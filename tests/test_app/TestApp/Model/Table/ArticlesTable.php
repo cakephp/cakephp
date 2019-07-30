@@ -36,10 +36,10 @@ class ArticlesTable extends Table
      */
     public function findPublished($query, array $options = [])
     {
-        $query = $query->where(['published' => 'Y']);
+        $query = $query->where([$this->aliasField('published') => 'Y']);
 
         if (isset($options['title'])) {
-            $query->andWhere(['title' => $options['title']]);
+            $query->andWhere([$this->aliasField('title') => $options['title']]);
         }
 
         return $query;

@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
+use Cake\I18n\I18n;
 use Cake\ORM\Entity;
 use Cake\ORM\RulesChecker;
 use Cake\TestSuite\TestCase;
@@ -33,7 +34,7 @@ class RulesCheckerIntegrationTest extends TestCase
      * @var array
      */
     protected $fixtures = [
-        'core.Articles', 'core.ArticlesTags', 'core.Authors', 'core.Tags',
+        'core.Articles', 'core.ArticlesTags', 'core.Authors', 'core.Comments', 'core.Tags',
         'core.SpecialTags', 'core.Categories', 'core.SiteArticles', 'core.SiteAuthors',
         'core.Comments',
     ];
@@ -1435,5 +1436,506 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $entity->tags = 0.512;
         $this->assertFalse($table->save($entity));
+    }
+
+    /**
+     * Tests that an exception is thrown when passing an invalid value for the `$association` argument.
+     *
+     * @return void
+     */
+    public function testIsLinkedToInvalidArgumentOne(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Argument 1 is expected to be of type `\Cake\ORM\Association|string`, `NULL` given.');
+
+        $Comments = $this->getTableLocator()->get('Comments');
+
+        /** @var \Cake\ORM\RulesChecker $rulesChecker */
+        $rulesChecker = $Comments->rulesChecker();
+        $rulesChecker->isLinkedTo(null);
+    }
+
+    /**
+     * Tests that an exception is thrown when passing an invalid value for the `$association` argument.
+     *
+     * @return void
+     */
+    public function testIsNotLinkedToInvalidArgumentOne(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Argument 1 is expected to be of type `\Cake\ORM\Association|string`, `NULL` given.');
+
+        $Comments = $this->getTableLocator()->get('Comments');
+
+        /** @var \Cake\ORM\RulesChecker $rulesChecker */
+        $rulesChecker = $Comments->rulesChecker();
+        $rulesChecker->isNotLinkedTo(null);
+    }
+
+    /**
+     * Tests that the error field name is inferred from the association name in case no name is provided.
+     *
+     * @return void
+     */
+    public function testIsLinkedToInferFieldFromAssociationName(): void
+    {
+        $Comments = $this->getTableLocator()->get('Comments');
+        $Comments->belongsTo('Articles');
+
+        $comment = $Comments->save($Comments->newEntity([
+            'article_id' => 9999,
+            'user_id' => 1,
+            'comment' => 'Orphaned Comment',
+        ]));
+
+        /** @var \Cake\ORM\RulesChecker $rulesChecker */
+        $rulesChecker = $Comments->rulesChecker();
+        $rulesChecker->addUpdate(
+            $rulesChecker->isLinkedTo('Articles')
+        );
+
+        $comment->setDirty('comment', true);
+        $this->assertFalse($Comments->save($comment));
+
+        $expected = [
+            'articles' => [
+                '_isLinkedTo' => 'Cannot modify row: a constraint for the `Articles` association fails.',
+            ],
+        ];
+        $this->assertEquals($expected, $comment->getErrors());
+    }
+
+    /**
+     * Tests that the error field name is inferred from the association name in case no name is provided.
+     *
+     * @return void
+     */
+    public function testIsNotLinkedToInferFieldFromAssociationName(): void
+    {
+        $Articles = $this->getTableLocator()->get('Articles');
+        $Articles->hasMany('Comments');
+
+        /** @var \Cake\ORM\RulesChecker $rulesChecker */
+        $rulesChecker = $Articles->rulesChecker();
+        $rulesChecker->addDelete(
+            $rulesChecker->isNotLinkedTo('Comments')
+        );
+
+        $article = $Articles->get(1);
+        $this->assertFalse($Articles->delete($article));
+
+        $expected = [
+            'comments' => [
+                '_isNotLinkedTo' => 'Cannot modify row: a constraint for the `Comments` association fails.',
+            ],
+        ];
+        $this->assertEquals($expected, $article->getErrors());
+    }
+
+    /**
+     * Tests that the error field name is inferred from the association object in case no name is provided.
+     *
+     * @return void
+     */
+    public function testIsLinkedToInferFieldFromAssociationObject(): void
+    {
+        $Comments = $this->getTableLocator()->get('Comments');
+        $Comments->belongsTo('Articles');
+
+        $comment = $Comments->save($Comments->newEntity([
+            'article_id' => 9999,
+            'user_id' => 1,
+            'comment' => 'Orphaned Comment',
+        ]));
+
+        /** @var \Cake\ORM\RulesChecker $rulesChecker */
+        $rulesChecker = $Comments->rulesChecker();
+        $rulesChecker->addUpdate(
+            $rulesChecker->isLinkedTo($Comments->getAssociation('Articles'))
+        );
+
+        $comment->setDirty('comment', true);
+        $this->assertFalse($Comments->save($comment));
+
+        $expected = [
+            'article' => [
+                '_isLinkedTo' => 'Cannot modify row: a constraint for the `Articles` association fails.',
+            ],
+        ];
+        $this->assertEquals($expected, $comment->getErrors());
+    }
+
+    /**
+     * Tests that the error field name is inferred from the association object in case no name is provided.
+     *
+     * @return void
+     */
+    public function testIsNotLinkedToInferFieldFromAssociationObject(): void
+    {
+        $Articles = $this->getTableLocator()->get('Articles');
+        $Articles->hasMany('Comments');
+
+        /** @var \Cake\ORM\RulesChecker $rulesChecker */
+        $rulesChecker = $Articles->rulesChecker();
+        $rulesChecker->addDelete(
+            $rulesChecker->isNotLinkedTo($Articles->getAssociation('Comments'))
+        );
+
+        $article = $Articles->get(1);
+        $this->assertFalse($Articles->delete($article));
+
+        $expected = [
+            'comments' => [
+                '_isNotLinkedTo' => 'Cannot modify row: a constraint for the `Comments` association fails.',
+            ],
+        ];
+        $this->assertEquals($expected, $article->getErrors());
+    }
+
+    /**
+     * Tests that the custom error field name is being used.
+     *
+     * @return void
+     */
+    public function testIsLinkedToWithCustomField(): void
+    {
+        $Comments = $this->getTableLocator()->get('Comments');
+        $Comments->belongsTo('Articles');
+
+        $comment = $Comments->save($Comments->newEntity([
+            'article_id' => 9999,
+            'user_id' => 1,
+            'comment' => 'Orphaned Comment',
+        ]));
+
+        /** @var \Cake\ORM\RulesChecker $rulesChecker */
+        $rulesChecker = $Comments->rulesChecker();
+        $rulesChecker->addUpdate(
+            $rulesChecker->isLinkedTo('Articles', 'custom')
+        );
+
+        $comment->setDirty('comment', true);
+        $this->assertFalse($Comments->save($comment));
+
+        $expected = [
+            'custom' => [
+                '_isLinkedTo' => 'Cannot modify row: a constraint for the `Articles` association fails.',
+            ],
+        ];
+        $this->assertEquals($expected, $comment->getErrors());
+    }
+
+    /**
+     * Tests that the custom error field name is being used.
+     *
+     * @return void
+     */
+    public function testIsNotLinkedToWithCustomField(): void
+    {
+        $Articles = $this->getTableLocator()->get('Articles');
+        $Articles->hasMany('Comments');
+
+        /** @var \Cake\ORM\RulesChecker $rulesChecker */
+        $rulesChecker = $Articles->rulesChecker();
+        $rulesChecker->addDelete(
+            $rulesChecker->isNotLinkedTo('Comments', 'custom')
+        );
+
+        $article = $Articles->get(1);
+        $this->assertFalse($Articles->delete($article));
+
+        $expected = [
+            'custom' => [
+                '_isNotLinkedTo' => 'Cannot modify row: a constraint for the `Comments` association fails.',
+            ],
+        ];
+        $this->assertEquals($expected, $article->getErrors());
+    }
+
+    /**
+     * Tests that the custom error message is being used.
+     *
+     * @return void
+     */
+    public function testIsLinkedToWithCustomMessage(): void
+    {
+        $Comments = $this->getTableLocator()->get('Comments');
+        $Comments->belongsTo('Articles');
+
+        $comment = $Comments->save($Comments->newEntity([
+            'article_id' => 9999,
+            'user_id' => 1,
+            'comment' => 'Orphaned Comment',
+        ]));
+
+        /** @var \Cake\ORM\RulesChecker $rulesChecker */
+        $rulesChecker = $Comments->rulesChecker();
+        $rulesChecker->addUpdate(
+            $rulesChecker->isLinkedTo('Articles', 'article', 'custom')
+        );
+
+        $comment->setDirty('comment', true);
+        $this->assertFalse($Comments->save($comment));
+
+        $expected = [
+            'article' => [
+                '_isLinkedTo' => 'custom',
+            ],
+        ];
+        $this->assertEquals($expected, $comment->getErrors());
+    }
+
+    /**
+     * Tests that the custom error message is being used.
+     *
+     * @return void
+     */
+    public function testIsNotLinkedToWithCustomMessage(): void
+    {
+        $Articles = $this->getTableLocator()->get('Articles');
+        $Articles->hasMany('Comments');
+
+        /** @var \Cake\ORM\RulesChecker $rulesChecker */
+        $rulesChecker = $Articles->rulesChecker();
+        $rulesChecker->addDelete(
+            $rulesChecker->isNotLinkedTo('Comments', 'comments', 'custom')
+        );
+
+        $article = $Articles->get(1);
+        $this->assertFalse($Articles->delete($article));
+
+        $expected = [
+            'comments' => [
+                '_isNotLinkedTo' => 'custom',
+            ],
+        ];
+        $this->assertEquals($expected, $article->getErrors());
+    }
+
+    /**
+     * Tests that the default error message can be translated.
+     *
+     * @return void
+     */
+    public function testIsLinkedToMessageWithI18n(): void
+    {
+        /** @var \Cake\I18n\Translator $translator */
+        $translator = I18n::getTranslator('cake');
+
+        $messageId = 'Cannot modify row: a constraint for the `{0}` association fails.';
+        $translator->getPackage()->addMessage(
+            $messageId,
+            'Zeile kann nicht geändert werden: Eine Einschränkung für die "{0}" Beziehung schlägt fehl.'
+        );
+
+        $Comments = $this->getTableLocator()->get('Comments');
+        $Comments->belongsTo('Articles');
+
+        $comment = $Comments->save($Comments->newEntity([
+            'article_id' => 9999,
+            'user_id' => 1,
+            'comment' => 'Orphaned Comment',
+        ]));
+
+        /** @var \Cake\ORM\RulesChecker $rulesChecker */
+        $rulesChecker = $Comments->rulesChecker();
+
+        $rulesChecker->addUpdate(
+            $rulesChecker->isLinkedTo('Articles', 'article')
+        );
+
+        $comment->setDirty('comment', true);
+        $this->assertFalse($Comments->save($comment));
+
+        $expected = [
+            'article' => [
+                '_isLinkedTo' => 'Zeile kann nicht geändert werden: Eine Einschränkung für die "Articles" Beziehung schlägt fehl.',
+            ],
+        ];
+        $this->assertEquals($expected, $comment->getErrors());
+
+        $translator->getPackage()->addMessage($messageId, null);
+    }
+
+    /**
+     * Tests that the default error message can be translated.
+     *
+     * @return void
+     */
+    public function testIsNotLinkedToMessageWithI18n(): void
+    {
+        /** @var \Cake\I18n\Translator $translator */
+        $translator = I18n::getTranslator('cake');
+
+        $messageId = 'Cannot modify row: a constraint for the `{0}` association fails.';
+        $translator->getPackage()->addMessage(
+            $messageId,
+            'Zeile kann nicht geändert werden: Eine Einschränkung für die "{0}" Beziehung schlägt fehl.'
+        );
+
+        $Comments = $this->getTableLocator()->get('Comments');
+        $Comments->belongsTo('Articles');
+
+        /** @var \Cake\ORM\RulesChecker $rulesChecker */
+        $rulesChecker = $Comments->rulesChecker();
+
+        $rulesChecker->addUpdate(
+            $rulesChecker->isNotLinkedTo('Articles', 'articles')
+        );
+
+        $comment = $Comments->get(1);
+        $comment->setDirty('comment', true);
+        $this->assertFalse($Comments->save($comment));
+
+        $expected = [
+            'articles' => [
+                '_isNotLinkedTo' => 'Zeile kann nicht geändert werden: Eine Einschränkung für die "Articles" Beziehung schlägt fehl.',
+            ],
+        ];
+        $this->assertEquals($expected, $comment->getErrors());
+
+        $translator->getPackage()->addMessage($messageId, null);
+    }
+
+    /**
+     * Tests that the default error message works without I18n.
+     *
+     * @return void
+     */
+    public function testIsLinkedToMessageWithoutI18n(): void
+    {
+        /** @var \Cake\I18n\Translator $translator */
+        $translator = I18n::getTranslator('cake');
+
+        $messageId = 'Cannot modify row: a constraint for the `{0}` association fails.';
+        $translator->getPackage()->addMessage(
+            $messageId,
+            'translated'
+        );
+
+        $Comments = $this->getTableLocator()->get('Comments');
+        $Comments->belongsTo('Articles');
+
+        $comment = $Comments->save($Comments->newEntity([
+            'article_id' => 9999,
+            'user_id' => 1,
+            'comment' => 'Orphaned Comment',
+        ]));
+
+        /** @var \Cake\ORM\RulesChecker $rulesChecker */
+        $rulesChecker = $Comments->rulesChecker();
+
+        \Closure::bind(
+            function () use ($rulesChecker) {
+                $rulesChecker->{'_useI18n'} = false;
+            },
+            null,
+            RulesChecker::class
+        )();
+
+        $rulesChecker->addUpdate(
+            $rulesChecker->isLinkedTo('Articles', 'article')
+        );
+
+        $comment->setDirty('comment', true);
+        $this->assertFalse($Comments->save($comment));
+
+        $expected = [
+            'article' => [
+                '_isLinkedTo' => 'Cannot modify row: a constraint for the `Articles` association fails.',
+            ],
+        ];
+        $this->assertEquals($expected, $comment->getErrors());
+
+        $translator->getPackage()->addMessage($messageId, null);
+    }
+
+    /**
+     * Tests that the default error message works without I18n.
+     *
+     * @return void
+     */
+    public function testIsNotLinkedToMessageWithoutI18n(): void
+    {
+        /** @var \Cake\I18n\Translator $translator */
+        $translator = I18n::getTranslator('cake');
+
+        $messageId = 'Cannot modify row: a constraint for the `{0}` association fails.';
+        $translator->getPackage()->addMessage(
+            $messageId,
+            'translated'
+        );
+
+        $Comments = $this->getTableLocator()->get('Comments');
+        $Comments->belongsTo('Articles');
+
+        /** @var \Cake\ORM\RulesChecker $rulesChecker */
+        $rulesChecker = $Comments->rulesChecker();
+
+        \Closure::bind(
+            function () use ($rulesChecker) {
+                $rulesChecker->{'_useI18n'} = false;
+            },
+            null,
+            RulesChecker::class
+        )();
+
+        $rulesChecker->addUpdate(
+            $rulesChecker->isNotLinkedTo('Articles', 'articles')
+        );
+
+        $comment = $Comments->get(1);
+        $comment->setDirty('comment', true);
+        $this->assertFalse($Comments->save($comment));
+
+        $expected = [
+            'articles' => [
+                '_isNotLinkedTo' => 'Cannot modify row: a constraint for the `Articles` association fails.',
+            ],
+        ];
+        $this->assertEquals($expected, $comment->getErrors());
+
+        $translator->getPackage()->addMessage($messageId, null);
+    }
+
+    /**
+     * Tests that the rule can pass.
+     *
+     * @return void
+     */
+    public function testIsLinkedToIsLinked(): void
+    {
+        $Comments = $this->getTableLocator()->get('Comments');
+        $Comments->belongsTo('Articles');
+
+        /** @var \Cake\ORM\RulesChecker $rulesChecker */
+        $rulesChecker = $Comments->rulesChecker();
+        $rulesChecker->addUpdate(
+            $rulesChecker->isLinkedTo('Articles', 'articles')
+        );
+
+        $comment = $Comments->get(1);
+        $comment->setDirty('comment', true);
+        $this->assertNotFalse($Comments->save($comment));
+    }
+
+    /**
+     * Tests that the rule can pass.
+     *
+     * @return void
+     */
+    public function testIsNotLinkedToIsNotLinked(): void
+    {
+        $Articles = $this->getTableLocator()->get('Articles');
+        $Articles->hasMany('Comments');
+
+        /** @var \Cake\ORM\RulesChecker $rulesChecker */
+        $rulesChecker = $Articles->rulesChecker();
+        $rulesChecker->addDelete(
+            $rulesChecker->isNotLinkedTo('Comments', 'comments')
+        );
+
+        $article = $Articles->get(3);
+        $this->assertTrue($Articles->delete($article));
     }
 }

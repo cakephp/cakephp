@@ -482,4 +482,9 @@ parameters:
 			count: 1
 			path: src/basics.php
 
+		-
+			message: '#Result of && is always false#'
+			count: 1
+			path: 'src/ORM/Rule/LinkConstraint.php'
+
 

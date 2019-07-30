@@ -20,7 +20,9 @@ use Cake\Datasource\RuleInvoker;
 use Cake\Datasource\RulesChecker as BaseRulesChecker;
 use Cake\ORM\Rule\ExistsIn;
 use Cake\ORM\Rule\IsUnique;
+use Cake\ORM\Rule\LinkConstraint;
 use Cake\ORM\Rule\ValidCount;
+use Cake\Utility\Inflector;
 
 /**
  * ORM flavoured rules checker.
@@ -106,6 +108,137 @@ class RulesChecker extends BaseRulesChecker
         $errorField = is_string($field) ? $field : current($field);
 
         return $this->_addError(new ExistsIn($field, $table, $options), '_existsIn', compact('errorField', 'message'));
+    }
+
+    /**
+     * Validates whether links to the given association exist.
+     *
+     * ### Example:
+     *
+     * ```
+     * $rules->update($rules->isLinkedTo('Articles', 'article'));
+     * ```
+     *
+     * On a `Comments` table that has a `belongsTo Articles` association, this check would ensure that comments
+     * can only be edited as long as they are associated to an existing article.
+     *
+     * @param \Cake\ORM\Association|string $association The association to check for links.
+     * @param string|null $field The name of the association property. When supplied, this is the name used to set
+     *  possible errors. When absent, the name is inferred from `$association`.
+     * @param string|null $message The error message to show in case the rule does not pass.
+     * @return \Cake\Datasource\RuleInvoker
+     *
+     * @since 4.0.0
+     */
+    public function isLinkedTo($association, ?string $field = null, ?string $message = null): RuleInvoker
+    {
+        return $this->_addLinkConstraintRule(
+            $association,
+            $field,
+            $message,
+            LinkConstraint::STATUS_LINKED,
+            '_isLinkedTo'
+        );
+    }
+
+    /**
+     * Validates whether links to the given association do not exist.
+     *
+     * ### Example:
+     *
+     * ```
+     * $rules->delete($rules->isNotLinkedTo('Comments', 'comments'));
+     * ```
+     *
+     * On a `Articles` table that has a `hasMany Comments` association, this check would ensure that articles
+     * can only be deleted when no associated comments exist.
+     *
+     * @param \Cake\ORM\Association|string $association The association to check for links.
+     * @param string|null $field The name of the association property. When supplied, this is the name used to set
+     *  possible errors. When absent, the name is inferred from `$association`.
+     * @param string|null $message The error message to show in case the rule does not pass.
+     * @return \Cake\Datasource\RuleInvoker
+     *
+     * @since 4.0.0
+     */
+    public function isNotLinkedTo($association, ?string $field = null, ?string $message = null): RuleInvoker
+    {
+        return $this->_addLinkConstraintRule(
+            $association,
+            $field,
+            $message,
+            LinkConstraint::STATUS_NOT_LINKED,
+            '_isNotLinkedTo'
+        );
+    }
+
+    /**
+     * Adds a link constraint rule.
+     *
+     * @param \Cake\ORM\Association|string $association The association to check for links.
+     * @param string|null $errorField The name of the property to use for setting possible errors. When absent,
+     *   the name is inferred from `$association`.
+     * @param string|null $message The error message to show in case the rule does not pass.
+     * @param string $linkStatus The ink status required for the check to pass.
+     * @param string $ruleName The alias/name of the rule.
+     * @return \Cake\Datasource\RuleInvoker
+     *
+     * @throws \InvalidArgumentException In case the `$association` argument is of an invalid type.
+     *
+     * @since 4.0.0
+     *
+     * @see \Cake\ORM\RulesChecker::isLinkedTo()
+     * @see \Cake\ORM\RulesChecker::isNotLinkedTo()
+     * @see \Cake\ORM\Rule\LinkConstraint::STATUS_LINKED
+     * @see \Cake\ORM\Rule\LinkConstraint::STATUS_NOT_LINKED
+     */
+    protected function _addLinkConstraintRule(
+        $association,
+        ?string $errorField,
+        ?string $message,
+        string $linkStatus,
+        string $ruleName
+    ): RuleInvoker {
+        if ($association instanceof Association) {
+            $associationAlias = $association->getName();
+
+            if ($errorField === null) {
+                $errorField = $association->getProperty();
+            }
+        } elseif (is_string($association)) {
+            $associationAlias = $association;
+
+            if ($errorField === null) {
+                $errorField = Inflector::underscore($association);
+            }
+        } else {
+            throw new \InvalidArgumentException(sprintf(
+                'Argument 1 is expected to be of type `\Cake\ORM\Association|string`, `%s` given.',
+                getTypeName($association)
+            ));
+        }
+
+        if (!$message) {
+            if ($this->_useI18n) {
+                $message = __d(
+                    'cake',
+                    'Cannot modify row: a constraint for the `{0}` association fails.',
+                    $associationAlias
+                );
+            } else {
+                $message = sprintf(
+                    'Cannot modify row: a constraint for the `%s` association fails.',
+                    $associationAlias
+                );
+            }
+        }
+
+        $rule = new LinkConstraint(
+            $association,
+            $linkStatus
+        );
+
+        return $this->_addError($rule, $ruleName, compact('errorField', 'message'));
     }
 
     /**
