@@ -47,6 +47,12 @@
         font-size: 30px;
         margin: 0;
     }
+    .header-title:hover:after {
+        content: attr(data-content);
+        font-size: 18px;
+        vertical-align: middle;
+        cursor: pointer;
+    }
     .header-type {
         display: block;
         font-size: 16px;
@@ -237,7 +243,7 @@
 </head>
 <body>
     <header>
-        <h1 class="header-title">
+        <h1 class="header-title" data-content="&#128203">
             <?= h($this->fetch('title')) ?>
         </h1>
         <span class="header-type"><?= get_class($error) ?></span>
@@ -323,6 +329,36 @@
                     }
                 });
                 event.preventDefault();
+            });
+
+            bindEvent('.header-title', 'click', function(event) {
+                event.preventDefault();
+                var text = '';
+                each(this.childNodes, function(el) {
+                    text += el.textContent.trim();
+                });
+
+                // Use execCommand(copy) as it has the widest support.
+                var textArea = document.createElement("textarea");
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                var el = this;
+                try {
+                    document.execCommand('copy');
+
+                    // Show a success icon and then revert
+                    var original = el.getAttribute('data-content');
+                    el.setAttribute('data-content', '\ud83c\udf70');
+                    setTimeout(function () {
+                        el.setAttribute('data-content', original);
+                    }, 1000);
+                } catch (err) {
+                    alert('Unable to update clipboard ' + err);
+                }
+                document.body.removeChild(textArea);
+                this.parentNode.scrollIntoView(true);
             });
         });
     </script>
