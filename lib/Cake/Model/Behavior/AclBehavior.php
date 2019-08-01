@@ -110,7 +110,7 @@ class AclBehavior extends ModelBehavior {
 			}
 			$data = array(
 				'parent_id' => isset($parent[0][$type]['id']) ? $parent[0][$type]['id'] : null,
-				'model' => $model->name,
+				'model' => $model->alias,
 				'foreign_key' => $model->id
 			);
 			if (!$created) {
