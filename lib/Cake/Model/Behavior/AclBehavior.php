@@ -85,7 +85,7 @@ class AclBehavior extends ModelBehavior {
 			}
 		}
 		if (empty($ref)) {
-			$ref = array('model' => $model->name, 'foreign_key' => $model->id);
+			$ref = array('model' => $model->alias, 'foreign_key' => $model->id);
 		}
 		return $model->{$type}->node($ref);
 	}
