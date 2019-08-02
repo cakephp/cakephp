@@ -64,10 +64,10 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      *
      * @param string $field the field to set or check status for
      * @param bool $isDirty true means the field was changed, false means
-     * it was not changed
+     * it was not changed. Default true.
      * @return $this
      */
-    public function setDirty(string $field, bool $isDirty);
+    public function setDirty(string $field, bool $isDirty = true);
 
     /**
      * Checks if the entity is dirty or if a single field of it is dirty.
