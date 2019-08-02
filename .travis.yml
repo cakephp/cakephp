@@ -65,6 +65,7 @@ before_install:
   - if [ $DB = 'pgsql' ]; then psql -c 'CREATE SCHEMA test3;' -U postgres -d cakephp_test; fi
 
   - pecl channel-update pecl.php.net
+  - if [[ $CODECOVERAGE == 1 ]]; then pecl install pcov; fi
   - |
       if [[ ${TRAVIS_PHP_VERSION} != "5.6" ]]; then
         echo 'extension = memcached.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini;
@@ -90,7 +91,8 @@ before_install:
   - sudo locale-gen da_DK
 
 before_script:
-  - if [[ $PREFER_LOWEST != 1 ]]; then composer install --prefer-source --no-interaction; fi
+  - if [[ $CODECOVERAGE == 1 ]]; then composer require --dev pcov/clobber; fi
+  - if [[ $CODECOVERAGE == 0 && $PREFER_LOWEST != 1 ]]; then composer install --no-interaction; fi
   - if [[ $PREFER_LOWEST == 1 ]]; then composer update --prefer-lowest --prefer-stable --prefer-dist --no-interaction; fi
   - if [[ $PREFER_LOWEST == 1 ]]; then composer require --dev dereuromark/composer-prefer-lowest; fi
 
@@ -98,7 +100,7 @@ script:
   - if [[ $DEFAULT == 1 ]]; then vendor/bin/phpunit; fi
   - if [[ $PREFER_LOWEST == 1 ]]; then vendor/bin/validate-prefer-lowest; fi
 
-  - if [[ $CODECOVERAGE == 1 ]]; then phpdbg -qrr vendor/bin/phpunit --coverage-clover=clover.xml; fi
+  - if [[ $CODECOVERAGE == 1 ]]; then vendor/bin/pcov clobber; vendor/bin/phpunit --coverage-clover=clover.xml; fi
 
   - if [[ $CHECKS == 1 ]]; then composer require --dev phpstan/phpstan:^0.11 && vendor/bin/phpstan analyse -c phpstan.neon -l 2 src/; fi
   - if [[ $CHECKS == 1 ]]; then composer cs-check; fi
