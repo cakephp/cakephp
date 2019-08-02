@@ -938,10 +938,10 @@ class EntityTest extends TestCase
         $entity = new Entity($data);
         $this->assertTrue($entity->isNew());
 
-        $entity->isNew(true);
+        $entity->setNew(true);
         $this->assertTrue($entity->isNew());
 
-        $entity->isNew(false);
+        $entity->setNew(false);
         $this->assertFalse($entity->isNew());
     }
 
@@ -975,17 +975,17 @@ class EntityTest extends TestCase
     public function testConstructorWithMarkNew()
     {
         $entity = $this->getMockBuilder('Cake\ORM\Entity')
-            ->setMethods(['isNew', 'clean'])
+            ->setMethods(['setNew', 'clean'])
             ->disableOriginalConstructor()
             ->getMock();
         $entity->expects($this->never())->method('clean');
         $entity->__construct(['a' => 'b', 'c' => 'd']);
 
         $entity = $this->getMockBuilder('Cake\ORM\Entity')
-            ->setMethods(['isNew'])
+            ->setMethods(['setNew'])
             ->disableOriginalConstructor()
             ->getMock();
-        $entity->expects($this->once())->method('isNew');
+        $entity->expects($this->once())->method('setNew');
         $entity->__construct(['a' => 'b', 'c' => 'd'], ['markNew' => true]);
     }
 
@@ -1642,7 +1642,7 @@ class EntityTest extends TestCase
         $this->assertFalse($entity->isDirty());
 
         $cloned = clone $entity;
-        $cloned->isNew(true);
+        $cloned->setNew(true);
 
         $this->assertTrue($cloned->isDirty());
         $this->assertTrue($cloned->isDirty('a'));

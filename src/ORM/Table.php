@@ -1765,7 +1765,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
             if ($options['atomic'] || $options['_primary']) {
                 $entity->clean();
-                $entity->isNew(false);
+                $entity->setNew(false);
                 $entity->setSource($this->getRegistryAlias());
             }
         }
@@ -1813,7 +1813,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             foreach ($entity->extract($primaryColumns) as $k => $v) {
                 $conditions["$alias.$k"] = $v;
             }
-            $entity->isNew(!$this->exists($conditions));
+            $entity->setNew(!$this->exists($conditions));
         }
 
         $mode = $entity->isNew() ? RulesChecker::CREATE : RulesChecker::UPDATE;
@@ -1854,7 +1854,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         if (!$success && $isNew) {
             $entity->unset($this->getPrimaryKey());
-            $entity->isNew(true);
+            $entity->setNew(true);
         }
 
         return $success ? $entity : false;
@@ -1891,7 +1891,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         if (!$options['atomic'] && !$options['_primary']) {
             $entity->clean();
-            $entity->isNew(false);
+            $entity->setNew(false);
             $entity->setSource($this->getRegistryAlias());
         }
 
@@ -2096,7 +2096,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             foreach ($entities as $key => $entity) {
                 if (isset($isNew[$key]) && $isNew[$key]) {
                     $entity->unset($this->getPrimaryKey());
-                    $entity->isNew(true);
+                    $entity->setNew(true);
                 }
             }
         };
