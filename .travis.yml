@@ -39,7 +39,9 @@ matrix:
 
 before_install:
   - echo cakephp version && tail -1 VERSION.txt
+
   - phpenv config-rm xdebug.ini
+  - if [ $CODECOVERAGE == 1 ]; then pecl install pcov; fi
 
   - if [ $DB = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE cakephp_test;'; fi
   - if [ $DB = 'pgsql' ]; then psql -c 'CREATE DATABASE cakephp_test;' -U postgres; fi
@@ -58,7 +60,7 @@ before_script:
   - composer install --prefer-dist --no-interaction
 
 script:
-  - if [[ $CODECOVERAGE == 1 ]]; then phpdbg -qrr vendor/bin/phpunit --coverage-clover=clover.xml; fi
+  - if [[ $CODECOVERAGE == 1 ]]; then vendor/bin/phpunit --coverage-clover=clover.xml; fi
   - if [[ $CODECOVERAGE != 1 ]]; then vendor/bin/phpunit; fi
 
 after_script:

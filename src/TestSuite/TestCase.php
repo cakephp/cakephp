@@ -753,12 +753,12 @@ abstract class TestCase extends BaseTestCase
      * Mock a model, maintain fixtures and table association
      *
      * @param string $alias The model to get a mock for.
-     * @param array|null $methods The list of methods to mock
+     * @param array $methods The list of methods to mock
      * @param array $options The config data for the mock's constructor.
      * @throws \Cake\ORM\Exception\MissingTableClassException
      * @return \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
      */
-    public function getMockForModel(string $alias, ?array $methods = [], array $options = [])
+    public function getMockForModel(string $alias, array $methods = [], array $options = [])
     {
         $className = $this->_getTableClassName($alias, $options);
         $connectionName = $className::defaultConnectionName();
@@ -772,7 +772,7 @@ abstract class TestCase extends BaseTestCase
 
         /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $mock */
         $mock = $this->getMockBuilder($className)
-            ->setMethods($methods)
+            ->onlyMethods($methods)
             ->setConstructorArgs([$options])
             ->getMock();
 

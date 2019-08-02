@@ -359,12 +359,10 @@ class TestCaseTest extends TestCase
             ->will($this->returnValue('mocked'));
         $this->assertSame('mocked', $Posts->save($entity));
         $this->assertSame('Cake\ORM\Entity', $Posts->getEntityClass());
-
-        $Posts = $this->getMockForModel('Posts', ['doSomething']);
         $this->assertInstanceOf('Cake\Database\Connection', $Posts->getConnection());
         $this->assertSame('test', $Posts->getConnection()->configName());
 
-        $Tags = $this->getMockForModel('Tags', ['doSomething']);
+        $Tags = $this->getMockForModel('Tags', ['save']);
         $this->assertSame('TestApp\Model\Entity\Tag', $Tags->getEntityClass());
     }
 
@@ -411,7 +409,7 @@ class TestCaseTest extends TestCase
         $this->assertTrue($TestPluginComment->save($entity));
         $this->assertFalse($TestPluginComment->save($entity));
 
-        $TestPluginAuthors = $this->getMockForModel('TestPlugin.Authors', ['doSomething']);
+        $TestPluginAuthors = $this->getMockForModel('TestPlugin.Authors', ['save']);
         $this->assertInstanceOf('TestPlugin\Model\Table\AuthorsTable', $TestPluginAuthors);
         $this->assertSame('TestPlugin\Model\Entity\Author', $TestPluginAuthors->getEntityClass());
         $this->clearPlugins();
@@ -453,17 +451,6 @@ class TestCaseTest extends TestCase
         $result = $this->getTableLocator()->get('Comments');
         $this->assertInstanceOf(Table::class, $result);
         $this->assertEmpty([], $allMethodsStubs->getAlias());
-
-        $allMethodsMocks = $this->getMockForModel(
-            'Table',
-            null,
-            ['alias' => 'Comments', 'className' => Table::class]
-        );
-        $result = $this->getTableLocator()->get('Comments');
-        $this->assertInstanceOf(Table::class, $result);
-        $this->assertSame('Comments', $allMethodsMocks->getAlias());
-
-        $this->assertNotEquals($allMethodsStubs, $allMethodsMocks);
     }
 
     /**
@@ -475,10 +462,10 @@ class TestCaseTest extends TestCase
     {
         static::setAppNamespace();
 
-        $I18n = $this->getMockForModel('I18n', ['doSomething']);
+        $I18n = $this->getMockForModel('I18n', ['save']);
         $this->assertSame('custom_i18n_table', $I18n->getTable());
 
-        $Tags = $this->getMockForModel('Tags', ['doSomething']);
+        $Tags = $this->getMockForModel('Tags', ['save']);
         $this->assertSame('tags', $Tags->getTable());
     }
 }
