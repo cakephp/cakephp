@@ -3076,7 +3076,7 @@ class TableTest extends TestCase
             ));
 
         $table = $this->getTableLocator()->get('users', ['eventManager' => $mock]);
-        $entity->isNew(false);
+        $entity->setNew(false);
         $table->delete($entity, ['checkRules' => false]);
     }
 
@@ -3160,7 +3160,7 @@ class TableTest extends TestCase
             }));
 
         $table = $this->getTableLocator()->get('users', ['eventManager' => $mock]);
-        $entity->isNew(false);
+        $entity->setNew(false);
         $result = $table->delete($entity, ['checkRules' => false]);
         $this->assertNull($result);
     }
@@ -3184,7 +3184,7 @@ class TableTest extends TestCase
             }));
 
         $table = $this->getTableLocator()->get('users', ['eventManager' => $mock]);
-        $entity->isNew(false);
+        $entity->setNew(false);
         $result = $table->delete($entity, ['checkRules' => false]);
         $this->assertEquals('got stopped', $result);
     }
@@ -3205,7 +3205,7 @@ class TableTest extends TestCase
         $table->expects($this->never())
             ->method('query');
 
-        $entity->isNew(true);
+        $entity->setNew(true);
         $result = $table->delete($entity);
         $this->assertFalse($result);
     }
@@ -4041,10 +4041,10 @@ class TableTest extends TestCase
                 ]
             ]),
         ]);
-        $entity->isNew(true);
-        $entity->author->isNew(true);
-        $entity->author->supervisor->isNew(true);
-        $entity->author->tags[0]->isNew(true);
+        $entity->setNew(true);
+        $entity->author->setNew(true);
+        $entity->author->supervisor->setNew(true);
+        $entity->author->tags[0]->setNew(true);
 
         $articles->expects($this->once())
             ->method('_insert')
@@ -6217,7 +6217,7 @@ class TableTest extends TestCase
 
         $cloned = clone $article;
         $cloned->unsetProperty('id');
-        $cloned->isNew(true);
+        $cloned->setNew(true);
         $this->assertSame($cloned, $table->save($cloned));
         $this->assertEquals(
             $article->extract(['title', 'author_id']),

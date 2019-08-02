@@ -844,7 +844,7 @@ class BelongsToMany extends Association
             // as new, we let save() sort out whether or not we have a new link
             // or if we are updating an existing link.
             if ($changedKeys) {
-                $joint->isNew(true);
+                $joint->setNew(true);
                 $joint->unsetProperty($junction->getPrimaryKey())
                     ->set(array_merge($sourceKeys, $targetKeys), ['guard' => false]);
             }

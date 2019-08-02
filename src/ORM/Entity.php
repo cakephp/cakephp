@@ -60,7 +60,7 @@ class Entity implements EntityInterface, InvalidPropertyInterface
         }
 
         if ($options['markNew'] !== null) {
-            $this->isNew($options['markNew']);
+            $this->setNew($options['markNew']);
         }
 
         if (!empty($properties) && $options['markClean'] && !$options['useSetters']) {
