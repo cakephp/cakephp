@@ -120,7 +120,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
     {
         /** @var \Cake\Core\InstanceConfigTrait $existing */
         $existing = $this->_loaded[$name];
-        $msg = sprintf('The "%s" alias has already been loaded', $name);
+        $msg = sprintf('The "%s" alias has already been loaded.', $name);
         $hasConfig = method_exists($existing, 'config');
         if (!$hasConfig) {
             throw new RuntimeException($msg);
@@ -131,22 +131,24 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
         $existingConfig = $existing->getConfig();
         unset($config['enabled'], $existingConfig['enabled']);
 
-        $fail = false;
+        $failure = null;
         foreach ($config as $key => $value) {
             if (!array_key_exists($key, $existingConfig)) {
-                $fail = true;
+                $failure = " The `{$key}` was not defined in the previous configuration data.";
                 break;
             }
             if (isset($existingConfig[$key]) && $existingConfig[$key] !== $value) {
-                $fail = true;
+                $failure = sprintf(
+                    ' The `%s` key has a value of `%s` but previously had a value of `%s`',
+                    $key,
+                    json_encode($value),
+                    json_encode($existingConfig[$key])
+                );
                 break;
             }
         }
-        if ($fail) {
-            $msg .= ' with the following config: ';
-            $msg .= var_export($existingConfig, true);
-            $msg .= ' which differs from ' . var_export($config, true);
-            throw new RuntimeException($msg);
+        if ($failure) {
+            throw new RuntimeException($msg . $failure);
         }
     }
 
