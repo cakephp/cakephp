@@ -255,7 +255,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * Set the status of this entity.
      *
      * Using `true` means that the entity has not been persisted in the database,
-     * `false` that it already is.
+     * `false` indicates that the entity has been persisted.
      *
      * @param bool $new Indicate whether or not this entity has been persisted.
      * @return $this
