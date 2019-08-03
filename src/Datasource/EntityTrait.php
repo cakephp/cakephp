@@ -788,32 +788,41 @@ trait EntityTrait
     }
 
     /**
-     * Returns whether or not this entity has already been persisted.
-     * This method can return null in the case there is no prior information on
-     * the status of this entity.
+     * Set the status of this entity.
      *
-     * If called with a boolean it will set the known status of this instance,
-     * true means that the instance is not yet persisted in the database, false
-     * that it already is.
+     * Using `true` means that the entity has not been persisted in the database,
+     * `false` that it already is.
      *
-     * @param bool|null $new True if it is known this instance was not yet persisted
-     * @return bool Whether or not the entity has been persisted.
+     * @param bool $new Indicate whether or not this entity has been persisted.
+     * @return $this
      */
-    public function isNew(?bool $new = null): bool
+    public function setNew(bool $new)
     {
-        if ($new === null) {
-            return $this->_new;
-        }
-
-        $new = (bool)$new;
-
         if ($new) {
             foreach ($this->_fields as $k => $p) {
                 $this->_dirty[$k] = true;
             }
         }
 
-        return $this->_new = $new;
+        $this->_new = $new;
+
+        return $this;
+    }
+
+    /**
+     * Returns whether or not this entity has already been persisted.
+     *
+     * @return bool Whether or not the entity has been persisted.
+     */
+    public function isNew(): bool
+    {
+        if (func_num_args()) {
+            deprecationWarning('Using isNew() as setter is deprecated. Use setNew() instead.');
+
+            $this->setNew(func_get_arg(0));
+        }
+
+        return $this->_new;
     }
 
     /**

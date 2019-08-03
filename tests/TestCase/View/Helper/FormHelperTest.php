@@ -4389,7 +4389,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         // Default value from schema is used only for new entities.
-        $entity->isNew(false);
+        $entity->setNew(false);
         $result = $this->Form->text('title');
         $expected = ['input' => ['type' => 'text', 'name' => 'title']];
         $this->assertHtml($expected, $result);

@@ -462,11 +462,11 @@ class EavStrategy implements TranslateStrategyInterface
         foreach ($find as $i => $translation) {
             if (!empty($results[$i])) {
                 $contents[$i]->set('id', $results[$i], ['setter' => false]);
-                $contents[$i]->isNew(false);
+                $contents[$i]->setNew(false);
             } else {
                 $translation['model'] = $this->_config['referenceName'];
                 $contents[$i]->set($translation, ['setter' => false, 'guard' => false]);
-                $contents[$i]->isNew(true);
+                $contents[$i]->setNew(true);
             }
         }
 
