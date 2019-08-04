@@ -955,13 +955,6 @@
     </MissingParamType>
   </file>
   <file src="src/I18n/Number.php">
-    <InvalidArgument occurrences="5">
-      <code>$size</code>
-      <code>$size / 1024</code>
-      <code>$size / 1024 / 1024</code>
-      <code>$size / 1024 / 1024 / 1024</code>
-      <code>$size / 1024 / 1024 / 1024 / 1024</code>
-    </InvalidArgument>
     <PossiblyInvalidOperand occurrences="1">
       <code>$value</code>
     </PossiblyInvalidOperand>
@@ -1001,20 +994,6 @@
     </PossiblyUndefinedArrayOffset>
   </file>
   <file src="src/I18n/RelativeTimeFormatter.php">
-    <InvalidArgument occurrences="12">
-      <code>$count</code>
-      <code>$count</code>
-      <code>$count</code>
-      <code>$count</code>
-      <code>$count</code>
-      <code>$count</code>
-      <code>$count</code>
-      <code>$message</code>
-      <code>$message</code>
-      <code>$message</code>
-      <code>$message</code>
-      <code>'just now'</code>
-    </InvalidArgument>
     <PossiblyNullArgument occurrences="1">
       <code>$other</code>
     </PossiblyNullArgument>
@@ -1559,10 +1538,6 @@
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>string</code>
     </ImplementedReturnTypeMismatch>
-    <InvalidArgument occurrences="2">
-      <code>$modelName</code>
-      <code>$modelName</code>
-    </InvalidArgument>
     <PossiblyNullArgument occurrences="3">
       <code>$url</code>
       <code>$options</code>
