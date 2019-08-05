@@ -1063,12 +1063,12 @@ trait IntegrationTestTrait
     /**
      * Asserts session contents
      *
-     * @param string $expected The expected contents.
+     * @param mixed $expected The expected contents.
      * @param string $path The session data path. Uses Hash::get() compatible notation
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
      */
-    public function assertSession(string $expected, string $path, string $message = ''): void
+    public function assertSession($expected, string $path, string $message = ''): void
     {
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat($expected, new SessionEquals($this->_requestSession, $path), $verboseMessage);
@@ -1193,7 +1193,7 @@ trait IntegrationTestTrait
      * The difference from assertCookie() is this decrypts the cookie
      * value like the CookieComponent for this assertion.
      *
-     * @param string $expected The expected contents.
+     * @param mixed $expected The expected contents.
      * @param string $name The cookie name.
      * @param string|bool $encrypt Encryption mode to use.
      * @param string|null $key Encryption key used. Defaults
@@ -1203,7 +1203,7 @@ trait IntegrationTestTrait
      * @see \Cake\Utility\CookieCryptTrait::_encrypt()
      */
     public function assertCookieEncrypted(
-        string $expected,
+        $expected,
         string $name,
         $encrypt = 'aes',
         $key = null,
