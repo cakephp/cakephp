@@ -32,6 +32,7 @@ matrix:
       env: DB=pgsql db_dsn='postgres://postgres@127.0.0.1/cakephp_test'
     - php: 7.3
       env: DB=sqlite db_dsn='sqlite:///:memory:'
+    - php: '7.4snapshot'
 
   allow_failures:
     - php: '7.4snapshot'
