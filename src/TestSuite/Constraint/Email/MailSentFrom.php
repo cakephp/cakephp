@@ -23,6 +23,9 @@ namespace Cake\TestSuite\Constraint\Email;
  */
 class MailSentFrom extends MailSentWith
 {
+    /**
+     * @var string
+     */
     protected $method = 'from';
 
     /**

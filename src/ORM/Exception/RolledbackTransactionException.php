@@ -21,6 +21,9 @@ use Cake\Core\Exception\Exception;
  */
 class RolledbackTransactionException extends Exception
 {
+    /**
+     * @var string
+     */
     // phpcs:ignore Generic.Files.LineLength
     protected $_messageTemplate = 'The afterSave event in "%s" is aborting the transaction before the save process is done.';
 }
