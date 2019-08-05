@@ -7,10 +7,6 @@ php:
 
 dist: trusty
 
-env:
-  global:
-    - CODECOVERAGE=0
-
 services:
   - memcached
   - redis-server
