@@ -234,7 +234,7 @@ class RedisEngine extends CacheEngine
      */
     public function clear(): bool
     {
-        $this->_Redis->setOption(Redis::OPT_SCAN, Redis::SCAN_RETRY);
+        $this->_Redis->setOption(Redis::OPT_SCAN, (string)Redis::SCAN_RETRY);
 
         $isAllDeleted = true;
         $iterator = null;
