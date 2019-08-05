@@ -427,6 +427,7 @@ class Response implements ResponseInterface
      *  - status: the HTTP status code to respond with
      *  - type: a complete mime-type string or an extension mapped in this class
      *  - charset: the charset for the response body
+     * @throws \InvalidArgumentException
      */
     public function __construct(array $options = [])
     {
@@ -791,6 +792,9 @@ class Response implements ResponseInterface
     {
         if (!is_int($time)) {
             $time = strtotime($time);
+            if ($time === false) {
+                throw new InvalidArgumentException('Invalid time parameter. Ensure your time value can be parsed by strtotime');
+            }
         }
 
         return $this->withHeader('Date', gmdate('D, j M Y G:i:s ', time()) . 'GMT')
@@ -914,7 +918,7 @@ class Response implements ResponseInterface
      * $response->withExpires(new DateTime('+1 day'))
      * ```
      *
-     * @param string|\DateTimeInterface $time Valid time string or \DateTime instance.
+     * @param string|int|\DateTimeInterface|null $time Valid time string or \DateTime instance.
      * @return static
      */
     public function withExpires($time)

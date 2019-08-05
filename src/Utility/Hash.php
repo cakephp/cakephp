@@ -254,8 +254,13 @@ class Hash
                 return false;
             }
 
+            if (is_array($data)) {
+                $attrPresent = array_key_exists($attr, $data);
+            } else {
+                $attrPresent = $data->offsetExists($attr);
+            }
             // Empty attribute = fail.
-            if (!(isset($data[$attr]) || array_key_exists($attr, $data))) {
+            if (!$attrPresent) {
                 return false;
             }
 
@@ -935,8 +940,8 @@ class Hash
      *
      * ### Sort directions
      *
-     * - `asc` or `\SORT_ASC` Sort ascending.
-     * - `desc` or `\SORT_DESC` Sort descending.
+     * - `asc` or \SORT_ASC Sort ascending.
+     * - `desc` or \SORT_DESC Sort descending.
      *
      * ### Sort types
      *
@@ -1008,6 +1013,7 @@ class Hash
             $type = $type['type'];
         }
         $type = strtolower($type);
+
         if ($type === 'numeric') {
             $type = \SORT_NUMERIC;
         } elseif ($type === 'string') {

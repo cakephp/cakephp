@@ -1344,8 +1344,8 @@ class FormHelper extends Helper
             $options['templateVars']['customValidityMessage'] = $message;
 
             if ($this->getConfig('autoSetCustomValidity')) {
-                $options['oninvalid'] = "this.setCustomValidity('$message')";
-                $options['onvalid'] = "this.setCustomValidity('')";
+                $options['oninvalid'] = "this.setCustomValidity(''); if (!this.validity.valid) this.setCustomValidity('$message')";
+                $options['oninput'] = "this.setCustomValidity('')";
             }
         }
 
@@ -1939,7 +1939,7 @@ class FormHelper extends Helper
         if ($isUrl) {
             $options['src'] = $caption;
         } elseif ($isImage) {
-            if ($caption{0} !== '/') {
+            if ($caption[0] !== '/') {
                 $url = $this->Url->webroot(Configure::read('App.imageBaseUrl') . $caption);
             } else {
                 $url = $this->Url->webroot(trim($caption, '/'));

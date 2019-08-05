@@ -531,6 +531,40 @@ class EagerLoaderTest extends TestCase
     }
 
     /**
+     * Tests that the paths for matching containments point to _matchingData.
+     *
+     * @return void
+     */
+    public function testNormalizedMatchingPath()
+    {
+        $loader = new EagerLoader();
+        $loader->setMatching('Clients');
+        $assocs = $loader->attachableAssociations($this->table);
+
+        $this->assertEquals('Clients', $assocs['Clients']->aliasPath());
+        $this->assertEquals('_matchingData.Clients', $assocs['Clients']->propertyPath());
+    }
+
+    /**
+     * Tests that the paths for deep matching containments point to _matchingData.
+     *
+     * @return void
+     */
+    public function testNormalizedDeepMatchingPath()
+    {
+        $loader = new EagerLoader();
+        $loader->setMatching('Clients.Orders');
+        $assocs = $loader->attachableAssociations($this->table);
+
+        $this->assertEquals('Clients', $assocs['Clients']->aliasPath());
+        $this->assertEquals('_matchingData.Clients', $assocs['Clients']->propertyPath());
+
+        $assocs = $assocs['Clients']->associations();
+        $this->assertEquals('Clients.Orders', $assocs['Orders']->aliasPath());
+        $this->assertEquals('_matchingData.Orders', $assocs['Orders']->propertyPath());
+    }
+
+    /**
      * Test clearing containments but not matching joins.
      *
      * @return void
