@@ -21,6 +21,7 @@ use Cake\Http\Client\Exception\NetworkException;
 use Cake\Http\Client\Exception\RequestException;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
+use Cake\Http\Exception\HttpException;
 use Composer\CaBundle\CaBundle;
 use Psr\Http\Message\RequestInterface;
 
@@ -151,10 +152,10 @@ class Curl implements AdapterInterface
     /**
      * Convert HTTP version number into curl value.
      *
-     * @param \Cake\Http\Client\Request $request The request to get a protocol version for.
+     * @param \Psr\Http\Message\RequestInterface $request The request to get a protocol version for.
      * @return int
      */
-    protected function getProtocolVersion(Request $request)
+    protected function getProtocolVersion(RequestInterface $request)
     {
         switch ($request->getProtocolVersion()) {
             case '1.0':

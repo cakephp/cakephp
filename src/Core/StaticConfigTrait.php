@@ -113,7 +113,7 @@ trait StaticConfigTrait
      * @param string $key The name of the configuration.
      * @return mixed Configuration data at the named key or null if the key does not exist.
      */
-    public static function getConfig(string $key): ?array
+    public static function getConfig(string $key)
     {
         return static::$_config[$key] ?? null;
     }
