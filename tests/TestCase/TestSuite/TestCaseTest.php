@@ -346,12 +346,12 @@ class TestCaseTest extends TestCase
     public function testGetMockForModel()
     {
         static::setAppNamespace();
+        // No methods will be mocked if $methods argument of getMockForModel() is empty.
         $Posts = $this->getMockForModel('Posts');
         $entity = new Entity([]);
 
         $this->assertInstanceOf('TestApp\Model\Table\PostsTable', $Posts);
-        $this->assertNull($Posts->save($entity));
-        $this->assertSame('', $Posts->getTable());
+        $this->assertSame('posts', $Posts->getTable());
 
         $Posts = $this->getMockForModel('Posts', ['save']);
         $Posts->expects($this->at(0))

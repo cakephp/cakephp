@@ -52,7 +52,7 @@
         "cakephp/cakephp-codesniffer": "dev-next",
         "mikey179/vfsstream": "^1.6",
         "paragonie/csp-builder": "^2.3",
-        "phpunit/phpunit": "^8.0"
+        "phpunit/phpunit": "^8.3.3|^8.4"
     },
     "autoload": {
         "psr-4": {
