@@ -24,7 +24,7 @@ namespace Cake\TestSuite\Constraint\Email;
 class MailSentWith extends MailConstraintBase
 {
     /**
-     * @var string|null
+     * @var string
      */
     protected $method;
 
@@ -32,14 +32,13 @@ class MailSentWith extends MailConstraintBase
      * Constructor
      *
      * @param int|null $at At
-     * @param string|null $method Method
+     * @param string $method Method
      * @return void
      */
-    public function __construct(?int $at = null, ?string $method = null)
+    public function __construct(?int $at = null, string $method)
     {
-        if ($method) {
-            $this->method = $method;
-        }
+        $this->method = $method;
+
         parent::__construct($at);
     }
 
