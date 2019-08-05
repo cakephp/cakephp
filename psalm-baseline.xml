@@ -11,33 +11,12 @@
       <code>setHidden</code>
       <code>toArray</code>
     </PossiblyInvalidMethodCall>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>$_passwordHasher</code>
-    </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/Auth/BasicAuthenticate.php">
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>BasicAuthenticate</code>
-    </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/Auth/ControllerAuthorize.php">
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>$_Controller</code>
-    </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/Auth/DigestAuthenticate.php">
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>DigestAuthenticate</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/Auth/FormAuthenticate.php">
     <PossiblyInvalidArgument occurrences="2">
       <code>$request-&gt;getData($fields['username'])</code>
       <code>$request-&gt;getData($fields['password'])</code>
     </PossiblyInvalidArgument>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>FormAuthenticate</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/Auth/Storage/SessionStorage.php">
     <MoreSpecificImplementedParamType occurrences="1">
@@ -96,16 +75,6 @@
       <code>null</code>
     </ImplementedReturnTypeMismatch>
   </file>
-  <file src="src/Command/CompletionCommand.php">
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>$commands</code>
-    </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/Command/HelpCommand.php">
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>$commands</code>
-    </PropertyNotSetInConstructor>
-  </file>
   <file src="src/Command/I18nExtractCommand.php">
     <UndefinedConstant occurrences="3">
       <code>APP</code>
@@ -117,23 +86,6 @@
     <PossiblyInvalidArgument occurrences="1">
       <code>$path</code>
     </PossiblyInvalidArgument>
-    <PropertyNotSetInConstructor occurrences="2">
-      <code>$args</code>
-      <code>$io</code>
-    </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/Console/CommandRunner.php">
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>CommandRunner</code>
-    </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/Console/ConsoleInputArgument.php">
-    <PropertyNotSetInConstructor occurrences="4">
-      <code>$_name</code>
-      <code>$_help</code>
-      <code>$_required</code>
-      <code>$_choices</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/Console/ConsoleInputOption.php">
     <PossiblyInvalidArgument occurrences="1">
@@ -188,15 +140,6 @@
     <PossiblyNullPropertyAssignmentValue occurrences="1">
       <code>$command</code>
     </PossiblyNullPropertyAssignmentValue>
-    <PropertyNotSetInConstructor occurrences="4">
-      <code>$OptionParser</code>
-      <code>$command</code>
-      <code>$name</code>
-      <code>$plugin</code>
-    </PropertyNotSetInConstructor>
-    <UninitializedProperty occurrences="1">
-      <code>$this-&gt;name</code>
-    </UninitializedProperty>
   </file>
   <file src="src/Console/TaskRegistry.php">
     <MoreSpecificImplementedParamType occurrences="1">
@@ -275,49 +218,21 @@
       <code>$fields</code>
       <code>$lockedFields</code>
     </PossiblyNullArrayOffset>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>$_action</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/Controller/ComponentRegistry.php">
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$class</code>
     </MoreSpecificImplementedParamType>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>ComponentRegistry</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/Controller/Controller.php">
     <PossiblyNullOperand occurrences="1">
       <code>$this-&gt;name</code>
     </PossiblyNullOperand>
-    <PropertyNotSetInConstructor occurrences="3">
-      <code>$name</code>
-      <code>$_components</code>
-      <code>Controller</code>
-    </PropertyNotSetInConstructor>
-    <UninitializedProperty occurrences="3">
-      <code>$this-&gt;name</code>
-      <code>$this-&gt;name</code>
-      <code>$this-&gt;name</code>
-    </UninitializedProperty>
   </file>
   <file src="src/Controller/ErrorController.php">
     <PossiblyNullArgument occurrences="1">
       <code>$builder-&gt;getTemplatePath()</code>
     </PossiblyNullArgument>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>ErrorController</code>
-    </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/Core/BasePlugin.php">
-    <PropertyNotSetInConstructor occurrences="5">
-      <code>$path</code>
-      <code>$classPath</code>
-      <code>$configPath</code>
-      <code>$templatePath</code>
-      <code>$name</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/Core/Configure/Engine/IniConfig.php">
     <LoopInvalidation occurrences="1">
@@ -404,11 +319,6 @@
       <code>prepare</code>
       <code>getAttribute</code>
     </PossiblyNullReference>
-    <PropertyNotSetInConstructor occurrences="3">
-      <code>$_version</code>
-      <code>$_supportsNativeJson</code>
-      <code>Mysql</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/Database/Driver/Postgres.php">
     <PossiblyNullReference occurrences="4">
@@ -417,9 +327,6 @@
       <code>exec</code>
       <code>quote</code>
     </PossiblyNullReference>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>Postgres</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/Database/Driver/Sqlite.php">
     <PossiblyInvalidArgument occurrences="1">
@@ -432,9 +339,6 @@
     <PossiblyNullReference occurrences="1">
       <code>prepare</code>
     </PossiblyNullReference>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>Sqlite</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/Database/Driver/Sqlserver.php">
     <PossiblyInvalidArgument occurrences="1">
@@ -469,22 +373,11 @@
       <code>$this-&gt;_type</code>
       <code>$type</code>
     </PossiblyInvalidArgument>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>$_type</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/Database/Expression/FunctionExpression.php">
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$params</code>
     </MoreSpecificImplementedParamType>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>FunctionExpression</code>
-    </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/Database/Expression/OrderByExpression.php">
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>OrderByExpression</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/Database/Expression/OrderClauseExpression.php">
     <PossiblyInvalidArgument occurrences="1">
@@ -522,9 +415,6 @@
     <PossiblyNullArrayAccess occurrences="1">
       <code>$type[$k]</code>
     </PossiblyNullArrayAccess>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>TupleComparison</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/Database/Expression/ValuesExpression.php">
     <InvalidScalarArgument occurrences="2">
@@ -543,9 +433,6 @@
       <code>$type</code>
       <code>$type</code>
     </InvalidScalarArgument>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>$_logger</code>
-    </PropertyNotSetInConstructor>
     <UndefinedPropertyAssignment occurrences="1">
       <code>$e-&gt;queryString</code>
     </UndefinedPropertyAssignment>
@@ -563,10 +450,6 @@
       <code>$key($exp)</code>
       <code>$append($this-&gt;newExpr(), $this)</code>
     </PossiblyInvalidFunctionCall>
-    <PropertyNotSetInConstructor occurrences="2">
-      <code>$_selectTypeMap</code>
-      <code>Query</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/Database/Schema/BaseSchema.php">
     <PossiblyNullOperand occurrences="1">
@@ -612,9 +495,6 @@
     <PossiblyNullOperand occurrences="1">
       <code>$schema-&gt;getColumn($existingColumn)</code>
     </PossiblyNullOperand>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>$_hasSequences</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/Database/Schema/SqlserverSchema.php">
     <PossiblyNullArrayAccess occurrences="4">
@@ -791,14 +671,6 @@
       <code>$value</code>
       <code>$value</code>
     </PossiblyInvalidArgument>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>$_localeFormat</code>
-    </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/Database/Type/DateType.php">
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>DateType</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/Database/Type/ExpressionTypeCasterTrait.php">
     <InvalidArgument occurrences="1">
@@ -814,9 +686,6 @@
     <PossiblyInvalidArgument occurrences="1">
       <code>$this-&gt;_localeFormat</code>
     </PossiblyInvalidArgument>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>TimeType</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/Database/TypeConverterTrait.php">
     <PossiblyNullArgument occurrences="1">
@@ -881,12 +750,6 @@
       <code>object|null</code>
     </ImplementedReturnTypeMismatch>
   </file>
-  <file src="src/Form/Form.php">
-    <PropertyNotSetInConstructor occurrences="2">
-      <code>$_schema</code>
-      <code>Form</code>
-    </PropertyNotSetInConstructor>
-  </file>
   <file src="src/Http/BaseApplication.php">
     <UnresolvableInclude occurrences="2">
       <code>require_once $this-&gt;configDir . '/bootstrap.php'</code>
@@ -921,15 +784,6 @@
       <code>$name</code>
       <code>$name</code>
     </PossiblyInvalidArgument>
-  </file>
-  <file src="src/Http/Client/Response.php">
-    <PropertyNotSetInConstructor occurrences="5">
-      <code>$code</code>
-      <code>$cookies</code>
-      <code>$reasonPhrase</code>
-      <code>$_xml</code>
-      <code>$_json</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/Http/ControllerFactory.php">
     <PossiblyNullArgument occurrences="1">
@@ -1031,11 +885,6 @@
       <code>process</code>
     </PossiblyNullReference>
   </file>
-  <file src="src/Http/Server.php">
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>Server</code>
-    </PropertyNotSetInConstructor>
-  </file>
   <file src="src/Http/ServerRequest.php">
     <LessSpecificImplementedReturnType occurrences="2">
       <code>array</code>
@@ -1058,9 +907,6 @@
     <PossiblyNullOperand occurrences="1">
       <code>$uri-&gt;getPort()</code>
     </PossiblyNullOperand>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>$_input</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/Http/ServerRequestFactory.php">
     <NoInterfaceProperties occurrences="5">
@@ -1075,10 +921,6 @@
     <PossiblyInvalidIterator occurrences="1">
       <code>$write</code>
     </PossiblyInvalidIterator>
-    <PropertyNotSetInConstructor occurrences="2">
-      <code>$_engine</code>
-      <code>$_started</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/Http/Session/DatabaseSession.php">
     <InvalidArgument occurrences="2">
@@ -1113,13 +955,6 @@
     </MissingParamType>
   </file>
   <file src="src/I18n/Number.php">
-    <InvalidArgument occurrences="5">
-      <code>$size</code>
-      <code>$size / 1024</code>
-      <code>$size / 1024 / 1024</code>
-      <code>$size / 1024 / 1024 / 1024</code>
-      <code>$size / 1024 / 1024 / 1024 / 1024</code>
-    </InvalidArgument>
     <PossiblyInvalidOperand occurrences="1">
       <code>$value</code>
     </PossiblyInvalidOperand>
@@ -1159,20 +994,6 @@
     </PossiblyUndefinedArrayOffset>
   </file>
   <file src="src/I18n/RelativeTimeFormatter.php">
-    <InvalidArgument occurrences="12">
-      <code>$count</code>
-      <code>$count</code>
-      <code>$count</code>
-      <code>$count</code>
-      <code>$count</code>
-      <code>$count</code>
-      <code>$count</code>
-      <code>$message</code>
-      <code>$message</code>
-      <code>$message</code>
-      <code>$message</code>
-      <code>'just now'</code>
-    </InvalidArgument>
     <PossiblyNullArgument occurrences="1">
       <code>$other</code>
     </PossiblyNullArgument>
@@ -1201,9 +1022,6 @@
     <PossiblyNullArgument occurrences="1">
       <code>$locale</code>
     </PossiblyNullArgument>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>TranslatorRegistry</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/Log/Engine/ConsoleLog.php">
     <MoreSpecificImplementedParamType occurrences="1">
@@ -1243,36 +1061,10 @@
       <code>$this-&gt;connection</code>
     </PossiblyNullArgument>
   </file>
-  <file src="src/ORM/Association.php">
-    <PropertyNotSetInConstructor occurrences="6">
-      <code>$_className</code>
-      <code>$_bindingKey</code>
-      <code>$_foreignKey</code>
-      <code>$_sourceTable</code>
-      <code>$_targetTable</code>
-      <code>$_propertyName</code>
-    </PropertyNotSetInConstructor>
-    <UninitializedProperty occurrences="1">
-      <code>$this-&gt;_className</code>
-    </UninitializedProperty>
-  </file>
-  <file src="src/ORM/Association/BelongsTo.php">
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>BelongsTo</code>
-    </PropertyNotSetInConstructor>
-  </file>
   <file src="src/ORM/Association/BelongsToMany.php">
     <PossiblyInvalidArgument occurrences="1">
       <code>$hasMany-&gt;getConditions()</code>
     </PossiblyInvalidArgument>
-    <PropertyNotSetInConstructor occurrences="6">
-      <code>$_junctionTable</code>
-      <code>$_junctionTableName</code>
-      <code>$_junctionAssociationName</code>
-      <code>$_targetForeignKey</code>
-      <code>$_through</code>
-      <code>BelongsToMany</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/ORM/Association/DependentDeleteHelper.php">
     <InvalidArgument occurrences="1">
@@ -1287,24 +1079,11 @@
     <PossiblyInvalidArgument occurrences="1">
       <code>$entry-&gt;getField()</code>
     </PossiblyInvalidArgument>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>HasMany</code>
-    </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/ORM/Association/HasOne.php">
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>HasOne</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/ORM/Association/Loader/SelectLoader.php">
     <PossiblyInvalidOperand occurrences="1">
       <code>$key</code>
     </PossiblyInvalidOperand>
-  </file>
-  <file src="src/ORM/Behavior/TimestampBehavior.php">
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>$_ts</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/ORM/Behavior/Translate/EavStrategy.php">
     <UndefinedClass occurrences="1">
@@ -1328,18 +1107,11 @@
     <PossiblyNullReference occurrences="1">
       <code>$edge</code>
     </PossiblyNullReference>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>$_primaryKey</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/ORM/BehaviorRegistry.php">
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$class</code>
     </MoreSpecificImplementedParamType>
-    <PropertyNotSetInConstructor occurrences="2">
-      <code>$_table</code>
-      <code>BehaviorRegistry</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/ORM/EagerLoader.php">
     <InvalidArgument occurrences="1">
@@ -1382,11 +1154,6 @@
     <PossiblyInvalidArrayAccess occurrences="1">
       <code>$statement-&gt;fetch('assoc')['count']</code>
     </PossiblyInvalidArrayAccess>
-    <PropertyNotSetInConstructor occurrences="3">
-      <code>$_hasFields</code>
-      <code>$_eagerLoader</code>
-      <code>Query</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/ORM/ResultSet.php">
     <PossiblyInvalidArgument occurrences="1">
@@ -1395,10 +1162,6 @@
     <PossiblyNullPropertyAssignmentValue occurrences="1">
       <code>$query-&gt;isAutoFieldsEnabled()</code>
     </PossiblyNullPropertyAssignmentValue>
-    <PropertyNotSetInConstructor occurrences="2">
-      <code>$_current</code>
-      <code>$_count</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/ORM/Table.php">
     <MoreSpecificImplementedParamType occurrences="1">
@@ -1413,14 +1176,6 @@
       <code>$type</code>
       <code>$typeName</code>
     </PossiblyNullArgument>
-    <PropertyNotSetInConstructor occurrences="6">
-      <code>$_table</code>
-      <code>$_alias</code>
-      <code>$_primaryKey</code>
-      <code>$_displayField</code>
-      <code>$_entityClass</code>
-      <code>Table</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/Routing/Exception/DuplicateNamedRouteException.php">
     <MissingParamType occurrences="1">
@@ -1479,9 +1234,6 @@
     <DeprecatedClass occurrences="1">
       <code>Shell</code>
     </DeprecatedClass>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>CommandTask</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/TestSuite/ConsoleIntegrationTestTrait.php">
     <PossiblyInvalidPropertyAssignmentValue occurrences="1">
@@ -1512,16 +1264,6 @@
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$other</code>
     </MoreSpecificImplementedParamType>
-  </file>
-  <file src="src/TestSuite/Constraint/Email/MailContains.php">
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>$type</code>
-    </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/TestSuite/Constraint/Email/MailContainsAttachment.php">
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>MailContainsAttachment</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/TestSuite/Constraint/Email/MailContainsHtml.php">
     <DeprecatedConstant occurrences="1">
@@ -1572,11 +1314,6 @@
     <InternalClass occurrences="1">
       <code>new AssertionFailedError('No response set, cannot assert content.')</code>
     </InternalClass>
-  </file>
-  <file src="src/TestSuite/Constraint/Response/StatusCode.php">
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>StatusCode</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/TestSuite/Constraint/Response/StatusCodeBase.php">
     <MoreSpecificImplementedParamType occurrences="1">
@@ -1666,9 +1403,6 @@
       <code>addTestFile</code>
       <code>BaseTestSuite</code>
     </InternalMethod>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>TestSuite</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/Utility/CookieCryptTrait.php">
     <InvalidScalarArgument occurrences="2">
@@ -1762,22 +1496,12 @@
     <PossiblyInvalidArgument occurrences="1">
       <code>$this-&gt;_rule</code>
     </PossiblyInvalidArgument>
-    <PropertyNotSetInConstructor occurrences="3">
-      <code>$_rule</code>
-      <code>$_on</code>
-      <code>$_message</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/Validation/Validator.php">
     <PossiblyNullArgument occurrences="2">
       <code>$this-&gt;getProvider($provider)</code>
       <code>$this-&gt;getProvider($provider)</code>
     </PossiblyNullArgument>
-  </file>
-  <file src="src/View/AjaxView.php">
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>AjaxView</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/View/Cell.php">
     <PossiblyFalseOperand occurrences="2">
@@ -1788,11 +1512,6 @@
       <code>$request</code>
       <code>$response</code>
     </PossiblyNullPropertyAssignmentValue>
-    <PropertyNotSetInConstructor occurrences="3">
-      <code>$View</code>
-      <code>$action</code>
-      <code>Cell</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/View/Form/EntityContext.php">
     <LessSpecificImplementedReturnType occurrences="1">
@@ -1815,28 +1534,15 @@
       <code>$class</code>
     </PossiblyNullOperand>
   </file>
-  <file src="src/View/Helper/BreadcrumbsHelper.php">
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>BreadcrumbsHelper</code>
-    </PropertyNotSetInConstructor>
-  </file>
   <file src="src/View/Helper/FormHelper.php">
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>string</code>
     </ImplementedReturnTypeMismatch>
-    <InvalidArgument occurrences="2">
-      <code>$modelName</code>
-      <code>$modelName</code>
-    </InvalidArgument>
     <PossiblyNullArgument occurrences="3">
       <code>$url</code>
       <code>$options</code>
       <code>$options</code>
     </PossiblyNullArgument>
-    <PropertyNotSetInConstructor occurrences="2">
-      <code>$_contextFactory</code>
-      <code>FormHelper</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/View/Helper/HtmlHelper.php">
     <PossiblyInvalidIterator occurrences="1">
@@ -1847,9 +1553,6 @@
       <code>$this-&gt;css($i, $options)</code>
       <code>$this-&gt;script($i, $options)</code>
     </PossiblyNullOperand>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>HtmlHelper</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/View/Helper/NumberHelper.php">
     <LessSpecificImplementedReturnType occurrences="1">
@@ -1871,19 +1574,11 @@
     <PossiblyUndefinedArrayOffset occurrences="1">
       <code>$options['templates']</code>
     </PossiblyUndefinedArrayOffset>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>PaginatorHelper</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/View/Helper/TextHelper.php">
     <LessSpecificImplementedReturnType occurrences="1">
       <code>mixed</code>
     </LessSpecificImplementedReturnType>
-  </file>
-  <file src="src/View/Helper/TimeHelper.php">
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>TimeHelper</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/View/Helper/UrlHelper.php">
     <PossiblyNullArgument occurrences="1">
@@ -1901,35 +1596,16 @@
       <code>$class</code>
     </MoreSpecificImplementedParamType>
   </file>
-  <file src="src/View/JsonView.php">
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>JsonView</code>
-    </PropertyNotSetInConstructor>
-  </file>
   <file src="src/View/SerializedView.php">
     <PossiblyNullArgument occurrences="1">
       <code>$this-&gt;_responseType</code>
     </PossiblyNullArgument>
-    <PropertyNotSetInConstructor occurrences="2">
-      <code>$_responseType</code>
-      <code>SerializedView</code>
-    </PropertyNotSetInConstructor>
-    <UninitializedProperty occurrences="1">
-      <code>$this-&gt;_responseType</code>
-    </UninitializedProperty>
   </file>
   <file src="src/View/View.php">
     <PossiblyNullPropertyAssignmentValue occurrences="2">
       <code>$request ?: Router::getRequest(true)</code>
       <code>$defaultLayout</code>
     </PossiblyNullPropertyAssignmentValue>
-    <PropertyNotSetInConstructor occurrences="5">
-      <code>$_helpers</code>
-      <code>$templatePath</code>
-      <code>$template</code>
-      <code>$_current</code>
-      <code>View</code>
-    </PropertyNotSetInConstructor>
     <UnresolvableInclude occurrences="1">
       <code>include func_get_arg(0)</code>
     </UnresolvableInclude>
@@ -1938,8 +1614,5 @@
     <PossiblyUndefinedMethod occurrences="1">
       <code>asXML</code>
     </PossiblyUndefinedMethod>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>XmlView</code>
-    </PropertyNotSetInConstructor>
   </file>
 </files>

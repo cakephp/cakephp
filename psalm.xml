@@ -34,5 +34,6 @@
                 <referencedClass name="Redis" />
             </errorLevel>
         </UndefinedDocblockClass>
+        <PropertyNotSetInConstructor errorLevel="info" />
     </issueHandlers>
 </psalm>
