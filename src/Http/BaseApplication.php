@@ -14,11 +14,13 @@ declare(strict_types=1);
  * @since         3.3.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace Cake\Http;
 
 use Cake\Console\CommandCollection;
 use Cake\Controller\ControllerFactory;
 use Cake\Core\ConsoleApplicationInterface;
+use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\HttpApplicationInterface;
 use Cake\Core\Plugin;
 use Cake\Core\PluginApplicationInterface;
@@ -117,6 +119,60 @@ abstract class BaseApplication implements
             $plugin = $name;
         }
         $this->plugins->add($plugin);
+
+        return $this;
+    }
+
+    /**
+     * Add an optional plugin
+     *
+     * If it isn't available, ignore it.
+     *
+     * @param string|\Cake\Core\PluginInterface $name The plugin name or plugin object.
+     * @param array $config The configuration data for the plugin if using a string for $name
+     * @return $this
+     */
+    public function addOptionalPlugin($name, array $config = [])
+    {
+        try {
+            $this->addPlugin($name, $config);
+        } catch (MissingPluginException $e) {
+            // Do not halt if the plugin is missing
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add a plugin, when in CLI
+     *
+     * @param string|\Cake\Core\PluginInterface $name The plugin name or plugin object.
+     * @param array $config The configuration data for the plugin if using a string for $name
+     * @return $this
+     */
+    public function addCliPlugin($name, array $config = [])
+    {
+        if (PHP_SAPI === 'cli') {
+            $this->addPlugin($name, $config);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add an optional plugin, when in CLI
+     *
+     * If it isn't available, ignore it.
+     *
+     * @param string|\Cake\Core\PluginInterface $name The plugin name or plugin object.
+     * @param array $config The configuration data for the plugin if using a string for $name
+     * @return $this
+     */
+    public function addOptionalCliPlugin($name, array $config = [])
+    {
+        if (PHP_SAPI === 'cli') {
+            $this->addOptionalCliPlugin($name, $config);
+        }
 
         return $this;
     }
