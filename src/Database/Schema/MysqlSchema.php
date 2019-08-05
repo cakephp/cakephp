@@ -124,7 +124,7 @@ class MysqlSchema extends BaseSchema
             return ['type' => TableSchema::TYPE_UUID, 'length' => null];
         }
         if ($col === 'char') {
-            return ['type' => TableSchema::TYPE_STRING, 'fixed' => true, 'length' => $length];
+            return ['type' => TableSchema::TYPE_CHAR, 'fixed' => true, 'length' => $length];
         }
         if (strpos($col, 'char') !== false) {
             return ['type' => TableSchema::TYPE_STRING, 'length' => $length];
@@ -327,6 +327,7 @@ class MysqlSchema extends BaseSchema
             TableSchema::TYPE_TIME => ' TIME',
             TableSchema::TYPE_DATETIME => ' DATETIME',
             TableSchema::TYPE_TIMESTAMP => ' TIMESTAMP',
+            TableSchema::TYPE_CHAR => ' CHAR',
             TableSchema::TYPE_UUID => ' CHAR(36)',
             TableSchema::TYPE_JSON => $nativeJson ? ' JSON' : ' LONGTEXT',
         ];
@@ -380,6 +381,7 @@ class MysqlSchema extends BaseSchema
         }
         $hasLength = [
             TableSchema::TYPE_INTEGER,
+            TableSchema::TYPE_CHAR,
             TableSchema::TYPE_SMALLINTEGER,
             TableSchema::TYPE_TINYINTEGER,
             TableSchema::TYPE_STRING,

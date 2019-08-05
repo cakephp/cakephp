@@ -208,7 +208,7 @@ SQL;
                 10,
                 null,
                 null,
-                ['type' => 'string', 'fixed' => true, 'length' => 10],
+                ['type' => 'char', 'fixed' => true, 'length' => 10],
             ],
             [
                 'NCHAR',

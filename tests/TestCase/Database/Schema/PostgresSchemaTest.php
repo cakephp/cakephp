@@ -175,15 +175,15 @@ SQL;
             ],
             [
                 ['type' => 'CHAR(10)'],
-                ['type' => 'string', 'fixed' => true, 'length' => 10],
+                ['type' => 'char', 'fixed' => true, 'length' => 10],
             ],
             [
                 ['type' => 'CHAR(36)'],
-                ['type' => 'string', 'fixed' => true, 'length' => 36],
+                ['type' => 'char', 'fixed' => true, 'length' => 36],
             ],
             [
                 ['type' => 'CHARACTER(10)'],
-                ['type' => 'string', 'fixed' => true, 'length' => 10],
+                ['type' => 'char', 'fixed' => true, 'length' => 10],
             ],
             [
                 ['type' => 'MONEY'],
@@ -697,7 +697,7 @@ SQL;
             ],
             [
                 'id',
-                ['type' => 'string', 'length' => 32, 'fixed' => true, 'null' => false],
+                ['type' => 'char', 'length' => 32, 'fixed' => true, 'null' => false],
                 '"id" CHAR(32) NOT NULL',
             ],
             [
@@ -1125,7 +1125,7 @@ SQL;
             ->addColumn('body', ['type' => 'text'])
             ->addColumn('data', ['type' => 'json'])
             ->addColumn('hash', [
-                'type' => 'string',
+                'type' => 'char',
                 'fixed' => true,
                 'length' => 40,
                 'collate' => 'C',

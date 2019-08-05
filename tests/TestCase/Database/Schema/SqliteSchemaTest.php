@@ -78,7 +78,7 @@ class SqliteSchemaTest extends TestCase
             ],
             [
                 'CHAR(25)',
-                ['type' => 'string', 'fixed' => true, 'length' => 25],
+                ['type' => 'char', 'fixed' => true, 'length' => 25],
             ],
             [
                 'CHAR(36)',

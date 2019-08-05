@@ -140,6 +140,10 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
             'fixed' => null,
             'collate' => null,
         ],
+        'char' => [
+            'collate' => null,
+            'fixed' => true,
+        ],
         'text' => [
             'collate' => null,
         ],

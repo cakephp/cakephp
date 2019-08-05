@@ -114,11 +114,11 @@ class MysqlSchemaTest extends TestCase
             ],
             [
                 'CHAR(25)',
-                ['type' => 'string', 'length' => 25, 'fixed' => true],
+                ['type' => 'char', 'length' => 25, 'fixed' => true],
             ],
             [
                 'CHAR(36)',
-                ['type' => 'uuid', 'length' => null],
+                ['type' => 'uuid', 'length' => 36, 'fixed' => true],
             ],
             [
                 'BINARY(16)',
@@ -526,7 +526,7 @@ SQL;
             ],
             [
                 'id',
-                ['type' => 'string', 'length' => 32, 'fixed' => true, 'null' => false],
+                ['type' => 'uuid', 'length' => 32, 'fixed' => true, 'null' => false],
                 '`id` CHAR(32) NOT NULL',
             ],
             [
@@ -1075,7 +1075,7 @@ SQL;
                 'type' => 'json',
             ])
             ->addColumn('hash', [
-                'type' => 'string',
+                'type' => 'char',
                 'fixed' => true,
                 'length' => 40,
                 'collate' => 'latin1_bin',

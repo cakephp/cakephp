@@ -112,7 +112,7 @@ class PostgresSchema extends BaseSchema
             return ['type' => TableSchema::TYPE_UUID, 'length' => null];
         }
         if ($col === 'char' || $col === 'character') {
-            return ['type' => TableSchema::TYPE_STRING, 'fixed' => true, 'length' => $length];
+            return ['type' => TableSchema::TYPE_CHAR, 'fixed' => true, 'length' => $length];
         }
         // money is 'string' as it includes arbitrary text content
         // before the number value.
@@ -369,6 +369,7 @@ class PostgresSchema extends BaseSchema
             TableSchema::TYPE_TIME => ' TIME',
             TableSchema::TYPE_DATETIME => ' TIMESTAMP',
             TableSchema::TYPE_TIMESTAMP => ' TIMESTAMP',
+            TableSchema::TYPE_CHAR => ' CHAR',
             TableSchema::TYPE_UUID => ' UUID',
             TableSchema::TYPE_JSON => ' JSONB',
         ];
@@ -393,6 +394,10 @@ class PostgresSchema extends BaseSchema
             $out .= ' BYTEA';
         }
 
+        if ($data['type'] === TableSchema::TYPE_CHAR) {
+            $out .= '(' . (int)$data['length'] . ')';
+        }
+
         if ($data['type'] === TableSchema::TYPE_STRING ||
             ($data['type'] === TableSchema::TYPE_TEXT && $data['length'] === TableSchema::LENGTH_TINY)
         ) {
@@ -407,7 +412,7 @@ class PostgresSchema extends BaseSchema
             }
         }
 
-        $hasCollate = [TableSchema::TYPE_TEXT, TableSchema::TYPE_STRING];
+        $hasCollate = [TableSchema::TYPE_TEXT, TableSchema::TYPE_STRING, TableSchema::TYPE_CHAR];
         if (in_array($data['type'], $hasCollate, true) && isset($data['collate']) && $data['collate'] !== '') {
             $out .= ' COLLATE "' . $data['collate'] . '"';
         }
