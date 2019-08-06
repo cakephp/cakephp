@@ -334,7 +334,7 @@ class HelperRegistryTest extends TestCase
     public function testLoadMultipleTimesDifferentConfigured()
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('The "Html" alias has already been loaded with the following');
+        $this->expectExceptionMessage('The "Html" alias has already been loaded');
         $this->Helpers->load('Html');
         $this->Helpers->load('Html', ['same' => 'stuff']);
     }
@@ -347,7 +347,7 @@ class HelperRegistryTest extends TestCase
     public function testLoadMultipleTimesDifferentConfigValues()
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('The "Html" alias has already been loaded with the following');
+        $this->expectExceptionMessage('The "Html" alias has already been loaded');
         $this->Helpers->load('Html', ['key' => 'value']);
         $this->Helpers->load('Html', ['key' => 'new value']);
     }
