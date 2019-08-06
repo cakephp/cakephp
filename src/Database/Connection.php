@@ -380,7 +380,7 @@ class Connection implements ConnectionInterface
         if (!empty($this->_config['cacheMetadata'])) {
             return $this->_schemaCollection = new CachedCollection(
                 new SchemaCollection($this),
-                $this->configName(),
+                empty($this->_config['cacheKeyPrefix']) ? $this->configName() : $this->_config['cacheKeyPrefix'],
                 $this->getCacher()
             );
         }
