@@ -21,5 +21,8 @@ use Cake\Core\Exception\Exception;
  */
 class MissingTaskException extends Exception
 {
+    /**
+     * @var string
+     */
     protected $_messageTemplate = 'Task class %s could not be found.';
 }

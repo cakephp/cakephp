@@ -25,6 +25,9 @@ use Cake\Mailer\Email;
  */
 class MailContainsHtml extends MailContains
 {
+    /**
+     * @var string
+     */
     protected $type = Email::MESSAGE_HTML;
 
     /**

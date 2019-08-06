@@ -840,9 +840,6 @@
     </PossiblyNullOperand>
   </file>
   <file src="src/Http/Response.php">
-    <InvalidScalarArgument occurrences="1">
-      <code>$time</code>
-    </InvalidScalarArgument>
     <PossiblyInvalidArgument occurrences="5">
       <code>env('HTTP_ACCEPT_ENCODING')</code>
       <code>env('HTTP_ACCEPT_ENCODING')</code>
@@ -1275,21 +1272,6 @@
       <code>Email::MESSAGE_TEXT</code>
     </DeprecatedConstant>
   </file>
-  <file src="src/TestSuite/Constraint/Email/MailSentFrom.php">
-    <MissingPropertyType occurrences="1">
-      <code>$method</code>
-    </MissingPropertyType>
-  </file>
-  <file src="src/TestSuite/Constraint/Email/MailSentTo.php">
-    <MissingPropertyType occurrences="1">
-      <code>$method</code>
-    </MissingPropertyType>
-  </file>
-  <file src="src/TestSuite/Constraint/Email/MailSentWith.php">
-    <MissingPropertyType occurrences="1">
-      <code>$method</code>
-    </MissingPropertyType>
-  </file>
   <file src="src/TestSuite/Constraint/EventFired.php">
     <InternalClass occurrences="1"/>
     <PossiblyNullReference occurrences="1">
@@ -1417,8 +1399,7 @@
     </PossiblyNullArgument>
   </file>
   <file src="src/Utility/Hash.php">
-    <PossiblyInvalidArgument occurrences="16">
-      <code>$data</code>
+    <PossiblyInvalidArgument occurrences="15">
       <code>$keys</code>
       <code>$keys</code>
       <code>$vals</code>
