@@ -14,12 +14,8 @@ branches:
     - 3.next
     - 4.x
 environment:
-  global:
-    PHP: "C:/PHP"
-    php_ver_target: 7.2
-
   matrix:
-    - db: 2012
+    - db: '2012'
       db_dsn: 'sqlserver://sa:Password12!@.\SQL2012SP1/cakephp?MultipleActiveResultSets=false'
 
 services:
@@ -28,11 +24,9 @@ services:
 init:
   - SET PATH=C:\Program Files\OpenSSL;C:\php;%PATH%
   - SET COMPOSER_NO_INTERACTION=1
-  - SET PHP=1 # This var is connected to PHP install cache
   - SET ANSICON=121x90 (121x90)
 
 install:
-  - IF EXIST C:\php (SET PHP=0)
   - curl -fsS https://windows.php.net/downloads/releases/latest/php-7.2-nts-Win32-VC15-x64-latest.zip -o php.zip
   - 7z x php.zip -oC:\php\ -aoa > nul
 
