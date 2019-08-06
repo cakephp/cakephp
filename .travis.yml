@@ -70,8 +70,9 @@ script:
 after_script:
   - |
       if [[ $CODECOVERAGE == 1 ]]; then
-        wget https://scrutinizer-ci.com/ocular.phar
-        php ocular.phar code-coverage:upload --format=php-clover clover.xml
+        wget https://github.com/php-coveralls/php-coveralls/releases/download/v2.1.0/php-coveralls.phar
+        chmod +x php-coveralls.phar
+        ./php-coveralls.phar
       fi
 
 notifications:
