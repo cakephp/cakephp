@@ -384,7 +384,7 @@ class SqlserverSchema extends BaseSchema
         }
 
         if ($data['type'] === TableSchema::TYPE_CHAR) {
-            $out .= '(' . (int)$data['length'] . ')';
+            $out .= '(' . $data['length'] . ')';
         }
 
         if ($data['type'] === TableSchema::TYPE_BINARY) {

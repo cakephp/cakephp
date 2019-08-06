@@ -395,7 +395,7 @@ class PostgresSchema extends BaseSchema
         }
 
         if ($data['type'] === TableSchema::TYPE_CHAR) {
-            $out .= '(' . (int)$data['length'] . ')';
+            $out .= '(' . $data['length'] . ')';
         }
 
         if ($data['type'] === TableSchema::TYPE_STRING ||
@@ -408,7 +408,7 @@ class PostgresSchema extends BaseSchema
             }
             $out .= $type;
             if (isset($data['length'])) {
-                $out .= '(' . (int)$data['length'] . ')';
+                $out .= '(' . $data['length'] . ')';
             }
         }
 
@@ -418,13 +418,13 @@ class PostgresSchema extends BaseSchema
         }
 
         if ($data['type'] === TableSchema::TYPE_FLOAT && isset($data['precision'])) {
-            $out .= '(' . (int)$data['precision'] . ')';
+            $out .= '(' . $data['precision'] . ')';
         }
 
         if ($data['type'] === TableSchema::TYPE_DECIMAL &&
             (isset($data['length']) || isset($data['precision']))
         ) {
-            $out .= '(' . (int)$data['length'] . ',' . (int)$data['precision'] . ')';
+            $out .= '(' . $data['length'] . ',' . (int)$data['precision'] . ')';
         }
 
         if (isset($data['null']) && $data['null'] === false) {

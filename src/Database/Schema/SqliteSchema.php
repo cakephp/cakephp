@@ -333,7 +333,7 @@ class SqliteSchema extends BaseSchema
         }
 
         if ($data['type'] === TableSchema::TYPE_CHAR) {
-            $out .= '(' . (int)$data['length'] . ')';
+            $out .= '(' . $data['length'] . ')';
         }
 
         if ($data['type'] === TableSchema::TYPE_STRING ||
@@ -342,13 +342,13 @@ class SqliteSchema extends BaseSchema
             $out .= ' VARCHAR';
 
             if (isset($data['length'])) {
-                $out .= '(' . (int)$data['length'] . ')';
+                $out .= '(' . $data['length'] . ')';
             }
         }
 
         if ($data['type'] === TableSchema::TYPE_BINARY) {
             if (isset($data['length'])) {
-                $out .= ' BLOB(' . (int)$data['length'] . ')';
+                $out .= ' BLOB(' . $data['length'] . ')';
             } else {
                 $out .= ' BLOB';
             }
@@ -362,7 +362,7 @@ class SqliteSchema extends BaseSchema
         if (in_array($data['type'], $integerTypes, true) &&
             isset($data['length']) && (array)$schema->primaryKey() !== [$name]
         ) {
-                $out .= '(' . (int)$data['length'] . ')';
+                $out .= '(' . $data['length'] . ')';
         }
 
         $hasPrecision = [TableSchema::TYPE_FLOAT, TableSchema::TYPE_DECIMAL];

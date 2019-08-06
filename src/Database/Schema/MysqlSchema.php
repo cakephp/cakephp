@@ -387,7 +387,7 @@ class MysqlSchema extends BaseSchema
             TableSchema::TYPE_STRING,
         ];
         if (in_array($data['type'], $hasLength, true) && isset($data['length'])) {
-            $out .= '(' . (int)$data['length'] . ')';
+            $out .= '(' . $data['length'] . ')';
         }
 
         $hasPrecision = [TableSchema::TYPE_FLOAT, TableSchema::TYPE_DECIMAL];
