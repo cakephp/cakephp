@@ -118,7 +118,7 @@ class MysqlSchemaTest extends TestCase
             ],
             [
                 'CHAR(36)',
-                ['type' => 'uuid', 'length' => 36, 'fixed' => true],
+                ['type' => 'uuid', 'length' => null],
             ],
             [
                 'BINARY(16)',
@@ -536,7 +536,7 @@ SQL;
             ],
             [
                 'id',
-                ['type' => 'char'],
+                ['type' => 'char', 'length' => 36],
                 '`id` CHAR(36)',
             ],
             [

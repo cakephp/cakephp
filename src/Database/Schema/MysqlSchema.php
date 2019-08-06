@@ -413,6 +413,7 @@ class MysqlSchema extends BaseSchema
 
         $hasCollate = [
             TableSchema::TYPE_TEXT,
+            TableSchema::TYPE_CHAR,
             TableSchema::TYPE_STRING,
         ];
         if (in_array($data['type'], $hasCollate, true) && isset($data['collate']) && $data['collate'] !== '') {

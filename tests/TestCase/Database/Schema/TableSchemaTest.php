@@ -299,12 +299,17 @@ class TableSchemaTest extends TestCase
             'type' => 'text',
             'null' => true,
             'default' => null,
+        ])->addColumn('hash', [
+            'type' => 'char',
+            'default' => '098f6bcd4621d373cade4e832627b4f6',
+            'length' => 32,
         ]);
         $result = $table->defaultValues();
         $expected = [
             'id' => 0,
             'title' => 'A title',
             'body' => null,
+            'hash' => '098f6bcd4621d373cade4e832627b4f6',
         ];
         $this->assertEquals($expected, $result);
     }

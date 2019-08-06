@@ -97,6 +97,10 @@ class SqlserverSchema extends BaseSchema
             return ['type' => TableSchema::TYPE_TIMESTAMP, 'length' => null];
         }
 
+        if ($col === 'char') {
+            return ['type' => TableSchema::TYPE_CHAR, 'length' => $length, 'fixed' => true];
+        }
+
         if ($col === 'tinyint') {
             return ['type' => TableSchema::TYPE_TINYINTEGER, 'length' => $precision ?: 3];
         }
@@ -353,6 +357,7 @@ class SqlserverSchema extends BaseSchema
             TableSchema::TYPE_BIGINTEGER => ' BIGINT',
             TableSchema::TYPE_BINARY_UUID => ' UNIQUEIDENTIFIER',
             TableSchema::TYPE_BOOLEAN => ' BIT',
+            TableSchema::TYPE_CHAR => ' CHAR',
             TableSchema::TYPE_FLOAT => ' FLOAT',
             TableSchema::TYPE_DECIMAL => ' DECIMAL',
             TableSchema::TYPE_DATE => ' DATE',
@@ -376,6 +381,10 @@ class SqlserverSchema extends BaseSchema
 
         if ($data['type'] === TableSchema::TYPE_TEXT && $data['length'] !== TableSchema::LENGTH_TINY) {
             $out .= ' NVARCHAR(MAX)';
+        }
+
+        if ($data['type'] === TableSchema::TYPE_CHAR) {
+            $out .= '(' . (int)$data['length'] . ')';
         }
 
         if ($data['type'] === TableSchema::TYPE_BINARY) {
@@ -409,7 +418,7 @@ class SqlserverSchema extends BaseSchema
             $out .= sprintf('%s(%d)', $type, $data['length']);
         }
 
-        $hasCollate = [TableSchema::TYPE_TEXT, TableSchema::TYPE_STRING];
+        $hasCollate = [TableSchema::TYPE_TEXT, TableSchema::TYPE_STRING, TableSchema::TYPE_CHAR];
         if (in_array($data['type'], $hasCollate, true) && isset($data['collate']) && $data['collate'] !== '') {
             $out .= ' COLLATE ' . $data['collate'];
         }
