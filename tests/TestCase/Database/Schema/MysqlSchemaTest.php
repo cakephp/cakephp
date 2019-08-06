@@ -526,7 +526,7 @@ SQL;
             ],
             [
                 'id',
-                ['type' => 'uuid', 'length' => 32, 'fixed' => true, 'null' => false],
+                ['type' => 'char', 'length' => 32, 'fixed' => true, 'null' => false],
                 '`id` CHAR(32) NOT NULL',
             ],
             [
@@ -536,7 +536,7 @@ SQL;
             ],
             [
                 'id',
-                ['type' => 'uuid'],
+                ['type' => 'char'],
                 '`id` CHAR(36)',
             ],
             [
