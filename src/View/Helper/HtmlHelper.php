@@ -905,7 +905,7 @@ class HtmlHelper extends Helper
             if (!is_array($arg)) {
                 $content = $arg;
                 $attrs = $thOptions;
-            } else if (isset($arg[0], $arg[1])) {
+            } elseif (isset($arg[0], $arg[1])) {
                 $content = $arg[0];
                 $attrs = $arg[1];
             } else {
