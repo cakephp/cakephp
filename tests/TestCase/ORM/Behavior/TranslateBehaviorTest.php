@@ -1859,29 +1859,6 @@ class TranslateBehaviorTest extends TestCase
     }
 
     /**
-     * Tests that using matching doesn't cause an association property to be created.
-     *
-     * @return void
-     */
-    public function testMatchingDoesNotCreateAssociationProperty()
-    {
-        $table = $this->getTableLocator()->get('Articles');
-        $table->hasMany('Comments');
-
-        $table->Comments->addBehavior('Translate', ['fields' => ['comment']]);
-        $table->Comments->setLocale('abc');
-
-        $this->assertNotEquals($table->Comments->getLocale(), I18n::getLocale());
-
-        $result = $table
-            ->find()
-            ->matching('Comments')
-            ->first();
-
-        $this->assertArrayNotHasKey('comments', $result->toArray());
-    }
-
-    /**
      * Tests that using deep matching doesn't cause an association property to be created.
      *
      * @return void
@@ -1908,34 +1885,6 @@ class TranslateBehaviorTest extends TestCase
             ->first();
 
         $this->assertArrayNotHasKey('author', $result->comments);
-    }
-
-    /**
-     * Tests that using contained matching doesn't cause an association property to be created.
-     *
-     * @return void
-     */
-    public function testContainedMatchingDoesNotCreateAssociationProperty()
-    {
-        $table = $this->getTableLocator()->get('Authors');
-        $table->hasMany('Comments')->setForeignKey('user_id');
-        $table->Comments->belongsTo('Articles');
-
-        $table->Comments->Articles->addBehavior('Translate', ['fields' => ['title', 'body']]);
-        $table->Comments->Articles->setLocale('xyz');
-
-        $this->assertNotEquals($table->Comments->Articles->getLocale(), I18n::getLocale());
-
-        $result = $table
-            ->find()
-            ->contain([
-                'Comments' => function ($query) {
-                    return $query->matching('Articles');
-                },
-            ])
-            ->first();
-
-        $this->assertArrayNotHasKey('article', $result->comments[0]->toArray());
     }
 
     /**
