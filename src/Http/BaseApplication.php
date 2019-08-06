@@ -162,6 +162,7 @@ abstract class BaseApplication implements
         } catch (MissingPluginException $e) {
             // Do not halt if the plugin is missing
         }
+
         return $this;
     }
 
