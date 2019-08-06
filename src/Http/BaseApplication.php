@@ -109,7 +109,7 @@ abstract class BaseApplication implements
      */
     public function addCliPlugin($name, array $config = [], bool $optional = false)
     {
-        if (PHP_SAPI !== 'cli') {
+        if (!$this->isCli()) {
             return $this;
         }
 
@@ -272,5 +272,13 @@ abstract class BaseApplication implements
     protected function getDispatcher(): ActionDispatcher
     {
         return new ActionDispatcher();
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isCli(): bool
+    {
+        return PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg';
     }
 }
