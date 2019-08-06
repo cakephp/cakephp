@@ -18,6 +18,7 @@ namespace Cake\Http;
 
 use Cake\Console\CommandCollection;
 use Cake\Core\ConsoleApplicationInterface;
+use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\HttpApplicationInterface;
 use Cake\Core\Plugin;
 use Cake\Core\PluginApplicationInterface;
@@ -90,7 +91,50 @@ abstract class BaseApplication implements
     /**
      * @inheritDoc
      */
-    public function addPlugin($name, array $config = [])
+    public function addPlugin($name, array $config = [], bool $optional = false)
+    {
+        if ($optional) {
+            $this->addOptionalPlugin($name, $config);
+
+            return $this;
+        }
+
+        $this->addRequiredPlugin($name, $config);
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function addCliPlugin($name, array $config = [], bool $optional = false)
+    {
+        if (PHP_SAPI !== 'cli') {
+            return $this;
+        }
+
+        if ($optional) {
+            $this->addOptionalPlugin($name, $config);
+
+            return $this;
+        }
+
+        $this->addRequiredPlugin($name, $config);
+
+        return $this;
+    }
+
+    /**
+     * Adds a plugin
+     *
+     * If it isn't available, throws exception.
+     *
+     * @param string|\Cake\Core\PluginInterface $name The plugin name or plugin object.
+     * @param array $config The configuration data for the plugin if using a string for $name
+     * @throws \Cake\Core\Exception\MissingPluginException If plugin not found.
+     * @return $this
+     */
+    protected function addRequiredPlugin($name, array $config = [])
     {
         if (is_string($name)) {
             $plugin = $this->plugins->create($name, $config);
@@ -99,6 +143,25 @@ abstract class BaseApplication implements
         }
         $this->plugins->add($plugin);
 
+        return $this;
+    }
+
+    /**
+     * Adds an optional plugin
+     *
+     * If it isn't available, ignore it.
+     *
+     * @param string|\Cake\Core\PluginInterface $name The plugin name or plugin object.
+     * @param array $config The configuration data for the plugin if using a string for $name
+     * @return $this
+     */
+    protected function addOptionalPlugin($name, array $config = [])
+    {
+        try {
+            $this->addPlugin($name, $config);
+        } catch (MissingPluginException $e) {
+            // Do not halt if the plugin is missing
+        }
         return $this;
     }
 

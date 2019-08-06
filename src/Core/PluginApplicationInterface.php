@@ -38,9 +38,20 @@ interface PluginApplicationInterface extends EventDispatcherInterface
      *
      * @param string|\Cake\Core\PluginInterface $name The plugin name or plugin object.
      * @param array $config The configuration data for the plugin if using a string for $name
+     * @param bool $optional If an exception for missing plugin should not be thrown.
      * @return $this
      */
-    public function addPlugin($name, array $config = []);
+    public function addPlugin($name, array $config = [], bool $optional = false);
+
+    /**
+     * Adds a plugin, but only when in CLI mode.
+     *
+     * @param string|\Cake\Core\PluginInterface $name The plugin name or plugin object.
+     * @param array $config The configuration data for the plugin if using a string for $name
+     * @param bool $optional If an exception for missing plugin should not be thrown.
+     * @return $this
+     */
+    public function addCliPlugin($name, array $config = [], bool $optional = false);
 
     /**
      * Run bootstrap logic for loaded plugins.
