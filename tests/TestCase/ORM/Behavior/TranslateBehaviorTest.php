@@ -1859,29 +1859,6 @@ class TranslateBehaviorTest extends TestCase
     }
 
     /**
-     * Tests that using matching doesn't cause an association property to be created.
-     *
-     * @return void
-     */
-    public function testMatchingDoesNotCreateAssociationProperty()
-    {
-        $table = $this->getTableLocator()->get('Articles');
-        $table->hasMany('Comments');
-
-        $table->Comments->addBehavior('Translate');
-        $table->Comments->setLocale('abc');
-
-        $this->assertNotEquals($table->Comments->getLocale(), I18n::getLocale());
-
-        $result = $table
-            ->find()
-            ->matching('Comments')
-            ->first();
-
-        $this->assertArrayNotHasKey('comments', $result->toArray());
-    }
-
-    /**
      * Tests that using deep matching doesn't cause an association property to be created.
      *
      * @return void
@@ -1892,10 +1869,10 @@ class TranslateBehaviorTest extends TestCase
         $table->hasMany('Comments');
         $table->Comments->belongsTo('Authors')->setForeignKey('user_id');
 
-        $table->Comments->addBehavior('Translate');
+        $table->Comments->addBehavior('Translate', ['fields' => ['comment']]);
         $table->Comments->setLocale('abc');
 
-        $table->Comments->Authors->addBehavior('Translate');
+        $table->Comments->Authors->addBehavior('Translate', ['fields' => ['name']]);
         $table->Comments->Authors->setLocale('xyz');
 
         $this->assertNotEquals($table->Comments->getLocale(), I18n::getLocale());
@@ -1911,34 +1888,6 @@ class TranslateBehaviorTest extends TestCase
     }
 
     /**
-     * Tests that using contained matching doesn't cause an association property to be created.
-     *
-     * @return void
-     */
-    public function testContainedMatchingDoesNotCreateAssociationProperty()
-    {
-        $table = $this->getTableLocator()->get('Authors');
-        $table->hasMany('Comments')->setForeignKey('user_id');
-        $table->Comments->belongsTo('Articles');
-
-        $table->Comments->Articles->addBehavior('Translate');
-        $table->Comments->Articles->setLocale('xyz');
-
-        $this->assertNotEquals($table->Comments->Articles->getLocale(), I18n::getLocale());
-
-        $result = $table
-            ->find()
-            ->contain([
-                'Comments' => function ($query) {
-                    return $query->matching('Articles');
-                }
-            ])
-            ->first();
-
-        $this->assertArrayNotHasKey('article', $result->comments[0]->toArray());
-    }
-
-    /**
      * Tests that the _locale property is set on the entity in the _matchingData property.
      *
      * @return void
@@ -1948,7 +1897,7 @@ class TranslateBehaviorTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $table->hasMany('Comments');
 
-        $table->Comments->addBehavior('Translate');
+        $table->Comments->addBehavior('Translate', ['fields' => ['comment']]);
         $table->Comments->setLocale('abc');
 
         $this->assertNotEquals($table->Comments->getLocale(), I18n::getLocale());
@@ -1975,10 +1924,10 @@ class TranslateBehaviorTest extends TestCase
         $table->hasMany('Comments');
         $table->Comments->belongsTo('Authors')->setForeignKey('user_id');
 
-        $table->Comments->addBehavior('Translate');
+        $table->Comments->addBehavior('Translate', ['fields' => ['comment']]);
         $table->Comments->setLocale('abc');
 
-        $table->Comments->Authors->addBehavior('Translate');
+        $table->Comments->Authors->addBehavior('Translate', ['fields' => ['name']]);
         $table->Comments->Authors->setLocale('xyz');
 
         $this->assertNotEquals($table->Comments->getLocale(), I18n::getLocale());
@@ -2007,10 +1956,10 @@ class TranslateBehaviorTest extends TestCase
         $table->hasMany('Articles');
         $table->Articles->belongsToMany('Tags');
 
-        $table->Articles->addBehavior('Translate');
+        $table->Articles->addBehavior('Translate', ['fields' => ['title', 'body']]);
         $table->Articles->setLocale('abc');
 
-        $table->Articles->Tags->addBehavior('Translate');
+        $table->Articles->Tags->addBehavior('Translate', ['fields' => ['name']]);
         $table->Articles->Tags->setLocale('xyz');
 
         $this->assertNotEquals($table->Articles->getLocale(), I18n::getLocale());
@@ -2022,7 +1971,7 @@ class TranslateBehaviorTest extends TestCase
                 'Articles' => function ($query) {
                     return $query->matching('Tags');
                 },
-                'Articles.Tags'
+                'Articles.Tags',
             ])
             ->first();
 
