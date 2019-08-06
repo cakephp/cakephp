@@ -120,7 +120,14 @@ class Connection implements ConnectionInterface
     /**
      * Constructor.
      *
-     * @param array $config configuration for connecting to database
+     * @param array $config Configuration array.
+     * ### Available options:
+     * - `driver` Sort name or FCQN for driver.
+     * - `log` Boolean indicating whether to use query logging.
+     * - `name` Connection name.
+     * - `cacheMetaData` Boolean indicating whether metadata (datasource schemas) should be cached.
+     *    If set to a string it will be used as the name of cache config to use.
+     * - `cacheKeyPrefix` Custom prefix to use when generation cache keys. Defaults to connection name.
      */
     public function __construct(array $config)
     {
@@ -380,7 +387,7 @@ class Connection implements ConnectionInterface
         if (!empty($this->_config['cacheMetadata'])) {
             return $this->_schemaCollection = new CachedCollection(
                 new SchemaCollection($this),
-                $this->configName(),
+                empty($this->_config['cacheKeyPrefix']) ? $this->configName() : $this->_config['cacheKeyPrefix'],
                 $this->getCacher()
             );
         }
