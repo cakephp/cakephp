@@ -569,7 +569,7 @@ class Connection implements ConnectionInterface
      * @param bool $enable Whether or not save points should be used.
      * @return $this
      */
-    public function enableSavePoints(bool $enable)
+    public function enableSavePoints(bool $enable = true)
     {
         if ($enable === false) {
             $this->_useSavePoints = false;
@@ -848,7 +848,7 @@ class Connection implements ConnectionInterface
      * @param bool $value Enable/disable query logging
      * @return $this
      */
-    public function enableQueryLogging(bool $value)
+    public function enableQueryLogging(bool $value = true)
     {
         $this->_logQueries = $value;
 
