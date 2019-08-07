@@ -40,19 +40,11 @@ class IsUnique
     /**
      * Constructor.
      *
-     * ### Options
-     *
-     * - `allowMultipleNulls` Set to false to disallow multiple null values in
-     *   multi-column unique rules. By default this is `true` to emulate how SQL UNIQUE
-     *   keys work.
-     *
      * @param string[] $fields The list of fields to check uniqueness for
-     * @param array $options The additional options for this rule.
      */
-    public function __construct(array $fields, array $options = [])
+    public function __construct(array $fields)
     {
         $this->_fields = $fields;
-        $this->_options = $options + ['allowMultipleNulls' => true];
     }
 
     /**
@@ -68,13 +60,12 @@ class IsUnique
         if (!$entity->extract($this->_fields, true)) {
             return true;
         }
-        $allowMultipleNulls = $this->_options['allowMultipleNulls'];
 
         $alias = $options['repository']->getAlias();
-        $conditions = $this->_alias($alias, $entity->extract($this->_fields), $allowMultipleNulls);
+        $conditions = $this->_alias($alias, $entity->extract($this->_fields));
         if ($entity->isNew() === false) {
             $keys = (array)$options['repository']->getPrimaryKey();
-            $keys = $this->_alias($alias, $entity->extract($keys), $allowMultipleNulls);
+            $keys = $this->_alias($alias, $entity->extract($keys));
             if (array_filter($keys, 'strlen')) {
                 $conditions['NOT'] = $keys;
             }
@@ -86,23 +77,15 @@ class IsUnique
     /**
      * Add a model alias to all the keys in a set of conditions.
      *
-     * Null values will be omitted from the generated conditions,
-     * as SQL UNIQUE indexes treat `NULL != NULL`
-     *
      * @param string $alias The alias to add.
      * @param array $conditions The conditions to alias.
-     * @param bool $multipleNulls Whether or not to allow multiple nulls.
      * @return array
      */
-    protected function _alias(string $alias, array $conditions, bool $multipleNulls): array
+    protected function _alias(string $alias, array $conditions): array
     {
         $aliased = [];
         foreach ($conditions as $key => $value) {
-            if ($multipleNulls) {
-                $aliased["$alias.$key"] = $value;
-            } else {
-                $aliased["$alias.$key IS"] = $value;
-            }
+            $aliased["$alias.$key IS"] = $value;
         }
 
         return $aliased;
