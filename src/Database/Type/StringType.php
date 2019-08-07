@@ -90,11 +90,8 @@ class StringType extends BaseType implements OptionalConvertInterface
      */
     public function marshal($value): ?string
     {
-        if ($value === null) {
+        if ($value === null || is_array($value)) {
             return null;
-        }
-        if (is_array($value)) {
-            return '';
         }
 
         return (string)$value;
