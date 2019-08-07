@@ -976,7 +976,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     public function enableHydration(bool $enable = true)
     {
         $this->_dirty();
-        $this->_hydrate = (bool)$enable;
+        $this->_hydrate = $enable;
 
         return $this;
     }
@@ -1319,7 +1319,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function enableAutoFields(bool $value = true)
     {
-        $this->_autoFields = (bool)$value;
+        $this->_autoFields = $value;
 
         return $this;
     }

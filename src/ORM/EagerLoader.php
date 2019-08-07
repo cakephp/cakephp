@@ -194,7 +194,7 @@ class EagerLoader
      */
     public function enableAutoFields(bool $enable = true)
     {
-        $this->_autoFields = (bool)$enable;
+        $this->_autoFields = $enable;
 
         return $this;
     }
