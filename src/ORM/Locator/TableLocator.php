@@ -157,7 +157,7 @@ class TableLocator implements LocatorInterface
      * key in the registry. This means that if two plugins, or a plugin and app provide
      * the same alias, the registry will only store the first instance.
      *
-     * @param string $alias The alias name you want to get. Must be in CamelCase format.
+     * @param string $alias The alias name you want to get. Should be in CamelCase format.
      * @param array $options The options you want to build the table with.
      *   If a table has already been loaded the options will be ignored.
      * @return \Cake\ORM\Table
@@ -226,7 +226,7 @@ class TableLocator implements LocatorInterface
     /**
      * Gets the table class name.
      *
-     * @param string $alias The alias name you want to get. Must be in CamelCase format.
+     * @param string $alias The alias name you want to get. Should be in CamelCase format.
      * @param array $options Table options array.
      * @return string|null
      */
