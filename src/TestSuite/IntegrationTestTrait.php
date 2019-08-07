@@ -195,6 +195,13 @@ trait IntegrationTestTrait
     protected $_cookieEncryptionKey;
 
     /**
+     * List of fields that are excluded from field validation.
+     *
+     * @var array
+     */
+    protected $_unlockedFields = [];
+
+    /**
      * Auto-detect if the HTTP middleware stack should be used.
      *
      * @before
@@ -263,11 +270,22 @@ trait IntegrationTestTrait
      * compatible token to be added to request data. This
      * lets you easily test actions protected by SecurityComponent.
      *
+     * @param array $unlockedFields List of fields that are excluded from field validation.
      * @return void
      */
-    public function enableSecurityToken()
+    public function enableSecurityToken($unlockedFields = [])
     {
+        $this->setUnlockedFields($unlockedFields);
+
         $this->_securityToken = true;
+    }
+
+    /**
+     * Set list of fields that are excluded from field validation.
+     */
+    public function setUnlockedFields($unlockedFields = [])
+    {
+        $this->_unlockedFields = $unlockedFields;
     }
 
     /**
@@ -671,10 +689,14 @@ trait IntegrationTestTrait
     protected function _addTokens($url, $data)
     {
         if ($this->_securityToken === true) {
+            $fields = array_diff_key($data, array_flip($this->_unlockedFields));
+
             $keys = array_map(function ($field) {
                 return preg_replace('/(\.\d+)+$/', '', $field);
-            }, array_keys(Hash::flatten($data)));
-            $tokenData = $this->_buildFieldToken($url, array_unique($keys));
+            }, array_keys(Hash::flatten($fields)));
+
+            $tokenData = $this->_buildFieldToken($url, array_unique($keys), $this->_unlockedFields);
+
             $data['_Token'] = $tokenData;
             $data['_Token']['debug'] = 'SecurityComponent debug data would be added here';
         }
