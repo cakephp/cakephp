@@ -768,6 +768,10 @@ class QueryExpression implements ExpressionInterface, Countable
             $operator = '!=';
         }
 
+        if ($value === null && $this->_conjunction !== ',') {
+            throw new \InvalidArgumentException();
+        }
+
         return new Comparison($expression, $value, $type, $operator);
     }
 

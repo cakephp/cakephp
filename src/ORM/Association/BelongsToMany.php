@@ -1329,9 +1329,18 @@ class BelongsToMany extends Association
 
         $unions = [];
         foreach ($missing as $key) {
+            $conditions = array_merge(
+                array_combine($foreignKey, $sourceKey),
+                array_combine($assocForeignKey, $key)
+            );
+            foreach ($conditions as $k => $v) {
+                if ($v === null) {
+                    $conditions[$k . ' IS'] = $v;
+                    unset($conditions[$k]);
+                }
+            }
             $unions[] = $hasMany->find()
-                ->where(array_combine($foreignKey, $sourceKey))
-                ->where(array_combine($assocForeignKey, $key));
+                ->where($conditions);
         }
 
         $query = array_shift($unions);

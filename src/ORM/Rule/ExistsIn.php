@@ -140,6 +140,12 @@ class ExistsIn
             $primary,
             $entity->extract($fields)
         );
+        foreach ($conditions as $k => $v) {
+            if ($v === null) {
+                $conditions[$k . ' IS'] = $v;
+                unset($conditions[$k]);
+            }
+        }
 
         return $target->exists($conditions);
     }
