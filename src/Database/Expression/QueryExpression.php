@@ -22,6 +22,7 @@ use Cake\Database\Query;
 use Cake\Database\TypeMapTrait;
 use Cake\Database\ValueBinder;
 use Countable;
+use InvalidArgumentException;
 
 /**
  * Represents a SQL Query expression. Internally it stores a tree of
@@ -717,6 +718,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * be extracted.
      * @param mixed $value The value to be bound to a placeholder for the field
      * @return string|\Cake\Database\ExpressionInterface
+     * @throws \InvalidArgumentException If operator is invalid or missing on NULL usage.
      */
     protected function _parseCondition(string $field, $value)
     {
@@ -769,7 +771,7 @@ class QueryExpression implements ExpressionInterface, Countable
         }
 
         if ($value === null && $this->_conjunction !== ',') {
-            throw new \InvalidArgumentException();
+            throw new InvalidArgumentException('Invalid or missing operator together with `null` usage.');
         }
 
         return new Comparison($expression, $value, $type, $operator);
