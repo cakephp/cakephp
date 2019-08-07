@@ -205,7 +205,9 @@ if (!function_exists('env')) {
                 return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
             }
 
-            return (strpos((string)env('SCRIPT_URI'), 'https://') === 0);
+            $val = env('SCRIPT_URI');
+
+            return is_string($val) ? (strpos($val, 'https://') === 0) : false;
         }
 
         if ($key === 'SCRIPT_NAME' && env('CGI_MODE') && isset($_ENV['SCRIPT_URL'])) {
@@ -234,16 +236,23 @@ if (!function_exists('env')) {
 
         switch ($key) {
             case 'DOCUMENT_ROOT':
+                /** @var string|null $name */
                 $name = env('SCRIPT_NAME');
+                /** @var string|null $filename */
                 $filename = env('SCRIPT_FILENAME');
                 $offset = 0;
-                if (!strpos($name, '.php')) {
+                if (is_string($name) && !strpos($name, '.php')) {
                     $offset = 4;
                 }
 
-                return substr($filename, 0, -(strlen($name) + $offset));
+                return substr((string)$filename, 0, -(strlen((string)$name) + $offset));
             case 'PHP_SELF':
-                return str_replace(env('DOCUMENT_ROOT'), '', env('SCRIPT_FILENAME'));
+                /** @var string|null $root */
+                $root = env('DOCUMENT_ROOT');
+                /** @var string|null $filename */
+                $filename = env('SCRIPT_FILENAME');
+
+                return str_replace((string)$root, '', (string)$filename);
             case 'CGI_MODE':
                 return (PHP_SAPI === 'cgi');
         }
