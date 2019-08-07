@@ -110,11 +110,11 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     /**
      * Sets error messages to the entity
      *
-     * @param array $fields The array of errors to set.
+     * @param array $errors The array of errors to set.
      * @param bool $overwrite Whether or not to overwrite pre-existing errors for $fields
      * @return $this
      */
-    public function setErrors(array $fields, bool $overwrite = false);
+    public function setErrors(array $errors, bool $overwrite = false);
 
     /**
      * Sets errors for a single field
@@ -163,7 +163,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * Returns an array with the requested original fields
      * stored in this entity, indexed by field name.
      *
-     * @param array $fields List of fields to be returned
+     * @param string[] $fields List of fields to be returned
      * @return array
      */
     public function extractOriginal(array $fields): array;
@@ -172,7 +172,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * Returns an array with only the original fields
      * stored in this entity, indexed by field name.
      *
-     * @param array $fields List of fields to be returned
+     * @param string[] $fields List of fields to be returned
      * @return array
      */
     public function extractOriginalChanged(array $fields): array;

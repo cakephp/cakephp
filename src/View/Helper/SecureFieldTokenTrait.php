@@ -30,7 +30,7 @@ trait SecureFieldTokenTrait
      * @param string $url The URL the form is being submitted to.
      * @param array $fields If set specifies the list of fields to use when
      *    generating the hash.
-     * @param array $unlockedFields The list of fields that are excluded from
+     * @param string[] $unlockedFields The list of fields that are excluded from
      *    field validation.
      * @return array{fields: string, unlocked: string} The token data.
      */

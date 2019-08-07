@@ -689,7 +689,7 @@ trait EntityTrait
      * Fields that are unchanged from their original value will be included in the
      * return of this method.
      *
-     * @param array $fields List of fields to be returned
+     * @param string[] $fields List of fields to be returned
      * @return array
      */
     public function extractOriginal(array $fields): array
@@ -709,7 +709,7 @@ trait EntityTrait
      * This method will only return fields that have been modified since
      * the entity was built. Unchanged fields will be omitted.
      *
-     * @param array $fields List of fields to be returned
+     * @param string[] $fields List of fields to be returned
      * @return array
      */
     public function extractOriginalChanged(array $fields): array
@@ -896,21 +896,21 @@ trait EntityTrait
      * $entity->setErrors(['salary' => ['message'], 'name' => ['another message']]);
      * ```
      *
-     * @param array $fields The array of errors to set.
+     * @param array $errors The array of errors to set.
      * @param bool $overwrite Whether or not to overwrite pre-existing errors for $fields
      * @return $this
      */
-    public function setErrors(array $fields, bool $overwrite = false)
+    public function setErrors(array $errors, bool $overwrite = false)
     {
         if ($overwrite) {
-            foreach ($fields as $f => $error) {
+            foreach ($errors as $f => $error) {
                 $this->_errors[$f] = (array)$error;
             }
 
             return $this;
         }
 
-        foreach ($fields as $f => $error) {
+        foreach ($errors as $f => $error) {
             $this->_errors += [$f => []];
 
             // String messages are appended to the list,
