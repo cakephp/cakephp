@@ -141,7 +141,7 @@ class TupleComparison extends Comparison
      */
     public function traverse(callable $callable)
     {
-        /** @var array $fields */
+        /** @var string[] $fields */
         $fields = $this->getField();
         foreach ($fields as $field) {
             $this->_traverseValue($field, $callable);
