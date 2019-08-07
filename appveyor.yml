@@ -14,12 +14,8 @@ branches:
     - 3.next
     - 4.x
 environment:
-  global:
-    PHP: "C:/PHP"
-    php_ver_target: 7.2
-
   matrix:
-    - db: 2012
+    - db: '2012'
       db_dsn: 'sqlserver://sa:Password12!@.\SQL2012SP1/cakephp?MultipleActiveResultSets=false'
 
 services:
@@ -28,12 +24,12 @@ services:
 init:
   - SET PATH=C:\Program Files\OpenSSL;C:\php;%PATH%
   - SET COMPOSER_NO_INTERACTION=1
-  - SET PHP=1 # This var is connected to PHP install cache
   - SET ANSICON=121x90 (121x90)
 
 install:
-  - IF EXIST C:\php (SET PHP=0)
-  - ps: appveyor-retry cinst --no-progress --params '""/InstallDir:C:\php""' --ignore-checksums -y php --version ((choco search php --exact --all-versions -r | select-string -pattern $env:php_ver_target | sort { [version]($_ -split '\|' | select -last 1) } -Descending | Select-Object -first 1) -replace '[php|]','')
+  - curl -fsS https://windows.php.net/downloads/releases/latest/php-7.2-nts-Win32-VC15-x64-latest.zip -o php.zip
+  - 7z x php.zip -oC:\php\ -aoa > nul
+
   - cd C:\php
   - copy php.ini-production php.ini /Y
   - echo date.timezone="UTC" >> php.ini
@@ -42,6 +38,7 @@ install:
   - echo extension=php_mbstring.dll >> php.ini
   - echo extension=php_intl.dll >> php.ini
   - echo extension=php_fileinfo.dll >> php.ini
+  - php -v
 
   - curl -fsS https://windows.php.net/downloads/pecl/releases/pdo_sqlsrv/5.2.0/php_pdo_sqlsrv-5.2.0-7.2-nts-vc15-x64.zip -o pdosqlsrv.zip
   - 7z x pdosqlsrv.zip -oC:\php\ext php_pdo_sqlsrv.dll -aoa > nul
