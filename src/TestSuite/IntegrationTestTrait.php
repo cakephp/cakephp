@@ -282,6 +282,9 @@ trait IntegrationTestTrait
 
     /**
      * Set list of fields that are excluded from field validation.
+     *
+     * @param array $unlockedFields List of fields that are excluded from field validation.
+     * @return void
      */
     public function setUnlockedFields($unlockedFields = [])
     {
