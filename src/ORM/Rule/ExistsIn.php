@@ -133,19 +133,15 @@ class ExistsIn
         }
 
         $primary = array_map(
-            [$target, 'aliasField'],
+            function ($key) use ($target) {
+                return $target->aliasField($key) . ' IS';
+            },
             $bindingKey
         );
         $conditions = array_combine(
             $primary,
             $entity->extract($fields)
         );
-        foreach ($conditions as $k => $v) {
-            if ($v === null) {
-                $conditions[$k . ' IS'] = $v;
-                unset($conditions[$k]);
-            }
-        }
 
         return $target->exists($conditions);
     }
