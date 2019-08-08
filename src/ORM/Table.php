@@ -2371,7 +2371,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         return $deleted;
     }
 
-
     /**
      * Deletes multiple entities of a table.
      *

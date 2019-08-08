@@ -2860,7 +2860,6 @@ class TableTest extends TestCase
         }
     }
 
-
     /**
      * Test saveManyOrFail() with entities array
      *
