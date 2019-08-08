@@ -37,6 +37,7 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\SaveOptionsBuilder;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Hash;
 use Cake\Validation\Validator;
 use InvalidArgumentException;
 
@@ -2857,6 +2858,71 @@ class TableTest extends TestCase
                 $this->assertTrue($entity->isNew());
             }
         }
+    }
+
+
+    /**
+     * Test saveManyOrFail() with entities array
+     *
+     * @return void
+     */
+    public function testSaveManyOrFailArray()
+    {
+        $entities = [
+            new Entity(['name' => 'admad']),
+            new Entity(['name' => 'dakota']),
+        ];
+
+        $table = $this->getTableLocator()->get('authors');
+        $result = $table->saveManyOrFail($entities);
+
+        $this->assertSame($entities, $result);
+        $this->assertTrue(isset($result[0]->id));
+        foreach ($entities as $entity) {
+            $this->assertFalse($entity->isNew());
+        }
+    }
+
+    /**
+     * Test saveManyOrFail() with ResultSet instance
+     *
+     * @return void
+     */
+    public function testSaveManyOrFailResultSet()
+    {
+        $table = $this->getTableLocator()->get('authors');
+
+        $entities = $table->find()
+            ->order(['id' => 'ASC'])
+            ->all();
+        $entities->first()->name = 'admad';
+
+        $result = $table->saveManyOrFail($entities);
+        $this->assertSame($entities, $result);
+
+        $first = $table->find()
+            ->order(['id' => 'ASC'])
+            ->first();
+        $this->assertSame('admad', $first->name);
+    }
+
+    /**
+     * Test saveManyOrFail() with failed save
+     *
+     * @return void
+     */
+    public function testSaveManyOrFailFailed()
+    {
+        $table = $this->getTableLocator()->get('authors');
+        $entities = [
+            new Entity(['name' => 'mark']),
+            new Entity(['name' => 'jose']),
+        ];
+        $entities[1]->setErrors(['name' => ['message']]);
+
+        $this->expectException(PersistenceFailedException::class);
+
+        $table->saveManyOrFail($entities);
     }
 
     /**
@@ -6575,6 +6641,42 @@ class TableTest extends TestCase
         } catch (\Cake\ORM\Exception\PersistenceFailedException $e) {
             $this->assertSame($entity, $e->getEntity());
         }
+    }
+
+    /**
+     * Test simple delete.
+     *
+     * @return void
+     */
+    public function testDeleteMany()
+    {
+        $table = $this->getTableLocator()->get('users');
+        $entities = $table->find()->limit(2)->all()->toArray();
+        $this->assertCount(2, $entities);
+
+        $result = $table->deleteMany($entities);
+        $this->assertSame($entities, $result);
+
+        $count = $table->find()->where(['id IN' => Hash::extract($entities, '{n}.id')])->count();
+        $this->assertSame(0, $count, 'Find should not return > 0.');
+    }
+
+    /**
+     * Test simple delete.
+     *
+     * @return void
+     */
+    public function testDeleteManyOrFail()
+    {
+        $table = $this->getTableLocator()->get('users');
+        $entities = $table->find()->limit(2)->all()->toArray();
+        $this->assertCount(2, $entities);
+
+        $result = $table->deleteManyOrFail($entities);
+        $this->assertSame($entities, $result);
+
+        $count = $table->find()->where(['id IN' => Hash::extract($entities, '{n}.id')])->count();
+        $this->assertSame(0, $count, 'Find should not return > 0.');
     }
 
     /**
