@@ -50,7 +50,7 @@ class FixtureInjector extends BaseTestListener
     public function __construct(FixtureManager $manager)
     {
         if (isset($_SERVER['argv'])) {
-            $manager->setDebug(in_array('--debug', $_SERVER['argv']));
+            $manager->setDebug(in_array('--debug', $_SERVER['argv'], true));
         }
         $this->_fixtureManager = $manager;
         $this->_fixtureManager->shutDown();

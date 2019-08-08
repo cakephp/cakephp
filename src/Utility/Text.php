@@ -647,7 +647,7 @@ class Text
                         if (preg_match('/<[\w]+[^>]*>/', $tag[0])) {
                             array_unshift($openTags, $tag[2]);
                         } elseif (preg_match('/<\/([\w]+)[^>]*>/', $tag[0], $closeTag)) {
-                            $pos = array_search($closeTag[1], $openTags);
+                            $pos = array_search($closeTag[1], $openTags, true);
                             if ($pos !== false) {
                                 array_splice($openTags, $pos, 1);
                             }
@@ -1045,10 +1045,10 @@ class Text
         $size = strtoupper($size);
 
         $l = -2;
-        $i = array_search(substr($size, -2), ['KB', 'MB', 'GB', 'TB', 'PB']);
+        $i = array_search(substr($size, -2), ['KB', 'MB', 'GB', 'TB', 'PB'], true);
         if ($i === false) {
             $l = -1;
-            $i = array_search(substr($size, -1), ['K', 'M', 'G', 'T', 'P']);
+            $i = array_search(substr($size, -1), ['K', 'M', 'G', 'T', 'P'], true);
         }
         if ($i !== false) {
             $size = (float)substr($size, 0, $l);

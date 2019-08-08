@@ -227,7 +227,7 @@ class SecurityHeadersMiddleware
      *
      * @throws \InvalidArgumentException Thrown when a value is invalid.
      * @param string $value Value to check
-     * @param array $allowed List of allowed values
+     * @param string[] $allowed List of allowed values
      * @return void
      */
     protected function checkValues($value, array $allowed)

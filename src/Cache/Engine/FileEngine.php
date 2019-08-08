@@ -284,7 +284,7 @@ class FileEngine extends CacheEngine
             }
 
             $path = $path->getRealPath() . DIRECTORY_SEPARATOR;
-            if (!in_array($path, $cleared)) {
+            if (!in_array($path, $cleared, true)) {
                 $this->_clearDirectory($path, $now, $threshold);
                 $cleared[] = $path;
             }

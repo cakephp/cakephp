@@ -217,7 +217,7 @@ class FormHelper extends Helper
      *
      * @see \Cake\View\Helper\FormHelper::_secure()
      * @see \Cake\Controller\Component\SecurityComponent::validatePost()
-     * @var array
+     * @var string[]
      */
     protected $_unlockedFields = [];
 
@@ -253,14 +253,14 @@ class FormHelper extends Helper
     /**
      * The sources to be used when retrieving prefilled input values.
      *
-     * @var array
+     * @var string[]
      */
     protected $_valueSources = ['context'];
 
     /**
      * Grouped input types.
      *
-     * @var array
+     * @var string[]
      */
     protected $_groupedInputTypes = ['radio', 'multicheckbox', 'date', 'time', 'datetime'];
 
@@ -708,10 +708,10 @@ class FormHelper extends Helper
         if ($name === null) {
             return $this->_unlockedFields;
         }
-        if (!in_array($name, $this->_unlockedFields)) {
+        if (!in_array($name, $this->_unlockedFields, true)) {
             $this->_unlockedFields[] = $name;
         }
-        $index = array_search($name, $this->fields);
+        $index = array_search($name, $this->fields, true);
         if ($index !== false) {
             unset($this->fields[$index]);
         }
@@ -750,7 +750,7 @@ class FormHelper extends Helper
         $field = preg_replace('/(\.\d+)+$/', '', $field);
 
         if ($lock) {
-            if (!in_array($field, $this->fields)) {
+            if (!in_array($field, $this->fields, true)) {
                 if ($value !== null) {
                     $this->fields[$field] = $value;
 
@@ -2923,7 +2923,7 @@ class FormHelper extends Helper
      *
      * Returns a list, but at least one item, of valid sources, such as: `'context'`, `'data'` and `'query'`.
      *
-     * @return array List of value sources.
+     * @return string[] List of value sources.
      */
     public function getValueSources()
     {
@@ -2936,7 +2936,7 @@ class FormHelper extends Helper
      * Valid values are `'context'`, `'data'` and `'query'`.
      * You need to supply one valid context or multiple, as a list of strings. Order sets priority.
      *
-     * @param string|array $sources A string or a list of strings identifying a source.
+     * @param string|string[] $sources A string or a list of strings identifying a source.
      * @return $this
      */
     public function setValueSources($sources)
