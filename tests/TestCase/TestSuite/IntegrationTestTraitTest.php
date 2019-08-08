@@ -889,27 +889,6 @@ class IntegrationTestTraitTest extends IntegrationTestCase
      *
      * @return void
      */
-    public function testPostSecuredFormUnlockedFieldsWithParam()
-    {
-        $this->enableSecurityToken(['some_unlocked_field']);
-        $data = [
-            'title' => 'New post',
-            'comments' => [
-                ['comment' => 'A new comment']
-            ],
-            'tags' => ['_ids' => [1, 2, 3, 4]],
-            'some_unlocked_field' => 'Unlocked data'
-        ];
-        $this->post('/posts/securePost', $data);
-        $this->assertResponseOk();
-        $this->assertResponseContains('Request was accepted');
-    }
-
-    /**
-     * Test posting to a secured form action with unlocked fields
-     *
-     * @return void
-     */
     public function testPostSecuredFormUnlockedFieldsWithSet()
     {
         $this->enableSecurityToken();
