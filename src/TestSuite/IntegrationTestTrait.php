@@ -270,13 +270,10 @@ trait IntegrationTestTrait
      * compatible token to be added to request data. This
      * lets you easily test actions protected by SecurityComponent.
      *
-     * @param string[] $unlockedFields List of fields that are excluded from field validation.
      * @return void
      */
-    public function enableSecurityToken($unlockedFields = [])
+    public function enableSecurityToken()
     {
-        $this->setUnlockedFields($unlockedFields);
-
         $this->_securityToken = true;
     }
 
@@ -286,7 +283,7 @@ trait IntegrationTestTrait
      * @param string[] $unlockedFields List of fields that are excluded from field validation.
      * @return void
      */
-    public function setUnlockedFields($unlockedFields = [])
+    public function setUnlockedFields(array $unlockedFields = [])
     {
         $this->_unlockedFields = $unlockedFields;
     }
