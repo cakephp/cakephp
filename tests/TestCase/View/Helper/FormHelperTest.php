@@ -2703,7 +2703,7 @@ class FormHelperTest extends TestCase
                 'type' => 'text', 'name' => 'title',
                 'id' => 'title', 'class' => 'form-error',
                 'required' => 'required',
-                'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.value) this.setCustomValidity(&#039;This field is required&#039;)',
+                'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.value) this.setCustomValidity(&#039;This field cannot be left empty&#039;)',
                 'oninput' => 'this.setCustomValidity(&#039;&#039;)',
             ],
             ['div' => ['class' => 'error-message']],
@@ -2727,7 +2727,7 @@ class FormHelperTest extends TestCase
                 'id' => 'title',
                 'class' => 'form-error',
                 'required' => 'required',
-                'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.value) this.setCustomValidity(&#039;This field is required&#039;)',
+                'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.value) this.setCustomValidity(&#039;This field cannot be left empty&#039;)',
                 'oninput' => 'this.setCustomValidity(&#039;&#039;)',
             ],
             ['div' => ['class' => 'error-message']],
@@ -6326,7 +6326,7 @@ class FormHelperTest extends TestCase
                 'required' => 'required',
                 'id' => 'title',
                 'name' => 'title',
-                'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.value) this.setCustomValidity(&#039;This field is required&#039;)',
+                'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.value) this.setCustomValidity(&#039;This field cannot be left empty&#039;)',
                 'oninput' => 'this.setCustomValidity(&#039;&#039;)',
             ],
             '/div',
@@ -7644,7 +7644,7 @@ class FormHelperTest extends TestCase
         $this->Form->setConfig('autoSetCustomValidity', true);
 
         $validator = (new \Cake\Validation\Validator())
-            ->requirePresence('email', true, 'Custom error message')
+            ->notEmpty('email', 'Custom error message')
             ->requirePresence('password')
             ->alphaNumeric('password')
             ->notBlank('phone');
@@ -7670,7 +7670,7 @@ class FormHelperTest extends TestCase
                 'value' => '',
                 'required' => 'required',
                 'oninput' => 'this.setCustomValidity(&#039;&#039;)',
-                'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.value) this.setCustomValidity(&#039;This field is required&#039;)',
+                'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.value) this.setCustomValidity(&#039;This field cannot be left empty&#039;)',
             ],
         ];
         $this->assertHtml($expected, $result);
@@ -7720,7 +7720,7 @@ class FormHelperTest extends TestCase
     public function testHtml5ErrorMessageInTemplateVars()
     {
         $validator = (new \Cake\Validation\Validator())
-            ->requirePresence('email', true, 'Custom error "message" & entities')
+            ->notEmpty('email', 'Custom error "message" & entities')
             ->requirePresence('password')
             ->alphaNumeric('password')
             ->notBlank('phone');
@@ -7749,7 +7749,7 @@ class FormHelperTest extends TestCase
                 'type' => 'password',
                 'value' => '',
                 'required' => 'required',
-                'data-message' => 'This field is required',
+                'data-message' => 'This field cannot be left empty',
             ],
         ];
         $this->assertHtml($expected, $result);
@@ -7822,7 +7822,7 @@ class FormHelperTest extends TestCase
                 'name' => 'title',
                 'id' => 'title',
                 'required' => 'required',
-                'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.value) this.setCustomValidity(&#039;This field is required&#039;)',
+                'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.value) this.setCustomValidity(&#039;This field cannot be left empty&#039;)',
                 'oninput' => 'this.setCustomValidity(&#039;&#039;)',
             ],
             '/div',
@@ -8741,7 +8741,7 @@ class FormHelperTest extends TestCase
                 'type' => 'text',
                 'required' => 'required',
                 'maxlength' => 10,
-                'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.value) this.setCustomValidity(&#039;This field is required&#039;)',
+                'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.value) this.setCustomValidity(&#039;This field cannot be left empty&#039;)',
                 'oninput' => 'this.setCustomValidity(&#039;&#039;)',
             ],
             '/div',
