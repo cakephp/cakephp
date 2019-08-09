@@ -107,7 +107,6 @@ class Connection implements ConnectionInterface
     /**
      * Constructor.
      *
-     * @param array $config Configuration array.
      * ### Available options:
      * - `driver` Sort name or FCQN for driver.
      * - `log` Boolean indicating whether to use query logging.
@@ -115,6 +114,8 @@ class Connection implements ConnectionInterface
      * - `cacheMetaData` Boolean indicating whether metadata (datasource schemas) should be cached.
      *    If set to a string it will be used as the name of cache config to use.
      * - `cacheKeyPrefix` Custom prefix to use when generation cache keys. Defaults to connection name.
+     *
+     * @param array $config Configuration array.
      */
     public function __construct($config)
     {
