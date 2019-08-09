@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="3.4.10@c283f0877d543e7ab738d231ba6a3cdce5e1039a">
+<files psalm-version="3.4.11@85c9b6bb442039c773120059ae35a31f8ef9d488">
   <file src="src/Auth/BaseAuthenticate.php">
     <PossiblyInvalidArrayOffset occurrences="1">
       <code>$hidden[$key]</code>
@@ -41,18 +41,10 @@
       <code>close</code>
     </PossiblyNullReference>
   </file>
-  <file src="src/Cache/Engine/MemcachedEngine.php">
-    <MissingConstructor occurrences="1">
-      <code>$_Memcached</code>
-    </MissingConstructor>
-  </file>
   <file src="src/Cache/Engine/RedisEngine.php">
     <InvalidArgument occurrences="1">
       <code>$value</code>
     </InvalidArgument>
-    <MissingConstructor occurrences="1">
-      <code>$_Redis</code>
-    </MissingConstructor>
     <PossiblyInvalidArgument occurrences="3">
       <code>$value</code>
       <code>$value</code>
@@ -122,9 +114,6 @@
     </PossiblyNullArrayOffset>
   </file>
   <file src="src/Console/HelperRegistry.php">
-    <MissingConstructor occurrences="1">
-      <code>$_io</code>
-    </MissingConstructor>
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$class</code>
     </MoreSpecificImplementedParamType>
@@ -223,11 +212,6 @@
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$class</code>
     </MoreSpecificImplementedParamType>
-  </file>
-  <file src="src/Controller/Controller.php">
-    <PossiblyNullOperand occurrences="1">
-      <code>$this-&gt;name</code>
-    </PossiblyNullOperand>
   </file>
   <file src="src/Controller/ErrorController.php">
     <PossiblyNullArgument occurrences="1">
@@ -508,11 +492,6 @@
       <code>$row['default']</code>
     </PossiblyUndefinedArrayOffset>
   </file>
-  <file src="src/Database/Schema/TableSchema.php">
-    <MissingParamType occurrences="1">
-      <code>$attrs</code>
-    </MissingParamType>
-  </file>
   <file src="src/Database/SchemaCache.php">
     <PossiblyNullArgument occurrences="2">
       <code>$table</code>
@@ -776,9 +755,6 @@
     </PossiblyNullOperand>
   </file>
   <file src="src/Http/Client/FormData.php">
-    <MissingConstructor occurrences="1">
-      <code>$_boundary</code>
-    </MissingConstructor>
     <PossiblyInvalidArgument occurrences="3">
       <code>$name</code>
       <code>$name</code>
@@ -875,9 +851,6 @@
     </PossiblyInvalidArgument>
   </file>
   <file src="src/Http/Runner.php">
-    <MissingConstructor occurrences="1">
-      <code>$queue</code>
-    </MissingConstructor>
     <PossiblyNullReference occurrences="1">
       <code>process</code>
     </PossiblyNullReference>
@@ -1380,10 +1353,9 @@
     <InternalClass occurrences="1">
       <code>BaseTestSuite</code>
     </InternalClass>
-    <InternalMethod occurrences="3">
+    <InternalMethod occurrences="2">
       <code>addTestFile</code>
       <code>addTestFile</code>
-      <code>BaseTestSuite</code>
     </InternalMethod>
   </file>
   <file src="src/Utility/CookieCryptTrait.php">
@@ -1576,11 +1548,6 @@
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$class</code>
     </MoreSpecificImplementedParamType>
-  </file>
-  <file src="src/View/SerializedView.php">
-    <PossiblyNullArgument occurrences="1">
-      <code>$this-&gt;_responseType</code>
-    </PossiblyNullArgument>
   </file>
   <file src="src/View/View.php">
     <PossiblyNullPropertyAssignmentValue occurrences="2">

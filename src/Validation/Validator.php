@@ -2388,7 +2388,6 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             $defaultMessage = __d('cake', 'This field cannot be left empty');
         }
 
-        $notBlankMessage = null;
         foreach ($this->_fields[$field] as $rule) {
             if ($rule->get('rule') === 'notBlank' && $rule->get('message')) {
                 return $rule->get('message');

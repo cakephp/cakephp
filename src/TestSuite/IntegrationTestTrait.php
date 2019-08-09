@@ -199,17 +199,6 @@ trait IntegrationTestTrait
     protected $_disableRouterReload = false;
 
     /**
-     * Auto-detect if the HTTP middleware stack should be used.
-     *
-     * @before
-     * @return void
-     */
-    public function setupServer(): void
-    {
-        $namespace = Configure::read('App.namespace');
-    }
-
-    /**
      * Clears the state used for requests.
      *
      * @after

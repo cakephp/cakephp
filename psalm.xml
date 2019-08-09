@@ -17,11 +17,11 @@
     </projectFiles>
 
     <issueHandlers>
-        <RedundantConditionGivenDocblockType errorLevel="info" />
-        <TypeCoercion errorLevel="info" />
-        <DocblockTypeContradiction errorLevel="info" />
-        <MissingClosureParamType errorLevel="info" />
-        <MissingClosureReturnType errorLevel="info" />
+        <RedundantConditionGivenDocblockType errorLevel="suppress" />
+        <TypeCoercion errorLevel="suppress" />
+        <DocblockTypeContradiction errorLevel="suppress" />
+        <MissingClosureParamType errorLevel="suppress" />
+        <MissingClosureReturnType errorLevel="suppress" />
         <UndefinedClass>
             <errorLevel type="suppress">
                 <referencedClass name="Memcached" />
@@ -34,6 +34,6 @@
                 <referencedClass name="Redis" />
             </errorLevel>
         </UndefinedDocblockClass>
-        <PropertyNotSetInConstructor errorLevel="info" />
+        <PropertyNotSetInConstructor errorLevel="suppress" />
     </issueHandlers>
 </psalm>

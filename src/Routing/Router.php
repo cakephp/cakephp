@@ -471,7 +471,7 @@ class Router
             'action' => 'index',
             '_ext' => null,
         ];
-        $here = $output = $frag = null;
+        $here = $frag = null;
 
         $context = static::$_requestContext;
         // In 4.x this should be replaced with state injected via setRequestContext

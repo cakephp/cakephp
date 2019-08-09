@@ -101,7 +101,6 @@ trait ModelAwareTrait
             $modelType = $this->getModelType();
         }
 
-        $alias = null;
         $options = [];
         if (strpos($modelClass, '\\') === false) {
             [, $alias] = pluginSplit($modelClass, true);

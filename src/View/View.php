@@ -1578,7 +1578,6 @@ class View implements EventDispatcherInterface
             return $cache;
         }
 
-        $plugin = null;
         [$plugin, $name] = $this->pluginSplit($name);
 
         $underscored = null;

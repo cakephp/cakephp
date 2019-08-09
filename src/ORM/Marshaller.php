@@ -383,7 +383,6 @@ class Marshaller
         $primaryKey = array_flip((array)$target->getPrimaryKey());
         $records = $conditions = [];
         $primaryCount = count($primaryKey);
-        $conditions = [];
 
         foreach ($data as $i => $row) {
             if (!is_array($row)) {

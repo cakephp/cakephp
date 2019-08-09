@@ -132,7 +132,7 @@ class FileLog extends BaseLog
         }
 
         $exists = file_exists($pathname);
-        $result = file_put_contents($pathname, $output, FILE_APPEND);
+        file_put_contents($pathname, $output, FILE_APPEND);
         static $selfError = false;
 
         if (!$selfError && !$exists && !chmod($pathname, (int)$mask)) {

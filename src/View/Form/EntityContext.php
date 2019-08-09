@@ -417,7 +417,6 @@ class EntityContext implements ContextInterface
         }
 
         $len = count($path);
-        $last = $len - 1;
         $leafEntity = $entity;
         for ($i = 0; $i < $len; $i++) {
             $prop = $path[$i];
