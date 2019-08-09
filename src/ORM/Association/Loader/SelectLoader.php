@@ -297,7 +297,6 @@ class SelectLoader
         }
         $subquery->select($filter, true);
 
-        $conditions = null;
         if (is_array($key)) {
             $conditions = $this->_createTupleCondition($query, $key, $filter, '=');
         } else {

@@ -67,7 +67,6 @@ class TransportRegistry extends ObjectRegistry
      */
     protected function _create($class, string $alias, array $config): AbstractTransport
     {
-        $instance = null;
         if (is_object($class)) {
             $instance = $class;
         } else {

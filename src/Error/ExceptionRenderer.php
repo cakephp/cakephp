@@ -131,7 +131,6 @@ class ExceptionRenderer implements ExceptionRendererInterface
         }
 
         $response = new Response();
-        $controller = null;
 
         try {
             $class = null;
@@ -160,23 +159,22 @@ class ExceptionRenderer implements ExceptionRendererInterface
             /** @var \Cake\Controller\Controller $controller */
             $controller = new $class($request, $response);
             $controller->startupProcess();
-            $startup = true;
         } catch (Throwable $e) {
-            $startup = false;
+        }
+
+        if (!isset($controller)) {
+            return new Controller($request, $response);
         }
 
         // Retry RequestHandler, as another aspect of startupProcess()
         // could have failed. Ignore any exceptions out of startup, as
         // there could be userland input data parsers.
-        if ($startup === false && !empty($controller) && isset($controller->RequestHandler)) {
+        if (isset($controller->RequestHandler)) {
             try {
                 $event = new Event('Controller.startup', $controller);
                 $controller->RequestHandler->startup($event);
             } catch (Throwable $e) {
             }
-        }
-        if (empty($controller)) {
-            $controller = new Controller($request, $response);
         }
 
         return $controller;

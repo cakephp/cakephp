@@ -101,7 +101,6 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
             $invert[$class][] = $name;
         }
         $grouped = [];
-        $appNamespace = Configure::read('App.namespace');
         $plugins = Plugin::loaded();
         foreach ($invert as $class => $names) {
             preg_match('/^(.+)\\\\(Command|Shell)\\\\/', $class, $matches);

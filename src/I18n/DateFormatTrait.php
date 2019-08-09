@@ -173,7 +173,7 @@ trait DateFormatTrait
      */
     protected function _formatObject($date, $format, ?string $locale): string
     {
-        $pattern = $dateFormat = $timeFormat = $calendar = null;
+        $pattern = $timeFormat = null;
 
         if (is_array($format)) {
             [$dateFormat, $timeFormat] = $format;
