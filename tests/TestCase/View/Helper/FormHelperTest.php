@@ -2703,8 +2703,6 @@ class FormHelperTest extends TestCase
                 'type' => 'text', 'name' => 'title',
                 'id' => 'title', 'class' => 'form-error',
                 'required' => 'required',
-                'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.validity.valid) this.setCustomValidity(&#039;This field is required&#039;)',
-                'oninput' => 'this.setCustomValidity(&#039;&#039;)',
             ],
             ['div' => ['class' => 'error-message']],
             'Custom error!',
@@ -2727,8 +2725,6 @@ class FormHelperTest extends TestCase
                 'id' => 'title',
                 'class' => 'form-error',
                 'required' => 'required',
-                'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.validity.valid) this.setCustomValidity(&#039;This field is required&#039;)',
-                'oninput' => 'this.setCustomValidity(&#039;&#039;)',
             ],
             ['div' => ['class' => 'error-message']],
             'Custom error!',
@@ -6326,8 +6322,6 @@ class FormHelperTest extends TestCase
                 'required' => 'required',
                 'id' => 'title',
                 'name' => 'title',
-                'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.validity.valid) this.setCustomValidity(&#039;This field is required&#039;)',
-                'oninput' => 'this.setCustomValidity(&#039;&#039;)',
             ],
             '/div',
         ];
@@ -7555,8 +7549,6 @@ class FormHelperTest extends TestCase
                     'required' => 'required',
                     'id' => '0-comments-1-comment',
                     'rows' => 5,
-                    'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.validity.valid) this.setCustomValidity(&#039;This field cannot be left empty&#039;)',
-                    'oninput' => 'this.setCustomValidity(&#039;&#039;)',
                 ],
                 '/textarea',
             '/div'
@@ -7822,8 +7814,6 @@ class FormHelperTest extends TestCase
                 'name' => 'title',
                 'id' => 'title',
                 'required' => 'required',
-                'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.validity.valid) this.setCustomValidity(&#039;This field is required&#039;)',
-                'oninput' => 'this.setCustomValidity(&#039;&#039;)',
             ],
             '/div',
         ];
@@ -8741,8 +8731,6 @@ class FormHelperTest extends TestCase
                 'type' => 'text',
                 'required' => 'required',
                 'maxlength' => 10,
-                'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.validity.valid) this.setCustomValidity(&#039;This field is required&#039;)',
-                'oninput' => 'this.setCustomValidity(&#039;&#039;)',
             ],
             '/div',
         ];
@@ -8787,8 +8775,6 @@ class FormHelperTest extends TestCase
                 'type' => 'text',
                 'required' => 'required',
                 'maxlength' => 10,
-                'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.validity.valid) this.setCustomValidity(&#039;This field cannot be left empty&#039;)',
-                'oninput' => 'this.setCustomValidity(&#039;&#039;)',
             ],
             '/div',
         ];
@@ -8823,8 +8809,6 @@ class FormHelperTest extends TestCase
                 'type' => 'text',
                 'required' => 'required',
                 'maxlength' => 55, // Length set in validator should take precedence over schema.
-                'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.validity.valid) this.setCustomValidity(&#039;This field cannot be left empty&#039;)',
-                'oninput' => 'this.setCustomValidity(&#039;&#039;)',
             ],
             '/div',
         ];
@@ -8859,8 +8843,6 @@ class FormHelperTest extends TestCase
                 'type' => 'text',
                 'required' => 'required',
                 'maxlength' => 10, // Length set in options should take highest precedence.
-                'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.validity.valid) this.setCustomValidity(&#039;This field cannot be left empty&#039;)',
-                'oninput' => 'this.setCustomValidity(&#039;&#039;)',
             ],
             '/div',
         ];
@@ -8903,8 +8885,6 @@ class FormHelperTest extends TestCase
                 'type' => 'text',
                 'required' => 'required',
                 'maxlength' => 10,
-                'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.validity.valid) this.setCustomValidity(&#039;This field cannot be left empty&#039;)',
-                'oninput' => 'this.setCustomValidity(&#039;&#039;)',
             ],
             '/div',
         ];
@@ -8938,8 +8918,6 @@ class FormHelperTest extends TestCase
                 'type' => 'text',
                 'required' => 'required',
                 'maxlength' => 10,
-                'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.validity.valid) this.setCustomValidity(&#039;This field cannot be left empty&#039;)',
-                'oninput' => 'this.setCustomValidity(&#039;&#039;)',
             ],
             '/div',
         ];
