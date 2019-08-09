@@ -912,7 +912,7 @@ trait EntityTrait
      * This will be deprecated in 4.0, use `setNew()` instead.
      * @return bool Whether or not the entity has been persisted.
      */
-    public function isNew($new = null): bool
+    public function isNew($new = null)
     {
         if ($new !== null) {
             $this->setNew($new);
