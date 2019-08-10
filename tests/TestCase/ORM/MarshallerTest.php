@@ -1326,7 +1326,7 @@ class MarshallerTest extends TestCase
             'body' => 'My Content'
         ]);
         $entity->setAccess('*', true);
-        $entity->isNew(false);
+        $entity->setNew(false);
         $entity->clean();
         $result = $marshall->merge($entity, $data, []);
 
@@ -1355,7 +1355,7 @@ class MarshallerTest extends TestCase
             'body' => 'My Content'
         ]);
         $entity->setAccess('*', false);
-        $entity->isNew(false);
+        $entity->setNew(false);
         $entity->clean();
         $result = $marshall->merge($entity, $data, ['accessibleFields' => ['body' => true]]);
 
@@ -1413,7 +1413,7 @@ class MarshallerTest extends TestCase
             'body' => null
         ]);
         $entity->setAccess('*', true);
-        $entity->isNew(false);
+        $entity->setNew(false);
         $entity->clean();
         $result = $marshall->merge($entity, $data, []);
 
@@ -1439,7 +1439,7 @@ class MarshallerTest extends TestCase
         ]);
         $entity->setAccess('*', false);
         $entity->setAccess('author_id', true);
-        $entity->isNew(false);
+        $entity->setNew(false);
         $entity->clean();
 
         $result = $marshall->merge($entity, $data, []);
@@ -2708,7 +2708,7 @@ class MarshallerTest extends TestCase
             'author_id' => 2
         ]);
         $entity->setAccess('*', false);
-        $entity->isNew(false);
+        $entity->setNew(false);
         $entity->clean();
         $result = $marshall->merge($entity, $data, ['fields' => ['title', 'body']]);
 
@@ -3141,7 +3141,7 @@ class MarshallerTest extends TestCase
         $this->assertEmpty($entity->getInvalid());
 
         $entity->setAccess('*', true);
-        $entity->isNew(false);
+        $entity->setNew(false);
         $entity->clean();
 
         $this->articles->getValidator()
@@ -3183,7 +3183,7 @@ class MarshallerTest extends TestCase
             'author_id' => 1
         ]);
         $entity->setAccess('*', true);
-        $entity->isNew(true);
+        $entity->setNew(true);
         $entity->clean();
 
         $this->articles->getValidator()
@@ -3197,7 +3197,7 @@ class MarshallerTest extends TestCase
         $this->assertEmpty($result->getError('thing'));
 
         $entity->clean();
-        $entity->isNew(false);
+        $entity->setNew(false);
         $result = $marshall->merge($entity, $data, []);
         $this->assertNotEmpty($result->getError('author_id'));
         $this->assertNotEmpty($result->getError('thing'));

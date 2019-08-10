@@ -141,7 +141,7 @@ class TimestampBehaviorTest extends TestCase
 
         $event = new Event('Model.beforeSave');
         $entity = new Entity(['name' => 'Foo']);
-        $entity->isNew(false);
+        $entity->setNew(false);
 
         $return = $this->Behavior->handleEvent($event, $entity);
         $this->assertTrue($return, 'Handle Event is expected to always return true');
@@ -163,7 +163,7 @@ class TimestampBehaviorTest extends TestCase
 
         $event = new Event('Model.beforeSave');
         $entity = new Entity(['name' => 'Foo']);
-        $entity->isNew(false);
+        $entity->setNew(false);
 
         $return = $this->Behavior->handleEvent($event, $entity);
         $this->assertTrue($return, 'Handle Event is expected to always return true');
@@ -188,7 +188,7 @@ class TimestampBehaviorTest extends TestCase
         $existingValue = new \DateTime('2011-11-11');
         $entity = new Entity(['name' => 'Foo', 'modified' => $existingValue]);
         $entity->clean();
-        $entity->isNew(false);
+        $entity->setNew(false);
 
         $return = $this->Behavior->handleEvent($event, $entity);
         $this->assertTrue($return, 'Handle Event is expected to always return true');
