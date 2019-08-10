@@ -4067,6 +4067,7 @@ class QueryTest extends TestCase
     public function testIsNullInvalid()
     {
         $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid or missing operator together with `null` usage.');
 
         $this->loadFixtures('Authors');
         (new Query($this->connection))
