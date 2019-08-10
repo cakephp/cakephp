@@ -1395,7 +1395,7 @@ class EntityContextTest extends TestCase
         ]);
 
         $validator = new Validator();
-        $validator->requirePresence('title', true, 'Don\'t forget a title!');
+        $validator->notEmpty('title', 'Don\'t forget a title!');
         $validator->add('title', 'minlength', [
             'rule' => ['minlength', 10],
         ])

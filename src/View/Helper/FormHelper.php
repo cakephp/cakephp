@@ -1333,22 +1333,7 @@ class FormHelper extends Helper
             'templateVars' => [],
         ];
 
-        if (!isset($options['required']) && $options['type'] !== 'hidden') {
-            $options['required'] = $context->isRequired($fieldName);
-        }
-
-        $message = $context->getRequiredMessage($fieldName);
-        $message = h($message);
-
-        if ($options['required'] && $message) {
-            $options['templateVars']['customValidityMessage'] = $message;
-
-            if ($this->getConfig('autoSetCustomValidity')) {
-                $options['oninvalid'] = "this.setCustomValidity(''); "
-                    . "if (!this.validity.valid) this.setCustomValidity('$message')";
-                $options['oninput'] = "this.setCustomValidity('')";
-            }
-        }
+        $options = $this->setRequiredAndCustomValidity($fieldName, $options);
 
         $type = $context->type($fieldName);
         $fieldDef = $context->attributes($fieldName);
@@ -1399,6 +1384,37 @@ class FormHelper extends Helper
 
         if (in_array($options['type'], ['datetime', 'date', 'time', 'select'], true)) {
             $options += ['empty' => false];
+        }
+
+        return $options;
+    }
+
+    /**
+     * Set required attribute and custom validity js.
+     *
+     * @param string $fieldName The name of the field to generate options for.
+     * @param array $options Options list.
+     * @return array Modified options list.
+     */
+    protected function setRequiredAndCustomValidity(string $fieldName, array $options)
+    {
+        $context = $this->_getContext();
+
+        if (!isset($options['required']) && $options['type'] !== 'hidden') {
+            $options['required'] = $context->isRequired($fieldName);
+        }
+
+        $message = $context->getRequiredMessage($fieldName);
+        $message = h($message);
+
+        if ($options['required'] && $message) {
+            $options['templateVars']['customValidityMessage'] = $message;
+
+            if ($this->getConfig('autoSetCustomValidity')) {
+                $options['oninvalid'] = "this.setCustomValidity(''); "
+                    . "if (!this.value) this.setCustomValidity('$message')";
+                $options['oninput'] = "this.setCustomValidity('')";
+            }
         }
 
         return $options;

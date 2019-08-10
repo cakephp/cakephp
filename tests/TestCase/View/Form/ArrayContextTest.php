@@ -49,7 +49,7 @@ class ArrayContextTest extends TestCase
         ]);
 
         $this->assertSame('My custom message', $context->getRequiredMessage('Comments.required'));
-        $this->assertSame('This field is required', $context->getRequiredMessage('Comments.tags'));
+        $this->assertSame('This field cannot be left empty', $context->getRequiredMessage('Comments.tags'));
         $this->assertSame(null, $context->getRequiredMessage('Comments.nope'));
     }
 
