@@ -4059,6 +4059,43 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Tests that using the wrong NULL operator will throw meaningful exception instead of
+     * cloaking as always-empty result set.
+     *
+     * @return void
+     */
+    public function testIsNullInvalid()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid or missing operator together with `null` usage.');
+
+        $this->loadFixtures('Authors');
+        (new Query($this->connection))
+            ->select(['name'])
+            ->from(['authors'])
+            ->where(['name' => null])
+            ->sql();
+    }
+
+    /**
+     * Tests that using the wrong NULL operator will throw meaningful exception instead of
+     * cloaking as always-empty result set.
+     *
+     * @return void
+     */
+    public function testIsNotNullInvalid()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        $this->loadFixtures('Authors');
+        (new Query($this->connection))
+            ->select(['name'])
+            ->from(['authors'])
+            ->where(['name !=' => null])
+            ->sql();
+    }
+
+    /**
      * Tests that using the IS NOT operator will automatically translate to the best
      * possible operator depending on the passed value
      *

@@ -446,7 +446,7 @@ class EavStrategy implements TranslateStrategyInterface
                 if (!$translation->isDirty($field)) {
                     continue;
                 }
-                $find[] = ['locale' => $lang, 'field' => $field, 'foreign_key' => $key];
+                $find[] = ['locale' => $lang, 'field' => $field, 'foreign_key IS' => $key];
                 $contents[] = new Entity(['content' => $translation->get($field)], [
                     'useSetters' => false,
                 ]);

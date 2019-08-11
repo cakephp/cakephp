@@ -42,18 +42,11 @@ class RulesChecker extends BaseRulesChecker
      * ```
      *
      * @param string[] $fields The list of fields to check for uniqueness.
-     * @param string|array|null $message The error message to show in case the rule does not pass. Can
-     *   also be an array of options. When an array, the 'message' key can be used to provide a message.
+     * @param string|null $message The error message to show in case the rule does not pass.
      * @return \Cake\Datasource\RuleInvoker
      */
     public function isUnique(array $fields, $message = null): RuleInvoker
     {
-        $options = [];
-        if (is_array($message)) {
-            $options = $message + ['message' => null];
-            $message = $options['message'];
-            unset($options['message']);
-        }
         if (!$message) {
             if ($this->_useI18n) {
                 $message = __d('cake', 'This value is already in use');
@@ -64,7 +57,7 @@ class RulesChecker extends BaseRulesChecker
 
         $errorField = current($fields);
 
-        return $this->_addError(new IsUnique($fields, $options), '_isUnique', compact('errorField', 'message'));
+        return $this->_addError(new IsUnique($fields), '_isUnique', compact('errorField', 'message'));
     }
 
     /**
