@@ -147,7 +147,7 @@ class JsonView extends SerializedView
 
         $return = json_encode($data, $jsonOptions);
         if ($return === false) {
-            throw new RuntimeException(json_last_error_msg(),  json_last_error());
+            throw new RuntimeException(json_last_error_msg(), json_last_error());
         }
 
         return $return;
