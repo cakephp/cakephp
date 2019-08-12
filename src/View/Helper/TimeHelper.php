@@ -194,7 +194,7 @@ class TimeHelper extends Helper
      *
      * @param int|string|\DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
      * @param bool $range if true returns a range in Y-m-d format
-     * @return int|array 1, 2, 3, or 4 quarter of year or array if $range true
+     * @return string[]|int 1, 2, 3, or 4 quarter of year or array if $range true
      * @see \Cake\I18n\Time::toQuarter()
      */
     public function toQuarter($dateString, $range = false)

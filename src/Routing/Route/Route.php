@@ -533,7 +533,7 @@ class Route
      *
      * @param string $args A string with the passed params. eg. /1/foo
      * @param array $context The current route context, which should contain controller/action keys.
-     * @return array Array of passed args.
+     * @return string[] Array of passed args.
      */
     protected function _parseArgs(string $args, array $context): array
     {

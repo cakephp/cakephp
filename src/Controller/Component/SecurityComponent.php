@@ -298,7 +298,7 @@ class SecurityComponent extends Component
      * Return hash parts for the Token generation
      *
      * @param \Cake\Controller\Controller $controller Instantiating controller
-     * @return array
+     * @return string[]
      */
     protected function _hashParts(Controller $controller): array
     {
@@ -475,7 +475,7 @@ class SecurityComponent extends Component
      * @param string|null $stringKeyMessage Message string if tampered found in
      *  data fields indexed by string (protected).
      * @param string $missingMessage Message string if missing field
-     * @return array Messages
+     * @return string[] Messages
      */
     protected function _debugCheckFields(
         array $dataFields,

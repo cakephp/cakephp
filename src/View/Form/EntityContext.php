@@ -175,7 +175,7 @@ class EntityContext implements ContextInterface
      *
      * Gets the primary key columns from the root entity's schema.
      *
-     * @return array
+     * @return string[]
      */
     public function primaryKey(): array
     {
@@ -552,7 +552,7 @@ class EntityContext implements ContextInterface
      *
      * If the context is for an array of entities, the 0th index will be used.
      *
-     * @return array Array of field names in the table/entity.
+     * @return string[] Array of field names in the table/entity.
      */
     public function fieldNames(): array
     {

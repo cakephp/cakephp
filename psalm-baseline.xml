@@ -1467,9 +1467,6 @@
     </PossiblyNullPropertyAssignmentValue>
   </file>
   <file src="src/View/Form/EntityContext.php">
-    <LessSpecificImplementedReturnType occurrences="1">
-      <code>array</code>
-    </LessSpecificImplementedReturnType>
     <LoopInvalidation occurrences="2">
       <code>$entity</code>
       <code>$entity</code>

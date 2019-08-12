@@ -235,7 +235,7 @@ abstract class Mailer implements EventListenerInterface
      * @param string $action The name of the mailer action to trigger.
      * @param array $args Arguments to pass to the triggered mailer action.
      * @param array $headers Headers to set.
-     * @return array
+     * @return string[]
      * @throws \Cake\Mailer\Exception\MissingActionException
      * @throws \BadMethodCallException
      */
