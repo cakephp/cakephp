@@ -864,6 +864,49 @@ class IntegrationTestTraitTest extends IntegrationTestCase
     }
 
     /**
+     * Test posting to a secured form action with unlocked fields
+     *
+     * @return void
+     */
+    public function testPostSecuredFormUnlockedFieldsFails()
+    {
+        $this->enableSecurityToken();
+        $data = [
+            'title' => 'New post',
+            'comments' => [
+                ['comment' => 'A new comment']
+            ],
+            'tags' => ['_ids' => [1, 2, 3, 4]],
+            'some_unlocked_field' => 'Unlocked data'
+        ];
+        $this->post('/posts/securePost', $data);
+        $this->assertResponseCode(400);
+        $this->assertResponseContains('Invalid security debug token.');
+    }
+
+    /**
+     * Test posting to a secured form action with unlocked fields
+     *
+     * @return void
+     */
+    public function testPostSecuredFormUnlockedFieldsWithSet()
+    {
+        $this->enableSecurityToken();
+        $data = [
+            'title' => 'New post',
+            'comments' => [
+                ['comment' => 'A new comment']
+            ],
+            'tags' => ['_ids' => [1, 2, 3, 4]],
+            'some_unlocked_field' => 'Unlocked data'
+        ];
+        $this->setUnlockedFields(['some_unlocked_field']);
+        $this->post('/posts/securePost', $data);
+        $this->assertResponseOk();
+        $this->assertResponseContains('Request was accepted');
+    }
+
+    /**
      * Test posting to a secured form action.
      *
      * @return void

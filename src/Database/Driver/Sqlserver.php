@@ -132,7 +132,7 @@ class Sqlserver extends Driver
      */
     public function enabled()
     {
-        return in_array('sqlsrv', PDO::getAvailableDrivers());
+        return in_array('sqlsrv', PDO::getAvailableDrivers(), true);
     }
 
     /**

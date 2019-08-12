@@ -1167,7 +1167,7 @@ class View implements EventDispatcherInterface
         $c = 1;
         $url = Router::url($url);
         $hash = $object . substr(md5($object . $url), 0, 10);
-        while (in_array($hash, $this->uuids)) {
+        while (in_array($hash, $this->uuids, true)) {
             $hash = $object . substr(md5($object . $url . $c), 0, 10);
             $c++;
         }

@@ -1934,7 +1934,7 @@ class Response implements ResponseInterface
     public function outputCompressed()
     {
         return strpos(env('HTTP_ACCEPT_ENCODING'), 'gzip') !== false
-            && (ini_get('zlib.output_compression') === '1' || in_array('ob_gzhandler', ob_list_handlers()));
+            && (ini_get('zlib.output_compression') === '1' || in_array('ob_gzhandler', ob_list_handlers(), true));
     }
 
     /**
@@ -2082,7 +2082,7 @@ class Response implements ResponseInterface
         $responseTag = $this->getHeaderLine('Etag');
         $etagMatches = null;
         if ($responseTag) {
-            $etagMatches = in_array('*', $etags) || in_array($responseTag, $etags);
+            $etagMatches = in_array('*', $etags, true) || in_array($responseTag, $etags, true);
         }
 
         $modifiedSince = $request->getHeaderLine('If-Modified-Since');
