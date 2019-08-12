@@ -1558,9 +1558,4 @@
       <code>include func_get_arg(0)</code>
     </UnresolvableInclude>
   </file>
-  <file src="src/View/XmlView.php">
-    <PossiblyUndefinedMethod occurrences="1">
-      <code>asXML</code>
-    </PossiblyUndefinedMethod>
-  </file>
 </files>
