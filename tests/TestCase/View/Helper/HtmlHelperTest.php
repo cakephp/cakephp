@@ -1759,17 +1759,35 @@ class HtmlHelperTest extends TestCase
         $expected = ['<tr', '<th', 'ID', '/th', '<th', 'Name', '/th', '<th', 'Date', '/th', '/tr'];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Html->tableHeaders(['ID', ['Name' => ['class' => 'highlight']], 'Date']);
         $expected = ['<tr', '<th', 'ID', '/th', '<th class="highlight"', 'Name', '/th', '<th', 'Date', '/th', '/tr'];
-        $this->assertHtml($expected, $result);
+        $resultComma = $this->Html->tableHeaders(['ID', ['Name', ['class' => 'highlight']], 'Date']);
+        $resultAssoc = $this->Html->tableHeaders(['ID', ['Name' => ['class' => 'highlight']], 'Date']);
+        $this->assertHtml($expected, $resultComma);
+        $this->assertHtml($expected, $resultAssoc);
 
-        $result = $this->Html->tableHeaders(['ID', ['Name' => ['class' => 'highlight', 'width' => '120px']], 'Date']);
         $expected = ['<tr', '<th', 'ID', '/th', '<th class="highlight" width="120px"', 'Name', '/th', '<th', 'Date', '/th', '/tr'];
-        $this->assertHtml($expected, $result);
+        $resultComma = $this->Html->tableHeaders(['ID', ['Name', ['class' => 'highlight', 'width' => '120px']], 'Date']);
+        $resultAssoc = $this->Html->tableHeaders(['ID', ['Name' => ['class' => 'highlight', 'width' => '120px']], 'Date']);
+        $this->assertHtml($expected, $resultComma);
+        $this->assertHtml($expected, $resultAssoc);
 
-        $result = $this->Html->tableHeaders(['ID', ['Name' => []], 'Date']);
         $expected = ['<tr', '<th', 'ID', '/th', '<th', 'Name', '/th', '<th', 'Date', '/th', '/tr'];
-        $this->assertHtml($expected, $result);
+        $resultComma = $this->Html->tableHeaders(['ID', ['Name', []], 'Date']);
+        $resultAssoc = $this->Html->tableHeaders(['ID', ['Name' => []], 'Date']);
+        $this->assertHtml($expected, $resultComma);
+        $this->assertHtml($expected, $resultAssoc);
+
+        $expected = ['<tr', '<th', 'ID', '/th', '<th class="highlight"', '0', '/th', '<th', 'Date', '/th', '/tr'];
+        $resultAssoc = $this->Html->tableHeaders(['ID', ['0' => ['class' => 'highlight']], 'Date']);
+        $this->assertHtml($expected, $resultAssoc);
+
+        $expected = ['<tr', '<th', 'ID', '/th', '<th class="highlight" width="120px"', '0', '/th', '<th', 'Date', '/th', '/tr'];
+        $resultAssoc = $this->Html->tableHeaders(['ID', ['0' => ['class' => 'highlight', 'width' => '120px']], 'Date']);
+        $this->assertHtml($expected, $resultAssoc);
+
+        $expected = ['<tr', '<th', 'ID', '/th', '<th', '0', '/th', '<th', 'Date', '/th', '/tr'];
+        $resultAssoc = $this->Html->tableHeaders(['ID', ['0' => []], 'Date']);
+        $this->assertHtml($expected, $resultAssoc);
     }
 
     /**

@@ -119,7 +119,7 @@ class ComponentTest extends TestCase
     public function testDuplicateComponentInitialize(): void
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('The "Banana" alias has already been loaded with the following config:');
+        $this->expectExceptionMessage('The "Banana" alias has already been loaded. The `property` key');
         $Collection = new ComponentRegistry();
         $Collection->load('Banana', ['property' => ['closure' => function (): void {
         }]]);

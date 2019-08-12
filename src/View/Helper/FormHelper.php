@@ -197,7 +197,7 @@ class FormHelper extends Helper
      *
      * @see \Cake\View\Helper\FormHelper::_secure()
      * @see \Cake\Controller\Component\SecurityComponent::validatePost()
-     * @var array
+     * @var string[]
      */
     protected $_unlockedFields = [];
 
@@ -233,14 +233,14 @@ class FormHelper extends Helper
     /**
      * The sources to be used when retrieving prefilled input values.
      *
-     * @var array
+     * @var string[]
      */
     protected $_valueSources = ['context'];
 
     /**
      * Grouped input types.
      *
-     * @var array
+     * @var string[]
      */
     protected $_groupedInputTypes = ['radio', 'multicheckbox', 'date', 'time', 'datetime'];
 
@@ -510,7 +510,9 @@ class FormHelper extends Helper
         $action = Router::url($url, true);
         $query = parse_url($action, PHP_URL_QUERY);
         $query = $query ? '?' . $query : '';
-        $this->_lastAction = parse_url($action, PHP_URL_PATH) . $query;
+
+        $path = parse_url($action, PHP_URL_PATH) ?: '';
+        $this->_lastAction = $path . $query;
     }
 
     /**
@@ -2533,7 +2535,7 @@ class FormHelper extends Helper
      *
      * Returns a list, but at least one item, of valid sources, such as: `'context'`, `'data'` and `'query'`.
      *
-     * @return array List of value sources.
+     * @return string[] List of value sources.
      */
     public function getValueSources(): array
     {

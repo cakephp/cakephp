@@ -125,7 +125,7 @@ class Mysql extends Driver
      */
     public function enabled(): bool
     {
-        return in_array('mysql', PDO::getAvailableDrivers());
+        return in_array('mysql', PDO::getAvailableDrivers(), true);
     }
 
     /**

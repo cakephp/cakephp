@@ -1189,6 +1189,43 @@ class ConnectionTest extends TestCase
     }
 
     /**
+     * Test CachedCollection creation with default and custom cache key prefix.
+     *
+     * @return void
+     */
+    public function testGetCachedCollection()
+    {
+        $driver = $this->getMockFormDriver();
+        $connection = $this->getMockBuilder(Connection::class)
+            ->setMethods(['connect'])
+            ->setConstructorArgs([[
+                'driver' => $driver,
+                'name' => 'default',
+                'cacheMetadata' => true,
+            ]])
+            ->getMock();
+
+        $schema = $connection->getSchemaCollection();
+        $this->assertInstanceOf(CachedCollection::class, $schema);
+        $this->assertSame('default_key', $schema->cacheKey('key'));
+
+        $driver = $this->getMockFormDriver();
+        $connection = $this->getMockBuilder(Connection::class)
+            ->setMethods(['connect'])
+            ->setConstructorArgs([[
+                'driver' => $driver,
+                'name' => 'default',
+                'cacheMetadata' => true,
+                'cacheKeyPrefix' => 'foo',
+            ]])
+            ->getMock();
+
+        $schema = $connection->getSchemaCollection();
+        $this->assertInstanceOf(CachedCollection::class, $schema);
+        $this->assertSame('foo_key', $schema->cacheKey('key'));
+    }
+
+    /**
      * Tests that allowed nesting of commit/rollback operations doesn't
      * throw any exceptions.
      *

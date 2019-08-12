@@ -44,7 +44,7 @@ class BodyParserMiddleware implements MiddlewareInterface
     /**
      * The HTTP methods to parse data on.
      *
-     * @var array
+     * @var string[]
      */
     protected $methods = ['PUT', 'POST', 'PATCH', 'DELETE'];
 
@@ -83,7 +83,7 @@ class BodyParserMiddleware implements MiddlewareInterface
     /**
      * Set the HTTP methods to parse request bodies on.
      *
-     * @param array $methods The methods to parse data on.
+     * @param string[] $methods The methods to parse data on.
      * @return $this
      */
     public function setMethods(array $methods)
@@ -118,7 +118,7 @@ class BodyParserMiddleware implements MiddlewareInterface
      * });
      * ```
      *
-     * @param array $types An array of content-type header values to match. eg. application/json
+     * @param string[] $types An array of content-type header values to match. eg. application/json
      * @param callable $parser The parser function. Must return an array of data to be inserted
      *   into the request.
      * @return $this
