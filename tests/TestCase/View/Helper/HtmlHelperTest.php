@@ -147,16 +147,24 @@ class HtmlHelperTest extends TestCase
 
         $result = $this->Html->link('Home', '/home', ['confirm' => 'Are you sure you want to do this?']);
         $expected = [
-            'a' => ['href' => '/home', 'onclick' => 'if (confirm(&quot;Are you sure you want to do this?&quot;)) { return true; } return false;'],
+            'a' => [
+                'href' => '/home',
+                'data-confirm-message' => 'Are you sure you want to do this?',
+                'onclick' => 'if (confirm(this.dataset.confirmMessage)) { return true; } return false;',
+            ],
             'Home',
             '/a',
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Html->setTemplates(['confirmJs' => 'if (confirm({{confirmMessage}})) { window.location="/";};']);
+        $this->Html->setTemplates(['confirmJs' => 'if (confirm(this.dataset.confirmMessage)) { window.location="/";};']);
         $result = $this->Html->link('Home', '/home', ['confirm' => 'Are you sure you want to do this?']);
         $expected = [
-            'a' => ['href' => '/home', 'onclick' => 'preg:/if \(confirm\(&quot;Are you sure you want to do this\?&quot;\)\) \{ window\.location=&quot;\/&quot;;\};/'],
+            'a' => [
+                'href' => '/home',
+                'data-confirm-message' => 'Are you sure you want to do this?',
+                'onclick' => 'preg:/if \(confirm\(this.dataset.confirmMessage\)\) \{ window\.location=&quot;\/&quot;;\};/',
+            ],
             'Home',
             '/a',
         ];
@@ -166,7 +174,11 @@ class HtmlHelperTest extends TestCase
 
         $result = $this->Html->link('Home', '/home', ['escape' => false, 'confirm' => 'Confirm\'s "nightmares"']);
         $expected = [
-            'a' => ['href' => '/home', 'onclick' => 'if (confirm(&quot;Confirm&#039;s \&quot;nightmares\&quot;&quot;)) { return true; } return false;'],
+            'a' => [
+                'href' => '/home',
+                'data-confirm-message' => 'Confirm&#039;s &quot;nightmares&quot;',
+                'onclick' => 'if (confirm(this.dataset.confirmMessage)) { return true; } return false;',
+            ],
             'Home',
             '/a',
         ];

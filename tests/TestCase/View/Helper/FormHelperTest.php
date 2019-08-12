@@ -6584,7 +6584,11 @@ class FormHelperTest extends TestCase
     public function testButtonWithConfirm()
     {
         $result = $this->Form->button('Hi', ['confirm' => 'Confirm me!']);
-        $expected = ['button' => ['type' => 'submit', 'onclick' => 'if (confirm(&quot;Confirm me!&quot;)) { return true; } return false;'], 'Hi', '/button'];
+        $expected = ['button' => [
+            'type' => 'submit',
+            'data-confirm-message' => 'Confirm me!',
+            'onclick' => 'if (confirm(this.dataset.confirmMessage)) { return true; } return false;',
+        ], 'Hi', '/button'];
         $this->assertHtml($expected, $result);
     }
 
@@ -6793,7 +6797,11 @@ class FormHelperTest extends TestCase
             ],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
             '/form',
-            'a' => ['href' => '#', 'onclick' => 'preg:/if \(confirm\(&quot;Confirm\?&quot;\)\) \{ document\.post_\w+\.submit\(\); \} event\.returnValue = false; return false;/'],
+            'a' => [
+                'href' => '#',
+                'data-confirm-message' => 'Confirm?',
+                'onclick' => 'preg:/if \(confirm\(this.dataset.confirmMessage\)\) \{ document\.post_\w+\.submit\(\); \} event\.returnValue = false; return false;/',
+            ],
             'Delete',
             '/a',
         ];
@@ -6811,13 +6819,17 @@ class FormHelperTest extends TestCase
             ],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
             '/form',
-            'a' => ['href' => '#', 'onclick' => "preg:/if \(confirm\(&quot;&#039;Confirm&#039;\\\\nthis \\\&quot;deletion\\\&quot;\?&quot;\)\) \{ document\.post_\w+\.submit\(\); \} event\.returnValue = false; return false;/"],
+            'a' => [
+                'href' => '#',
+                'data-confirm-message' => "&#039;Confirm&#039;\nthis &quot;deletion&quot;?",
+                'onclick' => "preg:/if \(confirm\(this.dataset.confirmMessage\)\) \{ document\.post_\w+\.submit\(\); \} event\.returnValue = false; return false;/",
+            ],
             'Delete',
             '/a',
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Form->setTemplates(['confirmJs' => 'if (confirm({{confirmMessage}})) { $(\'form[name="{{formName}}"]\').submit();};']);
+        $this->Form->setTemplates(['confirmJs' => 'if (confirm(this.dataset.confirmMessage)) { $(\'form[name="{{formName}}"]\').submit();};']);
         $result = $this->Form->postLink(
             'Delete',
             '/posts/delete/1',
@@ -6830,7 +6842,11 @@ class FormHelperTest extends TestCase
             ],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
             '/form',
-            'a' => ['href' => '#', 'onclick' => 'preg:/if \(confirm\("Confirm this deletion\?"\)\) \{ \$\(\'form\[name="post_\w+"\]\'\)\.submit\(\);\};/'],
+            'a' => [
+                'href' => '#',
+                'data-confirm-message' => 'Confirm this deletion?',
+                'onclick' => 'preg:/if \(confirm\(this.dataset.confirmMessage\)\) \{ \$\(\'form\[name="post_\w+"\]\'\)\.submit\(\);\};/',
+            ],
             'Delete',
             '/a',
         ];

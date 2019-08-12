@@ -1738,7 +1738,12 @@ class FormHelper extends Helper
         $confirmMessage = $options['confirm'];
         unset($options['confirm']);
         if ($confirmMessage) {
-            $options['onclick'] = $this->_confirm($confirmMessage, 'return true;', 'return false;', $options);
+            $confirm = $this->_confirm($confirmMessage, 'return true;', 'return false;', $options);
+            $options['data-confirm-message'] = $confirm['message'];
+            $options['onclick'] = $this->templater()->format('confirmJs', [
+                'confirmMessage' => $confirm['message'],
+                'confirm' => $confirm['js'],
+            ]);
         }
 
         return $this->widget('button', $options);
@@ -1885,15 +1890,17 @@ class FormHelper extends Helper
         $onClick = 'document.' . $formName . '.submit();';
         if ($confirmMessage) {
             $confirm = $this->_confirm($confirmMessage, $onClick, '', $options);
+            $onClick = $confirm['js'] . 'event.returnValue = false; return false;';
+            $onClick = $this->templater()->format('confirmJs', [
+                'confirmMessage' => $confirm['message'],
+                'formName' => $formName,
+                'confirm' => $onClick,
+            ]);
+            $options['data-confirm-message'] = $confirm['message'];
         } else {
-            $confirm = $onClick . ' ';
+            $onClick .= ' event.returnValue = false; return false;';
         }
-        $confirm .= 'event.returnValue = false; return false;';
-        $options['onclick'] = $this->templater()->format('confirmJs', [
-            'confirmMessage' => $this->_cleanConfirmMessage($confirmMessage),
-            'formName' => $formName,
-            'confirm' => $confirm,
-        ]);
+        $options['onclick'] = $onClick;
 
         $out .= $this->Html->link($title, $url, $options);
 
