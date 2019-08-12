@@ -172,7 +172,7 @@ class HtmlHelperTest extends TestCase
         $this->assertHtml($expected, $result);
         $this->Html->setTemplates(['confirmJs' => '{{confirm}}']);
 
-        $result = $this->Html->link('Home', '/home', ['escape' => false, 'confirm' => 'Confirm\'s "nightmares"']);
+        $result = $this->Html->link('Home', '/home', ['confirm' => 'Confirm\'s "nightmares"']);
         $expected = [
             'a' => [
                 'href' => '/home',

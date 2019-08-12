@@ -324,11 +324,11 @@ class HtmlHelper extends Helper
             unset($options['confirm']);
         }
         if ($confirmMessage) {
-            $confirm = $this->_confirm($confirmMessage, 'return true;', 'return false;', $options);
-            $options['data-confirm-message'] = $confirm['message'];
+            $confirm = $this->_confirm('return true;', 'return false;');
+            $options['data-confirm-message'] = $confirmMessage;
             $options['onclick'] = $templater->format('confirmJs', [
-                'confirmMessage' => $confirm['message'],
-                'confirm' => $confirm['js'],
+                'confirmMessage' => h($confirmMessage),
+                'confirm' => $confirm,
             ]);
         }
 

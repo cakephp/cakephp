@@ -131,25 +131,13 @@ class Helper implements EventListenerInterface
     /**
      * Returns a string to be used as onclick handler for confirm dialogs.
      *
-     * @param string $message Message to be displayed
      * @param string $okCode Code to be executed after user chose 'OK'
      * @param string $cancelCode Code to be executed after user chose 'Cancel'
-     * @param array $options Array of options
-     * @return array{message: string, js: string} Array containing message and Javascript code.
+     * @return string "onclick" JS code
      */
-    protected function _confirm(string $message, string $okCode, string $cancelCode, array $options = []): array
+    protected function _confirm(string $okCode, string $cancelCode): string
     {
-        /** @var string $message */
-        $message = h($message);
-        $js = "if (confirm(this.dataset.confirmMessage)) { {$okCode} } {$cancelCode}";
-        // We cannot change the key here in 3.x, but the behavior is inverted in this case
-        $escape = isset($options['escape']) && $options['escape'] === false;
-        if ($escape) {
-            /** @var string $js */
-            $js = h($js);
-        }
-
-        return compact('message', 'js');
+        return "if (confirm(this.dataset.confirmMessage)) { {$okCode} } {$cancelCode}";
     }
 
     /**

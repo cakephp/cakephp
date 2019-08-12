@@ -6593,6 +6593,14 @@ class FormHelperTest extends TestCase
             'onclick' => 'if (confirm(this.dataset.confirmMessage)) { return true; } return false;',
         ], 'Hi', '/button'];
         $this->assertHtml($expected, $result);
+
+        $result = $this->Form->button('Hi', ['confirm' => 'Confirm "me"!']);
+        $expected = ['button' => [
+            'type' => 'submit',
+            'data-confirm-message' => 'Confirm "me"!',
+            'onclick' => 'if (confirm(this.dataset.confirmMessage)) { return true; } return false;',
+        ], 'Hi', '/button'];
+        $this->assertHtml($expected, $result);
     }
 
     /**
@@ -6813,7 +6821,7 @@ class FormHelperTest extends TestCase
         $result = $this->Form->postLink(
             'Delete',
             '/posts/delete/1',
-            ['escape' => false, 'confirm' => "'Confirm'\nthis \"deletion\"?"]
+            ['confirm' => "'Confirm'\nthis \"deletion\"?"]
         );
         $expected = [
             'form' => [
