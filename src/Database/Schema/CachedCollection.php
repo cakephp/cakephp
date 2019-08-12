@@ -82,6 +82,7 @@ class CachedCollection extends Collection
         if (isset($config['cacheKeyPrefix'])) {
             $cachePrefix = $config['cacheKeyPrefix'];
         }
+
         return $cachePrefix . '_' . $name;
     }
 
