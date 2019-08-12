@@ -891,7 +891,7 @@ class HtmlHelper extends Helper
     /**
      * Returns a row of formatted and named TABLE headers.
      *
-     * @param array $names Array of tablenames. Each tablename also can be a key that points to an array with a set
+     * @param array $names Array of tablenames. Each tablename can be string, or array with name and an array with a set
      *     of attributes to its specific tag
      * @param array|null $trOptions HTML options for TR elements.
      * @param array|null $thOptions HTML options for TH elements.
@@ -903,16 +903,20 @@ class HtmlHelper extends Helper
         $out = [];
         foreach ($names as $arg) {
             if (!is_array($arg)) {
-                $out[] = $this->formatTemplate('tableheader', [
-                    'attrs' => $this->templater()->formatAttributes($thOptions),
-                    'content' => $arg
-                ]);
+                $content = $arg;
+                $attrs = $thOptions;
+            } elseif (isset($arg[0], $arg[1])) {
+                $content = $arg[0];
+                $attrs = $arg[1];
             } else {
-                $out[] = $this->formatTemplate('tableheader', [
-                    'attrs' => $this->templater()->formatAttributes(current($arg)),
-                    'content' => key($arg)
-                ]);
+                $content = key($arg);
+                $attrs = current($arg);
             }
+
+            $out[] = $this->formatTemplate('tableheader', [
+                'attrs' => $this->templater()->formatAttributes($attrs),
+                'content' => $content
+            ]);
         }
 
         return $this->tableRow(implode(' ', $out), (array)$trOptions);
