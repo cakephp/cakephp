@@ -79,6 +79,7 @@ class CommandTest extends TestCase
         $command = new Command();
         $this->assertSame($command, $command->setName('routes show'));
         $this->assertSame('routes show', $command->getName());
+        $this->assertSame('routes', $command->getRootName());
     }
 
     /**
