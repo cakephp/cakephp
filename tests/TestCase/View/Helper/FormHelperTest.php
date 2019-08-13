@@ -382,10 +382,8 @@ class FormHelperTest extends TestCase
             'collection' => [$collection, 'Cake\View\Form\EntityContext'],
             'empty_collection' => [$emptyCollection, 'Cake\View\Form\NullContext'],
             'array' => [$data, 'Cake\View\Form\ArrayContext'],
-            'array_object' => [$arrayObject, 'Cake\View\Form\NullContext'],
             'form' => [$form, 'Cake\View\Form\FormContext'],
             'none' => [null, 'Cake\View\Form\NullContext'],
-            'false' => [false, 'Cake\View\Form\NullContext'],
             'custom' => [$custom, get_class($custom)],
         ];
     }
@@ -427,7 +425,7 @@ class FormHelperTest extends TestCase
     public function testCreateFile()
     {
         $encoding = strtolower(Configure::read('App.encoding'));
-        $result = $this->Form->create(false, ['type' => 'file']);
+        $result = $this->Form->create(null, ['type' => 'file']);
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/articles/add',
@@ -448,7 +446,7 @@ class FormHelperTest extends TestCase
     public function testCreateGet()
     {
         $encoding = strtolower(Configure::read('App.encoding'));
-        $result = $this->Form->create(false, ['type' => 'get']);
+        $result = $this->Form->create(null, ['type' => 'get']);
         $expected = ['form' => [
             'method' => 'get', 'action' => '/articles/add',
             'accept-charset' => $encoding,
@@ -466,7 +464,7 @@ class FormHelperTest extends TestCase
     public function testCreateExplicitMethodEnctype()
     {
         $encoding = strtolower(Configure::read('App.encoding'));
-        $result = $this->Form->create(false, [
+        $result = $this->Form->create(null, [
             'type' => 'get',
             'method' => 'put',
             'enctype' => 'multipart/form-data',
@@ -631,7 +629,7 @@ class FormHelperTest extends TestCase
     public function testCreateTypeOptions($type, $method, $override)
     {
         $encoding = strtolower(Configure::read('App.encoding'));
-        $result = $this->Form->create(false, ['type' => $type]);
+        $result = $this->Form->create(null, ['type' => $type]);
         $expected = [
             'form' => [
                 'method' => $method, 'action' => '/articles/add',
@@ -786,7 +784,7 @@ class FormHelperTest extends TestCase
      */
     public function testCreateNoUrl()
     {
-        $result = $this->Form->create(false, ['url' => false]);
+        $result = $this->Form->create(null, ['url' => false]);
         $expected = [
             'form' => [
                 'method' => 'post',
@@ -812,7 +810,7 @@ class FormHelperTest extends TestCase
         $this->View->setRequest($this->View->getRequest()
             ->withParam('controller', 'users'));
 
-        $result = $this->Form->create(false, ['url' => ['action' => 'login']]);
+        $result = $this->Form->create(null, ['url' => ['action' => 'login']]);
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/login',
@@ -829,7 +827,7 @@ class FormHelperTest extends TestCase
             ['controller' => 'articles', 'action' => 'myaction'],
             ['_name' => 'my-route']
         );
-        $result = $this->Form->create(false, ['url' => ['_name' => 'my-route']]);
+        $result = $this->Form->create(null, ['url' => ['_name' => 'my-route']]);
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/new-article',
@@ -1005,7 +1003,7 @@ class FormHelperTest extends TestCase
     {
         $encoding = strtolower(Configure::read('App.encoding'));
         $this->View->setRequest($this->View->getRequest()->withParam('controller', 'contact_test'));
-        $result = $this->Form->create(false, [
+        $result = $this->Form->create(null, [
             'type' => 'get', 'url' => ['controller' => 'contact_test'],
         ]);
 
@@ -1481,7 +1479,7 @@ class FormHelperTest extends TestCase
     {
         $this->View->setRequest($this->View->getRequest()->withParam('_csrfToken', 'testKey'));
 
-        $this->Form->create('Addresses');
+        $this->Form->create();
         $this->Form->button('Test', ['type' => 'submit', 'name' => 'Address[button]']);
         $result = $this->Form->unlockField();
         $this->assertEquals(['Address.button'], $result);
@@ -1511,7 +1509,7 @@ class FormHelperTest extends TestCase
     {
         $this->View->setRequest($this->View->getRequest()->withParam('_Token', 'testKey'));
 
-        $this->Form->create(false);
+        $this->Form->create();
         $result = $this->Form->submit('save.png');
         $expected = [
             'div' => ['class' => 'submit'],
@@ -2427,12 +2425,12 @@ class FormHelperTest extends TestCase
         ]));
 
         $this->Form->unlockField('Contact.id');
-        $this->Form->create('Contact');
+        $this->Form->create();
         $this->Form->hidden('Contact.id', ['value' => 1]);
         $this->assertEmpty($this->Form->fields, 'Field should be unlocked');
         $this->Form->end();
 
-        $this->Form->create('Contact');
+        $this->Form->create(null);
         $this->Form->hidden('Contact.id', ['value' => 1]);
         $this->assertEquals(1, $this->Form->fields['Contact.id'], 'Hidden input should be secured.');
     }
@@ -3155,7 +3153,7 @@ class FormHelperTest extends TestCase
      */
     public function testCreateIdPrefix()
     {
-        $this->Form->create(false, ['idPrefix' => 'prefix']);
+        $this->Form->create(null, ['idPrefix' => 'prefix']);
 
         $result = $this->Form->control('field');
         $expected = [
@@ -3447,7 +3445,7 @@ class FormHelperTest extends TestCase
             ->setConstructorArgs([new View()])
             ->getMock();
 
-        $this->Form->create(false, ['idPrefix' => 'prefix']);
+        $this->Form->create(null, ['idPrefix' => 'prefix']);
 
         $this->Form->expects($this->once())->method('datetime')
             ->with('prueba', [
@@ -4096,7 +4094,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Form->create(false);
+        $this->Form->create();
         $expected = [
             'fieldset' => [],
             ['div' => ['class' => 'input text']],
@@ -6954,7 +6952,7 @@ class FormHelperTest extends TestCase
         $hash .= '%3A';
         $this->View->setRequest($this->View->getRequest()->withParam('_Token.key', 'test'));
 
-        $this->Form->create('Post', ['url' => ['action' => 'add']]);
+        $this->Form->create(null, ['url' => ['action' => 'add']]);
         $this->Form->control('title');
         $this->Form->postLink('Delete', '/posts/delete/1', ['block' => true]);
         $result = $this->View->fetch('postLink');
