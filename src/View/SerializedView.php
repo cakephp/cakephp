@@ -21,6 +21,7 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\View\Exception\SerializationFailureException;
 use Exception;
+use TypeError;
 
 /**
  * Parent class for view classes generating serialized outputs like JsonView and XmlView.
@@ -122,7 +123,7 @@ abstract class SerializedView extends View
         if ($serialize !== false) {
             try {
                 return $this->_serialize($serialize);
-            } catch (Exception $e) {
+            } catch (Exception | TypeError $e) {
                 throw new SerializationFailureException(
                     'Serialization of View data failed.',
                     null,
