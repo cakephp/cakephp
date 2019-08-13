@@ -155,7 +155,7 @@ class Curl implements AdapterInterface
      * @param \Psr\Http\Message\RequestInterface $request The request to get a protocol version for.
      * @return int
      */
-    protected function getProtocolVersion(RequestInterface $request)
+    protected function getProtocolVersion(RequestInterface $request): int
     {
         switch ($request->getProtocolVersion()) {
             case '1.0':
@@ -177,7 +177,7 @@ class Curl implements AdapterInterface
      *
      * @param resource $handle Curl handle
      * @param string $responseData string The response data from curl_exec
-     * @return array
+     * @return \Cake\Http\Client\Response[]
      */
     protected function createResponse($handle, $responseData): array
     {

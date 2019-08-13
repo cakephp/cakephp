@@ -534,7 +534,7 @@ class Hash
      * @param array $data Source array from which to extract the data
      * @param array $paths An array containing one or more Hash::extract()-style key paths
      * @param string $format Format string into which values will be inserted, see sprintf()
-     * @return array|null An array of strings extracted from `$path` and formatted with `$format`
+     * @return string[]|null An array of strings extracted from `$path` and formatted with `$format`
      * @link https://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::format
      * @see sprintf()
      * @see \Cake\Utility\Hash::extract()
@@ -1181,7 +1181,7 @@ class Hash
      *
      * @param array $data The data to nest.
      * @param array $options Options are:
-     * @return array of results, nested
+     * @return array[] of results, nested
      * @see \Cake\Utility\Hash::extract()
      * @throws \InvalidArgumentException When providing invalid data.
      * @link https://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::nest

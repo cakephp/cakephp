@@ -104,7 +104,7 @@ if (!function_exists('breakpoint')) {
      * ```
      * @return string|null
      */
-    function breakpoint()
+    function breakpoint(): ?string
     {
         if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') && class_exists('\Psy\Shell')) {
             return 'extract(\Psy\Shell::debug(get_defined_vars(), isset($this) ? $this : null));';
@@ -113,6 +113,8 @@ if (!function_exists('breakpoint')) {
             'psy/psysh must be installed and you must be in a CLI environment to use the breakpoint function',
             E_USER_WARNING
         );
+
+        return null;
     }
 }
 
@@ -128,7 +130,7 @@ if (!function_exists('dd')) {
      * @return void
      * @link https://book.cakephp.org/3.0/en/development/debugging.html#basic-debugging
      */
-    function dd($var, $showHtml = null)
+    function dd($var, $showHtml = null): void
     {
         if (!Configure::read('debug')) {
             return;

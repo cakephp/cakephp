@@ -223,7 +223,7 @@ class RouteCollection
      * and newer style urls containing '_name'
      *
      * @param array $url The url to match.
-     * @return array The set of names of the url
+     * @return string[] The set of names of the url
      */
     protected function _getNames(array $url): array
     {

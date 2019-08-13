@@ -635,7 +635,7 @@ class FormHelper extends Helper
      * it from the list of fields.
      *
      * @param string|null $name The dot separated name for the field.
-     * @return array|null Either null, or the list of fields.
+     * @return string[]|null Either null, or the list of fields.
      * @link https://book.cakephp.org/3.0/en/views/helpers/form.html#working-with-securitycomponent
      */
     public function unlockField(?string $name = null): ?array
@@ -1523,7 +1523,7 @@ class FormHelper extends Helper
      *
      * @param string $fieldName Name of a field, like this "modelname.fieldname"
      * @param array $options Array of HTML attributes.
-     * @return string|array An HTML text input element.
+     * @return string[]|string An HTML text input element.
      * @link https://book.cakephp.org/3.0/en/views/helpers/form.html#creating-checkboxes
      */
     public function checkbox(string $fieldName, array $options = [])
@@ -2381,7 +2381,7 @@ class FormHelper extends Helper
      * fieldname parts like ['Model', 'field'] is returned.
      *
      * @param string $name The form inputs name attribute.
-     * @return array Array of field name params like ['Model.field'] or
+     * @return string[] Array of field name params like ['Model.field'] or
      *   ['Model', 'field'] for array fields or empty array if $name is empty.
      */
     protected function _secureFieldName(string $name): array

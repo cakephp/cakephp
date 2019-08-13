@@ -212,7 +212,7 @@ class App
      * Will return the full path to the cache engines package.
      *
      * @param string $type Package type.
-     * @return array Full path to package
+     * @return string[] Full path to package
      */
     public static function core(string $type): array
     {

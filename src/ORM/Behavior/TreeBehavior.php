@@ -625,10 +625,10 @@ class TreeBehavior extends Behavior
      *
      * @param \Cake\Datasource\EntityInterface $node The node to move
      * @param int|true $number How many places to move the node, or true to move to first position
+     * @return \Cake\Datasource\EntityInterface $node The node after being moved or false on failure
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
-     * @return \Cake\Datasource\EntityInterface|false $node The node after being moved or false on failure
      */
-    protected function _moveUp(EntityInterface $node, $number)
+    protected function _moveUp(EntityInterface $node, $number): EntityInterface
     {
         $config = $this->getConfig();
         [$parent, $left, $right] = [$config['parent'], $config['left'], $config['right']];
@@ -715,10 +715,10 @@ class TreeBehavior extends Behavior
      *
      * @param \Cake\Datasource\EntityInterface $node The node to move
      * @param int|true $number How many places to move the node, or true to move to last position
+     * @return \Cake\Datasource\EntityInterface $node The node after being moved or false on failure
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
-     * @return \Cake\Datasource\EntityInterface|false $node The node after being moved or false on failure
      */
-    protected function _moveDown(EntityInterface $node, $number)
+    protected function _moveDown(EntityInterface $node, $number): EntityInterface
     {
         $config = $this->getConfig();
         [$parent, $left, $right] = [$config['parent'], $config['left'], $config['right']];

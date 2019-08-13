@@ -1479,7 +1479,7 @@ class View implements EventDispatcherInterface
      * and layouts.
      *
      * @param string $basePath Base path on which to get the prefixed one.
-     * @return array Array with all the templates paths.
+     * @return string[] Array with all the templates paths.
      */
     protected function _getSubPaths(string $basePath): array
     {

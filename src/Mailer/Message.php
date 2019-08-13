@@ -1229,7 +1229,7 @@ class Message implements JsonSerializable, Serializable
     /**
      * Generate full message.
      *
-     * @return array
+     * @return string[]
      */
     protected function generateMessage(): array
     {

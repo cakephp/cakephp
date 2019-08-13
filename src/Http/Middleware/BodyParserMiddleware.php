@@ -96,7 +96,7 @@ class BodyParserMiddleware implements MiddlewareInterface
     /**
      * Get the HTTP methods to parse request bodies on.
      *
-     * @return array
+     * @return string[]
      */
     public function getMethods(): array
     {
