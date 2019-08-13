@@ -57,16 +57,6 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
      */
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
-        if (!$args->getOption('xml')) {
-            $io->out('<info>Current Paths:</info>', 2);
-            $io->out('* app:  ' . Configure::read('App.dir'));
-            $io->out('* root: ' . rtrim(ROOT, DIRECTORY_SEPARATOR));
-            $io->out('* core: ' . rtrim(CORE_PATH, DIRECTORY_SEPARATOR));
-            $io->out('');
-
-            $io->out('<info>Available Commands:</info>', 2);
-        }
-
         $commands = $this->commands->getIterator();
         $commands->ksort();
 
@@ -122,8 +112,10 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
 
             $grouped[$prefix][] = $shortestName;
         }
-
         ksort($grouped);
+
+        $this->outputPaths($io);
+        $io->out('<info>Available Commands:</info>', 2);
 
         foreach ($grouped as $prefix => $names) {
             $io->out("<info>{$prefix}</info>:");
@@ -133,9 +125,39 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
             }
             $io->out('');
         }
+        $root = $this->getRootName();
 
-        $io->out('To run a command, type <info>`cake command_name [args|options]`</info>');
-        $io->out('To get help on a specific command, type <info>`cake command_name --help`</info>', 2);
+        $io->out("To run a command, type <info>`{$root} command_name [args|options]`</info>");
+        $io->out("To get help on a specific command, type <info>`{$root} command_name --help`</info>", 2);
+    }
+
+    /**
+     * Output relevant paths if defined
+     *
+     * @param \Cake\Console\ConsoleIo $io IO object.
+     * @return void
+     */
+    protected function outputPaths(ConsoleIo $io): void
+    {
+        $paths = [];
+        if (Configure::check('App.dir')) {
+            // Extra space is to align output
+            $paths['app'] = ' ' . Configure::read('App.dir');
+        }
+        if (defined('ROOT')) {
+            $paths['root'] = rtrim(ROOT, DIRECTORY_SEPARATOR);
+        }
+        if (defined('CORE_PATH')) {
+            $paths['core'] = rtrim(CORE_PATH, DIRECTORY_SEPARATOR);
+        }
+        if (!count($paths)) {
+            return;
+        }
+        $io->out('<info>Current Paths:</info>', 2);
+        foreach ($paths as $key => $value) {
+            $io->out("* {$key}: {$value}");
+        }
+        $io->out('');
     }
 
     /**
