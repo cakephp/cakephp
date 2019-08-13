@@ -1718,12 +1718,11 @@ class FormHelper extends Helper
     /**
      * Creates a `<button>` tag.
      *
-     * The type attribute defaults to `type="submit"`
-     * You can change it to a different value by using `$options['type']`.
-     *
      * ### Options:
      *
-     * - `escape` - HTML entity encode the $title of the button. Defaults to false.
+     * - `type` - Value for "type" attribute of button. Defaults to "submit".
+     * - `escapeTitle` - HTML entity encode the title of the button. Defaults to false.
+     * - `escape` - HTML entity encode the attributes of button tag. Defaults to true.
      * - `confirm` - Confirm message to show. Form execution will only continue if confirmed then.
      *
      * @param string $title The button's caption. Not automatically HTML encoded
@@ -1733,7 +1732,13 @@ class FormHelper extends Helper
      */
     public function button(string $title, array $options = []): string
     {
-        $options += ['type' => 'submit', 'escape' => false, 'secure' => false, 'confirm' => null];
+        $options += [
+            'type' => 'submit',
+            'escapeTitle' => false,
+            'escape' => true,
+            'secure' => false,
+            'confirm' => null,
+        ];
         $options['text'] = $title;
 
         $confirmMessage = $options['confirm'];
