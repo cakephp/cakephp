@@ -136,8 +136,7 @@ class ContextFactory
      * @param \Cake\Http\ServerRequest $request Request instance.
      * @param array $data The data to get a context provider for.
      * @return \Cake\View\Form\ContextInterface Context provider.
-     * @throws \RuntimeException When a context instace cannot be generated for
-     *   given entity or context class does not implement the ContextInterface.
+     * @throws \RuntimeException When a context instace cannot be generated for given entity.
      */
     public function get(ServerRequest $request, array $data = []): ContextInterface
     {
@@ -150,17 +149,11 @@ class ContextFactory
                 break;
             }
         }
+
         if (!isset($context)) {
             throw new RuntimeException(sprintf(
                 'No context provider found for entity of type `%s`.',
                 getTypeName($data['entity'])
-            ));
-        }
-        if (!($context instanceof ContextInterface)) {
-            throw new RuntimeException(sprintf(
-                'Context providers must return object implementing %s. Got "%s" instead.',
-                ContextInterface::class,
-                getTypeName($context)
             ));
         }
 

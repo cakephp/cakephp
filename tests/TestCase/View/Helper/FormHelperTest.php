@@ -349,8 +349,8 @@ class FormHelperTest extends TestCase
      */
     public function testAddContextProviderInvalid()
     {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Context providers must return object implementing Cake\View\Form\ContextInterface. Got "stdClass" instead.');
+        $this->expectException(\TypeError::class);
+        $this->expectExceptionMessage('Return value of Cake\View\Form\ContextFactory::get() must implement interface Cake\View\Form\ContextInterface, instance of stdClass returned');
         $context = 'My data';
         $this->Form->addContextProvider('test', function ($request, $data) use ($context) {
             return new \StdClass();
