@@ -107,7 +107,7 @@ class BinaryType extends Type implements TypeInterface
     }
 
     /**
-     * Marshalls flat data into PHP objects.
+     * Marshals flat data into PHP objects.
      *
      * Most useful for converting request data into PHP objects
      * that make sense for the rest of the ORM/Database layers.
