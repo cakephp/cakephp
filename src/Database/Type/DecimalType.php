@@ -81,7 +81,6 @@ class DecimalType extends BaseType implements BatchCastingInterface
      * @param mixed $value The value to convert.
      * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
      * @return string|null
-     * @throws \Cake\Core\Exception\Exception
      */
     public function toPHP($value, DriverInterface $driver): ?string
     {
@@ -152,6 +151,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
      *
      * @param bool $enable Whether or not to enable
      * @return $this
+     * @throws \RuntimeException
      */
     public function useLocaleParser(bool $enable = true)
     {
@@ -181,6 +181,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
      */
     protected function _parseValue(string $value): string
     {
+        /* @var \Cake\I18n\Number $class */
         $class = static::$numberClass;
 
         return (string)$class::parseFloat($value);
