@@ -105,7 +105,7 @@ class IntegerType extends Type implements TypeInterface, BatchCastingInterface
     /**
      * {@inheritDoc}
      *
-     * @return array
+     * @return int[]
      */
     public function manyToPHP(array $values, array $fields, Driver $driver)
     {
