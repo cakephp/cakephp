@@ -181,7 +181,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
      */
     protected function _parseValue(string $value): string
     {
-        /* @var \Cake\I18n\Number $class */
+        /** @var \Cake\I18n\Number $class */
         $class = static::$numberClass;
 
         return (string)$class::parseFloat($value);
