@@ -34,8 +34,8 @@ class ButtonWidget extends BasicWidget
      *
      * - `text` The text of the button. Unlike all other form controls, buttons
      *   do not escape their contents by default.
-     * - `escapeTitle` Set to true to enable escaping of button text.
-     * - `escape` Set to fase to disable escaping of attributes.
+     * - `escapeTitle` Set to false to disable escaping of button text.
+     * - `escape` Set to false to disable escaping of attributes.
      * - `type` The button type defaults to 'submit'.
      *
      * Any other keys provided in $data will be converted into HTML attributes.
@@ -49,7 +49,7 @@ class ButtonWidget extends BasicWidget
         $data += [
             'text' => '',
             'type' => 'submit',
-            'escapeTitle' => false,
+            'escapeTitle' => true,
             'escape' => true,
             'templateVars' => [],
         ];

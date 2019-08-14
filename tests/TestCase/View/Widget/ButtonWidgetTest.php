@@ -88,16 +88,16 @@ class ButtonWidgetTest extends TestCase
         $result = $button->render($data, $this->context);
         $expected = [
             'button' => ['type' => 'submit', 'onclick' => '&lt;escape me&gt;'],
-            'Some <value>',
+            'Some &lt;value&gt;',
             '/button',
         ];
         $this->assertHtml($expected, $result);
 
-        $data['escapeTitle'] = true;
+        $data['escapeTitle'] = false;
         $result = $button->render($data, $this->context);
         $expected = [
             'button' => ['type' => 'submit', 'onclick' => '&lt;escape me&gt;'],
-            'Some &lt;value&gt;',
+            'Some <value>',
             '/button',
         ];
         $this->assertHtml($expected, $result);

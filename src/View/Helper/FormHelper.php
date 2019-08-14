@@ -1721,7 +1721,7 @@ class FormHelper extends Helper
      * ### Options:
      *
      * - `type` - Value for "type" attribute of button. Defaults to "submit".
-     * - `escapeTitle` - HTML entity encode the title of the button. Defaults to false.
+     * - `escapeTitle` - HTML entity encode the title of the button. Defaults to true.
      * - `escape` - HTML entity encode the attributes of button tag. Defaults to true.
      * - `confirm` - Confirm message to show. Form execution will only continue if confirmed then.
      *
@@ -1734,7 +1734,7 @@ class FormHelper extends Helper
     {
         $options += [
             'type' => 'submit',
-            'escapeTitle' => false,
+            'escapeTitle' => true,
             'escape' => true,
             'secure' => false,
             'confirm' => null,

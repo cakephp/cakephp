@@ -6539,15 +6539,15 @@ class FormHelperTest extends TestCase
         $expected = ['button' => ['type' => 'submit'], 'Hi', '/button'];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Form->button('Clear Form >', ['type' => 'reset']);
+        $result = $this->Form->button('Clear Form >', ['type' => 'reset', 'escapeTitle' => false]);
         $expected = ['button' => ['type' => 'reset'], 'Clear Form >', '/button'];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Form->button('Clear Form >', ['type' => 'reset', 'id' => 'clearForm']);
+        $result = $this->Form->button('Clear Form >', ['type' => 'reset', 'id' => 'clearForm', 'escapeTitle' => false]);
         $expected = ['button' => ['type' => 'reset', 'id' => 'clearForm'], 'Clear Form >', '/button'];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Form->button('<Clear Form>', ['type' => 'reset', 'escapeTitle' => true]);
+        $result = $this->Form->button('<Clear Form>', ['type' => 'reset']);
         $expected = ['button' => ['type' => 'reset'], '&lt;Clear Form&gt;', '/button'];
         $this->assertHtml($expected, $result);
 
