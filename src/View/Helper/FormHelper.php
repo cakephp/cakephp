@@ -1413,8 +1413,9 @@ class FormHelper extends Helper
             $options['templateVars']['customValidityMessage'] = $message;
 
             if ($this->getConfig('autoSetCustomValidity')) {
+                $options['data-validity-message'] = $message;
                 $options['oninvalid'] = "this.setCustomValidity(''); "
-                    . "if (!this.value) this.setCustomValidity('$message')";
+                    . "if (!this.value) this.setCustomValidity(this.dataset.validityMessage)";
                 $options['oninput'] = "this.setCustomValidity('')";
             }
         }
@@ -1717,12 +1718,11 @@ class FormHelper extends Helper
     /**
      * Creates a `<button>` tag.
      *
-     * The type attribute defaults to `type="submit"`
-     * You can change it to a different value by using `$options['type']`.
-     *
      * ### Options:
      *
-     * - `escape` - HTML entity encode the $title of the button. Defaults to false.
+     * - `type` - Value for "type" attribute of button. Defaults to "submit".
+     * - `escapeTitle` - HTML entity encode the title of the button. Defaults to true.
+     * - `escape` - HTML entity encode the attributes of button tag. Defaults to true.
      * - `confirm` - Confirm message to show. Form execution will only continue if confirmed then.
      *
      * @param string $title The button's caption. Not automatically HTML encoded
@@ -1732,13 +1732,24 @@ class FormHelper extends Helper
      */
     public function button(string $title, array $options = []): string
     {
-        $options += ['type' => 'submit', 'escape' => false, 'secure' => false, 'confirm' => null];
+        $options += [
+            'type' => 'submit',
+            'escapeTitle' => true,
+            'escape' => true,
+            'secure' => false,
+            'confirm' => null,
+        ];
         $options['text'] = $title;
 
         $confirmMessage = $options['confirm'];
         unset($options['confirm']);
         if ($confirmMessage) {
-            $options['onclick'] = $this->_confirm($confirmMessage, 'return true;', 'return false;', $options);
+            $confirm = $this->_confirm('return true;', 'return false;');
+            $options['data-confirm-message'] = $confirmMessage;
+            $options['onclick'] = $this->templater()->format('confirmJs', [
+                'confirmMessage' => h($confirmMessage),
+                'confirm' => $confirm,
+            ]);
         }
 
         return $this->widget('button', $options);
@@ -1884,16 +1895,18 @@ class FormHelper extends Helper
         $url = '#';
         $onClick = 'document.' . $formName . '.submit();';
         if ($confirmMessage) {
-            $confirm = $this->_confirm($confirmMessage, $onClick, '', $options);
+            $onClick = $this->_confirm($onClick, '');
+            $onClick = $onClick . 'event.returnValue = false; return false;';
+            $onClick = $this->templater()->format('confirmJs', [
+                'confirmMessage' => h($confirmMessage),
+                'formName' => $formName,
+                'confirm' => $onClick,
+            ]);
+            $options['data-confirm-message'] = $confirmMessage;
         } else {
-            $confirm = $onClick . ' ';
+            $onClick .= ' event.returnValue = false; return false;';
         }
-        $confirm .= 'event.returnValue = false; return false;';
-        $options['onclick'] = $this->templater()->format('confirmJs', [
-            'confirmMessage' => $this->_cleanConfirmMessage($confirmMessage),
-            'formName' => $formName,
-            'confirm' => $confirm,
-        ]);
+        $options['onclick'] = $onClick;
 
         $out .= $this->Html->link($title, $url, $options);
 
