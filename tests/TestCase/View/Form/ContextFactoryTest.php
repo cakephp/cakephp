@@ -28,7 +28,10 @@ class ContextFactoryTest extends TestCase
     public function testGetException()
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('No context provider found for entity of type `boolean`.');
+        $this->expectExceptionMessage(
+            'No context provider found for value of type `boolean`.'
+            . ' Use `null` as 1st argument of FormHelper::create() to create a context-less form.'
+        );
 
         $factory = new ContextFactory();
         $factory->get(new ServerRequest(), ['entity' => false]);
