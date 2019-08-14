@@ -141,7 +141,7 @@ class DecimalType extends Type implements TypeInterface, BatchCastingInterface
     }
 
     /**
-     * Marshalls request data into PHP floats.
+     * Marshals request data into PHP floats.
      *
      * @param mixed $value The value to convert.
      * @return mixed Converted value.
