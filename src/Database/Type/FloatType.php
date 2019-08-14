@@ -102,7 +102,7 @@ class FloatType extends Type implements TypeInterface, BatchCastingInterface
     /**
      * {@inheritDoc}
      *
-     * @return array
+     * @return float[]
      */
     public function manyToPHP(array $values, array $fields, Driver $driver)
     {
