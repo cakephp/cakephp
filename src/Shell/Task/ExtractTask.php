@@ -385,6 +385,9 @@ class ExtractTask extends Shell
                 }
             }
             unset($allTokens);
+            $this->_parse(array('Form', 'input'), array('singular'));
+            $this->_parse(array('Form', 'radio'), array('singular'));
+            $this->_parse(array('Paginator', 'sort'), array('singular'));
             $this->_parse('__', ['singular']);
             $this->_parse('__n', ['singular', 'plural']);
             $this->_parse('__d', ['domain', 'singular']);
@@ -422,6 +425,21 @@ class ExtractTask extends Shell
             }
 
             list($type, $string, $line) = $countToken;
+            if (($type == T_OBJECT_OPERATOR) && is_array($functionName) && isset($this->_tokens[$count + 1][1], $this->_tokens[$count + 3][1], $this->_tokens[$count + 5][1])) {
+                if (($this->_tokens[$count + 1][1] === $functionName[0]) && ($this->_tokens[$count + 3][1] === $functionName[1])) {
+                    if ($this->_tokens[$i = $count + 7][0] == T_ARRAY || $this->_tokens[$i = $count + 7][0] == '[') {
+                        while ($this->_tokens[$i] !== ')') {
+                            ++$i;
+                            if (is_array($this->_tokens[$i]) && $this->_tokens[$i][0] == T_CONSTANT_ENCAPSED_STRING && preg_match('/label|legend/', $this->_tokens[$i][1])) {
+                                $count++;
+                                continue 2;
+                            }
+                        }
+                    }
+                    $this->_addTranslation('LC_MESSAGES', 'default', $this->_formatLabel($this->_formatString($this->_tokens[$count + 5][1])), array('file' => $this->_file, 'line' => $line));
+                }
+            }
+
             if (($type == T_STRING) && ($string === $functionName) && ($firstParenthesis === '(')) {
                 $position = $count;
                 $depth = 0;
@@ -641,6 +659,26 @@ class ExtractTask extends Shell
         }
 
         return $strings;
+    }
+
+    /**
+     * Format a label from a FormHelper::input(), ::radio() or PaginatorHelper::sort() field name
+     * to be added as a translatable string
+     *
+     * @param string $fieldName Field name label to format
+     * @return string Formatted string
+     */
+    protected function _formatLabel($fieldName) {
+        if (strpos($fieldName, '.') !== false) {
+            $fieldElements = explode('.', $fieldName);
+            $text = array_pop($fieldElements);
+        } else {
+            $text = $fieldName;
+        }
+        if (substr($text, -3) === '_id') {
+            $text = substr($text, 0, -3);
+        }
+        return Inflector::humanize(Inflector::underscore($text));
     }
 
     /**
