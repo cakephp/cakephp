@@ -33,11 +33,16 @@ class JsonType extends BaseType implements BatchCastingInterface
      * @param mixed $value The value to convert.
      * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
      * @return string|null
+     * @throws \InvalidArgumentException
      */
     public function toDatabase($value, DriverInterface $driver): ?string
     {
         if (is_resource($value)) {
             throw new InvalidArgumentException('Cannot convert a resource value to JSON');
+        }
+
+        if ($value === null) {
+            return null;
         }
 
         return json_encode($value);
