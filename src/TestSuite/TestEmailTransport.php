@@ -19,6 +19,7 @@ namespace Cake\TestSuite;
 use Cake\Mailer\AbstractTransport;
 use Cake\Mailer\Message;
 use Cake\Mailer\TransportFactory;
+use Cake\Mailer\Transport\DebugTransport;
 
 /**
  * TestEmailTransport
@@ -27,7 +28,7 @@ use Cake\Mailer\TransportFactory;
  *
  * @see \Cake\TestSuite\EmailTrait
  */
-class TestEmailTransport extends AbstractTransport
+class TestEmailTransport extends DebugTransport
 {
     /**
      * @var array

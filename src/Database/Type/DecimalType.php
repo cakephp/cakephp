@@ -49,7 +49,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
      *
      * @param mixed $value The value to convert.
      * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
-     * @return mixed
+     * @return string|float|int|null
      * @throws \InvalidArgumentException
      */
     public function toDatabase($value, DriverInterface $driver)

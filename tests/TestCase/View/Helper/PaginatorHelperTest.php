@@ -3064,38 +3064,38 @@ class PaginatorHelperTest extends TestCase
             // Verifies that no next and prev links are created for single page results.
             [1, false, false, 1, [], ''],
             // Verifies that first and last pages are created for single page results.
-            [1, false, false, 1, ['first' => true, 'last' => true], '<link href="http://localhost/index" rel="first"/>' .
-                '<link href="http://localhost/index" rel="last"/>'],
+            [1, false, false, 1, ['first' => true, 'last' => true], '<link href="http://localhost/index?foo=bar" rel="first"/>' .
+                '<link href="http://localhost/index?foo=bar" rel="last"/>'],
             // Verifies that first page is created for single page results.
-            [1, false, false, 1, ['first' => true], '<link href="http://localhost/index" rel="first"/>'],
+            [1, false, false, 1, ['first' => true], '<link href="http://localhost/index?foo=bar" rel="first"/>'],
             // Verifies that last page is created for single page results.
-            [1, false, false, 1, ['last' => true], '<link href="http://localhost/index" rel="last"/>'],
+            [1, false, false, 1, ['last' => true], '<link href="http://localhost/index?foo=bar" rel="last"/>'],
             // Verifies that page 1 only has a next link.
-            [1, false, true, 2, [], '<link href="http://localhost/index?page=2" rel="next"/>'],
+            [1, false, true, 2, [], '<link href="http://localhost/index?foo=bar&amp;page=2" rel="next"/>'],
             // Verifies that page 1 only has next, first and last link.
-            [1, false, true, 2, ['first' => true, 'last' => true], '<link href="http://localhost/index?page=2" rel="next"/>' .
-                '<link href="http://localhost/index" rel="first"/>' .
-                '<link href="http://localhost/index?page=2" rel="last"/>'],
+            [1, false, true, 2, ['first' => true, 'last' => true], '<link href="http://localhost/index?foo=bar&amp;page=2" rel="next"/>' .
+                '<link href="http://localhost/index?foo=bar" rel="first"/>' .
+                '<link href="http://localhost/index?foo=bar&amp;page=2" rel="last"/>'],
             // Verifies that page 1 only has next and first link.
-            [1, false, true, 2, ['first' => true], '<link href="http://localhost/index?page=2" rel="next"/>' .
-                '<link href="http://localhost/index" rel="first"/>'],
+            [1, false, true, 2, ['first' => true], '<link href="http://localhost/index?foo=bar&amp;page=2" rel="next"/>' .
+                '<link href="http://localhost/index?foo=bar" rel="first"/>'],
             // Verifies that page 1 only has next and last link.
-            [1, false, true, 2, ['last' => true], '<link href="http://localhost/index?page=2" rel="next"/>' .
-                '<link href="http://localhost/index?page=2" rel="last"/>'],
+            [1, false, true, 2, ['last' => true], '<link href="http://localhost/index?foo=bar&amp;page=2" rel="next"/>' .
+                '<link href="http://localhost/index?foo=bar&amp;page=2" rel="last"/>'],
             // Verifies that the last page only has a prev link.
-            [2, true, false, 2, [], '<link href="http://localhost/index" rel="prev"/>'],
+            [2, true, false, 2, [], '<link href="http://localhost/index?foo=bar" rel="prev"/>'],
             // Verifies that the last page only has a prev, first and last link.
-            [2, true, false, 2, ['first' => true, 'last' => true], '<link href="http://localhost/index" rel="prev"/>' .
-                '<link href="http://localhost/index" rel="first"/>' .
-                '<link href="http://localhost/index?page=2" rel="last"/>'],
+            [2, true, false, 2, ['first' => true, 'last' => true], '<link href="http://localhost/index?foo=bar" rel="prev"/>' .
+                '<link href="http://localhost/index?foo=bar" rel="first"/>' .
+                '<link href="http://localhost/index?foo=bar&amp;page=2" rel="last"/>'],
             // Verifies that a page in the middle has both links.
-            [5, true, true, 10, [], '<link href="http://localhost/index?page=4" rel="prev"/>' .
-                '<link href="http://localhost/index?page=6" rel="next"/>'],
+            [5, true, true, 10, [], '<link href="http://localhost/index?foo=bar&amp;page=4" rel="prev"/>' .
+                '<link href="http://localhost/index?foo=bar&amp;page=6" rel="next"/>'],
             // Verifies that a page in the middle has both links.
-            [5, true, true, 10, ['first' => true, 'last' => true], '<link href="http://localhost/index?page=4" rel="prev"/>' .
-                '<link href="http://localhost/index?page=6" rel="next"/>' .
-                '<link href="http://localhost/index" rel="first"/>' .
-                '<link href="http://localhost/index?page=10" rel="last"/>'],
+            [5, true, true, 10, ['first' => true, 'last' => true], '<link href="http://localhost/index?foo=bar&amp;page=4" rel="prev"/>' .
+                '<link href="http://localhost/index?foo=bar&amp;page=6" rel="next"/>' .
+                '<link href="http://localhost/index?foo=bar" rel="first"/>' .
+                '<link href="http://localhost/index?foo=bar&amp;page=10" rel="last"/>']
         ];
     }
 
@@ -3118,6 +3118,8 @@ class PaginatorHelperTest extends TestCase
                 'pageCount' => $pageCount,
             ],
         ]));
+
+        $this->Paginator->options(['url' => ['?' => ['foo' => 'bar']]]);
 
         $result = $this->Paginator->meta($options);
         $this->assertSame($expected, $result);
