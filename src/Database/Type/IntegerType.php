@@ -105,7 +105,7 @@ class IntegerType extends Type implements TypeInterface, BatchCastingInterface
     /**
      * {@inheritDoc}
      *
-     * @return array
+     * @return int[]
      */
     public function manyToPHP(array $values, array $fields, Driver $driver)
     {
@@ -135,7 +135,7 @@ class IntegerType extends Type implements TypeInterface, BatchCastingInterface
     }
 
     /**
-     * Marshalls request data into PHP floats.
+     * Marshals request data into PHP floats.
      *
      * @param mixed $value The value to convert.
      * @return int|null Converted value.

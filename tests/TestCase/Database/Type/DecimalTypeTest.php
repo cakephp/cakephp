@@ -205,11 +205,11 @@ class DecimalTypeTest extends TestCase
     }
 
     /**
-     * test marshall() number in the danish locale which uses . for thousands separator.
+     * test marshal() number in the danish locale which uses . for thousands separator.
      *
      * @return void
      */
-    public function testMarshallWithLocaleParsingDanish()
+    public function testMarshalWithLocaleParsingDanish()
     {
         I18n::setLocale('da_DK');
 

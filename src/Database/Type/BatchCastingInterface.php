@@ -28,7 +28,7 @@ interface BatchCastingInterface
      * this type.
      *
      * @param array $values The original array of values containing the fields to be casted
-     * @param array $fields The field keys to cast
+     * @param string[] $fields The field keys to cast
      * @param \Cake\Database\Driver $driver Object from which database preferences and configuration will be extracted.
      * @return array
      */

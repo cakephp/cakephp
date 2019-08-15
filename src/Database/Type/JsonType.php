@@ -110,7 +110,7 @@ class JsonType extends Type implements TypeInterface, BatchCastingInterface
     }
 
     /**
-     * Marshalls request data into a JSON compatible structure.
+     * Marshals request data into a JSON compatible structure.
      *
      * @param mixed $value The value to convert.
      * @return mixed Converted value.
