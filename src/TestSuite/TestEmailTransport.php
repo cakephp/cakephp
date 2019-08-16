@@ -16,10 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite;
 
-use Cake\Mailer\AbstractTransport;
 use Cake\Mailer\Message;
-use Cake\Mailer\TransportFactory;
 use Cake\Mailer\Transport\DebugTransport;
+use Cake\Mailer\TransportFactory;
 
 /**
  * TestEmailTransport
@@ -39,16 +38,13 @@ class TestEmailTransport extends DebugTransport
      * Stores email for later assertions
      *
      * @param \Cake\Mailer\Message $message Message
-     * @return string[]
-     * @psalm-suppress LessSpecificImplementedReturnType
+     * @return array{headers: string, message: string}
      */
     public function send(Message $message): array
     {
         static::$messages[] = $message;
 
-        return [
-            'result' => 'Success',
-        ];
+        return parent::send($message);
     }
 
     /**
