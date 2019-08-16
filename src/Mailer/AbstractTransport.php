@@ -60,9 +60,9 @@ abstract class AbstractTransport
      */
     protected function checkRecipient(Message $message): void
     {
-        if (empty($message->getTo())
-            && empty($message->getCc())
-            && empty($message->getBcc())
+        if ($message->getTo() === []
+            && $message->getCc() === []
+            && $message->getBcc() === []
         ) {
             throw new Exception('You must specify at least one recipient of to, cc or bcc.');
         }
