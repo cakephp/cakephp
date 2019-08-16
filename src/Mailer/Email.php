@@ -371,10 +371,6 @@ class Email implements JsonSerializable, Serializable
      */
     public function send($content = null): array
     {
-        if (empty($this->message->getFrom())) {
-            throw new BadMethodCallException('From is not specified.');
-        }
-
         if (empty($this->message->getTo())
             && empty($this->message->getCc())
             && empty($this->message->getBcc())
