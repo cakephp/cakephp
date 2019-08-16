@@ -106,6 +106,18 @@ class Command
     }
 
     /**
+     * Get the root command name.
+     *
+     * @return string
+     */
+    public function getRootName(): string
+    {
+        [$root] = explode(' ', $this->name);
+
+        return $root;
+    }
+
+    /**
      * Get the command name.
      *
      * Returns the command name based on class name.
