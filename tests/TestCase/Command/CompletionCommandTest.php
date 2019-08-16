@@ -192,6 +192,24 @@ class CompletionCommandTest extends ConsoleIntegrationTestCase
     }
 
     /**
+     * test that nested command returns subcommand's options not command.
+     *
+     * @return void
+     */
+    public function testOptionsNestedCommand()
+    {
+        $this->exec('completion options i18n extract');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+
+        $expected = [
+            '--plugin',
+            '--app',
+        ];
+        foreach ($expected as $value) {
+            $this->assertOutputContains($value);
+        }
+    }
+    /**
      * test that subCommands with a existing CORE command returns the proper sub commands
      *
      * @return void
