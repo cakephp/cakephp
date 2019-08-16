@@ -165,7 +165,6 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
             $this->setConfig('duration', $ttl);
         }
         try {
-            $return = [];
             foreach ($values as $key => $value) {
                 $success = $this->set($key, $value);
                 if ($success === false) {
