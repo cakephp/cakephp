@@ -52,7 +52,6 @@ install:
 
   - cd C:\projects\cakephp
   - appveyor-retry appveyor DownloadFile https://getcomposer.org/composer.phar
-  - del composer.lock
   - php composer.phar install --no-progress
   - php -i | grep "ICU version"
 
