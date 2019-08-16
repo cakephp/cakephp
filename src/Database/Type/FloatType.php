@@ -79,7 +79,7 @@ class FloatType extends BaseType implements BatchCastingInterface
     /**
      * {@inheritDoc}
      *
-     * @return float[]
+     * @return array
      */
     public function manyToPHP(array $values, array $fields, DriverInterface $driver): array
     {

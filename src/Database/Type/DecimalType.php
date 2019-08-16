@@ -94,7 +94,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
     /**
      * {@inheritDoc}
      *
-     * @return string[]
+     * @return array
      */
     public function manyToPHP(array $values, array $fields, DriverInterface $driver): array
     {

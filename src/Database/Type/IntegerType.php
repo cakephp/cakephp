@@ -81,7 +81,7 @@ class IntegerType extends BaseType implements BatchCastingInterface
     /**
      * {@inheritDoc}
      *
-     * @return int[]
+     * @return array
      */
     public function manyToPHP(array $values, array $fields, DriverInterface $driver): array
     {
