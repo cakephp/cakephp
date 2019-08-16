@@ -112,12 +112,9 @@ class XmlView extends SerializedView
     ];
 
     /**
-     * Serialize view vars.
-     *
-     * @param array|string $serialize The name(s) of the view variable(s) that need(s) to be serialized
-     * @return string|false The serialized data
+     * @inheritDoc
      */
-    protected function _serialize($serialize)
+    protected function _serialize($serialize): string
     {
         $rootNode = $this->getConfig('rootNode', 'response');
 
@@ -151,10 +148,6 @@ class XmlView extends SerializedView
             $options['pretty'] = true;
         }
 
-        if (isset($options['return']) && strtolower($options['return']) === 'domdocument') {
-            return Xml::fromArray($data, $options)->saveXML();
-        }
-
-        return Xml::fromArray($data, $options)->asXML();
+        return Xml::fromArray($data, $options)->saveXML();
     }
 }

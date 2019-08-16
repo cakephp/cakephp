@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\View;
 
 use Cake\Core\Configure;
+use RuntimeException;
 
 /**
  * A view class that is used for JSON responses.
@@ -127,12 +128,9 @@ class JsonView extends SerializedView
     }
 
     /**
-     * Serialize view vars
-     *
-     * @param array|string $serialize The name(s) of the view variable(s) that need(s) to be serialized.
-     * @return string|false The serialized data, or boolean false if not serializable.
+     * @inheritDoc
      */
-    protected function _serialize($serialize)
+    protected function _serialize($serialize): string
     {
         $data = $this->_dataToSerialize($serialize);
 
@@ -147,7 +145,16 @@ class JsonView extends SerializedView
             $jsonOptions |= JSON_PRETTY_PRINT;
         }
 
-        return json_encode($data, $jsonOptions);
+        if (defined('JSON_THROW_ON_ERROR')) {
+            $jsonOptions |= JSON_THROW_ON_ERROR;
+        }
+
+        $return = json_encode($data, $jsonOptions);
+        if ($return === false) {
+            throw new RuntimeException(json_last_error_msg(), json_last_error());
+        }
+
+        return $return;
     }
 
     /**
