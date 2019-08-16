@@ -18,6 +18,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Mailer\Transport;
 
+use Cake\Core\Exception\Exception;
 use Cake\Mailer\Message;
 use Cake\TestSuite\TestCase;
 
@@ -38,6 +39,20 @@ class MailTransportTest extends TestCase
             ->setMethods(['_mail'])
             ->getMock();
         $this->MailTransport->setConfig(['additionalParameters' => '-f']);
+    }
+
+    /**
+     * testSendWithoutRecipient method
+     *
+     * @return void
+     */
+    public function testSendWithoutRecipient()
+    {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('You must specify at least one recipient of to, cc or bcc.');
+
+        $message = new Message();
+        $this->MailTransport->send($message);
     }
 
     /**

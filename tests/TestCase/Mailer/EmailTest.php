@@ -1087,21 +1087,6 @@ class EmailTest extends TestCase
     }
 
     /**
-     * testSendWithoutTo method
-     *
-     * @return void
-     */
-    public function testSendWithoutTo()
-    {
-        $this->expectException(\BadMethodCallException::class);
-        $this->Email->setTransport('debug');
-        $this->Email->setFrom('cake@cakephp.org');
-        $this->Email->setSubject('My title');
-        $this->Email->setProfile(['empty']);
-        $this->Email->send('Forgot to set To');
-    }
-
-    /**
      * test send without a transport method
      *
      * @return void

@@ -32,6 +32,8 @@ class MailTransport extends AbstractTransport
      */
     public function send(Message $message): array
     {
+        $this->checkRecipient($message);
+
         $eol = PHP_EOL;
         if (isset($this->_config['eol'])) {
             $eol = $this->_config['eol'];

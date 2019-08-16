@@ -371,13 +371,6 @@ class Email implements JsonSerializable, Serializable
      */
     public function send($content = null): array
     {
-        if (empty($this->message->getTo())
-            && empty($this->message->getCc())
-            && empty($this->message->getBcc())
-        ) {
-            throw new BadMethodCallException('You need specify one destination on to, cc or bcc.');
-        }
-
         if (is_array($content)) {
             $content = implode("\n", $content) . "\n";
         }

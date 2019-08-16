@@ -173,6 +173,8 @@ class SmtpTransport extends AbstractTransport
      */
     public function send(Message $message): array
     {
+        $this->checkRecipient($message);
+
         if (!$this->connected()) {
             $this->_connect();
             $this->_auth();
