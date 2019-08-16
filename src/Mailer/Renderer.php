@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Mailer;
 
+use Cake\View\ViewBuilder;
 use Cake\View\ViewVarsTrait;
 
 /**
@@ -31,6 +32,16 @@ class Renderer
      * @var string
      */
     public const TEMPLATE_FOLDER = 'email';
+
+    /**
+     * Constructor
+     *
+     * @param \Cake\View\ViewBuilder|null $viewBuilder View builder instance.
+     */
+    public function __construct(?ViewBuilder $viewBuilder = null)
+    {
+        $this->_viewBuilder = $viewBuilder;
+    }
 
     /**
      * Build and set all the view properties needed to render the templated emails.
