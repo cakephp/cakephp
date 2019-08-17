@@ -31,8 +31,8 @@ use Psr\Http\Server\RequestHandlerInterface;
  * Provides CSRF protection & validation.
  *
  * This middleware adds a CSRF token to a cookie. The cookie value is compared to
- * request data, or the X-CSRF-Token header on each PATCH, POST,
- * PUT, or DELETE request.
+ * token in request data, or the X-CSRF-Token header on each PATCH, POST,
+ * PUT, or DELETE request. This is known as "double submit cookie" technique.
  *
  * If the request data is missing or does not match the cookie data,
  * an InvalidCsrfTokenException will be raised.
@@ -40,6 +40,8 @@ use Psr\Http\Server\RequestHandlerInterface;
  * This middleware integrates with the FormHelper automatically and when
  * used together your forms will have CSRF tokens automatically added
  * when `$this->Form->create(...)` is used in a view.
+ *
+ * @see https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#double-submit-cookie
  */
 class CsrfProtectionMiddleware implements MiddlewareInterface
 {
