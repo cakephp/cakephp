@@ -165,7 +165,6 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
             $this->setConfig('duration', $ttl);
         }
         try {
-            $return = [];
             foreach ($values as $key => $value) {
                 $success = $this->set($key, $value);
                 if ($success === false) {
@@ -307,10 +306,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @param string $group name of the group to be cleared
      * @return bool
      */
-    public function clearGroup(string $group): bool
-    {
-        return false;
-    }
+    abstract public function clearGroup(string $group): bool;
 
     /**
      * Does whatever initialization for each group is required
