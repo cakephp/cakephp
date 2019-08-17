@@ -44,15 +44,16 @@ class Renderer
     }
 
     /**
-     * Build and set all the view properties needed to render the templated emails.
+     * Render text/HTML content.
+     *
      * If there is no template set, the $content will be returned in a hash
-     * of the text content types for the email.
+     * of the specified content types for the email.
      *
      * @param string $content The content.
      * @param array $types Content types to render.
      * @return array{html?: string, text?: string} The rendered content with "html" and/or "text" keys.
      */
-    public function getContent(string $content, array $types = []): array
+    public function render(string $content, array $types = []): array
     {
         $rendered = [];
         $template = $this->viewBuilder()->getTemplate();

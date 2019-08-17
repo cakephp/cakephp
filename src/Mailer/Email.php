@@ -402,7 +402,7 @@ class Email implements JsonSerializable, Serializable
         }
 
         $this->message->setBody(
-            $this->getRenderer()->getContent(
+            $this->getRenderer()->render(
                 (string)$content,
                 $this->message->getBodyTypes()
             )
