@@ -64,7 +64,7 @@ abstract class AbstractTransport
             && $message->getCc() === []
             && $message->getBcc() === []
         ) {
-            throw new Exception('You must specify at least one recipient of to, cc or bcc.');
+            throw new Exception('You must specify at least one recipient. Use one of `setTo`, `setCc` or `setBcc` to define a recipient.');
         }
     }
 
