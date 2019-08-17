@@ -83,7 +83,7 @@ class Renderer
             $view->setTemplatePath(static::TEMPLATE_FOLDER . DIRECTORY_SEPARATOR . $type);
             $view->setLayoutPath(static::TEMPLATE_FOLDER . DIRECTORY_SEPARATOR . $type);
 
-            $rendered[$type] = (string)$view->render();
+            $rendered[$type] = $view->render();
         }
 
         return $rendered;
