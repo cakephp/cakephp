@@ -14,10 +14,13 @@ declare(strict_types=1);
  */
 namespace Cake\Mailer;
 
+use Cake\Core\Exception\Exception;
+use Cake\Core\StaticConfigTrait;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Event\EventListenerInterface;
 use Cake\Mailer\Exception\MissingActionException;
 use Cake\View\ViewBuilder;
+use InvalidArgumentException;
 
 /**
  * Mailer base class.
@@ -132,6 +135,7 @@ use Cake\View\ViewBuilder;
 abstract class Mailer implements EventListenerInterface
 {
     use ModelAwareTrait;
+    use StaticConfigTrait;
 
     /**
      * Mailer's name.
@@ -156,18 +160,53 @@ abstract class Mailer implements EventListenerInterface
     protected $_clonedEmail;
 
     /**
-     * Constructor.
+     * The transport instance to use for sending mail.
      *
-     * @param \Cake\Mailer\Email|null $email Email instance.
+     * @var \Cake\Mailer\AbstractTransport|null
      */
-    public function __construct(?Email $email = null)
+    protected $transport;
+
+    /**
+     * Message class name.
+     *
+     * @var string
+     */
+    protected $messageClass = Message::class;
+
+    /**
+     * Message instance.
+     *
+     * @var \Cake\Mailer\Message
+     */
+    protected $message;
+
+    /**
+     * Constructor
+     *
+     * @param array|string|null $config Array of configs, or string to load configs from app.php
+     */
+    public function __construct($config = null)
     {
-        if ($email === null) {
-            $email = new Email();
-        }
+        $email = new Email();
 
         $this->_email = $email;
         $this->_clonedEmail = clone $email;
+
+        $this->message = new $this->messageClass();
+
+        if ($config === null) {
+            $config = static::getConfig('default');
+        }
+
+        $this->viewBuilder()
+            ->setClassName(View::class)
+            ->setTemplate('')
+            ->setLayout('default')
+            ->setHelpers(['Html']);
+
+        if ($config) {
+            $this->setProfile($config);
+        }
     }
 
     /**
@@ -199,7 +238,7 @@ abstract class Mailer implements EventListenerInterface
     }
 
     /**
-     * Magic method to forward method class to Email instance.
+     * Magic method to forward method class to Message instance.
      *
      * @param string $method Method name.
      * @param array $args Method arguments
@@ -207,7 +246,7 @@ abstract class Mailer implements EventListenerInterface
      */
     public function __call(string $method, array $args)
     {
-        $result = $this->_email->$method(...$args);
+        $result = $this->message->$method(...$args);
         if (strpos($method, 'get') === 0) {
             return $result;
         }
@@ -262,6 +301,111 @@ abstract class Mailer implements EventListenerInterface
         }
 
         return $result;
+    }
+
+    /**
+     * Sets the configuration profile to use for this instance.
+     *
+     * @param string|array $config String with configuration name, or
+     *    an array with config.
+     * @return $this
+     */
+    public function setProfile($config)
+    {
+        if (is_string($config)) {
+            $name = $config;
+            $config = static::getConfig($name);
+            if (empty($config)) {
+                throw new InvalidArgumentException(sprintf('Unknown email configuration "%s".', $name));
+            }
+            unset($name);
+        }
+
+        $simpleMethods = [
+            'transport',
+        ];
+        foreach ($simpleMethods as $method) {
+            if (isset($config[$method])) {
+                $this->{'set' . ucfirst($method)}($config[$method]);
+                unset($config[$method]);
+            }
+        }
+
+        $viewBuilderMethods = [
+            'template', 'layout', 'theme',
+        ];
+        foreach ($viewBuilderMethods as $method) {
+            if (array_key_exists($method, $config)) {
+                $this->viewBuilder()->{'set' . ucfirst($method)}($config[$method]);
+                unset($config[$method]);
+            }
+        }
+
+        if (array_key_exists('helpers', $config)) {
+            $this->viewBuilder()->setHelpers($config['helpers'], false);
+            unset($config['helpers']);
+        }
+        if (array_key_exists('viewRenderer', $config)) {
+            $this->viewBuilder()->setClassName($config['viewRenderer']);
+            unset($config['viewRenderer']);
+        }
+        if (array_key_exists('viewVars', $config)) {
+            $this->viewBuilder()->setVars($config['viewVars']);
+            unset($config['viewVars']);
+        }
+
+        $this->message->setConfig($config);
+
+        return $this;
+    }
+
+    /**
+     * Sets the transport.
+     *
+     * When setting the transport you can either use the name
+     * of a configured transport or supply a constructed transport.
+     *
+     * @param string|\Cake\Mailer\AbstractTransport $name Either the name of a configured
+     *   transport, or a transport instance.
+     * @return $this
+     * @throws \LogicException When the chosen transport lacks a send method.
+     * @throws \InvalidArgumentException When $name is neither a string nor an object.
+     */
+    public function setTransport($name)
+    {
+        if (is_string($name)) {
+            $transport = TransportFactory::get($name);
+        } elseif (is_object($name)) {
+            $transport = $name;
+            if (!$transport instanceof AbstractTransport) {
+                throw new Exception('Transport class must extend Cake\Mailer\AbstractTransport');
+            }
+        } else {
+            throw new InvalidArgumentException(sprintf(
+                'The value passed for the "$name" argument must be either a string, or an object, %s given.',
+                gettype($name)
+            ));
+        }
+
+        $this->transport = $transport;
+
+        return $this;
+    }
+
+    /**
+     * Gets the transport.
+     *
+     * @return \Cake\Mailer\AbstractTransport
+     */
+    public function getTransport(): AbstractTransport
+    {
+        if ($this->transport === null) {
+            throw new BadMethodCallException(
+                'Transport was not defined. You must set on using setTransport() or set `transport` option in profile.'
+            );
+        }
+
+        return $this->transport;
     }
 
     /**

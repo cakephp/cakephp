@@ -14,12 +14,64 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Mailer;
 
+use Cake\Core\Configure;
+use Cake\Core\Exception\Exception;
+use Cake\Mailer\AbstractTransport;
+use Cake\Mailer\Mailer;
+use Cake\Mailer\Transport\DebugTransport;
+use Cake\Mailer\TransportFactory;
 use Cake\TestSuite\TestCase;
 use RuntimeException;
 use TestApp\Mailer\TestMailer;
 
 class MailerTest extends TestCase
 {
+    /**
+     * @var array
+     */
+    protected $transports = [];
+
+    /**
+     * @var \Cake\Mailer\Mailer
+     */
+    protected $mailer;
+
+    /**
+     * setUp
+     *
+     * @return void
+     */
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->transports = [
+            'debug' => [
+                'className' => 'Debug',
+            ],
+            'badClassName' => [
+                'className' => 'TestFalse',
+            ],
+        ];
+
+        TransportFactory::setConfig($this->transports);
+
+        $this->mailer = new TestMailer();
+    }
+
+    /**
+     * tearDown method
+     *
+     * @return void
+     */
+    public function tearDown(): void
+    {
+        parent::tearDown();
+
+        TransportFactory::drop('debug');
+        TransportFactory::drop('badClassName');
+    }
+
     /**
      * @param array $methods
      * @param array $args
@@ -40,6 +92,189 @@ class MailerTest extends TestCase
     {
         $mailer = new TestMailer();
         $this->assertInstanceOf('Cake\Mailer\Email', $mailer->getEmailForAssertion());
+    }
+
+    /**
+     * testTransport method
+     *
+     * @return void
+     */
+    public function testTransport()
+    {
+        $result = $this->mailer->setTransport('debug');
+        $this->assertSame($this->mailer, $result);
+
+        $result = $this->mailer->getTransport();
+        $this->assertInstanceOf(DebugTransport::class, $result);
+
+        $instance = $this->getMockBuilder(DebugTransport::class)->getMock();
+        $this->mailer->setTransport($instance);
+        $this->assertSame($instance, $this->mailer->getTransport());
+    }
+
+    /**
+     * Test that using unknown transports fails.
+     *
+     */
+    public function testTransportInvalid()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The "Invalid" transport configuration does not exist');
+        $this->mailer->setTransport('Invalid');
+    }
+
+    /**
+     * Test that using classes with no send method fails.
+     *
+     */
+    public function testTransportInstanceInvalid()
+    {
+        $this->expectException(Exception::class);
+        $this->mailer->setTransport(new \StdClass());
+    }
+
+    /**
+     * Test that using unknown transports fails.
+     *
+     */
+    public function testTransportTypeInvalid()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The value passed for the "$name" argument must be either a string, or an object, integer given.');
+        $this->mailer->setTransport(123);
+    }
+
+    /**
+     * Test reading/writing configuration profiles.
+     *
+     * @return void
+     */
+    public function testConfig()
+    {
+        $settings = [
+            'to' => 'mark@example.com',
+            'from' => 'noreply@example.com',
+        ];
+        Mailer::setConfig('test', $settings);
+        $this->assertEquals($settings, Mailer::getConfig('test'), 'Should be the same.');
+
+        $mailer = new TestMailer('test');
+        $this->assertContains($settings['to'], $mailer->getTo());
+    }
+
+    /**
+     * Test that exceptions are raised on duplicate config set.
+     *
+     * @return void
+     */
+    public function testConfigErrorOnDuplicate()
+    {
+        $this->expectException(\BadMethodCallException::class);
+        $settings = [
+            'to' => 'mark@example.com',
+            'from' => 'noreply@example.com',
+        ];
+        Mailer::setConfig('test', $settings);
+        Mailer::setConfig('test', $settings);
+    }
+
+    /**
+     * test profile method
+     *
+     * @return void
+     */
+    public function testSetProfile()
+    {
+        $config = ['to' => 'foo@bar.com'];
+        $this->mailer->setProfile($config);
+        $this->assertSame(['foo@bar.com' => 'foo@bar.com'], $this->mailer->getTo());
+    }
+
+    /**
+     * test that default profile is used by constructor if available.
+     *
+     * @return void
+     */
+    public function testDefaultProfile()
+    {
+        $config = ['to' => 'foo@bar.com', 'from' => 'from@bar.com'];
+
+        Configure::write('Mailer.default', $config);
+        Mailer::setConfig(Configure::consume('Mailer'));
+
+        $mailer = new TestMailer();
+        $this->assertSame(['foo@bar.com' => 'foo@bar.com'], $mailer->getTo());
+        $this->assertSame(['from@bar.com' => 'from@bar.com'], $mailer->getFrom());
+
+        Configure::delete('Mailer');
+        Mailer::drop('default');
+    }
+
+    /**
+     * Test that using an invalid profile fails.
+     *
+     */
+    public function testProfileInvalid()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unknown email configuration "derp".');
+        $mailer = new TestMailer();
+        $mailer->setProfile('derp');
+    }
+
+    /**
+     * testConfigString method
+     *
+     * @return void
+     */
+    public function testUseConfigString()
+    {
+        $config = [
+            'from' => ['some@example.com' => 'My website'],
+            'to' => ['test@example.com' => 'Testname'],
+            'subject' => 'Test mail subject',
+            'transport' => 'debug',
+            'theme' => 'TestTheme',
+            'helpers' => ['Html', 'Form'],
+        ];
+        Mailer::setConfig('test', $config);
+        $this->mailer->setProfile('test');
+
+        $result = $this->mailer->getTo();
+        $this->assertEquals($config['to'], $result);
+
+        $result = $this->mailer->getFrom();
+        $this->assertEquals($config['from'], $result);
+
+        $result = $this->mailer->getSubject();
+        $this->assertEquals($config['subject'], $result);
+
+        $result = $this->mailer->viewBuilder()->getTheme();
+        $this->assertEquals($config['theme'], $result);
+
+        $result = $this->mailer->getTransport();
+        $this->assertInstanceOf(DebugTransport::class, $result);
+
+        $result = $this->mailer->viewBuilder()->getHelpers();
+        $this->assertEquals($config['helpers'], $result);
+    }
+
+    /**
+     * CakeEmailTest::testMockTransport()
+     */
+    public function testMockTransport()
+    {
+        TransportFactory::drop('default');
+
+        $mock = $this->getMockBuilder(AbstractTransport::class)->getMock();
+        $config = ['from' => 'tester@example.org', 'transport' => 'default'];
+
+        Mailer::setConfig('default', $config);
+        TransportFactory::setConfig('default', $mock);
+
+        $em = new TestMailer('default');
+
+        $this->assertSame($mock, $em->getTransport());
     }
 
     /**
