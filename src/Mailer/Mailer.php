@@ -14,6 +14,7 @@ declare(strict_types=1);
  */
 namespace Cake\Mailer;
 
+use BadMethodCallException;
 use Cake\Core\Exception\Exception;
 use Cake\Core\StaticConfigTrait;
 use Cake\Datasource\ModelAwareTrait;
@@ -164,11 +165,24 @@ class Mailer implements EventListenerInterface
      */
     protected $renderer;
 
+    /**
+     * Hold message, renderer and transport instance for restoring after runnning
+     * a mailer action.
+     *
+     * @var array
+     */
     protected $clonedInstances = [
         'message' => null,
         'renderer' => null,
         'transport' => null,
     ];
+
+    /**
+     * Mailer driver class map.
+     *
+     * @var array
+     */
+    protected static $_dsnClassMap = [];
 
     /**
      * Constructor
@@ -290,7 +304,7 @@ class Mailer implements EventListenerInterface
      * @param string $action The name of the mailer action to trigger.
      * @param array $args Arguments to pass to the triggered mailer action.
      * @param array $headers Headers to set.
-     * @return string[]
+     * @return array{headers: string, message: string}
      * @throws \Cake\Mailer\Exception\MissingActionException
      * @throws \BadMethodCallException
      */
@@ -326,7 +340,7 @@ class Mailer implements EventListenerInterface
     }
 
     /**
-     * Send email directly without using a mailer method.
+     * Send email directly without using a mailer action.
      *
      * @param string $content
      * @return array{headers: string, message: string}
@@ -450,7 +464,7 @@ class Mailer implements EventListenerInterface
     }
 
     /**
-     * Restore instances.
+     * Restore message, renderer, transport instances to state before an action was run.
      *
      * @return $this
      */
@@ -463,6 +477,8 @@ class Mailer implements EventListenerInterface
                 $this->{$key} = clone $this->clonedInstances[$key];
             }
         }
+
+        return $this;
     }
 
     /**

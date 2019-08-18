@@ -87,6 +87,11 @@ class Renderer
         return $rendered;
     }
 
+    /**
+     * Reset view builder to defaults.
+     *
+     * @return $this
+     */
     public function reset()
     {
         $this->viewBuilder()
@@ -94,6 +99,8 @@ class Renderer
             ->setLayout('default')
             ->setHelpers(['Html'], false)
             ->setVars([], false);
+
+        return $this;
     }
 
     public function __clone()
