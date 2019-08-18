@@ -132,12 +132,6 @@ class Email implements JsonSerializable, Serializable
             $config = static::getConfig('default');
         }
 
-        $this->getRenderer()->viewBuilder()
-            ->setClassName(View::class)
-            ->setTemplate('')
-            ->setLayout('default')
-            ->setHelpers(['Html']);
-
         if ($config) {
             $this->setProfile($config);
         }

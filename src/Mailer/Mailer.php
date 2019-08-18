@@ -85,54 +85,46 @@ use InvalidArgumentException;
  * Our mailer could either be registered in the application bootstrap, or
  * in the Table class' initialize() hook.
  *
- * @method \Cake\Mailer\Mailer setTo($email, $name = null)
+ * @method $this setTo($email, $name = null)
  * @method array getTo()
- * @method \Cake\Mailer\Mailer setFrom($email, $name = null)
+ * @method $this setFrom($email, $name = null)
  * @method array getFrom()
- * @method \Cake\Mailer\Mailer setSender($email, $name = null)
+ * @method $this setSender($email, $name = null)
  * @method array getSender()
- * @method \Cake\Mailer\Mailer setReplyTo($email, $name = null)
+ * @method $this setReplyTo($email, $name = null)
  * @method array getReplyTo()
- * @method \Cake\Mailer\Mailer setReadReceipt($email, $name = null)
+ * @method $this setReadReceipt($email, $name = null)
  * @method array getReadReceipt()
- * @method \Cake\Mailer\Mailer setReturnPath($email, $name = null)
+ * @method $this setReturnPath($email, $name = null)
  * @method array getReturnPath()
- * @method \Cake\Mailer\Mailer addTo($email, $name = null)
- * @method \Cake\Mailer\Mailer setCc($email, $name = null)
+ * @method $this addTo($email, $name = null)
+ * @method $this setCc($email, $name = null)
  * @method array getCc()
- * @method \Cake\Mailer\Mailer addCc($email, $name = null)
- * @method \Cake\Mailer\Mailer setBcc($email, $name = null)
+ * @method $this addCc($email, $name = null)
+ * @method $this setBcc($email, $name = null)
  * @method array getBcc()
- * @method \Cake\Mailer\Mailer addBcc($email, $name = null)
- * @method \Cake\Mailer\Mailer setCharset($charset)
+ * @method $this addBcc($email, $name = null)
+ * @method $this setCharset($charset)
  * @method string getCharset()
- * @method \Cake\Mailer\Mailer setHeaderCharset($charset)
+ * @method $this setHeaderCharset($charset)
  * @method string getHeaderCharset()
- * @method \Cake\Mailer\Mailer setSubject($subject)
+ * @method $this setSubject($subject)
  * @method string getSubject()
- * @method \Cake\Mailer\Mailer setHeaders(array $headers)
- * @method \Cake\Mailer\Mailer addHeaders(array $headers)
- * @method \Cake\Mailer\Mailer getHeaders(array $include = [])
- * @method \Cake\Mailer\Mailer setViewRenderer($viewClass)
- * @method string getViewRenderer()
- * @method \Cake\Mailer\Mailer setViewVars($viewVars)
- * @method array getViewVars()
- * @method \Cake\Mailer\Mailer setEmailFormat($format)
+ * @method $this setHeaders(array $headers)
+ * @method $this addHeaders(array $headers)
+ * @method $this getHeaders(array $include = [])
+ * @method $this setEmailFormat($format)
  * @method string getEmailFormat()
- * @method \Cake\Mailer\Mailer setTransport($name)
- * @method \Cake\Mailer\AbstractTransport getTransport()
- * @method \Cake\Mailer\Mailer setMessageId($message)
+ * @method $this setMessageId($message)
  * @method bool|string getMessageId()
- * @method \Cake\Mailer\Mailer setDomain($domain)
+ * @method $this setDomain($domain)
  * @method string getDomain()
- * @method \Cake\Mailer\Mailer setAttachments($attachments)
+ * @method $this setAttachments($attachments)
  * @method array getAttachments()
- * @method \Cake\Mailer\Mailer addAttachments($attachments)
- * @method \Cake\Mailer\Mailer message($type = null)
- * @method \Cake\Mailer\Mailer setProfile($config)
- * @method string|array getProfile()
+ * @method $this addAttachments($attachments)
+ * @method $this getBody(?string $type = null)
  */
-abstract class Mailer implements EventListenerInterface
+class Mailer implements EventListenerInterface
 {
     use ModelAwareTrait;
     use StaticConfigTrait;
@@ -143,21 +135,6 @@ abstract class Mailer implements EventListenerInterface
      * @var string
      */
     public static $name;
-
-    /**
-     * Email instance.
-     *
-     * @var \Cake\Mailer\Email
-     */
-    protected $_email;
-
-    /**
-     * Cloned Email instance for restoring instance after email is sent by
-     * mailer action.
-     *
-     * @var \Cake\Mailer\Email
-     */
-    protected $_clonedEmail;
 
     /**
      * The transport instance to use for sending mail.
@@ -181,28 +158,30 @@ abstract class Mailer implements EventListenerInterface
     protected $message;
 
     /**
+     * Email Renderer
+     *
+     * @var \Cake\Mailer\Renderer|null
+     */
+    protected $renderer;
+
+    protected $clonedInstances = [
+        'message' => null,
+        'renderer' => null,
+        'transport' => null,
+    ];
+
+    /**
      * Constructor
      *
      * @param array|string|null $config Array of configs, or string to load configs from app.php
      */
     public function __construct($config = null)
     {
-        $email = new Email();
-
-        $this->_email = $email;
-        $this->_clonedEmail = clone $email;
-
         $this->message = new $this->messageClass();
 
         if ($config === null) {
             $config = static::getConfig('default');
         }
-
-        $this->viewBuilder()
-            ->setClassName(View::class)
-            ->setTemplate('')
-            ->setLayout('default')
-            ->setHelpers(['Html']);
 
         if ($config) {
             $this->setProfile($config);
@@ -228,13 +207,50 @@ abstract class Mailer implements EventListenerInterface
     }
 
     /**
-     * Get Email instance's view builder.
+     * Get the view builder.
      *
      * @return \Cake\View\ViewBuilder
      */
     public function viewBuilder(): ViewBuilder
     {
-        return $this->_email->viewBuilder();
+        return $this->getRenderer()->viewBuilder();
+    }
+
+    /**
+     * Get email renderer.
+     *
+     * @return \Cake\Mailer\Renderer
+     */
+    public function getRenderer(): Renderer
+    {
+        if ($this->renderer === null) {
+            $this->renderer = new Renderer();
+        }
+
+        return $this->renderer;
+    }
+
+    /**
+     * Set email renderer.
+     *
+     * @param \Cake\Mailer\Renderer $renderer Render instance.
+     * @return $this
+     */
+    public function setRenderer(Renderer $renderer)
+    {
+        $this->renderer = $renderer;
+
+        return $this;
+    }
+
+    /**
+     * Get message instance.
+     *
+     * @return \Cake\Mailer\Message
+     */
+    public function getMessage(): Message
+    {
+        return $this->message;
     }
 
     /**
@@ -263,7 +279,7 @@ abstract class Mailer implements EventListenerInterface
      */
     public function set($key, $value = null)
     {
-        $this->_email->setViewVars(is_string($key) ? [$key => $value] : $key);
+        $this->getRenderer()->set($key, $value);
 
         return $this;
     }
@@ -283,24 +299,49 @@ abstract class Mailer implements EventListenerInterface
         try {
             if (!method_exists($this, $action)) {
                 throw new MissingActionException([
-                    'mailer' => $this->getName() . 'Mailer',
+                    'mailer' => static::class,
                     'action' => $action,
                 ]);
             }
 
-            $this->_email->getMessage()->setHeaders($headers);
-            if (!$this->_email->viewBuilder()->getTemplate()) {
-                $this->_email->viewBuilder()->setTemplate($action);
+            $this->clonedInstances['message'] = clone $this->message;
+            $this->clonedInstances['renderer'] = clone $this->getRenderer();
+            if ($this->transport !== null) {
+                $this->clonedInstances['transport'] = clone $this->transport;
+            }
+
+            $this->getMessage()->setHeaders($headers);
+            if (!$this->viewBuilder()->getTemplate()) {
+                $this->viewBuilder()->setTemplate($action);
             }
 
             $this->$action(...$args);
 
-            $result = $this->_email->send();
+            $result = $this->deliver();
         } finally {
-            $this->reset();
+            $this->restore();
         }
 
         return $result;
+    }
+
+    /**
+     * Send email directly without using a mailer method.
+     *
+     * @param string $content
+     * @return array{headers: string, message: string}
+     */
+    public function deliver(string $content = '')
+    {
+        $this->message->setBody(
+            $this->getRenderer()->render(
+                $content,
+                $this->message->getBodyTypes()
+            )
+        );
+        $transport = $this->getTransport();
+
+        return $transport->send($this->message);
     }
 
     /**
@@ -409,13 +450,36 @@ abstract class Mailer implements EventListenerInterface
     }
 
     /**
-     * Reset email instance.
+     * Restore instances.
      *
      * @return $this
      */
-    protected function reset()
+    protected function restore()
     {
-        $this->_email = clone $this->_clonedEmail;
+        foreach (array_keys($this->clonedInstances) as $key) {
+            if ($this->clonedInstances[$key] === null) {
+                $this->{$key} = null;
+            } else {
+                $this->{$key} = clone $this->clonedInstances[$key];
+            }
+        }
+    }
+
+    /**
+     * Reset all the internal variables to be able to send out a new email.
+     *
+     * @return $this
+     */
+    public function reset()
+    {
+        $this->message->reset();
+        $this->getRenderer()->reset();
+        $this->transport = null;
+        $this->clonedInstances = [
+            'message' => null,
+            'renderer' => null,
+            'transport' => null,
+        ];
 
         return $this;
     }

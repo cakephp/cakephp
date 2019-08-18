@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Mailer;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Mailer\AbstractTransport;
+use Cake\Mailer\Exception\MissingActionException;
 use Cake\Mailer\Mailer;
 use Cake\Mailer\Transport\DebugTransport;
 use Cake\Mailer\TransportFactory;
@@ -56,7 +57,7 @@ class MailerTest extends TestCase
 
         TransportFactory::setConfig($this->transports);
 
-        $this->mailer = new TestMailer();
+        $this->mailer = new Mailer();
     }
 
     /**
@@ -70,6 +71,7 @@ class MailerTest extends TestCase
 
         TransportFactory::drop('debug');
         TransportFactory::drop('badClassName');
+        Mailer::drop('test');
     }
 
     /**
@@ -83,15 +85,6 @@ class MailerTest extends TestCase
             ->setMethods((array)$methods)
             ->setConstructorArgs((array)$args)
             ->getMock();
-    }
-
-    /**
-     * @return void
-     */
-    public function testConstructor()
-    {
-        $mailer = new TestMailer();
-        $this->assertInstanceOf('Cake\Mailer\Email', $mailer->getEmailForAssertion());
     }
 
     /**
@@ -158,7 +151,7 @@ class MailerTest extends TestCase
         Mailer::setConfig('test', $settings);
         $this->assertEquals($settings, Mailer::getConfig('test'), 'Should be the same.');
 
-        $mailer = new TestMailer('test');
+        $mailer = new Mailer('test');
         $this->assertContains($settings['to'], $mailer->getTo());
     }
 
@@ -202,7 +195,7 @@ class MailerTest extends TestCase
         Configure::write('Mailer.default', $config);
         Mailer::setConfig(Configure::consume('Mailer'));
 
-        $mailer = new TestMailer();
+        $mailer = new Mailer();
         $this->assertSame(['foo@bar.com' => 'foo@bar.com'], $mailer->getTo());
         $this->assertSame(['from@bar.com' => 'from@bar.com'], $mailer->getFrom());
 
@@ -218,7 +211,7 @@ class MailerTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Unknown email configuration "derp".');
-        $mailer = new TestMailer();
+        $mailer = new Mailer();
         $mailer->setProfile('derp');
     }
 
@@ -257,6 +250,8 @@ class MailerTest extends TestCase
 
         $result = $this->mailer->viewBuilder()->getHelpers();
         $this->assertEquals($config['helpers'], $result);
+
+        Mailer::drop('test');
     }
 
     /**
@@ -272,21 +267,9 @@ class MailerTest extends TestCase
         Mailer::setConfig('default', $config);
         TransportFactory::setConfig('default', $mock);
 
-        $em = new TestMailer('default');
+        $em = new Mailer('default');
 
         $this->assertSame($mock, $em->getTransport());
-    }
-
-    /**
-     * @return void
-     */
-    public function testReset()
-    {
-        $mailer = new TestMailer();
-        $email = $mailer->getEmailForAssertion();
-
-        $mailer->set(['foo' => 'bar']);
-        $this->assertNotEquals($email->getViewVars(), $mailer->reset()->getEmailForAssertion()->getViewVars());
     }
 
     /**
@@ -304,30 +287,19 @@ class MailerTest extends TestCase
      */
     public function testProxies()
     {
-        $email = $this->getMockForEmail('setHeaders');
-        $email->expects($this->once())
-            ->method('setHeaders')
-            ->with(['X-Something' => 'nice']);
-        $result = (new TestMailer($email))->setHeaders(['X-Something' => 'nice']);
-        $this->assertInstanceOf('TestApp\Mailer\TestMailer', $result);
+        $result = (new Mailer())->setHeaders(['X-Something' => 'nice']);
+        $this->assertInstanceOf(Mailer::class, $result);
+        $header = $result->getMessage()->getHeaders();
+        $this->assertSame('nice', $header['X-Something']);
 
-        $email = $this->getMockForEmail('addHeaders');
-        $email->expects($this->once())
-            ->method('addHeaders')
-            ->with(['X-Something' => 'very nice', 'X-Other' => 'cool']);
-        $result = (new TestMailer($email))->addHeaders(['X-Something' => 'very nice', 'X-Other' => 'cool']);
-        $this->assertInstanceOf('TestApp\Mailer\TestMailer', $result);
-
-        $email = $this->getMockForEmail('setAttachments');
-        $email->expects($this->once())
-            ->method('setAttachments')
-            ->with([
-                ['file' => CAKE . 'basics.php', 'mimetype' => 'text/plain'],
-            ]);
-        $result = (new TestMailer($email))->setAttachments([
+        $result = (new Mailer())->setAttachments([
             ['file' => CAKE . 'basics.php', 'mimetype' => 'text/plain'],
         ]);
-        $this->assertInstanceOf('TestApp\Mailer\TestMailer', $result);
+        $this->assertInstanceOf(Mailer::class, $result);
+        $this->assertSame(
+            ['basics.php' => ['file' => CAKE . 'basics.php', 'mimetype' => 'text/plain']],
+            $result->getMessage()->getAttachments()
+        );
     }
 
     /**
@@ -337,7 +309,7 @@ class MailerTest extends TestCase
      */
     public function testGetSetProxies()
     {
-        $mailer = new TestMailer();
+        $mailer = new Mailer();
         $result = $mailer
             ->setTo('test@example.com')
             ->setCc('cc@example.com');
@@ -349,56 +321,42 @@ class MailerTest extends TestCase
 
     public function testSet()
     {
-        $email = $this->getMockForEmail('setViewVars');
-        $email->expects($this->once())
-            ->method('setViewVars')
-            ->with(['key' => 'value']);
-        $result = (new TestMailer($email))->set('key', 'value');
-        $this->assertInstanceOf('TestApp\Mailer\TestMailer', $result);
-
-        $email = $this->getMockForEmail('setViewVars');
-        $email->expects($this->once())
-            ->method('setViewVars')
-            ->with(['key' => 'value']);
-        $result = (new TestMailer($email))->set(['key' => 'value']);
-        $this->assertInstanceOf('TestApp\Mailer\TestMailer', $result);
+        $result = (new Mailer())->set('key', 'value');
+        $this->assertInstanceOf(Mailer::class, $result);
+        $this->assertSame(['key' => 'value'], $result->getRenderer()->viewBuilder()->getVars());
     }
 
     public function testSend()
     {
-        $email = $this->getMockForEmail('send');
-        $email->expects($this->any())
-            ->method('send')
-            ->will($this->returnValue([]));
-
-        $mailer = $this->getMockBuilder('TestApp\Mailer\TestMailer')
-            ->setMethods(['test'])
-            ->setConstructorArgs([$email])
+        $mailer = $this->getMockBuilder(Mailer::class)
+            ->setMethods(['test', 'deliver'])
             ->getMock();
         $mailer->expects($this->once())
             ->method('test')
             ->with('foo', 'bar');
+        $mailer->expects($this->any())
+            ->method('deliver')
+            ->will($this->returnValue([]));
 
         $mailer->send('test', ['foo', 'bar']);
+
+        $this->assertNull($mailer->viewBuilder()->getTemplate());
     }
 
     public function testSendWithUnsetTemplateDefaultsToActionName()
     {
-        $email = $this->getMockForEmail('send');
-        $email->expects($this->any())
-            ->method('send')
-            ->will($this->returnValue([]));
-
-        $mailer = $this->getMockBuilder('TestApp\Mailer\TestMailer')
-            ->setMethods(['test'])
-            ->setConstructorArgs([$email])
+        $mailer = $this->getMockBuilder(Mailer::class)
+            ->setMethods(['test', 'deliver', 'restore'])
             ->getMock();
         $mailer->expects($this->once())
             ->method('test')
             ->with('foo', 'bar');
+        $mailer->expects($this->any())
+            ->method('deliver')
+            ->will($this->returnValue([]));
 
         $mailer->send('test', ['foo', 'bar']);
-        $this->assertEquals($mailer->template, 'test');
+        $this->assertEquals('test', $mailer->viewBuilder()->getTemplate());
     }
 
     /**
@@ -408,19 +366,16 @@ class MailerTest extends TestCase
      */
     public function testSendFailsEmailIsReset()
     {
-        $email = $this->getMockForEmail(['send', 'reset']);
-        $email->expects($this->once())
-            ->method('send')
-            ->will($this->throwException(new RuntimeException('kaboom')));
-
-        $mailer = $this->getMockBuilder('TestApp\Mailer\TestMailer')
-            ->setMethods(['welcome', 'reset'])
-            ->setConstructorArgs([$email])
+        $mailer = $this->getMockBuilder(Mailer::class)
+            ->setMethods(['welcome', 'restore', 'deliver'])
             ->getMock();
 
+        $mailer->expects($this->once())
+            ->method('deliver')
+            ->will($this->throwException(new RuntimeException('kaboom')));
         // Mailer should be reset even if sending fails.
         $mailer->expects($this->once())
-            ->method('reset');
+            ->method('restore');
 
         try {
             $mailer->send('welcome', ['foo', 'bar']);
@@ -437,18 +392,16 @@ class MailerTest extends TestCase
      */
     public function testDefaultProfileRestoration()
     {
-        $email = $this->getMockForEmail('send', [['template' => 'cakephp']]);
-        $email->expects($this->any())
-            ->method('send')
-            ->will($this->returnValue([]));
-
-        $mailer = $this->getMockBuilder('TestApp\Mailer\TestMailer')
-            ->setMethods(['test'])
-            ->setConstructorArgs([$email])
+        $mailer = $this->getMockBuilder(Mailer::class)
+            ->setMethods(['test', 'deliver'])
+            ->setConstructorArgs([['template' => 'cakephp']])
             ->getMock();
         $mailer->expects($this->once())
             ->method('test')
             ->with('foo', 'bar');
+        $mailer->expects($this->once())
+            ->method('deliver')
+            ->will($this->returnValue([]));
 
         $mailer->send('test', ['foo', 'bar']);
         $this->assertSame('cakephp', $mailer->viewBuilder()->getTemplate());
@@ -459,8 +412,34 @@ class MailerTest extends TestCase
      */
     public function testMissingActionThrowsException()
     {
-        $this->expectException(\Cake\Mailer\Exception\MissingActionException::class);
-        $this->expectExceptionMessage('Mail TestMailer::test() could not be found, or is not accessible.');
-        (new TestMailer())->send('test');
+        $this->expectException(MissingActionException::class);
+        $this->expectExceptionMessage('Mail Cake\Mailer\Mailer::test() could not be found, or is not accessible.');
+        (new Mailer())->send('test');
+    }
+
+    public function testDeliver()
+    {
+        $this->mailer->reset();
+        $this->mailer->setTransport('debug');
+        $this->mailer->setFrom('cake@cakephp.org');
+        $this->mailer->setTo(['you@cakephp.org' => 'You']);
+        $this->mailer->setSubject('My title');
+        $this->mailer->setProfile(['empty']);
+
+        $result = $this->mailer->deliver("Here is my body, with multi lines.\nThis is the second line.\r\n\r\nAnd the last.");
+        $expected = ['headers', 'message'];
+        $this->assertEquals($expected, array_keys($result));
+        $expected = "Here is my body, with multi lines.\r\nThis is the second line.\r\n\r\nAnd the last.\r\n\r\n";
+
+        $this->assertEquals($expected, $result['message']);
+        $this->assertStringContainsString('Date: ', $result['headers']);
+        $this->assertStringContainsString('Message-ID: ', $result['headers']);
+        $this->assertStringContainsString('To: ', $result['headers']);
+
+        $result = $this->mailer->deliver('Other body');
+        $expected = "Other body\r\n\r\n";
+        $this->assertSame($expected, $result['message']);
+        $this->assertStringContainsString('Message-ID: ', $result['headers']);
+        $this->assertStringContainsString('To: ', $result['headers']);
     }
 }

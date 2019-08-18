@@ -2037,7 +2037,7 @@ class EmailTest extends TestCase
 
         $template = $this->Email->viewBuilder()->getTemplate();
         $layout = $this->Email->viewBuilder()->getLayout();
-        $this->assertSame('', $template);
+        $this->assertNull($template);
         $this->assertEquals($configs['layout'], $layout);
     }
 
