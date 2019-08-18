@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Mailer;
 
+use Cake\Core\Exception\Exception;
 use Cake\Core\InstanceConfigTrait;
 
 /**
@@ -48,6 +49,23 @@ abstract class AbstractTransport
     public function __construct(array $config = [])
     {
         $this->setConfig($config);
+    }
+
+    /**
+     * Check that at least one destination header is set.
+     *
+     * @param \Cake\Mailer\Message $message
+     * @return void
+     * @throws \Cake\Core\Exception\Exception If at least one of to, cc or bcc is not specified.
+     */
+    protected function checkRecipient(Message $message): void
+    {
+        if ($message->getTo() === []
+            && $message->getCc() === []
+            && $message->getBcc() === []
+        ) {
+            throw new Exception('You must specify at least one recipient. Use one of `setTo`, `setCc` or `setBcc` to define a recipient.');
+        }
     }
 
     /**

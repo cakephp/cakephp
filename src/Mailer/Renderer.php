@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Mailer;
 
+use Cake\View\ViewBuilder;
 use Cake\View\ViewVarsTrait;
 
 /**
@@ -33,15 +34,26 @@ class Renderer
     public const TEMPLATE_FOLDER = 'email';
 
     /**
-     * Build and set all the view properties needed to render the templated emails.
+     * Constructor
+     *
+     * @param \Cake\View\ViewBuilder|null $viewBuilder View builder instance.
+     */
+    public function __construct(?ViewBuilder $viewBuilder = null)
+    {
+        $this->_viewBuilder = $viewBuilder;
+    }
+
+    /**
+     * Render text/HTML content.
+     *
      * If there is no template set, the $content will be returned in a hash
-     * of the text content types for the email.
+     * of the specified content types for the email.
      *
      * @param string $content The content.
      * @param array $types Content types to render.
      * @return array{html?: string, text?: string} The rendered content with "html" and/or "text" keys.
      */
-    public function getContent(string $content, array $types = []): array
+    public function render(string $content, array $types = []): array
     {
         $rendered = [];
         $template = $this->viewBuilder()->getTemplate();
@@ -71,7 +83,7 @@ class Renderer
             $view->setTemplatePath(static::TEMPLATE_FOLDER . DIRECTORY_SEPARATOR . $type);
             $view->setLayoutPath(static::TEMPLATE_FOLDER . DIRECTORY_SEPARATOR . $type);
 
-            $rendered[$type] = (string)$view->render();
+            $rendered[$type] = $view->render();
         }
 
         return $rendered;
