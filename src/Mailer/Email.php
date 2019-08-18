@@ -39,6 +39,8 @@ use SimpleXMLElement;
  * Email::config() can be used to add or read a configuration profile for Email instances.
  * Once made configuration profiles can be used to re-use across various email messages your
  * application sends.
+ *
+ * @deprecated 4.0.0 This class will be removed in CakePHP 4.0, use Mailer instead.
  */
 class Email implements JsonSerializable, Serializable
 {
