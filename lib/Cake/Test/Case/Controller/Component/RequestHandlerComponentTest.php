@@ -400,6 +400,20 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	}
 
 /**
+ * testStartupCallbackJson method
+ *
+ * @return void
+ */
+	public function testStartupCallbackJson() {
+		$_SERVER['REQUEST_METHOD'] = 'PUT';
+		$_SERVER['CONTENT_TYPE'] = 'application/json';
+		$this->Controller->request = $this->getMock('CakeRequest', array('_readInput'));
+		$this->RequestHandler->startup($this->Controller);
+		$this->assertTrue(is_array($this->Controller->data));
+		$this->assertFalse(is_object($this->Controller->data));
+	}
+
+/**
  * testStartupCallback with charset.
  *
  * @return void
