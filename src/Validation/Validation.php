@@ -120,9 +120,10 @@ class Validation
     }
 
     /**
-     * Checks that a string contains only integer or letters
+     * Checks that a string contains only integer or letters.
      *
-     * Returns true if string contains only integer or letters
+     * This method's definition of letters and integers includes unicode characters.
+     * Use `asciiAlphaNumeric()` if you want to exclude unicode.
      *
      * @param mixed $check Value to check
      * @return bool Success
@@ -134,6 +135,46 @@ class Validation
         }
 
         return self::_check($check, '/^[\p{Ll}\p{Lm}\p{Lo}\p{Lt}\p{Lu}\p{Nd}]+$/Du');
+    }
+
+    /**
+     * Checks that a doesn't contain any alpha numeric characters
+     *
+     * This method's definition of letters and integers includes unicode characters.
+     * Use `notAsciiAlphaNumeric()` if you want to exclude ascii only.
+     *
+     * @param mixed $check Value to check
+     * @return bool Success
+     */
+    public static function notAlphaNumeric($check): bool
+    {
+        return !static::alphaNumeric($check);
+    }
+
+    /**
+     * Checks that a string contains only ascii integer or letters.
+     *
+     * @param mixed $check Value to check
+     * @return bool Success
+     */
+    public static function asciiAlphaNumeric($check): bool
+    {
+        if ((empty($check) && $check !== '0') || !is_scalar($check)) {
+            return false;
+        }
+
+        return self::_check($check, '/^[[:alnum:]]+$/');
+    }
+
+    /**
+     * Checks that a doesn't contain any non-ascii alpha numeric characters
+     *
+     * @param mixed $check Value to check
+     * @return bool Success
+     */
+    public static function notAsciiAlphaNumeric($check): bool
+    {
+        return !static::asciiAlphaNumeric($check);
     }
 
     /**
@@ -359,6 +400,7 @@ class Validation
      * @param mixed $check Value to check
      * @param int $count Number of non-alphanumerics to check for
      * @return bool Success
+     * @deprecated 4.0 Use notAlphaNumeric() instead. Will be removed in 5.0
      */
     public static function containsNonAlphaNumeric($check, int $count = 1): bool
     {
