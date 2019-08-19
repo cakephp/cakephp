@@ -1,28 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="3.4.11@85c9b6bb442039c773120059ae35a31f8ef9d488">
-  <file src="src/Auth/BaseAuthenticate.php">
-    <PossiblyInvalidArrayOffset occurrences="1">
-      <code>$hidden[$key]</code>
-    </PossiblyInvalidArrayOffset>
-    <PossiblyInvalidMethodCall occurrences="5">
-      <code>get</code>
-      <code>unset</code>
-      <code>getHidden</code>
-      <code>setHidden</code>
-      <code>toArray</code>
-    </PossiblyInvalidMethodCall>
-  </file>
-  <file src="src/Auth/FormAuthenticate.php">
-    <PossiblyInvalidArgument occurrences="2">
-      <code>$request-&gt;getData($fields['username'])</code>
-      <code>$request-&gt;getData($fields['password'])</code>
-    </PossiblyInvalidArgument>
-  </file>
-  <file src="src/Auth/Storage/SessionStorage.php">
-    <MoreSpecificImplementedParamType occurrences="1">
-      <code>$user</code>
-    </MoreSpecificImplementedParamType>
-  </file>
   <file src="src/Cache/CacheRegistry.php">
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$class</code>
@@ -135,27 +112,6 @@
       <code>$class</code>
     </MoreSpecificImplementedParamType>
   </file>
-  <file src="src/Controller/Component/AuthComponent.php">
-    <InvalidScalarArgument occurrences="1">
-      <code>$message</code>
-    </InvalidScalarArgument>
-    <PossiblyInvalidArgument occurrences="2">
-      <code>$redirectUrl</code>
-      <code>$redirectUrl</code>
-    </PossiblyInvalidArgument>
-    <PossiblyNullReference occurrences="6">
-      <code>write</code>
-      <code>delete</code>
-      <code>read</code>
-      <code>write</code>
-      <code>getConfig</code>
-      <code>setConfig</code>
-    </PossiblyNullReference>
-    <UndefinedInterfaceMethod occurrences="2">
-      <code>getConfig</code>
-      <code>setConfig</code>
-    </UndefinedInterfaceMethod>
-  </file>
   <file src="src/Controller/Component/PaginatorComponent.php">
     <ImplementedReturnTypeMismatch occurrences="2">
       <code>$this</code>
@@ -213,20 +169,10 @@
       <code>$class</code>
     </MoreSpecificImplementedParamType>
   </file>
-  <file src="src/Controller/ErrorController.php">
-    <PossiblyNullArgument occurrences="1">
-      <code>$builder-&gt;getTemplatePath()</code>
-    </PossiblyNullArgument>
-  </file>
   <file src="src/Core/Configure/Engine/IniConfig.php">
     <LoopInvalidation occurrences="1">
       <code>$values</code>
     </LoopInvalidation>
-  </file>
-  <file src="src/Core/Configure/Engine/PhpConfig.php">
-    <UnresolvableInclude occurrences="1">
-      <code>include $file</code>
-    </UnresolvableInclude>
   </file>
   <file src="src/Core/StaticConfigTrait.php">
     <PossiblyInvalidArgument occurrences="1">
@@ -724,17 +670,6 @@
       <code>$end</code>
     </PossiblyNullOperand>
   </file>
-  <file src="src/Event/Event.php">
-    <ImplementedReturnTypeMismatch occurrences="1">
-      <code>object|null</code>
-    </ImplementedReturnTypeMismatch>
-  </file>
-  <file src="src/Http/BaseApplication.php">
-    <UnresolvableInclude occurrences="2">
-      <code>require_once $this-&gt;configDir . '/bootstrap.php'</code>
-      <code>require $this-&gt;configDir . '/routes.php'</code>
-    </UnresolvableInclude>
-  </file>
   <file src="src/Http/Client/Adapter/Curl.php">
     <InvalidScalarArgument occurrences="1">
       <code>$body</code>
@@ -799,11 +734,6 @@
       <code>$cookie['httponly']</code>
     </PossiblyInvalidArgument>
   </file>
-  <file src="src/Http/Middleware/CsrfProtectionMiddleware.php">
-    <PossiblyNullArgument occurrences="1">
-      <code>$request-&gt;getParsedBody()</code>
-    </PossiblyNullArgument>
-  </file>
   <file src="src/Http/MiddlewareQueue.php">
     <InvalidOperand occurrences="1">
       <code>$i</code>
@@ -833,12 +763,6 @@
     </PossiblyNullArgument>
   </file>
   <file src="src/Http/ResponseEmitter.php">
-    <MissingParamType occurrences="1">
-      <code>$maxBufferLength</code>
-    </MissingParamType>
-    <NullArgument occurrences="1">
-      <code>$file</code>
-    </NullArgument>
     <PossiblyInvalidArgument occurrences="8">
       <code>$data['expires']</code>
       <code>$data['name']</code>
@@ -849,11 +773,6 @@
       <code>$data['secure']</code>
       <code>$data['httponly']</code>
     </PossiblyInvalidArgument>
-  </file>
-  <file src="src/Http/Runner.php">
-    <PossiblyNullReference occurrences="1">
-      <code>process</code>
-    </PossiblyNullReference>
   </file>
   <file src="src/Http/ServerRequest.php">
     <LessSpecificImplementedReturnType occurrences="2">
@@ -886,17 +805,6 @@
       <code>$uri-&gt;base</code>
       <code>$uri-&gt;webroot</code>
     </NoInterfaceProperties>
-  </file>
-  <file src="src/Http/Session.php">
-    <PossiblyInvalidIterator occurrences="1">
-      <code>$write</code>
-    </PossiblyInvalidIterator>
-  </file>
-  <file src="src/Http/Session/DatabaseSession.php">
-    <InvalidArgument occurrences="2">
-      <code>$record</code>
-      <code>[$this-&gt;_table-&gt;getPrimaryKey() =&gt; $id]</code>
-    </InvalidArgument>
   </file>
   <file src="src/I18n/DateFormatTrait.php">
     <PossiblyInvalidArgument occurrences="2">
@@ -1547,12 +1455,8 @@
     </MoreSpecificImplementedParamType>
   </file>
   <file src="src/View/View.php">
-    <PossiblyNullPropertyAssignmentValue occurrences="2">
-      <code>$request ?: Router::getRequest(true)</code>
+    <PossiblyNullPropertyAssignmentValue occurrences="1">
       <code>$defaultLayout</code>
     </PossiblyNullPropertyAssignmentValue>
-    <UnresolvableInclude occurrences="1">
-      <code>include func_get_arg(0)</code>
-    </UnresolvableInclude>
   </file>
 </files>

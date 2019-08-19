@@ -42,12 +42,33 @@ use Zend\HttpHandlerRunner\Emitter\EmitterInterface;
 class ResponseEmitter implements EmitterInterface
 {
     /**
-     * @inheritDoc
+     * Maximum output buffering size for each iteration.
+     *
+     * @var int
      */
-    public function emit(ResponseInterface $response, $maxBufferLength = 8192): bool
+    protected $maxBufferLength;
+
+    /**
+     * Constructor
+     *
+     * @param int $maxBufferLength Maximum output buffering size for each iteration.
+     */
+    public function __construct(int $maxBufferLength = 8192)
     {
-        $file = null;
-        $line = 0;
+        $this->maxBufferLength = $maxBufferLength;
+    }
+
+    /**
+     * Emit a response.
+     *
+     * Emits a response, including status line, headers, and the message body,
+     * according to the environment.
+     *
+     * @param \Psr\Http\Message\ResponseInterface $response The response to emit.
+     * @return bool
+     */
+    public function emit(ResponseInterface $response): bool
+    {
         if (headers_sent($file, $line)) {
             $message = "Unable to emit headers. Headers sent in file=$file line=$line";
             if (Configure::read('debug')) {
@@ -63,9 +84,9 @@ class ResponseEmitter implements EmitterInterface
 
         $range = $this->parseContentRange($response->getHeaderLine('Content-Range'));
         if (is_array($range)) {
-            $this->emitBodyRange($range, $response, $maxBufferLength);
+            $this->emitBodyRange($range, $response);
         } else {
-            $this->emitBody($response, $maxBufferLength);
+            $this->emitBody($response);
         }
 
         if (function_exists('fastcgi_finish_request')) {
@@ -80,10 +101,9 @@ class ResponseEmitter implements EmitterInterface
      * Emit the message body.
      *
      * @param \Psr\Http\Message\ResponseInterface $response The response to emit
-     * @param int $maxBufferLength The chunk size to emit
      * @return void
      */
-    protected function emitBody(ResponseInterface $response, int $maxBufferLength): void
+    protected function emitBody(ResponseInterface $response): void
     {
         if (in_array($response->getStatusCode(), [204, 304], true)) {
             return;
@@ -98,7 +118,7 @@ class ResponseEmitter implements EmitterInterface
 
         $body->rewind();
         while (!$body->eof()) {
-            echo $body->read($maxBufferLength);
+            echo $body->read($this->maxBufferLength);
         }
     }
 
@@ -107,10 +127,9 @@ class ResponseEmitter implements EmitterInterface
      *
      * @param array $range The range data to emit
      * @param \Psr\Http\Message\ResponseInterface $response The response to emit
-     * @param int $maxBufferLength The chunk size to emit
      * @return void
      */
-    protected function emitBodyRange(array $range, ResponseInterface $response, int $maxBufferLength): void
+    protected function emitBodyRange(array $range, ResponseInterface $response): void
     {
         [$unit, $first, $last, $length] = $range;
 
@@ -128,12 +147,12 @@ class ResponseEmitter implements EmitterInterface
         $pos = 0;
         $length = $last - $first + 1;
         while (!$body->eof() && $pos < $length) {
-            if (($pos + $maxBufferLength) > $length) {
+            if (($pos + $this->maxBufferLength) > $length) {
                 echo $body->read($length - $pos);
                 break;
             }
 
-            echo $body->read($maxBufferLength);
+            echo $body->read($this->maxBufferLength);
             $pos = $body->tell();
         }
     }

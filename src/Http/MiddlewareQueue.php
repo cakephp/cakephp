@@ -260,13 +260,13 @@ class MiddlewareQueue implements Countable, SeekableIterator
     /**
      *  Returns the current middleware.
      *
-     * @return \Psr\Http\Server\MiddlewareInterface|null
+     * @return \Psr\Http\Server\MiddlewareInterface
      * @see \Iterator::current()
      */
-    public function current(): ?MiddlewareInterface
+    public function current(): MiddlewareInterface
     {
         if (!isset($this->queue[$this->position])) {
-            return null;
+            throw new OutOfBoundsException("Invalid current position ($this->position)");
         }
 
         if ($this->queue[$this->position] instanceof MiddlewareInterface) {

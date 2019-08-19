@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Http\Middleware;
 
+use ArrayAccess;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Exception\InvalidCsrfTokenException;
 use Cake\Http\Response;
@@ -227,17 +228,25 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      */
     protected function _validateToken(ServerRequestInterface $request): void
     {
-        $cookies = $request->getCookieParams();
-        $cookie = Hash::get($cookies, $this->_config['cookieName']);
-        $post = Hash::get($request->getParsedBody(), $this->_config['field']);
-        $header = $request->getHeaderLine('X-CSRF-Token');
+        $cookie = Hash::get($request->getCookieParams(), $this->_config['cookieName']);
 
         if (!$cookie) {
             throw new InvalidCsrfTokenException(__d('cake', 'Missing CSRF token cookie'));
         }
 
-        if (!Security::constantEquals($post, $cookie) && !Security::constantEquals($header, $cookie)) {
-            throw new InvalidCsrfTokenException(__d('cake', 'CSRF token mismatch.'));
+        $body = $request->getParsedBody();
+        if (is_array($body) || $body instanceof ArrayAccess) {
+            $post = Hash::get($body, $this->_config['field']);
+            if (Security::constantEquals($post, $cookie)) {
+                return;
+            }
         }
+
+        $header = $request->getHeaderLine('X-CSRF-Token');
+        if (Security::constantEquals($header, $cookie)) {
+            return;
+        }
+
+        throw new InvalidCsrfTokenException(__d('cake', 'Missing CSRF token body'));
     }
 }
