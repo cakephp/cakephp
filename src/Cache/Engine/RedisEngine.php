@@ -315,7 +315,7 @@ class RedisEngine extends CacheEngine
      *
      * @param mixed $value Value to serialize.
      * @return string
-     * @https://github.com/phpredis/phpredis/issues/81
+     * @link https://github.com/phpredis/phpredis/issues/81
      */
     protected function serialize($value): string
     {
