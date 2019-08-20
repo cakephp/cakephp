@@ -400,13 +400,13 @@ class RedisEngineTest extends TestCase
         $this->assertTrue($result);
 
         $result = Cache::read('test_increment', 'redis');
-        $this->assertEquals(1, $result);
+        $this->assertSame(1, $result);
 
         $result = Cache::increment('test_increment', 2, 'redis');
-        $this->assertEquals(3, $result);
+        $this->assertSame(3, $result);
 
         $result = Cache::read('test_increment', 'redis');
-        $this->assertEquals(3, $result);
+        $this->assertSame(3, $result);
     }
 
     /**
