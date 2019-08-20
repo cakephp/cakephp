@@ -3095,7 +3095,7 @@ class PaginatorHelperTest extends TestCase
             [5, true, true, 10, ['first' => true, 'last' => true], '<link href="http://localhost/index?foo=bar&amp;page=4" rel="prev"/>' .
                 '<link href="http://localhost/index?foo=bar&amp;page=6" rel="next"/>' .
                 '<link href="http://localhost/index?foo=bar" rel="first"/>' .
-                '<link href="http://localhost/index?foo=bar&amp;page=10" rel="last"/>']
+                '<link href="http://localhost/index?foo=bar&amp;page=10" rel="last"/>'],
         ];
     }
 

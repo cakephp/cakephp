@@ -470,13 +470,12 @@ class Session
             $this->start();
         }
 
-        $write = $name;
         if (!is_array($name)) {
-            $write = [$name => $value];
+            $name = [$name => $value];
         }
 
         $data = $_SESSION ?? [];
-        foreach ($write as $key => $val) {
+        foreach ($name as $key => $val) {
             $data = Hash::insert($data, $key, $val);
         }
 

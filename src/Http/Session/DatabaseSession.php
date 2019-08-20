@@ -112,10 +112,12 @@ class DatabaseSession implements SessionHandlerInterface
      */
     public function read($id): string
     {
+        /** @var string $pkField */
+        $pkField = $this->_table->getPrimaryKey();
         $result = $this->_table
             ->find('all')
             ->select(['data'])
-            ->where([$this->_table->getPrimaryKey() => $id])
+            ->where([$pkField => $id])
             ->disableHydration()
             ->first();
 
@@ -150,7 +152,9 @@ class DatabaseSession implements SessionHandlerInterface
         }
         $expires = time() + $this->_timeout;
         $record = compact('data', 'expires');
-        $record[$this->_table->getPrimaryKey()] = $id;
+        /** @var string $pkField */
+        $pkField = $this->_table->getPrimaryKey();
+        $record[$pkField] = $id;
         $result = $this->_table->save(new Entity($record));
 
         return (bool)$result;
@@ -164,8 +168,10 @@ class DatabaseSession implements SessionHandlerInterface
      */
     public function destroy($id): bool
     {
+        /** @var string $pkField */
+        $pkField = $this->_table->getPrimaryKey();
         $this->_table->delete(new Entity(
-            [$this->_table->getPrimaryKey() => $id],
+            [$pkField => $id],
             ['markNew' => false]
         ));
 

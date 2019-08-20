@@ -33,7 +33,7 @@ interface EventInterface
     /**
      * Returns the subject of this event.
      *
-     * @return object
+     * @return object|null
      */
     public function getSubject();
 

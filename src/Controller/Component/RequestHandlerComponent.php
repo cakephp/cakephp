@@ -307,6 +307,7 @@ class RequestHandlerComponent extends Component
         $controller = $this->getController();
         $request = $controller->getRequest();
         $response = $controller->getResponse();
+        /** @var array $accepted */
         $accepted = $request->accepts();
 
         if (!$type) {
@@ -390,11 +391,13 @@ class RequestHandlerComponent extends Component
         $controller = $this->getController();
         $request = $controller->getRequest();
         $response = $controller->getResponse();
+        /** @var array $acceptRaw */
         $acceptRaw = $request->parseAccept();
 
         if (empty($acceptRaw)) {
             return $type ? $type === $this->ext : $this->ext;
         }
+        /** @var array $accepts */
         $accepts = $response->mapType(array_shift($acceptRaw));
 
         if (!$type) {
@@ -473,12 +476,12 @@ class RequestHandlerComponent extends Component
             $builder->setClassName($viewClass);
         } else {
             if (!$this->_renderType) {
-                $builder->setTemplatePath($builder->getTemplatePath() . DIRECTORY_SEPARATOR . $type);
+                $builder->setTemplatePath((string)$builder->getTemplatePath() . DIRECTORY_SEPARATOR . $type);
             } else {
                 $builder->setTemplatePath(preg_replace(
                     "/([\/\\\\]{$this->_renderType})$/",
                     DIRECTORY_SEPARATOR . $type,
-                    $builder->getTemplatePath()
+                    (string)$builder->getTemplatePath()
                 ));
             }
 
@@ -495,7 +498,7 @@ class RequestHandlerComponent extends Component
      * Sets the response header based on type map index name. This wraps several methods
      * available on Cake\Http\Response. It also allows you to use Content-Type aliases.
      *
-     * @param string|array $type Friendly type name, i.e. 'html' or 'xml', or a full content-type,
+     * @param string $type Friendly type name, i.e. 'html' or 'xml', or a full content-type,
      *    like 'application/x-shockwave'.
      * @param array $options If $type is a friendly type name that is associated with
      *    more than one type of content, $index is used to select which content-type to use.

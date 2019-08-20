@@ -340,15 +340,11 @@ class View implements EventDispatcherInterface
         if ($eventManager !== null) {
             $this->setEventManager($eventManager);
         }
-        $this->request = $request ?: Router::getRequest(true);
-        $this->response = $response ?: new Response();
-        if (!$this->request) {
-            $this->request = new ServerRequest([
-                'base' => '',
-                'url' => '',
-                'webroot' => '/',
-            ]);
+        if ($request === null) {
+            $request = Router::getRequest(true) ?: new ServerRequest(['base' => '', 'url' => '', 'webroot' => '/']);
         }
+        $this->request = $request;
+        $this->response = $response ?: new Response();
         $this->Blocks = new $this->_viewBlockClass();
         $this->initialize();
         $this->loadHelpers();
