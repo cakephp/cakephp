@@ -18,16 +18,6 @@
       <code>close</code>
     </PossiblyNullReference>
   </file>
-  <file src="src/Cache/Engine/RedisEngine.php">
-    <InvalidArgument occurrences="1">
-      <code>$value</code>
-    </InvalidArgument>
-    <PossiblyInvalidArgument occurrences="3">
-      <code>$value</code>
-      <code>$value</code>
-      <code>$value</code>
-    </PossiblyInvalidArgument>
-  </file>
   <file src="src/Cache/Engine/WincacheEngine.php">
     <NullArgument occurrences="1">
       <code>$success</code>
