@@ -118,25 +118,6 @@
       <code>$this</code>
     </ImplementedReturnTypeMismatch>
   </file>
-  <file src="src/Controller/Component/RequestHandlerComponent.php">
-    <InvalidScalarArgument occurrences="1">
-      <code>$accepted</code>
-    </InvalidScalarArgument>
-    <PossiblyInvalidArgument occurrences="6">
-      <code>$accepted</code>
-      <code>$accepted</code>
-      <code>$accepts</code>
-      <code>$accepts</code>
-      <code>$type</code>
-      <code>$type</code>
-    </PossiblyInvalidArgument>
-    <PossiblyNullArgument occurrences="1">
-      <code>$builder-&gt;getTemplatePath()</code>
-    </PossiblyNullArgument>
-    <PossiblyNullOperand occurrences="1">
-      <code>$builder-&gt;getTemplatePath()</code>
-    </PossiblyNullOperand>
-  </file>
   <file src="src/Controller/Component/SecurityComponent.php">
     <InvalidArgument occurrences="1">
       <code>$lockedFields</code>
