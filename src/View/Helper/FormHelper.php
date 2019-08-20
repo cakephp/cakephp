@@ -1370,10 +1370,7 @@ class FormHelper extends Helper
         if (!array_key_exists('maxlength', $options)
             && in_array($options['type'], $typesWithMaxLength, true)
         ) {
-            $maxLength = null;
-            if (method_exists($context, 'getMaxLength')) {
-                $maxLength = $context->getMaxLength($fieldName);
-            }
+            $maxLength = $context->getMaxLength($fieldName);
 
             if ($maxLength === null && !empty($fieldDef['length'])) {
                 $maxLength = $fieldDef['length'];
