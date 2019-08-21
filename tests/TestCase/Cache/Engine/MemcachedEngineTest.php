@@ -293,7 +293,11 @@ class MemcachedEngineTest extends TestCase
     public function testMsgpackSerializerThrowException()
     {
         $this->skipIf(
-            defined('Memcached::HAVE_MSGPACK') && Memcached::HAVE_MSGPACK,
+            !defined('Memcached::HAVE_MSGPACK'),
+            'Memcached::HAVE_MSGPACK constant is not available in Memcached below 3.0.0'
+        );
+        $this->skipIf(
+            (bool)Memcached::HAVE_MSGPACK,
             'Memcached extension is compiled with msgpack support'
         );
 
@@ -306,7 +310,7 @@ class MemcachedEngineTest extends TestCase
         ];
 
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('msgpack is not a valid serializer engine for Memcached');
+        $this->expectExceptionMessage('Memcached extension is not compiled with msgpack support');
         $Memcached->init($config);
     }
 
