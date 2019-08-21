@@ -228,7 +228,6 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::notAsciiAlphaNumeric('ÆΔΩЖÇ'));
         $this->assertTrue(Validation::notAsciiAlphaNumeric('12 234'));
         $this->assertTrue(Validation::notAsciiAlphaNumeric('dfd 234'));
-        $this->assertTrue(Validation::notAsciiAlphaNumeric("0\n"));
         $this->assertTrue(Validation::notAsciiAlphaNumeric("\n"));
         $this->assertTrue(Validation::notAsciiAlphaNumeric("\t"));
         $this->assertTrue(Validation::notAsciiAlphaNumeric("\r"));
