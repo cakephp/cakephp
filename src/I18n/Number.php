@@ -251,7 +251,6 @@ class Number
     public static function defaultCurrency($currency = null): ?string
     {
         if (!empty($currency)) {
-            /** @psalm-suppress InvalidReturnStatement */
             return self::$_defaultCurrency = $currency;
         }
 

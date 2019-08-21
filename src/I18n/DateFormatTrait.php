@@ -418,7 +418,6 @@ trait DateFormatTrait
      * Get the difference formatter instance.
      *
      * @return \Cake\Chronos\DifferenceFormatterInterface
-     * @psalm-suppress InvalidReturnType
      */
     public static function getDiffFormatter(): DifferenceFormatterInterface
     {

@@ -897,7 +897,6 @@ class RouteBuilder
      * @param callable|null $callback The callback to invoke that builds the plugin routes
      *   Only required when $options is defined.
      * @return $this
-     * @psalm-suppress PossiblyInvalidArrayAccess
      */
     public function plugin(string $name, $options = [], ?callable $callback = null)
     {

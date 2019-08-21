@@ -36,9 +36,6 @@ parameters:
         - "#Parameter \\#2 \\$callback of function array_filter expects callable\\(mixed, mixed\\): bool, 'strlen' given.#"
         - '#Parameter \#1 \$autoload_function of function spl_autoload_register expects#'
         -
-            message: '#Right side of && is always false#'
-            path: 'src/Cache/Engine/MemcachedEngine.php'
-        -
             message: '#Call to function method_exists\(\) with string and [^ ]+ will always evaluate to false#'
             path: 'src/Controller/Component/AuthComponent.php'
         -

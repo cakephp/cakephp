@@ -111,7 +111,7 @@ class MemcachedEngine extends CacheEngine
             'json' => Memcached::SERIALIZER_JSON,
             'php' => Memcached::SERIALIZER_PHP,
         ];
-        if (defined('Memcached::HAVE_MSGPACK') && Memcached::HAVE_MSGPACK) {
+        if (defined('Memcached::HAVE_MSGPACK')) {
             $this->_serializers['msgpack'] = Memcached::SERIALIZER_MSGPACK;
         }
 

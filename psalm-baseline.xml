@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="3.4.11@85c9b6bb442039c773120059ae35a31f8ef9d488">
+<files psalm-version="3.4.12@86e5e50c1bb492045e70f2ebe1da3cad06e4e9b2">
+  <file src="src/Cache/Cache.php">
+    <PossiblyInvalidArgument occurrences="2">
+      <code>$config</code>
+      <code>$config</code>
+    </PossiblyInvalidArgument>
+    <PossiblyInvalidOperand occurrences="1">
+      <code>$config</code>
+    </PossiblyInvalidOperand>
+  </file>
   <file src="src/Cache/CacheRegistry.php">
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$class</code>
@@ -59,7 +68,6 @@
   <file src="src/Console/ConsoleInputOption.php">
     <PossiblyInvalidArgument occurrences="1">
       <code>$this-&gt;_default</code>
-      <code>$this-&gt;_default</code>
     </PossiblyInvalidArgument>
   </file>
   <file src="src/Console/ConsoleIo.php">
@@ -85,6 +93,9 @@
     </PossiblyNullReference>
   </file>
   <file src="src/Console/ConsoleOutput.php">
+    <PossibleRawObjectIteration occurrences="1">
+      <code>$style</code>
+    </PossibleRawObjectIteration>
     <PossiblyNullArrayOffset occurrences="2">
       <code>static::$_styles</code>
       <code>static::$_styles</code>
@@ -416,7 +427,6 @@
     </PossiblyNullArrayAccess>
     <PossiblyUndefinedArrayOffset occurrences="1">
       <code>$row['default']</code>
-      <code>$row['default']</code>
     </PossiblyUndefinedArrayOffset>
   </file>
   <file src="src/Database/SchemaCache.php">
@@ -603,11 +613,6 @@
       <code>$config</code>
     </PossiblyNullArgument>
   </file>
-  <file src="src/Datasource/EntityTrait.php">
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$entity</code>
-    </PossiblyInvalidArgument>
-  </file>
   <file src="src/Datasource/ModelAwareTrait.php">
     <PossiblyFalseOperand occurrences="1">
       <code>strrpos($modelClass, '\\')</code>
@@ -764,6 +769,12 @@
       <code>$data</code>
       <code>$target</code>
     </MoreSpecificImplementedParamType>
+    <PossiblyInvalidArgument occurrences="4">
+      <code>$detect</code>
+      <code>$detect</code>
+      <code>$detect</code>
+      <code>$detect</code>
+    </PossiblyInvalidArgument>
     <PossiblyNullArgument occurrences="8">
       <code>$this-&gt;getEnv('HTTP_X_FORWARDED_FOR')</code>
       <code>$this-&gt;getEnv($detect['env'])</code>
@@ -786,6 +797,14 @@
       <code>$uri-&gt;base</code>
       <code>$uri-&gt;webroot</code>
     </NoInterfaceProperties>
+  </file>
+  <file src="src/Http/Session.php">
+    <PossiblyInvalidArgument occurrences="1">
+      <code>$config['handler']</code>
+    </PossiblyInvalidArgument>
+    <TypeDoesNotContainType occurrences="1">
+      <code>$_SESSION</code>
+    </TypeDoesNotContainType>
   </file>
   <file src="src/I18n/DateFormatTrait.php">
     <PossiblyInvalidArgument occurrences="2">
@@ -1184,6 +1203,16 @@
   </file>
   <file src="src/TestSuite/IntegrationTestTrait.php">
     <InvalidCatch occurrences="1"/>
+    <InvalidThrow occurrences="8">
+      <code>\PHPUnit\Exception|\Throwable</code>
+      <code>\PHPUnit\Exception|\Throwable</code>
+      <code>\PHPUnit\Exception|\Throwable</code>
+      <code>\PHPUnit\Exception|\Throwable</code>
+      <code>\PHPUnit\Exception|\Throwable</code>
+      <code>\PHPUnit\Exception|\Throwable</code>
+      <code>\PHPUnit\Exception|\Throwable</code>
+      <code>\PHPUnit\Exception|\Throwable</code>
+    </InvalidThrow>
     <PossiblyInvalidArgument occurrences="2">
       <code>$data</code>
       <code>$encrypt</code>
@@ -1436,6 +1465,12 @@
     </MoreSpecificImplementedParamType>
   </file>
   <file src="src/View/View.php">
+    <InvalidReturnStatement occurrences="1">
+      <code>$cache</code>
+    </InvalidReturnStatement>
+    <InvalidReturnType occurrences="1">
+      <code>array</code>
+    </InvalidReturnType>
     <PossiblyNullPropertyAssignmentValue occurrences="1">
       <code>$defaultLayout</code>
     </PossiblyNullPropertyAssignmentValue>
