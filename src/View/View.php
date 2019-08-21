@@ -79,7 +79,6 @@ class View implements EventDispatcherInterface
         getConfig as private _getConfig;
     }
     use LogTrait;
-    use ViewVarsTrait;
 
     /**
      * Helpers collection
