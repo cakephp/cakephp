@@ -40,7 +40,7 @@ trait ViewVarsTrait
      * Deprecated: This property will be removed in 4.x.
      * Inside controller context use `$this->set()` instead, also see `$this->viewBuilder()->getVar()`.
      * In view context it will be a protected property `View::$viewVars`.
-     * 
+     *
      * @var array
      */
     public $viewVars = [];
