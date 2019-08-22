@@ -109,7 +109,7 @@ class FunctionExpressionTest extends TestCase
             ->newQuery()
             ->select(['column']);
 
-        $binder = new ValueBinder;
+        $binder = new ValueBinder();
         $function = new FunctionExpression('MyFunction', [$query]);
         $this->assertEquals(
             'MyFunction((SELECT column))',
@@ -129,7 +129,7 @@ class FunctionExpressionTest extends TestCase
             ->find()
             ->select(['column']);
 
-        $binder = new ValueBinder;
+        $binder = new ValueBinder();
         $function = new FunctionExpression('MyFunction', [$query]);
         $this->assertEquals(
             'MyFunction((SELECT Articles.column AS Articles__column FROM articles Articles))',

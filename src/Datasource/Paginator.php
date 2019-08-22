@@ -183,7 +183,7 @@ class Paginator implements PaginatorInterface
         if ($pagingParams['requestedPage'] > $pagingParams['page']) {
             throw new PageOutOfBoundsException([
                 'requestedPage' => $pagingParams['requestedPage'],
-                'pagingParams' => $this->_pagingParams
+                'pagingParams' => $this->_pagingParams,
             ]);
         }
 
@@ -198,7 +198,7 @@ class Paginator implements PaginatorInterface
      * @param array $data Pagination data.
      * @return \Cake\Datasource\QueryInterface
      */
-    protected function getQuery(RepositoryInterface $object, QueryInterface $query = null, array $data)
+    protected function getQuery(RepositoryInterface $object, ?QueryInterface $query = null, array $data): QueryInterface
     {
         if ($query === null) {
             $query = $object->find($data['finder'], $data['options']);
@@ -216,7 +216,7 @@ class Paginator implements PaginatorInterface
      * @param array $data Pagination data.
      * @return int
      */
-    protected function getCount(QueryInterface $query, array $data)
+    protected function getCount(QueryInterface $query, array $data): int
     {
         return $query->count();
     }
@@ -229,7 +229,7 @@ class Paginator implements PaginatorInterface
      * @param array $settings The settings/configuration used for pagination.
      * @return array Array with keys 'defaults', 'options' and 'finder'
      */
-    protected function extractData(RepositoryInterface $object, array $params, array $settings)
+    protected function extractData(RepositoryInterface $object, array $params, array $settings): array
     {
         $alias = $object->getAlias();
         $defaults = $this->getDefaults($alias, $settings);
@@ -251,7 +251,7 @@ class Paginator implements PaginatorInterface
      *   'count', 'defaults', 'finder', 'numResults'.
      * @return array Paging params.
      */
-    protected function buildParams(array $data)
+    protected function buildParams(array $data): array
     {
         $defaults = $data['defaults'];
         $count = $data['count'];

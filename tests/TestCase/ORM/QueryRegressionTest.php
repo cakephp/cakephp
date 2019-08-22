@@ -1780,7 +1780,7 @@ class QueryRegressionTest extends TestCase
                             ->getConnection()
                             ->newQuery()
                             ->select(-1),
-                    ])
+                    ]),
                 ];
             });
 
@@ -1810,8 +1810,8 @@ class QueryRegressionTest extends TestCase
                             ->select(['Authors.name'])
                             ->where(function (QueryExpression $exp) {
                                 return $exp->equalFields('Authors.id', 'Articles.author_id');
-                            })
-                    ])
+                            }),
+                    ]),
                 ];
             });
 
@@ -1839,10 +1839,10 @@ class QueryRegressionTest extends TestCase
                                 ->getConnection()
                                 ->newQuery()
                                 ->select(1.23456),
-                            2
+                            2,
                         ],
                         [null, 'integer']
-                    )
+                    ),
                 ];
             });
 
@@ -1878,8 +1878,8 @@ class QueryRegressionTest extends TestCase
                             ->where(function (QueryExpression $exp) {
                                 return $exp->equalFields('Authors.id', 'Articles.author_id');
                             }),
-                        1
-                    ])
+                        1,
+                    ]),
                 ];
             });
 
@@ -1908,8 +1908,8 @@ class QueryRegressionTest extends TestCase
                             ->find()
                             ->select(['Authors.name'])
                             ->where(['Authors.id' => 1]),
-                        ' appended'
-                    ])
+                        ' appended',
+                    ]),
                 ];
             });
 
@@ -1940,8 +1940,8 @@ class QueryRegressionTest extends TestCase
                             ->where(function (QueryExpression $exp) {
                                 return $exp->equalFields('Authors.id', 'Articles.author_id');
                             }),
-                        ' appended'
-                    ])
+                        ' appended',
+                    ]),
                 ];
             });
 
