@@ -140,10 +140,7 @@ class RedisEngine extends CacheEngine
     public function set($key, $value, $ttl = null): bool
     {
         $key = $this->_key($key);
-
-        if (!is_int($value)) {
-            $value = serialize($value);
-        }
+        $value = $this->serialize($value);
 
         $duration = $this->duration($ttl);
         if ($duration === 0) {
@@ -167,11 +164,8 @@ class RedisEngine extends CacheEngine
         if ($value === false) {
             return $default;
         }
-        if (preg_match('/^[-]?\d+$/', $value)) {
-            return (int)$value;
-        }
 
-        return unserialize($value);
+        return $this->unserialize($value);
     }
 
     /**
@@ -269,10 +263,7 @@ class RedisEngine extends CacheEngine
     {
         $duration = $this->_config['duration'];
         $key = $this->_key($key);
-
-        if (!is_int($value)) {
-            $value = serialize($value);
-        }
+        $value = $this->serialize($value);
 
         // setNx() doesn't have an expiry option, so follow up with an expiry
         if ($this->_Redis->setNx($key, $value)) {
@@ -295,7 +286,7 @@ class RedisEngine extends CacheEngine
         foreach ($this->_config['groups'] as $group) {
             $value = $this->_Redis->get($this->_config['prefix'] . $group);
             if (!$value) {
-                $value = 1;
+                $value = $this->serialize(1);
                 $this->_Redis->set($this->_config['prefix'] . $group, $value);
             }
             $result[] = $group . $value;
@@ -314,6 +305,40 @@ class RedisEngine extends CacheEngine
     public function clearGroup(string $group): bool
     {
         return (bool)$this->_Redis->incr($this->_config['prefix'] . $group);
+    }
+
+    /**
+     * Serialize value for saving to Redis.
+     *
+     * This is needed instead of using Redis' in built serialization feature
+     * as it creates problems incrementing/decrementing intially set integer value.
+     *
+     * @param mixed $value Value to serialize.
+     * @return string
+     * @link https://github.com/phpredis/phpredis/issues/81
+     */
+    protected function serialize($value): string
+    {
+        if (is_int($value)) {
+            return (string)$value;
+        }
+
+        return serialize($value);
+    }
+
+    /**
+     * Unserialize string value fetched from Redis.
+     *
+     * @param string $value Value to unserialize.
+     * @return mixed
+     */
+    protected function unserialize(string $value)
+    {
+        if (preg_match('/^[-]?\d+$/', $value)) {
+            return (int)$value;
+        }
+
+        return unserialize($value);
     }
 
     /**

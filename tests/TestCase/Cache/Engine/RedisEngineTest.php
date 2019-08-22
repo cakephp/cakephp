@@ -389,6 +389,27 @@ class RedisEngineTest extends TestCase
     }
 
     /**
+     * testIncrementAfterWrite method
+     *
+     * @return void
+     */
+    public function testIncrementAfterWrite()
+    {
+        Cache::delete('test_increment', 'redis');
+        $result = Cache::write('test_increment', 1, 'redis');
+        $this->assertTrue($result);
+
+        $result = Cache::read('test_increment', 'redis');
+        $this->assertSame(1, $result);
+
+        $result = Cache::increment('test_increment', 2, 'redis');
+        $this->assertSame(3, $result);
+
+        $result = Cache::read('test_increment', 'redis');
+        $this->assertSame(3, $result);
+    }
+
+    /**
      * Test that increment() and decrement() can live forever.
      *
      * @return void
