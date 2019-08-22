@@ -1105,7 +1105,7 @@ class Response implements ResponseInterface
      * type(['jpg' => 'text/plain']);
      * ```
      *
-     * @param string|null $contentType Content type key.
+     * @param string|array|null $contentType Content type key.
      * @return mixed Current content type or false if supplied an invalid content type.
      * @deprecated 3.5.5 Use getType() or withType() instead.
      */
