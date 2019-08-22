@@ -161,8 +161,12 @@ class Socket
         }
 
         set_error_handler([$this, '_connectionErrorHandler']);
-        $this->connection = stream_socket_client(
-            $scheme . $this->_config['host'] . ':' . $this->_config['port'],
+        $remoteSocketTarget = $scheme . $this->_config['host'];
+        if ($this->_config['port'] !== null) {
+            $remoteSocketTarget .= ':' . $this->_config['port'];
+        }
+        $this->connection = $this->_getStreamSocketClient(
+            $remoteSocketTarget,
             $errNum,
             $errStr,
             $this->_config['timeout'],
@@ -187,6 +191,29 @@ class Socket
         }
 
         return $this->connected;
+    }
+
+    /**
+     * Create a stream socket client. Mock utility.
+     *
+     * @param string $remoteSocketTarget remote socket
+     * @param int $errNum error number
+     * @param string $errStr error string
+     * @param int $timeout timeout
+     * @param int $connectAs flags
+     * @param resource $context context
+     * @return bool|resource
+     */
+    protected function _getStreamSocketClient($remoteSocketTarget, &$errNum, &$errStr, $timeout, $connectAs, $context)
+    {
+        return stream_socket_client(
+            $remoteSocketTarget,
+            $errNum,
+            $errStr,
+            $timeout,
+            $connectAs,
+            $context
+        );
     }
 
     /**
