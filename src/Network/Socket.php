@@ -162,9 +162,9 @@ class Socket
 
         set_error_handler([$this, '_connectionErrorHandler']);
         $remoteSocketTarget = $scheme . $this->_config['host'];
-        $port = $this->_config['port'];
-        if (is_int($port)) {
-            $remoteSocketTarget .= ':' . (int)$port;
+        $port = (int)$this->_config['port'];
+        if ($port > 0) {
+            $remoteSocketTarget .= ':' . $port;
         }
         $this->connection = stream_socket_client(
             $remoteSocketTarget,
