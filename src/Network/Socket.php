@@ -161,8 +161,13 @@ class Socket
         }
 
         set_error_handler([$this, '_connectionErrorHandler']);
+        $remoteSocketTarget = $scheme . $this->_config['host'];
+        $port = $this->_config['port'];
+        if (is_int($port)) {
+            $remoteSocketTarget .= ':' . (int)$port;
+        }
         $this->connection = stream_socket_client(
-            $scheme . $this->_config['host'] . ':' . $this->_config['port'],
+            $remoteSocketTarget,
             $errNum,
             $errStr,
             $this->_config['timeout'],
