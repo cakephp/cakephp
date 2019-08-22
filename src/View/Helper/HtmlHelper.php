@@ -95,7 +95,7 @@ class HtmlHelper extends Helper
     /**
      * Document type definitions
      *
-     * @var array
+     * @var string[]
      */
     protected $_docTypes = [
         // phpcs:disable Generic.Files.LineLength

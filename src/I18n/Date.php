@@ -91,7 +91,7 @@ class Date extends MutableDate implements I18nDateTimeInterface
      * The format to use when formatting a time using `Date::timeAgoInWords()`
      * and the difference is less than `Date::$wordEnd`
      *
-     * @var array
+     * @var string[]
      * @see \Cake\I18n\Date::timeAgoInWords()
      */
     public static $wordAccuracy = [
