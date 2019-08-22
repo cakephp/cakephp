@@ -22,6 +22,7 @@ use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\I18n\FrozenTime;
 use Cake\I18n\Time;
+use Cake\ORM\Query;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -1758,5 +1759,193 @@ class QueryRegressionTest extends TestCase
 
         $expected = ['tag1 - visited', 'tag2 - visited', 'tag1 - visited', 'tag3 - visited'];
         $this->assertEquals($expected, $query->toArray());
+    }
+
+    /**
+     * Tests that subqueries can be used with function expressions.
+     *
+     * @return void
+     */
+    public function testFunctionExpressionWithSubquery()
+    {
+        $this->loadFixtures('Articles');
+        $table = $this->getTableLocator()->get('Articles');
+
+        $query = $table
+            ->find()
+            ->select(function (Query $q) use ($table) {
+                return [
+                    'value' => $q->func()->ABS([
+                        $table
+                            ->getConnection()
+                            ->newQuery()
+                            ->select(-1),
+                    ])
+                ];
+            });
+
+        $result = $query->first()->get('value');
+        $this->assertEquals(1, $result);
+    }
+
+    /**
+     * Tests that correlated subqueries can be used with function expressions.
+     *
+     * @return void
+     */
+    public function testFunctionExpressionWithCorrelatedSubquery()
+    {
+        $this->loadFixtures('Articles', 'Authors');
+        $table = $this->getTableLocator()->get('Articles');
+        $table->belongsTo('Authors');
+
+        $query = $table
+            ->find()
+            ->select(function (Query $q) use ($table) {
+                return [
+                    'value' => $q->func()->UPPER([
+                        $table
+                            ->getAssociation('Authors')
+                            ->find()
+                            ->select(['Authors.name'])
+                            ->where(function (QueryExpression $exp) {
+                                return $exp->equalFields('Authors.id', 'Articles.author_id');
+                            })
+                    ])
+                ];
+            });
+
+        $result = $query->first()->get('value');
+        $this->assertEquals('MARIANO', $result);
+    }
+
+    /**
+     * Tests that subqueries can be used with multi argument function expressions.
+     *
+     * @return void
+     */
+    public function testMultiArgumentFunctionExpressionWithSubquery()
+    {
+        $this->loadFixtures('Articles', 'Authors');
+        $table = $this->getTableLocator()->get('Articles');
+
+        $query = $table
+            ->find()
+            ->select(function (Query $q) use ($table) {
+                return [
+                    'value' => $q->func()->ROUND(
+                        [
+                            $table
+                                ->getConnection()
+                                ->newQuery()
+                                ->select(1.23456),
+                            2
+                        ],
+                        [null, 'integer']
+                    )
+                ];
+            });
+
+        $result = $query->first()->get('value');
+        $this->assertEquals('1.23', $result);
+    }
+
+    /**
+     * Tests that correlated subqueries can be used with multi argument function expressions.
+     *
+     * @return void
+     */
+    public function testMultiArgumentFunctionExpressionWithCorrelatedSubquery()
+    {
+        $this->loadFixtures('Articles', 'Authors');
+        $table = $this->getTableLocator()->get('Articles');
+        $table->belongsTo('Authors');
+
+        $this->assertEquals(
+            1,
+            $table->getAssociation('Authors')->updateAll(['name' => null], ['id' => 3])
+        );
+
+        $query = $table
+            ->find()
+            ->select(function (Query $q) use ($table) {
+                return [
+                    'value' => $q->func()->coalesce([
+                        $table
+                            ->getAssociation('Authors')
+                            ->find()
+                            ->select(['Authors.name'])
+                            ->where(function (QueryExpression $exp) {
+                                return $exp->equalFields('Authors.id', 'Articles.author_id');
+                            }),
+                        1
+                    ])
+                ];
+            });
+
+        $results = $query->extract('value')->toArray();
+        $this->assertEquals(['mariano', '1', 'mariano'], $results);
+    }
+
+    /**
+     * Tests that subqueries can be used with function expressions that are being transpiled.
+     *
+     * @return void
+     */
+    public function testTranspiledFunctionExpressionWithSubquery()
+    {
+        $this->loadFixtures('Articles', 'Authors');
+        $table = $this->getTableLocator()->get('Articles');
+        $table->belongsTo('Authors');
+
+        $query = $table
+            ->find()
+            ->select(function (Query $q) use ($table) {
+                return [
+                    'value' => $q->func()->concat([
+                        $table
+                            ->getAssociation('Authors')
+                            ->find()
+                            ->select(['Authors.name'])
+                            ->where(['Authors.id' => 1]),
+                        ' appended'
+                    ])
+                ];
+            });
+
+        $result = $query->first()->get('value');
+        $this->assertEquals('mariano appended', $result);
+    }
+
+    /**
+     * Tests that correlated subqueries can be used with function expressions that are being transpiled.
+     *
+     * @return void
+     */
+    public function testTranspiledFunctionExpressionWithCorrelatedSubquery()
+    {
+        $this->loadFixtures('Articles', 'Authors');
+        $table = $this->getTableLocator()->get('Articles');
+        $table->belongsTo('Authors');
+
+        $query = $table
+            ->find()
+            ->select(function (Query $q) use ($table) {
+                return [
+                    'value' => $q->func()->concat([
+                        $table
+                            ->getAssociation('Authors')
+                            ->find()
+                            ->select(['Authors.name'])
+                            ->where(function (QueryExpression $exp) {
+                                return $exp->equalFields('Authors.id', 'Articles.author_id');
+                            }),
+                        ' appended'
+                    ])
+                ];
+            });
+
+        $result = $query->first()->get('value');
+        $this->assertEquals('mariano appended', $result);
     }
 }

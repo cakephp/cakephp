@@ -169,6 +169,68 @@ class Paginator implements PaginatorInterface
             $object = $query->getRepository();
         }
 
+        $data = $this->extractData($object, $params, $settings);
+        $query = $this->getQuery($object, $query, $data);
+
+        $cleanQuery = clone $query;
+        $results = $query->all();
+        $data['numResults'] = count($results);
+        $data['count'] = $this->getCount($cleanQuery, $data);
+
+        $pagingParams = $this->buildParams($data);
+        $alias = $object->getAlias();
+        $this->_pagingParams = [$alias => $this->buildParams($data)];
+        if ($pagingParams['requestedPage'] > $pagingParams['page']) {
+            throw new PageOutOfBoundsException([
+                'requestedPage' => $pagingParams['requestedPage'],
+                'pagingParams' => $this->_pagingParams
+            ]);
+        }
+
+        return $results;
+    }
+
+    /**
+     * Get query for fetching paginated results.
+     *
+     * @param \Cake\Datasource\RepositoryInterface $object Repository instance.
+     * @param \Cake\Datasource\QueryInterface|null $query Query Instance.
+     * @param array $data Pagination data.
+     * @return \Cake\Datasource\QueryInterface
+     */
+    protected function getQuery(RepositoryInterface $object, QueryInterface $query = null, array $data)
+    {
+        if ($query === null) {
+            $query = $object->find($data['finder'], $data['options']);
+        } else {
+            $query->applyOptions($data['options']);
+        }
+
+        return $query;
+    }
+
+    /**
+     * Get total count of records.
+     *
+     * @param \Cake\Datasource\QueryInterface $query Query instance.
+     * @param array $data Pagination data.
+     * @return int
+     */
+    protected function getCount(QueryInterface $query, array $data)
+    {
+        return $query->count();
+    }
+
+    /**
+     * Extract pagination data needed
+     *
+     * @param \Cake\Datasource\RepositoryInterface $object The repository object.
+     * @param array $params Request params
+     * @param array $settings The settings/configuration used for pagination.
+     * @return array Array with keys 'defaults', 'options' and 'finder'
+     */
+    protected function extractData(RepositoryInterface $object, array $params, array $settings)
+    {
         $alias = $object->getAlias();
         $defaults = $this->getDefaults($alias, $settings);
         $options = $this->mergeOptions($params, $defaults);
@@ -179,24 +241,27 @@ class Paginator implements PaginatorInterface
         $options['page'] = (int)$options['page'] < 1 ? 1 : (int)$options['page'];
         [$finder, $options] = $this->_extractFinder($options);
 
-        if (empty($query)) {
-            $query = $object->find($finder, $options);
-        } else {
-            $query->applyOptions($options);
-        }
+        return compact('defaults', 'options', 'finder');
+    }
 
-        $cleanQuery = clone $query;
-        $results = $query->all();
-        $numResults = count($results);
-        $count = $cleanQuery->count();
-
-        $page = $options['page'];
-        $limit = $options['limit'];
+    /**
+     * Build pagination params.
+     *
+     * @param array $data Paginator data containing keys 'options',
+     *   'count', 'defaults', 'finder', 'numResults'.
+     * @return array Paging params.
+     */
+    protected function buildParams(array $data)
+    {
+        $defaults = $data['defaults'];
+        $count = $data['count'];
+        $page = $data['options']['page'];
+        $limit = $data['options']['limit'];
         $pageCount = max((int)ceil($count / $limit), 1);
         $requestedPage = $page;
         $page = min($page, $pageCount);
 
-        $order = (array)$options['order'];
+        $order = (array)$data['options']['order'];
         $sortDefault = $directionDefault = false;
         if (!empty($defaults['order']) && count($defaults['order']) === 1) {
             $sortDefault = key($defaults['order']);
@@ -213,9 +278,10 @@ class Paginator implements PaginatorInterface
         }
 
         $paging = [
-            'finder' => $finder,
+            'finder' => $data['finder'],
+            'requestedPage' => $requestedPage,
             'page' => $page,
-            'current' => $numResults,
+            'current' => $data['numResults'],
             'count' => $count,
             'perPage' => $limit,
             'start' => $start,
@@ -223,25 +289,16 @@ class Paginator implements PaginatorInterface
             'prevPage' => $page > 1,
             'nextPage' => $count > ($page * $limit),
             'pageCount' => $pageCount,
-            'sort' => $options['sort'],
-            'direction' => isset($options['sort']) ? current($order) : null,
+            'sort' => $data['options']['sort'],
+            'direction' => isset($data['options']['sort']) ? current($order) : null,
             'limit' => $defaults['limit'] !== $limit ? $limit : null,
             'sortDefault' => $sortDefault,
             'directionDefault' => $directionDefault,
-            'scope' => $options['scope'],
+            'scope' => $data['options']['scope'],
             'completeSort' => $order,
         ];
 
-        $this->_pagingParams = [$alias => $paging];
-
-        if ($requestedPage > $page) {
-            throw new PageOutOfBoundsException([
-                'requestedPage' => $requestedPage,
-                'pagingParams' => $this->_pagingParams,
-            ]);
-        }
-
-        return $results;
+        return $paging;
     }
 
     /**
