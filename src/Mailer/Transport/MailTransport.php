@@ -18,9 +18,9 @@ declare(strict_types=1);
  */
 namespace Cake\Mailer\Transport;
 
+use Cake\Core\Exception\Exception;
 use Cake\Mailer\AbstractTransport;
 use Cake\Mailer\Message;
-use Cake\Network\Exception\SocketException;
 
 /**
  * Send mail using mail() function
@@ -59,7 +59,7 @@ class MailTransport extends AbstractTransport
 
         $message = implode($eol, (array)$message->getBody());
 
-        $params = $this->_config['additionalParameters'] ?? null;
+        $params = $this->_config['additionalParameters'] ?? '';
         $this->_mail($to, $subject, $message, $headers, $params);
 
         $headers .= $eol . 'To: ' . $to;
@@ -75,7 +75,7 @@ class MailTransport extends AbstractTransport
      * @param string $subject email's subject
      * @param string $message email's body
      * @param string $headers email's custom headers
-     * @param string|null $params additional params for sending email
+     * @param string $params additional params for sending email
      * @throws \Cake\Network\Exception\SocketException if mail could not be sent
      * @return void
      */
@@ -83,14 +83,14 @@ class MailTransport extends AbstractTransport
         string $to,
         string $subject,
         string $message,
-        string $headers,
-        ?string $params = null
+        string $headers = '',
+        string $params = ''
     ): void {
         // phpcs:disable
         if (!@mail($to, $subject, $message, $headers, $params)) {
             $error = error_get_last();
             $msg = 'Could not send email: ' . ($error['message'] ?? 'unknown');
-            throw new SocketException($msg);
+            throw new Exception($msg);
         }
         // phpcs:enable
     }
