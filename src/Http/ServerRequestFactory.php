@@ -54,6 +54,7 @@ abstract class ServerRequestFactory extends BaseFactory
             'webroot' => $uri->webroot,
             'base' => $uri->base,
             'session' => $session,
+            'mergeFilesAsObjects' => Configure::read('ServerRequest.mergeFilesAsObjects'),
         ]);
 
         return $request;

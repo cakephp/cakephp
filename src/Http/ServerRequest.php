@@ -244,6 +244,13 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     ];
 
     /**
+     * Whether to merge file uploads as objects (`true`) or arrays (`false`).
+     *
+     * @var bool
+     */
+    private $mergeFilesAsObjects = false;
+
+    /**
      * Wrapper method to create a new request from PHP superglobals.
      *
      * Uses the $_GET, $_POST, $_FILES, $_COOKIE, $_SERVER, $_ENV and php://input data to construct
@@ -302,6 +309,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
             'base' => '',
             'webroot' => '',
             'input' => null,
+            'mergeFilesAsObjects' => false,
         ];
 
         $this->_setConfig($config);
@@ -363,6 +371,8 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
             $stream = new PhpInputStream();
         }
         $this->stream = $stream;
+
+        $this->mergeFilesAsObjects = $config['mergeFilesAsObjects'];
 
         $config['post'] = $this->_processPost($config['post']);
         $this->data = $this->_processFiles($config['post'], $config['files']);
@@ -457,6 +467,10 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
             ));
         }
         $this->uploadedFiles = $fileData;
+
+        if ($this->mergeFilesAsObjects) {
+            return Hash::merge($post, $fileData);
+        }
 
         // Make a flat map that can be inserted into $post for BC.
         $fileMap = Hash::flatten($fileData);
