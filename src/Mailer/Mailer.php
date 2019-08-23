@@ -475,6 +475,7 @@ class Mailer implements EventListenerInterface
                 $this->{$key} = null;
             } else {
                 $this->{$key} = clone $this->clonedInstances[$key];
+                $this->clonedInstances[$key] = null;
             }
         }
 
