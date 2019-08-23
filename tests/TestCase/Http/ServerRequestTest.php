@@ -589,6 +589,57 @@ class ServerRequestTest extends TestCase
     }
 
     /**
+     * Test passing an invalid data type for the files list.
+     *
+     * @return void
+     */
+    public function testFilesWithInvalidDataType()
+    {
+        $request = new ServerRequest([
+            'files' => 'invalid',
+        ]);
+
+        $this->assertEmpty($request->getData());
+        $this->assertEmpty($request->getUploadedFiles());
+    }
+
+    /**
+     * Test passing an empty files list.
+     *
+     * @return void
+     */
+    public function testFilesWithEmptyList()
+    {
+        $request = new ServerRequest([
+            'files' => [],
+        ]);
+
+        $this->assertEmpty($request->getData());
+        $this->assertEmpty($request->getUploadedFiles());
+    }
+
+    /**
+     * Test passing invalid files list structure.
+     *
+     * @return void
+     */
+    public function testFilesWithInvalidStructure()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid value in FILES "{"invalid":["data"]}"');
+
+        new ServerRequest([
+            'files' => [
+                [
+                    'invalid' => [
+                        'data'
+                    ]
+                ]
+            ],
+        ]);
+    }
+
+    /**
      * Tests that file uploads are merged into the post data as objects instead of as arrays.
      *
      * @return void
