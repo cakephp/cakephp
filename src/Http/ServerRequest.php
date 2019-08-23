@@ -446,7 +446,9 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     protected function _processFiles($post, $files)
     {
-        if (!is_array($files)) {
+        if (empty($files) ||
+            !is_array($files)
+        ) {
             return $post;
         }
         $fileData = [];
