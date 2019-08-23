@@ -292,25 +292,25 @@ class Mailer implements EventListenerInterface
      */
     public function send(string $action, array $args = [], array $headers = []): array
     {
+        if (!method_exists($this, $action)) {
+            throw new MissingActionException([
+                'mailer' => static::class,
+                'action' => $action,
+            ]);
+        }
+
+        $this->clonedInstances['message'] = clone $this->message;
+        $this->clonedInstances['renderer'] = clone $this->getRenderer();
+        if ($this->transport !== null) {
+            $this->clonedInstances['transport'] = clone $this->transport;
+        }
+
+        $this->getMessage()->setHeaders($headers);
+        if (!$this->viewBuilder()->getTemplate()) {
+            $this->viewBuilder()->setTemplate($action);
+        }
+
         try {
-            if (!method_exists($this, $action)) {
-                throw new MissingActionException([
-                    'mailer' => static::class,
-                    'action' => $action,
-                ]);
-            }
-
-            $this->clonedInstances['message'] = clone $this->message;
-            $this->clonedInstances['renderer'] = clone $this->getRenderer();
-            if ($this->transport !== null) {
-                $this->clonedInstances['transport'] = clone $this->transport;
-            }
-
-            $this->getMessage()->setHeaders($headers);
-            if (!$this->viewBuilder()->getTemplate()) {
-                $this->viewBuilder()->setTemplate($action);
-            }
-
             $this->$action(...$args);
 
             $result = $this->deliver();
