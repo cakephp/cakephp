@@ -324,7 +324,7 @@ class Mailer implements EventListenerInterface
     /**
      * Send email directly without using a mailer action.
      *
-     * @param string $content
+     * @param string $content Content.
      * @return array{headers: string, message: string}
      */
     public function deliver(string $content = '')
