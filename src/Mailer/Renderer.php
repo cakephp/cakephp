@@ -94,11 +94,12 @@ class Renderer
      */
     public function reset()
     {
+        $this->_viewBuilder = null;
+
         $this->viewBuilder()
             ->setClassName(View::class)
             ->setLayout('default')
-            ->setHelpers(['Html'], false)
-            ->setVars([], false);
+            ->setHelpers(['Html'], false);
 
         return $this;
     }

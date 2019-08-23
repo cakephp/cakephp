@@ -528,16 +528,11 @@ class Email implements JsonSerializable, Serializable
     public function reset()
     {
         $this->message->reset();
+        if ($this->renderer !== null) {
+            $this->renderer->reset();
+        }
         $this->_transport = null;
         $this->_profile = [];
-
-        $this->getRenderer()->viewBuilder()
-            ->setLayout('default')
-            ->setTemplate('')
-            ->setClassName(View::class)
-            ->setTheme(null)
-            ->setHelpers(['Html'], false)
-            ->setVars([], false);
 
         return $this;
     }
