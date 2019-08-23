@@ -608,11 +608,6 @@
       <code>strrpos($modelClass, '\\')</code>
     </PossiblyFalseOperand>
   </file>
-  <file src="src/Datasource/Paginator.php">
-    <PossiblyNullReference occurrences="1">
-      <code>getAlias</code>
-    </PossiblyNullReference>
-  </file>
   <file src="src/Datasource/QueryTrait.php">
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>\Iterator</code>

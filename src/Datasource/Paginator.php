@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Datasource;
 
+use Cake\Core\Exception\Exception;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Datasource\Exception\PageOutOfBoundsException;
 
@@ -154,7 +155,7 @@ class Paginator implements PaginatorInterface
      * /dashboard?articles[page]=1&tags[page]=2
      * ```
      *
-     * @param \Cake\Datasource\RepositoryInterface|\Cake\Datasource\QueryInterface $object The table or query
+     * @param \Cake\Datasource\RepositoryInterface|\Cake\Datasource\QueryInterface $object The repository or query
      *   to paginate.
      * @param array $params Request params
      * @param array $settings The settings/configuration used for pagination.
@@ -167,6 +168,9 @@ class Paginator implements PaginatorInterface
         if ($object instanceof QueryInterface) {
             $query = $object;
             $object = $query->getRepository();
+            if ($object === null) {
+                throw new Exception('No repository set for query.');
+            }
         }
 
         $data = $this->extractData($object, $params, $settings);
