@@ -23,7 +23,6 @@ use Cake\Mailer\Transport\DebugTransport;
 use Cake\Mailer\TransportFactory;
 use Cake\TestSuite\TestCase;
 use RuntimeException;
-use TestApp\Mailer\TestMailer;
 
 class MailerTest extends TestCase
 {
@@ -270,16 +269,6 @@ class MailerTest extends TestCase
         $em = new Mailer('default');
 
         $this->assertSame($mock, $em->getTransport());
-    }
-
-    /**
-     * @return void
-     */
-    public function testGetName()
-    {
-        $result = (new TestMailer())->getName();
-        $expected = 'Test';
-        $this->assertEquals($expected, $result);
     }
 
     /**

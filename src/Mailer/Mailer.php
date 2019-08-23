@@ -203,24 +203,6 @@ class Mailer implements EventListenerInterface
     }
 
     /**
-     * Returns the mailer's name.
-     *
-     * @return string
-     */
-    public function getName(): string
-    {
-        if (!static::$name) {
-            static::$name = str_replace(
-                'Mailer',
-                '',
-                implode('', array_slice(explode('\\', static::class), -1))
-            );
-        }
-
-        return static::$name;
-    }
-
-    /**
      * Get the view builder.
      *
      * @return \Cake\View\ViewBuilder
