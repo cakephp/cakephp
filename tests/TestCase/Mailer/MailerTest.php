@@ -19,10 +19,13 @@ use Cake\Core\Exception\Exception;
 use Cake\Mailer\AbstractTransport;
 use Cake\Mailer\Exception\MissingActionException;
 use Cake\Mailer\Mailer;
+use Cake\Mailer\Message;
 use Cake\Mailer\Transport\DebugTransport;
 use Cake\Mailer\TransportFactory;
 use Cake\TestSuite\TestCase;
+use Cake\View\Exception\MissingTemplateException;
 use RuntimeException;
+use TestApp\Mailer\TestMailer;
 
 class MailerTest extends TestCase
 {
@@ -56,7 +59,7 @@ class MailerTest extends TestCase
 
         TransportFactory::setConfig($this->transports);
 
-        $this->mailer = new Mailer();
+        $this->mailer = new TestMailer();
     }
 
     /**
@@ -71,19 +74,7 @@ class MailerTest extends TestCase
         TransportFactory::drop('debug');
         TransportFactory::drop('badClassName');
         Mailer::drop('test');
-    }
-
-    /**
-     * @param array $methods
-     * @param array $args
-     * @return \Cake\Mailer\Email|\PHPUnit_Framework_MockObject_MockObject
-     */
-    public function getMockForEmail($methods = [], $args = [])
-    {
-        return $this->getMockBuilder('Cake\Mailer\Email')
-            ->setMethods((array)$methods)
-            ->setConstructorArgs((array)$args)
-            ->getMock();
+        Mailer::drop('default');
     }
 
     /**
@@ -269,6 +260,8 @@ class MailerTest extends TestCase
         $em = new Mailer('default');
 
         $this->assertSame($mock, $em->getTransport());
+
+        TransportFactory::drop('default');
     }
 
     /**
@@ -330,6 +323,759 @@ class MailerTest extends TestCase
         $mailer->send('test', ['foo', 'bar']);
 
         $this->assertNull($mailer->viewBuilder()->getTemplate());
+    }
+
+    /**
+     * Calling send() with no parameters should not overwrite the view variables.
+     *
+     * @return void
+     */
+    public function testSendWithNoContentDoesNotOverwriteViewVar()
+    {
+        $this->mailer->reset();
+        $this->mailer->setTransport('debug');
+        $this->mailer->setFrom('cake@cakephp.org');
+        $this->mailer->setTo('you@cakephp.org');
+        $this->mailer->setSubject('My title');
+        $this->mailer->setEmailFormat('text');
+        $this->mailer->viewBuilder()
+            ->setTemplate('default')
+            ->setVars([
+                'content' => 'A message to you',
+            ]);
+
+        $result = $this->mailer->send();
+        $this->assertStringContainsString('A message to you', $result['message']);
+    }
+
+    /**
+     * testSendWithContent method
+     *
+     * @return void
+     */
+    public function testSendWithContent()
+    {
+        $this->mailer->reset();
+        $this->mailer->setTransport('debug');
+        $this->mailer->setFrom('cake@cakephp.org');
+        $this->mailer->setTo(['you@cakephp.org' => 'You']);
+        $this->mailer->setSubject('My title');
+        $this->mailer->setProfile(['empty']);
+        $this->mailer->setBodyText("Here is my body, with multi lines.\nThis is the second line.\r\n\r\nAnd the last.");
+
+        $result = $this->mailer->send();
+        $expected = ['headers', 'message'];
+        $this->assertEquals($expected, array_keys($result));
+        $expected = "Here is my body, with multi lines.\r\nThis is the second line.\r\n\r\nAnd the last.\r\n\r\n";
+
+        $this->assertEquals($expected, $result['message']);
+        $this->assertStringContainsString('Date: ', $result['headers']);
+        $this->assertStringContainsString('Message-ID: ', $result['headers']);
+        $this->assertStringContainsString('To: ', $result['headers']);
+
+        $this->mailer->setBodyText('Other body');
+        $result = $this->mailer->send();
+        $expected = "Other body\r\n\r\n";
+        $this->assertSame($expected, $result['message']);
+        $this->assertStringContainsString('Message-ID: ', $result['headers']);
+        $this->assertStringContainsString('To: ', $result['headers']);
+    }
+
+    /**
+     * test send without a transport method
+     *
+     * @return void
+     */
+    public function testSendWithoutTransport()
+    {
+        $this->expectException(\BadMethodCallException::class);
+        $this->expectExceptionMessage(
+            'Transport was not defined. You must set on using setTransport() or set `transport` option in profile.'
+        );
+        $this->mailer->setTo('cake@cakephp.org');
+        $this->mailer->setFrom('cake@cakephp.org');
+        $this->mailer->setSubject('My title');
+        $this->mailer->send();
+    }
+
+    /**
+     * Test send() with no template.
+     *
+     * @return void
+     */
+    public function testSendNoTemplateWithAttachments()
+    {
+        $this->mailer->setTransport('debug');
+        $this->mailer->setFrom('cake@cakephp.org');
+        $this->mailer->setTo('cake@cakephp.org');
+        $this->mailer->setSubject('My title');
+        $this->mailer->setEmailFormat('text');
+        $this->mailer->setAttachments([CAKE . 'basics.php']);
+        $this->mailer->setBodyText('Hello');
+        $result = $this->mailer->send();
+
+        $boundary = $this->mailer->boundary;
+        $this->assertStringContainsString('Content-Type: multipart/mixed; boundary="' . $boundary . '"', $result['headers']);
+        $expected = "--$boundary\r\n" .
+            "Content-Type: text/plain; charset=UTF-8\r\n" .
+            "Content-Transfer-Encoding: 8bit\r\n" .
+            "\r\n" .
+            'Hello' .
+            "\r\n" .
+            "\r\n" .
+            "\r\n" .
+            "--$boundary\r\n" .
+            "Content-Disposition: attachment; filename=\"basics.php\"\r\n" .
+            "Content-Type: text/x-php\r\n" .
+            "Content-Transfer-Encoding: base64\r\n" .
+            "\r\n";
+        $this->assertStringContainsString($expected, $result['message']);
+    }
+
+    /**
+     * Test send() with no template and data string attachment
+     *
+     * @return void
+     */
+    public function testSendNoTemplateWithDataStringAttachment()
+    {
+        $this->mailer->setTransport('debug');
+        $this->mailer->setFrom('cake@cakephp.org');
+        $this->mailer->setTo('cake@cakephp.org');
+        $this->mailer->setSubject('My title');
+        $this->mailer->setEmailFormat('text');
+        $data = file_get_contents(TEST_APP . 'webroot/img/cake.power.gif');
+        $this->mailer->setAttachments(['cake.icon.gif' => [
+                'data' => $data,
+                'mimetype' => 'image/gif',
+        ]]);
+        $this->mailer->setBodyText('Hello');
+        $result = $this->mailer->send();
+
+        $boundary = $this->mailer->boundary;
+        $this->assertStringContainsString('Content-Type: multipart/mixed; boundary="' . $boundary . '"', $result['headers']);
+        $expected = "--$boundary\r\n" .
+                "Content-Type: text/plain; charset=UTF-8\r\n" .
+                "Content-Transfer-Encoding: 8bit\r\n" .
+                "\r\n" .
+                'Hello' .
+                "\r\n" .
+                "\r\n" .
+                "\r\n" .
+                "--$boundary\r\n" .
+                "Content-Disposition: attachment; filename=\"cake.icon.gif\"\r\n" .
+                "Content-Type: image/gif\r\n" .
+                "Content-Transfer-Encoding: base64\r\n\r\n";
+        $expected .= chunk_split(base64_encode($data), 76, "\r\n");
+        $this->assertStringContainsString($expected, $result['message']);
+    }
+
+    /**
+     * Test send() with no template as both
+     *
+     * @return void
+     */
+    public function testSendNoTemplateWithAttachmentsAsBoth()
+    {
+        $this->mailer->setTransport('debug');
+        $this->mailer->setFrom('cake@cakephp.org');
+        $this->mailer->setTo('cake@cakephp.org');
+        $this->mailer->setSubject('My title');
+        $this->mailer->setEmailFormat('both');
+        $this->mailer->setAttachments([CORE_PATH . 'VERSION.txt']);
+        $this->mailer->setBody(['text' => 'Hello', 'html' => 'Hello']);
+        $result = $this->mailer->send();
+
+        $boundary = $this->mailer->boundary;
+        $this->assertStringContainsString('Content-Type: multipart/mixed; boundary="' . $boundary . '"', $result['headers']);
+        $expected = "--$boundary\r\n" .
+            "Content-Type: multipart/alternative; boundary=\"alt-$boundary\"\r\n" .
+            "\r\n" .
+            "--alt-$boundary\r\n" .
+            "Content-Type: text/plain; charset=UTF-8\r\n" .
+            "Content-Transfer-Encoding: 8bit\r\n" .
+            "\r\n" .
+            'Hello' .
+            "\r\n" .
+            "\r\n" .
+            "\r\n" .
+            "--alt-$boundary\r\n" .
+            "Content-Type: text/html; charset=UTF-8\r\n" .
+            "Content-Transfer-Encoding: 8bit\r\n" .
+            "\r\n" .
+            'Hello' .
+            "\r\n" .
+            "\r\n" .
+            "\r\n" .
+            "--alt-{$boundary}--\r\n" .
+            "\r\n" .
+            "--$boundary\r\n" .
+            "Content-Disposition: attachment; filename=\"VERSION.txt\"\r\n" .
+            "Content-Type: text/plain\r\n" .
+            "Content-Transfer-Encoding: base64\r\n" .
+            "\r\n";
+        $this->assertStringContainsString($expected, $result['message']);
+    }
+
+    /**
+     * Test setting inline attachments and messages.
+     *
+     * @return void
+     */
+    public function testSendWithInlineAttachments()
+    {
+        $this->mailer->setTransport('debug');
+        $this->mailer->setFrom('cake@cakephp.org');
+        $this->mailer->setTo('cake@cakephp.org');
+        $this->mailer->setSubject('My title');
+        $this->mailer->setEmailFormat('both');
+        $this->mailer->setAttachments([
+            'cake.png' => [
+                'file' => CORE_PATH . 'VERSION.txt',
+                'contentId' => 'abc123',
+            ],
+        ]);
+        $this->mailer->setBody(['text' => 'Hello', 'html' => 'Hello']);
+        $result = $this->mailer->send();
+
+        $boundary = $this->mailer->boundary;
+        $this->assertStringContainsString('Content-Type: multipart/mixed; boundary="' . $boundary . '"', $result['headers']);
+        $expected = "--$boundary\r\n" .
+            "Content-Type: multipart/related; boundary=\"rel-$boundary\"\r\n" .
+            "\r\n" .
+            "--rel-$boundary\r\n" .
+            "Content-Type: multipart/alternative; boundary=\"alt-$boundary\"\r\n" .
+            "\r\n" .
+            "--alt-$boundary\r\n" .
+            "Content-Type: text/plain; charset=UTF-8\r\n" .
+            "Content-Transfer-Encoding: 8bit\r\n" .
+            "\r\n" .
+            'Hello' .
+            "\r\n" .
+            "\r\n" .
+            "\r\n" .
+            "--alt-$boundary\r\n" .
+            "Content-Type: text/html; charset=UTF-8\r\n" .
+            "Content-Transfer-Encoding: 8bit\r\n" .
+            "\r\n" .
+            'Hello' .
+            "\r\n" .
+            "\r\n" .
+            "\r\n" .
+            "--alt-{$boundary}--\r\n" .
+            "\r\n" .
+            "--rel-$boundary\r\n" .
+            "Content-Disposition: inline; filename=\"cake.png\"\r\n" .
+            "Content-Type: text/plain\r\n" .
+            "Content-Transfer-Encoding: base64\r\n" .
+            "Content-ID: <abc123>\r\n" .
+            "\r\n";
+        $this->assertStringContainsString($expected, $result['message']);
+        $this->assertStringContainsString('--rel-' . $boundary . '--', $result['message']);
+        $this->assertStringContainsString('--' . $boundary . '--', $result['message']);
+    }
+
+    /**
+     * Test setting inline attachments and HTML only messages.
+     *
+     * @return void
+     */
+    public function testSendWithInlineAttachmentsHtmlOnly()
+    {
+        $this->mailer->setTransport('debug');
+        $this->mailer->setFrom('cake@cakephp.org');
+        $this->mailer->setTo('cake@cakephp.org');
+        $this->mailer->setSubject('My title');
+        $this->mailer->setEmailFormat('html');
+        $this->mailer->setAttachments([
+            'cake.png' => [
+                'file' => CORE_PATH . 'VERSION.txt',
+                'contentId' => 'abc123',
+            ],
+        ]);
+        $this->mailer->setBody(['text' => 'Hello', 'html' => 'Hello']);
+        $result = $this->mailer->send();
+
+        $boundary = $this->mailer->boundary;
+        $this->assertStringContainsString('Content-Type: multipart/mixed; boundary="' . $boundary . '"', $result['headers']);
+        $expected = "--$boundary\r\n" .
+            "Content-Type: multipart/related; boundary=\"rel-$boundary\"\r\n" .
+            "\r\n" .
+            "--rel-$boundary\r\n" .
+            "Content-Type: text/html; charset=UTF-8\r\n" .
+            "Content-Transfer-Encoding: 8bit\r\n" .
+            "\r\n" .
+            'Hello' .
+            "\r\n" .
+            "\r\n" .
+            "\r\n" .
+            "--rel-$boundary\r\n" .
+            "Content-Disposition: inline; filename=\"cake.png\"\r\n" .
+            "Content-Type: text/plain\r\n" .
+            "Content-Transfer-Encoding: base64\r\n" .
+            "Content-ID: <abc123>\r\n" .
+            "\r\n";
+        $this->assertStringContainsString($expected, $result['message']);
+        $this->assertStringContainsString('--rel-' . $boundary . '--', $result['message']);
+        $this->assertStringContainsString('--' . $boundary . '--', $result['message']);
+    }
+
+    /**
+     * Test disabling content-disposition.
+     *
+     * @return void
+     */
+    public function testSendWithNoContentDispositionAttachments()
+    {
+        $this->mailer->setTransport('debug');
+        $this->mailer->setFrom('cake@cakephp.org');
+        $this->mailer->setTo('cake@cakephp.org');
+        $this->mailer->setSubject('My title');
+        $this->mailer->setEmailFormat('text');
+        $this->mailer->setAttachments([
+            'cake.png' => [
+                'file' => CORE_PATH . 'VERSION.txt',
+                'contentDisposition' => false,
+            ],
+        ]);
+        $this->mailer->setBodyText('Hello');
+        $result = $this->mailer->send();
+
+        $boundary = $this->mailer->boundary;
+        $this->assertStringContainsString('Content-Type: multipart/mixed; boundary="' . $boundary . '"', $result['headers']);
+        $expected = "--$boundary\r\n" .
+            "Content-Type: text/plain; charset=UTF-8\r\n" .
+            "Content-Transfer-Encoding: 8bit\r\n" .
+            "\r\n" .
+            'Hello' .
+            "\r\n" .
+            "\r\n" .
+            "\r\n" .
+            "--{$boundary}\r\n" .
+            "Content-Type: text/plain\r\n" .
+            "Content-Transfer-Encoding: base64\r\n" .
+            "\r\n";
+
+        $this->assertStringContainsString($expected, $result['message']);
+        $this->assertStringContainsString('--' . $boundary . '--', $result['message']);
+    }
+
+    /**
+     * testSendRender method
+     *
+     * @return void
+     */
+    public function testSendRender()
+    {
+        $this->mailer->setTransport('debug');
+
+        $this->mailer->setFrom('cake@cakephp.org');
+        $this->mailer->setTo(['you@cakephp.org' => 'You']);
+        $this->mailer->setSubject('My title');
+        $this->mailer->setProfile(['empty']);
+        $this->mailer->viewBuilder()->setTemplate('default', 'default');
+        $result = $this->mailer->send();
+
+        $this->assertStringContainsString('This email was sent using the CakePHP Framework', $result['message']);
+        $this->assertStringContainsString('Message-ID: ', $result['headers']);
+        $this->assertStringContainsString('To: ', $result['headers']);
+    }
+
+    /**
+     * test sending and rendering with no layout
+     *
+     * @return void
+     */
+    public function testSendRenderNoLayout()
+    {
+        $this->mailer->setTransport('debug');
+
+        $this->mailer->setFrom('cake@cakephp.org');
+        $this->mailer->setTo(['you@cakephp.org' => 'You']);
+        $this->mailer->setSubject('My title');
+        $this->mailer->setConfig(['empty']);
+        $this->mailer->viewBuilder()
+            ->setTemplate('default')
+            ->setVar('content', 'message body.')
+            ->disableAutoLayout();
+        $result = $this->mailer->send();
+
+        $this->assertStringContainsString('message body.', $result['message']);
+        $this->assertStringNotContainsString('This email was sent using the CakePHP Framework', $result['message']);
+    }
+
+    /**
+     * testSendRender both method
+     *
+     * @return void
+     */
+    public function testSendRenderBoth()
+    {
+        $this->mailer->setTransport('debug');
+
+        $this->mailer->setFrom('cake@cakephp.org');
+        $this->mailer->setTo(['you@cakephp.org' => 'You']);
+        $this->mailer->setSubject('My title');
+        $this->mailer->setProfile(['empty']);
+        $this->mailer->viewBuilder()->setTemplate('default', 'default');
+        $this->mailer->setEmailFormat('both');
+        $result = $this->mailer->send();
+
+        $this->assertStringContainsString('Message-ID: ', $result['headers']);
+        $this->assertStringContainsString('To: ', $result['headers']);
+
+        $boundary = $this->mailer->boundary;
+        $this->assertStringContainsString('Content-Type: multipart/alternative; boundary="' . $boundary . '"', $result['headers']);
+
+        $expected = "--$boundary\r\n" .
+            "Content-Type: text/plain; charset=UTF-8\r\n" .
+            "Content-Transfer-Encoding: 8bit\r\n" .
+            "\r\n" .
+            "\r\n" .
+            "\r\n" .
+            'This email was sent using the CakePHP Framework, https://cakephp.org.' .
+            "\r\n" .
+            "\r\n" .
+            "\r\n" .
+            "--$boundary\r\n" .
+            "Content-Type: text/html; charset=UTF-8\r\n" .
+            "Content-Transfer-Encoding: 8bit\r\n" .
+            "\r\n" .
+            '<!DOCTYPE html';
+        $this->assertStringStartsWith($expected, $result['message']);
+
+        $expected = "</html>\r\n" .
+            "\r\n" .
+            "\r\n" .
+            "\r\n" .
+            "--$boundary--\r\n";
+        $this->assertStringEndsWith($expected, $result['message']);
+    }
+
+    /**
+     * testSendRender method for ISO-2022-JP
+     *
+     * @return void
+     */
+    public function testSendRenderJapanese()
+    {
+        $this->mailer->setTransport('debug');
+
+        $this->mailer->setFrom('cake@cakephp.org');
+        $this->mailer->setTo(['you@cakephp.org' => 'You']);
+        $this->mailer->setSubject('My title');
+        $this->mailer->setProfile(['empty']);
+        $this->mailer->viewBuilder()->setTemplate('default');
+        $this->mailer->viewBuilder()->setLayout('japanese');
+        $this->mailer->setCharset('ISO-2022-JP');
+        $result = $this->mailer->send();
+
+        $expected = mb_convert_encoding('CakePHP Framework を使って送信したメールです。 https://cakephp.org.', 'ISO-2022-JP');
+        $this->assertStringContainsString($expected, $result['message']);
+        $this->assertStringContainsString('Message-ID: ', $result['headers']);
+        $this->assertStringContainsString('To: ', $result['headers']);
+    }
+
+    /**
+     * testSendRenderThemed method
+     *
+     * @return void
+     */
+    public function testSendRenderThemed()
+    {
+        $this->loadPlugins(['TestTheme']);
+        $this->mailer->setTransport('debug');
+
+        $this->mailer->setFrom('cake@cakephp.org');
+        $this->mailer->setTo(['you@cakephp.org' => 'You']);
+        $this->mailer->setSubject('My title');
+        $this->mailer->setProfile(['empty']);
+        $this->mailer->viewBuilder()->setTheme('TestTheme');
+        $this->mailer->viewBuilder()->setTemplate('themed', 'default');
+        $result = $this->mailer->send();
+
+        $this->assertStringContainsString('In TestTheme', $result['message']);
+        $this->assertStringContainsString('/test_theme/img/test.jpg', $result['message']);
+        $this->assertStringContainsString('Message-ID: ', $result['headers']);
+        $this->assertStringContainsString('To: ', $result['headers']);
+        $this->assertStringContainsString('/test_theme/img/test.jpg', $result['message']);
+        $this->clearPlugins();
+    }
+
+    /**
+     * testSendRenderWithHTML method and assert line length is kept below the required limit
+     *
+     * @return void
+     */
+    public function testSendRenderWithHTML()
+    {
+        $this->mailer->setTransport('debug');
+
+        $this->mailer->setFrom('cake@cakephp.org');
+        $this->mailer->setTo(['you@cakephp.org' => 'You']);
+        $this->mailer->setSubject('My title');
+        $this->mailer->setProfile(['empty']);
+        $this->mailer->setEmailFormat('html');
+        $this->mailer->viewBuilder()->setTemplate('html', 'default');
+        $result = $this->mailer->send();
+
+        $this->assertTextContains('<h1>HTML Ipsum Presents</h1>', $result['message']);
+        $this->assertLineLengths($result['message']);
+    }
+
+    /**
+     * testSendRenderWithVars method
+     *
+     * @return void
+     */
+    public function testSendRenderWithVars()
+    {
+        $this->mailer->setTransport('debug');
+
+        $this->mailer->setFrom('cake@cakephp.org');
+        $this->mailer->setTo(['you@cakephp.org' => 'You']);
+        $this->mailer->setSubject('My title');
+        $this->mailer->setProfile(['empty']);
+        $this->mailer->viewBuilder()->setTemplate('custom', 'default');
+        $this->mailer->set(['value' => 12345]);
+        $result = $this->mailer->send();
+
+        $this->assertStringContainsString('Here is your value: 12345', $result['message']);
+    }
+
+    /**
+     * testSendRenderWithVars method for ISO-2022-JP
+     *
+     * @return void
+     */
+    public function testSendRenderWithVarsJapanese()
+    {
+        $this->mailer->setTransport('debug');
+
+        $this->mailer->setFrom('cake@cakephp.org');
+        $this->mailer->setTo(['you@cakephp.org' => 'You']);
+        $this->mailer->setSubject('My title');
+        $this->mailer->setProfile(['empty']);
+        $this->mailer->viewBuilder()->setTemplate('japanese', 'default');
+        $this->mailer->set(['value' => '日本語の差し込み123']);
+        $this->mailer->setCharset('ISO-2022-JP');
+        $result = $this->mailer->send();
+
+        $expected = mb_convert_encoding('ここにあなたの設定した値が入ります: 日本語の差し込み123', 'ISO-2022-JP');
+        $this->assertStringContainsString($expected, $result['message']);
+    }
+
+    /**
+     * testSendRenderWithHelpers method
+     *
+     * @return void
+     */
+    public function testSendRenderWithHelpers()
+    {
+        $this->mailer->setTransport('debug');
+
+        $timestamp = time();
+        $this->mailer->setFrom('cake@cakephp.org');
+        $this->mailer->setTo(['you@cakephp.org' => 'You']);
+        $this->mailer->setSubject('My title');
+        $this->mailer->setProfile(['empty']);
+        $this->mailer->viewBuilder()
+            ->setTemplate('custom_helper')
+            ->setLayout('default')
+            ->setHelpers(['Time'], false);
+        $this->mailer->set(['time' => $timestamp]);
+
+        $result = $this->mailer->send();
+        $dateTime = new \DateTime();
+        $dateTime->setTimestamp($timestamp);
+        $this->assertStringContainsString('Right now: ' . $dateTime->format($dateTime::ATOM), $result['message']);
+
+        $result = $this->mailer->viewBuilder()->getHelpers();
+        $this->assertEquals(['Time'], $result);
+    }
+
+    /**
+     * testSendRenderWithImage method
+     *
+     * @return void
+     */
+    public function testSendRenderWithImage()
+    {
+        $this->mailer->setTransport('debug');
+
+        $this->mailer->setFrom('cake@cakephp.org');
+        $this->mailer->setTo(['you@cakephp.org' => 'You']);
+        $this->mailer->setSubject('My title');
+        $this->mailer->setProfile(['empty']);
+        $this->mailer->viewBuilder()->setTemplate('image');
+        $this->mailer->setEmailFormat('html');
+        $server = env('SERVER_NAME') ? env('SERVER_NAME') : 'localhost';
+
+        if (env('SERVER_PORT') && env('SERVER_PORT') !== 80) {
+            $server .= ':' . env('SERVER_PORT');
+        }
+
+        $expected = '<img src="http://' . $server . '/img/image.gif" alt="cool image" width="100" height="100"';
+        $result = $this->mailer->send();
+        $this->assertStringContainsString($expected, $result['message']);
+    }
+
+    /**
+     * testSendRenderPlugin method
+     *
+     * @return void
+     */
+    public function testSendRenderPlugin()
+    {
+        $this->loadPlugins(['TestPlugin', 'TestPluginTwo', 'TestTheme']);
+
+        $this->mailer->setTransport('debug');
+        $this->mailer->setFrom('cake@cakephp.org');
+        $this->mailer->setTo(['you@cakephp.org' => 'You']);
+        $this->mailer->setSubject('My title');
+        $this->mailer->setProfile(['empty']);
+
+        $this->mailer->viewBuilder()
+            ->setTemplate('TestPlugin.test_plugin_tpl')
+            ->setLayout('default');
+        $result = $this->mailer->send();
+        $this->assertStringContainsString('Into TestPlugin.', $result['message']);
+        $this->assertStringContainsString('This email was sent using the CakePHP Framework', $result['message']);
+
+        $this->mailer->viewBuilder()
+            ->setTemplate('TestPlugin.test_plugin_tpl')
+            ->setLayout('TestPlugin.plug_default');
+        $result = $this->mailer->send();
+        $this->assertStringContainsString('Into TestPlugin.', $result['message']);
+        $this->assertStringContainsString('This email was sent using the TestPlugin.', $result['message']);
+
+        $this->mailer->viewBuilder()
+            ->setTemplate('TestPlugin.test_plugin_tpl')
+            ->setLayout('plug_default');
+        $result = $this->mailer->send();
+        $this->assertStringContainsString('Into TestPlugin.', $result['message']);
+        $this->assertStringContainsString('This email was sent using the TestPlugin.', $result['message']);
+
+        $this->mailer->viewBuilder()
+            ->setTemplate('TestPlugin.test_plugin_tpl')
+            ->setLayout('TestPluginTwo.default');
+        $result = $this->mailer->send();
+        $this->assertStringContainsString('Into TestPlugin.', $result['message']);
+        $this->assertStringContainsString('This email was sent using TestPluginTwo.', $result['message']);
+
+        // test plugin template overridden by theme
+        $this->mailer->viewBuilder()->setTheme('TestTheme');
+        $result = $this->mailer->send();
+
+        $this->assertStringContainsString('Into TestPlugin. (themed)', $result['message']);
+
+        $this->mailer->set(['value' => 12345]);
+        $this->mailer->viewBuilder()
+            ->setTemplate('custom')
+            ->setLayout('TestPlugin.plug_default');
+        $result = $this->mailer->send();
+        $this->assertStringContainsString('Here is your value: 12345', $result['message']);
+        $this->assertStringContainsString('This email was sent using the TestPlugin.', $result['message']);
+        $this->clearPlugins();
+    }
+
+    /**
+     * Test that a MissingTemplateException is thrown
+     *
+     * @return void
+     */
+    public function testMissingTemplateException()
+    {
+        $this->expectException(MissingTemplateException::class);
+
+        $this->mailer->setTransport('debug');
+        $this->mailer->setFrom('cake@cakephp.org');
+        $this->mailer->setTo(['you@cakephp.org' => 'You']);
+        $this->mailer->setSubject('My title');
+        $this->mailer->viewBuilder()->setTemplate('fooo');
+        $this->mailer->send();
+    }
+
+    /**
+     * testSendMultipleMIME method
+     *
+     * @return void
+     */
+    public function testSendMultipleMIME()
+    {
+        $this->mailer->setTransport('debug');
+
+        $this->mailer->setFrom('cake@cakephp.org');
+        $this->mailer->setTo(['you@cakephp.org' => 'You']);
+        $this->mailer->setSubject('My title');
+        $this->mailer->viewBuilder()->setTemplate('custom', 'default');
+        $this->mailer->setProfile([]);
+        $this->mailer->set(['value' => 12345]);
+        $this->mailer->setEmailFormat('both');
+        $this->mailer->send();
+
+        $message = $this->mailer->getBody();
+        $boundary = $this->mailer->boundary;
+        $this->assertNotEmpty($boundary);
+        $this->assertContains('--' . $boundary, $message);
+        $this->assertContains('--' . $boundary . '--', $message);
+
+        $this->mailer->setAttachments(['fake.php' => __FILE__]);
+        $this->mailer->send();
+
+        $message = $this->mailer->getBody();
+        $boundary = $this->mailer->boundary;
+        $this->assertNotEmpty($boundary);
+        $this->assertContains('--' . $boundary, $message);
+        $this->assertContains('--' . $boundary . '--', $message);
+        $this->assertContains('--alt-' . $boundary, $message);
+        $this->assertContains('--alt-' . $boundary . '--', $message);
+    }
+
+    /**
+     * testSendAttachment method
+     *
+     * @return void
+     */
+    public function testSendAttachment()
+    {
+        $this->mailer->setTransport('debug');
+        $this->mailer->setFrom('cake@cakephp.org');
+        $this->mailer->setTo(['you@cakephp.org' => 'You']);
+        $this->mailer->setSubject('My title');
+        $this->mailer->setProfile([]);
+        $this->mailer->setAttachments([CAKE . 'basics.php']);
+        $this->mailer->setBodyText('body');
+        $result = $this->mailer->send();
+        $expected = "Content-Disposition: attachment; filename=\"basics.php\"\r\n" .
+            "Content-Type: text/x-php\r\n" .
+            "Content-Transfer-Encoding: base64\r\n";
+        $this->assertStringContainsString($expected, $result['message']);
+
+        $this->mailer->setAttachments(['my.file.txt' => CAKE . 'basics.php']);
+        $this->mailer->setBodyText('body');
+        $result = $this->mailer->send();
+        $expected = "Content-Disposition: attachment; filename=\"my.file.txt\"\r\n" .
+            "Content-Type: text/x-php\r\n" .
+            "Content-Transfer-Encoding: base64\r\n";
+        $this->assertStringContainsString($expected, $result['message']);
+
+        $this->mailer->setAttachments(['file.txt' => ['file' => CAKE . 'basics.php', 'mimetype' => 'text/plain']]);
+        $this->mailer->setBodyText('body');
+        $result = $this->mailer->send();
+        $expected = "Content-Disposition: attachment; filename=\"file.txt\"\r\n" .
+            "Content-Type: text/plain\r\n" .
+            "Content-Transfer-Encoding: base64\r\n";
+        $this->assertStringContainsString($expected, $result['message']);
+
+        $this->mailer->setAttachments(['file2.txt' => ['file' => CAKE . 'basics.php', 'mimetype' => 'text/plain', 'contentId' => 'a1b1c1']]);
+        $this->mailer->setBodyText('body');
+        $result = $this->mailer->send();
+        $expected = "Content-Disposition: inline; filename=\"file2.txt\"\r\n" .
+            "Content-Type: text/plain\r\n" .
+            "Content-Transfer-Encoding: base64\r\n" .
+            "Content-ID: <a1b1c1>\r\n";
+        $this->assertStringContainsString($expected, $result['message']);
     }
 
     public function testSendWithUnsetTemplateDefaultsToActionName()
@@ -408,12 +1154,10 @@ class MailerTest extends TestCase
 
     public function testDeliver()
     {
-        $this->mailer->reset();
         $this->mailer->setTransport('debug');
         $this->mailer->setFrom('cake@cakephp.org');
         $this->mailer->setTo(['you@cakephp.org' => 'You']);
         $this->mailer->setSubject('My title');
-        $this->mailer->setProfile(['empty']);
 
         $result = $this->mailer->deliver("Here is my body, with multi lines.\nThis is the second line.\r\n\r\nAnd the last.");
         $expected = ['headers', 'message'];
@@ -430,5 +1174,20 @@ class MailerTest extends TestCase
         $this->assertSame($expected, $result['message']);
         $this->assertStringContainsString('Message-ID: ', $result['headers']);
         $this->assertStringContainsString('To: ', $result['headers']);
+    }
+
+    /**
+     * @param string $message
+     * @return void
+     */
+    public function assertLineLengths($message)
+    {
+        $lines = explode("\r\n", $message);
+        foreach ($lines as $line) {
+            $this->assertTrue(
+                strlen($line) <= Message::LINE_LENGTH_MUST,
+                'Line length exceeds the max. limit of Message::LINE_LENGTH_MUST'
+            );
+        }
     }
 }

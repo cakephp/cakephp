@@ -166,6 +166,15 @@ class Mailer implements EventListenerInterface
     protected $renderer;
 
     /**
+     * Flag to decide whether to auto render templates.
+     *
+     * It's set to false if message body is explicity set using one of setBody*() methods.
+     *
+     * @var bool
+     */
+    protected $autoRender = true;
+
+    /**
      * Hold message, renderer and transport instance for restoring after runnning
      * a mailer action.
      *
@@ -283,15 +292,24 @@ class Mailer implements EventListenerInterface
     /**
      * Sends email.
      *
-     * @param string $action The name of the mailer action to trigger.
+     * @param string|null $action The name of the mailer action to trigger.
+     *   If no action is specified then all other method arguments will be ignored.
      * @param array $args Arguments to pass to the triggered mailer action.
      * @param array $headers Headers to set.
      * @return array{headers: string, message: string}
      * @throws \Cake\Mailer\Exception\MissingActionException
      * @throws \BadMethodCallException
      */
-    public function send(string $action, array $args = [], array $headers = []): array
+    public function send(?string $action = null, array $args = [], array $headers = []): array
     {
+        if ($action === null) {
+            if ($this->autoRender) {
+                $this->render();
+            }
+
+            return $this->getTransport()->send($this->message);
+        }
+
         if (!method_exists($this, $action)) {
             throw new MissingActionException([
                 'mailer' => static::class,
@@ -313,7 +331,7 @@ class Mailer implements EventListenerInterface
         try {
             $this->$action(...$args);
 
-            $result = $this->deliver();
+            $result = $this->deliver('');
         } finally {
             $this->restore();
         }
@@ -322,22 +340,75 @@ class Mailer implements EventListenerInterface
     }
 
     /**
-     * Send email directly without using a mailer action.
+     * Render content and set message body.
+     *
+     * @param string $content Content.
+     * @return $this
+     */
+    public function render(string $content = '')
+    {
+        $content = $this->getRenderer()->render(
+            $content,
+            $this->message->getBodyTypes()
+        );
+
+        $this->message->setBody($content);
+
+        return $this;
+    }
+
+    /**
+     * Render content and send email using configured transport.
      *
      * @param string $content Content.
      * @return array{headers: string, message: string}
      */
-    public function deliver(string $content = '')
+    public function deliver(string $content)
     {
-        $this->message->setBody(
-            $this->getRenderer()->render(
-                $content,
-                $this->message->getBodyTypes()
-            )
-        );
-        $transport = $this->getTransport();
+        $this->render($content);
 
-        return $transport->send($this->message);
+        return $this->getTransport()->send($this->message);
+    }
+
+    /**
+     * Set message body.
+     *
+     * @param array $content Content array with keys "text" and/or "html" with
+     *   content string of respective type.
+     * @return $this
+     */
+    public function setBody(array $content)
+    {
+        $this->autoRender = false;
+        $this->message->setBody($content);
+
+        return $this;
+    }
+
+    /**
+     * Set text body for message.
+     *
+     * @param string $content Content string
+     * @return $this
+     */
+    public function setBodyText(string $content)
+    {
+        $this->setBody([Message::MESSAGE_TEXT => $content]);
+
+        return $this;
+    }
+
+    /**
+     * Set HTML body for message.
+     *
+     * @param string $content Content string
+     * @return $this
+     */
+    public function setBodyHtml(string $content)
+    {
+        $this->setBody([Message::MESSAGE_HTML => $content]);
+
+        return $this;
     }
 
     /**
