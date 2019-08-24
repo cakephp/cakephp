@@ -19,6 +19,7 @@ use Cake\Core\Exception\Exception;
 use Cake\Core\StaticConfigTrait;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Event\EventListenerInterface;
+use Cake\Log\Log;
 use Cake\Mailer\Exception\MissingActionException;
 use Cake\View\ViewBuilder;
 use InvalidArgumentException;
@@ -194,6 +195,11 @@ class Mailer implements EventListenerInterface
     protected static $_dsnClassMap = [];
 
     /**
+     * @var array|null
+     */
+    protected $logConfig = null;
+
+    /**
      * Constructor
      *
      * @param array|string|null $config Array of configs, or string to load configs from app.php
@@ -303,11 +309,7 @@ class Mailer implements EventListenerInterface
     public function send(?string $action = null, array $args = [], array $headers = []): array
     {
         if ($action === null) {
-            if ($this->autoRender) {
-                $this->render();
-            }
-
-            return $this->getTransport()->send($this->message);
+            return $this->doSend('', $this->autoRender);
         }
 
         if (!method_exists($this, $action)) {
@@ -365,9 +367,26 @@ class Mailer implements EventListenerInterface
      */
     public function deliver(string $content)
     {
-        $this->render($content);
+        return $this->doSend($content);
+    }
 
-        return $this->getTransport()->send($this->message);
+    /**
+     * Send email using configured transport and optionally log delivered message.
+     *
+     * @param string $content Content
+     * @param bool $render Flag to controller view rendering, default `true`.
+     * @return array{headers: string, message: string}
+     */
+    protected function doSend(string $content = '', $render = true)
+    {
+        if ($render) {
+            $this->render($content);
+        }
+
+        $result = $this->getTransport()->send($this->message);
+        $this->logDelivery($result);
+
+        return $result;
     }
 
     /**
@@ -462,6 +481,10 @@ class Mailer implements EventListenerInterface
             unset($config['viewVars']);
         }
 
+        if (isset($config['log'])) {
+            $this->setLogConfig($config['log']);
+        }
+
         $this->message->setConfig($config);
 
         return $this;
@@ -552,6 +575,58 @@ class Mailer implements EventListenerInterface
         ];
 
         return $this;
+    }
+
+    /**
+     * Log the email message delivery.
+     *
+     * @param array{headers: string, message: string} $contents The content with 'headers' and 'message' keys.
+     * @return void
+     */
+    protected function logDelivery(array $contents): void
+    {
+        if (empty($this->logConfig)) {
+            return;
+        }
+
+        Log::write(
+            $this->logConfig['level'],
+            PHP_EOL . $this->flatten($contents['headers']) . PHP_EOL . PHP_EOL . $this->flatten($contents['message']),
+            $this->logConfig['scope']
+        );
+    }
+
+    /**
+     * Set logging config.
+     *
+     * @param string|array|true $log Log config.
+     * @return void
+     */
+    protected function setLogConfig($log)
+    {
+        $config = [
+            'level' => 'debug',
+            'scope' => 'email',
+        ];
+        if ($log !== true) {
+            if (!is_array($log)) {
+                $log = ['level' => $log];
+            }
+            $config = $log + $config;
+        }
+
+        $this->logConfig = $config;
+    }
+
+    /**
+     * Converts given value to string
+     *
+     * @param string|array $value The value to convert
+     * @return string
+     */
+    protected function flatten($value): string
+    {
+        return is_array($value) ? implode(';', $value) : $value;
     }
 
     /**

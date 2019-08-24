@@ -16,6 +16,8 @@ namespace Cake\Test\TestCase\Mailer;
 
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
+use Cake\Log\Engine\BaseLog;
+use Cake\Log\Log;
 use Cake\Mailer\AbstractTransport;
 use Cake\Mailer\Exception\MissingActionException;
 use Cake\Mailer\Mailer;
@@ -75,6 +77,7 @@ class MailerTest extends TestCase
         TransportFactory::drop('badClassName');
         Mailer::drop('test');
         Mailer::drop('default');
+        Log::drop('email');
     }
 
     /**
@@ -1118,6 +1121,78 @@ class MailerTest extends TestCase
         } catch (RuntimeException $e) {
             $this->assertTrue(true, 'Exception was raised');
         }
+    }
+
+    /**
+     * testSendWithLog method
+     *
+     * @return void
+     */
+    public function testSendWithLog()
+    {
+        $log = $this->getMockBuilder(BaseLog::class)
+            ->setMethods(['log'])
+            ->setConstructorArgs([['scopes' => 'email']])
+            ->getMock();
+
+        $message = 'Logging This';
+
+        $log->expects($this->once())
+            ->method('log')
+            ->with(
+                'debug',
+                $this->logicalAnd(
+                    $this->stringContains($message),
+                    $this->stringContains('cake@cakephp.org'),
+                    $this->stringContains('me@cakephp.org')
+                )
+            );
+
+        Log::setConfig('email', $log);
+
+        $this->mailer->setTransport('debug');
+        $this->mailer->setTo('me@cakephp.org');
+        $this->mailer->setFrom('cake@cakephp.org');
+        $this->mailer->setSubject('My title');
+        $this->mailer->setProfile(['log' => 'debug']);
+        $result = $this->mailer->deliver($message);
+
+        $this->assertNotEmpty($result);
+    }
+
+    /**
+     * testSendWithLogAndScope method
+     *
+     * @return void
+     */
+    public function testSendWithLogAndScope()
+    {
+        $message = 'Logging This';
+
+        $log = $this->getMockBuilder(BaseLog::class)
+            ->setMethods(['log'])
+            ->setConstructorArgs(['scopes' => ['email']])
+            ->getMock();
+        $log->expects($this->once())
+            ->method('log')
+            ->with(
+                'debug',
+                $this->logicalAnd(
+                    $this->stringContains($message),
+                    $this->stringContains('cake@cakephp.org'),
+                    $this->stringContains('me@cakephp.org')
+                )
+            );
+
+        Log::setConfig('email', $log);
+
+        $this->mailer->setTransport('debug');
+        $this->mailer->setTo('me@cakephp.org');
+        $this->mailer->setFrom('cake@cakephp.org');
+        $this->mailer->setSubject('My title');
+        $this->mailer->setProfile(['log' => ['scope' => 'email']]);
+        $this->mailer->setBodyText($message);
+        $this->mailer->send();
     }
 
     /**
