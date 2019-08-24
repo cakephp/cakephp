@@ -804,7 +804,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @return string
      */
-    protected function _viewPath()
+    public function _viewPath()
     {
         $viewPath = $this->name;
         if ($this->request->getParam('prefix')) {
