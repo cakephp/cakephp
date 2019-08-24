@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\Database\Expression;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ValueBinder;
+use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -94,6 +95,45 @@ class FunctionExpressionTest extends TestCase
         $q = new QueryExpression('a');
         $f = new FunctionExpression('MyFunction', [$q]);
         $this->assertEquals('MyFunction(a)', $f->sql($binder));
+    }
+
+    /**
+     * Tests that passing a database query as an argument wraps the query SQL into parentheses.
+     *
+     * @return void
+     */
+    public function testFunctionWithDatabaseQuery()
+    {
+        $query = ConnectionManager::get('test')
+            ->newQuery()
+            ->select(['column']);
+
+        $binder = new ValueBinder;
+        $function = new FunctionExpression('MyFunction', [$query]);
+        $this->assertEquals(
+            'MyFunction((SELECT column))',
+            preg_replace('/[`"\[\]]/', '', $function->sql($binder))
+        );
+    }
+
+    /**
+     * Tests that passing a ORM query as an argument wraps the query SQL into parentheses.
+     *
+     * @return void
+     */
+    public function testFunctionWithOrmQuery()
+    {
+        $query = $this->getTableLocator()->get('Articles')
+            ->setSchema(['column' => 'integer'])
+            ->find()
+            ->select(['column']);
+
+        $binder = new ValueBinder;
+        $function = new FunctionExpression('MyFunction', [$query]);
+        $this->assertEquals(
+            'MyFunction((SELECT Articles.column AS Articles__column FROM articles Articles))',
+            preg_replace('/[`"\[\]]/', '', $function->sql($binder))
+        );
     }
 
     /**

@@ -166,6 +166,7 @@ class Socket
         if ($port > 0) {
             $remoteSocketTarget .= ':' . $port;
         }
+
         $this->connection = $this->_getStreamSocketClient(
             $remoteSocketTarget,
             $errNum,
