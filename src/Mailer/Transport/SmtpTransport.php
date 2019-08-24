@@ -408,7 +408,16 @@ class SmtpTransport extends AbstractTransport
     {
         $this->_smtpSend('DATA', '354');
 
-        $headers = $this->_headersToString($this->_prepareMessageHeaders($message));
+        $headers = $message->getHeadersString([
+            'from',
+            'sender',
+            'replyTo',
+            'readReceipt',
+            'to',
+            'cc',
+            'subject',
+            'returnPath'
+        ]);
         $message = $this->_prepareMessage($message);
 
         $this->_smtpSend($headers . "\r\n\r\n" . $message . "\r\n\r\n\r\n.");

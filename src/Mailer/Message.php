@@ -22,6 +22,7 @@ use Cake\Http\Client\FormDataPart;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
 use Cake\Utility\Text;
+use Closure;
 use InvalidArgumentException;
 use JsonSerializable;
 use Serializable;
@@ -854,8 +855,8 @@ class Message implements JsonSerializable, Serializable
      * - `bcc`
      * - `subject`
      *
-     * @param array $include List of headers.
-     * @return array
+     * @param string[] $include List of headers.
+     * @return string[]
      */
     public function getHeaders(array $include = []): array
     {
@@ -932,6 +933,40 @@ class Message implements JsonSerializable, Serializable
         $headers['Content-Transfer-Encoding'] = $this->getContentTransferEncoding();
 
         return $headers;
+    }
+
+    /**
+     * Get headers as string.
+     *
+     * @param string[] $include List of headers.
+     * @param \Closure $callback Callback to run each header value through before stringifying.
+     * @param string $eol End of line string.
+     * @return string
+     * @see Message::getHeaders()
+     */
+    public function getHeadersString(array $include = [], ?Closure $callback = null, string $eol = "\r\n"): string
+    {
+        $headers = $this->getHeaders($include);
+
+        if ($callback) {
+            $headers = array_map($callback, $headers);
+        }
+
+        $out = '';
+        foreach ($headers as $key => $value) {
+            if (empty($value) && $value !== '0') {
+                continue;
+            }
+
+            foreach ((array)$value as $val) {
+                $out .= $key . ': ' . $val . $eol;
+            }
+        }
+        if (!empty($out)) {
+            $out = substr($out, 0, -1 * strlen($eol));
+        }
+
+        return $out;
     }
 
     /**

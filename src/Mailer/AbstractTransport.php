@@ -64,33 +64,10 @@ abstract class AbstractTransport
             && $message->getCc() === []
             && $message->getBcc() === []
         ) {
-            throw new Exception('You must specify at least one recipient. Use one of `setTo`, `setCc` or `setBcc` to define a recipient.');
+            throw new Exception(
+                'You must specify at least one recipient.'
+                . ' Use one of `setTo`, `setCc` or `setBcc` to define a recipient.'
+            );
         }
-    }
-
-    /**
-     * Help to convert headers in string
-     *
-     * @param array $headers Headers in format key => value
-     * @param string $eol End of line string.
-     * @return string
-     */
-    protected function _headersToString(array $headers, string $eol = "\r\n"): string
-    {
-        $out = '';
-        foreach ($headers as $key => $value) {
-            if ($value === false || $value === null || $value === '') {
-                continue;
-            }
-
-            foreach ((array)$value as $val) {
-                $out .= $key . ': ' . $val . $eol;
-            }
-        }
-        if (!empty($out)) {
-            $out = substr($out, 0, -1 * strlen($eol));
-        }
-
-        return $out;
     }
 }

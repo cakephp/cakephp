@@ -38,22 +38,23 @@ class MailTransport extends AbstractTransport
         if (isset($this->_config['eol'])) {
             $eol = $this->_config['eol'];
         }
-        $headers = $message->getHeaders([
-            'from',
-            'sender',
-            'replyTo',
-            'readReceipt',
-            'returnPath',
-            'to',
-            'cc',
-            'bcc',
-        ]);
-        $to = $headers['To'];
-        unset($headers['To']);
-        foreach ($headers as $key => $header) {
-            $headers[$key] = str_replace(["\r", "\n"], '', $header);
-        }
-        $headers = $this->_headersToString($headers, $eol);
+        $to = $message->getHeaders(['to'])['To'];
+        $headers = $message->getHeadersString(
+            [
+                'from',
+                'sender',
+                'replyTo',
+                'readReceipt',
+                'returnPath',
+                'cc',
+                'bcc',
+            ],
+            function ($val) {
+                return str_replace(["\r", "\n"], '', $val);
+            },
+            $eol
+        );
+
         $subject = str_replace(["\r", "\n"], '', $message->getSubject());
         $to = str_replace(["\r", "\n"], '', $to);
 

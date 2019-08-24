@@ -26,6 +26,18 @@ use TestApp\Mailer\TestMessage;
 class MessageTest extends TestCase
 {
     /**
+     * @var \Cake\Mailer\Message
+     */
+    protected $message;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->message = new Message();
+    }
+
+    /**
      * testWrap method
      *
      * @return void
@@ -92,5 +104,106 @@ class MessageTest extends TestCase
             '',
         ];
         $this->assertSame($expected, $result);
+    }
+
+    /**
+     * testHeaders method
+     *
+     * @return void
+     */
+    public function testHeaders()
+    {
+        $this->message->setMessageId(false);
+        $this->message->setHeaders(['X-Something' => 'nice']);
+        $expected = [
+            'X-Something' => 'nice',
+            'Date' => date(DATE_RFC2822),
+            'MIME-Version' => '1.0',
+            'Content-Type' => 'text/plain; charset=UTF-8',
+            'Content-Transfer-Encoding' => '8bit',
+        ];
+        $this->assertSame($expected, $this->message->getHeaders());
+
+        $this->message->addHeaders(['X-Something' => 'very nice', 'X-Other' => 'cool']);
+        $expected = [
+            'X-Something' => 'very nice',
+            'X-Other' => 'cool',
+            'Date' => date(DATE_RFC2822),
+            'MIME-Version' => '1.0',
+            'Content-Type' => 'text/plain; charset=UTF-8',
+            'Content-Transfer-Encoding' => '8bit',
+        ];
+        $this->assertSame($expected, $this->message->getHeaders());
+
+        $this->message->setFrom('cake@cakephp.org');
+        $this->assertSame($expected, $this->message->getHeaders());
+
+        $expected = [
+            'From' => 'cake@cakephp.org',
+            'X-Something' => 'very nice',
+            'X-Other' => 'cool',
+            'Date' => date(DATE_RFC2822),
+            'MIME-Version' => '1.0',
+            'Content-Type' => 'text/plain; charset=UTF-8',
+            'Content-Transfer-Encoding' => '8bit',
+        ];
+        $this->assertSame($expected, $this->message->getHeaders(['from' => true]));
+
+        $this->message->setFrom('cake@cakephp.org', 'CakePHP');
+        $expected['From'] = 'CakePHP <cake@cakephp.org>';
+        $this->assertSame($expected, $this->message->getHeaders(['from' => true]));
+
+        $this->message->setTo(['cake@cakephp.org', 'php@cakephp.org' => 'CakePHP']);
+        $expected = [
+            'From' => 'CakePHP <cake@cakephp.org>',
+            'To' => 'cake@cakephp.org, CakePHP <php@cakephp.org>',
+            'X-Something' => 'very nice',
+            'X-Other' => 'cool',
+            'Date' => date(DATE_RFC2822),
+            'MIME-Version' => '1.0',
+            'Content-Type' => 'text/plain; charset=UTF-8',
+            'Content-Transfer-Encoding' => '8bit',
+        ];
+        $this->assertSame($expected, $this->message->getHeaders(['from' => true, 'to' => true]));
+
+        $this->message->setCharset('ISO-2022-JP');
+        $expected = [
+            'From' => 'CakePHP <cake@cakephp.org>',
+            'To' => 'cake@cakephp.org, CakePHP <php@cakephp.org>',
+            'X-Something' => 'very nice',
+            'X-Other' => 'cool',
+            'Date' => date(DATE_RFC2822),
+            'MIME-Version' => '1.0',
+            'Content-Type' => 'text/plain; charset=ISO-2022-JP',
+            'Content-Transfer-Encoding' => '7bit',
+        ];
+        $this->assertSame($expected, $this->message->getHeaders(['from' => true, 'to' => true]));
+
+        $result = $this->message->setHeaders([]);
+        $this->assertInstanceOf(Message::class, $result);
+
+        $this->message->setHeaders(['o:tag' => ['foo']]);
+        $this->message->addHeaders(['o:tag' => ['bar']]);
+        $result = $this->message->getHeaders();
+        $this->assertEquals(['foo', 'bar'], $result['o:tag']);
+    }
+
+    /**
+     * testHeadersString method
+     *
+     * @return void
+     */
+    public function testHeadersString()
+    {
+        $this->message->setMessageId(false);
+        $this->message->setHeaders(['X-Something' => 'nice']);
+        $expected = [
+            'X-Something: nice',
+            'Date: ' . date(DATE_RFC2822),
+            'MIME-Version: 1.0',
+            'Content-Type: text/plain; charset=UTF-8',
+            'Content-Transfer-Encoding: 8bit',
+        ];
+        $this->assertSame(implode("\r\n", $expected), $this->message->getHeadersString());
     }
 }
