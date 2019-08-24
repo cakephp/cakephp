@@ -289,7 +289,7 @@ class ServerRequestFactoryTest extends TestCase
      */
     public function testFromGlobalsWithFilesAsObjectsDefault()
     {
-        $this->assertNull(Configure::read('ServerRequest.mergeFilesAsObjects'));
+        $this->assertNull(Configure::read('App.uploadedFilesAsObjects'));
 
         $files = [
             'file' => [
@@ -321,7 +321,7 @@ class ServerRequestFactoryTest extends TestCase
      */
     public function testFromGlobalsWithFilesAsObjectsDisabled()
     {
-        Configure::write('ServerRequest.mergeFilesAsObjects', false);
+        Configure::write('App.uploadedFilesAsObjects', false);
 
         $files = [
             'file' => [
@@ -353,7 +353,7 @@ class ServerRequestFactoryTest extends TestCase
      */
     public function testFromGlobalsWithFilesAsObjectsEnabled()
     {
-        Configure::write('ServerRequest.mergeFilesAsObjects', true);
+        Configure::write('App.uploadedFilesAsObjects', true);
 
         $files = [
             'file' => [
