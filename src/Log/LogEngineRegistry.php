@@ -18,11 +18,13 @@ namespace Cake\Log;
 
 use Cake\Core\App;
 use Cake\Core\ObjectRegistry;
-use Psr\Log\LoggerInterface;
+use Cake\Log\Engine\BaseLog;
 use RuntimeException;
 
 /**
  * Registry of loaded log engines
+ *
+ * @extends \Cake\Core\ObjectRegistry<\Cake\Log\Engine\BaseLog>
  */
 class LogEngineRegistry extends ObjectRegistry
 {
@@ -59,13 +61,13 @@ class LogEngineRegistry extends ObjectRegistry
      *
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
-     * @param string|\Psr\Log\LoggerInterface $class The classname or object to make.
+     * @param string|\Cake\Log\Engine\BaseLog $class The classname or object to make.
      * @param string $alias The alias of the object.
      * @param array $settings An array of settings to use for the logger.
-     * @return \Psr\Log\LoggerInterface The constructed logger class.
+     * @return \Cake\Log\Engine\BaseLog The constructed logger class.
      * @throws \RuntimeException when an object doesn't implement the correct interface.
      */
-    protected function _create($class, string $alias, array $settings): LoggerInterface
+    protected function _create($class, string $alias, array $settings): BaseLog
     {
         if (is_callable($class)) {
             $class = $class($alias);
@@ -80,13 +82,11 @@ class LogEngineRegistry extends ObjectRegistry
             $instance = new $class($settings);
         }
 
-        if ($instance instanceof LoggerInterface) {
+        if ($instance instanceof BaseLog) {
             return $instance;
         }
 
-        throw new RuntimeException(
-            'Loggers must implement Psr\Log\LoggerInterface.'
-        );
+        throw new RuntimeException('Loggers must instanceof ' . BaseLog::class);
     }
 
     /**

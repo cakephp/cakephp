@@ -38,13 +38,14 @@ use RuntimeException;
  * @see \Cake\Controller\ComponentRegistry
  * @see \Cake\View\HelperRegistry
  * @see \Cake\Console\TaskRegistry
+ * @template TObject
  */
 abstract class ObjectRegistry implements Countable, IteratorAggregate
 {
     /**
      * Map of loaded objects.
      *
-     * @var object[]
+     * @var TObject[]
      */
     protected $_loaded = [];
 
@@ -70,7 +71,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      *
      * @param string $objectName The name/class of the object to load.
      * @param array $config Additional settings to use when loading the object.
-     * @return mixed
+     * @return TObject
      * @throws \Exception If the class cannot be found.
      */
     public function load(string $objectName, array $config = [])
@@ -180,10 +181,10 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * This method should construct and do any other initialization logic
      * required.
      *
-     * @param string|object $class The class to build.
+     * @param string|TObject $class The class to build.
      * @param string $alias The alias of the object.
      * @param array $config The Configuration settings for construction
-     * @return object
+     * @return TObject
      */
     abstract protected function _create($class, string $alias, array $config);
 
@@ -212,10 +213,10 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * Get loaded object instance.
      *
      * @param string $name Name of object.
-     * @return object Object instance.
+     * @return TObject Object instance.
      * @throws \RuntimeException If not loaded or found.
      */
-    public function get(string $name): object
+    public function get(string $name)
     {
         if (!isset($this->_loaded[$name])) {
             throw new RuntimeException(sprintf('Unknown object "%s"', $name));
@@ -228,7 +229,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * Provide public read access to the loaded objects
      *
      * @param string $name Name of property to read
-     * @return object|null
+     * @return TObject|null
      */
     public function __get(string $name)
     {
@@ -250,7 +251,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * Sets an object.
      *
      * @param string $name Name of a property to set.
-     * @param mixed $object Object to set.
+     * @param TObject $object Object to set.
      * @return void
      */
     public function __set(string $name, $object): void
@@ -319,7 +320,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * be attached into the event manager
      *
      * @param string $objectName The name of the object to set in the registry.
-     * @param object $object instance to store in the registry
+     * @param TObject $object instance to store in the registry
      * @return $this
      */
     public function set(string $objectName, object $object)

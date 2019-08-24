@@ -3,4 +3,8 @@
     <config name="installed_paths" value="../../cakephp/cakephp-codesniffer" />
 
     <rule ref="CakePHP" />
+
+    <rule ref="SlevomatCodingStandard.Namespaces.FullyQualifiedClassNameInAnnotation.NonFullyQualifiedClassName">
+        <exclude-pattern>Core/ObjectRegistry.php</exclude-pattern>
+    </rule>
 </ruleset>
