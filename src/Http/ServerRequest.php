@@ -288,6 +288,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * - `input` The data that would come from php://input this is useful for simulating
      *   requests with put, patch or delete data.
      * - `session` An instance of a Session object
+     * - `mergeFilesAsObjects` Whether to merge file uploads as objects (`true`) or arrays (`false`).
      *
      * @param string|array $config An array of request data to create a request with.
      *   The string version of this argument is *deprecated* and will be removed in 4.0.0
