@@ -124,7 +124,7 @@ use InvalidArgumentException;
  * @method $this setAttachments($attachments)
  * @method array getAttachments()
  * @method $this addAttachments($attachments)
- * @method $this getBody(?string $type = null)
+ * @method string|array getBody(?string $type = null)
  */
 class Mailer implements EventListenerInterface
 {

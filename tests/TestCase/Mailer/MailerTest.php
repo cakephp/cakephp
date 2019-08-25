@@ -165,6 +165,96 @@ class MailerTest extends TestCase
     }
 
     /**
+     * testConstructWithConfigArray method
+     *
+     * @return void
+     */
+    public function testConstructWithConfigArray()
+    {
+        $configs = [
+            'from' => ['some@example.com' => 'My website'],
+            'to' => 'test@example.com',
+            'subject' => 'Test mail subject',
+            'transport' => 'debug',
+        ];
+        $this->mailer = new Mailer($configs);
+
+        $result = $this->mailer->getTo();
+        $this->assertEquals([$configs['to'] => $configs['to']], $result);
+
+        $result = $this->mailer->getFrom();
+        $this->assertEquals($configs['from'], $result);
+
+        $result = $this->mailer->getSubject();
+        $this->assertEquals($configs['subject'], $result);
+
+        $result = $this->mailer->getTransport();
+        $this->assertInstanceOf(DebugTransport::class, $result);
+
+        $result = $this->mailer->deliver('This is the message');
+
+        $this->assertStringContainsString('Message-ID: ', $result['headers']);
+        $this->assertStringContainsString('To: ', $result['headers']);
+    }
+
+    /**
+     * testConfigArrayWithLayoutWithoutTemplate method
+     *
+     * @return void
+     */
+    public function testConfigArrayWithLayoutWithoutTemplate()
+    {
+        $configs = [
+            'from' => ['some@example.com' => 'My website'],
+            'to' => 'test@example.com',
+            'subject' => 'Test mail subject',
+            'transport' => 'debug',
+            'layout' => 'custom',
+        ];
+        $this->mailer = new Mailer($configs);
+
+        $template = $this->mailer->viewBuilder()->getTemplate();
+        $layout = $this->mailer->viewBuilder()->getLayout();
+        $this->assertNull($template);
+        $this->assertEquals($configs['layout'], $layout);
+    }
+
+    /**
+     * testConstructWithConfigString method
+     *
+     * @return void
+     */
+    public function testConstructWithConfigString()
+    {
+        $configs = [
+            'from' => ['some@example.com' => 'My website'],
+            'to' => 'test@example.com',
+            'subject' => 'Test mail subject',
+            'transport' => 'debug',
+        ];
+        Mailer::setConfig('test', $configs);
+
+        $this->mailer = new Mailer('test');
+
+        $result = $this->mailer->getTo();
+        $this->assertEquals([$configs['to'] => $configs['to']], $result);
+
+        $result = $this->mailer->getFrom();
+        $this->assertEquals($configs['from'], $result);
+
+        $result = $this->mailer->getSubject();
+        $this->assertEquals($configs['subject'], $result);
+
+        $result = $this->mailer->getTransport();
+        $this->assertInstanceOf('Cake\Mailer\Transport\DebugTransport', $result);
+
+        $result = $this->mailer->deliver('This is the message');
+
+        $this->assertStringContainsString('Message-ID: ', $result['headers']);
+        $this->assertStringContainsString('To: ', $result['headers']);
+    }
+
+    /**
      * test profile method
      *
      * @return void
@@ -309,6 +399,24 @@ class MailerTest extends TestCase
         $result = (new Mailer())->set('key', 'value');
         $this->assertInstanceOf(Mailer::class, $result);
         $this->assertSame(['key' => 'value'], $result->getRenderer()->viewBuilder()->getVars());
+    }
+
+    /**
+     * testRenderWithLayoutAndAttachment method
+     *
+     * @return void
+     */
+    public function testRenderWithLayoutAndAttachment()
+    {
+        $this->mailer->setEmailFormat('html');
+        $this->mailer->viewBuilder()->setTemplate('html', 'default');
+        $this->mailer->setAttachments([CAKE . 'basics.php']);
+        $this->mailer->render();
+        $result = $this->mailer->getBody();
+        $this->assertNotEmpty($result);
+
+        $result = $this->mailer->getBoundary();
+        $this->assertRegExp('/^[0-9a-f]{32}$/', $result);
     }
 
     public function testSend()
@@ -1098,6 +1206,83 @@ class MailerTest extends TestCase
     }
 
     /**
+     * testGetBody method
+     *
+     * @return void
+     */
+    public function testGetBody()
+    {
+        $this->mailer->setTransport('debug');
+        $this->mailer->setFrom('cake@cakephp.org');
+        $this->mailer->setTo(['you@cakephp.org' => 'You']);
+        $this->mailer->setSubject('My title');
+        $this->mailer->setProfile(['empty']);
+        $this->mailer->viewBuilder()->setTemplate('default', 'default');
+        $this->mailer->setEmailFormat('both');
+        $this->mailer->send();
+
+        $expected = '<p>This email was sent using the <a href="https://cakephp.org">CakePHP Framework</a></p>';
+        $this->assertStringContainsString($expected, $this->mailer->getBody(Message::MESSAGE_HTML));
+
+        $expected = 'This email was sent using the CakePHP Framework, https://cakephp.org.';
+        $this->assertStringContainsString($expected, $this->mailer->getBody(Message::MESSAGE_TEXT));
+
+        $message = $this->mailer->getBody();
+        $this->assertContains('Content-Type: text/plain; charset=UTF-8', $message);
+        $this->assertContains('Content-Type: text/html; charset=UTF-8', $message);
+
+        // UTF-8 is 8bit
+        $this->assertTrue($this->_checkContentTransferEncoding($message, '8bit'));
+
+        $this->mailer->setCharset('ISO-2022-JP');
+        $this->mailer->send();
+        $message = $this->mailer->getBody();
+        $this->assertContains('Content-Type: text/plain; charset=ISO-2022-JP', $message);
+        $this->assertContains('Content-Type: text/html; charset=ISO-2022-JP', $message);
+
+        // ISO-2022-JP is 7bit
+        $this->assertTrue($this->_checkContentTransferEncoding($message, '7bit'));
+    }
+
+    /**
+     * testZeroOnlyLinesNotBeingEmptied()
+     *
+     * @return void
+     */
+    public function testZeroOnlyLinesNotBeingEmptied()
+    {
+        $message = "Lorem\r\n0\r\n0\r\nipsum";
+
+        $this->mailer->reset();
+        $this->mailer->setTransport('debug');
+        $this->mailer->setFrom('cake@cakephp.org');
+        $this->mailer->setTo('cake@cakephp.org');
+        $this->mailer->setSubject('Wordwrap Test');
+
+        $result = $this->mailer->deliver($message);
+        $expected = "{$message}\r\n\r\n";
+        $this->assertEquals($expected, $result['message']);
+    }
+
+    /**
+     * testReset method
+     *
+     * @return void
+     */
+    public function testReset()
+    {
+        $this->mailer->setTo('cake@cakephp.org');
+        $this->mailer->viewBuilder()->setTheme('TestTheme');
+        $this->mailer->setEmailPattern('/.+@.+\..+/i');
+        $this->assertSame(['cake@cakephp.org' => 'cake@cakephp.org'], $this->mailer->getTo());
+
+        $this->mailer->reset();
+        $this->assertSame([], $this->mailer->getTo());
+        $this->assertNull($this->mailer->viewBuilder()->getTheme());
+        $this->assertSame(Message::EMAIL_PATTERN, $this->mailer->getEmailPattern());
+    }
+
+    /**
      * Test that mailers call reset() when send fails
      *
      * @return void
@@ -1255,7 +1440,7 @@ class MailerTest extends TestCase
      * @param string $message
      * @return void
      */
-    public function assertLineLengths($message)
+    protected function assertLineLengths($message)
     {
         $lines = explode("\r\n", $message);
         foreach ($lines as $line) {
@@ -1264,5 +1449,34 @@ class MailerTest extends TestCase
                 'Line length exceeds the max. limit of Message::LINE_LENGTH_MUST'
             );
         }
+    }
+
+    protected function _checkContentTransferEncoding($message, $charset)
+    {
+        $boundary = '--' . $this->mailer->getBoundary();
+        $result['text'] = false;
+        $result['html'] = false;
+        $length = count($message);
+        for ($i = 0; $i < $length; ++$i) {
+            if ($message[$i] === $boundary) {
+                $flag = false;
+                $type = '';
+                while (!preg_match('/^$/', $message[$i])) {
+                    if (preg_match('/^Content-Type: text\/plain/', $message[$i])) {
+                        $type = 'text';
+                    }
+                    if (preg_match('/^Content-Type: text\/html/', $message[$i])) {
+                        $type = 'html';
+                    }
+                    if ($message[$i] === 'Content-Transfer-Encoding: ' . $charset) {
+                        $flag = true;
+                    }
+                    ++$i;
+                }
+                $result[$type] = $flag;
+            }
+        }
+
+        return $result['text'] && $result['html'];
     }
 }
