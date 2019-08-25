@@ -265,6 +265,19 @@ class Mailer implements EventListenerInterface
     }
 
     /**
+     * Set message instance.
+     *
+     * @param \Cake\Mailer\Message $message Message instance.
+     * @return $this
+     */
+    public function setMessage(Message $message)
+    {
+        $this->message = $message;
+
+        return $this;
+    }
+
+    /**
      * Magic method to forward method class to Message instance.
      *
      * @param string $method Method name.

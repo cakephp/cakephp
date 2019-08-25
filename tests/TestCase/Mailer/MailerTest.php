@@ -131,6 +131,22 @@ class MailerTest extends TestCase
     }
 
     /**
+     * testMessage function
+     *
+     * @return void
+     */
+    public function testMessage()
+    {
+        $message = $this->mailer->getMessage();
+        $this->assertInstanceOf(Message::class, $message);
+
+        $newMessage = new Message();
+        $this->mailer->setMessage($newMessage);
+        $this->assertSame($newMessage, $this->mailer->getMessage());
+        $this->assertNotSame($message, $newMessage);
+    }
+
+    /**
      * Test reading/writing configuration profiles.
      *
      * @return void
