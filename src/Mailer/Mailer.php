@@ -392,6 +392,8 @@ class Mailer implements EventListenerInterface
     /**
      * Set message body.
      *
+     * Setting body content explicity will disable auto rendering.
+     *
      * @param array $content Content array with keys "text" and/or "html" with
      *   content string of respective type.
      * @return $this
@@ -407,6 +409,8 @@ class Mailer implements EventListenerInterface
     /**
      * Set text body for message.
      *
+     * Setting body content explicity will disable auto rendering.
+     *
      * @param string $content Content string
      * @return $this
      */
@@ -419,6 +423,8 @@ class Mailer implements EventListenerInterface
 
     /**
      * Set HTML body for message.
+     *
+     * Setting body content explicity will disable auto rendering.
      *
      * @param string $content Content string
      * @return $this
