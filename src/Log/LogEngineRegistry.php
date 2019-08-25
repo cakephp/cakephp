@@ -86,7 +86,11 @@ class LogEngineRegistry extends ObjectRegistry
             return $instance;
         }
 
-        throw new RuntimeException('Loggers must instanceof ' . LoggerInterface::class);
+        throw new RuntimeException(sprintf(
+            'Loggers must implement %s. Found `%s` instance instead.',
+            LoggerInterface::class,
+            getTypeName($instance)
+        ));
     }
 
     /**
