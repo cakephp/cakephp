@@ -593,9 +593,8 @@ class Client implements ClientInterface
         $auth = $options['auth'];
         /** @var \Cake\Http\Client\Auth\Basic $adapter */
         $adapter = $this->_createAuth($auth, $options);
-        $result = $adapter->authentication($request, $options['auth']);
 
-        return $result ?: $request;
+        return $adapter->authentication($request, $options['auth']);
     }
 
     /**
@@ -613,9 +612,8 @@ class Client implements ClientInterface
         $auth = $options['proxy'];
         /** @var \Cake\Http\Client\Auth\Basic $adapter */
         $adapter = $this->_createAuth($auth, $options);
-        $result = $adapter->proxyAuthentication($request, $options['proxy']);
 
-        return $result ?: $request;
+        return $adapter->proxyAuthentication($request, $options['proxy']);
     }
 
     /**
