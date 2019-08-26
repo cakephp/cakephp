@@ -88,8 +88,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      * Provide public read access to the loaded objects
      *
      * @param string $name Name of property to read
-     * @return object|null
-     * @psalm-return \Cake\View\Helper|null
+     * @return \Cake\View\Helper|null
      */
     public function __get(string $name)
     {

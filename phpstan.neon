@@ -74,6 +74,9 @@ parameters:
         -
             message: '#Parameter \#1 \$connection of method Cake\\Database\\Schema\\SqlGeneratorInterface::(create|drop|truncate)Sql\(\) expects Cake\\Database\\Connection, Cake\\Datasource\\ConnectionInterface given#'
             path: 'src/TestSuite/Fixture/TestFixture.php'
+        -
+            message: '#Method Cake\\View\\HelperRegistry::__get\(\) should return Cake\\View\\Helper|null but returns object#'
+            path: 'src/View/HelperRegistry.php'
     earlyTerminatingMethodCalls:
         Cake\Console\Shell:
             - abort
