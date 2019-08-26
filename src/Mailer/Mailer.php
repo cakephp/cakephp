@@ -167,15 +167,6 @@ class Mailer implements EventListenerInterface
     protected $renderer;
 
     /**
-     * Flag to decide whether to auto render templates.
-     *
-     * It's set to false if message body is explicity set using one of setBody*() methods.
-     *
-     * @var bool
-     */
-    protected $autoRender = true;
-
-    /**
      * Hold message, renderer and transport instance for restoring after runnning
      * a mailer action.
      *
@@ -322,7 +313,7 @@ class Mailer implements EventListenerInterface
     public function send(?string $action = null, array $args = [], array $headers = []): array
     {
         if ($action === null) {
-            return $this->doSend('', $this->autoRender);
+            return $this->deliver();
         }
 
         if (!method_exists($this, $action)) {
@@ -346,7 +337,7 @@ class Mailer implements EventListenerInterface
         try {
             $this->$action(...$args);
 
-            $result = $this->deliver('');
+            $result = $this->deliver();
         } finally {
             $this->restore();
         }
@@ -378,75 +369,14 @@ class Mailer implements EventListenerInterface
      * @param string $content Content.
      * @return array{headers: string, message: string}
      */
-    public function deliver(string $content)
+    public function deliver(string $content = '')
     {
-        return $this->doSend($content);
-    }
-
-    /**
-     * Send email using configured transport and optionally log delivered message.
-     *
-     * @param string $content Content
-     * @param bool $render Flag to controller view rendering, default `true`.
-     * @return array{headers: string, message: string}
-     */
-    protected function doSend(string $content = '', $render = true)
-    {
-        if ($render) {
-            $this->render($content);
-        }
+        $this->render($content);
 
         $result = $this->getTransport()->send($this->message);
         $this->logDelivery($result);
 
         return $result;
-    }
-
-    /**
-     * Set message body.
-     *
-     * Setting body content explicity will disable auto rendering.
-     *
-     * @param array $content Content array with keys "text" and/or "html" with
-     *   content string of respective type.
-     * @return $this
-     */
-    public function setBody(array $content)
-    {
-        $this->autoRender = false;
-        $this->message->setBody($content);
-
-        return $this;
-    }
-
-    /**
-     * Set text body for message.
-     *
-     * Setting body content explicity will disable auto rendering.
-     *
-     * @param string $content Content string
-     * @return $this
-     */
-    public function setBodyText(string $content)
-    {
-        $this->setBody([Message::MESSAGE_TEXT => $content]);
-
-        return $this;
-    }
-
-    /**
-     * Set HTML body for message.
-     *
-     * Setting body content explicity will disable auto rendering.
-     *
-     * @param string $content Content string
-     * @return $this
-     */
-    public function setBodyHtml(string $content)
-    {
-        $this->setBody([Message::MESSAGE_HTML => $content]);
-
-        return $this;
     }
 
     /**

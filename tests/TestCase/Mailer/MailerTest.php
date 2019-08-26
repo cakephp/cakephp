@@ -488,9 +488,8 @@ class MailerTest extends TestCase
         $this->mailer->setTo(['you@cakephp.org' => 'You']);
         $this->mailer->setSubject('My title');
         $this->mailer->setProfile(['empty']);
-        $this->mailer->setBodyText("Here is my body, with multi lines.\nThis is the second line.\r\n\r\nAnd the last.");
 
-        $result = $this->mailer->send();
+        $result = $this->mailer->deliver("Here is my body, with multi lines.\nThis is the second line.\r\n\r\nAnd the last.");
         $expected = ['headers', 'message'];
         $this->assertEquals($expected, array_keys($result));
         $expected = "Here is my body, with multi lines.\r\nThis is the second line.\r\n\r\nAnd the last.\r\n\r\n";
@@ -500,8 +499,7 @@ class MailerTest extends TestCase
         $this->assertStringContainsString('Message-ID: ', $result['headers']);
         $this->assertStringContainsString('To: ', $result['headers']);
 
-        $this->mailer->setBodyText('Other body');
-        $result = $this->mailer->send();
+        $result = $this->mailer->deliver('Other body');
         $expected = "Other body\r\n\r\n";
         $this->assertSame($expected, $result['message']);
         $this->assertStringContainsString('Message-ID: ', $result['headers']);
@@ -538,8 +536,7 @@ class MailerTest extends TestCase
         $this->mailer->setSubject('My title');
         $this->mailer->setEmailFormat('text');
         $this->mailer->setAttachments([CAKE . 'basics.php']);
-        $this->mailer->setBodyText('Hello');
-        $result = $this->mailer->send();
+        $result = $this->mailer->deliver('Hello');
 
         $boundary = $this->mailer->boundary;
         $this->assertStringContainsString('Content-Type: multipart/mixed; boundary="' . $boundary . '"', $result['headers']);
@@ -576,8 +573,7 @@ class MailerTest extends TestCase
                 'data' => $data,
                 'mimetype' => 'image/gif',
         ]]);
-        $this->mailer->setBodyText('Hello');
-        $result = $this->mailer->send();
+        $result = $this->mailer->deliver('Hello');
 
         $boundary = $this->mailer->boundary;
         $this->assertStringContainsString('Content-Type: multipart/mixed; boundary="' . $boundary . '"', $result['headers']);
@@ -610,8 +606,7 @@ class MailerTest extends TestCase
         $this->mailer->setSubject('My title');
         $this->mailer->setEmailFormat('both');
         $this->mailer->setAttachments([CORE_PATH . 'VERSION.txt']);
-        $this->mailer->setBody(['text' => 'Hello', 'html' => 'Hello']);
-        $result = $this->mailer->send();
+        $result = $this->mailer->deliver('Hello');
 
         $boundary = $this->mailer->boundary;
         $this->assertStringContainsString('Content-Type: multipart/mixed; boundary="' . $boundary . '"', $result['headers']);
@@ -662,8 +657,7 @@ class MailerTest extends TestCase
                 'contentId' => 'abc123',
             ],
         ]);
-        $this->mailer->setBody(['text' => 'Hello', 'html' => 'Hello']);
-        $result = $this->mailer->send();
+        $result = $this->mailer->deliver('Hello');
 
         $boundary = $this->mailer->boundary;
         $this->assertStringContainsString('Content-Type: multipart/mixed; boundary="' . $boundary . '"', $result['headers']);
@@ -720,8 +714,7 @@ class MailerTest extends TestCase
                 'contentId' => 'abc123',
             ],
         ]);
-        $this->mailer->setBody(['text' => 'Hello', 'html' => 'Hello']);
-        $result = $this->mailer->send();
+        $result = $this->mailer->deliver('Hello');
 
         $boundary = $this->mailer->boundary;
         $this->assertStringContainsString('Content-Type: multipart/mixed; boundary="' . $boundary . '"', $result['headers']);
@@ -765,8 +758,7 @@ class MailerTest extends TestCase
                 'contentDisposition' => false,
             ],
         ]);
-        $this->mailer->setBodyText('Hello');
-        $result = $this->mailer->send();
+        $result = $this->mailer->deliver('Hello');
 
         $boundary = $this->mailer->boundary;
         $this->assertStringContainsString('Content-Type: multipart/mixed; boundary="' . $boundary . '"', $result['headers']);
@@ -1392,8 +1384,7 @@ class MailerTest extends TestCase
         $this->mailer->setFrom('cake@cakephp.org');
         $this->mailer->setSubject('My title');
         $this->mailer->setProfile(['log' => ['scope' => 'email']]);
-        $this->mailer->setBodyText($message);
-        $this->mailer->send();
+        $this->mailer->deliver($message);
     }
 
     /**
