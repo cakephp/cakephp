@@ -591,10 +591,10 @@ class Client implements ClientInterface
     protected function _addAuthentication(Request $request, array $options): Request
     {
         $auth = $options['auth'];
+        /** @var \Cake\Http\Client\Auth\Basic $adapter */
         $adapter = $this->_createAuth($auth, $options);
-        $result = $adapter->authentication($request, $options['auth']);
 
-        return $result ?: $request;
+        return $adapter->authentication($request, $options['auth']);
     }
 
     /**
@@ -610,10 +610,10 @@ class Client implements ClientInterface
     protected function _addProxy(Request $request, array $options): Request
     {
         $auth = $options['proxy'];
+        /** @var \Cake\Http\Client\Auth\Basic $adapter */
         $adapter = $this->_createAuth($auth, $options);
-        $result = $adapter->proxyAuthentication($request, $options['proxy']);
 
-        return $result ?: $request;
+        return $adapter->proxyAuthentication($request, $options['proxy']);
     }
 
     /**
@@ -624,7 +624,7 @@ class Client implements ClientInterface
      *
      * @param array $auth The authentication options to use.
      * @param array $options The overall request options to use.
-     * @return mixed Authentication strategy instance.
+     * @return object Authentication strategy instance.
      * @throws \Cake\Core\Exception\Exception when an invalid strategy is chosen.
      */
     protected function _createAuth(array $auth, array $options)

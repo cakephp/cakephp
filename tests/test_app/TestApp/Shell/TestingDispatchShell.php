@@ -31,9 +31,11 @@ class TestingDispatchShell extends Shell
         $this->out('<info>Welcome to CakePHP Console</info>');
     }
 
-    public function out($message = null, int $newlines = 1, int $level = Shell::NORMAL)
+    public function out($message = null, int $newlines = 1, int $level = Shell::NORMAL): ?int
     {
         echo $message . "\n";
+
+        return 1;
     }
 
     public function testTask()

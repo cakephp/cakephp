@@ -244,7 +244,10 @@ class Debugger
      */
     public static function log($var, $level = 'debug', int $depth = 3): void
     {
-        $source = static::trace(['start' => 1]) . "\n";
+        /** @var string $source */
+        $source = static::trace(['start' => 1]);
+        $source .= "\n";
+
         Log::write($level, "\n" . $source . static::exportVar($var, $depth));
     }
 
@@ -261,7 +264,7 @@ class Debugger
      * - `start` - The stack frame to start generating a trace from. Defaults to 0
      *
      * @param array $options Format for outputting stack trace.
-     * @return mixed Formatted stack trace.
+     * @return string|array Formatted stack trace.
      * @link https://book.cakephp.org/3.0/en/development/debugging.html#generating-stack-traces
      */
     public static function trace(array $options = [])
@@ -283,7 +286,7 @@ class Debugger
      *
      * @param array|\Exception $backtrace Trace as array or an exception object.
      * @param array $options Format for outputting stack trace.
-     * @return mixed Formatted stack trace.
+     * @return string|array Formatted stack trace.
      * @link https://book.cakephp.org/3.0/en/development/debugging.html#generating-stack-traces
      */
     public static function formatTrace($backtrace, array $options = [])
