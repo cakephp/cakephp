@@ -1230,10 +1230,10 @@ class MailerTest extends TestCase
         $this->mailer->send();
 
         $expected = '<p>This email was sent using the <a href="https://cakephp.org">CakePHP Framework</a></p>';
-        $this->assertStringContainsString($expected, $this->mailer->getBody(Message::MESSAGE_HTML));
+        $this->assertStringContainsString($expected, $this->mailer->getBodyHtml());
 
         $expected = 'This email was sent using the CakePHP Framework, https://cakephp.org.';
-        $this->assertStringContainsString($expected, $this->mailer->getBody(Message::MESSAGE_TEXT));
+        $this->assertStringContainsString($expected, $this->mailer->getBodyText());
 
         $message = $this->mailer->getBody();
         $this->assertContains('Content-Type: text/plain; charset=UTF-8', $message);

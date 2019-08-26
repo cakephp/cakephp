@@ -26,7 +26,7 @@ class MailContains extends MailConstraintBase
     /**
      * Mail type to check contents of
      *
-     * @var string
+     * @var string|null
      */
     protected $type;
 
@@ -40,7 +40,8 @@ class MailContains extends MailConstraintBase
     {
         $messages = $this->getMessages();
         foreach ($messages as $message) {
-            $message = implode("\r\n", (array)$message->getBody($this->type));
+            $method = 'getBody' . ($this->type ? ucfirst($this->type) : 'String');
+            $message = $message->$method();
 
             $other = preg_quote($other, '/');
             if (preg_match("/$other/", $message) > 0) {

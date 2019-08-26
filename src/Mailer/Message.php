@@ -1214,20 +1214,12 @@ class Message implements JsonSerializable, Serializable
     }
 
     /**
-     * Get generated message body.
+     * Get generated message body as array.
      *
-     * @param string|null $type Use MESSAGE_* constants or null to return the full message as array
-     * @return string|array String if type is given, array if type is null
+     * @return array
      */
-    public function getBody(?string $type = null)
+    public function getBody()
     {
-        switch ($type) {
-            case static::MESSAGE_HTML:
-                return $this->htmlMessage;
-            case static::MESSAGE_TEXT:
-                return $this->textMessage;
-        }
-
         if (empty($this->message)) {
             $this->message = $this->generateMessage();
         }
@@ -1244,7 +1236,6 @@ class Message implements JsonSerializable, Serializable
      */
     public function getBodyString(string $eol = "\r\n"): string
     {
-        /** @var array $lines */
         $lines = $this->getBody();
 
         return implode($eol, $lines);
@@ -1533,6 +1524,26 @@ class Message implements JsonSerializable, Serializable
         $this->setBody([static::MESSAGE_HTML => $content]);
 
         return $this;
+    }
+
+    /**
+     * Get text body of message.
+     *
+     * @return string
+     */
+    public function getBodyText()
+    {
+        return $this->textMessage;
+    }
+
+    /**
+     * Get HTML body of message.
+     *
+     * @return string
+     */
+    public function getBodyHtml()
+    {
+        return $this->htmlMessage;
     }
 
     /**

@@ -18,7 +18,6 @@ namespace Cake\Mailer;
 
 use BadMethodCallException;
 use Cake\Log\Log;
-use Cake\View\View;
 use Cake\View\ViewBuilder;
 use InvalidArgumentException;
 use JsonSerializable;
@@ -277,7 +276,13 @@ class Email implements JsonSerializable, Serializable
      */
     public function message(?string $type = null)
     {
-        return $this->message->getBody($type);
+        if ($type === null) {
+            return $this->message->getBody();
+        }
+
+        $method = 'getBody' . ucfirst($type);
+
+        return $this->message->$method();
     }
 
     /**
