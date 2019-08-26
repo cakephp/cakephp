@@ -88,7 +88,10 @@ if (!function_exists('stackTrace')) {
 
         $options += ['start' => 0];
         $options['start']++;
-        echo Debugger::trace($options);
+
+        /** @var string $trace */
+        $trace = Debugger::trace($options);
+        echo $trace;
     }
 
 }

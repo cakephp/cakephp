@@ -299,6 +299,7 @@ abstract class BaseErrorHandler
             $data['line']
         );
         if (!empty($this->_config['trace'])) {
+            /** @var string $trace */
             $trace = Debugger::trace([
                 'start' => 1,
                 'format' => 'log',

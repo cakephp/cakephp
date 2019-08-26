@@ -244,7 +244,10 @@ class Debugger
      */
     public static function log($var, $level = 'debug', int $depth = 3): void
     {
-        $source = static::trace(['start' => 1]) . "\n";
+        /** @var string $source */
+        $source = static::trace(['start' => 1]);
+        $source .= "\n";
+
         Log::write($level, "\n" . $source . static::exportVar($var, $depth));
     }
 

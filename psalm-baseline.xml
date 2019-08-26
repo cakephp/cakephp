@@ -78,9 +78,6 @@
     </PossiblyNullReference>
   </file>
   <file src="src/Console/ConsoleOutput.php">
-    <PossibleRawObjectIteration occurrences="1">
-      <code>$style</code>
-    </PossibleRawObjectIteration>
     <PossiblyNullArrayOffset occurrences="2">
       <code>static::$_styles</code>
       <code>static::$_styles</code>
