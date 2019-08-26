@@ -710,7 +710,7 @@ class Response implements ResponseInterface
      * e.g `getMimeType('pdf'); // returns 'application/pdf'`
      *
      * @param string $alias the content type alias to map
-     * @return mixed String mapped mime type or false if $alias is not mapped
+     * @return string|array|false String mapped mime type or false if $alias is not mapped
      */
     public function getMimeType(string $alias)
     {

@@ -626,7 +626,7 @@ class Shell
      * @return mixed Either the default value, or the user-provided input.
      * @link https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::in
      */
-    public function in(string $prompt, $options = null, $default = null)
+    public function in(string $prompt, $options = null, ?string $default = null): ?string
     {
         if (!$this->interactive) {
             return $default;
@@ -666,7 +666,7 @@ class Shell
      * @param int $newlines Number of newlines to append
      * @return int|null The number of bytes returned from writing to stdout.
      */
-    public function verbose($message, int $newlines = 1)
+    public function verbose($message, int $newlines = 1): ?int
     {
         return $this->_io->verbose($message, $newlines);
     }
@@ -678,7 +678,7 @@ class Shell
      * @param int $newlines Number of newlines to append
      * @return int|null The number of bytes returned from writing to stdout.
      */
-    public function quiet($message, int $newlines = 1)
+    public function quiet($message, int $newlines = 1): ?int
     {
         return $this->_io->quiet($message, $newlines);
     }
@@ -700,7 +700,7 @@ class Shell
      * @return int|null The number of bytes returned from writing to stdout.
      * @link https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::out
      */
-    public function out($message = null, int $newlines = 1, int $level = Shell::NORMAL)
+    public function out($message = null, int $newlines = 1, int $level = Shell::NORMAL): ?int
     {
         return $this->_io->out($message, $newlines, $level);
     }
@@ -754,7 +754,7 @@ class Shell
      * @return int|null The number of bytes returned from writing to stdout.
      * @see https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::out
      */
-    public function success($message = null, int $newlines = 1, int $level = Shell::NORMAL)
+    public function success($message = null, int $newlines = 1, int $level = Shell::NORMAL): ?int
     {
         return $this->_io->success($message, $newlines, $level);
     }
@@ -809,12 +809,14 @@ class Shell
      */
     public function clear(): void
     {
-        if (empty($this->params['noclear'])) {
-            if (DIRECTORY_SEPARATOR === '/') {
-                passthru('clear');
-            } else {
-                passthru('cls');
-            }
+        if (!empty($this->params['noclear'])) {
+            return;
+        }
+
+        if (DIRECTORY_SEPARATOR === '/') {
+            passthru('clear');
+        } else {
+            passthru('cls');
         }
     }
 

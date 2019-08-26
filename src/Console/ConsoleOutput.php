@@ -282,9 +282,9 @@ class ConsoleOutput
      * ```
      *
      * @param string|null $style The style to get or create.
-     * @param array|bool|null $definition The array definition of the style to change or create a style
+     * @param array|false|null $definition The array definition of the style to change or create a style
      *   or false to remove a style.
-     * @return mixed If you are getting styles, the style or null will be returned. If you are creating/modifying
+     * @return array|true|null If you are getting styles, the style or null will be returned. If you are creating/modifying
      *   styles true will be returned.
      */
     public function styles(?string $style = null, $definition = null)

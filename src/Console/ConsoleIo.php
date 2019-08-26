@@ -363,9 +363,9 @@ class ConsoleIo
      *
      * @param string $prompt Prompt text.
      * @param string|null $default Default input value.
-     * @return mixed Either the default value, or the user-provided input.
+     * @return string Either the default value, or the user-provided input.
      */
-    public function ask(string $prompt, ?string $default = null)
+    public function ask(string $prompt, ?string $default = null): string
     {
         return $this->_getInput($prompt, null, $default);
     }
@@ -388,7 +388,7 @@ class ConsoleIo
      * @param string|null $style The style to get or create.
      * @param array|bool|null $definition The array definition of the style to change or create a style
      *   or false to remove a style.
-     * @return mixed If you are getting styles, the style or null will be returned. If you are creating/modifying
+     * @return array|null|true If you are getting styles, the style or null will be returned. If you are creating/modifying
      *   styles true will be returned.
      * @see \Cake\Console\ConsoleOutput::styles()
      */
@@ -403,9 +403,9 @@ class ConsoleIo
      * @param string $prompt Prompt text.
      * @param string|array $options Array or string of options.
      * @param string|null $default Default input value.
-     * @return mixed Either the default value, or the user-provided input.
+     * @return string Either the default value, or the user-provided input.
      */
-    public function askChoice(string $prompt, $options, ?string $default = null)
+    public function askChoice(string $prompt, $options, ?string $default = null): string
     {
         if ($options && is_string($options)) {
             if (strpos($options, ',')) {
