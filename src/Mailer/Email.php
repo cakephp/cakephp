@@ -366,8 +366,9 @@ class Email implements JsonSerializable, Serializable
      * Send an email using the specified content, template and layout
      *
      * @param string|array|null $content String with message or array with messages
-     * @return array{headers: string, message: string}
+     * @return array
      * @throws \BadMethodCallException
+     * @psalm-return array{headers: string, message: string}
      */
     public function send($content = null): array
     {

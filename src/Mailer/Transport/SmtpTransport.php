@@ -168,8 +168,9 @@ class SmtpTransport extends AbstractTransport
      * Send mail
      *
      * @param \Cake\Mailer\Message $message Message instance
-     * @return array{headers: string, message: string}
+     * @return array
      * @throws \Cake\Network\Exception\SocketException
+     * @psalm-return array{headers: string, message: string}
      */
     public function send(Message $message): array
     {

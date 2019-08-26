@@ -51,7 +51,8 @@ class Renderer
      *
      * @param string $content The content.
      * @param array $types Content types to render.
-     * @return array{html?: string, text?: string} The rendered content with "html" and/or "text" keys.
+     * @return array The rendered content with "html" and/or "text" keys.
+     * @psalm-return array{html?: string, text?: string}
      */
     public function render(string $content, array $types = []): array
     {

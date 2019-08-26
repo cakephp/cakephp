@@ -94,7 +94,8 @@ class JsonView extends SerializedView
      *   - Setting it to a string value, uses the provided query string parameter
      *     for finding the JSONP callback name.
      *
-     * @var array{serialize:string|bool|null, jsonOptions: int|null, jsonp: bool|string|null}
+     * @var array
+     * @pslam-var array{serialize:string|bool|null, jsonOptions: int|null, jsonp: bool|string|null}
      */
     protected $_defaultConfig = [
         'serialize' => null,
