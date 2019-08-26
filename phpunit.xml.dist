@@ -28,7 +28,7 @@
     </testsuites>
 
     <listeners>
-        <listener class="\Cake\TestSuite\Fixture\FixtureInjector">
+        <listener class="Cake\TestSuite\Fixture\FixtureInjector">
             <arguments>
                 <object class="\Cake\TestSuite\Fixture\FixtureManager" />
             </arguments>
