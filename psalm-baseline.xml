@@ -45,16 +45,6 @@
       <code>APP</code>
     </UndefinedConstant>
   </file>
-  <file src="src/Command/UpgradeCommand.php">
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$path</code>
-    </PossiblyInvalidArgument>
-  </file>
-  <file src="src/Console/ConsoleInputOption.php">
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$this-&gt;_default</code>
-    </PossiblyInvalidArgument>
-  </file>
   <file src="src/Console/ConsoleIo.php">
     <PossiblyInvalidArgument occurrences="4">
       <code>$options</code>
@@ -1420,31 +1410,9 @@
       <code>mixed</code>
     </LessSpecificImplementedReturnType>
   </file>
-  <file src="src/View/Helper/UrlHelper.php">
-    <PossiblyNullArgument occurrences="1">
-      <code>$file</code>
-    </PossiblyNullArgument>
-    <PossiblyNullOperand occurrences="4">
-      <code>$asset[0]</code>
-      <code>$asset[0]</code>
-      <code>$asset[1]</code>
-      <code>$asset[1]</code>
-    </PossiblyNullOperand>
-  </file>
   <file src="src/View/HelperRegistry.php">
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$class</code>
     </MoreSpecificImplementedParamType>
-  </file>
-  <file src="src/View/View.php">
-    <InvalidReturnStatement occurrences="1">
-      <code>$cache</code>
-    </InvalidReturnStatement>
-    <InvalidReturnType occurrences="1">
-      <code>array</code>
-    </InvalidReturnType>
-    <PossiblyNullPropertyAssignmentValue occurrences="1">
-      <code>$defaultLayout</code>
-    </PossiblyNullPropertyAssignmentValue>
   </file>
 </files>

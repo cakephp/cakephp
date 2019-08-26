@@ -757,6 +757,7 @@ class View implements EventDispatcherInterface
             $this->Blocks->set('content', $this->renderLayout('', $this->layout));
         }
         if ($layout !== null) {
+            /** @var string $defaultLayout */
             $this->layout = $defaultLayout;
         }
         if ($defaultAutoLayout !== null) {
@@ -1564,6 +1565,8 @@ class View implements EventDispatcherInterface
      * @param array $data Data
      * @param array $options Element options
      * @return array Element Cache configuration.
+     * @psalm-param array{cache:string, callbacks?: mixed, plugin?:mixed}|array{cache:array{key:string, config:string}, callbacks?: mixed, plugin?:mixed} $options
+     * @psalm-return array{key:string, config:string}
      */
     protected function _elementCache(string $name, array $data, array $options): array
     {
