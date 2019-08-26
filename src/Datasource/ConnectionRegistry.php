@@ -24,6 +24,8 @@ use Cake\Datasource\Exception\MissingDatasourceException;
  * A registry object for connection instances.
  *
  * @see \Cake\Datasource\ConnectionManager
+ *
+ * @extends \Cake\Core\ObjectRegistry<\Cake\Datasource\ConnectionInterface>
  */
 class ConnectionRegistry extends ObjectRegistry
 {
@@ -66,12 +68,12 @@ class ConnectionRegistry extends ObjectRegistry
      * If a callable is passed as first argument, The returned value of this
      * function will be the result of the callable.
      *
-     * @param string|object|callable $class The classname or object to make.
+     * @param string|\Cake\Datasource\ConnectionInterface|callable $class The classname or object to make.
      * @param string $alias The alias of the object.
      * @param array $settings An array of settings to use for the datasource.
-     * @return object A connection with the correct settings.
+     * @return \Cake\Datasource\ConnectionInterface A connection with the correct settings.
      */
-    protected function _create($class, string $alias, array $settings): object
+    protected function _create($class, string $alias, array $settings)
     {
         if (is_callable($class)) {
             return $class($alias);
@@ -83,6 +85,7 @@ class ConnectionRegistry extends ObjectRegistry
 
         unset($settings['className']);
 
+        /** @var \Cake\Datasource\ConnectionInterface */
         return new $class($settings);
     }
 

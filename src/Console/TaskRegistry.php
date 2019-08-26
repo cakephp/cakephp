@@ -23,6 +23,8 @@ use Cake\Core\ObjectRegistry;
 /**
  * Registry for Tasks. Provides features
  * for lazily loading tasks.
+ *
+ * @extends \Cake\Core\ObjectRegistry<\Cake\Console\Shell>
  */
 class TaskRegistry extends ObjectRegistry
 {

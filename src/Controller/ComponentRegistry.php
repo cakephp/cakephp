@@ -27,6 +27,8 @@ use Cake\Event\EventDispatcherTrait;
  * ComponentRegistry is a registry for loaded components
  *
  * Handles loading, constructing and binding events for component class objects.
+ *
+ * @extends \Cake\Core\ObjectRegistry<\Cake\Controller\Component>
  */
 class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterface
 {

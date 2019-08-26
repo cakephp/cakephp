@@ -9,11 +9,6 @@
       <code>$config</code>
     </PossiblyInvalidOperand>
   </file>
-  <file src="src/Cache/CacheRegistry.php">
-    <MoreSpecificImplementedParamType occurrences="1">
-      <code>$class</code>
-    </MoreSpecificImplementedParamType>
-  </file>
   <file src="src/Cache/Engine/FileEngine.php">
     <PossiblyInvalidOperand occurrences="1">
       <code>$this-&gt;_File-&gt;current()</code>
@@ -899,11 +894,6 @@
   <file src="src/Log/Engine/SyslogLog.php">
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$level</code>
-    </MoreSpecificImplementedParamType>
-  </file>
-  <file src="src/Log/LogEngineRegistry.php">
-    <MoreSpecificImplementedParamType occurrences="1">
-      <code>$class</code>
     </MoreSpecificImplementedParamType>
   </file>
   <file src="src/Mailer/Message.php">
