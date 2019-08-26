@@ -104,12 +104,12 @@ class CorsBuilder
      * Accepts a string or an array of domains that have CORS enabled.
      * You can use `*.example.com` wildcards to accept subdomains, or `*` to allow all domains
      *
-     * @param string|array $domain The allowed domains
+     * @param string|string[] $domains The allowed domains
      * @return $this
      */
-    public function allowOrigin($domain)
+    public function allowOrigin($domains)
     {
-        $allowed = $this->_normalizeDomains((array)$domain);
+        $allowed = $this->_normalizeDomains((array)$domains);
         foreach ($allowed as $domain) {
             if (!preg_match($domain['preg'], $this->_origin)) {
                 continue;
@@ -125,7 +125,7 @@ class CorsBuilder
     /**
      * Normalize the origin to regular expressions and put in an array format
      *
-     * @param array $domains Domain names to normalize.
+     * @param string[] $domains Domain names to normalize.
      * @return array
      */
     protected function _normalizeDomains(array $domains): array
@@ -151,7 +151,7 @@ class CorsBuilder
     /**
      * Set the list of allowed HTTP Methods.
      *
-     * @param array $methods The allowed HTTP methods
+     * @param string[] $methods The allowed HTTP methods
      * @return $this
      */
     public function allowMethods(array $methods)

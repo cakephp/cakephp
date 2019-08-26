@@ -37,7 +37,7 @@ abstract class ContentsBase extends Constraint
     /**
      * Constructor
      *
-     * @param array $contents Contents
+     * @param string[] $contents Contents
      * @param string $output Output type
      */
     public function __construct(array $contents, string $output)

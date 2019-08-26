@@ -41,7 +41,7 @@ class MissingOptionException extends ConsoleException
      *
      * @param string $message The string message.
      * @param string $requested The requested value.
-     * @param array $suggestions The list of potential values that were valid.
+     * @param string[] $suggestions The list of potential values that were valid.
      * @param int|null $code The exception code if relevant.
      * @param \Throwable|null $previous the previous exception.
      */

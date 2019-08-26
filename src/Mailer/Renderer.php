@@ -50,7 +50,7 @@ class Renderer
      * of the specified content types for the email.
      *
      * @param string $content The content.
-     * @param array $types Content types to render.
+     * @param string[] $types Content types to render.
      * @return array The rendered content with "html" and/or "text" keys.
      * @psalm-return array{html?: string, text?: string}
      */

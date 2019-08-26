@@ -526,7 +526,7 @@ class SelectLoader
      * be done with multiple foreign keys
      *
      * @param array $resultMap A keyed arrays containing the target table
-     * @param array $sourceKeys An array with aliased keys to match
+     * @param string[] $sourceKeys An array with aliased keys to match
      * @param string $nestKey The key under which results should be nested
      * @return \Closure
      */
