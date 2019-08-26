@@ -58,7 +58,7 @@ class MailTransport extends AbstractTransport
         $subject = str_replace(["\r", "\n"], '', $message->getSubject());
         $to = str_replace(["\r", "\n"], '', $to);
 
-        $message = implode($eol, (array)$message->getBody());
+        $message = $message->getBodyString($eol);
 
         $params = $this->_config['additionalParameters'] ?? '';
         $this->_mail($to, $subject, $message, $headers, $params);

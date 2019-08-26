@@ -1236,6 +1236,21 @@ class Message implements JsonSerializable, Serializable
     }
 
     /**
+     * Get generated body as string.
+     *
+     * @param string $eol End of line string for imploding.
+     * @return string
+     * @see Message::getBody()
+     */
+    public function getBodyString(string $eol = "\r\n"): string
+    {
+        /** @var array $lines */
+        $lines = $this->getBody();
+
+        return implode($eol, $lines);
+    }
+
+    /**
      * Create unique boundary identifier
      *
      * @return void
