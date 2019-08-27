@@ -946,27 +946,24 @@ class Message implements JsonSerializable, Serializable
      */
     public function getHeadersString(array $include = [], string $eol = "\r\n", ?Closure $callback = null): string
     {
-        $headers = $this->getHeaders($include);
+        $lines = $this->getHeaders($include);
 
         if ($callback) {
-            $headers = array_map($callback, $headers);
+            $lines = array_map($callback, $lines);
         }
 
-        $out = '';
-        foreach ($headers as $key => $value) {
+        $headers = [];
+        foreach ($lines as $key => $value) {
             if (empty($value) && $value !== '0') {
                 continue;
             }
 
             foreach ((array)$value as $val) {
-                $out .= $key . ': ' . $val . $eol;
+                $headers[] = $key . ': ' . $val;
             }
         }
-        if (!empty($out)) {
-            $out = substr($out, 0, -1 * strlen($eol));
-        }
 
-        return $out;
+        return implode($eol, $headers);
     }
 
     /**
