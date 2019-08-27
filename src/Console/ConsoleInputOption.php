@@ -247,10 +247,16 @@ class ConsoleInputOption
         if (strlen($this->_short) > 0) {
             $short = '-' . $this->_short;
         }
+        $default = $this->_default;
+        if ($default === true) {
+            $default = 'true';
+        } elseif ($default === false) {
+            $default = 'false';
+        }
         $option->addAttribute('short', $short);
         $option->addAttribute('help', $this->_help);
         $option->addAttribute('boolean', (string)(int)$this->_boolean);
-        $option->addChild('default', $this->_default);
+        $option->addChild('default', $default);
         $choices = $option->addChild('choices');
         foreach ($this->_choices as $valid) {
             $choices->addChild('choice', $valid);

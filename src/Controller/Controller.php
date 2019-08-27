@@ -296,7 +296,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         if (!empty($this->modelClass)) {
             [$plugin, $class] = pluginSplit($this->modelClass, true);
             if ($class === $name) {
-                return $this->loadModel($plugin . $class);
+                return $this->loadModel((string)$plugin . $class);
             }
         }
 

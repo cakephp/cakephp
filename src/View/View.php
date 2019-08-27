@@ -757,6 +757,7 @@ class View implements EventDispatcherInterface
             $this->Blocks->set('content', $this->renderLayout('', $this->layout));
         }
         if ($layout !== null) {
+            /** @var string $defaultLayout */
             $this->layout = $defaultLayout;
         }
         if ($defaultAutoLayout !== null) {
@@ -1375,7 +1376,8 @@ class View implements EventDispatcherInterface
      *
      * @param string $name The name you want to plugin split.
      * @param bool $fallback If true uses the plugin set in the current Request when parsed plugin is not loaded
-     * @return array{0: null|string|mixed, 1: string|mixed} Array with 2 indexes. 0 => plugin name, 1 => filename.
+     * @return array Array with 2 indexes. 0 => plugin name, 1 => filename.
+     * @psalm-return array{string|null, string}
      */
     public function pluginSplit(string $name, bool $fallback = true): array
     {
@@ -1563,6 +1565,8 @@ class View implements EventDispatcherInterface
      * @param array $data Data
      * @param array $options Element options
      * @return array Element Cache configuration.
+     * @psalm-param array{cache:string, callbacks?: mixed, plugin?:mixed}|array{cache:array{key:string, config:string}, callbacks?: mixed, plugin?:mixed} $options
+     * @psalm-return array{key:string, config:string}
      */
     protected function _elementCache(string $name, array $data, array $options): array
     {

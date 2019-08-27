@@ -825,7 +825,8 @@ class PaginatorHelper extends Helper
      *
      * @param array $params Params from the numbers() method.
      * @param array $options Options from the numbers() method.
-     * @return array{0: int, 1: int} An array with the start and end numbers.
+     * @return array An array with the start and end numbers.
+     * @psalm-return array{0: int, 1: int}
      */
     protected function _getNumbersStartAndEnd(array $params, array $options): array
     {

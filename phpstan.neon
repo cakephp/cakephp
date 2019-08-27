@@ -35,7 +35,6 @@ parameters:
         - '#Property Cake\\Controller\\Controller::\$response \(Cake\\Http\\Response\) does not accept Psr\\Http\\Message\\ResponseInterface#'
         - "#Parameter \\#2 \\$callback of function array_filter expects callable\\(mixed, mixed\\): bool, 'strlen' given.#"
         - '#Parameter \#1 \$autoload_function of function spl_autoload_register expects#'
-        - '#TObject#'
         -
             message: '#Call to function method_exists\(\) with string and [^ ]+ will always evaluate to false#'
             path: 'src/Controller/Component/AuthComponent.php'
@@ -75,6 +74,9 @@ parameters:
         -
             message: '#Parameter \#1 \$connection of method Cake\\Database\\Schema\\SqlGeneratorInterface::(create|drop|truncate)Sql\(\) expects Cake\\Database\\Connection, Cake\\Datasource\\ConnectionInterface given#'
             path: 'src/TestSuite/Fixture/TestFixture.php'
+        -
+            message: '#Method Cake\\View\\HelperRegistry::__get\(\) should return Cake\\View\\Helper|null but returns object#'
+            path: 'src/View/HelperRegistry.php'
     earlyTerminatingMethodCalls:
         Cake\Console\Shell:
             - abort

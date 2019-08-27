@@ -37,7 +37,8 @@ abstract class AbstractTransport
      * Send mail
      *
      * @param \Cake\Mailer\Message $message Email mesage.
-     * @return array{headers: string, message: string}
+     * @return array
+     * @psalm-return array{headers: string, message: string}
      */
     abstract public function send(Message $message): array;
 
@@ -54,7 +55,7 @@ abstract class AbstractTransport
     /**
      * Check that at least one destination header is set.
      *
-     * @param \Cake\Mailer\Message $message
+     * @param \Cake\Mailer\Message $message Message instance.
      * @return void
      * @throws \Cake\Core\Exception\Exception If at least one of to, cc or bcc is not specified.
      */
@@ -64,7 +65,10 @@ abstract class AbstractTransport
             && $message->getCc() === []
             && $message->getBcc() === []
         ) {
-            throw new Exception('You must specify at least one recipient. Use one of `setTo`, `setCc` or `setBcc` to define a recipient.');
+            throw new Exception(
+                'You must specify at least one recipient.'
+                . ' Use one of `setTo`, `setCc` or `setBcc` to define a recipient.'
+            );
         }
     }
 

@@ -276,7 +276,7 @@ class UrlHelper extends Helper
         $request = $this->_View->getRequest();
 
         $asset = explode('?', $file);
-        $asset[1] = isset($asset[1]) ? '?' . $asset[1] : null;
+        $asset[1] = isset($asset[1]) ? '?' . $asset[1] : '';
         $webPath = $request->getAttribute('webroot') . $asset[0];
         $file = $asset[0];
 
