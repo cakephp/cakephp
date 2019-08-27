@@ -34,11 +34,14 @@ class MailTransport extends AbstractTransport
     {
         $this->checkRecipient($message);
 
-        $eol = PHP_EOL;
-        if (isset($this->_config['eol'])) {
-            $eol = $this->_config['eol'];
-        }
+        // https://github.com/cakephp/cakephp/issues/2209
+        // https://bugs.php.net/bug.php?id=47983
+        $subject = str_replace("\r\n", '', $message->getSubject());
+
         $to = $message->getHeaders(['to'])['To'];
+        $to = str_replace("\r\n", '', $to);
+
+        $eol = $this->getConfig('eol', PHP_EOL);
         $headers = $message->getHeadersString(
             [
                 'from',
@@ -51,16 +54,13 @@ class MailTransport extends AbstractTransport
             ],
             $eol,
             function ($val) {
-                return str_replace(["\r", "\n"], '', $val);
+                return str_replace("\r\n", '', $val);
             }
         );
 
-        $subject = str_replace(["\r", "\n"], '', $message->getSubject());
-        $to = str_replace(["\r", "\n"], '', $to);
-
         $message = $message->getBodyString($eol);
 
-        $params = $this->_config['additionalParameters'] ?? '';
+        $params = $this->getConfig('additionalParameters', '');
         $this->_mail($to, $subject, $message, $headers, $params);
 
         $headers .= $eol . 'To: ' . $to;
