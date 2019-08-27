@@ -939,12 +939,12 @@ class Message implements JsonSerializable, Serializable
      * Get headers as string.
      *
      * @param string[] $include List of headers.
+     * @param string $eol End of line string for concatenating headers.
      * @param \Closure $callback Callback to run each header value through before stringifying.
-     * @param string $eol End of line string.
      * @return string
      * @see Message::getHeaders()
      */
-    public function getHeadersString(array $include = [], ?Closure $callback = null, string $eol = "\r\n"): string
+    public function getHeadersString(array $include = [], string $eol = "\r\n", ?Closure $callback = null): string
     {
         $headers = $this->getHeaders($include);
 

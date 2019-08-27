@@ -49,10 +49,10 @@ class MailTransport extends AbstractTransport
                 'cc',
                 'bcc',
             ],
+            $eol,
             function ($val) {
                 return str_replace(["\r", "\n"], '', $val);
-            },
-            $eol
+            }
         );
 
         $subject = str_replace(["\r", "\n"], '', $message->getSubject());
