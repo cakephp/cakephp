@@ -1084,7 +1084,7 @@ class Validation
      * Checks if a value is in a given list. Comparison is case sensitive by default.
      *
      * @param mixed $check Value to check.
-     * @param array $list List to check against.
+     * @param string[] $list List to check against.
      * @param bool $caseInsensitive Set to true for case insensitive comparison.
      * @return bool Success.
      */

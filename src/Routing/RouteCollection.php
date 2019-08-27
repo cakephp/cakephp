@@ -84,7 +84,7 @@ class RouteCollection
     /**
      * Route extensions
      *
-     * @var array
+     * @var string[]
      */
     protected $_extensions = [];
 
@@ -371,7 +371,7 @@ class RouteCollection
     /**
      * Get the extensions that can be handled.
      *
-     * @return array The valid extensions.
+     * @return string[] The valid extensions.
      */
     public function getExtensions(): array
     {
@@ -381,7 +381,7 @@ class RouteCollection
     /**
      * Set the extensions that the route collection can handle.
      *
-     * @param array $extensions The list of extensions to set.
+     * @param string[] $extensions The list of extensions to set.
      * @param bool $merge Whether to merge with or override existing extensions.
      *   Defaults to `true`.
      * @return $this
@@ -420,8 +420,9 @@ class RouteCollection
      * Add middleware to a middleware group
      *
      * @param string $name Name of the middleware group
-     * @param array $middlewareNames Names of the middleware
+     * @param string[] $middlewareNames Names of the middleware
      * @return $this
+     * @throws \RuntimeException
      */
     public function middlewareGroup(string $name, array $middlewareNames)
     {
@@ -508,7 +509,7 @@ class RouteCollection
     /**
      * Get an array of middleware given a list of names
      *
-     * @param array $names The names of the middleware or groups to fetch
+     * @param string[] $names The names of the middleware or groups to fetch
      * @return array An array of middleware. If any of the passed names are groups,
      *   the groups middleware will be flattened into the returned list.
      * @throws \RuntimeException when a requested middleware does not exist.

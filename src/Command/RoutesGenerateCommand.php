@@ -63,7 +63,7 @@ class RoutesGenerateCommand extends Command
     /**
      * Split the CLI arguments into a hash.
      *
-     * @param array $args The arguments to split.
+     * @param string[] $args The arguments to split.
      * @return array
      */
     protected function _splitArgs(array $args): array

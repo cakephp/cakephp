@@ -152,7 +152,7 @@ class StringTemplate
      * ]);
      * ```
      *
-     * @param array $templates An associative list of named templates.
+     * @param string[] $templates An associative list of named templates.
      * @return $this
      */
     public function add(array $templates)
