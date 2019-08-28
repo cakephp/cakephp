@@ -1641,7 +1641,7 @@ class ViewTest extends TestCase
     public function testBlockSetObjectWithoutToString()
     {
         $this->checkException(
-            'Object of class Cake\Test\TestCase\View\TestObjectWithoutToString could not be converted to string'
+            'Object of class ' . TestObjectWithoutToString::class . ' could not be converted to string'
         );
 
         $objectWithToString = new TestObjectWithoutToString();
@@ -1698,7 +1698,7 @@ class ViewTest extends TestCase
     public function testBlockAppendObjectWithoutToString()
     {
         $this->checkException(
-            'Object of class Cake\Test\TestCase\View\TestObjectWithoutToString could not be converted to string'
+            'Object of class ' . TestObjectWithoutToString::class . ' could not be converted to string'
         );
 
         $object = new TestObjectWithoutToString();
@@ -1731,7 +1731,7 @@ class ViewTest extends TestCase
     public function testBlockPrependObjectWithoutToString()
     {
         $this->checkException(
-            'Object of class Cake\Test\TestCase\View\TestObjectWithoutToString could not be converted to string'
+            'Object of class ' . TestObjectWithoutToString::class . ' could not be converted to string'
         );
 
         $object = new TestObjectWithoutToString();
