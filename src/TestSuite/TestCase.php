@@ -161,7 +161,8 @@ abstract class TestCase extends BaseTestCase
             Configure::write($this->_configure);
         }
         $this->getTableLocator()->clear();
-        unset($this->_configure, $this->_pathRestore, $this->_tableLocator);
+        $this->_configure = $this->_pathRestore = [];
+        $this->_tableLocator = null;
     }
 
     /**
