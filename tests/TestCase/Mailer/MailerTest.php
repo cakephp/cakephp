@@ -515,7 +515,7 @@ class MailerTest extends TestCase
     {
         $this->expectException(\BadMethodCallException::class);
         $this->expectExceptionMessage(
-            'Transport was not defined. You must set on using setTransport() or set `transport` option in profile.'
+            'Transport was not defined. You must set on using setTransport() or set `transport` option in your mailer profile.'
         );
         $this->mailer->setTo('cake@cakephp.org');
         $this->mailer->setFrom('cake@cakephp.org');
