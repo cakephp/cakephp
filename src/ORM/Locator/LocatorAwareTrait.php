@@ -70,7 +70,7 @@ trait LocatorAwareTrait
      */
     public function getTableLocator()
     {
-        if (!isset($this->_tableLocator)) {
+        if ($this->_tableLocator === null) {
             $this->_tableLocator = TableRegistry::getTableLocator();
         }
 
