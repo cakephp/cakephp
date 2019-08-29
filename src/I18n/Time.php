@@ -74,7 +74,7 @@ class Time extends MutableDateTime implements JsonSerializable
      * The format to use when formatting a time using `Time::timeAgoInWords()`
      * and the difference is less than `Time::$wordEnd`
      *
-     * @var array
+     * @var string[]
      * @see \Cake\I18n\Time::timeAgoInWords()
      */
     public static $wordAccuracy = [

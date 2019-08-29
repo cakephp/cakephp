@@ -193,7 +193,7 @@ class Validation
      * Backwards compatibility wrapper for Validation::creditCard().
      *
      * @param string $check credit card number to validate
-     * @param string|array $type 'all' may be passed as a string, defaults to fast which checks format of most major credit cards
+     * @param string|string[] $type 'all' may be passed as a string, defaults to fast which checks format of most major credit cards
      *    if an array is used only the values of the array are checked.
      *    Example: ['amex', 'bankcard', 'maestro']
      * @param bool $deep set to true this will check the Luhn algorithm of the credit card.
@@ -1108,7 +1108,7 @@ class Validation
      * Checks if a value is in a given list. Comparison is case sensitive by default.
      *
      * @param string $check Value to check.
-     * @param array $list List to check against.
+     * @param string[] $list List to check against.
      * @param bool $caseInsensitive Set to true for case insensitive comparison.
      * @return bool Success.
      */

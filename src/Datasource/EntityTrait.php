@@ -983,21 +983,21 @@ trait EntityTrait
      * $entity->setErrors(['salary' => ['message'], 'name' => ['another message']]);
      * ```
      *
-     * @param array $fields The array of errors to set.
+     * @param array $errors The array of errors to set.
      * @param bool $overwrite Whether or not to overwrite pre-existing errors for $fields
      * @return $this
      */
-    public function setErrors(array $fields, $overwrite = false)
+    public function setErrors(array $errors, $overwrite = false)
     {
         if ($overwrite) {
-            foreach ($fields as $f => $error) {
+            foreach ($errors as $f => $error) {
                 $this->_errors[$f] = (array)$error;
             }
 
             return $this;
         }
 
-        foreach ($fields as $f => $error) {
+        foreach ($errors as $f => $error) {
             $this->_errors += [$f => []];
 
             // String messages are appended to the list,
@@ -1207,7 +1207,7 @@ trait EntityTrait
      * Get a single value of an invalid field. Returns null if not set.
      *
      * @param string $field The name of the field.
-     * @return mixed
+     * @return mixed|null
      */
     public function getInvalidField($field)
     {

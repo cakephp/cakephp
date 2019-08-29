@@ -126,9 +126,9 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     public $trustProxy = false;
 
     /**
-     * trusted proxies list
+     * Trusted proxies list
      *
-     * @var array
+     * @var string[]
      */
     protected $trustedProxies = [];
 
@@ -615,7 +615,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     /**
      * register trusted proxies
      *
-     * @param array $proxies ips list of trusted proxies
+     * @param string[] $proxies ips list of trusted proxies
      * @return void
      */
     public function setTrustedProxies(array $proxies)
@@ -627,7 +627,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     /**
      * Get trusted proxies
      *
-     * @return array
+     * @return string[]
      */
     public function getTrustedProxies()
     {
@@ -943,7 +943,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * See Request::is() for how to add additional types and the
      * built-in types.
      *
-     * @param array $types The types to check.
+     * @param string[] $types The types to check.
      * @return bool Success.
      * @see \Cake\Http\ServerRequest::is()
      */
