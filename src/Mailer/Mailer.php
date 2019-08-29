@@ -494,7 +494,8 @@ class Mailer implements EventListenerInterface
     {
         if ($this->transport === null) {
             throw new BadMethodCallException(
-                'Transport was not defined. You must set on using setTransport() or set `transport` option in your mailer profile.'
+                'Transport was not defined. '
+                . 'You must set on using setTransport() or set `transport` option in your mailer profile.'
             );
         }
 

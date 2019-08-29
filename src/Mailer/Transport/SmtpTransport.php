@@ -404,7 +404,7 @@ class SmtpTransport extends AbstractTransport
             'to',
             'cc',
             'subject',
-            'returnPath'
+            'returnPath',
         ]);
         $message = $this->_prepareMessage($message);
 
