@@ -211,7 +211,7 @@ class Paginator implements PaginatorInterface
      *
      * @param \Cake\Datasource\QueryInterface $query Query instance.
      * @param array $data Pagination data.
-     * @return int
+     * @return int|null
      */
     protected function getCount(QueryInterface $query, array $data)
     {
@@ -252,11 +252,9 @@ class Paginator implements PaginatorInterface
     {
         $defaults = $data['defaults'];
         $count = $data['count'];
-        $page = $data['options']['page'];
+        $numResults = $data['numResults'];
+        $requestedPage = $page = $data['options']['page'];
         $limit = $data['options']['limit'];
-        $pageCount = max((int)ceil($count / $limit), 1);
-        $requestedPage = $page;
-        $page = min($page, $pageCount);
 
         $order = (array)$data['options']['order'];
         $sortDefault = $directionDefault = false;
@@ -265,26 +263,31 @@ class Paginator implements PaginatorInterface
             $directionDefault = current($defaults['order']);
         }
 
-        $start = 0;
-        if ($count >= 1) {
-            $start = (($page - 1) * $limit) + 1;
+        $pageCount = 0;
+        if ($count !== null) {
+            $pageCount = max((int)ceil($count / $limit), 1);
+            $page = min($page, $pageCount);
+        } elseif ($numResults === 0 && $requestedPage > 1) {
+            $page = 1;
         }
-        $end = $start + $limit - 1;
-        if ($count < $end) {
-            $end = $count;
+
+        $start = $end = 0;
+        if ($numResults > 0) {
+            $start = (($page - 1) * $limit) + 1;
+            $end = $start + $numResults - 1;
         }
 
         $paging = [
             'finder' => $data['finder'],
             'requestedPage' => $requestedPage,
             'page' => $page,
-            'current' => $data['numResults'],
+            'current' => $numResults,
             'count' => $count,
             'perPage' => $limit,
             'start' => $start,
             'end' => $end,
             'prevPage' => $page > 1,
-            'nextPage' => $count > ($page * $limit),
+            'nextPage' => $count === null ? true : ($count > ($page * $limit)),
             'pageCount' => $pageCount,
             'sort' => $data['options']['sort'],
             'direction' => isset($data['options']['sort']) ? current($order) : null,

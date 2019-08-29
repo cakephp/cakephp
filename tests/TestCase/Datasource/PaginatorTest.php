@@ -171,25 +171,23 @@ class PaginatorTest extends TestCase
     {
         $settings = [
             'PaginatorPosts' => [
-                'finder' => 'popular',
+                'finder' => 'published',
                 'fields' => ['id', 'title'],
                 'maxLimit' => 10,
             ]
         ];
 
-        $table = $this->_getMockPosts(['findPopular']);
-        $query = $this->_getMockFindQuery();
-
-        $table->expects($this->any())
-            ->method('findPopular')
-            ->will($this->returnValue($query));
+        $this->loadFixtures('Posts');
+        $table = $this->getTableLocator()->get('PaginatorPosts');
+        $table->updateAll(['published' => 'N'], ['id' => 2]);
 
         $this->Paginator->paginate($table, [], $settings);
         $pagingParams = $this->Paginator->getPagingParams();
-        $this->assertSame('popular', $pagingParams['PaginatorPosts']['finder']);
+        $this->assertSame('published', $pagingParams['PaginatorPosts']['finder']);
 
         $this->assertSame(1, $pagingParams['PaginatorPosts']['start']);
         $this->assertSame(2, $pagingParams['PaginatorPosts']['end']);
+        $this->assertFalse($pagingParams['PaginatorPosts']['nextPage']);
     }
 
     /**
@@ -1494,6 +1492,7 @@ class PaginatorTest extends TestCase
         $results = $this->getMockBuilder('Cake\ORM\ResultSet')
             ->disableOriginalConstructor()
             ->getMock();
+
         $query->expects($this->any())
             ->method('count')
             ->will($this->returnValue(2));
@@ -1501,10 +1500,6 @@ class PaginatorTest extends TestCase
         $query->expects($this->any())
             ->method('all')
             ->will($this->returnValue($results));
-
-        $query->expects($this->any())
-            ->method('count')
-            ->will($this->returnValue(2));
 
         if ($table) {
             $query->repository($table);
