@@ -1207,7 +1207,7 @@ trait EntityTrait
      * Get a single value of an invalid field. Returns null if not set.
      *
      * @param string $field The name of the field.
-     * @return mixed
+     * @return mixed|null
      */
     public function getInvalidField($field)
     {
