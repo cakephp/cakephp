@@ -254,8 +254,8 @@ class ConsoleIo
      * Wraps a message with a given message type, e.g. <warning>
      *
      * @param string $messageType The message type, e.g. "warning".
-     * @param string|array $message The message to wrap.
-     * @return array|string The message wrapped with the given message type.
+     * @param string|string[] $message The message to wrap.
+     * @return string|string[] The message wrapped with the given message type.
      */
     protected function wrapMessageWithType($messageType, $message)
     {
