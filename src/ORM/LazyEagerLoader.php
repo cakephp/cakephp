@@ -86,9 +86,11 @@ class LazyEagerLoader
                 }
 
                 if (is_string($primaryKey)) {
+                    /** @var \Cake\Database\Expression\QueryExpression $exp */
                     return $exp->in($source->aliasField($primaryKey), $keys->toList());
                 }
 
+                /** @var \Cake\ORM\Query $q */
                 $types = array_intersect_key($q->getDefaultTypes(), array_flip($primaryKey));
                 $primaryKey = array_map([$source, 'aliasField'], $primaryKey);
 
