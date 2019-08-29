@@ -43,7 +43,7 @@ class Response implements ResponseInterface
     /**
      * Holds HTTP response statuses
      *
-     * @var array
+     * @var string[]
      */
     protected $_statusCodes = [
         100 => 'Continue',

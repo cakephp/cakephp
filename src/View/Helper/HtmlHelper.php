@@ -111,7 +111,7 @@ class HtmlHelper extends Helper
     /**
      * Document type definitions
      *
-     * @var array
+     * @var string[]
      */
     protected $_docTypes = [
         'html4-strict' => '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">',
