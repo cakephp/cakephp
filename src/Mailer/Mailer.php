@@ -291,8 +291,21 @@ class Mailer implements EventListenerInterface
      * @param string|array $key Variable name or hash of view variables.
      * @param mixed $value View variable value.
      * @return $this
+     * @deprecated 4.0.0 Use Mailer::setViewVars() instead.
      */
     public function set($key, $value = null)
+    {
+        return $this->setViewVars($key, $value);
+    }
+
+    /**
+     * Sets email view vars.
+     *
+     * @param string|array $key Variable name or hash of view variables.
+     * @param mixed $value View variable value.
+     * @return $this
+     */
+    public function setViewVars($key, $value = null)
     {
         $this->getRenderer()->set($key, $value);
 

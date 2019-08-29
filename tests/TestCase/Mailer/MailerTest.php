@@ -412,7 +412,7 @@ class MailerTest extends TestCase
 
     public function testSet()
     {
-        $result = (new Mailer())->set('key', 'value');
+        $result = (new Mailer())->setViewVars('key', 'value');
         $this->assertInstanceOf(Mailer::class, $result);
         $this->assertSame(['key' => 'value'], $result->getRenderer()->viewBuilder()->getVars());
     }
@@ -956,7 +956,7 @@ class MailerTest extends TestCase
         $this->mailer->setSubject('My title');
         $this->mailer->setProfile(['empty']);
         $this->mailer->viewBuilder()->setTemplate('custom', 'default');
-        $this->mailer->set(['value' => 12345]);
+        $this->mailer->setViewVars(['value' => 12345]);
         $result = $this->mailer->send();
 
         $this->assertStringContainsString('Here is your value: 12345', $result['message']);
@@ -976,7 +976,7 @@ class MailerTest extends TestCase
         $this->mailer->setSubject('My title');
         $this->mailer->setProfile(['empty']);
         $this->mailer->viewBuilder()->setTemplate('japanese', 'default');
-        $this->mailer->set(['value' => '日本語の差し込み123']);
+        $this->mailer->setViewVars(['value' => '日本語の差し込み123']);
         $this->mailer->setCharset('ISO-2022-JP');
         $result = $this->mailer->send();
 
@@ -1002,7 +1002,7 @@ class MailerTest extends TestCase
             ->setTemplate('custom_helper')
             ->setLayout('default')
             ->setHelpers(['Time'], false);
-        $this->mailer->set(['time' => $timestamp]);
+        $this->mailer->setViewVars(['time' => $timestamp]);
 
         $result = $this->mailer->send();
         $dateTime = new \DateTime();
@@ -1088,7 +1088,7 @@ class MailerTest extends TestCase
 
         $this->assertStringContainsString('Into TestPlugin. (themed)', $result['message']);
 
-        $this->mailer->set(['value' => 12345]);
+        $this->mailer->setViewVars(['value' => 12345]);
         $this->mailer->viewBuilder()
             ->setTemplate('custom')
             ->setLayout('TestPlugin.plug_default');
@@ -1129,7 +1129,7 @@ class MailerTest extends TestCase
         $this->mailer->setSubject('My title');
         $this->mailer->viewBuilder()->setTemplate('custom', 'default');
         $this->mailer->setProfile([]);
-        $this->mailer->set(['value' => 12345]);
+        $this->mailer->setViewVars(['value' => 12345]);
         $this->mailer->setEmailFormat('both');
         $this->mailer->send();
 
