@@ -83,7 +83,7 @@ class ConsoleInputOption
      * @param string $help The help text for this option
      * @param bool $boolean Whether this option is a boolean option. Boolean options don't consume extra tokens
      * @param string $default The default value for this option.
-     * @param array $choices Valid choices for this option.
+     * @param string[] $choices Valid choices for this option.
      * @param bool $multiple Whether this option can accept multiple value definition.
      * @throws \Cake\Console\Exception\ConsoleException
      */

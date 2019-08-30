@@ -254,8 +254,8 @@ class ConsoleIo
      * Wraps a message with a given message type, e.g. <warning>
      *
      * @param string $messageType The message type, e.g. "warning".
-     * @param string|array $message The message to wrap.
-     * @return array|string The message wrapped with the given message type.
+     * @param string|string[] $message The message to wrap.
+     * @return string|string[] The message wrapped with the given message type.
      */
     protected function wrapMessageWithType($messageType, $message)
     {
@@ -353,7 +353,7 @@ class ConsoleIo
      *
      * @param string $prompt Prompt text.
      * @param string|null $default Default input value.
-     * @return mixed Either the default value, or the user-provided input.
+     * @return string Either the default value, or the user-provided input.
      */
     public function ask($prompt, $default = null)
     {
@@ -390,9 +390,9 @@ class ConsoleIo
      * Add a new output style or get defined styles.
      *
      * @param string|null $style The style to get or create.
-     * @param array|bool|null $definition The array definition of the style to change or create a style
+     * @param array|false|null $definition The array definition of the style to change or create a style
      *   or false to remove a style.
-     * @return mixed If you are getting styles, the style or null will be returned. If you are creating/modifying
+     * @return array|null|true If you are getting styles, the style or null will be returned. If you are creating/modifying
      *   styles true will be returned.
      * @see \Cake\Console\ConsoleOutput::styles()
      */
@@ -407,7 +407,7 @@ class ConsoleIo
      * @param string $prompt Prompt text.
      * @param string|array $options Array or string of options.
      * @param string|null $default Default input value.
-     * @return mixed Either the default value, or the user-provided input.
+     * @return string Either the default value, or the user-provided input.
      */
     public function askChoice($prompt, $options, $default = null)
     {

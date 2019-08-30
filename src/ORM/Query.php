@@ -231,7 +231,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      *
      * @param \Cake\ORM\Table|\Cake\ORM\Association $table The table to use to get an array of columns
-     * @param array $excludedFields The un-aliased column names you do not want selected from $table
+     * @param string[] $excludedFields The un-aliased column names you do not want selected from $table
      * @param bool $overwrite Whether to reset/remove previous selected fields
      * @return Query
      * @throws \InvalidArgumentException If Association|Table is not passed in first argument

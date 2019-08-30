@@ -676,7 +676,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * See `join()` for further details on conditions and types.
      *
-     * @param string|array $table The table to join with
+     * @param string|string[] $table The table to join with
      * @param string|array|\Cake\Database\ExpressionInterface $conditions The conditions
      * to use for joining.
      * @param array $types a list of types associated to the conditions used for converting
@@ -716,7 +716,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * The arguments of this method are identical to the `leftJoin()` shorthand, please refer
      * to that methods description for further details.
      *
-     * @param string|array $table The table to join with
+     * @param string|string[] $table The table to join with
      * @param string|array|\Cake\Database\ExpressionInterface $conditions The conditions
      * to use for joining.
      * @param array $types a list of types associated to the conditions used for converting
@@ -731,7 +731,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     /**
      * Returns an array that can be passed to the join method describing a single join clause
      *
-     * @param string|array $table The table to join with
+     * @param string|string[] $table The table to join with
      * @param string|array|\Cake\Database\ExpressionInterface $conditions The conditions
      * to use for joining.
      * @param string $type the join type to use
@@ -1538,7 +1538,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * with Query::values().
      *
      * @param array $columns The columns to insert into.
-     * @param array $types A map between columns & their datatypes.
+     * @param string[] $types A map between columns & their datatypes.
      * @return $this
      * @throws \RuntimeException When there are 0 columns.
      */

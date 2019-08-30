@@ -40,7 +40,6 @@ use Traversable;
  * @method string email($fieldName, array $options = [])
  * @method string password($fieldName, array $options = [])
  * @method string search($fieldName, array $options = [])
- *
  * @property \Cake\View\Helper\HtmlHelper $Html
  * @property \Cake\View\Helper\UrlHelper $Url
  * @link https://book.cakephp.org/3.0/en/views/helpers/form.html

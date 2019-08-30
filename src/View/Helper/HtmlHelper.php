@@ -111,7 +111,7 @@ class HtmlHelper extends Helper
     /**
      * Document type definitions
      *
-     * @var array
+     * @var string[]
      */
     protected $_docTypes = [
         'html4-strict' => '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">',
@@ -435,7 +435,7 @@ class HtmlHelper extends Helper
      * - `rel` Defaults to 'stylesheet'. If equal to 'import' the stylesheet will be imported.
      * - `fullBase` If true the URL will get a full address for the css file.
      *
-     * @param string|array $path The name of a CSS style sheet or an array containing names of
+     * @param string|string[] $path The name of a CSS style sheet or an array containing names of
      *   CSS stylesheets. If `$path` is prefixed with '/', the path will be relative to the webroot
      *   of your application. Otherwise, the path will be relative to your CSS path, usually webroot/css.
      * @param array $options Array of options and HTML arguments.
@@ -529,7 +529,7 @@ class HtmlHelper extends Helper
      * - `plugin` False value will prevent parsing path as a plugin
      * - `fullBase` If true the url will get a full address for the script file.
      *
-     * @param string|array $url String or array of javascript files to include
+     * @param string|string[] $url String or array of javascript files to include
      * @param array $options Array of options, and html attributes see above.
      * @return string|null String of `<script />` tags or null if block is specified in options
      *   or if $once is true and the file has been included before.

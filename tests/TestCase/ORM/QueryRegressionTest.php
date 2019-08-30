@@ -1773,12 +1773,15 @@ class QueryRegressionTest extends TestCase
             ->find()
             ->select(function (Query $q) use ($table) {
                 return [
-                    'value' => $q->func()->ABS([
-                        $table
-                            ->getConnection()
-                            ->newQuery()
-                            ->select(-1),
-                    ])
+                    'value' => $q
+                        ->func()
+                        ->ABS([
+                            $table
+                                ->getConnection()
+                                ->newQuery()
+                                ->select(-1),
+                        ])
+                        ->setReturnType('integer')
                 ];
             });
 
@@ -1831,21 +1834,24 @@ class QueryRegressionTest extends TestCase
             ->find()
             ->select(function (Query $q) use ($table) {
                 return [
-                    'value' => $q->func()->ROUND(
-                        [
-                            $table
-                                ->getConnection()
-                                ->newQuery()
-                                ->select(1.23456),
-                            2
-                        ],
-                        [null, 'integer']
-                    )
+                    'value' => $q
+                        ->func()
+                        ->ROUND(
+                            [
+                                $table
+                                    ->getConnection()
+                                    ->newQuery()
+                                    ->select(1.23456),
+                                2
+                            ],
+                            [null, 'integer']
+                        )
+                        ->setReturnType('float')
                 ];
             });
 
         $result = $query->first()->get('value');
-        $this->assertEquals('1.23', $result);
+        $this->assertEquals(1.23, $result);
     }
 
     /**
@@ -1876,7 +1882,7 @@ class QueryRegressionTest extends TestCase
                             ->where(function (QueryExpression $exp) {
                                 return $exp->equalFields('Authors.id', 'Articles.author_id');
                             }),
-                        1
+                        '1'
                     ])
                 ];
             });

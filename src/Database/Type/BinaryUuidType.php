@@ -155,9 +155,9 @@ class BinaryUuidType extends Type implements TypeInterface
      * Converts a string uuid to a binary representation
      *
      *
-     * @param mixed $string The value to convert.
+     * @param string $string The value to convert.
      *
-     * @return mixed Converted value.
+     * @return string Converted value.
      */
     protected function convertStringToBinaryUuid($string)
     {
