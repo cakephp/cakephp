@@ -12,13 +12,10 @@
  */
 namespace Cake\Console\Exception;
 
-use Cake\Core\Exception\Exception;
-
 /**
  * Used when a Task cannot be found.
  */
-class MissingTaskException extends Exception
+class MissingTaskException extends ConsoleException
 {
-
     protected $_messageTemplate = 'Task class %s could not be found.';
 }
