@@ -251,6 +251,19 @@ class ConsoleIo
     }
 
     /**
+     * @param string $message
+     * @param int $code
+     * @return void
+     * @throws \Cake\Console\Exception\StopException
+     */
+    public function abort($message, $code = Command::CODE_ERROR)
+    {
+        $this->error($message);
+
+        throw new StopException($code);
+    }
+
+    /**
      * Wraps a message with a given message type, e.g. <warning>
      *
      * @param string $messageType The message type, e.g. "warning".

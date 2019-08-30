@@ -24,6 +24,10 @@ use Cake\TestSuite\TestCase;
  */
 class ConsoleIoTest extends TestCase
 {
+    /**
+     * @var \Cake\Console\ConsoleIo
+     */
+    protected $io;
 
     /**
      * setUp method
@@ -270,6 +274,22 @@ class ConsoleIoTest extends TestCase
         $this->io->err(['Just', 'a', 'test']);
         $this->io->err(['Just', 'a', 'test'], 2);
         $this->io->err();
+    }
+
+    /**
+     * Tests abort() wrapper.
+     *
+     * @expectedException \Cake\Console\Exception\StopException
+     * @expectedExceptionMessage 1
+     * @return void
+     */
+    public function testAbort()
+    {
+        $this->err->expects($this->at(0))
+            ->method('write')
+            ->with('<error>Some error</error>', 1);
+
+        $this->io->abort('Some error');
     }
 
     /**
