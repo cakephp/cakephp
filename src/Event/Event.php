@@ -16,8 +16,12 @@ declare(strict_types=1);
  */
 namespace Cake\Event;
 
+use Cake\Core\Exception\Exception;
+
 /**
  * Class Event
+ *
+ * @template TSubject
  */
 class Event implements EventInterface
 {
@@ -32,6 +36,7 @@ class Event implements EventInterface
      * The object this event applies to (usually the same object that generates the event)
      *
      * @var object|null
+     * @psalm-var TSubject|null
      */
     protected $_subject;
 
@@ -73,6 +78,7 @@ class Event implements EventInterface
      *   (usually the object that is generating the event).
      * @param array|\ArrayAccess|null $data any value you wish to be transported
      *   with this event to it can be read by listeners.
+     * @psalm-param TSubject|null $subject
      */
     public function __construct(string $name, $subject = null, $data = null)
     {
@@ -94,10 +100,16 @@ class Event implements EventInterface
     /**
      * Returns the subject of this event
      *
-     * @return object|null
+     * @return object
+     * @psalm-return TSubject
+     * @psalm-suppress LessSpecificImplementedReturnType
      */
     public function getSubject()
     {
+        if ($this->_subject === null) {
+            throw new Exception('No subject set for this event');
+        }
+
         return $this->_subject;
     }
 
