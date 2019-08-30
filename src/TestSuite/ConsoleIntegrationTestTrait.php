@@ -175,6 +175,7 @@ trait ConsoleIntegrationTestTrait
     {
         $this->assertThat($expected, new ContentsContain($this->_out->messages(), 'output'), $message);
     }
+
     /**
      * Asserts `stdout` does not contain expected output
      *

@@ -223,6 +223,7 @@ class TableHelperTest extends TestCase
         ];
         $this->assertEquals($expected, $this->stub->messages());
     }
+
     /**
      * Test output with different header style
      *

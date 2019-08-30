@@ -174,6 +174,7 @@ class ServerRequestTest extends TestCase
         $request = new ServerRequest('/');
         $this->assertEquals('/', $request->getUri()->getPath());
     }
+
     /**
      * Test that querystring args provided in the URL string are parsed.
      *
