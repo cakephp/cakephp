@@ -14,8 +14,6 @@
  */
 namespace Cake\Datasource;
 
-use Cake\Datasource\Exception\PageOutOfBoundsException;
-
 /**
  * Simplified paginator which avoids potentially expensives queries
  * to get the total count of records.
