@@ -17,9 +17,9 @@ namespace Cake\Datasource;
 use Cake\Datasource\Exception\PageOutOfBoundsException;
 
 /**
- * Simplified paginator which avoids potentially expensives queries 
+ * Simplified paginator which avoids potentially expensives queries
  * to get the total count of records.
- * 
+ *
  * When using a simple paginator you will not be able to generate page numbers.
  * Instead use only the prev/next pagination controls, and handle 404 errors
  * when pagination goes past the available result set.
