@@ -83,6 +83,7 @@ class CommandRetryTest extends TestCase
         $this->expectExceptionMessage('this is failing');
         $retry->run($action);
     }
+
     /**
      * Test that the strategy is respected
      *

@@ -207,6 +207,7 @@ class TreeBehaviorTest extends TestCase
         $count = $table->childCount($table->get(1), false);
         $this->assertEquals(4, $count);
     }
+
     /**
      * Tests the find('children') method
      *
