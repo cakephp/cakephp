@@ -698,27 +698,47 @@ class RouteBuilder
             return $defaults;
         }
 
-        $regex = '/(?:(?<plugin>[a-zA-Z0-9\/]*)\.)?(?<prefix>[a-zA-Z0-9\/]*?)' .
-            '(?:\/)?(?<controller>[a-zA-Z0-9]*):{2}(?<action>[a-zA-Z0-9_]*)/i';
+        return self::parseShortString($defaults);
+    }
 
-        if (preg_match($regex, $defaults, $matches)) {
-            foreach ($matches as $key => $value) {
-                // Remove numeric keys and empty values.
-                if (is_int($key) || $value === '' || $value === '::') {
-                    unset($matches[$key]);
-                }
-            }
-            $length = count($matches);
+    /**
+     * Parse the short string
+     *
+     * String examples:
+     * - Bookmarks::view
+     * - Admin/Bookmarks::view
+     * - Cms.Articles::edit
+     * - Vendor/Cms.Management/Admin/Articles::view
+     *
+     * @param string $routeString Short string in [Plugin.][Prefix/]Controller::action format
+     * @return string[]
+     */
+    public static function parseShortString(string $routeString): array
+    {
+        $regex = '#^
+            (?:(?<plugin>[a-z0-9]+(?:/[a-z0-9]+)*)\.)?
+            (?:(?<prefix>[a-z0-9]+(?:/[a-z0-9]+)*)/)?
+            (?<controller>[a-z0-9]+)
+            ::
+            (?<action>[a-z0-9_]+)
+            $#ix';
 
-            if (isset($matches['prefix'])) {
-                $matches['prefix'] = strtolower($matches['prefix']);
-            }
-
-            if ($length >= 2 || $length <= 4) {
-                return $matches;
-            }
+        if (!preg_match($regex, $routeString, $matches)) {
+            throw new RuntimeException("Could not parse `{$routeString}` route short string.");
         }
-        throw new RuntimeException("Could not parse `{$defaults}` route destination string.");
+
+        $defaults = [];
+
+        if ($matches['plugin'] !== '') {
+            $defaults['plugin'] = $matches['plugin'];
+        }
+        if ($matches['prefix'] !== '') {
+            $defaults['prefix'] = strtolower($matches['prefix']);
+        }
+        $defaults['controller'] = $matches['controller'];
+        $defaults['action'] = $matches['action'];
+
+        return $defaults;
     }
 
     /**

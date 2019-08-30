@@ -293,6 +293,75 @@ class RouteBuilderTest extends TestCase
     }
 
     /**
+     * Test parseShortString() with valid strings
+     *
+     * @return void
+     */
+    public function testParseShortString()
+    {
+        $expected = [
+            'controller' => 'Bookmarks',
+            'action' => 'view',
+        ];
+        $this->assertSame($expected, RouteBuilder::parseShortString('Bookmarks::view'));
+
+        $expected = [
+            'prefix' => 'admin',
+            'controller' => 'Bookmarks',
+            'action' => 'view',
+        ];
+        $this->assertSame($expected, RouteBuilder::parseShortString('Admin/Bookmarks::view'));
+
+        $expected = [
+            'plugin' => 'Cms',
+            'controller' => 'Articles',
+            'action' => 'edit',
+        ];
+        $this->assertSame($expected, RouteBuilder::parseShortString('Cms.Articles::edit'));
+
+        $expected = [
+            'plugin' => 'Vendor/Cms',
+            'prefix' => 'management/admin',
+            'controller' => 'Articles',
+            'action' => 'view',
+        ];
+        $this->assertSame($expected, RouteBuilder::parseShortString('Vendor/Cms.Management/Admin/Articles::view'));
+    }
+
+    /**
+     * @return array
+     */
+    public function invalidShortStringsProvider()
+    {
+        return [
+            ['view'],
+            ['Bookmarks:view'],
+            ['Bookmarks/view'],
+            ['Vendor\Cms.Articles::edit'],
+            ['Vendor//Cms.Articles::edit'],
+            ['Cms./Articles::edit'],
+            ['Cms./Admin/Articles::edit'],
+            ['Cms.Admin//Articles::edit'],
+            ['Vendor\Cms.Management\Admin\Articles::edit'],
+        ];
+    }
+
+    /**
+     * Test parseShortString() with invalid strings
+     *
+     * @param string $value
+     * @return void
+     * @dataProvider invalidShortStringsProvider
+     */
+    public function testParseShortInvalidString(string $value)
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Could not parse');
+
+        RouteBuilder::parseShortString($value);
+    }
+
+    /**
      * Test if a route name already exist
      *
      * @return void
