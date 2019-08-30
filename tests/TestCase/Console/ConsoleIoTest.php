@@ -293,6 +293,22 @@ class ConsoleIoTest extends TestCase
     }
 
     /**
+     * Tests abort() wrapper.
+     *
+     * @expectedException \Cake\Console\Exception\StopException
+     * @expectedExceptionMessage 99
+     * @return void
+     */
+    public function testAbortCustomCode()
+    {
+        $this->err->expects($this->at(0))
+            ->method('write')
+            ->with('<error>Some error</error>', 1);
+
+        $this->io->abort('Some error', 99);
+    }
+
+    /**
      * testNl
      *
      * @return void

@@ -251,8 +251,10 @@ class ConsoleIo
     }
 
     /**
-     * @param string $message
-     * @param int $code
+     * Halts the the current process with a StopException.
+     *
+     * @param string $message Error message.
+     * @param int $code Error code.
      * @return void
      * @throws \Cake\Console\Exception\StopException
      */
