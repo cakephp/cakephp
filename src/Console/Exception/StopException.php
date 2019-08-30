@@ -13,6 +13,7 @@
  */
 namespace Cake\Console\Exception;
 
+use Cake\Console\Command;
 use Cake\Core\Exception\Exception;
 
 /**
@@ -20,7 +21,14 @@ use Cake\Core\Exception\Exception;
  *
  * @see \Cake\Console\Shell::_stop()
  * @see \Cake\Console\Shell::error()
+ * @see \Cake\Console\Command::abort()
  */
 class StopException extends Exception
 {
+    /**
+     * Default exception code
+     *
+     * @var int
+     */
+    protected $_defaultCode = Command::CODE_ERROR;
 }
