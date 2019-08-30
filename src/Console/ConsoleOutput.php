@@ -82,8 +82,9 @@ class ConsoleOutput
     protected $_output;
 
     /**
-     * The current output type. Manipulated with ConsoleOutput::outputAs();
+     * The current output type.
      *
+     * @see setOutputAs() For manipulation.
      * @var int
      */
     protected $_outputAs = self::COLOR;

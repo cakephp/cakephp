@@ -183,6 +183,7 @@ class MapReduce implements IteratorAggregate
             throw new LogicException('No reducer function was provided');
         }
 
+        /** @var callable $reducer */
         $reducer = $this->_reducer;
         foreach ($this->_intermediate as $key => $list) {
             $reducer($list, $key, $this);
