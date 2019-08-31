@@ -140,7 +140,7 @@ class TypeMap
      * the column type will be looked for inside the default mapping. If neither exist,
      * null will be returned.
      *
-     * @param string $column The type for a given column
+     * @param string|int $column The type for a given column
      * @return string|null
      */
     public function type($column): ?string
