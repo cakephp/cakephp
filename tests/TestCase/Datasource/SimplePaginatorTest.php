@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         3.5.0
+ * @since         3.9.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Datasource;
@@ -20,6 +20,13 @@ use Cake\ORM\Entity;
 
 class SimplePaginatorTest extends PaginatorTest
 {
+    /**
+     * Don't load data for fixtures for all tests
+     *
+     * @var bool
+     */
+    public $autoFixtures = false;
+
     public function setUp()
     {
         parent::setUp();

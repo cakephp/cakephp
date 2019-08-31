@@ -250,55 +250,123 @@ class Paginator implements PaginatorInterface
      */
     protected function buildParams(array $data)
     {
-        $defaults = $data['defaults'];
-        $count = $data['count'];
-        $numResults = $data['numResults'];
-        $requestedPage = $page = $data['options']['page'];
         $limit = $data['options']['limit'];
 
+        $paging = [
+            'count' => $data['count'],
+            'current' => $data['numResults'],
+            'perPage' => $limit,
+            'page' => $data['options']['page'],
+            'requestedPage' => $data['options']['page'],
+        ];
+
+        $paging = $this->addPageCountParams($paging, $data);
+        $paging = $this->addStartEndParams($paging, $data);
+        $paging = $this->addPrevNextParams($paging, $data);
+        $paging = $this->addSortingParams($paging, $data);
+
+        $paging += [
+            'limit' => $data['defaults']['limit'] != $limit ? $limit : null,
+            'scope' => $data['options']['scope'],
+            'finder' => $data['finder'],
+        ];
+
+        return $paging;
+    }
+
+    /**
+     * Add "page" and "pageCount" params.
+     *
+     * @param array $params Paging params.
+     * @param array $data Paginator data.
+     * @return array Updated params.
+     */
+    protected function addPageCountParams(array $params, array $data)
+    {
+        $page = $params['page'];
+        $pageCount = 0;
+
+        if ($params['count'] !== null) {
+            $pageCount = max((int)ceil($params['count'] / $params['perPage']), 1);
+            $page = min($page, $pageCount);
+        } elseif ($params['current'] === 0 && $params['requestedPage'] > 1) {
+            $page = 1;
+        }
+
+        $params['page'] = $page;
+        $params['pageCount'] = $pageCount;
+
+        return $params;
+    }
+
+    /**
+     * Add "start" and "end" params.
+     *
+     * @param array $params Paging params.
+     * @param array $data Paginator data.
+     * @return array Updated params.
+     */
+    protected function addStartEndParams(array $params, array $data)
+    {
+        $start = $end = 0;
+
+        if ($params['current'] > 0) {
+            $start = (($params['page'] - 1) * $params['perPage']) + 1;
+            $end = $start + $params['current'] - 1;
+        }
+
+        $params['start'] = $start;
+        $params['end'] = $end;
+
+        return $params;
+    }
+
+    /**
+     * Add "prevPage" and "nextPage" params.
+     *
+     * @param array $params Paginator params.
+     * @param array $data Paging data.
+     * @return array Updated params.
+     */
+    protected function addPrevNextParams(array $params, array $data)
+    {
+        $params['prevPage'] = $params['page'] > 1;
+        if ($params['count'] === null) {
+            $params['nextPage'] = true;
+        } else {
+            $params['nextPage'] = $params['count'] > ($params['page'] * $params['perPage']);
+        }
+
+        return $params;
+    }
+
+    /**
+     * Add sorting / ordering params.
+     *
+     * @param array $params Paginator params.
+     * @param array $data Paging data.
+     * @return array Updated params.
+     */
+    protected function addSortingParams(array $params, array $data)
+    {
+        $defaults = $data['defaults'];
         $order = (array)$data['options']['order'];
         $sortDefault = $directionDefault = false;
+
         if (!empty($defaults['order']) && count($defaults['order']) === 1) {
             $sortDefault = key($defaults['order']);
             $directionDefault = current($defaults['order']);
         }
 
-        $pageCount = 0;
-        if ($count !== null) {
-            $pageCount = max((int)ceil($count / $limit), 1);
-            $page = min($page, $pageCount);
-        } elseif ($numResults === 0 && $requestedPage > 1) {
-            $page = 1;
-        }
-
-        $start = $end = 0;
-        if ($numResults > 0) {
-            $start = (($page - 1) * $limit) + 1;
-            $end = $start + $numResults - 1;
-        }
-
-        $paging = [
-            'finder' => $data['finder'],
-            'requestedPage' => $requestedPage,
-            'page' => $page,
-            'current' => $numResults,
-            'count' => $count,
-            'perPage' => $limit,
-            'start' => $start,
-            'end' => $end,
-            'prevPage' => $page > 1,
-            'nextPage' => $count === null ? true : ($count > ($page * $limit)),
-            'pageCount' => $pageCount,
+        $params += [
             'sort' => $data['options']['sort'],
             'direction' => isset($data['options']['sort']) ? current($order) : null,
-            'limit' => $defaults['limit'] != $limit ? $limit : null,
             'sortDefault' => $sortDefault,
             'directionDefault' => $directionDefault,
-            'scope' => $data['options']['scope'],
             'completeSort' => $order,
         ];
 
-        return $paging;
+        return $params;
     }
 
     /**
