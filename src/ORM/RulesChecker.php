@@ -42,7 +42,8 @@ class RulesChecker extends BaseRulesChecker
      * ```
      *
      * @param string[] $fields The list of fields to check for uniqueness.
-     * @param string|null $message The error message to show in case the rule does not pass.
+     * @param string|array|null $message The error message to show in case the rule does not pass. Can
+     *   also be an array of options. When an array, the 'message' key can be used to provide a message.
      * @return \Cake\Datasource\RuleInvoker
      */
     public function isUnique(array $fields, $message = null): RuleInvoker

@@ -164,6 +164,7 @@ class Client implements ClientInterface
      *   \Cake\Http\Client\Adapter\Stream.
      *
      * @param array $config Config options for scoped clients.
+     * @throws \InvalidArgumentException
      */
     public function __construct(array $config = [])
     {
@@ -212,6 +213,7 @@ class Client implements ClientInterface
      *
      * @param \Cake\Http\Cookie\CookieInterface $cookie Cookie object.
      * @return $this
+     * @throws \InvalidArgumentException
      */
     public function addCookie(CookieInterface $cookie)
     {

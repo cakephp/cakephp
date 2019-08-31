@@ -286,6 +286,7 @@ class TableLocator implements LocatorInterface
         $this->_instances = [];
         $this->_config = [];
         $this->_fallbacked = [];
+        $this->_options = [];
     }
 
     /**

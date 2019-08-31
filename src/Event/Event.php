@@ -103,7 +103,7 @@ class Event implements EventInterface
      * If the event has no subject an exception will be raised.
      *
      * @return object
-     * @throws \Cake\Core\Exception\Exception;
+     * @throws \Cake\Core\Exception\Exception
      * @psalm-return TSubject
      * @psalm-suppress LessSpecificImplementedReturnType
      */

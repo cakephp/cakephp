@@ -14,12 +14,10 @@ declare(strict_types=1);
  */
 namespace Cake\Console\Exception;
 
-use Cake\Core\Exception\Exception;
-
 /**
  * Used when a shell method cannot be found.
  */
-class MissingShellMethodException extends Exception
+class MissingShellMethodException extends ConsoleException
 {
     /**
      * @var string

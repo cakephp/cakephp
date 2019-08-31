@@ -108,6 +108,7 @@ class ViewBlock
 
             return;
         }
+
         if (!$this->_active) {
             return;
         }
