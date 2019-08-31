@@ -57,6 +57,7 @@ class Security
      * @param mixed $salt If true, automatically prepends the application's salt
      *   value to $string (Security.salt).
      * @return string Hash
+     * @throws \RuntimeException
      * @link https://book.cakephp.org/3.0/en/core-libraries/security.html#hashing-data
      */
     public static function hash($string, $algorithm = null, $salt = false)
