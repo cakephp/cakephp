@@ -71,6 +71,16 @@ class PostsController extends AppController
 
         return $this->redirect(['action' => 'index']);
     }
+    
+    /**
+     * View template for I18n parsing FormHelper::radio(), FormHelper::input() and Paginator::sort()
+     *
+     * @return void
+     */
+    public function add()
+    {
+        // Do nothing.
+    }
 
     /**
      * Stub get method
