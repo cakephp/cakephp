@@ -172,12 +172,12 @@ class Socket
         );
         restore_error_handler();
 
-        if ($this->connection === null) {
+        if ($this->connection === null && (!$errNum || !$errStr)) {
             $this->setLastError($errNum, $errStr);
             throw new SocketException($errStr, $errNum);
         }
 
-        if (!$this->connection && $this->_connectionErrors) {
+        if ($this->connection === null && $this->_connectionErrors) {
             $message = implode("\n", $this->_connectionErrors);
             throw new SocketException($message, E_WARNING);
         }
