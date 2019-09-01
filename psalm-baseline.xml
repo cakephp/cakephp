@@ -1299,11 +1299,6 @@
       <code>getTarget</code>
     </PossiblyNullReference>
   </file>
-  <file src="src/View/Helper.php">
-    <PossiblyNullOperand occurrences="1">
-      <code>$class</code>
-    </PossiblyNullOperand>
-  </file>
   <file src="src/View/Helper/FormHelper.php">
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>string</code>

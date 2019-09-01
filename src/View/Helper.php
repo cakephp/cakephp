@@ -144,11 +144,11 @@ class Helper implements EventListenerInterface
      * Adds the given class to the element options
      *
      * @param array $options Array options/attributes to add a class to
-     * @param string|null $class The class name being added.
-     * @param string $key the key to use for class.
+     * @param string $class The class name being added.
+     * @param string $key the key to use for class. Defaults to `'class'`.
      * @return array Array of options with $key set.
      */
-    public function addClass(array $options = [], ?string $class = null, string $key = 'class'): array
+    public function addClass(array $options, string $class, string $key = 'class'): array
     {
         if (isset($options[$key]) && is_array($options[$key])) {
             $options[$key][] = $class;
