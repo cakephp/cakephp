@@ -1587,6 +1587,7 @@ class EmailTest extends TestCase
         $this->assertContains($expected, $result['message']);
         $this->assertContains('--' . $boundary . '--', $result['message']);
     }
+
     /**
      * testSendWithLog method
      *

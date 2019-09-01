@@ -24,7 +24,6 @@ use Traversable;
  */
 class NestIterator extends Collection implements RecursiveIterator
 {
-
     /**
      * The name of the property that contains the nested items for each element
      *
@@ -48,7 +47,7 @@ class NestIterator extends Collection implements RecursiveIterator
     /**
      * Returns a traversable containing the children for the current item
      *
-     * @return \Traversable
+     * @return \RecursiveIterator
      */
     public function getChildren()
     {

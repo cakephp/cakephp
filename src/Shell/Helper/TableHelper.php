@@ -21,7 +21,6 @@ use Cake\Console\Helper;
  */
 class TableHelper extends Helper
 {
-
     /**
      * Default config for this helper.
      *
@@ -37,7 +36,7 @@ class TableHelper extends Helper
      * Calculate the column widths
      *
      * @param array $rows The rows on which the columns width will be calculated on.
-     * @return array
+     * @return int[]
      */
     protected function _calculateWidths($rows)
     {
@@ -77,7 +76,7 @@ class TableHelper extends Helper
     /**
      * Output a row separator.
      *
-     * @param array $widths The widths of each column to output.
+     * @param int[] $widths The widths of each column to output.
      * @return void
      */
     protected function _rowSeparator($widths)
@@ -94,7 +93,7 @@ class TableHelper extends Helper
      * Output a row.
      *
      * @param array $row The row to output.
-     * @param array $widths The widths of each column to output.
+     * @param int[] $widths The widths of each column to output.
      * @param array $options Options to be passed.
      * @return void
      */

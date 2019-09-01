@@ -816,6 +816,10 @@ abstract class TestCase extends BaseTestCase
             return [];
         }
         if (is_string($this->fixtures)) {
+            deprecationWarning(
+                'Setting fixtures as string is deprecated and will be removed in 4.0.' .
+                ' Set TestCase::$fixtures as array instead.'
+            );
             return array_map('trim', explode(',', $this->fixtures));
         }
 

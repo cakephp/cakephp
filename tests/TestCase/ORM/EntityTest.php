@@ -1622,6 +1622,7 @@ class EntityTest extends TestCase
     {
         return [[''], [null], [false]];
     }
+
     /**
      * Tests that trying to get an empty property name throws exception
      *
