@@ -110,7 +110,7 @@ class Helper implements EventListenerInterface
      *
      * @param string $method Method to invoke
      * @param array $params Array of params for the method.
-     * @return void
+     * @return mixed|void
      */
     public function __call($method, $params)
     {
@@ -257,7 +257,7 @@ class Helper implements EventListenerInterface
      *
      * @param array $options Array options/attributes to add a class to
      * @param string|null $class The class name being added.
-     * @param string $key the key to use for class.
+     * @param string $key the key to use for class. Defaults to `'class'`.
      * @return array Array of options with $key set.
      */
     public function addClass(array $options = [], $class = null, $key = 'class')
