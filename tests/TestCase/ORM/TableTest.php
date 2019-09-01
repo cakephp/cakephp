@@ -64,20 +64,27 @@ class ProtectedEntity extends Entity
 class TableTest extends TestCase
 {
 
-    public $fixtures = [
-        'core.Articles',
-        'core.Tags',
-        'core.ArticlesTags',
-        'core.Authors',
-        'core.Categories',
-        'core.Comments',
-        'core.Groups',
-        'core.GroupsMembers',
-        'core.Members',
-        'core.PolymorphicTagged',
-        'core.SiteArticles',
-        'core.Users'
-    ];
+    /**
+     * {@inheritDoc}
+     * @see \Cake\TestSuite\TestCase::getFixtures()
+     */
+    public function getFixtures()
+    {
+        return [
+            'core.Articles',
+            'core.Tags',
+            'core.ArticlesTags',
+            'core.Authors',
+            'core.Categories',
+            'core.Comments',
+            'core.Groups',
+            'core.GroupsMembers',
+            'core.Members',
+            'core.PolymorphicTagged',
+            'core.SiteArticles',
+            'core.Users',
+        ];
+    }
 
     /**
      * Handy variable containing the next primary key that will be inserted in the
