@@ -100,9 +100,7 @@ class FixtureManager
         if (empty($test->fixtures) || !empty($this->_processed[get_class($test)])) {
             return;
         }
-        if (!is_array($test->fixtures)) {
-            $test->fixtures = array_map('trim', explode(',', $test->fixtures));
-        }
+
         $this->_loadFixtures($test);
         $this->_processed[get_class($test)] = true;
     }
