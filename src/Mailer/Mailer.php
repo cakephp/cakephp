@@ -319,9 +319,10 @@ class Mailer implements EventListenerInterface
      *   If no action is specified then all other method arguments will be ignored.
      * @param array $args Arguments to pass to the triggered mailer action.
      * @param array $headers Headers to set.
-     * @return array{headers: string, message: string}
+     * @return array
      * @throws \Cake\Mailer\Exception\MissingActionException
      * @throws \BadMethodCallException
+     * @psalm-return array{headers: string, message: string}
      */
     public function send(?string $action = null, array $args = [], array $headers = []): array
     {
@@ -380,7 +381,8 @@ class Mailer implements EventListenerInterface
      * Render content and send email using configured transport.
      *
      * @param string $content Content.
-     * @return array{headers: string, message: string}
+     * @return array
+     * @psalm-return array{headers: string, message: string}
      */
     public function deliver(string $content = '')
     {
@@ -543,8 +545,9 @@ class Mailer implements EventListenerInterface
     /**
      * Log the email message delivery.
      *
-     * @param array{headers: string, message: string} $contents The content with 'headers' and 'message' keys.
+     * @param array $contents The content with 'headers' and 'message' keys.
      * @return void
+     * @psalm-param array{headers: string, message: string} $contents
      */
     protected function logDelivery(array $contents): void
     {
