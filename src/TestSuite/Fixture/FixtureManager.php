@@ -166,7 +166,7 @@ class FixtureManager
     protected function _loadFixtures($test)
     {
         $fixtures = $test->getFixtures();
-        if (empty($fixtures)) {
+        if (!$fixtures) {
             return;
         }
         foreach ($fixtures as $fixture) {
@@ -445,7 +445,7 @@ class FixtureManager
     public function unload($test)
     {
         $fixtures = $test->getFixtures();
-        if (empty($fixtures)) {
+        if (!$fixtures) {
             return;
         }
         $truncate = function ($db, $fixtures) {
