@@ -306,7 +306,7 @@ class Route
         foreach ($namedElements[1] as $i => $name) {
             $search = preg_quote($namedElements[0][$i]);
             if (isset($this->options[$name])) {
-                $option = null;
+                $option = '';
                 if ($name !== 'plugin' && array_key_exists($name, $this->defaults)) {
                     $option = '?';
                 }

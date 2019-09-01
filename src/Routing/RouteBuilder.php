@@ -874,6 +874,7 @@ class RouteBuilder
         if (isset($this->_params['prefix'])) {
             $name = $this->_params['prefix'] . '/' . $name;
         }
+        /** @psalm-suppress PossiblyInvalidArgument */
         $params = array_merge($params, ['prefix' => $name]);
         $this->scope($path, $params, $callback);
 

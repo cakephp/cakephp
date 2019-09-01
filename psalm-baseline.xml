@@ -995,36 +995,6 @@
       <code>$message</code>
     </MissingParamType>
   </file>
-  <file src="src/Routing/Route/Route.php">
-    <PossiblyNullOperand occurrences="4">
-      <code>$option</code>
-      <code>$option</code>
-      <code>$option</code>
-      <code>$option</code>
-    </PossiblyNullOperand>
-  </file>
-  <file src="src/Routing/RouteBuilder.php">
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$params</code>
-    </PossiblyInvalidArgument>
-  </file>
-  <file src="src/Routing/RouteCollection.php">
-    <InvalidArgument occurrences="1">
-      <code>$queryParameters</code>
-    </InvalidArgument>
-  </file>
-  <file src="src/Routing/Router.php">
-    <InvalidArgument occurrences="1">
-      <code>$filter</code>
-    </InvalidArgument>
-    <PossiblyInvalidArgument occurrences="2">
-      <code>$e-&gt;getCode()</code>
-      <code>$params</code>
-    </PossiblyInvalidArgument>
-    <PossiblyNullOperand occurrences="1">
-      <code>$frag</code>
-    </PossiblyNullOperand>
-  </file>
   <file src="src/Shell/Task/CommandTask.php">
     <DeprecatedClass occurrences="1">
       <code>Shell</code>

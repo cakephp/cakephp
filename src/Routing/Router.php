@@ -410,6 +410,7 @@ class Router
                 if (is_array($filter)) {
                     $ref = new ReflectionMethod($filter[0], $filter[1]);
                 } else {
+                    /** @psalm-suppress InvalidArgument */
                     $ref = new ReflectionFunction($filter);
                 }
                 $message = sprintf(
@@ -418,7 +419,7 @@ class Router
                     $ref->getStartLine(),
                     $e->getMessage()
                 );
-                throw new RuntimeException($message, $e->getCode(), $e);
+                throw new RuntimeException($message, (int)$e->getCode(), $e);
             }
         }
 
@@ -471,7 +472,8 @@ class Router
             'action' => 'index',
             '_ext' => null,
         ];
-        $here = $frag = null;
+        $here = null;
+        $frag = '';
 
         $context = static::$_requestContext;
         // In 4.x this should be replaced with state injected via setRequestContext
@@ -841,7 +843,6 @@ class Router
      *   If you have no parameters, this argument can be a callable.
      * @param callable|null $callback The callback to invoke that builds the prefixed routes.
      * @return void
-     * @psalm-suppress PossiblyInvalidArrayAccess
      */
     public static function prefix(string $name, $params = [], ?callable $callback = null): void
     {
@@ -851,6 +852,7 @@ class Router
             $params = [];
         }
 
+        /** @var array $params */
         $path = $params['path'] ?? '/' . Inflector::dasherize($name);
         unset($params['path']);
 
