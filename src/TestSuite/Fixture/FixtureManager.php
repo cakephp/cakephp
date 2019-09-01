@@ -98,6 +98,8 @@ class FixtureManager
             return;
         }
         if (!is_array($test->fixtures)) {
+            deprecationWarning('Using a string for TestCase::$fixtures is deprecated and will be removed in 4.0. Use array instead.');
+
             $test->fixtures = array_map('trim', explode(',', $test->fixtures));
         }
         $this->_loadFixtures($test);
