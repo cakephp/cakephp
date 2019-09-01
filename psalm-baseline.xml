@@ -1324,11 +1324,6 @@
       <code>$this-&gt;script($i, $options)</code>
     </PossiblyNullOperand>
   </file>
-  <file src="src/View/Helper/NumberHelper.php">
-    <LessSpecificImplementedReturnType occurrences="1">
-      <code>mixed</code>
-    </LessSpecificImplementedReturnType>
-  </file>
   <file src="src/View/Helper/PaginatorHelper.php">
     <PossiblyFalseOperand occurrences="2">
       <code>$this-&gt;first($offset, $options)</code>
@@ -1344,11 +1339,6 @@
     <PossiblyUndefinedArrayOffset occurrences="1">
       <code>$options['templates']</code>
     </PossiblyUndefinedArrayOffset>
-  </file>
-  <file src="src/View/Helper/TextHelper.php">
-    <LessSpecificImplementedReturnType occurrences="1">
-      <code>mixed</code>
-    </LessSpecificImplementedReturnType>
   </file>
   <file src="src/View/HelperRegistry.php">
     <MoreSpecificImplementedParamType occurrences="1">

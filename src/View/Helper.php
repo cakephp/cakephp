@@ -95,7 +95,7 @@ class Helper implements EventListenerInterface
      *
      * @param string $method Method to invoke
      * @param array $params Array of params for the method.
-     * @return void
+     * @return mixed|void
      */
     public function __call(string $method, array $params)
     {
