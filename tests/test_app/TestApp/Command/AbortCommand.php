@@ -9,7 +9,7 @@ class AbortCommand extends Command
 {
     public function execute(Arguments $args, ConsoleIo $io)
     {
-        $io->error('Command aborted');
+        $io->error('Aborted');
         $this->abort(127);
     }
 }

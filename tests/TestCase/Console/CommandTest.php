@@ -354,7 +354,7 @@ class CommandTest extends TestCase
         $command = new Command();
         $result = $command->executeCommand(AbortCommand::class, [], $this->getMockIo($output));
         $this->assertSame(127, $result);
-        $this->assertEquals(['<error>Command aborted</error>'], $output->messages());
+        $this->assertEquals(['<error>Aborted</error>', '<error>Command aborted</error>'], $output->messages());
     }
 
     /**
