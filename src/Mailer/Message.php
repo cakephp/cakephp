@@ -22,6 +22,7 @@ use Cake\Http\Client\FormDataPart;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
 use Cake\Utility\Text;
+use Closure;
 use InvalidArgumentException;
 use JsonSerializable;
 use Serializable;
@@ -854,8 +855,8 @@ class Message implements JsonSerializable, Serializable
      * - `bcc`
      * - `subject`
      *
-     * @param array $include List of headers.
-     * @return array
+     * @param string[] $include List of headers.
+     * @return string[]
      */
     public function getHeaders(array $include = []): array
     {
@@ -932,6 +933,37 @@ class Message implements JsonSerializable, Serializable
         $headers['Content-Transfer-Encoding'] = $this->getContentTransferEncoding();
 
         return $headers;
+    }
+
+    /**
+     * Get headers as string.
+     *
+     * @param string[] $include List of headers.
+     * @param string $eol End of line string for concatenating headers.
+     * @param \Closure $callback Callback to run each header value through before stringifying.
+     * @return string
+     * @see Message::getHeaders()
+     */
+    public function getHeadersString(array $include = [], string $eol = "\r\n", ?Closure $callback = null): string
+    {
+        $lines = $this->getHeaders($include);
+
+        if ($callback) {
+            $lines = array_map($callback, $lines);
+        }
+
+        $headers = [];
+        foreach ($lines as $key => $value) {
+            if (empty($value) && $value !== '0') {
+                continue;
+            }
+
+            foreach ((array)$value as $val) {
+                $headers[] = $key . ': ' . $val;
+            }
+        }
+
+        return implode($eol, $headers);
     }
 
     /**
@@ -1179,20 +1211,12 @@ class Message implements JsonSerializable, Serializable
     }
 
     /**
-     * Get generated message body.
+     * Get generated message body as array.
      *
-     * @param string|null $type Use MESSAGE_* constants or null to return the full message as array
-     * @return string|array String if type is given, array if type is null
+     * @return array
      */
-    public function getBody(?string $type = null)
+    public function getBody()
     {
-        switch ($type) {
-            case static::MESSAGE_HTML:
-                return $this->htmlMessage;
-            case static::MESSAGE_TEXT:
-                return $this->textMessage;
-        }
-
         if (empty($this->message)) {
             $this->message = $this->generateMessage();
         }
@@ -1201,15 +1225,17 @@ class Message implements JsonSerializable, Serializable
     }
 
     /**
-     * Get generated message body.
+     * Get generated body as string.
      *
-     * @param string|null $type Use MESSAGE_* constants or null to return the full message as array
-     * @return string|array String if type is given, array if type is null
-     * @internal This method is just for backwards compatibility. Use getBody() instead.
+     * @param string $eol End of line string for imploding.
+     * @return string
+     * @see Message::getBody()
      */
-    public function message(?string $type = null)
+    public function getBodyString(string $eol = "\r\n"): string
     {
-        return $this->getBody();
+        $lines = $this->getBody();
+
+        return implode($eol, $lines);
     }
 
     /**
@@ -1495,6 +1521,26 @@ class Message implements JsonSerializable, Serializable
         $this->setBody([static::MESSAGE_HTML => $content]);
 
         return $this;
+    }
+
+    /**
+     * Get text body of message.
+     *
+     * @return string
+     */
+    public function getBodyText()
+    {
+        return $this->textMessage;
+    }
+
+    /**
+     * Get HTML body of message.
+     *
+     * @return string
+     */
+    public function getBodyHtml()
+    {
+        return $this->htmlMessage;
     }
 
     /**

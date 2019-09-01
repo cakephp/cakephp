@@ -348,17 +348,6 @@ class SmtpTransport extends AbstractTransport
     }
 
     /**
-     * Prepares the message headers.
-     *
-     * @param \Cake\Mailer\Message $message Message instance
-     * @return array
-     */
-    protected function _prepareMessageHeaders(Message $message): array
-    {
-        return $message->getHeaders(['from', 'sender', 'replyTo', 'readReceipt', 'to', 'cc', 'subject', 'returnPath']);
-    }
-
-    /**
      * Prepares the message body.
      *
      * @param \Cake\Mailer\Message $message Message instance
@@ -366,7 +355,6 @@ class SmtpTransport extends AbstractTransport
      */
     protected function _prepareMessage(Message $message): string
     {
-        /** @var array $lines */
         $lines = $message->getBody();
         $messages = [];
         foreach ($lines as $line) {
@@ -409,7 +397,16 @@ class SmtpTransport extends AbstractTransport
     {
         $this->_smtpSend('DATA', '354');
 
-        $headers = $this->_headersToString($this->_prepareMessageHeaders($message));
+        $headers = $message->getHeadersString([
+            'from',
+            'sender',
+            'replyTo',
+            'readReceipt',
+            'to',
+            'cc',
+            'subject',
+            'returnPath',
+        ]);
         $message = $this->_prepareMessage($message);
 
         $this->_smtpSend($headers . "\r\n\r\n" . $message . "\r\n\r\n\r\n.");

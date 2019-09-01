@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Mailer;
 use Cake\Core\Configure;
 use Cake\Log\Log;
 use Cake\Mailer\Email;
+use Cake\Mailer\Mailer;
 use Cake\Mailer\Message;
 use Cake\Mailer\TransportFactory;
 use Cake\TestSuite\TestCase;
@@ -75,6 +76,7 @@ class EmailTest extends TestCase
     {
         parent::tearDown();
         Log::drop('email');
+        Email::drop('default');
         Email::drop('test');
         TransportFactory::drop('debug');
         TransportFactory::drop('badClassName');
@@ -2037,7 +2039,7 @@ class EmailTest extends TestCase
 
         $template = $this->Email->viewBuilder()->getTemplate();
         $layout = $this->Email->viewBuilder()->getLayout();
-        $this->assertSame('', $template);
+        $this->assertNull($template);
         $this->assertEquals($configs['layout'], $layout);
     }
 
@@ -2715,6 +2717,20 @@ XML;
         $this->assertStringContainsString('test', $result['viewConfig']['_vars']['exception']);
         unset($result['viewConfig']['_vars']['exception']);
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * testStaticMethodProxy
+     *
+     * @return void
+     */
+    public function testStaticMethodProxy()
+    {
+        Email::setConfig('proxy_test', ['yay']);
+        $this->assertEquals(['yay'], Mailer::getConfig('proxy_test'));
+
+        Email::drop('proxy_test');
+        $this->assertSame([], Mailer::configured());
     }
 
     /**

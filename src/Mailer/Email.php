@@ -17,9 +17,7 @@ declare(strict_types=1);
 namespace Cake\Mailer;
 
 use BadMethodCallException;
-use Cake\Core\StaticConfigTrait;
 use Cake\Log\Log;
-use Cake\View\View;
 use Cake\View\ViewBuilder;
 use InvalidArgumentException;
 use JsonSerializable;
@@ -39,11 +37,11 @@ use SimpleXMLElement;
  * Email::config() can be used to add or read a configuration profile for Email instances.
  * Once made configuration profiles can be used to re-use across various email messages your
  * application sends.
+ *
+ * @deprecated 4.0.0 This class will be removed in CakePHP 5.0, use Cake\Mailer\Mailer instead.
  */
 class Email implements JsonSerializable, Serializable
 {
-    use StaticConfigTrait;
-
     /**
      * Type of message - HTML
      *
@@ -75,13 +73,6 @@ class Email implements JsonSerializable, Serializable
      * @deprecated 4.0.0 Use Message::EMAIL_PATTERN instead.
      */
     public const EMAIL_PATTERN = '/^((?:[\p{L}0-9.!#$%&\'*+\/=?^_`{|}~-]+)*@[\p{L}0-9-._]+)$/ui';
-
-    /**
-     * Email driver class map.
-     *
-     * @var array
-     */
-    protected static $_dsnClassMap = [];
 
     /**
      * The transport instance to use for sending mail.
@@ -129,14 +120,8 @@ class Email implements JsonSerializable, Serializable
         $this->message = new $this->messageClass();
 
         if ($config === null) {
-            $config = static::getConfig('default');
+            $config = Mailer::getConfig('default');
         }
-
-        $this->getRenderer()->viewBuilder()
-            ->setClassName(View::class)
-            ->setTemplate('')
-            ->setLayout('default')
-            ->setHelpers(['Html']);
 
         if ($config) {
             $this->setProfile($config);
@@ -291,7 +276,13 @@ class Email implements JsonSerializable, Serializable
      */
     public function message(?string $type = null)
     {
-        return $this->message->getBody($type);
+        if ($type === null) {
+            return $this->message->getBody();
+        }
+
+        $method = 'getBody' . ucfirst($type);
+
+        return $this->message->$method();
     }
 
     /**
@@ -305,7 +296,7 @@ class Email implements JsonSerializable, Serializable
     {
         if (is_string($config)) {
             $name = $config;
-            $config = static::getConfig($name);
+            $config = Mailer::getConfig($name);
             if (empty($config)) {
                 throw new InvalidArgumentException(sprintf('Unknown email configuration "%s".', $name));
             }
@@ -543,16 +534,11 @@ class Email implements JsonSerializable, Serializable
     public function reset()
     {
         $this->message->reset();
+        if ($this->renderer !== null) {
+            $this->renderer->reset();
+        }
         $this->_transport = null;
         $this->_profile = [];
-
-        $this->getRenderer()->viewBuilder()
-            ->setLayout('default')
-            ->setTemplate('')
-            ->setClassName(View::class)
-            ->setTheme(null)
-            ->setHelpers(['Html'], false)
-            ->setVars([], false);
 
         return $this;
     }
@@ -619,5 +605,17 @@ class Email implements JsonSerializable, Serializable
     public function unserialize($data): void
     {
         $this->createFromArray(unserialize($data));
+    }
+
+    /**
+     * Proxy all static method calls (for methods provided by StaticConfigTrat) to Mailer.
+     *
+     * @param string $name Method name.
+     * @param array $arguments Method argument.
+     * @return mixed
+     */
+    public static function __callStatic($name, $arguments)
+    {
+        return call_user_func_array('\Cake\Mailer\Mailer::' . $name, $arguments);
     }
 }

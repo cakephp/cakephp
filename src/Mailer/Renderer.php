@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Mailer;
 
-use Cake\View\ViewBuilder;
+use Cake\View\View;
 use Cake\View\ViewVarsTrait;
 
 /**
@@ -35,12 +35,10 @@ class Renderer
 
     /**
      * Constructor
-     *
-     * @param \Cake\View\ViewBuilder|null $viewBuilder View builder instance.
      */
-    public function __construct(?ViewBuilder $viewBuilder = null)
+    public function __construct()
     {
-        $this->_viewBuilder = $viewBuilder;
+        $this->reset();
     }
 
     /**
@@ -89,5 +87,34 @@ class Renderer
         }
 
         return $rendered;
+    }
+
+    /**
+     * Reset view builder to defaults.
+     *
+     * @return $this
+     */
+    public function reset()
+    {
+        $this->_viewBuilder = null;
+
+        $this->viewBuilder()
+            ->setClassName(View::class)
+            ->setLayout('default')
+            ->setHelpers(['Html'], false);
+
+        return $this;
+    }
+
+    /**
+     * Clone ViewBuilder instance when renderer is cloned.
+     *
+     * @return void
+     */
+    public function __clone()
+    {
+        if ($this->_viewBuilder !== null) {
+            $this->_viewBuilder = clone $this->_viewBuilder;
+        }
     }
 }

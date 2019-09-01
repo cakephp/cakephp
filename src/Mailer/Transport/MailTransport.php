@@ -34,32 +34,33 @@ class MailTransport extends AbstractTransport
     {
         $this->checkRecipient($message);
 
-        $eol = PHP_EOL;
-        if (isset($this->_config['eol'])) {
-            $eol = $this->_config['eol'];
-        }
-        $headers = $message->getHeaders([
-            'from',
-            'sender',
-            'replyTo',
-            'readReceipt',
-            'returnPath',
-            'to',
-            'cc',
-            'bcc',
-        ]);
-        $to = $headers['To'];
-        unset($headers['To']);
-        foreach ($headers as $key => $header) {
-            $headers[$key] = str_replace(["\r", "\n"], '', $header);
-        }
-        $headers = $this->_headersToString($headers, $eol);
-        $subject = str_replace(["\r", "\n"], '', $message->getSubject());
-        $to = str_replace(["\r", "\n"], '', $to);
+        // https://github.com/cakephp/cakephp/issues/2209
+        // https://bugs.php.net/bug.php?id=47983
+        $subject = str_replace("\r\n", '', $message->getSubject());
 
-        $message = implode($eol, (array)$message->getBody());
+        $to = $message->getHeaders(['to'])['To'];
+        $to = str_replace("\r\n", '', $to);
 
-        $params = $this->_config['additionalParameters'] ?? '';
+        $eol = $this->getConfig('eol', PHP_EOL);
+        $headers = $message->getHeadersString(
+            [
+                'from',
+                'sender',
+                'replyTo',
+                'readReceipt',
+                'returnPath',
+                'cc',
+                'bcc',
+            ],
+            $eol,
+            function ($val) {
+                return str_replace("\r\n", '', $val);
+            }
+        );
+
+        $message = $message->getBodyString($eol);
+
+        $params = $this->getConfig('additionalParameters', '');
         $this->_mail($to, $subject, $message, $headers, $params);
 
         $headers .= $eol . 'To: ' . $to;

@@ -1105,16 +1105,6 @@
       <code>$other</code>
     </MoreSpecificImplementedParamType>
   </file>
-  <file src="src/TestSuite/Constraint/Email/MailContainsHtml.php">
-    <DeprecatedConstant occurrences="1">
-      <code>Email::MESSAGE_HTML</code>
-    </DeprecatedConstant>
-  </file>
-  <file src="src/TestSuite/Constraint/Email/MailContainsText.php">
-    <DeprecatedConstant occurrences="1">
-      <code>Email::MESSAGE_TEXT</code>
-    </DeprecatedConstant>
-  </file>
   <file src="src/TestSuite/Constraint/EventFired.php">
     <InternalClass occurrences="1"/>
     <PossiblyNullReference occurrences="1">
