@@ -94,7 +94,7 @@ class FixtureManager
     public function fixturize($test)
     {
         $this->_initDb();
-        if (empty($test->getFixtures()) || !empty($this->_processed[get_class($test)])) {
+        if (!$test->getFixtures() || !empty($this->_processed[get_class($test)])) {
             return;
         }
         $this->_loadFixtures($test);
