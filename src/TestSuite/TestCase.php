@@ -804,4 +804,21 @@ abstract class TestCase extends BaseTestCase
     {
         Configure::write('App.namespace', $appNamespace);
     }
+
+    /**
+     * Gets fixtures.
+     *
+     * @return array
+     */
+    public function getFixtures()
+    {
+        if (!isset($this->fixtures)) {
+            return [];
+        }
+        if (is_string($this->fixtures)) {
+            return array_map('trim', explode(',', $this->fixtures));
+        }
+
+        return $this->fixtures;
+    }
 }

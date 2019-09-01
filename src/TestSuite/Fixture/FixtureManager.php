@@ -94,11 +94,8 @@ class FixtureManager
     public function fixturize($test)
     {
         $this->_initDb();
-        if (empty($test->fixtures) || !empty($this->_processed[get_class($test)])) {
+        if (empty($test->getFixtures()) || !empty($this->_processed[get_class($test)])) {
             return;
-        }
-        if (!is_array($test->fixtures)) {
-            $test->fixtures = array_map('trim', explode(',', $test->fixtures));
         }
         $this->_loadFixtures($test);
         $this->_processed[get_class($test)] = true;
@@ -168,10 +165,11 @@ class FixtureManager
      */
     protected function _loadFixtures($test)
     {
-        if (empty($test->fixtures)) {
+        $fixtures = $test->getFixtures();
+        if (empty($fixtures)) {
             return;
         }
-        foreach ($test->fixtures as $fixture) {
+        foreach ($fixtures as $fixture) {
             if (isset($this->_loaded[$fixture])) {
                 continue;
             }
@@ -298,11 +296,7 @@ class FixtureManager
      */
     public function load($test)
     {
-        if (empty($test->fixtures)) {
-            return;
-        }
-
-        $fixtures = $test->fixtures;
+        $fixtures = $test->getFixtures();
         if (empty($fixtures) || !$test->autoFixtures) {
             return;
         }
@@ -450,7 +444,8 @@ class FixtureManager
      */
     public function unload($test)
     {
-        if (empty($test->fixtures)) {
+        $fixtures = $test->getFixtures();
+        if (empty($fixtures)) {
             return;
         }
         $truncate = function ($db, $fixtures) {
@@ -468,7 +463,7 @@ class FixtureManager
                 }
             }
         };
-        $this->_runOperation($test->fixtures, $truncate);
+        $this->_runOperation($fixtures, $truncate);
     }
 
     /**
