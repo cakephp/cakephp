@@ -864,11 +864,6 @@
       <code>$this-&gt;connection</code>
     </PossiblyNullArgument>
   </file>
-  <file src="src/ORM/Association/BelongsToMany.php">
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$hasMany-&gt;getConditions()</code>
-    </PossiblyInvalidArgument>
-  </file>
   <file src="src/ORM/BehaviorRegistry.php">
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$class</code>

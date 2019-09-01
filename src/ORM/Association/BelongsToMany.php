@@ -568,7 +568,12 @@ class BelongsToMany extends Association
             return true;
         }
 
-        $conditions = array_merge($conditions, $hasMany->getConditions());
+        $assocConditions = $hasMany->getConditions();
+        if (is_array($assocConditions)) {
+            $conditions = array_merge($conditions, $assocConditions);
+        } else {
+            $conditions[] = $assocConditions;
+        }
 
         $table->deleteAll($conditions);
 
