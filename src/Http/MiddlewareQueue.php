@@ -45,6 +45,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * The queue of middlewares.
      *
      * @var array
+     * @psalm-var array<int, mixed>
      */
     protected $queue = [];
 
@@ -173,7 +174,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
     public function insertBefore(string $class, $middleware)
     {
         $found = false;
-        $i = null;
+        $i = 0;
         foreach ($this->queue as $i => $object) {
             if ((is_string($object) && $object === $class)
                 || is_a($object, $class)
@@ -202,7 +203,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
     public function insertAfter(string $class, $middleware)
     {
         $found = false;
-        $i = null;
+        $i = 0;
         foreach ($this->queue as $i => $object) {
             if ((is_string($object) && $object === $class)
                 || is_a($object, $class)

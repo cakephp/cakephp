@@ -267,9 +267,10 @@ class ResponseEmitter implements EmitterInterface
                 $key = strtolower($key);
                 $data[$key] = $value;
             }
-            if (!empty($data['expires'])) {
+            if (is_string($data['expires'])) {
                 $data['expires'] = strtotime($data['expires']);
             }
+            /** @psalm-suppress PossiblyInvalidArgument */
             setcookie(
                 $data['name'],
                 $data['value'],
