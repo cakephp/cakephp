@@ -723,9 +723,11 @@ class Marshaller
         $types = [Association::ONE_TO_ONE, Association::MANY_TO_ONE];
         $type = $assoc->type();
         if (in_array($type, $types, true)) {
+            /** @var \Cake\Datasource\EntityInterface $original */
             return $marshaller->merge($original, $value, (array)$options);
         }
         if ($type === Association::MANY_TO_MANY) {
+            /** @var \Cake\Datasource\EntityInterface[] $original */
             return $marshaller->_mergeBelongsToMany($original, $assoc, $value, (array)$options);
         }
 
@@ -740,6 +742,7 @@ class Marshaller
             }
         }
 
+        /** @var \Cake\Datasource\EntityInterface[] $original */
         return $marshaller->mergeMany($original, $value, (array)$options);
     }
 

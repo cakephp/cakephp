@@ -103,7 +103,7 @@ class ResultSet implements ResultSetInterface
     /**
      * Results that have been fetched or hydrated into the results.
      *
-     * @var array|\ArrayAccess
+     * @var array|\SplFixedArray
      */
     protected $_results = [];
 
@@ -117,7 +117,7 @@ class ResultSet implements ResultSetInterface
     /**
      * Tracks value of $_autoFields property of $query passed to constructor.
      *
-     * @var bool
+     * @var bool|null
      */
     protected $_autoFields;
 

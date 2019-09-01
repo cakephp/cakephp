@@ -59,7 +59,7 @@ class EagerLoadable
      * A dotted separated string representing the path of associations
      * that should be followed to fetch this level.
      *
-     * @var string|null
+     * @var string
      */
     protected $_aliasPath;
 
@@ -183,9 +183,9 @@ class EagerLoadable
      * Gets a dot separated string representing the path of associations
      * that should be followed to fetch this level.
      *
-     * @return string|null
+     * @return string
      */
-    public function aliasPath(): ?string
+    public function aliasPath(): string
     {
         return $this->_aliasPath;
     }

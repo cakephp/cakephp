@@ -869,116 +869,15 @@
       <code>$hasMany-&gt;getConditions()</code>
     </PossiblyInvalidArgument>
   </file>
-  <file src="src/ORM/Association/DependentDeleteHelper.php">
-    <InvalidArgument occurrences="1">
-      <code>[$association, 'aliasField']</code>
-    </InvalidArgument>
-  </file>
-  <file src="src/ORM/Association/HasMany.php">
-    <InvalidArgument occurrences="2">
-      <code>$targetEntities</code>
-      <code>$targetEntities</code>
-    </InvalidArgument>
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$entry-&gt;getField()</code>
-    </PossiblyInvalidArgument>
-  </file>
-  <file src="src/ORM/Association/Loader/SelectLoader.php">
-    <PossiblyInvalidOperand occurrences="1">
-      <code>$key</code>
-    </PossiblyInvalidOperand>
-  </file>
-  <file src="src/ORM/Behavior/Translate/EavStrategy.php">
-    <UndefinedClass occurrences="1">
-      <code>['id', 'field']</code>
-    </UndefinedClass>
-  </file>
-  <file src="src/ORM/Behavior/Translate/ShadowTableStrategy.php">
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$translation</code>
-    </PossiblyInvalidArgument>
-    <PossiblyInvalidMethodCall occurrences="2">
-      <code>set</code>
-      <code>getVisible</code>
-    </PossiblyInvalidMethodCall>
-  </file>
-  <file src="src/ORM/Behavior/TreeBehavior.php">
-    <PossiblyInvalidMethodCall occurrences="2">
-      <code>extract</code>
-      <code>extract</code>
-    </PossiblyInvalidMethodCall>
-    <PossiblyNullReference occurrences="1">
-      <code>$edge</code>
-    </PossiblyNullReference>
-  </file>
   <file src="src/ORM/BehaviorRegistry.php">
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$class</code>
     </MoreSpecificImplementedParamType>
   </file>
-  <file src="src/ORM/EagerLoader.php">
-    <InvalidArgument occurrences="1">
-      <code>$collectKeys</code>
-    </InvalidArgument>
-    <PossiblyNullArgument occurrences="1">
-      <code>$loadable-&gt;aliasPath()</code>
-    </PossiblyNullArgument>
-    <PossiblyNullArrayOffset occurrences="1">
-      <code>$collectKeys</code>
-    </PossiblyNullArrayOffset>
-    <PossiblyNullReference occurrences="1">
-      <code>normalized</code>
-    </PossiblyNullReference>
-  </file>
-  <file src="src/ORM/LazyEagerLoader.php">
-    <PossiblyNullReference occurrences="1">
-      <code>getProperty</code>
-    </PossiblyNullReference>
-    <PossiblyUndefinedMethod occurrences="1">
-      <code>indexBy</code>
-    </PossiblyUndefinedMethod>
-  </file>
-  <file src="src/ORM/Marshaller.php">
-    <PossiblyInvalidArgument occurrences="3">
-      <code>$original</code>
-      <code>$original</code>
-      <code>$original</code>
-    </PossiblyInvalidArgument>
-  </file>
   <file src="src/ORM/Query.php">
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>$this</code>
     </ImplementedReturnTypeMismatch>
-    <MissingParamType occurrences="3">
-      <code>$config</code>
-      <code>$method</code>
-      <code>$arguments</code>
-    </MissingParamType>
-    <PossiblyInvalidArrayAccess occurrences="1">
-      <code>$statement-&gt;fetch('assoc')['count']</code>
-    </PossiblyInvalidArrayAccess>
-  </file>
-  <file src="src/ORM/ResultSet.php">
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$this-&gt;_results</code>
-    </PossiblyInvalidArgument>
-    <PossiblyNullPropertyAssignmentValue occurrences="1">
-      <code>$query-&gt;isAutoFieldsEnabled()</code>
-    </PossiblyNullPropertyAssignmentValue>
-  </file>
-  <file src="src/ORM/Table.php">
-    <MoreSpecificImplementedParamType occurrences="1">
-      <code>$options</code>
-    </MoreSpecificImplementedParamType>
-    <PossiblyInvalidArgument occurrences="3">
-      <code>$options</code>
-      <code>$options</code>
-      <code>$options</code>
-    </PossiblyInvalidArgument>
-    <PossiblyNullArgument occurrences="2">
-      <code>$type</code>
-      <code>$typeName</code>
-    </PossiblyNullArgument>
   </file>
   <file src="src/Routing/Exception/DuplicateNamedRouteException.php">
     <MissingParamType occurrences="1">

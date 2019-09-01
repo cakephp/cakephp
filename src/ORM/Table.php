@@ -1185,10 +1185,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Would invoke the `findPublished` method.
      *
      * @param string $type the type of query to perform
-     * @param array|\ArrayAccess $options An array that will be passed to Query::applyOptions()
+     * @param array $options An array that will be passed to Query::applyOptions()
      * @return \Cake\ORM\Query The query builder
      */
-    public function find(string $type = 'all', $options = []): Query
+    public function find(string $type = 'all', array $options = []): Query
     {
         $query = $this->query();
         $query->select();
@@ -1730,7 +1730,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ```
      *
      * @param \Cake\Datasource\EntityInterface $entity
-     * @param array $options
+     * @param array|\ArrayAccess|\Cake\ORM\SaveOptionsBuilder $options
      * @return \Cake\Datasource\EntityInterface|false
      * @throws \Cake\ORM\Exception\RolledbackTransactionException If the transaction is aborted in the afterSave event.
      */
@@ -1962,6 +1962,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             foreach ($primary as $key => $v) {
                 if (!isset($data[$key])) {
                     $id = $statement->lastInsertId($this->getTable(), $key);
+                    /** @var string $type */
                     $type = $schema->getColumnType($key);
                     $entity->set($key, TypeFactory::build($type)->toPHP($id, $driver));
                     break;
@@ -1991,6 +1992,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if (!$primary || count((array)$primary) > 1) {
             return null;
         }
+        /** @var string $typeName */
         $typeName = $this->getSchema()->getColumnType($primary[0]);
         $type = TypeFactory::build($typeName);
 
@@ -2051,7 +2053,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * error.
      *
      * @param \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface $entities Entities to save.
-     * @param array|\ArrayAccess $options Options used when calling Table::save() for each entity.
+     * @param array|\ArrayAccess|\Cake\ORM\SaveOptionsBuilder $options Options used when calling Table::save() for each entity.
      * @return \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface|false False on failure, entities list on success.
      * @throws \Exception
      */
@@ -2084,7 +2086,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
     /**
      * @param \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface $entities Entities to save.
-     * @param array|\ArrayAccess $options Options used when calling Table::save() for each entity.
+     * @param array|\ArrayAccess|\Cake\ORM\SaveOptionsBuilder $options Options used when calling Table::save() for each entity.
      * @return \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface Entities list.
      * @throws \Cake\ORM\Exception\PersistenceFailedException If an entity couldn't be saved.
      */

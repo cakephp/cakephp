@@ -51,7 +51,7 @@ use Traversable;
  * @method mixed max($field, int $type = SORT_NUMERIC) Returns the maximum value for a single column in all the results.
  * @method mixed min($field, int $type = SORT_NUMERIC) Returns the minimum value for a single column in all the results.
  * @method \Cake\Collection\CollectionInterface groupBy(string|callable $field) In-memory group all results by the value of a column.
- * @method \Cake\Collection\CollectionInterface indexBy(string|callable $field) Returns the results indexed by the value of a column.
+ * @method \Cake\Collection\CollectionInterface indexBy(string|callable $callback) Returns the results indexed by the value of a column.
  * @method \Cake\Collection\CollectionInterface countBy(string|callable $field) Returns the number of unique values for a column
  * @method float sumOf(string|callable $field) Returns the sum of all values for a single column
  * @method \Cake\Collection\CollectionInterface shuffle() In-memory randomize the order the results are returned
@@ -934,10 +934,14 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
                 ->execute();
         }
 
-        $result = $statement->fetch('assoc')['count'];
+        $result = $statement->fetch('assoc');
         $statement->closeCursor();
 
-        return (int)$result;
+        if ($result === false) {
+            return 0;
+        }
+
+        return (int)$result['count'];
     }
 
     /**
@@ -1010,10 +1014,14 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     /**
      * {@inheritDoc}
      *
+     * @param false|string|\Closure $key Either the cache key or a function to generate the cache key.
+     *   When using a function, this query instance will be supplied as an argument.
+     * @param string|\Cake\Cache\CacheEngine $config Either the name of the cache config to use, or
+     *   a cache config instance.
      * @return $this
      * @throws \RuntimeException When you attempt to cache a non-select query.
      */
-    public function cache(string $key, $config = 'default')
+    public function cache($key, $config = 'default')
     {
         if ($this->_type !== 'select' && $this->_type !== null) {
             throw new RuntimeException('You cannot cache the results of non-select queries.');
@@ -1264,6 +1272,9 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     /**
      * {@inheritDoc}
      *
+     * @param string $method the method to call
+     * @param array $arguments list of arguments for the method to call
+     * @return mixed
      * @throws \BadMethodCallException if the method is called for a non-select query
      */
     public function __call($method, $arguments)
