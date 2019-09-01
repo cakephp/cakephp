@@ -199,13 +199,6 @@ trait IntegrationTestTrait
     protected $_unlockedFields = [];
 
     /**
-     * Auto-detect if the HTTP middleware stack should be used.
-     *
-     * @var bool
-     */
-    protected $_disableRouterReload = false;
-
-    /**
      * Clears the state used for requests.
      *
      * @after
@@ -535,7 +528,7 @@ trait IntegrationTestTrait
      */
     protected function _makeDispatcher(): MiddlewareDispatcher
     {
-        return new MiddlewareDispatcher($this, $this->_appClass, $this->_appArgs, $this->_disableRouterReload);
+        return new MiddlewareDispatcher($this, $this->_appClass, $this->_appArgs);
     }
 
     /**
