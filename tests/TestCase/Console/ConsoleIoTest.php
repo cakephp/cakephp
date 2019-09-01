@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\ConsoleIo;
+use Cake\Console\Exception\StopException;
 use Cake\Filesystem\Folder;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
@@ -28,6 +29,21 @@ class ConsoleIoTest extends TestCase
      * @var \Cake\Console\ConsoleIo
      */
     protected $io;
+
+    /**
+     * @var \Cake\Console\ConsoleOutput|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $out;
+
+    /**
+     * @var \Cake\Console\ConsoleOutput|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $err;
+
+    /**
+     * @var \Cake\Console\ConsoleInput|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $in;
 
     /**
      * setUp method
@@ -279,8 +295,6 @@ class ConsoleIoTest extends TestCase
     /**
      * Tests abort() wrapper.
      *
-     * @expectedException \Cake\Console\Exception\StopException
-     * @expectedExceptionMessage 1
      * @return void
      */
     public function testAbort()
@@ -289,14 +303,16 @@ class ConsoleIoTest extends TestCase
             ->method('write')
             ->with('<error>Some error</error>', 1);
 
+        $this->expectException(StopException::class);
+        $this->expectExceptionCode(1);
+        $this->expectExceptionMessage('Some error');
+
         $this->io->abort('Some error');
     }
 
     /**
      * Tests abort() wrapper.
      *
-     * @expectedException \Cake\Console\Exception\StopException
-     * @expectedExceptionMessage 99
      * @return void
      */
     public function testAbortCustomCode()
@@ -304,6 +320,10 @@ class ConsoleIoTest extends TestCase
         $this->err->expects($this->at(0))
             ->method('write')
             ->with('<error>Some error</error>', 1);
+
+        $this->expectException(StopException::class);
+        $this->expectExceptionCode(99);
+        $this->expectExceptionMessage('Some error');
 
         $this->io->abort('Some error', 99);
     }

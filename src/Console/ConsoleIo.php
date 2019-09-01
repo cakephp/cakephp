@@ -262,7 +262,7 @@ class ConsoleIo
     {
         $this->error($message);
 
-        throw new StopException($code);
+        throw new StopException($message, $code);
     }
 
     /**
