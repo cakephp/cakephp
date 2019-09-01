@@ -255,7 +255,7 @@ class Route
      */
     public function compiled(): bool
     {
-        return !empty($this->_compiledRoute);
+        return $this->_compiledRoute !== null;
     }
 
     /**
@@ -265,16 +265,14 @@ class Route
      * and populates $this->names with the named routing elements.
      *
      * @return string Returns a string regular expression of the compiled route.
-     * @psalm-suppress InvalidNullableReturnType
      */
     public function compile(): string
     {
-        if ($this->_compiledRoute) {
-            return $this->_compiledRoute;
+        if ($this->_compiledRoute === null) {
+            $this->_writeRoute();
         }
-        $this->_writeRoute();
 
-        /** @psalm-suppress NullableReturnStatement */
+        /** @var string */
         return $this->_compiledRoute;
     }
 
@@ -420,12 +418,10 @@ class Route
      */
     public function parse(string $url, string $method): ?array
     {
-        if (empty($this->_compiledRoute)) {
-            $this->compile();
-        }
+        $compiledRoute = $this->compile();
         [$url, $ext] = $this->_parseExtension($url);
 
-        if (!preg_match($this->_compiledRoute, urldecode($url), $route)) {
+        if (!preg_match($compiledRoute, urldecode($url), $route)) {
             return null;
         }
 

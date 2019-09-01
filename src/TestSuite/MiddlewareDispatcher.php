@@ -61,7 +61,7 @@ class MiddlewareDispatcher
     /**
      * The application that is being dispatched.
      *
-     * @var \Cake\Core\HttpApplicationInterface
+     * @var \Cake\Core\HttpApplicationInterface|\Cake\Core\ConsoleApplicationInterface
      */
     protected $app;
 
@@ -76,6 +76,7 @@ class MiddlewareDispatcher
      *   flag may be necessary if you are using Router methods in your test case setup, and using array URLs
      *   when doing requests in your tests.
      * @throws \LogicException If it cannot load class for use in integration testing.
+     * @psalm-param \Cake\Core\HttpApplicationInterface::class|\Cake\Core\ConsoleApplicationInterface::class|null $class
      */
     public function __construct(
         TestCase $test,

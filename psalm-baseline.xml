@@ -687,17 +687,6 @@
       <code>$cookie['httponly']</code>
     </PossiblyInvalidArgument>
   </file>
-  <file src="src/Http/MiddlewareQueue.php">
-    <InvalidOperand occurrences="1">
-      <code>$i</code>
-    </InvalidOperand>
-    <PossiblyNullArgument occurrences="1">
-      <code>$i</code>
-    </PossiblyNullArgument>
-    <PossiblyNullOperand occurrences="1">
-      <code>$i</code>
-    </PossiblyNullOperand>
-  </file>
   <file src="src/Http/Response.php">
     <PossiblyInvalidArgument occurrences="5">
       <code>env('HTTP_ACCEPT_ENCODING')</code>
@@ -714,18 +703,6 @@
     <PossiblyNullArgument occurrences="1">
       <code>$weak ? 'W/' : null</code>
     </PossiblyNullArgument>
-  </file>
-  <file src="src/Http/ResponseEmitter.php">
-    <PossiblyInvalidArgument occurrences="8">
-      <code>$data['expires']</code>
-      <code>$data['name']</code>
-      <code>$data['value']</code>
-      <code>$data['expires']</code>
-      <code>$data['path']</code>
-      <code>$data['domain']</code>
-      <code>$data['secure']</code>
-      <code>$data['httponly']</code>
-    </PossiblyInvalidArgument>
   </file>
   <file src="src/Http/ServerRequest.php">
     <LessSpecificImplementedReturnType occurrences="2">
@@ -755,15 +732,6 @@
     <PossiblyNullOperand occurrences="1">
       <code>$uri-&gt;getPort()</code>
     </PossiblyNullOperand>
-  </file>
-  <file src="src/Http/ServerRequestFactory.php">
-    <NoInterfaceProperties occurrences="5">
-      <code>$uri-&gt;webroot</code>
-      <code>$uri-&gt;webroot</code>
-      <code>$uri-&gt;base</code>
-      <code>$uri-&gt;base</code>
-      <code>$uri-&gt;webroot</code>
-    </NoInterfaceProperties>
   </file>
   <file src="src/Http/Session.php">
     <PossiblyInvalidArgument occurrences="1">
@@ -837,11 +805,6 @@
     <PossiblyUndefinedArrayOffset occurrences="1">
       <code>$stage[1]</code>
     </PossiblyUndefinedArrayOffset>
-  </file>
-  <file src="src/I18n/RelativeTimeFormatter.php">
-    <PossiblyNullArgument occurrences="1">
-      <code>$other</code>
-    </PossiblyNullArgument>
   </file>
   <file src="src/I18n/Time.php">
     <InvalidOperand occurrences="1">
@@ -1032,15 +995,7 @@
       <code>$message</code>
     </MissingParamType>
   </file>
-  <file src="src/Routing/Middleware/RoutingMiddleware.php">
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$e-&gt;getCode()</code>
-    </PossiblyInvalidArgument>
-  </file>
   <file src="src/Routing/Route/Route.php">
-    <PossiblyNullArgument occurrences="1">
-      <code>$this-&gt;_compiledRoute</code>
-    </PossiblyNullArgument>
     <PossiblyNullOperand occurrences="4">
       <code>$option</code>
       <code>$option</code>
@@ -1194,11 +1149,6 @@
       <code>$io</code>
     </PossiblyNullPropertyAssignmentValue>
   </file>
-  <file src="src/TestSuite/MiddlewareDispatcher.php">
-    <RedundantCondition occurrences="1">
-      <code>$this-&gt;app instanceof HttpApplicationInterface</code>
-    </RedundantCondition>
-  </file>
   <file src="src/TestSuite/TestCase.php">
     <PossiblyFalseArgument occurrences="1">
       <code>$tag</code>
@@ -1349,11 +1299,6 @@
       <code>getTarget</code>
     </PossiblyNullReference>
   </file>
-  <file src="src/View/Helper.php">
-    <PossiblyNullOperand occurrences="1">
-      <code>$class</code>
-    </PossiblyNullOperand>
-  </file>
   <file src="src/View/Helper/FormHelper.php">
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>string</code>
@@ -1374,11 +1319,6 @@
       <code>$this-&gt;script($i, $options)</code>
     </PossiblyNullOperand>
   </file>
-  <file src="src/View/Helper/NumberHelper.php">
-    <LessSpecificImplementedReturnType occurrences="1">
-      <code>mixed</code>
-    </LessSpecificImplementedReturnType>
-  </file>
   <file src="src/View/Helper/PaginatorHelper.php">
     <PossiblyFalseOperand occurrences="2">
       <code>$this-&gt;first($offset, $options)</code>
@@ -1394,11 +1334,6 @@
     <PossiblyUndefinedArrayOffset occurrences="1">
       <code>$options['templates']</code>
     </PossiblyUndefinedArrayOffset>
-  </file>
-  <file src="src/View/Helper/TextHelper.php">
-    <LessSpecificImplementedReturnType occurrences="1">
-      <code>mixed</code>
-    </LessSpecificImplementedReturnType>
   </file>
   <file src="src/View/HelperRegistry.php">
     <MoreSpecificImplementedParamType occurrences="1">

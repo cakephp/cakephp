@@ -61,11 +61,13 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
     ): ServerRequest {
         $server = normalizeServer($server ?: $_SERVER);
         $uri = static::createUri($server);
+        /** @psalm-suppress NoInterfaceProperties */
         $sessionConfig = (array)Configure::read('Session') + [
             'defaults' => 'php',
             'cookiePath' => $uri->webroot,
         ];
         $session = Session::create($sessionConfig);
+        /** @psalm-suppress NoInterfaceProperties */
         $request = new ServerRequest([
             'environment' => $server,
             'uri' => $uri,
@@ -157,7 +159,9 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
 
         // Splat on some extra attributes to save
         // some method calls.
+        /** @psalm-suppress NoInterfaceProperties */
         $uri->base = $base;
+        /** @psalm-suppress NoInterfaceProperties */
         $uri->webroot = $webroot;
 
         return $uri;

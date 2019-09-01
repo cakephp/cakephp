@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Network;
 
+use Cake\Core\Exception\Exception as CakeException;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Network\Exception\SocketException;
 use Cake\Validation\Validation;
@@ -487,6 +488,9 @@ class Socket
         }
 
         try {
+            if ($this->connection === null) {
+                throw new CakeException('You must call connect() first.');
+            }
             $enableCryptoResult = stream_socket_enable_crypto($this->connection, $enable, $method);
         } catch (Exception $e) {
             $this->setLastError(null, $e->getMessage());
