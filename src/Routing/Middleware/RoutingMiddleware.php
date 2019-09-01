@@ -153,7 +153,7 @@ class RoutingMiddleware
         } catch (RedirectException $e) {
             return new RedirectResponse(
                 $e->getMessage(),
-                $e->getCode(),
+                (int)$e->getCode(),
                 $response->getHeaders()
             );
         }
