@@ -151,10 +151,10 @@ class RouteCollection
                 continue;
             }
 
-            $queryParameters = null;
+            $queryParameters = [];
             if (strpos($url, '?') !== false) {
-                [$url, $queryParameters] = explode('?', $url, 2);
-                parse_str($queryParameters, $queryParameters);
+                [$url, $qs] = explode('?', $url, 2);
+                parse_str($qs, $queryParameters);
             }
             /** @var \Cake\Routing\Route\Route $route */
             foreach ($this->_paths[$path] as $route) {
