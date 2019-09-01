@@ -4055,6 +4055,14 @@ class QueryTest extends TestCase
         $query = new Query($this->connection);
         $sql = $query->select('*')->join(['foo' => $query->newExpr('bar')])->sql();
         $this->assertQuotedQuery('JOIN \(bar\) <foo>', $sql);
+
+        $query = new Query($this->connection);
+        $sql = $query->select('*')->join([
+            'alias' => 'orders',
+            'table' => 'Order',
+            'conditions' => ['1 = 1'],
+        ])->sql();
+        $this->assertQuotedQuery('JOIN <Order> <orders> ON 1 = 1', $sql);
     }
 
     /**
