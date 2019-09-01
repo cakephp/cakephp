@@ -89,6 +89,7 @@ trait ConsoleIntegrationTestTrait
         try {
             $this->_exitCode = $runner->run($args, $io);
         } catch (StopException $exception) {
+            $io->error($exception->getMessage());
             $this->_exitCode = $exception->getCode();
         }
     }

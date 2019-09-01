@@ -277,6 +277,8 @@ class Command
         try {
             return $command->run($args, $io);
         } catch (StopException $e) {
+            $io->error($e->getMessage());
+            
             return $e->getCode();
         }
     }
