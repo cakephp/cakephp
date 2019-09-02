@@ -22,6 +22,7 @@ use Cake\Database\Expression\OrderClauseExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\ValuesExpression;
 use Cake\Database\Statement\CallbackStatement;
+use Closure;
 use InvalidArgumentException;
 use IteratorAggregate;
 use RuntimeException;
@@ -125,7 +126,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * statement upon retrieval. Each one of the callback function will receive
      * the row array as first argument.
      *
-     * @var callable[]
+     * @var \Closure[]
      */
     protected $_resultDecorators = [];
 
@@ -312,10 +313,10 @@ class Query implements ExpressionInterface, IteratorAggregate
      * });
      * ```
      *
-     * @param callable $visitor A function or callable to be executed for each part
+     * @param \Closure $visitor A function or callable to be executed for each part
      * @return $this
      */
-    public function traverse(callable $visitor)
+    public function traverse(Closure $visitor)
     {
         $parts = array_keys($this->_parts);
         foreach ($parts as $name) {
@@ -345,11 +346,11 @@ class Query implements ExpressionInterface, IteratorAggregate
      * }, ['select', 'from']);
      * ```
      *
-     * @param callable $visitor A function or callable to be executed for each part
+     * @param \Closure $visitor A function or callable to be executed for each part
      * @param string[] $parts The list of query parts to traverse
      * @return $this
      */
-    public function traverseParts(callable $visitor, array $parts)
+    public function traverseParts(Closure $visitor, array $parts)
     {
         foreach ($parts as $name) {
             $visitor($this->_parts[$name], $name);
@@ -389,13 +390,13 @@ class Query implements ExpressionInterface, IteratorAggregate
      * fields you should also call `Cake\ORM\Query::enableAutoFields()` to select the default fields
      * from the table.
      *
-     * @param array|\Cake\Database\ExpressionInterface|string|callable $fields fields to be added to the list.
+     * @param array|\Cake\Database\ExpressionInterface|string|\Closure $fields fields to be added to the list.
      * @param bool $overwrite whether to reset fields with passed list or not
      * @return $this
      */
     public function select($fields = [], bool $overwrite = false)
     {
-        if (!is_string($fields) && is_callable($fields)) {
+        if ($fields instanceof Closure) {
             $fields = $fields($this);
         }
 
@@ -642,7 +643,7 @@ class Query implements ExpressionInterface, IteratorAggregate
                 $t = ['table' => $t, 'conditions' => $this->newExpr()];
             }
 
-            if (!is_string($t['conditions']) && is_callable($t['conditions'])) {
+            if ($t['conditions'] instanceof Closure) {
                 $t['conditions'] = $t['conditions']($this->newExpr(), $this);
             }
 
@@ -911,7 +912,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * If you use string conditions make sure that your values are correctly quoted.
      * The safest thing you can do is to never use string conditions.
      *
-     * @param string|array|\Cake\Database\ExpressionInterface|callable|null $conditions The conditions to filter on.
+     * @param string|array|\Cake\Database\ExpressionInterface|\Closure|null $conditions The conditions to filter on.
      * @param array $types associative array of type names used to bind values to query
      * @param bool $overwrite whether to reset conditions with passed list or not
      * @see \Cake\Database\Type
@@ -1080,7 +1081,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * `WHERE (title = 'Foo') AND (author_id = 1 OR author_id = 2)`
      *
-     * @param string|array|\Cake\Database\ExpressionInterface|callable $conditions The conditions to add with AND.
+     * @param string|array|\Cake\Database\ExpressionInterface|\Closure $conditions The conditions to add with AND.
      * @param array $types associative array of type names used to bind values to query
      * @see \Cake\Database\Query::where()
      * @see \Cake\Database\Type
@@ -1148,7 +1149,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * If you need to set complex expressions as order conditions, you
      * should use `orderAsc()` or `orderDesc()`.
      *
-     * @param array|\Cake\Database\ExpressionInterface|callable|string $fields fields to be added to the list
+     * @param array|\Cake\Database\ExpressionInterface|\Closure|string $fields fields to be added to the list
      * @param bool $overwrite whether to reset order with field list or not
      * @return $this
      */
@@ -1280,7 +1281,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * Having fields are not suitable for use with user supplied data as they are
      * not sanitized by the query builder.
      *
-     * @param string|array|\Cake\Database\ExpressionInterface|callable|null $conditions The having conditions.
+     * @param string|array|\Cake\Database\ExpressionInterface|\Closure|null $conditions The having conditions.
      * @param array $types associative array of type names used to bind values to query
      * @param bool $overwrite whether to reset conditions with passed list or not
      * @see \Cake\Database\Query::where()
@@ -1305,7 +1306,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * Having fields are not suitable for use with user supplied data as they are
      * not sanitized by the query builder.
      *
-     * @param string|array|\Cake\Database\ExpressionInterface|callable $conditions The AND conditions for HAVING.
+     * @param string|array|\Cake\Database\ExpressionInterface|\Closure $conditions The AND conditions for HAVING.
      * @param array $types associative array of type names used to bind values to query
      * @see \Cake\Database\Query::andWhere()
      * @return $this
@@ -1634,7 +1635,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * });
      * ```
      *
-     * @param string|array|callable|\Cake\Database\Expression\QueryExpression $key The column name or array of keys
+     * @param string|array|\Closure|\Cake\Database\Expression\QueryExpression $key The column name or array of keys
      *    + values to set. This can also be a QueryExpression containing a SQL fragment.
      *    It can also be a callable, that is required to return an expression object.
      * @param mixed $value The value to update $key to. Can be null if $key is an
@@ -1649,9 +1650,8 @@ class Query implements ExpressionInterface, IteratorAggregate
             $this->_parts['set'] = $this->newExpr()->setConjunction(',');
         }
 
-        if ($this->_parts['set']->isCallable($key)) {
+        if ($key instanceof Closure) {
             $exp = $this->newExpr()->setConjunction(',');
-            /** @psalm-suppress PossiblyInvalidFunctionCall */
             $this->_parts['set']->add($key($exp));
 
             return $this;
@@ -1667,7 +1667,6 @@ class Query implements ExpressionInterface, IteratorAggregate
         if (is_string($types) && is_string($key)) {
             $types = [$key => $types];
         }
-        /** @psalm-suppress PossiblyInvalidArgument */
         $this->_parts['set']->eq($key, $value, $types);
 
         return $this;
@@ -1862,11 +1861,11 @@ class Query implements ExpressionInterface, IteratorAggregate
      * });
      * ```
      *
-     * @param callable|null $callback The callback to invoke when results are fetched.
+     * @param \Closure|null $callback The callback to invoke when results are fetched.
      * @param bool $overwrite Whether or not this should append or replace all existing decorators.
      * @return $this
      */
-    public function decorateResults(?callable $callback, bool $overwrite = false)
+    public function decorateResults(?Closure $callback, bool $overwrite = false)
     {
         if ($overwrite) {
             $this->_resultDecorators = [];
@@ -1887,11 +1886,11 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * Callback will receive as first parameter the currently visited expression.
      *
-     * @param callable $callback the function to be executed for each ExpressionInterface
+     * @param \Closure $callback the function to be executed for each ExpressionInterface
      *   found inside this query.
      * @return $this
      */
-    public function traverseExpressions(callable $callback)
+    public function traverseExpressions(Closure $callback)
     {
         $visitor = function ($expression) use (&$visitor, $callback) {
             if (is_array($expression)) {
@@ -2105,7 +2104,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * Helper function used to build conditions by composing QueryExpression objects.
      *
      * @param string $part Name of the query part to append the new part to
-     * @param string|null|array|\Cake\Database\ExpressionInterface|callable $append Expression or builder function
+     * @param string|null|array|\Cake\Database\ExpressionInterface|\Closure $append Expression or builder function
      *   to append.
      * @param string $conjunction type of conjunction to be used to operate part
      * @param array $types associative array of type names used to bind values to query
@@ -2120,8 +2119,7 @@ class Query implements ExpressionInterface, IteratorAggregate
             return;
         }
 
-        if ($expression->isCallable($append)) {
-            /** @psalm-suppress PossiblyInvalidFunctionCall */
+        if ($append instanceof Closure) {
             $append = $append($this->newExpr(), $this);
         }
 

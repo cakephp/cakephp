@@ -28,6 +28,7 @@ use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Inflector;
 use Cake\View\Exception\MissingCellTemplateException;
 use Cake\View\Exception\MissingTemplateException;
+use Closure;
 use Error;
 use Exception;
 use ReflectionException;
@@ -123,7 +124,7 @@ abstract class Cell implements EventDispatcherInterface
         }
         $this->request = $request;
         $this->response = $response;
-        $this->modelFactory('Table', [$this->getTableLocator(), 'get']);
+        $this->modelFactory('Table', Closure::fromCallable([$this->getTableLocator(), 'get']));
 
         $this->_validCellOptions = array_merge(['action', 'args'], $this->_validCellOptions);
         foreach ($this->_validCellOptions as $var) {

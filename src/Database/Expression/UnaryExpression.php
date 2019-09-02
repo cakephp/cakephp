@@ -18,6 +18,7 @@ namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
 use Cake\Database\ValueBinder;
+use Closure;
 
 /**
  * An expression object that represents an expression with only a single operand.
@@ -94,7 +95,7 @@ class UnaryExpression implements ExpressionInterface
     /**
      * @inheritDoc
      */
-    public function traverse(callable $callable)
+    public function traverse(Closure $callable)
     {
         if ($this->_value instanceof ExpressionInterface) {
             $callable($this->_value);

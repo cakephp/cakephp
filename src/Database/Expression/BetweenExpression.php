@@ -19,6 +19,7 @@ namespace Cake\Database\Expression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Type\ExpressionTypeCasterTrait;
 use Cake\Database\ValueBinder;
+use Closure;
 
 /**
  * An expression object that represents a SQL BETWEEN snippet
@@ -103,7 +104,7 @@ class BetweenExpression implements ExpressionInterface, FieldInterface
     /**
      * @inheritDoc
      */
-    public function traverse(callable $callable)
+    public function traverse(Closure $callable)
     {
         foreach ([$this->_field, $this->_from, $this->_to] as $part) {
             if ($part instanceof ExpressionInterface) {

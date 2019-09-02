@@ -20,6 +20,7 @@ use Cake\Database\Exception as DatabaseException;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Type\ExpressionTypeCasterTrait;
 use Cake\Database\ValueBinder;
+use Closure;
 
 /**
  * A Comparison is a type of query expression that represents an operation
@@ -168,7 +169,7 @@ class Comparison implements ExpressionInterface, FieldInterface
     /**
      * @inheritDoc
      */
-    public function traverse(callable $callable)
+    public function traverse(Closure $callable)
     {
         if ($this->_field instanceof ExpressionInterface) {
             $callable($this->_field);

@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Datasource;
 
+use Closure;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
@@ -77,24 +78,24 @@ interface ConnectionInterface extends LoggerAwareInterface
      *
      * The callback will receive the connection instance as its first argument.
      *
-     * @param callable $transaction The callback to execute within a transaction.
+     * @param \Closure $transaction The callback to execute within a transaction.
      * @return mixed The return value of the callback.
      * @throws \Exception Will re-throw any exception raised in $callback after
      *   rolling back the transaction.
      */
-    public function transactional(callable $transaction);
+    public function transactional(Closure $transaction);
 
     /**
      * Run an operation with constraints disabled.
      *
      * Constraints should be re-enabled after the callback succeeds/fails.
      *
-     * @param callable $operation The callback to execute within a transaction.
+     * @param \Closure $operation The callback to execute within a transaction.
      * @return mixed The return value of the callback.
      * @throws \Exception Will re-throw any exception raised in $callback after
      *   rolling back the transaction.
      */
-    public function disableConstraints(callable $operation);
+    public function disableConstraints(Closure $operation);
 
     /**
      * Enable/disable query logging

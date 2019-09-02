@@ -27,6 +27,7 @@ use Cake\Database\ValueBinder;
 use Cake\Datasource\QueryInterface;
 use Cake\Datasource\QueryTrait;
 use Cake\Datasource\ResultSetInterface;
+use Closure;
 use InvalidArgumentException;
 use JsonSerializable;
 use RuntimeException;
@@ -210,7 +211,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * all the fields in the schema of the table or the association will be added to
      * the select clause.
      *
-     * @param array|\Cake\Database\ExpressionInterface|callable|string|\Cake\ORM\Table|\Cake\ORM\Association $fields Fields
+     * @param array|\Cake\Database\ExpressionInterface|\Closure|string|\Cake\ORM\Table|\Cake\ORM\Association $fields Fields
      * to be added to the list.
      * @param bool $overwrite whether to reset fields with passed list or not
      * @return $this
@@ -422,7 +423,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * previous list will be emptied.
      *
      * @param array|string $associations List of table aliases to be queried.
-     * @param callable|bool $override The query builder for the association, or
+     * @param \Closure|bool $override The query builder for the association, or
      *   if associations is an array, a bool on whether to override previous list
      *   with the one passed
      * defaults to merging previous list with the new one.
@@ -436,7 +437,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         }
 
         $queryBuilder = null;
-        if (is_callable($override)) {
+        if ($override instanceof Closure) {
             $queryBuilder = $override;
         }
 

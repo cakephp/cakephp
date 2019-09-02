@@ -29,6 +29,7 @@ use Cake\Log\LogTrait;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Routing\Router;
 use Cake\View\ViewVarsTrait;
+use Closure;
 use Psr\Http\Message\ResponseInterface;
 use ReflectionClass;
 use ReflectionException;
@@ -199,7 +200,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             $this->setEventManager($eventManager);
         }
 
-        $this->modelFactory('Table', [$this->getTableLocator(), 'get']);
+        $this->modelFactory('Table', Closure::fromCallable([$this->getTableLocator(), 'get']));
         $plugin = $this->request->getParam('plugin');
         $modelClass = ($plugin ? $plugin . '.' : '') . $this->name;
         $this->_setModelClass($modelClass);

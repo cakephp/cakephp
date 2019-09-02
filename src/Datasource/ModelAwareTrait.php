@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Datasource;
 
 use Cake\Datasource\Exception\MissingModelException;
+use Closure;
 use UnexpectedValueException;
 
 /**
@@ -137,10 +138,10 @@ trait ModelAwareTrait
      * Override a existing callable to generate repositories of a given type.
      *
      * @param string $type The name of the repository type the factory function is for.
-     * @param callable $factory The factory function used to create instances.
+     * @param \Closure $factory The factory function used to create instances.
      * @return void
      */
-    public function modelFactory(string $type, callable $factory): void
+    public function modelFactory(string $type, Closure $factory): void
     {
         $this->_modelFactories[$type] = $factory;
     }

@@ -19,6 +19,7 @@ namespace Cake\Datasource;
 use BadMethodCallException;
 use Cake\Collection\Iterator\MapReduce;
 use Cake\Datasource\Exception\RecordNotFoundException;
+use Closure;
 use InvalidArgumentException;
 use Traversable;
 
@@ -57,7 +58,7 @@ trait QueryTrait
      * List of formatter classes or callbacks that will post-process the
      * results when fetched
      *
-     * @var callable[]
+     * @var \Closure[]
      */
     protected $_formatters = [];
 
@@ -319,13 +320,13 @@ trait QueryTrait
      * If the third argument is set to true, it will erase previous map reducers
      * and replace it with the arguments passed.
      *
-     * @param callable|null $mapper The mapper callable.
-     * @param callable|null $reducer The reducing function.
+     * @param \Closure|null $mapper The mapper callable.
+     * @param \Closure|null $reducer The reducing function.
      * @param bool $overwrite Set to true to overwrite existing map + reduce functions.
      * @return $this
      * @see \Cake\Collection\Iterator\MapReduce for details on how to use emit data to the map reducer.
      */
-    public function mapReduce(?callable $mapper = null, ?callable $reducer = null, bool $overwrite = false)
+    public function mapReduce(?Closure $mapper = null, ?Closure $reducer = null, bool $overwrite = false)
     {
         if ($overwrite) {
             $this->_mapReduce = [];
@@ -383,12 +384,12 @@ trait QueryTrait
      * });
      * ```
      *
-     * @param callable|null $formatter The formatting callable.
+     * @param \Closure|null $formatter The formatting callable.
      * @param int|true $mode Whether or not to overwrite, append or prepend the formatter.
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function formatResults(?callable $formatter = null, $mode = 0)
+    public function formatResults(?Closure $formatter = null, $mode = 0)
     {
         if ($mode === self::OVERWRITE) {
             $this->_formatters = [];
@@ -415,7 +416,7 @@ trait QueryTrait
     /**
      * Returns the list of previously registered format routines.
      *
-     * @return callable[]
+     * @return \Closure[]
      */
     public function getResultFormatters(): array
     {

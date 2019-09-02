@@ -32,6 +32,7 @@ use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\CollectionInterface as SchemaCollectionInterface;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Log\Log;
+use Closure;
 use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
 use RuntimeException;
@@ -682,7 +683,7 @@ class Connection implements ConnectionInterface
      * });
      * ```
      */
-    public function transactional(callable $callback)
+    public function transactional(Closure $callback)
     {
         $this->begin();
 
@@ -730,7 +731,7 @@ class Connection implements ConnectionInterface
      * });
      * ```
      */
-    public function disableConstraints(callable $callback)
+    public function disableConstraints(Closure $callback)
     {
         return $this->getDisconnectRetry()->run(function () use ($callback) {
             $this->disableForeignKeys();

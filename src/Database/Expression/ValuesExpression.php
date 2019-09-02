@@ -23,6 +23,7 @@ use Cake\Database\Type\ExpressionTypeCasterTrait;
 use Cake\Database\TypeMap;
 use Cake\Database\TypeMapTrait;
 use Cake\Database\ValueBinder;
+use Closure;
 
 /**
  * An expression object to contain values being inserted.
@@ -261,10 +262,10 @@ class ValuesExpression implements ExpressionInterface
      * This method will also traverse any queries that are to be used in the INSERT
      * values.
      *
-     * @param callable $visitor The visitor to traverse the expression with.
+     * @param \Closure $visitor The visitor to traverse the expression with.
      * @return $this
      */
-    public function traverse(callable $visitor)
+    public function traverse(Closure $visitor)
     {
         if ($this->_query) {
             return $this;

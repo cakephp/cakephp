@@ -18,6 +18,7 @@ namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
 use Cake\Database\ValueBinder;
+use Closure;
 
 /**
  * Represents a single identifier name in the database.
@@ -82,10 +83,10 @@ class IdentifierExpression implements ExpressionInterface
      * This method is a no-op, this is a leaf type of expression,
      * hence there is nothing to traverse
      *
-     * @param callable $callable The callable to traverse with.
+     * @param \Closure $callable The callable to traverse with.
      * @return $this
      */
-    public function traverse(callable $callable)
+    public function traverse(Closure $callable)
     {
         return $this;
     }

@@ -21,6 +21,7 @@ use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
 use Cake\Database\TypeMapTrait;
 use Cake\Database\ValueBinder;
+use Closure;
 use Countable;
 use InvalidArgumentException;
 
@@ -29,8 +30,8 @@ use InvalidArgumentException;
  * expressions that can be compiled by converting this object to string
  * and will contain a correctly parenthesized and nested expression.
  *
- * @method $this and(callable|string|array|\Cake\Database\ExpressionInterface $conditions)
- * @method $this or(callable|string|array|\Cake\Database\ExpressionInterface $conditions)
+ * @method $this and(\Closure|string|array|\Cake\Database\ExpressionInterface $conditions)
+ * @method $this or(\Closure|string|array|\Cake\Database\ExpressionInterface $conditions)
  */
 class QueryExpression implements ExpressionInterface, Countable
 {
@@ -415,19 +416,17 @@ class QueryExpression implements ExpressionInterface, Countable
      * Returns a new QueryExpression object containing all the conditions passed
      * and set up the conjunction to be "AND"
      *
-     * @param callable|string|array|\Cake\Database\ExpressionInterface $conditions to be joined with AND
+     * @param \Closure|string|array|\Cake\Database\ExpressionInterface $conditions to be joined with AND
      * @param array $types associative array of fields pointing to the type of the
      * values that are being passed. Used for correctly binding values to statements.
      * @return \Cake\Database\Expression\QueryExpression
      */
     public function and_($conditions, $types = [])
     {
-        if ($this->isCallable($conditions)) {
-            /** @var callable $conditions */
+        if ($conditions instanceof Closure) {
             return $conditions(new static([], $this->getTypeMap()->setTypes($types)));
         }
 
-        /** @var string|array|\Cake\Database\ExpressionInterface $conditions */
         return new static($conditions, $this->getTypeMap()->setTypes($types));
     }
 
@@ -435,19 +434,17 @@ class QueryExpression implements ExpressionInterface, Countable
      * Returns a new QueryExpression object containing all the conditions passed
      * and set up the conjunction to be "OR"
      *
-     * @param callable|string|array|\Cake\Database\ExpressionInterface $conditions to be joined with OR
+     * @param \Closure|string|array|\Cake\Database\ExpressionInterface $conditions to be joined with OR
      * @param array $types associative array of fields pointing to the type of the
      * values that are being passed. Used for correctly binding values to statements.
      * @return \Cake\Database\Expression\QueryExpression
      */
     public function or_($conditions, $types = [])
     {
-        if ($this->isCallable($conditions)) {
-            /** @var callable $conditions */
+        if ($conditions instanceof Closure) {
             return $conditions(new static([], $this->getTypeMap()->setTypes($types), 'OR'));
         }
 
-        /** @var string|array|\Cake\Database\ExpressionInterface $conditions */
         return new static($conditions, $this->getTypeMap()->setTypes($types), 'OR');
     }
 // phpcs:enable
@@ -540,10 +537,10 @@ class QueryExpression implements ExpressionInterface, Countable
      *
      * Callback function receives as only argument an instance of ExpressionInterface
      *
-     * @param callable $callable The callable to apply to all sub-expressions.
+     * @param \Closure $callable The callable to apply to all sub-expressions.
      * @return $this
      */
-    public function traverse(callable $callable)
+    public function traverse(Closure $callable)
     {
         foreach ($this->_conditions as $c) {
             if ($c instanceof ExpressionInterface) {
@@ -567,10 +564,10 @@ class QueryExpression implements ExpressionInterface, Countable
      * passed by reference, this will enable you to change the key under which the
      * modified part is stored.
      *
-     * @param callable $callable The callable to apply to each part.
+     * @param \Closure $callable The callable to apply to each part.
      * @return $this
      */
-    public function iterateParts(callable $callable)
+    public function iterateParts(Closure $callable)
     {
         $parts = [];
         foreach ($this->_conditions as $k => $c) {
@@ -599,29 +596,6 @@ class QueryExpression implements ExpressionInterface, Countable
             return call_user_func_array([$this, $method . '_'], $args);
         }
         throw new BadMethodCallException(sprintf('Method %s does not exist', $method));
-    }
-
-    /**
-     * Check whether or not a callable is acceptable.
-     *
-     * We don't accept ['class', 'method'] style callbacks,
-     * as they often contain user input and arrays of strings
-     * are easy to sneak in.
-     *
-     * @param callable|string|array|\Cake\Database\ExpressionInterface $c The callable to check.
-     * @return bool Valid callable.
-     */
-    public function isCallable($c): bool
-    {
-        if (is_string($c)) {
-            return false;
-        }
-        /** @psalm-suppress RedundantCondition */
-        if (is_object($c) && is_callable($c)) {
-            return true;
-        }
-
-        return is_array($c) && isset($c[0]) && is_object($c[0]) && is_callable($c);
     }
 
     /**
@@ -660,7 +634,7 @@ class QueryExpression implements ExpressionInterface, Countable
         foreach ($conditions as $k => $c) {
             $numericKey = is_numeric($k);
 
-            if ($this->isCallable($c)) {
+            if ($c instanceof Closure) {
                 /** @var \Cake\Database\Expression\QueryExpression $expr */
                 $expr = new static([], $typeMap);
                 $c = $c($expr, $this);

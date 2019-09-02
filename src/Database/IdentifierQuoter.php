@@ -19,6 +19,7 @@ namespace Cake\Database;
 use Cake\Database\Expression\FieldInterface;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
+use Closure;
 
 /**
  * Contains all the logic related to quoting identifiers in a Query object
@@ -64,7 +65,7 @@ class IdentifierQuoter
             $this->_quoteParts($query);
         }
 
-        $query->traverseExpressions([$this, 'quoteExpression']);
+        $query->traverseExpressions(Closure::fromCallable([$this, 'quoteExpression']));
         $query->setValueBinder($binder);
 
         return $query;

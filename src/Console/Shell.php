@@ -28,6 +28,7 @@ use Cake\ORM\Locator\LocatorInterface;
 use Cake\Utility\Inflector;
 use Cake\Utility\MergeVariablesTrait;
 use Cake\Utility\Text;
+use Closure;
 use ReflectionException;
 use ReflectionMethod;
 use RuntimeException;
@@ -191,7 +192,7 @@ class Shell
         $this->_io = $io ?: new ConsoleIo();
         $this->_tableLocator = $locator;
 
-        $this->modelFactory('Table', [$this->getTableLocator(), 'get']);
+        $this->modelFactory('Table', Closure::fromCallable([$this->getTableLocator(), 'get']));
         $this->Tasks = new TaskRegistry($this);
 
         $this->_mergeVars(

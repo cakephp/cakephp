@@ -18,6 +18,7 @@ namespace Cake\Datasource;
 
 use Cake\Cache\Cache;
 use Cake\Cache\CacheEngine;
+use Closure;
 use RuntimeException;
 use Traversable;
 
@@ -34,7 +35,7 @@ class QueryCacher
     /**
      * The key or function to generate a key.
      *
-     * @var string|callable
+     * @var string|\Closure
      */
     protected $_key;
 
@@ -54,8 +55,8 @@ class QueryCacher
      */
     public function __construct($key, $config)
     {
-        if (!is_string($key) && !is_callable($key)) {
-            throw new RuntimeException('Cache keys must be strings or callables.');
+        if (!is_string($key) && !$key instanceof Closure) {
+            throw new RuntimeException('Cache keys must be strings or Closures.');
         }
         $this->_key = $key;
 
