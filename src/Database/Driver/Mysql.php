@@ -138,8 +138,13 @@ class Mysql extends Driver
     {
         $this->connect();
         $isObject = $query instanceof Query;
+        /**
+         * @psalm-suppress PossiblyInvalidMethodCall
+         * @psalm-suppress PossiblyInvalidArgument
+         */
         $statement = $this->_connection->prepare($isObject ? $query->sql() : $query);
         $result = new MysqlStatement($statement, $this);
+        /** @psalm-suppress PossiblyInvalidMethodCall */
         if ($isObject && $query->isBufferedResultsEnabled() === false) {
             $result->bufferResults(false);
         }

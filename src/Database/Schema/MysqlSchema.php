@@ -353,6 +353,7 @@ class MysqlSchema extends BaseSchema
                         break;
                     }
 
+                    /** @var string $length */
                     $length = array_search($data['length'], TableSchema::$columnLengths);
                     $out .= ' ' . strtoupper($length) . 'TEXT';
 
@@ -360,6 +361,7 @@ class MysqlSchema extends BaseSchema
                 case TableSchema::TYPE_BINARY:
                     $isKnownLength = in_array($data['length'], TableSchema::$columnLengths);
                     if ($isKnownLength) {
+                        /** @var string $length */
                         $length = array_search($data['length'], TableSchema::$columnLengths);
                         $out .= ' ' . strtoupper($length) . 'BLOB';
                         break;
@@ -457,6 +459,7 @@ class MysqlSchema extends BaseSchema
      */
     public function constraintSql(TableSchema $schema, string $name): string
     {
+        /** @var array $data */
         $data = $schema->getConstraint($name);
         if ($data['type'] === TableSchema::CONSTRAINT_PRIMARY) {
             $columns = array_map(
@@ -488,6 +491,7 @@ class MysqlSchema extends BaseSchema
         $sql = [];
 
         foreach ($schema->constraints() as $name) {
+            /** @var array $constraint */
             $constraint = $schema->getConstraint($name);
             if ($constraint['type'] === TableSchema::CONSTRAINT_FOREIGN) {
                 $tableName = $this->_driver->quoteIdentifier($schema->name());
@@ -507,6 +511,7 @@ class MysqlSchema extends BaseSchema
         $sql = [];
 
         foreach ($schema->constraints() as $name) {
+            /** @var array $constraint */
             $constraint = $schema->getConstraint($name);
             if ($constraint['type'] === TableSchema::CONSTRAINT_FOREIGN) {
                 $tableName = $this->_driver->quoteIdentifier($schema->name());
@@ -523,6 +528,7 @@ class MysqlSchema extends BaseSchema
      */
     public function indexSql(TableSchema $schema, string $name): string
     {
+        /** @var array $data */
         $data = $schema->getIndex($name);
         $out = '';
         if ($data['type'] === TableSchema::INDEX_INDEX) {

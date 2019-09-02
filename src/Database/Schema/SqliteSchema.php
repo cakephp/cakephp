@@ -157,6 +157,7 @@ class SqliteSchema extends BaseSchema
         // SQLite does not support autoincrement on composite keys.
         if ($row['pk'] && !empty($primary)) {
             $existingColumn = $primary['columns'][0];
+            /** @psalm-suppress PossiblyNullOperand */
             $schema->addColumn($existingColumn, ['autoIncrement' => null] + $schema->getColumn($existingColumn));
         }
 
@@ -396,6 +397,7 @@ class SqliteSchema extends BaseSchema
     {
         /** @var array $data */
         $data = $schema->getConstraint($name);
+        /** @psalm-suppress PossiblyNullArrayAccess */
         if ($data['type'] === TableSchema::CONSTRAINT_PRIMARY &&
             count($data['columns']) === 1 &&
             $schema->getColumn($data['columns'][0])['type'] === TableSchema::TYPE_INTEGER

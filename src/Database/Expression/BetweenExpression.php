@@ -83,6 +83,7 @@ class BetweenExpression implements ExpressionInterface, FieldInterface
             'to' => $this->_to,
         ];
 
+        /** @var string|\Cake\Database\ExpressionInterface $field */
         $field = $this->_field;
         if ($field instanceof ExpressionInterface) {
             $field = $field->sql($generator);

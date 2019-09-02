@@ -73,6 +73,7 @@ class CallbackStatement extends StatementDecorator
      */
     public function fetchAll($type = parent::FETCH_TYPE_NUM): array
     {
+        /** @psalm-suppress PossiblyFalseArgument  */
         return array_map($this->_callback, $this->_statement->fetchAll($type));
     }
 }

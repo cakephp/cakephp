@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Statement;
 
+use Cake\Core\Exception\Exception;
 use Cake\Database\DriverInterface;
 use PDO;
 use PDOStatement as Statement;
@@ -27,14 +28,22 @@ use PDOStatement as Statement;
 class PDOStatement extends StatementDecorator
 {
     /**
+     * PDOStatement instance
+     *
+     * @var \PDOStatement
+     */
+    protected $_statement;
+
+    /**
      * Constructor
      *
-     * @param \PDOStatement|null $statement Original statement to be decorated.
-     * @param \Cake\Database\DriverInterface|null $driver Driver instance.
+     * @param \PDOStatement $statement Original statement to be decorated.
+     * @param \Cake\Database\DriverInterface $driver Driver instance.
      */
-    public function __construct(?Statement $statement = null, ?DriverInterface $driver = null)
+    public function __construct(Statement $statement, DriverInterface $driver)
     {
-        parent::__construct($statement, $driver);
+        $this->_statement = $statement;
+        $this->_driver = $driver;
     }
 
     /**
@@ -59,7 +68,7 @@ class PDOStatement extends StatementDecorator
      *
      * @param string|int $column name or param position to be bound
      * @param mixed $value The value to bind to variable in query
-     * @param string|int $type PDO type or name of configured Type class
+     * @param string|int|null $type PDO type or name of configured Type class
      * @return void
      */
     public function bindValue($column, $value, $type = 'string'): void
@@ -102,6 +111,10 @@ class PDOStatement extends StatementDecorator
             return $this->_statement->fetch(PDO::FETCH_OBJ);
         }
 
+        if (!is_int($type)) {
+            throw new Exception('Fetch type for PDOStatement must be an integer');
+        }
+
         return $this->_statement->fetch($type);
     }
 
@@ -118,6 +131,7 @@ class PDOStatement extends StatementDecorator
      *
      * @param string|int $type num for fetching columns as positional keys or assoc for column names as keys
      * @return array|false list of all results from database for this statement, false on failure
+     * @psalm-assert string $type
      */
     public function fetchAll($type = parent::FETCH_TYPE_NUM)
     {
@@ -129,6 +143,10 @@ class PDOStatement extends StatementDecorator
         }
         if ($type === static::FETCH_TYPE_OBJ) {
             return $this->_statement->fetchAll(PDO::FETCH_OBJ);
+        }
+
+        if (!is_int($type)) {
+            throw new Exception('Fetch type for PDOStatement must be an integer');
         }
 
         return $this->_statement->fetchAll($type);

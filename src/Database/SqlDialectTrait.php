@@ -229,6 +229,7 @@ trait SqlDialectTrait
                     return $condition;
                 }
 
+                /** @var string|\Cake\Database\ExpressionInterface $field */
                 $field = $condition->getField();
                 if ($field instanceof ExpressionInterface || strpos($field, '.') === false) {
                     return $condition;

@@ -94,6 +94,7 @@ class BufferedStatement implements Iterator, StatementInterface
     public function __get(string $property)
     {
         if ($property === 'queryString') {
+            /** @psalm-suppress NoInterfaceProperties */
             return $this->statement->queryString;
         }
     }
@@ -155,7 +156,7 @@ class BufferedStatement implements Iterator, StatementInterface
     public function fetchColumn(int $position)
     {
         $result = $this->fetch(static::FETCH_TYPE_NUM);
-        if (isset($result[$position])) {
+        if ($result && isset($result[$position])) {
             return $result[$position];
         }
 
@@ -234,10 +235,7 @@ class BufferedStatement implements Iterator, StatementInterface
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @param string $type The type to fetch.
-     * @return array
+     * @inheritDoc
      */
     public function fetchAll($type = self::FETCH_TYPE_NUM)
     {

@@ -62,7 +62,7 @@ class FloatType extends BaseType implements BatchCastingInterface
     /**
      * Convert float values to PHP integers
      *
-     * @param null|string|resource $value The value to convert.
+     * @param mixed $value The value to convert.
      * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
      * @return float|null
      * @throws \Cake\Core\Exception\Exception

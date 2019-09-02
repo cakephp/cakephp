@@ -21,6 +21,7 @@ use Cake\Collection\Collection;
 use Cake\Database\Exception;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Schema\TableSchema;
+use Cake\Database\StatementInterface;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
@@ -2188,7 +2189,7 @@ class TableTest extends TestCase
             ->setMethods(['execute', 'addDefaultTypes'])
             ->setConstructorArgs([$this->connection, $table])
             ->getMock();
-        $statement = $this->getMockBuilder('Cake\Database\Statement\StatementDecorator')->getMock();
+        $statement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $data = new Entity([
             'username' => 'superuser',
             'created' => new Time('2013-10-10 00:00'),
@@ -2385,7 +2386,7 @@ class TableTest extends TestCase
         $table->expects($this->once())->method('query')
             ->will($this->returnValue($query));
 
-        $statement = $this->getMockBuilder('Cake\Database\Statement\StatementDecorator')->getMock();
+        $statement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $statement->expects($this->once())
             ->method('rowCount')
             ->will($this->returnValue(0));
@@ -2568,7 +2569,7 @@ class TableTest extends TestCase
         $table->expects($this->once())->method('query')
             ->will($this->returnValue($query));
 
-        $statement = $this->getMockBuilder('Cake\Database\Statement\StatementDecorator')->getMock();
+        $statement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $statement->expects($this->once())
             ->method('errorCode')
             ->will($this->returnValue('00000'));

@@ -51,10 +51,10 @@ abstract class BaseSchema
     /**
      * Generate an ON clause for a foreign key.
      *
-     * @param string|null $on The on clause
+     * @param string $on The on clause
      * @return string
      */
-    protected function _foreignOnClause(?string $on): string
+    protected function _foreignOnClause(string $on): string
     {
         if ($on === TableSchema::ACTION_SET_NULL) {
             return 'SET NULL';

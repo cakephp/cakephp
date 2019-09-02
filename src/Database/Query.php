@@ -1369,6 +1369,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @param int|\Cake\Database\ExpressionInterface|null $num number of records to be returned
      * @return $this
+     * @psalm-suppress MoreSpecificImplementedParamType
      */
     public function limit($num)
     {
@@ -1398,6 +1399,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @param int|\Cake\Database\ExpressionInterface|null $num number of records to be skipped
      * @return $this
+     * @psalm-suppress MoreSpecificImplementedParamType
      */
     public function offset($num)
     {
@@ -1649,6 +1651,7 @@ class Query implements ExpressionInterface, IteratorAggregate
 
         if ($this->_parts['set']->isCallable($key)) {
             $exp = $this->newExpr()->setConjunction(',');
+            /** @psalm-suppress PossiblyInvalidFunctionCall */
             $this->_parts['set']->add($key($exp));
 
             return $this;
@@ -1664,6 +1667,7 @@ class Query implements ExpressionInterface, IteratorAggregate
         if (is_string($types) && is_string($key)) {
             $types = [$key => $types];
         }
+        /** @psalm-suppress PossiblyInvalidArgument */
         $this->_parts['set']->eq($key, $value, $types);
 
         return $this;
@@ -2117,10 +2121,12 @@ class Query implements ExpressionInterface, IteratorAggregate
         }
 
         if ($expression->isCallable($append)) {
+            /** @psalm-suppress PossiblyInvalidFunctionCall */
             $append = $append($this->newExpr(), $this);
         }
 
         if ($expression->getConjunction() === $conjunction) {
+            /** @psalm-suppress PossiblyInvalidArgument */
             $expression->add($append, $types);
         } else {
             $expression = $this->newExpr()

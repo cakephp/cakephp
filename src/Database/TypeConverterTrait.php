@@ -26,8 +26,9 @@ trait TypeConverterTrait
      * and return relevant internal statement type
      *
      * @param mixed $value The value to cast
-     * @param \Cake\Database\TypeInterface|string $type The type name or type instance to use.
+     * @param \Cake\Database\TypeInterface|string|int $type The type name or type instance to use.
      * @return array list containing converted value and internal type
+     * @pslam-return array{mixed, int}
      */
     public function cast($value, $type): array
     {

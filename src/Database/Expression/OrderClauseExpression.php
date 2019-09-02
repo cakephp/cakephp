@@ -50,6 +50,7 @@ class OrderClauseExpression implements ExpressionInterface, FieldInterface
      */
     public function sql(ValueBinder $generator): string
     {
+        /** @var string|\Cake\Database\ExpressionInterface $field */
         $field = $this->_field;
         if ($field instanceof ExpressionInterface) {
             $field = $field->sql($generator);

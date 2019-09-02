@@ -49,15 +49,20 @@ class SqliteStatement extends StatementDecorator
      */
     public function rowCount(): int
     {
+        /** @psalm-suppress NoInterfaceProperties */
         if ($this->_statement->queryString &&
             preg_match('/^(?:DELETE|UPDATE|INSERT)/i', $this->_statement->queryString)
         ) {
             $changes = $this->_driver->prepare('SELECT CHANGES()');
             $changes->execute();
-            $count = $changes->fetch()[0];
+            $row = $changes->fetch();
             $changes->closeCursor();
 
-            return (int)$count;
+            if (!$row) {
+                return 0;
+            }
+
+            return (int)$row[0];
         }
 
         return parent::rowCount();

@@ -172,6 +172,7 @@ class SqlserverSchema extends BaseSchema
             $field['autoIncrement'] = true;
         }
         if ($field['type'] === TableSchema::TYPE_BOOLEAN) {
+            /** @psalm-suppress PossiblyUndefinedArrayOffset */
             $row['default'] = (int)$row['default'];
         }
 
@@ -312,7 +313,7 @@ class SqlserverSchema extends BaseSchema
     /**
      * @inheritDoc
      */
-    protected function _foreignOnClause(?string $on): string
+    protected function _foreignOnClause(string $on): string
     {
         $parent = parent::_foreignOnClause($on);
 
@@ -454,6 +455,7 @@ class SqlserverSchema extends BaseSchema
         $sql = [];
 
         foreach ($schema->constraints() as $name) {
+            /** @var array $constraint */
             $constraint = $schema->getConstraint($name);
             if ($constraint['type'] === TableSchema::CONSTRAINT_FOREIGN) {
                 $tableName = $this->_driver->quoteIdentifier($schema->name());
@@ -473,6 +475,7 @@ class SqlserverSchema extends BaseSchema
         $sql = [];
 
         foreach ($schema->constraints() as $name) {
+            /** @var array $constraint */
             $constraint = $schema->getConstraint($name);
             if ($constraint['type'] === TableSchema::CONSTRAINT_FOREIGN) {
                 $tableName = $this->_driver->quoteIdentifier($schema->name());
@@ -489,6 +492,7 @@ class SqlserverSchema extends BaseSchema
      */
     public function indexSql(TableSchema $schema, string $name): string
     {
+        /** @var array $data */
         $data = $schema->getIndex($name);
         $columns = array_map(
             [$this->_driver, 'quoteIdentifier'],
@@ -578,6 +582,7 @@ class SqlserverSchema extends BaseSchema
         // Restart identity sequences
         $pk = $schema->primaryKey();
         if (count($pk) === 1) {
+            /** @var array $column */
             $column = $schema->getColumn($pk[0]);
             if (in_array($column['type'], ['integer', 'biginteger'])) {
                 $queries[] = sprintf(

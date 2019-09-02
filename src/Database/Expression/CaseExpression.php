@@ -164,7 +164,6 @@ class CaseExpression implements ExpressionInterface
      *
      * @param \Cake\Database\ExpressionInterface|string|array|null $value Value to set
      * @param string|null $type Type of value
-     *
      * @return void
      */
     public function elseValue($value = null, $type = null): void
@@ -175,6 +174,7 @@ class CaseExpression implements ExpressionInterface
         }
 
         if ($value !== null && !$value instanceof ExpressionInterface) {
+            /** @var string $type */
             $value = $this->_castToExpression($value, $type);
         }
 

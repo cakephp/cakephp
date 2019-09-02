@@ -453,6 +453,7 @@ class PostgresSchema extends BaseSchema
         $sql = [];
 
         foreach ($schema->constraints() as $name) {
+            /** @var array $constraint */
             $constraint = $schema->getConstraint($name);
             if ($constraint['type'] === TableSchema::CONSTRAINT_FOREIGN) {
                 $tableName = $this->_driver->quoteIdentifier($schema->name());
@@ -472,6 +473,7 @@ class PostgresSchema extends BaseSchema
         $sql = [];
 
         foreach ($schema->constraints() as $name) {
+            /** @var array $constraint */
             $constraint = $schema->getConstraint($name);
             if ($constraint['type'] === TableSchema::CONSTRAINT_FOREIGN) {
                 $tableName = $this->_driver->quoteIdentifier($schema->name());
@@ -488,6 +490,7 @@ class PostgresSchema extends BaseSchema
      */
     public function indexSql(TableSchema $schema, string $name): string
     {
+        /** @var array $data */
         $data = $schema->getIndex($name);
         $columns = array_map(
             [$this->_driver, 'quoteIdentifier'],
