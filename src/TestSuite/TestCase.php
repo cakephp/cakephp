@@ -51,7 +51,6 @@ abstract class TestCase extends BaseTestCase
      */
     public $fixtures = null;
 
-
     /**
      * By default, all fixtures attached to this class will be truncated and reloaded after each test.
      * Set this to false to handle manually
