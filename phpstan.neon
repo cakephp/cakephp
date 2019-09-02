@@ -13,7 +13,6 @@ parameters:
         - '#Access to an undefined property Exception::\$queryString#'
         - '#Access to an undefined property PHPUnit\\Framework\\Test::\$fixtureManager#'
         - '#Call to an undefined method Traversable::getArrayCopy().#'
-        - '#Cannot call method lastInsertId\(\) on null#'
         - '#Access to an undefined property Cake\\Mailer\\Renderer::\$request#'
         - '#Access to an undefined property Cake\\Mailer\\Renderer::\$response#'
         - '#Call to an undefined method Cake\\Auth\\Storage\\StorageInterface::getConfig\(\)#'
@@ -77,6 +76,29 @@ parameters:
         -
             message: '#Method Cake\\View\\HelperRegistry::__get\(\) should return Cake\\View\\Helper|null but returns object#'
             path: 'src/View/HelperRegistry.php'
+        -
+            message: '#Property Cake\\Database\\Driver::\$_connection \(PDO\) does not accept null#'
+            path: 'src/Database/Driver.php'
+        -
+            message: '#If condition is always true#'
+            paths:
+                - 'src/Database/Driver/Mysql.php'
+                - 'src/Database/Driver/Postgres.php'
+                - 'src/Database/Driver/Sqlite.php'
+                - 'src/Database/Driver/Sqlserver.php'
+        -
+            message: '#Cake\\Database\\Statement\\PDOStatement::__construct\(\) does not call parent constructor from Cake\\Database\\Statement\\StatementDecorator#'
+            path: 'src/Database/Statement/PDOStatement.php'
+        -
+            message: '#Cake\\Database\\Expression\\TupleComparison::__construct\(\) does not call parent constructor from Cake\\Database\\Expression\\Comparison#'
+            path: 'src/Database/Expression/TupleComparison.php'
+        -
+            message: '#Ternary operator condition is always true#'
+            path: 'src/Database/Expression/TupleComparison.php'
+        -
+            message: '#Left side of && is always true#'
+            path: 'src/Database/Expression/TupleComparison.php'
+
     earlyTerminatingMethodCalls:
         Cake\Console\Shell:
             - abort
