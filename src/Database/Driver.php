@@ -323,7 +323,6 @@ abstract class Driver implements DriverInterface
             return $this->_connection->lastInsertId($table);
         }
 
-        /** @psalm-suppress PossiblyNullArgument */
         return $this->_connection->lastInsertId($table, $column);
     }
 
