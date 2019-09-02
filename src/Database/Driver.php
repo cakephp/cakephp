@@ -335,13 +335,13 @@ abstract class Driver implements DriverInterface
             $connected = false;
         } else {
             try {
-                $connected = $this->_connection->query('SELECT 1');
+                $connected = (bool)$this->_connection->query('SELECT 1');
             } catch (PDOException $e) {
                 $connected = false;
             }
         }
 
-        return (bool)$connected;
+        return $connected;
     }
 
     /**
@@ -349,7 +349,7 @@ abstract class Driver implements DriverInterface
      */
     public function enableAutoQuoting(bool $enable = true)
     {
-        $this->_autoQuoting = (bool)$enable;
+        $this->_autoQuoting = $enable;
 
         return $this;
     }
