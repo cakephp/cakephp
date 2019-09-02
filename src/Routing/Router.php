@@ -495,6 +495,10 @@ class Router
             return $output;
         }
         if (is_array($url)) {
+            if (isset($url['_path'])) {
+                $url = self::unwrapShortString($url);
+            }
+
             if (isset($url['_ssl'])) {
                 $url['_scheme'] = $url['_ssl'] === true ? 'https' : 'http';
             }
@@ -923,5 +927,30 @@ class Router
     public static function setRouteCollection(RouteCollection $routeCollection): void
     {
         static::$_collection = $routeCollection;
+    }
+
+    /**
+     * Inject route defaults from `_path` key
+     *
+     * @param array $url Route array with `_path` key
+     * @return array
+     */
+    protected static function unwrapShortString(array $url)
+    {
+        foreach (['plugin', 'prefix', 'controller', 'action'] as $key) {
+            if (array_key_exists($key, $url)) {
+                throw new RuntimeException("The `_path` string cannot be overriden by `$key` key.");
+            }
+        }
+
+        $url += RouteBuilder::parseShortString($url['_path']);
+        $url += [
+            'plugin' => null,
+            'prefix' => false,
+        ];
+
+        unset($url['_path']);
+
+        return $url;
     }
 }

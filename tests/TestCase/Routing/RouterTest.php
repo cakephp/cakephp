@@ -3117,6 +3117,125 @@ class RouterTest extends TestCase
     }
 
     /**
+     * test url() with short string syntax
+     *
+     * @return void
+     */
+    public function testUrlGenerationInShortStringSyntax()
+    {
+        Router::connect('/articles', 'Articles::index');
+        Router::connect('/articles/view/*', 'Articles::view');
+        Router::connect('/article/{slug}', 'Articles::read');
+        Router::connect('/admin/articles', 'Admin/Articles::index');
+        Router::connect('/cms/articles', 'Cms.Articles::index');
+        Router::connect('/cms/admin/articles', 'Cms.Admin/Articles::index');
+
+        $result = Router::url(['_path' => 'Articles::index']);
+        $expected = '/articles';
+        $this->assertEquals($result, $expected);
+
+        $result = Router::url(['_path' => 'Articles::view', 3]);
+        $expected = '/articles/view/3';
+        $this->assertEquals($result, $expected);
+
+        $result = Router::url(['_path' => 'Articles::read', 'slug' => 'title']);
+        $expected = '/article/title';
+        $this->assertEquals($result, $expected);
+
+        $result = Router::url(['_path' => 'Admin/Articles::index']);
+        $expected = '/admin/articles';
+        $this->assertEquals($result, $expected);
+
+        $result = Router::url(['_path' => 'Cms.Admin/Articles::index']);
+        $expected = '/cms/admin/articles';
+        $this->assertEquals($result, $expected);
+
+        $result = Router::url(['_path' => 'Cms.Articles::index']);
+        $expected = '/cms/articles';
+        $this->assertEquals($result, $expected);
+    }
+
+    /**
+     * test url() with short string syntax doesn't take parameters from current request
+     *
+     * @return void
+     */
+    public function testUrlGenerationInShortStringSyntaxWithContext()
+    {
+        Router::connect('/articles', 'Articles::index');
+        Router::connect('/articles/view/*', 'Articles::view');
+        Router::connect('/admin/articles', 'Admin/Articles::index');
+        Router::connect('/cms/articles', 'Cms.Articles::index');
+        Router::connect('/cms/admin/articles', 'Cms.Admin/Articles::index');
+
+        $request = new ServerRequest([
+            'params' => [
+                'plugin' => null,
+                'prefix' => 'admin',
+                'controller' => 'Articles',
+                'action' => 'edit',
+                'pass' => ['3'],
+            ],
+            'url' => '/admin/articles/edit/3',
+        ]);
+        Router::setRequestInfo($request);
+
+        $result = Router::url(['_path' => 'Articles::index']);
+        $expected = '/articles';
+        $this->assertEquals($result, $expected);
+
+        $result = Router::url(['_path' => 'Articles::view', 3]);
+        $expected = '/articles/view/3';
+        $this->assertEquals($result, $expected);
+
+        $result = Router::url(['_path' => 'Admin/Articles::index']);
+        $expected = '/admin/articles';
+        $this->assertEquals($result, $expected);
+
+        $result = Router::url(['_path' => 'Cms.Admin/Articles::index']);
+        $expected = '/cms/admin/articles';
+        $this->assertEquals($result, $expected);
+
+        $result = Router::url(['_path' => 'Cms.Articles::index']);
+        $expected = '/cms/articles';
+        $this->assertEquals($result, $expected);
+    }
+
+    /**
+     * @return array
+     */
+    public function invalidShortStringArrayProvider()
+    {
+        return [
+            [['_path' => 'Articles::index', 'plugin' => null]],
+            [['_path' => 'Articles::index', 'plugin' => 'Cms']],
+            [['_path' => 'Articles::index', 'prefix' => false]],
+            [['_path' => 'Articles::index', 'prefix' => 'Manager']],
+            [['_path' => 'Articles::index', 'controller' => 'Bookmarks']],
+            [['_path' => 'Articles::index', 'controller' => 'Articles']],
+            [['_path' => 'Articles::index', 'action' => 'edit']],
+            [['_path' => 'Articles::index', 'action' => 'index']],
+        ];
+    }
+
+    /**
+     * Test url() doesn't let override parts of short string
+     *
+     * @param array $url
+     * @return void
+     * @dataProvider invalidShortStringArrayProvider
+     */
+    public function testUrlGenerationOverridingShortString(array $url)
+    {
+        Router::connect('/articles', 'Articles::index');
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('The `_path` string cannot be overriden by ');
+
+        Router::url($url);
+    }
+
+    /**
      * Connect some fallback routes for testing router behavior.
      *
      * @return void
