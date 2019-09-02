@@ -177,6 +177,9 @@ class HasMany extends Association
             return false;
         }
 
+        if (!is_array($targetEntities)) {
+            $targetEntities = iterator_to_array($targetEntities);
+        }
         if (!$this->_saveTarget($foreignKeyReference, $entity, $targetEntities, $options)) {
             return false;
         }
@@ -448,7 +451,7 @@ class HasMany extends Association
      * target entity, and the parent entity.
      * @param \Cake\Datasource\EntityInterface $entity the entity which should have its associated entities unassigned
      * @param \Cake\ORM\Table $target The associated table
-     * @param array $remainingEntities Entities that should not be deleted
+     * @param iterable $remainingEntities Entities that should not be deleted
      * @param array $options list of options accepted by `Table::delete()`
      * @return bool success
      */
@@ -456,7 +459,7 @@ class HasMany extends Association
         array $foreignKeyReference,
         EntityInterface $entity,
         Table $target,
-        array $remainingEntities = [],
+        iterable $remainingEntities = [],
         array $options = []
     ): bool {
         $primaryKey = (array)$target->getPrimaryKey();
@@ -509,7 +512,10 @@ class HasMany extends Association
                 $conditions = new QueryExpression($conditions);
                 $conditions->traverse(function ($entry) use ($target): void {
                     if ($entry instanceof FieldInterface) {
-                        $entry->setField($target->aliasField($entry->getField()));
+                        $field = $entry->getField();
+                        if (is_string($field)) {
+                            $entry->setField($target->aliasField($field));
+                        }
                     }
                 });
                 $query = $this->find()->where($conditions);

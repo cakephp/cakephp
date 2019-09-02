@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\ORM\BehaviorRegistry;
+use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 
@@ -317,16 +318,14 @@ class BehaviorRegistryTest extends TestCase
             ->getMock();
         $this->Behaviors->set('Sluggable', $mockedBehavior);
 
-        $query = $this->getMockBuilder('Cake\ORM\Query')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $query = new Query($this->Table->getConnection(), $this->Table);
         $mockedBehavior
             ->expects($this->once())
             ->method('findNoSlug')
             ->with($query, [])
-            ->will($this->returnValue('example'));
+            ->will($this->returnValue($query));
         $return = $this->Behaviors->callFinder('noSlug', [$query, []]);
-        $this->assertSame('example', $return);
+        $this->assertSame($query, $return);
     }
 
     /**

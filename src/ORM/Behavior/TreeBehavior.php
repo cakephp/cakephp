@@ -636,6 +636,7 @@ class TreeBehavior extends Behavior
 
         $targetNode = null;
         if ($number !== true) {
+            /** @var \Cake\Datasource\EntityInterface|null $targetNode */
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
                 ->where(["$parent IS" => $nodeParent])
@@ -649,6 +650,7 @@ class TreeBehavior extends Behavior
                 ->first();
         }
         if (!$targetNode) {
+            /** @var \Cake\Datasource\EntityInterface|null $targetNode */
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
                 ->where(["$parent IS" => $nodeParent])
@@ -726,6 +728,7 @@ class TreeBehavior extends Behavior
 
         $targetNode = null;
         if ($number !== true) {
+            /** @var \Cake\Datasource\EntityInterface|null $targetNode */
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
                 ->where(["$parent IS" => $nodeParent])
@@ -739,6 +742,7 @@ class TreeBehavior extends Behavior
                 ->first();
         }
         if (!$targetNode) {
+            /** @var \Cake\Datasource\EntityInterface|null $targetNode */
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
                 ->where(["$parent IS" => $nodeParent])
@@ -880,7 +884,7 @@ class TreeBehavior extends Behavior
             ->orderDesc($rightField)
             ->first();
 
-        if (empty($edge[$field])) {
+        if ($edge === null || empty($edge[$field])) {
             return 0;
         }
 

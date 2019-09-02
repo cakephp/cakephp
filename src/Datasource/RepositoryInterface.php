@@ -65,10 +65,10 @@ interface RepositoryInterface
      * type of search that was selected.
      *
      * @param string $type the type of query to perform
-     * @param array|\ArrayAccess $options An array that will be passed to Query::applyOptions()
+     * @param array $options An array that will be passed to Query::applyOptions()
      * @return \Cake\Datasource\QueryInterface
      */
-    public function find(string $type = 'all', $options = []);
+    public function find(string $type = 'all', array $options = []);
 
     /**
      * Returns a single record after finding it by its primary key, if no record is
@@ -84,13 +84,13 @@ interface RepositoryInterface
      * ```
      *
      * @param mixed $primaryKey primary key value to find
-     * @param array|\ArrayAccess $options options accepted by `Table::find()`
+     * @param array $options options accepted by `Table::find()`
      * @throws \Cake\Datasource\Exception\RecordNotFoundException if the record with such id
      * could not be found
      * @return \Cake\Datasource\EntityInterface
      * @see \Cake\Datasource\RepositoryInterface::find()
      */
-    public function get($primaryKey, $options = []): EntityInterface;
+    public function get($primaryKey, array $options = []): EntityInterface;
 
     /**
      * Creates a new Query instance for this repository

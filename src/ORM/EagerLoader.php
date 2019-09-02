@@ -684,6 +684,7 @@ class EagerLoader
             return $map;
         }
 
+        /** @psalm-suppress PossiblyNullReference */
         $map = $this->_buildAssociationsMap($map, $this->_matching->normalized($table), true);
         $map = $this->_buildAssociationsMap($map, $this->normalized($table));
         $map = $this->_buildAssociationsMap($map, $this->_joinsMap);

@@ -323,9 +323,9 @@ class SelectLoader
     {
         if (is_array($key)) {
             $conditions = $this->_createTupleCondition($query, $key, $filter, 'IN');
+        } else {
+            $conditions = [$key . ' IN' => $filter];
         }
-
-        $conditions = $conditions ?? [$key . ' IN' => $filter];
 
         return $query->andWhere($conditions);
     }

@@ -123,6 +123,7 @@ class LazyEagerLoader
         $map = [];
         $container = $source->associations();
         foreach ($associations as $assoc) {
+            /** @psalm-suppress PossiblyNullReference */
             $map[$assoc] = $container->get($assoc)->getProperty();
         }
 
@@ -134,7 +135,7 @@ class LazyEagerLoader
      * entities.
      *
      * @param \Cake\Datasource\EntityInterface[]|\Traversable $objects The original list of entities
-     * @param \Cake\Collection\CollectionInterface|\Cake\Database\Query $results The loaded results
+     * @param \Cake\Collection\CollectionInterface|\Cake\ORM\Query $results The loaded results
      * @param string[] $associations The top level associations that were loaded
      * @param \Cake\ORM\Table $source The table where the entities came from
      * @return array

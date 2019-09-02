@@ -277,6 +277,7 @@ class EavStrategy implements TranslateStrategyInterface
         }
 
         $model = $this->_config['referenceName'];
+        /** @psalm-suppress UndefinedClass */
         $preexistent = $this->translationTable->find()
             ->select(['id', 'field'])
             ->where([
