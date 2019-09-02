@@ -176,7 +176,7 @@ class Paginator implements PaginatorInterface
 
         $pagingParams = $this->buildParams($data);
         $alias = $object->getAlias();
-        $this->_pagingParams = [$alias => $this->buildParams($data)];
+        $this->_pagingParams = [$alias => $pagingParams];
         if ($pagingParams['requestedPage'] > $pagingParams['page']) {
             throw new PageOutOfBoundsException([
                 'requestedPage' => $pagingParams['requestedPage'],
