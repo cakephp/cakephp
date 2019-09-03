@@ -156,7 +156,7 @@ class BufferedStatement implements Iterator, StatementInterface
     public function fetchColumn(int $position)
     {
         $result = $this->fetch(static::FETCH_TYPE_NUM);
-        if ($result && isset($result[$position])) {
+        if ($result !== false && isset($result[$position])) {
             return $result[$position];
         }
 
