@@ -311,7 +311,7 @@ class Message implements JsonSerializable, Serializable
         if ($this->appCharset !== null) {
             $this->charset = $this->appCharset;
         }
-        $this->domain = preg_replace('/\:\d+$/', '', env('HTTP_HOST'));
+        $this->domain = preg_replace('/\:\d+$/', '', (string)env('HTTP_HOST'));
         if (empty($this->domain)) {
             $this->domain = php_uname('n');
         }
@@ -1555,6 +1555,10 @@ class Message implements JsonSerializable, Serializable
     {
         if ($this->appCharset === $charset) {
             return $text;
+        }
+
+        if ($this->appCharset === null) {
+            return mb_convert_encoding($text, $charset);
         }
 
         return mb_convert_encoding($text, $charset, $this->appCharset);

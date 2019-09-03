@@ -342,14 +342,6 @@
       <code>$locale</code>
     </PossiblyNullArgument>
   </file>
-  <file src="src/Mailer/Message.php">
-    <PossiblyInvalidArgument occurrences="1">
-      <code>env('HTTP_HOST')</code>
-    </PossiblyInvalidArgument>
-    <PossiblyNullArgument occurrences="1">
-      <code>$this-&gt;appCharset</code>
-    </PossiblyNullArgument>
-  </file>
   <file src="src/Network/Socket.php">
     <InvalidArgument occurrences="1">
       <code>[$this, '_connectionErrorHandler']</code>
