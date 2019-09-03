@@ -26,18 +26,27 @@ use Cake\Database\ValueBinder;
 class TupleComparison extends Comparison
 {
     /**
+     * The type to be used for casting the value to a database representation
+     *
+     * @var array
+     */
+    protected $_type;
+
+    /**
      * Constructor
      *
      * @param string|array|\Cake\Database\ExpressionInterface $fields the fields to use to form a tuple
      * @param array|\Cake\Database\ExpressionInterface $values the values to use to form a tuple
-     * @param string|array $types the types names to use for casting each of the values, only
+     * @param array $types the types names to use for casting each of the values, only
      * one type per position in the value array in needed
      * @param string $conjunction the operator used for comparing field and value
      */
-    public function __construct($fields, $values, $types = [], $conjunction = '=')
+    public function __construct($fields, $values, array $types = [], string $conjunction = '=')
     {
-        parent::__construct($fields, $values, $types, $conjunction);
-        $this->_type = (array)$types;
+        $this->_type = $types;
+        $this->setField($fields);
+        $this->setValue($values);
+        $this->_operator = $conjunction;
     }
 
     /**
@@ -98,6 +107,7 @@ class TupleComparison extends Comparison
             if ($isMulti) {
                 $bound = [];
                 foreach ($value as $k => $val) {
+                    /** @psalm-suppress PossiblyNullArrayAccess */
                     $valType = $multiType ? $type[$k] : $type;
                     $bound[] = $this->_bindValue($val, $generator, $valType);
                 }

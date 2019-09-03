@@ -189,7 +189,7 @@ interface QueryInterface
      *  $query->offset($query->newExpr()->add(['1 + 1'])); // OFFSET (1 + 1)
      * ```
      *
-     * @param int|mixed $num number of records to be skipped
+     * @param mixed $num number of records to be skipped
      * @return $this
      */
     public function offset($num);

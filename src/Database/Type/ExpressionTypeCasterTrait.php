@@ -50,6 +50,7 @@ trait ExpressionTypeCasterTrait
         $multi = $type !== $baseType;
 
         if ($multi) {
+            /** @psalm-suppress InvalidArgument */
             return array_map([$converter, 'toExpression'], $value);
         }
 

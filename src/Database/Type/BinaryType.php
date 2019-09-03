@@ -33,7 +33,7 @@ class BinaryType extends BaseType
      * Binary data is not altered before being inserted into the database.
      * As PDO will handle reading file handles.
      *
-     * @param string|resource $value The value to convert.
+     * @param mixed $value The value to convert.
      * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
      * @return string|resource
      */
@@ -45,7 +45,7 @@ class BinaryType extends BaseType
     /**
      * Convert binary into resource handles
      *
-     * @param null|string|resource $value The value to convert.
+     * @param mixed $value The value to convert.
      * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
      * @return resource|null
      * @throws \Cake\Core\Exception\Exception

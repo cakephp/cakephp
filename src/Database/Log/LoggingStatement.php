@@ -57,6 +57,7 @@ class LoggingStatement extends StatementDecorator
         try {
             $result = parent::execute($params);
         } catch (Exception $e) {
+            /** @psalm-suppress UndefinedPropertyAssignment */
             $e->queryString = $this->queryString;
             $query->error = $e;
             $this->_log($query, $params, $t);
@@ -98,6 +99,7 @@ class LoggingStatement extends StatementDecorator
     public function bindValue($column, $value, $type = 'string'): void
     {
         parent::bindValue($column, $value, $type);
+
         if ($type === null) {
             $type = 'string';
         }

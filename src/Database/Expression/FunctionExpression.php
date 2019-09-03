@@ -106,6 +106,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      * @param bool $prepend Whether to prepend or append to the list of arguments
      * @see \Cake\Database\Expression\FunctionExpression::__construct() for more details.
      * @return $this
+     * @psalm-suppress MoreSpecificImplementedParamType
      */
     public function add($params, array $types = [], bool $prepend = false)
     {

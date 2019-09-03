@@ -759,10 +759,10 @@ class Connection implements ConnectionInterface
      * Quotes value to be used safely in database query.
      *
      * @param mixed $value The value to quote.
-     * @param string|null $type Type to be used for determining kind of quoting to perform
+     * @param string|int|\Cake\Database\TypeInterface $type Type to be used for determining kind of quoting to perform
      * @return string Quoted value
      */
-    public function quote($value, $type = null): string
+    public function quote($value, $type = 'string'): string
     {
         [$value, $type] = $this->cast($value, $type);
 

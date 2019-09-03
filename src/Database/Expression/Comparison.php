@@ -41,7 +41,7 @@ class Comparison implements ExpressionInterface, FieldInterface
     /**
      * The type to be used for casting the value to a database representation
      *
-     * @var string|array
+     * @var string
      */
     protected $_type;
 
@@ -72,10 +72,10 @@ class Comparison implements ExpressionInterface, FieldInterface
      *
      * @param string|\Cake\Database\ExpressionInterface $field the field name to compare to a value
      * @param mixed $value The value to be used in comparison
-     * @param string|array $type the type name used to cast the value
+     * @param string|array|null $type the type name used to cast the value
      * @param string $operator the operator used for comparing field and value
      */
-    public function __construct($field, $value, $type, $operator)
+    public function __construct($field, $value, $type, string $operator)
     {
         if (is_string($type)) {
             $this->_type = $type;
@@ -148,6 +148,7 @@ class Comparison implements ExpressionInterface, FieldInterface
      */
     public function sql(ValueBinder $generator): string
     {
+        /** @var string|\Cake\Database\ExpressionInterface $field */
         $field = $this->_field;
 
         if ($field instanceof ExpressionInterface) {
@@ -262,10 +263,10 @@ class Comparison implements ExpressionInterface, FieldInterface
      *
      * @param iterable $value the value to flatten
      * @param \Cake\Database\ValueBinder $generator The value binder to use
-     * @param string|array|null $type the type to cast values to
+     * @param string $type the type to cast values to
      * @return string
      */
-    protected function _flattenValue(iterable $value, ValueBinder $generator, $type = 'string'): string
+    protected function _flattenValue(iterable $value, ValueBinder $generator, string $type = 'string'): string
     {
         $parts = [];
         if (is_array($value)) {

@@ -41,14 +41,14 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * Statement instance implementation, such as PDOStatement
      * or any other custom implementation.
      *
-     * @var \Cake\Database\StatementInterface|\PDOStatement|null
+     * @var \Cake\Database\StatementInterface
      */
     protected $_statement;
 
     /**
      * Reference to the driver object associated to this statement.
      *
-     * @var \Cake\Database\DriverInterface|null
+     * @var \Cake\Database\DriverInterface
      */
     protected $_driver;
 
@@ -62,11 +62,11 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
     /**
      * Constructor
      *
-     * @param \Cake\Database\StatementInterface|\PDOStatement|null $statement Statement implementation
+     * @param \Cake\Database\StatementInterface $statement Statement implementation
      *  such as PDOStatement.
-     * @param \Cake\Database\DriverInterface|null $driver Driver instance
+     * @param \Cake\Database\DriverInterface $driver Driver instance
      */
-    public function __construct($statement = null, ?DriverInterface $driver = null)
+    public function __construct(StatementInterface $statement, DriverInterface $driver)
     {
         $this->_statement = $statement;
         $this->_driver = $driver;
@@ -81,6 +81,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
     public function __get(string $property)
     {
         if ($property === 'queryString') {
+            /** @psalm-suppress NoInterfaceProperties */
             return $this->_statement->queryString;
         }
     }
@@ -102,7 +103,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      *
      * @param string|int $column name or param position to be bound
      * @param mixed $value The value to bind to variable in query
-     * @param string $type name of configured Type class
+     * @param string|int|null $type name of configured Type class
      * @return void
      */
     public function bindValue($column, $value, $type = 'string'): void
@@ -221,7 +222,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
     public function fetchColumn(int $position)
     {
         $result = $this->fetch(static::FETCH_TYPE_NUM);
-        if (isset($result[$position])) {
+        if ($result && isset($result[$position])) {
             return $result[$position];
         }
 
@@ -278,8 +279,8 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * }
      * ```
      *
-     * @return \Cake\Database\StatementInterface|\PDOStatement
-     * @psalm-suppress InvalidNullableReturnType
+     * @return \Cake\Database\StatementInterface
+     * @psalm-suppress ImplementedReturnTypeMismatch
      */
     public function getIterator()
     {
@@ -287,7 +288,6 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
             $this->execute();
         }
 
-        /** @psalm-suppress NullableReturnStatement */
         return $this->_statement;
     }
 
@@ -323,6 +323,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
                 $type = $types[$index];
             }
             if ($anonymousParams) {
+                /** @psalm-suppress InvalidOperand */
                 $index += $offset;
             }
             $this->bindValue($index, $value, $type);
@@ -352,12 +353,10 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
     /**
      * Returns the statement object that was decorated by this class.
      *
-     * @return \Cake\Database\StatementInterface|\PDOStatement
-     * @psalm-suppress InvalidNullableReturnType
+     * @return \Cake\Database\StatementInterface
      */
     public function getInnerStatement()
     {
-        /** @psalm-suppress NullableReturnStatement */
         return $this->_statement;
     }
 }

@@ -106,6 +106,7 @@ trait ModelAwareTrait
             [, $alias] = pluginSplit($modelClass, true);
         } else {
             $options['className'] = $modelClass;
+            /** @psalm-suppress PossiblyFalseOperand */
             $alias = substr(
                 $modelClass,
                 strrpos($modelClass, '\\') + 1,

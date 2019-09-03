@@ -91,10 +91,10 @@ class RuleInvoker
      *
      * Only truthy names will be set.
      *
-     * @param string $name The name to set.
+     * @param string|null $name The name to set.
      * @return $this
      */
-    public function setName(string $name)
+    public function setName(?string $name)
     {
         if ($name) {
             $this->name = $name;

@@ -145,7 +145,7 @@ interface DriverInterface
      * Returns a value in a safe representation to be used in a query string
      *
      * @param mixed $value The value to quote.
-     * @param string|int $type Type to be used for determining kind of quoting to perform.
+     * @param int $type Type to be used for determining kind of quoting to perform.
      * @return string
      */
     public function quote($value, $type): string;

@@ -240,14 +240,16 @@ class ValuesExpression implements ExpressionInterface
 
                 $placeholder = $generator->placeholder('c');
                 $rowPlaceholders[] = $placeholder;
+                /** @psalm-suppress PossiblyNullArgument */
                 $generator->bind($placeholder, $value, $types[$column]);
             }
 
             $placeholders[] = implode(', ', $rowPlaceholders);
         }
 
-        if ($this->getQuery()) {
-            return ' ' . $this->getQuery()->sql($generator);
+        $query = $this->getQuery();
+        if ($query) {
+            return ' ' . $query->sql($generator);
         }
 
         return sprintf(' VALUES (%s)', implode('), (', $placeholders));
@@ -302,7 +304,7 @@ class ValuesExpression implements ExpressionInterface
 
         $columns = $this->_columnNames();
         foreach ($columns as $c) {
-            if (!is_scalar($c)) {
+            if (!is_string($c) && !is_int($c)) {
                 continue;
             }
             $types[$c] = $typeMap->type($c);

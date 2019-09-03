@@ -143,7 +143,7 @@ class QueryExpression implements ExpressionInterface, Countable
      *
      * @param string|\Cake\Database\ExpressionInterface $field Database field to be compared against value
      * @param mixed $value The value to be bound to $field for comparison
-     * @param string|null $type the type name for $value as configured using the Type map.
+     * @param string|array|null $type the type name for $value as configured using the Type map.
      * If it is suffixed with "[]" and the value is an array then multiple placeholders
      * will be created, one per each value in the array.
      * @return $this
@@ -423,10 +423,11 @@ class QueryExpression implements ExpressionInterface, Countable
     public function and_($conditions, $types = [])
     {
         if ($this->isCallable($conditions)) {
+            /** @var callable $conditions */
             return $conditions(new static([], $this->getTypeMap()->setTypes($types)));
         }
 
-        /** @var \Cake\Database\Expression\QueryExpression */
+        /** @var string|array|\Cake\Database\ExpressionInterface $conditions */
         return new static($conditions, $this->getTypeMap()->setTypes($types));
     }
 
@@ -442,10 +443,11 @@ class QueryExpression implements ExpressionInterface, Countable
     public function or_($conditions, $types = [])
     {
         if ($this->isCallable($conditions)) {
+            /** @var callable $conditions */
             return $conditions(new static([], $this->getTypeMap()->setTypes($types), 'OR'));
         }
 
-        /** @var \Cake\Database\Expression\QueryExpression */
+        /** @var string|array|\Cake\Database\ExpressionInterface $conditions */
         return new static($conditions, $this->getTypeMap()->setTypes($types), 'OR');
     }
 // phpcs:enable
@@ -736,7 +738,9 @@ class QueryExpression implements ExpressionInterface, Countable
         $typeMultiple = (is_string($type) && strpos($type, '[]') !== false);
         if (in_array($operator, ['in', 'not in']) || $typeMultiple) {
             $type = $type ?: 'string';
-            $type .= $typeMultiple ? null : '[]';
+            if (!$typeMultiple) {
+                $type .= '[]';
+            }
             $operator = $operator === '=' ? 'IN' : $operator;
             $operator = $operator === '!=' ? 'NOT IN' : $operator;
             $typeMultiple = true;
