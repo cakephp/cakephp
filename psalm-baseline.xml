@@ -342,16 +342,6 @@
       <code>$locale</code>
     </PossiblyNullArgument>
   </file>
-  <file src="src/ORM/BehaviorRegistry.php">
-    <MoreSpecificImplementedParamType occurrences="1">
-      <code>$class</code>
-    </MoreSpecificImplementedParamType>
-  </file>
-  <file src="src/ORM/Query.php">
-    <ImplementedReturnTypeMismatch occurrences="1">
-      <code>$this</code>
-    </ImplementedReturnTypeMismatch>
-  </file>
   <file src="src/Shell/Task/CommandTask.php">
     <DeprecatedClass occurrences="1">
       <code>Shell</code>
