@@ -762,7 +762,7 @@ class Connection implements ConnectionInterface
      * @param string|int|\Cake\Database\TypeInterface $type Type to be used for determining kind of quoting to perform
      * @return string Quoted value
      */
-    public function quote($value, $type): string
+    public function quote($value, $type = 'string'): string
     {
         [$value, $type] = $this->cast($value, $type);
 
