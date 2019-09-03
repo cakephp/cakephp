@@ -407,12 +407,6 @@
       <code>$table</code>
     </PossiblyNullArgument>
   </file>
-  <file src="src/Database/SqlDialectTrait.php">
-    <PossiblyInvalidArgument occurrences="2">
-      <code>$field</code>
-      <code>$field</code>
-    </PossiblyInvalidArgument>
-  </file>
   <file src="src/Database/Statement/BufferedStatement.php">
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$type</code>
