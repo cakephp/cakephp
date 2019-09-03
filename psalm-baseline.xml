@@ -423,21 +423,6 @@
       <code>$this</code>
     </ImplementedReturnTypeMismatch>
   </file>
-  <file src="src/Routing/Exception/DuplicateNamedRouteException.php">
-    <MissingParamType occurrences="1">
-      <code>$message</code>
-    </MissingParamType>
-  </file>
-  <file src="src/Routing/Exception/MissingControllerException.php">
-    <MissingParamType occurrences="1">
-      <code>$message</code>
-    </MissingParamType>
-  </file>
-  <file src="src/Routing/Exception/MissingRouteException.php">
-    <MissingParamType occurrences="1">
-      <code>$message</code>
-    </MissingParamType>
-  </file>
   <file src="src/Shell/Task/CommandTask.php">
     <DeprecatedClass occurrences="1">
       <code>Shell</code>
