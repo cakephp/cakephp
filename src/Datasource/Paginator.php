@@ -288,7 +288,7 @@ class Paginator implements PaginatorInterface
      * @param array $data Paginator data.
      * @return array Updated params.
      */
-    protected function addPageCountParams(array $params, array $data)
+    protected function addPageCountParams(array $params, array $data): array
     {
         $page = $params['page'];
         $pageCount = 0;
@@ -313,7 +313,7 @@ class Paginator implements PaginatorInterface
      * @param array $data Paginator data.
      * @return array Updated params.
      */
-    protected function addStartEndParams(array $params, array $data)
+    protected function addStartEndParams(array $params, array $data): array
     {
         $start = $end = 0;
 
@@ -335,7 +335,7 @@ class Paginator implements PaginatorInterface
      * @param array $data Paging data.
      * @return array Updated params.
      */
-    protected function addPrevNextParams(array $params, array $data)
+    protected function addPrevNextParams(array $params, array $data): array
     {
         $params['prevPage'] = $params['page'] > 1;
         if ($params['count'] === null) {
@@ -354,7 +354,7 @@ class Paginator implements PaginatorInterface
      * @param array $data Paging data.
      * @return array Updated params.
      */
-    protected function addSortingParams(array $params, array $data)
+    protected function addSortingParams(array $params, array $data): array
     {
         $defaults = $data['defaults'];
         $order = (array)$data['options']['order'];
