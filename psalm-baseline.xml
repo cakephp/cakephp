@@ -613,27 +613,4 @@
       <code>setAttributeNS</code>
     </PossiblyUndefinedMethod>
   </file>
-  <file src="src/Validation/Validation.php">
-    <InvalidArgument occurrences="1">
-      <code>$value</code>
-    </InvalidArgument>
-    <InvalidOperand occurrences="1">
-      <code>$check[$position]</code>
-    </InvalidOperand>
-    <PossiblyNullArgument occurrences="2">
-      <code>$check-&gt;getClientFilename()</code>
-      <code>$operator</code>
-    </PossiblyNullArgument>
-  </file>
-  <file src="src/Validation/ValidationRule.php">
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$this-&gt;_rule</code>
-    </PossiblyInvalidArgument>
-  </file>
-  <file src="src/Validation/Validator.php">
-    <PossiblyNullArgument occurrences="2">
-      <code>$this-&gt;getProvider($provider)</code>
-      <code>$this-&gt;getProvider($provider)</code>
-    </PossiblyNullArgument>
-  </file>
 </files>

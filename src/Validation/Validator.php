@@ -481,6 +481,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 return false;
             }
             foreach ($this->providers() as $provider) {
+                /** @psalm-suppress PossiblyNullArgument */
                 $validator->setProvider($provider, $this->getProvider($provider));
             }
             $errors = $validator->errors($value, $context['newRecord']);
@@ -523,6 +524,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 return false;
             }
             foreach ($this->providers() as $provider) {
+                /** @psalm-suppress PossiblyNullArgument */
                 $validator->setProvider($provider, $this->getProvider($provider));
             }
             $errors = [];
