@@ -283,6 +283,7 @@ class PaginatorComponent extends Component
      * @param mixed|null $value The value to set.
      * @param bool $merge Whether to recursively merge or overwrite existing config, defaults to true.
      * @return $this
+     * @psalm-suppress ImplementedReturnTypeMismatch
      */
     public function setConfig($key, $value = null, $merge = true)
     {
@@ -309,6 +310,7 @@ class PaginatorComponent extends Component
      * @param string|array $key The key to set, or a complete array of configs.
      * @param mixed|null $value The value to set.
      * @return $this
+     * @psalm-suppress ImplementedReturnTypeMismatch
      */
     public function configShallow($key, $value = null)
     {

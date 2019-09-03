@@ -95,44 +95,6 @@
       <code>$class</code>
     </MoreSpecificImplementedParamType>
   </file>
-  <file src="src/Controller/Component/PaginatorComponent.php">
-    <ImplementedReturnTypeMismatch occurrences="2">
-      <code>$this</code>
-      <code>$this</code>
-    </ImplementedReturnTypeMismatch>
-  </file>
-  <file src="src/Controller/Component/SecurityComponent.php">
-    <InvalidArgument occurrences="1">
-      <code>$lockedFields</code>
-    </InvalidArgument>
-    <InvalidScalarArgument occurrences="6">
-      <code>0</code>
-      <code>0</code>
-      <code>1</code>
-      <code>1</code>
-      <code>2</code>
-      <code>2</code>
-    </InvalidScalarArgument>
-    <PossiblyInvalidArgument occurrences="3">
-      <code>$data</code>
-      <code>$data</code>
-      <code>$controller-&gt;getRequest()-&gt;getData('_Token.debug')</code>
-    </PossiblyInvalidArgument>
-    <PossiblyNullArgument occurrences="3">
-      <code>$key</code>
-      <code>empty($params) ? null : $params</code>
-      <code>$stringKeyMessage</code>
-    </PossiblyNullArgument>
-    <PossiblyNullArrayOffset occurrences="2">
-      <code>$fields</code>
-      <code>$lockedFields</code>
-    </PossiblyNullArrayOffset>
-  </file>
-  <file src="src/Controller/ComponentRegistry.php">
-    <MoreSpecificImplementedParamType occurrences="1">
-      <code>$class</code>
-    </MoreSpecificImplementedParamType>
-  </file>
   <file src="src/Core/Configure/Engine/IniConfig.php">
     <LoopInvalidation occurrences="1">
       <code>$values</code>
