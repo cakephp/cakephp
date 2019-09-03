@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -27,7 +29,7 @@ class SimplePaginatorTest extends PaginatorTest
      */
     public $fixtures = [
         'core.Posts', 'core.Articles', 'core.ArticlesTags',
-        'core.Authors', 'core.AuthorsTags', 'core.Tags'
+        'core.Authors', 'core.AuthorsTags', 'core.Tags',
     ];
 
     /**
@@ -127,7 +129,7 @@ class SimplePaginatorTest extends PaginatorTest
         $settings = [
             'finder' => 'list',
             'conditions' => ['PaginatorPosts.published' => 'Y'],
-            'limit' => 2
+            'limit' => 2,
         ];
         $results = $this->Paginator->paginate($table, [], $settings);
 
@@ -158,7 +160,7 @@ class SimplePaginatorTest extends PaginatorTest
                 'finder' => 'published',
                 'fields' => ['id', 'title'],
                 'maxLimit' => 10,
-            ]
+            ],
         ];
 
         $this->loadFixtures('Posts');

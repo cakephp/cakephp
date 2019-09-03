@@ -16,12 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Datasource;
 
-use Cake\Core\Configure;
-use Cake\Datasource\ConnectionManager;
-use Cake\Datasource\EntityInterface;
-use Cake\Datasource\Exception\PageOutOfBoundsException;
-use Cake\Datasource\Paginator;
-use Cake\Datasource\RepositoryInterface;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 
@@ -36,7 +30,7 @@ class PaginatorTest extends TestCase
      */
     public $fixtures = [
         'core.Posts', 'core.Articles', 'core.ArticlesTags',
-        'core.Authors', 'core.AuthorsTags', 'core.Tags'
+        'core.Authors', 'core.AuthorsTags', 'core.Tags',
     ];
 
     /**
@@ -156,7 +150,7 @@ class PaginatorTest extends TestCase
                 'finder' => 'published',
                 'fields' => ['id', 'title'],
                 'maxLimit' => 10,
-            ]
+            ],
         ];
 
         $this->loadFixtures('Posts');

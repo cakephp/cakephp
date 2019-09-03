@@ -3246,9 +3246,9 @@ class PaginatorHelperTest extends TestCase
                         'sort' => null,
                         'direction' => null,
                         'limit' => null,
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ]);
 
         $view = new View($request);

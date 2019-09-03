@@ -2885,9 +2885,9 @@ class QueryTest extends TestCase
                         'OR' => [
                             $query->newExpr()->eq(new IdentifierExpression('c.name'), 'zap'),
                             'd.name' => 'baz',
-                            (new Query($this->connection))->select(['e.name'])->where(['e.name' => 'oof'])
-                        ]
-                    ]
+                            (new Query($this->connection))->select(['e.name'])->where(['e.name' => 'oof']),
+                        ],
+                    ],
                 ],
             ]);
 
