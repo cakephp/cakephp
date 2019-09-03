@@ -23,15 +23,6 @@ use Cake\ORM\Entity;
 
 trait PaginatorTestTrait
 {
-    /**
-     * fixtures property
-     *
-     * @var array
-     */
-    public $fixtures = [
-        'core.Posts', 'core.Articles', 'core.ArticlesTags',
-        'core.Authors', 'core.AuthorsTags', 'core.Tags'
-    ];
 
     /**
      * @var \Cake\Datasource\Paginator

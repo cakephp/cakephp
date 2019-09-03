@@ -49,7 +49,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @var array|string|null
      */
-    public $fixtures = null;
+    public $fixtures;
 
     /**
      * By default, all fixtures attached to this class will be truncated and reloaded after each test.
