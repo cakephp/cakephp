@@ -342,21 +342,6 @@
       <code>$locale</code>
     </PossiblyNullArgument>
   </file>
-  <file src="src/Log/Engine/ConsoleLog.php">
-    <MoreSpecificImplementedParamType occurrences="1">
-      <code>$level</code>
-    </MoreSpecificImplementedParamType>
-  </file>
-  <file src="src/Log/Engine/FileLog.php">
-    <MoreSpecificImplementedParamType occurrences="1">
-      <code>$level</code>
-    </MoreSpecificImplementedParamType>
-  </file>
-  <file src="src/Log/Engine/SyslogLog.php">
-    <MoreSpecificImplementedParamType occurrences="1">
-      <code>$level</code>
-    </MoreSpecificImplementedParamType>
-  </file>
   <file src="src/Mailer/Message.php">
     <PossiblyInvalidArgument occurrences="1">
       <code>env('HTTP_HOST')</code>
