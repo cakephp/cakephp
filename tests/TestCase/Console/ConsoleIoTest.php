@@ -33,6 +33,21 @@ class ConsoleIoTest extends TestCase
     protected $io;
 
     /**
+     * @var \Cake\Console\ConsoleOutput|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $out;
+
+    /**
+     * @var \Cake\Console\ConsoleOutput|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $err;
+
+    /**
+     * @var \Cake\Console\ConsoleInput|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $in;
+
+    /**
      * setUp method
      *
      * @return void
@@ -294,12 +309,16 @@ class ConsoleIoTest extends TestCase
             ->method('write')
             ->with('<error>Some error</error>', 1);
 
+        $this->expectException(StopException::class);
+        $this->expectExceptionCode(1);
+        $this->expectExceptionMessage('Some error');
+
         $this->io->abort('Some error');
     }
 
     /**
      * Tests abort() wrapper.
-
+     *
      * @return void
      */
     public function testAbortCustomCode()
@@ -311,6 +330,10 @@ class ConsoleIoTest extends TestCase
         $this->err->expects($this->at(0))
             ->method('write')
             ->with('<error>Some error</error>', 1);
+
+        $this->expectException(StopException::class);
+        $this->expectExceptionCode(99);
+        $this->expectExceptionMessage('Some error');
 
         $this->io->abort('Some error', 99);
     }
