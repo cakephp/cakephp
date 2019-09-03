@@ -280,7 +280,7 @@ class Route
      */
     public function compiled()
     {
-        return !empty($this->_compiledRoute);
+        return $this->_compiledRoute !== null;
     }
 
     /**
