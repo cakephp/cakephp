@@ -357,65 +357,16 @@
       <code>Shell</code>
     </DeprecatedClass>
   </file>
-  <file src="src/TestSuite/ConsoleIntegrationTestTrait.php">
-    <PossiblyInvalidPropertyAssignmentValue occurrences="1">
-      <code>$exception-&gt;getCode()</code>
-    </PossiblyInvalidPropertyAssignmentValue>
-    <PossiblyNullReference occurrences="8">
-      <code>messages</code>
-      <code>messages</code>
-      <code>messages</code>
-      <code>messages</code>
-      <code>messages</code>
-      <code>messages</code>
-      <code>messages</code>
-      <code>messages</code>
-    </PossiblyNullReference>
-    <PossiblyUndefinedMethod occurrences="8">
-      <code>messages</code>
-      <code>messages</code>
-      <code>messages</code>
-      <code>messages</code>
-      <code>messages</code>
-      <code>messages</code>
-      <code>messages</code>
-      <code>messages</code>
-    </PossiblyUndefinedMethod>
-  </file>
-  <file src="src/TestSuite/Constraint/Console/ContentsContainRow.php">
-    <MoreSpecificImplementedParamType occurrences="1">
-      <code>$other</code>
-    </MoreSpecificImplementedParamType>
-  </file>
   <file src="src/TestSuite/Constraint/EventFired.php">
     <InternalClass occurrences="1"/>
-    <PossiblyNullReference occurrences="1">
-      <code>hasEvent</code>
-    </PossiblyNullReference>
   </file>
   <file src="src/TestSuite/Constraint/EventFiredWith.php">
     <InternalClass occurrences="2"/>
-    <PossiblyNullArgument occurrences="1">
-      <code>$list</code>
-    </PossiblyNullArgument>
-    <PossiblyNullPropertyAssignmentValue occurrences="1">
-      <code>$dataValue</code>
-    </PossiblyNullPropertyAssignmentValue>
-  </file>
-  <file src="src/TestSuite/Constraint/Response/FileSentAs.php">
-    <PossiblyNullReference occurrences="1">
-      <code>getPathName</code>
-    </PossiblyNullReference>
   </file>
   <file src="src/TestSuite/Constraint/Response/ResponseBase.php">
     <InternalClass occurrences="1">
       <code>new AssertionFailedError('No response set, cannot assert content.')</code>
     </InternalClass>
-  </file>
-  <file src="src/TestSuite/Constraint/Response/StatusCodeBase.php">
-    <MoreSpecificImplementedParamType occurrences="1">
-      <code>$other</code>
-    </MoreSpecificImplementedParamType>
   </file>
   <file src="src/TestSuite/Constraint/Session/FlashParamEquals.php">
     <InternalClass occurrences="1">
@@ -431,70 +382,12 @@
     <DeprecatedInterface occurrences="1">
       <code>FixtureInjector</code>
     </DeprecatedInterface>
-    <NoInterfaceProperties occurrences="1">
-      <code>$test-&gt;fixtureManager</code>
-    </NoInterfaceProperties>
-  </file>
-  <file src="src/TestSuite/IntegrationTestTrait.php">
-    <InvalidCatch occurrences="1"/>
-    <InvalidThrow occurrences="8">
-      <code>\PHPUnit\Exception|\Throwable</code>
-      <code>\PHPUnit\Exception|\Throwable</code>
-      <code>\PHPUnit\Exception|\Throwable</code>
-      <code>\PHPUnit\Exception|\Throwable</code>
-      <code>\PHPUnit\Exception|\Throwable</code>
-      <code>\PHPUnit\Exception|\Throwable</code>
-      <code>\PHPUnit\Exception|\Throwable</code>
-      <code>\PHPUnit\Exception|\Throwable</code>
-    </InvalidThrow>
-    <PossiblyInvalidArgument occurrences="2">
-      <code>$data</code>
-      <code>$encrypt</code>
-    </PossiblyInvalidArgument>
-    <PossiblyInvalidPropertyAssignmentValue occurrences="1">
-      <code>$controller-&gt;getRequest()-&gt;getSession()-&gt;read('Flash')</code>
-    </PossiblyInvalidPropertyAssignmentValue>
-    <PossiblyNullArgument occurrences="10">
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_viewName</code>
-      <code>$this-&gt;_layoutName</code>
-    </PossiblyNullArgument>
   </file>
   <file src="src/TestSuite/LegacyShellDispatcher.php">
     <DeprecatedClass occurrences="2">
       <code>ShellDispatcher</code>
       <code>parent::__construct($args, $bootstrap)</code>
     </DeprecatedClass>
-    <PossiblyNullPropertyAssignmentValue occurrences="1">
-      <code>$io</code>
-    </PossiblyNullPropertyAssignmentValue>
-  </file>
-  <file src="src/TestSuite/TestCase.php">
-    <PossiblyFalseArgument occurrences="1">
-      <code>$tag</code>
-    </PossiblyFalseArgument>
-    <PossiblyInvalidArgument occurrences="2">
-      <code>$mock</code>
-      <code>$mock</code>
-    </PossiblyInvalidArgument>
-    <PossiblyNullArgument occurrences="3">
-      <code>$prefix[0]</code>
-      <code>$prefix[1]</code>
-      <code>$expression</code>
-    </PossiblyNullArgument>
-    <PossiblyUndefinedMethod occurrences="4">
-      <code>getEntityClass</code>
-      <code>setEntityClass</code>
-      <code>getTable</code>
-      <code>setTable</code>
-    </PossiblyUndefinedMethod>
   </file>
   <file src="src/TestSuite/TestSuite.php">
     <InternalClass occurrences="1">
