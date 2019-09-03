@@ -342,16 +342,6 @@
       <code>$locale</code>
     </PossiblyNullArgument>
   </file>
-  <file src="src/Network/Socket.php">
-    <InvalidArgument occurrences="1">
-      <code>[$this, '_connectionErrorHandler']</code>
-    </InvalidArgument>
-    <PossiblyNullArgument occurrences="3">
-      <code>$this-&gt;connection</code>
-      <code>$this-&gt;connection</code>
-      <code>$this-&gt;connection</code>
-    </PossiblyNullArgument>
-  </file>
   <file src="src/ORM/BehaviorRegistry.php">
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$class</code>
