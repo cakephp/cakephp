@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Database;
 
 use Cake\Database\Expression\Comparison;
+use Cake\Database\Expression\IdentifierExpression;
 use RuntimeException;
 
 /**

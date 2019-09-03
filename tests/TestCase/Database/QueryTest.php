@@ -2874,7 +2874,8 @@ class QueryTest extends TestCase
         $query = new Query($this->connection);
 
         $query
-            ->delete('authors')
+            ->delete()
+            ->from(['a' => 'authors'])
             ->where([
                 'OR' => [
                     'a.id' => 1,
