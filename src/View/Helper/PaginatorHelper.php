@@ -715,7 +715,7 @@ class PaginatorHelper extends Helper
      * @return string Counter string.
      * @link https://book.cakephp.org/3.0/en/views/helpers/paginator.html#creating-a-page-counter
      */
-    public function counter(string $format, array $options = []): string
+    public function counter(string $format = 'pages', array $options = []): string
     {
         $options += [
             'model' => $this->defaultModel(),

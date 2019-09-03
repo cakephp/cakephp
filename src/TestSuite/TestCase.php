@@ -164,6 +164,7 @@ abstract class TestCase extends BaseTestCase
         $this->getTableLocator()->clear();
         $this->_configure = [];
         $this->_tableLocator = null;
+        $this->fixtureManager = null;
     }
 
     /**

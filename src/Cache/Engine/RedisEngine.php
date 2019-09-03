@@ -257,7 +257,7 @@ class RedisEngine extends CacheEngine
      * @param string $key Identifier for the data.
      * @param mixed $value Data to be cached.
      * @return bool True if the data was successfully cached, false on failure.
-     * @link https://github.com/phpredis/phpredis#setnx
+     * @link https://github.com/phpredis/phpredis#set
      */
     public function add(string $key, $value): bool
     {
@@ -265,9 +265,8 @@ class RedisEngine extends CacheEngine
         $key = $this->_key($key);
         $value = $this->serialize($value);
 
-        // setNx() doesn't have an expiry option, so follow up with an expiry
-        if ($this->_Redis->setNx($key, $value)) {
-            return $this->_Redis->expire($key, $duration);
+        if ($this->_Redis->set($key, $value, ['nx', 'ex' => $duration])) {
+            return true;
         }
 
         return false;

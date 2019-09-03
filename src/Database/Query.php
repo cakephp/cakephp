@@ -1536,7 +1536,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * ### Example
      *
      * ```
-     * $query->newExp()->lte('count', $query->identifier('total'));
+     * $query->newExpr()->lte('count', $query->identifier('total'));
      * ```
      *
      * @param string $identifier The identifier for an expression

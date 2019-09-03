@@ -100,7 +100,6 @@ class FixtureManager
         if (empty($test->fixtures) || !empty($this->_processed[get_class($test)])) {
             return;
         }
-
         $this->_loadFixtures($test);
         $this->_processed[get_class($test)] = true;
     }
