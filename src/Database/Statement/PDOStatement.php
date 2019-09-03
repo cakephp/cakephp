@@ -112,7 +112,10 @@ class PDOStatement extends StatementDecorator
         }
 
         if (!is_int($type)) {
-            throw new Exception('Fetch type for PDOStatement must be an integer');
+            throw new Exception(sprintf(
+                'Fetch type for PDOStatement must be an integer, found `%s` instead',
+                getTypeName($type)
+            ));
         }
 
         return $this->_statement->fetch($type);
@@ -146,7 +149,10 @@ class PDOStatement extends StatementDecorator
         }
 
         if (!is_int($type)) {
-            throw new Exception('Fetch type for PDOStatement must be an integer');
+            throw new Exception(sprintf(
+                'Fetch type for PDOStatement must be an integer, found `%s` instead',
+                getTypeName($type)
+            ));
         }
 
         return $this->_statement->fetchAll($type);
