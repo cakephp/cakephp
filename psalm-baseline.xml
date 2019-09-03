@@ -117,23 +117,6 @@
       <code>env('SCRIPT_FILENAME')</code>
     </InvalidScalarArgument>
   </file>
-  <file src="src/Error/BaseErrorHandler.php">
-    <PossiblyNullArgument occurrences="3">
-      <code>$file</code>
-      <code>$line</code>
-      <code>$file</code>
-    </PossiblyNullArgument>
-  </file>
-  <file src="src/Error/Debugger.php">
-    <PossiblyNullArgument occurrences="1">
-      <code>$key</code>
-    </PossiblyNullArgument>
-    <PossiblyNullOperand occurrences="3">
-      <code>$break</code>
-      <code>$break</code>
-      <code>$end</code>
-    </PossiblyNullOperand>
-  </file>
   <file src="src/Http/Client/Adapter/Curl.php">
     <InvalidScalarArgument occurrences="1">
       <code>$body</code>

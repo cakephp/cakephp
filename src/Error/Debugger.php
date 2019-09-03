@@ -186,6 +186,10 @@ class Debugger
      */
     public static function configInstance($key = null, $value = null, bool $merge = true)
     {
+        if ($key === null) {
+            return static::getInstance()->getConfig($key);
+        }
+
         if (is_array($key) || func_num_args() >= 2) {
             return static::getInstance()->setConfig($key, $value, $merge);
         }
@@ -550,7 +554,7 @@ class Debugger
     protected static function _array(array $var, int $depth, int $indent): string
     {
         $out = '[';
-        $break = $end = null;
+        $break = $end = '';
         if (!empty($var)) {
             $break = "\n" . str_repeat("\t", $indent);
             $end = "\n" . str_repeat("\t", $indent - 1);
