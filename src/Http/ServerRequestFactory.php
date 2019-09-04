@@ -78,7 +78,7 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
             'webroot' => $uri->webroot,
             'base' => $uri->base,
             'session' => $session,
-            'mergeFilesAsObjects' => Configure::read('App.uploadedFilesAsObjects', false),
+            'mergeFilesAsObjects' => Configure::read('App.uploadedFilesAsObjects', true),
         ]);
 
         return $request;
