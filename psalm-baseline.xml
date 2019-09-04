@@ -95,28 +95,6 @@
       <code>$class</code>
     </MoreSpecificImplementedParamType>
   </file>
-  <file src="src/Core/Configure/Engine/IniConfig.php">
-    <LoopInvalidation occurrences="1">
-      <code>$values</code>
-    </LoopInvalidation>
-  </file>
-  <file src="src/Core/StaticConfigTrait.php">
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$key</code>
-    </PossiblyInvalidArgument>
-    <UndefinedPropertyFetch occurrences="1">
-      <code>static::$_registry</code>
-    </UndefinedPropertyFetch>
-  </file>
-  <file src="src/Core/functions.php">
-    <InvalidScalarArgument occurrences="5">
-      <code>$name</code>
-      <code>$name</code>
-      <code>$filename</code>
-      <code>env('DOCUMENT_ROOT')</code>
-      <code>env('SCRIPT_FILENAME')</code>
-    </InvalidScalarArgument>
-  </file>
   <file src="src/Http/Cookie/CookieCollection.php">
     <InvalidScalarArgument occurrences="1">
       <code>$cookie['value']</code>
