@@ -1,32 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="3.4.12@86e5e50c1bb492045e70f2ebe1da3cad06e4e9b2">
-  <file src="src/Cache/Cache.php">
-    <PossiblyInvalidArgument occurrences="2">
-      <code>$config</code>
-      <code>$config</code>
-    </PossiblyInvalidArgument>
-    <PossiblyInvalidOperand occurrences="1">
-      <code>$config</code>
-    </PossiblyInvalidOperand>
-  </file>
-  <file src="src/Cache/Engine/FileEngine.php">
-    <PossiblyInvalidOperand occurrences="1">
-      <code>$this-&gt;_File-&gt;current()</code>
-    </PossiblyInvalidOperand>
-    <PossiblyNullReference occurrences="6">
-      <code>flock</code>
-      <code>rewind</code>
-      <code>flock</code>
-      <code>rewind</code>
-      <code>getRealPath</code>
-      <code>close</code>
-    </PossiblyNullReference>
-  </file>
-  <file src="src/Cache/Engine/WincacheEngine.php">
-    <NullArgument occurrences="1">
-      <code>$success</code>
-    </NullArgument>
-  </file>
   <file src="src/Collection/CollectionTrait.php">
     <PossiblyInvalidArgument occurrences="2">
       <code>$dir</code>
