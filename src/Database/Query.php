@@ -1664,8 +1664,8 @@ class Query implements ExpressionInterface, IteratorAggregate
             return $this;
         }
 
-        if (is_string($types) && is_string($key)) {
-            $types = [$key => $types];
+        if (!is_string($types)) {
+            $types = null;
         }
         /** @psalm-suppress PossiblyInvalidArgument */
         $this->_parts['set']->eq($key, $value, $types);

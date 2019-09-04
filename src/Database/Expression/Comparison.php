@@ -72,15 +72,12 @@ class Comparison implements ExpressionInterface, FieldInterface
      *
      * @param string|\Cake\Database\ExpressionInterface $field the field name to compare to a value
      * @param mixed $value The value to be used in comparison
-     * @param string|array|null $type the type name used to cast the value
+     * @param string|null $type the type name used to cast the value
      * @param string $operator the operator used for comparing field and value
      */
-    public function __construct($field, $value, $type = null, string $operator = '=')
+    public function __construct($field, $value, ?string $type = null, string $operator = '=')
     {
-        if (is_string($type)) {
-            $this->_type = $type;
-        }
-
+        $this->_type = $type;
         $this->setField($field);
         $this->setValue($value);
         $this->_operator = $operator;
