@@ -216,7 +216,7 @@ class HtmlHelper extends Helper
         }
 
         $options += $type + ['block' => null];
-        $out = null;
+        $out = '';
 
         if (isset($options['link'])) {
             $options['link'] = $this->Url->assetUrl($options['link']);
@@ -393,7 +393,7 @@ class HtmlHelper extends Helper
         if (is_array($path)) {
             $out = '';
             foreach ($path as $i) {
-                $out .= "\n\t" . $this->css($i, $options);
+                $out .= "\n\t" . (string)$this->css($i, $options);
             }
             if (empty($options['block'])) {
                 return $out . "\n";
@@ -489,7 +489,7 @@ class HtmlHelper extends Helper
         if (is_array($url)) {
             $out = '';
             foreach ($url as $i) {
-                $out .= "\n\t" . $this->script($i, $options);
+                $out .= "\n\t" . (string)$this->script($i, $options);
             }
             if (empty($options['block'])) {
                 return $out . "\n";
@@ -748,7 +748,7 @@ class HtmlHelper extends Helper
         bool $useCount = false,
         bool $continueOddEven = true
     ): string {
-        if (empty($data[0]) || !is_array($data[0])) {
+        if (is_string($data) || empty($data[0]) || !is_array($data[0])) {
             $data = [$data];
         }
 

@@ -3021,9 +3021,9 @@ class PaginatorHelperTest extends TestCase
                 'pageCount' => 1,
             ],
         ]));
-        $this->assertFalse($this->Paginator->numbers());
-        $this->assertFalse($this->Paginator->first());
-        $this->assertFalse($this->Paginator->last());
+        $this->assertSame('', $this->Paginator->numbers());
+        $this->assertSame('', $this->Paginator->first());
+        $this->assertSame('', $this->Paginator->last());
     }
 
     /**
@@ -3255,16 +3255,16 @@ class PaginatorHelperTest extends TestCase
         $paginator = new PaginatorHelper($view);
 
         $result = $paginator->first();
-        $this->assertFalse($result);
+        $this->assertSame('', $result);
 
         $result = $paginator->last();
-        $this->assertFalse($result);
+        $this->assertSame('', $result);
 
         // Using below methods when SimplePaginator is used makes no practical sense.
         // The asserts are just to ensure they return a reasonable value.
 
         $result = $paginator->numbers();
-        $this->assertFalse($result);
+        $this->assertSame('', $result);
 
         $result = $paginator->hasNext();
         $this->assertTrue($result);

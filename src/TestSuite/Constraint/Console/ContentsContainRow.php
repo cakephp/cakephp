@@ -27,6 +27,7 @@ class ContentsContainRow extends ContentsRegExp
      *
      * @param array $other Row
      * @return bool
+     * @psalm-suppress MoreSpecificImplementedParamType
      */
     public function matches($other): bool
     {

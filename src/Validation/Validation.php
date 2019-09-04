@@ -810,13 +810,17 @@ class Validation
     public static function extension($check, array $extensions = ['gif', 'jpeg', 'png', 'jpg']): bool
     {
         if ($check instanceof UploadedFileInterface) {
-            return static::extension($check->getClientFilename(), $extensions);
+            $check = $check->getClientFilename();
+        } elseif (is_array($check) && isset($check['name'])) {
+            $check = $check['name'];
+        } elseif (is_array($check)) {
+            return static::extension(array_shift($check), $extensions);
         }
-        if (is_array($check)) {
-            $check = $check['name'] ?? array_shift($check);
 
-            return static::extension($check, $extensions);
+        if (empty($check)) {
+            return false;
         }
+
         $extension = strtolower(pathinfo($check, PATHINFO_EXTENSION));
         foreach ($extensions as $value) {
             if ($extension === strtolower($value)) {
@@ -1142,7 +1146,7 @@ class Validation
         $length = strlen($check);
 
         for ($position = 1 - ($length % 2); $position < $length; $position += 2) {
-            $sum += $check[$position];
+            $sum += (int)$check[$position];
         }
 
         for ($position = $length % 2; $position < $length; $position += 2) {
@@ -1237,11 +1241,11 @@ class Validation
      * reported by the client.
      *
      * @param string|array|\Psr\Http\Message\UploadedFileInterface $check Value to check.
-     * @param string|null $operator See `Validation::comparison()`.
-     * @param int|string|null $size Size in bytes or human readable string like '5MB'.
+     * @param string $operator See `Validation::comparison()`.
+     * @param int|string $size Size in bytes or human readable string like '5MB'.
      * @return bool Success
      */
-    public static function fileSize($check, ?string $operator = null, $size = null): bool
+    public static function fileSize($check, string $operator, $size): bool
     {
         $file = static::getFilename($check);
         if ($file === false) {
@@ -1568,6 +1572,7 @@ class Validation
             return true;
         }
 
+        /** @var string $value */
         return (bool)preg_match('/^-?[0-9]+$/', $value);
     }
 

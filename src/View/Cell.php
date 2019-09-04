@@ -107,14 +107,14 @@ abstract class Cell implements EventDispatcherInterface
     /**
      * Constructor.
      *
-     * @param \Cake\Http\ServerRequest|null $request The request to use in the cell.
-     * @param \Cake\Http\Response|null $response The response to use in the cell.
-     * @param \Cake\Event\EventManagerInterface|null $eventManager The eventManager to bind events to.
+     * @param \Cake\Http\ServerRequest $request The request to use in the cell.
+     * @param \Cake\Http\Response $response The response to use in the cell.
+     * @param \Cake\Event\EventManagerInterface $eventManager The eventManager to bind events to.
      * @param array $cellOptions Cell options to apply.
      */
     public function __construct(
-        ?ServerRequest $request = null,
-        ?Response $response = null,
+        ServerRequest $request,
+        Response $response,
         ?EventManagerInterface $eventManager = null,
         array $cellOptions = []
     ) {
@@ -186,6 +186,7 @@ abstract class Cell implements EventDispatcherInterface
 
             $className = static::class;
             $namePrefix = '\View\Cell\\';
+            /** @psalm-suppress PossiblyFalseOperand */
             $name = substr($className, strpos($className, $namePrefix) + strlen($namePrefix));
             $name = substr($name, 0, -4);
             if (!$builder->getTemplatePath()) {
@@ -242,6 +243,7 @@ abstract class Cell implements EventDispatcherInterface
             return $default;
         }
 
+        /** @psalm-suppress PossiblyFalseOperand */
         return $this->_cache + $default;
     }
 

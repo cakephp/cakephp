@@ -154,6 +154,7 @@ abstract class BaseErrorHandler
         $this->_handled = true;
         [$error, $log] = static::mapErrorCode($code);
         if ($log === LOG_ERR) {
+            /** @psalm-suppress PossiblyNullArgument */
             return $this->handleFatalError($code, $description, $file, $line);
         }
         $data = [
@@ -170,7 +171,7 @@ abstract class BaseErrorHandler
             $data += [
                 'context' => $context,
                 'start' => 3,
-                'path' => Debugger::trimPath($file),
+                'path' => Debugger::trimPath((string)$file),
             ];
         }
         $this->_displayError($data, $debug);

@@ -66,21 +66,21 @@ trait ConsoleIntegrationTestTrait
     /**
      * Console output stub
      *
-     * @var \Cake\TestSuite\Stub\ConsoleOutput|\PHPUnit\Framework\MockObject\MockObject|null
+     * @var \Cake\TestSuite\Stub\ConsoleOutput
      */
     protected $_out;
 
     /**
      * Console error output stub
      *
-     * @var \Cake\TestSuite\Stub\ConsoleOutput|\PHPUnit\Framework\MockObject\MockObject|null
+     * @var \Cake\TestSuite\Stub\ConsoleOutput
      */
     protected $_err;
 
     /**
      * Console input mock
      *
-     * @var \Cake\Console\ConsoleInput|\PHPUnit\Framework\MockObject\MockObject|null
+     * @var \Cake\Console\ConsoleInput
      */
     protected $_in;
 
@@ -105,6 +105,7 @@ trait ConsoleIntegrationTestTrait
         try {
             $this->_exitCode = $runner->run($args, $io);
         } catch (StopException $exception) {
+            /** @var int $this->_exitCode */
             $this->_exitCode = $exception->getCode();
         }
     }
@@ -114,6 +115,7 @@ trait ConsoleIntegrationTestTrait
      *
      * @after
      * @return void
+     * @psalm-suppress PossiblyNullPropertyAssignmentValue
      */
     public function cleanupConsoleTrait(): void
     {

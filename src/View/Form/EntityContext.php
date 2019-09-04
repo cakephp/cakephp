@@ -137,6 +137,7 @@ class EntityContext implements ContextInterface
         if (empty($table)) {
             if (is_iterable($entity)) {
                 foreach ($entity as $e) {
+                    /** @psalm-suppress LoopInvalidation */
                     $entity = $e;
                     break;
                 }
@@ -213,6 +214,7 @@ class EntityContext implements ContextInterface
         $entity = $this->_context['entity'];
         if (is_iterable($entity)) {
             foreach ($entity as $e) {
+                /** @psalm-suppress LoopInvalidation */
                 $entity = $e;
                 break;
             }
@@ -581,6 +583,7 @@ class EntityContext implements ContextInterface
         $entity = $this->entity($parts) ?: null;
 
         if (isset($this->_validator[$key])) {
+            /** @psalm-suppress PossiblyInvalidArgument */
             $this->_validator[$key]->setProvider('entity', $entity);
 
             return $this->_validator[$key];
@@ -600,6 +603,7 @@ class EntityContext implements ContextInterface
         }
 
         $validator = $table->getValidator($method);
+        /** @psalm-suppress PossiblyInvalidArgument */
         $validator->setProvider('entity', $entity);
 
         return $this->_validator[$key] = $validator;
@@ -656,6 +660,7 @@ class EntityContext implements ContextInterface
                 return null;
             }
 
+            /** @var \Cake\ORM\Association $assoc  */
             $table = $assoc->getTarget();
         }
 
