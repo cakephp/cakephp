@@ -118,7 +118,7 @@ class Number
     {
         $options += ['multiply' => false];
         if ($options['multiply']) {
-            $value *= 100;
+            $value = (float)$value * 100;
         }
 
         return static::precision($value, $precision, $options) . '%';
@@ -234,10 +234,15 @@ class Number
             return static::format($value, ['precision' => 0, $pos => $options['fractionSymbol']]);
         }
 
-        $before = $options['before'] ?? null;
-        $after = $options['after'] ?? null;
+        $before = $options['before'] ?? '';
+        $after = $options['after'] ?? '';
+        if ($currency) {
+            $value = $formatter->formatCurrency($value, $currency);
+        } else {
+            $formatter->format($value, NumberFormatter::TYPE_CURRENCY);
+        }
 
-        return $before . $formatter->formatCurrency($value, $currency) . $after;
+        return $before . $value . $after;
     }
 
     /**
