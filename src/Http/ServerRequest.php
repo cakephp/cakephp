@@ -218,6 +218,13 @@ class ServerRequest implements ServerRequestInterface
     protected $requestTarget;
 
     /**
+     * Whether to merge file uploads as objects (`true`) or arrays (`false`).
+     *
+     * @var bool
+     */
+    protected $mergeFilesAsObjects = false;
+
+    /**
      * Create a new request object.
      *
      * You can supply the data as either an array or as a string. If you use
@@ -236,6 +243,7 @@ class ServerRequest implements ServerRequestInterface
      * - `input` The data that would come from php://input this is useful for simulating
      *   requests with put, patch or delete data.
      * - `session` An instance of a Session object
+     * - `mergeFilesAsObjects` Whether to merge file uploads as objects (`true`) or arrays (`false`).
      *
      * @param array $config An array of request data to create a request with.
      */
@@ -253,6 +261,7 @@ class ServerRequest implements ServerRequestInterface
             'base' => '',
             'webroot' => '',
             'input' => null,
+            'mergeFilesAsObjects' => false,
         ];
 
         $this->_setConfig($config);
@@ -314,6 +323,8 @@ class ServerRequest implements ServerRequestInterface
             $stream = new PhpInputStream();
         }
         $this->stream = $stream;
+
+        $this->mergeFilesAsObjects = $config['mergeFilesAsObjects'];
 
         $config['post'] = $this->_processPost($config['post']);
         $this->data = $this->_processFiles($config['post'], $config['files']);
@@ -382,12 +393,12 @@ class ServerRequest implements ServerRequestInterface
      * Process uploaded files and move things onto the post data.
      *
      * @param mixed $post Post data to merge files onto.
-     * @param array $files Uploaded files to merge in.
+     * @param mixed $files Uploaded files to merge in.
      * @return array merged post + file data.
      */
-    protected function _processFiles($post, array $files)
+    protected function _processFiles($post, $files)
     {
-        if (!is_array($post)) {
+        if (!is_array($post) || !is_array($files) || empty($files)) {
             return $post;
         }
 
@@ -409,6 +420,10 @@ class ServerRequest implements ServerRequestInterface
             ));
         }
         $this->uploadedFiles = $fileData;
+
+        if ($this->mergeFilesAsObjects) {
+            return Hash::merge($post, $fileData);
+        }
 
         // Make a flat map that can be inserted into $post for BC.
         $fileMap = Hash::flatten($fileData);
