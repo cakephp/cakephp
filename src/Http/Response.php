@@ -1049,7 +1049,7 @@ class Response implements ResponseInterface
      */
     public function withEtag(string $hash, bool $weak = false)
     {
-        $hash = sprintf('%s"%s"', $weak ? 'W/' : null, $hash);
+        $hash = sprintf('%s"%s"', $weak ? 'W/' : '', $hash);
 
         return $this->withHeader('Etag', $hash);
     }
@@ -1085,7 +1085,7 @@ class Response implements ResponseInterface
     {
         $compressionEnabled = ini_get('zlib.output_compression') !== '1' &&
             extension_loaded('zlib') &&
-            (strpos(env('HTTP_ACCEPT_ENCODING'), 'gzip') !== false);
+            (strpos((string)env('HTTP_ACCEPT_ENCODING'), 'gzip') !== false);
 
         return $compressionEnabled && ob_start('ob_gzhandler');
     }
@@ -1097,7 +1097,7 @@ class Response implements ResponseInterface
      */
     public function outputCompressed(): bool
     {
-        return strpos(env('HTTP_ACCEPT_ENCODING'), 'gzip') !== false
+        return strpos((string)env('HTTP_ACCEPT_ENCODING'), 'gzip') !== false
             && (ini_get('zlib.output_compression') === '1' || in_array('ob_gzhandler', ob_list_handlers(), true));
     }
 
@@ -1428,7 +1428,7 @@ class Response implements ResponseInterface
 
         $fileSize = $file->getSize();
         if ($options['download']) {
-            $agent = env('HTTP_USER_AGENT');
+            $agent = (string)env('HTTP_USER_AGENT');
 
             if ($agent && preg_match('%Opera(/| )([0-9].[0-9]{1,2})%', $agent)) {
                 $contentType = 'application/octet-stream';
@@ -1445,8 +1445,8 @@ class Response implements ResponseInterface
         }
 
         $new = $new->withHeader('Accept-Ranges', 'bytes');
-        $httpRange = env('HTTP_RANGE');
-        if (isset($httpRange)) {
+        $httpRange = (string)env('HTTP_RANGE');
+        if ($httpRange) {
             $new->_fileRange($file, $httpRange);
         } else {
             $new = $new->withHeader('Content-Length', (string)$fileSize);
@@ -1530,7 +1530,7 @@ class Response implements ResponseInterface
         }
 
         if ($start === '') {
-            $start = $fileSize - $end;
+            $start = $fileSize - (int)$end;
             $end = $lastByte;
         }
         if ($end === '') {
@@ -1544,6 +1544,7 @@ class Response implements ResponseInterface
             return;
         }
 
+        /** @psalm-suppress PossiblyInvalidOperand */
         $this->_setHeader('Content-Length', (string)($end - $start + 1));
         $this->_setHeader('Content-Range', 'bytes ' . $start . '-' . $end . '/' . $fileSize);
         $this->_setStatus(206);

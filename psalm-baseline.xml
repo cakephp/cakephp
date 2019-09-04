@@ -117,62 +117,10 @@
       <code>env('SCRIPT_FILENAME')</code>
     </InvalidScalarArgument>
   </file>
-  <file src="src/Http/Client/Adapter/Curl.php">
-    <InvalidScalarArgument occurrences="1">
-      <code>$body</code>
-    </InvalidScalarArgument>
-  </file>
-  <file src="src/Http/Client/Adapter/Stream.php">
-    <InvalidOperand occurrences="1">
-      <code>$indexes[$i + 1]</code>
-    </InvalidOperand>
-    <PossiblyNullArgument occurrences="2">
-      <code>$this-&gt;_stream</code>
-      <code>$this-&gt;_context</code>
-    </PossiblyNullArgument>
-  </file>
-  <file src="src/Http/Client/Auth/Digest.php">
-    <PossiblyNullOperand occurrences="1">
-      <code>$nc</code>
-    </PossiblyNullOperand>
-  </file>
-  <file src="src/Http/Client/FormData.php">
-    <PossiblyInvalidArgument occurrences="3">
-      <code>$name</code>
-      <code>$name</code>
-      <code>$name</code>
-    </PossiblyInvalidArgument>
-  </file>
-  <file src="src/Http/ControllerFactory.php">
-    <PossiblyNullArgument occurrences="1">
-      <code>$className</code>
-    </PossiblyNullArgument>
-  </file>
-  <file src="src/Http/Cookie/Cookie.php">
-    <PossiblyInvalidArgument occurrences="11">
-      <code>$this-&gt;value</code>
-      <code>$value</code>
-      <code>$this-&gt;value</code>
-      <code>$this-&gt;value</code>
-      <code>$this-&gt;value</code>
-      <code>$new-&gt;value</code>
-      <code>$new-&gt;value</code>
-      <code>$new-&gt;value</code>
-      <code>$new-&gt;value</code>
-      <code>$this-&gt;value</code>
-      <code>$this-&gt;value</code>
-    </PossiblyInvalidArgument>
-  </file>
   <file src="src/Http/Cookie/CookieCollection.php">
-    <InvalidOperand occurrences="1">
-      <code>$cookie['max-age']</code>
-    </InvalidOperand>
     <InvalidScalarArgument occurrences="1">
       <code>$cookie['value']</code>
     </InvalidScalarArgument>
-    <PossiblyFalseArgument occurrences="1">
-      <code>$name</code>
-    </PossiblyFalseArgument>
     <PossiblyInvalidArgument occurrences="5">
       <code>$cookie['expires']</code>
       <code>$cookie['path']</code>
@@ -180,60 +128,6 @@
       <code>$cookie['secure']</code>
       <code>$cookie['httponly']</code>
     </PossiblyInvalidArgument>
-  </file>
-  <file src="src/Http/Response.php">
-    <PossiblyInvalidArgument occurrences="5">
-      <code>env('HTTP_ACCEPT_ENCODING')</code>
-      <code>env('HTTP_ACCEPT_ENCODING')</code>
-      <code>$agent</code>
-      <code>$agent</code>
-      <code>$httpRange</code>
-    </PossiblyInvalidArgument>
-    <PossiblyInvalidOperand occurrences="3">
-      <code>$end</code>
-      <code>$end</code>
-      <code>$start</code>
-    </PossiblyInvalidOperand>
-    <PossiblyNullArgument occurrences="1">
-      <code>$weak ? 'W/' : null</code>
-    </PossiblyNullArgument>
-  </file>
-  <file src="src/Http/ServerRequest.php">
-    <LessSpecificImplementedReturnType occurrences="2">
-      <code>array</code>
-      <code>array</code>
-    </LessSpecificImplementedReturnType>
-    <MoreSpecificImplementedParamType occurrences="2">
-      <code>$data</code>
-      <code>$target</code>
-    </MoreSpecificImplementedParamType>
-    <PossiblyInvalidArgument occurrences="4">
-      <code>$detect</code>
-      <code>$detect</code>
-      <code>$detect</code>
-      <code>$detect</code>
-    </PossiblyInvalidArgument>
-    <PossiblyNullArgument occurrences="8">
-      <code>$this-&gt;getEnv('HTTP_X_FORWARDED_FOR')</code>
-      <code>$this-&gt;getEnv($detect['env'])</code>
-      <code>$this-&gt;getEnv($detect['env'])</code>
-      <code>$this-&gt;host()</code>
-      <code>$this-&gt;host()</code>
-      <code>$this-&gt;data</code>
-      <code>$copy-&gt;data</code>
-      <code>$copy-&gt;data</code>
-    </PossiblyNullArgument>
-    <PossiblyNullOperand occurrences="1">
-      <code>$uri-&gt;getPort()</code>
-    </PossiblyNullOperand>
-  </file>
-  <file src="src/Http/Session.php">
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$config['handler']</code>
-    </PossiblyInvalidArgument>
-    <TypeDoesNotContainType occurrences="1">
-      <code>$_SESSION</code>
-    </TypeDoesNotContainType>
   </file>
   <file src="src/Shell/Task/CommandTask.php">
     <DeprecatedClass occurrences="1">

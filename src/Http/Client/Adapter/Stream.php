@@ -102,6 +102,7 @@ class Stream implements AdapterInterface
         }
         $last = count($indexes) - 1;
         foreach ($indexes as $i => $start) {
+            /** @psalm-suppress InvalidOperand */
             $end = isset($indexes[$i + 1]) ? $indexes[$i + 1] - $start : null;
             $headerSlice = array_slice($headers, $start, $end);
             $body = $i === $last ? $content : '';
@@ -266,6 +267,7 @@ class Stream implements AdapterInterface
                 break;
             }
         }
+        /** @psalm-suppress PossiblyNullArgument */
         $meta = stream_get_meta_data($this->_stream);
         fclose($this->_stream);
 
@@ -314,6 +316,7 @@ class Stream implements AdapterInterface
             return true;
         });
         try {
+            /** @psalm-suppress PossiblyNullArgument */
             $this->_stream = fopen($url, 'rb', false, $this->_context);
         } finally {
             restore_error_handler();
