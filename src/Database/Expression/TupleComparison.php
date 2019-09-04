@@ -50,6 +50,17 @@ class TupleComparison extends Comparison
     }
 
     /**
+     * Sets the value
+     *
+     * @param mixed $value The value to compare
+     * @return void
+     */
+    public function setValue($value): void
+    {
+        $this->_value = $value;
+    }
+
+    /**
      * Convert the expression into a SQL fragment.
      *
      * @param \Cake\Database\ValueBinder $generator Placeholder generator object
@@ -99,16 +110,16 @@ class TupleComparison extends Comparison
             }
 
             $type = $this->_type;
-            $multiType = is_array($type);
-            $isMulti = $this->isMulti();
-            $type = $multiType ? $type : str_replace('[]', '', $type);
-            $type = $type ?: null;
+            $isMultiOperation = $this->isMulti();
+            if (empty($type)) {
+                $type = null;
+            }
 
-            if ($isMulti) {
+            if ($isMultiOperation) {
                 $bound = [];
                 foreach ($value as $k => $val) {
                     /** @psalm-suppress PossiblyNullArrayAccess */
-                    $valType = $multiType ? $type[$k] : $type;
+                    $valType = $type ? $type[$k] : $type;
                     $bound[] = $this->_bindValue($val, $generator, $valType);
                 }
 
@@ -116,7 +127,7 @@ class TupleComparison extends Comparison
                 continue;
             }
 
-            $valType = $multiType && isset($type[$i]) ? $type[$i] : $type;
+            $valType = $type && isset($type[$i]) ? $type[$i] : $type;
             $values[] = $this->_bindValue($value, $generator, $valType);
         }
 
@@ -124,15 +135,9 @@ class TupleComparison extends Comparison
     }
 
     /**
-     * Registers a value in the placeholder generator and returns the generated
-     * placeholder
-     *
-     * @param mixed $value The value to bind
-     * @param \Cake\Database\ValueBinder $generator The value binder
-     * @param string $type The type to use
-     * @return string generated placeholder
+     * @inheritDoc
      */
-    protected function _bindValue($value, ValueBinder $generator, $type): string
+    protected function _bindValue($value, ValueBinder $generator, ?string $type = null): string
     {
         $placeholder = $generator->placeholder('tuple');
         $generator->bind($placeholder, $value, $type);

@@ -1924,11 +1924,11 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param string|int $param placeholder to be replaced with quoted version
      *   of $value
      * @param mixed $value The value to be bound
-     * @param string|int $type the mapped type name, used for casting when sending
+     * @param string|int|null $type the mapped type name, used for casting when sending
      *   to database
      * @return $this
      */
-    public function bind($param, $value, $type = 'string')
+    public function bind($param, $value, $type = null)
     {
         $this->getValueBinder()->bind($param, $value, $type);
 
