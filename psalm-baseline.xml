@@ -95,44 +95,6 @@
       <code>$class</code>
     </MoreSpecificImplementedParamType>
   </file>
-  <file src="src/Controller/Component/PaginatorComponent.php">
-    <ImplementedReturnTypeMismatch occurrences="2">
-      <code>$this</code>
-      <code>$this</code>
-    </ImplementedReturnTypeMismatch>
-  </file>
-  <file src="src/Controller/Component/SecurityComponent.php">
-    <InvalidArgument occurrences="1">
-      <code>$lockedFields</code>
-    </InvalidArgument>
-    <InvalidScalarArgument occurrences="6">
-      <code>0</code>
-      <code>0</code>
-      <code>1</code>
-      <code>1</code>
-      <code>2</code>
-      <code>2</code>
-    </InvalidScalarArgument>
-    <PossiblyInvalidArgument occurrences="3">
-      <code>$data</code>
-      <code>$data</code>
-      <code>$controller-&gt;getRequest()-&gt;getData('_Token.debug')</code>
-    </PossiblyInvalidArgument>
-    <PossiblyNullArgument occurrences="3">
-      <code>$key</code>
-      <code>empty($params) ? null : $params</code>
-      <code>$stringKeyMessage</code>
-    </PossiblyNullArgument>
-    <PossiblyNullArrayOffset occurrences="2">
-      <code>$fields</code>
-      <code>$lockedFields</code>
-    </PossiblyNullArrayOffset>
-  </file>
-  <file src="src/Controller/ComponentRegistry.php">
-    <MoreSpecificImplementedParamType occurrences="1">
-      <code>$class</code>
-    </MoreSpecificImplementedParamType>
-  </file>
   <file src="src/Core/Configure/Engine/IniConfig.php">
     <LoopInvalidation occurrences="1">
       <code>$values</code>
@@ -154,23 +116,6 @@
       <code>env('DOCUMENT_ROOT')</code>
       <code>env('SCRIPT_FILENAME')</code>
     </InvalidScalarArgument>
-  </file>
-  <file src="src/Error/BaseErrorHandler.php">
-    <PossiblyNullArgument occurrences="3">
-      <code>$file</code>
-      <code>$line</code>
-      <code>$file</code>
-    </PossiblyNullArgument>
-  </file>
-  <file src="src/Error/Debugger.php">
-    <PossiblyNullArgument occurrences="1">
-      <code>$key</code>
-    </PossiblyNullArgument>
-    <PossiblyNullOperand occurrences="3">
-      <code>$break</code>
-      <code>$break</code>
-      <code>$end</code>
-    </PossiblyNullOperand>
   </file>
   <file src="src/Http/Client/Adapter/Curl.php">
     <InvalidScalarArgument occurrences="1">
@@ -380,128 +325,21 @@
       <code>$locale</code>
     </PossiblyNullArgument>
   </file>
-  <file src="src/Log/Engine/ConsoleLog.php">
-    <MoreSpecificImplementedParamType occurrences="1">
-      <code>$level</code>
-    </MoreSpecificImplementedParamType>
-  </file>
-  <file src="src/Log/Engine/FileLog.php">
-    <MoreSpecificImplementedParamType occurrences="1">
-      <code>$level</code>
-    </MoreSpecificImplementedParamType>
-  </file>
-  <file src="src/Log/Engine/SyslogLog.php">
-    <MoreSpecificImplementedParamType occurrences="1">
-      <code>$level</code>
-    </MoreSpecificImplementedParamType>
-  </file>
-  <file src="src/Mailer/Message.php">
-    <PossiblyInvalidArgument occurrences="1">
-      <code>env('HTTP_HOST')</code>
-    </PossiblyInvalidArgument>
-    <PossiblyNullArgument occurrences="1">
-      <code>$this-&gt;appCharset</code>
-    </PossiblyNullArgument>
-  </file>
-  <file src="src/Network/Socket.php">
-    <InvalidArgument occurrences="1">
-      <code>[$this, '_connectionErrorHandler']</code>
-    </InvalidArgument>
-    <PossiblyNullArgument occurrences="3">
-      <code>$this-&gt;connection</code>
-      <code>$this-&gt;connection</code>
-      <code>$this-&gt;connection</code>
-    </PossiblyNullArgument>
-  </file>
-  <file src="src/ORM/BehaviorRegistry.php">
-    <MoreSpecificImplementedParamType occurrences="1">
-      <code>$class</code>
-    </MoreSpecificImplementedParamType>
-  </file>
-  <file src="src/ORM/Query.php">
-    <ImplementedReturnTypeMismatch occurrences="1">
-      <code>$this</code>
-    </ImplementedReturnTypeMismatch>
-  </file>
-  <file src="src/Routing/Exception/DuplicateNamedRouteException.php">
-    <MissingParamType occurrences="1">
-      <code>$message</code>
-    </MissingParamType>
-  </file>
-  <file src="src/Routing/Exception/MissingControllerException.php">
-    <MissingParamType occurrences="1">
-      <code>$message</code>
-    </MissingParamType>
-  </file>
-  <file src="src/Routing/Exception/MissingRouteException.php">
-    <MissingParamType occurrences="1">
-      <code>$message</code>
-    </MissingParamType>
-  </file>
   <file src="src/Shell/Task/CommandTask.php">
     <DeprecatedClass occurrences="1">
       <code>Shell</code>
     </DeprecatedClass>
   </file>
-  <file src="src/TestSuite/ConsoleIntegrationTestTrait.php">
-    <PossiblyInvalidPropertyAssignmentValue occurrences="1">
-      <code>$exception-&gt;getCode()</code>
-    </PossiblyInvalidPropertyAssignmentValue>
-    <PossiblyNullReference occurrences="8">
-      <code>messages</code>
-      <code>messages</code>
-      <code>messages</code>
-      <code>messages</code>
-      <code>messages</code>
-      <code>messages</code>
-      <code>messages</code>
-      <code>messages</code>
-    </PossiblyNullReference>
-    <PossiblyUndefinedMethod occurrences="8">
-      <code>messages</code>
-      <code>messages</code>
-      <code>messages</code>
-      <code>messages</code>
-      <code>messages</code>
-      <code>messages</code>
-      <code>messages</code>
-      <code>messages</code>
-    </PossiblyUndefinedMethod>
-  </file>
-  <file src="src/TestSuite/Constraint/Console/ContentsContainRow.php">
-    <MoreSpecificImplementedParamType occurrences="1">
-      <code>$other</code>
-    </MoreSpecificImplementedParamType>
-  </file>
   <file src="src/TestSuite/Constraint/EventFired.php">
     <InternalClass occurrences="1"/>
-    <PossiblyNullReference occurrences="1">
-      <code>hasEvent</code>
-    </PossiblyNullReference>
   </file>
   <file src="src/TestSuite/Constraint/EventFiredWith.php">
     <InternalClass occurrences="2"/>
-    <PossiblyNullArgument occurrences="1">
-      <code>$list</code>
-    </PossiblyNullArgument>
-    <PossiblyNullPropertyAssignmentValue occurrences="1">
-      <code>$dataValue</code>
-    </PossiblyNullPropertyAssignmentValue>
-  </file>
-  <file src="src/TestSuite/Constraint/Response/FileSentAs.php">
-    <PossiblyNullReference occurrences="1">
-      <code>getPathName</code>
-    </PossiblyNullReference>
   </file>
   <file src="src/TestSuite/Constraint/Response/ResponseBase.php">
     <InternalClass occurrences="1">
       <code>new AssertionFailedError('No response set, cannot assert content.')</code>
     </InternalClass>
-  </file>
-  <file src="src/TestSuite/Constraint/Response/StatusCodeBase.php">
-    <MoreSpecificImplementedParamType occurrences="1">
-      <code>$other</code>
-    </MoreSpecificImplementedParamType>
   </file>
   <file src="src/TestSuite/Constraint/Session/FlashParamEquals.php">
     <InternalClass occurrences="1">
@@ -517,70 +355,12 @@
     <DeprecatedInterface occurrences="1">
       <code>FixtureInjector</code>
     </DeprecatedInterface>
-    <NoInterfaceProperties occurrences="1">
-      <code>$test-&gt;fixtureManager</code>
-    </NoInterfaceProperties>
-  </file>
-  <file src="src/TestSuite/IntegrationTestTrait.php">
-    <InvalidCatch occurrences="1"/>
-    <InvalidThrow occurrences="8">
-      <code>\PHPUnit\Exception|\Throwable</code>
-      <code>\PHPUnit\Exception|\Throwable</code>
-      <code>\PHPUnit\Exception|\Throwable</code>
-      <code>\PHPUnit\Exception|\Throwable</code>
-      <code>\PHPUnit\Exception|\Throwable</code>
-      <code>\PHPUnit\Exception|\Throwable</code>
-      <code>\PHPUnit\Exception|\Throwable</code>
-      <code>\PHPUnit\Exception|\Throwable</code>
-    </InvalidThrow>
-    <PossiblyInvalidArgument occurrences="2">
-      <code>$data</code>
-      <code>$encrypt</code>
-    </PossiblyInvalidArgument>
-    <PossiblyInvalidPropertyAssignmentValue occurrences="1">
-      <code>$controller-&gt;getRequest()-&gt;getSession()-&gt;read('Flash')</code>
-    </PossiblyInvalidPropertyAssignmentValue>
-    <PossiblyNullArgument occurrences="10">
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_viewName</code>
-      <code>$this-&gt;_layoutName</code>
-    </PossiblyNullArgument>
   </file>
   <file src="src/TestSuite/LegacyShellDispatcher.php">
     <DeprecatedClass occurrences="2">
       <code>ShellDispatcher</code>
       <code>parent::__construct($args, $bootstrap)</code>
     </DeprecatedClass>
-    <PossiblyNullPropertyAssignmentValue occurrences="1">
-      <code>$io</code>
-    </PossiblyNullPropertyAssignmentValue>
-  </file>
-  <file src="src/TestSuite/TestCase.php">
-    <PossiblyFalseArgument occurrences="1">
-      <code>$tag</code>
-    </PossiblyFalseArgument>
-    <PossiblyInvalidArgument occurrences="2">
-      <code>$mock</code>
-      <code>$mock</code>
-    </PossiblyInvalidArgument>
-    <PossiblyNullArgument occurrences="3">
-      <code>$prefix[0]</code>
-      <code>$prefix[1]</code>
-      <code>$expression</code>
-    </PossiblyNullArgument>
-    <PossiblyUndefinedMethod occurrences="4">
-      <code>getEntityClass</code>
-      <code>setEntityClass</code>
-      <code>getTable</code>
-      <code>setTable</code>
-    </PossiblyUndefinedMethod>
   </file>
   <file src="src/TestSuite/TestSuite.php">
     <InternalClass occurrences="1">
@@ -665,89 +445,5 @@
     <PossiblyUndefinedMethod occurrences="1">
       <code>setAttributeNS</code>
     </PossiblyUndefinedMethod>
-  </file>
-  <file src="src/Validation/Validation.php">
-    <InvalidArgument occurrences="1">
-      <code>$value</code>
-    </InvalidArgument>
-    <InvalidOperand occurrences="1">
-      <code>$check[$position]</code>
-    </InvalidOperand>
-    <PossiblyNullArgument occurrences="2">
-      <code>$check-&gt;getClientFilename()</code>
-      <code>$operator</code>
-    </PossiblyNullArgument>
-  </file>
-  <file src="src/Validation/ValidationRule.php">
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$this-&gt;_rule</code>
-    </PossiblyInvalidArgument>
-  </file>
-  <file src="src/Validation/Validator.php">
-    <PossiblyNullArgument occurrences="2">
-      <code>$this-&gt;getProvider($provider)</code>
-      <code>$this-&gt;getProvider($provider)</code>
-    </PossiblyNullArgument>
-  </file>
-  <file src="src/View/Cell.php">
-    <PossiblyFalseOperand occurrences="2">
-      <code>strpos($className, $namePrefix)</code>
-      <code>$this-&gt;_cache</code>
-    </PossiblyFalseOperand>
-    <PossiblyNullPropertyAssignmentValue occurrences="2">
-      <code>$request</code>
-      <code>$response</code>
-    </PossiblyNullPropertyAssignmentValue>
-  </file>
-  <file src="src/View/Form/EntityContext.php">
-    <LoopInvalidation occurrences="2">
-      <code>$entity</code>
-      <code>$entity</code>
-    </LoopInvalidation>
-    <PossiblyInvalidArgument occurrences="2">
-      <code>$entity</code>
-      <code>$entity</code>
-    </PossiblyInvalidArgument>
-    <PossiblyNullReference occurrences="1">
-      <code>getTarget</code>
-    </PossiblyNullReference>
-  </file>
-  <file src="src/View/Helper/FormHelper.php">
-    <PossiblyNullArgument occurrences="3">
-      <code>$url</code>
-      <code>$options</code>
-      <code>$options</code>
-    </PossiblyNullArgument>
-  </file>
-  <file src="src/View/Helper/HtmlHelper.php">
-    <PossiblyInvalidIterator occurrences="1">
-      <code>$data</code>
-    </PossiblyInvalidIterator>
-    <PossiblyNullOperand occurrences="3">
-      <code>$out</code>
-      <code>$this-&gt;css($i, $options)</code>
-      <code>$this-&gt;script($i, $options)</code>
-    </PossiblyNullOperand>
-  </file>
-  <file src="src/View/Helper/PaginatorHelper.php">
-    <PossiblyFalseOperand occurrences="2">
-      <code>$this-&gt;first($offset, $options)</code>
-      <code>$this-&gt;last($offset, $options)</code>
-    </PossiblyFalseOperand>
-    <PossiblyNullOperand occurrences="5">
-      <code>$model</code>
-      <code>$model</code>
-      <code>$model</code>
-      <code>$model</code>
-      <code>$sortKey</code>
-    </PossiblyNullOperand>
-    <PossiblyUndefinedArrayOffset occurrences="1">
-      <code>$options['templates']</code>
-    </PossiblyUndefinedArrayOffset>
-  </file>
-  <file src="src/View/HelperRegistry.php">
-    <MoreSpecificImplementedParamType occurrences="1">
-      <code>$class</code>
-    </MoreSpecificImplementedParamType>
   </file>
 </files>

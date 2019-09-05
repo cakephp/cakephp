@@ -39,7 +39,7 @@ class Hash
      *
      * @param array|\ArrayAccess $data Array of data or object implementing
      *   \ArrayAccess interface to operate on.
-     * @param string|array|null $path The path being searched for. Either a dot
+     * @param string|int|array|null $path The path being searched for. Either a dot
      *   separated string, or an array of path segments.
      * @param mixed $default The return value when the path does not exist
      * @throws \InvalidArgumentException

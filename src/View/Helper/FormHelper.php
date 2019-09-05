@@ -502,10 +502,10 @@ class FormHelper extends Helper
     /**
      * Correctly store the last created form action URL.
      *
-     * @param string|array $url The URL of the last form.
+     * @param string|array|null $url The URL of the last form.
      * @return void
      */
-    protected function _lastAction($url): void
+    protected function _lastAction($url = null): void
     {
         $action = Router::url($url, true);
         $query = parse_url($action, PHP_URL_QUERY);
@@ -1192,20 +1192,15 @@ class FormHelper extends Helper
         unset($options['labelOptions']);
         switch (strtolower($options['type'])) {
             case 'select':
-                $opts = $options['options'];
-                unset($options['options']);
-
-                return $this->select($fieldName, $opts, $options + ['label' => $label]);
             case 'radio':
-                $opts = $options['options'];
-                unset($options['options']);
-
-                return $this->radio($fieldName, $opts, $options + ['label' => $label]);
             case 'multicheckbox':
                 $opts = $options['options'];
+                if ($opts == null) {
+                    $opts = [];
+                }
                 unset($options['options']);
 
-                return $this->multiCheckbox($fieldName, $opts, $options + ['label' => $label]);
+                return $this->{$options['type']}($fieldName, $opts, $options + ['label' => $label]);
             case 'input':
                 throw new RuntimeException("Invalid type 'input' used for field '$fieldName'");
 
@@ -2037,14 +2032,14 @@ class FormHelper extends Helper
      * ```
      *
      * @param string $fieldName Name attribute of the SELECT
-     * @param iterable|null $options Array of the OPTION elements (as 'value'=>'Text' pairs) to be used in the
+     * @param iterable $options Array of the OPTION elements (as 'value'=>'Text' pairs) to be used in the
      *   SELECT element
      * @param array $attributes The HTML attributes of the select element.
      * @return string Formatted SELECT element
      * @see \Cake\View\Helper\FormHelper::multiCheckbox() for creating multiple checkboxes.
      * @link https://book.cakephp.org/3.0/en/views/helpers/form.html#creating-select-pickers
      */
-    public function select(string $fieldName, ?iterable $options = [], array $attributes = []): string
+    public function select(string $fieldName, iterable $options = [], array $attributes = []): string
     {
         $attributes += [
             'disabled' => null,
@@ -2572,10 +2567,10 @@ class FormHelper extends Helper
      * Gets a single field value from the sources available.
      *
      * @param string $fieldname The fieldname to fetch the value for.
-     * @param array|null $options The options containing default values.
+     * @param array $options The options containing default values.
      * @return mixed Field value derived from sources or defaults.
      */
-    public function getSourceValue(string $fieldname, ?array $options = [])
+    public function getSourceValue(string $fieldname, array $options = [])
     {
         $valueMap = [
             'data' => 'getData',

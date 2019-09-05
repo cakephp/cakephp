@@ -308,7 +308,7 @@ class SecurityComponent extends Component
         $session = $request->getSession();
         $session->start();
 
-        $data = $request->getData();
+        $data = (array)$request->getData();
         $fieldList = $this->_fieldsList($data);
         $unlocked = $this->_sortedUnlocked($data);
 
@@ -362,12 +362,14 @@ class SecurityComponent extends Component
             array_merge((array)$this->getConfig('disabledFields'), (array)$this->_config['unlockedFields'], $unlocked)
         );
 
+        /** @var (string|int)[] $fieldList */
         foreach ($fieldList as $i => $key) {
             $isLocked = in_array($key, $locked, true);
 
             if (!empty($unlockedFields)) {
                 foreach ($unlockedFields as $off) {
                     $off = explode('.', $off);
+                    /** @psalm-suppress PossiblyInvalidArgument */
                     $field = array_values(array_intersect(explode('.', $key), $off));
                     $isUnlocked = ($field === $off);
                     if ($isUnlocked) {
@@ -427,6 +429,7 @@ class SecurityComponent extends Component
     protected function _debugPostTokenNotMatching(Controller $controller, array $hashParts): string
     {
         $messages = [];
+        /** @psalm-suppress PossiblyInvalidArgument */
         $expectedParts = json_decode(urldecode($controller->getRequest()->getData('_Token.debug')), true);
         if (!is_array($expectedParts) || count($expectedParts) !== 3) {
             return 'Invalid security debug token.';
@@ -457,7 +460,7 @@ class SecurityComponent extends Component
             (array)$dataUnlockedFields,
             $expectedUnlockedFields,
             'Unexpected unlocked field \'%s\' in POST data',
-            null,
+            '',
             'Missing unlocked field: \'%s\''
         );
 
@@ -472,7 +475,7 @@ class SecurityComponent extends Component
      * @param array $dataFields Fields array, containing the POST data fields
      * @param array $expectedFields Fields array, containing the expected fields we should have in POST
      * @param string $intKeyMessage Message string if unexpected found in data fields indexed by int (not protected)
-     * @param string|null $stringKeyMessage Message string if tampered found in
+     * @param string $stringKeyMessage Message string if tampered found in
      *  data fields indexed by string (protected).
      * @param string $missingMessage Message string if missing field
      * @return string[] Messages
@@ -481,7 +484,7 @@ class SecurityComponent extends Component
         array $dataFields,
         array $expectedFields = [],
         string $intKeyMessage = '',
-        ?string $stringKeyMessage = '',
+        string $stringKeyMessage = '',
         string $missingMessage = ''
     ): array {
         $messages = $this->_matchExistingFields($dataFields, $expectedFields, $intKeyMessage, $stringKeyMessage);
@@ -537,7 +540,7 @@ class SecurityComponent extends Component
             throw new BadRequestException('The request has been black-holed');
         }
 
-        return call_user_func_array([&$controller, $method], empty($params) ? null : $params);
+        return call_user_func_array([&$controller, $method], $params);
     }
 
     /**
@@ -547,7 +550,7 @@ class SecurityComponent extends Component
      * @param array $dataFields Fields array, containing the POST data fields
      * @param array $expectedFields Fields array, containing the expected fields we should have in POST
      * @param string $intKeyMessage Message string if unexpected found in data fields indexed by int (not protected)
-     * @param string|null $stringKeyMessage Message string if tampered found in
+     * @param string $stringKeyMessage Message string if tampered found in
      *   data fields indexed by string (protected)
      * @return string[] Error messages
      */
@@ -555,7 +558,7 @@ class SecurityComponent extends Component
         array $dataFields,
         array &$expectedFields,
         string $intKeyMessage,
-        ?string $stringKeyMessage
+        string $stringKeyMessage
     ): array {
         $messages = [];
         foreach ($dataFields as $key => $value) {
