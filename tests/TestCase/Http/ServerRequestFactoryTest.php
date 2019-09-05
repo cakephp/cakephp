@@ -20,6 +20,7 @@ use Cake\Core\Configure;
 use Cake\Http\ServerRequestFactory;
 use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
+use Psr\Http\Message\UploadedFileInterface;
 use Zend\Diactoros\UploadedFile;
 
 /**
@@ -108,8 +109,15 @@ class ServerRequestFactoryTest extends TestCase
         $this->assertSame($_GET['query'], $res->getQuery('query'));
         $this->assertArrayHasKey('title', $res->getData());
         $this->assertArrayHasKey('image', $res->getData());
-        $this->assertSame($_FILES['image'], $res->getData('image'));
         $this->assertCount(1, $res->getUploadedFiles());
+
+        /** @var \Zend\Diactoros\UploadedFile $expected */
+        $expected = $res->getData('image');
+        $this->assertInstanceOf(UploadedFileInterface::class, $expected);
+        $this->assertSame($_FILES['image']['size'], $expected->getSize());
+        $this->assertSame($_FILES['image']['error'], $expected->getError());
+        $this->assertSame($_FILES['image']['name'], $expected->getClientFilename());
+        $this->assertSame($_FILES['image']['type'], $expected->getClientMediaType());
     }
 
     /**
@@ -304,16 +312,12 @@ class ServerRequestFactoryTest extends TestCase
         ];
         $request = ServerRequestFactory::fromGlobals(null, null, null, null, $files);
 
-        $expected = [
-            'file' => [
-                'tmp_name' => __FILE__,
-                'error' => 0,
-                'name' => 'file.txt',
-                'type' => 'text/plain',
-                'size' => 1234,
-            ],
-        ];
-        $this->assertEquals($expected, $request->getData());
+        /** @var \Zend\Diactoros\UploadedFile $expected */
+        $expected = $request->getData('file');
+        $this->assertSame($files['file']['size'], $expected->getSize());
+        $this->assertSame($files['file']['error'], $expected->getError());
+        $this->assertSame($files['file']['name'], $expected->getClientFilename());
+        $this->assertSame($files['file']['type'], $expected->getClientMediaType());
     }
 
     /**

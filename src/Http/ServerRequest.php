@@ -222,7 +222,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @var bool
      */
-    protected $mergeFilesAsObjects = false;
+    protected $mergeFilesAsObjects = true;
 
     /**
      * Create a new request object.
@@ -261,7 +261,7 @@ class ServerRequest implements ServerRequestInterface
             'base' => '',
             'webroot' => '',
             'input' => null,
-            'mergeFilesAsObjects' => false,
+            'mergeFilesAsObjects' => true,
         ];
 
         $this->_setConfig($config);
