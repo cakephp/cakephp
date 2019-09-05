@@ -24,6 +24,7 @@ use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use RuntimeException;
 
 /**
@@ -3170,7 +3171,7 @@ class RouterTest extends TestCase
 
         $request = new ServerRequest([
             'params' => [
-                'plugin' => null,
+                'plugin' => 'Cms',
                 'prefix' => 'admin',
                 'controller' => 'Articles',
                 'action' => 'edit',
@@ -3207,7 +3208,7 @@ class RouterTest extends TestCase
     public function invalidShortStringArrayProvider()
     {
         return [
-            [['_path' => 'Articles::index', 'plugin' => null]],
+            [['_path' => 'Articles::index', 'plugin' => false]],
             [['_path' => 'Articles::index', 'plugin' => 'Cms']],
             [['_path' => 'Articles::index', 'prefix' => false]],
             [['_path' => 'Articles::index', 'prefix' => 'Manager']],
@@ -3229,8 +3230,8 @@ class RouterTest extends TestCase
     {
         Router::connect('/articles', 'Articles::index');
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('The `_path` string cannot be overriden by ');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('cannot be used to override `_path` value.');
 
         Router::url($url);
     }

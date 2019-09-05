@@ -24,7 +24,7 @@ use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
-use RuntimeException;
+use InvalidArgumentException;
 
 /**
  * RouteBuilder test case
@@ -193,7 +193,7 @@ class RouteBuilderTest extends TestCase
      */
     public function testConnectShortStringInvalid()
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(InvalidArgumentException::class);
         $routes = new RouteBuilder($this->collection, '/');
         $routes->connect('/my-articles/view', 'Articles:no');
     }
@@ -355,7 +355,7 @@ class RouteBuilderTest extends TestCase
      */
     public function testParseShortInvalidString(string $value)
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Could not parse');
 
         RouteBuilder::parseShortString($value);

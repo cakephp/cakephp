@@ -21,6 +21,7 @@ use Cake\Http\ServerRequest;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Utility\Inflector;
 use Exception;
+use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
 use ReflectionFunction;
 use ReflectionMethod;
@@ -938,14 +939,14 @@ class Router
     protected static function unwrapShortString(array $url)
     {
         foreach (['plugin', 'prefix', 'controller', 'action'] as $key) {
-            if (array_key_exists($key, $url)) {
-                throw new RuntimeException("The `_path` string cannot be overriden by `$key` key.");
+            if (isset($url[$key])) {
+                throw new InvalidArgumentException("`$key` cannot be used to override `_path` value.");
             }
         }
 
         $url += RouteBuilder::parseShortString($url['_path']);
         $url += [
-            'plugin' => null,
+            'plugin' => false,
             'prefix' => false,
         ];
 

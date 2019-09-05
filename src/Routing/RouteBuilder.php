@@ -724,7 +724,7 @@ class RouteBuilder
             $#ix';
 
         if (!preg_match($regex, $routeString, $matches)) {
-            throw new RuntimeException("Could not parse `{$routeString}` route short string.");
+            throw new InvalidArgumentException("Could not parse `{$routeString}` route short string.");
         }
 
         $defaults = [];
