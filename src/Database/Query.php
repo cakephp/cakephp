@@ -22,6 +22,7 @@ use Cake\Database\Expression\OrderClauseExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\ValuesExpression;
 use Cake\Database\Statement\CallbackStatement;
+use Closure;
 use InvalidArgumentException;
 use IteratorAggregate;
 use RuntimeException;
@@ -1634,9 +1635,9 @@ class Query implements ExpressionInterface, IteratorAggregate
      * });
      * ```
      *
-     * @param string|array|callable|\Cake\Database\Expression\QueryExpression $key The column name or array of keys
+     * @param string|array|\Closure|\Cake\Database\Expression\QueryExpression $key The column name or array of keys
      *    + values to set. This can also be a QueryExpression containing a SQL fragment.
-     *    It can also be a callable, that is required to return an expression object.
+     *    It can also be a Closure, that is required to return an expression object.
      * @param mixed $value The value to update $key to. Can be null if $key is an
      *    array or QueryExpression. When $key is an array, this parameter will be
      *    used as $types instead.
@@ -1649,9 +1650,8 @@ class Query implements ExpressionInterface, IteratorAggregate
             $this->_parts['set'] = $this->newExpr()->setConjunction(',');
         }
 
-        if ($this->_parts['set']->isCallable($key)) {
+        if ($key instanceof Closure) {
             $exp = $this->newExpr()->setConjunction(',');
-            /** @psalm-suppress PossiblyInvalidFunctionCall */
             $this->_parts['set']->add($key($exp));
 
             return $this;
@@ -2105,7 +2105,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * Helper function used to build conditions by composing QueryExpression objects.
      *
      * @param string $part Name of the query part to append the new part to
-     * @param string|null|array|\Cake\Database\ExpressionInterface|callable $append Expression or builder function
+     * @param string|null|array|\Cake\Database\ExpressionInterface|\Closure $append Expression or builder function
      *   to append.
      * @param string $conjunction type of conjunction to be used to operate part
      * @param array $types associative array of type names used to bind values to query
@@ -2120,7 +2120,7 @@ class Query implements ExpressionInterface, IteratorAggregate
             return;
         }
 
-        if ($expression->isCallable($append)) {
+        if ($append instanceof Closure) {
             /** @psalm-suppress PossiblyInvalidFunctionCall */
             $append = $append($this->newExpr(), $this);
         }
