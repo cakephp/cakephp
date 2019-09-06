@@ -320,6 +320,7 @@ class Xml
                     }
                     $isNamespace = strpos($key, 'xmlns:');
                     if ($isNamespace !== false) {
+                        /** @psalm-suppress PossiblyUndefinedMethod */
                         $node->setAttributeNS('http://www.w3.org/2000/xmlns/', $key, $value);
                         continue;
                     }

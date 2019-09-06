@@ -158,6 +158,7 @@ class Security
      * @param \Cake\Utility\Crypto\OpenSsl|null $instance The crypto instance to use.
      * @return \Cake\Utility\Crypto\OpenSsl Crypto instance.
      * @throws \InvalidArgumentException When no compatible crypto extension is available.
+     * @psalm-suppress MoreSpecificReturnType
      */
     public static function engine($instance = null)
     {
@@ -170,6 +171,7 @@ class Security
             static::$_instance = $instance;
         }
         if (isset(static::$_instance)) {
+            /** @psalm-suppress LessSpecificReturnStatement */
             return static::$_instance;
         }
         throw new InvalidArgumentException(
