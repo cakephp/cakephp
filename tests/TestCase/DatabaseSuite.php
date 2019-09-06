@@ -23,16 +23,15 @@ use PHPUnit\Framework\TestResult;
  */
 class DatabaseSuite extends TestSuite
 {
-
     /**
      * Returns a suite containing all tests requiring a database connection,
      * tests are decorated so that they are run once with automatic
      *
-     * @return void
+     * @return static
      */
     public static function suite()
     {
-        $suite = new self('Database related tests');
+        $suite = new static('Database related tests');
         $suite->addTestFile(__DIR__ . DS . 'Database' . DS . 'ConnectionTest.php');
         $suite->addTestDirectoryRecursive(__DIR__ . DS . 'Database');
         $suite->addTestDirectoryRecursive(__DIR__ . DS . 'ORM');
@@ -40,6 +39,10 @@ class DatabaseSuite extends TestSuite
         return $suite;
     }
 
+    /**
+     * @param bool $preferCache
+     * @return int
+     */
     public function count($preferCache = false)
     {
         return parent::count($preferCache) * 2;
