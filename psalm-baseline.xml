@@ -1,17 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="3.4.12@86e5e50c1bb492045e70f2ebe1da3cad06e4e9b2">
-  <file src="src/Http/Cookie/CookieCollection.php">
-    <InvalidScalarArgument occurrences="1">
-      <code>$cookie['value']</code>
-    </InvalidScalarArgument>
-    <PossiblyInvalidArgument occurrences="5">
-      <code>$cookie['expires']</code>
-      <code>$cookie['path']</code>
-      <code>$cookie['domain']</code>
-      <code>$cookie['secure']</code>
-      <code>$cookie['httponly']</code>
-    </PossiblyInvalidArgument>
-  </file>
   <file src="src/TestSuite/Constraint/EventFired.php">
     <InternalClass occurrences="1"/>
   </file>
