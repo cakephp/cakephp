@@ -90,23 +90,6 @@ parameters:
         -
             message: '#Cake\\Database\\Expression\\TupleComparison::__construct\(\) does not call parent constructor from Cake\\Database\\Expression\\Comparison#'
             path: 'src/Database/Expression/TupleComparison.php'
-        -
-            message: '#Ternary operator condition is always true#'
-            paths:
-                - 'src/Database/Expression/TupleComparison.php'
-                - 'src/TestSuite/IntegrationTestTrait.php'
-        -
-            message: '#Left side of && is always true#'
-            path: 'src/Database/Expression/TupleComparison.php'
-        -
-            message: '#Property Cake\\TestSuite\\IntegrationTestCase::\$_[a-zA-z]+ \([a-zA-Z\\]+\) does not accept null#'
-            path: 'src/TestSuite/IntegrationTestTrait.php'
-        -
-            message: '#Property Cake\\TestSuite\\ConsoleIntegrationTestCase::\$_[a-zA-z]+ \([a-zA-Z\\]+\) does not accept null#'
-            path: 'src/TestSuite/ConsoleIntegrationTestTrait.php'
-        -
-            message: '#Negated boolean expression is always false#'
-            path: 'src/TestSuite/IntegrationTestTrait.php'
 
     earlyTerminatingMethodCalls:
         Cake\Console\Shell:

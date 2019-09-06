@@ -143,12 +143,12 @@ class QueryExpression implements ExpressionInterface, Countable
      *
      * @param string|\Cake\Database\ExpressionInterface $field Database field to be compared against value
      * @param mixed $value The value to be bound to $field for comparison
-     * @param string|array|null $type the type name for $value as configured using the Type map.
+     * @param string|null $type the type name for $value as configured using the Type map.
      * If it is suffixed with "[]" and the value is an array then multiple placeholders
      * will be created, one per each value in the array.
      * @return $this
      */
-    public function eq($field, $value, $type = null)
+    public function eq($field, $value, ?string $type = null)
     {
         if ($type === null) {
             $type = $this->_calculateType($field);
