@@ -26,7 +26,6 @@ use Cake\Utility\Inflector;
  * Base class for Shell Command reflection.
  *
  * @internal
- * @psalm-suppress DeprecatedClass
  */
 class CommandTask extends Shell
 {

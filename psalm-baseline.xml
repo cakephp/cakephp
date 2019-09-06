@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="3.4.12@86e5e50c1bb492045e70f2ebe1da3cad06e4e9b2">
+  <file src="src/Shell/Task/CommandTask.php">
+    <DeprecatedClass occurrences="1">
+      <code>Shell</code>
+    </DeprecatedClass>
+  </file>
   <file src="src/TestSuite/Constraint/EventFired.php">
     <InternalClass occurrences="1"/>
   </file>
