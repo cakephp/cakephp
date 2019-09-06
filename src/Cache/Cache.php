@@ -148,6 +148,7 @@ class Cache
             );
         }
 
+        /** @var array $config */
         $config = static::$_config[$name];
 
         try {

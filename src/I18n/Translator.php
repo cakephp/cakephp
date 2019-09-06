@@ -91,11 +91,11 @@ class Translator extends BaseTranslator
      * Resolve a message's context structure.
      *
      * @param string $key The message key being handled.
-     * @param string|array $message The message content.
+     * @param array $message The message content.
      * @param array $vars The variables containing the `_context` key.
      * @return string|array
      */
-    protected function resolveContext(string $key, $message, array $vars)
+    protected function resolveContext(string $key, array $message, array $vars)
     {
         $context = $vars['_context'] ?? null;
 

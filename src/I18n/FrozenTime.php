@@ -122,7 +122,10 @@ class FrozenTime extends Chronos implements I18nDateTimeInterface
     public const UNIX_TIMESTAMP_FORMAT = 'unixTimestampFormat';
 
     /**
-     * @inheritDoc
+     * Create a new immutable time instance.
+     *
+     * @param string|int|\DateTimeInterface|null $time Fixed or relative time
+     * @param \DateTimeZone|string|null $tz The timezone for the instance
      */
     public function __construct($time = null, $tz = null)
     {

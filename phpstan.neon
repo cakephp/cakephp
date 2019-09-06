@@ -23,7 +23,6 @@ parameters:
         - '#Return type \(void\) of method Cake\\Shell\\[A-Za-z]+Shell::main\(\) should be compatible with return type \(bool|int|null\) of method Cake\\Console\\Shell::main\(\)#'
         - '#Return type \(null\) of method Cake\\Collection\\Iterator\\NoChildrenIterator::getChildren\(\) should be compatible with return type \(RecursiveIterator\) of method RecursiveIterator::getChildren\(\)#'
         - '#Call to an undefined method DateTimeInterface::setTimezone\(\)#'
-        - '#Parameter \#1 \$filename of function fopen expects string, resource given.#'
         - '#Parameter \#1 \$it of method AppendIterator::append\(\) expects Iterator, Traversable given.#'
         - '#Parameter \#1 \$it of class .+Iterator constructor expects Iterator, Traversable given.#'
         - '#Parameter \#1 \$assoc of method Cake\\ORM\\Marshaller::_belongsToMany\(\) expects .+BelongsToMany, Cake\\ORM\\Association given.#'

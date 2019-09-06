@@ -146,9 +146,11 @@ class FileEngine extends CacheEngine
         $contents = implode([$expires, $lineBreak, $data, $lineBreak]);
 
         if ($this->_config['lock']) {
+            /** @psalm-suppress PossiblyNullReference */
             $this->_File->flock(LOCK_EX);
         }
 
+        /** @psalm-suppress PossiblyNullReference */
         $this->_File->rewind();
         $success = $this->_File->ftruncate(0) &&
             $this->_File->fwrite($contents) &&
@@ -179,9 +181,11 @@ class FileEngine extends CacheEngine
         }
 
         if ($this->_config['lock']) {
+            /** @psalm-suppress PossiblyNullReference */
             $this->_File->flock(LOCK_SH);
         }
 
+        /** @psalm-suppress PossiblyNullReference */
         $this->_File->rewind();
         $time = time();
         $cachetime = (int)$this->_File->current();
@@ -197,6 +201,7 @@ class FileEngine extends CacheEngine
         $data = '';
         $this->_File->next();
         while ($this->_File->valid()) {
+            /** @psalm-suppress PossiblyInvalidOperand */
             $data .= $this->_File->current();
             $this->_File->next();
         }
@@ -232,6 +237,7 @@ class FileEngine extends CacheEngine
             return false;
         }
 
+        /** @psalm-suppress PossiblyNullReference */
         $path = $this->_File->getRealPath();
         $this->_File = null;
 
@@ -289,9 +295,14 @@ class FileEngine extends CacheEngine
         if (!is_dir($path)) {
             return;
         }
-        $prefixLength = strlen($this->_config['prefix']);
 
         $dir = dir($path);
+        if (!$dir) {
+            return;
+        }
+
+        $prefixLength = strlen($this->_config['prefix']);
+
         while (($entry = $dir->read()) !== false) {
             if (substr($entry, 0, $prefixLength) !== $this->_config['prefix']) {
                 continue;

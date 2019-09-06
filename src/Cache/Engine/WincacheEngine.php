@@ -80,7 +80,6 @@ class WincacheEngine extends CacheEngine
      */
     public function get($key, $default = null)
     {
-        $success = null;
         $value = wincache_ucache_get($this->_key($key), $success);
         if ($success === false) {
             return $default;

@@ -221,8 +221,8 @@ if (!function_exists('env')) {
 
         switch ($key) {
             case 'DOCUMENT_ROOT':
-                $name = env('SCRIPT_NAME');
-                $filename = env('SCRIPT_FILENAME');
+                $name = (string)env('SCRIPT_NAME');
+                $filename = (string)env('SCRIPT_FILENAME');
                 $offset = 0;
                 if (!strpos($name, '.php')) {
                     $offset = 4;
@@ -230,7 +230,7 @@ if (!function_exists('env')) {
 
                 return substr($filename, 0, -(strlen($name) + $offset));
             case 'PHP_SELF':
-                return str_replace(env('DOCUMENT_ROOT'), '', env('SCRIPT_FILENAME'));
+                return str_replace((string)env('DOCUMENT_ROOT'), '', (string)env('SCRIPT_FILENAME'));
             case 'CGI_MODE':
                 return PHP_SAPI === 'cgi';
         }

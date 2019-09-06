@@ -207,11 +207,18 @@ class Session
      */
     public function __construct(array $config = [])
     {
-        if (isset($config['timeout'])) {
+        $config += [
+            'timeout' => null,
+            'cookie' => null,
+            'ini' => [],
+            'handler' => [],
+        ];
+
+        if ($config['timeout']) {
             $config['ini']['session.gc_maxlifetime'] = 60 * $config['timeout'];
         }
 
-        if (!empty($config['cookie'])) {
+        if ($config['cookie']) {
             $config['ini']['session.name'] = $config['cookie'];
         }
 
@@ -220,9 +227,7 @@ class Session
             $config['ini']['session.cookie_path'] = $cookiePath;
         }
 
-        if (!empty($config['ini']) && is_array($config['ini'])) {
-            $this->options($config['ini']);
-        }
+        $this->options($config['ini']);
 
         if (!empty($config['handler']['engine'])) {
             $class = $config['handler']['engine'];
@@ -431,7 +436,7 @@ class Session
         }
 
         if ($name === null) {
-            return $_SESSION ?? [];
+            return $_SESSION ?: [];
         }
 
         return Hash::get($_SESSION, $name);

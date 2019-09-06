@@ -136,7 +136,7 @@ class ServerRequest implements ServerRequestInterface
      * There are several ways to specify a detector, see \Cake\Http\ServerRequest::addDetector() for the
      * various formats and ways to define detectors.
      *
-     * @var array
+     * @var (array|callable)[]
      */
     protected static $_detectors = [
         'get' => ['env' => 'REQUEST_METHOD', 'value' => 'GET'],
@@ -528,7 +528,7 @@ class ServerRequest implements ServerRequestInterface
     public function clientIp(): string
     {
         if ($this->trustProxy && $this->getEnv('HTTP_X_FORWARDED_FOR')) {
-            $addresses = array_map('trim', explode(',', $this->getEnv('HTTP_X_FORWARDED_FOR')));
+            $addresses = array_map('trim', explode(',', (string)$this->getEnv('HTTP_X_FORWARDED_FOR')));
             $trusted = (count($this->trustedProxies) > 0);
             $n = count($addresses);
 
@@ -778,12 +778,12 @@ class ServerRequest implements ServerRequestInterface
                 return $this->getEnv($detect['env']) == $detect['value'];
             }
             if (isset($detect['pattern'])) {
-                return (bool)preg_match($detect['pattern'], $this->getEnv($detect['env']));
+                return (bool)preg_match($detect['pattern'], (string)$this->getEnv($detect['env']));
             }
             if (isset($detect['options'])) {
                 $pattern = '/' . implode('|', $detect['options']) . '/i';
 
-                return (bool)preg_match($pattern, $this->getEnv($detect['env']));
+                return (bool)preg_match($pattern, (string)$this->getEnv($detect['env']));
             }
         }
 
@@ -893,6 +893,7 @@ class ServerRequest implements ServerRequestInterface
             return;
         }
         if (isset(static::$_detectors[$name], $callable['options'])) {
+            /** @psalm-suppress PossiblyInvalidArgument */
             $callable = Hash::merge(static::$_detectors[$name], $callable);
         }
         static::$_detectors[$name] = $callable;
@@ -923,7 +924,7 @@ class ServerRequest implements ServerRequestInterface
      * While header names are not case-sensitive, getHeaders() will normalize
      * the headers.
      *
-     * @return array An associative array of headers and their values.
+     * @return string[][] An associative array of headers and their values.
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
     public function getHeaders(): array
@@ -968,7 +969,7 @@ class ServerRequest implements ServerRequestInterface
      * is not present an empty array will be returned.
      *
      * @param string $name The header you want to get (case-insensitive)
-     * @return array An associative array of headers and their values.
+     * @return string[] An associative array of headers and their values.
      *   If the header doesn't exist, an empty array will be returned.
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
@@ -1191,7 +1192,12 @@ class ServerRequest implements ServerRequestInterface
      */
     public function domain(int $tldLength = 1): string
     {
-        $segments = explode('.', $this->host());
+        $host = $this->host();
+        if (empty($host)) {
+            return '';
+        }
+
+        $segments = explode('.', $host);
         $domain = array_slice($segments, -1 * ($tldLength + 1));
 
         return implode('.', $domain);
@@ -1206,7 +1212,12 @@ class ServerRequest implements ServerRequestInterface
      */
     public function subdomains(int $tldLength = 1): array
     {
-        $segments = explode('.', $this->host());
+        $host = $this->host();
+        if (empty($host)) {
+            return [];
+        }
+
+        $segments = explode('.', $host);
 
         return array_slice($segments, 0, -1 * ($tldLength + 1));
     }
@@ -1395,6 +1406,7 @@ class ServerRequest implements ServerRequestInterface
             return $default;
         }
 
+        /** @psalm-suppress PossiblyNullArgument */
         return Hash::get($this->data, $name, $default);
     }
 
@@ -1532,6 +1544,7 @@ class ServerRequest implements ServerRequestInterface
      * @param null|array $data The deserialized body data. This will
      *     typically be in an array or object.
      * @return static
+     * @psalm-suppress MoreSpecificImplementedParamType
      */
     public function withParsedBody($data)
     {
@@ -1684,6 +1697,7 @@ class ServerRequest implements ServerRequestInterface
     public function withData(string $name, $value)
     {
         $copy = clone $this;
+        /** @psalm-suppress PossiblyNullArgument */
         $copy->data = Hash::insert($copy->data, $name, $value);
 
         return $copy;
@@ -1701,6 +1715,7 @@ class ServerRequest implements ServerRequestInterface
     public function withoutData(string $name)
     {
         $copy = clone $this;
+        /** @psalm-suppress PossiblyNullArgument */
         $copy->data = Hash::remove($copy->data, $name);
 
         return $copy;
@@ -1936,8 +1951,9 @@ class ServerRequest implements ServerRequestInterface
         if (!$host) {
             return $new;
         }
-        if ($uri->getPort()) {
-            $host .= ':' . $uri->getPort();
+        $port = $uri->getPort();
+        if ($port) {
+            $host .= ':' . $port;
         }
         $new->_environment['HTTP_HOST'] = $host;
 
@@ -1955,6 +1971,7 @@ class ServerRequest implements ServerRequestInterface
      *   request-target forms allowed in request messages)
      * @param string $target The request target.
      * @return static
+     * @psalm-suppress MoreSpecificImplementedParamType
      */
     public function withRequestTarget($target)
     {
