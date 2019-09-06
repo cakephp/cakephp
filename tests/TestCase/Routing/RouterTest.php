@@ -3231,7 +3231,7 @@ class RouterTest extends TestCase
         Router::connect('/articles', 'Articles::index');
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('cannot be used to override `_path` value.');
+        $this->expectExceptionMessage('cannot be used when defining routes targets with `_path`.');
 
         Router::url($url);
     }
