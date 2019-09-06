@@ -940,7 +940,7 @@ class Router
     {
         foreach (['plugin', 'prefix', 'controller', 'action'] as $key) {
             if (isset($url[$key])) {
-                throw new InvalidArgumentException("`$key` cannot be used to override `_path` value.");
+                throw new InvalidArgumentException("`$key` cannot be used when defining routes targets with `_path`.");
             }
         }
 
