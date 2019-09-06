@@ -298,10 +298,12 @@ class ConsoleOutput
             return static::$_styles[$style] ?? null;
         }
         if ($definition === false) {
+            /** @psalm-suppress PossiblyNullArrayOffset */
             unset(static::$_styles[$style]);
 
             return true;
         }
+        /** @psalm-suppress PossiblyNullArrayOffset */
         static::$_styles[$style] = $definition;
 
         return true;

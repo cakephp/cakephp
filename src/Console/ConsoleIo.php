@@ -195,14 +195,14 @@ class ConsoleIo
     /**
      * Convenience method for out() that wraps message between <info /> tag
      *
-     * @param string|array|null $message A string or an array of strings to output
+     * @param string|array $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
      * @return int|null The number of bytes returned from writing to stdout
      *   or null if provided $level is greater than current level.
      * @see https://book.cakephp.org/3.0/en/console-and-shells.html#ConsoleIo::out
      */
-    public function info($message = null, int $newlines = 1, int $level = self::NORMAL): ?int
+    public function info($message, int $newlines = 1, int $level = self::NORMAL): ?int
     {
         $messageType = 'info';
         $message = $this->wrapMessageWithType($messageType, $message);
@@ -213,12 +213,12 @@ class ConsoleIo
     /**
      * Convenience method for err() that wraps message between <warning /> tag
      *
-     * @param string|array|null $message A string or an array of strings to output
+     * @param string|array $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int The number of bytes returned from writing to stderr.
      * @see https://book.cakephp.org/3.0/en/console-and-shells.html#ConsoleIo::err
      */
-    public function warning($message = null, int $newlines = 1): int
+    public function warning($message, int $newlines = 1): int
     {
         $messageType = 'warning';
         $message = $this->wrapMessageWithType($messageType, $message);
@@ -229,12 +229,12 @@ class ConsoleIo
     /**
      * Convenience method for err() that wraps message between <error /> tag
      *
-     * @param string|array|null $message A string or an array of strings to output
+     * @param string|array $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int The number of bytes returned from writing to stderr.
      * @see https://book.cakephp.org/3.0/en/console-and-shells.html#ConsoleIo::err
      */
-    public function error($message = null, int $newlines = 1): int
+    public function error($message, int $newlines = 1): int
     {
         $messageType = 'error';
         $message = $this->wrapMessageWithType($messageType, $message);
@@ -245,14 +245,14 @@ class ConsoleIo
     /**
      * Convenience method for out() that wraps message between <success /> tag
      *
-     * @param string|array|null $message A string or an array of strings to output
+     * @param string|array $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
      * @return int|null The number of bytes returned from writing to stdout
      *   or null if provided $level is greater than current level.
      * @see https://book.cakephp.org/3.0/en/console-and-shells.html#ConsoleIo::out
      */
-    public function success($message = null, int $newlines = 1, int $level = self::NORMAL): ?int
+    public function success($message, int $newlines = 1, int $level = self::NORMAL): ?int
     {
         $messageType = 'success';
         $message = $this->wrapMessageWithType($messageType, $message);
@@ -422,7 +422,7 @@ class ConsoleIo
      */
     public function askChoice(string $prompt, $options, ?string $default = null): string
     {
-        if ($options && is_string($options)) {
+        if (is_string($options)) {
             if (strpos($options, ',')) {
                 $options = explode(',', $options);
             } elseif (strpos($options, '/')) {
