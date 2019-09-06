@@ -109,8 +109,6 @@ class PoFileParser
                         /**
                          * @psalm-suppress PossiblyUndefinedArrayOffset
                          * @psalm-suppress PossiblyInvalidArrayOffset
-                         * @psalm-suppress PossiblyInvalidOperand
-                         * @psalm-suppress PossiblyNullOperand
                          * @psalm-suppress PossiblyNullArrayAccess
                          */
                         $item[$stage[0]][$stage[1]] .= substr($line, 1, -1);
@@ -119,7 +117,6 @@ class PoFileParser
                     case 1:
                         /**
                          * @psalm-suppress PossiblyUndefinedArrayOffset
-                         * @psalm-suppress PossiblyInvalidArrayOffset
                          * @psalm-suppress PossiblyInvalidOperand
                          * @psalm-suppress PossiblyNullOperand
                          */

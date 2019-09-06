@@ -240,7 +240,6 @@ class ValuesExpression implements ExpressionInterface
 
                 $placeholder = $generator->placeholder('c');
                 $rowPlaceholders[] = $placeholder;
-                /** @psalm-suppress PossiblyNullArgument */
                 $generator->bind($placeholder, $value, $types[$column]);
             }
 

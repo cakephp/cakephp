@@ -567,7 +567,6 @@ class Hash
         for ($j = 0; $j < $count; $j++) {
             $args = [];
             for ($i = 0; $i < $countTwo; $i++) {
-                /** @psalm-suppress PossiblyInvalidArgument */
                 if (array_key_exists($j, $data[$i])) {
                     $args[] = $data[$i][$j];
                 }

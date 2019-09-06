@@ -325,7 +325,6 @@ class SecurityComponent extends Component
      *
      * @param array $check Data array
      * @return array
-     * @psalm-suppress InvalidReturnType
      */
     protected function _fieldsList(array $check): array
     {
@@ -389,7 +388,6 @@ class SecurityComponent extends Component
         ksort($lockedFields, SORT_STRING);
         $fieldList += $lockedFields;
 
-        /** @psalm-suppress InvalidReturnStatement */
         return $fieldList;
     }
 
