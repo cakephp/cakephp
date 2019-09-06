@@ -36,6 +36,7 @@ use LimitIterator;
 use LogicException;
 use OuterIterator;
 use RecursiveIteratorIterator;
+use RuntimeException;
 use Traversable;
 
 /**
@@ -744,16 +745,26 @@ trait CollectionTrait
      */
     public function listNested($dir = 'desc', $nestingKey = 'children'): CollectionInterface
     {
-        $dir = strtolower($dir);
-        $modes = [
-            'desc' => TreeIterator::SELF_FIRST,
-            'asc' => TreeIterator::CHILD_FIRST,
-            'leaves' => TreeIterator::LEAVES_ONLY,
-        ];
+        if (is_string($dir)) {
+            $dir = strtolower($dir);
+            $modes = [
+                'desc' => RecursiveIteratorIterator::SELF_FIRST,
+                'asc' => RecursiveIteratorIterator::CHILD_FIRST,
+                'leaves' => RecursiveIteratorIterator::LEAVES_ONLY,
+            ];
+
+            if (!isset($modes[$dir])) {
+                throw new RuntimeException(sprintf(
+                    "Invalid direction `%s` provided. Must be one of: 'desc', 'asc', 'leaves'",
+                    $dir
+                ));
+            }
+            $dir = $modes[$dir];
+        }
 
         return new TreeIterator(
             new NestIterator($this, $nestingKey),
-            $modes[$dir] ?? $dir
+            $dir
         );
     }
 

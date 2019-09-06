@@ -1,16 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="3.4.12@86e5e50c1bb492045e70f2ebe1da3cad06e4e9b2">
-  <file src="src/Collection/CollectionTrait.php">
-    <PossiblyInvalidArgument occurrences="2">
-      <code>$dir</code>
-      <code>$modes[$dir] ?? $dir</code>
-    </PossiblyInvalidArgument>
-  </file>
-  <file src="src/Collection/Iterator/NoChildrenIterator.php">
-    <ImplementedReturnTypeMismatch occurrences="1">
-      <code>null</code>
-    </ImplementedReturnTypeMismatch>
-  </file>
   <file src="src/Command/I18nExtractCommand.php">
     <UndefinedConstant occurrences="3">
       <code>APP</code>
