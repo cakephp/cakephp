@@ -12,11 +12,6 @@
       <code>$cookie['httponly']</code>
     </PossiblyInvalidArgument>
   </file>
-  <file src="src/Shell/Task/CommandTask.php">
-    <DeprecatedClass occurrences="1">
-      <code>Shell</code>
-    </DeprecatedClass>
-  </file>
   <file src="src/TestSuite/Constraint/EventFired.php">
     <InternalClass occurrences="1"/>
   </file>
