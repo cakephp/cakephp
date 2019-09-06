@@ -273,7 +273,7 @@ REGEXP;
                 $parsed['className'] = $classMap[$parsed['scheme']];
             }
         }
-        
+
         return $parsed;
     }
 
