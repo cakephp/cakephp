@@ -440,7 +440,7 @@ trait EntityTrait
     {
         $field = (array)$field;
         foreach ($field as $p) {
-            unset($this->_properties[$p], $this->_original[$p], $this->_dirty[$p]);
+            unset($this->_fields[$p], $this->_original[$p], $this->_dirty[$p]);
         }
 
         return $this;
