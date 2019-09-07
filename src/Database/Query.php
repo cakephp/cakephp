@@ -1667,7 +1667,6 @@ class Query implements ExpressionInterface, IteratorAggregate
         if (!is_string($types)) {
             $types = null;
         }
-        /** @psalm-suppress PossiblyInvalidArgument */
         $this->_parts['set']->eq($key, $value, $types);
 
         return $this;
@@ -2121,7 +2120,6 @@ class Query implements ExpressionInterface, IteratorAggregate
         }
 
         if ($append instanceof Closure) {
-            /** @psalm-suppress PossiblyInvalidFunctionCall */
             $append = $append($this->newExpr(), $this);
         }
 
