@@ -137,6 +137,7 @@ class I18nExtractCommand extends Command
      */
     protected function _getPaths(ConsoleIo $io): void
     {
+        /** @psalm-suppress UndefinedConstant */
         $defaultPath = APP;
         while (true) {
             $currentPaths = count($this->_paths) > 0 ? $this->_paths : ['None'];
@@ -527,6 +528,7 @@ class I18nExtractCommand extends Command
     protected function _buildFiles(Arguments $args): void
     {
         $paths = $this->_paths;
+        /** @psalm-suppress UndefinedConstant */
         $paths[] = realpath(APP) . DIRECTORY_SEPARATOR;
 
         usort($paths, function (string $a, string $b) {
@@ -822,6 +824,7 @@ class I18nExtractCommand extends Command
      */
     protected function _isExtractingApp(): bool
     {
+        /** @psalm-suppress UndefinedConstant */
         return $this->_paths === [APP];
     }
 

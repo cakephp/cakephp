@@ -45,7 +45,7 @@ trait CookieCryptTrait
      * Encrypts $value using public $type method in Security class
      *
      * @param string|array $value Value to encrypt
-     * @param string|bool $encrypt Encryption mode to use. False
+     * @param string|false $encrypt Encryption mode to use. False
      *   disabled encryption.
      * @param string|null $key Used as the security salt if specified.
      * @return string Encoded values
@@ -60,7 +60,7 @@ trait CookieCryptTrait
         }
         $this->_checkCipher($encrypt);
         $prefix = 'Q2FrZQ==.';
-        $cipher = null;
+        $cipher = '';
         if ($key === null) {
             $key = $this->_getCookieEncryptionKey();
         }
@@ -93,7 +93,7 @@ trait CookieCryptTrait
      * Decrypts $value using public $type method in Security class
      *
      * @param array|string $values Values to decrypt
-     * @param string|bool $mode Encryption mode
+     * @param string|false $mode Encryption mode
      * @param string|null $key Used as the security salt if specified.
      * @return string|array Decrypted values
      */

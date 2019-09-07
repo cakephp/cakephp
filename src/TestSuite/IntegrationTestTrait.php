@@ -358,7 +358,7 @@ trait IntegrationTestTrait
      *
      * @param string $name The cookie name to use.
      * @param mixed $value The value of the cookie.
-     * @param string|bool $encrypt Encryption mode to use.
+     * @param string|false $encrypt Encryption mode to use.
      * @param string|null $key Encryption key used. Defaults
      *   to Security.salt.
      * @return void
