@@ -313,10 +313,10 @@ class Query implements ExpressionInterface, IteratorAggregate
      * });
      * ```
      *
-     * @param \Closure $visitor A function or callable to be executed for each part
+     * @param callable $visitor A function or callable to be executed for each part
      * @return $this
      */
-    public function traverse(Closure $visitor)
+    public function traverse($visitor)
     {
         $parts = array_keys($this->_parts);
         foreach ($parts as $name) {
