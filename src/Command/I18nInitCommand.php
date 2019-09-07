@@ -56,10 +56,10 @@ class I18nInitCommand extends Command
             return static::CODE_ERROR;
         }
 
-        $paths = App::path('Locale');
+        $paths = App::path('locales');
         if ($args->hasOption('plugin')) {
             $plugin = Inflector::camelize((string)$args->getOption('plugin'));
-            $paths = App::path('Locale', $plugin);
+            $paths = App::path('locales', $plugin);
         }
 
         $response = $io->ask('What folder?', rtrim($paths[0], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR);

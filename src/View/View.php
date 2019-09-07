@@ -302,7 +302,7 @@ class View implements EventDispatcherInterface
      *
      * @var string
      */
-    public const NAME_TEMPLATE = 'Template';
+    public const NAME_TEMPLATE = 'templates';
 
     /**
      * Constant for folder name containing files for overriding plugin templates.

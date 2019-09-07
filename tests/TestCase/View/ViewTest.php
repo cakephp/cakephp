@@ -242,7 +242,7 @@ class ViewTest extends TestCase
 
         $View = new TestView(null, null, null, $viewOptions);
         $paths = $View->paths();
-        $expected = array_merge(App::path('Template'), App::core('Template'));
+        $expected = array_merge(App::path('templates'), App::core('templates'));
         $this->assertEquals($expected, $paths);
 
         $paths = $View->paths('TestPlugin');

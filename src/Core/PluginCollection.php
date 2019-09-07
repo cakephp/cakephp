@@ -110,7 +110,7 @@ class PluginCollection implements Iterator, Countable
     /**
      * Locate a plugin path by looking at configuration data.
      *
-     * This will use the `plugins` Configure key, and fallback to enumerating `App::path('Plugin')`
+     * This will use the `plugins` Configure key, and fallback to enumerating `App::path('pluginss')`
      *
      * This method is not part of the official public API as plugins with
      * no plugin class are being phased out.
@@ -130,7 +130,7 @@ class PluginCollection implements Iterator, Countable
         }
 
         $pluginPath = str_replace('/', DIRECTORY_SEPARATOR, $name);
-        $paths = App::path('Plugin');
+        $paths = App::path('plugins');
         foreach ($paths as $path) {
             if (is_dir($path . $pluginPath)) {
                 return $path . $pluginPath . DIRECTORY_SEPARATOR;

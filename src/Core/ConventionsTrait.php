@@ -140,7 +140,7 @@ trait ConventionsTrait
             return Plugin::path($pluginName);
         }
 
-        return current(App::path('Plugin')) . $pluginName . DIRECTORY_SEPARATOR;
+        return current(App::path('plugins')) . $pluginName . DIRECTORY_SEPARATOR;
     }
 
     /**
