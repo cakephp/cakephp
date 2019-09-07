@@ -110,7 +110,7 @@ class PluginCollection implements Iterator, Countable
     /**
      * Locate a plugin path by looking at configuration data.
      *
-     * This will use the `plugins` Configure key, and fallback to enumerating `App::path('pluginss')`
+     * This will use the `plugins` Configure key, and fallback to enumerating `App::path('plugins')`
      *
      * This method is not part of the official public API as plugins with
      * no plugin class are being phased out.

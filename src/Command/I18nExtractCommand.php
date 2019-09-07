@@ -178,6 +178,7 @@ class I18nExtractCommand extends Command
      */
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
+        $plugin = '';
         if ($args->getOption('exclude')) {
             $this->_exclude = explode(',', (string)$args->getOption('exclude'));
         }
@@ -218,13 +219,20 @@ class I18nExtractCommand extends Command
         if ($args->hasOption('output')) {
             $this->_output = (string)$args->getOption('output');
         } elseif ($args->hasOption('plugin')) {
-            $this->_output = $this->_paths[0] . 'Locale';
+            $this->_output = Plugin::path($plugin)
+                . 'resources' . DIRECTORY_SEPARATOR
+                . 'locales' . DIRECTORY_SEPARATOR;
         } else {
             $message = "What is the path you would like to output?\n[Q]uit";
+            $localePaths = App::path('locales');
+            if (!$localePaths) {
+                /** @psalm-suppress UndefinedConstant */
+                $localePaths[] = ROOT . 'resources' . DIRECTORY_SEPARATOR . 'locales';
+            }
             while (true) {
                 $response = $io->ask(
                     $message,
-                    rtrim($this->_paths[0], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'Locale'
+                    $localePaths[0]
                 );
                 if (strtoupper($response) === 'Q') {
                     $io->err('Extract Aborted');

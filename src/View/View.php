@@ -1524,11 +1524,11 @@ class View implements EventDispatcherInterface
                     . $plugin
                     . DIRECTORY_SEPARATOR;
             }
-            $pluginPaths = array_merge($pluginPaths, App::path(static::NAME_TEMPLATE, $plugin));
+            $pluginPaths[] = Plugin::templatePath($plugin);
         }
 
         if (!empty($this->theme)) {
-            $themePaths = App::path(static::NAME_TEMPLATE, Inflector::camelize($this->theme));
+            $themePaths[] = Plugin::templatePath(Inflector::camelize($this->theme));
 
             if ($plugin) {
                 for ($i = 0, $count = count($themePaths); $i < $count; $i++) {
@@ -1548,7 +1548,7 @@ class View implements EventDispatcherInterface
             $themePaths,
             $pluginPaths,
             $templatePaths,
-            [dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR]
+            App::core('templates')
         );
 
         if ($plugin !== null) {

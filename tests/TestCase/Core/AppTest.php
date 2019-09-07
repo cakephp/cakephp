@@ -225,10 +225,8 @@ class AppTest extends TestCase
     {
         $basepath = TEST_APP . 'Plugin' . DS;
         $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
-
         $result = App::path('Controller', 'TestPlugin');
         $this->assertPathEquals($basepath . 'TestPlugin' . DS . 'src' . DS . 'Controller' . DS, $result[0]);
-
         $result = App::path('Controller', 'Company/TestPluginThree');
         $expected = $basepath . 'Company' . DS . 'TestPluginThree' . DS . 'src' . DS . 'Controller' . DS;
         $this->assertPathEquals($expected, $result[0]);
