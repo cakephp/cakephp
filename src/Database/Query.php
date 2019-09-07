@@ -313,10 +313,10 @@ class Query implements ExpressionInterface, IteratorAggregate
      * });
      * ```
      *
-     * @param callable $visitor A function or callable to be executed for each part
+     * @param \Closure $visitor A function or callable to be executed for each part
      * @return $this
      */
-    public function traverse(callable $visitor)
+    public function traverse(Closure $visitor)
     {
         $parts = array_keys($this->_parts);
         foreach ($parts as $name) {
@@ -912,7 +912,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * If you use string conditions make sure that your values are correctly quoted.
      * The safest thing you can do is to never use string conditions.
      *
-     * @param string|array|\Cake\Database\ExpressionInterface|callable|null $conditions The conditions to filter on.
+     * @param string|array|\Cake\Database\ExpressionInterface|\Closure|null $conditions The conditions to filter on.
      * @param array $types associative array of type names used to bind values to query
      * @param bool $overwrite whether to reset conditions with passed list or not
      * @see \Cake\Database\Type
@@ -1081,7 +1081,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * `WHERE (title = 'Foo') AND (author_id = 1 OR author_id = 2)`
      *
-     * @param string|array|\Cake\Database\ExpressionInterface|callable $conditions The conditions to add with AND.
+     * @param string|array|\Cake\Database\ExpressionInterface|\Closure $conditions The conditions to add with AND.
      * @param array $types associative array of type names used to bind values to query
      * @see \Cake\Database\Query::where()
      * @see \Cake\Database\Type
@@ -1149,7 +1149,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * If you need to set complex expressions as order conditions, you
      * should use `orderAsc()` or `orderDesc()`.
      *
-     * @param array|\Cake\Database\ExpressionInterface|callable|string $fields fields to be added to the list
+     * @param array|\Cake\Database\ExpressionInterface|\Closure|string $fields fields to be added to the list
      * @param bool $overwrite whether to reset order with field list or not
      * @return $this
      */
@@ -1281,7 +1281,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * Having fields are not suitable for use with user supplied data as they are
      * not sanitized by the query builder.
      *
-     * @param string|array|\Cake\Database\ExpressionInterface|callable|null $conditions The having conditions.
+     * @param string|array|\Cake\Database\ExpressionInterface|\Closure|null $conditions The having conditions.
      * @param array $types associative array of type names used to bind values to query
      * @param bool $overwrite whether to reset conditions with passed list or not
      * @see \Cake\Database\Query::where()
@@ -1306,7 +1306,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * Having fields are not suitable for use with user supplied data as they are
      * not sanitized by the query builder.
      *
-     * @param string|array|\Cake\Database\ExpressionInterface|callable $conditions The AND conditions for HAVING.
+     * @param string|array|\Cake\Database\ExpressionInterface|\Closure $conditions The AND conditions for HAVING.
      * @param array $types associative array of type names used to bind values to query
      * @see \Cake\Database\Query::andWhere()
      * @return $this

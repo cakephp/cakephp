@@ -121,7 +121,7 @@ abstract class Association
      * A list of conditions to be always included when fetching records from
      * the target association
      *
-     * @var array|callable
+     * @var array|\Closure
      */
     protected $_conditions = [];
 
@@ -421,7 +421,7 @@ abstract class Association
      * Sets a list of conditions to be always included when fetching records from
      * the target association.
      *
-     * @param array|callable $conditions list of conditions to be used
+     * @param array|\Closure $conditions list of conditions to be used
      * @see \Cake\Database\Query::where() for examples on the format of the array
      * @return \Cake\ORM\Association
      */
@@ -437,7 +437,7 @@ abstract class Association
      * the target association.
      *
      * @see \Cake\Database\Query::where() for examples on the format of the array
-     * @return array|callable
+     * @return array|\Closure
      */
     public function getConditions()
     {
@@ -855,7 +855,7 @@ abstract class Association
      * Proxies the operation to the target table's exists method after
      * appending the default conditions for this association
      *
-     * @param array|callable|\Cake\Database\ExpressionInterface $conditions The conditions to use
+     * @param array|\Closure|\Cake\Database\ExpressionInterface $conditions The conditions to use
      * for checking if any record matches.
      * @see \Cake\ORM\Table::exists()
      * @return bool
