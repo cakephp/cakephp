@@ -438,8 +438,8 @@ trait EntityTrait
      */
     public function unsetProperty($property)
     {
-        $property = (array)$property;
-        foreach ($property as $p) {
+        $field = (array)$field;
+        foreach ($field as $p) {
             unset($this->_properties[$p], $this->_original[$p], $this->_dirty[$p]);
         }
 
