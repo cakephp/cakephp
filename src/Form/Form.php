@@ -44,11 +44,11 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
     use ValidatorAwareTrait;
 
     /**
-     * Schema class.
+     * Name of default validation set.
      *
      * @var string
      */
-    protected $_schemaClass = Schema::class;
+    public const DEFAULT_VALIDATOR = 'default';
 
     /**
      * The alias this object is assigned to validators as.
@@ -63,6 +63,13 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * @var string
      */
     public const BUILD_VALIDATOR_EVENT = 'Form.buildValidator';
+
+    /**
+     * Schema class.
+     *
+     * @var string
+     */
+    protected $_schemaClass = Schema::class;
 
     /**
      * The schema used by this form.
