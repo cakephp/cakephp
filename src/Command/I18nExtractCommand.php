@@ -130,7 +130,7 @@ class I18nExtractCommand extends Command
     protected $_countMarkerError = 0;
 
     /**
-     * Method to interact with the User and get path selections.
+     * Method to interact with the user and get path selections.
      *
      * @param \Cake\Console\ConsoleIo $io The io instance.
      * @return void
@@ -138,14 +138,19 @@ class I18nExtractCommand extends Command
     protected function _getPaths(ConsoleIo $io): void
     {
         /** @psalm-suppress UndefinedConstant */
-        $defaultPath = APP;
+        $defaultPaths = [
+            APP,
+            App::path('templates'),
+            'D', // This is required to break the loop below
+        ];
+        $defaultPathIndex = 0;
         while (true) {
             $currentPaths = count($this->_paths) > 0 ? $this->_paths : ['None'];
             $message = sprintf(
                 "Current paths: %s\nWhat is the path you would like to extract?\n[Q]uit [D]one",
                 implode(', ', $currentPaths)
             );
-            $response = $io->ask($message, $defaultPath);
+            $response = $io->ask($message, $defaultPaths[$defaultPathIndex]);
             if (strtoupper($response) === 'Q') {
                 $io->err('Extract Aborted');
                 $this->abort();
@@ -161,7 +166,7 @@ class I18nExtractCommand extends Command
                 $io->warning('No directories selected. Please choose a directory.');
             } elseif (is_dir($response)) {
                 $this->_paths[] = $response;
-                $defaultPath = 'D';
+                $defaultPathIndex++;
             } else {
                 $io->err('The directory path you supplied was not found. Please try again.');
             }
