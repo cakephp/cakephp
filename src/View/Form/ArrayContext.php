@@ -66,7 +66,6 @@ use Cake\Validation\Validator;
  */
 class ArrayContext implements ContextInterface
 {
-
     /**
      * The request object.
      *

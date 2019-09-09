@@ -31,7 +31,6 @@ use RuntimeException;
  */
 class RouteBuilder
 {
-
     /**
      * Regular expression for auto increment IDs
      *

@@ -34,7 +34,6 @@ use InvalidArgumentException;
  */
 class PaginatorComponent extends Component
 {
-
     /**
      * Default pagination settings.
      *

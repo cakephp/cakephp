@@ -25,7 +25,6 @@ use Cake\Utility\Hash;
  */
 class FormContext implements ContextInterface
 {
-
     /**
      * The request object.
      *

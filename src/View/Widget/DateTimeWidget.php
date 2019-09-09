@@ -28,7 +28,6 @@ use RuntimeException;
  */
 class DateTimeWidget implements WidgetInterface
 {
-
     /**
      * Select box widget.
      *

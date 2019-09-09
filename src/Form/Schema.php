@@ -19,7 +19,6 @@ namespace Cake\Form;
  */
 class Schema
 {
-
     /**
      * The fields in this schema.
      *

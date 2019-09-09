@@ -23,7 +23,6 @@ use Cake\Console\Shell;
  */
 class CompletionShell extends Shell
 {
-
     /**
      * Contains tasks to load and instantiate
      *

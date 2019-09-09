@@ -29,7 +29,6 @@ use Exception;
  */
 abstract class BaseErrorHandler
 {
-
     /**
      * Options to use for the Error handling.
      *

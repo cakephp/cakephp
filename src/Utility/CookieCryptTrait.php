@@ -25,7 +25,6 @@ use RuntimeException;
  */
 trait CookieCryptTrait
 {
-
     /**
      * Valid cipher names for encrypted cookies.
      *

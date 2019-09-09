@@ -33,7 +33,6 @@ use RuntimeException;
  */
 class Query implements ExpressionInterface, IteratorAggregate
 {
-
     use TypeMapTrait;
 
     /**

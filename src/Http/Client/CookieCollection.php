@@ -26,7 +26,6 @@ use Cake\Http\Cookie\CookieInterface;
  */
 class CookieCollection extends BaseCollection
 {
-
     /**
      * {@inheritDoc}
      */

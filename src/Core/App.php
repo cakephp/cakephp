@@ -40,7 +40,6 @@ namespace Cake\Core;
  */
 class App
 {
-
     /**
      * Return the class name namespaced. This method checks if the class is defined on the
      * application/plugin, otherwise try to load from the CakePHP core

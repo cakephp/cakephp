@@ -55,7 +55,6 @@ use Cake\Core\Configure;
  */
 class JsonView extends SerializedView
 {
-
     /**
      * JSON layouts are located in the json sub directory of `Layouts/`
      *

@@ -30,7 +30,6 @@ use RuntimeException;
  */
 class Oauth
 {
-
     /**
      * Add headers for Oauth authorization.
      *

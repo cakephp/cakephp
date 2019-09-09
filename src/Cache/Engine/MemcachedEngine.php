@@ -29,7 +29,6 @@ use Memcached;
  */
 class MemcachedEngine extends CacheEngine
 {
-
     /**
      * memcached wrapper.
      *

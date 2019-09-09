@@ -25,7 +25,6 @@ use Cake\Event\EventDispatcherInterface;
  */
 trait ViewVarsTrait
 {
-
     /**
      * The name of default View class.
      *

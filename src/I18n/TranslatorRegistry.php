@@ -26,7 +26,6 @@ use Cake\Cache\CacheEngine;
  */
 class TranslatorRegistry extends TranslatorLocator
 {
-
     /**
      * A list of loader functions indexed by domain name. Loaders are
      * callables that are invoked as a default for building translation

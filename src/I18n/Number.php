@@ -25,7 +25,6 @@ use NumberFormatter;
  */
 class Number
 {
-
     /**
      * Default locale
      *

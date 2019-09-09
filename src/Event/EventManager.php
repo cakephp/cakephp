@@ -24,7 +24,6 @@ use InvalidArgumentException;
  */
 class EventManager implements EventManagerInterface
 {
-
     /**
      * The default priority queue value for new, attached listeners
      *

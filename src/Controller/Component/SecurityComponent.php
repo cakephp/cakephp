@@ -39,7 +39,6 @@ use Cake\Utility\Security;
  */
 class SecurityComponent extends Component
 {
-
     /**
      * Default message used for exceptions thrown
      */

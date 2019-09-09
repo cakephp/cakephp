@@ -19,7 +19,6 @@ namespace Cake\Event;
  */
 trait EventDispatcherTrait
 {
-
     /**
      * Instance of the Cake\Event\EventManager this object is using
      * to dispatch inner events.

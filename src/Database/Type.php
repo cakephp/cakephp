@@ -23,7 +23,6 @@ use PDO;
  */
 class Type implements TypeInterface
 {
-
     /**
      * List of supported database types. A human readable
      * identifier is used as key and a complete namespaced class name as value

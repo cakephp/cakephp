@@ -26,7 +26,6 @@ use PHPUnit\Framework\TestSuite as BaseTestSuite;
  */
 class TestSuite extends BaseTestSuite
 {
-
     /**
      * Adds all the files in a directory to the test suite. Does not recursive through directories.
      *

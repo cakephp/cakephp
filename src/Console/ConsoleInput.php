@@ -19,7 +19,6 @@ namespace Cake\Console;
  */
 class ConsoleInput
 {
-
     /**
      * Input value.
      *

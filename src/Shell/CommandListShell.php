@@ -29,7 +29,6 @@ use SimpleXMLElement;
  */
 class CommandListShell extends Shell
 {
-
     /**
      * Contains tasks to load and instantiate
      *

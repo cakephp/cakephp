@@ -28,7 +28,6 @@ use RuntimeException;
  */
 class StringTemplate
 {
-
     use InstanceConfigTrait {
         getConfig as get;
     }

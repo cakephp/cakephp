@@ -21,7 +21,6 @@ use Cake\View\Form\ContextInterface;
  */
 class CheckboxWidget extends BasicWidget
 {
-
     /**
      * Render a checkbox element.
      *

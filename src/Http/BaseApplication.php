@@ -42,7 +42,6 @@ abstract class BaseApplication implements
     HttpApplicationInterface,
     PluginApplicationInterface
 {
-
     use EventDispatcherTrait;
 
     /**

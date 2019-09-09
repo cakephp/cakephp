@@ -27,7 +27,6 @@ use Cake\Utility\Inflector;
  */
 class AssetFilter extends DispatcherFilter
 {
-
     /**
      * Default priority for all methods in this filter
      * This filter should run before the request gets parsed by router

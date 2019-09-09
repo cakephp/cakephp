@@ -28,7 +28,6 @@ use Cake\View\View;
  */
 class RssHelper extends Helper
 {
-
     /**
      * Helpers used by RSS Helper
      *

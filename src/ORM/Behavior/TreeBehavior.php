@@ -37,7 +37,6 @@ use RuntimeException;
  */
 class TreeBehavior extends Behavior
 {
-
     /**
      * Cached copy of the first column in a table's primary key.
      *

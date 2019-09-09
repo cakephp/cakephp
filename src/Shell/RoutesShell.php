@@ -24,7 +24,6 @@ use Cake\Routing\Router;
  */
 class RoutesShell extends Shell
 {
-
     /**
      * Override main() to handle action
      * Displays all routes in an application.

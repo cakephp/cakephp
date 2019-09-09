@@ -86,7 +86,6 @@ use RuntimeException;
  */
 class Controller implements EventListenerInterface, EventDispatcherInterface
 {
-
     use EventDispatcherTrait;
     use LocatorAwareTrait;
     use LogTrait;

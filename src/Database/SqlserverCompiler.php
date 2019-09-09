@@ -22,7 +22,6 @@ namespace Cake\Database;
  */
 class SqlserverCompiler extends QueryCompiler
 {
-
     /**
      * SQLserver does not support ORDER BY in UNION queries.
      *

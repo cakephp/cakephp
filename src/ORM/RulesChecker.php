@@ -28,7 +28,6 @@ use Cake\ORM\Rule\ValidCount;
  */
 class RulesChecker extends BaseRulesChecker
 {
-
     /**
      * Returns a callable that can be used as a rule for checking the uniqueness of a value
      * in the table.

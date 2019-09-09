@@ -30,7 +30,6 @@ use RuntimeException;
  */
 class Validation
 {
-
     /**
      * Default locale
      */

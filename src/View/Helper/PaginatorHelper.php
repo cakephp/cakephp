@@ -33,7 +33,6 @@ use Cake\View\View;
  */
 class PaginatorHelper extends Helper
 {
-
     use StringTemplateTrait;
 
     /**

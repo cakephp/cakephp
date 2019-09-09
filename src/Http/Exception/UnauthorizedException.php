@@ -17,7 +17,6 @@ namespace Cake\Http\Exception;
  */
 class UnauthorizedException extends HttpException
 {
-
     /**
      * {@inheritDoc}
      */

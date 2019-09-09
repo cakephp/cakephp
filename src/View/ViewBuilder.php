@@ -30,7 +30,6 @@ use Serializable;
  */
 class ViewBuilder implements JsonSerializable, Serializable
 {
-
     /**
      * The subdirectory to the template.
      *

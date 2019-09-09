@@ -40,7 +40,6 @@ use RuntimeException;
  */
 class RequestHandlerComponent extends Component
 {
-
     /**
      * @var bool
      * @deprecated 3.4.0 Unused. Will be removed in 4.0.0

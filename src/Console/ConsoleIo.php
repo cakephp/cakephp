@@ -29,7 +29,6 @@ use SplFileObject;
  */
 class ConsoleIo
 {
-
     /**
      * The output stream
      *

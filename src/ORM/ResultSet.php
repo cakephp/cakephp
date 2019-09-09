@@ -30,7 +30,6 @@ use SplFixedArray;
  */
 class ResultSet implements ResultSetInterface
 {
-
     use CollectionTrait;
 
     /**

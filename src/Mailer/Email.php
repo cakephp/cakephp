@@ -49,7 +49,6 @@ use SimpleXMLElement;
  */
 class Email implements JsonSerializable, Serializable
 {
-
     use StaticConfigTrait;
     use ViewVarsTrait;
 

@@ -30,7 +30,6 @@ use Zend\Diactoros\Response\EmitterInterface;
  */
 class Server implements EventDispatcherInterface
 {
-
     /**
      * Alias methods away so we can implement proxying methods.
      */

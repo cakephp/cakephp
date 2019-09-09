@@ -51,7 +51,6 @@ use Cake\Http\ServerRequest;
  */
 class BasicAuthenticate extends BaseAuthenticate
 {
-
     /**
      * Authenticate a user using HTTP auth. Will use the configured User model and attempt a
      * login using HTTP auth.

@@ -18,7 +18,6 @@ namespace Cake\Http\Cookie;
  */
 interface CookieInterface
 {
-
     /**
      * Expires attribute format.
      *

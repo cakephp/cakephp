@@ -24,7 +24,6 @@ namespace Cake\ORM;
  */
 class EagerLoadable
 {
-
     /**
      * The name of the association to load.
      *

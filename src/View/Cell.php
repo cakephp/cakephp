@@ -35,7 +35,6 @@ use ReflectionMethod;
  */
 abstract class Cell
 {
-
     use EventDispatcherTrait;
     use LocatorAwareTrait;
     use ModelAwareTrait;

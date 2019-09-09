@@ -22,7 +22,6 @@ use Cake\Database\Schema\TableSchema;
  */
 class SqliteSchema extends BaseSchema
 {
-
     /**
      * Array containing the foreign keys constraints names
      * Necessary for composite foreign keys to be handled

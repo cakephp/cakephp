@@ -26,7 +26,6 @@ use SimpleXMLElement;
  */
 class ConsoleInputSubcommand
 {
-
     /**
      * Name of the subcommand
      *
