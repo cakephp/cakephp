@@ -20,7 +20,6 @@ use Cake\Core\Exception\Exception;
  */
 class SocketException extends Exception
 {
-
     /**
      * {@inheritDoc}
      */

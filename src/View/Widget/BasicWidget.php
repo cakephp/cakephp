@@ -25,7 +25,6 @@ use Cake\View\Form\ContextInterface;
  */
 class BasicWidget implements WidgetInterface
 {
-
     /**
      * StringTemplate instance.
      *

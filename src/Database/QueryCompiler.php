@@ -23,7 +23,6 @@ use Cake\Database\Expression\QueryExpression;
  */
 class QueryCompiler
 {
-
     /**
      * List of sprintf templates that will be used for compiling the SQL for
      * this query. There are some clauses that can be built as just as the

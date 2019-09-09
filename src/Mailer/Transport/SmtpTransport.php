@@ -25,7 +25,6 @@ use Exception;
  */
 class SmtpTransport extends AbstractTransport
 {
-
     /**
      * Default config for this class
      *

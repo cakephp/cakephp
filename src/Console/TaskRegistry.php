@@ -24,7 +24,6 @@ use Cake\Core\ObjectRegistry;
  */
 class TaskRegistry extends ObjectRegistry
 {
-
     /**
      * Shell to use to set params to tasks.
      *

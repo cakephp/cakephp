@@ -39,7 +39,6 @@ use Throwable;
  */
 class Router
 {
-
     /**
      * Have routes been loaded
      *

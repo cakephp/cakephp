@@ -21,7 +21,6 @@ use Cake\View\Form\ContextInterface;
  */
 interface WidgetInterface
 {
-
     /**
      * Converts the $data into one or many HTML elements.
      *

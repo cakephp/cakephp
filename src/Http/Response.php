@@ -37,7 +37,6 @@ use Zend\Diactoros\Stream;
  */
 class Response implements ResponseInterface
 {
-
     use MessageTrait;
 
     /**

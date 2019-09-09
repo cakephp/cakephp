@@ -26,7 +26,6 @@ use Locale;
  */
 class I18n
 {
-
     /**
      * Default locale
      *

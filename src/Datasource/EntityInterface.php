@@ -46,7 +46,6 @@ use JsonSerializable;
  */
 interface EntityInterface extends ArrayAccess, JsonSerializable
 {
-
     /**
      * Sets one or multiple properties to the specified value
      *

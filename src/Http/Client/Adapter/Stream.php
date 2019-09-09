@@ -27,7 +27,6 @@ use Cake\Http\Exception\HttpException;
  */
 class Stream implements AdapterInterface
 {
-
     /**
      * Context resource used by the stream API.
      *

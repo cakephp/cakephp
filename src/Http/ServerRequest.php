@@ -36,7 +36,6 @@ use Zend\Diactoros\UploadedFile;
  */
 class ServerRequest implements ArrayAccess, ServerRequestInterface
 {
-
     /**
      * Array of parameters parsed from the URL.
      *

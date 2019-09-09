@@ -26,7 +26,6 @@ use Traversable;
  */
 class RadioWidget implements WidgetInterface
 {
-
     use IdGeneratorTrait;
 
     /**

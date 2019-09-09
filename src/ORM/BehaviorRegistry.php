@@ -30,7 +30,6 @@ use LogicException;
  */
 class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterface
 {
-
     use EventDispatcherTrait;
 
     /**

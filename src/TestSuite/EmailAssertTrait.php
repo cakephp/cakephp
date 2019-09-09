@@ -28,7 +28,6 @@ use Cake\Mailer\Email;
  */
 trait EmailAssertTrait
 {
-
     /**
      * @var \Cake\Mailer\Email
      */

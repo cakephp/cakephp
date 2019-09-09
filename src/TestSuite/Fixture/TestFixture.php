@@ -32,7 +32,6 @@ use Exception;
  */
 class TestFixture implements FixtureInterface, TableSchemaInterface, TableSchemaAwareInterface
 {
-
     use LocatorAwareTrait;
 
     /**

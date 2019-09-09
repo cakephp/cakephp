@@ -21,7 +21,6 @@ use Aura\Intl\Translator as BaseTranslator;
  */
 class Translator extends BaseTranslator
 {
-
     const PLURAL_PREFIX = 'p:';
 
     /**

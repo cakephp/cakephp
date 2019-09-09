@@ -22,7 +22,6 @@ namespace Cake\Database;
  */
 interface TypedResultInterface
 {
-
     /**
      * Sets the type of the value this object will generate.
      * If called without arguments, returns the current known type

@@ -17,7 +17,6 @@ namespace Cake\Http\Exception;
  */
 class NotAcceptableException extends HttpException
 {
-
     /**
      * {@inheritDoc}
      */

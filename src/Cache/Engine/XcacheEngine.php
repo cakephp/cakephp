@@ -24,7 +24,6 @@ use Cake\Cache\CacheEngine;
  */
 class XcacheEngine extends CacheEngine
 {
-
     /**
      * The default config used unless overridden by runtime configuration
      *

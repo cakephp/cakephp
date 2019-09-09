@@ -21,6 +21,5 @@ namespace Cake\Event;
  */
 trait EventManagerTrait
 {
-
     use EventDispatcherTrait;
 }

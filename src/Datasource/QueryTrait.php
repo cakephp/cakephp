@@ -24,7 +24,6 @@ use Cake\Datasource\Exception\RecordNotFoundException;
  */
 trait QueryTrait
 {
-
     /**
      * Instance of a table object this query is bound to
      *

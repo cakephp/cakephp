@@ -23,7 +23,6 @@ use Cake\Core\Configure;
  */
 class ServerShell extends Shell
 {
-
     /**
      * Default ServerHost
      *

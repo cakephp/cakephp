@@ -74,7 +74,6 @@ use RuntimeException;
  */
 class View implements EventDispatcherInterface
 {
-
     use CellTrait {
         cell as public;
     }

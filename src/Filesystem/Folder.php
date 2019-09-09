@@ -28,7 +28,6 @@ use RecursiveIteratorIterator;
  */
 class Folder
 {
-
     /**
      * Default scheme for Folder::copy
      * Recursively merges subfolders with the same name

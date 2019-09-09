@@ -21,7 +21,6 @@ namespace Cake\Database;
  */
 class ValueBinder
 {
-
     /**
      * Array containing a list of bound values to the conditions on this
      * object. Each array entry is another array structure containing the actual

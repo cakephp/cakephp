@@ -29,7 +29,6 @@ use Exception;
  */
 class TimeHelper extends Helper
 {
-
     use StringTemplateTrait;
 
     /**

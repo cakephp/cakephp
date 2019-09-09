@@ -65,7 +65,6 @@ use Cake\Utility\Security;
  */
 class DigestAuthenticate extends BasicAuthenticate
 {
-
     /**
      * Constructor
      *

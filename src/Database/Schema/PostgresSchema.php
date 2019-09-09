@@ -22,7 +22,6 @@ use Cake\Database\Schema\TableSchema;
  */
 class PostgresSchema extends BaseSchema
 {
-
     /**
      * {@inheritDoc}
      */

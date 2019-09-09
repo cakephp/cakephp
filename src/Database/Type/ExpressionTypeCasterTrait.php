@@ -23,7 +23,6 @@ use Cake\Database\Type;
  */
 trait ExpressionTypeCasterTrait
 {
-
     /**
      * Conditionally converts the passed value to an ExpressionInterface object
      * if the type class implements the ExpressionTypeInterface. Otherwise,

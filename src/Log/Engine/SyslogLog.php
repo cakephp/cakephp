@@ -19,7 +19,6 @@ namespace Cake\Log\Engine;
  */
 class SyslogLog extends BaseLog
 {
-
     /**
      * Default config for this class
      *

@@ -28,7 +28,6 @@ use Cake\Collection\CollectionInterface;
  */
 class StoppableIterator extends Collection
 {
-
     /**
      * The condition to evaluate for each item of the collection
      *

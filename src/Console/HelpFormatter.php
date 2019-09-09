@@ -29,7 +29,6 @@ use SimpleXMLElement;
  */
 class HelpFormatter
 {
-
     /**
      * The maximum number of arguments shown when generating usage.
      *

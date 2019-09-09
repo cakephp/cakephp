@@ -35,7 +35,6 @@ use Exception;
  */
 class Connection implements ConnectionInterface
 {
-
     use TypeConverterTrait;
 
     /**

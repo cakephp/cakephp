@@ -36,7 +36,6 @@ use Traversable;
  */
 class BelongsToMany extends Association
 {
-
     /**
      * Saving strategy that will only append to the links set
      *

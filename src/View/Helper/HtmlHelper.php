@@ -30,7 +30,6 @@ use Cake\View\View;
  */
 class HtmlHelper extends Helper
 {
-
     use StringTemplateTrait;
 
     /**

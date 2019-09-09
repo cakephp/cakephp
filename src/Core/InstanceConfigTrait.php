@@ -24,7 +24,6 @@ use Cake\Utility\Hash;
  */
 trait InstanceConfigTrait
 {
-
     /**
      * Runtime config
      *

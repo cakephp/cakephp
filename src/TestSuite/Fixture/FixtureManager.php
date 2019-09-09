@@ -30,7 +30,6 @@ use UnexpectedValueException;
  */
 class FixtureManager
 {
-
     /**
      * Was this instance already initialized?
      *

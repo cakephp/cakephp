@@ -50,7 +50,6 @@ use PDOException;
  */
 class ExceptionRenderer implements ExceptionRendererInterface
 {
-
     /**
      * The exception being handled.
      *

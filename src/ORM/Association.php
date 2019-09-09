@@ -34,7 +34,6 @@ use RuntimeException;
  */
 abstract class Association
 {
-
     use ConventionsTrait;
     use LocatorAwareTrait;
 

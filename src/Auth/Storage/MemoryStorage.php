@@ -19,7 +19,6 @@ namespace Cake\Auth\Storage;
  */
 class MemoryStorage implements StorageInterface
 {
-
     /**
      * User record.
      *

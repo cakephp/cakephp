@@ -26,7 +26,6 @@ use PDOException;
  */
 trait PDODriverTrait
 {
-
     /**
      * Instance of PDO.
      *

@@ -25,7 +25,6 @@ use LogicException;
  */
 class BreadcrumbsHelper extends Helper
 {
-
     use StringTemplateTrait;
 
     /**

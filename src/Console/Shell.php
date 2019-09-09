@@ -38,7 +38,6 @@ use RuntimeException;
  */
 class Shell
 {
-
     use LocatorAwareTrait;
     use LogTrait;
     use MergeVariablesTrait;

@@ -20,7 +20,6 @@ namespace Cake\TestSuite\Constraint\Console;
  */
 class ContentsContain extends ContentsBase
 {
-
     /**
      * Checks if contents contain expected
      *

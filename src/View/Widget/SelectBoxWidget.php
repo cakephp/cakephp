@@ -25,7 +25,6 @@ use Traversable;
  */
 class SelectBoxWidget extends BasicWidget
 {
-
     /**
      * Render a select box form input.
      *

@@ -22,7 +22,6 @@ use SplFileInfo;
  */
 class File
 {
-
     /**
      * Folder object of the file
      *

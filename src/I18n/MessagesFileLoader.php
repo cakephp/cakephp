@@ -29,7 +29,6 @@ use RuntimeException;
  */
 class MessagesFileLoader
 {
-
     /**
      * The package (domain) name.
      *

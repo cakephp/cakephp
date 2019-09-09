@@ -28,7 +28,6 @@ use InvalidArgumentException;
  */
 class EagerLoader
 {
-
     /**
      * Nested array describing the association to be fetched
      * and the options to apply for each of them, if any

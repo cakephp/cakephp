@@ -27,7 +27,6 @@ use Cake\Routing\Router;
  */
 class RoutingFilter extends DispatcherFilter
 {
-
     /**
      * Priority setting.
      *

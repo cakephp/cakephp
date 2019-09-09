@@ -30,7 +30,6 @@ use RuntimeException;
  */
 class Hash
 {
-
     /**
      * Get a single value specified by $path out of $data.
      * Does not support the full dot notation feature set,
