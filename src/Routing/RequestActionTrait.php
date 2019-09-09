@@ -176,7 +176,7 @@ trait RequestActionTrait
             }
         }
         foreach ($needed as $class) {
-            $dispatcher->addFilter(new $class);
+            $dispatcher->addFilter(new $class());
         }
         $result = $dispatcher->dispatch($request, new Response());
         Router::popRequest();
