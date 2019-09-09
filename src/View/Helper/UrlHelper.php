@@ -65,7 +65,7 @@ class UrlHelper extends Helper
      * Depending on options passed provides full URL with domain name. Also calls
      * `Helper::assetTimestamp()` to add timestamp to local files.
      *
-     * @param string|array $path Path string or URL array
+     * @param string $path Path string.
      * @param array $options Options array. Possible keys:
      *   `fullBase` Return full URL with domain name
      *   `pathPrefix` Path prefix for relative URLs
@@ -76,7 +76,7 @@ class UrlHelper extends Helper
      *        enable timestamping regardless of debug value.
      * @return string Generated URL
      */
-    public function image($path, array $options = []): string
+    public function image(string $path, array $options = []): string
     {
         $pathPrefix = Configure::read('App.imageBaseUrl');
 
@@ -89,7 +89,7 @@ class UrlHelper extends Helper
      * Depending on options passed provides full URL with domain name. Also calls
      * `Helper::assetTimestamp()` to add timestamp to local files.
      *
-     * @param string|array $path Path string or URL array
+     * @param string $path Path string.
      * @param array $options Options array. Possible keys:
      *   `fullBase` Return full URL with domain name
      *   `pathPrefix` Path prefix for relative URLs
@@ -101,7 +101,7 @@ class UrlHelper extends Helper
      *        enable timestamping regardless of debug value.
      * @return string Generated URL
      */
-    public function css($path, array $options = []): string
+    public function css(string $path, array $options = []): string
     {
         $pathPrefix = Configure::read('App.cssBaseUrl');
         $ext = '.css';
@@ -115,7 +115,7 @@ class UrlHelper extends Helper
      * Depending on options passed provides full URL with domain name. Also calls
      * `Helper::assetTimestamp()` to add timestamp to local files.
      *
-     * @param string|array $path Path string or URL array
+     * @param string $path Path string.
      * @param array $options Options array. Possible keys:
      *   `fullBase` Return full URL with domain name
      *   `pathPrefix` Path prefix for relative URLs
@@ -127,7 +127,7 @@ class UrlHelper extends Helper
      *        enable timestamping regardless of debug value.
      * @return string Generated URL
      */
-    public function script($path, array $options = []): string
+    public function script(string $path, array $options = []): string
     {
         $pathPrefix = Configure::read('App.jsBaseUrl');
         $ext = '.js';
@@ -153,15 +153,12 @@ class UrlHelper extends Helper
      *    Set to true to apply timestamps when debug is true. Set to 'force' to always
      *    enable timestamping regardless of debug value.
      *
-     * @param string|array $path Path string or URL array
+     * @param string $path Path string or URL array
      * @param array $options Options array.
      * @return string Generated URL
      */
-    public function assetUrl($path, array $options = []): string
+    public function assetUrl(string $path, array $options = []): string
     {
-        if (is_array($path)) {
-            return $this->build($path, $options);
-        }
         // data URIs only require HTML escaping
         if (preg_match('/^data:[a-z]+\/[a-z]+;/', $path)) {
             return h($path);

@@ -219,7 +219,11 @@ class HtmlHelper extends Helper
         $out = '';
 
         if (isset($options['link'])) {
-            $options['link'] = $this->Url->assetUrl($options['link']);
+            if (is_array($options['link'])) {
+                $options['link'] = $this->Url->build($options['link']);
+            } else {
+                $options['link'] = $this->Url->assetUrl($options['link']);
+            }
             if (isset($options['rel']) && $options['rel'] === 'icon') {
                 $out = $this->formatTemplate('metalink', [
                     'url' => $options['link'],
@@ -659,12 +663,12 @@ class HtmlHelper extends Helper
      * - `fullBase` If true the src attribute will get a full address for the image file.
      * - `plugin` False value will prevent parsing path as a plugin
      *
-     * @param string|array $path Path to the image file, relative to the app/webroot/img/ directory.
+     * @param string $path Path to the image file, relative to the app/webroot/img/ directory.
      * @param array $options Array of HTML attributes. See above for special options.
      * @return string completed img tag
      * @link https://book.cakephp.org/3.0/en/views/helpers/html.html#linking-to-images
      */
-    public function image($path, array $options = []): string
+    public function image(string $path, array $options = []): string
     {
         $path = $this->Url->image($path, $options);
         $options = array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
