@@ -184,13 +184,13 @@ trait IntegrationTestTrait
     /**
      * Stored flash messages before render
      *
-     * @var null|array
+     * @var array|null
      */
     protected $_flashMessages;
 
     /**
      *
-     * @var null|string
+     * @var string|null
      */
     protected $_cookieEncryptionKey;
 

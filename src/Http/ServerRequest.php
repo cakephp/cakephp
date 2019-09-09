@@ -55,7 +55,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * In PUT/PATCH/DELETE requests this property will contain the form-urlencoded
      * data.
      *
-     * @var null|array|object
+     * @var array|object|null
      * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getData() instead.
      */
     protected $data = [];
