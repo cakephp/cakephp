@@ -333,7 +333,7 @@ class CommandRunner implements EventDispatcherInterface
         try {
             return $command->run($argv, $io);
         } catch (StopException $e) {
-            return (int)$e->getCode();
+            return $e->getCode();
         }
     }
 

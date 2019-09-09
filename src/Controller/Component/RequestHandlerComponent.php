@@ -531,7 +531,7 @@ class RequestHandlerComponent extends Component
             }
         }
 
-        if (!$type) {
+        if (!$cType) {
             return false;
         }
         if (!$request->getParam('requested')) {

@@ -138,11 +138,11 @@ class I18nExtractCommand extends Command
     protected function _getPaths(ConsoleIo $io): void
     {
         /** @psalm-suppress UndefinedConstant */
-        $defaultPaths = [
-            APP,
+        $defaultPaths = array_merge(
+            [APP],
             App::path('templates'),
-            'D', // This is required to break the loop below
-        ];
+            ['D'] // This is required to break the loop below
+        );
         $defaultPathIndex = 0;
         while (true) {
             $currentPaths = count($this->_paths) > 0 ? $this->_paths : ['None'];

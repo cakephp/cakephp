@@ -19,6 +19,8 @@ use Throwable;
 
 /**
  * Base class that all CakePHP Exceptions extend.
+ *
+ * @method int getCode()
  */
 class Exception extends RuntimeException
 {

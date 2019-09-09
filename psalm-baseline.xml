@@ -1,5 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="3.4.12@86e5e50c1bb492045e70f2ebe1da3cad06e4e9b2">
+<files psalm-version="3.5.0@f8b8f35c031e2fad6754a961a9fad2708649d8da">
+  <file src="src/Command/CompletionCommand.php">
+    <DeprecatedClass occurrences="1">
+      <code>\Cake\Console\Shell</code>
+    </DeprecatedClass>
+  </file>
+  <file src="src/Console/CommandCollection.php">
+    <DeprecatedClass occurrences="1">
+      <code>string|\Cake\Console\Shell|\Cake\Console\Command</code>
+    </DeprecatedClass>
+  </file>
+  <file src="src/Console/CommandFactoryInterface.php">
+    <DeprecatedClass occurrences="1">
+      <code>\Cake\Console\Shell|\Cake\Console\Command</code>
+    </DeprecatedClass>
+  </file>
+  <file src="src/Console/CommandRunner.php">
+    <DeprecatedClass occurrences="3">
+      <code>\Cake\Console\Shell|\Cake\Console\Command</code>
+      <code>\Cake\Console\Shell</code>
+      <code>\Cake\Console\Shell|\Cake\Console\Command</code>
+    </DeprecatedClass>
+  </file>
+  <file src="src/Console/ShellDispatcher.php">
+    <DeprecatedClass occurrences="3">
+      <code>Shell</code>
+      <code>Shell</code>
+      <code>$instance</code>
+    </DeprecatedClass>
+  </file>
+  <file src="src/Console/TaskRegistry.php">
+    <DeprecatedClass occurrences="4">
+      <code>TaskRegistry</code>
+      <code>\Cake\Console\Shell</code>
+      <code>\Cake\Console\Shell</code>
+      <code>Shell</code>
+    </DeprecatedClass>
+  </file>
+  <file src="src/Datasource/ModelAwareTrait.php">
+    <DeprecatedClass occurrences="1">
+      <code>$this</code>
+    </DeprecatedClass>
+  </file>
+  <file src="src/ORM/Locator/LocatorAwareTrait.php">
+    <DeprecatedClass occurrences="1">
+      <code>$this</code>
+    </DeprecatedClass>
+  </file>
   <file src="src/Shell/Task/CommandTask.php">
     <DeprecatedClass occurrences="1">
       <code>Shell</code>
@@ -32,9 +79,11 @@
     </DeprecatedInterface>
   </file>
   <file src="src/TestSuite/LegacyShellDispatcher.php">
-    <DeprecatedClass occurrences="2">
+    <DeprecatedClass occurrences="4">
       <code>ShellDispatcher</code>
       <code>parent::__construct($args, $bootstrap)</code>
+      <code>Shell</code>
+      <code>$instance</code>
     </DeprecatedClass>
   </file>
   <file src="src/TestSuite/TestSuite.php">
