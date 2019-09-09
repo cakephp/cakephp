@@ -65,7 +65,7 @@ class SqliteSchema extends BaseSchema
         if (isset($matches[3])) {
             $length = $matches[3];
             if (strpos($length, ',') !== false) {
-                [$length, $precision] = explode(',', $length);
+                list($length, $precision) = explode(',', $length);
             }
             $length = (int)$length;
             $precision = (int)$precision;
