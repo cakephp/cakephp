@@ -21,6 +21,7 @@ use Cake\Console\Command;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\App;
+use Cake\Core\Plugin;
 use Cake\Utility\Inflector;
 use DirectoryIterator;
 
@@ -56,10 +57,10 @@ class I18nInitCommand extends Command
             return static::CODE_ERROR;
         }
 
-        $paths = App::path('Locale');
+        $paths = App::path('locales');
         if ($args->hasOption('plugin')) {
             $plugin = Inflector::camelize((string)$args->getOption('plugin'));
-            $paths = App::path('Locale', $plugin);
+            $paths = [Plugin::path($plugin) . 'resources' . DIRECTORY_SEPARATOR . 'locales' . DIRECTORY_SEPARATOR];
         }
 
         $response = $io->ask('What folder?', rtrim($paths[0], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR);
