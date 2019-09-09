@@ -2126,6 +2126,7 @@ class Query implements ExpressionInterface, IteratorAggregate
         }
 
         if ($expression->getConjunction() === $conjunction) {
+            /** @psalm-suppress PossiblyInvalidArgument */
             $expression->add($append, $types);
         } else {
             $expression = $this->newExpr()

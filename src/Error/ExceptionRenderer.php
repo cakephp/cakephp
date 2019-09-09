@@ -337,12 +337,12 @@ class ExceptionRenderer implements ExceptionRendererInterface
     protected function _code(Throwable $exception): int
     {
         $code = 500;
-        $errorCode = $exception->getCode();
+        $errorCode = (int)$exception->getCode();
         if ($errorCode >= 400 && $errorCode < 600) {
             $code = $errorCode;
         }
 
-        return (int)$code;
+        return $code;
     }
 
     /**

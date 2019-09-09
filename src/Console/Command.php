@@ -309,7 +309,7 @@ class Command
         try {
             return $command->run($args, $io);
         } catch (StopException $e) {
-            return (int)$e->getCode();
+            return $e->getCode();
         }
     }
 }

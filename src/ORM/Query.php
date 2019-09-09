@@ -789,7 +789,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * @param array $options the options to be applied
      * @return $this
-     * @psalm-suppress ImplementedReturnTypeMismatch
      */
     public function applyOptions(array $options)
     {
