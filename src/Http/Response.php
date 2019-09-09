@@ -762,7 +762,7 @@ class Response implements ResponseInterface
      *
      * Get/Set the Location header value.
      *
-     * @param null|string $url Either null to get the current location, or a string to set one.
+     * @param string|null $url Either null to get the current location, or a string to set one.
      * @return string|null When setting the location null will be returned. When reading the location
      *   a string of the current location header value (if any) will be returned.
      * @deprecated 3.4.0 Mutable responses are deprecated. Use `withLocation()` and `getHeaderLine()`

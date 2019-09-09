@@ -1259,7 +1259,7 @@ trait IntegrationTestTrait
      * Inspect controller to extract possible causes of the failed assertion
      *
      * @param string $message Original message to use as a base
-     * @return null|string
+     * @return string|null
      */
     protected function extractVerboseMessage($message = null)
     {
