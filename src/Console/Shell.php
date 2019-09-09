@@ -717,6 +717,8 @@ class Shell
      */
     public function out($message = null, $newlines = 1, $level = Shell::NORMAL)
     {
+
+
         return $this->_io->out($message, $newlines, $level);
     }
 
