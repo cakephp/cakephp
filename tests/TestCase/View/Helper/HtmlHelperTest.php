@@ -371,6 +371,10 @@ class HtmlHelperTest extends TestCase
         $expected = ['img' => ['src' => '//google.com/logo.gif', 'alt' => '']];
         $this->assertHtml($expected, $result);
 
+        $result = $this->Html->image(['controller' => 'test', 'action' => 'view', 1, '_ext' => 'gif']);
+        $expected = ['img' => ['src' => '/test/view/1.gif', 'alt' => '']];
+        $this->assertHtml($expected, $result);
+
         $result = $this->Html->image('/test/view/1.gif');
         $expected = ['img' => ['src' => '/test/view/1.gif', 'alt' => '']];
         $this->assertHtml($expected, $result);
@@ -385,6 +389,15 @@ class HtmlHelperTest extends TestCase
 
         $result = $this->Html->image('//google.com/"><script>alert(1)</script>');
         $expected = ['img' => ['src' => '//google.com/&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;', 'alt' => '']];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Html->image([
+            'controller' => 'images',
+            'action' => 'display',
+            'test',
+            '?' => ['one' => 'two', 'three' => 'four'],
+        ]);
+        $expected = ['img' => ['src' => '/images/display/test?one=two&amp;three=four', 'alt' => '']];
         $this->assertHtml($expected, $result);
     }
 
