@@ -142,7 +142,7 @@ class Route
      * Get/Set the supported extensions for this route.
      *
      * @deprecated 3.3.9 Use getExtensions/setExtensions instead.
-     * @param null|string|array $extensions The extensions to set. Use null to get.
+     * @param array|string|null $extensions The extensions to set. Use null to get.
      * @return array|null The extensions or null.
      */
     public function extensions($extensions = null)

@@ -280,7 +280,7 @@ class MemcachedEngine extends CacheEngine
      * Read an option value from the memcached connection.
      *
      * @param string $name The option name to read.
-     * @return string|int|null|bool
+     * @return string|int|bool|null
      */
     public function getOption($name)
     {

@@ -369,7 +369,7 @@ class RouteCollection
     /**
      * Get/set the extensions that the route collection could handle.
      *
-     * @param null|string|string[] $extensions Either the list of extensions to set,
+     * @param string[]|string|null $extensions Either the list of extensions to set,
      *   or null to get.
      * @param bool $merge Whether to merge with or override existing extensions.
      *   Defaults to `true`.
