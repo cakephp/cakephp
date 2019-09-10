@@ -110,9 +110,10 @@ class Curl implements AdapterInterface
         }
 
         $body = $request->getBody();
-        $body->rewind();
-        $out[CURLOPT_POSTFIELDS] = $body->getContents();
-
+        if (!empty($body->getContents())) {
+            $body->rewind();
+            $out[CURLOPT_POSTFIELDS] = $body->getContents();
+        }
         if (empty($options['ssl_cafile'])) {
             $options['ssl_cafile'] = CaBundle::getBundledCaBundlePath();
         }
