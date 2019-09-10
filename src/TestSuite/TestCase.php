@@ -835,9 +835,9 @@ abstract class TestCase extends BaseTestCase
     /**
      * Gets fixtures.
      *
-     * @return array
+     * @return string[]
      */
-    public function getFixtures()
+    public function getFixtures(): array
     {
         return $this->fixtures;
     }
