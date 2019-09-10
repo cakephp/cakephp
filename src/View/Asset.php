@@ -19,7 +19,6 @@ namespace Cake\View;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Core\Plugin;
-use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 
@@ -216,7 +215,7 @@ class Asset
         $timestampEnabled = $timestamp === 'force' || ($timestamp === true && Configure::read('debug'));
         if ($timestampEnabled) {
             $filepath = preg_replace(
-                '/^' . preg_quote(static::request()->getAttribute('webroot'), '/') . '/',
+                '/^' . preg_quote(static::requestWebroot(), '/') . '/',
                 '',
                 urldecode($path)
             );
@@ -255,11 +254,11 @@ class Asset
     public static function webroot(string $file, array $options = []): string
     {
         $options += ['theme' => null];
-        $request = static::request();
+        $requestWebroot = static::requestWebroot();
 
         $asset = explode('?', $file);
         $asset[1] = isset($asset[1]) ? '?' . $asset[1] : '';
-        $webPath = $request->getAttribute('webroot') . $asset[0];
+        $webPath = $requestWebroot . $asset[0];
         $file = $asset[0];
 
         $themeName = $options['theme'];
@@ -272,12 +271,12 @@ class Asset
             }
 
             if (file_exists(Configure::read('App.wwwRoot') . $theme . $file)) {
-                $webPath = $request->getAttribute('webroot') . $theme . $asset[0];
+                $webPath = $requestWebroot . $theme . $asset[0];
             } else {
                 $themePath = Plugin::path($themeName);
                 $path = $themePath . 'webroot/' . $file;
                 if (file_exists($path)) {
-                    $webPath = $request->getAttribute('webroot') . $theme . $asset[0];
+                    $webPath = $requestWebroot . $theme . $asset[0];
                 }
             }
         }
@@ -300,18 +299,18 @@ class Asset
     }
 
     /**
-     * Get current request instance from Router.
+     * Get webroot from request.
      *
-     * @return \Cake\Http\ServerRequest
+     * @return string
      */
-    protected static function request(): ServerRequest
+    protected static function requestWebroot(): string
     {
         $request = Router::getRequest(true);
         if ($request === null) {
             throw new Exception('No request instance present in Router.');
         }
 
-        return $request;
+        return $request->getAttribute('webroot');
     }
 
     /**
