@@ -150,7 +150,7 @@ class TableTest extends TestCase
         $table = new Table(['table' => 'users']);
         $this->assertEquals('users', $table->getTable());
 
-        $table = new UsersTable;
+        $table = new UsersTable();
         $this->assertEquals('users', $table->getTable());
 
         $table = $this->getMockBuilder('\Cake\ORM\Table')
@@ -184,7 +184,7 @@ class TableTest extends TestCase
             $table = new Table(['table' => 'stuffs']);
             $this->assertEquals('stuffs', $table->alias());
 
-            $table = new UsersTable;
+            $table = new UsersTable();
             $this->assertEquals('Users', $table->alias());
 
             $table = $this->getMockBuilder('\Cake\ORM\Table')
@@ -211,7 +211,7 @@ class TableTest extends TestCase
         $table = new Table(['table' => 'stuffs']);
         $this->assertEquals('stuffs', $table->getAlias());
 
-        $table = new UsersTable;
+        $table = new UsersTable();
         $this->assertEquals('Users', $table->getAlias());
 
         $table = $this->getMockBuilder('\Cake\ORM\Table')
@@ -1570,7 +1570,7 @@ class TableTest extends TestCase
     {
         $this->expectException(\Cake\ORM\Exception\MissingEntityException::class);
         $this->expectExceptionMessage('Entity class FooUser could not be found.');
-        $table = new Table;
+        $table = new Table();
         $table->setEntityClass('FooUser');
     }
 
@@ -1582,7 +1582,7 @@ class TableTest extends TestCase
      */
     public function testTableClassConventionForAPP()
     {
-        $table = new \TestApp\Model\Table\ArticlesTable;
+        $table = new \TestApp\Model\Table\ArticlesTable();
         $this->assertEquals('TestApp\Model\Entity\Article', $table->getEntityClass());
     }
 
@@ -1595,7 +1595,7 @@ class TableTest extends TestCase
     public function testEntityClass()
     {
         $this->deprecated(function () {
-            $table = new Table;
+            $table = new Table();
             $class = '\\' . $this->getMockClass('\Cake\ORM\Entity');
             $table->entityClass($class);
             $this->assertEquals($class, $table->getEntityClass());
@@ -1609,7 +1609,7 @@ class TableTest extends TestCase
      */
     public function testSetEntityClass()
     {
-        $table = new Table;
+        $table = new Table();
         $class = '\\' . $this->getMockClass('\Cake\ORM\Entity');
         $this->assertSame($table, $table->setEntityClass($class));
         $this->assertEquals($class, $table->getEntityClass());
@@ -2465,7 +2465,7 @@ class TableTest extends TestCase
         $connection->expects($this->once())->method('begin');
         $connection->expects($this->once())->method('rollback');
         $query->expects($this->once())->method('execute')
-            ->will($this->throwException(new \PDOException));
+            ->will($this->throwException(new \PDOException()));
 
         $data = new Entity([
             'username' => 'superuser',
@@ -3308,8 +3308,8 @@ class TableTest extends TestCase
      */
     public function testValidatorSetter()
     {
-        $table = new Table;
-        $validator = new \Cake\Validation\Validator;
+        $table = new Table();
+        $validator = new \Cake\Validation\Validator();
         $table->setValidator('other', $validator);
         $this->assertSame($validator, $table->getValidator('other'));
         $this->assertSame($table, $validator->getProvider('table'));
@@ -3322,11 +3322,11 @@ class TableTest extends TestCase
      */
     public function testHasValidator()
     {
-        $table = new Table;
+        $table = new Table();
         $this->assertTrue($table->hasValidator('default'));
         $this->assertFalse($table->hasValidator('other'));
 
-        $validator = new \Cake\Validation\Validator;
+        $validator = new \Cake\Validation\Validator();
         $table->setValidator('other', $validator);
         $this->assertTrue($table->hasValidator('other'));
     }
@@ -5589,7 +5589,7 @@ class TableTest extends TestCase
         $table->expects($this->once())->method('marshaller')
             ->will($this->returnValue($marshaller));
 
-        $entities = [new Entity];
+        $entities = [new Entity()];
         $data = [['foo' => 'bar']];
         $marshaller->expects($this->once())
             ->method('mergeMany')
@@ -5972,7 +5972,7 @@ class TableTest extends TestCase
     public function testValidateUnique()
     {
         $table = $this->getTableLocator()->get('Users');
-        $validator = new Validator;
+        $validator = new Validator();
         $validator->add('username', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
         $validator->setProvider('table', $table);
 
@@ -6009,7 +6009,7 @@ class TableTest extends TestCase
     public function testValidateUniqueScope()
     {
         $table = $this->getTableLocator()->get('Users');
-        $validator = new Validator;
+        $validator = new Validator();
         $validator->add('username', 'unique', [
             'rule' => ['validateUnique', ['derp' => 'erp', 'scope' => 'id']],
             'provider' => 'table'
@@ -6042,7 +6042,7 @@ class TableTest extends TestCase
         $table = $this->getTableLocator()->get('SiteArticles');
         $table->save($entity);
 
-        $validator = new Validator;
+        $validator = new Validator();
         $validator->add('site_id', 'unique', [
             'rule' => [
                 'validateUnique',
@@ -6078,7 +6078,7 @@ class TableTest extends TestCase
             'Model.beforeFind',
             function (Event $event, Query $query, ArrayObject $options, $primary) use (&$associationBeforeFindCount) {
                 $this->assertInternalType('bool', $primary);
-                $associationBeforeFindCount ++;
+                $associationBeforeFindCount++;
             }
         );
 
@@ -6087,7 +6087,7 @@ class TableTest extends TestCase
             'Model.beforeFind',
             function (Event $event, Query $query, ArrayObject $options, $primary) use (&$beforeFindCount) {
                 $this->assertInternalType('bool', $primary);
-                $beforeFindCount ++;
+                $beforeFindCount++;
             }
         );
         $table->find()->contain('authors')->first();
@@ -6099,7 +6099,7 @@ class TableTest extends TestCase
             'Model.buildValidator',
             $callback = function (Event $event, Validator $validator, $name) use (&$buildValidatorCount) {
                 $this->assertInternalType('string', $name);
-                $buildValidatorCount ++;
+                $buildValidatorCount++;
             }
         );
         $table->getValidator();
@@ -6113,14 +6113,14 @@ class TableTest extends TestCase
         $eventManager->on(
             'Model.buildRules',
             function (Event $event, RulesChecker $rules) use (&$buildRulesCount) {
-                $buildRulesCount ++;
+                $buildRulesCount++;
             }
         );
         $eventManager->on(
             'Model.beforeRules',
             function (Event $event, Entity $entity, ArrayObject $options, $operation) use (&$beforeRulesCount) {
                 $this->assertInternalType('string', $operation);
-                $beforeRulesCount ++;
+                $beforeRulesCount++;
             }
         );
         $eventManager->on(
@@ -6128,19 +6128,19 @@ class TableTest extends TestCase
             function (Event $event, Entity $entity, ArrayObject $options, $result, $operation) use (&$afterRulesCount) {
                 $this->assertInternalType('bool', $result);
                 $this->assertInternalType('string', $operation);
-                $afterRulesCount ++;
+                $afterRulesCount++;
             }
         );
         $eventManager->on(
             'Model.beforeSave',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$beforeSaveCount) {
-                $beforeSaveCount ++;
+                $beforeSaveCount++;
             }
         );
         $eventManager->on(
             'Model.afterSave',
             $afterSaveCallback = function (Event $event, Entity $entity, ArrayObject $options) use (&$afterSaveCount) {
-                $afterSaveCount ++;
+                $afterSaveCount++;
             }
         );
         $entity = new Entity(['title' => 'Title']);
@@ -6156,13 +6156,13 @@ class TableTest extends TestCase
         $eventManager->on(
             'Model.beforeDelete',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$beforeDeleteCount) {
-                $beforeDeleteCount ++;
+                $beforeDeleteCount++;
             }
         );
         $eventManager->on(
             'Model.afterDelete',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$afterDeleteCount) {
-                $afterDeleteCount ++;
+                $afterDeleteCount++;
             }
         );
         $this->assertTrue($table->delete($entity, ['checkRules' => false]));

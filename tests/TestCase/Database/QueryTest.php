@@ -3223,7 +3223,7 @@ class QueryTest extends TestCase
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
-        $date = new \DateTime;
+        $date = new \DateTime();
         $query->update('comments')
             ->set(['comment' => 'mark', 'created' => $date], ['created' => 'date'])
             ->where(['id' => 1]);
@@ -3254,7 +3254,7 @@ class QueryTest extends TestCase
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
-        $date = new \DateTime;
+        $date = new \DateTime();
         $query->update('comments')
             ->set(function ($exp) use ($date) {
                 return $exp
