@@ -55,7 +55,7 @@ class AssociationTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->source = new TestTable;
+        $this->source = new TestTable();
         $config = [
             'className' => '\Cake\Test\TestCase\ORM\TestTable',
             'foreignKey' => 'a_key',
@@ -388,7 +388,7 @@ class AssociationTest extends TestCase
      */
     public function testBindingDefaultNoOwningSide()
     {
-        $target = new Table;
+        $target = new Table();
         $target->setPrimaryKey(['foo', 'site_id']);
         $this->association->setTarget($target);
 
@@ -478,7 +478,7 @@ class AssociationTest extends TestCase
             $table = $this->association->target();
             $this->assertInstanceOf(__NAMESPACE__ . '\TestTable', $table);
 
-            $other = new Table;
+            $other = new Table();
             $this->association->target($other);
             $this->assertSame($other, $this->association->target());
         });
@@ -494,7 +494,7 @@ class AssociationTest extends TestCase
         $table = $this->association->getTarget();
         $this->assertInstanceOf(__NAMESPACE__ . '\TestTable', $table);
 
-        $other = new Table;
+        $other = new Table();
         $this->assertSame($this->association, $this->association->setTarget($other));
         $this->assertSame($other, $this->association->getTarget());
     }
@@ -555,7 +555,7 @@ class AssociationTest extends TestCase
             $table = $this->association->source();
             $this->assertSame($this->source, $table);
 
-            $other = new Table;
+            $other = new Table();
             $this->association->source($other);
             $this->assertSame($other, $this->association->source());
         });
@@ -571,7 +571,7 @@ class AssociationTest extends TestCase
         $table = $this->association->getSource();
         $this->assertSame($this->source, $table);
 
-        $other = new Table;
+        $other = new Table();
         $this->assertSame($this->association, $this->association->setSource($other));
         $this->assertSame($other, $this->association->getSource());
     }

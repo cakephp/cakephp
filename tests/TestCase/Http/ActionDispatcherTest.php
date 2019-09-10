@@ -146,7 +146,7 @@ class ActionDispatcherTest extends TestCase
                 'action' => 'index',
                 'pass' => [],
             ],
-            'session' => new Session
+            'session' => new Session()
         ]);
         $res = new Response();
         $this->dispatcher->getEventManager()->on('Dispatcher.afterDispatch', function (Event $event) {

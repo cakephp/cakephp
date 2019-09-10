@@ -31,7 +31,7 @@ class MemoryStorageTest extends TestCase
     {
         parent::setUp();
 
-        $this->storage = new MemoryStorage;
+        $this->storage = new MemoryStorage();
         $this->user = ['username' => 'giantGummyLizard'];
     }
 

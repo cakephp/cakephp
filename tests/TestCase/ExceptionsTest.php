@@ -111,7 +111,7 @@ class ExceptionsTest extends TestCase
         $this->assertSame($previous, $exception->getPrevious());
         $this->assertSame($entity, $exception->getEntity());
 
-        $exception = new PersistenceFailedException(new Entity, 'message', null, $previous);
+        $exception = new PersistenceFailedException(new Entity(), 'message', null, $previous);
         $this->assertSame('message', $exception->getMessage());
         $this->assertSame(500, $exception->getCode());
         $this->assertSame($previous, $exception->getPrevious());
