@@ -267,7 +267,7 @@ class MemcachedEngine extends CacheEngine
      * Read an option value from the memcached connection.
      *
      * @param int $name The option name to read.
-     * @return string|int|null|bool
+     * @return string|int|bool|null
      * @see https://secure.php.net/manual/en/memcached.getoption.php
      */
     public function getOption(int $name)
@@ -283,7 +283,7 @@ class MemcachedEngine extends CacheEngine
      *
      * @param string $key Identifier for the data
      * @param mixed $value Data to be cached
-     * @param null|int|\DateInterval $ttl Optional. The TTL value of this item. If no value is sent and
+     * @param \DateInterval|int|null $ttl Optional. The TTL value of this item. If no value is sent and
      *   the driver supports TTL then the library may set a default value
      *   for it or let the driver take care of that.
      * @return bool True if the data was successfully cached, false on failure
@@ -303,7 +303,7 @@ class MemcachedEngine extends CacheEngine
      * Write many cache entries to the cache at once
      *
      * @param iterable $data An array of data to be stored in the cache
-     * @param null|int|\DateInterval $ttl Optional. The TTL value of this item. If no value is sent and
+     * @param \DateInterval|int|null $ttl Optional. The TTL value of this item. If no value is sent and
      *   the driver supports TTL then the library may set a default value
      *   for it or let the driver take care of that.
      * @return bool Whether the write was successful or not.

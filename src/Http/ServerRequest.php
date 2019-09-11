@@ -54,7 +54,7 @@ class ServerRequest implements ServerRequestInterface
      * In PUT/PATCH/DELETE requests this property will contain the form-urlencoded
      * data.
      *
-     * @var null|array
+     * @var array|null
      */
     protected $data = [];
 
@@ -1362,7 +1362,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param string|null $name The name or dotted path to the query param or null to read all.
      * @param mixed $default The default value if the named parameter is not set, and $name is not null.
-     * @return null|string|array Query data.
+     * @return array|string|null Query data.
      * @see ServerRequest::getQueryParams()
      */
     public function getQuery(?string $name = null, $default = null)
@@ -1395,7 +1395,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param string|null $name Dot separated name of the value to read. Or null to read all data.
      * @param mixed $default The default data.
-     * @return null|string|array The value being read.
+     * @return array|string|null The value being read.
      */
     public function getData(?string $name = null, $default = null)
     {
@@ -1452,7 +1452,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param string $key The key or dotted path you want to read.
      * @param string $default The default value if the cookie is not set.
-     * @return null|array|string Either the cookie value, or null if the value doesn't exist.
+     * @return string|array|null Either the cookie value, or null if the value doesn't exist.
      */
     public function getCookie(string $key, ?string $default = null)
     {
@@ -1530,7 +1530,7 @@ class ServerRequest implements ServerRequestInterface
      * post data. For other content types, it may be the deserialized request
      * body.
      *
-     * @return null|array The deserialized body parameters, if any.
+     * @return array|null The deserialized body parameters, if any.
      *     These will typically be an array.
      */
     public function getParsedBody(): ?array
@@ -1541,7 +1541,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Update the parsed body and get a new instance.
      *
-     * @param null|array $data The deserialized body data. This will
+     * @param array|null $data The deserialized body data. This will
      *     typically be in an array or object.
      * @return static
      * @psalm-suppress MoreSpecificImplementedParamType
@@ -1833,7 +1833,7 @@ class ServerRequest implements ServerRequestInterface
      * Get the uploaded file from a dotted path.
      *
      * @param string $path The dot separated path to the file you want.
-     * @return null|\Psr\Http\Message\UploadedFileInterface
+     * @return \Psr\Http\Message\UploadedFileInterface|null
      */
     public function getUploadedFile(string $path): ?UploadedFileInterface
     {
