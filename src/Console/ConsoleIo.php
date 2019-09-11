@@ -126,7 +126,7 @@ class ConsoleIo
     /**
      * Get/set the current output level.
      *
-     * @param null|int $level The current output level.
+     * @param int|null $level The current output level.
      * @return int The current output level.
      */
     public function level(?int $level = null): int
@@ -403,7 +403,7 @@ class ConsoleIo
      * @param string|null $style The style to get or create.
      * @param array|false|null $definition The array definition of the style to change or create a style
      *   or false to remove a style.
-     * @return array|null|true If you are getting styles, the style or null will be returned. If you are creating/modifying
+     * @return array|true|null If you are getting styles, the style or null will be returned. If you are creating/modifying
      *   styles true will be returned.
      * @see \Cake\Console\ConsoleOutput::styles()
      */

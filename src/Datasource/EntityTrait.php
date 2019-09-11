@@ -433,7 +433,7 @@ trait EntityTrait
     {
         $field = (array)$field;
         foreach ($field as $p) {
-            unset($this->_fields[$p], $this->_dirty[$p]);
+            unset($this->_fields[$p], $this->_original[$p], $this->_dirty[$p]);
         }
 
         return $this;
@@ -1028,7 +1028,7 @@ trait EntityTrait
     /**
      * Read the error(s) from one or many objects.
      *
-     * @param array|\Cake\Datasource\EntityInterface $object The object to read errors from.
+     * @param iterable|\Cake\Datasource\EntityInterface $object The object to read errors from.
      * @param string|null $path The field name for errors.
      * @return array
      */
@@ -1040,12 +1040,12 @@ trait EntityTrait
         if ($object instanceof EntityInterface) {
             return $object->getErrors();
         }
-        if (is_array($object)) {
+        if (is_iterable($object)) {
             $array = array_map(function ($val) {
                 if ($val instanceof EntityInterface) {
                     return $val->getErrors();
                 }
-            }, $object);
+            }, (array)$object);
 
             return array_filter($array);
         }

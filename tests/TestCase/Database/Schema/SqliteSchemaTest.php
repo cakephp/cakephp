@@ -126,27 +126,27 @@ class SqliteSchemaTest extends TestCase
             ],
             [
                 'FLOAT',
-                ['type' => 'float', 'length' => null, 'unsigned' => false],
+                ['type' => 'float', 'length' => null, 'precision' => null, 'unsigned' => false],
             ],
             [
                 'DOUBLE',
-                ['type' => 'float', 'length' => null, 'unsigned' => false],
+                ['type' => 'float', 'length' => null, 'precision' => null, 'unsigned' => false],
             ],
             [
                 'UNSIGNED DOUBLE',
-                ['type' => 'float', 'length' => null, 'unsigned' => true],
+                ['type' => 'float', 'length' => null, 'precision' => null, 'unsigned' => true],
             ],
             [
                 'REAL',
-                ['type' => 'float', 'length' => null, 'unsigned' => false],
+                ['type' => 'float', 'length' => null, 'precision' => null, 'unsigned' => false],
             ],
             [
                 'DECIMAL(11,2)',
-                ['type' => 'decimal', 'length' => null, 'unsigned' => false],
+                ['type' => 'decimal', 'length' => 11, 'precision' => 2, 'unsigned' => false],
             ],
             [
                 'UNSIGNED DECIMAL(11,2)',
-                ['type' => 'decimal', 'length' => null, 'unsigned' => true],
+                ['type' => 'decimal', 'length' => 11, 'precision' => 2, 'unsigned' => true],
             ],
         ];
     }

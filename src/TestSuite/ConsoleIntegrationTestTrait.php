@@ -105,7 +105,6 @@ trait ConsoleIntegrationTestTrait
         try {
             $this->_exitCode = $runner->run($args, $io);
         } catch (StopException $exception) {
-            /** @var int $this->_exitCode */
             $this->_exitCode = $exception->getCode();
         }
     }

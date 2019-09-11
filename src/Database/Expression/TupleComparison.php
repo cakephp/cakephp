@@ -127,6 +127,7 @@ class TupleComparison extends Comparison
                 continue;
             }
 
+            /** @var string $valType */
             $valType = $type && isset($type[$i]) ? $type[$i] : $type;
             $values[] = $this->_bindValue($value, $generator, $valType);
         }

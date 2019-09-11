@@ -1467,11 +1467,11 @@ class FormHelper extends Helper
      * used instead of the generated values if present.
      *
      * @param string $fieldName The name of the field to generate label for.
-     * @param string|array $label Label text or array with label attributes.
+     * @param string|array|null $label Label text or array with label attributes.
      * @param array $options Options for the label element.
      * @return string Generated label element
      */
-    protected function _inputLabel(string $fieldName, $label, $options): string
+    protected function _inputLabel(string $fieldName, $label = null, array $options = []): string
     {
         $options += ['id' => null, 'input' => null, 'nestedInput' => false, 'templateVars' => []];
         $labelAttributes = ['templateVars' => $options['templateVars']];

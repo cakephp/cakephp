@@ -693,7 +693,7 @@ class ExceptionRendererTest extends TestCase
             ->setMethods(['render'])
             ->getMock();
         $controller->viewBuilder()->setHelpers(['Fail', 'Boom']);
-        $controller->request = new ServerRequest();
+        $controller->setRequest(new ServerRequest());
         $controller->expects($this->at(0))
             ->method('render')
             ->with('missingHelper')

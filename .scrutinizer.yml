@@ -23,7 +23,7 @@ build:
       tests:
         override:
           - vendor/bin/phpstan.phar analyse src/
-          - vendor/bin/psalm.phar --show-info=false
+          - vendor/bin/psalm.phar --show-info=false --no-cache
 
 build_failure_conditions:
   # Issues reported by any analyzer (which generates report in checkstyle format) like phpcs

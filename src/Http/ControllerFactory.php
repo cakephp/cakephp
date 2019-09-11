@@ -61,7 +61,7 @@ class ControllerFactory
      */
     public function getControllerClass(ServerRequest $request): ?string
     {
-        $pluginPath = $controller = null;
+        $pluginPath = $controller = '';
         $namespace = 'Controller';
         if ($request->getParam('controller')) {
             $controller = $request->getParam('controller');

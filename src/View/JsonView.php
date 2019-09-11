@@ -107,7 +107,7 @@ class JsonView extends SerializedView
      * Render a JSON view.
      *
      * @param string|null $template The template being rendered.
-     * @param string|null|false $layout The layout being rendered.
+     * @param string|false|null $layout The layout being rendered.
      * @return string The rendered view.
      */
     public function render(?string $template = null, $layout = null): string

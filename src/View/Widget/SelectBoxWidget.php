@@ -288,7 +288,7 @@ class SelectBoxWidget extends BasicWidget
      * Helper method for deciding what options are selected.
      *
      * @param string $key The key to test.
-     * @param array|string|null|false $selected The selected values.
+     * @param array|string|false|null $selected The selected values.
      * @return bool
      */
     protected function _isSelected(string $key, $selected): bool

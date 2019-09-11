@@ -139,14 +139,14 @@ class BelongsToMany extends Association
     /**
      * Filtered conditions that reference the target table.
      *
-     * @var null|array
+     * @var array|null
      */
     protected $_targetConditions;
 
     /**
      * Filtered conditions that reference the junction table.
      *
-     * @var null|array
+     * @var array|null
      */
     protected $_junctionConditions;
 
