@@ -54,7 +54,7 @@ class ServerRequest implements ServerRequestInterface
      * In PUT/PATCH/DELETE requests this property will contain the form-urlencoded
      * data.
      *
-     * @var array|null
+     * @var array|object|null
      */
     protected $data = [];
 
@@ -1395,7 +1395,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param string|null $name Dot separated name of the value to read. Or null to read all data.
      * @param mixed $default The default data.
-     * @return array|string|null The value being read.
+     * @return mixed The value being read.
      */
     public function getData(?string $name = null, $default = null)
     {
@@ -1530,10 +1530,10 @@ class ServerRequest implements ServerRequestInterface
      * post data. For other content types, it may be the deserialized request
      * body.
      *
-     * @return array|null The deserialized body parameters, if any.
+     * @return array|object|null The deserialized body parameters, if any.
      *     These will typically be an array.
      */
-    public function getParsedBody(): ?array
+    public function getParsedBody()
     {
         return $this->data;
     }
@@ -1541,7 +1541,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Update the parsed body and get a new instance.
      *
-     * @param array|null $data The deserialized body data. This will
+     * @param array|object|null $data The deserialized body data. This will
      *     typically be in an array or object.
      * @return static
      * @psalm-suppress MoreSpecificImplementedParamType
@@ -1697,8 +1697,10 @@ class ServerRequest implements ServerRequestInterface
     public function withData(string $name, $value)
     {
         $copy = clone $this;
-        /** @psalm-suppress PossiblyNullArgument */
-        $copy->data = Hash::insert($copy->data, $name, $value);
+
+        if (is_array($copy->data)) {
+            $copy->data = Hash::insert($copy->data, $name, $value);
+        }
 
         return $copy;
     }
@@ -1715,8 +1717,10 @@ class ServerRequest implements ServerRequestInterface
     public function withoutData(string $name)
     {
         $copy = clone $this;
-        /** @psalm-suppress PossiblyNullArgument */
-        $copy->data = Hash::remove($copy->data, $name);
+
+        if (is_array($copy->data)) {
+            $copy->data = Hash::remove($copy->data, $name);
+        }
 
         return $copy;
     }
