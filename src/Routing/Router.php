@@ -160,6 +160,13 @@ class Router
     protected static $_defaultExtensions = [];
 
     /**
+     * Cache of parsed short strings
+     *
+     * @var array
+     */
+    protected static $_shortStrings = [];
+
+    /**
      * Get or set default route class.
      *
      * @param string|null $routeClass Class name.
@@ -944,11 +951,19 @@ class Router
             }
         }
 
-        $url += RouteBuilder::parseShortString($url['_path']);
-        $url += [
-            'plugin' => false,
-            'prefix' => false,
-        ];
+        if (isset(self::$_shortStrings[$url['_path']])) {
+            $defaults = self::$_shortStrings[$url['_path']];
+        } else {
+            $defaults = RouteBuilder::parseShortString($url['_path']);
+            $defaults += [
+                'plugin' => false,
+                'prefix' => false,
+            ];
+
+            self::$_shortStrings[$url['_path']] = $defaults;
+        }
+
+        $url += $defaults;
 
         unset($url['_path']);
 
