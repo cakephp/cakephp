@@ -14,12 +14,11 @@ declare(strict_types=1);
  * @since         4.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\View;
+namespace Cake\Routing;
 
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Core\Plugin;
-use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 
 /**

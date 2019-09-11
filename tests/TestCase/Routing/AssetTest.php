@@ -14,13 +14,13 @@ declare(strict_types=1);
  * @since         4.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\View;
+namespace Cake\Test\TestCase\Routing;
 
 use Cake\Core\Configure;
 use Cake\Http\ServerRequest;
+use Cake\Routing\Asset;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
-use Cake\View\Asset;
 
 /**
  * AssetTest class
