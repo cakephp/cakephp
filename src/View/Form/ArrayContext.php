@@ -66,7 +66,6 @@ use Cake\Validation\Validator;
  */
 class ArrayContext implements ContextInterface
 {
-
     /**
      * The request object.
      *
@@ -261,7 +260,7 @@ class ArrayContext implements ContextInterface
      * Get the abstract field type for a given field name.
      *
      * @param string $field A dot separated path to get a schema type for.
-     * @return null|string An abstract data type or null.
+     * @return string|null An abstract data type or null.
      * @see \Cake\Database\Type
      */
     public function type($field)

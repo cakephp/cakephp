@@ -30,7 +30,6 @@ use Exception;
  */
 class FlashComponent extends Component
 {
-
     /**
      * The Session object instance
      *

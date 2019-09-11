@@ -24,7 +24,6 @@ use RecursiveIterator;
  */
 class NoChildrenIterator extends Collection implements RecursiveIterator
 {
-
     /**
      * Returns false as there are no children iterators in this collection
      *

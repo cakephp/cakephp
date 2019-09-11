@@ -33,7 +33,6 @@ use RuntimeException;
  */
 class ProgressHelper extends Helper
 {
-
     /**
      * The current progress.
      *

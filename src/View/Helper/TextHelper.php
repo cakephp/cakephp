@@ -31,7 +31,6 @@ use Cake\View\View;
  */
 class TextHelper extends Helper
 {
-
     /**
      * helpers
      *

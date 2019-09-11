@@ -26,7 +26,6 @@ use Cake\ORM\Association\DependentDeleteHelper;
  */
 trait DependentDeleteTrait
 {
-
     /**
      * Cascade a delete to remove dependent records.
      *

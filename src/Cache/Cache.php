@@ -65,7 +65,6 @@ use RuntimeException;
  */
 class Cache
 {
-
     use StaticConfigTrait;
 
     /**

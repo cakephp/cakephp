@@ -35,7 +35,6 @@ use Traversable;
  */
 class HasMany extends Association
 {
-
     /**
      * Order in which target records should be returned
      *

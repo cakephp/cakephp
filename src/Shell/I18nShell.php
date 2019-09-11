@@ -27,7 +27,6 @@ use DirectoryIterator;
  */
 class I18nShell extends Shell
 {
-
     /**
      * Contains tasks to load and instantiate
      *

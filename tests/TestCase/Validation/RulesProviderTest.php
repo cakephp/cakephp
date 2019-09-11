@@ -32,7 +32,7 @@ class RulesProviderTest extends TestCase
      */
     public function testProxyToValidation()
     {
-        $provider = new RulesProvider;
+        $provider = new RulesProvider();
         $this->assertTrue($provider->extension('foo.jpg', compact('provider')));
         $this->assertFalse($provider->extension('foo.jpg', ['png'], compact('provider')));
     }

@@ -22,7 +22,6 @@ use Traversable;
  */
 trait ExtractTrait
 {
-
     /**
      * Returns a callable that can be used to extract a property or column from
      * an array or object based on a dot separated path.

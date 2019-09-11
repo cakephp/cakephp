@@ -38,7 +38,6 @@ use Cake\Utility\Hash;
  */
 class AuthComponent extends Component
 {
-
     use EventDispatcherTrait;
 
     /**

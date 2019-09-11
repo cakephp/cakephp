@@ -53,7 +53,6 @@ use Cake\Utility\Hash;
  */
 class IniConfig implements ConfigEngineInterface
 {
-
     use FileConfigTrait;
 
     /**

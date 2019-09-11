@@ -28,7 +28,6 @@ use RuntimeException;
  */
 class SelectLoader
 {
-
     /**
      * The alias of the association loading the results
      *

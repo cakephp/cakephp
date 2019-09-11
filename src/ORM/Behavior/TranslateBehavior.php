@@ -42,7 +42,6 @@ use Cake\Utility\Inflector;
  */
 class TranslateBehavior extends Behavior implements PropertyMarshalInterface
 {
-
     use LocatorAwareTrait;
 
     /**

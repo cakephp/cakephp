@@ -49,7 +49,6 @@ use SimpleXMLElement;
  */
 class Email implements JsonSerializable, Serializable
 {
-
     use StaticConfigTrait;
     use ViewVarsTrait;
 
@@ -2094,7 +2093,7 @@ class Email implements JsonSerializable, Serializable
      * Get/Set the configuration profile to use for this instance.
      *
      * @deprecated 3.4.0 Use setProfile()/getProfile() instead.
-     * @param null|string|array $config String with configuration name, or
+     * @param array|string|null $config String with configuration name, or
      *    an array with config or null to return current config.
      * @return string|array|$this
      */

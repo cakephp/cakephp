@@ -25,7 +25,6 @@ use Cake\Network\Exception\SocketException;
  */
 class MailTransport extends AbstractTransport
 {
-
     /**
      * Send mail
      *

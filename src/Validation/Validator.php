@@ -328,7 +328,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @deprecated 3.4.0 Use setProvider()/getProvider() instead.
      * @param string $name The name under which the provider should be set.
-     * @param null|object|string $object Provider object or class name.
+     * @param string|object|null $object Provider object or class name.
      * @return $this|object|string|null
      */
     public function provider($name, $object = null)

@@ -346,7 +346,7 @@ class DispatcherTest extends TestCase
                 'action' => 'index',
                 'pass' => [],
             ],
-            'session' => new Session
+            'session' => new Session()
         ]);
         $this->dispatcher->addFilter($filter);
         $this->dispatcher->dispatch($request, $response);

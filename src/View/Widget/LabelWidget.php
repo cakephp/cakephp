@@ -24,7 +24,6 @@ use Cake\View\Form\ContextInterface;
  */
 class LabelWidget implements WidgetInterface
 {
-
     /**
      * Templates
      *

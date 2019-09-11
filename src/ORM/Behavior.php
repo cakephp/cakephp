@@ -112,7 +112,6 @@ use ReflectionMethod;
  */
 class Behavior implements EventListenerInterface
 {
-
     use InstanceConfigTrait;
 
     /**

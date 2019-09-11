@@ -22,7 +22,6 @@ use Cake\Filesystem\File;
  */
 class UnloadTask extends Shell
 {
-
     /**
      * Path to the bootstrap file.
      *

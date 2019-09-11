@@ -757,7 +757,7 @@ class ExceptionRendererTest extends TestCase
             ->setMethods(['render'])
             ->getMock();
         $controller->helpers = ['Fail', 'Boom'];
-        $controller->request = new ServerRequest;
+        $controller->request = new ServerRequest();
         $controller->expects($this->at(0))
             ->method('render')
             ->with('missingHelper')
@@ -784,7 +784,7 @@ class ExceptionRendererTest extends TestCase
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
             ->setMethods(['beforeRender'])
             ->getMock();
-        $controller->request = new ServerRequest;
+        $controller->request = new ServerRequest();
         $controller->expects($this->any())
             ->method('beforeRender')
             ->will($this->throwException($exception));
@@ -815,7 +815,7 @@ class ExceptionRendererTest extends TestCase
                 $event->getSubject()->viewBuilder()->setLayoutPath('boom');
             }
         );
-        $controller->setRequest(new ServerRequest);
+        $controller->setRequest(new ServerRequest());
 
         $ExceptionRenderer->setController($controller);
 

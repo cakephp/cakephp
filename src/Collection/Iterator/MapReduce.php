@@ -26,7 +26,6 @@ use Traversable;
  */
 class MapReduce implements IteratorAggregate
 {
-
     /**
      * Holds the shuffled results that were emitted from the map
      * phase

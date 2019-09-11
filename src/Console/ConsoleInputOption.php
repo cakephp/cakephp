@@ -25,7 +25,6 @@ use SimpleXMLElement;
  */
 class ConsoleInputOption
 {
-
     /**
      * Name of the option
      *

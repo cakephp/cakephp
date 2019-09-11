@@ -24,7 +24,6 @@ use PHPUnit\Framework\Constraint\Constraint;
  */
 abstract class MailConstraintBase extends Constraint
 {
-
     protected $at;
 
     /**

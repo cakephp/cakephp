@@ -21,7 +21,6 @@ namespace Cake\Database\Type;
  */
 interface ExpressionTypeInterface
 {
-
     /**
      * Returns an ExpressionInterface object for the given value that can
      * be used in queries.

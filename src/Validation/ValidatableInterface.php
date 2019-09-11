@@ -19,7 +19,6 @@ namespace Cake\Validation;
  */
 interface ValidatableInterface
 {
-
     /**
      * Validates the internal properties using a validator object and returns any
      * validation errors found.

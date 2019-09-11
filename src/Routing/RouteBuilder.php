@@ -31,7 +31,6 @@ use RuntimeException;
  */
 class RouteBuilder
 {
-
     /**
      * Regular expression for auto increment IDs
      *
@@ -192,7 +191,7 @@ class RouteBuilder
      * extensions applied. However, setting extensions does not modify existing routes.
      *
      * @deprecated 3.5.0 Use getExtensions/setExtensions instead.
-     * @param null|string|array $extensions Either the extensions to use or null.
+     * @param array|string|null $extensions Either the extensions to use or null.
      * @return array|null
      */
     public function extensions($extensions = null)

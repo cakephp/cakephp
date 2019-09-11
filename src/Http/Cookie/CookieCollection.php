@@ -32,7 +32,6 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class CookieCollection implements IteratorAggregate, Countable
 {
-
     /**
      * Cookie objects
      *
