@@ -26,19 +26,18 @@ use Cake\Utility\Inflector;
 class Asset
 {
     /**
-     * Inflection type to use when inflection plugin/theme name to get directory name.
+     * Inflection type.
      *
      * @var string
-     * @psalm-var 'dasherize'|'underscore'
      */
     protected static $inflectionType = 'underscore';
 
     /**
-     * Set inflection type.
+     * Set inflection type to use when inflecting plugin/theme name.
      *
-     * @param string $inflectionType Inflection type
+     * @param string $inflectionType Inflection type. Value should be a valid
+     *  method name of `Inflector` class like `'dasherize'` or `'underscore`'`.
      * @return void
-     * @psalm-param 'dasherize'|'underscore' $inflectionType
      */
     public static function setInflectionType(string $inflectionType): void
     {
@@ -49,7 +48,7 @@ class Asset
      * Generates URL for given image file.
      *
      * Depending on options passed provides full URL with domain name. Also calls
-     * `Helper::assetTimestamp()` to add timestamp to local files.
+     * `Asset::assetTimestamp()` to add timestamp to local files.
      *
      * @param string $path Path string.
      * @param array $options Options array. Possible keys:
@@ -73,7 +72,7 @@ class Asset
      * Generates URL for given CSS file.
      *
      * Depending on options passed provides full URL with domain name. Also calls
-     * `Helper::assetTimestamp()` to add timestamp to local files.
+     * `Asset::assetTimestamp()` to add timestamp to local files.
      *
      * @param string $path Path string.
      * @param array $options Options array. Possible keys:
@@ -99,7 +98,7 @@ class Asset
      * Generates URL for given javascript file.
      *
      * Depending on options passed provides full URL with domain name. Also calls
-     * `Helper::assetTimestamp()` to add timestamp to local files.
+     * `Asset::assetTimestamp()` to add timestamp to local files.
      *
      * @param string $path Path string.
      * @param array $options Options array. Possible keys:
@@ -125,7 +124,7 @@ class Asset
      * Generates URL for given asset file.
      *
      * Depending on options passed provides full URL with domain name. Also calls
-     * `Helper::assetTimestamp()` to add timestamp to local files.
+     * `Asset::assetTimestamp()` to add timestamp to local files.
      *
      * ### Options:
      *
@@ -188,7 +187,9 @@ class Asset
         $path = static::encodeUrl($webPath);
 
         if (!empty($options['fullBase'])) {
-            $fullBaseUrl = is_string($options['fullBase']) ? $options['fullBase'] : Router::fullBaseUrl();
+            $fullBaseUrl = is_string($options['fullBase'])
+                ? $options['fullBase']
+                : Router::fullBaseUrl();
             $path = rtrim($fullBaseUrl, '/') . '/' . ltrim($path, '/');
         }
 
@@ -196,7 +197,7 @@ class Asset
     }
 
     /**
-     * Encodes a URL.
+     * Encodes URL parts using rawurlencode().
      *
      * @param string $url The URL to encode.
      * @return string
@@ -260,7 +261,7 @@ class Asset
     }
 
     /**
-     * Checks if a file exists when theme is used, if no file is found default location is returned
+     * Checks if a file exists when theme is used, if no file is found default location is returned.
      *
      * ### Options:
      *
@@ -307,7 +308,7 @@ class Asset
     }
 
     /**
-     * Inflect the theme/plugin name to its underscored version.
+     * Inflect the theme/plugin name to type set using `Asset::setInflectionType()`.
      *
      * @param string $string String inflected.
      * @return string Inflected name of the theme
