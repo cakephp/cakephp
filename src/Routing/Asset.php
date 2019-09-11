@@ -153,7 +153,7 @@ class Asset
         }
 
         if (isset($plugin)) {
-            $path = Inflector::underscore($plugin) . '/' . $path;
+            $path = static::inflectString($plugin) . '/' . $path;
         }
 
         $optionTimestamp = null;
@@ -263,7 +263,7 @@ class Asset
         $themeName = $options['theme'];
         if ($themeName) {
             $file = trim($file, '/');
-            $theme = static::inflectThemeName($themeName) . '/';
+            $theme = static::inflectString($themeName) . '/';
 
             if (DIRECTORY_SEPARATOR === '\\') {
                 $file = str_replace('/', '\\', $file);
@@ -287,14 +287,14 @@ class Asset
     }
 
     /**
-     * Inflect the theme name to its underscored version.
+     * Inflect the theme/plugin name to its underscored version.
      *
-     * @param string $name Name of the theme which should be inflected.
+     * @param string $string String inflected.
      * @return string Inflected name of the theme
      */
-    protected static function inflectThemeName(string $name): string
+    protected static function inflectString(string $string): string
     {
-        return Inflector::underscore($name);
+        return Inflector::underscore($string);
     }
 
     /**
