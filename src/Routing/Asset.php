@@ -27,6 +27,26 @@ use Cake\Utility\Inflector;
 class Asset
 {
     /**
+     * Inflection type to use when inflection plugin/theme name to get directory name.
+     *
+     * @var string
+     * @psalm-var 'dasherize'|'underscore'
+     */
+    protected static $inflectionType = 'underscore';
+
+    /**
+     * Set inflection type.
+     *
+     * @param string $inflectionType Inflection type
+     * @return void
+     * @psalm-param 'dasherize'|'underscore' $inflectionType
+     */
+    public static function setInflectionType(string $inflectionType): void
+    {
+        static::$inflectionType = $inflectionType;
+    }
+
+    /**
      * Generates URL for given image file.
      *
      * Depending on options passed provides full URL with domain name. Also calls
@@ -295,7 +315,7 @@ class Asset
      */
     protected static function inflectString(string $string): string
     {
-        return Inflector::underscore($string);
+        return Inflector::{static::$inflectionType}($string);
     }
 
     /**

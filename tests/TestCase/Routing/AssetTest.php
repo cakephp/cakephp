@@ -400,22 +400,19 @@ class AssetTest extends TestCase
      */
     public function testWebrootPaths()
     {
-        // $this->View->setRequest(
-        //     $this->View->getRequest()->withAttribute('webroot', '/')
-        // );
         $result = Asset::webroot('/img/cake.power.gif');
         $expected = '/img/cake.power.gif';
         $this->assertEquals($expected, $result);
-
-        // Asset::getView()->setTheme('TestTheme');
 
         $result = Asset::webroot('/img/cake.power.gif', ['theme' => 'TestTheme']);
         $expected = '/test_theme/img/cake.power.gif';
         $this->assertEquals($expected, $result);
 
+        Asset::setInflectionType('dasherize');
         $result = Asset::webroot('/img/test.jpg', ['theme' => 'TestTheme']);
-        $expected = '/test_theme/img/test.jpg';
+        $expected = '/test-theme/img/test.jpg';
         $this->assertEquals($expected, $result);
+        Asset::setInflectionType('underscore');
 
         $webRoot = Configure::read('App.wwwRoot');
         Configure::write('App.wwwRoot', TEST_APP . 'TestApp/webroot/');
