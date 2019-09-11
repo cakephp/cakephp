@@ -69,6 +69,9 @@ class HtmlHelperTest extends TestCase
         $request = new ServerRequest([
             'webroot' => '',
         ]);
+        Router::reload();
+        Router::pushRequest($request);
+
         $this->View = $this->getMockBuilder('Cake\View\View')
             ->setMethods(['append'])
             ->setConstructorArgs([$request])
@@ -138,6 +141,7 @@ class HtmlHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         Router::reload();
+        Router::pushRequest(new ServerRequest());
         Router::connect('/:controller', ['action' => 'index']);
         Router::connect('/:controller/:action/*');
 
@@ -482,13 +486,13 @@ class HtmlHelperTest extends TestCase
         $expected = ['img' => ['src' => $here . 'img/sub/test.gif', 'alt' => '']];
         $this->assertHtml($expected, $result);
 
-        $this->View->setRequest($this->View->getRequest()
+        $request = Router::getRequest()
             ->withAttribute('webroot', '/myproject/')
-            ->withAttribute('base', '/myproject'));
+            ->withAttribute('base', '/myproject');
+        Router::pushRequest($request);
 
         $result = $this->Html->image('sub/test.gif', ['fullBase' => true]);
-        $here = $this->Html->Url->build('/', ['fullBase' => true]);
-        $expected = ['img' => ['src' => $here . 'myproject/img/sub/test.gif', 'alt' => '']];
+        $expected = ['img' => ['src' => 'http://localhost/myproject/img/sub/test.gif', 'alt' => '']];
         $this->assertHtml($expected, $result);
     }
 
@@ -501,7 +505,8 @@ class HtmlHelperTest extends TestCase
     {
         Configure::write('Asset.timestamp', 'force');
 
-        $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/'));
+        $request = Router::getRequest()->withAttribute('webroot', '/');
+        Router::pushRequest($request);
         $result = $this->Html->image('cake.icon.png');
         $expected = ['img' => ['src' => 'preg:/\/img\/cake\.icon\.png\?\d+/', 'alt' => '']];
         $this->assertHtml($expected, $result);
@@ -513,7 +518,8 @@ class HtmlHelperTest extends TestCase
         $expected = ['img' => ['src' => 'preg:/\/img\/cake\.icon\.png\?\d+/', 'alt' => '']];
         $this->assertHtml($expected, $result);
 
-        $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/testing/longer/'));
+        $request = Router::getRequest()->withAttribute('webroot', '/testing/longer/');
+        Router::pushRequest($request);
         $result = $this->Html->image('cake.icon.png');
         $expected = [
             'img' => ['src' => 'preg:/\/testing\/longer\/img\/cake\.icon\.png\?[0-9]+/', 'alt' => ''],
@@ -536,7 +542,8 @@ class HtmlHelperTest extends TestCase
         Configure::write('Asset.timestamp', true);
         Configure::write('debug', true);
 
-        $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/'));
+        $request = Router::getRequest()->withAttribute('webroot', '/');
+        Router::pushRequest($request);
         $this->Html->Url->getView()->setTheme('TestTheme');
         $result = $this->Html->image('__cake_test_image.gif');
         $expected = [
@@ -547,7 +554,8 @@ class HtmlHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/testing/'));
+        $request = Router::getRequest()->withAttribute('webroot', '/testing/');
+        Router::pushRequest($request);
         $result = $this->Html->image('__cake_test_image.gif');
         $expected = [
         'img' => [
@@ -787,12 +795,14 @@ class HtmlHelperTest extends TestCase
         $expected['link']['href'] = 'preg:/.*css\/cake\.generic\.css\?[0-9]+/';
         $this->assertHtml($expected, $result);
 
-        $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/testing/'));
+        $request = Router::getRequest()->withAttribute('webroot', '/testing/');
+        Router::pushRequest($request);
         $result = $this->Html->css('cake.generic', ['once' => false]);
         $expected['link']['href'] = 'preg:/\/testing\/css\/cake\.generic\.css\?[0-9]+/';
         $this->assertHtml($expected, $result);
 
-        $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/testing/longer/'));
+        $request = Router::getRequest()->withAttribute('webroot', '/testing/longer/');
+        Router::pushRequest($request);
         $result = $this->Html->css('cake.generic', ['once' => false]);
         $expected['link']['href'] = 'preg:/\/testing\/longer\/css\/cake\.generic\.css\?[0-9]+/';
         $this->assertHtml($expected, $result);
@@ -830,12 +840,14 @@ class HtmlHelperTest extends TestCase
         $expected['link']['href'] = 'preg:/.*test_plugin\/css\/test_plugin_asset\.css\?[0-9]+/';
         $this->assertHtml($expected, $result);
 
-        $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/testing/'));
+        $request = Router::getRequest()->withAttribute('webroot', '/testing/');
+        Router::pushRequest($request);
         $result = $this->Html->css('TestPlugin.test_plugin_asset', ['once' => false]);
         $expected['link']['href'] = 'preg:/\/testing\/test_plugin\/css\/test_plugin_asset\.css\?[0-9]+/';
         $this->assertHtml($expected, $result);
 
-        $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/testing/longer/'));
+        $request = Router::getRequest()->withAttribute('webroot', '/testing/longer/');
+        Router::pushRequest($request);
         $result = $this->Html->css('TestPlugin.test_plugin_asset', ['once' => false]);
         $expected['link']['href'] = 'preg:/\/testing\/longer\/test_plugin\/css\/test_plugin_asset\.css\?[0-9]+/';
         $this->assertHtml($expected, $result);
@@ -1145,7 +1157,8 @@ class HtmlHelperTest extends TestCase
         $testfile = WWW_ROOT . '/test_theme/js/__test_js.js';
         $File = new File($testfile, true);
 
-        $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/'));
+        $request = Router::getRequest()->withAttribute('webroot', '/');
+        Router::pushRequest($request);
         $this->Html->Url->getView()->setTheme('TestTheme');
         $result = $this->Html->script('__test_js.js');
         $expected = [
@@ -1678,7 +1691,8 @@ class HtmlHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/testing/'));
+        $request = Router::getRequest()->withAttribute('webroot', '/testing/');
+        Router::pushRequest($request);
         $result = $this->Html->meta('icon');
         $expected = [
             'link' => ['href' => '/testing/favicon.ico', 'type' => 'image/x-icon', 'rel' => 'icon'],
@@ -1710,7 +1724,8 @@ class HtmlHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/testing/'));
+        $request = Router::getRequest()->withAttribute('webroot', '/testing/');
+        Router::pushRequest($request);
         $result = $this->Html->meta('icon');
         $expected = [
             'link' => ['href' => '/testing/test_theme/favicon.ico', 'type' => 'image/x-icon', 'rel' => 'icon'],

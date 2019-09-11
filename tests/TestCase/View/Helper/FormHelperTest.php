@@ -83,9 +83,12 @@ class FormHelperTest extends TestCase
             'params' => [
                 'controller' => 'articles',
                 'action' => 'add',
+                'plugin' => null,
             ],
         ]);
         $this->View = new View($request);
+        Router::reload();
+        Router::pushRequest($request);
 
         $this->Form = new FormHelper($this->View);
 

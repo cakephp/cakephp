@@ -148,6 +148,7 @@ class Asset
             $path .= $options['ext'];
         }
 
+        // Check again if path has protocol as `pathPrefix` could be for CDNs.
         if (preg_match('|^([a-z0-9]+:)?//|', $path)) {
             return Router::url($path);
         }
