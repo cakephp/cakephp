@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Routing;
 
 use Cake\Core\Configure;
-use Cake\Core\Exception\Exception;
 use Cake\Core\Plugin;
 use Cake\Utility\Inflector;
 
@@ -327,7 +326,7 @@ class Asset
     {
         $request = Router::getRequest(true);
         if ($request === null) {
-            throw new Exception('No request instance present in Router.');
+            return '/';
         }
 
         return $request->getAttribute('webroot');
