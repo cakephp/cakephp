@@ -199,17 +199,8 @@ class UrlHelperTest extends TestCase
      */
     public function testAssetUrl()
     {
-        Router::connect('/:controller/:action/*');
-
         $this->Helper->webroot = '';
-        $result = $this->Helper->assetUrl(
-            [
-                'controller' => 'js',
-                'action' => 'post',
-                '_ext' => 'js',
-            ],
-            ['fullBase' => true]
-        );
+        $result = $this->Helper->assetUrl('js/post.js', ['fullBase' => true]);
         $this->assertEquals(Router::fullBaseUrl() . '/js/post.js', $result);
 
         $result = $this->Helper->assetUrl('foo.jpg', ['pathPrefix' => 'img/']);
@@ -366,15 +357,9 @@ class UrlHelperTest extends TestCase
      */
     public function testScript()
     {
-        Router::connect('/:controller/:action/*');
-
         $this->Helper->webroot = '';
         $result = $this->Helper->script(
-            [
-                'controller' => 'js',
-                'action' => 'post',
-                '_ext' => 'js',
-            ],
+            'post.js',
             ['fullBase' => true]
         );
         $this->assertEquals(Router::fullBaseUrl() . '/js/post.js', $result);
