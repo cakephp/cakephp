@@ -84,10 +84,20 @@ class SqliteSchema extends BaseSchema
             return ['type' => TableSchema::TYPE_INTEGER, 'length' => $length, 'unsigned' => $unsigned];
         }
         if (strpos($col, 'decimal') !== false) {
-            return ['type' => TableSchema::TYPE_DECIMAL, 'length' => $length, 'precision' => $precision, 'unsigned' => $unsigned];
+            return [
+                'type' => TableSchema::TYPE_DECIMAL,
+                'length' => $length,
+                'precision' => $precision,
+                'unsigned' => $unsigned,
+            ];
         }
         if (in_array($col, ['float', 'real', 'double'])) {
-            return ['type' => TableSchema::TYPE_FLOAT, 'length' => $length, 'precision' => $precision, 'unsigned' => $unsigned];
+            return [
+                'type' => TableSchema::TYPE_FLOAT,
+                'length' => $length,
+                'precision' => $precision,
+                'unsigned' => $unsigned,
+            ];
         }
 
         if (strpos($col, 'boolean') !== false) {
