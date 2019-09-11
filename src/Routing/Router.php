@@ -954,7 +954,7 @@ class Router
         if (isset(self::$_shortStrings[$url['_path']])) {
             $defaults = self::$_shortStrings[$url['_path']];
         } else {
-            $defaults = RouteBuilder::parseShortString($url['_path']);
+            $defaults = RouteBuilder::parseRoutePath($url['_path']);
             $defaults += [
                 'plugin' => false,
                 'prefix' => false,

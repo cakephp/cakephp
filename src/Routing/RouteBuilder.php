@@ -698,7 +698,7 @@ class RouteBuilder
             return $defaults;
         }
 
-        return self::parseShortString($defaults);
+        return self::parseRoutePath($defaults);
     }
 
     /**
@@ -713,7 +713,7 @@ class RouteBuilder
      * @param string $routeString Short string in [Plugin.][Prefix/]Controller::action format
      * @return string[]
      */
-    public static function parseShortString(string $routeString): array
+    public static function parseRoutePath(string $routeString): array
     {
         $regex = '#^
             (?:(?<plugin>[a-z0-9]+(?:/[a-z0-9]+)*)\.)?

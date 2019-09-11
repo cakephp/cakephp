@@ -303,21 +303,21 @@ class RouteBuilderTest extends TestCase
             'controller' => 'Bookmarks',
             'action' => 'view',
         ];
-        $this->assertSame($expected, RouteBuilder::parseShortString('Bookmarks::view'));
+        $this->assertSame($expected, RouteBuilder::parseRoutePath('Bookmarks::view'));
 
         $expected = [
             'prefix' => 'admin',
             'controller' => 'Bookmarks',
             'action' => 'view',
         ];
-        $this->assertSame($expected, RouteBuilder::parseShortString('Admin/Bookmarks::view'));
+        $this->assertSame($expected, RouteBuilder::parseRoutePath('Admin/Bookmarks::view'));
 
         $expected = [
             'plugin' => 'Cms',
             'controller' => 'Articles',
             'action' => 'edit',
         ];
-        $this->assertSame($expected, RouteBuilder::parseShortString('Cms.Articles::edit'));
+        $this->assertSame($expected, RouteBuilder::parseRoutePath('Cms.Articles::edit'));
 
         $expected = [
             'plugin' => 'Vendor/Cms',
@@ -325,7 +325,7 @@ class RouteBuilderTest extends TestCase
             'controller' => 'Articles',
             'action' => 'view',
         ];
-        $this->assertSame($expected, RouteBuilder::parseShortString('Vendor/Cms.Management/Admin/Articles::view'));
+        $this->assertSame($expected, RouteBuilder::parseRoutePath('Vendor/Cms.Management/Admin/Articles::view'));
     }
 
     /**
@@ -358,7 +358,7 @@ class RouteBuilderTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Could not parse');
 
-        RouteBuilder::parseShortString($value);
+        RouteBuilder::parseRoutePath($value);
     }
 
     /**
