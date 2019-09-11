@@ -43,7 +43,7 @@ class Asset
      *        enable timestamping regardless of debug value.
      * @return string Generated URL
      */
-    public static function image(string $path, array $options = []): string
+    public static function imageUrl(string $path, array $options = []): string
     {
         $pathPrefix = Configure::read('App.imageBaseUrl');
 
@@ -68,7 +68,7 @@ class Asset
      *        enable timestamping regardless of debug value.
      * @return string Generated URL
      */
-    public static function css(string $path, array $options = []): string
+    public static function cssUrl(string $path, array $options = []): string
     {
         $pathPrefix = Configure::read('App.cssBaseUrl');
         $ext = '.css';
@@ -94,7 +94,7 @@ class Asset
      *        enable timestamping regardless of debug value.
      * @return string Generated URL
      */
-    public static function script(string $path, array $options = []): string
+    public static function scriptUrl(string $path, array $options = []): string
     {
         $pathPrefix = Configure::read('App.jsBaseUrl');
         $ext = '.js';

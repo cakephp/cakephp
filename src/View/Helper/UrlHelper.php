@@ -78,7 +78,7 @@ class UrlHelper extends Helper
     {
         $options += ['theme' => $this->_View->getTheme()];
 
-        return h(Asset::image($path, $options));
+        return h(Asset::imageUrl($path, $options));
     }
 
     /**
@@ -103,7 +103,7 @@ class UrlHelper extends Helper
     {
         $options += ['theme' => $this->_View->getTheme()];
 
-        return h(Asset::css($path, $options));
+        return h(Asset::cssUrl($path, $options));
     }
 
     /**
@@ -128,7 +128,7 @@ class UrlHelper extends Helper
     {
         $options += ['theme' => $this->_View->getTheme()];
 
-        return h(Asset::script($path, $options));
+        return h(Asset::scriptUrl($path, $options));
     }
 
     /**

@@ -268,7 +268,7 @@ class AssetTest extends TestCase
     {
         Router::connect('/:controller/:action/*');
 
-        $result = Asset::script('post.js', ['fullBase' => true]);
+        $result = Asset::scriptUrl('post.js', ['fullBase' => true]);
         $this->assertEquals(Router::fullBaseUrl() . '/js/post.js', $result);
     }
 
@@ -281,7 +281,7 @@ class AssetTest extends TestCase
     {
         Configure::write('Asset.timestamp', 'force');
 
-        $result = Asset::script('script.js');
+        $result = Asset::scriptUrl('script.js');
         $this->assertRegExp('/' . preg_quote(Configure::read('App.jsBaseUrl') . 'script.js?', '/') . '[0-9]+/', $result);
     }
 
@@ -295,7 +295,7 @@ class AssetTest extends TestCase
         Configure::write('Asset.timestamp', 'force');
         $timestamp = false;
 
-        $result = Asset::script('script.js', ['timestamp' => $timestamp]);
+        $result = Asset::scriptUrl('script.js', ['timestamp' => $timestamp]);
         $this->assertEquals('/' . Configure::read('App.jsBaseUrl') . 'script.js', $result);
     }
 
@@ -306,25 +306,25 @@ class AssetTest extends TestCase
      */
     public function testImage()
     {
-        $result = Asset::image('foo.jpg');
+        $result = Asset::imageUrl('foo.jpg');
         $this->assertSame('/img/foo.jpg', $result);
 
-        $result = Asset::image('foo.jpg', ['fullBase' => true]);
+        $result = Asset::imageUrl('foo.jpg', ['fullBase' => true]);
         $this->assertEquals(Router::fullBaseUrl() . '/img/foo.jpg', $result);
 
-        $result = Asset::image('dir/sub dir/my image.jpg');
+        $result = Asset::imageUrl('dir/sub dir/my image.jpg');
         $this->assertSame('/img/dir/sub%20dir/my%20image.jpg', $result);
 
-        $result = Asset::image('foo.jpg?one=two&three=four');
+        $result = Asset::imageUrl('foo.jpg?one=two&three=four');
         $this->assertSame('/img/foo.jpg?one=two&three=four', $result);
 
-        $result = Asset::image('dir/big+tall/image.jpg');
+        $result = Asset::imageUrl('dir/big+tall/image.jpg');
         $this->assertSame('/img/dir/big%2Btall/image.jpg', $result);
 
-        $result = Asset::image('cid:foo.jpg');
+        $result = Asset::imageUrl('cid:foo.jpg');
         $this->assertSame('cid:foo.jpg', $result);
 
-        $result = Asset::image('CID:foo.jpg');
+        $result = Asset::imageUrl('CID:foo.jpg');
         $this->assertSame('CID:foo.jpg', $result);
     }
 
@@ -337,7 +337,7 @@ class AssetTest extends TestCase
     {
         Configure::write('Asset.timestamp', 'force');
 
-        $result = Asset::image('cake.icon.png');
+        $result = Asset::imageUrl('cake.icon.png');
         $this->assertRegExp('/' . preg_quote('img/cake.icon.png?', '/') . '[0-9]+/', $result);
     }
 
@@ -351,7 +351,7 @@ class AssetTest extends TestCase
         Configure::write('Asset.timestamp', 'force');
         $timestamp = false;
 
-        $result = Asset::image('cake.icon.png', ['timestamp' => $timestamp]);
+        $result = Asset::imageUrl('cake.icon.png', ['timestamp' => $timestamp]);
         $this->assertSame('/img/cake.icon.png', $result);
     }
 
@@ -362,7 +362,7 @@ class AssetTest extends TestCase
      */
     public function testCss()
     {
-        $result = Asset::css('style');
+        $result = Asset::cssUrl('style');
         $this->assertSame('/css/style.css', $result);
     }
 
@@ -375,7 +375,7 @@ class AssetTest extends TestCase
     {
         Configure::write('Asset.timestamp', 'force');
 
-        $result = Asset::css('cake.generic');
+        $result = Asset::cssUrl('cake.generic');
         $this->assertRegExp('/' . preg_quote('css/cake.generic.css?', '/') . '[0-9]+/', $result);
     }
 
@@ -389,7 +389,7 @@ class AssetTest extends TestCase
         Configure::write('Asset.timestamp', 'force');
         $timestamp = false;
 
-        $result = Asset::css('cake.generic', ['timestamp' => $timestamp]);
+        $result = Asset::cssUrl('cake.generic', ['timestamp' => $timestamp]);
         $this->assertSame('/css/cake.generic.css', $result);
     }
 
@@ -451,17 +451,17 @@ class AssetTest extends TestCase
         $jsBaseUrl = Configure::read('App.jsBaseUrl');
         $cssBaseUrl = Configure::read('App.cssBaseUrl');
         Configure::write('App.imageBaseUrl', $cdnPrefix);
-        $result = Asset::image('TestTheme.text.jpg');
+        $result = Asset::imageUrl('TestTheme.text.jpg');
         $expected = $cdnPrefix . 'text.jpg';
         $this->assertSame($expected, $result);
 
         Configure::write('App.jsBaseUrl', $cdnPrefix);
-        $result = Asset::script('TestTheme.app.js');
+        $result = Asset::scriptUrl('TestTheme.app.js');
         $expected = $cdnPrefix . 'app.js';
         $this->assertSame($expected, $result);
 
         Configure::write('App.cssBaseUrl', $cdnPrefix);
-        $result = Asset::css('TestTheme.app.css');
+        $result = Asset::cssUrl('TestTheme.app.css');
         $expected = $cdnPrefix . 'app.css';
         $this->assertSame($expected, $result);
     }
