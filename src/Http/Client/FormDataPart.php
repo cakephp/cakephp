@@ -95,7 +95,7 @@ class FormDataPart
      * By passing in `false` you can disable the disposition
      * header from being added.
      *
-     * @param string $disposition Use null to get/string to set.
+     * @param string|null $disposition Use null to get/string to set.
      * @return string
      */
     public function disposition(?string $disposition = null): string

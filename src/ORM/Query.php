@@ -108,7 +108,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * Whether the user select any fields before being executed, this is used
      * to determined if any fields should be automatically be selected.
      *
-     * @var bool
+     * @var bool|null
      */
     protected $_hasFields;
 
@@ -139,7 +139,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * Instance of a class responsible for storing association containments and
      * for eager loading them when this query is executed
      *
-     * @var \Cake\ORM\EagerLoader
+     * @var \Cake\ORM\EagerLoader|null
      */
     protected $_eagerLoader;
 
@@ -1353,7 +1353,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * By default calling select() will disable auto-fields. You can re-enable
      * auto-fields with enableAutoFields().
      *
-     * @return bool|null The current value.
+     * @return bool|null The current value. Returns null if neither enabled or disabled yet.
      */
     public function isAutoFieldsEnabled(): ?bool
     {
