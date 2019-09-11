@@ -467,12 +467,13 @@ class Router
      *   'controller', 'action', 'plugin' additionally, you can provide routed
      *   elements or query string parameters. If string it can be name any valid url
      *   string.
-     * @param bool $full If true, the full base URL will be prepended to the result.
+     * @param array|bool $full If true, the full base URL will be prepended to the result.
+     *   If first argument is route path string, this argument can be array of parameters.
      *   Default is false.
      * @return string Full translated URL with base path.
      * @throws \Cake\Core\Exception\Exception When the route name is not found
      */
-    public static function url($url = null, bool $full = false): string
+    public static function url($url = null, $full = false): string
     {
         $params = [
             'plugin' => null,
@@ -496,17 +497,48 @@ class Router
 
         if (empty($url)) {
             $output = $context['_base'] . ($here ?? '/');
-            if ($full) {
+            if ($full === true) {
                 $output = static::fullBaseUrl() . $output;
             }
 
             return $output;
         }
-        if (is_array($url)) {
-            if (isset($url['_path'])) {
-                $url = self::unwrapShortString($url);
+
+        if (is_string($url)) {
+            $plainString = (
+                strpos($url, 'javascript:') === 0 ||
+                strpos($url, 'mailto:') === 0 ||
+                strpos($url, 'tel:') === 0 ||
+                strpos($url, 'sms:') === 0 ||
+                strpos($url, '#') === 0 ||
+                strpos($url, '?') === 0 ||
+                strpos($url, '//') === 0 ||
+                strpos($url, '://') !== false
+            );
+
+            if ($plainString) {
+                return $url;
             }
 
+            if (ctype_alnum($url[0]) && strpos($url, '::') > 0) {
+                $url = RouteBuilder::parseRoutePath($url) + ['plugin' => false, 'prefix' => false];
+
+                if (is_array($full)) {
+                    foreach (['plugin', 'prefix', 'controller', 'action'] as $key) {
+                        if (isset($full[$key])) {
+                            throw new InvalidArgumentException(
+                                "`$key` cannot be used when defining routes targets with route path string."
+                            );
+                        }
+                    }
+
+                    $url += $full;
+                    $full = false;
+                }
+            }
+        }
+
+        if (is_array($url)) {
             if (isset($url['_ssl'])) {
                 $url['_scheme'] = $url['_ssl'] === true ? 'https' : 'http';
             }
@@ -544,33 +576,20 @@ class Router
 
             // If a full URL is requested with a scheme the host should default
             // to App.fullBaseUrl to avoid corrupt URLs
-            if ($full && isset($url['_scheme']) && !isset($url['_host'])) {
+            if ($full === true && isset($url['_scheme']) && !isset($url['_host'])) {
                 $url['_host'] = parse_url(static::fullBaseUrl(), PHP_URL_HOST);
             }
             $context['params'] = $params;
 
             $output = static::$_collection->match($url, $context);
         } else {
-            $plainString = (
-                strpos($url, 'javascript:') === 0 ||
-                strpos($url, 'mailto:') === 0 ||
-                strpos($url, 'tel:') === 0 ||
-                strpos($url, 'sms:') === 0 ||
-                strpos($url, '#') === 0 ||
-                strpos($url, '?') === 0 ||
-                strpos($url, '//') === 0 ||
-                strpos($url, '://') !== false
-            );
-
-            if ($plainString) {
-                return $url;
-            }
             $output = $context['_base'] . $url;
         }
+
         $protocol = preg_match('#^[a-z][a-z0-9+\-.]*\://#i', $output);
         if ($protocol === 0) {
             $output = str_replace('//', '/', '/' . $output);
-            if ($full) {
+            if ($full === true) {
                 $output = static::fullBaseUrl() . $output;
             }
         }
@@ -935,38 +954,5 @@ class Router
     public static function setRouteCollection(RouteCollection $routeCollection): void
     {
         static::$_collection = $routeCollection;
-    }
-
-    /**
-     * Inject route defaults from `_path` key
-     *
-     * @param array $url Route array with `_path` key
-     * @return array
-     */
-    protected static function unwrapShortString(array $url)
-    {
-        foreach (['plugin', 'prefix', 'controller', 'action'] as $key) {
-            if (isset($url[$key])) {
-                throw new InvalidArgumentException("`$key` cannot be used when defining routes targets with `_path`.");
-            }
-        }
-
-        if (isset(self::$_shortStrings[$url['_path']])) {
-            $defaults = self::$_shortStrings[$url['_path']];
-        } else {
-            $defaults = RouteBuilder::parseRoutePath($url['_path']);
-            $defaults += [
-                'plugin' => false,
-                'prefix' => false,
-            ];
-
-            self::$_shortStrings[$url['_path']] = $defaults;
-        }
-
-        $url += $defaults;
-
-        unset($url['_path']);
-
-        return $url;
     }
 }
