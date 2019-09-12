@@ -447,14 +447,14 @@ class AssetTest extends TestCase
         $imageBaseUrl = Configure::read('App.imageBaseUrl');
         $jsBaseUrl = Configure::read('App.jsBaseUrl');
         $cssBaseUrl = Configure::read('App.cssBaseUrl');
-        Configure::write('App.imageBaseUrl', $cdnPrefix);
+        Configure::write('App.imageBaseUrl', $cdnPrefix . '{plugin}img/');
         $result = Asset::imageUrl('TestTheme.text.jpg');
-        $expected = $cdnPrefix . 'text.jpg';
+        $expected = $cdnPrefix . 'test_theme/img/text.jpg';
         $this->assertSame($expected, $result);
 
-        Configure::write('App.jsBaseUrl', $cdnPrefix);
+        Configure::write('App.jsBaseUrl', $cdnPrefix . '{plugin}js/');
         $result = Asset::scriptUrl('TestTheme.app.js');
-        $expected = $cdnPrefix . 'app.js';
+        $expected = $cdnPrefix . 'test_theme/js/app.js';
         $this->assertSame($expected, $result);
 
         Configure::write('App.cssBaseUrl', $cdnPrefix);

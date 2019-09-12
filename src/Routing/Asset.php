@@ -157,7 +157,15 @@ class Asset
             [$plugin, $path] = static::pluginSplit($path);
         }
         if (!empty($options['pathPrefix']) && $path[0] !== '/') {
-            $path = $options['pathPrefix'] . $path;
+            $pathPrefix = $options['pathPrefix'];
+            $placeHolderVal = '';
+            if (!empty($options['theme'])) {
+                $placeHolderVal = static::inflectString($options['theme']) . '/';
+            } elseif (isset($plugin)) {
+                $placeHolderVal = static::inflectString($plugin) . '/';
+            }
+
+            $path = str_replace('{plugin}', $placeHolderVal, $pathPrefix) . $path;
         }
         if (!empty($options['ext']) &&
             strpos($path, '?') === false &&
