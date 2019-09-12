@@ -692,53 +692,13 @@ class RouteBuilder
      * @param string|array $defaults Defaults array from the connect() method.
      * @return array
      */
-    protected static function parseDefaults($defaults): array
+    protected function parseDefaults($defaults): array
     {
         if (!is_string($defaults)) {
             return $defaults;
         }
 
-        return self::parseRoutePath($defaults);
-    }
-
-    /**
-     * Parse the short string
-     *
-     * String examples:
-     * - Bookmarks::view
-     * - Admin/Bookmarks::view
-     * - Cms.Articles::edit
-     * - Vendor/Cms.Management/Admin/Articles::view
-     *
-     * @param string $routeString Short string in [Plugin.][Prefix/]Controller::action format
-     * @return string[]
-     */
-    public static function parseRoutePath(string $routeString): array
-    {
-        $regex = '#^
-            (?:(?<plugin>[a-z0-9]+(?:/[a-z0-9]+)*)\.)?
-            (?:(?<prefix>[a-z0-9]+(?:/[a-z0-9]+)*)/)?
-            (?<controller>[a-z0-9]+)
-            ::
-            (?<action>[a-z0-9_]+)
-            $#ix';
-
-        if (!preg_match($regex, $routeString, $matches)) {
-            throw new InvalidArgumentException("Could not parse `{$routeString}` route short string.");
-        }
-
-        $defaults = [];
-
-        if ($matches['plugin'] !== '') {
-            $defaults['plugin'] = $matches['plugin'];
-        }
-        if ($matches['prefix'] !== '') {
-            $defaults['prefix'] = strtolower($matches['prefix']);
-        }
-        $defaults['controller'] = $matches['controller'];
-        $defaults['action'] = $matches['action'];
-
-        return $defaults;
+        return Router::parseRoutePath($defaults);
     }
 
     /**

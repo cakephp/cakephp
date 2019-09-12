@@ -2220,6 +2220,75 @@ class RouterTest extends TestCase
     }
 
     /**
+     * Test parseRoutePath() with valid strings
+     *
+     * @return void
+     */
+    public function testParseRoutePath()
+    {
+        $expected = [
+            'controller' => 'Bookmarks',
+            'action' => 'view',
+        ];
+        $this->assertSame($expected, Router::parseRoutePath('Bookmarks::view'));
+
+        $expected = [
+            'prefix' => 'admin',
+            'controller' => 'Bookmarks',
+            'action' => 'view',
+        ];
+        $this->assertSame($expected, Router::parseRoutePath('Admin/Bookmarks::view'));
+
+        $expected = [
+            'plugin' => 'Cms',
+            'controller' => 'Articles',
+            'action' => 'edit',
+        ];
+        $this->assertSame($expected, Router::parseRoutePath('Cms.Articles::edit'));
+
+        $expected = [
+            'plugin' => 'Vendor/Cms',
+            'prefix' => 'management/admin',
+            'controller' => 'Articles',
+            'action' => 'view',
+        ];
+        $this->assertSame($expected, Router::parseRoutePath('Vendor/Cms.Management/Admin/Articles::view'));
+    }
+
+    /**
+     * @return array
+     */
+    public function invalidRoutePathProvider()
+    {
+        return [
+            ['view'],
+            ['Bookmarks:view'],
+            ['Bookmarks/view'],
+            ['Vendor\Cms.Articles::edit'],
+            ['Vendor//Cms.Articles::edit'],
+            ['Cms./Articles::edit'],
+            ['Cms./Admin/Articles::edit'],
+            ['Cms.Admin//Articles::edit'],
+            ['Vendor\Cms.Management\Admin\Articles::edit'],
+        ];
+    }
+
+    /**
+     * Test parseRoutePath() with invalid strings
+     *
+     * @param string $value
+     * @return void
+     * @dataProvider invalidRoutePathProvider
+     */
+    public function testParseInvalidRoutePath(string $value)
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Could not parse a string route path');
+
+        Router::parseRoutePath($value);
+    }
+
+    /**
      * Test url() works with patterns on :action
      *
      * @return void
@@ -3118,11 +3187,11 @@ class RouterTest extends TestCase
     }
 
     /**
-     * test url() with short string syntax
+     * test url() with a string route path
      *
      * @return void
      */
-    public function testUrlGenerationInShortStringSyntax()
+    public function testUrlGenerationWithRoutePath()
     {
         Router::connect('/articles', 'Articles::index');
         Router::connect('/articles/view/*', 'Articles::view');
@@ -3157,11 +3226,11 @@ class RouterTest extends TestCase
     }
 
     /**
-     * test url() with short string syntax doesn't take parameters from current request
+     * test url() with a string route path doesn't take parameters from current request
      *
      * @return void
      */
-    public function testUrlGenerationInShortStringSyntaxWithContext()
+    public function testUrlGenerationWithRoutePathWithContext()
     {
         Router::connect('/articles', 'Articles::index');
         Router::connect('/articles/view/*', 'Articles::view');
@@ -3205,7 +3274,7 @@ class RouterTest extends TestCase
     /**
      * @return array
      */
-    public function invalidShortStringArrayProvider()
+    public function invalidRoutePathParametersArrayProvider()
     {
         return [
             [['plugin' => false]],
@@ -3220,11 +3289,11 @@ class RouterTest extends TestCase
     }
 
     /**
-     * Test url() doesn't let override parts of short string
+     * Test url() doesn't let override parts of string route path
      *
      * @param array $params
      * @return void
-     * @dataProvider invalidShortStringArrayProvider
+     * @dataProvider invalidRoutePathParametersArrayProvider
      */
     public function testUrlGenerationOverridingShortString(array $params)
     {

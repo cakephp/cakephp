@@ -160,11 +160,11 @@ class Router
     protected static $_defaultExtensions = [];
 
     /**
-     * Cache of parsed short strings
+     * Cache of parsed route paths
      *
      * @var array
      */
-    protected static $_shortStrings = [];
+    protected static $_routePaths = [];
 
     /**
      * Get or set default route class.
@@ -521,7 +521,7 @@ class Router
             }
 
             if (ctype_alnum($url[0]) && strpos($url, '::') > 0) {
-                $url = RouteBuilder::parseRoutePath($url) + ['plugin' => false, 'prefix' => false];
+                $url = static::parseRoutePath($url) + ['plugin' => false, 'prefix' => false];
 
                 if (is_array($full)) {
                     foreach (['plugin', 'prefix', 'controller', 'action'] as $key) {
@@ -954,5 +954,51 @@ class Router
     public static function setRouteCollection(RouteCollection $routeCollection): void
     {
         static::$_collection = $routeCollection;
+    }
+
+    /**
+     * Parse a string route path
+     *
+     * String examples:
+     * - Bookmarks::view
+     * - Admin/Bookmarks::view
+     * - Cms.Articles::edit
+     * - Vendor/Cms.Management/Admin/Articles::view
+     *
+     * @param string $url Route path in [Plugin.][Prefix/]Controller::action format
+     * @return string[]
+     */
+    public static function parseRoutePath(string $url): array
+    {
+        if (isset(static::$_routePaths[$url])) {
+            return static::$_routePaths[$url];
+        }
+
+        $regex = '#^
+            (?:(?<plugin>[a-z0-9]+(?:/[a-z0-9]+)*)\.)?
+            (?:(?<prefix>[a-z0-9]+(?:/[a-z0-9]+)*)/)?
+            (?<controller>[a-z0-9]+)
+            ::
+            (?<action>[a-z0-9_]+)
+            $#ix';
+
+        if (!preg_match($regex, $url, $matches)) {
+            throw new InvalidArgumentException("Could not parse a string route path `{$url}`.");
+        }
+
+        $defaults = [];
+
+        if ($matches['plugin'] !== '') {
+            $defaults['plugin'] = $matches['plugin'];
+        }
+        if ($matches['prefix'] !== '') {
+            $defaults['prefix'] = strtolower($matches['prefix']);
+        }
+        $defaults['controller'] = $matches['controller'];
+        $defaults['action'] = $matches['action'];
+
+        static::$_routePaths[$url] = $defaults;
+
+        return $defaults;
     }
 }
