@@ -27,6 +27,11 @@ use DateInterval;
 class RedisEngineTest extends TestCase
 {
     /**
+     * @var string
+     */
+    protected $port = '6379';
+
+    /**
      * setUp method
      *
      * @return void
@@ -36,8 +41,10 @@ class RedisEngineTest extends TestCase
         parent::setUp();
         $this->skipIf(!class_exists('Redis'), 'Redis extension is not installed or configured properly.');
 
+        $this->port = env('REDIS_PORT', $this->port);
+
         // phpcs:disable
-        $socket = @fsockopen('127.0.0.1', 6379, $errno, $errstr, 1);
+        $socket = @fsockopen('127.0.0.1', (int)$this->port, $errno, $errstr, 1);
         // phpcs:enable
         $this->skipIf(!$socket, 'Redis is not running.');
         fclose($socket);
@@ -71,6 +78,7 @@ class RedisEngineTest extends TestCase
             'className' => 'Redis',
             'prefix' => 'cake_',
             'duration' => 3600,
+            'port' => $this->port,
         ];
         Cache::drop('redis');
         Cache::setConfig('redis', array_merge($defaults, $config));
@@ -89,7 +97,7 @@ class RedisEngineTest extends TestCase
             'duration' => 3600,
             'groups' => [],
             'server' => '127.0.0.1',
-            'port' => 6379,
+            'port' => $this->port,
             'timeout' => 0,
             'persistent' => true,
             'password' => false,
@@ -108,7 +116,7 @@ class RedisEngineTest extends TestCase
     public function testConfigDsn()
     {
         Cache::setConfig('redis_dsn', [
-            'url' => 'redis://localhost:6379?database=1&prefix=redis_',
+            'url' => 'redis://localhost:' . $this->port . '?database=1&prefix=redis_',
         ]);
 
         $config = Cache::pool('redis_dsn')->getConfig();
@@ -117,7 +125,7 @@ class RedisEngineTest extends TestCase
             'duration' => 3600,
             'groups' => [],
             'server' => 'localhost',
-            'port' => 6379,
+            'port' => $this->port,
             'timeout' => 0,
             'persistent' => true,
             'password' => false,
@@ -154,6 +162,7 @@ class RedisEngineTest extends TestCase
             'prefix' => 'cake2_',
             'duration' => 3600,
             'persistent' => false,
+            'port' => $this->port,
         ]);
 
         Cache::setConfig('redisdb1', [
@@ -162,6 +171,7 @@ class RedisEngineTest extends TestCase
             'prefix' => 'cake2_',
             'duration' => 3600,
             'persistent' => false,
+            'port' => $this->port,
         ]);
 
         $result = Cache::write('save_in_0', true, 'redisdb0');
@@ -461,6 +471,7 @@ class RedisEngineTest extends TestCase
             'engine' => 'Redis',
             'prefix' => 'cake2_',
             'duration' => 3600,
+            'port' => $this->port,
         ]);
 
         Cache::write('some_value', 'cache1', 'redis');
@@ -506,11 +517,13 @@ class RedisEngineTest extends TestCase
             'duration' => 3600,
             'groups' => ['group_a', 'group_b'],
             'prefix' => 'test_',
+            'port' => $this->port,
         ]);
         Cache::setConfig('redis_helper', [
             'engine' => 'Redis',
             'duration' => 3600,
             'prefix' => 'test_',
+            'port' => $this->port,
         ]);
         $this->assertTrue(Cache::write('test_groups', 'value', 'redis_groups'));
         $this->assertSame('value', Cache::read('test_groups', 'redis_groups'));
@@ -537,6 +550,7 @@ class RedisEngineTest extends TestCase
             'engine' => 'Redis',
             'duration' => 3600,
             'groups' => ['group_a', 'group_b'],
+            'port' => $this->port,
         ]);
         $this->assertTrue(Cache::write('test_groups', 'value', 'redis_groups'));
         $this->assertSame('value', Cache::read('test_groups', 'redis_groups'));
@@ -556,6 +570,7 @@ class RedisEngineTest extends TestCase
             'engine' => 'Redis',
             'duration' => 3600,
             'groups' => ['group_a', 'group_b'],
+            'port' => $this->port,
         ]);
 
         $this->assertTrue(Cache::write('test_groups', 'value', 'redis_groups'));
