@@ -3231,7 +3231,7 @@ class RouterTest extends TestCase
         Router::connect('/articles', 'Articles::index');
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('cannot be used when defining routes targets with route path string.');
+        $this->expectExceptionMessage('cannot be used when defining route targets with a string route path.');
 
         Router::url('Articles::index', $params);
     }
