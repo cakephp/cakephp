@@ -707,9 +707,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * Redirects to given $url, after turning off $this->autoRender.
      *
-     * @param string|array $url A string or array-based URL pointing to another location within the app,
-     *     or an absolute URL
-     * @param int $status HTTP status code (eg: 301)
+     * @param string|array|\Psr\Http\Message\UriInterface $url A string, array-based URL or UriInterface instance.
+     * @param int $status HTTP status code. Defaults to `302`.
      * @return \Cake\Http\Response|null
      * @link https://book.cakephp.org/3.0/en/controllers.html#Controller::redirect
      */
