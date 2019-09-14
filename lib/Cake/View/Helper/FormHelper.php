@@ -1823,6 +1823,9 @@ class FormHelper extends AppHelper {
  */
 	public function button($title, $options = array()) {
 		$options += array('type' => 'submit', 'escape' => false, 'secure' => false);
+		if (isset($options['title'])) {
+			$title = $options['title'];
+		}
 		if ($options['escape']) {
 			$title = h($title);
 		}
