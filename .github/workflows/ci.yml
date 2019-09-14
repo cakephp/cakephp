@@ -72,9 +72,7 @@ jobs:
     - name: Submit code coverage data
       run: |
         if [[ ${{ matrix.php-version }} == '7.2' ]]; then
-          wget https://github.com/php-coveralls/php-coveralls/releases/download/v2.1.0/php-coveralls.phar
-          chmod +x php-coveralls.phar
-          ./php-coveralls.phar --verbose
+          bash <(curl -s https://codecov.io/bash)
         fi
 
   coding-standard:
