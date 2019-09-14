@@ -40,6 +40,7 @@ jobs:
         sudo update-alternatives --set phar /usr/bin/phar${{ matrix.php-version }}
         sudo update-alternatives --set phar.phar /usr/bin/phar.phar${{ matrix.php-version }}
         sudo phpdismod xdebug
+        sudo phpenmod apcu
 
         sudo locale-gen da_DK
 
