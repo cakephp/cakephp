@@ -649,6 +649,16 @@ class SecurityException extends BadRequestException {
 	protected $_reason = null;
 
 /**
+ * Setter for type
+ *
+ * @param string $type Exception type
+ * @return void
+ */
+	public function setType($type) {
+		$this->_type = $type;
+	}
+
+/**
  * Getter for type
  *
  * @return string
@@ -685,6 +695,21 @@ class SecurityException extends BadRequestException {
 	public function getReason() {
 		return $this->_reason;
 	}
+
+}
+
+/**
+ * Csrf Security exception - used when SecurityComponent detects csrf issue with the current request
+ *
+ * @package       Cake.Error
+ */
+class CsrfSecurityException extends SecurityException {
+
+/**
+ * Security Exception type
+ * @var string
+ */
+	protected $_type = 'csrf';
 
 }
 

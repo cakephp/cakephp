@@ -73,6 +73,13 @@ class SecurityTestController extends Controller {
 	public $components = array('Session', 'TestSecurity');
 
 /**
+ * error type
+ *
+ * @var string
+ */
+	public $errorType = '';
+
+/**
  * failed property
  *
  * @var bool
@@ -89,9 +96,11 @@ class SecurityTestController extends Controller {
 /**
  * fail method
  *
+ * @param mixed $type
  * @return void
  */
-	public function fail() {
+	public function fail($type) {
+		$this->errorType = $type;
 		$this->failed = true;
 	}
 
@@ -137,6 +146,7 @@ class BrokenCallbackController extends Controller {
  * SecurityComponentTest class
  *
  * @package       Cake.Test.Case.Controller.Component
+ * @group sec
  */
 class SecurityComponentTest extends CakeTestCase {
 
@@ -235,8 +245,10 @@ class SecurityComponentTest extends CakeTestCase {
 			'action' => 'fail'
 		));
 		$this->assertFalse($this->Controller->failed);
+		$this->assertEquals('', $this->Controller->errorType);
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed, 'Request was blackholed.');
+		$this->assertEquals('auth', $this->Controller->errorType);
 	}
 
 /**
@@ -283,6 +295,7 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->Security->validatePost = false;
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
+		$this->assertEquals('post', $this->Controller->errorType);
 	}
 
 /**
@@ -312,6 +325,7 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->Security->validatePost = false;
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
+		$this->assertEquals('secure', $this->Controller->errorType);
 	}
 
 /**
@@ -340,6 +354,7 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->Security->requireAuth(array('posted'));
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
+		$this->assertEquals('auth', $this->Controller->errorType);
 
 		$this->Controller->Session->write('_Token', array('allowedControllers' => array()));
 		$this->Controller->request->data = array('username' => 'willy', 'password' => 'somePass');
@@ -347,6 +362,7 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->Security->requireAuth('posted');
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
+		$this->assertEquals('auth', $this->Controller->errorType);
 
 		$this->Controller->Session->write('_Token', array(
 			'allowedControllers' => array('SecurityTest'), 'allowedActions' => array('posted2')
@@ -356,6 +372,7 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->Security->requireAuth('posted');
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
+		$this->assertEquals('auth', $this->Controller->errorType);
 	}
 
 /**
@@ -415,6 +432,7 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->Security->validatePost = false;
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
+		$this->assertEquals('get', $this->Controller->errorType);
 	}
 
 /**
@@ -457,6 +475,7 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->Security->validatePost = false;
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
+		$this->assertEquals('put', $this->Controller->errorType);
 	}
 
 /**
@@ -499,6 +518,7 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->Security->validatePost = false;
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
+		$this->assertEquals('delete', $this->Controller->errorType);
 	}
 
 /**
@@ -553,8 +573,10 @@ class SecurityComponentTest extends CakeTestCase {
 			'_Token' => compact('fields', 'unlocked', 'debug')
 		);
 		$this->assertFalse($this->Controller->failed, 'Should not be failed yet');
+		$this->assertEquals('', $this->Controller->errorType);
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed, 'Should fail because of validatePost.');
+		$this->assertEquals('auth', $this->Controller->errorType);
 	}
 
 /**
@@ -1495,7 +1517,7 @@ class SecurityComponentTest extends CakeTestCase {
  * test that blackhole throws an exception when the key is missing and balckHoleCallback is not set.
  *
  * @return void
- * @expectedException SecurityException
+ * @expectedException CsrfSecurityException
  * @expectedExceptionMessage Missing CSRF token
  */
 	public function testCsrfExceptionOnMissingKey() {
@@ -1535,13 +1557,14 @@ class SecurityComponentTest extends CakeTestCase {
 		);
 		$this->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed, 'fail() was not called.');
+		$this->assertEquals('csrf', $this->Controller->errorType);
 	}
 
 /**
  * test that blackhole throws an exception when the keys are mismatched and balckHoleCallback is not set.
  *
  * @return void
- * @expectedException SecurityException
+ * @expectedException CsrfSecurityException
  * @expectedExceptionMessage CSRF token mismatch
  */
 	public function testCsrfExceptionOnKeyMismatch() {
@@ -1587,13 +1610,14 @@ class SecurityComponentTest extends CakeTestCase {
 		);
 		$this->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed, 'fail() was not called.');
+		$this->assertEquals('csrf', $this->Controller->errorType);
 	}
 
 /**
  * test that blackhole throws an exception when the key is expired and balckHoleCallback is not set
  *
  * @return void
- * @expectedException SecurityException
+ * @expectedException CsrfSecurityException
  * @expectedExceptionMessage CSRF token expired
  */
 	public function testCsrfExceptionOnExpiredKey() {

@@ -397,9 +397,11 @@ class SecurityComponent extends Component {
 				$require = $this->$property;
 				if (in_array($this->_action, $require) || $this->$property === array('*')) {
 					if (!$controller->request->is($method)) {
-						throw new SecurityException(
+						$exception = new SecurityException(
 							sprintf('The request method must be %s', strtoupper($method))
 						);
+						$exception->setType(strtolower($method));
+						throw $exception;
 					}
 				}
 			}
@@ -769,7 +771,7 @@ class SecurityComponent extends Component {
  * it will be removed from the list of valid tokens.
  *
  * @param Controller $controller A controller to check
- * @throws SecurityException
+ * @throws CsrfSecurityException
  * @return bool Valid csrf token.
  */
 	protected function _validateCsrf(Controller $controller) {
@@ -777,15 +779,15 @@ class SecurityComponent extends Component {
 		$requestToken = $controller->request->data('_Token.key');
 
 		if (!$requestToken) {
-			throw new SecurityException('Missing CSRF token');
+			throw new CsrfSecurityException('Missing CSRF token');
 		}
 
 		if (!isset($token['csrfTokens'][$requestToken])) {
-			throw new SecurityException('CSRF token mismatch');
+			throw new CsrfSecurityException('CSRF token mismatch');
 		}
 
 		if ($token['csrfTokens'][$requestToken] < time()) {
-			throw new SecurityException('CSRF token expired');
+			throw new CsrfSecurityException('CSRF token expired');
 		}
 
 		if ($this->csrfUseOnce) {
