@@ -109,6 +109,7 @@ class MemcachedEngineTest extends TestCase
             'serialize' => 'php',
             'options' => [],
             'host' => null,
+            'port' => null,
         ];
         $this->assertEquals($expecting, $config);
     }

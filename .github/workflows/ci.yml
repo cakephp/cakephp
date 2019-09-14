@@ -17,10 +17,6 @@ jobs:
         image: redis
         ports:
           - 6379/tcp
-      memcached:
-        image: memcached
-        ports:
-          - 11211/tcp
       postgres:
         image: postgres
         ports:
@@ -42,6 +38,12 @@ jobs:
         sudo phpdismod xdebug
         sudo phpenmod apcu
 
+        # memcached installation fails without updating packages.
+        # Packages updating is not done earlier to avoid all wasting time as all
+        # php packages get updated when installing php-intl.
+        sudo apt update
+        sudo apt install memcached
+
         sudo locale-gen da_DK
 
         if [[ ${{ matrix.php-version }} == '7.2' ]]; then sudo apt install php-pcov; fi
@@ -58,7 +60,6 @@ jobs:
     - name: Run PHPUnit
       env:
         REDIS_PORT: ${{ job.services.redis.ports['6379'] }}
-        MEMCACHED_PORT: ${{ job.services.memcached.ports['11211'] }}
       run: |
         if [[ ${{ matrix.php-version }} == '7.2' ]]; then
           # Setting CODECOVERAGE is necessary to skip memory usage tests
