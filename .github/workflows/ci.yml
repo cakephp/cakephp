@@ -45,6 +45,7 @@ jobs:
         sudo apt install memcached
 
         sudo locale-gen da_DK
+        sudo locale-gen de_DE
 
         if [[ ${{ matrix.php-version }} == '7.2' ]]; then sudo apt install php-pcov; fi
 
