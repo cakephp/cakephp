@@ -46,6 +46,11 @@ class ConsoleInputTest extends TestCase
             'Skip ConsoleInput tests on Windows as they fail on AppVeyor.'
         );
 
+        $this->skipIf(
+            (bool)env('GITHUB_ACTIONS'),
+            'Skip test for ConsoleInput::dataAvailable() on Github VM as stream_select() incorrectly return 1 even though no data is available on STDIN.'
+        );
+
         $this->assertFalse($this->in->dataAvailable());
     }
 }
