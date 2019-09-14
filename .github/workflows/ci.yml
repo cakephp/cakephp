@@ -74,7 +74,7 @@ jobs:
         if [[ ${{ matrix.php-version }} == '7.2' ]]; then
           wget https://github.com/php-coveralls/php-coveralls/releases/download/v2.1.0/php-coveralls.phar
           chmod +x php-coveralls.phar
-          ./php-coveralls.phar
+          ./php-coveralls.phar --verbose
         fi
 
   coding-standard:
