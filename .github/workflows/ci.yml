@@ -61,7 +61,7 @@ jobs:
       run: |
         if [[ ${{ matrix.php-version }} == '7.2' ]]; then
           # Setting CODECOVERAGE is necessary to skip memory usage tests
-          CODECOVERAGE=1 vendor/bin/phpunit --coverage-clover=clover.xml
+          CODECOVERAGE=1 vendor/bin/phpunit --verbose --coverage-clover=clover.xml
         else
           vendor/bin/phpunit
         fi
