@@ -58,7 +58,7 @@ class MysqlTest extends TestCase
             'flags' => [],
             'encoding' => 'utf8mb4',
             'timezone' => null,
-            'init' => []
+            'init' => [],
         ];
 
         $expected['flags'] += [
@@ -93,8 +93,8 @@ class MysqlTest extends TestCase
             'username' => 'user',
             'password' => 'pass',
             'port' => 3440,
-            'flags' => [1 => true, 2 => false],
-            'encoding' => 'some-encoding',
+            'flags' => [PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'],
+            'encoding' => null,
             'timezone' => 'Antarctica',
             'init' => [
                 'Execute this',
@@ -105,10 +105,11 @@ class MysqlTest extends TestCase
             ->setMethods(['_connect', 'getConnection'])
             ->setConstructorArgs([$config])
             ->getMock();
-        $dsn = 'mysql:host=foo;port=3440;dbname=bar;charset=some-encoding';
+        $dsn = 'mysql:host=foo;port=3440;dbname=bar';
         $expected = $config;
         $expected['init'][] = "SET time_zone = 'Antarctica'";
         $expected['flags'] += [
+            PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
             PDO::ATTR_PERSISTENT => false,
             PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
