@@ -21,6 +21,7 @@ use ArrayIterator;
 use Countable;
 use InvalidArgumentException;
 use IteratorAggregate;
+use Psr\Http\Message\UploadedFileInterface;
 
 /**
  * Validator object encapsulates all methods related to data validations for a model
@@ -73,6 +74,9 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * When an array is given, if it has at least the `name`, `type`, `tmp_name` and `error` keys,
      * and the value of `error` is equal to `UPLOAD_ERR_NO_FILE`, the value will be recognized as
      * empty.
+     *
+     * When an instance of \Psr\Http\Message\UploadedFileInterface is given the
+     * return value of it's getError() method must be equal to `UPLOAD_ERR_NO_FILE`.
      *
      * @var int
      */
@@ -2565,6 +2569,13 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                     return true;
                 }
             }
+        }
+
+        if (($flags & self::EMPTY_FILE)
+            && $data instanceof UploadedFileInterface
+            && $data->getError() === UPLOAD_ERR_NO_FILE
+        ) {
+            return true;
         }
 
         return false;

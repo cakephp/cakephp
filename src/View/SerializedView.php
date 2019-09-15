@@ -100,7 +100,7 @@ abstract class SerializedView extends View
      * Render view template or return serialized data.
      *
      * @param string|null $template The template being rendered.
-     * @param string|null|false $layout The layout being rendered.
+     * @param string|false|null $layout The layout being rendered.
      * @return string The rendered view.
      * @throws \Cake\View\Exception\SerializationFailureException When serialization fails.
      */

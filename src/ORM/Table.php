@@ -137,6 +137,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     use ValidatorAwareTrait;
 
     /**
+     * Name of default validation set.
+     *
+     * @var string
+     */
+    public const DEFAULT_VALIDATOR = 'default';
+
+    /**
      * The alias this object is assigned to validators as.
      *
      * @var string

@@ -156,48 +156,51 @@ class App
     }
 
     /**
-     * Used to read information stored path
+     * Used to read information stored path.
      *
-     * Usage:
+     * If 1st character of $type argument is lower cased it will return the
+     * value of `App.paths.$type` config.
      *
-     * ```
-     * App::path('Plugin');
-     * ```
-     *
-     * Will return the configured paths for plugins. This is a simpler way to access
-     * the `App.paths.plugins` configure variable.
+     * Example:
      *
      * ```
-     * App::path('Model/Datasource', 'MyPlugin');
+     * App::path('plugins');
      * ```
      *
-     * Will return the path for datasources under the 'MyPlugin' plugin.
+     * Will return the value of `App.paths.plugins` config.
+     *
+     * ```
+     * App::path('Model/Table');
+     * ```
+     *
+     * Will return the path for tables `src/Model/Table`.
      *
      * @param string $type type of path
-     * @param string|null $plugin name of plugin
+     * @param string|null $plugin This argument is deprecated.
+     *   Use \Cake\Core\Plugin::classPath()/templatePath() instead for plugin paths.
      * @return array
      * @link https://book.cakephp.org/3.0/en/core-libraries/app.html#finding-paths-to-namespaces
      */
     public static function path(string $type, ?string $plugin = null): array
     {
-        if ($type === 'Plugin') {
-            return (array)Configure::read('App.paths.plugins');
-        }
-        if (empty($plugin) && $type === 'Locale') {
-            return (array)Configure::read('App.paths.locales');
-        }
-        if (empty($plugin) && $type === 'Template') {
-            return (array)Configure::read('App.paths.templates');
-        }
-        if (!empty($plugin)) {
-            if ($type === 'Template') {
-                return [Plugin::templatePath($plugin)];
+        if (empty($plugin)) {
+            if ($type[0] === strtolower($type[0])) {
+                return (array)Configure::read('App.paths.' . $type);
             }
 
-            return [Plugin::classPath($plugin) . $type . DIRECTORY_SEPARATOR];
+            return [APP . $type . DIRECTORY_SEPARATOR];
         }
 
-        return [APP . $type . DIRECTORY_SEPARATOR];
+        deprecationWarning(
+            'Using App::path() with 2nd argument $plugin is deprecated.'
+            . ' Use \Cake\Core\Plugin::classPath()/templatePath() instead.'
+        );
+
+        if ($type === 'templates') {
+            return [Plugin::templatePath($plugin)];
+        }
+
+        return [Plugin::classPath($plugin) . $type . DIRECTORY_SEPARATOR];
     }
 
     /**
@@ -216,7 +219,7 @@ class App
      */
     public static function core(string $type): array
     {
-        if ($type === 'Template') {
+        if ($type === 'templates') {
             return [CORE_PATH . 'templates' . DIRECTORY_SEPARATOR];
         }
 

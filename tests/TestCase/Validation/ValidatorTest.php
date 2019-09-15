@@ -21,6 +21,7 @@ use Cake\Validation\Validation;
 use Cake\Validation\ValidationRule;
 use Cake\Validation\ValidationSet;
 use Cake\Validation\Validator;
+use Zend\Diactoros\UploadedFile;
 
 /**
  * Tests Validator class
@@ -683,7 +684,17 @@ class ValidatorTest extends TestCase
             ],
         ];
         $result = $validator->errors($data);
-        $this->assertEmpty($result, 'No errors on empty date');
+        $this->assertEmpty($result, 'No errors on empty file');
+
+        $data = [
+            'picture' => new UploadedFile(
+                '',
+                0,
+                UPLOAD_ERR_NO_FILE
+            ),
+        ];
+        $result = $validator->errors($data);
+        $this->assertEmpty($result, 'No errors on empty file');
 
         $data = [
             'picture' => [

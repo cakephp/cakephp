@@ -149,7 +149,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * Persists a set of key => value pairs in the cache, with an optional TTL.
      *
      * @param iterable $values A list of key => value pairs for a multiple-set operation.
-     * @param null|int|\DateInterval $ttl Optional. The TTL value of this item. If no value is sent and
+     * @param \DateInterval|int|null $ttl Optional. The TTL value of this item. If no value is sent and
      *   the driver supports TTL then the library may set a default value
      *   for it or let the driver take care of that.
      * @return bool True on success and false on failure.
@@ -236,7 +236,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      *
      * @param string $key The key of the item to store.
      * @param mixed $value The value of the item to store, must be serializable.
-     * @param null|int|\DateInterval $ttl Optional. The TTL value of this item. If no value is sent and
+     * @param \DateInterval|int|null $ttl Optional. The TTL value of this item. If no value is sent and
      *   the driver supports TTL then the library may set a default value
      *   for it or let the driver take care of that.
      * @return bool True on success and false on failure.
@@ -362,7 +362,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
     /**
      * Convert the various expressions of a TTL value into duration in seconds
      *
-     * @param null|int|\DateInterval $ttl The TTL value of this item. If null is sent, the
+     * @param \DateInterval|int|null $ttl The TTL value of this item. If null is sent, the
      *   driver's default duration will be used.
      * @return int
      */

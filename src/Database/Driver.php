@@ -319,7 +319,6 @@ abstract class Driver implements DriverInterface
         $this->connect();
 
         if ($this->_connection instanceof PDO) {
-            /** @psalm-suppress PossiblyNullArgument */
             return $this->_connection->lastInsertId($table);
         }
 
