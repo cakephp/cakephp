@@ -40,7 +40,7 @@ class BelongsToManyTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.Articles', 'core.SpecialTags', 'core.ArticlesTags', 'core.Tags'];
+    protected $fixtures = ['core.Articles', 'core.SpecialTags', 'core.ArticlesTags', 'core.Tags'];
 
     /**
      * Set up

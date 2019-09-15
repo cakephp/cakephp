@@ -50,7 +50,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @var string[]
      */
-    public $fixtures = [];
+    protected $fixtures = [];
 
     /**
      * By default, all fixtures attached to this class will be truncated and reloaded after each test.

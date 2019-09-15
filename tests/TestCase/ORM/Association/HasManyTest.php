@@ -39,7 +39,7 @@ class HasManyTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = [
+    protected $fixtures = [
         'core.Comments',
         'core.Articles',
         'core.Authors',
