@@ -24,7 +24,6 @@ use RuntimeException;
  */
 class MoFileParser
 {
-
     /**
      * Magic used for validating the format of a MO file as well as
      * detecting if the machine used to create that file was little endian.

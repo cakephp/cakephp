@@ -27,7 +27,6 @@ use UnexpectedValueException;
  */
 class TimestampBehavior extends Behavior
 {
-
     /**
      * Default config
      *

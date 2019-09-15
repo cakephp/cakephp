@@ -21,7 +21,6 @@ namespace Cake\Auth;
  */
 class FallbackPasswordHasher extends AbstractPasswordHasher
 {
-
     /**
      * Default config for this object.
      *

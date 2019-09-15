@@ -22,7 +22,6 @@ use Cake\Datasource\ConnectionInterface;
  */
 class CachedCollection extends Collection
 {
-
     /**
      * The name of the cache config key to use for caching table metadata,
      * of false if disabled.

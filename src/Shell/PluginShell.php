@@ -26,7 +26,6 @@ use Cake\Core\Plugin;
  */
 class PluginShell extends Shell
 {
-
     /**
      * Tasks to load
      *

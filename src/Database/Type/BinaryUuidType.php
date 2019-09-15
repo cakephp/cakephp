@@ -83,7 +83,7 @@ class BinaryUuidType extends Type implements TypeInterface
     /**
      * Convert binary uuid into resource handles
      *
-     * @param null|string|resource $value The value to convert.
+     * @param resource|string|null $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return resource|string|null
      * @throws \Cake\Core\Exception\Exception

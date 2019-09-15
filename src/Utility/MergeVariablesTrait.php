@@ -19,7 +19,6 @@ namespace Cake\Utility;
  */
 trait MergeVariablesTrait
 {
-
     /**
      * Merge the list of $properties with all parent classes of the current class.
      *

@@ -40,7 +40,6 @@ use RuntimeException;
  */
 class RequestHandlerComponent extends Component
 {
-
     /**
      * @var bool
      * @deprecated 3.4.0 Unused. Will be removed in 4.0.0
@@ -724,7 +723,7 @@ class RequestHandlerComponent extends Component
      * Maps a content type alias back to its mime-type(s)
      *
      * @param string|array $alias String alias to convert back into a content type. Or an array of aliases to map.
-     * @return string|null|array Null on an undefined alias. String value of the mapped alias type. If an
+     * @return string|array|null Null on an undefined alias. String value of the mapped alias type. If an
      *   alias maps to more than one content type, the first one will be returned. If an array is provided
      *   for $alias, an array of mapped types will be returned.
      */

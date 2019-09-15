@@ -193,7 +193,7 @@ class LogTest extends TestCase
     public function testConfigInjectErrorOnWrongType()
     {
         $this->expectException(\RuntimeException::class);
-        Log::setConfig('test', new \StdClass);
+        Log::setConfig('test', new \StdClass());
         Log::info('testing');
     }
 
@@ -206,7 +206,7 @@ class LogTest extends TestCase
     public function testSetConfigInjectErrorOnWrongType()
     {
         $this->expectException(\RuntimeException::class);
-        Log::setConfig('test', new \StdClass);
+        Log::setConfig('test', new \StdClass());
         Log::info('testing');
     }
 
@@ -689,7 +689,7 @@ class LogTest extends TestCase
      */
     public function testCreateLoggerWithCallable()
     {
-        $instance = new FileLog;
+        $instance = new FileLog();
         Log::setConfig('default', function ($alias) use ($instance) {
             $this->assertEquals('default', $alias);
 

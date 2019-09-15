@@ -36,7 +36,6 @@ use Zend\Diactoros\UploadedFile;
  */
 class ServerRequest implements ArrayAccess, ServerRequestInterface
 {
-
     /**
      * Array of parameters parsed from the URL.
      *
@@ -56,7 +55,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * In PUT/PATCH/DELETE requests this property will contain the form-urlencoded
      * data.
      *
-     * @var null|array|object
+     * @var array|object|null
      * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getData() instead.
      */
     protected $data = [];
@@ -1642,7 +1641,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string|null $name The name or dotted path to the query param or null to read all.
      * @param mixed $default The default value if the named parameter is not set, and $name is not null.
-     * @return null|string|array Query data.
+     * @return array|string|null Query data.
      * @see ServerRequest::getQueryParams()
      */
     public function getQuery($name = null, $default = null)
@@ -1720,7 +1719,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string|null $name Dot separated name of the value to read. Or null to read all data.
      * @param mixed $default The default data.
-     * @return null|string|array The value being read.
+     * @return array|string|null The value being read.
      */
     public function getData($name = null, $default = null)
     {
@@ -1800,7 +1799,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * Read cookie data from the request's cookie data.
      *
      * @param string $key The key you want to read.
-     * @return null|string Either the cookie value, or null if the value doesn't exist.
+     * @return string|null Either the cookie value, or null if the value doesn't exist.
      * @deprecated 3.4.0 Use getCookie() instead.
      */
     public function cookie($key)
@@ -1822,7 +1821,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string $key The key or dotted path you want to read.
      * @param string $default The default value if the cookie is not set.
-     * @return null|array|string Either the cookie value, or null if the value doesn't exist.
+     * @return string|array|null Either the cookie value, or null if the value doesn't exist.
      */
     public function getCookie($key, $default = null)
     {
@@ -1900,7 +1899,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * post data. For other content types, it may be the deserialized request
      * body.
      *
-     * @return null|array|object The deserialized body parameters, if any.
+     * @return object|array|null The deserialized body parameters, if any.
      *     These will typically be an array or object.
      */
     public function getParsedBody()
@@ -1911,7 +1910,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     /**
      * Update the parsed body and get a new instance.
      *
-     * @param null|array|object $data The deserialized body data. This will
+     * @param object|array|null $data The deserialized body data. This will
      *     typically be in an array or object.
      * @return static
      */
@@ -2255,7 +2254,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * Get the uploaded file from a dotted path.
      *
      * @param string $path The dot separated path to the file you want.
-     * @return null|\Psr\Http\Message\UploadedFileInterface
+     * @return \Psr\Http\Message\UploadedFileInterface|null
      */
     public function getUploadedFile($path)
     {

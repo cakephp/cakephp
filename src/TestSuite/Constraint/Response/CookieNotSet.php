@@ -20,7 +20,6 @@ namespace Cake\TestSuite\Constraint\Response;
  */
 class CookieNotSet extends CookieSet
 {
-
     /**
      * Checks assertion
      *

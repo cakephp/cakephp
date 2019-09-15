@@ -27,7 +27,6 @@ use Cake\Routing\DispatcherFilter;
  */
 class ControllerFactoryFilter extends DispatcherFilter
 {
-
     /**
      * Priority is set high to allow other filters to be called first.
      *

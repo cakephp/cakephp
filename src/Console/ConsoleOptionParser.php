@@ -72,7 +72,6 @@ use LogicException;
  */
 class ConsoleOptionParser
 {
-
     /**
      * Description text - displays before options when help is generated
      *

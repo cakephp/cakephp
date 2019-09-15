@@ -22,7 +22,6 @@ use InvalidArgumentException;
  */
 class CommandFactory implements CommandFactoryInterface
 {
-
     /**
      * {@inheritDoc}
      */

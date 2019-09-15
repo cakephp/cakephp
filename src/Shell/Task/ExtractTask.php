@@ -27,7 +27,6 @@ use Cake\Utility\Inflector;
  */
 class ExtractTask extends Shell
 {
-
     /**
      * Paths to use when looking for strings
      *

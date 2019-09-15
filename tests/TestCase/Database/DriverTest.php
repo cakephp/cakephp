@@ -250,7 +250,7 @@ class DriverTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $result = $driver->compileQuery($query, new ValueBinder);
+        $result = $driver->compileQuery($query, new ValueBinder());
 
         $this->assertInternalType('array', $result);
         $this->assertSame($query, $result[0]);

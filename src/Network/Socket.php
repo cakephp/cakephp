@@ -272,7 +272,7 @@ class Socket
     /**
      * Get the connection context.
      *
-     * @return null|array Null when there is no connection, an array when there is.
+     * @return array|null Null when there is no connection, an array when there is.
      */
     public function context()
     {

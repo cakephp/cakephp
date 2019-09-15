@@ -29,7 +29,6 @@ use InvalidArgumentException;
  */
 class CacheShell extends Shell
 {
-
     /**
      * Get the option parser for this shell.
      *

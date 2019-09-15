@@ -19,7 +19,6 @@ namespace Cake\Auth;
  */
 class DefaultPasswordHasher extends AbstractPasswordHasher
 {
-
     /**
      * Default config for this object.
      *

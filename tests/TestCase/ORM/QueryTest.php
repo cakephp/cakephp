@@ -1831,7 +1831,7 @@ class QueryTest extends TestCase
             ['shuffle', $identity],
             ['sample', $identity],
             ['take', 1],
-            ['append', new \ArrayIterator],
+            ['append', new \ArrayIterator()],
             ['compile', 1],
         ];
     }

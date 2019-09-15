@@ -26,7 +26,6 @@ use RuntimeException;
  */
 class TableLocator implements LocatorInterface
 {
-
     /**
      * Contains a list of locations where table classes should be looked for.
      *

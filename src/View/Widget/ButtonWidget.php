@@ -25,7 +25,6 @@ use Cake\View\Form\ContextInterface;
  */
 class ButtonWidget extends BasicWidget
 {
-
     /**
      * Render a button.
      *

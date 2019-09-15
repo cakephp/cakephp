@@ -26,6 +26,7 @@ use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Error\Notice;
 use TestApp\Controller\Admin\PostsController;
 use TestPlugin\Controller\TestPluginController;
+use Zend\Diactoros\Uri;
 
 /**
  * AppController class
@@ -458,7 +459,7 @@ class ControllerTest extends TestCase
      */
     public function testBeforeRenderCallbackChangingViewClass()
     {
-        $Controller = new Controller(new ServerRequest, new Response());
+        $Controller = new Controller(new ServerRequest(), new Response());
 
         $Controller->getEventManager()->on('Controller.beforeRender', function (Event $event) {
             $controller = $event->getSubject();
@@ -483,7 +484,7 @@ class ControllerTest extends TestCase
      */
     public function testBeforeRenderEventCancelsRender()
     {
-        $Controller = new Controller(new ServerRequest, new Response());
+        $Controller = new Controller(new ServerRequest(), new Response());
 
         $Controller->getEventManager()->on('Controller.beforeRender', function (Event $event) {
             return false;
@@ -491,6 +492,19 @@ class ControllerTest extends TestCase
 
         $result = $Controller->render('index');
         $this->assertInstanceOf('Cake\Http\Response', $result);
+    }
+
+    public function testControllerRedirect()
+    {
+        $Controller = new Controller();
+        $uri = new Uri('/foo/bar');
+        $response = $Controller->redirect($uri);
+        $this->assertEquals('http://localhost/foo/bar', $response->getHeaderLine('Location'));
+
+        $Controller = new Controller();
+        $uri = new Uri('http://cakephp.org/foo/bar');
+        $response = $Controller->redirect($uri);
+        $this->assertEquals('http://cakephp.org/foo/bar', $response->getHeaderLine('Location'));
     }
 
     /**
@@ -576,7 +590,7 @@ class ControllerTest extends TestCase
             ->getMock();
         $Controller = new Controller(null, $Response);
 
-        $newResponse = new Response;
+        $newResponse = new Response();
         $Controller->getEventManager()->on('Controller.beforeRedirect', function (Event $event, $url, Response $response) use ($newResponse) {
             return $newResponse;
         });
@@ -1192,7 +1206,7 @@ class ControllerTest extends TestCase
         $controller = new PostsController();
         $this->assertInstanceOf(Response::class, $controller->getResponse());
 
-        $response = new Response;
+        $response = new Response();
         $this->assertSame($controller, $controller->setResponse($response));
         $this->assertSame($response, $controller->getResponse());
     }

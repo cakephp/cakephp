@@ -26,7 +26,6 @@ use Cake\Routing\Exception\MissingDispatcherFilterException;
  */
 class DispatcherFactory
 {
-
     /**
      * Stack of middleware to apply to dispatchers.
      *

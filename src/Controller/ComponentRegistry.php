@@ -27,7 +27,6 @@ use Cake\Event\EventDispatcherTrait;
  */
 class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterface
 {
-
     use EventDispatcherTrait;
 
     /**

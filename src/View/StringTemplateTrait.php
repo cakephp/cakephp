@@ -24,7 +24,6 @@ namespace Cake\View;
  */
 trait StringTemplateTrait
 {
-
     /**
      * StringTemplate instance.
      *
@@ -60,7 +59,7 @@ trait StringTemplateTrait
      * Gets/sets templates to use.
      *
      * @deprecated 3.4.0 Use setTemplates()/getTemplates() instead.
-     * @param string|null|array $templates null or string allow reading templates. An array
+     * @param string|array|null $templates null or string allow reading templates. An array
      *   allows templates to be added.
      * @return $this|string|array
      */

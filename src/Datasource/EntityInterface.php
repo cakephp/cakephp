@@ -47,7 +47,6 @@ use JsonSerializable;
  */
 interface EntityInterface extends ArrayAccess, JsonSerializable
 {
-
     /**
      * Sets one or multiple properties to the specified value
      *
@@ -92,7 +91,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * If the properties argument is null, the currently hidden properties
      * will be returned. Otherwise the hidden properties will be set.
      *
-     * @param null|array $properties Either an array of properties to hide or null to get properties
+     * @param array|null $properties Either an array of properties to hide or null to get properties
      * @return array|\Cake\Datasource\EntityInterface
      */
     public function hiddenProperties($properties = null);
@@ -103,7 +102,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * If the properties argument is null, the currently virtual properties
      * will be returned. Otherwise the virtual properties will be set.
      *
-     * @param null|array $properties Either an array of properties to treat as virtual or null to get properties
+     * @param array|null $properties Either an array of properties to treat as virtual or null to get properties
      * @return array|\Cake\Datasource\EntityInterface
      */
     public function virtualProperties($properties = null);
@@ -145,7 +144,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      *
      * @deprecated 3.4.0 Use setDirty() and isDirty() instead.
      * @param string|null $property the field to set or check status for
-     * @param null|bool $isDirty true means the property was changed, false means
+     * @param bool|null $isDirty true means the property was changed, false means
      * it was not changed and null will make the function return current state
      * for that property
      * @return bool whether the property was changed or not

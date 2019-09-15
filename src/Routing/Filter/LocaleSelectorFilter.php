@@ -26,7 +26,6 @@ use Locale;
  */
 class LocaleSelectorFilter extends DispatcherFilter
 {
-
     /**
      * List of valid locales for the request
      *

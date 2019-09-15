@@ -26,7 +26,6 @@ use RuntimeException;
  */
 trait DateFormatTrait
 {
-
     /**
      * The default locale to be used for displaying formatted date strings.
      *

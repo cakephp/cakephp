@@ -24,7 +24,6 @@ namespace Cake\Http\Client;
  */
 class FormDataPart
 {
-
     /**
      * Name of the value.
      *
@@ -94,7 +93,7 @@ class FormDataPart
      * By passing in `false` you can disable the disposition
      * header from being added.
      *
-     * @param null|string $disposition Use null to get/string to set.
+     * @param string|null $disposition Use null to get/string to set.
      * @return string|null
      */
     public function disposition($disposition = null)
@@ -108,7 +107,7 @@ class FormDataPart
     /**
      * Get/set the contentId for a part.
      *
-     * @param null|string $id The content id.
+     * @param string|null $id The content id.
      * @return string|null
      */
     public function contentId($id = null)
@@ -125,7 +124,7 @@ class FormDataPart
      * Setting the filename to `false` will exclude it from the
      * generated output.
      *
-     * @param null|string $filename Use null to get/string to set.
+     * @param string|null $filename Use null to get/string to set.
      * @return string|null
      */
     public function filename($filename = null)
@@ -139,7 +138,7 @@ class FormDataPart
     /**
      * Get/set the content type.
      *
-     * @param null|string $type Use null to get/string to set.
+     * @param string|null $type Use null to get/string to set.
      * @return string|null
      */
     public function type($type)
@@ -155,7 +154,7 @@ class FormDataPart
      *
      * Useful when content bodies are in encodings like base64.
      *
-     * @param null|string $type The type of encoding the value has.
+     * @param string|null $type The type of encoding the value has.
      * @return string|null
      */
     public function transferEncoding($type)

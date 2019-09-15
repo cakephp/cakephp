@@ -45,7 +45,6 @@ use InvalidArgumentException;
  */
 class ConsoleOutput
 {
-
     /**
      * Raw output constant - no modification of output text.
      *

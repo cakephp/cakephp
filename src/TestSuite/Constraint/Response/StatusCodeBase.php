@@ -20,7 +20,6 @@ namespace Cake\TestSuite\Constraint\Response;
  */
 abstract class StatusCodeBase extends ResponseBase
 {
-
     /**
      * @var int|array
      */

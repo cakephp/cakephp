@@ -40,7 +40,6 @@ use Cake\Event\EventListenerInterface;
  */
 class Helper implements EventListenerInterface
 {
-
     use InstanceConfigTrait;
 
     /**

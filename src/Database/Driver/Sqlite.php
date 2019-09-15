@@ -26,7 +26,6 @@ use PDO;
  */
 class Sqlite extends Driver
 {
-
     use SqliteDialectTrait;
 
     /**

@@ -29,7 +29,6 @@ use Cake\Database\ValueBinder;
  */
 class FunctionExpression extends QueryExpression implements TypedResultInterface
 {
-
     use ExpressionTypeCasterTrait;
     use TypedResultTrait;
 

@@ -25,7 +25,6 @@ use Cake\Utility\Security;
  */
 class WeakPasswordHasher extends AbstractPasswordHasher
 {
-
     /**
      * Default config for this object.
      *

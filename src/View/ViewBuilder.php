@@ -30,7 +30,6 @@ use Serializable;
  */
 class ViewBuilder implements JsonSerializable, Serializable
 {
-
     /**
      * The subdirectory to the template.
      *
@@ -48,21 +47,21 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * The plugin name to use.
      *
-     * @var string|null|false
+     * @var string|false|null
      */
     protected $_plugin;
 
     /**
      * The theme name to use.
      *
-     * @var string|null|false
+     * @var string|false|null
      */
     protected $_theme;
 
     /**
      * The layout name to render.
      *
-     * @var string|null|false
+     * @var string|false|null
      */
     protected $_layout;
 
@@ -329,7 +328,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      *
      * `False` to remove current plugin name is deprecated as of 3.4.0. Use directly `null` instead.
      *
-     * @param string|null|false $name Plugin name.
+     * @param string|false|null $name Plugin name.
      *   Use null or false to remove the current plugin name.
      * @return $this
      */
@@ -343,7 +342,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * Gets the plugin name to use.
      *
-     * @return string|null|false
+     * @return string|false|null
      */
     public function getPlugin()
     {
@@ -354,7 +353,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * The plugin name to use
      *
      * @deprecated 3.4.0 Use setPlugin()/getPlugin() instead.
-     * @param string|null|false $name Plugin name. If null returns current plugin.
+     * @param string|false|null $name Plugin name. If null returns current plugin.
      *   Use false to remove the current plugin name.
      * @return string|false|null|$this
      */
@@ -418,7 +417,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      *
      * `False` to remove current theme is deprecated as of 3.4.0. Use directly `null` instead.
      *
-     * @param string|null|false $theme Theme name.
+     * @param string|false|null $theme Theme name.
      *   Use null or false to remove the current theme.
      * @return $this
      */
@@ -432,7 +431,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * Gets the view theme to use.
      *
-     * @return string|null|false
+     * @return string|false|null
      */
     public function getTheme()
     {
@@ -443,7 +442,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * The view theme to use.
      *
      * @deprecated 3.4.0 Use setTheme()/getTheme() instead.
-     * @param string|null|false $theme Theme name. If null returns current theme.
+     * @param string|false|null $theme Theme name. If null returns current theme.
      *   Use false to remove the current theme.
      * @return string|false|null|$this
      */
@@ -505,7 +504,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * The name specified is the filename of the layout in /src/Template/Layout
      * without the .ctp extension.
      *
-     * @param string|null|false $name Layout file name to set.
+     * @param string|false|null $name Layout file name to set.
      * @return $this
      */
     public function setLayout($name)
@@ -518,7 +517,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * Gets the name of the layout file to render the view inside of.
      *
-     * @return string|null|false
+     * @return string|false|null
      */
     public function getLayout()
     {

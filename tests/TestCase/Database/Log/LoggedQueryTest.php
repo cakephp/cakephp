@@ -30,7 +30,7 @@ class LoggedQueryTest extends TestCase
      */
     public function testStringConversion()
     {
-        $logged = new LoggedQuery;
+        $logged = new LoggedQuery();
         $logged->query = 'SELECT foo FROM bar';
         $this->assertEquals('duration=0 rows=0 SELECT foo FROM bar', (string)$logged);
     }

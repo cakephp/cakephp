@@ -27,7 +27,6 @@ use LogicException;
  */
 trait StaticConfigTrait
 {
-
     /**
      * Configuration sets.
      *

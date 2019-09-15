@@ -23,7 +23,6 @@ use Cake\Database\ValueBinder;
  */
 class CaseExpression implements ExpressionInterface
 {
-
     use ExpressionTypeCasterTrait;
 
     /**

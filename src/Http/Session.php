@@ -35,7 +35,6 @@ use SessionHandlerInterface;
  */
 class Session
 {
-
     /**
      * The Session handler instance used as an engine for persisting the session data.
      *

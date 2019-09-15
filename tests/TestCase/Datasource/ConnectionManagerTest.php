@@ -85,7 +85,7 @@ class ConnectionManagerTest extends TestCase
                 'instance' => 'Sqlite',
                 'database' => ':memory:',
             ]],
-            'Direct instance' => [new FakeConnection],
+            'Direct instance' => [new FakeConnection()],
         ];
     }
 
@@ -464,7 +464,7 @@ class ConnectionManagerTest extends TestCase
      */
     public function testConfigWithObject()
     {
-        $connection = new FakeConnection;
+        $connection = new FakeConnection();
         ConnectionManager::setConfig('test_variant', $connection);
         $this->assertSame($connection, ConnectionManager::get('test_variant'));
     }
@@ -476,7 +476,7 @@ class ConnectionManagerTest extends TestCase
      */
     public function testConfigWithCallable()
     {
-        $connection = new FakeConnection;
+        $connection = new FakeConnection();
         $callable = function ($alias) use ($connection) {
             $this->assertEquals('test_variant', $alias);
 

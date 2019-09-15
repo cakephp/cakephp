@@ -24,7 +24,6 @@ use Cake\Core\Exception\Exception;
  */
 class ViewBlock
 {
-
     /**
      * Override content
      *

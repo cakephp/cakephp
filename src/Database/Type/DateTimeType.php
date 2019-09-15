@@ -372,7 +372,7 @@ class DateTimeType extends Type implements TypeInterface, BatchCastingInterface
             $class = $fallback;
         }
         $this->_className = $class;
-        $this->_datetimeInstance = new $this->_className;
+        $this->_datetimeInstance = new $this->_className();
     }
 
     /**

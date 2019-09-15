@@ -24,7 +24,6 @@ namespace Cake\Utility;
  */
 class Inflector
 {
-
     /**
      * Plural inflector rules
      *

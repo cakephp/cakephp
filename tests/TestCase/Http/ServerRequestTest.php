@@ -3554,7 +3554,7 @@ XML;
     public function testSession()
     {
         $this->deprecated(function () {
-            $session = new Session;
+            $session = new Session();
             $request = new ServerRequest(['session' => $session]);
             $this->assertSame($session, $request->session());
 
@@ -3570,7 +3570,7 @@ XML;
      */
     public function testGetSession()
     {
-        $session = new Session;
+        $session = new Session();
         $request = new ServerRequest(['session' => $session]);
         $this->assertSame($session, $request->getSession());
 
