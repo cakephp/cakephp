@@ -31,12 +31,17 @@ jobs:
       run: |
         # Without removing php-fpm extensions installation fails for some reason
         sudo apt remove php${{ matrix.php-version }}-fpm
+
+        sudo apt install php${{ matrix.php-version }}-intl
+
         sudo update-alternatives --set php /usr/bin/php${{ matrix.php-version }}
         sudo update-alternatives --set phar /usr/bin/phar${{ matrix.php-version }}
         sudo update-alternatives --set phar.phar /usr/bin/phar.phar${{ matrix.php-version }}
-        sudo apt install php-apcu php${{ matrix.php-version }}-intl
+
+        sudo phpenmod apcu
+        echo 'apc.enable_cli = 1' | sudo tee -a /etc/php/${{ matrix.php-version }}/php.ini
+
         sudo phpdismod xdebug
-        sudo phpenmod -s ALL apcu
 
         # memcached installation fails without updating packages.
         # Packages updating is not done earlier to avoid all wasting time as all
