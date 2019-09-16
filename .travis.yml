@@ -43,7 +43,7 @@ before_install:
   - echo 'extension = apcu.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - echo 'apc.enable_cli = 1' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 
-  - sudo locale-gen da_DK
+  - sudo locale-gen da_DK.UTF-8
 
 install:
   - composer install --prefer-dist --no-interaction
