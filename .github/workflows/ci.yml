@@ -70,10 +70,8 @@ jobs:
         fi
 
     - name: Submit code coverage data
-      run: |
-        if [[ ${{ matrix.php-version }} == '7.2' ]]; then
-          bash <(curl -s https://codecov.io/bash)
-        fi
+      if: matrix.php-version == '7.2'
+      run: bash <(curl -s https://codecov.io/bash)
 
   coding-standard:
     name: Coding Standard
