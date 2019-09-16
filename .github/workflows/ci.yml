@@ -36,7 +36,7 @@ jobs:
         sudo update-alternatives --set phar /usr/bin/phar${{ matrix.php-version }}
         sudo update-alternatives --set phar.phar /usr/bin/phar.phar${{ matrix.php-version }}
         sudo phpdismod xdebug
-        sudo phpenmod apcu
+        sudo phpenmod -s ALL apcu
 
         # memcached installation fails without updating packages.
         # Packages updating is not done earlier to avoid all wasting time as all
@@ -45,7 +45,7 @@ jobs:
         sudo apt install memcached
 
         sudo locale-gen da_DK
-        sudo locale-gen de_DE
+        sudo apt install language-pack-de
 
         if [[ ${{ matrix.php-version }} == '7.2' ]]; then sudo apt install php-pcov; fi
 
