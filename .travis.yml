@@ -17,8 +17,6 @@ cache:
     - $HOME/.composer/cache
 
 php:
-  - 7.2
-  - 7.3
   - 7.4snapshot
 
 env:
@@ -39,7 +37,7 @@ before_install:
   - if [[ $TRAVIS_PHP_VERSION != '7.4snapshot' ]]; then phpenv config-rm xdebug.ini; fi
 
   - pecl channel-update pecl.php.net
-  - if [[ $TRAVIS_PHP_VERSION == '7.2' ]]; then pecl install pcov; fi
+  - if [[ $TRAVIS_PHP_VERSION == '7.4snapshot' ]]; then pecl install pcov; fi
   - echo 'extension = memcached.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini;
   - echo 'extension = redis.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - echo 'extension = apcu.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
@@ -52,7 +50,7 @@ install:
 
 script:
   - |
-      if [[ $TRAVIS_PHP_VERSION == '7.2' ]]; then
+      if [[ $TRAVIS_PHP_VERSION == '7.4snapshot' ]]; then
         # This is necessary to skip memory usage tests
         CODECOVERAGE=1 vendor/bin/phpunit --coverage-clover=clover.xml
       else
@@ -61,7 +59,7 @@ script:
 
 after_success:
   - |
-      if [[ $TRAVIS_PHP_VERSION == '7.2' ]]; then
+      if [[ $TRAVIS_PHP_VERSION == '7.4snapshot' ]]; then
         wget https://github.com/php-coveralls/php-coveralls/releases/download/v2.1.0/php-coveralls.phar
         chmod +x php-coveralls.phar
         ./php-coveralls.phar
