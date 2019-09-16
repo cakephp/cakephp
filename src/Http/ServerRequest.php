@@ -1451,10 +1451,10 @@ class ServerRequest implements ServerRequestInterface
      * Read cookie data from the request's cookie data.
      *
      * @param string $key The key or dotted path you want to read.
-     * @param string $default The default value if the cookie is not set.
+     * @param string|array|null $default The default value if the cookie is not set.
      * @return string|array|null Either the cookie value, or null if the value doesn't exist.
      */
-    public function getCookie(string $key, ?string $default = null)
+    public function getCookie(string $key, $default = null)
     {
         return Hash::get($this->cookies, $key, $default);
     }
