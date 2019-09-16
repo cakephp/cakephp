@@ -63,15 +63,10 @@ jobs:
         REDIS_PORT: ${{ job.services.redis.ports['6379'] }}
       run: |
         if [[ ${{ matrix.php-version }} == '7.2' ]]; then
-          # Setting CODECOVERAGE is necessary to skip memory usage tests
-          CODECOVERAGE=1 vendor/bin/phpunit --verbose --coverage-clover=clover.xml
-        else
           vendor/bin/phpunit
+        else
+          vendor/bin/phpunit --verbose
         fi
-
-    - name: Submit code coverage data
-      if: matrix.php-version == '7.2'
-      run: bash <(curl -s https://codecov.io/bash)
 
   coding-standard:
     name: Coding Standard

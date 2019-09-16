@@ -52,7 +52,7 @@ script:
   - |
       if [[ $TRAVIS_PHP_VERSION == '7.4snapshot' ]]; then
         # This is necessary to skip memory usage tests
-        CODECOVERAGE=1 vendor/bin/phpunit --coverage-clover=clover.xml
+        CODECOVERAGE=1 vendor/bin/phpunit --verbose --coverage-clover=clover.xml
       else
         vendor/bin/phpunit
       fi
