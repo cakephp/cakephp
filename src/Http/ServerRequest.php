@@ -80,13 +80,6 @@ class ServerRequest implements ServerRequestInterface
     protected $_environment = [];
 
     /**
-     * The URL string used for the request.
-     *
-     * @var string
-     */
-    protected $url;
-
-    /**
      * Base URL path.
      *
      * @var string
@@ -99,13 +92,6 @@ class ServerRequest implements ServerRequestInterface
      * @var string
      */
     protected $webroot = '/';
-
-    /**
-     * The full address to the current request
-     *
-     * @var string
-     */
-    protected $here;
 
     /**
      * Whether or not to trust HTTP_X headers set by most load balancers.
@@ -312,9 +298,6 @@ class ServerRequest implements ServerRequestInterface
         $this->base = $config['base'];
         $this->webroot = $config['webroot'];
 
-        $this->url = substr($uri->getPath(), 1);
-        $this->here = $this->base . '/' . $this->url;
-
         if (isset($config['input'])) {
             $stream = new Stream('php://memory', 'rw');
             $stream->write($config['input']);
@@ -379,7 +362,7 @@ class ServerRequest implements ServerRequestInterface
      */
     protected function _processGet(array $query, string $queryString = ''): array
     {
-        $unsetUrl = '/' . str_replace(['.', ' '], '_', urldecode($this->url));
+        $unsetUrl = str_replace(['.', ' '], '_', urldecode($this->uri->getPath()));
         unset($query[$unsetUrl], $query[$this->base . $unsetUrl]);
         if (strlen($queryString)) {
             parse_str($queryString, $queryArgs);
@@ -1804,6 +1787,10 @@ class ServerRequest implements ServerRequestInterface
     public function getAttribute($name, $default = null)
     {
         if (in_array($name, $this->emulatedAttributes, true)) {
+            if ($name === 'here') {
+                return $this->base . $this->uri->getPath();
+            }
+
             return $this->{$name};
         }
         if (array_key_exists($name, $this->attributes)) {
@@ -1827,7 +1814,7 @@ class ServerRequest implements ServerRequestInterface
             'params' => $this->params,
             'webroot' => $this->webroot,
             'base' => $this->base,
-            'here' => $this->here,
+            'here' => $this->base . $this->uri->getPath(),
         ];
 
         return $this->attributes + $emulated;
