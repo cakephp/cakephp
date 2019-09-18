@@ -296,7 +296,7 @@ class MemcachedEngine extends CacheEngine
      * @param string $key Identifier for the data
      * @param mixed $value Data to be cached
      * @return bool True if the data was successfully cached, false on failure
-     * @see https://secure.php.net/manual/en/memcache.set.php
+     * @see https://www.php.net/manual/en/memcached.set.php
      */
     public function write($key, $value)
     {
@@ -470,10 +470,6 @@ class MemcachedEngine extends CacheEngine
     public function add($key, $value)
     {
         $duration = $this->_config['duration'];
-        if ($duration > 30 * DAY) {
-            $duration = 0;
-        }
-
         $key = $this->_key($key);
 
         return $this->_Memcached->add($key, $value, $duration);
