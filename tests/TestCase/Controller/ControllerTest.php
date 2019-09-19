@@ -40,7 +40,7 @@ class ControllerTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = [
+    protected $fixtures = [
         'core.Comments',
         'core.Posts',
     ];

@@ -38,7 +38,7 @@ class DigestAuthenticateTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.AuthUsers', 'core.Users'];
+    protected $fixtures = ['core.AuthUsers', 'core.Users'];
 
     /**
      * @var \Cake\Controller\ComponentRegistry|\PHPUnit\Framework\MockObject\MockObject

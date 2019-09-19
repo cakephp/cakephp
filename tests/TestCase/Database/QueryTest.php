@@ -36,7 +36,7 @@ use TestApp\Database\Type\BarType;
  */
 class QueryTest extends TestCase
 {
-    public $fixtures = [
+    protected $fixtures = [
         'core.Articles',
         'core.Authors',
         'core.Comments',

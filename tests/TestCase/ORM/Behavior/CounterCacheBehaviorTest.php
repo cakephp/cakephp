@@ -40,7 +40,7 @@ class CounterCacheBehaviorTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = [
+    protected $fixtures = [
         'core.CounterCacheCategories',
         'core.CounterCachePosts',
         'core.CounterCacheComments',

@@ -52,7 +52,7 @@ use TestApp\Model\Table\UsersTable;
  */
 class TableTest extends TestCase
 {
-    public $fixtures = [
+    protected $fixtures = [
         'core.Articles',
         'core.Tags',
         'core.ArticlesTags',

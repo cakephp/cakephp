@@ -32,7 +32,7 @@ use TestApp\Model\Entity\TranslateBakedArticle;
  */
 class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
 {
-    public $fixtures = [
+    protected $fixtures = [
         'core.Articles',
         'core.Authors',
         'core.Comments',

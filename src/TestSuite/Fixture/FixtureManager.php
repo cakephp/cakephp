@@ -97,7 +97,7 @@ class FixtureManager
     public function fixturize(TestCase $test): void
     {
         $this->_initDb();
-        if (empty($test->fixtures) || !empty($this->_processed[get_class($test)])) {
+        if (!$test->getFixtures() || !empty($this->_processed[get_class($test)])) {
             return;
         }
         $this->_loadFixtures($test);
@@ -168,10 +168,11 @@ class FixtureManager
      */
     protected function _loadFixtures(TestCase $test): void
     {
-        if (empty($test->fixtures)) {
+        $fixtures = $test->getFixtures();
+        if (!$fixtures) {
             return;
         }
-        foreach ($test->fixtures as $fixture) {
+        foreach ($fixtures as $fixture) {
             if (isset($this->_loaded[$fixture])) {
                 continue;
             }
@@ -275,12 +276,8 @@ class FixtureManager
      */
     public function load(TestCase $test): void
     {
-        if (empty($test->fixtures)) {
-            return;
-        }
-
-        $fixtures = $test->fixtures;
-        if (empty($fixtures) || !$test->autoFixtures) {
+        $fixtures = $test->getFixtures();
+        if (!$fixtures || !$test->autoFixtures) {
             return;
         }
 
@@ -423,7 +420,8 @@ class FixtureManager
      */
     public function unload(TestCase $test): void
     {
-        if (empty($test->fixtures)) {
+        $fixtures = $test->getFixtures();
+        if (!$fixtures) {
             return;
         }
         $truncate = function (ConnectionInterface $db, array $fixtures): void {
@@ -443,7 +441,7 @@ class FixtureManager
                 }
             }
         };
-        $this->_runOperation($test->fixtures, $truncate);
+        $this->_runOperation($fixtures, $truncate);
     }
 
     /**
