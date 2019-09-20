@@ -674,10 +674,7 @@ class Message implements JsonSerializable, Serializable
     {
         if (!is_array($email)) {
             $this->validateEmail($email, $varName);
-            if ($name === null) {
-                $name = $email;
-            }
-            $this->{$varName} = [$email => $name];
+            $this->{$varName} = [$email => $name ?? $email];
 
             return $this;
         }
@@ -687,7 +684,7 @@ class Message implements JsonSerializable, Serializable
                 $key = $value;
             }
             $this->validateEmail($key, $varName);
-            $list[$key] = $value;
+            $list[$key] = $value ?? $key;
         }
         $this->{$varName} = $list;
 

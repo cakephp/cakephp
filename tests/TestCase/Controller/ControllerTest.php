@@ -29,6 +29,7 @@ use PHPUnit\Framework\Error\Warning;
 use TestApp\Controller\Admin\PostsController;
 use TestApp\Controller\TestController;
 use TestPlugin\Controller\TestPluginController;
+use Zend\Diactoros\Uri;
 
 /**
  * ControllerTest class
@@ -300,6 +301,19 @@ class ControllerTest extends TestCase
 
         $result = $Controller->render('index');
         $this->assertInstanceOf('Cake\Http\Response', $result);
+    }
+
+    public function testControllerRedirect()
+    {
+        $Controller = new Controller();
+        $uri = new Uri('/foo/bar');
+        $response = $Controller->redirect($uri);
+        $this->assertEquals('http://localhost/foo/bar', $response->getHeaderLine('Location'));
+
+        $Controller = new Controller();
+        $uri = new Uri('http://cakephp.org/foo/bar');
+        $response = $Controller->redirect($uri);
+        $this->assertEquals('http://cakephp.org/foo/bar', $response->getHeaderLine('Location'));
     }
 
     /**

@@ -279,7 +279,7 @@ class MemcachedEngine extends CacheEngine
      * Write data for key into cache. When using memcached as your cache engine
      * remember that the Memcached pecl extension does not support cache expiry
      * times greater than 30 days in the future. Any duration greater than 30 days
-     * will be treated as never expiring.
+     * will be treated as real Unix time value rather than an offset from current time.
      *
      * @param string $key Identifier for the data
      * @param mixed $value Data to be cached
@@ -287,14 +287,11 @@ class MemcachedEngine extends CacheEngine
      *   the driver supports TTL then the library may set a default value
      *   for it or let the driver take care of that.
      * @return bool True if the data was successfully cached, false on failure
-     * @see https://secure.php.net/manual/en/memcache.set.php
+     * @see https://www.php.net/manual/en/memcached.set.php
      */
     public function set($key, $value, $ttl = null): bool
     {
         $duration = $this->duration($ttl);
-        if ($duration > 30 * DAY) {
-            $duration = 0;
-        }
 
         return $this->_Memcached->set($this->_key($key), $value, $duration);
     }
@@ -315,9 +312,6 @@ class MemcachedEngine extends CacheEngine
             $cacheData[$this->_key($key)] = $value;
         }
         $duration = $this->duration($ttl);
-        if ($duration > 30 * DAY) {
-            $duration = 0;
-        }
 
         return (bool)$this->_Memcached->setMulti($cacheData, $duration);
     }
@@ -449,10 +443,6 @@ class MemcachedEngine extends CacheEngine
     public function add(string $key, $value): bool
     {
         $duration = $this->_config['duration'];
-        if ($duration > 30 * DAY) {
-            $duration = 0;
-        }
-
         $key = $this->_key($key);
 
         return $this->_Memcached->add($key, $value, $duration);
