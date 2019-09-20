@@ -53,11 +53,6 @@ trait PluginAssetsTrait
         if ($name === null) {
             $pluginsList = Plugin::loaded();
         } else {
-            if (!Plugin::isLoaded($name)) {
-                $this->io->err(sprintf('Plugin %s is not loaded.', $name));
-
-                return [];
-            }
             $pluginsList = [$name];
         }
 
