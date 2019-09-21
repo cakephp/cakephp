@@ -117,7 +117,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
     protected function _getController(): Controller
     {
         $request = $this->request;
-        $routerRequest = Router::getRequest(true);
+        $routerRequest = Router::getRequest();
         // Fallback to the request in the router or make a new one from
         // $_SERVER
         if ($request === null) {

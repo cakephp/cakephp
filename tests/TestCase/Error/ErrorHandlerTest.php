@@ -64,7 +64,7 @@ class ErrorHandlerTest extends TestCase
             ],
         ]);
 
-        Router::setRequestInfo($request);
+        Router::setRequest($request);
         Configure::write('debug', true);
 
         $this->_logger = $this->getMockBuilder(LoggerInterface::class)->getMock();

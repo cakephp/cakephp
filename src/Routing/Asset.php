@@ -333,7 +333,7 @@ class Asset
      */
     protected static function requestWebroot(): string
     {
-        $request = Router::getRequest(true);
+        $request = Router::getRequest();
         if ($request === null) {
             return '/';
         }

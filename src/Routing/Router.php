@@ -21,7 +21,6 @@ use Cake\Http\ServerRequest;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Utility\Inflector;
 use Exception;
-use Psr\Http\Message\ServerRequestInterface;
 use ReflectionFunction;
 use ReflectionMethod;
 use RuntimeException;
@@ -127,12 +126,11 @@ class Router
     ];
 
     /**
-     * Maintains the request object stack for the current request.
-     * This will contain more than one request object when requestAction is used.
+     * Maintains the request object reference.
      *
-     * @var array
+     * @var \Cake\Http\ServerRequest
      */
-    protected static $_requests = [];
+    protected static $_request;
 
     /**
      * Initial state is populated the first time reload() is called which is at the bottom
@@ -213,98 +211,44 @@ class Router
     /**
      * Get the routing parameters for the request is possible.
      *
-     * @param \Psr\Http\Message\ServerRequestInterface $request The request to parse request data from.
+     * @param \Cake\Http\ServerRequest $request The request to parse request data from.
      * @return array Parsed elements from URL.
      * @throws \Cake\Routing\Exception\MissingRouteException When a route cannot be handled
      */
-    public static function parseRequest(ServerRequestInterface $request): array
+    public static function parseRequest(ServerRequest $request): array
     {
         return static::$_collection->parseRequest($request);
     }
 
     /**
-     * Takes parameter and path information back from the Dispatcher, sets these
-     * parameters as the current request parameters that are merged with URL arrays
-     * created later in the request.
+     * Set current request instance.
      *
-     * Nested requests will create a stack of requests. You can remove requests using
-     * Router::popRequest(). This is done automatically when using Object::requestAction().
-     *
-     * Will accept either a Cake\Http\ServerRequest object or an array of arrays. Support for
-     * accepting arrays may be removed in the future.
-     *
-     * @param \Psr\Http\Message\ServerRequestInterface $request request object.
+     * @param \Cake\Http\ServerRequest $request request object.
      * @return void
      */
-    public static function setRequestInfo(ServerRequestInterface $request): void
+    public static function setRequest(ServerRequest $request): void
     {
-        static::pushRequest($request);
-    }
+        static::$_request = $request;
 
-    /**
-     * Push a request onto the request stack. Pushing a request
-     * sets the request context used when generating URLs.
-     *
-     * @param \Psr\Http\Message\ServerRequestInterface $request Request instance.
-     * @return void
-     */
-    public static function pushRequest(ServerRequestInterface $request): void
-    {
-        static::$_requests[] = $request;
-        static::setRequestContext($request);
-    }
-
-    /**
-     * Store the request context for a given request.
-     *
-     * @param \Psr\Http\Message\ServerRequestInterface $request The request instance.
-     * @return void
-     * @throws \InvalidArgumentException When parameter is an incorrect type.
-     */
-    public static function setRequestContext(ServerRequestInterface $request): void
-    {
         $uri = $request->getUri();
-        static::$_requestContext = [
-            '_base' => $request->getAttribute('base'),
-            '_port' => $uri->getPort(),
+        $context = [
             '_scheme' => $uri->getScheme(),
             '_host' => $uri->getHost(),
+            '_port' => $uri->getPort(),
+            '_base' => $request->getAttribute('base'),
+            '_params' => $request->getAttribute('params', []),
         ];
+        static::$_requestContext = $context;
     }
 
     /**
-     * Pops a request off of the request stack. Used when doing requestAction
+     * Get the current request object.
      *
-     * @return \Cake\Http\ServerRequest The request removed from the stack.
-     * @see \Cake\Routing\Router::pushRequest()
-     */
-    public static function popRequest(): ServerRequest
-    {
-        $removed = array_pop(static::$_requests);
-        $last = end(static::$_requests);
-        if ($last) {
-            static::setRequestContext($last);
-            reset(static::$_requests);
-        }
-
-        return $removed;
-    }
-
-    /**
-     * Get the current request object, or the first one.
-     *
-     * @param bool $current True to get the current request, or false to get the first one.
      * @return \Cake\Http\ServerRequest|null
      */
-    public static function getRequest(bool $current = false): ?ServerRequest
+    public static function getRequest(): ?ServerRequest
     {
-        if ($current) {
-            $request = end(static::$_requests);
-
-            return $request ?: null;
-        }
-
-        return static::$_requests[0] ?? null;
+        return static::$_request;
     }
 
     /**
@@ -396,7 +340,7 @@ class Router
      */
     protected static function _applyUrlFilters(array $url): array
     {
-        $request = static::getRequest(true);
+        $request = static::getRequest();
         $e = null;
         foreach (static::$_urlFilters as $filter) {
             try {
@@ -466,34 +410,35 @@ class Router
      */
     public static function url($url = null, bool $full = false): string
     {
-        $params = [
-            'plugin' => null,
-            'controller' => null,
-            'action' => 'index',
-            '_ext' => null,
-        ];
-        $here = null;
-        $frag = '';
-
         $context = static::$_requestContext;
-        // In 4.x this should be replaced with state injected via setRequestContext
-        $request = static::getRequest(true);
-        if ($request) {
-            $params = $request->getAttribute('params');
-            $here = $request->getRequestTarget();
-            $context['_base'] = $request->getAttribute('base');
-        } elseif (!isset($context['_base'])) {
-            $context['_base'] = Configure::read('App.base');
+        $request = static::getRequest();
+
+        if (!isset($context['_base'])) {
+            $context['_base'] = Configure::read('App.base') ?: '';
         }
 
         if (empty($url)) {
-            $output = $context['_base'] . ($here ?? '/');
+            $here = $request ? $request->getRequestTarget() : '/';
+            $output = $context['_base'] . $here;
             if ($full) {
                 $output = static::fullBaseUrl() . $output;
             }
 
             return $output;
         }
+
+        $params = [
+            'plugin' => null,
+            'controller' => null,
+            'action' => 'index',
+            '_ext' => null,
+        ];
+        if (!empty($context['_params'])) {
+            $params = $context['_params'];
+        }
+
+        $frag = '';
+
         if (is_array($url)) {
             if (isset($url['_ssl'])) {
                 $url['_scheme'] = $url['_ssl'] === true ? 'https' : 'http';
@@ -585,7 +530,7 @@ class Router
      *   Default is false.
      * @return bool
      */
-    public static function routeExists($url = null, $full = false): bool
+    public static function routeExists($url = null, bool $full = false): bool
     {
         try {
             $route = static::url($url, $full);

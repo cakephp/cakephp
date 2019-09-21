@@ -884,7 +884,7 @@ class AuthComponentTest extends TestCase
             'webroot' => '/dirname/',
         ]);
         $this->Controller->setRequest($request);
-        Router::pushRequest($request);
+        Router::setRequest($request);
 
         $this->Auth->setConfig('authorize', ['Controller']);
         $this->Auth->setUser(['username' => 'mariano', 'password' => 'cake']);
@@ -1135,7 +1135,7 @@ class AuthComponentTest extends TestCase
             'session' => $this->Auth->session,
         ]));
 
-        Router::setRequestInfo($this->Controller->getRequest());
+        Router::setRequest($this->Controller->getRequest());
 
         $this->Auth->setConfig('loginAction', [
             'prefix' => 'admin',
@@ -1205,7 +1205,7 @@ class AuthComponentTest extends TestCase
             'webroot' => '/',
             'url' => $url,
         ]);
-        Router::setRequestInfo($request);
+        Router::setRequest($request);
 
         $this->Auth->setConfig('loginAction', [
             'prefix' => 'admin',
@@ -1483,7 +1483,7 @@ class AuthComponentTest extends TestCase
             ->withAttribute('base', '/waves')
             ->withQueryParams(['redirect' => '/waves/add']));
 
-        Router::setRequestInfo($this->Controller->getRequest());
+        Router::setRequest($this->Controller->getRequest());
 
         $result = $this->Auth->redirectUrl();
         $this->assertSame('/waves/add', $result);
@@ -1551,7 +1551,7 @@ class AuthComponentTest extends TestCase
             'url' => $url,
             'params' => ['plugin' => null, 'controller' => 'Users', 'action' => 'login'],
         ]));
-        Router::setRequestInfo($this->Controller->getRequest());
+        Router::setRequest($this->Controller->getRequest());
 
         $this->Auth->setConfig('loginAction', ['controller' => 'users', 'action' => 'login']);
         $this->Auth->setConfig('loginRedirect', ['controller' => 'users', 'action' => 'home']);

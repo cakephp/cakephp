@@ -44,7 +44,7 @@ class UrlHelperTest extends TestCase
 
         Router::reload();
         $request = new ServerRequest();
-        Router::pushRequest($request);
+        Router::setRequest($request);
 
         $this->View = new View($request);
         $this->Helper = new UrlHelper($this->View);
@@ -127,7 +127,7 @@ class UrlHelperTest extends TestCase
             'base' => '/magazine',
             'webroot' => '/magazine/',
         ]);
-        Router::pushRequest($request);
+        Router::setRequest($request);
 
         $this->assertSame('/magazine/subscribe', $this->Helper->build());
         $this->assertEquals(
@@ -192,7 +192,7 @@ class UrlHelperTest extends TestCase
 
         $request = $this->View->getRequest()->withAttribute('webroot', '/some/dir/');
         $this->View->setRequest($request);
-        Router::pushRequest($request);
+        Router::setRequest($request);
         $result = $this->Helper->assetTimestamp('/some/dir/' . Configure::read('App.cssBaseUrl') . 'cake.generic.css');
         $this->assertRegExp('/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/', $result);
     }
@@ -242,7 +242,7 @@ class UrlHelperTest extends TestCase
             ->withAttribute('webroot', 'subdir/');
 
         $this->View->setRequest($request);
-        Router::pushRequest($request);
+        Router::setRequest($request);
 
         $data = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4' .
             '/8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==';
@@ -265,7 +265,7 @@ class UrlHelperTest extends TestCase
             ->withAttribute('base', '/cake_dev/index.php')
             ->withAttribute('webroot', '/cake_dev/app/webroot/')
             ->withRequestTarget('/cake_dev/index.php/tasks');
-        Router::pushRequest($request);
+        Router::setRequest($request);
 
         $result = $this->Helper->assetUrl('img/cake.icon.png', ['fullBase' => true]);
         $expected = Configure::read('App.fullBaseUrl') . '/cake_dev/app/webroot/img/cake.icon.png';
@@ -505,7 +505,7 @@ class UrlHelperTest extends TestCase
         $this->View->setRequest(
             $request
         );
-        Router::pushRequest($request);
+        Router::setRequest($request);
         $result = $this->Helper->webroot('/img/cake.power.gif');
         $expected = '/img/cake.power.gif';
         $this->assertEquals($expected, $result);

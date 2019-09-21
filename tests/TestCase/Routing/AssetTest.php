@@ -40,7 +40,7 @@ class AssetTest extends TestCase
         $request = new ServerRequest([
             'webroot' => '/',
         ]);
-        Router::pushRequest($request);
+        Router::setRequest($request);
 
         static::setAppNamespace();
         $this->loadPlugins(['TestTheme']);
@@ -96,7 +96,7 @@ class AssetTest extends TestCase
         $this->assertEquals(Configure::read('App.cssBaseUrl') . 'cake.generic.css?someparam', $result);
 
         $request = Router::getRequest()->withAttribute('webroot', '/some/dir/');
-        Router::pushRequest($request);
+        Router::setRequest($request);
         $result = Asset::assetTimestamp('/some/dir/' . Configure::read('App.cssBaseUrl') . 'cake.generic.css');
         $this->assertRegExp('/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/', $result);
     }
@@ -147,7 +147,7 @@ class AssetTest extends TestCase
         $request = Router::getRequest()
             ->withAttribute('base', 'subdir')
             ->withAttribute('webroot', 'subdir/');
-        Router::pushRequest($request);
+        Router::setRequest($request);
 
         $data = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4' .
             '/8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==';
@@ -170,7 +170,7 @@ class AssetTest extends TestCase
             ->withAttribute('base', '/cake_dev/index.php')
             ->withAttribute('webroot', '/cake_dev/app/webroot/')
             ->withRequestTarget('/cake_dev/index.php/tasks');
-        Router::pushRequest($request);
+        Router::setRequest($request);
 
         $result = Asset::url('img/cake.icon.png', ['fullBase' => true]);
         $expected = Configure::read('App.fullBaseUrl') . '/cake_dev/app/webroot/img/cake.icon.png';

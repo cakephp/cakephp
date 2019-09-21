@@ -340,7 +340,7 @@ class View implements EventDispatcherInterface
             $this->setEventManager($eventManager);
         }
         if ($request === null) {
-            $request = Router::getRequest(true) ?: new ServerRequest(['base' => '', 'url' => '', 'webroot' => '/']);
+            $request = Router::getRequest() ?: new ServerRequest(['base' => '', 'url' => '', 'webroot' => '/']);
         }
         $this->request = $request;
         $this->response = $response ?: new Response();

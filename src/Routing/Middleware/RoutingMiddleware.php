@@ -129,7 +129,7 @@ class RoutingMiddleware implements MiddlewareInterface
     {
         $this->loadRoutes();
         try {
-            Router::setRequestContext($request);
+            Router::setRequest($request);
             $params = (array)$request->getAttribute('params', []);
             $middleware = [];
             if (empty($params['controller'])) {
@@ -143,6 +143,7 @@ class RoutingMiddleware implements MiddlewareInterface
                     unset($params['_middleware']);
                 }
                 $request = $request->withAttribute('params', $params);
+                Router::setRequest($request);
             }
         } catch (RedirectException $e) {
             return new RedirectResponse(
