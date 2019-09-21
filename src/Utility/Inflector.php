@@ -222,7 +222,7 @@ class Inflector
 
     /**
      * Adds custom inflection $rules, of either 'plural', 'singular',
-     * 'uninflected', 'irregular' or 'transliteration' $type.
+     * 'uninflected' or 'irregular' $type.
      *
      * ### Usage:
      *
@@ -230,11 +230,10 @@ class Inflector
      * Inflector::rules('plural', ['/^(inflect)or$/i' => '\1ables']);
      * Inflector::rules('irregular', ['red' => 'redlings']);
      * Inflector::rules('uninflected', ['dontinflectme']);
-     * Inflector::rules('transliteration', ['/å/' => 'aa']);
      * ```
      *
      * @param string $type The type of inflection, either 'plural', 'singular',
-     *   'uninflected' or 'transliteration'.
+     *    or 'uninflected'.
      * @param array $rules Array of rules to be added.
      * @param bool $reset If true, will unset default inflections for all
      *        new rules that are being defined in $rules.
