@@ -852,6 +852,7 @@ class Router
             $params['requested'],
             $params['return'],
             $params['_Token'],
+            $params['_csrfToken'],
             $params['_matchedRoute'],
             $params['_name']
         );
