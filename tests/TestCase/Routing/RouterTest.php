@@ -2549,7 +2549,6 @@ class RouterTest extends TestCase
             'action' => 'view',
             'pass' => [1],
             'url' => ['url' => 'eng/posts/view/1'],
-            'paging' => [],
             'models' => [],
         ];
         $result = Router::reverse($params);
@@ -2623,7 +2622,6 @@ class RouterTest extends TestCase
             'action' => 'view',
             'pass' => [123],
             '?' => ['foo' => 'bar', 'baz' => 'quu'],
-            'paging' => [],
         ];
         $actual = Router::reverseToArray($params);
         $expected = [

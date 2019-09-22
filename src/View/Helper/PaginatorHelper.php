@@ -126,11 +126,10 @@ class PaginatorHelper extends Helper
         if (empty($model)) {
             $model = (string)$this->defaultModel();
         }
-        if (!$request->getParam('paging') || !$request->getParam('paging.' . $model)) {
-            return [];
-        }
 
-        return $request->getParam('paging.' . $model);
+        $params = $request->getAttribute('paging');
+
+        return empty($params[$model]) ? [] : $params[$model];
     }
 
     /**
@@ -162,19 +161,18 @@ class PaginatorHelper extends Helper
         $request = $this->_View->getRequest();
 
         if (!empty($options['paging'])) {
-            $request = $request->withParam(
+            $request = $request->withAttribute(
                 'paging',
-                $options['paging'] + $request->getParam('paging', [])
+                $options['paging'] + $request->getAttribute('paging', [])
             );
             unset($options['paging']);
         }
 
         $model = (string)$this->defaultModel();
         if (!empty($options[$model])) {
-            $request = $request->withParam(
-                'paging.' . $model,
-                $options[$model] + (array)$request->getParam('paging.' . $model, [])
-            );
+            $params = $request->getAttribute('paging', []);
+            $params[$model] = $options[$model] + Hash::get($params, $model, []);
+            $request = $request->withAttribute('paging', $params);
             unset($options[$model]);
         }
 
@@ -691,10 +689,12 @@ class PaginatorHelper extends Helper
         if ($this->_defaultModel) {
             return $this->_defaultModel;
         }
-        if (!$this->_View->getRequest()->getParam('paging')) {
+
+        $params = $this->_View->getRequest()->getAttribute('paging');
+        if (!$params) {
             return null;
         }
-        [$this->_defaultModel] = array_keys($this->_View->getRequest()->getParam('paging'));
+        [$this->_defaultModel] = array_keys($params);
 
         return $this->_defaultModel;
     }
