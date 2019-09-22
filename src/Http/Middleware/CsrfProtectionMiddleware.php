@@ -112,15 +112,13 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
         $cookieData = Hash::get($cookies, $this->_config['cookieName']);
 
         if ($cookieData !== null && strlen($cookieData) > 0) {
-            $params = $request->getAttribute('params');
-            $params['_csrfToken'] = $cookieData;
-            $request = $request->withAttribute('params', $params);
+            $request = $request->withAttribute('csrfToken', $cookieData);
         }
 
         $method = $request->getMethod();
         if ($method === 'GET' && $cookieData === null) {
             $token = $this->_createToken();
-            $request = $this->_addTokenToRequest($token, $request);
+            $request = $request->withAttribute('csrfToken', $token);
             /** @var \Cake\Http\Response $response */
             $response = $handler->handle($request);
 
@@ -177,21 +175,6 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
     protected function _createToken(): string
     {
         return hash('sha512', Security::randomBytes(16), false);
-    }
-
-    /**
-     * Add a CSRF token to the request parameters.
-     *
-     * @param string $token The token to add.
-     * @param \Psr\Http\Message\ServerRequestInterface $request The request to augment
-     * @return \Psr\Http\Message\ServerRequestInterface Modified request
-     */
-    protected function _addTokenToRequest(string $token, ServerRequestInterface $request): ServerRequestInterface
-    {
-        $params = $request->getAttribute('params');
-        $params['_csrfToken'] = $token;
-
-        return $request->withAttribute('params', $params);
     }
 
     /**

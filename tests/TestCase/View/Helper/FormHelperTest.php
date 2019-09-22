@@ -1032,7 +1032,7 @@ class FormHelperTest extends TestCase
      */
     public function testCreateWithSecurity()
     {
-        $this->View->setRequest($this->View->getRequest()->withParam('_csrfToken', 'testKey'));
+        $this->View->setRequest($this->View->getRequest()->withAttribute('csrfToken', 'testKey'));
         $encoding = strtolower(Configure::read('App.encoding'));
         $result = $this->Form->create($this->article, [
             'url' => '/articles/publish',
@@ -1065,7 +1065,7 @@ class FormHelperTest extends TestCase
      */
     public function testCreateEndGetNoSecurity()
     {
-        $this->View->setRequest($this->View->getRequest()->withParam('_csrfToken', 'testKey'));
+        $this->View->setRequest($this->View->getRequest()->withAttribute('csrfToken', 'testKey'));
         $article = new Article();
         $result = $this->Form->create($article, [
             'type' => 'get',
@@ -1480,7 +1480,7 @@ class FormHelperTest extends TestCase
      */
     public function testSecurityButtonNestedNamed()
     {
-        $this->View->setRequest($this->View->getRequest()->withParam('_csrfToken', 'testKey'));
+        $this->View->setRequest($this->View->getRequest()->withAttribute('csrfToken', 'testKey'));
 
         $this->Form->create();
         $this->Form->button('Test', ['type' => 'submit', 'name' => 'Address[button]']);
@@ -2007,7 +2007,7 @@ class FormHelperTest extends TestCase
     {
         $this->View->setRequest($this->View->getRequest()
             ->withParam('_Token', 'stuff')
-            ->withParam('_csrfToken', 'testKey'));
+            ->withAttribute('csrfToken', 'testKey'));
         $this->article['schema'] = [
             'ratio' => ['type' => 'decimal', 'length' => 5, 'precision' => 6],
             'population' => ['type' => 'decimal', 'length' => 15, 'precision' => 0],
@@ -2248,7 +2248,7 @@ class FormHelperTest extends TestCase
      */
     public function testFormSecuredMultipleSelect()
     {
-        $this->View->setRequest($this->View->getRequest()->withParam('_csrfToken', 'testKey'));
+        $this->View->setRequest($this->View->getRequest()->withAttribute('csrfToken', 'testKey'));
         $this->assertEquals([], $this->Form->fields);
         $options = ['1' => 'one', '2' => 'two'];
 
@@ -6572,7 +6572,7 @@ class FormHelperTest extends TestCase
      */
     public function testButtonUnlockedByDefault()
     {
-        $this->View->setRequest($this->View->getRequest()->withParam('_csrfToken', 'secured'));
+        $this->View->setRequest($this->View->getRequest()->withAttribute('csrfToken', 'secured'));
         $this->Form->button('Save', ['name' => 'save']);
         $this->Form->button('Clear');
 
@@ -6702,7 +6702,7 @@ class FormHelperTest extends TestCase
     public function testSecurePostButton()
     {
         $this->View->setRequest($this->View->getRequest()
-            ->withParam('_csrfToken', 'testkey')
+            ->withAttribute('csrfToken', 'testkey')
             ->withParam('_Token.unlockedFields', []));
 
         $result = $this->Form->postButton('Delete', '/posts/delete/1');
@@ -7065,7 +7065,7 @@ class FormHelperTest extends TestCase
     public function testPostLinkAfterGetForm()
     {
         $this->View->setRequest($this->View->getRequest()
-            ->withParam('_csrfToken', 'testkey')
+            ->withAttribute('csrfToken', 'testkey')
             ->withParam('_Token', 'val'));
 
         $this->Form->create($this->article, ['type' => 'get']);

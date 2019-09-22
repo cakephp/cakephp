@@ -531,12 +531,14 @@ class FormHelper extends Helper
                 $this->_unlockedFields[] = $unlocked;
             }
         }
-        if (!$request->getParam('_csrfToken')) {
+
+        $csrfToken = $request->getAttribute('csrfToken');
+        if (!$csrfToken) {
             return '';
         }
 
         return $this->hidden('_csrfToken', [
-            'value' => $request->getParam('_csrfToken'),
+            'value' => $csrfToken,
             'secure' => static::SECURE_SKIP,
             'autocomplete' => 'off',
         ]);
