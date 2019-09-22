@@ -2794,6 +2794,7 @@ class RouterTest extends TestCase
             'requested' => 1,
             '_Token' => ['key' => 'sekret'],
             '_csrfToken' => 'foo',
+            'isAjax' => true,
         ];
         $result = Router::reverse($params);
         $this->assertEquals('/posts/view/1', $result);
