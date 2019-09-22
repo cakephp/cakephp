@@ -2510,7 +2510,6 @@ class RouterTest extends TestCase
             'bare' => 1,
             'return' => 1,
             'requested' => 1,
-            '_Token' => ['key' => 'sekret'],
         ];
         $result = Router::reverse($params);
         $this->assertSame('/posts/view/1', $result);
