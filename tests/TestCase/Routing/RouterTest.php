@@ -1884,6 +1884,7 @@ class RouterTest extends TestCase
      */
     public function testGenerationWithSslOption()
     {
+        Router::fullBaseUrl('http://app.test');
         Router::connect('/:controller/:action/*');
         $request = new ServerRequest([
             'url' => '/images/index',
@@ -1897,52 +1898,12 @@ class RouterTest extends TestCase
         $result = Router::url([
             '_ssl' => true,
         ]);
-        $this->assertSame('https://localhost/images/index', $result);
+        $this->assertSame('https://app.test/images/index', $result);
 
         $result = Router::url([
             '_ssl' => false,
         ]);
-        $this->assertSame('http://localhost/images/index', $result);
-    }
-
-    /**
-     * Test that the _ssl + _full options work together.
-     *
-     * @return void
-     */
-    public function testGenerationWithSslAndFullOption()
-    {
-        Configure::write('App.fullBaseUrl', 'http://app.localhost');
-        Router::connect('/:controller/:action/*');
-
-        $request = new ServerRequest([
-            'environment' => ['HTTP_HOST' => 'localhost'],
-        ]);
-        Router::setRequest($request);
-
-        $result = Router::url([
-            'controller' => 'images',
-            'action' => 'index',
-            '_ssl' => true,
-            '_full' => true,
-        ]);
-        $this->assertSame('https://app.localhost/images/index', $result);
-
-        $result = Router::url([
-            'controller' => 'images',
-            'action' => 'index',
-            '_ssl' => false,
-            '_full' => true,
-        ]);
-        $this->assertSame('http://app.localhost/images/index', $result);
-
-        $result = Router::url([
-            'controller' => 'images',
-            'action' => 'index',
-            '_full' => false,
-            '_ssl' => false,
-        ]);
-        $this->assertSame('http://localhost/images/index', $result);
+        $this->assertSame('http://app.test/images/index', $result);
     }
 
     /**
@@ -1955,7 +1916,7 @@ class RouterTest extends TestCase
         Router::connect('/:controller/:action/*');
         $request = new ServerRequest([
             'url' => '/images/index',
-            'environment' => ['HTTP_HOST' => 'localhost', 'HTTPS' => 'on'],
+            'environment' => ['HTTP_HOST' => 'app.test', 'HTTPS' => 'on'],
             'params' => [
                 'plugin' => null,
                 'controller' => 'images',
@@ -1967,12 +1928,12 @@ class RouterTest extends TestCase
         $result = Router::url([
             '_ssl' => false,
         ]);
-        $this->assertSame('http://localhost/images/index', $result);
+        $this->assertSame('http://app.test/images/index', $result);
 
         $result = Router::url([
             '_ssl' => true,
         ]);
-        $this->assertSame('https://localhost/images/index', $result);
+        $this->assertSame('https://app.test/images/index', $result);
     }
 
     /**

@@ -230,13 +230,14 @@ class Router
     {
         static::$_request = $request;
 
+        static::$_requestContext['_base'] = $request->getAttribute('base');
+        static::$_requestContext['params'] = $request->getAttribute('params', []);
+
         $uri = $request->getUri();
-        static::$_requestContext = [
+        static::$_requestContext += [
             '_scheme' => $uri->getScheme(),
             '_host' => $uri->getHost(),
             '_port' => $uri->getPort(),
-            '_base' => $request->getAttribute('base'),
-            'params' => $request->getAttribute('params', []),
         ];
     }
 
@@ -477,7 +478,7 @@ class Router
             // If a full URL is requested with a scheme the host should default
             // to App.fullBaseUrl to avoid corrupt URLs
             if ($full && isset($url['_scheme']) && !isset($url['_host'])) {
-                $url['_host'] = parse_url(static::fullBaseUrl(), PHP_URL_HOST);
+                $url['_host'] = $context['_host'];
             }
             $context['params'] = $params;
 
@@ -567,6 +568,13 @@ class Router
         } else {
             static::$_fullBaseUrl = Configure::read('App.fullBaseUrl');
         }
+
+        $parts = parse_url(static::$_fullBaseUrl);
+        static::$_requestContext = [
+            '_scheme' => $parts['scheme'],
+            '_host' => $parts['host'],
+            '_port' => $parts['port'] ?? null,
+        ] + static::$_requestContext;
 
         return static::$_fullBaseUrl;
     }
