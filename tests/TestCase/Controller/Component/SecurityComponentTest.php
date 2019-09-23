@@ -616,7 +616,7 @@ class SecurityComponentTest extends TestCase
         $this->Controller->setRequest($this->Controller->getRequest()
             ->withAttribute('base', 'subdir')
             ->withAttributE('webroot', 'subdir/'));
-        Router::pushRequest($this->Controller->getRequest());
+        Router::setRequest($this->Controller->getRequest());
 
         $event = new Event('Controller.startup', $this->Controller);
         $this->Security->startup($event);

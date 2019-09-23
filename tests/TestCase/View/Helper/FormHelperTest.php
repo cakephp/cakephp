@@ -88,7 +88,7 @@ class FormHelperTest extends TestCase
         ]);
         $this->View = new View($request);
         Router::reload();
-        Router::pushRequest($request);
+        Router::setRequest($request);
 
         $this->Form = new FormHelper($this->View);
 

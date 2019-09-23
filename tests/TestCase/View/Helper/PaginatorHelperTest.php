@@ -160,7 +160,7 @@ class PaginatorHelperTest extends TestCase
             'base' => '',
             'webroot' => '/',
         ]);
-        Router::setRequestInfo($request);
+        Router::setRequest($request);
 
         $this->Paginator->options(['url' => ['param']]);
         $this->View->setRequest($this->View->getRequest()->withParam('paging', [
@@ -333,7 +333,7 @@ class PaginatorHelperTest extends TestCase
             'base' => '',
             'webroot' => '/',
         ]);
-        Router::setRequestInfo($request);
+        Router::setRequest($request);
 
         $this->View->setRequest($this->View->getRequest()
             ->withParam('paging.Article.sort', 'full_name')
@@ -390,7 +390,7 @@ class PaginatorHelperTest extends TestCase
             'base' => '',
             'webroot' => '/',
         ]);
-        Router::setRequestInfo($request);
+        Router::setRequest($request);
 
         $this->Paginator->options(['url' => ['param']]);
 
@@ -426,7 +426,7 @@ class PaginatorHelperTest extends TestCase
             'base' => '',
             'webroot' => '/',
         ]);
-        Router::setRequestInfo($request);
+        Router::setRequest($request);
 
         $this->View->setRequest($this->View->getRequest()
             ->withParam('paging.Article.sort', 'Article.title')
@@ -488,7 +488,7 @@ class PaginatorHelperTest extends TestCase
             'base' => '',
             'webroot' => '/',
         ]);
-        Router::setRequestInfo($request);
+        Router::setRequest($request);
 
         $this->Paginator->options(['model' => 'Articles']);
         $this->View->setRequest($this->View->getRequest()->withParam('paging', [
@@ -703,7 +703,7 @@ class PaginatorHelperTest extends TestCase
             'base' => '',
             'webroot' => '/',
         ]);
-        Router::setRequestInfo($request);
+        Router::setRequest($request);
 
         $this->View->setRequest($this->View->getRequest()->withParam('paging.Article.page', 1));
         $result = $this->Paginator->next('Next');
@@ -750,7 +750,7 @@ class PaginatorHelperTest extends TestCase
             'base' => '',
             'webroot' => '/',
         ]);
-        Router::setRequestInfo($request);
+        Router::setRequest($request);
 
         $this->View->setRequest($this->View->getRequest()->withParam('paging', [
             'Article' => [
@@ -885,7 +885,7 @@ class PaginatorHelperTest extends TestCase
             'base' => '',
             'webroot' => '/',
         ]);
-        Router::setRequestInfo($request);
+        Router::setRequest($request);
 
         $this->View->setRequest($this->View->getRequest()
             ->withParam('paging.Article.page', 2)
@@ -963,7 +963,7 @@ class PaginatorHelperTest extends TestCase
             ],
             'webroot' => '/',
         ]);
-        Router::setRequestInfo($request);
+        Router::setRequest($request);
         $this->View->setRequest($request);
 
         $result = $this->Paginator->generateUrl();
@@ -998,7 +998,7 @@ class PaginatorHelperTest extends TestCase
             'base' => '',
             'webroot' => '/',
         ]);
-        Router::setRequestInfo($request);
+        Router::setRequest($request);
 
         $this->View->setRequest($this->View->getRequest()
             ->withParam('paging.Article.scope', 'article')
@@ -1060,7 +1060,7 @@ class PaginatorHelperTest extends TestCase
                 'plugin' => null, 'controller' => 'posts', 'action' => 'index',
             ],
         ]);
-        Router::setRequestInfo($request);
+        Router::setRequest($request);
 
         $this->View->setRequest($this->View->getRequest()
             ->withParam('paging.Article.scope', 'article')
@@ -1141,7 +1141,7 @@ class PaginatorHelperTest extends TestCase
                 'plugin' => null, 'controller' => 'articles', 'action' => 'index', 'pass' => [],
             ],
         ]);
-        Router::setRequestInfo($request);
+        Router::setRequest($request);
 
         $this->View->setRequest($this->View->getRequest()->withParam('paging', [
             'Article' => [
@@ -1200,7 +1200,7 @@ class PaginatorHelperTest extends TestCase
                 'plugin' => null, 'controller' => 'articles', 'action' => 'index',
             ],
         ]);
-        Router::setRequestInfo($request);
+        Router::setRequest($request);
 
         $this->View->setRequest($this->View->getRequest()->withParam('paging', [
             'Article' => [
@@ -1232,7 +1232,7 @@ class PaginatorHelperTest extends TestCase
             'params' => ['controller' => 'articles', 'action' => 'index', 'plugin' => null],
             'url' => '/articles?sort=title&direction=asc',
         ]);
-        Router::setRequestInfo($request);
+        Router::setRequest($request);
 
         $this->Paginator->options(['model' => 'Articles']);
         $request = $this->View->getRequest()->withParam('paging', [
@@ -2442,7 +2442,7 @@ class PaginatorHelperTest extends TestCase
             'params' => ['controller' => 'clients', 'action' => 'index', 'plugin' => null],
             'url' => '/clients/index?page=2',
         ]);
-        Router::setRequestInfo($request);
+        Router::setRequest($request);
 
         $result = $this->Paginator->numbers();
         $expected = [
@@ -2931,7 +2931,7 @@ class PaginatorHelperTest extends TestCase
                 'plugin' => null, 'controller' => 'accounts', 'action' => 'index',
             ],
         ]);
-        Router::setRequestInfo($request);
+        Router::setRequest($request);
 
         $this->View->setRequest($this->View->getRequest()
             ->withParam('paging.Article.sort', 'Article.title')

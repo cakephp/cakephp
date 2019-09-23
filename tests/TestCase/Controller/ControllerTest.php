@@ -468,7 +468,7 @@ class ControllerTest extends TestCase
             ->setMethods(['referer'])
             ->getMock();
         $request = $request->withAttribute('base', '/base');
-        Router::pushRequest($request);
+        Router::setRequest($request);
 
         $request->expects($this->any())->method('referer')
             ->will($this->returnValue(null));

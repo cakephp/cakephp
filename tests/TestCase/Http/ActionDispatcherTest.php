@@ -76,7 +76,7 @@ class ActionDispatcherTest extends TestCase
         ]);
         $res = new Response();
         $this->dispatcher->dispatch($req, $res);
-        $this->assertSame($req, Router::getRequest(true));
+        $this->assertSame($req, Router::getRequest());
     }
 
     /**

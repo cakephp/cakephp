@@ -32,6 +32,7 @@ parameters:
         - "#Parameter \\#2 \\$callback of function array_filter expects callable\\(mixed, mixed\\): bool, 'strlen' given.#"
         - '#Parameter \#1 \$autoload_function of function spl_autoload_register expects#'
         - '#Property Cake\\TestSuite\\ConsoleIntegrationTestCase::\$_[a-z]+ \(Cake\\TestSuite\\Stub\\ConsoleOutput\) does not accept null#'
+        - '#Parameter \#1 \$request of static method Cake\\Routing\\Router::(set|parse)Request\(\) expects Cake\\Http\\ServerRequest, Psr\\Http\\Message\\ServerRequestInterface given#'
         -
             message: '#Call to function method_exists\(\) with string and [^ ]+ will always evaluate to false#'
             path: 'src/Controller/Component/AuthComponent.php'
