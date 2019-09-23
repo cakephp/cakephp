@@ -231,14 +231,13 @@ class Router
         static::$_request = $request;
 
         $uri = $request->getUri();
-        $context = [
+        static::$_requestContext = [
             '_scheme' => $uri->getScheme(),
             '_host' => $uri->getHost(),
             '_port' => $uri->getPort(),
             '_base' => $request->getAttribute('base'),
-            '_params' => $request->getAttribute('params', []),
+            'params' => $request->getAttribute('params', []),
         ];
-        static::$_requestContext = $context;
     }
 
     /**
@@ -433,8 +432,8 @@ class Router
             'action' => 'index',
             '_ext' => null,
         ];
-        if (!empty($context['_params'])) {
-            $params = $context['_params'];
+        if (!empty($context['params'])) {
+            $params = $context['params'];
         }
 
         $frag = '';
