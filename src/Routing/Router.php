@@ -231,14 +231,13 @@ class Router
         static::$_request = $request;
 
         $uri = $request->getUri();
-        $context = [
+        static::$_requestContext = [
             '_scheme' => $uri->getScheme(),
             '_host' => $uri->getHost(),
             '_port' => $uri->getPort(),
             '_base' => $request->getAttribute('base'),
-            '_params' => $request->getAttribute('params', []),
+            'params' => $request->getAttribute('params', []),
         ];
-        static::$_requestContext = $context;
     }
 
     /**
@@ -433,8 +432,8 @@ class Router
             'action' => 'index',
             '_ext' => null,
         ];
-        if (!empty($context['_params'])) {
-            $params = $context['_params'];
+        if (!empty($context['params'])) {
+            $params = $context['params'];
         }
 
         $frag = '';
@@ -533,7 +532,7 @@ class Router
     public static function routeExists($url = null, bool $full = false): bool
     {
         try {
-            $route = static::url($url, $full);
+            static::url($url, $full);
 
             return true;
         } catch (MissingRouteException $e) {
@@ -558,15 +557,18 @@ class Router
      */
     public static function fullBaseUrl(?string $base = null): string
     {
+        if ($base === null && static::$_fullBaseUrl !== null) {
+            return static::$_fullBaseUrl;
+        }
+
         if ($base !== null) {
             static::$_fullBaseUrl = $base;
             Configure::write('App.fullBaseUrl', $base);
-        }
-        if (!static::$_fullBaseUrl) {
+        } else {
             static::$_fullBaseUrl = Configure::read('App.fullBaseUrl');
         }
 
-        return (string)static::$_fullBaseUrl;
+        return static::$_fullBaseUrl;
     }
 
     /**
