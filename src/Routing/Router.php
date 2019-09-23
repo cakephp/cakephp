@@ -532,7 +532,7 @@ class Router
     public static function routeExists($url = null, bool $full = false): bool
     {
         try {
-            $route = static::url($url, $full);
+            static::url($url, $full);
 
             return true;
         } catch (MissingRouteException $e) {
