@@ -40,8 +40,7 @@ class RouterTest extends TestCase
     {
         parent::setUp();
         Configure::write('Routing', ['admin' => null, 'prefixes' => []]);
-        Router::fullBaseUrl('');
-        Configure::write('App.fullBaseUrl', 'http://localhost');
+        Router::reload();
     }
 
     /**
@@ -53,7 +52,6 @@ class RouterTest extends TestCase
     {
         parent::tearDown();
         $this->clearPlugins();
-        Router::reload();
         Router::defaultRouteClass('Cake\Routing\Route\Route');
     }
 

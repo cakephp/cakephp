@@ -557,15 +557,18 @@ class Router
      */
     public static function fullBaseUrl(?string $base = null): string
     {
+        if ($base === null && static::$_fullBaseUrl !== null) {
+            return static::$_fullBaseUrl;
+        }
+
         if ($base !== null) {
             static::$_fullBaseUrl = $base;
             Configure::write('App.fullBaseUrl', $base);
-        }
-        if (!static::$_fullBaseUrl) {
+        } else {
             static::$_fullBaseUrl = Configure::read('App.fullBaseUrl');
         }
 
-        return (string)static::$_fullBaseUrl;
+        return static::$_fullBaseUrl;
     }
 
     /**
