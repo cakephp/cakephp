@@ -566,7 +566,25 @@ class Router
             static::$_fullBaseUrl = $base;
             Configure::write('App.fullBaseUrl', $base);
         } else {
-            static::$_fullBaseUrl = Configure::read('App.fullBaseUrl');
+            $base = (string)Configure::read('App.fullBaseUrl');
+
+            // If App.fullBaseUrl is empty but context is set from request through setRequest()
+            if (!$base && !empty(static::$_requestContext['_host'])) {
+                $base = sprintf(
+                    '%s://%s',
+                    static::$_requestContext['_scheme'],
+                    static::$_requestContext['_host']
+                );
+                if (!empty(static::$_requestContext['_port'])) {
+                    $base .= ':' . static::$_requestContext['_port'];
+                }
+
+                Configure::write('App.fullBaseUrl', $base);
+
+                return static::$_fullBaseUrl = $base;
+            }
+
+            static::$_fullBaseUrl = $base;
         }
 
         $parts = parse_url(static::$_fullBaseUrl);

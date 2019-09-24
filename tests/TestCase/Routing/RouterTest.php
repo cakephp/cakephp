@@ -155,6 +155,24 @@ class RouterTest extends TestCase
     }
 
     /**
+     * Test that full base URL can be generated from request context too if
+     * App.fullBaseUrl is not set.
+     *
+     * @return void
+     */
+    public function testFullBaseURLFromRequest()
+    {
+        Configure::write('App.fullBaseUrl', false);
+        $server = [
+            'HTTP_HOST' => 'cake.local',
+        ];
+
+        $request = ServerRequestFactory::fromGlobals($server);
+        Router::setRequest($request);
+        $this->assertSame('http://cake.local', Router::fullBaseUrl());
+    }
+
+    /**
      * testRouteDefaultParams method
      *
      * @return void
