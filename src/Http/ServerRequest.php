@@ -135,7 +135,6 @@ class ServerRequest implements ServerRequestInterface
         'ssl' => ['env' => 'HTTPS', 'options' => [1, 'on']],
         'ajax' => ['env' => 'HTTP_X_REQUESTED_WITH', 'value' => 'XMLHttpRequest'],
         'flash' => ['env' => 'HTTP_USER_AGENT', 'pattern' => '/^(Shockwave|Adobe) Flash/'],
-        'requested' => ['param' => 'requested', 'value' => 1],
         'json' => ['accept' => ['application/json'], 'param' => '_ext', 'value' => 'json'],
         'xml' => ['accept' => ['application/xml', 'text/xml'], 'param' => '_ext', 'value' => 'xml'],
     ];
@@ -818,7 +817,7 @@ class ServerRequest implements ServerRequestInterface
      * Allows for custom detectors on the request parameters.
      *
      * ```
-     * addDetector('requested', ['param' => 'requested', 'value' => 1]);
+     * addDetector('admin', ['param' => 'prefix', 'value' => 'admin']);
      * ```
      *
      * ### Accept comparison

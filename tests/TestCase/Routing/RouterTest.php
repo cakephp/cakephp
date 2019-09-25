@@ -2491,30 +2491,6 @@ class RouterTest extends TestCase
         Router::connect('/:controller', [], ['routeClass' => 'Object']);
     }
 
-    /**
-     * test reversing parameter arrays back into strings.
-     *
-     * Mark the router as initialized so it doesn't auto-load routes
-     *
-     * @return void
-     */
-    public function testReverseToken()
-    {
-        Router::connect('/:controller/:action/*');
-        $params = [
-            'controller' => 'posts',
-            'action' => 'view',
-            'pass' => [1],
-            'url' => [],
-            'autoRender' => 1,
-            'bare' => 1,
-            'return' => 1,
-            'requested' => 1,
-        ];
-        $result = Router::reverse($params);
-        $this->assertSame('/posts/view/1', $result);
-    }
-
     public function testReverseLocalized()
     {
         Router::reload();

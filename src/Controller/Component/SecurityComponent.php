@@ -102,8 +102,6 @@ class SecurityComponent extends Component
         try {
             $this->_secureRequired($controller);
 
-            $isNotRequestAction = !$request->getParam('requested');
-
             if ($this->_action === $this->_config['blackHoleCallback']) {
                 throw new AuthSecurityException(sprintf(
                     'Action %s is defined as the blackhole callback.',
@@ -113,7 +111,6 @@ class SecurityComponent extends Component
 
             if (!in_array($this->_action, (array)$this->_config['unlockedActions'], true) &&
                 $hasData &&
-                $isNotRequestAction &&
                 $this->_config['validatePost']
             ) {
                 $this->_validatePost($controller);

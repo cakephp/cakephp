@@ -71,7 +71,6 @@ class ActionDispatcherTest extends TestCase
                 'controller' => 'Cakes',
                 'action' => 'index',
                 'pass' => [],
-                'return' => true,
             ],
         ]);
         $res = new Response();
