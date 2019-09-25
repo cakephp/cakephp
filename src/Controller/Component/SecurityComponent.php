@@ -505,11 +505,12 @@ class SecurityComponent extends Component
     {
         if ($request->is('requested')) {
             if ($request->getSession()->check('_Token')) {
-                $request = $request->withParam('_Token', $request->getSession()->read('_Token'));
+                $request = $request->withAttribute('securityToken', $request->getSession()->read('_Token'));
             }
 
             return $request;
         }
+
         $token = [
             'allowedControllers' => $this->_config['allowedControllers'],
             'allowedActions' => $this->_config['allowedActions'],
@@ -518,7 +519,7 @@ class SecurityComponent extends Component
 
         $request->getSession()->write('_Token', $token);
 
-        return $request->withParam('_Token', [
+        return $request->withAttribute('securityToken', [
             'unlockedFields' => $token['unlockedFields'],
         ]);
     }

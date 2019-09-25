@@ -593,8 +593,6 @@ class Router
 
         unset(
             $params['pass'],
-            $params['paging'],
-            $params['_Token'],
             $params['_matchedRoute'],
             $params['_name']
         );

@@ -1328,8 +1328,9 @@ class SecurityComponentTest extends TestCase
         $request = $this->Controller->getRequest();
         $request = $this->Security->generateToken($request);
 
-        $this->assertNotEmpty($request->getParam('_Token'));
-        $this->assertSame([], $request->getParam('_Token.unlockedFields'));
+        $securityToken = $request->getAttribute('securityToken');
+        $this->assertNotEmpty($securityToken);
+        $this->assertSame([], $securityToken['unlockedFields']);
     }
 
     /**

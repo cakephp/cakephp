@@ -580,7 +580,7 @@ class ControllerTest extends TestCase
         $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
         $this->assertCount(3, $results);
 
-        $paging = $Controller->getRequest()->getParam('paging');
+        $paging = $Controller->getRequest()->getAttribute('paging');
         $this->assertSame($paging['Posts']['page'], 1);
         $this->assertSame($paging['Posts']['pageCount'], 1);
         $this->assertFalse($paging['Posts']['prevPage']);
@@ -591,7 +591,7 @@ class ControllerTest extends TestCase
         $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
         $this->assertCount(1, $results);
 
-        $paging = $Controller->getRequest()->getParam('paging');
+        $paging = $Controller->getRequest()->getAttribute('paging');
         $this->assertSame($paging['Posts']['page'], 2);
         $this->assertSame($paging['Posts']['pageCount'], 2);
         $this->assertTrue($paging['Posts']['prevPage']);

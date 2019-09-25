@@ -177,7 +177,7 @@ class RequestHandlerComponent extends Component
         }
 
         $isAjax = $request->is('ajax');
-        $controller->setRequest($request->withParam('isAjax', $isAjax));
+        $controller->setRequest($request->withAttribute('isAjax', $isAjax));
 
         if (!$this->ext && $isAjax) {
             $this->ext = 'ajax';

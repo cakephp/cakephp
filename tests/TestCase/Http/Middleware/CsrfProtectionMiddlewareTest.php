@@ -95,7 +95,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $this->assertRegExp('/^[a-f0-9]+$/', $cookie['value'], 'Should look like a hash.');
         $this->assertSame(0, $cookie['expire'], 'session duration.');
         $this->assertSame('/dir/', $cookie['path'], 'session path.');
-        $this->assertEquals($cookie['value'], $updatedRequest->getParam('_csrfToken'));
+        $this->assertEquals($cookie['value'], $updatedRequest->getAttribute('csrfToken'));
     }
 
     /**
