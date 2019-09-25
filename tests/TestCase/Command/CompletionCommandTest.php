@@ -157,6 +157,10 @@ class CompletionCommandTest extends ConsoleIntegrationTestCase
      */
     public function testOptionsShellTask()
     {
+        //details: https://github.com/cakephp/cakephp/pull/13533
+        $this->markTestIncomplete(
+            'This test does not work correctly with shells.'
+        );
         $this->exec('completion options sample sample');
         $this->assertExitCode(Shell::CODE_SUCCESS);
 
