@@ -199,6 +199,21 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     public function &get(string $field);
 
     /**
+     * Returns the original value of a field.
+     *
+     * @param string $field The name of the field.
+     * @return mixed
+     */
+    public function getOriginal(string $field);
+
+    /**
+     * Gets all original values of the entity.
+     *
+     * @return array
+     */
+    public function getOriginalValues(): array;
+
+    /**
      * Returns whether this entity contains a field named $field
      * regardless of if it is empty.
      *
