@@ -648,6 +648,7 @@ class Marshaller
             ->toArray();
 
         $new = $indexed[null] ?? [];
+        /** @psalm-suppress PossiblyNullArrayOffset */
         unset($indexed[null]);
         $output = [];
 

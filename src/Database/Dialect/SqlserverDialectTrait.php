@@ -295,7 +295,6 @@ trait SqlserverDialectTrait
                     return $params[$key];
                 };
 
-                /** @psalm-suppress EmptyArrayAccess */
                 $expression
                     ->setName('DATEADD')
                     ->setConjunction(',')
@@ -313,7 +312,6 @@ trait SqlserverDialectTrait
                 $expression->setName('SUBSTRING');
                 if (count($expression) < 4) {
                     $params = [];
-                    /** @psalm-suppress EmptyArrayAccess */
                     $expression
                         ->iterateParts(function ($p) use (&$params) {
                             return $params[] = $p;

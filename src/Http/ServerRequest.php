@@ -1526,7 +1526,6 @@ class ServerRequest implements ServerRequestInterface
      * @param array|object|null $data The deserialized body data. This will
      *     typically be in an array or object.
      * @return static
-     * @psalm-suppress MoreSpecificImplementedParamType
      */
     public function withParsedBody($data)
     {

@@ -512,7 +512,6 @@ class Hash
                         /** @psalm-suppress PossiblyNullArrayOffset */
                         $out[$group[$i]] = [];
                     }
-                    /** @psalm-suppress PossiblyNullArrayOffset */
                     $out[$group[$i]][$keys[$i]] = $vals[$i];
                 }
 

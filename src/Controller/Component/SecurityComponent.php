@@ -424,7 +424,6 @@ class SecurityComponent extends Component
     protected function _debugPostTokenNotMatching(Controller $controller, array $hashParts): string
     {
         $messages = [];
-        /** @psalm-suppress PossiblyInvalidArgument */
         $expectedParts = json_decode(urldecode($controller->getRequest()->getData('_Token.debug')), true);
         if (!is_array($expectedParts) || count($expectedParts) !== 3) {
             return 'Invalid security debug token.';
