@@ -38,6 +38,6 @@ class HeaderNotContains extends HeaderContains
      */
     public function toString()
     {
-        return sprintf("is not in header '%s'", $this->headerName);
+        return sprintf("is not in header '%s' (`%s`)", $this->headerName, $this->response->getHeaderLine($this->headerName));
     }
 }
