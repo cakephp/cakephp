@@ -1518,7 +1518,7 @@ class IntegrationTestTraitTest extends IntegrationTestCase
             'assertRedirectContains' => ['assertRedirectContains', 'Failed asserting that \'/posts/somewhere-else\' is in header \'Location\' (`http://localhost/app/Posts`).', '/posts/flashNoRender', '/posts/somewhere-else'],
             'assertRedirectContainsVerbose' => ['assertRedirectContains', 'Possibly related to Cake\Routing\Exception\MissingRouteException: "A route matching "/notfound" could not be found."', '/notfound', '/posts/somewhere-else'],
             'assertRedirectNotContainsVerbose' => ['assertRedirectNotContains', 'Possibly related to Cake\Routing\Exception\MissingRouteException: "A route matching "/notfound" could not be found."', '/notfound', '/posts/somewhere-else'],
-            'assertResponseCode' => ['assertResponseCode', 'Failed asserting that 302 matches response status code 200.', '/posts/index', 302],
+            'assertResponseCode' => ['assertResponseCode', 'Failed asserting that `302` matches response status code `200`.', '/posts/index', 302],
             'assertResponseContains' => ['assertResponseContains', 'Failed asserting that \'test\' is in response body.', '/posts/index', 'test'],
             'assertResponseEmpty' => ['assertResponseEmpty', 'Failed asserting that response body is empty.', '/posts/index'],
             'assertResponseEquals' => ['assertResponseEquals', 'Failed asserting that \'test\' matches response body.', '/posts/index', 'test'],
