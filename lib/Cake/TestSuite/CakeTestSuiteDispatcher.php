@@ -170,7 +170,9 @@ class CakeTestSuiteDispatcher {
 			} elseif (is_file($vendor . DS . 'phpunit.phar')) {
 				$backup = $GLOBALS['_SERVER']['SCRIPT_NAME'];
 				$GLOBALS['_SERVER']['SCRIPT_NAME'] = '-';
+				ob_start();
 				$included = include_once $vendor . DS . 'phpunit.phar';
+				ob_end_clean();
 				$GLOBALS['_SERVER']['SCRIPT_NAME'] = $backup;
 				return $included;
 			}
