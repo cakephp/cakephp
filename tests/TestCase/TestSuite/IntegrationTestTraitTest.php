@@ -795,7 +795,7 @@ class IntegrationTestTraitTest extends IntegrationTestCase
     public function testCookieNotSetFailure()
     {
         $this->expectException(AssertionFailedError::class);
-        $this->expectExceptionMessage('Failed asserting that \'remember_me\' cookie was not set');
+        $this->expectExceptionMessage('Failed asserting that \'remember_me\' cookie is not set');
         $this->post('/posts/index');
         $this->assertCookieNotSet('remember_me');
     }
@@ -1497,13 +1497,13 @@ class IntegrationTestTraitTest extends IntegrationTestCase
         $templateDir = TEST_APP . 'TestApp' . DS . 'Template' . DS;
 
         return [
-            'assertContentType' => ['assertContentType', 'Failed asserting that \'test\' was set as the Content-Type (`text/html`).', '/posts/index', 'test'],
+            'assertContentType' => ['assertContentType', 'Failed asserting that \'test\' is set as the Content-Type (`text/html`).', '/posts/index', 'test'],
             'assertContentTypeVerbose' => ['assertContentType', 'Possibly related to Cake\Routing\Exception\MissingRouteException: "A route matching "/notfound" could not be found."', '/notfound', 'test'],
-            'assertCookie' => ['assertCookie', 'Failed asserting that \'test\' was in cookie \'remember_me\'.', '/posts/index', 'test', 'remember_me'],
+            'assertCookie' => ['assertCookie', 'Failed asserting that \'test\' is in cookie \'remember_me\'.', '/posts/index', 'test', 'remember_me'],
             'assertCookieVerbose' => ['assertCookie', 'Possibly related to Cake\Routing\Exception\MissingRouteException: "A route matching "/notfound" could not be found."', '/notfound', 'test', 'remember_me'],
             'assertCookieEncrypted' => ['assertCookieEncrypted', 'Failed asserting that \'test\' was encrypted in cookie \'NameOfCookie\'.', '/cookie_component_test/set_cookie', 'test', 'NameOfCookie'],
             'assertCookieEncryptedVerbose' => ['assertCookieEncrypted', 'Possibly related to Cake\Routing\Exception\MissingRouteException: "A route matching "/notfound" could not be found."', '/notfound', 'test', 'NameOfCookie'],
-            'assertCookieNotSet' => ['assertCookieNotSet', 'Failed asserting that \'remember_me\' cookie was not set.', '/posts/index', 'remember_me'],
+            'assertCookieNotSet' => ['assertCookieNotSet', 'Failed asserting that \'remember_me\' cookie is not set.', '/posts/index', 'remember_me'],
             'assertFileResponse' => ['assertFileResponse', 'Failed asserting that \'test\' file was sent.', '/posts/file', 'test'],
             'assertFileResponseVerbose' => ['assertFileResponse', 'Possibly related to Cake\Routing\Exception\MissingRouteException: "A route matching "/notfound" could not be found."', '/notfound', 'test'],
             'assertHeader' => ['assertHeader', 'Failed asserting that \'test\' equals content in header \'X-Cake\' (`custom header`).', '/posts/header', 'X-Cake', 'test'],
@@ -1537,14 +1537,14 @@ class IntegrationTestTraitTest extends IntegrationTestCase
             'assertSession' => ['assertSession', 'Failed asserting that \'test\' is in session path \'Missing.path\'.', '/posts/index', 'test', 'Missing.path'],
             'assertTemplate' => ['assertTemplate', 'Failed asserting that \'custom_template\' equals template file `' . $templateDir . 'Posts' . DS . 'index.ctp`.', '/posts/index', 'custom_template'],
             'assertTemplateVerbose' => ['assertTemplate', 'Possibly related to Cake\Routing\Exception\MissingRouteException: "A route matching "/notfound" could not be found."', '/notfound', 'custom_template'],
-            'assertFlashMessage' => ['assertFlashMessage', 'Failed asserting that \'missing\' was in \'flash\' message.', '/posts/index', 'missing'],
-            'assertFlashMessageWithKey' => ['assertFlashMessage', 'Failed asserting that \'missing\' was in \'auth\' message.', '/posts/index', 'missing', 'auth'],
-            'assertFlashMessageAt' => ['assertFlashMessageAt', 'Failed asserting that \'missing\' was in \'flash\' message #0.', '/posts/index', 0, 'missing'],
-            'assertFlashMessageAtWithKey' => ['assertFlashMessageAt', 'Failed asserting that \'missing\' was in \'auth\' message #0.', '/posts/index', 0, 'missing', 'auth'],
-            'assertFlashElement' => ['assertFlashElement', 'Failed asserting that \'missing\' was in \'flash\' element.', '/posts/index', 'missing'],
-            'assertFlashElementWithKey' => ['assertFlashElement', 'Failed asserting that \'missing\' was in \'auth\' element.', '/posts/index', 'missing', 'auth'],
-            'assertFlashElementAt' => ['assertFlashElementAt', 'Failed asserting that \'missing\' was in \'flash\' element #0.', '/posts/index', 0, 'missing'],
-            'assertFlashElementAtWithKey' => ['assertFlashElementAt', 'Failed asserting that \'missing\' was in \'auth\' element #0.', '/posts/index', 0, 'missing', 'auth'],
+            'assertFlashMessage' => ['assertFlashMessage', 'Failed asserting that \'missing\' is in \'flash\' message.', '/posts/index', 'missing'],
+            'assertFlashMessageWithKey' => ['assertFlashMessage', 'Failed asserting that \'missing\' is in \'auth\' message.', '/posts/index', 'missing', 'auth'],
+            'assertFlashMessageAt' => ['assertFlashMessageAt', 'Failed asserting that \'missing\' is in \'flash\' message #0.', '/posts/index', 0, 'missing'],
+            'assertFlashMessageAtWithKey' => ['assertFlashMessageAt', 'Failed asserting that \'missing\' is in \'auth\' message #0.', '/posts/index', 0, 'missing', 'auth'],
+            'assertFlashElement' => ['assertFlashElement', 'Failed asserting that \'missing\' is in \'flash\' element.', '/posts/index', 'missing'],
+            'assertFlashElementWithKey' => ['assertFlashElement', 'Failed asserting that \'missing\' is in \'auth\' element.', '/posts/index', 'missing', 'auth'],
+            'assertFlashElementAt' => ['assertFlashElementAt', 'Failed asserting that \'missing\' is in \'flash\' element #0.', '/posts/index', 0, 'missing'],
+            'assertFlashElementAtWithKey' => ['assertFlashElementAt', 'Failed asserting that \'missing\' is in \'auth\' element #0.', '/posts/index', 0, 'missing', 'auth'],
         ];
     }
 
