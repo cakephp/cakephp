@@ -80,10 +80,6 @@ class UrlHelper extends Helper
      */
     public function image($path, array $options = [])
     {
-        if (is_array($path)) {
-            deprecationWarning('UrlHelper::image() in 4.x will not allow array of paths anymore. Use string here.');
-        }
-
         $pathPrefix = Configure::read('App.imageBaseUrl');
 
         return $this->assetUrl($path, $options + compact('pathPrefix'));
@@ -109,10 +105,6 @@ class UrlHelper extends Helper
      */
     public function css($path, array $options = [])
     {
-        if (is_array($path)) {
-            deprecationWarning('UrlHelper::css() in 4.x will not allow array of paths anymore. Use string here.');
-        }
-
         $pathPrefix = Configure::read('App.cssBaseUrl');
         $ext = '.css';
 
@@ -139,10 +131,6 @@ class UrlHelper extends Helper
      */
     public function script($path, array $options = [])
     {
-        if (is_array($path)) {
-            deprecationWarning('UrlHelper::script() in 4.x will not allow array of paths anymore. Use string here.');
-        }
-
         $pathPrefix = Configure::read('App.jsBaseUrl');
         $ext = '.js';
 
@@ -174,8 +162,6 @@ class UrlHelper extends Helper
     public function assetUrl($path, array $options = [])
     {
         if (is_array($path)) {
-            deprecationWarning('UrlHelper::assetUrl() in 4.x will not allow array of paths anymore. Use string here.');
-
             return $this->build($path, !empty($options['fullBase']));
         }
         // data URIs only require HTML escaping
@@ -250,11 +236,15 @@ class UrlHelper extends Helper
      */
     public function assetTimestamp($path, $timestamp = null)
     {
+        if (strpos($path, '?') !== false) {
+            return $path;
+        }
+
         if ($timestamp === null) {
             $timestamp = Configure::read('Asset.timestamp');
         }
         $timestampEnabled = $timestamp === 'force' || ($timestamp === true && Configure::read('debug'));
-        if ($timestampEnabled && strpos($path, '?') === false) {
+        if ($timestampEnabled) {
             $filepath = preg_replace(
                 '/^' . preg_quote($this->_View->getRequest()->getAttribute('webroot'), '/') . '/',
                 '',
