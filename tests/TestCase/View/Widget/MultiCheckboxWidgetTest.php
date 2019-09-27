@@ -749,7 +749,7 @@ class MultiCheckboxWidgetTest extends TestCase
             [
                 'div' => ['class' => 'checkbox'],
                 'input' => ['type' => 'checkbox', 'name' => 'field[]', 'value' => '1', 'checked' => 'checked', 'id' => 'field-1'],
-                'label' => ['title' =>'my label', 'for' => 'field-1', 'class' => 'active'],
+                'label' => ['title' => 'my label', 'for' => 'field-1', 'class' => 'active'],
             ],
             'value1',
             '/label',
