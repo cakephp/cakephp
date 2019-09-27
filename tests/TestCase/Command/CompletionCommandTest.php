@@ -213,6 +213,7 @@ class CompletionCommandTest extends ConsoleIntegrationTestCase
             $this->assertOutputContains($value);
         }
     }
+
     /**
      * test that subCommands with a existing CORE command returns the proper sub commands
      *
