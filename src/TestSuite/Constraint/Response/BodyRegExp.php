@@ -47,6 +47,6 @@ class BodyRegExp extends ResponseBase
      */
     public function failureDescription($other)
     {
-        return $other . ' ' . $this->toString();
+        return '`' . $other . '`' . ' ' . $this->toString();
     }
 }

@@ -43,6 +43,6 @@ class ContentType extends ResponseBase
      */
     public function toString()
     {
-        return 'was set as the Content-Type';
+        return 'is set as the Content-Type (`' . $this->response->getType() . '`)';
     }
 }

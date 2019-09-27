@@ -247,10 +247,10 @@ class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
             'assertOutputEmpty' => ['assertOutputEmpty', 'Failed asserting that output is empty.', 'routes'],
             'assertOutputContains' => ['assertOutputContains', 'Failed asserting that \'missing\' is in output.', 'routes', 'missing'],
             'assertOutputNotContains' => ['assertOutputNotContains', 'Failed asserting that \'controller\' is not in output.', 'routes', 'controller'],
-            'assertOutputRegExp' => ['assertOutputRegExp', 'Failed asserting that /missing/ PCRE pattern found in output.', 'routes', '/missing/'],
-            'assertOutputContainsRow' => ['assertOutputContainsRow', 'Failed asserting that Array (...) row was in output.', 'routes', ['test', 'missing']],
+            'assertOutputRegExp' => ['assertOutputRegExp', 'Failed asserting that `/missing/` PCRE pattern found in output.', 'routes', '/missing/'],
+            'assertOutputContainsRow' => ['assertOutputContainsRow', 'Failed asserting that `Array (...)` row was in output.', 'routes', ['test', 'missing']],
             'assertErrorContains' => ['assertErrorContains', 'Failed asserting that \'test\' is in error output.', 'routes', 'test'],
-            'assertErrorRegExp' => ['assertErrorRegExp', 'Failed asserting that /test/ PCRE pattern found in error output.', 'routes', '/test/'],
+            'assertErrorRegExp' => ['assertErrorRegExp', 'Failed asserting that `/test/` PCRE pattern found in error output.', 'routes', '/test/'],
             'assertErrorEmpty' => ['assertErrorEmpty', 'Failed asserting that error output is empty.', 'integration args_and_options'],
         ];
     }
