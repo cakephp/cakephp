@@ -242,7 +242,7 @@ class FormHelper extends Helper
      *
      * @var string[]
      */
-    protected $_groupedInputTypes = ['radio', 'multicheckbox', 'date', 'time', 'datetime'];
+    protected $_groupedInputTypes = ['radio', 'multicheckbox'];
 
     /**
      * Construct the widgets and binds the default context providers
