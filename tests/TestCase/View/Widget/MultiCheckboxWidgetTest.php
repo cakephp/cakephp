@@ -41,6 +41,7 @@ class MultiCheckboxWidgetTest extends TestCase
             'checkboxWrapper' => '<div class="checkbox">{{input}}{{label}}</div>',
             'multicheckboxWrapper' => '<fieldset{{attrs}}>{{content}}</fieldset>',
             'multicheckboxTitle' => '<legend>{{text}}</legend>',
+            'selectedClass' => 'selected',
         ];
         $this->templates = new StringTemplate($templates);
         $this->context = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();

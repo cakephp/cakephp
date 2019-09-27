@@ -38,6 +38,7 @@ class RadioWidgetTest extends TestCase
             'radio' => '<input type="radio" name="{{name}}" value="{{value}}"{{attrs}}>',
             'nestingLabel' => '<label{{attrs}}>{{input}}{{text}}</label>',
             'radioWrapper' => '{{label}}',
+            'selectedClass' => 'selected',
         ];
         $this->templates = new StringTemplate($templates);
         $this->context = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
