@@ -3410,7 +3410,7 @@ class FormHelperTest extends TestCase
         ]);
         $expected = [
             'div' => ['class' => 'input datetime'],
-            '<label',
+            'label' => ['for' => 'prueba'],
             'Prueba',
             '/label',
             'input' => ['name' => 'prueba', 'id' => 'prueba', 'type' => 'datetime-local', 'value' => '2019-09-27T02:52:43'],
@@ -3435,7 +3435,7 @@ class FormHelperTest extends TestCase
         ]);
         $expected = [
             'div' => ['class' => 'input datetime'],
-            '<label',
+            'label' => ['for' => 'prefix-prueba'],
             'Prueba',
             '/label',
             'input' => ['name' => 'prueba', 'id' => 'prefix-prueba', 'type' => 'datetime-local', 'value' => ''],
