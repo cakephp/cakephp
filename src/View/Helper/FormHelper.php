@@ -2210,6 +2210,7 @@ class FormHelper extends Helper
             'value' => null,
         ];
         $options = $this->_initInputField($fieldName, $options);
+        $options['type'] = 'datetime-local';
 
         return $this->widget('datetime', $options);
     }

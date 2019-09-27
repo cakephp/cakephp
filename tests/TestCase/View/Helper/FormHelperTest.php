@@ -21,6 +21,7 @@ use Cake\Core\Configure;
 use Cake\Form\Form;
 use Cake\Http\ServerRequest;
 use Cake\I18n\Date;
+use Cake\I18n\FrozenTime;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\Routing\Router;
@@ -3403,34 +3404,16 @@ class FormHelperTest extends TestCase
      */
     public function testControlDatetime()
     {
-        $this->Form = $this->getMockBuilder('Cake\View\Helper\FormHelper')
-            ->setMethods(['datetime'])
-            ->setConstructorArgs([new View()])
-            ->getMock();
-        $this->Form->expects($this->once())->method('datetime')
-            ->with('prueba', [
-                'type' => 'datetime',
-                'timeFormat' => 24,
-                'minYear' => 2008,
-                'maxYear' => 2011,
-                'interval' => 15,
-                'options' => null,
-                'empty' => false,
-                'id' => 'prueba',
-                'required' => false,
-                'templateVars' => [],
-            ])
-            ->will($this->returnValue('This is it!'));
         $result = $this->Form->control('prueba', [
-            'type' => 'datetime', 'timeFormat' => 24, 'minYear' => 2008,
-            'maxYear' => 2011, 'interval' => 15,
+            'type' => 'datetime',
+            'value' => new FrozenTime('2019-09-27 02:52:43'),
         ]);
         $expected = [
             'div' => ['class' => 'input datetime'],
             '<label',
             'Prueba',
             '/label',
-            'This is it!',
+            'input' => ['name' => 'prueba', 'id' => 'prueba', 'type' => 'datetime-local', 'value' => '2019-09-27T02:52:43'],
             '/div',
         ];
         $this->assertHtml($expected, $result);
@@ -3445,37 +3428,17 @@ class FormHelperTest extends TestCase
      */
     public function testControlDatetimeIdPrefix()
     {
-        $this->Form = $this->getMockBuilder('Cake\View\Helper\FormHelper')
-            ->setMethods(['datetime'])
-            ->setConstructorArgs([new View()])
-            ->getMock();
-
         $this->Form->create(null, ['idPrefix' => 'prefix']);
 
-        $this->Form->expects($this->once())->method('datetime')
-            ->with('prueba', [
-                'type' => 'datetime',
-                'timeFormat' => 24,
-                'minYear' => 2008,
-                'maxYear' => 2011,
-                'interval' => 15,
-                'options' => null,
-                'empty' => false,
-                'id' => 'prefix-prueba',
-                'required' => false,
-                'templateVars' => [],
-            ])
-            ->will($this->returnValue('This is it!'));
         $result = $this->Form->control('prueba', [
-            'type' => 'datetime', 'timeFormat' => 24, 'minYear' => 2008,
-            'maxYear' => 2011, 'interval' => 15,
+            'type' => 'datetime',
         ]);
         $expected = [
             'div' => ['class' => 'input datetime'],
             '<label',
             'Prueba',
             '/label',
-            'This is it!',
+            'input' => ['name' => 'prueba', 'id' => 'prefix-prueba', 'type' => 'datetime-local', 'value' => ''],
             '/div',
         ];
         $this->assertHtml($expected, $result);
