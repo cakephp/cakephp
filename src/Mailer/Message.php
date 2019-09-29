@@ -1174,8 +1174,7 @@ class Message implements JsonSerializable, Serializable
                     $name = basename($fileInfo['file']);
                 }
             }
-            if (
-                !isset($fileInfo['mimetype'])
+            if (!isset($fileInfo['mimetype'])
                 && isset($fileInfo['file'])
                 && is_string($fileInfo['file'])
                 && function_exists('mime_content_type')
