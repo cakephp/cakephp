@@ -44,6 +44,13 @@ abstract class TestCase extends BaseTestCase
     public $fixtureManager;
 
     /**
+     * Fixtures used by this test case.
+     *
+     * @var array|string|null
+     */
+    public $fixtures;
+
+    /**
      * By default, all fixtures attached to this class will be truncated and reloaded after each test.
      * Set this to false to handle manually
      *
@@ -803,5 +810,27 @@ abstract class TestCase extends BaseTestCase
     public static function setAppNamespace($appNamespace = 'TestApp')
     {
         Configure::write('App.namespace', $appNamespace);
+    }
+
+    /**
+     * Gets fixtures.
+     *
+     * @return array
+     */
+    public function getFixtures()
+    {
+        if (!isset($this->fixtures)) {
+            return [];
+        }
+        if (is_string($this->fixtures)) {
+            deprecationWarning(
+                'Setting fixtures as string is deprecated and will be removed in 4.0.' .
+                ' Set TestCase::$fixtures as array instead.'
+            );
+
+            return array_map('trim', explode(',', $this->fixtures));
+        }
+
+        return $this->fixtures;
     }
 }

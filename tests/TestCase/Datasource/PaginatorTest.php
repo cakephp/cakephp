@@ -27,6 +27,16 @@ class PaginatorTest extends TestCase
     use PaginatorTestTrait;
 
     /**
+     * fixtures property
+     *
+     * @var array
+     */
+    public $fixtures = [
+        'core.Posts', 'core.Articles', 'core.ArticlesTags',
+        'core.Authors', 'core.AuthorsTags', 'core.Tags'
+    ];
+
+    /**
      * Don't load data for fixtures for all tests
      *
      * @var bool

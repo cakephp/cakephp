@@ -76,7 +76,7 @@ class TableTest extends TestCase
         'core.Members',
         'core.PolymorphicTagged',
         'core.SiteArticles',
-        'core.Users'
+        'core.Users',
     ];
 
     /**
