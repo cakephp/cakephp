@@ -25,6 +25,7 @@ use Cake\Utility\Text;
 use Closure;
 use InvalidArgumentException;
 use JsonSerializable;
+use Psr\Http\Message\UploadedFileInterface;
 use Serializable;
 use SimpleXMLElement;
 
@@ -1157,6 +1158,11 @@ class Message implements JsonSerializable, Serializable
                     throw new InvalidArgumentException('No filename specified.');
                 }
                 $fileInfo['data'] = chunk_split(base64_encode($fileInfo['data']), 76, "\r\n");
+            } elseif ($fileInfo['file'] instanceof UploadedFileInterface) {
+                $fileInfo['mimetype'] = $fileInfo['file']->getClientMediaType();
+                if (is_int($name)) {
+                    $name = $fileInfo['file']->getClientFilename();
+                }
             } else {
                 $fileName = $fileInfo['file'];
                 $fileInfo['file'] = realpath($fileInfo['file']);
@@ -1747,12 +1753,19 @@ class Message implements JsonSerializable, Serializable
     /**
      * Read the file contents and return a base64 version of the file contents.
      *
-     * @param string $path The absolute path to the file to read.
+     * @param string|\Psr\Http\Message\UploadedFileInterface $file The absolute path to the file to read
+     *   or UploadedFileInterface instance.
      * @return string File contents in base64 encoding
      */
-    protected function readFile(string $path): string
+    protected function readFile($file): string
     {
-        return chunk_split(base64_encode((string)file_get_contents($path)));
+        if (is_string($file)) {
+            $content = (string)file_get_contents($file);
+        } else {
+            $content = (string)$file->getStream();
+        }
+
+        return chunk_split(base64_encode($content));
     }
 
     /**
