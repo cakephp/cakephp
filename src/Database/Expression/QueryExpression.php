@@ -694,6 +694,7 @@ class QueryExpression implements ExpressionInterface, Countable
 
             if ($numericKey && $isArray || $isOperator) {
                 /** @var \Cake\Database\Expression\QueryExpression $this->_conditions[] */
+                // phpcs:ignore
                 $this->_conditions[] = new static($c, $typeMap, $numericKey ? 'AND' : $k);
                 continue;
             }

@@ -1283,7 +1283,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             'groupField' => null,
         ];
 
-        if (!$query->clause('select') &&
+        if (
+            !$query->clause('select') &&
             !is_object($options['keyField']) &&
             !is_object($options['valueField']) &&
             !is_object($options['groupField'])

@@ -1179,7 +1179,8 @@ class Message implements JsonSerializable, Serializable
                     gettype($fileInfo['file'])
                 ));
             }
-            if (!isset($fileInfo['mimetype'])
+            if (
+                !isset($fileInfo['mimetype'])
                 && isset($fileInfo['file'])
                 && is_string($fileInfo['file'])
                 && function_exists('mime_content_type')
@@ -1258,8 +1259,12 @@ class Message implements JsonSerializable, Serializable
      */
     protected function createBoundary(): void
     {
-        if ($this->boundary === null &&
-            ($this->attachments || $this->emailFormat === static::MESSAGE_BOTH)
+        if (
+            $this->boundary === null &&
+            (
+                $this->attachments ||
+                $this->emailFormat === static::MESSAGE_BOTH
+            )
         ) {
             $this->boundary = md5(Security::randomBytes(16));
         }
@@ -1299,7 +1304,8 @@ class Message implements JsonSerializable, Serializable
             $textBoundary = 'alt-' . $boundary;
         }
 
-        if ($this->emailFormat === static::MESSAGE_TEXT
+        if (
+            $this->emailFormat === static::MESSAGE_TEXT
             || $this->emailFormat === static::MESSAGE_BOTH
         ) {
             if ($multiPart) {
@@ -1314,7 +1320,8 @@ class Message implements JsonSerializable, Serializable
             $msg[] = '';
         }
 
-        if ($this->emailFormat === static::MESSAGE_HTML
+        if (
+            $this->emailFormat === static::MESSAGE_HTML
             || $this->emailFormat === static::MESSAGE_BOTH
         ) {
             if ($multiPart) {

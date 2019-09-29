@@ -50,7 +50,8 @@ class SqliteStatement extends StatementDecorator
     public function rowCount(): int
     {
         /** @psalm-suppress NoInterfaceProperties */
-        if ($this->_statement->queryString &&
+        if (
+            $this->_statement->queryString &&
             preg_match('/^(?:DELETE|UPDATE|INSERT)/i', $this->_statement->queryString)
         ) {
             $changes = $this->_driver->prepare('SELECT CHANGES()');

@@ -101,14 +101,16 @@ class Session
             }
         }
 
-        if (!isset($sessionConfig['ini']['session.cookie_secure'])
+        if (
+            !isset($sessionConfig['ini']['session.cookie_secure'])
             && env('HTTPS')
             && ini_get('session.cookie_secure') != 1
         ) {
             $sessionConfig['ini']['session.cookie_secure'] = 1;
         }
 
-        if (!isset($sessionConfig['ini']['session.name'])
+        if (
+            !isset($sessionConfig['ini']['session.name'])
             && isset($sessionConfig['cookie'])
         ) {
             $sessionConfig['ini']['session.name'] = $sessionConfig['cookie'];

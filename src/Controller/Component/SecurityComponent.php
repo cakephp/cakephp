@@ -109,7 +109,8 @@ class SecurityComponent extends Component
                 ));
             }
 
-            if (!in_array($this->_action, (array)$this->_config['unlockedActions'], true) &&
+            if (
+                !in_array($this->_action, (array)$this->_config['unlockedActions'], true) &&
                 $hasData &&
                 $this->_config['validatePost']
             ) {
@@ -215,7 +216,8 @@ class SecurityComponent extends Component
      */
     protected function _secureRequired(Controller $controller): void
     {
-        if (is_array($this->_config['requireSecure']) &&
+        if (
+            is_array($this->_config['requireSecure']) &&
             !empty($this->_config['requireSecure'])
         ) {
             $requireSecure = $this->_config['requireSecure'];

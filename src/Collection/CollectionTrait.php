@@ -898,8 +898,10 @@ trait CollectionTrait
     public function unwrap(): Traversable
     {
         $iterator = $this;
-        while (get_class($iterator) === Collection::class
-            && $iterator instanceof OuterIterator) {
+        while (
+            get_class($iterator) === Collection::class
+            && $iterator instanceof OuterIterator
+        ) {
             $iterator = $iterator->getInnerIterator();
         }
 
@@ -956,10 +958,12 @@ trait CollectionTrait
             $currentIndexes[$lastIndex]++;
 
             // phpcs:ignore Squiz.ControlStructures.ForLoopDeclaration.SpacingAfterFirst
-            for ($changeIndex = $lastIndex;
+            for (
+                $changeIndex = $lastIndex;
                 // phpcs:ignore Squiz.ControlStructures.ForLoopDeclaration.SpacingAfterSecond
                 $currentIndexes[$changeIndex] === $collectionArraysCounts[$changeIndex] && $changeIndex > 0;
-                $changeIndex--) {
+                $changeIndex--
+            ) {
                 $currentIndexes[$changeIndex] = 0;
                 $currentIndexes[$changeIndex - 1]++;
             }

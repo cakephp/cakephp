@@ -482,8 +482,10 @@ class FormHelper extends Helper
             return $request->getRequestTarget();
         }
 
-        if (is_string($options['url']) ||
-            (is_array($options['url']) && isset($options['url']['_name']))
+        if (
+            is_string($options['url']) ||
+            (is_array($options['url']) &&
+            isset($options['url']['_name']))
         ) {
             return $options['url'];
         }
@@ -1100,7 +1102,8 @@ class FormHelper extends Helper
         $nestedInput = $options['nestedInput'] ?? $nestedInput;
         unset($options['nestedInput']);
 
-        if ($nestedInput === true
+        if (
+            $nestedInput === true
             && $options['type'] === 'checkbox'
             && !array_key_exists('hiddenField', $options)
             && $label !== false
@@ -1364,7 +1367,8 @@ class FormHelper extends Helper
         }
 
         $typesWithMaxLength = ['text', 'textarea', 'email', 'tel', 'url', 'search'];
-        if (!array_key_exists('maxlength', $options)
+        if (
+            !array_key_exists('maxlength', $options)
             && in_array($options['type'], $typesWithMaxLength, true)
         ) {
             $maxLength = $context->getMaxLength($fieldName);
@@ -2062,7 +2066,8 @@ class FormHelper extends Helper
 
         // Secure the field if there are options, or it's a multi select.
         // Single selects with no options don't submit, but multiselects do.
-        if ($attributes['secure'] &&
+        if (
+            $attributes['secure'] &&
             empty($options) &&
             empty($attributes['empty']) &&
             empty($attributes['multiple'])
@@ -2504,7 +2509,8 @@ class FormHelper extends Helper
         /** @var \Cake\View\Widget\WidgetInterface $widget */
         $widget = $this->_locator->get($name);
         $out = $widget->render($data, $this->context());
-        if (isset($data['name']) &&
+        if (
+            isset($data['name']) &&
             $secure !== null &&
             $secure !== self::SECURE_SKIP
         ) {

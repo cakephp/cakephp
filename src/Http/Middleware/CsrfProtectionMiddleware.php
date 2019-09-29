@@ -102,7 +102,8 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if ($this->whitelistCallback !== null
+        if (
+            $this->whitelistCallback !== null
             && call_user_func($this->whitelistCallback, $request) === true
         ) {
             return $handler->handle($request);
@@ -153,7 +154,8 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      */
     protected function _validateAndUnsetTokenField(ServerRequestInterface $request): ServerRequestInterface
     {
-        if (in_array($request->getMethod(), ['PUT', 'POST', 'DELETE', 'PATCH'], true)
+        if (
+            in_array($request->getMethod(), ['PUT', 'POST', 'DELETE', 'PATCH'], true)
             || $request->getParsedBody()
         ) {
             $this->_validateToken($request);

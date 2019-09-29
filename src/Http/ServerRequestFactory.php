@@ -189,7 +189,8 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
         }
         $endsWithIndex = '/' . (Configure::read('App.webroot') ?: 'webroot') . '/index.php';
         $endsWithLength = strlen($endsWithIndex);
-        if (strlen($path) >= $endsWithLength &&
+        if (
+            strlen($path) >= $endsWithLength &&
             substr($path, -$endsWithLength) === $endsWithIndex
         ) {
             $path = '/';

@@ -46,7 +46,8 @@ class ErrorController extends Controller
         $builder = $this->viewBuilder();
         $templatePath = 'Error';
 
-        if ($this->request->getParam('prefix') &&
+        if (
+            $this->request->getParam('prefix') &&
             in_array($builder->getTemplate(), ['error400', 'error500'], true)
         ) {
             $parts = explode(DIRECTORY_SEPARATOR, (string)$builder->getTemplatePath(), -1);

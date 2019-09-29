@@ -428,7 +428,8 @@ class FixtureManager
             $configName = $db->configName();
 
             foreach ($fixtures as $name => $fixture) {
-                if ($this->isFixtureSetup($configName, $fixture)
+                if (
+                    $this->isFixtureSetup($configName, $fixture)
                     && $fixture instanceof ConstraintsInterface
                 ) {
                     $fixture->dropConstraints($db);

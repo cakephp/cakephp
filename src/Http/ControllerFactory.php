@@ -85,7 +85,8 @@ class ControllerFactory
         // Disallow plugin short forms, / and \\ from
         // controller names as they allow direct references to
         // be created.
-        if (strpos($controller, '\\') !== false ||
+        if (
+            strpos($controller, '\\') !== false ||
             strpos($controller, '/') !== false ||
             strpos($controller, '.') !== false ||
             $firstChar === strtolower($firstChar)

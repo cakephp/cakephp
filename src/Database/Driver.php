@@ -293,9 +293,17 @@ abstract class Driver implements DriverInterface
             return str_replace(',', '.', (string)$value);
         }
         /** @psalm-suppress InvalidArgument */
-        if ((is_int($value) || $value === '0') || (
-            is_numeric($value) && strpos($value, ',') === false &&
-            substr($value, 0, 1) !== '0' && strpos($value, 'e') === false)
+        if (
+            (
+                is_int($value) ||
+                $value === '0'
+            ) ||
+            (
+                is_numeric($value) &&
+                strpos($value, ',') === false &&
+                substr($value, 0, 1) !== '0' &&
+                strpos($value, 'e') === false
+            )
         ) {
             return (string)$value;
         }
