@@ -1161,6 +1161,7 @@ class Message implements JsonSerializable, Serializable
             } elseif ($fileInfo['file'] instanceof UploadedFileInterface) {
                 $fileInfo['mimetype'] = $fileInfo['file']->getClientMediaType();
                 if (is_int($name)) {
+                    /** @var string $name */
                     $name = $fileInfo['file']->getClientFilename();
                 }
             } else {
@@ -1173,7 +1174,12 @@ class Message implements JsonSerializable, Serializable
                     $name = basename($fileInfo['file']);
                 }
             }
-            if (!isset($fileInfo['mimetype']) && isset($fileInfo['file']) && function_exists('mime_content_type')) {
+            if (
+                !isset($fileInfo['mimetype'])
+                && isset($fileInfo['file'])
+                && is_string($fileInfo['file'])
+                && function_exists('mime_content_type')
+            ) {
                 $fileInfo['mimetype'] = mime_content_type($fileInfo['file']);
             }
             if (!isset($fileInfo['mimetype'])) {
