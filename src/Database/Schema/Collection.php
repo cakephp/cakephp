@@ -113,7 +113,7 @@ class Collection
      * @param string $stage The stage name.
      * @param string $name The table name.
      * @param array $config The config data.
-     * @param \Cake\Database\Schema\TableSchema $schema The table instance
+     * @param \Cake\Database\Schema\TableSchemaInterface $schema The table schema instance.
      * @return void
      * @throws \Cake\Database\Exception on query failure.
      */

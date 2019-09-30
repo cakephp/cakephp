@@ -527,6 +527,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if (!$this->_connection) {
             $this->_connection = ConnectionManager::get(static::defaultConnectionName());
         }
+
         return $this->_connection;
     }
 
