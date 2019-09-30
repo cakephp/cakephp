@@ -976,6 +976,18 @@ HTML;
         $this->assertSame($expected, $this->message->getAttachments());
     }
 
+    public function testSetAttachmentInvalidFile()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'File must be a filepath or UploadedFileInterface instance. Found `boolean` instead.'
+        );
+
+        $this->message->setAttachments(['cake.icon.gif' => [
+            'file' => true,
+        ]]);
+    }
+
     /**
      * testReset method
      *

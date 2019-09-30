@@ -1164,7 +1164,7 @@ class Message implements JsonSerializable, Serializable
                     /** @var string $name */
                     $name = $fileInfo['file']->getClientFilename();
                 }
-            } else {
+            } elseif (is_string($fileInfo['file'])) {
                 $fileName = $fileInfo['file'];
                 $fileInfo['file'] = realpath($fileInfo['file']);
                 if ($fileInfo['file'] === false || !file_exists($fileInfo['file'])) {
@@ -1173,8 +1173,14 @@ class Message implements JsonSerializable, Serializable
                 if (is_int($name)) {
                     $name = basename($fileInfo['file']);
                 }
+            } else {
+                throw new InvalidArgumentException(sprintf(
+                    'File must be a filepath or UploadedFileInterface instance. Found `%s` instead.',
+                    gettype($fileInfo['file'])
+                ));
             }
-            if (!isset($fileInfo['mimetype'])
+            if (
+                !isset($fileInfo['mimetype'])
                 && isset($fileInfo['file'])
                 && is_string($fileInfo['file'])
                 && function_exists('mime_content_type')
