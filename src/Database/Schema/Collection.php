@@ -93,7 +93,7 @@ class Collection
         if (strpos($name, '.')) {
             list($config['schema'], $name) = explode('.', $name);
         }
-        $table = new TableSchema($name);
+        $table = $this->_connection->getDriver()->newTableSchema($name);
 
         $this->_reflect('Column', $name, $config, $table);
         if (count($table->columns()) === 0) {

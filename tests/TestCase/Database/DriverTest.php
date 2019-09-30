@@ -18,6 +18,7 @@ use Cake\Database\Driver;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Query;
 use Cake\Database\QueryCompiler;
+use Cake\Database\Schema\TableSchema;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
 use PDO;
@@ -265,6 +266,17 @@ class DriverTest extends TestCase
     public function testNewCompiler()
     {
         $this->assertInstanceOf(QueryCompiler::class, $this->driver->newCompiler());
+    }
+
+    /**
+     * Test newTableSchema().
+     *
+     * @return void
+     */
+    public function testNewTableSchema()
+    {
+        $actual = $this->driver->newTableSchema('articles');
+        $this->assertInstanceOf(TableSchema::class, $actual);
     }
 
     /**
