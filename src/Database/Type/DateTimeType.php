@@ -148,7 +148,7 @@ class DateTimeType extends Type implements TypeInterface, BatchCastingInterface
             $value = $value->setTimezone($this->dbTimezone);
         }
 
-        return $value->format(array_shift($format));
+        return $value->format(array_pop($format));
     }
 
     /**
