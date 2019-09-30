@@ -436,7 +436,10 @@ abstract class Driver implements DriverInterface
      */
     public function newTableSchema($table, array $columns = [])
     {
-        $className = $this->_config['tableSchema'] ?? TableSchema::class;
+        $className = TableSchema::class;
+        if (isset($this->_config['tableSchema'])) {
+            $className = $this->_config['tableSchema'];
+        }
 
         return new $className($table, $columns);
     }
