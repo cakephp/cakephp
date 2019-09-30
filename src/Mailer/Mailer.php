@@ -161,7 +161,6 @@ use Cake\Mailer\Exception\MissingActionException;
  */
 abstract class Mailer implements EventListenerInterface
 {
-
     use ModelAwareTrait;
 
     /**

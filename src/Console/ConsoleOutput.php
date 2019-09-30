@@ -45,7 +45,6 @@ use InvalidArgumentException;
  */
 class ConsoleOutput
 {
-
     /**
      * Raw output constant - no modification of output text.
      *
@@ -82,8 +81,9 @@ class ConsoleOutput
     protected $_output;
 
     /**
-     * The current output type. Manipulated with ConsoleOutput::outputAs();
+     * The current output type.
      *
+     * @see setOutputAs() For manipulation.
      * @var int
      */
     protected $_outputAs = self::COLOR;
@@ -220,6 +220,7 @@ class ConsoleOutput
      */
     protected function _replaceTags($matches)
     {
+        /** @var array $style */
         $style = $this->styles($matches['tag']);
         if (empty($style)) {
             return '<' . $matches['tag'] . '>' . $matches['text'] . '</' . $matches['tag'] . '>';
@@ -239,7 +240,7 @@ class ConsoleOutput
             }
         }
 
-        return "\033[" . implode($styleInfo, ';') . 'm' . $matches['text'] . "\033[0m";
+        return "\033[" . implode(';', $styleInfo) . 'm' . $matches['text'] . "\033[0m";
     }
 
     /**
@@ -281,9 +282,9 @@ class ConsoleOutput
      * ```
      *
      * @param string|null $style The style to get or create.
-     * @param array|bool|null $definition The array definition of the style to change or create a style
+     * @param array|false|null $definition The array definition of the style to change or create a style
      *   or false to remove a style.
-     * @return mixed If you are getting styles, the style or null will be returned. If you are creating/modifying
+     * @return array|true|null If you are getting styles, the style or null will be returned. If you are creating/modifying
      *   styles true will be returned.
      */
     public function styles($style = null, $definition = null)

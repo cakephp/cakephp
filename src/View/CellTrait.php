@@ -23,7 +23,6 @@ use Cake\View\Exception\MissingCellException;
  */
 trait CellTrait
 {
-
     /**
      * Renders the given cell.
      *

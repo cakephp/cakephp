@@ -461,7 +461,15 @@ class NumberTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $result = $this->Number->toPercentage(0.456, 2, ['locale' => 'de-DE', 'multiply' => true]);
-        $expected = '45,60%';
+        $expected = '45,60 %';
+        $this->assertEquals($expected, $result);
+
+        $result = $this->Number->toPercentage(13, 0, ['locale' => 'fi_FI']);
+        $expected = '13 %';
+        $this->assertEquals($expected, $result);
+
+        $result = $this->Number->toPercentage(0.13, 0, ['locale' => 'fi_FI', 'multiply' => true]);
+        $expected = '13 %';
         $this->assertEquals($expected, $result);
     }
 

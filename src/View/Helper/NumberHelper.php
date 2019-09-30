@@ -29,7 +29,6 @@ use Cake\View\View;
  */
 class NumberHelper extends Helper
 {
-
     /**
      * Default config for this class
      *

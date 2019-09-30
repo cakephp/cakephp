@@ -158,6 +158,7 @@ class Client
      *   \Cake\Http\Client\Adapter\Stream.
      *
      * @param array $config Config options for scoped clients.
+     * @throws \InvalidArgumentException
      */
     public function __construct($config = [])
     {
@@ -206,6 +207,7 @@ class Client
      *
      * @param \Cake\Http\Cookie\CookieInterface $cookie Cookie object.
      * @return $this
+     * @throws \InvalidArgumentException
      */
     public function addCookie(CookieInterface $cookie)
     {
@@ -606,7 +608,7 @@ class Client
      *
      * @param array $auth The authentication options to use.
      * @param array $options The overall request options to use.
-     * @return mixed Authentication strategy instance.
+     * @return object Authentication strategy instance.
      * @throws \Cake\Core\Exception\Exception when an invalid strategy is chosen.
      */
     protected function _createAuth($auth, $options)

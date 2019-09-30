@@ -22,7 +22,6 @@ use Cake\View\Helper\IdGeneratorTrait;
  */
 class MultiCheckboxWidget implements WidgetInterface
 {
-
     use IdGeneratorTrait;
 
     /**

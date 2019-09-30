@@ -30,7 +30,6 @@ use RuntimeException;
  */
 class Hash
 {
-
     /**
      * Get a single value specified by $path out of $data.
      * Does not support the full dot notation feature set,
@@ -253,8 +252,13 @@ class Hash
                 return false;
             }
 
+            if (is_array($data)) {
+                $attrPresent = array_key_exists($attr, $data);
+            } else {
+                $attrPresent = $data->offsetExists($attr);
+            }
             // Empty attribute = fail.
-            if (!(isset($data[$attr]) || array_key_exists($attr, $data))) {
+            if (!$attrPresent) {
                 return false;
             }
 

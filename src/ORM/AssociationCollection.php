@@ -29,7 +29,6 @@ use IteratorAggregate;
  */
 class AssociationCollection implements IteratorAggregate
 {
-
     use AssociationsNormalizerTrait;
     use LocatorAwareTrait;
 

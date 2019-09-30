@@ -21,6 +21,5 @@ use Cake\Core\Exception\Exception;
  */
 class MissingMailerException extends Exception
 {
-
     protected $_messageTemplate = 'Mailer class "%s" could not be found.';
 }

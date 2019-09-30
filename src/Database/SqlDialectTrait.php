@@ -15,13 +15,13 @@
 namespace Cake\Database;
 
 use Cake\Database\Expression\Comparison;
+use Cake\Database\Expression\IdentifierExpression;
 
 /**
  * Sql dialect trait
  */
 trait SqlDialectTrait
 {
-
     /**
      * Quotes a database identifier (a column name, table name, etc..) to
      * be used safely in queries without the risk of using reserved words
@@ -222,20 +222,30 @@ trait SqlDialectTrait
 
         $conditions = $query->clause('where');
         if ($conditions) {
-            $conditions->traverse(function ($condition) {
-                if (!($condition instanceof Comparison)) {
-                    return $condition;
+            $conditions->traverse(function ($expression) {
+                if ($expression instanceof Comparison) {
+                    $field = $expression->getField();
+                    if (is_string($field) &&
+                        strpos($field, '.') !== false
+                    ) {
+                        list(, $unaliasedField) = explode('.', $field, 2);
+                        $expression->setField($unaliasedField);
+                    }
+
+                    return $expression;
                 }
 
-                $field = $condition->getField();
-                if ($field instanceof ExpressionInterface || strpos($field, '.') === false) {
-                    return $condition;
+                if ($expression instanceof IdentifierExpression) {
+                    $identifier = $expression->getIdentifier();
+                    if (strpos($identifier, '.') !== false) {
+                        list(, $unaliasedIdentifier) = explode('.', $identifier, 2);
+                        $expression->setIdentifier($unaliasedIdentifier);
+                    }
+
+                    return $expression;
                 }
 
-                list(, $field) = explode('.', $field);
-                $condition->setField($field);
-
-                return $condition;
+                return $expression;
             });
         }
 

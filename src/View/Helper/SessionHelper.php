@@ -27,7 +27,6 @@ use Cake\View\View;
  */
 class SessionHelper extends Helper
 {
-
     /**
      * Constructor
      *

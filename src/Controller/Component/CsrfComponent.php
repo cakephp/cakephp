@@ -41,7 +41,6 @@ use Cake\Utility\Security;
  */
 class CsrfComponent extends Component
 {
-
     /**
      * Default config for the CSRF handling.
      *

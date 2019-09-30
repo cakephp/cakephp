@@ -21,7 +21,6 @@ use Cake\Core\InstanceConfigTrait;
  */
 abstract class AbstractPasswordHasher
 {
-
     use InstanceConfigTrait;
 
     /**
@@ -48,7 +47,7 @@ abstract class AbstractPasswordHasher
      *
      * @param string|array $password Plain text password to hash or array of data
      *   required to generate password hash.
-     * @return string Password hash
+     * @return string|false Either the password hash string or false
      */
     abstract public function hash($password);
 

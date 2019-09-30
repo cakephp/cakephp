@@ -23,7 +23,6 @@ use RuntimeException;
  */
 class ChainMessagesLoader
 {
-
     /**
      * The list of callables to execute one after another for loading messages
      *

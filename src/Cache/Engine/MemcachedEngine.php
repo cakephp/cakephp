@@ -29,7 +29,6 @@ use Memcached;
  */
 class MemcachedEngine extends CacheEngine
 {
-
     /**
      * memcached wrapper.
      *
@@ -281,7 +280,7 @@ class MemcachedEngine extends CacheEngine
      * Read an option value from the memcached connection.
      *
      * @param string $name The option name to read.
-     * @return string|int|null|bool
+     * @return string|int|bool|null
      */
     public function getOption($name)
     {
@@ -378,7 +377,7 @@ class MemcachedEngine extends CacheEngine
      *
      * @param string $key Identifier for the data
      * @param int $offset How much to increment
-     * @return bool|int New incremented value, false otherwise
+     * @return int|false New incremented value, false otherwise
      */
     public function increment($key, $offset = 1)
     {
@@ -392,7 +391,7 @@ class MemcachedEngine extends CacheEngine
      *
      * @param string $key Identifier for the data
      * @param int $offset How much to subtract
-     * @return bool|int New decremented value, false otherwise
+     * @return int|false New decremented value, false otherwise
      */
     public function decrement($key, $offset = 1)
     {

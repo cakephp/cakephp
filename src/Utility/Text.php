@@ -21,7 +21,6 @@ use InvalidArgumentException;
  */
 class Text
 {
-
     /**
      * Default transliterator.
      *
@@ -91,7 +90,7 @@ class Text
      * @param string $separator The token to split the data on.
      * @param string $leftBound The left boundary to ignore separators in.
      * @param string $rightBound The right boundary to ignore separators in.
-     * @return array|string Array of tokens in $data or original input if empty.
+     * @return string|string[] Array of tokens in $data or original input if empty.
      */
     public static function tokenize($data, $separator = ',', $leftBound = '(', $rightBound = ')')
     {
@@ -647,7 +646,7 @@ class Text
                         if (preg_match('/<[\w]+[^>]*>/', $tag[0])) {
                             array_unshift($openTags, $tag[2]);
                         } elseif (preg_match('/<\/([\w]+)[^>]*>/', $tag[0], $closeTag)) {
-                            $pos = array_search($closeTag[1], $openTags);
+                            $pos = array_search($closeTag[1], $openTags, true);
                             if ($pos !== false) {
                                 array_splice($openTags, $pos, 1);
                             }
@@ -922,7 +921,7 @@ class Text
     /**
      * Creates a comma separated list where the last two items are joined with 'and', forming natural language.
      *
-     * @param array $list The list to be joined.
+     * @param string[] $list The list to be joined.
      * @param string|null $and The word used to join the last and second last items together with. Defaults to 'and'.
      * @param string $separator The separator used to join all the other items together. Defaults to ', '.
      * @return string The glued together string.
@@ -1045,10 +1044,10 @@ class Text
         $size = strtoupper($size);
 
         $l = -2;
-        $i = array_search(substr($size, -2), ['KB', 'MB', 'GB', 'TB', 'PB']);
+        $i = array_search(substr($size, -2), ['KB', 'MB', 'GB', 'TB', 'PB'], true);
         if ($i === false) {
             $l = -1;
-            $i = array_search(substr($size, -1), ['K', 'M', 'G', 'T', 'P']);
+            $i = array_search(substr($size, -1), ['K', 'M', 'G', 'T', 'P'], true);
         }
         if ($i !== false) {
             $size = (float)substr($size, 0, $l);

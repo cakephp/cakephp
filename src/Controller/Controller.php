@@ -86,7 +86,6 @@ use RuntimeException;
  */
 class Controller implements EventListenerInterface, EventDispatcherInterface
 {
-
     use EventDispatcherTrait;
     use LocatorAwareTrait;
     use LogTrait;
@@ -147,7 +146,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @var string
      */
-    protected $_responseClass = 'Cake\Http\Response';
+    protected $_responseClass = Response::class;
 
     /**
      * Settings for pagination.

@@ -1587,6 +1587,7 @@ class EmailTest extends TestCase
         $this->assertContains($expected, $result['message']);
         $this->assertContains('--' . $boundary . '--', $result['message']);
     }
+
     /**
      * testSendWithLog method
      *
@@ -1888,7 +1889,7 @@ class EmailTest extends TestCase
         $this->Email->setViewVars(['time' => $timestamp]);
 
         $result = $this->Email->send();
-        $dateTime = new \DateTime;
+        $dateTime = new \DateTime();
         $dateTime->setTimestamp($timestamp);
         $this->assertContains('Right now: ' . $dateTime->format($dateTime::ATOM), $result['message']);
 

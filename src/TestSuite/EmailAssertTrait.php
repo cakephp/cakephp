@@ -28,7 +28,6 @@ use Cake\Mailer\Email;
  */
 trait EmailAssertTrait
 {
-
     /**
      * @var \Cake\Mailer\Email
      */
@@ -72,7 +71,7 @@ trait EmailAssertTrait
     {
         $name = current(array_slice(explode('\\', $className), -1));
 
-        if (!in_array('profile', $methods)) {
+        if (!in_array('profile', $methods, true)) {
             $methods[] = 'profile';
         }
 

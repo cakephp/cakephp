@@ -28,7 +28,6 @@ use Exception;
  */
 class TestExceptionRenderer
 {
-
     /**
      * Simply rethrow the given exception
      *

@@ -37,13 +37,12 @@ use Zend\Diactoros\Stream;
  */
 class Response implements ResponseInterface
 {
-
     use MessageTrait;
 
     /**
      * Holds HTTP response statuses
      *
-     * @var array
+     * @var string[]
      */
     protected $_statusCodes = [
         100 => 'Continue',
@@ -763,7 +762,7 @@ class Response implements ResponseInterface
      *
      * Get/Set the Location header value.
      *
-     * @param null|string $url Either null to get the current location, or a string to set one.
+     * @param string|null $url Either null to get the current location, or a string to set one.
      * @return string|null When setting the location null will be returned. When reading the location
      *   a string of the current location header value (if any) will be returned.
      * @deprecated 3.4.0 Mutable responses are deprecated. Use `withLocation()` and `getHeaderLine()`
@@ -1105,7 +1104,7 @@ class Response implements ResponseInterface
      * type(['jpg' => 'text/plain']);
      * ```
      *
-     * @param string|null $contentType Content type key.
+     * @param string|array|null $contentType Content type key.
      * @return mixed Current content type or false if supplied an invalid content type.
      * @deprecated 3.5.5 Use getType() or withType() instead.
      */
@@ -1210,7 +1209,7 @@ class Response implements ResponseInterface
      * e.g `getMimeType('pdf'); // returns 'application/pdf'`
      *
      * @param string $alias the content type alias to map
-     * @return mixed String mapped mime type or false if $alias is not mapped
+     * @return string|array|false String mapped mime type or false if $alias is not mapped
      */
     public function getMimeType($alias)
     {
@@ -1934,7 +1933,7 @@ class Response implements ResponseInterface
     public function outputCompressed()
     {
         return strpos(env('HTTP_ACCEPT_ENCODING'), 'gzip') !== false
-            && (ini_get('zlib.output_compression') === '1' || in_array('ob_gzhandler', ob_list_handlers()));
+            && (ini_get('zlib.output_compression') === '1' || in_array('ob_gzhandler', ob_list_handlers(), true));
     }
 
     /**
@@ -2082,7 +2081,7 @@ class Response implements ResponseInterface
         $responseTag = $this->getHeaderLine('Etag');
         $etagMatches = null;
         if ($responseTag) {
-            $etagMatches = in_array('*', $etags) || in_array($responseTag, $etags);
+            $etagMatches = in_array('*', $etags, true) || in_array($responseTag, $etags, true);
         }
 
         $modifiedSince = $request->getHeaderLine('If-Modified-Since');

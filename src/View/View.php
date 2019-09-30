@@ -74,7 +74,6 @@ use RuntimeException;
  */
 class View implements EventDispatcherInterface
 {
-
     use CellTrait {
         cell as public;
     }
@@ -232,7 +231,7 @@ class View implements EventDispatcherInterface
     /**
      * List of variables to collect from the associated controller.
      *
-     * @var array
+     * @var string[]
      */
     protected $_passedVars = [
         'viewVars', 'autoLayout', 'helpers', 'template', 'layout', 'name', 'theme',
@@ -278,7 +277,7 @@ class View implements EventDispatcherInterface
     /**
      * Content stack, used for nested templates that all use View::extend();
      *
-     * @var array
+     * @var string[]
      */
     protected $_stack = [];
 
@@ -1167,7 +1166,7 @@ class View implements EventDispatcherInterface
         $c = 1;
         $url = Router::url($url);
         $hash = $object . substr(md5($object . $url), 0, 10);
-        while (in_array($hash, $this->uuids)) {
+        while (in_array($hash, $this->uuids, true)) {
             $hash = $object . substr(md5($object . $url . $c), 0, 10);
             $c++;
         }

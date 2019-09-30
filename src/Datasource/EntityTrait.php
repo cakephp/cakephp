@@ -26,7 +26,6 @@ use Traversable;
  */
 trait EntityTrait
 {
-
     /**
      * Holds all properties and their values for this entity
      *
@@ -453,7 +452,7 @@ trait EntityTrait
      * will be returned. Otherwise the hidden properties will be set.
      *
      * @deprecated 3.4.0 Use EntityTrait::setHidden() and EntityTrait::getHidden()
-     * @param null|array $properties Either an array of properties to hide or null to get properties
+     * @param array|null $properties Either an array of properties to hide or null to get properties
      * @return array|$this
      */
     public function hiddenProperties($properties = null)
@@ -508,7 +507,7 @@ trait EntityTrait
      * will be returned. Otherwise the virtual properties will be set.
      *
      * @deprecated 3.4.0 Use EntityTrait::getVirtual() and EntityTrait::setVirtual()
-     * @param null|array $properties Either an array of properties to treat as virtual or null to get properties
+     * @param array|null $properties Either an array of properties to treat as virtual or null to get properties
      * @return array|$this
      */
     public function virtualProperties($properties = null)
@@ -797,7 +796,7 @@ trait EntityTrait
      *
      * @deprecated 3.4.0 Use EntityTrait::setDirty() and EntityTrait::isDirty()
      * @param string|null $property the field to set or check status for
-     * @param null|bool $isDirty true means the property was changed, false means
+     * @param bool|null $isDirty true means the property was changed, false means
      * it was not changed and null will make the function return current state
      * for that property
      * @return bool Whether the property was changed or not
@@ -983,21 +982,21 @@ trait EntityTrait
      * $entity->setErrors(['salary' => ['message'], 'name' => ['another message']]);
      * ```
      *
-     * @param array $fields The array of errors to set.
+     * @param array $errors The array of errors to set.
      * @param bool $overwrite Whether or not to overwrite pre-existing errors for $fields
      * @return $this
      */
-    public function setErrors(array $fields, $overwrite = false)
+    public function setErrors(array $errors, $overwrite = false)
     {
         if ($overwrite) {
-            foreach ($fields as $f => $error) {
+            foreach ($errors as $f => $error) {
                 $this->_errors[$f] = (array)$error;
             }
 
             return $this;
         }
 
-        foreach ($fields as $f => $error) {
+        foreach ($errors as $f => $error) {
             $this->_errors += [$f => []];
 
             // String messages are appended to the list,
@@ -1207,7 +1206,7 @@ trait EntityTrait
      * Get a single value of an invalid field. Returns null if not set.
      *
      * @param string $field The name of the field.
-     * @return mixed
+     * @return mixed|null
      */
     public function getInvalidField($field)
     {

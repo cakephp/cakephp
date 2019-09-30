@@ -174,6 +174,7 @@ class ServerRequestTest extends TestCase
         $request = new ServerRequest('/');
         $this->assertEquals('/', $request->getUri()->getPath());
     }
+
     /**
      * Test that querystring args provided in the URL string are parsed.
      *
@@ -3354,7 +3355,7 @@ XML;
     public function testSession()
     {
         $this->deprecated(function () {
-            $session = new Session;
+            $session = new Session();
             $request = new ServerRequest(['session' => $session]);
             $this->assertSame($session, $request->session());
 
@@ -3370,7 +3371,7 @@ XML;
      */
     public function testGetSession()
     {
-        $session = new Session;
+        $session = new Session();
         $request = new ServerRequest(['session' => $session]);
         $this->assertSame($session, $request->getSession());
 

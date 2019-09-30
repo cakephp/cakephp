@@ -610,7 +610,7 @@ class Response extends Message implements ResponseInterface
     /**
      * Get the response body as XML decoded data.
      *
-     * @return null|\SimpleXMLElement
+     * @return \SimpleXMLElement|null
      */
     public function getXml()
     {
@@ -620,7 +620,7 @@ class Response extends Message implements ResponseInterface
     /**
      * Get the response body as XML decoded data.
      *
-     * @return null|\SimpleXMLElement
+     * @return \SimpleXMLElement|null
      */
     protected function _getXml()
     {

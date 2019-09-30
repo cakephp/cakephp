@@ -28,7 +28,6 @@ use RuntimeException;
  */
 class StringTemplate
 {
-
     use InstanceConfigTrait {
         getConfig as get;
     }
@@ -151,7 +150,7 @@ class StringTemplate
      * ]);
      * ```
      *
-     * @param array $templates An associative list of named templates.
+     * @param string[] $templates An associative list of named templates.
      * @return $this
      */
     public function add(array $templates)
@@ -165,7 +164,7 @@ class StringTemplate
     /**
      * Compile templates into a more efficient printf() compatible format.
      *
-     * @param array $templates The template names to compile. If empty all templates will be compiled.
+     * @param string[] $templates The template names to compile. If empty all templates will be compiled.
      * @return void
      */
     protected function _compileTemplates(array $templates = [])
@@ -334,7 +333,7 @@ class StringTemplate
      * @param array|string $input The array or string to add the class to
      * @param array|string $newClass the new class or classes to add
      * @param string $useIndex if you are inputting an array with an element other than default of 'class'.
-     * @return array|string
+     * @return string|string[]
      */
     public function addClass($input, $newClass, $useIndex = 'class')
     {

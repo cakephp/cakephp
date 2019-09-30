@@ -34,7 +34,6 @@ use PHPUnit\Framework\TestCase as BaseTestCase;
  */
 abstract class TestCase extends BaseTestCase
 {
-
     use LocatorAwareTrait;
 
     /**
@@ -227,14 +226,14 @@ abstract class TestCase extends BaseTestCase
      *
      * Useful in test case teardown methods.
      *
-     * @param array $plugins A list of plugins you want to remove.
+     * @param string[] $names A list of plugins you want to remove.
      * @return void
      */
-    public function removePlugins(array $plugins = [])
+    public function removePlugins(array $names = [])
     {
         $collection = Plugin::getCollection();
-        foreach ($plugins as $plugin) {
-            $collection->remove($plugin);
+        foreach ($names as $name) {
+            $collection->remove($name);
         }
     }
 
@@ -492,7 +491,7 @@ abstract class TestCase extends BaseTestCase
                 $tags = (string)$tags;
             }
             $i++;
-            if (is_string($tags) && $tags{0} === '<') {
+            if (is_string($tags) && $tags[0] === '<') {
                 $tags = [substr($tags, 1) => []];
             } elseif (is_string($tags)) {
                 $tagsTrimmed = preg_replace('/\s+/m', '', $tags);
@@ -734,7 +733,7 @@ abstract class TestCase extends BaseTestCase
      * Mock a model, maintain fixtures and table association
      *
      * @param string $alias The model to get a mock for.
-     * @param array|null $methods The list of methods to mock
+     * @param string[]|null $methods The list of methods to mock
      * @param array $options The config data for the mock's constructor.
      * @throws \Cake\ORM\Exception\MissingTableClassException
      * @return \Cake\ORM\Table|\PHPUnit_Framework_MockObject_MockObject

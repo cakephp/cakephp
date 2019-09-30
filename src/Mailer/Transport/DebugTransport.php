@@ -25,7 +25,6 @@ use Cake\Mailer\Email;
  */
 class DebugTransport extends AbstractTransport
 {
-
     /**
      * Send mail
      *

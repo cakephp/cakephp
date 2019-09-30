@@ -22,7 +22,6 @@ use Cake\Filesystem\File;
  */
 class LoadTask extends Shell
 {
-
     /**
      * Path to the bootstrap file.
      *

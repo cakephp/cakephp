@@ -51,14 +51,13 @@ use Cake\Http\ServerRequest;
  */
 class BasicAuthenticate extends BaseAuthenticate
 {
-
     /**
      * Authenticate a user using HTTP auth. Will use the configured User model and attempt a
      * login using HTTP auth.
      *
      * @param \Cake\Http\ServerRequest $request The request to authenticate with.
      * @param \Cake\Http\Response $response The response to add headers to.
-     * @return mixed Either false on failure, or an array of user data on success.
+     * @return array|false Either false on failure, or an array of user data on success.
      */
     public function authenticate(ServerRequest $request, Response $response)
     {
@@ -69,7 +68,7 @@ class BasicAuthenticate extends BaseAuthenticate
      * Get a user based on information in the request. Used by cookie-less auth for stateless clients.
      *
      * @param \Cake\Http\ServerRequest $request Request object.
-     * @return mixed Either false or an array of user information
+     * @return array|false Either false or an array of user information
      */
     public function getUser(ServerRequest $request)
     {
@@ -102,7 +101,7 @@ class BasicAuthenticate extends BaseAuthenticate
      * Generate the login headers
      *
      * @param \Cake\Http\ServerRequest $request Request object.
-     * @return array Headers for logging in.
+     * @return string[] Headers for logging in.
      */
     public function loginHeaders(ServerRequest $request)
     {

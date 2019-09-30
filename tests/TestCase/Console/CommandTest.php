@@ -368,7 +368,7 @@ class CommandTest extends TestCase
         $this->expectExceptionMessage("Command 'stdClass' is not a subclass");
 
         $command = new Command();
-        $command->executeCommand(new \stdClass, [], $this->getMockIo(new ConsoleOutput()));
+        $command->executeCommand(new \stdClass(), [], $this->getMockIo(new ConsoleOutput()));
     }
 
     protected function getMockIo($output)

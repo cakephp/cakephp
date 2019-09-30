@@ -24,7 +24,6 @@ use Cake\Collection\CollectionInterface;
  */
 class ExtractIterator extends Collection
 {
-
     /**
      * A callable responsible for extracting a single value for each
      * item in the collection.
@@ -98,6 +97,7 @@ class ExtractIterator extends Collection
         $callback = $this->_extractor;
         $res = [];
 
+        /** @var \ArrayObject $iterator */
         foreach ($iterator->getArrayCopy() as $k => $v) {
             $res[$k] = $callback($v);
         }

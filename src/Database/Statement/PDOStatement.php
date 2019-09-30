@@ -23,7 +23,6 @@ use PDOStatement as Statement;
  */
 class PDOStatement extends StatementDecorator
 {
-
     /**
      * Constructor
      *

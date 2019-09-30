@@ -20,7 +20,6 @@ namespace Cake\TestSuite\Constraint\Console;
  */
 class ContentsContainRow extends ContentsRegExp
 {
-
     /**
      * Checks if contents contain expected
      *
@@ -54,6 +53,6 @@ class ContentsContainRow extends ContentsRegExp
      */
     public function failureDescription($other)
     {
-        return $this->exporter->shortenedExport($other) . ' ' . $this->toString();
+        return '`' . $this->exporter->shortenedExport($other) . '` ' . $this->toString();
     }
 }

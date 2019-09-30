@@ -24,7 +24,6 @@ use Cake\Utility\Hash;
  */
 trait InstanceConfigTrait
 {
-
     /**
      * Runtime config
      *
@@ -111,7 +110,7 @@ trait InstanceConfigTrait
      *
      * @param string|null $key The key to get or null for the whole config.
      * @param mixed $default The return value when the key does not exist.
-     * @return mixed Config value being read.
+     * @return mixed Configuration data at the named key or null if the key does not exist.
      */
     public function getConfig($key = null, $default = null)
     {

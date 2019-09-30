@@ -31,14 +31,15 @@ class ExceptionsTest extends TestCase
      * Tests simple exceptions work.
      *
      * @dataProvider exceptionProvider
-     * @param $class The exception class name
-     * @param $defaultCode The default exception code
+     * @param string $class The exception class name
+     * @param int $defaultCode The default exception code
      * @return void
      */
     public function testSimpleException($class, $defaultCode)
     {
         $previous = new Exception();
 
+        /** @var \Exception $exception */
         $exception = new $class('message', 100, $previous);
         $this->assertSame('message', $exception->getMessage());
         $this->assertSame(100, $exception->getCode());
@@ -110,7 +111,7 @@ class ExceptionsTest extends TestCase
         $this->assertSame($previous, $exception->getPrevious());
         $this->assertSame($entity, $exception->getEntity());
 
-        $exception = new PersistenceFailedException(new Entity, 'message', null, $previous);
+        $exception = new PersistenceFailedException(new Entity(), 'message', null, $previous);
         $this->assertSame('message', $exception->getMessage());
         $this->assertSame(500, $exception->getCode());
         $this->assertSame($previous, $exception->getPrevious());
@@ -124,12 +125,12 @@ class ExceptionsTest extends TestCase
     public function exceptionProvider()
     {
         return [
-            ['Cake\Console\Exception\ConsoleException', 500],
-            ['Cake\Console\Exception\MissingHelperException', 500],
-            ['Cake\Console\Exception\MissingShellException', 500],
-            ['Cake\Console\Exception\MissingShellMethodException', 500],
-            ['Cake\Console\Exception\MissingTaskException', 500],
-            ['Cake\Console\Exception\StopException', 500],
+            ['Cake\Console\Exception\ConsoleException', 1],
+            ['Cake\Console\Exception\MissingHelperException', 1],
+            ['Cake\Console\Exception\MissingShellException', 1],
+            ['Cake\Console\Exception\MissingShellMethodException', 1],
+            ['Cake\Console\Exception\MissingTaskException', 1],
+            ['Cake\Console\Exception\StopException', 1],
             ['Cake\Controller\Exception\AuthSecurityException', 400],
             ['Cake\Controller\Exception\MissingActionException', 404],
             ['Cake\Controller\Exception\MissingComponentException', 500],

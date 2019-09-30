@@ -29,7 +29,6 @@ use Exception;
  */
 class TimeHelper extends Helper
 {
-
     use StringTemplateTrait;
 
     /**
@@ -46,8 +45,8 @@ class TimeHelper extends Helper
      *
      * Will use the provided timezone, or default output timezone if defined.
      *
-     * @param null|string|\DateTimeZone $timezone The override timezone if applicable.
-     * @return null|string|\DateTimeZone The chosen timezone or null.
+     * @param \DateTimeZone|string|null $timezone The override timezone if applicable.
+     * @return \DateTimeZone|string|null The chosen timezone or null.
      */
     protected function _getTimezone($timezone)
     {

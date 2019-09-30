@@ -28,7 +28,6 @@ use Cake\ORM\Rule\ValidCount;
  */
 class RulesChecker extends BaseRulesChecker
 {
-
     /**
      * Returns a callable that can be used as a rule for checking the uniqueness of a value
      * in the table.
@@ -39,7 +38,7 @@ class RulesChecker extends BaseRulesChecker
      * $rules->add($rules->isUnique(['email'], 'The email should be unique'));
      * ```
      *
-     * @param array $fields The list of fields to check for uniqueness.
+     * @param string[] $fields The list of fields to check for uniqueness.
      * @param string|array|null $message The error message to show in case the rule does not pass. Can
      *   also be an array of options. When an array, the 'message' key can be used to provide a message.
      * @return callable

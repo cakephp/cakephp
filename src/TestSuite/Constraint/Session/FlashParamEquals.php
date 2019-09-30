@@ -23,7 +23,6 @@ use PHPUnit\Framework\Constraint\Constraint;
  */
 class FlashParamEquals extends Constraint
 {
-
     /**
      * @var \Cake\Http\Session
      */
@@ -101,9 +100,9 @@ class FlashParamEquals extends Constraint
     public function toString()
     {
         if ($this->at !== null) {
-            return sprintf('was in \'%s\' %s #%d', $this->key, $this->param, $this->at);
+            return sprintf('is in \'%s\' %s #%d', $this->key, $this->param, $this->at);
         }
 
-        return sprintf('was in \'%s\' %s', $this->key, $this->param);
+        return sprintf('is in \'%s\' %s', $this->key, $this->param);
     }
 }

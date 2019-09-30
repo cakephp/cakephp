@@ -27,7 +27,6 @@ use PDO;
  */
 class StringType extends Type implements OptionalConvertInterface, TypeInterface
 {
-
     /**
      * Convert string data into the database format.
      *
@@ -84,7 +83,7 @@ class StringType extends Type implements OptionalConvertInterface, TypeInterface
     }
 
     /**
-     * Marshalls request data into PHP strings.
+     * Marshals request data into PHP strings.
      *
      * @param mixed $value The value to convert.
      * @return string|null Converted value.

@@ -147,7 +147,7 @@ class CsrfProtectionMiddleware
      */
     protected function _validateAndUnsetTokenField(ServerRequest $request)
     {
-        if (in_array($request->getMethod(), ['PUT', 'POST', 'DELETE', 'PATCH']) || $request->getData()) {
+        if (in_array($request->getMethod(), ['PUT', 'POST', 'DELETE', 'PATCH'], true) || $request->getData()) {
             $this->_validateToken($request);
             $body = $request->getParsedBody();
             if (is_array($body)) {

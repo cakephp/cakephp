@@ -21,7 +21,6 @@ use Cake\ORM\TableRegistry;
  */
 trait LocatorAwareTrait
 {
-
     /**
      * Table locator instance
      *

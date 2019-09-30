@@ -28,7 +28,6 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class Route
 {
-
     /**
      * An array of named segments in a Route.
      * `/:controller/:action/:id` has 3 key elements
@@ -83,7 +82,7 @@ class Route
     /**
      * List of connected extensions for this route.
      *
-     * @var array
+     * @var string[]
      */
     protected $_extensions = [];
 
@@ -143,7 +142,7 @@ class Route
      * Get/Set the supported extensions for this route.
      *
      * @deprecated 3.3.9 Use getExtensions/setExtensions instead.
-     * @param null|string|array $extensions The extensions to set. Use null to get.
+     * @param array|string|null $extensions The extensions to set. Use null to get.
      * @return array|null The extensions or null.
      */
     public function extensions($extensions = null)
@@ -161,7 +160,7 @@ class Route
     /**
      * Set the supported extensions for this route.
      *
-     * @param array $extensions The extensions to set.
+     * @param string[] $extensions The extensions to set.
      * @return $this
      */
     public function setExtensions(array $extensions)
@@ -177,7 +176,7 @@ class Route
     /**
      * Get the supported extensions for this route.
      *
-     * @return array
+     * @return string[]
      */
     public function getExtensions()
     {
@@ -187,7 +186,7 @@ class Route
     /**
      * Set the accepted HTTP methods for this route.
      *
-     * @param array $methods The HTTP methods to accept.
+     * @param string[] $methods The HTTP methods to accept.
      * @return $this
      * @throws \InvalidArgumentException
      */
@@ -211,12 +210,12 @@ class Route
      * If any of your patterns contain multibyte values, the `multibytePattern`
      * mode will be enabled.
      *
-     * @param array $patterns The patterns to apply to routing elements
+     * @param string[] $patterns The patterns to apply to routing elements
      * @return $this
      */
     public function setPatterns(array $patterns)
     {
-        $patternValues = implode("", $patterns);
+        $patternValues = implode('', $patterns);
         if (mb_strlen($patternValues) < strlen($patternValues)) {
             $this->options['multibytePattern'] = true;
         }
@@ -241,7 +240,7 @@ class Route
     /**
      * Set the names of parameters that will be converted into passed parameters
      *
-     * @param array $names The names of the parameters that should be passed.
+     * @param string[] $names The names of the parameters that should be passed.
      * @return $this
      */
     public function setPass(array $names)
@@ -280,7 +279,7 @@ class Route
      */
     public function compiled()
     {
-        return !empty($this->_compiledRoute);
+        return $this->_compiledRoute !== null;
     }
 
     /**

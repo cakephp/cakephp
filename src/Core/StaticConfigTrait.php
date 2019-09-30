@@ -27,7 +27,6 @@ use LogicException;
  */
 trait StaticConfigTrait
 {
-
     /**
      * Configuration sets.
      *
@@ -110,7 +109,7 @@ trait StaticConfigTrait
      * Reads existing configuration.
      *
      * @param string $key The name of the configuration.
-     * @return array|null Array of configuration data.
+     * @return mixed Configuration data at the named key or null if the key does not exist.
      */
     public static function getConfig($key)
     {

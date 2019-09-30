@@ -25,7 +25,6 @@ use NumberFormatter;
  */
 class Number
 {
-
     /**
      * Default locale
      *
@@ -113,12 +112,12 @@ class Number
      */
     public static function toPercentage($value, $precision = 2, array $options = [])
     {
-        $options += ['multiply' => false];
-        if ($options['multiply']) {
-            $value *= 100;
+        $options += ['multiply' => false, 'type' => NumberFormatter::PERCENT];
+        if (!$options['multiply']) {
+            $value /= 100;
         }
 
-        return static::precision($value, $precision, $options) . '%';
+        return static::precision($value, $precision, $options);
     }
 
     /**

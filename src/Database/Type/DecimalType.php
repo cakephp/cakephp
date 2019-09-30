@@ -70,7 +70,7 @@ class DecimalType extends Type implements TypeInterface, BatchCastingInterface
     /**
      * Convert integer data into the database format.
      *
-     * @param string|int|float $value The value to convert.
+     * @param mixed $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return string|null
      * @throws \InvalidArgumentException
@@ -96,10 +96,9 @@ class DecimalType extends Type implements TypeInterface, BatchCastingInterface
     /**
      * Convert float values to PHP floats
      *
-     * @param null|string|resource $value The value to convert.
+     * @param mixed $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return float|null
-     * @throws \Cake\Core\Exception\Exception
      */
     public function toPHP($value, Driver $driver)
     {
@@ -113,7 +112,7 @@ class DecimalType extends Type implements TypeInterface, BatchCastingInterface
     /**
      * {@inheritDoc}
      *
-     * @return array
+     * @return float[]
      */
     public function manyToPHP(array $values, array $fields, Driver $driver)
     {
@@ -141,10 +140,10 @@ class DecimalType extends Type implements TypeInterface, BatchCastingInterface
     }
 
     /**
-     * Marshalls request data into PHP floats.
+     * Marshals request data into PHP floats.
      *
      * @param mixed $value The value to convert.
-     * @return mixed Converted value.
+     * @return float|string|null Converted value.
      */
     public function marshal($value)
     {
@@ -170,6 +169,7 @@ class DecimalType extends Type implements TypeInterface, BatchCastingInterface
      *
      * @param bool $enable Whether or not to enable
      * @return $this
+     * @throws \RuntimeException
      */
     public function useLocaleParser($enable = true)
     {

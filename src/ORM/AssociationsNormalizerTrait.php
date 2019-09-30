@@ -20,7 +20,6 @@ namespace Cake\ORM;
  */
 trait AssociationsNormalizerTrait
 {
-
     /**
      * Returns an array out of the original passed associations list where dot notation
      * is transformed into nested arrays so that they can be parsed by other routines

@@ -19,7 +19,6 @@ use Cake\Core\Exception\Exception;
  */
 class MissingDispatcherFilterException extends Exception
 {
-
     /**
      * {@inheritDoc}
      */

@@ -23,7 +23,6 @@ use RecursiveIteratorIterator;
  */
 class TreePrinter extends RecursiveIteratorIterator
 {
-
     use CollectionTrait;
 
     /**

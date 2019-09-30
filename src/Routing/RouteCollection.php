@@ -30,7 +30,6 @@ use RuntimeException;
  */
 class RouteCollection
 {
-
     /**
      * The routes connected to this collection.
      *
@@ -83,7 +82,7 @@ class RouteCollection
     /**
      * Route extensions
      *
-     * @var array
+     * @var string[]
      */
     protected $_extensions = [];
 
@@ -222,7 +221,7 @@ class RouteCollection
      * and newer style urls containing '_name'
      *
      * @param array $url The url to match.
-     * @return array The set of names of the url
+     * @return string[] The set of names of the url
      */
     protected function _getNames($url)
     {
@@ -370,11 +369,11 @@ class RouteCollection
     /**
      * Get/set the extensions that the route collection could handle.
      *
-     * @param null|string|array $extensions Either the list of extensions to set,
+     * @param string[]|string|null $extensions Either the list of extensions to set,
      *   or null to get.
      * @param bool $merge Whether to merge with or override existing extensions.
      *   Defaults to `true`.
-     * @return array The valid extensions.
+     * @return string[] The valid extensions.
      * @deprecated 3.5.0 Use getExtensions()/setExtensions() instead.
      */
     public function extensions($extensions = null, $merge = true)
@@ -393,7 +392,7 @@ class RouteCollection
     /**
      * Get the extensions that can be handled.
      *
-     * @return array The valid extensions.
+     * @return string[] The valid extensions.
      */
     public function getExtensions()
     {
@@ -403,7 +402,7 @@ class RouteCollection
     /**
      * Set the extensions that the route collection can handle.
      *
-     * @param array $extensions The list of extensions to set.
+     * @param string[] $extensions The list of extensions to set.
      * @param bool $merge Whether to merge with or override existing extensions.
      *   Defaults to `true`.
      * @return $this
@@ -430,6 +429,7 @@ class RouteCollection
      * @param string $name The name of the middleware. Used when applying middleware to a scope.
      * @param callable|string $middleware The middleware callable or class name to register.
      * @return $this
+     * @throws \RuntimeException
      */
     public function registerMiddleware($name, $middleware)
     {
@@ -442,8 +442,9 @@ class RouteCollection
      * Add middleware to a middleware group
      *
      * @param string $name Name of the middleware group
-     * @param array $middlewareNames Names of the middleware
+     * @param string[] $middlewareNames Names of the middleware
      * @return $this
+     * @throws \RuntimeException
      */
     public function middlewareGroup($name, array $middlewareNames)
     {
@@ -527,7 +528,7 @@ class RouteCollection
     /**
      * Get an array of middleware given a list of names
      *
-     * @param array $names The names of the middleware or groups to fetch
+     * @param string[] $names The names of the middleware or groups to fetch
      * @return array An array of middleware. If any of the passed names are groups,
      *   the groups middleware will be flattened into the returned list.
      * @throws \RuntimeException when a requested middleware does not exist.

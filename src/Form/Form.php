@@ -142,7 +142,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
     public function schema(Schema $schema = null)
     {
         if ($schema === null && empty($this->_schema)) {
-            $schema = $this->_buildSchema(new $this->_schemaClass);
+            $schema = $this->_buildSchema(new $this->_schemaClass());
         }
         if ($schema) {
             $this->_schema = $schema;
@@ -185,7 +185,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
         );
 
         if ($validator === null && empty($this->_validator)) {
-            $validator = $this->_buildValidator(new $this->_validatorClass);
+            $validator = $this->_buildValidator(new $this->_validatorClass());
         }
         if ($validator) {
             $this->_validator = $validator;

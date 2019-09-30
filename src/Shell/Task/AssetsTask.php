@@ -24,7 +24,6 @@ use Cake\Utility\Inflector;
  */
 class AssetsTask extends Shell
 {
-
     /**
      * Attempt to symlink plugin assets to app's webroot. If symlinking fails it
      * fallbacks to copying the assets. For vendor namespaced plugin, parent folder

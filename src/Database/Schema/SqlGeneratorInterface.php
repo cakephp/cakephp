@@ -21,7 +21,6 @@ use Cake\Database\Connection;
  */
 interface SqlGeneratorInterface
 {
-
     /**
      * Generate the SQL to create the Table.
      *

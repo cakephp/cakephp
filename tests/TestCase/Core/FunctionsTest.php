@@ -64,7 +64,7 @@ class FunctionsTest extends TestCase
             [null, null],
             [1, 1],
             [1.1, 1.1],
-            [new \stdClass, '(object)stdClass'],
+            [new \stdClass(), '(object)stdClass'],
             [new Response(), ''],
             [['clean', '"clean-me'], ['clean', '&quot;clean-me']],
         ];

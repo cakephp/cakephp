@@ -5,6 +5,7 @@ php:
   - 5.6
   - 7.2
   - 7.3
+  - '7.4snapshot'
 
 dist: trusty
 
@@ -45,9 +46,15 @@ matrix:
     - php: 7.1
       env: CODECOVERAGE=1 DEFAULT=0
 
+  allow_failures:
+    - php: '7.4snapshot'
+
 before_install:
   - echo cakephp version && tail -1 VERSION.txt
-  - phpenv config-rm xdebug.ini
+  - |
+      if [[ ${TRAVIS_PHP_VERSION} != "7.4snapshot" ]]; then
+        phpenv config-rm xdebug.ini
+      fi
 
   - if [ $DB = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE cakephp_test;'; fi
   - if [ $DB = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE cakephp_test2;'; fi
@@ -58,6 +65,7 @@ before_install:
   - if [ $DB = 'pgsql' ]; then psql -c 'CREATE SCHEMA test3;' -U postgres -d cakephp_test; fi
 
   - pecl channel-update pecl.php.net
+  - if [[ $CODECOVERAGE == 1 ]]; then pecl install pcov; fi
   - |
       if [[ ${TRAVIS_PHP_VERSION} != "5.6" ]]; then
         echo 'extension = memcached.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini;
@@ -66,7 +74,7 @@ before_install:
   - echo 'extension = apcu.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - echo 'apc.enable_cli = 1' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 
-  - if [[ ${TRAVIS_PHP_VERSION:0:1} == "7" ]] ; then echo "yes" | pecl install channel://pecl.php.net/apcu-5.1.5 || true; fi
+  - if [[ ${TRAVIS_PHP_VERSION:0:1} == "7" ]] ; then echo "yes" | pecl install channel://pecl.php.net/apcu-5.1.17 || true; fi
   - if [[ ${TRAVIS_PHP_VERSION:0:1} == "5" ]] ; then echo "yes" | pecl install apcu-4.0.11 || true; fi
   - |
       if [[ ${TRAVIS_PHP_VERSION:0:1} == "5" && $DB = 'mysql' ]]; then
@@ -83,7 +91,8 @@ before_install:
   - sudo locale-gen da_DK
 
 before_script:
-  - if [[ $PREFER_LOWEST != 1 ]]; then composer install --prefer-source --no-interaction; fi
+  - if [[ $CODECOVERAGE == 1 ]]; then composer require --dev pcov/clobber; fi
+  - if [[ $CODECOVERAGE == 0 && $PREFER_LOWEST != 1 ]]; then composer install --no-interaction; fi
   - if [[ $PREFER_LOWEST == 1 ]]; then composer update --prefer-lowest --prefer-stable --prefer-dist --no-interaction; fi
   - if [[ $PREFER_LOWEST == 1 ]]; then composer require --dev dereuromark/composer-prefer-lowest; fi
 
@@ -91,7 +100,7 @@ script:
   - if [[ $DEFAULT == 1 ]]; then vendor/bin/phpunit; fi
   - if [[ $PREFER_LOWEST == 1 ]]; then vendor/bin/validate-prefer-lowest; fi
 
-  - if [[ $CODECOVERAGE == 1 ]]; then phpdbg -qrr vendor/bin/phpunit --coverage-clover=clover.xml; fi
+  - if [[ $CODECOVERAGE == 1 ]]; then vendor/bin/pcov clobber; vendor/bin/phpunit --coverage-clover=clover.xml; fi
 
   - if [[ $CHECKS == 1 ]]; then composer require --dev phpstan/phpstan:^0.11 && vendor/bin/phpstan analyse -c phpstan.neon -l 2 src/; fi
   - if [[ $CHECKS == 1 ]]; then composer cs-check; fi

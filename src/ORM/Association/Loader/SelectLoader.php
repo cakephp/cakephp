@@ -28,7 +28,6 @@ use RuntimeException;
  */
 class SelectLoader
 {
-
     /**
      * The alias of the association loading the results
      *
@@ -276,7 +275,7 @@ class SelectLoader
      * filtering needs to be done using a subquery.
      *
      * @param \Cake\ORM\Query $query Target table's query
-     * @param string|array $key the fields that should be used for filtering
+     * @param string|string[] $key the fields that should be used for filtering
      * @param \Cake\ORM\Query $subquery The Subquery to use for filtering
      * @return \Cake\ORM\Query
      */
@@ -334,7 +333,7 @@ class SelectLoader
      * from $keys with the tuple values in $filter using the provided operator.
      *
      * @param \Cake\ORM\Query $query Target table's query
-     * @param array $keys the fields that should be used for filtering
+     * @param string[] $keys the fields that should be used for filtering
      * @param mixed $filter the value that should be used to match for $key
      * @param string $operator The operator for comparing the tuples
      * @return \Cake\Database\Expression\TupleComparison
@@ -357,7 +356,8 @@ class SelectLoader
      * which the filter should be applied
      *
      * @param array $options The options for getting the link field.
-     * @return string|array
+     * @return string|string[]
+     * @throws \RuntimeException
      */
     protected function _linkField($options)
     {
@@ -459,8 +459,8 @@ class SelectLoader
     protected function _buildResultMap($fetchQuery, $options)
     {
         $resultMap = [];
-        $singleResult = in_array($this->associationType, [Association::MANY_TO_ONE, Association::ONE_TO_ONE]);
-        $keys = in_array($this->associationType, [Association::ONE_TO_ONE, Association::ONE_TO_MANY]) ?
+        $singleResult = in_array($this->associationType, [Association::MANY_TO_ONE, Association::ONE_TO_ONE], true);
+        $keys = in_array($this->associationType, [Association::ONE_TO_ONE, Association::ONE_TO_MANY], true) ?
             $this->foreignKey :
             $this->bindingKey;
         $key = (array)$keys;
@@ -524,7 +524,7 @@ class SelectLoader
      * be done with multiple foreign keys
      *
      * @param array $resultMap A keyed arrays containing the target table
-     * @param array $sourceKeys An array with aliased keys to match
+     * @param string[] $sourceKeys An array with aliased keys to match
      * @param string $nestKey The key under which results should be nested
      * @return \Closure
      */

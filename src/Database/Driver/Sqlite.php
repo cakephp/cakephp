@@ -26,7 +26,6 @@ use PDO;
  */
 class Sqlite extends Driver
 {
-
     use SqliteDialectTrait;
 
     /**
@@ -91,7 +90,7 @@ class Sqlite extends Driver
      */
     public function enabled()
     {
-        return in_array('sqlite', PDO::getAvailableDrivers());
+        return in_array('sqlite', PDO::getAvailableDrivers(), true);
     }
 
     /**

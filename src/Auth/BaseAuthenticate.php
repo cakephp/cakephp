@@ -139,8 +139,8 @@ abstract class BaseAuthenticate implements EventListenerInterface
             $result->unsetProperty($passwordField);
         }
         $hidden = $result->getHidden();
-        if ($password === null && in_array($passwordField, $hidden)) {
-            $key = array_search($passwordField, $hidden);
+        if ($password === null && in_array($passwordField, $hidden, true)) {
+            $key = array_search($passwordField, $hidden, true);
             unset($hidden[$key]);
             $result->setHidden($hidden);
         }
@@ -217,7 +217,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
      *
      * @param \Cake\Http\ServerRequest $request Request to get authentication information from.
      * @param \Cake\Http\Response $response A response object that can have headers added.
-     * @return mixed Either false on failure, or an array of user data on success.
+     * @return array|false Either false on failure, or an array of user data on success.
      */
     abstract public function authenticate(ServerRequest $request, Response $response);
 
@@ -226,7 +226,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
      * systems like basic and digest auth.
      *
      * @param \Cake\Http\ServerRequest $request Request object.
-     * @return mixed Either false or an array of user information
+     * @return array|false Either false or an array of user information
      */
     public function getUser(ServerRequest $request)
     {

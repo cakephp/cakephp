@@ -19,7 +19,6 @@ namespace Cake\Event;
  */
 class Event implements EventInterface
 {
-
     /**
      * Name of the event
      *

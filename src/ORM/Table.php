@@ -126,7 +126,6 @@ use RuntimeException;
  */
 class Table implements RepositoryInterface, EventListenerInterface, EventDispatcherInterface, ValidatorAwareInterface
 {
-
     use EventDispatcherTrait;
     use RulesAwareTrait;
     use ValidatorAwareTrait;
@@ -191,7 +190,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * The name of the field that represents the primary key in the table
      *
-     * @var string|array
+     * @var string|string[]
      */
     protected $_primaryKey;
 
@@ -664,7 +663,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Sets the primary key field name.
      *
-     * @param string|array $key Sets a new name to be used as primary key
+     * @param string|string[] $key Sets a new name to be used as primary key
      * @return $this
      */
     public function setPrimaryKey($key)
@@ -677,7 +676,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Returns the primary key field name.
      *
-     * @return string|array
+     * @return string|string[]
      */
     public function getPrimaryKey()
     {
@@ -696,8 +695,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Returns the primary key field name or sets a new one
      *
      * @deprecated 3.4.0 Use setPrimaryKey()/getPrimaryKey() instead.
-     * @param string|array|null $key Sets a new name to be used as primary key
-     * @return string|array
+     * @param string|string[]|null $key Sets a new name to be used as primary key
+     * @return string|string[]
      */
     public function primaryKey($key = null)
     {
@@ -1687,6 +1686,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   is persisted.
      * @param array $options The options to use when saving.
      * @return \Cake\Datasource\EntityInterface An entity.
+     * @throws \Cake\ORM\Exception\PersistenceFailedException When the entity couldn't be saved
      */
     public function findOrCreate($search, callable $callback = null, $options = [])
     {
@@ -1716,6 +1716,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   is persisted.
      * @param array $options The options to use when saving.
      * @return \Cake\Datasource\EntityInterface An entity.
+     * @throws \Cake\ORM\Exception\PersistenceFailedException When the entity couldn't be saved
      */
     protected function _processFindOrCreate($search, callable $callback = null, $options = [])
     {
@@ -2155,8 +2156,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Note: The ORM will not generate primary key values for composite primary keys.
      * You can overwrite _newId() in your table class.
      *
-     * @param array $primary The primary key columns to get a new ID for.
-     * @return null|string|array Either null or the primary key value or a list of primary key values.
+     * @param string[] $primary The primary key columns to get a new ID for.
+     * @return string|null Either null or the primary key value or a list of primary key values.
      */
     protected function _newId($primary)
     {
@@ -2932,7 +2933,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function loadInto($entities, array $contain)
     {
-        return (new LazyEagerLoader)->loadInto($entities, $contain, $this);
+        return (new LazyEagerLoader())->loadInto($entities, $contain, $this);
     }
 
     /**

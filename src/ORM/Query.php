@@ -101,7 +101,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * Whether the user select any fields before being executed, this is used
      * to determined if any fields should be automatically be selected.
      *
-     * @var bool
+     * @var bool|null
      */
     protected $_hasFields;
 
@@ -109,7 +109,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * Tracks whether or not the original query should include
      * fields from the top level table.
      *
-     * @var bool
+     * @var bool|null
      */
     protected $_autoFields;
 
@@ -124,7 +124,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * A callable function that can be used to calculate the total amount of
      * records this query will match when not using `limit`
      *
-     * @var callable
+     * @var callable|null
      */
     protected $_counter;
 
@@ -132,7 +132,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * Instance of a class responsible for storing association containments and
      * for eager loading them when this query is executed
      *
-     * @var \Cake\ORM\EagerLoader
+     * @var \Cake\ORM\EagerLoader|null
      */
     protected $_eagerLoader;
 
@@ -231,7 +231,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      *
      * @param \Cake\ORM\Table|\Cake\ORM\Association $table The table to use to get an array of columns
-     * @param array $excludedFields The un-aliased column names you do not want selected from $table
+     * @param string[] $excludedFields The un-aliased column names you do not want selected from $table
      * @param bool $overwrite Whether to reset/remove previous selected fields
      * @return Query
      * @throws \InvalidArgumentException If Association|Table is not passed in first argument
@@ -1391,7 +1391,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * By default calling select() will disable auto-fields. You can re-enable
      * auto-fields with enableAutoFields().
      *
-     * @return bool The current value.
+     * @return bool|null The current value. Returns null if neither enabled or disabled yet.
      */
     public function isAutoFieldsEnabled()
     {
@@ -1406,7 +1406,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * @deprecated 3.4.0 Use enableAutoFields()/isAutoFieldsEnabled() instead.
      * @param bool|null $value The value to set or null to read the current value.
-     * @return bool|$this Either the current value or the query object.
+     * @return bool|null|$this Either the current value or the query object.
      */
     public function autoFields($value = null)
     {

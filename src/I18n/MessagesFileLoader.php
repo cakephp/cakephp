@@ -29,7 +29,6 @@ use RuntimeException;
  */
 class MessagesFileLoader
 {
-
     /**
      * The package (domain) name.
      *
@@ -135,7 +134,7 @@ class MessagesFileLoader
             throw new RuntimeException(sprintf('Could not find class %s', "{$name}FileParser"));
         }
 
-        $messages = (new $class)->parse($file);
+        $messages = (new $class())->parse($file);
         $package = new Package('default');
         $package->setMessages($messages);
 

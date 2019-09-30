@@ -20,7 +20,6 @@ namespace Cake\TestSuite\Constraint\View;
  */
 class LayoutFileEquals extends TemplateFileEquals
 {
-
     /**
      * Assertion message
      *
@@ -28,6 +27,6 @@ class LayoutFileEquals extends TemplateFileEquals
      */
     public function toString()
     {
-        return sprintf('equals layout file %s', $this->filename);
+        return sprintf('equals layout file `%s`', $this->filename);
     }
 }

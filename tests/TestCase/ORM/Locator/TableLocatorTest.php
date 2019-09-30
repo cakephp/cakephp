@@ -61,7 +61,7 @@ class TableLocatorTest extends TestCase
         parent::setUp();
         static::setAppNamespace();
 
-        $this->_locator = new TableLocator;
+        $this->_locator = new TableLocator();
     }
 
     /**

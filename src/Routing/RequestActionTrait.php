@@ -27,7 +27,6 @@ use Cake\Routing\Filter\RoutingFilter;
  */
 trait RequestActionTrait
 {
-
     /**
      * Calls a controller's method from any location. Can be used to connect controllers together
      * or tie plugins into a main application. requestAction can be used to return rendered views
@@ -177,7 +176,7 @@ trait RequestActionTrait
             }
         }
         foreach ($needed as $class) {
-            $dispatcher->addFilter(new $class);
+            $dispatcher->addFilter(new $class());
         }
         $result = $dispatcher->dispatch($request, new Response());
         Router::popRequest();

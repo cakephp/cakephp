@@ -28,7 +28,6 @@ use ReflectionMethod;
  */
 class CommandTask extends Shell
 {
-
     /**
      * Gets the shell command listing.
      *
@@ -68,7 +67,7 @@ class CommandTask extends Shell
      * @param array $shellList The shell listing array.
      * @param string $path The path to look in.
      * @param string $key The key to add shells to
-     * @param array $skip A list of commands to exclude.
+     * @param string[] $skip A list of commands to exclude.
      * @return array The updated list of shells.
      */
     protected function _findShells($shellList, $path, $key, $skip)

@@ -24,7 +24,6 @@ use Cake\Core\Exception\Exception;
  */
 class ViewBlock
 {
-
     /**
      * Override content
      *
@@ -49,7 +48,7 @@ class ViewBlock
     /**
      * Block content. An array of blocks indexed by name.
      *
-     * @var array
+     * @var string[]
      */
     protected $_blocks = [];
 
@@ -112,7 +111,7 @@ class ViewBlock
             $active = key($this->_active);
             $content = ob_get_clean();
             if ($mode === ViewBlock::OVERRIDE) {
-                $this->_blocks[$active] = $content;
+                $this->_blocks[$active] = (string)$content;
             } else {
                 $this->concat($active, $content, $mode);
             }

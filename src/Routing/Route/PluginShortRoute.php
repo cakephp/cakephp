@@ -20,7 +20,6 @@ namespace Cake\Routing\Route;
  */
 class PluginShortRoute extends InflectedRoute
 {
-
     /**
      * Parses a string URL into an array. If a plugin key is found, it will be copied to the
      * controller parameter.

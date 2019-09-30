@@ -33,7 +33,6 @@ use RuntimeException;
  */
 class Query implements ExpressionInterface, IteratorAggregate
 {
-
     use TypeMapTrait;
 
     /**
@@ -676,7 +675,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * See `join()` for further details on conditions and types.
      *
-     * @param string|array $table The table to join with
+     * @param string|string[] $table The table to join with
      * @param string|array|\Cake\Database\ExpressionInterface $conditions The conditions
      * to use for joining.
      * @param array $types a list of types associated to the conditions used for converting
@@ -716,7 +715,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * The arguments of this method are identical to the `leftJoin()` shorthand, please refer
      * to that methods description for further details.
      *
-     * @param string|array $table The table to join with
+     * @param string|string[] $table The table to join with
      * @param string|array|\Cake\Database\ExpressionInterface $conditions The conditions
      * to use for joining.
      * @param array $types a list of types associated to the conditions used for converting
@@ -731,7 +730,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     /**
      * Returns an array that can be passed to the join method describing a single join clause
      *
-     * @param string|array $table The table to join with
+     * @param string|string[] $table The table to join with
      * @param string|array|\Cake\Database\ExpressionInterface $conditions The conditions
      * to use for joining.
      * @param string $type the join type to use
@@ -1538,7 +1537,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * with Query::values().
      *
      * @param array $columns The columns to insert into.
-     * @param array $types A map between columns & their datatypes.
+     * @param string[] $types A map between columns & their datatypes.
      * @return $this
      * @throws \RuntimeException When there are 0 columns.
      */
@@ -1584,7 +1583,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * ### Example
      *
      * ```
-     * $query->newExp()->lte('count', $query->identifier('total'));
+     * $query->newExpr()->lte('count', $query->identifier('total'));
      * ```
      *
      * @param string $identifier The identifier for an expression
@@ -2229,7 +2228,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * Helper function used to build conditions by composing QueryExpression objects.
      *
      * @param string $part Name of the query part to append the new part to
-     * @param string|null|array|\Cake\Database\ExpressionInterface|callable $append Expression or builder function to append.
+     * @param string|array|\Cake\Database\ExpressionInterface|callable|null $append Expression or builder function to append.
      * @param string $conjunction type of conjunction to be used to operate part
      * @param array $types associative array of type names used to bind values to query
      * @return void
