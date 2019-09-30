@@ -21,6 +21,7 @@ use Cake\Mailer\Message;
 use Cake\Mailer\Transport\DebugTransport;
 use Cake\TestSuite\TestCase;
 use TestApp\Mailer\TestMessage;
+use Zend\Diactoros\UploadedFile;
 
 /**
  * MessageTest class
@@ -908,10 +909,25 @@ HTML;
      */
     public function testSetAttachments()
     {
-        $this->message->setAttachments([CAKE . 'basics.php']);
+        $uploadedFile = new UploadedFile(
+            __FILE__,
+            filesize(__FILE__),
+            UPLOAD_ERR_OK,
+            'MessageTest.php',
+            'text/x-php'
+        );
+
+        $this->message->setAttachments([
+            CAKE . 'basics.php',
+            $uploadedFile,
+        ]);
         $expected = [
             'basics.php' => [
                 'file' => CAKE . 'basics.php',
+                'mimetype' => 'text/x-php',
+            ],
+            'MessageTest.php' => [
+                'file' => $uploadedFile,
                 'mimetype' => 'text/x-php',
             ],
         ];
@@ -958,6 +974,18 @@ HTML;
             ],
         ];
         $this->assertSame($expected, $this->message->getAttachments());
+    }
+
+    public function testSetAttachmentInvalidFile()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'File must be a filepath or UploadedFileInterface instance. Found `boolean` instead.'
+        );
+
+        $this->message->setAttachments(['cake.icon.gif' => [
+            'file' => true,
+        ]]);
     }
 
     /**
@@ -1032,6 +1060,26 @@ HTML;
         $email = new Message(['headerCharset' => 'iso-2022-jp-ms']);
         $this->assertEquals(Configure::read('App.encoding'), $email->getCharset());
         $this->assertSame('iso-2022-jp-ms', $email->getHeaderCharset());
+    }
+
+    public function testGetBody()
+    {
+        $message = new Message();
+
+        $uploadedFile = new UploadedFile(
+            __FILE__,
+            filesize(__FILE__),
+            UPLOAD_ERR_OK,
+            'MessageTest.php',
+            'text/x-php'
+        );
+        $chunks = base64_encode(file_get_contents(__FILE__));
+
+        $result = $message->setAttachments([$uploadedFile])
+            ->setBodyText('Attached an uploaded file')
+            ->getBody();
+        $result = implode("\r\n", $result);
+        $this->assertStringContainsString($chunks[0], $result);
     }
 
     /**
