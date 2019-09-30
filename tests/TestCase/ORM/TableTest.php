@@ -248,7 +248,6 @@ class TableTest extends TestCase
     {
         $this->deprecated(function () {
             $table = new Table(['table' => 'users']);
-            $this->assertNull($table->connection());
             $table->connection($this->connection);
             $this->assertSame($this->connection, $table->connection());
         });
@@ -262,7 +261,6 @@ class TableTest extends TestCase
     public function testSetConnection()
     {
         $table = new Table(['table' => 'users']);
-        $this->assertNull($table->getConnection());
         $this->assertSame($table, $table->setConnection($this->connection));
         $this->assertSame($this->connection, $table->getConnection());
     }

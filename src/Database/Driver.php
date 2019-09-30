@@ -432,9 +432,9 @@ abstract class Driver implements DriverInterface
      *
      * @param string $table The table name.
      * @param array $columns The list of columns for the schema.
-     * @return \Cake\Database\Schema\TableSchema
+     * @return \Cake\Database\Schema\TableSchemaInterface
      */
-    public function newTableSchema($table, $columns = [])
+    public function newTableSchema($table, array $columns = [])
     {
         return new TableSchema($table, $columns);
     }

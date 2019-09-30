@@ -524,6 +524,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function getConnection()
     {
+        if (!$this->_connection) {
+            $this->_connection = ConnectionManager::get(static::defaultConnectionName());
+        }
         return $this->_connection;
     }
 
@@ -584,11 +587,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 unset($schema['_constraints']);
             }
 
-            $connection = $this->getConnection();
-            if ($connection === null) {
-                $connection = ConnectionManager::get(static::defaultConnectionName());
-            }
-            $schema = $connection->getDriver()->newTableSchema($this->getTable(), $schema);
+            $schema = $this->getConnection()->getDriver()->newTableSchema($this->getTable(), $schema);
 
             foreach ($constraints as $name => $value) {
                 $schema->addConstraint($name, $value);
