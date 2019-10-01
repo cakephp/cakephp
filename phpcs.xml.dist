@@ -3,21 +3,4 @@
     <config name="installed_paths" value="../../cakephp/cakephp-codesniffer" />
 
     <rule ref="CakePHP" />
-
-    <!-- https://github.com/squizlabs/PHP_CodeSniffer/issues/2619 -->
-    <rule ref="PSR12.Files.FileHeader">
-        <exclude-pattern>*/test_app/config/bootstrap.php</exclude-pattern>
-        <exclude-pattern>*/test_app/config/empty.php</exclude-pattern>
-        <severity>0</severity>
-    </rule>
-
-    <rule ref="PSR2.ControlStructures.ControlStructureSpacing.SpacingAfterOpenBrace">
-        <severity>0</severity>
-    </rule>
-    <rule ref="Squiz.ControlStructures.ForLoopDeclaration.SpacingAfterSecond">
-        <severity>0</severity>
-    </rule>
-    <rule ref="Squiz.ControlStructures.ForLoopDeclaration.SpacingAfterFirst">
-        <severity>0</severity>
-    </rule>
 </ruleset>
