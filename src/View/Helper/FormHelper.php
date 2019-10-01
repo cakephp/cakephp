@@ -161,8 +161,10 @@ class FormHelper extends Helper
             'textarea' => '<textarea name="{{name}}"{{attrs}}>{{value}}</textarea>',
             // Container for submit buttons.
             'submitContainer' => '<div class="submit">{{content}}</div>',
-            //Confirm javascript template for postLink()
+            // Confirm javascript template for postLink()
             'confirmJs' => '{{confirm}}',
+            // selected class
+            'selectedClass' => 'selected',
         ],
         // set HTML5 validation message to custom required/empty messages
         'autoSetCustomValidity' => false,
