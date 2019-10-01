@@ -275,8 +275,10 @@ class DriverTest extends TestCase
      */
     public function testNewTableSchema()
     {
-        $actual = $this->driver->newTableSchema('articles');
+        $tableName = 'articles';
+        $actual = $this->driver->newTableSchema($tableName);
         $this->assertInstanceOf(TableSchema::class, $actual);
+        $this->assertEquals($tableName, $actual->name());
     }
 
     /**
