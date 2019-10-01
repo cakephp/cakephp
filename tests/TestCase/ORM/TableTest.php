@@ -74,7 +74,9 @@ class TableTest extends TestCase
         'core.Groups',
         'core.GroupsMembers',
         'core.Members',
+        'core.Orders',
         'core.PolymorphicTagged',
+        'core.Products',
         'core.SiteArticles',
         'core.Users',
     ];
@@ -6701,5 +6703,46 @@ class TableTest extends TestCase
             $this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlserver,
             'SQLServer does not support the requirements of this test.'
         );
+    }
+
+    public function testJoinOrders()
+    {
+        $expected = [
+            0 => [
+                'id' => 1,
+                'category' => 1,
+                'name' => 'First product',
+                'price' => 10,
+            ],
+            1 => [
+                'id' => 2,
+                'category' => 2,
+                'name' => 'Second product',
+                'price' => 20,
+            ],
+            2 => [
+                'id' => 3,
+                'category' => 3,
+                'name' => 'Third product',
+                'price' => 30,
+            ],
+        ];
+        $table = $this->getTableLocator()->get('products');
+        $options = [
+            'join' => [
+                'table' => 'orders',
+                'alias' => 'Order',
+                // With escaped alias the test passes.
+                //'alias' => '`Order`',
+                'type' => 'LEFT',
+                'conditions' => [
+                    'Order.product_id = products.id',
+                ],
+            ],
+        ];
+        $actual = $table->find('all', $options)
+            ->enableHydration(false)
+            ->toArray();
+        $this->assertEquals($expected, $actual);
     }
 }
