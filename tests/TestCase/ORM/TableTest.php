@@ -6732,13 +6732,15 @@ class TableTest extends TestCase
                 'Order.product_id',
             ],
             'join' => [
-                'table' => 'orders',
-                'alias' => 'Order',
-                // With escaped alias the test passes.
-                //'alias' => '`Order`',
-                'type' => 'INNER',
-                'conditions' => [
-                    'Order.product_id = products.id',
+                [
+                    'table' => 'orders',
+                    'alias' => 'Order',
+                    // With escaped alias the test passes.
+                    //'alias' => '`Order`',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Order.product_id = products.id',
+                    ],
                 ],
             ],
         ];
