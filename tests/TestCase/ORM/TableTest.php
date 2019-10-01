@@ -6705,7 +6705,7 @@ class TableTest extends TestCase
         );
     }
 
-    public function testJoinOrders()
+    public function testJoinOrdersWithAlias()
     {
         $expected = [
             0 => [
@@ -6713,28 +6713,30 @@ class TableTest extends TestCase
                 'category' => 1,
                 'name' => 'First product',
                 'price' => 10,
-            ],
-            1 => [
-                'id' => 2,
-                'category' => 2,
-                'name' => 'Second product',
-                'price' => 20,
-            ],
-            2 => [
-                'id' => 3,
-                'category' => 3,
-                'name' => 'Third product',
-                'price' => 30,
+                'Order' => [
+                    'id' => '1',
+                    'product_category' => '1',
+                    'product_id' => '1',
+                ],
             ],
         ];
         $table = $this->getTableLocator()->get('products');
         $options = [
+            'fields' => [
+                'products.id',
+                'products.category',
+                'products.name',
+                'products.price',
+                'Order.id',
+                'Order.product_category',
+                'Order.product_id',
+            ],
             'join' => [
                 'table' => 'orders',
                 'alias' => 'Order',
                 // With escaped alias the test passes.
                 //'alias' => '`Order`',
-                'type' => 'LEFT',
+                'type' => 'INNER',
                 'conditions' => [
                     'Order.product_id = products.id',
                 ],
