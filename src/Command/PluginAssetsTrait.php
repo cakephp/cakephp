@@ -106,7 +106,8 @@ trait PluginAssetsTrait
             $this->io->out('For plugin: ' . $plugin);
             $this->io->hr();
 
-            if ($config['namespaced'] &&
+            if (
+                $config['namespaced'] &&
                 !is_dir($config['destDir']) &&
                 !$this->_createDirectory($config['destDir'])
             ) {

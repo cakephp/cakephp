@@ -181,7 +181,8 @@ class FileLog extends BaseLog
         $filePath = $this->_path . $filename;
         clearstatcache(true, $filePath);
 
-        if (!file_exists($filePath) ||
+        if (
+            !file_exists($filePath) ||
             filesize($filePath) < $this->_size
         ) {
             return null;

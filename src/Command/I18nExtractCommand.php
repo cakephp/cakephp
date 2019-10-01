@@ -636,7 +636,8 @@ class I18nExtractCommand extends Command
 
             $filename = str_replace('/', '_', $domain) . '.pot';
             $response = '';
-            while ($overwriteAll === false
+            while (
+                $overwriteAll === false
                 && file_exists($this->_output . $filename)
                 && strtoupper($response) !== 'Y'
             ) {
@@ -698,7 +699,8 @@ class I18nExtractCommand extends Command
     {
         $strings = [];
         $count = count($strings);
-        while ($count < $target
+        while (
+            $count < $target
             && ($this->_tokens[$position] === ','
                 || $this->_tokens[$position][0] === T_CONSTANT_ENCAPSED_STRING
                 || $this->_tokens[$position][0] === T_LNUMBER
@@ -707,7 +709,8 @@ class I18nExtractCommand extends Command
             $count = count($strings);
             if ($this->_tokens[$position][0] === T_CONSTANT_ENCAPSED_STRING && $this->_tokens[$position + 1] === '.') {
                 $string = '';
-                while ($this->_tokens[$position][0] === T_CONSTANT_ENCAPSED_STRING
+                while (
+                    $this->_tokens[$position][0] === T_CONSTANT_ENCAPSED_STRING
                     || $this->_tokens[$position] === '.'
                 ) {
                     if ($this->_tokens[$position][0] === T_CONSTANT_ENCAPSED_STRING) {

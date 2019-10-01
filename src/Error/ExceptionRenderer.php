@@ -285,7 +285,8 @@ class ExceptionRenderer implements ExceptionRendererInterface
     {
         $message = $exception->getMessage();
 
-        if (!Configure::read('debug') &&
+        if (
+            !Configure::read('debug') &&
             !($exception instanceof HttpException)
         ) {
             if ($code < 500) {
@@ -359,8 +360,12 @@ class ExceptionRenderer implements ExceptionRendererInterface
             return $this->_shutdown();
         } catch (MissingTemplateException $e) {
             $attributes = $e->getAttributes();
-            if ($e instanceof MissingLayoutException ||
-                (isset($attributes['file']) && strpos($attributes['file'], 'error500') !== false)
+            if (
+                $e instanceof MissingLayoutException ||
+                (
+                    isset($attributes['file']) &&
+                    strpos($attributes['file'], 'error500') !== false
+                )
             ) {
                 return $this->_outputMessageSafe('error500');
             }

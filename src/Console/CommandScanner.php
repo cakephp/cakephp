@@ -130,7 +130,8 @@ class CommandScanner
 
             $class = $namespace . $fileInfo->getBasename('.php');
             /** @psalm-suppress DeprecatedClass */
-            if (!is_subclass_of($class, Shell::class)
+            if (
+                !is_subclass_of($class, Shell::class)
                 && !is_subclass_of($class, Command::class)
             ) {
                 continue;

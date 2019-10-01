@@ -167,7 +167,8 @@ class Asset
 
             $path = str_replace('{plugin}', $placeHolderVal, $pathPrefix) . $path;
         }
-        if (!empty($options['ext']) &&
+        if (
+            !empty($options['ext']) &&
             strpos($path, '?') === false &&
             substr($path, -strlen($options['ext'])) !== $options['ext']
         ) {

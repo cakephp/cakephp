@@ -62,7 +62,8 @@ class DecimalType extends BaseType implements BatchCastingInterface
             return $value;
         }
 
-        if (is_object($value)
+        if (
+            is_object($value)
             && method_exists($value, '__toString')
             && is_numeric(strval($value))
         ) {
@@ -160,7 +161,8 @@ class DecimalType extends BaseType implements BatchCastingInterface
 
             return $this;
         }
-        if (static::$numberClass === Number::class ||
+        if (
+            static::$numberClass === Number::class ||
             is_subclass_of(static::$numberClass, Number::class)
         ) {
             $this->_useLocaleParser = $enable;

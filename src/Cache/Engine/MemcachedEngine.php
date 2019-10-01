@@ -203,7 +203,8 @@ class MemcachedEngine extends CacheEngine
             );
         }
 
-        if ($serializer !== 'php' &&
+        if (
+            $serializer !== 'php' &&
             !constant('Memcached::HAVE_' . strtoupper($serializer))
         ) {
             throw new InvalidArgumentException(
@@ -217,7 +218,8 @@ class MemcachedEngine extends CacheEngine
         );
 
         // Check for Amazon ElastiCache instance
-        if (defined('Memcached::OPT_CLIENT_MODE') &&
+        if (
+            defined('Memcached::OPT_CLIENT_MODE') &&
             defined('Memcached::DYNAMIC_CLIENT_MODE')
         ) {
             $this->_Memcached->setOption(

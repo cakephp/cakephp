@@ -176,7 +176,11 @@ class Hash
             if ($conditions) {
                 $filter = [];
                 foreach ($next as $item) {
-                    if ((is_array($item) || $item instanceof ArrayAccess) &&
+                    if (
+                        (
+                            is_array($item) ||
+                            $item instanceof ArrayAccess
+                        ) &&
                         static::_matches($item, $conditions)
                     ) {
                         $filter[] = $item;
@@ -283,12 +287,15 @@ class Hash
                 if (!preg_match($val, $prop)) {
                     return false;
                 }
-            } elseif (($op === '=' && $prop != $val) ||
+                // phpcs:disable
+            } elseif (
+                ($op === '=' && $prop != $val) ||
                 ($op === '!=' && $prop == $val) ||
                 ($op === '>' && $prop <= $val) ||
                 ($op === '<' && $prop >= $val) ||
                 ($op === '>=' && $prop < $val) ||
                 ($op === '<=' && $prop > $val)
+                // phpcs:enable
             ) {
                 return false;
             }
@@ -788,7 +795,8 @@ class Hash
             foreach ($stack as $curKey => &$curMerge) {
                 foreach ($curMerge[0] as $key => &$val) {
                     $isArray = is_array($curMerge[1]);
-                    if ($isArray
+                    if (
+                        $isArray
                         && !empty($curMerge[1][$key])
                         && (array)$curMerge[1][$key] === $curMerge[1][$key]
                         && (array)$val === $val

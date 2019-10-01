@@ -86,8 +86,15 @@ class ValuesExpression implements ExpressionInterface
      */
     public function add($data): void
     {
-        if ((count($this->_values) && $data instanceof Query) ||
-            ($this->_query && is_array($data))
+        if (
+            (
+                count($this->_values) &&
+                $data instanceof Query
+            ) ||
+            (
+                $this->_query &&
+                is_array($data)
+            )
         ) {
             throw new Exception(
                 'You cannot mix subqueries and array data in inserts.'
