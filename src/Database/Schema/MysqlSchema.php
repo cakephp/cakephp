@@ -389,13 +389,11 @@ class MysqlSchema extends BaseSchema
         }
 
         $hasPrecision = [TableSchema::TYPE_FLOAT, TableSchema::TYPE_DECIMAL];
-        if (in_array($data['type'], $hasPrecision, true)) {
-            if (isset($data['length'])) {
-                if (isset($data['precision'])) {
-                    $out .= '(' . (int)$data['length'] . ',' . (int)$data['precision'] . ')';
-                } else {
-                    $out .= '(' . (int)$data['length'] . ')';
-                }
+        if (in_array($data['type'], $hasPrecision, true) && isset($data['length'])) {
+            if (isset($data['precision'])) {
+                $out .= '(' . (int)$data['length'] . ',' . (int)$data['precision'] . ')';
+            } else {
+                $out .= '(' . (int)$data['length'] . ')';
             }
         }
 
