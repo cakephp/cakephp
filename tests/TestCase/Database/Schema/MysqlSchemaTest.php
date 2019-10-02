@@ -670,7 +670,7 @@ SQL;
             [
                 'value',
                 ['type' => 'decimal', 'length' => 11, 'unsigned' => true],
-                '`value` DECIMAL(11,0) UNSIGNED'
+                '`value` DECIMAL(11) UNSIGNED'
             ],
             [
                 'value',
@@ -776,6 +776,28 @@ SQL;
         $driver = $this->_getMockedDriver();
         $schema = new MysqlSchema($driver);
 
+        $table = (new TableSchema('articles'))->addColumn($name, $data);
+        $this->assertEquals($expected, $schema->columnSql($table, $name));
+    }
+
+    /**
+     * Test generating column definitions
+     *
+     * @return void
+     */
+    public function testColumnSqlFloat()
+    {
+        $expected = '`latitude` FLOAT(53) UNSIGNED';
+        $driver = $this->_getMockedDriver();
+        $schema = new MysqlSchema($driver);
+        $name = 'latitude';
+        $data = [
+            'type' => 'float',
+            'length' => 53,
+            'null' => true,
+            'default' => null,
+            'unsigned' => true,
+        ];
         $table = (new TableSchema('articles'))->addColumn($name, $data);
         $this->assertEquals($expected, $schema->columnSql($table, $name));
     }
