@@ -38,7 +38,7 @@ use RuntimeException;
  * XMLHttpRequest(AJAX) and configures the response object and view builder accordingly.
  *
  * It can also check for HTTP caching headers like `Last-Modified`, `If-Modified-Since`
- * etc. and return response accordingly.
+ * etc. and return a response accordingly.
  *
  * @link https://book.cakephp.org/3.0/en/controllers/components/request-handling.html
  */
