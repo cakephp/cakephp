@@ -402,4 +402,18 @@ class Security
 
         return substr($clean, random_int(1, $length * 2), $length);
     }
+
+    /**
+     * Generate a 12 chars short hash (like git signature).
+     * @param  mixed $input Data to hash. Can be string or array
+     * @return string
+     */
+    public static function shortHash($input)
+    {
+        if (is_array($input)) {
+            $input = serialize($input);
+        }
+
+        return substr(static::hash($input, null, true), 0, 12);
+    }
 }

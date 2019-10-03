@@ -407,4 +407,40 @@ class SecurityTest extends TestCase
 
         $this->assertRegExp('/^[A-Za-z0-9]+$/', $value, 'should return a ASCII string');
     }
+
+    /**
+     * testShortHas method
+     *
+     * @return void
+     */
+    public function testShortHash()
+    {
+        $_hashType = Security::$hashType;
+        $_salt = Security::getSalt();
+
+        Security::setSalt('testShortHash');
+
+        // sha256
+        Security::setHash('sha256');
+
+        $result = Security::shortHash('someKey');
+        $this->assertSame(12, strlen($result));
+        $this->assertSame($result, '77d167ded549');
+
+        $result = Security::shortHash(['key' => 'value']);
+        $this->assertSame($result, 'c172fadcc0b3');
+
+        // md5
+        Security::setHash('md5');
+
+        $result = Security::shortHash('someKey');
+        $this->assertSame(12, strlen($result));
+        $this->assertSame($result, '766863df4538');
+
+        $result = Security::shortHash(['key' => 'value']);
+        $this->assertSame($result, 'a72367494f61');
+
+        Security::setHash($_hashType);
+        Security::setSalt($_salt);
+    }
 }
