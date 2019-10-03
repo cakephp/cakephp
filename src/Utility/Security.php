@@ -405,7 +405,8 @@ class Security
 
     /**
      * Generate a 12 chars short hash (like git signature).
-     * @param  mixed $input Data to hash. Can be string or array
+     *
+     * @param  mixed $input Data to hash. Can be string or array.
      * @return string
      */
     public static function shortHash($input)
