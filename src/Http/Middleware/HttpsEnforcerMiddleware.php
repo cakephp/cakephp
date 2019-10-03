@@ -68,8 +68,7 @@ class HttpsEnforcerMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        /** @psalm-suppress UndefinedInterfaceMethod */
-        if ($request->is('ssl')) {
+        if ($request->getUri()->getScheme() === 'https') {
             return $handler->handle($request);
         }
 

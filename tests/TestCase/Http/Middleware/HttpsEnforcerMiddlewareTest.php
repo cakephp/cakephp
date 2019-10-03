@@ -19,10 +19,11 @@ namespace Cake\Test\TestCase\Http\Middleware;
 use Cake\Controller\Exception\SecurityException;
 use Cake\Http\Middleware\HttpsEnforcerMiddleware;
 use Cake\Http\Response;
-use Cake\Http\ServerRequestFactory;
+use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use TestApp\Http\TestRequestHandler;
 use Zend\Diactoros\Response\RedirectResponse;
+use Zend\Diactoros\Uri;
 
 /**
  * Test for HttpsEnforcerMiddleware
@@ -31,10 +32,10 @@ class HttpsEnforcerMiddlewareTest extends TestCase
 {
     public function testForRequestWithHttp()
     {
-        $request = ServerRequestFactory::fromGlobals([
-            'REQUEST_URI' => '/',
-            'HTTPS' => '1',
-        ]);
+        $uri = new Uri('https://localhost/foo');
+        $request = new ServerRequest();
+        $request = $request->withUri($uri);
+
         $handler = new TestRequestHandler(function ($req) {
             return new Response();
         });
@@ -47,9 +48,10 @@ class HttpsEnforcerMiddlewareTest extends TestCase
 
     public function testRedirect()
     {
-        $request = ServerRequestFactory::fromGlobals([
-            'REQUEST_URI' => '/foo',
-        ]);
+        $uri = new Uri('http://localhost/foo');
+        $request = new ServerRequest();
+        $request = $request->withUri($uri);
+
         $handler = new TestRequestHandler(function ($req) {
             return new Response();
         });
@@ -81,9 +83,10 @@ class HttpsEnforcerMiddlewareTest extends TestCase
     {
         $this->expectException(SecurityException::class);
 
-        $request = ServerRequestFactory::fromGlobals([
-            'REQUEST_URI' => '/',
-        ]);
+        $uri = new Uri('http://localhost/foo');
+        $request = new ServerRequest();
+        $request = $request->withUri($uri);
+
         $handler = new TestRequestHandler(function ($req) {
             return new Response();
         });

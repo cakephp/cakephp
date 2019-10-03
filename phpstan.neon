@@ -103,9 +103,6 @@ parameters:
         -
             message: '#Ternary operator condition is always true#'
             path: 'src/TestSuite/IntegrationTestTrait.php'
-        -
-            message: '#Call to an undefined method Psr\\Http\\Message\\ServerRequestInterface::is\(\)#'
-            path: 'src/Http/Middleware/HttpsEnforcerMiddleware.php'
 
     earlyTerminatingMethodCalls:
         Cake\Console\Shell:
