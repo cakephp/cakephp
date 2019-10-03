@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Http\Middleware;
 
-use Cake\Controller\Exception\SecurityException;
+use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Middleware\HttpsEnforcerMiddleware;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
@@ -81,7 +81,7 @@ class HttpsEnforcerMiddlewareTest extends TestCase
 
     public function testSecurityException()
     {
-        $this->expectException(SecurityException::class);
+        $this->expectException(BadRequestException::class);
 
         $uri = new Uri('http://localhost/foo');
         $request = new ServerRequest();

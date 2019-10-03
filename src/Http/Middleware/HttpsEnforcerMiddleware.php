@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Http\Middleware;
 
-use Cake\Controller\Exception\SecurityException;
+use Cake\Http\Exception\BadRequestException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -65,6 +65,7 @@ class HttpsEnforcerMiddleware implements MiddlewareInterface
      * @param \Psr\Http\Message\ServerRequestInterface $request The request.
      * @param \Psr\Http\Server\RequestHandlerInterface $handler The request handler.
      * @return \Psr\Http\Message\ResponseInterface A response.
+     * @throws \Cake\Http\Exception\BadRequestException
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
@@ -82,7 +83,7 @@ class HttpsEnforcerMiddleware implements MiddlewareInterface
             );
         }
 
-        throw new SecurityException(
+        throw new BadRequestException(
             'Request to this URL must be made with HTTPS'
         );
     }
