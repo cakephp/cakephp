@@ -60,6 +60,6 @@ class CookieEquals extends ResponseBase
      */
     public function toString()
     {
-        return sprintf('was in cookie \'%s\'', $this->cookieName);
+        return sprintf('is in cookie \'%s\'', $this->cookieName);
     }
 }

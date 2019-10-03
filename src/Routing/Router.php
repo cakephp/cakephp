@@ -853,7 +853,9 @@ class Router
             $params['bare'],
             $params['requested'],
             $params['return'],
+            $params['isAjax'],
             $params['_Token'],
+            $params['_csrfToken'],
             $params['_matchedRoute'],
             $params['_name']
         );
