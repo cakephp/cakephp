@@ -31,12 +31,10 @@ use Cake\Utility\Security;
 
 /**
  * The Security Component creates an easy way to integrate tighter security in
- * your application. It provides methods for various tasks like:
+ * your application. It provides methods for these tasks:
  *
- * - Restricting which HTTP methods your application accepts.
  * - Form tampering protection
  * - Requiring that SSL be used.
- * - Limiting cross controller communication.
  *
  * @link https://book.cakephp.org/3.0/en/controllers/components/security.html
  */
@@ -62,7 +60,7 @@ class SecurityComponent extends Component
      *   Fields that have been unlocked are not required to be part of the POST
      *   and hidden unlocked fields do not have their values checked.
      * - `unlockedActions` - Actions to exclude from POST validation checks.
-     *   Other checks like requireAuth(), requireSecure() etc. will still be applied.
+     *   Other checks like requireSecure() etc. will still be applied.
      * - `validatePost` - Whether to validate POST data. Set to false to disable
      *   for data coming from 3rd party services, etc.
      *
@@ -71,7 +69,6 @@ class SecurityComponent extends Component
     protected $_defaultConfig = [
         'blackHoleCallback' => null,
         'requireSecure' => [],
-        'requireAuth' => [],
         'allowedControllers' => [],
         'allowedActions' => [],
         'unlockedFields' => [],
@@ -149,7 +146,8 @@ class SecurityComponent extends Component
      */
     public function requireSecure($actions = null): void
     {
-        $this->_requireMethod('Secure', (array)$actions);
+        $actions = (array)$actions;
+        $this->setConfig('requireSecure', empty($actions) ? ['*'] : $actions);
     }
 
     /**
@@ -193,21 +191,6 @@ class SecurityComponent extends Component
     }
 
     /**
-     * Sets the actions that require a $method HTTP request, or empty for all actions
-     *
-     * @param string $method The HTTP method to assign controller actions to
-     * @param array $actions Controller actions to set the required HTTP method to.
-     * @return void
-     */
-    protected function _requireMethod(string $method, array $actions = []): void
-    {
-        if (isset($actions[0]) && is_array($actions[0])) {
-            $actions = $actions[0];
-        }
-        $this->setConfig('require' . $method, empty($actions) ? ['*'] : $actions);
-    }
-
-    /**
      * Check if access requires secure connection
      *
      * @param \Cake\Controller\Controller $controller Instantiating controller
@@ -217,18 +200,22 @@ class SecurityComponent extends Component
     protected function _secureRequired(Controller $controller): void
     {
         if (
-            is_array($this->_config['requireSecure']) &&
-            !empty($this->_config['requireSecure'])
+            empty($this->_config['requireSecure']) ||
+            !is_array($this->_config['requireSecure'])
         ) {
-            $requireSecure = $this->_config['requireSecure'];
+            return;
+        }
 
-            if (in_array($this->_action, $requireSecure, true) || $requireSecure === ['*']) {
-                if (!$controller->getRequest()->is('ssl')) {
-                    throw new SecurityException(
-                        'Request is not SSL and the action is required to be secure'
-                    );
-                }
-            }
+        $requireSecure = $this->_config['requireSecure'];
+        if (
+            ($requireSecure[0] === '*' ||
+                in_array($this->_action, $requireSecure, true)
+            ) &&
+            !$controller->getRequest()->is('ssl')
+        ) {
+            throw new SecurityException(
+                'Request is not SSL and the action is required to be secure'
+            );
         }
     }
 
