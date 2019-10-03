@@ -409,7 +409,7 @@ class SecurityTest extends TestCase
     }
 
     /**
-     * testShortHas method
+     * Test the shortHash method.
      *
      * @return void
      */
