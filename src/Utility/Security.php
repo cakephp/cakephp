@@ -388,4 +388,18 @@ class Security
 
         return static::$_salt = (string)$salt;
     }
+
+    /**
+     * Creates a secure random sensitive case token.
+     *
+     * @param int $length String length. Default 12.
+     * @return string
+     */
+    public static function randomToken($length = 12)
+    {
+        $random = base64_encode(static::randomBytes($length * 4));
+        $clean = preg_replace('/[^A-Za-z0-9]/', '', $random);
+
+        return substr($clean, random_int(1, $length * 2), $length);
+    }
 }

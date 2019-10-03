@@ -391,4 +391,20 @@ class SecurityTest extends TestCase
         $this->assertTrue(Security::constantEquals($snowman, $snowman));
         $this->assertFalse(Security::constantEquals(str_repeat($snowman, 3), $snowman));
     }
+
+    /**
+     * Test the randomString method.
+     *
+     * @return void
+     */
+    public function testRandomToken()
+    {
+        $value = Security::randomToken(7);
+        $this->assertSame(7, strlen($value));
+
+        $value = Security::randomToken();
+        $this->assertSame(12, strlen($value));
+
+        $this->assertRegExp('/^[A-Za-z0-9]+$/', $value, 'should return a ASCII string');
+    }
 }
