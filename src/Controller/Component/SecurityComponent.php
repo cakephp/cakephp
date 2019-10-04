@@ -177,11 +177,11 @@ class SecurityComponent extends Component
         if ($exception !== null) {
             if (!Configure::read('debug')) {
                 $exception->setReason($exception->getMessage());
-                $exception->setMessage(self::DEFAULT_EXCEPTION_MESSAGE);
+                $exception->setMessage(static::DEFAULT_EXCEPTION_MESSAGE);
             }
             throw $exception;
         }
-        throw new BadRequestException(self::DEFAULT_EXCEPTION_MESSAGE);
+        throw new BadRequestException(static::DEFAULT_EXCEPTION_MESSAGE);
     }
 
     /**
@@ -230,7 +230,7 @@ class SecurityComponent extends Component
             return;
         }
 
-        $msg = self::DEFAULT_EXCEPTION_MESSAGE;
+        $msg = static::DEFAULT_EXCEPTION_MESSAGE;
         if (Configure::read('debug')) {
             $msg = $this->_debugPostTokenNotMatching($controller, $hashParts);
         }
