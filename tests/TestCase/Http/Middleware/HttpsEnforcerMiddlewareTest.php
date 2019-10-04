@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Http\Middleware;
 
+use Cake\Core\Configure;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Middleware\HttpsEnforcerMiddleware;
 use Cake\Http\Response;
@@ -30,6 +31,20 @@ use Zend\Diactoros\Uri;
  */
 class HttpsEnforcerMiddlewareTest extends TestCase
 {
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        Configure::write('debug', false);
+    }
+
+    public function tearDown(): void
+    {
+        parent::tearDown();
+
+        Configure::write('debug', true);
+    }
+
     public function testForRequestWithHttps()
     {
         $uri = new Uri('https://localhost/foo');
@@ -120,5 +135,29 @@ class HttpsEnforcerMiddlewareTest extends TestCase
 
         $middleware = new HttpsEnforcerMiddleware(['redirect' => true]);
         $middleware->process($request, $handler);
+    }
+
+    /**
+     * Test that HTTPS check is skipped when debug is on.
+     *
+     * @return void
+     */
+    public function testNoCheckWithDebugOn()
+    {
+        Configure::write('debug', true);
+
+        $uri = new Uri('http://localhost/foo');
+        $request = new ServerRequest();
+        $request = $request->withUri($uri);
+
+        $handler = new TestRequestHandler(function ($req) {
+            return new Response(['body' => 'skipped']);
+        });
+
+        $middleware = new HttpsEnforcerMiddleware();
+
+        $result = $middleware->process($request, $handler);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertSame('skipped', (string)$result->getBody());
     }
 }

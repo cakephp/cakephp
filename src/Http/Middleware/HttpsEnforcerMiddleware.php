@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Http\Middleware;
 
+use Cake\Core\Configure;
 use Cake\Http\Exception\BadRequestException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -33,17 +34,19 @@ class HttpsEnforcerMiddleware implements MiddlewareInterface
      *
      * ### Options
      *
-     * - `redirect` If set to true (default) redirects GET requests to same URL with https.
-     * - `statusCode` Status code to use in case of redirect, defaults to 301 - Permanent redirect.
-     * - `headers` Array of response headers in case of redirect.
+     * - `redirect` - If set to true (default) redirects GET requests to same URL with https.
+     * - `statusCode` - Status code to use in case of redirect, defaults to 301 - Permanent redirect.
+     * - `headers` - Array of response headers in case of redirect.
+     * - `disableOnDebug` - Whether HTTPS check should be disabled when debug is on. Default `true`.
      *
      * @var array
-     * @psalm-var array{redirect: bool, statusCode: int, headers: array}
+     * @psalm-var array{redirect: bool, statusCode: int, headers: array, disableOnDebug: bool}
      */
     protected $config = [
         'redirect' => true,
         'statusCode' => 301,
         'headers' => [],
+        'disableOnDebug' => true,
     ];
 
     /**
@@ -70,7 +73,11 @@ class HttpsEnforcerMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if ($request->getUri()->getScheme() === 'https') {
+        if (
+            $request->getUri()->getScheme() === 'https'
+            || ($this->config['disableOnDebug']
+                && Configure::read('debug'))
+        ) {
             return $handler->handle($request);
         }
 
