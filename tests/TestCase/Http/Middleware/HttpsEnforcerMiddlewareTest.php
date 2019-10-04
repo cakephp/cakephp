@@ -30,20 +30,21 @@ use Zend\Diactoros\Uri;
  */
 class HttpsEnforcerMiddlewareTest extends TestCase
 {
-    public function testForRequestWithHttp()
+    public function testForRequestWithHttps()
     {
         $uri = new Uri('https://localhost/foo');
         $request = new ServerRequest();
         $request = $request->withUri($uri);
 
         $handler = new TestRequestHandler(function ($req) {
-            return new Response();
+            return new Response(['body' => 'success']);
         });
 
         $middleware = new HttpsEnforcerMiddleware();
 
         $result = $middleware->process($request, $handler);
         $this->assertInstanceOf(Response::class, $result);
+        $this->assertSame('success', (string)$result->getBody());
     }
 
     public function testRedirect()

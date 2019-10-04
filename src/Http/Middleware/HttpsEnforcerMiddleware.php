@@ -84,7 +84,7 @@ class HttpsEnforcerMiddleware implements MiddlewareInterface
         }
 
         throw new BadRequestException(
-            'Request to this URL must be made with HTTPS'
+            'Requests to this URL must be made with HTTPS.'
         );
     }
 }
