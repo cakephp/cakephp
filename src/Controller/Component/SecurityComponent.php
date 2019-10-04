@@ -338,7 +338,10 @@ class SecurityComponent extends Component
         }
 
         $unlockedFields = array_unique(
-            array_merge((array)$this->getConfig('disabledFields'), (array)$this->_config['unlockedFields'], $unlocked)
+            array_merge(
+                (array)$this->_config['unlockedFields'],
+                $unlocked
+            )
         );
 
         /** @var (string|int)[] $fieldList */

@@ -790,32 +790,6 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
-     * testValidatePostWithDisabledFields method
-     *
-     * @return void
-     * @triggers Controller.startup $this->Controller
-     */
-    public function testValidatePostWithDisabledFields(): void
-    {
-        $event = new Event('Controller.startup', $this->Controller);
-        $this->Security->setConfig('disabledFields', ['Model.username', 'Model.password']);
-        $this->Security->startup($event);
-        $fields = '0313460e1136e1227044399fe10a6edc0cbca279%3AModel.hidden';
-        $unlocked = '';
-        $debug = 'not used';
-
-        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
-            'Model' => [
-                'username' => '', 'password' => '', 'hidden' => '0',
-            ],
-            '_Token' => compact('fields', 'unlocked', 'debug'),
-        ]));
-
-        $result = $this->validatePost();
-        $this->assertNull($result);
-    }
-
-    /**
      * testValidatePostDisabledFieldsInData method
      *
      * Test validating post data with posted unlocked fields.
@@ -1166,44 +1140,6 @@ class SecurityComponentTest extends TestCase
         ]));
         $result = $this->validatePost('SecurityException', 'Bad Request');
         $this->assertFalse($result);
-    }
-
-    /**
-     * testFormDisabledFields method
-     *
-     * @return void
-     * @triggers Controller.startup $this->Controller
-     */
-    public function testFormDisabledFields(): void
-    {
-        $event = new Event('Controller.startup', $this->Controller);
-
-        $this->Security->startup($event);
-        $fields = '4eaf5c6b93d5140c24171d5fdce16ed5b904f288%3An%3A0%3A%7B%7D';
-        $unlocked = '';
-        $debug = urlencode(json_encode([
-            '/articles/index',
-            [],
-            [],
-        ]));
-
-        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
-            'MyModel' => ['name' => 'some data'],
-            '_Token' => compact('fields', 'unlocked', 'debug'),
-        ]));
-        $result = $this->validatePost('SecurityException', 'Unexpected field \'MyModel.name\' in POST data');
-        $this->assertFalse($result);
-
-        $this->Security->startup($event);
-        $this->Security->setConfig('disabledFields', ['MyModel.name']);
-
-        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
-            'MyModel' => ['name' => 'some data'],
-            '_Token' => compact('fields', 'unlocked', 'debug'),
-        ]));
-
-        $result = $this->validatePost();
-        $this->assertNull($result);
     }
 
     /**
