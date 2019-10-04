@@ -33,8 +33,9 @@ use Cake\Utility\Security;
  * The Security Component creates an easy way to integrate tighter security in
  * your application. It provides methods for these tasks:
  *
- * - Form tampering protection
+ * - Form tampering protection.
  * - Requiring that SSL be used.
+ * - Limiting cross controller communication.
  *
  * @link https://book.cakephp.org/3.0/en/controllers/components/security.html
  */
