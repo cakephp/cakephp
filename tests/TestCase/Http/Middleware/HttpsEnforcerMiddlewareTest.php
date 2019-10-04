@@ -51,7 +51,7 @@ class HttpsEnforcerMiddlewareTest extends TestCase
     {
         $uri = new Uri('http://localhost/foo');
         $request = new ServerRequest();
-        $request = $request->withUri($uri);
+        $request = $request->withUri($uri)->withMethod('GET');
 
         $handler = new TestRequestHandler(function ($req) {
             return new Response();
@@ -80,7 +80,12 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         );
     }
 
-    public function testSecurityException()
+    /**
+     * Test that exception is thrown when redirect is disabled.
+     *
+     * @return void
+     */
+    public function testNoRedirectException()
     {
         $this->expectException(BadRequestException::class);
 
@@ -93,6 +98,27 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         });
 
         $middleware = new HttpsEnforcerMiddleware(['redirect' => false]);
+        $middleware->process($request, $handler);
+    }
+
+    /**
+     * Test that exception is thrown for non GET request even if redirect is enabled.
+     *
+     * @return void
+     */
+    public function testExceptionForNonGetRequest()
+    {
+        $this->expectException(BadRequestException::class);
+
+        $uri = new Uri('http://localhost/foo');
+        $request = new ServerRequest();
+        $request = $request->withUri($uri)->withMethod('POST');
+
+        $handler = new TestRequestHandler(function ($req) {
+            return new Response();
+        });
+
+        $middleware = new HttpsEnforcerMiddleware(['redirect' => true]);
         $middleware->process($request, $handler);
     }
 }

@@ -33,7 +33,7 @@ class HttpsEnforcerMiddleware implements MiddlewareInterface
      *
      * ### Options
      *
-     * - `redirect` If set to true (default) redirect to same URL with https.
+     * - `redirect` If set to true (default) redirects GET requests to same URL with https.
      * - `statusCode` Status code to use in case of redirect, defaults to 301 - Permanent redirect.
      * - `headers` Array of response headers in case of redirect.
      *
@@ -60,7 +60,8 @@ class HttpsEnforcerMiddleware implements MiddlewareInterface
     /**
      * Check whether request has been made using HTTPS.
      *
-     * Depending on configuration either redirects to same URL with https or throws exception.
+     * Depending on the configuration and request method, either redirects to
+     * same URL with https or throws an exception.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request.
      * @param \Psr\Http\Server\RequestHandlerInterface $handler The request handler.
@@ -73,7 +74,7 @@ class HttpsEnforcerMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         }
 
-        if ($this->config['redirect']) {
+        if ($this->config['redirect'] && $request->getMethod() === 'GET') {
             $uri = $request->getUri()->withScheme('https');
 
             return new RedirectResponse(
