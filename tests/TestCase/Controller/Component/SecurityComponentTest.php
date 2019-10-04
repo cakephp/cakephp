@@ -213,7 +213,7 @@ class SecurityComponentTest extends TestCase
     {
         $event = new Event('Controller.startup', $this->Controller);
         $this->Controller->Security->startup($event);
-        $this->assertTrue($this->Controller->getRequest()->getSession()->check('_Token'));
+        $this->assertTrue($this->Controller->getRequest()->getSession()->check('_formToken'));
     }
 
     /**
@@ -1311,7 +1311,7 @@ class SecurityComponentTest extends TestCase
 
         $this->Security->blackHole($this->Controller, 'auth');
         $this->assertTrue(
-            $this->Controller->getRequest()->getSession()->check('_Token'),
+            $this->Controller->getRequest()->getSession()->check('_formToken'),
             '_Token was deleted by blackHole %s'
         );
     }
@@ -1328,7 +1328,7 @@ class SecurityComponentTest extends TestCase
         $request = $this->Controller->getRequest();
         $request = $this->Security->generateToken($request);
 
-        $securityToken = $request->getAttribute('securityToken');
+        $securityToken = $request->getAttribute('_formToken');
         $this->assertNotEmpty($securityToken);
         $this->assertSame([], $securityToken['unlockedFields']);
     }
