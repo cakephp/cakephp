@@ -35,7 +35,6 @@ use Cake\Utility\Security;
  *
  * - Form tampering protection.
  * - Requiring that SSL be used.
- * - Limiting cross controller communication.
  *
  * @link https://book.cakephp.org/3.0/en/controllers/components/security.html
  */
@@ -52,10 +51,6 @@ class SecurityComponent extends Component
      * - `blackHoleCallback` - The controller method that will be called if this
      *   request is black-hole'd.
      * - `requireSecure` - List of actions that require an SSL-secured connection.
-     * - `allowedControllers` - Controllers from which actions of the current
-     *   controller are allowed to receive requests.
-     * - `allowedActions` - Actions from which actions of the current controller
-     *   are allowed to receive requests.
      * - `unlockedFields` - Form fields to exclude from POST validation. Fields can
      *   be unlocked either in the Component, or with FormHelper::unlockField().
      *   Fields that have been unlocked are not required to be part of the POST
@@ -70,8 +65,6 @@ class SecurityComponent extends Component
     protected $_defaultConfig = [
         'blackHoleCallback' => null,
         'requireSecure' => [],
-        'allowedControllers' => [],
-        'allowedActions' => [],
         'unlockedFields' => [],
         'unlockedActions' => [],
         'validatePost' => true,
@@ -498,8 +491,6 @@ class SecurityComponent extends Component
         }
 
         $token = [
-            'allowedControllers' => $this->_config['allowedControllers'],
-            'allowedActions' => $this->_config['allowedActions'],
             'unlockedFields' => $this->_config['unlockedFields'],
         ];
 
