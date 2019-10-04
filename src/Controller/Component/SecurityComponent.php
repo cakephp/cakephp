@@ -482,14 +482,6 @@ class SecurityComponent extends Component
      */
     public function generateToken(ServerRequest $request): ServerRequest
     {
-        if ($request->is('requested')) {
-            if ($request->getSession()->check('_Token')) {
-                $request = $request->withAttribute('securityToken', $request->getSession()->read('_Token'));
-            }
-
-            return $request;
-        }
-
         $token = [
             'unlockedFields' => $this->_config['unlockedFields'],
         ];
