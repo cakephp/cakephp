@@ -488,7 +488,6 @@ class SecurityComponentTest extends TestCase
         $debug = 'not used';
 
         $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
-            '_csrfToken' => 'abc123',
             'Model' => ['multi_field' => ['1', '3']],
             '_Token' => compact('fields', 'unlocked', 'debug'),
         ]));
