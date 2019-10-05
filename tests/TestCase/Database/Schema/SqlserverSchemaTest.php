@@ -265,6 +265,13 @@ SQL;
                 null,
                 ['type' => 'binary', 'length' => 30]
             ],
+            [
+                'VARBINARY',
+                -1,
+                null,
+                null,
+                ['type' => 'binary', 'length' => TableSchema::LENGTH_LONG]
+            ],
         ];
     }
 
