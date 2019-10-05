@@ -22,7 +22,6 @@ declare(strict_types=1);
 namespace Cake\Http;
 
 use Cake\Core\Configure;
-use Cake\Log\Log;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\RelativeStream;
 use Zend\HttpHandlerRunner\Emitter\EmitterInterface;
@@ -73,11 +72,7 @@ class ResponseEmitter implements EmitterInterface
         $line = 0;
         if (headers_sent($file, $line)) {
             $message = "Unable to emit headers. Headers sent in file=$file line=$line";
-            if (Configure::read('debug')) {
-                trigger_error($message, E_USER_WARNING);
-            } else {
-                Log::warning($message);
-            }
+            trigger_error($message, E_USER_WARNING);
         }
 
         $this->emitStatusLine($response);

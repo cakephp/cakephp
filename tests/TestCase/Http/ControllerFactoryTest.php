@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Http;
 
 use Cake\Http\ControllerFactory;
 use Cake\Http\ServerRequest;
+use Cake\Http\Exception\MissingControllerException;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -184,7 +185,7 @@ class ControllerFactoryTest extends TestCase
      */
     public function testAbstractClassFailure()
     {
-        $this->expectException(\Cake\Routing\Exception\MissingControllerException::class);
+        $this->expectException(MissingControllerException::class);
         $this->expectExceptionMessage('Controller class Abstract could not be found.');
         $request = new ServerRequest([
             'url' => 'abstract/index',
@@ -201,7 +202,7 @@ class ControllerFactoryTest extends TestCase
      */
     public function testInterfaceFailure()
     {
-        $this->expectException(\Cake\Routing\Exception\MissingControllerException::class);
+        $this->expectException(MissingControllerException::class);
         $this->expectExceptionMessage('Controller class Interface could not be found.');
         $request = new ServerRequest([
             'url' => 'interface/index',
@@ -218,7 +219,7 @@ class ControllerFactoryTest extends TestCase
      */
     public function testMissingClassFailure()
     {
-        $this->expectException(\Cake\Routing\Exception\MissingControllerException::class);
+        $this->expectException(MissingControllerException::class);
         $this->expectExceptionMessage('Controller class Invisible could not be found.');
         $request = new ServerRequest([
             'url' => 'interface/index',
@@ -235,7 +236,7 @@ class ControllerFactoryTest extends TestCase
      */
     public function testSlashedControllerFailure()
     {
-        $this->expectException(\Cake\Routing\Exception\MissingControllerException::class);
+        $this->expectException(MissingControllerException::class);
         $this->expectExceptionMessage('Controller class Admin/Posts could not be found.');
         $request = new ServerRequest([
             'url' => 'admin/posts/index',
@@ -252,7 +253,7 @@ class ControllerFactoryTest extends TestCase
      */
     public function testAbsoluteReferenceFailure()
     {
-        $this->expectException(\Cake\Routing\Exception\MissingControllerException::class);
+        $this->expectException(MissingControllerException::class);
         $this->expectExceptionMessage('Controller class TestApp\Controller\CakesController could not be found.');
         $request = new ServerRequest([
             'url' => 'interface/index',

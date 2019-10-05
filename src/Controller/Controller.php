@@ -23,6 +23,7 @@ use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventInterface;
 use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManagerInterface;
+use Cake\Http\ControllerInterface;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Log\LogTrait;
@@ -84,7 +85,7 @@ use UnexpectedValueException;
  * @method bool isAuthorized($user)
  * @link https://book.cakephp.org/3.0/en/controllers.html
  */
-class Controller implements EventListenerInterface, EventDispatcherInterface
+class Controller implements EventListenerInterface, EventDispatcherInterface, ControllerInterface
 {
     use EventDispatcherTrait;
     use LocatorAwareTrait;

@@ -17,10 +17,10 @@ declare(strict_types=1);
 namespace Cake\Http\Middleware;
 
 use ArrayAccess;
+use DateTimeImmutable;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Exception\InvalidCsrfTokenException;
 use Cake\Http\Response;
-use Cake\I18n\Time;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
 use Psr\Http\Message\ResponseInterface;
@@ -186,7 +186,11 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      */
     protected function _addTokenCookie(string $token, ServerRequestInterface $request, Response $response): Response
     {
-        $expiry = new Time($this->_config['expiry']);
+        $time = $this->_config['expiry'];
+        if (is_string($time)) {
+            $time = strtotime($time);
+        }
+        $expiry = new DateTimeImmutable('@' . $time);
 
         $cookie = new Cookie(
             $this->_config['cookieName'],

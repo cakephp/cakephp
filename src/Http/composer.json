@@ -1,0 +1,40 @@
+{
+    "name": "cakephp/http",
+    "description": "CakePHP HTTP client and PSR7/15 middleware libraries",
+    "type": "library",
+    "keywords": [
+        "cakephp",
+        "http",
+        "psr7",
+        "psr15"
+    ],
+    "homepage": "https://cakephp.org",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "CakePHP Community",
+            "homepage": "https://github.com/cakephp/form/graphs/contributors"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/cakephp/cakephp/issues",
+        "forum": "https://stackoverflow.com/tags/cakephp",
+        "irc": "irc://irc.freenode.org/cakephp",
+        "source": "https://github.com/cakephp/form"
+    },
+    "require": {
+        "php": ">=7.2.0",
+        "cakephp/core": "^4.0",
+        "cakephp/event": "^4.0",
+        "cakephp/utility": "^4.0"
+    },
+    "suggest": {
+        "cakephp/cache": "To use cache session storage",
+        "cakephp/orm": "To use database session storage"
+    },
+    "autoload": {
+        "psr-4": {
+            "Cake\\Http\\": "."
+        }
+    }
+}

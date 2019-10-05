@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Http;
 
-use Cake\Controller\Controller;
+use Cake\Http\ControllerInterface;
 use Cake\Routing\Router;
 use Psr\Http\Message\ResponseInterface;
 
@@ -54,7 +54,7 @@ class ActionDispatcher
         if ($response === null) {
             $response = new Response();
         }
-        if (Router::getRequest() !== $request) {
+        if (class_exists(Router::class) && Router::getRequest() !== $request) {
             Router::setRequest($request);
         }
 
@@ -66,10 +66,10 @@ class ActionDispatcher
     /**
      * Invoke a controller's action and wrapping methods.
      *
-     * @param \Cake\Controller\Controller $controller The controller to invoke.
+     * @param \Cake\Http\ControllerInterface $controller The controller to invoke.
      * @return \Psr\Http\Message\ResponseInterface The response
      */
-    protected function _invoke(Controller $controller): ResponseInterface
+    protected function _invoke(ControllerInterface $controller): ResponseInterface
     {
         $result = $controller->startupProcess();
         if ($result instanceof ResponseInterface) {
