@@ -106,6 +106,8 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
             $this->whitelistCallback !== null
             && call_user_func($this->whitelistCallback, $request) === true
         ) {
+            $request = $this->_unsetTokenField($request);
+
             return $handler->handle($request);
         }
 
@@ -125,6 +127,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
 
             return $this->_addTokenCookie($token, $request, $response);
         }
+
         $request = $this->_validateAndUnsetTokenField($request);
 
         return $handler->handle($request);
@@ -159,11 +162,24 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
             || $request->getParsedBody()
         ) {
             $this->_validateToken($request);
-            $body = $request->getParsedBody();
-            if (is_array($body)) {
-                unset($body[$this->_config['field']]);
-                $request = $request->withParsedBody($body);
-            }
+            $request = $this->_unsetTokenField($request);
+        }
+
+        return $request;
+    }
+
+    /**
+     * Remove CSRF protection token from request data.
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request object.
+     * @return \Psr\Http\Message\ServerRequestInterface
+     */
+    protected function _unsetTokenField(ServerRequestInterface $request): ServerRequestInterface
+    {
+        $body = $request->getParsedBody();
+        if (is_array($body)) {
+            unset($body[$this->_config['field']]);
+            $request = $request->withParsedBody($body);
         }
 
         return $request;
