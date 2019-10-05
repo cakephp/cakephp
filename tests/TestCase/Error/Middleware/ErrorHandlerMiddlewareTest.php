@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Error\Middleware;
 use Cake\Error\ErrorHandler;
 use Cake\Error\ExceptionRendererInterface;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
+use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequestFactory;
 use Cake\Log\Log;
@@ -260,7 +261,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
             ->method('log')
             ->with('error', $this->logicalAnd(
                 $this->stringContains(
-                    '[Cake\Routing\Exception\MissingControllerException] ' .
+                    '[Cake\Http\Exception\MissingControllerException] ' .
                     'Controller class Articles could not be found.'
                 ),
                 $this->stringContains('Exception Attributes:'),
@@ -271,7 +272,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $request = ServerRequestFactory::fromGlobals();
         $middleware = new ErrorHandlerMiddleware(null, ['log' => true]);
         $handler = new TestRequestHandler(function ($req) {
-            throw new \Cake\Routing\Exception\MissingControllerException(['class' => 'Articles']);
+            throw new MissingControllerException(['class' => 'Articles']);
         });
         $result = $middleware->process($request, $handler);
         $this->assertEquals(404, $result->getStatusCode());
