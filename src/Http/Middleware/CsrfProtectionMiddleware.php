@@ -102,8 +102,13 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        $method = $request->getMethod();
+        $hasData = in_array($method, ['PUT', 'POST', 'DELETE', 'PATCH'], true)
+            || $request->getParsedBody();
+
         if (
-            $this->whitelistCallback !== null
+            $hasData
+            && $this->whitelistCallback !== null
             && call_user_func($this->whitelistCallback, $request) === true
         ) {
             $request = $this->_unsetTokenField($request);
@@ -118,7 +123,6 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
             $request = $request->withAttribute('csrfToken', $cookieData);
         }
 
-        $method = $request->getMethod();
         if ($method === 'GET' && $cookieData === null) {
             $token = $this->_createToken();
             $request = $request->withAttribute('csrfToken', $token);
@@ -128,7 +132,10 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
             return $this->_addTokenCookie($token, $request, $response);
         }
 
-        $request = $this->_validateAndUnsetTokenField($request);
+        if ($hasData) {
+            $this->_validateToken($request);
+            $request = $this->_unsetTokenField($request);
+        }
 
         return $handler->handle($request);
     }
@@ -147,25 +154,6 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
         $this->whitelistCallback = $callback;
 
         return $this;
-    }
-
-    /**
-     * Checks if the request is POST, PUT, DELETE or PATCH and validates the CSRF token
-     *
-     * @param \Psr\Http\Message\ServerRequestInterface $request The request object.
-     * @return \Psr\Http\Message\ServerRequestInterface
-     */
-    protected function _validateAndUnsetTokenField(ServerRequestInterface $request): ServerRequestInterface
-    {
-        if (
-            in_array($request->getMethod(), ['PUT', 'POST', 'DELETE', 'PATCH'], true)
-            || $request->getParsedBody()
-        ) {
-            $this->_validateToken($request);
-            $request = $this->_unsetTokenField($request);
-        }
-
-        return $request;
     }
 
     /**
