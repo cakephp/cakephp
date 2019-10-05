@@ -13,14 +13,14 @@
     "authors": [
         {
             "name": "CakePHP Community",
-            "homepage": "https://github.com/cakephp/form/graphs/contributors"
+            "homepage": "https://github.com/cakephp/http/graphs/contributors"
         }
     ],
     "support": {
         "issues": "https://github.com/cakephp/cakephp/issues",
         "forum": "https://stackoverflow.com/tags/cakephp",
         "irc": "irc://irc.freenode.org/cakephp",
-        "source": "https://github.com/cakephp/form"
+        "source": "https://github.com/cakephp/http"
     },
     "require": {
         "php": ">=7.2.0",
