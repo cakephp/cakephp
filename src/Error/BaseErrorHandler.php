@@ -114,8 +114,8 @@ abstract class BaseErrorHandler
      * Set as the default error handler by CakePHP.
      *
      * Use config/error.php to customize or replace this error handler.
-     * This function will use Debugger to display errors when debug > 0. And
-     * will log errors to Log, when debug == 0.
+     * This function will use Debugger to display errors when debug mode is on. And
+     * will log errors to Log, when debug mode is off.
      *
      * You can use the 'errorLevel' option to set what type of errors will be handled.
      * Stack traces for errors can be enabled with the 'trace' option.
