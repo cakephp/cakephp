@@ -528,7 +528,7 @@ class FormHelper extends Helper
     {
         $request = $this->_View->getRequest();
 
-        $formToken = $request->getAttribute('_formToken');
+        $formToken = $request->getAttribute('formToken');
         if (!empty($formToken['unlockedFields'])) {
             foreach ($formToken['unlockedFields'] as $unlocked) {
                 $this->_unlockedFields[] = $unlocked;
@@ -562,7 +562,7 @@ class FormHelper extends Helper
     {
         $out = '';
 
-        if ($this->requestType !== 'get' && $this->_View->getRequest()->getAttribute('_formToken')) {
+        if ($this->requestType !== 'get' && $this->_View->getRequest()->getAttribute('formToken')) {
             $out .= $this->secure($this->fields, $secureAttributes);
             $this->fields = [];
             $this->_unlockedFields = [];
@@ -595,7 +595,7 @@ class FormHelper extends Helper
      */
     public function secure(array $fields = [], array $secureAttributes = []): string
     {
-        if (!$this->_View->getRequest()->getAttribute('_formToken')) {
+        if (!$this->_View->getRequest()->getAttribute('formToken')) {
             return '';
         }
         $debugSecurity = Configure::read('debug');
@@ -2293,7 +2293,7 @@ class FormHelper extends Helper
     protected function _initInputField(string $field, array $options = []): array
     {
         if (!isset($options['secure'])) {
-            $options['secure'] = (bool)$this->_View->getRequest()->getAttribute('_formToken');
+            $options['secure'] = (bool)$this->_View->getRequest()->getAttribute('formToken');
         }
         $context = $this->_getContext();
 
