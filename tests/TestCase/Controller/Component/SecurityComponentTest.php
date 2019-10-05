@@ -204,19 +204,6 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
-     * testStartup method
-     *
-     * @return void
-     * @triggers Controller.startup $this->Controller
-     */
-    public function testStartup(): void
-    {
-        $event = new Event('Controller.startup', $this->Controller);
-        $this->Controller->Security->startup($event);
-        $this->assertTrue($this->Controller->getRequest()->getSession()->check('_formToken'));
-    }
-
-    /**
      * testRequireSecureFail method
      *
      * @return void
@@ -356,7 +343,6 @@ class SecurityComponentTest extends TestCase
     {
         $event = new Event('Controller.startup', $this->Controller);
         $this->Security->startup($event);
-        $this->Controller->getRequest()->getSession()->delete('_Token');
         $unlocked = '';
         $debug = urlencode(json_encode([
             '/articles/index',
@@ -385,7 +371,6 @@ class SecurityComponentTest extends TestCase
     {
         $event = new Event('Controller.startup', $this->Controller);
         $this->Security->startup($event);
-        $this->Controller->getRequest()->getSession()->delete('_Token');
 
         $fields = 'a5475372b40f6e3ccbf9f8af191f20e1642fd877%3AModel.valid';
 
@@ -1228,27 +1213,6 @@ class SecurityComponentTest extends TestCase
             'SecurityException',
             'URL mismatch in POST data (expected \'another-url\' but found \'/posts/edit/1\')'
         ));
-    }
-
-    /**
-     * testBlackHoleNotDeletingSessionInformation method
-     *
-     * Test that blackhole doesn't delete the _Token session key so repeat data submissions
-     * stay blackholed.
-     *
-     * @return void
-     * @triggers Controller.startup $this->Controller
-     */
-    public function testBlackHoleNotDeletingSessionInformation(): void
-    {
-        $event = new Event('Controller.startup', $this->Controller);
-        $this->Security->startup($event);
-
-        $this->Security->blackHole($this->Controller, 'auth');
-        $this->assertTrue(
-            $this->Controller->getRequest()->getSession()->check('_formToken'),
-            '_Token was deleted by blackHole %s'
-        );
     }
 
     /**
