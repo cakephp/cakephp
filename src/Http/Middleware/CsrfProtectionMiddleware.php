@@ -47,7 +47,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 class CsrfProtectionMiddleware implements MiddlewareInterface
 {
     /**
-     * Default config for the CSRF handling.
+     * Config for the CSRF handling.
      *
      *  - `cookieName` The name of the cookie to send.
      *  - `expiry` A strotime compatible value of how long the CSRF token should last.
@@ -59,20 +59,13 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      *
      * @var array
      */
-    protected $_defaultConfig = [
+    protected $_config = [
         'cookieName' => 'csrfToken',
         'expiry' => 0,
         'secure' => false,
         'httpOnly' => false,
         'field' => '_csrfToken',
     ];
-
-    /**
-     * Configuration
-     *
-     * @var array
-     */
-    protected $_config = [];
 
     /**
      * Callback for deciding whether or not to skip the token check for particular request.
@@ -86,11 +79,11 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
     /**
      * Constructor
      *
-     * @param array $config Config options. See $_defaultConfig for valid keys.
+     * @param array $config Config options. See $_config for valid keys.
      */
     public function __construct(array $config = [])
     {
-        $this->_config = $config + $this->_defaultConfig;
+        $this->_config = $config + $this->_config;
     }
 
     /**
