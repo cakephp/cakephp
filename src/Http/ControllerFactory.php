@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Http;
 
 use Cake\Core\App;
-use Cake\Http\ControllerInterface;
 use Cake\Http\Exception\MissingControllerException;
 use Cake\Utility\Inflector;
 use ReflectionClass;
@@ -101,7 +100,7 @@ class ControllerFactory
      * Throws an exception when a controller is missing.
      *
      * @param \Cake\Http\ServerRequest $request The request.
-     * @throws \Cake\Routing\Exception\MissingControllerException
+     * @throws \Cake\Http\Exception\MissingControllerException
      * @return void
      */
     protected function missingController(ServerRequest $request): void

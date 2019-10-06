@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Http;
 
-use Cake\Http\ControllerInterface;
 use Cake\Routing\Router;
 use Psr\Http\Message\ResponseInterface;
 

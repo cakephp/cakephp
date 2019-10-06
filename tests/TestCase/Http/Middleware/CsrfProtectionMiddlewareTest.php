@@ -19,7 +19,6 @@ namespace Cake\Test\TestCase\Http\Middleware;
 use Cake\Http\Middleware\CsrfProtectionMiddleware;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use TestApp\Http\TestRequestHandler;

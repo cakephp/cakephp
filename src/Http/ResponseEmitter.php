@@ -21,7 +21,6 @@ declare(strict_types=1);
  */
 namespace Cake\Http;
 
-use Cake\Core\Configure;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\RelativeStream;
 use Zend\HttpHandlerRunner\Emitter\EmitterInterface;

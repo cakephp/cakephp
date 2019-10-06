@@ -17,12 +17,12 @@ declare(strict_types=1);
 namespace Cake\Http\Middleware;
 
 use ArrayAccess;
-use DateTimeImmutable;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Exception\InvalidCsrfTokenException;
 use Cake\Http\Response;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
+use DateTimeImmutable;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;

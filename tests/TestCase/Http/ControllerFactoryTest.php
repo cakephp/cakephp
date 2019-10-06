@@ -17,8 +17,8 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Http;
 
 use Cake\Http\ControllerFactory;
-use Cake\Http\ServerRequest;
 use Cake\Http\Exception\MissingControllerException;
+use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 
 /**
