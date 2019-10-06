@@ -234,7 +234,7 @@ class FormData implements Countable
             return 'application/x-www-form-urlencoded';
         }
 
-        return 'multipart/form-data; boundary="' . $this->boundary() . '"';
+        return 'multipart/form-data; boundary=' . $this->boundary();
     }
 
     /**
@@ -253,7 +253,7 @@ class FormData implements Countable
                 $out .= (string)$part;
                 $out .= "\r\n";
             }
-            $out .= "--$boundary--\r\n\r\n";
+            $out .= "--$boundary--\r\n";
 
             return $out;
         }

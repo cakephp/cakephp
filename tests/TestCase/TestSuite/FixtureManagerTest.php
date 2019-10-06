@@ -61,6 +61,7 @@ class FixtureManagerTest extends TestCase
             ->willReturn(['core.Articles']);
         $this->manager->fixturize($test);
         $fixtures = $this->manager->loaded();
+        $this->manager->unload($test);
         $this->assertCount(1, $fixtures);
         $this->assertArrayHasKey('core.Articles', $fixtures);
         $this->assertInstanceOf('Cake\Test\Fixture\ArticlesFixture', $fixtures['core.Articles']);
@@ -336,7 +337,9 @@ class FixtureManagerTest extends TestCase
      */
     public function testLoadSingle()
     {
-        $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
+        $test = $this->getMockBuilder('Cake\TestSuite\TestCase')
+            ->setMethods(['getFixtures'])
+            ->getMock();
         $test->autoFixtures = false;
         $test->expects($this->any())
             ->method('getFixtures')

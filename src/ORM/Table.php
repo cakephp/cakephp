@@ -479,9 +479,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function getConnection(): Connection
     {
         if (!$this->_connection) {
-            /** @var \Cake\Database\Connection $connection */
-            $connection = ConnectionManager::get(static::defaultConnectionName());
-            $this->_connection = $connection;
+            $this->_connection = ConnectionManager::get(static::defaultConnectionName());
         }
 
         return $this->_connection;
@@ -524,7 +522,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 unset($schema['_constraints']);
             }
 
-            $schema = new TableSchema($this->getTable(), $schema);
+            $schema = $this->getConnection()->getDriver()->newTableSchema($this->getTable(), $schema);
 
             foreach ($constraints as $name => $value) {
                 $schema->addConstraint($name, $value);

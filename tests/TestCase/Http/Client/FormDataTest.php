@@ -117,7 +117,6 @@ class FormDataTest extends TestCase
             'value',
             '--' . $boundary . '--',
             '',
-            '',
         ];
         $this->assertEquals(implode("\r\n", $expected), (string)$data);
     }
@@ -164,7 +163,6 @@ class FormDataTest extends TestCase
             $contents,
             '--' . $boundary . '--',
             '',
-            '',
         ];
         $this->assertEquals(implode("\r\n", $expected), $result);
     }
@@ -195,7 +193,6 @@ class FormDataTest extends TestCase
             $contents,
             '--' . $boundary . '--',
             '',
-            '',
         ];
         $this->assertEquals(implode("\r\n", $expected), $result);
     }
@@ -218,7 +215,7 @@ class FormDataTest extends TestCase
         $data->addFile('upload', fopen($file, 'r'));
         $boundary = $data->boundary();
         $result = $data->contentType();
-        $expected = 'multipart/form-data; boundary="' . $boundary . '"';
+        $expected = 'multipart/form-data; boundary=' . $boundary;
         $this->assertEquals($expected, $result);
     }
 }

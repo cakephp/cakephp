@@ -116,12 +116,12 @@ class Number
      */
     public static function toPercentage($value, int $precision = 2, array $options = []): string
     {
-        $options += ['multiply' => false];
-        if ($options['multiply']) {
-            $value = (float)$value * 100;
+        $options += ['multiply' => false, 'type' => NumberFormatter::PERCENT];
+        if (!$options['multiply']) {
+            $value /= 100;
         }
 
-        return static::precision($value, $precision, $options) . '%';
+        return static::precision($value, $precision, $options);
     }
 
     /**
