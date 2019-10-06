@@ -20,6 +20,7 @@ use Cake\Core\App;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\Type;
 use Cake\Datasource\ConnectionInterface;
+use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\InvalidPrimaryKeyException;
 use Cake\Datasource\RepositoryInterface;
@@ -523,6 +524,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function getConnection()
     {
+        if (!$this->_connection) {
+            $this->_connection = ConnectionManager::get(static::defaultConnectionName());
+        }
+
         return $this->_connection;
     }
 
@@ -583,7 +588,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 unset($schema['_constraints']);
             }
 
-            $schema = new TableSchema($this->getTable(), $schema);
+            $schema = $this->getConnection()->getDriver()->newTableSchema($this->getTable(), $schema);
 
             foreach ($constraints as $name => $value) {
                 $schema->addConstraint($name, $value);

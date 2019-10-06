@@ -93,7 +93,7 @@ class Collection
         if (strpos($name, '.')) {
             list($config['schema'], $name) = explode('.', $name);
         }
-        $table = new TableSchema($name);
+        $table = $this->_connection->getDriver()->newTableSchema($name);
 
         $this->_reflect('Column', $name, $config, $table);
         if (count($table->columns()) === 0) {
@@ -113,7 +113,7 @@ class Collection
      * @param string $stage The stage name.
      * @param string $name The table name.
      * @param array $config The config data.
-     * @param \Cake\Database\Schema\TableSchema $schema The table instance
+     * @param \Cake\Database\Schema\TableSchemaInterface $schema The table schema instance.
      * @return void
      * @throws \Cake\Database\Exception on query failure.
      */
