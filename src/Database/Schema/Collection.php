@@ -95,6 +95,7 @@ class Collection implements CollectionInterface
         if (strpos($name, '.')) {
             [$config['schema'], $name] = explode('.', $name);
         }
+        /** @var \Cake\Database\Schema\TableSchema $table */
         $table = $this->_connection->getDriver()->newTableSchema($name);
 
         $this->_reflect('Column', $name, $config, $table);
@@ -115,7 +116,7 @@ class Collection implements CollectionInterface
      * @param string $stage The stage name.
      * @param string $name The table name.
      * @param array $config The config data.
-     * @param \Cake\Database\Schema\TableSchemaInterface $schema The table schema instance.
+     * @param \Cake\Database\Schema\TableSchema $schema The table schema instance.
      * @return void
      * @throws \Cake\Database\Exception on query failure.
      */

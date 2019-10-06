@@ -20,7 +20,6 @@ use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Schema\BaseSchema;
 use Cake\Database\Query;
 use Cake\Database\Schema\TableSchema;
-use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Database\Statement\PDOStatement;
 use InvalidArgumentException;
 use PDO;
@@ -405,13 +404,14 @@ abstract class Driver implements DriverInterface
     /**
      * @inheritDoc
      */
-    public function newTableSchema(string $table, array $columns = []): TableSchemaInterface
+    public function newTableSchema(string $table, array $columns = []): TableSchema
     {
         $className = TableSchema::class;
         if (isset($this->_config['tableSchema'])) {
             $className = $this->_config['tableSchema'];
         }
 
+        /** @var \Cake\Database\Schema\TableSchema */
         return new $className($table, $columns);
     }
 

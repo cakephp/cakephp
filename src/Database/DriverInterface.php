@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Database;
 
 use Cake\Database\Schema\BaseSchema;
-use Cake\Database\Schema\TableSchemaInterface;
+use Cake\Database\Schema\TableSchema;
 
 /**
  * Interface for database driver.
@@ -270,7 +270,7 @@ interface DriverInterface
      *
      * @param string $table The table name.
      * @param array $columns The list of columns for the schema.
-     * @return \Cake\Database\Schema\TableSchemaInterface
+     * @return \Cake\Database\Schema\TableSchema
      */
-    public function newTableSchema(string $table, array $columns = []): TableSchemaInterface;
+    public function newTableSchema(string $table, array $columns = []): TableSchema;
 }

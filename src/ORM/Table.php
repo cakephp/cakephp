@@ -20,7 +20,6 @@ use ArrayObject;
 use BadMethodCallException;
 use Cake\Core\App;
 use Cake\Database\Connection;
-use Cake\Database\Schema\TableSchema;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Database\TypeFactory;
 use Cake\Datasource\ConnectionInterface;
@@ -464,7 +463,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param \Cake\Database\Connection $connection The connection instance
      * @return $this
      */
-    public function setConnection(ConnectionInterface $connection)
+    public function setConnection(Connection $connection)
     {
         $this->_connection = $connection;
 
@@ -479,7 +478,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function getConnection(): Connection
     {
         if (!$this->_connection) {
-            $this->_connection = ConnectionManager::get(static::defaultConnectionName());
+            /** @var \Cake\Database\Connection $connection */
+            $connection = ConnectionManager::get(static::defaultConnectionName());
+            $this->_connection = $connection;
         }
 
         return $this->_connection;
