@@ -541,11 +541,6 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function convert($field, $type)
     {
-
-        if ($field instanceof ExpressionInterface) {
-            $field = $field->sql($generator);
-        }
-
         $this->add("CAST($field AS $type)");
 
         return $this;
