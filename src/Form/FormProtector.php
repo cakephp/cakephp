@@ -49,14 +49,14 @@ class FormProtector
      *
      * @var string
      */
-    protected $url;
+    protected $url = '';
 
     /**
      * Session Id
      *
      * @var string
      */
-    protected $sessionId;
+    protected $sessionId = '';
 
     /**
      * Error message providing detail for failed validation.
@@ -72,7 +72,7 @@ class FormProtector
      * @param string $sessionId Session Id.
      * @param array $data Data array, can contain key `unlockedFields` with list of unlocked fields.
      */
-    public function __construct(?string $url = null, ?string $sessionId = null, array $data = [])
+    public function __construct(string $url = '', string $sessionId = '', array $data = [])
     {
         $this->url = $url;
         $this->sessionId = $sessionId;
