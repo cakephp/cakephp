@@ -531,7 +531,7 @@ class QueryExpression implements ExpressionInterface, Countable
 
         return $this->eq($wrapIdentifier($left), $wrapIdentifier($right));
     }
-    
+
     /**
      * Adds a new type convertion to the expression object in the form "CAST(field AS type)".
      *
@@ -542,9 +542,9 @@ class QueryExpression implements ExpressionInterface, Countable
     public function convert($field, $type)
     {
         $this->add("CAST($field AS $type)");
+
         return $this;
     }
-
 
     /**
      * Returns the string representation of this object so that it can be used in a
