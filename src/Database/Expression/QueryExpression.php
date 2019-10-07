@@ -533,6 +533,25 @@ class QueryExpression implements ExpressionInterface, Countable
     }
 
     /**
+     * Adds a new type convertion to the expression object in the form "CAST(field AS type)".
+     *
+     * @param string|\Cake\Database\ExpressionInterface $field Database field to be cast against type
+     * @param string target type to cast field
+     * @return $this
+     */
+    public function convert($field,$type)
+    {
+
+        if ($field instanceof ExpressionInterface) {
+            $field = $field->sql($generator);
+        }
+
+        $this->add("CAST($field AS $type)");
+
+        return $this;
+    }
+    
+    /**
      * Returns the string representation of this object so that it can be used in a
      * SQL query. Note that values condition values are not included in the string,
      * in their place placeholders are put and can be replaced by the quoted values
