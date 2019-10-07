@@ -321,6 +321,9 @@ class CsrfProtectionMiddlewareTest extends TestCase
     public function testSkippingTokenCheckUsingWhitelistCallback()
     {
         $request = new ServerRequest([
+            'post' => [
+                '_csrfToken' => 'foo',
+            ],
             'environment' => [
                 'REQUEST_METHOD' => 'POST',
             ],
@@ -333,7 +336,14 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
             return true;
         });
-        $response = $middleware->process($request, $this->_getRequestHandler());
+
+        $handler = new TestRequestHandler(function ($request) {
+            $this->assertEmpty($request->getParsedBody());
+
+            return new Response();
+        });
+
+        $response = $middleware->process($request, $handler);
         $this->assertInstanceOf(Response::class, $response);
     }
 }

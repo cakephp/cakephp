@@ -47,7 +47,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 class CsrfProtectionMiddleware implements MiddlewareInterface
 {
     /**
-     * Default config for the CSRF handling.
+     * Config for the CSRF handling.
      *
      *  - `cookieName` The name of the cookie to send.
      *  - `expiry` A strotime compatible value of how long the CSRF token should last.
@@ -59,20 +59,13 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      *
      * @var array
      */
-    protected $_defaultConfig = [
+    protected $_config = [
         'cookieName' => 'csrfToken',
         'expiry' => 0,
         'secure' => false,
         'httpOnly' => false,
         'field' => '_csrfToken',
     ];
-
-    /**
-     * Configuration
-     *
-     * @var array
-     */
-    protected $_config = [];
 
     /**
      * Callback for deciding whether or not to skip the token check for particular request.
@@ -86,11 +79,11 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
     /**
      * Constructor
      *
-     * @param array $config Config options. See $_defaultConfig for valid keys.
+     * @param array $config Config options. See $_config for valid keys.
      */
     public function __construct(array $config = [])
     {
-        $this->_config = $config + $this->_defaultConfig;
+        $this->_config = $config + $this->_config;
     }
 
     /**
@@ -102,10 +95,17 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        $method = $request->getMethod();
+        $hasData = in_array($method, ['PUT', 'POST', 'DELETE', 'PATCH'], true)
+            || $request->getParsedBody();
+
         if (
-            $this->whitelistCallback !== null
+            $hasData
+            && $this->whitelistCallback !== null
             && call_user_func($this->whitelistCallback, $request) === true
         ) {
+            $request = $this->_unsetTokenField($request);
+
             return $handler->handle($request);
         }
 
@@ -116,7 +116,6 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
             $request = $request->withAttribute('csrfToken', $cookieData);
         }
 
-        $method = $request->getMethod();
         if ($method === 'GET' && $cookieData === null) {
             $token = $this->_createToken();
             $request = $request->withAttribute('csrfToken', $token);
@@ -125,7 +124,11 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
 
             return $this->_addTokenCookie($token, $request, $response);
         }
-        $request = $this->_validateAndUnsetTokenField($request);
+
+        if ($hasData) {
+            $this->_validateToken($request);
+            $request = $this->_unsetTokenField($request);
+        }
 
         return $handler->handle($request);
     }
@@ -147,23 +150,17 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
     }
 
     /**
-     * Checks if the request is POST, PUT, DELETE or PATCH and validates the CSRF token
+     * Remove CSRF protection token from request data.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request object.
      * @return \Psr\Http\Message\ServerRequestInterface
      */
-    protected function _validateAndUnsetTokenField(ServerRequestInterface $request): ServerRequestInterface
+    protected function _unsetTokenField(ServerRequestInterface $request): ServerRequestInterface
     {
-        if (
-            in_array($request->getMethod(), ['PUT', 'POST', 'DELETE', 'PATCH'], true)
-            || $request->getParsedBody()
-        ) {
-            $this->_validateToken($request);
-            $body = $request->getParsedBody();
-            if (is_array($body)) {
-                unset($body[$this->_config['field']]);
-                $request = $request->withParsedBody($body);
-            }
+        $body = $request->getParsedBody();
+        if (is_array($body)) {
+            unset($body[$this->_config['field']]);
+            $request = $request->withParsedBody($body);
         }
 
         return $request;
