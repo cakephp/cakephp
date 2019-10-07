@@ -18,6 +18,7 @@ namespace Cake\Database;
 
 use Cake\Database\Schema\BaseSchema;
 use Cake\Database\Schema\TableSchema;
+use Closure;
 
 /**
  * Interface for database driver.
@@ -166,9 +167,9 @@ interface DriverInterface
      *
      * @param string $type The type of query to be transformed
      * (select, insert, update, delete).
-     * @return callable
+     * @return \Closure
      */
-    public function queryTranslator(string $type): callable;
+    public function queryTranslator(string $type): Closure;
 
     /**
      * Get the schema dialect.

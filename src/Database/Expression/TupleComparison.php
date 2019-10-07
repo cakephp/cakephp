@@ -18,6 +18,7 @@ namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
 use Cake\Database\ValueBinder;
+use Closure;
 
 /**
  * This expression represents SQL fragments that are used for comparing one tuple
@@ -151,10 +152,10 @@ class TupleComparison extends Comparison
      *
      * Callback function receives as its only argument an instance of an ExpressionInterface
      *
-     * @param callable $callable The callable to apply to sub-expressions
+     * @param \Closure $callable The callable to apply to sub-expressions
      * @return $this
      */
-    public function traverse(callable $callable)
+    public function traverse(Closure $callable)
     {
         /** @var string[] $fields */
         $fields = $this->getField();
@@ -188,10 +189,10 @@ class TupleComparison extends Comparison
      * it is an ExpressionInterface
      *
      * @param mixed $value The value to traverse
-     * @param callable $callable The callable to use when traversing
+     * @param \Closure $callable The callable to use when traversing
      * @return void
      */
-    protected function _traverseValue($value, $callable): void
+    protected function _traverseValue($value, Closure $callable): void
     {
         if ($value instanceof ExpressionInterface) {
             $callable($value);

@@ -21,6 +21,7 @@ use Cake\Database\Schema\BaseSchema;
 use Cake\Database\Query;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\Statement\PDOStatement;
+use Closure;
 use InvalidArgumentException;
 use PDO;
 use PDOException;
@@ -265,7 +266,7 @@ abstract class Driver implements DriverInterface
     /**
      * @inheritDoc
      */
-    abstract public function queryTranslator(string $type): callable;
+    abstract public function queryTranslator(string $type): Closure;
 
     /**
      * @inheritDoc

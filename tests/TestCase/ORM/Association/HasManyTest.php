@@ -28,6 +28,7 @@ use Cake\ORM\Association\HasMany;
 use Cake\ORM\Entity;
 use Cake\ORM\ResultSet;
 use Cake\TestSuite\TestCase;
+use Closure;
 
 /**
  * Tests HasMany class
@@ -671,7 +672,7 @@ class HasManyTest extends TestCase
     {
         if ($this->autoQuote) {
             $quoter = new IdentifierQuoter($query->getConnection()->getDriver());
-            $expected->traverse([$quoter, 'quoteExpression']);
+            $expected->traverse(Closure::fromCallable([$quoter, 'quoteExpression']));
         }
         $this->assertEquals($expected, $query->clause('where'));
     }
