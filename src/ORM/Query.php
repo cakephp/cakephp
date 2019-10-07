@@ -1277,7 +1277,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @return mixed
      * @throws \BadMethodCallException if the method is called for a non-select query
      */
-    public function __call($method, $arguments)
+    public function __call(string $method, array $arguments)
     {
         if ($this->type() === 'select') {
             return $this->_call($method, $arguments);
