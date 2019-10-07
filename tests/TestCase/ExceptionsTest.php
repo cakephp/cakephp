@@ -182,7 +182,7 @@ class ExceptionsTest extends TestCase
             ['Cake\Http\Exception\InternalErrorException', 500],
             ['Cake\Http\Exception\InvalidCsrfTokenException', 403],
             ['Cake\Http\Exception\MethodNotAllowedException', 405],
-            ['Cake\Http\Exception\MissingControllerException', 500],
+            ['Cake\Http\Exception\MissingControllerException', 404],
             ['Cake\Http\Exception\NotAcceptableException', 406],
             ['Cake\Http\Exception\NotFoundException', 404],
             ['Cake\Http\Exception\NotImplementedException', 501],
