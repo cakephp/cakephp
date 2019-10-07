@@ -124,6 +124,78 @@ class FormProtector
     }
 
     /**
+     * Determine which fields of a form should be used for hash.
+     *
+     * @param string|array $field Reference to field to be secured. Can be dot
+     *   separated string to indicate nesting or array of fieldname parts.
+     * @param bool $lock Whether this field should be part of the validation
+     *   or excluded as part of the unlockedFields. Default `true`.
+     * @param mixed $value Field value, if value should not be tampered with.
+     * @return $this
+     */
+    public function addField($field, bool $lock = true, $value = null)
+    {
+        if (empty($field) && $field !== '0') {
+            return $this;
+        }
+
+        if (is_string($field)) {
+            $field = Hash::filter(explode('.', $field));
+        }
+
+        foreach ($this->unlockedFields as $unlockField) {
+            $unlockParts = explode('.', $unlockField);
+            if (array_values(array_intersect($field, $unlockParts)) === $unlockParts) {
+                return $this;
+            }
+        }
+
+        $field = implode('.', $field);
+        $field = preg_replace('/(\.\d+)+$/', '', $field);
+
+        if ($lock) {
+            if (!in_array($field, $this->fields, true)) {
+                if ($value !== null) {
+                    $this->fields[$field] = $value;
+
+                    return $this;
+                }
+                if (isset($this->fields[$field])) {
+                    unset($this->fields[$field]);
+                }
+                $this->fields[] = $field;
+            }
+        } else {
+            $this->unlockField($field);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add to the list of fields that are currently unlocked.
+     *
+     * Unlocked fields are not included in the field hash.
+     *
+     * @param string $name The dot separated name for the field.
+     * @return $this
+     */
+    public function unlockField($name)
+    {
+        if (!in_array($name, $this->unlockedFields, true)) {
+            $this->unlockedFields[] = $name;
+        }
+
+        $index = array_search($name, $this->fields, true);
+        if ($index !== false) {
+            unset($this->fields[$index]);
+        }
+        unset($this->fields[$name]);
+
+        return $this;
+    }
+
+    /**
      * Get validation error message.
      *
      * @return string|null
@@ -312,6 +384,47 @@ class FormProtector
         sort($unlocked, SORT_STRING);
 
         return $unlocked;
+    }
+
+    /**
+     * Generate the token data.
+     *
+     * @return array The token data.
+     * @psalm-return array{fields: string, unlocked: string}
+     */
+    public function buildTokenData(): array
+    {
+        $fields = $this->fields;
+        $unlockedFields = $this->unlockedFields;
+
+        $locked = [];
+        foreach ($fields as $key => $value) {
+            if (is_numeric($value)) {
+                $value = (string)$value;
+            }
+            if (!is_int($key)) {
+                $locked[$key] = $value;
+                unset($fields[$key]);
+            }
+        }
+
+        sort($unlockedFields, SORT_STRING);
+        sort($fields, SORT_STRING);
+        ksort($locked, SORT_STRING);
+        $fields += $locked;
+
+        $fields = $this->generateHash($fields, $unlockedFields, $this->url, $this->sessionId);
+        $locked = implode('|', array_keys($locked));
+
+        return [
+            'fields' => urlencode($fields . ':' . $locked),
+            'unlocked' => urlencode(implode('|', $unlockedFields)),
+            'debug' => urlencode(json_encode([
+                $this->url,
+                $this->fields,
+                $this->unlockedFields,
+            ])),
+        ];
     }
 
     /**
