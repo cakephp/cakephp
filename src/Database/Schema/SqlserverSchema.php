@@ -142,6 +142,7 @@ class SqlserverSchema extends BaseSchema
             if ($length == -1) {
                 $length = TableSchema::LENGTH_LONG;
             }
+
             return ['type' => TableSchema::TYPE_BINARY, 'length' => $length];
         }
 
