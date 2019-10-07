@@ -22,7 +22,6 @@ use Cake\Core\App;
 use Cake\Database\Connection;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Database\TypeFactory;
-use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\InvalidPrimaryKeyException;

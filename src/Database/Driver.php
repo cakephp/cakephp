@@ -18,7 +18,6 @@ namespace Cake\Database;
 
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Schema\BaseSchema;
-use Cake\Database\Query;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\Statement\PDOStatement;
 use Closure;

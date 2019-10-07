@@ -671,7 +671,7 @@ SQL;
             [
                 'value',
                 ['type' => 'decimal', 'length' => 11, 'unsigned' => true],
-                '`value` DECIMAL(11) UNSIGNED'
+                '`value` DECIMAL(11) UNSIGNED',
             ],
             [
                 'value',
