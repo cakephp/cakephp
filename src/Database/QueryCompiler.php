@@ -128,8 +128,15 @@ class QueryCompiler
     protected function _sqlCompiler(string &$sql, Query $query, ValueBinder $generator): Closure
     {
         return function ($parts, $name) use (&$sql, $query, $generator): ?string {
-            if (!isset($parts) ||
-                ((is_array($parts) || $parts instanceof Countable) && !count($parts))
+            if (
+                !isset($parts) ||
+                (
+                    (
+                        is_array($parts) ||
+                        $parts instanceof Countable
+                    ) &&
+                    !count($parts)
+                )
             ) {
                 return null;
             }

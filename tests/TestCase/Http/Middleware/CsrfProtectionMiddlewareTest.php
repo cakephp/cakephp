@@ -95,7 +95,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $this->assertRegExp('/^[a-f0-9]+$/', $cookie['value'], 'Should look like a hash.');
         $this->assertSame(0, $cookie['expire'], 'session duration.');
         $this->assertSame('/dir/', $cookie['path'], 'session path.');
-        $this->assertEquals($cookie['value'], $updatedRequest->getParam('_csrfToken'));
+        $this->assertEquals($cookie['value'], $updatedRequest->getAttribute('csrfToken'));
     }
 
     /**
@@ -321,6 +321,9 @@ class CsrfProtectionMiddlewareTest extends TestCase
     public function testSkippingTokenCheckUsingWhitelistCallback()
     {
         $request = new ServerRequest([
+            'post' => [
+                '_csrfToken' => 'foo',
+            ],
             'environment' => [
                 'REQUEST_METHOD' => 'POST',
             ],
@@ -333,7 +336,14 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
             return true;
         });
-        $response = $middleware->process($request, $this->_getRequestHandler());
+
+        $handler = new TestRequestHandler(function ($request) {
+            $this->assertEmpty($request->getParsedBody());
+
+            return new Response();
+        });
+
+        $response = $middleware->process($request, $handler);
         $this->assertInstanceOf(Response::class, $response);
     }
 }

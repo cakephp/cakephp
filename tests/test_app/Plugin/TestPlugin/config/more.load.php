@@ -12,4 +12,5 @@
  * @since         1.3.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 return ['plugin_more_load' => '/test_app/Plugin/TestPlugin/Config/more.load.php'];

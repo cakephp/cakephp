@@ -40,6 +40,6 @@ class CookieNotSet extends CookieSet
      */
     public function toString(): string
     {
-        return 'cookie was not set';
+        return 'cookie is not set';
     }
 }

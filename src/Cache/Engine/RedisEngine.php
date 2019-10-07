@@ -102,8 +102,8 @@ class RedisEngine extends CacheEngine
             } elseif (empty($this->_config['persistent'])) {
                 $return = $this->_Redis->connect(
                     $this->_config['server'],
-                    $this->_config['port'],
-                    $this->_config['timeout']
+                    (int)$this->_config['port'],
+                    (int)$this->_config['timeout']
                 );
             } else {
                 $persistentId = $this->_config['port'] . $this->_config['timeout'] . $this->_config['database'];

@@ -269,8 +269,10 @@ class TimeHelper extends Helper
             'timezone' => null,
         ];
         $options['timezone'] = $this->_getTimezone($options['timezone']);
-        if ($options['timezone'] &&
-            ($dateTime instanceof Time || $dateTime instanceof FrozenTime)
+        if (
+            $options['timezone'] &&
+            ($dateTime instanceof Time ||
+            $dateTime instanceof FrozenTime)
         ) {
             $dateTime = $dateTime->timezone($options['timezone']);
             unset($options['timezone']);

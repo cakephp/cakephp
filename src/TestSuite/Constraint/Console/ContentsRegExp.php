@@ -49,6 +49,6 @@ class ContentsRegExp extends ContentsBase
      */
     public function failureDescription($other): string
     {
-        return $other . ' ' . $this->toString();
+        return '`' . $other . '` ' . $this->toString();
     }
 }

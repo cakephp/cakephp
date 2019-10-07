@@ -1036,11 +1036,11 @@ class BelongsToMany extends Association
             ->where($this->targetConditions())
             ->addDefaultTypes($this->getTarget());
 
-        if (!($this->junctionConditions() || $this->getFinder())) {
-            return $query;
+        if ($this->junctionConditions()) {
+            return $this->_appendJunctionJoin($query);
         }
 
-        return $this->_appendJunctionJoin($query);
+        return $query;
     }
 
     /**
@@ -1159,6 +1159,7 @@ class BelongsToMany extends Association
                 $existing = $this->find()
                     ->select($keys)
                     ->where(array_combine($prefixedForeignKey, $primaryValue));
+                $existing = $this->_appendJunctionJoin($existing);
 
                 $jointEntities = $this->_collectJointEntities($sourceEntity, $targetEntities);
                 $inserts = $this->_diffLinks($existing, $jointEntities, $targetEntities, $options);

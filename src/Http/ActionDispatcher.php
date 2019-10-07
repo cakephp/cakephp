@@ -54,8 +54,8 @@ class ActionDispatcher
         if ($response === null) {
             $response = new Response();
         }
-        if (Router::getRequest(true) !== $request) {
-            Router::pushRequest($request);
+        if (Router::getRequest() !== $request) {
+            Router::setRequest($request);
         }
 
         $controller = $this->factory->create($request, $response);

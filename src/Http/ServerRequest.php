@@ -54,7 +54,7 @@ class ServerRequest implements ServerRequestInterface
      * In PUT/PATCH/DELETE requests this property will contain the form-urlencoded
      * data.
      *
-     * @var array|null
+     * @var array|object|null
      */
     protected $data = [];
 
@@ -80,13 +80,6 @@ class ServerRequest implements ServerRequestInterface
     protected $_environment = [];
 
     /**
-     * The URL string used for the request.
-     *
-     * @var string
-     */
-    protected $url;
-
-    /**
      * Base URL path.
      *
      * @var string
@@ -99,13 +92,6 @@ class ServerRequest implements ServerRequestInterface
      * @var string
      */
     protected $webroot = '/';
-
-    /**
-     * The full address to the current request
-     *
-     * @var string
-     */
-    protected $here;
 
     /**
      * Whether or not to trust HTTP_X headers set by most load balancers.
@@ -149,7 +135,6 @@ class ServerRequest implements ServerRequestInterface
         'ssl' => ['env' => 'HTTPS', 'options' => [1, 'on']],
         'ajax' => ['env' => 'HTTP_X_REQUESTED_WITH', 'value' => 'XMLHttpRequest'],
         'flash' => ['env' => 'HTTP_USER_AGENT', 'pattern' => '/^(Shockwave|Adobe) Flash/'],
-        'requested' => ['param' => 'requested', 'value' => 1],
         'json' => ['accept' => ['application/json'], 'param' => '_ext', 'value' => 'json'],
         'xml' => ['accept' => ['application/xml', 'text/xml'], 'param' => '_ext', 'value' => 'xml'],
     ];
@@ -312,9 +297,6 @@ class ServerRequest implements ServerRequestInterface
         $this->base = $config['base'];
         $this->webroot = $config['webroot'];
 
-        $this->url = substr($uri->getPath(), 1);
-        $this->here = $this->base . '/' . $this->url;
-
         if (isset($config['input'])) {
             $stream = new Stream('php://memory', 'rw');
             $stream->write($config['input']);
@@ -346,7 +328,8 @@ class ServerRequest implements ServerRequestInterface
         $method = $this->getEnv('REQUEST_METHOD');
         $override = false;
 
-        if (in_array($method, ['PUT', 'DELETE', 'PATCH'], true) &&
+        if (
+            in_array($method, ['PUT', 'DELETE', 'PATCH'], true) &&
             strpos((string)$this->contentType(), 'application/x-www-form-urlencoded') === 0
         ) {
             $data = $this->input();
@@ -379,7 +362,7 @@ class ServerRequest implements ServerRequestInterface
      */
     protected function _processGet(array $query, string $queryString = ''): array
     {
-        $unsetUrl = '/' . str_replace(['.', ' '], '_', urldecode($this->url));
+        $unsetUrl = str_replace(['.', ' '], '_', urldecode($this->uri->getPath()));
         unset($query[$unsetUrl], $query[$this->base . $unsetUrl]);
         if (strlen($queryString)) {
             parse_str($queryString, $queryArgs);
@@ -835,7 +818,7 @@ class ServerRequest implements ServerRequestInterface
      * Allows for custom detectors on the request parameters.
      *
      * ```
-     * addDetector('requested', ['param' => 'requested', 'value' => 1]);
+     * addDetector('admin', ['param' => 'prefix', 'value' => 'admin']);
      * ```
      *
      * ### Accept comparison
@@ -1085,7 +1068,8 @@ class ServerRequest implements ServerRequestInterface
     {
         $new = clone $this;
 
-        if (!is_string($method) ||
+        if (
+            !is_string($method) ||
             !preg_match('/^[!#$%&\'*+.^_`\|~0-9a-z-]+$/i', $method)
         ) {
             throw new InvalidArgumentException(sprintf(
@@ -1395,7 +1379,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param string|null $name Dot separated name of the value to read. Or null to read all data.
      * @param mixed $default The default data.
-     * @return array|string|null The value being read.
+     * @return mixed The value being read.
      */
     public function getData(?string $name = null, $default = null)
     {
@@ -1451,10 +1435,10 @@ class ServerRequest implements ServerRequestInterface
      * Read cookie data from the request's cookie data.
      *
      * @param string $key The key or dotted path you want to read.
-     * @param string $default The default value if the cookie is not set.
+     * @param string|array|null $default The default value if the cookie is not set.
      * @return string|array|null Either the cookie value, or null if the value doesn't exist.
      */
-    public function getCookie(string $key, ?string $default = null)
+    public function getCookie(string $key, $default = null)
     {
         return Hash::get($this->cookies, $key, $default);
     }
@@ -1530,10 +1514,10 @@ class ServerRequest implements ServerRequestInterface
      * post data. For other content types, it may be the deserialized request
      * body.
      *
-     * @return array|null The deserialized body parameters, if any.
+     * @return array|object|null The deserialized body parameters, if any.
      *     These will typically be an array.
      */
-    public function getParsedBody(): ?array
+    public function getParsedBody()
     {
         return $this->data;
     }
@@ -1541,10 +1525,9 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Update the parsed body and get a new instance.
      *
-     * @param array|null $data The deserialized body data. This will
+     * @param array|object|null $data The deserialized body data. This will
      *     typically be in an array or object.
      * @return static
-     * @psalm-suppress MoreSpecificImplementedParamType
      */
     public function withParsedBody($data)
     {
@@ -1697,8 +1680,10 @@ class ServerRequest implements ServerRequestInterface
     public function withData(string $name, $value)
     {
         $copy = clone $this;
-        /** @psalm-suppress PossiblyNullArgument */
-        $copy->data = Hash::insert($copy->data, $name, $value);
+
+        if (is_array($copy->data)) {
+            $copy->data = Hash::insert($copy->data, $name, $value);
+        }
 
         return $copy;
     }
@@ -1715,8 +1700,10 @@ class ServerRequest implements ServerRequestInterface
     public function withoutData(string $name)
     {
         $copy = clone $this;
-        /** @psalm-suppress PossiblyNullArgument */
-        $copy->data = Hash::remove($copy->data, $name);
+
+        if (is_array($copy->data)) {
+            $copy->data = Hash::remove($copy->data, $name);
+        }
 
         return $copy;
     }
@@ -1800,6 +1787,10 @@ class ServerRequest implements ServerRequestInterface
     public function getAttribute($name, $default = null)
     {
         if (in_array($name, $this->emulatedAttributes, true)) {
+            if ($name === 'here') {
+                return $this->base . $this->uri->getPath();
+            }
+
             return $this->{$name};
         }
         if (array_key_exists($name, $this->attributes)) {
@@ -1823,7 +1814,7 @@ class ServerRequest implements ServerRequestInterface
             'params' => $this->params,
             'webroot' => $this->webroot,
             'base' => $this->base,
-            'here' => $this->here,
+            'here' => $this->base . $this->uri->getPath(),
         ];
 
         return $this->attributes + $emulated;

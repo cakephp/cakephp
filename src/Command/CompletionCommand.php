@@ -205,7 +205,8 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
             $coreShellReflection = new ReflectionClass(Shell::class);
             $reflection = new ReflectionClass($shell);
             foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-                if ($shell->hasMethod($method->getName())
+                if (
+                    $shell->hasMethod($method->getName())
                     && !$coreShellReflection->hasMethod($method->getName())
                 ) {
                     $output[] = $method->getName();
@@ -234,6 +235,9 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
         foreach ($this->commands as $key => $value) {
             $parts = explode(' ', $key);
             if ($parts[0] !== $name) {
+                continue;
+            }
+            if ($subcommand && !isset($parts[1])) {
                 continue;
             }
             if ($subcommand && isset($parts[1]) && $parts[1] !== $subcommand) {

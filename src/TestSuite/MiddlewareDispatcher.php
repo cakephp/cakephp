@@ -20,11 +20,11 @@ use Cake\Core\HttpApplicationInterface;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Event\EventManager;
 use Cake\Http\Server;
+use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Router;
 use LogicException;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use ReflectionClass;
 use ReflectionException;
 use Zend\Diactoros\Stream;
@@ -143,9 +143,9 @@ class MiddlewareDispatcher
      * Create a PSR7 request from the request spec.
      *
      * @param array $spec The request spec.
-     * @return \Psr\Http\Message\ServerRequestInterface
+     * @return \Cake\Http\ServerRequest
      */
-    protected function _createRequest(array $spec): ServerRequestInterface
+    protected function _createRequest(array $spec): ServerRequest
     {
         if (isset($spec['input'])) {
             $spec['post'] = [];

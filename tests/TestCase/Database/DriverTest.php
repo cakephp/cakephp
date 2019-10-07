@@ -21,6 +21,7 @@ use Cake\Database\Driver\Mysql;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Query;
 use Cake\Database\QueryCompiler;
+use Cake\Database\Schema\TableSchema;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
 use PDO;
@@ -262,6 +263,19 @@ class DriverTest extends TestCase
     public function testNewCompiler()
     {
         $this->assertInstanceOf(QueryCompiler::class, $this->driver->newCompiler());
+    }
+
+    /**
+     * Test newTableSchema().
+     *
+     * @return void
+     */
+    public function testNewTableSchema()
+    {
+        $tableName = 'articles';
+        $actual = $this->driver->newTableSchema($tableName);
+        $this->assertInstanceOf(TableSchema::class, $actual);
+        $this->assertEquals($tableName, $actual->name());
     }
 
     /**

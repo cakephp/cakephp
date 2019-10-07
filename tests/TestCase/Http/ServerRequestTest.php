@@ -2994,35 +2994,6 @@ XML;
     }
 
     /**
-     * Test is('requested') and isRequested()
-     *
-     * @return void
-     */
-    public function testIsRequested()
-    {
-        $request = new ServerRequest([
-            'params' => [
-                'controller' => 'posts',
-                'action' => 'index',
-                'plugin' => null,
-                'requested' => 1,
-            ],
-        ]);
-        $this->assertTrue($request->is('requested'));
-        $this->assertTrue($request->isRequested());
-
-        $request = new ServerRequest([
-            'params' => [
-                'controller' => 'posts',
-                'action' => 'index',
-                'plugin' => null,
-            ],
-        ]);
-        $this->assertFalse($request->is('requested'));
-        $this->assertFalse($request->isRequested());
-    }
-
-    /**
      * Test the cookie() method.
      *
      * @return void

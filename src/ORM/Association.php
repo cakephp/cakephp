@@ -309,7 +309,8 @@ abstract class Association
      */
     public function setClassName(string $className)
     {
-        if ($this->_targetTable !== null &&
+        if (
+            $this->_targetTable !== null &&
             get_class($this->_targetTable) !== App::className($className, 'Model/Table', 'Table')
         ) {
             throw new InvalidArgumentException(sprintf(

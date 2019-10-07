@@ -22,6 +22,7 @@ use Cake\Database\Query;
 use Cake\Database\Statement\PDOStatement;
 use Cake\Database\Statement\SqliteStatement;
 use Cake\Database\StatementInterface;
+use InvalidArgumentException;
 use PDO;
 
 /**
@@ -65,6 +66,12 @@ class Sqlite extends Driver
             PDO::ATTR_EMULATE_PREPARES => false,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
+        if (!is_string($config['database']) || !strlen($config['database'])) {
+            $name = $config['name'] ?? 'unknown';
+            throw new InvalidArgumentException(
+                "The `database` key for the `{$name}` SQLite connection needs to be a non-empty string."
+            );
+        }
 
         $databaseExists = file_exists($config['database']);
 

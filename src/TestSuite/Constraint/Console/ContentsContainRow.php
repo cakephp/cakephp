@@ -56,6 +56,6 @@ class ContentsContainRow extends ContentsRegExp
      */
     public function failureDescription($other): string
     {
-        return $this->exporter()->shortenedExport($other) . ' ' . $this->toString();
+        return '`' . $this->exporter()->shortenedExport($other) . '` ' . $this->toString();
     }
 }

@@ -38,7 +38,7 @@ class EntityContextTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.Articles', 'core.Comments', 'core.ArticlesTags', 'core.Tags'];
+    protected $fixtures = ['core.Articles', 'core.Comments', 'core.ArticlesTags', 'core.Tags'];
 
     /**
      * @var \Cake\Http\ServerRequest

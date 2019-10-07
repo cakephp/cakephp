@@ -21,7 +21,6 @@ use Cake\Console\Command;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\App;
-use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\Plugin;
 use Cake\Filesystem\Filesystem;
 use Cake\Utility\Inflector;
@@ -194,9 +193,6 @@ class I18nExtractCommand extends Command
             $this->_paths = explode(',', (string)$args->getOption('paths'));
         } elseif ($args->getOption('plugin')) {
             $plugin = Inflector::camelize((string)$args->getOption('plugin'));
-            if (!Plugin::isLoaded($plugin)) {
-                throw new MissingPluginException(['plugin' => $plugin]);
-            }
             $this->_paths = [Plugin::classPath($plugin), Plugin::templatePath($plugin)];
         } else {
             $this->_getPaths($io);
@@ -640,7 +636,8 @@ class I18nExtractCommand extends Command
 
             $filename = str_replace('/', '_', $domain) . '.pot';
             $response = '';
-            while ($overwriteAll === false
+            while (
+                $overwriteAll === false
                 && file_exists($this->_output . $filename)
                 && strtoupper($response) !== 'Y'
             ) {
@@ -702,7 +699,8 @@ class I18nExtractCommand extends Command
     {
         $strings = [];
         $count = count($strings);
-        while ($count < $target
+        while (
+            $count < $target
             && ($this->_tokens[$position] === ','
                 || $this->_tokens[$position][0] === T_CONSTANT_ENCAPSED_STRING
                 || $this->_tokens[$position][0] === T_LNUMBER
@@ -711,7 +709,8 @@ class I18nExtractCommand extends Command
             $count = count($strings);
             if ($this->_tokens[$position][0] === T_CONSTANT_ENCAPSED_STRING && $this->_tokens[$position + 1] === '.') {
                 $string = '';
-                while ($this->_tokens[$position][0] === T_CONSTANT_ENCAPSED_STRING
+                while (
+                    $this->_tokens[$position][0] === T_CONSTANT_ENCAPSED_STRING
                     || $this->_tokens[$position] === '.'
                 ) {
                     if ($this->_tokens[$position][0] === T_CONSTANT_ENCAPSED_STRING) {

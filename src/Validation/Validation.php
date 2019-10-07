@@ -1336,12 +1336,14 @@ class Validation
         if ($options['optional'] && $error === UPLOAD_ERR_NO_FILE) {
             return true;
         }
-        if (isset($options['minSize'])
+        if (
+            isset($options['minSize'])
             && !static::fileSize($file, static::COMPARE_GREATER_OR_EQUAL, $options['minSize'])
         ) {
             return false;
         }
-        if (isset($options['maxSize'])
+        if (
+            isset($options['maxSize'])
             && !static::fileSize($file, static::COMPARE_LESS_OR_EQUAL, $options['maxSize'])
         ) {
             return false;
@@ -1623,7 +1625,8 @@ class Validation
      */
     public static function iban($check): bool
     {
-        if (!is_string($check) ||
+        if (
+            !is_string($check) ||
             !preg_match('/^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$/', $check)
         ) {
             return false;
@@ -1660,8 +1663,13 @@ class Validation
     protected static function _getDateString(array $value): string
     {
         $formatted = '';
-        if (isset($value['year'], $value['month'], $value['day']) &&
-            (is_numeric($value['year']) && is_numeric($value['month']) && is_numeric($value['day']))
+        if (
+            isset($value['year'], $value['month'], $value['day']) &&
+            (
+                is_numeric($value['year']) &&
+                is_numeric($value['month']) &&
+                is_numeric($value['day'])
+            )
         ) {
             $formatted .= sprintf('%d-%02d-%02d ', $value['year'], $value['month'], $value['day']);
         }

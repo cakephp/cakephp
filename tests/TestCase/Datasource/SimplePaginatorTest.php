@@ -27,7 +27,7 @@ class SimplePaginatorTest extends PaginatorTest
      *
      * @var array
      */
-    public $fixtures = [
+    protected $fixtures = [
         'core.Posts', 'core.Articles', 'core.ArticlesTags',
         'core.Authors', 'core.AuthorsTags', 'core.Tags',
     ];

@@ -101,9 +101,9 @@ class FlashParamEquals extends Constraint
     public function toString(): string
     {
         if ($this->at !== null) {
-            return sprintf('was in \'%s\' %s #%d', $this->key, $this->param, $this->at);
+            return sprintf('is in \'%s\' %s #%d', $this->key, $this->param, $this->at);
         }
 
-        return sprintf('was in \'%s\' %s', $this->key, $this->param);
+        return sprintf('is in \'%s\' %s', $this->key, $this->param);
     }
 }

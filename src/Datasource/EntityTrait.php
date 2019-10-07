@@ -241,7 +241,8 @@ trait EntityTrait
 
             $this->setDirty($name, true);
 
-            if (!array_key_exists($name, $this->_original) &&
+            if (
+                !array_key_exists($name, $this->_original) &&
                 array_key_exists($name, $this->_fields) &&
                 $this->_fields[$name] !== $value
             ) {
@@ -385,9 +386,16 @@ trait EntityTrait
     public function isEmpty(string $field): bool
     {
         $value = $this->get($field);
-        if ($value === null
-            || (is_array($value) && empty($value)
-            || (is_string($value) && empty($value)))
+        if (
+            $value === null ||
+            (
+                is_array($value) &&
+                empty($value) ||
+                (
+                    is_string($value) &&
+                    empty($value)
+                )
+            )
         ) {
             return true;
         }
@@ -985,7 +993,8 @@ trait EntityTrait
                 $val = $entity[$part] ?? false;
             }
 
-            if (is_array($val) ||
+            if (
+                is_array($val) ||
                 $val instanceof Traversable ||
                 $val instanceof EntityInterface
             ) {

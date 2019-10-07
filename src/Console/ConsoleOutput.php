@@ -166,8 +166,16 @@ class ConsoleOutput
     {
         $this->_output = fopen($stream, 'wb');
 
-        if ((DIRECTORY_SEPARATOR === '\\' && !(bool)env('ANSICON') && env('ConEmuANSI') !== 'ON') ||
-            (function_exists('posix_isatty') && !posix_isatty($this->_output))
+        if (
+            (
+                DIRECTORY_SEPARATOR === '\\' &&
+                !(bool)env('ANSICON') &&
+                env('ConEmuANSI') !== 'ON'
+            ) ||
+            (
+                function_exists('posix_isatty') &&
+                !posix_isatty($this->_output)
+            )
         ) {
             $this->_outputAs = self::PLAIN;
         }

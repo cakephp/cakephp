@@ -2545,7 +2545,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         }
 
         if (is_array($data)) {
-            if (($flags & self::EMPTY_FILE)
+            if (
+                ($flags & self::EMPTY_FILE)
                 && isset($data['name'], $data['type'], $data['tmp_name'], $data['error'])
                 && (int)$data['error'] === UPLOAD_ERR_NO_FILE
             ) {
@@ -2571,7 +2572,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             }
         }
 
-        if (($flags & self::EMPTY_FILE)
+        if (
+            ($flags & self::EMPTY_FILE)
             && $data instanceof UploadedFileInterface
             && $data->getError() === UPLOAD_ERR_NO_FILE
         ) {

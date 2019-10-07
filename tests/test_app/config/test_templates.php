@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Template strings for testing.
  */
 return [

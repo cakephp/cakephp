@@ -109,13 +109,14 @@ class EmailTraitTest extends TestCase
 
         $this->sendEmails();
 
-        $this->assertMailCount(2);
+        $this->assertMailCount(3);
 
         $this->assertMailSentFromAt(0, 'default@example.com');
         $this->assertMailSentFromAt(1, 'alternate@example.com');
 
         $this->assertMailSentToAt(0, 'to@example.com');
         $this->assertMailSentToAt(1, 'to2@example.com');
+        $this->assertMailSentToAt(2, 'to3@example.com');
 
         $this->assertMailContainsAt(0, 'text');
         $this->assertMailContainsAt(1, 'html');
@@ -242,6 +243,10 @@ class EmailTraitTest extends TestCase
             ->setTo('to2@example.com')
             ->setCc('cc2@example.com')
             ->setEmailFormat(Message::MESSAGE_HTML)
+            ->deliver('html');
+
+        (new Mailer('alternate'))
+            ->setTo(['to3@example.com' => null])
             ->deliver('html');
     }
 }

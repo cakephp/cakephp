@@ -31,7 +31,7 @@ class SessionTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.CakeSessions', 'core.Sessions'];
+    protected $fixtures = ['core.CakeSessions', 'core.Sessions'];
 
     /**
      * tearDown method

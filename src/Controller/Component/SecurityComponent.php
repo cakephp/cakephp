@@ -31,12 +31,10 @@ use Cake\Utility\Security;
 
 /**
  * The Security Component creates an easy way to integrate tighter security in
- * your application. It provides methods for various tasks like:
+ * your application. It provides methods for these tasks:
  *
- * - Restricting which HTTP methods your application accepts.
- * - Form tampering protection
+ * - Form tampering protection.
  * - Requiring that SSL be used.
- * - Limiting cross controller communication.
  *
  * @link https://book.cakephp.org/3.0/en/controllers/components/security.html
  */
@@ -53,16 +51,12 @@ class SecurityComponent extends Component
      * - `blackHoleCallback` - The controller method that will be called if this
      *   request is black-hole'd.
      * - `requireSecure` - List of actions that require an SSL-secured connection.
-     * - `allowedControllers` - Controllers from which actions of the current
-     *   controller are allowed to receive requests.
-     * - `allowedActions` - Actions from which actions of the current controller
-     *   are allowed to receive requests.
      * - `unlockedFields` - Form fields to exclude from POST validation. Fields can
      *   be unlocked either in the Component, or with FormHelper::unlockField().
      *   Fields that have been unlocked are not required to be part of the POST
      *   and hidden unlocked fields do not have their values checked.
      * - `unlockedActions` - Actions to exclude from POST validation checks.
-     *   Other checks like requireAuth(), requireSecure() etc. will still be applied.
+     *   Other checks like requireSecure() etc. will still be applied.
      * - `validatePost` - Whether to validate POST data. Set to false to disable
      *   for data coming from 3rd party services, etc.
      *
@@ -71,9 +65,6 @@ class SecurityComponent extends Component
     protected $_defaultConfig = [
         'blackHoleCallback' => null,
         'requireSecure' => [],
-        'requireAuth' => [],
-        'allowedControllers' => [],
-        'allowedActions' => [],
         'unlockedFields' => [],
         'unlockedActions' => [],
         'validatePost' => true,
@@ -102,8 +93,6 @@ class SecurityComponent extends Component
         try {
             $this->_secureRequired($controller);
 
-            $isNotRequestAction = !$request->getParam('requested');
-
             if ($this->_action === $this->_config['blackHoleCallback']) {
                 throw new AuthSecurityException(sprintf(
                     'Action %s is defined as the blackhole callback.',
@@ -111,9 +100,9 @@ class SecurityComponent extends Component
                 ));
             }
 
-            if (!in_array($this->_action, (array)$this->_config['unlockedActions'], true) &&
+            if (
+                !in_array($this->_action, (array)$this->_config['unlockedActions'], true) &&
                 $hasData &&
-                $isNotRequestAction &&
                 $this->_config['validatePost']
             ) {
                 $this->_validatePost($controller);
@@ -151,7 +140,8 @@ class SecurityComponent extends Component
      */
     public function requireSecure($actions = null): void
     {
-        $this->_requireMethod('Secure', (array)$actions);
+        $actions = (array)$actions;
+        $this->setConfig('requireSecure', empty($actions) ? ['*'] : $actions);
     }
 
     /**
@@ -187,26 +177,11 @@ class SecurityComponent extends Component
         if ($exception !== null) {
             if (!Configure::read('debug')) {
                 $exception->setReason($exception->getMessage());
-                $exception->setMessage(self::DEFAULT_EXCEPTION_MESSAGE);
+                $exception->setMessage(static::DEFAULT_EXCEPTION_MESSAGE);
             }
             throw $exception;
         }
-        throw new BadRequestException(self::DEFAULT_EXCEPTION_MESSAGE);
-    }
-
-    /**
-     * Sets the actions that require a $method HTTP request, or empty for all actions
-     *
-     * @param string $method The HTTP method to assign controller actions to
-     * @param array $actions Controller actions to set the required HTTP method to.
-     * @return void
-     */
-    protected function _requireMethod(string $method, array $actions = []): void
-    {
-        if (isset($actions[0]) && is_array($actions[0])) {
-            $actions = $actions[0];
-        }
-        $this->setConfig('require' . $method, empty($actions) ? ['*'] : $actions);
+        throw new BadRequestException(static::DEFAULT_EXCEPTION_MESSAGE);
     }
 
     /**
@@ -218,18 +193,23 @@ class SecurityComponent extends Component
      */
     protected function _secureRequired(Controller $controller): void
     {
-        if (is_array($this->_config['requireSecure']) &&
-            !empty($this->_config['requireSecure'])
+        if (
+            empty($this->_config['requireSecure']) ||
+            !is_array($this->_config['requireSecure'])
         ) {
-            $requireSecure = $this->_config['requireSecure'];
+            return;
+        }
 
-            if (in_array($this->_action, $requireSecure, true) || $requireSecure === ['*']) {
-                if (!$controller->getRequest()->is('ssl')) {
-                    throw new SecurityException(
-                        'Request is not SSL and the action is required to be secure'
-                    );
-                }
-            }
+        $requireSecure = $this->_config['requireSecure'];
+        if (
+            ($requireSecure[0] === '*' ||
+                in_array($this->_action, $requireSecure, true)
+            ) &&
+            !$controller->getRequest()->is('ssl')
+        ) {
+            throw new SecurityException(
+                'Request is not SSL and the action is required to be secure'
+            );
         }
     }
 
@@ -250,7 +230,7 @@ class SecurityComponent extends Component
             return;
         }
 
-        $msg = self::DEFAULT_EXCEPTION_MESSAGE;
+        $msg = static::DEFAULT_EXCEPTION_MESSAGE;
         if (Configure::read('debug')) {
             $msg = $this->_debugPostTokenNotMatching($controller, $hashParts);
         }
@@ -335,7 +315,7 @@ class SecurityComponent extends Component
         if (strpos($token, ':')) {
             [$token, $locked] = explode(':', $token, 2);
         }
-        unset($check['_Token'], $check['_csrfToken']);
+        unset($check['_Token']);
 
         $locked = explode('|', $locked);
         $unlocked = explode('|', $unlocked);
@@ -358,7 +338,10 @@ class SecurityComponent extends Component
         }
 
         $unlockedFields = array_unique(
-            array_merge((array)$this->getConfig('disabledFields'), (array)$this->_config['unlockedFields'], $unlocked)
+            array_merge(
+                (array)$this->_config['unlockedFields'],
+                $unlocked
+            )
         );
 
         /** @var (string|int)[] $fieldList */
@@ -427,7 +410,6 @@ class SecurityComponent extends Component
     protected function _debugPostTokenNotMatching(Controller $controller, array $hashParts): string
     {
         $messages = [];
-        /** @psalm-suppress PossiblyInvalidArgument */
         $expectedParts = json_decode(urldecode($controller->getRequest()->getData('_Token.debug')), true);
         if (!is_array($expectedParts) || count($expectedParts) !== 3) {
             return 'Invalid security debug token.';
@@ -503,22 +485,11 @@ class SecurityComponent extends Component
      */
     public function generateToken(ServerRequest $request): ServerRequest
     {
-        if ($request->is('requested')) {
-            if ($request->getSession()->check('_Token')) {
-                $request = $request->withParam('_Token', $request->getSession()->read('_Token'));
-            }
-
-            return $request;
-        }
         $token = [
-            'allowedControllers' => $this->_config['allowedControllers'],
-            'allowedActions' => $this->_config['allowedActions'],
             'unlockedFields' => $this->_config['unlockedFields'],
         ];
 
-        $request->getSession()->write('_Token', $token);
-
-        return $request->withParam('_Token', [
+        return $request->withAttribute('formToken', [
             'unlockedFields' => $token['unlockedFields'],
         ]);
     }

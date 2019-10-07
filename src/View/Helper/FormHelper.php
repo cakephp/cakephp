@@ -142,8 +142,10 @@ class FormHelper extends Helper
             'textarea' => '<textarea name="{{name}}"{{attrs}}>{{value}}</textarea>',
             // Container for submit buttons.
             'submitContainer' => '<div class="submit">{{content}}</div>',
-            //Confirm javascript template for postLink()
+            // Confirm javascript template for postLink()
             'confirmJs' => '{{confirm}}',
+            // selected class
+            'selectedClass' => 'selected',
         ],
         // set HTML5 validation message to custom required/empty messages
         'autoSetCustomValidity' => true,
@@ -242,7 +244,7 @@ class FormHelper extends Helper
      *
      * @var string[]
      */
-    protected $_groupedInputTypes = ['radio', 'multicheckbox', 'date', 'time', 'datetime'];
+    protected $_groupedInputTypes = ['radio', 'multicheckbox'];
 
     /**
      * Construct the widgets and binds the default context providers
@@ -482,8 +484,10 @@ class FormHelper extends Helper
             return $request->getRequestTarget();
         }
 
-        if (is_string($options['url']) ||
-            (is_array($options['url']) && isset($options['url']['_name']))
+        if (
+            is_string($options['url']) ||
+            (is_array($options['url']) &&
+            isset($options['url']['_name']))
         ) {
             return $options['url'];
         }
@@ -526,17 +530,20 @@ class FormHelper extends Helper
     {
         $request = $this->_View->getRequest();
 
-        if ($request->getParam('_Token.unlockedFields')) {
-            foreach ((array)$request->getParam('_Token.unlockedFields') as $unlocked) {
+        $formToken = $request->getAttribute('formToken');
+        if (!empty($formToken['unlockedFields'])) {
+            foreach ($formToken['unlockedFields'] as $unlocked) {
                 $this->_unlockedFields[] = $unlocked;
             }
         }
-        if (!$request->getParam('_csrfToken')) {
+
+        $csrfToken = $request->getAttribute('csrfToken');
+        if (!$csrfToken) {
             return '';
         }
 
         return $this->hidden('_csrfToken', [
-            'value' => $request->getParam('_csrfToken'),
+            'value' => $csrfToken,
             'secure' => static::SECURE_SKIP,
             'autocomplete' => 'off',
         ]);
@@ -557,7 +564,7 @@ class FormHelper extends Helper
     {
         $out = '';
 
-        if ($this->requestType !== 'get' && $this->_View->getRequest()->getParam('_Token')) {
+        if ($this->requestType !== 'get' && $this->_View->getRequest()->getAttribute('formToken')) {
             $out .= $this->secure($this->fields, $secureAttributes);
             $this->fields = [];
             $this->_unlockedFields = [];
@@ -590,7 +597,7 @@ class FormHelper extends Helper
      */
     public function secure(array $fields = [], array $secureAttributes = []): string
     {
-        if (!$this->_View->getRequest()->getParam('_Token')) {
+        if (!$this->_View->getRequest()->getAttribute('formToken')) {
             return '';
         }
         $debugSecurity = Configure::read('debug');
@@ -1098,7 +1105,8 @@ class FormHelper extends Helper
         $nestedInput = $options['nestedInput'] ?? $nestedInput;
         unset($options['nestedInput']);
 
-        if ($nestedInput === true
+        if (
+            $nestedInput === true
             && $options['type'] === 'checkbox'
             && !array_key_exists('hiddenField', $options)
             && $label !== false
@@ -1362,7 +1370,8 @@ class FormHelper extends Helper
         }
 
         $typesWithMaxLength = ['text', 'textarea', 'email', 'tel', 'url', 'search'];
-        if (!array_key_exists('maxlength', $options)
+        if (
+            !array_key_exists('maxlength', $options)
             && in_array($options['type'], $typesWithMaxLength, true)
         ) {
             $maxLength = $context->getMaxLength($fieldName);
@@ -2060,7 +2069,8 @@ class FormHelper extends Helper
 
         // Secure the field if there are options, or it's a multi select.
         // Single selects with no options don't submit, but multiselects do.
-        if ($attributes['secure'] &&
+        if (
+            $attributes['secure'] &&
             empty($options) &&
             empty($attributes['empty']) &&
             empty($attributes['multiple'])
@@ -2208,6 +2218,7 @@ class FormHelper extends Helper
             'value' => null,
         ];
         $options = $this->_initInputField($fieldName, $options);
+        $options['type'] = 'datetime-local';
 
         return $this->widget('datetime', $options);
     }
@@ -2284,7 +2295,7 @@ class FormHelper extends Helper
     protected function _initInputField(string $field, array $options = []): array
     {
         if (!isset($options['secure'])) {
-            $options['secure'] = (bool)$this->_View->getRequest()->getParam('_Token');
+            $options['secure'] = (bool)$this->_View->getRequest()->getAttribute('formToken');
         }
         $context = $this->_getContext();
 
@@ -2501,7 +2512,8 @@ class FormHelper extends Helper
         /** @var \Cake\View\Widget\WidgetInterface $widget */
         $widget = $this->_locator->get($name);
         $out = $widget->render($data, $this->context());
-        if (isset($data['name']) &&
+        if (
+            isset($data['name']) &&
             $secure !== null &&
             $secure !== self::SECURE_SKIP
         ) {

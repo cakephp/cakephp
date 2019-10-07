@@ -116,9 +116,7 @@ class WidgetLocator
     public function add(array $widgets): void
     {
         foreach ($widgets as $object) {
-            if (is_object($object) &&
-                !($object instanceof WidgetInterface)
-            ) {
+            if (is_object($object) && !($object instanceof WidgetInterface)) {
                 throw new RuntimeException(
                     'Widget objects must implement Cake\View\Widget\WidgetInterface.'
                 );

@@ -61,7 +61,8 @@ abstract class AbstractTransport
      */
     protected function checkRecipient(Message $message): void
     {
-        if ($message->getTo() === []
+        if (
+            $message->getTo() === []
             && $message->getCc() === []
             && $message->getBcc() === []
         ) {
