@@ -47,7 +47,6 @@ use RuntimeException;
 class FormHelper extends Helper
 {
     use IdGeneratorTrait;
-    use SecureFieldTokenTrait;
     use StringTemplateTrait;
 
     /**
@@ -644,7 +643,7 @@ class FormHelper extends Helper
      * @param array $formTokenData Token data.
      * @return \Cake\Form\FormProtector
      */
-    public function createFormProtector(string $url, array $formTokenData): FormProtector
+    protected function createFormProtector(string $url, array $formTokenData): FormProtector
     {
         $session = $this->_View->getRequest()->getSession();
         $session->start();
