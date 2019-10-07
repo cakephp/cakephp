@@ -177,11 +177,11 @@ class SecurityComponent extends Component
         if ($exception !== null) {
             if (!Configure::read('debug')) {
                 $exception->setReason($exception->getMessage());
-                $exception->setMessage(self::DEFAULT_EXCEPTION_MESSAGE);
+                $exception->setMessage(static::DEFAULT_EXCEPTION_MESSAGE);
             }
             throw $exception;
         }
-        throw new BadRequestException(self::DEFAULT_EXCEPTION_MESSAGE);
+        throw new BadRequestException(static::DEFAULT_EXCEPTION_MESSAGE);
     }
 
     /**
@@ -230,7 +230,7 @@ class SecurityComponent extends Component
             return;
         }
 
-        $msg = self::DEFAULT_EXCEPTION_MESSAGE;
+        $msg = static::DEFAULT_EXCEPTION_MESSAGE;
         if (Configure::read('debug')) {
             $msg = $this->_debugPostTokenNotMatching($controller, $hashParts);
         }
@@ -315,7 +315,7 @@ class SecurityComponent extends Component
         if (strpos($token, ':')) {
             [$token, $locked] = explode(':', $token, 2);
         }
-        unset($check['_Token'], $check['_csrfToken']);
+        unset($check['_Token']);
 
         $locked = explode('|', $locked);
         $unlocked = explode('|', $unlocked);
@@ -338,7 +338,10 @@ class SecurityComponent extends Component
         }
 
         $unlockedFields = array_unique(
-            array_merge((array)$this->getConfig('disabledFields'), (array)$this->_config['unlockedFields'], $unlocked)
+            array_merge(
+                (array)$this->_config['unlockedFields'],
+                $unlocked
+            )
         );
 
         /** @var (string|int)[] $fieldList */
@@ -486,9 +489,7 @@ class SecurityComponent extends Component
             'unlockedFields' => $this->_config['unlockedFields'],
         ];
 
-        $request->getSession()->write('_Token', $token);
-
-        return $request->withAttribute('securityToken', [
+        return $request->withAttribute('formToken', [
             'unlockedFields' => $token['unlockedFields'],
         ]);
     }

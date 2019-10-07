@@ -1097,7 +1097,7 @@ class FormHelperTest extends TestCase
      */
     public function testValidateHashNoModel()
     {
-        $this->View->setRequest($this->View->getRequest()->withParam('_Token', 'foo'));
+        $this->View->setRequest($this->View->getRequest()->withAttribute('formToken', 'foo'));
 
         $fields = ['anything'];
         $result = $this->Form->secure($fields);
@@ -1113,7 +1113,7 @@ class FormHelperTest extends TestCase
      */
     public function testNoCheckboxLocking()
     {
-        $this->View->setRequest($this->View->getRequest()->withParam('_Token', 'foo'));
+        $this->View->setRequest($this->View->getRequest()->withAttribute('formToken', 'foo'));
         $this->assertSame([], $this->Form->fields);
 
         $this->Form->checkbox('check', ['value' => '1']);
@@ -1131,7 +1131,7 @@ class FormHelperTest extends TestCase
     {
         $fields = ['Model.password', 'Model.username', 'Model.valid' => '0'];
 
-        $this->View->setRequest($this->View->getRequest()->withParam('_Token', 'testKey'));
+        $this->View->setRequest($this->View->getRequest()->withAttribute('formToken', 'testKey'));
         $result = $this->Form->secure($fields);
 
         $hash = hash_hmac('sha1', serialize($fields) . session_id(), Security::getSalt());
@@ -1179,7 +1179,7 @@ class FormHelperTest extends TestCase
         Configure::write('debug', false);
         $fields = ['Model.password', 'Model.username', 'Model.valid' => '0'];
 
-        $this->View->setRequest($this->View->getRequest()->withParam('_Token', 'testKey'));
+        $this->View->setRequest($this->View->getRequest()->withAttribute('formToken', 'testKey'));
         $result = $this->Form->secure($fields);
 
         $hash = hash_hmac('sha1', serialize($fields) . session_id(), Security::getSalt());
@@ -1366,7 +1366,7 @@ class FormHelperTest extends TestCase
      */
     public function testFormSecurityMultipleFields()
     {
-        $this->View->setRequest($this->View->getRequest()->withParam('_Token', 'foo'));
+        $this->View->setRequest($this->View->getRequest()->withAttribute('formToken', 'foo'));
 
         $fields = [
             'Model.0.password', 'Model.0.username', 'Model.0.hidden' => 'value',
@@ -1417,7 +1417,7 @@ class FormHelperTest extends TestCase
      */
     public function testFormSecurityMultipleSubmitButtons()
     {
-        $this->View->setRequest($this->View->getRequest()->withParam('_Token', 'testKey'));
+        $this->View->setRequest($this->View->getRequest()->withAttribute('formToken', 'testKey'));
 
         $this->Form->create($this->article);
         $this->Form->text('Address.title');
@@ -1496,7 +1496,7 @@ class FormHelperTest extends TestCase
      */
     public function testSecuritySubmitNestedNamed()
     {
-        $this->View->setRequest($this->View->getRequest()->withParam('_Token', 'testKey'));
+        $this->View->setRequest($this->View->getRequest()->withAttribute('formToken', 'testKey'));
 
         $this->Form->create($this->article);
         $this->Form->submit('Test', ['type' => 'submit', 'name' => 'Address[button]']);
@@ -1511,7 +1511,7 @@ class FormHelperTest extends TestCase
      */
     public function testSecuritySubmitImageNoName()
     {
-        $this->View->setRequest($this->View->getRequest()->withParam('_Token', 'testKey'));
+        $this->View->setRequest($this->View->getRequest()->withAttribute('formToken', 'testKey'));
 
         $this->Form->create();
         $result = $this->Form->submit('save.png');
@@ -1531,7 +1531,7 @@ class FormHelperTest extends TestCase
      */
     public function testSecuritySubmitImageName()
     {
-        $this->View->setRequest($this->View->getRequest()->withParam('_Token', 'testKey'));
+        $this->View->setRequest($this->View->getRequest()->withAttribute('formToken', 'testKey'));
 
         $this->Form->create(null);
         $result = $this->Form->submit('save.png', ['name' => 'test']);
@@ -1553,7 +1553,7 @@ class FormHelperTest extends TestCase
      */
     public function testFormSecurityMultipleControlFields()
     {
-        $this->View->setRequest($this->View->getRequest()->withParam('_Token', 'testKey'));
+        $this->View->setRequest($this->View->getRequest()->withAttribute('formToken', 'testKey'));
         $this->Form->create();
 
         $this->Form->hidden('Addresses.0.id', ['value' => '123456']);
@@ -1632,7 +1632,7 @@ class FormHelperTest extends TestCase
      */
     public function testFormSecurityArrayFields()
     {
-        $this->View->setRequest($this->View->getRequest()->withParam('_Token', 'testKey'));
+        $this->View->setRequest($this->View->getRequest()->withAttribute('formToken', 'testKey'));
 
         $this->Form->create();
         $this->Form->text('Address.primary.1');
@@ -1651,7 +1651,7 @@ class FormHelperTest extends TestCase
      */
     public function testFormSecurityMultipleControlDisabledFields()
     {
-        $this->View->setRequest($this->View->getRequest()->withParam('_Token', [
+        $this->View->setRequest($this->View->getRequest()->withAttribute('formToken', [
             'unlockedFields' => ['first_name', 'address'],
         ]));
         $this->Form->create();
@@ -1727,11 +1727,14 @@ class FormHelperTest extends TestCase
      */
     public function testFormSecurityControlUnlockedFields()
     {
-        $this->View->setRequest($this->View->getRequest()->withParam('_Token', [
+        $this->View->setRequest($this->View->getRequest()->withAttribute('formToken', [
             'unlockedFields' => ['first_name', 'address'],
         ]));
         $this->Form->create();
-        $this->assertEquals($this->View->getRequest()->getParam('_Token.unlockedFields'), $this->Form->unlockField());
+        $this->assertEquals(
+            $this->View->getRequest()->getAttribute('formToken'),
+            ['unlockedFields' => $this->Form->unlockField()]
+        );
 
         $this->Form->hidden('Addresses.id', ['value' => '123456']);
         $this->Form->text('Addresses.title');
@@ -1802,11 +1805,14 @@ class FormHelperTest extends TestCase
      */
     public function testFormSecurityControlUnlockedFieldsDebugSecurityTrue()
     {
-        $this->View->setRequest($this->View->getRequest()->withParam('_Token', [
+        $this->View->setRequest($this->View->getRequest()->withAttribute('formToken', [
             'unlockedFields' => ['first_name', 'address'],
         ]));
         $this->Form->create();
-        $this->assertEquals($this->View->getRequest()->getParam('_Token.unlockedFields'), $this->Form->unlockField());
+        $this->assertEquals(
+            $this->View->getRequest()->getAttribute('formToken'),
+            ['unlockedFields' => $this->Form->unlockField()]
+        );
 
         $this->Form->hidden('Addresses.id', ['value' => '123456']);
         $this->Form->text('Addresses.title');
@@ -1876,11 +1882,14 @@ class FormHelperTest extends TestCase
      */
     public function testFormSecurityControlUnlockedFieldsDebugSecurityDebugFalse()
     {
-        $this->View->setRequest($this->View->getRequest()->withParam('_Token', [
+        $this->View->setRequest($this->View->getRequest()->withAttribute('formToken', [
             'unlockedFields' => ['first_name', 'address'],
         ]));
         $this->Form->create();
-        $this->assertEquals($this->View->getRequest()->getParam('_Token.unlockedFields'), $this->Form->unlockField());
+        $this->assertEquals(
+            $this->View->getRequest()->getAttribute('formToken'),
+            ['unlockedFields' => $this->Form->unlockField()]
+        );
 
         $this->Form->hidden('Addresses.id', ['value' => '123456']);
         $this->Form->text('Addresses.title');
@@ -1930,13 +1939,13 @@ class FormHelperTest extends TestCase
      */
     public function testFormSecurityControlUnlockedFieldsDebugSecurityFalse()
     {
-        $this->View->setRequest($this->View->getRequest()->withParam('_Token', [
+        $this->View->setRequest($this->View->getRequest()->withAttribute('formToken', [
             'unlockedFields' => ['first_name', 'address'],
         ]));
         $this->Form->create();
         $this->assertEquals(
-            $this->View->getRequest()->getParam('_Token.unlockedFields'),
-            $this->Form->unlockField()
+            $this->View->getRequest()->getAttribute('formToken'),
+            ['unlockedFields' => $this->Form->unlockField()]
         );
 
         $this->Form->hidden('Addresses.id', ['value' => '123456']);
@@ -1988,7 +1997,7 @@ class FormHelperTest extends TestCase
      */
     public function testFormSecureWithCustomNameAttribute()
     {
-        $this->View->setRequest($this->View->getRequest()->withParam('_Token', 'testKey'));
+        $this->View->setRequest($this->View->getRequest()->withAttribute('formToken', 'testKey'));
 
         $this->Form->text('UserForm.published', ['name' => 'User[custom]']);
         $this->assertSame('User.custom', $this->Form->fields[0]);
@@ -2007,7 +2016,7 @@ class FormHelperTest extends TestCase
     public function testFormSecuredControl()
     {
         $this->View->setRequest($this->View->getRequest()
-            ->withParam('_Token', 'stuff')
+            ->withAttribute('formToken', 'stuff')
             ->withAttribute('csrfToken', 'testKey'));
         $this->article['schema'] = [
             'ratio' => ['type' => 'decimal', 'length' => 5, 'precision' => 6],
@@ -2173,7 +2182,7 @@ class FormHelperTest extends TestCase
      */
     public function testSecuredControlCustomName()
     {
-        $this->View->setRequest($this->View->getRequest()->withParam('_Token', 'testKey'));
+        $this->View->setRequest($this->View->getRequest()->withAttribute('formToken', 'testKey'));
         $this->assertEquals([], $this->Form->fields);
 
         $this->Form->text('text_input', [
@@ -2203,7 +2212,7 @@ class FormHelperTest extends TestCase
      */
     public function testSecuredControlDuplicate()
     {
-        $this->View->setRequest($this->View->getRequest()->withParam('_Token', 'testKey'));
+        $this->View->setRequest($this->View->getRequest()->withAttribute('formToken', 'testKey'));
         $this->assertEquals([], $this->Form->fields);
 
         $this->Form->control('text_val', [
@@ -2269,7 +2278,7 @@ class FormHelperTest extends TestCase
      */
     public function testFormSecuredRadio()
     {
-        $this->View->setRequest($this->View->getRequest()->withParam('_Token', 'testKey'));
+        $this->View->setRequest($this->View->getRequest()->withAttribute('formToken', 'testKey'));
 
         $this->assertEquals([], $this->Form->fields);
         $options = ['1' => 'option1', '2' => 'option2'];
@@ -2300,7 +2309,7 @@ class FormHelperTest extends TestCase
      */
     public function testFormSecuredAndDisabledNotAssoc()
     {
-        $this->View->setRequest($this->View->getRequest()->withParam('_Token', 'testKey'));
+        $this->View->setRequest($this->View->getRequest()->withAttribute('formToken', 'testKey'));
 
         $this->Form->select('Model.select', [1, 2], ['disabled']);
         $this->Form->checkbox('Model.checkbox', ['disabled']);
@@ -2325,7 +2334,7 @@ class FormHelperTest extends TestCase
      */
     public function testFormSecuredAndDisabled()
     {
-        $this->View->setRequest($this->View->getRequest()->withParam('_Token', 'testKey'));
+        $this->View->setRequest($this->View->getRequest()->withAttribute('formToken', 'testKey'));
 
         $this->Form->checkbox('Model.checkbox', ['disabled' => true]);
         $this->Form->text('Model.text', ['disabled' => true]);
@@ -2353,7 +2362,7 @@ class FormHelperTest extends TestCase
      */
     public function testDisableSecurityUsingForm()
     {
-        $this->View->setRequest($this->View->getRequest()->withParam('_Token', [
+        $this->View->setRequest($this->View->getRequest()->withAttribute('formToken', [
             'disabledFields' => [],
         ]));
         $this->Form->create();
@@ -2380,7 +2389,7 @@ class FormHelperTest extends TestCase
      */
     public function testUnlockFieldAddsToList()
     {
-        $this->View->setRequest($this->View->getRequest()->withParam('_Token', [
+        $this->View->setRequest($this->View->getRequest()->withAttribute('formToken', [
             'unlockedFields' => [],
         ]));
         $this->Form->unlockField('Contact.name');
@@ -2399,7 +2408,7 @@ class FormHelperTest extends TestCase
      */
     public function testUnlockFieldRemovingFromFields()
     {
-        $this->View->setRequest($this->View->getRequest()->withParam('_Token', [
+        $this->View->setRequest($this->View->getRequest()->withAttribute('formToken', [
             'unlockedFields' => [],
         ]));
         $this->Form->create($this->article);
@@ -2423,7 +2432,7 @@ class FormHelperTest extends TestCase
      */
     public function testResetUnlockFields()
     {
-        $this->View->setRequest($this->View->getRequest()->withParam('_Token', [
+        $this->View->setRequest($this->View->getRequest()->withAttribute('formToken', [
             'key' => 'testKey',
             'unlockedFields' => [],
         ]));
@@ -2448,7 +2457,7 @@ class FormHelperTest extends TestCase
      */
     public function testSecuredFormUrlIgnoresHost()
     {
-        $this->View->setRequest($this->View->getRequest()->withParam('_Token', ['key' => 'testKey']));
+        $this->View->setRequest($this->View->getRequest()->withAttribute('formToken', ['key' => 'testKey']));
 
         $expected = '2548654895b160d724042ed269a2a863fd9d66ee%3A';
         $this->Form->create($this->article, [
@@ -2479,7 +2488,7 @@ class FormHelperTest extends TestCase
      */
     public function testSecuredFormUrlHasHtmlAndIdentifier()
     {
-        $this->View->setRequest($this->View->getRequest()->withParam('_Token', 'testKey'));
+        $this->View->setRequest($this->View->getRequest()->withAttribute('formToken', 'testKey'));
 
         $expected = '0a913f45b887b4d9cc2650ef1edc50183896959c%3A';
         $this->Form->create($this->article, [
@@ -5529,7 +5538,7 @@ class FormHelperTest extends TestCase
      */
     public function testSelectMultipleCheckboxSecurity()
     {
-        $this->View->setRequest($this->View->getRequest()->withParam('_Token', 'testKey'));
+        $this->View->setRequest($this->View->getRequest()->withAttribute('formToken', 'testKey'));
         $this->assertEquals([], $this->Form->fields);
 
         $this->Form->select(
@@ -5574,7 +5583,7 @@ class FormHelperTest extends TestCase
      */
     public function testSelectNoSecureWithNoOptions()
     {
-        $this->View->setRequest($this->View->getRequest()->withParam('_Token', 'testkey'));
+        $this->View->setRequest($this->View->getRequest()->withAttribute('formToken', 'testkey'));
         $this->assertEquals([], $this->Form->fields);
 
         $this->Form->select(
@@ -6012,7 +6021,7 @@ class FormHelperTest extends TestCase
     public function testDateTimeSecured()
     {
         $this->View->setRequest(
-            $this->View->getRequest()->withParam('_Token', ['unlockedFields' => []])
+            $this->View->getRequest()->withAttribute('formToken', ['unlockedFields' => []])
         );
         $this->Form->dateTime('date');
         $expected = ['date'];
@@ -6034,7 +6043,7 @@ class FormHelperTest extends TestCase
     public function testDateTimeSecuredDisabled()
     {
         $this->View->setRequest(
-            $this->View->getRequest()->withParam('_Token', ['unlockedFields' => []])
+            $this->View->getRequest()->withAttribute('formToken', ['unlockedFields' => []])
         );
         $this->Form->dateTime('date', ['secure' => false]);
         $expected = [];
@@ -6666,7 +6675,7 @@ class FormHelperTest extends TestCase
     {
         $this->View->setRequest($this->View->getRequest()
             ->withAttribute('csrfToken', 'testkey')
-            ->withParam('_Token.unlockedFields', []));
+            ->withAttribute('formToken', ['unlockedFields' => []]));
 
         $result = $this->Form->postButton('Delete', '/posts/delete/1');
         $tokenDebug = urlencode(json_encode([
@@ -6890,7 +6899,7 @@ class FormHelperTest extends TestCase
     {
         $hash = hash_hmac('sha1', '/posts/delete/1' . serialize(['id' => '1']) . session_id(), Security::getSalt());
         $hash .= '%3Aid';
-        $this->View->setRequest($this->View->getRequest()->withParam('_Token.key', 'test'));
+        $this->View->setRequest($this->View->getRequest()->withAttribute('formToken', ['key' => 'test']));
 
         $result = $this->Form->postLink(
             'Delete',
@@ -6943,7 +6952,7 @@ class FormHelperTest extends TestCase
     {
         $hash = hash_hmac('sha1', '/posts/delete/1' . serialize([]) . session_id(), Security::getSalt());
         $hash .= '%3A';
-        $this->View->setRequest($this->View->getRequest()->withParam('_Token.key', 'test'));
+        $this->View->setRequest($this->View->getRequest()->withAttribute('formToken', ['key' => 'test']));
 
         $this->Form->create(null, ['url' => ['action' => 'add']]);
         $this->Form->control('title');
@@ -6970,7 +6979,7 @@ class FormHelperTest extends TestCase
         $hash = hash_hmac('sha1', '/posts/delete/1' . serialize(['id' => '1']) . session_id(), Security::getSalt());
         $hash .= '%3Aid';
         $this->View->setRequest($this->View->getRequest()
-            ->withParam('_Token.key', 'test'));
+            ->withAttribute('formToken', ['key' => 'test']));
 
         $result = $this->Form->postLink(
             'Delete',
@@ -7029,7 +7038,7 @@ class FormHelperTest extends TestCase
     {
         $this->View->setRequest($this->View->getRequest()
             ->withAttribute('csrfToken', 'testkey')
-            ->withParam('_Token', 'val'));
+            ->withAttribute('formToken', 'val'));
 
         $this->Form->create($this->article, ['type' => 'get']);
         $this->Form->end();
@@ -7243,7 +7252,7 @@ class FormHelperTest extends TestCase
      */
     public function testSubmitUnlockedByDefault()
     {
-        $this->View->setRequest($this->View->getRequest()->withParam('_Token', 'secured'));
+        $this->View->setRequest($this->View->getRequest()->withAttribute('formToken', 'secured'));
         $this->Form->submit('Go go');
         $this->Form->submit('Save', ['name' => 'save']);
 
