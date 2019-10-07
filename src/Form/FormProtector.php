@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Form;
 
-use Cake\Controller\Exception\FormProtectionException;
 use Cake\Core\Configure;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
@@ -90,7 +89,6 @@ class FormProtector
      * @param string $url URL form was POSTed to.
      * @param string $sessionId Session id for hash generation.
      * @return bool
-     * @throws \Cake\Controller\Exception\FormProtectionException
      */
     public function validate($formData, string $url, string $sessionId): bool
     {
@@ -203,27 +201,6 @@ class FormProtector
     public function getError(): ?string
     {
         return $this->debugMessage;
-    }
-
-    /**
-     * Throws a 400 - Bad request exception or calls custom callback.
-     *
-     * If `validationFailureCallback` config is specified, it will use this
-     * callback by executing the method passing the argument as exception.
-     *
-     * @param \Cake\Controller\Exception\FormProtectionException $exception Exception.
-     * @return \Cake\Http\Response|null If specified, validationFailureCallback's response, or no return otherwise.
-     * @throws \Cake\Http\Exception\BadRequestException
-     */
-    protected function validationFailure(FormProtectionException $exception): ?Response
-    {
-        if ($this->_config['validationFailureCallback']) {
-            return $this->executeCallback($this->_config['validationFailureCallback'], [$exception]);
-        }
-
-        $this->throwException($exception);
-
-        return null;
     }
 
     /**
