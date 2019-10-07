@@ -138,6 +138,11 @@ class SqlserverSchema extends BaseSchema
         }
 
         if ($col === 'image' || strpos($col, 'binary') !== false) {
+            // -1 is the value for MAX which we treat as a 'long' binary
+            if ($length == -1) {
+                $length = TableSchema::LENGTH_LONG;
+            }
+
             return ['type' => TableSchema::TYPE_BINARY, 'length' => $length];
         }
 
