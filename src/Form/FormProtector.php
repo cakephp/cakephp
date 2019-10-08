@@ -586,4 +586,20 @@ class FormProtector
 
         return sprintf($missingMessage, implode(', ', $expectedFieldNames));
     }
+
+    /**
+     * Return debug info
+     *
+     * @return array
+     */
+    public function __debugInfo(): array
+    {
+        return [
+            'url' => $this->url,
+            'sessionId' => $this->sessionId,
+            'fields' => $this->fields,
+            'unlockedFields' => $this->unlockedFields,
+            'debugMessage' => $this->debugMessage,
+        ];
+    }
 }

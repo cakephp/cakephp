@@ -32,7 +32,6 @@ use Cake\View\Form\EntityContext;
 use Cake\View\Helper\FormHelper;
 use Cake\View\View;
 use Cake\View\Widget\WidgetLocator;
-use ReflectionClass;
 use ReflectionProperty;
 use TestApp\Model\Entity\Article;
 use TestApp\Model\Table\ContactsTable;
@@ -283,12 +282,12 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->widget('select', ['secure' => true, 'name' => '']);
         $this->assertSame('<select name=""></select>', $result);
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals([], $result);
 
         $result = $this->Form->widget('select', ['secure' => true, 'name' => '0']);
         $this->assertSame('<select name="0"></select>', $result);
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals(['0'], $result);
     }
 
@@ -1120,10 +1119,10 @@ class FormHelperTest extends TestCase
         $this->View->setRequest($this->View->getRequest()->withAttribute('formToken', []));
         $this->Form->create();
 
-        $this->assertSame([], $this->getProtectedProperty($this->Form->getFormProtector(), 'fields'));
+        $this->assertSame([], $this->Form->getFormProtector()->__debugInfo()['fields']);
 
         $this->Form->checkbox('check', ['value' => '1']);
-        $this->assertSame(['check'], $this->getProtectedProperty($this->Form->getFormProtector(), 'fields'));
+        $this->assertSame(['check'], $this->Form->getFormProtector()->__debugInfo()['fields']);
     }
 
     /**
@@ -1506,7 +1505,7 @@ class FormHelperTest extends TestCase
 
         $this->Form->create();
         $this->Form->button('Test', ['type' => 'submit', 'name' => 'Address[button]']);
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'unlockedFields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['unlockedFields'];
         $this->assertEquals(['Address.button'], $result);
     }
 
@@ -1521,7 +1520,7 @@ class FormHelperTest extends TestCase
 
         $this->Form->create($this->article);
         $this->Form->submit('Test', ['type' => 'submit', 'name' => 'Address[button]']);
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'unlockedFields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['unlockedFields'];
         $this->assertEquals(['Address.button'], $result);
     }
 
@@ -1543,7 +1542,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'unlockedFields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['unlockedFields'];
         $this->assertEquals(['x', 'y'], $result);
     }
 
@@ -1564,7 +1563,7 @@ class FormHelperTest extends TestCase
             '/div',
         ];
         $this->assertHtml($expected, $result);
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'unlockedFields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['unlockedFields'];
         $this->assertEquals(['test', 'test_x', 'test_y'], $result);
     }
 
@@ -1660,11 +1659,11 @@ class FormHelperTest extends TestCase
 
         $this->Form->create();
         $this->Form->text('Address.primary.1');
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertSame('Address.primary', $result[0]);
 
         $this->Form->text('Address.secondary.1.0');
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertSame('Address.secondary', $result[1]);
     }
 
@@ -1757,7 +1756,7 @@ class FormHelperTest extends TestCase
             'unlockedFields' => ['first_name', 'address'],
         ]));
         $this->Form->create();
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'unlockedFields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['unlockedFields'];
         $this->assertEquals(
             $this->View->getRequest()->getAttribute('formToken'),
             ['unlockedFields' => $result]
@@ -1771,7 +1770,7 @@ class FormHelperTest extends TestCase
         $this->Form->text('Addresses.city');
         $this->Form->text('Addresses.phone');
 
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $expected = [
             'Addresses.id' => '123456', 'Addresses.title', 'Addresses.last_name',
             'Addresses.city', 'Addresses.phone',
@@ -1836,7 +1835,7 @@ class FormHelperTest extends TestCase
             'unlockedFields' => ['first_name', 'address'],
         ]));
         $this->Form->create();
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'unlockedFields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['unlockedFields'];
         $this->assertEquals(
             $this->View->getRequest()->getAttribute('formToken'),
             ['unlockedFields' => $result]
@@ -1850,7 +1849,7 @@ class FormHelperTest extends TestCase
         $this->Form->text('Addresses.city');
         $this->Form->text('Addresses.phone');
 
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $expected = [
             'Addresses.id' => '123456', 'Addresses.title', 'Addresses.last_name',
             'Addresses.city', 'Addresses.phone',
@@ -1914,7 +1913,7 @@ class FormHelperTest extends TestCase
             'unlockedFields' => ['first_name', 'address'],
         ]));
         $this->Form->create();
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'unlockedFields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['unlockedFields'];
         $this->assertEquals(
             $this->View->getRequest()->getAttribute('formToken'),
             ['unlockedFields' => $result]
@@ -1928,7 +1927,7 @@ class FormHelperTest extends TestCase
         $this->Form->text('Addresses.city');
         $this->Form->text('Addresses.phone');
 
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $expected = [
             'Addresses.id' => '123456', 'Addresses.title', 'Addresses.last_name',
             'Addresses.city', 'Addresses.phone',
@@ -1972,7 +1971,7 @@ class FormHelperTest extends TestCase
             'unlockedFields' => ['first_name', 'address'],
         ]));
         $this->Form->create();
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'unlockedFields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['unlockedFields'];
         $this->assertEquals(
             $this->View->getRequest()->getAttribute('formToken'),
             ['unlockedFields' => $result]
@@ -1986,7 +1985,7 @@ class FormHelperTest extends TestCase
         $this->Form->text('Addresses.city');
         $this->Form->text('Addresses.phone');
 
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $expected = [
             'Addresses.id' => '123456', 'Addresses.title', 'Addresses.last_name',
             'Addresses.city', 'Addresses.phone',
@@ -2031,11 +2030,11 @@ class FormHelperTest extends TestCase
         $this->Form->create();
 
         $this->Form->text('UserForm.published', ['name' => 'User[custom]']);
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertSame('User.custom', $result[0]);
 
         $this->Form->text('UserForm.published', ['name' => 'User[custom][another][value]']);
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertSame('User.custom.another.value', $result[1]);
     }
 
@@ -2163,7 +2162,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $expectedFields = [
             'ratio',
             'population',
@@ -2222,19 +2221,19 @@ class FormHelperTest extends TestCase
             'name' => 'Option[General.default_role]',
         ]);
         $expected = ['Option.General.default_role'];
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals($expected, $result);
 
         $this->Form->select('select_box', [1, 2], [
             'name' => 'Option[General.select_role]',
         ]);
         $expected[] = 'Option.General.select_role';
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals($expected, $result);
 
         $this->Form->text('other.things[]');
         $expected[] = 'other.things';
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals($expected, $result);
     }
 
@@ -2256,14 +2255,14 @@ class FormHelperTest extends TestCase
                 'value' => 'some text',
         ]);
         $expected = ['text_val' => 'some text'];
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals($expected, $result);
 
         $this->Form->control('text_val', [
                 'type' => 'text',
         ]);
         $expected = ['text_val'];
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals($expected, $result);
     }
 
@@ -2285,7 +2284,7 @@ class FormHelperTest extends TestCase
             'Attachment.file.tmp_name', 'Attachment.file.error',
             'Attachment.file.size',
         ];
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals($expected, $result);
     }
 
@@ -2304,12 +2303,12 @@ class FormHelperTest extends TestCase
         $options = ['1' => 'one', '2' => 'two'];
         $this->Form->select('Model.select', $options);
         $expected = ['Model.select'];
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals($expected, $result);
 
         $this->Form->fields = [];
         $this->Form->select('Model.select', $options, ['multiple' => true]);
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals($expected, $result);
     }
 
@@ -2327,21 +2326,21 @@ class FormHelperTest extends TestCase
 
         $this->Form->radio('Test.test', $options);
         $expected = ['Test.test'];
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals($expected, $result);
 
         $this->Form->radio('Test.all', $options, [
             'disabled' => ['option1', 'option2'],
         ]);
         $expected = ['Test.test', 'Test.all' => ''];
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals($expected, $result);
 
         $this->Form->radio('Test.some', $options, [
             'disabled' => ['option1'],
         ]);
         $expected = ['Test.test', 'Test.all' => '', 'Test.some'];
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals($expected, $result);
     }
 
@@ -2367,7 +2366,7 @@ class FormHelperTest extends TestCase
         $expected = [
             'Model.radio' => '',
         ];
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals($expected, $result);
     }
 
@@ -2400,7 +2399,7 @@ class FormHelperTest extends TestCase
         $expected = [
             'Model.radio' => '',
         ];
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals($expected, $result);
     }
 
@@ -2421,10 +2420,10 @@ class FormHelperTest extends TestCase
         $this->Form->unlockField('Contact.name');
         $this->Form->text('Contact.name');
 
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals([], $result);
 
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'unlockedFields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['unlockedFields'];
         $this->assertEquals(['Contact.name'], $result);
     }
 
@@ -2444,13 +2443,13 @@ class FormHelperTest extends TestCase
         $this->Form->hidden('Article.id', ['value' => 1]);
         $this->Form->text('Article.title');
 
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals(1, $result['Article.id'], 'Hidden input should be secured.');
         $this->assertContains('Article.title', $result, 'Field should be secured.');
 
         $this->Form->unlockField('Article.title');
         $this->Form->unlockField('Article.id');
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals([], $result);
     }
 
@@ -2471,13 +2470,13 @@ class FormHelperTest extends TestCase
         $this->Form->create();
         $this->Form->unlockField('Contact.id');
         $this->Form->hidden('Contact.id', ['value' => 1]);
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEmpty($result, 'Field should be unlocked');
         $this->Form->end();
 
         $this->Form->create();
         $this->Form->hidden('Contact.id', ['value' => 1]);
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals(1, $result['Contact.id'], 'Hidden input should be secured.');
     }
 
@@ -5579,7 +5578,7 @@ class FormHelperTest extends TestCase
             ['1' => 'first', '2' => 'second', '3' => 'third'],
             ['multiple' => 'checkbox']
         );
-        $fields = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $fields = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals(['Model.multi_field'], $fields);
 
         $result = $this->Form->secure();
@@ -5606,7 +5605,7 @@ class FormHelperTest extends TestCase
             [],
             ['multiple' => true]
         );
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals(['Model.select'], $result);
     }
 
@@ -5627,7 +5626,7 @@ class FormHelperTest extends TestCase
             'Model.select',
             []
         );
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals([], $result);
 
         $this->Form->select(
@@ -5635,7 +5634,7 @@ class FormHelperTest extends TestCase
             [],
             ['empty' => true]
         );
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals(['Model.user_id'], $result);
     }
 
@@ -6066,13 +6065,13 @@ class FormHelperTest extends TestCase
 
         $this->Form->dateTime('date');
         $expected = ['date'];
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals($expected, $result);
 
         $this->Form->fields = [];
         $this->Form->date('published');
         $expected = ['date', 'published'];
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals($expected, $result);
     }
 
@@ -6092,13 +6091,13 @@ class FormHelperTest extends TestCase
 
         $this->Form->dateTime('date', ['secure' => false]);
         $expected = [];
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals($expected, $result);
 
         $this->Form->fields = [];
         $this->Form->date('published', ['secure' => false]);
         $expected = [];
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals($expected, $result);
     }
 
@@ -6597,7 +6596,7 @@ class FormHelperTest extends TestCase
         $this->Form->button('Save', ['name' => 'save']);
         $this->Form->button('Clear');
 
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'unlockedFields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['unlockedFields'];
         $this->assertEquals(['save'], $result);
     }
 
@@ -7008,7 +7007,7 @@ class FormHelperTest extends TestCase
         $this->Form->postLink('Delete', '/posts/delete/1', ['block' => true]);
         $result = $this->View->fetch('postLink');
 
-        $fields = $this->getProtectedProperty($this->Form->getFormProtector(), 'fields');
+        $fields = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals(['title'], $fields);
         $this->assertStringContainsString($hash, $result, 'Should contain the correct hash.');
         $reflect = new ReflectionProperty($this->Form, '_lastAction');
@@ -7307,7 +7306,7 @@ class FormHelperTest extends TestCase
         $this->Form->submit('Go go');
         $this->Form->submit('Save', ['name' => 'save']);
 
-        $result = $this->getProtectedProperty($this->Form->getFormProtector(), 'unlockedFields');
+        $result = $this->Form->getFormProtector()->__debugInfo()['unlockedFields'];
         $this->assertEquals(['save'], $result, 'Only submits with name attributes should be unlocked.');
     }
 
@@ -9006,14 +9005,5 @@ class FormHelperTest extends TestCase
             '/div',
         ];
         $this->assertHtml($expected, $result);
-    }
-
-    protected function getProtectedProperty(object $object, string $propertyName)
-    {
-        $reflector = new ReflectionClass(get_class($object));
-        $property = $reflector->getProperty($propertyName);
-        $property->setAccessible(true);
-
-        return $property->getValue($object);
     }
 }
