@@ -1651,7 +1651,7 @@ class FormHelper extends Helper
 
         if ($secure === true && $this->formProtector) {
             $this->formProtector->addField(
-                $this->_secureFieldName($options['name']),
+                $options['name'],
                 true,
                 (string)$options['val']
             );
@@ -1918,7 +1918,7 @@ class FormHelper extends Helper
 
         if (isset($options['name']) && $this->formProtector) {
             $this->formProtector->addField(
-                $this->_secureFieldName($options['name']),
+                $options['name'],
                 $options['secure']
             );
         }
@@ -2368,34 +2368,6 @@ class FormHelper extends Helper
     }
 
     /**
-     * Get the field name for use with _secure().
-     *
-     * Parses the name attribute to create a dot separated name value for use
-     * in secured field hash. If filename is of form Model[field] an array of
-     * fieldname parts like ['Model', 'field'] is returned.
-     *
-     * @param string $name The form inputs name attribute.
-     * @return string[] Array of field name params like ['Model.field'] or
-     *   ['Model', 'field'] for array fields or empty array if $name is empty.
-     */
-    protected function _secureFieldName(string $name): array
-    {
-        if (empty($name) && $name !== '0') {
-            return [];
-        }
-
-        if (strpos($name, '[') === false) {
-            return [$name];
-        }
-        $parts = explode('[', $name);
-        $parts = array_map(function ($el) {
-            return trim($el, ']');
-        }, $parts);
-
-        return array_filter($parts, 'strlen');
-    }
-
-    /**
      * Add a new context type.
      *
      * Form context types allow FormHelper to interact with
@@ -2497,7 +2469,7 @@ class FormHelper extends Helper
             $secure !== self::SECURE_SKIP
         ) {
             foreach ($widget->secureFields($data) as $field) {
-                $this->formProtector->addField($this->_secureFieldName($field), $secure);
+                $this->formProtector->addField($field, $secure);
             }
         }
 

@@ -133,12 +133,12 @@ class FormProtector
      */
     public function addField($field, bool $lock = true, $value = null)
     {
-        if (empty($field) && $field !== '0') {
-            return $this;
+        if (is_string($field)) {
+            $field = $this->getFieldNameArray($field);
         }
 
-        if (is_string($field)) {
-            $field = Hash::filter(explode('.', $field));
+        if (empty($field)) {
+            return $this;
         }
 
         foreach ($this->unlockedFields as $unlockField) {
@@ -168,6 +168,32 @@ class FormProtector
         }
 
         return $this;
+    }
+
+    /**
+     * Parses the field name to create a dot separated name value for use in
+     * field hash. If filename is of form Model[field] or Model.fiedl an array of
+     * fieldname parts like ['Model', 'field'] is returned.
+     *
+     * @param string $name The form inputs name attribute.
+     * @return string[] Array of field name params like ['Model.field'] or
+     *   ['Model', 'field'] for array fields or empty array if $name is empty.
+     */
+    protected function getFieldNameArray(string $name): array
+    {
+        if (empty($name) && $name !== '0') {
+            return [];
+        }
+
+        if (strpos($name, '[') === false) {
+            return Hash::filter(explode('.', $name));
+        }
+        $parts = explode('[', $name);
+        $parts = array_map(function ($el) {
+            return trim($el, ']');
+        }, $parts);
+
+        return Hash::filter($parts, 'strlen');
     }
 
     /**
