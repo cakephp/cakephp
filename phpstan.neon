@@ -103,6 +103,9 @@ parameters:
         -
             message: '#Ternary operator condition is always true#'
             path: 'src/TestSuite/IntegrationTestTrait.php'
+        -
+            message: '#Strict comparison using === between array|string and null will always evaluate to false#'
+            path: 'src/Console/ConsoleIo.php'
 
     earlyTerminatingMethodCalls:
         Cake\Console\Shell:
