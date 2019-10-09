@@ -520,18 +520,10 @@ class Router
                 return $url;
             }
 
-            if (ctype_alnum($url[0]) && strpos($url, '::') > 0) {
-                $url = static::parseRoutePath($url) + ['plugin' => false, 'prefix' => false];
+            if ($url[0] !== '/' && strpos($url, '::') > 1) {
+                $url = ['_path' => $url];
 
                 if (is_array($full)) {
-                    foreach (['plugin', 'prefix', 'controller', 'action'] as $key) {
-                        if (isset($full[$key])) {
-                            throw new InvalidArgumentException(
-                                "`$key` cannot be used when defining route targets with a string route path."
-                            );
-                        }
-                    }
-
                     $url += $full;
                     $full = false;
                 }
@@ -539,6 +531,10 @@ class Router
         }
 
         if (is_array($url)) {
+            if (isset($url['_path'])) {
+                $url = self::unwrapShortString($url);
+            }
+
             if (isset($url['_ssl'])) {
                 $url['_scheme'] = $url['_ssl'] === true ? 'https' : 'http';
             }
@@ -954,6 +950,31 @@ class Router
     public static function setRouteCollection(RouteCollection $routeCollection): void
     {
         static::$_collection = $routeCollection;
+    }
+
+    /**
+     * Inject route defaults from `_path` key
+     *
+     * @param array $url Route array with `_path` key
+     * @return array
+     */
+    protected static function unwrapShortString(array $url)
+    {
+        foreach (['plugin', 'prefix', 'controller', 'action'] as $key) {
+            if (array_key_exists($key, $url)) {
+                throw new InvalidArgumentException(
+                    "`$key` cannot be used when defining route targets with a string route path."
+                );
+            }
+        }
+        $url += static::parseRoutePath($url['_path']);
+        $url += [
+            'plugin' => false,
+            'prefix' => false,
+        ];
+        unset($url['_path']);
+
+        return $url;
     }
 
     /**
