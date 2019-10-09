@@ -12,6 +12,7 @@
  * @since         3.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+use Cake\Error\Debugger;
 ?>
 <!DOCTYPE html>
 <html>
@@ -19,7 +20,7 @@
     <?= $this->Html->charset() ?>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>
-        Error: <?= h($this->fetch('title')) ?>
+        Error: <?= Debugger::formatHtmlMessage($this->fetch('title')) ?>
     </title>
     <?= $this->Html->meta('icon') ?>
     <style>
