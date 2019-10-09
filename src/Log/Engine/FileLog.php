@@ -108,11 +108,11 @@ class FileLog extends BaseLog
     /**
      * Implements writing to log files.
      *
-     * @param string $level The severity level of the message being written.
-     *    See Cake\Log\Log::$_levels for list of possible levels.
+     * @param mixed $level The severity level of the message being written.
      * @param string $message The message you want to log.
      * @param array $context Additional information about the logged message
      * @return void
+     * @see Cake\Log\Log::$_levels
      */
     public function log($level, $message, array $context = []): void
     {
@@ -181,7 +181,8 @@ class FileLog extends BaseLog
         $filePath = $this->_path . $filename;
         clearstatcache(true, $filePath);
 
-        if (!file_exists($filePath) ||
+        if (
+            !file_exists($filePath) ||
             filesize($filePath) < $this->_size
         ) {
             return null;

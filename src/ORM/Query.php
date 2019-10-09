@@ -108,7 +108,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * Whether the user select any fields before being executed, this is used
      * to determined if any fields should be automatically be selected.
      *
-     * @var bool
+     * @var bool|null
      */
     protected $_hasFields;
 
@@ -139,7 +139,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * Instance of a class responsible for storing association containments and
      * for eager loading them when this query is executed
      *
-     * @var \Cake\ORM\EagerLoader
+     * @var \Cake\ORM\EagerLoader|null
      */
     protected $_eagerLoader;
 
@@ -1014,7 +1014,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     /**
      * {@inheritDoc}
      *
-     * @param false|string|\Closure $key Either the cache key or a function to generate the cache key.
+     * @param \Closure|string|false $key Either the cache key or a function to generate the cache key.
      *   When using a function, this query instance will be supplied as an argument.
      * @param string|\Cake\Cache\CacheEngine $config Either the name of the cache config to use, or
      *   a cache config instance.
@@ -1277,7 +1277,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @return mixed
      * @throws \BadMethodCallException if the method is called for a non-select query
      */
-    public function __call($method, $arguments)
+    public function __call(string $method, array $arguments)
     {
         if ($this->type() === 'select') {
             return $this->_call($method, $arguments);
@@ -1353,7 +1353,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * By default calling select() will disable auto-fields. You can re-enable
      * auto-fields with enableAutoFields().
      *
-     * @return bool|null The current value.
+     * @return bool|null The current value. Returns null if neither enabled or disabled yet.
      */
     public function isAutoFieldsEnabled(): ?bool
     {

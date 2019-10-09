@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Database;
 
+use Closure;
+
 /**
  * An interface used by Expression objects.
  */
@@ -35,8 +37,8 @@ interface ExpressionInterface
      * passing as first parameter the instance of the expression currently
      * being iterated.
      *
-     * @param callable $visitor The callable to apply to all nodes.
+     * @param \Closure $visitor The callable to apply to all nodes.
      * @return $this
      */
-    public function traverse(callable $visitor);
+    public function traverse(Closure $visitor);
 }

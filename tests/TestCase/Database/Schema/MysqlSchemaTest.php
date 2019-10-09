@@ -671,7 +671,7 @@ SQL;
             [
                 'value',
                 ['type' => 'decimal', 'length' => 11, 'unsigned' => true],
-                '`value` DECIMAL(11,0) UNSIGNED',
+                '`value` DECIMAL(11) UNSIGNED',
             ],
             [
                 'value',
@@ -688,6 +688,11 @@ SQL;
                 'value',
                 ['type' => 'float', 'unsigned' => true],
                 '`value` FLOAT UNSIGNED',
+            ],
+            [
+                'latitude',
+                ['type' => 'float', 'length' => 53, 'null' => true, 'default' => null, 'unsigned' => true],
+                '`latitude` FLOAT(53) UNSIGNED',
             ],
             [
                 'value',

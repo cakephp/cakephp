@@ -33,7 +33,7 @@ use TestApp\Mailer\TestEmail;
  */
 class EmailTest extends TestCase
 {
-    public $fixtures = ['core.Users'];
+    protected $fixtures = ['core.Users'];
 
     /**
      * @var \TestApp\Mailer\Email\TestEmail

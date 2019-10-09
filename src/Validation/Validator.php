@@ -21,6 +21,7 @@ use ArrayIterator;
 use Countable;
 use InvalidArgumentException;
 use IteratorAggregate;
+use Psr\Http\Message\UploadedFileInterface;
 
 /**
  * Validator object encapsulates all methods related to data validations for a model
@@ -73,6 +74,9 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * When an array is given, if it has at least the `name`, `type`, `tmp_name` and `error` keys,
      * and the value of `error` is equal to `UPLOAD_ERR_NO_FILE`, the value will be recognized as
      * empty.
+     *
+     * When an instance of \Psr\Http\Message\UploadedFileInterface is given the
+     * return value of it's getError() method must be equal to `UPLOAD_ERR_NO_FILE`.
      *
      * @var int
      */
@@ -481,6 +485,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 return false;
             }
             foreach ($this->providers() as $provider) {
+                /** @psalm-suppress PossiblyNullArgument */
                 $validator->setProvider($provider, $this->getProvider($provider));
             }
             $errors = $validator->errors($value, $context['newRecord']);
@@ -523,6 +528,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 return false;
             }
             foreach ($this->providers() as $provider) {
+                /** @psalm-suppress PossiblyNullArgument */
                 $validator->setProvider($provider, $this->getProvider($provider));
             }
             $errors = [];
@@ -2539,7 +2545,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         }
 
         if (is_array($data)) {
-            if (($flags & self::EMPTY_FILE)
+            if (
+                ($flags & self::EMPTY_FILE)
                 && isset($data['name'], $data['type'], $data['tmp_name'], $data['error'])
                 && (int)$data['error'] === UPLOAD_ERR_NO_FILE
             ) {
@@ -2563,6 +2570,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                     return true;
                 }
             }
+        }
+
+        if (
+            ($flags & self::EMPTY_FILE)
+            && $data instanceof UploadedFileInterface
+            && $data->getError() === UPLOAD_ERR_NO_FILE
+        ) {
+            return true;
         }
 
         return false;

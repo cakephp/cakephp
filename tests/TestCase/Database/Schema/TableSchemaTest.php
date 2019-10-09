@@ -27,7 +27,7 @@ use TestApp\Database\Type\IntType;
  */
 class TableSchemaTest extends TestCase
 {
-    public $fixtures = [
+    protected $fixtures = [
         'core.Articles',
         'core.Tags',
         'core.ArticlesTags',

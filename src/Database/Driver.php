@@ -18,7 +18,9 @@ namespace Cake\Database;
 
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Schema\BaseSchema;
+use Cake\Database\Schema\TableSchema;
 use Cake\Database\Statement\PDOStatement;
+use Closure;
 use InvalidArgumentException;
 use PDO;
 use PDOException;
@@ -263,7 +265,7 @@ abstract class Driver implements DriverInterface
     /**
      * @inheritDoc
      */
-    abstract public function queryTranslator(string $type): callable;
+    abstract public function queryTranslator(string $type): Closure;
 
     /**
      * @inheritDoc
@@ -293,9 +295,17 @@ abstract class Driver implements DriverInterface
             return str_replace(',', '.', (string)$value);
         }
         /** @psalm-suppress InvalidArgument */
-        if ((is_int($value) || $value === '0') || (
-            is_numeric($value) && strpos($value, ',') === false &&
-            substr($value, 0, 1) !== '0' && strpos($value, 'e') === false)
+        if (
+            (
+                is_int($value) ||
+                $value === '0'
+            ) ||
+            (
+                is_numeric($value) &&
+                strpos($value, ',') === false &&
+                substr($value, 0, 1) !== '0' &&
+                strpos($value, 'e') === false
+            )
         ) {
             return (string)$value;
         }
@@ -319,7 +329,6 @@ abstract class Driver implements DriverInterface
         $this->connect();
 
         if ($this->_connection instanceof PDO) {
-            /** @psalm-suppress PossiblyNullArgument */
             return $this->_connection->lastInsertId($table);
         }
 
@@ -390,6 +399,20 @@ abstract class Driver implements DriverInterface
     public function newCompiler(): QueryCompiler
     {
         return new QueryCompiler();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function newTableSchema(string $table, array $columns = []): TableSchema
+    {
+        $className = TableSchema::class;
+        if (isset($this->_config['tableSchema'])) {
+            $className = $this->_config['tableSchema'];
+        }
+
+        /** @var \Cake\Database\Schema\TableSchema */
+        return new $className($table, $columns);
     }
 
     /**

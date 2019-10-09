@@ -241,7 +241,8 @@ trait EntityTrait
 
             $this->setDirty($name, true);
 
-            if (!array_key_exists($name, $this->_original) &&
+            if (
+                !array_key_exists($name, $this->_original) &&
                 array_key_exists($name, $this->_fields) &&
                 $this->_fields[$name] !== $value
             ) {
@@ -385,9 +386,16 @@ trait EntityTrait
     public function isEmpty(string $field): bool
     {
         $value = $this->get($field);
-        if ($value === null
-            || (is_array($value) && empty($value)
-            || (is_string($value) && empty($value)))
+        if (
+            $value === null ||
+            (
+                is_array($value) &&
+                empty($value) ||
+                (
+                    is_string($value) &&
+                    empty($value)
+                )
+            )
         ) {
             return true;
         }
@@ -433,7 +441,7 @@ trait EntityTrait
     {
         $field = (array)$field;
         foreach ($field as $p) {
-            unset($this->_fields[$p], $this->_dirty[$p]);
+            unset($this->_fields[$p], $this->_original[$p], $this->_dirty[$p]);
         }
 
         return $this;
@@ -985,7 +993,8 @@ trait EntityTrait
                 $val = $entity[$part] ?? false;
             }
 
-            if (is_array($val) ||
+            if (
+                is_array($val) ||
                 $val instanceof Traversable ||
                 $val instanceof EntityInterface
             ) {
@@ -1028,7 +1037,7 @@ trait EntityTrait
     /**
      * Read the error(s) from one or many objects.
      *
-     * @param array|\Cake\Datasource\EntityInterface $object The object to read errors from.
+     * @param iterable|\Cake\Datasource\EntityInterface $object The object to read errors from.
      * @param string|null $path The field name for errors.
      * @return array
      */
@@ -1040,12 +1049,12 @@ trait EntityTrait
         if ($object instanceof EntityInterface) {
             return $object->getErrors();
         }
-        if (is_array($object)) {
+        if (is_iterable($object)) {
             $array = array_map(function ($val) {
                 if ($val instanceof EntityInterface) {
                     return $val->getErrors();
                 }
-            }, $object);
+            }, (array)$object);
 
             return array_filter($array);
         }

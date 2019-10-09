@@ -78,7 +78,7 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
             'webroot' => $uri->webroot,
             'base' => $uri->base,
             'session' => $session,
-            'mergeFilesAsObjects' => Configure::read('App.uploadedFilesAsObjects', false),
+            'mergeFilesAsObjects' => Configure::read('App.uploadedFilesAsObjects', true),
         ]);
 
         return $request;
@@ -189,7 +189,8 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
         }
         $endsWithIndex = '/' . (Configure::read('App.webroot') ?: 'webroot') . '/index.php';
         $endsWithLength = strlen($endsWithIndex);
-        if (strlen($path) >= $endsWithLength &&
+        if (
+            strlen($path) >= $endsWithLength &&
             substr($path, -$endsWithLength) === $endsWithIndex
         ) {
             $path = '/';

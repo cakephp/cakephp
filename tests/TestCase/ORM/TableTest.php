@@ -52,7 +52,7 @@ use TestApp\Model\Table\UsersTable;
  */
 class TableTest extends TestCase
 {
-    public $fixtures = [
+    protected $fixtures = [
         'core.Articles',
         'core.Tags',
         'core.ArticlesTags',
@@ -3261,13 +3261,18 @@ class TableTest extends TestCase
      */
     public function testValidationWithBadDefiner()
     {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('The Cake\ORM\Table::validationBad() validation method must return an instance of Cake\Validation\Validator.');
         $table = $this->getMockBuilder(Table::class)
             ->setMethods(['validationBad'])
             ->getMock();
         $table->expects($this->once())
             ->method('validationBad');
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage(sprintf(
+            'The %s::validationBad() validation method must return an instance of Cake\Validation\Validator.',
+            get_class($table)
+        ));
+
         $table->getValidator('bad');
     }
 

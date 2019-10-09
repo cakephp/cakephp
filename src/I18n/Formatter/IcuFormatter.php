@@ -30,7 +30,7 @@ class IcuFormatter implements FormatterInterface
      * message. Variables are interpolated using the MessageFormatter class.
      *
      * @param string $locale The locale in which the message is presented.
-     * @param string|array $message The message to be translated
+     * @param string $message The message to be translated
      * @param array $vars The list of values to interpolate in the message
      * @return string The formatted message
      * @throws \Aura\Intl\Exception\CannotFormat
@@ -47,7 +47,7 @@ class IcuFormatter implements FormatterInterface
      * Does the actual formatting using the MessageFormatter class
      *
      * @param string $locale The locale in which the message is presented.
-     * @param string|array $message The message to be translated
+     * @param string $message The message to be translated
      * @param array $vars The list of values to interpolate in the message
      * @return string The formatted message
      * @throws \Aura\Intl\Exception\CannotInstantiateFormatter if any error occurred
@@ -55,7 +55,7 @@ class IcuFormatter implements FormatterInterface
      * @throws \Aura\Intl\Exception\CannotFormat If any error related to the passed
      * variables is found
      */
-    protected function _formatMessage(string $locale, $message, array $vars): string
+    protected function _formatMessage(string $locale, string $message, array $vars): string
     {
         if ($message === '') {
             return $message;

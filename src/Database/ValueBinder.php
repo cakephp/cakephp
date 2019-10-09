@@ -45,11 +45,11 @@ class ValueBinder
      * @param string|int $param placeholder to be replaced with quoted version
      * of $value
      * @param mixed $value The value to be bound
-     * @param string|int $type the mapped type name, used for casting when sending
+     * @param string|int|null $type the mapped type name, used for casting when sending
      * to database
      * @return void
      */
-    public function bind($param, $value, $type = 'string'): void
+    public function bind($param, $value, $type = null): void
     {
         $this->_bindings[$param] = compact('value', 'type') + [
             'placeholder' => is_int($param) ? $param : substr($param, 1),
@@ -80,10 +80,10 @@ class ValueBinder
      * and binds them with the specified type.
      *
      * @param iterable $values The list of values to be bound
-     * @param string $type The type with which all values will be bound
+     * @param string|int|null $type The type with which all values will be bound
      * @return array with the placeholders to insert in the query
      */
-    public function generateManyNamed(iterable $values, string $type = 'string'): array
+    public function generateManyNamed(iterable $values, $type = null): array
     {
         $placeholders = [];
         foreach ($values as $k => $value) {

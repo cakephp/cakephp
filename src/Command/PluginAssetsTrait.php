@@ -53,11 +53,6 @@ trait PluginAssetsTrait
         if ($name === null) {
             $pluginsList = Plugin::loaded();
         } else {
-            if (!Plugin::isLoaded($name)) {
-                $this->io->err(sprintf('Plugin %s is not loaded.', $name));
-
-                return [];
-            }
             $pluginsList = [$name];
         }
 
@@ -111,7 +106,8 @@ trait PluginAssetsTrait
             $this->io->out('For plugin: ' . $plugin);
             $this->io->hr();
 
-            if ($config['namespaced'] &&
+            if (
+                $config['namespaced'] &&
                 !is_dir($config['destDir']) &&
                 !$this->_createDirectory($config['destDir'])
             ) {

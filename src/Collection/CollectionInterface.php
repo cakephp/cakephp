@@ -872,9 +872,9 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * The possible values for the first argument are aliases for the following
      * constants and it is valid to pass those instead of the alias:
      *
-     * - desc: TreeIterator::SELF_FIRST
-     * - asc: TreeIterator::CHILD_FIRST
-     * - leaves: TreeIterator::LEAVES_ONLY
+     * - desc: RecursiveIteratorIterator::SELF_FIRST
+     * - asc: RecursiveIteratorIterator::CHILD_FIRST
+     * - leaves: RecursiveIteratorIterator::LEAVES_ONLY
      *
      * ### Example:
      *

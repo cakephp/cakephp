@@ -213,7 +213,8 @@ class MultiCheckboxWidget implements WidgetInterface
             ];
 
             if ($checkbox['checked']) {
-                $labelAttrs = (array)$this->_templates->addClass($labelAttrs, 'selected');
+                $selectedClass = $this->_templates->format('selectedClass', []);
+                $labelAttrs = (array)$this->_templates->addClass($labelAttrs, $selectedClass);
             }
 
             $label = $this->_label->render($labelAttrs, $context);

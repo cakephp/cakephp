@@ -135,7 +135,7 @@ trait DateFormatTrait
      * You can control the default locale used through `Time::setDefaultLocale()`.
      * If empty, the default will be taken from the `intl.default_locale` ini config.
      *
-     * @param string|int|null $format Format string.
+     * @param string|int|array|null $format Format string.
      * @param string|\DateTimeZone|null $timezone Timezone string or DateTimeZone object
      * in which the date will be displayed. The timezone stored for this object will not
      * be changed.
@@ -447,6 +447,7 @@ trait DateFormatTrait
      */
     public function __debugInfo(): array
     {
+        /** @psalm-suppress PossiblyNullReference */
         return [
             'time' => $this->toIso8601String(),
             'timezone' => $this->getTimezone()->getName(),

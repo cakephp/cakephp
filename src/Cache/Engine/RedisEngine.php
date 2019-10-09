@@ -102,8 +102,8 @@ class RedisEngine extends CacheEngine
             } elseif (empty($this->_config['persistent'])) {
                 $return = $this->_Redis->connect(
                     $this->_config['server'],
-                    $this->_config['port'],
-                    $this->_config['timeout']
+                    (int)$this->_config['port'],
+                    (int)$this->_config['timeout']
                 );
             } else {
                 $persistentId = $this->_config['port'] . $this->_config['timeout'] . $this->_config['database'];
@@ -132,7 +132,7 @@ class RedisEngine extends CacheEngine
      *
      * @param string $key Identifier for the data
      * @param mixed $value Data to be cached
-     * @param null|int|\DateInterval $ttl Optional. The TTL value of this item. If no value is sent and
+     * @param \DateInterval|int|null $ttl Optional. The TTL value of this item. If no value is sent and
      *   the driver supports TTL then the library may set a default value
      *   for it or let the driver take care of that.
      * @return bool True if the data was successfully cached, false on failure

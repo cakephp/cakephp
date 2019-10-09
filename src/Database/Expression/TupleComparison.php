@@ -18,6 +18,7 @@ namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
 use Cake\Database\ValueBinder;
+use Closure;
 
 /**
  * This expression represents SQL fragments that are used for comparing one tuple
@@ -47,6 +48,17 @@ class TupleComparison extends Comparison
         $this->setField($fields);
         $this->setValue($values);
         $this->_operator = $conjunction;
+    }
+
+    /**
+     * Sets the value
+     *
+     * @param mixed $value The value to compare
+     * @return void
+     */
+    public function setValue($value): void
+    {
+        $this->_value = $value;
     }
 
     /**
@@ -99,16 +111,15 @@ class TupleComparison extends Comparison
             }
 
             $type = $this->_type;
-            $multiType = is_array($type);
-            $isMulti = $this->isMulti();
-            $type = $multiType ? $type : str_replace('[]', '', $type);
-            $type = $type ?: null;
+            $isMultiOperation = $this->isMulti();
+            if (empty($type)) {
+                $type = null;
+            }
 
-            if ($isMulti) {
+            if ($isMultiOperation) {
                 $bound = [];
                 foreach ($value as $k => $val) {
-                    /** @psalm-suppress PossiblyNullArrayAccess */
-                    $valType = $multiType ? $type[$k] : $type;
+                    $valType = $type ? $type[$k] : $type;
                     $bound[] = $this->_bindValue($val, $generator, $valType);
                 }
 
@@ -116,7 +127,8 @@ class TupleComparison extends Comparison
                 continue;
             }
 
-            $valType = $multiType && isset($type[$i]) ? $type[$i] : $type;
+            /** @var string $valType */
+            $valType = $type && isset($type[$i]) ? $type[$i] : $type;
             $values[] = $this->_bindValue($value, $generator, $valType);
         }
 
@@ -124,15 +136,9 @@ class TupleComparison extends Comparison
     }
 
     /**
-     * Registers a value in the placeholder generator and returns the generated
-     * placeholder
-     *
-     * @param mixed $value The value to bind
-     * @param \Cake\Database\ValueBinder $generator The value binder
-     * @param string $type The type to use
-     * @return string generated placeholder
+     * @inheritDoc
      */
-    protected function _bindValue($value, ValueBinder $generator, $type): string
+    protected function _bindValue($value, ValueBinder $generator, ?string $type = null): string
     {
         $placeholder = $generator->placeholder('tuple');
         $generator->bind($placeholder, $value, $type);
@@ -146,10 +152,10 @@ class TupleComparison extends Comparison
      *
      * Callback function receives as its only argument an instance of an ExpressionInterface
      *
-     * @param callable $callable The callable to apply to sub-expressions
+     * @param \Closure $callable The callable to apply to sub-expressions
      * @return $this
      */
-    public function traverse(callable $callable)
+    public function traverse(Closure $callable)
     {
         /** @var string[] $fields */
         $fields = $this->getField();
@@ -183,10 +189,10 @@ class TupleComparison extends Comparison
      * it is an ExpressionInterface
      *
      * @param mixed $value The value to traverse
-     * @param callable $callable The callable to use when traversing
+     * @param \Closure $callable The callable to use when traversing
      * @return void
      */
-    protected function _traverseValue($value, $callable): void
+    protected function _traverseValue($value, Closure $callable): void
     {
         if ($value instanceof ExpressionInterface) {
             $callable($value);

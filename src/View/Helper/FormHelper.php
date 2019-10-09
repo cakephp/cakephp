@@ -142,8 +142,10 @@ class FormHelper extends Helper
             'textarea' => '<textarea name="{{name}}"{{attrs}}>{{value}}</textarea>',
             // Container for submit buttons.
             'submitContainer' => '<div class="submit">{{content}}</div>',
-            //Confirm javascript template for postLink()
+            // Confirm javascript template for postLink()
             'confirmJs' => '{{confirm}}',
+            // selected class
+            'selectedClass' => 'selected',
         ],
         // set HTML5 validation message to custom required/empty messages
         'autoSetCustomValidity' => true,
@@ -242,7 +244,7 @@ class FormHelper extends Helper
      *
      * @var string[]
      */
-    protected $_groupedInputTypes = ['radio', 'multicheckbox', 'date', 'time', 'datetime'];
+    protected $_groupedInputTypes = ['radio', 'multicheckbox'];
 
     /**
      * Construct the widgets and binds the default context providers
@@ -482,8 +484,10 @@ class FormHelper extends Helper
             return $request->getRequestTarget();
         }
 
-        if (is_string($options['url']) ||
-            (is_array($options['url']) && isset($options['url']['_name']))
+        if (
+            is_string($options['url']) ||
+            (is_array($options['url']) &&
+            isset($options['url']['_name']))
         ) {
             return $options['url'];
         }
@@ -502,10 +506,10 @@ class FormHelper extends Helper
     /**
      * Correctly store the last created form action URL.
      *
-     * @param string|array $url The URL of the last form.
+     * @param string|array|null $url The URL of the last form.
      * @return void
      */
-    protected function _lastAction($url): void
+    protected function _lastAction($url = null): void
     {
         $action = Router::url($url, true);
         $query = parse_url($action, PHP_URL_QUERY);
@@ -526,17 +530,20 @@ class FormHelper extends Helper
     {
         $request = $this->_View->getRequest();
 
-        if ($request->getParam('_Token.unlockedFields')) {
-            foreach ((array)$request->getParam('_Token.unlockedFields') as $unlocked) {
+        $formToken = $request->getAttribute('formToken');
+        if (!empty($formToken['unlockedFields'])) {
+            foreach ($formToken['unlockedFields'] as $unlocked) {
                 $this->_unlockedFields[] = $unlocked;
             }
         }
-        if (!$request->getParam('_csrfToken')) {
+
+        $csrfToken = $request->getAttribute('csrfToken');
+        if (!$csrfToken) {
             return '';
         }
 
         return $this->hidden('_csrfToken', [
-            'value' => $request->getParam('_csrfToken'),
+            'value' => $csrfToken,
             'secure' => static::SECURE_SKIP,
             'autocomplete' => 'off',
         ]);
@@ -557,7 +564,7 @@ class FormHelper extends Helper
     {
         $out = '';
 
-        if ($this->requestType !== 'get' && $this->_View->getRequest()->getParam('_Token')) {
+        if ($this->requestType !== 'get' && $this->_View->getRequest()->getAttribute('formToken')) {
             $out .= $this->secure($this->fields, $secureAttributes);
             $this->fields = [];
             $this->_unlockedFields = [];
@@ -590,7 +597,7 @@ class FormHelper extends Helper
      */
     public function secure(array $fields = [], array $secureAttributes = []): string
     {
-        if (!$this->_View->getRequest()->getParam('_Token')) {
+        if (!$this->_View->getRequest()->getAttribute('formToken')) {
             return '';
         }
         $debugSecurity = Configure::read('debug');
@@ -1098,7 +1105,8 @@ class FormHelper extends Helper
         $nestedInput = $options['nestedInput'] ?? $nestedInput;
         unset($options['nestedInput']);
 
-        if ($nestedInput === true
+        if (
+            $nestedInput === true
             && $options['type'] === 'checkbox'
             && !array_key_exists('hiddenField', $options)
             && $label !== false
@@ -1192,20 +1200,15 @@ class FormHelper extends Helper
         unset($options['labelOptions']);
         switch (strtolower($options['type'])) {
             case 'select':
-                $opts = $options['options'];
-                unset($options['options']);
-
-                return $this->select($fieldName, $opts, $options + ['label' => $label]);
             case 'radio':
-                $opts = $options['options'];
-                unset($options['options']);
-
-                return $this->radio($fieldName, $opts, $options + ['label' => $label]);
             case 'multicheckbox':
                 $opts = $options['options'];
+                if ($opts == null) {
+                    $opts = [];
+                }
                 unset($options['options']);
 
-                return $this->multiCheckbox($fieldName, $opts, $options + ['label' => $label]);
+                return $this->{$options['type']}($fieldName, $opts, $options + ['label' => $label]);
             case 'input':
                 throw new RuntimeException("Invalid type 'input' used for field '$fieldName'");
 
@@ -1367,7 +1370,8 @@ class FormHelper extends Helper
         }
 
         $typesWithMaxLength = ['text', 'textarea', 'email', 'tel', 'url', 'search'];
-        if (!array_key_exists('maxlength', $options)
+        if (
+            !array_key_exists('maxlength', $options)
             && in_array($options['type'], $typesWithMaxLength, true)
         ) {
             $maxLength = $context->getMaxLength($fieldName);
@@ -1472,11 +1476,11 @@ class FormHelper extends Helper
      * used instead of the generated values if present.
      *
      * @param string $fieldName The name of the field to generate label for.
-     * @param string|array $label Label text or array with label attributes.
+     * @param string|array|null $label Label text or array with label attributes.
      * @param array $options Options for the label element.
      * @return string Generated label element
      */
-    protected function _inputLabel(string $fieldName, $label, $options): string
+    protected function _inputLabel(string $fieldName, $label = null, array $options = []): string
     {
         $options += ['id' => null, 'input' => null, 'nestedInput' => false, 'templateVars' => []];
         $labelAttributes = ['templateVars' => $options['templateVars']];
@@ -2037,14 +2041,14 @@ class FormHelper extends Helper
      * ```
      *
      * @param string $fieldName Name attribute of the SELECT
-     * @param iterable|null $options Array of the OPTION elements (as 'value'=>'Text' pairs) to be used in the
+     * @param iterable $options Array of the OPTION elements (as 'value'=>'Text' pairs) to be used in the
      *   SELECT element
      * @param array $attributes The HTML attributes of the select element.
      * @return string Formatted SELECT element
      * @see \Cake\View\Helper\FormHelper::multiCheckbox() for creating multiple checkboxes.
      * @link https://book.cakephp.org/3.0/en/views/helpers/form.html#creating-select-pickers
      */
-    public function select(string $fieldName, ?iterable $options = [], array $attributes = []): string
+    public function select(string $fieldName, iterable $options = [], array $attributes = []): string
     {
         $attributes += [
             'disabled' => null,
@@ -2065,7 +2069,8 @@ class FormHelper extends Helper
 
         // Secure the field if there are options, or it's a multi select.
         // Single selects with no options don't submit, but multiselects do.
-        if ($attributes['secure'] &&
+        if (
+            $attributes['secure'] &&
             empty($options) &&
             empty($attributes['empty']) &&
             empty($attributes['multiple'])
@@ -2213,6 +2218,7 @@ class FormHelper extends Helper
             'value' => null,
         ];
         $options = $this->_initInputField($fieldName, $options);
+        $options['type'] = 'datetime-local';
 
         return $this->widget('datetime', $options);
     }
@@ -2289,7 +2295,7 @@ class FormHelper extends Helper
     protected function _initInputField(string $field, array $options = []): array
     {
         if (!isset($options['secure'])) {
-            $options['secure'] = (bool)$this->_View->getRequest()->getParam('_Token');
+            $options['secure'] = (bool)$this->_View->getRequest()->getAttribute('formToken');
         }
         $context = $this->_getContext();
 
@@ -2506,7 +2512,8 @@ class FormHelper extends Helper
         /** @var \Cake\View\Widget\WidgetInterface $widget */
         $widget = $this->_locator->get($name);
         $out = $widget->render($data, $this->context());
-        if (isset($data['name']) &&
+        if (
+            isset($data['name']) &&
             $secure !== null &&
             $secure !== self::SECURE_SKIP
         ) {
@@ -2572,10 +2579,10 @@ class FormHelper extends Helper
      * Gets a single field value from the sources available.
      *
      * @param string $fieldname The fieldname to fetch the value for.
-     * @param array|null $options The options containing default values.
+     * @param array $options The options containing default values.
      * @return mixed Field value derived from sources or defaults.
      */
-    public function getSourceValue(string $fieldname, ?array $options = [])
+    public function getSourceValue(string $fieldname, array $options = [])
     {
         $valueMap = [
             'data' => 'getData',

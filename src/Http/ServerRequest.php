@@ -54,7 +54,7 @@ class ServerRequest implements ServerRequestInterface
      * In PUT/PATCH/DELETE requests this property will contain the form-urlencoded
      * data.
      *
-     * @var null|array
+     * @var array|object|null
      */
     protected $data = [];
 
@@ -80,13 +80,6 @@ class ServerRequest implements ServerRequestInterface
     protected $_environment = [];
 
     /**
-     * The URL string used for the request.
-     *
-     * @var string
-     */
-    protected $url;
-
-    /**
      * Base URL path.
      *
      * @var string
@@ -99,13 +92,6 @@ class ServerRequest implements ServerRequestInterface
      * @var string
      */
     protected $webroot = '/';
-
-    /**
-     * The full address to the current request
-     *
-     * @var string
-     */
-    protected $here;
 
     /**
      * Whether or not to trust HTTP_X headers set by most load balancers.
@@ -136,7 +122,7 @@ class ServerRequest implements ServerRequestInterface
      * There are several ways to specify a detector, see \Cake\Http\ServerRequest::addDetector() for the
      * various formats and ways to define detectors.
      *
-     * @var array
+     * @var (array|callable)[]
      */
     protected static $_detectors = [
         'get' => ['env' => 'REQUEST_METHOD', 'value' => 'GET'],
@@ -149,7 +135,6 @@ class ServerRequest implements ServerRequestInterface
         'ssl' => ['env' => 'HTTPS', 'options' => [1, 'on']],
         'ajax' => ['env' => 'HTTP_X_REQUESTED_WITH', 'value' => 'XMLHttpRequest'],
         'flash' => ['env' => 'HTTP_USER_AGENT', 'pattern' => '/^(Shockwave|Adobe) Flash/'],
-        'requested' => ['param' => 'requested', 'value' => 1],
         'json' => ['accept' => ['application/json'], 'param' => '_ext', 'value' => 'json'],
         'xml' => ['accept' => ['application/xml', 'text/xml'], 'param' => '_ext', 'value' => 'xml'],
     ];
@@ -222,7 +207,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @var bool
      */
-    protected $mergeFilesAsObjects = false;
+    protected $mergeFilesAsObjects = true;
 
     /**
      * Create a new request object.
@@ -261,7 +246,7 @@ class ServerRequest implements ServerRequestInterface
             'base' => '',
             'webroot' => '',
             'input' => null,
-            'mergeFilesAsObjects' => false,
+            'mergeFilesAsObjects' => true,
         ];
 
         $this->_setConfig($config);
@@ -312,9 +297,6 @@ class ServerRequest implements ServerRequestInterface
         $this->base = $config['base'];
         $this->webroot = $config['webroot'];
 
-        $this->url = substr($uri->getPath(), 1);
-        $this->here = $this->base . '/' . $this->url;
-
         if (isset($config['input'])) {
             $stream = new Stream('php://memory', 'rw');
             $stream->write($config['input']);
@@ -346,7 +328,8 @@ class ServerRequest implements ServerRequestInterface
         $method = $this->getEnv('REQUEST_METHOD');
         $override = false;
 
-        if (in_array($method, ['PUT', 'DELETE', 'PATCH'], true) &&
+        if (
+            in_array($method, ['PUT', 'DELETE', 'PATCH'], true) &&
             strpos((string)$this->contentType(), 'application/x-www-form-urlencoded') === 0
         ) {
             $data = $this->input();
@@ -379,7 +362,7 @@ class ServerRequest implements ServerRequestInterface
      */
     protected function _processGet(array $query, string $queryString = ''): array
     {
-        $unsetUrl = '/' . str_replace(['.', ' '], '_', urldecode($this->url));
+        $unsetUrl = str_replace(['.', ' '], '_', urldecode($this->uri->getPath()));
         unset($query[$unsetUrl], $query[$this->base . $unsetUrl]);
         if (strlen($queryString)) {
             parse_str($queryString, $queryArgs);
@@ -528,7 +511,7 @@ class ServerRequest implements ServerRequestInterface
     public function clientIp(): string
     {
         if ($this->trustProxy && $this->getEnv('HTTP_X_FORWARDED_FOR')) {
-            $addresses = array_map('trim', explode(',', $this->getEnv('HTTP_X_FORWARDED_FOR')));
+            $addresses = array_map('trim', explode(',', (string)$this->getEnv('HTTP_X_FORWARDED_FOR')));
             $trusted = (count($this->trustedProxies) > 0);
             $n = count($addresses);
 
@@ -778,12 +761,12 @@ class ServerRequest implements ServerRequestInterface
                 return $this->getEnv($detect['env']) == $detect['value'];
             }
             if (isset($detect['pattern'])) {
-                return (bool)preg_match($detect['pattern'], $this->getEnv($detect['env']));
+                return (bool)preg_match($detect['pattern'], (string)$this->getEnv($detect['env']));
             }
             if (isset($detect['options'])) {
                 $pattern = '/' . implode('|', $detect['options']) . '/i';
 
-                return (bool)preg_match($pattern, $this->getEnv($detect['env']));
+                return (bool)preg_match($pattern, (string)$this->getEnv($detect['env']));
             }
         }
 
@@ -835,7 +818,7 @@ class ServerRequest implements ServerRequestInterface
      * Allows for custom detectors on the request parameters.
      *
      * ```
-     * addDetector('requested', ['param' => 'requested', 'value' => 1]);
+     * addDetector('admin', ['param' => 'prefix', 'value' => 'admin']);
      * ```
      *
      * ### Accept comparison
@@ -893,6 +876,7 @@ class ServerRequest implements ServerRequestInterface
             return;
         }
         if (isset(static::$_detectors[$name], $callable['options'])) {
+            /** @psalm-suppress PossiblyInvalidArgument */
             $callable = Hash::merge(static::$_detectors[$name], $callable);
         }
         static::$_detectors[$name] = $callable;
@@ -923,7 +907,7 @@ class ServerRequest implements ServerRequestInterface
      * While header names are not case-sensitive, getHeaders() will normalize
      * the headers.
      *
-     * @return array An associative array of headers and their values.
+     * @return string[][] An associative array of headers and their values.
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
     public function getHeaders(): array
@@ -968,7 +952,7 @@ class ServerRequest implements ServerRequestInterface
      * is not present an empty array will be returned.
      *
      * @param string $name The header you want to get (case-insensitive)
-     * @return array An associative array of headers and their values.
+     * @return string[] An associative array of headers and their values.
      *   If the header doesn't exist, an empty array will be returned.
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
@@ -1084,7 +1068,8 @@ class ServerRequest implements ServerRequestInterface
     {
         $new = clone $this;
 
-        if (!is_string($method) ||
+        if (
+            !is_string($method) ||
             !preg_match('/^[!#$%&\'*+.^_`\|~0-9a-z-]+$/i', $method)
         ) {
             throw new InvalidArgumentException(sprintf(
@@ -1191,7 +1176,12 @@ class ServerRequest implements ServerRequestInterface
      */
     public function domain(int $tldLength = 1): string
     {
-        $segments = explode('.', $this->host());
+        $host = $this->host();
+        if (empty($host)) {
+            return '';
+        }
+
+        $segments = explode('.', $host);
         $domain = array_slice($segments, -1 * ($tldLength + 1));
 
         return implode('.', $domain);
@@ -1206,7 +1196,12 @@ class ServerRequest implements ServerRequestInterface
      */
     public function subdomains(int $tldLength = 1): array
     {
-        $segments = explode('.', $this->host());
+        $host = $this->host();
+        if (empty($host)) {
+            return [];
+        }
+
+        $segments = explode('.', $host);
 
         return array_slice($segments, 0, -1 * ($tldLength + 1));
     }
@@ -1351,7 +1346,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param string|null $name The name or dotted path to the query param or null to read all.
      * @param mixed $default The default value if the named parameter is not set, and $name is not null.
-     * @return null|string|array Query data.
+     * @return array|string|null Query data.
      * @see ServerRequest::getQueryParams()
      */
     public function getQuery(?string $name = null, $default = null)
@@ -1384,7 +1379,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param string|null $name Dot separated name of the value to read. Or null to read all data.
      * @param mixed $default The default data.
-     * @return null|string|array The value being read.
+     * @return mixed The value being read.
      */
     public function getData(?string $name = null, $default = null)
     {
@@ -1395,6 +1390,7 @@ class ServerRequest implements ServerRequestInterface
             return $default;
         }
 
+        /** @psalm-suppress PossiblyNullArgument */
         return Hash::get($this->data, $name, $default);
     }
 
@@ -1439,10 +1435,10 @@ class ServerRequest implements ServerRequestInterface
      * Read cookie data from the request's cookie data.
      *
      * @param string $key The key or dotted path you want to read.
-     * @param string $default The default value if the cookie is not set.
-     * @return null|array|string Either the cookie value, or null if the value doesn't exist.
+     * @param string|array|null $default The default value if the cookie is not set.
+     * @return string|array|null Either the cookie value, or null if the value doesn't exist.
      */
-    public function getCookie(string $key, ?string $default = null)
+    public function getCookie(string $key, $default = null)
     {
         return Hash::get($this->cookies, $key, $default);
     }
@@ -1518,10 +1514,10 @@ class ServerRequest implements ServerRequestInterface
      * post data. For other content types, it may be the deserialized request
      * body.
      *
-     * @return null|array The deserialized body parameters, if any.
+     * @return array|object|null The deserialized body parameters, if any.
      *     These will typically be an array.
      */
-    public function getParsedBody(): ?array
+    public function getParsedBody()
     {
         return $this->data;
     }
@@ -1529,7 +1525,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Update the parsed body and get a new instance.
      *
-     * @param null|array $data The deserialized body data. This will
+     * @param array|object|null $data The deserialized body data. This will
      *     typically be in an array or object.
      * @return static
      */
@@ -1684,7 +1680,10 @@ class ServerRequest implements ServerRequestInterface
     public function withData(string $name, $value)
     {
         $copy = clone $this;
-        $copy->data = Hash::insert($copy->data, $name, $value);
+
+        if (is_array($copy->data)) {
+            $copy->data = Hash::insert($copy->data, $name, $value);
+        }
 
         return $copy;
     }
@@ -1701,7 +1700,10 @@ class ServerRequest implements ServerRequestInterface
     public function withoutData(string $name)
     {
         $copy = clone $this;
-        $copy->data = Hash::remove($copy->data, $name);
+
+        if (is_array($copy->data)) {
+            $copy->data = Hash::remove($copy->data, $name);
+        }
 
         return $copy;
     }
@@ -1785,6 +1787,10 @@ class ServerRequest implements ServerRequestInterface
     public function getAttribute($name, $default = null)
     {
         if (in_array($name, $this->emulatedAttributes, true)) {
+            if ($name === 'here') {
+                return $this->base . $this->uri->getPath();
+            }
+
             return $this->{$name};
         }
         if (array_key_exists($name, $this->attributes)) {
@@ -1808,7 +1814,7 @@ class ServerRequest implements ServerRequestInterface
             'params' => $this->params,
             'webroot' => $this->webroot,
             'base' => $this->base,
-            'here' => $this->here,
+            'here' => $this->base . $this->uri->getPath(),
         ];
 
         return $this->attributes + $emulated;
@@ -1818,7 +1824,7 @@ class ServerRequest implements ServerRequestInterface
      * Get the uploaded file from a dotted path.
      *
      * @param string $path The dot separated path to the file you want.
-     * @return null|\Psr\Http\Message\UploadedFileInterface
+     * @return \Psr\Http\Message\UploadedFileInterface|null
      */
     public function getUploadedFile(string $path): ?UploadedFileInterface
     {
@@ -1936,8 +1942,9 @@ class ServerRequest implements ServerRequestInterface
         if (!$host) {
             return $new;
         }
-        if ($uri->getPort()) {
-            $host .= ':' . $uri->getPort();
+        $port = $uri->getPort();
+        if ($port) {
+            $host .= ':' . $port;
         }
         $new->_environment['HTTP_HOST'] = $host;
 
@@ -1955,6 +1962,7 @@ class ServerRequest implements ServerRequestInterface
      *   request-target forms allowed in request messages)
      * @param string $target The request target.
      * @return static
+     * @psalm-suppress MoreSpecificImplementedParamType
      */
     public function withRequestTarget($target)
     {

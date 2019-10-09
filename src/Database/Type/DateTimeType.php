@@ -123,7 +123,8 @@ class DateTimeType extends BaseType
 
         $format = (array)$this->_format;
 
-        if ($this->dbTimezone !== null
+        if (
+            $this->dbTimezone !== null
             && $this->dbTimezone->getName() !== $value->getTimezone()->getName()
         ) {
             if (!$value instanceof DateTimeImmutable) {
@@ -269,8 +270,13 @@ class DateTimeType extends BaseType
         $value += ['hour' => 0, 'minute' => 0, 'second' => 0];
 
         $format = '';
-        if (isset($value['year'], $value['month'], $value['day']) &&
-            (is_numeric($value['year']) && is_numeric($value['month']) && is_numeric($value['day']))
+        if (
+            isset($value['year'], $value['month'], $value['day']) &&
+            (
+                is_numeric($value['year']) &&
+                is_numeric($value['month']) &&
+                is_numeric($value['day'])
+            )
         ) {
             $format .= sprintf('%d-%02d-%02d', $value['year'], $value['month'], $value['day']);
         }

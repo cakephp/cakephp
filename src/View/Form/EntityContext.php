@@ -137,6 +137,7 @@ class EntityContext implements ContextInterface
         if (empty($table)) {
             if (is_iterable($entity)) {
                 foreach ($entity as $e) {
+                    /** @psalm-suppress LoopInvalidation */
                     $entity = $e;
                     break;
                 }
@@ -213,6 +214,7 @@ class EntityContext implements ContextInterface
         $entity = $this->_context['entity'];
         if (is_iterable($entity)) {
             foreach ($entity as $e) {
+                /** @psalm-suppress LoopInvalidation */
                 $entity = $e;
                 break;
             }
@@ -264,7 +266,8 @@ class EntityContext implements ContextInterface
             if ($val !== null) {
                 return $val;
             }
-            if ($options['default'] !== null
+            if (
+                $options['default'] !== null
                 || !$options['schemaDefault']
                 || !$entity->isNew()
             ) {
@@ -581,6 +584,7 @@ class EntityContext implements ContextInterface
         $entity = $this->entity($parts) ?: null;
 
         if (isset($this->_validator[$key])) {
+            /** @psalm-suppress PossiblyInvalidArgument */
             $this->_validator[$key]->setProvider('entity', $entity);
 
             return $this->_validator[$key];
@@ -600,6 +604,7 @@ class EntityContext implements ContextInterface
         }
 
         $validator = $table->getValidator($method);
+        /** @psalm-suppress PossiblyInvalidArgument */
         $validator->setProvider('entity', $entity);
 
         return $this->_validator[$key] = $validator;
@@ -656,6 +661,7 @@ class EntityContext implements ContextInterface
                 return null;
             }
 
+            /** @var \Cake\ORM\Association $assoc  */
             $table = $assoc->getTarget();
         }
 
@@ -666,7 +672,7 @@ class EntityContext implements ContextInterface
      * Get the abstract field type for a given field name.
      *
      * @param string $field A dot separated path to get a schema type for.
-     * @return null|string An abstract data type or null.
+     * @return string|null An abstract data type or null.
      * @see \Cake\Database\Type
      */
     public function type(string $field): ?string

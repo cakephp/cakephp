@@ -48,8 +48,8 @@ class TimeHelper extends Helper
      *
      * Will use the provided timezone, or default output timezone if defined.
      *
-     * @param null|string|\DateTimeZone $timezone The override timezone if applicable.
-     * @return null|string|\DateTimeZone The chosen timezone or null.
+     * @param \DateTimeZone|string|null $timezone The override timezone if applicable.
+     * @return \DateTimeZone|string|null The chosen timezone or null.
      */
     protected function _getTimezone($timezone)
     {
@@ -269,8 +269,10 @@ class TimeHelper extends Helper
             'timezone' => null,
         ];
         $options['timezone'] = $this->_getTimezone($options['timezone']);
-        if ($options['timezone'] &&
-            ($dateTime instanceof Time || $dateTime instanceof FrozenTime)
+        if (
+            $options['timezone'] &&
+            ($dateTime instanceof Time ||
+            $dateTime instanceof FrozenTime)
         ) {
             $dateTime = $dateTime->timezone($options['timezone']);
             unset($options['timezone']);
@@ -357,7 +359,7 @@ class TimeHelper extends Helper
      *   or DateTime object (or a date format string).
      * @param int|string|null $format date format string (or a UNIX timestamp,
      *   strtotime() valid string or DateTime object).
-     * @param false|string $invalid Default value to display on invalid dates
+     * @param string|false $invalid Default value to display on invalid dates
      * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
      * @return string|int|false Formatted and translated date string
      * @see \Cake\I18n\Time::i18nFormat()
@@ -373,7 +375,7 @@ class TimeHelper extends Helper
      *
      * @param int|string|\DateTime $date UNIX timestamp, strtotime() valid string or DateTime object
      * @param string|int|null $format Intl compatible format string.
-     * @param false|string $invalid Default value to display on invalid dates
+     * @param string|false $invalid Default value to display on invalid dates
      * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
      * @return string|int|false Formatted and translated date string or value for `$invalid` on failure.
      * @throws \Exception When the date cannot be parsed

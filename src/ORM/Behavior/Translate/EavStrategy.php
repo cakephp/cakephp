@@ -172,7 +172,8 @@ class EavStrategy implements TranslateStrategyInterface
             return function ($q) use ($field, $locale, $query, $select) {
                 $q->where([$q->getRepository()->aliasField('locale') => $locale]);
 
-                if ($query->isAutoFieldsEnabled() ||
+                if (
+                    $query->isAutoFieldsEnabled() ||
                     in_array($field, $select, true) ||
                     in_array($this->table->aliasField($field), $select, true)
                 ) {

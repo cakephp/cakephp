@@ -242,8 +242,19 @@ class SelectBoxWidget extends BasicWidget
         foreach ($options as $key => $val) {
             // Option groups
             $isIterable = is_iterable($val);
-            if ((!is_int($key) && $isIterable) ||
-                (is_int($key) && $isIterable && (isset($val['options']) || !isset($val['value'])))
+            if (
+                (
+                    !is_int($key) &&
+                    $isIterable
+                ) ||
+                (
+                    is_int($key) &&
+                    $isIterable &&
+                    (
+                        isset($val['options']) ||
+                        !isset($val['value'])
+                    )
+                )
             ) {
                 $out[] = $this->_renderOptgroup((string)$key, $val, $disabled, $selected, $templateVars, $escape);
                 continue;
@@ -288,7 +299,7 @@ class SelectBoxWidget extends BasicWidget
      * Helper method for deciding what options are selected.
      *
      * @param string $key The key to test.
-     * @param array|string|null|false $selected The selected values.
+     * @param array|string|false|null $selected The selected values.
      * @return bool
      */
     protected function _isSelected(string $key, $selected): bool

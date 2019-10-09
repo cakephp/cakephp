@@ -216,10 +216,14 @@ class HtmlHelper extends Helper
         }
 
         $options += $type + ['block' => null];
-        $out = null;
+        $out = '';
 
         if (isset($options['link'])) {
-            $options['link'] = $this->Url->assetUrl($options['link']);
+            if (is_array($options['link'])) {
+                $options['link'] = $this->Url->build($options['link']);
+            } else {
+                $options['link'] = $this->Url->assetUrl($options['link']);
+            }
             if (isset($options['rel']) && $options['rel'] === 'icon') {
                 $out = $this->formatTemplate('metalink', [
                     'url' => $options['link'],
@@ -314,6 +318,7 @@ class HtmlHelper extends Helper
         if ($escapeTitle === true) {
             $title = h($title);
         } elseif (is_string($escapeTitle)) {
+            /** @psalm-suppress PossiblyInvalidArgument */
             $title = htmlentities($title, ENT_QUOTES, $escapeTitle);
         }
 
@@ -393,7 +398,7 @@ class HtmlHelper extends Helper
         if (is_array($path)) {
             $out = '';
             foreach ($path as $i) {
-                $out .= "\n\t" . $this->css($i, $options);
+                $out .= "\n\t" . (string)$this->css($i, $options);
             }
             if (empty($options['block'])) {
                 return $out . "\n";
@@ -489,7 +494,7 @@ class HtmlHelper extends Helper
         if (is_array($url)) {
             $out = '';
             foreach ($url as $i) {
-                $out .= "\n\t" . $this->script($i, $options);
+                $out .= "\n\t" . (string)$this->script($i, $options);
             }
             if (empty($options['block'])) {
                 return $out . "\n";
@@ -658,14 +663,18 @@ class HtmlHelper extends Helper
      * - `fullBase` If true the src attribute will get a full address for the image file.
      * - `plugin` False value will prevent parsing path as a plugin
      *
-     * @param string|array $path Path to the image file, relative to the app/webroot/img/ directory.
+     * @param string|array $path Path to the image file, relative to the webroot/img/ directory.
      * @param array $options Array of HTML attributes. See above for special options.
      * @return string completed img tag
      * @link https://book.cakephp.org/3.0/en/views/helpers/html.html#linking-to-images
      */
     public function image($path, array $options = []): string
     {
-        $path = $this->Url->image($path, $options);
+        if (is_string($path)) {
+            $path = $this->Url->image($path, $options);
+        } else {
+            $path = $this->Url->build($path, $options);
+        }
         $options = array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
 
         if (!isset($options['alt'])) {
@@ -748,7 +757,7 @@ class HtmlHelper extends Helper
         bool $useCount = false,
         bool $continueOddEven = true
     ): string {
-        if (empty($data[0]) || !is_array($data[0])) {
+        if (is_string($data) || empty($data[0]) || !is_array($data[0])) {
             $data = [$data];
         }
 
@@ -1037,6 +1046,7 @@ class HtmlHelper extends Helper
             if (is_array($path)) {
                 $mimeType = $path[0]['type'];
             } else {
+                /** @var string $mimeType */
                 $mimeType = $this->_View->getResponse()->getMimeType(pathinfo($path, PATHINFO_EXTENSION));
             }
             if (preg_match('#^video/#', $mimeType)) {

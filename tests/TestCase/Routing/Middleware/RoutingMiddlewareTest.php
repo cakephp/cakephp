@@ -18,6 +18,8 @@ namespace Cake\Test\TestCase\Routing\Middleware;
 
 use Cake\Cache\Cache;
 use Cake\Cache\InvalidArgumentException as CacheInvalidArgumentException;
+use Cake\Core\Configure;
+use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Middleware\RoutingMiddleware;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
@@ -27,7 +29,6 @@ use TestApp\Application;
 use TestApp\Http\TestRequestHandler;
 use TestApp\Middleware\DumbMiddleware;
 use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequestFactory;
 
 /**
  * Test for RoutingMiddleware
@@ -47,6 +48,8 @@ class RoutingMiddlewareTest extends TestCase
         Router::reload();
         Router::connect('/articles', ['controller' => 'Articles', 'action' => 'index']);
         $this->log = [];
+
+        Configure::write('App.base', '');
     }
 
     /**
@@ -105,6 +108,7 @@ class RoutingMiddlewareTest extends TestCase
                 'action' => 'index',
                 'plugin' => null,
                 'pass' => [],
+                '_ext' => null,
                 '_matchedRoute' => '/articles',
             ];
             $this->assertEquals($expected, $req->getAttribute('params'));
@@ -157,6 +161,7 @@ class RoutingMiddlewareTest extends TestCase
                 'action' => 'index',
                 'plugin' => null,
                 'pass' => [],
+                '_ext' => null,
                 '_matchedRoute' => '/app/articles',
             ];
             $this->assertEquals($expected, $req->getAttribute('params'));
@@ -249,6 +254,7 @@ class RoutingMiddlewareTest extends TestCase
                 'plugin' => null,
                 'pass' => [],
                 '_matchedRoute' => '/articles-patch',
+                '_ext' => null,
             ];
             $this->assertEquals($expected, $req->getAttribute('params'));
             $this->assertSame('PATCH', $req->getMethod());

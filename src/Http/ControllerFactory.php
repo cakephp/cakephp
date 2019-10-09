@@ -41,6 +41,7 @@ class ControllerFactory
         if (!$className) {
             $this->missingController($request);
         }
+        /** @var string $className */
         $reflection = new ReflectionClass($className);
         if ($reflection->isAbstract() || $reflection->isInterface()) {
             $this->missingController($request);
@@ -60,7 +61,7 @@ class ControllerFactory
      */
     public function getControllerClass(ServerRequest $request): ?string
     {
-        $pluginPath = $controller = null;
+        $pluginPath = $controller = '';
         $namespace = 'Controller';
         if ($request->getParam('controller')) {
             $controller = $request->getParam('controller');
@@ -84,7 +85,8 @@ class ControllerFactory
         // Disallow plugin short forms, / and \\ from
         // controller names as they allow direct references to
         // be created.
-        if (strpos($controller, '\\') !== false ||
+        if (
+            strpos($controller, '\\') !== false ||
             strpos($controller, '/') !== false ||
             strpos($controller, '.') !== false ||
             $firstChar === strtolower($firstChar)

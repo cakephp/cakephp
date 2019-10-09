@@ -124,13 +124,12 @@ class PaginatorHelper extends Helper
         $request = $this->_View->getRequest();
 
         if (empty($model)) {
-            $model = $this->defaultModel();
-        }
-        if (!$request->getParam('paging') || !$request->getParam('paging.' . $model)) {
-            return [];
+            $model = (string)$this->defaultModel();
         }
 
-        return $request->getParam('paging.' . $model);
+        $params = $request->getAttribute('paging');
+
+        return empty($params[$model]) ? [] : $params[$model];
     }
 
     /**
@@ -162,19 +161,18 @@ class PaginatorHelper extends Helper
         $request = $this->_View->getRequest();
 
         if (!empty($options['paging'])) {
-            $request = $request->withParam(
+            $request = $request->withAttribute(
                 'paging',
-                $options['paging'] + $request->getParam('paging', [])
+                $options['paging'] + $request->getAttribute('paging', [])
             );
             unset($options['paging']);
         }
 
-        $model = $this->defaultModel();
+        $model = (string)$this->defaultModel();
         if (!empty($options[$model])) {
-            $request = $request->withParam(
-                'paging.' . $model,
-                $options[$model] + (array)$request->getParam('paging.' . $model, [])
-            );
+            $params = $request->getAttribute('paging', []);
+            $params[$model] = $options[$model] + Hash::get($params, $model, []);
+            $request = $request->withAttribute('paging', $params);
             unset($options[$model]);
         }
 
@@ -296,7 +294,7 @@ class PaginatorHelper extends Helper
         $text = $options['escape'] ? h($text) : $text;
 
         $templater = $this->templater();
-        $newTemplates = !empty($options['templates']) ? $options['templates'] : false;
+        $newTemplates = $options['templates'] ?? false;
         if ($newTemplates) {
             $templater->push();
             $templateMethod = is_string($options['templates']) ? 'load' : 'add';
@@ -455,7 +453,7 @@ class PaginatorHelper extends Helper
         $locked = $options['lock'] ?? false;
         unset($options['lock']);
 
-        $sortKey = $this->sortKey($options['model']);
+        $sortKey = (string)$this->sortKey($options['model']);
         $defaultModel = $this->defaultModel();
         $model = $options['model'] ?: $defaultModel;
         [$table, $field] = explode('.', $key . '.');
@@ -537,13 +535,15 @@ class PaginatorHelper extends Helper
         $paging = $this->params($model);
         $paging += ['page' => null, 'sort' => null, 'direction' => null, 'limit' => null];
 
-        if (!empty($paging['sort'])
+        if (
+            !empty($paging['sort'])
             && !empty($options['sort'])
             && strpos($options['sort'], '.') === false
         ) {
             $paging['sort'] = $this->_removeAlias($paging['sort'], $model = null);
         }
-        if (!empty($paging['sortDefault'])
+        if (
+            !empty($paging['sortDefault'])
             && !empty($options['sort'])
             && strpos($options['sort'], '.') === false
         ) {
@@ -559,9 +559,10 @@ class PaginatorHelper extends Helper
             $options['page'] = null;
         }
 
-        if (isset($paging['sortDefault'], $paging['directionDefault'], $options['sort'], $options['direction']) &&
-            $options['sort'] === $paging['sortDefault'] &&
-            strtolower($options['direction']) === strtolower($paging['directionDefault'])
+        if (
+            isset($paging['sortDefault'], $paging['directionDefault'], $options['sort'], $options['direction'])
+            && $options['sort'] === $paging['sortDefault']
+            && strtolower($options['direction']) === strtolower($paging['directionDefault'])
         ) {
             $options['sort'] = $options['direction'] = null;
         }
@@ -691,10 +692,12 @@ class PaginatorHelper extends Helper
         if ($this->_defaultModel) {
             return $this->_defaultModel;
         }
-        if (!$this->_View->getRequest()->getParam('paging')) {
+
+        $params = $this->_View->getRequest()->getAttribute('paging');
+        if (!$params) {
             return null;
         }
-        [$this->_defaultModel] = array_keys($this->_View->getRequest()->getParam('paging'));
+        [$this->_defaultModel] = array_keys($params);
 
         return $this->_defaultModel;
     }
@@ -784,10 +787,10 @@ class PaginatorHelper extends Helper
      * options and a modulus of 8, ellipsis content will be inserted after the first and last link sets.
      *
      * @param array $options Options for the numbers.
-     * @return string|false Numbers string.
+     * @return string Numbers string.
      * @link https://book.cakephp.org/3.0/en/views/helpers/paginator.html#creating-page-number-links
      */
-    public function numbers(array $options = [])
+    public function numbers(array $options = []): string
     {
         $defaults = [
             'before' => null, 'after' => null, 'model' => $this->defaultModel(),
@@ -797,7 +800,7 @@ class PaginatorHelper extends Helper
 
         $params = $this->params($options['model']) + ['page' => 1];
         if ($params['pageCount'] <= 1) {
-            return false;
+            return '';
         }
 
         $templater = $this->templater();
@@ -1039,10 +1042,10 @@ class PaginatorHelper extends Helper
      * @param string|int $first if string use as label for the link. If numeric, the number of page links
      *   you want at the beginning of the range.
      * @param array $options An array of options.
-     * @return string|false Numbers string.
+     * @return string Numbers string.
      * @link https://book.cakephp.org/3.0/en/views/helpers/paginator.html#creating-jump-links
      */
-    public function first($first = '<< first', array $options = [])
+    public function first($first = '<< first', array $options = []): string
     {
         $options += [
             'url' => [],
@@ -1053,7 +1056,7 @@ class PaginatorHelper extends Helper
         $params = $this->params($options['model']);
 
         if ($params['pageCount'] <= 1) {
-            return false;
+            return '';
         }
 
         $out = '';
@@ -1099,10 +1102,10 @@ class PaginatorHelper extends Helper
      *
      * @param string|int $last if string use as label for the link, if numeric print page numbers
      * @param array $options Array of options
-     * @return string|false Numbers string.
+     * @return string Numbers string.
      * @link https://book.cakephp.org/3.0/en/views/helpers/paginator.html#creating-jump-links
      */
-    public function last($last = 'last >>', array $options = [])
+    public function last($last = 'last >>', array $options = []): string
     {
         $options += [
             'model' => $this->defaultModel(),
@@ -1112,7 +1115,7 @@ class PaginatorHelper extends Helper
         $params = $this->params($options['model']);
 
         if ($params['pageCount'] <= 1) {
-            return false;
+            return '';
         }
 
         $out = '';

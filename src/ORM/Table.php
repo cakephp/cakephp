@@ -20,10 +20,8 @@ use ArrayObject;
 use BadMethodCallException;
 use Cake\Core\App;
 use Cake\Database\Connection;
-use Cake\Database\Schema\TableSchema;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Database\TypeFactory;
-use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\InvalidPrimaryKeyException;
@@ -135,6 +133,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     use EventDispatcherTrait;
     use RulesAwareTrait;
     use ValidatorAwareTrait;
+
+    /**
+     * Name of default validation set.
+     *
+     * @var string
+     */
+    public const DEFAULT_VALIDATOR = 'default';
 
     /**
      * The alias this object is assigned to validators as.
@@ -457,7 +462,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param \Cake\Database\Connection $connection The connection instance
      * @return $this
      */
-    public function setConnection(ConnectionInterface $connection)
+    public function setConnection(Connection $connection)
     {
         $this->_connection = $connection;
 
@@ -517,7 +522,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 unset($schema['_constraints']);
             }
 
-            $schema = new TableSchema($this->getTable(), $schema);
+            $schema = $this->getConnection()->getDriver()->newTableSchema($this->getTable(), $schema);
 
             foreach ($constraints as $name => $value) {
                 $schema->addConstraint($name, $value);
@@ -1276,7 +1281,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             'groupField' => null,
         ];
 
-        if (!$query->clause('select') &&
+        if (
+            !$query->clause('select') &&
             !is_object($options['keyField']) &&
             !is_object($options['valueField']) &&
             !is_object($options['groupField'])

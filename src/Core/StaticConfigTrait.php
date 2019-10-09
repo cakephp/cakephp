@@ -87,6 +87,7 @@ trait StaticConfigTrait
         }
 
         if (isset(static::$_config[$key])) {
+            /** @psalm-suppress PossiblyInvalidArgument */
             throw new BadMethodCallException(sprintf('Cannot reconfigure existing key "%s"', $key));
         }
 
@@ -135,6 +136,7 @@ trait StaticConfigTrait
         if (!isset(static::$_config[$config])) {
             return false;
         }
+        /** @psalm-suppress UndefinedPropertyFetch */
         if (isset(static::$_registry)) {
             /** @var \Cake\Core\ObjectRegistry $_registry */
             static::$_registry->unload($config);

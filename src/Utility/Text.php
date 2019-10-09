@@ -229,10 +229,12 @@ class Text
         $tempData = array_combine($dataKeys, $hashKeys);
         krsort($tempData);
 
+        /** @var array<string, string> $tempData */
         foreach ($tempData as $key => $hashVal) {
             $key = sprintf($format, preg_quote($key, '/'));
             $str = preg_replace($key, $hashVal, $str);
         }
+        /** @var array<string, mixed> $dataReplacements */
         $dataReplacements = array_combine($hashKeys, array_values($data));
         foreach ($dataReplacements as $tmpHash => $tmpValue) {
             $tmpValue = is_array($tmpValue) ? '' : $tmpValue;
@@ -596,7 +598,7 @@ class Text
         $default = [
             'ellipsis' => '...', 'exact' => true, 'html' => false, 'trimWidth' => false,
         ];
-        if (!empty($options['html']) && strtolower(mb_internal_encoding()) === 'utf-8') {
+        if (!empty($options['html']) && strtolower((string)mb_internal_encoding()) === 'utf-8') {
             $default['ellipsis'] = "\xe2\x80\xa6";
         }
         $options += $default;
@@ -806,7 +808,9 @@ class Text
 
             $len = self::_strlen($part, $options);
             if ($offset !== 0 || $totalLength + $len > $length) {
-                if (strpos($part, '&') === 0 && preg_match($pattern, $part)
+                if (
+                    strpos($part, '&') === 0
+                    && preg_match($pattern, $part)
                     && $part !== html_entity_decode($part, ENT_HTML5 | ENT_QUOTES, 'UTF-8')
                 ) {
                     // Entities cannot be passed substr.
@@ -1086,7 +1090,12 @@ class Text
      */
     public static function setTransliteratorId(string $transliteratorId): void
     {
-        static::setTransliterator(transliterator_create($transliteratorId));
+        $transliterator = transliterator_create($transliteratorId);
+        if ($transliterator === null) {
+            throw new Exception('Unable to create transliterator for id: ' . $transliteratorId);
+        }
+
+        static::setTransliterator($transliterator);
         static::$_defaultTransliteratorId = $transliteratorId;
     }
 

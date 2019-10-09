@@ -87,10 +87,11 @@ class SyslogLog extends BaseLog
      * Map the $level back to a LOG_ constant value, split multi-line messages into multiple
      * log messages, pass all messages through the format defined in the configuration
      *
-     * @param string $level The severity level of log you are making.
+     * @param mixed $level The severity level of log you are making.
      * @param string $message The message you want to log.
      * @param array $context Additional information about the logged message
      * @return void
+     * @see Cake\Log\Log::$_levels
      */
     public function log($level, $message, array $context = []): void
     {

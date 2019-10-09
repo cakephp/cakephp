@@ -154,6 +154,7 @@ class Socket
             $connectAs |= STREAM_CLIENT_PERSISTENT;
         }
 
+        /** @psalm-suppress InvalidArgument */
         set_error_handler([$this, '_connectionErrorHandler']);
         $remoteSocketTarget = $scheme . $this->_config['host'];
         $port = (int)$this->_config['port'];
@@ -185,6 +186,7 @@ class Socket
 
         $this->connected = is_resource($this->connection);
         if ($this->connected) {
+            /** @psalm-suppress PossiblyNullArgument */
             stream_set_timeout($this->connection, $this->_config['timeout']);
         }
 
@@ -271,7 +273,7 @@ class Socket
     /**
      * Get the connection context.
      *
-     * @return null|array Null when there is no connection, an array when there is.
+     * @return array|null Null when there is no connection, an array when there is.
      */
     public function context(): ?array
     {
@@ -364,6 +366,7 @@ class Socket
         $totalBytes = strlen($data);
         $written = 0;
         while ($written < $totalBytes) {
+            /** @psalm-suppress PossiblyNullArgument */
             $rv = fwrite($this->connection, substr($data, $written));
             if ($rv === false || $rv === 0) {
                 return $written;
@@ -387,6 +390,7 @@ class Socket
             return null;
         }
 
+        /** @psalm-suppress PossiblyNullArgument */
         if (!feof($this->connection)) {
             $buffer = fread($this->connection, $length);
             $info = stream_get_meta_data($this->connection);

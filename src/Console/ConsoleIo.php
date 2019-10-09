@@ -126,7 +126,7 @@ class ConsoleIo
     /**
      * Get/set the current output level.
      *
-     * @param null|int $level The current output level.
+     * @param int|null $level The current output level.
      * @return int The current output level.
      */
     public function level(?int $level = null): int
@@ -195,15 +195,19 @@ class ConsoleIo
     /**
      * Convenience method for out() that wraps message between <info /> tag
      *
-     * @param string|array|null $message A string or an array of strings to output
+     * @param string|array $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
      * @return int|null The number of bytes returned from writing to stdout
      *   or null if provided $level is greater than current level.
      * @see https://book.cakephp.org/3.0/en/console-and-shells.html#ConsoleIo::out
      */
-    public function info($message = null, int $newlines = 1, int $level = self::NORMAL): ?int
+    public function info($message, int $newlines = 1, int $level = self::NORMAL): ?int
     {
+        if ($message === null) {
+            deprecationWarning('ConsoleIo::info() in 4.x will not allow null anymore.');
+        }
+
         $messageType = 'info';
         $message = $this->wrapMessageWithType($messageType, $message);
 
@@ -213,13 +217,17 @@ class ConsoleIo
     /**
      * Convenience method for err() that wraps message between <warning /> tag
      *
-     * @param string|array|null $message A string or an array of strings to output
+     * @param string|array $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int The number of bytes returned from writing to stderr.
      * @see https://book.cakephp.org/3.0/en/console-and-shells.html#ConsoleIo::err
      */
-    public function warning($message = null, int $newlines = 1): int
+    public function warning($message, int $newlines = 1): int
     {
+        if ($message === null) {
+            deprecationWarning('ConsoleIo::warning() in 4.x will not allow null anymore.');
+        }
+
         $messageType = 'warning';
         $message = $this->wrapMessageWithType($messageType, $message);
 
@@ -229,13 +237,17 @@ class ConsoleIo
     /**
      * Convenience method for err() that wraps message between <error /> tag
      *
-     * @param string|array|null $message A string or an array of strings to output
+     * @param string|array $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int The number of bytes returned from writing to stderr.
      * @see https://book.cakephp.org/3.0/en/console-and-shells.html#ConsoleIo::err
      */
-    public function error($message = null, int $newlines = 1): int
+    public function error($message, int $newlines = 1): int
     {
+        if ($message === null) {
+            deprecationWarning('ConsoleIo::error() in 4.x will not allow null anymore.');
+        }
+
         $messageType = 'error';
         $message = $this->wrapMessageWithType($messageType, $message);
 
@@ -245,15 +257,19 @@ class ConsoleIo
     /**
      * Convenience method for out() that wraps message between <success /> tag
      *
-     * @param string|array|null $message A string or an array of strings to output
+     * @param string|array $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
      * @return int|null The number of bytes returned from writing to stdout
      *   or null if provided $level is greater than current level.
      * @see https://book.cakephp.org/3.0/en/console-and-shells.html#ConsoleIo::out
      */
-    public function success($message = null, int $newlines = 1, int $level = self::NORMAL): ?int
+    public function success($message, int $newlines = 1, int $level = self::NORMAL): ?int
     {
+        if ($message === null) {
+            deprecationWarning('ConsoleIo::success() in 4.x will not allow null anymore.');
+        }
+
         $messageType = 'success';
         $message = $this->wrapMessageWithType($messageType, $message);
 
@@ -403,7 +419,7 @@ class ConsoleIo
      * @param string|null $style The style to get or create.
      * @param array|false|null $definition The array definition of the style to change or create a style
      *   or false to remove a style.
-     * @return array|null|true If you are getting styles, the style or null will be returned. If you are creating/modifying
+     * @return array|true|null If you are getting styles, the style or null will be returned. If you are creating/modifying
      *   styles true will be returned.
      * @see \Cake\Console\ConsoleOutput::styles()
      */
@@ -422,7 +438,7 @@ class ConsoleIo
      */
     public function askChoice(string $prompt, $options, ?string $default = null): string
     {
-        if ($options && is_string($options)) {
+        if (is_string($options)) {
             if (strpos($options, ',')) {
                 $options = explode(',', $options);
             } elseif (strpos($options, '/')) {

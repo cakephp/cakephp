@@ -39,7 +39,7 @@ class ValueBinderTest extends TestCase
         $expected = [
             ':c0' => [
                 'value' => 'value0',
-                'type' => 'string',
+                'type' => null,
                 'placeholder' => 'c0',
             ],
             ':c1' => [
@@ -49,7 +49,7 @@ class ValueBinderTest extends TestCase
             ],
             ':c2' => [
                 'value' => 'value2',
-                'type' => 'string',
+                'type' => null,
                 'placeholder' => 'c2',
             ],
         ];

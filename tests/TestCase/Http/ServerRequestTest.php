@@ -401,7 +401,7 @@ class ServerRequestTest extends TestCase
                 'name' => 'A dog',
             ],
         ];
-        $request = new ServerRequest(compact('files', 'post'));
+        $request = new ServerRequest(compact('files', 'post') + ['mergeFilesAsObjects' => false]);
         $expected = [
             'image_main' => [
                 'file' => [
@@ -477,7 +477,7 @@ class ServerRequestTest extends TestCase
             ],
         ];
 
-        $request = new ServerRequest(compact('files'));
+        $request = new ServerRequest(['files' => $files, 'mergeFilesAsObjects' => false]);
         $expected = [
             'birth_cert' => [
                 'name' => 'born on.txt',
@@ -517,6 +517,7 @@ class ServerRequestTest extends TestCase
 
         $request = new ServerRequest([
             'files' => $files,
+            'mergeFilesAsObjects' => false,
         ]);
         $this->assertEquals($files, $request->getData());
 
@@ -2990,35 +2991,6 @@ XML;
         $new = $request->withUri($uri, false);
 
         $this->assertSame('example.com:123', $new->getHeaderLine('Host'));
-    }
-
-    /**
-     * Test is('requested') and isRequested()
-     *
-     * @return void
-     */
-    public function testIsRequested()
-    {
-        $request = new ServerRequest([
-            'params' => [
-                'controller' => 'posts',
-                'action' => 'index',
-                'plugin' => null,
-                'requested' => 1,
-            ],
-        ]);
-        $this->assertTrue($request->is('requested'));
-        $this->assertTrue($request->isRequested());
-
-        $request = new ServerRequest([
-            'params' => [
-                'controller' => 'posts',
-                'action' => 'index',
-                'plugin' => null,
-            ],
-        ]);
-        $this->assertFalse($request->is('requested'));
-        $this->assertFalse($request->isRequested());
     }
 
     /**

@@ -50,7 +50,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @var string[]
      */
-    public $fixtures = [];
+    protected $fixtures = [];
 
     /**
      * By default, all fixtures attached to this class will be truncated and reloaded after each test.
@@ -510,7 +510,7 @@ abstract class TestCase extends BaseTestCase
                 $tagsTrimmed = preg_replace('/\s+/m', '', $tags);
 
                 if (preg_match('/^\*?\//', $tags, $match) && $tagsTrimmed !== '//') {
-                    $prefix = [null, null];
+                    $prefix = ['', ''];
 
                     if ($match[0] === '*/') {
                         $prefix = ['Anything, ', '.*?'];
@@ -536,6 +536,7 @@ abstract class TestCase extends BaseTestCase
                 ];
                 continue;
             }
+            /** @var array<string, true|array> $tags */
             foreach ($tags as $tag => $attributes) {
                 $regex[] = [
                     sprintf('Open %s tag', $tag),
@@ -607,7 +608,7 @@ abstract class TestCase extends BaseTestCase
              * @var array<int, string> $assertion
              */
             [$description, $expressions, $itemNum] = $assertion;
-            $expression = null;
+            $expression = '';
             foreach ((array)$expressions as $expression) {
                 $expression = sprintf('/^%s/s', $expression);
                 if (preg_match($expression, $string, $match)) {
@@ -773,7 +774,7 @@ abstract class TestCase extends BaseTestCase
         $options += ['alias' => $baseClass, 'connection' => $connection];
         $options += $locator->getConfig($alias);
 
-        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $mock */
+        /** @var \Cake\ORM\Table $mock */
         $mock = $this->getMockBuilder($className)
             ->onlyMethods($methods)
             ->setConstructorArgs([$options])
@@ -829,5 +830,15 @@ abstract class TestCase extends BaseTestCase
     public static function setAppNamespace(string $appNamespace = 'TestApp'): void
     {
         Configure::write('App.namespace', $appNamespace);
+    }
+
+    /**
+     * Gets fixtures.
+     *
+     * @return string[]
+     */
+    public function getFixtures(): array
+    {
+        return $this->fixtures;
     }
 }

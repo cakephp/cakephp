@@ -17,9 +17,12 @@ declare(strict_types=1);
 namespace Cake\Database;
 
 use Cake\Database\Schema\BaseSchema;
+use Cake\Database\Schema\TableSchema;
+use Closure;
 
 /**
  * Interface for database driver.
+ *
  */
 interface DriverInterface
 {
@@ -164,9 +167,9 @@ interface DriverInterface
      *
      * @param string $type The type of query to be transformed
      * (select, insert, update, delete).
-     * @return callable
+     * @return \Closure
      */
-    public function queryTranslator(string $type): callable;
+    public function queryTranslator(string $type): Closure;
 
     /**
      * Get the schema dialect.
@@ -262,4 +265,13 @@ interface DriverInterface
      * @return \Cake\Database\QueryCompiler
      */
     public function newCompiler(): QueryCompiler;
+
+    /**
+     * Constructs new TableSchema.
+     *
+     * @param string $table The table name.
+     * @param array $columns The list of columns for the schema.
+     * @return \Cake\Database\Schema\TableSchema
+     */
+    public function newTableSchema(string $table, array $columns = []): TableSchema;
 }

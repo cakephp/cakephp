@@ -117,7 +117,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
     protected function _getController(): Controller
     {
         $request = $this->request;
-        $routerRequest = Router::getRequest(true);
+        $routerRequest = Router::getRequest();
         // Fallback to the request in the router or make a new one from
         // $_SERVER
         if ($request === null) {
@@ -285,7 +285,8 @@ class ExceptionRenderer implements ExceptionRendererInterface
     {
         $message = $exception->getMessage();
 
-        if (!Configure::read('debug') &&
+        if (
+            !Configure::read('debug') &&
             !($exception instanceof HttpException)
         ) {
             if ($code < 500) {
@@ -337,12 +338,12 @@ class ExceptionRenderer implements ExceptionRendererInterface
     protected function _code(Throwable $exception): int
     {
         $code = 500;
-        $errorCode = $exception->getCode();
+        $errorCode = (int)$exception->getCode();
         if ($errorCode >= 400 && $errorCode < 600) {
             $code = $errorCode;
         }
 
-        return (int)$code;
+        return $code;
     }
 
     /**
@@ -359,8 +360,12 @@ class ExceptionRenderer implements ExceptionRendererInterface
             return $this->_shutdown();
         } catch (MissingTemplateException $e) {
             $attributes = $e->getAttributes();
-            if ($e instanceof MissingLayoutException ||
-                (isset($attributes['file']) && strpos($attributes['file'], 'error500') !== false)
+            if (
+                $e instanceof MissingLayoutException ||
+                (
+                    isset($attributes['file']) &&
+                    strpos($attributes['file'], 'error500') !== false
+                )
             ) {
                 return $this->_outputMessageSafe('error500');
             }
