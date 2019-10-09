@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
+use Cake\Database\Query;
 use Cake\Database\Type\ExpressionTypeCasterTrait;
 use Cake\Database\TypedResultInterface;
 use Cake\Database\TypedResultTrait;
@@ -105,6 +106,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      * @param bool $prepend Whether to prepend or append to the list of arguments
      * @see \Cake\Database\Expression\FunctionExpression::__construct() for more details.
      * @return $this
+     * @psalm-suppress MoreSpecificImplementedParamType
      */
     public function add($params, array $types = [], bool $prepend = false)
     {
@@ -151,8 +153,10 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
     {
         $parts = [];
         foreach ($this->_conditions as $condition) {
-            if ($condition instanceof ExpressionInterface) {
-                $condition = sprintf('%s', $condition->sql($generator));
+            if ($condition instanceof Query) {
+                $condition = sprintf('(%s)', $condition->sql($generator));
+            } elseif ($condition instanceof ExpressionInterface) {
+                $condition = $condition->sql($generator);
             } elseif (is_array($condition)) {
                 $p = $generator->placeholder('param');
                 $generator->bind($p, $condition['value'], $condition['type']);

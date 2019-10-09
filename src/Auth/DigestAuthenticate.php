@@ -101,7 +101,7 @@ class DigestAuthenticate extends BasicAuthenticate
      * Get a user based on information in the request. Used by cookie-less auth for stateless clients.
      *
      * @param \Cake\Http\ServerRequest $request Request object.
-     * @return mixed Either false or an array of user information
+     * @return array|false Either false or an array of user information
      */
     public function getUser(ServerRequest $request)
     {
@@ -214,7 +214,7 @@ class DigestAuthenticate extends BasicAuthenticate
      * Generate the login headers
      *
      * @param \Cake\Http\ServerRequest $request Request object.
-     * @return array Headers for logging in.
+     * @return string[] Headers for logging in.
      */
     public function loginHeaders(ServerRequest $request): array
     {

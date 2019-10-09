@@ -82,7 +82,7 @@ class Route
     /**
      * List of connected extensions for this route.
      *
-     * @var array
+     * @var string[]
      */
     protected $_extensions = [];
 
@@ -136,7 +136,7 @@ class Route
     /**
      * Set the supported extensions for this route.
      *
-     * @param array $extensions The extensions to set.
+     * @param string[] $extensions The extensions to set.
      * @return $this
      */
     public function setExtensions(array $extensions)
@@ -152,7 +152,7 @@ class Route
     /**
      * Get the supported extensions for this route.
      *
-     * @return array
+     * @return string[]
      */
     public function getExtensions(): array
     {
@@ -162,7 +162,7 @@ class Route
     /**
      * Set the accepted HTTP methods for this route.
      *
-     * @param array $methods The HTTP methods to accept.
+     * @param string[] $methods The HTTP methods to accept.
      * @return $this
      * @throws \InvalidArgumentException
      */
@@ -186,12 +186,12 @@ class Route
      * If any of your patterns contain multibyte values, the `multibytePattern`
      * mode will be enabled.
      *
-     * @param array $patterns The patterns to apply to routing elements
+     * @param string[] $patterns The patterns to apply to routing elements
      * @return $this
      */
     public function setPatterns(array $patterns)
     {
-        $patternValues = implode("", $patterns);
+        $patternValues = implode('', $patterns);
         if (mb_strlen($patternValues) < strlen($patternValues)) {
             $this->options['multibytePattern'] = true;
         }
@@ -216,7 +216,7 @@ class Route
     /**
      * Set the names of parameters that will be converted into passed parameters
      *
-     * @param array $names The names of the parameters that should be passed.
+     * @param string[] $names The names of the parameters that should be passed.
      * @return $this
      */
     public function setPass(array $names)
@@ -255,7 +255,7 @@ class Route
      */
     public function compiled(): bool
     {
-        return !empty($this->_compiledRoute);
+        return $this->_compiledRoute !== null;
     }
 
     /**
@@ -265,16 +265,14 @@ class Route
      * and populates $this->names with the named routing elements.
      *
      * @return string Returns a string regular expression of the compiled route.
-     * @psalm-suppress InvalidNullableReturnType
      */
     public function compile(): string
     {
-        if ($this->_compiledRoute) {
-            return $this->_compiledRoute;
+        if ($this->_compiledRoute === null) {
+            $this->_writeRoute();
         }
-        $this->_writeRoute();
 
-        /** @psalm-suppress NullableReturnStatement */
+        /** @var string */
         return $this->_compiledRoute;
     }
 
@@ -308,7 +306,7 @@ class Route
         foreach ($namedElements[1] as $i => $name) {
             $search = preg_quote($namedElements[0][$i]);
             if (isset($this->options[$name])) {
-                $option = null;
+                $option = '';
                 if ($name !== 'plugin' && array_key_exists($name, $this->defaults)) {
                     $option = '?';
                 }
@@ -420,16 +418,15 @@ class Route
      */
     public function parse(string $url, string $method): ?array
     {
-        if (empty($this->_compiledRoute)) {
-            $this->compile();
-        }
+        $compiledRoute = $this->compile();
         [$url, $ext] = $this->_parseExtension($url);
 
-        if (!preg_match($this->_compiledRoute, urldecode($url), $route)) {
+        if (!preg_match($compiledRoute, urldecode($url), $route)) {
             return null;
         }
 
-        if (isset($this->defaults['_method']) &&
+        if (
+            isset($this->defaults['_method']) &&
             !in_array($method, (array)$this->defaults['_method'], true)
         ) {
             return null;
@@ -533,7 +530,7 @@ class Route
      *
      * @param string $args A string with the passed params. eg. /1/foo
      * @param array $context The current route context, which should contain controller/action keys.
-     * @return array Array of passed args.
+     * @return string[] Array of passed args.
      */
     protected function _parseArgs(string $args, array $context): array
     {
@@ -591,7 +588,8 @@ class Route
         $defaults = $this->defaults;
         $context += ['params' => [], '_port' => null, '_scheme' => null, '_host' => null];
 
-        if (!empty($this->options['persist']) &&
+        if (
+            !empty($this->options['persist']) &&
             is_array($this->options['persist'])
         ) {
             $url = $this->_persistParams($url, $context['params']);
@@ -616,13 +614,15 @@ class Route
 
         // Check for properties that will cause an
         // absolute url. Copy the other properties over.
-        if (isset($hostOptions['_scheme']) ||
+        if (
+            isset($hostOptions['_scheme']) ||
             isset($hostOptions['_port']) ||
             isset($hostOptions['_host'])
         ) {
             $hostOptions += $context;
 
-            if ($hostOptions['_scheme'] &&
+            if (
+                $hostOptions['_scheme'] &&
                 getservbyname($hostOptions['_scheme'], 'tcp') === $hostOptions['_port']
             ) {
                 unset($hostOptions['_port']);
@@ -789,7 +789,8 @@ class Route
         }
 
         $out = str_replace('//', '/', $out);
-        if (isset($params['_scheme']) ||
+        if (
+            isset($params['_scheme']) ||
             isset($params['_host']) ||
             isset($params['_port'])
         ) {

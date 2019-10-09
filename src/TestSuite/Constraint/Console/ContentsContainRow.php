@@ -27,6 +27,7 @@ class ContentsContainRow extends ContentsRegExp
      *
      * @param array $other Row
      * @return bool
+     * @psalm-suppress MoreSpecificImplementedParamType
      */
     public function matches($other): bool
     {
@@ -55,6 +56,6 @@ class ContentsContainRow extends ContentsRegExp
      */
     public function failureDescription($other): string
     {
-        return $this->exporter()->shortenedExport($other) . ' ' . $this->toString();
+        return '`' . $this->exporter()->shortenedExport($other) . '` ' . $this->toString();
     }
 }

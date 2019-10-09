@@ -102,11 +102,12 @@ class ArrayContext implements ContextInterface
     /**
      * Get the fields used in the context as a primary key.
      *
-     * @return array
+     * @return string[]
      */
     public function primaryKey(): array
     {
-        if (empty($this->_context['schema']['_constraints']) ||
+        if (
+            empty($this->_context['schema']['_constraints']) ||
             !is_array($this->_context['schema']['_constraints'])
         ) {
             return [];
@@ -223,7 +224,7 @@ class ArrayContext implements ContextInterface
         }
 
         if ($required === true) {
-            $required = __d('cake', 'This field is required');
+            $required = __d('cake', 'This field cannot be left empty');
         }
 
         return $required;
@@ -261,7 +262,7 @@ class ArrayContext implements ContextInterface
      * Get the abstract field type for a given field name.
      *
      * @param string $field A dot separated path to get a schema type for.
-     * @return null|string An abstract data type or null.
+     * @return string|null An abstract data type or null.
      * @see \Cake\Database\Type
      */
     public function type(string $field): ?string

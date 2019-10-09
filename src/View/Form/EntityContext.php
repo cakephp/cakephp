@@ -137,6 +137,7 @@ class EntityContext implements ContextInterface
         if (empty($table)) {
             if (is_iterable($entity)) {
                 foreach ($entity as $e) {
+                    /** @psalm-suppress LoopInvalidation */
                     $entity = $e;
                     break;
                 }
@@ -175,7 +176,7 @@ class EntityContext implements ContextInterface
      *
      * Gets the primary key columns from the root entity's schema.
      *
-     * @return array
+     * @return string[]
      */
     public function primaryKey(): array
     {
@@ -213,6 +214,7 @@ class EntityContext implements ContextInterface
         $entity = $this->_context['entity'];
         if (is_iterable($entity)) {
             foreach ($entity as $e) {
+                /** @psalm-suppress LoopInvalidation */
                 $entity = $e;
                 break;
             }
@@ -264,7 +266,8 @@ class EntityContext implements ContextInterface
             if ($val !== null) {
                 return $val;
             }
-            if ($options['default'] !== null
+            if (
+                $options['default'] !== null
                 || !$options['schemaDefault']
                 || !$entity->isNew()
             ) {
@@ -417,7 +420,6 @@ class EntityContext implements ContextInterface
         }
 
         $len = count($path);
-        $last = $len - 1;
         $leafEntity = $entity;
         for ($i = 0; $i < $len; $i++) {
             $prop = $path[$i];
@@ -518,15 +520,8 @@ class EntityContext implements ContextInterface
         }
 
         $ruleset = $validator->field($fieldName);
-
-        $requiredMessage = $validator->getRequiredMessage($fieldName);
-        $emptyMessage = $validator->getNotEmptyMessage($fieldName);
-
-        if ($ruleset->isPresenceRequired() && $requiredMessage) {
-            return $requiredMessage;
-        }
-        if (!$ruleset->isEmptyAllowed() && $emptyMessage) {
-            return $emptyMessage;
+        if (!$ruleset->isEmptyAllowed()) {
+            return $validator->getNotEmptyMessage($fieldName);
         }
 
         return null;
@@ -560,7 +555,7 @@ class EntityContext implements ContextInterface
      *
      * If the context is for an array of entities, the 0th index will be used.
      *
-     * @return array Array of field names in the table/entity.
+     * @return string[] Array of field names in the table/entity.
      */
     public function fieldNames(): array
     {
@@ -589,6 +584,7 @@ class EntityContext implements ContextInterface
         $entity = $this->entity($parts) ?: null;
 
         if (isset($this->_validator[$key])) {
+            /** @psalm-suppress PossiblyInvalidArgument */
             $this->_validator[$key]->setProvider('entity', $entity);
 
             return $this->_validator[$key];
@@ -608,6 +604,7 @@ class EntityContext implements ContextInterface
         }
 
         $validator = $table->getValidator($method);
+        /** @psalm-suppress PossiblyInvalidArgument */
         $validator->setProvider('entity', $entity);
 
         return $this->_validator[$key] = $validator;
@@ -664,6 +661,7 @@ class EntityContext implements ContextInterface
                 return null;
             }
 
+            /** @var \Cake\ORM\Association $assoc  */
             $table = $assoc->getTarget();
         }
 
@@ -674,7 +672,7 @@ class EntityContext implements ContextInterface
      * Get the abstract field type for a given field name.
      *
      * @param string $field A dot separated path to get a schema type for.
-     * @return null|string An abstract data type or null.
+     * @return string|null An abstract data type or null.
      * @see \Cake\Database\Type
      */
     public function type(string $field): ?string

@@ -24,7 +24,7 @@ interface ContextInterface
     /**
      * Get the fields used in the context as a primary key.
      *
-     * @return array
+     * @return string[]
      */
     public function primaryKey(): array;
 
@@ -99,7 +99,7 @@ interface ContextInterface
      * Get the abstract field type for a given field name.
      *
      * @param string $field A dot separated path to get a schema type for.
-     * @return null|string An abstract data type or null.
+     * @return string|null An abstract data type or null.
      * @see \Cake\Database\Type
      */
     public function type(string $field): ?string;

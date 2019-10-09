@@ -29,7 +29,7 @@ trait MergeVariablesTrait
      * - `associative` - A list of properties that should be treated as associative arrays.
      *   Properties in this list will be passed through Hash::normalize() before merging.
      *
-     * @param array $properties An array of properties and the merge strategy for them.
+     * @param string[] $properties An array of properties and the merge strategy for them.
      * @param array $options The options to use when merging properties.
      * @return void
      */
@@ -69,7 +69,8 @@ trait MergeVariablesTrait
     {
         $thisValue = $this->{$property};
         $isAssoc = false;
-        if (isset($options['associative']) &&
+        if (
+            isset($options['associative']) &&
             in_array($property, (array)$options['associative'], true)
         ) {
             $isAssoc = true;

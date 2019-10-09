@@ -360,6 +360,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
 
         $where = ['id' => $id, 'locale' => $locale];
 
+        /** @var \Cake\Datasource\EntityInterface|null $translation */
         $translation = $this->translationTable->find()
             ->select(array_merge(['id', 'locale'], $fields))
             ->where($where)
@@ -455,6 +456,10 @@ class ShadowTableStrategy implements TranslateStrategyInterface
             /** @var \Cake\ORM\Entity|array $translation */
             $translation = $row['translation'];
 
+            /**
+             * @psalm-suppress PossiblyInvalidMethodCall
+             * @psalm-suppress PossiblyInvalidArgument
+             */
             $keys = $hydrated ? $translation->getVisible() : array_keys($translation);
 
             foreach ($keys as $field) {

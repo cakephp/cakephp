@@ -38,7 +38,7 @@ class AuthTestController extends Controller
      */
     public function __construct($request = null, $response = null)
     {
-        Router::setRequestInfo($request);
+        Router::setRequest($request);
         parent::__construct($request, $response);
     }
 

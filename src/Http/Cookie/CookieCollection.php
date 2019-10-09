@@ -350,7 +350,7 @@ class CookieCollection implements IteratorAggregate, Countable
             $value = rtrim($value, ';');
             $parts = preg_split('/\;[ \t]*/', $value);
 
-            $name = false;
+            $name = '';
             $cookie = [
                 'value' => '',
                 'path' => '',
@@ -380,9 +380,9 @@ class CookieCollection implements IteratorAggregate, Countable
             try {
                 $expires = null;
                 if ($cookie['max-age'] !== null) {
-                    $expires = new DateTimeImmutable('@' . (time() + $cookie['max-age']));
-                } elseif ($cookie['expires']) {
-                    $expires = new DateTimeImmutable('@' . strtotime($cookie['expires']));
+                    $expires = new DateTimeImmutable('@' . (time() + (int)$cookie['max-age']));
+                } elseif ($cookie['expires'] !== null) {
+                    $expires = new DateTimeImmutable('@' . strtotime((string)$cookie['expires']));
                 }
             } catch (Exception $e) {
                 $expires = null;
@@ -391,12 +391,12 @@ class CookieCollection implements IteratorAggregate, Countable
             try {
                 $cookies[] = new Cookie(
                     $name,
-                    $cookie['value'],
+                    (string)$cookie['value'],
                     $expires,
-                    $cookie['path'],
-                    $cookie['domain'],
-                    $cookie['secure'],
-                    $cookie['httponly']
+                    (string)$cookie['path'],
+                    (string)$cookie['domain'],
+                    (bool)$cookie['secure'],
+                    (bool)$cookie['httponly']
                 );
             } catch (Exception $e) {
                 // Don't blow up on invalid cookies

@@ -128,7 +128,7 @@ class MultiCheckboxWidget implements WidgetInterface
      *
      * @param array $data The data array defining the checkboxes.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
-     * @return array An array of rendered inputs.
+     * @return string[] An array of rendered inputs.
      */
     protected function _renderInputs(array $data, ContextInterface $context): array
     {
@@ -213,7 +213,8 @@ class MultiCheckboxWidget implements WidgetInterface
             ];
 
             if ($checkbox['checked']) {
-                $labelAttrs = (array)$this->_templates->addClass($labelAttrs, 'selected');
+                $selectedClass = $this->_templates->format('selectedClass', []);
+                $labelAttrs = (array)$this->_templates->addClass($labelAttrs, $selectedClass);
             }
 
             $label = $this->_label->render($labelAttrs, $context);

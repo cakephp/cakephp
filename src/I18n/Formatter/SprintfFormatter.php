@@ -29,7 +29,7 @@ class SprintfFormatter implements FormatterInterface
      * message. Variables are interpolated using the sprintf format.
      *
      * @param string $locale The locale in which the message is presented.
-     * @param string|array $message The message to be translated
+     * @param string $message The message to be translated
      * @param array $vars The list of values to interpolate in the message
      * @return string The formatted message
      */

@@ -20,11 +20,11 @@ use Cake\Core\HttpApplicationInterface;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Event\EventManager;
 use Cake\Http\Server;
+use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Router;
 use LogicException;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use ReflectionClass;
 use ReflectionException;
 use Zend\Diactoros\Stream;
@@ -61,7 +61,7 @@ class MiddlewareDispatcher
     /**
      * The application that is being dispatched.
      *
-     * @var \Cake\Core\HttpApplicationInterface
+     * @var \Cake\Core\HttpApplicationInterface|\Cake\Core\ConsoleApplicationInterface
      */
     protected $app;
 
@@ -72,16 +72,13 @@ class MiddlewareDispatcher
      * @param string|null $class The application class name. Defaults to App\Application.
      * @param array|null $constructorArgs The constructor arguments for your application class.
      *   Defaults to `['./config']`
-     * @param bool $disableRouterReload Disable Router::reload() call when resolving URLs. This
-     *   flag may be necessary if you are using Router methods in your test case setup, and using array URLs
-     *   when doing requests in your tests.
      * @throws \LogicException If it cannot load class for use in integration testing.
+     * @psalm-param \Cake\Core\HttpApplicationInterface::class|\Cake\Core\ConsoleApplicationInterface::class|null $class
      */
     public function __construct(
         TestCase $test,
         ?string $class = null,
-        ?array $constructorArgs = null,
-        bool $disableRouterReload = false
+        ?array $constructorArgs = null
     ) {
         $this->_test = $test;
         $this->_class = $class ?: Configure::read('App.namespace') . '\Application';
@@ -146,9 +143,9 @@ class MiddlewareDispatcher
      * Create a PSR7 request from the request spec.
      *
      * @param array $spec The request spec.
-     * @return \Psr\Http\Message\ServerRequestInterface
+     * @return \Cake\Http\ServerRequest
      */
-    protected function _createRequest(array $spec): ServerRequestInterface
+    protected function _createRequest(array $spec): ServerRequest
     {
         if (isset($spec['input'])) {
             $spec['post'] = [];

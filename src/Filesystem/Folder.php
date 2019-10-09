@@ -94,6 +94,8 @@ class Folder
 
     /**
      * Functions array to be called depending on the sort type chosen.
+     *
+     * @var string[]
      */
     protected $_fsorts = [
         self::SORT_NAME => 'getPathname',
@@ -570,7 +572,7 @@ class Folder
         foreach ($iterator as $itemPath => $fsIterator) {
             if ($skipHidden) {
                 $subPathName = $fsIterator->getSubPathname();
-                if ($subPathName{0} === '.' || strpos($subPathName, DIRECTORY_SEPARATOR . '.') !== false) {
+                if ($subPathName[0] === '.' || strpos($subPathName, DIRECTORY_SEPARATOR . '.') !== false) {
                     continue;
                 }
             }

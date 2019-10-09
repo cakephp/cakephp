@@ -69,7 +69,7 @@ class QueryCacher
      * Load the cached results from the cache or run the query.
      *
      * @param object $query The query the cache read is for.
-     * @return mixed Either the cached results or null.
+     * @return mixed|null Either the cached results or null.
      */
     public function fetch(object $query)
     {

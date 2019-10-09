@@ -77,6 +77,7 @@ if (!function_exists('pluginSplit')) {
      * @param string|null $plugin Optional default plugin to use if no plugin is found. Defaults to null.
      * @return array Array with 2 indexes. 0 => plugin name, 1 => class name.
      * @link https://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#pluginSplit
+     * @psalm-return array{string|null, string}
      */
     function pluginSplit(string $name, bool $dotAppend = false, ?string $plugin = null): array
     {
@@ -86,6 +87,7 @@ if (!function_exists('pluginSplit')) {
                 $parts[0] .= '.';
             }
 
+            /** @psalm-var array{string, string}*/
             return $parts;
         }
 
@@ -219,8 +221,8 @@ if (!function_exists('env')) {
 
         switch ($key) {
             case 'DOCUMENT_ROOT':
-                $name = env('SCRIPT_NAME');
-                $filename = env('SCRIPT_FILENAME');
+                $name = (string)env('SCRIPT_NAME');
+                $filename = (string)env('SCRIPT_FILENAME');
                 $offset = 0;
                 if (!strpos($name, '.php')) {
                     $offset = 4;
@@ -228,7 +230,7 @@ if (!function_exists('env')) {
 
                 return substr($filename, 0, -(strlen($name) + $offset));
             case 'PHP_SELF':
-                return str_replace(env('DOCUMENT_ROOT'), '', env('SCRIPT_FILENAME'));
+                return str_replace((string)env('DOCUMENT_ROOT'), '', (string)env('SCRIPT_FILENAME'));
             case 'CGI_MODE':
                 return PHP_SAPI === 'cgi';
         }

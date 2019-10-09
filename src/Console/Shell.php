@@ -106,7 +106,7 @@ class Shell
     /**
      * The command (method/task) that is being run.
      *
-     * @var string
+     * @var string|null
      */
     public $command;
 
@@ -396,6 +396,7 @@ class Shell
         if (!isset($extra['requested'])) {
             $extra['requested'] = true;
         }
+        /** @psalm-suppress DeprecatedClass */
         $dispatcher = new ShellDispatcher($args, false);
 
         return $dispatcher->dispatch($extra);
@@ -477,7 +478,7 @@ class Shell
         $this->params = array_merge($this->params, $extra);
         $this->_setOutputLevel();
         $this->command = $command;
-        if (!empty($this->params['help'])) {
+        if ($command && !empty($this->params['help'])) {
             return $this->_displayHelp($command);
         }
 
@@ -546,10 +547,10 @@ class Shell
     /**
      * Display the help in the correct format
      *
-     * @param string $command The command to get help for.
+     * @param string|null $command The command to get help for.
      * @return int|null The number of bytes returned from writing to stdout.
      */
-    protected function _displayHelp(string $command)
+    protected function _displayHelp(?string $command = null)
     {
         $format = 'text';
         if (!empty($this->args[0]) && $this->args[0] === 'xml') {
@@ -560,7 +561,9 @@ class Shell
         }
 
         $subcommands = $this->OptionParser->subcommands();
-        $command = isset($subcommands[$command]) ? $command : null;
+        if ($command !== null) {
+            $command = isset($subcommands[$command]) ? $command : null;
+        }
 
         return $this->out($this->OptionParser->help($command, $format));
     }
@@ -623,10 +626,10 @@ class Shell
      * @param string $prompt Prompt text.
      * @param string|array|null $options Array or string of options.
      * @param string|null $default Default input value.
-     * @return mixed Either the default value, or the user-provided input.
+     * @return string|null Either the default value, or the user-provided input.
      * @link https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::in
      */
-    public function in(string $prompt, $options = null, $default = null)
+    public function in(string $prompt, $options = null, ?string $default = null): ?string
     {
         if (!$this->interactive) {
             return $default;
@@ -666,7 +669,7 @@ class Shell
      * @param int $newlines Number of newlines to append
      * @return int|null The number of bytes returned from writing to stdout.
      */
-    public function verbose($message, int $newlines = 1)
+    public function verbose($message, int $newlines = 1): ?int
     {
         return $this->_io->verbose($message, $newlines);
     }
@@ -678,7 +681,7 @@ class Shell
      * @param int $newlines Number of newlines to append
      * @return int|null The number of bytes returned from writing to stdout.
      */
-    public function quiet($message, int $newlines = 1)
+    public function quiet($message, int $newlines = 1): ?int
     {
         return $this->_io->quiet($message, $newlines);
     }
@@ -694,13 +697,13 @@ class Shell
      * present in most shells. Using Shell::QUIET for a message means it will always display.
      * While using Shell::VERBOSE means it will only display when verbose output is toggled.
      *
-     * @param string|array|null $message A string or an array of strings to output
+     * @param string|array $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
      * @return int|null The number of bytes returned from writing to stdout.
      * @link https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::out
      */
-    public function out($message = null, int $newlines = 1, int $level = Shell::NORMAL)
+    public function out($message, int $newlines = 1, int $level = Shell::NORMAL): ?int
     {
         return $this->_io->out($message, $newlines, $level);
     }
@@ -709,11 +712,11 @@ class Shell
      * Outputs a single or multiple error messages to stderr. If no parameters
      * are passed outputs just a newline.
      *
-     * @param string|array|null $message A string or an array of strings to output
+     * @param string|array $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int The number of bytes returned from writing to stderr.
      */
-    public function err($message = null, int $newlines = 1): int
+    public function err($message, int $newlines = 1): int
     {
         return $this->_io->error($message, $newlines);
     }
@@ -721,13 +724,13 @@ class Shell
     /**
      * Convenience method for out() that wraps message between <info /> tag
      *
-     * @param string|array|null $message A string or an array of strings to output
+     * @param string|array $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
      * @return int|null The number of bytes returned from writing to stdout.
      * @see https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::out
      */
-    public function info($message = null, int $newlines = 1, int $level = Shell::NORMAL): ?int
+    public function info($message, int $newlines = 1, int $level = Shell::NORMAL): ?int
     {
         return $this->_io->info($message, $newlines, $level);
     }
@@ -735,12 +738,12 @@ class Shell
     /**
      * Convenience method for err() that wraps message between <warning /> tag
      *
-     * @param string|array|null $message A string or an array of strings to output
+     * @param string|array $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int The number of bytes returned from writing to stderr.
      * @see https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::err
      */
-    public function warn($message = null, int $newlines = 1): int
+    public function warn($message, int $newlines = 1): int
     {
         return $this->_io->warning($message, $newlines);
     }
@@ -748,13 +751,13 @@ class Shell
     /**
      * Convenience method for out() that wraps message between <success /> tag
      *
-     * @param string|array|null $message A string or an array of strings to output
+     * @param string|array $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
      * @return int|null The number of bytes returned from writing to stdout.
      * @see https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::out
      */
-    public function success($message = null, int $newlines = 1, int $level = Shell::NORMAL)
+    public function success($message, int $newlines = 1, int $level = Shell::NORMAL): ?int
     {
         return $this->_io->success($message, $newlines, $level);
     }
@@ -786,7 +789,7 @@ class Shell
 
     /**
      * Displays a formatted error message
-     * and exits the application with status code 1
+     * and exits the application with an error code.
      *
      * @param string $message The error message
      * @param int $exitCode The exit code for the shell task.
@@ -809,12 +812,14 @@ class Shell
      */
     public function clear(): void
     {
-        if (empty($this->params['noclear'])) {
-            if (DIRECTORY_SEPARATOR === '/') {
-                passthru('clear');
-            } else {
-                passthru('cls');
-            }
+        if (!empty($this->params['noclear'])) {
+            return;
+        }
+
+        if (DIRECTORY_SEPARATOR === '/') {
+            passthru('clear');
+        } else {
+            passthru('cls');
         }
     }
 

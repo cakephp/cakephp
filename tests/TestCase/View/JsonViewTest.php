@@ -23,6 +23,7 @@ use Cake\Core\Configure;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
+use Cake\View\Exception\SerializationFailureException;
 
 /**
  * JsonViewTest
@@ -337,5 +338,24 @@ class JsonViewTest extends TestCase
         $expected = json_encode(['user' => 'fake', 'list' => ['item1', 'item2'], 'paging' => null]);
         $this->assertSame($expected, $output);
         $this->assertSame('application/json', $View->getResponse()->getType());
+    }
+
+    public function testSerializationFailureException()
+    {
+        $this->expectException(SerializationFailureException::class);
+        $this->expectExceptionMessage('Serialization of View data failed.');
+
+        $Request = new ServerRequest();
+        $Response = new Response();
+        $Controller = new Controller($Request, $Response);
+
+        $data = "\xB1\x31";
+        $Controller->set('data', $data);
+        $Controller->viewBuilder()
+            ->setOption('serialize', 'data')
+            ->setOption('jsonOptions', false)
+            ->setClassName('Json');
+        $View = $Controller->createView();
+        $View->render();
     }
 }

@@ -306,7 +306,7 @@ class EventManager implements EventManagerInterface
      */
     protected function _callListener(callable $listener, EventInterface $event)
     {
-        $data = $event->getData();
+        $data = (array)$event->getData();
 
         return $listener($event, ...array_values($data));
     }
@@ -471,9 +471,12 @@ class EventManager implements EventManagerInterface
             $count = count($this->_eventList);
             for ($i = 0; $i < $count; $i++) {
                 $event = $this->_eventList[$i];
-                $subject = $event->getSubject();
-                $properties['_dispatchedEvents'][] = $event->getName() . ' with ' .
-                    (is_object($subject) ? 'subject ' . get_class($subject) : 'no subject');
+                try {
+                    $subject = $event->getSubject();
+                    $properties['_dispatchedEvents'][] = $event->getName() . ' with subject ' . get_class($subject);
+                } catch (Exception $e) {
+                    $properties['_dispatchedEvents'][] = $event->getName() . ' with no subject';
+                }
             }
         } else {
             $properties['_dispatchedEvents'] = null;

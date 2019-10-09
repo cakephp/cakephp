@@ -128,6 +128,7 @@ class TranslatorRegistry extends TranslatorLocator
      * @return \Aura\Intl\TranslatorInterface|null A translator object.
      * @throws \Aura\Intl\Exception If no translator with that name could be found
      * for the given locale.
+     * @psalm-suppress ImplementedReturnTypeMismatch
      */
     public function get($name, $locale = null)
     {
@@ -163,11 +164,11 @@ class TranslatorRegistry extends TranslatorLocator
      * Gets a translator from the registry by package for a locale.
      *
      * @param string $name The translator package to retrieve.
-     * @param string|null $locale The locale to use; if empty, uses the default
+     * @param string $locale The locale to use; if empty, uses the default
      * locale.
      * @return \Aura\Intl\TranslatorInterface A translator object.
      */
-    protected function _getTranslator(string $name, ?string $locale): TranslatorInterface
+    protected function _getTranslator(string $name, string $locale): TranslatorInterface
     {
         try {
             return parent::get($name, $locale);

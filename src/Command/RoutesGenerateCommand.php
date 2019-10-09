@@ -41,7 +41,7 @@ class RoutesGenerateCommand extends Command
      *
      * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
-     * @return null|int The exit code or null for success
+     * @return int|null The exit code or null for success
      */
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
@@ -63,7 +63,7 @@ class RoutesGenerateCommand extends Command
     /**
      * Split the CLI arguments into a hash.
      *
-     * @param array $args The arguments to split.
+     * @param string[] $args The arguments to split.
      * @return array
      */
     protected function _splitArgs(array $args): array

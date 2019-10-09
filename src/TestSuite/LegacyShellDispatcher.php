@@ -38,6 +38,7 @@ class LegacyShellDispatcher extends ShellDispatcher
      */
     public function __construct(array $args = [], bool $bootstrap = true, ?ConsoleIo $io = null)
     {
+        /** @psalm-suppress PossiblyNullPropertyAssignmentValue */
         $this->_io = $io;
         parent::__construct($args, $bootstrap);
     }

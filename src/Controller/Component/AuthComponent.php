@@ -290,7 +290,8 @@ class AuthComponent extends Component implements EventDispatcherInterface
             return $result;
         }
 
-        if ($isLoginAction ||
+        if (
+            $isLoginAction ||
             empty($this->_config['authorize']) ||
             $this->isAuthorized($this->user())
         ) {
@@ -748,7 +749,8 @@ class AuthComponent extends Component implements EventDispatcherInterface
         if ($url !== null) {
             $redirectUrl = $url;
         } elseif ($redirectUrl) {
-            if ($this->_config['loginAction']
+            if (
+                $this->_config['loginAction']
                 && Router::normalize($redirectUrl) === Router::normalize($this->_config['loginAction'])
             ) {
                 $redirectUrl = $this->_config['loginRedirect'];

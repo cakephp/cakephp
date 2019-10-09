@@ -360,7 +360,6 @@ object(Cake\View\View) {
 	[protected] _eventClass => 'Cake\Event\Event'
 	[protected] _config => []
 	[protected] _configInitialized => true
-	[protected] _viewBuilder => null
 }
 TEXT;
 

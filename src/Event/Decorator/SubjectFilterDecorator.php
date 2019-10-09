@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Event\Decorator;
 
+use Cake\Core\Exception\Exception;
 use Cake\Event\EventInterface;
 use RuntimeException;
 
@@ -51,7 +52,6 @@ class SubjectFilterDecorator extends AbstractDecorator
      */
     public function canTrigger(EventInterface $event): bool
     {
-        $class = get_class($event->getSubject());
         if (!isset($this->_options['allowedSubject'])) {
             throw new RuntimeException(self::class . ' Missing subject filter options!');
         }
@@ -59,6 +59,12 @@ class SubjectFilterDecorator extends AbstractDecorator
             $this->_options['allowedSubject'] = [$this->_options['allowedSubject']];
         }
 
-        return in_array($class, $this->_options['allowedSubject'], true);
+        try {
+            $subject = $event->getSubject();
+        } catch (Exception $e) {
+            return false;
+        }
+
+        return in_array(get_class($subject), $this->_options['allowedSubject'], true);
     }
 }

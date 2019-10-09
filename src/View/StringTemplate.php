@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\View;
 
 use Cake\Core\Configure\Engine\PhpConfig;
+use Cake\Core\Exception\Exception;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Utility\Hash;
 use RuntimeException;
@@ -152,7 +153,7 @@ class StringTemplate
      * ]);
      * ```
      *
-     * @param array $templates An associative list of named templates.
+     * @param string[] $templates An associative list of named templates.
      * @return $this
      */
     public function add(array $templates)
@@ -166,7 +167,7 @@ class StringTemplate
     /**
      * Compile templates into a more efficient printf() compatible format.
      *
-     * @param array $templates The template names to compile. If empty all templates will be compiled.
+     * @param string[] $templates The template names to compile. If empty all templates will be compiled.
      * @return void
      */
     protected function _compileTemplates(array $templates = []): void
@@ -201,6 +202,10 @@ class StringTemplate
      */
     public function load(string $file): void
     {
+        if ($file === '') {
+            throw new Exception('String template filename cannot be an empty string');
+        }
+
         $loader = new PhpConfig();
         $templates = $loader->read($file);
         $this->add($templates);

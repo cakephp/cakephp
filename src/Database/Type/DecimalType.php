@@ -45,11 +45,11 @@ class DecimalType extends BaseType implements BatchCastingInterface
     protected $_useLocaleParser = false;
 
     /**
-     * Convert integer data into the database format.
+     * Convert decimal strings into the database format.
      *
      * @param mixed $value The value to convert.
      * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
-     * @return mixed
+     * @return string|float|int|null
      * @throws \InvalidArgumentException
      */
     public function toDatabase($value, DriverInterface $driver)
@@ -62,7 +62,8 @@ class DecimalType extends BaseType implements BatchCastingInterface
             return $value;
         }
 
-        if (is_object($value)
+        if (
+            is_object($value)
             && method_exists($value, '__toString')
             && is_numeric(strval($value))
         ) {
@@ -76,12 +77,11 @@ class DecimalType extends BaseType implements BatchCastingInterface
     }
 
     /**
-     * Convert float values to PHP floats
+     * Convert numeric values to strings representing decimal.
      *
      * @param mixed $value The value to convert.
      * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
      * @return string|null
-     * @throws \Cake\Core\Exception\Exception
      */
     public function toPHP($value, DriverInterface $driver): ?string
     {
@@ -95,7 +95,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
     /**
      * {@inheritDoc}
      *
-     * @return string[]
+     * @return array
      */
     public function manyToPHP(array $values, array $fields, DriverInterface $driver): array
     {
@@ -111,7 +111,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
     }
 
     /**
-     * Get the correct PDO binding type for integer data.
+     * Get the correct PDO binding type for decimal data.
      *
      * @param mixed $value The value being bound.
      * @param \Cake\Database\DriverInterface $driver The driver.
@@ -123,7 +123,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
     }
 
     /**
-     * Marshalls request data into PHP floats.
+     * Marshalls request data into decimal strings.
      *
      * @param mixed $value The value to convert.
      * @return string|null Converted value.
@@ -152,6 +152,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
      *
      * @param bool $enable Whether or not to enable
      * @return $this
+     * @throws \RuntimeException
      */
     public function useLocaleParser(bool $enable = true)
     {
@@ -160,7 +161,8 @@ class DecimalType extends BaseType implements BatchCastingInterface
 
             return $this;
         }
-        if (static::$numberClass === Number::class ||
+        if (
+            static::$numberClass === Number::class ||
             is_subclass_of(static::$numberClass, Number::class)
         ) {
             $this->_useLocaleParser = $enable;
@@ -173,14 +175,15 @@ class DecimalType extends BaseType implements BatchCastingInterface
     }
 
     /**
-     * Converts a string into a float point after parsing it using the locale
-     * aware parser.
+     * Converts localized string into a decimal string after parsing it using
+     * the locale aware parser.
      *
      * @param string $value The value to parse and convert to an float.
      * @return string
      */
     protected function _parseValue(string $value): string
     {
+        /** @var \Cake\I18n\Number $class */
         $class = static::$numberClass;
 
         return (string)$class::parseFloat($value);

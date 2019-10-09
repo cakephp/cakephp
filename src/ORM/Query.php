@@ -51,7 +51,7 @@ use Traversable;
  * @method mixed max($field, int $type = SORT_NUMERIC) Returns the maximum value for a single column in all the results.
  * @method mixed min($field, int $type = SORT_NUMERIC) Returns the minimum value for a single column in all the results.
  * @method \Cake\Collection\CollectionInterface groupBy(string|callable $field) In-memory group all results by the value of a column.
- * @method \Cake\Collection\CollectionInterface indexBy(string|callable $field) Returns the results indexed by the value of a column.
+ * @method \Cake\Collection\CollectionInterface indexBy(string|callable $callback) Returns the results indexed by the value of a column.
  * @method \Cake\Collection\CollectionInterface countBy(string|callable $field) Returns the number of unique values for a column
  * @method float sumOf(string|callable $field) Returns the sum of all values for a single column
  * @method \Cake\Collection\CollectionInterface shuffle() In-memory randomize the order the results are returned
@@ -108,7 +108,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * Whether the user select any fields before being executed, this is used
      * to determined if any fields should be automatically be selected.
      *
-     * @var bool
+     * @var bool|null
      */
     protected $_hasFields;
 
@@ -139,7 +139,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * Instance of a class responsible for storing association containments and
      * for eager loading them when this query is executed
      *
-     * @var \Cake\ORM\EagerLoader
+     * @var \Cake\ORM\EagerLoader|null
      */
     protected $_eagerLoader;
 
@@ -239,7 +239,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      *
      * @param \Cake\ORM\Table|\Cake\ORM\Association $table The table to use to get an array of columns
-     * @param array $excludedFields The un-aliased column names you do not want selected from $table
+     * @param string[] $excludedFields The un-aliased column names you do not want selected from $table
      * @param bool $overwrite Whether to reset/remove previous selected fields
      * @return $this
      * @throws \InvalidArgumentException If Association|Table is not passed in first argument
@@ -934,10 +934,14 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
                 ->execute();
         }
 
-        $result = $statement->fetch('assoc')['count'];
+        $result = $statement->fetch('assoc');
         $statement->closeCursor();
 
-        return (int)$result;
+        if ($result === false) {
+            return 0;
+        }
+
+        return (int)$result['count'];
     }
 
     /**
@@ -976,7 +980,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     public function enableHydration(bool $enable = true)
     {
         $this->_dirty();
-        $this->_hydrate = (bool)$enable;
+        $this->_hydrate = $enable;
 
         return $this;
     }
@@ -1010,10 +1014,14 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     /**
      * {@inheritDoc}
      *
+     * @param \Closure|string|false $key Either the cache key or a function to generate the cache key.
+     *   When using a function, this query instance will be supplied as an argument.
+     * @param string|\Cake\Cache\CacheEngine $config Either the name of the cache config to use, or
+     *   a cache config instance.
      * @return $this
      * @throws \RuntimeException When you attempt to cache a non-select query.
      */
-    public function cache(string $key, $config = 'default')
+    public function cache($key, $config = 'default')
     {
         if ($this->_type !== 'select' && $this->_type !== null) {
             throw new RuntimeException('You cannot cache the results of non-select queries.');
@@ -1264,9 +1272,12 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     /**
      * {@inheritDoc}
      *
+     * @param string $method the method to call
+     * @param array $arguments list of arguments for the method to call
+     * @return mixed
      * @throws \BadMethodCallException if the method is called for a non-select query
      */
-    public function __call($method, $arguments)
+    public function __call(string $method, array $arguments)
     {
         if ($this->type() === 'select') {
             return $this->_call($method, $arguments);
@@ -1319,7 +1330,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function enableAutoFields(bool $value = true)
     {
-        $this->_autoFields = (bool)$value;
+        $this->_autoFields = $value;
 
         return $this;
     }
@@ -1342,7 +1353,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * By default calling select() will disable auto-fields. You can re-enable
      * auto-fields with enableAutoFields().
      *
-     * @return bool|null The current value.
+     * @return bool|null The current value. Returns null if neither enabled or disabled yet.
      */
     public function isAutoFieldsEnabled(): ?bool
     {

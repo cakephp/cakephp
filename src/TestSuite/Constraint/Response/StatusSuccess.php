@@ -22,6 +22,9 @@ namespace Cake\TestSuite\Constraint\Response;
  */
 class StatusSuccess extends StatusCodeBase
 {
+    /**
+     * @var int[]
+     */
     protected $code = [200, 308];
 
     /**

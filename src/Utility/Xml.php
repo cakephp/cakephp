@@ -320,6 +320,7 @@ class Xml
                     }
                     $isNamespace = strpos($key, 'xmlns:');
                     if ($isNamespace !== false) {
+                        /** @psalm-suppress PossiblyUndefinedMethod */
                         $node->setAttributeNS('http://www.w3.org/2000/xmlns/', $key, $value);
                         continue;
                     }
@@ -443,7 +444,7 @@ class Xml
      * @param \SimpleXMLElement $xml SimpleXMLElement object
      * @param array $parentData Parent array with data
      * @param string $ns Namespace of current child
-     * @param array $namespaces List of namespaces in XML
+     * @param string[] $namespaces List of namespaces in XML
      * @return void
      */
     protected static function _toArray(SimpleXMLElement $xml, array &$parentData, string $ns, array $namespaces): void

@@ -112,7 +112,7 @@ class CurlTest extends TestCase
         $result = $this->curl->buildOptions($request, $options);
         $expected = [
             CURLOPT_URL => 'http://localhost/things',
-            CURLOPT_HTTP_VERSION => '1.1',
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER => true,
             CURLOPT_HTTPHEADER => [
@@ -121,7 +121,6 @@ class CurlTest extends TestCase
                 'User-Agent: CakePHP',
             ],
             CURLOPT_HTTPGET => true,
-            CURLOPT_POSTFIELDS => '',
             CURLOPT_TIMEOUT => 5,
             CURLOPT_CAINFO => $this->caFile,
         ];
@@ -145,7 +144,7 @@ class CurlTest extends TestCase
         $result = $this->curl->buildOptions($request, $options);
         $expected = [
             CURLOPT_URL => 'http://localhost/things',
-            CURLOPT_HTTP_VERSION => '1.1',
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER => true,
             CURLOPT_HTTPHEADER => [
@@ -177,7 +176,7 @@ class CurlTest extends TestCase
         $result = $this->curl->buildOptions($request, $options);
         $expected = [
             CURLOPT_URL => 'http://localhost/things',
-            CURLOPT_HTTP_VERSION => '1.1',
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER => true,
             CURLOPT_HTTPHEADER => [
@@ -187,7 +186,6 @@ class CurlTest extends TestCase
             ],
             CURLOPT_POST => true,
             CURLOPT_CUSTOMREQUEST => 'PUT',
-            CURLOPT_POSTFIELDS => '',
             CURLOPT_CAINFO => $this->caFile,
         ];
         $this->assertSame($expected, $result);
@@ -211,7 +209,7 @@ class CurlTest extends TestCase
         $result = $this->curl->buildOptions($request, $options);
         $expected = [
             CURLOPT_URL => 'http://localhost/things',
-            CURLOPT_HTTP_VERSION => '1.1',
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER => true,
             CURLOPT_HTTPHEADER => [
@@ -245,7 +243,7 @@ class CurlTest extends TestCase
         $result = $this->curl->buildOptions($request, $options);
         $expected = [
             CURLOPT_URL => 'http://localhost/things',
-            CURLOPT_HTTP_VERSION => '1.1',
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER => true,
             CURLOPT_HTTPHEADER => [
@@ -253,7 +251,6 @@ class CurlTest extends TestCase
                 'User-Agent: CakePHP',
             ],
             CURLOPT_HTTPGET => true,
-            CURLOPT_POSTFIELDS => '',
             CURLOPT_SSL_VERIFYPEER => true,
             CURLOPT_SSL_VERIFYHOST => 2,
             CURLOPT_CAINFO => $this->caFile,
@@ -279,7 +276,7 @@ class CurlTest extends TestCase
         $result = $this->curl->buildOptions($request, $options);
         $expected = [
             CURLOPT_URL => 'http://localhost/things',
-            CURLOPT_HTTP_VERSION => '1.1',
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER => true,
             CURLOPT_HTTPHEADER => [
@@ -287,7 +284,6 @@ class CurlTest extends TestCase
                 'User-Agent: CakePHP',
             ],
             CURLOPT_HTTPGET => true,
-            CURLOPT_POSTFIELDS => '',
             CURLOPT_CAINFO => $this->caFile,
             CURLOPT_PROXY => '127.0.0.1:8080',
             CURLOPT_PROXYUSERPWD => 'frodo:one_ring',
@@ -308,10 +304,12 @@ class CurlTest extends TestCase
             ],
         ];
         $request = new Request('http://localhost/things', 'GET');
+        $request = $request->withProtocolVersion('1.0');
+
         $result = $this->curl->buildOptions($request, $options);
         $expected = [
             CURLOPT_URL => 'http://localhost/things',
-            CURLOPT_HTTP_VERSION => '1.1',
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_0,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER => true,
             CURLOPT_HTTPHEADER => [
@@ -319,7 +317,6 @@ class CurlTest extends TestCase
                 'User-Agent: CakePHP',
             ],
             CURLOPT_HTTPGET => true,
-            CURLOPT_POSTFIELDS => '',
             CURLOPT_CAINFO => $this->caFile,
             CURLOPT_USERAGENT => 'Super-secret',
         ];

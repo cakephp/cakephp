@@ -47,6 +47,12 @@
         font-size: 30px;
         margin: 0;
     }
+    .header-title:hover:after {
+        content: attr(data-content);
+        font-size: 18px;
+        vertical-align: middle;
+        cursor: pointer;
+    }
     .header-type {
         display: block;
         font-size: 16px;
@@ -61,28 +67,27 @@
     .col-left,
     .col-right {
         overflow-y: auto;
-        padding: 15px;
+        padding: 10px;
     }
     .col-left {
+        background: #ececec;
         flex: 0 0 30%;
     }
     .col-right {
         flex: 1;
     }
 
-    .toggle-link {
+    .toggle-vendor-frames {
+        color: #404041;
         display: block;
-        padding: 8px 14px;
-        text-decoration: none;
-        background-color: #606c76;
-        border-radius: 4px;
-        cursor: pointer;
-        color: #fff;
-        text-align: center;
+        padding: 5px;
         margin-bottom: 10px;
+        text-align: center;
+        text-decoration: none;
     }
-    .toggle-link:hover {
-        background-color: #D33C47;
+    .toggle-vendor-frames:hover,
+    .toggle-vendor-frames:active {
+        background: #e5e5e5;
     }
 
     .code-dump,
@@ -91,7 +96,6 @@
         border-radius: 4px;
         padding: 5px;
         white-space: pre-wrap;
-        box-shadow: 0 7px 14px 0 rgba(60,66,87, 0.1), 0 3px 6px 0 rgba(0, 0, 0, .07);
         margin: 0;
     }
 
@@ -130,7 +134,9 @@
         padding: 0;
     }
     .stack-frame {
-        padding: 15px 10px;
+        background: #e5e5e5;
+        padding: 10px;
+        margin-bottom: 5px;
     }
     .stack-frame:last-child {
         border-bottom: none;
@@ -141,8 +147,7 @@
         text-decoration: none;
     }
     .stack-frame.active {
-        background: #e5e5e5;
-        border-radius: 4px;
+        background: #F5F7FA;
     }
     .stack-frame a:hover {
         text-decoration: underline;
@@ -151,9 +156,23 @@
         display: flex;
         align-items: center;
     }
+
     .stack-frame-args {
         flex: 0 0 150px;
+        display: block;
+        padding: 8px 14px;
+        text-decoration: none;
+        background-color: #606c76;
+        border-radius: 4px;
+        cursor: pointer;
+        color: #fff;
+        text-align: center;
+        margin-bottom: 10px;
     }
+    .stack-frame-args:hover {
+        background-color: #D33C47;
+    }
+
     .stack-frame-file {
         flex: 1;
         word-break:break-all;
@@ -174,13 +193,15 @@
     }
     .stack-file {
         font-size: 0.9em;
-        word-wrap: break-word;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        direction: rtl;
     }
 
     .stack-details {
         background: #ececec;
         border-radius: 4px;
-        box-shadow: 0 7px 14px 0 rgba(60,66,87, 0.1), 0 3px 6px 0 rgba(0, 0, 0, .07);
         padding: 10px;
         margin-bottom: 18px;
     }
@@ -195,7 +216,7 @@
         background: #fff59d;
     }
     .excerpt-line {
-        padding-left: 2px;
+        padding: 0;
     }
     .excerpt-number {
         background: #f6f6f6;
@@ -222,7 +243,7 @@
 </head>
 <body>
     <header>
-        <h1 class="header-title">
+        <h1 class="header-title" data-content="&#128203">
             <?= h($this->fetch('title')) ?>
         </h1>
         <span class="header-type"><?= get_class($error) ?></span>
@@ -308,6 +329,36 @@
                     }
                 });
                 event.preventDefault();
+            });
+
+            bindEvent('.header-title', 'click', function(event) {
+                event.preventDefault();
+                var text = '';
+                each(this.childNodes, function(el) {
+                    text += el.textContent.trim();
+                });
+
+                // Use execCommand(copy) as it has the widest support.
+                var textArea = document.createElement("textarea");
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                var el = this;
+                try {
+                    document.execCommand('copy');
+
+                    // Show a success icon and then revert
+                    var original = el.getAttribute('data-content');
+                    el.setAttribute('data-content', '\ud83c\udf70');
+                    setTimeout(function () {
+                        el.setAttribute('data-content', original);
+                    }, 1000);
+                } catch (err) {
+                    alert('Unable to update clipboard ' + err);
+                }
+                document.body.removeChild(textArea);
+                this.parentNode.scrollIntoView(true);
             });
         });
     </script>

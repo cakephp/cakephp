@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Core\Configure;
+use Cake\ORM\Association;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use TestApp\Model\Table\AuthorsTable;
@@ -49,7 +50,7 @@ class AssociationTest extends TestCase
             'sourceTable' => $this->source,
             'joinType' => 'INNER',
         ];
-        $this->association = $this->getMockBuilder('Cake\ORM\Association')
+        $this->association = $this->getMockBuilder(Association::class)
             ->setMethods([
                 '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
                 'saveAssociated', 'eagerLoader', 'type', 'requiresKeys',
@@ -128,6 +129,22 @@ class AssociationTest extends TestCase
         $alias = $this->association->getTarget()->getAlias();
         $this->association->setName($alias);
         $this->assertEquals($alias, $this->association->getName());
+    }
+
+    /**
+     * Test that _className property is set to alias when "className" config
+     * if not explicitly set.
+     *
+     * @return void
+     */
+    public function testSetttingClassNameFromAlias()
+    {
+        $association = $this->getMockBuilder(Association::class)
+            ->setMethods(['type', 'eagerLoader', 'cascadeDelete', 'isOwningSide', 'saveAssociated'])
+            ->setConstructorArgs(['Foo'])
+            ->getMock();
+
+        $this->assertSame('Foo', $association->getClassName());
     }
 
     /**

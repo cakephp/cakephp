@@ -71,12 +71,11 @@ class ActionDispatcherTest extends TestCase
                 'controller' => 'Cakes',
                 'action' => 'index',
                 'pass' => [],
-                'return' => true,
             ],
         ]);
         $res = new Response();
         $this->dispatcher->dispatch($req, $res);
-        $this->assertSame($req, Router::getRequest(true));
+        $this->assertSame($req, Router::getRequest());
     }
 
     /**

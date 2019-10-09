@@ -625,10 +625,10 @@ class TreeBehavior extends Behavior
      *
      * @param \Cake\Datasource\EntityInterface $node The node to move
      * @param int|true $number How many places to move the node, or true to move to first position
+     * @return \Cake\Datasource\EntityInterface $node The node after being moved or false on failure
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
-     * @return \Cake\Datasource\EntityInterface|false $node The node after being moved or false on failure
      */
-    protected function _moveUp(EntityInterface $node, $number)
+    protected function _moveUp(EntityInterface $node, $number): EntityInterface
     {
         $config = $this->getConfig();
         [$parent, $left, $right] = [$config['parent'], $config['left'], $config['right']];
@@ -636,6 +636,7 @@ class TreeBehavior extends Behavior
 
         $targetNode = null;
         if ($number !== true) {
+            /** @var \Cake\Datasource\EntityInterface|null $targetNode */
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
                 ->where(["$parent IS" => $nodeParent])
@@ -649,6 +650,7 @@ class TreeBehavior extends Behavior
                 ->first();
         }
         if (!$targetNode) {
+            /** @var \Cake\Datasource\EntityInterface|null $targetNode */
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
                 ->where(["$parent IS" => $nodeParent])
@@ -715,10 +717,10 @@ class TreeBehavior extends Behavior
      *
      * @param \Cake\Datasource\EntityInterface $node The node to move
      * @param int|true $number How many places to move the node, or true to move to last position
+     * @return \Cake\Datasource\EntityInterface $node The node after being moved or false on failure
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
-     * @return \Cake\Datasource\EntityInterface|false $node The node after being moved or false on failure
      */
-    protected function _moveDown(EntityInterface $node, $number)
+    protected function _moveDown(EntityInterface $node, $number): EntityInterface
     {
         $config = $this->getConfig();
         [$parent, $left, $right] = [$config['parent'], $config['left'], $config['right']];
@@ -726,6 +728,7 @@ class TreeBehavior extends Behavior
 
         $targetNode = null;
         if ($number !== true) {
+            /** @var \Cake\Datasource\EntityInterface|null $targetNode */
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
                 ->where(["$parent IS" => $nodeParent])
@@ -739,6 +742,7 @@ class TreeBehavior extends Behavior
                 ->first();
         }
         if (!$targetNode) {
+            /** @var \Cake\Datasource\EntityInterface|null $targetNode */
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
                 ->where(["$parent IS" => $nodeParent])
@@ -880,7 +884,7 @@ class TreeBehavior extends Behavior
             ->orderDesc($rightField)
             ->first();
 
-        if (empty($edge[$field])) {
+        if ($edge === null || empty($edge[$field])) {
             return 0;
         }
 

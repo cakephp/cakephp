@@ -23,6 +23,9 @@ namespace Cake\TestSuite\Constraint\Email;
  */
 class MailSentWith extends MailConstraintBase
 {
+    /**
+     * @var string
+     */
     protected $method;
 
     /**
@@ -34,9 +37,10 @@ class MailSentWith extends MailConstraintBase
      */
     public function __construct(?int $at = null, ?string $method = null)
     {
-        if ($method) {
+        if ($method !== null) {
             $this->method = $method;
         }
+
         parent::__construct($at);
     }
 
@@ -51,7 +55,10 @@ class MailSentWith extends MailConstraintBase
         $emails = $this->getMessages();
         foreach ($emails as $email) {
             $value = $email->{'get' . ucfirst($this->method)}();
-            if (in_array($this->method, ['to', 'cc', 'bcc', 'from'], true) && isset($value[$other])) {
+            if (
+                in_array($this->method, ['to', 'cc', 'bcc', 'from'], true)
+                && array_key_exists($other, $value)
+            ) {
                 return true;
             }
             if ($value === $other) {

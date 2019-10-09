@@ -45,6 +45,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * The queue of middlewares.
      *
      * @var array
+     * @psalm-var array<int, mixed>
      */
     protected $queue = [];
 
@@ -61,7 +62,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
     /**
      * Resolve middleware name to a PSR 15 compliant middleware instance.
      *
-     * @param string|callable $middleware The middleware to resolve.
+     * @param string|callable|\Psr\Http\Server\MiddlewareInterface $middleware The middleware to resolve.
      * @return \Psr\Http\Server\MiddlewareInterface
      * @throws \RuntimeException If Middleware not found.
      */
@@ -97,7 +98,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
     /**
      * Append a middleware to the end of the queue.
      *
-     * @param callable|string|array $middleware The middleware(s) to append.
+     * @param callable|string|array|\Psr\Http\Server\MiddlewareInterface $middleware The middleware(s) to append.
      * @return $this
      */
     public function add($middleware)
@@ -115,7 +116,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
     /**
      * Alias for MiddlewareQueue::add().
      *
-     * @param callable|string|array $middleware The middleware(s) to append.
+     * @param callable|string|array|\Psr\Http\Server\MiddlewareInterface $middleware The middleware(s) to append.
      * @return $this
      * @see MiddlewareQueue::add()
      */
@@ -127,7 +128,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
     /**
      * Prepend a middleware to the start of the queue.
      *
-     * @param callable|string|array $middleware The middleware(s) to prepend.
+     * @param callable|string|array|\Psr\Http\Server\MiddlewareInterface $middleware The middleware(s) to prepend.
      * @return $this
      */
     public function prepend($middleware)
@@ -149,7 +150,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * and the existing element will be shifted one index greater.
      *
      * @param int $index The index to insert at.
-     * @param callable|string $middleware The middleware to insert.
+     * @param callable|string|\Psr\Http\Server\MiddlewareInterface $middleware The middleware to insert.
      * @return $this
      */
     public function insertAt(int $index, $middleware)
@@ -166,16 +167,20 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * and inserts the supplied callable before it.
      *
      * @param string $class The classname to insert the middleware before.
-     * @param callable|string $middleware The middleware to insert.
+     * @param callable|string|\Psr\Http\Server\MiddlewareInterface $middleware The middleware to insert.
      * @return $this
      * @throws \LogicException If middleware to insert before is not found.
      */
     public function insertBefore(string $class, $middleware)
     {
         $found = false;
-        $i = null;
+        $i = 0;
         foreach ($this->queue as $i => $object) {
-            if ((is_string($object) && $object === $class)
+            if (
+                (
+                    is_string($object)
+                    && $object === $class
+                )
                 || is_a($object, $class)
             ) {
                 $found = true;
@@ -196,15 +201,19 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * this method will behave like add().
      *
      * @param string $class The classname to insert the middleware before.
-     * @param callable|string $middleware The middleware to insert.
+     * @param callable|string|\Psr\Http\Server\MiddlewareInterface $middleware The middleware to insert.
      * @return $this
      */
     public function insertAfter(string $class, $middleware)
     {
         $found = false;
-        $i = null;
+        $i = 0;
         foreach ($this->queue as $i => $object) {
-            if ((is_string($object) && $object === $class)
+            if (
+                (
+                    is_string($object)
+                    && $object === $class
+                )
                 || is_a($object, $class)
             ) {
                 $found = true;
@@ -260,13 +269,13 @@ class MiddlewareQueue implements Countable, SeekableIterator
     /**
      *  Returns the current middleware.
      *
-     * @return \Psr\Http\Server\MiddlewareInterface|null
+     * @return \Psr\Http\Server\MiddlewareInterface
      * @see \Iterator::current()
      */
-    public function current(): ?MiddlewareInterface
+    public function current(): MiddlewareInterface
     {
         if (!isset($this->queue[$this->position])) {
-            return null;
+            throw new OutOfBoundsException("Invalid current position ($this->position)");
         }
 
         if ($this->queue[$this->position] instanceof MiddlewareInterface) {

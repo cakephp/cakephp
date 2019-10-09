@@ -95,7 +95,7 @@ class Helper implements EventListenerInterface
      *
      * @param string $method Method to invoke
      * @param array $params Array of params for the method.
-     * @return void
+     * @return mixed|void
      */
     public function __call(string $method, array $params)
     {
@@ -131,50 +131,24 @@ class Helper implements EventListenerInterface
     /**
      * Returns a string to be used as onclick handler for confirm dialogs.
      *
-     * @param string $message Message to be displayed
      * @param string $okCode Code to be executed after user chose 'OK'
      * @param string $cancelCode Code to be executed after user chose 'Cancel'
-     * @param array $options Array of options
-     * @return string onclick JS code
+     * @return string "onclick" JS code
      */
-    protected function _confirm(string $message, string $okCode, string $cancelCode = '', array $options = []): string
+    protected function _confirm(string $okCode, string $cancelCode): string
     {
-        $message = $this->_cleanConfirmMessage($message);
-        $confirm = "if (confirm({$message})) { {$okCode} } {$cancelCode}";
-        // We cannot change the key here in 3.x, but the behavior is inverted in this case
-        $escape = isset($options['escape']) && $options['escape'] === false;
-        if ($escape) {
-            /** @var string $confirm */
-            $confirm = h($confirm);
-        }
-
-        return $confirm;
-    }
-
-    /**
-     * Returns a string read to be used in confirm()
-     *
-     * @param string|null $message The message to clean
-     * @return string
-     */
-    protected function _cleanConfirmMessage(?string $message): string
-    {
-        if ($message === null) {
-            return '';
-        }
-
-        return str_replace('\\\n', '\n', json_encode($message));
+        return "if (confirm(this.dataset.confirmMessage)) { {$okCode} } {$cancelCode}";
     }
 
     /**
      * Adds the given class to the element options
      *
      * @param array $options Array options/attributes to add a class to
-     * @param string|null $class The class name being added.
-     * @param string $key the key to use for class.
+     * @param string $class The class name being added.
+     * @param string $key the key to use for class. Defaults to `'class'`.
      * @return array Array of options with $key set.
      */
-    public function addClass(array $options = [], ?string $class = null, string $key = 'class'): array
+    public function addClass(array $options, string $class, string $key = 'class'): array
     {
         if (isset($options[$key]) && is_array($options[$key])) {
             $options[$key][] = $class;

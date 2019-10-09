@@ -106,6 +106,18 @@ class Command
     }
 
     /**
+     * Get the root command name.
+     *
+     * @return string
+     */
+    public function getRootName(): string
+    {
+        [$root] = explode(' ', $this->name);
+
+        return $root;
+    }
+
+    /**
      * Get the command name.
      *
      * Returns the command name based on class name.
@@ -251,7 +263,7 @@ class Command
      *
      * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
-     * @return null|int The exit code or null for success
+     * @return int|null The exit code or null for success
      */
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
@@ -297,7 +309,7 @@ class Command
         try {
             return $command->run($args, $io);
         } catch (StopException $e) {
-            return (int)$e->getCode();
+            return $e->getCode();
         }
     }
 }

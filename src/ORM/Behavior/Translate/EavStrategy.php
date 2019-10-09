@@ -172,7 +172,8 @@ class EavStrategy implements TranslateStrategyInterface
             return function ($q) use ($field, $locale, $query, $select) {
                 $q->where([$q->getRepository()->aliasField('locale') => $locale]);
 
-                if ($query->isAutoFieldsEnabled() ||
+                if (
+                    $query->isAutoFieldsEnabled() ||
                     in_array($field, $select, true) ||
                     in_array($this->table->aliasField($field), $select, true)
                 ) {
@@ -277,6 +278,7 @@ class EavStrategy implements TranslateStrategyInterface
         }
 
         $model = $this->_config['referenceName'];
+        /** @psalm-suppress UndefinedClass */
         $preexistent = $this->translationTable->find()
             ->select(['id', 'field'])
             ->where([
@@ -446,7 +448,7 @@ class EavStrategy implements TranslateStrategyInterface
                 if (!$translation->isDirty($field)) {
                     continue;
                 }
-                $find[] = ['locale' => $lang, 'field' => $field, 'foreign_key' => $key];
+                $find[] = ['locale' => $lang, 'field' => $field, 'foreign_key IS' => $key];
                 $contents[] = new Entity(['content' => $translation->get($field)], [
                     'useSetters' => false,
                 ]);
@@ -462,11 +464,11 @@ class EavStrategy implements TranslateStrategyInterface
         foreach ($find as $i => $translation) {
             if (!empty($results[$i])) {
                 $contents[$i]->set('id', $results[$i], ['setter' => false]);
-                $contents[$i]->isNew(false);
+                $contents[$i]->setNew(false);
             } else {
                 $translation['model'] = $this->_config['referenceName'];
                 $contents[$i]->set($translation, ['setter' => false, 'guard' => false]);
-                $contents[$i]->isNew(true);
+                $contents[$i]->setNew(true);
             }
         }
 

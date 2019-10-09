@@ -21,7 +21,9 @@ use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
 use Cake\Database\TypeMapTrait;
 use Cake\Database\ValueBinder;
+use Closure;
 use Countable;
+use InvalidArgumentException;
 
 /**
  * Represents a SQL Query expression. Internally it stores a tree of
@@ -147,7 +149,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * will be created, one per each value in the array.
      * @return $this
      */
-    public function eq($field, $value, $type = null)
+    public function eq($field, $value, ?string $type = null)
     {
         if ($type === null) {
             $type = $this->_calculateType($field);
@@ -414,18 +416,17 @@ class QueryExpression implements ExpressionInterface, Countable
      * Returns a new QueryExpression object containing all the conditions passed
      * and set up the conjunction to be "AND"
      *
-     * @param callable|string|array|\Cake\Database\ExpressionInterface $conditions to be joined with AND
+     * @param \Closure|string|array|\Cake\Database\ExpressionInterface $conditions to be joined with AND
      * @param array $types associative array of fields pointing to the type of the
      * values that are being passed. Used for correctly binding values to statements.
      * @return \Cake\Database\Expression\QueryExpression
      */
     public function and_($conditions, $types = [])
     {
-        if ($this->isCallable($conditions)) {
+        if ($conditions instanceof Closure) {
             return $conditions(new static([], $this->getTypeMap()->setTypes($types)));
         }
 
-        /** @var \Cake\Database\Expression\QueryExpression */
         return new static($conditions, $this->getTypeMap()->setTypes($types));
     }
 
@@ -433,18 +434,17 @@ class QueryExpression implements ExpressionInterface, Countable
      * Returns a new QueryExpression object containing all the conditions passed
      * and set up the conjunction to be "OR"
      *
-     * @param callable|string|array|\Cake\Database\ExpressionInterface $conditions to be joined with OR
+     * @param \Closure|string|array|\Cake\Database\ExpressionInterface $conditions to be joined with OR
      * @param array $types associative array of fields pointing to the type of the
      * values that are being passed. Used for correctly binding values to statements.
      * @return \Cake\Database\Expression\QueryExpression
      */
     public function or_($conditions, $types = [])
     {
-        if ($this->isCallable($conditions)) {
+        if ($conditions instanceof Closure) {
             return $conditions(new static([], $this->getTypeMap()->setTypes($types), 'OR'));
         }
 
-        /** @var \Cake\Database\Expression\QueryExpression */
         return new static($conditions, $this->getTypeMap()->setTypes($types), 'OR');
     }
 // phpcs:enable
@@ -537,10 +537,10 @@ class QueryExpression implements ExpressionInterface, Countable
      *
      * Callback function receives as only argument an instance of ExpressionInterface
      *
-     * @param callable $callable The callable to apply to all sub-expressions.
+     * @param \Closure $callable The callable to apply to all sub-expressions.
      * @return $this
      */
-    public function traverse(callable $callable)
+    public function traverse(Closure $callable)
     {
         foreach ($this->_conditions as $c) {
             if ($c instanceof ExpressionInterface) {
@@ -657,7 +657,7 @@ class QueryExpression implements ExpressionInterface, Countable
         foreach ($conditions as $k => $c) {
             $numericKey = is_numeric($k);
 
-            if ($this->isCallable($c)) {
+            if ($c instanceof Closure) {
                 /** @var \Cake\Database\Expression\QueryExpression $expr */
                 $expr = new static([], $typeMap);
                 $c = $c($expr, $this);
@@ -691,6 +691,7 @@ class QueryExpression implements ExpressionInterface, Countable
 
             if ($numericKey && $isArray || $isOperator) {
                 /** @var \Cake\Database\Expression\QueryExpression $this->_conditions[] */
+                // phpcs:ignore
                 $this->_conditions[] = new static($c, $typeMap, $numericKey ? 'AND' : $k);
                 continue;
             }
@@ -717,6 +718,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * be extracted.
      * @param mixed $value The value to be bound to a placeholder for the field
      * @return string|\Cake\Database\ExpressionInterface
+     * @throws \InvalidArgumentException If operator is invalid or missing on NULL usage.
      */
     protected function _parseCondition(string $field, $value)
     {
@@ -734,7 +736,9 @@ class QueryExpression implements ExpressionInterface, Countable
         $typeMultiple = (is_string($type) && strpos($type, '[]') !== false);
         if (in_array($operator, ['in', 'not in']) || $typeMultiple) {
             $type = $type ?: 'string';
-            $type .= $typeMultiple ? null : '[]';
+            if (!$typeMultiple) {
+                $type .= '[]';
+            }
             $operator = $operator === '=' ? 'IN' : $operator;
             $operator = $operator === '!=' ? 'NOT IN' : $operator;
             $typeMultiple = true;
@@ -766,6 +770,10 @@ class QueryExpression implements ExpressionInterface, Countable
 
         if ($operator === 'is not' && $value !== null) {
             $operator = '!=';
+        }
+
+        if ($value === null && $this->_conjunction !== ',') {
+            throw new InvalidArgumentException('Invalid or missing operator together with `null` usage.');
         }
 
         return new Comparison($expression, $value, $type, $operator);

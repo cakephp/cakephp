@@ -91,22 +91,24 @@ class FormData implements Countable
      * If the $value is an array, multiple parts will be added.
      * Files will be read from their current position and saved in memory.
      *
-     * @param string|\Cake\Http\Client\FormData|\Cake\Http\Client\FormDataPart $name The name of the part to add,
+     * @param string|\Cake\Http\Client\FormDataPart $name The name of the part to add,
      *   or the part data object.
      * @param mixed $value The value for the part.
      * @return $this
      */
     public function add($name, $value = null)
     {
-        if (is_array($value)) {
-            $this->addRecursive($name, $value);
-        } elseif (is_resource($value)) {
-            $this->addFile($name, $value);
-        } elseif ($name instanceof FormDataPart && $value === null) {
+        if (is_string($name)) {
+            if (is_array($value)) {
+                $this->addRecursive($name, $value);
+            } elseif (is_resource($value)) {
+                $this->addFile($name, $value);
+            } else {
+                $this->_parts[] = $this->newPart($name, (string)$value);
+            }
+        } else {
             $this->_hasComplexPart = true;
             $this->_parts[] = $name;
-        } else {
-            $this->_parts[] = $this->newPart($name, (string)$value);
         }
 
         return $this;
@@ -123,7 +125,7 @@ class FormData implements Countable
     public function addMany(array $data)
     {
         foreach ($data as $name => $value) {
-            $this->add((string)$name, $value);
+            $this->add($name, $value);
         }
 
         return $this;
@@ -232,7 +234,7 @@ class FormData implements Countable
             return 'application/x-www-form-urlencoded';
         }
 
-        return 'multipart/form-data; boundary="' . $this->boundary() . '"';
+        return 'multipart/form-data; boundary=' . $this->boundary();
     }
 
     /**
@@ -251,7 +253,7 @@ class FormData implements Countable
                 $out .= (string)$part;
                 $out .= "\r\n";
             }
-            $out .= "--$boundary--\r\n\r\n";
+            $out .= "--$boundary--\r\n";
 
             return $out;
         }

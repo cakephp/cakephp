@@ -18,6 +18,7 @@ namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
 use Cake\Database\ValueBinder;
+use Closure;
 
 /**
  * An expression object for complex ORDER BY clauses
@@ -50,6 +51,7 @@ class OrderClauseExpression implements ExpressionInterface, FieldInterface
      */
     public function sql(ValueBinder $generator): string
     {
+        /** @var string|\Cake\Database\ExpressionInterface $field */
         $field = $this->_field;
         if ($field instanceof ExpressionInterface) {
             $field = $field->sql($generator);
@@ -61,7 +63,7 @@ class OrderClauseExpression implements ExpressionInterface, FieldInterface
     /**
      * @inheritDoc
      */
-    public function traverse(callable $visitor)
+    public function traverse(Closure $visitor)
     {
         if ($this->_field instanceof ExpressionInterface) {
             $visitor($this->_field);

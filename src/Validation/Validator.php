@@ -21,6 +21,7 @@ use ArrayIterator;
 use Countable;
 use InvalidArgumentException;
 use IteratorAggregate;
+use Psr\Http\Message\UploadedFileInterface;
 
 /**
  * Validator object encapsulates all methods related to data validations for a model
@@ -73,6 +74,9 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * When an array is given, if it has at least the `name`, `type`, `tmp_name` and `error` keys,
      * and the value of `error` is equal to `UPLOAD_ERR_NO_FILE`, the value will be recognized as
      * empty.
+     *
+     * When an instance of \Psr\Http\Message\UploadedFileInterface is given the
+     * return value of it's getError() method must be equal to `UPLOAD_ERR_NO_FILE`.
      *
      * @var int
      */
@@ -481,6 +485,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 return false;
             }
             foreach ($this->providers() as $provider) {
+                /** @psalm-suppress PossiblyNullArgument */
                 $validator->setProvider($provider, $this->getProvider($provider));
             }
             $errors = $validator->errors($value, $context['newRecord']);
@@ -523,6 +528,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 return false;
             }
             foreach ($this->providers() as $provider) {
+                /** @psalm-suppress PossiblyNullArgument */
                 $validator->setProvider($provider, $this->getProvider($provider));
             }
             $errors = [];
@@ -1025,7 +1031,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @since 3.8.0
      * @see \Cake\Validation\Validator::allowEmptyDateTime()
      */
-    public function notEmptyDateTime(string $field, ?string $message = null, $when = true)
+    public function notEmptyDateTime(string $field, ?string $message = null, $when = false)
     {
         $when = $this->invertWhenClause($when);
 
@@ -1209,6 +1215,63 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
 
         return $this->add($field, 'alphaNumeric', $extra + [
             'rule' => 'alphaNumeric',
+        ]);
+    }
+
+    /**
+     * Add a non-alphanumeric rule to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::notAlphaNumeric()
+     * @return $this
+     */
+    public function notAlphaNumeric(string $field, ?string $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+
+        return $this->add($field, 'notAlphaNumeric', $extra + [
+            'rule' => 'notAlphaNumeric',
+        ]);
+    }
+
+    /**
+     * Add an ascii-alphanumeric rule to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::asciiAlphaNumeric()
+     * @return $this
+     */
+    public function asciiAlphaNumeric(string $field, ?string $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+
+        return $this->add($field, 'asciiAlphaNumeric', $extra + [
+            'rule' => 'asciiAlphaNumeric',
+        ]);
+    }
+
+    /**
+     * Add a non-ascii alphanumeric rule to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::notAlphaNumeric()
+     * @return $this
+     */
+    public function notAsciiAlphaNumeric(string $field, ?string $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+
+        return $this->add($field, 'notAsciiAlphaNumeric', $extra + [
+            'rule' => 'notAsciiAlphaNumeric',
         ]);
     }
 
@@ -1556,6 +1619,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::containsNonAlphaNumeric()
      * @return $this
+     * @deprecated 4.0 Use notAlphaNumeric() instead. Will be removed in 5.0
      */
     public function containsNonAlphaNumeric(string $field, int $limit = 1, ?string $message = null, $when = null)
     {
@@ -2388,7 +2452,6 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             $defaultMessage = __d('cake', 'This field cannot be left empty');
         }
 
-        $notBlankMessage = null;
         foreach ($this->_fields[$field] as $rule) {
             if ($rule->get('rule') === 'notBlank' && $rule->get('message')) {
                 return $rule->get('message');
@@ -2482,7 +2545,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         }
 
         if (is_array($data)) {
-            if (($flags & self::EMPTY_FILE)
+            if (
+                ($flags & self::EMPTY_FILE)
                 && isset($data['name'], $data['type'], $data['tmp_name'], $data['error'])
                 && (int)$data['error'] === UPLOAD_ERR_NO_FILE
             ) {
@@ -2506,6 +2570,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                     return true;
                 }
             }
+        }
+
+        if (
+            ($flags & self::EMPTY_FILE)
+            && $data instanceof UploadedFileInterface
+            && $data->getError() === UPLOAD_ERR_NO_FILE
+        ) {
+            return true;
         }
 
         return false;

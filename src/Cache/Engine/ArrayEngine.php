@@ -44,7 +44,7 @@ class ArrayEngine extends CacheEngine
      *
      * @param string $key Identifier for the data
      * @param mixed $data Data to be cached
-     * @param null|int|\DateInterval $ttl Optional. The TTL value of this item. If no value is sent and
+     * @param \DateInterval|int|null $ttl Optional. The TTL value of this item. If no value is sent and
      *   the driver supports TTL then the library may set a default value
      *   for it or let the driver take care of that.
      * @return bool True on success and false on failure.

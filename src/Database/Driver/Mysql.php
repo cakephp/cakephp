@@ -81,9 +81,6 @@ class Mysql extends Driver
         if (!empty($config['timezone'])) {
             $config['init'][] = sprintf("SET time_zone = '%s'", $config['timezone']);
         }
-        if (!empty($config['encoding'])) {
-            $config['init'][] = sprintf('SET NAMES %s', $config['encoding']);
-        }
 
         $config['flags'] += [
             PDO::ATTR_PERSISTENT => $config['persistent'],
@@ -100,10 +97,13 @@ class Mysql extends Driver
         }
 
         if (empty($config['unix_socket'])) {
-            // phpcs:ignore Generic.Files.LineLength
-            $dsn = "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset={$config['encoding']}";
+            $dsn = "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']}";
         } else {
             $dsn = "mysql:unix_socket={$config['unix_socket']};dbname={$config['database']}";
+        }
+
+        if (!empty($config['encoding'])) {
+            $dsn .= ";charset={$config['encoding']}";
         }
 
         $this->_connect($dsn, $config);
@@ -125,7 +125,7 @@ class Mysql extends Driver
      */
     public function enabled(): bool
     {
-        return in_array('mysql', PDO::getAvailableDrivers());
+        return in_array('mysql', PDO::getAvailableDrivers(), true);
     }
 
     /**
@@ -138,8 +138,13 @@ class Mysql extends Driver
     {
         $this->connect();
         $isObject = $query instanceof Query;
+        /**
+         * @psalm-suppress PossiblyInvalidMethodCall
+         * @psalm-suppress PossiblyInvalidArgument
+         */
         $statement = $this->_connection->prepare($isObject ? $query->sql() : $query);
         $result = new MysqlStatement($statement, $this);
+        /** @psalm-suppress PossiblyInvalidMethodCall */
         if ($isObject && $query->isBufferedResultsEnabled() === false) {
             $result->bufferResults(false);
         }

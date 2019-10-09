@@ -33,7 +33,7 @@ class UuidType extends StringType
      */
     public function toDatabase($value, DriverInterface $driver): ?string
     {
-        if ($value === null || $value === '') {
+        if ($value === null || $value === '' || $value === false) {
             return null;
         }
 

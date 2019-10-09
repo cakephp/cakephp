@@ -38,6 +38,7 @@ use RuntimeException;
  * @see \Cake\Controller\ComponentRegistry
  * @see \Cake\View\HelperRegistry
  * @see \Cake\Console\TaskRegistry
+ * @template TObject
  */
 abstract class ObjectRegistry implements Countable, IteratorAggregate
 {
@@ -45,6 +46,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * Map of loaded objects.
      *
      * @var object[]
+     * @psalm-var TObject[]
      */
     protected $_loaded = [];
 
@@ -71,6 +73,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @param string $objectName The name/class of the object to load.
      * @param array $config Additional settings to use when loading the object.
      * @return mixed
+     * @psalm-return TObject
      * @throws \Exception If the class cannot be found.
      */
     public function load(string $objectName, array $config = [])
@@ -123,9 +126,8 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      */
     protected function _checkDuplicate(string $name, array $config): void
     {
-        /** @psalm-suppress UndefinedClass */
         $existing = $this->_loaded[$name];
-        $msg = sprintf('The "%s" alias has already been loaded', $name);
+        $msg = sprintf('The "%s" alias has already been loaded.', $name);
         $hasConfig = method_exists($existing, 'getConfig');
         if (!$hasConfig) {
             throw new RuntimeException($msg);
@@ -133,26 +135,27 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
         if (empty($config)) {
             return;
         }
-        /** @psalm-suppress UndefinedClass */
         $existingConfig = $existing->getConfig();
         unset($config['enabled'], $existingConfig['enabled']);
 
-        $fail = false;
+        $failure = null;
         foreach ($config as $key => $value) {
             if (!array_key_exists($key, $existingConfig)) {
-                $fail = true;
+                $failure = " The `{$key}` was not defined in the previous configuration data.";
                 break;
             }
             if (isset($existingConfig[$key]) && $existingConfig[$key] !== $value) {
-                $fail = true;
+                $failure = sprintf(
+                    ' The `%s` key has a value of `%s` but previously had a value of `%s`',
+                    $key,
+                    json_encode($value),
+                    json_encode($existingConfig[$key])
+                );
                 break;
             }
         }
-        if ($fail) {
-            $msg .= ' with the following config: ';
-            $msg .= var_export($existingConfig, true);
-            $msg .= ' which differs from ' . var_export($config, true);
-            throw new RuntimeException($msg);
+        if ($failure) {
+            throw new RuntimeException($msg . $failure);
         }
     }
 
@@ -184,6 +187,8 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @param string $alias The alias of the object.
      * @param array $config The Configuration settings for construction
      * @return object
+     * @psalm-param string|TObject $class
+     * @psalm-return TObject
      */
     abstract protected function _create($class, string $alias, array $config);
 
@@ -214,8 +219,9 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @param string $name Name of object.
      * @return object Object instance.
      * @throws \RuntimeException If not loaded or found.
+     * @psalm-return TObject
      */
-    public function get(string $name): object
+    public function get(string $name)
     {
         if (!isset($this->_loaded[$name])) {
             throw new RuntimeException(sprintf('Unknown object "%s"', $name));
@@ -229,6 +235,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      *
      * @param string $name Name of property to read
      * @return object|null
+     * @psalm-return TObject|null
      */
     public function __get(string $name)
     {
@@ -250,7 +257,8 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * Sets an object.
      *
      * @param string $name Name of a property to set.
-     * @param mixed $object Object to set.
+     * @param object $object Object to set.
+     * @psalm-param TObject $object
      * @return void
      */
     public function __set(string $name, $object): void
@@ -320,6 +328,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      *
      * @param string $objectName The name of the object to set in the registry.
      * @param object $object instance to store in the registry
+     * @psalm-param TObject $object
      * @return $this
      */
     public function set(string $objectName, object $object)

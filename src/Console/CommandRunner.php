@@ -102,7 +102,7 @@ class CommandRunner implements EventDispatcherInterface
      * $runner->setAliases(['--version' => 'version']);
      * ```
      *
-     * @param array $aliases The map of aliases to replace.
+     * @param string[] $aliases The map of aliases to replace.
      * @return $this
      */
     public function setAliases(array $aliases)
@@ -172,7 +172,7 @@ class CommandRunner implements EventDispatcherInterface
         if ($result === null || $result === true) {
             return Command::CODE_SUCCESS;
         }
-        if (is_int($result)) {
+        if (is_int($result) && $result >= 0 && $result <= 255) {
             return $result;
         }
 
@@ -294,6 +294,7 @@ class CommandRunner implements EventDispatcherInterface
      * @param \Cake\Console\ConsoleIo $io ConsoleIo object for errors.
      * @param string|null $name The name from the CLI args.
      * @return string The resolved name.
+     * @throws \Cake\Console\Exception\MissingOptionException
      */
     protected function resolveName(CommandCollection $commands, ConsoleIo $io, ?string $name): string
     {
@@ -332,7 +333,7 @@ class CommandRunner implements EventDispatcherInterface
         try {
             return $command->run($argv, $io);
         } catch (StopException $e) {
-            return (int)$e->getCode();
+            return $e->getCode();
         }
     }
 

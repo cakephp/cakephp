@@ -36,7 +36,7 @@ class SluggableBehavior extends Behavior
 
     public function findNoSlug(Query $query, $options = [])
     {
-        $query->where(['slug' => null]);
+        $query->where(['slug IS' => null]);
 
         return $query;
     }

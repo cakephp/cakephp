@@ -84,7 +84,7 @@ class RouteCollection
     /**
      * Route extensions
      *
-     * @var array
+     * @var string[]
      */
     protected $_extensions = [];
 
@@ -151,10 +151,10 @@ class RouteCollection
                 continue;
             }
 
-            $queryParameters = null;
+            $queryParameters = [];
             if (strpos($url, '?') !== false) {
-                [$url, $queryParameters] = explode('?', $url, 2);
-                parse_str($queryParameters, $queryParameters);
+                [$url, $qs] = explode('?', $url, 2);
+                parse_str($qs, $queryParameters);
             }
             /** @var \Cake\Routing\Route\Route $route */
             foreach ($this->_paths[$path] as $route) {
@@ -223,7 +223,7 @@ class RouteCollection
      * and newer style urls containing '_name'
      *
      * @param array $url The url to match.
-     * @return array The set of names of the url
+     * @return string[] The set of names of the url
      */
     protected function _getNames(array $url): array
     {
@@ -371,7 +371,7 @@ class RouteCollection
     /**
      * Get the extensions that can be handled.
      *
-     * @return array The valid extensions.
+     * @return string[] The valid extensions.
      */
     public function getExtensions(): array
     {
@@ -381,7 +381,7 @@ class RouteCollection
     /**
      * Set the extensions that the route collection can handle.
      *
-     * @param array $extensions The list of extensions to set.
+     * @param string[] $extensions The list of extensions to set.
      * @param bool $merge Whether to merge with or override existing extensions.
      *   Defaults to `true`.
      * @return $this
@@ -408,6 +408,7 @@ class RouteCollection
      * @param string $name The name of the middleware. Used when applying middleware to a scope.
      * @param callable|string $middleware The middleware callable or class name to register.
      * @return $this
+     * @throws \RuntimeException
      */
     public function registerMiddleware(string $name, $middleware)
     {
@@ -420,8 +421,9 @@ class RouteCollection
      * Add middleware to a middleware group
      *
      * @param string $name Name of the middleware group
-     * @param array $middlewareNames Names of the middleware
+     * @param string[] $middlewareNames Names of the middleware
      * @return $this
+     * @throws \RuntimeException
      */
     public function middlewareGroup(string $name, array $middlewareNames)
     {
@@ -508,7 +510,7 @@ class RouteCollection
     /**
      * Get an array of middleware given a list of names
      *
-     * @param array $names The names of the middleware or groups to fetch
+     * @param string[] $names The names of the middleware or groups to fetch
      * @return array An array of middleware. If any of the passed names are groups,
      *   the groups middleware will be flattened into the returned list.
      * @throws \RuntimeException when a requested middleware does not exist.

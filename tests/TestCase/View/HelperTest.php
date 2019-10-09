@@ -209,17 +209,4 @@ class HelperTest extends TestCase
 
         $this->assertEquals($expected, $helper->addClass($input, 'element3'));
     }
-
-    /**
-     * Test addClass() with adding null class
-     */
-    public function testAddClassNull()
-    {
-        $helper = new TestHelper($this->View);
-
-        $input = [];
-        $expected = ['class' => ''];
-
-        $this->assertEquals($expected, $helper->addClass($input, null));
-    }
 }

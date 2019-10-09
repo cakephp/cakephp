@@ -464,7 +464,7 @@ class RouteBuilderTest extends TestCase
             $this->assertSame('/path/admin', $r->path());
             $this->assertEquals(['prefix' => 'admin', 'key' => 'value', 'param' => 'value'], $r->params());
         });
-        $this->assertNull($res);
+        $this->assertSame($routes, $res);
     }
 
     /**
@@ -481,7 +481,7 @@ class RouteBuilderTest extends TestCase
             $this->assertSame('/path/admin', $r->path());
             $this->assertEquals(['prefix' => 'admin', 'key' => 'value'], $r->params());
         });
-        $this->assertNull($res);
+        $this->assertSame($routes, $res);
     }
 
     /**
@@ -497,7 +497,7 @@ class RouteBuilderTest extends TestCase
             $this->assertEquals(['prefix' => 'admin/api'], $r->params());
             $this->assertSame('api:', $r->namePrefix());
         });
-        $this->assertNull($res);
+        $this->assertSame($routes, $res);
     }
 
     /**
@@ -518,7 +518,7 @@ class RouteBuilderTest extends TestCase
                 });
             });
         });
-        $this->assertNull($res);
+        $this->assertSame($routes, $res);
     }
 
     /**
@@ -540,7 +540,7 @@ class RouteBuilderTest extends TestCase
                 $route->defaults
             );
         });
-        $this->assertNull($res);
+        $this->assertSame($routes, $res);
     }
 
     /**

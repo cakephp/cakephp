@@ -31,12 +31,12 @@ trait ExpressionTypeCasterTrait
      * returns the value unmodified.
      *
      * @param mixed $value The value to converto to ExpressionInterface
-     * @param string $type The type name
+     * @param string|null $type The type name
      * @return mixed
      */
-    protected function _castToExpression($value, $type)
+    protected function _castToExpression($value, ?string $type = null)
     {
-        if (empty($type)) {
+        if ($type === null) {
             return $value;
         }
 
@@ -50,6 +50,7 @@ trait ExpressionTypeCasterTrait
         $multi = $type !== $baseType;
 
         if ($multi) {
+            /** @psalm-suppress InvalidArgument */
             return array_map([$converter, 'toExpression'], $value);
         }
 

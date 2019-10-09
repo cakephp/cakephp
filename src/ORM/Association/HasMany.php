@@ -110,7 +110,7 @@ class HasMany extends Association
      */
     public function setSaveStrategy(string $strategy)
     {
-        if (!in_array($strategy, [self::SAVE_APPEND, self::SAVE_REPLACE])) {
+        if (!in_array($strategy, [self::SAVE_APPEND, self::SAVE_REPLACE], true)) {
             $msg = sprintf('Invalid save strategy "%s"', $strategy);
             throw new InvalidArgumentException($msg);
         }
@@ -149,7 +149,8 @@ class HasMany extends Association
 
         $isEmpty = in_array($targetEntities, [null, [], '', false], true);
         if ($isEmpty) {
-            if ($entity->isNew() ||
+            if (
+                $entity->isNew() ||
                 $this->getSaveStrategy() !== self::SAVE_REPLACE
             ) {
                 return $entity;
@@ -171,12 +172,16 @@ class HasMany extends Association
 
         $options['_sourceTable'] = $this->getSource();
 
-        if ($this->_saveStrategy === self::SAVE_REPLACE &&
+        if (
+            $this->_saveStrategy === self::SAVE_REPLACE &&
             !$this->_unlinkAssociated($foreignKeyReference, $entity, $this->getTarget(), $targetEntities, $options)
         ) {
             return false;
         }
 
+        if (!is_array($targetEntities)) {
+            $targetEntities = iterator_to_array($targetEntities);
+        }
         if (!$this->_saveTarget($foreignKeyReference, $entity, $targetEntities, $options)) {
             return false;
         }
@@ -355,6 +360,7 @@ class HasMany extends Association
         $conditions = [
             'OR' => (new Collection($targetEntities))
                 ->map(function ($entity) use ($targetPrimaryKey) {
+                    /** @var \Cake\Datasource\EntityInterface $entity */
                     return $entity->extract($targetPrimaryKey);
                 })
                 ->toList(),
@@ -447,7 +453,7 @@ class HasMany extends Association
      * target entity, and the parent entity.
      * @param \Cake\Datasource\EntityInterface $entity the entity which should have its associated entities unassigned
      * @param \Cake\ORM\Table $target The associated table
-     * @param array $remainingEntities Entities that should not be deleted
+     * @param iterable $remainingEntities Entities that should not be deleted
      * @param array $options list of options accepted by `Table::delete()`
      * @return bool success
      */
@@ -455,13 +461,14 @@ class HasMany extends Association
         array $foreignKeyReference,
         EntityInterface $entity,
         Table $target,
-        array $remainingEntities = [],
+        iterable $remainingEntities = [],
         array $options = []
     ): bool {
         $primaryKey = (array)$target->getPrimaryKey();
         $exclusions = new Collection($remainingEntities);
         $exclusions = $exclusions->map(
             function ($ent) use ($primaryKey) {
+                /** @var \Cake\Datasource\EntityInterface $ent */
                 return $ent->extract($primaryKey);
             }
         )
@@ -507,7 +514,10 @@ class HasMany extends Association
                 $conditions = new QueryExpression($conditions);
                 $conditions->traverse(function ($entry) use ($target): void {
                     if ($entry instanceof FieldInterface) {
-                        $entry->setField($target->aliasField($entry->getField()));
+                        $field = $entry->getField();
+                        if (is_string($field)) {
+                            $entry->setField($target->aliasField($field));
+                        }
                     }
                 });
                 $query = $this->find()->where($conditions);

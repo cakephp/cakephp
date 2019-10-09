@@ -83,8 +83,9 @@ class ConsoleOutput
     protected $_output;
 
     /**
-     * The current output type. Manipulated with ConsoleOutput::setOutputAs();
+     * The current output type.
      *
+     * @see setOutputAs() For manipulation.
      * @var int
      */
     protected $_outputAs = self::COLOR;
@@ -165,8 +166,16 @@ class ConsoleOutput
     {
         $this->_output = fopen($stream, 'wb');
 
-        if ((DIRECTORY_SEPARATOR === '\\' && !(bool)env('ANSICON') && env('ConEmuANSI') !== 'ON') ||
-            (function_exists('posix_isatty') && !posix_isatty($this->_output))
+        if (
+            (
+                DIRECTORY_SEPARATOR === '\\' &&
+                !(bool)env('ANSICON') &&
+                env('ConEmuANSI') !== 'ON'
+            ) ||
+            (
+                function_exists('posix_isatty') &&
+                !posix_isatty($this->_output)
+            )
         ) {
             $this->_outputAs = self::PLAIN;
         }
@@ -221,6 +230,7 @@ class ConsoleOutput
      */
     protected function _replaceTags(array $matches): string
     {
+        /** @var array $style */
         $style = $this->styles($matches['tag']);
         if (empty($style)) {
             return '<' . $matches['tag'] . '>' . $matches['text'] . '</' . $matches['tag'] . '>';
@@ -240,7 +250,7 @@ class ConsoleOutput
             }
         }
 
-        return "\033[" . implode($styleInfo, ';') . 'm' . $matches['text'] . "\033[0m";
+        return "\033[" . implode(';', $styleInfo) . 'm' . $matches['text'] . "\033[0m";
     }
 
     /**
@@ -282,9 +292,9 @@ class ConsoleOutput
      * ```
      *
      * @param string|null $style The style to get or create.
-     * @param array|bool|null $definition The array definition of the style to change or create a style
+     * @param array|false|null $definition The array definition of the style to change or create a style
      *   or false to remove a style.
-     * @return mixed If you are getting styles, the style or null will be returned. If you are creating/modifying
+     * @return array|true|null If you are getting styles, the style or null will be returned. If you are creating/modifying
      *   styles true will be returned.
      */
     public function styles(?string $style = null, $definition = null)
@@ -296,10 +306,12 @@ class ConsoleOutput
             return static::$_styles[$style] ?? null;
         }
         if ($definition === false) {
+            /** @psalm-suppress PossiblyNullArrayOffset */
             unset(static::$_styles[$style]);
 
             return true;
         }
+        /** @psalm-suppress PossiblyNullArrayOffset */
         static::$_styles[$style] = $definition;
 
         return true;

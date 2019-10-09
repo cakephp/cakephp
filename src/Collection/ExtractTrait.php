@@ -59,7 +59,7 @@ trait ExtractTrait
      * It will return arrays for elements in represented with `{*}`
      *
      * @param array|\ArrayAccess $data Data.
-     * @param array $path Path to extract from.
+     * @param string[] $path Path to extract from.
      * @return mixed
      */
     protected function _extract($data, array $path)
@@ -73,8 +73,13 @@ trait ExtractTrait
                 continue;
             }
 
-            if ($collectionTransform &&
-                !($data instanceof Traversable || is_array($data))) {
+            if (
+                $collectionTransform &&
+                !(
+                    $data instanceof Traversable ||
+                    is_array($data)
+                )
+            ) {
                 return null;
             }
 
@@ -100,7 +105,7 @@ trait ExtractTrait
      * by iterating over the column names contained in $path
      *
      * @param array|\ArrayAccess $data Data.
-     * @param array $path Path to extract from.
+     * @param string[] $path Path to extract from.
      * @return mixed
      */
     protected function _simpleExtract($data, array $path)

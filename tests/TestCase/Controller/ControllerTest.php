@@ -29,6 +29,7 @@ use PHPUnit\Framework\Error\Warning;
 use TestApp\Controller\Admin\PostsController;
 use TestApp\Controller\TestController;
 use TestPlugin\Controller\TestPluginController;
+use Zend\Diactoros\Uri;
 
 /**
  * ControllerTest class
@@ -40,7 +41,7 @@ class ControllerTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = [
+    protected $fixtures = [
         'core.Comments',
         'core.Posts',
     ];
@@ -302,6 +303,19 @@ class ControllerTest extends TestCase
         $this->assertInstanceOf('Cake\Http\Response', $result);
     }
 
+    public function testControllerRedirect()
+    {
+        $Controller = new Controller();
+        $uri = new Uri('/foo/bar');
+        $response = $Controller->redirect($uri);
+        $this->assertEquals('http://localhost/foo/bar', $response->getHeaderLine('Location'));
+
+        $Controller = new Controller();
+        $uri = new Uri('http://cakephp.org/foo/bar');
+        $response = $Controller->redirect($uri);
+        $this->assertEquals('http://cakephp.org/foo/bar', $response->getHeaderLine('Location'));
+    }
+
     /**
      * Generates status codes for redirect test.
      *
@@ -454,7 +468,7 @@ class ControllerTest extends TestCase
             ->setMethods(['referer'])
             ->getMock();
         $request = $request->withAttribute('base', '/base');
-        Router::pushRequest($request);
+        Router::setRequest($request);
 
         $request->expects($this->any())->method('referer')
             ->will($this->returnValue(null));
@@ -566,7 +580,7 @@ class ControllerTest extends TestCase
         $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
         $this->assertCount(3, $results);
 
-        $paging = $Controller->getRequest()->getParam('paging');
+        $paging = $Controller->getRequest()->getAttribute('paging');
         $this->assertSame($paging['Posts']['page'], 1);
         $this->assertSame($paging['Posts']['pageCount'], 1);
         $this->assertFalse($paging['Posts']['prevPage']);
@@ -577,7 +591,7 @@ class ControllerTest extends TestCase
         $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
         $this->assertCount(1, $results);
 
-        $paging = $Controller->getRequest()->getParam('paging');
+        $paging = $Controller->getRequest()->getAttribute('paging');
         $this->assertSame($paging['Posts']['page'], 2);
         $this->assertSame($paging['Posts']['pageCount'], 2);
         $this->assertTrue($paging['Posts']['prevPage']);

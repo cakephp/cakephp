@@ -194,7 +194,7 @@ class EagerLoader
      */
     public function enableAutoFields(bool $enable = true)
     {
-        $this->_autoFields = (bool)$enable;
+        $this->_autoFields = $enable;
 
         return $this;
     }
@@ -491,7 +491,15 @@ class EagerLoader
 
         $paths += ['aliasPath' => '', 'propertyPath' => '', 'root' => $alias];
         $paths['aliasPath'] .= '.' . $alias;
-        $paths['propertyPath'] .= '.' . $instance->getProperty();
+
+        if (
+            isset($options['matching']) &&
+            $options['matching'] === true
+        ) {
+            $paths['propertyPath'] = '_matchingData.' . $alias;
+        } else {
+            $paths['propertyPath'] .= '.' . $instance->getProperty();
+        }
 
         $table = $instance->getTarget();
 
@@ -677,6 +685,7 @@ class EagerLoader
             return $map;
         }
 
+        /** @psalm-suppress PossiblyNullReference */
         $map = $this->_buildAssociationsMap($map, $this->_matching->normalized($table), true);
         $map = $this->_buildAssociationsMap($map, $this->normalized($table));
         $map = $this->_buildAssociationsMap($map, $this->_joinsMap);

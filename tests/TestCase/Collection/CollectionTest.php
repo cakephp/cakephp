@@ -2035,7 +2035,21 @@ class CollectionTest extends TestCase
         $collection = new Collection([1, 2, 3, 4, 5]);
         $this->assertEquals([3, 4, 5], $collection->skip(2)->toList());
 
+        $this->assertEquals([1, 2, 3, 4, 5], $collection->skip(0)->toList());
+        $this->assertEquals([4, 5], $collection->skip(3)->toList());
         $this->assertEquals([5], $collection->skip(4)->toList());
+    }
+
+    /**
+     * Test skip() with an overflow
+     *
+     * @return void
+     */
+    public function testSkipOverflow()
+    {
+        $collection = new Collection([1, 2, 3]);
+        $this->assertEquals([], $collection->skip(3)->toArray());
+        $this->assertEquals([], $collection->skip(4)->toArray());
     }
 
     /**

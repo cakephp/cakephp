@@ -77,10 +77,11 @@ class ConsoleLog extends BaseLog
     /**
      * Implements writing to console.
      *
-     * @param string $level The severity level of log you are making.
+     * @param mixed $level The severity level of log you are making.
      * @param string $message The message you want to log.
      * @param array $context Additional information about the logged message
      * @return void success of write.
+     * @see Cake\Log\Log::$_levels
      */
     public function log($level, $message, array $context = [])
     {

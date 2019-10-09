@@ -133,7 +133,8 @@ trait QueryTrait
      * iterated without having to call execute() manually, thus making it look like
      * a result set instead of the query itself.
      *
-     * @return \Iterator
+     * @return \Cake\Datasource\ResultSetInterface
+     * @psalm-suppress ImplementedReturnTypeMismatch
      */
     public function getIterator()
     {
@@ -170,7 +171,7 @@ trait QueryTrait
      * $query->cache(false);
      * ```
      *
-     * @param false|string|\Closure $key Either the cache key or a function to generate the cache key.
+     * @param \Closure|string|false $key Either the cache key or a function to generate the cache key.
      *   When using a function, this query instance will be supplied as an argument.
      * @param string|\Cake\Cache\CacheEngine $config Either the name of the cache config to use, or
      *   a cache config instance.
@@ -251,7 +252,7 @@ trait QueryTrait
      *
      * @param array $fields The fields to alias
      * @param string|null $defaultAlias The default alias
-     * @return array
+     * @return string[]
      */
     public function aliasFields(array $fields, ?string $defaultAlias = null): array
     {

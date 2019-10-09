@@ -87,6 +87,7 @@ trait StaticConfigTrait
         }
 
         if (isset(static::$_config[$key])) {
+            /** @psalm-suppress PossiblyInvalidArgument */
             throw new BadMethodCallException(sprintf('Cannot reconfigure existing key "%s"', $key));
         }
 
@@ -111,9 +112,9 @@ trait StaticConfigTrait
      * Reads existing configuration.
      *
      * @param string $key The name of the configuration.
-     * @return array|null Array of configuration data.
+     * @return mixed Configuration data at the named key or null if the key does not exist.
      */
-    public static function getConfig(string $key): ?array
+    public static function getConfig(string $key)
     {
         return static::$_config[$key] ?? null;
     }
@@ -135,6 +136,7 @@ trait StaticConfigTrait
         if (!isset(static::$_config[$config])) {
             return false;
         }
+        /** @psalm-suppress UndefinedPropertyFetch */
         if (isset(static::$_registry)) {
             /** @var \Cake\Core\ObjectRegistry $_registry */
             static::$_registry->unload($config);

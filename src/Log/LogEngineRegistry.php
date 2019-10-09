@@ -23,6 +23,8 @@ use RuntimeException;
 
 /**
  * Registry of loaded log engines
+ *
+ * @extends \Cake\Core\ObjectRegistry<\Psr\Log\LoggerInterface>
  */
 class LogEngineRegistry extends ObjectRegistry
 {
@@ -84,9 +86,11 @@ class LogEngineRegistry extends ObjectRegistry
             return $instance;
         }
 
-        throw new RuntimeException(
-            'Loggers must implement Psr\Log\LoggerInterface.'
-        );
+        throw new RuntimeException(sprintf(
+            'Loggers must implement %s. Found `%s` instance instead.',
+            LoggerInterface::class,
+            getTypeName($instance)
+        ));
     }
 
     /**

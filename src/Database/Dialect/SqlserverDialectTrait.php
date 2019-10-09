@@ -89,6 +89,7 @@ trait SqlserverDialectTrait
     {
         $this->connect();
 
+        /** @var \PDO $this->_connection */
         return $this->_connection->getAttribute(PDO::ATTR_SERVER_VERSION);
     }
 
@@ -118,7 +119,8 @@ trait SqlserverDialectTrait
                 ->clause('order')
                 ->iterateParts(function ($direction, $orderBy) use ($select, $order) {
                     $key = $orderBy;
-                    if (isset($select[$orderBy]) &&
+                    if (
+                        isset($select[$orderBy]) &&
                         $select[$orderBy] instanceof ExpressionInterface
                     ) {
                         $key = $select[$orderBy]->sql(new ValueBinder());

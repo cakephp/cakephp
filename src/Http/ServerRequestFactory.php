@@ -61,11 +61,13 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
     ): ServerRequest {
         $server = normalizeServer($server ?: $_SERVER);
         $uri = static::createUri($server);
+        /** @psalm-suppress NoInterfaceProperties */
         $sessionConfig = (array)Configure::read('Session') + [
             'defaults' => 'php',
             'cookiePath' => $uri->webroot,
         ];
         $session = Session::create($sessionConfig);
+        /** @psalm-suppress NoInterfaceProperties */
         $request = new ServerRequest([
             'environment' => $server,
             'uri' => $uri,
@@ -76,6 +78,7 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
             'webroot' => $uri->webroot,
             'base' => $uri->base,
             'session' => $session,
+            'mergeFilesAsObjects' => Configure::read('App.uploadedFilesAsObjects', true),
         ]);
 
         return $request;
@@ -157,7 +160,9 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
 
         // Splat on some extra attributes to save
         // some method calls.
+        /** @psalm-suppress NoInterfaceProperties */
         $uri->base = $base;
+        /** @psalm-suppress NoInterfaceProperties */
         $uri->webroot = $webroot;
 
         return $uri;
@@ -184,7 +189,8 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
         }
         $endsWithIndex = '/' . (Configure::read('App.webroot') ?: 'webroot') . '/index.php';
         $endsWithLength = strlen($endsWithIndex);
-        if (strlen($path) >= $endsWithLength &&
+        if (
+            strlen($path) >= $endsWithLength &&
             substr($path, -$endsWithLength) === $endsWithIndex
         ) {
             $path = '/';

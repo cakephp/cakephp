@@ -22,8 +22,10 @@ use Cake\Http\Client\FormDataPart;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
 use Cake\Utility\Text;
+use Closure;
 use InvalidArgumentException;
 use JsonSerializable;
+use Psr\Http\Message\UploadedFileInterface;
 use Serializable;
 use SimpleXMLElement;
 
@@ -310,7 +312,7 @@ class Message implements JsonSerializable, Serializable
         if ($this->appCharset !== null) {
             $this->charset = $this->appCharset;
         }
-        $this->domain = preg_replace('/\:\d+$/', '', env('HTTP_HOST'));
+        $this->domain = preg_replace('/\:\d+$/', '', (string)env('HTTP_HOST'));
         if (empty($this->domain)) {
             $this->domain = php_uname('n');
         }
@@ -673,10 +675,7 @@ class Message implements JsonSerializable, Serializable
     {
         if (!is_array($email)) {
             $this->validateEmail($email, $varName);
-            if ($name === null) {
-                $name = $email;
-            }
-            $this->{$varName} = [$email => $name];
+            $this->{$varName} = [$email => $name ?? $email];
 
             return $this;
         }
@@ -686,7 +685,7 @@ class Message implements JsonSerializable, Serializable
                 $key = $value;
             }
             $this->validateEmail($key, $varName);
-            $list[$key] = $value;
+            $list[$key] = $value ?? $key;
         }
         $this->{$varName} = $list;
 
@@ -854,8 +853,8 @@ class Message implements JsonSerializable, Serializable
      * - `bcc`
      * - `subject`
      *
-     * @param array $include List of headers.
-     * @return array
+     * @param string[] $include List of headers.
+     * @return string[]
      */
     public function getHeaders(array $include = []): array
     {
@@ -932,6 +931,37 @@ class Message implements JsonSerializable, Serializable
         $headers['Content-Transfer-Encoding'] = $this->getContentTransferEncoding();
 
         return $headers;
+    }
+
+    /**
+     * Get headers as string.
+     *
+     * @param string[] $include List of headers.
+     * @param string $eol End of line string for concatenating headers.
+     * @param \Closure $callback Callback to run each header value through before stringifying.
+     * @return string
+     * @see Message::getHeaders()
+     */
+    public function getHeadersString(array $include = [], string $eol = "\r\n", ?Closure $callback = null): string
+    {
+        $lines = $this->getHeaders($include);
+
+        if ($callback) {
+            $lines = array_map($callback, $lines);
+        }
+
+        $headers = [];
+        foreach ($lines as $key => $value) {
+            if (empty($value) && $value !== '0') {
+                continue;
+            }
+
+            foreach ((array)$value as $val) {
+                $headers[] = $key . ': ' . $val;
+            }
+        }
+
+        return implode($eol, $headers);
     }
 
     /**
@@ -1128,7 +1158,13 @@ class Message implements JsonSerializable, Serializable
                     throw new InvalidArgumentException('No filename specified.');
                 }
                 $fileInfo['data'] = chunk_split(base64_encode($fileInfo['data']), 76, "\r\n");
-            } else {
+            } elseif ($fileInfo['file'] instanceof UploadedFileInterface) {
+                $fileInfo['mimetype'] = $fileInfo['file']->getClientMediaType();
+                if (is_int($name)) {
+                    /** @var string $name */
+                    $name = $fileInfo['file']->getClientFilename();
+                }
+            } elseif (is_string($fileInfo['file'])) {
                 $fileName = $fileInfo['file'];
                 $fileInfo['file'] = realpath($fileInfo['file']);
                 if ($fileInfo['file'] === false || !file_exists($fileInfo['file'])) {
@@ -1137,8 +1173,18 @@ class Message implements JsonSerializable, Serializable
                 if (is_int($name)) {
                     $name = basename($fileInfo['file']);
                 }
+            } else {
+                throw new InvalidArgumentException(sprintf(
+                    'File must be a filepath or UploadedFileInterface instance. Found `%s` instead.',
+                    gettype($fileInfo['file'])
+                ));
             }
-            if (!isset($fileInfo['mimetype']) && isset($fileInfo['file']) && function_exists('mime_content_type')) {
+            if (
+                !isset($fileInfo['mimetype'])
+                && isset($fileInfo['file'])
+                && is_string($fileInfo['file'])
+                && function_exists('mime_content_type')
+            ) {
                 $fileInfo['mimetype'] = mime_content_type($fileInfo['file']);
             }
             if (!isset($fileInfo['mimetype'])) {
@@ -1179,20 +1225,12 @@ class Message implements JsonSerializable, Serializable
     }
 
     /**
-     * Get generated message body.
+     * Get generated message body as array.
      *
-     * @param string|null $type Use MESSAGE_* constants or null to return the full message as array
-     * @return string|array String if type is given, array if type is null
+     * @return array
      */
-    public function getBody(?string $type = null)
+    public function getBody()
     {
-        switch ($type) {
-            case static::MESSAGE_HTML:
-                return $this->htmlMessage;
-            case static::MESSAGE_TEXT:
-                return $this->textMessage;
-        }
-
         if (empty($this->message)) {
             $this->message = $this->generateMessage();
         }
@@ -1201,15 +1239,17 @@ class Message implements JsonSerializable, Serializable
     }
 
     /**
-     * Get generated message body.
+     * Get generated body as string.
      *
-     * @param string|null $type Use MESSAGE_* constants or null to return the full message as array
-     * @return string|array String if type is given, array if type is null
-     * @internal This method is just for backwards compatibility. Use getBody() instead.
+     * @param string $eol End of line string for imploding.
+     * @return string
+     * @see Message::getBody()
      */
-    public function message(?string $type = null)
+    public function getBodyString(string $eol = "\r\n"): string
     {
-        return $this->getBody();
+        $lines = $this->getBody();
+
+        return implode($eol, $lines);
     }
 
     /**
@@ -1219,8 +1259,12 @@ class Message implements JsonSerializable, Serializable
      */
     protected function createBoundary(): void
     {
-        if ($this->boundary === null &&
-            ($this->attachments || $this->emailFormat === static::MESSAGE_BOTH)
+        if (
+            $this->boundary === null &&
+            (
+                $this->attachments ||
+                $this->emailFormat === static::MESSAGE_BOTH
+            )
         ) {
             $this->boundary = md5(Security::randomBytes(16));
         }
@@ -1229,7 +1273,7 @@ class Message implements JsonSerializable, Serializable
     /**
      * Generate full message.
      *
-     * @return array
+     * @return string[]
      */
     protected function generateMessage(): array
     {
@@ -1260,7 +1304,8 @@ class Message implements JsonSerializable, Serializable
             $textBoundary = 'alt-' . $boundary;
         }
 
-        if ($this->emailFormat === static::MESSAGE_TEXT
+        if (
+            $this->emailFormat === static::MESSAGE_TEXT
             || $this->emailFormat === static::MESSAGE_BOTH
         ) {
             if ($multiPart) {
@@ -1275,7 +1320,8 @@ class Message implements JsonSerializable, Serializable
             $msg[] = '';
         }
 
-        if ($this->emailFormat === static::MESSAGE_HTML
+        if (
+            $this->emailFormat === static::MESSAGE_HTML
             || $this->emailFormat === static::MESSAGE_BOTH
         ) {
             if ($multiPart) {
@@ -1498,6 +1544,26 @@ class Message implements JsonSerializable, Serializable
     }
 
     /**
+     * Get text body of message.
+     *
+     * @return string
+     */
+    public function getBodyText()
+    {
+        return $this->textMessage;
+    }
+
+    /**
+     * Get HTML body of message.
+     *
+     * @return string
+     */
+    public function getBodyHtml()
+    {
+        return $this->htmlMessage;
+    }
+
+    /**
      * Translates a string for one charset to another if the App.encoding value
      * differs and the mb_convert_encoding function exists
      *
@@ -1509,6 +1575,10 @@ class Message implements JsonSerializable, Serializable
     {
         if ($this->appCharset === $charset) {
             return $text;
+        }
+
+        if ($this->appCharset === null) {
+            return mb_convert_encoding($text, $charset);
         }
 
         return mb_convert_encoding($text, $charset, $this->appCharset);
@@ -1700,12 +1770,19 @@ class Message implements JsonSerializable, Serializable
     /**
      * Read the file contents and return a base64 version of the file contents.
      *
-     * @param string $path The absolute path to the file to read.
+     * @param string|\Psr\Http\Message\UploadedFileInterface $file The absolute path to the file to read
+     *   or UploadedFileInterface instance.
      * @return string File contents in base64 encoding
      */
-    protected function readFile(string $path): string
+    protected function readFile($file): string
     {
-        return chunk_split(base64_encode((string)file_get_contents($path)));
+        if (is_string($file)) {
+            $content = (string)file_get_contents($file);
+        } else {
+            $content = (string)$file->getStream();
+        }
+
+        return chunk_split(base64_encode($content));
     }
 
     /**

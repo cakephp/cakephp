@@ -25,6 +25,8 @@ use RuntimeException;
  * An object registry for cache engines.
  *
  * Used by Cake\Cache\Cache to load and manage cache engines.
+ *
+ * @extends \Cake\Core\ObjectRegistry<\Cake\Cache\CacheEngine>
  */
 class CacheRegistry extends ObjectRegistry
 {
@@ -69,7 +71,6 @@ class CacheRegistry extends ObjectRegistry
      */
     protected function _create($class, string $alias, array $config): CacheEngine
     {
-        $instance = null;
         if (is_object($class)) {
             $instance = $class;
         } else {

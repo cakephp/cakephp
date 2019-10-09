@@ -19,6 +19,7 @@ namespace Cake\Database\Expression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Type\ExpressionTypeCasterTrait;
 use Cake\Database\ValueBinder;
+use Closure;
 
 /**
  * This class represents a SQL Case statement
@@ -164,7 +165,6 @@ class CaseExpression implements ExpressionInterface
      *
      * @param \Cake\Database\ExpressionInterface|string|array|null $value Value to set
      * @param string|null $type Type of value
-     *
      * @return void
      */
     public function elseValue($value = null, $type = null): void
@@ -175,6 +175,7 @@ class CaseExpression implements ExpressionInterface
         }
 
         if ($value !== null && !$value instanceof ExpressionInterface) {
+            /** @var string $type */
             $value = $this->_castToExpression($value, $type);
         }
 
@@ -233,7 +234,7 @@ class CaseExpression implements ExpressionInterface
     /**
      * @inheritDoc
      */
-    public function traverse(callable $visitor)
+    public function traverse(Closure $visitor)
     {
         foreach (['_conditions', '_values'] as $part) {
             foreach ($this->{$part} as $c) {

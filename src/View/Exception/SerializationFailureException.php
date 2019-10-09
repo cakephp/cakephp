@@ -11,26 +11,16 @@ declare(strict_types=1);
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         2.2.0
+ * @since         4.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace TestPlugin\Routing\Filter;
+namespace Cake\View\Exception;
 
-use Cake\Event\EventInterface;
-use Cake\Routing\DispatcherFilter;
+use Cake\Core\Exception\Exception;
 
 /**
- * TestDispatcherFilter
+ * Used when a SerializedView class fails to serialize data.
  */
-class TestDispatcherFilter extends DispatcherFilter
+class SerializationFailureException extends Exception
 {
-    public function beforeDispatch(EventInterface $event)
-    {
-        $event->data('request')->params['altered'] = true;
-    }
-
-    public function afterDispatch(EventInterface $event)
-    {
-        $event->data('response')->statusCode(304);
-    }
 }

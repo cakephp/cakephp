@@ -204,19 +204,6 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
-     * testStartup method
-     *
-     * @return void
-     * @triggers Controller.startup $this->Controller
-     */
-    public function testStartup(): void
-    {
-        $event = new Event('Controller.startup', $this->Controller);
-        $this->Controller->Security->startup($event);
-        $this->assertTrue($this->Controller->getRequest()->getSession()->check('_Token'));
-    }
-
-    /**
      * testRequireSecureFail method
      *
      * @return void
@@ -356,7 +343,6 @@ class SecurityComponentTest extends TestCase
     {
         $event = new Event('Controller.startup', $this->Controller);
         $this->Security->startup($event);
-        $this->Controller->getRequest()->getSession()->delete('_Token');
         $unlocked = '';
         $debug = urlencode(json_encode([
             '/articles/index',
@@ -385,7 +371,6 @@ class SecurityComponentTest extends TestCase
     {
         $event = new Event('Controller.startup', $this->Controller);
         $this->Security->startup($event);
-        $this->Controller->getRequest()->getSession()->delete('_Token');
 
         $fields = 'a5475372b40f6e3ccbf9f8af191f20e1642fd877%3AModel.valid';
 
@@ -488,7 +473,6 @@ class SecurityComponentTest extends TestCase
         $debug = 'not used';
 
         $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
-            '_csrfToken' => 'abc123',
             'Model' => ['multi_field' => ['1', '3']],
             '_Token' => compact('fields', 'unlocked', 'debug'),
         ]));
@@ -616,7 +600,7 @@ class SecurityComponentTest extends TestCase
         $this->Controller->setRequest($this->Controller->getRequest()
             ->withAttribute('base', 'subdir')
             ->withAttributE('webroot', 'subdir/'));
-        Router::pushRequest($this->Controller->getRequest());
+        Router::setRequest($this->Controller->getRequest());
 
         $event = new Event('Controller.startup', $this->Controller);
         $this->Security->startup($event);
@@ -785,32 +769,6 @@ class SecurityComponentTest extends TestCase
             ],
             '_Token' => compact('fields', 'unlocked', 'debug'),
         ]));
-        $result = $this->validatePost();
-        $this->assertNull($result);
-    }
-
-    /**
-     * testValidatePostWithDisabledFields method
-     *
-     * @return void
-     * @triggers Controller.startup $this->Controller
-     */
-    public function testValidatePostWithDisabledFields(): void
-    {
-        $event = new Event('Controller.startup', $this->Controller);
-        $this->Security->setConfig('disabledFields', ['Model.username', 'Model.password']);
-        $this->Security->startup($event);
-        $fields = '0313460e1136e1227044399fe10a6edc0cbca279%3AModel.hidden';
-        $unlocked = '';
-        $debug = 'not used';
-
-        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
-            'Model' => [
-                'username' => '', 'password' => '', 'hidden' => '0',
-            ],
-            '_Token' => compact('fields', 'unlocked', 'debug'),
-        ]));
-
         $result = $this->validatePost();
         $this->assertNull($result);
     }
@@ -1169,44 +1127,6 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
-     * testFormDisabledFields method
-     *
-     * @return void
-     * @triggers Controller.startup $this->Controller
-     */
-    public function testFormDisabledFields(): void
-    {
-        $event = new Event('Controller.startup', $this->Controller);
-
-        $this->Security->startup($event);
-        $fields = '4eaf5c6b93d5140c24171d5fdce16ed5b904f288%3An%3A0%3A%7B%7D';
-        $unlocked = '';
-        $debug = urlencode(json_encode([
-            '/articles/index',
-            [],
-            [],
-        ]));
-
-        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
-            'MyModel' => ['name' => 'some data'],
-            '_Token' => compact('fields', 'unlocked', 'debug'),
-        ]));
-        $result = $this->validatePost('SecurityException', 'Unexpected field \'MyModel.name\' in POST data');
-        $this->assertFalse($result);
-
-        $this->Security->startup($event);
-        $this->Security->setConfig('disabledFields', ['MyModel.name']);
-
-        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
-            'MyModel' => ['name' => 'some data'],
-            '_Token' => compact('fields', 'unlocked', 'debug'),
-        ]));
-
-        $result = $this->validatePost();
-        $this->assertNull($result);
-    }
-
-    /**
      * testValidatePostRadio method
      *
      * Test validatePost with radio buttons.
@@ -1296,27 +1216,6 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
-     * testBlackHoleNotDeletingSessionInformation method
-     *
-     * Test that blackhole doesn't delete the _Token session key so repeat data submissions
-     * stay blackholed.
-     *
-     * @return void
-     * @triggers Controller.startup $this->Controller
-     */
-    public function testBlackHoleNotDeletingSessionInformation(): void
-    {
-        $event = new Event('Controller.startup', $this->Controller);
-        $this->Security->startup($event);
-
-        $this->Security->blackHole($this->Controller, 'auth');
-        $this->assertTrue(
-            $this->Controller->getRequest()->getSession()->check('_Token'),
-            '_Token was deleted by blackHole %s'
-        );
-    }
-
-    /**
      * testGenerateToken method
      *
      * Test generateToken().
@@ -1328,8 +1227,9 @@ class SecurityComponentTest extends TestCase
         $request = $this->Controller->getRequest();
         $request = $this->Security->generateToken($request);
 
-        $this->assertNotEmpty($request->getParam('_Token'));
-        $this->assertSame([], $request->getParam('_Token.unlockedFields'));
+        $securityToken = $request->getAttribute('formToken');
+        $this->assertNotEmpty($securityToken);
+        $this->assertSame([], $securityToken['unlockedFields']);
     }
 
     /**

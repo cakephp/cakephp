@@ -36,7 +36,7 @@ use TestApp\Database\Type\BarType;
  */
 class QueryTest extends TestCase
 {
-    public $fixtures = [
+    protected $fixtures = [
         'core.Articles',
         'core.Authors',
         'core.Comments',
@@ -2864,6 +2864,48 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Tests that aliases are stripped from delete query conditions
+     * where possible.
+     *
+     * @return void
+     */
+    public function testDeleteStripAliasesFromConditions()
+    {
+        $query = new Query($this->connection);
+
+        $query
+            ->delete()
+            ->from(['a' => 'authors'])
+            ->where([
+                'OR' => [
+                    'a.id' => 1,
+                    'a.name IS' => null,
+                    'a.email IS NOT' => null,
+                    'AND' => [
+                        'b.name NOT IN' => ['foo', 'bar'],
+                        'OR' => [
+                            $query->newExpr()->eq(new IdentifierExpression('c.name'), 'zap'),
+                            'd.name' => 'baz',
+                            (new Query($this->connection))->select(['e.name'])->where(['e.name' => 'oof']),
+                        ],
+                    ],
+                ],
+            ]);
+
+        $this->assertQuotedQuery(
+            'DELETE FROM <authors> WHERE \(' .
+                '<id> = :c0 OR \(<name>\) IS NULL OR \(<email>\) IS NOT NULL OR \(' .
+                    '<name> not in \(:c1,:c2\) AND \(' .
+                        '\(<name>\) = :c3 OR <name> = :c4 OR \(SELECT <e>\.<name> WHERE <e>\.<name> = :c5\)' .
+                    '\)' .
+                '\)' .
+            '\)',
+            $query->sql(),
+            !$this->autoQuote
+        );
+    }
+
+    /**
      * Test setting select() & delete() modes.
      *
      * @return void
@@ -3076,6 +3118,8 @@ class QueryTest extends TestCase
             ->where([
                 'OR' => [
                     'a.id' => 1,
+                    'a.name IS' => null,
+                    'a.email IS NOT' => null,
                     'AND' => [
                         'b.name NOT IN' => ['foo', 'bar'],
                         'OR' => [
@@ -3089,9 +3133,9 @@ class QueryTest extends TestCase
 
         $this->assertQuotedQuery(
             'UPDATE <authors> SET <name> = :c0 WHERE \(' .
-                '<id> = :c1 OR \(' .
+                '<id> = :c1 OR \(<name>\) IS NULL OR \(<email>\) IS NOT NULL OR \(' .
                     '<name> not in \(:c2,:c3\) AND \(' .
-                        '\(<c>\.<name>\) = :c4 OR <name> = :c5 OR \(SELECT <e>\.<name> WHERE <e>\.<name> = :c6\)' .
+                        '\(<name>\) = :c4 OR <name> = :c5 OR \(SELECT <e>\.<name> WHERE <e>\.<name> = :c6\)' .
                     '\)' .
                 '\)' .
             '\)',
@@ -3838,6 +3882,14 @@ class QueryTest extends TestCase
         $query = new Query($this->connection);
         $sql = $query->select('*')->join(['foo' => $query->newExpr('bar')])->sql();
         $this->assertQuotedQuery('JOIN \(bar\) <foo>', $sql);
+
+        $query = new Query($this->connection);
+        $sql = $query->select('*')->join([
+            'alias' => 'orders',
+            'table' => 'Order',
+            'conditions' => ['1 = 1'],
+        ])->sql();
+        $this->assertQuotedQuery('JOIN <Order> <orders> ON 1 = 1', $sql);
     }
 
     /**
@@ -4056,6 +4108,43 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(1, $results);
         $this->assertEquals(['name' => 'larry'], $results->fetch('assoc'));
+    }
+
+    /**
+     * Tests that using the wrong NULL operator will throw meaningful exception instead of
+     * cloaking as always-empty result set.
+     *
+     * @return void
+     */
+    public function testIsNullInvalid()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid or missing operator together with `null` usage.');
+
+        $this->loadFixtures('Authors');
+        (new Query($this->connection))
+            ->select(['name'])
+            ->from(['authors'])
+            ->where(['name' => null])
+            ->sql();
+    }
+
+    /**
+     * Tests that using the wrong NULL operator will throw meaningful exception instead of
+     * cloaking as always-empty result set.
+     *
+     * @return void
+     */
+    public function testIsNotNullInvalid()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        $this->loadFixtures('Authors');
+        (new Query($this->connection))
+            ->select(['name'])
+            ->from(['authors'])
+            ->where(['name !=' => null])
+            ->sql();
     }
 
     /**

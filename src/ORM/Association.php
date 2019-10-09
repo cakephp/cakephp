@@ -121,7 +121,7 @@ abstract class Association
      * A list of conditions to be always included when fetching records from
      * the target association
      *
-     * @var array|callable
+     * @var array|\Closure
      */
     protected $_conditions = [];
 
@@ -226,7 +226,7 @@ abstract class Association
             }
         }
 
-        if (empty($this->_className) && strpos($alias, '.')) {
+        if (empty($this->_className)) {
             $this->_className = $alias;
         }
 
@@ -309,7 +309,8 @@ abstract class Association
      */
     public function setClassName(string $className)
     {
-        if ($this->_targetTable !== null &&
+        if (
+            $this->_targetTable !== null &&
             get_class($this->_targetTable) !== App::className($className, 'Model/Table', 'Table')
         ) {
             throw new InvalidArgumentException(sprintf(
@@ -378,9 +379,9 @@ abstract class Association
     public function getTarget(): Table
     {
         if ($this->_targetTable === null) {
-            if (strpos((string)$this->_className, '.')) {
+            if (strpos($this->_className, '.')) {
                 [$plugin] = pluginSplit($this->_className, true);
-                $registryAlias = $plugin . $this->_name;
+                $registryAlias = (string)$plugin . $this->_name;
             } else {
                 $registryAlias = $this->_name;
             }
@@ -395,7 +396,7 @@ abstract class Association
             $this->_targetTable = $tableLocator->get($registryAlias, $config);
 
             if ($exists) {
-                $className = $this->_getClassName($registryAlias, ['className' => $this->_className]);
+                $className = App::className($this->_className, 'Model/Table', 'Table') ?: Table::class;
 
                 if (!$this->_targetTable instanceof $className) {
                     $errorMessage = '%s association "%s" of type "%s" to "%s" doesn\'t match the expected class "%s". ';
@@ -421,7 +422,7 @@ abstract class Association
      * Sets a list of conditions to be always included when fetching records from
      * the target association.
      *
-     * @param array|callable $conditions list of conditions to be used
+     * @param array|\Closure $conditions list of conditions to be used
      * @see \Cake\Database\Query::where() for examples on the format of the array
      * @return \Cake\ORM\Association
      */
@@ -437,7 +438,7 @@ abstract class Association
      * the target association.
      *
      * @see \Cake\Database\Query::where() for examples on the format of the array
-     * @return array|callable
+     * @return array|\Closure
      */
     public function getConditions()
     {
@@ -855,7 +856,7 @@ abstract class Association
      * Proxies the operation to the target table's exists method after
      * appending the default conditions for this association
      *
-     * @param array|callable|\Cake\Database\ExpressionInterface $conditions The conditions to use
+     * @param array|\Closure|\Cake\Database\ExpressionInterface $conditions The conditions to use
      * for checking if any record matches.
      * @see \Cake\ORM\Table::exists()
      * @return bool
@@ -1123,24 +1124,6 @@ abstract class Association
         }
 
         return [key($finderData), current($finderData)];
-    }
-
-    /**
-     * Gets the table class name.
-     *
-     * @param string $alias The alias name you want to get.
-     * @param array $options Table options array.
-     * @return string
-     */
-    protected function _getClassName(string $alias, array $options = []): string
-    {
-        if (empty($options['className'])) {
-            $options['className'] = Inflector::camelize($alias);
-        }
-
-        $className = App::className($options['className'], 'Model/Table', 'Table') ?: Table::class;
-
-        return ltrim($className, '\\');
     }
 
     /**

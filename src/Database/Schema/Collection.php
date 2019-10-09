@@ -56,7 +56,7 @@ class Collection implements CollectionInterface
     /**
      * Get the list of tables available in the current connection.
      *
-     * @return array The list of tables in the connected database/schema.
+     * @return string[] The list of tables in the connected database/schema.
      */
     public function listTables(): array
     {
@@ -95,7 +95,8 @@ class Collection implements CollectionInterface
         if (strpos($name, '.')) {
             [$config['schema'], $name] = explode('.', $name);
         }
-        $table = new TableSchema($name);
+        /** @var \Cake\Database\Schema\TableSchema $table */
+        $table = $this->_connection->getDriver()->newTableSchema($name);
 
         $this->_reflect('Column', $name, $config, $table);
         if (count($table->columns()) === 0) {
@@ -115,7 +116,7 @@ class Collection implements CollectionInterface
      * @param string $stage The stage name.
      * @param string $name The table name.
      * @param array $config The config data.
-     * @param \Cake\Database\Schema\TableSchema $schema The table instance
+     * @param \Cake\Database\Schema\TableSchema $schema The table schema instance.
      * @return void
      * @throws \Cake\Database\Exception on query failure.
      */

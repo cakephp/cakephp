@@ -44,7 +44,7 @@ class ViewTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.Posts', 'core.Users'];
+    protected $fixtures = ['core.Posts', 'core.Users'];
 
     /**
      * @var \Cake\View\View
@@ -242,7 +242,7 @@ class ViewTest extends TestCase
 
         $View = new TestView(null, null, null, $viewOptions);
         $paths = $View->paths();
-        $expected = array_merge(App::path('Template'), App::core('Template'));
+        $expected = array_merge(App::path('templates'), App::core('templates'));
         $this->assertEquals($expected, $paths);
 
         $paths = $View->paths('TestPlugin');
@@ -1388,14 +1388,14 @@ class ViewTest extends TestCase
     /**
      * Test setting a block's content to an object without __toString magic method
      *
-     * This should produce a "Object of class TestObjectWithoutToString could not be converted to string" error
-     * which gets thrown as a \PHPUnit\Framework\Error\Error Exception by PHPUnit.
-     *
      * @return void
      */
     public function testBlockSetObjectWithoutToString()
     {
-        $this->expectException(\PHPUnit\Framework\Error\Error::class);
+        $this->checkException(
+            'Object of class ' . TestObjectWithoutToString::class . ' could not be converted to string'
+        );
+
         $objectWithToString = new TestObjectWithoutToString();
         $this->View->assign('testWithObjectWithoutToString', $objectWithToString);
     }
@@ -1445,14 +1445,14 @@ class ViewTest extends TestCase
     /**
      * Test appending an object without __toString magic method to a block with append.
      *
-     * This should produce a "Object of class TestObjectWithoutToString could not be converted to string" error
-     * which gets thrown as a \PHPUnit\Framework\Error\Error     Exception by PHPUnit.
-     *
      * @return void
      */
     public function testBlockAppendObjectWithoutToString()
     {
-        $this->expectException(\PHPUnit\Framework\Error\Error::class);
+        $this->checkException(
+            'Object of class ' . TestObjectWithoutToString::class . ' could not be converted to string'
+        );
+
         $object = new TestObjectWithoutToString();
         $this->View->assign('testBlock', 'Block ');
         $this->View->append('testBlock', $object);
@@ -1478,14 +1478,14 @@ class ViewTest extends TestCase
     /**
      * Test prepending an object without __toString magic method to a block with prepend.
      *
-     * This should produce a "Object of class TestObjectWithoutToString could not be converted to string" error
-     * which gets thrown as a \PHPUnit\Framework\Error\Error Exception by PHPUnit.
-     *
      * @return void
      */
     public function testBlockPrependObjectWithoutToString()
     {
-        $this->expectException(\PHPUnit\Framework\Error\Error::class);
+        $this->checkException(
+            'Object of class ' . TestObjectWithoutToString::class . ' could not be converted to string'
+        );
+
         $object = new TestObjectWithoutToString();
         $this->View->assign('test', 'Block ');
         $this->View->prepend('test', $object);
@@ -1907,5 +1907,15 @@ TEXT;
 
         $this->assertSame($this->View, $this->View->setPlugin('TestPlugin'));
         $this->assertSame('TestPlugin', $this->View->getPlugin());
+    }
+
+    protected function checkException($message)
+    {
+        if (version_compare(PHP_VERSION, '7.4', '>=')) {
+            $this->expectException(\Error::class);
+        } else {
+            $this->expectException(\PHPUnit\Framework\Error\Error::class);
+        }
+        $this->expectExceptionMessage($message);
     }
 }

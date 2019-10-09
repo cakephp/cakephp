@@ -29,7 +29,7 @@ class TypeMap
      *
      * @var string[]
      */
-    protected $_defaults;
+    protected $_defaults = [];
 
     /**
      * Associative array with the fields and the related types that override defaults this query might contain

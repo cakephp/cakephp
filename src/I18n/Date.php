@@ -91,7 +91,7 @@ class Date extends MutableDate implements I18nDateTimeInterface
      * The format to use when formatting a time using `Date::timeAgoInWords()`
      * and the difference is less than `Date::$wordEnd`
      *
-     * @var array
+     * @var string[]
      * @see \Cake\I18n\Date::timeAgoInWords()
      */
     public static $wordAccuracy = [
@@ -120,7 +120,7 @@ class Date extends MutableDate implements I18nDateTimeInterface
      * timezone will always be UTC. Normalizing the timezone allows for
      * subtraction/addition to have deterministic results.
      *
-     * @param string|int|null|\DateTimeInterface $time Fixed or relative time
+     * @param string|int|\DateTimeInterface|null $time Fixed or relative time
      */
     public function __construct($time = 'now')
     {

@@ -120,9 +120,10 @@ class Validation
     }
 
     /**
-     * Checks that a string contains only integer or letters
+     * Checks that a string contains only integer or letters.
      *
-     * Returns true if string contains only integer or letters
+     * This method's definition of letters and integers includes unicode characters.
+     * Use `asciiAlphaNumeric()` if you want to exclude unicode.
      *
      * @param mixed $check Value to check
      * @return bool Success
@@ -134,6 +135,46 @@ class Validation
         }
 
         return self::_check($check, '/^[\p{Ll}\p{Lm}\p{Lo}\p{Lt}\p{Lu}\p{Nd}]+$/Du');
+    }
+
+    /**
+     * Checks that a doesn't contain any alpha numeric characters
+     *
+     * This method's definition of letters and integers includes unicode characters.
+     * Use `notAsciiAlphaNumeric()` if you want to exclude ascii only.
+     *
+     * @param mixed $check Value to check
+     * @return bool Success
+     */
+    public static function notAlphaNumeric($check): bool
+    {
+        return !static::alphaNumeric($check);
+    }
+
+    /**
+     * Checks that a string contains only ascii integer or letters.
+     *
+     * @param mixed $check Value to check
+     * @return bool Success
+     */
+    public static function asciiAlphaNumeric($check): bool
+    {
+        if ((empty($check) && $check !== '0') || !is_scalar($check)) {
+            return false;
+        }
+
+        return self::_check($check, '/^[[:alnum:]]+$/');
+    }
+
+    /**
+     * Checks that a doesn't contain any non-ascii alpha numeric characters
+     *
+     * @param mixed $check Value to check
+     * @return bool Success
+     */
+    public static function notAsciiAlphaNumeric($check): bool
+    {
+        return !static::asciiAlphaNumeric($check);
     }
 
     /**
@@ -359,6 +400,7 @@ class Validation
      * @param mixed $check Value to check
      * @param int $count Number of non-alphanumerics to check for
      * @return bool Success
+     * @deprecated 4.0 Use notAlphaNumeric() instead. Will be removed in 5.0
      */
     public static function containsNonAlphaNumeric($check, int $count = 1): bool
     {
@@ -768,13 +810,17 @@ class Validation
     public static function extension($check, array $extensions = ['gif', 'jpeg', 'png', 'jpg']): bool
     {
         if ($check instanceof UploadedFileInterface) {
-            return static::extension($check->getClientFilename(), $extensions);
+            $check = $check->getClientFilename();
+        } elseif (is_array($check) && isset($check['name'])) {
+            $check = $check['name'];
+        } elseif (is_array($check)) {
+            return static::extension(array_shift($check), $extensions);
         }
-        if (is_array($check)) {
-            $check = $check['name'] ?? array_shift($check);
 
-            return static::extension($check, $extensions);
+        if (empty($check)) {
+            return false;
         }
+
         $extension = strtolower(pathinfo($check, PATHINFO_EXTENSION));
         foreach ($extensions as $value) {
             if ($extension === strtolower($value)) {
@@ -1042,7 +1088,7 @@ class Validation
      * Checks if a value is in a given list. Comparison is case sensitive by default.
      *
      * @param mixed $check Value to check.
-     * @param array $list List to check against.
+     * @param string[] $list List to check against.
      * @param bool $caseInsensitive Set to true for case insensitive comparison.
      * @return bool Success.
      */
@@ -1100,7 +1146,7 @@ class Validation
         $length = strlen($check);
 
         for ($position = 1 - ($length % 2); $position < $length; $position += 2) {
-            $sum += $check[$position];
+            $sum += (int)$check[$position];
         }
 
         for ($position = $length % 2; $position < $length; $position += 2) {
@@ -1195,11 +1241,11 @@ class Validation
      * reported by the client.
      *
      * @param string|array|\Psr\Http\Message\UploadedFileInterface $check Value to check.
-     * @param string|null $operator See `Validation::comparison()`.
-     * @param int|string|null $size Size in bytes or human readable string like '5MB'.
+     * @param string $operator See `Validation::comparison()`.
+     * @param int|string $size Size in bytes or human readable string like '5MB'.
      * @return bool Success
      */
-    public static function fileSize($check, ?string $operator = null, $size = null): bool
+    public static function fileSize($check, string $operator, $size): bool
     {
         $file = static::getFilename($check);
         if ($file === false) {
@@ -1290,12 +1336,14 @@ class Validation
         if ($options['optional'] && $error === UPLOAD_ERR_NO_FILE) {
             return true;
         }
-        if (isset($options['minSize'])
+        if (
+            isset($options['minSize'])
             && !static::fileSize($file, static::COMPARE_GREATER_OR_EQUAL, $options['minSize'])
         ) {
             return false;
         }
-        if (isset($options['maxSize'])
+        if (
+            isset($options['maxSize'])
             && !static::fileSize($file, static::COMPARE_LESS_OR_EQUAL, $options['maxSize'])
         ) {
             return false;
@@ -1526,6 +1574,7 @@ class Validation
             return true;
         }
 
+        /** @var string $value */
         return (bool)preg_match('/^-?[0-9]+$/', $value);
     }
 
@@ -1576,7 +1625,8 @@ class Validation
      */
     public static function iban($check): bool
     {
-        if (!is_string($check) ||
+        if (
+            !is_string($check) ||
             !preg_match('/^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$/', $check)
         ) {
             return false;
@@ -1613,8 +1663,13 @@ class Validation
     protected static function _getDateString(array $value): string
     {
         $formatted = '';
-        if (isset($value['year'], $value['month'], $value['day']) &&
-            (is_numeric($value['year']) && is_numeric($value['month']) && is_numeric($value['day']))
+        if (
+            isset($value['year'], $value['month'], $value['day']) &&
+            (
+                is_numeric($value['year']) &&
+                is_numeric($value['month']) &&
+                is_numeric($value['day'])
+            )
         ) {
             $formatted .= sprintf('%d-%02d-%02d ', $value['year'], $value['month'], $value['day']);
         }

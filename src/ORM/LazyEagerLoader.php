@@ -88,14 +88,17 @@ class LazyEagerLoader
                 }
 
                 if (is_string($primaryKey)) {
+                    /** @var \Cake\Database\Expression\QueryExpression $exp */
                     return $exp->in($source->aliasField($primaryKey), $keys->toList());
                 }
 
+                /** @var \Cake\ORM\Query $q */
                 $types = array_intersect_key($q->getDefaultTypes(), array_flip($primaryKey));
                 $primaryKey = array_map([$source, 'aliasField'], $primaryKey);
 
                 return new TupleComparison($primaryKey, $keys->toList(), $types, 'IN');
             })
+            ->enableAutoFields()
             ->contain($contain);
 
         foreach ($query->getEagerLoader()->attachableAssociations($source) as $loadable) {
@@ -120,6 +123,7 @@ class LazyEagerLoader
         $map = [];
         $container = $source->associations();
         foreach ($associations as $assoc) {
+            /** @psalm-suppress PossiblyNullReference */
             $map[$assoc] = $container->get($assoc)->getProperty();
         }
 
@@ -131,7 +135,7 @@ class LazyEagerLoader
      * entities.
      *
      * @param \Cake\Datasource\EntityInterface[]|\Traversable $objects The original list of entities
-     * @param \Cake\Collection\CollectionInterface|\Cake\Database\Query $results The loaded results
+     * @param \Cake\Collection\CollectionInterface|\Cake\ORM\Query $results The loaded results
      * @param string[] $associations The top level associations that were loaded
      * @param \Cake\ORM\Table $source The table where the entities came from
      * @return array

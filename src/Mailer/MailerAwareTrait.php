@@ -24,7 +24,7 @@ use Cake\Mailer\Exception\MissingMailerException;
  * onto properties of the host object.
  *
  * Example users of this trait are Cake\Controller\Controller and
- * Cake\Console\Shell.
+ * Cake\Console\Command.
  */
 trait MailerAwareTrait
 {
@@ -32,21 +32,17 @@ trait MailerAwareTrait
      * Returns a mailer instance.
      *
      * @param string $name Mailer's name.
-     * @param \Cake\Mailer\Email|null $email Email instance.
+     * @param array|string|null $config Array of configs, or profile name string.
      * @return \Cake\Mailer\Mailer
      * @throws \Cake\Mailer\Exception\MissingMailerException if undefined mailer class.
      */
-    protected function getMailer(string $name, ?Email $email = null): Mailer
+    protected function getMailer(string $name, $config = null): Mailer
     {
-        if ($email === null) {
-            $email = new Email();
-        }
-
         $className = App::className($name, 'Mailer', 'Mailer');
         if ($className === null) {
             throw new MissingMailerException(compact('name'));
         }
 
-        return new $className($email);
+        return new $className($config);
     }
 }

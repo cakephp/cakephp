@@ -13,19 +13,15 @@ parameters:
         - '#Access to an undefined property Exception::\$queryString#'
         - '#Access to an undefined property PHPUnit\\Framework\\Test::\$fixtureManager#'
         - '#Call to an undefined method Traversable::getArrayCopy().#'
-        - '#Cannot call method lastInsertId\(\) on null#'
         - '#Access to an undefined property Cake\\Mailer\\Renderer::\$request#'
         - '#Access to an undefined property Cake\\Mailer\\Renderer::\$response#'
         - '#Call to an undefined method Cake\\Auth\\Storage\\StorageInterface::getConfig\(\)#'
         - '#Call to an undefined method Cake\\Auth\\Storage\\StorageInterface::setConfig\(\)#'
         - '#Variable \$_SESSION in isset\(\) always exists and is not nullable#'
-        - '#PHPDoc tag @throws with type PHPUnit\\Exception|Throwable is not subtype of Throwable#'
         - '#Call to an undefined method Cake\\Chronos\\DifferenceFormatterInterface::dateAgoInWords\(\)#'
         - '#Call to an undefined method Cake\\Chronos\\DifferenceFormatterInterface::timeAgoInWords\(\)#'
         - '#Return type \(void\) of method Cake\\Shell\\[A-Za-z]+Shell::main\(\) should be compatible with return type \(bool|int|null\) of method Cake\\Console\\Shell::main\(\)#'
-        - '#Return type \(null\) of method Cake\\Collection\\Iterator\\NoChildrenIterator::getChildren\(\) should be compatible with return type \(RecursiveIterator\) of method RecursiveIterator::getChildren\(\)#'
         - '#Call to an undefined method DateTimeInterface::setTimezone\(\)#'
-        - '#Parameter \#1 \$filename of function fopen expects string, resource given.#'
         - '#Parameter \#1 \$it of method AppendIterator::append\(\) expects Iterator, Traversable given.#'
         - '#Parameter \#1 \$it of class .+Iterator constructor expects Iterator, Traversable given.#'
         - '#Parameter \#1 \$assoc of method Cake\\ORM\\Marshaller::_belongsToMany\(\) expects .+BelongsToMany, Cake\\ORM\\Association given.#'
@@ -35,9 +31,8 @@ parameters:
         - '#Property Cake\\Controller\\Controller::\$response \(Cake\\Http\\Response\) does not accept Psr\\Http\\Message\\ResponseInterface#'
         - "#Parameter \\#2 \\$callback of function array_filter expects callable\\(mixed, mixed\\): bool, 'strlen' given.#"
         - '#Parameter \#1 \$autoload_function of function spl_autoload_register expects#'
-        -
-            message: '#Right side of && is always false#'
-            path: 'src/Cache/Engine/MemcachedEngine.php'
+        - '#Property Cake\\TestSuite\\ConsoleIntegrationTestCase::\$_[a-z]+ \(Cake\\TestSuite\\Stub\\ConsoleOutput\) does not accept null#'
+        - '#Parameter \#1 \$request of static method Cake\\Routing\\Router::(set|parse)Request\(\) expects Cake\\Http\\ServerRequest, Psr\\Http\\Message\\ServerRequestInterface given#'
         -
             message: '#Call to function method_exists\(\) with string and [^ ]+ will always evaluate to false#'
             path: 'src/Controller/Component/AuthComponent.php'
@@ -77,6 +72,41 @@ parameters:
         -
             message: '#Parameter \#1 \$connection of method Cake\\Database\\Schema\\SqlGeneratorInterface::(create|drop|truncate)Sql\(\) expects Cake\\Database\\Connection, Cake\\Datasource\\ConnectionInterface given#'
             path: 'src/TestSuite/Fixture/TestFixture.php'
+        -
+            message: '#Method Cake\\View\\HelperRegistry::__get\(\) should return Cake\\View\\Helper|null but returns object#'
+            path: 'src/View/HelperRegistry.php'
+        -
+            message: '#Property Cake\\Database\\Driver::\$_connection \(PDO\) does not accept null#'
+            path: 'src/Database/Driver.php'
+        -
+            message: '#If condition is always true#'
+            paths:
+                - 'src/Database/Driver/Mysql.php'
+                - 'src/Database/Driver/Postgres.php'
+                - 'src/Database/Driver/Sqlite.php'
+                - 'src/Database/Driver/Sqlserver.php'
+        -
+            message: '#Cake\\Database\\Statement\\PDOStatement::__construct\(\) does not call parent constructor from Cake\\Database\\Statement\\StatementDecorator#'
+            path: 'src/Database/Statement/PDOStatement.php'
+        -
+            message: '#Cake\\Database\\Expression\\TupleComparison::__construct\(\) does not call parent constructor from Cake\\Database\\Expression\\Comparison#'
+            path: 'src/Database/Expression/TupleComparison.php'
+        -
+            message: '#Property Cake\\TestSuite\\IntegrationTestCase::\$_[a-zA-z]+ \([a-zA-Z\\]+\) does not accept null#'
+            path: 'src/TestSuite/IntegrationTestTrait.php'
+        -
+            message: '#Property Cake\\TestSuite\\ConsoleIntegrationTestCase::\$_[a-zA-z]+ \([a-zA-Z\\]+\) does not accept null#'
+            path: 'src/TestSuite/ConsoleIntegrationTestTrait.php'
+        -
+            message: '#Negated boolean expression is always false#'
+            path: 'src/TestSuite/IntegrationTestTrait.php'
+        -
+            message: '#Ternary operator condition is always true#'
+            path: 'src/TestSuite/IntegrationTestTrait.php'
+        -
+            message: '#Strict comparison using === between array|string and null will always evaluate to false#'
+            path: 'src/Console/ConsoleIo.php'
+
     earlyTerminatingMethodCalls:
         Cake\Console\Shell:
             - abort

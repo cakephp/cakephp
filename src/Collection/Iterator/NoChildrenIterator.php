@@ -37,12 +37,12 @@ class NoChildrenIterator extends Collection implements RecursiveIterator
     }
 
     /**
-     * Returns null as there are no children for this iteration level
+     * Returns a self instance without any elements.
      *
-     * @return null
+     * @return \RecursiveIterator
      */
     public function getChildren()
     {
-        return null;
+        return new static([]);
     }
 }

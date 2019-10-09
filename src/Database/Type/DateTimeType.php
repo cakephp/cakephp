@@ -93,9 +93,11 @@ class DateTimeType extends BaseType
     protected $dbTimezone;
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * @param string|null $name The name identifying this type
      */
-    public function __construct($name = null)
+    public function __construct(?string $name = null)
     {
         parent::__construct($name);
 
@@ -105,7 +107,7 @@ class DateTimeType extends BaseType
     /**
      * Convert DateTime instance into strings.
      *
-     * @param string|int|\DateTime|\DateTimeImmutable $value The value to convert.
+     * @param mixed $value The value to convert.
      * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
      * @return string|null
      */
@@ -121,7 +123,8 @@ class DateTimeType extends BaseType
 
         $format = (array)$this->_format;
 
-        if ($this->dbTimezone !== null
+        if (
+            $this->dbTimezone !== null
             && $this->dbTimezone->getName() !== $value->getTimezone()->getName()
         ) {
             if (!$value instanceof DateTimeImmutable) {
@@ -158,18 +161,26 @@ class DateTimeType extends BaseType
     /**
      * Convert strings into DateTime instances.
      *
-     * @param string|int|null $value The value to convert.
+     * @param mixed $value The value to convert.
      * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
      * @return \Cake\I18n\Time|\DateTime|null
      */
     public function toPHP($value, DriverInterface $driver)
     {
-        if ($value === null || strpos($value, '0000-00-00') === 0) {
+        if ($value === null) {
             return null;
         }
 
         $instance = clone $this->_datetimeInstance;
-        $instance = $instance->modify($value);
+        if (is_int($value)) {
+            $instance = $instance->setTimestamp($value);
+        } else {
+            if (strpos($value, '0000-00-00') === 0) {
+                return null;
+            }
+            $instance = $instance->modify($value);
+        }
+
         if ($instance->getTimezone()->getName() !== date_default_timezone_get()) {
             $instance = $instance->setTimezone(new DateTimeZone(date_default_timezone_get()));
         }
@@ -259,8 +270,13 @@ class DateTimeType extends BaseType
         $value += ['hour' => 0, 'minute' => 0, 'second' => 0];
 
         $format = '';
-        if (isset($value['year'], $value['month'], $value['day']) &&
-            (is_numeric($value['year']) && is_numeric($value['month']) && is_numeric($value['day']))
+        if (
+            isset($value['year'], $value['month'], $value['day']) &&
+            (
+                is_numeric($value['year']) &&
+                is_numeric($value['month']) &&
+                is_numeric($value['day'])
+            )
         ) {
             $format .= sprintf('%d-%02d-%02d', $value['year'], $value['month'], $value['day']);
         }

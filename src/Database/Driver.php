@@ -18,7 +18,9 @@ namespace Cake\Database;
 
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Schema\BaseSchema;
+use Cake\Database\Schema\TableSchema;
 use Cake\Database\Statement\PDOStatement;
+use Closure;
 use InvalidArgumentException;
 use PDO;
 use PDOException;
@@ -32,7 +34,7 @@ abstract class Driver implements DriverInterface
     /**
      * Instance of PDO.
      *
-     * @var \PDO|null
+     * @var \PDO
      */
     protected $_connection;
 
@@ -109,6 +111,7 @@ abstract class Driver implements DriverInterface
      */
     public function disconnect(): void
     {
+        /** @psalm-suppress PossiblyNullPropertyAssignmentValue */
         $this->_connection = null;
     }
 
@@ -131,6 +134,7 @@ abstract class Driver implements DriverInterface
      *
      * @param \PDO $connection PDO instance.
      * @return $this
+     * @psalm-suppress MoreSpecificImplementedParamType
      */
     public function setConnection($connection)
     {
@@ -150,8 +154,7 @@ abstract class Driver implements DriverInterface
     public function prepare($query): StatementInterface
     {
         $this->connect();
-        $isObject = $query instanceof Query;
-        $statement = $this->_connection->prepare($isObject ? $query->sql() : $query);
+        $statement = $this->_connection->prepare($query instanceof Query ? $query->sql() : $query);
 
         return new PDOStatement($statement, $this);
     }
@@ -234,9 +237,13 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * @param mixed $value The value to quote.
+     * @param int $type Type to be used for determining kind of quoting to perform.
+     * @return string
      */
-    public function quote($value, $type): string
+    public function quote($value, $type = PDO::PARAM_STR): string
     {
         $this->connect();
 
@@ -258,7 +265,7 @@ abstract class Driver implements DriverInterface
     /**
      * @inheritDoc
      */
-    abstract public function queryTranslator(string $type): callable;
+    abstract public function queryTranslator(string $type): Closure;
 
     /**
      * @inheritDoc
@@ -287,9 +294,18 @@ abstract class Driver implements DriverInterface
         if (is_float($value)) {
             return str_replace(',', '.', (string)$value);
         }
-        if ((is_int($value) || $value === '0') || (
-            is_numeric($value) && strpos($value, ',') === false &&
-            substr($value, 0, 1) !== '0' && strpos($value, 'e') === false)
+        /** @psalm-suppress InvalidArgument */
+        if (
+            (
+                is_int($value) ||
+                $value === '0'
+            ) ||
+            (
+                is_numeric($value) &&
+                strpos($value, ',') === false &&
+                substr($value, 0, 1) !== '0' &&
+                strpos($value, 'e') === false
+            )
         ) {
             return (string)$value;
         }
@@ -328,13 +344,13 @@ abstract class Driver implements DriverInterface
             $connected = false;
         } else {
             try {
-                $connected = $this->_connection->query('SELECT 1');
+                $connected = (bool)$this->_connection->query('SELECT 1');
             } catch (PDOException $e) {
                 $connected = false;
             }
         }
 
-        return (bool)$connected;
+        return $connected;
     }
 
     /**
@@ -342,7 +358,7 @@ abstract class Driver implements DriverInterface
      */
     public function enableAutoQuoting(bool $enable = true)
     {
-        $this->_autoQuoting = (bool)$enable;
+        $this->_autoQuoting = $enable;
 
         return $this;
     }
@@ -386,10 +402,25 @@ abstract class Driver implements DriverInterface
     }
 
     /**
+     * @inheritDoc
+     */
+    public function newTableSchema(string $table, array $columns = []): TableSchema
+    {
+        $className = TableSchema::class;
+        if (isset($this->_config['tableSchema'])) {
+            $className = $this->_config['tableSchema'];
+        }
+
+        /** @var \Cake\Database\Schema\TableSchema */
+        return new $className($table, $columns);
+    }
+
+    /**
      * Destructor
      */
     public function __destruct()
     {
+        /** @psalm-suppress PossiblyNullPropertyAssignmentValue */
         $this->_connection = null;
     }
 

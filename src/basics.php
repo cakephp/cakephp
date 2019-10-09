@@ -18,16 +18,13 @@ declare(strict_types=1);
 use Cake\Core\Configure;
 use Cake\Error\Debugger;
 
-    /**
-     * Basic defines for timing functions.
-     */
-    define('SECOND', 1);
-    define('MINUTE', 60);
-    define('HOUR', 3600);
-    define('DAY', 86400);
-    define('WEEK', 604800);
-    define('MONTH', 2592000);
-    define('YEAR', 31536000);
+define('SECOND', 1);
+define('MINUTE', 60);
+define('HOUR', 3600);
+define('DAY', 86400);
+define('WEEK', 604800);
+define('MONTH', 2592000);
+define('YEAR', 31536000);
 
 if (!function_exists('debug')) {
     /**
@@ -42,7 +39,6 @@ if (!function_exists('debug')) {
      * @return mixed The same $var that was passed
      * @link https://book.cakephp.org/3.0/en/development/debugging.html#basic-debugging
      * @link https://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#debug
-     * @psalm-suppress MissingReturnType
      */
     function debug($var, $showHtml = null, $showFrom = true)
     {
@@ -78,9 +74,9 @@ if (!function_exists('stackTrace')) {
      * - `start` - The stack frame to start generating a trace from. Defaults to 1
      *
      * @param array $options Format for outputting stack trace
-     * @return mixed Formatted stack trace
+     * @return void
      */
-    function stackTrace(array $options = [])
+    function stackTrace(array $options = []): void
     {
         if (!Configure::read('debug')) {
             return;
@@ -88,7 +84,10 @@ if (!function_exists('stackTrace')) {
 
         $options += ['start' => 0];
         $options['start']++;
-        echo Debugger::trace($options);
+
+        /** @var string $trace */
+        $trace = Debugger::trace($options);
+        echo $trace;
     }
 
 }
@@ -104,7 +103,7 @@ if (!function_exists('breakpoint')) {
      * ```
      * @return string|null
      */
-    function breakpoint()
+    function breakpoint(): ?string
     {
         if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') && class_exists('\Psy\Shell')) {
             return 'extract(\Psy\Shell::debug(get_defined_vars(), isset($this) ? $this : null));';
@@ -113,6 +112,8 @@ if (!function_exists('breakpoint')) {
             'psy/psysh must be installed and you must be in a CLI environment to use the breakpoint function',
             E_USER_WARNING
         );
+
+        return null;
     }
 }
 
@@ -128,7 +129,7 @@ if (!function_exists('dd')) {
      * @return void
      * @link https://book.cakephp.org/3.0/en/development/debugging.html#basic-debugging
      */
-    function dd($var, $showHtml = null)
+    function dd($var, $showHtml = null): void
     {
         if (!Configure::read('debug')) {
             return;

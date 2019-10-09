@@ -32,7 +32,7 @@ class RulesCheckerIntegrationTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = [
+    protected $fixtures = [
         'core.Articles', 'core.ArticlesTags', 'core.Authors', 'core.Tags',
         'core.SpecialTags', 'core.Categories', 'core.SiteArticles', 'core.SiteAuthors',
         'core.Comments',
@@ -418,10 +418,7 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table = $this->getTableLocator()->get('SpecialTags');
         $rules = $table->rulesChecker();
-        $rules->add($rules->isUnique(['author_id'], [
-            'allowMultipleNulls' => false,
-            'message' => 'All fields are required',
-        ]));
+        $rules->add($rules->isUnique(['author_id'], 'All fields are required'));
 
         $this->assertFalse($table->save($entity));
         $this->assertEquals(['_isUnique' => 'All fields are required'], $entity->getError('author_id'));
@@ -450,10 +447,7 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table = $this->getTableLocator()->get('SpecialTags');
         $rules = $table->rulesChecker();
-        $rules->add($rules->isUnique(['author_id', 'article_id'], [
-            'allowMultipleNulls' => false,
-            'message' => 'Nope',
-        ]));
+        $rules->add($rules->isUnique(['author_id', 'article_id'], 'Nope'));
 
         $this->assertFalse($table->save($entity));
         $this->assertEquals(['author_id' => ['_isUnique' => 'Nope']], $entity->getErrors());

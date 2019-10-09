@@ -61,9 +61,14 @@ class SqliteSchema extends BaseSchema
         }
 
         $col = strtolower($matches[2]);
-        $length = null;
+        $length = $precision = null;
         if (isset($matches[3])) {
-            $length = (int)$matches[3];
+            $length = $matches[3];
+            if (strpos($length, ',') !== false) {
+                [$length, $precision] = explode(',', $length);
+            }
+            $length = (int)$length;
+            $precision = (int)$precision;
         }
 
         if ($col === 'bigint') {
@@ -79,10 +84,20 @@ class SqliteSchema extends BaseSchema
             return ['type' => TableSchema::TYPE_INTEGER, 'length' => $length, 'unsigned' => $unsigned];
         }
         if (strpos($col, 'decimal') !== false) {
-            return ['type' => TableSchema::TYPE_DECIMAL, 'length' => null, 'unsigned' => $unsigned];
+            return [
+                'type' => TableSchema::TYPE_DECIMAL,
+                'length' => $length,
+                'precision' => $precision,
+                'unsigned' => $unsigned,
+            ];
         }
         if (in_array($col, ['float', 'real', 'double'])) {
-            return ['type' => TableSchema::TYPE_FLOAT, 'length' => null, 'unsigned' => $unsigned];
+            return [
+                'type' => TableSchema::TYPE_FLOAT,
+                'length' => $length,
+                'precision' => $precision,
+                'unsigned' => $unsigned,
+            ];
         }
 
         if (strpos($col, 'boolean') !== false) {
@@ -157,6 +172,7 @@ class SqliteSchema extends BaseSchema
         // SQLite does not support autoincrement on composite keys.
         if ($row['pk'] && !empty($primary)) {
             $existingColumn = $primary['columns'][0];
+            /** @psalm-suppress PossiblyNullOperand */
             $schema->addColumn($existingColumn, ['autoIncrement' => null] + $schema->getColumn($existingColumn));
         }
 
@@ -316,8 +332,10 @@ class SqliteSchema extends BaseSchema
             TableSchema::TYPE_DECIMAL,
         ];
 
-        if (in_array($data['type'], $hasUnsigned, true) &&
-            isset($data['unsigned']) && $data['unsigned'] === true
+        if (
+            in_array($data['type'], $hasUnsigned, true) &&
+            isset($data['unsigned']) &&
+            $data['unsigned'] === true
         ) {
             if ($data['type'] !== TableSchema::TYPE_INTEGER || (array)$schema->primaryKey() !== [$name]) {
                 $out .= ' UNSIGNED';
@@ -336,8 +354,12 @@ class SqliteSchema extends BaseSchema
             $out .= '(' . $data['length'] . ')';
         }
 
-        if ($data['type'] === TableSchema::TYPE_STRING ||
-            ($data['type'] === TableSchema::TYPE_TEXT && $data['length'] === TableSchema::LENGTH_TINY)
+        if (
+            $data['type'] === TableSchema::TYPE_STRING ||
+            (
+                $data['type'] === TableSchema::TYPE_TEXT &&
+                $data['length'] === TableSchema::LENGTH_TINY
+            )
         ) {
             $out .= ' VARCHAR';
 
@@ -359,15 +381,21 @@ class SqliteSchema extends BaseSchema
             TableSchema::TYPE_SMALLINTEGER,
             TableSchema::TYPE_INTEGER,
         ];
-        if (in_array($data['type'], $integerTypes, true) &&
-            isset($data['length']) && (array)$schema->primaryKey() !== [$name]
+        if (
+            in_array($data['type'], $integerTypes, true) &&
+            isset($data['length']) &&
+            (array)$schema->primaryKey() !== [$name]
         ) {
-                $out .= '(' . $data['length'] . ')';
+            $out .= '(' . (int)$data['length'] . ')';
         }
 
         $hasPrecision = [TableSchema::TYPE_FLOAT, TableSchema::TYPE_DECIMAL];
-        if (in_array($data['type'], $hasPrecision, true) &&
-            (isset($data['length']) || isset($data['precision']))
+        if (
+            in_array($data['type'], $hasPrecision, true) &&
+            (
+                isset($data['length']) ||
+                isset($data['precision'])
+            )
         ) {
             $out .= '(' . (int)$data['length'] . ',' . (int)$data['precision'] . ')';
         }
@@ -401,7 +429,9 @@ class SqliteSchema extends BaseSchema
     {
         /** @var array $data */
         $data = $schema->getConstraint($name);
-        if ($data['type'] === TableSchema::CONSTRAINT_PRIMARY &&
+        /** @psalm-suppress PossiblyNullArrayAccess */
+        if (
+            $data['type'] === TableSchema::CONSTRAINT_PRIMARY &&
             count($data['columns']) === 1 &&
             $schema->getColumn($data['columns'][0])['type'] === TableSchema::TYPE_INTEGER
         ) {

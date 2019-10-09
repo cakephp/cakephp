@@ -64,10 +64,10 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      *
      * @param string $field the field to set or check status for
      * @param bool $isDirty true means the field was changed, false means
-     * it was not changed
+     * it was not changed. Default true.
      * @return $this
      */
-    public function setDirty(string $field, bool $isDirty);
+    public function setDirty(string $field, bool $isDirty = true);
 
     /**
      * Checks if the entity is dirty or if a single field of it is dirty.
@@ -110,11 +110,11 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     /**
      * Sets error messages to the entity
      *
-     * @param array $fields The array of errors to set.
+     * @param array $errors The array of errors to set.
      * @param bool $overwrite Whether or not to overwrite pre-existing errors for $fields
      * @return $this
      */
-    public function setErrors(array $fields, bool $overwrite = false);
+    public function setErrors(array $errors, bool $overwrite = false);
 
     /**
      * Sets errors for a single field
@@ -163,7 +163,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * Returns an array with the requested original fields
      * stored in this entity, indexed by field name.
      *
-     * @param array $fields List of fields to be returned
+     * @param string[] $fields List of fields to be returned
      * @return array
      */
     public function extractOriginal(array $fields): array;
@@ -172,7 +172,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * Returns an array with only the original fields
      * stored in this entity, indexed by field name.
      *
-     * @param array $fields List of fields to be returned
+     * @param string[] $fields List of fields to be returned
      * @return array
      */
     public function extractOriginalChanged(array $fields): array;
@@ -197,6 +197,21 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * @return mixed
      */
     public function &get(string $field);
+
+    /**
+     * Returns the original value of a field.
+     *
+     * @param string $field The name of the field.
+     * @return mixed
+     */
+    public function getOriginal(string $field);
+
+    /**
+     * Gets all original values of the entity.
+     *
+     * @return array
+     */
+    public function getOriginalValues(): array;
 
     /**
      * Returns whether this entity contains a field named $field
@@ -252,17 +267,20 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     public function clean(): void;
 
     /**
-     * Returns whether or not this entity has already been persisted.
-     * This method can return null in the case there is no prior information on
-     * the status of this entity.
+     * Set the status of this entity.
      *
-     * If called with a boolean, this method will set the status of this instance.
-     * Using `true` means that the instance has not been persisted in the database, `false`
-     * that it already is.
+     * Using `true` means that the entity has not been persisted in the database,
+     * `false` indicates that the entity has been persisted.
      *
-     * @param bool|null $new Indicate whether or not this instance has been persisted.
-     * @return bool If it is known whether the entity was already persisted
-     * null otherwise
+     * @param bool $new Indicate whether or not this entity has been persisted.
+     * @return $this
      */
-    public function isNew(?bool $new = null): bool;
+    public function setNew(bool $new);
+
+    /**
+     * Returns whether or not this entity has already been persisted.
+     *
+     * @return bool Whether or not the entity has been persisted.
+     */
+    public function isNew(): bool;
 }

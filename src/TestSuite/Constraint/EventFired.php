@@ -57,7 +57,9 @@ class EventFired extends Constraint
      */
     public function matches($other): bool
     {
-        return $this->_eventManager->getEventList()->hasEvent($other);
+        $list = $this->_eventManager->getEventList();
+
+        return $list === null ? false : $list->hasEvent($other);
     }
 
     /**

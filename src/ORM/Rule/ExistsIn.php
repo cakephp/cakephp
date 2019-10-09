@@ -133,7 +133,9 @@ class ExistsIn
         }
 
         $primary = array_map(
-            [$target, 'aliasField'],
+            function ($key) use ($target) {
+                return $target->aliasField($key) . ' IS';
+            },
             $bindingKey
         );
         $conditions = array_combine(

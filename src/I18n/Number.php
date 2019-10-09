@@ -116,12 +116,12 @@ class Number
      */
     public static function toPercentage($value, int $precision = 2, array $options = []): string
     {
-        $options += ['multiply' => false];
-        if ($options['multiply']) {
-            $value *= 100;
+        $options += ['multiply' => false, 'type' => NumberFormatter::PERCENT];
+        if (!$options['multiply']) {
+            $value /= 100;
         }
 
-        return static::precision($value, $precision, $options) . '%';
+        return static::precision($value, $precision, $options);
     }
 
     /**
@@ -234,10 +234,15 @@ class Number
             return static::format($value, ['precision' => 0, $pos => $options['fractionSymbol']]);
         }
 
-        $before = $options['before'] ?? null;
-        $after = $options['after'] ?? null;
+        $before = $options['before'] ?? '';
+        $after = $options['after'] ?? '';
+        if ($currency) {
+            $value = $formatter->formatCurrency($value, $currency);
+        } else {
+            $formatter->format($value, NumberFormatter::TYPE_CURRENCY);
+        }
 
-        return $before . $formatter->formatCurrency($value, $currency) . $after;
+        return $before . $value . $after;
     }
 
     /**
@@ -251,7 +256,6 @@ class Number
     public static function defaultCurrency($currency = null): ?string
     {
         if (!empty($currency)) {
-            /** @psalm-suppress InvalidReturnStatement */
             return self::$_defaultCurrency = $currency;
         }
 

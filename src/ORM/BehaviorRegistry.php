@@ -29,6 +29,8 @@ use LogicException;
  * and constructing behavior objects.
  *
  * This class also provides method for checking and dispatching behavior methods.
+ *
+ * @extends \Cake\Core\ObjectRegistry<\Cake\ORM\Behavior>
  */
 class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterface
 {
@@ -134,6 +136,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      * @param string $alias The alias of the object.
      * @param array $config An array of config to use for the behavior.
      * @return \Cake\ORM\Behavior The constructed behavior class.
+     * @psalm-suppress MoreSpecificImplementedParamType
      */
     protected function _create($class, string $alias, array $config): Behavior
     {
@@ -258,10 +261,10 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      *
      * @param string $type The finder type to invoke.
      * @param array $args The arguments you want to invoke the method with.
-     * @return mixed The return value depends on the underlying behavior method.
+     * @return \Cake\ORM\Query The return value depends on the underlying behavior method.
      * @throws \BadMethodCallException When the method is unknown.
      */
-    public function callFinder(string $type, array $args = [])
+    public function callFinder(string $type, array $args = []): Query
     {
         $type = strtolower($type);
 

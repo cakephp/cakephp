@@ -19,7 +19,9 @@ namespace Cake\View;
 use Cake\Event\EventManager;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use RuntimeException;
+use Cake\View\Exception\SerializationFailureException;
+use Exception;
+use TypeError;
 
 /**
  * Parent class for view classes generating serialized outputs like JsonView and XmlView.
@@ -43,7 +45,8 @@ abstract class SerializedView extends View
      *   names. If true all view variables will be serialized. If null or false
      *   normal view template will be rendered.
      *
-     * @var array{serialize:string|bool|null}
+     * @var array
+     * @psalm-var array{serialize:string|bool|null}
      */
     protected $_defaultConfig = [
         'serialize' => null,
@@ -89,16 +92,17 @@ abstract class SerializedView extends View
      *
      * @param array|string $serialize The name(s) of the view variable(s) that
      *   need(s) to be serialized
-     * @return string|false The serialized data or false.
+     * @return string The serialized data.
      */
-    abstract protected function _serialize($serialize);
+    abstract protected function _serialize($serialize): string;
 
     /**
      * Render view template or return serialized data.
      *
      * @param string|null $template The template being rendered.
-     * @param string|null|false $layout The layout being rendered.
+     * @param string|false|null $layout The layout being rendered.
      * @return string The rendered view.
+     * @throws \Cake\View\Exception\SerializationFailureException When serialization fails.
      */
     public function render(?string $template = null, $layout = null): string
     {
@@ -118,12 +122,15 @@ abstract class SerializedView extends View
             );
         }
         if ($serialize !== false) {
-            $result = $this->_serialize($serialize);
-            if ($result === false) {
-                throw new RuntimeException('Serialization of View data failed.');
+            try {
+                return $this->_serialize($serialize);
+            } catch (Exception | TypeError $e) {
+                throw new SerializationFailureException(
+                    'Serialization of View data failed.',
+                    null,
+                    $e
+                );
             }
-
-            return $result;
         }
 
         return parent::render($template, false);

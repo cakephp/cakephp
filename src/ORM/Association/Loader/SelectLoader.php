@@ -297,7 +297,6 @@ class SelectLoader
         }
         $subquery->select($filter, true);
 
-        $conditions = null;
         if (is_array($key)) {
             $conditions = $this->_createTupleCondition($query, $key, $filter, '=');
         } else {
@@ -324,9 +323,9 @@ class SelectLoader
     {
         if (is_array($key)) {
             $conditions = $this->_createTupleCondition($query, $key, $filter, 'IN');
+        } else {
+            $conditions = [$key . ' IN' => $filter];
         }
-
-        $conditions = $conditions ?? [$key . ' IN' => $filter];
 
         return $query->andWhere($conditions);
     }
@@ -527,7 +526,7 @@ class SelectLoader
      * be done with multiple foreign keys
      *
      * @param array $resultMap A keyed arrays containing the target table
-     * @param array $sourceKeys An array with aliased keys to match
+     * @param string[] $sourceKeys An array with aliased keys to match
      * @param string $nestKey The key under which results should be nested
      * @return \Closure
      */

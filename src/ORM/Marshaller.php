@@ -383,7 +383,6 @@ class Marshaller
         $primaryKey = array_flip((array)$target->getPrimaryKey());
         $records = $conditions = [];
         $primaryCount = count($primaryKey);
-        $conditions = [];
 
         foreach ($data as $i => $row) {
             if (!is_array($row)) {
@@ -562,9 +561,20 @@ class Marshaller
                 // change. Arrays will always be marked as dirty because
                 // the original/updated list could contain references to the
                 // same objects, even though those objects may have changed internally.
-                if ((is_scalar($value) && $original === $value) ||
-                    ($value === null && $original === $value) ||
-                    (is_object($value) && !($value instanceof EntityInterface) && $original === $value)
+                if (
+                    (
+                        is_scalar($value)
+                        && $original === $value
+                    )
+                    || (
+                        $value === null
+                        && $original === $value
+                    )
+                    || (
+                        is_object($value)
+                        && !($value instanceof EntityInterface)
+                        && $original === $value
+                    )
                 ) {
                     continue;
                 }
@@ -649,6 +659,7 @@ class Marshaller
             ->toArray();
 
         $new = $indexed[null] ?? [];
+        /** @psalm-suppress PossiblyNullArrayOffset */
         unset($indexed[null]);
         $output = [];
 
@@ -724,9 +735,11 @@ class Marshaller
         $types = [Association::ONE_TO_ONE, Association::MANY_TO_ONE];
         $type = $assoc->type();
         if (in_array($type, $types, true)) {
+            /** @var \Cake\Datasource\EntityInterface $original */
             return $marshaller->merge($original, $value, (array)$options);
         }
         if ($type === Association::MANY_TO_MANY) {
+            /** @var \Cake\Datasource\EntityInterface[] $original */
             return $marshaller->_mergeBelongsToMany($original, $assoc, $value, (array)$options);
         }
 
@@ -741,6 +754,7 @@ class Marshaller
             }
         }
 
+        /** @var \Cake\Datasource\EntityInterface[] $original */
         return $marshaller->mergeMany($original, $value, (array)$options);
     }
 
@@ -768,7 +782,7 @@ class Marshaller
             return [];
         }
 
-        if (!empty($associated) && !in_array('_joinData', $associated) && !isset($associated['_joinData'])) {
+        if (!empty($associated) && !in_array('_joinData', $associated, true) && !isset($associated['_joinData'])) {
             return $this->mergeMany($original, $value, $options);
         }
 

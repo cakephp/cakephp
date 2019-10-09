@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite\Constraint\Email;
 
-use Cake\Mailer\Email;
+use Cake\Mailer\Message;
 
 /**
  * MailContainsText
@@ -25,7 +25,10 @@ use Cake\Mailer\Email;
  */
 class MailContainsText extends MailContains
 {
-    protected $type = Email::MESSAGE_TEXT;
+    /**
+     * @inheritDoc
+     */
+    protected $type = Message::MESSAGE_TEXT;
 
     /**
      * Assertion message string
