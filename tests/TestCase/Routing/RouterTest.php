@@ -386,6 +386,9 @@ class RouterTest extends TestCase
         $result = Router::url('/articles/');
         $this->assertSame('/magazine/articles/', $result);
 
+        $result = Router::url('/articles::index');
+        $this->assertSame('/magazine/articles::index', $result);
+
         $result = Router::url('/articles/view');
         $this->assertSame('/magazine/articles/view', $result);
 
@@ -3157,26 +3160,36 @@ class RouterTest extends TestCase
             ],
             'url' => '/admin/articles/edit/3',
         ]);
-        Router::setRequestInfo($request);
+        Router::setRequest($request);
 
-        $result = Router::url('Articles::index');
         $expected = '/articles';
+        $result = Router::url('Articles::index');
+        $this->assertEquals($result, $expected);
+        $result = Router::url(['_path' => 'Articles::index']);
         $this->assertEquals($result, $expected);
 
-        $result = Router::url('Articles::view', [3]);
         $expected = '/articles/view/3';
+        $result = Router::url('Articles::view', [3]);
+        $this->assertEquals($result, $expected);
+        $result = Router::url(['_path' => 'Articles::view', 3]);
         $this->assertEquals($result, $expected);
 
-        $result = Router::url('Admin/Articles::index');
         $expected = '/admin/articles';
+        $result = Router::url('Admin/Articles::index');
+        $this->assertEquals($result, $expected);
+        $result = Router::url(['_path' => 'Admin/Articles::index']);
         $this->assertEquals($result, $expected);
 
-        $result = Router::url('Cms.Admin/Articles::index');
         $expected = '/cms/admin/articles';
+        $result = Router::url('Cms.Admin/Articles::index');
+        $this->assertEquals($result, $expected);
+        $result = Router::url(['_path' => 'Cms.Admin/Articles::index']);
         $this->assertEquals($result, $expected);
 
-        $result = Router::url('Cms.Articles::index');
         $expected = '/cms/articles';
+        $result = Router::url('Cms.Articles::index');
+        $this->assertEquals($result, $expected);
+        $result = Router::url(['_path' => 'Cms.Articles::index']);
         $this->assertEquals($result, $expected);
     }
 
@@ -3212,6 +3225,23 @@ class RouterTest extends TestCase
         $this->expectExceptionMessage('cannot be used when defining route targets with a string route path.');
 
         Router::url('Articles::index', $params);
+    }
+
+    /**
+     * Test url() doesn't let override parts of string route path from `_path` key
+     *
+     * @param array $params
+     * @return void
+     * @dataProvider invalidRoutePathParametersArrayProvider
+     */
+    public function testUrlGenerationOverridingPathKey(array $params)
+    {
+        Router::connect('/articles', 'Articles::index');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('cannot be used when defining route targets with a string route path.');
+
+        Router::url(['_path' => 'Articles::index'] + $params);
     }
 
     /**
