@@ -1264,10 +1264,11 @@ class PaginatorHelper extends Helper
             ];
         }
 
+        $query = $this->_View->getRequest()->getQueryParams();
         $out .= $this->Form->control('limit', $options + [
                 'type' => 'select',
                 'label' => __('View'),
-                'value' => $default,
+                'value' => !empty($query['limit'])?$query['limit']:$default,
                 'options' => $limits,
                 'onChange' => 'this.form.submit()'
             ]);
