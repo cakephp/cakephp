@@ -53,6 +53,7 @@ class ActionDispatcher
         if ($response === null) {
             $response = new Response();
         }
+        /** @psalm-suppress RedundantCondition */
         if (class_exists(Router::class) && Router::getRequest() !== $request) {
             Router::setRequest($request);
         }
