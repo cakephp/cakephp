@@ -155,35 +155,35 @@ SQL;
             // String
             [
                 ['type' => 'VARCHAR'],
-                ['type' => 'string', 'length' => null],
+                ['type' => 'string', 'length' => null, 'collate' => 'ja_JP.utf8']
             ],
             [
                 ['type' => 'VARCHAR(10)'],
-                ['type' => 'string', 'length' => 10],
+                ['type' => 'string', 'length' => 10, 'collate' => 'ja_JP.utf8']
             ],
             [
                 ['type' => 'CHARACTER VARYING'],
-                ['type' => 'string', 'length' => null],
+                ['type' => 'string', 'length' => null, 'collate' => 'ja_JP.utf8']
             ],
             [
                 ['type' => 'CHARACTER VARYING(10)'],
-                ['type' => 'string', 'length' => 10],
+                ['type' => 'string', 'length' => 10, 'collate' => 'ja_JP.utf8']
             ],
             [
                 ['type' => 'CHARACTER VARYING(255)', 'default' => 'NULL::character varying'],
-                ['type' => 'string', 'length' => 255, 'default' => null],
+                ['type' => 'string', 'length' => 255, 'default' => null, 'collate' => 'ja_JP.utf8']
             ],
             [
                 ['type' => 'CHAR(10)'],
-                ['type' => 'char', 'fixed' => true, 'length' => 10],
+                ['type' => 'char', 'length' => 10, 'collate' => 'ja_JP.utf8']
             ],
             [
                 ['type' => 'CHAR(36)'],
-                ['type' => 'char', 'fixed' => true, 'length' => 36],
+                ['type' => 'char', 'length' => 36, 'collate' => 'ja_JP.utf8']
             ],
             [
                 ['type' => 'CHARACTER(10)'],
-                ['type' => 'char', 'fixed' => true, 'length' => 10],
+                ['type' => 'char', 'length' => 10, 'collate' => 'ja_JP.utf8']
             ],
             [
                 ['type' => 'MONEY'],
@@ -201,7 +201,7 @@ SQL;
             // Text
             [
                 ['type' => 'TEXT'],
-                ['type' => 'text', 'length' => null],
+                ['type' => 'text', 'length' => null, 'collate' => 'ja_JP.utf8']
             ],
             // Blob
             [
@@ -251,18 +251,18 @@ SQL;
             'null' => true,
             'default' => 'Default value',
             'comment' => 'Comment section',
-            'collate' => 'ja_JP.utf8',
         ];
 
         $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')->getMock();
         $dialect = new PostgresSchema($driver);
 
-        $table = $this->getMockBuilder(TableSchema::class)
-            ->setConstructorArgs(['table'])
-            ->getMock();
-        $table->expects($this->at(0))->method('addColumn')->with('field', $expected);
-
+        $table = new TableSchema('table');
         $dialect->convertColumnDescription($table, $field);
+
+        $actual = array_intersect_key($table->getColumn('field'), $expected);
+        ksort($expected);
+        ksort($actual);
+        $this->assertSame($expected, $actual);
     }
 
     /**

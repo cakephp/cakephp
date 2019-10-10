@@ -45,7 +45,7 @@ class ViewBuilderTest extends TestCase
         $update = ['test' => 'updated'];
         $builder->setVars($update);
         $this->assertEquals(
-            ['test' => 'val', 'foo' => 'bar', 'test' => 'updated'],
+            ['foo' => 'bar', 'test' => 'updated'],
             $builder->getVars()
         );
 
