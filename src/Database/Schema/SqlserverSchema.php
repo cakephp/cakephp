@@ -86,9 +86,9 @@ class SqlserverSchema extends BaseSchema
         ?int $scale = null
     ): array {
         $col = strtolower($col);
-        $length = (int)$length;
-        $precision = (int)$precision;
-        $scale = (int)$scale;
+        $length = $length !== null ? (int)$length : $length;
+        $precision = $precision !== null ? (int)$precision : $precision;
+        $scale = $scale !== null ? (int)$scale : $scale;
 
         if (in_array($col, ['date', 'time'])) {
             return ['type' => $col, 'length' => null];
@@ -145,6 +145,11 @@ class SqlserverSchema extends BaseSchema
         }
 
         if ($col === 'image' || strpos($col, 'binary') !== false) {
+            // -1 is the value for MAX which we treat as a 'long' binary
+            if ($length == -1) {
+                $length = TableSchema::LENGTH_LONG;
+            }
+
             return ['type' => TableSchema::TYPE_BINARY, 'length' => $length];
         }
 
@@ -162,9 +167,9 @@ class SqlserverSchema extends BaseSchema
     {
         $field = $this->_convertColumn(
             $row['type'],
-            (int)$row['char_length'],
-            (int)$row['precision'],
-            (int)$row['scale']
+            $row['char_length'],
+            $row['precision'],
+            $row['scale']
         );
         if (!empty($row['default'])) {
             $row['default'] = trim($row['default'], '()');
