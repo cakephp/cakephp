@@ -98,7 +98,7 @@ class FormProtectionComponent extends Component
         $token = [
             'unlockedFields' => $this->_config['unlockedFields'],
         ];
-        $request = $request->withAttribute('formToken', [
+        $request = $request->withAttribute('formTokenData', [
             'unlockedFields' => $token['unlockedFields'],
         ]);
 

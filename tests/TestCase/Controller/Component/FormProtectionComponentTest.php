@@ -228,7 +228,7 @@ class FormProtectionComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         $this->Controller->FormProtection->startup($event);
 
-        $securityToken = $this->Controller->getRequest()->getAttribute('formToken');
+        $securityToken = $this->Controller->getRequest()->getAttribute('formTokenData');
         $this->assertNotEmpty($securityToken);
         $this->assertSame([], $securityToken['unlockedFields']);
     }

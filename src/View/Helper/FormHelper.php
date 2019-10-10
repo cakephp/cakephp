@@ -443,7 +443,7 @@ class FormHelper extends Helper
         $htmlAttributes += $options;
 
         if ($this->requestType !== 'get') {
-            $formTokenData = $this->_View->getRequest()->getAttribute('formToken');
+            $formTokenData = $this->_View->getRequest()->getAttribute('formTokenData');
             if ($formTokenData !== null) {
                 $this->formProtector = $this->createFormProtector($this->_lastAction, $formTokenData);
             }
@@ -550,7 +550,7 @@ class FormHelper extends Helper
     {
         $out = '';
 
-        if ($this->requestType !== 'get' && $this->_View->getRequest()->getAttribute('formToken') !== null) {
+        if ($this->requestType !== 'get' && $this->_View->getRequest()->getAttribute('formTokenData') !== null) {
             $out .= $this->secure([], $secureAttributes);
         }
         $out .= $this->formatTemplate('formEnd', []);
@@ -1837,7 +1837,7 @@ class FormHelper extends Helper
         ]);
         $out .= $this->_csrfField();
 
-        $formTokenData = $this->_View->getRequest()->getAttribute('formToken');
+        $formTokenData = $this->_View->getRequest()->getAttribute('formTokenData');
         if ($formTokenData !== null) {
             $this->formProtector = $this->createFormProtector($this->_lastAction, $formTokenData);
         }
@@ -2273,7 +2273,7 @@ class FormHelper extends Helper
     protected function _initInputField(string $field, array $options = []): array
     {
         if (!isset($options['secure'])) {
-            $options['secure'] = $this->_View->getRequest()->getAttribute('formToken') === null ? false : true;
+            $options['secure'] = $this->_View->getRequest()->getAttribute('formTokenData') === null ? false : true;
         }
         $context = $this->_getContext();
 

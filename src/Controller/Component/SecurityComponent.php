@@ -489,7 +489,7 @@ class SecurityComponent extends Component
             'unlockedFields' => $this->_config['unlockedFields'],
         ];
 
-        return $request->withAttribute('formToken', [
+        return $request->withAttribute('formTokenData', [
             'unlockedFields' => $token['unlockedFields'],
         ]);
     }
