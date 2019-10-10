@@ -944,9 +944,7 @@ TEXT;
     public static function formatHtmlMessage(string $message): string
     {
         $message = h($message);
-        $message = preg_replace_callback('/`([^`]+)`/', function ($matches) {
-            return '<code>' . $matches[1] . '</code>';
-        }, $message);
+        $message = preg_replace('/`([^`]+)`/', '<code>$1</code>', $message);
         $message = nl2br($message);
 
         return $message;

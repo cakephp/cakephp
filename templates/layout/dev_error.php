@@ -20,7 +20,7 @@ use Cake\Error\Debugger;
     <?= $this->Html->charset() ?>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>
-        Error: <?= Debugger::formatHtmlMessage($this->fetch('title')) ?>
+        Error: <?= h($this->fetch('title')) ?>
     </title>
     <?= $this->Html->meta('icon') ?>
     <style>
@@ -245,7 +245,7 @@ use Cake\Error\Debugger;
 <body>
     <header>
         <h1 class="header-title" data-content="&#128203">
-            <?= h($this->fetch('title')) ?>
+            <?= Debugger::formatHtmlMessage($this->fetch('title')) ?>
         </h1>
         <span class="header-type"><?= get_class($error) ?></span>
     </header>
