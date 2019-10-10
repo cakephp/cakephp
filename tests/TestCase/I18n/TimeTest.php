@@ -792,7 +792,7 @@ class TimeTest extends TestCase
         $expected = [
             'time' => '2014-04-20T10:10:10.000000+00:00',
             'timezone' => 'UTC',
-            'fixedNowTime' => $class::getTestNow()->format('Y-m-d\TH:i:s.uP')
+            'fixedNowTime' => $class::getTestNow()->format('Y-m-d\TH:i:s.uP'),
         ];
         $this->assertEquals($expected, $time->__debugInfo());
     }

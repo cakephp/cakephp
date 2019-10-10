@@ -186,14 +186,14 @@ SQL;
                 null,
                 null,
                 null,
-                ['type' => 'string', 'length' => 255, 'collate' => 'Japanese_Unicode_CI_AI']
+                ['type' => 'string', 'length' => 255, 'collate' => 'Japanese_Unicode_CI_AI'],
             ],
             [
                 'VARCHAR',
                 10,
                 null,
                 null,
-                ['type' => 'string', 'length' => 10, 'collate' => 'Japanese_Unicode_CI_AI']
+                ['type' => 'string', 'length' => 10, 'collate' => 'Japanese_Unicode_CI_AI'],
             ],
             [
                 'NVARCHAR',
@@ -201,14 +201,14 @@ SQL;
                 null,
                 null,
                 // Sqlserver returns double lengths for unicode columns
-                ['type' => 'string', 'length' => 25, 'collate' => 'Japanese_Unicode_CI_AI']
+                ['type' => 'string', 'length' => 25, 'collate' => 'Japanese_Unicode_CI_AI'],
             ],
             [
                 'CHAR',
                 10,
                 null,
                 null,
-                ['type' => 'string', 'fixed' => true, 'length' => 10, 'collate' => 'Japanese_Unicode_CI_AI']
+                ['type' => 'string', 'fixed' => true, 'length' => 10, 'collate' => 'Japanese_Unicode_CI_AI'],
             ],
             [
                 'NCHAR',
@@ -216,7 +216,7 @@ SQL;
                 null,
                 null,
                 // SQLServer returns double length for unicode columns.
-                ['type' => 'string', 'fixed' => true, 'length' => 5, 'collate' => 'Japanese_Unicode_CI_AI']
+                ['type' => 'string', 'fixed' => true, 'length' => 5, 'collate' => 'Japanese_Unicode_CI_AI'],
             ],
             [
                 'UNIQUEIDENTIFIER',
@@ -230,7 +230,7 @@ SQL;
                 null,
                 null,
                 null,
-                ['type' => 'text', 'length' => null, 'collate' => 'Japanese_Unicode_CI_AI']
+                ['type' => 'text', 'length' => null, 'collate' => 'Japanese_Unicode_CI_AI'],
             ],
             [
                 'REAL',
@@ -244,7 +244,7 @@ SQL;
                 -1,
                 null,
                 null,
-                ['type' => 'text', 'length' => null, 'collate' => 'Japanese_Unicode_CI_AI']
+                ['type' => 'text', 'length' => null, 'collate' => 'Japanese_Unicode_CI_AI'],
             ],
             [
                 'IMAGE',
@@ -272,7 +272,7 @@ SQL;
                 -1,
                 null,
                 null,
-                ['type' => 'binary', 'length' => TableSchema::LENGTH_LONG]
+                ['type' => 'binary', 'length' => TableSchema::LENGTH_LONG],
             ],
         ];
     }

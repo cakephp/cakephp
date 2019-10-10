@@ -451,7 +451,7 @@ trait DateFormatTrait
         return [
             'time' => $this->format('Y-m-d\TH:i:s.uP'),
             'timezone' => $this->getTimezone()->getName(),
-            'fixedNowTime' => static::hasTestNow() ? static::getTestNow()->format('Y-m-d\TH:i:s.uP') : false
+            'fixedNowTime' => static::hasTestNow() ? static::getTestNow()->format('Y-m-d\TH:i:s.uP') : false,
         ];
     }
 }
