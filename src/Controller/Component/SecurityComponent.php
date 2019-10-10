@@ -37,6 +37,8 @@ use Cake\Utility\Security;
  * - Requiring that SSL be used.
  *
  * @link https://book.cakephp.org/3.0/en/controllers/components/security.html
+ * @deprecated 4.0.0 Use FormProtectionComponent instead, for form tampering protection
+ *   or HttpsEnforceMiddleware to enforce use of HTTPS (SSL) for requests.
  */
 class SecurityComponent extends Component
 {
