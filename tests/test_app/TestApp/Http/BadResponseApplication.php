@@ -28,6 +28,6 @@ class BadResponseApplication extends BaseApplication
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
     {
-        return $res;
+        return $response;
     }
 }

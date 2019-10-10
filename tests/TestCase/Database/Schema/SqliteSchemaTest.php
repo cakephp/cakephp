@@ -168,17 +168,19 @@ class SqliteSchemaTest extends TestCase
         $expected += [
             'null' => true,
             'default' => 'Default value',
+            'comment' => null,
         ];
 
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlite')->getMock();
         $dialect = new SqliteSchema($driver);
 
-        $table = $this->getMockBuilder(TableSchema::class)
-            ->setConstructorArgs(['table'])
-            ->getMock();
-        $table->expects($this->at(1))->method('addColumn')->with('field', $expected);
-
+        $table = new TableSchema('table');
         $dialect->convertColumnDescription($table, $field);
+
+        $actual = array_intersect_key($table->getColumn('field'), $expected);
+        ksort($expected);
+        ksort($actual);
+        $this->assertSame($expected, $actual);
     }
 
     /**

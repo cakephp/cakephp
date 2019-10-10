@@ -80,9 +80,9 @@ class SqlserverSchema extends BaseSchema
     protected function _convertColumn($col, $length = null, $precision = null, $scale = null)
     {
         $col = strtolower($col);
-        $length = (int)$length;
-        $precision = (int)$precision;
-        $scale = (int)$scale;
+        $length = $length !== null ? (int)$length : $length;
+        $precision = $precision !== null ? (int)$precision : $precision;
+        $scale = $scale !== null ? (int)$scale : $scale;
 
         if (in_array($col, ['date', 'time'])) {
             return ['type' => $col, 'length' => null];
@@ -138,6 +138,11 @@ class SqlserverSchema extends BaseSchema
         }
 
         if ($col === 'image' || strpos($col, 'binary') !== false) {
+            // -1 is the value for MAX which we treat as a 'long' binary
+            if ($length == -1) {
+                $length = TableSchema::LENGTH_LONG;
+            }
+
             return ['type' => TableSchema::TYPE_BINARY, 'length' => $length];
         }
 
