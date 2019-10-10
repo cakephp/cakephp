@@ -209,7 +209,7 @@ class FormHelper extends Helper
 
     /**
      * The action attribute value of the last created form.
-     * Used to make form/request specific hashes for SecurityComponent.
+     * Used to make form/request specific hashes for form tampering protection.
      *
      * @var string
      */
