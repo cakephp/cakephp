@@ -76,10 +76,7 @@ class ActionDispatcher
             return $result;
         }
 
-        $response = $controller->invokeAction();
-        if ($response === null && $controller->isAutoRenderEnabled()) {
-            $controller->render();
-        }
+        $controller->invokeAction();
 
         $result = $controller->shutdownProcess();
         if ($result instanceof ResponseInterface) {

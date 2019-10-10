@@ -513,19 +513,21 @@ class Controller implements EventListenerInterface, EventDispatcherInterface, Co
         $callable = [$this, $request->getParam('action')];
 
         $result = $callable(...array_values($request->getParam('pass')));
-        if ($result === null) {
-            return $result;
-        }
-
-        if (!$result instanceof ResponseInterface) {
+        if ($result !== null && !$result instanceof ResponseInterface) {
             throw new UnexpectedValueException(sprintf(
                 'Controller actions can only return ResponseInterface instance or null. '
                 . 'Got %s instead.',
                 getTypeName($result)
             ));
         }
+        if ($result === null && $this->isAutoRenderEnabled()) {
+            $result = $this->render();
+        }
+        if ($result) {
+            $this->response = $result;
+        }
 
-        return $this->response = $result;
+        return $this->response;
     }
 
     /**

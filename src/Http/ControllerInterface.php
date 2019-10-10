@@ -58,25 +58,9 @@ interface ControllerInterface
     public function invokeAction(): ?ResponseInterface;
 
     /**
-     * Returns true if an action should be rendered automatically.
-     *
-     * @return bool
-     */
-    public function isAutoRenderEnabled(): bool;
-
-    /**
      * Gets the response instance.
      *
      * @return \Cake\Http\Response
      */
     public function getResponse(): Response;
-
-    /**
-     * Renders a response generally using a View.
-     *
-     * @param string|null $template Template to use for rendering
-     * @param string|null $layout Layout to use
-     * @return \Cake\Http\Response A response object containing the rendered view.
-     */
-    public function render(?string $template = null, ?string $layout = null): Response;
 }

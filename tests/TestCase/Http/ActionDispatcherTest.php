@@ -117,7 +117,7 @@ class ActionDispatcherTest extends TestCase
         ]);
         $response = new Response();
         $result = $this->dispatcher->dispatch($request, $response);
-        $this->assertInstanceOf('Cake\Http\Response', $result);
+        $this->assertInstanceOf(Response::class, $result);
         $this->assertStringContainsString('autoRender false body', (string)$result->getBody());
     }
 
