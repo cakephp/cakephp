@@ -1256,6 +1256,7 @@ class Email implements JsonSerializable, Serializable
      *
      * @param string|null $template Template name or null to not use.
      * @return $this
+     * @deprecated 3.7.0 Use $email->viewBuilder()->setTemplate() instead.
      */
     public function setTemplate($template)
     {
@@ -1272,6 +1273,7 @@ class Email implements JsonSerializable, Serializable
      * Gets template.
      *
      * @return string
+     * @deprecated 3.7.0 Use $email->viewBuilder()->getTemplate() instead.
      */
     public function getTemplate()
     {
