@@ -554,16 +554,16 @@ class Controller implements EventListenerInterface, EventDispatcherInterface, Co
      * - Calls the controller `beforeFilter`.
      * - triggers Component `startup` methods.
      *
-     * @return \Cake\Http\Response|null
+     * @return \Psr\Http\Message\ResponseInterface|null
      */
-    public function startupProcess(): ?Response
+    public function startupProcess(): ?ResponseInterface
     {
         $event = $this->dispatchEvent('Controller.initialize');
-        if ($event->getResult() instanceof Response) {
+        if ($event->getResult() instanceof ResponseInterface) {
             return $event->getResult();
         }
         $event = $this->dispatchEvent('Controller.startup');
-        if ($event->getResult() instanceof Response) {
+        if ($event->getResult() instanceof ResponseInterface) {
             return $event->getResult();
         }
 
@@ -577,12 +577,12 @@ class Controller implements EventListenerInterface, EventDispatcherInterface, Co
      * - triggers the component `shutdown` callback.
      * - calls the Controller's `afterFilter` method.
      *
-     * @return \Cake\Http\Response|null
+     * @return \Psr\Http\Message\ResponseInterface|null
      */
-    public function shutdownProcess(): ?Response
+    public function shutdownProcess(): ?ResponseInterface
     {
         $event = $this->dispatchEvent('Controller.shutdown');
-        if ($event->getResult() instanceof Response) {
+        if ($event->getResult() instanceof ResponseInterface) {
             return $event->getResult();
         }
 
@@ -606,7 +606,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface, Co
         }
 
         $event = $this->dispatchEvent('Controller.beforeRedirect', [$url, $this->response]);
-        if ($event->getResult() instanceof Response) {
+        if ($event->getResult() instanceof ResponseInterface) {
             return $this->response = $event->getResult();
         }
         if ($event->isStopped()) {

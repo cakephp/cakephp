@@ -32,9 +32,9 @@ interface ControllerInterface
      * - Calls the controller `beforeFilter`.
      * - triggers Component `startup` methods.
      *
-     * @return \Cake\Http\Response|null
+     * @return \Psr\Http\Message\ResponseInterface|null
      */
-    public function startupProcess(): ?Response;
+    public function startupProcess(): ?ResponseInterface;
 
     /**
      * Perform the various shutdown processes for this controller.
@@ -43,9 +43,9 @@ interface ControllerInterface
      * - triggers the component `shutdown` callback.
      * - calls the Controller's `afterFilter` method.
      *
-     * @return \Cake\Http\Response|null
+     * @return \Psr\Http\Message\ResponseInterface|null
      */
-    public function shutdownProcess(): ?Response;
+    public function shutdownProcess(): ?ResponseInterface;
 
     /**
      * Dispatches the controller action. Checks that the action
