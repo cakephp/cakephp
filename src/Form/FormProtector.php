@@ -243,7 +243,7 @@ class FormProtector
             return null;
         }
 
-        $message = '\'%s\' was not found in request data.';
+        $message = '`%s` was not found in request data.';
         if (!isset($formData['_Token'])) {
             $this->debugMessage = sprintf($message, '_Token');
 
@@ -265,7 +265,7 @@ class FormProtector
             return null;
         }
         if (!Configure::read('debug') && isset($formData['_Token']['debug'])) {
-            $this->debugMessage = 'Unexpected \'_Token.debug\' found in request data';
+            $this->debugMessage = 'Unexpected `_Token.debug` found in request data';
 
             return null;
         }
@@ -472,25 +472,25 @@ class FormProtector
         $expectedUrl = Hash::get($expectedParts, 0);
         $url = Hash::get($hashParts, 'url');
         if ($expectedUrl !== $url) {
-            $messages[] = sprintf('URL mismatch in POST data (expected \'%s\' but found \'%s\')', $expectedUrl, $url);
+            $messages[] = sprintf('URL mismatch in POST data (expected `%s` but found `%s`)', $expectedUrl, $url);
         }
         $expectedFields = Hash::get($expectedParts, 1);
         $dataFields = Hash::get($hashParts, 'fields') ?: [];
         $fieldsMessages = $this->debugCheckFields(
             (array)$dataFields,
             $expectedFields,
-            'Unexpected field \'%s\' in POST data',
-            'Tampered field \'%s\' in POST data (expected value \'%s\' but found \'%s\')',
-            'Missing field \'%s\' in POST data'
+            'Unexpected field `%s` in POST data',
+            'Tampered field `%s` in POST data (expected value `%s` but found `%s`)',
+            'Missing field `%s` in POST data'
         );
         $expectedUnlockedFields = Hash::get($expectedParts, 2);
         $dataUnlockedFields = Hash::get($hashParts, 'unlockedFields') ?: [];
         $unlockFieldsMessages = $this->debugCheckFields(
             (array)$dataUnlockedFields,
             $expectedUnlockedFields,
-            'Unexpected unlocked field \'%s\' in POST data',
+            'Unexpected unlocked field `%s` in POST data',
             '',
-            'Missing unlocked field: \'%s\''
+            'Missing unlocked field: `%s`'
         );
 
         $messages = array_merge($messages, $fieldsMessages, $unlockFieldsMessages);

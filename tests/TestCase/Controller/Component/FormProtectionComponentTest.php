@@ -135,7 +135,7 @@ class FormProtectionComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
 
         $this->expectException(BadRequestException::class);
-        $this->expectExceptionMessage('Unexpected field \'Model.password\' in POST data, Unexpected field \'Model.username\' in POST data');
+        $this->expectExceptionMessage('Unexpected field `Model.password` in POST data, Unexpected field `Model.username` in POST data');
         $this->FormProtection->startup($event);
     }
 
@@ -148,7 +148,7 @@ class FormProtectionComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
 
         $this->expectException(BadRequestException::class);
-        $this->expectExceptionMessage('\'_Token\' was not found in request data.');
+        $this->expectExceptionMessage('`_Token` was not found in request data.');
         $this->FormProtection->startup($event);
     }
 
@@ -173,7 +173,7 @@ class FormProtectionComponentTest extends TestCase
         ]));
 
         $this->expectException(BadRequestException::class);
-        $this->expectExceptionMessage('Tampered field \'Model.hidden\' in POST data (expected value \'value\' but found \'tampered\')');
+        $this->expectExceptionMessage('Tampered field `Model.hidden` in POST data (expected value `value` but found `tampered`)');
 
         $event = new Event('Controller.startup', $this->Controller);
         $this->FormProtection->startup($event);

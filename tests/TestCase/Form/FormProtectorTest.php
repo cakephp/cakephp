@@ -101,7 +101,7 @@ class FormProtectorTest extends TestCase
             '_Token' => compact('fields'),
         ];
 
-        $this->validate($data, '\'_Token.unlocked\' was not found in request data.');
+        $this->validate($data, '`_Token.unlocked` was not found in request data.');
     }
 
     /**
@@ -120,7 +120,7 @@ class FormProtectorTest extends TestCase
             '_Token' => compact('unlocked'),
         ];
 
-        $this->validate($data, '\'_Token.fields\' was not found in request data.');
+        $this->validate($data, '`_Token.fields` was not found in request data.');
     }
 
     /**
@@ -132,7 +132,7 @@ class FormProtectorTest extends TestCase
      */
     public function testValidateEmptyForm(): void
     {
-        $this->validate([], '\'_Token\' was not found in request data.');
+        $this->validate([], '`_Token` was not found in request data.');
     }
 
     /**
@@ -435,7 +435,7 @@ class FormProtectorTest extends TestCase
             '_Token' => compact('fields'),
         ];
 
-        $this->validate($data, '\'_Token.unlocked\' was not found in request data.');
+        $this->validate($data, '`_Token.unlocked` was not found in request data.');
     }
 
     /**
@@ -460,7 +460,7 @@ class FormProtectorTest extends TestCase
             '_Token' => compact('fields', 'unlocked'),
         ];
 
-        $this->validate($data, '\'_Token.debug\' was not found in request data.');
+        $this->validate($data, '`_Token.debug` was not found in request data.');
     }
 
     /**
@@ -520,7 +520,7 @@ class FormProtectorTest extends TestCase
             '_Token' => compact('fields', 'unlocked', 'debug'),
         ];
 
-        $this->validate($data, 'Missing field \'Model.password\' in POST data, Unexpected unlocked field \'Model.password\' in POST data');
+        $this->validate($data, 'Missing field `Model.password` in POST data, Unexpected unlocked field `Model.password` in POST data');
     }
 
     /**
@@ -749,13 +749,13 @@ class FormProtectorTest extends TestCase
         $this->url = '/posts/index?page=1';
         $this->validate(
             $data,
-            'URL mismatch in POST data (expected \'another-url\' but found \'/posts/index?page=1\')'
+            'URL mismatch in POST data (expected `another-url` but found `/posts/index?page=1`)'
         );
 
         $this->url = '/posts/edit/1';
         $this->validate(
             $data,
-            'URL mismatch in POST data (expected \'another-url\' but found \'/posts/edit/1\')'
+            'URL mismatch in POST data (expected `another-url` but found `/posts/edit/1`)'
         );
     }
 
@@ -819,7 +819,7 @@ class FormProtectorTest extends TestCase
             '_Token' => compact('fields', 'unlocked', 'debug'),
         ];
 
-        $this->validate($data, 'Tampered field \'Model.hidden\' in POST data (expected value \'value\' but found \'tampered\')');
+        $this->validate($data, 'Tampered field `Model.hidden` in POST data (expected value `value` but found `tampered`)');
     }
 
     /**
@@ -850,7 +850,7 @@ class FormProtectorTest extends TestCase
 
         $this->validate(
             $data,
-            'Unexpected field \'Model.hidden.some-key\' in POST data, Missing field \'Model.hidden\' in POST data'
+            'Unexpected field `Model.hidden.some-key` in POST data, Missing field `Model.hidden` in POST data'
         );
     }
 
@@ -880,6 +880,6 @@ class FormProtectorTest extends TestCase
             '_Token' => compact('fields', 'unlocked', 'debug'),
         ];
         Configure::write('debug', false);
-        $this->validate($data, 'Unexpected \'_Token.debug\' found in request data');
+        $this->validate($data, 'Unexpected `_Token.debug` found in request data');
     }
 }
