@@ -126,7 +126,7 @@ class MiddlewareDispatcher
         }
         $builder = Router::createRouteBuilder('/');
 
-        if ($this->app instanceof HttpApplicationInterface) {
+        if ($this->app instanceof RoutingApplicationInterface) {
             $this->app->routes($builder);
         }
         if ($this->app instanceof PluginApplicationInterface) {

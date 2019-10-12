@@ -17,13 +17,13 @@ declare(strict_types=1);
 namespace Cake\Routing\Middleware;
 
 use Cake\Cache\Cache;
-use Cake\Core\HttpApplicationInterface;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\Runner;
 use Cake\Routing\Exception\RedirectException;
 use Cake\Routing\RouteCollection;
 use Cake\Routing\Router;
+use Cake\Routing\RoutingApplicationInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -44,7 +44,7 @@ class RoutingMiddleware implements MiddlewareInterface
     /**
      * The application that will have its routing hook invoked.
      *
-     * @var \Cake\Core\HttpApplicationInterface
+     * @var \Cake\Core\RoutingApplicationInterface
      */
     protected $app;
 
@@ -59,10 +59,10 @@ class RoutingMiddleware implements MiddlewareInterface
     /**
      * Constructor
      *
-     * @param \Cake\Core\HttpApplicationInterface $app The application instance that routes are defined on.
+     * @param \Cake\Core\RoutingApplicationInterface $app The application instance that routes are defined on.
      * @param string|null $cacheConfig The cache config name to use or null to disable routes cache
      */
-    public function __construct(HttpApplicationInterface $app, ?string $cacheConfig = null)
+    public function __construct(RoutingApplicationInterface $app, ?string $cacheConfig = null)
     {
         $this->app = $app;
         $this->cacheConfig = $cacheConfig;

@@ -33,17 +33,6 @@ interface HttpApplicationInterface extends RequestHandlerInterface
      * @return void
      */
     public function bootstrap(): void;
-
-    /**
-     * Define the routes for an application.
-     *
-     * Use the provided RouteBuilder to define an application's routing.
-     *
-     * @param \Cake\Routing\RouteBuilder $routes A route builder to add routes into.
-     * @return void
-     */
-    public function routes(RouteBuilder $routes): void;
-
     /**
      * Define the HTTP middleware layers for an application.
      *
