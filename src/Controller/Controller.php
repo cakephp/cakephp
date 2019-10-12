@@ -606,7 +606,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface, Co
         }
 
         $event = $this->dispatchEvent('Controller.beforeRedirect', [$url, $this->response]);
-        if ($event->getResult() instanceof ResponseInterface) {
+        if ($event->getResult() instanceof Response) {
             return $this->response = $event->getResult();
         }
         if ($event->isStopped()) {
