@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Http;
 
 use Cake\Http\ActionDispatcher;
+use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
@@ -116,7 +117,7 @@ class ActionDispatcherTest extends TestCase
         ]);
         $response = new Response();
         $result = $this->dispatcher->dispatch($request, $response);
-        $this->assertInstanceOf('Cake\Http\Response', $result);
+        $this->assertInstanceOf(Response::class, $result);
         $this->assertStringContainsString('autoRender false body', (string)$result->getBody());
     }
 
@@ -127,7 +128,7 @@ class ActionDispatcherTest extends TestCase
      */
     public function testMissingController()
     {
-        $this->expectException(\Cake\Routing\Exception\MissingControllerException::class);
+        $this->expectException(MissingControllerException::class);
         $this->expectExceptionMessage('Controller class SomeController could not be found.');
         $request = new ServerRequest([
             'url' => 'some_controller/home',
@@ -147,7 +148,7 @@ class ActionDispatcherTest extends TestCase
      */
     public function testMissingControllerInterface()
     {
-        $this->expectException(\Cake\Routing\Exception\MissingControllerException::class);
+        $this->expectException(MissingControllerException::class);
         $this->expectExceptionMessage('Controller class Interface could not be found.');
         $request = new ServerRequest([
             'url' => 'interface/index',
@@ -167,7 +168,7 @@ class ActionDispatcherTest extends TestCase
      */
     public function testMissingControllerAbstract()
     {
-        $this->expectException(\Cake\Routing\Exception\MissingControllerException::class);
+        $this->expectException(MissingControllerException::class);
         $this->expectExceptionMessage('Controller class Abstract could not be found.');
         $request = new ServerRequest([
             'url' => 'abstract/index',
@@ -190,7 +191,7 @@ class ActionDispatcherTest extends TestCase
      */
     public function testMissingControllerLowercase()
     {
-        $this->expectException(\Cake\Routing\Exception\MissingControllerException::class);
+        $this->expectException(MissingControllerException::class);
         $this->expectExceptionMessage('Controller class somepages could not be found.');
         $request = new ServerRequest([
             'url' => 'pages/home',

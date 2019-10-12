@@ -23,6 +23,7 @@ use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventInterface;
 use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManagerInterface;
+use Cake\Http\ControllerInterface;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Log\LogTrait;
@@ -84,7 +85,7 @@ use UnexpectedValueException;
  * @method bool isAuthorized($user)
  * @link https://book.cakephp.org/3.0/en/controllers.html
  */
-class Controller implements EventListenerInterface, EventDispatcherInterface
+class Controller implements EventListenerInterface, EventDispatcherInterface, ControllerInterface
 {
     use EventDispatcherTrait;
     use LocatorAwareTrait;
@@ -512,19 +513,21 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         $callable = [$this, $request->getParam('action')];
 
         $result = $callable(...array_values($request->getParam('pass')));
-        if ($result === null) {
-            return $result;
-        }
-
-        if (!$result instanceof ResponseInterface) {
+        if ($result !== null && !$result instanceof ResponseInterface) {
             throw new UnexpectedValueException(sprintf(
                 'Controller actions can only return ResponseInterface instance or null. '
                 . 'Got %s instead.',
                 getTypeName($result)
             ));
         }
+        if ($result === null && $this->isAutoRenderEnabled()) {
+            $result = $this->render();
+        }
+        if ($result) {
+            $this->response = $result;
+        }
 
-        return $this->response = $result;
+        return $this->response;
     }
 
     /**
@@ -551,16 +554,16 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * - Calls the controller `beforeFilter`.
      * - triggers Component `startup` methods.
      *
-     * @return \Cake\Http\Response|null
+     * @return \Psr\Http\Message\ResponseInterface|null
      */
-    public function startupProcess(): ?Response
+    public function startupProcess(): ?ResponseInterface
     {
         $event = $this->dispatchEvent('Controller.initialize');
-        if ($event->getResult() instanceof Response) {
+        if ($event->getResult() instanceof ResponseInterface) {
             return $event->getResult();
         }
         $event = $this->dispatchEvent('Controller.startup');
-        if ($event->getResult() instanceof Response) {
+        if ($event->getResult() instanceof ResponseInterface) {
             return $event->getResult();
         }
 
@@ -574,12 +577,12 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * - triggers the component `shutdown` callback.
      * - calls the Controller's `afterFilter` method.
      *
-     * @return \Cake\Http\Response|null
+     * @return \Psr\Http\Message\ResponseInterface|null
      */
-    public function shutdownProcess(): ?Response
+    public function shutdownProcess(): ?ResponseInterface
     {
         $event = $this->dispatchEvent('Controller.shutdown');
-        if ($event->getResult() instanceof Response) {
+        if ($event->getResult() instanceof ResponseInterface) {
             return $event->getResult();
         }
 
