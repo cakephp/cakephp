@@ -27,6 +27,8 @@ use Cake\Utility\Security;
  * - Unknown / extra fields are not added to the form.
  * - Existing fields have not been removed from the form.
  * - Values of hidden inputs have not been changed.
+ *
+ * @internal
  */
 class FormProtector
 {
