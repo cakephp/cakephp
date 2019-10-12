@@ -22,6 +22,7 @@ use Cake\Event\EventInterface;
 use Cake\Form\FormProtector;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Response;
+use Closure;
 
 /**
  * Protects against form tampering. It ensures that:
@@ -31,7 +32,7 @@ use Cake\Http\Response;
  * - Existing fields have not been removed from the form.
  * - Values of hidden inputs have not been changed.
  *
- * @psalm-property array{validatePost:bool, unlockedFields:array, unlockedActions:array, validationFailureCallback:?callable} $_config
+ * @psalm-property array{validatePost:bool, unlockedFields:array, unlockedActions:array, validationFailureCallback:?\Closure} $_config
  */
 class FormProtectionComponent extends Component
 {
@@ -51,7 +52,7 @@ class FormProtectionComponent extends Component
      *   and hidden unlocked fields do not have their values checked.
      * - `unlockedActions` - Actions to exclude from POST validation checks.
      * - `validationFailureCallback` - Callback to call in case of validation
-     *   failure. Must be a valid callable. Unset by default in which case
+     *   failure. Must be a valid Closure. Unset by default in which case
      *   exception is thrown on validation failure.
      *
      * @var array
@@ -137,26 +138,26 @@ class FormProtectionComponent extends Component
     protected function validationFailure(FormProtector $formProtector): ?Response
     {
         if ($this->_config['validationFailureCallback']) {
-            return $this->executeCallback($this->_config['validationFailureCallback'], [$formProtector]);
+            return $this->executeCallback($this->_config['validationFailureCallback'], $formProtector);
         }
 
         if (!Configure::read('debug')) {
             throw new BadRequestException(static::DEFAULT_EXCEPTION_MESSAGE);
         }
 
-        $errorMessage = $formProtector->getError() ?: static::DEFAULT_EXCEPTION_MESSAGE;
+        $errorMessage = $formProtector->getError();
         throw new BadRequestException($errorMessage);
     }
 
     /**
      * Execute callback.
      *
-     * @param callable $callback A valid callable
-     * @param array $params Params
+     * @param \Closure $callback A valid callable
+     * @param @param \Cake\Form\FormProtector $formProtector Form Protector instance.
      * @return \Cake\Http\Response|null
      */
-    protected function executeCallback(callable $callback, array $params): ?Response
+    protected function executeCallback(Closure $callback, FormProtector $formProtector): ?Response
     {
-        return call_user_func_array($callback, $params);
+        return $callback($formProtector);
     }
 }
