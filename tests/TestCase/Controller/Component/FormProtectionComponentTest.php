@@ -19,7 +19,6 @@ namespace Cake\Test\TestCase\Controller\Component;
 use Cake\Controller\Component\FormProtectionComponent;
 use Cake\Controller\Controller;
 use Cake\Event\Event;
-use Cake\Form\FormProtector;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
@@ -181,7 +180,7 @@ class FormProtectionComponentTest extends TestCase
 
     public function testCallbackReturnResponse()
     {
-        $this->FormProtection->setConfig('validationFailureCallback', function (FormProtector $formProtector) {
+        $this->FormProtection->setConfig('validationFailureCallback', function (BadRequestException $exception) {
             return new Response(['body' => 'from callback']);
         });
 
@@ -213,7 +212,7 @@ class FormProtectionComponentTest extends TestCase
         $this->expectException(NotFoundException::class);
         $this->expectExceptionMessage('error description');
 
-        $this->FormProtection->setConfig('validationFailureCallback', function (FormProtector $formProtector) {
+        $this->FormProtection->setConfig('validationFailureCallback', function (BadRequestException $exception) {
             throw new NotFoundException('error description');
         });
 

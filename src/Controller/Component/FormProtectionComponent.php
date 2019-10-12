@@ -137,27 +137,28 @@ class FormProtectionComponent extends Component
      */
     protected function validationFailure(FormProtector $formProtector): ?Response
     {
+        if (Configure::read('debug')) {
+            $exception = new BadRequestException($formProtector->getError());
+        } else {
+            $exception = new BadRequestException(static::DEFAULT_EXCEPTION_MESSAGE);
+        }
+
         if ($this->_config['validationFailureCallback']) {
-            return $this->executeCallback($this->_config['validationFailureCallback'], $formProtector);
+            return $this->executeCallback($this->_config['validationFailureCallback'], $exception);
         }
 
-        if (!Configure::read('debug')) {
-            throw new BadRequestException(static::DEFAULT_EXCEPTION_MESSAGE);
-        }
-
-        $errorMessage = $formProtector->getError();
-        throw new BadRequestException($errorMessage);
+        throw $exception;
     }
 
     /**
      * Execute callback.
      *
      * @param \Closure $callback A valid callable
-     * @param @param \Cake\Form\FormProtector $formProtector Form Protector instance.
+     * @param \Cake\Http\Exception\BadRequestException $exception Exception instance.
      * @return \Cake\Http\Response|null
      */
-    protected function executeCallback(Closure $callback, FormProtector $formProtector): ?Response
+    protected function executeCallback(Closure $callback, BadRequestException $exception): ?Response
     {
-        return $callback($formProtector);
+        return $callback($exception);
     }
 }
