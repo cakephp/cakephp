@@ -637,7 +637,6 @@ class Query implements ExpressionInterface, IteratorAggregate
 
         $joins = [];
         $i = count($this->_parts['join']);
-        /** @var array $tables */
         foreach ($tables as $alias => $t) {
             if (!is_array($t)) {
                 $t = ['table' => $t, 'conditions' => $this->newExpr()];

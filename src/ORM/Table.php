@@ -2101,7 +2101,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         /** @var bool[] $isNew */
         $isNew = [];
         $cleanup = function ($entities) use (&$isNew): void {
-            /** @var \Cake\Datasource\EntityInterface[] $entities */
             foreach ($entities as $key => $entity) {
                 if (isset($isNew[$key]) && $isNew[$key]) {
                     $entity->unset($this->getPrimaryKey());
