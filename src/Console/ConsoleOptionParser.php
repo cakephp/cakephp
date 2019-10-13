@@ -706,7 +706,7 @@ class ConsoleOptionParser
         foreach ($this->_args as $i => $arg) {
             if ($arg->isRequired() && !isset($args[$i]) && empty($params['help'])) {
                 throw new ConsoleException(
-                    sprintf('Missing required arguments. %s is required.', $arg->name())
+                    sprintf('Missing required arguments. The `%s` argument is required.', $arg->name())
                 );
             }
         }
@@ -934,7 +934,10 @@ class ConsoleOptionParser
         }
         $next = count($args);
         if (!isset($this->_args[$next])) {
-            throw new ConsoleException('Too many arguments.');
+            $expected = count($this->_args);
+            throw new ConsoleException(
+                "Received too many arguments. Got {$next} but only {$expected} arguments are defined."
+            );
         }
 
         $this->_args[$next]->validChoice($argument);
