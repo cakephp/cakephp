@@ -1158,7 +1158,9 @@ class RouterTest extends TestCase
         ]);
         Router::setRequest($request);
 
-        Router::addUrlFilter([$this, 'badFilter']);
+        Router::addUrlFilter(function () {
+            return $this->badFilter();
+        });
         Router::url(['controller' => 'posts', 'action' => 'index', 'lang' => 'en']);
     }
 

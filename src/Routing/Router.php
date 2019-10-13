@@ -20,6 +20,7 @@ use Cake\Core\Configure;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Utility\Inflector;
+use Closure;
 use Exception;
 use ReflectionFunction;
 use ReflectionMethod;
@@ -145,7 +146,7 @@ class Router
      * The stack of URL filters to apply against routing URLs before passing the
      * parameters to the route collection.
      *
-     * @var callable[]
+     * @var \Closure[]
      */
     protected static $_urlFilters = [];
 
@@ -322,10 +323,10 @@ class Router
      * });
      * ```
      *
-     * @param callable $function The function to add
+     * @param \Closure $function The function to add
      * @return void
      */
-    public static function addUrlFilter(callable $function): void
+    public static function addUrlFilter(Closure $function): void
     {
         static::$_urlFilters[] = $function;
     }
@@ -781,13 +782,13 @@ class Router
      *
      * @param string $path The path prefix for the scope. This path will be prepended
      *   to all routes connected in the scoped collection.
-     * @param array|callable $params An array of routing defaults to add to each connected route.
-     *   If you have no parameters, this argument can be a callable.
-     * @param callable|null $callback The callback to invoke with the scoped collection.
-     * @throws \InvalidArgumentException When an invalid callable is provided.
+     * @param array|\Closure $params An array of routing defaults to add to each connected route.
+     *   If you have no parameters, this argument can be a Closure.
+     * @param \Closure|null $callback The callback to invoke with the scoped collection.
+     * @throws \InvalidArgumentException When an invalid callback is provided.
      * @return void
      */
-    public static function scope(string $path, $params = [], $callback = null): void
+    public static function scope(string $path, $params = [], ?Closure $callback = null): void
     {
         $options = [];
         if (is_array($params)) {
@@ -816,15 +817,15 @@ class Router
      * to the `Controller\Admin\Api\` namespace.
      *
      * @param string $name The prefix name to use.
-     * @param array|callable $params An array of routing defaults to add to each connected route.
-     *   If you have no parameters, this argument can be a callable.
-     * @param callable|null $callback The callback to invoke that builds the prefixed routes.
+     * @param array|\Closure $params An array of routing defaults to add to each connected route.
+     *   If you have no parameters, this argument can be a Closure.
+     * @param \Closure|null $callback The callback to invoke that builds the prefixed routes.
      * @return void
      */
-    public static function prefix(string $name, $params = [], ?callable $callback = null): void
+    public static function prefix(string $name, $params = [], ?Closure $callback = null): void
     {
         if ($callback === null) {
-            /** @var callable $callback */
+            /** @var \Closure $callback */
             $callback = $params;
             $params = [];
         }
@@ -850,16 +851,15 @@ class Router
      * prepended, and have a matching plugin routing key set.
      *
      * @param string $name The plugin name to build routes for
-     * @param array|callable $options Either the options to use, or a callback
-     * @param callable|null $callback The callback to invoke that builds the plugin routes.
+     * @param array|\Closure $options Either the options to use, or a callback
+     * @param \Closure|null $callback The callback to invoke that builds the plugin routes.
      *   Only required when $options is defined
      * @return void
      * @psalm-suppress PossiblyInvalidArrayAccess
      */
-    public static function plugin(string $name, $options = [], ?callable $callback = null): void
+    public static function plugin(string $name, $options = [], ?Closure $callback = null): void
     {
-        if ($callback === null) {
-            /** @var callable $callback */
+        if (!is_array($options)) {
             $callback = $options;
             $options = [];
         }

@@ -23,6 +23,7 @@ use Cake\Core\Plugin;
 use Cake\Routing\Route\RedirectRoute;
 use Cake\Routing\Route\Route;
 use Cake\Utility\Inflector;
+use Closure;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -344,14 +345,14 @@ class RouteBuilder
      *   is available at `/posts`
      *
      * @param string $name A controller name to connect resource routes for.
-     * @param array|callable $options Options to use when generating REST routes, or a callback.
-     * @param callable|null $callback An optional callback to be executed in a nested scope. Nested
+     * @param array|\Closure $options Options to use when generating REST routes, or a callback.
+     * @param \Closure|null $callback An optional callback to be executed in a nested scope. Nested
      *   scopes inherit the existing path and 'id' parameter.
      * @return $this
      */
-    public function resources(string $name, $options = [], $callback = null)
+    public function resources(string $name, $options = [], ?Closure $callback = null)
     {
-        if (is_callable($options)) {
+        if ($options instanceof Closure) {
             $callback = $options;
             $options = [];
         }
@@ -422,7 +423,7 @@ class RouteBuilder
             $this->connect($url, $params, $routeOptions);
         }
 
-        if (is_callable($callback)) {
+        if ($callback !== null) {
             $idName = Inflector::singularize(Inflector::underscore($name)) . '_id';
             $path = '/' . $options['path'] . '/:' . $idName;
             $this->scope($path, [], $callback);
@@ -849,19 +850,16 @@ class RouteBuilder
      * ```
      *
      * @param string $name The prefix name to use.
-     * @param array|callable $params An array of routing defaults to add to each connected route.
-     *   If you have no parameters, this argument can be a callable.
-     * @param callable|null $callback The callback to invoke that builds the prefixed routes.
+     * @param array|\Closure $params An array of routing defaults to add to each connected route.
+     *   If you have no parameters, this argument can be a Closure.
+     * @param \Closure|null $callback The callback to invoke that builds the prefixed routes.
      * @return $this
      * @throws \InvalidArgumentException If a valid callback is not passed
      * @psalm-suppress PossiblyInvalidArrayAccess
      */
-    public function prefix(string $name, $params = [], ?callable $callback = null)
+    public function prefix(string $name, $params = [], ?Closure $callback = null)
     {
-        if ($callback === null) {
-            if (!is_callable($params)) {
-                throw new InvalidArgumentException('A valid callback is expected');
-            }
+        if (!is_array($params)) {
             $callback = $params;
             $params = [];
         }
@@ -874,7 +872,6 @@ class RouteBuilder
         if (isset($this->_params['prefix'])) {
             $name = $this->_params['prefix'] . '/' . $name;
         }
-        /** @psalm-suppress PossiblyInvalidArgument */
         $params = array_merge($params, ['prefix' => $name]);
         $this->scope($path, $params, $callback);
 
@@ -894,16 +891,16 @@ class RouteBuilder
      * prepended, and have a matching plugin routing key set.
      *
      * @param string $name The plugin name to build routes for
-     * @param array|callable $options Either the options to use, or a callback
-     * @param callable|null $callback The callback to invoke that builds the plugin routes
+     * @param array|\Closure $options Either the options to use, or a callback
+     * @param \Closure|null $callback The callback to invoke that builds the plugin routes
      *   Only required when $options is defined.
      * @return $this
      */
-    public function plugin(string $name, $options = [], ?callable $callback = null)
+    public function plugin(string $name, $options = [], ?Closure $callback = null)
     {
         if ($callback === null) {
-            if (!is_callable($options)) {
-                throw new InvalidArgumentException('A valid callback is expected');
+            if (!$options instanceof Closure) {
+                throw new InvalidArgumentException('A valid Closure is expected');
             }
             $callback = $options;
             $options = [];
@@ -924,21 +921,20 @@ class RouteBuilder
      * to the supplied parameters.
      *
      * @param string $path The path to create a scope for.
-     * @param array|callable $params Either the parameters to add to routes, or a callback.
-     * @param callable|null $callback The callback to invoke that builds the plugin routes.
+     * @param array|\Closure $params Either the parameters to add to routes, or a callback.
+     * @param \Closure|null $callback The callback to invoke that builds the plugin routes.
      *   Only required when $params is defined.
      * @return $this
-     * @throws \InvalidArgumentException when there is no callable parameter.
+     * @throws \InvalidArgumentException when there is no callback parameter.
      */
-    public function scope(string $path, $params, $callback = null)
+    public function scope(string $path, $params, ?Closure $callback = null)
     {
-        if (is_callable($params)) {
+        if (!is_array($params)) {
             $callback = $params;
             $params = [];
         }
-        if (!is_callable($callback)) {
-            $msg = 'Need a callable function/object to connect routes.';
-            throw new InvalidArgumentException($msg);
+        if (!$callback instanceof Closure) {
+            throw new InvalidArgumentException('Need a Closure to connect routes.');
         }
 
         if ($this->_path !== '/') {
@@ -987,7 +983,7 @@ class RouteBuilder
      * scope or any child scopes that share the same RouteCollection.
      *
      * @param string $name The name of the middleware. Used when applying middleware to a scope.
-     * @param callable|string $middleware The middleware callable or class name to register.
+     * @param \Closure|string $middleware The middleware Closure or class name to register.
      * @return $this
      * @see \Cake\Routing\RouteCollection
      */
