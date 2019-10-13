@@ -44,7 +44,7 @@ class RoutingMiddleware implements MiddlewareInterface
     /**
      * The application that will have its routing hook invoked.
      *
-     * @var \Cake\Core\RoutingApplicationInterface
+     * @var \Cake\Routing\RoutingApplicationInterface
      */
     protected $app;
 
@@ -59,7 +59,7 @@ class RoutingMiddleware implements MiddlewareInterface
     /**
      * Constructor
      *
-     * @param \Cake\Core\RoutingApplicationInterface $app The application instance that routes are defined on.
+     * @param \Cake\Routing\RoutingApplicationInterface $app The application instance that routes are defined on.
      * @param string|null $cacheConfig The cache config name to use or null to disable routes cache
      */
     public function __construct(RoutingApplicationInterface $app, ?string $cacheConfig = null)
