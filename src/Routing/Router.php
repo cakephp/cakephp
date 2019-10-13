@@ -21,9 +21,7 @@ use Cake\Http\ServerRequest;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Utility\Inflector;
 use Closure;
-use Exception;
 use ReflectionFunction;
-use ReflectionMethod;
 use RuntimeException;
 use Throwable;
 
@@ -342,22 +340,11 @@ class Router
     protected static function _applyUrlFilters(array $url): array
     {
         $request = static::getRequest();
-        $e = null;
         foreach (static::$_urlFilters as $filter) {
             try {
                 $url = $filter($url, $request);
-            } catch (Exception $e) {
-                // fall through
             } catch (Throwable $e) {
-                // fall through
-            }
-            if ($e !== null) {
-                if (is_array($filter)) {
-                    $ref = new ReflectionMethod($filter[0], $filter[1]);
-                } else {
-                    /** @psalm-suppress InvalidArgument */
-                    $ref = new ReflectionFunction($filter);
-                }
+                $ref = new ReflectionFunction($filter);
                 $message = sprintf(
                     'URL filter defined in %s on line %s could not be applied. The filter failed with: %s',
                     $ref->getFileName(),
