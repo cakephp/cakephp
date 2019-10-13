@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Cake\Core;
 
 use Cake\Http\MiddlewareQueue;
-use Cake\Routing\RouteBuilder;
 use Psr\Http\Server\RequestHandlerInterface;
 
 /**
@@ -33,6 +32,7 @@ interface HttpApplicationInterface extends RequestHandlerInterface
      * @return void
      */
     public function bootstrap(): void;
+
     /**
      * Define the HTTP middleware layers for an application.
      *
