@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Http;
 
 use Cake\Core\App;
-use Cake\Http\Middleware\CallableDecoratorMiddleware;
+use Cake\Http\Middleware\ClosureDecoratorMiddleware;
 use Cake\Http\Middleware\DoublePassDecoratorMiddleware;
 use Closure;
 use Countable;
@@ -92,7 +92,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
             return new DoublePassDecoratorMiddleware($middleware);
         }
 
-        return new CallableDecoratorMiddleware($middleware);
+        return new ClosureDecoratorMiddleware($middleware);
     }
 
     /**
