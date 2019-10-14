@@ -3174,7 +3174,7 @@ class PaginatorHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $out);
     }
-    
+
     /**
      * test the limitControl() method with defaults and query
      *
@@ -3204,7 +3204,7 @@ class PaginatorHelperTest extends TestCase
             '/form'
         ];
         $this->assertHtml($expected, $out);
-        
+
         $this->View->setRequest($this->View->getRequest()->withQueryParams(['limit' => '100']));
         $out = $this->Paginator->limitControl([], 50);
         $expected = [
