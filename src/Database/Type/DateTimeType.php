@@ -24,6 +24,7 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
 use Exception;
+use InvalidArgumentException;
 use PDO;
 use RuntimeException;
 
@@ -45,36 +46,44 @@ class DateTimeType extends BaseType
     protected $setToDateStart = false;
 
     /**
-     * String format to use for DateTime parsing
+     * The DateTime format used when converting to string.
+     *
+     * @var string
+     */
+    protected $_format = 'Y-m-d H:i:s';
+
+    /**
+     * The DateTime formats allowed by `marshal()`.
      *
      * @var string|array
      */
-    protected $_format = [
+    protected $_marshalFormat = [
         'Y-m-d H:i:s',
         'Y-m-d\TH:i:s',
         'Y-m-d\TH:i:sP',
     ];
 
     /**
-     * Whether dates should be parsed using a locale aware parser
-     * when marshalling string inputs.
+     * Whether `marshal()` should use locale-aware parser with `_localeMarshalFormat`.
      *
      * @var bool
      */
-    protected $_useLocaleParser = false;
+    protected $_useLocaleMarshal = false;
 
     /**
-     * The date format to use for parsing incoming dates for marshalling.
+     * The locale-aware format `marshal()` uses when `_useLocaleParser` is true.
+     *
+     * See `Cake\I18n\Time::parseDateTime()` for accepted formats.
      *
      * @var string|array|int
      */
-    protected $_localeFormat;
+    protected $_localeMarshalFormat;
 
     /**
      * An instance of the configured dateTimeClass, used to quickly generate
      * new instances without calling the constructor.
      *
-     * @var \DateTime
+     * @var \DateTime|\DateTimeImmutable
      */
     protected $_datetimeInstance;
 
@@ -121,8 +130,6 @@ class DateTimeType extends BaseType
             $value = new $class('@' . $value);
         }
 
-        $format = (array)$this->_format;
-
         if (
             $this->dbTimezone !== null
             && $this->dbTimezone->getName() !== $value->getTimezone()->getName()
@@ -133,7 +140,7 @@ class DateTimeType extends BaseType
             $value = $value->setTimezone($this->dbTimezone);
         }
 
-        return $value->format(array_shift($format));
+        return $value->format($this->_format);
     }
 
     /**
@@ -163,7 +170,7 @@ class DateTimeType extends BaseType
      *
      * @param mixed $value The value to convert.
      * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
-     * @return \Cake\I18n\Time|\DateTime|null
+     * @return \DateTimeInterface|null
      */
     public function toPHP($value, DriverInterface $driver)
     {
@@ -247,18 +254,12 @@ class DateTimeType extends BaseType
             if (ctype_digit($value)) {
                 /** @var \DateTimeInterface $date */
                 $date = new $class('@' . $value);
-            } elseif ($isString && $this->_useLocaleParser) {
-                return $this->_parseValue($value);
-            } elseif ($isString) {
-                /** @var \DateTimeInterface $date */
-                $date = new $class($value);
-                $compare = true;
-            }
-            if ($compare && $date && !$this->_compare($date, $value)) {
-                return null;
-            }
-            if ($date) {
+
                 return $date;
+            } elseif ($isString && $this->_useLocaleMarshal) {
+                return $this->_parseLocaleValue($value);
+            } elseif ($isString) {
+                return $this->_parseValue($value);
             }
         } catch (Exception $e) {
             return null;
@@ -267,7 +268,7 @@ class DateTimeType extends BaseType
         if (is_array($value) && implode('', $value) === '') {
             return null;
         }
-        $value += ['hour' => 0, 'minute' => 0, 'second' => 0];
+        $value += ['hour' => 0, 'minute' => 0, 'second' => 0, 'microsecond' => 0];
 
         $format = '';
         if (
@@ -288,11 +289,12 @@ class DateTimeType extends BaseType
             $value['hour'] = strtolower($value['meridian']) === 'am' ? $value['hour'] : $value['hour'] + 12;
         }
         $format .= sprintf(
-            '%s%02d:%02d:%02d',
+            '%s%02d:%02d:%02d.%06d',
             empty($format) ? '' : ' ',
             $value['hour'],
             $value['minute'],
-            $value['second']
+            $value['second'],
+            $value['microsecond']
         );
         $tz = $value['timezone'] ?? null;
 
@@ -301,24 +303,10 @@ class DateTimeType extends BaseType
     }
 
     /**
-     * @param \DateTimeInterface $date DateTime object
-     * @param mixed $value Request data
-     * @return bool
-     */
-    protected function _compare($date, $value): bool
-    {
-        foreach ((array)$this->_format as $format) {
-            if ($date->format($format) === $value) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Sets whether or not to parse dates passed to the marshal() function
-     * by using a locale aware parser.
+     * Sets whether or not to parse strings passed to `marshal()` using
+     * the locale-aware format set by `setLocaleFormat()`.
+     *
+     * This is not used by any other parser or conversion than `marshal()`.
      *
      * @param bool $enable Whether or not to enable
      * @return $this
@@ -326,12 +314,12 @@ class DateTimeType extends BaseType
     public function useLocaleParser(bool $enable = true)
     {
         if ($enable === false) {
-            $this->_useLocaleParser = $enable;
+            $this->_useLocaleMarshal = $enable;
 
             return $this;
         }
-        if (method_exists($this->_className, 'parseDateTime')) {
-            $this->_useLocaleParser = $enable;
+        if ($this->_datetimeInstance instanceof \Cake\I18n\I18nDateTimeInterface) {
+            $this->_useLocaleMarshal = $enable;
 
             return $this;
         }
@@ -341,17 +329,17 @@ class DateTimeType extends BaseType
     }
 
     /**
-     * Sets the format string to use for parsing dates in this class. The formats
-     * that are accepted are documented in the `Cake\I18n\Time::parseDateTime()`
-     * function.
+     * Sets the format string to use for parsing dates in this class.
      *
-     * @param string|array $format The format in which the string are passed.
+     * See `Cake\I18n\Time::parseDateTime()` for accepted formats.
+     *
+     * @param string|array $format The locale-aware format
      * @see \Cake\I18n\Time::parseDateTime()
      * @return $this
      */
     public function setLocaleFormat($format)
     {
-        $this->_localeFormat = $format;
+        $this->_localeMarshalFormat = $format;
 
         return $this;
     }
@@ -408,17 +396,46 @@ class DateTimeType extends BaseType
 
     /**
      * Converts a string into a DateTime object after parsing it using the locale
-     * aware parser with the specified format.
+     * aware parser with the format set by `setLocaleFormat()`.
      *
      * @param string $value The value to parse and convert to an object.
-     * @return \Cake\I18n\Time|null
+     * @return \Cake\I18n\I18nDateTimeInterface|null
+     */
+    protected function _parseLocaleValue(string $value)
+    {
+        /** @var \Cake\I18n\I18nDateTimeInterface $class */
+        $class = $this->_className;
+
+        return $class::parseDateTime($value, $this->_localeMarshalFormat);
+    }
+
+    /**
+     * Converts a string into a DateTime object after parsing it using the
+     * formats in `_marshalFormat`.
+     *
+     * @param string $value The value to parse and convert to an object.
+     * @return \DateTimeInterface|null
      */
     protected function _parseValue(string $value)
     {
-        /** @var \Cake\I18n\Time $class */
+        /** @var \DateTime|\DateTimeImmutable $class */
         $class = $this->_className;
 
-        return $class::parseDateTime($value, $this->_localeFormat);
+        foreach ((array)$this->_marshalFormat as $format) {
+            try {
+                $dateTime = $class::createFromFormat($format, $value);
+                // Check for false in case DateTime is used directly
+                if ($dateTime !== false) {
+                    return $dateTime;
+                }
+            } catch (InvalidArgumentException $e) {
+                // Chronos wraps DateTime::createFromFormat and throws
+                // exception if parse fails.
+                continue;
+            }
+        }
+
+        return null;
     }
 
     /**

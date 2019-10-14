@@ -17,31 +17,24 @@ declare(strict_types=1);
 namespace Cake\Database\Type;
 
 /**
- * Time type converter.
- *
- * Use to convert time instances to strings & back.
+ * Extends DateTimeType with support for fractional seconds up to microseconds.
  */
-class TimeType extends DateTimeType
+class DateTimeFractionalType extends DateTimeType
 {
     /**
      * @inheritDoc
      */
-    protected $_format = 'H:i:s';
+    protected $_format = 'Y-m-d H:i:s.u';
 
     /**
      * @inheritDoc
      */
-    protected $_marshalFormat = 'H:i:s';
-
-    /**
-     * @inheritDoc
-     */
-    protected function _parseLocaleValue(string $value)
-    {
-        /** @var \Cake\I18n\I18nDateTimeInterface $class */
-        $class = $this->_className;
-
-        /** @psalm-suppress PossiblyInvalidArgument */
-        return $class::parseTime($value, $this->_localeMarshalFormat);
-    }
+    protected $_marshalFormat = [
+        'Y-m-d H:i:s.u',
+        'Y-m-d H:i:s',
+        'Y-m-d\TH:i:s.u',
+        'Y-m-d\TH:i:s',
+        'Y-m-d\TH:i:s.uP',
+        'Y-m-d\TH:i:sP',
+    ];
 }

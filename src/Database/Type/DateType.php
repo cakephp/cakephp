@@ -28,11 +28,14 @@ use DateTimeInterface;
 class DateType extends DateTimeType
 {
     /**
-     * Date format for DateTime object
-     *
-     * @var string|array
+     * @inheritDoc
      */
     protected $_format = 'Y-m-d';
+
+    /**
+     * @inheritDoc
+     */
+    protected $_marshalFormat = 'Y-m-d';
 
     /**
      * In this class we want Date objects to  have their time
@@ -85,11 +88,11 @@ class DateType extends DateTimeType
     /**
      * @inheritDoc
      */
-    protected function _parseValue(string $value)
+    protected function _parseLocaleValue(string $value)
     {
-        /** @var \Cake\I18n\Time $class */
+        /** @var \Cake\I18n\I18nDateTimeInterface $class */
         $class = $this->_className;
 
-        return $class::parseDate($value, $this->_localeFormat);
+        return $class::parseDate($value, $this->_localeMarshalFormat);
     }
 }

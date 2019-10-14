@@ -40,9 +40,6 @@ parameters:
             message: '#Result of && is always false#'
             path: 'src/Database/Query.php'
         -
-            message: "#Call to function method_exists\\(\\) with string and 'parseDateTime' will always evaluate to false#"
-            path: 'src/Database/Type/DateTimeType.php'
-        -
             message: '#Result of && is always false#'
             path: 'src/Datasource/QueryCacher.php'
         -
