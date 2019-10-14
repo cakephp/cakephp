@@ -27,11 +27,16 @@ use Cake\Event\EventManager;
 use Cake\Event\EventManagerInterface;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
+use Cake\Routing\RoutingApplicationInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Base class for application classes.
+ * Base class for full-stack applications
+ *
+ * This class serves as a base class for applications that are using
+ * CakePHP as a full stack framework. If you are only using the Http or Console libraries
+ * you should implement the relevant interfaces directly.
  *
  * The application class is responsible for bootstrapping the application,
  * and ensuring that middleware is attached. It is also invoked as the last piece
@@ -40,7 +45,8 @@ use Psr\Http\Message\ServerRequestInterface;
 abstract class BaseApplication implements
     ConsoleApplicationInterface,
     HttpApplicationInterface,
-    PluginApplicationInterface
+    PluginApplicationInterface,
+    RoutingApplicationInterface
 {
     use EventDispatcherTrait;
 

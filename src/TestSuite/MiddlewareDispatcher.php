@@ -16,13 +16,13 @@ declare(strict_types=1);
 namespace Cake\TestSuite;
 
 use Cake\Core\Configure;
-use Cake\Core\HttpApplicationInterface;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Event\EventManager;
 use Cake\Http\Server;
 use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Router;
+use Cake\Routing\RoutingApplicationInterface;
 use LogicException;
 use Psr\Http\Message\ResponseInterface;
 use ReflectionClass;
@@ -126,7 +126,7 @@ class MiddlewareDispatcher
         }
         $builder = Router::createRouteBuilder('/');
 
-        if ($this->app instanceof HttpApplicationInterface) {
+        if ($this->app instanceof RoutingApplicationInterface) {
             $this->app->routes($builder);
         }
         if ($this->app instanceof PluginApplicationInterface) {
