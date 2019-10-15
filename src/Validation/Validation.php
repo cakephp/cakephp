@@ -1681,9 +1681,14 @@ class Validation
             if (isset($value['meridian'])) {
                 $value['hour'] = strtolower($value['meridian']) === 'am' ? $value['hour'] : $value['hour'] + 12;
             }
-            $value += ['minute' => 0, 'second' => 0];
-            if (is_numeric($value['hour']) && is_numeric($value['minute']) && is_numeric($value['second'])) {
-                $formatted .= sprintf('%02d:%02d:%02d', $value['hour'], $value['minute'], $value['second']);
+            $value += ['minute' => 0, 'second' => 0, 'microsecond' => 0];
+            if (
+                is_numeric($value['hour']) &&
+                is_numeric($value['minute']) &&
+                is_numeric($value['second']) &&
+                is_numeric($value['microsecond'])
+            ) {
+                $formatted .= sprintf('%02d:%02d:%02d.%06d', $value['hour'], $value['minute'], $value['second'], $value['microsecond']);
             }
         }
 

@@ -1546,6 +1546,7 @@ class ValidationTest extends TestCase
             'hour' => '12',
             'minute' => '14',
             'second' => '15',
+            'microsecond' => '123456',
             'meridian' => 'pm',
         ];
         $this->assertTrue(Validation::datetime($date));

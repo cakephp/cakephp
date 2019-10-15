@@ -18,6 +18,7 @@ namespace Cake\Database\Type;
 
 use Cake\Database\DriverInterface;
 use Cake\I18n\FrozenTime;
+use Cake\I18n\I18nDateTimeInterface;
 use Cake\I18n\Time;
 use DateTime;
 use DateTimeImmutable;
@@ -306,8 +307,6 @@ class DateTimeType extends BaseType
      * Sets whether or not to parse strings passed to `marshal()` using
      * the locale-aware format set by `setLocaleFormat()`.
      *
-     * This is not used by any other parser or conversion than `marshal()`.
-     *
      * @param bool $enable Whether or not to enable
      * @return $this
      */
@@ -318,7 +317,7 @@ class DateTimeType extends BaseType
 
             return $this;
         }
-        if ($this->_datetimeInstance instanceof \Cake\I18n\I18nDateTimeInterface) {
+        if ($this->_datetimeInstance instanceof I18nDateTimeInterface) {
             $this->_useLocaleMarshal = $enable;
 
             return $this;
@@ -329,7 +328,7 @@ class DateTimeType extends BaseType
     }
 
     /**
-     * Sets the format string to use for parsing dates in this class.
+     * Sets the locale-aware format used by `marshal()` when parsing strings.
      *
      * See `Cake\I18n\Time::parseDateTime()` for accepted formats.
      *
