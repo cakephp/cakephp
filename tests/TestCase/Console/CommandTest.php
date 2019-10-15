@@ -235,7 +235,10 @@ class CommandTest extends TestCase
         $this->assertSame(Command::CODE_ERROR, $result);
 
         $messages = implode("\n", $output->messages());
-        $this->assertStringContainsString('Error: Missing required arguments. name is required', $messages);
+        $this->assertStringContainsString(
+            'Error: Missing required arguments. The `name` argument is required',
+            $messages
+        );
     }
 
     /**
