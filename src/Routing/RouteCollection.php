@@ -75,13 +75,6 @@ class RouteCollection
     protected $_middlewareGroups = [];
 
     /**
-     * A map of paths and the list of applicable middleware.
-     *
-     * @var array
-     */
-    protected $_middlewarePaths = [];
-
-    /**
      * Route extensions
      *
      * @var string[]
@@ -475,36 +468,6 @@ class RouteCollection
     public function middlewareExists(string $name): bool
     {
         return $this->hasMiddleware($name) || $this->hasMiddlewareGroup($name);
-    }
-
-    /**
-     * Apply a registered middleware(s) for the provided path
-     *
-     * @param string $path The URL path to register middleware for.
-     * @param string[] $middleware The middleware names to add for the path.
-     * @return $this
-     */
-    public function applyMiddleware(string $path, array $middleware)
-    {
-        foreach ($middleware as $name) {
-            if (!$this->hasMiddleware($name) && !$this->hasMiddlewareGroup($name)) {
-                throw new RuntimeException(sprintf(
-                    "Cannot apply '%s' middleware or middleware group to path '%s'. It has not been registered.",
-                    $name,
-                    $path
-                ));
-            }
-        }
-        // Matches route element pattern in Cake\Routing\Route
-        $path = '#^' . preg_quote($path, '#') . '#';
-        $path = preg_replace('/\\\\:([a-z0-9-_]+(?<![-_]))/i', '[^/]+', $path);
-
-        if (!isset($this->_middlewarePaths[$path])) {
-            $this->_middlewarePaths[$path] = [];
-        }
-        $this->_middlewarePaths[$path] = array_merge($this->_middlewarePaths[$path], $middleware);
-
-        return $this;
     }
 
     /**
