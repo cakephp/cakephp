@@ -954,6 +954,8 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::date('00.00.0000', ['dmy']));
         $this->assertFalse(Validation::date('00/00/0000', ['dmy']));
         $this->assertFalse(Validation::date('00 00 0000', ['dmy']));
+        $this->assertFalse(Validation::date('01-01-0000', ['dmy']));
+        $this->assertFalse(Validation::date('01-01-300', ['dmy']));
         $this->assertFalse(Validation::date('31-11-2006', ['dmy']));
         $this->assertFalse(Validation::date('31.11.2006', ['dmy']));
         $this->assertFalse(Validation::date('31/11/2006', ['dmy']));
@@ -1070,6 +1072,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::date('0.0.0000', ['dmy']));
         $this->assertFalse(Validation::date('0/0/0000', ['dmy']));
         $this->assertFalse(Validation::date('0 0 0000', ['dmy']));
+        $this->assertFalse(Validation::date('1 1 300', ['dmy']));
         $this->assertFalse(Validation::date('32-2-2006', ['dmy']));
         $this->assertFalse(Validation::date('32.2.2006', ['dmy']));
         $this->assertFalse(Validation::date('32/2/2006', ['dmy']));
@@ -1110,6 +1113,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::date('00.00.0000', ['mdy']));
         $this->assertFalse(Validation::date('00/00/0000', ['mdy']));
         $this->assertFalse(Validation::date('00 00 0000', ['mdy']));
+        $this->assertFalse(Validation::date('10-31-300', ['mdy']));
         $this->assertFalse(Validation::date('11-31-2006', ['mdy']));
         $this->assertFalse(Validation::date('11.31.2006', ['mdy']));
         $this->assertFalse(Validation::date('11/31/2006', ['mdy']));
@@ -1226,6 +1230,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::date('0.0.0000', ['mdy']));
         $this->assertFalse(Validation::date('0/0/0000', ['mdy']));
         $this->assertFalse(Validation::date('0 0 0000', ['mdy']));
+        $this->assertFalse(Validation::date('2-21-300', ['mdy']));
         $this->assertFalse(Validation::date('2-32-2006', ['mdy']));
         $this->assertFalse(Validation::date('2.32.2006', ['mdy']));
         $this->assertFalse(Validation::date('2/32/2006', ['mdy']));
@@ -1263,6 +1268,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::date('2006.12.27', ['ymd']));
         $this->assertTrue(Validation::date('2006/12/27', ['ymd']));
         $this->assertTrue(Validation::date('2006 12 27', ['ymd']));
+        $this->assertFalse(Validation::date('300-01-15', ['ymd']));
         $this->assertFalse(Validation::date('2006-11-31', ['ymd']));
         $this->assertFalse(Validation::date('2006.11.31', ['ymd']));
         $this->assertFalse(Validation::date('2006/11/31', ['ymd']));
@@ -1459,6 +1465,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::date('2104', ['y']));
         $this->assertTrue(Validation::date('1899', ['y']));
         $this->assertFalse(Validation::date('20009', ['y']));
+        $this->assertFalse(Validation::date('0000', ['y']));
         $this->assertFalse(Validation::date(' 2012', ['y']));
         $this->assertFalse(Validation::date('3000', ['y']));
     }

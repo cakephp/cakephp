@@ -522,7 +522,8 @@ class Validation
         }
         $month = '(0[123456789]|10|11|12)';
         $separator = '([- /.])';
-        $fourDigitYear = '(?:[012]\d{3})';
+        // Don't allow 0000, but 0001-2999 are ok.
+        $fourDigitYear = '(?:(?!0000)[012]\d{3})';
         $twoDigitYear = '(?:\d{2})';
         $year = '(?:' . $fourDigitYear . '|' . $twoDigitYear . ')';
 
