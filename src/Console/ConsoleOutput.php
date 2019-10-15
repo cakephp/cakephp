@@ -230,8 +230,7 @@ class ConsoleOutput
      */
     protected function _replaceTags(array $matches): string
     {
-        /** @var array $style */
-        $style = $this->styles($matches['tag']);
+        $style = $this->getStyle($matches['tag']);
         if (empty($style)) {
             return '<' . $matches['tag'] . '>' . $matches['text'] . '</' . $matches['tag'] . '>';
         }
@@ -265,56 +264,56 @@ class ConsoleOutput
     }
 
     /**
-     * Get the current styles offered, or append new ones in.
+     * Gets the current styles offered
      *
-     * ### Get a style definition
+     * @param string $style The style to get.
+     * @return array The style or empty array.
+     */
+    public function getStyle(string $style): array
+    {
+        return static::$_styles[$style] ?? [];
+    }
+
+    /**
+     * Sets style.
+     *
+     * ### Creates or modifies an existing style.
      *
      * ```
-     * $output->styles('error');
-     * ```
-     *
-     * ### Get all the style definitions
-     *
-     * ```
-     * $output->styles();
-     * ```
-     *
-     * ### Create or modify an existing style
-     *
-     * ```
-     * $output->styles('annoy', ['text' => 'purple', 'background' => 'yellow', 'blink' => true]);
+     * $output->setStyle('annoy', ['text' => 'purple', 'background' => 'yellow', 'blink' => true]);
      * ```
      *
      * ### Remove a style
      *
      * ```
-     * $this->output->styles('annoy', false);
+     * $this->output->setStyle('annoy', []);
      * ```
      *
-     * @param string|null $style The style to get or create.
-     * @param array|false|null $definition The array definition of the style to change or create a style
-     *   or false to remove a style.
-     * @return array|true|null If you are getting styles, the style or null will be returned. If you are creating/modifying
-     *   styles true will be returned.
+     * @param string $style The style to get or create.
+     * @param array $definition The array definition of the style to change or create..
+     * @return void
      */
-    public function styles(?string $style = null, $definition = null)
+    public function setStyle(string $style, array $definition): void
     {
-        if ($style === null && $definition === null) {
-            return static::$_styles;
-        }
-        if ($definition === null) {
-            return static::$_styles[$style] ?? null;
-        }
-        if ($definition === false) {
+        if (!$definition) {
             /** @psalm-suppress PossiblyNullArrayOffset */
             unset(static::$_styles[$style]);
 
-            return true;
+            return;
         }
+
         /** @psalm-suppress PossiblyNullArrayOffset */
         static::$_styles[$style] = $definition;
+    }
 
-        return true;
+    /**
+     * Gets all the style definitions.
+     *
+     * @return array
+     */
+    public function styles(): array
+    {
+        return static::$_styles;
     }
 
     /**

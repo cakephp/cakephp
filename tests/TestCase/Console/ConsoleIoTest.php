@@ -545,6 +545,32 @@ class ConsoleIoTest extends TestCase
     }
 
     /**
+     * Ensure that setStyle() just proxies to stdout.
+     *
+     * @return void
+     */
+    public function testSetStyle()
+    {
+        $this->out->expects($this->once())
+            ->method('setStyle')
+            ->with('name', ['props']);
+        $this->io->setStyle('name', ['props']);
+    }
+
+    /**
+     * Ensure that getStyle() just proxies to stdout.
+     *
+     * @return void
+     */
+    public function testGetStyle()
+    {
+        $this->out->expects($this->once())
+            ->method('getStyle')
+            ->with('name');
+        $this->io->getStyle('name');
+    }
+
+    /**
      * Ensure that styles() just proxies to stdout.
      *
      * @return void
@@ -552,9 +578,8 @@ class ConsoleIoTest extends TestCase
     public function testStyles()
     {
         $this->out->expects($this->once())
-            ->method('styles')
-            ->with('name', 'props');
-        $this->io->styles('name', 'props');
+            ->method('styles');
+        $this->io->styles();
     }
 
     /**

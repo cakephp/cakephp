@@ -27,6 +27,11 @@ use Cake\TestSuite\TestCase;
 class ConsoleOutputTest extends TestCase
 {
     /**
+     * @var \Cake\Console\ConsoleOutput|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $output;
+
+    /**
      * setup
      *
      * @return void
@@ -34,7 +39,7 @@ class ConsoleOutputTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->output = $this->getMockBuilder('Cake\Console\ConsoleOutput')
+        $this->output = $this->getMockBuilder(ConsoleOutput::class)
             ->setMethods(['_write'])
             ->getMock();
         $this->output->setOutputAs(ConsoleOutput::COLOR);
@@ -110,11 +115,11 @@ class ConsoleOutputTest extends TestCase
      */
     public function testStylesGet()
     {
-        $result = $this->output->styles('error');
+        $result = $this->output->getStyle('error');
         $expected = ['text' => 'red'];
         $this->assertEquals($expected, $result);
 
-        $this->assertNull($this->output->styles('made_up_goop'));
+        $this->assertSame([], $this->output->getStyle('made_up_goop'));
 
         $result = $this->output->styles();
         $this->assertNotEmpty($result, 'Error is missing');
@@ -128,13 +133,13 @@ class ConsoleOutputTest extends TestCase
      */
     public function testStylesAdding()
     {
-        $this->output->styles('test', ['text' => 'red', 'background' => 'black']);
-        $result = $this->output->styles('test');
+        $this->output->setStyle('test', ['text' => 'red', 'background' => 'black']);
+        $result = $this->output->getStyle('test');
         $expected = ['text' => 'red', 'background' => 'black'];
         $this->assertEquals($expected, $result);
 
-        $this->assertTrue($this->output->styles('test', false), 'Removing a style should return true.');
-        $this->assertNull($this->output->styles('test'), 'Removed styles should be null.');
+        $this->output->setStyle('test', []);
+        $this->assertSame([], $this->output->getStyle('test'), 'Removed styles should be empty.');
     }
 
     /**
@@ -170,7 +175,7 @@ class ConsoleOutputTest extends TestCase
      */
     public function testFormattingCustom()
     {
-        $this->output->styles('annoying', [
+        $this->output->setStyle('annoying', [
             'text' => 'magenta',
             'background' => 'cyan',
             'blink' => true,

@@ -414,18 +414,38 @@ class ConsoleIo
     }
 
     /**
-     * Add a new output style or get defined styles.
+     * @return array
+     * @see \Cake\Console\ConsoleOutput::styles()
+     */
+    public function styles(): array
+    {
+        return $this->_out->styles();
+    }
+
+    /**
+     * Get defined styles.
+     *
+     * @param string $style
+     * @return array
+     * @see \Cake\Console\ConsoleOutput::getStyle()
+     */
+    public function getStyle(string $style): array
+    {
+        return $this->_out->getStyle($style);
+    }
+
+    /**
+     * Add a new output style or
      *
      * @param string|null $style The style to get or create.
      * @param array|false|null $definition The array definition of the style to change or create a style
      *   or false to remove a style.
-     * @return array|true|null If you are getting styles, the style or null will be returned. If you are creating/modifying
-     *   styles true will be returned.
-     * @see \Cake\Console\ConsoleOutput::styles()
+     * @return void
+     * @see \Cake\Console\ConsoleOutput::setStyle()
      */
-    public function styles(?string $style = null, $definition = null)
+    public function setStyle(string $style, array $definition): void
     {
-        return $this->_out->styles($style, $definition);
+        $this->_out->setStyle($style, $definition);
     }
 
     /**
