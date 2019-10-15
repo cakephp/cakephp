@@ -980,7 +980,7 @@ class RouteBuilder
      * scope or any child scopes that share the same RouteCollection.
      *
      * @param string $name The name of the middleware. Used when applying middleware to a scope.
-     * @param callable|string $middleware The middleware callable or class name to register.
+     * @param string|\Closure|\Psr\Http\Server\MiddlewareInterface $middleware The middleware to register.
      * @return $this
      * @see \Cake\Routing\RouteCollection
      */
