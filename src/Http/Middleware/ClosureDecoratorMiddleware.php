@@ -16,15 +16,16 @@ declare(strict_types=1);
  */
 namespace Cake\Http\Middleware;
 
+use Closure;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 /**
- * Decorate callable middleware as PSR-15 middleware.
+ * Decorate closures as PSR-15 middleware.
  *
- * Decorates middleware with the following signature:
+ * Decorates closures with the following signature:
  *
  * ```
  * function (
@@ -34,24 +35,22 @@ use Psr\Http\Server\RequestHandlerInterface;
  * ```
  *
  * such that it will operate as PSR-15 middleware.
- *
- * Neither the arguments nor the return value need be typehinted.
  */
-class CallableDecoratorMiddleware implements MiddlewareInterface
+class ClosureDecoratorMiddleware implements MiddlewareInterface
 {
     /**
-     * A callable.
+     * A Closure.
      *
-     * @var callable
+     * @var \Closure
      */
     protected $callable;
 
     /**
      * Constructor
      *
-     * @param callable $callable A closure.
+     * @param \Closure $callable A closure.
      */
-    public function __construct(callable $callable)
+    public function __construct(Closure $callable)
     {
         $this->callable = $callable;
     }
