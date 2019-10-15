@@ -658,7 +658,6 @@ class QueryExpression implements ExpressionInterface, Countable
             $numericKey = is_numeric($k);
 
             if ($c instanceof Closure) {
-                /** @var \Cake\Database\Expression\QueryExpression $expr */
                 $expr = new static([], $typeMap);
                 $c = $c($expr, $this);
             }

@@ -637,7 +637,6 @@ class EntityContext implements ContextInterface
             $normalized = array_slice($normalized, 1);
         }
 
-        /** @var \Cake\ORM\Table $table */
         $table = $this->_tables[$this->_rootName];
         /** @var \Cake\ORM\Association\BelongsToMany|null $assoc */
         $assoc = null;
@@ -649,7 +648,6 @@ class EntityContext implements ContextInterface
                     continue;
                 }
             } else {
-                /** @var \Cake\ORM\AssociationCollection $associationCollection */
                 $associationCollection = $table->associations();
                 $assoc = $associationCollection->getByProperty($part);
             }
