@@ -28,25 +28,11 @@ use RuntimeException;
 /**
  * Base class for console commands.
  */
-class Command
+class Command implements CommandInterface
 {
     use LocatorAwareTrait;
     use LogTrait;
     use ModelAwareTrait;
-
-    /**
-     * Default error code
-     *
-     * @var int
-     */
-    public const CODE_ERROR = 1;
-
-    /**
-     * Default success code
-     *
-     * @var int
-     */
-    public const CODE_SUCCESS = 0;
 
     /**
      * The name of this command.
@@ -73,15 +59,7 @@ class Command
     }
 
     /**
-     * Set the name this command uses in the collection.
-     *
-     * Generally invoked by the CommandCollection when the command is added.
-     * Required to have at least one space in the name so that the root
-     * command can be calculated.
-     *
-     * @param string $name The name the command uses in the collection.
-     * @return $this
-     * @throws \InvalidArgumentException
+     * {@inheritDoc}
      */
     public function setName(string $name)
     {
@@ -185,11 +163,7 @@ class Command
     }
 
     /**
-     * Run the command.
-     *
-     * @param array $argv Arguments from the CLI environment.
-     * @param \Cake\Console\ConsoleIo $io The console io
-     * @return int|null Exit code or null for success.
+     * {@inheritDoc}
      */
     public function run(array $argv, ConsoleIo $io): ?int
     {
@@ -285,7 +259,7 @@ class Command
     /**
      * Execute another command with the provided set of arguments.
      *
-     * @param string|\Cake\Console\Command $command The command class name or command instance.
+     * @param string|\Cake\Console\CommandInterface $command The command class name or command instance.
      * @param array $args The arguments to invoke the command with.
      * @param \Cake\Console\ConsoleIo $io The ConsoleIo instance to use for the executed command.
      * @return int|null The exit code or null for success of the command.
@@ -298,10 +272,10 @@ class Command
             }
             $command = new $command();
         }
-        if (!$command instanceof Command) {
+        if (!$command instanceof CommandInterface) {
             $commandType = getTypeName($command);
             throw new InvalidArgumentException(
-                "Command '{$commandType}' is not a subclass of Cake\Console\Command."
+                "Command '{$commandType}' is not a subclass of Cake\Console\CommandInterface."
             );
         }
         $io = $io ?: new ConsoleIo();
