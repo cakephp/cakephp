@@ -1770,6 +1770,35 @@ class CollectionTest extends TestCase
     }
 
     /**
+     * Provider for sumOf float tests
+     *
+     * @return array
+     */
+    public function sumOfFloatProvider()
+    {
+        $items = [
+            ['invoice' => ['total' => 100.1]],
+            ['invoice' => ['total' => 200.2]],
+        ];
+
+        return [
+            'array' => [$items],
+            'iterator' => [$this->yieldItems($items)],
+        ];
+    }
+
+    /**
+     * Tests the sumOf method with float result
+     *
+     * @dataProvider sumOfFloatProvider
+     * @return void
+     */
+    public function testSumOfFloat($items)
+    {
+        $this->assertEquals(300.3, (new Collection($items))->sumOf('invoice.total'));
+    }
+
+    /**
      * Tests the stopWhen method with a callable
      *
      * @dataProvider simpleProvider
