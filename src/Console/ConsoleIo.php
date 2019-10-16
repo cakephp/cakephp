@@ -427,7 +427,7 @@ class ConsoleIo
     /**
      * Get defined style.
      *
-     * @param string $style
+     * @param string $style The style to get.
      * @return array
      * @see \Cake\Console\ConsoleOutput::getStyle()
      */
