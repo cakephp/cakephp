@@ -289,7 +289,7 @@ class ConsoleOutput
      * $this->output->setStyle('annoy', []);
      * ```
      *
-     * @param string $style The style to get or create.
+     * @param string $style The style to set.
      * @param array $definition The array definition of the style to change or create..
      * @return void
      */

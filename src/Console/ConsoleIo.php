@@ -414,6 +414,8 @@ class ConsoleIo
     }
 
     /**
+     * Gets defined styles.
+     *
      * @return array
      * @see \Cake\Console\ConsoleOutput::styles()
      */
@@ -423,7 +425,7 @@ class ConsoleIo
     }
 
     /**
-     * Get defined styles.
+     * Get defined style.
      *
      * @param string $style
      * @return array
@@ -435,11 +437,10 @@ class ConsoleIo
     }
 
     /**
-     * Add a new output style or
+     * Adds a new output style.
      *
-     * @param string|null $style The style to get or create.
-     * @param array|false|null $definition The array definition of the style to change or create a style
-     *   or false to remove a style.
+     * @param string $style The style to set.
+     * @param array $definition The array definition of the style to change or create.
      * @return void
      * @see \Cake\Console\ConsoleOutput::setStyle()
      */
