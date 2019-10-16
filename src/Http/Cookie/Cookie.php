@@ -105,6 +105,14 @@ class Cookie implements CookieInterface
     protected $httpOnly = false;
 
     /**
+     * Samesite
+     *
+     * @var string|null
+     * @psalm-var CookieInterface::SAMESITE_LAX|CookieInterface::SAMESITE_STRICT|null
+     */
+    protected $sameSite = null;
+
+    /**
      * Constructor
      *
      * The constructors args are similar to the native PHP `setcookie()` method.
@@ -119,6 +127,7 @@ class Cookie implements CookieInterface
      * @param string $domain Domain
      * @param bool $secure Is secure
      * @param bool $httpOnly HTTP Only
+     * @param string|null $sameSite Samesite
      */
     public function __construct(
         string $name,
@@ -127,7 +136,8 @@ class Cookie implements CookieInterface
         string $path = '/',
         string $domain = '',
         bool $secure = false,
-        bool $httpOnly = false
+        bool $httpOnly = false,
+        ?string $sameSite = null
     ) {
         $this->validateName($name);
         $this->name = $name;
@@ -138,11 +148,48 @@ class Cookie implements CookieInterface
         $this->httpOnly = $httpOnly;
         $this->path = $path;
         $this->secure = $secure;
+        if ($sameSite !== null) {
+            $this->validateSameSiteValue($sameSite);
+            $this->sameSite = $sameSite;
+        }
 
         if ($expiresAt) {
             $expiresAt = $expiresAt->setTimezone(new DateTimeZone('GMT'));
         }
         $this->expiresAt = $expiresAt;
+    }
+
+    /**
+     * Factory method to create Cookie instances.
+     *
+     * @param string $name Cookie name
+     * @param string|array $value Value of the cookie
+     * @param array $options Cookies options. Can contain one of following keys:
+     *  expires, path, domain, secure, httponly and samesite.
+     *  (Keys must be lowercase).
+     * @return static
+     */
+    public static function create(string $name, $value, array $options = [])
+    {
+        $options += [
+            'expires' => null,
+            'path' => '/',
+            'domain' => '',
+            'secure' => false,
+            'httponly' => false,
+            'samesite' => null,
+        ];
+
+        return new static(
+            $name,
+            $value,
+            $options['expires'],
+            $options['path'],
+            $options['domain'],
+            $options['secure'],
+            $options['httponly'],
+            $options['samesite']
+        );
     }
 
     /**
@@ -169,6 +216,9 @@ class Cookie implements CookieInterface
         }
         if ($this->domain !== '') {
             $headerValue[] = sprintf('domain=%s', $this->domain);
+        }
+        if ($this->sameSite) {
+            $headerValue[] = sprintf('samesite=%s', $this->sameSite);
         }
         if ($this->secure) {
             $headerValue[] = 'secure';
@@ -441,6 +491,45 @@ class Cookie implements CookieInterface
     }
 
     /**
+     * @inheritDoc
+     */
+    public function getSameSite(): ?string
+    {
+        return $this->sameSite;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function withSameSite(?string $sameSite)
+    {
+        if ($sameSite !== null) {
+            $this->validateSameSiteValue($sameSite);
+        }
+
+        $new = clone $this;
+        $new->sameSite = $sameSite;
+
+        return $new;
+    }
+
+    /**
+     * Check that value passed for SameSite is valid.
+     *
+     * @param string $sameSite SameSite value
+     * @return void
+     * @throws \InvalidArgumentException
+     */
+    protected function validateSameSiteValue(string $sameSite)
+    {
+        if (!in_array($sameSite, CookieInterface::SAMESITE_VALUES)) {
+            throw new InvalidArgumentException(
+                'Samesite value must be either of: ' . implode(',', CookieInterface::SAMESITE_VALUES)
+            );
+        }
+    }
+
+    /**
      * Checks if a value exists in the cookie data.
      *
      * This method will expand serialized complex data,
@@ -533,6 +622,26 @@ class Cookie implements CookieInterface
     public function isExpanded(): bool
     {
         return $this->isExpanded;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getOptions(): array
+    {
+        $options = [
+            'expires' => $this->getExpiresTimestamp(),
+            'path' => $this->path,
+            'domain' => $this->domain,
+            'secure' => $this->secure,
+            'httponly' => $this->httpOnly,
+        ];
+
+        if ($this->sameSite !== null) {
+            $options['samesite'] = $this->sameSite;
+        }
+
+        return $options;
     }
 
     /**

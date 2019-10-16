@@ -28,6 +28,28 @@ interface CookieInterface
     public const EXPIRES_FORMAT = 'D, d-M-Y H:i:s T';
 
     /**
+     * SameSite option value: Lax
+     *
+     * @var string
+     */
+    public const SAMESITE_LAX = 'Lax';
+
+    /**
+     * SameSite option value: Strict
+     *
+     * @var string
+     */
+    public const SAMESITE_STRICT = 'Strict';
+
+    /**
+     * Valid values for "SameSite" option.
+     */
+    public const SAMESITE_VALUES = [
+        self::SAMESITE_LAX,
+        self::SAMESITE_STRICT,
+    ];
+
+    /**
      * Sets the cookie name
      *
      * @param string $name Name of the cookie
@@ -189,6 +211,28 @@ interface CookieInterface
      * @return static
      */
     public function withSecure(bool $secure);
+
+    /**
+     * Get the SameSite attribute.
+     *
+     * @return string|null
+     */
+    public function getSameSite(): ?string;
+
+    /**
+     * Create a cookie with an updated SameSite option
+     *
+     * @param string|null $sameSite Value for to set for Samesite option
+     * @return static
+     */
+    public function withSameSite(?string $sameSite);
+
+    /**
+     * Get cookie options
+     *
+     * @return array
+     */
+    public function getOptions(): array;
 
     /**
      * Returns the cookie as header value

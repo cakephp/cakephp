@@ -220,15 +220,19 @@ class ResponseEmitter implements EmitterInterface
     {
         foreach ($cookies as $cookie) {
             if (is_array($cookie)) {
-                setcookie(
-                    $cookie['name'],
-                    $cookie['value'],
-                    $cookie['expire'],
-                    $cookie['path'],
-                    $cookie['domain'],
-                    $cookie['secure'],
-                    $cookie['httpOnly']
-                );
+                if (PHP_VERSION_ID >= 70300) {
+                    setcookie($cookie['name'], $cookie['value'], $cookie['options']);
+                } else {
+                    setcookie(
+                        $cookie['name'],
+                        $cookie['value'],
+                        $cookie['options']['expire'],
+                        $cookie['options']['path'],
+                        $cookie['options']['domain'],
+                        $cookie['options']['secure'],
+                        $cookie['options']['httpOnly']
+                    );
+                }
                 continue;
             }
 
@@ -248,6 +252,7 @@ class ResponseEmitter implements EmitterInterface
                 'domain' => '',
                 'secure' => false,
                 'httponly' => false,
+                'samesite' => null,
             ];
 
             foreach ($parts as $part) {
@@ -264,16 +269,28 @@ class ResponseEmitter implements EmitterInterface
             if (is_string($data['expires'])) {
                 $data['expires'] = strtotime($data['expires']);
             }
-            /** @psalm-suppress PossiblyInvalidArgument */
-            setcookie(
-                $data['name'],
-                $data['value'],
-                $data['expires'],
-                $data['path'],
-                $data['domain'],
-                $data['secure'],
-                $data['httponly']
-            );
+
+            $name = $data['name'];
+            $value = $data['value'];
+            unset($data['name'], $data['value']);
+            if (!$data['samesite']) {
+                unset($data['samesite']);
+            }
+
+            if (PHP_VERSION_ID >= 70300) {
+                setcookie($name, $value, $cookie['options']);
+            } else {
+                /** @psalm-suppress PossiblyInvalidArgument */
+                setcookie(
+                    $name,
+                    $value,
+                    $data['expires'],
+                    $data['path'],
+                    $data['domain'],
+                    $data['secure'],
+                    $data['httponly']
+                );
+            }
         }
     }
 

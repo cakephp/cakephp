@@ -351,7 +351,7 @@ class CookieCollection implements IteratorAggregate, Countable
             $parts = preg_split('/\;[ \t]*/', $value);
 
             $name = '';
-            $cookie = [
+            $cookieOptions = [
                 'value' => '',
                 'path' => '',
                 'domain' => '',
@@ -369,34 +369,35 @@ class CookieCollection implements IteratorAggregate, Countable
                 }
                 if ($i === 0) {
                     $name = $key;
-                    $cookie['value'] = urldecode((string)$value);
+                    $cookieOptions['value'] = urldecode((string)$value);
                     continue;
                 }
                 $key = strtolower($key);
-                if (array_key_exists($key, $cookie) && !strlen((string)$cookie[$key])) {
-                    $cookie[$key] = $value;
+                if (array_key_exists($key, $cookieOptions) && !strlen((string)$cookieOptions[$key])) {
+                    $cookieOptions[$key] = $value;
                 }
             }
             try {
                 $expires = null;
-                if ($cookie['max-age'] !== null) {
-                    $expires = new DateTimeImmutable('@' . (time() + (int)$cookie['max-age']));
-                } elseif ($cookie['expires'] !== null) {
-                    $expires = new DateTimeImmutable('@' . strtotime((string)$cookie['expires']));
+                if ($cookieOptions['max-age'] !== null) {
+                    $expires = new DateTimeImmutable('@' . (time() + (int)$cookieOptions['max-age']));
+                } elseif ($cookieOptions['expires'] !== null) {
+                    $expires = new DateTimeImmutable('@' . strtotime((string)$cookieOptions['expires']));
                 }
             } catch (Exception $e) {
                 $expires = null;
             }
 
+            $cookieOptions['expires'] = $expires;
+            /** @psalm-suppress PossiblyInvalidCast */
+            $value = (string)$cookieOptions['value'];
+            unset($cookieOptions['value'], $cookieOptions['max-age']);
+
             try {
-                $cookies[] = new Cookie(
+                $cookies[] = Cookie::create(
                     $name,
-                    (string)$cookie['value'],
-                    $expires,
-                    (string)$cookie['path'],
-                    (string)$cookie['domain'],
-                    (bool)$cookie['secure'],
-                    (bool)$cookie['httponly']
+                    $value,
+                    $cookieOptions
                 );
             } catch (Exception $e) {
                 // Don't blow up on invalid cookies
