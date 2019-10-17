@@ -18,6 +18,9 @@ use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use Cake\View\StringTemplate;
 
+/**
+ * @property StringTemplate $template
+ */
 class StringTemplateTest extends TestCase
 {
 
@@ -438,6 +441,100 @@ class StringTemplateTest extends TestCase
                 'text'
             ],
             'non-existent' => ['new_class']
+        ]);
+    }
+
+    /**
+     * Test removeClass method input parameter
+     *
+     * Tests null, string, array, false and object
+     *
+     * @return void
+     */
+    public function testRemoveClassMethodCurrentClass()
+    {
+        $result = $this->template->removeClass(['class' => ['keep_class', 'remove_class']], 'remove_class');
+        $this->assertEquals($result, ['class' => ['keep_class']]);
+
+        $result = $this->template->removeClass('keep_class remove_class', 'remove_class');
+        $this->assertEquals($result, ['class' => ['keep_class']]);
+
+        $result = $this->template->removeClass(null, 'remove_class');
+        $this->assertEquals($result, ['class' => []]);
+
+        $result = $this->template->removeClass(false, 'remove_class');
+        $this->assertEquals($result, ['class' => []]);
+
+        $result = $this->template->removeClass(new \StdClass(), 'remove_class');
+        $this->assertEquals($result, ['class' => []]);
+    }
+
+    /**
+     * Test removeClass method string parameter, it should fallback to string
+     *
+     * @return void
+     */
+    public function testRemoveClassMethodFallbackToString()
+    {
+        $result = $this->template->removeClass('keep_class remove_class', 'remove_class');
+        $this->assertEquals($result, ['class' => ['keep_class']]);
+    }
+
+    /**
+     * Test removeClass method useIndex param
+     *
+     * Tests for useIndex being the default, 'keep_class' and false
+     *
+     * @return void
+     */
+    public function testRemoveClassMethodUseIndex()
+    {
+        $result = $this->template->removeClass(
+            [
+                'class' => 'keep_class remove_class',
+                'other_index1' => false,
+                'type' => 'text'
+            ],
+            'remove_class',
+            'class'
+        );
+        $this->assertEquals($result, [
+            'class' => ['keep_class'],
+            'other_index1' => false,
+            'type' => 'text'
+        ]);
+
+        $result = $this->template->removeClass(
+            [
+                'my_class' => 'keep_class remove_class',
+                'other_index1' => false,
+                'type' => 'text'
+            ],
+            'remove_class',
+            'my_class'
+        );
+        $this->assertEquals($result, [
+            'other_index1' => false,
+            'type' => 'text',
+            'my_class' => ['keep_class']
+        ]);
+
+        $result = $this->template->removeClass(
+            [
+                'class' => [
+                    'keep_class',
+                    'remove_class'
+                ]
+            ],
+            'remove_class',
+            'non-existent'
+        );
+        $this->assertEquals($result, [
+            'class' => [
+                'keep_class',
+                'remove_class'
+            ],
+            'non-existent' => []
         ]);
     }
 }
