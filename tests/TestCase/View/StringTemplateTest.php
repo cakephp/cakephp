@@ -360,7 +360,7 @@ class StringTemplateTest extends TestCase
         $result = $this->template->addClass(false, 'new_class');
         $this->assertEquals($result, ['class' => ['new_class']]);
 
-        $result = $this->template->addClass(new \StdClass(), 'new_class');
+        $result = $this->template->addClass(new \stdClass(), 'new_class');
         $this->assertEquals($result, ['class' => ['new_class']]);
     }
 
@@ -465,7 +465,7 @@ class StringTemplateTest extends TestCase
         $result = $this->template->removeClass(false, 'remove_class');
         $this->assertEquals($result, ['class' => []]);
 
-        $result = $this->template->removeClass(new \StdClass(), 'remove_class');
+        $result = $this->template->removeClass(new \stdClass(), 'remove_class');
         $this->assertEquals($result, ['class' => []]);
     }
 
