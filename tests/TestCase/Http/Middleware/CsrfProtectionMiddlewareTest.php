@@ -131,7 +131,6 @@ class CsrfProtectionMiddlewareTest extends TestCase
             'environment' => ['REQUEST_METHOD' => 'GET'],
         ]);
         $expectedResponse = new RedirectResponse('/');
-
         $handler = new TestRequestHandler(function ($request) use ($expectedResponse) {
 
             return $expectedResponse;
@@ -142,9 +141,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
             ->getMock();
         $middleware->expects($this->never())
             ->method('_addTokenCookie');
-
         $response = $middleware->process($request, $handler);
-
         $this->assertSame($expectedResponse, $response);
     }
 
