@@ -125,6 +125,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
                 return $response;
             }
 
+            /** @var \Cake\Http\Response $response */
             return $this->_addTokenCookie($token, $request, $response);
         }
 
