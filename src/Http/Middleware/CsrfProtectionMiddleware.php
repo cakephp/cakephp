@@ -27,6 +27,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Zend\Diactoros\Response\RedirectResponse;
 
 /**
  * Provides CSRF protection & validation.
@@ -121,6 +122,10 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
             $request = $request->withAttribute('csrfToken', $token);
             /** @var \Cake\Http\Response $response */
             $response = $handler->handle($request);
+            if ($response instanceof RedirectResponse) {
+
+                return $response;
+            }
 
             return $this->_addTokenCookie($token, $request, $response);
         }
