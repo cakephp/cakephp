@@ -699,7 +699,7 @@ class Cookie implements CookieInterface
     public function getOptions(): array
     {
         $options = [
-            'expires' => $this->getExpiresTimestamp(),
+            'expires' => (int)$this->getExpiresTimestamp(),
             'path' => $this->path,
             'domain' => $this->domain,
             'secure' => $this->secure,

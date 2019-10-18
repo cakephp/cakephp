@@ -882,7 +882,7 @@ class ResponseTest extends TestCase
 
         $new = $response->withExpiredCookie(new Cookie('testing'));
 
-        $this->assertNull($response->getCookie('testing')['options']['expires']);
+        $this->assertSame(0, $response->getCookie('testing')['options']['expires']);
         $this->assertLessThan(FrozenTime::createFromTimestamp(1), (string)$new->getCookie('testing')['options']['expires']);
     }
 
@@ -933,7 +933,7 @@ class ResponseTest extends TestCase
 
         $new = $response->withExpiredCookie($cookie);
 
-        $this->assertNull($response->getCookie('yay')['options']['expires']);
+        $this->assertSame(0, $response->getCookie('yay')['options']['expires']);
         $this->assertSame(1, $new->getCookie('yay')['options']['expires']);
     }
 
@@ -952,7 +952,7 @@ class ResponseTest extends TestCase
                 'name' => 'testing',
                 'value' => 'a',
                 'options' => [
-                    'expires' => null,
+                    'expires' => 0,
                     'path' => '/',
                     'domain' => '',
                     'secure' => false,
@@ -963,7 +963,7 @@ class ResponseTest extends TestCase
                 'name' => 'test2',
                 'value' => 'b',
                 'options' => [
-                    'expires' => null,
+                    'expires' => 0,
                     'path' => '/test',
                     'domain' => '',
                     'secure' => true,
@@ -992,7 +992,7 @@ class ResponseTest extends TestCase
                 'name' => 'urmc',
                 'value' => '{"user_id":1,"token":"abc123"}',
                 'options' => [
-                    'expires' => null,
+                    'expires' => 0,
                     'path' => '/',
                     'domain' => '',
                     'secure' => false,
