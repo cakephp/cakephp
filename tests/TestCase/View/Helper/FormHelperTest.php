@@ -531,9 +531,6 @@ class FormHelperTest extends TestCase
         ]);
         $expected = [
             'start form',
-            'div' => ['class' => 'hidden'],
-            'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
-            '/div',
         ];
         $this->assertHtml($expected, $result);
     }
@@ -653,10 +650,18 @@ class FormHelperTest extends TestCase
                 'method' => $method, 'action' => '/articles/add',
                 'accept-charset' => $encoding,
             ],
+        ];
+
+        $extra = [
             'div' => ['style' => 'display:none;'],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => $override],
             '/div',
         ];
+
+        if ($type !== 'post') {
+            $expected = array_merge($expected, $extra);
+        }
+
         $this->assertHtml($expected, $result);
     }
 
@@ -733,9 +738,6 @@ class FormHelperTest extends TestCase
                 'method' => 'post', 'action' => '/articles/delete/10',
                 'accept-charset' => $encoding,
             ],
-            'div' => ['style' => 'display:none;'],
-            'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
-            '/div',
         ];
         $this->assertHtml($expected, $result);
 
@@ -808,9 +810,6 @@ class FormHelperTest extends TestCase
                 'method' => 'post',
                 'accept-charset' => strtolower(Configure::read('App.encoding')),
             ],
-            'div' => ['style' => 'display:none;'],
-            'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
-            '/div',
         ];
         $this->assertHtml($expected, $result);
     }
@@ -834,9 +833,6 @@ class FormHelperTest extends TestCase
                 'method' => 'post', 'action' => '/login',
                 'accept-charset' => $encoding,
             ],
-            'div' => ['style' => 'display:none;'],
-            'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
-            '/div',
         ];
         $this->assertHtml($expected, $result);
 
@@ -851,9 +847,6 @@ class FormHelperTest extends TestCase
                 'method' => 'post', 'action' => '/new-article',
                 'accept-charset' => $encoding,
             ],
-            'div' => ['style' => 'display:none;'],
-            'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
-            '/div',
         ];
         $this->assertHtml($expected, $result);
     }
@@ -876,9 +869,6 @@ class FormHelperTest extends TestCase
                 'method' => 'post', 'action' => '/articles',
                 'accept-charset' => 'iso-8859-1',
             ],
-            'div' => ['style' => 'display:none;'],
-            'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
-            '/div',
         ];
         $this->assertHtml($expected, $result);
     }
@@ -905,9 +895,6 @@ class FormHelperTest extends TestCase
                 'action' => '/controller/action?param1=value1&amp;param2=value2',
                 'accept-charset' => $encoding,
             ],
-            'div' => ['style' => 'display:none;'],
-            'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
-            '/div',
         ];
         $this->assertHtml($expected, $result);
 
@@ -940,9 +927,6 @@ class FormHelperTest extends TestCase
                 'action' => '/articles/add',
                 'accept-charset' => $encoding,
             ],
-            'div' => ['style' => 'display:none;'],
-            'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
-            '/div',
         ];
         $this->assertHtml($expected, $result);
     }
@@ -970,9 +954,6 @@ class FormHelperTest extends TestCase
                 'action' => '/articles/edit/myparam',
                 'accept-charset' => $encoding,
             ],
-            'div' => ['style' => 'display:none;'],
-            'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
-            '/div',
         ];
         $this->assertHtml($expected, $result);
     }
@@ -1055,7 +1036,6 @@ class FormHelperTest extends TestCase
         $expected = [
             'form' => ['method' => 'post', 'action' => '/articles/publish', 'accept-charset' => $encoding],
             'div' => ['style' => 'display:none;'],
-            ['input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST']],
             ['input' => [
                 'type' => 'hidden',
                 'name' => '_csrfToken',
@@ -2060,7 +2040,6 @@ class FormHelperTest extends TestCase
         $expected = [
             'form' => ['method' => 'post', 'action' => '/articles/add', 'accept-charset' => $encoding],
             'div' => ['style' => 'display:none;'],
-            ['input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST']],
             ['input' => [
                 'type' => 'hidden',
                 'name' => '_csrfToken',
@@ -6634,9 +6613,6 @@ class FormHelperTest extends TestCase
         $result = $this->Form->postButton('Hi', '/controller/action');
         $expected = [
             'form' => ['method' => 'post', 'action' => '/controller/action', 'accept-charset' => 'utf-8'],
-            'div' => ['style' => 'display:none;'],
-            'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
-            '/div',
             'button' => ['type' => 'submit'],
             'Hi',
             '/button',
@@ -6679,9 +6655,6 @@ class FormHelperTest extends TestCase
         $result = $this->Form->postButton('Hi', '/controller/action', ['form' => ['class' => 'inline']]);
         $expected = [
             'form' => ['method' => 'post', 'action' => '/controller/action', 'accept-charset' => 'utf-8', 'class' => 'inline'],
-            'div' => ['style' => 'display:none;'],
-            'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
-            '/div',
             'button' => ['type' => 'submit'],
             'Hi',
             '/button',
@@ -6737,7 +6710,6 @@ class FormHelperTest extends TestCase
                 'method' => 'post', 'action' => '/posts/delete/1', 'accept-charset' => 'utf-8',
             ],
             ['div' => ['style' => 'display:none;']],
-            ['input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST']],
             ['input' => ['type' => 'hidden', 'name' => '_csrfToken', 'value' => 'testkey', 'autocomplete' => 'off']],
             '/div',
             'button' => ['type' => 'submit'],

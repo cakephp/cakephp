@@ -410,8 +410,6 @@ class FormHelper extends Helper
                 $htmlAttributes['enctype'] = 'multipart/form-data';
                 $options['type'] = $isCreate ? 'post' : 'put';
             // Move on
-            case 'post':
-            // Move on
             case 'put':
             // Move on
             case 'delete':
