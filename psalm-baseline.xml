@@ -7,19 +7,19 @@
   </file>
   <file src="src/Console/CommandCollection.php">
     <DeprecatedClass occurrences="1">
-      <code>string|\Cake\Console\Shell|\Cake\Console\Command</code>
+      <code>string|\Cake\Console\Shell|\Cake\Console\CommandInterface</code>
     </DeprecatedClass>
   </file>
   <file src="src/Console/CommandFactoryInterface.php">
     <DeprecatedClass occurrences="1">
-      <code>\Cake\Console\Shell|\Cake\Console\Command</code>
+      <code>\Cake\Console\Shell|\Cake\Console\CommandInterface</code>
     </DeprecatedClass>
   </file>
   <file src="src/Console/CommandRunner.php">
     <DeprecatedClass occurrences="3">
-      <code>\Cake\Console\Shell|\Cake\Console\Command</code>
+      <code>\Cake\Console\Shell|\Cake\Console\CommandInterface</code>
       <code>\Cake\Console\Shell</code>
-      <code>\Cake\Console\Shell|\Cake\Console\Command</code>
+      <code>\Cake\Console\Shell|\Cake\Console\CommandInterface</code>
     </DeprecatedClass>
   </file>
   <file src="src/Console/ShellDispatcher.php">
