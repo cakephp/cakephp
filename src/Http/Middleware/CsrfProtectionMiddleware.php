@@ -123,7 +123,6 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
             /** @var \Cake\Http\Response $response */
             $response = $handler->handle($request);
             if ($response instanceof RedirectResponse) {
-
                 return $response;
             }
 
