@@ -226,11 +226,11 @@ class ResponseEmitter implements EmitterInterface
                     setcookie(
                         $cookie['name'],
                         $cookie['value'],
-                        $cookie['options']['expire'],
+                        $cookie['options']['expires'],
                         $cookie['options']['path'],
                         $cookie['options']['domain'],
                         $cookie['options']['secure'],
-                        $cookie['options']['httpOnly']
+                        $cookie['options']['httponly']
                     );
                 }
                 continue;
