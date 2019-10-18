@@ -21,6 +21,7 @@ declare(strict_types=1);
  */
 namespace Cake\Http;
 
+use Cake\Http\Cookie\Cookie;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\RelativeStream;
 use Zend\HttpHandlerRunner\Emitter\EmitterInterface;
@@ -219,76 +220,21 @@ class ResponseEmitter implements EmitterInterface
     protected function emitCookies(array $cookies): void
     {
         foreach ($cookies as $cookie) {
-            if (is_array($cookie)) {
-                if (PHP_VERSION_ID >= 70300) {
-                    setcookie($cookie['name'], $cookie['value'], $cookie['options']);
-                } else {
-                    setcookie(
-                        $cookie['name'],
-                        $cookie['value'],
-                        $cookie['options']['expires'],
-                        $cookie['options']['path'],
-                        $cookie['options']['domain'],
-                        $cookie['options']['secure'],
-                        $cookie['options']['httponly']
-                    );
-                }
-                continue;
-            }
-
-            if (strpos($cookie, '";"') !== false) {
-                $cookie = str_replace('";"', '{__cookie_replace__}', $cookie);
-                $parts = str_replace('{__cookie_replace__}', '";"', explode(';', $cookie));
-            } else {
-                $parts = preg_split('/\;[ \t]*/', $cookie);
-            }
-
-            [$name, $value] = explode('=', array_shift($parts), 2);
-            $data = [
-                'name' => urldecode($name),
-                'value' => urldecode($value),
-                'expires' => 0,
-                'path' => '',
-                'domain' => '',
-                'secure' => false,
-                'httponly' => false,
-                'samesite' => null,
-            ];
-
-            foreach ($parts as $part) {
-                if (strpos($part, '=') !== false) {
-                    [$key, $value] = explode('=', $part);
-                } else {
-                    $key = $part;
-                    $value = true;
-                }
-
-                $key = strtolower($key);
-                $data[$key] = $value;
-            }
-            if (is_string($data['expires'])) {
-                $data['expires'] = strtotime($data['expires']);
-            }
-
-            $name = $data['name'];
-            $value = $data['value'];
-            unset($data['name'], $data['value']);
-            if (!$data['samesite']) {
-                unset($data['samesite']);
+            if (is_string($cookie)) {
+                $cookie = Cookie::createFromHeaderString($cookie)->toArray();
             }
 
             if (PHP_VERSION_ID >= 70300) {
-                setcookie($name, $value, $cookie['options']);
+                setcookie($cookie['name'], $cookie['value'], $cookie['options']);
             } else {
-                /** @psalm-suppress PossiblyInvalidArgument */
                 setcookie(
-                    $name,
-                    $value,
-                    $data['expires'],
-                    $data['path'],
-                    $data['domain'],
-                    $data['secure'],
-                    $data['httponly']
+                    $cookie['name'],
+                    $cookie['value'],
+                    $cookie['options']['expires'],
+                    $cookie['options']['path'],
+                    $cookie['options']['domain'],
+                    $cookie['options']['secure'],
+                    $cookie['options']['httponly']
                 );
             }
         }

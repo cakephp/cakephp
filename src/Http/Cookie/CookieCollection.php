@@ -347,58 +347,8 @@ class CookieCollection implements IteratorAggregate, Countable
     {
         $cookies = [];
         foreach ($values as $value) {
-            $value = rtrim($value, ';');
-            $parts = preg_split('/\;[ \t]*/', $value);
-
-            $name = '';
-            $cookieOptions = [
-                'value' => '',
-                'path' => '',
-                'domain' => '',
-                'secure' => false,
-                'httponly' => false,
-                'expires' => null,
-                'max-age' => null,
-            ];
-            foreach ($parts as $i => $part) {
-                if (strpos($part, '=') !== false) {
-                    [$key, $value] = explode('=', $part, 2);
-                } else {
-                    $key = $part;
-                    $value = true;
-                }
-                if ($i === 0) {
-                    $name = $key;
-                    $cookieOptions['value'] = urldecode((string)$value);
-                    continue;
-                }
-                $key = strtolower($key);
-                if (array_key_exists($key, $cookieOptions) && !strlen((string)$cookieOptions[$key])) {
-                    $cookieOptions[$key] = $value;
-                }
-            }
             try {
-                $expires = null;
-                if ($cookieOptions['max-age'] !== null) {
-                    $expires = new DateTimeImmutable('@' . (time() + (int)$cookieOptions['max-age']));
-                } elseif ($cookieOptions['expires'] !== null) {
-                    $expires = new DateTimeImmutable('@' . strtotime((string)$cookieOptions['expires']));
-                }
-            } catch (Exception $e) {
-                $expires = null;
-            }
-
-            $cookieOptions['expires'] = $expires;
-            /** @psalm-suppress PossiblyInvalidCast */
-            $value = (string)$cookieOptions['value'];
-            unset($cookieOptions['value'], $cookieOptions['max-age']);
-
-            try {
-                $cookies[] = Cookie::create(
-                    $name,
-                    $value,
-                    $cookieOptions
-                );
+                $cookies[] = Cookie::createFromHeaderString($value);
             } catch (Exception $e) {
                 // Don't blow up on invalid cookies
             }

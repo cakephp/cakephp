@@ -17,6 +17,7 @@ namespace Cake\Http\Cookie;
 
 use Cake\Utility\Hash;
 use DateTimeImmutable;
+use DateTimeInterface;
 use DateTimeZone;
 use InvalidArgumentException;
 
@@ -132,7 +133,7 @@ class Cookie implements CookieInterface
     public function __construct(
         string $name,
         $value = '',
-        $expiresAt = null,
+        ?DateTimeInterface $expiresAt = null,
         string $path = '/',
         string $domain = '',
         bool $secure = false,
@@ -180,7 +181,20 @@ class Cookie implements CookieInterface
             'samesite' => null,
         ];
 
-        return new static(
+        if (
+            $options['expires'] !== null
+            && !($options['expires'] instanceof DateTimeInterface)
+        ) {
+            if (!is_numeric($options['expires'])) {
+                $options['expires'] = strtotime($options['expires']) ?: null;
+            }
+
+            if ($options['expires'] !== null) {
+                $options['expires'] = new DateTimeImmutable('@' . (string)$options['expires']);
+            }
+        }
+
+        return new self(
             $name,
             $value,
             $options['expires'],
@@ -189,6 +203,61 @@ class Cookie implements CookieInterface
             $options['secure'],
             $options['httponly'],
             $options['samesite']
+        );
+    }
+
+    /**
+     * Create Cookie instance from "set-cookie" header string.
+     *
+     * @param string $cookie Cookie header string
+     * @return static
+     */
+    public static function createFromHeaderString(string $cookie)
+    {
+        if (strpos($cookie, '";"') !== false) {
+            $cookie = str_replace('";"', '{__cookie_replace__}', $cookie);
+            $parts = str_replace('{__cookie_replace__}', '";"', explode(';', $cookie));
+        } else {
+            $parts = preg_split('/\;[ \t]*/', $cookie);
+        }
+
+        [$name, $value] = explode('=', array_shift($parts), 2);
+        $data = [
+            'name' => urldecode($name),
+            'value' => urldecode($value),
+            'max-age' => null,
+            'expires' => null,
+            'path' => '',
+            'domain' => '',
+            'secure' => false,
+            'httponly' => false,
+            'samesite' => null,
+        ];
+
+        foreach ($parts as $part) {
+            if (strpos($part, '=') !== false) {
+                [$key, $value] = explode('=', $part);
+            } else {
+                $key = $part;
+                $value = true;
+            }
+
+            $key = strtolower($key);
+            $data[$key] = $value;
+        }
+
+        if ($data['max-age'] !== null) {
+            $data['expires'] = new DateTimeImmutable('@' . (time() + (int)$data['max-age']));
+        }
+
+        $name = $data['name'];
+        $value = $data['value'];
+        unset($data['name'], $data['value'], $data['max-age']);
+
+        return Cookie::create(
+            $name,
+            $value,
+            $data
         );
     }
 
