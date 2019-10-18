@@ -235,6 +235,13 @@ interface CookieInterface
     public function getOptions(): array;
 
     /**
+     * Get cookie data as array.
+     *
+     * @return array With keys `name`, `value` and `options`.
+     */
+    public function toArray(): array;
+
+    /**
      * Returns the cookie as header value
      *
      * @return string

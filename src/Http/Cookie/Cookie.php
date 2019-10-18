@@ -645,6 +645,18 @@ class Cookie implements CookieInterface
     }
 
     /**
+     * @inheritDoc
+     */
+    public function toArray(): array
+    {
+        return [
+            'name' => $this->name,
+            'value' => $this->getScalarValue(),
+            'options' => $this->getOptions(),
+        ];
+    }
+
+    /**
      * Implode method to keep keys are multidimensional arrays
      *
      * @param array $array Map of key and values
