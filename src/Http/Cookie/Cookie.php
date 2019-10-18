@@ -250,8 +250,8 @@ class Cookie implements CookieInterface
             $data['expires'] = new DateTimeImmutable('@' . (time() + (int)$data['max-age']));
         }
 
-        $name = $data['name'];
-        $value = $data['value'];
+        $name = (string)$data['name'];
+        $value = (string)$data['value'];
         unset($data['name'], $data['value'], $data['max-age']);
 
         return Cookie::create(
