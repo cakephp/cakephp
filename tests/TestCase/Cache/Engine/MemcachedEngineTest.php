@@ -95,7 +95,7 @@ class MemcachedEngineTest extends TestCase
      */
     public function testConfig()
     {
-        $config = Cache::pool('memcached')->getConfig();
+        $config = Cache::pool('memcached')->config();
         unset($config['path']);
         $expecting = [
             'prefix' => 'cake_',
@@ -399,7 +399,7 @@ class MemcachedEngineTest extends TestCase
         $Memcached = new MemcachedEngine();
         $Memcached->init(['engine' => 'Memcached', 'servers' => $servers]);
 
-        $config = $Memcached->getConfig();
+        $config = $Memcached->config();
         $this->assertEquals($config['servers'], $servers);
         Cache::drop('dual_server');
     }

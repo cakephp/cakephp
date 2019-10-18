@@ -88,7 +88,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
         $table->getTable();
         $table->addBehavior('Translate');
 
-        $config = $table->behaviors()->get('Translate')->getStrategy()->getConfig();
+        $config = $table->behaviors()->get('Translate')->getStrategy()->config();
         $wantedKeys = [
             'translationTable',
             'mainTableAlias',
@@ -117,7 +117,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
         $table->getTable();
         $table->addBehavior('Translate');
 
-        $config = $table->behaviors()->get('Translate')->getStrategy()->getConfig();
+        $config = $table->behaviors()->get('Translate')->getStrategy()->config();
         $wantedKeys = [
             'translationTable',
             'mainTableAlias',
@@ -157,7 +157,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
         $table->getTable();
         $table->addBehavior('Translate');
 
-        $config = $table->behaviors()->get('Translate')->getStrategy()->getConfig();
+        $config = $table->behaviors()->get('Translate')->getStrategy()->config();
         $wantedKeys = [
             'translationTable',
             'mainTableAlias',
@@ -191,7 +191,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
             ['referenceName' => 'Posts']
         );
 
-        $config = $table->behaviors()->get('Translate')->getStrategy()->getConfig();
+        $config = $table->behaviors()->get('Translate')->getStrategy()->config();
         $wantedKeys = [
             'translationTable',
             'mainTableAlias',

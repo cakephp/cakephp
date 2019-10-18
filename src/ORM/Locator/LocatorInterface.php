@@ -24,13 +24,19 @@ use Cake\ORM\Table;
 interface LocatorInterface
 {
     /**
-     * Returns configuration for an alias or the full configuration array for
-     * all aliases.
+     * Returns full configuration.
+     *
+     * @return array
+     */
+    public function config(): array;
+
+    /**
+     * Returns configuration for an alias.
      *
      * @param string|null $alias Alias to get config for, null for complete config.
      * @return array The config data.
      */
-    public function getConfig(?string $alias = null): array;
+    public function getConfig(string $alias): array;
 
     /**
      * Stores a list of options to be used when instantiating an object

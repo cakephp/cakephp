@@ -448,7 +448,7 @@ class Paginator implements PaginatorInterface
             $settings = $settings[$alias];
         }
 
-        $defaults = $this->getConfig();
+        $defaults = $this->config();
         $maxLimit = $settings['maxLimit'] ?? $defaults['maxLimit'];
         $limit = $settings['limit'] ?? $defaults['limit'];
 

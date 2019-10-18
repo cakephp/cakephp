@@ -91,7 +91,7 @@ class RedisEngineTest extends TestCase
      */
     public function testConfig()
     {
-        $config = Cache::pool('redis')->getConfig();
+        $config = Cache::pool('redis')->config();
         $expecting = [
             'prefix' => 'cake_',
             'duration' => 3600,
@@ -119,7 +119,7 @@ class RedisEngineTest extends TestCase
             'url' => 'redis://localhost:' . $this->port . '?database=1&prefix=redis_',
         ]);
 
-        $config = Cache::pool('redis_dsn')->getConfig();
+        $config = Cache::pool('redis_dsn')->config();
         $expecting = [
             'prefix' => 'redis_',
             'duration' => 3600,
@@ -147,7 +147,7 @@ class RedisEngineTest extends TestCase
     public function testConnect()
     {
         $Redis = new RedisEngine();
-        $this->assertTrue($Redis->init(Cache::pool('redis')->getConfig()));
+        $this->assertTrue($Redis->init(Cache::pool('redis')->config()));
     }
 
     /**

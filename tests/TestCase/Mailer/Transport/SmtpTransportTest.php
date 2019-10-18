@@ -416,12 +416,12 @@ class SmtpTransportTest extends TestCase
             'client' => 'myhost.com',
             'port' => 666,
         ]);
-        $expected = $this->SmtpTransport->getConfig();
+        $expected = $this->SmtpTransport->config();
 
         $this->assertEquals(666, $expected['port']);
 
         $this->SmtpTransport->setConfig([]);
-        $result = $this->SmtpTransport->getConfig();
+        $result = $this->SmtpTransport->config();
         $this->assertEquals($expected, $result);
     }
 

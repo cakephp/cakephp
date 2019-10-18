@@ -41,7 +41,7 @@ class ClientTest extends TestCase
             'host' => 'example.org',
         ];
         $http = new Client($config);
-        $result = $http->getConfig();
+        $result = $http->config();
         foreach ($config as $key => $val) {
             $this->assertEquals($val, $result[$key]);
         }
@@ -51,7 +51,7 @@ class ClientTest extends TestCase
         ]);
         $this->assertSame($result, $http);
 
-        $result = $http->getConfig();
+        $result = $http->config();
         $expected = [
             'scheme' => 'http',
             'host' => 'example.org',

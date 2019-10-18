@@ -113,12 +113,22 @@ class TableLocator implements LocatorInterface
     }
 
     /**
+     * Returns complete configuration.
+     *
+     * @return array
+     */
+    public function config(): array
+    {
+        return $this->_config;
+    }
+
+    /**
      * Returns configuration for an alias or the full configuration array for all aliases.
      *
-     * @param string|null $alias Alias to get config for, null for complete config.
+     * @param string|null $alias Alias to get config for
      * @return array The config data.
      */
-    public function getConfig(?string $alias = null): array
+    public function getConfig(string $alias): array
     {
         if ($alias === null) {
             return $this->_config;

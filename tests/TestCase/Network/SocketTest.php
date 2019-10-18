@@ -55,7 +55,7 @@ class SocketTest extends TestCase
     public function testConstruct()
     {
         $this->Socket = new Socket();
-        $config = $this->Socket->getConfig();
+        $config = $this->Socket->config();
         $this->assertSame($config, [
             'persistent' => false,
             'host' => 'localhost',
@@ -67,16 +67,16 @@ class SocketTest extends TestCase
         $this->Socket->reset();
         $this->Socket->__construct(['host' => 'foo-bar']);
         $config['host'] = 'foo-bar';
-        $this->assertSame($this->Socket->getConfig(), $config);
+        $this->assertSame($this->Socket->config(), $config);
 
         $this->Socket = new Socket(['host' => 'www.cakephp.org', 'port' => 23, 'protocol' => 'udp']);
-        $config = $this->Socket->getConfig();
+        $config = $this->Socket->config();
 
         $config['host'] = 'www.cakephp.org';
         $config['port'] = 23;
         $config['protocol'] = 'udp';
 
-        $this->assertSame($this->Socket->getConfig(), $config);
+        $this->assertSame($this->Socket->config(), $config);
     }
 
     /**
@@ -253,7 +253,7 @@ class SocketTest extends TestCase
         ];
         $this->assertEquals(
             $expected,
-            $anotherSocket->getConfig(),
+            $anotherSocket->config(),
             'Reset should cause config to return the defaults defined in _defaultConfig'
         );
     }
@@ -482,10 +482,10 @@ class SocketTest extends TestCase
         $this->assertFalse($result['ssl']['allow_self_signed']);
         $this->assertEquals(5, $result['ssl']['verify_depth']);
         $this->assertSame('smtp.gmail.com', $result['ssl']['CN_match']);
-        $this->assertArrayNotHasKey('ssl_verify_peer', $socket->getConfig());
-        $this->assertArrayNotHasKey('ssl_allow_self_signed', $socket->getConfig());
-        $this->assertArrayNotHasKey('ssl_verify_host', $socket->getConfig());
-        $this->assertArrayNotHasKey('ssl_verify_depth', $socket->getConfig());
+        $this->assertArrayNotHasKey('ssl_verify_peer', $socket->config());
+        $this->assertArrayNotHasKey('ssl_allow_self_signed', $socket->config());
+        $this->assertArrayNotHasKey('ssl_verify_host', $socket->config());
+        $this->assertArrayNotHasKey('ssl_verify_depth', $socket->config());
     }
 
     /**

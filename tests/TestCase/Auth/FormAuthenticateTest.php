@@ -37,6 +37,11 @@ class FormAuthenticateTest extends TestCase
     protected $fixtures = ['core.AuthUsers', 'core.Users'];
 
     /**
+     * @var \Cake\Auth\FormAuthenticate
+     */
+    protected $auth;
+
+    /**
      * setup
      *
      * @return void
@@ -390,8 +395,9 @@ class FormAuthenticateTest extends TestCase
             'hashType' => PASSWORD_BCRYPT,
         ]);
 
+        /** @var \Cake\Auth\AbstractPasswordHasher $passwordHasher */
         $passwordHasher = $this->auth->passwordHasher();
-        $result = $passwordHasher->getConfig();
+        $result = $passwordHasher->config();
         $this->assertEquals(PASSWORD_BCRYPT, $result['hashType']);
 
         $hash = password_hash('mypass', PASSWORD_BCRYPT);

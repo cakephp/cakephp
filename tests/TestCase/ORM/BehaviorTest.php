@@ -38,7 +38,7 @@ class BehaviorTest extends TestCase
         $table = $this->getMockBuilder(Table::class)->getMock();
         $config = ['key' => 'value'];
         $behavior = new TestBehavior($table, $config);
-        $this->assertEquals($config, $behavior->getConfig());
+        $this->assertEquals($config, $behavior->config());
     }
 
     /**
