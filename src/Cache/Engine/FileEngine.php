@@ -49,7 +49,6 @@ class FileEngine extends CacheEngine
      * - `duration` Specify how long items in this cache configuration last.
      * - `groups` List of groups or 'tags' associated to every key stored in this config.
      *    handy for deleting a complete group from cache.
-     * - `isWindows` Automatically populated with whether the host is windows or not
      * - `lock` Used by FileCache. Should files be locked before writing to them?
      * - `mask` The mask used for created files
      * - `path` Path to where cachefiles should be saved. Defaults to system's temp dir.
@@ -63,7 +62,6 @@ class FileEngine extends CacheEngine
     protected $_defaultConfig = [
         'duration' => 3600,
         'groups' => [],
-        'isWindows' => false,
         'lock' => true,
         'mask' => 0664,
         'path' => null,
@@ -92,9 +90,6 @@ class FileEngine extends CacheEngine
 
         if ($this->_config['path'] === null) {
             $this->_config['path'] = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'cake_cache' . DIRECTORY_SEPARATOR;
-        }
-        if (DIRECTORY_SEPARATOR === '\\') {
-            $this->_config['isWindows'] = true;
         }
         if (substr($this->_config['path'], -1) !== DIRECTORY_SEPARATOR) {
             $this->_config['path'] .= DIRECTORY_SEPARATOR;
@@ -128,22 +123,12 @@ class FileEngine extends CacheEngine
             return false;
         }
 
-        $lineBreak = "\n";
-
-        if ($this->_config['isWindows']) {
-            $lineBreak = "\r\n";
-        }
-
         if (!empty($this->_config['serialize'])) {
-            if ($this->_config['isWindows']) {
-                $data = str_replace('\\', '\\\\\\\\', serialize($data));
-            } else {
-                $data = serialize($data);
-            }
+            $data = serialize($data);
         }
 
         $expires = time() + $this->duration($ttl);
-        $contents = implode([$expires, $lineBreak, $data, $lineBreak]);
+        $contents = implode([$expires, PHP_EOL, $data, PHP_EOL]);
 
         if ($this->_config['lock']) {
             /** @psalm-suppress PossiblyNullReference */
@@ -213,9 +198,6 @@ class FileEngine extends CacheEngine
         $data = trim($data);
 
         if ($data !== '' && !empty($this->_config['serialize'])) {
-            if ($this->_config['isWindows']) {
-                $data = str_replace('\\\\\\\\', '\\', $data);
-            }
             $data = unserialize((string)$data);
         }
 
