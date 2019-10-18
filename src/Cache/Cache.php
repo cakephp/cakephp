@@ -183,7 +183,7 @@ class Cache
         }
 
         if ($config['className'] instanceof CacheEngine) {
-            $config = $config['className']->getConfig();
+            $config = $config['className']->config();
         }
 
         if (!empty($config['groups'])) {

@@ -22,6 +22,11 @@ use Cake\View\StringTemplate;
 class StringTemplateTest extends TestCase
 {
     /**
+     * @var \Cake\View\StringTemplate
+     */
+    protected $template;
+
+    /**
      * setUp
      *
      * @return void
@@ -180,7 +185,7 @@ class StringTemplateTest extends TestCase
     {
         $this->template->remove('attribute');
         $this->template->remove('compactAttribute');
-        $this->assertEquals([], $this->template->get());
+        $this->assertEquals([], $this->template->all());
         $this->assertNull($this->template->load('test_templates'));
         $this->assertSame('<a href="{{url}}">{{text}}</a>', $this->template->get('link'));
     }

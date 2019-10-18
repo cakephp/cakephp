@@ -68,7 +68,7 @@ class FlashComponent extends Component
      */
     public function set($message, array $options = []): void
     {
-        $options += (array)$this->getConfig();
+        $options += (array)$this->config();
 
         if ($message instanceof Exception) {
             if (!isset($options['params']['code'])) {

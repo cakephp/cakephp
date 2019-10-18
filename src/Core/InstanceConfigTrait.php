@@ -18,6 +18,7 @@ namespace Cake\Core;
 
 use Cake\Core\Exception\Exception;
 use Cake\Utility\Hash;
+use RuntimeException;
 
 /**
  * A trait for reading and writing instance config
@@ -39,6 +40,21 @@ trait InstanceConfigTrait
      * @var bool
      */
     protected $_configInitialized = false;
+
+    /**
+     * Gets the whole config array.
+     *
+     * @return array
+     */
+    public function config(): array
+    {
+        if (!$this->_configInitialized) {
+            $this->_config = $this->_defaultConfig;
+            $this->_configInitialized = true;
+        }
+
+        return $this->_config;
+    }
 
     /**
      * Sets the config.
@@ -86,12 +102,6 @@ trait InstanceConfigTrait
      *
      * ### Usage
      *
-     * Reading the whole config:
-     *
-     * ```
-     * $this->getConfig();
-     * ```
-     *
      * Reading a specific value:
      *
      * ```
@@ -110,11 +120,11 @@ trait InstanceConfigTrait
      * $this->getConfig('some-key', 'default-value');
      * ```
      *
-     * @param string|null $key The key to get or null for the whole config.
-     * @param mixed $default The return value when the key does not exist.
-     * @return mixed Configuration data at the named key or null if the key does not exist.
+     * @param string $key The key to get.
+     * @param mixed|null $default The return value when the key does not exist.
+     * @return mixed|null Configuration data at the named key or null if the key does not exist.
      */
-    public function getConfig(?string $key = null, $default = null)
+    public function getConfig(string $key, $default = null)
     {
         if (!$this->_configInitialized) {
             $this->_config = $this->_defaultConfig;
@@ -124,6 +134,25 @@ trait InstanceConfigTrait
         $return = $this->_configRead($key);
 
         return $return ?? $default;
+    }
+
+    /**
+     * Returns the config.
+     *
+     * The config here can never be null as in "it must exist".
+     *
+     * @param string $key
+     * @return mixed|null Configuration data at the named key
+     * @throws \RuntimeException
+     */
+    public function getConfigOrFail(string $key)
+    {
+        $config = $this->getConfig($key);
+        if ($config === null) {
+            throw new RuntimeException(sprintf('Expected configuration `%s` not found.', $key));
+        }
+
+        return $config;
     }
 
     /**
@@ -198,7 +227,7 @@ trait InstanceConfigTrait
      * Writes a config key.
      *
      * @param string|array $key Key to write to.
-     * @param mixed $value Value to write.
+     * @param mixed|null $value Value to write.
      * @param bool|string $merge True to merge recursively, 'shallow' for simple merge,
      *   false to overwrite, defaults to false.
      * @return void

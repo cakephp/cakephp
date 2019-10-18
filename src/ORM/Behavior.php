@@ -278,7 +278,7 @@ class Behavior implements EventListenerInterface
             'Model.beforeRules' => 'beforeRules',
             'Model.afterRules' => 'afterRules',
         ];
-        $config = $this->getConfig();
+        $config = $this->config();
         $priority = $config['priority'] ?? null;
         $events = [];
 

@@ -196,7 +196,7 @@ class Component implements EventListenerInterface
         return [
             'components' => $this->components,
             'implementedEvents' => $this->implementedEvents(),
-            '_config' => $this->getConfig(),
+            '_config' => $this->config(),
         ];
     }
 }

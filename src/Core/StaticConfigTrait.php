@@ -19,6 +19,7 @@ namespace Cake\Core;
 use BadMethodCallException;
 use InvalidArgumentException;
 use LogicException;
+use RuntimeException;
 
 /**
  * A trait that provides a set of static methods to manage configuration
@@ -112,11 +113,27 @@ trait StaticConfigTrait
      * Reads existing configuration.
      *
      * @param string $key The name of the configuration.
-     * @return mixed Configuration data at the named key or null if the key does not exist.
+     * @return mixed|null Configuration data at the named key or null if the key does not exist.
      */
     public static function getConfig(string $key)
     {
         return static::$_config[$key] ?? null;
+    }
+
+    /**
+     * Reads existing configuration. The value must exist.
+     *
+     * @param string $key The name of the configuration.
+     * @return mixed Configuration data at the named key.
+     * @throws \RuntimeException If value does not exist.
+     */
+    public static function getConfigOrFail(string $key)
+    {
+        if (!isset(static::$_config[$key])) {
+            throw new RuntimeException(sprintf('Expected configuration `%s` not found.', $key));
+        }
+
+        return static::$_config[$key];
     }
 
     /**

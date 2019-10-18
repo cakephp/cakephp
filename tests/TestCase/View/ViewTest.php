@@ -867,7 +867,7 @@ class ViewTest extends TestCase
         $View->loadHelper('Html', ['foo' => 'bar']);
         $this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $View->Html);
 
-        $config = $View->Html->getConfig();
+        $config = $View->Html->config();
         $this->assertSame('bar', $config['foo']);
     }
 
@@ -906,10 +906,10 @@ class ViewTest extends TestCase
         $this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $View->Html, 'Object type is wrong.');
         $this->assertInstanceOf('Cake\View\Helper\FormHelper', $View->Form, 'Object type is wrong.');
 
-        $config = $View->Html->getConfig();
+        $config = $View->Html->config();
         $this->assertSame('bar', $config['foo']);
 
-        $config = $View->Form->getConfig();
+        $config = $View->Form->config();
         $this->assertSame('baz', $config['foo']);
     }
 
@@ -934,7 +934,7 @@ class ViewTest extends TestCase
     public function testInitialize()
     {
         $View = new TestView();
-        $config = $View->Html->getConfig();
+        $config = $View->Html->config();
         $this->assertSame('myval', $config['mykey']);
     }
 

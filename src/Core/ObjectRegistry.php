@@ -128,14 +128,14 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
     {
         $existing = $this->_loaded[$name];
         $msg = sprintf('The "%s" alias has already been loaded.', $name);
-        $hasConfig = method_exists($existing, 'getConfig');
+        $hasConfig = method_exists($existing, 'config');
         if (!$hasConfig) {
             throw new RuntimeException($msg);
         }
         if (empty($config)) {
             return;
         }
-        $existingConfig = $existing->getConfig();
+        $existingConfig = $existing->config();
         unset($config['enabled'], $existingConfig['enabled']);
 
         $failure = null;
