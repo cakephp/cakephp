@@ -221,10 +221,7 @@ abstract class BaseCommand implements CommandInterface
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return int|null The exit code or null for success
      */
-    public function execute(Arguments $args, ConsoleIo $io): ?int
-    {
-        return null;
-    }
+    abstract public function execute(Arguments $args, ConsoleIo $io): ?int;
 
     /**
      * Halt the the current process with a StopException.
