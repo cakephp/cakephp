@@ -252,7 +252,7 @@ class ResponseEmitter implements EmitterInterface
             $cookie = $cookie->toHeaderValue();
         }
 
-        header('Set-Cookie: ' . $cookie);
+        header('Set-Cookie: ' . $cookie, true);
 
         return true;
     }
