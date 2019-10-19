@@ -729,8 +729,7 @@ class Cookie implements CookieInterface
         return [
             'name' => $this->name,
             'value' => $this->getScalarValue(),
-            'options' => $this->getOptions(),
-        ];
+        ] + $this->getOptions();
     }
 
     /**

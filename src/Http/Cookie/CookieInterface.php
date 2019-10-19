@@ -237,7 +237,7 @@ interface CookieInterface
     /**
      * Get cookie data as array.
      *
-     * @return array With keys `name`, `value` and `options`.
+     * @return array With keys `name`, `value`, `expires` etc. options.
      */
     public function toArray(): array;
 

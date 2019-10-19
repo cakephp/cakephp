@@ -354,13 +354,13 @@ XML;
 
         $result = $response->getCookieData('expiring');
         $this->assertSame('soon', $result['value']);
-        $this->assertTrue($result['options']['httponly']);
-        $this->assertTrue($result['options']['secure']);
+        $this->assertTrue($result['httponly']);
+        $this->assertTrue($result['secure']);
         $this->assertEquals(
             strtotime('Wed, 09-Jun-2021 10:18:14 GMT'),
-            $result['options']['expires']
+            $result['expires']
         );
-        $this->assertSame('/', $result['options']['path']);
+        $this->assertSame('/', $result['path']);
 
         $result = $response->getCookies();
         $this->assertCount(3, $result);
