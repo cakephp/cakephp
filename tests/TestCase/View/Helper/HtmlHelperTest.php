@@ -316,14 +316,6 @@ class HtmlHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Html->link('Index', 'articles::index');
-        $expected = ['a' => ['href' => '/articles'], 'Index', '/a'];
-        $this->assertHtml($expected, $result);
-
-        $result = $this->Html->link('Read article', ['_path' => 'articles::view', 3]);
-        $expected = ['a' => ['href' => '/articles/view/3'], 'Read article', '/a'];
-        $this->assertHtml($expected, $result);
-
         $result = $this->Html->link('http://www.example.org?param1=value1&param2=value2');
         $expected = ['a' => ['href' => 'http://www.example.org?param1=value1&amp;param2=value2'], 'http://www.example.org?param1=value1&amp;param2=value2', '/a'];
         $this->assertHtml($expected, $result);

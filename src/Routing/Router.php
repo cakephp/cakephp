@@ -21,7 +21,6 @@ use Cake\Http\ServerRequest;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
-use Psr\Http\Message\UriInterface;
 use ReflectionFunction;
 use ReflectionMethod;
 use RuntimeException;
@@ -405,13 +404,12 @@ class Router
      *   'controller', 'action', 'plugin' additionally, you can provide routed
      *   elements or query string parameters. If string it can be name any valid url
      *   string or it can be an UriInterface instance.
-     * @param array|bool $full If true, the full base URL will be prepended to the result.
-     *   If first argument is route path string, this argument can be array of parameters.
+     * @param bool $full If true, the full base URL will be prepended to the result.
      *   Default is false.
      * @return string Full translated URL with base path.
      * @throws \Cake\Core\Exception\Exception When the route name is not found
      */
-    public static function url($url = null, $full = false): string
+    public static function url($url = null, bool $full = false): string
     {
         $context = static::$_requestContext;
         $request = static::getRequest();
@@ -428,36 +426,6 @@ class Router
             }
 
             return $output;
-        }
-
-        if ($url instanceof UriInterface) {
-            $url = (string)$url;
-        }
-
-        if (is_string($url)) {
-            $plainString = (
-                strpos($url, 'javascript:') === 0 ||
-                strpos($url, 'mailto:') === 0 ||
-                strpos($url, 'tel:') === 0 ||
-                strpos($url, 'sms:') === 0 ||
-                strpos($url, '#') === 0 ||
-                strpos($url, '?') === 0 ||
-                strpos($url, '//') === 0 ||
-                strpos($url, '://') !== false
-            );
-
-            if ($plainString) {
-                return $url;
-            }
-
-            if ($url[0] !== '/' && strpos($url, '::') > 1) {
-                $url = ['_path' => $url];
-
-                if (is_array($full)) {
-                    $url += $full;
-                    $full = false;
-                }
-            }
         }
 
         $params = [
@@ -518,25 +486,62 @@ class Router
 
             // If a full URL is requested with a scheme the host should default
             // to App.fullBaseUrl to avoid corrupt URLs
-            if ($full === true && isset($url['_scheme']) && !isset($url['_host'])) {
+            if ($full && isset($url['_scheme']) && !isset($url['_host'])) {
                 $url['_host'] = $context['_host'];
             }
             $context['params'] = $params;
 
             $output = static::$_collection->match($url, $context);
         } else {
+            $url = (string)$url;
+
+            $plainString = (
+                strpos($url, 'javascript:') === 0 ||
+                strpos($url, 'mailto:') === 0 ||
+                strpos($url, 'tel:') === 0 ||
+                strpos($url, 'sms:') === 0 ||
+                strpos($url, '#') === 0 ||
+                strpos($url, '?') === 0 ||
+                strpos($url, '//') === 0 ||
+                strpos($url, '://') !== false
+            );
+
+            if ($plainString) {
+                return $url;
+            }
             $output = $context['_base'] . $url;
         }
 
         $protocol = preg_match('#^[a-z][a-z0-9+\-.]*\://#i', $output);
         if ($protocol === 0) {
             $output = str_replace('//', '/', '/' . $output);
-            if ($full === true) {
+            if ($full) {
                 $output = static::fullBaseUrl() . $output;
             }
         }
 
         return $output . $frag;
+    }
+
+    /**
+     * Generate URL for route path.
+     *
+     * Route path examples:
+     * - Bookmarks::view
+     * - Admin/Bookmarks::view
+     * - Cms.Articles::edit
+     * - Vendor/Cms.Management/Admin/Articles::view
+     *
+     * @param string $path Route path specifying controller and action, optionally with plugin and prefix.
+     * @param array $params An array specifying any additional parameters.
+     *   Can be also any special parameters supported by `Router::url()`.
+     * @param bool $full If true, the full base URL will be prepended to the result.
+     *   Default is false.
+     * @return string Full translated URL with base path.
+     */
+    public static function pathUrl(string $path, array $params = [], bool $full = false): string
+    {
+        return static::url(['_path' => $path] + $params, $full);
     }
 
     /**
