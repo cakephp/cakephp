@@ -16,12 +16,18 @@ function header($header)
     $GLOBALS['mockedHeaders'][] = $header;
 }
 
-function setcookie($name, $value, $expire, $path, $domain, $secure = false, $httponly = false)
+function setcookie($name, $value = '', $expires = 0, $path = '', $domain = '', $secure = false, $httponly = false)
 {
+    if (is_array($expires)) {
+        $GLOBALS['mockedCookies'][] = compact('name', 'value') + $expires;
+
+        return;
+    }
+
     $GLOBALS['mockedCookies'][] = compact(
         'name',
         'value',
-        'expire',
+        'expires',
         'path',
         'domain',
         'secure',
