@@ -29,6 +29,9 @@ require_once __DIR__ . '/server_mocks.php';
  */
 class ResponseEmitterTest extends TestCase
 {
+    /**
+     * @var \Cake\Http\ResponseEmitter
+     */
     protected $emitter;
 
     /**
@@ -39,9 +42,26 @@ class ResponseEmitterTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+
         $GLOBALS['mockedHeadersSent'] = false;
-        $GLOBALS['mockedHeaders'] = $GLOBALS['mockedCookies'] = [];
-        $this->emitter = new ResponseEmitter();
+        $GLOBALS['mockedHeaders'] = [];
+
+        $this->emitter = $this->getMockBuilder(ResponseEmitter::class)
+            ->setMethods(['setCookie'])
+            ->getMock();
+
+        $this->emitter->expects($this->any())
+            ->method('setCookie')
+            ->will($this->returnCallback(function ($cookie) {
+                if (is_string($cookie)) {
+                    $cookie = Cookie::createFromHeaderString($cookie);
+                }
+
+                $GLOBALS['mockedCookies'][] = ['name' => $cookie->getName(), 'value' => $cookie->getValue()]
+                    + $cookie->getOptions();
+
+                return true;
+            }));
     }
 
     /**
@@ -161,7 +181,7 @@ class ResponseEmitterTest extends TestCase
         $response = (new Response())
             ->withAddedHeader('Set-Cookie', "simple=val;\tSecure")
             ->withAddedHeader('Set-Cookie', 'people=jim,jack,jonny";";Path=/accounts')
-            ->withAddedHeader('Set-Cookie', 'google=not=nice;Path=/accounts; HttpOnly')
+            ->withAddedHeader('Set-Cookie', 'google=not=nice;Path=/accounts; HttpOnly; samesite=Strict')
             ->withAddedHeader('Set-Cookie', 'a=b;  Expires=Wed, 13 Jan 2021 22:23:01 GMT; Domain=www.example.com;')
             ->withAddedHeader('Set-Cookie', 'list%5B%5D=a%20b%20c')
             ->withHeader('Content-Type', 'text/plain');
@@ -204,6 +224,7 @@ class ResponseEmitterTest extends TestCase
                 'domain' => '',
                 'secure' => false,
                 'httponly' => true,
+                'samesite' => 'Strict',
             ],
             [
                 'name' => 'a',

@@ -21,7 +21,7 @@ declare(strict_types=1);
  */
 namespace Cake\Http;
 
-use Cake\Http\Cookie\Cookie;
+use Cake\Http\Cookie\CookieInterface;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\RelativeStream;
 use Zend\HttpHandlerRunner\Emitter\EmitterInterface;
@@ -188,8 +188,8 @@ class ResponseEmitter implements EmitterInterface
     protected function emitHeaders(ResponseInterface $response): void
     {
         $cookies = [];
-        if (method_exists($response, 'getCookies')) {
-            $cookies = $response->getCookies();
+        if (method_exists($response, 'getCookieCollection')) {
+            $cookies = iterator_to_array($response->getCookieCollection());
         }
 
         foreach ($response->getHeaders() as $name => $values) {
@@ -214,30 +214,47 @@ class ResponseEmitter implements EmitterInterface
     /**
      * Emit cookies using setcookie()
      *
-     * @param array $cookies An array of Set-Cookie headers.
+     * @param (string|\Cake\Http\Cookie\CookieInterface)[] $cookies An array of cookies.
      * @return void
      */
     protected function emitCookies(array $cookies): void
     {
         foreach ($cookies as $cookie) {
-            if (is_string($cookie)) {
-                $cookie = Cookie::createFromHeaderString($cookie)->toArray();
-            }
+            $this->setCookie($cookie);
+        }
+    }
 
+    /**
+     * Helper methods to set cookie.
+     *
+     * For PHP 7.3 it uses setcookie() and for PHP < 7.3 it uses header().
+     *
+     * @param string|\Cake\Http\Cookie\CookieInterface $cookie Cookie.
+     * @return bool
+     */
+    protected function setCookie($cookie): bool
+    {
+        if ($cookie instanceof CookieInterface) {
             if (PHP_VERSION_ID >= 70300) {
-                setcookie($cookie['name'], $cookie['value'], $cookie['options']);
-            } else {
-                setcookie(
-                    $cookie['name'],
-                    $cookie['value'],
-                    $cookie['options']['expires'],
-                    $cookie['options']['path'],
-                    $cookie['options']['domain'],
-                    $cookie['options']['secure'],
-                    $cookie['options']['httponly']
+                return setcookie($cookie->getName(), $cookie->getScalarValue(), $cookie->getOptions());
+            } elseif ($cookie->getSameSite() === null) {
+                return setcookie(
+                    $cookie->getName(),
+                    $cookie->getScalarValue(),
+                    $cookie->getExpiresTimestamp() ?: 0,
+                    $cookie->getPath(),
+                    $cookie->getDomain(),
+                    $cookie->isSecure(),
+                    $cookie->isHttpOnly()
                 );
             }
+
+            $cookie = $cookie->toHeaderValue();
         }
+
+        header('Set-Cookie: ' . $cookie);
+
+        return true;
     }
 
     /**
