@@ -250,6 +250,14 @@ class Cookie implements CookieInterface
             $data['expires'] = new DateTimeImmutable('@' . (time() + (int)$data['max-age']));
         }
 
+        if ($data['samesite'] !== null) {
+            // Ignore invalid value when parsing headers
+            // https://tools.ietf.org/html/draft-west-first-party-cookies-07#section-4.1
+            if (!in_array($data['samesite'], CookieInterface::SAMESITE_VALUES, true)) {
+                $data['samesite'] = null;
+            }
+        }
+
         $name = (string)$data['name'];
         $value = (string)$data['value'];
         unset($data['name'], $data['value'], $data['max-age']);
@@ -591,7 +599,7 @@ class Cookie implements CookieInterface
      */
     protected function validateSameSiteValue(string $sameSite)
     {
-        if (!in_array($sameSite, CookieInterface::SAMESITE_VALUES)) {
+        if (!in_array($sameSite, CookieInterface::SAMESITE_VALUES, true)) {
             throw new InvalidArgumentException(
                 'Samesite value must be either of: ' . implode(',', CookieInterface::SAMESITE_VALUES)
             );

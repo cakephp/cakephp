@@ -500,4 +500,14 @@ class CookieTest extends TestCase
         $cookie = new Cookie('test', 'val', null, '/path', 'example.com');
         $this->assertSame('test;example.com;/path', $cookie->getId());
     }
+
+    public function testCreateFromHeaderString()
+    {
+        $header = 'cakephp=cakephp-rocks; expires=Wed, 01-Dec-2027 12:00:00 GMT; path=/; domain=cakephp.org; samesite=invalid; secure; httponly';
+        $result = Cookie::createFromHeaderString($header);
+
+        // Ignore invalid value when parsing headers
+        // https://tools.ietf.org/html/draft-west-first-party-cookies-07#section-4.1
+        $this->assertNull($result->getSameSite());
+    }
 }
