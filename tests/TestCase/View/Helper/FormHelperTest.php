@@ -6351,7 +6351,6 @@ class FormHelperTest extends TestCase
         $this->assertRegExp('/<option value="">HOUR<\/option>/', $result);
         $this->assertRegExp('/<option value="">MINUTE<\/option>/', $result);
         $this->assertNotRegExp('/<option value=""><\/option>/', $result);
-
     }
 
     /**
