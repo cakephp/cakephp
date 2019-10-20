@@ -131,7 +131,7 @@ class FrozenTime extends Chronos implements I18nDateTimeInterface
     {
         if ($time instanceof DateTimeInterface) {
             $tz = $time->getTimezone();
-            $time = $time->format('Y-m-d H:i:s');
+            $time = $time->format('Y-m-d H:i:s.u');
         }
 
         if (is_numeric($time)) {

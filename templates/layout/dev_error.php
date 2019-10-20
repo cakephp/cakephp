@@ -12,6 +12,7 @@
  * @since         3.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+use Cake\Error\Debugger;
 ?>
 <!DOCTYPE html>
 <html>
@@ -244,7 +245,7 @@
 <body>
     <header>
         <h1 class="header-title" data-content="&#128203">
-            <?= h($this->fetch('title')) ?>
+            <?= Debugger::formatHtmlMessage($this->fetch('title')) ?>
         </h1>
         <span class="header-type"><?= get_class($error) ?></span>
     </header>

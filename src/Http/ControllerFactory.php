@@ -16,9 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Http;
 
-use Cake\Controller\Controller;
 use Cake\Core\App;
-use Cake\Routing\Exception\MissingControllerException;
+use Cake\Http\Exception\MissingControllerException;
 use Cake\Utility\Inflector;
 use ReflectionClass;
 
@@ -32,10 +31,10 @@ class ControllerFactory
      *
      * @param \Cake\Http\ServerRequest $request The request to build a controller for.
      * @param \Cake\Http\Response $response The response to use.
-     * @return \Cake\Controller\Controller
+     * @return \Cake\Http\ControllerInterface
      * @throws \ReflectionException
      */
-    public function create(ServerRequest $request, Response $response): Controller
+    public function create(ServerRequest $request, Response $response): ControllerInterface
     {
         $className = $this->getControllerClass($request);
         if (!$className) {
@@ -101,7 +100,7 @@ class ControllerFactory
      * Throws an exception when a controller is missing.
      *
      * @param \Cake\Http\ServerRequest $request The request.
-     * @throws \Cake\Routing\Exception\MissingControllerException
+     * @throws \Cake\Http\Exception\MissingControllerException
      * @return void
      */
     protected function missingController(ServerRequest $request): void

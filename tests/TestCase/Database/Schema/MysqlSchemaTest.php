@@ -110,11 +110,11 @@ class MysqlSchemaTest extends TestCase
             ],
             [
                 'VARCHAR(255)',
-                ['type' => 'string', 'length' => 255],
+                ['type' => 'string', 'length' => 255, 'collate' => 'utf8_general_ci'],
             ],
             [
                 'CHAR(25)',
-                ['type' => 'string', 'length' => 25, 'fixed' => true],
+                ['type' => 'string', 'length' => 25, 'fixed' => true, 'collate' => 'utf8_general_ci'],
             ],
             [
                 'CHAR(36)',
@@ -130,19 +130,19 @@ class MysqlSchemaTest extends TestCase
             ],
             [
                 'TEXT',
-                ['type' => 'text', 'length' => null],
+                ['type' => 'text', 'length' => null, 'collate' => 'utf8_general_ci'],
             ],
             [
                 'TINYTEXT',
-                ['type' => 'text', 'length' => TableSchema::LENGTH_TINY],
+                ['type' => 'text', 'length' => TableSchema::LENGTH_TINY, 'collate' => 'utf8_general_ci'],
             ],
             [
                 'MEDIUMTEXT',
-                ['type' => 'text', 'length' => TableSchema::LENGTH_MEDIUM],
+                ['type' => 'text', 'length' => TableSchema::LENGTH_MEDIUM, 'collate' => 'utf8_general_ci'],
             ],
             [
                 'LONGTEXT',
-                ['type' => 'text', 'length' => TableSchema::LENGTH_LONG],
+                ['type' => 'text', 'length' => TableSchema::LENGTH_LONG, 'collate' => 'utf8_general_ci'],
             ],
             [
                 'TINYBLOB',
@@ -222,19 +222,18 @@ class MysqlSchemaTest extends TestCase
         $expected += [
             'null' => true,
             'default' => 'Default value',
-            'collate' => 'utf8_general_ci',
             'comment' => 'Comment section',
         ];
-
         $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')->getMock();
         $dialect = new MysqlSchema($driver);
 
-        $table = $this->getMockBuilder(TableSchema::class)
-            ->setConstructorArgs(['table'])
-            ->getMock();
-        $table->expects($this->at(0))->method('addColumn')->with('field', $expected);
-
+        $table = new TableSchema('table');
         $dialect->convertColumnDescription($table, $field);
+
+        $actual = array_intersect_key($table->getColumn('field'), $expected);
+        ksort($expected);
+        ksort($actual);
+        $this->assertSame($expected, $actual);
     }
 
     /**

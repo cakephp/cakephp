@@ -95,7 +95,6 @@ class Collection implements CollectionInterface
         if (strpos($name, '.')) {
             [$config['schema'], $name] = explode('.', $name);
         }
-        /** @var \Cake\Database\Schema\TableSchema $table */
         $table = $this->_connection->getDriver()->newTableSchema($name);
 
         $this->_reflect('Column', $name, $config, $table);
@@ -119,6 +118,14 @@ class Collection implements CollectionInterface
      * @param \Cake\Database\Schema\TableSchema $schema The table schema instance.
      * @return void
      * @throws \Cake\Database\Exception on query failure.
+     * @uses \Cake\Database\Schema\BaseSchema::describeColumnSql
+     * @uses \Cake\Database\Schema\BaseSchema::describeIndexSql
+     * @uses \Cake\Database\Schema\BaseSchema::describeForeignKeySql
+     * @uses \Cake\Database\Schema\BaseSchema::describeOptionsSql
+     * @uses \Cake\Database\Schema\BaseSchema::convertColumnDescription
+     * @uses \Cake\Database\Schema\BaseSchema::convertIndexDescription
+     * @uses \Cake\Database\Schema\BaseSchema::convertForeignKeyDescription
+     * @uses \Cake\Database\Schema\BaseSchema::convertOptionsDescription
      */
     protected function _reflect(string $stage, string $name, array $config, TableSchema $schema): void
     {

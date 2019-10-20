@@ -393,7 +393,6 @@ class FileEngineTest extends TestCase
     {
         Cache::setConfig('windows_test', [
             'engine' => 'File',
-            'isWindows' => true,
             'prefix' => null,
             'path' => CACHE,
         ]);

@@ -91,7 +91,7 @@ class MysqlSchema extends BaseSchema
 
         $col = strtolower($matches[1]);
         $length = $precision = null;
-        if (isset($matches[2])) {
+        if (isset($matches[2]) && strlen($matches[2])) {
             $length = $matches[2];
             if (strpos($matches[2], ',') !== false) {
                 [$length, $precision] = explode(',', $length);
@@ -124,7 +124,7 @@ class MysqlSchema extends BaseSchema
             return ['type' => TableSchema::TYPE_UUID, 'length' => null];
         }
         if ($col === 'char') {
-            return ['type' => TableSchema::TYPE_STRING, 'fixed' => true, 'length' => $length];
+            return ['type' => TableSchema::TYPE_STRING, 'length' => $length, 'fixed' => true];
         }
         if (strpos($col, 'char') !== false) {
             return ['type' => TableSchema::TYPE_STRING, 'length' => $length];

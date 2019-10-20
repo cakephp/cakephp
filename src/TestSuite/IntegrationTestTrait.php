@@ -20,6 +20,7 @@ use Cake\Core\Configure;
 use Cake\Database\Exception as DatabaseException;
 use Cake\Error\ExceptionRenderer;
 use Cake\Event\EventInterface;
+use Cake\Form\FormProtector;
 use Cake\Http\Session;
 use Cake\Routing\Router;
 use Cake\TestSuite\Constraint\Response\BodyContains;
@@ -56,7 +57,6 @@ use Cake\Utility\CookieCryptTrait;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
 use Cake\Utility\Text;
-use Cake\View\Helper\SecureFieldTokenTrait;
 use Exception;
 use LogicException;
 use PHPUnit\Framework\Error\Error as PhpUnitError;
@@ -75,7 +75,6 @@ use Zend\Diactoros\Uri;
 trait IntegrationTestTrait
 {
     use CookieCryptTrait;
-    use SecureFieldTokenTrait;
 
     /**
      * The customized application class name.
@@ -661,10 +660,15 @@ trait IntegrationTestTrait
                 return preg_replace('/(\.\d+)+$/', '', $field);
             }, array_keys(Hash::flatten($fields)));
 
-            $tokenData = $this->_buildFieldToken($url, array_unique($keys), $this->_unlockedFields);
+            $formProtector = new FormProtector($url, 'cli', ['unlockedFields' => $this->_unlockedFields]);
+            foreach ($keys as $field) {
+                /** @psalm-suppress PossiblyNullArgument */
+                $formProtector->addField($field);
+            }
+            $tokenData = $formProtector->buildTokenData();
 
             $data['_Token'] = $tokenData;
-            $data['_Token']['debug'] = 'SecurityComponent debug data would be added here';
+            $data['_Token']['debug'] = 'FormProtector debug data would be added here';
         }
 
         if ($this->_csrfToken === true) {

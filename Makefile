@@ -6,7 +6,7 @@
 # Use the version number to figure out if the release
 # is a pre-release
 PRERELEASE=$(shell echo $(VERSION) | grep -E 'dev|rc|alpha|beta' --quiet && echo 'true' || echo 'false')
-COMPONENTS= filesystem log utility cache datasource core collection event validation database i18n ORM form
+COMPONENTS= cache core collection database datasource event filesystem form http i18n log ORM utility validation
 CURRENT_BRANCH=$(shell git branch | grep '*' | tr -d '* ')
 
 # Github settings

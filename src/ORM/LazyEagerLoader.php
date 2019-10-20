@@ -78,7 +78,6 @@ class LazyEagerLoader
             return $entity->{$method}($primaryKey);
         });
 
-        /** @var \Cake\ORM\Query $query */
         $query = $source
             ->find()
             ->select((array)$primaryKey)
