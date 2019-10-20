@@ -21,7 +21,7 @@ declare(strict_types=1);
  */
 namespace Cake\Http;
 
-use Cake\Http\Cookie\CookieInterface;
+use Cake\Http\Cookie\Cookie;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\RelativeStream;
 use Zend\HttpHandlerRunner\Emitter\EmitterInterface;
@@ -227,34 +227,36 @@ class ResponseEmitter implements EmitterInterface
     /**
      * Helper methods to set cookie.
      *
-     * For PHP 7.3 it uses setcookie() and for PHP < 7.3 it uses header().
-     *
      * @param string|\Cake\Http\Cookie\CookieInterface $cookie Cookie.
      * @return bool
      */
     protected function setCookie($cookie): bool
     {
-        if ($cookie instanceof CookieInterface) {
-            if (PHP_VERSION_ID >= 70300) {
-                return setcookie($cookie->getName(), $cookie->getScalarValue(), $cookie->getOptions());
-            } elseif ($cookie->getSameSite() === null) {
-                return setcookie(
-                    $cookie->getName(),
-                    $cookie->getScalarValue(),
-                    $cookie->getExpiresTimestamp() ?: 0,
-                    $cookie->getPath(),
-                    $cookie->getDomain(),
-                    $cookie->isSecure(),
-                    $cookie->isHttpOnly()
-                );
-            }
-
-            $cookie = $cookie->toHeaderValue();
+        if (is_string($cookie)) {
+            $cookie = Cookie::createFromHeaderString($cookie);
         }
 
-        header('Set-Cookie: ' . $cookie, true);
+        if (PHP_VERSION_ID >= 70300) {
+            return setcookie($cookie->getName(), $cookie->getScalarValue(), $cookie->getOptions());
+        }
 
-        return true;
+        $path = $cookie->getPath();
+        $sameSite = $cookie->getSameSite();
+        if ($sameSite !== null) {
+            // Temporary hack for PHP 7.2 to set "SameSite" attribute
+            // https://stackoverflow.com/questions/39750906/php-setcookie-samesite-strict
+            $path .= '; samesite=' . $sameSite;
+        }
+
+        return setcookie(
+            $cookie->getName(),
+            $cookie->getScalarValue(),
+            $cookie->getExpiresTimestamp() ?: 0,
+            $path,
+            $cookie->getDomain(),
+            $cookie->isSecure(),
+            $cookie->isHttpOnly()
+        );
     }
 
     /**
