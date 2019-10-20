@@ -145,7 +145,7 @@ abstract class BaseCommand implements CommandInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function run(array $argv, ConsoleIo $io): ?int
     {
