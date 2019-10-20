@@ -6272,8 +6272,6 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * testDatetimeEmpty method
-     *
      * Test empty defaulting to true for datetime.
      *
      * @return void
@@ -6326,6 +6324,73 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
         $this->assertNotRegExp('/<option[^<>]+value=""[^<>]+selected="selected"[^>]*>/', $result);
+    }
+
+    /**
+     * Presence check for array form empty options
+     *
+     * @return void
+     */
+    public function testDateTimeEmptyAsArrayPresence()
+    {
+        $result = $this->Form->dateTime('Contact.date', [
+            'empty' => [
+                'day' => 'DAY',
+                'month' => 'MONTH',
+                'year' => 'YEAR',
+                'hour' => 'HOUR',
+                'minute' => 'MINUTE',
+                'meridian' => false
+            ],
+            'default' => true
+        ]);
+
+        $this->assertRegExp('/<option value="">DAY<\/option>/', $result);
+        $this->assertRegExp('/<option value="">MONTH<\/option>/', $result);
+        $this->assertRegExp('/<option value="">YEAR<\/option>/', $result);
+        $this->assertRegExp('/<option value="">HOUR<\/option>/', $result);
+        $this->assertRegExp('/<option value="">MINUTE<\/option>/', $result);
+        $this->assertNotRegExp('/<option value=""><\/option>/', $result);
+
+    }
+
+    /**
+     * Test datetime with array empty value, ensuring
+     * empty options aren't duplicated.
+     *
+     * @return void
+     */
+    public function testDatetimeEmptyArrayForm()
+    {
+        extract($this->dateRegex);
+
+        $result = $this->Form->dateTime('Contact.date', [
+            'minYear' => '2017',
+            'maxYear' => '2019',
+            'empty' => [
+                'year' => 'pick year',
+                'month' => 'pick month',
+            ],
+            'hour' => false,
+            'minute' => false,
+            'second' => false,
+            'meridian' => false,
+        ]);
+        $expected = [
+            ['select' => ['name' => 'Contact[date][year]']],
+            ['option' => ['value' => '', 'selected' => 'selected']], 'pick year', '/option',
+            '*/select',
+
+            ['select' => ['name' => 'Contact[date][month]']],
+            ['option' => ['value' => '', 'selected' => 'selected']], 'pick month', '/option',
+            $monthsRegex,
+            '*/select',
+
+            ['select' => ['name' => 'Contact[date][day]']],
+            $daysRegex,
+            '*/select',
+        ];
+        $this->assertHtml($expected, $result);
     }
 
     /**
@@ -6455,42 +6520,6 @@ class FormHelperTest extends TestCase
 
         $this->assertRegExp('/<option value="">-<\/option>/', $result);
         $this->assertNotRegExp('/<option value="0" selected="selected">0<\/option>/', $result);
-    }
-
-    /**
-     * testDateTimeEmptyAsArray method
-     *
-     * @return void
-     */
-    public function testDateTimeEmptyAsArray()
-    {
-        $result = $this->Form->dateTime('Contact.date', [
-            'empty' => [
-                'day' => 'DAY',
-                'month' => 'MONTH',
-                'year' => 'YEAR',
-                'hour' => 'HOUR',
-                'minute' => 'MINUTE',
-                'meridian' => false
-            ],
-            'default' => true
-        ]);
-
-        $this->assertRegExp('/<option value="">DAY<\/option>/', $result);
-        $this->assertRegExp('/<option value="">MONTH<\/option>/', $result);
-        $this->assertRegExp('/<option value="">YEAR<\/option>/', $result);
-        $this->assertRegExp('/<option value="">HOUR<\/option>/', $result);
-        $this->assertRegExp('/<option value="">MINUTE<\/option>/', $result);
-        $this->assertNotRegExp('/<option value=""><\/option>/', $result);
-
-        $result = $this->Form->dateTime('Contact.date', [
-            'empty' => ['day' => 'DAY', 'month' => 'MONTH', 'year' => 'YEAR'],
-            'default' => true
-        ]);
-
-        $this->assertRegExp('/<option value="">DAY<\/option>/', $result);
-        $this->assertRegExp('/<option value="">MONTH<\/option>/', $result);
-        $this->assertRegExp('/<option value="">YEAR<\/option>/', $result);
     }
 
     /**

@@ -2524,10 +2524,8 @@ class FormHelper extends Helper
                 $options[$type] = [];
             }
 
-            // Pass empty options to each type.
-            if (!empty($options['empty']) &&
-                is_array($options[$type])
-            ) {
+            // Pass boolean/scalar empty options to each type.
+            if (is_array($options[$type]) && isset($options['empty']) && !is_array($options['empty'])) {
                 $options[$type]['empty'] = $options['empty'];
             }
 
