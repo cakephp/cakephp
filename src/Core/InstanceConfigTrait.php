@@ -46,7 +46,7 @@ trait InstanceConfigTrait
      *
      * @return array
      */
-    public function config(): array
+    public function getAllConfig(): array
     {
         if (!$this->_configInitialized) {
             $this->_config = $this->_defaultConfig;

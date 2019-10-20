@@ -96,7 +96,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      */
     protected function setupAssociations()
     {
-        $config = $this->config();
+        $config = $this->getAllConfig();
 
         $this->table->hasMany($config['translationTable'], [
             'className' => $config['translationTable'],
@@ -125,7 +125,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
             return;
         }
 
-        $config = $this->config();
+        $config = $this->getAllConfig();
 
         if (isset($options['filterByCurrentLocale'])) {
             $joinType = $options['filterByCurrentLocale'] ? 'INNER' : 'LEFT';

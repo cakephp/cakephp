@@ -460,7 +460,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
             'authError' => __d('cake', 'You are not authorized to access that location.'),
         ];
 
-        $config = $this->config();
+        $config = $this->getAllConfig();
         foreach ($config as $key => $value) {
             if ($value !== null) {
                 unset($defaults[$key]);

@@ -33,7 +33,7 @@ class StringTemplate
 {
     use InstanceConfigTrait {
         getConfig as get;
-        config as all;
+        getAllConfig as all;
     }
 
     /**

@@ -28,7 +28,7 @@ interface LocatorInterface
      *
      * @return array
      */
-    public function config(): array;
+    public function getAllConfig(): array;
 
     /**
      * Returns configuration for an alias.

@@ -55,7 +55,7 @@ trait StringTemplateTrait
     public function getTemplates(?string $template = null)
     {
         if ($template === null) {
-            return $this->templater()->config();
+            return $this->templater()->getAllConfig();
         }
 
         return $this->templater()->get($template);

@@ -135,7 +135,7 @@ class TableHelper extends Helper
             return;
         }
 
-        $config = $this->config();
+        $config = $this->getAllConfig();
         $widths = $this->_calculateWidths($rows);
 
         $this->_rowSeparator($widths);

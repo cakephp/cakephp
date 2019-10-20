@@ -399,7 +399,7 @@ class MemcachedEngineTest extends TestCase
         $Memcached = new MemcachedEngine();
         $Memcached->init(['engine' => 'Memcached', 'servers' => $servers]);
 
-        $config = $Memcached->config();
+        $config = $Memcached->getAllConfig();
         $this->assertEquals($config['servers'], $servers);
         Cache::drop('dual_server');
     }

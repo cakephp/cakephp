@@ -30,7 +30,7 @@ class EventListenerTestHelper extends Helper
      */
     public function beforeRender(EventInterface $event, $viewFile)
     {
-        $this->config('options.foo', 'bar');
+        $this->getAllConfig('options.foo', 'bar');
     }
 
     /**

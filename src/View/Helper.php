@@ -215,7 +215,7 @@ class Helper implements EventListenerInterface
         return [
             'helpers' => $this->helpers,
             'implementedEvents' => $this->implementedEvents(),
-            '_config' => $this->config(),
+            '_config' => $this->getAllConfig(),
         ];
     }
 }

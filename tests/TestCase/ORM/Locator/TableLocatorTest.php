@@ -77,7 +77,7 @@ class TableLocatorTest extends TestCase
         $result = $this->_locator->setConfig('Tests', $data);
         $this->assertSame($this->_locator, $result, 'Returns locator');
 
-        $result = $this->_locator->config();
+        $result = $this->_locator->getAllConfig();
         $expected = ['Tests' => $data];
         $this->assertEquals($expected, $result);
     }
@@ -420,15 +420,15 @@ class TableLocatorTest extends TestCase
     public function testConfigAndBuild()
     {
         $this->_locator->clear();
-        $map = $this->_locator->config();
+        $map = $this->_locator->getAllConfig();
         $this->assertEquals([], $map);
 
         $connection = ConnectionManager::get('test', false);
         $options = ['connection' => $connection];
         $this->_locator->setConfig('users', $options);
-        $map = $this->_locator->config();
+        $map = $this->_locator->getAllConfig();
         $this->assertEquals(['users' => $options], $map);
-        $this->assertEquals($options, $this->_locator->config('users'));
+        $this->assertEquals($options, $this->_locator->getConfig('users'));
 
         $schema = ['id' => ['type' => 'rubbish']];
         $options += ['schema' => $schema];
@@ -443,7 +443,7 @@ class TableLocatorTest extends TestCase
         $this->assertEquals($schema['id']['type'], $table->getSchema()->getColumnType('id'));
 
         $this->_locator->clear();
-        $this->assertEmpty($this->_locator->config());
+        $this->assertEmpty($this->_locator->getAllConfig());
 
         $this->_locator->setConfig('users', $options);
         $table = $this->_locator->get('users', ['className' => MyUsersTable::class]);

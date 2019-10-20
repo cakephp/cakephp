@@ -117,7 +117,7 @@ class TableLocator implements LocatorInterface
      *
      * @return array
      */
-    public function config(): array
+    public function getAllConfig(): array
     {
         return $this->_config;
     }
