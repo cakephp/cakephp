@@ -2443,9 +2443,9 @@ class Response implements ResponseInterface
      * Instead the builder object should be used.
      *
      * @param \Cake\Http\ServerRequest $request Request object
-     * @param string|array $allowedDomains List of allowed domains, see method description for more details
-     * @param string|array $allowedMethods List of HTTP verbs allowed
-     * @param string|array $allowedHeaders List of HTTP headers allowed
+     * @param string|string[] $allowedDomains List of allowed domains, see method description for more details
+     * @param string|string[] $allowedMethods List of HTTP verbs allowed
+     * @param string|string[] $allowedHeaders List of HTTP headers allowed
      * @return \Cake\Http\CorsBuilder A builder object the provides a fluent interface for defining
      *   additional CORS headers.
      */
