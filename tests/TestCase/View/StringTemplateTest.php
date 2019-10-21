@@ -22,6 +22,11 @@ use Cake\View\StringTemplate;
 class StringTemplateTest extends TestCase
 {
     /**
+     * @var \Cake\View\StringTemplate
+     */
+    protected $template;
+
+    /**
      * setUp
      *
      * @return void
