@@ -44,7 +44,7 @@ class SmtpTransport extends AbstractTransport
     /**
      * Socket to SMTP server
      *
-     * @var \Cake\Network\Socket
+     * @var \Cake\Network\Socket|null
      */
     protected $_socket;
 

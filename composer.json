@@ -98,6 +98,8 @@
         "cs-check": "phpcs --colors --parallel=16 -p src/ tests/",
         "cs-fix": "phpcbf --colors --parallel=16 -p src/ tests/",
         "test": "phpunit",
-        "test-coverage": "phpunit --coverage-clover=clover.xml"
+        "test-coverage": "phpunit --coverage-clover=clover.xml",
+        "phpstan": "phpstan analyse -c phpstan.neon -l 2 src/",
+        "phpstan-setup": "cp composer.json composer.backup && composer require --dev phpstan/phpstan-shim:^0.11 && mv composer.backup composer.json"
     }
 }

@@ -34,13 +34,20 @@ use Zend\Diactoros\Stream;
 
 /**
  * Responses contain the response text, status and headers of a HTTP response.
+ *
+ * There are external packages such as `fig/http-message-util` that provide HTTP
+ * status code constants. These can be used with any method that accepts or
+ * returns a status code integer. Keep in mind that these consants might
+ * include status codes that are now allowed which will throw an
+ * `\InvalidArgumentException`.
+ *
  */
 class Response implements ResponseInterface
 {
     use MessageTrait;
 
     /**
-     * Holds HTTP response statuses
+     * Allowed HTTP status codes and their default description.
      *
      * @var string[]
      */
@@ -899,8 +906,8 @@ class Response implements ResponseInterface
     }
 
     /**
-     * Sets the HTTP status code to be sent
-     * if $code is null the current code is returned
+     * Sets the HTTP status code to be sent.
+     * If $code is null the current code is returned
      *
      * If the status code is 304 or 204, the existing Content-Type header
      * will be cleared, as these response codes have no body.
@@ -955,9 +962,15 @@ class Response implements ResponseInterface
      * If the status code is 304 or 204, the existing Content-Type header
      * will be cleared, as these response codes have no body.
      *
+     * There are external packages such as `fig/http-message-util` that provide HTTP
+     * status code constants. These can be used with any method that accepts or
+     * returns a status code integer. However, keep in mind that these consants
+     * might include status codes that are now allowed which will throw an
+     * `\InvalidArgumentException`.
+     *
      * @link https://tools.ietf.org/html/rfc7231#section-6
      * @link https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
-     * @param int $code The 3-digit integer result code to set.
+     * @param int $code The 3-digit integer status code to set.
      * @param string $reasonPhrase The reason phrase to use with the
      *     provided status code; if none is provided, implementations MAY
      *     use the defaults as suggested in the HTTP specification.
@@ -975,7 +988,7 @@ class Response implements ResponseInterface
     /**
      * Modifier for response status
      *
-     * @param int $code The code to set.
+     * @param int $code The status code to set.
      * @param string $reasonPhrase The response reason phrase.
      * @return void
      * @throws \InvalidArgumentException For invalid status code arguments.
@@ -2443,9 +2456,9 @@ class Response implements ResponseInterface
      * Instead the builder object should be used.
      *
      * @param \Cake\Http\ServerRequest $request Request object
-     * @param string|array $allowedDomains List of allowed domains, see method description for more details
-     * @param string|array $allowedMethods List of HTTP verbs allowed
-     * @param string|array $allowedHeaders List of HTTP headers allowed
+     * @param string|string[] $allowedDomains List of allowed domains, see method description for more details
+     * @param string|string[] $allowedMethods List of HTTP verbs allowed
+     * @param string|string[] $allowedHeaders List of HTTP headers allowed
      * @return \Cake\Http\CorsBuilder A builder object the provides a fluent interface for defining
      *   additional CORS headers.
      */

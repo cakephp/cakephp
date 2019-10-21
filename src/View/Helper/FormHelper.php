@@ -308,9 +308,9 @@ class FormHelper extends Helper
     /**
      * Set the widget registry the helper will use.
      *
-     * @param \Cake\View\Widget\WidgetRegistry|null $instance The registry instance to set.
+     * @param \Cake\View\Widget\WidgetLocator|null $instance The registry instance to set.
      * @param array $widgets An array of widgets
-     * @return \Cake\View\Widget\WidgetRegistry
+     * @return \Cake\View\Widget\WidgetLocator
      * @deprecated 3.6.0 Use FormHelper::widgetLocator() instead.
      */
     public function widgetRegistry(WidgetRegistry $instance = null, $widgets = [])

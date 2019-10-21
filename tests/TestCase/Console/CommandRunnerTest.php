@@ -253,7 +253,7 @@ class CommandRunnerTest extends TestCase
     }
 
     /**
-     * Test using `cake --verson` invokes the version command
+     * Test using `cake --version` invokes the version command
      *
      * @return void
      */

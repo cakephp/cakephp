@@ -1256,6 +1256,7 @@ class Email implements JsonSerializable, Serializable
      *
      * @param string|null $template Template name or null to not use.
      * @return $this
+     * @deprecated 3.7.0 Use $email->viewBuilder()->setTemplate() instead.
      */
     public function setTemplate($template)
     {
@@ -1272,6 +1273,7 @@ class Email implements JsonSerializable, Serializable
      * Gets template.
      *
      * @return string
+     * @deprecated 3.7.0 Use $email->viewBuilder()->getTemplate() instead.
      */
     public function getTemplate()
     {
@@ -1333,13 +1335,13 @@ class Email implements JsonSerializable, Serializable
 
         if ($template === false) {
             return [
-                'template' => $this->getTemplate(),
-                'layout' => $this->getLayout()
+                'template' => $this->viewBuilder()->getTemplate(),
+                'layout' => $this->viewBuilder()->getLayout()
             ];
         }
-        $this->setTemplate($template);
+        $this->viewBuilder()->setTemplate($template);
         if ($layout !== false) {
-            $this->setLayout($layout);
+            $this->viewBuilder()->setLayout($layout);
         }
 
         return $this;
@@ -1475,10 +1477,12 @@ class Email implements JsonSerializable, Serializable
         );
 
         if ($theme === null) {
-            return $this->getTheme();
+            return $this->viewBuilder()->getTheme();
         }
 
-        return $this->setTheme($theme);
+        $this->viewBuilder()->setTheme($theme);
+
+        return $this;
     }
 
     /**
@@ -1528,10 +1532,12 @@ class Email implements JsonSerializable, Serializable
         );
 
         if ($helpers === null) {
-            return $this->getHelpers();
+            return $this->viewBuilder()->getHelpers();
         }
 
-        return $this->setHelpers((array)$helpers);
+        $this->viewBuilder()->setHelpers((array)$helpers);
+
+        return $this;
     }
 
     /**
