@@ -35,7 +35,7 @@ use Zend\Diactoros\Stream;
 /**
  * Responses contain the response text, status and headers of a HTTP response.
  *
- * There are external packages such as `http-message-util` that provide HTTP
+ * There are external packages such as `fig/http-message-util` that provide HTTP
  * status code constants. These can be used with any method that accepts or
  * returns a status code integer. Keep in mind that these consants might
  * include status codes that are now allowed which will throw an
@@ -962,7 +962,7 @@ class Response implements ResponseInterface
      * If the status code is 304 or 204, the existing Content-Type header
      * will be cleared, as these response codes have no body.
      *
-     * There are external packages such as `http-message-util` that provide HTTP
+     * There are external packages such as `fig/http-message-util` that provide HTTP
      * status code constants. These can be used with any method that accepts or
      * returns a status code integer. However, keep in mind that these consants
      * might include status codes that are now allowed which will throw an
@@ -988,7 +988,7 @@ class Response implements ResponseInterface
     /**
      * Modifier for response status
      *
-     * @param int $code The staus code to set.
+     * @param int $code The status code to set.
      * @param string $reasonPhrase The response reason phrase.
      * @return void
      * @throws \InvalidArgumentException For invalid status code arguments.
