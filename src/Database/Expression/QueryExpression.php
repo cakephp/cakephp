@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Expression;
 
-use BadMethodCallException;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
 use Cake\Database\TypeMapTrait;
@@ -29,9 +28,6 @@ use InvalidArgumentException;
  * Represents a SQL Query expression. Internally it stores a tree of
  * expressions that can be compiled by converting this object to string
  * and will contain a correctly parenthesized and nested expression.
- *
- * @method $this and(callable|string|array|\Cake\Database\ExpressionInterface $conditions)
- * @method $this or(callable|string|array|\Cake\Database\ExpressionInterface $conditions)
  */
 class QueryExpression implements ExpressionInterface, Countable
 {
@@ -411,7 +407,6 @@ class QueryExpression implements ExpressionInterface, Countable
         return $this->add(new BetweenExpression($field, $from, $to, $type));
     }
 
-// phpcs:disable
     /**
      * Returns a new QueryExpression object containing all the conditions passed
      * and set up the conjunction to be "AND"
@@ -421,7 +416,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * values that are being passed. Used for correctly binding values to statements.
      * @return \Cake\Database\Expression\QueryExpression
      */
-    public function and_($conditions, $types = [])
+    public function and($conditions, $types = [])
     {
         if ($conditions instanceof Closure) {
             return $conditions(new static([], $this->getTypeMap()->setTypes($types)));
@@ -439,13 +434,44 @@ class QueryExpression implements ExpressionInterface, Countable
      * values that are being passed. Used for correctly binding values to statements.
      * @return \Cake\Database\Expression\QueryExpression
      */
-    public function or_($conditions, $types = [])
+    public function or($conditions, $types = [])
     {
         if ($conditions instanceof Closure) {
             return $conditions(new static([], $this->getTypeMap()->setTypes($types), 'OR'));
         }
 
         return new static($conditions, $this->getTypeMap()->setTypes($types), 'OR');
+    }
+
+// phpcs:disable
+    /**
+     * Returns a new QueryExpression object containing all the conditions passed
+     * and set up the conjunction to be "AND"
+     *
+     * @param \Closure|string|array|\Cake\Database\ExpressionInterface $conditions to be joined with AND
+     * @param array $types associative array of fields pointing to the type of the
+     * values that are being passed. Used for correctly binding values to statements.
+     * @return \Cake\Database\Expression\QueryExpression
+     * @deprecated 4.0.0 Use and() instead.
+     */
+    public function and_($conditions, $types = [])
+    {
+        return $this->and($conditions, $types);
+    }
+
+    /**
+     * Returns a new QueryExpression object containing all the conditions passed
+     * and set up the conjunction to be "OR"
+     *
+     * @param \Closure|string|array|\Cake\Database\ExpressionInterface $conditions to be joined with OR
+     * @param array $types associative array of fields pointing to the type of the
+     * values that are being passed. Used for correctly binding values to statements.
+     * @return \Cake\Database\Expression\QueryExpression
+     * @deprecated 4.0.0 Use or() instead.
+     */
+    public function or_($conditions, $types = [])
+    {
+        return $this->or($conditions, $types);
     }
 // phpcs:enable
 
@@ -580,22 +606,6 @@ class QueryExpression implements ExpressionInterface, Countable
         $this->_conditions = $parts;
 
         return $this;
-    }
-
-    /**
-     * Helps calling the `and()` and `or()` methods transparently.
-     *
-     * @param string $method The method name.
-     * @param array $args The arguments to pass to the method.
-     * @return $this
-     * @throws \BadMethodCallException
-     */
-    public function __call(string $method, array $args)
-    {
-        if (in_array($method, ['and', 'or'])) {
-            return call_user_func_array([$this, $method . '_'], $args);
-        }
-        throw new BadMethodCallException(sprintf('Method %s does not exist', $method));
     }
 
     /**
