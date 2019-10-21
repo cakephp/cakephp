@@ -82,7 +82,7 @@ class RulesChecker extends BaseRulesChecker
      * 'message' sets a custom error message.
      * Set 'allowNullableNulls' to true to accept composite foreign keys where one or more nullable columns are null.
      *
-     * @param string|array $field The field or list of fields to check for existence by
+     * @param string|string[] $field The field or list of fields to check for existence by
      * primary key lookup in the other table.
      * @param object|string $table The table name where the fields existence will be checked.
      * @param string|array|null $message The error message to show in case the rule does not pass. Can
