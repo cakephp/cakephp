@@ -309,7 +309,7 @@ class CookieCollection implements IteratorAggregate, Countable
         $host = $uri->getHost();
         $path = $uri->getPath() ?: '/';
 
-        $cookies = iterator_to_array(static::createFromHeader($response->getHeader('Set-Cookie')));
+        $cookies = static::createFromHeader($response->getHeader('Set-Cookie'));
         $cookies = $this->setRequestDefaults($cookies, $host, $path);
         $new = clone $this;
         foreach ($cookies as $cookie) {
@@ -323,12 +323,12 @@ class CookieCollection implements IteratorAggregate, Countable
     /**
      * Apply path and host to the set of cookies if they are not set.
      *
-     * @param array $cookies An array of cookies to update.
+     * @param static $cookies A cookies collection to update.
      * @param string $host The host to set.
      * @param string $path The path to set.
      * @return array An array of updated cookies.
      */
-    protected function setRequestDefaults(array $cookies, string $host, string $path): array
+    protected function setRequestDefaults($cookies, string $host, string $path): array
     {
         $out = [];
         foreach ($cookies as $name => $cookie) {
