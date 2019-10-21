@@ -141,7 +141,7 @@ class ConsoleIo
     /**
      * Output at the verbose level.
      *
-     * @param string|array $message A string or an array of strings to output
+     * @param string|string[] $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int|null The number of bytes returned from writing to stdout
      *   or null if current level is less than ConsoleIo::VERBOSE
@@ -154,7 +154,7 @@ class ConsoleIo
     /**
      * Output at all levels.
      *
-     * @param string|array $message A string or an array of strings to output
+     * @param string|string[] $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int|null The number of bytes returned from writing to stdout
      *   or null if current level is less than ConsoleIo::QUIET
@@ -175,7 +175,7 @@ class ConsoleIo
      * present in most shells. Using ConsoleIo::QUIET for a message means it will always display.
      * While using ConsoleIo::VERBOSE means it will only display when verbose output is toggled.
      *
-     * @param string|array $message A string or an array of strings to output
+     * @param string|string[] $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
      * @return int|null The number of bytes returned from writing to stdout
@@ -195,7 +195,7 @@ class ConsoleIo
     /**
      * Convenience method for out() that wraps message between <info /> tag
      *
-     * @param string|array $message A string or an array of strings to output
+     * @param string|string[] $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
      * @return int|null The number of bytes returned from writing to stdout
@@ -204,10 +204,6 @@ class ConsoleIo
      */
     public function info($message, int $newlines = 1, int $level = self::NORMAL): ?int
     {
-        if ($message === null) {
-            deprecationWarning('ConsoleIo::info() in 4.x will not allow null anymore.');
-        }
-
         $messageType = 'info';
         $message = $this->wrapMessageWithType($messageType, $message);
 
@@ -217,17 +213,13 @@ class ConsoleIo
     /**
      * Convenience method for err() that wraps message between <warning /> tag
      *
-     * @param string|array $message A string or an array of strings to output
+     * @param string|string[] $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int The number of bytes returned from writing to stderr.
      * @see https://book.cakephp.org/3.0/en/console-and-shells.html#ConsoleIo::err
      */
     public function warning($message, int $newlines = 1): int
     {
-        if ($message === null) {
-            deprecationWarning('ConsoleIo::warning() in 4.x will not allow null anymore.');
-        }
-
         $messageType = 'warning';
         $message = $this->wrapMessageWithType($messageType, $message);
 
@@ -237,17 +229,13 @@ class ConsoleIo
     /**
      * Convenience method for err() that wraps message between <error /> tag
      *
-     * @param string|array $message A string or an array of strings to output
+     * @param string|string[] $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int The number of bytes returned from writing to stderr.
      * @see https://book.cakephp.org/3.0/en/console-and-shells.html#ConsoleIo::err
      */
     public function error($message, int $newlines = 1): int
     {
-        if ($message === null) {
-            deprecationWarning('ConsoleIo::error() in 4.x will not allow null anymore.');
-        }
-
         $messageType = 'error';
         $message = $this->wrapMessageWithType($messageType, $message);
 
@@ -257,7 +245,7 @@ class ConsoleIo
     /**
      * Convenience method for out() that wraps message between <success /> tag
      *
-     * @param string|array $message A string or an array of strings to output
+     * @param string|string[] $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
      * @return int|null The number of bytes returned from writing to stdout
@@ -266,10 +254,6 @@ class ConsoleIo
      */
     public function success($message, int $newlines = 1, int $level = self::NORMAL): ?int
     {
-        if ($message === null) {
-            deprecationWarning('ConsoleIo::success() in 4.x will not allow null anymore.');
-        }
-
         $messageType = 'success';
         $message = $this->wrapMessageWithType($messageType, $message);
 
@@ -355,7 +339,7 @@ class ConsoleIo
      * Outputs a single or multiple error messages to stderr. If no parameters
      * are passed outputs just a newline.
      *
-     * @param string|array $message A string or an array of strings to output
+     * @param string|string[] $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int The number of bytes returned from writing to stderr.
      */

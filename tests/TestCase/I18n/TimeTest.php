@@ -790,7 +790,7 @@ class TimeTest extends TestCase
     {
         $time = new $class('2014-04-20 10:10:10');
         $expected = [
-            'time' => '2014-04-20T10:10:10.000000+00:00',
+            'time' => '2014-04-20 10:10:10.000000+00:00',
             'timezone' => 'UTC',
             'fixedNowTime' => $class::getTestNow()->format('Y-m-d\TH:i:s.uP'),
         ];
