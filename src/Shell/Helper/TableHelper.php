@@ -71,7 +71,6 @@ class TableHelper extends Helper
             return mb_strwidth($text);
         }
 
-        /** @var array $styles */
         $styles = $this->_io->styles();
         $tags = implode('|', array_keys($styles));
         $text = preg_replace('#</?(?:' . $tags . ')>#', '', $text);

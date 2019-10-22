@@ -95,7 +95,6 @@ class Collection implements CollectionInterface
         if (strpos($name, '.')) {
             [$config['schema'], $name] = explode('.', $name);
         }
-        /** @var \Cake\Database\Schema\TableSchema $table */
         $table = $this->_connection->getDriver()->newTableSchema($name);
 
         $this->_reflect('Column', $name, $config, $table);

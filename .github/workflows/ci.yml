@@ -124,4 +124,4 @@ jobs:
       run: vendor/bin/psalm.phar --show-info=false
 
     - name: Run phpstan
-      run: vendor/bin/phpstan.phar analyse src/
+      run: vendor/bin/phpstan.phar analyse --no-progress src/

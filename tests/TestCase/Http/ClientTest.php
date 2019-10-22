@@ -848,4 +848,52 @@ class ClientTest extends TestCase
 
         $this->assertSame($result, $response);
     }
+
+    /**
+     * test redirect across sub domains
+     *
+     * @return void
+     */
+    public function testRedirectDifferentSubDomains()
+    {
+        $adapter = $this->getMockBuilder(Client\Adapter\Stream::class)
+            ->setMethods(['send'])
+            ->getMock();
+
+        $url = 'http://auth.example.org';
+
+        $redirect = new Response([
+            'HTTP/1.0 301',
+            'Location: http://backstage.example.org',
+        ]);
+        $adapter->expects($this->at(0))
+            ->method('send')
+            ->willReturn([$redirect]);
+
+        $response = new Response([
+            'HTTP/1.0 200',
+        ]);
+        $adapter->expects($this->at(1))
+            ->method('send')
+            ->with($this->callback(function ($request) {
+                $this->assertSame('http://backstage.example.org', (string)$request->getUri());
+                $this->assertSame('session=backend', $request->getHeaderLine('Cookie'));
+
+                return true;
+            }))
+            ->willReturn([$response]);
+
+        $client = new Client([
+            'adapter' => $adapter,
+        ]);
+        $client->addCookie(new Cookie('session', 'backend', null, '/', 'backstage.example.org'));
+        $client->addCookie(new Cookie('session', 'authz', null, '/', 'auth.example.org'));
+
+        $result = $client->send(new Request($url), [
+            'redirect' => 10,
+        ]);
+
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertSame($response, $result);
+    }
 }

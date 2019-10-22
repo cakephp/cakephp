@@ -411,7 +411,7 @@ class Marshaller
             $query = $target->find();
             $query->andWhere(function ($exp) use ($conditions) {
                 /** @var \Cake\Database\Expression\QueryExpression $exp */
-                return $exp->or_($conditions);
+                return $exp->or($conditions);
             });
 
             $keyFields = array_keys($primaryKey);

@@ -132,11 +132,11 @@ class CommandScanner
             /** @psalm-suppress DeprecatedClass */
             if (
                 !is_subclass_of($class, Shell::class)
-                && !is_subclass_of($class, Command::class)
+                && !is_subclass_of($class, CommandInterface::class)
             ) {
                 continue;
             }
-            if (is_subclass_of($class, Command::class)) {
+            if (is_subclass_of($class, CommandInterface::class)) {
                 /** @var \Cake\Console\Command $class */
                 $name = $class::defaultName();
             }

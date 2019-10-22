@@ -30,9 +30,9 @@ class CommandFactory implements CommandFactoryInterface
     public function create(string $className)
     {
         $command = new $className();
-        if (!($command instanceof Command) && !($command instanceof Shell)) {
+        if (!($command instanceof CommandInterface) && !($command instanceof Shell)) {
             /** @psalm-suppress DeprecatedClass */
-            $valid = implode('` or `', [Shell::class, Command::class]);
+            $valid = implode('` or `', [Shell::class, CommandInterface::class]);
             $message = sprintf('Class `%s` must be an instance of `%s`.', $className, $valid);
             throw new InvalidArgumentException($message);
         }

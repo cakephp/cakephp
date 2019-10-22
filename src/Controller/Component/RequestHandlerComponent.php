@@ -391,7 +391,6 @@ class RequestHandlerComponent extends Component
     {
         $controller = $this->getController();
 
-        /** @var array $acceptRaw */
         $acceptRaw = $controller->getRequest()->parseAccept();
         if (empty($acceptRaw)) {
             return $type ? $type === $this->ext : $this->ext;
