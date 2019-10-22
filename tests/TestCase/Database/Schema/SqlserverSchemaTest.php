@@ -208,7 +208,7 @@ SQL;
                 10,
                 null,
                 null,
-                ['type' => 'char', 'length' => 10, 'collate' => 'Japanese_Unicode_CI_AI']
+                ['type' => 'char', 'length' => 10, 'collate' => 'Japanese_Unicode_CI_AI'],
             ],
             [
                 'NCHAR',
