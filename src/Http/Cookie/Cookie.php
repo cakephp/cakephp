@@ -15,7 +15,6 @@ declare(strict_types=1);
  */
 namespace Cake\Http\Cookie;
 
-use Cake\Chronos\Chronos;
 use Cake\Utility\Hash;
 use DateTimeImmutable;
 use DateTimeZone;
@@ -425,7 +424,7 @@ class Cookie implements CookieInterface
     public function withNeverExpire()
     {
         $new = clone $this;
-        $new->expiresAt = Chronos::createFromDate(2038, 1, 1);
+        $new->expiresAt = new DateTimeImmutable('2038-01-01');
 
         return $new;
     }
@@ -436,7 +435,7 @@ class Cookie implements CookieInterface
     public function withExpired()
     {
         $new = clone $this;
-        $new->expiresAt = Chronos::createFromTimestamp(1);
+        $new->expiresAt = new DateTimeImmutable('1970-01-01 00:00:01');
 
         return $new;
     }

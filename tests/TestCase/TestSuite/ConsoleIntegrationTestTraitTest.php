@@ -127,7 +127,7 @@ class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
 
         $this->assertOutputEmpty();
         $this->assertErrorContains('Missing required arguments');
-        $this->assertErrorContains('arg is required');
+        $this->assertErrorContains('`arg` argument is required');
         $this->assertExitCode(Shell::CODE_ERROR);
     }
 

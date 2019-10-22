@@ -86,9 +86,6 @@ class SqlserverSchema extends BaseSchema
         ?int $scale = null
     ): array {
         $col = strtolower($col);
-        $length = $length !== null ? (int)$length : $length;
-        $precision = $precision !== null ? (int)$precision : $precision;
-        $scale = $scale !== null ? (int)$scale : $scale;
 
         if (in_array($col, ['date', 'time'])) {
             return ['type' => $col, 'length' => null];
@@ -171,9 +168,9 @@ class SqlserverSchema extends BaseSchema
     {
         $field = $this->_convertColumn(
             $row['type'],
-            $row['char_length'],
-            $row['precision'],
-            $row['scale']
+            $row['char_length'] != null ? (int)$row['char_length'] : null,
+            $row['precision'] != null ? (int)$row['precision'] : null,
+            $row['scale'] != null ? (int)$row['scale'] : null
         );
         if (!empty($row['default'])) {
             $row['default'] = trim($row['default'], '()');

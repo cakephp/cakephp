@@ -3346,6 +3346,61 @@ class PaginatorHelperTest extends TestCase
     }
 
     /**
+     * test the limitControl() method with defaults and query
+     *
+     * @return void
+     */
+    public function testLimitControlQuery()
+    {
+        $out = $this->Paginator->limitControl([], 50);
+        $expected = [
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/']],
+            ['div' => ['class' => 'input select']],
+            ['label' => ['for' => 'limit']],
+            'View',
+            '/label',
+            ['select' => ['name' => 'limit', 'id' => 'limit', 'onChange' => 'this.form.submit()']],
+            ['option' => ['value' => '20']],
+            '20',
+            '/option',
+            ['option' => ['value' => '50', 'selected' => 'selected']],
+            '50',
+            '/option',
+            ['option' => ['value' => '100']],
+            '100',
+            '/option',
+            '/select',
+            '/div',
+            '/form',
+        ];
+        $this->assertHtml($expected, $out);
+
+        $this->View->setRequest($this->View->getRequest()->withQueryParams(['limit' => '100']));
+        $out = $this->Paginator->limitControl([], 50);
+        $expected = [
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/']],
+            ['div' => ['class' => 'input select']],
+            ['label' => ['for' => 'limit']],
+            'View',
+            '/label',
+            ['select' => ['name' => 'limit', 'id' => 'limit', 'onChange' => 'this.form.submit()']],
+            ['option' => ['value' => '20']],
+            '20',
+            '/option',
+            ['option' => ['value' => '50']],
+            '50',
+            '/option',
+            ['option' => ['value' => '100', 'selected' => 'selected']],
+            '100',
+            '/option',
+            '/select',
+            '/div',
+            '/form',
+        ];
+        $this->assertHtml($expected, $out);
+    }
+
+    /**
      * Test using paging params set by SimplePaginator which doesn't do count query.
      *
      * @return void

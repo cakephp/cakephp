@@ -941,6 +941,20 @@ class RouteBuilderTest extends TestCase
     }
 
     /**
+     * Test that exception is thrown if callback is not a valid callable.
+     *
+     * @return void
+     */
+    public function testScopeException()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Need a valid callable to connect routes. Got `string` instead.');
+
+        $routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'api']);
+        $routes->scope('/v1', 'fail');
+    }
+
+    /**
      * Test that nested scopes inherit middleware.
      *
      * @return void

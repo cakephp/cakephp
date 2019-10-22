@@ -316,7 +316,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function sumOf($matcher = null): int
+    public function sumOf($matcher = null)
     {
         if ($matcher === null) {
             return array_sum($this->toList());

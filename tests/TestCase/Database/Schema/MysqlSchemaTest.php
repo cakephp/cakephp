@@ -110,7 +110,7 @@ class MysqlSchemaTest extends TestCase
             ],
             [
                 'VARCHAR(255)',
-                ['type' => 'string', 'length' => 255, 'collate' => 'utf8_general_ci']
+                ['type' => 'string', 'length' => 255, 'collate' => 'utf8_general_ci'],
             ],
             [
                 'CHAR(25)',
@@ -130,19 +130,19 @@ class MysqlSchemaTest extends TestCase
             ],
             [
                 'TEXT',
-                ['type' => 'text', 'length' => null, 'collate' => 'utf8_general_ci']
+                ['type' => 'text', 'length' => null, 'collate' => 'utf8_general_ci'],
             ],
             [
                 'TINYTEXT',
-                ['type' => 'text', 'length' => TableSchema::LENGTH_TINY, 'collate' => 'utf8_general_ci']
+                ['type' => 'text', 'length' => TableSchema::LENGTH_TINY, 'collate' => 'utf8_general_ci'],
             ],
             [
                 'MEDIUMTEXT',
-                ['type' => 'text', 'length' => TableSchema::LENGTH_MEDIUM, 'collate' => 'utf8_general_ci']
+                ['type' => 'text', 'length' => TableSchema::LENGTH_MEDIUM, 'collate' => 'utf8_general_ci'],
             ],
             [
                 'LONGTEXT',
-                ['type' => 'text', 'length' => TableSchema::LENGTH_LONG, 'collate' => 'utf8_general_ci']
+                ['type' => 'text', 'length' => TableSchema::LENGTH_LONG, 'collate' => 'utf8_general_ci'],
             ],
             [
                 'TINYBLOB',

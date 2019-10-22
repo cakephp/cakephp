@@ -20,7 +20,6 @@ use Cake\Core\Configure;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Utility\Inflector;
-use Exception;
 use ReflectionFunction;
 use ReflectionMethod;
 use RuntimeException;
@@ -341,16 +340,10 @@ class Router
     protected static function _applyUrlFilters(array $url): array
     {
         $request = static::getRequest();
-        $e = null;
         foreach (static::$_urlFilters as $filter) {
             try {
                 $url = $filter($url, $request);
-            } catch (Exception $e) {
-                // fall through
             } catch (Throwable $e) {
-                // fall through
-            }
-            if ($e !== null) {
                 if (is_array($filter)) {
                     $ref = new ReflectionMethod($filter[0], $filter[1]);
                 } else {
@@ -821,10 +814,9 @@ class Router
      * @param callable|null $callback The callback to invoke that builds the prefixed routes.
      * @return void
      */
-    public static function prefix(string $name, $params = [], ?callable $callback = null): void
+    public static function prefix(string $name, $params = [], $callback = null): void
     {
-        if ($callback === null) {
-            /** @var callable $callback */
+        if (!is_array($params)) {
             $callback = $params;
             $params = [];
         }
@@ -856,10 +848,9 @@ class Router
      * @return void
      * @psalm-suppress PossiblyInvalidArrayAccess
      */
-    public static function plugin(string $name, $options = [], ?callable $callback = null): void
+    public static function plugin(string $name, $options = [], $callback = null): void
     {
-        if ($callback === null) {
-            /** @var callable $callback */
+        if (!is_array($options)) {
             $callback = $options;
             $options = [];
         }

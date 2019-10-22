@@ -1,0 +1,480 @@
+
+
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Constructor of class Cake\\\\Auth\\\\Storage\\\\SessionStorage has an unused parameter \\$response\\.$#"
+			count: 1
+			path: src/Auth/Storage/SessionStorage.php
+
+		-
+			message: "#^Access to undefined constant Memcached\\:\\:OPT_CLIENT_MODE\\.$#"
+			count: 1
+			path: src/Cache/Engine/MemcachedEngine.php
+
+		-
+			message: "#^Access to undefined constant Memcached\\:\\:DYNAMIC_CLIENT_MODE\\.$#"
+			count: 1
+			path: src/Cache/Engine/MemcachedEngine.php
+
+		-
+			message: "#^Parameter \\#1 \\$it of method AppendIterator\\:\\:append\\(\\) expects Iterator, Traversable given\\.$#"
+			count: 2
+			path: src/Collection/Collection.php
+
+		-
+			message: "#^Parameter \\#1 \\$it of method AppendIterator\\:\\:append\\(\\) expects Iterator, Traversable given\\.$#"
+			count: 2
+			path: src/Collection/Iterator/TreeIterator.php
+
+		-
+			message: "#^Parameter \\#1 \\$it of method AppendIterator\\:\\:append\\(\\) expects Iterator, Traversable given\\.$#"
+			count: 2
+			path: src/Collection/Iterator/TreePrinter.php
+
+		-
+			message: "#^Parameter \\#1 \\$it of method AppendIterator\\:\\:append\\(\\) expects Iterator, Traversable given\\.$#"
+			count: 2
+			path: src/Collection/Iterator/ZipIterator.php
+
+		-
+			message: "#^Parameter \\#1 \\$it of method AppendIterator\\:\\:append\\(\\) expects Iterator, Traversable given\\.$#"
+			count: 2
+			path: src/ORM/ResultSet.php
+
+		-
+			message: "#^Call to an undefined method Traversable\\:\\:getArrayCopy\\(\\)\\.$#"
+			count: 1
+			path: src/Collection/Iterator/ExtractIterator.php
+
+		-
+			message: "#^Parameter \\#1 \\$var_array of function extract is passed by reference, so it expects variables only\\.$#"
+			count: 1
+			path: src/Command/I18nExtractCommand.php
+
+		-
+			message: "#^Strict comparison using \\!\\=\\= between null and null will always evaluate to false\\.$#"
+			count: 2
+			path: src/Command/I18nExtractCommand.php
+
+		-
+			message: "#^Result of \\|\\| is always true\\.$#"
+			count: 1
+			path: src/Command/I18nExtractCommand.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between int and null will always evaluate to false\\.$#"
+			count: 1
+			path: src/Console/CommandRunner.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between int and null will always evaluate to false\\.$#"
+			count: 1
+			path: src/Console/ShellDispatcher.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with string and 'authorize' will always evaluate to false\\.$#"
+			count: 1
+			path: src/Controller/Component/AuthComponent.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with string and 'authenticate' will always evaluate to false\\.$#"
+			count: 1
+			path: src/Controller/Component/AuthComponent.php
+
+		-
+			message: "#^Call to an undefined method Cake\\\\Auth\\\\Storage\\\\StorageInterface\\:\\:getConfig\\(\\)\\.$#"
+			count: 1
+			path: src/Controller/Component/AuthComponent.php
+
+		-
+			message: "#^Call to an undefined method Cake\\\\Auth\\\\Storage\\\\StorageInterface\\:\\:setConfig\\(\\)\\.$#"
+			count: 1
+			path: src/Controller/Component/AuthComponent.php
+
+		-
+			message: "#^Property Cake\\\\Controller\\\\Controller\\:\\:\\$response \\(Cake\\\\Http\\\\Response\\) does not accept Psr\\\\Http\\\\Message\\\\ResponseInterface\\.$#"
+			count: 1
+			path: src/Controller/Controller.php
+
+		-
+			message: "#^Parameter \\#1 \\$autoload_function of function spl_autoload_register expects callable\\(string\\)\\: void, array\\(\\$this\\(Cake\\\\Core\\\\ClassLoader\\), 'loadClass'\\) given\\.$#"
+			count: 1
+			path: src/Core/ClassLoader.php
+
+		-
+			message: "#^Property Cake\\\\Database\\\\Driver\\:\\:\\$_connection \\(PDO\\) does not accept null\\.$#"
+			count: 2
+			path: src/Database/Driver.php
+
+		-
+			message: "#^If condition is always true\\.$#"
+			count: 1
+			path: src/Database/Driver/Mysql.php
+
+		-
+			message: "#^If condition is always true\\.$#"
+			count: 1
+			path: src/Database/Driver/Postgres.php
+
+		-
+			message: "#^If condition is always true\\.$#"
+			count: 1
+			path: src/Database/Driver/Sqlite.php
+
+		-
+			message: "#^If condition is always true\\.$#"
+			count: 1
+			path: src/Database/Driver/Sqlserver.php
+
+		-
+			message: "#^Access to undefined constant PDO\\:\\:SQLSRV_ATTR_ENCODING\\.$#"
+			count: 1
+			path: src/Database/Driver/Sqlserver.php
+
+		-
+			message: "#^Cake\\\\Database\\\\Expression\\\\TupleComparison\\:\\:__construct\\(\\) does not call parent constructor from Cake\\\\Database\\\\Expression\\\\Comparison\\.$#"
+			count: 1
+			path: src/Database/Expression/TupleComparison.php
+
+		-
+			message: "#^Access to an undefined property Exception\\:\\:\\$queryString\\.$#"
+			count: 1
+			path: src/Database/Log/LoggingStatement.php
+
+		-
+			message: "#^Result of && is always false\\.$#"
+			count: 1
+			path: src/Database/Query.php
+
+		-
+			message: "#^Cake\\\\Database\\\\Statement\\\\PDOStatement\\:\\:__construct\\(\\) does not call parent constructor from Cake\\\\Database\\\\Statement\\\\StatementDecorator\\.$#"
+			count: 1
+			path: src/Database/Statement/PDOStatement.php
+
+		-
+			message: "#^Access to undefined constant PDO\\:\\:SQLSRV_ENCODING_BINARY\\.$#"
+			count: 1
+			path: src/Database/Statement/SqlserverStatement.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with string and 'parseDateTime' will always evaluate to false\\.$#"
+			count: 1
+			path: src/Database/Type/DateTimeType.php
+
+		-
+			message: "#^Result of && is always false\\.$#"
+			count: 2
+			path: src/Datasource/QueryCacher.php
+
+		-
+			message: "#^Call to function is_int\\(\\) with bool\\|string will always evaluate to false\\.$#"
+			count: 1
+			path: src/Filesystem/File.php
+
+		-
+			message: "#^Parameter \\#1 \\$it of class RegexIterator constructor expects Iterator, Traversable given\\.$#"
+			count: 1
+			path: src/Filesystem/Filesystem.php
+
+		-
+			message: "#^Parameter \\#1 \\$it of class CallbackFilterIterator constructor expects Iterator, Traversable given\\.$#"
+			count: 1
+			path: src/Filesystem/Filesystem.php
+
+		-
+			message: "#^Constructor of class Cake\\\\Http\\\\Client\\\\Auth\\\\Digest has an unused parameter \\$options\\.$#"
+			count: 1
+			path: src/Http/Client/Auth/Digest.php
+
+		-
+			message: "#^Method Cake\\\\Http\\\\Middleware\\\\CspMiddleware\\:\\:process\\(\\) should return Psr\\\\Http\\\\Message\\\\ResponseInterface but returns Psr\\\\Http\\\\Message\\\\MessageInterface\\.$#"
+			count: 1
+			path: src/Http/Middleware/CspMiddleware.php
+
+		-
+			message: "#^Call to an undefined method DateTimeInterface\\:\\:setTimezone\\(\\)\\.$#"
+			count: 1
+			path: src/Http/Response.php
+
+		-
+			message: "#^Access to an undefined property Psr\\\\Http\\\\Message\\\\UriInterface\\:\\:\\$webroot\\.$#"
+			count: 3
+			path: src/Http/ServerRequestFactory.php
+
+		-
+			message: "#^Access to an undefined property Psr\\\\Http\\\\Message\\\\UriInterface\\:\\:\\$base\\.$#"
+			count: 2
+			path: src/Http/ServerRequestFactory.php
+
+		-
+			message: "#^Variable \\$_SESSION in isset\\(\\) always exists and is not nullable\\.$#"
+			count: 2
+			path: src/Http/Session.php
+
+		-
+			message: "#^Call to an undefined method Cake\\\\Chronos\\\\DifferenceFormatterInterface\\:\\:dateAgoInWords\\(\\)\\.$#"
+			count: 1
+			path: src/I18n/Date.php
+
+		-
+			message: "#^Parameter \\#4 \\$timezone of function datefmt_create expects int, string given\\.$#"
+			count: 2
+			path: src/I18n/Date.php
+
+		-
+			message: "#^Parameter \\#5 \\$calendar of function datefmt_create expects int\\|IntlCalendar, null given\\.$#"
+			count: 1
+			path: src/I18n/Date.php
+
+		-
+			message: "#^Parameter \\#4 \\$timezone of function datefmt_create expects int, string given\\.$#"
+			count: 2
+			path: src/I18n/FrozenDate.php
+
+		-
+			message: "#^Parameter \\#5 \\$calendar of function datefmt_create expects int\\|IntlCalendar, null given\\.$#"
+			count: 1
+			path: src/I18n/FrozenDate.php
+
+		-
+			message: "#^Call to an undefined method Cake\\\\Chronos\\\\DifferenceFormatterInterface\\:\\:dateAgoInWords\\(\\)\\.$#"
+			count: 1
+			path: src/I18n/FrozenDate.php
+
+		-
+			message: "#^Parameter \\#4 \\$timezone of function datefmt_create expects int, string given\\.$#"
+			count: 2
+			path: src/I18n/FrozenTime.php
+
+		-
+			message: "#^Parameter \\#5 \\$calendar of function datefmt_create expects int\\|IntlCalendar, null given\\.$#"
+			count: 1
+			path: src/I18n/FrozenTime.php
+
+		-
+			message: "#^Call to an undefined method Cake\\\\Chronos\\\\DifferenceFormatterInterface\\:\\:timeAgoInWords\\(\\)\\.$#"
+			count: 1
+			path: src/I18n/FrozenTime.php
+
+		-
+			message: "#^Parameter \\#4 \\$timezone of function datefmt_create expects int, string given\\.$#"
+			count: 2
+			path: src/I18n/Time.php
+
+		-
+			message: "#^Parameter \\#5 \\$calendar of function datefmt_create expects int\\|IntlCalendar, null given\\.$#"
+			count: 1
+			path: src/I18n/Time.php
+
+		-
+			message: "#^Call to an undefined method Cake\\\\Chronos\\\\DifferenceFormatterInterface\\:\\:timeAgoInWords\\(\\)\\.$#"
+			count: 1
+			path: src/I18n/Time.php
+
+		-
+			message: "#^Call to sprintf contains 0 placeholders, 1 value given\\.$#"
+			count: 1
+			path: src/Mailer/Message.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between int and true will always evaluate to false\\.$#"
+			count: 1
+			path: src/Network/Socket.php
+
+		-
+			message: "#^Parameter \\#2 \\$callback of function array_filter expects callable\\(mixed, mixed\\)\\: bool, 'strlen' given\\.$#"
+			count: 1
+			path: src/ORM/Association/BelongsToMany.php
+
+		-
+			message: "#^Parameter \\#1 \\$assoc of method Cake\\\\ORM\\\\Marshaller\\:\\:_belongsToMany\\(\\) expects Cake\\\\ORM\\\\Association\\\\BelongsToMany, Cake\\\\ORM\\\\Association given\\.$#"
+			count: 1
+			path: src/ORM/Marshaller.php
+
+		-
+			message: "#^Parameter \\#2 \\$callback of function array_filter expects callable\\(mixed, mixed\\)\\: bool, 'strlen' given\\.$#"
+			count: 1
+			path: src/ORM/Marshaller.php
+
+		-
+			message: "#^Parameter \\#2 \\$assoc of method Cake\\\\ORM\\\\Marshaller\\:\\:_mergeBelongsToMany\\(\\) expects Cake\\\\ORM\\\\Association\\\\BelongsToMany, Cake\\\\ORM\\\\Association given\\.$#"
+			count: 1
+			path: src/ORM/Marshaller.php
+
+		-
+			message: "#^Parameter \\#1 \\$table of method Cake\\\\ORM\\\\Query\\:\\:addDefaultTypes\\(\\) expects Cake\\\\ORM\\\\Table, Cake\\\\Datasource\\\\RepositoryInterface given\\.$#"
+			count: 1
+			path: src/ORM/Query.php
+
+		-
+			message: "#^Parameter \\#1 \\$table of method Cake\\\\ORM\\\\Query\\:\\:_addAssociationsToTypeMap\\(\\) expects Cake\\\\ORM\\\\Table, Cake\\\\Datasource\\\\RepositoryInterface given\\.$#"
+			count: 5
+			path: src/ORM/Query.php
+
+		-
+			message: "#^Parameter \\#2 \\$callback of function array_filter expects callable\\(mixed, mixed\\)\\: bool, 'strlen' given\\.$#"
+			count: 1
+			path: src/ORM/Rule/IsUnique.php
+
+		-
+			message: "#^Parameter \\#1 \\$request of static method Cake\\\\Routing\\\\Router\\:\\:setRequest\\(\\) expects Cake\\\\Http\\\\ServerRequest, Psr\\\\Http\\\\Message\\\\ServerRequestInterface given\\.$#"
+			count: 2
+			path: src/Routing/Middleware/RoutingMiddleware.php
+
+		-
+			message: "#^Parameter \\#1 \\$request of static method Cake\\\\Routing\\\\Router\\:\\:parseRequest\\(\\) expects Cake\\\\Http\\\\ServerRequest, Psr\\\\Http\\\\Message\\\\ServerRequestInterface given\\.$#"
+			count: 1
+			path: src/Routing/Middleware/RoutingMiddleware.php
+
+		-
+			message: "#^Result of && is always false\\.$#"
+			count: 1
+			path: src/Routing/Route/EntityRoute.php
+
+		-
+			message: "#^Property Cake\\\\TestSuite\\\\ConsoleIntegrationTestCase\\:\\:\\$_out \\(Cake\\\\TestSuite\\\\Stub\\\\ConsoleOutput\\) does not accept null\\.$#"
+			count: 1
+			path: src/TestSuite/ConsoleIntegrationTestCase.php
+
+		-
+			message: "#^Property Cake\\\\TestSuite\\\\ConsoleIntegrationTestCase\\:\\:\\$_err \\(Cake\\\\TestSuite\\\\Stub\\\\ConsoleOutput\\) does not accept null\\.$#"
+			count: 1
+			path: src/TestSuite/ConsoleIntegrationTestCase.php
+
+		-
+			message: "#^Property Cake\\\\TestSuite\\\\ConsoleIntegrationTestCase\\:\\:\\$_in \\(Cake\\\\Console\\\\ConsoleInput\\) does not accept null\\.$#"
+			count: 1
+			path: src/TestSuite/ConsoleIntegrationTestCase.php
+
+		-
+			message: "#^Access to an undefined property PHPUnit\\\\Framework\\\\Test\\:\\:\\$fixtureManager\\.$#"
+			count: 1
+			path: src/TestSuite/Fixture/FixtureInjector.php
+
+		-
+			message: "#^Call to an undefined method Cake\\\\Database\\\\ConstraintsInterface\\:\\:sourceName\\(\\)\\.$#"
+			count: 1
+			path: src/TestSuite/Fixture/FixtureManager.php
+
+		-
+			message: "#^Parameter \\#1 \\$connection of method Cake\\\\Database\\\\Schema\\\\SqlGeneratorInterface\\:\\:createSql\\(\\) expects Cake\\\\Database\\\\Connection, Cake\\\\Datasource\\\\ConnectionInterface given\\.$#"
+			count: 1
+			path: src/TestSuite/Fixture/TestFixture.php
+
+		-
+			message: "#^Parameter \\#1 \\$connection of method Cake\\\\Database\\\\Schema\\\\SqlGeneratorInterface\\:\\:dropSql\\(\\) expects Cake\\\\Database\\\\Connection, Cake\\\\Datasource\\\\ConnectionInterface given\\.$#"
+			count: 1
+			path: src/TestSuite/Fixture/TestFixture.php
+
+		-
+			message: "#^Parameter \\#1 \\$connection of method Cake\\\\Database\\\\Schema\\\\SqlGeneratorInterface\\:\\:addConstraintSql\\(\\) expects Cake\\\\Database\\\\Connection, Cake\\\\Datasource\\\\ConnectionInterface given\\.$#"
+			count: 1
+			path: src/TestSuite/Fixture/TestFixture.php
+
+		-
+			message: "#^Parameter \\#1 \\$connection of method Cake\\\\Database\\\\Schema\\\\SqlGeneratorInterface\\:\\:dropConstraintSql\\(\\) expects Cake\\\\Database\\\\Connection, Cake\\\\Datasource\\\\ConnectionInterface given\\.$#"
+			count: 1
+			path: src/TestSuite/Fixture/TestFixture.php
+
+		-
+			message: "#^Parameter \\#1 \\$connection of method Cake\\\\Database\\\\Schema\\\\SqlGeneratorInterface\\:\\:truncateSql\\(\\) expects Cake\\\\Database\\\\Connection, Cake\\\\Datasource\\\\ConnectionInterface given\\.$#"
+			count: 1
+			path: src/TestSuite/Fixture/TestFixture.php
+
+		-
+			message: "#^Property Cake\\\\TestSuite\\\\IntegrationTestCase\\:\\:\\$_response \\(Psr\\\\Http\\\\Message\\\\ResponseInterface\\) does not accept null\\.$#"
+			count: 1
+			path: src/TestSuite/IntegrationTestCase.php
+
+		-
+			message: "#^Property Cake\\\\TestSuite\\\\IntegrationTestCase\\:\\:\\$_controller \\(Cake\\\\Controller\\\\Controller\\) does not accept null\\.$#"
+			count: 1
+			path: src/TestSuite/IntegrationTestCase.php
+
+		-
+			message: "#^Property Cake\\\\TestSuite\\\\IntegrationTestCase\\:\\:\\$_viewName \\(string\\) does not accept null\\.$#"
+			count: 1
+			path: src/TestSuite/IntegrationTestCase.php
+
+		-
+			message: "#^Property Cake\\\\TestSuite\\\\IntegrationTestCase\\:\\:\\$_layoutName \\(string\\) does not accept null\\.$#"
+			count: 1
+			path: src/TestSuite/IntegrationTestCase.php
+
+		-
+			message: "#^Property Cake\\\\TestSuite\\\\IntegrationTestCase\\:\\:\\$_requestSession \\(Cake\\\\Http\\\\Session\\) does not accept null\\.$#"
+			count: 1
+			path: src/TestSuite/IntegrationTestCase.php
+
+		-
+			message: "#^Negated boolean expression is always false\\.$#"
+			count: 1
+			path: src/TestSuite/IntegrationTestCase.php
+
+		-
+			message: "#^Ternary operator condition is always true\\.$#"
+			count: 1
+			path: src/TestSuite/IntegrationTestCase.php
+
+		-
+			message: "#^Parameter \\#1 \\$response of class Cake\\\\TestSuite\\\\Constraint\\\\Response\\\\CookieEquals constructor expects Cake\\\\Http\\\\Response\\|null, Psr\\\\Http\\\\Message\\\\ResponseInterface given\\.$#"
+			count: 1
+			path: src/TestSuite/IntegrationTestCase.php
+
+		-
+			message: "#^Parameter \\#1 \\$response of class Cake\\\\TestSuite\\\\Constraint\\\\Response\\\\CookieEncryptedEquals constructor expects Cake\\\\Http\\\\Response\\|null, Psr\\\\Http\\\\Message\\\\ResponseInterface given\\.$#"
+			count: 1
+			path: src/TestSuite/IntegrationTestCase.php
+
+		-
+			message: "#^Result of \\|\\| is always true\\.$#"
+			count: 2
+			path: src/Utility/Hash.php
+
+		-
+			message: "#^Method Cake\\\\Utility\\\\Security\\:\\:engine\\(\\) should return Cake\\\\Utility\\\\Crypto\\\\OpenSsl but returns object\\.$#"
+			count: 1
+			path: src/Utility/Security.php
+
+		-
+			message: "#^Call to function method_exists\\(\\) with \\*NEVER\\* and 'viewBuilder' will always evaluate to false\\.$#"
+			count: 1
+			path: src/View/View.php
+
+		-
+			message: "#^Constructor of class Cake\\\\View\\\\Form\\\\NullContext has an unused parameter \\$context\\.$#"
+			count: 1
+			path: src/View/Form/NullContext.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between DateTime\\|int\\|string and null will always evaluate to false\\.$#"
+			count: 1
+			path: src/View/Helper/TimeHelper.php
+
+		-
+			message: "#^Method Cake\\\\View\\\\HelperRegistry\\:\\:__get\\(\\) should return Cake\\\\View\\\\Helper\\|null but returns object\\.$#"
+			count: 2
+			path: src/View/HelperRegistry.php
+
+		-
+			message: "#^Access to an undefined property Cake\\\\Mailer\\\\Renderer\\:\\:\\$request\\.$#"
+			count: 1
+			path: src/Mailer/Renderer.php
+
+		-
+			message: "#^Access to an undefined property Cake\\\\Mailer\\\\Renderer\\:\\:\\$response\\.$#"
+			count: 1
+			path: src/Mailer/Renderer.php
+
+		-
+			message: "#^Call to function is_int\\(\\) with string will always evaluate to false\\.$#"
+			count: 1
+			path: src/View/Widget/DateTimeWidget.php
+
+		-
+			message: "#^Class Psy\\\\Shell not found\\.$#"
+			count: 1
+			path: src/basics.php
+
+

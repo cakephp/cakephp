@@ -930,6 +930,27 @@ TEXT;
     }
 
     /**
+     * Format an exception message to be HTML formatted.
+     *
+     * Does the following formatting operations:
+     *
+     * - HTML escape the message.
+     * - Convert `bool` into `<code>bool</code>`
+     * - Convert newlines into `<br />`
+     *
+     * @param string $message The string message to format.
+     * @return string Formatted message.
+     */
+    public static function formatHtmlMessage(string $message): string
+    {
+        $message = h($message);
+        $message = preg_replace('/`([^`]+)`/', '<code>$1</code>', $message);
+        $message = nl2br($message);
+
+        return $message;
+    }
+
+    /**
      * Verifies that the application's salt and cipher seed value has been changed from the default value.
      *
      * @return void

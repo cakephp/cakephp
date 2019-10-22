@@ -196,8 +196,8 @@ class QueryExpressionTest extends TestCase
     public function testEmptyOr()
     {
         $expr = new QueryExpression();
-        $expr = $expr->or_([]);
-        $expr = $expr->or_([]);
+        $expr = $expr->or([]);
+        $expr = $expr->or([]);
         $this->assertCount(0, $expr);
 
         $expr = new QueryExpression(['OR' => []]);

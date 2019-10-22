@@ -21,13 +21,13 @@ use Cake\Command\VersionCommand;
 use Cake\Console\Exception\MissingOptionException;
 use Cake\Console\Exception\StopException;
 use Cake\Core\ConsoleApplicationInterface;
-use Cake\Core\HttpApplicationInterface;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerInterface;
 use Cake\Routing\Router;
+use Cake\Routing\RoutingApplicationInterface;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
 use RuntimeException;
@@ -165,7 +165,7 @@ class CommandRunner implements EventDispatcherInterface
         if ($shell instanceof Shell) {
             $result = $this->runShell($shell, $argv);
         }
-        if ($shell instanceof Command) {
+        if ($shell instanceof CommandInterface) {
             $result = $this->runCommand($shell, $argv, $io);
         }
 
@@ -237,7 +237,7 @@ class CommandRunner implements EventDispatcherInterface
      * @param \Cake\Console\ConsoleIo $io The IO wrapper for the created shell class.
      * @param \Cake\Console\CommandCollection $commands The command collection to find the shell in.
      * @param string $name The command name to find
-     * @return \Cake\Console\Shell|\Cake\Console\Command
+     * @return \Cake\Console\Shell|\Cake\Console\CommandInterface
      */
     protected function getShell(ConsoleIo $io, CommandCollection $commands, string $name)
     {
@@ -248,7 +248,7 @@ class CommandRunner implements EventDispatcherInterface
         if ($instance instanceof Shell) {
             $instance->setRootName($this->root);
         }
-        if ($instance instanceof Command) {
+        if ($instance instanceof CommandInterface) {
             $instance->setName("{$this->root} {$name}");
         }
         if ($instance instanceof CommandCollectionAwareInterface) {
@@ -323,12 +323,12 @@ class CommandRunner implements EventDispatcherInterface
     /**
      * Execute a Command class.
      *
-     * @param \Cake\Console\Command $command The command to run.
+     * @param \Cake\Console\CommandInterface $command The command to run.
      * @param array $argv The CLI arguments to invoke.
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return int|null Exit code
      */
-    protected function runCommand(Command $command, array $argv, ConsoleIo $io): ?int
+    protected function runCommand(CommandInterface $command, array $argv, ConsoleIo $io): ?int
     {
         try {
             return $command->run($argv, $io);
@@ -362,7 +362,7 @@ class CommandRunner implements EventDispatcherInterface
      *
      * @param string $className Shell class name.
      * @param \Cake\Console\ConsoleIo $io The IO wrapper for the created shell class.
-     * @return \Cake\Console\Shell|\Cake\Console\Command
+     * @return \Cake\Console\Shell|\Cake\Console\CommandInterface
      */
     protected function createShell(string $className, ConsoleIo $io)
     {
@@ -383,11 +383,12 @@ class CommandRunner implements EventDispatcherInterface
      */
     protected function loadRoutes(): void
     {
+        if (!($this->app instanceof RoutingApplicationInterface)) {
+            return;
+        }
         $builder = Router::createRouteBuilder('/');
 
-        if ($this->app instanceof HttpApplicationInterface) {
-            $this->app->routes($builder);
-        }
+        $this->app->routes($builder);
         if ($this->app instanceof PluginApplicationInterface) {
             $this->app->pluginRoutes($builder);
         }

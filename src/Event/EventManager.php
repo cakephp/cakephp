@@ -156,21 +156,21 @@ class EventManager implements EventManagerInterface
      *
      * @param array $function the array taken from a handler definition for an event
      * @param \Cake\Event\EventListenerInterface $object The handler object
-     * @return callable
+     * @return array
+     * @psalm-return array{callable, array}
      */
-    protected function _extractCallable(array $function, EventListenerInterface $object)
+    protected function _extractCallable(array $function, EventListenerInterface $object): array
     {
+        /** @var callable $method */
         $method = $function['callable'];
         $options = $function;
         unset($options['callable']);
         if (is_string($method)) {
+            /** @var callable $method */
             $method = [$object, $method];
         }
 
-        /** @var callable $callable */
-        $callable = [$method, $options];
-
-        return $callable;
+        return [$method, $options];
     }
 
     /**

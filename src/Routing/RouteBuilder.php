@@ -351,7 +351,7 @@ class RouteBuilder
      */
     public function resources(string $name, $options = [], $callback = null)
     {
-        if (is_callable($options)) {
+        if (!is_array($options)) {
             $callback = $options;
             $options = [];
         }
@@ -422,7 +422,7 @@ class RouteBuilder
             $this->connect($url, $params, $routeOptions);
         }
 
-        if (is_callable($callback)) {
+        if ($callback !== null) {
             $idName = Inflector::singularize(Inflector::underscore($name)) . '_id';
             $path = '/' . $options['path'] . '/:' . $idName;
             $this->scope($path, [], $callback);
@@ -856,12 +856,9 @@ class RouteBuilder
      * @throws \InvalidArgumentException If a valid callback is not passed
      * @psalm-suppress PossiblyInvalidArrayAccess
      */
-    public function prefix(string $name, $params = [], ?callable $callback = null)
+    public function prefix(string $name, $params = [], $callback = null)
     {
-        if ($callback === null) {
-            if (!is_callable($params)) {
-                throw new InvalidArgumentException('A valid callback is expected');
-            }
+        if (!is_array($params)) {
             $callback = $params;
             $params = [];
         }
@@ -899,12 +896,9 @@ class RouteBuilder
      *   Only required when $options is defined.
      * @return $this
      */
-    public function plugin(string $name, $options = [], ?callable $callback = null)
+    public function plugin(string $name, $options = [], $callback = null)
     {
-        if ($callback === null) {
-            if (!is_callable($options)) {
-                throw new InvalidArgumentException('A valid callback is expected');
-            }
+        if (!is_array($options)) {
             $callback = $options;
             $options = [];
         }
@@ -932,13 +926,15 @@ class RouteBuilder
      */
     public function scope(string $path, $params, $callback = null)
     {
-        if (is_callable($params)) {
+        if (!is_array($params)) {
             $callback = $params;
             $params = [];
         }
         if (!is_callable($callback)) {
-            $msg = 'Need a callable function/object to connect routes.';
-            throw new InvalidArgumentException($msg);
+            throw new InvalidArgumentException(sprintf(
+                'Need a valid callable to connect routes. Got `%s` instead.',
+                getTypeName($callback)
+            ));
         }
 
         if ($this->_path !== '/') {
@@ -987,7 +983,7 @@ class RouteBuilder
      * scope or any child scopes that share the same RouteCollection.
      *
      * @param string $name The name of the middleware. Used when applying middleware to a scope.
-     * @param callable|string $middleware The middleware callable or class name to register.
+     * @param string|\Closure|\Psr\Http\Server\MiddlewareInterface $middleware The middleware to register.
      * @return $this
      * @see \Cake\Routing\RouteCollection
      */

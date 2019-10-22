@@ -1738,9 +1738,16 @@ class CollectionTest extends TestCase
             ['invoice' => ['total' => 200]],
         ];
 
+        $floatItems = [
+            ['invoice' => ['total' => 100.0]],
+            ['invoice' => ['total' => 200.0]],
+        ];
+
         return [
-            'array' => [$items],
-            'iterator' => [$this->yieldItems($items)],
+            'array' => [$items, 300],
+            'iterator' => [$this->yieldItems($items), 300],
+            'floatArray' => [$floatItems, 300.0],
+            'floatIterator' => [$this->yieldItems($floatItems), 300.0],
         ];
     }
 
@@ -1750,9 +1757,9 @@ class CollectionTest extends TestCase
      * @dataProvider sumOfProvider
      * @return void
      */
-    public function testSumOf($items)
+    public function testSumOf($items, $expected)
     {
-        $this->assertEquals(300, (new Collection($items))->sumOf('invoice.total'));
+        $this->assertEquals($expected, (new Collection($items))->sumOf('invoice.total'));
     }
 
     /**
@@ -1761,12 +1768,12 @@ class CollectionTest extends TestCase
      * @dataProvider sumOfProvider
      * @return void
      */
-    public function testSumOfCallable($items)
+    public function testSumOfCallable($items, $expected)
     {
         $sum = (new Collection($items))->sumOf(function ($v) {
-            return $v['invoice']['total'] * 2;
+            return $v['invoice']['total'];
         });
-        $this->assertEquals(600, $sum);
+        $this->assertEquals($expected, $sum);
     }
 
     /**

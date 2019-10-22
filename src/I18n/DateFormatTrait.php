@@ -449,9 +449,9 @@ trait DateFormatTrait
     {
         /** @psalm-suppress PossiblyNullReference */
         return [
-            'time' => $this->format('Y-m-d\TH:i:s.uP'),
+            'time' => $this->format('Y-m-d H:i:s.uP'),
             'timezone' => $this->getTimezone()->getName(),
-            'fixedNowTime' => static::hasTestNow() ? static::getTestNow()->format('Y-m-d\TH:i:s.uP') : false
+            'fixedNowTime' => static::hasTestNow() ? static::getTestNow()->format('Y-m-d\TH:i:s.uP') : false,
         ];
     }
 }

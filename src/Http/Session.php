@@ -200,9 +200,9 @@ class Session
      * - cookiePath: The url path for which session cookie is set. Maps to the
      *   `session.cookie_path` php.ini config. Defaults to base path of app.
      * - ini: A list of php.ini directives to change before the session start.
-     * - handler: An array containing at least the `class` key. To be used as the session
+     * - handler: An array containing at least the `engine` key. To be used as the session
      *   engine for persisting data. The rest of the keys in the array will be passed as
-     *   the configuration array for the engine. You can set the `class` key to an already
+     *   the configuration array for the engine. You can set the `engine` key to an already
      *   instantiated session handler object.
      *
      * @param array $config The Configuration to apply to this session object
@@ -231,7 +231,7 @@ class Session
 
         $this->options($config['ini']);
 
-        if (!empty($config['handler']['engine'])) {
+        if (!empty($config['handler'])) {
             $class = $config['handler']['engine'];
             unset($config['handler']['engine']);
             $this->engine($class, $config['handler']);

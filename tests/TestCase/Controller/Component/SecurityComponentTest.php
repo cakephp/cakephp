@@ -13,6 +13,7 @@ declare(strict_types=1);
  * @link          https://cakephp.org CakePHP(tm) Project
  * @since         1.2.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
+ * @deprecated 4.0.0 SecurityComponent is deprecated.
  */
 namespace Cake\Test\TestCase\Controller\Component;
 
@@ -1227,7 +1228,7 @@ class SecurityComponentTest extends TestCase
         $request = $this->Controller->getRequest();
         $request = $this->Security->generateToken($request);
 
-        $securityToken = $request->getAttribute('formToken');
+        $securityToken = $request->getAttribute('formTokenData');
         $this->assertNotEmpty($securityToken);
         $this->assertSame([], $securityToken['unlockedFields']);
     }
