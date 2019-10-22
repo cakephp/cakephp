@@ -81,7 +81,7 @@ interface TableSchemaInterface extends SchemaInterface
 
     /**
      * Char column type
-     * 
+     *
      * @var string
      */
     public const TYPE_CHAR = 'char';
