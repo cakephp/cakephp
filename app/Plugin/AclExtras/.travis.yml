@@ -1,0 +1,36 @@
+language: php
+
+php:
+  - 5.4
+  - 5.5
+  - 5.6
+  - 7.0
+
+env:
+  - CAKE_VERSION=2.x
+
+install:
+  - git clone git://github.com/cakephp/cakephp ../cakephp && cd ../cakephp && git checkout $CAKE_VERSION
+  - cp -R ../acl_extras plugins/AclExtras
+  - chmod -R 777 ../cakephp/app/tmp
+  - sh -c "composer require 'phpunit/phpunit=3.7.33'"
+  - sh -c "ln -s ./vendor/phpunit/phpunit/PHPUnit ../cakephp/vendors/PHPUnit"
+
+before_script:
+  - sh -c "mysql -e 'CREATE DATABASE cakephp_test;'"
+  - echo "<?php
+    class DATABASE_CONFIG {
+    public \$test = array(
+      'datasource' => 'Database/Mysql',
+      'database' => 'cakephp_test',
+      'host' => '0.0.0.0',
+      'login' => 'travis',
+      'persistent' => false,
+    );
+    }" > ../cakephp/app/Config/database.php
+
+script:
+  - ./lib/Cake/Console/cake test AclExtras AllTests --stderr
+
+notifications:
+  email: false

@@ -49,25 +49,32 @@ class AppController extends Controller {
                     'passwordHasher' => 'Blowfish'
                 )
 			),
-			'authorize' => array('Controller')
-
-        )
+			'authorize' => array(
+                'Actions' => array('actionPath' => 'controllers')
+			),
+			'Session'
+		)
 	);
 
-	public function isAuthorized($user) {
-		// Admin can access every action
-		if (isset($user['role']) && $user['role'] === 'admin') {
-			return true;
-		}
-
-		// Default deny
-		return false;
-	}
+	public $helpers = array('Html', 'Form', 'Session');
 
 	function beforeFilter(){
-		parent::beforeFilter();
-		//if(Configure::read('debugkit')){
-			Hash::merge($this->components, array('DebugKit.Toolbar'));
-	//	}
+		if(Configure::read('DebugKit')){
+			$debugkit = array('DebugKit.Toolbar' => array('history' => 10));
+			$this->components = Hash::merge($this->components, $debugkit);
+		}
+		//Configure AuthComponent
+		$this->Auth->loginAction = array(
+			'controller' => 'users',
+			'action' => 'login'
+		);
+		$this->Auth->logoutRedirect = array(
+			'controller' => 'users',
+			'action' => 'login'
+		);
+		$this->Auth->loginRedirect = array(
+			'controller' => 'posts',
+			'action' => 'add'
+		);
 	}
 }
