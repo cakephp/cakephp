@@ -23,7 +23,7 @@ interface CommandFactoryInterface
      * The factory method for creating Command and Shell instances.
      *
      * @param string $className Command/Shell class name.
-     * @return \Cake\Console\Shell|\Cake\Console\Command
+     * @return \Cake\Console\Shell|\Cake\Console\CommandInterface
      */
     public function create(string $className);
 }

@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\CommandFactory;
+use Cake\Console\CommandInterface;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use TestApp\Command\DemoCommand;
@@ -28,6 +29,7 @@ class CommandFactoryTest extends TestCase
 
         $command = $factory->create(DemoCommand::class);
         $this->assertInstanceOf(DemoCommand::class, $command);
+        $this->assertInstanceOf(CommandInterface::class, $command);
     }
 
     public function testCreateShell()
@@ -43,7 +45,10 @@ class CommandFactoryTest extends TestCase
         $factory = new CommandFactory();
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Class `Cake\Test\TestCase\Console\CommandFactoryTest` must be an instance of `Cake\Console\Shell` or `Cake\Console\Command`.');
+        $this->expectExceptionMessage(
+            'Class `Cake\Test\TestCase\Console\CommandFactoryTest` must be an instance of ' .
+            '`Cake\Console\Shell` or `Cake\Console\CommandInterface`.'
+        );
 
         $factory->create(static::class);
     }
