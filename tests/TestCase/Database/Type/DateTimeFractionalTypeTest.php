@@ -78,6 +78,11 @@ class DateTimeFractionalTypeTest extends TestCase
         $this->assertSame('14', $result->format('s'));
         $this->assertSame('123456', $result->format('u'));
 
+        // test extra fractional second past microseconds being ignored
+        $result = $this->type->toPHP('2001-01-04 12:13:14.1234567', $this->driver);
+        $this->assertInstanceOf(FrozenTime::class, $result);
+        $this->assertSame('123456', $result->format('u'));
+
         $this->type->setTimezone('Asia/Kolkata'); // UTC+5:30
         $result = $this->type->toPHP('2001-01-04 12:00:00.123456', $this->driver);
         $this->assertInstanceOf(FrozenTime::class, $result);
@@ -102,12 +107,15 @@ class DateTimeFractionalTypeTest extends TestCase
             'b' => '2001-01-04 12:13:14',
             'c' => '2001-01-04 12:13:14.123',
             'd' => '2001-01-04 12:13:14.123456',
+            // test extra fractional second past microseconds being ignored
+            'e' => '2001-01-04 12:13:14.1234567',
         ];
         $expected = [
             'a' => null,
             'b' => new FrozenTime('2001-01-04 12:13:14'),
             'c' => new FrozenTime('2001-01-04 12:13:14.123'),
             'd' => new FrozenTime('2001-01-04 12:13:14.123456'),
+            'e' => new FrozenTime('2001-01-04 12:13:14.123456'),
         ];
         $this->assertEquals(
             $expected,
@@ -143,6 +151,11 @@ class DateTimeFractionalTypeTest extends TestCase
         $value = '2001-01-04 12:13:14.123456';
         $result = $this->type->toDatabase($value, $this->driver);
         $this->assertEquals($value, $result);
+
+        // test extra fractional second past microseconds being ignored
+        $date = new Time('2013-08-12 15:16:17.1234567');
+        $result = $this->type->toDatabase($date, $this->driver);
+        $this->assertSame('2013-08-12 15:16:17.123456', $result);
 
         $date = new Time('2013-08-12 15:16:17.123456');
         $result = $this->type->toDatabase($date, $this->driver);
@@ -220,6 +233,9 @@ class DateTimeFractionalTypeTest extends TestCase
             ['', null],
             ['derpy', null],
             ['2013-nope!', null],
+            ['2014-02-14T13:14:15.1234567', null],
+            ['2017-04-05T17:18:00.1234567+00:00', null],
+
 
             // valid string types
             ['2014-02-14 00:00:00.123456', new FrozenTime('2014-02-14 00:00:00.123456')],

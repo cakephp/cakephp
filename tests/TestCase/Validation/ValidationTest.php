@@ -1562,6 +1562,18 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::datetime($date));
         $this->assertTrue(Validation::datetime($date, 'mdy'));
 
+        // test fractional seconds greater than microseconds failing
+        $date = [
+            'year' => 2014,
+            'month' => '02',
+            'day' => '14',
+            'hour' => '00',
+            'minute' => '00',
+            'second' => '00',
+            'microsecond' => '1234567',
+        ];
+        $this->assertFalse(Validation::datetime($date));
+
         $date = [
             'year' => '2014', 'month' => '02', 'day' => '14',
             'hour' => 'farts', 'minute' => 'farts',
