@@ -472,4 +472,9 @@ parameters:
 			count: 1
 			path: src/View/Widget/DateTimeWidget.php
 
+		-
+			message: "#^Class Psy\\\\Shell not found\\.$#"
+			count: 1
+			path: src/basics.php
+
 

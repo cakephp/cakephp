@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 use Cake\Core\Configure;
 use Cake\Error\Debugger;
+use Psy\Shell as PsyShell;
 
 define('SECOND', 1);
 define('MINUTE', 60);
@@ -105,7 +106,7 @@ if (!function_exists('breakpoint')) {
      */
     function breakpoint(): ?string
     {
-        if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') && class_exists('\Psy\Shell')) {
+        if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') && class_exists(PsyShell::class)) {
             return 'extract(\Psy\Shell::debug(get_defined_vars(), isset($this) ? $this : null));';
         }
         trigger_error(

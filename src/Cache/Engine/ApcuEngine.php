@@ -140,7 +140,7 @@ class ApcuEngine extends CacheEngine
      */
     public function clear(): bool
     {
-        if (class_exists('APCuIterator', false)) {
+        if (class_exists(APCuIterator::class, false)) {
             $iterator = new APCuIterator(
                 '/^' . preg_quote($this->_config['prefix'], '/') . '/',
                 APC_ITER_NONE
