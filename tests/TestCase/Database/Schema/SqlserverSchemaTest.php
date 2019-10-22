@@ -9,10 +9,10 @@ declare(strict_types=1);
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- * @link          https://cakephp.org CakePHP(tm) Project
- * @since         3.0.0
- * @license       https://opensource.org/licenses/mit-license.php MIT License
+ * @copyright Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link      https://cakephp.org CakePHP(tm) Project
+ * @since     3.0.0
+ * @license   https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Database\Schema;
 
@@ -281,7 +281,7 @@ SQL;
      * Test parsing Sqlserver column types from field description.
      *
      * @dataProvider convertColumnProvider
-     * @return void
+     * @return       void
      */
     public function testConvertColumn($type, $length, $precision, $scale, $expected)
     {
@@ -752,7 +752,7 @@ SQL;
      * Test generating column definitions
      *
      * @dataProvider columnSqlProvider
-     * @return void
+     * @return       void
      */
     public function testColumnSql($name, $data, $expected)
     {
@@ -824,12 +824,16 @@ SQL;
         $driver = $this->_getMockedDriver();
         $schema = new SqlserverSchema($driver);
 
-        $table = (new TableSchema('schema_articles'))->addColumn('title', [
+        $table = (new TableSchema('schema_articles'))->addColumn(
+            'title', [
             'type' => 'string',
             'length' => 255,
-        ])->addColumn('author_id', [
-            'type' => 'integer',
-        ])->addConstraint($name, $data);
+            ]
+        )->addColumn(
+            'author_id', [
+                'type' => 'integer',
+                ]
+        )->addConstraint($name, $data);
 
         $this->assertEquals($expected, $schema->constraintSql($table, $name));
     }
@@ -849,32 +853,42 @@ SQL;
             ->will($this->returnValue($driver));
 
         $table = (new TableSchema('posts'))
-            ->addColumn('author_id', [
+            ->addColumn(
+                'author_id', [
                 'type' => 'integer',
                 'null' => false,
-            ])
-            ->addColumn('category_id', [
+                ]
+            )
+            ->addColumn(
+                'category_id', [
                 'type' => 'integer',
                 'null' => false,
-            ])
-            ->addColumn('category_name', [
+                ]
+            )
+            ->addColumn(
+                'category_name', [
                 'type' => 'integer',
                 'null' => false,
-            ])
-            ->addConstraint('author_fk', [
+                ]
+            )
+            ->addConstraint(
+                'author_fk', [
                 'type' => 'foreign',
                 'columns' => ['author_id'],
                 'references' => ['authors', 'id'],
                 'update' => 'cascade',
                 'delete' => 'cascade',
-            ])
-            ->addConstraint('category_fk', [
+                ]
+            )
+            ->addConstraint(
+                'category_fk', [
                 'type' => 'foreign',
                 'columns' => ['category_id', 'category_name'],
                 'references' => ['categories', ['id', 'name']],
                 'update' => 'cascade',
                 'delete' => 'cascade',
-            ]);
+                ]
+            );
 
         $expected = [
             'ALTER TABLE [posts] ADD CONSTRAINT [author_fk] FOREIGN KEY ([author_id]) REFERENCES [authors] ([id]) ON UPDATE CASCADE ON DELETE CASCADE;',
@@ -900,32 +914,42 @@ SQL;
             ->will($this->returnValue($driver));
 
         $table = (new TableSchema('posts'))
-            ->addColumn('author_id', [
+            ->addColumn(
+                'author_id', [
                 'type' => 'integer',
                 'null' => false,
-            ])
-            ->addColumn('category_id', [
+                ]
+            )
+            ->addColumn(
+                'category_id', [
                 'type' => 'integer',
                 'null' => false,
-            ])
-            ->addColumn('category_name', [
+                ]
+            )
+            ->addColumn(
+                'category_name', [
                 'type' => 'integer',
                 'null' => false,
-            ])
-            ->addConstraint('author_fk', [
+                ]
+            )
+            ->addConstraint(
+                'author_fk', [
                 'type' => 'foreign',
                 'columns' => ['author_id'],
                 'references' => ['authors', 'id'],
                 'update' => 'cascade',
                 'delete' => 'cascade',
-            ])
-            ->addConstraint('category_fk', [
+                ]
+            )
+            ->addConstraint(
+                'category_fk', [
                 'type' => 'foreign',
                 'columns' => ['category_id', 'category_name'],
                 'references' => ['categories', ['id', 'name']],
                 'update' => 'cascade',
                 'delete' => 'cascade',
-            ]);
+                ]
+            );
 
         $expected = [
             'ALTER TABLE [posts] DROP CONSTRAINT [author_fk];',
@@ -950,32 +974,42 @@ SQL;
         $connection->expects($this->any())->method('getDriver')
             ->will($this->returnValue($driver));
 
-        $table = (new TableSchema('schema_articles'))->addColumn('id', [
+        $table = (new TableSchema('schema_articles'))->addColumn(
+            'id', [
                 'type' => 'integer',
                 'null' => false,
-            ])
-            ->addColumn('title', [
+            ]
+        )
+            ->addColumn(
+                'title', [
                 'type' => 'string',
                 'null' => false,
-            ])
+                ]
+            )
             ->addColumn('body', ['type' => 'text'])
             ->addColumn('data', ['type' => 'json'])
-            ->addColumn('hash', [
+            ->addColumn(
+                'hash', [
                 'type' => 'char',
                 'fixed' => true,
                 'length' => 40,
                 'collate' => 'Latin1_General_BIN',
                 'null' => false,
-            ])
+                ]
+            )
             ->addColumn('created', 'datetime')
-            ->addConstraint('primary', [
+            ->addConstraint(
+                'primary', [
                 'type' => 'primary',
                 'columns' => ['id'],
-            ])
-            ->addIndex('title_idx', [
+                ]
+            )
+            ->addIndex(
+                'title_idx', [
                 'type' => 'index',
                 'columns' => ['title'],
-            ]);
+                ]
+            );
 
         $expected = <<<SQL
 CREATE TABLE [schema_articles] (
@@ -1034,10 +1068,12 @@ SQL;
 
         $table = new TableSchema('schema_articles');
         $table->addColumn('id', 'integer')
-            ->addConstraint('primary', [
+            ->addConstraint(
+                'primary', [
                 'type' => 'primary',
                 'columns' => ['id'],
-            ]);
+                ]
+            );
         $result = $table->truncateSql($connection);
         $this->assertCount(2, $result);
         $this->assertSame('DELETE FROM [schema_articles]', $result[0]);
@@ -1058,9 +1094,13 @@ SQL;
             ->getMock();
         $mock->expects($this->any())
             ->method('quote')
-            ->will($this->returnCallback(function ($value) {
-                return "'$value'";
-            }));
+            ->will(
+                $this->returnCallback(
+                    function ($value) {
+                        return "'$value'";
+                    }
+                )
+            );
         $driver->setConnection($mock);
 
         return $driver;
