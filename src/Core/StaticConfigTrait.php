@@ -125,7 +125,7 @@ trait StaticConfigTrait
      * The config value for this key must exist, it can never be null.
      *
      * @param string $key The name of the configuration.
-     * @return mixed|null Configuration data at the named key.
+     * @return mixed Configuration data at the named key.
      * @throws \InvalidArgumentException If value does not exist.
      */
     public static function getConfigOrFail(string $key)
