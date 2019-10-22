@@ -236,7 +236,6 @@ class DateTimeFractionalTypeTest extends TestCase
             ['2014-02-14T13:14:15.1234567', null],
             ['2017-04-05T17:18:00.1234567+00:00', null],
 
-
             // valid string types
             ['2014-02-14 00:00:00.123456', new FrozenTime('2014-02-14 00:00:00.123456')],
             ['2014-02-14 13:14:15.123456', new FrozenTime('2014-02-14 13:14:15.123456')],
