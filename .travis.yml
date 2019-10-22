@@ -1,13 +1,13 @@
 language: php
 
+dist: xenial
+
 php:
   - 7.0
   - 5.6
   - 7.2
   - 7.3
   - '7.4snapshot'
-
-dist: trusty
 
 env:
   matrix:
@@ -25,9 +25,6 @@ services:
   - postgresql
   - mysql
 
-addons:
-  postgresql: "9.4"
-
 cache:
   directories:
     - vendor
@@ -40,10 +37,10 @@ matrix:
     - php: 5.6
       env: PREFER_LOWEST=1
 
-    - php: 7.2
+    - php: 7.3
       env: CHECKS=1 DEFAULT=0
 
-    - php: 7.1
+    - php: 7.3
       env: CODECOVERAGE=1 DEFAULT=0
 
   allow_failures:
@@ -89,6 +86,7 @@ before_install:
         printf "extension=xcache.so\nxcache.size=64M\nxcache.var_size=16M\nxcache.test=On" > ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
       fi
   - sudo locale-gen da_DK
+  - sudo locale-gen de_DE
 
 before_script:
   - if [[ $CODECOVERAGE == 1 ]]; then composer require --dev pcov/clobber; fi
