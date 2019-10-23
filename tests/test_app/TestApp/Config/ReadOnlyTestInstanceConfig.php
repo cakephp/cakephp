@@ -28,11 +28,11 @@ class ReadOnlyTestInstanceConfig
      * Example of how to prevent modifying config at run time
      *
      * @throws \Exception
-     * @param mixed $key
+     * @param string|array $key
      * @param mixed $value
      * @return void
      */
-    protected function _configWrite($key, $value = null)
+    protected function _configWrite($key, $value): void
     {
         throw new Exception('This Instance is readonly');
     }
