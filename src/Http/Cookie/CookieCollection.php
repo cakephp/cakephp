@@ -357,10 +357,12 @@ class CookieCollection implements IteratorAggregate, Countable
         $hostPattern = '/' . preg_quote($host, '/') . '$/';
 
         foreach ($this->cookies as $i => $cookie) {
-            $expired = $cookie->isExpired($time);
+            if (!$cookie->isExpired($time)) {
+                continue;
+            }
             $pathMatches = strpos($path, $cookie->getPath()) === 0;
             $hostMatches = preg_match($hostPattern, $cookie->getDomain());
-            if ($pathMatches && $hostMatches && $expired) {
+            if ($pathMatches && $hostMatches) {
                 unset($this->cookies[$i]);
             }
         }
