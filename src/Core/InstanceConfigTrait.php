@@ -192,7 +192,7 @@ trait InstanceConfigTrait
      *
      * The config value for this key must exist, it can never be null.
      *
-     * @param string $key The key to get.
+     * @param string|null $key The key to get.
      * @return mixed Configuration data at the named key
      * @throws \InvalidArgumentException
      */
