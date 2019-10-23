@@ -28,28 +28,28 @@ interface CookieInterface
     public const EXPIRES_FORMAT = 'D, d-M-Y H:i:s T';
 
     /**
-     * SameSite option value: Lax
+     * SameSite attribute value: Lax
      *
      * @var string
      */
     public const SAMESITE_LAX = 'Lax';
 
     /**
-     * SameSite option value: Strict
+     * SameSite attribute value: Strict
      *
      * @var string
      */
     public const SAMESITE_STRICT = 'Strict';
 
     /**
-     * SameSite option value: None
+     * SameSite attribute value: None
      *
      * @var string
      */
     public const SAMESITE_NONE = 'None';
 
     /**
-     * Valid values for "SameSite" option.
+     * Valid values for "SameSite" attribute.
      */
     public const SAMESITE_VALUES = [
         self::SAMESITE_LAX,
