@@ -42,11 +42,19 @@ interface CookieInterface
     public const SAMESITE_STRICT = 'Strict';
 
     /**
+     * SameSite option value: None
+     *
+     * @var string
+     */
+    public const SAMESITE_NONE = 'None';
+
+    /**
      * Valid values for "SameSite" option.
      */
     public const SAMESITE_VALUES = [
         self::SAMESITE_LAX,
         self::SAMESITE_STRICT,
+        self::SAMESITE_NONE,
     ];
 
     /**
