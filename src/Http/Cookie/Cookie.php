@@ -194,7 +194,7 @@ class Cookie implements CookieInterface
             }
         }
 
-        return new self(
+        return new static(
             $name,
             $value,
             $options['expires'],
