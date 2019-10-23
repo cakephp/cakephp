@@ -535,6 +535,11 @@ SQL;
             ],
             [
                 'id',
+                ['type' => 'uuid'],
+                '`id` CHAR(36)',
+            ],
+            [
+                'id',
                 ['type' => 'char', 'length' => 36],
                 '`id` CHAR(36)',
             ],
