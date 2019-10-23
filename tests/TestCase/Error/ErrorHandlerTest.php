@@ -27,6 +27,7 @@ use Cake\Log\Log;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 use TestApp\Error\TestErrorHandler;
 
 /**
@@ -110,7 +111,7 @@ class ErrorHandlerTest extends TestCase
      */
     public function testInvalidRenderer()
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('The \'TotallyInvalid\' renderer class could not be found');
 
         $errorHandler = new ErrorHandler(['exceptionRenderer' => 'TotallyInvalid']);

@@ -277,7 +277,7 @@ abstract class Cell implements EventDispatcherInterface
                 $e->getMessage(),
                 $e->getFile(),
                 $e->getLine()
-            ));
+            ), 0, $e);
         }
     }
 

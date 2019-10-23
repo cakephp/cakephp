@@ -28,8 +28,8 @@ use Cake\Routing\Router;
 use Cake\TestSuite\Constraint\EventFired;
 use Cake\TestSuite\Constraint\EventFiredWith;
 use Cake\Utility\Inflector;
-use Exception;
 use PHPUnit\Framework\TestCase as BaseTestCase;
+use RuntimeException;
 
 /**
  * Cake TestCase class
@@ -175,12 +175,12 @@ abstract class TestCase extends BaseTestCase
      *
      * @return void
      * @see \Cake\TestSuite\TestCase::$autoFixtures
-     * @throws \Exception when no fixture manager is available.
+     * @throws \RuntimeException when no fixture manager is available.
      */
     public function loadFixtures(): void
     {
         if ($this->fixtureManager === null) {
-            throw new Exception('No fixture manager to load the test fixture');
+            throw new RuntimeException('No fixture manager to load the test fixture');
         }
         $args = func_get_args();
         foreach ($args as $class) {
