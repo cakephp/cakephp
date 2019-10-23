@@ -22,6 +22,7 @@ use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use TestApp\Http\TestRequestHandler;
+use Zend\Diactoros\Response\RedirectResponse;
 
 /**
  * Test for CsrfProtection
@@ -117,6 +118,31 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $middleware = new CsrfProtectionMiddleware();
         $response = $middleware->process($request, $this->_getRequestHandler());
         $this->assertInstanceOf(Response::class, $response);
+    }
+
+    /**
+     * Test that the CSRF tokens are not set for redirect responses
+     *
+     * @return void
+     */
+    public function testRedirectResponseCookiesNotSet()
+    {
+        $request = new ServerRequest([
+            'environment' => ['REQUEST_METHOD' => 'GET'],
+        ]);
+        $expectedResponse = new RedirectResponse('/');
+        $handler = new TestRequestHandler(function ($request) use ($expectedResponse) {
+
+            return $expectedResponse;
+        });
+
+        $middleware = $this->getMockBuilder(CsrfProtectionMiddleware::class)
+            ->onlyMethods(['_addTokenCookie'])
+            ->getMock();
+        $middleware->expects($this->never())
+            ->method('_addTokenCookie');
+        $response = $middleware->process($request, $handler);
+        $this->assertSame($expectedResponse, $response);
     }
 
     /**
