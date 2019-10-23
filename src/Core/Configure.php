@@ -439,6 +439,7 @@ class Configure
      * @param string $cacheConfig The cache configuration to save into. Defaults to 'default'
      * @param array|null $data Either an array of data to store, or leave empty to store all values.
      * @return bool Success
+     * @throws \RuntimeException
      */
     public static function store($name, $cacheConfig = 'default', $data = null)
     {
@@ -459,6 +460,7 @@ class Configure
      * @param string $name Name of the stored config file to load.
      * @param string $cacheConfig Name of the Cache configuration to read from.
      * @return bool Success.
+     * @throws \RuntimeException
      */
     public static function restore($name, $cacheConfig = 'default')
     {
