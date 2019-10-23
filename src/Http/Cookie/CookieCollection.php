@@ -62,7 +62,14 @@ class CookieCollection implements IteratorAggregate, Countable
      */
     public static function createFromHeader(array $header)
     {
-        $cookies = static::parseSetCookieHeader($header);
+        $cookies = [];
+        foreach ($header as $value) {
+            try {
+                $cookies[] = Cookie::createFromHeaderString($value);
+            } catch (Exception $e) {
+                // Don't blow up on invalid cookies
+            }
+        }
 
         return new static($cookies);
     }
@@ -302,7 +309,7 @@ class CookieCollection implements IteratorAggregate, Countable
         $host = $uri->getHost();
         $path = $uri->getPath() ?: '/';
 
-        $cookies = static::parseSetCookieHeader($response->getHeader('Set-Cookie'));
+        $cookies = static::createFromHeader($response->getHeader('Set-Cookie'));
         $cookies = $this->setRequestDefaults($cookies, $host, $path);
         $new = clone $this;
         foreach ($cookies as $cookie) {
@@ -316,12 +323,12 @@ class CookieCollection implements IteratorAggregate, Countable
     /**
      * Apply path and host to the set of cookies if they are not set.
      *
-     * @param array $cookies An array of cookies to update.
+     * @param static $cookies A cookies collection to update.
      * @param string $host The host to set.
      * @param string $path The path to set.
      * @return array An array of updated cookies.
      */
-    protected function setRequestDefaults(array $cookies, string $host, string $path): array
+    protected function setRequestDefaults($cookies, string $host, string $path): array
     {
         $out = [];
         foreach ($cookies as $name => $cookie) {
@@ -335,75 +342,6 @@ class CookieCollection implements IteratorAggregate, Countable
         }
 
         return $out;
-    }
-
-    /**
-     * Parse Set-Cookie headers into array
-     *
-     * @param array $values List of Set-Cookie Header values.
-     * @return \Cake\Http\Cookie\CookieInterface[] An array of cookie objects
-     */
-    protected static function parseSetCookieHeader(array $values): array
-    {
-        $cookies = [];
-        foreach ($values as $value) {
-            $value = rtrim($value, ';');
-            $parts = preg_split('/\;[ \t]*/', $value);
-
-            $name = '';
-            $cookie = [
-                'value' => '',
-                'path' => '',
-                'domain' => '',
-                'secure' => false,
-                'httponly' => false,
-                'expires' => null,
-                'max-age' => null,
-            ];
-            foreach ($parts as $i => $part) {
-                if (strpos($part, '=') !== false) {
-                    [$key, $value] = explode('=', $part, 2);
-                } else {
-                    $key = $part;
-                    $value = true;
-                }
-                if ($i === 0) {
-                    $name = $key;
-                    $cookie['value'] = urldecode((string)$value);
-                    continue;
-                }
-                $key = strtolower($key);
-                if (array_key_exists($key, $cookie) && !strlen((string)$cookie[$key])) {
-                    $cookie[$key] = $value;
-                }
-            }
-            try {
-                $expires = null;
-                if ($cookie['max-age'] !== null) {
-                    $expires = new DateTimeImmutable('@' . (time() + (int)$cookie['max-age']));
-                } elseif ($cookie['expires'] !== null) {
-                    $expires = new DateTimeImmutable('@' . strtotime((string)$cookie['expires']));
-                }
-            } catch (Exception $e) {
-                $expires = null;
-            }
-
-            try {
-                $cookies[] = new Cookie(
-                    $name,
-                    (string)$cookie['value'],
-                    $expires,
-                    (string)$cookie['path'],
-                    (string)$cookie['domain'],
-                    (bool)$cookie['secure'],
-                    (bool)$cookie['httponly']
-                );
-            } catch (Exception $e) {
-                // Don't blow up on invalid cookies
-            }
-        }
-
-        return $cookies;
     }
 
     /**

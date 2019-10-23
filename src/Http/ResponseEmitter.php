@@ -21,6 +21,7 @@ declare(strict_types=1);
  */
 namespace Cake\Http;
 
+use Cake\Http\Cookie\Cookie;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\RelativeStream;
 use Zend\HttpHandlerRunner\Emitter\EmitterInterface;
@@ -187,8 +188,8 @@ class ResponseEmitter implements EmitterInterface
     protected function emitHeaders(ResponseInterface $response): void
     {
         $cookies = [];
-        if (method_exists($response, 'getCookies')) {
-            $cookies = $response->getCookies();
+        if (method_exists($response, 'getCookieCollection')) {
+            $cookies = iterator_to_array($response->getCookieCollection());
         }
 
         foreach ($response->getHeaders() as $name => $values) {
@@ -213,68 +214,49 @@ class ResponseEmitter implements EmitterInterface
     /**
      * Emit cookies using setcookie()
      *
-     * @param array $cookies An array of Set-Cookie headers.
+     * @param (string|\Cake\Http\Cookie\CookieInterface)[] $cookies An array of cookies.
      * @return void
      */
     protected function emitCookies(array $cookies): void
     {
         foreach ($cookies as $cookie) {
-            if (is_array($cookie)) {
-                setcookie(
-                    $cookie['name'],
-                    $cookie['value'],
-                    $cookie['expire'],
-                    $cookie['path'],
-                    $cookie['domain'],
-                    $cookie['secure'],
-                    $cookie['httpOnly']
-                );
-                continue;
-            }
-
-            if (strpos($cookie, '";"') !== false) {
-                $cookie = str_replace('";"', '{__cookie_replace__}', $cookie);
-                $parts = str_replace('{__cookie_replace__}', '";"', explode(';', $cookie));
-            } else {
-                $parts = preg_split('/\;[ \t]*/', $cookie);
-            }
-
-            [$name, $value] = explode('=', array_shift($parts), 2);
-            $data = [
-                'name' => urldecode($name),
-                'value' => urldecode($value),
-                'expires' => 0,
-                'path' => '',
-                'domain' => '',
-                'secure' => false,
-                'httponly' => false,
-            ];
-
-            foreach ($parts as $part) {
-                if (strpos($part, '=') !== false) {
-                    [$key, $value] = explode('=', $part);
-                } else {
-                    $key = $part;
-                    $value = true;
-                }
-
-                $key = strtolower($key);
-                $data[$key] = $value;
-            }
-            if (is_string($data['expires'])) {
-                $data['expires'] = strtotime($data['expires']);
-            }
-            /** @psalm-suppress PossiblyInvalidArgument */
-            setcookie(
-                $data['name'],
-                $data['value'],
-                $data['expires'],
-                $data['path'],
-                $data['domain'],
-                $data['secure'],
-                $data['httponly']
-            );
+            $this->setCookie($cookie);
         }
+    }
+
+    /**
+     * Helper methods to set cookie.
+     *
+     * @param string|\Cake\Http\Cookie\CookieInterface $cookie Cookie.
+     * @return bool
+     */
+    protected function setCookie($cookie): bool
+    {
+        if (is_string($cookie)) {
+            $cookie = Cookie::createFromHeaderString($cookie);
+        }
+
+        if (PHP_VERSION_ID >= 70300) {
+            return setcookie($cookie->getName(), $cookie->getScalarValue(), $cookie->getOptions());
+        }
+
+        $path = $cookie->getPath();
+        $sameSite = $cookie->getSameSite();
+        if ($sameSite !== null) {
+            // Temporary hack for PHP 7.2 to set "SameSite" attribute
+            // https://stackoverflow.com/questions/39750906/php-setcookie-samesite-strict
+            $path .= '; samesite=' . $sameSite;
+        }
+
+        return setcookie(
+            $cookie->getName(),
+            $cookie->getScalarValue(),
+            $cookie->getExpiresTimestamp() ?: 0,
+            $path,
+            $cookie->getDomain(),
+            $cookie->isSecure(),
+            $cookie->isHttpOnly()
+        );
     }
 
     /**

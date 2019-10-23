@@ -17,6 +17,7 @@ namespace Cake\Http\Cookie;
 
 use Cake\Utility\Hash;
 use DateTimeImmutable;
+use DateTimeInterface;
 use DateTimeZone;
 use InvalidArgumentException;
 
@@ -105,6 +106,14 @@ class Cookie implements CookieInterface
     protected $httpOnly = false;
 
     /**
+     * Samesite
+     *
+     * @var string|null
+     * @psalm-var CookieInterface::SAMESITE_LAX|CookieInterface::SAMESITE_STRICT|null
+     */
+    protected $sameSite = null;
+
+    /**
      * Constructor
      *
      * The constructors args are similar to the native PHP `setcookie()` method.
@@ -119,15 +128,17 @@ class Cookie implements CookieInterface
      * @param string $domain Domain
      * @param bool $secure Is secure
      * @param bool $httpOnly HTTP Only
+     * @param string|null $sameSite Samesite
      */
     public function __construct(
         string $name,
         $value = '',
-        $expiresAt = null,
+        ?DateTimeInterface $expiresAt = null,
         string $path = '/',
         string $domain = '',
         bool $secure = false,
-        bool $httpOnly = false
+        bool $httpOnly = false,
+        ?string $sameSite = null
     ) {
         $this->validateName($name);
         $this->name = $name;
@@ -138,11 +149,124 @@ class Cookie implements CookieInterface
         $this->httpOnly = $httpOnly;
         $this->path = $path;
         $this->secure = $secure;
+        if ($sameSite !== null) {
+            $this->validateSameSiteValue($sameSite);
+            $this->sameSite = $sameSite;
+        }
 
         if ($expiresAt) {
             $expiresAt = $expiresAt->setTimezone(new DateTimeZone('GMT'));
         }
         $this->expiresAt = $expiresAt;
+    }
+
+    /**
+     * Factory method to create Cookie instances.
+     *
+     * @param string $name Cookie name
+     * @param string|array $value Value of the cookie
+     * @param array $options Cookies options. Can contain one of following keys:
+     *  expires, path, domain, secure, httponly and samesite.
+     *  (Keys must be lowercase).
+     * @return static
+     */
+    public static function create(string $name, $value, array $options = [])
+    {
+        $options += [
+            'expires' => null,
+            'path' => '/',
+            'domain' => '',
+            'secure' => false,
+            'httponly' => false,
+            'samesite' => null,
+        ];
+
+        if (
+            $options['expires'] !== null
+            && !($options['expires'] instanceof DateTimeInterface)
+        ) {
+            if (!is_numeric($options['expires'])) {
+                $options['expires'] = strtotime($options['expires']) ?: null;
+            }
+
+            if ($options['expires'] !== null) {
+                $options['expires'] = new DateTimeImmutable('@' . (string)$options['expires']);
+            }
+        }
+
+        return new self(
+            $name,
+            $value,
+            $options['expires'],
+            $options['path'],
+            $options['domain'],
+            $options['secure'],
+            $options['httponly'],
+            $options['samesite']
+        );
+    }
+
+    /**
+     * Create Cookie instance from "set-cookie" header string.
+     *
+     * @param string $cookie Cookie header string
+     * @return static
+     */
+    public static function createFromHeaderString(string $cookie)
+    {
+        if (strpos($cookie, '";"') !== false) {
+            $cookie = str_replace('";"', '{__cookie_replace__}', $cookie);
+            $parts = str_replace('{__cookie_replace__}', '";"', explode(';', $cookie));
+        } else {
+            $parts = preg_split('/\;[ \t]*/', $cookie);
+        }
+
+        [$name, $value] = explode('=', array_shift($parts), 2);
+        $data = [
+            'name' => urldecode($name),
+            'value' => urldecode($value),
+            'max-age' => null,
+            'expires' => null,
+            'path' => '',
+            'domain' => '',
+            'secure' => false,
+            'httponly' => false,
+            'samesite' => null,
+        ];
+
+        foreach ($parts as $part) {
+            if (strpos($part, '=') !== false) {
+                [$key, $value] = explode('=', $part);
+            } else {
+                $key = $part;
+                $value = true;
+            }
+
+            $key = strtolower($key);
+            $data[$key] = $value;
+        }
+
+        if ($data['max-age'] !== null) {
+            $data['expires'] = new DateTimeImmutable('@' . (time() + (int)$data['max-age']));
+        }
+
+        if ($data['samesite'] !== null) {
+            // Ignore invalid value when parsing headers
+            // https://tools.ietf.org/html/draft-west-first-party-cookies-07#section-4.1
+            if (!in_array($data['samesite'], CookieInterface::SAMESITE_VALUES, true)) {
+                $data['samesite'] = null;
+            }
+        }
+
+        $name = (string)$data['name'];
+        $value = (string)$data['value'];
+        unset($data['name'], $data['value'], $data['max-age']);
+
+        return Cookie::create(
+            $name,
+            $value,
+            $data
+        );
     }
 
     /**
@@ -169,6 +293,9 @@ class Cookie implements CookieInterface
         }
         if ($this->domain !== '') {
             $headerValue[] = sprintf('domain=%s', $this->domain);
+        }
+        if ($this->sameSite) {
+            $headerValue[] = sprintf('samesite=%s', $this->sameSite);
         }
         if ($this->secure) {
             $headerValue[] = 'secure';
@@ -441,6 +568,45 @@ class Cookie implements CookieInterface
     }
 
     /**
+     * @inheritDoc
+     */
+    public function getSameSite(): ?string
+    {
+        return $this->sameSite;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function withSameSite(?string $sameSite)
+    {
+        if ($sameSite !== null) {
+            $this->validateSameSiteValue($sameSite);
+        }
+
+        $new = clone $this;
+        $new->sameSite = $sameSite;
+
+        return $new;
+    }
+
+    /**
+     * Check that value passed for SameSite is valid.
+     *
+     * @param string $sameSite SameSite value
+     * @return void
+     * @throws \InvalidArgumentException
+     */
+    protected function validateSameSiteValue(string $sameSite)
+    {
+        if (!in_array($sameSite, CookieInterface::SAMESITE_VALUES, true)) {
+            throw new InvalidArgumentException(
+                'Samesite value must be either of: ' . implode(',', CookieInterface::SAMESITE_VALUES)
+            );
+        }
+    }
+
+    /**
      * Checks if a value exists in the cookie data.
      *
      * This method will expand serialized complex data,
@@ -533,6 +699,37 @@ class Cookie implements CookieInterface
     public function isExpanded(): bool
     {
         return $this->isExpanded;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getOptions(): array
+    {
+        $options = [
+            'expires' => (int)$this->getExpiresTimestamp(),
+            'path' => $this->path,
+            'domain' => $this->domain,
+            'secure' => $this->secure,
+            'httponly' => $this->httpOnly,
+        ];
+
+        if ($this->sameSite !== null) {
+            $options['samesite'] = $this->sameSite;
+        }
+
+        return $options;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function toArray(): array
+    {
+        return [
+            'name' => $this->name,
+            'value' => $this->getScalarValue(),
+        ] + $this->getOptions();
     }
 
     /**

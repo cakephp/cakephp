@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Cake\Http\Client;
 
 use Cake\Http\Cookie\CookieCollection;
-use Cake\Http\Cookie\CookieInterface;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 use SimpleXMLElement;
@@ -352,31 +351,7 @@ class Response extends Message implements ResponseInterface
             return null;
         }
 
-        $cookie = $this->cookies->get($name);
-
-        return $this->convertCookieToArray($cookie);
-    }
-
-    /**
-     * Convert the cookie into an array of its properties.
-     *
-     * This method is compatible with older client code that
-     * expects date strings instead of timestamps.
-     *
-     * @param \Cake\Http\Cookie\CookieInterface $cookie Cookie object.
-     * @return array
-     */
-    protected function convertCookieToArray(CookieInterface $cookie): array
-    {
-        return [
-            'name' => $cookie->getName(),
-            'value' => $cookie->getValue(),
-            'path' => $cookie->getPath(),
-            'domain' => $cookie->getDomain(),
-            'secure' => $cookie->isSecure(),
-            'httponly' => $cookie->isHttpOnly(),
-            'expires' => $cookie->getFormattedExpires(),
-        ];
+        return $this->cookies->get($name)->toArray();
     }
 
     /**
@@ -405,7 +380,7 @@ class Response extends Message implements ResponseInterface
         /** @var \Cake\Http\Cookie\Cookie[] $cookies */
         $cookies = $this->cookies;
         foreach ($cookies as $cookie) {
-            $out[$cookie->getName()] = $this->convertCookieToArray($cookie);
+            $out[$cookie->getName()] = $cookie->toArray();
         }
 
         return $out;

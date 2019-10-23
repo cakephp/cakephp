@@ -1290,9 +1290,7 @@ class Response implements ResponseInterface
             return null;
         }
 
-        $cookie = $this->_cookies->get($name);
-
-        return $this->convertCookieToArray($cookie);
+        return $this->_cookies->get($name)->toArray();
     }
 
     /**
@@ -1308,32 +1306,10 @@ class Response implements ResponseInterface
         /** @var \Cake\Http\Cookie\Cookie[] $cookies */
         $cookies = $this->_cookies;
         foreach ($cookies as $cookie) {
-            $out[$cookie->getName()] = $this->convertCookieToArray($cookie);
+            $out[$cookie->getName()] = $cookie->toArray();
         }
 
         return $out;
-    }
-
-    /**
-     * Convert the cookie into an array of its properties.
-     *
-     * This method is compatible with the historical behavior of Cake\Http\Response,
-     * where `httponly` is `httpOnly` and `expires` is `expire`
-     *
-     * @param \Cake\Http\Cookie\CookieInterface $cookie Cookie object.
-     * @return array
-     */
-    protected function convertCookieToArray(CookieInterface $cookie): array
-    {
-        return [
-            'name' => $cookie->getName(),
-            'value' => $cookie->getScalarValue(),
-            'path' => $cookie->getPath(),
-            'domain' => $cookie->getDomain(),
-            'secure' => $cookie->isSecure(),
-            'httpOnly' => $cookie->isHttpOnly(),
-            'expire' => $cookie->getExpiresTimestamp(),
-        ];
     }
 
     /**

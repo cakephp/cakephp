@@ -783,11 +783,12 @@ class ResponseTest extends TestCase
         $expected = [
             'name' => 'testing',
             'value' => '',
-            'expire' => 0,
+            'expires' => 0,
             'path' => '/',
             'domain' => '',
             'secure' => false,
-            'httpOnly' => false];
+            'httponly' => false,
+        ];
         $result = $new->getCookie('testing');
         $this->assertEquals($expected, $result);
     }
@@ -840,15 +841,15 @@ class ResponseTest extends TestCase
         $expected = [
             'name' => 'testing',
             'value' => '[a,b,c]',
-            'expire' => $expiry,
+            'expires' => $expiry,
             'path' => '/test',
             'domain' => '',
             'secure' => true,
-            'httpOnly' => false,
+            'httponly' => false,
         ];
 
         // Match the date time formatting to Response::convertCookieToArray
-        $expected['expire'] = $expiry->format('U');
+        $expected['expires'] = $expiry->format('U');
 
         $this->assertEquals($expected, $new->getCookie('testing'));
     }
@@ -877,8 +878,8 @@ class ResponseTest extends TestCase
 
         $new = $response->withExpiredCookie(new Cookie('testing'));
 
-        $this->assertNull($response->getCookie('testing')['expire']);
-        $this->assertLessThan(FrozenTime::createFromTimestamp(1), (string)$new->getCookie('testing')['expire']);
+        $this->assertSame(0, $response->getCookie('testing')['expires']);
+        $this->assertLessThan(FrozenTime::createFromTimestamp(1), (string)$new->getCookie('testing')['expires']);
     }
 
     /**
@@ -889,34 +890,32 @@ class ResponseTest extends TestCase
         $options = [
             'name' => 'testing',
             'value' => 'abc123',
-            'domain' => 'cakephp.org',
-            'path' => '/custompath/',
-            'secure' => true,
-            'httpOnly' => true,
-            'expire' => new \DateTimeImmutable('+14 days'),
+            'options' => [
+                'domain' => 'cakephp.org',
+                'path' => '/custompath/',
+                'secure' => true,
+                'httponly' => true,
+                'expires' => new \DateTimeImmutable('+14 days'),
+            ],
         ];
 
-        $cookie = new Cookie(
+        $cookie = Cookie::create(
             $options['name'],
             $options['value'],
-            $options['expire'],
-            $options['path'],
-            $options['domain'],
-            $options['secure'],
-            $options['httpOnly']
+            $options['options']
         );
 
         $response = new Response();
         $response = $response->withCookie($cookie);
 
-        // Change the timestamp format to match the Response::convertCookieToArray
-        $options['expire'] = $options['expire']->format('U');
-        $this->assertEquals($options, $response->getCookie('testing'));
+        $options['options']['expires'] = $options['options']['expires']->format('U');
+        $expected = ['name' => $options['name'], 'value' => $options['value']] + $options['options'];
+        $this->assertEquals($expected, $response->getCookie('testing'));
 
         $expiredCookie = $response->withExpiredCookie($cookie);
 
-        $this->assertEquals($options['expire'], $response->getCookie('testing')['expire']);
-        $this->assertLessThan(FrozenTime::createFromTimestamp(1), (string)$expiredCookie->getCookie('testing')['expire']);
+        $this->assertEquals($expected['expires'], $response->getCookie('testing')['expires']);
+        $this->assertLessThan(FrozenTime::createFromTimestamp(1), (string)$expiredCookie->getCookie('testing')['expires']);
     }
 
     /**
@@ -931,8 +930,8 @@ class ResponseTest extends TestCase
 
         $new = $response->withExpiredCookie($cookie);
 
-        $this->assertNull($response->getCookie('yay')['expire']);
-        $this->assertSame(1, $new->getCookie('yay')['expire']);
+        $this->assertSame(0, $response->getCookie('yay')['expires']);
+        $this->assertSame(1, $new->getCookie('yay')['expires']);
     }
 
     /**
@@ -949,20 +948,20 @@ class ResponseTest extends TestCase
             'testing' => [
                 'name' => 'testing',
                 'value' => 'a',
-                'expire' => null,
+                'expires' => 0,
                 'path' => '/',
                 'domain' => '',
                 'secure' => false,
-                'httpOnly' => false,
+                'httponly' => false,
             ],
             'test2' => [
                 'name' => 'test2',
                 'value' => 'b',
-                'expire' => null,
+                'expires' => 0,
                 'path' => '/test',
                 'domain' => '',
                 'secure' => true,
-                'httpOnly' => false,
+                'httponly' => false,
             ],
         ];
         $this->assertEquals($expected, $new->getCookies());
@@ -985,11 +984,11 @@ class ResponseTest extends TestCase
             'urmc' => [
                 'name' => 'urmc',
                 'value' => '{"user_id":1,"token":"abc123"}',
-                'expire' => null,
+                'expires' => 0,
                 'path' => '/',
                 'domain' => '',
                 'secure' => false,
-                'httpOnly' => true,
+                'httponly' => true,
             ],
         ];
         $this->assertEquals($expected, $new->getCookies());

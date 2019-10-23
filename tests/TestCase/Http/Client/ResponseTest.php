@@ -357,7 +357,7 @@ XML;
         $this->assertTrue($result['httponly']);
         $this->assertTrue($result['secure']);
         $this->assertEquals(
-            'Wed, 09-Jun-2021 10:18:14 GMT',
+            strtotime('Wed, 09-Jun-2021 10:18:14 GMT'),
             $result['expires']
         );
         $this->assertSame('/', $result['path']);
