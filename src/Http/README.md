@@ -41,7 +41,7 @@ look like:
 ```php
 namespace App
 
-use Cake\Http\BaseApplication;
+use Cake\Core\HttpApplicationInterface;
 
 class Application implements HttpApplicationInterface
 {
