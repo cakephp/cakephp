@@ -198,6 +198,11 @@ parameters:
 			path: src/Http/Response.php
 
 		-
+			message: "#^Parameter \\#3 \\$expires of function setcookie expects int, array given\\.$#"
+			count: 1
+			path: src/Http/ResponseEmitter.php
+
+		-
 			message: "#^Access to an undefined property Psr\\\\Http\\\\Message\\\\UriInterface\\:\\:\\$webroot\\.$#"
 			count: 3
 			path: src/Http/ServerRequestFactory.php
