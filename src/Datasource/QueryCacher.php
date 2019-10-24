@@ -17,7 +17,8 @@ declare(strict_types=1);
 namespace Cake\Datasource;
 
 use Cake\Cache\Cache;
-use Cake\Cache\CacheEngine;
+use Closure;
+use Psr\SimpleCache\CacheInterface;
 use RuntimeException;
 use Traversable;
 
@@ -34,14 +35,14 @@ class QueryCacher
     /**
      * The key or function to generate a key.
      *
-     * @var string|callable
+     * @var string|\Closure
      */
     protected $_key;
 
     /**
      * Config for cache engine.
      *
-     * @var string|\Cake\Cache\CacheEngine
+     * @var string|\Psr\SimpleCache\CacheInterface
      */
     protected $_config;
 
@@ -49,18 +50,18 @@ class QueryCacher
      * Constructor.
      *
      * @param string|\Closure $key The key or function to generate a key.
-     * @param string|\Cake\Cache\CacheEngine $config The cache config name or cache engine instance.
+     * @param string|\Psr\SimpleCache\CacheInterface $config The cache config name or cache engine instance.
      * @throws \RuntimeException
      */
     public function __construct($key, $config)
     {
-        if (!is_string($key) && !is_callable($key)) {
+        if (!is_string($key) && !($key instanceof Closure)) {
             throw new RuntimeException('Cache keys must be strings or callables.');
         }
         $this->_key = $key;
 
-        if (!is_string($config) && !($config instanceof CacheEngine)) {
-            throw new RuntimeException('Cache configs must be strings or CacheEngine instances.');
+        if (!is_string($config) && !($config instanceof CacheInterface)) {
+            throw new RuntimeException('Cache configs must be strings or \Psr\SimpleCache\CacheInterface instances.');
         }
         $this->_config = $config;
     }
@@ -123,7 +124,7 @@ class QueryCacher
     /**
      * Get the cache engine.
      *
-     * @return \Psr\SimpleCache\CacheInterface&\Cake\Cache\CacheEngineInterface
+     * @return \Psr\SimpleCache\CacheInterface
      */
     protected function _resolveCacher()
     {
