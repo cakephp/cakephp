@@ -109,7 +109,7 @@ trait StaticConfigTrait
      * Reads existing configuration.
      *
      * @param string $key The name of the configuration.
-     * @return mixed Configuration data at the named key or null if the key does not exist.
+     * @return mixed|null Configuration data at the named key or null if the key does not exist.
      */
     public static function getConfig($key)
     {
@@ -174,6 +174,27 @@ trait StaticConfigTrait
         }
 
         return static::getConfig($key);
+    }
+
+    /**
+     * Reads existing configuration for a specific key.
+     *
+     * The config value for this key must exist, it can never be null.
+     *
+     * @param string|null $key The name of the configuration.
+     * @return mixed Configuration data at the named key.
+     * @throws \InvalidArgumentException If value does not exist.
+     */
+    public static function getConfigOrFail($key)
+    {
+        if (!isset($key)) {
+            throw new InvalidArgumentException('$key must not be null.');
+        }
+        if (!isset(static::$_config[$key])) {
+            throw new InvalidArgumentException(sprintf('Expected configuration `%s` not found.', $key));
+        }
+
+        return static::$_config[$key];
     }
 
     /**
