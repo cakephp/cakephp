@@ -56,9 +56,9 @@ class DateTimeType extends BaseType
     /**
      * The DateTime formats allowed by `marshal()`.
      *
-     * @var string|array
+     * @var array
      */
-    protected $_marshalFormat = [
+    protected $_marshalFormats = [
         'Y-m-d H:i:s',
         'Y-m-d\TH:i:s',
         'Y-m-d\TH:i:sP',
@@ -410,7 +410,7 @@ class DateTimeType extends BaseType
 
     /**
      * Converts a string into a DateTime object after parsing it using the
-     * formats in `_marshalFormat`.
+     * formats in `_marshalFormats`.
      *
      * @param string $value The value to parse and convert to an object.
      * @return \DateTimeInterface|null
@@ -420,7 +420,7 @@ class DateTimeType extends BaseType
         /** @var \DateTime|\DateTimeImmutable $class */
         $class = $this->_className;
 
-        foreach ((array)$this->_marshalFormat as $format) {
+        foreach ($this->_marshalFormats as $format) {
             try {
                 $dateTime = $class::createFromFormat($format, $value);
                 // Check for false in case DateTime is used directly

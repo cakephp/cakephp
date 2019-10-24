@@ -31,7 +31,9 @@ class TimeType extends DateTimeType
     /**
      * @inheritDoc
      */
-    protected $_marshalFormat = 'H:i:s';
+    protected $_marshalFormats = [
+        'H:i:s',
+    ];
 
     /**
      * @inheritDoc

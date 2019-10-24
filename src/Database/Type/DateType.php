@@ -35,7 +35,9 @@ class DateType extends DateTimeType
     /**
      * @inheritDoc
      */
-    protected $_marshalFormat = 'Y-m-d';
+    protected $_marshalFormats = [
+        'Y-m-d',
+    ];
 
     /**
      * In this class we want Date objects to  have their time
