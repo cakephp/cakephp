@@ -107,7 +107,11 @@ class ErrorLogger
         }
 
         if ($this->getConfig('trace')) {
-            $message .= "\nStack Trace:\n" . $exception->getTraceAsString();
+            $trace = Debugger::formatTrace($exception, ['format' => 'points']);
+            $message .= "\nStack Trace:\n";
+            foreach ($trace as $line) {
+                $message .= "- {$line['file']}:{$line['line']}\n";
+            }
         }
 
         $previous = $exception->getPrevious();

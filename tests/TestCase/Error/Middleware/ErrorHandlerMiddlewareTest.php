@@ -176,7 +176,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
             ->method('log')
             ->with('error', $this->logicalAnd(
                 $this->stringContains('[Cake\Http\Exception\NotFoundException] Kaboom!'),
-                $this->stringContains('ErrorHandlerMiddlewareTest->testHandleException'),
+                $this->stringContains('vendor/phpunit/phpunit/src/Framework/TestCase.php'),
                 $this->stringContains('Request URL: /target/url'),
                 $this->stringContains('Referer URL: /other/path'),
                 $this->logicalNot(
@@ -209,7 +209,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
             ->with('error', $this->logicalAnd(
                 $this->stringContains('[Cake\Http\Exception\NotFoundException] Kaboom!'),
                 $this->stringContains('Caused by: [Cake\Datasource\Exception\RecordNotFoundException] Previous logged'),
-                $this->stringContains('ErrorHandlerMiddlewareTest->testHandleExceptionLogAndTraceWithPrevious'),
+                $this->stringContains('vendor/phpunit/phpunit/src/Framework/TestCase.php'),
                 $this->stringContains('Request URL: /target/url'),
                 $this->stringContains('Referer URL: /other/path')
             ));

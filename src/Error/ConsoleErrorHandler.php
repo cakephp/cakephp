@@ -80,7 +80,7 @@ class ConsoleErrorHandler extends BaseErrorHandler
         }
 
         $message = sprintf(
-            '<error>%s</error> %s in [%s, line %s]',
+            "<error>%s</error> %s\nIn [%s, line %s]\n",
             $errorName,
             $exception->getMessage(),
             $exception->getFile(),
@@ -101,7 +101,7 @@ class ConsoleErrorHandler extends BaseErrorHandler
     protected function _displayError(array $error, bool $debug): void
     {
         $message = sprintf(
-            '%s in [%s, line %s]',
+            "%s\nIn [%s, line %s]",
             $error['description'],
             $error['file'],
             $error['line']

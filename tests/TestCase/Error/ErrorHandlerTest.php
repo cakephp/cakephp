@@ -271,14 +271,14 @@ class ErrorHandlerTest extends TestCase
             ->method('log')
             ->with('error', $this->logicalAnd(
                 $this->stringContains('[Cake\Http\Exception\NotFoundException] Kaboom!'),
-                $this->stringContains('ErrorHandlerTest->testHandleExceptionLog')
+                $this->stringContains('vendor/phpunit/phpunit/src/Framework/TestCase.php')
             ));
 
         $this->_logger->expects($this->at(1))
             ->method('log')
             ->with('error', $this->logicalAnd(
                 $this->stringContains('[Cake\Http\Exception\NotFoundException] Kaboom!'),
-                $this->logicalNot($this->stringContains('ErrorHandlerTest->testHandleExceptionLog'))
+                $this->logicalNot($this->stringContains('vendor/phpunit/phpunit/src/Framework/TestCase.php'))
             ));
 
         $errorHandler->handleException($error);
@@ -352,7 +352,7 @@ class ErrorHandlerTest extends TestCase
             ->with('error', $this->logicalAnd(
                 $this->stringContains('[Cake\Http\Exception\NotFoundException] Kaboom!'),
                 $this->stringContains('Caused by: [Cake\Datasource\Exception\RecordNotFoundException] Previous logged'),
-                $this->stringContains('ErrorHandlerTest->testHandleExceptionLogPrevious')
+                $this->stringContains('vendor/phpunit/phpunit/src/Framework/TestCase.php')
             ));
 
         $errorHandler->handleException($error);
