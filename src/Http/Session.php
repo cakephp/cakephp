@@ -347,7 +347,7 @@ class Session
             throw new RuntimeException('Session was already started');
         }
 
-        if (ini_get('session.use_cookies') && headers_sent($file, $line)) {
+        if (ini_get('session.use_cookies') && headers_sent()) {
             return false;
         }
 
