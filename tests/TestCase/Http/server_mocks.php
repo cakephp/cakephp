@@ -6,7 +6,7 @@ declare(strict_types=1);
  */
 namespace Cake\Http;
 
-function headers_sent()
+function headers_sent(&$file = null, &$line = null)
 {
     return $GLOBALS['mockedHeadersSent'] ?? true;
 }
