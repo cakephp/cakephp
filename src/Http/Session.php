@@ -116,16 +116,6 @@ class Session
             $sessionConfig['ini']['session.name'] = $sessionConfig['cookie'];
         }
 
-        if (!empty($sessionConfig['handler'])) {
-            $sessionConfig['ini']['session.save_handler'] = 'user';
-        }
-
-        // In PHP7.2.0+ session.save_handler can't be set to user by the user.
-        // https://github.com/php/php-src/commit/a93a51c3bf4ea1638ce0adc4a899cb93531b9f0d
-        if (version_compare(PHP_VERSION, '7.2.0', '>=')) {
-            unset($sessionConfig['ini']['session.save_handler']);
-        }
-
         if (!isset($sessionConfig['ini']['session.use_strict_mode']) && ini_get('session.use_strict_mode') != 1) {
             $sessionConfig['ini']['session.use_strict_mode'] = 1;
         }
@@ -164,7 +154,6 @@ class Session
                 'ini' => [
                     'session.use_trans_sid' => 0,
                     'session.use_cookies' => 1,
-                    'session.save_handler' => 'user',
                 ],
                 'handler' => [
                     'engine' => 'CacheSession',
@@ -175,7 +164,6 @@ class Session
                 'ini' => [
                     'session.use_trans_sid' => 0,
                     'session.use_cookies' => 1,
-                    'session.save_handler' => 'user',
                     'session.serialize_handler' => 'php',
                 ],
                 'handler' => [
