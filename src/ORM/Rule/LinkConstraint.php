@@ -93,17 +93,12 @@ class LinkConstraint
      */
     public function __invoke(EntityInterface $entity, array $options): bool
     {
-        if (
-            !isset($options['repository']) ||
-            !($options['repository'] instanceof Table)
-        ) {
+        $table = $options['repository'] ?? null;
+        if (!($table instanceof Table)) {
             throw new \InvalidArgumentException(
                 'Argument 2 is expected to have a `repository` key that holds an instance of `\Cake\ORM\Table`.'
             );
         }
-
-        /** @var \Cake\ORM\Table $table */
-        $table = $options['repository'];
 
         $association = $this->_association;
         if (!$association instanceof Association) {
