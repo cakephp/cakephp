@@ -209,7 +209,13 @@ class RulesChecker extends BaseRulesChecker
             $associationAlias = $association;
 
             if ($errorField === null) {
-                $errorField = Inflector::underscore($association);
+                $repository = $this->_options['repository'] ?? null;
+                if ($repository instanceof Table) {
+                    $association = $repository->getAssociation($association);
+                    $errorField = $association->getProperty();
+                } else {
+                    $errorField = Inflector::underscore($association);
+                }
             }
         } else {
             throw new \InvalidArgumentException(sprintf(

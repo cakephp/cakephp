@@ -21,6 +21,7 @@ use Cake\Event\EventInterface;
 use Cake\I18n\I18n;
 use Cake\ORM\Entity;
 use Cake\ORM\RulesChecker;
+use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -1498,7 +1499,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $this->assertFalse($Comments->save($comment));
 
         $expected = [
-            'articles' => [
+            'article' => [
                 '_isLinkedTo' => 'Cannot modify row: a constraint for the `Articles` association fails.',
             ],
         ];
@@ -1519,6 +1520,82 @@ class RulesCheckerIntegrationTest extends TestCase
         $rulesChecker = $Articles->rulesChecker();
         $rulesChecker->addDelete(
             $rulesChecker->isNotLinkedTo('Comments')
+        );
+
+        $article = $Articles->get(1);
+        $this->assertFalse($Articles->delete($article));
+
+        $expected = [
+            'comments' => [
+                '_isNotLinkedTo' => 'Cannot modify row: a constraint for the `Comments` association fails.',
+            ],
+        ];
+        $this->assertEquals($expected, $article->getErrors());
+    }
+
+    /**
+     * Tests that the error field name is inferred from the association name in case no name is provided,
+     * and no repository is available at the time of creating the rule.
+     *
+     * @return void
+     */
+    public function testIsLinkedToInferFieldFromAssociationNameWithNoRepositoryAvailable(): void
+    {
+        $rulesChecker = new RulesChecker();
+
+        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $Comments */
+        $Comments = $this->getMockForModel('Comments', ['rulesChecker'], ['className' => Table::class]);
+        $Comments
+            ->expects($this->any())
+            ->method('rulesChecker')
+            ->willReturn($rulesChecker);
+
+        $Comments->belongsTo('Articles');
+
+        $comment = $Comments->save($Comments->newEntity([
+            'article_id' => 9999,
+            'user_id' => 1,
+            'comment' => 'Orphaned Comment',
+        ]));
+
+        $rulesChecker->addUpdate(
+            $rulesChecker->isLinkedTo('Articles'),
+            ['repository' => $Comments]
+        );
+
+        $comment->setDirty('comment', true);
+        $this->assertFalse($Comments->save($comment));
+
+        $expected = [
+            'articles' => [
+                '_isLinkedTo' => 'Cannot modify row: a constraint for the `Articles` association fails.',
+            ],
+        ];
+        $this->assertEquals($expected, $comment->getErrors());
+    }
+
+    /**
+     * Tests that the error field name is inferred from the association name in case no name is provided,
+     * and no repository is available at the time of creating the rule.
+     *
+     * @return void
+     */
+    public function testIsNotLinkedToInferFieldFromAssociationNameWithNoRepositoryAvailable(): void
+    {
+        $rulesChecker = new RulesChecker();
+
+        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $Comments */
+        $Articles = $this->getMockForModel('Articles', ['rulesChecker'], ['className' => Table::class]);
+        $Articles
+            ->expects($this->any())
+            ->method('rulesChecker')
+            ->willReturn($rulesChecker);
+
+        $Articles->hasMany('Comments');
+
+        $rulesChecker->addDelete(
+            $rulesChecker->isNotLinkedTo('Comments'),
+            ['repository' => $Articles]
         );
 
         $article = $Articles->get(1);
