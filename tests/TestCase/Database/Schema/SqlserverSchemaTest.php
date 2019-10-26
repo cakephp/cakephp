@@ -826,7 +826,7 @@ SQL;
 
         $table = (new TableSchema('schema_articles'))->addColumn('title', [
             'type' => 'string',
-            'length' => 255
+            'length' => 255,
         ])->addColumn('author_id', [
             'type' => 'integer',
         ])->addConstraint($name, $data);
@@ -851,15 +851,15 @@ SQL;
         $table = (new TableSchema('posts'))
             ->addColumn('author_id', [
                 'type' => 'integer',
-                'null' => false
+                'null' => false,
             ])
             ->addColumn('category_id', [
                 'type' => 'integer',
-                'null' => false
+                'null' => false,
             ])
             ->addColumn('category_name', [
                 'type' => 'integer',
-                'null' => false
+                'null' => false,
             ])
             ->addConstraint('author_fk', [
                 'type' => 'foreign',

@@ -175,15 +175,15 @@ SQL;
             ],
             [
                 ['type' => 'CHAR(10)'],
-                ['type' => 'char', 'length' => 10, 'collate' => 'ja_JP.utf8']
+                ['type' => 'char', 'length' => 10, 'collate' => 'ja_JP.utf8'],
             ],
             [
                 ['type' => 'CHAR(36)'],
-                ['type' => 'char', 'length' => 36, 'collate' => 'ja_JP.utf8']
+                ['type' => 'char', 'length' => 36, 'collate' => 'ja_JP.utf8'],
             ],
             [
                 ['type' => 'CHARACTER(10)'],
-                ['type' => 'char', 'length' => 10, 'collate' => 'ja_JP.utf8']
+                ['type' => 'char', 'length' => 10, 'collate' => 'ja_JP.utf8'],
             ],
             [
                 ['type' => 'MONEY'],
