@@ -175,13 +175,16 @@ SQL;
             ],
             [
                 ['type' => 'CHAR(10)'],
-                ['type' => 'char', 'length' => 10, 'collate' => 'ja_JP.utf8']],
+                ['type' => 'char', 'length' => 10, 'collate' => 'ja_JP.utf8']
+            ],
             [
                 ['type' => 'CHAR(36)'],
-                ['type' => 'char', 'length' => 36, 'collate' => 'ja_JP.utf8']],
+                ['type' => 'char', 'length' => 36, 'collate' => 'ja_JP.utf8']
+            ],
             [
                 ['type' => 'CHARACTER(10)'],
-                ['type' => 'char', 'length' => 10, 'collate' => 'ja_JP.utf8']],
+                ['type' => 'char', 'length' => 10, 'collate' => 'ja_JP.utf8']
+            ],
             [
                 ['type' => 'MONEY'],
                 ['type' => 'string', 'length' => null],
@@ -915,7 +918,6 @@ SQL;
                 'type' => 'integer',
                 'null' => false,
             ])
-
             ->addConstraint('primary', [
                 'type' => 'primary',
                 'columns' => ['id'],
@@ -989,11 +991,9 @@ SQL;
         $table = (new TableSchema('schema_articles'))->addColumn('title', [
             'type' => 'string',
             'length' => 255,
-            ])
-        ->addColumn('author_id', [
+        ])->addColumn('author_id', [
                 'type' => 'integer',
-                ])
-        ->addConstraint($name, $data);
+        ])->addConstraint($name, $data);
 
         $this->assertTextEquals($expected, $schema->constraintSql($table, $name));
     }
@@ -1016,29 +1016,29 @@ SQL;
             ->addColumn('author_id', [
                 'type' => 'integer',
                 'null' => false,
-                ])
+            ])
             ->addColumn('category_id', [
                 'type' => 'integer',
                 'null' => false,
-                ])
+            ])
             ->addColumn('category_name', [
                 'type' => 'integer',
                 'null' => false,
-                ])
+            ])
             ->addConstraint('author_fk', [
                 'type' => 'foreign',
                 'columns' => ['author_id'],
                 'references' => ['authors', 'id'],
                 'update' => 'cascade',
                 'delete' => 'cascade',
-                ])
+            ])
             ->addConstraint('category_fk', [
                 'type' => 'foreign',
                 'columns' => ['category_id', 'category_name'],
                 'references' => ['categories', ['id', 'name']],
                 'update' => 'cascade',
                 'delete' => 'cascade',
-                ]);
+            ]);
 
         $expected = [
             'ALTER TABLE "posts" ADD CONSTRAINT "author_fk" FOREIGN KEY ("author_id") REFERENCES "authors" ("id") ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY IMMEDIATE;',
@@ -1067,29 +1067,29 @@ SQL;
             ->addColumn('author_id', [
                 'type' => 'integer',
                 'null' => false,
-                ])
+            ])
             ->addColumn('category_id', [
                 'type' => 'integer',
                 'null' => false,
-                ])
+            ])
             ->addColumn('category_name', [
                 'type' => 'integer',
                 'null' => false,
-                ])
+            ])
             ->addConstraint('author_fk', [
                 'type' => 'foreign',
                 'columns' => ['author_id'],
                 'references' => ['authors', 'id'],
                 'update' => 'cascade',
                 'delete' => 'cascade',
-                ])
+            ])
             ->addConstraint('category_fk', [
                 'type' => 'foreign',
                 'columns' => ['category_id', 'category_name'],
                 'references' => ['categories', ['id', 'name']],
                 'update' => 'cascade',
                 'delete' => 'cascade',
-                ]);
+            ]);
 
         $expected = [
             'ALTER TABLE "posts" DROP CONSTRAINT "author_fk";',
@@ -1122,7 +1122,7 @@ SQL;
                 'type' => 'string',
                 'null' => false,
                 'comment' => 'This is the title',
-                ])
+            ])
             ->addColumn('body', ['type' => 'text'])
             ->addColumn('data', ['type' => 'json'])
             ->addColumn('hash', [
@@ -1131,16 +1131,16 @@ SQL;
                 'length' => 40,
                 'collate' => 'C',
                 'null' => false,
-                ])
+            ])
             ->addColumn('created', 'datetime')
             ->addConstraint('primary', [
                 'type' => 'primary',
                 'columns' => ['id'],
-                ])
+            ])
             ->addIndex('title_idx', [
                 'type' => 'index',
                 'columns' => ['title'],
-                ]);
+            ]);
 
         $expected = <<<SQL
 CREATE TABLE "schema_articles" (
@@ -1183,7 +1183,7 @@ SQL;
         $table = (new TableSchema('schema_articles'))->addColumn('id', [
             'type' => 'integer',
             'null' => false,
-            ]);
+        ]);
         $table->setTemporary(true);
         $sql = $table->createSql($connection);
         $this->assertStringContainsString('CREATE TEMPORARY TABLE', $sql[0]);
@@ -1207,15 +1207,15 @@ SQL;
             ->addColumn('article_id', [
                 'type' => 'integer',
                 'null' => false,
-                ])
+            ])
             ->addColumn('tag_id', [
                 'type' => 'integer',
                 'null' => false,
-                ])
+            ])
             ->addConstraint('primary', [
                 'type' => 'primary',
                 'columns' => ['article_id', 'tag_id'],
-                ]);
+            ]);
 
         $expected = <<<SQL
 CREATE TABLE "articles_tags" (
@@ -1233,15 +1233,15 @@ SQL;
                 'type' => 'integer',
                 'null' => false,
                 'autoIncrement' => true,
-                ])
+            ])
             ->addColumn('account_id', [
                 'type' => 'integer',
                 'null' => false,
-                ])
+            ])
             ->addConstraint('primary', [
                 'type' => 'primary',
                 'columns' => ['id', 'account_id'],
-                ]);
+            ]);
 
         $expected = <<<SQL
 CREATE TABLE "composite_key" (
@@ -1314,13 +1314,9 @@ SQL;
             ->getMock();
         $mock->expects($this->any())
             ->method('quote')
-            ->will(
-                $this->returnCallback(
-                    function ($value) {
-                        return "'$value'";
-                    }
-                )
-            );
+            ->will($this->returnCallback(function ($value) {
+                return "'$value'";
+            }));
         $driver->setConnection($mock);
 
         return $driver;

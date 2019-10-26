@@ -826,12 +826,10 @@ SQL;
 
         $table = (new TableSchema('schema_articles'))->addColumn('title', [
             'type' => 'string',
-            'length' => 255,])
-
-        ->addColumn('author_id', [
+            'length' => 255
+        ])->addColumn('author_id', [
             'type' => 'integer',
-        ])
-        ->addConstraint($name, $data);
+        ])->addConstraint($name, $data);
 
         $this->assertEquals($expected, $schema->constraintSql($table, $name));
     }
@@ -853,31 +851,30 @@ SQL;
         $table = (new TableSchema('posts'))
             ->addColumn('author_id', [
                 'type' => 'integer',
-                'null' => false,])
-
+                'null' => false
+            ])
             ->addColumn('category_id', [
                 'type' => 'integer',
-                'null' => false,])
-
+                'null' => false
+            ])
             ->addColumn('category_name', [
                 'type' => 'integer',
-                'null' => false,])
-
+                'null' => false
+            ])
             ->addConstraint('author_fk', [
                 'type' => 'foreign',
                 'columns' => ['author_id'],
                 'references' => ['authors', 'id'],
                 'update' => 'cascade',
                 'delete' => 'cascade',
-                ])
-
+            ])
             ->addConstraint('category_fk', [
                 'type' => 'foreign',
                 'columns' => ['category_id', 'category_name'],
                 'references' => ['categories', ['id', 'name']],
                 'update' => 'cascade',
                 'delete' => 'cascade',
-                ]);
+            ]);
 
         $expected = [
             'ALTER TABLE [posts] ADD CONSTRAINT [author_fk] FOREIGN KEY ([author_id]) REFERENCES [authors] ([id]) ON UPDATE CASCADE ON DELETE CASCADE;',
@@ -906,33 +903,29 @@ SQL;
             ->addColumn('author_id', [
                 'type' => 'integer',
                 'null' => false,
-                ])
-
+            ])
             ->addColumn('category_id', [
                     'type' => 'integer',
                     'null' => false,
-                ])
-
+            ])
             ->addColumn('category_name', [
                 'type' => 'integer',
                 'null' => false,
-                ])
-
+            ])
             ->addConstraint('author_fk', [
                 'type' => 'foreign',
                 'columns' => ['author_id'],
                 'references' => ['authors', 'id'],
                 'update' => 'cascade',
                 'delete' => 'cascade',
-                ])
-
+            ])
             ->addConstraint('category_fk', [
                 'type' => 'foreign',
                 'columns' => ['category_id', 'category_name'],
                 'references' => ['categories', ['id', 'name']],
                 'update' => 'cascade',
                 'delete' => 'cascade',
-                ]);
+            ]);
 
         $expected = [
             'ALTER TABLE [posts] DROP CONSTRAINT [author_fk];',
@@ -957,17 +950,14 @@ SQL;
         $connection->expects($this->any())->method('getDriver')
             ->will($this->returnValue($driver));
 
-        $table = (new TableSchema('schema_articles'))
-            ->addColumn('id', [
+        $table = (new TableSchema('schema_articles'))->addColumn('id', [
                 'type' => 'integer',
                 'null' => false,
             ])
-
             ->addColumn('title', [
                 'type' => 'string',
                 'null' => false,
-                ])
-
+            ])
             ->addColumn('body', ['type' => 'text'])
             ->addColumn('data', ['type' => 'json'])
             ->addColumn('hash', [
@@ -976,18 +966,16 @@ SQL;
                 'length' => 40,
                 'collate' => 'Latin1_General_BIN',
                 'null' => false,
-                ])
-
+            ])
             ->addColumn('created', 'datetime')
             ->addConstraint('primary', [
                 'type' => 'primary',
                 'columns' => ['id'],
-                ])
-
+            ])
             ->addIndex('title_idx', [
                 'type' => 'index',
                 'columns' => ['title'],
-                ]);
+            ]);
 
         $expected = <<<SQL
 CREATE TABLE [schema_articles] (
@@ -1070,13 +1058,9 @@ SQL;
             ->getMock();
         $mock->expects($this->any())
             ->method('quote')
-            ->will(
-                $this->returnCallback(
-                    function ($value) {
-                        return "'$value'";
-                    }
-                )
-            );
+            ->will($this->returnCallback(function ($value) {
+                return "'$value'";
+            }));
         $driver->setConnection($mock);
 
         return $driver;
