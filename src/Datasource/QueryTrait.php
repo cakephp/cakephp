@@ -173,8 +173,8 @@ trait QueryTrait
      *
      * @param \Closure|string|false $key Either the cache key or a function to generate the cache key.
      *   When using a function, this query instance will be supplied as an argument.
-     * @param string|\Cake\Cache\CacheEngine $config Either the name of the cache config to use, or
-     *   a cache config instance.
+     * @param string|\Psr\SimpleCache\CacheInterface $config Either the name of the cache config to use, or
+     *   a cache engine instance.
      * @return $this
      */
     public function cache($key, $config = 'default')
