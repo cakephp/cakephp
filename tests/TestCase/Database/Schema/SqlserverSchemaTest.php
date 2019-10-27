@@ -961,7 +961,7 @@ SQL;
             ->addColumn('body', ['type' => 'text'])
             ->addColumn('data', ['type' => 'json'])
             ->addColumn('hash', [
-                'type' => 'char',
+                'type' => 'nchar',
                 'fixed' => true,
                 'length' => 40,
                 'collate' => 'Latin1_General_BIN',
@@ -983,7 +983,7 @@ CREATE TABLE [schema_articles] (
 [title] NVARCHAR(255) NOT NULL,
 [body] NVARCHAR(MAX),
 [data] NVARCHAR(MAX),
-[hash] CHAR(40) COLLATE Latin1_General_BIN NOT NULL,
+[hash] NCHAR(40) COLLATE Latin1_General_BIN NOT NULL,
 [created] DATETIME,
 PRIMARY KEY ([id])
 )
