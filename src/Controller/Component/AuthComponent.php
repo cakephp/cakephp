@@ -354,7 +354,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
         }
         $result = $auth->unauthenticated($controller->getRequest(), $response);
         if ($result !== null) {
-            return $result;
+            return $result instanceof Response ? $result : null;
         }
 
         if (!$controller->getRequest()->is('ajax')) {
