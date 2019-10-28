@@ -474,21 +474,11 @@ class Socket
         }
         $method = $this->_encryptMethods[$type . '_' . $clientOrServer];
 
-        // Prior to PHP 5.6.7 TLS_CLIENT was any version of TLS. This was changed in 5.6.7
-        // to fix backwards compatibility issues, and now only resolves to TLS1.0
-        //
-        // See https://github.com/php/php-src/commit/10bc5fd4c4c8e1dd57bd911b086e9872a56300a0
-        if (version_compare(PHP_VERSION, '5.6.7', '>=')) {
-            if ($method === STREAM_CRYPTO_METHOD_TLS_CLIENT) {
-                // phpcs:disable
-                $method |= STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT | STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT;
-                // phpcs:enable
-            }
-            if ($method === STREAM_CRYPTO_METHOD_TLS_SERVER) {
-                // phpcs:disable
-                $method |= STREAM_CRYPTO_METHOD_TLSv1_1_SERVER | STREAM_CRYPTO_METHOD_TLSv1_2_SERVER;
-                // phpcs:enable
-            }
+        if ($method === STREAM_CRYPTO_METHOD_TLS_CLIENT) {
+            $method |= STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT | STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT;
+        }
+        if ($method === STREAM_CRYPTO_METHOD_TLS_SERVER) {
+            $method |= STREAM_CRYPTO_METHOD_TLSv1_1_SERVER | STREAM_CRYPTO_METHOD_TLSv1_2_SERVER;
         }
 
         try {
