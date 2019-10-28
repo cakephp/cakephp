@@ -361,7 +361,7 @@ class SqlserverSchema extends BaseSchema
             TableSchema::TYPE_BIGINTEGER => ' BIGINT',
             TableSchema::TYPE_BINARY_UUID => ' UNIQUEIDENTIFIER',
             TableSchema::TYPE_BOOLEAN => ' BIT',
-            TableSchema::TYPE_CHAR => ' CHAR',
+            TableSchema::TYPE_CHAR => ' NCHAR',
             TableSchema::TYPE_FLOAT => ' FLOAT',
             TableSchema::TYPE_DECIMAL => ' DECIMAL',
             TableSchema::TYPE_DATE => ' DATE',
