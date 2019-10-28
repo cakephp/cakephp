@@ -95,7 +95,7 @@ class SqlserverSchema extends BaseSchema
         }
 
         if ($col === 'char') {
-            return ['type' => TableSchema::TYPE_CHAR, 'length' => $length, 'fixed' => true];
+            return ['type' => TableSchema::TYPE_CHAR, 'length' => $length];
         }
 
         if ($col === 'tinyint') {
@@ -113,8 +113,7 @@ class SqlserverSchema extends BaseSchema
         if ($col === 'bit') {
             return ['type' => TableSchema::TYPE_BOOLEAN, 'length' => null];
         }
-        if (
-            strpos($col, 'numeric') !== false ||
+        if (strpos($col, 'numeric') !== false ||
             strpos($col, 'money') !== false ||
             strpos($col, 'decimal') !== false
         ) {
@@ -138,7 +137,7 @@ class SqlserverSchema extends BaseSchema
         }
 
         if (strpos($col, 'char') !== false) {
-            return ['type' => TableSchema::TYPE_STRING, 'fixed' => true, 'length' => $length];
+            return ['type' => TableSchema::TYPE_CHAR, 'length' => $length];
         }
 
         if (strpos($col, 'text') !== false) {
@@ -392,8 +391,7 @@ class SqlserverSchema extends BaseSchema
         }
 
         if ($data['type'] === TableSchema::TYPE_BINARY) {
-            if (
-                !isset($data['length'])
+            if (!isset($data['length'])
                 || in_array($data['length'], [TableSchema::LENGTH_MEDIUM, TableSchema::LENGTH_LONG], true)
             ) {
                 $data['length'] = 'MAX';
@@ -408,8 +406,7 @@ class SqlserverSchema extends BaseSchema
             }
         }
 
-        if (
-            $data['type'] === TableSchema::TYPE_STRING ||
+        if ($data['type'] === TableSchema::TYPE_STRING ||
             (
                 $data['type'] === TableSchema::TYPE_TEXT &&
                 $data['length'] === TableSchema::LENGTH_TINY
@@ -437,8 +434,7 @@ class SqlserverSchema extends BaseSchema
             $out .= '(' . (int)$data['precision'] . ')';
         }
 
-        if (
-            $data['type'] === TableSchema::TYPE_DECIMAL &&
+        if ($data['type'] === TableSchema::TYPE_DECIMAL &&
             (
                 isset($data['length']) ||
                 isset($data['precision'])
@@ -451,8 +447,7 @@ class SqlserverSchema extends BaseSchema
             $out .= ' NOT NULL';
         }
 
-        if (
-            isset($data['default']) &&
+        if (isset($data['default']) &&
             in_array($data['type'], [TableSchema::TYPE_TIMESTAMP, TableSchema::TYPE_DATETIME]) &&
             strtolower($data['default']) === 'current_timestamp'
         ) {
