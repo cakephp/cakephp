@@ -16,12 +16,12 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Error;
 
-use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\Controller\Exception\MissingActionException;
 use Cake\Core\Exception\Exception;
 use Cake\Http\Exception\InternalErrorException;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Log\Log;
+use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
 
 /**

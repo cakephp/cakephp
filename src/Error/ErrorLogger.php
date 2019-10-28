@@ -107,6 +107,7 @@ class ErrorLogger
         }
 
         if ($this->getConfig('trace')) {
+            /** @var array $trace */
             $trace = Debugger::formatTrace($exception, ['format' => 'points']);
             $message .= "\nStack Trace:\n";
             foreach ($trace as $line) {
