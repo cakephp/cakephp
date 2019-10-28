@@ -116,7 +116,8 @@ class PostgresSchema extends BaseSchema
         }
         // money is 'string' as it includes arbitrary text content
         // before the number value.
-        if (strpos($col, 'char') !== false ||
+        if (
+            strpos($col, 'char') !== false ||
             strpos($col, 'money') !== false
         ) {
             return ['type' => TableSchema::TYPE_STRING, 'length' => $length];
@@ -130,7 +131,8 @@ class PostgresSchema extends BaseSchema
         if ($col === 'real' || strpos($col, 'double') !== false) {
             return ['type' => TableSchema::TYPE_FLOAT, 'length' => null];
         }
-        if (strpos($col, 'numeric') !== false ||
+        if (
+            strpos($col, 'numeric') !== false ||
             strpos($col, 'decimal') !== false
         ) {
             return ['type' => TableSchema::TYPE_DECIMAL, 'length' => null];
@@ -398,7 +400,8 @@ class PostgresSchema extends BaseSchema
             $out .= '(' . $data['length'] . ')';
         }
 
-        if ($data['type'] === TableSchema::TYPE_STRING ||
+        if (
+            $data['type'] === TableSchema::TYPE_STRING ||
             (
                 $data['type'] === TableSchema::TYPE_TEXT &&
                 $data['length'] === TableSchema::LENGTH_TINY
@@ -424,7 +427,8 @@ class PostgresSchema extends BaseSchema
             $out .= '(' . $data['precision'] . ')';
         }
 
-        if ($data['type'] === TableSchema::TYPE_DECIMAL &&
+        if (
+            $data['type'] === TableSchema::TYPE_DECIMAL &&
             (
                 isset($data['length']) ||
                 isset($data['precision'])
@@ -437,7 +441,8 @@ class PostgresSchema extends BaseSchema
             $out .= ' NOT NULL';
         }
 
-        if (isset($data['default']) &&
+        if (
+            isset($data['default']) &&
             in_array($data['type'], [TableSchema::TYPE_TIMESTAMP, TableSchema::TYPE_DATETIME]) &&
             strtolower($data['default']) === 'current_timestamp'
         ) {
