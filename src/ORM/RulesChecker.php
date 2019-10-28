@@ -116,7 +116,7 @@ class RulesChecker extends BaseRulesChecker
      * ### Example:
      *
      * ```
-     * $rules->update($rules->isLinkedTo('Articles', 'article'));
+     * $rules->addUpdate($rules->isLinkedTo('Articles', 'article'));
      * ```
      *
      * On a `Comments` table that has a `belongsTo Articles` association, this check would ensure that comments
@@ -147,7 +147,7 @@ class RulesChecker extends BaseRulesChecker
      * ### Example:
      *
      * ```
-     * $rules->delete($rules->isNotLinkedTo('Comments', 'comments'));
+     * $rules->addDelete($rules->isNotLinkedTo('Comments', 'comments'));
      * ```
      *
      * On a `Articles` table that has a `hasMany Comments` association, this check would ensure that articles
