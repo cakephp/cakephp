@@ -388,7 +388,7 @@ trait QueryTrait
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function formatResults(?callable $formatter = null, $mode = 0)
+    public function formatResults(?callable $formatter = null, $mode = self::APPEND)
     {
         if ($mode === self::OVERWRITE) {
             $this->_formatters = [];
