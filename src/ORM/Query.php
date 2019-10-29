@@ -839,12 +839,12 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         $clone = clone $this;
         $clone->setEagerLoader(clone $this->getEagerLoader());
         $clone->triggerBeforeFind();
-        $clone->enableAutoFields(false);
+        $clone->disableAutoFields();
         $clone->limit(null);
         $clone->order([], true);
         $clone->offset(null);
         $clone->mapReduce(null, null, true);
-        $clone->formatResults(null, true);
+        $clone->formatResults(null, self::OVERWRITE);
         $clone->setSelectTypeMap(new TypeMap());
         $clone->decorateResults(null, true);
 
