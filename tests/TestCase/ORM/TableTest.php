@@ -43,6 +43,7 @@ use Cake\TestSuite\TestCase;
 use Cake\Utility\Hash;
 use Cake\Validation\Validator;
 use InvalidArgumentException;
+use RuntimeException;
 use TestApp\Model\Entity\ProtectedEntity;
 use TestApp\Model\Entity\VirtualUser;
 use TestApp\Model\Table\UsersTable;
@@ -2050,6 +2051,52 @@ class TableTest extends TestCase
         $this->assertNull($data->id);
         $row = $table->find('all')->where(['id' => self::$nextUserId])->first();
         $this->assertNull($row);
+    }
+
+    /**
+     * Tests that if beforeSave event is stopped and callback doesn't return any
+     * value then save() returns false.
+     *
+     * @group save
+     * @return void
+     */
+    public function testBeforeSaveStopEventWithNoResult()
+    {
+        $table = $this->getTableLocator()->get('users');
+        $data = new Entity([
+            'username' => 'superuser',
+            'created' => new Time('2013-10-10 00:00'),
+            'updated' => new Time('2013-10-10 00:00'),
+        ]);
+        $listener = function (EventInterface $event, $entity) {
+            $event->stopPropagation();
+        };
+        $table->getEventManager()->on('Model.beforeSave', $listener);
+        $this->assertFalse($table->save($data));
+    }
+
+    /**
+     * @group save
+     * @return void
+     */
+    public function testBeforeSaveException()
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('beforeSave callback must return `false` or `EntityInterface` instance. Got `integer` instead.');
+
+        $table = $this->getTableLocator()->get('users');
+        $data = new Entity([
+            'username' => 'superuser',
+            'created' => new Time('2013-10-10 00:00'),
+            'updated' => new Time('2013-10-10 00:00'),
+        ]);
+        $listener = function (EventInterface $event, $entity) {
+            $event->stopPropagation();
+
+            return 1;
+        };
+        $table->getEventManager()->on('Model.beforeSave', $listener);
+        $table->save($data);
     }
 
     /**

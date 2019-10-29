@@ -1832,7 +1832,19 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $event = $this->dispatchEvent('Model.beforeSave', compact('entity', 'options'));
 
         if ($event->isStopped()) {
-            return $event->getResult();
+            $result = $event->getResult();
+            if ($result === null) {
+                return false;
+            }
+
+            if ($result !== false && !($result instanceof EntityInterface)) {
+                throw new RuntimeException(sprintf(
+                    'beforeSave callback must return `false` or `EntityInterface` instance. Got `%s` instead.',
+                    getTypeName($result)
+                ));
+            }
+
+            return $result;
         }
 
         $saved = $this->_associations->saveParents(
