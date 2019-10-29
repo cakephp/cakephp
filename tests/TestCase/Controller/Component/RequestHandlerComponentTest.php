@@ -32,7 +32,6 @@ use Cake\View\XmlView;
 use TestApp\Controller\Component\RequestHandlerExtComponent;
 use TestApp\Controller\RequestHandlerTestController;
 use TestApp\View\AppView;
-use Zend\Diactoros\Stream;
 
 /**
  * RequestHandlerComponentTest class
@@ -40,7 +39,7 @@ use Zend\Diactoros\Stream;
 class RequestHandlerComponentTest extends TestCase
 {
     /**
-     * @var RequestHandlerTestController
+     * @var \TestApp\Controller\RequestHandlerTestController
      */
     public $Controller;
 
@@ -50,7 +49,7 @@ class RequestHandlerComponentTest extends TestCase
     public $RequestHandler;
 
     /**
-     * @var ServerRequest
+     * @var \Cake\Http\ServerRequest
      */
     public $request;
 
@@ -553,229 +552,6 @@ class RequestHandlerComponentTest extends TestCase
     }
 
     /**
-     * testStartupCallback method
-     *
-     * @return void
-     * @triggers Controller.beforeRender $this->Controller
-     */
-    public function testStartupCallback(): void
-    {
-        $event = new Event('Controller.beforeRender', $this->Controller);
-        $_SERVER['REQUEST_METHOD'] = 'PUT';
-        $_SERVER['CONTENT_TYPE'] = 'application/xml';
-        $this->Controller->setRequest(new ServerRequest());
-        $this->RequestHandler->beforeRender($event);
-        $this->assertIsArray($this->Controller->getRequest()->getData());
-    }
-
-    /**
-     * testStartupCallback with charset.
-     *
-     * @return void
-     * @triggers Controller.startup $this->Controller
-     */
-    public function testStartupCallbackCharset(): void
-    {
-        $event = new Event('Controller.startup', $this->Controller);
-        $_SERVER['REQUEST_METHOD'] = 'PUT';
-        $_SERVER['CONTENT_TYPE'] = 'application/xml; charset=UTF-8';
-        $this->Controller->setRequest(new ServerRequest());
-        $this->RequestHandler->startup($event);
-        $this->assertIsArray($this->Controller->getRequest()->getData());
-    }
-
-    /**
-     * Test that processing data results in an array.
-     *
-     * @return void
-     * @triggers Controller.startup $this->Controller
-     */
-    public function testStartupProcessDataInvalid(): void
-    {
-        $this->Controller->setRequest(new ServerRequest([
-            'environment' => [
-                'REQUEST_METHOD' => 'POST',
-                'CONTENT_TYPE' => 'application/json',
-            ],
-        ]));
-
-        $event = new Event('Controller.startup', $this->Controller);
-        $this->RequestHandler->startup($event);
-        $this->assertEquals([], $this->Controller->getRequest()->getData());
-
-        $stream = new Stream('php://memory', 'w');
-        $stream->write('"invalid"');
-        $this->Controller->setRequest($this->Controller->getRequest()->withBody($stream));
-        $this->RequestHandler->startup($event);
-        $this->assertEquals(['invalid'], $this->Controller->getRequest()->getData());
-    }
-
-    /**
-     * Test that processing data results in an array.
-     *
-     * @return void
-     * @triggers Controller.startup $this->Controller
-     */
-    public function testStartupProcessData(): void
-    {
-        $this->Controller->setRequest(new ServerRequest([
-            'environment' => [
-                'REQUEST_METHOD' => 'POST',
-                'CONTENT_TYPE' => 'application/json',
-            ],
-        ]));
-
-        $stream = new Stream('php://memory', 'w');
-        $stream->write('{"valid":true}');
-        $this->Controller->setRequest($this->Controller->getRequest()->withBody($stream));
-        $event = new Event('Controller.startup', $this->Controller);
-
-        $this->RequestHandler->startup($event);
-        $this->assertEquals(['valid' => true], $this->Controller->getRequest()->getData());
-    }
-
-    /**
-     * Test that file handles are ignored as XML data.
-     *
-     * @return void
-     * @triggers Controller.startup $this->Controller
-     */
-    public function testStartupIgnoreFileAsXml(): void
-    {
-        $this->Controller->setRequest(new ServerRequest([
-            'input' => '/dev/random',
-            'environment' => [
-                'REQUEST_METHOD' => 'POST',
-                'CONTENT_TYPE' => 'application/xml',
-            ],
-        ]));
-
-        $event = new Event('Controller.startup', $this->Controller);
-        $this->RequestHandler->startup($event);
-        $this->assertEquals([], $this->Controller->getRequest()->getData());
-    }
-
-    /**
-     * Test that input xml is parsed
-     *
-     * @return void
-     */
-    public function testStartupConvertXmlDataWrapper(): void
-    {
-        $xml = <<<XML
-<?xml version="1.0" encoding="utf-8"?>
-<data>
-<article id="1" title="first"></article>
-</data>
-XML;
-        $this->Controller->setRequest((new ServerRequest(['input' => $xml]))
-            ->withEnv('REQUEST_METHOD', 'POST')
-            ->withEnv('CONTENT_TYPE', 'application/xml'));
-
-        $event = new Event('Controller.startup', $this->Controller);
-        $this->RequestHandler->startup($event);
-        $expected = [
-            'data' => [
-                'article' => [
-                    '@id' => 1,
-                    '@title' => 'first',
-                ],
-            ],
-        ];
-        $this->assertEquals($expected, $this->Controller->getRequest()->getData());
-    }
-
-    /**
-     * Test that input xml is parsed
-     *
-     * @return void
-     */
-    public function testStartupConvertXmlElements(): void
-    {
-        $xml = <<<XML
-<?xml version="1.0" encoding="utf-8"?>
-<article>
-    <id>1</id>
-    <title><![CDATA[first]]></title>
-</article>
-XML;
-        $this->Controller->setRequest((new ServerRequest(['input' => $xml]))
-            ->withEnv('REQUEST_METHOD', 'POST')
-            ->withEnv('CONTENT_TYPE', 'application/xml'));
-
-        $event = new Event('Controller.startup', $this->Controller);
-        $this->RequestHandler->startup($event);
-        $expected = [
-            'article' => [
-                'id' => 1,
-                'title' => 'first',
-            ],
-        ];
-        $this->assertEquals($expected, $this->Controller->getRequest()->getData());
-    }
-
-    /**
-     * Test that input xml is parsed
-     *
-     * @return void
-     */
-    public function testStartupConvertXmlIgnoreEntities(): void
-    {
-        $xml = <<<XML
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE item [
-  <!ENTITY item "item">
-  <!ENTITY item1 "&item;&item;&item;&item;&item;&item;">
-  <!ENTITY item2 "&item1;&item1;&item1;&item1;&item1;&item1;&item1;&item1;&item1;">
-  <!ENTITY item3 "&item2;&item2;&item2;&item2;&item2;&item2;&item2;&item2;&item2;">
-  <!ENTITY item4 "&item3;&item3;&item3;&item3;&item3;&item3;&item3;&item3;&item3;">
-  <!ENTITY item5 "&item4;&item4;&item4;&item4;&item4;&item4;&item4;&item4;&item4;">
-  <!ENTITY item6 "&item5;&item5;&item5;&item5;&item5;&item5;&item5;&item5;&item5;">
-  <!ENTITY item7 "&item6;&item6;&item6;&item6;&item6;&item6;&item6;&item6;&item6;">
-  <!ENTITY item8 "&item7;&item7;&item7;&item7;&item7;&item7;&item7;&item7;&item7;">
-]>
-<item>
-  <description>&item8;</description>
-</item>
-XML;
-        $this->Controller->setRequest((new ServerRequest(['input' => $xml]))
-            ->withEnv('REQUEST_METHOD', 'POST')
-            ->withEnv('CONTENT_TYPE', 'application/xml'));
-
-        $event = new Event('Controller.startup', $this->Controller);
-        $this->RequestHandler->startup($event);
-        $this->assertEquals([], $this->Controller->getRequest()->getData());
-    }
-
-    /**
-     * Test that data isn't processed when parsed data already exists.
-     *
-     * @return void
-     * @triggers Controller.startup $this->Controller
-     */
-    public function testStartupSkipDataProcess(): void
-    {
-        $this->Controller->setRequest(new ServerRequest([
-            'environment' => [
-                'REQUEST_METHOD' => 'POST',
-                'CONTENT_TYPE' => 'application/json',
-            ],
-        ]));
-
-        $event = new Event('Controller.startup', $this->Controller);
-        $this->RequestHandler->startup($event);
-        $this->assertEquals([], $this->Controller->getRequest()->getData());
-
-        $stream = new Stream('php://memory', 'w');
-        $stream->write('{"new": "data"}');
-        $this->Controller->setRequest($this->Controller->getRequest()
-            ->withBody($stream)
-            ->withParsedBody(['old' => 'news']));
-        $this->RequestHandler->startup($event);
-        $this->assertEquals(['old' => 'news'], $this->Controller->getRequest()->getData());
-    }
-
-    /**
      * testRenderAs method
      *
      * @return void
@@ -1108,10 +884,6 @@ XML;
             'ajax' => 'Ajax',
         ];
         $this->assertEquals($expected, $viewClass);
-
-        $inputs = $requestHandler->getConfig('inputTypeMap');
-        $this->assertArrayHasKey('json', $inputs);
-        $this->assertArrayHasKey('xml', $inputs);
     }
 
     /**
