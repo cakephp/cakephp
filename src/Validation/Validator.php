@@ -26,7 +26,7 @@ use IteratorAggregate;
  *
  * Implements ArrayAccess to easily modify rules in the set
  *
- * @link https://book.cakephp.org/3.0/en/core-libraries/validation.html
+ * @link https://book.cakephp.org/3/en/core-libraries/validation.html
  */
 class Validator implements ArrayAccess, IteratorAggregate, Countable
 {

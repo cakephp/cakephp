@@ -205,7 +205,7 @@
             <span class="header-type"><?= get_class($error) ?></span>
         </h1>
         <div class="header-help">
-            <a target="_blank" href="https://book.cakephp.org/3.0/">Documentation</a>
+            <a target="_blank" href="https://book.cakephp.org/3/">Documentation</a>
             <a target="_blank" href="https://api.cakephp.org/">API</a>
         </div>
     </header>
