@@ -61,7 +61,7 @@ use Cake\Utility\Security;
  * `User.password` would store the password hash for use with other methods like
  * Basic or Form.
  *
- * @see https://book.cakephp.org/3.0/en/controllers/components/authentication.html
+ * @see https://book.cakephp.org/3/en/controllers/components/authentication.html
  */
 class DigestAuthenticate extends BasicAuthenticate
 {

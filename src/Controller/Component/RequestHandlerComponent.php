@@ -36,7 +36,7 @@ use RuntimeException;
  * and the like. These units have no use for AJAX requests, and this Component can tell how Cake
  * should respond to the different needs of a handheld computer and a desktop machine.
  *
- * @link https://book.cakephp.org/3.0/en/controllers/components/request-handling.html
+ * @link https://book.cakephp.org/3/en/controllers/components/request-handling.html
  */
 class RequestHandlerComponent extends Component
 {

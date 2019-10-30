@@ -53,7 +53,7 @@ use Cake\Log\LogTrait;
  * While the controller is not an explicit argument for the callback methods it
  * is the subject of each event and can be fetched using Event::getSubject().
  *
- * @link https://book.cakephp.org/3.0/en/controllers/components.html
+ * @link https://book.cakephp.org/3/en/controllers/components.html
  * @see \Cake\Controller\Controller::$components
  */
 class Component implements EventListenerInterface

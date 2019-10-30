@@ -24,7 +24,7 @@ use Exception;
  *
  * Manipulation of time data.
  *
- * @link https://book.cakephp.org/3.0/en/views/helpers/time.html
+ * @link https://book.cakephp.org/3/en/views/helpers/time.html
  * @see \Cake\I18n\Time
  */
 class TimeHelper extends Helper

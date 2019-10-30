@@ -431,8 +431,8 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * globally configured locale.
      * @return $this
      * @see \Cake\ORM\Behavior\TranslateBehavior::getLocale()
-     * @link https://book.cakephp.org/3.0/en/orm/behaviors/translate.html#retrieving-one-language-without-using-i18n-locale
-     * @link https://book.cakephp.org/3.0/en/orm/behaviors/translate.html#saving-in-another-language
+     * @link https://book.cakephp.org/3/en/orm/behaviors/translate.html#retrieving-one-language-without-using-i18n-locale
+     * @link https://book.cakephp.org/3/en/orm/behaviors/translate.html#saving-in-another-language
      */
     public function setLocale($locale)
     {
