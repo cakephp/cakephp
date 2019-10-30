@@ -324,6 +324,25 @@ class RequestHandlerComponentTest extends TestCase
     }
 
     /**
+     * Test that startup() throws deprecation warning if input data is available and request data is not populated.
+     *
+     * @return void
+     */
+    public function testInitializeInputDataWarning()
+    {
+        $request = new ServerRequest([
+            'input' => json_encode(['foo' => 'bar']),
+        ]);
+        $this->Controller->setRequest($request->withMethod('POST'));
+
+        $this->deprecated(function () {
+            $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
+        });
+
+        $this->assertEmpty($request->getData());
+    }
+
+    /**
      * testViewClassMap
      *
      * @return void

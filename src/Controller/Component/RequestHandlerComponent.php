@@ -172,6 +172,17 @@ class RequestHandlerComponent extends Component
         if (!$this->ext && $isAjax) {
             $this->ext = 'ajax';
         }
+
+        if (
+            !$request->is(['get', 'head', 'options'])
+            && $request->getParsedBody() === []
+            && !empty($request->input())
+        ) {
+            deprecationWarning(
+                'Request\'s input data parsing feature has been removed from RequestHandler. '
+                . 'Use the BodyParserMiddleware in your Application class instead.'
+            );
+        }
     }
 
     /**
