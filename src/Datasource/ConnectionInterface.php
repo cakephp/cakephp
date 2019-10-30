@@ -25,6 +25,7 @@ namespace Cake\Datasource;
  * @method \Cake\Database\Query newQuery()
  * @method \Cake\Database\StatementInterface prepare($sql)
  * @method \Cake\Database\StatementInterface execute($query, $params = [], array $types = [])
+ * @method \Cake\Database\StatementInterface query(string $sql)
  * @method $this enableQueryLogging($value)
  * @method $this disableQueryLogging()
  * @method $this disableSavePoints()
