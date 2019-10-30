@@ -21,7 +21,7 @@ use NumberFormatter;
  *
  * Methods to make numbers more readable.
  *
- * @link https://book.cakephp.org/3.0/en/core-libraries/number.html
+ * @link https://book.cakephp.org/3/en/core-libraries/number.html
  */
 class Number
 {
@@ -64,7 +64,7 @@ class Number
      * @param int $precision The precision of the returned number.
      * @param array $options Additional options
      * @return string Formatted float.
-     * @link https://book.cakephp.org/3.0/en/core-libraries/number.html#formatting-floating-point-numbers
+     * @link https://book.cakephp.org/3/en/core-libraries/number.html#formatting-floating-point-numbers
      */
     public static function precision($value, $precision = 3, array $options = [])
     {
@@ -78,7 +78,7 @@ class Number
      *
      * @param int $size Size in bytes
      * @return string Human readable size
-     * @link https://book.cakephp.org/3.0/en/core-libraries/number.html#interacting-with-human-readable-values
+     * @link https://book.cakephp.org/3/en/core-libraries/number.html#interacting-with-human-readable-values
      */
     public static function toReadableSize($size)
     {
@@ -108,7 +108,7 @@ class Number
      * @param int $precision The precision of the returned number
      * @param array $options Options
      * @return string Percentage string
-     * @link https://book.cakephp.org/3.0/en/core-libraries/number.html#formatting-percentages
+     * @link https://book.cakephp.org/3/en/core-libraries/number.html#formatting-percentages
      */
     public static function toPercentage($value, $precision = 2, array $options = [])
     {

@@ -20,7 +20,7 @@ namespace Cake\Utility;
  * Inflector pluralizes and singularizes English nouns.
  * Used by CakePHP's naming conventions throughout the framework.
  *
- * @link https://book.cakephp.org/3.0/en/core-libraries/inflector.html
+ * @link https://book.cakephp.org/3/en/core-libraries/inflector.html
  */
 class Inflector
 {
@@ -498,7 +498,7 @@ class Inflector
      *
      * @param string $word Word in singular
      * @return string Word in plural
-     * @link https://book.cakephp.org/3.0/en/core-libraries/inflector.html#creating-plural-singular-forms
+     * @link https://book.cakephp.org/3/en/core-libraries/inflector.html#creating-plural-singular-forms
      */
     public static function pluralize($word)
     {
@@ -541,7 +541,7 @@ class Inflector
      *
      * @param string $word Word in plural
      * @return string Word in singular
-     * @link https://book.cakephp.org/3.0/en/core-libraries/inflector.html#creating-plural-singular-forms
+     * @link https://book.cakephp.org/3/en/core-libraries/inflector.html#creating-plural-singular-forms
      */
     public static function singularize($word)
     {
@@ -588,7 +588,7 @@ class Inflector
      * @param string $string String to camelize
      * @param string $delimiter the delimiter in the input string
      * @return string CamelizedStringLikeThis.
-     * @link https://book.cakephp.org/3.0/en/core-libraries/inflector.html#creating-camelcase-and-under-scored-forms
+     * @link https://book.cakephp.org/3/en/core-libraries/inflector.html#creating-camelcase-and-under-scored-forms
      */
     public static function camelize($string, $delimiter = '_')
     {
@@ -611,7 +611,7 @@ class Inflector
      *
      * @param string $string CamelCasedString to be "underscorized"
      * @return string underscore_version of the input string
-     * @link https://book.cakephp.org/3.0/en/core-libraries/inflector.html#creating-camelcase-and-under-scored-forms
+     * @link https://book.cakephp.org/3/en/core-libraries/inflector.html#creating-camelcase-and-under-scored-forms
      */
     public static function underscore($string)
     {
@@ -638,7 +638,7 @@ class Inflector
      * @param string $string String to be humanized
      * @param string $delimiter the character to replace with a space
      * @return string Human-readable string
-     * @link https://book.cakephp.org/3.0/en/core-libraries/inflector.html#creating-human-readable-forms
+     * @link https://book.cakephp.org/3/en/core-libraries/inflector.html#creating-human-readable-forms
      */
     public static function humanize($string, $delimiter = '_')
     {
@@ -684,7 +684,7 @@ class Inflector
      *
      * @param string $className Name of class to get database table name for
      * @return string Name of the database table for given class
-     * @link https://book.cakephp.org/3.0/en/core-libraries/inflector.html#creating-table-and-class-name-forms
+     * @link https://book.cakephp.org/3/en/core-libraries/inflector.html#creating-table-and-class-name-forms
      */
     public static function tableize($className)
     {
@@ -703,7 +703,7 @@ class Inflector
      *
      * @param string $tableName Name of database table to get class name for
      * @return string Class name
-     * @link https://book.cakephp.org/3.0/en/core-libraries/inflector.html#creating-table-and-class-name-forms
+     * @link https://book.cakephp.org/3/en/core-libraries/inflector.html#creating-table-and-class-name-forms
      */
     public static function classify($tableName)
     {
@@ -722,7 +722,7 @@ class Inflector
      *
      * @param string $string String to convert.
      * @return string in variable form
-     * @link https://book.cakephp.org/3.0/en/core-libraries/inflector.html#creating-variable-names
+     * @link https://book.cakephp.org/3/en/core-libraries/inflector.html#creating-variable-names
      */
     public static function variable($string)
     {
@@ -746,7 +746,7 @@ class Inflector
      * @param string $string the string you want to slug
      * @param string $replacement will replace keys in map
      * @return string
-     * @link https://book.cakephp.org/3.0/en/core-libraries/inflector.html#creating-url-safe-strings
+     * @link https://book.cakephp.org/3/en/core-libraries/inflector.html#creating-url-safe-strings
      */
     public static function slug($string, $replacement = '-')
     {

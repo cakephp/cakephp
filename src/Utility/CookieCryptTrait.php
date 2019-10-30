@@ -21,7 +21,7 @@ use RuntimeException;
  *
  * Provides the encrypt/decrypt logic for the CookieComponent.
  *
- * @link https://book.cakephp.org/3.0/en/controllers/components/cookie.html
+ * @link https://book.cakephp.org/3/en/controllers/components/cookie.html
  */
 trait CookieCryptTrait
 {
