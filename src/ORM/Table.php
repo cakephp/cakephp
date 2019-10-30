@@ -1839,7 +1839,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
             if ($result !== false && !($result instanceof EntityInterface)) {
                 throw new RuntimeException(sprintf(
-                    'beforeSave callback must return `false` or `EntityInterface` instance. Got `%s` instead.',
+                    'The beforeSave callback must return `false` or `EntityInterface` instance. Got `%s` instead.',
                     getTypeName($result)
                 ));
             }

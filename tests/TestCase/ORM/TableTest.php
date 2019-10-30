@@ -2082,7 +2082,7 @@ class TableTest extends TestCase
     public function testBeforeSaveException()
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('beforeSave callback must return `false` or `EntityInterface` instance. Got `integer` instead.');
+        $this->expectExceptionMessage('The beforeSave callback must return `false` or `EntityInterface` instance. Got `integer` instead.');
 
         $table = $this->getTableLocator()->get('users');
         $data = new Entity([
