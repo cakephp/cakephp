@@ -25,6 +25,7 @@ use Exception;
 use InvalidArgumentException;
 use ReflectionObject;
 use ReflectionProperty;
+use Throwable;
 
 /**
  * Provide custom logging and error handling.
@@ -288,14 +289,14 @@ class Debugger
      *   will be displayed.
      * - `start` - The stack frame to start generating a trace from. Defaults to 0
      *
-     * @param array|\Exception $backtrace Trace as array or an exception object.
+     * @param array|\Throwable $backtrace Trace as array or an exception object.
      * @param array $options Format for outputting stack trace.
      * @return string|array Formatted stack trace.
      * @link https://book.cakephp.org/3.0/en/development/debugging.html#generating-stack-traces
      */
     public static function formatTrace($backtrace, array $options = [])
     {
-        if ($backtrace instanceof Exception) {
+        if ($backtrace instanceof Throwable) {
             $backtrace = $backtrace->getTrace();
         }
         $self = Debugger::getInstance();
