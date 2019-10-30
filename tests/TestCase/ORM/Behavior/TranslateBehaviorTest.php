@@ -1531,6 +1531,54 @@ class TranslateBehaviorTest extends TestCase
     }
 
     /**
+     * Test that when `defaultLocale` feature is disabled translations table
+     * is always used.
+     *
+     * @return void
+     */
+    public function testSaveDefaultLocaleFalse()
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $table->addBehavior('Translate', [
+            'defaultLocale' => '',
+            'fields' => ['title', 'body'],
+        ]);
+
+        $data = [
+            'title' => 'New title',
+            'body' => 'New body',
+            'published' => 'Y',
+        ];
+        $article = $table->newEntity($data);
+        $result = $table->save($article);
+        $this->assertNotEmpty($result);
+
+        $record = $table->get($article->id);
+        $this->assertSame($data['title'], $record->title);
+        $this->assertSame($data['body'], $record->body);
+
+        $table->removeBehavior('Translate');
+        $record = $table->get($article->id);
+        $this->assertEmpty($record->title);
+        $this->assertEmpty($record->body);
+
+        $article->title = 'updated title';
+        $table->addBehavior('Translate', [
+            'defaultLocale' => '',
+            'fields' => ['title', 'body'],
+        ]);
+        $result = $table->save($article);
+        $this->assertNotEmpty($result);
+
+        $record = $table->get($article->id);
+        $this->assertSame('updated title', $record->title);
+
+        $table->removeBehavior('Translate');
+        $record = $table->get($article->id);
+        $this->assertEmpty($record->title);
+    }
+
+    /**
      * Tests that translations are added to the whitelist of associations to be
      * saved
      *

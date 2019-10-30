@@ -55,7 +55,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
             'translationField' => 'translationField',
         ],
         'fields' => [],
-        'defaultLocale' => '',
+        'defaultLocale' => null,
         'referenceName' => '',
         'allowEmptyTranslations' => true,
         'onlyTranslated' => false,
@@ -80,6 +80,25 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
 
     /**
      * Constructor
+     *
+     * ### Options
+     * - `fields`: List of fields which need to be translated. Providing this fields
+     *   list is mandatory when using `EavStrategy`. If the fields list is empty when
+     *   using `ShadowTableStrategy` then the list will be auto generated based on
+     *   shadow table schema.
+     * - `defaultLocale`: The locale which is treated as default by the behavior.
+     *   Fields values for defaut locale will be stored in the primary table itself
+     *   and the rest in translation table. If not explicitly set the value of
+     *   `I18n::getDefaultLocale()` will be used to get default locale.
+     *   If you do not want any default locale and want translated fields
+     *   for all locales to be stored in translation table then set this config
+     *   to empty string `''`.
+     * - `allowEmptyTranslations`: By default if a record has been translated and
+     *   stored as an empty string the translate behavior will take and use this
+     *   value to overwrite the original field value. If you don't want this behavior
+     *   then set this option to `false`.
+     * - `validator`: The validator that should be used when translation records
+     *   are created/modified. Default `null`.
      *
      * @param \Cake\ORM\Table $table The table this behavior is attached to.
      * @param array $config The config for this behavior.

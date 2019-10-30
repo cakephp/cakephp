@@ -278,18 +278,22 @@ class EavStrategy implements TranslateStrategyInterface
         }
 
         $model = $this->_config['referenceName'];
-        /** @psalm-suppress UndefinedClass */
-        $preexistent = $this->translationTable->find()
-            ->select(['id', 'field'])
-            ->where([
-                'field IN' => $fields,
-                'locale' => $locale,
-                'foreign_key' => $key,
-                'model' => $model,
-            ])
-            ->disableBufferedResults()
-            ->all()
-            ->indexBy('field');
+
+        $preexistent = [];
+        if ($key) {
+            /** @psalm-suppress UndefinedClass */
+            $preexistent = $this->translationTable->find()
+                ->select(['id', 'field'])
+                ->where([
+                    'field IN' => $fields,
+                    'locale' => $locale,
+                    'foreign_key' => $key,
+                    'model' => $model,
+                ])
+                ->disableBufferedResults()
+                ->all()
+                ->indexBy('field');
+        }
 
         $modified = [];
         foreach ($preexistent as $field => $translation) {
