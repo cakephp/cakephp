@@ -19,8 +19,8 @@ endif;
 <?php if (file_exists(WWW_ROOT . 'css' . DS . 'cake.generic.css')): ?>
 <p id="url-rewriting-warning" style="background-color:#e32; color:#fff;">
     URL rewriting is not properly configured on your server.
-    1) <a target="_blank" href="https://book.cakephp.org/3/en/installation/url-rewriting.html" style="color:#fff;">Help me configure it</a>
-    2) <a target="_blank" href="https://book.cakephp.org/3/en/development/configuration.html#core-configuration-baseurl" style="color:#fff;">I don't / can't use URL rewriting</a>
+    1) <a target="_blank" href="https://book.cakephp.org/4/en/installation/url-rewriting.html" style="color:#fff;">Help me configure it</a>
+    2) <a target="_blank" href="https://book.cakephp.org/4/en/development/configuration.html#core-configuration-baseurl" style="color:#fff;">I don't / can't use URL rewriting</a>
 </p>
 <?php endif; ?>
 
@@ -104,7 +104,7 @@ You can also add some CSS styles for your pages at: APP/webroot/css.;
     <?php
         echo $this->Html->link(
             '<strong>New</strong> CakePHP 3.0 Docs',
-            'https://book.cakephp.org/3/en/',
+            'https://book.cakephp.org/4/en/',
             ['target' => '_blank', 'escape' => false]
         );
     ?>
@@ -113,7 +113,7 @@ You can also add some CSS styles for your pages at: APP/webroot/css.;
     <?php
         echo $this->Html->link(
             'The 15 min Blog Tutorial',
-            'https://book.cakephp.org/3/en/getting-started.html#blog-tutorial',
+            'https://book.cakephp.org/4/en/getting-started.html#blog-tutorial',
             ['target' => '_blank', 'escape' => false]
         );
     ?>

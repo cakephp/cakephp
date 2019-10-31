@@ -34,4 +34,4 @@ Configure::dump('my_config', 'default');
 
 ## Documentation
 
-Please make sure you check the [official documentation](https://book.cakephp.org/3/en/development/configuration.html)
+Please make sure you check the [official documentation](https://book.cakephp.org/4/en/development/configuration.html)

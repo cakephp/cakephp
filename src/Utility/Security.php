@@ -58,7 +58,7 @@ class Security
      *   Security::getSalt() to $string.
      * @return string Hash
      * @throws \RuntimeException
-     * @link https://book.cakephp.org/3/en/core-libraries/security.html#hashing-data
+     * @link https://book.cakephp.org/4/en/core-libraries/security.html#hashing-data
      */
     public static function hash(string $string, ?string $algorithm = null, $salt = false): string
     {

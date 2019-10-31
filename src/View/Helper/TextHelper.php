@@ -29,7 +29,7 @@ use Cake\View\View;
  * Text manipulations: Highlight, excerpt, truncate, strip of links, convert email addresses to mailto: links...
  *
  * @property \Cake\View\Helper\HtmlHelper $Html
- * @link https://book.cakephp.org/3/en/views/helpers/text.html
+ * @link https://book.cakephp.org/4/en/views/helpers/text.html
  * @see \Cake\Utility\Text
  */
 class TextHelper extends Helper
@@ -113,7 +113,7 @@ class TextHelper extends Helper
      * @param string $text Text
      * @param array $options Array of HTML options, and options listed above.
      * @return string The text with links
-     * @link https://book.cakephp.org/3/en/views/helpers/text.html#linking-urls
+     * @link https://book.cakephp.org/4/en/views/helpers/text.html#linking-urls
      */
     public function autoLinkUrls(string $text, array $options = []): string
     {
@@ -235,7 +235,7 @@ class TextHelper extends Helper
      * @param string $text Text
      * @param array $options Array of HTML options, and options listed above.
      * @return string The text with links
-     * @link https://book.cakephp.org/3/en/views/helpers/text.html#linking-email-addresses
+     * @link https://book.cakephp.org/4/en/views/helpers/text.html#linking-email-addresses
      */
     public function autoLinkEmails(string $text, array $options = []): string
     {
@@ -265,7 +265,7 @@ class TextHelper extends Helper
      * @param string $text Text
      * @param array $options Array of HTML options, and options listed above.
      * @return string The text with links
-     * @link https://book.cakephp.org/3/en/views/helpers/text.html#linking-both-urls-and-email-addresses
+     * @link https://book.cakephp.org/4/en/views/helpers/text.html#linking-both-urls-and-email-addresses
      */
     public function autoLink(string $text, array $options = []): string
     {
@@ -283,7 +283,7 @@ class TextHelper extends Helper
      * @param array $options An array of HTML attributes and options.
      * @return string The highlighted text
      * @see \Cake\Utility\Text::highlight()
-     * @link https://book.cakephp.org/3/en/views/helpers/text.html#highlighting-substrings
+     * @link https://book.cakephp.org/4/en/views/helpers/text.html#highlighting-substrings
      */
     public function highlight(string $text, string $phrase, array $options = []): string
     {
@@ -297,7 +297,7 @@ class TextHelper extends Helper
      *
      * @param string $text Text
      * @return string The text with proper <p> and <br /> tags
-     * @link https://book.cakephp.org/3/en/views/helpers/text.html#converting-text-into-paragraphs
+     * @link https://book.cakephp.org/4/en/views/helpers/text.html#converting-text-into-paragraphs
      */
     public function autoParagraph(string $text): string
     {
@@ -332,7 +332,7 @@ class TextHelper extends Helper
      * @param array $options An array of HTML attributes and options.
      * @return string Trimmed string.
      * @see \Cake\Utility\Text::truncate()
-     * @link https://book.cakephp.org/3/en/views/helpers/text.html#truncating-text
+     * @link https://book.cakephp.org/4/en/views/helpers/text.html#truncating-text
      */
     public function truncate(string $text, int $length = 100, array $options = []): string
     {
@@ -355,7 +355,7 @@ class TextHelper extends Helper
      * @param array $options An array of HTML attributes and options.
      * @return string Trimmed string.
      * @see \Cake\Utility\Text::tail()
-     * @link https://book.cakephp.org/3/en/views/helpers/text.html#truncating-the-tail-of-a-string
+     * @link https://book.cakephp.org/4/en/views/helpers/text.html#truncating-the-tail-of-a-string
      */
     public function tail(string $text, int $length = 100, array $options = []): string
     {
@@ -372,7 +372,7 @@ class TextHelper extends Helper
      * @param string $ending Ending that will be appended
      * @return string Modified string
      * @see \Cake\Utility\Text::excerpt()
-     * @link https://book.cakephp.org/3/en/views/helpers/text.html#extracting-an-excerpt
+     * @link https://book.cakephp.org/4/en/views/helpers/text.html#extracting-an-excerpt
      */
     public function excerpt(string $text, string $phrase, int $radius = 100, string $ending = '...'): string
     {
@@ -387,7 +387,7 @@ class TextHelper extends Helper
      * @param string $separator The separator used to join all the other items together. Defaults to ', '.
      * @return string The glued together string.
      * @see \Cake\Utility\Text::toList()
-     * @link https://book.cakephp.org/3/en/views/helpers/text.html#converting-an-array-to-sentence-form
+     * @link https://book.cakephp.org/4/en/views/helpers/text.html#converting-an-array-to-sentence-form
      */
     public function toList(array $list, ?string $and = null, string $separator = ', '): string
     {
