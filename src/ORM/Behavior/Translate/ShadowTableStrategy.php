@@ -358,14 +358,18 @@ class ShadowTableStrategy implements TranslateStrategyInterface
             return;
         }
 
-        $where = ['id' => $id, 'locale' => $locale];
+        $where = ['locale' => $locale];
+        $translation = null;
+        if ($id) {
+            $where['id'] = $id;
 
-        /** @var \Cake\Datasource\EntityInterface|null $translation */
-        $translation = $this->translationTable->find()
-            ->select(array_merge(['id', 'locale'], $fields))
-            ->where($where)
-            ->disableBufferedResults()
-            ->first();
+            /** @var \Cake\Datasource\EntityInterface|null $translation */
+            $translation = $this->translationTable->find()
+                ->select(array_merge(['id', 'locale'], $fields))
+                ->where($where)
+                ->disableBufferedResults()
+                ->first();
+        }
 
         if ($translation) {
             $translation->set($values);

@@ -80,11 +80,11 @@ class BodyParserMiddlewareTest extends TestCase
         $this->assertEquals([], $parser->getParsers(), 'No Xml types set.');
 
         $parser = new BodyParserMiddleware(['json' => false, 'xml' => true]);
-        $expected = [
-            'application/xml' => [$parser, 'decodeXml'],
-            'text/xml' => [$parser, 'decodeXml'],
-        ];
-        $this->assertEquals($expected, $parser->getParsers(), 'Xml types are incorrect.');
+        $this->assertEquals(
+            ['application/xml', 'text/xml'],
+            array_keys($parser->getParsers()),
+            'Default XML parsers are not set.'
+        );
     }
 
     /**
@@ -98,11 +98,11 @@ class BodyParserMiddlewareTest extends TestCase
         $this->assertEquals([], $parser->getParsers(), 'No JSON types set.');
 
         $parser = new BodyParserMiddleware([]);
-        $expected = [
-            'application/json' => [$parser, 'decodeJson'],
-            'text/json' => [$parser, 'decodeJson'],
-        ];
-        $this->assertEquals($expected, $parser->getParsers(), 'JSON types are incorrect.');
+        $this->assertEquals(
+            ['application/json', 'text/json'],
+            array_keys($parser->getParsers()),
+            'Default JSON parsers are not set.'
+        );
     }
 
     /**
@@ -125,7 +125,10 @@ class BodyParserMiddlewareTest extends TestCase
     public function testAddParserReturn()
     {
         $parser = new BodyParserMiddleware(['json' => false]);
-        $this->assertSame($parser, $parser->addParser(['application/json'], 'json_decode'));
+        $f1 = function (string $body) {
+            return json_decode($body, true);
+        };
+        $this->assertSame($parser, $parser->addParser(['application/json'], $f1));
     }
 
     /**
@@ -136,10 +139,17 @@ class BodyParserMiddlewareTest extends TestCase
     public function testAddParserOverwrite()
     {
         $parser = new BodyParserMiddleware(['json' => false]);
-        $parser->addParser(['application/json'], 'json_decode');
-        $parser->addParser(['application/json'], 'strpos');
 
-        $this->assertEquals(['application/json' => 'strpos'], $parser->getParsers());
+        $f1 = function (string $body) {
+            return json_decode($body, true);
+        };
+        $f2 = function (string $body) {
+            return ['overridden'];
+        };
+        $parser->addParser(['application/json'], $f1);
+        $parser->addParser(['application/json'], $f2);
+
+        $this->assertSame(['application/json' => $f2], $parser->getParsers());
     }
 
     /**

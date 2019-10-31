@@ -19,6 +19,7 @@ namespace Cake\Http\Middleware;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Utility\Exception\XmlException;
 use Cake\Utility\Xml;
+use Closure;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -37,7 +38,7 @@ class BodyParserMiddleware implements MiddlewareInterface
     /**
      * Registered Parsers
      *
-     * @var callable[]
+     * @var \Closure[]
      */
     protected $parsers = [];
 
@@ -66,13 +67,13 @@ class BodyParserMiddleware implements MiddlewareInterface
         if ($options['json']) {
             $this->addParser(
                 ['application/json', 'text/json'],
-                [$this, 'decodeJson']
+                Closure::fromCallable([$this, 'decodeJson'])
             );
         }
         if ($options['xml']) {
             $this->addParser(
                 ['application/xml', 'text/xml'],
-                [$this, 'decodeXml']
+                Closure::fromCallable([$this, 'decodeXml'])
             );
         }
         if ($options['methods']) {
@@ -119,11 +120,11 @@ class BodyParserMiddleware implements MiddlewareInterface
      * ```
      *
      * @param string[] $types An array of content-type header values to match. eg. application/json
-     * @param callable $parser The parser function. Must return an array of data to be inserted
+     * @param \Closure $parser The parser function. Must return an array of data to be inserted
      *   into the request.
      * @return $this
      */
-    public function addParser(array $types, callable $parser)
+    public function addParser(array $types, Closure $parser)
     {
         foreach ($types as $type) {
             $type = strtolower($type);
@@ -136,7 +137,7 @@ class BodyParserMiddleware implements MiddlewareInterface
     /**
      * Get the current parsers
      *
-     * @return callable[]
+     * @return \Closure[]
      */
     public function getParsers(): array
     {

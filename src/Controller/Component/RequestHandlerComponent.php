@@ -26,10 +26,7 @@ use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
-use Cake\Utility\Exception\XmlException;
 use Cake\Utility\Inflector;
-use Cake\Utility\Xml;
-use RuntimeException;
 
 /**
  * Request object handling for alternative HTTP requests.
@@ -67,15 +64,12 @@ class RequestHandlerComponent extends Component
      * - `checkHttpCache` - Whether to check for HTTP cache. Default `true`.
      * - `viewClassMap` - Mapping between type and view classes. If undefined
      *   json, xml, and ajax will be mapped. Defining any types will omit the defaults.
-     * - `inputTypeMap` - A mapping between types and deserializers for request bodies.
-     *   If undefined json & xml will be mapped. Defining any types will omit the defaults.
      *
      * @var array
      */
     protected $_defaultConfig = [
         'checkHttpCache' => true,
         'viewClassMap' => [],
-        'inputTypeMap' => [],
     ];
 
     /**
@@ -91,10 +85,6 @@ class RequestHandlerComponent extends Component
                 'json' => 'Json',
                 'xml' => 'Xml',
                 'ajax' => 'Ajax',
-            ],
-            'inputTypeMap' => [
-                'json' => ['json_decode', true],
-                'xml' => [[$this, 'convertXml']],
             ],
         ];
         parent::__construct($registry, $config);
@@ -183,44 +173,16 @@ class RequestHandlerComponent extends Component
             $this->ext = 'ajax';
         }
 
-        if ($request->is(['get', 'head', 'options'])) {
-            return;
+        if (
+            !$request->is(['get', 'head', 'options'])
+            && $request->getParsedBody() === []
+            && !empty($request->input())
+        ) {
+            deprecationWarning(
+                'Request\'s input data parsing feature has been removed from RequestHandler. '
+                . 'Use the BodyParserMiddleware in your Application class instead.'
+            );
         }
-
-        if ($request->getParsedBody() !== []) {
-            return;
-        }
-
-        foreach ($this->getConfig('inputTypeMap') as $type => $handler) {
-            if (!is_callable($handler[0])) {
-                throw new RuntimeException(sprintf("Invalid callable for '%s' type.", $type));
-            }
-            if ($this->requestedWith($type)) {
-                $input = $request->input(...$handler);
-                $controller->setRequest($request->withParsedBody((array)$input));
-            }
-        }
-    }
-
-    /**
-     * Helper method to parse xml input data, due to lack of anonymous functions
-     * this lives here.
-     *
-     * @param string $xml XML string.
-     * @return array Xml array data
-     */
-    public function convertXml(string $xml): array
-    {
-        try {
-            $xml = Xml::build($xml, ['return' => 'domdocument', 'readFile' => false]);
-            // We might not get child nodes if there are nested inline entities.
-            if ((int)$xml->childNodes->length > 0) {
-                return Xml::toArray($xml);
-            }
-        } catch (XmlException $e) {
-        }
-
-        return [];
     }
 
     /**
