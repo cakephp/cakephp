@@ -492,11 +492,11 @@ class Controller implements EventListenerInterface, EventDispatcherInterface, Co
      * Dispatches the controller action. Checks that the action
      * exists and isn't private.
      *
-     * @return \Psr\Http\Message\ResponseInterface The resulting response.
+     * @return void
      * @throws \Cake\Controller\Exception\MissingActionException If controller action is not found.
      * @throws \UnexpectedValueException If return value of action method is not null or ResponseInterface instance.
      */
-    public function invokeAction(): ?ResponseInterface
+    public function invokeAction(): void
     {
         $request = $this->request;
 
@@ -526,8 +526,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface, Co
         if ($result) {
             $this->response = $result;
         }
-
-        return $this->response;
     }
 
     /**

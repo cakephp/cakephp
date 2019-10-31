@@ -731,9 +731,8 @@ class ControllerTest extends TestCase
         $response = new Response();
 
         $Controller = new TestController($url, $response);
-        $result = $Controller->invokeAction();
+        $Controller->invokeAction();
 
-        $this->assertSame('I am from the controller.', (string)$result);
         $this->assertSame('I am from the controller.', (string)$Controller->getResponse());
     }
 

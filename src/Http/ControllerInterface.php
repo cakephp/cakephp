@@ -48,14 +48,13 @@ interface ControllerInterface
     public function shutdownProcess(): ?ResponseInterface;
 
     /**
-     * Dispatches the controller action. Checks that the action
-     * exists and isn't private.
+     * Dispatches the controller action. Checks that the action exists and isn't private.
      *
-     * @return \Psr\Http\Message\ResponseInterface The resulting response.
+     * @return void
      * @throws \Cake\Controller\Exception\MissingActionException If controller action is not found.
      * @throws \UnexpectedValueException If return value of action method is not null or ResponseInterface instance.
      */
-    public function invokeAction(): ?ResponseInterface;
+    public function invokeAction(): void;
 
     /**
      * Gets the response instance.
