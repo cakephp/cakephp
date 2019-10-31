@@ -110,5 +110,5 @@ Next we can run our command with `php bin/tool.php hello Syd`. To learn more
 about the various features we've used in this example read the docs:
 
 * [Option Parsing](https://book.cakephp.org/4.0/en/console-and-shells/option-parsers.html)
-* [Input & Output](https://book.cakephp.org/3.0/en/console-and-shells/input-output.html)
+* [Input & Output](https://book.cakephp.org/4/en/console-and-shells/input-output.html)
 
