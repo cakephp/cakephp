@@ -21,6 +21,7 @@ use Cake\Core\Exception\Exception;
 use Cake\Http\Exception\InternalErrorException;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Log\Log;
+use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -36,9 +37,7 @@ class ConsoleErrorHandlerTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->stderr = $this->getMockBuilder('Cake\Console\ConsoleOutput')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->stderr = new ConsoleOutput();
         $this->Error = $this->getMockBuilder('Cake\Error\ConsoleErrorHandler')
             ->setMethods(['_stop'])
             ->setConstructorArgs([['stderr' => $this->stderr]])
@@ -64,13 +63,12 @@ class ConsoleErrorHandlerTest extends TestCase
      */
     public function testHandleError()
     {
-        $content = "<error>Notice Error:</error> This is a notice error in [/some/file, line 275]\n";
-        $this->stderr->expects($this->once())->method('write')
-            ->with($content);
+        $content = "<error>Notice Error:</error> This is a notice error\nIn [/some/file, line 275]\n";
         $this->Error->expects($this->never())
             ->method('_stop');
 
         $this->Error->handleError(E_NOTICE, 'This is a notice error', '/some/file', 275);
+        $this->assertEquals($content, $this->stderr->messages()[0]);
     }
 
     /**
@@ -81,11 +79,11 @@ class ConsoleErrorHandlerTest extends TestCase
     public function testHandleFatalError()
     {
         ob_start();
-        $content = '<error>Fatal Error:</error> This is a fatal error in [/some/file, line 275]';
-        $this->stderr->expects($this->once())->method('write')
-            ->with($this->stringContains($content));
+        $content = "<error>Fatal Error:</error> This is a fatal error\nIn [/some/file, line 275]\n";
 
         $this->Error->handleError(E_USER_ERROR, 'This is a fatal error', '/some/file', 275);
+        $this->assertCount(1, $this->stderr->messages());
+        $this->assertEquals($content, $this->stderr->messages()[0]);
         ob_end_clean();
     }
 
@@ -97,14 +95,15 @@ class ConsoleErrorHandlerTest extends TestCase
     public function testCakeErrors()
     {
         $exception = new MissingActionException('Missing action');
-        $message = sprintf('Missing action in [%s, line %s]', $exception->getFile(), $exception->getLine());
-        $this->stderr->expects($this->once())->method('write')
-            ->with($this->stringContains($message));
+        $message = sprintf("<error>Exception:</error> Missing action\nIn [%s, line %s]\n", $exception->getFile(), $exception->getLine());
 
         $this->Error->expects($this->once())
             ->method('_stop');
 
         $this->Error->handleException($exception);
+
+        $this->assertCount(1, $this->stderr->messages());
+        $this->assertEquals($message, $this->stderr->messages()[0]);
     }
 
     /**
@@ -116,10 +115,8 @@ class ConsoleErrorHandlerTest extends TestCase
     {
         $exception = new \InvalidArgumentException('Too many parameters.');
 
-        $this->stderr->expects($this->once())->method('write')
-            ->with($this->stringContains('Too many parameters.'));
-
         $this->Error->handleException($exception);
+        $this->assertStringContainsString('Too many parameters', $this->stderr->messages()[0]);
     }
 
     /**
@@ -129,12 +126,10 @@ class ConsoleErrorHandlerTest extends TestCase
      */
     public function testError404Exception()
     {
-        $exception = new NotFoundException('don\'t use me in cli.');
-
-        $this->stderr->expects($this->once())->method('write')
-            ->with($this->stringContains('don\'t use me in cli.'));
+        $exception = new NotFoundException("don't use me in cli.");
 
         $this->Error->handleException($exception);
+        $this->assertStringContainsString("don't use me in cli", $this->stderr->messages()[0]);
     }
 
     /**
@@ -144,12 +139,10 @@ class ConsoleErrorHandlerTest extends TestCase
      */
     public function testError500Exception()
     {
-        $exception = new InternalErrorException('don\'t use me in cli.');
-
-        $this->stderr->expects($this->once())->method('write')
-            ->with($this->stringContains('don\'t use me in cli.'));
+        $exception = new InternalErrorException("don't use me in cli.");
 
         $this->Error->handleException($exception);
+        $this->assertStringContainsString("don't use me in cli", $this->stderr->messages()[0]);
     }
 
     /**
@@ -166,13 +159,11 @@ class ConsoleErrorHandlerTest extends TestCase
         $property->setAccessible(true);
         $property->setValue($exception, '42S22');
 
-        $this->stderr->expects($this->once())->method('write')
-            ->with($this->stringContains('Non-integer exception code'));
-
         $this->Error->expects($this->once())
             ->method('_stop')
             ->with(1);
 
         $this->Error->handleException($exception);
+        $this->assertStringContainsString('Non-integer exception code', $this->stderr->messages()[0]);
     }
 }
