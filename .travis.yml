@@ -1,6 +1,6 @@
 language: php
 
-dist: trusty
+dist: xenial
 
 services:
   - memcached
