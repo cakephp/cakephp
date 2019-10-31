@@ -40,7 +40,7 @@ use RuntimeException;
  * It can also check for HTTP caching headers like `Last-Modified`, `If-Modified-Since`
  * etc. and return a response accordingly.
  *
- * @link https://book.cakephp.org/3.0/en/controllers/components/request-handling.html
+ * @link https://book.cakephp.org/3/en/controllers/components/request-handling.html
  */
 class RequestHandlerComponent extends Component
 {

@@ -30,7 +30,7 @@ class File
      * Folder object of the file
      *
      * @var \Cake\Filesystem\Folder
-     * @link https://book.cakephp.org/3.0/en/core-libraries/file-folder.html
+     * @link https://book.cakephp.org/3/en/core-libraries/file-folder.html
      */
     public $Folder;
 
@@ -38,7 +38,7 @@ class File
      * File name
      *
      * @var string
-     * https://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$name
+     * https://book.cakephp.org/3/en/core-libraries/file-folder.html#Cake\Filesystem\File::$name
      */
     public $name;
 
@@ -46,7 +46,7 @@ class File
      * File info
      *
      * @var array
-     * https://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$info
+     * https://book.cakephp.org/3/en/core-libraries/file-folder.html#Cake\Filesystem\File::$info
      */
     public $info = [];
 
@@ -54,7 +54,7 @@ class File
      * Holds the file handler resource if the file is opened
      *
      * @var resource|null
-     * https://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$handle
+     * https://book.cakephp.org/3/en/core-libraries/file-folder.html#Cake\Filesystem\File::$handle
      */
     public $handle;
 
@@ -62,7 +62,7 @@ class File
      * Enable locking for file reading and writing
      *
      * @var bool|null
-     * https://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$lock
+     * https://book.cakephp.org/3/en/core-libraries/file-folder.html#Cake\Filesystem\File::$lock
      */
     public $lock;
 
@@ -72,7 +72,7 @@ class File
      * Current file's absolute path
      *
      * @var string|null
-     * https://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$path
+     * https://book.cakephp.org/3/en/core-libraries/file-folder.html#Cake\Filesystem\File::$path
      */
     public $path;
 
@@ -82,7 +82,7 @@ class File
      * @param string $path Path to file
      * @param bool $create Create file if it does not exist (if true)
      * @param int $mode Mode to apply to the folder holding the file
-     * @link https://book.cakephp.org/3.0/en/core-libraries/file-folder.html#file-api
+     * @link https://book.cakephp.org/3/en/core-libraries/file-folder.html#file-api
      */
     public function __construct(string $path, bool $create = false, int $mode = 0755)
     {

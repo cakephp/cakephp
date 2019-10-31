@@ -31,6 +31,7 @@ use Psr\SimpleCache\CacheInterface;
  * @method \Cake\Database\Query newQuery()
  * @method \Cake\Database\StatementInterface prepare($sql)
  * @method \Cake\Database\StatementInterface execute($query, $params = [], array $types = [])
+ * @method \Cake\Database\StatementInterface query(string $sql)
  */
 interface ConnectionInterface extends LoggerAwareInterface
 {

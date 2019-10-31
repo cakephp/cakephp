@@ -200,7 +200,7 @@ class ConsoleIo
      * @param int $level The message's output level, see above.
      * @return int|null The number of bytes returned from writing to stdout
      *   or null if provided $level is greater than current level.
-     * @see https://book.cakephp.org/3.0/en/console-and-shells.html#ConsoleIo::out
+     * @see https://book.cakephp.org/3/en/console-and-shells.html#ConsoleIo::out
      */
     public function info($message, int $newlines = 1, int $level = self::NORMAL): ?int
     {
@@ -216,7 +216,7 @@ class ConsoleIo
      * @param string|string[] $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int The number of bytes returned from writing to stderr.
-     * @see https://book.cakephp.org/3.0/en/console-and-shells.html#ConsoleIo::err
+     * @see https://book.cakephp.org/3/en/console-and-shells.html#ConsoleIo::err
      */
     public function warning($message, int $newlines = 1): int
     {
@@ -231,8 +231,13 @@ class ConsoleIo
      *
      * @param string|string[] $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
+<<<<<<< HEAD
      * @return int The number of bytes returned from writing to stderr.
      * @see https://book.cakephp.org/3.0/en/console-and-shells.html#ConsoleIo::err
+=======
+     * @return int|bool The number of bytes returned from writing to stderr.
+     * @see https://book.cakephp.org/3/en/console-and-shells.html#ConsoleIo::err
+>>>>>>> origin/3.next
      */
     public function error($message, int $newlines = 1): int
     {
@@ -248,9 +253,14 @@ class ConsoleIo
      * @param string|string[] $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
+<<<<<<< HEAD
      * @return int|null The number of bytes returned from writing to stdout
      *   or null if provided $level is greater than current level.
      * @see https://book.cakephp.org/3.0/en/console-and-shells.html#ConsoleIo::out
+=======
+     * @return int|bool The number of bytes returned from writing to stdout.
+     * @see https://book.cakephp.org/3/en/console-and-shells.html#ConsoleIo::out
+>>>>>>> origin/3.next
      */
     public function success($message, int $newlines = 1, int $level = self::NORMAL): ?int
     {

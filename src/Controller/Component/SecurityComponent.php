@@ -36,7 +36,7 @@ use Cake\Utility\Security;
  * - Form tampering protection.
  * - Requiring that SSL be used.
  *
- * @link https://book.cakephp.org/3.0/en/controllers/components/security.html
+ * @link https://book.cakephp.org/3/en/controllers/components/security.html
  * @deprecated 4.0.0 Use FormProtectionComponent instead, for form tampering protection
  *   or HttpsEnforcerMiddleware to enforce use of HTTPS (SSL) for requests.
  */
@@ -155,7 +155,7 @@ class SecurityComponent extends Component
      * @param \Cake\Controller\Exception\SecurityException|null $exception Additional debug info describing the cause
      * @return mixed If specified, controller blackHoleCallback's response, or no return otherwise
      * @see \Cake\Controller\Component\SecurityComponent::$blackHoleCallback
-     * @link https://book.cakephp.org/3.0/en/controllers/components/security.html#handling-blackhole-callbacks
+     * @link https://book.cakephp.org/3/en/controllers/components/security.html#handling-blackhole-callbacks
      * @throws \Cake\Http\Exception\BadRequestException
      */
     public function blackHole(Controller $controller, string $error = '', ?SecurityException $exception = null)

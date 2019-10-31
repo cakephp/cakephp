@@ -39,7 +39,7 @@ use Cake\Utility\Hash;
  *
  * @property \Cake\Controller\Component\RequestHandlerComponent $RequestHandler
  * @property \Cake\Controller\Component\FlashComponent $Flash
- * @link https://book.cakephp.org/3.0/en/controllers/components/authentication.html
+ * @link https://book.cakephp.org/3/en/controllers/components/authentication.html
  * @deprecated 4.0.0 Use the cakephp/authentication and cakephp/authorization plugins instead.
  * @see https://github.com/cakephp/authentication
  * @see https://github.com/cakephp/authorization
@@ -578,7 +578,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
      *
      * @param string|string[]|null $actions Controller action name or array of actions
      * @return void
-     * @link https://book.cakephp.org/3.0/en/controllers/components/authentication.html#making-actions-public
+     * @link https://book.cakephp.org/3/en/controllers/components/authentication.html#making-actions-public
      */
     public function allow($actions = null): void
     {
@@ -609,7 +609,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
      * @param string|string[]|null $actions Controller action name or array of actions
      * @return void
      * @see \Cake\Controller\Component\AuthComponent::allow()
-     * @link https://book.cakephp.org/3.0/en/controllers/components/authentication.html#making-actions-require-authorization
+     * @link https://book.cakephp.org/3/en/controllers/components/authentication.html#making-actions-require-authorization
      */
     public function deny($actions = null): void
     {
@@ -635,7 +635,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
      *
      * @param array|\ArrayAccess $user User data.
      * @return void
-     * @link https://book.cakephp.org/3.0/en/controllers/components/authentication.html#identifying-users-and-logging-them-in
+     * @link https://book.cakephp.org/3/en/controllers/components/authentication.html#identifying-users-and-logging-them-in
      */
     public function setUser($user): void
     {
@@ -649,7 +649,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
      * which the authenticate classes can listen for and perform custom logout logic.
      *
      * @return string Normalized config `logoutRedirect`
-     * @link https://book.cakephp.org/3.0/en/controllers/components/authentication.html#logging-users-out
+     * @link https://book.cakephp.org/3/en/controllers/components/authentication.html#logging-users-out
      */
     public function logout(): string
     {
@@ -669,7 +669,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
      *
      * @param string|null $key Field to retrieve. Leave null to get entire User record.
      * @return mixed|null Either User record or null if no user is logged in, or retrieved field if key is specified.
-     * @link https://book.cakephp.org/3.0/en/controllers/components/authentication.html#accessing-the-logged-in-user
+     * @link https://book.cakephp.org/3/en/controllers/components/authentication.html#accessing-the-logged-in-user
      */
     public function user(?string $key = null)
     {

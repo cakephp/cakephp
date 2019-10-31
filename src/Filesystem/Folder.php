@@ -27,7 +27,7 @@ use RecursiveIteratorIterator;
  * Provides an Object interface for Common directory related tasks.
  *
  * @deprecated 4.0.0 Will be removed in 5.0.
- * @link https://book.cakephp.org/3.0/en/core-libraries/file-folder.html#folder-api
+ * @link https://book.cakephp.org/3/en/core-libraries/file-folder.html#folder-api
  */
 class Folder
 {
@@ -88,7 +88,7 @@ class Folder
      * Mode to be used on create. Does nothing on windows platforms.
      *
      * @var int
-     * https://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\Folder::$mode
+     * https://book.cakephp.org/3/en/core-libraries/file-folder.html#Cake\Filesystem\Folder::$mode
      */
     public $mode = 0755;
 

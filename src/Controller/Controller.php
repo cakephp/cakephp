@@ -83,7 +83,7 @@ use UnexpectedValueException;
  * @property \Cake\Controller\Component\RequestHandlerComponent $RequestHandler
  * @property \Cake\Controller\Component\SecurityComponent $Security
  * @method bool isAuthorized($user)
- * @link https://book.cakephp.org/3.0/en/controllers.html
+ * @link https://book.cakephp.org/3/en/controllers.html
  */
 class Controller implements EventListenerInterface, EventDispatcherInterface, ControllerInterface
 {
@@ -108,7 +108,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface, Co
      * additional information about the request.
      *
      * @var \Cake\Http\ServerRequest
-     * @link https://book.cakephp.org/3.0/en/controllers/request-response.html#request
+     * @link https://book.cakephp.org/3/en/controllers/request-response.html#request
      */
     protected $request;
 
@@ -116,7 +116,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface, Co
      * An instance of a Response object that contains information about the impending response
      *
      * @var \Cake\Http\Response
-     * @link https://book.cakephp.org/3.0/en/controllers/request-response.html#response
+     * @link https://book.cakephp.org/3/en/controllers/request-response.html#response
      */
     protected $response;
 
@@ -595,7 +595,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface, Co
      * @param string|array|\Psr\Http\Message\UriInterface $url A string, array-based URL or UriInterface instance.
      * @param int $status HTTP status code. Defaults to `302`.
      * @return \Cake\Http\Response|null
-     * @link https://book.cakephp.org/3.0/en/controllers.html#Controller::redirect
+     * @link https://book.cakephp.org/3/en/controllers.html#Controller::redirect
      */
     public function redirect($url, int $status = 302): ?Response
     {
@@ -649,7 +649,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface, Co
      * @param string|null $template Template to use for rendering
      * @param string|null $layout Layout to use
      * @return \Cake\Http\Response A response object containing the rendered view.
-     * @link https://book.cakephp.org/3.0/en/controllers.html#rendering-a-view
+     * @link https://book.cakephp.org/3/en/controllers.html#rendering-a-view
      */
     public function render(?string $template = null, ?string $layout = null): Response
     {
@@ -747,7 +747,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface, Co
      * (e.g: Table instance, 'TableName' or a Query object)
      * @param array $settings The settings/configuration used for pagination.
      * @return \Cake\ORM\ResultSet|\Cake\Datasource\ResultSetInterface Query results
-     * @link https://book.cakephp.org/3.0/en/controllers.html#paginating-a-model
+     * @link https://book.cakephp.org/3/en/controllers.html#paginating-a-model
      * @throws \RuntimeException When no compatible table object can be found.
      */
     public function paginate($object = null, array $settings = [])
@@ -808,7 +808,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface, Co
      *
      * @param \Cake\Event\EventInterface $event An Event instance
      * @return \Cake\Http\Response|null|void
-     * @link https://book.cakephp.org/3.0/en/controllers.html#request-life-cycle-callbacks
+     * @link https://book.cakephp.org/3/en/controllers.html#request-life-cycle-callbacks
      */
     public function beforeFilter(EventInterface $event)
     {
@@ -820,7 +820,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface, Co
      *
      * @param \Cake\Event\EventInterface $event An Event instance
      * @return \Cake\Http\Response|null|void
-     * @link https://book.cakephp.org/3.0/en/controllers.html#request-life-cycle-callbacks
+     * @link https://book.cakephp.org/3/en/controllers.html#request-life-cycle-callbacks
      */
     public function beforeRender(EventInterface $event)
     {
@@ -840,7 +840,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface, Co
      *     or an absolute URL
      * @param \Cake\Http\Response $response The response object.
      * @return \Cake\Http\Response|null|void
-     * @link https://book.cakephp.org/3.0/en/controllers.html#request-life-cycle-callbacks
+     * @link https://book.cakephp.org/3/en/controllers.html#request-life-cycle-callbacks
      */
     public function beforeRedirect(EventInterface $event, $url, Response $response)
     {
@@ -851,7 +851,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface, Co
      *
      * @param \Cake\Event\EventInterface $event An Event instance
      * @return \Cake\Http\Response|null|void
-     * @link https://book.cakephp.org/3.0/en/controllers.html#request-life-cycle-callbacks
+     * @link https://book.cakephp.org/3/en/controllers.html#request-life-cycle-callbacks
      */
     public function afterFilter(EventInterface $event)
     {
