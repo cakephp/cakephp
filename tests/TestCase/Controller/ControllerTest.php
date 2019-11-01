@@ -623,7 +623,7 @@ class ControllerTest extends TestCase
      *
      * @return void
      */
-    public function testInvokeActionMissingAction(): void
+    public function testGetActionMissingAction(): void
     {
         $this->expectException(\Cake\Controller\Exception\MissingActionException::class);
         $this->expectExceptionMessage('Action TestController::missing() could not be found, or is not accessible.');
@@ -634,7 +634,7 @@ class ControllerTest extends TestCase
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $Controller = new TestController($url, $response);
-        $Controller->invokeAction();
+        $Controller->getAction();
     }
 
     /**
@@ -642,7 +642,7 @@ class ControllerTest extends TestCase
      *
      * @return void
      */
-    public function testInvokeActionPrivate(): void
+    public function testGetActionPrivate(): void
     {
         $this->expectException(\Cake\Controller\Exception\MissingActionException::class);
         $this->expectExceptionMessage('Action TestController::private_m() could not be found, or is not accessible.');
@@ -653,7 +653,7 @@ class ControllerTest extends TestCase
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $Controller = new TestController($url, $response);
-        $Controller->invokeAction();
+        $Controller->getAction();
     }
 
     /**
@@ -661,7 +661,7 @@ class ControllerTest extends TestCase
      *
      * @return void
      */
-    public function testInvokeActionProtected(): void
+    public function testGetActionProtected(): void
     {
         $this->expectException(\Cake\Controller\Exception\MissingActionException::class);
         $this->expectExceptionMessage('Action TestController::protected_m() could not be found, or is not accessible.');
@@ -672,7 +672,7 @@ class ControllerTest extends TestCase
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $Controller = new TestController($url, $response);
-        $Controller->invokeAction();
+        $Controller->getAction();
     }
 
     /**
@@ -680,7 +680,7 @@ class ControllerTest extends TestCase
      *
      * @return void
      */
-    public function testInvokeActionBaseMethods(): void
+    public function testGetActionBaseMethods(): void
     {
         $this->expectException(\Cake\Controller\Exception\MissingActionException::class);
         $this->expectExceptionMessage('Action TestController::redirect() could not be found, or is not accessible.');
@@ -691,7 +691,7 @@ class ControllerTest extends TestCase
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $Controller = new TestController($url, $response);
-        $Controller->invokeAction();
+        $Controller->getAction();
     }
 
     /**
@@ -699,7 +699,7 @@ class ControllerTest extends TestCase
      *
      * @return void
      */
-    public function testInvokeActionMethodCasing(): void
+    public function testGetActionMethodCasing(): void
     {
         $this->expectException(\Cake\Controller\Exception\MissingActionException::class);
         $this->expectExceptionMessage('Action TestController::RETURNER() could not be found, or is not accessible.');
@@ -710,7 +710,7 @@ class ControllerTest extends TestCase
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $Controller = new TestController($url, $response);
-        $Controller->invokeAction();
+        $Controller->getAction();
     }
 
     /**
@@ -731,9 +731,8 @@ class ControllerTest extends TestCase
         $response = new Response();
 
         $Controller = new TestController($url, $response);
-        $result = $Controller->invokeAction();
+        $Controller->invokeAction($Controller->getAction(), $Controller->getRequest()->getParam('pass'));
 
-        $this->assertSame('I am from the controller.', (string)$result);
         $this->assertSame('I am from the controller.', (string)$Controller->getResponse());
     }
 
@@ -754,7 +753,7 @@ class ControllerTest extends TestCase
         ]);
         $controller = new TestController($request, new Response());
         $controller->disableAutoRender();
-        $controller->invokeAction();
+        $controller->invokeAction($controller->getAction(), array_values($controller->getRequest()->getParam('pass')));
 
         $this->assertEquals(
             ['testId' => '1', 'test2Id' => '2'],
@@ -786,7 +785,7 @@ class ControllerTest extends TestCase
         $response = $this->getMockBuilder(Response::class)->getMock();
 
         $Controller = new TestController($url, $response);
-        $Controller->invokeAction();
+        $Controller->invokeAction($Controller->getAction(), $Controller->getRequest()->getParam('pass'));
     }
 
     /**

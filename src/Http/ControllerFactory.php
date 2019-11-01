@@ -63,6 +63,8 @@ class ControllerFactory implements ControllerFactoryInterface
      *
      * @param mixed $controller The controller to invoke.
      * @return \Psr\Http\Message\ResponseInterface The response
+     * @throws \Cake\Controller\Exception\MissingActionException If controller action is not found.
+     * @throws \UnexpectedValueException If return value of action method is not null or ResponseInterface instance.
      */
     public function invoke($controller): ResponseInterface
     {
@@ -71,7 +73,9 @@ class ControllerFactory implements ControllerFactoryInterface
             return $result;
         }
 
-        $controller->invokeAction();
+        $action = $controller->getAction();
+        $args = array_values($controller->getRequest()->getParam('pass'));
+        $controller->invokeAction($action, $args);
 
         $result = $controller->shutdownProcess();
         if ($result instanceof ResponseInterface) {
