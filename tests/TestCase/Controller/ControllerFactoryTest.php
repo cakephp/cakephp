@@ -14,9 +14,9 @@ declare(strict_types=1);
  * @since         3.3.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Http;
+namespace Cake\Test\TestCase\Controller;
 
-use Cake\Http\ControllerFactory;
+use Cake\Controller\ControllerFactory;
 use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;

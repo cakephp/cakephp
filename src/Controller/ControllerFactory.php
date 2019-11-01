@@ -14,11 +14,13 @@ declare(strict_types=1);
  * @since         3.3.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Http;
+namespace Cake\Controller;
 
-use Cake\Controller\Controller;
 use Cake\Core\App;
+use Cake\Http\ControllerFactoryInterface;
 use Cake\Http\Exception\MissingControllerException;
+use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\Utility\Inflector;
 use Psr\Http\Message\ResponseInterface;
 use ReflectionClass;
