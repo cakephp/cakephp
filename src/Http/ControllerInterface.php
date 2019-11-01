@@ -26,6 +26,7 @@ interface ControllerInterface
 {
     /**
      * Perform the startup process for this controller.
+     *
      * Fire the Components and Controller callbacks in the correct order.
      *
      * - Initializes components, which fires their `initialize` callback
@@ -38,14 +39,16 @@ interface ControllerInterface
 
     /**
      * Perform the various shutdown processes for this controller.
-     * Fire the Components and Controller callbacks in the correct order.
+     *
+     * Fire the Components and Controller callbacks in the correct order and
+     * return the final response instance.
      *
      * - triggers the component `shutdown` callback.
      * - calls the Controller's `afterFilter` method.
      *
-     * @return \Psr\Http\Message\ResponseInterface|null
+     * @return \Psr\Http\Message\ResponseInterface
      */
-    public function shutdownProcess(): ?ResponseInterface;
+    public function shutdownProcess(): ResponseInterface;
 
     /**
      * Dispatches the controller action. Checks that the action exists and isn't private.
@@ -55,11 +58,4 @@ interface ControllerInterface
      * @throws \UnexpectedValueException If return value of action method is not null or ResponseInterface instance.
      */
     public function invokeAction(): void;
-
-    /**
-     * Gets the response instance.
-     *
-     * @return \Cake\Http\Response
-     */
-    public function getResponse(): Response;
 }

@@ -545,14 +545,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface, Co
     }
 
     /**
-     * Perform the startup process for this controller.
-     * Fire the Components and Controller callbacks in the correct order.
-     *
-     * - Initializes components, which fires their `initialize` callback
-     * - Calls the controller `beforeFilter`.
-     * - triggers Component `startup` methods.
-     *
-     * @return \Psr\Http\Message\ResponseInterface|null
+     * @inheritDoc
      */
     public function startupProcess(): ?ResponseInterface
     {
@@ -569,22 +562,16 @@ class Controller implements EventListenerInterface, EventDispatcherInterface, Co
     }
 
     /**
-     * Perform the various shutdown processes for this controller.
-     * Fire the Components and Controller callbacks in the correct order.
-     *
-     * - triggers the component `shutdown` callback.
-     * - calls the Controller's `afterFilter` method.
-     *
-     * @return \Psr\Http\Message\ResponseInterface|null
+     * @inheritDoc
      */
-    public function shutdownProcess(): ?ResponseInterface
+    public function shutdownProcess(): ResponseInterface
     {
         $event = $this->dispatchEvent('Controller.shutdown');
         if ($event->getResult() instanceof ResponseInterface) {
             return $event->getResult();
         }
 
-        return null;
+        return $this->response;
     }
 
     /**

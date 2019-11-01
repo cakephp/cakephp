@@ -16,7 +16,7 @@ class CakesController extends Controller
      *
      * @var string
      */
-    public $modelClass = 'Posts';
+    protected $modelClass = 'Posts';
 
     /**
      * index method
@@ -52,7 +52,7 @@ class CakesController extends Controller
     /**
      * Startup process
      *
-     * \Psr\Http\Message\ResponseInterface|null
+     * @return \Psr\Http\Message\ResponseInterface|null
      */
     public function startupProcess(): ?ResponseInterface
     {
@@ -67,15 +67,16 @@ class CakesController extends Controller
     /**
      * Shutdown process
      *
-     * \Psr\Http\Message\ResponseInterface|null
+     * @return \Psr\Http\Message\ResponseInterface
      */
-    public function shutdownProcess(): ?ResponseInterface
+    public function shutdownProcess(): ResponseInterface
     {
-        parent::shutdownProcess();
+        $response = parent::shutdownProcess();
+
         if ($this->request->getParam('stop') === 'shutdown') {
-            return $this->response->withStringBody('shutdown stop');
+            $response = $response->withStringBody('shutdown stop');
         }
 
-        return null;
+        return $response;
     }
 }

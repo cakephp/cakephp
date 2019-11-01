@@ -72,17 +72,12 @@ class ActionDispatcher
     protected function _invoke(ControllerInterface $controller): ResponseInterface
     {
         $result = $controller->startupProcess();
-        if ($result instanceof ResponseInterface) {
+        if ($result) {
             return $result;
         }
 
         $controller->invokeAction();
 
-        $result = $controller->shutdownProcess();
-        if ($result instanceof ResponseInterface) {
-            return $result;
-        }
-
-        return $controller->getResponse();
+        return $controller->shutdownProcess();
     }
 }
