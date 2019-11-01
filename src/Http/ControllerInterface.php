@@ -25,37 +25,11 @@ use Psr\Http\Message\ResponseInterface;
 interface ControllerInterface
 {
     /**
-     * Perform the startup process for this controller.
-     *
-     * Fire the Components and Controller callbacks in the correct order.
-     *
-     * - Initializes components, which fires their `initialize` callback
-     * - Calls the controller `beforeFilter`.
-     * - triggers Component `startup` methods.
-     *
-     * @return \Psr\Http\Message\ResponseInterface|null
-     */
-    public function startupProcess(): ?ResponseInterface;
-
-    /**
-     * Perform the various shutdown processes for this controller.
-     *
-     * Fire the Components and Controller callbacks in the correct order and
-     * return the final response instance.
-     *
-     * - triggers the component `shutdown` callback.
-     * - calls the Controller's `afterFilter` method.
-     *
-     * @return \Psr\Http\Message\ResponseInterface
-     */
-    public function shutdownProcess(): ResponseInterface;
-
-    /**
      * Dispatches the controller action. Checks that the action exists and isn't private.
      *
-     * @return void
+     * @return \Psr\Http\Message\ResponseInterface
      * @throws \Cake\Controller\Exception\MissingActionException If controller action is not found.
      * @throws \UnexpectedValueException If return value of action method is not null or ResponseInterface instance.
      */
-    public function invokeAction(): void;
+    public function invokeAction(): ResponseInterface;
 }

@@ -58,26 +58,6 @@ class ActionDispatcher
             Router::setRequest($request);
         }
 
-        $controller = $this->factory->create($request, $response);
-
-        return $this->_invoke($controller);
-    }
-
-    /**
-     * Invoke a controller's action and wrapping methods.
-     *
-     * @param \Cake\Http\ControllerInterface $controller The controller to invoke.
-     * @return \Psr\Http\Message\ResponseInterface The response
-     */
-    protected function _invoke(ControllerInterface $controller): ResponseInterface
-    {
-        $result = $controller->startupProcess();
-        if ($result) {
-            return $result;
-        }
-
-        $controller->invokeAction();
-
-        return $controller->shutdownProcess();
+        return $this->factory->create($request, $response)->invokeAction();
     }
 }

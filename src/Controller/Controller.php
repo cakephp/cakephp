@@ -492,12 +492,17 @@ class Controller implements EventListenerInterface, EventDispatcherInterface, Co
      * Dispatches the controller action. Checks that the action
      * exists and isn't private.
      *
-     * @return void
+     * @return \Psr\Http\Message\ResponseInterface
      * @throws \Cake\Controller\Exception\MissingActionException If controller action is not found.
      * @throws \UnexpectedValueException If return value of action method is not null or ResponseInterface instance.
      */
-    public function invokeAction(): void
+    public function invokeAction(): ResponseInterface
     {
+        $result = $this->startupProcess();
+        if ($result) {
+            return $result;
+        }
+
         $request = $this->request;
 
         if (!$this->isAction($request->getParam('action'))) {
@@ -526,6 +531,13 @@ class Controller implements EventListenerInterface, EventDispatcherInterface, Co
         if ($result) {
             $this->response = $result;
         }
+
+        $result = $this->shutdownProcess();
+        if ($result) {
+            return $result;
+        }
+
+        return $this->response;
     }
 
     /**
@@ -545,7 +557,14 @@ class Controller implements EventListenerInterface, EventDispatcherInterface, Co
     }
 
     /**
-     * @inheritDoc
+     * Perform the startup process for this controller.
+     * Fire the Components and Controller callbacks in the correct order.
+     *
+     * - Initializes components, which fires their `initialize` callback
+     * - Calls the controller `beforeFilter`.
+     * - triggers Component `startup` methods.
+     *
+     * @return \Psr\Http\Message\ResponseInterface|null
      */
     public function startupProcess(): ?ResponseInterface
     {
@@ -562,16 +581,22 @@ class Controller implements EventListenerInterface, EventDispatcherInterface, Co
     }
 
     /**
-     * @inheritDoc
+     * Perform the various shutdown processes for this controller.
+     * Fire the Components and Controller callbacks in the correct order.
+     *
+     * - triggers the component `shutdown` callback.
+     * - calls the Controller's `afterFilter` method.
+     *
+     * @return \Psr\Http\Message\ResponseInterface|null
      */
-    public function shutdownProcess(): ResponseInterface
+    public function shutdownProcess(): ?ResponseInterface
     {
         $event = $this->dispatchEvent('Controller.shutdown');
         if ($event->getResult() instanceof ResponseInterface) {
             return $event->getResult();
         }
 
-        return $this->response;
+        return null;
     }
 
     /**

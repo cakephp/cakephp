@@ -67,16 +67,15 @@ class CakesController extends Controller
     /**
      * Shutdown process
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return \Psr\Http\Message\ResponseInterface|null
      */
-    public function shutdownProcess(): ResponseInterface
+    public function shutdownProcess(): ?ResponseInterface
     {
-        $response = parent::shutdownProcess();
-
+        parent::shutdownProcess();
         if ($this->request->getParam('stop') === 'shutdown') {
-            $response = $response->withStringBody('shutdown stop');
+            return $this->response->withStringBody('shutdown stop');
         }
 
-        return $response;
+        return null;
     }
 }

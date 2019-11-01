@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace TestApp\Controller;
 
-use Cake\Event\EventInterface;
-
 /**
  * TestController class
  */
@@ -23,16 +21,6 @@ class TestController extends ControllerTestAppController
      * @var string
      */
     public $modelClass = 'Comments';
-
-    /**
-     * beforeFilter handler
-     *
-     * @param \Cake\Event\EventInterface $event
-     * @return \Cake\Http\Response|null
-     */
-    public function beforeFilter(EventInterface $event): ?Response
-    {
-    }
 
     /**
      * index method
