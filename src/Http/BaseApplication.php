@@ -66,7 +66,7 @@ abstract class BaseApplication implements
     /**
      * Controller factory
      *
-     * @var \Cake\Http\ControllerFactoryInterface
+     * @var \Cake\Http\ControllerFactoryInterface|null
      */
     protected $controllerFactory;
 
@@ -85,7 +85,7 @@ abstract class BaseApplication implements
         $this->configDir = $configDir;
         $this->plugins = Plugin::getCollection();
         $this->_eventManager = $eventManager ?: EventManager::instance();
-        $this->controllerFactory = $controllerFactory ?: new ControllerFactory();
+        $this->controllerFactory = $controllerFactory;
     }
 
     /**
@@ -216,6 +216,10 @@ abstract class BaseApplication implements
     public function handle(
         ServerRequestInterface $request
     ): ResponseInterface {
+        if ($this->controllerFactory === null) {
+            $this->controllerFactory = new ControllerFactory();
+        }
+
         if (Router::getRequest() !== $request) {
             Router::setRequest($request);
         }
