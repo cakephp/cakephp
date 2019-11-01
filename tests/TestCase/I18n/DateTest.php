@@ -205,9 +205,6 @@ class DateTest extends TestCase
     public static function timeAgoProvider()
     {
         return [
-            ['-12 seconds', 'today'],
-            ['-12 minutes', 'today'],
-            ['-2 hours', 'today'],
             ['-1 day', '1 day ago'],
             ['-2 days', '2 days ago'],
             ['-1 week', '1 week ago'],
@@ -414,7 +411,7 @@ class DateTest extends TestCase
         $expected = '1 year';
         $this->assertEquals($expected, $result);
 
-        $date = new $class('+23 hours');
+        $date = new $class('now');
         $result = $date->timeAgoInWords([
             'accuracy' => 'day',
         ]);
@@ -496,10 +493,6 @@ class DateTest extends TestCase
         $date = new $class('-13 months -5 days');
         $result = $date->timeAgoInWords(['end' => '2 years']);
         $this->assertSame('1 year, 1 month, 5 days ago', $result);
-
-        $date = new $class('-23 hours');
-        $result = $date->timeAgoInWords(['accuracy' => 'day']);
-        $this->assertSame('today', $result);
     }
 
     /**
