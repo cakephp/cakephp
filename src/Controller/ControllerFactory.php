@@ -28,7 +28,7 @@ use ReflectionClass;
 /**
  * Factory method for building controllers from request/response pairs.
  *
- * @implments \Cake\Http\ControllerFactoryInterface<\Cake\Controller\Controller>
+ * @implements \Cake\Http\ControllerFactoryInterface<\Cake\Controller\Controller>
  */
 class ControllerFactory implements ControllerFactoryInterface
 {
@@ -67,6 +67,7 @@ class ControllerFactory implements ControllerFactoryInterface
      * @return \Psr\Http\Message\ResponseInterface The response
      * @throws \Cake\Controller\Exception\MissingActionException If controller action is not found.
      * @throws \UnexpectedValueException If return value of action method is not null or ResponseInterface instance.
+     * @psalm-param \Cake\Controller\Controller $controller
      */
     public function invoke($controller): ResponseInterface
     {
