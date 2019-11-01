@@ -65,7 +65,7 @@ abstract class BaseApplication implements
     /**
      * Controller factory
      *
-     * @var \Cake\Http\ControllerFactory
+     * @var \Cake\Http\ControllerFactoryInterface
      */
     protected $controllerFactory;
 
@@ -74,12 +74,12 @@ abstract class BaseApplication implements
      *
      * @param string $configDir The directory the bootstrap configuration is held in.
      * @param \Cake\Event\EventManagerInterface $eventManager Application event manager instance.
-     * @param \Cake\Http\ControllerFactory $controllerFactory Controller factory.
+     * @param \Cake\Http\ControllerFactoryInterface $controllerFactory Controller factory.
      */
     public function __construct(
         string $configDir,
         ?EventManagerInterface $eventManager = null,
-        ?ControllerFactory $controllerFactory = null
+        ?ControllerFactoryInterface $controllerFactory = null
     ) {
         $this->configDir = $configDir;
         $this->plugins = Plugin::getCollection();

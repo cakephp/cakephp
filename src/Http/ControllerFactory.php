@@ -25,14 +25,17 @@ use ReflectionClass;
 
 /**
  * Factory method for building controllers from request/response pairs.
+ *
+ * @implments \Cake\Http\ControllerFactoryInterface<\Cake\Controller\Controller>
  */
-class ControllerFactory
+class ControllerFactory implements ControllerFactoryInterface
 {
     /**
      * Create a controller for a given request/response
      *
      * @param \Cake\Http\ServerRequest $request The request to build a controller for.
      * @return \Cake\Controller\Controller
+     * @throws \Cake\Http\Exception\MissingControllerException
      * @throws \ReflectionException
      */
     public function create(ServerRequest $request): Controller
@@ -58,10 +61,10 @@ class ControllerFactory
     /**
      * Invoke a controller's action and wrapping methods.
      *
-     * @param \Cake\Controller\Controller $controller The controller to invoke.
+     * @param mixed $controller The controller to invoke.
      * @return \Psr\Http\Message\ResponseInterface The response
      */
-    public function invoke(Controller $controller): ResponseInterface
+    public function invoke($controller): ResponseInterface
     {
         $result = $controller->startupProcess();
         if ($result instanceof ResponseInterface) {
