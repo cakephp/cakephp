@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Http;
 
 use Cake\Http\ControllerFactory;
 use Cake\Http\Exception\MissingControllerException;
+use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 
@@ -26,6 +27,11 @@ use Cake\TestSuite\TestCase;
  */
 class ControllerFactoryTest extends TestCase
 {
+    /**
+     * @var \Cake\Http\ControllerFactory
+     */
+    protected $factory;
+
     /**
      * Setup
      *
@@ -36,7 +42,6 @@ class ControllerFactoryTest extends TestCase
         parent::setUp();
         static::setAppNamespace();
         $this->factory = new ControllerFactory();
-        $this->response = $this->getMockBuilder('Cake\Http\Response')->getMock();
     }
 
     /**
@@ -53,10 +58,9 @@ class ControllerFactoryTest extends TestCase
                 'action' => 'index',
             ],
         ]);
-        $result = $this->factory->create($request, $this->response);
+        $result = $this->factory->create($request);
         $this->assertInstanceOf('TestApp\Controller\CakesController', $result);
         $this->assertSame($request, $result->getRequest());
-        $this->assertSame($this->response, $result->getResponse());
     }
 
     /**
@@ -74,13 +78,12 @@ class ControllerFactoryTest extends TestCase
                 'action' => 'index',
             ],
         ]);
-        $result = $this->factory->create($request, $this->response);
+        $result = $this->factory->create($request);
         $this->assertInstanceOf(
             'TestApp\Controller\Admin\PostsController',
             $result
         );
         $this->assertSame($request, $result->getRequest());
-        $this->assertSame($this->response, $result->getResponse());
     }
 
     /**
@@ -98,13 +101,12 @@ class ControllerFactoryTest extends TestCase
                 'action' => 'index',
             ],
         ]);
-        $result = $this->factory->create($request, $this->response);
+        $result = $this->factory->create($request);
         $this->assertInstanceOf(
             'TestApp\Controller\Admin\Sub\PostsController',
             $result
         );
         $this->assertSame($request, $result->getRequest());
-        $this->assertSame($this->response, $result->getResponse());
     }
 
     /**
@@ -122,13 +124,12 @@ class ControllerFactoryTest extends TestCase
                 'action' => 'index',
             ],
         ]);
-        $result = $this->factory->create($request, $this->response);
+        $result = $this->factory->create($request);
         $this->assertInstanceOf(
             'TestPlugin\Controller\TestPluginController',
             $result
         );
         $this->assertSame($request, $result->getRequest());
-        $this->assertSame($this->response, $result->getResponse());
     }
 
     /**
@@ -146,13 +147,12 @@ class ControllerFactoryTest extends TestCase
                 'action' => 'index',
             ],
         ]);
-        $result = $this->factory->create($request, $this->response);
+        $result = $this->factory->create($request);
         $this->assertInstanceOf(
             'Company\TestPluginThree\Controller\OvensController',
             $result
         );
         $this->assertSame($request, $result->getRequest());
-        $this->assertSame($this->response, $result->getResponse());
     }
 
     /**
@@ -171,13 +171,12 @@ class ControllerFactoryTest extends TestCase
                 'action' => 'index',
             ],
         ]);
-        $result = $this->factory->create($request, $this->response);
+        $result = $this->factory->create($request);
         $this->assertInstanceOf(
             'TestPlugin\Controller\Admin\CommentsController',
             $result
         );
         $this->assertSame($request, $result->getRequest());
-        $this->assertSame($this->response, $result->getResponse());
     }
 
     /**
@@ -194,7 +193,7 @@ class ControllerFactoryTest extends TestCase
                 'action' => 'index',
             ],
         ]);
-        $this->factory->create($request, $this->response);
+        $this->factory->create($request);
     }
 
     /**
@@ -211,7 +210,7 @@ class ControllerFactoryTest extends TestCase
                 'action' => 'index',
             ],
         ]);
-        $this->factory->create($request, $this->response);
+        $this->factory->create($request);
     }
 
     /**
@@ -228,7 +227,7 @@ class ControllerFactoryTest extends TestCase
                 'action' => 'index',
             ],
         ]);
-        $this->factory->create($request, $this->response);
+        $this->factory->create($request);
     }
 
     /**
@@ -245,7 +244,7 @@ class ControllerFactoryTest extends TestCase
                 'action' => 'index',
             ],
         ]);
-        $this->factory->create($request, $this->response);
+        $this->factory->create($request);
     }
 
     /**
@@ -262,7 +261,7 @@ class ControllerFactoryTest extends TestCase
                 'action' => 'index',
             ],
         ]);
-        $this->factory->create($request, $this->response);
+        $this->factory->create($request);
     }
 
     /**
@@ -282,5 +281,95 @@ class ControllerFactoryTest extends TestCase
         ]);
         $result = $this->factory->getControllerClass($request);
         $this->assertSame('Company\TestPluginThree\Controller\OvensController', $result);
+    }
+
+    /**
+     * Test invoke with autorender
+     *
+     * @return void
+     */
+    public function testInvokeAutoRender()
+    {
+        $request = new ServerRequest([
+            'url' => 'posts',
+            'params' => [
+                'controller' => 'Posts',
+                'action' => 'index',
+                'pass' => [],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+        $result = $this->factory->invoke($controller);
+
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertStringContainsString('posts index', (string)$result->getBody());
+    }
+
+    /**
+     * Test dispatch with autorender=false
+     *
+     * @return void
+     */
+    public function testInvokeAutoRenderFalse()
+    {
+        $request = new ServerRequest([
+            'url' => 'posts',
+            'params' => [
+                'controller' => 'Cakes',
+                'action' => 'noRender',
+                'pass' => [],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+        $result = $this->factory->invoke($controller);
+
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertStringContainsString('autoRender false body', (string)$result->getBody());
+    }
+
+    /**
+     * Ensure that a controller's startup event can stop the request.
+     *
+     * @return void
+     */
+    public function testStartupProcessAbort()
+    {
+        $request = new ServerRequest([
+            'url' => 'cakes/index',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Cakes',
+                'action' => 'index',
+                'stop' => 'startup',
+                'pass' => [],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+        $result = $this->factory->invoke($controller);
+
+        $this->assertSame('startup stop', (string)$result->getBody());
+    }
+
+    /**
+     * Ensure that a controllers startup process can emit a response
+     *
+     * @return void
+     */
+    public function testShutdownProcessResponse()
+    {
+        $request = new ServerRequest([
+            'url' => 'cakes/index',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Cakes',
+                'action' => 'index',
+                'stop' => 'shutdown',
+                'pass' => [],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+        $result = $this->factory->invoke($controller);
+
+        $this->assertSame('shutdown stop', (string)$result->getBody());
     }
 }

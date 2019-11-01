@@ -45,44 +45,17 @@ class ActionDispatcher
      * Dispatches a Request & Response
      *
      * @param \Cake\Http\ServerRequest $request The request to dispatch.
-     * @param \Cake\Http\Response $response The response to dispatch.
      * @return \Psr\Http\Message\ResponseInterface A modified/replaced response.
      */
-    public function dispatch(ServerRequest $request, ?Response $response = null): ResponseInterface
+    public function dispatch(ServerRequest $request): ResponseInterface
     {
-        if ($response === null) {
-            $response = new Response();
-        }
         /** @psalm-suppress RedundantCondition */
         if (class_exists(Router::class) && Router::getRequest() !== $request) {
             Router::setRequest($request);
         }
 
-        $controller = $this->factory->create($request, $response);
+        $controller = $this->factory->create($request);
 
-        return $this->_invoke($controller);
-    }
-
-    /**
-     * Invoke a controller's action and wrapping methods.
-     *
-     * @param \Cake\Http\ControllerInterface $controller The controller to invoke.
-     * @return \Psr\Http\Message\ResponseInterface The response
-     */
-    protected function _invoke(ControllerInterface $controller): ResponseInterface
-    {
-        $result = $controller->startupProcess();
-        if ($result instanceof ResponseInterface) {
-            return $result;
-        }
-
-        $controller->invokeAction();
-
-        $result = $controller->shutdownProcess();
-        if ($result instanceof ResponseInterface) {
-            return $result;
-        }
-
-        return $controller->getResponse();
+        return $this->factory->invoke($controller);
     }
 }

@@ -16,9 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\Http;
 
+use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Http\Exception\MissingControllerException;
 use Cake\Utility\Inflector;
+use Psr\Http\Message\ResponseInterface;
 use ReflectionClass;
 
 /**
@@ -30,11 +32,10 @@ class ControllerFactory
      * Create a controller for a given request/response
      *
      * @param \Cake\Http\ServerRequest $request The request to build a controller for.
-     * @param \Cake\Http\Response $response The response to use.
-     * @return \Cake\Http\ControllerInterface
+     * @return \Cake\Controller\Controller
      * @throws \ReflectionException
      */
-    public function create(ServerRequest $request, Response $response): ControllerInterface
+    public function create(ServerRequest $request): Controller
     {
         $className = $this->getControllerClass($request);
         if (!$className) {
@@ -46,10 +47,35 @@ class ControllerFactory
             $this->missingController($request);
         }
 
+        $response = new Response();
+
         /** @var \Cake\Controller\Controller $controller */
         $controller = $reflection->newInstance($request, $response);
 
         return $controller;
+    }
+
+    /**
+     * Invoke a controller's action and wrapping methods.
+     *
+     * @param \Cake\Controller\Controller $controller The controller to invoke.
+     * @return \Psr\Http\Message\ResponseInterface The response
+     */
+    public function invoke(Controller $controller): ResponseInterface
+    {
+        $result = $controller->startupProcess();
+        if ($result instanceof ResponseInterface) {
+            return $result;
+        }
+
+        $controller->invokeAction();
+
+        $result = $controller->shutdownProcess();
+        if ($result instanceof ResponseInterface) {
+            return $result;
+        }
+
+        return $controller->getResponse();
     }
 
     /**
