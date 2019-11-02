@@ -88,7 +88,6 @@ class CompletionCommandTest extends ConsoleIntegrationTestCase
             'routes',
             'schema_cache',
             'server',
-            'upgrade',
             'version',
             'abort',
             'auto_load_model',
