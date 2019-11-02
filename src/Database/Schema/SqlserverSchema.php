@@ -437,7 +437,8 @@ class SqlserverSchema extends BaseSchema
             $out .= '(' . (int)$data['precision'] . ')';
         }
 
-        if ($data['type'] === TableSchema::TYPE_DECIMAL &&
+        if (
+            $data['type'] === TableSchema::TYPE_DECIMAL &&
             (
                 isset($data['length']) ||
                 isset($data['precision'])

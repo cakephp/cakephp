@@ -216,7 +216,7 @@ SQL;
                 null,
                 null,
                 // SQLServer returns double length for unicode columns.
-                ['type' => 'string', 'fixed' => true, 'length' => 5, 'collate' => 'Japanese_Unicode_CI_AI'],
+                ['type' => 'string', 'length' => 5, 'collate' => 'Japanese_Unicode_CI_AI'],
             ],
             [
                 'UNIQUEIDENTIFIER',
@@ -558,8 +558,8 @@ SQL;
             ],
             [
                 'id',
-                ['type' => 'string', 'length' => 32, 'fixed' => true, 'null' => false],
-                '[id] NCHAR(32) NOT NULL',
+                ['type' => 'char', 'length' => 32, 'null' => false],
+                '[id] CHAR(32) NOT NULL',
             ],
             [
                 'id',
