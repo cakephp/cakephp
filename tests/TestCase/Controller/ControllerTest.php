@@ -22,10 +22,12 @@ use Cake\Event\Event;
 use Cake\Event\EventInterface;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
+use Cake\ORM\Table;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Error\Notice;
 use PHPUnit\Framework\Error\Warning;
+use ReflectionFunction;
 use TestApp\Controller\Admin\PostsController;
 use TestApp\Controller\TestController;
 use TestPlugin\Controller\TestPluginController;
@@ -711,6 +713,28 @@ class ControllerTest extends TestCase
 
         $Controller = new TestController($url, $response);
         $Controller->getAction();
+    }
+
+    public function testGetActionArgsReflection(): void
+    {
+        $request = new ServerRequest([
+            'url' => 'test/reflection/1',
+            'params' => [
+                'controller' => 'Test',
+                'action' => 'reflection',
+                'pass' => ['1'],
+            ],
+        ]);
+        $controller = new TestController($request, new Response());
+
+        $closure = $controller->getAction();
+        $args = (new ReflectionFunction($closure))->getParameters();
+
+        $this->assertNull($args[0]->getClass());
+        $this->assertSame('passed', $args[0]->getName());
+
+        $this->assertSame(Table::class, $args[1]->getClass()->getName());
+        $this->assertSame('table', $args[1]->getName());
     }
 
     /**

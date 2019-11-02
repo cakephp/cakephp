@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace TestApp\Controller;
 
 use Cake\Event\EventInterface;
+use Cake\ORM\Table;
 
 /**
  * TestController class
@@ -62,6 +63,10 @@ class TestController extends ControllerTestAppController
             'testId' => $testId,
             'test2Id' => $testTwoId,
         ]);
+    }
+
+    public function reflection($passed, Table $table)
+    {
     }
 
     public function returner()
