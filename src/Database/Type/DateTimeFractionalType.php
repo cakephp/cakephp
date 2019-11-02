@@ -11,39 +11,30 @@ declare(strict_types=1);
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         3.0.0
+ * @since         4.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Database\Type;
 
 /**
- * Time type converter.
- *
- * Use to convert time instances to strings & back.
+ * Extends DateTimeType with support for fractional seconds up to microseconds.
  */
-class TimeType extends DateTimeType
+class DateTimeFractionalType extends DateTimeType
 {
     /**
      * @inheritDoc
      */
-    protected $_format = 'H:i:s';
+    protected $_format = 'Y-m-d H:i:s.u';
 
     /**
      * @inheritDoc
      */
     protected $_marshalFormats = [
-        'H:i:s',
+        'Y-m-d H:i:s.u',
+        'Y-m-d H:i:s',
+        'Y-m-d\TH:i:s.u',
+        'Y-m-d\TH:i:s',
+        'Y-m-d\TH:i:s.uP',
+        'Y-m-d\TH:i:sP',
     ];
-
-    /**
-     * @inheritDoc
-     */
-    protected function _parseLocaleValue(string $value)
-    {
-        /** @var \Cake\I18n\I18nDateTimeInterface $class */
-        $class = $this->_className;
-
-        /** @psalm-suppress PossiblyInvalidArgument */
-        return $class::parseTime($value, $this->_localeMarshalFormat);
-    }
 }

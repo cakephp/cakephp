@@ -126,7 +126,6 @@ class DateTypeTest extends TestCase
             ['', null],
             ['derpy', null],
             ['2013-nope!', null],
-            ['14-02-14', null],
             ['2014-02-14 13:14:15', null],
 
             // valid string types

@@ -590,8 +590,10 @@ class Validation
 
     /**
      * Time validation, determines if the string passed is a valid time.
-     * Validates time as 24hr (HH:MM) or am/pm ([H]H:MM[a|p]m)
-     * Does not allow/validate seconds.
+     * Validates time as 24hr (HH:MM[:SS][.FFFFFF]) or am/pm ([H]H:MM[a|p]m)
+     *
+     * Seconds and fractional seconds (microseconds) are allowed but optional
+     * in 24hr format.
      *
      * @param mixed $check a valid time string/object
      * @return bool Success
@@ -609,10 +611,10 @@ class Validation
             return false;
         }
 
-        return static::_check(
-            $check,
-            '%^((0?[1-9]|1[012])(:[0-5]\d){0,2} ?([AP]M|[ap]m))$|^([01]\d|2[0-3])(:[0-5]\d){0,2}$%'
-        );
+        $meridianClockRegex = '^((0?[1-9]|1[012])(:[0-5]\d){0,2} ?([AP]M|[ap]m))$';
+        $standardClockRegex = '^([01]\d|2[0-3])((:[0-5]\d){0,2}|(:[0-5]\d){2}\.\d{0,6})$';
+
+        return static::_check($check, '%' . $meridianClockRegex . '|' . $standardClockRegex . '%');
     }
 
     /**
@@ -1687,9 +1689,20 @@ class Validation
             if (isset($value['meridian'])) {
                 $value['hour'] = strtolower($value['meridian']) === 'am' ? $value['hour'] : $value['hour'] + 12;
             }
-            $value += ['minute' => 0, 'second' => 0];
-            if (is_numeric($value['hour']) && is_numeric($value['minute']) && is_numeric($value['second'])) {
-                $formatted .= sprintf('%02d:%02d:%02d', $value['hour'], $value['minute'], $value['second']);
+            $value += ['minute' => 0, 'second' => 0, 'microsecond' => 0];
+            if (
+                is_numeric($value['hour']) &&
+                is_numeric($value['minute']) &&
+                is_numeric($value['second']) &&
+                is_numeric($value['microsecond'])
+            ) {
+                $formatted .= sprintf(
+                    '%02d:%02d:%02d.%06d',
+                    $value['hour'],
+                    $value['minute'],
+                    $value['second'],
+                    $value['microsecond']
+                );
             }
         }
 

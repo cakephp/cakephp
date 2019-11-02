@@ -212,7 +212,6 @@ class DateTimeTypeTest extends TestCase
             ['', null],
             ['derpy', null],
             ['2013-nope!', null],
-            ['13-06-26', null],
 
             // valid string types
             ['1392387900', new Time('@1392387900')],
