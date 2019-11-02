@@ -19,7 +19,6 @@ namespace Cake\Controller;
 use Cake\Core\App;
 use Cake\Http\ControllerFactoryInterface;
 use Cake\Http\Exception\MissingControllerException;
-use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Utility\Inflector;
 use Psr\Http\Message\ResponseInterface;
@@ -27,14 +26,14 @@ use Psr\Http\Message\ServerRequestInterface;
 use ReflectionClass;
 
 /**
- * Factory method for building controllers from request/response pairs.
+ * Factory method for building controllers for request.
  *
  * @implements \Cake\Http\ControllerFactoryInterface<\Cake\Controller\Controller>
  */
 class ControllerFactory implements ControllerFactoryInterface
 {
     /**
-     * Create a controller for a given request/response
+     * Create a controller for a given request.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request to build a controller for.
      * @return \Cake\Controller\Controller
@@ -53,10 +52,8 @@ class ControllerFactory implements ControllerFactoryInterface
             $this->missingController($request);
         }
 
-        $response = new Response();
-
         /** @var \Cake\Controller\Controller $controller */
-        $controller = $reflection->newInstance($request, $response);
+        $controller = $reflection->newInstance($request);
 
         return $controller;
     }
