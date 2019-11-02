@@ -100,6 +100,6 @@
         "test": "phpunit",
         "test-coverage": "phpunit --coverage-clover=clover.xml",
         "phpstan": "phpstan analyse -c phpstan.neon -l 2 src/",
-        "phpstan-setup": "cp composer.json composer.backup && composer require --dev phpstan/phpstan-shim:^0.11 && mv composer.backup composer.json"
+        "phpstan-setup": "wget -O vendor/bin/phpstan https://github.com/phpstan/phpstan-shim/raw/master/phpstan.phar && chmod +x vendor/bin/phpstan"
     }
 }
