@@ -559,7 +559,7 @@ SQL;
             [
                 'id',
                 ['type' => 'char', 'length' => 16, 'null' => false],
-                '[id] CHAR(16) NOT NULL',
+                '[id] NCHAR(16) NOT NULL',
             ],
             [
                 'id',
