@@ -23,6 +23,7 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Utility\Inflector;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use ReflectionClass;
 
 /**
@@ -35,12 +36,12 @@ class ControllerFactory implements ControllerFactoryInterface
     /**
      * Create a controller for a given request/response
      *
-     * @param \Cake\Http\ServerRequest $request The request to build a controller for.
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request to build a controller for.
      * @return \Cake\Controller\Controller
      * @throws \Cake\Http\Exception\MissingControllerException
      * @throws \ReflectionException
      */
-    public function create(ServerRequest $request): Controller
+    public function create(ServerRequestInterface $request): Controller
     {
         $className = $this->getControllerClass($request);
         if (!$className) {

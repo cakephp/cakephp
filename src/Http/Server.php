@@ -24,6 +24,7 @@ use Cake\Event\EventManager;
 use Cake\Event\EventManagerInterface;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Zend\HttpHandlerRunner\Emitter\EmitterInterface;
 
 /**
@@ -65,11 +66,11 @@ class Server implements EventDispatcherInterface
      *   from event listeners.
      * - Run the middleware queue including the application.
      *
-     * @param \Cake\Http\ServerRequest|null $request The request to use or null.
+     * @param \Psr\Http\Message\ServerRequestInterface|null $request The request to use or null.
      * @return \Psr\Http\Message\ResponseInterface
      * @throws \RuntimeException When the application does not make a response.
      */
-    public function run(?ServerRequest $request = null): ResponseInterface
+    public function run(?ServerRequestInterface $request = null): ResponseInterface
     {
         $this->bootstrap();
 
