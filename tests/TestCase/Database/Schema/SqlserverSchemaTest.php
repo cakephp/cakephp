@@ -9,10 +9,10 @@ declare(strict_types=1);
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- * @link      https://cakephp.org CakePHP(tm) Project
- * @since     3.0.0
- * @license   https://opensource.org/licenses/mit-license.php MIT License
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
+ * @since         3.0.0
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Database\Schema;
 
@@ -281,7 +281,7 @@ SQL;
      * Test parsing Sqlserver column types from field description.
      *
      * @dataProvider convertColumnProvider
-     * @return       void
+     * @return void
      */
     public function testConvertColumn($type, $length, $precision, $scale, $expected)
     {
@@ -752,7 +752,7 @@ SQL;
      * Test generating column definitions
      *
      * @dataProvider columnSqlProvider
-     * @return       void
+     * @return void
      */
     public function testColumnSql($name, $data, $expected)
     {
@@ -905,8 +905,8 @@ SQL;
                 'null' => false,
             ])
             ->addColumn('category_id', [
-                    'type' => 'integer',
-                    'null' => false,
+                'type' => 'integer',
+                'null' => false,
             ])
             ->addColumn('category_name', [
                 'type' => 'integer',
@@ -1037,7 +1037,7 @@ SQL;
             ->addConstraint('primary', [
                 'type' => 'primary',
                 'columns' => ['id'],
-                ]);
+            ]);
         $result = $table->truncateSql($connection);
         $this->assertCount(2, $result);
         $this->assertSame('DELETE FROM [schema_articles]', $result[0]);
