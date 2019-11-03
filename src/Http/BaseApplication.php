@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Http;
 
 use Cake\Console\CommandCollection;
+use Cake\Controller\ControllerFactory;
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\HttpApplicationInterface;
 use Cake\Core\Plugin;
@@ -63,16 +64,28 @@ abstract class BaseApplication implements
     protected $plugins;
 
     /**
+     * Controller factory
+     *
+     * @var \Cake\Http\ControllerFactoryInterface|null
+     */
+    protected $controllerFactory;
+
+    /**
      * Constructor
      *
      * @param string $configDir The directory the bootstrap configuration is held in.
      * @param \Cake\Event\EventManagerInterface $eventManager Application event manager instance.
+     * @param \Cake\Http\ControllerFactoryInterface $controllerFactory Controller factory.
      */
-    public function __construct(string $configDir, ?EventManagerInterface $eventManager = null)
-    {
+    public function __construct(
+        string $configDir,
+        ?EventManagerInterface $eventManager = null,
+        ?ControllerFactoryInterface $controllerFactory = null
+    ) {
         $this->configDir = $configDir;
         $this->plugins = Plugin::getCollection();
         $this->_eventManager = $eventManager ?: EventManager::instance();
+        $this->controllerFactory = $controllerFactory;
     }
 
     /**
@@ -203,16 +216,16 @@ abstract class BaseApplication implements
     public function handle(
         ServerRequestInterface $request
     ): ResponseInterface {
-        return $this->getDispatcher()->dispatch($request);
-    }
+        if ($this->controllerFactory === null) {
+            $this->controllerFactory = new ControllerFactory();
+        }
 
-    /**
-     * Get the ActionDispatcher.
-     *
-     * @return \Cake\Http\ActionDispatcher
-     */
-    protected function getDispatcher(): ActionDispatcher
-    {
-        return new ActionDispatcher();
+        if (Router::getRequest() !== $request) {
+            Router::setRequest($request);
+        }
+
+        $controller = $this->controllerFactory->create($request);
+
+        return $this->controllerFactory->invoke($controller);
     }
 }

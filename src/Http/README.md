@@ -42,6 +42,7 @@ look like:
 namespace App
 
 use Cake\Core\HttpApplicationInterface;
+use Cake\Http\MiddlewareQueue;
 
 class Application implements HttpApplicationInterface
 {

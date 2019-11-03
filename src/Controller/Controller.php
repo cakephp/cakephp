@@ -23,13 +23,13 @@ use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventInterface;
 use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManagerInterface;
-use Cake\Http\ControllerInterface;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Log\LogTrait;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Routing\Router;
 use Cake\View\ViewVarsTrait;
+use Closure;
 use Psr\Http\Message\ResponseInterface;
 use ReflectionClass;
 use ReflectionException;
@@ -85,7 +85,7 @@ use UnexpectedValueException;
  * @method bool isAuthorized($user)
  * @link https://book.cakephp.org/4/en/controllers.html
  */
-class Controller implements EventListenerInterface, EventDispatcherInterface, ControllerInterface
+class Controller implements EventListenerInterface, EventDispatcherInterface
 {
     use EventDispatcherTrait;
     use LocatorAwareTrait;
@@ -489,18 +489,17 @@ class Controller implements EventListenerInterface, EventDispatcherInterface, Co
     }
 
     /**
-     * Dispatches the controller action. Checks that the action
-     * exists and isn't private.
+     * Get the closure for action to be invoked by ControllerFactory.
      *
-     * @return \Psr\Http\Message\ResponseInterface The resulting response.
-     * @throws \Cake\Controller\Exception\MissingActionException If controller action is not found.
-     * @throws \UnexpectedValueException If return value of action method is not null or ResponseInterface instance.
+     * @return \Closure
+     * @throws \Cake\Controller\Exception\MissingActionException
      */
-    public function invokeAction(): ?ResponseInterface
+    public function getAction(): Closure
     {
         $request = $this->request;
+        $action = $request->getParam('action');
 
-        if (!$this->isAction($request->getParam('action'))) {
+        if (!$this->isAction($action)) {
             throw new MissingActionException([
                 'controller' => $this->name . 'Controller',
                 'action' => $request->getParam('action'),
@@ -509,10 +508,20 @@ class Controller implements EventListenerInterface, EventDispatcherInterface, Co
             ]);
         }
 
-        /** @var callable $callable */
-        $callable = [$this, $request->getParam('action')];
+        return Closure::fromCallable([$this, $action]);
+    }
 
-        $result = $callable(...array_values($request->getParam('pass')));
+    /**
+     * Dispatches the controller action.
+     *
+     * @param \Closure $action The action closure.
+     * @param array $args The arguments to be passed when invoking action.
+     * @return void
+     * @throws \UnexpectedValueException If return value of action is not `null` or `ResponseInterface` instance.
+     */
+    public function invokeAction(Closure $action, array $args): void
+    {
+        $result = $action(...$args);
         if ($result !== null && !$result instanceof ResponseInterface) {
             throw new UnexpectedValueException(sprintf(
                 'Controller actions can only return ResponseInterface instance or null. '
@@ -526,8 +535,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface, Co
         if ($result) {
             $this->response = $result;
         }
-
-        return $this->response;
     }
 
     /**
