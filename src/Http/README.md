@@ -34,9 +34,7 @@ To learn more read the [Http Client documentation](https://book.cakephp.org/4.0/
 
 The Http Server allows an `HttpApplicationInterface` to process requests and
 emit responses. To get started first implement the
-`Cake\Http\HttpApplicationInterface`, or extend `Cake\Http\BaseApplication` if
-you are also using CakePHP's console libraries.  A minimal example would could
-look like:
+`Cake\Http\HttpApplicationInterface`  A minimal example would could look like:
 
 ```php
 namespace App
