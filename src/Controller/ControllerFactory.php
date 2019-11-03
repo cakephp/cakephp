@@ -38,17 +38,17 @@ class ControllerFactory implements ControllerFactoryInterface
      * @param \Psr\Http\Message\ServerRequestInterface $request The request to build a controller for.
      * @return \Cake\Controller\Controller
      * @throws \Cake\Http\Exception\MissingControllerException
-     * @throws \ReflectionException
      */
     public function create(ServerRequestInterface $request): Controller
     {
         $className = $this->getControllerClass($request);
-        if (!$className) {
+        if ($className === null) {
             $this->missingController($request);
         }
+
         /** @var string $className */
         $reflection = new ReflectionClass($className);
-        if ($reflection->isAbstract() || $reflection->isInterface()) {
+        if ($reflection->isAbstract()) {
             $this->missingController($request);
         }
 
