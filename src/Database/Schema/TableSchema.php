@@ -137,12 +137,10 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      */
     protected static $_columnExtras = [
         'string' => [
-            'fixed' => null,
             'collate' => null,
         ],
         'char' => [
             'collate' => null,
-            'fixed' => true,
         ],
         'text' => [
             'collate' => null,
