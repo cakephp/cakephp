@@ -9,10 +9,10 @@ declare(strict_types=1);
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- * @link      https://cakephp.org CakePHP(tm) Project
- * @since     3.0.0
- * @license   https://opensource.org/licenses/mit-license.php MIT License
+ * @copyright    Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link         https://cakephp.org CakePHP(tm) Project
+ * @since        3.0.0
+ * @license      https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Database\Schema;
 
@@ -43,7 +43,7 @@ class PostgresSchemaTest extends TestCase
     /**
      * Helper method for testing methods.
      *
-     * @param  \Cake\Datasource\ConnectionInterface $connection
+     * @param \Cake\Datasource\ConnectionInterface $connection
      * @return void
      */
     protected function _createTables($connection)
@@ -233,7 +233,7 @@ SQL;
      * Test parsing Postgres column types from field description.
      *
      * @dataProvider convertColumnProvider
-     * @return       void
+     * @return void
      */
     public function testConvertColumn($field, $expected)
     {
@@ -892,7 +892,7 @@ SQL;
      * Test generating column definitions
      *
      * @dataProvider columnSqlProvider
-     * @return       void
+     * @return void
      */
     public function testColumnSql($name, $data, $expected)
     {
@@ -921,7 +921,7 @@ SQL;
             ->addConstraint('primary', [
                 'type' => 'primary',
                 'columns' => ['id'],
-                ]);
+            ]);
 
         $result = $schema->columnSql($table, 'id');
         $this->assertEquals($result, '"id" SERIAL');
@@ -992,7 +992,7 @@ SQL;
             'type' => 'string',
             'length' => 255,
         ])->addColumn('author_id', [
-                'type' => 'integer',
+            'type' => 'integer',
         ])->addConstraint($name, $data);
 
         $this->assertTextEquals($expected, $schema->constraintSql($table, $name));
@@ -1294,7 +1294,7 @@ SQL;
             ->addConstraint('primary', [
                 'type' => 'primary',
                 'columns' => ['id'],
-                ]);
+            ]);
         $result = $table->truncateSql($connection);
         $this->assertCount(1, $result);
         $this->assertSame('TRUNCATE "schema_articles" RESTART IDENTITY CASCADE', $result[0]);
