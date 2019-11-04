@@ -103,12 +103,16 @@ class ControllerFactory implements ControllerFactoryInterface
             $pluginPath = $request->getParam('plugin') . '.';
         }
         if ($request->getParam('prefix')) {
-            if (strpos($request->getParam('prefix'), '/') === false) {
-                $namespace .= '/' . Inflector::camelize($request->getParam('prefix'));
+            $prefix = $request->getParam('prefix');
+
+            if (strpos($prefix, '/') === false) {
+                $namespace .= '/' . Inflector::camelize($prefix);
             } else {
                 $prefixes = array_map(
-                    'Cake\Utility\Inflector::camelize',
-                    explode('/', $request->getParam('prefix'))
+                    function ($val) {
+                        return Inflector::camelize($val);
+                    },
+                    explode('/', $prefix)
                 );
                 $namespace .= '/' . implode('/', $prefixes);
             }
