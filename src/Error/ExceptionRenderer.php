@@ -131,6 +131,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
             $request = $request->withAttribute('params', $routerRequest->getAttribute('params'));
         }
 
+        $errorOccured = false;
         try {
             $params = $request->getAttribute('params');
             $params['controller'] = 'Error';
@@ -147,6 +148,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
             $controller = new $class($request);
             $controller->startupProcess();
         } catch (Throwable $e) {
+            $errorOccured = true;
         }
 
         if (!isset($controller)) {
@@ -156,7 +158,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
         // Retry RequestHandler, as another aspect of startupProcess()
         // could have failed. Ignore any exceptions out of startup, as
         // there could be userland input data parsers.
-        if (isset($controller->RequestHandler)) {
+        if ($errorOccured && isset($controller->RequestHandler)) {
             try {
                 $event = new Event('Controller.startup', $controller);
                 $controller->RequestHandler->startup($event);
