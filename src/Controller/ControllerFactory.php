@@ -94,11 +94,9 @@ class ControllerFactory implements ControllerFactoryInterface
      */
     public function getControllerClass(ServerRequest $request): ?string
     {
-        $pluginPath = $controller = '';
+        $pluginPath = '';
         $namespace = 'Controller';
-        if ($request->getParam('controller')) {
-            $controller = $request->getParam('controller');
-        }
+        $controller = $request->getParam('controller', '');
         if ($request->getParam('plugin')) {
             $pluginPath = $request->getParam('plugin') . '.';
         }
