@@ -111,12 +111,15 @@ class PostgresSchema extends BaseSchema
         if ($col === 'uuid') {
             return ['type' => TableSchema::TYPE_UUID, 'length' => null];
         }
-        if ($col === 'char' || $col === 'character') {
+        if ($col === 'char') {
             return ['type' => TableSchema::TYPE_CHAR, 'length' => $length];
+        }
+        if ( strpos($col, 'character') !== false) {
+            return ['type' => TableSchema::TYPE_STRING, 'length' => $length];
         }
         // money is 'string' as it includes arbitrary text content
         // before the number value.
-        if ( strpos($col, 'money') !== false ) {
+        if ( strpos($col, 'money') !== false || $col === 'string') {
             return ['type' => TableSchema::TYPE_STRING, 'length' => $length];
         }
         if (strpos($col, 'text') !== false) {
@@ -139,7 +142,9 @@ class PostgresSchema extends BaseSchema
             return ['type' => TableSchema::TYPE_JSON, 'length' => null];
         }
 
-        return ['type' => TableSchema::TYPE_STRING, 'length' => null];
+        $length = is_numeric($length) ? $length : null;
+
+        return ['type' => TableSchema::TYPE_STRING, 'length' => $length];
     }
 
     /**

@@ -335,7 +335,6 @@ SQL;
                 'length' => 20,
                 'precision' => null,
                 'comment' => 'A title',
-                'fixed' => null,
                 'collate' => 'utf8_general_ci',
             ],
             'body' => [

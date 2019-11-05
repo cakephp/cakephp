@@ -183,7 +183,7 @@ SQL;
             ],
             [
                 ['type' => 'CHARACTER(10)'],
-                ['type' => 'char', 'length' => 10, 'collate' => 'ja_JP.utf8'],
+                ['type' => 'string', 'length' => 10, 'collate' => 'ja_JP.utf8'],
             ],
             [
                 ['type' => 'MONEY'],
@@ -697,13 +697,13 @@ SQL;
             ],
             [
                 'id',
-                ['type' => 'char', 'length' => 32, 'fixed' => true, 'null' => false],
+                ['type' => 'char', 'length' => 32, 'null' => false],
                 '"id" CHAR(32) NOT NULL',
             ],
             [
                 'title',
-                ['type' => 'string', 'length' => 36, 'fixed' => true, 'null' => false],
-                '"title" CHAR(36) NOT NULL',
+                ['type' => 'string', 'length' => 36, 'null' => false],
+                '"title" VARCHAR(36) NOT NULL',
             ],
             [
                 'id',
