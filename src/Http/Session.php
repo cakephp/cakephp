@@ -135,7 +135,7 @@ class Session
      */
     protected static function _defaultConfig(string $name)
     {
-        $tmp = defined('TMP') ? TMP : sys_get_temp_dir();
+        $tmp = defined('TMP') ? TMP : sys_get_temp_dir() . DIRECTORY_SEPARATOR;
         $defaults = [
             'php' => [
                 'ini' => [
