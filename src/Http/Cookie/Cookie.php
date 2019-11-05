@@ -114,6 +114,20 @@ class Cookie implements CookieInterface
     protected $sameSite = null;
 
     /**
+     * Default attributes for a cookie.
+     *
+     * @var array
+     */
+    protected static $defaults = [
+        'expires' => null,
+        'path' => '/',
+        'domain' => '',
+        'secure' => false,
+        'httponly' => false,
+        'samesite' => null,
+    ];
+
+    /**
      * Constructor
      *
      * The constructors args are similar to the native PHP `setcookie()` method.
@@ -124,20 +138,20 @@ class Cookie implements CookieInterface
      * @param string $name Cookie name
      * @param string|array $value Value of the cookie
      * @param \DateTime|\DateTimeImmutable|null $expiresAt Expiration time and date
-     * @param string $path Path
-     * @param string $domain Domain
-     * @param bool $secure Is secure
-     * @param bool $httpOnly HTTP Only
+     * @param string|null $path Path
+     * @param string|null $domain Domain
+     * @param bool|null $secure Is secure
+     * @param bool|null $httpOnly HTTP Only
      * @param string|null $sameSite Samesite
      */
     public function __construct(
         string $name,
         $value = '',
         ?DateTimeInterface $expiresAt = null,
-        string $path = '/',
-        string $domain = '',
-        bool $secure = false,
-        bool $httpOnly = false,
+        ?string $path = null,
+        ?string $domain = null,
+        ?bool $secure = null,
+        ?bool $httpOnly = null,
         ?string $sameSite = null
     ) {
         $this->validateName($name);
@@ -145,11 +159,13 @@ class Cookie implements CookieInterface
 
         $this->_setValue($value);
 
-        $this->domain = $domain;
-        $this->httpOnly = $httpOnly;
-        $this->path = $path;
-        $this->secure = $secure;
-        if ($sameSite !== null) {
+        $this->domain = $domain ?? static::$defaults['domain'];
+        $this->httpOnly = $httpOnly ?? static::$defaults['httponly'];
+        $this->path = $path ?? static::$defaults['path'];
+        $this->secure = $secure ?? static::$defaults['secure'];
+        if ($sameSite === null) {
+            $this->sameSite = static::$defaults['samesite'];
+        } else {
             $this->validateSameSiteValue($sameSite);
             $this->sameSite = $sameSite;
         }
@@ -158,6 +174,17 @@ class Cookie implements CookieInterface
             $expiresAt = $expiresAt->setTimezone(new DateTimeZone('GMT'));
         }
         $this->expiresAt = $expiresAt;
+    }
+
+    /**
+     * Set default options for the cookies.
+     *
+     * @param array $options Default options.
+     * @return void
+     */
+    public static function setDefaults(array $options): void
+    {
+        static::$defaults = $options + static::$defaults;
     }
 
     /**
@@ -172,14 +199,7 @@ class Cookie implements CookieInterface
      */
     public static function create(string $name, $value, array $options = [])
     {
-        $options += [
-            'expires' => null,
-            'path' => '/',
-            'domain' => '',
-            'secure' => false,
-            'httponly' => false,
-            'samesite' => null,
-        ];
+        $options += static::$defaults;
 
         if (
             $options['expires'] !== null
@@ -209,10 +229,11 @@ class Cookie implements CookieInterface
     /**
      * Create Cookie instance from "set-cookie" header string.
      *
-     * @param string $cookie Cookie header string
+     * @param string $cookie Cookie header string.
+     * @param array $defaults Default attributes.
      * @return static
      */
-    public static function createFromHeaderString(string $cookie)
+    public static function createFromHeaderString(string $cookie, array $defaults = [])
     {
         if (strpos($cookie, '";"') !== false) {
             $cookie = str_replace('";"', '{__cookie_replace__}', $cookie);
@@ -223,16 +244,9 @@ class Cookie implements CookieInterface
 
         [$name, $value] = explode('=', array_shift($parts), 2);
         $data = [
-            'name' => urldecode($name),
-            'value' => urldecode($value),
-            'max-age' => null,
-            'expires' => null,
-            'path' => '',
-            'domain' => '',
-            'secure' => false,
-            'httponly' => false,
-            'samesite' => null,
-        ];
+                'name' => urldecode($name),
+                'value' => urldecode($value),
+            ] + $defaults;
 
         foreach ($parts as $part) {
             if (strpos($part, '=') !== false) {
@@ -246,21 +260,22 @@ class Cookie implements CookieInterface
             $data[$key] = $value;
         }
 
-        if ($data['max-age'] !== null) {
-            $data['expires'] = new DateTimeImmutable('@' . (time() + (int)$data['max-age']));
+        if (isset($data['max-age'])) {
+            $data['expires'] = time() + (int)$data['max-age'];
+            unset($data['max-age']);
         }
 
-        if ($data['samesite'] !== null) {
+        if (isset($data['samesite'])) {
             // Ignore invalid value when parsing headers
             // https://tools.ietf.org/html/draft-west-first-party-cookies-07#section-4.1
             if (!in_array($data['samesite'], CookieInterface::SAMESITE_VALUES, true)) {
-                $data['samesite'] = null;
+                unset($data['samesite']);
             }
         }
 
         $name = (string)$data['name'];
         $value = (string)$data['value'];
-        unset($data['name'], $data['value'], $data['max-age']);
+        unset($data['name'], $data['value']);
 
         return Cookie::create(
             $name,

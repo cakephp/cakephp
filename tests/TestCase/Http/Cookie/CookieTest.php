@@ -510,4 +510,15 @@ class CookieTest extends TestCase
         // https://tools.ietf.org/html/draft-west-first-party-cookies-07#section-4.1
         $this->assertNull($result->getSameSite());
     }
+
+    public function testDefaults()
+    {
+        Cookie::setDefaults(['path' => '/cakephp']);
+        $cookie = new Cookie('cakephp', 'cakephp-rocks');
+        $this->assertSame('/cakephp', $cookie->getPath());
+
+        Cookie::setDefaults(['path' => '/']);
+        $cookie = new Cookie('cakephp', 'cakephp-rocks');
+        $this->assertSame('/', $cookie->getPath());
+    }
 }

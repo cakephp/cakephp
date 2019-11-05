@@ -58,14 +58,15 @@ class CookieCollection implements IteratorAggregate, Countable
      * Create a Cookie Collection from an array of Set-Cookie Headers
      *
      * @param array $header The array of set-cookie header values.
+     * @param array $defaults The defaults attributes.
      * @return static
      */
-    public static function createFromHeader(array $header)
+    public static function createFromHeader(array $header, array $defaults = [])
     {
         $cookies = [];
         foreach ($header as $value) {
             try {
-                $cookies[] = Cookie::createFromHeaderString($value);
+                $cookies[] = Cookie::createFromHeaderString($value, $defaults);
             } catch (Exception $e) {
                 // Don't blow up on invalid cookies
             }
@@ -309,8 +310,10 @@ class CookieCollection implements IteratorAggregate, Countable
         $host = $uri->getHost();
         $path = $uri->getPath() ?: '/';
 
-        $cookies = static::createFromHeader($response->getHeader('Set-Cookie'));
-        $cookies = $this->setRequestDefaults($cookies, $host, $path);
+        $cookies = static::createFromHeader(
+            $response->getHeader('Set-Cookie'),
+            ['domain' => $host, 'path' => $path]
+        );
         $new = clone $this;
         foreach ($cookies as $cookie) {
             $new->cookies[$cookie->getId()] = $cookie;
@@ -318,30 +321,6 @@ class CookieCollection implements IteratorAggregate, Countable
         $new->removeExpiredCookies($host, $path);
 
         return $new;
-    }
-
-    /**
-     * Apply path and host to the set of cookies if they are not set.
-     *
-     * @param static $cookies A cookies collection to update.
-     * @param string $host The host to set.
-     * @param string $path The path to set.
-     * @return array An array of updated cookies.
-     */
-    protected function setRequestDefaults($cookies, string $host, string $path): array
-    {
-        $out = [];
-        foreach ($cookies as $name => $cookie) {
-            if (!$cookie->getDomain()) {
-                $cookie = $cookie->withDomain($host);
-            }
-            if (!$cookie->getPath()) {
-                $cookie = $cookie->withPath($path);
-            }
-            $out[] = $cookie;
-        }
-
-        return $out;
     }
 
     /**

@@ -233,7 +233,7 @@ class ResponseEmitter implements EmitterInterface
     protected function setCookie($cookie): bool
     {
         if (is_string($cookie)) {
-            $cookie = Cookie::createFromHeaderString($cookie);
+            $cookie = Cookie::createFromHeaderString($cookie, ['path' => '']);
         }
 
         if (PHP_VERSION_ID >= 70300) {
