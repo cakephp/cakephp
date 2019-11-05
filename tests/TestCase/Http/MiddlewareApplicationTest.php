@@ -16,9 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Http;
 
-use Cake\Core\Configure;
 use Cake\Http\MiddlewareApplication;
-use Cake\Http\MiddlewareQueue;
 use Cake\Http\ServerRequestFactory;
 use Cake\TestSuite\TestCase;
 use Psr\Http\Message\ResponseInterface;
