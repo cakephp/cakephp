@@ -173,6 +173,8 @@ class Cookie implements CookieInterface
 
         if ($expiresAt) {
             $expiresAt = $expiresAt->setTimezone(new DateTimeZone('GMT'));
+        } else {
+            $expiresAt = static::$defaults['expires'];
         }
         $this->expiresAt = $expiresAt;
     }
@@ -196,6 +198,7 @@ class Cookie implements CookieInterface
     public static function setDefaults(array $options): void
     {
         static::$defaults = $options + static::$defaults;
+        static::$defaults['expires'] = static::dateTimeInstance(static::$defaults['expires']);
     }
 
     /**
@@ -210,19 +213,7 @@ class Cookie implements CookieInterface
     public static function create(string $name, $value, array $options = [])
     {
         $options += static::$defaults;
-
-        if (
-            $options['expires'] !== null
-            && !($options['expires'] instanceof DateTimeInterface)
-        ) {
-            if (!is_numeric($options['expires'])) {
-                $options['expires'] = strtotime($options['expires']) ?: null;
-            }
-
-            if ($options['expires'] !== null) {
-                $options['expires'] = new DateTimeImmutable('@' . (string)$options['expires']);
-            }
-        }
+        $options['expires'] = static::dateTimeInstance($options['expires']);
 
         return new static(
             $name,
@@ -234,6 +225,34 @@ class Cookie implements CookieInterface
             $options['httponly'],
             $options['samesite']
         );
+    }
+
+    /**
+     * Converts non null expiry value into DateTimeInterface instance.
+     *
+     * @param mixed $expires Expiry value.
+     * @return \DateTimeInterface|null
+     */
+    protected static function dateTimeInstance($expires): ?DateTimeInterface
+    {
+        if ($expires === null) {
+            return $expires;
+        }
+
+        if ($expires instanceof DateTimeInterface) {
+            /** @psalm-suppress UndefinedInterfaceMethod */
+            return $expires->setTimezone(new DateTimeZone('GMT'));
+        }
+
+        if (!is_numeric($expires)) {
+            $expires = strtotime($expires) ?: null;
+        }
+
+        if ($expires !== null) {
+            $expires = new DateTimeImmutable('@' . (string)$expires);
+        }
+
+        return $expires;
     }
 
     /**

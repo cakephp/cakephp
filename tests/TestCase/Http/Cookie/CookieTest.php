@@ -18,6 +18,7 @@ use Cake\Chronos\Chronos;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieInterface;
 use Cake\TestSuite\TestCase;
+use DateTimeInterface;
 
 /**
  * HTTP cookies test.
@@ -513,12 +514,14 @@ class CookieTest extends TestCase
 
     public function testDefaults()
     {
-        Cookie::setDefaults(['path' => '/cakephp']);
+        Cookie::setDefaults(['path' => '/cakephp', 'expires' => time()]);
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $this->assertSame('/cakephp', $cookie->getPath());
+        $this->assertInstanceOf(DateTimeInterface::class, $cookie->getExpiry());
 
-        Cookie::setDefaults(['path' => '/']);
+        Cookie::setDefaults(['path' => '/', 'expires' => null]);
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $this->assertSame('/', $cookie->getPath());
+        $this->assertNull($cookie->getExpiry());
     }
 }
