@@ -108,7 +108,7 @@ class SqliteSchema extends BaseSchema
             return ['type' => TableSchema::TYPE_UUID, 'length' => null];
         }
         if ($col === 'char') {
-            return ['type' => TableSchema::TYPE_STRING, 'fixed' => true, 'length' => $length];
+            return ['type' => TableSchema::TYPE_CHAR, 'length' => $length];
         }
         if (strpos($col, 'char') !== false) {
             return ['type' => TableSchema::TYPE_STRING, 'length' => $length];
@@ -307,6 +307,7 @@ class SqliteSchema extends BaseSchema
         $typeMap = [
             TableSchema::TYPE_BINARY_UUID => ' BINARY(16)',
             TableSchema::TYPE_UUID => ' CHAR(36)',
+            TableSchema::TYPE_CHAR => ' CHAR',
             TableSchema::TYPE_TINYINTEGER => ' TINYINT',
             TableSchema::TYPE_SMALLINTEGER => ' SMALLINT',
             TableSchema::TYPE_INTEGER => ' INTEGER',
@@ -349,6 +350,10 @@ class SqliteSchema extends BaseSchema
             $out .= ' TEXT';
         }
 
+        if ($data['type'] === TableSchema::TYPE_CHAR) {
+            $out .= '(' . $data['length'] . ')';
+        }
+
         if (
             $data['type'] === TableSchema::TYPE_STRING ||
             (
@@ -359,13 +364,13 @@ class SqliteSchema extends BaseSchema
             $out .= ' VARCHAR';
 
             if (isset($data['length'])) {
-                $out .= '(' . (int)$data['length'] . ')';
+                $out .= '(' . $data['length'] . ')';
             }
         }
 
         if ($data['type'] === TableSchema::TYPE_BINARY) {
             if (isset($data['length'])) {
-                $out .= ' BLOB(' . (int)$data['length'] . ')';
+                $out .= ' BLOB(' . $data['length'] . ')';
             } else {
                 $out .= ' BLOB';
             }

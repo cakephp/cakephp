@@ -208,7 +208,7 @@ SQL;
                 10,
                 null,
                 null,
-                ['type' => 'string', 'fixed' => true, 'length' => 10, 'collate' => 'Japanese_Unicode_CI_AI'],
+                ['type' => 'char', 'length' => 10, 'collate' => 'Japanese_Unicode_CI_AI'],
             ],
             [
                 'NCHAR',
@@ -216,7 +216,7 @@ SQL;
                 null,
                 null,
                 // SQLServer returns double length for unicode columns.
-                ['type' => 'string', 'fixed' => true, 'length' => 5, 'collate' => 'Japanese_Unicode_CI_AI'],
+                ['type' => 'char', 'length' => 5, 'collate' => 'Japanese_Unicode_CI_AI'],
             ],
             [
                 'UNIQUEIDENTIFIER',
@@ -558,8 +558,8 @@ SQL;
             ],
             [
                 'id',
-                ['type' => 'string', 'length' => 32, 'fixed' => true, 'null' => false],
-                '[id] NCHAR(32) NOT NULL',
+                ['type' => 'char', 'length' => 16, 'null' => false],
+                '[id] NCHAR(16) NOT NULL',
             ],
             [
                 'id',
@@ -961,8 +961,7 @@ SQL;
             ->addColumn('body', ['type' => 'text'])
             ->addColumn('data', ['type' => 'json'])
             ->addColumn('hash', [
-                'type' => 'string',
-                'fixed' => true,
+                'type' => 'char',
                 'length' => 40,
                 'collate' => 'Latin1_General_BIN',
                 'null' => false,

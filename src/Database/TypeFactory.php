@@ -44,6 +44,7 @@ class TypeFactory
         'float' => Type\FloatType::class,
         'json' => Type\JsonType::class,
         'string' => Type\StringType::class,
+        'char' => Type\StringType::class,
         'text' => Type\StringType::class,
         'time' => Type\TimeType::class,
         'timestamp' => Type\DateTimeType::class,
