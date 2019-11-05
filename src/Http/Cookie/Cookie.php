@@ -117,6 +117,7 @@ class Cookie implements CookieInterface
      * Default attributes for a cookie.
      *
      * @var array
+     * @see \Cake\Cookie\Cookie::setDefaults()
      */
     protected static $defaults = [
         'expires' => null,
@@ -179,6 +180,16 @@ class Cookie implements CookieInterface
     /**
      * Set default options for the cookies.
      *
+     * Valid option keys are:
+     *
+     * - `expires`: Can be a UNIX timestamp or `strtotime()` compatible string or `DateTimeInterface` instance or `null`.
+     * - `path`: A path string. Defauts to `'/'`.
+     * - `domain`: Domain name string. Defaults to `''`.
+     * - `httponly`: Boolean. Defaults to `false`.
+     * - `secure`: Boolean. Defaults to `false`.
+     * - `samesite`: Can be one of `CookieInterface::SAMESITE_LAX`, `CookieInterface::SAMESITE_STRICT`,
+     *    `CookieInterface::SAMESITE_NONE` or `null`. Defaults to `null`.
+     *
      * @param array $options Default options.
      * @return void
      */
@@ -192,10 +203,9 @@ class Cookie implements CookieInterface
      *
      * @param string $name Cookie name
      * @param string|array $value Value of the cookie
-     * @param array $options Cookies options. Can contain one of following keys:
-     *  expires, path, domain, secure, httponly and samesite.
-     *  (Keys must be lowercase).
+     * @param array $options Cookies options.
      * @return static
+     * @see \Cake\Cookie\Cookie::setDefaults()
      */
     public static function create(string $name, $value, array $options = [])
     {
@@ -232,6 +242,7 @@ class Cookie implements CookieInterface
      * @param string $cookie Cookie header string.
      * @param array $defaults Default attributes.
      * @return static
+     * @see \Cake\Cookie\Cookie::setDefaults()
      */
     public static function createFromHeaderString(string $cookie, array $defaults = [])
     {
