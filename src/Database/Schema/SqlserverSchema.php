@@ -416,7 +416,7 @@ class SqlserverSchema extends BaseSchema
             )
         ) {
             $type = ' NVARCHAR';
-            $length = isset($data['length']) ? $data['length'] : TableSchema::LENGTH_TINY;
+            $length = $data['length'] ?? TableSchema::LENGTH_TINY;
             $out .= sprintf('%s(%d)', $type, $length);
         }
 

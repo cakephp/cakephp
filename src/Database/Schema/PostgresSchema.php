@@ -114,12 +114,12 @@ class PostgresSchema extends BaseSchema
         if ($col === 'char') {
             return ['type' => TableSchema::TYPE_CHAR, 'length' => $length];
         }
-        if ( strpos($col, 'character') !== false) {
+        if (strpos($col, 'character') !== false) {
             return ['type' => TableSchema::TYPE_STRING, 'length' => $length];
         }
         // money is 'string' as it includes arbitrary text content
         // before the number value.
-        if ( strpos($col, 'money') !== false || $col === 'string') {
+        if (strpos($col, 'money') !== false || $col === 'string') {
             return ['type' => TableSchema::TYPE_STRING, 'length' => $length];
         }
         if (strpos($col, 'text') !== false) {

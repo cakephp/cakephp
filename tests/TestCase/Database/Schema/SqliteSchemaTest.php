@@ -320,7 +320,6 @@ SQL;
                 'default' => 'Let \'em eat cake',
                 'length' => 20,
                 'precision' => null,
-                'fixed' => null,
                 'comment' => null,
                 'collate' => null,
             ],
@@ -365,7 +364,6 @@ SQL;
                 'default' => null,
                 'length' => 10,
                 'precision' => null,
-                'fixed' => null,
                 'comment' => null,
                 'collate' => null,
             ],
@@ -375,7 +373,6 @@ SQL;
                 'default' => 'NULL',
                 'length' => 10,
                 'precision' => null,
-                'fixed' => null,
                 'comment' => null,
                 'collate' => null,
             ],
@@ -481,7 +478,7 @@ SQL;
             ],
             [
                 'id',
-                ['type' => 'string', 'length' => 32, 'fixed' => true, 'null' => false],
+                ['type' => 'string', 'length' => 32, 'null' => false],
                 '"id" VARCHAR(32) NOT NULL',
             ],
             [
