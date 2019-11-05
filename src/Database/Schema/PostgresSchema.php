@@ -116,10 +116,7 @@ class PostgresSchema extends BaseSchema
         }
         // money is 'string' as it includes arbitrary text content
         // before the number value.
-        if (
-            strpos($col, 'char') !== false ||
-            strpos($col, 'money') !== false
-        ) {
+        if ( strpos($col, 'money') !== false ) {
             return ['type' => TableSchema::TYPE_STRING, 'length' => $length];
         }
         if (strpos($col, 'text') !== false) {
@@ -407,8 +404,10 @@ class PostgresSchema extends BaseSchema
                 $data['length'] === TableSchema::LENGTH_TINY
             )
         ) {
-            $length = isset($data['length']) ? $data['length'] : 255;
-                $out .= ' VARCHAR(' . $data['length'] . ')';
+            $out .= ' VARCHAR';
+            if (isset($data['length']) && $data['length'] !== '') {
+                $out .= '(' . $data['length'] . ')';
+            }
         }
 
         $hasCollate = [TableSchema::TYPE_TEXT, TableSchema::TYPE_STRING, TableSchema::TYPE_CHAR];

@@ -348,9 +348,6 @@ class MysqlSchema extends BaseSchema
                         $data['length'] = 255;
                     }
                     break;
-                case TableSchema::TYPE_CHAR:
-                    $out .= ' CHAR';
-                    break;
                 case TableSchema::TYPE_TEXT:
                     $isKnownLength = in_array($data['length'], TableSchema::$columnLengths);
                     if (empty($data['length']) || !$isKnownLength) {
