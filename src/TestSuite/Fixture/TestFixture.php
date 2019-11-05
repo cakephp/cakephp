@@ -182,7 +182,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
     protected function _schemaFromFields(): void
     {
         $connection = ConnectionManager::get($this->connection());
-        $this->_schema = new TableSchema($this->table);
+        $this->_schema = $connection->getDriver()->newTableSchema($this->table);
         foreach ($this->fields as $field => $data) {
             if ($field === '_constraints' || $field === '_indexes' || $field === '_options') {
                 continue;

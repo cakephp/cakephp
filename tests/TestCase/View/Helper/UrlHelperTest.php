@@ -14,7 +14,7 @@ declare(strict_types=1);
  * @since         3.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\View;
+namespace Cake\Test\TestCase\View\Helper;
 
 use Cake\Core\Configure;
 use Cake\Http\ServerRequest;
@@ -43,7 +43,10 @@ class UrlHelperTest extends TestCase
         parent::setUp();
 
         Router::reload();
-        $this->View = new View(new ServerRequest());
+        $request = new ServerRequest();
+        Router::setRequest($request);
+
+        $this->View = new View($request);
         $this->Helper = new UrlHelper($this->View);
 
         static::setAppNamespace();
@@ -124,7 +127,7 @@ class UrlHelperTest extends TestCase
             'base' => '/magazine',
             'webroot' => '/magazine/',
         ]);
-        Router::pushRequest($request);
+        Router::setRequest($request);
 
         $this->assertSame('/magazine/subscribe', $this->Helper->build());
         $this->assertEquals(
@@ -187,7 +190,9 @@ class UrlHelperTest extends TestCase
         $result = $this->Helper->assetTimestamp(Configure::read('App.cssBaseUrl') . 'cake.generic.css?someparam');
         $this->assertEquals(Configure::read('App.cssBaseUrl') . 'cake.generic.css?someparam', $result);
 
-        $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/some/dir/'));
+        $request = $this->View->getRequest()->withAttribute('webroot', '/some/dir/');
+        $this->View->setRequest($request);
+        Router::setRequest($request);
         $result = $this->Helper->assetTimestamp('/some/dir/' . Configure::read('App.cssBaseUrl') . 'cake.generic.css');
         $this->assertRegExp('/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/', $result);
     }
@@ -199,17 +204,8 @@ class UrlHelperTest extends TestCase
      */
     public function testAssetUrl()
     {
-        Router::connect('/:controller/:action/*');
-
         $this->Helper->webroot = '';
-        $result = $this->Helper->assetUrl(
-            [
-                'controller' => 'js',
-                'action' => 'post',
-                '_ext' => 'js',
-            ],
-            ['fullBase' => true]
-        );
+        $result = $this->Helper->assetUrl('js/post.js', ['fullBase' => true]);
         $this->assertEquals(Router::fullBaseUrl() . '/js/post.js', $result);
 
         $result = $this->Helper->assetUrl('foo.jpg', ['pathPrefix' => 'img/']);
@@ -246,7 +242,7 @@ class UrlHelperTest extends TestCase
             ->withAttribute('webroot', 'subdir/');
 
         $this->View->setRequest($request);
-        Router::pushRequest($request);
+        Router::setRequest($request);
 
         $data = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4' .
             '/8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==';
@@ -265,10 +261,12 @@ class UrlHelperTest extends TestCase
      */
     public function testAssetUrlNoRewrite()
     {
-        $this->View->setRequest($this->View->getRequest()
+        $request = Router::getRequest()
             ->withAttribute('base', '/cake_dev/index.php')
             ->withAttribute('webroot', '/cake_dev/app/webroot/')
-            ->withRequestTarget('/cake_dev/index.php/tasks'));
+            ->withRequestTarget('/cake_dev/index.php/tasks');
+        Router::setRequest($request);
+
         $result = $this->Helper->assetUrl('img/cake.icon.png', ['fullBase' => true]);
         $expected = Configure::read('App.fullBaseUrl') . '/cake_dev/app/webroot/img/cake.icon.png';
         $this->assertEquals($expected, $result);
@@ -366,15 +364,9 @@ class UrlHelperTest extends TestCase
      */
     public function testScript()
     {
-        Router::connect('/:controller/:action/*');
-
         $this->Helper->webroot = '';
         $result = $this->Helper->script(
-            [
-                'controller' => 'js',
-                'action' => 'post',
-                '_ext' => 'js',
-            ],
+            'post.js',
             ['fullBase' => true]
         );
         $this->assertEquals(Router::fullBaseUrl() . '/js/post.js', $result);
@@ -509,9 +501,11 @@ class UrlHelperTest extends TestCase
      */
     public function testWebrootPaths()
     {
+        $request = $this->View->getRequest()->withAttribute('webroot', '/');
         $this->View->setRequest(
-            $this->View->getRequest()->withAttribute('webroot', '/')
+            $request
         );
+        Router::setRequest($request);
         $result = $this->Helper->webroot('/img/cake.power.gif');
         $expected = '/img/cake.power.gif';
         $this->assertEquals($expected, $result);

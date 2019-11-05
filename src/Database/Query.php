@@ -22,6 +22,7 @@ use Cake\Database\Expression\OrderClauseExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\ValuesExpression;
 use Cake\Database\Statement\CallbackStatement;
+use Closure;
 use InvalidArgumentException;
 use IteratorAggregate;
 use RuntimeException;
@@ -315,7 +316,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param callable $visitor A function or callable to be executed for each part
      * @return $this
      */
-    public function traverse(callable $visitor)
+    public function traverse($visitor)
     {
         $parts = array_keys($this->_parts);
         foreach ($parts as $name) {
@@ -636,7 +637,6 @@ class Query implements ExpressionInterface, IteratorAggregate
 
         $joins = [];
         $i = count($this->_parts['join']);
-        /** @var array $tables */
         foreach ($tables as $alias => $t) {
             if (!is_array($t)) {
                 $t = ['table' => $t, 'conditions' => $this->newExpr()];
@@ -911,7 +911,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * If you use string conditions make sure that your values are correctly quoted.
      * The safest thing you can do is to never use string conditions.
      *
-     * @param string|array|\Cake\Database\ExpressionInterface|callable|null $conditions The conditions to filter on.
+     * @param string|array|\Cake\Database\ExpressionInterface|\Closure|null $conditions The conditions to filter on.
      * @param array $types associative array of type names used to bind values to query
      * @param bool $overwrite whether to reset conditions with passed list or not
      * @see \Cake\Database\Type
@@ -1080,7 +1080,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * `WHERE (title = 'Foo') AND (author_id = 1 OR author_id = 2)`
      *
-     * @param string|array|\Cake\Database\ExpressionInterface|callable $conditions The conditions to add with AND.
+     * @param string|array|\Cake\Database\ExpressionInterface|\Closure $conditions The conditions to add with AND.
      * @param array $types associative array of type names used to bind values to query
      * @see \Cake\Database\Query::where()
      * @see \Cake\Database\Type
@@ -1148,7 +1148,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * If you need to set complex expressions as order conditions, you
      * should use `orderAsc()` or `orderDesc()`.
      *
-     * @param array|\Cake\Database\ExpressionInterface|callable|string $fields fields to be added to the list
+     * @param array|\Cake\Database\ExpressionInterface|\Closure|string $fields fields to be added to the list
      * @param bool $overwrite whether to reset order with field list or not
      * @return $this
      */
@@ -1280,7 +1280,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * Having fields are not suitable for use with user supplied data as they are
      * not sanitized by the query builder.
      *
-     * @param string|array|\Cake\Database\ExpressionInterface|callable|null $conditions The having conditions.
+     * @param string|array|\Cake\Database\ExpressionInterface|\Closure|null $conditions The having conditions.
      * @param array $types associative array of type names used to bind values to query
      * @param bool $overwrite whether to reset conditions with passed list or not
      * @see \Cake\Database\Query::where()
@@ -1305,7 +1305,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * Having fields are not suitable for use with user supplied data as they are
      * not sanitized by the query builder.
      *
-     * @param string|array|\Cake\Database\ExpressionInterface|callable $conditions The AND conditions for HAVING.
+     * @param string|array|\Cake\Database\ExpressionInterface|\Closure $conditions The AND conditions for HAVING.
      * @param array $types associative array of type names used to bind values to query
      * @see \Cake\Database\Query::andWhere()
      * @return $this
@@ -1369,6 +1369,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @param int|\Cake\Database\ExpressionInterface|null $num number of records to be returned
      * @return $this
+     * @psalm-suppress MoreSpecificImplementedParamType
      */
     public function limit($num)
     {
@@ -1398,6 +1399,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @param int|\Cake\Database\ExpressionInterface|null $num number of records to be skipped
      * @return $this
+     * @psalm-suppress MoreSpecificImplementedParamType
      */
     public function offset($num)
     {
@@ -1536,7 +1538,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * ### Example
      *
      * ```
-     * $query->newExp()->lte('count', $query->identifier('total'));
+     * $query->newExpr()->lte('count', $query->identifier('total'));
      * ```
      *
      * @param string $identifier The identifier for an expression
@@ -1632,9 +1634,9 @@ class Query implements ExpressionInterface, IteratorAggregate
      * });
      * ```
      *
-     * @param string|array|callable|\Cake\Database\Expression\QueryExpression $key The column name or array of keys
+     * @param string|array|\Closure|\Cake\Database\Expression\QueryExpression $key The column name or array of keys
      *    + values to set. This can also be a QueryExpression containing a SQL fragment.
-     *    It can also be a callable, that is required to return an expression object.
+     *    It can also be a Closure, that is required to return an expression object.
      * @param mixed $value The value to update $key to. Can be null if $key is an
      *    array or QueryExpression. When $key is an array, this parameter will be
      *    used as $types instead.
@@ -1647,7 +1649,7 @@ class Query implements ExpressionInterface, IteratorAggregate
             $this->_parts['set'] = $this->newExpr()->setConjunction(',');
         }
 
-        if ($this->_parts['set']->isCallable($key)) {
+        if ($key instanceof Closure) {
             $exp = $this->newExpr()->setConjunction(',');
             $this->_parts['set']->add($key($exp));
 
@@ -1661,8 +1663,8 @@ class Query implements ExpressionInterface, IteratorAggregate
             return $this;
         }
 
-        if (is_string($types) && is_string($key)) {
-            $types = [$key => $types];
+        if (!is_string($types)) {
+            $types = null;
         }
         $this->_parts['set']->eq($key, $value, $types);
 
@@ -1920,11 +1922,11 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param string|int $param placeholder to be replaced with quoted version
      *   of $value
      * @param mixed $value The value to be bound
-     * @param string|int $type the mapped type name, used for casting when sending
+     * @param string|int|null $type the mapped type name, used for casting when sending
      *   to database
      * @return $this
      */
-    public function bind($param, $value, $type = 'string')
+    public function bind($param, $value, $type = null)
     {
         $this->getValueBinder()->bind($param, $value, $type);
 
@@ -2101,7 +2103,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * Helper function used to build conditions by composing QueryExpression objects.
      *
      * @param string $part Name of the query part to append the new part to
-     * @param string|null|array|\Cake\Database\ExpressionInterface|callable $append Expression or builder function
+     * @param string|array|\Cake\Database\ExpressionInterface|\Closure|null $append Expression or builder function to append.
      *   to append.
      * @param string $conjunction type of conjunction to be used to operate part
      * @param array $types associative array of type names used to bind values to query
@@ -2116,11 +2118,12 @@ class Query implements ExpressionInterface, IteratorAggregate
             return;
         }
 
-        if ($expression->isCallable($append)) {
+        if ($append instanceof Closure) {
             $append = $append($this->newExpr(), $this);
         }
 
         if ($expression->getConjunction() === $conjunction) {
+            /** @psalm-suppress PossiblyInvalidArgument */
             $expression->add($append, $types);
         } else {
             $expression = $this->newExpr()

@@ -86,6 +86,7 @@ class Sqlserver extends Driver
         ];
 
         if (!empty($config['encoding'])) {
+            /** @psalm-suppress UndefinedConstant */
             $config['flags'][PDO::SQLSRV_ATTR_ENCODING] = $config['encoding'];
         }
         $port = '';
@@ -138,7 +139,7 @@ class Sqlserver extends Driver
      */
     public function enabled(): bool
     {
-        return in_array('sqlsrv', PDO::getAvailableDrivers());
+        return in_array('sqlsrv', PDO::getAvailableDrivers(), true);
     }
 
     /**
@@ -152,9 +153,14 @@ class Sqlserver extends Driver
         $this->connect();
         $options = [PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL];
         $isObject = $query instanceof Query;
+        /** @psalm-suppress PossiblyInvalidMethodCall */
         if ($isObject && $query->isBufferedResultsEnabled() === false) {
             $options = [];
         }
+        /**
+         * @psalm-suppress PossiblyInvalidMethodCall
+         * @psalm-suppress PossiblyInvalidArgument
+         */
         $statement = $this->_connection->prepare($isObject ? $query->sql() : $query, $options);
 
         return new SqlserverStatement($statement, $this);

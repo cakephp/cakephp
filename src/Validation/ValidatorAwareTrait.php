@@ -90,10 +90,9 @@ trait ValidatorAwareTrait
      */
     public function getValidator(?string $name = null): Validator
     {
-        $name = $name ?: self::DEFAULT_VALIDATOR;
+        $name = $name ?: static::DEFAULT_VALIDATOR;
         if (!isset($this->_validators[$name])) {
-            $validator = $this->createValidator($name);
-            $this->setValidator($name, $validator);
+            $this->setValidator($name, $this->createValidator($name));
         }
 
         return $this->_validators[$name];
@@ -114,15 +113,15 @@ trait ValidatorAwareTrait
     {
         $method = 'validation' . ucfirst($name);
         if (!$this->validationMethodExists($method)) {
-            $message = sprintf('The %s::%s() validation method does not exists.', self::class, $method);
+            $message = sprintf('The %s::%s() validation method does not exists.', static::class, $method);
             throw new RuntimeException($message);
         }
 
         $validator = new $this->_validatorClass();
         $validator = $this->$method($validator);
         if ($this instanceof EventDispatcherInterface) {
-            $event = defined(self::class . '::BUILD_VALIDATOR_EVENT')
-                ? self::BUILD_VALIDATOR_EVENT
+            $event = defined(static::class . '::BUILD_VALIDATOR_EVENT')
+                ? static::BUILD_VALIDATOR_EVENT
                 : 'Model.buildValidator';
             $this->dispatchEvent($event, compact('validator', 'name'));
         }
@@ -130,7 +129,7 @@ trait ValidatorAwareTrait
         if (!$validator instanceof Validator) {
             throw new RuntimeException(sprintf(
                 'The %s::%s() validation method must return an instance of %s.',
-                self::class,
+                static::class,
                 $method,
                 Validator::class
             ));
@@ -159,7 +158,7 @@ trait ValidatorAwareTrait
      */
     public function setValidator(string $name, Validator $validator)
     {
-        $validator->setProvider(self::VALIDATOR_PROVIDER_NAME, $this);
+        $validator->setProvider(static::VALIDATOR_PROVIDER_NAME, $this);
         $this->_validators[$name] = $validator;
 
         return $this;

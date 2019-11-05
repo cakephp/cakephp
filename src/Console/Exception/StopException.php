@@ -15,14 +15,13 @@ declare(strict_types=1);
  */
 namespace Cake\Console\Exception;
 
-use Cake\Core\Exception\Exception;
-
 /**
  * Exception class for halting errors in console tasks
  *
  * @see \Cake\Console\Shell::_stop()
- * @see \Cake\Console\Shell::abort()
+ * @see \Cake\Console\Shell::error()
+ * @see \Cake\Console\Command::abort()
  */
-class StopException extends Exception
+class StopException extends ConsoleException
 {
 }

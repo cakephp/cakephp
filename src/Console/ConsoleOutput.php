@@ -83,8 +83,9 @@ class ConsoleOutput
     protected $_output;
 
     /**
-     * The current output type. Manipulated with ConsoleOutput::setOutputAs();
+     * The current output type.
      *
+     * @see setOutputAs() For manipulation.
      * @var int
      */
     protected $_outputAs = self::COLOR;
@@ -165,8 +166,16 @@ class ConsoleOutput
     {
         $this->_output = fopen($stream, 'wb');
 
-        if ((DIRECTORY_SEPARATOR === '\\' && !(bool)env('ANSICON') && env('ConEmuANSI') !== 'ON') ||
-            (function_exists('posix_isatty') && !posix_isatty($this->_output))
+        if (
+            (
+                DIRECTORY_SEPARATOR === '\\' &&
+                !(bool)env('ANSICON') &&
+                env('ConEmuANSI') !== 'ON'
+            ) ||
+            (
+                function_exists('posix_isatty') &&
+                !posix_isatty($this->_output)
+            )
         ) {
             $this->_outputAs = self::PLAIN;
         }
@@ -176,7 +185,7 @@ class ConsoleOutput
      * Outputs a single or multiple messages to stdout or stderr. If no parameters
      * are passed, outputs just a newline.
      *
-     * @param string|array $message A string or an array of strings to output
+     * @param string|string[] $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int The number of bytes returned from writing to output.
      */
@@ -221,7 +230,7 @@ class ConsoleOutput
      */
     protected function _replaceTags(array $matches): string
     {
-        $style = $this->styles($matches['tag']);
+        $style = $this->getStyle($matches['tag']);
         if (empty($style)) {
             return '<' . $matches['tag'] . '>' . $matches['text'] . '</' . $matches['tag'] . '>';
         }
@@ -240,7 +249,7 @@ class ConsoleOutput
             }
         }
 
-        return "\033[" . implode($styleInfo, ';') . 'm' . $matches['text'] . "\033[0m";
+        return "\033[" . implode(';', $styleInfo) . 'm' . $matches['text'] . "\033[0m";
     }
 
     /**
@@ -255,54 +264,56 @@ class ConsoleOutput
     }
 
     /**
-     * Get the current styles offered, or append new ones in.
+     * Gets the current styles offered
      *
-     * ### Get a style definition
+     * @param string $style The style to get.
+     * @return array The style or empty array.
+     */
+    public function getStyle(string $style): array
+    {
+        return static::$_styles[$style] ?? [];
+    }
+
+    /**
+     * Sets style.
+     *
+     * ### Creates or modifies an existing style.
      *
      * ```
-     * $output->styles('error');
-     * ```
-     *
-     * ### Get all the style definitions
-     *
-     * ```
-     * $output->styles();
-     * ```
-     *
-     * ### Create or modify an existing style
-     *
-     * ```
-     * $output->styles('annoy', ['text' => 'purple', 'background' => 'yellow', 'blink' => true]);
+     * $output->setStyle('annoy', ['text' => 'purple', 'background' => 'yellow', 'blink' => true]);
      * ```
      *
      * ### Remove a style
      *
      * ```
-     * $this->output->styles('annoy', false);
+     * $this->output->setStyle('annoy', []);
      * ```
      *
-     * @param string|null $style The style to get or create.
-     * @param array|bool|null $definition The array definition of the style to change or create a style
-     *   or false to remove a style.
-     * @return mixed If you are getting styles, the style or null will be returned. If you are creating/modifying
-     *   styles true will be returned.
+     * @param string $style The style to set.
+     * @param array $definition The array definition of the style to change or create..
+     * @return void
      */
-    public function styles(?string $style = null, $definition = null)
+    public function setStyle(string $style, array $definition): void
     {
-        if ($style === null && $definition === null) {
-            return static::$_styles;
-        }
-        if ($definition === null) {
-            return static::$_styles[$style] ?? null;
-        }
-        if ($definition === false) {
+        if (!$definition) {
+            /** @psalm-suppress PossiblyNullArrayOffset */
             unset(static::$_styles[$style]);
 
-            return true;
+            return;
         }
-        static::$_styles[$style] = $definition;
 
-        return true;
+        /** @psalm-suppress PossiblyNullArrayOffset */
+        static::$_styles[$style] = $definition;
+    }
+
+    /**
+     * Gets all the style definitions.
+     *
+     * @return array
+     */
+    public function styles(): array
+    {
+        return static::$_styles;
     }
 
     /**

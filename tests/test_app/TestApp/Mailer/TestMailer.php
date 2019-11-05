@@ -23,15 +23,23 @@ use Cake\Mailer\Mailer;
  */
 class TestMailer extends Mailer
 {
-    public function getEmailForAssertion()
+    protected $messageClass = TestMessage::class;
+
+    public $boundary = null;
+
+    public function deliver(string $content = '')
     {
-        return $this->_email;
+        $result = parent::deliver($content);
+        $this->boundary = $this->message->getBoundary();
+
+        return $result;
     }
 
-    protected function reset(): Mailer
+    public function send(?string $action = null, array $args = [], array $headers = []): array
     {
-        $this->template = $this->viewBuilder()->getTemplate();
+        $result = parent::send($action, $args, $headers);
+        $this->boundary = $this->message->getBoundary();
 
-        return parent::reset();
+        return $result;
     }
 }

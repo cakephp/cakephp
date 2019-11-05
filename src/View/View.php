@@ -79,7 +79,6 @@ class View implements EventDispatcherInterface
         getConfig as private _getConfig;
     }
     use LogTrait;
-    use ViewVarsTrait;
 
     /**
      * Helpers collection
@@ -213,7 +212,7 @@ class View implements EventDispatcherInterface
     /**
      * List of variables to collect from the associated controller.
      *
-     * @var array
+     * @var string[]
      */
     protected $_passedVars = [
         'viewVars', 'autoLayout', 'helpers', 'template', 'layout', 'name', 'theme',
@@ -266,7 +265,7 @@ class View implements EventDispatcherInterface
     /**
      * Content stack, used for nested templates that all use View::extend();
      *
-     * @var array
+     * @var string[]
      */
     protected $_stack = [];
 
@@ -303,7 +302,7 @@ class View implements EventDispatcherInterface
      *
      * @var string
      */
-    public const NAME_TEMPLATE = 'Template';
+    public const NAME_TEMPLATE = 'templates';
 
     /**
      * Constant for folder name containing files for overriding plugin templates.
@@ -340,15 +339,11 @@ class View implements EventDispatcherInterface
         if ($eventManager !== null) {
             $this->setEventManager($eventManager);
         }
-        $this->request = $request ?: Router::getRequest(true);
-        $this->response = $response ?: new Response();
-        if (!$this->request) {
-            $this->request = new ServerRequest([
-                'base' => '',
-                'url' => '',
-                'webroot' => '/',
-            ]);
+        if ($request === null) {
+            $request = Router::getRequest() ?: new ServerRequest(['base' => '', 'url' => '', 'webroot' => '/']);
         }
+        $this->request = $request;
+        $this->response = $response ?: new Response();
         $this->Blocks = new $this->_viewBlockClass();
         $this->initialize();
         $this->loadHelpers();
@@ -762,6 +757,7 @@ class View implements EventDispatcherInterface
             $this->Blocks->set('content', $this->renderLayout('', $this->layout));
         }
         if ($layout !== null) {
+            /** @var string $defaultLayout */
             $this->layout = $defaultLayout;
         }
         if ($defaultAutoLayout !== null) {
@@ -1380,7 +1376,8 @@ class View implements EventDispatcherInterface
      *
      * @param string $name The name you want to plugin split.
      * @param bool $fallback If true uses the plugin set in the current Request when parsed plugin is not loaded
-     * @return array{0: null|string|mixed, 1: string|mixed} Array with 2 indexes. 0 => plugin name, 1 => filename.
+     * @return array Array with 2 indexes. 0 => plugin name, 1 => filename.
+     * @psalm-return array{string|null, string}
      */
     public function pluginSplit(string $name, bool $fallback = true): array
     {
@@ -1479,7 +1476,7 @@ class View implements EventDispatcherInterface
      * and layouts.
      *
      * @param string $basePath Base path on which to get the prefixed one.
-     * @return array Array with all the templates paths.
+     * @return string[] Array with all the templates paths.
      */
     protected function _getSubPaths(string $basePath): array
     {
@@ -1527,11 +1524,11 @@ class View implements EventDispatcherInterface
                     . $plugin
                     . DIRECTORY_SEPARATOR;
             }
-            $pluginPaths = array_merge($pluginPaths, App::path(static::NAME_TEMPLATE, $plugin));
+            $pluginPaths[] = Plugin::templatePath($plugin);
         }
 
         if (!empty($this->theme)) {
-            $themePaths = App::path(static::NAME_TEMPLATE, Inflector::camelize($this->theme));
+            $themePaths[] = Plugin::templatePath(Inflector::camelize($this->theme));
 
             if ($plugin) {
                 for ($i = 0, $count = count($themePaths); $i < $count; $i++) {
@@ -1551,7 +1548,7 @@ class View implements EventDispatcherInterface
             $themePaths,
             $pluginPaths,
             $templatePaths,
-            [dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR]
+            App::core('templates')
         );
 
         if ($plugin !== null) {
@@ -1568,6 +1565,8 @@ class View implements EventDispatcherInterface
      * @param array $data Data
      * @param array $options Element options
      * @return array Element Cache configuration.
+     * @psalm-param array{cache:string, callbacks?: mixed, plugin?:mixed}|array{cache:array{key:string, config:string}, callbacks?: mixed, plugin?:mixed} $options
+     * @psalm-return array{key:string, config:string}
      */
     protected function _elementCache(string $name, array $data, array $options): array
     {
@@ -1578,7 +1577,6 @@ class View implements EventDispatcherInterface
             return $cache;
         }
 
-        $plugin = null;
         [$plugin, $name] = $this->pluginSplit($name);
 
         $underscored = null;

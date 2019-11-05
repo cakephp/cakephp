@@ -21,6 +21,7 @@ use Cake\Validation\Validation;
 use Cake\Validation\ValidationRule;
 use Cake\Validation\ValidationSet;
 use Cake\Validation\Validator;
+use Zend\Diactoros\UploadedFile;
 
 /**
  * Tests Validator class
@@ -683,7 +684,17 @@ class ValidatorTest extends TestCase
             ],
         ];
         $result = $validator->errors($data);
-        $this->assertEmpty($result, 'No errors on empty date');
+        $this->assertEmpty($result, 'No errors on empty file');
+
+        $data = [
+            'picture' => new UploadedFile(
+                '',
+                0,
+                UPLOAD_ERR_NO_FILE
+            ),
+        ];
+        $result = $validator->errors($data);
+        $this->assertEmpty($result, 'No errors on empty file');
 
         $data = [
             'picture' => [
@@ -1468,7 +1479,7 @@ class ValidatorTest extends TestCase
     public function testNotEmptyDateTime()
     {
         $validator = new Validator();
-        $validator->notEmptyDate('published', 'required field');
+        $validator->notEmptyDateTime('published', 'required field');
 
         $this->assertFalse($validator->isEmptyAllowed('published', true));
         $this->assertFalse($validator->isEmptyAllowed('published', false));
@@ -2206,6 +2217,42 @@ class ValidatorTest extends TestCase
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'alphaNumeric');
         $this->assertNotEmpty($validator->errors(['username' => '$']));
+    }
+
+    /**
+     * Tests the notalphanumeric proxy method
+     *
+     * @return void
+     */
+    public function testNotAlphanumeric()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'notAlphaNumeric');
+        $this->assertEmpty($validator->errors(['username' => '$']));
+    }
+
+    /**
+     * Tests the asciialphanumeric proxy method
+     *
+     * @return void
+     */
+    public function testAsciiAlphanumeric()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'asciiAlphaNumeric');
+        $this->assertNotEmpty($validator->errors(['username' => '$']));
+    }
+
+    /**
+     * Tests the notalphanumeric proxy method
+     *
+     * @return void
+     */
+    public function testNotAsciiAlphanumeric()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'notAsciiAlphaNumeric');
+        $this->assertEmpty($validator->errors(['username' => '$']));
     }
 
     /**

@@ -21,6 +21,7 @@ use Cake\Http\Client\Exception\NetworkException;
 use Cake\Http\Client\Exception\RequestException;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
+use Cake\Http\Exception\HttpException;
 use Composer\CaBundle\CaBundle;
 use Psr\Http\Message\RequestInterface;
 
@@ -47,6 +48,7 @@ class Curl implements AdapterInterface
         $options = $this->buildOptions($request, $options);
         curl_setopt_array($ch, $options);
 
+        /** @var string|false $body */
         $body = $this->exec($ch);
         if ($body === false) {
             $errorCode = curl_errno($ch);
@@ -87,7 +89,7 @@ class Curl implements AdapterInterface
 
         $out = [
             CURLOPT_URL => (string)$request->getUri(),
-            CURLOPT_HTTP_VERSION => $request->getProtocolVersion(),
+            CURLOPT_HTTP_VERSION => $this->getProtocolVersion($request),
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER => true,
             CURLOPT_HTTPHEADER => $headers,
@@ -110,6 +112,9 @@ class Curl implements AdapterInterface
         $body = $request->getBody();
         $body->rewind();
         $out[CURLOPT_POSTFIELDS] = $body->getContents();
+        if ($out[CURLOPT_POSTFIELDS] === '') {
+            unset($out[CURLOPT_POSTFIELDS]);
+        }
 
         if (empty($options['ssl_cafile'])) {
             $options['ssl_cafile'] = CaBundle::getBundledCaBundlePath();
@@ -149,11 +154,34 @@ class Curl implements AdapterInterface
     }
 
     /**
+     * Convert HTTP version number into curl value.
+     *
+     * @param \Psr\Http\Message\RequestInterface $request The request to get a protocol version for.
+     * @return int
+     */
+    protected function getProtocolVersion(RequestInterface $request): int
+    {
+        switch ($request->getProtocolVersion()) {
+            case '1.0':
+                return CURL_HTTP_VERSION_1_0;
+            case '1.1':
+                return CURL_HTTP_VERSION_1_1;
+            case '2.0':
+                if (defined('CURL_HTTP_VERSION_2_0')) {
+                    return CURL_HTTP_VERSION_2_0;
+                }
+                throw new HttpException('libcurl 7.33 needed for HTTP 2.0 support');
+        }
+
+        return CURL_HTTP_VERSION_NONE;
+    }
+
+    /**
      * Convert the raw curl response into an Http\Client\Response
      *
      * @param resource $handle Curl handle
      * @param string $responseData string The response data from curl_exec
-     * @return array
+     * @return \Cake\Http\Client\Response[]
      */
     protected function createResponse($handle, $responseData): array
     {

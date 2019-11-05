@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\View;
 
 use Cake\Core\Configure;
+use RuntimeException;
 
 /**
  * A view class that is used for JSON responses.
@@ -93,7 +94,8 @@ class JsonView extends SerializedView
      *   - Setting it to a string value, uses the provided query string parameter
      *     for finding the JSONP callback name.
      *
-     * @var array{serialize:string|bool|null, jsonOptions: int|null, jsonp: bool|string|null}
+     * @var array
+     * @pslam-var array{serialize:string|bool|null, jsonOptions: int|null, jsonp: bool|string|null}
      */
     protected $_defaultConfig = [
         'serialize' => null,
@@ -105,7 +107,7 @@ class JsonView extends SerializedView
      * Render a JSON view.
      *
      * @param string|null $template The template being rendered.
-     * @param string|null|false $layout The layout being rendered.
+     * @param string|false|null $layout The layout being rendered.
      * @return string The rendered view.
      */
     public function render(?string $template = null, $layout = null): string
@@ -127,12 +129,9 @@ class JsonView extends SerializedView
     }
 
     /**
-     * Serialize view vars
-     *
-     * @param array|string $serialize The name(s) of the view variable(s) that need(s) to be serialized.
-     * @return string|false The serialized data, or boolean false if not serializable.
+     * @inheritDoc
      */
-    protected function _serialize($serialize)
+    protected function _serialize($serialize): string
     {
         $data = $this->_dataToSerialize($serialize);
 
@@ -147,7 +146,16 @@ class JsonView extends SerializedView
             $jsonOptions |= JSON_PRETTY_PRINT;
         }
 
-        return json_encode($data, $jsonOptions);
+        if (defined('JSON_THROW_ON_ERROR')) {
+            $jsonOptions |= JSON_THROW_ON_ERROR;
+        }
+
+        $return = json_encode($data, $jsonOptions);
+        if ($return === false) {
+            throw new RuntimeException(json_last_error_msg(), json_last_error());
+        }
+
+        return $return;
     }
 
     /**

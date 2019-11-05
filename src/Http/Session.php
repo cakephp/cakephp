@@ -101,14 +101,16 @@ class Session
             }
         }
 
-        if (!isset($sessionConfig['ini']['session.cookie_secure'])
+        if (
+            !isset($sessionConfig['ini']['session.cookie_secure'])
             && env('HTTPS')
             && ini_get('session.cookie_secure') != 1
         ) {
             $sessionConfig['ini']['session.cookie_secure'] = 1;
         }
 
-        if (!isset($sessionConfig['ini']['session.name'])
+        if (
+            !isset($sessionConfig['ini']['session.name'])
             && isset($sessionConfig['cookie'])
         ) {
             $sessionConfig['ini']['session.name'] = $sessionConfig['cookie'];
@@ -198,20 +200,27 @@ class Session
      * - cookiePath: The url path for which session cookie is set. Maps to the
      *   `session.cookie_path` php.ini config. Defaults to base path of app.
      * - ini: A list of php.ini directives to change before the session start.
-     * - handler: An array containing at least the `class` key. To be used as the session
+     * - handler: An array containing at least the `engine` key. To be used as the session
      *   engine for persisting data. The rest of the keys in the array will be passed as
-     *   the configuration array for the engine. You can set the `class` key to an already
+     *   the configuration array for the engine. You can set the `engine` key to an already
      *   instantiated session handler object.
      *
      * @param array $config The Configuration to apply to this session object
      */
     public function __construct(array $config = [])
     {
-        if (isset($config['timeout'])) {
+        $config += [
+            'timeout' => null,
+            'cookie' => null,
+            'ini' => [],
+            'handler' => [],
+        ];
+
+        if ($config['timeout']) {
             $config['ini']['session.gc_maxlifetime'] = 60 * $config['timeout'];
         }
 
-        if (!empty($config['cookie'])) {
+        if ($config['cookie']) {
             $config['ini']['session.name'] = $config['cookie'];
         }
 
@@ -220,11 +229,9 @@ class Session
             $config['ini']['session.cookie_path'] = $cookiePath;
         }
 
-        if (!empty($config['ini']) && is_array($config['ini'])) {
-            $this->options($config['ini']);
-        }
+        $this->options($config['ini']);
 
-        if (!empty($config['handler']['engine'])) {
+        if (!empty($config['handler'])) {
             $class = $config['handler']['engine'];
             unset($config['handler']['engine']);
             $this->engine($class, $config['handler']);
@@ -431,7 +438,7 @@ class Session
         }
 
         if ($name === null) {
-            return $_SESSION ?? [];
+            return $_SESSION ?: [];
         }
 
         return Hash::get($_SESSION, $name);
@@ -470,13 +477,12 @@ class Session
             $this->start();
         }
 
-        $write = $name;
         if (!is_array($name)) {
-            $write = [$name => $value];
+            $name = [$name => $value];
         }
 
         $data = $_SESSION ?? [];
-        foreach ($write as $key => $val) {
+        foreach ($name as $key => $val) {
             $data = Hash::insert($data, $key, $val);
         }
 

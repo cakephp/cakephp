@@ -44,6 +44,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
         if ($isNow) {
             $other = $date->now($date->getTimezone());
         }
+        /** @psalm-suppress PossiblyNullArgument */
         $diffInterval = $date->diff($other);
 
         switch (true) {

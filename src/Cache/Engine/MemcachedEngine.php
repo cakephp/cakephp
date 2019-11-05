@@ -111,7 +111,7 @@ class MemcachedEngine extends CacheEngine
             'json' => Memcached::SERIALIZER_JSON,
             'php' => Memcached::SERIALIZER_PHP,
         ];
-        if (defined('Memcached::HAVE_MSGPACK') && Memcached::HAVE_MSGPACK) {
+        if (defined('Memcached::HAVE_MSGPACK')) {
             $this->_serializers['msgpack'] = Memcached::SERIALIZER_MSGPACK;
         }
 
@@ -203,7 +203,8 @@ class MemcachedEngine extends CacheEngine
             );
         }
 
-        if ($serializer !== 'php' &&
+        if (
+            $serializer !== 'php' &&
             !constant('Memcached::HAVE_' . strtoupper($serializer))
         ) {
             throw new InvalidArgumentException(
@@ -217,7 +218,8 @@ class MemcachedEngine extends CacheEngine
         );
 
         // Check for Amazon ElastiCache instance
-        if (defined('Memcached::OPT_CLIENT_MODE') &&
+        if (
+            defined('Memcached::OPT_CLIENT_MODE') &&
             defined('Memcached::DYNAMIC_CLIENT_MODE')
         ) {
             $this->_Memcached->setOption(
@@ -267,7 +269,7 @@ class MemcachedEngine extends CacheEngine
      * Read an option value from the memcached connection.
      *
      * @param int $name The option name to read.
-     * @return string|int|null|bool
+     * @return string|int|bool|null
      * @see https://secure.php.net/manual/en/memcached.getoption.php
      */
     public function getOption(int $name)
@@ -279,22 +281,19 @@ class MemcachedEngine extends CacheEngine
      * Write data for key into cache. When using memcached as your cache engine
      * remember that the Memcached pecl extension does not support cache expiry
      * times greater than 30 days in the future. Any duration greater than 30 days
-     * will be treated as never expiring.
+     * will be treated as real Unix time value rather than an offset from current time.
      *
      * @param string $key Identifier for the data
      * @param mixed $value Data to be cached
-     * @param null|int|\DateInterval $ttl Optional. The TTL value of this item. If no value is sent and
+     * @param \DateInterval|int|null $ttl Optional. The TTL value of this item. If no value is sent and
      *   the driver supports TTL then the library may set a default value
      *   for it or let the driver take care of that.
      * @return bool True if the data was successfully cached, false on failure
-     * @see https://secure.php.net/manual/en/memcache.set.php
+     * @see https://www.php.net/manual/en/memcached.set.php
      */
     public function set($key, $value, $ttl = null): bool
     {
         $duration = $this->duration($ttl);
-        if ($duration > 30 * DAY) {
-            $duration = 0;
-        }
 
         return $this->_Memcached->set($this->_key($key), $value, $duration);
     }
@@ -303,7 +302,7 @@ class MemcachedEngine extends CacheEngine
      * Write many cache entries to the cache at once
      *
      * @param iterable $data An array of data to be stored in the cache
-     * @param null|int|\DateInterval $ttl Optional. The TTL value of this item. If no value is sent and
+     * @param \DateInterval|int|null $ttl Optional. The TTL value of this item. If no value is sent and
      *   the driver supports TTL then the library may set a default value
      *   for it or let the driver take care of that.
      * @return bool Whether the write was successful or not.
@@ -315,9 +314,6 @@ class MemcachedEngine extends CacheEngine
             $cacheData[$this->_key($key)] = $value;
         }
         $duration = $this->duration($ttl);
-        if ($duration > 30 * DAY) {
-            $duration = 0;
-        }
 
         return (bool)$this->_Memcached->setMulti($cacheData, $duration);
     }
@@ -449,10 +445,6 @@ class MemcachedEngine extends CacheEngine
     public function add(string $key, $value): bool
     {
         $duration = $this->_config['duration'];
-        if ($duration > 30 * DAY) {
-            $duration = 0;
-        }
-
         $key = $this->_key($key);
 
         return $this->_Memcached->add($key, $value, $duration);

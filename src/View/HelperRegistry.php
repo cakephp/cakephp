@@ -25,6 +25,8 @@ use Cake\View\Exception\MissingHelperException;
 /**
  * HelperRegistry is used as a registry for loaded helpers and handles loading
  * and constructing helper class objects.
+ *
+ * @extends \Cake\Core\ObjectRegistry<\Cake\View\Helper>
  */
 class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
 {
@@ -86,7 +88,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      * Provide public read access to the loaded objects
      *
      * @param string $name Name of property to read
-     * @return object|null
+     * @return \Cake\View\Helper|null
      */
     public function __get(string $name)
     {
@@ -142,6 +144,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      * @param string $alias The alias of the loaded helper.
      * @param array $settings An array of settings to use for the helper.
      * @return \Cake\View\Helper The constructed helper class.
+     * @psalm-suppress MoreSpecificImplementedParamType
      */
     protected function _create($class, string $alias, array $settings): Helper
     {

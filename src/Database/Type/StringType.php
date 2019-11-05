@@ -83,18 +83,15 @@ class StringType extends BaseType implements OptionalConvertInterface
     }
 
     /**
-     * Marshalls request data into PHP strings.
+     * Marshals request data into PHP strings.
      *
      * @param mixed $value The value to convert.
      * @return string|null Converted value.
      */
     public function marshal($value): ?string
     {
-        if ($value === null) {
+        if ($value === null || is_array($value)) {
             return null;
-        }
-        if (is_array($value)) {
-            return '';
         }
 
         return (string)$value;

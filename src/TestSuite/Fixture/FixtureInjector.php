@@ -94,6 +94,7 @@ class FixtureInjector implements TestListener
      */
     public function startTest(Test $test): void
     {
+        /** @psalm-suppress NoInterfaceProperties */
         $test->fixtureManager = $this->_fixtureManager;
         if ($test instanceof TestCase) {
             $this->_fixtureManager->fixturize($test);

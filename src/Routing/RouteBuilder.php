@@ -71,7 +71,7 @@ class RouteBuilder
     /**
      * The extensions that should be set into the routes connected.
      *
-     * @var array
+     * @var string[]
      */
     protected $_extensions = [];
 
@@ -174,7 +174,7 @@ class RouteBuilder
      * Future routes connected in through this builder will have the connected
      * extensions applied. However, setting extensions does not modify existing routes.
      *
-     * @param string|array $extensions The extensions to set.
+     * @param string|string[] $extensions The extensions to set.
      * @return $this
      */
     public function setExtensions($extensions)
@@ -187,7 +187,7 @@ class RouteBuilder
     /**
      * Get the extensions in this route builder's scope.
      *
-     * @return array
+     * @return string[]
      */
     public function getExtensions(): array
     {
@@ -198,12 +198,14 @@ class RouteBuilder
      * Add additional extensions to what is already in current scope
      *
      * @param string|array $extensions One or more extensions to add
-     * @return void
+     * @return $this
      */
-    public function addExtensions($extensions): void
+    public function addExtensions($extensions)
     {
         $extensions = array_merge($this->_extensions, (array)$extensions);
         $this->_extensions = array_unique($extensions);
+
+        return $this;
     }
 
     /**
@@ -345,11 +347,11 @@ class RouteBuilder
      * @param array|callable $options Options to use when generating REST routes, or a callback.
      * @param callable|null $callback An optional callback to be executed in a nested scope. Nested
      *   scopes inherit the existing path and 'id' parameter.
-     * @return void
+     * @return $this
      */
-    public function resources(string $name, $options = [], $callback = null): void
+    public function resources(string $name, $options = [], $callback = null)
     {
-        if (is_callable($options)) {
+        if (!is_array($options)) {
             $callback = $options;
             $options = [];
         }
@@ -420,11 +422,13 @@ class RouteBuilder
             $this->connect($url, $params, $routeOptions);
         }
 
-        if (is_callable($callback)) {
+        if ($callback !== null) {
             $idName = Inflector::singularize(Inflector::underscore($name)) . '_id';
             $path = '/' . $options['path'] . '/:' . $idName;
             $this->scope($path, [], $callback);
         }
+
+        return $this;
     }
 
     /**
@@ -563,11 +567,11 @@ class RouteBuilder
      * the current RouteBuilder instance.
      *
      * @param string $name The plugin name
-     * @return void
+     * @return $this
      * @throws \Cake\Core\Exception\MissingPluginException When the plugin has not been loaded.
      * @throws \InvalidArgumentException When the plugin does not have a routes file.
      */
-    public function loadPlugin(string $name): void
+    public function loadPlugin(string $name)
     {
         $plugins = Plugin::getCollection();
         if (!$plugins->has($name)) {
@@ -578,6 +582,8 @@ class RouteBuilder
 
         // Disable the routes hook to prevent duplicate route issues.
         $plugin->disable('routes');
+
+        return $this;
     }
 
     /**
@@ -846,16 +852,13 @@ class RouteBuilder
      * @param array|callable $params An array of routing defaults to add to each connected route.
      *   If you have no parameters, this argument can be a callable.
      * @param callable|null $callback The callback to invoke that builds the prefixed routes.
-     * @return void
+     * @return $this
      * @throws \InvalidArgumentException If a valid callback is not passed
      * @psalm-suppress PossiblyInvalidArrayAccess
      */
-    public function prefix(string $name, $params = [], ?callable $callback = null): void
+    public function prefix(string $name, $params = [], $callback = null)
     {
-        if ($callback === null) {
-            if (!is_callable($params)) {
-                throw new InvalidArgumentException('A valid callback is expected');
-            }
+        if (!is_array($params)) {
             $callback = $params;
             $params = [];
         }
@@ -868,8 +871,11 @@ class RouteBuilder
         if (isset($this->_params['prefix'])) {
             $name = $this->_params['prefix'] . '/' . $name;
         }
+        /** @psalm-suppress PossiblyInvalidArgument */
         $params = array_merge($params, ['prefix' => $name]);
         $this->scope($path, $params, $callback);
+
+        return $this;
     }
 
     /**
@@ -888,15 +894,11 @@ class RouteBuilder
      * @param array|callable $options Either the options to use, or a callback
      * @param callable|null $callback The callback to invoke that builds the plugin routes
      *   Only required when $options is defined.
-     * @return void
-     * @psalm-suppress PossiblyInvalidArrayAccess
+     * @return $this
      */
-    public function plugin(string $name, $options = [], ?callable $callback = null): void
+    public function plugin(string $name, $options = [], $callback = null)
     {
-        if ($callback === null) {
-            if (!is_callable($options)) {
-                throw new InvalidArgumentException('A valid callback is expected');
-            }
+        if (!is_array($options)) {
             $callback = $options;
             $options = [];
         }
@@ -904,6 +906,8 @@ class RouteBuilder
         $params = ['plugin' => $name] + $this->_params;
         $path = $options['path'] ?? '/' . Inflector::dasherize($name);
         $this->scope($path, $params, $callback);
+
+        return $this;
     }
 
     /**
@@ -917,18 +921,20 @@ class RouteBuilder
      * @param array|callable $params Either the parameters to add to routes, or a callback.
      * @param callable|null $callback The callback to invoke that builds the plugin routes.
      *   Only required when $params is defined.
-     * @return void
+     * @return $this
      * @throws \InvalidArgumentException when there is no callable parameter.
      */
-    public function scope(string $path, $params, $callback = null): void
+    public function scope(string $path, $params, $callback = null)
     {
-        if (is_callable($params)) {
+        if (!is_array($params)) {
             $callback = $params;
             $params = [];
         }
         if (!is_callable($callback)) {
-            $msg = 'Need a callable function/object to connect routes.';
-            throw new InvalidArgumentException($msg);
+            throw new InvalidArgumentException(sprintf(
+                'Need a valid callable to connect routes. Got `%s` instead.',
+                getTypeName($callback)
+            ));
         }
 
         if ($this->_path !== '/') {
@@ -948,6 +954,8 @@ class RouteBuilder
             'middleware' => $this->middleware,
         ]);
         $callback($builder);
+
+        return $this;
     }
 
     /**
@@ -957,13 +965,15 @@ class RouteBuilder
      *
      * @param string|null $routeClass the route class to use, uses the default routeClass
      *   if not specified
-     * @return void
+     * @return $this
      */
-    public function fallbacks(?string $routeClass = null): void
+    public function fallbacks(?string $routeClass = null)
     {
         $routeClass = $routeClass ?: $this->_routeClass;
         $this->connect('/:controller', ['action' => 'index'], compact('routeClass'));
         $this->connect('/:controller/:action/*', [], compact('routeClass'));
+
+        return $this;
     }
 
     /**
@@ -973,7 +983,7 @@ class RouteBuilder
      * scope or any child scopes that share the same RouteCollection.
      *
      * @param string $name The name of the middleware. Used when applying middleware to a scope.
-     * @param callable|string $middleware The middleware callable or class name to register.
+     * @param string|\Closure|\Psr\Http\Server\MiddlewareInterface $middleware The middleware to register.
      * @return $this
      * @see \Cake\Routing\RouteCollection
      */
@@ -1021,7 +1031,7 @@ class RouteBuilder
      * Apply a set of middleware to a group
      *
      * @param string $name Name of the middleware group
-     * @param array $middlewareNames Names of the middleware
+     * @param string[] $middlewareNames Names of the middleware
      * @return $this
      */
     public function middlewareGroup(string $name, array $middlewareNames)

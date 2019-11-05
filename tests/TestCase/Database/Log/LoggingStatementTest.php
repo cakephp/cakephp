@@ -16,9 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Log;
 
+use Cake\Database\DriverInterface;
 use Cake\Database\Log\LoggedQuery;
 use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
+use Cake\Database\StatementInterface;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -33,7 +35,7 @@ class LoggingStatementTest extends TestCase
      */
     public function testExecuteNoParams()
     {
-        $inner = $this->getMockBuilder('PDOStatement')->getMock();
+        $inner = $this->getMockBuilder(StatementInterface::class)->getMock();
         $inner->method('rowCount')->will($this->returnValue(3));
         $inner->method('execute')->will($this->returnValue(true));
 
@@ -56,7 +58,8 @@ class LoggingStatementTest extends TestCase
                 })
             );
 
-        $st = new LoggingStatement($inner);
+        $driver = $this->getMockBuilder(DriverInterface::class)->getMock();
+        $st = new LoggingStatement($inner, $driver);
         $st->queryString = 'SELECT bar FROM foo';
         $st->setLogger($logger);
         $st->execute();
@@ -69,7 +72,7 @@ class LoggingStatementTest extends TestCase
      */
     public function testExecuteWithParams()
     {
-        $inner = $this->getMockBuilder('PDOStatement')->getMock();
+        $inner = $this->getMockBuilder(StatementInterface::class)->getMock();
         $inner->method('rowCount')->will($this->returnValue(4));
         $inner->method('execute')->will($this->returnValue(true));
 
@@ -92,7 +95,8 @@ class LoggingStatementTest extends TestCase
                 })
             );
 
-        $st = new LoggingStatement($inner);
+        $driver = $this->getMockBuilder(DriverInterface::class)->getMock();
+        $st = new LoggingStatement($inner, $driver);
         $st->queryString = 'SELECT bar FROM foo';
         $st->setLogger($logger);
         $st->execute(['a' => 1, 'b' => 2]);
@@ -105,7 +109,7 @@ class LoggingStatementTest extends TestCase
      */
     public function testExecuteWithBinding()
     {
-        $inner = $this->getMockBuilder('PDOStatement')->getMock();
+        $inner = $this->getMockBuilder(StatementInterface::class)->getMock();
         $inner->method('rowCount')->will($this->returnValue(4));
         $inner->method('execute')->will($this->returnValue(true));
 
@@ -166,7 +170,7 @@ class LoggingStatementTest extends TestCase
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('This is bad');
         $exception = new \LogicException('This is bad');
-        $inner = $this->getMockBuilder('PDOStatement')->getMock();
+        $inner = $this->getMockBuilder(StatementInterface::class)->getMock();
         $inner->expects($this->once())
             ->method('execute')
             ->will($this->throwException($exception));
@@ -190,7 +194,8 @@ class LoggingStatementTest extends TestCase
                 })
             );
 
-        $st = new LoggingStatement($inner);
+        $driver = $this->getMockBuilder(DriverInterface::class)->getMock();
+        $st = new LoggingStatement($inner, $driver);
         $st->queryString = 'SELECT bar FROM foo';
         $st->setLogger($logger);
         $st->execute();
@@ -206,7 +211,10 @@ class LoggingStatementTest extends TestCase
         $logger = $this->getMockBuilder(QueryLogger::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $st = new LoggingStatement();
+        $st = new LoggingStatement(
+            $this->getMockBuilder(StatementInterface::class)->getMock(),
+            $this->getMockBuilder(DriverInterface::class)->getMock()
+        );
 
         $st->setLogger($logger);
         $this->assertSame($logger, $st->getLogger());

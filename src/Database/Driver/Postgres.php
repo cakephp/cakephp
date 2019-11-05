@@ -96,7 +96,7 @@ class Postgres extends Driver
      */
     public function enabled(): bool
     {
-        return in_array('pgsql', PDO::getAvailableDrivers());
+        return in_array('pgsql', PDO::getAvailableDrivers(), true);
     }
 
     /**

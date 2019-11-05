@@ -120,7 +120,15 @@ class Connection implements ConnectionInterface
     /**
      * Constructor.
      *
-     * @param array $config configuration for connecting to database
+     * ### Available options:
+     * - `driver` Sort name or FCQN for driver.
+     * - `log` Boolean indicating whether to use query logging.
+     * - `name` Connection name.
+     * - `cacheMetaData` Boolean indicating whether metadata (datasource schemas) should be cached.
+     *    If set to a string it will be used as the name of cache config to use.
+     * - `cacheKeyPrefix` Custom prefix to use when generation cache keys. Defaults to connection name.
+     *
+     * @param array $config Configuration array.
      */
     public function __construct(array $config)
     {
@@ -380,7 +388,7 @@ class Connection implements ConnectionInterface
         if (!empty($this->_config['cacheMetadata'])) {
             return $this->_schemaCollection = new CachedCollection(
                 new SchemaCollection($this),
-                $this->configName(),
+                empty($this->_config['cacheKeyPrefix']) ? $this->configName() : $this->_config['cacheKeyPrefix'],
                 $this->getCacher()
             );
         }
@@ -562,7 +570,7 @@ class Connection implements ConnectionInterface
      * @param bool $enable Whether or not save points should be used.
      * @return $this
      */
-    public function enableSavePoints(bool $enable)
+    public function enableSavePoints(bool $enable = true)
     {
         if ($enable === false) {
             $this->_useSavePoints = false;
@@ -751,10 +759,10 @@ class Connection implements ConnectionInterface
      * Quotes value to be used safely in database query.
      *
      * @param mixed $value The value to quote.
-     * @param string|null $type Type to be used for determining kind of quoting to perform
+     * @param string|int|\Cake\Database\TypeInterface $type Type to be used for determining kind of quoting to perform
      * @return string Quoted value
      */
-    public function quote($value, $type = null): string
+    public function quote($value, $type = 'string'): string
     {
         [$value, $type] = $this->cast($value, $type);
 
@@ -841,7 +849,7 @@ class Connection implements ConnectionInterface
      * @param bool $value Enable/disable query logging
      * @return $this
      */
-    public function enableQueryLogging(bool $value)
+    public function enableQueryLogging(bool $value = true)
     {
         $this->_logQueries = $value;
 

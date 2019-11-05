@@ -360,7 +360,6 @@ object(Cake\View\View) {
 	[protected] _eventClass => 'Cake\Event\Event'
 	[protected] _config => []
 	[protected] _configInitialized => true
-	[protected] _viewBuilder => null
 }
 TEXT;
 
@@ -825,5 +824,25 @@ false
 EXPECTED;
         $expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 9);
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * test formatHtmlMessage
+     *
+     * @return void
+     */
+    public function testFormatHtmlMessage()
+    {
+        $output = Debugger::formatHtmlMessage('Some `code` to `replace`');
+        $this->assertSame('Some <code>code</code> to <code>replace</code>', $output);
+
+        $output = Debugger::formatHtmlMessage("Some `co\nde` to `replace`\nmore");
+        $this->assertSame("Some <code>co<br />\nde</code> to <code>replace</code><br />\nmore", $output);
+
+        $output = Debugger::formatHtmlMessage("Some `code` to <script>alert(\"test\")</script>\nmore");
+        $this->assertSame(
+            "Some <code>code</code> to &lt;script&gt;alert(&quot;test&quot;)&lt;/script&gt;<br />\nmore",
+            $output
+        );
     }
 }

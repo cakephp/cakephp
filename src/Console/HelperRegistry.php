@@ -23,6 +23,8 @@ use Cake\Core\ObjectRegistry;
 /**
  * Registry for Helpers. Provides features
  * for lazily loading helpers.
+ *
+ * @extends \Cake\Core\ObjectRegistry<\Cake\Console\Helper>
  */
 class HelperRegistry extends ObjectRegistry
 {
@@ -93,6 +95,7 @@ class HelperRegistry extends ObjectRegistry
      * @param string $alias The alias of the helper.
      * @param array $settings An array of settings to use for the helper.
      * @return \Cake\Console\Helper The constructed helper class.
+     * @psalm-suppress MoreSpecificImplementedParamType
      */
     protected function _create($class, string $alias, array $settings): Helper
     {

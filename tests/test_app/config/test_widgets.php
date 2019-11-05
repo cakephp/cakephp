@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Widgets list for testing.
  */
 return [

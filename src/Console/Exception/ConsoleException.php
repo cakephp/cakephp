@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Console\Exception;
 
+use Cake\Console\Command;
 use Cake\Core\Exception\Exception;
 
 /**
@@ -23,4 +24,10 @@ use Cake\Core\Exception\Exception;
  */
 class ConsoleException extends Exception
 {
+    /**
+     * Default exception code
+     *
+     * @var int
+     */
+    protected $_defaultCode = Command::CODE_ERROR;
 }

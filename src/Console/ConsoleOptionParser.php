@@ -184,11 +184,11 @@ class ConsoleOptionParser
     /**
      * Static factory method for creating new OptionParsers so you can chain methods off of them.
      *
-     * @param string|null $command The command name this parser is for. The command name is used for generating help.
+     * @param string $command The command name this parser is for. The command name is used for generating help.
      * @param bool $defaultOptions Whether you want the verbose and quiet options set.
      * @return static
      */
-    public static function create(?string $command, bool $defaultOptions = true)
+    public static function create(string $command, bool $defaultOptions = true)
     {
         return new static($command, $defaultOptions);
     }
@@ -685,6 +685,7 @@ class ConsoleOptionParser
             array_shift($argv);
         }
         if (isset($this->_subcommands[$command]) && $this->_subcommands[$command]->parser()) {
+            /** @psalm-suppress PossiblyNullReference */
             return $this->_subcommands[$command]->parser()->parse($argv);
         }
         $params = $args = [];
@@ -705,7 +706,7 @@ class ConsoleOptionParser
         foreach ($this->_args as $i => $arg) {
             if ($arg->isRequired() && !isset($args[$i]) && empty($params['help'])) {
                 throw new ConsoleException(
-                    sprintf('Missing required arguments. %s is required.', $arg->name())
+                    sprintf('Missing required arguments. The `%s` argument is required.', $arg->name())
                 );
             }
         }
@@ -908,8 +909,8 @@ class ConsoleOptionParser
         if (substr($name, 0, 2) === '--') {
             return isset($this->_options[substr($name, 2)]);
         }
-        if ($name{0} === '-' && $name{1} !== '-') {
-            return isset($this->_shortOptions[$name{1}]);
+        if ($name[0] === '-' && $name[1] !== '-') {
+            return isset($this->_shortOptions[$name[1]]);
         }
 
         return false;
@@ -933,7 +934,10 @@ class ConsoleOptionParser
         }
         $next = count($args);
         if (!isset($this->_args[$next])) {
-            throw new ConsoleException('Too many arguments.');
+            $expected = count($this->_args);
+            throw new ConsoleException(
+                "Received too many arguments. Got {$next} but only {$expected} arguments are defined."
+            );
         }
 
         $this->_args[$next]->validChoice($argument);

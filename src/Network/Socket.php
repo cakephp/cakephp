@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Network;
 
+use Cake\Core\Exception\Exception as CakeException;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Network\Exception\SocketException;
 use Cake\Validation\Validation;
@@ -153,9 +154,18 @@ class Socket
             $connectAs |= STREAM_CLIENT_PERSISTENT;
         }
 
+        /** @psalm-suppress InvalidArgument */
         set_error_handler([$this, '_connectionErrorHandler']);
-        $this->connection = stream_socket_client(
-            $scheme . $this->_config['host'] . ':' . $this->_config['port'],
+        $remoteSocketTarget = $scheme . $this->_config['host'];
+        $port = (int)$this->_config['port'];
+        if ($port > 0) {
+            $remoteSocketTarget .= ':' . $port;
+        }
+
+        $errNum = 0;
+        $errStr = '';
+        $this->connection = $this->_getStreamSocketClient(
+            $remoteSocketTarget,
             $errNum,
             $errStr,
             $this->_config['timeout'],
@@ -164,22 +174,52 @@ class Socket
         );
         restore_error_handler();
 
-        if (!empty($errNum) || !empty($errStr)) {
+        if ($this->connection === null && (!$errNum || !$errStr)) {
             $this->setLastError($errNum, $errStr);
             throw new SocketException($errStr, $errNum);
         }
 
-        if (!$this->connection && $this->_connectionErrors) {
+        if ($this->connection === null && $this->_connectionErrors) {
             $message = implode("\n", $this->_connectionErrors);
             throw new SocketException($message, E_WARNING);
         }
 
         $this->connected = is_resource($this->connection);
         if ($this->connected) {
+            /** @psalm-suppress PossiblyNullArgument */
             stream_set_timeout($this->connection, $this->_config['timeout']);
         }
 
         return $this->connected;
+    }
+
+    /**
+     * Create a stream socket client. Mock utility.
+     *
+     * @param string $remoteSocketTarget remote socket
+     * @param int $errNum error number
+     * @param string $errStr error string
+     * @param int $timeout timeout
+     * @param int $connectAs flags
+     * @param resource $context context
+     * @return resource|null
+     */
+    protected function _getStreamSocketClient($remoteSocketTarget, &$errNum, &$errStr, $timeout, $connectAs, $context)
+    {
+        $resource = stream_socket_client(
+            $remoteSocketTarget,
+            $errNum,
+            $errStr,
+            $timeout,
+            $connectAs,
+            $context
+        );
+
+        if ($resource) {
+            return $resource;
+        }
+
+        return null;
     }
 
     /**
@@ -233,7 +273,7 @@ class Socket
     /**
      * Get the connection context.
      *
-     * @return null|array Null when there is no connection, an array when there is.
+     * @return array|null Null when there is no connection, an array when there is.
      */
     public function context(): ?array
     {
@@ -326,6 +366,7 @@ class Socket
         $totalBytes = strlen($data);
         $written = 0;
         while ($written < $totalBytes) {
+            /** @psalm-suppress PossiblyNullArgument */
             $rv = fwrite($this->connection, substr($data, $written));
             if ($rv === false || $rv === 0) {
                 return $written;
@@ -349,6 +390,7 @@ class Socket
             return null;
         }
 
+        /** @psalm-suppress PossiblyNullArgument */
         if (!feof($this->connection)) {
             $buffer = fread($this->connection, $length);
             $info = stream_get_meta_data($this->connection);
@@ -450,6 +492,9 @@ class Socket
         }
 
         try {
+            if ($this->connection === null) {
+                throw new CakeException('You must call connect() first.');
+            }
             $enableCryptoResult = stream_socket_enable_crypto($this->connection, $enable, $method);
         } catch (Exception $e) {
             $this->setLastError(null, $e->getMessage());

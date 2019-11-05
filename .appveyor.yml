@@ -4,10 +4,7 @@ clone_folder: C:\projects\cakephp
 clone_depth: 10
 
 cache:
-  - '%LOCALAPPDATA%\Composer\files -> composer.lock'
-  - C:\ProgramData\chocolatey\bin -> .appveyor.yml
-  - C:\ProgramData\chocolatey\lib -> .appveyor.yml
-  - C:\php -> .appveyor.yml
+  - '%LOCALAPPDATA%\Composer\files'
 
 branches:
   only:
@@ -15,12 +12,8 @@ branches:
     - 3.next
     - 4.x
 environment:
-  global:
-    PHP: 'C:\php'
-    php_ver_target: 7.2
-
   matrix:
-    - db: 2012
+    - db: '2012'
       db_dsn: 'sqlserver://sa:Password12!@.\SQL2012SP1/cakephp?MultipleActiveResultSets=false'
 
 services:
@@ -32,35 +25,33 @@ init:
   - SET ANSICON=121x90 (121x90)
 
 install:
-  - ps: |
-      # Check if installation is cached
-      if (!(Test-Path C:\php)) {
-        appveyor-retry cinst --params '""/InstallDir:C:\php""' --ignore-checksums -y php --version ((choco search php --exact --all-versions -r | select-string -pattern $env:php_ver_target | sort { [version]($_ -split '\|' | select -last 1) } -Descending | Select-Object -first 1) -replace '[php|]','')
-        cd C:\php
-        copy php.ini-production php.ini /Y
-        echo date.timezone="UTC" >> php.ini
-        echo extension_dir=ext >> php.ini
-        echo extension=php_openssl.dll >> php.ini
-        echo extension=php_mbstring.dll >> php.ini
-        echo extension=php_intl.dll >> php.ini
-        echo extension=php_fileinfo.dll >> php.ini
+  - curl -fsS https://windows.php.net/downloads/releases/latest/php-7.2-nts-Win32-VC15-x64-latest.zip -o php.zip
+  - 7z x php.zip -oC:\php\ -aoa > nul
 
-        curl -fsS https://windows.php.net/downloads/pecl/releases/pdo_sqlsrv/5.2.0/php_pdo_sqlsrv-5.2.0-7.2-nts-vc15-x64.zip -o pdosqlsrv.zip
-        7z x pdosqlsrv.zip -oC:\php\ext php_pdo_sqlsrv.dll > nul
-        curl -fsS https://windows.php.net/downloads/pecl/releases/sqlsrv/5.2.0/php_sqlsrv-5.2.0-7.2-nts-vc15-x64.zip -o sqlsrv.zip
-        7z x sqlsrv.zip -oC:\php\ext php_sqlsrv.dll > nul
-        echo extension=php_pdo_sqlsrv.dll >> php.ini
-        echo extension=php_sqlsrv.dll >> php.ini
+  - cd C:\php
+  - copy php.ini-production php.ini /Y
+  - echo date.timezone="UTC" >> php.ini
+  - echo extension_dir=ext >> php.ini
+  - echo extension=openssl >> php.ini
+  - echo extension=mbstring >> php.ini
+  - echo extension=intl >> php.ini
+  - echo extension=fileinfo >> php.ini
+  - php -v
 
-        curl -fsS https://windows.php.net/downloads/pecl/releases/wincache/2.0.0.8/php_wincache-2.0.0.8-7.2-nts-vc15-x64.zip -o wincache.zip
-        7z x wincache.zip -oC:\php\ext php_wincache.dll > nul
-        echo extension=php_wincache.dll >> php.ini
-        echo wincache.enablecli = 1 >> php.ini
-      }
+  - curl -fsS https://windows.php.net/downloads/pecl/releases/pdo_sqlsrv/5.2.0/php_pdo_sqlsrv-5.2.0-7.2-nts-vc15-x64.zip -o pdosqlsrv.zip
+  - 7z x pdosqlsrv.zip -oC:\php\ext php_pdo_sqlsrv.dll > nul
+  - curl -fsS https://windows.php.net/downloads/pecl/releases/sqlsrv/5.2.0/php_sqlsrv-5.2.0-7.2-nts-vc15-x64.zip -o sqlsrv.zip
+  - 7z x sqlsrv.zip -oC:\php\ext php_sqlsrv.dll -aoa > nul
+  - echo extension=pdo_sqlsrv >> php.ini
+  - echo extension=sqlsrv >> php.ini
+
+  - curl -fsS https://windows.php.net/downloads/pecl/releases/wincache/2.0.0.8/php_wincache-2.0.0.8-7.2-nts-vc15-x64.zip -o wincache.zip
+  - 7z x wincache.zip -oC:\php\ext php_wincache.dll -aoa > nul
+  - echo extension=wincache >> php.ini
+  - echo wincache.enablecli = 1 >> php.ini
 
   - cd C:\projects\cakephp
   - appveyor-retry appveyor DownloadFile https://getcomposer.org/composer.phar
-  - del composer.lock
   - php composer.phar install --no-progress
   - php -i | grep "ICU version"
 

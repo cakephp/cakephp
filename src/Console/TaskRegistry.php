@@ -23,6 +23,8 @@ use Cake\Core\ObjectRegistry;
 /**
  * Registry for Tasks. Provides features
  * for lazily loading tasks.
+ *
+ * @extends \Cake\Core\ObjectRegistry<\Cake\Console\Shell>
  */
 class TaskRegistry extends ObjectRegistry
 {
@@ -84,6 +86,7 @@ class TaskRegistry extends ObjectRegistry
      * @param string $alias The alias of the task.
      * @param array $settings An array of settings to use for the task.
      * @return \Cake\Console\Shell The constructed task class.
+     * @psalm-suppress MoreSpecificImplementedParamType
      */
     protected function _create($class, string $alias, array $settings): Shell
     {

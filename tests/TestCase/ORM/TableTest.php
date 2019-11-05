@@ -21,6 +21,7 @@ use Cake\Collection\Collection;
 use Cake\Database\Exception;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Schema\TableSchema;
+use Cake\Database\StatementInterface;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
@@ -51,7 +52,7 @@ use TestApp\Model\Table\UsersTable;
  */
 class TableTest extends TestCase
 {
-    public $fixtures = [
+    protected $fixtures = [
         'core.Articles',
         'core.Tags',
         'core.ArticlesTags',
@@ -2188,7 +2189,7 @@ class TableTest extends TestCase
             ->setMethods(['execute', 'addDefaultTypes'])
             ->setConstructorArgs([$this->connection, $table])
             ->getMock();
-        $statement = $this->getMockBuilder('Cake\Database\Statement\StatementDecorator')->getMock();
+        $statement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $data = new Entity([
             'username' => 'superuser',
             'created' => new Time('2013-10-10 00:00'),
@@ -2385,7 +2386,7 @@ class TableTest extends TestCase
         $table->expects($this->once())->method('query')
             ->will($this->returnValue($query));
 
-        $statement = $this->getMockBuilder('Cake\Database\Statement\StatementDecorator')->getMock();
+        $statement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $statement->expects($this->once())
             ->method('rowCount')
             ->will($this->returnValue(0));
@@ -2568,7 +2569,7 @@ class TableTest extends TestCase
         $table->expects($this->once())->method('query')
             ->will($this->returnValue($query));
 
-        $statement = $this->getMockBuilder('Cake\Database\Statement\StatementDecorator')->getMock();
+        $statement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $statement->expects($this->once())
             ->method('errorCode')
             ->will($this->returnValue('00000'));
@@ -3017,7 +3018,7 @@ class TableTest extends TestCase
             }));
 
         $table = $this->getTableLocator()->get('users', ['eventManager' => $mock]);
-        $entity->isNew(false);
+        $entity->setNew(false);
         $table->delete($entity, ['checkRules' => false]);
     }
 
@@ -3103,7 +3104,7 @@ class TableTest extends TestCase
             }));
 
         $table = $this->getTableLocator()->get('users', ['eventManager' => $mock]);
-        $entity->isNew(false);
+        $entity->setNew(false);
         $result = $table->delete($entity, ['checkRules' => false]);
         $this->assertFalse($result);
     }
@@ -3129,7 +3130,7 @@ class TableTest extends TestCase
             }));
 
         $table = $this->getTableLocator()->get('users', ['eventManager' => $mock]);
-        $entity->isNew(false);
+        $entity->setNew(false);
         $result = $table->delete($entity, ['checkRules' => false]);
         $this->assertTrue($result);
     }
@@ -3151,7 +3152,7 @@ class TableTest extends TestCase
         $table->expects($this->never())
             ->method('query');
 
-        $entity->isNew(true);
+        $entity->setNew(true);
         $result = $table->delete($entity);
         $this->assertFalse($result);
     }
@@ -3260,13 +3261,18 @@ class TableTest extends TestCase
      */
     public function testValidationWithBadDefiner()
     {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('The Cake\ORM\Table::validationBad() validation method must return an instance of Cake\Validation\Validator.');
         $table = $this->getMockBuilder(Table::class)
             ->setMethods(['validationBad'])
             ->getMock();
         $table->expects($this->once())
             ->method('validationBad');
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage(sprintf(
+            'The %s::validationBad() validation method must return an instance of Cake\Validation\Validator.',
+            get_class($table)
+        ));
+
         $table->getValidator('bad');
     }
 
@@ -4034,10 +4040,10 @@ class TableTest extends TestCase
                 ],
             ]),
         ]);
-        $entity->isNew(true);
-        $entity->author->isNew(true);
-        $entity->author->supervisor->isNew(true);
-        $entity->author->tags[0]->isNew(true);
+        $entity->setNew(true);
+        $entity->author->setNew(true);
+        $entity->author->supervisor->setNew(true);
+        $entity->author->tags[0]->setNew(true);
 
         $articles->expects($this->once())
             ->method('_insert')
@@ -6192,7 +6198,7 @@ class TableTest extends TestCase
 
         $cloned = clone $article;
         $cloned->unset('id');
-        $cloned->isNew(true);
+        $cloned->setNew(true);
         $this->assertSame($cloned, $table->save($cloned));
         $this->assertEquals(
             $article->extract(['title', 'author_id']),

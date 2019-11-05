@@ -69,7 +69,8 @@ class OrderByExpression extends QueryExpression
     protected function _addConditions(array $orders, array $types): void
     {
         foreach ($orders as $key => $val) {
-            if (is_string($key) &&
+            if (
+                is_string($key) &&
                 is_string($val) &&
                 !in_array(strtoupper($val), ['ASC', 'DESC'], true)
             ) {

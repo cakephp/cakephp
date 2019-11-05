@@ -189,11 +189,27 @@ class FileEngineTest extends TestCase
         $this->assertTrue($engine->set('default_ttl', $data));
         $this->assertTrue($engine->set('int_ttl', $data, 1));
         $this->assertTrue($engine->set('interval_ttl', $data, new DateInterval('PT1S')));
+        $this->assertTrue($engine->setMultiple(['multi' => $data], 1));
 
         sleep(2);
         $this->assertNull($engine->get('int_ttl'));
         $this->assertNull($engine->get('interval_ttl'));
         $this->assertSame($data, $engine->get('default_ttl'));
+        $this->assertNull($engine->get('multi'));
+    }
+
+    /**
+     * Test has() method
+     *
+     * @return void
+     */
+    public function testHas()
+    {
+        $engine = Cache::pool('file_test');
+        $this->assertFalse($engine->has('test'));
+
+        $this->assertTrue($engine->set('test', 1));
+        $this->assertTrue($engine->has('test', 1));
     }
 
     /**
@@ -377,7 +393,6 @@ class FileEngineTest extends TestCase
     {
         Cache::setConfig('windows_test', [
             'engine' => 'File',
-            'isWindows' => true,
             'prefix' => null,
             'path' => CACHE,
         ]);

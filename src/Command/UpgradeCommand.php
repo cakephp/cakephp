@@ -89,7 +89,7 @@ class UpgradeCommand extends Command
         $this->io = $io;
         $this->args = $args;
 
-        $path = $args->getOption('path');
+        $path = (string)$args->getOption('path');
         if ($path) {
             $this->path = rtrim($path, '/') . DIRECTORY_SEPARATOR;
         } else {

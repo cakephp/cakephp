@@ -14,7 +14,7 @@ declare(strict_types=1);
  * @since         3.3.5
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase;
+namespace Cake\Test\TestCase\Http;
 
 use Cake\Http\CallbackStream;
 use Cake\Http\Cookie\Cookie;

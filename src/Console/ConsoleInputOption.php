@@ -84,7 +84,7 @@ class ConsoleInputOption
      * @param string $help The help text for this option
      * @param bool $boolean Whether this option is a boolean option. Boolean options don't consume extra tokens
      * @param string|bool $default The default value for this option.
-     * @param array $choices Valid choices for this option.
+     * @param string[] $choices Valid choices for this option.
      * @param bool $multiple Whether this option can accept multiple value definition.
      * @throws \Cake\Console\Exception\ConsoleException
      */
@@ -247,10 +247,16 @@ class ConsoleInputOption
         if (strlen($this->_short) > 0) {
             $short = '-' . $this->_short;
         }
+        $default = $this->_default;
+        if ($default === true) {
+            $default = 'true';
+        } elseif ($default === false) {
+            $default = 'false';
+        }
         $option->addAttribute('short', $short);
         $option->addAttribute('help', $this->_help);
         $option->addAttribute('boolean', (string)(int)$this->_boolean);
-        $option->addChild('default', $this->_default);
+        $option->addChild('default', $default);
         $choices = $option->addChild('choices');
         foreach ($this->_choices as $valid) {
             $choices->addChild('choice', $valid);

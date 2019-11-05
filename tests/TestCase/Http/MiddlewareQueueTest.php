@@ -72,8 +72,20 @@ class MiddlewareQueueTest extends TestCase
         };
         $queue->add($cb);
         $this->assertSame($cb, $queue->current()->getCallable());
-        $queue->next();
-        $this->assertNull($queue->current());
+    }
+
+    /**
+     * Test that current() throws exception for invalid current position.
+     *
+     * @return void
+     */
+    public function testGetException()
+    {
+        $this->expectException(\OutOfBoundsException::class);
+        $this->expectExceptionMessage('Invalid current position (0)');
+
+        $queue = new MiddlewareQueue();
+        $queue->current();
     }
 
     /**

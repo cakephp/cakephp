@@ -11,29 +11,23 @@ declare(strict_types=1);
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         2.2.0
+ * @since         4.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace TestPlugin\Routing\Filter;
-
-use Cake\Event\EventInterface;
-use Cake\Routing\DispatcherFilter;
+namespace Cake\Routing;
 
 /**
- * Test2DispatcherFilter
+ * Interface for applications that use routing.
  */
-class Test2DispatcherFilter extends DispatcherFilter
+interface RoutingApplicationInterface
 {
-    public function beforeDispatch(EventInterface $event)
-    {
-        $event->data('response')->statusCode(500);
-        $event->stopPropagation();
-
-        return $event->data('response');
-    }
-
-    public function afterDispatch(EventInterface $event)
-    {
-        $event->data('response')->statusCode(200);
-    }
+    /**
+     * Define the routes for an application.
+     *
+     * Use the provided RouteBuilder to define an application's routing.
+     *
+     * @param \Cake\Routing\RouteBuilder $routes A route builder to add routes into.
+     * @return void
+     */
+    public function routes(RouteBuilder $routes): void;
 }

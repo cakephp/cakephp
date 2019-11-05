@@ -17,13 +17,13 @@ declare(strict_types=1);
 namespace Cake\Routing\Middleware;
 
 use Cake\Cache\Cache;
-use Cake\Core\HttpApplicationInterface;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\Runner;
 use Cake\Routing\Exception\RedirectException;
 use Cake\Routing\RouteCollection;
 use Cake\Routing\Router;
+use Cake\Routing\RoutingApplicationInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -44,7 +44,7 @@ class RoutingMiddleware implements MiddlewareInterface
     /**
      * The application that will have its routing hook invoked.
      *
-     * @var \Cake\Core\HttpApplicationInterface
+     * @var \Cake\Routing\RoutingApplicationInterface
      */
     protected $app;
 
@@ -59,10 +59,10 @@ class RoutingMiddleware implements MiddlewareInterface
     /**
      * Constructor
      *
-     * @param \Cake\Core\HttpApplicationInterface $app The application instance that routes are defined on.
+     * @param \Cake\Routing\RoutingApplicationInterface $app The application instance that routes are defined on.
      * @param string|null $cacheConfig The cache config name to use or null to disable routes cache
      */
-    public function __construct(HttpApplicationInterface $app, ?string $cacheConfig = null)
+    public function __construct(RoutingApplicationInterface $app, ?string $cacheConfig = null)
     {
         $this->app = $app;
         $this->cacheConfig = $cacheConfig;
@@ -129,7 +129,7 @@ class RoutingMiddleware implements MiddlewareInterface
     {
         $this->loadRoutes();
         try {
-            Router::setRequestContext($request);
+            Router::setRequest($request);
             $params = (array)$request->getAttribute('params', []);
             $middleware = [];
             if (empty($params['controller'])) {
@@ -143,11 +143,12 @@ class RoutingMiddleware implements MiddlewareInterface
                     unset($params['_middleware']);
                 }
                 $request = $request->withAttribute('params', $params);
+                Router::setRequest($request);
             }
         } catch (RedirectException $e) {
             return new RedirectResponse(
                 $e->getMessage(),
-                $e->getCode()
+                (int)$e->getCode()
             );
         }
         $matching = Router::getRouteCollection()->getMiddleware($middleware);

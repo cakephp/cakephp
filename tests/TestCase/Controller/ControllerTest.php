@@ -29,6 +29,7 @@ use PHPUnit\Framework\Error\Warning;
 use TestApp\Controller\Admin\PostsController;
 use TestApp\Controller\TestController;
 use TestPlugin\Controller\TestPluginController;
+use Zend\Diactoros\Uri;
 
 /**
  * ControllerTest class
@@ -40,7 +41,7 @@ class ControllerTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = [
+    protected $fixtures = [
         'core.Comments',
         'core.Posts',
     ];
@@ -77,8 +78,7 @@ class ControllerTest extends TestCase
     public function testTableAutoload(): void
     {
         $request = new ServerRequest(['url' => 'controller/posts/index']);
-        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
-        $Controller = new Controller($request, $response);
+        $Controller = new Controller($request, new Response());
         $Controller->modelClass = 'SiteArticles';
 
         $this->assertFalse(isset($Controller->Articles));
@@ -126,8 +126,7 @@ class ControllerTest extends TestCase
     public function testLoadModel(): void
     {
         $request = new ServerRequest(['url' => 'controller/posts/index']);
-        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
-        $Controller = new Controller($request, $response);
+        $Controller = new Controller($request, new Response());
 
         $this->assertFalse(isset($Controller->Articles));
 
@@ -302,6 +301,19 @@ class ControllerTest extends TestCase
         $this->assertInstanceOf('Cake\Http\Response', $result);
     }
 
+    public function testControllerRedirect()
+    {
+        $Controller = new Controller();
+        $uri = new Uri('/foo/bar');
+        $response = $Controller->redirect($uri);
+        $this->assertEquals('http://localhost/foo/bar', $response->getHeaderLine('Location'));
+
+        $Controller = new Controller();
+        $uri = new Uri('http://cakephp.org/foo/bar');
+        $response = $Controller->redirect($uri);
+        $this->assertEquals('http://cakephp.org/foo/bar', $response->getHeaderLine('Location'));
+    }
+
     /**
      * Generates status codes for redirect test.
      *
@@ -454,7 +466,7 @@ class ControllerTest extends TestCase
             ->setMethods(['referer'])
             ->getMock();
         $request = $request->withAttribute('base', '/base');
-        Router::pushRequest($request);
+        Router::setRequest($request);
 
         $request->expects($this->any())->method('referer')
             ->will($this->returnValue(null));
@@ -566,7 +578,7 @@ class ControllerTest extends TestCase
         $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
         $this->assertCount(3, $results);
 
-        $paging = $Controller->getRequest()->getParam('paging');
+        $paging = $Controller->getRequest()->getAttribute('paging');
         $this->assertSame($paging['Posts']['page'], 1);
         $this->assertSame($paging['Posts']['pageCount'], 1);
         $this->assertFalse($paging['Posts']['prevPage']);
@@ -577,7 +589,7 @@ class ControllerTest extends TestCase
         $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
         $this->assertCount(1, $results);
 
-        $paging = $Controller->getRequest()->getParam('paging');
+        $paging = $Controller->getRequest()->getAttribute('paging');
         $this->assertSame($paging['Posts']['page'], 2);
         $this->assertSame($paging['Posts']['pageCount'], 2);
         $this->assertTrue($paging['Posts']['prevPage']);
@@ -732,7 +744,7 @@ class ControllerTest extends TestCase
      */
     public function testInvokeActionWithPassedParams(): void
     {
-        $url = new ServerRequest([
+        $request = new ServerRequest([
             'url' => 'test/index/1/2',
             'params' => [
                 'controller' => 'Test',
@@ -740,13 +752,13 @@ class ControllerTest extends TestCase
                 'pass' => ['param1' => '1', 'param2' => '2'],
             ],
         ]);
-        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
+        $controller = new TestController($request, new Response());
+        $controller->disableAutoRender();
+        $controller->invokeAction();
 
-        $Controller = new TestController($url, $response);
-        $result = $Controller->invokeAction();
         $this->assertEquals(
             ['testId' => '1', 'test2Id' => '2'],
-            $Controller->getRequest()->getData()
+            $controller->getRequest()->getData()
         );
     }
 

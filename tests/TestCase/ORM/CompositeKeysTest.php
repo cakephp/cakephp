@@ -37,7 +37,7 @@ class CompositeKeysTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = [
+    protected $fixtures = [
         'core.CompositeIncrements',
         'core.SiteArticles',
         'core.SiteArticlesTags',

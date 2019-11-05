@@ -27,6 +27,8 @@ use Cake\Event\EventDispatcherTrait;
  * ComponentRegistry is a registry for loaded components
  *
  * Handles loading, constructing and binding events for component class objects.
+ *
+ * @extends \Cake\Core\ObjectRegistry<\Cake\Controller\Component>
  */
 class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterface
 {
@@ -121,6 +123,8 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      * @param string $alias The alias of the component.
      * @param array $config An array of config to use for the component.
      * @return \Cake\Controller\Component The constructed component class.
+     * @psalm-suppress MoreSpecificImplementedParamType
+     * @psalm-var class-string $class
      */
     protected function _create($class, string $alias, array $config): Component
     {

@@ -32,15 +32,22 @@ use Zend\Diactoros\Stream;
 
 /**
  * Responses contain the response text, status and headers of a HTTP response.
+ *
+ * There are external packages such as `fig/http-message-util` that provide HTTP
+ * status code constants. These can be used with any method that accepts or
+ * returns a status code integer. Keep in mind that these consants might
+ * include status codes that are now allowed which will throw an
+ * `\InvalidArgumentException`.
+ *
  */
 class Response implements ResponseInterface
 {
     use MessageTrait;
 
     /**
-     * Holds HTTP response statuses
+     * Allowed HTTP status codes and their default description.
      *
-     * @var array
+     * @var string[]
      */
     protected $_statusCodes = [
         100 => 'Continue',
@@ -427,6 +434,7 @@ class Response implements ResponseInterface
      *  - status: the HTTP status code to respond with
      *  - type: a complete mime-type string or an extension mapped in this class
      *  - charset: the charset for the response body
+     * @throws \InvalidArgumentException
      */
     public function __construct(array $options = [])
     {
@@ -489,8 +497,12 @@ class Response implements ResponseInterface
         ];
 
         $charset = false;
-        if ($this->_charset &&
-            (strpos($this->_contentType, 'text/') === 0 || in_array($this->_contentType, $whitelist, true))
+        if (
+            $this->_charset &&
+            (
+                strpos($this->_contentType, 'text/') === 0 ||
+                in_array($this->_contentType, $whitelist, true)
+            )
         ) {
             $charset = true;
         }
@@ -578,9 +590,15 @@ class Response implements ResponseInterface
      * If the status code is 304 or 204, the existing Content-Type header
      * will be cleared, as these response codes have no body.
      *
+     * There are external packages such as `fig/http-message-util` that provide HTTP
+     * status code constants. These can be used with any method that accepts or
+     * returns a status code integer. However, keep in mind that these consants
+     * might include status codes that are now allowed which will throw an
+     * `\InvalidArgumentException`.
+     *
      * @link https://tools.ietf.org/html/rfc7231#section-6
      * @link https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
-     * @param int $code The 3-digit integer result code to set.
+     * @param int $code The 3-digit integer status code to set.
      * @param string $reasonPhrase The reason phrase to use with the
      *     provided status code; if none is provided, implementations MAY
      *     use the defaults as suggested in the HTTP specification.
@@ -598,7 +616,7 @@ class Response implements ResponseInterface
     /**
      * Modifier for response status
      *
-     * @param int $code The code to set.
+     * @param int $code The status code to set.
      * @param string $reasonPhrase The response reason phrase.
      * @return void
      * @throws \InvalidArgumentException For invalid status code arguments.
@@ -709,7 +727,7 @@ class Response implements ResponseInterface
      * e.g `getMimeType('pdf'); // returns 'application/pdf'`
      *
      * @param string $alias the content type alias to map
-     * @return mixed String mapped mime type or false if $alias is not mapped
+     * @return string|array|false String mapped mime type or false if $alias is not mapped
      */
     public function getMimeType(string $alias)
     {
@@ -791,6 +809,11 @@ class Response implements ResponseInterface
     {
         if (!is_int($time)) {
             $time = strtotime($time);
+            if ($time === false) {
+                throw new InvalidArgumentException(
+                    'Invalid time parameter. Ensure your time value can be parsed by strtotime'
+                );
+            }
         }
 
         return $this->withHeader('Date', gmdate('D, j M Y G:i:s ', time()) . 'GMT')
@@ -914,7 +937,7 @@ class Response implements ResponseInterface
      * $response->withExpires(new DateTime('+1 day'))
      * ```
      *
-     * @param string|\DateTimeInterface $time Valid time string or \DateTime instance.
+     * @param string|int|\DateTimeInterface|null $time Valid time string or \DateTime instance.
      * @return static
      */
     public function withExpires($time)
@@ -1043,7 +1066,7 @@ class Response implements ResponseInterface
      */
     public function withEtag(string $hash, bool $weak = false)
     {
-        $hash = sprintf('%s"%s"', $weak ? 'W/' : null, $hash);
+        $hash = sprintf('%s"%s"', $weak ? 'W/' : '', $hash);
 
         return $this->withHeader('Etag', $hash);
     }
@@ -1065,7 +1088,7 @@ class Response implements ResponseInterface
             $result = new DateTime($time);
         }
 
-        /** @psalm-suppress PossiblyUndefinedMethod */
+        /** @psalm-suppress UndefinedInterfaceMethod */
         return $result->setTimezone(new DateTimeZone('UTC'));
     }
 
@@ -1079,7 +1102,7 @@ class Response implements ResponseInterface
     {
         $compressionEnabled = ini_get('zlib.output_compression') !== '1' &&
             extension_loaded('zlib') &&
-            (strpos(env('HTTP_ACCEPT_ENCODING'), 'gzip') !== false);
+            (strpos((string)env('HTTP_ACCEPT_ENCODING'), 'gzip') !== false);
 
         return $compressionEnabled && ob_start('ob_gzhandler');
     }
@@ -1091,7 +1114,7 @@ class Response implements ResponseInterface
      */
     public function outputCompressed(): bool
     {
-        return strpos(env('HTTP_ACCEPT_ENCODING'), 'gzip') !== false
+        return strpos((string)env('HTTP_ACCEPT_ENCODING'), 'gzip') !== false
             && (ini_get('zlib.output_compression') === '1' || in_array('ob_gzhandler', ob_list_handlers(), true));
     }
 
@@ -1422,7 +1445,7 @@ class Response implements ResponseInterface
 
         $fileSize = $file->getSize();
         if ($options['download']) {
-            $agent = env('HTTP_USER_AGENT');
+            $agent = (string)env('HTTP_USER_AGENT');
 
             if ($agent && preg_match('%Opera(/| )([0-9].[0-9]{1,2})%', $agent)) {
                 $contentType = 'application/octet-stream';
@@ -1439,8 +1462,8 @@ class Response implements ResponseInterface
         }
 
         $new = $new->withHeader('Accept-Ranges', 'bytes');
-        $httpRange = env('HTTP_RANGE');
-        if (isset($httpRange)) {
+        $httpRange = (string)env('HTTP_RANGE');
+        if ($httpRange) {
             $new->_fileRange($file, $httpRange);
         } else {
             $new = $new->withHeader('Content-Length', (string)$fileSize);
@@ -1524,7 +1547,7 @@ class Response implements ResponseInterface
         }
 
         if ($start === '') {
-            $start = $fileSize - $end;
+            $start = $fileSize - (int)$end;
             $end = $lastByte;
         }
         if ($end === '') {
@@ -1538,6 +1561,7 @@ class Response implements ResponseInterface
             return;
         }
 
+        /** @psalm-suppress PossiblyInvalidOperand */
         $this->_setHeader('Content-Length', (string)($end - $start + 1));
         $this->_setHeader('Content-Range', 'bytes ' . $start . '-' . $end . '/' . $fileSize);
         $this->_setStatus(206);

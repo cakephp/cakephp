@@ -30,11 +30,11 @@ use Cake\Event\EventManager;
 use Cake\Http\Exception\HttpException;
 use Cake\Http\Exception\InternalErrorException;
 use Cake\Http\Exception\MethodNotAllowedException;
+use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\ServerRequest;
 use Cake\Mailer\Exception\MissingActionException as MissingMailerActionException;
 use Cake\ORM\Exception\MissingBehaviorException;
-use Cake\Routing\Exception\MissingControllerException;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Exception\MissingHelperException;
@@ -66,7 +66,7 @@ class ExceptionRendererTest extends TestCase
         Router::reload();
 
         $request = new ServerRequest(['base' => '']);
-        Router::setRequestInfo($request);
+        Router::setRequest($request);
         Configure::write('debug', true);
     }
 
@@ -339,7 +339,7 @@ class ExceptionRendererTest extends TestCase
         Router::reload();
 
         $request = new ServerRequest(['url' => 'posts/view/1000']);
-        Router::setRequestInfo($request);
+        Router::setRequest($request);
 
         $exception = new NotFoundException('Custom message');
         $ExceptionRenderer = new ExceptionRenderer($exception);
@@ -364,7 +364,7 @@ class ExceptionRendererTest extends TestCase
         $request = new ServerRequest(['url' => 'posts/view/1000?sort=title&direction=desc']);
         $request = $request->withHeader('Accept', 'application/json');
         $request = $request->withHeader('Content-Type', 'application/json');
-        Router::setRequestInfo($request);
+        Router::setRequest($request);
 
         $exception = new NotFoundException('Custom message');
         $exceptionLine = __LINE__ - 1;
@@ -415,7 +415,7 @@ class ExceptionRendererTest extends TestCase
         Router::reload();
 
         $request = new ServerRequest(['url' => 'pages/<span id=333>pink</span></id><script>document.body.style.background = t=document.getElementById(333).innerHTML;window.alert(t);</script>']);
-        Router::setRequestInfo($request);
+        Router::setRequest($request);
 
         $exception = new NotFoundException('Custom message');
         $ExceptionRenderer = new ExceptionRenderer($exception);
@@ -693,7 +693,7 @@ class ExceptionRendererTest extends TestCase
             ->setMethods(['render'])
             ->getMock();
         $controller->viewBuilder()->setHelpers(['Fail', 'Boom']);
-        $controller->request = new ServerRequest();
+        $controller->setRequest(new ServerRequest());
         $controller->expects($this->at(0))
             ->method('render')
             ->with('missingHelper')
@@ -867,7 +867,7 @@ class ExceptionRendererTest extends TestCase
     public function testRenderWithNoRequest()
     {
         Router::reload();
-        $this->assertNull(Router::getRequest(false));
+        $this->assertNull(Router::getRequest());
 
         $exception = new Exception('Terrible');
         $ExceptionRenderer = new ExceptionRenderer($exception);
@@ -895,7 +895,7 @@ class ExceptionRendererTest extends TestCase
             ],
         ]);
         // Simulate a request having routing applied and stored in router
-        Router::pushRequest($routerRequest);
+        Router::setRequest($routerRequest);
 
         $exceptionRenderer = new ExceptionRenderer(new Exception('Terrible'), new ServerRequest());
         $exceptionRenderer->render();

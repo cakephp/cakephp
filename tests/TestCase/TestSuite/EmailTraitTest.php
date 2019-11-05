@@ -16,7 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\TestSuite;
 
-use Cake\Mailer\Email;
+use Cake\Mailer\Mailer;
+use Cake\Mailer\Message;
 use Cake\Mailer\TransportFactory;
 use Cake\TestSuite\EmailTrait;
 use Cake\TestSuite\TestCase;
@@ -39,14 +40,14 @@ class EmailTraitTest extends TestCase
     {
         parent::setUp();
 
-        Email::drop('default');
-        Email::drop('alternate');
+        Mailer::drop('default');
+        Mailer::drop('alternate');
 
-        Email::setConfig('default', [
+        Mailer::setConfig('default', [
             'transport' => 'test_tools',
             'from' => 'default@example.com',
         ]);
-        Email::setConfig('alternate', [
+        Mailer::setConfig('alternate', [
             'transport' => 'test_tools',
             'from' => 'alternate@example.com',
         ]);
@@ -64,8 +65,8 @@ class EmailTraitTest extends TestCase
     {
         parent::tearDown();
 
-        Email::drop('default');
-        Email::drop('alternate');
+        Mailer::drop('default');
+        Mailer::drop('alternate');
         TransportFactory::drop('test_tools');
     }
 
@@ -108,13 +109,14 @@ class EmailTraitTest extends TestCase
 
         $this->sendEmails();
 
-        $this->assertMailCount(2);
+        $this->assertMailCount(3);
 
         $this->assertMailSentFromAt(0, 'default@example.com');
         $this->assertMailSentFromAt(1, 'alternate@example.com');
 
         $this->assertMailSentToAt(0, 'to@example.com');
         $this->assertMailSentToAt(1, 'to2@example.com');
+        $this->assertMailSentToAt(2, 'to3@example.com');
 
         $this->assertMailContainsAt(0, 'text');
         $this->assertMailContainsAt(1, 'html');
@@ -171,10 +173,10 @@ class EmailTraitTest extends TestCase
      */
     public function testAssertUsingRegExpCharacters()
     {
-        (new Email())
+        (new Mailer())
             ->setTo('to3@example.com')
             ->setCc('cc3@example.com')
-            ->send('email with regexp chars $/[]');
+            ->deliver('email with regexp chars $/[]');
 
         $this->assertMailContains('$/[]');
     }
@@ -227,20 +229,24 @@ class EmailTraitTest extends TestCase
      */
     private function sendEmails()
     {
-        (new Email())
+        (new Mailer())
             ->setTo(['to@example.com' => 'Foo Bar'])
             ->addTo('alsoto@example.com')
             ->setCc('cc@example.com')
             ->setBcc(['bcc@example.com' => 'Baz Qux'])
             ->setSubject('Hello world')
             ->setAttachments(['custom_name.php' => CAKE . 'basics.php'])
-            ->setEmailFormat(Email::MESSAGE_TEXT)
-            ->send('text');
+            ->setEmailFormat(Message::MESSAGE_TEXT)
+            ->deliver('text');
 
-        (new Email('alternate'))
+        (new Mailer('alternate'))
             ->setTo('to2@example.com')
             ->setCc('cc2@example.com')
-            ->setEmailFormat(Email::MESSAGE_HTML)
-            ->send('html');
+            ->setEmailFormat(Message::MESSAGE_HTML)
+            ->deliver('html');
+
+        (new Mailer('alternate'))
+            ->setTo(['to3@example.com' => null])
+            ->deliver('html');
     }
 }

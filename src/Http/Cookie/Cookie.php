@@ -15,7 +15,6 @@ declare(strict_types=1);
  */
 namespace Cake\Http\Cookie;
 
-use Cake\Chronos\Chronos;
 use Cake\Utility\Hash;
 use DateTimeImmutable;
 use DateTimeZone;
@@ -155,9 +154,11 @@ class Cookie implements CookieInterface
     {
         $value = $this->value;
         if ($this->isExpanded) {
+            /** @psalm-suppress PossiblyInvalidArgument */
             $value = $this->_flatten($this->value);
         }
         $headerValue = [];
+        /** @psalm-suppress PossiblyInvalidArgument */
         $headerValue[] = sprintf('%s=%s', $this->name, rawurlencode($value));
 
         if ($this->expiresAt) {
@@ -250,11 +251,12 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getScalarValue()
     {
         if ($this->isExpanded) {
+            /** @psalm-suppress PossiblyInvalidArgument */
             return $this->_flatten($this->value);
         }
 
@@ -275,7 +277,7 @@ class Cookie implements CookieInterface
     /**
      * Setter for the value attribute.
      *
-     * @param mixed $value The value to store.
+     * @param string|array $value The value to store.
      * @return void
      */
     protected function _setValue($value): void
@@ -422,7 +424,7 @@ class Cookie implements CookieInterface
     public function withNeverExpire()
     {
         $new = clone $this;
-        $new->expiresAt = Chronos::createFromDate(2038, 1, 1);
+        $new->expiresAt = new DateTimeImmutable('2038-01-01');
 
         return $new;
     }
@@ -433,7 +435,7 @@ class Cookie implements CookieInterface
     public function withExpired()
     {
         $new = clone $this;
-        $new->expiresAt = Chronos::createFromTimestamp(1);
+        $new->expiresAt = new DateTimeImmutable('1970-01-01 00:00:01');
 
         return $new;
     }
@@ -450,9 +452,11 @@ class Cookie implements CookieInterface
     public function check(string $path): bool
     {
         if ($this->isExpanded === false) {
+            /** @psalm-suppress PossiblyInvalidArgument */
             $this->value = $this->_expand($this->value);
         }
 
+        /** @psalm-suppress PossiblyInvalidArgument */
         return Hash::check($this->value, $path);
     }
 
@@ -467,8 +471,11 @@ class Cookie implements CookieInterface
     {
         $new = clone $this;
         if ($new->isExpanded === false) {
+            /** @psalm-suppress PossiblyInvalidArgument */
             $new->value = $new->_expand($new->value);
         }
+
+        /** @psalm-suppress PossiblyInvalidArgument */
         $new->value = Hash::insert($new->value, $path, $value);
 
         return $new;
@@ -484,8 +491,11 @@ class Cookie implements CookieInterface
     {
         $new = clone $this;
         if ($new->isExpanded === false) {
+            /** @psalm-suppress PossiblyInvalidArgument */
             $new->value = $new->_expand($new->value);
         }
+
+        /** @psalm-suppress PossiblyInvalidArgument */
         $new->value = Hash::remove($new->value, $path);
 
         return $new;
@@ -503,6 +513,7 @@ class Cookie implements CookieInterface
     public function read(?string $path = null)
     {
         if ($this->isExpanded === false) {
+            /** @psalm-suppress PossiblyInvalidArgument */
             $this->value = $this->_expand($this->value);
         }
 
@@ -510,6 +521,7 @@ class Cookie implements CookieInterface
             return $this->value;
         }
 
+        /** @psalm-suppress PossiblyInvalidArgument */
         return Hash::get($this->value, $path);
     }
 

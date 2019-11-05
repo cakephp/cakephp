@@ -38,7 +38,7 @@ class EntityContextTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.Articles', 'core.Comments', 'core.ArticlesTags', 'core.Tags'];
+    protected $fixtures = ['core.Articles', 'core.Comments', 'core.ArticlesTags', 'core.Tags'];
 
     /**
      * @var \Cake\Http\ServerRequest
@@ -141,10 +141,10 @@ class EntityContextTest extends TestCase
         ]);
         $this->assertTrue($context->isCreate());
 
-        $row->isNew(false);
+        $row->setNew(false);
         $this->assertFalse($context->isCreate());
 
-        $row->isNew(true);
+        $row->setNew(true);
         $this->assertTrue($context->isCreate());
     }
 
@@ -1395,7 +1395,7 @@ class EntityContextTest extends TestCase
         ]);
 
         $validator = new Validator();
-        $validator->requirePresence('title', true, 'Don\'t forget a title!');
+        $validator->notEmpty('title', 'Don\'t forget a title!');
         $validator->add('title', 'minlength', [
             'rule' => ['minlength', 10],
         ])

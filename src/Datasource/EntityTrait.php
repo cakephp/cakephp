@@ -241,7 +241,8 @@ trait EntityTrait
 
             $this->setDirty($name, true);
 
-            if (!array_key_exists($name, $this->_original) &&
+            if (
+                !array_key_exists($name, $this->_original) &&
                 array_key_exists($name, $this->_fields) &&
                 $this->_fields[$name] !== $value
             ) {
@@ -385,9 +386,16 @@ trait EntityTrait
     public function isEmpty(string $field): bool
     {
         $value = $this->get($field);
-        if ($value === null
-            || (is_array($value) && empty($value)
-            || (is_string($value) && empty($value)))
+        if (
+            $value === null ||
+            (
+                is_array($value) &&
+                empty($value) ||
+                (
+                    is_string($value) &&
+                    empty($value)
+                )
+            )
         ) {
             return true;
         }
@@ -433,7 +441,7 @@ trait EntityTrait
     {
         $field = (array)$field;
         foreach ($field as $p) {
-            unset($this->_fields[$p], $this->_dirty[$p]);
+            unset($this->_fields[$p], $this->_original[$p], $this->_dirty[$p]);
         }
 
         return $this;
@@ -689,7 +697,7 @@ trait EntityTrait
      * Fields that are unchanged from their original value will be included in the
      * return of this method.
      *
-     * @param array $fields List of fields to be returned
+     * @param string[] $fields List of fields to be returned
      * @return array
      */
     public function extractOriginal(array $fields): array
@@ -709,7 +717,7 @@ trait EntityTrait
      * This method will only return fields that have been modified since
      * the entity was built. Unchanged fields will be omitted.
      *
-     * @param array $fields List of fields to be returned
+     * @param string[] $fields List of fields to be returned
      * @return array
      */
     public function extractOriginalChanged(array $fields): array
@@ -788,32 +796,41 @@ trait EntityTrait
     }
 
     /**
-     * Returns whether or not this entity has already been persisted.
-     * This method can return null in the case there is no prior information on
-     * the status of this entity.
+     * Set the status of this entity.
      *
-     * If called with a boolean it will set the known status of this instance,
-     * true means that the instance is not yet persisted in the database, false
-     * that it already is.
+     * Using `true` means that the entity has not been persisted in the database,
+     * `false` that it already is.
      *
-     * @param bool|null $new True if it is known this instance was not yet persisted
-     * @return bool Whether or not the entity has been persisted.
+     * @param bool $new Indicate whether or not this entity has been persisted.
+     * @return $this
      */
-    public function isNew(?bool $new = null): bool
+    public function setNew(bool $new)
     {
-        if ($new === null) {
-            return $this->_new;
-        }
-
-        $new = (bool)$new;
-
         if ($new) {
             foreach ($this->_fields as $k => $p) {
                 $this->_dirty[$k] = true;
             }
         }
 
-        return $this->_new = $new;
+        $this->_new = $new;
+
+        return $this;
+    }
+
+    /**
+     * Returns whether or not this entity has already been persisted.
+     *
+     * @return bool Whether or not the entity has been persisted.
+     */
+    public function isNew(): bool
+    {
+        if (func_num_args()) {
+            deprecationWarning('Using isNew() as setter is deprecated. Use setNew() instead.');
+
+            $this->setNew(func_get_arg(0));
+        }
+
+        return $this->_new;
     }
 
     /**
@@ -887,21 +904,21 @@ trait EntityTrait
      * $entity->setErrors(['salary' => ['message'], 'name' => ['another message']]);
      * ```
      *
-     * @param array $fields The array of errors to set.
+     * @param array $errors The array of errors to set.
      * @param bool $overwrite Whether or not to overwrite pre-existing errors for $fields
      * @return $this
      */
-    public function setErrors(array $fields, bool $overwrite = false)
+    public function setErrors(array $errors, bool $overwrite = false)
     {
         if ($overwrite) {
-            foreach ($fields as $f => $error) {
+            foreach ($errors as $f => $error) {
                 $this->_errors[$f] = (array)$error;
             }
 
             return $this;
         }
 
-        foreach ($fields as $f => $error) {
+        foreach ($errors as $f => $error) {
             $this->_errors += [$f => []];
 
             // String messages are appended to the list,
@@ -976,7 +993,8 @@ trait EntityTrait
                 $val = $entity[$part] ?? false;
             }
 
-            if (is_array($val) ||
+            if (
+                is_array($val) ||
                 $val instanceof Traversable ||
                 $val instanceof EntityInterface
             ) {
@@ -1019,7 +1037,7 @@ trait EntityTrait
     /**
      * Read the error(s) from one or many objects.
      *
-     * @param array|\Cake\Datasource\EntityInterface $object The object to read errors from.
+     * @param iterable|\Cake\Datasource\EntityInterface $object The object to read errors from.
      * @param string|null $path The field name for errors.
      * @return array
      */
@@ -1031,12 +1049,12 @@ trait EntityTrait
         if ($object instanceof EntityInterface) {
             return $object->getErrors();
         }
-        if (is_array($object)) {
+        if (is_iterable($object)) {
             $array = array_map(function ($val) {
                 if ($val instanceof EntityInterface) {
                     return $val->getErrors();
                 }
-            }, $object);
+            }, (array)$object);
 
             return array_filter($array);
         }
@@ -1058,7 +1076,7 @@ trait EntityTrait
      * Get a single value of an invalid field. Returns null if not set.
      *
      * @param string $field The name of the field.
-     * @return mixed
+     * @return mixed|null
      */
     public function getInvalidField(string $field)
     {

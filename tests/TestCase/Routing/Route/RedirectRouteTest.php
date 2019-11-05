@@ -158,7 +158,7 @@ class RedirectRouteTest extends TestCase
             'base' => '/basedir',
             'url' => '/posts/2',
         ]);
-        Router::pushRequest($request);
+        Router::setRequest($request);
 
         $this->expectException(\Cake\Routing\Exception\RedirectException::class);
         $this->expectExceptionMessage('http://localhost/basedir/posts/view/2');

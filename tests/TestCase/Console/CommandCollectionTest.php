@@ -14,7 +14,7 @@ declare(strict_types=1);
  * @since         3.5.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\Console;
+namespace Cake\Test\TestCase\Console;
 
 use Cake\Command\RoutesCommand;
 use Cake\Command\VersionCommand;

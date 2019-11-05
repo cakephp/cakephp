@@ -24,6 +24,8 @@ use Psr\SimpleCache\CacheInterface;
  * This interface defines the methods you can depend on in
  * a connection.
  *
+ * @method object getDriver() Gets the driver instance.
+ * @method $this setLogger($logger) Set the current logger.
  * @method bool supportsDynamicConstraints()
  * @method \Cake\Database\Schema\Collection getSchemaCollection()
  * @method \Cake\Database\Query newQuery()
@@ -102,7 +104,7 @@ interface ConnectionInterface extends LoggerAwareInterface
      * @param bool $value Enable/disable query logging
      * @return $this
      */
-    public function enableQueryLogging(bool $value);
+    public function enableQueryLogging(bool $value = true);
 
     /**
      * Disable query logging

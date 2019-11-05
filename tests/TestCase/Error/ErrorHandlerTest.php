@@ -20,10 +20,10 @@ use Cake\Core\Configure;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Error\ErrorHandler;
 use Cake\Http\Exception\ForbiddenException;
+use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\ServerRequest;
 use Cake\Log\Log;
-use Cake\Routing\Exception\MissingControllerException;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Psr\Log\LoggerInterface;
@@ -64,7 +64,7 @@ class ErrorHandlerTest extends TestCase
             ],
         ]);
 
-        Router::setRequestInfo($request);
+        Router::setRequest($request);
         Configure::write('debug', true);
 
         $this->_logger = $this->getMockBuilder(LoggerInterface::class)->getMock();
@@ -308,7 +308,7 @@ class ErrorHandlerTest extends TestCase
             ->method('log')
             ->with('error', $this->logicalAnd(
                 $this->stringContains(
-                    '[Cake\Routing\Exception\MissingControllerException] ' .
+                    '[Cake\Http\Exception\MissingControllerException] ' .
                     'Controller class Derp could not be found.'
                 ),
                 $this->stringContains('Exception Attributes:'),
@@ -320,7 +320,7 @@ class ErrorHandlerTest extends TestCase
             ->method('log')
             ->with('error', $this->logicalAnd(
                 $this->stringContains(
-                    '[Cake\Routing\Exception\MissingControllerException] ' .
+                    '[Cake\Http\Exception\MissingControllerException] ' .
                     'Controller class Derp could not be found.'
                 ),
                 $this->logicalNot($this->stringContains('Exception Attributes:'))

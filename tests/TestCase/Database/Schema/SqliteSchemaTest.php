@@ -78,7 +78,7 @@ class SqliteSchemaTest extends TestCase
             ],
             [
                 'CHAR(25)',
-                ['type' => 'string', 'fixed' => true, 'length' => 25],
+                ['type' => 'char', 'length' => 25],
             ],
             [
                 'CHAR(36)',
@@ -126,27 +126,27 @@ class SqliteSchemaTest extends TestCase
             ],
             [
                 'FLOAT',
-                ['type' => 'float', 'length' => null, 'unsigned' => false],
+                ['type' => 'float', 'length' => null, 'precision' => null, 'unsigned' => false],
             ],
             [
                 'DOUBLE',
-                ['type' => 'float', 'length' => null, 'unsigned' => false],
+                ['type' => 'float', 'length' => null, 'precision' => null, 'unsigned' => false],
             ],
             [
                 'UNSIGNED DOUBLE',
-                ['type' => 'float', 'length' => null, 'unsigned' => true],
+                ['type' => 'float', 'length' => null, 'precision' => null, 'unsigned' => true],
             ],
             [
                 'REAL',
-                ['type' => 'float', 'length' => null, 'unsigned' => false],
+                ['type' => 'float', 'length' => null, 'precision' => null, 'unsigned' => false],
             ],
             [
                 'DECIMAL(11,2)',
-                ['type' => 'decimal', 'length' => null, 'unsigned' => false],
+                ['type' => 'decimal', 'length' => 11, 'precision' => 2, 'unsigned' => false],
             ],
             [
                 'UNSIGNED DECIMAL(11,2)',
-                ['type' => 'decimal', 'length' => null, 'unsigned' => true],
+                ['type' => 'decimal', 'length' => 11, 'precision' => 2, 'unsigned' => true],
             ],
         ];
     }
@@ -169,17 +169,19 @@ class SqliteSchemaTest extends TestCase
         $expected += [
             'null' => true,
             'default' => 'Default value',
+            'comment' => null,
         ];
 
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlite')->getMock();
         $dialect = new SqliteSchema($driver);
 
-        $table = $this->getMockBuilder(TableSchema::class)
-            ->setConstructorArgs(['table'])
-            ->getMock();
-        $table->expects($this->at(1))->method('addColumn')->with('field', $expected);
-
+        $table = new TableSchema('table');
         $dialect->convertColumnDescription($table, $field);
+
+        $actual = array_intersect_key($table->getColumn('field'), $expected);
+        ksort($expected);
+        ksort($actual);
+        $this->assertSame($expected, $actual);
     }
 
     /**
@@ -226,7 +228,8 @@ class SqliteSchemaTest extends TestCase
 
         $schema = new SchemaCollection($connection);
         $result = $schema->listTables();
-        if (in_array('schema_articles', $result) &&
+        if (
+            in_array('schema_articles', $result) &&
             in_array('schema_authors', $result)
         ) {
             return;
@@ -317,7 +320,6 @@ SQL;
                 'default' => 'Let \'em eat cake',
                 'length' => 20,
                 'precision' => null,
-                'fixed' => null,
                 'comment' => null,
                 'collate' => null,
             ],
@@ -362,7 +364,6 @@ SQL;
                 'default' => null,
                 'length' => 10,
                 'precision' => null,
-                'fixed' => null,
                 'comment' => null,
                 'collate' => null,
             ],
@@ -372,7 +373,6 @@ SQL;
                 'default' => 'NULL',
                 'length' => 10,
                 'precision' => null,
-                'fixed' => null,
                 'comment' => null,
                 'collate' => null,
             ],
@@ -478,7 +478,7 @@ SQL;
             ],
             [
                 'id',
-                ['type' => 'string', 'length' => 32, 'fixed' => true, 'null' => false],
+                ['type' => 'string', 'length' => 32, 'null' => false],
                 '"id" VARCHAR(32) NOT NULL',
             ],
             [

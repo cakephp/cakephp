@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace TestApp\Controller;
 
 use Cake\Controller\Controller;
-use Cake\Http\Response;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * CakesController class
@@ -52,9 +52,9 @@ class CakesController extends Controller
     /**
      * Startup process
      *
-     * \Cake\Http\Response|null
+     * \Psr\Http\Message\ResponseInterface|null
      */
-    public function startupProcess(): ?Response
+    public function startupProcess(): ?ResponseInterface
     {
         parent::startupProcess();
         if ($this->request->getParam('stop') === 'startup') {
@@ -67,9 +67,9 @@ class CakesController extends Controller
     /**
      * Shutdown process
      *
-     * \Cake\Http\Response|null
+     * \Psr\Http\Message\ResponseInterface|null
      */
-    public function shutdownProcess(): ?Response
+    public function shutdownProcess(): ?ResponseInterface
     {
         parent::shutdownProcess();
         if ($this->request->getParam('stop') === 'shutdown') {

@@ -32,7 +32,7 @@ use Cake\Core\Exception\Exception;
  * ```
  * <?php
  * return [
- *     'debug' => 0,
+ *     'debug' => false,
  *     'Security' => [
  *         'salt' => 'its-secret'
  *     ],

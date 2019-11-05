@@ -16,9 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Http;
 
-use Cake\Controller\Controller;
 use Cake\Core\App;
-use Cake\Routing\Exception\MissingControllerException;
+use Cake\Http\Exception\MissingControllerException;
 use Cake\Utility\Inflector;
 use ReflectionClass;
 
@@ -32,15 +31,16 @@ class ControllerFactory
      *
      * @param \Cake\Http\ServerRequest $request The request to build a controller for.
      * @param \Cake\Http\Response $response The response to use.
-     * @return \Cake\Controller\Controller
+     * @return \Cake\Http\ControllerInterface
      * @throws \ReflectionException
      */
-    public function create(ServerRequest $request, Response $response): Controller
+    public function create(ServerRequest $request, Response $response): ControllerInterface
     {
         $className = $this->getControllerClass($request);
         if (!$className) {
             $this->missingController($request);
         }
+        /** @var string $className */
         $reflection = new ReflectionClass($className);
         if ($reflection->isAbstract() || $reflection->isInterface()) {
             $this->missingController($request);
@@ -60,7 +60,7 @@ class ControllerFactory
      */
     public function getControllerClass(ServerRequest $request): ?string
     {
-        $pluginPath = $controller = null;
+        $pluginPath = $controller = '';
         $namespace = 'Controller';
         if ($request->getParam('controller')) {
             $controller = $request->getParam('controller');
@@ -84,7 +84,8 @@ class ControllerFactory
         // Disallow plugin short forms, / and \\ from
         // controller names as they allow direct references to
         // be created.
-        if (strpos($controller, '\\') !== false ||
+        if (
+            strpos($controller, '\\') !== false ||
             strpos($controller, '/') !== false ||
             strpos($controller, '.') !== false ||
             $firstChar === strtolower($firstChar)
@@ -99,7 +100,7 @@ class ControllerFactory
      * Throws an exception when a controller is missing.
      *
      * @param \Cake\Http\ServerRequest $request The request.
-     * @throws \Cake\Routing\Exception\MissingControllerException
+     * @throws \Cake\Http\Exception\MissingControllerException
      * @return void
      */
     protected function missingController(ServerRequest $request): void

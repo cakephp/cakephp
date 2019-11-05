@@ -17,6 +17,8 @@ declare(strict_types=1);
 namespace Cake\Database;
 
 use Cake\Database\Expression\Comparison;
+use Cake\Database\Expression\IdentifierExpression;
+use Closure;
 use RuntimeException;
 
 /**
@@ -88,9 +90,9 @@ trait SqlDialectTrait
      *
      * @param string $type the type of query to be transformed
      * (select, insert, update, delete)
-     * @return callable
+     * @return \Closure
      */
-    public function queryTranslator(string $type): callable
+    public function queryTranslator(string $type): Closure
     {
         return function ($query) use ($type) {
             if ($this->isAutoQuotingEnabled()) {
@@ -224,20 +226,31 @@ trait SqlDialectTrait
 
         $conditions = $query->clause('where');
         if ($conditions) {
-            $conditions->traverse(function ($condition) {
-                if (!($condition instanceof Comparison)) {
-                    return $condition;
+            $conditions->traverse(function ($expression) {
+                if ($expression instanceof Comparison) {
+                    $field = $expression->getField();
+                    if (
+                        is_string($field) &&
+                        strpos($field, '.') !== false
+                    ) {
+                        [, $unaliasedField] = explode('.', $field, 2);
+                        $expression->setField($unaliasedField);
+                    }
+
+                    return $expression;
                 }
 
-                $field = $condition->getField();
-                if ($field instanceof ExpressionInterface || strpos($field, '.') === false) {
-                    return $condition;
+                if ($expression instanceof IdentifierExpression) {
+                    $identifier = $expression->getIdentifier();
+                    if (strpos($identifier, '.') !== false) {
+                        [, $unaliasedIdentifier] = explode('.', $identifier, 2);
+                        $expression->setIdentifier($unaliasedIdentifier);
+                    }
+
+                    return $expression;
                 }
 
-                [, $field] = explode('.', $field);
-                $condition->setField($field);
-
-                return $condition;
+                return $expression;
             });
         }
 

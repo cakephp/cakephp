@@ -14,7 +14,7 @@ declare(strict_types=1);
  * @since         2.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Console;
+namespace Cake\Test\TestCase\Error;
 
 use Cake\Controller\Exception\MissingActionException;
 use Cake\Core\Exception\Exception;
@@ -39,7 +39,7 @@ class ConsoleErrorHandlerTest extends TestCase
         $this->stderr = $this->getMockBuilder('Cake\Console\ConsoleOutput')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->Error = $this->getMockBuilder('Cake\Console\ConsoleErrorHandler')
+        $this->Error = $this->getMockBuilder('Cake\Error\ConsoleErrorHandler')
             ->setMethods(['_stop'])
             ->setConstructorArgs([['stderr' => $this->stderr]])
             ->getMock();

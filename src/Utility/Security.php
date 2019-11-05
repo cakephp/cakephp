@@ -57,6 +57,7 @@ class Security
      * @param mixed $salt If true, automatically prepends the value returned by
      *   Security::getSalt() to $string.
      * @return string Hash
+     * @throws \RuntimeException
      * @link https://book.cakephp.org/3.0/en/core-libraries/security.html#hashing-data
      */
     public static function hash(string $string, ?string $algorithm = null, $salt = false): string
@@ -157,6 +158,7 @@ class Security
      * @param \Cake\Utility\Crypto\OpenSsl|null $instance The crypto instance to use.
      * @return \Cake\Utility\Crypto\OpenSsl Crypto instance.
      * @throws \InvalidArgumentException When no compatible crypto extension is available.
+     * @psalm-suppress MoreSpecificReturnType
      */
     public static function engine($instance = null)
     {
@@ -169,6 +171,7 @@ class Security
             static::$_instance = $instance;
         }
         if (isset(static::$_instance)) {
+            /** @psalm-suppress LessSpecificReturnStatement */
             return static::$_instance;
         }
         throw new InvalidArgumentException(
@@ -285,7 +288,9 @@ class Security
     public static function getSalt(): string
     {
         if (static::$_salt === null) {
-            throw new RuntimeException('Salt not set. Use Security::setSalt() to set one, ideally in `config/bootstrap.php`.');
+            throw new RuntimeException(
+                'Salt not set. Use Security::setSalt() to set one, ideally in `config/bootstrap.php`.'
+            );
         }
 
         return static::$_salt;

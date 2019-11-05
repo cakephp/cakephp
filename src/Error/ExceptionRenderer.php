@@ -38,7 +38,7 @@ use Throwable;
  * Exception Renderer.
  *
  * Captures and handles all unhandled exceptions. Displays helpful framework errors when debug is true.
- * When debug is false a CakeException will render 404 or 500 errors. If an uncaught exception is thrown
+ * When debug is false a ExceptionRenderer will render 404 or 500 errors. If an uncaught exception is thrown
  * and it is a type that ExceptionHandler does not know about it will be treated as a 500 error.
  *
  * ### Implementing application specific exception rendering
@@ -117,7 +117,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
     protected function _getController(): Controller
     {
         $request = $this->request;
-        $routerRequest = Router::getRequest(true);
+        $routerRequest = Router::getRequest();
         // Fallback to the request in the router or make a new one from
         // $_SERVER
         if ($request === null) {
@@ -131,7 +131,6 @@ class ExceptionRenderer implements ExceptionRendererInterface
         }
 
         $response = new Response();
-        $controller = null;
 
         try {
             $class = null;
@@ -160,23 +159,22 @@ class ExceptionRenderer implements ExceptionRendererInterface
             /** @var \Cake\Controller\Controller $controller */
             $controller = new $class($request, $response);
             $controller->startupProcess();
-            $startup = true;
         } catch (Throwable $e) {
-            $startup = false;
+        }
+
+        if (!isset($controller)) {
+            return new Controller($request, $response);
         }
 
         // Retry RequestHandler, as another aspect of startupProcess()
         // could have failed. Ignore any exceptions out of startup, as
         // there could be userland input data parsers.
-        if ($startup === false && !empty($controller) && isset($controller->RequestHandler)) {
+        if (isset($controller->RequestHandler)) {
             try {
                 $event = new Event('Controller.startup', $controller);
                 $controller->RequestHandler->startup($event);
             } catch (Throwable $e) {
             }
-        }
-        if (empty($controller)) {
-            $controller = new Controller($request, $response);
         }
 
         return $controller;
@@ -287,7 +285,8 @@ class ExceptionRenderer implements ExceptionRendererInterface
     {
         $message = $exception->getMessage();
 
-        if (!Configure::read('debug') &&
+        if (
+            !Configure::read('debug') &&
             !($exception instanceof HttpException)
         ) {
             if ($code < 500) {
@@ -339,12 +338,12 @@ class ExceptionRenderer implements ExceptionRendererInterface
     protected function _code(Throwable $exception): int
     {
         $code = 500;
-        $errorCode = $exception->getCode();
+        $errorCode = (int)$exception->getCode();
         if ($errorCode >= 400 && $errorCode < 600) {
             $code = $errorCode;
         }
 
-        return (int)$code;
+        return $code;
     }
 
     /**
@@ -361,8 +360,12 @@ class ExceptionRenderer implements ExceptionRendererInterface
             return $this->_shutdown();
         } catch (MissingTemplateException $e) {
             $attributes = $e->getAttributes();
-            if ($e instanceof MissingLayoutException ||
-                (isset($attributes['file']) && strpos($attributes['file'], 'error500') !== false)
+            if (
+                $e instanceof MissingLayoutException ||
+                (
+                    isset($attributes['file']) &&
+                    strpos($attributes['file'], 'error500') !== false
+                )
             ) {
                 return $this->_outputMessageSafe('error500');
             }

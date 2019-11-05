@@ -60,7 +60,7 @@ class JsonTypeTest extends TestCase
     }
 
     /**
-     * Test converting json stirngs to PHP values.
+     * Test converting json strings to PHP values.
      *
      * @return void
      */
@@ -91,7 +91,7 @@ class JsonTypeTest extends TestCase
      */
     public function testToDatabase()
     {
-        $this->assertSame('null', $this->type->toDatabase(null, $this->driver));
+        $this->assertNull($this->type->toDatabase(null, $this->driver));
         $this->assertSame(json_encode('word'), $this->type->toDatabase('word', $this->driver));
         $this->assertSame(json_encode(2.123), $this->type->toDatabase(2.123, $this->driver));
         $this->assertSame(json_encode(['a' => 'b']), $this->type->toDatabase(['a' => 'b'], $this->driver));
@@ -117,6 +117,7 @@ class JsonTypeTest extends TestCase
     public function testMarshal()
     {
         $this->assertNull($this->type->marshal(null));
+        $this->assertSame('', $this->type->marshal(''));
         $this->assertSame('word', $this->type->marshal('word'));
         $this->assertSame(2.123, $this->type->marshal(2.123));
         $this->assertSame([1, 2, 3], $this->type->marshal([1, 2, 3]));

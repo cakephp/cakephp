@@ -39,7 +39,7 @@ class Hash
      *
      * @param array|\ArrayAccess $data Array of data or object implementing
      *   \ArrayAccess interface to operate on.
-     * @param string|array|null $path The path being searched for. Either a dot
+     * @param string|int|array|null $path The path being searched for. Either a dot
      *   separated string, or an array of path segments.
      * @param mixed $default The return value when the path does not exist
      * @throws \InvalidArgumentException
@@ -61,6 +61,7 @@ class Hash
         if (is_string($path) || is_numeric($path)) {
             $parts = explode('.', (string)$path);
         } else {
+            /** @psalm-suppress TypeDoesNotContainType */
             if (!is_array($path)) {
                 throw new InvalidArgumentException(sprintf(
                     'Invalid Parameter %s, should be dot separated path or array.',
@@ -175,7 +176,11 @@ class Hash
             if ($conditions) {
                 $filter = [];
                 foreach ($next as $item) {
-                    if ((is_array($item) || $item instanceof ArrayAccess) &&
+                    if (
+                        (
+                            is_array($item) ||
+                            $item instanceof ArrayAccess
+                        ) &&
                         static::_matches($item, $conditions)
                     ) {
                         $filter[] = $item;
@@ -254,8 +259,13 @@ class Hash
                 return false;
             }
 
+            if (is_array($data)) {
+                $attrPresent = array_key_exists($attr, $data);
+            } else {
+                $attrPresent = $data->offsetExists($attr);
+            }
             // Empty attribute = fail.
-            if (!(isset($data[$attr]) || array_key_exists($attr, $data))) {
+            if (!$attrPresent) {
                 return false;
             }
 
@@ -277,12 +287,15 @@ class Hash
                 if (!preg_match($val, $prop)) {
                     return false;
                 }
-            } elseif (($op === '=' && $prop != $val) ||
+                // phpcs:disable
+            } elseif (
+                ($op === '=' && $prop != $val) ||
                 ($op === '!=' && $prop == $val) ||
                 ($op === '>' && $prop <= $val) ||
                 ($op === '<' && $prop >= $val) ||
                 ($op === '>=' && $prop < $val) ||
                 ($op === '<=' && $prop > $val)
+                // phpcs:enable
             ) {
                 return false;
             }
@@ -464,8 +477,10 @@ class Hash
 
         if (is_array($keyPath)) {
             $format = array_shift($keyPath);
+            /** @var array $keys */
             $keys = static::format($data, $keyPath, $format);
         } else {
+            /** @var array $keys */
             $keys = static::extract($data, $keyPath);
         }
         if (empty($keys)) {
@@ -475,8 +490,10 @@ class Hash
         $vals = null;
         if (!empty($valuePath) && is_array($valuePath)) {
             $format = array_shift($valuePath);
+            /** @var array $vals */
             $vals = static::format($data, $valuePath, $format);
         } elseif (!empty($valuePath)) {
+            /** @var array $vals */
             $vals = static::extract($data, $valuePath);
         }
         if (empty($vals)) {
@@ -499,6 +516,7 @@ class Hash
                         $group[$i] = 0;
                     }
                     if (!isset($out[$group[$i]])) {
+                        /** @psalm-suppress PossiblyNullArrayOffset */
                         $out[$group[$i]] = [];
                     }
                     $out[$group[$i]][$keys[$i]] = $vals[$i];
@@ -529,7 +547,7 @@ class Hash
      * @param array $data Source array from which to extract the data
      * @param array $paths An array containing one or more Hash::extract()-style key paths
      * @param string $format Format string into which values will be inserted, see sprintf()
-     * @return array|null An array of strings extracted from `$path` and formatted with `$format`
+     * @return string[]|null An array of strings extracted from `$path` and formatted with `$format`
      * @link https://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::format
      * @see sprintf()
      * @see \Cake\Utility\Hash::extract()
@@ -547,6 +565,7 @@ class Hash
             $extracted[] = static::extract($data, $paths[$i]);
         }
         $out = [];
+        /** @var array<mixed, array> $data */
         $data = $extracted;
         $count = count($data[0]);
 
@@ -671,7 +690,7 @@ class Hash
     {
         $result = [];
         $stack = [];
-        $path = null;
+        $path = '';
 
         reset($data);
         while (!empty($data)) {
@@ -776,7 +795,8 @@ class Hash
             foreach ($stack as $curKey => &$curMerge) {
                 foreach ($curMerge[0] as $key => &$val) {
                     $isArray = is_array($curMerge[1]);
-                    if ($isArray
+                    if (
+                        $isArray
                         && !empty($curMerge[1][$key])
                         && (array)$curMerge[1][$key] === $curMerge[1][$key]
                         && (array)$val === $val
@@ -935,8 +955,8 @@ class Hash
      *
      * ### Sort directions
      *
-     * - `asc` or `\SORT_ASC` Sort ascending.
-     * - `desc` or `\SORT_DESC` Sort descending.
+     * - `asc` or \SORT_ASC Sort ascending.
+     * - `desc` or \SORT_DESC Sort descending.
      *
      * ### Sort types
      *
@@ -973,6 +993,7 @@ class Hash
         if ($numeric) {
             $data = array_values($data);
         }
+        /** @var array $sortValues */
         $sortValues = static::extract($data, $path);
         $dataCount = count($data);
 
@@ -989,7 +1010,9 @@ class Hash
             $sortValues = array_pad($sortValues, $dataCount, null);
         }
         $result = static::_squash($sortValues);
+        /** @var array $keys */
         $keys = static::extract($result, '{n}.id');
+        /** @var array $values */
         $values = static::extract($result, '{n}.value');
 
         if (is_string($dir)) {
@@ -1008,6 +1031,7 @@ class Hash
             $type = $type['type'];
         }
         $type = strtolower($type);
+
         if ($type === 'numeric') {
             $type = \SORT_NUMERIC;
         } elseif ($type === 'string') {
@@ -1175,7 +1199,7 @@ class Hash
      *
      * @param array $data The data to nest.
      * @param array $options Options are:
-     * @return array of results, nested
+     * @return array[] of results, nested
      * @see \Cake\Utility\Hash::extract()
      * @throws \InvalidArgumentException When providing invalid data.
      * @link https://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::nest
@@ -1195,6 +1219,7 @@ class Hash
         ];
 
         $return = $idMap = [];
+        /** @var array $ids */
         $ids = static::extract($data, $options['idPath']);
 
         $idKeys = explode('.', $options['idPath']);

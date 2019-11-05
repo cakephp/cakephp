@@ -26,7 +26,7 @@ use Cake\TestSuite\TestCase;
  */
 class SaveOptionsBuilderTest extends TestCase
 {
-    public $fixtures = [
+    protected $fixtures = [
         'core.Articles',
         'core.Authors',
         'core.Comments',

@@ -49,7 +49,6 @@ class FileEngine extends CacheEngine
      * - `duration` Specify how long items in this cache configuration last.
      * - `groups` List of groups or 'tags' associated to every key stored in this config.
      *    handy for deleting a complete group from cache.
-     * - `isWindows` Automatically populated with whether the host is windows or not
      * - `lock` Used by FileCache. Should files be locked before writing to them?
      * - `mask` The mask used for created files
      * - `path` Path to where cachefiles should be saved. Defaults to system's temp dir.
@@ -63,7 +62,6 @@ class FileEngine extends CacheEngine
     protected $_defaultConfig = [
         'duration' => 3600,
         'groups' => [],
-        'isWindows' => false,
         'lock' => true,
         'mask' => 0664,
         'path' => null,
@@ -93,9 +91,6 @@ class FileEngine extends CacheEngine
         if ($this->_config['path'] === null) {
             $this->_config['path'] = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'cake_cache' . DIRECTORY_SEPARATOR;
         }
-        if (DIRECTORY_SEPARATOR === '\\') {
-            $this->_config['isWindows'] = true;
-        }
         if (substr($this->_config['path'], -1) !== DIRECTORY_SEPARATOR) {
             $this->_config['path'] .= DIRECTORY_SEPARATOR;
         }
@@ -111,7 +106,7 @@ class FileEngine extends CacheEngine
      *
      * @param string $key Identifier for the data
      * @param mixed $data Data to be cached
-     * @param null|int|\DateInterval $ttl Optional. The TTL value of this item. If no value is sent and
+     * @param \DateInterval|int|null $ttl Optional. The TTL value of this item. If no value is sent and
      *   the driver supports TTL then the library may set a default value
      *   for it or let the driver take care of that.
      * @return bool True on success and false on failure.
@@ -128,27 +123,19 @@ class FileEngine extends CacheEngine
             return false;
         }
 
-        $lineBreak = "\n";
-
-        if ($this->_config['isWindows']) {
-            $lineBreak = "\r\n";
-        }
-
         if (!empty($this->_config['serialize'])) {
-            if ($this->_config['isWindows']) {
-                $data = str_replace('\\', '\\\\\\\\', serialize($data));
-            } else {
-                $data = serialize($data);
-            }
+            $data = serialize($data);
         }
 
         $expires = time() + $this->duration($ttl);
-        $contents = implode([$expires, $lineBreak, $data, $lineBreak]);
+        $contents = implode([$expires, PHP_EOL, $data, PHP_EOL]);
 
         if ($this->_config['lock']) {
+            /** @psalm-suppress PossiblyNullReference */
             $this->_File->flock(LOCK_EX);
         }
 
+        /** @psalm-suppress PossiblyNullReference */
         $this->_File->rewind();
         $success = $this->_File->ftruncate(0) &&
             $this->_File->fwrite($contents) &&
@@ -179,9 +166,11 @@ class FileEngine extends CacheEngine
         }
 
         if ($this->_config['lock']) {
+            /** @psalm-suppress PossiblyNullReference */
             $this->_File->flock(LOCK_SH);
         }
 
+        /** @psalm-suppress PossiblyNullReference */
         $this->_File->rewind();
         $time = time();
         $cachetime = (int)$this->_File->current();
@@ -197,6 +186,7 @@ class FileEngine extends CacheEngine
         $data = '';
         $this->_File->next();
         while ($this->_File->valid()) {
+            /** @psalm-suppress PossiblyInvalidOperand */
             $data .= $this->_File->current();
             $this->_File->next();
         }
@@ -208,9 +198,6 @@ class FileEngine extends CacheEngine
         $data = trim($data);
 
         if ($data !== '' && !empty($this->_config['serialize'])) {
-            if ($this->_config['isWindows']) {
-                $data = str_replace('\\\\\\\\', '\\', $data);
-            }
             $data = unserialize((string)$data);
         }
 
@@ -232,6 +219,7 @@ class FileEngine extends CacheEngine
             return false;
         }
 
+        /** @psalm-suppress PossiblyNullReference */
         $path = $this->_File->getRealPath();
         $this->_File = null;
 
@@ -289,9 +277,14 @@ class FileEngine extends CacheEngine
         if (!is_dir($path)) {
             return;
         }
-        $prefixLength = strlen($this->_config['prefix']);
 
         $dir = dir($path);
+        if (!$dir) {
+            return;
+        }
+
+        $prefixLength = strlen($this->_config['prefix']);
+
         while (($entry = $dir->read()) !== false) {
             if (substr($entry, 0, $prefixLength) !== $this->_config['prefix']) {
                 continue;
@@ -367,7 +360,8 @@ class FileEngine extends CacheEngine
         if (!$createKey && !$path->isFile()) {
             return false;
         }
-        if (empty($this->_File) ||
+        if (
+            empty($this->_File) ||
             $this->_File->getBasename() !== $key ||
             $this->_File->valid() === false
         ) {

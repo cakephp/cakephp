@@ -21,7 +21,6 @@ use Cake\Console\Command;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\App;
-use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\Plugin;
 use Cake\Filesystem\Filesystem;
 use Cake\Utility\Inflector;
@@ -130,21 +129,27 @@ class I18nExtractCommand extends Command
     protected $_countMarkerError = 0;
 
     /**
-     * Method to interact with the User and get path selections.
+     * Method to interact with the user and get path selections.
      *
      * @param \Cake\Console\ConsoleIo $io The io instance.
      * @return void
      */
     protected function _getPaths(ConsoleIo $io): void
     {
-        $defaultPath = APP;
+        /** @psalm-suppress UndefinedConstant */
+        $defaultPaths = array_merge(
+            [APP],
+            App::path('templates'),
+            ['D'] // This is required to break the loop below
+        );
+        $defaultPathIndex = 0;
         while (true) {
             $currentPaths = count($this->_paths) > 0 ? $this->_paths : ['None'];
             $message = sprintf(
                 "Current paths: %s\nWhat is the path you would like to extract?\n[Q]uit [D]one",
                 implode(', ', $currentPaths)
             );
-            $response = $io->ask($message, $defaultPath);
+            $response = $io->ask($message, $defaultPaths[$defaultPathIndex]);
             if (strtoupper($response) === 'Q') {
                 $io->err('Extract Aborted');
                 $this->abort();
@@ -160,7 +165,7 @@ class I18nExtractCommand extends Command
                 $io->warning('No directories selected. Please choose a directory.');
             } elseif (is_dir($response)) {
                 $this->_paths[] = $response;
-                $defaultPath = 'D';
+                $defaultPathIndex++;
             } else {
                 $io->err('The directory path you supplied was not found. Please try again.');
             }
@@ -173,10 +178,11 @@ class I18nExtractCommand extends Command
      *
      * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
-     * @return null|int The exit code or null for success
+     * @return int|null The exit code or null for success
      */
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
+        $plugin = '';
         if ($args->getOption('exclude')) {
             $this->_exclude = explode(',', (string)$args->getOption('exclude'));
         }
@@ -187,9 +193,6 @@ class I18nExtractCommand extends Command
             $this->_paths = explode(',', (string)$args->getOption('paths'));
         } elseif ($args->getOption('plugin')) {
             $plugin = Inflector::camelize((string)$args->getOption('plugin'));
-            if (!Plugin::isLoaded($plugin)) {
-                throw new MissingPluginException(['plugin' => $plugin]);
-            }
             $this->_paths = [Plugin::classPath($plugin), Plugin::templatePath($plugin)];
         } else {
             $this->_getPaths($io);
@@ -207,7 +210,7 @@ class I18nExtractCommand extends Command
         }
 
         if ($args->hasOption('exclude-plugins') && $this->_isExtractingApp()) {
-            $this->_exclude = array_merge($this->_exclude, App::path('Plugin'));
+            $this->_exclude = array_merge($this->_exclude, App::path('plugins'));
         }
 
         if ($this->_extractCore) {
@@ -217,13 +220,19 @@ class I18nExtractCommand extends Command
         if ($args->hasOption('output')) {
             $this->_output = (string)$args->getOption('output');
         } elseif ($args->hasOption('plugin')) {
-            $this->_output = $this->_paths[0] . 'Locale';
+            $this->_output = Plugin::path($plugin)
+                . 'resources' . DIRECTORY_SEPARATOR
+                . 'locales' . DIRECTORY_SEPARATOR;
         } else {
             $message = "What is the path you would like to output?\n[Q]uit";
+            $localePaths = App::path('locales');
+            if (!$localePaths) {
+                $localePaths[] = ROOT . 'resources' . DIRECTORY_SEPARATOR . 'locales';
+            }
             while (true) {
                 $response = $io->ask(
                     $message,
-                    rtrim($this->_paths[0], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'Locale'
+                    $localePaths[0]
                 );
                 if (strtoupper($response) === 'Q') {
                     $io->err('Extract Aborted');
@@ -527,6 +536,7 @@ class I18nExtractCommand extends Command
     protected function _buildFiles(Arguments $args): void
     {
         $paths = $this->_paths;
+        /** @psalm-suppress UndefinedConstant */
         $paths[] = realpath(APP) . DIRECTORY_SEPARATOR;
 
         usort($paths, function (string $a, string $b) {
@@ -626,7 +636,8 @@ class I18nExtractCommand extends Command
 
             $filename = str_replace('/', '_', $domain) . '.pot';
             $response = '';
-            while ($overwriteAll === false
+            while (
+                $overwriteAll === false
                 && file_exists($this->_output . $filename)
                 && strtoupper($response) !== 'Y'
             ) {
@@ -688,7 +699,8 @@ class I18nExtractCommand extends Command
     {
         $strings = [];
         $count = count($strings);
-        while ($count < $target
+        while (
+            $count < $target
             && ($this->_tokens[$position] === ','
                 || $this->_tokens[$position][0] === T_CONSTANT_ENCAPSED_STRING
                 || $this->_tokens[$position][0] === T_LNUMBER
@@ -697,7 +709,8 @@ class I18nExtractCommand extends Command
             $count = count($strings);
             if ($this->_tokens[$position][0] === T_CONSTANT_ENCAPSED_STRING && $this->_tokens[$position + 1] === '.') {
                 $string = '';
-                while ($this->_tokens[$position][0] === T_CONSTANT_ENCAPSED_STRING
+                while (
+                    $this->_tokens[$position][0] === T_CONSTANT_ENCAPSED_STRING
                     || $this->_tokens[$position] === '.'
                 ) {
                     if ($this->_tokens[$position][0] === T_CONSTANT_ENCAPSED_STRING) {
@@ -822,6 +835,7 @@ class I18nExtractCommand extends Command
      */
     protected function _isExtractingApp(): bool
     {
+        /** @psalm-suppress UndefinedConstant */
         return $this->_paths === [APP];
     }
 

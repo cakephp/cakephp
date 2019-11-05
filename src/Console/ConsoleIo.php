@@ -126,7 +126,7 @@ class ConsoleIo
     /**
      * Get/set the current output level.
      *
-     * @param null|int $level The current output level.
+     * @param int|null $level The current output level.
      * @return int The current output level.
      */
     public function level(?int $level = null): int
@@ -141,7 +141,7 @@ class ConsoleIo
     /**
      * Output at the verbose level.
      *
-     * @param string|array $message A string or an array of strings to output
+     * @param string|string[] $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int|null The number of bytes returned from writing to stdout
      *   or null if current level is less than ConsoleIo::VERBOSE
@@ -154,7 +154,7 @@ class ConsoleIo
     /**
      * Output at all levels.
      *
-     * @param string|array $message A string or an array of strings to output
+     * @param string|string[] $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int|null The number of bytes returned from writing to stdout
      *   or null if current level is less than ConsoleIo::QUIET
@@ -175,7 +175,7 @@ class ConsoleIo
      * present in most shells. Using ConsoleIo::QUIET for a message means it will always display.
      * While using ConsoleIo::VERBOSE means it will only display when verbose output is toggled.
      *
-     * @param string|array $message A string or an array of strings to output
+     * @param string|string[] $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
      * @return int|null The number of bytes returned from writing to stdout
@@ -195,14 +195,14 @@ class ConsoleIo
     /**
      * Convenience method for out() that wraps message between <info /> tag
      *
-     * @param string|array|null $message A string or an array of strings to output
+     * @param string|string[] $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
      * @return int|null The number of bytes returned from writing to stdout
      *   or null if provided $level is greater than current level.
      * @see https://book.cakephp.org/3.0/en/console-and-shells.html#ConsoleIo::out
      */
-    public function info($message = null, int $newlines = 1, int $level = self::NORMAL): ?int
+    public function info($message, int $newlines = 1, int $level = self::NORMAL): ?int
     {
         $messageType = 'info';
         $message = $this->wrapMessageWithType($messageType, $message);
@@ -213,12 +213,12 @@ class ConsoleIo
     /**
      * Convenience method for err() that wraps message between <warning /> tag
      *
-     * @param string|array|null $message A string or an array of strings to output
+     * @param string|string[] $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int The number of bytes returned from writing to stderr.
      * @see https://book.cakephp.org/3.0/en/console-and-shells.html#ConsoleIo::err
      */
-    public function warning($message = null, int $newlines = 1): int
+    public function warning($message, int $newlines = 1): int
     {
         $messageType = 'warning';
         $message = $this->wrapMessageWithType($messageType, $message);
@@ -229,12 +229,12 @@ class ConsoleIo
     /**
      * Convenience method for err() that wraps message between <error /> tag
      *
-     * @param string|array|null $message A string or an array of strings to output
+     * @param string|string[] $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int The number of bytes returned from writing to stderr.
      * @see https://book.cakephp.org/3.0/en/console-and-shells.html#ConsoleIo::err
      */
-    public function error($message = null, int $newlines = 1): int
+    public function error($message, int $newlines = 1): int
     {
         $messageType = 'error';
         $message = $this->wrapMessageWithType($messageType, $message);
@@ -245,19 +245,34 @@ class ConsoleIo
     /**
      * Convenience method for out() that wraps message between <success /> tag
      *
-     * @param string|array|null $message A string or an array of strings to output
+     * @param string|string[] $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
      * @return int|null The number of bytes returned from writing to stdout
      *   or null if provided $level is greater than current level.
      * @see https://book.cakephp.org/3.0/en/console-and-shells.html#ConsoleIo::out
      */
-    public function success($message = null, int $newlines = 1, int $level = self::NORMAL): ?int
+    public function success($message, int $newlines = 1, int $level = self::NORMAL): ?int
     {
         $messageType = 'success';
         $message = $this->wrapMessageWithType($messageType, $message);
 
         return $this->out($message, $newlines, $level);
+    }
+
+    /**
+     * Halts the the current process with a StopException.
+     *
+     * @param string $message Error message.
+     * @param int $code Error code.
+     * @return void
+     * @throws \Cake\Console\Exception\StopException
+     */
+    public function abort($message, $code = Command::CODE_ERROR): void
+    {
+        $this->error($message);
+
+        throw new StopException($message, $code);
     }
 
     /**
@@ -324,7 +339,7 @@ class ConsoleIo
      * Outputs a single or multiple error messages to stderr. If no parameters
      * are passed outputs just a newline.
      *
-     * @param string|array $message A string or an array of strings to output
+     * @param string|string[] $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int The number of bytes returned from writing to stderr.
      */
@@ -363,9 +378,9 @@ class ConsoleIo
      *
      * @param string $prompt Prompt text.
      * @param string|null $default Default input value.
-     * @return mixed Either the default value, or the user-provided input.
+     * @return string Either the default value, or the user-provided input.
      */
-    public function ask(string $prompt, ?string $default = null)
+    public function ask(string $prompt, ?string $default = null): string
     {
         return $this->_getInput($prompt, null, $default);
     }
@@ -383,18 +398,39 @@ class ConsoleIo
     }
 
     /**
-     * Add a new output style or get defined styles.
+     * Gets defined styles.
      *
-     * @param string|null $style The style to get or create.
-     * @param array|bool|null $definition The array definition of the style to change or create a style
-     *   or false to remove a style.
-     * @return mixed If you are getting styles, the style or null will be returned. If you are creating/modifying
-     *   styles true will be returned.
+     * @return array
      * @see \Cake\Console\ConsoleOutput::styles()
      */
-    public function styles(?string $style = null, $definition = null)
+    public function styles(): array
     {
-        return $this->_out->styles($style, $definition);
+        return $this->_out->styles();
+    }
+
+    /**
+     * Get defined style.
+     *
+     * @param string $style The style to get.
+     * @return array
+     * @see \Cake\Console\ConsoleOutput::getStyle()
+     */
+    public function getStyle(string $style): array
+    {
+        return $this->_out->getStyle($style);
+    }
+
+    /**
+     * Adds a new output style.
+     *
+     * @param string $style The style to set.
+     * @param array $definition The array definition of the style to change or create.
+     * @return void
+     * @see \Cake\Console\ConsoleOutput::setStyle()
+     */
+    public function setStyle(string $style, array $definition): void
+    {
+        $this->_out->setStyle($style, $definition);
     }
 
     /**
@@ -403,11 +439,11 @@ class ConsoleIo
      * @param string $prompt Prompt text.
      * @param string|array $options Array or string of options.
      * @param string|null $default Default input value.
-     * @return mixed Either the default value, or the user-provided input.
+     * @return string Either the default value, or the user-provided input.
      */
-    public function askChoice(string $prompt, $options, ?string $default = null)
+    public function askChoice(string $prompt, $options, ?string $default = null): string
     {
-        if ($options && is_string($options)) {
+        if (is_string($options)) {
             if (strpos($options, ',')) {
                 $options = explode(',', $options);
             } elseif (strpos($options, '/')) {

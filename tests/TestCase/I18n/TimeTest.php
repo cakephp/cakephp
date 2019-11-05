@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\I18n;
 
+use Cake\Chronos\Chronos;
 use Cake\I18n\FrozenTime;
 use Cake\I18n\I18n;
 use Cake\I18n\Time;
@@ -89,14 +90,22 @@ class TimeTest extends TestCase
      */
     public function testConstructFromAnotherInstance($class)
     {
-        $time = '2015-01-22 10:33:44';
+        $time = '2015-01-22 10:33:44.123456';
         $frozen = new FrozenTime($time, 'America/Chicago');
         $subject = new $class($frozen);
-        $this->assertEquals($time, $subject->format('Y-m-d H:i:s'), 'frozen time construction');
+        $this->assertEquals($time, $subject->format('Y-m-d H:i:s.u'), 'frozen time construction');
 
         $mut = new Time($time, 'America/Chicago');
         $subject = new $class($mut);
-        $this->assertEquals($time, $subject->format('Y-m-d H:i:s'), 'mutable time construction');
+        $this->assertEquals($time, $subject->format('Y-m-d H:i:s.u'), 'mutable time construction');
+
+        $mut = new Chronos($time, 'America/Chicago');
+        $subject = new $class($mut);
+        $this->assertEquals($time, $subject->format('Y-m-d H:i:s.u'), 'mutable time construction');
+
+        $mut = new \DateTime($time, new \DateTimeZone('America/Chicago'));
+        $subject = new $class($mut);
+        $this->assertEquals($time, $subject->format('Y-m-d H:i:s.u'), 'mutable time construction');
     }
 
     /**
@@ -781,9 +790,9 @@ class TimeTest extends TestCase
     {
         $time = new $class('2014-04-20 10:10:10');
         $expected = [
-            'time' => '2014-04-20T10:10:10+00:00',
+            'time' => '2014-04-20 10:10:10.000000+00:00',
             'timezone' => 'UTC',
-            'fixedNowTime' => $class::getTestNow()->toIso8601String(),
+            'fixedNowTime' => $class::getTestNow()->format('Y-m-d\TH:i:s.uP'),
         ];
         $this->assertEquals($expected, $time->__debugInfo());
     }

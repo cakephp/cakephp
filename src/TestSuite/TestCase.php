@@ -50,7 +50,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @var string[]
      */
-    public $fixtures = [];
+    protected $fixtures = [];
 
     /**
      * By default, all fixtures attached to this class will be truncated and reloaded after each test.
@@ -162,6 +162,9 @@ abstract class TestCase extends BaseTestCase
             Configure::write($this->_configure);
         }
         $this->getTableLocator()->clear();
+        $this->_configure = [];
+        $this->_tableLocator = null;
+        $this->fixtureManager = null;
     }
 
     /**
@@ -228,14 +231,14 @@ abstract class TestCase extends BaseTestCase
      *
      * Useful in test case teardown methods.
      *
-     * @param array $plugins A list of plugins you want to remove.
+     * @param string[] $names A list of plugins you want to remove.
      * @return void
      */
-    public function removePlugins(array $plugins = []): void
+    public function removePlugins(array $names = []): void
     {
         $collection = Plugin::getCollection();
-        foreach ($plugins as $plugin) {
-            $collection->remove($plugin);
+        foreach ($names as $name) {
+            $collection->remove($name);
         }
     }
 
@@ -501,13 +504,13 @@ abstract class TestCase extends BaseTestCase
                 $tags = (string)$tags;
             }
             $i++;
-            if (is_string($tags) && $tags{0} === '<') {
+            if (is_string($tags) && $tags[0] === '<') {
                 $tags = [substr($tags, 1) => []];
             } elseif (is_string($tags)) {
                 $tagsTrimmed = preg_replace('/\s+/m', '', $tags);
 
                 if (preg_match('/^\*?\//', $tags, $match) && $tagsTrimmed !== '//') {
-                    $prefix = [null, null];
+                    $prefix = ['', ''];
 
                     if ($match[0] === '*/') {
                         $prefix = ['Anything, ', '.*?'];
@@ -533,6 +536,7 @@ abstract class TestCase extends BaseTestCase
                 ];
                 continue;
             }
+            /** @var array<string, true|array> $tags */
             foreach ($tags as $tag => $attributes) {
                 $regex[] = [
                     sprintf('Open %s tag', $tag),
@@ -604,7 +608,7 @@ abstract class TestCase extends BaseTestCase
              * @var array<int, string> $assertion
              */
             [$description, $expressions, $itemNum] = $assertion;
-            $expression = null;
+            $expression = '';
             foreach ((array)$expressions as $expression) {
                 $expression = sprintf('/^%s/s', $expression);
                 if (preg_match($expression, $string, $match)) {
@@ -753,12 +757,12 @@ abstract class TestCase extends BaseTestCase
      * Mock a model, maintain fixtures and table association
      *
      * @param string $alias The model to get a mock for.
-     * @param array|null $methods The list of methods to mock
+     * @param string[] $methods The list of methods to mock
      * @param array $options The config data for the mock's constructor.
      * @throws \Cake\ORM\Exception\MissingTableClassException
      * @return \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
      */
-    public function getMockForModel(string $alias, ?array $methods = [], array $options = [])
+    public function getMockForModel(string $alias, array $methods = [], array $options = [])
     {
         $className = $this->_getTableClassName($alias, $options);
         $connectionName = $className::defaultConnectionName();
@@ -770,9 +774,9 @@ abstract class TestCase extends BaseTestCase
         $options += ['alias' => $baseClass, 'connection' => $connection];
         $options += $locator->getConfig($alias);
 
-        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $mock */
+        /** @var \Cake\ORM\Table $mock */
         $mock = $this->getMockBuilder($className)
-            ->setMethods($methods)
+            ->onlyMethods($methods)
             ->setConstructorArgs([$options])
             ->getMock();
 
@@ -826,5 +830,15 @@ abstract class TestCase extends BaseTestCase
     public static function setAppNamespace(string $appNamespace = 'TestApp'): void
     {
         Configure::write('App.namespace', $appNamespace);
+    }
+
+    /**
+     * Gets fixtures.
+     *
+     * @return string[]
+     */
+    public function getFixtures(): array
+    {
+        return $this->fixtures;
     }
 }

@@ -62,7 +62,7 @@ class FloatType extends BaseType implements BatchCastingInterface
     /**
      * Convert float values to PHP integers
      *
-     * @param null|string|resource $value The value to convert.
+     * @param mixed $value The value to convert.
      * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
      * @return float|null
      * @throws \Cake\Core\Exception\Exception
@@ -107,7 +107,7 @@ class FloatType extends BaseType implements BatchCastingInterface
     }
 
     /**
-     * Marshalls request data into PHP floats.
+     * Marshals request data into PHP floats.
      *
      * @param mixed $value The value to convert.
      * @return string|float|null Converted value.
@@ -144,7 +144,8 @@ class FloatType extends BaseType implements BatchCastingInterface
 
             return $this;
         }
-        if (static::$numberClass === Number::class ||
+        if (
+            static::$numberClass === Number::class ||
             is_subclass_of(static::$numberClass, Number::class)
         ) {
             $this->_useLocaleParser = $enable;

@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Statement;
 
 use Cake\Database\Statement\StatementDecorator;
+use Cake\Database\StatementInterface;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -32,7 +33,7 @@ class StatementDecoratorTest extends TestCase
      */
     public function testLastInsertId()
     {
-        $statement = $this->getMockBuilder('\PDOStatement')->getMock();
+        $statement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
         $statement = new StatementDecorator($statement, $driver);
 
@@ -50,7 +51,7 @@ class StatementDecoratorTest extends TestCase
      */
     public function testLastInsertIdWithReturning()
     {
-        $internal = $this->getMockBuilder('\PDOStatement')->getMock();
+        $internal = $this->getMockBuilder(StatementInterface::class)->getMock();
         $driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
         $statement = new StatementDecorator($internal, $driver);
 
@@ -71,8 +72,8 @@ class StatementDecoratorTest extends TestCase
      */
     public function testNoDoubleExecution()
     {
-        $inner = $this->getMockBuilder('\PDOStatement')->getMock();
-        $driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+        $inner = $this->getMockBuilder(StatementInterface::class)->getMock();
+        $driver = $this->getMockBuilder('Cake\Database\DriverInterface')->getMock();
         $statement = new StatementDecorator($inner, $driver);
 
         $inner->expects($this->once())

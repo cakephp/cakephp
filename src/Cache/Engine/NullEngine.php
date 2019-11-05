@@ -60,7 +60,7 @@ class NullEngine extends CacheEngine
     /**
      * @inheritDoc
      */
-    public function getMultiple($keys, $default = null): array
+    public function getMultiple($keys, $default = null): iterable
     {
         return [];
     }

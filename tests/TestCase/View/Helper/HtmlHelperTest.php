@@ -69,6 +69,9 @@ class HtmlHelperTest extends TestCase
         $request = new ServerRequest([
             'webroot' => '',
         ]);
+        Router::reload();
+        Router::setRequest($request);
+
         $this->View = $this->getMockBuilder('Cake\View\View')
             ->setMethods(['append'])
             ->setConstructorArgs([$request])
@@ -138,6 +141,7 @@ class HtmlHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         Router::reload();
+        Router::setRequest(new ServerRequest());
         Router::connect('/:controller', ['action' => 'index']);
         Router::connect('/:controller/:action/*');
 
@@ -147,16 +151,24 @@ class HtmlHelperTest extends TestCase
 
         $result = $this->Html->link('Home', '/home', ['confirm' => 'Are you sure you want to do this?']);
         $expected = [
-            'a' => ['href' => '/home', 'onclick' => 'if (confirm(&quot;Are you sure you want to do this?&quot;)) { return true; } return false;'],
+            'a' => [
+                'href' => '/home',
+                'data-confirm-message' => 'Are you sure you want to do this?',
+                'onclick' => 'if (confirm(this.dataset.confirmMessage)) { return true; } return false;',
+            ],
             'Home',
             '/a',
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Html->setTemplates(['confirmJs' => 'if (confirm({{confirmMessage}})) { window.location="/";};']);
+        $this->Html->setTemplates(['confirmJs' => 'if (confirm(this.dataset.confirmMessage)) { window.location="/";};']);
         $result = $this->Html->link('Home', '/home', ['confirm' => 'Are you sure you want to do this?']);
         $expected = [
-            'a' => ['href' => '/home', 'onclick' => 'preg:/if \(confirm\(&quot;Are you sure you want to do this\?&quot;\)\) \{ window\.location=&quot;\/&quot;;\};/'],
+            'a' => [
+                'href' => '/home',
+                'data-confirm-message' => 'Are you sure you want to do this?',
+                'onclick' => 'preg:/if \(confirm\(this.dataset.confirmMessage\)\) \{ window\.location=&quot;\/&quot;;\};/',
+            ],
             'Home',
             '/a',
         ];
@@ -164,9 +176,13 @@ class HtmlHelperTest extends TestCase
         $this->assertHtml($expected, $result);
         $this->Html->setTemplates(['confirmJs' => '{{confirm}}']);
 
-        $result = $this->Html->link('Home', '/home', ['escape' => false, 'confirm' => 'Confirm\'s "nightmares"']);
+        $result = $this->Html->link('Home', '/home', ['confirm' => 'Confirm\'s "nightmares"']);
         $expected = [
-            'a' => ['href' => '/home', 'onclick' => 'if (confirm(&quot;Confirm&#039;s \&quot;nightmares\&quot;&quot;)) { return true; } return false;'],
+            'a' => [
+                'href' => '/home',
+                'data-confirm-message' => 'Confirm&#039;s &quot;nightmares&quot;',
+                'onclick' => 'if (confirm(this.dataset.confirmMessage)) { return true; } return false;',
+            ],
             'Home',
             '/a',
         ];
@@ -378,6 +394,15 @@ class HtmlHelperTest extends TestCase
         $result = $this->Html->image('//google.com/"><script>alert(1)</script>');
         $expected = ['img' => ['src' => '//google.com/&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;', 'alt' => '']];
         $this->assertHtml($expected, $result);
+
+        $result = $this->Html->image([
+            'controller' => 'images',
+            'action' => 'display',
+            'test',
+            '?' => ['one' => 'two', 'three' => 'four'],
+        ]);
+        $expected = ['img' => ['src' => '/images/display/test?one=two&amp;three=four', 'alt' => '']];
+        $this->assertHtml($expected, $result);
     }
 
     /**
@@ -391,7 +416,7 @@ class HtmlHelperTest extends TestCase
             ->withAttribute('base', 'subdir')
             ->withAttribute('webroot', 'subdir/');
         $this->View->setRequest($request);
-        Router::pushRequest($request);
+        Router::setRequest($request);
 
         $data = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4' .
             '/8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==';
@@ -414,15 +439,6 @@ class HtmlHelperTest extends TestCase
     {
         $result = $this->Html->image('test.gif?one=two&three=four');
         $expected = ['img' => ['src' => 'img/test.gif?one=two&amp;three=four', 'alt' => '']];
-        $this->assertHtml($expected, $result);
-
-        $result = $this->Html->image([
-            'controller' => 'images',
-            'action' => 'display',
-            'test',
-            '?' => ['one' => 'two', 'three' => 'four'],
-        ]);
-        $expected = ['img' => ['src' => '/images/display/test?one=two&amp;three=four', 'alt' => '']];
         $this->assertHtml($expected, $result);
     }
 
@@ -470,13 +486,13 @@ class HtmlHelperTest extends TestCase
         $expected = ['img' => ['src' => $here . 'img/sub/test.gif', 'alt' => '']];
         $this->assertHtml($expected, $result);
 
-        $this->View->setRequest($this->View->getRequest()
+        $request = Router::getRequest()
             ->withAttribute('webroot', '/myproject/')
-            ->withAttribute('base', '/myproject'));
+            ->withAttribute('base', '/myproject');
+        Router::setRequest($request);
 
         $result = $this->Html->image('sub/test.gif', ['fullBase' => true]);
-        $here = $this->Html->Url->build('/', ['fullBase' => true]);
-        $expected = ['img' => ['src' => $here . 'myproject/img/sub/test.gif', 'alt' => '']];
+        $expected = ['img' => ['src' => 'http://localhost/myproject/img/sub/test.gif', 'alt' => '']];
         $this->assertHtml($expected, $result);
     }
 
@@ -489,7 +505,8 @@ class HtmlHelperTest extends TestCase
     {
         Configure::write('Asset.timestamp', 'force');
 
-        $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/'));
+        $request = Router::getRequest()->withAttribute('webroot', '/');
+        Router::setRequest($request);
         $result = $this->Html->image('cake.icon.png');
         $expected = ['img' => ['src' => 'preg:/\/img\/cake\.icon\.png\?\d+/', 'alt' => '']];
         $this->assertHtml($expected, $result);
@@ -501,7 +518,8 @@ class HtmlHelperTest extends TestCase
         $expected = ['img' => ['src' => 'preg:/\/img\/cake\.icon\.png\?\d+/', 'alt' => '']];
         $this->assertHtml($expected, $result);
 
-        $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/testing/longer/'));
+        $request = Router::getRequest()->withAttribute('webroot', '/testing/longer/');
+        Router::setRequest($request);
         $result = $this->Html->image('cake.icon.png');
         $expected = [
             'img' => ['src' => 'preg:/\/testing\/longer\/img\/cake\.icon\.png\?[0-9]+/', 'alt' => ''],
@@ -524,7 +542,8 @@ class HtmlHelperTest extends TestCase
         Configure::write('Asset.timestamp', true);
         Configure::write('debug', true);
 
-        $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/'));
+        $request = Router::getRequest()->withAttribute('webroot', '/');
+        Router::setRequest($request);
         $this->Html->Url->getView()->setTheme('TestTheme');
         $result = $this->Html->image('__cake_test_image.gif');
         $expected = [
@@ -535,7 +554,8 @@ class HtmlHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/testing/'));
+        $request = Router::getRequest()->withAttribute('webroot', '/testing/');
+        Router::setRequest($request);
         $result = $this->Html->image('__cake_test_image.gif');
         $expected = [
         'img' => [
@@ -775,12 +795,14 @@ class HtmlHelperTest extends TestCase
         $expected['link']['href'] = 'preg:/.*css\/cake\.generic\.css\?[0-9]+/';
         $this->assertHtml($expected, $result);
 
-        $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/testing/'));
+        $request = Router::getRequest()->withAttribute('webroot', '/testing/');
+        Router::setRequest($request);
         $result = $this->Html->css('cake.generic', ['once' => false]);
         $expected['link']['href'] = 'preg:/\/testing\/css\/cake\.generic\.css\?[0-9]+/';
         $this->assertHtml($expected, $result);
 
-        $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/testing/longer/'));
+        $request = Router::getRequest()->withAttribute('webroot', '/testing/longer/');
+        Router::setRequest($request);
         $result = $this->Html->css('cake.generic', ['once' => false]);
         $expected['link']['href'] = 'preg:/\/testing\/longer\/css\/cake\.generic\.css\?[0-9]+/';
         $this->assertHtml($expected, $result);
@@ -818,12 +840,14 @@ class HtmlHelperTest extends TestCase
         $expected['link']['href'] = 'preg:/.*test_plugin\/css\/test_plugin_asset\.css\?[0-9]+/';
         $this->assertHtml($expected, $result);
 
-        $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/testing/'));
+        $request = Router::getRequest()->withAttribute('webroot', '/testing/');
+        Router::setRequest($request);
         $result = $this->Html->css('TestPlugin.test_plugin_asset', ['once' => false]);
         $expected['link']['href'] = 'preg:/\/testing\/test_plugin\/css\/test_plugin_asset\.css\?[0-9]+/';
         $this->assertHtml($expected, $result);
 
-        $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/testing/longer/'));
+        $request = Router::getRequest()->withAttribute('webroot', '/testing/longer/');
+        Router::setRequest($request);
         $result = $this->Html->css('TestPlugin.test_plugin_asset', ['once' => false]);
         $expected['link']['href'] = 'preg:/\/testing\/longer\/test_plugin\/css\/test_plugin_asset\.css\?[0-9]+/';
         $this->assertHtml($expected, $result);
@@ -1133,7 +1157,8 @@ class HtmlHelperTest extends TestCase
         $testfile = WWW_ROOT . '/test_theme/js/__test_js.js';
         $File = new File($testfile, true);
 
-        $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/'));
+        $request = Router::getRequest()->withAttribute('webroot', '/');
+        Router::setRequest($request);
         $this->Html->Url->getView()->setTheme('TestTheme');
         $result = $this->Html->script('__test_js.js');
         $expected = [
@@ -1666,7 +1691,8 @@ class HtmlHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/testing/'));
+        $request = Router::getRequest()->withAttribute('webroot', '/testing/');
+        Router::setRequest($request);
         $result = $this->Html->meta('icon');
         $expected = [
             'link' => ['href' => '/testing/favicon.ico', 'type' => 'image/x-icon', 'rel' => 'icon'],
@@ -1698,7 +1724,8 @@ class HtmlHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/testing/'));
+        $request = Router::getRequest()->withAttribute('webroot', '/testing/');
+        Router::setRequest($request);
         $result = $this->Html->meta('icon');
         $expected = [
             'link' => ['href' => '/testing/test_theme/favicon.ico', 'type' => 'image/x-icon', 'rel' => 'icon'],
@@ -1759,17 +1786,35 @@ class HtmlHelperTest extends TestCase
         $expected = ['<tr', '<th', 'ID', '/th', '<th', 'Name', '/th', '<th', 'Date', '/th', '/tr'];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Html->tableHeaders(['ID', ['Name' => ['class' => 'highlight']], 'Date']);
         $expected = ['<tr', '<th', 'ID', '/th', '<th class="highlight"', 'Name', '/th', '<th', 'Date', '/th', '/tr'];
-        $this->assertHtml($expected, $result);
+        $resultComma = $this->Html->tableHeaders(['ID', ['Name', ['class' => 'highlight']], 'Date']);
+        $resultAssoc = $this->Html->tableHeaders(['ID', ['Name' => ['class' => 'highlight']], 'Date']);
+        $this->assertHtml($expected, $resultComma);
+        $this->assertHtml($expected, $resultAssoc);
 
-        $result = $this->Html->tableHeaders(['ID', ['Name' => ['class' => 'highlight', 'width' => '120px']], 'Date']);
         $expected = ['<tr', '<th', 'ID', '/th', '<th class="highlight" width="120px"', 'Name', '/th', '<th', 'Date', '/th', '/tr'];
-        $this->assertHtml($expected, $result);
+        $resultComma = $this->Html->tableHeaders(['ID', ['Name', ['class' => 'highlight', 'width' => '120px']], 'Date']);
+        $resultAssoc = $this->Html->tableHeaders(['ID', ['Name' => ['class' => 'highlight', 'width' => '120px']], 'Date']);
+        $this->assertHtml($expected, $resultComma);
+        $this->assertHtml($expected, $resultAssoc);
 
-        $result = $this->Html->tableHeaders(['ID', ['Name' => []], 'Date']);
         $expected = ['<tr', '<th', 'ID', '/th', '<th', 'Name', '/th', '<th', 'Date', '/th', '/tr'];
-        $this->assertHtml($expected, $result);
+        $resultComma = $this->Html->tableHeaders(['ID', ['Name', []], 'Date']);
+        $resultAssoc = $this->Html->tableHeaders(['ID', ['Name' => []], 'Date']);
+        $this->assertHtml($expected, $resultComma);
+        $this->assertHtml($expected, $resultAssoc);
+
+        $expected = ['<tr', '<th', 'ID', '/th', '<th class="highlight"', '0', '/th', '<th', 'Date', '/th', '/tr'];
+        $resultAssoc = $this->Html->tableHeaders(['ID', ['0' => ['class' => 'highlight']], 'Date']);
+        $this->assertHtml($expected, $resultAssoc);
+
+        $expected = ['<tr', '<th', 'ID', '/th', '<th class="highlight" width="120px"', '0', '/th', '<th', 'Date', '/th', '/tr'];
+        $resultAssoc = $this->Html->tableHeaders(['ID', ['0' => ['class' => 'highlight', 'width' => '120px']], 'Date']);
+        $this->assertHtml($expected, $resultAssoc);
+
+        $expected = ['<tr', '<th', 'ID', '/th', '<th', '0', '/th', '<th', 'Date', '/th', '/tr'];
+        $resultAssoc = $this->Html->tableHeaders(['ID', ['0' => []], 'Date']);
+        $this->assertHtml($expected, $resultAssoc);
     }
 
     /**

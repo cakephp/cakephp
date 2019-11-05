@@ -34,7 +34,7 @@ class BinaryUuidType extends BaseType
      * Binary data is not altered before being inserted into the database.
      * As PDO will handle reading file handles.
      *
-     * @param string|resource $value The value to convert.
+     * @param mixed $value The value to convert.
      * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
      * @return string|resource
      */
@@ -60,7 +60,7 @@ class BinaryUuidType extends BaseType
     /**
      * Convert binary uuid into resource handles
      *
-     * @param null|string|resource $value The value to convert.
+     * @param mixed $value The value to convert.
      * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
      * @return resource|string|null
      * @throws \Cake\Core\Exception\Exception
@@ -93,7 +93,7 @@ class BinaryUuidType extends BaseType
     }
 
     /**
-     * Marshalls flat data into PHP objects.
+     * Marshals flat data into PHP objects.
      *
      * Most useful for converting request data into PHP objects
      * that make sense for the rest of the ORM/Database layers.
@@ -132,11 +132,11 @@ class BinaryUuidType extends BaseType
      * Converts a string uuid to a binary representation
      *
      *
-     * @param mixed $string The value to convert.
+     * @param string $string The value to convert.
      *
-     * @return mixed Converted value.
+     * @return string Converted value.
      */
-    protected function convertStringToBinaryUuid($string)
+    protected function convertStringToBinaryUuid($string): string
     {
         $string = str_replace('-', '', $string);
 

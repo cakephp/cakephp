@@ -41,7 +41,7 @@ foreach ($error->getTrace() as $i => $stack):
         endif;
     endif;
 ?>
-    <div id="stack-frame-<?= $i ?>" style="display:none;" class="stack-details">
+    <div id="stack-frame-<?= $i ?>" style="display:<?= $i === 0 ? 'block' : 'none'; ?>;" class="stack-details">
         <div class="stack-frame-header">
             <span class="stack-frame-file"><?= h($file) ?></span>
             <a href="#" class="toggle-link stack-frame-args" data-target="stack-args-<?= $i ?>">Toggle Arguments</a>

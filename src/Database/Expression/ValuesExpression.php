@@ -23,6 +23,7 @@ use Cake\Database\Type\ExpressionTypeCasterTrait;
 use Cake\Database\TypeMap;
 use Cake\Database\TypeMapTrait;
 use Cake\Database\ValueBinder;
+use Closure;
 
 /**
  * An expression object to contain values being inserted.
@@ -86,8 +87,15 @@ class ValuesExpression implements ExpressionInterface
      */
     public function add($data): void
     {
-        if ((count($this->_values) && $data instanceof Query) ||
-            ($this->_query && is_array($data))
+        if (
+            (
+                count($this->_values) &&
+                $data instanceof Query
+            ) ||
+            (
+                $this->_query &&
+                is_array($data)
+            )
         ) {
             throw new Exception(
                 'You cannot mix subqueries and array data in inserts.'
@@ -246,8 +254,9 @@ class ValuesExpression implements ExpressionInterface
             $placeholders[] = implode(', ', $rowPlaceholders);
         }
 
-        if ($this->getQuery()) {
-            return ' ' . $this->getQuery()->sql($generator);
+        $query = $this->getQuery();
+        if ($query) {
+            return ' ' . $query->sql($generator);
         }
 
         return sprintf(' VALUES (%s)', implode('), (', $placeholders));
@@ -259,10 +268,10 @@ class ValuesExpression implements ExpressionInterface
      * This method will also traverse any queries that are to be used in the INSERT
      * values.
      *
-     * @param callable $visitor The visitor to traverse the expression with.
+     * @param \Closure $visitor The visitor to traverse the expression with.
      * @return $this
      */
-    public function traverse(callable $visitor)
+    public function traverse(Closure $visitor)
     {
         if ($this->_query) {
             return $this;
@@ -302,7 +311,7 @@ class ValuesExpression implements ExpressionInterface
 
         $columns = $this->_columnNames();
         foreach ($columns as $c) {
-            if (!is_scalar($c)) {
+            if (!is_string($c) && !is_int($c)) {
                 continue;
             }
             $types[$c] = $typeMap->type($c);

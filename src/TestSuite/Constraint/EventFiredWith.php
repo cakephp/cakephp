@@ -32,7 +32,7 @@ class EventFiredWith extends Constraint
     /**
      * Event data value
      *
-     * @var string
+     * @var string|null
      */
     protected $_dataValue;
 
@@ -67,9 +67,13 @@ class EventFiredWith extends Constraint
     {
         $firedEvents = [];
         $list = $this->_eventManager->getEventList();
-        $totalEvents = count($list);
-        for ($e = 0; $e < $totalEvents; $e++) {
-            $firedEvents[] = $list[$e];
+        if ($list === null) {
+            $totalEvents = 0;
+        } else {
+            $totalEvents = count($list);
+            for ($e = 0; $e < $totalEvents; $e++) {
+                $firedEvents[] = $list[$e];
+            }
         }
 
         $eventGroup = collection($firedEvents)
@@ -82,6 +86,7 @@ class EventFiredWith extends Constraint
             return false;
         }
 
+        /** @var \Cake\Event\EventInterface[] $event */
         $events = $eventGroup[$other];
 
         if (count($events) > 1) {
@@ -92,7 +97,6 @@ class EventFiredWith extends Constraint
             ));
         }
 
-        /** @var \Cake\Event\EventInterface $event */
         $event = $events[0];
 
         if (array_key_exists($this->_dataKey, $event->getData()) === false) {

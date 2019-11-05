@@ -47,6 +47,6 @@ class CookieSet extends ResponseBase
      */
     public function toString(): string
     {
-        return 'cookie was set';
+        return 'cookie is set';
     }
 }

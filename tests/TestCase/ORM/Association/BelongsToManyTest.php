@@ -40,7 +40,7 @@ class BelongsToManyTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.Articles', 'core.SpecialTags', 'core.ArticlesTags', 'core.Tags'];
+    protected $fixtures = ['core.Articles', 'core.SpecialTags', 'core.ArticlesTags', 'core.Tags'];
 
     /**
      * Set up
@@ -304,7 +304,7 @@ class BelongsToManyTest extends TestCase
         $articles = $this->getTableLocator()->get('Articles');
         $tags = $this->getTableLocator()->get('Tags');
 
-        $assoc = $tags->belongsToMany('Articles', [
+        $tags->belongsToMany('Articles', [
             'sourceTable' => $tags,
             'targetTable' => $articles,
             'finder' => 'published',
@@ -607,7 +607,7 @@ class BelongsToManyTest extends TestCase
 
         $joint->expects($this->once())
             ->method('save')
-            ->will($this->returnCallback(function (EntityInterface $e, $opts) {
+            ->will($this->returnCallback(function (EntityInterface $e) {
                 $this->assertSame('Plugin.ArticlesTags', $e->getSource());
 
                 return $e;
@@ -765,7 +765,7 @@ class BelongsToManyTest extends TestCase
         $this->assertFalse($entity->isDirty('tags'), 'Property should be cleaned');
 
         $new = $articles->get(1, ['contain' => 'Tags']);
-        $this->assertSame([], $entity->tags, 'Should not be data in db');
+        $this->assertSame([], $new->tags, 'Should not be data in db');
     }
 
     /**
@@ -1276,6 +1276,26 @@ class BelongsToManyTest extends TestCase
 
         $this->assertNotEmpty($result->tags[0]->two, 'Should have computed field');
         $this->assertNotEmpty($result->tags[0]->name, 'Should have standard field');
+    }
+
+    /**
+     * Test that association proxy find() works with no join records
+     *
+     * @return void
+     */
+    public function testAssociationProxyFindNoJoinRecords()
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $table->belongsToMany('Tags', [
+            'foreignKey' => 'article_id',
+            'associationForeignKey' => 'tag_id',
+            'through' => 'ArticlesTags',
+        ]);
+        $table->Tags->junction()->deleteAll('1=1');
+
+        $query = $table->Tags->find();
+        $result = $query->toArray();
+        $this->assertCount(3, $result);
     }
 
     /**

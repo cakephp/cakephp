@@ -91,7 +91,7 @@ class Time extends MutableDateTime implements I18nDateTimeInterface
      * The format to use when formatting a time using `Time::timeAgoInWords()`
      * and the difference is less than `Time::$wordEnd`
      *
-     * @var array
+     * @var string[]
      * @see \Cake\I18n\Time::timeAgoInWords()
      */
     public static $wordAccuracy = [
@@ -120,13 +120,16 @@ class Time extends MutableDateTime implements I18nDateTimeInterface
     public const UNIX_TIMESTAMP_FORMAT = 'unixTimestampFormat';
 
     /**
-     * @inheritDoc
+     * Create a new mutable time instance.
+     *
+     * @param string|int|\DateTimeInterface|null $time Fixed or relative time
+     * @param \DateTimeZone|string|null $tz The timezone for the instance
      */
     public function __construct($time = null, $tz = null)
     {
         if ($time instanceof DateTimeInterface) {
             $tz = $time->getTimezone();
-            $time = $time->format('Y-m-d H:i:s');
+            $time = $time->format('Y-m-d H:i:s.u');
         }
 
         if (is_numeric($time)) {
@@ -189,7 +192,7 @@ class Time extends MutableDateTime implements I18nDateTimeInterface
      */
     public function toQuarter(bool $range = false)
     {
-        $quarter = (int)ceil($this->format('m') / 3);
+        $quarter = (int)ceil((int)$this->format('m') / 3);
         if ($range === false) {
             return $quarter;
         }

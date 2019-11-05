@@ -34,14 +34,15 @@ class ExceptionsTest extends TestCase
      * Tests simple exceptions work.
      *
      * @dataProvider exceptionProvider
-     * @param $class The exception class name
-     * @param $defaultCode The default exception code
+     * @param string $class The exception class name
+     * @param int $defaultCode The default exception code
      * @return void
      */
     public function testSimpleException($class, $defaultCode)
     {
         $previous = new Exception();
 
+        /** @var \Exception $exception */
         $exception = new $class('message', 100, $previous);
         $this->assertSame('message', $exception->getMessage());
         $this->assertSame(100, $exception->getCode());
@@ -148,12 +149,12 @@ class ExceptionsTest extends TestCase
     public function exceptionProvider()
     {
         return [
-            ['Cake\Console\Exception\ConsoleException', 500],
-            ['Cake\Console\Exception\MissingHelperException', 500],
-            ['Cake\Console\Exception\MissingShellException', 500],
-            ['Cake\Console\Exception\MissingShellMethodException', 500],
-            ['Cake\Console\Exception\MissingTaskException', 500],
-            ['Cake\Console\Exception\StopException', 500],
+            ['Cake\Console\Exception\ConsoleException', 1],
+            ['Cake\Console\Exception\MissingHelperException', 1],
+            ['Cake\Console\Exception\MissingShellException', 1],
+            ['Cake\Console\Exception\MissingShellMethodException', 1],
+            ['Cake\Console\Exception\MissingTaskException', 1],
+            ['Cake\Console\Exception\StopException', 1],
             ['Cake\Controller\Exception\AuthSecurityException', 400],
             ['Cake\Controller\Exception\MissingActionException', 404],
             ['Cake\Controller\Exception\MissingComponentException', 500],
@@ -181,6 +182,7 @@ class ExceptionsTest extends TestCase
             ['Cake\Http\Exception\InternalErrorException', 500],
             ['Cake\Http\Exception\InvalidCsrfTokenException', 403],
             ['Cake\Http\Exception\MethodNotAllowedException', 405],
+            ['Cake\Http\Exception\MissingControllerException', 404],
             ['Cake\Http\Exception\NotAcceptableException', 406],
             ['Cake\Http\Exception\NotFoundException', 404],
             ['Cake\Http\Exception\NotImplementedException', 501],
@@ -193,7 +195,6 @@ class ExceptionsTest extends TestCase
             ['Cake\ORM\Exception\MissingTableClassException', 500],
             ['Cake\ORM\Exception\RolledbackTransactionException', 500],
             ['Cake\Routing\Exception\DuplicateNamedRouteException', 500],
-            ['Cake\Routing\Exception\MissingControllerException', 500],
             ['Cake\Routing\Exception\MissingDispatcherFilterException', 500],
             ['Cake\Routing\Exception\MissingRouteException', 500],
             ['Cake\Routing\Exception\RedirectException', 302],

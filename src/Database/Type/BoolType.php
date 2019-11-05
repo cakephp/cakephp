@@ -121,7 +121,7 @@ class BoolType extends BaseType implements BatchCastingInterface
     }
 
     /**
-     * Marshalls request data into PHP booleans.
+     * Marshals request data into PHP booleans.
      *
      * @param mixed $value The value to convert.
      * @return bool|null Converted value.

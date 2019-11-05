@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Mailer;
 
+use Cake\Core\Exception\Exception;
 use Cake\Core\InstanceConfigTrait;
 
 /**
@@ -36,7 +37,8 @@ abstract class AbstractTransport
      * Send mail
      *
      * @param \Cake\Mailer\Message $message Email mesage.
-     * @return array{headers: string, message: string}
+     * @return array
+     * @psalm-return array{headers: string, message: string}
      */
     abstract public function send(Message $message): array;
 
@@ -51,28 +53,23 @@ abstract class AbstractTransport
     }
 
     /**
-     * Help to convert headers in string
+     * Check that at least one destination header is set.
      *
-     * @param array $headers Headers in format key => value
-     * @param string $eol End of line string.
-     * @return string
+     * @param \Cake\Mailer\Message $message Message instance.
+     * @return void
+     * @throws \Cake\Core\Exception\Exception If at least one of to, cc or bcc is not specified.
      */
-    protected function _headersToString(array $headers, string $eol = "\r\n"): string
+    protected function checkRecipient(Message $message): void
     {
-        $out = '';
-        foreach ($headers as $key => $value) {
-            if ($value === false || $value === null || $value === '') {
-                continue;
-            }
-
-            foreach ((array)$value as $val) {
-                $out .= $key . ': ' . $val . $eol;
-            }
+        if (
+            $message->getTo() === []
+            && $message->getCc() === []
+            && $message->getBcc() === []
+        ) {
+            throw new Exception(
+                'You must specify at least one recipient.'
+                . ' Use one of `setTo`, `setCc` or `setBcc` to define a recipient.'
+            );
         }
-        if (!empty($out)) {
-            $out = substr($out, 0, -1 * strlen($eol));
-        }
-
-        return $out;
     }
 }

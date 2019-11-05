@@ -21,5 +21,8 @@ use Cake\Core\Exception\Exception;
  */
 class MissingDatasourceException extends Exception
 {
+    /**
+     * @var string
+     */
     protected $_messageTemplate = 'Datasource class %s could not be found. %s';
 }

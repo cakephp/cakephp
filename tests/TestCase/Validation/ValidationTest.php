@@ -146,6 +146,96 @@ class ValidationTest extends TestCase
     }
 
     /**
+     * testNotAlphaNumeric method
+     *
+     * @return void
+     */
+    public function testNotAlphaNumeric()
+    {
+        $this->assertFalse(Validation::notAlphaNumeric('frferrf'));
+        $this->assertFalse(Validation::notAlphaNumeric('12234'));
+        $this->assertFalse(Validation::notAlphaNumeric('1w2e2r3t4y'));
+        $this->assertFalse(Validation::notAlphaNumeric('0'));
+        $this->assertFalse(Validation::notAlphaNumeric('abçďĕʑʘπй'));
+        $this->assertFalse(Validation::notAlphaNumeric('ˇˆๆゞ'));
+        $this->assertFalse(Validation::notAlphaNumeric('אกあアꀀ豈'));
+        $this->assertFalse(Validation::notAlphaNumeric('ǅᾈᾨ'));
+        $this->assertFalse(Validation::notAlphaNumeric('ÆΔΩЖÇ'));
+
+        $this->assertTrue(Validation::notAlphaNumeric('12 234'));
+        $this->assertTrue(Validation::notAlphaNumeric('dfd 234'));
+        $this->assertTrue(Validation::notAlphaNumeric("0\n"));
+        $this->assertTrue(Validation::notAlphaNumeric("\n"));
+        $this->assertTrue(Validation::notAlphaNumeric("\t"));
+        $this->assertTrue(Validation::notAlphaNumeric("\r"));
+        $this->assertTrue(Validation::notAlphaNumeric(' '));
+        $this->assertTrue(Validation::notAlphaNumeric(''));
+    }
+
+    /**
+     * testAsciiAlphaNumeric method
+     *
+     * @return void
+     */
+    public function testAsciiAlphaNumeric()
+    {
+        $this->assertTrue(Validation::asciiAlphaNumeric('frferrf'));
+        $this->assertTrue(Validation::asciiAlphaNumeric('12234'));
+        $this->assertTrue(Validation::asciiAlphaNumeric('1w2e2r3t4y'));
+        $this->assertTrue(Validation::asciiAlphaNumeric('0'));
+
+        $this->assertFalse(Validation::asciiAlphaNumeric('1 two'));
+        $this->assertFalse(Validation::asciiAlphaNumeric('abçďĕʑʘπй'));
+        $this->assertFalse(Validation::asciiAlphaNumeric('ˇˆๆゞ'));
+        $this->assertFalse(Validation::asciiAlphaNumeric('אกあアꀀ豈'));
+        $this->assertFalse(Validation::asciiAlphaNumeric('ǅᾈᾨ'));
+        $this->assertFalse(Validation::asciiAlphaNumeric('ÆΔΩЖÇ'));
+        $this->assertFalse(Validation::asciiAlphaNumeric('12 234'));
+        $this->assertFalse(Validation::asciiAlphaNumeric('dfd 234'));
+        $this->assertFalse(Validation::asciiAlphaNumeric("\n"));
+        $this->assertFalse(Validation::asciiAlphaNumeric("\t"));
+        $this->assertFalse(Validation::asciiAlphaNumeric("\r"));
+        $this->assertFalse(Validation::asciiAlphaNumeric(' '));
+        $this->assertFalse(Validation::asciiAlphaNumeric(''));
+    }
+
+    /**
+     * testAlphaNumericPassedAsArray method
+     *
+     * @return void
+     */
+    public function testAsciiAlphaNumericPassedAsArray()
+    {
+        $this->assertFalse(Validation::asciiAlphaNumeric(['foo']));
+    }
+
+    /**
+     * testNotAlphaNumeric method
+     *
+     * @return void
+     */
+    public function testNotAsciiAlphaNumeric()
+    {
+        $this->assertFalse(Validation::notAsciiAlphaNumeric('frferrf'));
+        $this->assertFalse(Validation::notAsciiAlphaNumeric('12234'));
+        $this->assertFalse(Validation::notAsciiAlphaNumeric('1w2e2r3t4y'));
+        $this->assertFalse(Validation::notAsciiAlphaNumeric('0'));
+
+        $this->assertTrue(Validation::notAsciiAlphaNumeric('abçďĕʑʘπй'));
+        $this->assertTrue(Validation::notAsciiAlphaNumeric('ˇˆๆゞ'));
+        $this->assertTrue(Validation::notAsciiAlphaNumeric('אกあアꀀ豈'));
+        $this->assertTrue(Validation::notAsciiAlphaNumeric('ǅᾈᾨ'));
+        $this->assertTrue(Validation::notAsciiAlphaNumeric('ÆΔΩЖÇ'));
+        $this->assertTrue(Validation::notAsciiAlphaNumeric('12 234'));
+        $this->assertTrue(Validation::notAsciiAlphaNumeric('dfd 234'));
+        $this->assertTrue(Validation::notAsciiAlphaNumeric("\n"));
+        $this->assertTrue(Validation::notAsciiAlphaNumeric("\t"));
+        $this->assertTrue(Validation::notAsciiAlphaNumeric("\r"));
+        $this->assertTrue(Validation::notAsciiAlphaNumeric(' '));
+        $this->assertTrue(Validation::notAsciiAlphaNumeric(''));
+    }
+
+    /**
      * testLengthBetween method
      *
      * @return void
@@ -927,14 +1017,19 @@ class ValidationTest extends TestCase
      */
     public function testDateDdmmyyyy()
     {
+        $this->assertTrue(Validation::date('27-12-0001', ['dmy']));
         $this->assertTrue(Validation::date('27-12-2006', ['dmy']));
         $this->assertTrue(Validation::date('27.12.2006', ['dmy']));
         $this->assertTrue(Validation::date('27/12/2006', ['dmy']));
         $this->assertTrue(Validation::date('27 12 2006', ['dmy']));
+        $this->assertTrue(Validation::date('31-10-0001', ['dmy']));
+        $this->assertTrue(Validation::date('31-10-2006', ['dmy']));
         $this->assertFalse(Validation::date('00-00-0000', ['dmy']));
         $this->assertFalse(Validation::date('00.00.0000', ['dmy']));
         $this->assertFalse(Validation::date('00/00/0000', ['dmy']));
         $this->assertFalse(Validation::date('00 00 0000', ['dmy']));
+        $this->assertFalse(Validation::date('01-01-0000', ['dmy']));
+        $this->assertFalse(Validation::date('01-01-300', ['dmy']));
         $this->assertFalse(Validation::date('31-11-2006', ['dmy']));
         $this->assertFalse(Validation::date('31.11.2006', ['dmy']));
         $this->assertFalse(Validation::date('31/11/2006', ['dmy']));
@@ -948,6 +1043,7 @@ class ValidationTest extends TestCase
      */
     public function testDateDdmmyyyyLeapYear()
     {
+        $this->assertTrue(Validation::date('29-02-0004', ['dmy']));
         $this->assertTrue(Validation::date('29-02-2004', ['dmy']));
         $this->assertTrue(Validation::date('29.02.2004', ['dmy']));
         $this->assertTrue(Validation::date('29/02/2004', ['dmy']));
@@ -1041,6 +1137,7 @@ class ValidationTest extends TestCase
      */
     public function testDateDmyyyy()
     {
+        $this->assertTrue(Validation::date('1-1-0001', ['dmy']));
         $this->assertTrue(Validation::date('7-2-2006', ['dmy']));
         $this->assertTrue(Validation::date('7.2.2006', ['dmy']));
         $this->assertTrue(Validation::date('7/2/2006', ['dmy']));
@@ -1049,6 +1146,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::date('0.0.0000', ['dmy']));
         $this->assertFalse(Validation::date('0/0/0000', ['dmy']));
         $this->assertFalse(Validation::date('0 0 0000', ['dmy']));
+        $this->assertFalse(Validation::date('1 1 300', ['dmy']));
         $this->assertFalse(Validation::date('32-2-2006', ['dmy']));
         $this->assertFalse(Validation::date('32.2.2006', ['dmy']));
         $this->assertFalse(Validation::date('32/2/2006', ['dmy']));
@@ -1062,6 +1160,7 @@ class ValidationTest extends TestCase
      */
     public function testDateDmyyyyLeapYear()
     {
+        $this->assertTrue(Validation::date('29-2-0004', ['dmy']));
         $this->assertTrue(Validation::date('29-2-2004', ['dmy']));
         $this->assertTrue(Validation::date('29.2.2004', ['dmy']));
         $this->assertTrue(Validation::date('29/2/2004', ['dmy']));
@@ -1079,6 +1178,7 @@ class ValidationTest extends TestCase
      */
     public function testDateMmddyyyy()
     {
+        $this->assertTrue(Validation::date('01-01-0001', ['mdy']));
         $this->assertTrue(Validation::date('12-27-2006', ['mdy']));
         $this->assertTrue(Validation::date('12.27.2006', ['mdy']));
         $this->assertTrue(Validation::date('12/27/2006', ['mdy']));
@@ -1087,6 +1187,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::date('00.00.0000', ['mdy']));
         $this->assertFalse(Validation::date('00/00/0000', ['mdy']));
         $this->assertFalse(Validation::date('00 00 0000', ['mdy']));
+        $this->assertFalse(Validation::date('10-31-300', ['mdy']));
         $this->assertFalse(Validation::date('11-31-2006', ['mdy']));
         $this->assertFalse(Validation::date('11.31.2006', ['mdy']));
         $this->assertFalse(Validation::date('11/31/2006', ['mdy']));
@@ -1100,6 +1201,7 @@ class ValidationTest extends TestCase
      */
     public function testDateMmddyyyyLeapYear()
     {
+        $this->assertTrue(Validation::date('02-29-0004', ['mdy']));
         $this->assertTrue(Validation::date('02-29-2004', ['mdy']));
         $this->assertTrue(Validation::date('02.29.2004', ['mdy']));
         $this->assertTrue(Validation::date('02/29/2004', ['mdy']));
@@ -1193,6 +1295,7 @@ class ValidationTest extends TestCase
      */
     public function testDateMdyyyy()
     {
+        $this->assertTrue(Validation::date('1-1-0001', ['mdy']));
         $this->assertTrue(Validation::date('2-7-2006', ['mdy']));
         $this->assertTrue(Validation::date('2.7.2006', ['mdy']));
         $this->assertTrue(Validation::date('2/7/2006', ['mdy']));
@@ -1201,6 +1304,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::date('0.0.0000', ['mdy']));
         $this->assertFalse(Validation::date('0/0/0000', ['mdy']));
         $this->assertFalse(Validation::date('0 0 0000', ['mdy']));
+        $this->assertFalse(Validation::date('2-21-300', ['mdy']));
         $this->assertFalse(Validation::date('2-32-2006', ['mdy']));
         $this->assertFalse(Validation::date('2.32.2006', ['mdy']));
         $this->assertFalse(Validation::date('2/32/2006', ['mdy']));
@@ -1214,6 +1318,7 @@ class ValidationTest extends TestCase
      */
     public function testDateMdyyyyLeapYear()
     {
+        $this->assertTrue(Validation::date('2-29-0004', ['mdy']));
         $this->assertTrue(Validation::date('2-29-2004', ['mdy']));
         $this->assertTrue(Validation::date('2.29.2004', ['mdy']));
         $this->assertTrue(Validation::date('2/29/2004', ['mdy']));
@@ -1231,10 +1336,13 @@ class ValidationTest extends TestCase
      */
     public function testDateYyyymmdd()
     {
+        $this->assertTrue(Validation::date('0001-01-01', ['ymd']));
+        $this->assertTrue(Validation::date('0401-01-01', ['ymd']));
         $this->assertTrue(Validation::date('2006-12-27', ['ymd']));
         $this->assertTrue(Validation::date('2006.12.27', ['ymd']));
         $this->assertTrue(Validation::date('2006/12/27', ['ymd']));
         $this->assertTrue(Validation::date('2006 12 27', ['ymd']));
+        $this->assertFalse(Validation::date('300-01-31', ['ymd']));
         $this->assertFalse(Validation::date('2006-11-31', ['ymd']));
         $this->assertFalse(Validation::date('2006.11.31', ['ymd']));
         $this->assertFalse(Validation::date('2006/11/31', ['ymd']));
@@ -1248,10 +1356,12 @@ class ValidationTest extends TestCase
      */
     public function testDateYyyymmddLeapYear()
     {
+        $this->assertTrue(Validation::date('0004-02-29', ['ymd']));
         $this->assertTrue(Validation::date('2004-02-29', ['ymd']));
         $this->assertTrue(Validation::date('2004.02.29', ['ymd']));
         $this->assertTrue(Validation::date('2004/02/29', ['ymd']));
         $this->assertTrue(Validation::date('2004 02 29', ['ymd']));
+        $this->assertFalse(Validation::date('0000-02-29', ['ymd']));
         $this->assertFalse(Validation::date('2006-02-29', ['ymd']));
         $this->assertFalse(Validation::date('2006.02.29', ['ymd']));
         $this->assertFalse(Validation::date('2006/02/29', ['ymd']));
@@ -1286,6 +1396,7 @@ class ValidationTest extends TestCase
      */
     public function testDateYymmddLeapYear()
     {
+        $this->assertTrue(Validation::date('0004-04-29', ['ymd']));
         $this->assertTrue(Validation::date('2004-02-29', ['ymd']));
         $this->assertTrue(Validation::date('2004.02.29', ['ymd']));
         $this->assertTrue(Validation::date('2004/02/29', ['ymd']));
@@ -1303,6 +1414,7 @@ class ValidationTest extends TestCase
      */
     public function testDateDdMMMMyyyy()
     {
+        $this->assertTrue(Validation::date('01 January 0001', ['dMy']));
         $this->assertTrue(Validation::date('27 December 2006', ['dMy']));
         $this->assertTrue(Validation::date('27 Dec 2006', ['dMy']));
         $this->assertFalse(Validation::date('2006 Dec 27', ['dMy']));
@@ -1316,6 +1428,7 @@ class ValidationTest extends TestCase
      */
     public function testDateDdMMMMyyyyLeapYear()
     {
+        $this->assertTrue(Validation::date('29 February 0004', ['dMy']));
         $this->assertTrue(Validation::date('29 February 2004', ['dMy']));
         $this->assertFalse(Validation::date('29 February 2006', ['dMy']));
     }
@@ -1327,6 +1440,7 @@ class ValidationTest extends TestCase
      */
     public function testDateMmmmDdyyyy()
     {
+        $this->assertTrue(Validation::date('January 01, 0001', ['Mdy']));
         $this->assertTrue(Validation::date('December 27, 2006', ['Mdy']));
         $this->assertTrue(Validation::date('Dec 27, 2006', ['Mdy']));
         $this->assertTrue(Validation::date('December 27 2006', ['Mdy']));
@@ -1343,6 +1457,7 @@ class ValidationTest extends TestCase
      */
     public function testDateMmmmDdyyyyLeapYear()
     {
+        $this->assertTrue(Validation::date('February 29, 0004', ['Mdy']));
         $this->assertTrue(Validation::date('February 29, 2004', ['Mdy']));
         $this->assertTrue(Validation::date('Feb 29, 2004', ['Mdy']));
         $this->assertTrue(Validation::date('February 29 2004', ['Mdy']));
@@ -1357,6 +1472,7 @@ class ValidationTest extends TestCase
      */
     public function testDateMy()
     {
+        $this->assertTrue(Validation::date('January 0001', ['My']));
         $this->assertTrue(Validation::date('December 2006', ['My']));
         $this->assertTrue(Validation::date('Dec 2006', ['My']));
         $this->assertTrue(Validation::date('December/2006', ['My']));
@@ -1370,6 +1486,7 @@ class ValidationTest extends TestCase
      */
     public function testDateMyNumeric()
     {
+        $this->assertTrue(Validation::date('01/0001', ['my']));
         $this->assertTrue(Validation::date('01/2006', ['my']));
         $this->assertTrue(Validation::date('12-2006', ['my']));
         $this->assertTrue(Validation::date('12.2006', ['my']));
@@ -1389,6 +1506,7 @@ class ValidationTest extends TestCase
      */
     public function testDateYmNumeric()
     {
+        $this->assertTrue(Validation::date('0001/01', ['ym']));
         $this->assertTrue(Validation::date('2006/12', ['ym']));
         $this->assertTrue(Validation::date('2006-12', ['ym']));
         $this->assertTrue(Validation::date('2006-12', ['ym']));
@@ -1413,6 +1531,7 @@ class ValidationTest extends TestCase
      */
     public function testDateY()
     {
+        $this->assertTrue(Validation::date('0001', ['y']));
         $this->assertTrue(Validation::date('1900', ['y']));
         $this->assertTrue(Validation::date('1984', ['y']));
         $this->assertTrue(Validation::date('2006', ['y']));
@@ -1421,9 +1540,9 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::date('2104', ['y']));
         $this->assertTrue(Validation::date('1899', ['y']));
         $this->assertFalse(Validation::date('20009', ['y']));
+        $this->assertFalse(Validation::date('0000', ['y']));
         $this->assertFalse(Validation::date(' 2012', ['y']));
         $this->assertFalse(Validation::date('3000', ['y']));
-        $this->assertFalse(Validation::date('1799', ['y']));
     }
 
     /**
@@ -2867,54 +2986,56 @@ class ValidationTest extends TestCase
      */
     public function testContainNonAlphaNumeric()
     {
-        $this->assertFalse(Validation::containsNonAlphaNumeric('abcdefghijklmnopqrstuvwxyz'));
-        $this->assertFalse(Validation::containsNonAlphaNumeric('ABCDEFGHIJKLMNOPQRSTUVWXYZ'));
-        $this->assertFalse(Validation::containsNonAlphaNumeric('0123456789'));
-        $this->assertFalse(Validation::containsNonAlphaNumeric('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'));
+        $this->deprecated(function () {
+            $this->assertFalse(Validation::containsNonAlphaNumeric('abcdefghijklmnopqrstuvwxyz'));
+            $this->assertFalse(Validation::containsNonAlphaNumeric('ABCDEFGHIJKLMNOPQRSTUVWXYZ'));
+            $this->assertFalse(Validation::containsNonAlphaNumeric('0123456789'));
+            $this->assertFalse(Validation::containsNonAlphaNumeric('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'));
 
-        $this->assertTrue(Validation::containsNonAlphaNumeric('#'));
-        $this->assertTrue(Validation::containsNonAlphaNumeric("0\n"));
-        $this->assertTrue(Validation::containsNonAlphaNumeric("\n"));
-        $this->assertTrue(Validation::containsNonAlphaNumeric("\t"));
-        $this->assertTrue(Validation::containsNonAlphaNumeric("\r"));
-        $this->assertTrue(Validation::containsNonAlphaNumeric(' '));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('#'));
+            $this->assertTrue(Validation::containsNonAlphaNumeric("0\n"));
+            $this->assertTrue(Validation::containsNonAlphaNumeric("\n"));
+            $this->assertTrue(Validation::containsNonAlphaNumeric("\t"));
+            $this->assertTrue(Validation::containsNonAlphaNumeric("\r"));
+            $this->assertTrue(Validation::containsNonAlphaNumeric(' '));
 
-        $this->assertTrue(Validation::containsNonAlphaNumeric('#abcdef'));
-        $this->assertTrue(Validation::containsNonAlphaNumeric('abc#def'));
-        $this->assertTrue(Validation::containsNonAlphaNumeric('abcdef#'));
-        $this->assertTrue(Validation::containsNonAlphaNumeric('abc def'));
-        $this->assertTrue(Validation::containsNonAlphaNumeric("abcdef\n"));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('#abcdef'));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('abc#def'));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('abcdef#'));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('abc def'));
+            $this->assertTrue(Validation::containsNonAlphaNumeric("abcdef\n"));
 
-        $this->assertTrue(Validation::containsNonAlphaNumeric('##abcdef', 2));
-        $this->assertTrue(Validation::containsNonAlphaNumeric('abcdef##', 2));
-        $this->assertTrue(Validation::containsNonAlphaNumeric('#abcdef#', 2));
-        $this->assertTrue(Validation::containsNonAlphaNumeric('#abc#def', 2));
-        $this->assertTrue(Validation::containsNonAlphaNumeric('abc#def#', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('##abcdef', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('abcdef##', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('#abcdef#', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('#abc#def', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('abc#def#', 2));
 
-        $this->assertTrue(Validation::containsNonAlphaNumeric('#♥abcdef', 2));
-        $this->assertTrue(Validation::containsNonAlphaNumeric('abcdef#♥', 2));
-        $this->assertTrue(Validation::containsNonAlphaNumeric('#abcdef♥', 2));
-        $this->assertTrue(Validation::containsNonAlphaNumeric('#abc♥def', 2));
-        $this->assertTrue(Validation::containsNonAlphaNumeric('abc#def♥', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('#♥abcdef', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('abcdef#♥', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('#abcdef♥', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('#abc♥def', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('abc#def♥', 2));
 
-        $this->assertTrue(Validation::containsNonAlphaNumeric('#♥abcdef', 2));
-        $this->assertTrue(Validation::containsNonAlphaNumeric('abcdef#♥', 2));
-        $this->assertTrue(Validation::containsNonAlphaNumeric('#abcdef♥', 2));
-        $this->assertTrue(Validation::containsNonAlphaNumeric('#abc♥def', 2));
-        $this->assertTrue(Validation::containsNonAlphaNumeric('abc#def♥', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('#♥abcdef', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('abcdef#♥', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('#abcdef♥', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('#abc♥def', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('abc#def♥', 2));
 
-        $this->assertTrue(Validation::containsNonAlphaNumeric('###abcdef', 2));
-        $this->assertTrue(Validation::containsNonAlphaNumeric('abc###def', 2));
-        $this->assertTrue(Validation::containsNonAlphaNumeric('abcdef###', 2));
-        $this->assertTrue(Validation::containsNonAlphaNumeric('#abc#def#', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('###abcdef', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('abc###def', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('abcdef###', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('#abc#def#', 2));
 
-        $this->assertFalse(Validation::containsNonAlphaNumeric('##abcdef', 3));
-        $this->assertFalse(Validation::containsNonAlphaNumeric('abcdef##', 3));
-        $this->assertFalse(Validation::containsNonAlphaNumeric('abc##def', 3));
-        $this->assertFalse(Validation::containsNonAlphaNumeric('ab#cd#ef', 3));
+            $this->assertFalse(Validation::containsNonAlphaNumeric('##abcdef', 3));
+            $this->assertFalse(Validation::containsNonAlphaNumeric('abcdef##', 3));
+            $this->assertFalse(Validation::containsNonAlphaNumeric('abc##def', 3));
+            $this->assertFalse(Validation::containsNonAlphaNumeric('ab#cd#ef', 3));
 
-        // Non alpha numeric should not pass as array
-        $this->assertFalse(Validation::containsNonAlphaNumeric(['abc#']));
+            // Non alpha numeric should not pass as array
+            $this->assertFalse(Validation::containsNonAlphaNumeric(['abc#']));
+        });
     }
 
     /**

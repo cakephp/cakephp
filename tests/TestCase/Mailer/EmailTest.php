@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Mailer;
 use Cake\Core\Configure;
 use Cake\Log\Log;
 use Cake\Mailer\Email;
+use Cake\Mailer\Mailer;
 use Cake\Mailer\Message;
 use Cake\Mailer\TransportFactory;
 use Cake\TestSuite\TestCase;
@@ -32,7 +33,7 @@ use TestApp\Mailer\TestEmail;
  */
 class EmailTest extends TestCase
 {
-    public $fixtures = ['core.Users'];
+    protected $fixtures = ['core.Users'];
 
     /**
      * @var \TestApp\Mailer\Email\TestEmail
@@ -75,6 +76,7 @@ class EmailTest extends TestCase
     {
         parent::tearDown();
         Log::drop('email');
+        Email::drop('default');
         Email::drop('test');
         TransportFactory::drop('debug');
         TransportFactory::drop('badClassName');
@@ -1087,36 +1089,6 @@ class EmailTest extends TestCase
     }
 
     /**
-     * testSendWithoutFrom method
-     *
-     * @return void
-     */
-    public function testSendWithoutFrom()
-    {
-        $this->expectException(\BadMethodCallException::class);
-        $this->Email->setTransport('debug');
-        $this->Email->setTo('cake@cakephp.org');
-        $this->Email->setSubject('My title');
-        $this->Email->setProfile(['empty']);
-        $this->Email->send('Forgot to set From');
-    }
-
-    /**
-     * testSendWithoutTo method
-     *
-     * @return void
-     */
-    public function testSendWithoutTo()
-    {
-        $this->expectException(\BadMethodCallException::class);
-        $this->Email->setTransport('debug');
-        $this->Email->setFrom('cake@cakephp.org');
-        $this->Email->setSubject('My title');
-        $this->Email->setProfile(['empty']);
-        $this->Email->send('Forgot to set To');
-    }
-
-    /**
      * test send without a transport method
      *
      * @return void
@@ -2067,7 +2039,7 @@ class EmailTest extends TestCase
 
         $template = $this->Email->viewBuilder()->getTemplate();
         $layout = $this->Email->viewBuilder()->getLayout();
-        $this->assertSame('', $template);
+        $this->assertNull($template);
         $this->assertEquals($configs['layout'], $layout);
     }
 
@@ -2745,6 +2717,20 @@ XML;
         $this->assertStringContainsString('test', $result['viewConfig']['_vars']['exception']);
         unset($result['viewConfig']['_vars']['exception']);
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * testStaticMethodProxy
+     *
+     * @return void
+     */
+    public function testStaticMethodProxy()
+    {
+        Email::setConfig('proxy_test', ['yay']);
+        $this->assertEquals(['yay'], Mailer::getConfig('proxy_test'));
+
+        Email::drop('proxy_test');
+        $this->assertSame([], Mailer::configured());
     }
 
     /**

@@ -133,6 +133,27 @@ class TableLocatorTest extends TestCase
     }
 
     /**
+     * Tests the casing and locator. Using table name directly is not
+     * the same as using conventional aliases anymore.
+     *
+     * @return void
+     */
+    public function testCasing()
+    {
+        $this->assertFalse($this->_locator->exists('Articles'));
+
+        $Article = $this->_locator->get('Articles', ['table' => 'articles']);
+        $this->assertTrue($this->_locator->exists('Articles'));
+
+        $this->assertFalse($this->_locator->exists('articles'));
+
+        $article = $this->_locator->get('articles');
+        $this->assertTrue($this->_locator->exists('articles'));
+
+        $this->assertNotSame($Article, $article);
+    }
+
+    /**
      * Test the exists() method with plugin-prefixed models.
      *
      * @return void

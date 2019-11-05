@@ -128,8 +128,8 @@ abstract class BaseErrorHandler
      * Set as the default error handler by CakePHP.
      *
      * Use config/error.php to customize or replace this error handler.
-     * This function will use Debugger to display errors when debug > 0. And
-     * will log errors to Log, when debug == 0.
+     * This function will use Debugger to display errors when debug mode is on. And
+     * will log errors to Log, when debug mode is off.
      *
      * You can use the 'errorLevel' option to set what type of errors will be handled.
      * Stack traces for errors can be enabled with the 'trace' option.
@@ -154,6 +154,7 @@ abstract class BaseErrorHandler
         $this->_handled = true;
         [$error, $log] = static::mapErrorCode($code);
         if ($log === LOG_ERR) {
+            /** @psalm-suppress PossiblyNullArgument */
             return $this->handleFatalError($code, $description, $file, $line);
         }
         $data = [
@@ -170,7 +171,7 @@ abstract class BaseErrorHandler
             $data += [
                 'context' => $context,
                 'start' => 3,
-                'path' => Debugger::trimPath($file),
+                'path' => Debugger::trimPath((string)$file),
             ];
         }
         $this->_displayError($data, $debug);
@@ -299,6 +300,7 @@ abstract class BaseErrorHandler
             $data['line']
         );
         if (!empty($this->_config['trace'])) {
+            /** @var string $trace */
             $trace = Debugger::trace([
                 'start' => 1,
                 'format' => 'log',

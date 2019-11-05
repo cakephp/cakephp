@@ -103,7 +103,8 @@ class XmlView extends SerializedView
      *   For e.g. 'format' as 'attributes' instead of 'tags'.
      * - `rootNode`: Root node name. Defaults to "response".
      *
-     * @var array{serialize:string|bool|null, xmlOptions: int|null, rootNode: string|null}
+     * @var array
+     * @psalm-var array{serialize:string|bool|null, xmlOptions: int|null, rootNode: string|null}
      */
     protected $_defaultConfig = [
         'serialize' => null,
@@ -112,12 +113,9 @@ class XmlView extends SerializedView
     ];
 
     /**
-     * Serialize view vars.
-     *
-     * @param array|string $serialize The name(s) of the view variable(s) that need(s) to be serialized
-     * @return string|false The serialized data
+     * @inheritDoc
      */
-    protected function _serialize($serialize)
+    protected function _serialize($serialize): string
     {
         $rootNode = $this->getConfig('rootNode', 'response');
 
@@ -140,8 +138,8 @@ class XmlView extends SerializedView
                 }
             }
         } else {
-            $data = $this->viewVars[$serialize] ?? null;
-            if (is_array($data) && Hash::numeric(array_keys($data))) {
+            $data = $this->viewVars[$serialize] ?? [];
+            if ($data && Hash::numeric(array_keys($data))) {
                 $data = [$rootNode => [$serialize => $data]];
             }
         }
@@ -151,10 +149,6 @@ class XmlView extends SerializedView
             $options['pretty'] = true;
         }
 
-        if (isset($options['return']) && strtolower($options['return']) === 'domdocument') {
-            return Xml::fromArray($data, $options)->saveXML();
-        }
-
-        return Xml::fromArray($data, $options)->asXML();
+        return Xml::fromArray($data, $options)->saveXML();
     }
 }

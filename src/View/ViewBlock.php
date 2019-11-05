@@ -50,7 +50,7 @@ class ViewBlock
     /**
      * Block content. An array of blocks indexed by name.
      *
-     * @var array
+     * @var string[]
      */
     protected $_blocks = [];
 
@@ -108,17 +108,20 @@ class ViewBlock
 
             return;
         }
-        if ($this->_active) {
-            $mode = end($this->_active);
-            $active = key($this->_active);
-            $content = ob_get_clean();
-            if ($mode === ViewBlock::OVERRIDE) {
-                $this->_blocks[$active] = $content;
-            } else {
-                $this->concat($active, $content, $mode);
-            }
-            array_pop($this->_active);
+
+        if (!$this->_active) {
+            return;
         }
+
+        $mode = end($this->_active);
+        $active = key($this->_active);
+        $content = ob_get_clean();
+        if ($mode === ViewBlock::OVERRIDE) {
+            $this->_blocks[$active] = (string)$content;
+        } else {
+            $this->concat($active, $content, $mode);
+        }
+        array_pop($this->_active);
     }
 
     /**

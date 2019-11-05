@@ -20,6 +20,7 @@ use Cake\Core\Configure;
 use Cake\Database\Exception as DatabaseException;
 use Cake\Error\ExceptionRenderer;
 use Cake\Event\EventInterface;
+use Cake\Form\FormProtector;
 use Cake\Http\Session;
 use Cake\Routing\Router;
 use Cake\TestSuite\Constraint\Response\BodyContains;
@@ -56,10 +57,9 @@ use Cake\Utility\CookieCryptTrait;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
 use Cake\Utility\Text;
-use Cake\View\Helper\SecureFieldTokenTrait;
 use Exception;
 use LogicException;
-use PHPUnit\Exception as PhpUnitException;
+use PHPUnit\Framework\Error\Error as PhpUnitError;
 use Throwable;
 use Zend\Diactoros\Uri;
 
@@ -75,7 +75,6 @@ use Zend\Diactoros\Uri;
 trait IntegrationTestTrait
 {
     use CookieCryptTrait;
-    use SecureFieldTokenTrait;
 
     /**
      * The customized application class name.
@@ -101,7 +100,7 @@ trait IntegrationTestTrait
     /**
      * The response for the most recent request.
      *
-     * @var \Psr\Http\Message\ResponseInterface|null
+     * @var \Psr\Http\Message\ResponseInterface
      */
     protected $_response;
 
@@ -129,28 +128,28 @@ trait IntegrationTestTrait
     /**
      * The controller used in the last request.
      *
-     * @var \Cake\Controller\Controller|null
+     * @var \Cake\Controller\Controller
      */
     protected $_controller;
 
     /**
      * The last rendered view
      *
-     * @var string|null
+     * @var string
      */
     protected $_viewName;
 
     /**
      * The last rendered layout
      *
-     * @var string|null
+     * @var string
      */
     protected $_layoutName;
 
     /**
      * The session instance from the last request
      *
-     * @var \Cake\Http\Session|null
+     * @var \Cake\Http\Session
      */
     protected $_requestSession;
 
@@ -181,39 +180,29 @@ trait IntegrationTestTrait
     /**
      * Stored flash messages before render
      *
-     * @var null|array
+     * @var array|null
      */
     protected $_flashMessages;
 
     /**
      *
-     * @var null|string
+     * @var string|null
      */
     protected $_cookieEncryptionKey;
 
     /**
-     * Allow router reloading to be disabled.
+     * List of fields that are excluded from field validation.
      *
-     * @var bool
+     * @var string[]
      */
-    protected $_disableRouterReload = false;
-
-    /**
-     * Auto-detect if the HTTP middleware stack should be used.
-     *
-     * @before
-     * @return void
-     */
-    public function setupServer(): void
-    {
-        $namespace = Configure::read('App.namespace');
-    }
+    protected $_unlockedFields = [];
 
     /**
      * Clears the state used for requests.
      *
      * @after
      * @return void
+     * @psalm-suppress PossiblyNullPropertyAssignmentValue
      */
     public function cleanup(): void
     {
@@ -256,6 +245,17 @@ trait IntegrationTestTrait
     public function enableSecurityToken(): void
     {
         $this->_securityToken = true;
+    }
+
+    /**
+     * Set list of fields that are excluded from field validation.
+     *
+     * @param string[] $unlockedFields List of fields that are excluded from field validation.
+     * @return void
+     */
+    public function setUnlockedFields(array $unlockedFields = []): void
+    {
+        $this->_unlockedFields = $unlockedFields;
     }
 
     /**
@@ -357,7 +357,7 @@ trait IntegrationTestTrait
      *
      * @param string $name The cookie name to use.
      * @param mixed $value The value of the cookie.
-     * @param string|bool $encrypt Encryption mode to use.
+     * @param string|false $encrypt Encryption mode to use.
      * @param string|null $key Encryption key used. Defaults
      *   to Security.salt.
      * @return void
@@ -378,7 +378,7 @@ trait IntegrationTestTrait
      *
      * @param string|array $url The URL to request.
      * @return void
-     * @throws \PHPUnit\Exception|\Throwable
+     * @throws \PHPUnit\Framework\Error\Error|\Throwable
      */
     public function get($url): void
     {
@@ -393,9 +393,9 @@ trait IntegrationTestTrait
      * response.
      *
      * @param string|array $url The URL to request.
-     * @param string|array|null $data The data for the request.
+     * @param string|array $data The data for the request.
      * @return void
-     * @throws \PHPUnit\Exception|\Throwable
+     * @throws \PHPUnit\Framework\Error\Error|\Throwable
      */
     public function post($url, $data = []): void
     {
@@ -410,9 +410,9 @@ trait IntegrationTestTrait
      * response.
      *
      * @param string|array $url The URL to request.
-     * @param string|array|null $data The data for the request.
+     * @param string|array $data The data for the request.
      * @return void
-     * @throws \PHPUnit\Exception|\Throwable
+     * @throws \PHPUnit\Framework\Error\Error|\Throwable
      */
     public function patch($url, $data = []): void
     {
@@ -427,9 +427,9 @@ trait IntegrationTestTrait
      * response.
      *
      * @param string|array $url The URL to request.
-     * @param string|array|null $data The data for the request.
+     * @param string|array $data The data for the request.
      * @return void
-     * @throws \PHPUnit\Exception|\Throwable
+     * @throws \PHPUnit\Framework\Error\Error|\Throwable
      */
     public function put($url, $data = []): void
     {
@@ -445,7 +445,7 @@ trait IntegrationTestTrait
      *
      * @param string|array $url The URL to request.
      * @return void
-     * @throws \PHPUnit\Exception|\Throwable
+     * @throws \PHPUnit\Framework\Error\Error|\Throwable
      */
     public function delete($url): void
     {
@@ -461,7 +461,7 @@ trait IntegrationTestTrait
      *
      * @param string|array $url The URL to request.
      * @return void
-     * @throws \PHPUnit\Exception|\Throwable
+     * @throws \PHPUnit\Framework\Error\Error|\Throwable
      */
     public function head($url): void
     {
@@ -477,7 +477,7 @@ trait IntegrationTestTrait
      *
      * @param string|array $url The URL to request.
      * @return void
-     * @throws \PHPUnit\Exception|\Throwable
+     * @throws \PHPUnit\Framework\Error\Error|\Throwable
      */
     public function options($url): void
     {
@@ -491,9 +491,9 @@ trait IntegrationTestTrait
      *
      * @param string|array $url The URL
      * @param string $method The HTTP method
-     * @param string|array|null $data The request data.
+     * @param string|array $data The request data.
      * @return void
-     * @throws \PHPUnit\Exception|\Throwable
+     * @throws \PHPUnit\Framework\Error\Error|\Throwable
      */
     protected function _sendRequest($url, $method, $data = []): void
     {
@@ -508,7 +508,7 @@ trait IntegrationTestTrait
                 $this->_requestSession->write('Flash', $this->_flashMessages);
             }
             $this->_response = $response;
-        } catch (PhpUnitException $e) {
+        } catch (PhpUnitError $e) {
             throw $e;
         } catch (DatabaseException $e) {
             throw $e;
@@ -528,7 +528,7 @@ trait IntegrationTestTrait
      */
     protected function _makeDispatcher(): MiddlewareDispatcher
     {
-        return new MiddlewareDispatcher($this, $this->_appClass, $this->_appArgs, $this->_disableRouterReload);
+        return new MiddlewareDispatcher($this, $this->_appClass, $this->_appArgs);
     }
 
     /**
@@ -551,6 +551,7 @@ trait IntegrationTestTrait
                 $this->_viewName = $viewFile;
             }
             if ($this->_retainFlashMessages) {
+                /** @var array|null $this->_flashMessages */
                 $this->_flashMessages = $controller->getRequest()->getSession()->read('Flash');
             }
         });
@@ -584,10 +585,10 @@ trait IntegrationTestTrait
      *
      * @param string $url The URL
      * @param string $method The HTTP method
-     * @param string|array|null $data The request data.
+     * @param string|array $data The request data.
      * @return array The request context
      */
-    protected function _buildRequest(string $url, $method, $data): array
+    protected function _buildRequest(string $url, $method, $data = []): array
     {
         $sessionConfig = (array)Configure::read('Session') + [
             'defaults' => 'php',
@@ -610,8 +611,7 @@ trait IntegrationTestTrait
         ];
         if (is_string($data)) {
             $props['input'] = $data;
-        }
-        if (!isset($props['input'])) {
+        } else {
             $data = $this->_addTokens($tokenUrl, $data);
             $props['post'] = $this->_castToString($data);
         }
@@ -654,12 +654,21 @@ trait IntegrationTestTrait
     protected function _addTokens(string $url, array $data): array
     {
         if ($this->_securityToken === true) {
+            $fields = array_diff_key($data, array_flip($this->_unlockedFields));
+
             $keys = array_map(function ($field) {
                 return preg_replace('/(\.\d+)+$/', '', $field);
-            }, array_keys(Hash::flatten($data)));
-            $tokenData = $this->_buildFieldToken($url, array_unique($keys));
+            }, array_keys(Hash::flatten($fields)));
+
+            $formProtector = new FormProtector($url, 'cli', ['unlockedFields' => $this->_unlockedFields]);
+            foreach ($keys as $field) {
+                /** @psalm-suppress PossiblyNullArgument */
+                $formProtector->addField($field);
+            }
+            $tokenData = $formProtector->buildTokenData();
+
             $data['_Token'] = $tokenData;
-            $data['_Token']['debug'] = 'SecurityComponent debug data would be added here';
+            $data['_Token']['debug'] = 'FormProtector debug data would be added here';
         }
 
         if ($this->_csrfToken === true) {
@@ -1063,12 +1072,12 @@ trait IntegrationTestTrait
     /**
      * Asserts session contents
      *
-     * @param string $expected The expected contents.
+     * @param mixed $expected The expected contents.
      * @param string $path The session data path. Uses Hash::get() compatible notation
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
      */
-    public function assertSession(string $expected, string $path, string $message = ''): void
+    public function assertSession($expected, string $path, string $message = ''): void
     {
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat($expected, new SessionEquals($this->_requestSession, $path), $verboseMessage);
@@ -1193,9 +1202,9 @@ trait IntegrationTestTrait
      * The difference from assertCookie() is this decrypts the cookie
      * value like the CookieComponent for this assertion.
      *
-     * @param string $expected The expected contents.
+     * @param mixed $expected The expected contents.
      * @param string $name The cookie name.
-     * @param string|bool $encrypt Encryption mode to use.
+     * @param string $encrypt Encryption mode to use.
      * @param string|null $key Encryption key used. Defaults
      *   to Security.salt.
      * @param string $message The failure message that will be appended to the generated message.
@@ -1203,11 +1212,11 @@ trait IntegrationTestTrait
      * @see \Cake\Utility\CookieCryptTrait::_encrypt()
      */
     public function assertCookieEncrypted(
-        string $expected,
+        $expected,
         string $name,
-        $encrypt = 'aes',
-        $key = null,
-        $message = ''
+        string $encrypt = 'aes',
+        ?string $key = null,
+        string $message = ''
     ): void {
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat($name, new CookieSet($this->_response), $verboseMessage);

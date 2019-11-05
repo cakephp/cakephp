@@ -15,6 +15,7 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 $versionFile = file(CORE_PATH . 'VERSION.txt');
+
 return [
-    'Cake.version' => trim(array_pop($versionFile))
+    'Cake.version' => trim(array_pop($versionFile)),
 ];
