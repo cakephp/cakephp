@@ -2863,21 +2863,25 @@ class ValidationTest extends TestCase
     public function testCompareFieldsEqualTo()
     {
         $context = [
-            'data' => [
-                'other' => 'a value'
-            ]
+            'data' => ['other' => 'a value'],
         ];
         $this->assertTrue(Validation::compareFields('a value', 'other', Validation::COMPARE_EQUAL, $context));
 
         $context = [
-            'data' => [
-                'other' => 'different'
-            ]
+            'data' => ['other' => 'different'],
         ];
         $this->assertFalse(Validation::compareFields('a value', 'other', Validation::COMPARE_EQUAL, $context));
 
         $context = [];
         $this->assertFalse(Validation::compareFields('a value', 'other', Validation::COMPARE_EQUAL, $context));
+
+        $context = [
+            'data' => ['other' => null],
+        ];
+        $this->assertFalse(Validation::compareFields('a value', 'other', Validation::COMPARE_EQUAL, $context));
+        $this->assertFalse(Validation::compareFields(false, 'other', Validation::COMPARE_SAME, $context));
+        $this->assertTrue(Validation::compareFields(false, 'other', Validation::COMPARE_EQUAL, $context));
+        $this->assertTrue(Validation::compareFields(null, 'other', Validation::COMPARE_SAME, $context));
     }
 
     /**

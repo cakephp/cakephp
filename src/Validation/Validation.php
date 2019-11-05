@@ -435,7 +435,7 @@ class Validation
      */
     public static function compareFields($check, $field, $operator, $context)
     {
-        if (!isset($context['data'][$field])) {
+        if (!isset($context['data']) || !array_key_exists($field, $context['data'])) {
             return false;
         }
 
