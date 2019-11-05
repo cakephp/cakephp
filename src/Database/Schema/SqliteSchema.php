@@ -108,7 +108,7 @@ class SqliteSchema extends BaseSchema
             return ['type' => TableSchema::TYPE_UUID, 'length' => null];
         }
         if ($col === 'char') {
-            return ['type' => TableSchema::TYPE_CHAR, 'fixed' => true, 'length' => $length];
+            return ['type' => TableSchema::TYPE_CHAR, 'length' => $length];
         }
         if (strpos($col, 'char') !== false) {
             return ['type' => TableSchema::TYPE_STRING, 'length' => $length];

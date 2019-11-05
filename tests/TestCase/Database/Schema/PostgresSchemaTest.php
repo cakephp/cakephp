@@ -328,7 +328,6 @@ SQL;
                 'length' => 20,
                 'precision' => null,
                 'comment' => 'a title',
-                'fixed' => null,
                 'collate' => null,
             ],
             'body' => [
@@ -473,7 +472,6 @@ SQL;
                 'length' => 50,
                 'precision' => null,
                 'comment' => null,
-                'fixed' => null,
                 'collate' => null,
             ],
             'bio' => [
