@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Error;
 
 use Cake\Controller\Controller;
+use Cake\Controller\ControllerFactory;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception as CakeException;
@@ -130,26 +131,13 @@ class ExceptionRenderer implements ExceptionRendererInterface
             $request = $request->withAttribute('params', $routerRequest->getAttribute('params'));
         }
 
-        $response = new Response();
-
+        $errorOccured = false;
         try {
-            $class = null;
+            $params = $request->getAttribute('params');
+            $params['controller'] = 'Error';
 
-            $prefix = $request->getParam('prefix');
-            if ($prefix) {
-                $namespace = 'Controller';
-                if (strpos($prefix, '/') === false) {
-                    $namespace .= '/' . Inflector::camelize($prefix);
-                } else {
-                    $prefixes = array_map(
-                        'Cake\Utility\Inflector::camelize',
-                        explode('/', $prefix)
-                    );
-                    $namespace .= '/' . implode('/', $prefixes);
-                }
-
-                $class = App::className('Error', $namespace, 'Controller');
-            }
+            $factory = new ControllerFactory();
+            $class = $factory->getControllerClass($request->withAttribute('params', $params));
 
             if (!$class) {
                 /** @var string $class */
@@ -157,19 +145,20 @@ class ExceptionRenderer implements ExceptionRendererInterface
             }
 
             /** @var \Cake\Controller\Controller $controller */
-            $controller = new $class($request, $response);
+            $controller = new $class($request);
             $controller->startupProcess();
         } catch (Throwable $e) {
+            $errorOccured = true;
         }
 
         if (!isset($controller)) {
-            return new Controller($request, $response);
+            return new Controller($request);
         }
 
         // Retry RequestHandler, as another aspect of startupProcess()
         // could have failed. Ignore any exceptions out of startup, as
         // there could be userland input data parsers.
-        if (isset($controller->RequestHandler)) {
+        if ($errorOccured && isset($controller->RequestHandler)) {
             try {
                 $event = new Event('Controller.startup', $controller);
                 $controller->RequestHandler->startup($event);
