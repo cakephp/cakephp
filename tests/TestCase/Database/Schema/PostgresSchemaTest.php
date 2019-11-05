@@ -1127,7 +1127,6 @@ SQL;
             ->addColumn('data', ['type' => 'json'])
             ->addColumn('hash', [
                 'type' => 'char',
-                'fixed' => true,
                 'length' => 40,
                 'collate' => 'C',
                 'null' => false,

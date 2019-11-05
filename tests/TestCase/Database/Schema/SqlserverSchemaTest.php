@@ -961,8 +961,7 @@ SQL;
             ->addColumn('body', ['type' => 'text'])
             ->addColumn('data', ['type' => 'json'])
             ->addColumn('hash', [
-                'type' => 'string',
-                'fixed' => true,
+                'type' => 'char',
                 'length' => 40,
                 'collate' => 'Latin1_General_BIN',
                 'null' => false,

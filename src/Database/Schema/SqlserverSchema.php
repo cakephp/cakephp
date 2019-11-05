@@ -388,7 +388,7 @@ class SqlserverSchema extends BaseSchema
         }
 
         if ($data['type'] === TableSchema::TYPE_CHAR) {
-            $out .= '(' . $data['length'] . ')';
+            $out .= ' (' . $data['length'] . ')';
         }
 
         if ($data['type'] === TableSchema::TYPE_BINARY) {
@@ -416,16 +416,8 @@ class SqlserverSchema extends BaseSchema
             )
         ) {
             $type = ' NVARCHAR';
-
-            if (!empty($data['fixed'])) {
-                $type = ' NCHAR';
-            }
-
-            if (!isset($data['length'])) {
-                $data['length'] = 255;
-            }
-
-            $out .= sprintf('%s(%d)', $type, $data['length']);
+            $length = isset($data['length']) ? $data['length'] : TableSchema::LENGTH_TINY;
+            $out .= sprintf('%s(%d)', $type, $length);
         }
 
         $hasCollate = [TableSchema::TYPE_TEXT, TableSchema::TYPE_STRING, TableSchema::TYPE_CHAR];

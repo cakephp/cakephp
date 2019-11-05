@@ -334,6 +334,7 @@ class MysqlSchema extends BaseSchema
         $specialMap = [
             'string' => true,
             'text' => true,
+            'char' => true,
             'binary' => true,
         ];
         if (isset($typeMap[$data['type']])) {
@@ -342,10 +343,13 @@ class MysqlSchema extends BaseSchema
         if (isset($specialMap[$data['type']])) {
             switch ($data['type']) {
                 case TableSchema::TYPE_STRING:
-                    $out .= !empty($data['fixed']) ? ' CHAR' : ' VARCHAR';
+                    $out .= ' VARCHAR';
                     if (!isset($data['length'])) {
                         $data['length'] = 255;
                     }
+                    break;
+                case TableSchema::TYPE_CHAR:
+                    $out .= ' CHAR';
                     break;
                 case TableSchema::TYPE_TEXT:
                     $isKnownLength = in_array($data['length'], TableSchema::$columnLengths);

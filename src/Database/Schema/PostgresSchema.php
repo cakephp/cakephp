@@ -371,8 +371,8 @@ class PostgresSchema extends BaseSchema
             TableSchema::TYPE_TIME => ' TIME',
             TableSchema::TYPE_DATETIME => ' TIMESTAMP',
             TableSchema::TYPE_TIMESTAMP => ' TIMESTAMP',
-            TableSchema::TYPE_CHAR => ' CHAR',
             TableSchema::TYPE_UUID => ' UUID',
+            TableSchema::TYPE_CHAR => ' CHAR',
             TableSchema::TYPE_JSON => ' JSONB',
         ];
 
@@ -407,15 +407,8 @@ class PostgresSchema extends BaseSchema
                 $data['length'] === TableSchema::LENGTH_TINY
             )
         ) {
-            $isFixed = !empty($data['fixed']);
-            $type = ' VARCHAR';
-            if ($isFixed) {
-                $type = ' CHAR';
-            }
-            $out .= $type;
-            if (isset($data['length'])) {
-                $out .= '(' . $data['length'] . ')';
-            }
+            $length = isset($data['length']) ? $data['length'] : 255;
+                $out .= ' VARCHAR(' . $data['length'] . ')';
         }
 
         $hasCollate = [TableSchema::TYPE_TEXT, TableSchema::TYPE_STRING, TableSchema::TYPE_CHAR];
