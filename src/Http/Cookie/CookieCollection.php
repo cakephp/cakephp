@@ -44,7 +44,7 @@ class CookieCollection implements IteratorAggregate, Countable
     /**
      * Constructor
      *
-     * @param array $cookies Array of cookie objects
+     * @param \Cake\Http\Cookie\CookieInterface[] $cookies Array of cookie objects
      */
     public function __construct(array $cookies = [])
     {
@@ -185,7 +185,7 @@ class CookieCollection implements IteratorAggregate, Countable
     /**
      * Checks if only valid cookie objects are in the array
      *
-     * @param array $cookies Array of cookie objects
+     * @param \Cake\Http\Cookie\CookieInterface[] $cookies Array of cookie objects
      * @return void
      * @throws \InvalidArgumentException
      */
