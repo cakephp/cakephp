@@ -483,7 +483,7 @@ class Hash
             $vals = static::extract($data, $valuePath);
         }
         if (empty($vals)) {
-            $vals = array_fill(0, count($keys), null);
+            $vals = array_fill(0, $keys === null ? count($data) : count($keys), null);
         }
 
         if (is_array($keys) && count($keys) !== count($vals)) {
@@ -518,7 +518,7 @@ class Hash
             return [];
         }
 
-        return array_combine($keys, $vals);
+        return array_combine($keys === null ? range(0, count($vals)-1) : $keys, $vals);
     }
 
     /**
