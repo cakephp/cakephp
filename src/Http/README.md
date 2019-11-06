@@ -28,7 +28,7 @@ $response = $http->get('http://example.com/search', ['q' => 'widget'], [
 ]);
 ```
 
-To learn more read the [Http Client documentation](https://book.cakephp.org/4.0/en/core-libraries/httpclient.html).
+To learn more read the [Http Client documentation](https://book.cakephp.org/4/en/core-libraries/httpclient.html).
 
 ## Using the Http Server
 
@@ -87,4 +87,4 @@ $server->emit($server->run());
 ```
 
 For more information on middleware, [consult the
-documentation](https://book.cakephp.org/4.0/en/controllers/middleware.html)
+documentation](https://book.cakephp.org/4/en/controllers/middleware.html)
