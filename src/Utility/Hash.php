@@ -466,12 +466,12 @@ class Hash
         if (is_array($keyPath)) {
             $format = array_shift($keyPath);
             $keys = static::format($data, $keyPath, $format);
-        } elseif (is_null($keyPath)) {
+        } elseif ($keyPath === null) {
             $keys = $keyPath;
         } else {
             $keys = static::extract($data, $keyPath);
         }
-        if (!is_null($keyPath) && empty($keys)) {
+        if ($keyPath !== null && empty($keys)) {
             return [];
         }
 
@@ -504,7 +504,7 @@ class Hash
                     if (!isset($out[$group[$i]])) {
                         $out[$group[$i]] = [];
                     }
-                    if (is_null($keys)) {
+                    if ($keys === null) {
                         $out[$group[$i]][] = $vals[$i];
                     } else {
                         $out[$group[$i]][$keys[$i]] = $vals[$i];
