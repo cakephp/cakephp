@@ -518,7 +518,7 @@ class Hash
             return [];
         }
 
-        return array_combine($keys === null ? range(0, count($vals)-1) : $keys, $vals);
+        return array_combine($keys === null ? range(0, count($vals) - 1) : $keys, $vals);
     }
 
     /**
