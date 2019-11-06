@@ -197,8 +197,14 @@ class Cookie implements CookieInterface
      */
     public static function setDefaults(array $options): void
     {
+        if (isset($options['expires'])) {
+            $options['expires'] = static::dateTimeInstance($options['expires']);
+        }
+        if (isset($options['samesite'])) {
+            static::validateSameSiteValue($options['samesite']);
+        }
+
         static::$defaults = $options + static::$defaults;
-        static::$defaults['expires'] = static::dateTimeInstance(static::$defaults['expires']);
     }
 
     /**
@@ -242,6 +248,13 @@ class Cookie implements CookieInterface
         if ($expires instanceof DateTimeInterface) {
             /** @psalm-suppress UndefinedInterfaceMethod */
             return $expires->setTimezone(new DateTimeZone('GMT'));
+        }
+
+        if (!is_string($expires) && !is_int($expires)) {
+            throw new InvalidArgumentException(sprintf(
+                'Invalid type `%s` for expires.',
+                getTypeName($expires)
+            ));
         }
 
         if (!is_numeric($expires)) {
@@ -642,11 +655,11 @@ class Cookie implements CookieInterface
      * @return void
      * @throws \InvalidArgumentException
      */
-    protected function validateSameSiteValue(string $sameSite)
+    protected static function validateSameSiteValue(string $sameSite)
     {
         if (!in_array($sameSite, CookieInterface::SAMESITE_VALUES, true)) {
             throw new InvalidArgumentException(
-                'Samesite value must be either of: ' . implode(',', CookieInterface::SAMESITE_VALUES)
+                'Samesite value must be either of: ' . implode(', ', CookieInterface::SAMESITE_VALUES)
             );
         }
     }

@@ -188,7 +188,7 @@ class CookieTest extends TestCase
     public function testWithSameSiteException()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Samesite value must be either of: ' . implode(',', CookieInterface::SAMESITE_VALUES));
+        $this->expectExceptionMessage('Samesite value must be either of: ' . implode(', ', CookieInterface::SAMESITE_VALUES));
 
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $cookie->withSameSite('invalid');
@@ -523,5 +523,23 @@ class CookieTest extends TestCase
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $this->assertSame('/', $cookie->getPath());
         $this->assertNull($cookie->getExpiry());
+    }
+
+    public function testInvalidExpiresForDefaults()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid type `array` for expire');
+
+        Cookie::setDefaults(['expires' => ['ompalompa']]);
+        $cookie = new Cookie('cakephp', 'cakephp-rocks');
+    }
+
+    public function testInvalidSameSiteForDefaults()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Samesite value must be either of: ' . implode(', ', CookieInterface::SAMESITE_VALUES));
+
+        Cookie::setDefaults(['samesite' => 'ompalompa']);
+        $cookie = new Cookie('cakephp', 'cakephp-rocks');
     }
 }
