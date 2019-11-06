@@ -74,6 +74,8 @@ requests. In your application's webroot, you can add an `index.php` and process
 requests:
 
 ```php
+<?php
+// in webroot/index.php
 require dirname(__DIR__) . '/vendor/autoload.php';
 
 use App\Application;
@@ -84,6 +86,12 @@ $server = new Server(new Application());
 
 // Run the request/response through the application and emit the response.
 $server->emit($server->run());
+```
+
+You can then run your application using PHP's built in webserver:
+
+```bash
+php -S localhost:8765 -t ./webroot ./webroot/index.php
 ```
 
 For more information on middleware, [consult the

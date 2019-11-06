@@ -27,8 +27,11 @@
         "cakephp/core": "^4.0",
         "cakephp/event": "^4.0",
         "cakephp/utility": "^4.0",
+        "psr/http-client": "^1.0",
         "psr/http-server-handler": "^1.0",
-        "zendframework/zend-diactoros": "^2.1"
+        "psr/http-server-middleware": "^1.0",
+        "zendframework/zend-diactoros": "^2.1",
+        "zendframework/zend-httphandlerrunner": "^1.0"
     },
     "suggest": {
         "cakephp/cache": "To use cache session storage",
