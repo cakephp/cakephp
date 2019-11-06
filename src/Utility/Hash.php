@@ -492,7 +492,6 @@ class Hash
             );
         }
 
-
         if ($groupPath !== null) {
             $group = static::extract($data, $groupPath);
             if (!empty($group)) {
