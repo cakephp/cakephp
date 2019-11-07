@@ -536,7 +536,7 @@ class Client
      * or full mime-type.
      *
      * @param string $type short type alias or full mimetype.
-     * @return array Headers to set on the request.
+     * @return string[] Headers to set on the request.
      * @throws \Cake\Core\Exception\Exception When an unknown type alias is used.
      */
     protected function _typeHeaders($type)

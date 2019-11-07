@@ -249,7 +249,7 @@ class TestFixture implements FixtureInterface, TableSchemaInterface, TableSchema
         $schemaCollection = $db->getSchemaCollection();
         $tables = $schemaCollection->listTables();
 
-        if (!in_array($this->table, $tables)) {
+        if (!in_array($this->table, $tables, true)) {
             throw new CakeException(
                 sprintf(
                     'Cannot describe schema for table `%s` for fixture `%s` : the table does not exist.',
