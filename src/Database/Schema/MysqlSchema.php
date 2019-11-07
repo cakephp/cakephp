@@ -124,7 +124,7 @@ class MysqlSchema extends BaseSchema
             return ['type' => TableSchema::TYPE_UUID, 'length' => null];
         }
         if ($col === 'char') {
-            return ['type' => TableSchema::TYPE_STRING, 'length' => $length, 'fixed' => true];
+            return ['type' => TableSchema::TYPE_CHAR, 'length' => $length];
         }
         if (strpos($col, 'char') !== false) {
             return ['type' => TableSchema::TYPE_STRING, 'length' => $length];
@@ -327,12 +327,14 @@ class MysqlSchema extends BaseSchema
             TableSchema::TYPE_TIME => ' TIME',
             TableSchema::TYPE_DATETIME => ' DATETIME',
             TableSchema::TYPE_TIMESTAMP => ' TIMESTAMP',
+            TableSchema::TYPE_CHAR => ' CHAR',
             TableSchema::TYPE_UUID => ' CHAR(36)',
             TableSchema::TYPE_JSON => $nativeJson ? ' JSON' : ' LONGTEXT',
         ];
         $specialMap = [
             'string' => true,
             'text' => true,
+            'char' => true,
             'binary' => true,
         ];
         if (isset($typeMap[$data['type']])) {
@@ -341,7 +343,7 @@ class MysqlSchema extends BaseSchema
         if (isset($specialMap[$data['type']])) {
             switch ($data['type']) {
                 case TableSchema::TYPE_STRING:
-                    $out .= !empty($data['fixed']) ? ' CHAR' : ' VARCHAR';
+                    $out .= ' VARCHAR';
                     if (!isset($data['length'])) {
                         $data['length'] = 255;
                     }
@@ -382,12 +384,13 @@ class MysqlSchema extends BaseSchema
         }
         $hasLength = [
             TableSchema::TYPE_INTEGER,
+            TableSchema::TYPE_CHAR,
             TableSchema::TYPE_SMALLINTEGER,
             TableSchema::TYPE_TINYINTEGER,
             TableSchema::TYPE_STRING,
         ];
         if (in_array($data['type'], $hasLength, true) && isset($data['length'])) {
-            $out .= '(' . (int)$data['length'] . ')';
+            $out .= '(' . $data['length'] . ')';
         }
 
         $hasPrecision = [TableSchema::TYPE_FLOAT, TableSchema::TYPE_DECIMAL];
@@ -417,6 +420,7 @@ class MysqlSchema extends BaseSchema
 
         $hasCollate = [
             TableSchema::TYPE_TEXT,
+            TableSchema::TYPE_CHAR,
             TableSchema::TYPE_STRING,
         ];
         if (in_array($data['type'], $hasCollate, true) && isset($data['collate']) && $data['collate'] !== '') {

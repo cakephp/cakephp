@@ -80,6 +80,13 @@ interface TableSchemaInterface extends SchemaInterface
     public const TYPE_STRING = 'string';
 
     /**
+     * Char column type
+     *
+     * @var string
+     */
+    public const TYPE_CHAR = 'char';
+
+    /**
      * Text column type
      *
      * @var string

@@ -175,15 +175,15 @@ SQL;
             ],
             [
                 ['type' => 'CHAR(10)'],
-                ['type' => 'string', 'fixed' => true, 'length' => 10, 'collate' => 'ja_JP.utf8'],
+                ['type' => 'char', 'length' => 10, 'collate' => 'ja_JP.utf8'],
             ],
             [
                 ['type' => 'CHAR(36)'],
-                ['type' => 'string', 'fixed' => true, 'length' => 36, 'collate' => 'ja_JP.utf8'],
+                ['type' => 'char', 'length' => 36, 'collate' => 'ja_JP.utf8'],
             ],
             [
                 ['type' => 'CHARACTER(10)'],
-                ['type' => 'string', 'fixed' => true, 'length' => 10, 'collate' => 'ja_JP.utf8'],
+                ['type' => 'string', 'length' => 10, 'collate' => 'ja_JP.utf8'],
             ],
             [
                 ['type' => 'MONEY'],
@@ -328,7 +328,6 @@ SQL;
                 'length' => 20,
                 'precision' => null,
                 'comment' => 'a title',
-                'fixed' => null,
                 'collate' => null,
             ],
             'body' => [
@@ -473,7 +472,6 @@ SQL;
                 'length' => 50,
                 'precision' => null,
                 'comment' => null,
-                'fixed' => null,
                 'collate' => null,
             ],
             'bio' => [
@@ -697,13 +695,13 @@ SQL;
             ],
             [
                 'id',
-                ['type' => 'string', 'length' => 32, 'fixed' => true, 'null' => false],
+                ['type' => 'char', 'length' => 32, 'null' => false],
                 '"id" CHAR(32) NOT NULL',
             ],
             [
                 'title',
-                ['type' => 'string', 'length' => 36, 'fixed' => true, 'null' => false],
-                '"title" CHAR(36) NOT NULL',
+                ['type' => 'string', 'length' => 36, 'null' => false],
+                '"title" VARCHAR(36) NOT NULL',
             ],
             [
                 'id',
@@ -922,6 +920,7 @@ SQL;
                 'type' => 'primary',
                 'columns' => ['id'],
             ]);
+
         $result = $schema->columnSql($table, 'id');
         $this->assertEquals($result, '"id" SERIAL');
     }
@@ -1125,8 +1124,7 @@ SQL;
             ->addColumn('body', ['type' => 'text'])
             ->addColumn('data', ['type' => 'json'])
             ->addColumn('hash', [
-                'type' => 'string',
-                'fixed' => true,
+                'type' => 'char',
                 'length' => 40,
                 'collate' => 'C',
                 'null' => false,
