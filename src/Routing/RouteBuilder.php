@@ -1020,8 +1020,8 @@ class RouteBuilder
     public function fallbacks($routeClass = null)
     {
         $routeClass = $routeClass ?: $this->_routeClass;
-        $this->connect('/:controller', ['action' => 'index'], compact('routeClass'));
-        $this->connect('/:controller/:action/*', [], compact('routeClass'));
+        $this->connect('/{controller}', ['action' => 'index'], compact('routeClass'));
+        $this->connect('/{controller}/{action}/*', [], compact('routeClass'));
     }
 
     /**

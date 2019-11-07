@@ -582,7 +582,7 @@ class RouteCollectionTest extends TestCase
         ];
         $routes = new RouteBuilder($this->collection, '/');
         $routes->connect('/:action/*', ['controller' => 'Users']);
-        $routes->connect('/admin/:controller', ['prefix' => 'admin', 'action' => 'index']);
+        $routes->connect('/admin/{controller}', ['prefix' => 'admin', 'action' => 'index']);
 
         $url = [
             'plugin' => null,

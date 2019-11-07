@@ -1582,7 +1582,7 @@ class RouterTest extends TestCase
             'pass' => ['home'],
             'controller' => 'Pages',
             'action' => 'display',
-            '_matchedRoute' => '/:controller/:action/*',
+            '_matchedRoute' => '/{controller}/{action}/*',
         ];
         $this->assertEquals($expected, $result);
 
@@ -1999,7 +1999,7 @@ class RouterTest extends TestCase
             'action' => 'index',
             '_ext' => 'rss',
             'pass' => [],
-            '_matchedRoute' => '/:controller'
+            '_matchedRoute' => '/{controller}'
         ];
         $this->assertEquals($expected, $result);
 
@@ -2010,7 +2010,7 @@ class RouterTest extends TestCase
             'action' => 'view',
             'pass' => ['1'],
             '_ext' => 'rss',
-            '_matchedRoute' => '/:controller/:action/*'
+            '_matchedRoute' => '/{controller}/{action}/*'
         ];
         $this->assertEquals($expected, $result);
 
@@ -2029,7 +2029,7 @@ class RouterTest extends TestCase
             'action' => 'index',
             '_ext' => 'xml',
             'pass' => [],
-            '_matchedRoute' => '/:controller'
+            '_matchedRoute' => '/{controller}'
         ];
         $this->assertEquals($expected, $result);
 
@@ -2040,7 +2040,7 @@ class RouterTest extends TestCase
             'action' => 'index',
             'pass' => [],
             '?' => ['hello' => 'goodbye'],
-            '_matchedRoute' => '/:controller'
+            '_matchedRoute' => '/{controller}'
         ];
         $this->assertEquals($expected, $result);
 
