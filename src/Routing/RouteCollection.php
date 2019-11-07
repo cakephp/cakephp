@@ -504,6 +504,7 @@ class RouteCollection
      * @param string $path The URL path to register middleware for.
      * @param string[] $middleware The middleware names to add for the path.
      * @return $this
+     * @throws \RuntimeException
      */
     public function applyMiddleware($path, array $middleware)
     {

@@ -383,7 +383,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         $method = $this->getEnv('REQUEST_METHOD');
         $override = false;
 
-        if (in_array($method, ['PUT', 'DELETE', 'PATCH']) &&
+        if (in_array($method, ['PUT', 'DELETE', 'PATCH'], true) &&
             strpos($this->contentType(), 'application/x-www-form-urlencoded') === 0
         ) {
             $data = $this->input();
@@ -400,7 +400,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
             $override = true;
         }
 
-        if ($override && !in_array($this->_environment['REQUEST_METHOD'], ['PUT', 'POST', 'DELETE', 'PATCH'])) {
+        if ($override && !in_array($this->_environment['REQUEST_METHOD'], ['PUT', 'POST', 'DELETE', 'PATCH'], true)) {
             $data = [];
         }
 
@@ -1119,7 +1119,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     protected function normalizeHeaderName($name)
     {
         $name = str_replace('-', '_', strtoupper($name));
-        if (!in_array($name, ['CONTENT_LENGTH', 'CONTENT_TYPE'])) {
+        if (!in_array($name, ['CONTENT_LENGTH', 'CONTENT_TYPE'], true)) {
             $name = 'HTTP_' . $name;
         }
 
@@ -1496,7 +1496,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
             return $accept;
         }
 
-        return in_array($type, $accept);
+        return in_array($type, $accept, true);
     }
 
     /**
@@ -1544,7 +1544,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
             return $accept;
         }
 
-        return in_array(strtolower($language), $accept);
+        return in_array(strtolower($language), $accept, true);
     }
 
     /**

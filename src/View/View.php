@@ -197,7 +197,7 @@ class View implements EventDispatcherInterface
     /**
      * List of generated DOM UUIDs.
      *
-     * @var array
+     * @var string[]
      * @deprecated 3.7.0 The property is deprecated and will be removed in 4.0.0.
      */
     public $uuids = [];
@@ -241,21 +241,21 @@ class View implements EventDispatcherInterface
     /**
      * Holds an array of paths.
      *
-     * @var array
+     * @var string[]
      */
     protected $_paths = [];
 
     /**
      * Holds an array of plugin paths.
      *
-     * @var array
+     * @var string[][]
      */
     protected $_pathsForPlugin = [];
 
     /**
      * The names of views and their parents used with View::extend();
      *
-     * @var array
+     * @var string[]
      */
     protected $_parents = [];
 
@@ -1143,7 +1143,7 @@ class View implements EventDispatcherInterface
         if ($parent == $this->_current) {
             throw new LogicException('You cannot have views extend themselves.');
         }
-        if (isset($this->_parents[$parent]) && $this->_parents[$parent] == $this->_current) {
+        if (isset($this->_parents[$parent]) && $this->_parents[$parent] === $this->_current) {
             throw new LogicException('You cannot have views extend in a loop.');
         }
         $this->_parents[$this->_current] = $parent;

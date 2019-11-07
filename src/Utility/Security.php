@@ -67,7 +67,7 @@ class Security
         $algorithm = strtolower($algorithm);
 
         $availableAlgorithms = hash_algos();
-        if (!in_array($algorithm, $availableAlgorithms)) {
+        if (!in_array($algorithm, $availableAlgorithms, true)) {
             throw new RuntimeException(sprintf(
                 'The hash type `%s` was not found. Available algorithms are: %s',
                 $algorithm,
