@@ -252,7 +252,7 @@ class Cookie implements CookieInterface
 
         if (!is_string($expires) && !is_int($expires)) {
             throw new InvalidArgumentException(sprintf(
-                'Invalid type `%s` for expires.',
+                'Invalid type `%s` for expires. Expected an string, integer or DateTime object.',
                 getTypeName($expires)
             ));
         }
