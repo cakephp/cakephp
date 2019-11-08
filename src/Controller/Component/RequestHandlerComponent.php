@@ -494,9 +494,8 @@ class RequestHandlerComponent extends Component
             return false;
         }
 
-        if (!$request->getParam('requested')) {
-            $response = $response->withType($cType);
-        }
+        $response = $response->withType($cType);
+
         if (!empty($options['charset'])) {
             $response = $response->withCharset($options['charset']);
         }
