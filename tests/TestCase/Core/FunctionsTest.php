@@ -48,7 +48,7 @@ class FunctionsTest extends TestCase
         $this->assertSame('0', env('ZERO', '1'));
 
         $this->assertSame('', env('DOCUMENT_ROOT'));
-        $this->assertSame('vendor/bin/phpunit', env('PHP_SELF'));
+        $this->assertContains('phpunit', env('PHP_SELF'));
     }
 
     /**
