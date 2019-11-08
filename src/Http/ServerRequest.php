@@ -134,7 +134,6 @@ class ServerRequest implements ServerRequestInterface
         'options' => ['env' => 'REQUEST_METHOD', 'value' => 'OPTIONS'],
         'ssl' => ['env' => 'HTTPS', 'options' => [1, 'on']],
         'ajax' => ['env' => 'HTTP_X_REQUESTED_WITH', 'value' => 'XMLHttpRequest'],
-        'flash' => ['env' => 'HTTP_USER_AGENT', 'pattern' => '/^(Shockwave|Adobe) Flash/'],
         'json' => ['accept' => ['application/json'], 'param' => '_ext', 'value' => 'json'],
         'xml' => ['accept' => ['application/xml', 'text/xml'], 'param' => '_ext', 'value' => 'xml'],
     ];
