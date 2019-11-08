@@ -18,6 +18,7 @@ use Cake\Chronos\Chronos;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieInterface;
 use Cake\TestSuite\TestCase;
+use DateTimeInterface;
 
 /**
  * HTTP cookies test.
@@ -187,7 +188,7 @@ class CookieTest extends TestCase
     public function testWithSameSiteException()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Samesite value must be either of: ' . implode(',', CookieInterface::SAMESITE_VALUES));
+        $this->expectExceptionMessage('Samesite value must be either of: ' . implode(', ', CookieInterface::SAMESITE_VALUES));
 
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $cookie->withSameSite('invalid');
@@ -509,5 +510,36 @@ class CookieTest extends TestCase
         // Ignore invalid value when parsing headers
         // https://tools.ietf.org/html/draft-west-first-party-cookies-07#section-4.1
         $this->assertNull($result->getSameSite());
+    }
+
+    public function testDefaults()
+    {
+        Cookie::setDefaults(['path' => '/cakephp', 'expires' => time()]);
+        $cookie = new Cookie('cakephp', 'cakephp-rocks');
+        $this->assertSame('/cakephp', $cookie->getPath());
+        $this->assertInstanceOf(DateTimeInterface::class, $cookie->getExpiry());
+
+        Cookie::setDefaults(['path' => '/', 'expires' => null]);
+        $cookie = new Cookie('cakephp', 'cakephp-rocks');
+        $this->assertSame('/', $cookie->getPath());
+        $this->assertNull($cookie->getExpiry());
+    }
+
+    public function testInvalidExpiresForDefaults()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid type `array` for expire');
+
+        Cookie::setDefaults(['expires' => ['ompalompa']]);
+        $cookie = new Cookie('cakephp', 'cakephp-rocks');
+    }
+
+    public function testInvalidSameSiteForDefaults()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Samesite value must be either of: ' . implode(', ', CookieInterface::SAMESITE_VALUES));
+
+        Cookie::setDefaults(['samesite' => 'ompalompa']);
+        $cookie = new Cookie('cakephp', 'cakephp-rocks');
     }
 }

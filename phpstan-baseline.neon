@@ -193,6 +193,11 @@ parameters:
 			path: src/Http/Client/Auth/Digest.php
 
 		-
+			message: "#^Call to an undefined method DateTimeInterface\\:\\:setTimezone\\(\\)\\.$#"
+			count: 1
+			path: src/Http/Cookie/Cookie.php
+
+		-
 			message: "#^Method Cake\\\\Http\\\\Middleware\\\\CspMiddleware\\:\\:process\\(\\) should return Psr\\\\Http\\\\Message\\\\ResponseInterface but returns Psr\\\\Http\\\\Message\\\\MessageInterface\\.$#"
 			count: 1
 			path: src/Http/Middleware/CspMiddleware.php

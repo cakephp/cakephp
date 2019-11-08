@@ -54,7 +54,7 @@ class ResponseEmitterTest extends TestCase
             ->method('setCookie')
             ->will($this->returnCallback(function ($cookie) {
                 if (is_string($cookie)) {
-                    $cookie = Cookie::createFromHeaderString($cookie);
+                    $cookie = Cookie::createFromHeaderString($cookie, ['path' => '']);
                 }
 
                 $GLOBALS['mockedCookies'][] = ['name' => $cookie->getName(), 'value' => $cookie->getValue()]
