@@ -100,9 +100,18 @@ class MysqlSchema extends BaseSchema
             $precision = (int)$precision;
         }
 
-        if (in_array($col, ['date', 'time', 'datetime', 'timestamp'])) {
+        if (in_array($col, ['date', 'time'])) {
             return ['type' => $col, 'length' => null];
         }
+        if (in_array($col, ['datetime', 'timestamp'])) {
+            $typeName = $col;
+            if ($length > 0) {
+                $typeName = $col . 'fractional';
+            }
+
+            return ['type' => $typeName, 'length' => null, 'precision' => $length];
+        }
+
         if (($col === 'tinyint' && $length === 1) || $col === 'boolean') {
             return ['type' => TableSchema::TYPE_BOOLEAN, 'length' => null];
         }
@@ -326,7 +335,9 @@ class MysqlSchema extends BaseSchema
             TableSchema::TYPE_DATE => ' DATE',
             TableSchema::TYPE_TIME => ' TIME',
             TableSchema::TYPE_DATETIME => ' DATETIME',
+            TableSchema::TYPE_DATETIME_FRACTIONAL => ' DATETIME',
             TableSchema::TYPE_TIMESTAMP => ' TIMESTAMP',
+            TableSchema::TYPE_TIMESTAMP_FRACTIONAL => ' TIMESTAMP',
             TableSchema::TYPE_CHAR => ' CHAR',
             TableSchema::TYPE_UUID => ' CHAR(36)',
             TableSchema::TYPE_JSON => $nativeJson ? ' JSON' : ' LONGTEXT',
@@ -393,13 +404,18 @@ class MysqlSchema extends BaseSchema
             $out .= '(' . $data['length'] . ')';
         }
 
-        $hasPrecision = [TableSchema::TYPE_FLOAT, TableSchema::TYPE_DECIMAL];
-        if (in_array($data['type'], $hasPrecision, true) && isset($data['length'])) {
+        $hasLengthAndPrecision = [TableSchema::TYPE_FLOAT, TableSchema::TYPE_DECIMAL];
+        if (in_array($data['type'], $hasLengthAndPrecision, true) && isset($data['length'])) {
             if (isset($data['precision'])) {
                 $out .= '(' . (int)$data['length'] . ',' . (int)$data['precision'] . ')';
             } else {
                 $out .= '(' . (int)$data['length'] . ')';
             }
+        }
+
+        $hasPrecision = [TableSchema::TYPE_DATETIME_FRACTIONAL, TableSchema::TYPE_TIMESTAMP_FRACTIONAL];
+        if (in_array($data['type'], $hasPrecision, true) && isset($data['precision'])) {
+            $out .= '(' . (int)$data['precision'] . ')';
         }
 
         $hasUnsigned = [
@@ -444,16 +460,28 @@ class MysqlSchema extends BaseSchema
         ) {
             $out .= ' AUTO_INCREMENT';
         }
-        if (isset($data['null']) && $data['null'] === true && $data['type'] === TableSchema::TYPE_TIMESTAMP) {
+
+        $timestampTypes = [TableSchema::TYPE_TIMESTAMP, TableSchema::TYPE_TIMESTAMP_FRACTIONAL];
+        if (isset($data['null']) && $data['null'] === true && in_array($data['type'], $timestampTypes)) {
             $out .= ' NULL';
             unset($data['default']);
         }
+
+        $dateTimeTypes = [
+            TableSchema::TYPE_DATETIME,
+            TableSchema::TYPE_DATETIME_FRACTIONAL,
+            TableSchema::TYPE_TIMESTAMP,
+            TableSchema::TYPE_TIMESTAMP_FRACTIONAL,
+        ];
         if (
             isset($data['default']) &&
-            in_array($data['type'], [TableSchema::TYPE_TIMESTAMP, TableSchema::TYPE_DATETIME]) &&
-            in_array(strtolower($data['default']), ['current_timestamp', 'current_timestamp()'])
+            in_array($data['type'], $dateTimeTypes) &&
+            strpos(strtolower($data['default']), 'current_timestamp') !== false
         ) {
             $out .= ' DEFAULT CURRENT_TIMESTAMP';
+            if (isset($data['precision'])) {
+                $out .= '(' . $data['precision'] . ')';
+            }
             unset($data['default']);
         }
         if (isset($data['default'])) {

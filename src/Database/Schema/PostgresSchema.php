@@ -47,6 +47,7 @@ class PostgresSchema extends BaseSchema
             c.collation_name,
             d.description as comment,
             ordinal_position,
+            c.datetime_precision,
             c.numeric_precision as column_precision,
             c.numeric_scale as column_scale,
             pg_get_serial_sequence(attr.attrelid::regclass::text, attr.attname) IS NOT NULL AS has_serial
@@ -91,7 +92,7 @@ class PostgresSchema extends BaseSchema
             return ['type' => $col, 'length' => null];
         }
         if (strpos($col, 'timestamp') !== false) {
-            return ['type' => TableSchema::TYPE_TIMESTAMP, 'length' => null];
+            return ['type' => TableSchema::TYPE_TIMESTAMP_FRACTIONAL, 'length' => null];
         }
         if (strpos($col, 'time') !== false) {
             return ['type' => TableSchema::TYPE_TIME, 'length' => null];
@@ -178,6 +179,14 @@ class PostgresSchema extends BaseSchema
             $field['length'] = $row['column_precision'];
             $field['precision'] = $row['column_scale'] ?: null;
         }
+
+        if ($field['type'] === TableSchema::TYPE_TIMESTAMP_FRACTIONAL) {
+            $field['precision'] = $row['datetime_precision'];
+            if ($field['precision'] === 0) {
+                $field['type'] = TableSchema::TYPE_TIMESTAMP;
+            }
+        }
+
         $schema->addColumn($row['name'], $field);
     }
 
@@ -373,6 +382,7 @@ class PostgresSchema extends BaseSchema
             TableSchema::TYPE_TIME => ' TIME',
             TableSchema::TYPE_DATETIME => ' TIMESTAMP',
             TableSchema::TYPE_TIMESTAMP => ' TIMESTAMP',
+            TableSchema::TYPE_TIMESTAMP_FRACTIONAL => ' TIMESTAMP',
             TableSchema::TYPE_UUID => ' UUID',
             TableSchema::TYPE_CHAR => ' CHAR',
             TableSchema::TYPE_JSON => ' JSONB',
@@ -420,7 +430,12 @@ class PostgresSchema extends BaseSchema
             $out .= ' COLLATE "' . $data['collate'] . '"';
         }
 
-        if ($data['type'] === TableSchema::TYPE_FLOAT && isset($data['precision'])) {
+        $hasPrecision = [
+            TableSchema::TYPE_FLOAT,
+            TableSchema::TYPE_TIMESTAMP,
+            TableSchema::TYPE_TIMESTAMP_FRACTIONAL,
+        ];
+        if (in_array($data['type'], $hasPrecision) && isset($data['precision'])) {
             $out .= '(' . $data['precision'] . ')';
         }
 
