@@ -80,6 +80,34 @@ class SocketTest extends TestCase
     }
 
     /**
+     * test host() method
+     *
+     * @return void
+     */
+    public function testHost()
+    {
+        $this->Socket = new Socket();
+        $this->assertSame('localhost', $this->Socket->host());
+
+        $this->Socket = new Socket(['host' => '8.8.8.8']);
+        $this->assertSame('dns.google', $this->Socket->host());
+    }
+
+    /**
+     * test addresses() method
+     *
+     * @return void
+     */
+    public function testAddreses()
+    {
+        $this->Socket = new Socket();
+        $this->assertSame(['127.0.0.1'], $this->Socket->addresses());
+
+        $this->Socket = new Socket(['host' => '8.8.8.8']);
+        $this->assertSame(['8.8.8.8'], $this->Socket->addresses());
+    }
+
+    /**
      * testSocketConnection method
      *
      * @return void
