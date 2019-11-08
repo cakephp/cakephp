@@ -30,12 +30,12 @@ exit($runner->run($argv));
 For our `Application` class we can start with:
 
 ```php
-namespace App
+namespace App;
 
 use App\Command\HelloCommand;
-use Cake\Core\BaseApplication;
+use Cake\Core\ConsoleApplicationInterface;
 
-class Application implements HttpApplicationInterface
+class Application implements ConsoleApplicationInterface
 {
     /**
      * Load all the application configuration and bootstrap logic.
