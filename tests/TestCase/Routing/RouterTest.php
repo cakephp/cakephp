@@ -2220,6 +2220,13 @@ class RouterTest extends TestCase
         $this->assertSame($expected, Router::parseRoutePath('Admin/Bookmarks::view'));
 
         $expected = [
+            'prefix' => 'long_prefix/back_end',
+            'controller' => 'Bookmarks',
+            'action' => 'view',
+        ];
+        $this->assertSame($expected, Router::parseRoutePath('LongPrefix/BackEnd/Bookmarks::view'));
+
+        $expected = [
             'plugin' => 'Cms',
             'controller' => 'Articles',
             'action' => 'edit',
