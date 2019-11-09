@@ -855,7 +855,6 @@ class Router
             $params = [];
         }
 
-        /** @var array $params */
         $path = $params['path'] ?? '/' . Inflector::dasherize($name);
         unset($params['path']);
 

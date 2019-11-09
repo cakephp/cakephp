@@ -50,6 +50,7 @@ class App
      * @param string $type Type of class
      * @param string $suffix Class name suffix
      * @return string|null Namespaced class name, null if the class is not found.
+     * @psalm-return class-string|null
      */
     public static function className(string $class, string $type = '', string $suffix = ''): ?string
     {
@@ -63,6 +64,7 @@ class App
         $fullname = '\\' . str_replace('/', '\\', $type . '\\' . $name) . $suffix;
 
         if (static::_classExistsInBase($fullname, $base)) {
+            /** @psalm-var class-string */
             return $base . $fullname;
         }
 
@@ -70,6 +72,7 @@ class App
             return null;
         }
 
+        /** @psalm-var class-string */
         return 'Cake' . $fullname;
     }
 
