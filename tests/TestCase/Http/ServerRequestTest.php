@@ -1248,15 +1248,9 @@ class ServerRequestTest extends TestCase
      *
      * @return void
      */
-    public function testisAjaxFlashAndFriends()
+    public function testisAjax()
     {
         $request = new ServerRequest();
-
-        $request = $request->withEnv('HTTP_USER_AGENT', 'Shockwave Flash');
-        $this->assertTrue($request->is('flash'));
-
-        $request = $request->withEnv('HTTP_USER_AGENT', 'Adobe Flash');
-        $this->assertTrue($request->is('flash'));
 
         $request = $request->withEnv('HTTP_X_REQUESTED_WITH', 'XMLHttpRequest');
         $this->assertTrue($request->is('ajax'));
