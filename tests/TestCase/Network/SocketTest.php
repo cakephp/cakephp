@@ -86,9 +86,6 @@ class SocketTest extends TestCase
      */
     public function testHost()
     {
-        $this->Socket = new Socket();
-        $this->assertSame('localhost', $this->Socket->host());
-
         $this->Socket = new Socket(['host' => '8.8.8.8']);
         $this->assertSame('dns.google', $this->Socket->host());
     }
