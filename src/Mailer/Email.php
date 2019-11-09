@@ -832,7 +832,7 @@ class Email implements JsonSerializable, Serializable
      */
     public function getHeaderCharset()
     {
-        return $this->headerCharset;
+        return $this->headerCharset ? $this->headerCharset : $this->charset;
     }
 
     /**

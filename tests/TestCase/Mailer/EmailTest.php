@@ -2624,6 +2624,20 @@ class EmailTest extends TestCase
     }
 
     /**
+     * Tests headerCharset on reset
+     *
+     * @return void
+     */
+    public function testHeaderCharsetReset()
+    {
+        $email = new Email(['headerCharset' => 'ISO-2022-JP']);
+        $email->reset();
+
+        $this->assertSame('utf-8', $email->getCharset());
+        $this->assertSame('utf-8', $email->getHeaderCharset());
+    }
+
+    /**
      * Test transferEncoding
      *
      * @return void
