@@ -101,7 +101,12 @@ class DateTimeWidgetTest extends TestCase
     {
         $result = $this->DateTime->render(['val' => $selected], $this->context);
         $expected = [
-            'input' => ['type' => 'datetime-local', 'name' => '', 'value' => '2014-01-20T12:30:45'],
+            'input' => [
+                'type' => 'datetime-local',
+                'name' => '',
+                'value' => '2014-01-20T12:30:45',
+                'step' => '1',
+            ],
         ];
         $this->assertHtml($expected, $result);
     }
@@ -122,6 +127,7 @@ class DateTimeWidgetTest extends TestCase
                 'type' => 'datetime-local',
                 'name' => '',
                 'value' => '2019-02-03T15:30:00',
+                'step' => '1',
             ],
         ];
         $this->assertHtml($expected, $result);

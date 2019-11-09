@@ -90,6 +90,10 @@ class DateTimeWidget implements WidgetInterface
             'templateVars' => [],
         ];
 
+        if ($data['type'] === 'datetime-local' || $data['type'] === 'time') {
+            $data += ['step' => '1'];
+        }
+
         $data['value'] = $this->formatDateTime($data['val'], $data);
         unset($data['val'], $data['timezone']);
 
