@@ -131,6 +131,18 @@ class MysqlTest extends TestCase
     }
 
     /**
+     * Test schema
+     *
+     * @return void
+     */
+    public function testSchema()
+    {
+        $connection = ConnectionManager::get('test');
+        $config = ConnectionManager::getConfig('test');
+        $this->assertEquals($config['database'], $connection->getDriver()->schema());
+    }
+
+    /**
      * Test isConnected
      *
      * @return void
