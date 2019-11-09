@@ -342,7 +342,6 @@ class FormProtector
             )
         );
 
-        /** @var (string|int)[] $fieldList */
         foreach ($fieldList as $i => $key) {
             $isLocked = in_array($key, $locked, true);
 

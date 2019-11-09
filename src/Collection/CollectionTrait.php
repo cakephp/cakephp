@@ -408,12 +408,11 @@ trait CollectionTrait
             if ($count === 0) {
                 return null;
             }
-            /** @var \Countable $iterator */
+            /** @var iterable $iterator */
             $iterator = new LimitIterator($iterator, $count - 1, 1);
         }
 
         $result = null;
-        /** @var iterable $iterator */
         foreach ($iterator as $result) {
             // No-op
         }

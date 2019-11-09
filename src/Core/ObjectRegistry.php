@@ -46,7 +46,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * Map of loaded objects.
      *
      * @var object[]
-     * @psalm-var TObject[]
+     * @psalm-var array<string, TObject>
      */
     protected $_loaded = [];
 
@@ -164,6 +164,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      *
      * @param string $class The class to resolve.
      * @return string|null The resolved name or null for failure.
+     * @psalm-return class-string
      */
     abstract protected function _resolveClassName(string $class): ?string;
 
@@ -375,6 +376,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * Returns an array iterator.
      *
      * @return \ArrayIterator
+     * @psalm-return \ArrayIterator<string, TObject>
      */
     public function getIterator(): ArrayIterator
     {
