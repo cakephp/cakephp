@@ -20,6 +20,7 @@ use Cake\Core\Configure;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Utility\Inflector;
+use InvalidArgumentException;
 use ReflectionFunction;
 use ReflectionMethod;
 use RuntimeException;
@@ -154,6 +155,13 @@ class Router
      * @var string[]
      */
     protected static $_defaultExtensions = [];
+
+    /**
+     * Cache of parsed route paths
+     *
+     * @var array
+     */
+    protected static $_routePaths = [];
 
     /**
      * Get or set default route class.
@@ -433,6 +441,10 @@ class Router
         $frag = '';
 
         if (is_array($url)) {
+            if (isset($url['_path'])) {
+                $url = self::unwrapShortString($url);
+            }
+
             if (isset($url['_ssl'])) {
                 $url['_scheme'] = $url['_ssl'] === true ? 'https' : 'http';
             }
@@ -499,6 +511,7 @@ class Router
             }
             $output = $context['_base'] . $url;
         }
+
         $protocol = preg_match('#^[a-z][a-z0-9+\-.]*\://#i', $output);
         if ($protocol === 0) {
             $output = str_replace('//', '/', '/' . $output);
@@ -508,6 +521,27 @@ class Router
         }
 
         return $output . $frag;
+    }
+
+    /**
+     * Generate URL for route path.
+     *
+     * Route path examples:
+     * - Bookmarks::view
+     * - Admin/Bookmarks::view
+     * - Cms.Articles::edit
+     * - Vendor/Cms.Management/Admin/Articles::view
+     *
+     * @param string $path Route path specifying controller and action, optionally with plugin and prefix.
+     * @param array $params An array specifying any additional parameters.
+     *   Can be also any special parameters supported by `Router::url()`.
+     * @param bool $full If true, the full base URL will be prepended to the result.
+     *   Default is false.
+     * @return string Full translated URL with base path.
+     */
+    public static function pathUrl(string $path, array $params = [], bool $full = false): string
+    {
+        return static::url(['_path' => $path] + $params, $full);
     }
 
     /**
@@ -891,5 +925,76 @@ class Router
     public static function setRouteCollection(RouteCollection $routeCollection): void
     {
         static::$_collection = $routeCollection;
+    }
+
+    /**
+     * Inject route defaults from `_path` key
+     *
+     * @param array $url Route array with `_path` key
+     * @return array
+     */
+    protected static function unwrapShortString(array $url)
+    {
+        foreach (['plugin', 'prefix', 'controller', 'action'] as $key) {
+            if (array_key_exists($key, $url)) {
+                throw new InvalidArgumentException(
+                    "`$key` cannot be used when defining route targets with a string route path."
+                );
+            }
+        }
+        $url += static::parseRoutePath($url['_path']);
+        $url += [
+            'plugin' => false,
+            'prefix' => false,
+        ];
+        unset($url['_path']);
+
+        return $url;
+    }
+
+    /**
+     * Parse a string route path
+     *
+     * String examples:
+     * - Bookmarks::view
+     * - Admin/Bookmarks::view
+     * - Cms.Articles::edit
+     * - Vendor/Cms.Management/Admin/Articles::view
+     *
+     * @param string $url Route path in [Plugin.][Prefix/]Controller::action format
+     * @return string[]
+     */
+    public static function parseRoutePath(string $url): array
+    {
+        if (isset(static::$_routePaths[$url])) {
+            return static::$_routePaths[$url];
+        }
+
+        $regex = '#^
+            (?:(?<plugin>[a-z0-9]+(?:/[a-z0-9]+)*)\.)?
+            (?:(?<prefix>[a-z0-9]+(?:/[a-z0-9]+)*)/)?
+            (?<controller>[a-z0-9]+)
+            ::
+            (?<action>[a-z0-9_]+)
+            $#ix';
+
+        if (!preg_match($regex, $url, $matches)) {
+            throw new InvalidArgumentException("Could not parse a string route path `{$url}`.");
+        }
+
+        $defaults = [];
+
+        if ($matches['plugin'] !== '') {
+            $defaults['plugin'] = $matches['plugin'];
+        }
+        if ($matches['prefix'] !== '') {
+            $defaults['prefix'] = Inflector::underscore($matches['prefix']);
+        }
+        $defaults['controller'] = $matches['controller'];
+        $defaults['action'] = $matches['action'];
+
+        static::$_routePaths[$url] = $defaults;
+
+        return $defaults;
     }
 }

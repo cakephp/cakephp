@@ -692,33 +692,13 @@ class RouteBuilder
      * @param string|array $defaults Defaults array from the connect() method.
      * @return array
      */
-    protected static function parseDefaults($defaults): array
+    protected function parseDefaults($defaults): array
     {
         if (!is_string($defaults)) {
             return $defaults;
         }
 
-        $regex = '/(?:(?<plugin>[a-zA-Z0-9\/]*)\.)?(?<prefix>[a-zA-Z0-9\/]*?)' .
-            '(?:\/)?(?<controller>[a-zA-Z0-9]*):{2}(?<action>[a-zA-Z0-9_]*)/i';
-
-        if (preg_match($regex, $defaults, $matches)) {
-            foreach ($matches as $key => $value) {
-                // Remove numeric keys and empty values.
-                if (is_int($key) || $value === '' || $value === '::') {
-                    unset($matches[$key]);
-                }
-            }
-            $length = count($matches);
-
-            if (isset($matches['prefix'])) {
-                $matches['prefix'] = strtolower($matches['prefix']);
-            }
-
-            if ($length >= 2 || $length <= 4) {
-                return $matches;
-            }
-        }
-        throw new RuntimeException("Could not parse `{$defaults}` route destination string.");
+        return Router::parseRoutePath($defaults);
     }
 
     /**

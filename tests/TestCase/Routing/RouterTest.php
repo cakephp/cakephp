@@ -24,6 +24,7 @@ use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use RuntimeException;
 
 /**
@@ -384,6 +385,9 @@ class RouterTest extends TestCase
 
         $result = Router::url('/articles/');
         $this->assertSame('/magazine/articles/', $result);
+
+        $result = Router::url('/articles::index');
+        $this->assertSame('/magazine/articles::index', $result);
 
         $result = Router::url('/articles/view');
         $this->assertSame('/magazine/articles/view', $result);
@@ -2196,6 +2200,82 @@ class RouterTest extends TestCase
     }
 
     /**
+     * Test parseRoutePath() with valid strings
+     *
+     * @return void
+     */
+    public function testParseRoutePath()
+    {
+        $expected = [
+            'controller' => 'Bookmarks',
+            'action' => 'view',
+        ];
+        $this->assertSame($expected, Router::parseRoutePath('Bookmarks::view'));
+
+        $expected = [
+            'prefix' => 'admin',
+            'controller' => 'Bookmarks',
+            'action' => 'view',
+        ];
+        $this->assertSame($expected, Router::parseRoutePath('Admin/Bookmarks::view'));
+
+        $expected = [
+            'prefix' => 'long_prefix/back_end',
+            'controller' => 'Bookmarks',
+            'action' => 'view',
+        ];
+        $this->assertSame($expected, Router::parseRoutePath('LongPrefix/BackEnd/Bookmarks::view'));
+
+        $expected = [
+            'plugin' => 'Cms',
+            'controller' => 'Articles',
+            'action' => 'edit',
+        ];
+        $this->assertSame($expected, Router::parseRoutePath('Cms.Articles::edit'));
+
+        $expected = [
+            'plugin' => 'Vendor/Cms',
+            'prefix' => 'management/admin',
+            'controller' => 'Articles',
+            'action' => 'view',
+        ];
+        $this->assertSame($expected, Router::parseRoutePath('Vendor/Cms.Management/Admin/Articles::view'));
+    }
+
+    /**
+     * @return array
+     */
+    public function invalidRoutePathProvider()
+    {
+        return [
+            ['view'],
+            ['Bookmarks:view'],
+            ['Bookmarks/view'],
+            ['Vendor\Cms.Articles::edit'],
+            ['Vendor//Cms.Articles::edit'],
+            ['Cms./Articles::edit'],
+            ['Cms./Admin/Articles::edit'],
+            ['Cms.Admin//Articles::edit'],
+            ['Vendor\Cms.Management\Admin\Articles::edit'],
+        ];
+    }
+
+    /**
+     * Test parseRoutePath() with invalid strings
+     *
+     * @param string $value
+     * @return void
+     * @dataProvider invalidRoutePathProvider
+     */
+    public function testParseInvalidRoutePath(string $value)
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Could not parse a string route path');
+
+        Router::parseRoutePath($value);
+    }
+
+    /**
      * Test url() works with patterns on :action
      *
      * @return void
@@ -3023,6 +3103,152 @@ class RouterTest extends TestCase
 
         ];
         $this->assertEquals($result, $expected);
+    }
+
+    /**
+     * test url() with a string route path
+     *
+     * @return void
+     */
+    public function testUrlGenerationWithPathUrl()
+    {
+        Router::connect('/articles', 'Articles::index');
+        Router::connect('/articles/view/*', 'Articles::view');
+        Router::connect('/article/{slug}', 'Articles::read');
+        Router::connect('/admin/articles', 'Admin/Articles::index');
+        Router::connect('/cms/articles', 'Cms.Articles::index');
+        Router::connect('/cms/admin/articles', 'Cms.Admin/Articles::index');
+
+        $result = Router::pathUrl('Articles::index');
+        $expected = '/articles';
+        $this->assertEquals($result, $expected);
+
+        $result = Router::pathUrl('Articles::view', [3]);
+        $expected = '/articles/view/3';
+        $this->assertEquals($result, $expected);
+
+        $result = Router::pathUrl('Articles::read', ['slug' => 'title']);
+        $expected = '/article/title';
+        $this->assertEquals($result, $expected);
+
+        $result = Router::pathUrl('Admin/Articles::index');
+        $expected = '/admin/articles';
+        $this->assertEquals($result, $expected);
+
+        $result = Router::pathUrl('Cms.Admin/Articles::index');
+        $expected = '/cms/admin/articles';
+        $this->assertEquals($result, $expected);
+
+        $result = Router::pathUrl('Cms.Articles::index');
+        $expected = '/cms/articles';
+        $this->assertEquals($result, $expected);
+    }
+
+    /**
+     * test url() with a string route path doesn't take parameters from current request
+     *
+     * @return void
+     */
+    public function testUrlGenerationWithRoutePathWithContext()
+    {
+        Router::connect('/articles', 'Articles::index');
+        Router::connect('/articles/view/*', 'Articles::view');
+        Router::connect('/admin/articles', 'Admin/Articles::index');
+        Router::connect('/cms/articles', 'Cms.Articles::index');
+        Router::connect('/cms/admin/articles', 'Cms.Admin/Articles::index');
+
+        $request = new ServerRequest([
+            'params' => [
+                'plugin' => 'Cms',
+                'prefix' => 'admin',
+                'controller' => 'Articles',
+                'action' => 'edit',
+                'pass' => ['3'],
+            ],
+            'url' => '/admin/articles/edit/3',
+        ]);
+        Router::setRequest($request);
+
+        $expected = '/articles';
+        $result = Router::pathUrl('Articles::index');
+        $this->assertEquals($result, $expected);
+        $result = Router::url(['_path' => 'Articles::index']);
+        $this->assertEquals($result, $expected);
+
+        $expected = '/articles/view/3';
+        $result = Router::pathUrl('Articles::view', [3]);
+        $this->assertEquals($result, $expected);
+        $result = Router::url(['_path' => 'Articles::view', 3]);
+        $this->assertEquals($result, $expected);
+
+        $expected = '/admin/articles';
+        $result = Router::pathUrl('Admin/Articles::index');
+        $this->assertEquals($result, $expected);
+        $result = Router::url(['_path' => 'Admin/Articles::index']);
+        $this->assertEquals($result, $expected);
+
+        $expected = '/cms/admin/articles';
+        $result = Router::pathUrl('Cms.Admin/Articles::index');
+        $this->assertEquals($result, $expected);
+        $result = Router::url(['_path' => 'Cms.Admin/Articles::index']);
+        $this->assertEquals($result, $expected);
+
+        $expected = '/cms/articles';
+        $result = Router::pathUrl('Cms.Articles::index');
+        $this->assertEquals($result, $expected);
+        $result = Router::url(['_path' => 'Cms.Articles::index']);
+        $this->assertEquals($result, $expected);
+    }
+
+    /**
+     * @return array
+     */
+    public function invalidRoutePathParametersArrayProvider()
+    {
+        return [
+            [['plugin' => false]],
+            [['plugin' => 'Cms']],
+            [['prefix' => false]],
+            [['prefix' => 'Manager']],
+            [['controller' => 'Bookmarks']],
+            [['controller' => 'Articles']],
+            [['action' => 'edit']],
+            [['action' => 'index']],
+        ];
+    }
+
+    /**
+     * Test url() doesn't let override parts of string route path
+     *
+     * @param array $params
+     * @return void
+     * @dataProvider invalidRoutePathParametersArrayProvider
+     */
+    public function testUrlGenerationOverridingShortString(array $params)
+    {
+        Router::connect('/articles', 'Articles::index');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('cannot be used when defining route targets with a string route path.');
+
+        Router::pathUrl('Articles::index', $params);
+    }
+
+    /**
+     * Test url() doesn't let override parts of string route path from `_path` key
+     *
+     * @param array $params
+     * @return void
+     * @dataProvider invalidRoutePathParametersArrayProvider
+     */
+    public function testUrlGenerationOverridingPathKey(array $params)
+    {
+        Router::connect('/articles', 'Articles::index');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('cannot be used when defining route targets with a string route path.');
+
+        Router::url(['_path' => 'Articles::index'] + $params);
     }
 
     /**
