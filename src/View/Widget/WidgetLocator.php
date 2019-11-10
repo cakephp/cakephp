@@ -55,6 +55,13 @@ class WidgetLocator
     protected $_templates;
 
     /**
+     * View instance.
+     *
+     * @var \Cake\View\View
+     */
+    protected $_view;
+
+    /**
      * Constructor
      *
      * @param \Cake\View\StringTemplate $templates Templates instance to use.
@@ -64,6 +71,8 @@ class WidgetLocator
     public function __construct(StringTemplate $templates, View $view, array $widgets = [])
     {
         $this->_templates = $templates;
+        $this->_view = $view;
+
         if (!empty($widgets)) {
             $this->add($widgets);
             foreach ($this->_widgets as $key => $widget) {
@@ -73,7 +82,6 @@ class WidgetLocator
                 }
             }
         }
-        $this->_widgets['_view'] = $view;
     }
 
     /**
@@ -135,7 +143,6 @@ class WidgetLocator
      *
      * @param string $name The widget name to get.
      * @return object WidgetInterface instance.
-     *  or \Cake\View\View instance in case of special name "_view".
      * @throws \RuntimeException when widget is undefined.
      * @throws \ReflectionException
      */
@@ -190,7 +197,11 @@ class WidgetLocator
             $reflection = new ReflectionClass($className);
             $arguments = [$this->_templates];
             foreach ($widget as $requirement) {
-                $arguments[] = $this->get($requirement);
+                if ($requirement === '_view') {
+                    $arguments[] = $this->_view;
+                } else {
+                    $arguments[] = $this->get($requirement);
+                }
             }
             $instance = $reflection->newInstanceArgs($arguments);
         } else {

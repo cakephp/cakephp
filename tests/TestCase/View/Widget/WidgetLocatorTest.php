@@ -20,6 +20,7 @@ use Cake\TestSuite\TestCase;
 use Cake\View\StringTemplate;
 use Cake\View\View;
 use Cake\View\Widget\WidgetLocator;
+use TestApp\View\Widget\TestUsingViewWidget;
 
 /**
  * WidgetLocator test case
@@ -68,16 +69,20 @@ class WidgetLocatorTest extends TestCase
     }
 
     /**
-     * Test getting view instance from locator.
+     * Test that view instance is property passed to widget constructor which need it.
      *
      * @return void
      */
-    public function testGetViewInstance()
+    public function testGeneratingWidgetUsingViewInstance()
     {
-        $inputs = new WidgetLocator($this->templates, $this->view, []);
+        $inputs = new WidgetLocator(
+            $this->templates,
+            $this->view,
+            ['test' => [TestUsingViewWidget::class, '_view']]
+        );
 
-        $result = $inputs->get('_view');
-        $this->assertInstanceOf('Cake\View\View', $result);
+        $widget = $inputs->get('test');
+        $this->assertInstanceOf(View::class, $widget->getView());
     }
 
     /**
