@@ -15,10 +15,8 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 use Cake\Error\Debugger;
-?>
 
-<?php
-foreach ($error->getTrace() as $i => $stack):
+foreach ($trace as $i => $stack):
     $excerpt = $params = [];
 
     if (isset($stack['file'], $stack['line'])):
@@ -31,7 +29,7 @@ foreach ($error->getTrace() as $i => $stack):
         $file = '[internal function]';
     endif;
 
-    if ($stack['function']):
+    if (isset($stack['function'])):
         if (!empty($stack['args'])):
             foreach ((array)$stack['args'] as $arg):
                 $params[] = Debugger::exportVar($arg, 4);

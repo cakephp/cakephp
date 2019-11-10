@@ -17,17 +17,16 @@ use Cake\Error\Debugger;
 <a href="#" class="toggle-link toggle-vendor-frames">Toggle Vendor Stack Frames</a>
 
 <ul class="stack-trace">
-<?php foreach ($error->getTrace() as $i => $stack): ?>
+<?php foreach ($trace as $i => $stack): ?>
     <?php
     $class = isset($stack['file']) && strpos($stack['file'], APP) === false ? 'vendor-frame' : 'app-frame';
     $class .= $i == 0 ? ' active' : '';
     ?>
     <li class="stack-frame <?= $class ?>">
-    <?php if (isset($stack['function'])): ?>
         <a href="#" data-target="stack-frame-<?= $i ?>">
             <?php if (isset($stack['class'])): ?>
                 <span class="stack-function"><?= h($stack['class'] . $stack['type'] . $stack['function']) ?></span>
-            <?php else: ?>
+            <?php elseif (isset($stack['function'])): ?>
                 <span class="stack-function"><?= h($stack['function']) ?></span>
             <?php endif; ?>
             <span class="stack-file">
@@ -38,9 +37,6 @@ use Cake\Error\Debugger;
             <?php endif ?>
             </span>
         </a>
-    <?php else: ?>
-        <a href="#">&rang; [internal function]</a>
-    <?php endif; ?>
     </li>
 <?php endforeach; ?>
 </ul>

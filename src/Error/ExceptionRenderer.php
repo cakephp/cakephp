@@ -206,12 +206,18 @@ class ExceptionRenderer implements ExceptionRendererInterface
 
         $isDebug = Configure::read('debug');
         if ($isDebug) {
-            $viewVars['trace'] = Debugger::formatTrace($exception->getTrace(), [
+            $trace = Debugger::formatTrace($exception->getTrace(), [
                 'format' => 'array',
                 'args' => false,
             ]);
-            $viewVars['file'] = $exception->getFile() ?: 'null';
-            $viewVars['line'] = $exception->getLine() ?: 'null';
+            $origin = [
+                'file' => $exception->getFile() ?: 'null',
+                'line' => $exception->getLine() ?: 'null',
+            ];
+            // Traces don't include the origin file/line.
+            array_unshift($trace, $origin);
+            $viewVars['trace'] = $trace;
+            $viewVars += $origin;
             $serialize[] = 'file';
             $serialize[] = 'line';
         }
