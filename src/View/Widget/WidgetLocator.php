@@ -73,15 +73,7 @@ class WidgetLocator
         $this->_templates = $templates;
         $this->_view = $view;
 
-        if (!empty($widgets)) {
-            $this->add($widgets);
-            foreach ($this->_widgets as $key => $widget) {
-                if (is_string($widget) && !class_exists($widget)) {
-                    $this->load($widget);
-                    unset($this->_widgets[$key]);
-                }
-            }
-        }
+        $this->add($widgets);
     }
 
     /**
@@ -123,14 +115,24 @@ class WidgetLocator
      */
     public function add(array $widgets): void
     {
-        foreach ($widgets as $object) {
-            if (is_object($object) && !($object instanceof WidgetInterface)) {
-                throw new RuntimeException(
-                    'Widget objects must implement Cake\View\Widget\WidgetInterface.'
-                );
+        $files = [];
+
+        foreach ($widgets as $key => $widget) {
+            if (is_int($key)) {
+                $files[] = $widget;
+                continue;
             }
+
+            if (is_object($widget) && !($widget instanceof WidgetInterface)) {
+                throw new RuntimeException('Widget objects must implement ' . WidgetInterface::class);
+            }
+
+            $this->_widgets[$key] = $widget;
         }
-        $this->_widgets = $widgets + $this->_widgets;
+
+        foreach ($files as $file) {
+            $this->load($file);
+        }
     }
 
     /**
@@ -188,12 +190,16 @@ class WidgetLocator
             $widget = [$widget];
         }
 
+        if (!is_array($widget)) {
+            throw new RuntimeException('Widget config must be a string or array.');
+        }
+
         $class = array_shift($widget);
         $className = App::className($class, 'View/Widget', 'Widget');
         if ($className === null) {
             throw new RuntimeException(sprintf('Unable to locate widget class "%s"', $class));
         }
-        if ($type === 'array' && count($widget)) {
+        if (count($widget)) {
             $reflection = new ReflectionClass($className);
             $arguments = [$this->_templates];
             foreach ($widget as $requirement) {
