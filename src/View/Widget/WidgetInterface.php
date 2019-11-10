@@ -33,8 +33,7 @@ interface WidgetInterface
     public function render(array $data, ContextInterface $context): string;
 
     /**
-     * Returns a list of fields that need to be secured for
-     * this widget. Fields are in the form of Model[field][suffix]
+     * Returns a list of fields that need to be secured for this widget.
      *
      * @param array $data The data to render.
      * @return string[] Array of fields to secure.
