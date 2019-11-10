@@ -18,16 +18,6 @@ class TestErrorHandler extends ErrorHandler
     public $response;
 
     /**
-     * Stub output clearing in tests.
-     *
-     * @return void
-     */
-    protected function _clearOutput(): void
-    {
-        // noop
-    }
-
-    /**
      * Stub sending responses
      *
      * @param \Cake\Http\Response $response

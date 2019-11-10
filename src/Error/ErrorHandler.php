@@ -136,7 +136,6 @@ class ErrorHandler extends BaseErrorHandler
                 Router::getRequest()
             );
             $response = $renderer->render();
-            $this->_clearOutput();
             $this->_sendResponse($response);
         } catch (Throwable $exception) {
             $this->_logInternalError($exception);
@@ -174,20 +173,6 @@ class ErrorHandler extends BaseErrorHandler
         $factory = $renderer;
 
         return $factory($exception, $request);
-    }
-
-    /**
-     * Clear output buffers so error pages display properly.
-     *
-     * Easily stubbed in testing.
-     *
-     * @return void
-     */
-    protected function _clearOutput(): void
-    {
-        while (ob_get_level()) {
-            ob_end_clean();
-        }
     }
 
     /**
