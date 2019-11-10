@@ -150,15 +150,19 @@ class WidgetLocator
      */
     public function get(string $name)
     {
-        if (!isset($this->_widgets[$name]) && empty($this->_widgets['_default'])) {
-            throw new RuntimeException(sprintf('Unknown widget "%s"', $name));
-        }
         if (!isset($this->_widgets[$name])) {
+            if (empty($this->_widgets['_default'])) {
+                throw new RuntimeException(sprintf('Unknown widget `%s`', $name));
+            }
+
             $name = '_default';
         }
-        $this->_widgets[$name] = $this->_resolveWidget($this->_widgets[$name]);
 
-        return $this->_widgets[$name];
+        if ($this->_widgets[$name] instanceof WidgetInterface) {
+            return $this->_widgets[$name];
+        }
+
+        return $this->_widgets[$name] = $this->_resolveWidget($this->_widgets[$name]);
     }
 
     /**
@@ -181,12 +185,7 @@ class WidgetLocator
      */
     protected function _resolveWidget($widget): object
     {
-        $type = gettype($widget);
-        if ($type === 'object') {
-            return $widget;
-        }
-
-        if ($type === 'string') {
+        if (is_string($widget)) {
             $widget = [$widget];
         }
 
