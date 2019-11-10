@@ -704,15 +704,15 @@ class RouterTest extends TestCase
         Router::connect('/pages/*', ['controller' => 'pages', 'action' => 'display']);
         Router::connect('/reset/*', ['admin' => true, 'controller' => 'users', 'action' => 'reset']);
         Router::connect('/tests', ['controller' => 'tests', 'action' => 'index']);
-        Router::connect('/admin/:controller/:action/*', ['prefix' => 'admin']);
+        Router::connect('/admin/:controller/:action/*', ['prefix' => 'Admin']);
         Router::extensions('rss', false);
 
         $request = new ServerRequest([
             'params' => [
                 'controller' => 'registrations',
-                'action' => 'admin_index',
+                'action' => 'index',
                 'plugin' => null,
-                'prefix' => 'admin',
+                'prefix' => 'Admin',
                 '_ext' => 'html',
             ],
             'url' => '/admin/registrations/index',
@@ -724,15 +724,15 @@ class RouterTest extends TestCase
         $this->assertEquals($expected, $result);
 
         Router::reload();
-        Router::connect('/admin/subscriptions/:action/*', ['controller' => 'subscribe', 'prefix' => 'admin']);
-        Router::connect('/admin/:controller/:action/*', ['prefix' => 'admin']);
+        Router::connect('/admin/subscriptions/:action/*', ['controller' => 'Subscribe', 'prefix' => 'Admin']);
+        Router::connect('/admin/:controller/:action/*', ['prefix' => 'Admin']);
 
         $request = new ServerRequest([
             'params' => [
                 'action' => 'index',
                 'plugin' => null,
-                'controller' => 'subscribe',
-                'prefix' => 'admin',
+                'controller' => 'Subscribe',
+                'prefix' => 'Admin',
             ],
             'webroot' => '/magazine/',
             'base' => '/magazine',
@@ -744,7 +744,7 @@ class RouterTest extends TestCase
         $expected = '/magazine/admin/subscriptions/edit/1';
         $this->assertEquals($expected, $result);
 
-        $result = Router::url(['prefix' => 'admin', 'controller' => 'users', 'action' => 'login']);
+        $result = Router::url(['prefix' => 'Admin', 'controller' => 'users', 'action' => 'login']);
         $expected = '/magazine/admin/users/login';
         $this->assertEquals($expected, $result);
 
@@ -880,7 +880,13 @@ class RouterTest extends TestCase
                 $routes->fallbacks('InflectedRoute');
             });
         });
-        $result = Router::url(['prefix' => 'admin', 'plugin' => 'MyPlugin', 'controller' => 'Forms', 'action' => 'edit', 2]);
+        $result = Router::url([
+            'prefix' => 'Admin',
+            'plugin' => 'MyPlugin',
+            'controller' => 'Forms',
+            'action' => 'edit',
+            2
+        ]);
         $expected = '/admin/my-plugin/forms/edit/2';
         $this->assertEquals($expected, $result);
     }
@@ -898,7 +904,7 @@ class RouterTest extends TestCase
             });
         });
         $result = Router::url([
-            'prefix' => 'admin/backoffice',
+            'prefix' => 'Admin/Backoffice',
             'controller' => 'Dashboards',
             'action' => 'home',
         ]);
@@ -2911,12 +2917,12 @@ class RouterTest extends TestCase
     {
         Router::prefix('admin', function (RouteBuilder $routes) {
             $this->assertSame('/admin', $routes->path());
-            $this->assertEquals(['prefix' => 'admin'], $routes->params());
+            $this->assertEquals(['prefix' => 'Admin'], $routes->params());
         });
 
         Router::prefix('admin', ['_namePrefix' => 'admin:'], function (RouteBuilder $routes) {
             $this->assertSame('admin:', $routes->namePrefix());
-            $this->assertEquals(['prefix' => 'admin'], $routes->params());
+            $this->assertEquals(['prefix' => 'Admin'], $routes->params());
         });
     }
 
@@ -2929,12 +2935,12 @@ class RouterTest extends TestCase
     {
         Router::prefix('admin', ['param' => 'value'], function (RouteBuilder $routes) {
             $this->assertSame('/admin', $routes->path());
-            $this->assertEquals(['prefix' => 'admin', 'param' => 'value'], $routes->params());
+            $this->assertEquals(['prefix' => 'Admin', 'param' => 'value'], $routes->params());
         });
 
         Router::prefix('CustomPath', ['path' => '/custom-path'], function (RouteBuilder $routes) {
             $this->assertSame('/custom-path', $routes->path());
-            $this->assertEquals(['prefix' => 'custom_path'], $routes->params());
+            $this->assertEquals(['prefix' => 'CustomPath'], $routes->params());
         });
     }
 
