@@ -69,7 +69,7 @@ class WidgetLocatorTest extends TestCase
     }
 
     /**
-     * Test that view instance is property passed to widget constructor which need it.
+     * Test that view instance is properly passed to widget constructor.
      *
      * @return void
      */
