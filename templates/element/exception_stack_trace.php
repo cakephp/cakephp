@@ -19,7 +19,7 @@ use Cake\Error\Debugger;
 foreach ($trace as $i => $stack):
     $excerpt = $params = [];
 
-    if (isset($stack['file'], $stack['line'])):
+    if (isset($stack['file'], $stack['line']) && is_numeric($stack['line'])):
         $excerpt = Debugger::excerpt($stack['file'], $stack['line'], 4);
     endif;
 
@@ -46,7 +46,7 @@ foreach ($trace as $i => $stack):
         </div>
 
         <table class="code-excerpt" cellspacing="0" cellpadding="0">
-        <?php $lineno = isset($stack['line']) ? $stack['line'] - 4 : 0 ?>
+        <?php $lineno = isset($stack['line']) && is_numeric($stack['line']) ? $stack['line'] - 4 : 0 ?>
         <?php foreach ($excerpt as $l => $line): ?>
             <tr>
                 <td class="excerpt-number" data-number="<?= $lineno + $l ?>"></td>
