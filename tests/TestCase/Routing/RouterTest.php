@@ -885,7 +885,7 @@ class RouterTest extends TestCase
             'plugin' => 'MyPlugin',
             'controller' => 'Forms',
             'action' => 'edit',
-            2
+            2,
         ]);
         $expected = '/admin/my-plugin/forms/edit/2';
         $this->assertEquals($expected, $result);

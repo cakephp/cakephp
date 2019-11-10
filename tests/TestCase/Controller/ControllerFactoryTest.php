@@ -70,7 +70,7 @@ class ControllerFactoryTest extends TestCase
      */
     public function testPrefixedAppControllerDeprecated()
     {
-        $this->deprecated(function() {
+        $this->deprecated(function () {
             $request = new ServerRequest([
                 'url' => 'admin/posts/index',
                 'params' => [
