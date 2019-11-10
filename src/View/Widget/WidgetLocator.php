@@ -181,29 +181,29 @@ class WidgetLocator
     /**
      * Resolves a widget spec into an instance.
      *
-     * @param mixed $widget The widget to get
+     * @param mixed $config The widget config.
      * @return \Cake\View\Widget\WidgetInterface Widget instance.
      * @throws \ReflectionException
      */
-    protected function _resolveWidget($widget): WidgetInterface
+    protected function _resolveWidget($config): WidgetInterface
     {
-        if (is_string($widget)) {
-            $widget = [$widget];
+        if (is_string($config)) {
+            $config = [$config];
         }
 
-        if (!is_array($widget)) {
+        if (!is_array($config)) {
             throw new RuntimeException('Widget config must be a string or array.');
         }
 
-        $class = array_shift($widget);
+        $class = array_shift($config);
         $className = App::className($class, 'View/Widget', 'Widget');
         if ($className === null) {
             throw new RuntimeException(sprintf('Unable to locate widget class "%s"', $class));
         }
-        if (count($widget)) {
+        if (count($config)) {
             $reflection = new ReflectionClass($className);
             $arguments = [$this->_templates];
-            foreach ($widget as $requirement) {
+            foreach ($config as $requirement) {
                 if ($requirement === '_view') {
                     $arguments[] = $this->_view;
                 } else {
