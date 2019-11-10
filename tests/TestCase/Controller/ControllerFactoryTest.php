@@ -28,7 +28,7 @@ use Cake\TestSuite\TestCase;
 class ControllerFactoryTest extends TestCase
 {
     /**
-     * @var \Cake\Http\ControllerFactory
+     * @var \Cake\Controller\ControllerFactory
      */
     protected $factory;
 
@@ -68,22 +68,24 @@ class ControllerFactoryTest extends TestCase
      *
      * @return void
      */
-    public function testPrefixedAppController()
+    public function testPrefixedAppControllerDeprecated()
     {
-        $request = new ServerRequest([
-            'url' => 'admin/posts/index',
-            'params' => [
-                'prefix' => 'admin',
-                'controller' => 'Posts',
-                'action' => 'index',
-            ],
-        ]);
-        $result = $this->factory->create($request);
-        $this->assertInstanceOf(
-            'TestApp\Controller\Admin\PostsController',
-            $result
-        );
-        $this->assertSame($request, $result->getRequest());
+        $this->deprecated(function() {
+            $request = new ServerRequest([
+                'url' => 'admin/posts/index',
+                'params' => [
+                    'prefix' => 'admin',
+                    'controller' => 'Posts',
+                    'action' => 'index',
+                ],
+            ]);
+            $result = $this->factory->create($request);
+            $this->assertInstanceOf(
+                'TestApp\Controller\Admin\PostsController',
+                $result
+            );
+            $this->assertSame($request, $result->getRequest());
+        });
     }
 
     /**
@@ -96,7 +98,7 @@ class ControllerFactoryTest extends TestCase
         $request = new ServerRequest([
             'url' => 'admin/sub/posts/index',
             'params' => [
-                'prefix' => 'admin/sub',
+                'prefix' => 'Admin/Sub',
                 'controller' => 'Posts',
                 'action' => 'index',
             ],
@@ -165,7 +167,7 @@ class ControllerFactoryTest extends TestCase
         $request = new ServerRequest([
             'url' => 'test_plugin/admin/comments',
             'params' => [
-                'prefix' => 'admin',
+                'prefix' => 'Admin',
                 'plugin' => 'TestPlugin',
                 'controller' => 'Comments',
                 'action' => 'index',
