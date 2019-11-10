@@ -93,7 +93,7 @@ class ExceptionRendererTest extends TestCase
         $request = new ServerRequest();
         $request = $request
             ->withParam('controller', 'Articles')
-            ->withParam('prefix', 'admin');
+            ->withParam('prefix', 'Admin');
 
         $ExceptionRenderer = new MyCustomExceptionRenderer($exception, $request);
 
@@ -123,7 +123,7 @@ class ExceptionRendererTest extends TestCase
         $this->assertSame('error400', $controller->viewBuilder()->getTemplate());
         $this->assertSame('Error', $controller->viewBuilder()->getTemplatePath());
 
-        $request = $request->withParam('prefix', 'admin');
+        $request = $request->withParam('prefix', 'Admin');
         $exception = new MissingActionException(['controller' => 'Foo', 'action' => 'bar']);
 
         $ExceptionRenderer = new ExceptionRenderer($exception, $request);
