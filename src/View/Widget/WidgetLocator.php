@@ -124,7 +124,11 @@ class WidgetLocator
             }
 
             if (is_object($widget) && !($widget instanceof WidgetInterface)) {
-                throw new RuntimeException('Widget objects must implement ' . WidgetInterface::class);
+                throw new RuntimeException(sprintf(
+                    'Widget objects must implement `%s`. Got `%s` instance instead.',
+                    WidgetInterface::class,
+                    getTypeName($widget)
+                ));
             }
 
             $this->_widgets[$key] = $widget;
@@ -144,11 +148,10 @@ class WidgetLocator
      * the `_default` widget is undefined.
      *
      * @param string $name The widget name to get.
-     * @return object WidgetInterface instance.
+     * @return \Cake\View\Widget\WidgetInterface WidgetInterface instance.
      * @throws \RuntimeException when widget is undefined.
-     * @throws \ReflectionException
      */
-    public function get(string $name)
+    public function get(string $name): WidgetInterface
     {
         if (!isset($this->_widgets[$name])) {
             if (empty($this->_widgets['_default'])) {
@@ -179,11 +182,10 @@ class WidgetLocator
      * Resolves a widget spec into an instance.
      *
      * @param mixed $widget The widget to get
-     * @return object Either WidgetInterface or View instance.
-     * @throws \RuntimeException when class cannot be loaded or does not implement WidgetInterface.
+     * @return \Cake\View\Widget\WidgetInterface Widget instance.
      * @throws \ReflectionException
      */
-    protected function _resolveWidget($widget): object
+    protected function _resolveWidget($widget): WidgetInterface
     {
         if (is_string($widget)) {
             $widget = [$widget];
@@ -208,12 +210,11 @@ class WidgetLocator
                     $arguments[] = $this->get($requirement);
                 }
             }
+            /** @var \Cake\View\Widget\WidgetInterface $instance */
             $instance = $reflection->newInstanceArgs($arguments);
         } else {
+            /** @var \Cake\View\Widget\WidgetInterface $instance */
             $instance = new $className($this->_templates);
-        }
-        if (!($instance instanceof WidgetInterface)) {
-            throw new RuntimeException(sprintf('"%s" does not implement the WidgetInterface', $className));
         }
 
         return $instance;

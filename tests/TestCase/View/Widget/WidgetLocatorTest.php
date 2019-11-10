@@ -149,7 +149,9 @@ class WidgetLocatorTest extends TestCase
     public function testAddInvalidType()
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Widget objects must implement Cake\View\Widget\WidgetInterface');
+        $this->expectExceptionMessage(
+            'Widget objects must implement `Cake\View\Widget\WidgetInterface`. Got `stdClass` instance instead.'
+        );
         $inputs = new WidgetLocator($this->templates, $this->view);
         $inputs->add([
             'text' => new \StdClass(),
@@ -198,7 +200,7 @@ class WidgetLocatorTest extends TestCase
     public function testGetNoFallbackError()
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Unknown widget "foo"');
+        $this->expectExceptionMessage('Unknown widget `foo`');
         $inputs = new WidgetLocator($this->templates, $this->view);
         $inputs->clear();
         $inputs->get('foo');
@@ -243,7 +245,7 @@ class WidgetLocatorTest extends TestCase
     public function testGetResolveDependencyMissingDependency()
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Unknown widget "label"');
+        $this->expectExceptionMessage('Unknown widget `label`');
         $inputs = new WidgetLocator($this->templates, $this->view);
         $inputs->clear();
         $inputs->add(['multicheckbox' => ['Cake\View\Widget\MultiCheckboxWidget', 'label']]);
