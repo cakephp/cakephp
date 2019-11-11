@@ -201,29 +201,21 @@ trait PDODriverTrait
     }
 
     /**
-     * Creates a map of row keys out of the query select clause that can be
-     * used to hydrate nested result sets more quickly.
+     * Truncates an identifier if the database does
      *
-     * @param \Cake\Database\Query $query The query from where to derive the column map
+     * @param string $key Aliased field name
      *
-     * @return array
+     * @return string Aliased field name as returned by Database
      */
-    public function calculateColumnMap(Query $query)
+    public function sanitizeIdentifier(string $key)
     {
-        $map = [];
-        $defaultAlias = $query->getRepository()->getAlias();
-        foreach ($query->clause('select') as $key => $field) {
-            $key = trim($key, '"`[]');
-
-            if (strpos($key, '__') <= 0) {
-                $map[$defaultAlias][$key] = $key;
-                continue;
-            }
-
-            $parts = explode('__', $key, 2);
-            $map[$parts[0]][$key] = $parts[1];
+        // In PostgreSQL, identifiers — table names, column names, constraint names, etc. — are limited to a
+        // maximum length of 63 bytes. Identifiers longer than 63 characters can be used, but they will be truncated
+        // to the allowed length of 63.
+        if(PDO::ATTR_DRIVER_NAME === 'pgsql'){
+            return substr($key, 0, 63);
         }
 
-        return $map;
+        return $key;
     }
 }

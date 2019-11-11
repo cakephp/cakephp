@@ -400,7 +400,18 @@ class ResultSet implements ResultSetInterface
      */
     protected function _calculateColumnMap($query)
     {
-        $map = $this->_driver->calculateColumnMap($query);
+        $map = [];
+        foreach ($query->clause('select') as $key => $aliasedField) {
+            $key = trim($key, '"`[]');
+
+            if (strpos($key, '__') <= 0) {
+                $map[$this->_defaultAlias][$key] = $key;
+                continue;
+            }
+
+            $parts = explode('__', $key, 2);
+            $map[$parts[0]][$this->_driver->sanitizeIdentifier($key)] = $parts[1];
+        }
 
         foreach ($this->_matchingMap as $alias => $assoc) {
             if (!isset($map[$alias])) {

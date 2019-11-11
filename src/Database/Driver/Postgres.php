@@ -129,29 +129,4 @@ class Postgres extends Driver
     {
         return true;
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function calculateColumnMap(Query $query)
-    {
-        $map = [];
-        $defaultAlias = $query->getRepository()->getAlias();
-        foreach ($query->clause('select') as $key => $field) {
-            $key = trim($key, '"`[]');
-
-            if (strpos($key, '__') <= 0) {
-                $map[$defaultAlias][$key] = $key;
-                continue;
-            }
-
-            $parts = explode('__', $key, 2);
-            // In PostgreSQL, identifiers — table names, column names, constraint names, etc. — are limited to a
-            // maximum length of 63 bytes. Identifiers longer than 63 characters can be used, but they will be truncated
-            // to the allowed length of 63.
-            $map[$parts[0]][substr($key, 0, 63)] = $parts[1];
-        }
-
-        return $map;
-    }
 }
