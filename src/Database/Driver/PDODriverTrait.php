@@ -199,4 +199,31 @@ trait PDODriverTrait
 
         return $this->_connection->getAttribute(PDO::ATTR_DRIVER_NAME) !== 'odbc';
     }
+
+    /**
+     * Creates a map of row keys out of the query select clause that can be
+     * used to hydrate nested result sets more quickly.
+     *
+     * @param \Cake\Database\Query $query The query from where to derive the column map
+     *
+     * @return array
+     */
+    public function calculateColumnMap(Query $query)
+    {
+        $map = [];
+        $defaultAlias = $query->getRepository()->getAlias();
+        foreach ($query->clause('select') as $key => $field) {
+            $key = trim($key, '"`[]');
+
+            if (strpos($key, '__') <= 0) {
+                $map[$defaultAlias][$key] = $key;
+                continue;
+            }
+
+            $parts = explode('__', $key, 2);
+            $map[$parts[0]][$key] = $parts[1];
+        }
+
+        return $map;
+    }
 }
