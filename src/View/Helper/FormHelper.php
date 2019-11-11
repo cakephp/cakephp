@@ -69,7 +69,9 @@ class FormHelper extends Helper
             'text' => 'textarea',
             'uuid' => 'string',
             'datetime' => 'datetime',
+            'datetimefractional' => 'datetime',
             'timestamp' => 'datetime',
+            'timestampfractional' => 'datetime',
             'date' => 'date',
             'time' => 'time',
             'year' => 'year',
@@ -2195,6 +2197,7 @@ class FormHelper extends Helper
         ];
         $options = $this->_initInputField($fieldName, $options);
         $options['type'] = 'datetime-local';
+        $options['fieldName'] = $fieldName;
 
         return $this->widget('datetime', $options);
     }

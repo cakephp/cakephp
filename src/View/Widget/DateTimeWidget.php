@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\View\Widget;
 
+use Cake\Database\Schema\TableSchema;
 use Cake\View\Form\ContextInterface;
 use Cake\View\StringTemplate;
 use DateTime;
@@ -45,11 +46,23 @@ class DateTimeWidget implements WidgetInterface
      * @var string[]
      */
     protected $formatMap = [
-        'datetime-local' => 'Y-m-d\TH:i:s',
+        'datetime-local' => 'Y-m-d\TH:i:s.v',
         'date' => 'Y-m-d',
         'time' => 'H:i:s',
         'month' => 'Y-m',
         'week' => 'Y-\WW',
+    ];
+
+    /**
+     * Step size for various input types.
+     *
+     * If not set, defaults to browser default.
+     *
+     * @var string[]
+     */
+    protected $defaultStep = [
+        'datetime-local' => '1',
+        'time' => '1',
     ];
 
     /**
@@ -86,16 +99,35 @@ class DateTimeWidget implements WidgetInterface
             'val' => null,
             'type' => 'datetime-local',
             'escape' => true,
+            'step' => null,
             'timezone' => null,
             'templateVars' => [],
         ];
 
-        if ($data['type'] === 'datetime-local' || $data['type'] === 'time') {
-            $data += ['step' => '1'];
+        if (!isset($data['step'])) {
+            $step = null;
+            if (isset($this->defaultStep[$data['type']])) {
+                $step = $this->defaultStep[$data['type']];
+            }
+
+            if (isset($data['fieldName'])) {
+                $schemaType = $context->type($data['fieldName']);
+                if ($schemaType !== null) {
+                    $fractionalTypes = [
+                        TableSchema::TYPE_DATETIME_FRACTIONAL,
+                        TableSchema::TYPE_TIMESTAMP_FRACTIONAL,
+                    ];
+                    if (in_array($schemaType, $fractionalTypes)) {
+                        $step = '0.001';
+                    }
+                }
+            }
+
+            $data['step'] = $step;
         }
 
         $data['value'] = $this->formatDateTime($data['val'], $data);
-        unset($data['val'], $data['timezone']);
+        unset($data['val'], $data['timezone'], $data['fieldName']);
 
         return $this->_templates->format('input', [
             'name' => $data['name'],
