@@ -19,6 +19,8 @@ namespace Cake\I18n;
 use Cake\Chronos\Date as ChronosDate;
 use Cake\Chronos\DifferenceFormatterInterface;
 use Cake\Chronos\MutableDate;
+use DateTime;
+use DateTimeZone;
 use IntlDateFormatter;
 use RuntimeException;
 
@@ -290,6 +292,10 @@ trait DateFormatTrait
      *
      * When no $format is provided, the `toString` format will be used.
      *
+     * The time zone of the returned instance is always converted to the default
+     * timezone even if the `$time` string specified a time zone. This is a
+     * limitation of IntlDateFormatter.
+     *
      * If it was impossible to parse the provided time, null will be returned.
      *
      * Example:
@@ -323,20 +329,20 @@ trait DateFormatTrait
                 is_subclass_of(static::class, MutableDate::class);
         }
 
-        $defaultTimezone = static::$_isDateInstance ? 'UTC' : date_default_timezone_get();
         $formatter = datefmt_create(
             (string)static::$defaultLocale,
             (int)$dateFormat,
             (int)$timeFormat,
-            $defaultTimezone,
+            null,
             null,
             (string)$pattern
         );
         $time = $formatter->parse($time);
         if ($time !== false) {
-            $result = new static('@' . $time);
+            $dateTime = new DateTime('@' . $time);
+            $dateTime->setTimezone(new DateTimeZone(date_default_timezone_get()));
 
-            return static::$_isDateInstance ? $result : $result->setTimezone($defaultTimezone);
+            return new static($dateTime);
         }
 
         return null;

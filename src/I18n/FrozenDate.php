@@ -117,19 +117,22 @@ class FrozenDate extends ChronosDate implements I18nDateTimeInterface
     /**
      * Create a new Date instance.
      *
+     * You can specify the timezone for the $time parameter. This timezone will
+     * not be used in any future modifications to the Date instance.
+     *
+     * The $timezone parameter is ignored if $time is a DateTimeInterface
+     * instance.
+     *
      * Date instances lack time components, however due to limitations in PHP's
      * internal Datetime object the time will always be set to 00:00:00, and the
      * timezone will always be UTC. Normalizing the timezone allows for
      * subtraction/addition to have deterministic results.
      *
      * @param string|int|\DateTimeInterface|null $time Fixed or relative time
+     * @param \DateTimeZone|string|null $tz The timezone in which the date is taken
      */
-    public function __construct($time = 'now')
+    public function __construct($time = 'now', $tz = null)
     {
-        if ($time instanceof DateTimeInterface) {
-            $time = $time->format('Y-m-d 00:00:00');
-        }
-
         parent::__construct($time);
     }
 
