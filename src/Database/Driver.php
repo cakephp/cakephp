@@ -459,7 +459,7 @@ abstract class Driver implements DriverInterface
         // In PostgreSQL, identifiers — table names, column names, constraint names, etc. — are limited to a
         // maximum length of 63 bytes. Identifiers longer than 63 characters can be used, but they will be truncated
         // to the allowed length of 63.
-        if (PDO::ATTR_DRIVER_NAME === 'pgsql') {
+        if ($this->_connection->getAttribute(PDO::ATTR_DRIVER_NAME) === 'pgsql') {
             return substr($key, 0, 63);
         }
 
