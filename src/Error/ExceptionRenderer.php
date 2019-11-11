@@ -206,7 +206,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
 
         $isDebug = Configure::read('debug');
         if ($isDebug) {
-            $trace = Debugger::formatTrace($exception->getTrace(), [
+            $trace = (array)Debugger::formatTrace($exception->getTrace(), [
                 'format' => 'array',
                 'args' => false,
             ]);
