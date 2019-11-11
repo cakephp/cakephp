@@ -401,7 +401,7 @@ class ResultSet implements ResultSetInterface
     protected function _calculateColumnMap($query)
     {
         $map = [];
-        foreach ($query->clause('select') as $key => $aliasedField) {
+        foreach ($query->clause('select') as $key => $field) {
             $key = trim($key, '"`[]');
 
             if (strpos($key, '__') <= 0) {
