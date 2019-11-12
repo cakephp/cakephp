@@ -192,8 +192,8 @@ class FormContextTest extends TestCase
         ]);
         $this->assertTrue($context->isRequired('name'));
         $this->assertTrue($context->isRequired('email'));
-        $this->assertFalse($context->isRequired('body'));
-        $this->assertFalse($context->isRequired('Prefix.body'));
+        $this->assertNull($context->isRequired('body'));
+        $this->assertNull($context->isRequired('Prefix.body'));
     }
 
     /**

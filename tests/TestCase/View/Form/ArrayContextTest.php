@@ -228,7 +228,7 @@ class ArrayContextTest extends TestCase
         $this->assertTrue($context->isRequired('Comments.required'));
         $this->assertFalse($context->isRequired('Comments.nope'));
         $this->assertTrue($context->isRequired('Comments.0.tags'));
-        $this->assertFalse($context->isRequired('Articles.id'));
+        $this->assertNull($context->isRequired('Articles.id'));
     }
 
     /**
@@ -239,7 +239,7 @@ class ArrayContextTest extends TestCase
     public function testIsRequiredUndefined()
     {
         $context = new ArrayContext($this->request, []);
-        $this->assertFalse($context->isRequired('Comments.field'));
+        $this->assertNull($context->isRequired('Comments.field'));
     }
 
     /**

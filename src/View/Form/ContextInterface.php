@@ -68,9 +68,9 @@ interface ContextInterface
      * In this context class, this is simply defined by the 'required' array.
      *
      * @param string $field A dot separated path to check required-ness for.
-     * @return bool
+     * @return bool|null
      */
-    public function isRequired(string $field): bool;
+    public function isRequired(string $field): ?bool;
 
     /**
      * Gets the default "required" error message for a field

@@ -126,14 +126,14 @@ class FormContext implements ContextInterface
     /**
      * @inheritDoc
      */
-    public function isRequired(string $field): bool
+    public function isRequired(string $field): ?bool
     {
         $validator = $this->_form->getValidator();
         if (!$validator->hasField($field)) {
-            return false;
+            return null;
         }
         if ($this->type($field) !== 'boolean') {
-            return $validator->isEmptyAllowed($field, $this->isCreate()) === false;
+            return !$validator->isEmptyAllowed($field, $this->isCreate());
         }
 
         return false;

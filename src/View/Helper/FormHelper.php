@@ -1994,8 +1994,13 @@ class FormHelper extends Helper
             'hiddenField' => true,
             'multiple' => null,
             'secure' => true,
-            'empty' => false,
+            'empty' => null,
         ];
+
+        if ($attributes['empty'] === null && $attributes['multiple'] !== 'checkbox') {
+            $required = $this->_getContext()->isRequired($fieldName);
+            $attributes['empty'] = $required === null ? false : !$required;
+        }
 
         if ($attributes['multiple'] === 'checkbox') {
             unset($attributes['multiple'], $attributes['empty']);

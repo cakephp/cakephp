@@ -217,7 +217,7 @@ class EntityContextTest extends TestCase
         ]);
 
         $this->assertNull($context->val('title'));
-        $this->assertFalse($context->isRequired('title'));
+        $this->assertNull($context->isRequired('title'));
         $this->assertFalse($context->hasError('title'));
         $this->assertSame('string', $context->type('title'));
         $this->assertEquals([], $context->error('title'));
@@ -426,14 +426,14 @@ class EntityContextTest extends TestCase
                 'Users' => 'custom',
             ],
         ]);
-        $this->assertFalse($context->isRequired('nope'));
+        $this->assertNull($context->isRequired('nope'));
 
         $this->assertTrue($context->isRequired('0.title'));
         $this->assertTrue($context->isRequired('0.user.username'));
         $this->assertFalse($context->isRequired('1.body'));
 
         $this->assertTrue($context->isRequired('99.title'));
-        $this->assertFalse($context->isRequired('99.nope'));
+        $this->assertNull($context->isRequired('99.nope'));
     }
 
     /**
@@ -780,7 +780,7 @@ class EntityContextTest extends TestCase
         ]);
         $articles->setValidator('default', $validator);
 
-        $this->assertFalse($context->isRequired('title'));
+        $this->assertNull($context->isRequired('title'));
     }
 
     /**
@@ -801,9 +801,9 @@ class EntityContextTest extends TestCase
         $this->assertTrue($context->isRequired('title'));
         $this->assertFalse($context->isRequired('body'));
 
-        $this->assertFalse($context->isRequired('Herp.derp.derp'));
-        $this->assertFalse($context->isRequired('nope'));
-        $this->assertFalse($context->isRequired(''));
+        $this->assertNull($context->isRequired('Herp.derp.derp'));
+        $this->assertNull($context->isRequired('nope'));
+        $this->assertNull($context->isRequired(''));
     }
 
     /**
@@ -835,9 +835,9 @@ class EntityContextTest extends TestCase
         ]);
 
         $this->assertTrue($context->isRequired('comments.0.user_id'));
-        $this->assertFalse($context->isRequired('comments.0.other'));
-        $this->assertFalse($context->isRequired('user.0.other'));
-        $this->assertFalse($context->isRequired(''));
+        $this->assertNull($context->isRequired('comments.0.other'));
+        $this->assertNull($context->isRequired('user.0.other'));
+        $this->assertNull($context->isRequired(''));
     }
 
     /**
@@ -991,7 +991,7 @@ class EntityContextTest extends TestCase
         ]);
 
         $this->assertTrue($context->isRequired('user.username'));
-        $this->assertFalse($context->isRequired('user.first_name'));
+        $this->assertNull($context->isRequired('user.first_name'));
     }
 
     /**

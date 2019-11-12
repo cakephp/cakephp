@@ -24,6 +24,7 @@ use Cake\I18n\Date;
 use Cake\I18n\FrozenTime;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
+use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
@@ -5090,6 +5091,28 @@ class FormHelperTest extends TestCase
                 'name' => 'user_id',
                 'disabled' => 'disabled',
             ],
+            ['option' => ['value' => '0']], 'option A', '/option',
+            '/select',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    public function testSelectEmptyWithRequiredFalse()
+    {
+        $this->loadFixtures();
+        $Articles = TableRegistry::getTableLocator()->get('Articles');
+        $validator = $Articles->getValidator('default');
+        $validator->allowEmpty('user_id');
+        $Articles->setValidator('default', $validator);
+
+        $entity = $Articles->newEmptyEntity();
+        $this->Form->create($entity);
+        $result = $this->Form->select('user_id', ['option A']);
+        $expected = [
+            'select' => [
+                'name' => 'user_id',
+            ],
+            ['option' => ['value' => '']], '/option',
             ['option' => ['value' => '0']], 'option A', '/option',
             '/select',
         ];
