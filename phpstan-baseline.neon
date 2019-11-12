@@ -493,6 +493,21 @@ parameters:
 			path: src/View/Widget/DateTimeWidget.php
 
 		-
+			message: "#^Cake\\\\View\\\\Widget\\\\MultiCheckboxWidget\\:\\:__construct\\(\\) does not call parent constructor from Cake\\\\View\\\\Widget\\\\BasicWidget\\.$#"
+			count: 1
+			path: src/View/Widget/MultiCheckboxWidget.php
+
+		-
+			message: "#^Cake\\\\View\\\\Widget\\\\RadioWidget\\:\\:__construct\\(\\) does not call parent constructor from Cake\\\\View\\\\Widget\\\\BasicWidget\\.$#"
+			count: 1
+			path: src/View/Widget/RadioWidget.php
+
+		-
+			message: "#^Cake\\\\View\\\\Widget\\\\YearWidget\\:\\:__construct\\(\\) does not call parent constructor from Cake\\\\View\\\\Widget\\\\BasicWidget\\.$#"
+			count: 1
+			path: src/View/Widget/YearWidget.php
+
+		-
 			message: "#^Class Psy\\\\Shell not found\\.$#"
 			count: 1
 			path: src/basics.php
