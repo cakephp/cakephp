@@ -108,7 +108,7 @@ class DateTimeWidget implements WidgetInterface
             'templateVars' => [],
         ];
 
-        if (!isset($this->formatMap($data['type']))) {
+        if (!isset($this->formatMap[$data['type']])) {
             throw new InvalidArgumentException(sprintf(
                 'Invalid type "%s" for input tag',
                 $data['type']
