@@ -27,17 +27,24 @@ use Traversable;
  * This class is intended as an internal implementation detail
  * of Cake\View\Helper\FormHelper and is not intended for direct use.
  */
-class RadioWidget implements WidgetInterface
+class RadioWidget extends BasicWidget
 {
-    use HtmlAttributesTrait;
     use IdGeneratorTrait;
 
     /**
-     * Template instance.
-     *
-     * @var \Cake\View\StringTemplate
+     * Data defaults.
      */
-    protected $_templates;
+    protected $defaults = [
+        'name' => '',
+        'options' => [],
+        'disabled' => null,
+        'val' => null,
+        'escape' => true,
+        'label' => true,
+        'empty' => false,
+        'idPrefix' => null,
+        'templateVars' => [],
+    ];
 
     /**
      * Label instance.
@@ -88,21 +95,7 @@ class RadioWidget implements WidgetInterface
      */
     public function render(array $data, ContextInterface $context): string
     {
-        $data += [
-            'name' => '',
-            'options' => [],
-            'disabled' => null,
-            'val' => null,
-            'escape' => true,
-            'label' => true,
-            'empty' => false,
-            'idPrefix' => null,
-            'templateVars' => [],
-        ];
-
-        if (isset($data['fieldName'])) {
-            $data = $this->setRequired($data, $context, $data['fieldName']);
-        }
+        $data += $this->mergeDefaults($data, $context);
 
         if ($data['options'] instanceof Traversable) {
             $options = iterator_to_array($data['options']);
@@ -266,13 +259,5 @@ class RadioWidget implements WidgetInterface
         ];
 
         return $this->_label->render($labelAttrs, $context);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function secureFields(array $data): array
-    {
-        return [$data['name']];
     }
 }

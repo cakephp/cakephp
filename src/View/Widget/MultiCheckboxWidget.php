@@ -23,17 +23,23 @@ use Cake\View\StringTemplate;
 /**
  * Input widget class for generating multiple checkboxes.
  */
-class MultiCheckboxWidget implements WidgetInterface
+class MultiCheckboxWidget extends BasicWidget
 {
-    use HtmlAttributesTrait;
     use IdGeneratorTrait;
 
     /**
-     * Template instance to use.
-     *
-     * @var \Cake\View\StringTemplate
+     * Data defaults.
      */
-    protected $_templates;
+    protected $defaults = [
+        'name' => '',
+        'escape' => true,
+        'options' => [],
+        'disabled' => null,
+        'val' => null,
+        'idPrefix' => null,
+        'templateVars' => [],
+        'label' => true,
+    ];
 
     /**
      * Label widget instance.
@@ -108,22 +114,10 @@ class MultiCheckboxWidget implements WidgetInterface
      */
     public function render(array $data, ContextInterface $context): string
     {
-        $data += [
-            'name' => '',
-            'escape' => true,
-            'options' => [],
-            'disabled' => null,
-            'val' => null,
-            'idPrefix' => null,
-            'templateVars' => [],
-            'label' => true,
-        ];
+        $data += $this->mergeDefaults($data, $context);
+
         $this->_idPrefix = $data['idPrefix'];
         $this->_clearIds();
-
-        if (isset($data['fieldName'])) {
-            $data = $this->setRequired($data, $context, $data['fieldName']);
-        }
 
         return implode('', $this->_renderInputs($data, $context));
     }
@@ -270,13 +264,5 @@ class MultiCheckboxWidget implements WidgetInterface
         $strict = !is_numeric($key);
 
         return in_array($key, $disabled, $strict);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function secureFields(array $data): array
-    {
-        return [$data['name']];
     }
 }

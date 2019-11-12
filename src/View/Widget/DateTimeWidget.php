@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\View\Widget;
 
 use Cake\View\Form\ContextInterface;
-use Cake\View\StringTemplate;
 use DateTime;
 use DateTimeInterface;
 use DateTimeZone;
@@ -30,16 +29,26 @@ use InvalidArgumentException;
  * This class is intended as an internal implementation detail
  * of Cake\View\Helper\FormHelper and is not intended for direct use.
  */
-class DateTimeWidget implements WidgetInterface
+class DateTimeWidget extends BasicWidget
 {
-    use HtmlAttributesTrait;
-
     /**
      * Template instance.
      *
      * @var \Cake\View\StringTemplate
      */
     protected $_templates;
+
+    /**
+     * Data defaults.
+     */
+    protected $defaults = [
+        'name' => '',
+        'val' => null,
+        'type' => 'datetime-local',
+        'escape' => true,
+        'timezone' => null,
+        'templateVars' => [],
+    ];
 
     /**
      * Formats for various input types.
@@ -53,16 +62,6 @@ class DateTimeWidget implements WidgetInterface
         'month' => 'Y-m',
         'week' => 'Y-\WW',
     ];
-
-    /**
-     * Constructor
-     *
-     * @param \Cake\View\StringTemplate $templates Templates list.
-     */
-    public function __construct(StringTemplate $templates)
-    {
-        $this->_templates = $templates;
-    }
 
     /**
      * Render a date / time form widget.
@@ -83,18 +82,7 @@ class DateTimeWidget implements WidgetInterface
      */
     public function render(array $data, ContextInterface $context): string
     {
-        $data += [
-            'name' => '',
-            'val' => null,
-            'type' => 'datetime-local',
-            'escape' => true,
-            'timezone' => null,
-            'templateVars' => [],
-        ];
-
-        if (isset($data['fieldName'])) {
-            $data = $this->setRequired($data, $context, $data['fieldName']);
-        }
+        $data += $this->mergeDefaults($data, $context);
 
         if ($data['type'] === 'datetime-local' || $data['type'] === 'time') {
             $data += ['step' => '1'];

@@ -38,6 +38,17 @@ class BasicWidget implements WidgetInterface
     protected $_templates;
 
     /**
+     * Data defaults.
+     */
+    protected $defaults = [
+        'name' => '',
+        'val' => null,
+        'type' => 'text',
+        'escape' => true,
+        'templateVars' => [],
+    ];
+
+    /**
      * Constructor.
      *
      * @param \Cake\View\StringTemplate $templates Templates list.
@@ -64,20 +75,13 @@ class BasicWidget implements WidgetInterface
      */
     public function render(array $data, ContextInterface $context): string
     {
-        $data += [
-            'name' => '',
-            'val' => null,
-            'type' => 'text',
-            'escape' => true,
-            'templateVars' => [],
-        ];
+        $data = $this->mergeDefaults($data, $context);
+
         $data['value'] = $data['val'];
         unset($data['val']);
 
         $fieldName = $data['fieldName'] ?? null;
         if ($fieldName) {
-            $data = $this->setRequired($data, $context, $fieldName);
-
             if (
                 $data['type'] === 'number'
                 && !isset($data['step'])
@@ -103,6 +107,17 @@ class BasicWidget implements WidgetInterface
                 ['name', 'type']
             ),
         ]);
+    }
+
+    protected function mergeDefaults(array $data, ContextInterface $context): array
+    {
+        $data += $this->defaults;
+
+        if (isset($data['fieldName'])) {
+            $data = $this->setRequired($data, $context, $data['fieldName']);
+        }
+
+        return $data;
     }
 
     protected function setStep(array $data, ContextInterface $context, string $fieldName): array

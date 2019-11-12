@@ -26,7 +26,16 @@ use Cake\View\Form\ContextInterface;
  */
 class TextareaWidget extends BasicWidget
 {
-    use HtmlAttributesTrait;
+    /**
+     * Data defaults.
+     */
+    protected $defaults = [
+        'val' => '',
+        'name' => '',
+        'escape' => true,
+        'rows' => 5,
+        'templateVars' => [],
+    ];
 
     /**
      * Render a text area form widget.
@@ -45,17 +54,7 @@ class TextareaWidget extends BasicWidget
      */
     public function render(array $data, ContextInterface $context): string
     {
-        $data += [
-            'val' => '',
-            'name' => '',
-            'escape' => true,
-            'rows' => 5,
-            'templateVars' => [],
-        ];
-
-        if (isset($data['fieldName'])) {
-            $data = $this->setRequired($data, $context, $data['fieldName']);
-        }
+        $data += $this->mergeDefaults($data, $context);
 
         if (
             !array_key_exists('maxlength', $data)
