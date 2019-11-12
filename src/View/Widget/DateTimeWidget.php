@@ -59,10 +59,14 @@ class DateTimeWidget implements WidgetInterface
      * If not set, defaults to browser default.
      *
      * @var string[]
+     * @psalm-var array{string|null}
      */
     protected $defaultStep = [
         'datetime-local' => '1',
+        'date' => null,
         'time' => '1',
+        'month' => null,
+        'week' => null,
     ];
 
     /**
@@ -104,22 +108,25 @@ class DateTimeWidget implements WidgetInterface
             'templateVars' => [],
         ];
 
+        if (!isset($this->formatMap($data['type']))) {
+            throw new InvalidArgumentException(sprintf(
+                'Invalid type "%s" for input tag',
+                $data['type']
+            ));
+        }
+
         if (!isset($data['step'])) {
-            $step = null;
-            if (isset($this->defaultStep[$data['type']])) {
-                $step = $this->defaultStep[$data['type']];
-            }
+            $step = $this->defaultStep[$data['type']];
 
             if (isset($data['fieldName'])) {
+                $fractionalTypes = [
+                    TableSchema::TYPE_DATETIME_FRACTIONAL,
+                    TableSchema::TYPE_TIMESTAMP_FRACTIONAL,
+                ];
+
                 $schemaType = $context->type($data['fieldName']);
-                if ($schemaType !== null) {
-                    $fractionalTypes = [
-                        TableSchema::TYPE_DATETIME_FRACTIONAL,
-                        TableSchema::TYPE_TIMESTAMP_FRACTIONAL,
-                    ];
-                    if (in_array($schemaType, $fractionalTypes)) {
-                        $step = '0.001';
-                    }
+                if (in_array($schemaType, $fractionalTypes, true)) {
+                    $step = '0.001';
                 }
             }
 
@@ -177,14 +184,7 @@ class DateTimeWidget implements WidgetInterface
             $dateTime = $dateTime->setTimezone($timezone);
         }
 
-        if (isset($this->formatMap[$options['type']])) {
-            return $dateTime->format($this->formatMap[$options['type']]);
-        }
-
-        throw new InvalidArgumentException(sprintf(
-            'Invalid type "%s" for input tag',
-            $options['type']
-        ));
+        return $dateTime->format($this->formatMap[$options['type']]);
     }
 
     /**

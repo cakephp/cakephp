@@ -7398,10 +7398,13 @@ class FormHelperTest extends TestCase
                 'created' => ['type' => 'datetimefractional'],
             ],
         ]);
-        $result = $this->Form->datetime('created', [
+        $result = $this->Form->control('created', [
             'val' => new FrozenTime('2019-09-27 02:52:43'),
         ]);
         $expected = [
+            'label' => ['for' => 'created'],
+            'Created',
+            '/label',
             'input' => [
                 'type' => 'datetime-local',
                 'name' => 'created',
