@@ -113,7 +113,7 @@ class BasicWidget implements WidgetInterface
     {
         $data += $this->defaults;
 
-        if (isset($data['fieldName'])) {
+        if (isset($data['fieldName']) && !isset($data['required'])) {
             $data = $this->setRequired($data, $context, $data['fieldName']);
         }
 

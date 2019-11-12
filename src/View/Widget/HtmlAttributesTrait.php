@@ -23,8 +23,12 @@ trait HtmlAttributesTrait
     protected function setRequired(array $data, ContextInterface $context, string $fieldName): array
     {
         if (
-            !isset($data['required'])
-            && empty($data['disabled'])
+            empty($data['disabled'])
+            && (
+                (isset($data['type'])
+                && $data['type'] !== 'hidden')
+                || !isset($data['type'])
+            )
             && $context->isRequired($fieldName)
         ) {
             $data['required'] = true;
