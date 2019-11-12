@@ -381,7 +381,7 @@ class PostgresSchema extends BaseSchema
             TableSchema::TYPE_DATE => ' DATE',
             TableSchema::TYPE_TIME => ' TIME',
             TableSchema::TYPE_DATETIME => ' TIMESTAMP',
-            TableSchema::TYPE_DATATIME_FRACTIONAL => ' TIMESTAMP',
+            TableSchema::TYPE_DATETIME_FRACTIONAL => ' TIMESTAMP',
             TableSchema::TYPE_TIMESTAMP => ' TIMESTAMP',
             TableSchema::TYPE_TIMESTAMP_FRACTIONAL => ' TIMESTAMP',
             TableSchema::TYPE_UUID => ' UUID',

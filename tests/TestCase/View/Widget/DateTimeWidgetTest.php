@@ -160,7 +160,7 @@ class DateTimeWidgetTest extends TestCase
     public function testRenderInvalidTypeException()
     {
         $this->expectException('InvalidArgumentException');
-        $this->expectExceptionMessage('Invalid type "foo" for input tag');
+        $this->expectExceptionMessage('Invalid type `foo` for input tag, expected datetime-local, date, time, month or week');
         $result = $this->DateTime->render(['type' => 'foo', 'val' => new \DateTime()], $this->context);
     }
 
