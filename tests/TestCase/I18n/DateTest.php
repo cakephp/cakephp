@@ -510,6 +510,20 @@ class DateTest extends TestCase
     }
 
     /**
+     * Tests that parsing a full date + time in a timezone other
+     * than UTC respects the timezone when grabbing the date.
+     *
+     * @dataProvider classNameProvider
+     * @return void
+     */
+    public function testParseDateTimeDifferentTimezone($class)
+    {
+        date_default_timezone_set('America/Toronto');
+        $result = $class::parseDateTime('25-02-2016 23:00:00', 'd-M-y H:m:s');
+        $this->assertSame('25-02-2016', $result->format('d-m-Y'));
+    }
+
+    /**
      * Tests the default locale setter.
      *
      * @dataProvider classNameProvider
