@@ -1024,6 +1024,7 @@ class FormHelper extends Helper
             'templates' => [],
             'templateVars' => [],
             'labelOptions' => true,
+            'fieldName' => $fieldName,
         ];
         $options = $this->_parseOptions($fieldName, $options);
         $options += ['id' => $this->_domId($fieldName)];
@@ -1297,18 +1298,7 @@ class FormHelper extends Helper
         ];
 
         $options = $this->setRequiredAndCustomValidity($fieldName, $options);
-
-        $type = $context->type($fieldName);
         $fieldDef = $context->attributes($fieldName);
-
-        if ($options['type'] === 'number' && !isset($options['step'])) {
-            if ($type === 'decimal' && isset($fieldDef['precision'])) {
-                $decimalPlaces = $fieldDef['precision'];
-                $options['step'] = sprintf('%.' . $decimalPlaces . 'F', pow(10, -1 * $decimalPlaces));
-            } elseif ($type === 'float') {
-                $options['step'] = 'any';
-            }
-        }
 
         $typesWithOptions = ['text', 'number', 'radio', 'select'];
         $magicOptions = (in_array($options['type'], ['radio', 'select'], true) || $allowOverride);
@@ -1321,10 +1311,6 @@ class FormHelper extends Helper
             if (!isset($options['multiple']) || ($options['multiple'] && $options['multiple'] !== 'checkbox')) {
                 $options['multiple'] = true;
             }
-        }
-
-        if ($options['type'] === 'select' && array_key_exists('step', $options)) {
-            unset($options['step']);
         }
 
         $typesWithMaxLength = ['text', 'textarea', 'email', 'tel', 'url', 'search'];

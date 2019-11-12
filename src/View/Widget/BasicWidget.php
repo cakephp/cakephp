@@ -72,6 +72,14 @@ class BasicWidget implements WidgetInterface
         $data['value'] = $data['val'];
         unset($data['val']);
 
+        if (
+            $data['type'] === 'number'
+            && !isset($data['step'])
+            && isset($data['fieldName'])
+        ) {
+            $data = $this->setStep($data, $context, $data['fieldName']);
+        }
+
         return $this->_templates->format('input', [
             'name' => $data['name'],
             'type' => $data['type'],
@@ -81,6 +89,21 @@ class BasicWidget implements WidgetInterface
                 ['name', 'type']
             ),
         ]);
+    }
+
+    protected function setStep(array $data, ContextInterface $context, string $fieldName): array
+    {
+        $type = $context->type($fieldName);
+        $fieldDef = $context->attributes($fieldName);
+
+        if ($type === 'decimal' && isset($fieldDef['precision'])) {
+            $decimalPlaces = $fieldDef['precision'];
+            $data['step'] = sprintf('%.' . $decimalPlaces . 'F', pow(10, -1 * $decimalPlaces));
+        } elseif ($type === 'float') {
+            $data['step'] = 'any';
+        }
+
+        return $data;
     }
 
     /**
