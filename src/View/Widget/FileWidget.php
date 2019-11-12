@@ -28,6 +28,8 @@ class FileWidget extends BasicWidget
 {
     /**
      * Data defaults.
+     *
+     * @var array
      */
     protected $defaults = [
         'name' => '',

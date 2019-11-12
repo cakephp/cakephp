@@ -40,6 +40,8 @@ class DateTimeWidget extends BasicWidget
 
     /**
      * Data defaults.
+     *
+     * @var array
      */
     protected $defaults = [
         'name' => '',

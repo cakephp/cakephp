@@ -39,6 +39,8 @@ class BasicWidget implements WidgetInterface
 
     /**
      * Data defaults.
+     *
+     * @var array
      */
     protected $defaults = [
         'name' => '',
@@ -109,27 +111,19 @@ class BasicWidget implements WidgetInterface
         ]);
     }
 
+    /**
+     * Merge default values with supplied data.
+     *
+     * @param array $data Data array
+     * @param \Cake\View\Form\ContextInterface $context Context instance.
+     * @return array Updated data array.
+     */
     protected function mergeDefaults(array $data, ContextInterface $context): array
     {
         $data += $this->defaults;
 
         if (isset($data['fieldName']) && !array_key_exists('required', $data)) {
             $data = $this->setRequired($data, $context, $data['fieldName']);
-        }
-
-        return $data;
-    }
-
-    protected function setStep(array $data, ContextInterface $context, string $fieldName): array
-    {
-        $type = $context->type($fieldName);
-        $fieldDef = $context->attributes($fieldName);
-
-        if ($type === 'decimal' && isset($fieldDef['precision'])) {
-            $decimalPlaces = $fieldDef['precision'];
-            $data['step'] = sprintf('%.' . $decimalPlaces . 'F', pow(10, -1 * $decimalPlaces));
-        } elseif ($type === 'float') {
-            $data['step'] = 'any';
         }
 
         return $data;

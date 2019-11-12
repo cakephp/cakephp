@@ -25,13 +25,22 @@ use Cake\View\Form\ContextInterface;
  */
 trait HtmlAttributesTrait
 {
+    /**
+     * Set value for "required" attribute if applicable.
+     *
+     * @param array $data Data array
+     * @param \Cake\View\Form\ContextInterface $context Context instance.
+     * @param string $fieldName Field name.
+     * @return array Updated data array.
+     */
     protected function setRequired(array $data, ContextInterface $context, string $fieldName): array
     {
         if (
             empty($data['disabled'])
             && (
                 (isset($data['type'])
-                && $data['type'] !== 'hidden')
+                    && $data['type'] !== 'hidden'
+                )
                 || !isset($data['type'])
             )
             && $context->isRequired($fieldName)
@@ -42,11 +51,42 @@ trait HtmlAttributesTrait
         return $data;
     }
 
+    /**
+     * Set value for "maxlength" attribute if applicable.
+     *
+     * @param array $data Data array
+     * @param \Cake\View\Form\ContextInterface $context Context instance.
+     * @param string $fieldName Field name.
+     * @return array Updated data array.
+     */
     protected function setMaxLength(array $data, ContextInterface $context, string $fieldName): array
     {
         $maxLength = $context->getMaxLength($fieldName);
         if ($maxLength !== null) {
             $data['maxlength'] = min($maxLength, 100000);
+        }
+
+        return $data;
+    }
+
+    /**
+     * Set value for "step" attribute if applicable.
+     *
+     * @param array $data Data array
+     * @param \Cake\View\Form\ContextInterface $context Context instance.
+     * @param string $fieldName Field name.
+     * @return array Updated data array.
+     */
+    protected function setStep(array $data, ContextInterface $context, string $fieldName): array
+    {
+        $type = $context->type($fieldName);
+        $fieldDef = $context->attributes($fieldName);
+
+        if ($type === 'decimal' && isset($fieldDef['precision'])) {
+            $decimalPlaces = $fieldDef['precision'];
+            $data['step'] = sprintf('%.' . $decimalPlaces . 'F', pow(10, -1 * $decimalPlaces));
+        } elseif ($type === 'float') {
+            $data['step'] = 'any';
         }
 
         return $data;
