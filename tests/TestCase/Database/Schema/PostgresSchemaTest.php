@@ -938,7 +938,7 @@ SQL;
             [
                 'current_timestamp_fractional',
                 ['type' => 'timestampfractional', 'null' => false, 'default' => 'CURRENT_TIMESTAMP'],
-                '"current_timestamp" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP',
+                '"current_timestamp_fractional" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP',
             ],
         ];
     }
