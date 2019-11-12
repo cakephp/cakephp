@@ -58,8 +58,7 @@ class DateTimeWidget implements WidgetInterface
      *
      * If not set, defaults to browser default.
      *
-     * @var string[]
-     * @psalm-var array{string|null}
+     * @var array
      */
     protected $defaultStep = [
         'datetime-local' => '1',

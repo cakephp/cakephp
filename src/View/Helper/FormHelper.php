@@ -1349,6 +1349,10 @@ class FormHelper extends Helper
             $options += ['empty' => false];
         }
 
+        if ($options['type'] === 'datetime') {
+            $options += ['fieldName' => $fieldName];
+        }
+
         return $options;
     }
 

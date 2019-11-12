@@ -7398,6 +7398,35 @@ class FormHelperTest extends TestCase
                 'created' => ['type' => 'datetimefractional'],
             ],
         ]);
+        $result = $this->Form->datetime('created', [
+            'val' => new FrozenTime('2019-09-27 02:52:43'),
+        ]);
+        $expected = [
+            'input' => [
+                'type' => 'datetime-local',
+                'name' => 'created',
+                'value' => '2019-09-27T02:52:43.000',
+                'step' => '0.001',
+            ],
+        ];
+
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * testControlWithFractional method
+     *
+     * Test that control() works with datetimefractional.
+     *
+     * @return void
+     */
+    public function testControlWithFractional()
+    {
+        $this->Form->create([
+            'schema' => [
+                'created' => ['type' => 'datetimefractional'],
+            ],
+        ]);
         $result = $this->Form->control('created', [
             'val' => new FrozenTime('2019-09-27 02:52:43'),
         ]);
