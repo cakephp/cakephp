@@ -86,7 +86,7 @@ class BasicWidget implements WidgetInterface
                 $data['type'] === 'number'
                 && !isset($data['step'])
             ) {
-                $data = $this->setStep($data, $context, $data['fieldName']);
+                $data = $this->setStep($data, $context, $fieldName);
             }
 
             $typesWithMaxLength = ['text', 'email', 'tel', 'url', 'search'];
