@@ -7438,6 +7438,7 @@ class FormHelperTest extends TestCase
             'input' => [
                 'type' => 'datetime-local',
                 'name' => 'created',
+                'id' => 'created',
                 'value' => '2019-09-27T02:52:43.123',
                 'step' => '0.001',
             ],
