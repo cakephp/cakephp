@@ -1310,10 +1310,6 @@ class FormHelper extends Helper
             }
         }
 
-        if ($options['type'] === 'select') {
-            $options += ['empty' => false];
-        }
-
         return $options;
     }
 
