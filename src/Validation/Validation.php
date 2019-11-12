@@ -1082,7 +1082,7 @@ class Validation
         $path = '([' . $subDelimiters . $alpha . ']|' . $hex . ')';
         $fragmentAndQuery = '([\?' . $subDelimiters . $alpha . ']|' . $hex . ')';
         // phpcs:disable Generic.Files.LineLength
-        $regex = '/^(?:(?:https?|ftps?|sftp|file|news|gopher):\/\/)' . (!empty($strict) ? '' : '?') .
+        $regex = '/^(?:(?:https?|ftps?|sftp|file|news|gopher):\/\/)' . ($strict ? '' : '?') .
             '(?:' . static::$_pattern['IPv4'] . '|\[' . static::$_pattern['IPv6'] . '\]|' . static::$_pattern['hostname'] . ')(?::[1-9][0-9]{0,4})?' .
             '(?:\/' . $path . '*)?' .
             '(?:\?' . $fragmentAndQuery . '*)?' .
