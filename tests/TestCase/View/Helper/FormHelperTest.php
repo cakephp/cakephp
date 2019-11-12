@@ -7402,7 +7402,7 @@ class FormHelperTest extends TestCase
             'val' => new FrozenTime('2019-09-27 02:52:43.123'),
         ]);
         $expected = [
-            'input' => [\
+            'input' => [
                 'type' => 'datetime-local',
                 'name' => 'created',
                 'value' => '2019-09-27T02:52:43.123',
