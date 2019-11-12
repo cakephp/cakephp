@@ -1129,9 +1129,10 @@ class ViewTest extends TestCase
         $error = new \PDOException();
         $error->queryString = 'this is sql string';
         $message = 'it works';
+        $trace = $error->getTrace();
 
         $View = $this->PostsController->createView(TestView::class);
-        $View->set(compact('error', 'message'));
+        $View->set(compact('error', 'message', 'trace'));
         $View->setTemplatePath('Error');
 
         $result = $View->render('pdo_error', 'error');
