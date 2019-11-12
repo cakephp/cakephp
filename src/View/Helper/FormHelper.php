@@ -1329,7 +1329,7 @@ class FormHelper extends Helper
             }
         }
 
-        if (in_array($options['type'], ['datetime', 'date', 'time', 'select'], true)) {
+        if ($options['type'] === 'select') {
             $options += ['empty' => false];
         }
 
