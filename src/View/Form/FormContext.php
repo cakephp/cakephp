@@ -175,6 +175,11 @@ class FormContext implements ContextInterface
             }
         }
 
+        $attributes = $this->attributes($field);
+        if (!empty($attributes['length'])) {
+            return $attributes['length'];
+        }
+
         return null;
     }
 

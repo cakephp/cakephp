@@ -26,6 +26,8 @@ use Cake\View\Form\ContextInterface;
  */
 class TextareaWidget extends BasicWidget
 {
+    use HtmlAttributesTrait;
+
     /**
      * Render a text area form widget.
      *
@@ -50,6 +52,13 @@ class TextareaWidget extends BasicWidget
             'rows' => 5,
             'templateVars' => [],
         ];
+
+        if (
+            !array_key_exists('maxlength', $data)
+            && isset($data['fieldName'])
+        ) {
+            $data = $this->setMaxLength($data, $context, $data['fieldName']);
+        }
 
         return $this->_templates->format('textarea', [
             'name' => $data['name'],

@@ -28,6 +28,8 @@ use Cake\View\StringTemplate;
  */
 class BasicWidget implements WidgetInterface
 {
+    use HtmlAttributesTrait;
+
     /**
      * StringTemplate instance.
      *
@@ -72,12 +74,22 @@ class BasicWidget implements WidgetInterface
         $data['value'] = $data['val'];
         unset($data['val']);
 
+        $fieldName = $data['fieldName'] ?? null;
         if (
             $data['type'] === 'number'
             && !isset($data['step'])
-            && isset($data['fieldName'])
+            && $fieldName
         ) {
             $data = $this->setStep($data, $context, $data['fieldName']);
+        }
+
+        $typesWithMaxLength = ['text', 'email', 'tel', 'url', 'search'];
+        if (
+            !array_key_exists('maxlength', $data)
+            && in_array($data['type'], $typesWithMaxLength, true)
+            && $fieldName
+        ) {
+            $data = $this->setMaxLength($data, $context, $fieldName);
         }
 
         return $this->_templates->format('input', [

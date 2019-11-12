@@ -1291,14 +1291,11 @@ class FormHelper extends Helper
      */
     protected function _magicOptions(string $fieldName, array $options, bool $allowOverride): array
     {
-        $context = $this->_getContext();
-
         $options += [
             'templateVars' => [],
         ];
 
         $options = $this->setRequiredAndCustomValidity($fieldName, $options);
-        $fieldDef = $context->attributes($fieldName);
 
         $typesWithOptions = ['text', 'number', 'radio', 'select'];
         $magicOptions = (in_array($options['type'], ['radio', 'select'], true) || $allowOverride);
@@ -1310,22 +1307,6 @@ class FormHelper extends Helper
             $options['type'] = 'select';
             if (!isset($options['multiple']) || ($options['multiple'] && $options['multiple'] !== 'checkbox')) {
                 $options['multiple'] = true;
-            }
-        }
-
-        $typesWithMaxLength = ['text', 'textarea', 'email', 'tel', 'url', 'search'];
-        if (
-            !array_key_exists('maxlength', $options)
-            && in_array($options['type'], $typesWithMaxLength, true)
-        ) {
-            $maxLength = $context->getMaxLength($fieldName);
-
-            if ($maxLength === null && !empty($fieldDef['length'])) {
-                $maxLength = $fieldDef['length'];
-            }
-
-            if ($maxLength !== null) {
-                $options['maxlength'] = min($maxLength, 100000);
             }
         }
 

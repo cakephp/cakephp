@@ -538,13 +538,18 @@ class EntityContext implements ContextInterface
         $parts = explode('.', $field);
         $validator = $this->_getValidator($parts);
         $fieldName = array_pop($parts);
-        if (!$validator->hasField($fieldName)) {
-            return null;
-        }
-        foreach ($validator->field($fieldName)->rules() as $rule) {
-            if ($rule->get('rule') === 'maxLength') {
-                return $rule->get('pass')[0];
+
+        if ($validator->hasField($fieldName)) {
+            foreach ($validator->field($fieldName)->rules() as $rule) {
+                if ($rule->get('rule') === 'maxLength') {
+                    return $rule->get('pass')[0];
+                }
             }
+        }
+
+        $attributes = $this->attributes($field);
+        if (!empty($attributes['length'])) {
+            return (int)$attributes['length'];
         }
 
         return null;
