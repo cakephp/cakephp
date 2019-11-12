@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\I18n;
 
 use Cake\Chronos\MutableDate;
-use DateTimeInterface;
 use IntlDateFormatter;
 
 /**
@@ -118,7 +117,7 @@ class Date extends MutableDate implements I18nDateTimeInterface
      * You can specify the timezone for the $time parameter. This timezone will
      * not be used in any future modifications to the Date instance.
      *
-     * The $timezone parameter is ignored if $time is a DateTimeInterface
+     * The `$timezone` parameter is ignored if `$time` is a DateTimeInterface
      * instance.
      *
      * Date instances lack time components, however due to limitations in PHP's
@@ -127,7 +126,8 @@ class Date extends MutableDate implements I18nDateTimeInterface
      * subtraction/addition to have deterministic results.
      *
      * @param string|int|\DateTimeInterface|null $time Fixed or relative time
-     * @param \DateTimeZone|string|null $tz The timezone in which the date is taken
+     * @param \DateTimeZone|string|null $tz The timezone in which the date is taken.
+     *                                  Ignored if `$time` is a DateTimeInterface instance.
      */
     public function __construct($time = 'now', $tz = null)
     {
