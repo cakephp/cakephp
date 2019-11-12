@@ -7402,6 +7402,7 @@ class FormHelperTest extends TestCase
             'val' => new FrozenTime('2019-09-27 02:52:43'),
         ]);
         $expected = [
+            'div' => ['class' => 'input datetime'],
             'label' => ['for' => 'created'],
             'Created',
             '/label',
@@ -7411,6 +7412,7 @@ class FormHelperTest extends TestCase
                 'value' => '2019-09-27T02:52:43.000',
                 'step' => '0.001',
             ],
+            '/div',
         ];
 
         $this->assertHtml($expected, $result);
