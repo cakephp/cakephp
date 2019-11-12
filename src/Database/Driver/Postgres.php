@@ -129,4 +129,15 @@ class Postgres extends Driver
     {
         return true;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function generateIdentifier(string $key)
+    {
+        // In PostgreSQL, identifiers — table names, column names, constraint names, etc. — are limited to a
+        // maximum length of 63 bytes. Identifiers longer than 63 characters can be used, but they will be truncated
+        // to the allowed length of 63.
+        return substr($key, 0, 63);
+    }
 }

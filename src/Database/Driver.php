@@ -448,21 +448,14 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * Truncates an identifier if the database does
+     * Generates a column identifier respecting database constraints
      *
-     * @param string $key Aliased field name
+     * @param string $key Identifier
      *
-     * @return string Aliased field name as returned by Database
+     * @return string Identifier as returned by Database
      */
-    public function sanitizeIdentifier(string $key)
+    public function generateIdentifier(string $key)
     {
-        // In PostgreSQL, identifiers — table names, column names, constraint names, etc. — are limited to a
-        // maximum length of 63 bytes. Identifiers longer than 63 characters can be used, but they will be truncated
-        // to the allowed length of 63.
-        if ($this->_connection->getAttribute(PDO::ATTR_DRIVER_NAME) === 'pgsql') {
-            return substr($key, 0, 63);
-        }
-
         return $key;
     }
 }

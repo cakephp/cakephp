@@ -410,7 +410,7 @@ class ResultSet implements ResultSetInterface
             }
 
             $parts = explode('__', $key, 2);
-            $map[$parts[0]][$this->_driver->sanitizeIdentifier($key)] = $parts[1];
+            $map[$parts[0]][$this->_driver->generateIdentifier($key)] = $parts[1];
         }
 
         foreach ($this->_matchingMap as $alias => $assoc) {
