@@ -18,6 +18,11 @@ namespace Cake\View\Widget;
 
 use Cake\View\Form\ContextInterface;
 
+/**
+ * Trait with helper methods to set default HTML attributes for widgets.
+ *
+ * @internal
+ */
 trait HtmlAttributesTrait
 {
     protected function setRequired(array $data, ContextInterface $context, string $fieldName): array
