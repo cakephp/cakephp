@@ -878,6 +878,27 @@ SQL;
                 ['type' => 'time'],
                 '"start_time" TIME',
             ],
+            // Datetime
+            [
+                'created',
+                ['type' => 'datetime', 'null' => true],
+                '"created" TIMESTAMP DEFAULT NULL',
+            ],
+            [
+                'created_without_precision',
+                ['type' => 'datetime', 'precision' => 0],
+                '"created_without_precision" TIMESTAMP(0)',
+            ],
+            [
+                'created_without_precision',
+                ['type' => 'datetimefractional', 'precision' => 0],
+                '"created_without_precision" TIMESTAMP(0)',
+            ],
+            [
+                'created_with_precision',
+                ['type' => 'datetimefractional', 'precision' => 3],
+                '"created_with_precision" TIMESTAMP(3)',
+            ],
             // Timestamp
             [
                 'created',
@@ -912,6 +933,11 @@ SQL;
             [
                 'current_timestamp',
                 ['type' => 'timestamp', 'null' => false, 'default' => 'CURRENT_TIMESTAMP'],
+                '"current_timestamp" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP',
+            ],
+            [
+                'current_timestamp_fractional',
+                ['type' => 'timestampfractional', 'null' => false, 'default' => 'CURRENT_TIMESTAMP'],
                 '"current_timestamp" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP',
             ],
         ];

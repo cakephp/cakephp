@@ -7399,13 +7399,13 @@ class FormHelperTest extends TestCase
             ],
         ]);
         $result = $this->Form->datetime('created', [
-            'val' => new FrozenTime('2019-09-27 02:52:43'),
+            'val' => new FrozenTime('2019-09-27 02:52:43.123'),
         ]);
         $expected = [
-            'input' => [
+            'input' => [\
                 'type' => 'datetime-local',
                 'name' => 'created',
-                'value' => '2019-09-27T02:52:43.000',
+                'value' => '2019-09-27T02:52:43.123',
                 'step' => '0.001',
             ],
         ];
@@ -7428,7 +7428,7 @@ class FormHelperTest extends TestCase
             ],
         ]);
         $result = $this->Form->control('created', [
-            'val' => new FrozenTime('2019-09-27 02:52:43'),
+            'val' => new FrozenTime('2019-09-27 02:52:43.123'),
         ]);
         $expected = [
             'div' => ['class' => 'input datetime'],
@@ -7438,7 +7438,7 @@ class FormHelperTest extends TestCase
             'input' => [
                 'type' => 'datetime-local',
                 'name' => 'created',
-                'value' => '2019-09-27T02:52:43.000',
+                'value' => '2019-09-27T02:52:43.123',
                 'step' => '0.001',
             ],
             '/div',

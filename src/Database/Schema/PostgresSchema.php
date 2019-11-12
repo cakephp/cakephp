@@ -381,6 +381,7 @@ class PostgresSchema extends BaseSchema
             TableSchema::TYPE_DATE => ' DATE',
             TableSchema::TYPE_TIME => ' TIME',
             TableSchema::TYPE_DATETIME => ' TIMESTAMP',
+            TableSchema::TYPE_DATATIME_FRACTIONAL => ' TIMESTAMP',
             TableSchema::TYPE_TIMESTAMP => ' TIMESTAMP',
             TableSchema::TYPE_TIMESTAMP_FRACTIONAL => ' TIMESTAMP',
             TableSchema::TYPE_UUID => ' UUID',
@@ -432,6 +433,8 @@ class PostgresSchema extends BaseSchema
 
         $hasPrecision = [
             TableSchema::TYPE_FLOAT,
+            TableSchema::TYPE_DATETIME,
+            TableSchema::TYPE_DATETIME_FRACTIONAL,
             TableSchema::TYPE_TIMESTAMP,
             TableSchema::TYPE_TIMESTAMP_FRACTIONAL,
         ];
@@ -453,9 +456,15 @@ class PostgresSchema extends BaseSchema
             $out .= ' NOT NULL';
         }
 
+        $datetimeTypes = [
+            TableSchema::TYPE_DATETIME,
+            TableSchema::TYPE_DATETIME_FRACTIONAL,
+            TableSchema::TYPE_TIMESTAMP,
+            TableSchema::TYPE_TIMESTAMP_FRACTIONAL,
+        ];
         if (
             isset($data['default']) &&
-            in_array($data['type'], [TableSchema::TYPE_TIMESTAMP, TableSchema::TYPE_DATETIME]) &&
+            in_array($data['type'], $datetimeTypes) &&
             strtolower($data['default']) === 'current_timestamp'
         ) {
             $out .= ' DEFAULT CURRENT_TIMESTAMP';
