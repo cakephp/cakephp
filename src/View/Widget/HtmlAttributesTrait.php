@@ -20,6 +20,19 @@ use Cake\View\Form\ContextInterface;
 
 trait HtmlAttributesTrait
 {
+    protected function setRequired(array $data, ContextInterface $context, string $fieldName): array
+    {
+        if (
+            !isset($data['required'])
+            && empty($data['disabled'])
+            && $context->isRequired($fieldName)
+        ) {
+            $data['required'] = true;
+        }
+
+        return $data;
+    }
+
     protected function setMaxLength(array $data, ContextInterface $context, string $fieldName): array
     {
         $maxLength = $context->getMaxLength($fieldName);

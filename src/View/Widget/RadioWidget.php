@@ -29,6 +29,7 @@ use Traversable;
  */
 class RadioWidget implements WidgetInterface
 {
+    use HtmlAttributesTrait;
     use IdGeneratorTrait;
 
     /**
@@ -98,6 +99,11 @@ class RadioWidget implements WidgetInterface
             'idPrefix' => null,
             'templateVars' => [],
         ];
+
+        if (isset($data['fieldName'])) {
+            $data = $this->setRequired($data, $context, $data['fieldName']);
+        }
+
         if ($data['options'] instanceof Traversable) {
             $options = iterator_to_array($data['options']);
         } else {

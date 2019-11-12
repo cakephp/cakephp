@@ -27,6 +27,8 @@ use Cake\View\StringTemplate;
  */
 class FileWidget implements WidgetInterface
 {
+    use HtmlAttributesTrait;
+
     /**
      * Templates
      *
@@ -68,6 +70,10 @@ class FileWidget implements WidgetInterface
             'templateVars' => [],
         ];
         unset($data['val']);
+
+        if (isset($data['fieldName'])) {
+            $data = $this->setRequired($data, $context, $data['fieldName']);
+        }
 
         return $this->_templates->format('file', [
             'name' => $data['name'],

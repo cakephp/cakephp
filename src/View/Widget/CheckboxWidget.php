@@ -54,6 +54,10 @@ class CheckboxWidget extends BasicWidget
         }
         unset($data['val']);
 
+        if (isset($data['fieldName'])) {
+            $data = $this->setRequired($data, $context, $data['fieldName']);
+        }
+
         $attrs = $this->_templates->formatAttributes(
             $data,
             ['name', 'value']

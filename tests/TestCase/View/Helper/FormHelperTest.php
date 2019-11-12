@@ -3746,7 +3746,7 @@ class FormHelperTest extends TestCase
         $this->Form->create($this->article);
         $result = $this->Form->control('title');
         $expected = [
-            'input' => ['type' => 'hidden', 'name' => 'title', 'id' => 'title'],
+            'input' => ['type' => 'hidden', 'name' => 'title', 'required' => 'required', 'id' => 'title'],
         ];
         $this->assertHtml($expected, $result);
 
@@ -3754,7 +3754,7 @@ class FormHelperTest extends TestCase
         $this->Form->create($this->article);
         $result = $this->Form->control('title');
         $expected = [
-            'input' => ['type' => 'hidden', 'name' => 'title', 'id' => 'title'],
+            'input' => ['type' => 'hidden', 'name' => 'title', 'required' => 'required', 'id' => 'title'],
         ];
         $this->assertHtml($expected, $result);
 

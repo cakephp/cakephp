@@ -53,6 +53,10 @@ class TextareaWidget extends BasicWidget
             'templateVars' => [],
         ];
 
+        if (isset($data['fieldName'])) {
+            $data = $this->setRequired($data, $context, $data['fieldName']);
+        }
+
         if (
             !array_key_exists('maxlength', $data)
             && isset($data['fieldName'])

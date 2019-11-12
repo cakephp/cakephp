@@ -114,6 +114,10 @@ class SelectBoxWidget extends BasicWidget
             'templateVars' => [],
         ];
 
+        if (isset($data['fieldName'])) {
+            $data = $this->setRequired($data, $context, $data['fieldName']);
+        }
+
         $options = $this->_renderContent($data);
         $name = $data['name'];
         unset($data['name'], $data['options'], $data['empty'], $data['val'], $data['escape']);

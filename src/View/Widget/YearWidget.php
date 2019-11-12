@@ -22,6 +22,8 @@ use InvalidArgumentException;
 
 class YearWidget implements WidgetInterface
 {
+    use HtmlAttributesTrait;
+
     /**
      * Select box widget.
      *
@@ -63,6 +65,10 @@ class YearWidget implements WidgetInterface
             'order' => 'desc',
             'templateVars' => [],
         ];
+
+        if (isset($data['fieldName'])) {
+            $data = $this->setRequired($data, $context, $data['fieldName']);
+        }
 
         if (empty($data['min'])) {
             $data['min'] = date('Y', strtotime('-5 years'));

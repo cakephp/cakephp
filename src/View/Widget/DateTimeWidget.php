@@ -32,6 +32,8 @@ use InvalidArgumentException;
  */
 class DateTimeWidget implements WidgetInterface
 {
+    use HtmlAttributesTrait;
+
     /**
      * Template instance.
      *
@@ -89,6 +91,10 @@ class DateTimeWidget implements WidgetInterface
             'timezone' => null,
             'templateVars' => [],
         ];
+
+        if (isset($data['fieldName'])) {
+            $data = $this->setRequired($data, $context, $data['fieldName']);
+        }
 
         if ($data['type'] === 'datetime-local' || $data['type'] === 'time') {
             $data += ['step' => '1'];

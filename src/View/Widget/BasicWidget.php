@@ -75,21 +75,23 @@ class BasicWidget implements WidgetInterface
         unset($data['val']);
 
         $fieldName = $data['fieldName'] ?? null;
-        if (
-            $data['type'] === 'number'
-            && !isset($data['step'])
-            && $fieldName
-        ) {
-            $data = $this->setStep($data, $context, $data['fieldName']);
-        }
+        if ($fieldName) {
+            $data = $this->setRequired($data, $context, $fieldName);
 
-        $typesWithMaxLength = ['text', 'email', 'tel', 'url', 'search'];
-        if (
-            !array_key_exists('maxlength', $data)
-            && in_array($data['type'], $typesWithMaxLength, true)
-            && $fieldName
-        ) {
-            $data = $this->setMaxLength($data, $context, $fieldName);
+            if (
+                $data['type'] === 'number'
+                && !isset($data['step'])
+            ) {
+                $data = $this->setStep($data, $context, $data['fieldName']);
+            }
+
+            $typesWithMaxLength = ['text', 'email', 'tel', 'url', 'search'];
+            if (
+                !array_key_exists('maxlength', $data)
+                && in_array($data['type'], $typesWithMaxLength, true)
+            ) {
+                $data = $this->setMaxLength($data, $context, $fieldName);
+            }
         }
 
         return $this->_templates->format('input', [

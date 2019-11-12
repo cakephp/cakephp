@@ -25,6 +25,7 @@ use Cake\View\StringTemplate;
  */
 class MultiCheckboxWidget implements WidgetInterface
 {
+    use HtmlAttributesTrait;
     use IdGeneratorTrait;
 
     /**
@@ -119,6 +120,10 @@ class MultiCheckboxWidget implements WidgetInterface
         ];
         $this->_idPrefix = $data['idPrefix'];
         $this->_clearIds();
+
+        if (isset($data['fieldName'])) {
+            $data = $this->setRequired($data, $context, $data['fieldName']);
+        }
 
         return implode('', $this->_renderInputs($data, $context));
     }

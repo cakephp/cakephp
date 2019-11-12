@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\View\Widget;
 
 use Cake\View\Form\ContextInterface;
+use Cake\View\StringTemplate;
 
 /**
  * Button input class
@@ -25,8 +26,25 @@ use Cake\View\Form\ContextInterface;
  * If you need to make basic submit inputs with type=submit,
  * use the Basic input widget.
  */
-class ButtonWidget extends BasicWidget
+class ButtonWidget implements WidgetInterface
 {
+    /**
+     * StringTemplate instance.
+     *
+     * @var \Cake\View\StringTemplate
+     */
+    protected $_templates;
+
+    /**
+     * Constructor.
+     *
+     * @param \Cake\View\StringTemplate $templates Templates list.
+     */
+    public function __construct(StringTemplate $templates)
+    {
+        $this->_templates = $templates;
+    }
+
     /**
      * Render a button.
      *
@@ -59,5 +77,17 @@ class ButtonWidget extends BasicWidget
             'templateVars' => $data['templateVars'],
             'attrs' => $this->_templates->formatAttributes($data, ['text', 'escapeTitle']),
         ]);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function secureFields(array $data): array
+    {
+        if (!isset($data['name']) || $data['name'] === '') {
+            return [];
+        }
+
+        return [$data['name']];
     }
 }

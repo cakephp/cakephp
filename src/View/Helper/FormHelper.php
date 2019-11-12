@@ -1024,7 +1024,6 @@ class FormHelper extends Helper
             'templates' => [],
             'templateVars' => [],
             'labelOptions' => true,
-            'fieldName' => $fieldName,
         ];
         $options = $this->_parseOptions($fieldName, $options);
         $options += ['id' => $this->_domId($fieldName)];
@@ -2233,6 +2232,8 @@ class FormHelper extends Helper
      */
     protected function _initInputField(string $field, array $options = []): array
     {
+        $options += ['fieldName' => $field];
+
         if (!isset($options['secure'])) {
             $options['secure'] = $this->_View->getRequest()->getAttribute('formTokenData') === null ? false : true;
         }
@@ -2284,9 +2285,6 @@ class FormHelper extends Helper
         }
         if ($options['secure'] === self::SECURE_SKIP) {
             return $options;
-        }
-        if (!isset($options['required']) && empty($options['disabled']) && $context->isRequired($field)) {
-            $options['required'] = true;
         }
 
         return $options;
