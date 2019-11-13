@@ -48,9 +48,10 @@ Assuming you have PHPUnit installed system wide using one of the methods stated
 tests for CakePHP by doing the following:
 
 1. Copy `phpunit.xml.dist` to `phpunit.xml`.
-2. Add the relevant database credentials to your `phpunit.xml` if you want to run tests against
-   a non-SQLite datasource.
-3. Run `phpunit`.
+2. Uncomment the `DB_DSN` env settings that matches your database.
+3. Update the database credentials in the `DB_DSN` string if needed.
+4. Create the `cake_test` database if using mysql, postgres or sqlserver.
+5. Run `phpunit` (or `composer test` if not installed system wide).
 
 ## Some Handy Links
 

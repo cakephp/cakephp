@@ -48,7 +48,7 @@
         <env name="DB_DSN" value="postgres://localhost/cake_test?timezone=UTC"/>
         -->
         <!-- Mysql
-        <env name="DB_DSN" value="mysql://localhost/cake_test?timezone=UTC"/>
+        <env name="DB_DSN" value="mysql://localhost/cake_test?timezone=UTC&init[]=SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))"/>
         -->
         <!-- SQL Server
         <env name="DB_DSN" value="sqlserver://localhost/cake_test?timezone=UTC"/>
