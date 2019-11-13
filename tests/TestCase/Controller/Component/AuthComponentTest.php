@@ -1129,7 +1129,7 @@ class AuthComponentTest extends TestCase
                 'controller' => 'AuthTest',
                 'action' => 'add',
                 'plugin' => null,
-                'prefix' => 'admin',
+                'prefix' => 'Admin',
             ],
             'url' => '/admin/auth_test/add',
             'session' => $this->Auth->session,
@@ -1138,7 +1138,7 @@ class AuthComponentTest extends TestCase
         Router::setRequest($this->Controller->getRequest());
 
         $this->Auth->setConfig('loginAction', [
-            'prefix' => 'admin',
+            'prefix' => 'Admin',
             'controller' => 'auth_test',
             'action' => 'login',
         ]);
@@ -1146,7 +1146,7 @@ class AuthComponentTest extends TestCase
         $response = $this->Auth->startup($event);
         $redirectHeader = $response->getHeaderLine('Location');
         $expected = Router::url([
-            'prefix' => 'admin',
+            'prefix' => 'Admin',
             'controller' => 'auth_test',
             'action' => 'login',
             '?' => ['redirect' => '/admin/auth_test/add'],

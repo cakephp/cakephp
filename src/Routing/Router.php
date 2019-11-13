@@ -858,7 +858,7 @@ class Router
         $path = $params['path'] ?? '/' . Inflector::dasherize($name);
         unset($params['path']);
 
-        $params = array_merge($params, ['prefix' => Inflector::underscore($name)]);
+        $params = array_merge($params, ['prefix' => Inflector::camelize($name)]);
         static::scope($path, $params, $callback);
     }
 
