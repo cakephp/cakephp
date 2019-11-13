@@ -59,10 +59,6 @@ class FileWidget extends BasicWidget
 
         unset($data['val']);
 
-        if (isset($data['fieldName'])) {
-            $data = $this->setRequired($data, $context, $data['fieldName']);
-        }
-
         return $this->_templates->format('file', [
             'name' => $data['name'],
             'templateVars' => $data['templateVars'],
