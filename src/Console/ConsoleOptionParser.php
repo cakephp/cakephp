@@ -496,7 +496,7 @@ class ConsoleOptionParser
             unset($options['index']);
             $arg = new ConsoleInputArgument($options);
         }
-        foreach ($this->_args as $k => $a) {
+        foreach ($this->_args as $a) {
             if ($a->isEqualTo($arg)) {
                 return $this;
             }

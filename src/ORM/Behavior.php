@@ -382,7 +382,7 @@ class Behavior implements EventListenerInterface
 
         $events = $this->implementedEvents();
         $eventMethods = [];
-        foreach ($events as $e => $binding) {
+        foreach ($events as $binding) {
             if (is_array($binding) && isset($binding['callable'])) {
                 /** @var string $callable */
                 $callable = $binding['callable'];

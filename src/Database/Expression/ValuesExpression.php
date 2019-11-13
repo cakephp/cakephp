@@ -288,7 +288,7 @@ class ValuesExpression implements ExpressionInterface
             if (!is_array($v)) {
                 continue;
             }
-            foreach ($v as $column => $field) {
+            foreach ($v as $field) {
                 if ($field instanceof ExpressionInterface) {
                     $visitor($field);
                     $field->traverse($visitor);

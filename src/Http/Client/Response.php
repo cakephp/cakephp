@@ -176,7 +176,7 @@ class Response extends Message implements ResponseInterface
      */
     protected function _parseHeaders(array $headers): void
     {
-        foreach ($headers as $key => $value) {
+        foreach ($headers as $value) {
             if (substr($value, 0, 5) === 'HTTP/') {
                 preg_match('/HTTP\/([\d.]+) ([0-9]+)(.*)/i', $value, $matches);
                 $this->protocol = $matches[1];

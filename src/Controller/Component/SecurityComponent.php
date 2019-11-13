@@ -315,7 +315,7 @@ class SecurityComponent extends Component
         $unlocked = $this->_unlocked($check);
 
         if (strpos($token, ':')) {
-            [$token, $locked] = explode(':', $token, 2);
+            [, $locked] = explode(':', $token, 2);
         }
         unset($check['_Token']);
 

@@ -128,7 +128,7 @@ class ResponseEmitter implements EmitterInterface
      */
     protected function emitBodyRange(array $range, ResponseInterface $response): void
     {
-        [$unit, $first, $last, $length] = $range;
+        [, $first, $last] = $range;
 
         $body = $response->getBody();
 

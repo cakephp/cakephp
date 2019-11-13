@@ -682,9 +682,6 @@ class Route
 
         $pass = [];
         foreach ($url as $key => $value) {
-            // keys that exist in the defaults and have different values is a match failure.
-            $defaultExists = array_key_exists($key, $defaults);
-
             // If the key is a routed key, it's not different yet.
             if (array_key_exists($key, $keyNames)) {
                 continue;
