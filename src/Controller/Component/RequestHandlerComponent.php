@@ -473,7 +473,6 @@ class RequestHandlerComponent extends Component
         $cType = $type;
         $controller = $this->getController();
         $response = $controller->getResponse();
-        $request = $controller->getRequest();
 
         if (strpos($type, '/') === false) {
             $cType = $response->getMimeType($type);
