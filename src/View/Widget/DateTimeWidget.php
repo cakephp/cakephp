@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\View\Widget;
 
+use Cake\Database\Schema\TableSchema;
 use Cake\View\Form\ContextInterface;
 use Cake\View\StringTemplate;
 use DateTime;
@@ -45,11 +46,26 @@ class DateTimeWidget implements WidgetInterface
      * @var string[]
      */
     protected $formatMap = [
-        'datetime-local' => 'Y-m-d\TH:i:s',
+        'datetime-local' => 'Y-m-d\TH:i:s.v',
         'date' => 'Y-m-d',
         'time' => 'H:i:s',
         'month' => 'Y-m',
         'week' => 'Y-\WW',
+    ];
+
+    /**
+     * Step size for various input types.
+     *
+     * If not set, defaults to browser default.
+     *
+     * @var array
+     */
+    protected $defaultStep = [
+        'datetime-local' => '1',
+        'date' => null,
+        'time' => '1',
+        'month' => null,
+        'week' => null,
     ];
 
     /**
@@ -86,16 +102,38 @@ class DateTimeWidget implements WidgetInterface
             'val' => null,
             'type' => 'datetime-local',
             'escape' => true,
+            'step' => null,
             'timezone' => null,
             'templateVars' => [],
         ];
 
-        if ($data['type'] === 'datetime-local' || $data['type'] === 'time') {
-            $data += ['step' => '1'];
+        if (!isset($this->formatMap[$data['type']])) {
+            throw new InvalidArgumentException(sprintf(
+                'Invalid type `%s` for input tag, expected datetime-local, date, time, month or week',
+                $data['type']
+            ));
+        }
+
+        if (!isset($data['step'])) {
+            $step = $this->defaultStep[$data['type']];
+
+            if (isset($data['fieldName'])) {
+                $fractionalTypes = [
+                    TableSchema::TYPE_DATETIME_FRACTIONAL,
+                    TableSchema::TYPE_TIMESTAMP_FRACTIONAL,
+                ];
+
+                $schemaType = $context->type($data['fieldName']);
+                if (in_array($schemaType, $fractionalTypes, true)) {
+                    $step = '0.001';
+                }
+            }
+
+            $data['step'] = $step;
         }
 
         $data['value'] = $this->formatDateTime($data['val'], $data);
-        unset($data['val'], $data['timezone']);
+        unset($data['val'], $data['timezone'], $data['fieldName']);
 
         return $this->_templates->format('input', [
             'name' => $data['name'],
@@ -145,14 +183,7 @@ class DateTimeWidget implements WidgetInterface
             $dateTime = $dateTime->setTimezone($timezone);
         }
 
-        if (isset($this->formatMap[$options['type']])) {
-            return $dateTime->format($this->formatMap[$options['type']]);
-        }
-
-        throw new InvalidArgumentException(sprintf(
-            'Invalid type "%s" for input tag',
-            $options['type']
-        ));
+        return $dateTime->format($this->formatMap[$options['type']]);
     }
 
     /**

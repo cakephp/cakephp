@@ -53,6 +53,14 @@ class MysqlSchemaTest extends TestCase
                 ['type' => 'datetime', 'length' => null],
             ],
             [
+                'DATETIME(0)',
+                ['type' => 'datetime', 'length' => null],
+            ],
+            [
+                'DATETIME(6)',
+                ['type' => 'datetimefractional', 'length' => null, 'precision' => 6],
+            ],
+            [
                 'DATE',
                 ['type' => 'date', 'length' => null],
             ],
@@ -63,6 +71,14 @@ class MysqlSchemaTest extends TestCase
             [
                 'TIMESTAMP',
                 ['type' => 'timestamp', 'length' => null],
+            ],
+            [
+                'TIMESTAMP(0)',
+                ['type' => 'timestamp', 'length' => null],
+            ],
+            [
+                'TIMESTAMP(6)',
+                ['type' => 'timestampfractional', 'length' => null, 'precision' => 6],
             ],
             [
                 'TINYINT(1)',
@@ -268,6 +284,7 @@ SQL;
                 published BOOLEAN DEFAULT 0,
                 allow_comments TINYINT(1) DEFAULT 0,
                 created DATETIME,
+                created_with_precision DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3),
                 KEY `author_idx` (`author_id`),
                 UNIQUE KEY `length_idx` (`title`(4)),
                 FOREIGN KEY `author_idx` (`author_id`) REFERENCES `schema_authors`(`id`) ON UPDATE CASCADE ON DELETE RESTRICT
@@ -378,6 +395,14 @@ SQL;
                 'default' => null,
                 'length' => null,
                 'precision' => null,
+                'comment' => null,
+            ],
+            'created_with_precision' => [
+                'type' => 'datetimefractional',
+                'null' => true,
+                'default' => 'CURRENT_TIMESTAMP(3)',
+                'length' => null,
+                'precision' => 3,
                 'comment' => null,
             ],
         ];
@@ -739,6 +764,11 @@ SQL;
                 ['type' => 'datetime', 'null' => false, 'default' => '2016-12-07 23:04:00'],
                 '`open_date` DATETIME NOT NULL DEFAULT \'2016-12-07 23:04:00\'',
             ],
+            [
+                'created_with_precision',
+                ['type' => 'datetimefractional', 'precision' => 3, 'null' => false, 'default' => 'current_timestamp'],
+                '`created_with_precision` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3)',
+            ],
             // Date & Time
             [
                 'start_date',
@@ -770,6 +800,11 @@ SQL;
                 'open_date',
                 ['type' => 'timestamp', 'null' => false, 'default' => '2016-12-07 23:04:00'],
                 '`open_date` TIMESTAMP NOT NULL DEFAULT \'2016-12-07 23:04:00\'',
+            ],
+            [
+                'created_with_precision',
+                ['type' => 'timestampfractional', 'precision' => 3, 'null' => false, 'default' => 'current_timestamp'],
+                '`created_with_precision` TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3)',
             ],
         ];
     }

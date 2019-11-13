@@ -99,6 +99,28 @@ class TableTest extends TestCase
             'Users__updated' => 'timestamp',
             'updated' => 'timestamp',
         ]);
+
+        $config = $this->connection->config();
+        if (strpos($config['driver'], 'Postgres') !== false) {
+            $this->usersTypeMap = new TypeMap([
+                'Users.id' => 'integer',
+                'id' => 'integer',
+                'Users__id' => 'integer',
+                'Users.username' => 'string',
+                'Users__username' => 'string',
+                'username' => 'string',
+                'Users.password' => 'string',
+                'Users__password' => 'string',
+                'password' => 'string',
+                'Users.created' => 'timestampfractional',
+                'Users__created' => 'timestampfractional',
+                'created' => 'timestampfractional',
+                'Users.updated' => 'timestampfractional',
+                'Users__updated' => 'timestampfractional',
+                'updated' => 'timestampfractional',
+            ]);
+        }
+
         $this->articlesTypeMap = new TypeMap([
             'Articles.id' => 'integer',
             'Articles__id' => 'integer',

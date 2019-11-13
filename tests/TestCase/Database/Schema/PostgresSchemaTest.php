@@ -79,6 +79,8 @@ data JSONB,
 average_note DECIMAL(4,2),
 average_income NUMERIC(10,2),
 created TIMESTAMP,
+created_without_precision TIMESTAMP(0),
+created_with_precision TIMESTAMP(3),
 CONSTRAINT "content_idx" UNIQUE ("title", "body"),
 CONSTRAINT "author_idx" FOREIGN KEY ("author_id") REFERENCES "schema_authors" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 )
@@ -98,12 +100,16 @@ SQL;
         return [
             // Timestamp
             [
-                ['type' => 'TIMESTAMP'],
-                ['type' => 'timestamp', 'length' => null],
+                ['type' => 'TIMESTAMP', 'datetime_precision' => 6],
+                ['type' => 'timestampfractional', 'length' => null, 'precision' => 6],
             ],
             [
-                ['type' => 'TIMESTAMP WITHOUT TIME ZONE'],
-                ['type' => 'timestamp', 'length' => null],
+                ['type' => 'TIMESTAMP', 'datetime_precision' => 0],
+                ['type' => 'timestamp', 'length' => null, 'precision' => 0],
+            ],
+            [
+                ['type' => 'TIMESTAMP WITHOUT TIME ZONE', 'datetime_precision' => 6],
+                ['type' => 'timestampfractional', 'length' => null, 'precision' => 6],
             ],
             // Date & time
             [
@@ -401,11 +407,27 @@ SQL;
                 'comment' => null,
             ],
             'created' => [
+                'type' => 'timestampfractional',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => 6,
+                'comment' => null,
+            ],
+            'created_without_precision' => [
                 'type' => 'timestamp',
                 'null' => true,
                 'default' => null,
                 'length' => null,
-                'precision' => null,
+                'precision' => 0,
+                'comment' => null,
+            ],
+            'created_with_precision' => [
+                'type' => 'timestampfractional',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => 3,
                 'comment' => null,
             ],
         ];
@@ -493,11 +515,11 @@ SQL;
                 'autoIncrement' => null,
             ],
             'created' => [
-                'type' => 'timestamp',
+                'type' => 'timestampfractional',
                 'null' => true,
                 'default' => null,
                 'length' => null,
-                'precision' => null,
+                'precision' => 6,
                 'comment' => null,
             ],
         ];
@@ -845,27 +867,6 @@ SQL;
                 ['type' => 'boolean', 'default' => 1, 'null' => false],
                 '"checked" BOOLEAN NOT NULL DEFAULT TRUE',
             ],
-            // Datetime
-            [
-                'created',
-                ['type' => 'datetime'],
-                '"created" TIMESTAMP',
-            ],
-            [
-                'open_date',
-                ['type' => 'datetime', 'null' => false, 'default' => '2016-12-07 23:04:00'],
-                '"open_date" TIMESTAMP NOT NULL DEFAULT \'2016-12-07 23:04:00\'',
-            ],
-            [
-                'null_date',
-                ['type' => 'datetime', 'null' => true],
-                '"null_date" TIMESTAMP DEFAULT NULL',
-            ],
-            [
-                'current_timestamp',
-                ['type' => 'datetime', 'null' => false, 'default' => 'CURRENT_TIMESTAMP'],
-                '"current_timestamp" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP',
-            ],
             // Date & Time
             [
                 'start_date',
@@ -877,11 +878,67 @@ SQL;
                 ['type' => 'time'],
                 '"start_time" TIME',
             ],
+            // Datetime
+            [
+                'created',
+                ['type' => 'datetime', 'null' => true],
+                '"created" TIMESTAMP DEFAULT NULL',
+            ],
+            [
+                'created_without_precision',
+                ['type' => 'datetime', 'precision' => 0],
+                '"created_without_precision" TIMESTAMP(0)',
+            ],
+            [
+                'created_without_precision',
+                ['type' => 'datetimefractional', 'precision' => 0],
+                '"created_without_precision" TIMESTAMP(0)',
+            ],
+            [
+                'created_with_precision',
+                ['type' => 'datetimefractional', 'precision' => 3],
+                '"created_with_precision" TIMESTAMP(3)',
+            ],
             // Timestamp
             [
                 'created',
                 ['type' => 'timestamp', 'null' => true],
                 '"created" TIMESTAMP DEFAULT NULL',
+            ],
+            [
+                'created_without_precision',
+                ['type' => 'timestamp', 'precision' => 0],
+                '"created_without_precision" TIMESTAMP(0)',
+            ],
+            [
+                'created_without_precision',
+                ['type' => 'timestampfractional', 'precision' => 0],
+                '"created_without_precision" TIMESTAMP(0)',
+            ],
+            [
+                'created_with_precision',
+                ['type' => 'timestampfractional', 'precision' => 3],
+                '"created_with_precision" TIMESTAMP(3)',
+            ],
+            [
+                'open_date',
+                ['type' => 'timestampfractional', 'null' => false, 'default' => '2016-12-07 23:04:00'],
+                '"open_date" TIMESTAMP NOT NULL DEFAULT \'2016-12-07 23:04:00\'',
+            ],
+            [
+                'null_date',
+                ['type' => 'timestampfractional', 'null' => true],
+                '"null_date" TIMESTAMP DEFAULT NULL',
+            ],
+            [
+                'current_timestamp',
+                ['type' => 'timestamp', 'null' => false, 'default' => 'CURRENT_TIMESTAMP'],
+                '"current_timestamp" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP',
+            ],
+            [
+                'current_timestamp_fractional',
+                ['type' => 'timestampfractional', 'null' => false, 'default' => 'CURRENT_TIMESTAMP'],
+                '"current_timestamp_fractional" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP',
             ],
         ];
     }
@@ -1129,7 +1186,9 @@ SQL;
                 'collate' => 'C',
                 'null' => false,
             ])
-            ->addColumn('created', 'datetime')
+            ->addColumn('created', 'timestamp')
+            ->addColumn('created_without_precision', ['type' => 'timestamp', 'precision' => 0])
+            ->addColumn('created_with_precision', ['type' => 'timestampfractional', 'precision' => 6])
             ->addConstraint('primary', [
                 'type' => 'primary',
                 'columns' => ['id'],
@@ -1147,6 +1206,8 @@ CREATE TABLE "schema_articles" (
 "data" JSONB,
 "hash" CHAR(40) COLLATE "C" NOT NULL,
 "created" TIMESTAMP,
+"created_without_precision" TIMESTAMP(0),
+"created_with_precision" TIMESTAMP(6),
 PRIMARY KEY ("id")
 )
 SQL;
