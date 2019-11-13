@@ -4366,7 +4366,7 @@ class FormHelperTest extends TestCase
         $title = $Articles->getSchema()->getColumn('title');
         $Articles->getSchema()->addColumn(
             'title',
-            ['default' => 'default title'] + $title
+            ['default' => 'default title', 'length' => 255] + $title
         );
 
         $entity = $Articles->newEmptyEntity();
@@ -4374,23 +4374,23 @@ class FormHelperTest extends TestCase
 
         // Get default value from schema
         $result = $this->Form->text('title');
-        $expected = ['input' => ['type' => 'text', 'name' => 'title', 'value' => 'default title']];
+        $expected = ['input' => ['type' => 'text', 'name' => 'title', 'value' => 'default title', 'maxlength' => '255']];
         $this->assertHtml($expected, $result);
 
         // Don't get value from schema
         $result = $this->Form->text('title', ['schemaDefault' => false]);
-        $expected = ['input' => ['type' => 'text', 'name' => 'title']];
+        $expected = ['input' => ['type' => 'text', 'name' => 'title', 'maxlength' => '255']];
         $this->assertHtml($expected, $result);
 
         // Custom default value overrides default value from schema
         $result = $this->Form->text('title', ['default' => 'override default']);
-        $expected = ['input' => ['type' => 'text', 'name' => 'title', 'value' => 'override default']];
+        $expected = ['input' => ['type' => 'text', 'name' => 'title', 'value' => 'override default', 'maxlength' => '255']];
         $this->assertHtml($expected, $result);
 
         // Default value from schema is used only for new entities.
         $entity->setNew(false);
         $result = $this->Form->text('title');
-        $expected = ['input' => ['type' => 'text', 'name' => 'title']];
+        $expected = ['input' => ['type' => 'text', 'name' => 'title', 'maxlength' => '255']];
         $this->assertHtml($expected, $result);
     }
 
