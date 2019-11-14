@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\View\Widget;
 
+use Cake\Database\Schema\TableSchema;
 use Cake\View\Form\ContextInterface;
 use DateTime;
 use DateTimeInterface;
@@ -128,6 +129,29 @@ class DateTimeWidget extends BasicWidget
                 ['name', 'type']
             ),
         ]);
+    }
+
+    /**
+     * Set value for "step" attribute if applicable.
+     *
+     * @param array $data Data array
+     * @param \Cake\View\Form\ContextInterface $context Context instance.
+     * @param string $fieldName Field name.
+     * @return array Updated data array.
+     */
+    protected function setStep(array $data, ContextInterface $context, string $fieldName): array
+    {
+        $dbType = $context->type($fieldName);
+        $fractionalTypes = [
+            TableSchema::TYPE_DATETIME_FRACTIONAL,
+            TableSchema::TYPE_TIMESTAMP_FRACTIONAL,
+        ];
+
+        if (in_array($dbType, $fractionalTypes, true)) {
+            $data['step'] = '0.001';
+        }
+
+        return $data;
     }
 
     /**

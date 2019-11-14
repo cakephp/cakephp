@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\View\Widget;
 
-use Cake\Database\Schema\TableSchema;
 use Cake\View\Form\ContextInterface;
 use Cake\View\StringTemplate;
 
@@ -185,20 +184,11 @@ class BasicWidget implements WidgetInterface
         $dbType = $context->type($fieldName);
         $fieldDef = $context->attributes($fieldName);
 
-        $fractionalTypes = [
-            TableSchema::TYPE_DATETIME_FRACTIONAL,
-            TableSchema::TYPE_TIMESTAMP_FRACTIONAL,
-        ];
-
-        if ($data['type'] === 'number') {
-            if ($dbType === 'decimal' && isset($fieldDef['precision'])) {
-                $decimalPlaces = $fieldDef['precision'];
-                $data['step'] = sprintf('%.' . $decimalPlaces . 'F', pow(10, -1 * $decimalPlaces));
-            } elseif ($dbType === 'float') {
-                $data['step'] = 'any';
-            }
-        } elseif (in_array($dbType, $fractionalTypes, true)) {
-            $data['step'] = '0.001';
+        if ($dbType === 'decimal' && isset($fieldDef['precision'])) {
+            $decimalPlaces = $fieldDef['precision'];
+            $data['step'] = sprintf('%.' . $decimalPlaces . 'F', pow(10, -1 * $decimalPlaces));
+        } elseif ($dbType === 'float') {
+            $data['step'] = 'any';
         }
 
         return $data;
