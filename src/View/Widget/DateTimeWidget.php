@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\View\Widget;
 
-use Cake\Database\Schema\TableSchema;
 use Cake\View\Form\ContextInterface;
 use DateTime;
 use DateTimeInterface;
@@ -110,25 +109,15 @@ class DateTimeWidget extends BasicWidget
         }
 
         if (!isset($data['step'])) {
-            $step = $this->defaultStep[$data['type']];
+            $data['step'] = $this->defaultStep[$data['type']];
 
             if (isset($data['fieldName'])) {
-                $fractionalTypes = [
-                    TableSchema::TYPE_DATETIME_FRACTIONAL,
-                    TableSchema::TYPE_TIMESTAMP_FRACTIONAL,
-                ];
-
-                $schemaType = $context->type($data['fieldName']);
-                if (in_array($schemaType, $fractionalTypes, true)) {
-                    $step = '0.001';
-                }
+                $data = $this->setStep($data, $context, $data['fieldName']);
             }
-
-            $data['step'] = $step;
         }
 
         $data['value'] = $this->formatDateTime($data['val'], $data);
-        unset($data['val'], $data['timezone'], $data['fieldName']);
+        unset($data['val'], $data['timezone']);
 
         return $this->_templates->format('input', [
             'name' => $data['name'],

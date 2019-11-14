@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\View\Widget;
 
+use Cake\Database\Schema\TableSchema;
 use Cake\View\Form\ContextInterface;
 
 /**
@@ -79,14 +80,23 @@ trait HtmlAttributesTrait
      */
     protected function setStep(array $data, ContextInterface $context, string $fieldName): array
     {
-        $type = $context->type($fieldName);
+        $dbType = $context->type($fieldName);
         $fieldDef = $context->attributes($fieldName);
 
-        if ($type === 'decimal' && isset($fieldDef['precision'])) {
-            $decimalPlaces = $fieldDef['precision'];
-            $data['step'] = sprintf('%.' . $decimalPlaces . 'F', pow(10, -1 * $decimalPlaces));
-        } elseif ($type === 'float') {
-            $data['step'] = 'any';
+        $fractionalTypes = [
+            TableSchema::TYPE_DATETIME_FRACTIONAL,
+            TableSchema::TYPE_TIMESTAMP_FRACTIONAL,
+        ];
+
+        if ($data['type'] === 'number') {
+            if ($dbType === 'decimal' && isset($fieldDef['precision'])) {
+                $decimalPlaces = $fieldDef['precision'];
+                $data['step'] = sprintf('%.' . $decimalPlaces . 'F', pow(10, -1 * $decimalPlaces));
+            } elseif ($dbType === 'float') {
+                $data['step'] = 'any';
+            }
+        } elseif (in_array($dbType, $fractionalTypes, true)) {
+            $data['step'] = '0.001';
         }
 
         return $data;
