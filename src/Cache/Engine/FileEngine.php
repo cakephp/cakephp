@@ -298,7 +298,7 @@ class FileEngine extends CacheEngine
 
             if ($file->isFile()) {
                 $filePath = $file->getRealPath();
-                $file = null;
+                unset($file);
 
                 // phpcs:disable
                 @unlink($filePath);
@@ -472,7 +472,7 @@ class FileEngine extends CacheEngine
         );
         foreach ($filtered as $object) {
             $path = $object->getPathname();
-            $object = null;
+            unset($object);
             // phpcs:ignore
             @unlink($path);
         }

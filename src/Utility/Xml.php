@@ -141,9 +141,8 @@ class Xml
      */
     protected static function _loadXml(string $input, array $options)
     {
-        $hasDisable = function_exists('libxml_disable_entity_loader');
         $internalErrors = libxml_use_internal_errors(true);
-        if ($hasDisable && !$options['loadEntities']) {
+        if (!$options['loadEntities']) {
             libxml_disable_entity_loader(true);
         }
         $flags = 0;
@@ -163,7 +162,7 @@ class Xml
         } catch (Exception $e) {
             throw new XmlException('Xml cannot be read. ' . $e->getMessage(), null, $e);
         } finally {
-            if ($hasDisable && !$options['loadEntities']) {
+            if (!$options['loadEntities']) {
                 libxml_disable_entity_loader(false);
             }
             libxml_use_internal_errors($internalErrors);
@@ -186,9 +185,8 @@ class Xml
         ];
         $options += $defaults;
 
-        $hasDisable = function_exists('libxml_disable_entity_loader');
         $internalErrors = libxml_use_internal_errors(true);
-        if ($hasDisable && !$options['loadEntities']) {
+        if (!$options['loadEntities']) {
             libxml_disable_entity_loader(true);
         }
         $flags = 0;
@@ -200,7 +198,6 @@ class Xml
             $xml->loadHTML($input, $flags);
 
             if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
-                $flags |= LIBXML_NOCDATA;
                 $xml = simplexml_import_dom($xml);
             }
 
@@ -208,7 +205,7 @@ class Xml
         } catch (Exception $e) {
             throw new XmlException('Xml cannot be read. ' . $e->getMessage(), null, $e);
         } finally {
-            if ($hasDisable && !$options['loadEntities']) {
+            if (!$options['loadEntities']) {
                 libxml_disable_entity_loader(false);
             }
             libxml_use_internal_errors($internalErrors);

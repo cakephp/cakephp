@@ -238,7 +238,7 @@ class FrozenTime extends Chronos implements I18nDateTimeInterface
             $now = time();
             $before = $options['before'];
             $after = $options['after'];
-            foreach ($identifiers as $key => $tz) {
+            foreach ($identifiers as $tz) {
                 $abbr = '';
                 if ($options['abbr']) {
                     $dateTimeZone = new DateTimeZone($tz);

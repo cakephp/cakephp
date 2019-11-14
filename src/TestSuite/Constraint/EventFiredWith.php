@@ -67,9 +67,7 @@ class EventFiredWith extends Constraint
     {
         $firedEvents = [];
         $list = $this->_eventManager->getEventList();
-        if ($list === null) {
-            $totalEvents = 0;
-        } else {
+        if ($list !== null) {
             $totalEvents = count($list);
             for ($e = 0; $e < $totalEvents; $e++) {
                 $firedEvents[] = $list[$e];

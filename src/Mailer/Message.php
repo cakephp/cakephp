@@ -1032,7 +1032,7 @@ class Message implements JsonSerializable, Serializable
             return [static::MESSAGE_HTML, static::MESSAGE_TEXT];
         }
 
-        return $types = [$format];
+        return [$format];
     }
 
     /**

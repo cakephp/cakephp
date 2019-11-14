@@ -311,7 +311,7 @@ class FormProtector
         $unlocked = urldecode($formData['_Token']['unlocked']);
 
         if (strpos($token, ':')) {
-            [$token, $locked] = explode(':', $token, 2);
+            [, $locked] = explode(':', $token, 2);
         }
         unset($formData['_Token']);
 

@@ -982,7 +982,7 @@ trait CollectionTrait
         $arrayValue = $this->toList();
         $length = count(current($arrayValue));
         $result = [];
-        foreach ($arrayValue as $column => $row) {
+        foreach ($arrayValue as $row) {
             if (count($row) !== $length) {
                 throw new LogicException('Child arrays do not have even length');
             }
