@@ -52,6 +52,13 @@ interface TableSchemaInterface extends SchemaInterface
     public const TYPE_DATETIME = 'datetime';
 
     /**
+     * Datetime with fractional seconds column type
+     *
+     * @var string
+     */
+    public const TYPE_DATETIME_FRACTIONAL = 'datetimefractional';
+
+    /**
      * Time column type
      *
      * @var string
@@ -64,6 +71,13 @@ interface TableSchemaInterface extends SchemaInterface
      * @var string
      */
     public const TYPE_TIMESTAMP = 'timestamp';
+
+    /**
+     * Timestamp with fractional seconds column type
+     *
+     * @var string
+     */
+    public const TYPE_TIMESTAMP_FRACTIONAL = 'timestampfractional';
 
     /**
      * JSON column type

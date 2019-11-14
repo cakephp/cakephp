@@ -15,13 +15,11 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 use Cake\Error\Debugger;
-?>
 
-<?php
-foreach ($error->getTrace() as $i => $stack):
+foreach ($trace as $i => $stack):
     $excerpt = $params = [];
 
-    if (isset($stack['file'], $stack['line'])):
+    if (isset($stack['file'], $stack['line']) && is_numeric($stack['line'])):
         $excerpt = Debugger::excerpt($stack['file'], $stack['line'], 4);
     endif;
 
@@ -31,7 +29,7 @@ foreach ($error->getTrace() as $i => $stack):
         $file = '[internal function]';
     endif;
 
-    if ($stack['function']):
+    if (isset($stack['function'])):
         if (!empty($stack['args'])):
             foreach ((array)$stack['args'] as $arg):
                 $params[] = Debugger::exportVar($arg, 4);
@@ -48,7 +46,7 @@ foreach ($error->getTrace() as $i => $stack):
         </div>
 
         <table class="code-excerpt" cellspacing="0" cellpadding="0">
-        <?php $lineno = isset($stack['line']) ? $stack['line'] - 4 : 0 ?>
+        <?php $lineno = isset($stack['line']) && is_numeric($stack['line']) ? $stack['line'] - 4 : 0 ?>
         <?php foreach ($excerpt as $l => $line): ?>
             <tr>
                 <td class="excerpt-number" data-number="<?= $lineno + $l ?>"></td>

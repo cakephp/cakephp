@@ -462,7 +462,7 @@ class RouteBuilderTest extends TestCase
             $this->assertInstanceOf(RouteBuilder::class, $r);
             $this->assertCount(0, $this->collection->routes());
             $this->assertSame('/path/admin', $r->path());
-            $this->assertEquals(['prefix' => 'admin', 'key' => 'value', 'param' => 'value'], $r->params());
+            $this->assertEquals(['prefix' => 'Admin', 'key' => 'value', 'param' => 'value'], $r->params());
         });
         $this->assertSame($routes, $res);
     }
@@ -479,7 +479,7 @@ class RouteBuilderTest extends TestCase
             $this->assertInstanceOf(RouteBuilder::class, $r);
             $this->assertCount(0, $this->collection->routes());
             $this->assertSame('/path/admin', $r->path());
-            $this->assertEquals(['prefix' => 'admin', 'key' => 'value'], $r->params());
+            $this->assertEquals(['prefix' => 'Admin', 'key' => 'value'], $r->params());
         });
         $this->assertSame($routes, $res);
     }
@@ -494,7 +494,7 @@ class RouteBuilderTest extends TestCase
         $routes = new RouteBuilder($this->collection, '/admin', ['prefix' => 'admin']);
         $res = $routes->prefix('api', ['_namePrefix' => 'api:'], function ($r) {
             $this->assertSame('/admin/api', $r->path());
-            $this->assertEquals(['prefix' => 'admin/api'], $r->params());
+            $this->assertEquals(['prefix' => 'admin/Api'], $r->params());
             $this->assertSame('api:', $r->namePrefix());
         });
         $this->assertSame($routes, $res);
@@ -511,10 +511,10 @@ class RouteBuilderTest extends TestCase
         $res = $routes->prefix('api', function ($r) {
             $r->prefix('v10', ['path' => '/v1.0'], function ($r2) {
                 $this->assertSame('/admin/api/v1.0', $r2->path());
-                $this->assertEquals(['prefix' => 'admin/api/v10'], $r2->params());
+                $this->assertEquals(['prefix' => 'admin/Api/V10'], $r2->params());
                 $r2->prefix('b1', ['path' => '/beta.1'], function ($r3) {
                     $this->assertSame('/admin/api/v1.0/beta.1', $r3->path());
-                    $this->assertEquals(['prefix' => 'admin/api/v10/b1'], $r3->params());
+                    $this->assertEquals(['prefix' => 'admin/Api/V10/B1'], $r3->params());
                 });
             });
         });

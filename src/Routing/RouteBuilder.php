@@ -843,7 +843,7 @@ class RouteBuilder
             $params = [];
         }
         $path = '/' . Inflector::dasherize($name);
-        $name = Inflector::underscore($name);
+        $name = Inflector::camelize($name);
         if (isset($params['path'])) {
             $path = $params['path'];
             unset($params['path']);

@@ -247,7 +247,7 @@ class DateTimeType extends BaseType
 
         $class = $this->_className;
         try {
-            $compare = $date = false;
+            $date = false;
             if ($value === '' || $value === null || $value === false || $value === true) {
                 return null;
             }

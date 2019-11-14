@@ -620,8 +620,8 @@ class Router
 
         $parts = parse_url(static::$_fullBaseUrl);
         static::$_requestContext = [
-            '_scheme' => $parts['scheme'],
-            '_host' => $parts['host'],
+            '_scheme' => $parts['scheme'] ?? null,
+            '_host' => $parts['host'] ?? null,
             '_port' => $parts['port'] ?? null,
         ] + static::$_requestContext;
 
@@ -858,7 +858,7 @@ class Router
         $path = $params['path'] ?? '/' . Inflector::dasherize($name);
         unset($params['path']);
 
-        $params = array_merge($params, ['prefix' => Inflector::underscore($name)]);
+        $params = array_merge($params, ['prefix' => Inflector::camelize($name)]);
         static::scope($path, $params, $callback);
     }
 

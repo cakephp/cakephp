@@ -222,7 +222,7 @@ class FormDataPart
             $out .= 'Content-ID: <' . $this->_contentId . ">\r\n";
         }
         $out .= "\r\n";
-        $out .= (string)$this->_value;
+        $out .= $this->_value;
 
         return $out;
     }

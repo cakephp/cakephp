@@ -40,6 +40,7 @@ class TypeFactory
         'boolean' => Type\BoolType::class,
         'date' => Type\DateType::class,
         'datetime' => Type\DateTimeType::class,
+        'datetimefractional' => Type\DateTimeFractionalType::class,
         'decimal' => Type\DecimalType::class,
         'float' => Type\FloatType::class,
         'json' => Type\JsonType::class,
@@ -48,6 +49,7 @@ class TypeFactory
         'text' => Type\StringType::class,
         'time' => Type\TimeType::class,
         'timestamp' => Type\DateTimeType::class,
+        'timestampfractional' => Type\DateTimeFractionalType::class,
         'uuid' => Type\UuidType::class,
     ];
 

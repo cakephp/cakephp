@@ -170,6 +170,21 @@ class ExceptionRenderer implements ExceptionRendererInterface
     }
 
     /**
+     * Clear output buffers so error pages display properly.
+     *
+     * @return void
+     */
+    protected function clearOutput(): void
+    {
+        if (in_array(PHP_SAPI, ['cli', 'phpdbg'])) {
+            return;
+        }
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
+    }
+
+    /**
      * Renders the response for the exception.
      *
      * @return \Cake\Http\Response The response to be sent.
@@ -180,6 +195,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
         $code = $this->_code($exception);
         $method = $this->_method($exception);
         $template = $this->_template($exception, $method, $code);
+        $this->clearOutput();
 
         if (method_exists($this, $method)) {
             return $this->_customMethod($method, $exception);
@@ -206,12 +222,18 @@ class ExceptionRenderer implements ExceptionRendererInterface
 
         $isDebug = Configure::read('debug');
         if ($isDebug) {
-            $viewVars['trace'] = Debugger::formatTrace($exception->getTrace(), [
+            $trace = (array)Debugger::formatTrace($exception->getTrace(), [
                 'format' => 'array',
                 'args' => false,
             ]);
-            $viewVars['file'] = $exception->getFile() ?: 'null';
-            $viewVars['line'] = $exception->getLine() ?: 'null';
+            $origin = [
+                'file' => $exception->getFile() ?: 'null',
+                'line' => $exception->getLine() ?: 'null',
+            ];
+            // Traces don't include the origin file/line.
+            array_unshift($trace, $origin);
+            $viewVars['trace'] = $trace;
+            $viewVars += $origin;
             $serialize[] = 'file';
             $serialize[] = 'line';
         }
