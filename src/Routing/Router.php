@@ -620,8 +620,8 @@ class Router
 
         $parts = parse_url(static::$_fullBaseUrl);
         static::$_requestContext = [
-            '_scheme' => $parts['scheme'],
-            '_host' => $parts['host'],
+            '_scheme' => $parts['scheme'] ?? null,
+            '_host' => $parts['host'] ?? null,
             '_port' => $parts['port'] ?? null,
         ] + static::$_requestContext;
 
