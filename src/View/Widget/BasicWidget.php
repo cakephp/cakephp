@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\View\Widget;
 
+use Cake\Database\Schema\TableSchema;
 use Cake\View\Form\ContextInterface;
 use Cake\View\StringTemplate;
 
@@ -28,8 +29,6 @@ use Cake\View\StringTemplate;
  */
 class BasicWidget implements WidgetInterface
 {
-    use HtmlAttributesTrait;
-
     /**
      * StringTemplate instance.
      *
@@ -124,6 +123,82 @@ class BasicWidget implements WidgetInterface
 
         if (isset($data['fieldName']) && !array_key_exists('required', $data)) {
             $data = $this->setRequired($data, $context, $data['fieldName']);
+        }
+
+        return $data;
+    }
+
+    /**
+     * Set value for "required" attribute if applicable.
+     *
+     * @param array $data Data array
+     * @param \Cake\View\Form\ContextInterface $context Context instance.
+     * @param string $fieldName Field name.
+     * @return array Updated data array.
+     */
+    protected function setRequired(array $data, ContextInterface $context, string $fieldName): array
+    {
+        if (
+            empty($data['disabled'])
+            && (
+                (isset($data['type'])
+                    && $data['type'] !== 'hidden'
+                )
+                || !isset($data['type'])
+            )
+            && $context->isRequired($fieldName)
+        ) {
+            $data['required'] = true;
+        }
+
+        return $data;
+    }
+
+    /**
+     * Set value for "maxlength" attribute if applicable.
+     *
+     * @param array $data Data array
+     * @param \Cake\View\Form\ContextInterface $context Context instance.
+     * @param string $fieldName Field name.
+     * @return array Updated data array.
+     */
+    protected function setMaxLength(array $data, ContextInterface $context, string $fieldName): array
+    {
+        $maxLength = $context->getMaxLength($fieldName);
+        if ($maxLength !== null) {
+            $data['maxlength'] = min($maxLength, 100000);
+        }
+
+        return $data;
+    }
+
+    /**
+     * Set value for "step" attribute if applicable.
+     *
+     * @param array $data Data array
+     * @param \Cake\View\Form\ContextInterface $context Context instance.
+     * @param string $fieldName Field name.
+     * @return array Updated data array.
+     */
+    protected function setStep(array $data, ContextInterface $context, string $fieldName): array
+    {
+        $dbType = $context->type($fieldName);
+        $fieldDef = $context->attributes($fieldName);
+
+        $fractionalTypes = [
+            TableSchema::TYPE_DATETIME_FRACTIONAL,
+            TableSchema::TYPE_TIMESTAMP_FRACTIONAL,
+        ];
+
+        if ($data['type'] === 'number') {
+            if ($dbType === 'decimal' && isset($fieldDef['precision'])) {
+                $decimalPlaces = $fieldDef['precision'];
+                $data['step'] = sprintf('%.' . $decimalPlaces . 'F', pow(10, -1 * $decimalPlaces));
+            } elseif ($dbType === 'float') {
+                $data['step'] = 'any';
+            }
+        } elseif (in_array($dbType, $fractionalTypes, true)) {
+            $data['step'] = '0.001';
         }
 
         return $data;
