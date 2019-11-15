@@ -22,6 +22,7 @@ use Cake\Chronos\MutableDate;
 use DateTime;
 use DateTimeZone;
 use IntlDateFormatter;
+use InvalidArgumentException;
 use RuntimeException;
 
 /**
@@ -292,9 +293,9 @@ trait DateFormatTrait
      *
      * When no $format is provided, the `toString` format will be used.
      *
-     * The time zone of the returned instance is always converted to the default
-     * timezone even if the `$time` string specified a time zone. This is a
-     * limitation of IntlDateFormatter.
+     * Unlike DateTime, the time zone of the returned instance is always converted
+     * to `$tz` (default time zone if null) even if the `$time` string specified a
+     * time zone. This is a limitation of IntlDateFormatter.
      *
      * If it was impossible to parse the provided time, null will be returned.
      *
@@ -307,10 +308,12 @@ trait DateFormatTrait
      * ```
      *
      * @param string $time The time string to parse.
-     * @param string|int|array|null $format Any format accepted by IntlDateFormatter.
+     * @param string|int[]|null $format Any format accepted by IntlDateFormatter.
+     * @param \DateTimeZone|string|null $tz The timezone for the instance
      * @return static|null
+     * @throws \InvalidArgumentException If $format is a single int instead of array of constants
      */
-    public static function parseDateTime(string $time, $format = null)
+    public static function parseDateTime(string $time, $format = null, $tz = null)
     {
         $dateFormat = $format ?: static::$_toStringFormat;
         $timeFormat = $pattern = null;
@@ -321,6 +324,12 @@ trait DateFormatTrait
         } else {
             $pattern = $dateFormat;
             $dateFormat = null;
+
+            if (is_int($pattern)) {
+                throw new InvalidArgumentException(
+                    'If $format is an IntlDateFormatter constant, must be an array.'
+                );
+            }
         }
 
         if (static::$_isDateInstance === null) {
@@ -331,16 +340,20 @@ trait DateFormatTrait
 
         $formatter = datefmt_create(
             (string)static::$defaultLocale,
-            (int)$dateFormat,
-            (int)$timeFormat,
+            $dateFormat ?? 0,
+            $timeFormat ?? 0,
+            $tz,
             null,
-            null,
-            (string)$pattern
+            $pattern ?? ''
         );
         $time = $formatter->parse($time);
         if ($time !== false) {
             $dateTime = new DateTime('@' . $time);
-            $dateTime->setTimezone(new DateTimeZone(date_default_timezone_get()));
+
+            if (!($tz instanceof DateTimeZone)) {
+                $tz = new DateTimeZone($tz ?? date_default_timezone_get());
+            }
+            $dateTime->setTimezone($tz);
 
             return new static($dateTime);
         }

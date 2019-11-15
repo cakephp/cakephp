@@ -154,10 +154,12 @@ interface I18nDateTimeInterface extends ChronosInterface, JsonSerializable
      * ```
      *
      * @param string $time The time string to parse.
-     * @param string|int|array|null $format Any format accepted by IntlDateFormatter.
+     * @param string|int[]|null $format Any format accepted by IntlDateFormatter.
+     * @param \DateTimeZone|string|null $tz The timezone for the instance
      * @return static|null
+     * @throws \InvalidArgumentException If $format is a single int instead of array of constants
      */
-    public static function parseDateTime(string $time, $format = null);
+    public static function parseDateTime(string $time, $format = null, $tz = null);
 
     /**
      * Returns a new Time object after parsing the provided $date string based on
