@@ -24,6 +24,19 @@ use Cake\View\Form\ContextInterface;
 class CheckboxWidget extends BasicWidget
 {
     /**
+     * Data defaults.
+     *
+     * @var array
+     */
+    protected $defaults = [
+        'name' => '',
+        'value' => 1,
+        'val' => null,
+        'disabled' => false,
+        'templateVars' => [],
+    ];
+
+    /**
      * Render a checkbox element.
      *
      * Data supports the following keys:
@@ -42,13 +55,8 @@ class CheckboxWidget extends BasicWidget
      */
     public function render(array $data, ContextInterface $context): string
     {
-        $data += [
-            'name' => '',
-            'value' => 1,
-            'val' => null,
-            'disabled' => false,
-            'templateVars' => [],
-        ];
+        $data += $this->mergeDefaults($data, $context);
+
         if ($this->_isChecked($data)) {
             $data['checked'] = true;
         }

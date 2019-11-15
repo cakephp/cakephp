@@ -199,11 +199,25 @@ class ArrayContext implements ContextInterface
      * In this context class, this is simply defined by the 'required' array.
      *
      * @param string $field A dot separated path to check required-ness for.
-     * @return bool
+     * @return bool|null
      */
-    public function isRequired(string $field): bool
+    public function isRequired(string $field): ?bool
     {
-        return (bool)$this->getRequiredMessage($field);
+        if (!is_array($this->_context['required'])) {
+            return null;
+        }
+
+        $required = Hash::get($this->_context['required'], $field);
+
+        if ($required === null) {
+            $required = Hash::get($this->_context['required'], $this->stripNesting($field));
+        }
+
+        if (!empty($required) || $required === '0') {
+            return true;
+        }
+
+        return $required;
     }
 
     /**

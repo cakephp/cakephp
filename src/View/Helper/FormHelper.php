@@ -1292,25 +1292,11 @@ class FormHelper extends Helper
      */
     protected function _magicOptions(string $fieldName, array $options, bool $allowOverride): array
     {
-        $context = $this->_getContext();
-
         $options += [
             'templateVars' => [],
         ];
 
         $options = $this->setRequiredAndCustomValidity($fieldName, $options);
-
-        $type = $context->type($fieldName);
-        $fieldDef = $context->attributes($fieldName);
-
-        if ($options['type'] === 'number' && !isset($options['step'])) {
-            if ($type === 'decimal' && isset($fieldDef['precision'])) {
-                $decimalPlaces = $fieldDef['precision'];
-                $options['step'] = sprintf('%.' . $decimalPlaces . 'F', pow(10, -1 * $decimalPlaces));
-            } elseif ($type === 'float') {
-                $options['step'] = 'any';
-            }
-        }
 
         $typesWithOptions = ['text', 'number', 'radio', 'select'];
         $magicOptions = (in_array($options['type'], ['radio', 'select'], true) || $allowOverride);
@@ -1323,34 +1309,6 @@ class FormHelper extends Helper
             if (!isset($options['multiple']) || ($options['multiple'] && $options['multiple'] !== 'checkbox')) {
                 $options['multiple'] = true;
             }
-        }
-
-        if ($options['type'] === 'select' && array_key_exists('step', $options)) {
-            unset($options['step']);
-        }
-
-        $typesWithMaxLength = ['text', 'textarea', 'email', 'tel', 'url', 'search'];
-        if (
-            !array_key_exists('maxlength', $options)
-            && in_array($options['type'], $typesWithMaxLength, true)
-        ) {
-            $maxLength = $context->getMaxLength($fieldName);
-
-            if ($maxLength === null && !empty($fieldDef['length'])) {
-                $maxLength = $fieldDef['length'];
-            }
-
-            if ($maxLength !== null) {
-                $options['maxlength'] = min($maxLength, 100000);
-            }
-        }
-
-        if (in_array($options['type'], ['datetime', 'date', 'time', 'select'], true)) {
-            $options += ['empty' => false];
-        }
-
-        if ($options['type'] === 'datetime') {
-            $options += ['fieldName' => $fieldName];
         }
 
         return $options;
@@ -2038,8 +1996,13 @@ class FormHelper extends Helper
             'hiddenField' => true,
             'multiple' => null,
             'secure' => true,
-            'empty' => false,
+            'empty' => null,
         ];
+
+        if ($attributes['empty'] === null && $attributes['multiple'] !== 'checkbox') {
+            $required = $this->_getContext()->isRequired($fieldName);
+            $attributes['empty'] = $required === null ? false : !$required;
+        }
 
         if ($attributes['multiple'] === 'checkbox') {
             unset($attributes['multiple'], $attributes['empty']);
@@ -2277,6 +2240,8 @@ class FormHelper extends Helper
      */
     protected function _initInputField(string $field, array $options = []): array
     {
+        $options += ['fieldName' => $field];
+
         if (!isset($options['secure'])) {
             $options['secure'] = $this->_View->getRequest()->getAttribute('formTokenData') === null ? false : true;
         }
@@ -2328,9 +2293,6 @@ class FormHelper extends Helper
         }
         if ($options['secure'] === self::SECURE_SKIP) {
             return $options;
-        }
-        if (!isset($options['required']) && empty($options['disabled']) && $context->isRequired($field)) {
-            $options['required'] = true;
         }
 
         return $options;

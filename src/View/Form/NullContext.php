@@ -79,9 +79,9 @@ class NullContext implements ContextInterface
     /**
      * @inheritDoc
      */
-    public function isRequired(string $field): bool
+    public function isRequired(string $field): ?bool
     {
-        return false;
+        return null;
     }
 
     /**

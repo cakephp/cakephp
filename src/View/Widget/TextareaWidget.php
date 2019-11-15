@@ -27,6 +27,19 @@ use Cake\View\Form\ContextInterface;
 class TextareaWidget extends BasicWidget
 {
     /**
+     * Data defaults.
+     *
+     * @var array
+     */
+    protected $defaults = [
+        'val' => '',
+        'name' => '',
+        'escape' => true,
+        'rows' => 5,
+        'templateVars' => [],
+    ];
+
+    /**
      * Render a text area form widget.
      *
      * Data supports the following keys:
@@ -43,13 +56,14 @@ class TextareaWidget extends BasicWidget
      */
     public function render(array $data, ContextInterface $context): string
     {
-        $data += [
-            'val' => '',
-            'name' => '',
-            'escape' => true,
-            'rows' => 5,
-            'templateVars' => [],
-        ];
+        $data += $this->mergeDefaults($data, $context);
+
+        if (
+            !array_key_exists('maxlength', $data)
+            && isset($data['fieldName'])
+        ) {
+            $data = $this->setMaxLength($data, $context, $data['fieldName']);
+        }
 
         return $this->_templates->format('textarea', [
             'name' => $data['name'],

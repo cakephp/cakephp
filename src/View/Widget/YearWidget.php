@@ -20,21 +20,26 @@ use Cake\View\Form\ContextInterface;
 use Cake\View\StringTemplate;
 use InvalidArgumentException;
 
-class YearWidget implements WidgetInterface
+class YearWidget extends BasicWidget
 {
+    /**
+     * Data defaults.
+     *
+     * @var array
+     */
+    protected $defaults = [
+        'name' => '',
+        'val' => null,
+        'order' => 'desc',
+        'templateVars' => [],
+    ];
+
     /**
      * Select box widget.
      *
      * @var \Cake\View\Widget\SelectBoxWidget
      */
     protected $_select;
-
-    /**
-     * Template instance.
-     *
-     * @var \Cake\View\StringTemplate
-     */
-    protected $_templates;
 
     /**
      * Constructor
@@ -57,12 +62,7 @@ class YearWidget implements WidgetInterface
      */
     public function render(array $data, ContextInterface $context): string
     {
-        $data += [
-            'name' => '',
-            'val' => null,
-            'order' => 'desc',
-            'templateVars' => [],
-        ];
+        $data += $this->mergeDefaults($data, $context);
 
         if (empty($data['min'])) {
             $data['min'] = date('Y', strtotime('-5 years'));
@@ -94,17 +94,5 @@ class YearWidget implements WidgetInterface
         unset($data['order'], $data['min'], $data['max']);
 
         return $this->_select->render($data, $context);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function secureFields(array $data): array
-    {
-        if (!isset($data['name']) || $data['name'] === '') {
-            return [];
-        }
-
-        return [$data['name']];
     }
 }

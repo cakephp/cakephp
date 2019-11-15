@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\View\Widget;
 
 use Cake\View\Form\ContextInterface;
-use Cake\View\StringTemplate;
 
 /**
  * Input widget class for generating a file upload control.
@@ -25,24 +24,18 @@ use Cake\View\StringTemplate;
  * This class is intended as an internal implementation detail
  * of Cake\View\Helper\FormHelper and is not intended for direct use.
  */
-class FileWidget implements WidgetInterface
+class FileWidget extends BasicWidget
 {
     /**
-     * Templates
+     * Data defaults.
      *
-     * @var \Cake\View\StringTemplate
+     * @var array
      */
-    protected $_templates;
-
-    /**
-     * Constructor
-     *
-     * @param \Cake\View\StringTemplate $templates Templates list.
-     */
-    public function __construct(StringTemplate $templates)
-    {
-        $this->_templates = $templates;
-    }
+    protected $defaults = [
+        'name' => '',
+        'escape' => true,
+        'templateVars' => [],
+    ];
 
     /**
      * Render a file upload form widget.
@@ -62,11 +55,8 @@ class FileWidget implements WidgetInterface
      */
     public function render(array $data, ContextInterface $context): string
     {
-        $data += [
-            'name' => '',
-            'escape' => true,
-            'templateVars' => [],
-        ];
+        $data += $this->mergeDefaults($data, $context);
+
         unset($data['val']);
 
         return $this->_templates->format('file', [

@@ -482,9 +482,9 @@ class EntityContext implements ContextInterface
      * Check if a field should be marked as required.
      *
      * @param string $field The dot separated path to the field you want to check.
-     * @return bool
+     * @return bool|null
      */
-    public function isRequired(string $field): bool
+    public function isRequired(string $field): ?bool
     {
         $parts = explode('.', $field);
         $entity = $this->entity($parts);
@@ -497,10 +497,10 @@ class EntityContext implements ContextInterface
         $validator = $this->_getValidator($parts);
         $fieldName = array_pop($parts);
         if (!$validator->hasField($fieldName)) {
-            return false;
+            return null;
         }
         if ($this->type($field) !== 'boolean') {
-            return $validator->isEmptyAllowed($fieldName, $isNew) === false;
+            return !$validator->isEmptyAllowed($fieldName, $isNew);
         }
 
         return false;
@@ -538,13 +538,18 @@ class EntityContext implements ContextInterface
         $parts = explode('.', $field);
         $validator = $this->_getValidator($parts);
         $fieldName = array_pop($parts);
-        if (!$validator->hasField($fieldName)) {
-            return null;
-        }
-        foreach ($validator->field($fieldName)->rules() as $rule) {
-            if ($rule->get('rule') === 'maxLength') {
-                return $rule->get('pass')[0];
+
+        if ($validator->hasField($fieldName)) {
+            foreach ($validator->field($fieldName)->rules() as $rule) {
+                if ($rule->get('rule') === 'maxLength') {
+                    return $rule->get('pass')[0];
+                }
             }
+        }
+
+        $attributes = $this->attributes($field);
+        if (!empty($attributes['length'])) {
+            return (int)$attributes['length'];
         }
 
         return null;

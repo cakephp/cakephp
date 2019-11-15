@@ -18,7 +18,6 @@ namespace Cake\View\Widget;
 
 use Cake\Database\Schema\TableSchema;
 use Cake\View\Form\ContextInterface;
-use Cake\View\StringTemplate;
 use DateTime;
 use DateTimeInterface;
 use DateTimeZone;
@@ -31,7 +30,7 @@ use InvalidArgumentException;
  * This class is intended as an internal implementation detail
  * of Cake\View\Helper\FormHelper and is not intended for direct use.
  */
-class DateTimeWidget implements WidgetInterface
+class DateTimeWidget extends BasicWidget
 {
     /**
      * Template instance.
@@ -39,6 +38,20 @@ class DateTimeWidget implements WidgetInterface
      * @var \Cake\View\StringTemplate
      */
     protected $_templates;
+
+    /**
+     * Data defaults.
+     *
+     * @var array
+     */
+    protected $defaults = [
+        'name' => '',
+        'val' => null,
+        'type' => 'datetime-local',
+        'escape' => true,
+        'timezone' => null,
+        'templateVars' => [],
+    ];
 
     /**
      * Formats for various input types.
@@ -69,16 +82,6 @@ class DateTimeWidget implements WidgetInterface
     ];
 
     /**
-     * Constructor
-     *
-     * @param \Cake\View\StringTemplate $templates Templates list.
-     */
-    public function __construct(StringTemplate $templates)
-    {
-        $this->_templates = $templates;
-    }
-
-    /**
      * Render a date / time form widget.
      *
      * Data supports the following keys:
@@ -97,15 +100,7 @@ class DateTimeWidget implements WidgetInterface
      */
     public function render(array $data, ContextInterface $context): string
     {
-        $data += [
-            'name' => '',
-            'val' => null,
-            'type' => 'datetime-local',
-            'escape' => true,
-            'step' => null,
-            'timezone' => null,
-            'templateVars' => [],
-        ];
+        $data += $this->mergeDefaults($data, $context);
 
         if (!isset($this->formatMap[$data['type']])) {
             throw new InvalidArgumentException(sprintf(
@@ -115,25 +110,15 @@ class DateTimeWidget implements WidgetInterface
         }
 
         if (!isset($data['step'])) {
-            $step = $this->defaultStep[$data['type']];
+            $data['step'] = $this->defaultStep[$data['type']];
 
             if (isset($data['fieldName'])) {
-                $fractionalTypes = [
-                    TableSchema::TYPE_DATETIME_FRACTIONAL,
-                    TableSchema::TYPE_TIMESTAMP_FRACTIONAL,
-                ];
-
-                $schemaType = $context->type($data['fieldName']);
-                if (in_array($schemaType, $fractionalTypes, true)) {
-                    $step = '0.001';
-                }
+                $data = $this->setStep($data, $context, $data['fieldName']);
             }
-
-            $data['step'] = $step;
         }
 
         $data['value'] = $this->formatDateTime($data['val'], $data);
-        unset($data['val'], $data['timezone'], $data['fieldName']);
+        unset($data['val'], $data['timezone']);
 
         return $this->_templates->format('input', [
             'name' => $data['name'],
@@ -144,6 +129,29 @@ class DateTimeWidget implements WidgetInterface
                 ['name', 'type']
             ),
         ]);
+    }
+
+    /**
+     * Set value for "step" attribute if applicable.
+     *
+     * @param array $data Data array
+     * @param \Cake\View\Form\ContextInterface $context Context instance.
+     * @param string $fieldName Field name.
+     * @return array Updated data array.
+     */
+    protected function setStep(array $data, ContextInterface $context, string $fieldName): array
+    {
+        $dbType = $context->type($fieldName);
+        $fractionalTypes = [
+            TableSchema::TYPE_DATETIME_FRACTIONAL,
+            TableSchema::TYPE_TIMESTAMP_FRACTIONAL,
+        ];
+
+        if (in_array($dbType, $fractionalTypes, true)) {
+            $data['step'] = '0.001';
+        }
+
+        return $data;
     }
 
     /**

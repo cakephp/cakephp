@@ -28,6 +28,21 @@ use Traversable;
 class SelectBoxWidget extends BasicWidget
 {
     /**
+     * Data defaults.
+     *
+     * @var array
+     */
+    protected $defaults = [
+        'name' => '',
+        'empty' => false,
+        'escape' => true,
+        'options' => [],
+        'disabled' => null,
+        'val' => null,
+        'templateVars' => [],
+    ];
+
+    /**
      * Render a select box form input.
      *
      * Render a select box input given a set of data. Supported keys
@@ -104,15 +119,7 @@ class SelectBoxWidget extends BasicWidget
      */
     public function render(array $data, ContextInterface $context): string
     {
-        $data += [
-            'name' => '',
-            'empty' => false,
-            'escape' => true,
-            'options' => [],
-            'disabled' => null,
-            'val' => null,
-            'templateVars' => [],
-        ];
+        $data += $this->mergeDefaults($data, $context);
 
         $options = $this->_renderContent($data);
         $name = $data['name'];
