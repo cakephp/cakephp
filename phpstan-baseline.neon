@@ -238,12 +238,12 @@ parameters:
 			path: src/I18n/Date.php
 
 		-
-			message: "#^Parameter \\#5 \\$calendar of function datefmt_create expects int\\|IntlCalendar, null given\\.$#"
+			message: "#^Parameter \\#4 \\$timezone of function datefmt_create expects int, null given\\.$#"
 			count: 1
 			path: src/I18n/Date.php
 
 		-
-			message: "#^Parameter \\#4 \\$timezone of function datefmt_create expects int, null given.$#"
+			message: "#^Parameter \\#5 \\$calendar of function datefmt_create expects int\\|IntlCalendar, null given\\.$#"
 			count: 1
 			path: src/I18n/Date.php
 
@@ -253,12 +253,12 @@ parameters:
 			path: src/I18n/FrozenDate.php
 
 		-
-			message: "#^Parameter \\#5 \\$calendar of function datefmt_create expects int\\|IntlCalendar, null given\\.$#"
+			message: "#^Parameter \\#4 \\$timezone of function datefmt_create expects int, null given\\.$#"
 			count: 1
 			path: src/I18n/FrozenDate.php
 
 		-
-			message: "#^Parameter \\#4 \\$timezone of function datefmt_create expects int, null given.$#"
+			message: "#^Parameter \\#5 \\$calendar of function datefmt_create expects int\\|IntlCalendar, null given\\.$#"
 			count: 1
 			path: src/I18n/FrozenDate.php
 
@@ -273,12 +273,12 @@ parameters:
 			path: src/I18n/FrozenTime.php
 
 		-
-			message: "#^Parameter \\#5 \\$calendar of function datefmt_create expects int\\|IntlCalendar, null given\\.$#"
+			message: "#^Parameter \\#4 \\$timezone of function datefmt_create expects int, null given\\.$#"
 			count: 1
 			path: src/I18n/FrozenTime.php
 
 		-
-			message: "#^Parameter \\#4 \\$timezone of function datefmt_create expects int, null given.$#"
+			message: "#^Parameter \\#5 \\$calendar of function datefmt_create expects int\\|IntlCalendar, null given\\.$#"
 			count: 1
 			path: src/I18n/FrozenTime.php
 
@@ -293,12 +293,12 @@ parameters:
 			path: src/I18n/Time.php
 
 		-
-			message: "#^Parameter \\#5 \\$calendar of function datefmt_create expects int\\|IntlCalendar, null given\\.$#"
+			message: "#^Parameter \\#4 \\$timezone of function datefmt_create expects int, null given\\.$#"
 			count: 1
 			path: src/I18n/Time.php
 
 		-
-			message: "#^Parameter \\#4 \\$timezone of function datefmt_create expects int, null given.$#"
+			message: "#^Parameter \\#5 \\$calendar of function datefmt_create expects int\\|IntlCalendar, null given\\.$#"
 			count: 1
 			path: src/I18n/Time.php
 
@@ -488,7 +488,7 @@ parameters:
 			path: src/View/Form/NullContext.php
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between DateTime\\|int\\|string and null will always evaluate to false\\.$#"
+			message: "#^Call to an undefined method DateTimeInterface\\:\\:setTimezone\\(\\)\\.$#"
 			count: 1
 			path: src/View/Helper/TimeHelper.php
 
