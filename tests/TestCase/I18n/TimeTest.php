@@ -21,6 +21,7 @@ use Cake\I18n\FrozenTime;
 use Cake\I18n\I18n;
 use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
+use IntlDateFormatter;
 
 /**
  * TimeTest class
@@ -60,16 +61,6 @@ class TimeTest extends TestCase
 
         date_default_timezone_set('UTC');
         I18n::setLocale(I18n::DEFAULT_LOCALE);
-    }
-
-    /**
-     * Restored the original system timezone
-     *
-     * @return void
-     */
-    protected function _restoreSystemTimezone()
-    {
-        date_default_timezone_set($this->_systemTimezoneIdentifier);
     }
 
     /**
@@ -808,10 +799,31 @@ class TimeTest extends TestCase
         $time = $class::parseDateTime('01/01/1970 00:00am');
         $this->assertNotNull($time);
         $this->assertSame('1970-01-01 00:00', $time->format('Y-m-d H:i'));
+        $this->assertSame(date_default_timezone_get(), $time->tzName);
 
         $time = $class::parseDateTime('10/13/2013 12:54am');
         $this->assertNotNull($time);
         $this->assertSame('2013-10-13 00:54', $time->format('Y-m-d H:i'));
+        $this->assertSame(date_default_timezone_get(), $time->tzName);
+
+        // Default format does not include time zone in time string
+        // Time zone is ignored and is interpreted as default time zone
+        $time = $class::parseDateTime('10/13/2013 12:54am GMT+08:00');
+        $this->assertNotNull($time);
+        $this->assertSame('2013-10-13 00:54', $time->format('Y-m-d H:i'));
+        $this->assertSame(date_default_timezone_get(), $time->tzName);
+
+        // Unlike DateTime constructor, the instance is not created with the time zone
+        // in time string but converted to default time zone.
+        $time = $class::parseDateTime('10/13/2013 12:54:00am GMT+08:00', [IntlDateFormatter::SHORT, IntlDateFormatter::FULL]);
+        $this->assertNotNull($time);
+        $this->assertSame('2013-10-12 16:54', $time->format('Y-m-d H:i'));
+        $this->assertSame(date_default_timezone_get(), $time->tzName);
+
+        $time = $class::parseDateTime('10/13/2013 12:54am', null, 'Europe/London');
+        $this->assertNotNull($time);
+        $this->assertSame('2013-10-13 00:54', $time->format('Y-m-d H:i'));
+        $this->assertSame('Europe/London', $time->tzName);
 
         $class::setDefaultLocale('fr-FR');
         $time = $class::parseDateTime('13 10, 2013 12:54');
@@ -820,6 +832,19 @@ class TimeTest extends TestCase
 
         $time = $class::parseDateTime('13 foo 10 2013 12:54');
         $this->assertNull($time);
+    }
+
+    /**
+     * Test passing incorrect formatter options to parseDateTime
+     *
+     * @dataProvider classNameProvider
+     * @return void
+     */
+    public function testParseDateTimeInvalidFormat($class)
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('If $format is an IntlDateFormatter constant, must be an array.');
+        $time = $class::parseDateTime('10/13/2013 12:54am', IntlDateFormatter::SHORT);
     }
 
     /**
