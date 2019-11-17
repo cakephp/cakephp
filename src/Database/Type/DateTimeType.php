@@ -248,7 +248,7 @@ class DateTimeType extends BaseType
         $class = $this->_className;
         try {
             $date = false;
-            if ($value === '' || $value === null || $value === false || $value === true) {
+            if ($value === '' || $value === null || is_bool($value)) {
                 return null;
             }
             $isString = is_string($value);
