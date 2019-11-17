@@ -68,16 +68,19 @@ class Server implements EventDispatcherInterface
      * - Run the middleware queue including the application.
      *
      * @param \Psr\Http\Message\ServerRequestInterface|null $request The request to use or null.
+     * @param \Cake\Http\MiddlewareQueue $middlewareQueue MiddlewareQueue or null.
      * @return \Psr\Http\Message\ResponseInterface
      * @throws \RuntimeException When the application does not make a response.
      */
-    public function run(?ServerRequestInterface $request = null): ResponseInterface
-    {
+    public function run(
+        ?ServerRequestInterface $request = null,
+        ?MiddlewareQueue $middlewareQueue = null
+    ): ResponseInterface {
         $this->bootstrap();
 
         $request = $request ?: ServerRequestFactory::fromGlobals();
 
-        $middleware = $this->app->middleware(new MiddlewareQueue());
+        $middleware = $this->app->middleware($middlewareQueue ?? new MiddlewareQueue());
         if ($this->app instanceof PluginApplicationInterface) {
             $middleware = $this->app->pluginMiddleware($middleware);
         }
