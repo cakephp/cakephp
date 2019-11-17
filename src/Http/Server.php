@@ -48,11 +48,12 @@ class Server implements EventDispatcherInterface
      * Constructor
      *
      * @param \Cake\Core\HttpApplicationInterface $app The application to use.
+     * @param \Cake\Http\Runner|null $runner Application runner.
      */
-    public function __construct(HttpApplicationInterface $app)
+    public function __construct(HttpApplicationInterface $app, ?Runner $runner = null)
     {
         $this->app = $app;
-        $this->setRunner(new Runner());
+        $this->runner = $runner ?? new Runner();
     }
 
     /**
@@ -67,16 +68,19 @@ class Server implements EventDispatcherInterface
      * - Run the middleware queue including the application.
      *
      * @param \Psr\Http\Message\ServerRequestInterface|null $request The request to use or null.
+     * @param \Cake\Http\MiddlewareQueue $middlewareQueue MiddlewareQueue or null.
      * @return \Psr\Http\Message\ResponseInterface
      * @throws \RuntimeException When the application does not make a response.
      */
-    public function run(?ServerRequestInterface $request = null): ResponseInterface
-    {
+    public function run(
+        ?ServerRequestInterface $request = null,
+        ?MiddlewareQueue $middlewareQueue = null
+    ): ResponseInterface {
         $this->bootstrap();
 
         $request = $request ?: ServerRequestFactory::fromGlobals();
 
-        $middleware = $this->app->middleware(new MiddlewareQueue());
+        $middleware = $this->app->middleware($middlewareQueue ?? new MiddlewareQueue());
         if ($this->app instanceof PluginApplicationInterface) {
             $middleware = $this->app->pluginMiddleware($middleware);
         }
@@ -131,26 +135,13 @@ class Server implements EventDispatcherInterface
     }
 
     /**
-     * Set the runner
-     *
-     * @param \Cake\Http\Runner $runner The runner to use.
-     * @return $this
-     */
-    public function setRunner(Runner $runner)
-    {
-        $this->runner = $runner;
-
-        return $this;
-    }
-
-    /**
      * Get the application's event manager or the global one.
      *
      * @return \Cake\Event\EventManagerInterface
      */
     public function getEventManager(): EventManagerInterface
     {
-        if ($this->app instanceof PluginApplicationInterface) {
+        if ($this->app instanceof EventDispatcherInterface) {
             return $this->app->getEventManager();
         }
 
@@ -168,7 +159,7 @@ class Server implements EventDispatcherInterface
      */
     public function setEventManager(EventManagerInterface $eventManager)
     {
-        if ($this->app instanceof PluginApplicationInterface) {
+        if ($this->app instanceof EventDispatcherInterface) {
             $this->app->setEventManager($eventManager);
 
             return $this;
