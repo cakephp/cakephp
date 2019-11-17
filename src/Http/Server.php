@@ -48,7 +48,7 @@ class Server implements EventDispatcherInterface
      * Constructor
      *
      * @param \Cake\Core\HttpApplicationInterface $app The application to use.
-     * @param \Cake\Server\Runner $runner Application runner.
+     * @param \Cake\Http\Runner|null $runner Application runner.
      */
     public function __construct(HttpApplicationInterface $app, ?Runner $runner = null)
     {
