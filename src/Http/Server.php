@@ -53,7 +53,7 @@ class Server implements EventDispatcherInterface
     public function __construct(HttpApplicationInterface $app, ?Runner $runner = null)
     {
         $this->app = $app;
-        $this->setRunner($runner ?? new Runner());
+        $this->runner = $runner ?? new Runner();
     }
 
     /**
@@ -129,19 +129,6 @@ class Server implements EventDispatcherInterface
     public function getApp(): HttpApplicationInterface
     {
         return $this->app;
-    }
-
-    /**
-     * Set the runner
-     *
-     * @param \Cake\Http\Runner $runner The runner to use.
-     * @return $this
-     */
-    public function setRunner(Runner $runner)
-    {
-        $this->runner = $runner;
-
-        return $this;
     }
 
     /**
