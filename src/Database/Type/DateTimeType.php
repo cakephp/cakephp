@@ -247,16 +247,13 @@ class DateTimeType extends BaseType
 
         $class = $this->_className;
         try {
-            $date = false;
             if ($value === '' || $value === null || is_bool($value)) {
                 return null;
             }
             $isString = is_string($value);
             if (ctype_digit($value)) {
-                /** @var \DateTimeInterface $date */
-                $date = new $class('@' . $value);
-
-                return $date;
+                /** @var \DateTimeInterface */
+                return new $class('@' . $value);
             } elseif ($isString && $this->_useLocaleMarshal) {
                 return $this->_parseLocaleValue($value);
             } elseif ($isString) {
