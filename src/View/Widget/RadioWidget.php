@@ -223,7 +223,6 @@ class RadioWidget extends BasicWidget
             $label = $input;
         }
 
-        /** @psalm-suppress PossiblyUndefinedArrayOffset */
         return $this->_templates->format('radioWrapper', [
             'input' => $input,
             'label' => $label,

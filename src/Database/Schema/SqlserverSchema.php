@@ -179,7 +179,6 @@ class SqlserverSchema extends BaseSchema
             $field['autoIncrement'] = true;
         }
         if ($field['type'] === TableSchema::TYPE_BOOLEAN) {
-            /** @psalm-suppress PossiblyUndefinedArrayOffset */
             $row['default'] = (int)$row['default'];
         }
 

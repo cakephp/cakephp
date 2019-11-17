@@ -352,7 +352,6 @@ class SecurityComponent extends Component
             if (!empty($unlockedFields)) {
                 foreach ($unlockedFields as $off) {
                     $off = explode('.', $off);
-                    /** @psalm-suppress PossiblyInvalidArgument */
                     $field = array_values(array_intersect(explode('.', $key), $off));
                     $isUnlocked = ($field === $off);
                     if ($isUnlocked) {

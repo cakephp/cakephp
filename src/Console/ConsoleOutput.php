@@ -296,13 +296,11 @@ class ConsoleOutput
     public function setStyle(string $style, array $definition): void
     {
         if (!$definition) {
-            /** @psalm-suppress PossiblyNullArrayOffset */
             unset(static::$_styles[$style]);
 
             return;
         }
 
-        /** @psalm-suppress PossiblyNullArrayOffset */
         static::$_styles[$style] = $definition;
     }
 
