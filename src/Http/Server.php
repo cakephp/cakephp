@@ -150,7 +150,7 @@ class Server implements EventDispatcherInterface
      */
     public function getEventManager(): EventManagerInterface
     {
-        if ($this->app instanceof PluginApplicationInterface) {
+        if ($this->app instanceof EventDispatcherInterface) {
             return $this->app->getEventManager();
         }
 
@@ -168,7 +168,7 @@ class Server implements EventDispatcherInterface
      */
     public function setEventManager(EventManagerInterface $eventManager)
     {
-        if ($this->app instanceof PluginApplicationInterface) {
+        if ($this->app instanceof EventDispatcherInterface) {
             $this->app->setEventManager($eventManager);
 
             return $this;
