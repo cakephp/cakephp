@@ -342,7 +342,7 @@ xml;
 <subcommands />
 <options>
 	<option name="--help" short="-h" help="Display this help." boolean="1">
-		<default></default>
+		<default>false</default>
 		<choices></choices>
 	</option>
 	<option name="--test" short="" help="A test option." boolean="0">
@@ -393,7 +393,7 @@ xml;
 <subcommands />
 <options>
 	<option name="--help" short="-h" help="Display this help." boolean="1">
-		<default></default>
+		<default>false</default>
 		<choices></choices>
 	</option>
 	<option name="--test" short="" help="A test option." boolean="0">
@@ -435,7 +435,7 @@ xml;
 </subcommands>
 <options>
 	<option name="--help" short="-h" help="Display this help." boolean="1">
-		<default></default>
+		<default>false</default>
 		<choices></choices>
 	</option>
 	<option name="--test" short="" help="A test option." boolean="0">
@@ -477,7 +477,7 @@ xml;
 		<choices></choices>
 	</option>
 	<option name="--help" short="-h" help="Display this help." boolean="1">
-		<default></default>
+		<default>false</default>
 		<choices></choices>
 	</option>
 	<option name="--test" short="" help="A test option." boolean="0">
@@ -514,7 +514,7 @@ xml;
 	<subcommands/>
 	<options>
 		<option name="--help" short="-h" help="Display this help." boolean="1">
-			<default></default>
+			<default>false</default>
 			<choices></choices>
 		</option>
 		<option name="--test" short="" help="A test option." boolean="0">
