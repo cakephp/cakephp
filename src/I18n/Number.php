@@ -287,7 +287,7 @@ class Number
     /**
      * Getter/setter for default currency format
      *
-     * @param string|bool|null $currency Default currency format to be used by currency()
+     * @param null $currencyFormat Default currency format to be used by currency()
      * if $currencyFormat argument is not provided. If boolean false is passed, it will clear the
      * currently stored value
      * @return string CurrencyFormat
@@ -342,7 +342,7 @@ class Number
             $type = $options['type'];
             if ($options['type'] === static::FORMAT_CURRENCY) {
                 $type = NumberFormatter::CURRENCY;
-            } else if ($options['type'] === static::FORMAT_CURRENCY_ACCOUNTING) {
+            } elseif ($options['type'] === static::FORMAT_CURRENCY_ACCOUNTING) {
                 $type = static::CURRENCY_ACCOUNTING;
             }
         }
