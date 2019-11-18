@@ -91,8 +91,6 @@ class CacheRegistry extends ObjectRegistry
             );
         }
 
-        $config = $instance->getConfig();
-
         return $instance;
     }
 

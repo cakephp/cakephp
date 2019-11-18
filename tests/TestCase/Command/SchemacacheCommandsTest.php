@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Command;
 
 use Cake\Cache\Cache;
+use Cake\Cache\Engine\NullEngine;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
@@ -48,10 +49,9 @@ class SchemacacheCommandsTest extends TestCase
         $this->setAppNamespace();
         $this->useCommandRunner();
 
-        $this->cache = $this->getMockBuilder('Cake\Cache\CacheEngine')->getMock();
-        $this->cache->expects($this->any())
-            ->method('init')
-            ->will($this->returnValue(true));
+        $this->cache = $this->getMockBuilder(NullEngine::class)
+            ->setMethods(['set', 'get', 'delete'])
+            ->getMock();
         Cache::setConfig('orm_cache', $this->cache);
 
         $this->connection = ConnectionManager::get('test');
@@ -123,10 +123,7 @@ class SchemacacheCommandsTest extends TestCase
      */
     public function testBuildNoArgs()
     {
-        $this->cache->expects($this->any())
-            ->method('set')
-            ->will($this->returnValue(true));
-        $this->cache->expects($this->at(3))
+        $this->cache->expects($this->at(0))
             ->method('set')
             ->with('test_articles')
             ->will($this->returnValue(true));
@@ -204,11 +201,10 @@ class SchemacacheCommandsTest extends TestCase
      */
     public function testClearNoArgs()
     {
-        $this->cache->method('delete')
-            ->will($this->returnValue(true));
-        $this->cache->expects($this->at(3))
+        $this->cache->expects($this->at(0))
             ->method('delete')
-            ->with('test_articles');
+            ->with('test_articles')
+            ->will($this->returnValue(true));
 
         $this->exec('schema_cache clear --connection test');
         $this->assertExitSuccess();

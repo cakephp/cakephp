@@ -834,7 +834,6 @@ class RouteBuilder
      * @param callable|null $callback The callback to invoke that builds the prefixed routes.
      * @return $this
      * @throws \InvalidArgumentException If a valid callback is not passed
-     * @psalm-suppress PossiblyInvalidArrayAccess
      */
     public function prefix(string $name, $params = [], $callback = null)
     {
@@ -851,7 +850,6 @@ class RouteBuilder
         if (isset($this->_params['prefix'])) {
             $name = $this->_params['prefix'] . '/' . $name;
         }
-        /** @psalm-suppress PossiblyInvalidArgument */
         $params = array_merge($params, ['prefix' => $name]);
         $this->scope($path, $params, $callback);
 

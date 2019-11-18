@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database;
 
 use Cake\Cache\Cache;
-use Cake\Cache\CacheEngine;
+use Cake\Cache\Engine\NullEngine;
 use Cake\Database\Schema\CachedCollection;
 use Cake\Database\SchemaCache;
 use Cake\Datasource\ConnectionManager;
@@ -53,10 +53,9 @@ class SchemaCacheTest extends TestCase
     {
         parent::setUp();
 
-        $this->cache = $this->getMockBuilder(CacheEngine::class)->getMock();
-        $this->cache->expects($this->any())
-            ->method('init')
-            ->will($this->returnValue(true));
+        $this->cache = $this->getMockBuilder(NullEngine::class)
+            ->setMethods(['set', 'get', 'delete'])
+            ->getMock();
         Cache::setConfig('orm_cache', $this->cache);
 
         $this->connection = ConnectionManager::get('test');
@@ -114,9 +113,7 @@ class SchemaCacheTest extends TestCase
      */
     public function testBuildNoArgs()
     {
-        $this->cache->method('set')
-            ->will($this->returnValue(true));
-        $this->cache->expects($this->at(3))
+        $this->cache->expects($this->at(0))
             ->method('set')
             ->with('test_articles')
             ->will($this->returnValue(true));
@@ -170,12 +167,10 @@ class SchemaCacheTest extends TestCase
      */
     public function testClearNoArgs()
     {
-        $this->cache->method('delete')
-            ->will($this->returnValue(true));
-
-        $this->cache->expects($this->at(3))
+        $this->cache->expects($this->at(0))
             ->method('delete')
-            ->with('test_articles');
+            ->with('test_articles')
+            ->will($this->returnValue(true));
 
         $ormCache = new SchemaCache($this->connection);
         $ormCache->clear();
