@@ -71,7 +71,7 @@ class Cache
      * An array mapping url schemes to fully qualified caching engine
      * class names.
      *
-     * @var array
+     * @var string[]
      */
     protected static $_dsnClassMap = [
         'array' => 'Cake\Cache\Engine\ArrayEngine',
