@@ -153,11 +153,18 @@ class ConsoleOptionParserTest extends TestCase
     public function testAddOptionDefault()
     {
         $parser = new ConsoleOptionParser('test', false);
-        $parser->addOption('test', [
-            'default' => 'default value',
-        ]);
+        $parser
+            ->addOption('test', [
+                'default' => 'default value',
+            ])
+            ->addOption('no-default', [
+            ]);
         $result = $parser->parse(['--test']);
-        $this->assertEquals(['test' => 'default value', 'help' => false], $result[0], 'Default value did not parse out');
+        $this->assertEquals(
+            ['test' => 'default value', 'help' => false, 'no-default' => null],
+            $result[0],
+            'Default value did not parse out'
+        );
 
         $parser = new ConsoleOptionParser('test', false);
         $parser->addOption('test', [

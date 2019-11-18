@@ -58,7 +58,7 @@ class ConsoleInputOption
     /**
      * Default value for the option
      *
-     * @var string|bool
+     * @var string|bool|null
      */
     protected $_default;
 
@@ -83,7 +83,7 @@ class ConsoleInputOption
      * @param string $short The short alias for this option
      * @param string $help The help text for this option
      * @param bool $boolean Whether this option is a boolean option. Boolean options don't consume extra tokens
-     * @param string|bool $default The default value for this option.
+     * @param string|bool|null $default The default value for this option.
      * @param string[] $choices Valid choices for this option.
      * @param bool $multiple Whether this option can accept multiple value definition.
      * @throws \Cake\Console\Exception\ConsoleException
@@ -93,7 +93,7 @@ class ConsoleInputOption
         string $short = '',
         string $help = '',
         bool $boolean = false,
-        $default = '',
+        $default = null,
         array $choices = [],
         bool $multiple = false
     ) {
@@ -101,9 +101,14 @@ class ConsoleInputOption
         $this->_short = $short;
         $this->_help = $help;
         $this->_boolean = $boolean;
-        $this->_default = is_bool($default) ? $default : (string)$default;
         $this->_choices = $choices;
         $this->_multiple = $multiple;
+
+        if ($boolean) {
+            $this->_default = (bool)$default;
+        } elseif ($default !== null) {
+            $this->_default = (string)$default;
+        }
 
         if (strlen($this->_short) > 1) {
             throw new ConsoleException(
@@ -167,7 +172,7 @@ class ConsoleInputOption
     {
         $name = strlen($this->_short) > 0 ? ('-' . $this->_short) : ('--' . $this->_name);
         $default = '';
-        if (!is_bool($this->_default) && strlen($this->_default) > 0) {
+        if ($this->_default !== null && !is_bool($this->_default) && strlen($this->_default) > 0) {
             $default = ' ' . $this->_default;
         }
         if ($this->_choices) {
@@ -180,7 +185,7 @@ class ConsoleInputOption
     /**
      * Get the default value for this option
      *
-     * @return string|bool
+     * @return string|bool|null
      */
     public function defaultValue()
     {
@@ -194,7 +199,7 @@ class ConsoleInputOption
      */
     public function isBoolean(): bool
     {
-        return (bool)$this->_boolean;
+        return $this->_boolean;
     }
 
     /**
@@ -204,7 +209,7 @@ class ConsoleInputOption
      */
     public function acceptsMultiple(): bool
     {
-        return (bool)$this->_multiple;
+        return $this->_multiple;
     }
 
     /**
@@ -256,7 +261,7 @@ class ConsoleInputOption
         $option->addAttribute('short', $short);
         $option->addAttribute('help', $this->_help);
         $option->addAttribute('boolean', (string)(int)$this->_boolean);
-        $option->addChild('default', $default);
+        $option->addChild('default', (string)$default);
         $choices = $option->addChild('choices');
         foreach ($this->_choices as $valid) {
             $choices->addChild('choice', $valid);
