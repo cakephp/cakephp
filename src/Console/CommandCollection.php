@@ -54,15 +54,14 @@ class CommandCollection implements IteratorAggregate, Countable
      *
      * @param string $name The name of the command you want to map.
      * @param string|\Cake\Console\Shell|\Cake\Console\CommandInterface $command The command to map.
+     *   Can be a FQCN, Shell instance or CommandInterface instance.
      * @return $this
      * @throws \InvalidArgumentException
      */
     public function add(string $name, $command)
     {
-        // Once we have a new Command class this should check
-        // against that interface.
         /** @psalm-suppress DeprecatedClass */
-        if (!is_subclass_of($command, Shell::class) && !is_subclass_of($command, Command::class)) {
+        if (!is_subclass_of($command, Shell::class) && !is_subclass_of($command, CommandInterface::class)) {
             $class = is_string($command) ? $command : get_class($command);
             throw new InvalidArgumentException(sprintf(
                 "Cannot use '%s' for command '%s' it is not a subclass of Cake\Console\Shell or Cake\Console\Command.",
