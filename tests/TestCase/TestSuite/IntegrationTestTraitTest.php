@@ -1088,6 +1088,23 @@ class IntegrationTestTraitTest extends IntegrationTestCase
     }
 
     /**
+     * Test the location header assertion.
+     *
+     * @return void
+     */
+    public function testAssertRedirectEquals()
+    {
+        $this->_response = new Response();
+        $this->_response = $this->_response->withHeader('Location', '/get/tasks/index');
+
+        $this->assertRedirect();
+        $this->assertRedirectEquals('/get/tasks/index');
+        $this->assertRedirectEquals(['controller' => 'Tasks', 'action' => 'index']);
+
+        $this->assertResponseEmpty();
+    }
+
+    /**
      * Test the location header assertion string not contains
      *
      * @return void
