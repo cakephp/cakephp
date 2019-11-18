@@ -40,6 +40,20 @@ class Number
     const FORMAT_CURRENCY = 'currency';
 
     /**
+`     * Format type to format as currency, accounting style (negative numbers in parentheses)
+     *
+     * @var string
+     */
+    const FORMAT_CURRENCY_ACCOUNTING = 'currency_accounting';
+
+    /**
+     * ICU Constant for accounting format; not yet supported by INTL library
+     *
+     * @var int
+     */
+    const CURRENCY_ACCOUNTING = 12;
+
+    /**
      * A list of number formatters indexed by locale and type
      *
      * @var array
@@ -52,6 +66,13 @@ class Number
      * @var string|null
      */
     protected static $_defaultCurrency;
+
+    /**
+     * Default currency format used by Number::currency()
+     *
+     * @var string
+     */
+    protected static $_defaultCurrencyFormat;
 
     /**
      * Formats a number with a level of precision.
@@ -221,7 +242,7 @@ class Number
             return $options['zero'];
         }
 
-        $formatter = static::formatter(['type' => static::FORMAT_CURRENCY] + $options);
+        $formatter = static::formatter(['type' => static::defaultCurrencyFormat()] + $options);
         $abs = abs($value);
         if (!empty($options['fractionSymbol']) && $abs > 0 && $abs < 1) {
             $value *= 100;
@@ -264,6 +285,31 @@ class Number
     }
 
     /**
+     * Getter/setter for default currency format
+     *
+     * @param string|bool|null $currency Default currency format to be used by currency()
+     * if $currencyFormat argument is not provided. If boolean false is passed, it will clear the
+     * currently stored value
+     * @return string CurrencyFormat
+     */
+    public static function defaultCurrencyFormat($currencyFormat = null)
+    {
+        if (!empty($currencyFormat)) {
+            return self::$_defaultCurrencyFormat = $currencyFormat;
+        }
+
+        if ($currencyFormat === false) {
+            return self::$_defaultCurrencyFormat = null;
+        }
+
+        if (empty(self::$_defaultCurrencyFormat)) {
+            self::$_defaultCurrencyFormat = static::FORMAT_CURRENCY;
+        }
+
+        return self::$_defaultCurrencyFormat;
+    }
+
+    /**
      * Returns a formatter object that can be reused for similar formatting task
      * under the same locale and options. This is often a speedier alternative to
      * using other methods in this class as only one formatter object needs to be
@@ -296,6 +342,8 @@ class Number
             $type = $options['type'];
             if ($options['type'] === static::FORMAT_CURRENCY) {
                 $type = NumberFormatter::CURRENCY;
+            } else if ($options['type'] === static::FORMAT_CURRENCY_ACCOUNTING) {
+                $type = static::CURRENCY_ACCOUNTING;
             }
         }
 
