@@ -82,7 +82,7 @@ class ConsoleInputOption
      * @param string $name The long name of the option, or an array with all the properties.
      * @param string $short The short alias for this option
      * @param string $help The help text for this option
-     * @param bool $boolean Whether this option is a boolean option. Boolean options don't consume extra tokens
+     * @param bool $isBoolean Whether this option is a boolean option. Boolean options don't consume extra tokens
      * @param string|bool|null $default The default value for this option.
      * @param string[] $choices Valid choices for this option.
      * @param bool $multiple Whether this option can accept multiple value definition.
@@ -92,7 +92,7 @@ class ConsoleInputOption
         string $name,
         string $short = '',
         string $help = '',
-        bool $boolean = false,
+        bool $isBoolean = false,
         $default = null,
         array $choices = [],
         bool $multiple = false
@@ -100,11 +100,11 @@ class ConsoleInputOption
         $this->_name = $name;
         $this->_short = $short;
         $this->_help = $help;
-        $this->_boolean = $boolean;
+        $this->_boolean = $isBoolean;
         $this->_choices = $choices;
         $this->_multiple = $multiple;
 
-        if ($boolean) {
+        if ($isBoolean) {
             $this->_default = (bool)$default;
         } elseif ($default !== null) {
             $this->_default = (string)$default;
