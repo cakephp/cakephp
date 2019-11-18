@@ -42,8 +42,7 @@ class I18nCommand extends Command
         $io->out('[H]elp');
         $io->out('[Q]uit');
 
-        $choice = null;
-        while ($choice !== 'q') {
+        do {
             $choice = strtolower($io->askChoice('What would you like to do?', ['E', 'I', 'H', 'Q']));
             $code = null;
             switch ($choice) {
@@ -56,6 +55,9 @@ class I18nCommand extends Command
                 case 'h':
                     $io->out($this->getOptionParser()->help());
                     break;
+                case 'q':
+                    // Do nothing
+                    break;
                 default:
                     $io->err(
                         'You have made an invalid selection. ' .
@@ -65,7 +67,7 @@ class I18nCommand extends Command
             if ($code === static::CODE_ERROR) {
                 $this->abort();
             }
-        }
+        } while ($choice !== 'q');
 
         return static::CODE_SUCCESS;
     }
