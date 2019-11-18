@@ -294,7 +294,7 @@ class Email implements JsonSerializable, Serializable
      * An array mapping url schemes to fully qualified Transport class names.
      * Unused.
      *
-     * @var array
+     * @var string[]
      * @deprecated 3.7.0 This property is unused and will be removed in 4.0.0.
      */
     protected static $_dsnClassMap = [];

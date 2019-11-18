@@ -66,7 +66,7 @@ trait StaticConfigTrait
      * ```
      *
      * @param string|array $key The name of the configuration, or an array of multiple configs.
-     * @param array $config An array of name => configuration data for adapter.
+     * @param array|object|null $config An array of name => configuration data for adapter.
      * @throws \BadMethodCallException When trying to modify an existing config.
      * @throws \LogicException When trying to store an invalid structured config array.
      * @return void
@@ -339,7 +339,7 @@ REGEXP;
     /**
      * Updates the DSN class map for this class.
      *
-     * @param array $map Additions/edits to the class map to apply.
+     * @param string[] $map Additions/edits to the class map to apply.
      * @return void
      */
     public static function setDsnClassMap(array $map)
@@ -350,7 +350,7 @@ REGEXP;
     /**
      * Returns the DSN class map for this class.
      *
-     * @return array
+     * @return string[]
      */
     public static function getDsnClassMap()
     {
@@ -361,8 +361,8 @@ REGEXP;
      * Returns or updates the DSN class map for this class.
      *
      * @deprecated 3.4.0 Use setDsnClassMap()/getDsnClassMap() instead.
-     * @param array|null $map Additions/edits to the class map to apply.
-     * @return array
+     * @param string[]|null $map Additions/edits to the class map to apply.
+     * @return string[]
      */
     public static function dsnClassMap(array $map = null)
     {

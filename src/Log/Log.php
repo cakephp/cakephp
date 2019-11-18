@@ -110,7 +110,7 @@ class Log
     /**
      * An array mapping url schemes to fully qualified Log engine class names
      *
-     * @var array
+     * @var string[]
      */
     protected static $_dsnClassMap = [
         'console' => 'Cake\Log\Engine\ConsoleLog',
