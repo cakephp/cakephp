@@ -25,12 +25,13 @@ env:
     - DB=mysql DB_DSN='mysql://root@127.0.0.1/cakephp_test?init[]=SET sql_mode = "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"'
     - DB=pgsql DB_DSN='postgres://postgres@127.0.0.1/cakephp_test'
     - DB=sqlite DB_DSN='sqlite:///:memory:'
-  include:
-    - php: 7.3
-      env: CHECKS=1 DEFAULT=0
 
 matrix:
   fast_finish: true
+
+  include:
+    - php: 7.3
+      env: CHECKS=1 DEFAULT=0
 
 before_install:
   - echo cakephp version && tail -1 VERSION.txt
@@ -62,8 +63,8 @@ script:
       fi
   - |
       if [[ $CHECKS == 1 ]]; then
-        composer phpstan-setup
-        composer phpstan
+        composer pstan-setup
+        composer stan
         composer cs-check
       fi
 
