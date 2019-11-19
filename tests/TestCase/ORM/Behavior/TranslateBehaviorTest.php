@@ -1714,7 +1714,7 @@ class TranslateBehaviorTest extends TestCase
             'fields' => ['title', 'body'],
             'validator' => 'custom',
         ]);
-        $validator = (new Validator())->add('title', 'notBlank', ['rule' => 'notBlank']);
+        $validator = (new Validator())->notEmptyString('title');
         $table->setValidator('custom', $validator);
         $translate = $table->behaviors()->get('Translate');
 
@@ -1797,7 +1797,7 @@ class TranslateBehaviorTest extends TestCase
             'fields' => ['title', 'body'],
             'validator' => 'custom',
         ]);
-        $validator = (new Validator())->add('title', 'notBlank', ['rule' => 'notBlank']);
+        $validator = (new Validator())->notEmptyString('title');
         $table->setValidator('custom', $validator);
         $translate = $table->behaviors()->get('Translate');
 

@@ -202,7 +202,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
 
             $canBeEmpty = $this->_canBeEmpty($field, $context);
 
-            $flags = static::EMPTY_ALL;
+            $flags = 0;
             if (isset($this->_allowEmptyFlags[$name])) {
                 $flags = $this->_allowEmptyFlags[$name];
             }
@@ -699,7 +699,12 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         foreach ($field as $fieldName => $setting) {
             $settings = $this->_convertValidatorToArray($fieldName, $defaults, $setting);
             $fieldName = array_keys($settings)[0];
-            $this->allowEmptyFor($fieldName, null, $settings[$fieldName]['when'], $settings[$fieldName]['message']);
+            $this->allowEmptyFor(
+                $fieldName,
+                static::EMPTY_ALL,
+                $settings[$fieldName]['when'],
+                $settings[$fieldName]['message']
+            );
         }
 
         return $this;
@@ -1149,6 +1154,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             $whenSetting = $this->invertWhenClause($settings[$fieldName]['when']);
 
             $this->field($fieldName)->allowEmpty($whenSetting);
+            $this->_allowEmptyFlags[$fieldName] = static::EMPTY_ALL;
             if ($settings[$fieldName]['message']) {
                 $this->_allowEmptyMessages[$fieldName] = $settings[$fieldName]['message'];
             }
