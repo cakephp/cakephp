@@ -894,8 +894,8 @@ class RouteBuilderTest extends TestCase
         $routes->fallbacks();
 
         $all = $this->collection->routes();
-        $this->assertEquals('/api/:controller', $all[0]->template);
-        $this->assertEquals('/api/:controller/:action/*', $all[1]->template);
+        $this->assertSame('/api/{controller}', $all[0]->template);
+        $this->assertSame('/api/{controller}/{action}/*', $all[1]->template);
         $this->assertInstanceOf(Route::class, $all[0]);
     }
 
@@ -910,8 +910,8 @@ class RouteBuilderTest extends TestCase
         $routes->fallbacks('InflectedRoute');
 
         $all = $this->collection->routes();
-        $this->assertEquals('/api/:controller', $all[0]->template);
-        $this->assertEquals('/api/:controller/:action/*', $all[1]->template);
+        $this->assertSame('/api/{controller}', $all[0]->template);
+        $this->assertSame('/api/{controller}/{action}/*', $all[1]->template);
         $this->assertInstanceOf(InflectedRoute::class, $all[0]);
     }
 

@@ -54,7 +54,7 @@ class Collection
     /**
      * Get the list of tables available in the current connection.
      *
-     * @return array The list of tables in the connected database/schema.
+     * @return string[] The list of tables in the connected database/schema.
      */
     public function listTables()
     {

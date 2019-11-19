@@ -12,6 +12,7 @@
 *.mo
 debug.log
 error.log
+.phpunit.result.cache
 
 # OS generated files #
 ######################

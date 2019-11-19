@@ -219,7 +219,7 @@ class Route
         if (mb_strlen($patternValues) < strlen($patternValues)) {
             $this->options['multibytePattern'] = true;
         }
-        $this->options = array_merge($this->options, $patterns);
+        $this->options = $patterns + $this->options;
 
         return $this;
     }
@@ -391,7 +391,9 @@ class Route
         ];
         foreach ($keys as $key => $glue) {
             $value = null;
-            if (strpos($this->template, ':' . $key) !== false) {
+            if (strpos($this->template, ':' . $key) !== false
+                || strpos($this->template, '{' . $key . '}') !== false
+            ) {
                 $value = '_' . $key;
             } elseif (isset($this->defaults[$key])) {
                 $value = $this->defaults[$key];

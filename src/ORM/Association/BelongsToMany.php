@@ -17,6 +17,7 @@ namespace Cake\ORM\Association;
 use Cake\Core\App;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\QueryInterface;
 use Cake\ORM\Association;
@@ -518,7 +519,7 @@ class BelongsToMany extends Association
         $subquery = $this->_appendJunctionJoin($subquery, $conditions);
 
         $query
-            ->andWhere(function ($exp) use ($subquery, $conds) {
+            ->andWhere(function (QueryExpression $exp) use ($subquery, $conds) {
                 $identifiers = [];
                 foreach (array_keys($conds) as $field) {
                     $identifiers[] = new IdentifierExpression($field);
@@ -527,7 +528,7 @@ class BelongsToMany extends Association
                 $nullExp = clone $exp;
 
                 return $exp
-                    ->or_([
+                    ->or([
                         $exp->notIn($identifiers, $subquery),
                         $nullExp->and(array_map([$nullExp, 'isNull'], array_keys($conds))),
                     ]);

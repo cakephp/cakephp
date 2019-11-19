@@ -858,7 +858,7 @@ trait IntegrationTestTrait
     }
 
     /**
-     * Asserts that the Location header is correct.
+     * Asserts that the Location header is correct. Comparison is made against a full URL.
      *
      * @param string|array|null $url The URL you expected the client to go to. This
      *   can either be a string URL or an array compatible with Router::url(). Use null to
@@ -873,6 +873,25 @@ trait IntegrationTestTrait
 
         if ($url) {
             $this->assertThat(Router::url($url, ['_full' => true]), new HeaderEquals($this->_response, 'Location'), $verboseMessage);
+        }
+    }
+
+    /**
+     * Asserts that the Location header is correct. Comparison is made against exactly the URL provided.
+     *
+     * @param string|array|null $url The URL you expected the client to go to. This
+     *   can either be a string URL or an array compatible with Router::url(). Use null to
+     *   simply check for the existence of this header.
+     * @param string $message The failure message that will be appended to the generated message.
+     * @return void
+     */
+    public function assertRedirectEquals($url = null, $message = '')
+    {
+        $verboseMessage = $this->extractVerboseMessage($message);
+        $this->assertThat(null, new HeaderSet($this->_response, 'Location'), $verboseMessage);
+
+        if ($url) {
+            $this->assertThat(Router::url($url), new HeaderEquals($this->_response, 'Location'), $verboseMessage);
         }
     }
 

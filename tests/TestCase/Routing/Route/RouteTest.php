@@ -1607,6 +1607,9 @@ class RouteTest extends TestCase
         $route = new Route('/:controller/:action');
         $this->assertEquals('_controller:_action', $route->getName());
 
+        $route = new Route('/{controller}/{action}');
+        $this->assertSame('_controller:_action', $route->getName());
+
         $route = new Route('/articles/:action', ['controller' => 'posts']);
         $this->assertEquals('posts:_action', $route->getName());
 

@@ -44,7 +44,7 @@ trait EntityTrait
      * List of property names that should **not** be included in JSON or Array
      * representations of this Entity.
      *
-     * @var array
+     * @var string[]
      */
     protected $_hidden = [];
 
@@ -53,7 +53,7 @@ trait EntityTrait
      * representations of this Entity. If a field is present in both _hidden and _virtual
      * the field will **not** be in the array/json versions of the entity.
      *
-     * @var array
+     * @var string[]
      */
     protected $_virtual = [];
 
@@ -432,7 +432,7 @@ trait EntityTrait
      * $entity->unsetProperty(['name', 'last_name']);
      * ```
      *
-     * @param string|array $property The property to unset.
+     * @param string|string[] $property The property to unset.
      * @return $this
      */
     public function unsetProperty($property)
@@ -452,8 +452,8 @@ trait EntityTrait
      * will be returned. Otherwise the hidden properties will be set.
      *
      * @deprecated 3.4.0 Use EntityTrait::setHidden() and EntityTrait::getHidden()
-     * @param array|null $properties Either an array of properties to hide or null to get properties
-     * @return array|$this
+     * @param string[]|null $properties Either an array of properties to hide or null to get properties
+     * @return string[]|$this
      */
     public function hiddenProperties($properties = null)
     {
@@ -472,7 +472,7 @@ trait EntityTrait
     /**
      * Sets hidden properties.
      *
-     * @param array $properties An array of properties to hide from array exports.
+     * @param string[] $properties An array of properties to hide from array exports.
      * @param bool $merge Merge the new properties with the existing. By default false.
      * @return $this
      */
@@ -493,7 +493,7 @@ trait EntityTrait
     /**
      * Gets the hidden properties.
      *
-     * @return array
+     * @return string[]
      */
     public function getHidden()
     {
@@ -507,8 +507,8 @@ trait EntityTrait
      * will be returned. Otherwise the virtual properties will be set.
      *
      * @deprecated 3.4.0 Use EntityTrait::getVirtual() and EntityTrait::setVirtual()
-     * @param array|null $properties Either an array of properties to treat as virtual or null to get properties
-     * @return array|$this
+     * @param string[]|null $properties Either an array of properties to treat as virtual or null to get properties
+     * @return string[]|$this
      */
     public function virtualProperties($properties = null)
     {
@@ -547,7 +547,7 @@ trait EntityTrait
     /**
      * Gets the virtual properties on this entity.
      *
-     * @return array
+     * @return string[]
      */
     public function getVirtual()
     {
@@ -560,7 +560,7 @@ trait EntityTrait
      * The list of visible properties is all standard properties
      * plus virtual properties minus hidden properties.
      *
-     * @return array A list of properties that are 'visible' in all
+     * @return string[] A list of properties that are 'visible' in all
      *     representations.
      */
     public function getVisible()
@@ -577,7 +577,7 @@ trait EntityTrait
      * The list of visible properties is all standard properties
      * plus virtual properties minus hidden properties.
      *
-     * @return array A list of properties that are 'visible' in all
+     * @return string[] A list of properties that are 'visible' in all
      *     representations.
      * @deprecated 3.8.0 Use getVisible() instead.
      */

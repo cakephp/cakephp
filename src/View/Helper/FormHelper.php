@@ -192,7 +192,7 @@ class FormHelper extends Helper
     /**
      * List of fields created, used with secure forms.
      *
-     * @var array
+     * @var string[]
      */
     public $fields = [];
 
