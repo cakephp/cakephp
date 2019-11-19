@@ -30,7 +30,7 @@ trait CookieCryptTrait
     /**
      * Valid cipher names for encrypted cookies.
      *
-     * @var array
+     * @var string[]
      */
     protected $_validCiphers = ['aes'];
 
@@ -92,7 +92,7 @@ trait CookieCryptTrait
     /**
      * Decrypts $value using public $type method in Security class
      *
-     * @param array|string $values Values to decrypt
+     * @param string[]|string $values Values to decrypt
      * @param string|false $mode Encryption mode
      * @param string|null $key Used as the security salt if specified.
      * @return string|array Decrypted values

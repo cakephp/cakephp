@@ -107,7 +107,7 @@ class RouteBuilder
      * The list of middleware that routes in this builder get
      * added during construction.
      *
-     * @var array
+     * @var string[]
      */
     protected $middleware = [];
 
@@ -197,7 +197,7 @@ class RouteBuilder
     /**
      * Add additional extensions to what is already in current scope
      *
-     * @param string|array $extensions One or more extensions to add
+     * @param string|string[] $extensions One or more extensions to add
      * @return $this
      */
     public function addExtensions($extensions)
@@ -979,6 +979,7 @@ class RouteBuilder
      *
      * @param string ...$names The names of the middleware to apply to the current scope.
      * @return $this
+     * @throws \RuntimeException
      * @see \Cake\Routing\RouteCollection::addMiddlewareToScope()
      */
     public function applyMiddleware(string ...$names)

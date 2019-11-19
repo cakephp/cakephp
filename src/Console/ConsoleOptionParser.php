@@ -885,7 +885,7 @@ class ConsoleOptionParser
         } elseif ($isBoolean) {
             $value = true;
         } else {
-            $value = $option->defaultValue();
+            $value = (string)$option->defaultValue();
         }
 
         $option->validChoice($value);

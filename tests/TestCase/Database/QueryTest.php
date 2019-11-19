@@ -1537,7 +1537,7 @@ class QueryTest extends TestCase
             ->select(['id'])
             ->from('comments')
             ->where(function ($exp) {
-                $and = $exp->and_(['id' => 2, 'id >' => 1]);
+                $and = $exp->and(['id' => 2, 'id >' => 1]);
 
                 return $exp->add($and);
             })
@@ -1551,7 +1551,7 @@ class QueryTest extends TestCase
             ->select(['id'])
             ->from('comments')
             ->where(function ($exp) {
-                $and = $exp->and_(['id' => 2, 'id <' => 2]);
+                $and = $exp->and(['id' => 2, 'id <' => 2]);
 
                 return $exp->add($and);
             })
@@ -1564,7 +1564,7 @@ class QueryTest extends TestCase
             ->select(['id'])
             ->from('comments')
             ->where(function ($exp) {
-                $and = $exp->and_(function ($and) {
+                $and = $exp->and(function ($and) {
                     return $and->eq('id', 1)->gt('id', 0);
                 });
 
@@ -1580,8 +1580,8 @@ class QueryTest extends TestCase
             ->select(['id'])
             ->from('comments')
             ->where(function ($exp) {
-                $or = $exp->or_(['id' => 1]);
-                $and = $exp->and_(['id >' => 2, 'id <' => 4]);
+                $or = $exp->or(['id' => 1]);
+                $and = $exp->and(['id >' => 2, 'id <' => 4]);
 
                 return $or->add($and);
             })
@@ -1596,7 +1596,7 @@ class QueryTest extends TestCase
             ->select(['id'])
             ->from('comments')
             ->where(function ($exp) {
-                $or = $exp->or_(function ($or) {
+                $or = $exp->or(function ($or) {
                     return $or->eq('id', 1)->eq('id', 2);
                 });
 
@@ -1624,7 +1624,7 @@ class QueryTest extends TestCase
             ->from('comments')
             ->where(function ($exp) {
                 return $exp->not(
-                    $exp->and_(['id' => 2, 'created' => new \DateTime('2007-03-18 10:47:23')], ['created' => 'datetime'])
+                    $exp->and(['id' => 2, 'created' => new \DateTime('2007-03-18 10:47:23')], ['created' => 'datetime'])
                 );
             })
             ->execute();
@@ -1639,7 +1639,7 @@ class QueryTest extends TestCase
             ->from('comments')
             ->where(function ($exp) {
                 return $exp->not(
-                    $exp->and_(['id' => 2, 'created' => new \DateTime('2012-12-21 12:00')], ['created' => 'datetime'])
+                    $exp->and(['id' => 2, 'created' => new \DateTime('2012-12-21 12:00')], ['created' => 'datetime'])
                 );
             })
             ->execute();
@@ -4119,7 +4119,7 @@ class QueryTest extends TestCase
     public function testIsNullInvalid()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid or missing operator together with `null` usage.');
+        $this->expectExceptionMessage('Expression is missing operator (IS, IS NOT) with `null` value.');
 
         $this->loadFixtures('Authors');
         (new Query($this->connection))

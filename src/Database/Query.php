@@ -883,8 +883,8 @@ class Query implements ExpressionInterface, IteratorAggregate
      * $query
      *   ->where(['title !=' => 'Hello World'])
      *   ->where(function ($exp, $query) {
-     *     $or = $exp->or_(['id' => 1]);
-     *     $and = $exp->and_(['id >' => 2, 'id <' => 10]);
+     *     $or = $exp->or(['id' => 1]);
+     *     $and = $exp->and(['id >' => 2, 'id <' => 10]);
      *    return $or->add($and);
      *   });
      * ```
@@ -1071,7 +1071,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *   ->where(['title' => 'Foo'])
      *   ->andWhere(function ($exp, $query) {
      *     return $exp
-     *       ->or_(['author_id' => 1])
+     *       ->or(['author_id' => 1])
      *       ->add(['author_id' => 2]);
      *   });
      * ```
