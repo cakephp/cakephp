@@ -18,8 +18,8 @@ namespace Cake\ORM\Association;
 
 use Cake\Core\App;
 use Cake\Database\Expression\IdentifierExpression;
-use Cake\Database\ExpressionInterface;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\ExpressionInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Association\Loader\SelectWithPivotLoader;
