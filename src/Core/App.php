@@ -204,6 +204,8 @@ class App
     }
 
     /**
+     * Get the path to a class type in the application or a plugin.
+     *
      * @param string $type
      * @param string|null $plugin
      *
