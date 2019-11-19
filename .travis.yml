@@ -63,7 +63,7 @@ script:
       fi
   - |
       if [[ $CHECKS == 1 ]]; then
-        composer pstan-setup
+        composer stan-setup
         composer stan
         composer cs-check
       fi
