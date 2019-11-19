@@ -91,7 +91,7 @@ interface DriverInterface
     /**
      * Get the SQL for releasing a save point.
      *
-     * @param string $name The table name.
+     * @param string|int $name The table name.
      * @return string
      */
     public function releaseSavePointSQL($name);
@@ -99,7 +99,7 @@ interface DriverInterface
     /**
      * Get the SQL for creating a save point.
      *
-     * @param string $name The table name.
+     * @param string|int $name The table name.
      * @return string
      */
     public function savePointSQL($name);
@@ -107,7 +107,7 @@ interface DriverInterface
     /**
      * Get the SQL for rollingback a save point.
      *
-     * @param string $name The table name.
+     * @param string|int $name The table name.
      * @return string
      */
     public function rollbackSavePointSQL($name);
@@ -130,7 +130,7 @@ interface DriverInterface
      * Returns whether the driver supports adding or dropping constraints
      * to already created tables.
      *
-     * @return bool true if driver supports dynamic constraints.
+     * @return bool True if driver supports dynamic constraints.
      */
     public function supportsDynamicConstraints();
 
@@ -145,7 +145,7 @@ interface DriverInterface
      * Returns a value in a safe representation to be used in a query string
      *
      * @param mixed $value The value to quote.
-     * @param string $type Type to be used for determining kind of quoting to perform.
+     * @param int $type Type to be used for determining kind of quoting to perform.
      * @return string
      */
     public function quote($value, $type);

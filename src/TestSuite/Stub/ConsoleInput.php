@@ -28,7 +28,7 @@ class ConsoleInput extends ConsoleInputBase
     /**
      * Reply values for ask() and askChoice()
      *
-     * @var array
+     * @var string[]
      */
     protected $replies = [];
 
@@ -54,7 +54,7 @@ class ConsoleInput extends ConsoleInputBase
     /**
      * Read a reply
      *
-     * @return mixed The value of the reply
+     * @return string|false The value of the reply
      */
     public function read()
     {

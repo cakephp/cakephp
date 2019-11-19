@@ -43,9 +43,9 @@ use RuntimeException;
  * @method \Cake\Collection\CollectionInterface extract($field) Extracts a single column from each row
  * @method mixed max($field, $type = SORT_NUMERIC) Returns the maximum value for a single column in all the results.
  * @method mixed min($field, $type = SORT_NUMERIC) Returns the minimum value for a single column in all the results.
- * @method \Cake\Collection\CollectionInterface groupBy(string|callable $field) In-memory group all results by the value of a column.
- * @method \Cake\Collection\CollectionInterface indexBy(string|callable $field) Returns the results indexed by the value of a column.
- * @method \Cake\Collection\CollectionInterface countBy(string|callable $field) Returns the number of unique values for a column
+ * @method \Cake\Collection\CollectionInterface groupBy(string|callable $callable) In-memory group all results by the value of a column.
+ * @method \Cake\Collection\CollectionInterface indexBy(string|callable $callable) Returns the results indexed by the value of a column.
+ * @method \Cake\Collection\CollectionInterface countBy(string|callable $callable) Returns the number of unique values for a column
  * @method float sumOf(string|callable $field) Returns the sum of all values for a single column
  * @method \Cake\Collection\CollectionInterface shuffle() In-memory randomize the order the results are returned
  * @method \Cake\Collection\CollectionInterface sample($size = 10) In-memory shuffle the results and return a subset of them.

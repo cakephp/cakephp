@@ -378,14 +378,14 @@ class Behavior implements EventListenerInterface
         $eventMethods = [];
         foreach ($events as $e => $binding) {
             if (is_array($binding) && isset($binding['callable'])) {
-                /* @var string $callable */
+                /** @var string $callable */
                 $callable = $binding['callable'];
                 $binding = $callable;
             }
             $eventMethods[$binding] = true;
         }
 
-        $baseClass = 'Cake\ORM\Behavior';
+        $baseClass = self::class;
         if (isset(self::$_reflectionCache[$baseClass])) {
             $baseMethods = self::$_reflectionCache[$baseClass];
         } else {

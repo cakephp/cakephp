@@ -406,7 +406,7 @@ class DateTimeType extends Type implements TypeInterface, BatchCastingInterface
      */
     protected function _parseValue($value)
     {
-        /* @var \Cake\I18n\Time $class */
+        /** @var \Cake\I18n\Time $class */
         $class = $this->_className;
 
         return $class::parseDateTime($value, $this->_localeFormat);
