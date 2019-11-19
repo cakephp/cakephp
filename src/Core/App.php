@@ -27,11 +27,11 @@ namespace Cake\Core;
  *
  * ### Inspecting loaded paths
  *
- * You can inspect the currently loaded paths using `App::path('Controller')` for example to see loaded
+ * You can inspect the currently loaded paths using `App::classPath('Controller')` for example to see loaded
  * controller paths.
  *
  * It is also possible to inspect paths for plugin classes, for instance, to get
- * the path to a plugin's helpers you would call `App::path('View/Helper', 'MyPlugin')`
+ * the path to a plugin's helpers you would call `App::classPath('View/Helper', 'MyPlugin')`
  *
  * ### Locating plugins
  *
@@ -161,8 +161,13 @@ class App
     /**
      * Used to read information stored path.
      *
-     * If 1st character of $type argument is lower cased it will return the
+     * The 1st character of $type argument should be lower cased and will return the
      * value of `App.paths.$type` config.
+     *
+     * Default types:
+     * - plugins
+     * - templates
+     * - locales
      *
      * Example:
      *
@@ -172,38 +177,63 @@ class App
      *
      * Will return the value of `App.paths.plugins` config.
      *
-     * ```
-     * App::path('Model/Table');
-     * ```
+     * Deprecated: 4.0 App::path() is deprecated for class path (inside src/ directory).
+     *   Use \Cake\Core\App::classPath() instead or directly the method on \Cake\Core\Plugin class.
      *
-     * Will return the path for tables `src/Model/Table`.
-     *
-     * @param string $type type of path
-     * @param string|null $plugin This argument is deprecated.
-     *   Use \Cake\Core\Plugin::classPath()/templatePath() instead for plugin paths.
+     * @param string $type Type of path
+     * @param string|null $plugin Plugin name
      * @return string[]
      * @link https://book.cakephp.org/4/en/core-libraries/app.html#finding-paths-to-namespaces
      */
     public static function path(string $type, ?string $plugin = null): array
     {
-        if (empty($plugin)) {
-            if ($type[0] === strtolower($type[0])) {
-                return (array)Configure::read('App.paths.' . $type);
-            }
-
-            return [APP . $type . DIRECTORY_SEPARATOR];
+        if ($plugin === null && $type[0] === strtolower($type[0])) {
+            return (array)Configure::read('App.paths.' . $type);
         }
-
-        deprecationWarning(
-            'Using App::path() with 2nd argument $plugin is deprecated.'
-            . ' Use \Cake\Core\Plugin::classPath()/templatePath() instead.'
-        );
 
         if ($type === 'templates') {
             return [Plugin::templatePath($plugin)];
         }
 
-        return [Plugin::classPath($plugin) . $type . DIRECTORY_SEPARATOR];
+        deprecationWarning(
+            'App::path() is deprecated for class path.'
+            . ' Use \Cake\Core\App::classPath() or \Cake\Core\Plugin::classPath() instead.'
+        );
+
+        return static::classPath($type, $plugin);
+    }
+
+    /**
+     * Gets the path to a class type in the application or a plugin.
+     *
+     * Example:
+     *
+     * ```
+     * App::classPath('Model/Table');
+     * ```
+     *
+     * Will return the path for tables - e.g. `src/Model/Table/`.
+     *
+     * ```
+     * App::classPath('Model/Table', 'My/Plugin');
+     * ```
+     *
+     * Will return the plugin based path for those.
+     *
+     * @param string $type
+     * @param string|null $plugin
+     *
+     * @return string[]
+     */
+    public static function classPath(string $type, ?string $plugin = null): array
+    {
+        if ($plugin !== null) {
+            return [
+                Plugin::classPath($plugin) . $type . DIRECTORY_SEPARATOR,
+            ];
+        }
+
+        return [APP . $type . DIRECTORY_SEPARATOR];
     }
 
     /**

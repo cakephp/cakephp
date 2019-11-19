@@ -41,10 +41,10 @@ class CommandTask extends Shell
         $plugins = Plugin::loaded();
         $shellList = array_fill_keys($plugins, null) + ['CORE' => null, 'app' => null];
 
-        $appPath = App::path('Shell');
+        $appPath = App::classPath('Shell');
         $shellList = $this->_findShells($shellList, $appPath[0], 'app', $skipFiles);
 
-        $appPath = App::path('Command');
+        $appPath = App::classPath('Command');
         $shellList = $this->_findShells($shellList, $appPath[0], 'app', $skipFiles);
 
         $skipCore = array_merge($skipFiles, $hiddenCommands, $shellList['app']);

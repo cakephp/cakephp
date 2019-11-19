@@ -36,7 +36,7 @@ class AppTest extends TestCase
     }
 
     /**
-     * testClassname
+     * testClassName
      *
      * $checkCake and $existsInCake are derived from the input parameters
      *
@@ -46,9 +46,9 @@ class AppTest extends TestCase
      * @param bool $existsInBase Whether class exists in base.
      * @param mixed $expected Expected value.
      * @return void
-     * @dataProvider classnameProvider
+     * @dataProvider classNameProvider
      */
-    public function testClassname($class, $type, $suffix = '', $existsInBase = false, $expected = false)
+    public function testClassName($class, $type, $suffix = '', $existsInBase = false, $expected = false)
     {
         static::setAppNamespace();
         $i = 0;
@@ -63,11 +63,11 @@ class AppTest extends TestCase
 
             return false;
         };
-        $return = TestApp::classname($class, $type, $suffix);
+        $return = TestApp::className($class, $type, $suffix);
         $this->assertSame($expected === false ? null : $expected, $return);
     }
 
-    public function testClassnameWithFqcn()
+    public function testClassNameWithFqcn()
     {
         $this->assertSame(TestCase::class, App::className(TestCase::class));
         $this->assertNull(App::className('\Foo'));
@@ -111,10 +111,10 @@ class AppTest extends TestCase
     }
 
     /**
-     * classnameProvider
+     * classNameProvider
      *
-     * Return test permutations for testClassname method. Format:
-     *  classname
+     * Return test permutations for testClassName method. Format:
+     *  className
      *  type
      *  suffix
      *  existsInBase (Base meaning App or plugin namespace)
@@ -122,7 +122,7 @@ class AppTest extends TestCase
      *
      * @return array
      */
-    public function classnameProvider()
+    public function classNameProvider()
     {
         return [
             ['Does', 'Not', 'Exist'],
@@ -156,7 +156,7 @@ class AppTest extends TestCase
             ['Auth', 'Controller/Component'],
             ['Unknown', 'Controller', 'Controller'],
 
-            // Real examples returning classnames
+            // Real examples returning class names
             ['App', 'Core', '', false, 'Cake\Core\App'],
             ['Auth', 'Controller/Component', 'Component', false, 'Cake\Controller\Component\AuthComponent'],
             ['File', 'Cache/Engine', 'Engine', false, 'Cake\Cache\Engine\FileEngine'],
@@ -169,8 +169,8 @@ class AppTest extends TestCase
     /**
      * pluginSplitNameProvider
      *
-     * Return test permutations for testClassname method. Format:
-     *  classname
+     * Return test permutations for testClassName method. Format:
+     *  className
      *  type
      *  suffix
      *  expected return value
@@ -206,7 +206,7 @@ class AppTest extends TestCase
 
             ['Muffin\Webservice\Webservice\EndpointWebservice', 'Webservice', 'Webservice', 'Muffin/Webservice.Endpoint'],
 
-            // Real examples returning classnames
+            // Real examples returning class names
             ['Cake\Core\App', 'Core', '', 'App'],
             ['Cake\Controller\Component\AuthComponent', 'Controller/Component', 'Component', 'Auth'],
             ['Cake\Cache\Engine\FileEngine', 'Cache/Engine', 'Engine', 'File'],
@@ -214,6 +214,24 @@ class AppTest extends TestCase
             ['Cake\Shell\Task\Upgrade\LocationsTask', 'Shell/Task', 'Task', 'Upgrade/Locations'],
             ['TestApp\Controller\PagesController', 'Controller', 'Controller', 'Pages'],
         ];
+    }
+
+    /**
+     * test classPath() with a plugin.
+     *
+     * @return void
+     */
+    public function testClassPathWithPlugins()
+    {
+        $basepath = TEST_APP . 'Plugin' . DS;
+        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
+
+        $result = App::classPath('Controller', 'TestPlugin');
+        $this->assertPathEquals($basepath . 'TestPlugin' . DS . 'src' . DS . 'Controller' . DS, $result[0]);
+
+        $result = App::classPath('Controller', 'Company/TestPluginThree');
+        $expected = $basepath . 'Company' . DS . 'TestPluginThree' . DS . 'src' . DS . 'Controller' . DS;
+        $this->assertPathEquals($expected, $result[0]);
     }
 
     /**
@@ -227,8 +245,10 @@ class AppTest extends TestCase
         $this->deprecated(function () {
             $basepath = TEST_APP . 'Plugin' . DS;
             $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
+
             $result = App::path('Controller', 'TestPlugin');
             $this->assertPathEquals($basepath . 'TestPlugin' . DS . 'src' . DS . 'Controller' . DS, $result[0]);
+
             $result = App::path('Controller', 'Company/TestPluginThree');
             $expected = $basepath . 'Company' . DS . 'TestPluginThree' . DS . 'src' . DS . 'Controller' . DS;
             $this->assertPathEquals($expected, $result[0]);
