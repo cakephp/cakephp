@@ -220,8 +220,8 @@ class App
      *
      * Will return the plugin based path for those.
      *
-     * @param string $type
-     * @param string|null $plugin
+     * @param string $type Package type.
+     * @param string|null $plugin Plugin name.
      *
      * @return string[]
      */
