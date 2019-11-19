@@ -62,13 +62,13 @@ class CommandScanner
     {
         $appNamespace = Configure::read('App.namespace');
         $appShells = $this->scanDir(
-            App::path('Shell')[0],
+            App::classPath('Shell')[0],
             $appNamespace . '\Shell\\',
             '',
             []
         );
         $appCommands = $this->scanDir(
-            App::path('Command')[0],
+            App::classPath('Command')[0],
             $appNamespace . '\Command\\',
             '',
             []
