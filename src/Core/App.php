@@ -212,10 +212,10 @@ class App
      * App::classPath('Model/Table');
      * ```
      *
-     * Will return the path for tables `src/Model/Table`.
+     * Will return the path for tables - e.g. `src/Model/Table/`.
      *
      * ```
-     * App::classPath('My/Plugin.Model/Table');
+     * App::classPath('Model/Table', 'My/Plugin');
      * ```
      *
      * Will return the plugin based path for those.
