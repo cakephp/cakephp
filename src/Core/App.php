@@ -192,6 +192,7 @@ class App
         }
 
         if ($type === 'templates') {
+            /** @psalm-suppress PossiblyNullArgument */
             return [Plugin::templatePath($plugin)];
         }
 
