@@ -574,6 +574,7 @@ class Client
     protected function _addAuthentication(Request $request, $options)
     {
         $auth = $options['auth'];
+        /** @var \Cake\Http\Client\Auth\Basic $adapter */
         $adapter = $this->_createAuth($auth, $options);
         $result = $adapter->authentication($request, $options['auth']);
 
@@ -593,6 +594,7 @@ class Client
     protected function _addProxy(Request $request, $options)
     {
         $auth = $options['proxy'];
+        /** @var \Cake\Http\Client\Auth\Basic $adapter */
         $adapter = $this->_createAuth($auth, $options);
         $result = $adapter->proxyAuthentication($request, $options['proxy']);
 

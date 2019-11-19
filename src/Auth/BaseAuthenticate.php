@@ -67,7 +67,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
     /**
      * Password hasher instance.
      *
-     * @var \Cake\Auth\AbstractPasswordHasher
+     * @var \Cake\Auth\AbstractPasswordHasher|null
      */
     protected $_passwordHasher;
 
@@ -107,13 +107,13 @@ abstract class BaseAuthenticate implements EventListenerInterface
      * @param string $username The username/identifier.
      * @param string|null $password The password, if not provided password checking is skipped
      *   and result of find is returned.
-     * @return bool|array Either false on failure, or an array of user data.
+     * @return array|false Either false on failure, or an array of user data.
      */
     protected function _findUser($username, $password = null)
     {
         $result = $this->_query($username)->first();
 
-        if (empty($result)) {
+        if ($result === null) {
             // Waste time hashing the password, to prevent
             // timing side-channels. However, don't hash
             // null passwords as authentication systems
@@ -192,7 +192,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
      */
     public function passwordHasher()
     {
-        if ($this->_passwordHasher) {
+        if ($this->_passwordHasher !== null) {
             return $this->_passwordHasher;
         }
 

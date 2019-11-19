@@ -199,7 +199,7 @@ class DecimalType extends Type implements TypeInterface, BatchCastingInterface
      */
     protected function _parseValue($value)
     {
-        /* @var \Cake\I18n\Number $class */
+        /** @var \Cake\I18n\Number $class */
         $class = static::$numberClass;
 
         return $class::parseFloat($value);

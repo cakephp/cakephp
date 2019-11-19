@@ -187,7 +187,7 @@ abstract class Association
     /**
      * Valid strategies for this association. Subclasses can narrow this down.
      *
-     * @var array
+     * @var string[]
      */
     protected $_validStrategies = [
         self::STRATEGY_JOIN,
@@ -1280,7 +1280,7 @@ abstract class Association
                 $extracted = new ResultSetDecorator($callable($extracted));
             }
 
-            /* @var \Cake\Collection\CollectionInterface $results */
+            /** @var \Cake\Collection\CollectionInterface $results */
             return $results->insert($property, $extracted);
         }, Query::PREPEND);
     }
@@ -1522,7 +1522,7 @@ abstract class Association
      *
      * @param \Cake\Datasource\EntityInterface $entity the data to be saved
      * @param array $options The options for saving associated data.
-     * @return bool|\Cake\Datasource\EntityInterface false if $entity could not be saved, otherwise it returns
+     * @return \Cake\Datasource\EntityInterface|false False if $entity could not be saved, otherwise it returns
      * the saved entity
      * @see \Cake\ORM\Table::save()
      */

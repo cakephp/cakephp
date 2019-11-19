@@ -898,7 +898,7 @@ class View implements EventDispatcherInterface
      *
      * @param string $content Content to render in a template, wrapped by the surrounding layout.
      * @param string|null $layout Layout name
-     * @return mixed Rendered output, or false on error
+     * @return string|false Rendered output, or false on error
      * @throws \Cake\Core\Exception\Exception if there is an error in the view.
      * @triggers View.beforeLayout $this, [$layoutFileName]
      * @triggers View.afterLayout $this, [$layoutFileName]
@@ -911,7 +911,7 @@ class View implements EventDispatcherInterface
         }
 
         if (!empty($content)) {
-             $this->Blocks->set('content', $content);
+            $this->Blocks->set('content', $content);
         }
 
         $this->dispatchEvent('View.beforeLayout', [$layoutFileName]);
@@ -959,7 +959,7 @@ class View implements EventDispatcherInterface
     /**
      * Get the names of all the existing blocks.
      *
-     * @return array An array containing the blocks.
+     * @return string[] An array containing the blocks.
      * @see \Cake\View\ViewBlock::keys()
      */
     public function blocks()
@@ -1739,7 +1739,7 @@ class View implements EventDispatcherInterface
      *
      * @param string|null $plugin Optional plugin name to scan for view files.
      * @param bool $cached Set to false to force a refresh of view paths. Default true.
-     * @return array paths
+     * @return string[] paths
      */
     protected function _paths($plugin = null, $cached = true)
     {
