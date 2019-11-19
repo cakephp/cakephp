@@ -161,8 +161,13 @@ class App
     /**
      * Used to read information stored path.
      *
-     * If 1st character of $type argument is lower cased it will return the
+     * The 1st character of $type argument should be lower cased and will return the
      * value of `App.paths.$type` config.
+     *
+     * Default types:
+     * - plugins
+     * - templates
+     * - locales
      *
      * Example:
      *
@@ -171,12 +176,6 @@ class App
      * ```
      *
      * Will return the value of `App.paths.plugins` config.
-     *
-     * ```
-     * App::path('Model/Table');
-     * ```
-     *
-     * Will return the path for tables `src/Model/Table`.
      *
      * Deprecated: 4.0 App::path() is deprecated for class path (inside src/ directory).
      *   Use \Cake\Core\App::classPath() instead or directly the method on \Cake\Core\Plugin class.
@@ -210,13 +209,13 @@ class App
      * Example:
      *
      * ```
-     * App::path('Model/Table');
+     * App::classPath('Model/Table');
      * ```
      *
      * Will return the path for tables `src/Model/Table`.
      *
      * ```
-     * App::path('My/Plugin.Model/Table');
+     * App::classPath('My/Plugin.Model/Table');
      * ```
      *
      * Will return the plugin based path for those.
