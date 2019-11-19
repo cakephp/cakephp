@@ -306,7 +306,7 @@ class SelectBoxWidget extends BasicWidget
      * Helper method for deciding what options are selected.
      *
      * @param string $key The key to test.
-     * @param array|string|false|null $selected The selected values.
+     * @param  string[]|string|false|null $selected The selected values.
      * @return bool
      */
     protected function _isSelected(string $key, $selected): bool
@@ -328,7 +328,7 @@ class SelectBoxWidget extends BasicWidget
      * Helper method for deciding what options are disabled.
      *
      * @param string $key The key to test.
-     * @param array|null $disabled The disabled values.
+     * @param string[]|null $disabled The disabled values.
      * @return bool
      */
     protected function _isDisabled(string $key, ?array $disabled): bool

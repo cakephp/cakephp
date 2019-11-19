@@ -434,7 +434,7 @@ trait EntityTrait
      * $entity->unset(['name', 'last_name']);
      * ```
      *
-     * @param string|array $field The field to unset.
+     * @param string|string[] $field The field to unset.
      * @return $this
      */
     public function unset($field)
