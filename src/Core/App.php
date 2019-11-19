@@ -179,31 +179,45 @@ class App
      * Will return the path for tables `src/Model/Table`.
      *
      * @param string $type type of path
-     * @param string|null $plugin This argument is deprecated.
-     *   Use \Cake\Core\Plugin::classPath()/templatePath() instead for plugin paths.
-     * @return array
+     * @param string|null $plugin This argument is deprecated for class paths.
+     *   Use \Cake\Core\Plugin::classPath() instead or directly the method on \Cake\Core\Plugin.
+     * @return string[]
+     * @deprecated 4.0 Use \Cake\Core\App::classPath()/templatePath() instead.
      * @link https://book.cakephp.org/4/en/core-libraries/app.html#finding-paths-to-namespaces
      */
     public static function path(string $type, ?string $plugin = null): array
     {
-        if (empty($plugin)) {
-            if ($type[0] === strtolower($type[0])) {
-                return (array)Configure::read('App.paths.' . $type);
-            }
-
-            return [APP . $type . DIRECTORY_SEPARATOR];
+        if ($plugin === null && $type[0] === strtolower($type[0])) {
+            return (array)Configure::read('App.paths.' . $type);
         }
-
-        deprecationWarning(
-            'Using App::path() with 2nd argument $plugin is deprecated.'
-            . ' Use \Cake\Core\Plugin::classPath()/templatePath() instead.'
-        );
 
         if ($type === 'templates') {
             return [Plugin::templatePath($plugin)];
         }
 
-        return [Plugin::classPath($plugin) . $type . DIRECTORY_SEPARATOR];
+        deprecationWarning(
+            'App::path() is deprecated for class path.'
+            . ' Use \Cake\Core\App::classPath() instead or directly the method on \Cake\Core\Plugin.'
+        );
+
+        return static::classPath($type, $plugin);
+    }
+
+    /**
+     * @param string $type
+     * @param string|null $plugin
+     *
+     * @return string[]
+     */
+    public static function classPath(string $type, ?string $plugin = null): array
+    {
+        if ($plugin !== null) {
+            return [
+                Plugin::classPath($plugin) . $type . DIRECTORY_SEPARATOR,
+            ];
+        }
+
+        return [APP . $type . DIRECTORY_SEPARATOR];
     }
 
     /**
