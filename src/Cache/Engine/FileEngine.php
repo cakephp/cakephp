@@ -67,7 +67,7 @@ class FileEngine extends CacheEngine
         'path' => null,
         'prefix' => 'cake_',
         'probability' => 100,
-        'serialize' => true
+        'serialize' => true,
     ];
 
     /**

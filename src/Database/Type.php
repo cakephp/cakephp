@@ -62,7 +62,7 @@ class Type implements TypeInterface
         'text' => ['callback' => [Type::class, 'strval']],
         'boolean' => [
             'callback' => [Type::class, 'boolval'],
-            'pdo' => PDO::PARAM_BOOL
+            'pdo' => PDO::PARAM_BOOL,
         ],
     ];
 

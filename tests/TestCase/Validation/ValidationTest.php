@@ -1501,7 +1501,7 @@ class ValidationTest extends TestCase
             'hour' => '12',
             'minute' => '14',
             'second' => '15',
-            'meridian' => 'pm'
+            'meridian' => 'pm',
         ];
         $this->assertTrue(Validation::datetime($date));
 
@@ -1511,14 +1511,14 @@ class ValidationTest extends TestCase
         $date = [
             'year' => 2014, 'month' => 2, 'day' => 14,
             'hour' => 1, 'minute' => 14, 'second' => 15,
-            'meridian' => 'am'
+            'meridian' => 'am',
         ];
         $this->assertTrue(Validation::datetime($date));
         $this->assertTrue(Validation::datetime($date, 'mdy'));
 
         $date = [
             'year' => '2014', 'month' => '02', 'day' => '14',
-            'hour' => 'farts', 'minute' => 'farts'
+            'hour' => 'farts', 'minute' => 'farts',
         ];
         $this->assertFalse(Validation::datetime($date));
     }
@@ -1570,18 +1570,18 @@ class ValidationTest extends TestCase
 
         $date = [
             'hour' => 1, 'minute' => 14, 'second' => 15,
-            'meridian' => 'am'
+            'meridian' => 'am',
         ];
         $this->assertTrue(Validation::time($date));
 
         $date = [
             'hour' => 12, 'minute' => 14, 'second' => 15,
-            'meridian' => 'pm'
+            'meridian' => 'pm',
         ];
         $this->assertTrue(Validation::time($date));
 
         $date = [
-            'hour' => 'farts', 'minute' => 'farts'
+            'hour' => 'farts', 'minute' => 'farts',
         ];
         $this->assertFalse(Validation::time($date));
 
@@ -2382,7 +2382,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::extension([
             'file1' => ['name' => 'file.jpg'],
             'file2' => ['name' => 'file.jpg'],
-            'file3' => ['name' => 'file.jpg']
+            'file3' => ['name' => 'file.jpg'],
         ]));
         $this->assertFalse(Validation::extension(
             [
@@ -2401,7 +2401,7 @@ class ValidationTest extends TestCase
 
         $file = [
             'tmp_name' => '/var/private/secret-file',
-            'name' => 'cats.gif'
+            'name' => 'cats.gif',
         ];
         $this->assertTrue(Validation::extension($file), 'Uses filename if available.');
         $this->assertTrue(Validation::extension(['file' => $file]), 'Walks through arrays.');
@@ -2743,7 +2743,7 @@ class ValidationTest extends TestCase
     {
         $this->assertFalse(Validation::uploadedFile('derp'));
         $invalid = [
-            'name' => 'testing'
+            'name' => 'testing',
         ];
         $this->assertFalse(Validation::uploadedFile($invalid));
 
@@ -2752,7 +2752,7 @@ class ValidationTest extends TestCase
             'tmp_name' => TEST_APP . 'webroot/img/cake.power.gif',
             'error' => UPLOAD_ERR_OK,
             'type' => 'image/gif',
-            'size' => 201
+            'size' => 201,
         ];
         $this->assertTrue(Validation::uploadedFile($file));
 
@@ -2773,7 +2773,7 @@ class ValidationTest extends TestCase
             'tmp_name' => TEST_APP . 'webroot/img/cake.power.gif',
             'error' => UPLOAD_ERR_OK,
             'type' => 'text/plain',
-            'size' => 201
+            'size' => 201,
         ];
         $this->assertSame($expected, Validation::uploadedFile($file, $options));
     }
@@ -2790,17 +2790,17 @@ class ValidationTest extends TestCase
             'tmp_name' => TEST_APP . 'webroot/img/cake.power.gif',
             'error' => UPLOAD_ERR_NO_FILE,
             'type' => '',
-            'size' => 0
+            'size' => 0,
         ];
         $options = [
             'optional' => true,
             'minSize' => 500,
-            'types' => ['image/gif', 'image/png']
+            'types' => ['image/gif', 'image/png'],
         ];
         $this->assertTrue(Validation::uploadedFile($file, $options), 'No file should be ok.');
 
         $options = [
-            'optional' => false
+            'optional' => false,
         ];
         $this->assertFalse(Validation::uploadedFile($file, $options), 'File is required.');
     }
@@ -2817,7 +2817,7 @@ class ValidationTest extends TestCase
             'error' => UPLOAD_ERR_OK,
             'tmp_name' => TEST_APP . 'webroot/img/cake.power.gif',
             'type' => 'text/plain',
-            'size' => 201
+            'size' => 201,
         ];
         $options = [];
         $this->assertTrue(Validation::uploadedFile($file, $options), 'Wrong order');
@@ -2893,15 +2893,15 @@ class ValidationTest extends TestCase
     {
         $context = [
             'data' => [
-                'other' => 'different'
-            ]
+                'other' => 'different',
+            ],
         ];
         $this->assertTrue(Validation::compareFields('a value', 'other', Validation::COMPARE_NOT_EQUAL, $context));
 
         $context = [
             'data' => [
-                'other' => 'a value'
-            ]
+                'other' => 'a value',
+            ],
         ];
         $this->assertFalse(Validation::compareFields('a value', 'other', Validation::COMPARE_NOT_EQUAL, $context));
 
@@ -3192,7 +3192,7 @@ class ValidationTest extends TestCase
     {
         $image = WWW_ROOT . 'test_theme' . DS . 'img' . DS . 'test.jpg';
         $upload = [
-            'tmp_name' => $image
+            'tmp_name' => $image,
         ];
 
         $this->assertTrue(Validation::imageSize($upload, [
@@ -3256,7 +3256,7 @@ class ValidationTest extends TestCase
     {
         $image = WWW_ROOT . 'test_theme' . DS . 'img' . DS . 'test.jpg';
         $upload = [
-            'tmp_name' => $image
+            'tmp_name' => $image,
         ];
 
         $this->assertTrue(Validation::imageHeight($upload, Validation::COMPARE_GREATER, 100));
@@ -3277,7 +3277,7 @@ class ValidationTest extends TestCase
     {
         $image = WWW_ROOT . 'test_theme' . DS . 'img' . DS . 'test.jpg';
         $upload = [
-            'tmp_name' => $image
+            'tmp_name' => $image,
         ];
 
         $this->assertTrue(Validation::imageWidth($upload, Validation::COMPARE_GREATER, 100));

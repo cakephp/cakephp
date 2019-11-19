@@ -322,7 +322,7 @@ class DateTimeWidget implements WidgetInterface
             'end' => date('Y', strtotime('+5 years')),
             'order' => 'desc',
             'templateVars' => [],
-            'options' => []
+            'options' => [],
         ];
 
         if (!empty($options['val'])) {
@@ -580,7 +580,7 @@ class DateTimeWidget implements WidgetInterface
         $options += [
             'leadingZeroKey' => true,
             'leadingZeroValue' => true,
-            'interval' => 1
+            'interval' => 1,
         ];
 
         $numbers = [];

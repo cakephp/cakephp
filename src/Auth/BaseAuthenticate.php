@@ -48,13 +48,13 @@ abstract class BaseAuthenticate implements EventListenerInterface
     protected $_defaultConfig = [
         'fields' => [
             'username' => 'username',
-            'password' => 'password'
+            'password' => 'password',
         ],
         'userModel' => 'Users',
         'scope' => [],
         'finder' => 'all',
         'contain' => null,
-        'passwordHasher' => 'Default'
+        'passwordHasher' => 'Default',
     ];
 
     /**
@@ -160,7 +160,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
         $table = $this->getTableLocator()->get($config['userModel']);
 
         $options = [
-            'conditions' => [$table->aliasField($config['fields']['username']) => $username]
+            'conditions' => [$table->aliasField($config['fields']['username']) => $username],
         ];
 
         if (!empty($config['scope'])) {

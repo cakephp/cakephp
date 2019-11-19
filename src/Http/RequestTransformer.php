@@ -83,7 +83,7 @@ class RequestTransformer
             'controller' => null,
             'action' => null,
             '_ext' => null,
-            'pass' => []
+            'pass' => [],
         ];
 
         return $params;

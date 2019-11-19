@@ -443,7 +443,7 @@ class SmtpTransportTest extends TestCase
     {
         $this->SmtpTransport->setConfig([
             'client' => 'myhost.com',
-            'port' => 666
+            'port' => 666,
         ]);
         $expected = $this->SmtpTransport->getConfig();
 
@@ -492,7 +492,7 @@ class SmtpTransportTest extends TestCase
             ['code' => '250', 'message' => 'AUTH=PLAIN LOGIN'],
             ['code' => '250', 'message' => 'ENHANCEDSTATUSCODES'],
             ['code' => '250', 'message' => '8BITMIME'],
-            ['code' => '250', 'message' => 'DSN']
+            ['code' => '250', 'message' => 'DSN'],
         ];
         $result = $this->SmtpTransport->getLastResponse();
         $this->assertEquals($expected, $result);
@@ -546,7 +546,7 @@ class SmtpTransportTest extends TestCase
             ['code' => '250', 'message' => 'PIPELINING'],
             ['code' => '250', 'message' => 'ENHANCEDSTATUSCODES'],
             ['code' => '250', 'message' => '8BITMIME'],
-            ['code' => '250', 'message' => 'DSN']
+            ['code' => '250', 'message' => 'DSN'],
         ];
         $result = $this->SmtpTransport->getLastResponse();
         $this->assertEquals($expected, $result);

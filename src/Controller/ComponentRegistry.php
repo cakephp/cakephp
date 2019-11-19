@@ -100,7 +100,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
     {
         throw new MissingComponentException([
             'class' => $class . 'Component',
-            'plugin' => $plugin
+            'plugin' => $plugin,
         ]);
     }
 

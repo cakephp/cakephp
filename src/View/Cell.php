@@ -86,7 +86,7 @@ abstract class Cell
      * @deprecated 3.7.0 Use ViewBuilder::setOptions() or any one of it's setter methods instead.
      */
     protected $_validViewOptions = [
-        'viewPath'
+        'viewPath',
     ];
 
     /**
@@ -230,7 +230,7 @@ abstract class Cell
         $key = str_replace('\\', '_', $key);
         $default = [
             'config' => 'default',
-            'key' => $key
+            'key' => $key,
         ];
         if ($this->_cache === true) {
             return $default;

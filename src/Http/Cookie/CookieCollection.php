@@ -350,7 +350,7 @@ class CookieCollection implements IteratorAggregate, Countable
                 'secure' => false,
                 'httponly' => false,
                 'expires' => null,
-                'max-age' => null
+                'max-age' => null,
             ];
             foreach ($parts as $i => $part) {
                 if (strpos($part, '=') !== false) {

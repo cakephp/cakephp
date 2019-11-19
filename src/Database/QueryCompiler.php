@@ -38,7 +38,7 @@ class QueryCompiler
         'order' => ' %s',
         'limit' => ' LIMIT %s',
         'offset' => ' OFFSET %s',
-        'epilog' => ' %s'
+        'epilog' => ' %s',
     ];
 
     /**
@@ -48,7 +48,7 @@ class QueryCompiler
      */
     protected $_selectParts = [
         'select', 'from', 'join', 'where', 'group', 'having', 'order', 'limit',
-        'offset', 'union', 'epilog'
+        'offset', 'union', 'epilog',
     ];
 
     /**

@@ -656,7 +656,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         $result = $this->getEagerLoader()
             ->setMatching($assoc, $builder, [
                 'joinType' => QueryInterface::JOIN_TYPE_LEFT,
-                'fields' => false
+                'fields' => false,
             ])
             ->getMatching();
         $this->_addAssociationsToTypeMap($this->getRepository(), $this->getTypeMap(), $result);
@@ -705,7 +705,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         $result = $this->getEagerLoader()
             ->setMatching($assoc, $builder, [
                 'joinType' => QueryInterface::JOIN_TYPE_INNER,
-                'fields' => false
+                'fields' => false,
             ])
             ->getMatching();
         $this->_addAssociationsToTypeMap($this->getRepository(), $this->getTypeMap(), $result);
@@ -770,7 +770,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             ->setMatching($assoc, $builder, [
                 'joinType' => QueryInterface::JOIN_TYPE_LEFT,
                 'fields' => false,
-                'negateMatch' => true
+                'negateMatch' => true,
             ])
             ->getMatching();
         $this->_addAssociationsToTypeMap($this->getRepository(), $this->getTypeMap(), $result);
@@ -1105,7 +1105,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             $repository->dispatchEvent('Model.beforeFind', [
                 $this,
                 new ArrayObject($this->_options),
-                !$this->isEagerLoaded()
+                !$this->isEagerLoaded(),
             ]);
         }
     }
@@ -1341,7 +1341,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             'contain' => $eagerLoader ? $eagerLoader->getContain() : [],
             'matching' => $eagerLoader ? $eagerLoader->getMatching() : [],
             'extraOptions' => $this->_options,
-            'repository' => $this->_repository
+            'repository' => $this->_repository,
         ];
     }
 

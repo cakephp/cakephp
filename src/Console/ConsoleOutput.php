@@ -101,7 +101,7 @@ class ConsoleOutput
         'blue' => 34,
         'magenta' => 35,
         'cyan' => 36,
-        'white' => 37
+        'white' => 37,
     ];
 
     /**
@@ -117,7 +117,7 @@ class ConsoleOutput
         'blue' => 44,
         'magenta' => 45,
         'cyan' => 46,
-        'white' => 47
+        'white' => 47,
     ];
 
     /**
@@ -149,7 +149,7 @@ class ConsoleOutput
         'success' => ['text' => 'green'],
         'comment' => ['text' => 'blue'],
         'question' => ['text' => 'magenta'],
-        'notice' => ['text' => 'cyan']
+        'notice' => ['text' => 'cyan'],
     ];
 
     /**

@@ -60,7 +60,7 @@ class Sqlite extends Driver
         $config['flags'] += [
             PDO::ATTR_PERSISTENT => $config['persistent'],
             PDO::ATTR_EMULATE_PREPARES => false,
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
 
         $databaseExists = file_exists($config['database']);

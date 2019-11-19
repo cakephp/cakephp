@@ -33,14 +33,14 @@ class IniConfigTest extends TestCase
         'One' => [
             'two' => 'value',
             'three' => [
-                'four' => 'value four'
+                'four' => 'value four',
             ],
             'is_null' => null,
             'bool_false' => false,
             'bool_true' => true,
         ],
         'Asset' => [
-            'timestamp' => 'force'
+            'timestamp' => 'force',
         ],
     ];
 
@@ -111,7 +111,7 @@ class IniConfigTest extends TestCase
 
         $expected = [
             'some_key' => 'some_value',
-            'bool_key' => true
+            'bool_key' => true,
         ];
         $this->assertEquals($expected, $config);
     }

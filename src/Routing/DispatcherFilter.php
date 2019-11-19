@@ -120,11 +120,11 @@ class DispatcherFilter implements EventListenerInterface
         return [
             'Dispatcher.beforeDispatch' => [
                 'callable' => 'handle',
-                'priority' => $this->_config['priority']
+                'priority' => $this->_config['priority'],
             ],
             'Dispatcher.afterDispatch' => [
                 'callable' => 'handle',
-                'priority' => $this->_config['priority']
+                'priority' => $this->_config['priority'],
             ],
         ];
     }

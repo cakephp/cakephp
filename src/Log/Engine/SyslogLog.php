@@ -53,7 +53,7 @@ class SyslogLog extends BaseLog
         'format' => '%s: %s',
         'flag' => LOG_ODELAY,
         'prefix' => '',
-        'facility' => LOG_USER
+        'facility' => LOG_USER,
     ];
 
     /**
@@ -69,7 +69,7 @@ class SyslogLog extends BaseLog
         'warning' => LOG_WARNING,
         'notice' => LOG_NOTICE,
         'info' => LOG_INFO,
-        'debug' => LOG_DEBUG
+        'debug' => LOG_DEBUG,
     ];
 
     /**

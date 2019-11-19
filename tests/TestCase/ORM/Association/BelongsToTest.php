@@ -47,9 +47,9 @@ class BelongsToTest extends TestCase
                 'id' => ['type' => 'integer'],
                 'company_name' => ['type' => 'string'],
                 '_constraints' => [
-                    'primary' => ['type' => 'primary', 'columns' => ['id']]
-                ]
-            ]
+                    'primary' => ['type' => 'primary', 'columns' => ['id']],
+                ],
+            ],
         ]);
         $this->client = $this->getTableLocator()->get('Clients', [
             'schema' => [
@@ -57,9 +57,9 @@ class BelongsToTest extends TestCase
                 'client_name' => ['type' => 'string'],
                 'company_id' => ['type' => 'integer'],
                 '_constraints' => [
-                    'primary' => ['type' => 'primary', 'columns' => ['id']]
-                ]
-            ]
+                    'primary' => ['type' => 'primary', 'columns' => ['id']],
+                ],
+            ],
         ]);
         $this->companiesTypeMap = new TypeMap([
             'Companies.id' => 'integer',
@@ -67,7 +67,7 @@ class BelongsToTest extends TestCase
             'Companies.company_name' => 'string',
             'company_name' => 'string',
             'Companies__id' => 'integer',
-            'Companies__company_name' => 'string'
+            'Companies__company_name' => 'string',
         ]);
     }
 
@@ -152,12 +152,12 @@ class BelongsToTest extends TestCase
     public function testCustomAlias()
     {
         $table = $this->getTableLocator()->get('Articles', [
-            'className' => 'TestPlugin.Articles'
+            'className' => 'TestPlugin.Articles',
         ]);
         $table->addAssociations([
             'belongsTo' => [
-                'FooAuthors' => ['className' => 'TestPlugin.Authors', 'foreignKey' => 'author_id']
-            ]
+                'FooAuthors' => ['className' => 'TestPlugin.Authors', 'foreignKey' => 'author_id'],
+            ],
         ]);
         $article = $table->find()->contain(['FooAuthors'])->first();
 
@@ -178,7 +178,7 @@ class BelongsToTest extends TestCase
             'foreignKey' => 'company_id',
             'sourceTable' => $this->client,
             'targetTable' => $this->company,
-            'conditions' => ['Companies.is_active' => true]
+            'conditions' => ['Companies.is_active' => true],
         ];
         $association = new BelongsTo('Companies', $config);
         $query = $this->client->query();
@@ -186,7 +186,7 @@ class BelongsToTest extends TestCase
 
         $expected = [
             'Companies__id' => 'Companies.id',
-            'Companies__company_name' => 'Companies.company_name'
+            'Companies__company_name' => 'Companies.company_name',
         ];
         $this->assertEquals($expected, $query->clause('select'));
         $expected = [
@@ -196,9 +196,9 @@ class BelongsToTest extends TestCase
                 'type' => 'LEFT',
                 'conditions' => new QueryExpression([
                     'Companies.is_active' => true,
-                    ['Companies.id' => new IdentifierExpression('Clients.company_id')]
-                ], $this->companiesTypeMap)
-            ]
+                    ['Companies.id' => new IdentifierExpression('Clients.company_id')],
+                ], $this->companiesTypeMap),
+            ],
         ];
         $this->assertEquals($expected, $query->clause('join'));
 
@@ -219,7 +219,7 @@ class BelongsToTest extends TestCase
         $config = [
             'sourceTable' => $this->client,
             'targetTable' => $this->company,
-            'conditions' => ['Companies.is_active' => true]
+            'conditions' => ['Companies.is_active' => true],
         ];
         $query = $this->client->query();
         $association = new BelongsTo('Companies', $config);
@@ -241,7 +241,7 @@ class BelongsToTest extends TestCase
             'foreignKey' => ['company_id', 'company_tenant_id'],
             'sourceTable' => $this->client,
             'targetTable' => $this->company,
-            'conditions' => ['Companies.is_active' => true]
+            'conditions' => ['Companies.is_active' => true],
         ];
         $association = new BelongsTo('Companies', $config);
         $query = $this->client->query();
@@ -249,7 +249,7 @@ class BelongsToTest extends TestCase
 
         $expected = [
             'Companies__id' => 'Companies.id',
-            'Companies__company_name' => 'Companies.company_name'
+            'Companies__company_name' => 'Companies.company_name',
         ];
         $this->assertEquals($expected, $query->clause('select'));
 
@@ -259,12 +259,12 @@ class BelongsToTest extends TestCase
             'Companies' => [
                 'conditions' => new QueryExpression([
                     'Companies.is_active' => true,
-                    ['Companies.id' => $field1, 'Companies.tenant_id' => $field2]
+                    ['Companies.id' => $field1, 'Companies.tenant_id' => $field2],
                 ], $this->companiesTypeMap),
                 'table' => 'companies',
                 'type' => 'LEFT',
-                'alias' => 'Companies'
-            ]
+                'alias' => 'Companies',
+            ],
         ];
         $this->assertEquals($expected, $query->clause('join'));
     }
@@ -285,7 +285,7 @@ class BelongsToTest extends TestCase
             'foreignKey' => 'company_id',
             'sourceTable' => $this->client,
             'targetTable' => $this->company,
-            'conditions' => ['Companies.is_active' => true]
+            'conditions' => ['Companies.is_active' => true],
         ];
         $association = new BelongsTo('Companies', $config);
         $association->attachTo($query);
@@ -336,7 +336,7 @@ class BelongsToTest extends TestCase
         $entity = new Entity([
             'title' => 'A Title',
             'body' => 'A body',
-            'author' => ['name' => 'Jose']
+            'author' => ['name' => 'Jose'],
         ]);
 
         $association = new BelongsTo('Authors', $config);
@@ -386,7 +386,7 @@ class BelongsToTest extends TestCase
         $config = [
             'foreignKey' => 'company_id',
             'sourceTable' => $this->client,
-            'targetTable' => $this->company
+            'targetTable' => $this->company,
         ];
         $listener = $this->getMockBuilder('stdClass')
             ->setMethods(['__invoke'])
@@ -414,7 +414,7 @@ class BelongsToTest extends TestCase
         $config = [
             'foreignKey' => 'company_id',
             'sourceTable' => $this->client,
-            'targetTable' => $this->company
+            'targetTable' => $this->company,
         ];
         $listener = $this->getMockBuilder('stdClass')
             ->setMethods(['__invoke'])

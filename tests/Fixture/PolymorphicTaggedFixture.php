@@ -37,7 +37,7 @@ class PolymorphicTaggedFixture extends TestFixture
         'foreign_key' => ['type' => 'integer'],
         'foreign_model' => ['type' => 'string'],
         'position' => ['type' => 'integer', 'null' => true],
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
     ];
 
     /**

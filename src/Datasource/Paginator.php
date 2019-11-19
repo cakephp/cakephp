@@ -43,7 +43,7 @@ class Paginator implements PaginatorInterface
         'page' => 1,
         'limit' => 20,
         'maxLimit' => 100,
-        'whitelist' => ['limit', 'sort', 'page', 'direction']
+        'whitelist' => ['limit', 'sort', 'page', 'direction'],
     ];
 
     /**
@@ -234,7 +234,7 @@ class Paginator implements PaginatorInterface
         if ($requestedPage > $page) {
             throw new PageOutOfBoundsException([
                 'requestedPage' => $requestedPage,
-                'pagingParams' => $this->_pagingParams
+                'pagingParams' => $this->_pagingParams,
             ]);
         }
 

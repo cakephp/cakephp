@@ -71,7 +71,7 @@ class TaskRegistry extends ObjectRegistry
     {
         throw new MissingTaskException([
             'class' => $class,
-            'plugin' => $plugin
+            'plugin' => $plugin,
         ]);
     }
 

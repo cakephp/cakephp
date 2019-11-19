@@ -27,7 +27,7 @@ class FallbackPasswordHasher extends AbstractPasswordHasher
      * @var array
      */
     protected $_defaultConfig = [
-        'hashers' => []
+        'hashers' => [],
     ];
 
     /**

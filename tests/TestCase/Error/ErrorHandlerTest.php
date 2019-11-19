@@ -89,8 +89,8 @@ class ErrorHandlerTest extends TestCase
         $request = new ServerRequest([
             'base' => '',
             'environment' => [
-                'HTTP_REFERER' => '/referer'
-            ]
+                'HTTP_REFERER' => '/referer',
+            ],
         ]);
 
         Router::setRequestInfo($request);
@@ -100,7 +100,7 @@ class ErrorHandlerTest extends TestCase
 
         Log::reset();
         Log::setConfig('error_test', [
-            'engine' => $this->_logger
+            'engine' => $this->_logger,
         ]);
     }
 

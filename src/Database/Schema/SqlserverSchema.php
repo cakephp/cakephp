@@ -257,14 +257,14 @@ class SqlserverSchema extends BaseSchema
         if ($type === TableSchema::CONSTRAINT_PRIMARY || $type === TableSchema::CONSTRAINT_UNIQUE) {
             $schema->addConstraint($name, [
                 'type' => $type,
-                'columns' => $columns
+                'columns' => $columns,
             ]);
 
             return;
         }
         $schema->addIndex($name, [
             'type' => $type,
-            'columns' => $columns
+            'columns' => $columns,
         ]);
     }
 
@@ -565,7 +565,7 @@ class SqlserverSchema extends BaseSchema
     {
         $name = $this->_driver->quoteIdentifier($schema->name());
         $queries = [
-            sprintf('DELETE FROM %s', $name)
+            sprintf('DELETE FROM %s', $name),
         ];
 
         // Restart identity sequences

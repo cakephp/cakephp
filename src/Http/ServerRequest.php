@@ -47,7 +47,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         'controller' => null,
         'action' => null,
         '_ext' => null,
-        'pass' => []
+        'pass' => [],
     ];
 
     /**
@@ -320,7 +320,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
 
         if (empty($config['session'])) {
             $config['session'] = new Session([
-                'cookiePath' => $config['base']
+                'cookiePath' => $config['base'],
             ]);
         }
 
@@ -2227,7 +2227,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
             'params' => $this->params,
             'webroot' => $this->webroot,
             'base' => $this->base,
-            'here' => $this->here
+            'here' => $this->here,
         ];
 
         return $this->attributes + $emulated;

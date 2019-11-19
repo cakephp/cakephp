@@ -38,7 +38,7 @@ class ControllerFactoryFilterTest extends TestCase
         $filter = new ControllerFactoryFilter();
 
         $request = new ServerRequest([
-            'params' => ['prefix' => 'admin', 'controller' => 'Posts', 'action' => 'index']
+            'params' => ['prefix' => 'admin', 'controller' => 'Posts', 'action' => 'index'],
         ]);
         $response = new Response();
         $event = new Event(__CLASS__, $this, compact('request', 'response'));
@@ -50,7 +50,7 @@ class ControllerFactoryFilterTest extends TestCase
         );
 
         $request = new ServerRequest([
-            'params' => ['prefix' => 'admin/sub', 'controller' => 'Posts', 'action' => 'index']
+            'params' => ['prefix' => 'admin/sub', 'controller' => 'Posts', 'action' => 'index'],
         ]);
         $event = new Event(__CLASS__, $this, compact('request', 'response'));
         $filter->beforeDispatch($event);

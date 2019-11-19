@@ -94,7 +94,7 @@ class Folder
      */
     protected $_fsorts = [
         self::SORT_NAME => 'getPathname',
-        self::SORT_TIME => 'getCTime'
+        self::SORT_TIME => 'getCTime',
     ];
 
     /**
@@ -802,7 +802,7 @@ class Folder
             'mode' => $this->mode,
             'skip' => [],
             'scheme' => Folder::MERGE,
-            'recursive' => true
+            'recursive' => true,
         ];
 
         $fromDir = $options['from'];

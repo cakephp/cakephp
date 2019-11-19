@@ -82,7 +82,7 @@ class RequestHandlerComponent extends Component
         'checkHttpCache' => true,
         'viewClassMap' => [],
         'inputTypeMap' => [],
-        'enableBeforeRedirect' => true
+        'enableBeforeRedirect' => true,
     ];
 
     /**
@@ -106,12 +106,12 @@ class RequestHandlerComponent extends Component
             'viewClassMap' => [
                 'json' => 'Json',
                 'xml' => 'Xml',
-                'ajax' => 'Ajax'
+                'ajax' => 'Ajax',
             ],
             'inputTypeMap' => [
                 'json' => ['json_decode', true],
                 'xml' => [[$this, 'convertXml']],
-            ]
+            ],
         ];
         parent::__construct($registry, $config);
     }
@@ -291,10 +291,10 @@ class RequestHandlerComponent extends Component
             'return',
             'bare' => false,
             'environment' => [
-                'REQUEST_METHOD' => 'GET'
+                'REQUEST_METHOD' => 'GET',
             ],
             'query' => $query,
-            'cookies' => $request->getCookieParams()
+            'cookies' => $request->getCookieParams(),
         ]));
 
         return $response->withStatus(200);

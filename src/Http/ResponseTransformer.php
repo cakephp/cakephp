@@ -188,7 +188,7 @@ class ResponseTransformer
         }
 
         $whitelist = [
-            'application/javascript', 'application/json', 'application/xml', 'application/rss+xml'
+            'application/javascript', 'application/json', 'application/xml', 'application/rss+xml',
         ];
 
         $type = $response->type();
@@ -219,7 +219,7 @@ class ResponseTransformer
         $headers = [];
         foreach ($cookies as $cookie) {
             $parts = [
-                sprintf('%s=%s', urlencode($cookie['name']), urlencode($cookie['value']))
+                sprintf('%s=%s', urlencode($cookie['name']), urlencode($cookie['value'])),
             ];
             if ($cookie['expire']) {
                 $cookie['expire'] = gmdate('D, d M Y H:i:s T', $cookie['expire']);

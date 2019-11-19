@@ -49,7 +49,7 @@ class EmailTraitTest extends TestCase
             'from' => 'alternate@example.com',
         ]);
         TransportFactory::setConfig('test_tools', [
-            'className' => TestEmailTransport::class
+            'className' => TestEmailTransport::class,
         ]);
     }
 

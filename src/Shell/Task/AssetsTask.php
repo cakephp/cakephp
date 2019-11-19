@@ -122,7 +122,7 @@ class AssetsTask extends Shell
                 'srcPath' => Plugin::path($plugin) . 'webroot',
                 'destDir' => $dir,
                 'link' => $link,
-                'namespaced' => $namespaced
+                'namespaced' => $namespaced,
             ];
         }
 
@@ -319,18 +319,18 @@ class AssetsTask extends Shell
         $parser = parent::getOptionParser();
 
         $parser->addSubcommand('symlink', [
-            'help' => 'Symlink (copy as fallback) plugin assets to app\'s webroot.'
+            'help' => 'Symlink (copy as fallback) plugin assets to app\'s webroot.',
         ])->addSubcommand('copy', [
-            'help' => 'Copy plugin assets to app\'s webroot.'
+            'help' => 'Copy plugin assets to app\'s webroot.',
         ])->addSubcommand('remove', [
-            'help' => 'Remove plugin assets from app\'s webroot.'
+            'help' => 'Remove plugin assets from app\'s webroot.',
         ])->addArgument('name', [
             'help' => 'A specific plugin you want to symlink assets for.',
             'optional' => true,
         ])->addOption('overwrite', [
             'help' => 'Overwrite existing symlink / folder / files.',
             'default' => false,
-            'boolean' => true
+            'boolean' => true,
         ]);
 
         return $parser;

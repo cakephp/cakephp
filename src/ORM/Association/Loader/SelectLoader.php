@@ -138,7 +138,7 @@ class SelectLoader
             'conditions' => [],
             'strategy' => $this->strategy,
             'nestKey' => $this->alias,
-            'sort' => $this->sort
+            'sort' => $this->sort,
         ];
     }
 

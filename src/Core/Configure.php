@@ -38,7 +38,7 @@ class Configure
      * @var array
      */
     protected static $_values = [
-        'debug' => false
+        'debug' => false,
     ];
 
     /**

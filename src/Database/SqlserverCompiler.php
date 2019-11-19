@@ -39,7 +39,7 @@ class SqlserverCompiler extends QueryCompiler
         'having' => ' HAVING %s ',
         'order' => ' %s',
         'offset' => ' OFFSET %s ROWS',
-        'epilog' => ' %s'
+        'epilog' => ' %s',
     ];
 
     /**
@@ -47,7 +47,7 @@ class SqlserverCompiler extends QueryCompiler
      */
     protected $_selectParts = [
         'select', 'from', 'join', 'where', 'group', 'having', 'order', 'offset',
-        'limit', 'union', 'epilog'
+        'limit', 'union', 'epilog',
     ];
 
     /**

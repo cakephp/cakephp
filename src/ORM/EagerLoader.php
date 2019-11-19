@@ -61,7 +61,7 @@ class EagerLoader
         'finder' => 1,
         'joinType' => 1,
         'strategy' => 1,
-        'negateMatch' => 1
+        'negateMatch' => 1,
     ];
 
     /**
@@ -152,8 +152,8 @@ class EagerLoader
 
             $associations = [
                 $associations => [
-                    'queryBuilder' => $queryBuilder
-                ]
+                    'queryBuilder' => $queryBuilder,
+                ],
             ];
         }
 
@@ -574,7 +574,7 @@ class EagerLoader
             'config' => array_diff_key($options, $extra),
             'aliasPath' => trim($paths['aliasPath'], '.'),
             'propertyPath' => trim($paths['propertyPath'], '.'),
-            'targetProperty' => $instance->getProperty()
+            'targetProperty' => $instance->getProperty(),
         ];
         $config['canBeJoined'] = $instance->canBeJoined($config['config']);
         $eagerLoadable = new EagerLoadable($alias, $config);
@@ -715,7 +715,7 @@ class EagerLoader
                     'query' => $query,
                     'contain' => $contain,
                     'keys' => $keys,
-                    'nestKey' => $meta->aliasPath()
+                    'nestKey' => $meta->aliasPath(),
                 ]
             );
             $statement = new CallbackStatement($statement, $driver, $f);
@@ -778,7 +778,7 @@ class EagerLoader
                 'entityClass' => $instance->getTarget()->getEntityClass(),
                 'nestKey' => $canBeJoined ? $assoc : $meta->aliasPath(),
                 'matching' => $forMatching !== null ? $forMatching : $matching,
-                'targetProperty' => $meta->targetProperty()
+                'targetProperty' => $meta->targetProperty(),
             ];
             if ($canBeJoined && $associations) {
                 $map = $this->_buildAssociationsMap($map, $associations, $matching);
@@ -809,7 +809,7 @@ class EagerLoader
             'instance' => $assoc,
             'canBeJoined' => true,
             'forMatching' => $asMatching,
-            'targetProperty' => $targetProperty ?: $assoc->getProperty()
+            'targetProperty' => $targetProperty ?: $assoc->getProperty(),
         ]);
     }
 

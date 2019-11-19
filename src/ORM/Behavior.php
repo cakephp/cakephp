@@ -285,7 +285,7 @@ class Behavior implements EventListenerInterface
             } else {
                 $events[$event] = [
                     'callable' => $method,
-                    'priority' => $priority
+                    'priority' => $priority,
                 ];
             }
         }
@@ -395,7 +395,7 @@ class Behavior implements EventListenerInterface
 
         $return = [
             'finders' => [],
-            'methods' => []
+            'methods' => [],
         ];
 
         $reflection = new ReflectionClass($class);

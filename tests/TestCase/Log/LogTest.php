@@ -47,10 +47,10 @@ class LogTest extends TestCase
         $this->loadPlugins(['TestPlugin']);
 
         Log::setConfig('libtest', [
-            'engine' => 'TestApp'
+            'engine' => 'TestApp',
         ]);
         Log::setConfig('plugintest', [
-            'engine' => 'TestPlugin.TestPlugin'
+            'engine' => 'TestPlugin.TestPlugin',
         ]);
 
         $result = Log::engine('libtest');
@@ -112,7 +112,7 @@ class LogTest extends TestCase
     {
         Log::setConfig('file', [
             'engine' => 'File',
-            'path' => LOGS
+            'path' => LOGS,
         ]);
         $result = Log::configured();
         $this->assertContains('file', $result);
@@ -219,7 +219,7 @@ class LogTest extends TestCase
     {
         $config = [
             'engine' => 'File',
-            'path' => LOGS
+            'path' => LOGS,
         ];
         Log::setConfig('tests', $config);
 
@@ -454,7 +454,7 @@ class LogTest extends TestCase
             'path' => LOGS,
             'levels' => ['notice', 'info', 'debug'],
             'file' => 'debug',
-            'scopes' => false
+            'scopes' => false,
         ]);
         Log::setConfig('shops', [
             'engine' => 'File',

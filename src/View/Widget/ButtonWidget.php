@@ -47,7 +47,7 @@ class ButtonWidget extends BasicWidget
             'text' => '',
             'type' => 'submit',
             'escape' => false,
-            'templateVars' => []
+            'templateVars' => [],
         ];
 
         return $this->_templates->format('button', [

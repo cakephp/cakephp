@@ -373,7 +373,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
         $special = [
             '_schema' => $this->schema()->__debugInfo(),
             '_errors' => $this->getErrors(),
-            '_validator' => $this->getValidator()->__debugInfo()
+            '_validator' => $this->getValidator()->__debugInfo(),
         ];
 
         return $special + get_object_vars($this);

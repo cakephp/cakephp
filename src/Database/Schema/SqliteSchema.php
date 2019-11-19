@@ -124,7 +124,7 @@ class SqliteSchema extends BaseSchema
         return [
             'SELECT name FROM sqlite_master WHERE type="table" ' .
             'AND name != "sqlite_sequence" ORDER BY name',
-            []
+            [],
         ];
     }
 
@@ -168,7 +168,7 @@ class SqliteSchema extends BaseSchema
         if ($row['pk']) {
             $constraint = (array)$schema->getConstraint('primary') + [
                 'type' => TableSchema::CONSTRAINT_PRIMARY,
-                'columns' => []
+                'columns' => [],
             ];
             $constraint['columns'] = array_merge($constraint['columns'], [$row['name']]);
             $schema->addConstraint('primary', $constraint);
@@ -236,12 +236,12 @@ class SqliteSchema extends BaseSchema
         if ($row['unique']) {
             $schema->addConstraint($row['name'], [
                 'type' => TableSchema::CONSTRAINT_UNIQUE,
-                'columns' => $columns
+                'columns' => $columns,
             ]);
         } else {
             $schema->addIndex($row['name'], [
                 'type' => TableSchema::INDEX_INDEX,
-                'columns' => $columns
+                'columns' => $columns,
             ]);
         }
     }
@@ -304,7 +304,7 @@ class SqliteSchema extends BaseSchema
             TableSchema::TYPE_TIME => ' TIME',
             TableSchema::TYPE_DATETIME => ' DATETIME',
             TableSchema::TYPE_TIMESTAMP => ' TIMESTAMP',
-            TableSchema::TYPE_JSON => ' TEXT'
+            TableSchema::TYPE_JSON => ' TEXT',
         ];
 
         $out = $this->_driver->quoteIdentifier($name);
@@ -314,7 +314,7 @@ class SqliteSchema extends BaseSchema
             TableSchema::TYPE_INTEGER,
             TableSchema::TYPE_BIGINTEGER,
             TableSchema::TYPE_FLOAT,
-            TableSchema::TYPE_DECIMAL
+            TableSchema::TYPE_DECIMAL,
         ];
 
         if (in_array($data['type'], $hasUnsigned, true) &&

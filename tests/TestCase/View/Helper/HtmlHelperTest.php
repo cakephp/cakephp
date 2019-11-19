@@ -129,7 +129,7 @@ class HtmlHelperTest extends TestCase
         $expected = [
             'a' => ['href' => '/login/%3C%5BYou%5D%3E'],
             'preg:/\/login\/&lt;\[You\]&gt;/',
-            '/a'
+            '/a',
         ];
         $this->assertHtml($expected, $result);
 
@@ -145,7 +145,7 @@ class HtmlHelperTest extends TestCase
         $expected = [
             'a' => ['href' => '/home', 'onclick' => 'if (confirm(&quot;Are you sure you want to do this?&quot;)) { return true; } return false;'],
             'Home',
-            '/a'
+            '/a',
         ];
         $this->assertHtml($expected, $result);
 
@@ -154,7 +154,7 @@ class HtmlHelperTest extends TestCase
         $expected = [
             'a' => ['href' => '/home', 'onclick' => 'preg:/if \(confirm\(&quot;Are you sure you want to do this\?&quot;\)\) \{ window\.location=&quot;\/&quot;;\};/'],
             'Home',
-            '/a'
+            '/a',
         ];
 
         $this->assertHtml($expected, $result);
@@ -164,7 +164,7 @@ class HtmlHelperTest extends TestCase
         $expected = [
             'a' => ['href' => '/home', 'onclick' => 'if (confirm(&quot;Confirm&#039;s \&quot;nightmares\&quot;&quot;)) { return true; } return false;'],
             'Home',
-            '/a'
+            '/a',
         ];
         $this->assertHtml($expected, $result);
 
@@ -172,7 +172,7 @@ class HtmlHelperTest extends TestCase
         $expected = [
             'a' => ['href' => '/home', 'onclick' => 'someFunction();'],
             'Home',
-            '/a'
+            '/a',
         ];
         $this->assertHtml($expected, $result);
 
@@ -180,7 +180,7 @@ class HtmlHelperTest extends TestCase
         $expected = [
             'a' => ['href' => '#'],
             'Next &gt;',
-            '/a'
+            '/a',
         ];
         $this->assertHtml($expected, $result);
 
@@ -188,7 +188,7 @@ class HtmlHelperTest extends TestCase
         $expected = [
             'a' => ['href' => '#'],
             'Next &gt;',
-            '/a'
+            '/a',
         ];
         $this->assertHtml($expected, $result);
 
@@ -196,7 +196,7 @@ class HtmlHelperTest extends TestCase
         $expected = [
             'a' => ['href' => '#'],
             'Next &gt;',
-            '/a'
+            '/a',
         ];
         $this->assertHtml($expected, $result);
 
@@ -204,50 +204,50 @@ class HtmlHelperTest extends TestCase
         $expected = [
             'a' => ['href' => '#'],
             'Next >',
-            '/a'
+            '/a',
         ];
         $this->assertHtml($expected, $result);
 
         $result = $this->Html->link('Next >', '#', [
             'title' => 'to escape &#8230; or not escape?',
-            'escape' => false
+            'escape' => false,
         ]);
         $expected = [
             'a' => ['href' => '#', 'title' => 'to escape &#8230; or not escape?'],
             'Next >',
-            '/a'
+            '/a',
         ];
         $this->assertHtml($expected, $result);
 
         $result = $this->Html->link('Next >', '#', [
             'title' => 'to escape &#8230; or not escape?',
-            'escape' => true
+            'escape' => true,
         ]);
         $expected = [
             'a' => ['href' => '#', 'title' => 'to escape &amp;#8230; or not escape?'],
             'Next &gt;',
-            '/a'
+            '/a',
         ];
         $this->assertHtml($expected, $result);
 
         $result = $this->Html->link('Next >', '#', [
             'title' => 'Next >',
-            'escapeTitle' => false
+            'escapeTitle' => false,
         ]);
         $expected = [
             'a' => ['href' => '#', 'title' => 'Next &gt;'],
             'Next >',
-            '/a'
+            '/a',
         ];
         $this->assertHtml($expected, $result);
 
         $result = $this->Html->link('Original size', [
-            'controller' => 'images', 'action' => 'view', 3, '?' => ['height' => 100, 'width' => 200]
+            'controller' => 'images', 'action' => 'view', 3, '?' => ['height' => 100, 'width' => 200],
         ]);
         $expected = [
             'a' => ['href' => '/images/view/3?height=100&amp;width=200'],
             'Original size',
-            '/a'
+            '/a',
         ];
         $this->assertHtml($expected, $result);
 
@@ -257,18 +257,18 @@ class HtmlHelperTest extends TestCase
         $expected = [
             'a' => ['href' => '#'],
             'img' => ['src' => 'img/test.gif', 'alt' => ''],
-            '/a'
+            '/a',
         ];
         $this->assertHtml($expected, $result);
 
         $result = $this->Html->link($this->Html->image('test.gif'), '#', [
             'title' => 'hey "howdy"',
-            'escapeTitle' => false
+            'escapeTitle' => false,
         ]);
         $expected = [
             'a' => ['href' => '#', 'title' => 'hey &quot;howdy&quot;'],
             'img' => ['src' => 'img/test.gif', 'alt' => ''],
-            '/a'
+            '/a',
         ];
         $this->assertHtml($expected, $result);
 
@@ -276,7 +276,7 @@ class HtmlHelperTest extends TestCase
         $expected = [
             'a' => ['href' => '#'],
             'img' => ['src' => 'img/test.gif', 'alt' => ''],
-            '/a'
+            '/a',
         ];
         $this->assertHtml($expected, $result);
 
@@ -284,7 +284,7 @@ class HtmlHelperTest extends TestCase
         $expected = [
             'a' => ['href' => '#'],
             'img' => ['src' => 'img/../favicon.ico', 'alt' => ''],
-            '/a'
+            '/a',
         ];
         $this->assertHtml($expected, $result);
 
@@ -292,7 +292,7 @@ class HtmlHelperTest extends TestCase
         $expected = [
             'a' => ['href' => '#'],
             'img' => ['src' => 'img/../favicon.ico', 'alt' => ''],
-            '/a'
+            '/a',
         ];
         $this->assertHtml($expected, $result);
 
@@ -416,7 +416,7 @@ class HtmlHelperTest extends TestCase
             'controller' => 'images',
             'action' => 'display',
             'test',
-            '?' => ['one' => 'two', 'three' => 'four']
+            '?' => ['one' => 'two', 'three' => 'four'],
         ]);
         $expected = ['img' => ['src' => '/images/display/test?one=two&amp;three=four', 'alt' => '']];
         $this->assertHtml($expected, $result);
@@ -500,7 +500,7 @@ class HtmlHelperTest extends TestCase
         $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/testing/longer/'));
         $result = $this->Html->image('cake.icon.png');
         $expected = [
-            'img' => ['src' => 'preg:/\/testing\/longer\/img\/cake\.icon\.png\?[0-9]+/', 'alt' => '']
+            'img' => ['src' => 'preg:/\/testing\/longer\/img\/cake\.icon\.png\?[0-9]+/', 'alt' => ''],
         ];
         $this->assertHtml($expected, $result);
     }
@@ -526,8 +526,8 @@ class HtmlHelperTest extends TestCase
         $expected = [
             'img' => [
                 'src' => 'preg:/\/test_theme\/img\/__cake_test_image\.gif\?\d+/',
-                'alt' => ''
-            ]
+                'alt' => '',
+            ],
         ];
         $this->assertHtml($expected, $result);
 
@@ -536,7 +536,7 @@ class HtmlHelperTest extends TestCase
         $expected = [
         'img' => [
             'src' => 'preg:/\/testing\/test_theme\/img\/__cake_test_image\.gif\?\d+/',
-            'alt' => ''
+            'alt' => '',
         ]];
         $this->assertHtml($expected, $result);
         $File->delete();
@@ -554,14 +554,14 @@ class HtmlHelperTest extends TestCase
         $this->Html->Url->getView()->setTheme('TestTheme');
         $result = $this->Html->css('webroot_test');
         $expected = [
-            'link' => ['rel' => 'stylesheet', 'href' => 'preg:/.*test_theme\/css\/webroot_test\.css/']
+            'link' => ['rel' => 'stylesheet', 'href' => 'preg:/.*test_theme\/css\/webroot_test\.css/'],
         ];
         $this->assertHtml($expected, $result);
 
         $this->Html->getView()->setTheme('TestTheme');
         $result = $this->Html->css('theme_webroot');
         $expected = [
-            'link' => ['rel' => 'stylesheet', 'href' => 'preg:/.*test_theme\/css\/theme_webroot\.css/']
+            'link' => ['rel' => 'stylesheet', 'href' => 'preg:/.*test_theme\/css\/theme_webroot\.css/'],
         ];
         $this->assertHtml($expected, $result);
     }
@@ -589,7 +589,7 @@ class HtmlHelperTest extends TestCase
     {
         $result = $this->Html->css('screen');
         $expected = [
-            'link' => ['rel' => 'stylesheet', 'href' => 'preg:/.*css\/screen\.css/']
+            'link' => ['rel' => 'stylesheet', 'href' => 'preg:/.*css\/screen\.css/'],
         ];
         $this->assertHtml($expected, $result);
 
@@ -656,7 +656,7 @@ class HtmlHelperTest extends TestCase
         $expected = [
             '<style',
             'preg:/@import url\(.*css\/import-screen\.css\);/',
-            '/style'
+            '/style',
         ];
         $this->assertHtml($expected, $result);
     }
@@ -670,7 +670,7 @@ class HtmlHelperTest extends TestCase
     {
         $result = $this->Html->css('screen', ['once' => true]);
         $expected = [
-            'link' => ['rel' => 'stylesheet', 'href' => 'preg:/.*css\/screen\.css/']
+            'link' => ['rel' => 'stylesheet', 'href' => 'preg:/.*css\/screen\.css/'],
         ];
         $this->assertHtml($expected, $result);
 
@@ -680,7 +680,7 @@ class HtmlHelperTest extends TestCase
 
         $result = $this->Html->css('screen', ['once' => false]);
         $expected = [
-            'link' => ['rel' => 'stylesheet', 'href' => 'preg:/.*css\/screen\.css/']
+            'link' => ['rel' => 'stylesheet', 'href' => 'preg:/.*css\/screen\.css/'],
         ];
         $this->assertHtml($expected, $result);
     }
@@ -697,7 +697,7 @@ class HtmlHelperTest extends TestCase
 
         $result = $this->Html->css('screen', ['fullBase' => true]);
         $expected = [
-            'link' => ['rel' => 'stylesheet', 'href' => $here . 'css/screen.css']
+            'link' => ['rel' => 'stylesheet', 'href' => $here . 'css/screen.css'],
         ];
         $this->assertHtml($expected, $result);
     }
@@ -713,7 +713,7 @@ class HtmlHelperTest extends TestCase
 
         $result = $this->Html->css('TestPlugin.test_plugin_asset');
         $expected = [
-            'link' => ['rel' => 'stylesheet', 'href' => 'preg:/.*test_plugin\/css\/test_plugin_asset\.css/']
+            'link' => ['rel' => 'stylesheet', 'href' => 'preg:/.*test_plugin\/css\/test_plugin_asset\.css/'],
         ];
         $this->assertHtml($expected, $result);
 
@@ -752,7 +752,7 @@ class HtmlHelperTest extends TestCase
         Configure::write('Asset.timestamp', true);
 
         $expected = [
-            'link' => ['rel' => 'stylesheet', 'href' => '']
+            'link' => ['rel' => 'stylesheet', 'href' => ''],
         ];
 
         $result = $this->Html->css('cake.generic', ['once' => false]);
@@ -795,7 +795,7 @@ class HtmlHelperTest extends TestCase
         Configure::write('Asset.timestamp', true);
 
         $expected = [
-            'link' => ['rel' => 'stylesheet', 'href' => '']
+            'link' => ['rel' => 'stylesheet', 'href' => ''],
         ];
 
         $result = $this->Html->css('TestPlugin.test_plugin_asset', ['once' => false]);
@@ -911,7 +911,7 @@ class HtmlHelperTest extends TestCase
     {
         $result = $this->Html->script('foo');
         $expected = [
-            'script' => ['src' => 'js/foo.js']
+            'script' => ['src' => 'js/foo.js'],
         ];
         $this->assertHtml($expected, $result);
 
@@ -926,55 +926,55 @@ class HtmlHelperTest extends TestCase
 
         $result = $this->Html->script('jquery-1.3');
         $expected = [
-            'script' => ['src' => 'js/jquery-1.3.js']
+            'script' => ['src' => 'js/jquery-1.3.js'],
         ];
         $this->assertHtml($expected, $result);
 
         $result = $this->Html->script('test.json');
         $expected = [
-            'script' => ['src' => 'js/test.json.js']
+            'script' => ['src' => 'js/test.json.js'],
         ];
         $this->assertHtml($expected, $result);
 
         $result = $this->Html->script('http://example.com/test.json');
         $expected = [
-            'script' => ['src' => 'http://example.com/test.json']
+            'script' => ['src' => 'http://example.com/test.json'],
         ];
         $this->assertHtml($expected, $result);
 
         $result = $this->Html->script('/plugin/js/jquery-1.3.2.js?someparam=foo');
         $expected = [
-            'script' => ['src' => '/plugin/js/jquery-1.3.2.js?someparam=foo']
+            'script' => ['src' => '/plugin/js/jquery-1.3.2.js?someparam=foo'],
         ];
         $this->assertHtml($expected, $result);
 
         $result = $this->Html->script('test.json.js?foo=bar');
         $expected = [
-            'script' => ['src' => 'js/test.json.js?foo=bar']
+            'script' => ['src' => 'js/test.json.js?foo=bar'],
         ];
         $this->assertHtml($expected, $result);
 
         $result = $this->Html->script('test.json.js?foo=bar&other=test');
         $expected = [
-            'script' => ['src' => 'js/test.json.js?foo=bar&amp;other=test']
+            'script' => ['src' => 'js/test.json.js?foo=bar&amp;other=test'],
         ];
         $this->assertHtml($expected, $result);
 
         $result = $this->Html->script('x:"><script>alert(1)</script>');
         $expected = [
-            'script' => ['src' => 'x:&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;']
+            'script' => ['src' => 'x:&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;'],
         ];
         $this->assertHtml($expected, $result);
 
         $result = $this->Html->script('foo2', ['pathPrefix' => '/my/custom/path/']);
         $expected = [
-            'script' => ['src' => '/my/custom/path/foo2.js']
+            'script' => ['src' => '/my/custom/path/foo2.js'],
         ];
         $this->assertHtml($expected, $result);
 
         $result = $this->Html->script('foo3', ['pathPrefix' => 'http://cakephp.org/assets/js/']);
         $expected = [
-            'script' => ['src' => 'http://cakephp.org/assets/js/foo3.js']
+            'script' => ['src' => 'http://cakephp.org/assets/js/foo3.js'],
         ];
         $this->assertHtml($expected, $result);
 
@@ -982,7 +982,7 @@ class HtmlHelperTest extends TestCase
         Configure::write('App.jsBaseUrl', '//cdn.cakephp.org/js/');
         $result = $this->Html->script('foo4');
         $expected = [
-            'script' => ['src' => '//cdn.cakephp.org/js/foo4.js']
+            'script' => ['src' => '//cdn.cakephp.org/js/foo4.js'],
         ];
         $this->assertHtml($expected, $result);
         Configure::write('App.jsBaseUrl', $previousConfig);
@@ -998,7 +998,7 @@ class HtmlHelperTest extends TestCase
 
         $result = $this->Html->script('jquery-1.3.2', ['defer' => true, 'encoding' => 'utf-8']);
         $expected = [
-            'script' => ['src' => 'js/jquery-1.3.2.js', 'defer' => 'defer', 'encoding' => 'utf-8']
+            'script' => ['src' => 'js/jquery-1.3.2.js', 'defer' => 'defer', 'encoding' => 'utf-8'],
         ];
         $this->assertHtml($expected, $result);
     }
@@ -1015,7 +1015,7 @@ class HtmlHelperTest extends TestCase
 
         $result = $this->Html->script('TestPlugin.foo');
         $expected = [
-            'script' => ['src' => 'test_plugin/js/foo.js']
+            'script' => ['src' => 'test_plugin/js/foo.js'],
         ];
         $this->assertHtml($expected, $result);
 
@@ -1030,25 +1030,25 @@ class HtmlHelperTest extends TestCase
 
         $result = $this->Html->script('TestPlugin.jquery-1.3');
         $expected = [
-            'script' => ['src' => 'test_plugin/js/jquery-1.3.js']
+            'script' => ['src' => 'test_plugin/js/jquery-1.3.js'],
         ];
         $this->assertHtml($expected, $result);
 
         $result = $this->Html->script('TestPlugin.test.json');
         $expected = [
-            'script' => ['src' => 'test_plugin/js/test.json.js']
+            'script' => ['src' => 'test_plugin/js/test.json.js'],
         ];
         $this->assertHtml($expected, $result);
 
         $result = $this->Html->script('TestPlugin./jquery-1.3.2.js?someparam=foo');
         $expected = [
-            'script' => ['src' => 'test_plugin/jquery-1.3.2.js?someparam=foo']
+            'script' => ['src' => 'test_plugin/jquery-1.3.2.js?someparam=foo'],
         ];
         $this->assertHtml($expected, $result);
 
         $result = $this->Html->script('TestPlugin.test.json.js?foo=bar');
         $expected = [
-            'script' => ['src' => 'test_plugin/js/test.json.js?foo=bar']
+            'script' => ['src' => 'test_plugin/js/test.json.js?foo=bar'],
         ];
         $this->assertHtml($expected, $result);
 
@@ -1063,7 +1063,7 @@ class HtmlHelperTest extends TestCase
 
         $result = $this->Html->script('TestPlugin.jquery-1.3.2', ['defer' => true, 'encoding' => 'utf-8']);
         $expected = [
-            'script' => ['src' => 'test_plugin/js/jquery-1.3.2.js', 'defer' => 'defer', 'encoding' => 'utf-8']
+            'script' => ['src' => 'test_plugin/js/jquery-1.3.2.js', 'defer' => 'defer', 'encoding' => 'utf-8'],
         ];
         $this->assertHtml($expected, $result);
 
@@ -1103,7 +1103,7 @@ class HtmlHelperTest extends TestCase
 
         $result = $this->Html->script('foo', ['fullBase' => true]);
         $expected = [
-            'script' => ['src' => $here . 'js/foo.js']
+            'script' => ['src' => $here . 'js/foo.js'],
         ];
         $this->assertHtml($expected, $result);
 
@@ -1133,7 +1133,7 @@ class HtmlHelperTest extends TestCase
         $this->Html->Url->getView()->setTheme('TestTheme');
         $result = $this->Html->script('__test_js.js');
         $expected = [
-            'script' => ['src' => '/test_theme/js/__test_js.js']
+            'script' => ['src' => '/test_theme/js/__test_js.js'],
         ];
         $this->assertHtml($expected, $result);
         $File->delete();
@@ -1218,7 +1218,7 @@ class HtmlHelperTest extends TestCase
         $expected = [
             '<script',
             'this is some javascript',
-            '/script'
+            '/script',
         ];
         $this->assertHtml($expected, $result);
 
@@ -1230,7 +1230,7 @@ class HtmlHelperTest extends TestCase
         $expected = [
             '<script',
             'this is some javascript',
-            '/script'
+            '/script',
         ];
         $this->assertHtml($expected, $result);
 
@@ -1244,7 +1244,7 @@ class HtmlHelperTest extends TestCase
             $this->cDataStart,
             'this is some javascript',
             $this->cDataEnd,
-            '/script'
+            '/script',
         ];
         $this->assertHtml($expected, $result);
 
@@ -1258,7 +1258,7 @@ class HtmlHelperTest extends TestCase
             $this->cDataStart,
             'this is some template',
             $this->cDataEnd,
-            '/script'
+            '/script',
         ];
         $this->assertHtml($expected, $result);
 
@@ -1357,7 +1357,7 @@ class HtmlHelperTest extends TestCase
                 'Third',
                 '/a',
                 '&raquo;',
-                'Fourth'
+                'Fourth',
             ];
             $this->assertHtml($expected, $result);
 
@@ -1409,7 +1409,7 @@ class HtmlHelperTest extends TestCase
                 ['li' => ['class' => 'first']],
                 ['a' => ['href' => '/']], 'Home', '/a',
                 '/li',
-                '/ul'
+                '/ul',
             ];
             $this->assertHtml($expected, $result);
 
@@ -1444,7 +1444,7 @@ class HtmlHelperTest extends TestCase
         $list = [
             'Item 1',
             'Item 2' => [
-                'Item 2.1'
+                'Item 2.1',
             ],
             'Item 3',
             'Item 4' => [
@@ -1452,13 +1452,13 @@ class HtmlHelperTest extends TestCase
                 'Item 4.2',
                 'Item 4.3' => [
                     'Item 4.3.1',
-                    'Item 4.3.2'
-                ]
+                    'Item 4.3.2',
+                ],
             ],
             'Item 5' => [
                 'Item 5.1',
-                'Item 5.2'
-            ]
+                'Item 5.2',
+            ],
         ];
 
         $result = $this->Html->nestedList($list);
@@ -1487,7 +1487,7 @@ class HtmlHelperTest extends TestCase
             '<li', 'Item 5.2', '/li',
             '/ul',
             '/li',
-            '/ul'
+            '/ul',
         ];
         $this->assertHtml($expected, $result);
 
@@ -1520,7 +1520,7 @@ class HtmlHelperTest extends TestCase
             '<li', 'Item 5.2', '/li',
             '/ol',
             '/li',
-            '/ol'
+            '/ol',
         ];
         $this->assertHtml($expected, $result);
 
@@ -1553,7 +1553,7 @@ class HtmlHelperTest extends TestCase
             '<li', 'Item 5.2', '/li',
             '/ul',
             '/li',
-            '/ul'
+            '/ul',
         ];
         $this->assertHtml($expected, $result);
 
@@ -1583,7 +1583,7 @@ class HtmlHelperTest extends TestCase
             ['li' => ['class' => 'item']], 'Item 5.2', '/li',
             '/ul',
             '/li',
-            '/ul'
+            '/ul',
         ];
         $this->assertHtml($expected, $result);
 
@@ -1613,7 +1613,7 @@ class HtmlHelperTest extends TestCase
             ['li' => ['class' => 'even']], 'Item 5.2', '/li',
             '/ul',
             '/li',
-            '/ul'
+            '/ul',
         ];
         $this->assertHtml($expected, $result);
 
@@ -1643,7 +1643,7 @@ class HtmlHelperTest extends TestCase
             ['li' => ['class' => 'item']], 'Item 5.2', '/li',
             '/ul',
             '/li',
-            '/ul'
+            '/ul',
         ];
         $this->assertHtml($expected, $result);
     }
@@ -1699,19 +1699,19 @@ class HtmlHelperTest extends TestCase
 
         $result = $this->Html->meta('viewport', 'width=device-width');
         $expected = [
-            'meta' => ['name' => 'viewport', 'content' => 'width=device-width']
+            'meta' => ['name' => 'viewport', 'content' => 'width=device-width'],
         ];
         $this->assertHtml($expected, $result);
 
         $result = $this->Html->meta(['property' => 'og:site_name', 'content' => 'CakePHP']);
         $expected = [
-            'meta' => ['property' => 'og:site_name', 'content' => 'CakePHP']
+            'meta' => ['property' => 'og:site_name', 'content' => 'CakePHP'],
         ];
         $this->assertHtml($expected, $result);
 
         $result = $this->Html->meta(['link' => 'http://example.com/manifest', 'rel' => 'manifest']);
         $expected = [
-            'link' => ['href' => 'http://example.com/manifest', 'rel' => 'manifest']
+            'link' => ['href' => 'http://example.com/manifest', 'rel' => 'manifest'],
         ];
         $this->assertHtml($expected, $result);
     }
@@ -1726,7 +1726,7 @@ class HtmlHelperTest extends TestCase
             ['first', ['controller' => 'posts', 'action' => 'index'], '/posts'],
             ['last', ['controller' => 'posts', 'action' => 'index', '?' => ['page' => 10]], '/posts?page=10'],
             ['prev', ['controller' => 'posts', 'action' => 'index', '?' => ['page' => 4]], '/posts?page=4'],
-            ['next', ['controller' => 'posts', 'action' => 'index', '?' => ['page' => 6]], '/posts?page=6']
+            ['next', ['controller' => 'posts', 'action' => 'index', '?' => ['page' => 6]], '/posts?page=6'],
         ];
     }
 
@@ -1755,14 +1755,14 @@ class HtmlHelperTest extends TestCase
         $result = $this->Html->meta('icon', 'favicon.ico');
         $expected = [
             'link' => ['href' => 'preg:/.*favicon\.ico/', 'type' => 'image/x-icon', 'rel' => 'icon'],
-            ['link' => ['href' => 'preg:/.*favicon\.ico/', 'type' => 'image/x-icon', 'rel' => 'shortcut icon']]
+            ['link' => ['href' => 'preg:/.*favicon\.ico/', 'type' => 'image/x-icon', 'rel' => 'shortcut icon']],
         ];
         $this->assertHtml($expected, $result);
 
         $result = $this->Html->meta('icon');
         $expected = [
             'link' => ['href' => 'preg:/.*favicon\.ico/', 'type' => 'image/x-icon', 'rel' => 'icon'],
-            ['link' => ['href' => 'preg:/.*favicon\.ico/', 'type' => 'image/x-icon', 'rel' => 'shortcut icon']]
+            ['link' => ['href' => 'preg:/.*favicon\.ico/', 'type' => 'image/x-icon', 'rel' => 'shortcut icon']],
         ];
         $this->assertHtml($expected, $result);
 
@@ -1772,15 +1772,15 @@ class HtmlHelperTest extends TestCase
             'link' => [
                 'href' => $url,
                 'type' => 'image/x-icon',
-                'rel' => 'icon'
+                'rel' => 'icon',
             ],
             [
                 'link' => [
                     'href' => $url,
                     'type' => 'image/x-icon',
-                    'rel' => 'shortcut icon'
-                ]
-            ]
+                    'rel' => 'shortcut icon',
+                ],
+            ],
         ];
         $this->assertHtml($expected, $result);
 
@@ -1790,15 +1790,15 @@ class HtmlHelperTest extends TestCase
             'link' => [
                 'href' => $url,
                 'type' => 'image/x-icon',
-                'rel' => 'icon'
+                'rel' => 'icon',
             ],
             [
                 'link' => [
                     'href' => $url,
                     'type' => 'image/x-icon',
-                    'rel' => 'shortcut icon'
-                ]
-            ]
+                    'rel' => 'shortcut icon',
+                ],
+            ],
         ];
         $this->assertHtml($expected, $result);
 
@@ -1806,7 +1806,7 @@ class HtmlHelperTest extends TestCase
         $result = $this->Html->meta('icon');
         $expected = [
             'link' => ['href' => '/testing/favicon.ico', 'type' => 'image/x-icon', 'rel' => 'icon'],
-            ['link' => ['href' => '/testing/favicon.ico', 'type' => 'image/x-icon', 'rel' => 'shortcut icon']]
+            ['link' => ['href' => '/testing/favicon.ico', 'type' => 'image/x-icon', 'rel' => 'shortcut icon']],
         ];
         $this->assertHtml($expected, $result);
     }
@@ -1823,14 +1823,14 @@ class HtmlHelperTest extends TestCase
         $result = $this->Html->meta('icon', 'favicon.ico');
         $expected = [
             'link' => ['href' => 'preg:/.*test_theme\/favicon\.ico/', 'type' => 'image/x-icon', 'rel' => 'icon'],
-            ['link' => ['href' => 'preg:/.*test_theme\/favicon\.ico/', 'type' => 'image/x-icon', 'rel' => 'shortcut icon']]
+            ['link' => ['href' => 'preg:/.*test_theme\/favicon\.ico/', 'type' => 'image/x-icon', 'rel' => 'shortcut icon']],
         ];
         $this->assertHtml($expected, $result);
 
         $result = $this->Html->meta('icon');
         $expected = [
             'link' => ['href' => 'preg:/.*test_theme\/favicon\.ico/', 'type' => 'image/x-icon', 'rel' => 'icon'],
-            ['link' => ['href' => 'preg:/.*test_theme\/favicon\.ico/', 'type' => 'image/x-icon', 'rel' => 'shortcut icon']]
+            ['link' => ['href' => 'preg:/.*test_theme\/favicon\.ico/', 'type' => 'image/x-icon', 'rel' => 'shortcut icon']],
         ];
         $this->assertHtml($expected, $result);
 
@@ -1838,7 +1838,7 @@ class HtmlHelperTest extends TestCase
         $result = $this->Html->meta('icon');
         $expected = [
             'link' => ['href' => '/testing/test_theme/favicon.ico', 'type' => 'image/x-icon', 'rel' => 'icon'],
-            ['link' => ['href' => '/testing/test_theme/favicon.ico', 'type' => 'image/x-icon', 'rel' => 'shortcut icon']]
+            ['link' => ['href' => '/testing/test_theme/favicon.ico', 'type' => 'image/x-icon', 'rel' => 'shortcut icon']],
         ];
         $this->assertHtml($expected, $result);
     }
@@ -1918,7 +1918,7 @@ class HtmlHelperTest extends TestCase
         $tr = [
             'td content 1',
             ['td content 2', ['width' => '100px']],
-            ['td content 3', ['width' => '100px']]
+            ['td content 3', ['width' => '100px']],
         ];
         $result = $this->Html->tableCells($tr);
         $expected = [
@@ -1926,7 +1926,7 @@ class HtmlHelperTest extends TestCase
             '<td', 'td content 1', '/td',
             ['td' => ['width' => '100px']], 'td content 2', '/td',
             ['td' => ['width' => 'preg:/100px/']], 'td content 3', '/td',
-            '/tr'
+            '/tr',
         ];
         $this->assertHtml($expected, $result);
 
@@ -1937,7 +1937,7 @@ class HtmlHelperTest extends TestCase
             ['td' => ['class' => 'column-1']], 'td content 1', '/td',
             ['td' => ['class' => 'column-2']], 'td content 2', '/td',
             ['td' => ['class' => 'column-3']], 'td content 3', '/td',
-            '/tr'
+            '/tr',
         ];
         $this->assertHtml($expected, $result);
 
@@ -1948,14 +1948,14 @@ class HtmlHelperTest extends TestCase
             ['td' => ['class' => 'column-1']], 'td content 1', '/td',
             ['td' => ['class' => 'column-2']], 'td content 2', '/td',
             ['td' => ['class' => 'column-3']], 'td content 3', '/td',
-            '/tr'
+            '/tr',
         ];
         $this->assertHtml($expected, $result);
 
         $tr = [
             ['td content 1', 'td content 2', 'td content 3'],
             ['td content 1', 'td content 2', 'td content 3'],
-            ['td content 1', 'td content 2', 'td content 3']
+            ['td content 1', 'td content 2', 'td content 3'],
         ];
         $result = $this->Html->tableCells($tr, ['class' => 'odd'], ['class' => 'even']);
         $expected = "<tr class=\"even\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"odd\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"even\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>";
@@ -1965,7 +1965,7 @@ class HtmlHelperTest extends TestCase
             ['td content 1', 'td content 2', 'td content 3'],
             ['td content 1', 'td content 2', 'td content 3'],
             ['td content 1', 'td content 2', 'td content 3'],
-            ['td content 1', 'td content 2', 'td content 3']
+            ['td content 1', 'td content 2', 'td content 3'],
         ];
         $result = $this->Html->tableCells($tr, ['class' => 'odd'], ['class' => 'even']);
         $expected = "<tr class=\"odd\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"even\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"odd\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"even\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>";
@@ -1974,7 +1974,7 @@ class HtmlHelperTest extends TestCase
         $tr = [
             ['td content 1', 'td content 2', 'td content 3'],
             ['td content 1', 'td content 2', 'td content 3'],
-            ['td content 1', 'td content 2', 'td content 3']
+            ['td content 1', 'td content 2', 'td content 3'],
         ];
         $this->Html->tableCells($tr, ['class' => 'odd'], ['class' => 'even']);
         $result = $this->Html->tableCells($tr, ['class' => 'odd'], ['class' => 'even'], false, false);
@@ -1984,7 +1984,7 @@ class HtmlHelperTest extends TestCase
         $tr = [
             'td content 1',
             'td content 2',
-            ['td content 3', ['class' => 'foo']]
+            ['td content 3', ['class' => 'foo']],
         ];
         $result = $this->Html->tableCells($tr, null, null, true);
         $expected = [
@@ -1992,7 +1992,7 @@ class HtmlHelperTest extends TestCase
             ['td' => ['class' => 'column-1']], 'td content 1', '/td',
             ['td' => ['class' => 'column-2']], 'td content 2', '/td',
             ['td' => ['class' => 'foo column-3']], 'td content 3', '/td',
-            '/tr'
+            '/tr',
         ];
         $this->assertHtml($expected, $result);
     }
@@ -2086,7 +2086,7 @@ class HtmlHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $result = $this->Html->media('video.webm', [
-            'text' => 'Your browser does not support the HTML5 Video element.'
+            'text' => 'Your browser does not support the HTML5 Video element.',
         ]);
         $expected = ['video' => ['src' => 'files/video.webm'], 'Your browser does not support the HTML5 Video element.', '/video'];
         $this->assertHtml($expected, $result);
@@ -2096,9 +2096,9 @@ class HtmlHelperTest extends TestCase
             'video' => [
                 'src' => 'files/video.webm',
                 'autoload' => 'autoload',
-                'muted' => 'muted'
+                'muted' => 'muted',
             ],
-            '/video'
+            '/video',
         ];
         $this->assertHtml($expected, $result);
 
@@ -2111,7 +2111,7 @@ class HtmlHelperTest extends TestCase
                 ['source' => ['src' => 'videos/video.webm', 'type' => 'video/webm']],
                 ['source' => ['src' => 'videos/video.ogv', 'type' => 'video/ogg; codecs=&#039;theora, vorbis&#039;']],
                 'Your browser does not support the HTML5 Video element.',
-            '/video'
+            '/video',
         ];
         $this->assertHtml($expected, $result);
 
@@ -2130,14 +2130,14 @@ class HtmlHelperTest extends TestCase
             '<video',
                 ['source' => ['src' => 'files/video.mov', 'type' => 'video/mp4']],
                 ['source' => ['src' => 'files/video.webm', 'type' => 'video/webm']],
-            '/video'
+            '/video',
         ];
         $this->assertHtml($expected, $result);
 
         $result = $this->Html->media(null, ['src' => 'video.webm']);
         $expected = [
             'video' => ['src' => 'files/video.webm'],
-            '/video'
+            '/video',
         ];
         $this->assertHtml($expected, $result);
     }
@@ -2170,7 +2170,7 @@ class HtmlHelperTest extends TestCase
                 ['li' => ['class' => 'last']],
                 'Another page',
                 '/li',
-                '/ul'
+                '/ul',
             ];
             $this->assertHtml($expected, $result);
         });
@@ -2200,7 +2200,7 @@ class HtmlHelperTest extends TestCase
                 ['li' => ['class' => 'last']],
                 ['a' => ['href' => '#second']], 'Second', '/a',
                 '/li',
-                '/ul'
+                '/ul',
             ];
             $this->assertHtml($expected, $result);
 
@@ -2216,7 +2216,7 @@ class HtmlHelperTest extends TestCase
                 ['li' => ['class' => 'last']],
                 ['a' => ['href' => '#second']], 'Second', '/a',
                 '/li',
-                '/ul'
+                '/ul',
             ];
             $this->assertHtml($expected, $result);
         });
@@ -2238,7 +2238,7 @@ class HtmlHelperTest extends TestCase
                 'class' => 'breadcrumb',
                 'separator' => '<span class="divider">-</span>',
                 'firstClass' => false,
-                'lastClass' => 'active'
+                'lastClass' => 'active',
             ]);
             $expected = [
                 ['ul' => ['class' => 'breadcrumb']],
@@ -2251,7 +2251,7 @@ class HtmlHelperTest extends TestCase
                 ['span' => ['class' => 'divider']], '-', '/span',
                 '/li',
                 ['li' => ['class' => 'active']], 'Data', '/li',
-                '/ul'
+                '/ul',
             ];
             $this->assertHtml($expected, $result);
         });
@@ -2287,7 +2287,7 @@ class HtmlHelperTest extends TestCase
                 ['li' => ['class' => 'current']],
                 ['a' => ['href' => '#']], 'Home', '/a',
                 '/li',
-                '/ul'
+                '/ul',
             ];
             $this->assertHtml($expected, $result, true);
         });
@@ -2302,13 +2302,13 @@ class HtmlHelperTest extends TestCase
     {
         $result = $this->Html->css('foo');
         $expected = [
-            'link' => ['rel' => 'stylesheet', 'href' => 'preg:/.*css\/foo\.css/']
+            'link' => ['rel' => 'stylesheet', 'href' => 'preg:/.*css\/foo\.css/'],
         ];
         $this->assertHtml($expected, $result);
 
         $result = $this->Html->script('foo');
         $expected = [
-            'script' => ['src' => 'js/foo.js']
+            'script' => ['src' => 'js/foo.js'],
         ];
         $this->assertHtml($expected, $result);
     }

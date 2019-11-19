@@ -30,7 +30,7 @@ class UuidportfoliosFixture extends TestFixture
     public $fields = [
         'id' => ['type' => 'uuid'],
         'name' => ['type' => 'string', 'null' => false],
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
     ];
 
     /**

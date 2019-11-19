@@ -45,7 +45,7 @@ class XcacheEngine extends CacheEngine
         'prefix' => null,
         'probability' => 100,
         'PHP_AUTH_USER' => 'user',
-        'PHP_AUTH_PW' => 'password'
+        'PHP_AUTH_PW' => 'password',
     ];
 
     /**

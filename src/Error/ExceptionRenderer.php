@@ -219,14 +219,14 @@ class ExceptionRenderer implements ExceptionRendererInterface
             'url' => h($url),
             'error' => $unwrapped,
             'code' => $code,
-            '_serialize' => ['message', 'url', 'code']
+            '_serialize' => ['message', 'url', 'code'],
         ];
 
         $isDebug = Configure::read('debug');
         if ($isDebug) {
             $viewVars['trace'] = Debugger::formatTrace($unwrapped->getTrace(), [
                 'format' => 'array',
-                'args' => false
+                'args' => false,
             ]);
             $viewVars['file'] = $exception->getFile() ?: 'null';
             $viewVars['line'] = $exception->getLine() ?: 'null';
@@ -428,7 +428,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
         }
         $args = [
             'request' => $this->controller->request,
-            'response' => $this->controller->response
+            'response' => $this->controller->response,
         ];
         $result = $dispatcher->dispatchEvent('Dispatcher.afterDispatch', $args);
 

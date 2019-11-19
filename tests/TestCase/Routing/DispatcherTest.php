@@ -78,7 +78,7 @@ class DispatcherTest extends TestCase
             'params' => [
                 'controller' => 'SomeController',
                 'action' => 'home',
-            ]
+            ],
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $this->dispatcher->dispatch($request, $response, ['return' => 1]);
@@ -98,7 +98,7 @@ class DispatcherTest extends TestCase
             'params' => [
                 'controller' => 'Interface',
                 'action' => 'index',
-            ]
+            ],
         ]);
         $url = new ServerRequest('dispatcher_test_interface/index');
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
@@ -119,7 +119,7 @@ class DispatcherTest extends TestCase
             'params' => [
                 'controller' => 'Abstract',
                 'action' => 'index',
-            ]
+            ],
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $this->dispatcher->dispatch($request, $response, ['return' => 1]);
@@ -143,7 +143,7 @@ class DispatcherTest extends TestCase
                 'controller' => 'somepages',
                 'action' => 'display',
                 'pass' => ['home'],
-            ]
+            ],
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $this->dispatcher->dispatch($request, $response, ['return' => 1]);
@@ -162,7 +162,7 @@ class DispatcherTest extends TestCase
                 'controller' => 'Pages',
                 'action' => 'display',
                 'pass' => ['extract'],
-            ]
+            ],
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['send'])
@@ -186,8 +186,8 @@ class DispatcherTest extends TestCase
             'params' => [
                 'controller' => 'SomePages',
                 'action' => 'responseGenerator',
-                'pass' => []
-            ]
+                'pass' => [],
+            ],
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['_sendHeader'])
@@ -218,8 +218,8 @@ class DispatcherTest extends TestCase
                 'controller' => 'TestPlugin.Tests',
                 'action' => 'index',
                 'pass' => [],
-                'return' => 1
-            ]
+                'return' => 1,
+            ],
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $this->dispatcher->dispatch($request, $response);
@@ -241,8 +241,8 @@ class DispatcherTest extends TestCase
                 'controller' => 'TestApp\Controller\PostsController',
                 'action' => 'index',
                 'pass' => [],
-                'return' => 1
-            ]
+                'return' => 1,
+            ],
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $this->dispatcher->dispatch($request, $response);
@@ -271,8 +271,8 @@ class DispatcherTest extends TestCase
                 'controller' => 'Pages',
                 'action' => 'display',
                 'home',
-                'pass' => []
-            ]
+                'pass' => [],
+            ],
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['send'])
@@ -309,8 +309,8 @@ class DispatcherTest extends TestCase
                 'controller' => 'Pages',
                 'action' => 'display',
                 'home',
-                'pass' => []
-            ]
+                'pass' => [],
+            ],
         ]);
         $res = new Response();
         $this->dispatcher->addFilter($filter);
@@ -346,7 +346,7 @@ class DispatcherTest extends TestCase
                 'action' => 'index',
                 'pass' => [],
             ],
-            'session' => new Session()
+            'session' => new Session(),
         ]);
         $this->dispatcher->addFilter($filter);
         $this->dispatcher->dispatch($request, $response);

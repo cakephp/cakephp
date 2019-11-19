@@ -131,7 +131,7 @@ trait SqlserverDialectTrait
 
         $query = clone $original;
         $query->select([
-                '_cake_page_rownum_' => new UnaryExpression('ROW_NUMBER() OVER', $order)
+                '_cake_page_rownum_' => new UnaryExpression('ROW_NUMBER() OVER', $order),
             ])->limit(null)
             ->offset(null)
             ->order([], true);
@@ -189,7 +189,7 @@ trait SqlserverDialectTrait
                     ->setConjunction(' ');
 
                 return [
-                    '_cake_distinct_pivot_' => $over
+                    '_cake_distinct_pivot_' => $over,
                 ];
             })
             ->limit(null)
@@ -226,7 +226,7 @@ trait SqlserverDialectTrait
 
         return [
             $namespace . '\FunctionExpression' => '_transformFunctionExpression',
-            $namespace . '\TupleComparison' => '_transformTupleComparison'
+            $namespace . '\TupleComparison' => '_transformTupleComparison',
         ];
     }
 

@@ -163,16 +163,16 @@ class ServerShell extends Shell
             '<warning>[WARN] Don\'t use this in a production environment</warning>',
         ])->addOption('host', [
             'short' => 'H',
-            'help' => 'ServerHost'
+            'help' => 'ServerHost',
         ])->addOption('port', [
             'short' => 'p',
-            'help' => 'ListenPort'
+            'help' => 'ListenPort',
         ])->addOption('ini_path', [
             'short' => 'I',
-            'help' => 'php.ini path'
+            'help' => 'php.ini path',
         ])->addOption('document_root', [
             'short' => 'd',
-            'help' => 'DocumentRoot'
+            'help' => 'DocumentRoot',
         ]);
 
         return $parser;
