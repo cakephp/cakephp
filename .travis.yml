@@ -14,9 +14,13 @@ cache:
     - $HOME/.composer/cache
 
 php:
+  - 7.2
   - 7.4snapshot
 
 env:
+  global:
+    - DEFAULT=1
+    - CHECKS=0
   matrix:
     - DB=mysql DB_DSN='mysql://root@127.0.0.1/cakephp_test?init[]=SET sql_mode = "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"'
     - DB=pgsql DB_DSN='postgres://postgres@127.0.0.1/cakephp_test'
@@ -24,6 +28,10 @@ env:
 
 matrix:
   fast_finish: true
+
+  include:
+    - php: 7.3
+      env: CHECKS=1 DEFAULT=0
 
 before_install:
   - echo cakephp version && tail -1 VERSION.txt
@@ -50,8 +58,14 @@ script:
       if [[ $TRAVIS_PHP_VERSION == '7.4snapshot' ]]; then
         # This is necessary to skip memory usage tests
         CODECOVERAGE=1 vendor/bin/phpunit --verbose --coverage-clover=clover.xml
-      else
+      elif [[ $DEFAULT == '1' ]]; then
         vendor/bin/phpunit
+      fi
+  - |
+      if [[ $CHECKS == 1 ]]; then
+        composer stan-setup
+        composer stan
+        composer cs-check
       fi
 
 after_success:
