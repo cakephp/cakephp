@@ -178,11 +178,12 @@ class App
      *
      * Will return the path for tables `src/Model/Table`.
      *
-     * @param string $type type of path
-     * @param string|null $plugin This argument is deprecated for class paths.
-     *   Use \Cake\Core\Plugin::classPath() instead or directly the method on \Cake\Core\Plugin.
+     * Deprecated: 4.0 App::path() is deprecated for class path (inside src/ directory).
+     *   Use \Cake\Core\App::classPath() instead or directly the method on \Cake\Core\Plugin class.
+     *
+     * @param string $type Type of path
+     * @param string|null $plugin Plugin name
      * @return string[]
-     * @deprecated 4.0 Use \Cake\Core\App::classPath()/templatePath() instead.
      * @link https://book.cakephp.org/4/en/core-libraries/app.html#finding-paths-to-namespaces
      */
     public static function path(string $type, ?string $plugin = null): array
@@ -204,7 +205,21 @@ class App
     }
 
     /**
-     * Get the path to a class type in the application or a plugin.
+     * Gets the path to a class type in the application or a plugin.
+     *
+     * Example:
+     *
+     * ```
+     * App::path('Model/Table');
+     * ```
+     *
+     * Will return the path for tables `src/Model/Table`.
+     *
+     * ```
+     * App::path('My/Plugin.Model/Table');
+     * ```
+     *
+     * Will return the plugin based path for those.
      *
      * @param string $type
      * @param string|null $plugin
