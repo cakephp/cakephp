@@ -186,7 +186,7 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
      * Reflect the subcommands names out of a shell.
      *
      * @param \Cake\Console\Shell $shell The shell to get commands for
-     * @return array A list of commands
+     * @return string[] A list of commands
      */
     protected function shellSubcommands(Shell $shell): array
     {
