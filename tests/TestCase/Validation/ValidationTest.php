@@ -2973,6 +2973,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::compareFields(false, 'other', Validation::COMPARE_SAME, $context));
         $this->assertTrue(Validation::compareFields(false, 'other', Validation::COMPARE_EQUAL, $context));
         $this->assertTrue(Validation::compareFields(null, 'other', Validation::COMPARE_SAME, $context));
+        $this->assertFalse(Validation::compareFields(false, 'other', Validation::COMPARE_SAME, $context));
     }
 
     /**

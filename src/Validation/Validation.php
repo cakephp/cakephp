@@ -330,12 +330,12 @@ class Validation
                 }
                 break;
             case static::COMPARE_EQUAL:
-                if ($check1 === $check2) {
+                if ($check1 == $check2) {
                     return true;
                 }
                 break;
             case static::COMPARE_NOT_EQUAL:
-                if ($check1 !== $check2) {
+                if ($check1 != $check2) {
                     return true;
                 }
                 break;
