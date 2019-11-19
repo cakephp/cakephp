@@ -181,7 +181,7 @@ class App
      * @param string $type type of path
      * @param string|null $plugin This argument is deprecated.
      *   Use \Cake\Core\Plugin::classPath()/templatePath() instead for plugin paths.
-     * @return array
+     * @return string[]
      * @link https://book.cakephp.org/4/en/core-libraries/app.html#finding-paths-to-namespaces
      */
     public static function path(string $type, ?string $plugin = null): array

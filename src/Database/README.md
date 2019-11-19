@@ -270,7 +270,7 @@ Combining expressions is also possible:
 
 ```php
 $query->where(function ($exp) {
-        $orConditions = $exp->or_(['author_id' => 2])
+        $orConditions = $exp->or(['author_id' => 2])
             ->eq('author_id', 5);
         return $exp
             ->not($orConditions)

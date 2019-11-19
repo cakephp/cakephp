@@ -330,12 +330,12 @@ class Validation
                 }
                 break;
             case static::COMPARE_EQUAL:
-                if ($check1 === $check2) {
+                if ($check1 == $check2) {
                     return true;
                 }
                 break;
             case static::COMPARE_NOT_EQUAL:
-                if ($check1 !== $check2) {
+                if ($check1 != $check2) {
                     return true;
                 }
                 break;
@@ -385,7 +385,7 @@ class Validation
      */
     public static function compareFields($check, string $field, string $operator, array $context): bool
     {
-        if (!isset($context['data'][$field])) {
+        if (!isset($context['data']) || !array_key_exists($field, $context['data'])) {
             return false;
         }
 

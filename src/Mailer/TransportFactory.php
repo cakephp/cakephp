@@ -36,7 +36,7 @@ class TransportFactory
     /**
      * An array mapping url schemes to fully qualified Transport class names
      *
-     * @var array
+     * @var string[]
      */
     protected static $_dsnClassMap = [
         'debug' => Transport\DebugTransport::class,

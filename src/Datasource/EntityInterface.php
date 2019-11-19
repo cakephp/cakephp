@@ -217,7 +217,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * Returns whether this entity contains a field named $field
      * regardless of if it is empty.
      *
-     * @param string|array $field The field to check.
+     * @param string|string[] $field The field to check.
      * @return bool
      */
     public function has($field): bool;
@@ -225,7 +225,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     /**
      * Removes a field or list of fields from this entity
      *
-     * @param string|array $field The field to unset.
+     * @param string|string[] $field The field to unset.
      * @return $this
      */
     public function unset($field);
