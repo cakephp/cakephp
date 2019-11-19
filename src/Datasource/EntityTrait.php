@@ -302,7 +302,7 @@ trait EntityTrait
      */
     public function getOriginal(string $field)
     {
-        if (!strlen((string)$field)) {
+        if (!strlen($field)) {
             throw new InvalidArgumentException('Cannot get an empty field');
         }
         if (array_key_exists($field, $this->_original)) {
@@ -354,7 +354,7 @@ trait EntityTrait
      * When checking multiple fields. All fields must not be null
      * in order for true to be returned.
      *
-     * @param string|array $field The field or fields to check.
+     * @param string|string[] $field The field or fields to check.
      * @return bool
      */
     public function has($field): bool
@@ -451,7 +451,7 @@ trait EntityTrait
      * Removes a field or list of fields from this entity
      *
      * @deprecated 4.0.0 Use unset() instead. Will be removed in 5.0.
-     * @param string|array $field The field to unset.
+     * @param string|string[] $field The field to unset.
      * @return $this
      */
     public function unsetProperty($field)
