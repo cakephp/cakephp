@@ -197,7 +197,7 @@ class App
 
         deprecationWarning(
             'App::path() is deprecated for class path.'
-            . ' Use \Cake\Core\App::classPath() instead or directly the method on \Cake\Core\Plugin.'
+            . ' Use \Cake\Core\App::classPath() or \Cake\Core\Plugin::classPath() instead.'
         );
 
         return static::classPath($type, $plugin);
