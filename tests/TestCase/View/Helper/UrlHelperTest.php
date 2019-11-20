@@ -92,13 +92,13 @@ class UrlHelperTest extends TestCase
         $this->assertEquals('/controller/action/1/param:%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24', $result);
 
         $result = $this->Helper->build([
-            'controller' => 'posts', 'action' => 'index', 'param' => '%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24'
+            'controller' => 'posts', 'action' => 'index', 'param' => '%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24',
         ]);
         $this->assertEquals('/posts/index?param=%257Baround%2520here%257D%255Bthings%255D%255Bare%255D%2524%2524', $result);
 
         $result = $this->Helper->build([
             'controller' => 'posts', 'action' => 'index', 'page' => '1',
-            '?' => ['one' => 'value', 'two' => 'value', 'three' => 'purple']
+            '?' => ['one' => 'value', 'two' => 'value', 'three' => 'purple'],
         ]);
         $this->assertEquals('/posts/index?one=value&amp;two=value&amp;three=purple&amp;page=1', $result);
     }
@@ -119,7 +119,7 @@ class UrlHelperTest extends TestCase
             ],
             'url' => '/subscribe',
             'base' => '/magazine',
-            'webroot' => '/magazine/'
+            'webroot' => '/magazine/',
         ]);
         Router::pushRequest($request);
 
@@ -144,8 +144,8 @@ class UrlHelperTest extends TestCase
             'param' => '%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24',
             '?' => [
                 'k' => 'v',
-                '1' => '2'
-            ]
+                '1' => '2',
+            ],
         ], ['escape' => false]);
         $this->assertEquals('/posts/view?k=v&1=2&param=%257Baround%2520here%257D%255Bthings%255D%255Bare%255D%2524%2524', $result);
     }
@@ -203,7 +203,7 @@ class UrlHelperTest extends TestCase
             [
                 'controller' => 'js',
                 'action' => 'post',
-                '_ext' => 'js'
+                '_ext' => 'js',
             ],
             ['fullBase' => true]
         );
@@ -370,7 +370,7 @@ class UrlHelperTest extends TestCase
             [
                 'controller' => 'js',
                 'action' => 'post',
-                '_ext' => 'js'
+                '_ext' => 'js',
             ],
             ['fullBase' => true]
         );

@@ -117,7 +117,7 @@ class RequestHandlerComponentTest extends TestCase
     public function testConstructorConfig()
     {
         $config = [
-            'viewClassMap' => ['json' => 'MyPlugin.MyJson']
+            'viewClassMap' => ['json' => 'MyPlugin.MyJson'],
         ];
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
             ->setMethods(['redirect'])
@@ -339,7 +339,7 @@ class RequestHandlerComponentTest extends TestCase
         $expected = [
             'json' => 'CustomJson',
             'xml' => 'Xml',
-            'ajax' => 'Ajax'
+            'ajax' => 'Ajax',
         ];
         $this->assertEquals($expected, $result);
         $this->RequestHandler->setConfig(['viewClassMap' => ['xls' => 'Excel.Excel']]);
@@ -348,7 +348,7 @@ class RequestHandlerComponentTest extends TestCase
             'json' => 'CustomJson',
             'xml' => 'Xml',
             'ajax' => 'Ajax',
-            'xls' => 'Excel.Excel'
+            'xls' => 'Excel.Excel',
         ];
         $this->assertEquals($expected, $result);
 
@@ -385,7 +385,7 @@ class RequestHandlerComponentTest extends TestCase
             $expected = [
                 'json' => 'CustomJson',
                 'xml' => 'Xml',
-                'ajax' => 'Ajax'
+                'ajax' => 'Ajax',
             ];
             $this->assertEquals($expected, $result);
 
@@ -394,7 +394,7 @@ class RequestHandlerComponentTest extends TestCase
                 'json' => 'CustomJson',
                 'xml' => 'Xml',
                 'ajax' => 'Ajax',
-                'xls' => 'Excel.Excel'
+                'xls' => 'Excel.Excel',
             ];
             $this->assertEquals($expected, $result);
 
@@ -646,8 +646,8 @@ class RequestHandlerComponentTest extends TestCase
         $this->Controller->request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => 'POST',
-                'CONTENT_TYPE' => 'application/json'
-            ]
+                'CONTENT_TYPE' => 'application/json',
+            ],
         ]);
 
         $event = new Event('Controller.startup', $this->Controller);
@@ -672,8 +672,8 @@ class RequestHandlerComponentTest extends TestCase
         $this->Controller->request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => 'POST',
-                'CONTENT_TYPE' => 'application/json'
-            ]
+                'CONTENT_TYPE' => 'application/json',
+            ],
         ]);
 
         $stream = new Stream('php://memory', 'w');
@@ -697,8 +697,8 @@ class RequestHandlerComponentTest extends TestCase
             'input' => '/dev/random',
             'environment' => [
                 'REQUEST_METHOD' => 'POST',
-                'CONTENT_TYPE' => 'application/xml'
-            ]
+                'CONTENT_TYPE' => 'application/xml',
+            ],
         ]);
 
         $event = new Event('Controller.startup', $this->Controller);
@@ -730,9 +730,9 @@ XML;
             'data' => [
                 'article' => [
                     '@id' => 1,
-                    '@title' => 'first'
-                ]
-            ]
+                    '@title' => 'first',
+                ],
+            ],
         ];
         $this->assertEquals($expected, $this->Controller->request->getData());
     }
@@ -761,8 +761,8 @@ XML;
         $expected = [
             'article' => [
                 'id' => 1,
-                'title' => 'first'
-            ]
+                'title' => 'first',
+            ],
         ];
         $this->assertEquals($expected, $this->Controller->request->getData());
     }
@@ -815,14 +815,14 @@ XML;
                 'input' => '"A","csv","string"',
                 'environment' => [
                     'REQUEST_METHOD' => 'POST',
-                    'CONTENT_TYPE' => 'text/csv'
-                ]
+                    'CONTENT_TYPE' => 'text/csv',
+                ],
             ]);
             $this->RequestHandler->addInputType('csv', ['str_getcsv']);
             $event = new Event('Controller.startup', $this->Controller);
             $this->RequestHandler->startup($event);
             $expected = [
-                'A', 'csv', 'string'
+                'A', 'csv', 'string',
             ];
             $this->assertEquals($expected, $this->Controller->request->getData());
         });
@@ -839,8 +839,8 @@ XML;
         $this->Controller->request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => 'POST',
-                'CONTENT_TYPE' => 'application/json'
-            ]
+                'CONTENT_TYPE' => 'application/json',
+            ],
         ]);
 
         $event = new Event('Controller.startup', $this->Controller);
@@ -1286,7 +1286,7 @@ XML;
             $this->Controller->request->expects($this->any())->method('is')->will($this->returnValue(true));
 
             $cookies = [
-                'foo' => 'bar'
+                'foo' => 'bar',
             ];
             $this->Controller->request->cookies = $cookies;
 
@@ -1387,7 +1387,7 @@ XML;
 
             Router::setRequestInfo([
                 ['plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => []],
-                ['base' => '', 'here' => '/accounts/', 'webroot' => '/']
+                ['base' => '', 'here' => '/accounts/', 'webroot' => '/'],
             ]);
 
             $RequestHandler = new RequestHandlerComponent($this->Controller->components());
@@ -1544,7 +1544,7 @@ XML;
             $this->Controller->components(),
             [
                 'viewClassMap' => ['json' => 'Json'],
-                'inputTypeMap' => ['json' => ['json_decode', true]]
+                'inputTypeMap' => ['json' => ['json_decode', true]],
             ]
         );
         $viewClass = $requestHandler->getConfig('viewClassMap');

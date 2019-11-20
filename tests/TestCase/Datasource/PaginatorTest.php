@@ -122,7 +122,7 @@ class PaginatorTest extends TestCase
         $settings = [
             'finder' => 'list',
             'conditions' => ['PaginatorPosts.published' => 'Y'],
-            'limit' => 2
+            'limit' => 2,
         ];
         $results = $this->Paginator->paginate($table, [], $settings);
 

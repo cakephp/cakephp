@@ -189,53 +189,53 @@ class RequestTransformerTest extends TestCase
                 'type' => ['file' => ''],
                 'tmp_name' => ['file' => ''],
                 'error' => ['file' => UPLOAD_ERR_NO_FILE],
-                'size' => ['file' => 0]
+                'size' => ['file' => 0],
             ],
             'image_main' => [
                 'name' => ['file' => 'born on.txt'],
                 'type' => ['file' => 'text/plain'],
                 'tmp_name' => ['file' => __FILE__],
                 'error' => ['file' => 0],
-                'size' => ['file' => 17178]
+                'size' => ['file' => 17178],
             ],
             0 => [
                 'name' => ['image' => 'scratch.text'],
                 'type' => ['image' => 'text/plain'],
                 'tmp_name' => ['image' => __FILE__],
                 'error' => ['image' => 0],
-                'size' => ['image' => 1490]
+                'size' => ['image' => 1490],
             ],
             'pictures' => [
                 'name' => [
                     0 => ['file' => 'a-file.png'],
-                    1 => ['file' => 'a-moose.png']
+                    1 => ['file' => 'a-moose.png'],
                 ],
                 'type' => [
                     0 => ['file' => 'image/png'],
-                    1 => ['file' => 'image/jpg']
+                    1 => ['file' => 'image/jpg'],
                 ],
                 'tmp_name' => [
                     0 => ['file' => __FILE__],
-                    1 => ['file' => __FILE__]
+                    1 => ['file' => __FILE__],
                 ],
                 'error' => [
                     0 => ['file' => 0],
-                    1 => ['file' => 0]
+                    1 => ['file' => 0],
                 ],
                 'size' => [
                     0 => ['file' => 17188],
-                    1 => ['file' => 2010]
+                    1 => ['file' => 2010],
                 ],
-            ]
+            ],
         ];
         $post = [
             'pictures' => [
                 0 => ['name' => 'A cat'],
-                1 => ['name' => 'A moose']
+                1 => ['name' => 'A moose'],
             ],
             0 => [
-                'name' => 'A dog'
-            ]
+                'name' => 'A dog',
+            ],
         ];
         $psr = ServerRequestFactory::fromGlobals(null, null, $post, null, $files);
         $request = RequestTransformer::toCake($psr);
@@ -247,7 +247,7 @@ class RequestTransformerTest extends TestCase
                     'tmp_name' => __FILE__,
                     'error' => 0,
                     'size' => 17178,
-                ]
+                ],
             ],
             'no_file' => [
                 'file' => [
@@ -256,7 +256,7 @@ class RequestTransformerTest extends TestCase
                     'tmp_name' => '',
                     'error' => UPLOAD_ERR_NO_FILE,
                     'size' => 0,
-                ]
+                ],
             ],
             'pictures' => [
                 0 => [
@@ -267,7 +267,7 @@ class RequestTransformerTest extends TestCase
                         'tmp_name' => __FILE__,
                         'error' => 0,
                         'size' => 17188,
-                    ]
+                    ],
                 ],
                 1 => [
                     'name' => 'A moose',
@@ -277,8 +277,8 @@ class RequestTransformerTest extends TestCase
                         'tmp_name' => __FILE__,
                         'error' => 0,
                         'size' => 2010,
-                    ]
-                ]
+                    ],
+                ],
             ],
             0 => [
                 'name' => 'A dog',
@@ -287,9 +287,9 @@ class RequestTransformerTest extends TestCase
                     'type' => 'text/plain',
                     'tmp_name' => __FILE__,
                     'error' => 0,
-                    'size' => 1490
-                ]
-            ]
+                    'size' => 1490,
+                ],
+            ],
         ];
         $this->assertEquals($expected, $request->data);
     }

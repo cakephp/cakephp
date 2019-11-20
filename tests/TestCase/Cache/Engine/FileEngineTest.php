@@ -241,12 +241,12 @@ class FileEngineTest extends TestCase
         $FileOne = new FileEngine();
         $FileOne->init([
             'prefix' => 'prefix_one_',
-            'duration' => DAY
+            'duration' => DAY,
         ]);
         $FileTwo = new FileEngine();
         $FileTwo->init([
             'prefix' => 'prefix_two_',
-            'duration' => DAY
+            'duration' => DAY,
         ]);
 
         $dataOne = $dataTwo = $expected = 'content to cache';
@@ -272,7 +272,7 @@ class FileEngineTest extends TestCase
         $engine->init([
             'prefix' => 'cake_test_',
             'duration' => DAY,
-            'groups' => ['short', 'round']
+            'groups' => ['short', 'round'],
         ]);
         $key = 'cake_test_test_key';
         $engine->write($key, 'it works');
@@ -291,7 +291,7 @@ class FileEngineTest extends TestCase
         $engine->init([
             'prefix' => 'cake_test_',
             'duration' => DAY,
-            'groups' => ['one', 'two']
+            'groups' => ['one', 'two'],
         ]);
         $key = 'cake_test_test_key';
         $engine->clear(false);
@@ -335,7 +335,7 @@ class FileEngineTest extends TestCase
             'engine' => 'File',
             'isWindows' => true,
             'prefix' => null,
-            'path' => CACHE
+            'path' => CACHE,
         ]);
 
         $expected = [
@@ -364,7 +364,7 @@ class FileEngineTest extends TestCase
                 6 => 'C:\dev\prj2\sites\vendors\simpletest\extensions\testdox', 7 => 'C:\dev\prj2\sites\vendors\simpletest\docs',
                 8 => 'C:\dev\prj2\sites\vendors\simpletest\docs\fr', 9 => 'C:\dev\prj2\sites\vendors\simpletest\docs\en'],
             'C:\dev\prj2\sites\main_site\views\helpers' => [
-                0 => 'C:\dev\prj2\sites\main_site\views\helpers']
+                0 => 'C:\dev\prj2\sites\main_site\views\helpers'],
         ];
 
         Cache::write('test_dir_map', $expected, 'windows_test');
@@ -391,7 +391,7 @@ class FileEngineTest extends TestCase
         Cache::setConfig('file_test', [
             'className' => 'File',
             'isWindows' => true,
-            'path' => TMP . 'tests'
+            'path' => TMP . 'tests',
         ]);
 
         $this->assertSame(Cache::read('App.doubleQuoteTest', 'file_test'), '"this is a quoted string"');
@@ -414,7 +414,7 @@ class FileEngineTest extends TestCase
         Cache::drop('file_test');
         Cache::setConfig('file_test', [
             'engine' => 'File',
-            'path' => $dir
+            'path' => $dir,
         ]);
 
         Cache::read('Test', 'file_test');
@@ -437,7 +437,7 @@ class FileEngineTest extends TestCase
         Cache::drop('file_test');
         Cache::setConfig('file_test', [
             'engine' => 'File',
-            'path' => $dir
+            'path' => $dir,
         ]);
 
         Cache::read('Test', 'file_test');
@@ -501,7 +501,7 @@ class FileEngineTest extends TestCase
         Cache::setConfig('file_groups', [
             'engine' => 'File',
             'duration' => 3600,
-            'groups' => ['group_a', 'group_b']
+            'groups' => ['group_a', 'group_b'],
         ]);
         $this->assertTrue(Cache::write('test_groups', 'value', 'file_groups'));
         $this->assertEquals('value', Cache::read('test_groups', 'file_groups'));
@@ -519,7 +519,7 @@ class FileEngineTest extends TestCase
     {
         Cache::setConfig('repeat', [
             'engine' => 'File',
-            'groups' => ['users']
+            'groups' => ['users'],
         ]);
 
         $this->assertTrue(Cache::write('user', 'rchavik', 'repeat'));
@@ -550,7 +550,7 @@ class FileEngineTest extends TestCase
         Cache::setConfig('file_groups', [
             'engine' => 'File',
             'duration' => 3600,
-            'groups' => ['group_a', 'group_b']
+            'groups' => ['group_a', 'group_b'],
         ]);
         $this->assertTrue(Cache::write('test_groups', 'value', 'file_groups'));
         $this->assertEquals('value', Cache::read('test_groups', 'file_groups'));
@@ -569,12 +569,12 @@ class FileEngineTest extends TestCase
         Cache::setConfig('file_groups', [
             'engine' => 'File',
             'duration' => 3600,
-            'groups' => ['group_a', 'group_b']
+            'groups' => ['group_a', 'group_b'],
         ]);
         Cache::setConfig('file_groups2', [
             'engine' => 'File',
             'duration' => 3600,
-            'groups' => ['group_b']
+            'groups' => ['group_b'],
         ]);
         Cache::setConfig('file_groups3', [
             'engine' => 'File',
@@ -613,7 +613,7 @@ class FileEngineTest extends TestCase
             'className' => 'File',
             'duration' => 3600,
             'prefix' => '',
-            'groups' => ['group_a', 'group_b']
+            'groups' => ['group_a', 'group_b'],
         ]);
         Cache::write('key_1', 'value', 'file_groups');
         Cache::write('key_2', 'value', 'file_groups');

@@ -33,7 +33,7 @@ class AttachmentsFixture extends TestFixture
         'attachment' => ['type' => 'string', 'null' => false],
         'created' => 'datetime',
         'updated' => 'datetime',
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
     ];
 
     /**
@@ -42,6 +42,6 @@ class AttachmentsFixture extends TestFixture
      * @var array
      */
     public $records = [
-        ['comment_id' => 5, 'attachment' => 'attachment.zip', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31']
+        ['comment_id' => 5, 'attachment' => 'attachment.zip', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31'],
     ];
 }

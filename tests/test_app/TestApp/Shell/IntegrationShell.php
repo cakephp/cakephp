@@ -36,15 +36,15 @@ class IntegrationShell extends Shell
         $parser = new ConsoleOptionParser();
         $argAndOptionParser = (new ConsoleOptionParser())
             ->addArgument('arg', [
-                'required' => true
+                'required' => true,
             ])
             ->addOption('opt', [
-                'short' => 'o'
+                'short' => 'o',
             ]);
 
         $parser
             ->addSubcommand('argsAndOptions', [
-                'parser' => $argAndOptionParser
+                'parser' => $argAndOptionParser,
             ])
             ->addSubcommand('bridge')
             ->addSubcommand('abort_shell');

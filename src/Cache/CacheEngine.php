@@ -231,7 +231,7 @@ abstract class CacheEngine
      * and returns the `group value` for each of them, this is
      * the token representing each group in the cache key
      *
-     * @return array
+     * @return string[]
      */
     public function groups()
     {

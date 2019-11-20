@@ -74,7 +74,7 @@ class ResponseEmitterTest extends TestCase
         $expected = [
             'HTTP/1.1 201 Created',
             'Content-Type: text/html',
-            'Location: http://example.com/cake/1'
+            'Location: http://example.com/cake/1',
         ];
         $this->assertEquals($expected, $GLOBALS['mockedHeaders']);
     }
@@ -123,7 +123,7 @@ class ResponseEmitterTest extends TestCase
         $this->assertEquals('ok', $out);
         $expected = [
             'HTTP/1.1 200 OK',
-            'Content-Type: text/plain'
+            'Content-Type: text/plain',
         ];
         $this->assertEquals($expected, $GLOBALS['mockedHeaders']);
         $expected = [
@@ -134,7 +134,7 @@ class ResponseEmitterTest extends TestCase
                 'expire' => 0,
                 'domain' => '',
                 'secure' => true,
-                'httponly' => false
+                'httponly' => false,
             ],
             [
                 'name' => 'google',
@@ -143,7 +143,7 @@ class ResponseEmitterTest extends TestCase
                 'expire' => 0,
                 'domain' => '',
                 'secure' => false,
-                'httponly' => true
+                'httponly' => true,
             ],
         ];
         $this->assertEquals($expected, $GLOBALS['mockedCookies']);
@@ -172,7 +172,7 @@ class ResponseEmitterTest extends TestCase
         $this->assertEquals('ok', $out);
         $expected = [
             'HTTP/1.1 200 OK',
-            'Content-Type: text/plain'
+            'Content-Type: text/plain',
         ];
         $this->assertEquals($expected, $GLOBALS['mockedHeaders']);
         $expected = [
@@ -183,7 +183,7 @@ class ResponseEmitterTest extends TestCase
                 'expire' => 0,
                 'domain' => '',
                 'secure' => true,
-                'httponly' => false
+                'httponly' => false,
             ],
             [
                 'name' => 'people',
@@ -192,7 +192,7 @@ class ResponseEmitterTest extends TestCase
                 'expire' => 0,
                 'domain' => '',
                 'secure' => false,
-                'httponly' => false
+                'httponly' => false,
             ],
             [
                 'name' => 'google',
@@ -201,7 +201,7 @@ class ResponseEmitterTest extends TestCase
                 'expire' => 0,
                 'domain' => '',
                 'secure' => false,
-                'httponly' => true
+                'httponly' => true,
             ],
             [
                 'name' => 'a',
@@ -210,7 +210,7 @@ class ResponseEmitterTest extends TestCase
                 'expire' => 1610576581,
                 'domain' => 'www.example.com',
                 'secure' => false,
-                'httponly' => false
+                'httponly' => false,
             ],
             [
                 'name' => 'list[]',
@@ -219,7 +219,7 @@ class ResponseEmitterTest extends TestCase
                 'expire' => 0,
                 'domain' => '',
                 'secure' => false,
-                'httponly' => false
+                'httponly' => false,
             ],
         ];
         $this->assertEquals($expected, $GLOBALS['mockedCookies']);

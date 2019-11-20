@@ -88,7 +88,7 @@ class ServerRequestFactoryTest extends TestCase
     public function testFromGlobalsSuperGlobals()
     {
         $_POST = [
-            'title' => 'custom'
+            'title' => 'custom',
         ];
         $_FILES = [
             'image' => [
@@ -96,8 +96,8 @@ class ServerRequestFactoryTest extends TestCase
                 'error' => 0,
                 'name' => 'cats.png',
                 'type' => 'image/png',
-                'size' => 2112
-            ]
+                'size' => 2112,
+            ],
         ];
         $_COOKIE = ['key' => 'value'];
         $_GET = ['query' => 'string'];
@@ -213,7 +213,7 @@ class ServerRequestFactoryTest extends TestCase
             'dir' => 'app',
             'webroot' => 'www',
             'base' => false,
-            'baseUrl' => '/cake/index.php'
+            'baseUrl' => '/cake/index.php',
         ]);
         $server = [
             'DOCUMENT_ROOT' => '/Users/markstory/Sites',
@@ -240,7 +240,7 @@ class ServerRequestFactoryTest extends TestCase
             'dir' => 'app',
             'webroot' => 'webroot',
             'base' => false,
-            'baseUrl' => '/cake/index.php'
+            'baseUrl' => '/cake/index.php',
         ]);
         $server = [
             'DOCUMENT_ROOT' => '/Users/markstory/Sites',
@@ -267,7 +267,7 @@ class ServerRequestFactoryTest extends TestCase
             'dir' => 'cake',
             'webroot' => 'webroot',
             'base' => false,
-            'baseUrl' => '/index.php'
+            'baseUrl' => '/index.php',
         ]);
         $server = [
             'DOCUMENT_ROOT' => '/Users/markstory/Sites/cake',

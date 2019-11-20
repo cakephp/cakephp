@@ -164,7 +164,7 @@ class AuthComponent extends Component
         'authError' => null,
         'unauthorizedRedirect' => true,
         'storage' => 'Session',
-        'checkAuthIn' => 'Controller.startup'
+        'checkAuthIn' => 'Controller.startup',
     ];
 
     /**
@@ -320,7 +320,8 @@ class AuthComponent extends Component
             return $result;
         }
 
-        if ($isLoginAction ||
+        if (
+            $isLoginAction ||
             empty($this->_config['authorize']) ||
             $this->isAuthorized($this->user())
         ) {
@@ -488,15 +489,15 @@ class AuthComponent extends Component
             'flash' => [
                 'element' => 'error',
                 'key' => 'flash',
-                'params' => ['class' => 'error']
+                'params' => ['class' => 'error'],
             ],
             'loginAction' => [
                 'controller' => 'Users',
                 'action' => 'login',
-                'plugin' => null
+                'plugin' => null,
             ],
             'logoutRedirect' => $this->_config['loginAction'],
-            'authError' => __d('cake', 'You are not authorized to access that location.')
+            'authError' => __d('cake', 'You are not authorized to access that location.'),
         ];
 
         $config = $this->getConfig();

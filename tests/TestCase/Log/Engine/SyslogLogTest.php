@@ -42,7 +42,7 @@ class SyslogLogTest extends TestCase
             'prefix' => 'thing',
             'flag' => LOG_NDELAY,
             'facility' => LOG_MAIL,
-            'format' => '%s: %s'
+            'format' => '%s: %s',
         ]);
         $log->expects($this->once())->method('_open')
             ->with('thing', LOG_NDELAY, LOG_MAIL);
@@ -95,7 +95,7 @@ class SyslogLogTest extends TestCase
             ['warning', LOG_WARNING],
             ['notice', LOG_NOTICE],
             ['info', LOG_INFO],
-            ['debug', LOG_DEBUG]
+            ['debug', LOG_DEBUG],
         ];
     }
 }

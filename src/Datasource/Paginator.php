@@ -43,7 +43,7 @@ class Paginator implements PaginatorInterface
         'page' => 1,
         'limit' => 20,
         'maxLimit' => 100,
-        'whitelist' => ['limit', 'sort', 'page', 'direction']
+        'whitelist' => ['limit', 'sort', 'page', 'direction'],
     ];
 
     /**
@@ -522,7 +522,8 @@ class Paginator implements PaginatorInterface
             }
         }
 
-        if ($options['sort'] === null
+        if (
+            $options['sort'] === null
             && count($options['order']) === 1
             && !is_numeric(key($options['order']))
         ) {

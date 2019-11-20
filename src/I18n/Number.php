@@ -239,7 +239,7 @@ class Number
     /**
      * Getter/setter for default currency
      *
-     * @param string|bool|null $currency Default currency string to be used by currency()
+     * @param string|false|null $currency Default currency string to be used by currency()
      * if $currency argument is not provided. If boolean false is passed, it will clear the
      * currently stored value
      * @return string|null Currency
@@ -303,13 +303,14 @@ class Number
             static::$_formatters[$locale][$type] = new NumberFormatter($locale, $type);
         }
 
+        /** @var \NumberFormatter $formatter */
         $formatter = static::$_formatters[$locale][$type];
 
         $options = array_intersect_key($options, [
             'places' => null,
             'precision' => null,
             'pattern' => null,
-            'useIntlCode' => null
+            'useIntlCode' => null,
         ]);
         if (empty($options)) {
             return $formatter;

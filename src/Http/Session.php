@@ -141,7 +141,7 @@ class Session
                 'cookie' => 'CAKEPHP',
                 'ini' => [
                     'session.use_trans_sid' => 0,
-                ]
+                ],
             ],
             'cake' => [
                 'cookie' => 'CAKEPHP',
@@ -150,8 +150,8 @@ class Session
                     'session.serialize_handler' => 'php',
                     'session.use_cookies' => 1,
                     'session.save_path' => TMP . 'sessions',
-                    'session.save_handler' => 'files'
-                ]
+                    'session.save_handler' => 'files',
+                ],
             ],
             'cache' => [
                 'cookie' => 'CAKEPHP',
@@ -162,8 +162,8 @@ class Session
                 ],
                 'handler' => [
                     'engine' => 'CacheSession',
-                    'config' => 'default'
-                ]
+                    'config' => 'default',
+                ],
             ],
             'database' => [
                 'cookie' => 'CAKEPHP',
@@ -174,9 +174,9 @@ class Session
                     'session.serialize_handler' => 'php',
                 ],
                 'handler' => [
-                    'engine' => 'DatabaseSession'
-                ]
-            ]
+                    'engine' => 'DatabaseSession',
+                ],
+            ],
         ];
 
         if (isset($defaults[$name])) {

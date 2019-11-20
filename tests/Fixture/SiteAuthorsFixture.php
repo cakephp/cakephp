@@ -28,7 +28,7 @@ class SiteAuthorsFixture extends TestFixture
         'id' => ['type' => 'integer'],
         'name' => ['type' => 'string', 'default' => null],
         'site_id' => ['type' => 'integer', 'null' => false],
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id', 'site_id']]]
+        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id', 'site_id']]],
     ];
 
     /**
@@ -40,6 +40,6 @@ class SiteAuthorsFixture extends TestFixture
         ['id' => 1, 'name' => 'mark', 'site_id' => 1],
         ['id' => 2, 'name' => 'juan', 'site_id' => 2],
         ['id' => 3, 'name' => 'jose', 'site_id' => 2],
-        ['id' => 4, 'name' => 'andy', 'site_id' => 1]
+        ['id' => 4, 'name' => 'andy', 'site_id' => 1],
     ];
 }

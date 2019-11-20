@@ -330,12 +330,12 @@ class ValidatorTest extends TestCase
 
         $validator->requirePresence([
             'title' => [
-                'mode' => false
+                'mode' => false,
             ],
             'content' => [
-                'mode' => 'update'
+                'mode' => 'update',
             ],
-            'subject'
+            'subject',
         ], true);
         $this->assertFalse($validator->field('title')->isPresenceRequired());
         $this->assertEquals('update', $validator->field('content')->isPresenceRequired());
@@ -434,7 +434,7 @@ class ValidatorTest extends TestCase
         $validator->requirePresence('title');
 
         $data = [
-            'title' => 'Example title'
+            'title' => 'Example title',
         ];
 
         $expected = [];
@@ -462,20 +462,20 @@ class ValidatorTest extends TestCase
 
         $data = [
             'user' => [
-                'username' => 'is wrong'
+                'username' => 'is wrong',
             ],
             'comments' => [
-                ['comment' => 'is wrong']
-            ]
+                ['comment' => 'is wrong'],
+            ],
         ];
         $errors = $validator->errors($data);
         $expected = [
             'user' => [
-                'username' => ['letter' => 'The provided value is invalid']
+                'username' => ['letter' => 'The provided value is invalid'],
             ],
             'comments' => [
-                0 => ['comment' => ['letter' => 'The provided value is invalid']]
-            ]
+                0 => ['comment' => ['letter' => 'The provided value is invalid']],
+            ],
         ];
         $this->assertEquals($expected, $errors);
     }
@@ -543,8 +543,8 @@ class ValidatorTest extends TestCase
             'comments' => [
                 'a string',
                 ['comment' => 'letters'],
-                ['comment' => 'more invalid']
-            ]
+                ['comment' => 'more invalid'],
+            ],
         ];
         $errors = $validator->errors($data);
         $expected = [
@@ -581,20 +581,20 @@ class ValidatorTest extends TestCase
         $errors = $validator->errors(['foo' => 'something']);
         $expected = [
             'title' => ['_required' => 'Custom message'],
-            'content' => ['_required' => 'Custom message']
+            'content' => ['_required' => 'Custom message'],
         ];
         $this->assertEquals($expected, $errors);
 
         $validator->requirePresence([
             'title' => [
-                'message' => 'Test message'
+                'message' => 'Test message',
             ],
-            'content'
+            'content',
         ], true, 'Custom message');
         $errors = $validator->errors(['foo' => 'something']);
         $expected = [
             'title' => ['_required' => 'Test message'],
-            'content' => ['_required' => 'Custom message']
+            'content' => ['_required' => 'Custom message'],
         ];
         $this->assertEquals($expected, $errors);
     }
@@ -632,8 +632,8 @@ class ValidatorTest extends TestCase
             'created' => [
                 'year' => '',
                 'month' => '',
-                'day' => ''
-            ]
+                'day' => '',
+            ],
         ];
         $result = $validator->errors($data);
         $this->assertEmpty($result, 'No errors on empty date');
@@ -647,7 +647,7 @@ class ValidatorTest extends TestCase
                 'minute' => '',
                 'second' => '',
                 'meridian' => '',
-            ]
+            ],
         ];
         $result = $validator->errors($data);
         $this->assertEmpty($result, 'No errors on empty datetime');
@@ -657,7 +657,7 @@ class ValidatorTest extends TestCase
                 'hour' => '',
                 'minute' => '',
                 'meridian' => '',
-            ]
+            ],
         ];
         $result = $validator->errors($data);
         $this->assertEmpty($result, 'No errors on empty time');
@@ -680,7 +680,7 @@ class ValidatorTest extends TestCase
                 'type' => '',
                 'tmp_name' => '',
                 'error' => UPLOAD_ERR_NO_FILE,
-            ]
+            ],
         ];
         $result = $validator->errors($data);
         $this->assertEmpty($result, 'No errors on empty file');
@@ -701,7 +701,7 @@ class ValidatorTest extends TestCase
                 'type' => '',
                 'tmp_name' => '',
                 'error' => UPLOAD_ERR_OK,
-            ]
+            ],
         ];
         $result = $validator->errors($data);
         $this->assertNotEmpty($result, 'Invalid file should be caught still.');
@@ -721,14 +721,14 @@ class ValidatorTest extends TestCase
             'subject',
             'posted_at' => [
                 'when' => false,
-                'message' => 'Post time cannot be empty'
+                'message' => 'Post time cannot be empty',
             ],
             'updated_at' => [
-                'when' => true
+                'when' => true,
             ],
             'show_at' => [
-                'when' => 'update'
-            ]
+                'when' => 'update',
+            ],
         ], 'create', 'Cannot be empty');
         $this->assertEquals('create', $validator->field('title')->isEmptyAllowed());
         $this->assertEquals('create', $validator->field('subject')->isEmptyAllowed());
@@ -741,13 +741,13 @@ class ValidatorTest extends TestCase
             'subject' => null,
             'posted_at' => null,
             'updated_at' => null,
-            'show_at' => ''
+            'show_at' => '',
         ], false);
 
         $expected = [
             'title' => ['_empty' => 'Cannot be empty'],
             'subject' => ['_empty' => 'Cannot be empty'],
-            'posted_at' => ['_empty' => 'Post time cannot be empty']
+            'posted_at' => ['_empty' => 'Post time cannot be empty'],
         ];
         $this->assertEquals($expected, $errors);
     }
@@ -1042,7 +1042,7 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->field('items')->isEmptyAllowed());
 
         $error = [
-            'items' => ['_empty' => 'not empty']
+            'items' => ['_empty' => 'not empty'],
         ];
         $data = ['items' => ''];
         $result = $validator->errors($data);
@@ -1082,7 +1082,7 @@ class ValidatorTest extends TestCase
                 'type' => '',
                 'tmp_name' => '',
                 'error' => UPLOAD_ERR_NO_FILE,
-            ]
+            ],
         ];
         $result = $validator->errors($data);
         $this->assertEmpty($result);
@@ -1099,12 +1099,12 @@ class ValidatorTest extends TestCase
                 'type' => '',
                 'tmp_name' => '',
                 'error' => UPLOAD_ERR_FORM_SIZE,
-            ]
+            ],
         ];
         $expected = [
             'photo' => [
-                'uploadedFile' => 'The provided value is invalid'
-            ]
+                'uploadedFile' => 'The provided value is invalid',
+            ],
         ];
         $result = $validator->errors($data);
         $this->assertSame($expected, $result);
@@ -1114,8 +1114,8 @@ class ValidatorTest extends TestCase
         ];
         $expected = [
             'photo' => [
-                'uploadedFile' => 'The provided value is invalid'
-            ]
+                'uploadedFile' => 'The provided value is invalid',
+            ],
         ];
         $result = $validator->errors($data);
         $this->assertSame($expected, $result);
@@ -1182,7 +1182,7 @@ class ValidatorTest extends TestCase
                 'type' => '',
                 'tmp_name' => '',
                 'error' => UPLOAD_ERR_NO_FILE,
-            ]
+            ],
         ];
         $error = ['photo' => ['_empty' => 'required field']];
         $this->assertSame($error, $validator->errors($data));
@@ -1205,7 +1205,7 @@ class ValidatorTest extends TestCase
                 'type' => '',
                 'tmp_name' => '',
                 'error' => UPLOAD_ERR_FORM_SIZE,
-            ]
+            ],
         ];
         $this->assertEmpty($validator->errors($data));
     }
@@ -1247,7 +1247,7 @@ class ValidatorTest extends TestCase
             'date' => [
                 'year' => '',
                 'month' => '',
-                'day' => ''
+                'day' => '',
             ],
         ];
         $result = $validator->errors($data);
@@ -1334,7 +1334,7 @@ class ValidatorTest extends TestCase
             'date' => [
                 'year' => '',
                 'month' => '',
-                'day' => ''
+                'day' => '',
             ],
         ];
         $result = $validator->errors($data);
@@ -1356,8 +1356,8 @@ class ValidatorTest extends TestCase
             'date' => [
                 'year' => 2019,
                 'month' => 2,
-                'day' => 17
-            ]
+                'day' => 17,
+            ],
         ];
         $result = $validator->errors($data);
         $this->assertEmpty($result);
@@ -1712,19 +1712,19 @@ class ValidatorTest extends TestCase
 
         $validator->notEmpty([
             'title' => [
-                'when' => false
+                'when' => false,
             ],
             'content' => [
-                'when' => 'update'
+                'when' => 'update',
             ],
             'posted_at' => [
-                'when' => 'create'
+                'when' => 'create',
             ],
             'show_at' => [
                 'message' => 'Show date cannot be empty',
-                'when' => false
+                'when' => false,
             ],
-            'subject'
+            'subject',
         ], 'Not empty', true);
 
         $this->assertFalse($validator->field('title')->isEmptyAllowed());
@@ -1739,13 +1739,13 @@ class ValidatorTest extends TestCase
             'content' => '',
             'posted_at' => null,
             'show_at' => null,
-            'subject' => ''
+            'subject' => '',
         ], false);
 
         $expected = [
             'title' => ['_empty' => 'Not empty'],
             'content' => ['_empty' => 'Not empty'],
-            'show_at' => ['_empty' => 'Show date cannot be empty']
+            'show_at' => ['_empty' => 'Show date cannot be empty'],
         ];
         $this->assertEquals($expected, $errors);
     }
@@ -2007,8 +2007,8 @@ class ValidatorTest extends TestCase
         $expected = [
             'email' => [
                 'alpha' => 'The provided value is invalid',
-                'email' => 'Y u no write email?'
-            ]
+                'email' => 'Y u no write email?',
+            ],
         ];
         $this->assertEquals($expected, $errors);
     }
@@ -2034,16 +2034,16 @@ class ValidatorTest extends TestCase
                 $this->assertEquals('bar', $data);
                 $expected = [
                     'default' => new \Cake\Validation\RulesProvider(),
-                    'thing' => $thing
+                    'thing' => $thing,
                 ];
                 $expected = [
                     'newRecord' => true,
                     'providers' => $expected,
                     'data' => [
                         'email' => '!',
-                        'title' => 'bar'
+                        'title' => 'bar',
                     ],
-                    'field' => 'title'
+                    'field' => 'title',
                 ];
                 $this->assertEquals($expected, $context);
 
@@ -2054,7 +2054,7 @@ class ValidatorTest extends TestCase
         $errors = $validator->errors(['email' => '!', 'title' => 'bar']);
         $expected = [
             'email' => ['alpha' => 'The provided value is invalid'],
-            'title' => ['cool' => "That ain't cool, yo"]
+            'title' => ['cool' => "That ain't cool, yo"],
         ];
         $this->assertEquals($expected, $errors);
     }
@@ -2070,7 +2070,7 @@ class ValidatorTest extends TestCase
         $validator = new Validator();
         $validator->add('title', 'cool', [
             'rule' => ['isCool', 'and', 'awesome'],
-            'provider' => 'thing'
+            'provider' => 'thing',
         ]);
         $thing = $this->getMockBuilder('\stdClass')
             ->setMethods(['isCool'])
@@ -2082,16 +2082,16 @@ class ValidatorTest extends TestCase
                 $this->assertEquals('awesome', $b);
                 $expected = [
                     'default' => new \Cake\Validation\RulesProvider(),
-                    'thing' => $thing
+                    'thing' => $thing,
                 ];
                 $expected = [
                     'newRecord' => true,
                     'providers' => $expected,
                     'data' => [
                         'email' => '!',
-                        'title' => 'bar'
+                        'title' => 'bar',
                     ],
-                    'field' => 'title'
+                    'field' => 'title',
                 ];
                 $this->assertEquals($expected, $context);
 
@@ -2100,7 +2100,7 @@ class ValidatorTest extends TestCase
         $validator->setProvider('thing', $thing);
         $errors = $validator->errors(['email' => '!', 'title' => 'bar']);
         $expected = [
-            'title' => ['cool' => "That ain't cool, yo"]
+            'title' => ['cool' => "That ain't cool, yo"],
         ];
         $this->assertEquals($expected, $errors);
     }
@@ -2118,7 +2118,7 @@ class ValidatorTest extends TestCase
                 $this->assertEquals('foo', $data);
 
                 return 'You fail';
-            }
+            },
         ]);
         $expected = ['name' => ['myRule' => 'You fail']];
         $this->assertEquals($expected, $validator->errors(['name' => 'foo']));
@@ -2138,8 +2138,8 @@ class ValidatorTest extends TestCase
         $errors = $validator->errors(['email' => 'not an email!']);
         $expected = [
             'email' => [
-                'alpha' => 'The provided value is invalid'
-            ]
+                'alpha' => 'The provided value is invalid',
+            ],
         ];
 
         $this->assertEquals($expected, $errors);
@@ -2233,12 +2233,12 @@ class ValidatorTest extends TestCase
         $validator = new Validator();
         $validator->add('title', [
             'notBlank' => [
-                'rule' => 'notBlank'
+                'rule' => 'notBlank',
             ],
             'length' => [
                 'rule' => ['minLength', 10],
-                'message' => 'Titles need to be at least 10 characters long'
-            ]
+                'message' => 'Titles need to be at least 10 characters long',
+            ],
         ]);
         $set = $validator->field('title');
         $this->assertInstanceOf('Cake\Validation\ValidationSet', $set);
@@ -2255,12 +2255,12 @@ class ValidatorTest extends TestCase
         $validator = new Validator();
         $validator->add('password', [
             'compare' => [
-                'rule' => ['compareWith', 'password_compare']
+                'rule' => ['compareWith', 'password_compare'],
             ],
         ]);
         $data = [
             'password' => 'test',
-            'password_compare' => 'not the same'
+            'password_compare' => 'not the same',
         ];
         $this->assertNotEmpty($validator->errors($data), 'Validation should fail.');
     }

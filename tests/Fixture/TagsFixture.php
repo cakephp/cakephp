@@ -33,7 +33,7 @@ class TagsFixture extends TestFixture
         'name' => ['type' => 'string', 'null' => false],
         'description' => ['type' => 'text', 'length' => TableSchema::LENGTH_MEDIUM],
         'created' => ['type' => 'datetime', 'null' => true, 'default' => null],
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
     ];
 
     /**
@@ -44,6 +44,6 @@ class TagsFixture extends TestFixture
     public $records = [
         ['name' => 'tag1', 'description' => 'A big description', 'created' => '2016-01-01 00:00'],
         ['name' => 'tag2', 'description' => 'Another big description', 'created' => '2016-01-01 00:00'],
-        ['name' => 'tag3', 'description' => 'Yet another one', 'created' => '2016-01-01 00:00']
+        ['name' => 'tag3', 'description' => 'Yet another one', 'created' => '2016-01-01 00:00'],
     ];
 }

@@ -231,7 +231,7 @@ class EntityContext implements ContextInterface
     {
         $options += [
             'default' => null,
-            'schemaDefault' => true
+            'schemaDefault' => true,
         ];
 
         $val = $this->_request->getData($field);
@@ -254,7 +254,8 @@ class EntityContext implements ContextInterface
             if ($val !== null) {
                 return $val;
             }
-            if ($options['default'] !== null
+            if (
+                $options['default'] !== null
                 || !$options['schemaDefault']
                 || !$entity->isNew()
             ) {

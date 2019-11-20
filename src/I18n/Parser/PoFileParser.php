@@ -75,7 +75,7 @@ class PoFileParser
 
         $defaults = [
             'ids' => [],
-            'translated' => null
+            'translated' => null,
         ];
 
         $messages = [];

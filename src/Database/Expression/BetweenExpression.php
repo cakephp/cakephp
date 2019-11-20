@@ -78,7 +78,7 @@ class BetweenExpression implements ExpressionInterface, FieldInterface
     {
         $parts = [
             'from' => $this->_from,
-            'to' => $this->_to
+            'to' => $this->_to,
         ];
 
         $field = $this->_field;

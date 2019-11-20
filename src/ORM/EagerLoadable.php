@@ -131,7 +131,7 @@ class EagerLoadable
         $this->_name = $name;
         $allowed = [
             'associations', 'instance', 'config', 'canBeJoined',
-            'aliasPath', 'propertyPath', 'forMatching', 'targetProperty'
+            'aliasPath', 'propertyPath', 'forMatching', 'targetProperty',
         ];
         foreach ($allowed as $property) {
             if (isset($config[$property])) {
@@ -336,8 +336,8 @@ class EagerLoadable
         return [
             $this->_name => [
                 'associations' => $associations,
-                'config' => $config
-            ]
+                'config' => $config,
+            ],
         ];
     }
 }

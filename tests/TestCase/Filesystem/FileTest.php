@@ -80,9 +80,10 @@ class FileTest extends TestCase
             'basename' => basename($file),
             'filename' => 'LICENSE',
             'filesize' => filesize($file),
-            'mime' => 'text/plain'
+            'mime' => 'text/plain',
         ];
-        if (!function_exists('finfo_open') &&
+        if (
+            !function_exists('finfo_open') &&
             (!function_exists('mime_content_type') ||
             function_exists('mime_content_type') &&
             mime_content_type($this->File->pwd()) === false)

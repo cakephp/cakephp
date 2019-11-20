@@ -736,7 +736,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     {
         $properties = [
             '_templatePath', '_template', '_plugin', '_theme', '_layout', '_autoLayout',
-            '_layoutPath', '_name', '_className', '_options', '_helpers'
+            '_layoutPath', '_name', '_className', '_options', '_helpers',
         ];
 
         $array = [];

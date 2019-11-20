@@ -207,7 +207,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @deprecated 3.7.0 Use ViewBuilder::setOptions() or any one of it's setter methods instead.
      */
     protected $_validViewOptions = [
-        'passedArgs'
+        'passedArgs',
     ];
 
     /**
@@ -401,7 +401,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     {
         $deprecated = [
             'name' => 'setName',
-            'plugin' => 'setPlugin'
+            'plugin' => 'setPlugin',
         ];
         if (isset($deprecated[$name])) {
             $method = $deprecated[$name];
@@ -603,7 +603,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
                 'plugin' => $request->getParam('plugin'),
             ]);
         }
-        /* @var callable $callable */
+        /** @var callable $callable */
         $callable = [$this, $request->getParam('action')];
 
         $result = $callable(...array_values($request->getParam('pass')));

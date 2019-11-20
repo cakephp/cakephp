@@ -83,7 +83,7 @@ class AssociationCollection implements IteratorAggregate
     public function load($className, $associated, array $options = [])
     {
         $options += [
-            'tableLocator' => $this->getTableLocator()
+            'tableLocator' => $this->getTableLocator(),
         ];
 
         $association = new $className($associated, $options);

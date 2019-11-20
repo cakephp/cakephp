@@ -48,8 +48,8 @@ class FlashHelperTest extends TestCase
                         'key' => 'flash',
                         'message' => 'This is a calling',
                         'element' => 'Flash/default',
-                        'params' => []
-                    ]
+                        'params' => [],
+                    ],
                 ],
                 'notification' => [
                     [
@@ -58,24 +58,24 @@ class FlashHelperTest extends TestCase
                         'element' => 'flash_helper',
                         'params' => [
                             'title' => 'Notice!',
-                            'name' => 'Alert!'
-                        ]
-                    ]
+                            'name' => 'Alert!',
+                        ],
+                    ],
                 ],
                 'classy' => [
                     [
                         'key' => 'classy',
                         'message' => 'Recorded',
                         'element' => 'flash_classy',
-                        'params' => []
-                    ]
+                        'params' => [],
+                    ],
                 ],
                 'stack' => [
                     [
                         'key' => 'flash',
                         'message' => 'This is a calling',
                         'element' => 'Flash/default',
-                        'params' => []
+                        'params' => [],
                     ],
                     [
                         'key' => 'notification',
@@ -83,17 +83,17 @@ class FlashHelperTest extends TestCase
                         'element' => 'flash_helper',
                         'params' => [
                             'title' => 'Notice!',
-                            'name' => 'Alert!'
-                        ]
+                            'name' => 'Alert!',
+                        ],
                     ],
                     [
                         'key' => 'classy',
                         'message' => 'Recorded',
                         'element' => 'flash_classy',
-                        'params' => []
-                    ]
-                ]
-            ]
+                        'params' => [],
+                    ],
+                ],
+            ],
         ]);
     }
 
@@ -130,7 +130,7 @@ class FlashHelperTest extends TestCase
             '<h1', 'Alert!', '/h1',
             '<h3', 'Notice!', '/h3',
             '<p', 'This is a test of the emergency broadcasting system', '/p',
-            '/div'
+            '/div',
         ];
         $this->assertHtml($expected, $result);
         $this->assertNull($this->Flash->render('non-existent'));
@@ -156,7 +156,7 @@ class FlashHelperTest extends TestCase
     {
         $result = $this->Flash->render('notification', [
             'element' => 'flash_helper',
-            'params' => ['title' => 'Notice!', 'name' => 'Alert!']
+            'params' => ['title' => 'Notice!', 'name' => 'Alert!'],
         ]);
 
         $expected = [
@@ -164,7 +164,7 @@ class FlashHelperTest extends TestCase
             '<h1', 'Alert!', '/h1',
             '<h3', 'Notice!', '/h3',
             '<p', 'This is a test of the emergency broadcasting system', '/p',
-            '/div'
+            '/div',
         ];
         $this->assertHtml($expected, $result);
     }
@@ -214,7 +214,7 @@ class FlashHelperTest extends TestCase
             '<h3', 'Notice!', '/h3',
             '<p', 'This is a test of the emergency broadcasting system', '/p',
             '/div',
-            ['div' => ['id' => 'classy-message']], 'Recorded', '/div'
+            ['div' => ['id' => 'classy-message']], 'Recorded', '/div',
         ];
         $this->assertHtml($expected, $result);
         $this->assertNull($this->View->getRequest()->getSession()->read('Flash.stack'));

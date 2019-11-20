@@ -661,7 +661,7 @@ class Connection implements ConnectionInterface
     /**
      * Creates a new save point for nested transactions.
      *
-     * @param string $name The save point name.
+     * @param string|int $name The save point name.
      * @return void
      */
     public function createSavePoint($name)
@@ -672,7 +672,7 @@ class Connection implements ConnectionInterface
     /**
      * Releases a save point by its name.
      *
-     * @param string $name The save point name.
+     * @param string|int $name The save point name.
      * @return void
      */
     public function releaseSavePoint($name)
@@ -683,7 +683,7 @@ class Connection implements ConnectionInterface
     /**
      * Rollback a save point by its name.
      *
-     * @param string $name The save point name.
+     * @param string|int $name The save point name.
      * @return void
      */
     public function rollbackSavepoint($name)
@@ -1002,7 +1002,7 @@ class Connection implements ConnectionInterface
             'username' => '*****',
             'host' => '*****',
             'database' => '*****',
-            'port' => '*****'
+            'port' => '*****',
         ];
         $replace = array_intersect_key($secrets, $this->_config);
         $config = $replace + $this->_config;
@@ -1014,7 +1014,7 @@ class Connection implements ConnectionInterface
             'transactionStarted' => $this->_transactionStarted,
             'useSavePoints' => $this->_useSavePoints,
             'logQueries' => $this->_logQueries,
-            'logger' => $this->_logger
+            'logger' => $this->_logger,
         ];
     }
 }

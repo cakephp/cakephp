@@ -42,7 +42,7 @@ class Text
      */
     protected static $_defaultHtmlNoCount = [
         'style',
-        'script'
+        'script',
     ];
 
     /**
@@ -110,7 +110,7 @@ class Text
             $offsets = [
                 mb_strpos($data, $separator, $offset),
                 mb_strpos($data, $leftBound, $offset),
-                mb_strpos($data, $rightBound, $offset)
+                mb_strpos($data, $rightBound, $offset),
             ];
             for ($i = 0; $i < 3; $i++) {
                 if ($offsets[$i] !== false && ($offsets[$i] < $tmpOffset || $tmpOffset == -1)) {
@@ -189,7 +189,7 @@ class Text
     public static function insert($str, $data, array $options = [])
     {
         $defaults = [
-            'before' => ':', 'after' => null, 'escape' => '\\', 'format' => null, 'clean' => false
+            'before' => ':', 'after' => null, 'escape' => '\\', 'format' => null, 'clean' => false,
         ];
         $options += $defaults;
         $format = $options['format'];
@@ -571,7 +571,7 @@ class Text
     public static function tail($text, $length = 100, array $options = [])
     {
         $default = [
-            'ellipsis' => '...', 'exact' => true
+            'ellipsis' => '...', 'exact' => true,
         ];
         $options += $default;
         $exact = $ellipsis = null;
@@ -827,7 +827,8 @@ class Text
 
             $len = self::_strlen($part, $options);
             if ($offset !== 0 || $totalLength + $len > $length) {
-                if (strpos($part, '&') === 0 && preg_match($pattern, $part)
+                if (
+                    strpos($part, '&') === 0 && preg_match($pattern, $part)
                     && $part !== html_entity_decode($part, ENT_HTML5 | ENT_QUOTES, 'UTF-8')
                 ) {
                     // Entities cannot be passed substr.
@@ -1162,7 +1163,7 @@ class Text
         $options += [
             'replacement' => '-',
             'transliteratorId' => null,
-            'preserve' => null
+            'preserve' => null,
         ];
 
         if ($options['transliteratorId'] !== false) {

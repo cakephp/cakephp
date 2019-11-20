@@ -31,7 +31,7 @@ class OpenArticleEntity extends Entity
 {
 
     protected $_accessible = [
-        '*' => true
+        '*' => true,
     ];
 }
 
@@ -51,7 +51,7 @@ class CompositeKeyTest extends TestCase
         'core.SiteArticles',
         'core.SiteArticlesTags',
         'core.SiteAuthors',
-        'core.SiteTags'
+        'core.SiteTags',
     ];
 
     /**
@@ -152,7 +152,7 @@ class CompositeKeyTest extends TestCase
             'propertyName' => 'articles',
             'strategy' => $strategy,
             'sort' => ['SiteArticles.id' => 'asc'],
-            'foreignKey' => ['author_id', 'site_id']
+            'foreignKey' => ['author_id', 'site_id'],
         ]);
         $query = new Query($this->connection, $table);
 
@@ -171,9 +171,9 @@ class CompositeKeyTest extends TestCase
                         'title' => 'First Article',
                         'body' => 'First Article Body',
                         'author_id' => 1,
-                        'site_id' => 1
-                    ]
-                ]
+                        'site_id' => 1,
+                    ],
+                ],
             ],
             [
                 'id' => 2,
@@ -191,16 +191,16 @@ class CompositeKeyTest extends TestCase
                         'title' => 'Second Article',
                         'body' => 'Second Article Body',
                         'author_id' => 3,
-                        'site_id' => 2
-                    ]
-                ]
+                        'site_id' => 2,
+                    ],
+                ],
             ],
             [
                 'id' => 4,
                 'name' => 'andy',
                 'site_id' => 1,
                 'articles' => [],
-            ]
+            ],
         ];
         $this->assertEquals($expected, $results);
 
@@ -233,7 +233,7 @@ class CompositeKeyTest extends TestCase
             'through' => 'SiteArticlesTags',
             'sort' => ['SiteTags.id' => 'asc'],
             'foreignKey' => ['article_id', 'site_id'],
-            'targetForeignKey' => ['tag_id', 'site_id']
+            'targetForeignKey' => ['tag_id', 'site_id'],
         ]);
         $query = new Query($this->connection, $articles);
 
@@ -250,15 +250,15 @@ class CompositeKeyTest extends TestCase
                         'id' => 1,
                         'name' => 'tag1',
                         '_joinData' => ['article_id' => 1, 'tag_id' => 1, 'site_id' => 1],
-                        'site_id' => 1
+                        'site_id' => 1,
                     ],
                     [
                         'id' => 3,
                         'name' => 'tag3',
                         '_joinData' => ['article_id' => 1, 'tag_id' => 3, 'site_id' => 1],
-                        'site_id' => 1
-                    ]
-                ]
+                        'site_id' => 1,
+                    ],
+                ],
             ],
             [
                 'id' => 2,
@@ -271,9 +271,9 @@ class CompositeKeyTest extends TestCase
                         'id' => 4,
                         'name' => 'tag4',
                         '_joinData' => ['article_id' => 2, 'tag_id' => 4, 'site_id' => 2],
-                        'site_id' => 2
-                    ]
-                ]
+                        'site_id' => 2,
+                    ],
+                ],
             ],
             [
                 'id' => 3,
@@ -294,9 +294,9 @@ class CompositeKeyTest extends TestCase
                         'id' => 1,
                         'name' => 'tag1',
                         '_joinData' => ['article_id' => 4, 'tag_id' => 1, 'site_id' => 1],
-                        'site_id' => 1
-                    ]
-                ]
+                        'site_id' => 1,
+                    ],
+                ],
             ],
         ];
         $this->assertEquals($expected, $results);
@@ -315,7 +315,7 @@ class CompositeKeyTest extends TestCase
         $table->belongsTo('SiteAuthors', [
             'propertyName' => 'author',
             'strategy' => $strategy,
-            'foreignKey' => ['author_id', 'site_id']
+            'foreignKey' => ['author_id', 'site_id'],
         ]);
         $query = new Query($this->connection, $table);
         $results = $query->select()
@@ -333,8 +333,8 @@ class CompositeKeyTest extends TestCase
                 'author' => [
                     'id' => 1,
                     'name' => 'mark',
-                    'site_id' => 1
-                ]
+                    'site_id' => 1,
+                ],
             ],
             [
                 'id' => 2,
@@ -345,9 +345,9 @@ class CompositeKeyTest extends TestCase
                 'author' => [
                     'id' => 3,
                     'name' => 'jose',
-                    'site_id' => 2
-                ]
-            ]
+                    'site_id' => 2,
+                ],
+            ],
         ];
         $this->assertEquals($expected, $results);
     }
@@ -364,7 +364,7 @@ class CompositeKeyTest extends TestCase
         $table->hasOne('SiteArticles', [
             'propertyName' => 'first_article',
             'strategy' => $strategy,
-            'foreignKey' => ['author_id', 'site_id']
+            'foreignKey' => ['author_id', 'site_id'],
         ]);
         $query = new Query($this->connection, $table);
         $results = $query->select()
@@ -383,8 +383,8 @@ class CompositeKeyTest extends TestCase
                     'author_id' => 1,
                     'site_id' => 1,
                     'title' => 'First Article',
-                    'body' => 'First Article Body'
-                ]
+                    'body' => 'First Article Body',
+                ],
             ],
             [
                 'id' => 3,
@@ -395,9 +395,9 @@ class CompositeKeyTest extends TestCase
                     'author_id' => 3,
                     'site_id' => 2,
                     'title' => 'Second Article',
-                    'body' => 'Second Article Body'
-                ]
-            ]
+                    'body' => 'Second Article Body',
+                ],
+            ],
         ];
         $this->assertEquals($expected, $results);
     }
@@ -483,8 +483,8 @@ class CompositeKeyTest extends TestCase
         $query = $table->getAssociation('SiteArticles')->find('all', [
             'conditions' => [
                 'author_id' => $entity->id,
-                'site_id' => $entity->site_id
-            ]
+                'site_id' => $entity->site_id,
+            ],
         ]);
         $this->assertNull($query->all()->first(), 'Should not find any rows.');
     }
@@ -505,13 +505,13 @@ class CompositeKeyTest extends TestCase
             'propertyName' => 'tags',
             'through' => 'SiteArticlesTags',
             'foreignKey' => ['article_id', 'site_id'],
-            'targetForeignKey' => ['tag_id', 'site_id']
+            'targetForeignKey' => ['tag_id', 'site_id'],
         ]);
 
         $data = [
             'title' => 'Haz tags',
             'body' => 'Some content here',
-            'tags' => ['_ids' => [[1, 1], [2, 2], [3, 1]]]
+            'tags' => ['_ids' => [[1, 1], [2, 2], [3, 1]]],
         ];
         $marshall = new Marshaller($articles);
         $result = $marshall->one($data, ['associated' => ['SiteTags']]);
@@ -524,7 +524,7 @@ class CompositeKeyTest extends TestCase
         $data = [
             'title' => 'Haz tags',
             'body' => 'Some content here',
-            'tags' => ['_ids' => [1, 2, 3]]
+            'tags' => ['_ids' => [1, 2, 3]],
         ];
         $marshall = new Marshaller($articles);
         $result = $marshall->one($data, ['associated' => ['SiteTags']]);
@@ -550,7 +550,7 @@ class CompositeKeyTest extends TestCase
             '1;1' => 'mark',
             '2;2' => 'juan',
             '3;2' => 'jose',
-            '4;1' => 'andy'
+            '4;1' => 'andy',
         ];
         $this->assertEquals($expected, $query->toArray());
 
@@ -562,7 +562,7 @@ class CompositeKeyTest extends TestCase
             '1;1' => 'mark;1',
             '2;2' => 'juan;2',
             '3;2' => 'jose;2',
-            '4;1' => 'andy;1'
+            '4;1' => 'andy;1',
         ];
         $this->assertEquals($expected, $query->toArray());
 
@@ -572,12 +572,12 @@ class CompositeKeyTest extends TestCase
         $expected = [
             '1;1' => [
                 '1;1' => 'mark;1',
-                '4;1' => 'andy;1'
+                '4;1' => 'andy;1',
             ],
             '2;2' => [
                 '2;2' => 'juan;2',
-                '3;2' => 'jose;2'
-            ]
+                '3;2' => 'jose;2',
+            ],
         ];
         $this->assertEquals($expected, $query->toArray());
     }
@@ -626,11 +626,11 @@ class CompositeKeyTest extends TestCase
                                 'name' => 'a',
                                 'site_id' => 1,
                                 'parent_id' => 3,
-                                'children' => []
-                            ]
-                        ]
-                    ]
-                ]
+                                'children' => [],
+                            ],
+                        ],
+                    ],
+                ],
             ],
             [
                 'id' => 2,
@@ -649,26 +649,26 @@ class CompositeKeyTest extends TestCase
                                 'name' => 'a',
                                 'site_id' => 2,
                                 'parent_id' => 4,
-                                'children' => []
+                                'children' => [],
                             ],
                             [
                                 'id' => 8,
                                 'name' => 'a',
                                 'site_id' => 2,
                                 'parent_id' => 4,
-                                'children' => []
-                            ]
-                        ]
-                    ]
-                ]
+                                'children' => [],
+                            ],
+                        ],
+                    ],
+                ],
             ],
             [
                 'id' => 6,
                 'name' => 'a',
                 'site_id' => 1,
                 'parent_id' => 2,
-                'children' => []
-            ]
+                'children' => [],
+            ],
         ];
         $this->assertEquals($expected, $formatter($items)->toArray());
     }
@@ -764,7 +764,7 @@ class CompositeKeyTest extends TestCase
         $articles->belongsToMany('SiteTags', [
             'through' => 'SiteArticlesTags',
             'foreignKey' => ['article_id', 'site_id'],
-            'targetForeignKey' => ['tag_id', 'site_id']
+            'targetForeignKey' => ['tag_id', 'site_id'],
         ]);
 
         $results = $articles->find()

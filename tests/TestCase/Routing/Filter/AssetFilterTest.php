@@ -154,75 +154,75 @@ class AssetFilterTest extends TestCase
         return [
             [
                 'test_theme/flash/theme_test.swf',
-                'Plugin/TestTheme/webroot/flash/theme_test.swf'
+                'Plugin/TestTheme/webroot/flash/theme_test.swf',
             ],
             [
                 'test_theme/pdfs/theme_test.pdf',
-                'Plugin/TestTheme/webroot/pdfs/theme_test.pdf'
+                'Plugin/TestTheme/webroot/pdfs/theme_test.pdf',
             ],
             [
                 'test_theme/img/test.jpg',
-                'Plugin/TestTheme/webroot/img/test.jpg'
+                'Plugin/TestTheme/webroot/img/test.jpg',
             ],
             [
                 'test_theme/css/test_asset.css',
-                'Plugin/TestTheme/webroot/css/test_asset.css'
+                'Plugin/TestTheme/webroot/css/test_asset.css',
             ],
             [
                 'test_theme/js/theme.js',
-                'Plugin/TestTheme/webroot/js/theme.js'
+                'Plugin/TestTheme/webroot/js/theme.js',
             ],
             [
                 'test_theme/js/one/theme_one.js',
-                'Plugin/TestTheme/webroot/js/one/theme_one.js'
+                'Plugin/TestTheme/webroot/js/one/theme_one.js',
             ],
             [
                 'test_theme/space%20image.text',
-                'Plugin/TestTheme/webroot/space image.text'
+                'Plugin/TestTheme/webroot/space image.text',
             ],
             [
                 'test_plugin/root.js',
-                'Plugin/TestPlugin/webroot/root.js'
+                'Plugin/TestPlugin/webroot/root.js',
             ],
             [
                 'test_plugin/flash/plugin_test.swf',
-                'Plugin/TestPlugin/webroot/flash/plugin_test.swf'
+                'Plugin/TestPlugin/webroot/flash/plugin_test.swf',
             ],
             [
                 'test_plugin/pdfs/plugin_test.pdf',
-                'Plugin/TestPlugin/webroot/pdfs/plugin_test.pdf'
+                'Plugin/TestPlugin/webroot/pdfs/plugin_test.pdf',
             ],
             [
                 'test_plugin/js/test_plugin/test.js',
-                'Plugin/TestPlugin/webroot/js/test_plugin/test.js'
+                'Plugin/TestPlugin/webroot/js/test_plugin/test.js',
             ],
             [
                 'test_plugin/css/test_plugin_asset.css',
-                'Plugin/TestPlugin/webroot/css/test_plugin_asset.css'
+                'Plugin/TestPlugin/webroot/css/test_plugin_asset.css',
             ],
             [
                 'test_plugin/img/cake.icon.gif',
-                'Plugin/TestPlugin/webroot/img/cake.icon.gif'
+                'Plugin/TestPlugin/webroot/img/cake.icon.gif',
             ],
             [
                 'plugin_js/js/plugin_js.js',
-                'Plugin/PluginJs/webroot/js/plugin_js.js'
+                'Plugin/PluginJs/webroot/js/plugin_js.js',
             ],
             [
                 'plugin_js/js/one/plugin_one.js',
-                'Plugin/PluginJs/webroot/js/one/plugin_one.js'
+                'Plugin/PluginJs/webroot/js/one/plugin_one.js',
             ],
             [
                 'test_plugin/css/unknown.extension',
-                'Plugin/TestPlugin/webroot/css/unknown.extension'
+                'Plugin/TestPlugin/webroot/css/unknown.extension',
             ],
             [
                 'test_plugin/css/theme_one.htc',
-                'Plugin/TestPlugin/webroot/css/theme_one.htc'
+                'Plugin/TestPlugin/webroot/css/theme_one.htc',
             ],
             [
                 'company/test_plugin_three/css/company.css',
-                'Plugin/Company/TestPluginThree/webroot/css/company.css'
+                'Plugin/Company/TestPluginThree/webroot/css/company.css',
             ],
         ];
     }

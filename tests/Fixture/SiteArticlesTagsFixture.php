@@ -29,8 +29,8 @@ class SiteArticlesTagsFixture extends TestFixture
         'tag_id' => ['type' => 'integer', 'null' => false],
         'site_id' => ['type' => 'integer', 'null' => false],
         '_constraints' => [
-            'UNIQUE_TAG2' => ['type' => 'primary', 'columns' => ['article_id', 'tag_id', 'site_id']]
-        ]
+            'UNIQUE_TAG2' => ['type' => 'primary', 'columns' => ['article_id', 'tag_id', 'site_id']],
+        ],
     ];
 
     /**
@@ -43,6 +43,6 @@ class SiteArticlesTagsFixture extends TestFixture
         ['article_id' => 1, 'tag_id' => 2, 'site_id' => 2],
         ['article_id' => 2, 'tag_id' => 4, 'site_id' => 2],
         ['article_id' => 4, 'tag_id' => 1, 'site_id' => 1],
-        ['article_id' => 1, 'tag_id' => 3, 'site_id' => 1]
+        ['article_id' => 1, 'tag_id' => 3, 'site_id' => 1],
     ];
 }

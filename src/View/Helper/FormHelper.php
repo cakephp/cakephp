@@ -71,7 +71,7 @@ class FormHelper extends Helper
      */
     protected $_datetimeOptions = [
         'interval', 'round', 'monthNames', 'minYear', 'maxYear',
-        'orderYear', 'timeFormat', 'second'
+        'orderYear', 'timeFormat', 'second',
     ];
 
     /**
@@ -481,7 +481,7 @@ class FormHelper extends Helper
                 $append .= $this->hidden('_method', [
                     'name' => '_method',
                     'value' => strtoupper($options['type']),
-                    'secure' => static::SECURE_SKIP
+                    'secure' => static::SECURE_SKIP,
                 ]);
             // Default to post method
             default:
@@ -516,7 +516,7 @@ class FormHelper extends Helper
 
         return $this->formatTemplate('formStart', [
             'attrs' => $templater->formatAttributes($htmlAttributes) . $actionAttr,
-            'templateVars' => isset($options['templateVars']) ? $options['templateVars'] : []
+            'templateVars' => isset($options['templateVars']) ? $options['templateVars'] : [],
         ]) . $append;
     }
 
@@ -535,7 +535,8 @@ class FormHelper extends Helper
             return $request->getRequestTarget();
         }
 
-        if (is_string($options['url']) ||
+        if (
+            is_string($options['url']) ||
             (is_array($options['url']) && isset($options['url']['_name']))
         ) {
             return $options['url'];
@@ -684,7 +685,7 @@ class FormHelper extends Helper
                 'value' => urlencode(json_encode([
                     $this->_lastAction,
                     $fields,
-                    $this->_unlockedFields
+                    $this->_unlockedFields,
                 ])),
             ]);
             $out .= $this->hidden('_Token.debug', $tokenDebug);
@@ -838,7 +839,7 @@ class FormHelper extends Helper
                     $errorText[] = $this->formatTemplate('errorItem', ['text' => $err]);
                 }
                 $error = $this->formatTemplate('errorList', [
-                    'content' => implode('', $errorText)
+                    'content' => implode('', $errorText),
                 ]);
             } else {
                 $error = array_pop($error);
@@ -1168,7 +1169,7 @@ class FormHelper extends Helper
             'options' => null,
             'templates' => [],
             'templateVars' => [],
-            'labelOptions' => true
+            'labelOptions' => true,
         ];
         $options = $this->_parseOptions($fieldName, $options);
         $options += ['id' => $this->_domId($fieldName)];
@@ -1231,7 +1232,7 @@ class FormHelper extends Helper
             'content' => $result,
             'error' => $error,
             'errorSuffix' => $errorSuffix,
-            'options' => $options
+            'options' => $options,
         ]);
 
         if ($newTemplates) {
@@ -1277,7 +1278,7 @@ class FormHelper extends Helper
             'input' => isset($options['input']) ? $options['input'] : [],
             'label' => $options['label'],
             'error' => $options['error'],
-            'templateVars' => isset($options['options']['templateVars']) ? $options['options']['templateVars'] : []
+            'templateVars' => isset($options['options']['templateVars']) ? $options['options']['templateVars'] : [],
         ]);
     }
 
@@ -1299,7 +1300,7 @@ class FormHelper extends Helper
             'error' => $options['error'],
             'required' => $options['options']['required'] ? ' required' : '',
             'type' => $options['options']['type'],
-            'templateVars' => isset($options['options']['templateVars']) ? $options['options']['templateVars'] : []
+            'templateVars' => isset($options['options']['templateVars']) ? $options['options']['templateVars'] : [],
         ]);
     }
 
@@ -1454,7 +1455,7 @@ class FormHelper extends Helper
         $context = $this->_getContext();
 
         $options += [
-            'templateVars' => []
+            'templateVars' => [],
         ];
 
         if (!isset($options['required']) && $options['type'] !== 'hidden') {
@@ -1505,7 +1506,8 @@ class FormHelper extends Helper
         }
 
         $typesWithMaxLength = ['text', 'textarea', 'email', 'tel', 'url', 'search'];
-        if (!array_key_exists('maxlength', $options)
+        if (
+            !array_key_exists('maxlength', $options)
             && in_array($options['type'], $typesWithMaxLength)
         ) {
             $maxLength = null;
@@ -1649,7 +1651,7 @@ class FormHelper extends Helper
                 'name' => $options['name'],
                 'value' => $options['hiddenField'] !== true && $options['hiddenField'] !== '_split' ? $options['hiddenField'] : '0',
                 'form' => isset($options['form']) ? $options['form'] : null,
-                'secure' => false
+                'secure' => false,
             ];
             if (isset($options['disabled']) && $options['disabled']) {
                 $hiddenOptions['disabled'] = 'disabled';
@@ -1953,15 +1955,15 @@ class FormHelper extends Helper
 
         $action = $templater->formatAttributes([
             'action' => $this->Url->build($url),
-            'escape' => false
+            'escape' => false,
         ]);
 
         $out = $this->formatTemplate('formStart', [
-            'attrs' => $templater->formatAttributes($formOptions) . $action
+            'attrs' => $templater->formatAttributes($formOptions) . $action,
         ]);
         $out .= $this->hidden('_method', [
             'value' => $requestMethod,
-            'secure' => static::SECURE_SKIP
+            'secure' => static::SECURE_SKIP,
         ]);
         $out .= $this->_csrfField();
 
@@ -1997,7 +1999,7 @@ class FormHelper extends Helper
         $options['onclick'] = $this->templater()->format('confirmJs', [
             'confirmMessage' => $this->_cleanConfirmMessage($confirmMessage),
             'formName' => $formName,
-            'confirm' => $confirm
+            'confirm' => $confirm,
         ]);
 
         $out .= $this->Html->link($title, $url, $options);
@@ -2032,7 +2034,7 @@ class FormHelper extends Helper
         $options += [
             'type' => 'submit',
             'secure' => false,
-            'templateVars' => []
+            'templateVars' => [],
         ];
 
         if (isset($options['name'])) {
@@ -2051,7 +2053,7 @@ class FormHelper extends Helper
             if (isset($options['name'])) {
                 $unlockFields = [
                     $options['name'] . '_x',
-                    $options['name'] . '_y'
+                    $options['name'] . '_y',
                 ];
             }
             foreach ($unlockFields as $ignore) {
@@ -2077,12 +2079,12 @@ class FormHelper extends Helper
         $input = $this->formatTemplate('inputSubmit', [
             'type' => $type,
             'attrs' => $this->templater()->formatAttributes($options),
-            'templateVars' => $options['templateVars']
+            'templateVars' => $options['templateVars'],
         ]);
 
         return $this->formatTemplate('submitContainer', [
             'content' => $input,
-            'templateVars' => $options['templateVars']
+            'templateVars' => $options['templateVars'],
         ]);
     }
 
@@ -2160,7 +2162,8 @@ class FormHelper extends Helper
 
         // Secure the field if there are options, or it's a multi select.
         // Single selects with no options don't submit, but multiselects do.
-        if ($attributes['secure'] &&
+        if (
+            $attributes['secure'] &&
             empty($options) &&
             empty($attributes['empty']) &&
             empty($attributes['multiple'])
@@ -2288,7 +2291,7 @@ class FormHelper extends Helper
             $options['val'] = [
                 'year' => date('Y'),
                 'month' => date('m'),
-                'day' => (int)$options['val']
+                'day' => (int)$options['val'],
             ];
         }
 
@@ -2322,7 +2325,7 @@ class FormHelper extends Helper
             $options['val'] = [
                 'year' => (int)$options['val'],
                 'month' => date('m'),
-                'day' => date('d')
+                'day' => date('d'),
             ];
         }
 
@@ -2353,7 +2356,7 @@ class FormHelper extends Helper
             $options['val'] = [
                 'year' => date('Y'),
                 'month' => (int)$options['val'],
-                'day' => date('d')
+                'day' => date('d'),
             ];
         }
 
@@ -2955,7 +2958,7 @@ class FormHelper extends Helper
     {
         $valueMap = [
             'data' => 'getData',
-            'query' => 'getQuery'
+            'query' => 'getQuery',
         ];
         foreach ($this->getValueSources() as $valuesSource) {
             if ($valuesSource === 'context') {

@@ -29,7 +29,7 @@ class AssociationProxyTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.Articles', 'core.Authors', 'core.Comments'
+        'core.Articles', 'core.Authors', 'core.Comments',
     ];
 
     /**
@@ -146,7 +146,7 @@ class AssociationProxyTest extends TestCase
             ->setMethods(['crazy'])
             ->getMock();
         $articles->belongsTo('authors', [
-            'targetTable' => $mock
+            'targetTable' => $mock,
         ]);
 
         $mock->expects($this->once())->method('crazy')

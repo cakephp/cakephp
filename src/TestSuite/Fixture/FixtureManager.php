@@ -228,7 +228,7 @@ class FixtureManager
                     $baseNamespace,
                     'Test\Fixture',
                     $additionalPath,
-                    $name . 'Fixture'
+                    $name . 'Fixture',
                 ];
                 $className = implode('\\', array_filter($nameSegments));
             } else {

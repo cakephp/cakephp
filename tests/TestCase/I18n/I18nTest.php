@@ -162,7 +162,7 @@ class I18nTest extends TestCase
         I18n::setTranslator('custom', function () {
             $package = new Package('default');
             $package->setMessages([
-                'Cow' => 'Le moo'
+                'Cow' => 'Le moo',
             ]);
 
             return $package;
@@ -182,7 +182,7 @@ class I18nTest extends TestCase
     {
         $this->loadPlugins([
             'TestPlugin',
-            'Company/TestPluginThree'
+            'Company/TestPluginThree',
         ]);
 
         $translator = I18n::getTranslator('test_plugin');
@@ -239,7 +239,7 @@ class I18nTest extends TestCase
         I18n::setTranslator('custom', function () {
             $package = new Package('default');
             $package->setMessages([
-                'Cow' => 'Le moo'
+                'Cow' => 'Le moo',
             ]);
 
             return $package;
@@ -385,12 +385,12 @@ class I18nTest extends TestCase
                 'Cow' => 'Le Moo',
                 'Cows' => [
                     'Le Moo',
-                    'Les Moos'
+                    'Les Moos',
                 ],
                 '{0} years' => [
                     '',
-                    ''
-                ]
+                    '',
+                ],
             ]);
 
             return $package;
@@ -414,21 +414,21 @@ class I18nTest extends TestCase
                 'letter' => [
                     '_context' => [
                         'character' => 'The letter {0}',
-                        'communication' => 'She wrote a letter to {0}'
-                    ]
+                        'communication' => 'She wrote a letter to {0}',
+                    ],
                 ],
                 'letters' => [
                     '_context' => [
                         'character' => [
                             'The letter {0}',
-                            'The letters {0} and {1}'
+                            'The letters {0} and {1}',
                         ],
                         'communication' => [
                             'She wrote a letter to {0}',
-                            'She wrote a letter to {0} and {1}'
-                        ]
-                    ]
-                ]
+                            'She wrote a letter to {0} and {1}',
+                        ],
+                    ],
+                ],
             ]);
 
             return $package;
@@ -472,8 +472,8 @@ class I18nTest extends TestCase
                 'letter' => [
                     '_context' => [
                         'character' => '',
-                    ]
-                ]
+                    ],
+                ],
             ]);
 
             return $package;
@@ -496,8 +496,8 @@ class I18nTest extends TestCase
                 'letter' => [
                     '_context' => [
                         'noun' => 'a paper letter',
-                    ]
-                ]
+                    ],
+                ],
             ]);
 
             return $package;
@@ -521,20 +521,20 @@ class I18nTest extends TestCase
                     '_context' => [
                         'character' => 'The letter {0}',
                         'communication' => 'She wrote a letter to {0}',
-                    ]
+                    ],
                 ],
                 'letters' => [
                     '_context' => [
                         'character' => [
                             'The letter {0}',
-                            'The letters {0} and {1}'
+                            'The letters {0} and {1}',
                         ],
                         'communication' => [
                             'She wrote a letter to {0}',
-                            'She wrote a letter to {0} and {1}'
-                        ]
-                    ]
-                ]
+                            'She wrote a letter to {0} and {1}',
+                        ],
+                    ],
+                ],
             ]);
 
             return $package;
@@ -574,21 +574,21 @@ class I18nTest extends TestCase
                 'letter' => [
                     '_context' => [
                         'character' => 'The letter {0}',
-                        'communication' => 'She wrote a letter to {0}'
-                    ]
+                        'communication' => 'She wrote a letter to {0}',
+                    ],
                 ],
                 'letters' => [
                     '_context' => [
                         'character' => [
                             'The letter {0}',
-                            'The letters {0} and {1}'
+                            'The letters {0} and {1}',
                         ],
                         'communication' => [
                             'She wrote a letter to {0}',
-                            'She wrote a letter to {0} and {1}'
-                        ]
-                    ]
-                ]
+                            'She wrote a letter to {0} and {1}',
+                        ],
+                    ],
+                ],
             ]);
 
             return $package;
@@ -630,20 +630,20 @@ class I18nTest extends TestCase
                     '_context' => [
                         'character' => 'The letter {0}',
                         'communication' => 'She wrote a letter to {0}',
-                    ]
+                    ],
                 ],
                 'letters' => [
                     '_context' => [
                         'character' => [
                             'The letter {0}',
-                            'The letters {0} and {1}'
+                            'The letters {0} and {1}',
                         ],
                         'communication' => [
                             'She wrote a letter to {0}',
-                            'She wrote a letter to {0} and {1}'
-                        ]
-                    ]
-                ]
+                            'She wrote a letter to {0} and {1}',
+                        ],
+                    ],
+                ],
             ]);
 
             return $package;
@@ -714,8 +714,8 @@ class I18nTest extends TestCase
                 'Cow' => 'Le Moo',
                 'Cows' => [
                     'Le Moo',
-                    'Les Moos'
-                    ]
+                    'Les Moos',
+                    ],
                 ]);
             }
 
@@ -724,8 +724,8 @@ class I18nTest extends TestCase
                 'Cow' => 'El Moo',
                 'Cows' => [
                     'El Moo',
-                    'Los Moos'
-                    ]
+                    'Los Moos',
+                    ],
                 ]);
             }
 
@@ -784,7 +784,7 @@ class I18nTest extends TestCase
         I18n::setTranslator('default', function () {
             $package = new Package('default');
             $package->setMessages([
-                'Dog' => 'Le bark'
+                'Dog' => 'Le bark',
             ]);
 
             return $package;
@@ -793,7 +793,7 @@ class I18nTest extends TestCase
         I18n::setTranslator('custom', function () {
             $package = new Package('default');
             $package->setMessages([
-                'Cow' => 'Le moo'
+                'Cow' => 'Le moo',
             ]);
 
             return $package;
@@ -843,7 +843,7 @@ class I18nTest extends TestCase
         I18n::setTranslator('default', function () {
             $package = new Package('default');
             $package->setMessages([
-                'Dog' => 'Le bark'
+                'Dog' => 'Le bark',
             ]);
 
             return $package;

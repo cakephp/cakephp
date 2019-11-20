@@ -35,7 +35,7 @@ class TestAuthenticate extends BaseAuthenticate
     {
         return [
             'Auth.afterIdentify' => 'afterIdentify',
-            'Auth.logout' => 'logout'
+            'Auth.logout' => 'logout',
         ];
     }
 

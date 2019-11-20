@@ -469,9 +469,9 @@ class RouteBuilder
      * Create a route that only responds to GET requests.
      *
      * @param string $template The URL template to use.
-     * @param array $target An array describing the target route parameters. These parameters
+     * @param array|string $target An array describing the target route parameters. These parameters
      *   should indicate the plugin, prefix, controller, and action that this route points to.
-     * @param string $name The name of the route.
+     * @param string|null $name The name of the route.
      * @return \Cake\Routing\Route\Route
      */
     public function get($template, $target, $name = null)
@@ -483,9 +483,9 @@ class RouteBuilder
      * Create a route that only responds to POST requests.
      *
      * @param string $template The URL template to use.
-     * @param array $target An array describing the target route parameters. These parameters
+     * @param array|string $target An array describing the target route parameters. These parameters
      *   should indicate the plugin, prefix, controller, and action that this route points to.
-     * @param string $name The name of the route.
+     * @param string|null $name The name of the route.
      * @return \Cake\Routing\Route\Route
      */
     public function post($template, $target, $name = null)
@@ -497,9 +497,9 @@ class RouteBuilder
      * Create a route that only responds to PUT requests.
      *
      * @param string $template The URL template to use.
-     * @param array $target An array describing the target route parameters. These parameters
+     * @param array|string $target An array describing the target route parameters. These parameters
      *   should indicate the plugin, prefix, controller, and action that this route points to.
-     * @param string $name The name of the route.
+     * @param string|null $name The name of the route.
      * @return \Cake\Routing\Route\Route
      */
     public function put($template, $target, $name = null)
@@ -511,9 +511,9 @@ class RouteBuilder
      * Create a route that only responds to PATCH requests.
      *
      * @param string $template The URL template to use.
-     * @param array $target An array describing the target route parameters. These parameters
+     * @param array|string $target An array describing the target route parameters. These parameters
      *   should indicate the plugin, prefix, controller, and action that this route points to.
-     * @param string $name The name of the route.
+     * @param string|null $name The name of the route.
      * @return \Cake\Routing\Route\Route
      */
     public function patch($template, $target, $name = null)
@@ -525,9 +525,9 @@ class RouteBuilder
      * Create a route that only responds to DELETE requests.
      *
      * @param string $template The URL template to use.
-     * @param array $target An array describing the target route parameters. These parameters
+     * @param array|string $target An array describing the target route parameters. These parameters
      *   should indicate the plugin, prefix, controller, and action that this route points to.
-     * @param string $name The name of the route.
+     * @param string|null $name The name of the route.
      * @return \Cake\Routing\Route\Route
      */
     public function delete($template, $target, $name = null)
@@ -539,9 +539,9 @@ class RouteBuilder
      * Create a route that only responds to HEAD requests.
      *
      * @param string $template The URL template to use.
-     * @param array $target An array describing the target route parameters. These parameters
+     * @param array|string $target An array describing the target route parameters. These parameters
      *   should indicate the plugin, prefix, controller, and action that this route points to.
-     * @param string $name The name of the route.
+     * @param string|null $name The name of the route.
      * @return \Cake\Routing\Route\Route
      */
     public function head($template, $target, $name = null)
@@ -553,9 +553,9 @@ class RouteBuilder
      * Create a route that only responds to OPTIONS requests.
      *
      * @param string $template The URL template to use.
-     * @param array $target An array describing the target route parameters. These parameters
+     * @param array|string $target An array describing the target route parameters. These parameters
      *   should indicate the plugin, prefix, controller, and action that this route points to.
-     * @param string $name The name of the route.
+     * @param string|null $name The name of the route.
      * @return \Cake\Routing\Route\Route
      */
     public function options($template, $target, $name = null)
@@ -568,9 +568,9 @@ class RouteBuilder
      *
      * @param string $method The HTTP method name to match.
      * @param string $template The URL template to use.
-     * @param array $target An array describing the target route parameters. These parameters
+     * @param array|string $target An array describing the target route parameters. These parameters
      *   should indicate the plugin, prefix, controller, and action that this route points to.
-     * @param string $name The name of the route.
+     * @param string|null $name The name of the route.
      * @return \Cake\Routing\Route\Route
      */
     protected function _methodRoute($method, $template, $target, $name)

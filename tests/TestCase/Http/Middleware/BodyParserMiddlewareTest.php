@@ -49,7 +49,7 @@ class BodyParserMiddlewareTest extends TestCase
     public static function httpMethodProvider()
     {
         return [
-            ['PATCH'], ['PUT'], ['POST'], ['DELETE']
+            ['PATCH'], ['PUT'], ['POST'], ['DELETE'],
         ];
     }
 
@@ -155,7 +155,7 @@ class BodyParserMiddlewareTest extends TestCase
                 'REQUEST_METHOD' => $method,
                 'CONTENT_TYPE' => 'text/csv',
             ],
-            'input' => 'a,b,c'
+            'input' => 'a,b,c',
         ]);
         $response = new Response();
         $next = function ($req, $res) {
@@ -179,7 +179,7 @@ class BodyParserMiddlewareTest extends TestCase
                 'REQUEST_METHOD' => $method,
                 'CONTENT_TYPE' => 'ApPlIcAtIoN/JSoN',
             ],
-            'input' => '{"title": "yay"}'
+            'input' => '{"title": "yay"}',
         ]);
         $response = new Response();
         $next = function ($req, $res) {
@@ -203,7 +203,7 @@ class BodyParserMiddlewareTest extends TestCase
                 'REQUEST_METHOD' => $method,
                 'CONTENT_TYPE' => 'application/json',
             ],
-            'input' => '{"title": "yay"}'
+            'input' => '{"title": "yay"}',
         ]);
         $response = new Response();
         $next = function ($req, $res) {
@@ -226,7 +226,7 @@ class BodyParserMiddlewareTest extends TestCase
                 'REQUEST_METHOD' => 'POST',
                 'CONTENT_TYPE' => 'application/json; charset=utf-8',
             ],
-            'input' => '{"title": "yay"}'
+            'input' => '{"title": "yay"}',
         ]);
         $response = new Response();
         $next = function ($req, $res) {
@@ -250,7 +250,7 @@ class BodyParserMiddlewareTest extends TestCase
                 'REQUEST_METHOD' => $method,
                 'CONTENT_TYPE' => 'application/json',
             ],
-            'input' => '{"title": "yay"}'
+            'input' => '{"title": "yay"}',
         ]);
         $response = new Response();
         $next = function ($req, $res) {
@@ -278,12 +278,12 @@ XML;
                 'REQUEST_METHOD' => 'POST',
                 'CONTENT_TYPE' => 'application/xml',
             ],
-            'input' => $xml
+            'input' => $xml,
         ]);
         $response = new Response();
         $next = function ($req, $res) {
             $expected = [
-                'article' => ['title' => 'yay']
+                'article' => ['title' => 'yay'],
             ];
             $this->assertEquals($expected, $req->getParsedBody());
         };
@@ -311,15 +311,15 @@ XML;
                 'REQUEST_METHOD' => 'POST',
                 'CONTENT_TYPE' => 'application/xml',
             ],
-            'input' => $xml
+            'input' => $xml,
         ]);
         $response = new Response();
         $next = function ($req, $res) {
             $expected = [
                 'article' => [
                     'id' => 1,
-                    'title' => 'first'
-                ]
+                    'title' => 'first',
+                ],
             ];
             $this->assertEquals($expected, $req->getParsedBody());
         };
@@ -357,7 +357,7 @@ XML;
                 'REQUEST_METHOD' => 'POST',
                 'CONTENT_TYPE' => 'application/xml',
             ],
-            'input' => $xml
+            'input' => $xml,
         ]);
         $response = new Response();
         $next = function ($req, $res) {
@@ -380,7 +380,7 @@ XML;
                 'REQUEST_METHOD' => 'POST',
                 'CONTENT_TYPE' => 'application/json',
             ],
-            'input' => 'lol'
+            'input' => 'lol',
         ]);
         $response = new Response();
         $next = function ($req, $res) {

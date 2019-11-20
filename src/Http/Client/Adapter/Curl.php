@@ -75,7 +75,7 @@ class Curl implements AdapterInterface
             CURLOPT_HTTP_VERSION => $this->getProtocolVersion($request),
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER => true,
-            CURLOPT_HTTPHEADER => $headers
+            CURLOPT_HTTPHEADER => $headers,
         ];
         switch ($request->getMethod()) {
             case Request::METHOD_GET:

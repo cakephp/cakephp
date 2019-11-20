@@ -57,14 +57,14 @@ class XmlViewTest extends TestCase
         $data = [
             [
                 'User' => [
-                    'username' => 'user1'
-                ]
+                    'username' => 'user1',
+                ],
             ],
             [
                 'User' => [
-                    'username' => 'user2'
-                ]
-            ]
+                    'username' => 'user2',
+                ],
+            ],
         ];
         $Controller->set(['users' => $data, '_serialize' => 'users']);
         $Controller->viewBuilder()->setClassName('Xml');
@@ -96,7 +96,7 @@ class XmlViewTest extends TestCase
         $Controller->helpers = ['Html'];
         $Controller->set([
             '_serialize' => 'tags',
-            'tags' => ['cakephp', 'framework']
+            'tags' => ['cakephp', 'framework'],
         ]);
         $Controller->viewBuilder()->setClassName('Xml');
         $View = $Controller->createView();
@@ -121,14 +121,14 @@ class XmlViewTest extends TestCase
                     'tag' => [
                         [
                             'id' => '1',
-                            'name' => 'defect'
+                            'name' => 'defect',
                         ],
                         [
                             'id' => '2',
-                            'name' => 'enhancement'
-                        ]
-                    ]
-            ]
+                            'name' => 'enhancement',
+                        ],
+                    ],
+            ],
         ];
         $Controller->set($data);
         $Controller->viewBuilder()->setClassName('Xml');
@@ -157,15 +157,15 @@ class XmlViewTest extends TestCase
                     'tag' => [
                         [
                             'id' => '1',
-                            'name' => 'defect'
+                            'name' => 'defect',
                         ],
                         [
                             'id' => '2',
-                            'name' => 'enhancement'
-                        ]
-                    ]
-                ]
-            ]
+                            'name' => 'enhancement',
+                        ],
+                    ],
+                ],
+            ],
         ];
         $Controller->set($data);
         $Controller->viewBuilder()->setClassName('Xml');
@@ -194,7 +194,7 @@ class XmlViewTest extends TestCase
         $this->assertSame('application/xml', $View->getResponse()->getType());
         $output = $View->render(false);
         $expected = [
-            'response' => ['no' => $data['no'], 'user' => $data['user']]
+            'response' => ['no' => $data['no'], 'user' => $data['user']],
         ];
         $this->assertSame(Xml::build($expected)->asXML(), $output);
 
@@ -203,7 +203,7 @@ class XmlViewTest extends TestCase
         $View = $Controller->createView();
         $output = $View->render(false);
         $expected = [
-            'custom_name' => ['no' => $data['no'], 'user' => $data['user']]
+            'custom_name' => ['no' => $data['no'], 'user' => $data['user']],
         ];
         $this->assertSame(Xml::build($expected)->asXML(), $output);
     }
@@ -226,7 +226,7 @@ class XmlViewTest extends TestCase
         $this->assertSame('application/xml', $View->getResponse()->getType());
         $output = $View->render(false);
         $expected = [
-            'response' => ['new_name' => $data['original_name'], 'user' => $data['user']]
+            'response' => ['new_name' => $data['original_name'], 'user' => $data['user']],
         ];
         $this->assertSame(Xml::build($expected)->asXML(), $output);
 
@@ -235,7 +235,7 @@ class XmlViewTest extends TestCase
         $View = $Controller->createView();
         $output = $View->render(false);
         $expected = [
-            'custom_name' => ['new_name' => $data['original_name'], 'user' => $data['user']]
+            'custom_name' => ['new_name' => $data['original_name'], 'user' => $data['user']],
         ];
         $this->assertSame(Xml::build($expected)->asXML(), $output);
     }
@@ -266,7 +266,7 @@ class XmlViewTest extends TestCase
         $View = $Controller->createView();
         $output = $View->render();
         $expected = [
-            'response' => $data
+            'response' => $data,
         ];
         $this->assertSame(Xml::build($expected)->asXML(), $output);
     }
@@ -286,14 +286,14 @@ class XmlViewTest extends TestCase
         $data = [
             [
                 'User' => [
-                    'username' => 'user1'
-                ]
+                    'username' => 'user1',
+                ],
             ],
             [
                 'User' => [
-                    'username' => 'user2'
-                ]
-            ]
+                    'username' => 'user2',
+                ],
+            ],
         ];
         $Controller->set('users', $data);
         $Controller->viewBuilder()->setClassName('Xml');
@@ -302,7 +302,7 @@ class XmlViewTest extends TestCase
         $output = $View->render('index');
 
         $expected = [
-            'users' => ['user' => ['user1', 'user2']]
+            'users' => ['user' => ['user1', 'user2']],
         ];
         $expected = Xml::build($expected)->asXML();
         $this->assertSame($expected, $output);

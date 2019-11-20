@@ -129,7 +129,7 @@ class Router
         'Month' => Router::MONTH,
         'Day' => Router::DAY,
         'ID' => Router::ID,
-        'UUID' => Router::UUID
+        'UUID' => Router::UUID,
     ];
 
     /**
@@ -419,7 +419,7 @@ class Router
             $requestData[0] += [
                 'controller' => false,
                 'action' => false,
-                'plugin' => null
+                'plugin' => null,
             ];
             $request = new ServerRequest([
                 'params' => $requestData[0],
@@ -705,7 +705,8 @@ class Router
 
             if (!isset($url['_name'])) {
                 // Copy the current action if the controller is the current one.
-                if (empty($url['action']) &&
+                if (
+                    empty($url['action']) &&
                     (empty($url['controller']) || $params['controller'] === $url['controller'])
                 ) {
                     $url['action'] = $params['action'];
@@ -720,7 +721,7 @@ class Router
                     'plugin' => $params['plugin'],
                     'controller' => $params['controller'],
                     'action' => 'index',
-                    '_ext' => null
+                    '_ext' => null,
                 ];
             }
 
@@ -1013,7 +1014,7 @@ class Router
                         $arr = [$arr];
                     } else {
                         $arr = [
-                            $match[1] => $arr
+                            $match[1] => $arr,
                         ];
                     }
                 }

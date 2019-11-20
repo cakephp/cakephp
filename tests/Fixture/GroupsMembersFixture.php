@@ -31,7 +31,7 @@ class GroupsMembersFixture extends TestFixture
         'id' => ['type' => 'integer'],
         'group_id' => ['type' => 'integer'],
         'member_id' => ['type' => 'integer'],
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
     ];
 
     /**

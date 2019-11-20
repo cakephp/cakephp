@@ -303,7 +303,8 @@ abstract class Driver implements DriverInterface
         if (is_float($value)) {
             return str_replace(',', '.', (string)$value);
         }
-        if ((is_int($value) || $value === '0') || (
+        if (
+            (is_int($value) || $value === '0') || (
             is_numeric($value) && strpos($value, ',') === false &&
             $value[0] !== '0' && strpos($value, 'e') === false)
         ) {
@@ -461,7 +462,7 @@ abstract class Driver implements DriverInterface
     public function __debugInfo()
     {
         return [
-            'connected' => $this->_connection !== null
+            'connected' => $this->_connection !== null,
         ];
     }
 }

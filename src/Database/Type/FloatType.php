@@ -167,7 +167,8 @@ class FloatType extends Type implements TypeInterface, BatchCastingInterface
 
             return $this;
         }
-        if (static::$numberClass === 'Cake\I18n\Number' ||
+        if (
+            static::$numberClass === 'Cake\I18n\Number' ||
             is_subclass_of(static::$numberClass, 'Cake\I18n\Number')
         ) {
             $this->_useLocaleParser = $enable;
