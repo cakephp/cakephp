@@ -70,7 +70,7 @@ class ValidatorTest extends TestCase
         $this->assertSame('Cannot be blank', $validator->getNotEmptyMessage('field'));
 
         $validator = new Validator();
-        $validator->notEmpty('field', 'Cannot be empty');
+        $validator->notEmptyString('field', 'Cannot be empty');
         $validator->notBlank('field', 'Cannot be blank');
         $this->assertSame('Cannot be blank', $validator->getNotEmptyMessage('field'));
     }
@@ -611,7 +611,7 @@ class ValidatorTest extends TestCase
         $this->assertSame($validator, $validator->allowEmptyString('title'));
         $this->assertTrue($validator->field('title')->isEmptyAllowed());
 
-        $validator->allowEmpty('title', 'create');
+        $validator->allowEmptyString('title', 'create');
         $this->assertSame('create', $validator->field('title')->isEmptyAllowed());
 
         $validator->allowEmpty('title', 'update');
@@ -653,6 +653,7 @@ class ValidatorTest extends TestCase
         $result = $validator->errors($data);
         $this->assertEmpty($result, 'No errors on empty datetime');
 
+        $validator->allowEmptyTime('created');
         $data = [
             'created' => [
                 'hour' => '',
