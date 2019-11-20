@@ -618,6 +618,12 @@ class ValidatorTest extends TestCase
         $results = $validator->errors(['title' => '']);
         $this->assertSame(['title' => ['minLength' => 'Min. length 5 chars']], $results);
 
+        $results = $validator->errors(['title' => 0]);
+        $this->assertSame(['title' => ['minLength' => 'Min. length 5 chars']], $results);
+
+        $results = $validator->errors(['title' => []]);
+        $this->assertSame(['title' => ['minLength' => 'Min. length 5 chars']], $results);
+
         $validator
             ->allowEmptyFor('name', Validator::EMPTY_STRING);
 
@@ -626,6 +632,12 @@ class ValidatorTest extends TestCase
 
         $results = $validator->errors(['name' => '']);
         $this->assertSame([], $results);
+
+        $results = $validator->errors(['title' => 0]);
+        $this->assertSame(['title' => ['minLength' => 'Min. length 5 chars']], $results);
+
+        $results = $validator->errors(['title' => []]);
+        $this->assertSame(['title' => ['minLength' => 'Min. length 5 chars']], $results);
     }
 
     /**
