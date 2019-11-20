@@ -601,6 +601,46 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Tests the testAllowEmptyFor method
+     *
+     * @return void
+     */
+    public function testAllowEmptyFor()
+    {
+        $validator = new Validator();
+        $validator
+            ->allowEmptyFor('title')
+            ->minLength('title', 5, 'Min. length 5 chars');
+
+        $results = $validator->errors(['title' => null]);
+        $this->assertSame([], $results);
+
+        $results = $validator->errors(['title' => '']);
+        $this->assertSame([], $results);
+
+        $results = $validator->errors(['title' => 0]);
+        $this->assertSame(['title' => ['minLength' => 'Min. length 5 chars']], $results);
+
+        $results = $validator->errors(['title' => []]);
+        $this->assertSame([], $results);
+
+        $validator
+            ->allowEmptyFor('name', Validator::EMPTY_STRING);
+
+        $results = $validator->errors(['name' => null]);
+        $this->assertSame([], $results);
+
+        $this->assertSame([], $results);
+        $results = $validator->errors(['name' => '']);
+
+        $this->assertSame([], $results);
+        $results = $validator->errors(['title' => 0]);
+
+        $this->assertSame(['title' => ['minLength' => 'Min. length 5 chars']], $results);
+        $results = $validator->errors(['title' => []]);
+    }
+
+    /**
      * Tests the allowEmpty method
      *
      * @return void
