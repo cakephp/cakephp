@@ -533,7 +533,8 @@ class FormHelper extends Helper
             return $request->getRequestTarget();
         }
 
-        if (is_string($options['url']) ||
+        if (
+            is_string($options['url']) ||
             (is_array($options['url']) && isset($options['url']['_name']))
         ) {
             return $options['url'];
@@ -1503,7 +1504,8 @@ class FormHelper extends Helper
         }
 
         $typesWithMaxLength = ['text', 'textarea', 'email', 'tel', 'url', 'search'];
-        if (!array_key_exists('maxlength', $options)
+        if (
+            !array_key_exists('maxlength', $options)
             && in_array($options['type'], $typesWithMaxLength)
         ) {
             $maxLength = null;
@@ -2158,7 +2160,8 @@ class FormHelper extends Helper
 
         // Secure the field if there are options, or it's a multi select.
         // Single selects with no options don't submit, but multiselects do.
-        if ($attributes['secure'] &&
+        if (
+            $attributes['secure'] &&
             empty($options) &&
             empty($attributes['empty']) &&
             empty($attributes['multiple'])

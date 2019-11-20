@@ -10,7 +10,6 @@ use Cake\Datasource\EntityTrait;
  */
 class NonExtending implements EntityInterface
 {
-
     use EntityTrait;
 
     public function __construct(array $properties = [], array $options = [])

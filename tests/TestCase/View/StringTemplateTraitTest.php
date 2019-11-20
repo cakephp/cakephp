@@ -23,7 +23,6 @@ use Cake\View\StringTemplateTrait;
  */
 class TestStringTemplate
 {
-
     use InstanceConfigTrait;
     use StringTemplateTrait;
 

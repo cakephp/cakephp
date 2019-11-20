@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
  */
 class NumberTree extends Entity
 {
-
     use TranslateTrait;
 }
 

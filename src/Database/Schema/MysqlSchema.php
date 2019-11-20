@@ -405,7 +405,8 @@ class MysqlSchema extends BaseSchema
             TableSchema::TYPE_FLOAT,
             TableSchema::TYPE_DECIMAL,
         ];
-        if (in_array($data['type'], $hasUnsigned, true) &&
+        if (
+            in_array($data['type'], $hasUnsigned, true) &&
             isset($data['unsigned']) && $data['unsigned'] === true
         ) {
             $out .= ' UNSIGNED';
@@ -427,7 +428,8 @@ class MysqlSchema extends BaseSchema
             !$schema->hasAutoincrement() &&
             !isset($data['autoIncrement'])
         );
-        if (in_array($data['type'], [TableSchema::TYPE_INTEGER, TableSchema::TYPE_BIGINTEGER]) &&
+        if (
+            in_array($data['type'], [TableSchema::TYPE_INTEGER, TableSchema::TYPE_BIGINTEGER]) &&
             ($data['autoIncrement'] === true || $addAutoIncrement)
         ) {
             $out .= ' AUTO_INCREMENT';
@@ -436,7 +438,8 @@ class MysqlSchema extends BaseSchema
             $out .= ' NULL';
             unset($data['default']);
         }
-        if (isset($data['default']) &&
+        if (
+            isset($data['default']) &&
             in_array($data['type'], [TableSchema::TYPE_TIMESTAMP, TableSchema::TYPE_DATETIME]) &&
             in_array(strtolower($data['default']), ['current_timestamp', 'current_timestamp()'])
         ) {

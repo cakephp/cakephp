@@ -83,7 +83,8 @@ class ValuesExpression implements ExpressionInterface
      */
     public function add($data)
     {
-        if ((count($this->_values) && $data instanceof Query) ||
+        if (
+            (count($this->_values) && $data instanceof Query) ||
             ($this->_query && is_array($data))
         ) {
             throw new Exception(

@@ -23,7 +23,6 @@ use Exception;
  */
 class TestInstanceConfig
 {
-
     use InstanceConfigTrait;
 
     /**
@@ -47,7 +46,6 @@ class TestInstanceConfig
  */
 class ReadOnlyTestInstanceConfig
 {
-
     use InstanceConfigTrait;
 
     /**

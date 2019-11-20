@@ -320,7 +320,8 @@ class AuthComponent extends Component
             return $result;
         }
 
-        if ($isLoginAction ||
+        if (
+            $isLoginAction ||
             empty($this->_config['authorize']) ||
             $this->isAuthorized($this->user())
         ) {
