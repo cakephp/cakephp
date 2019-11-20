@@ -66,7 +66,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
     /**
      * Password hasher instance.
      *
-     * @var \Cake\Auth\AbstractPasswordHasher
+     * @var \Cake\Auth\AbstractPasswordHasher|null
      */
     protected $_passwordHasher;
 

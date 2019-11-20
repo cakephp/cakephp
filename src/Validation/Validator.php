@@ -678,7 +678,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * method called will take precedence.
      *
      * @deprecated 3.7.0 Use allowEmptyString(), allowEmptyArray(), allowEmptyFile(),
-     *   allowEmptyDate(), allowEmptyTime() or allowEmptyDateTime() instead.
+     *   allowEmptyDate(), allowEmptyTime() allowEmptyDateTime() or allowEmptyFor() instead.
      * @param string|array $field the name of the field or a list of fields
      * @param bool|string|callable $when Indicates when the field is allowed to be empty
      * Valid values are true (always), 'create', 'update'. If a callable is passed then
@@ -688,6 +688,12 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function allowEmpty($field, $when = true, $message = null)
     {
+        deprecationWarning(
+            'allowEmpty() is deprecated. '
+            . 'Use allowEmptyString(), allowEmptyArray(), allowEmptyFile(), allowEmptyDate(), allowEmptyTime(), '
+            . 'allowEmptyDateTime() or allowEmptyFor() instead.'
+        );
+
         $defaults = [
             'when' => $when,
             'message' => $message,
@@ -1139,6 +1145,12 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function notEmpty($field, ?string $message = null, $when = false)
     {
+        deprecationWarning(
+            'notEmpty() is deprecated. '
+            . 'Use notEmptyString(), notEmptyArray(), notEmptyFile(), notEmptyDate(), notEmptyTime() '
+            . 'or notEmptyDateTime() instead.'
+        );
+
         $defaults = [
             'when' => $when,
             'message' => $message,

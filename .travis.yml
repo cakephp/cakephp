@@ -64,7 +64,13 @@ script:
   - |
       if [[ $CHECKS == 1 ]]; then
         composer stan-setup
+      fi
+  - |
+      if [[ $CHECKS == 1 ]]; then
         composer stan
+      fi
+  - |
+      if [[ $CHECKS == 1 ]]; then
         composer cs-check
       fi
 

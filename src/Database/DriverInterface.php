@@ -133,7 +133,7 @@ interface DriverInterface
      * Returns whether the driver supports adding or dropping constraints
      * to already created tables.
      *
-     * @return bool true if driver supports dynamic constraints.
+     * @return bool True if driver supports dynamic constraints.
      */
     public function supportsDynamicConstraints(): bool;
 
