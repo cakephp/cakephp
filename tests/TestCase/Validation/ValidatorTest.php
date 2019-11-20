@@ -651,10 +651,10 @@ class ValidatorTest extends TestCase
         $this->assertSame($validator, $validator->allowEmptyString('title'));
         $this->assertTrue($validator->field('title')->isEmptyAllowed());
 
-        $validator->allowEmptyString('title', 'create');
+        $validator->allowEmptyString('title', null, 'create');
         $this->assertSame('create', $validator->field('title')->isEmptyAllowed());
 
-        $validator->allowEmpty('title', 'update');
+        $validator->allowEmptyString('title', null, 'update');
         $this->assertSame('update', $validator->field('title')->isEmptyAllowed());
     }
 
@@ -1713,7 +1713,7 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->isEmptyAllowed('title', false));
 
         $validator->notEmptyString('title')
-            ->allowEmptyString('title', 'create');
+            ->allowEmptyString('title', null, 'create');
         $this->assertTrue($validator->isEmptyAllowed('title', true));
         $this->assertFalse($validator->isEmptyAllowed('title', false));
     }
@@ -1778,11 +1778,11 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->isEmptyAllowed('title', true));
         $this->assertFalse($validator->isEmptyAllowed('title', false));
 
-        $validator->allowEmptyString('title', 'create');
+        $validator->allowEmptyString('title', null, 'create');
         $this->assertTrue($validator->isEmptyAllowed('title', true));
         $this->assertFalse($validator->isEmptyAllowed('title', false));
 
-        $validator->allowEmptyString('title', 'update');
+        $validator->allowEmptyString('title', null, 'update');
         $this->assertTrue($validator->isEmptyAllowed('title', false));
         $this->assertFalse($validator->isEmptyAllowed('title', true));
     }
