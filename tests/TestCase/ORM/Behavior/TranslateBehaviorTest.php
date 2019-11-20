@@ -28,7 +28,6 @@ use Cake\Validation\Validator;
  */
 class Article extends Entity
 {
-
     use TranslateTrait;
 }
 

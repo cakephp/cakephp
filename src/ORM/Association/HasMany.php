@@ -170,7 +170,8 @@ class HasMany extends Association
 
         $isEmpty = in_array($targetEntities, [null, [], '', false], true);
         if ($isEmpty) {
-            if ($entity->isNew() ||
+            if (
+                $entity->isNew() ||
                 $this->getSaveStrategy() !== self::SAVE_REPLACE
             ) {
                 return $entity;
@@ -179,7 +180,8 @@ class HasMany extends Association
             $targetEntities = [];
         }
 
-        if (!is_array($targetEntities) &&
+        if (
+            !is_array($targetEntities) &&
             !($targetEntities instanceof Traversable)
         ) {
             $name = $this->getProperty();
@@ -194,7 +196,8 @@ class HasMany extends Association
 
         $options['_sourceTable'] = $this->getSource();
 
-        if ($this->_saveStrategy === self::SAVE_REPLACE &&
+        if (
+            $this->_saveStrategy === self::SAVE_REPLACE &&
             !$this->_unlinkAssociated($foreignKeyReference, $entity, $this->getTarget(), $targetEntities, $options)
         ) {
             return false;

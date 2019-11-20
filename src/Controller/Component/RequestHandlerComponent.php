@@ -342,7 +342,8 @@ class RequestHandlerComponent extends Component
             $response = $response->withCharset(Configure::read('App.encoding'));
         }
 
-        if ($this->_config['checkHttpCache'] &&
+        if (
+            $this->_config['checkHttpCache'] &&
             $response->checkNotModified($request)
         ) {
             $controller->setResponse($response);
@@ -497,7 +498,8 @@ class RequestHandlerComponent extends Component
         $request = $controller->getRequest();
         $response = $controller->getResponse();
 
-        if (!$request->is('post') &&
+        if (
+            !$request->is('post') &&
             !$request->is('put') &&
             !$request->is('patch') &&
             !$request->is('delete')

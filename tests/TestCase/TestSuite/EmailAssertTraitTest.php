@@ -23,7 +23,6 @@ use TestApp\Mailer\TestUserMailer;
 
 class EmailAssertTraitTest extends TestCase
 {
-
     use EmailAssertTrait;
 
     public function setUp()

@@ -23,7 +23,6 @@ use TestApp\Model\Table\PaginatorPostsTable;
  */
 class Stub
 {
-
     use ModelAwareTrait;
 
     public function setProps($name)

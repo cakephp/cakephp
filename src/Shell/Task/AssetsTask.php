@@ -146,7 +146,8 @@ class AssetsTask extends Shell
             $this->out('For plugin: ' . $plugin);
             $this->hr();
 
-            if ($config['namespaced'] &&
+            if (
+                $config['namespaced'] &&
                 !is_dir($config['destDir']) &&
                 !$this->_createDirectory($config['destDir'])
             ) {

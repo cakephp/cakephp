@@ -809,7 +809,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     protected function sortMessageAndWhen($first, $second, $method)
     {
         // Called with `$message, $when`. No order change necessary
-        if ((
+        if (
+            (
                 in_array($second, [true, false, 'create', 'update'], true) ||
                 is_callable($second)
             ) && (
@@ -2558,7 +2559,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         }
 
         if (is_array($data)) {
-            if (($flags & self::EMPTY_FILE)
+            if (
+                ($flags & self::EMPTY_FILE)
                 && isset($data['name'], $data['type'], $data['tmp_name'], $data['error'])
                 && (int)$data['error'] === UPLOAD_ERR_NO_FILE
             ) {

@@ -19,7 +19,6 @@ use Cake\Utility\MergeVariablesTrait;
 
 class Base
 {
-
     use MergeVariablesTrait;
 
     public $hasBoolean = false;

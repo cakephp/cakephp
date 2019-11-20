@@ -45,13 +45,6 @@ use ReflectionMethod;
  */
 class Form implements EventListenerInterface, EventDispatcherInterface, ValidatorAwareInterface
 {
-    /**
-     * Schema class.
-     *
-     * @var string
-     */
-    protected $_schemaClass = Schema::class;
-
     use EventDispatcherTrait;
     use ValidatorAwareTrait;
 
@@ -68,6 +61,13 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * @var string
      */
     const BUILD_VALIDATOR_EVENT = 'Form.buildValidator';
+
+    /**
+     * Schema class.
+     *
+     * @var string
+     */
+    protected $_schemaClass = Schema::class;
 
     /**
      * The schema used by this form.

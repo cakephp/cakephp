@@ -114,7 +114,8 @@ class WidgetLocator
     public function add(array $widgets)
     {
         foreach ($widgets as $object) {
-            if (is_object($object) &&
+            if (
+                is_object($object) &&
                 !($object instanceof WidgetInterface)
             ) {
                 throw new RuntimeException(

@@ -173,7 +173,8 @@ class Hash
             if ($conditions) {
                 $filter = [];
                 foreach ($next as $item) {
-                    if ((is_array($item) || $item instanceof ArrayAccess) &&
+                    if (
+                        (is_array($item) || $item instanceof ArrayAccess) &&
                         static::_matches($item, $conditions)
                     ) {
                         $filter[] = $item;
@@ -280,7 +281,8 @@ class Hash
                 if (!preg_match($val, $prop)) {
                     return false;
                 }
-            } elseif (($op === '=' && $prop != $val) ||
+            } elseif (
+                ($op === '=' && $prop != $val) ||
                 ($op === '!=' && $prop == $val) ||
                 ($op === '>' && $prop <= $val) ||
                 ($op === '<' && $prop >= $val) ||
