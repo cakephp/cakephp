@@ -155,7 +155,7 @@ class RedirectRouteTest extends TestCase
     {
         $request = new ServerRequest([
             'base' => '/basedir',
-            'url' => '/posts/2'
+            'url' => '/posts/2',
         ]);
         Router::pushRequest($request);
 

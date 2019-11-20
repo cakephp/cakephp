@@ -109,7 +109,7 @@ class SelectBoxWidget extends BasicWidget
             'options' => [],
             'disabled' => null,
             'val' => null,
-            'templateVars' => []
+            'templateVars' => [],
         ];
 
         $options = $this->_renderContent($data);

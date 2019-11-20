@@ -165,7 +165,7 @@ class PostgresSchema extends BaseSchema
             'default' => $this->_defaultValue($row['default']),
             'null' => $row['null'] === 'YES',
             'collate' => $row['collation_name'],
-            'comment' => $row['comment']
+            'comment' => $row['comment'],
         ];
         $field['length'] = $row['char_length'] ?: $field['length'];
 
@@ -257,7 +257,7 @@ class PostgresSchema extends BaseSchema
         if (!$index) {
             $index = [
                 'type' => $type,
-                'columns' => []
+                'columns' => [],
             ];
         }
         $index['columns'][] = $row['attname'];
@@ -279,7 +279,7 @@ class PostgresSchema extends BaseSchema
         if (!$constraint) {
             $constraint = [
                 'type' => $type,
-                'columns' => []
+                'columns' => [],
             ];
         }
         $constraint['columns'][] = $row['attname'];
@@ -366,7 +366,7 @@ class PostgresSchema extends BaseSchema
             TableSchema::TYPE_DATETIME => ' TIMESTAMP',
             TableSchema::TYPE_TIMESTAMP => ' TIMESTAMP',
             TableSchema::TYPE_UUID => ' UUID',
-            TableSchema::TYPE_JSON => ' JSONB'
+            TableSchema::TYPE_JSON => ' JSONB',
         ];
 
         if (isset($typeMap[$data['type']])) {
@@ -579,7 +579,7 @@ class PostgresSchema extends BaseSchema
         $name = $this->_driver->quoteIdentifier($schema->name());
 
         return [
-            sprintf('TRUNCATE %s RESTART IDENTITY CASCADE', $name)
+            sprintf('TRUNCATE %s RESTART IDENTITY CASCADE', $name),
         ];
     }
 

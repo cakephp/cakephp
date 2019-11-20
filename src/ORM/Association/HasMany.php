@@ -63,7 +63,7 @@ class HasMany extends Association
      */
     protected $_validStrategies = [
         self::STRATEGY_SELECT,
-        self::STRATEGY_SUBQUERY
+        self::STRATEGY_SUBQUERY,
     ];
 
     /**
@@ -356,7 +356,7 @@ class HasMany extends Association
     {
         if (is_bool($options)) {
             $options = [
-                'cleanProperty' => $options
+                'cleanProperty' => $options,
             ];
         } else {
             $options += ['cleanProperty' => true];
@@ -376,7 +376,7 @@ class HasMany extends Association
                     /** @var \Cake\Datasource\EntityInterface $entity */
                     return $entity->extract($targetPrimaryKey);
                 })
-                ->toList()
+                ->toList(),
         ];
 
         $this->_unlink($foreignKey, $target, $conditions, $options);
@@ -492,9 +492,9 @@ class HasMany extends Association
         if (count($exclusions) > 0) {
             $conditions = [
                 'NOT' => [
-                    'OR' => $exclusions
+                    'OR' => $exclusions,
                 ],
-                $foreignKeyReference
+                $foreignKeyReference,
             ];
         }
 
@@ -690,7 +690,7 @@ class HasMany extends Association
             'strategy' => $this->getStrategy(),
             'associationType' => $this->type(),
             'sort' => $this->getSort(),
-            'finder' => [$this, 'find']
+            'finder' => [$this, 'find'],
         ]);
 
         return $loader->buildEagerLoader($options);

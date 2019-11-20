@@ -42,7 +42,7 @@ class Text
      */
     protected static $_defaultHtmlNoCount = [
         'style',
-        'script'
+        'script',
     ];
 
     /**
@@ -110,7 +110,7 @@ class Text
             $offsets = [
                 mb_strpos($data, $separator, $offset),
                 mb_strpos($data, $leftBound, $offset),
-                mb_strpos($data, $rightBound, $offset)
+                mb_strpos($data, $rightBound, $offset),
             ];
             for ($i = 0; $i < 3; $i++) {
                 if ($offsets[$i] !== false && ($offsets[$i] < $tmpOffset || $tmpOffset == -1)) {
@@ -189,7 +189,7 @@ class Text
     public static function insert($str, $data, array $options = [])
     {
         $defaults = [
-            'before' => ':', 'after' => null, 'escape' => '\\', 'format' => null, 'clean' => false
+            'before' => ':', 'after' => null, 'escape' => '\\', 'format' => null, 'clean' => false,
         ];
         $options += $defaults;
         $format = $options['format'];
@@ -571,7 +571,7 @@ class Text
     public static function tail($text, $length = 100, array $options = [])
     {
         $default = [
-            'ellipsis' => '...', 'exact' => true
+            'ellipsis' => '...', 'exact' => true,
         ];
         $options += $default;
         $exact = $ellipsis = null;
@@ -1162,7 +1162,7 @@ class Text
         $options += [
             'replacement' => '-',
             'transliteratorId' => null,
-            'preserve' => null
+            'preserve' => null,
         ];
 
         if ($options['transliteratorId'] !== false) {

@@ -505,7 +505,7 @@ class ResultSet implements ResultSetInterface
             'useSetters' => false,
             'markClean' => true,
             'markNew' => false,
-            'guard' => false
+            'guard' => false,
         ];
 
         foreach ($this->_matchingMapColumns as $alias => $keys) {

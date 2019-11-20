@@ -443,7 +443,7 @@ abstract class Driver implements DriverInterface
     public function __debugInfo()
     {
         return [
-            'connected' => $this->_connection !== null
+            'connected' => $this->_connection !== null,
         ];
     }
 }

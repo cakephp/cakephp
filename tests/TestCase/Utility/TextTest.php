@@ -235,7 +235,7 @@ class TextTest extends TestCase
         $result = Text::insert($string, [
             'user.email' => 'security@example.com',
             'user.id' => 2,
-            'user.created' => Time::parse('2016-01-01')
+            'user.created' => Time::parse('2016-01-01'),
         ]);
         $this->assertEquals($expected, $result);
     }
@@ -248,7 +248,7 @@ class TextTest extends TestCase
     public function testCleanInsert()
     {
         $result = Text::cleanInsert(':incomplete', [
-            'clean' => true, 'before' => ':', 'after' => ''
+            'clean' => true, 'before' => ':', 'after' => '',
         ]);
         $this->assertEquals('', $result);
 
@@ -261,7 +261,7 @@ class TextTest extends TestCase
         $this->assertEquals('complete', $result);
 
         $result = Text::cleanInsert(':in.complete', [
-            'clean' => true, 'before' => ':', 'after' => ''
+            'clean' => true, 'before' => ':', 'after' => '',
         ]);
         $this->assertEquals('', $result);
 
@@ -273,7 +273,7 @@ class TextTest extends TestCase
         $this->assertEquals('', $result);
 
         $result = Text::cleanInsert(':in.complete or stuff', [
-            'clean' => true, 'before' => ':', 'after' => ''
+            'clean' => true, 'before' => ':', 'after' => '',
         ]);
         $this->assertEquals('stuff', $result);
 
@@ -365,15 +365,15 @@ class TextTest extends TestCase
         return [
             [
                 'The quick brown fox jumped over the lazy dog.',
-                33
+                33,
             ],
             [
                 'A very long woooooooooooord.',
-                8
+                8,
             ],
             [
                 'A very long woooooooooooord. Right.',
-                8
+                8,
             ],
         ];
     }
@@ -604,7 +604,7 @@ TEXT;
         $result = $this->Text->truncate($text, 10, [
             'ellipsis' => '...',
             'exact' => false,
-            'html' => true
+            'html' => true,
         ]);
         $expected = '<p><span style="font-size: medium;"><a>Iamatestwi...</a></span></p>';
         $this->assertEquals($expected, $result);
@@ -626,7 +626,7 @@ TEXT;
         $result = Text::truncate($text, 6, [
             'ellipsis' => '..',
             'exact' => true,
-            'html' => true
+            'html' => true,
         ]);
         $this->assertEquals($expected, $result);
 
@@ -634,7 +634,7 @@ TEXT;
         $result = Text::truncate($text, 6, [
             'ellipsis' => '..',
             'exact' => false,
-            'html' => true
+            'html' => true,
         ]);
         $this->assertEquals($expected, $result);
     }
@@ -1676,7 +1676,7 @@ HTML;
             [['size' => '1G', 'default' => false], 1073741824],
             [['size' => '1.5G', 'default' => false], 1610612736],
             [['size' => '512', 'default' => 'Unknown type'], 512],
-            [['size' => '2VB', 'default' => 'Unknown type'], 'Unknown type']
+            [['size' => '2VB', 'default' => 'Unknown type'], 'Unknown type'],
         ];
     }
 
@@ -1729,11 +1729,11 @@ HTML;
         return [
             [
                 'Foo Bar: Not just for breakfast any-more', null,
-                'Foo Bar: Not just for breakfast any-more'
+                'Foo Bar: Not just for breakfast any-more',
             ],
             [
                 'A æ Übérmensch på høyeste nivå! И я люблю PHP! ест. ﬁ ¦', null,
-                'A ae Ubermensch pa hoyeste niva! I a lublu PHP! est. fi '
+                'A ae Ubermensch pa hoyeste niva! I a lublu PHP! est. fi ',
             ],
             [
                 'Äpfel Über Öl grün ärgert groß öko',
@@ -1752,32 +1752,32 @@ HTML;
                     $UE → UE;
                     ::Latin-ASCII;
                 '),
-                'Aepfel Ueber Oel gruen aergert gross oeko'
+                'Aepfel Ueber Oel gruen aergert gross oeko',
             ],
             [
                 'La langue française est un attribut de souveraineté en France', null,
-                'La langue francaise est un attribut de souverainete en France'
+                'La langue francaise est un attribut de souverainete en France',
             ],
             [
                 '!@$#exciting stuff! - what !@-# was that?', null,
-                '!@$#exciting stuff! - what !@-# was that?'
+                '!@$#exciting stuff! - what !@-# was that?',
             ],
             [
                 'controller/action/りんご/1', null,
-                'controller/action/ringo/1'
+                'controller/action/ringo/1',
             ],
             [
                 'の話が出たので大丈夫かなあと', null,
-                'no huaga chutanode da zhang fukanaato'
+                'no huaga chutanode da zhang fukanaato',
             ],
             [
                 'posts/view/한국어/page:1/sort:asc', null,
-                'posts/view/hangug-eo/page:1/sort:asc'
+                'posts/view/hangug-eo/page:1/sort:asc',
             ],
             [
                 "non\xc2\xa0breaking\xc2\xa0space", null,
-                'non breaking space'
-            ]
+                'non breaking space',
+            ],
         ];
     }
 
@@ -1801,83 +1801,83 @@ HTML;
         return [
             [
                 'Foo Bar: Not just for breakfast any-more', [],
-                'Foo-Bar-Not-just-for-breakfast-any-more'
+                'Foo-Bar-Not-just-for-breakfast-any-more',
             ],
             [
                 'Foo Bar: Not just for breakfast any-more', ['replacement' => '_'],
-                'Foo_Bar_Not_just_for_breakfast_any_more'
+                'Foo_Bar_Not_just_for_breakfast_any_more',
             ],
             [
                 'Foo Bar: Not just for breakfast any-more', ['replacement' => '+'],
-                'Foo+Bar+Not+just+for+breakfast+any+more'
+                'Foo+Bar+Not+just+for+breakfast+any+more',
             ],
             [
                 'A æ Übérmensch på høyeste nivå! И я люблю PHP! есть. ﬁ ¦', [],
-                'A-ae-Ubermensch-pa-hoyeste-niva-I-a-lublu-PHP-est-fi'
+                'A-ae-Ubermensch-pa-hoyeste-niva-I-a-lublu-PHP-est-fi',
             ],
             [
                 'A æ Übérmensch på høyeste nivå! И я люблю PHP! есть. ﬁ ¦', ['transliteratorId' => 'Latin-ASCII'],
-                'A-ae-Ubermensch-pa-hoyeste-niva-И-я-люблю-PHP-есть-fi'
+                'A-ae-Ubermensch-pa-hoyeste-niva-И-я-люблю-PHP-есть-fi',
             ],
             [
                 'Äpfel Über Öl grün ärgert groß öko', [],
-                'Apfel-Uber-Ol-grun-argert-gross-oko'
+                'Apfel-Uber-Ol-grun-argert-gross-oko',
             ],
             [
                 'The truth - and- more- news', [],
-                'The-truth-and-more-news'
+                'The-truth-and-more-news',
             ],
             [
                 'The truth: and more news', [],
-                'The-truth-and-more-news'
+                'The-truth-and-more-news',
             ],
             [
                 'La langue française est un attribut de souveraineté en France', [],
-                'La-langue-francaise-est-un-attribut-de-souverainete-en-France'
+                'La-langue-francaise-est-un-attribut-de-souverainete-en-France',
             ],
             [
                 '!@$#exciting stuff! - what !@-# was that?', [],
-                'exciting-stuff-what-was-that'
+                'exciting-stuff-what-was-that',
             ],
             [
                 '20% of profits went to me!', [],
-                '20-of-profits-went-to-me'
+                '20-of-profits-went-to-me',
             ],
             [
                 '#this melts your face1#2#3', [],
-                'this-melts-your-face1-2-3'
+                'this-melts-your-face1-2-3',
             ],
             [
                 'controller/action/りんご/1', ['transliteratorId' => false],
-                'controller-action-りんご-1'
+                'controller-action-りんご-1',
             ],
             [
                 'の話が出たので大丈夫かなあと', ['transliteratorId' => false],
-                'の話が出たので大丈夫かなあと'
+                'の話が出たので大丈夫かなあと',
             ],
             [
                 'posts/view/한국어/page:1/sort:asc', ['transliteratorId' => false],
-                'posts-view-한국어-page-1-sort-asc'
+                'posts-view-한국어-page-1-sort-asc',
             ],
             [
                 "non\xc2\xa0breaking\xc2\xa0space", [],
-                'non-breaking-space'
+                'non-breaking-space',
             ],
             [
                 'Foo Bar: Not just for breakfast any-more', ['replacement' => ''],
-                'FooBarNotjustforbreakfastanymore'
+                'FooBarNotjustforbreakfastanymore',
             ],
             [
                 'clean!_me.tar.gz', ['preserve' => '.'],
-                'clean-me.tar.gz'
+                'clean-me.tar.gz',
             ],
             [
                 'cl#ean(me', [],
-                'cl-ean-me'
+                'cl-ean-me',
             ],
             [
                 'cl#e|an(me.jpg', ['preserve' => '.'],
-                'cl-e-an-me.jpg'
+                'cl-e-an-me.jpg',
             ],
         ];
     }

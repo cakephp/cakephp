@@ -44,7 +44,7 @@ class CommandCollectionTest extends TestCase
     {
         $collection = new CommandCollection([
             'i18n' => I18nShell::class,
-            'routes' => RoutesShell::class
+            'routes' => RoutesShell::class,
         ]);
         $this->assertTrue($collection->has('routes'));
         $this->assertTrue($collection->has('i18n'));
@@ -62,7 +62,7 @@ class CommandCollectionTest extends TestCase
         $this->expectExceptionMessage('Cannot use \'stdClass\' for command \'nope\' it is not a subclass of Cake\Console\Shell');
         new CommandCollection([
             'i18n' => I18nShell::class,
-            'nope' => stdClass::class
+            'nope' => stdClass::class,
         ]);
     }
 
@@ -216,7 +216,7 @@ class CommandCollectionTest extends TestCase
     {
         $in = [
             'i18n' => I18nShell::class,
-            'routes' => RoutesShell::class
+            'routes' => RoutesShell::class,
         ];
         $collection = new CommandCollection($in);
         $out = [];

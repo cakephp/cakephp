@@ -227,7 +227,7 @@ class ResponseEmitter implements EmitterInterface
                 'path' => '',
                 'domain' => '',
                 'secure' => false,
-                'httponly' => false
+                'httponly' => false,
             ];
 
             foreach ($parts as $part) {

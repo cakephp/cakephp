@@ -47,7 +47,7 @@ class CookieCollectionTest extends TestCase
     {
         $cookies = [
             new Cookie('one', 'one'),
-            new Cookie('two', 'two')
+            new Cookie('two', 'two'),
         ];
 
         $collection = new CookieCollection($cookies);
@@ -64,7 +64,7 @@ class CookieCollectionTest extends TestCase
         $cookies = [
             new Cookie('remember_me', 'a'),
             new Cookie('gtm', 'b'),
-            new Cookie('three', 'tree')
+            new Cookie('three', 'tree'),
         ];
 
         $collection = new CookieCollection($cookies);
@@ -126,7 +126,7 @@ class CookieCollectionTest extends TestCase
     {
         $cookies = [
             new Cookie('remember_me', 'a'),
-            new Cookie('gtm', 'b')
+            new Cookie('gtm', 'b'),
         ];
 
         $collection = new CookieCollection($cookies);
@@ -144,7 +144,7 @@ class CookieCollectionTest extends TestCase
     {
         $cookies = [
             new Cookie('remember_me', 'a'),
-            new Cookie('gtm', 'b')
+            new Cookie('gtm', 'b'),
         ];
 
         $collection = new CookieCollection($cookies);
@@ -166,7 +166,7 @@ class CookieCollectionTest extends TestCase
     {
         $cookies = [
             new Cookie('remember_me', 'a'),
-            new Cookie('gtm', 'b')
+            new Cookie('gtm', 'b'),
         ];
 
         $collection = new CookieCollection($cookies);
@@ -188,7 +188,7 @@ class CookieCollectionTest extends TestCase
         $this->expectExceptionMessage('Expected `Cake\Http\Cookie\CookieCollection[]` as $cookies but instead got `array` at index 1');
         $array = [
             new Cookie('one', 'one'),
-            []
+            [],
         ];
 
         new CookieCollection($array);
@@ -203,7 +203,7 @@ class CookieCollectionTest extends TestCase
     {
         $collection = new CookieCollection();
         $request = new ServerRequest([
-            'url' => '/app'
+            'url' => '/app',
         ]);
         $response = (new Response())
             ->withAddedHeader('Set-Cookie', 'test=value')
@@ -251,7 +251,7 @@ class CookieCollectionTest extends TestCase
     {
         $collection = new CookieCollection();
         $request = new ServerRequest([
-            'url' => '/app'
+            'url' => '/app',
         ]);
         $response = (new Response())
             ->withAddedHeader('Set-Cookie', 'test=val%3Bue; Path=/example; Secure;');
@@ -272,7 +272,7 @@ class CookieCollectionTest extends TestCase
     {
         $collection = new CookieCollection();
         $request = new ServerRequest([
-            'url' => '/app'
+            'url' => '/app',
         ]);
         $response = (new Response())
             ->withAddedHeader('Set-Cookie', '');
@@ -289,7 +289,7 @@ class CookieCollectionTest extends TestCase
     {
         $collection = new CookieCollection();
         $request = new ServerRequest([
-            'url' => '/app'
+            'url' => '/app',
         ]);
         $response = (new Response())
             ->withAddedHeader('Set-Cookie', 'test=value')
@@ -307,13 +307,13 @@ class CookieCollectionTest extends TestCase
     public function testAddFromResponseRemoveExpired()
     {
         $collection = new CookieCollection([
-            new Cookie('expired', 'not yet', null, '/', 'example.com')
+            new Cookie('expired', 'not yet', null, '/', 'example.com'),
         ]);
         $request = new ServerRequest([
             'url' => '/app',
             'environment' => [
-                'HTTP_HOST' => 'example.com'
-            ]
+                'HTTP_HOST' => 'example.com',
+            ],
         ]);
         $response = (new Response())
             ->withAddedHeader('Set-Cookie', 'test=value')
@@ -331,7 +331,7 @@ class CookieCollectionTest extends TestCase
     {
         $collection = new CookieCollection();
         $request = new ServerRequest([
-            'url' => '/app'
+            'url' => '/app',
         ]);
         $response = (new Response())
             ->withAddedHeader('Set-Cookie', 'test=value')
@@ -351,13 +351,13 @@ class CookieCollectionTest extends TestCase
     public function testAddFromResponseUpdateExisting()
     {
         $collection = new CookieCollection([
-            new Cookie('key', 'old value', null, '/', 'example.com')
+            new Cookie('key', 'old value', null, '/', 'example.com'),
         ]);
         $request = new ServerRequest([
             'url' => '/',
             'environment' => [
-                'HTTP_HOST' => 'example.com'
-            ]
+                'HTTP_HOST' => 'example.com',
+            ],
         ]);
         $response = (new Response())->withAddedHeader('Set-Cookie', 'key=new value');
         $new = $collection->addFromResponse($response, $request);

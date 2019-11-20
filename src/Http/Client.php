@@ -424,7 +424,7 @@ class Client
                     'host' => $url->getHost(),
                     'port' => $url->getPort(),
                     'scheme' => $url->getScheme(),
-                    'protocolRelative' => true
+                    'protocolRelative' => true,
                 ]);
                 $request = $request->withUri(new Uri($locationUrl));
                 $request = $this->_cookies->addToRequest($request, []);
@@ -474,7 +474,7 @@ class Client
             'host' => null,
             'port' => null,
             'scheme' => 'http',
-            'protocolRelative' => false
+            'protocolRelative' => false,
         ];
         $options += $defaults;
 
@@ -487,7 +487,7 @@ class Client
 
         $defaultPorts = [
             'http' => 80,
-            'https' => 443
+            'https' => 443,
         ];
         $out = $options['scheme'] . '://' . $options['host'];
         if ($options['port'] && $options['port'] != $defaultPorts[$options['scheme']]) {
@@ -544,7 +544,7 @@ class Client
         if (strpos($type, '/') !== false) {
             return [
                 'Accept' => $type,
-                'Content-Type' => $type
+                'Content-Type' => $type,
             ];
         }
         $typeMap = [

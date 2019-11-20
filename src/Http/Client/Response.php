@@ -240,7 +240,7 @@ class Response extends Message implements ResponseInterface
             static::STATUS_CREATED,
             static::STATUS_ACCEPTED,
             static::STATUS_NON_AUTHORITATIVE_INFORMATION,
-            static::STATUS_NO_CONTENT
+            static::STATUS_NO_CONTENT,
         ];
 
         return in_array($this->code, $codes);
@@ -491,7 +491,7 @@ class Response extends Message implements ResponseInterface
             'domain' => $cookie->getDomain(),
             'secure' => $cookie->isSecure(),
             'httponly' => $cookie->isHttpOnly(),
-            'expires' => $cookie->getFormattedExpires()
+            'expires' => $cookie->getFormattedExpires(),
         ];
     }
 

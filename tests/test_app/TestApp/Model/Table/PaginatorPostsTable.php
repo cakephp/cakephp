@@ -31,7 +31,7 @@ class PaginatorPostsTable extends Table
     {
         $this->setTable('posts');
         $this->belongsTo('PaginatorAuthor', [
-            'foreignKey' => 'author_id'
+            'foreignKey' => 'author_id',
         ]);
     }
 

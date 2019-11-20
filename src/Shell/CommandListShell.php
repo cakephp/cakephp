@@ -159,10 +159,10 @@ class CommandListShell extends Shell
             'Get the list of available shells for this CakePHP application.'
         )->addOption('xml', [
             'help' => 'Get the listing as XML.',
-            'boolean' => true
+            'boolean' => true,
         ])->addOption('version', [
             'help' => 'Prints the currently installed version of CakePHP. (deprecated - use `cake --version` instead)',
-            'boolean' => true
+            'boolean' => true,
         ]);
 
         return $parser;

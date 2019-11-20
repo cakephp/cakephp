@@ -387,7 +387,7 @@ class Route
             'prefix' => ':',
             'plugin' => '.',
             'controller' => ':',
-            'action' => ''
+            'action' => '',
         ];
         foreach ($keys as $key => $glue) {
             $value = null;

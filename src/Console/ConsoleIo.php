@@ -491,7 +491,7 @@ class ConsoleIo
         if ($enable !== static::QUIET) {
             $stdout = new ConsoleLog([
                 'types' => $outLevels,
-                'stream' => $this->_out
+                'stream' => $this->_out,
             ]);
             Log::setConfig('stdout', ['engine' => $stdout]);
         }

@@ -129,7 +129,7 @@ class Router
         'Month' => Router::MONTH,
         'Day' => Router::DAY,
         'ID' => Router::ID,
-        'UUID' => Router::UUID
+        'UUID' => Router::UUID,
     ];
 
     /**
@@ -419,7 +419,7 @@ class Router
             $requestData[0] += [
                 'controller' => false,
                 'action' => false,
-                'plugin' => null
+                'plugin' => null,
             ];
             $request = new ServerRequest([
                 'params' => $requestData[0],
@@ -720,7 +720,7 @@ class Router
                     'plugin' => $params['plugin'],
                     'controller' => $params['controller'],
                     'action' => 'index',
-                    '_ext' => null
+                    '_ext' => null,
                 ];
             }
 
@@ -1011,7 +1011,7 @@ class Router
                         $arr = [$arr];
                     } else {
                         $arr = [
-                            $match[1] => $arr
+                            $match[1] => $arr,
                         ];
                     }
                 }

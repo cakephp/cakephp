@@ -42,7 +42,7 @@ class RoutingFilterTest extends TestCase
 
         $request = new ServerRequest([
             'url' => '/testcontroller/testaction/params1/params2/params3',
-            'params' => ['controller' => 'articles']
+            'params' => ['controller' => 'articles'],
         ]);
         $event = new Event(__CLASS__, $this, compact('request'));
         $filter->beforeDispatch($event);

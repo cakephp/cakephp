@@ -45,7 +45,7 @@ class Request extends Message implements RequestInterface
         $this->uri = $this->createUri($url);
         $headers += [
             'Connection' => 'close',
-            'User-Agent' => 'CakePHP'
+            'User-Agent' => 'CakePHP',
         ];
         $this->addHeaders($headers);
         $this->body($data);

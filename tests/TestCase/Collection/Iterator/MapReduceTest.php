@@ -34,7 +34,7 @@ class MapReduceTest extends TestCase
         $data = [
             'document_1' => 'Dogs are the most amazing animal in history',
             'document_2' => 'History is not only amazing but boring',
-            'document_3' => 'One thing that is not boring is dogs'
+            'document_3' => 'One thing that is not boring is dogs',
         ];
         $mapper = function ($row, $document, $mr) {
             $words = array_map('strtolower', explode(' ', $row));
@@ -62,7 +62,7 @@ class MapReduceTest extends TestCase
             'boring' => ['document_2', 'document_3'],
             'one' => ['document_3'],
             'thing' => ['document_3'],
-            'that' => ['document_3']
+            'that' => ['document_3'],
         ];
         $this->assertEquals($expected, iterator_to_array($results));
     }

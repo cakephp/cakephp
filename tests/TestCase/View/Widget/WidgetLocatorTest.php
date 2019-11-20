@@ -137,7 +137,7 @@ class WidgetLocatorTestCase extends TestCase
         $this->expectExceptionMessage('Widget objects must implement Cake\View\Widget\WidgetInterface');
         $inputs = new WidgetLocator($this->templates, $this->view);
         $inputs->add([
-            'text' => new \StdClass()
+            'text' => new \StdClass(),
         ]);
     }
 
@@ -200,7 +200,7 @@ class WidgetLocatorTestCase extends TestCase
         $inputs->clear();
         $inputs->add([
             'label' => ['Cake\View\Widget\LabelWidget'],
-            'multicheckbox' => ['Cake\View\Widget\MultiCheckboxWidget', 'label']
+            'multicheckbox' => ['Cake\View\Widget\MultiCheckboxWidget', 'label'],
         ]);
         $result = $inputs->get('multicheckbox');
         $this->assertInstanceOf('Cake\View\Widget\MultiCheckboxWidget', $result);

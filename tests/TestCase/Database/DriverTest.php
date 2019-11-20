@@ -293,7 +293,7 @@ class DriverTest extends TestCase
             [true, 'TRUE'],
             [1, '1'],
             ['0', '0'],
-            ['42', '42']
+            ['42', '42'],
         ];
     }
 }

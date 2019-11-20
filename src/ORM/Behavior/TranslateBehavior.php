@@ -79,7 +79,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
             'setLocale' => 'setLocale',
             'getLocale' => 'getLocale',
             'locale' => 'locale',
-            'translationField' => 'translationField'
+            'translationField' => 'translationField',
         ],
         'fields' => [],
         'translationTable' => 'I18n',
@@ -89,7 +89,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         'onlyTranslated' => false,
         'strategy' => 'subquery',
         'tableLocator' => null,
-        'validator' => false
+        'validator' => false,
     ];
 
     /**
@@ -102,7 +102,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     {
         $config += [
             'defaultLocale' => I18n::getDefaultLocale(),
-            'referenceName' => $this->_referenceName($table)
+            'referenceName' => $this->_referenceName($table),
         ];
 
         if (isset($config['tableLocator'])) {
@@ -160,7 +160,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
                 $fieldTable = $tableLocator->get($name, [
                     'className' => $table,
                     'alias' => $name,
-                    'table' => $this->_translationTable->getTable()
+                    'table' => $this->_translationTable->getTable(),
                 ]);
             } else {
                 $fieldTable = $tableLocator->get($name);
@@ -179,7 +179,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
                 'foreignKey' => 'foreign_key',
                 'joinType' => $filter ? QueryInterface::JOIN_TYPE_INNER : QueryInterface::JOIN_TYPE_LEFT,
                 'conditions' => $conditions,
-                'propertyName' => $field . '_translation'
+                'propertyName' => $field . '_translation',
             ]);
         }
 
@@ -194,7 +194,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
             'strategy' => $strategy,
             'conditions' => $conditions,
             'propertyName' => '_i18n',
-            'dependent' => true
+            'dependent' => true,
         ]);
     }
 
@@ -331,7 +331,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
                 'field IN' => $fields,
                 'locale' => $locale,
                 'foreign_key' => $key,
-                'model' => $model
+                'model' => $model,
             ])
             ->disableBufferedResults()
             ->all()
@@ -347,7 +347,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         foreach ($new as $field => $content) {
             $new[$field] = new Entity(compact('locale', 'field', 'content', 'model'), [
                 'useSetters' => false,
-                'markNew' => true
+                'markNew' => true,
             ]);
         }
 
@@ -410,7 +410,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
                 }
 
                 return $translations;
-            }
+            },
         ];
     }
 
@@ -634,7 +634,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
                 $translation = new $entityClass($keys + ['locale' => $locale], [
                     'markNew' => false,
                     'useSetters' => false,
-                    'markClean' => true
+                    'markClean' => true,
                 ]);
                 $result[$locale] = $translation;
             }
@@ -677,7 +677,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
                 }
                 $find[] = ['locale' => $lang, 'field' => $field, 'foreign_key' => $key];
                 $contents[] = new Entity(['content' => $translation->get($field)], [
-                    'useSetters' => false
+                    'useSetters' => false,
                 ]);
             }
         }

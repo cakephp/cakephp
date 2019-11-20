@@ -235,7 +235,7 @@ class View implements EventDispatcherInterface
      */
     protected $_passedVars = [
         'viewVars', 'autoLayout', 'helpers', 'template', 'layout', 'name', 'theme',
-        'layoutPath', 'templatePath', 'plugin', 'passedArgs'
+        'layoutPath', 'templatePath', 'plugin', 'passedArgs',
     ];
 
     /**
@@ -366,7 +366,7 @@ class View implements EventDispatcherInterface
             $this->request = new ServerRequest([
                 'base' => '',
                 'url' => '',
-                'webroot' => '/'
+                'webroot' => '/',
             ]);
         }
         $this->Blocks = new $this->_viewBlockClass();
@@ -1675,7 +1675,7 @@ class View implements EventDispatcherInterface
             }
         }
         throw new MissingLayoutException([
-            'file' => $layoutPaths[0] . $name . $this->_ext
+            'file' => $layoutPaths[0] . $name . $this->_ext,
         ]);
     }
 
@@ -1818,12 +1818,12 @@ class View implements EventDispatcherInterface
         );
         $config = [
             'config' => $this->elementCache,
-            'key' => implode('_', $keys)
+            'key' => implode('_', $keys),
         ];
         if (is_array($cache)) {
             $defaults = [
                 'config' => $this->elementCache,
-                'key' => $config['key']
+                'key' => $config['key'],
             ];
             $config = $cache + $defaults;
         }

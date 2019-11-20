@@ -35,7 +35,7 @@ class NumberHelper extends Helper
      * @var array
      */
     protected $_defaultConfig = [
-        'engine' => 'Cake\I18n\Number'
+        'engine' => 'Cake\I18n\Number',
     ];
 
     /**

@@ -346,7 +346,7 @@ class Response implements ResponseInterface
         'mkv' => 'video/x-matroska',
         'pkpass' => 'application/vnd.apple.pkpass',
         'ajax' => 'text/html',
-        'bmp' => 'image/bmp'
+        'bmp' => 'image/bmp',
     ];
 
     /**
@@ -588,7 +588,7 @@ class Response implements ResponseInterface
             return;
         }
         $whitelist = [
-            'application/javascript', 'application/xml', 'application/rss+xml'
+            'application/javascript', 'application/xml', 'application/rss+xml',
         ];
 
         $charset = false;
@@ -1753,7 +1753,7 @@ class Response implements ResponseInterface
             'Content-Length',
             'Content-MD5',
             'Content-Type',
-            'Last-Modified'
+            'Last-Modified',
         ];
         foreach ($remove as $header) {
             $this->_clearHeader($header);
@@ -1780,7 +1780,7 @@ class Response implements ResponseInterface
             'Content-Length',
             'Content-MD5',
             'Content-Type',
-            'Last-Modified'
+            'Last-Modified',
         ];
         foreach ($remove as $header) {
             $new = $new->withoutHeader($header);
@@ -2195,7 +2195,7 @@ class Response implements ResponseInterface
             'path' => '/',
             'domain' => '',
             'secure' => false,
-            'httpOnly' => false
+            'httpOnly' => false,
         ];
         $expires = $options['expire'] ? new DateTime('@' . $options['expire']) : null;
         $cookie = new Cookie(
@@ -2258,7 +2258,7 @@ class Response implements ResponseInterface
                 'path' => '/',
                 'domain' => '',
                 'secure' => false,
-                'httpOnly' => false
+                'httpOnly' => false,
             ];
             $expires = $data['expire'] ? new DateTime('@' . $data['expire']) : null;
             $cookie = new Cookie(
@@ -2319,7 +2319,7 @@ class Response implements ResponseInterface
                 'path' => '/',
                 'domain' => '',
                 'secure' => false,
-                'httpOnly' => false
+                'httpOnly' => false,
             ];
 
             $cookie = new Cookie(
@@ -2394,7 +2394,7 @@ class Response implements ResponseInterface
             'domain' => $cookie->getDomain(),
             'secure' => $cookie->isSecure(),
             'httpOnly' => $cookie->isHttpOnly(),
-            'expire' => $cookie->getExpiresTimestamp()
+            'expire' => $cookie->getExpiresTimestamp(),
         ];
     }
 
@@ -2524,7 +2524,7 @@ class Response implements ResponseInterface
         $file = $this->validateFile($path);
         $options += [
             'name' => null,
-            'download' => null
+            'download' => null,
         ];
 
         $extension = strtolower($file->ext());
@@ -2592,7 +2592,7 @@ class Response implements ResponseInterface
         $file = $this->validateFile($path);
         $options += [
             'name' => null,
-            'download' => null
+            'download' => null,
         ];
 
         $extension = strtolower($file->ext());

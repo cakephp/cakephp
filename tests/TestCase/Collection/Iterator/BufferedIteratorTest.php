@@ -35,7 +35,7 @@ class BufferedIteratorTest extends TestCase
         $items = new ArrayObject([
             'a' => 1,
             'b' => 2,
-            'c' => 3
+            'c' => 3,
         ]);
         $iterator = new BufferedIterator($items);
         $expected = (array)$items;
@@ -56,7 +56,7 @@ class BufferedIteratorTest extends TestCase
         $items = new ArrayObject([
             'a' => 1,
             'b' => 2,
-            'c' => 3
+            'c' => 3,
         ]);
         $iterator = new BufferedIterator($items);
         $this->assertCount(3, $iterator);

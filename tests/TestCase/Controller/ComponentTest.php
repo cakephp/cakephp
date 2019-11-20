@@ -156,12 +156,12 @@ class ComponentTest extends TestCase
 
         $expected = [
             'components' => [
-                'Orange'
+                'Orange',
             ],
             'implementedEvents' => [
-                'Controller.startup' => 'startup'
+                'Controller.startup' => 'startup',
             ],
-            '_config' => []
+            '_config' => [],
         ];
         $result = $Component->__debugInfo();
         $this->assertEquals($expected, $result);

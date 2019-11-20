@@ -442,7 +442,7 @@ class ExceptionRendererTest extends TestCase
             'url' => '/posts/view/1000?sort=title&amp;direction=desc',
             'code' => 404,
             'file' => __FILE__,
-            'line' => $exceptionLine
+            'line' => $exceptionLine,
         ];
         $this->assertEquals($expected, json_decode($result, true));
         $this->assertEquals(404, $response->getStatusCode());
@@ -589,9 +589,9 @@ class ExceptionRendererTest extends TestCase
                 ]),
                 [
                     '/Missing Method in PostsController/',
-                    '/<em>PostsController::index\(\)<\/em>/'
+                    '/<em>PostsController::index\(\)<\/em>/',
                 ],
-                404
+                404,
             ],
             [
                 new MissingActionException([
@@ -602,24 +602,24 @@ class ExceptionRendererTest extends TestCase
                 ]),
                 [
                     '/Missing Method in PostsController/',
-                    '/<em>PostsController::index\(\)<\/em>/'
+                    '/<em>PostsController::index\(\)<\/em>/',
                 ],
-                404
+                404,
             ],
             [
                 new MissingTemplateException(['file' => '/posts/about.ctp']),
                 [
-                    "/posts\/about.ctp/"
+                    "/posts\/about.ctp/",
                 ],
-                500
+                500,
             ],
             [
                 new MissingLayoutException(['file' => 'layouts/my_layout.ctp']),
                 [
                     '/Missing Layout/',
-                    "/layouts\/my_layout.ctp/"
+                    "/layouts\/my_layout.ctp/",
                 ],
-                500
+                500,
             ],
             [
                 new MissingHelperException(['class' => 'MyCustomHelper']),
@@ -627,43 +627,43 @@ class ExceptionRendererTest extends TestCase
                     '/Missing Helper/',
                     '/<em>MyCustomHelper<\/em> could not be found./',
                     '/Create the class <em>MyCustomHelper<\/em> below in file:/',
-                    '/(\/|\\\)MyCustomHelper.php/'
+                    '/(\/|\\\)MyCustomHelper.php/',
                 ],
-                500
+                500,
             ],
             [
                 new MissingBehaviorException(['class' => 'MyCustomBehavior']),
                 [
                     '/Missing Behavior/',
                     '/Create the class <em>MyCustomBehavior<\/em> below in file:/',
-                    '/(\/|\\\)MyCustomBehavior.php/'
+                    '/(\/|\\\)MyCustomBehavior.php/',
                 ],
-                500
+                500,
             ],
             [
                 new MissingComponentException(['class' => 'SideboxComponent']),
                 [
                     '/Missing Component/',
                     '/Create the class <em>SideboxComponent<\/em> below in file:/',
-                    '/(\/|\\\)SideboxComponent.php/'
+                    '/(\/|\\\)SideboxComponent.php/',
                 ],
-                500
+                500,
             ],
             [
                 new MissingDatasourceConfigException(['name' => 'MyDatasourceConfig']),
                 [
                     '/Missing Datasource Configuration/',
-                    '/<em>MyDatasourceConfig<\/em> was not found/'
+                    '/<em>MyDatasourceConfig<\/em> was not found/',
                 ],
-                500
+                500,
             ],
             [
                 new MissingDatasourceException(['class' => 'MyDatasource', 'plugin' => 'MyPlugin']),
                 [
                     '/Missing Datasource/',
-                    '/<em>MyPlugin.MyDatasource<\/em> could not be found./'
+                    '/<em>MyPlugin.MyDatasource<\/em> could not be found./',
                 ],
-                500
+                500,
             ],
             [
                 new MissingMailerActionException([
@@ -674,33 +674,33 @@ class ExceptionRendererTest extends TestCase
                 ]),
                 [
                     '/Missing Method in UserMailer/',
-                    '/<em>UserMailer::welcome\(\)<\/em>/'
+                    '/<em>UserMailer::welcome\(\)<\/em>/',
                 ],
-                404
+                404,
             ],
             [
                 new Exception('boom'),
                 [
-                    '/Internal Error/'
+                    '/Internal Error/',
                 ],
-                500
+                500,
             ],
             [
                 new RuntimeException('another boom'),
                 [
-                    '/Internal Error/'
+                    '/Internal Error/',
                 ],
-                500
+                500,
             ],
             [
                 new CakeException('base class'),
                 ['/Internal Error/'],
-                500
+                500,
             ],
             [
                 new HttpException('Network Authentication Required', 511),
                 ['/Network Authentication Required/'],
-                511
+                511,
             ],
         ];
     }
@@ -922,7 +922,7 @@ class ExceptionRendererTest extends TestCase
                 'plugin' => null,
                 'pass' => [],
                 '_ext' => 'json',
-            ]
+            ],
         ]);
         // Simulate a request having routing applied and stored in router
         Router::pushRequest($routerRequest);

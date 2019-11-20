@@ -719,12 +719,12 @@ class Hash
             $keys = explode($separator, $flat);
             $keys = array_reverse($keys);
             $child = [
-                $keys[0] => $value
+                $keys[0] => $value,
             ];
             array_shift($keys);
             foreach ($keys as $k) {
                 $child = [
-                    $k => $child
+                    $k => $child,
                 ];
             }
 
@@ -1188,7 +1188,7 @@ class Hash
             'idPath' => "{n}.$alias.id",
             'parentPath' => "{n}.$alias.parent_id",
             'children' => 'children',
-            'root' => null
+            'root' => null,
         ];
 
         $return = $idMap = [];

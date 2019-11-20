@@ -80,7 +80,7 @@ class HelperRegistry extends ObjectRegistry
     {
         throw new MissingHelperException([
             'class' => $class,
-            'plugin' => $plugin
+            'plugin' => $plugin,
         ]);
     }
 

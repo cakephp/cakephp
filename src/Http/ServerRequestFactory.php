@@ -41,7 +41,7 @@ abstract class ServerRequestFactory extends BaseFactory
         $uri = static::createUri($server);
         $sessionConfig = (array)Configure::read('Session') + [
             'defaults' => 'php',
-            'cookiePath' => $uri->webroot
+            'cookiePath' => $uri->webroot,
         ];
         $session = Session::create($sessionConfig);
         $request = new ServerRequest([
@@ -153,7 +153,7 @@ abstract class ServerRequestFactory extends BaseFactory
         $config = (array)Configure::read('App') + [
             'base' => null,
             'webroot' => null,
-            'baseUrl' => null
+            'baseUrl' => null,
         ];
         $base = $config['base'];
         $baseUrl = $config['baseUrl'];

@@ -33,7 +33,7 @@ abstract class BaseLog extends AbstractLogger
      */
     protected $_defaultConfig = [
         'levels' => [],
-        'scopes' => []
+        'scopes' => [],
     ];
 
     /**

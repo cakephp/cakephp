@@ -154,7 +154,7 @@ class RelativeTimeFormatter
                 'day' => __d('cake', 'about a day ago'),
                 'week' => __d('cake', 'about a week ago'),
                 'month' => __d('cake', 'about a month ago'),
-                'year' => __d('cake', 'about a year ago')
+                'year' => __d('cake', 'about a year ago'),
             ];
 
             return $relativeDate ? sprintf($options['relativeString'], $relativeDate) : $aboutAgo[$fWord];
@@ -171,7 +171,7 @@ class RelativeTimeFormatter
             'day' => __d('cake', 'in about a day'),
             'week' => __d('cake', 'in about a week'),
             'month' => __d('cake', 'in about a month'),
-            'year' => __d('cake', 'in about a year')
+            'year' => __d('cake', 'in about a year'),
         ];
 
         return $aboutIn[$fWord];
@@ -332,7 +332,7 @@ class RelativeTimeFormatter
                 'day' => __d('cake', 'about a day ago'),
                 'week' => __d('cake', 'about a week ago'),
                 'month' => __d('cake', 'about a month ago'),
-                'year' => __d('cake', 'about a year ago')
+                'year' => __d('cake', 'about a year ago'),
             ];
 
             return $relativeDate ? sprintf($options['relativeString'], $relativeDate) : $aboutAgo[$fWord];
@@ -346,7 +346,7 @@ class RelativeTimeFormatter
             'day' => __d('cake', 'in about a day'),
             'week' => __d('cake', 'in about a week'),
             'month' => __d('cake', 'in about a month'),
-            'year' => __d('cake', 'in about a year')
+            'year' => __d('cake', 'in about a year'),
         ];
 
         return $aboutIn[$fWord];

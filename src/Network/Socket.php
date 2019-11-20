@@ -47,7 +47,7 @@ class Socket
         'host' => 'localhost',
         'protocol' => 'tcp',
         'port' => 80,
-        'timeout' => 30
+        'timeout' => 30,
     ];
 
     /**

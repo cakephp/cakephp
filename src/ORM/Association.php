@@ -192,7 +192,7 @@ abstract class Association
     protected $_validStrategies = [
         self::STRATEGY_JOIN,
         self::STRATEGY_SELECT,
-        self::STRATEGY_SUBQUERY
+        self::STRATEGY_SUBQUERY,
     ];
 
     /**
@@ -216,7 +216,7 @@ abstract class Association
             'tableLocator',
             'propertyName',
             'sourceTable',
-            'targetTable'
+            'targetTable',
         ];
         foreach ($defaults as $property) {
             if (isset($options[$property])) {
@@ -993,7 +993,7 @@ abstract class Association
             'fields' => [],
             'type' => $joinType,
             'table' => $table,
-            'finder' => $this->getFinder()
+            'finder' => $this->getFinder(),
         ];
 
         if (!empty($options['foreignKey'])) {

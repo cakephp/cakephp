@@ -46,15 +46,15 @@ class TimestampBehavior extends Behavior
         'implementedFinders' => [],
         'implementedMethods' => [
             'timestamp' => 'timestamp',
-            'touch' => 'touch'
+            'touch' => 'touch',
         ],
         'events' => [
             'Model.beforeSave' => [
                 'created' => 'new',
-                'modified' => 'always'
-            ]
+                'modified' => 'always',
+            ],
         ],
-        'refreshTimestamp' => true
+        'refreshTimestamp' => true,
     ];
 
     /**

@@ -74,7 +74,7 @@ class SecurityComponent extends Component
         'allowedActions' => [],
         'unlockedFields' => [],
         'unlockedActions' => [],
-        'validatePost' => true
+        'validatePost' => true,
     ];
 
     /**
@@ -392,7 +392,7 @@ class SecurityComponent extends Component
             Router::url($request->getRequestTarget()),
             serialize($fieldList),
             $unlocked,
-            $session->id()
+            $session->id(),
         ];
     }
 
@@ -586,7 +586,7 @@ class SecurityComponent extends Component
         $this->session->write('_Token', $token);
 
         return $request->withParam('_Token', [
-            'unlockedFields' => $token['unlockedFields']
+            'unlockedFields' => $token['unlockedFields'],
         ]);
     }
 

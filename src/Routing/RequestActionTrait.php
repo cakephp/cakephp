@@ -121,14 +121,14 @@ trait RequestActionTrait
         }
         if (is_string($url)) {
             $params = [
-                'url' => $url
+                'url' => $url,
             ];
         } elseif (is_array($url)) {
             $defaultParams = ['plugin' => null, 'controller' => null, 'action' => null];
             $params = [
                 'params' => $url + $defaultParams,
                 'base' => false,
-                'url' => Router::reverse($url)
+                'url' => Router::reverse($url),
             ];
             if (empty($params['params']['pass'])) {
                 $params['params']['pass'] = [];
@@ -165,7 +165,7 @@ trait RequestActionTrait
         // we need to 'fix' their missing dispatcher filters.
         $needed = [
             'routing' => RoutingFilter::class,
-            'controller' => ControllerFactoryFilter::class
+            'controller' => ControllerFactoryFilter::class,
         ];
         foreach ($dispatcher->filters() as $filter) {
             if ($filter instanceof RoutingFilter) {

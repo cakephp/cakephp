@@ -109,7 +109,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     public static $columnLengths = [
         'tiny' => self::LENGTH_TINY,
         'medium' => self::LENGTH_MEDIUM,
-        'long' => self::LENGTH_LONG
+        'long' => self::LENGTH_LONG,
     ];
 
     /**

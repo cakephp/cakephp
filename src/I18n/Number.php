@@ -310,7 +310,7 @@ class Number
             'places' => null,
             'precision' => null,
             'pattern' => null,
-            'useIntlCode' => null
+            'useIntlCode' => null,
         ]);
         if (empty($options)) {
             return $formatter;
