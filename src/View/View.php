@@ -222,7 +222,7 @@ class View implements EventDispatcherInterface
     /**
      * Default custom config options.
      *
-     * @var array
+     * @var string[]
      */
     protected $_defaultConfig = [];
 
