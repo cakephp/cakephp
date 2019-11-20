@@ -53,6 +53,15 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * A flag for allowEmptyFor()
      *
+     * When `null` is given, it will be recognized as empty.
+     *
+     * @var int
+     */
+    public const EMPTY_NULL = 0;
+
+    /**
+     * A flag for allowEmptyFor()
+     *
      * When an empty string is given, it will be recognized as empty.
      *
      * @var int
@@ -202,7 +211,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
 
             $canBeEmpty = $this->_canBeEmpty($field, $context);
 
-            $flags = 0;
+            $flags = static::EMPTY_NULL;
             if (isset($this->_allowEmptyFlags[$name])) {
                 $flags = $this->_allowEmptyFlags[$name];
             }
