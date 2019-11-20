@@ -770,7 +770,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * ```
      *
      * @param string $field The name of the field.
-     * @param int|null $flags A bitmask of EMPTY_* flags which specify what is empty
+     * @param int|null $flags A bitmask of EMPTY_* flags which specify what is empty.
+     *   If no flags/bitmask is provided only `null` will be allowed as empty value.
      * @param bool|string|callable $when Indicates when the field is allowed to be empty
      * Valid values are true, false, 'create', 'update'. If a callable is passed then
      * the field will allowed to be empty only when the callback returns true.
