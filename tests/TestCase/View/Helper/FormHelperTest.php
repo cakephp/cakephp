@@ -5133,7 +5133,7 @@ class FormHelperTest extends TestCase
         $this->loadFixtures();
         $Articles = TableRegistry::getTableLocator()->get('Articles');
         $validator = $Articles->getValidator('default');
-        $validator->allowEmpty('user_id');
+        $validator->allowEmptyString('user_id');
         $Articles->setValidator('default', $validator);
 
         $entity = $Articles->newEmptyEntity();
@@ -7700,7 +7700,7 @@ class FormHelperTest extends TestCase
 
         $this->getTableLocator()->get('Comments')
             ->getValidator('default')
-            ->allowEmpty('comment', false);
+            ->allowEmptyString('comment', null, false);
         $result = $this->Form->control('0.comments.1.comment');
         // phpcs:disable
         $expected = [
@@ -7803,7 +7803,7 @@ class FormHelperTest extends TestCase
         $this->Form->setConfig('autoSetCustomValidity', true);
 
         $validator = (new \Cake\Validation\Validator())
-            ->notEmpty('email', 'Custom error message')
+            ->notEmptyString('email', 'Custom error message')
             ->requirePresence('password')
             ->alphaNumeric('password')
             ->notBlank('phone');
@@ -7882,7 +7882,7 @@ class FormHelperTest extends TestCase
     public function testHtml5ErrorMessageInTemplateVars()
     {
         $validator = (new \Cake\Validation\Validator())
-            ->notEmpty('email', 'Custom error "message" & entities')
+            ->notEmptyString('email', 'Custom error "message" & entities')
             ->requirePresence('password')
             ->alphaNumeric('password')
             ->notBlank('phone');
