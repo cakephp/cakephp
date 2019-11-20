@@ -56,7 +56,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
     /**
      * Get the controller associated with the collection.
      *
-     * @return \Cake\Controller\Controller|null Controller instance or null if not set.
+     * @return \Cake\Controller\Controller Controller instance or null if not set.
      */
     public function getController(): Controller
     {
