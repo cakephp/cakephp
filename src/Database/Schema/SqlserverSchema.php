@@ -91,7 +91,12 @@ class SqlserverSchema extends BaseSchema
             return ['type' => $col, 'length' => null];
         }
         if (strpos($col, 'datetime') !== false) {
-            return ['type' => TableSchema::TYPE_TIMESTAMP, 'length' => null];
+            $typeName = TableSchema::TYPE_DATETIME;
+            if ($scale > 0) {
+                $typeName = TableSchema::TYPE_DATETIME_FRACTIONAL;
+            }
+
+            return ['type' => $typeName, 'length' => null, 'precision' => $scale];
         }
 
         if ($col === 'char') {
@@ -168,23 +173,18 @@ class SqlserverSchema extends BaseSchema
     {
         $field = $this->_convertColumn(
             $row['type'],
-            $row['char_length'] != null ? (int)$row['char_length'] : null,
-            $row['precision'] != null ? (int)$row['precision'] : null,
-            $row['scale'] != null ? (int)$row['scale'] : null
+            $row['char_length'] !== null ? (int)$row['char_length'] : null,
+            $row['precision'] !== null ? (int)$row['precision'] : null,
+            $row['scale'] !== null ? (int)$row['scale'] : null
         );
-        if (!empty($row['default'])) {
-            $row['default'] = trim($row['default'], '()');
-        }
+
         if (!empty($row['autoincrement'])) {
             $field['autoIncrement'] = true;
-        }
-        if ($field['type'] === TableSchema::TYPE_BOOLEAN) {
-            $row['default'] = (int)$row['default'];
         }
 
         $field += [
             'null' => $row['null'] === '1',
-            'default' => $this->_defaultValue($row['default']),
+            'default' => $this->_defaultValue($field['type'], $row['default']),
             'collate' => $row['collation_name'],
         ];
         $schema->addColumn($row['name'], $field);
@@ -193,20 +193,34 @@ class SqlserverSchema extends BaseSchema
     /**
      * Manipulate the default value.
      *
-     * Sqlite includes quotes and bared NULLs in default values.
-     * We need to remove those.
+     * Removes () wrapping default values, extracts strings from
+     * N'' wrappers and collation text and converts NULL strings.
      *
      * @param string|int|null $default The default value.
      * @return string|int|null
      */
-    protected function _defaultValue($default)
+    protected function _defaultValue($type, $default)
     {
+        if ($default === null) {
+            return $default;
+        }
+
+        // remove () surrounding value (NULL) but leave () at the end of functions
+        // integers might have two ((0)) wrapping value
+        if (preg_match('/^\(+(.*?(\(\))?)\)+$/', $default, $matches)) {
+            $default = $matches[1];
+        }
+
         if ($default === 'NULL') {
             return null;
         }
 
+        if ($type === TableSchema::TYPE_BOOLEAN) {
+            return (int)$default;
+        }
+
         // Remove quotes
-        if (is_string($default) && preg_match("/^N?'(.*)'/", $default, $matches)) {
+        if (is_string($default) && preg_match("/^\(?N?'(.*)'\)?/", $default, $matches)) {
             return str_replace("''", "'", $matches[1]);
         }
 
@@ -365,8 +379,10 @@ class SqlserverSchema extends BaseSchema
             TableSchema::TYPE_DECIMAL => ' DECIMAL',
             TableSchema::TYPE_DATE => ' DATE',
             TableSchema::TYPE_TIME => ' TIME',
-            TableSchema::TYPE_DATETIME => ' DATETIME',
-            TableSchema::TYPE_TIMESTAMP => ' DATETIME',
+            TableSchema::TYPE_DATETIME => ' DATETIME2',
+            TableSchema::TYPE_DATETIME_FRACTIONAL => ' DATETIME2',
+            TableSchema::TYPE_TIMESTAMP => ' DATETIME2',
+            TableSchema::TYPE_TIMESTAMP_FRACTIONAL => ' DATETIME2',
             TableSchema::TYPE_UUID => ' UNIQUEIDENTIFIER',
             TableSchema::TYPE_JSON => ' NVARCHAR(MAX)',
         ];
@@ -424,7 +440,14 @@ class SqlserverSchema extends BaseSchema
             $out .= ' COLLATE ' . $data['collate'];
         }
 
-        if ($data['type'] === TableSchema::TYPE_FLOAT && isset($data['precision'])) {
+        $precisionTypes = [
+            TableSchema::TYPE_FLOAT,
+            TableSchema::TYPE_DATETIME,
+            TableSchema::TYPE_DATETIME_FRACTIONAL,
+            TableSchema::TYPE_TIMESTAMP,
+            TableSchema::TYPE_TIMESTAMP_FRACTIONAL,
+        ];
+        if (in_array($data['type'], $precisionTypes, true) && isset($data['precision'])) {
             $out .= '(' . (int)$data['precision'] . ')';
         }
 
@@ -442,12 +465,26 @@ class SqlserverSchema extends BaseSchema
             $out .= ' NOT NULL';
         }
 
+        $dateTimeTypes = [
+            TableSchema::TYPE_DATETIME,
+            TableSchema::TYPE_DATETIME_FRACTIONAL,
+            TableSchema::TYPE_TIMESTAMP,
+            TableSchema::TYPE_TIMESTAMP_FRACTIONAL,
+        ];
+        $dateTimeDefaults = [
+            'current_timestamp',
+            'getdate()',
+            'getutcdate()',
+            'sysdatetime()',
+            'sysutcdatetime()',
+            'sysdatetimeoffset()',
+        ];
         if (
             isset($data['default']) &&
-            in_array($data['type'], [TableSchema::TYPE_TIMESTAMP, TableSchema::TYPE_DATETIME]) &&
-            strtolower($data['default']) === 'current_timestamp'
+            in_array($data['type'], $dateTimeTypes, true) &&
+            in_array(strtolower($data['default']), $dateTimeDefaults, true)
         ) {
-            $out .= ' DEFAULT CURRENT_TIMESTAMP';
+            $out .= ' DEFAULT ' . strtoupper($data['default']);
         } elseif (isset($data['default'])) {
             $default = is_bool($data['default'])
                 ? (int)$data['default']
