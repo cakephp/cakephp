@@ -883,7 +883,7 @@ class EntityContextTest extends TestCase
         $articles = $this->getTableLocator()->get('Articles');
 
         $validator = $articles->getValidator();
-        $validator->notEmpty('title', 'nope', function ($context) {
+        $validator->notEmptyString('title', 'nope', function ($context) {
             return $context['providers']['entity']->isRequired();
         });
         $articles->setValidator('default', $validator);
@@ -911,7 +911,7 @@ class EntityContextTest extends TestCase
 
         $comments = $this->getTableLocator()->get('Comments');
         $validator = $comments->getValidator();
-        $validator->allowEmpty('comment', function ($context) {
+        $validator->allowEmptyString('comment', null, function ($context) {
             return $context['providers']['entity']->isNew();
         });
 
@@ -1395,13 +1395,13 @@ class EntityContextTest extends TestCase
         ]);
 
         $validator = new Validator();
-        $validator->notEmpty('title', 'Don\'t forget a title!');
+        $validator->notEmptyString('title', 'Don\'t forget a title!');
         $validator->add('title', 'minlength', [
             'rule' => ['minlength', 10],
         ])
         ->add('body', 'maxlength', [
             'rule' => ['maxlength', 1000],
-        ])->allowEmpty('body');
+        ])->allowEmptyString('body');
         $articles->setValidator('create', $validator);
 
         $validator = new Validator();

@@ -53,7 +53,7 @@ class FormContextTest extends TestCase
     public function testGetRequiredMessage()
     {
         $validator = new Validator();
-        $validator->notEmpty('title', 'Don\'t forget a title!');
+        $validator->notEmptyString('title', 'Don\'t forget a title!');
 
         $form = new Form();
         $form->setValidator(Form::DEFAULT_VALIDATOR, $validator);
