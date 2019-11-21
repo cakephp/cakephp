@@ -53,6 +53,15 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * A flag for allowEmptyFor()
      *
+     * When `null` is given, it will be recognized as empty.
+     *
+     * @var int
+     */
+    public const EMPTY_NULL = 0;
+
+    /**
+     * A flag for allowEmptyFor()
+     *
      * When an empty string is given, it will be recognized as empty.
      *
      * @var int
@@ -202,7 +211,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
 
             $canBeEmpty = $this->_canBeEmpty($field, $context);
 
-            $flags = static::EMPTY_ALL;
+            $flags = static::EMPTY_NULL;
             if (isset($this->_allowEmptyFlags[$name])) {
                 $flags = $this->_allowEmptyFlags[$name];
             }
@@ -705,7 +714,12 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         foreach ($field as $fieldName => $setting) {
             $settings = $this->_convertValidatorToArray($fieldName, $defaults, $setting);
             $fieldName = array_keys($settings)[0];
-            $this->allowEmptyFor($fieldName, null, $settings[$fieldName]['when'], $settings[$fieldName]['message']);
+            $this->allowEmptyFor(
+                $fieldName,
+                static::EMPTY_ALL,
+                $settings[$fieldName]['when'],
+                $settings[$fieldName]['message']
+            );
         }
 
         return $this;
@@ -771,7 +785,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * ```
      *
      * @param string $field The name of the field.
-     * @param int|null $flags A bitmask of EMPTY_* flags which specify what is empty
+     * @param int|null $flags A bitmask of EMPTY_* flags which specify what is empty.
+     *   If no flags/bitmask is provided only `null` will be allowed as empty value.
      * @param bool|string|callable $when Indicates when the field is allowed to be empty
      * Valid values are true, false, 'create', 'update'. If a callable is passed then
      * the field will allowed to be empty only when the callback returns true.
@@ -1161,6 +1176,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             $whenSetting = $this->invertWhenClause($settings[$fieldName]['when']);
 
             $this->field($fieldName)->allowEmpty($whenSetting);
+            $this->_allowEmptyFlags[$fieldName] = static::EMPTY_ALL;
             if ($settings[$fieldName]['message']) {
                 $this->_allowEmptyMessages[$fieldName] = $settings[$fieldName]['message'];
             }

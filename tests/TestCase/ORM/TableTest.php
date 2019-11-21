@@ -5932,7 +5932,7 @@ class TableTest extends TestCase
 
         $articles = $this->getTableLocator()->get('Articles');
         $validator = new Validator();
-        $validator->notBlank('title');
+        $validator->notEmptyString('title');
         $articles->setValidator('default', $validator);
 
         $articles->findOrCreate(['title' => '']);
