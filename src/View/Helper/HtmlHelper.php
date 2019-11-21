@@ -93,51 +93,6 @@ class HtmlHelper extends Helper
     protected $_scriptBlockOptions = [];
 
     /**
-     * Document type definitions
-     *
-     * @var string[]
-     */
-    protected $_docTypes = [
-        // phpcs:disable Generic.Files.LineLength
-        'html4-strict' => '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">',
-        'html4-trans' => '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">',
-        'html4-frame' => '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">',
-        'html5' => '<!DOCTYPE html>',
-        'xhtml-strict' => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">',
-        'xhtml-trans' => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">',
-        'xhtml-frame' => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">',
-        'xhtml11' => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">',
-        // phpcs:enable Generic.Files.LineLength
-    ];
-
-    /**
-     * Returns a doctype string.
-     *
-     * Possible doctypes:
-     *
-     *  - html4-strict:  HTML4 Strict.
-     *  - html4-trans:  HTML4 Transitional.
-     *  - html4-frame:  HTML4 Frameset.
-     *  - html5: HTML5. Default value.
-     *  - xhtml-strict: XHTML1 Strict.
-     *  - xhtml-trans: XHTML1 Transitional.
-     *  - xhtml-frame: XHTML1 Frameset.
-     *  - xhtml11: XHTML1.1.
-     *
-     * @param string $type Doctype to use.
-     * @return string|null Doctype string
-     * @link https://book.cakephp.org/4/en/views/helpers/html.html#creating-doctype-tags
-     */
-    public function docType(string $type = 'html5'): ?string
-    {
-        if (isset($this->_docTypes[$type])) {
-            return $this->_docTypes[$type];
-        }
-
-        return null;
-    }
-
-    /**
      * Creates a link to an external resource and handles basic meta tags
      *
      * Create a meta tag that is output inline:

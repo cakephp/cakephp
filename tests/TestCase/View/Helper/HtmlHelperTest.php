@@ -100,24 +100,6 @@ class HtmlHelperTest extends TestCase
     }
 
     /**
-     * testDocType method
-     *
-     * @return void
-     */
-    public function testDocType()
-    {
-        $result = $this->Html->docType();
-        $expected = '<!DOCTYPE html>';
-        $this->assertEquals($expected, $result);
-
-        $result = $this->Html->docType('html4-strict');
-        $expected = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">';
-        $this->assertEquals($expected, $result);
-
-        $this->assertNull($this->Html->docType('non-existing-doctype'));
-    }
-
-    /**
      * testLink method
      *
      * @return void
