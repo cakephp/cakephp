@@ -533,8 +533,6 @@ class HtmlHelper extends Helper
      *
      * ### Options
      *
-     * - `safe` (boolean) Whether or not the $script should be wrapped in `<![CDATA[ ]]>`.
-     *   Defaults to `false`.
      * - `block` Set to true to append output to view block "script" or provide
      *   custom block name.
      *
@@ -546,11 +544,7 @@ class HtmlHelper extends Helper
      */
     public function scriptBlock(string $script, array $options = []): ?string
     {
-        $options += ['safe' => false, 'block' => null];
-        if ($options['safe']) {
-            $script = "\n" . '//<![CDATA[' . "\n" . $script . "\n" . '//]]>' . "\n";
-        }
-        unset($options['safe']);
+        $options += ['block' => null];
 
         $out = $this->formatTemplate('javascriptblock', [
             'attrs' => $this->templater()->formatAttributes($options, ['block']),
@@ -575,8 +569,6 @@ class HtmlHelper extends Helper
      *
      * ### Options
      *
-     * - `safe` (boolean) Whether or not the $script should be wrapped in `<![CDATA[ ]]>`.
-     *   See scriptBlock().
      * - `block` Set to true to append output to view block "script" or provide
      *   custom block name.
      *
