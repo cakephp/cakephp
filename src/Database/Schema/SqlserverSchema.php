@@ -196,7 +196,8 @@ class SqlserverSchema extends BaseSchema
      * Removes () wrapping default values, extracts strings from
      * N'' wrappers and collation text and converts NULL strings.
      *
-     * @param string|int|null $default The default value.
+     * @param string $type The schema type
+     * @param string|null $default The default value.
      * @return string|int|null
      */
     protected function _defaultValue($type, $default)
