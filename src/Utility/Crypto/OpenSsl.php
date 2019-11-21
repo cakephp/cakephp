@@ -29,6 +29,8 @@ use LogicException;
  */
 class OpenSsl
 {
+    const METHOD_AES_256_CBC = 'aes-256-cbc';
+
     /**
      * Not implemented
      *
@@ -57,7 +59,7 @@ class OpenSsl
      */
     public static function encrypt($plain, $key)
     {
-        $method = 'AES-256-CBC';
+        $method = static::METHOD_AES_256_CBC;
         $ivSize = openssl_cipher_iv_length($method);
 
         $iv = openssl_random_pseudo_bytes($ivSize);
@@ -75,7 +77,7 @@ class OpenSsl
      */
     public static function decrypt($cipher, $key)
     {
-        $method = 'AES-256-CBC';
+        $method = static::METHOD_AES_256_CBC;
         $ivSize = openssl_cipher_iv_length($method);
 
         $iv = mb_substr($cipher, 0, $ivSize, '8bit');
