@@ -185,6 +185,7 @@ class HtmlHelper extends Helper
      * @param string $type Doctype to use.
      * @return string|null Doctype string
      * @link https://book.cakephp.org/3/en/views/helpers/html.html#creating-doctype-tags
+     * @deprecated 3.9.0 This method will be removed in 4.0.0.
      */
     public function docType($type = 'html5')
     {
