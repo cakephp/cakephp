@@ -189,6 +189,8 @@ class HtmlHelper extends Helper
      */
     public function docType($type = 'html5')
     {
+        deprecationWarning('HtmlHelper::docType() is deprecated and will be removed in 4.0.0');
+
         if (isset($this->_docTypes[$type])) {
             return $this->_docTypes[$type];
         }
