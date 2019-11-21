@@ -17,6 +17,13 @@ declare(strict_types=1);
 
 use Cake\Core\Configure;
 
+if (!defined('DS')) {
+    /**
+     * Defines DS as short form of DIRECTORY_SEPARATOR.
+     */
+    define('DS', DIRECTORY_SEPARATOR);
+}
+
 if (!function_exists('h')) {
     /**
      * Convenience method for htmlspecialchars.
