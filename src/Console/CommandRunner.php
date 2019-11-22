@@ -157,10 +157,10 @@ class CommandRunner implements EventDispatcherInterface
         } catch (MissingOptionException $e) {
             $io->error($e->getFullMessage());
 
-            return Command::CODE_ERROR;
+            return CommandInterface::CODE_ERROR;
         }
 
-        $result = Command::CODE_ERROR;
+        $result = CommandInterface::CODE_ERROR;
         $shell = $this->getShell($io, $commands, $name);
         if ($shell instanceof Shell) {
             $result = $this->runShell($shell, $argv);
@@ -170,13 +170,13 @@ class CommandRunner implements EventDispatcherInterface
         }
 
         if ($result === null || $result === true) {
-            return Command::CODE_SUCCESS;
+            return CommandInterface::CODE_SUCCESS;
         }
         if (is_int($result) && $result >= 0 && $result <= 255) {
             return $result;
         }
 
-        return Command::CODE_ERROR;
+        return CommandInterface::CODE_ERROR;
     }
 
     /**
