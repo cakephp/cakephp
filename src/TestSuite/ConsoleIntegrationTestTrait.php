@@ -15,7 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite;
 
-use Cake\Console\Command;
+use Cake\Command\Command;
 use Cake\Console\CommandRunner;
 use Cake\Console\ConsoleIo;
 use Cake\Console\Exception\StopException;
