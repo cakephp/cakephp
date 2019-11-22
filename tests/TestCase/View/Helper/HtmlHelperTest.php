@@ -1174,20 +1174,10 @@ class HtmlHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Html->scriptBlock('window.foo = 2;', ['safe' => false]);
+        $result = $this->Html->scriptBlock('window.foo = 2;');
         $expected = [
             '<script',
             'window.foo = 2;',
-            '/script',
-        ];
-        $this->assertHtml($expected, $result);
-
-        $result = $this->Html->scriptBlock('window.foo = 2;', ['safe' => true]);
-        $expected = [
-            '<script',
-            $this->cDataStart,
-            'window.foo = 2;',
-            $this->cDataEnd,
             '/script',
         ];
         $this->assertHtml($expected, $result);
@@ -1206,7 +1196,7 @@ class HtmlHelperTest extends TestCase
         $result = $this->Html->scriptBlock('alert("hi")', ['block' => 'scriptTop']);
         $this->assertNull($result);
 
-        $result = $this->Html->scriptBlock('window.foo = 2;', ['safe' => false, 'encoding' => 'utf-8']);
+        $result = $this->Html->scriptBlock('window.foo = 2;', ['encoding' => 'utf-8']);
         $expected = [
             'script' => ['encoding' => 'utf-8'],
             'window.foo = 2;',
@@ -1234,7 +1224,7 @@ class HtmlHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Html->scriptStart(['safe' => false]);
+        $result = $this->Html->scriptStart();
         $this->assertNull($result);
         echo 'this is some javascript';
 
@@ -1245,43 +1235,6 @@ class HtmlHelperTest extends TestCase
             '/script',
         ];
         $this->assertHtml($expected, $result);
-
-        $result = $this->Html->scriptStart(['safe' => true]);
-        $this->assertNull($result);
-        echo 'this is some javascript';
-
-        $result = $this->Html->scriptEnd();
-        $expected = [
-            '<script',
-            $this->cDataStart,
-            'this is some javascript',
-            $this->cDataEnd,
-            '/script',
-        ];
-        $this->assertHtml($expected, $result);
-
-        $result = $this->Html->scriptStart(['safe' => true, 'type' => 'text/x-handlebars-template']);
-        $this->assertNull($result);
-        echo 'this is some template';
-
-        $result = $this->Html->scriptEnd();
-        $expected = [
-            'script' => ['type' => 'text/x-handlebars-template'],
-            $this->cDataStart,
-            'this is some template',
-            $this->cDataEnd,
-            '/script',
-        ];
-        $this->assertHtml($expected, $result);
-
-        $this->View->expects($this->once())
-            ->method('append');
-        $result = $this->Html->scriptStart(['safe' => false, 'block' => true]);
-        $this->assertNull($result);
-        echo 'this is some javascript';
-
-        $result = $this->Html->scriptEnd();
-        $this->assertNull($result);
     }
 
     /**
