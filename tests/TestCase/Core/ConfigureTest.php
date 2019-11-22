@@ -465,7 +465,7 @@ class ConfigureTest extends TestCase
     public function testVersion()
     {
         $result = Configure::version();
-        $this->assertTrue(version_compare($result, '1.2', '>='));
+        $this->assertTrue(version_compare($result, '4.0', '>='));
     }
 
     /**
