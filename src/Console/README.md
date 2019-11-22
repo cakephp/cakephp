@@ -30,6 +30,7 @@ exit($runner->run($argv));
 For our `Application` class we can start with:
 
 ```php
+<?php
 namespace App;
 
 use App\Command\HelloCommand;
@@ -55,7 +56,7 @@ class Application implements ConsoleApplicationInterface
      * @param \Cake\Console\CommandCollection $commands The CommandCollection to add commands into.
      * @return \Cake\Console\CommandCollection The updated collection.
      */
-    public function console(CommandCollection $commands): CommandCollection;
+    public function console(CommandCollection $commands): CommandCollection
     {
         $commands->add('hello', HelloCommand::class);
 
@@ -67,6 +68,7 @@ class Application implements ConsoleApplicationInterface
 Next we'll build a very simple `HelloCommand`:
 
 ```php
+<?php
 namespace App\Command;
 
 use Cake\Console\Arguments;
