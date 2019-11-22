@@ -119,6 +119,24 @@ class TableTest extends TestCase
                 'Users__updated' => 'timestampfractional',
                 'updated' => 'timestampfractional',
             ]);
+        } elseif (strpos($config['driver'], 'Sqlserver') !== false) {
+            $this->usersTypeMap = new TypeMap([
+                'Users.id' => 'integer',
+                'id' => 'integer',
+                'Users__id' => 'integer',
+                'Users.username' => 'string',
+                'Users__username' => 'string',
+                'username' => 'string',
+                'Users.password' => 'string',
+                'Users__password' => 'string',
+                'password' => 'string',
+                'Users.created' => 'datetimefractional',
+                'Users__created' => 'datetimefractional',
+                'created' => 'datetimefractional',
+                'Users.updated' => 'datetimefractional',
+                'Users__updated' => 'datetimefractional',
+                'updated' => 'datetimefractional',
+            ]);
         }
 
         $this->articlesTypeMap = new TypeMap([

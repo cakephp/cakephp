@@ -71,6 +71,10 @@ author_id INTEGER NOT NULL,
 published BIT DEFAULT 0,
 views SMALLINT DEFAULT 0,
 created DATETIME,
+created2 DATETIME2,
+created2_with_default DATETIME2 DEFAULT SYSDATETIME(),
+created2_with_precision DATETIME2(3),
+created2_without_precision DATETIME2(0),
 field1 VARCHAR(10) DEFAULT NULL,
 field2 VARCHAR(10) DEFAULT 'NULL',
 field3 VARCHAR(10) DEFAULT 'O''hare',
@@ -94,8 +98,22 @@ SQL;
                 'DATETIME',
                 null,
                 null,
+                3,
+                ['type' => 'datetimefractional', 'length' => null, 'precision' => 3],
+            ],
+            [
+                'DATETIME2',
                 null,
-                ['type' => 'timestamp', 'length' => null],
+                null,
+                7,
+                ['type' => 'datetimefractional', 'length' => null, 'precision' => 7],
+            ],
+            [
+                'DATETIME2',
+                null,
+                null,
+                0,
+                ['type' => 'datetime', 'length' => null, 'precision' => 0],
             ],
             [
                 'DATE',
@@ -398,11 +416,43 @@ SQL;
                 'comment' => null,
             ],
             'created' => [
-                'type' => 'timestamp',
+                'type' => 'datetimefractional',
                 'null' => true,
                 'default' => null,
                 'length' => null,
-                'precision' => null,
+                'precision' => 3,
+                'comment' => null,
+            ],
+            'created2' => [
+                'type' => 'datetimefractional',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => 7,
+                'comment' => null,
+            ],
+            'created2_with_default' => [
+                'type' => 'datetimefractional',
+                'null' => true,
+                'default' => 'sysdatetime()',
+                'length' => null,
+                'precision' => 7,
+                'comment' => null,
+            ],
+            'created2_with_precision' => [
+                'type' => 'datetimefractional',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => 3,
+                'comment' => null,
+            ],
+            'created2_without_precision' => [
+                'type' => 'datetime',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => 0,
                 'comment' => null,
             ],
             'field1' => [
@@ -701,27 +751,52 @@ SQL;
             [
                 'created',
                 ['type' => 'datetime'],
-                '[created] DATETIME',
+                '[created] DATETIME2',
             ],
             [
                 'open_date',
                 ['type' => 'datetime', 'null' => false, 'default' => '2016-12-07 23:04:00'],
-                '[open_date] DATETIME NOT NULL DEFAULT \'2016-12-07 23:04:00\'',
+                '[open_date] DATETIME2 NOT NULL DEFAULT \'2016-12-07 23:04:00\'',
             ],
             [
                 'open_date',
                 ['type' => 'datetime', 'null' => false, 'default' => 'current_timestamp'],
-                '[open_date] DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP',
+                '[open_date] DATETIME2 NOT NULL DEFAULT CURRENT_TIMESTAMP',
+            ],
+            [
+                'open_date',
+                ['type' => 'datetime', 'null' => false, 'default' => 'getdate()'],
+                '[open_date] DATETIME2 NOT NULL DEFAULT GETDATE()',
+            ],
+            [
+                'open_date',
+                ['type' => 'datetime', 'null' => false, 'default' => 'getutcdate()'],
+                '[open_date] DATETIME2 NOT NULL DEFAULT GETUTCDATE()',
+            ],
+            [
+                'open_date',
+                ['type' => 'datetime', 'null' => false, 'default' => 'sysdatetime()'],
+                '[open_date] DATETIME2 NOT NULL DEFAULT SYSDATETIME()',
+            ],
+            [
+                'open_date',
+                ['type' => 'datetime', 'null' => false, 'default' => 'sysutcdatetime()'],
+                '[open_date] DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME()',
+            ],
+            [
+                'open_date',
+                ['type' => 'datetime', 'null' => false, 'default' => 'sysdatetimeoffset()'],
+                '[open_date] DATETIME2 NOT NULL DEFAULT SYSDATETIMEOFFSET()',
             ],
             [
                 'null_date',
                 ['type' => 'datetime', 'null' => true, 'default' => 'current_timestamp'],
-                '[null_date] DATETIME DEFAULT CURRENT_TIMESTAMP',
+                '[null_date] DATETIME2 DEFAULT CURRENT_TIMESTAMP',
             ],
             [
                 'null_date',
                 ['type' => 'datetime', 'null' => true],
-                '[null_date] DATETIME DEFAULT NULL',
+                '[null_date] DATETIME2 DEFAULT NULL',
             ],
             // Date & Time
             [
@@ -738,7 +813,7 @@ SQL;
             [
                 'created',
                 ['type' => 'timestamp', 'null' => true],
-                '[created] DATETIME DEFAULT NULL',
+                '[created] DATETIME2 DEFAULT NULL',
             ],
         ];
     }
@@ -962,6 +1037,18 @@ SQL;
                 'null' => false,
             ])
             ->addColumn('created', 'datetime')
+            ->addColumn('created_with_default', [
+                'type' => 'datetime',
+                'default' => 'sysdatetime()',
+            ])
+            ->addColumn('created_with_precision', [
+                'type' => 'datetime',
+                'precision' => 3,
+            ])
+            ->addColumn('created_without_precision', [
+                'type' => 'datetime',
+                'precision' => 0,
+            ])
             ->addConstraint('primary', [
                 'type' => 'primary',
                 'columns' => ['id'],
@@ -978,7 +1065,10 @@ CREATE TABLE [schema_articles] (
 [body] NVARCHAR(MAX),
 [data] NVARCHAR(MAX),
 [hash] NCHAR(40) COLLATE Latin1_General_BIN NOT NULL,
-[created] DATETIME,
+[created] DATETIME2,
+[created_with_default] DATETIME2 DEFAULT SYSDATETIME(),
+[created_with_precision] DATETIME2(3),
+[created_without_precision] DATETIME2(0),
 PRIMARY KEY ([id])
 )
 SQL;
