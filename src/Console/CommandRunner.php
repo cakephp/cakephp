@@ -161,7 +161,7 @@ class CommandRunner implements EventDispatcherInterface
         }
 
         $result = CommandInterface::CODE_ERROR;
-        $shell = $this->getShell($io, $commands, $name);
+        $shell = $this->getCommand($io, $commands, $name);
         if ($shell instanceof Shell) {
             $result = $this->runShell($shell, $argv);
         }
@@ -239,11 +239,11 @@ class CommandRunner implements EventDispatcherInterface
      * @param string $name The command name to find
      * @return \Cake\Console\Shell|\Cake\Console\CommandInterface
      */
-    protected function getShell(ConsoleIo $io, CommandCollection $commands, string $name)
+    protected function getCommand(ConsoleIo $io, CommandCollection $commands, string $name)
     {
         $instance = $commands->get($name);
         if (is_string($instance)) {
-            $instance = $this->createShell($instance, $io);
+            $instance = $this->createCommand($instance, $io);
         }
         if ($instance instanceof Shell) {
             $instance->setRootName($this->root);
@@ -364,7 +364,7 @@ class CommandRunner implements EventDispatcherInterface
      * @param \Cake\Console\ConsoleIo $io The IO wrapper for the created shell class.
      * @return \Cake\Console\Shell|\Cake\Console\CommandInterface
      */
-    protected function createShell(string $className, ConsoleIo $io)
+    protected function createCommand(string $className, ConsoleIo $io)
     {
         $shell = $this->factory->create($className);
         if ($shell instanceof Shell) {
