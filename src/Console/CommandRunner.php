@@ -16,8 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Console;
 
-use Cake\Command\HelpCommand;
 use Cake\Command\VersionCommand;
+use Cake\Console\Command\HelpCommand;
 use Cake\Console\Exception\MissingOptionException;
 use Cake\Console\Exception\StopException;
 use Cake\Core\ConsoleApplicationInterface;
