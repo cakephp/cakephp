@@ -54,6 +54,7 @@ class ClientTest extends TestCase
             'scheme' => 'http',
             'host' => 'example.org',
             'auth' => ['username' => 'mark', 'password' => 'secret'],
+            'protocolVersion' => '1.1',
         ];
         foreach ($expected as $key => $val) {
             $this->assertEquals($val, $result[$key]);
@@ -209,9 +210,10 @@ class ClientTest extends TestCase
             ->getMock();
         $mock->expects($this->once())
             ->method('send')
-            ->with($this->callback(function ($request) use ($cookies, $headers) {
+            ->with($this->callback(function ($request) use ($headers) {
                 $this->assertInstanceOf('Cake\Http\Client\Request', $request);
                 $this->assertEquals(Request::METHOD_GET, $request->getMethod());
+                $this->assertSame('2', $request->getProtocolVersion());
                 $this->assertEquals('http://cakephp.org/test.html', $request->getUri() . '');
                 $this->assertEquals('split=value', $request->getHeaderLine('Cookie'));
                 $this->assertEquals($headers['Content-Type'], $request->getHeaderLine('content-type'));
@@ -221,7 +223,7 @@ class ClientTest extends TestCase
             }))
             ->will($this->returnValue([$response]));
 
-        $http = new Client(['adapter' => $mock]);
+        $http = new Client(['adapter' => $mock, 'protocolVersion' => '2']);
         $result = $http->get('http://cakephp.org/test.html', [], [
             'headers' => $headers,
             'cookies' => $cookies,
