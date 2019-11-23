@@ -1589,6 +1589,63 @@ class EmailTest extends TestCase
     }
 
     /**
+     * Test an attachment filename with non-ASCII characters.
+     *
+     * @return void
+     */
+    public function testSendWithNonAsciiFilenameAttachments()
+    {
+        $this->Email->setTransport('debug');
+        $this->Email->setFrom('cake@cakephp.org');
+        $this->Email->setTo('cake@cakephp.org');
+        $this->Email->setSubject('My title');
+        $this->Email->setEmailFormat('both');
+        $this->Email->setAttachments([
+            'gâteau.png' => [
+                'file' => CORE_PATH . 'VERSION.txt',
+                'contentId' => 'abc123'
+            ]
+        ]);
+        $result = $this->Email->send('Hello');
+
+        $boundary = $this->Email->getBoundary();
+        $this->assertContains('Content-Type: multipart/mixed; boundary="' . $boundary . '"', $result['headers']);
+        $expected = "--$boundary\r\n" .
+            "Content-Type: multipart/related; boundary=\"rel-$boundary\"\r\n" .
+            "\r\n" .
+            "--rel-$boundary\r\n" .
+            "Content-Type: multipart/alternative; boundary=\"alt-$boundary\"\r\n" .
+            "\r\n" .
+            "--alt-$boundary\r\n" .
+            "Content-Type: text/plain; charset=UTF-8\r\n" .
+            "Content-Transfer-Encoding: 8bit\r\n" .
+            "\r\n" .
+            'Hello' .
+            "\r\n" .
+            "\r\n" .
+            "\r\n" .
+            "--alt-$boundary\r\n" .
+            "Content-Type: text/html; charset=UTF-8\r\n" .
+            "Content-Transfer-Encoding: 8bit\r\n" .
+            "\r\n" .
+            'Hello' .
+            "\r\n" .
+            "\r\n" .
+            "\r\n" .
+            "--alt-{$boundary}--\r\n" .
+            "\r\n" .
+            "--rel-$boundary\r\n" .
+            "Content-Disposition: inline; filename=\"gateau.png\"; filename*=utf-8''g%C3%A2teau.png\r\n" .
+            "Content-Type: text/plain\r\n" .
+            "Content-Transfer-Encoding: base64\r\n" .
+            "Content-ID: <abc123>\r\n" .
+            "\r\n";
+        $this->assertContains($expected, $result['message']);
+        $this->assertContains('--rel-' . $boundary . '--', $result['message']);
+        $this->assertContains('--' . $boundary . '--', $result['message']);
+    }
+
+    /**
      * testSendWithLog method
      *
      * @return void
