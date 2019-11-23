@@ -15,6 +15,8 @@ declare(strict_types=1);
  */
 namespace Cake\Http\Client;
 
+use Cake\Utility\Text;
+
 /**
  * Contains the data and behavior for a single
  * part in a Multipart FormData request body.
@@ -76,17 +78,26 @@ class FormDataPart
     protected $_contentId;
 
     /**
+     * The charset attribute for the Content-Disposition header fields
+     *
+     * @var string|null
+     */
+    protected $_charset;
+
+    /**
      * Constructor
      *
      * @param string $name The name of the data.
      * @param string $value The value of the data.
      * @param string $disposition The type of disposition to use, defaults to form-data.
+     * @param string|null $charset The charset of the data.
      */
-    public function __construct(string $name, string $value, string $disposition = 'form-data')
+    public function __construct(string $name, string $value, string $disposition = 'form-data', ?string $charset = null)
     {
         $this->_name = $name;
         $this->_value = $value;
         $this->_disposition = $disposition;
+        $this->_charset = $charset;
     }
 
     /**
@@ -205,10 +216,10 @@ class FormDataPart
         if ($this->_disposition) {
             $out .= 'Content-Disposition: ' . $this->_disposition;
             if ($this->_name) {
-                $out .= '; name="' . $this->_name . '"';
+                $out .= '; ' . $this->_headerParameterToString('name', $this->_name);
             }
             if ($this->_filename) {
-                $out .= '; filename="' . $this->_filename . '"';
+                $out .= '; ' . $this->_headerParameterToString('filename', $this->_filename);
             }
             $out .= "\r\n";
         }
@@ -225,5 +236,26 @@ class FormDataPart
         $out .= $this->_value;
 
         return $out;
+    }
+
+    /**
+     * Get the string for the header parameter.
+     *
+     * If the value contains non-ASCII letters an additional header indicating
+     * the charset encoding will be set.
+     *
+     * @param string $name The name of the header parameter
+     * @param string $value The value of the header parameter
+     * @return string
+     */
+    protected function _headerParameterToString(string $name, string $value): string
+    {
+        $transliterated = Text::transliterate(str_replace('"', '', $value));
+        $return = sprintf('%s="%s"', $name, $transliterated);
+        if ($this->_charset !== null && $value !== $transliterated) {
+            $return .= sprintf("; %s*=%s''%s", $name, strtolower($this->_charset), rawurlencode($value));
+        }
+
+        return $return;
     }
 }

@@ -1385,7 +1385,7 @@ class Message implements JsonSerializable, Serializable
                 !isset($fileInfo['contentDisposition']) ||
                 $fileInfo['contentDisposition']
             );
-            $part = new FormDataPart('', $data, '');
+            $part = new FormDataPart('', $data, '', $this->getHeaderCharset());
 
             if ($hasDisposition) {
                 $part->disposition('attachment');
@@ -1423,7 +1423,7 @@ class Message implements JsonSerializable, Serializable
             $data = $fileInfo['data'] ?? $this->readFile($fileInfo['file']);
 
             $msg[] = '--' . $boundary;
-            $part = new FormDataPart('', $data, 'inline');
+            $part = new FormDataPart('', $data, 'inline', $this->getHeaderCharset());
             $part->type($fileInfo['mimetype']);
             $part->transferEncoding('base64');
             $part->contentId($fileInfo['contentId']);
