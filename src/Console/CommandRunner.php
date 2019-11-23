@@ -132,9 +132,11 @@ class CommandRunner implements EventDispatcherInterface
         $this->bootstrap();
 
         $commands = new CommandCollection([
-            'version' => VersionCommand::class,
             'help' => HelpCommand::class,
         ]);
+        if (class_exists(VersionCommand::class)) {
+            $commands->add('version', VersionCommand::class);
+        }
         $commands = $this->app->console($commands);
 
         if ($this->app instanceof PluginApplicationInterface) {
