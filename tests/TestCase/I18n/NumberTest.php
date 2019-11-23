@@ -49,6 +49,7 @@ class NumberTest extends TestCase
         unset($this->Number);
         I18n::setLocale($this->locale);
         Number::defaultCurrency(false);
+        Number::defaultCurrencyFormat(false);
     }
 
     /**
@@ -323,6 +324,21 @@ class NumberTest extends TestCase
 
         $this->Number->defaultCurrency('JPY');
         $this->assertEquals('JPY', $this->Number->defaultCurrency());
+    }
+
+    /**
+     * Test default currency format
+     *
+     * @return void
+     */
+    public function testDefaultCurrencyFormat()
+    {
+        $this->assertEquals('currency', $this->Number->defaultCurrencyFormat());
+
+        $this->Number->defaultCurrencyFormat(Number::FORMAT_CURRENCY_ACCOUNTING);
+        $this->assertEquals('currency_accounting', $this->Number->defaultCurrencyFormat());
+
+        $this->assertEquals('($123.45)', $this->Number->currency(-123.45));
     }
 
     /**

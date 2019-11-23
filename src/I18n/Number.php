@@ -27,29 +27,22 @@ class Number
 {
     /**
      * Default locale
-     *
-     * @var string
      */
     const DEFAULT_LOCALE = 'en_US';
 
     /**
      * Format type to format as currency
-     *
-     * @var string
      */
     const FORMAT_CURRENCY = 'currency';
 
     /**
-`     * Format type to format as currency, accounting style (negative numbers in parentheses)
-     *
-     * @var string
+     * Format type to format as currency, accounting style (negative numbers in parentheses)
      */
     const FORMAT_CURRENCY_ACCOUNTING = 'currency_accounting';
 
     /**
-     * ICU Constant for accounting format; not yet supported by INTL library
-     *
-     * @var int
+     * ICU Constant for accounting format; not yet supported by INTL library.
+     * See UNUM_CURRENCY_ACCOUNTING in https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/unum_8h.html
      */
     const CURRENCY_ACCOUNTING = 12;
 
@@ -267,46 +260,46 @@ class Number
      */
     public static function defaultCurrency($currency = null)
     {
-        if (!empty($currency)) {
-            return self::$_defaultCurrency = $currency;
+        if ($currency !== null && $currency !== false) {
+            return static::$_defaultCurrency = $currency;
         }
 
         if ($currency === false) {
-            return self::$_defaultCurrency = null;
+            return static::$_defaultCurrency = null;
         }
 
-        if (empty(self::$_defaultCurrency)) {
+        if (static::$_defaultCurrency === null) {
             $locale = ini_get('intl.default_locale') ?: static::DEFAULT_LOCALE;
             $formatter = new NumberFormatter($locale, NumberFormatter::CURRENCY);
-            self::$_defaultCurrency = $formatter->getTextAttribute(NumberFormatter::CURRENCY_CODE);
+            static::$_defaultCurrency = $formatter->getTextAttribute(NumberFormatter::CURRENCY_CODE);
         }
 
-        return self::$_defaultCurrency;
+        return static::$_defaultCurrency;
     }
 
     /**
      * Getter/setter for default currency format
      *
-     * @param null $currencyFormat Default currency format to be used by currency()
+     * @param string|bool|null $currencyFormat Default currency format to be used by currency()
      * if $currencyFormat argument is not provided. If boolean false is passed, it will clear the
      * currently stored value
      * @return string CurrencyFormat
      */
     public static function defaultCurrencyFormat($currencyFormat = null)
     {
-        if (!empty($currencyFormat)) {
-            return self::$_defaultCurrencyFormat = $currencyFormat;
+        if ($currencyFormat !== null && $currencyFormat !== false) {
+            return static::$_defaultCurrencyFormat = $currencyFormat;
         }
 
         if ($currencyFormat === false) {
-            return self::$_defaultCurrencyFormat = null;
+            return static::$_defaultCurrencyFormat = null;
         }
 
-        if (empty(self::$_defaultCurrencyFormat)) {
-            self::$_defaultCurrencyFormat = static::FORMAT_CURRENCY;
+        if (static::$_defaultCurrencyFormat === null) {
+            static::$_defaultCurrencyFormat = static::FORMAT_CURRENCY;
         }
 
-        return self::$_defaultCurrencyFormat;
+        return static::$_defaultCurrencyFormat;
     }
 
     /**
