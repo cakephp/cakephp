@@ -54,17 +54,6 @@ class DateTimeType extends BaseType
     protected $_format = 'Y-m-d H:i:s';
 
     /**
-     * The DateTime formats allowed by `marshal()`.
-     *
-     * @var array
-     */
-    protected $_marshalFormats = [
-        'Y-m-d H:i:s',
-        'Y-m-d\TH:i:s',
-        'Y-m-d\TH:i:sP',
-    ];
-
-    /**
      * Whether `marshal()` should use locale-aware parser with `_localeMarshalFormat`.
      *
      * @var bool
@@ -257,7 +246,7 @@ class DateTimeType extends BaseType
             } elseif ($isString && $this->_useLocaleMarshal) {
                 return $this->_parseLocaleValue($value);
             } elseif ($isString) {
-                return $this->_parseValue($value);
+                return new $class($value);
             }
         } catch (Exception $e) {
             return null;
@@ -403,35 +392,6 @@ class DateTimeType extends BaseType
         $class = $this->_className;
 
         return $class::parseDateTime($value, $this->_localeMarshalFormat);
-    }
-
-    /**
-     * Converts a string into a DateTime object after parsing it using the
-     * formats in `_marshalFormats`.
-     *
-     * @param string $value The value to parse and convert to an object.
-     * @return \DateTimeInterface|null
-     */
-    protected function _parseValue(string $value)
-    {
-        /** @var \DateTime|\DateTimeImmutable $class */
-        $class = $this->_className;
-
-        foreach ($this->_marshalFormats as $format) {
-            try {
-                $dateTime = $class::createFromFormat($format, $value);
-                // Check for false in case DateTime is used directly
-                if ($dateTime !== false) {
-                    return $dateTime;
-                }
-            } catch (InvalidArgumentException $e) {
-                // Chronos wraps DateTime::createFromFormat and throws
-                // exception if parse fails.
-                continue;
-            }
-        }
-
-        return null;
     }
 
     /**

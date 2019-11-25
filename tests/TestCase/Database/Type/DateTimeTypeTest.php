@@ -313,13 +313,14 @@ class DateTimeTypeTest extends TestCase
      */
     public function testLocaleParserDisable()
     {
-        $expected = new Time('13-10-2013 23:28:00');
+        $expected = new Time('2013-10-13 23:28:00');
         $this->type->useLocaleParser();
-        $result = $this->type->marshal('10/13/2013 11:28pm');
+        $this->type->setLocaleFormat('y-d M m-ha');
+        $result = $this->type->marshal('2013-13 10 28:11pm');
         $this->assertEquals($expected, $result);
 
         $this->type->useLocaleParser(false);
-        $result = $this->type->marshal('10/13/2013 11:28pm');
+        $result = $this->type->marshal('2013-13 10 28:11pm');
         $this->assertNotEquals($expected, $result);
     }
 

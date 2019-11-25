@@ -33,13 +33,6 @@ class DateType extends DateTimeType
     protected $_format = 'Y-m-d';
 
     /**
-     * @inheritDoc
-     */
-    protected $_marshalFormats = [
-        'Y-m-d',
-    ];
-
-    /**
      * In this class we want Date objects to  have their time
      * set to the beginning of the day.
      *

@@ -31,13 +31,6 @@ class TimeType extends DateTimeType
     /**
      * @inheritDoc
      */
-    protected $_marshalFormats = [
-        'H:i:s',
-    ];
-
-    /**
-     * @inheritDoc
-     */
     protected function _parseLocaleValue(string $value)
     {
         /** @var \Cake\I18n\I18nDateTimeInterface $class */
