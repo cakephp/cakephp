@@ -309,4 +309,20 @@ class CurlTest extends TestCase
         ];
         $this->assertSame($expected, $result);
     }
+
+    /**
+     * Test converting client options into curl ones.
+     *
+     * @return void
+     */
+    public function testBuildOptionsProtocolVersion()
+    {
+        $this->skipIf(!defined('CURL_HTTP_VERSION_2TLS'), 'Requires libcurl 7.42');
+        $options = [];
+        $request = new Request('http://localhost/things', 'GET');
+        $request = $request->withProtocolVersion('2');
+
+        $result = $this->curl->buildOptions($request, $options);
+        $this->assertSame(CURL_HTTP_VERSION_2TLS, $result[CURLOPT_HTTP_VERSION]);
+    }
 }
