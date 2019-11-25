@@ -24,6 +24,7 @@ use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Http\Session;
+use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 
@@ -94,6 +95,43 @@ class FormProtectionComponentTest extends TestCase
         $this->assertNull($this->FormProtection->startup($event));
     }
 
+    public function testValidationWithBaseUrl(): void
+    {
+        $session = new Session();
+        $session->id('cli');
+        $request = new ServerRequest([
+            'url' => '/articles/index',
+            'base' => '/subfolder',
+            'webroot' => '/subfolder/',
+            'session' => $session,
+            'params' => ['controller' => 'articles', 'action' => 'index'],
+        ]);
+        Router::setRequest($request);
+        $this->Controller->setRequest($request);
+
+        $unlocked = '';
+        $fields = ['id' => '1'];
+        $debug = urlencode(json_encode([
+            '/subfolder/articles/index',
+            $fields,
+            [],
+        ]));
+        $fields = hash_hmac(
+            'sha1',
+            '/subfolder/articles/index' . serialize($fields) . $unlocked . 'cli',
+            Security::getSalt()
+        );
+        $fields .= urlencode(':id');
+
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
+            'id' => '1',
+            '_Token' => compact('fields', 'unlocked', 'debug'),
+        ]));
+
+        $event = new Event('Controller.startup', $this->Controller);
+        $this->assertNull($this->FormProtection->startup($event));
+    }
+
     public function testValidationOnGetWithData(): void
     {
         $fields = 'an-invalid-token';
@@ -160,7 +198,7 @@ class FormProtectionComponentTest extends TestCase
             $fields,
             [],
         ]));
-        $fields = urlencode(Security::hash(serialize($fields) . $unlocked . Security::getSalt()));
+        $fields = hash_hmac('sha1', '/articles/index' . serialize($fields) . $unlocked . 'cli', Security::getSalt());
         $fields .= urlencode(':Model.hidden|Model.id');
 
         $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
