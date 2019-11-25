@@ -411,12 +411,20 @@ class Configure
      */
     public static function version(): string
     {
-        if (!isset(static::$_values['Cake']['version'])) {
-            $config = require dirname(dirname(__DIR__)) . '/config/config.php';
-            static::write($config);
+        $version = static::read('Cake.version');
+        if ($version !== null) {
+            return $version;
         }
 
-        return static::$_values['Cake']['version'];
+        $path = dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'config/config.php';
+        if (file_exists($path)) {
+            $config = require $path;
+            static::write($config);
+
+            return static::read('Cake.version');
+        }
+
+        return 'unknown';
     }
 
     /**
