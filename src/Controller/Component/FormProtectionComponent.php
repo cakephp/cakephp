@@ -22,6 +22,7 @@ use Cake\Event\EventInterface;
 use Cake\Form\FormProtector;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Response;
+use Cake\Routing\Router;
 use Closure;
 
 /**
@@ -87,7 +88,7 @@ class FormProtectionComponent extends Component
             $request->getSession()->start();
             $isValid = $formProtector->validate(
                 $data,
-                $request->getRequestTarget(),
+                Router::url($request->getRequestTarget()),
                 $request->getSession()->id()
             );
 
