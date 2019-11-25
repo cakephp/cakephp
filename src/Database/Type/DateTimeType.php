@@ -25,7 +25,6 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
 use Exception;
-use InvalidArgumentException;
 use PDO;
 use RuntimeException;
 
@@ -246,6 +245,7 @@ class DateTimeType extends BaseType
             } elseif ($isString && $this->_useLocaleMarshal) {
                 return $this->_parseLocaleValue($value);
             } elseif ($isString) {
+                /** @var \DateTimeInterface */
                 return new $class($value);
             }
         } catch (Exception $e) {
