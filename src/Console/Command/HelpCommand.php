@@ -17,8 +17,8 @@ declare(strict_types=1);
 namespace Cake\Console\Command;
 
 use ArrayIterator;
-use Cake\Command\Command;
 use Cake\Console\Arguments;
+use Cake\Console\BaseCommand;
 use Cake\Console\CommandCollection;
 use Cake\Console\CommandCollectionAwareInterface;
 use Cake\Console\ConsoleIo;
@@ -31,7 +31,7 @@ use SimpleXMLElement;
 /**
  * Print out command list
  */
-class HelpCommand extends Command implements CommandCollectionAwareInterface
+class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
 {
     /**
      * The command collection to get help on.
