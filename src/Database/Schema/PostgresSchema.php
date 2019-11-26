@@ -88,8 +88,11 @@ class PostgresSchema extends BaseSchema
             $length = (int)$matches[2];
         }
 
-        if (in_array($col, ['date', 'time', 'boolean'])) {
+        if (in_array($col, ['date', 'time', 'boolean'], true)) {
             return ['type' => $col, 'length' => null];
+        }
+        if (in_array($col, ['timestamptz', 'timestamp with time zone'], true)) {
+            return ['type' => TableSchema::TYPE_TIMESTAMP_TIMEZONE, 'length' => null];
         }
         if (strpos($col, 'timestamp') !== false) {
             return ['type' => TableSchema::TYPE_TIMESTAMP_FRACTIONAL, 'length' => null];
@@ -185,6 +188,10 @@ class PostgresSchema extends BaseSchema
             if ($field['precision'] === 0) {
                 $field['type'] = TableSchema::TYPE_TIMESTAMP;
             }
+        }
+
+        if ($field['type'] === TableSchema::TYPE_TIMESTAMP_TIMEZONE) {
+            $field['precision'] = $row['datetime_precision'];
         }
 
         $schema->addColumn($row['name'], $field);
@@ -382,8 +389,10 @@ class PostgresSchema extends BaseSchema
             TableSchema::TYPE_TIME => ' TIME',
             TableSchema::TYPE_DATETIME => ' TIMESTAMP',
             TableSchema::TYPE_DATETIME_FRACTIONAL => ' TIMESTAMP',
+            TableSchema::TYPE_DATETIME_TIMEZONE => ' TIMESTAMPTZ',
             TableSchema::TYPE_TIMESTAMP => ' TIMESTAMP',
             TableSchema::TYPE_TIMESTAMP_FRACTIONAL => ' TIMESTAMP',
+            TableSchema::TYPE_TIMESTAMP_TIMEZONE => ' TIMESTAMPTZ',
             TableSchema::TYPE_UUID => ' UUID',
             TableSchema::TYPE_CHAR => ' CHAR',
             TableSchema::TYPE_JSON => ' JSONB',
@@ -435,8 +444,10 @@ class PostgresSchema extends BaseSchema
             TableSchema::TYPE_FLOAT,
             TableSchema::TYPE_DATETIME,
             TableSchema::TYPE_DATETIME_FRACTIONAL,
+            TableSchema::TYPE_DATETIME_TIMEZONE,
             TableSchema::TYPE_TIMESTAMP,
             TableSchema::TYPE_TIMESTAMP_FRACTIONAL,
+            TableSchema::TYPE_TIMESTAMP_TIMEZONE,
         ];
         if (in_array($data['type'], $hasPrecision) && isset($data['precision'])) {
             $out .= '(' . $data['precision'] . ')';
@@ -459,8 +470,10 @@ class PostgresSchema extends BaseSchema
         $datetimeTypes = [
             TableSchema::TYPE_DATETIME,
             TableSchema::TYPE_DATETIME_FRACTIONAL,
+            TableSchema::TYPE_DATETIME_TIMEZONE,
             TableSchema::TYPE_TIMESTAMP,
             TableSchema::TYPE_TIMESTAMP_FRACTIONAL,
+            TableSchema::TYPE_TIMESTAMP_TIMEZONE,
         ];
         if (
             isset($data['default']) &&

@@ -81,6 +81,7 @@ average_income NUMERIC(10,2),
 created TIMESTAMP,
 created_without_precision TIMESTAMP(0),
 created_with_precision TIMESTAMP(3),
+created_with_timezone TIMESTAMPTZ(3),
 CONSTRAINT "content_idx" UNIQUE ("title", "body"),
 CONSTRAINT "author_idx" FOREIGN KEY ("author_id") REFERENCES "schema_authors" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 )
@@ -110,6 +111,14 @@ SQL;
             [
                 ['type' => 'TIMESTAMP WITHOUT TIME ZONE', 'datetime_precision' => 6],
                 ['type' => 'timestampfractional', 'length' => null, 'precision' => 6],
+            ],
+            [
+                ['type' => 'TIMESTAMP WITH TIME ZONE', 'datetime_precision' => 6],
+                ['type' => 'timestamptimezone', 'length' => null, 'precision' => 6],
+            ],
+            [
+                ['type' => 'TIMESTAMPTZ', 'datetime_precision' => 6],
+                ['type' => 'timestamptimezone', 'length' => null, 'precision' => 6],
             ],
             // Date & time
             [
@@ -424,6 +433,14 @@ SQL;
             ],
             'created_with_precision' => [
                 'type' => 'timestampfractional',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => 3,
+                'comment' => null,
+            ],
+            'created_with_timezone' => [
+                'type' => 'timestamptimezone',
                 'null' => true,
                 'default' => null,
                 'length' => null,
@@ -1189,6 +1206,7 @@ SQL;
             ->addColumn('created', 'timestamp')
             ->addColumn('created_without_precision', ['type' => 'timestamp', 'precision' => 0])
             ->addColumn('created_with_precision', ['type' => 'timestampfractional', 'precision' => 6])
+            ->addColumn('created_with_timezone', ['type' => 'timestamptimezone', 'precision' => 6])
             ->addConstraint('primary', [
                 'type' => 'primary',
                 'columns' => ['id'],
@@ -1208,6 +1226,7 @@ CREATE TABLE "schema_articles" (
 "created" TIMESTAMP,
 "created_without_precision" TIMESTAMP(0),
 "created_with_precision" TIMESTAMP(6),
+"created_with_timezone" TIMESTAMPTZ(6),
 PRIMARY KEY ("id")
 )
 SQL;

@@ -41,6 +41,7 @@ class TypeFactory
         'date' => Type\DateType::class,
         'datetime' => Type\DateTimeType::class,
         'datetimefractional' => Type\DateTimeFractionalType::class,
+        'datetimetimezone' => Type\DateTimeTimezoneType::class,
         'decimal' => Type\DecimalType::class,
         'float' => Type\FloatType::class,
         'json' => Type\JsonType::class,
@@ -50,6 +51,7 @@ class TypeFactory
         'time' => Type\TimeType::class,
         'timestamp' => Type\DateTimeType::class,
         'timestampfractional' => Type\DateTimeFractionalType::class,
+        'timestamptimezone' => Type\DateTimeTimezoneType::class,
         'uuid' => Type\UuidType::class,
     ];
 
