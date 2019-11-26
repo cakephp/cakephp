@@ -412,7 +412,7 @@ class Configure
     public static function version(): string
     {
         if (!isset(static::$_values['Cake']['version'])) {
-            $config = require CORE_PATH . 'config/config.php';
+            $config = require dirname(dirname(__DIR__)) . '/config/config.php';
             static::write($config);
         }
 

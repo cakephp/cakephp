@@ -114,6 +114,9 @@ class CommandScanner
             return [];
         }
 
+        // This ensures `Command` class is not added to the list.
+        $hide[] = '';
+
         $classPattern = '/(Shell|Command)\.php$/';
         $fs = new Filesystem();
         /** @var \SplFileInfo[] $files */
@@ -137,7 +140,7 @@ class CommandScanner
                 continue;
             }
             if (is_subclass_of($class, CommandInterface::class)) {
-                /** @var \Cake\Console\Command $class */
+                /** @var \Cake\Console\BaseCommand $class */
                 $name = $class::defaultName();
             }
             $shells[$path . $file] = [
