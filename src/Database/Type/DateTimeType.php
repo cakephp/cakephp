@@ -204,10 +204,11 @@ class DateTimeType extends BaseType
             $instance = new $class($value, $this->dbTimezone);
         }
 
-        if (!$this->keepDatabaseTimezone) {
-            if ($instance->getTimezone()->getName() !== $this->defaultTimezone->getName()) {
-                $instance = $instance->setTimezone($this->defaultTimezone);
-            }
+        if (
+            !$this->keepDatabaseTimezone &&
+            $instance->getTimezone()->getName() !== $this->defaultTimezone->getName()
+        ) {
+            $instance = $instance->setTimezone($this->defaultTimezone);
         }
 
         if ($this->setToDateStart) {
