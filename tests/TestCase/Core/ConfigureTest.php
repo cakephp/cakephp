@@ -464,8 +464,14 @@ class ConfigureTest extends TestCase
      */
     public function testVersion()
     {
-        $result = Configure::version();
-        $this->assertTrue(version_compare($result, '4.0', '>='));
+        $original = Configure::version();
+        $this->assertTrue(version_compare($original, '4.0', '>='));
+
+        Configure::write('Cake.version', 'banana');
+        $this->assertSame('banana', Configure::version('Cake.version'));
+
+        Configure::delete('Cake.version');
+        $this->assertSame($original, Configure::version());
     }
 
     /**
