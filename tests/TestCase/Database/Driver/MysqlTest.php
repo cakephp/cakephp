@@ -163,4 +163,13 @@ class MysqlTest extends TestCase
         $this->assertFalse($driver->commitTransaction());
         $this->assertTrue($driver->isConnected());
     }
+
+    public function testGetConnectionId()
+    {
+        $connection = ConnectionManager::get('test');
+        $driver = $connection->getDriver();
+        $actual = $driver->getConnectionId();
+        $this->assertNotNull($actual);
+        $this->assertGreaterThan(0, $actual);
+    }
 }
