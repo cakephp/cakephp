@@ -25,14 +25,14 @@ use Cake\Log\Log;
 class QueryLogger
 {
     /**
-     * The connection id.
+     * The database connection id.
      *
      * @var int|null
      */
     protected $_connectionId;
 
     /**
-     * Gets the logger object
+     * Sets the database connection id.
      *
      * @param int|null $connectionId Database connection id.
      * @return void

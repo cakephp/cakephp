@@ -970,7 +970,7 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * Gets the logger object
+     * Gets the database connection id.
      *
      * @return int|null
      */

@@ -156,7 +156,7 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * Get database connection id.
+     * Gets the database connection id.
      *
      * @return int|null
      */
