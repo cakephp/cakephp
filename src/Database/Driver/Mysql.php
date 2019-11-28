@@ -187,6 +187,7 @@ class Mysql extends Driver
         if ($row === false) {
             return null;
         }
+
         return (int)$row[0];
     }
 }
