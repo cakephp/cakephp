@@ -257,7 +257,7 @@ class Marshaller
             );
         }
 
-        return $validator->errors($data, $isNew);
+        return $validator->validate($data, $isNew);
     }
 
     /**
