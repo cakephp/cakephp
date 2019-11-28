@@ -156,6 +156,16 @@ abstract class Driver implements DriverInterface
     }
 
     /**
+     * Get database connection id.
+     *
+     * @return int|null
+     */
+    public function getConnectionId()
+    {
+        return null;
+    }
+
+    /**
      * {@inheritDoc}
      */
     abstract public function enabled();

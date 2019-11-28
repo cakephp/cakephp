@@ -176,4 +176,17 @@ class Mysql extends Driver
 
         return $this->_supportsNativeJson = version_compare($this->_version, '5.7.0', '>=');
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getConnectionId()
+    {
+        $PDOStatement = $this->getConnection()->query('SELECT CONNECTION_ID()');
+        $row = $PDOStatement->fetch();
+        if ($row === false) {
+            return null;
+        }
+        return (int)$row[0];
+    }
 }

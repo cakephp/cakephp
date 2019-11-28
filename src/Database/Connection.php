@@ -45,6 +45,13 @@ class Connection implements ConnectionInterface
     protected $_config;
 
     /**
+     * The connection id.
+     *
+     * @var int|null
+     */
+    protected $_connectionId;
+
+    /**
      * Driver object, responsible for creating the real connection
      * and provide specific SQL dialect.
      *
@@ -956,9 +963,24 @@ class Connection implements ConnectionInterface
     {
         if ($this->_logger === null) {
             $this->_logger = new QueryLogger();
+            $this->_logger->setConnectionId($this->getConnectionId());
         }
 
         return $this->_logger;
+    }
+
+    /**
+     * Gets the logger object
+     *
+     * @return \Cake\Database\Log\QueryLogger logger instance
+     */
+    public function getConnectionId()
+    {
+        if ($this->_connectionId === null) {
+            $this->_connectionId = $this->_driver->getConnectionId();
+        }
+
+        return $this->_connectionId;
     }
 
     /**

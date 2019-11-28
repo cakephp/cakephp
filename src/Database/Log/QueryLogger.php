@@ -25,6 +25,24 @@ use Cake\Log\Log;
 class QueryLogger
 {
     /**
+     * The connection id.
+     *
+     * @var int|null
+     */
+    protected $_connectionId;
+
+    /**
+     * Gets the logger object
+     *
+     * @param int|null $connectionId Database connection id.
+     * @return void
+     */
+    public function setConnectionId($connectionId)
+    {
+        $this->_connectionId = $connectionId;
+    }
+
+    /**
      * Writes a LoggedQuery into a log
      *
      * @param \Cake\Database\Log\LoggedQuery $query to be written in log
@@ -47,7 +65,7 @@ class QueryLogger
      */
     protected function _log($query)
     {
-        Log::write('debug', $query, ['queriesLog']);
+        Log::write('debug', "connection_id={$this->_connectionId} $query", ['queriesLog']);
     }
 
     /**
