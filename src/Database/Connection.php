@@ -972,7 +972,7 @@ class Connection implements ConnectionInterface
     /**
      * Gets the logger object
      *
-     * @return \Cake\Database\Log\QueryLogger logger instance
+     * @return int|null
      */
     public function getConnectionId()
     {
