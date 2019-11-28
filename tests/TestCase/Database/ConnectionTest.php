@@ -1355,7 +1355,9 @@ class ConnectionTest extends TestCase
         $prop = new ReflectionProperty($conn, '_driver');
         $prop->setAccessible(true);
         $oldDriver = $prop->getValue($conn);
-        $newDriver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+        $newDriver = $this->getMockBuilder('Cake\Database\Driver')
+            ->setMethodsExcept(['getConnectionId'])
+            ->getMock();
         $prop->setValue($conn, $newDriver);
 
         $newDriver->expects($this->at(0))
