@@ -65,7 +65,8 @@ class QueryLogger
      */
     protected function _log($query)
     {
-        Log::write('debug', "connection_id={$this->_connectionId} $query", ['queriesLog']);
+        $message = "connection_id={$this->_connectionId} " . $query->__toString();
+        Log::write('debug', $message, ['queriesLog']);
     }
 
     /**
