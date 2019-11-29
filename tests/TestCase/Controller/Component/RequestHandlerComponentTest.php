@@ -1250,7 +1250,7 @@ XML;
                 $this->Controller->response
             );
             $data = json_decode($response, true);
-            $this->assertEquals('/request_action/params_pass', $data['here']);
+            $this->assertEquals('/request_action/params_pass?a=b&x=y%3Fish', $data['here']);
 
             $response = $this->RequestHandler->beforeRedirect(
                 $event,

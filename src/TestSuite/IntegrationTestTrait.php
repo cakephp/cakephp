@@ -752,7 +752,8 @@ trait IntegrationTestTrait
     {
         $uri = new Uri($url);
         $path = $uri->getPath();
-        $query = $uri->getQuery();
+        parse_str($uri->getQuery(), $query);
+        $query = http_build_query($query, null, '&', PHP_QUERY_RFC3986);
 
         $hostData = [];
         if ($uri->getHost()) {

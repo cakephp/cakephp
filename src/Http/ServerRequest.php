@@ -354,6 +354,9 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         $this->url = substr($uri->getPath(), 1);
         $this->here = $this->base . '/' . $this->url;
 
+        $this->query = $this->_processGet($config['query'], $querystr);
+        $this->uri = $this->uri->withQuery(http_build_query($this->query, null, '&', PHP_QUERY_RFC3986));
+
         if (isset($config['input'])) {
             $stream = new Stream('php://memory', 'rw');
             $stream->write($config['input']);
@@ -365,7 +368,6 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
 
         $config['post'] = $this->_processPost($config['post']);
         $this->data = $this->_processFiles($config['post'], $config['files']);
-        $this->query = $this->_processGet($config['query'], $querystr);
         $this->params = $config['params'];
         $this->session = $config['session'];
     }
@@ -423,6 +425,9 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
             parse_str($queryString, $queryArgs);
             $query += $queryArgs;
         }
+
+        parse_str($this->uri->getQuery(), $queryArgs);
+        $query += $queryArgs;
 
         return $query;
     }

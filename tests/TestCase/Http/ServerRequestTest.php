@@ -155,7 +155,7 @@ class ServerRequestTest extends TestCase
         ];
         $request = new ServerRequest($data);
         $this->assertEquals($request->getQueryParams(), $data['query']);
-        $this->assertEquals('/some/path', $request->getRequestTarget());
+        $this->assertEquals('/some/path?one=param&two=banana', $request->getRequestTarget());
     }
 
     /**
