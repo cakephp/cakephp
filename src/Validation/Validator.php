@@ -184,14 +184,27 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * Returns an array of fields that have failed validation. On the current model. This method will
-     * actually run validation rules over data, not just return the messages.
+     * Validates and returns an array of failed fields and their error messages.
      *
      * @param array $data The data to be checked for errors
      * @param bool $newRecord whether the data to be validated is new or to be updated.
      * @return array[] Array of invalid fields
+     * @deprecated 3.9.0 Renamed to validate()
      */
     public function errors(array $data, bool $newRecord = true): array
+    {
+        deprecationWarning('`Validator::errors()` is deprecated. Use `Validator::validate()` instead.');
+        return $this->validate($data, $newRecord);
+    }
+
+    /**
+     * Validates and returns an array of failed fields and their error messages.
+     *
+     * @param array $data The data to be checked for errors
+     * @param bool $newRecord whether the data to be validated is new or to be updated.
+     * @return array Array of failed fields
+     */
+    public function validate(array $data, $newRecord = true)
     {
         $errors = [];
 
@@ -497,7 +510,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 /** @psalm-suppress PossiblyNullArgument */
                 $validator->setProvider($provider, $this->getProvider($provider));
             }
-            $errors = $validator->errors($value, $context['newRecord']);
+            $errors = $validator->validate($value, $context['newRecord']);
 
             $message = $message ? [static::NESTED => $message] : [];
 
@@ -545,7 +558,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 if (!is_array($row)) {
                     return false;
                 }
-                $check = $validator->errors($row, $context['newRecord']);
+                $check = $validator->validate($row, $context['newRecord']);
                 if (!empty($check)) {
                     $errors[$i] = $check;
                 }

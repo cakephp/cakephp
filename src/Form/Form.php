@@ -181,7 +181,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
     public function validate(array $data): bool
     {
         $validator = $this->getValidator();
-        $this->_errors = $validator->errors($data);
+        $this->_errors = $validator->validate($data);
 
         return count($this->_errors) === 0;
     }

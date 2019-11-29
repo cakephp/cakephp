@@ -881,8 +881,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return $this->_associations->get($name);
         }
 
+        $result = null;
         [$name, $next] = array_pad(explode('.', $name, 2), 2, null);
-        $result = $this->_associations->get($name);
+        if ($name !== null) {
+            $result = $this->_associations->get($name);
+        }
 
         if ($result !== null && $next !== null) {
             $result = $result->getTarget()->getAssociation($next);

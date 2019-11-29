@@ -166,11 +166,15 @@ class Curl implements AdapterInterface
                 return CURL_HTTP_VERSION_1_0;
             case '1.1':
                 return CURL_HTTP_VERSION_1_1;
+            case '2':
             case '2.0':
+                if (defined('CURL_HTTP_VERSION_2TLS')) {
+                    return CURL_HTTP_VERSION_2TLS;
+                }
                 if (defined('CURL_HTTP_VERSION_2_0')) {
                     return CURL_HTTP_VERSION_2_0;
                 }
-                throw new HttpException('libcurl 7.33 needed for HTTP 2.0 support');
+                throw new HttpException('libcurl 7.33 or greater required for HTTP/2 support');
         }
 
         return CURL_HTTP_VERSION_NONE;

@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\TestSuite;
 use Cake\Console\Exception\ConsoleException;
 use Cake\Console\Shell;
 use Cake\TestSuite\ConsoleIntegrationTestCase;
+use Cake\TestSuite\Stub\MissingConsoleInputException;
 use PHPUnit\Framework\AssertionFailedError;
 
 class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
@@ -151,7 +152,7 @@ class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
      */
     public function testExecWithMissingInput()
     {
-        $this->expectException(ConsoleException::class);
+        $this->expectException(MissingConsoleInputException::class);
         $this->expectExceptionMessage('no more input');
         $this->exec('integration bridge', ['cake']);
     }

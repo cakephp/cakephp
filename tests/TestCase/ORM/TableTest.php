@@ -6063,28 +6063,28 @@ class TableTest extends TestCase
         $validator->setProvider('table', $table);
 
         $data = ['username' => ['larry', 'notthere']];
-        $this->assertNotEmpty($validator->errors($data));
+        $this->assertNotEmpty($validator->validate($data));
 
         $data = ['username' => 'larry'];
-        $this->assertNotEmpty($validator->errors($data));
+        $this->assertNotEmpty($validator->validate($data));
 
         $data = ['username' => 'jose'];
-        $this->assertEmpty($validator->errors($data));
+        $this->assertEmpty($validator->validate($data));
 
         $data = ['username' => 'larry', 'id' => 3];
-        $this->assertEmpty($validator->errors($data, false));
+        $this->assertEmpty($validator->validate($data, false));
 
         $data = ['username' => 'larry', 'id' => 3];
-        $this->assertNotEmpty($validator->errors($data));
+        $this->assertNotEmpty($validator->validate($data));
 
         $data = ['username' => 'larry'];
-        $this->assertNotEmpty($validator->errors($data, false));
+        $this->assertNotEmpty($validator->validate($data, false));
 
         $validator->add('username', 'unique', [
             'rule' => 'validateUnique', 'provider' => 'table',
         ]);
         $data = ['username' => 'larry'];
-        $this->assertNotEmpty($validator->errors($data, false));
+        $this->assertNotEmpty($validator->validate($data, false));
     }
 
     /**
@@ -6102,13 +6102,13 @@ class TableTest extends TestCase
         ]);
         $validator->setProvider('table', $table);
         $data = ['username' => 'larry', 'id' => 3];
-        $this->assertNotEmpty($validator->errors($data));
+        $this->assertNotEmpty($validator->validate($data));
 
         $data = ['username' => 'larry', 'id' => 1];
-        $this->assertEmpty($validator->errors($data));
+        $this->assertEmpty($validator->validate($data));
 
         $data = ['username' => 'jose'];
-        $this->assertEmpty($validator->errors($data));
+        $this->assertEmpty($validator->validate($data));
     }
 
     /**
@@ -6144,7 +6144,7 @@ class TableTest extends TestCase
 
         $data = ['site_id' => 1, 'author_id' => null, 'title' => 'Null dupe'];
         $expected = ['site_id' => ['unique' => 'Must be unique.']];
-        $this->assertEquals($expected, $validator->errors($data));
+        $this->assertEquals($expected, $validator->validate($data));
     }
 
     /**
