@@ -188,7 +188,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
             'REQUEST_URI' => '/target/url',
             'HTTP_REFERER' => '/other/path',
         ]);
-        $middleware = new ErrorHandlerMiddleware(null, ['log' => true, 'trace' => true]);
+        $middleware = new ErrorHandlerMiddleware(['log' => true, 'trace' => true]);
         $handler = new TestRequestHandler(function ($req) {
             throw new \Cake\Http\Exception\NotFoundException('Kaboom!');
         });
@@ -218,7 +218,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
             'REQUEST_URI' => '/target/url',
             'HTTP_REFERER' => '/other/path',
         ]);
-        $middleware = new ErrorHandlerMiddleware(null, ['log' => true, 'trace' => true]);
+        $middleware = new ErrorHandlerMiddleware(['log' => true, 'trace' => true]);
         $handler = new TestRequestHandler(function ($req) {
             $previous = new \Cake\Datasource\Exception\RecordNotFoundException('Previous logged');
             throw new \Cake\Http\Exception\NotFoundException('Kaboom!', null, $previous);
@@ -238,7 +238,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $this->logger->expects($this->never())->method('log');
 
         $request = ServerRequestFactory::fromGlobals();
-        $middleware = new ErrorHandlerMiddleware(null, [
+        $middleware = new ErrorHandlerMiddleware([
             'log' => true,
             'skipLog' => ['Cake\Http\Exception\NotFoundException'],
         ]);
@@ -270,7 +270,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
             ));
 
         $request = ServerRequestFactory::fromGlobals();
-        $middleware = new ErrorHandlerMiddleware(null, ['log' => true]);
+        $middleware = new ErrorHandlerMiddleware(['log' => true]);
         $handler = new TestRequestHandler(function ($req) {
             throw new MissingControllerException(['class' => 'Articles']);
         });
