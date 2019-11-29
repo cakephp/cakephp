@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Cake\TestSuite\Stub;
 
 use Cake\Console\ConsoleInput as ConsoleInputBase;
-use Cake\TestSuite\Stub\MissingConsoleInputException;
 use NumberFormatter;
 
 /**

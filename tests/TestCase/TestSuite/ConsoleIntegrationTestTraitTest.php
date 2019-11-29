@@ -15,7 +15,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\TestSuite;
 
-use Cake\Console\Exception\ConsoleException;
 use Cake\Console\Shell;
 use Cake\TestSuite\ConsoleIntegrationTestCase;
 use Cake\TestSuite\Stub\MissingConsoleInputException;

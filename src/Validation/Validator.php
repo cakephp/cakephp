@@ -194,6 +194,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function errors(array $data, bool $newRecord = true): array
     {
         deprecationWarning('`Validator::errors()` is deprecated. Use `Validator::validate()` instead.');
+
         return $this->validate($data, $newRecord);
     }
 
