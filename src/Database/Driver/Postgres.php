@@ -129,4 +129,18 @@ class Postgres extends Driver
     {
         return true;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getConnectionId()
+    {
+        $PDOStatement = $this->getConnection()->query('SELECT pg_backend_pid()');
+        $row = $PDOStatement->fetch();
+        if ($row === false) {
+            return null;
+        }
+
+        return (int)$row[0];
+    }
 }

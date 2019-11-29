@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\Database\Driver;
 
 use Cake\Database\Query;
+use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PDO;
 
@@ -171,5 +172,18 @@ class PostgresTest extends TestCase
             ->epilog('FOO');
         $query = $translator($query);
         $this->assertEquals('FOO', $query->clause('epilog'));
+    }
+
+    public function testGetConnectionId()
+    {
+        $config = ConnectionManager::getConfig('test');
+        $this->skipIf(strpos($config['driver'], 'Postgres') === false, 'Not using Posgres for test config');
+        $connection = ConnectionManager::get('test');
+        $driver = $connection->getDriver();
+        $driver->connect();
+        $actual = $driver->getConnectionId();
+        $this->assertNotNull($actual);
+        $this->assertInternalType('int', $actual);
+        $this->assertGreaterThan(0, $actual);
     }
 }

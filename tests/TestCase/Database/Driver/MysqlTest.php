@@ -170,6 +170,7 @@ class MysqlTest extends TestCase
         $driver = $connection->getDriver();
         $actual = $driver->getConnectionId();
         $this->assertNotNull($actual);
+        $this->assertInternalType('int', $actual);
         $this->assertGreaterThan(0, $actual);
     }
 }
