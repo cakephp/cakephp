@@ -15,7 +15,7 @@ cache:
 
 php:
   - 7.2
-  - 7.4snapshot
+  - 7.4
 
 env:
   global:
@@ -39,10 +39,10 @@ before_install:
   - if [[ $DB == 'mysql' ]]; then mysql -u root -e 'CREATE DATABASE cakephp_test;'; fi
   - if [[ $DB == 'pgsql' ]]; then psql -c 'CREATE DATABASE cakephp_test;' -U postgres; fi
 
-  - if [[ $TRAVIS_PHP_VERSION != '7.4snapshot' ]]; then phpenv config-rm xdebug.ini; fi
+  - if [[ $TRAVIS_PHP_VERSION != '7.4' ]]; then phpenv config-rm xdebug.ini; fi
 
   - pecl channel-update pecl.php.net
-  - if [[ $TRAVIS_PHP_VERSION == '7.4snapshot' ]]; then pecl install pcov; fi
+  - if [[ $TRAVIS_PHP_VERSION == '7.4' ]]; then pecl install pcov; fi
   - echo 'extension = memcached.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini;
   - echo 'extension = redis.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - echo 'extension = apcu.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
@@ -55,7 +55,7 @@ install:
 
 script:
   - |
-      if [[ $TRAVIS_PHP_VERSION == '7.4snapshot' ]]; then
+      if [[ $TRAVIS_PHP_VERSION == '7.4' ]]; then
         # This is necessary to skip memory usage tests
         CODECOVERAGE=1 vendor/bin/phpunit --verbose --coverage-clover=clover.xml
       elif [[ $DEFAULT == '1' ]]; then
@@ -76,7 +76,7 @@ script:
 
 after_success:
   - |
-      if [[ $TRAVIS_PHP_VERSION == '7.4snapshot' ]]; then
+      if [[ $TRAVIS_PHP_VERSION == '7.4' ]]; then
         wget https://github.com/php-coveralls/php-coveralls/releases/download/v2.1.0/php-coveralls.phar
         chmod +x php-coveralls.phar
         ./php-coveralls.phar
