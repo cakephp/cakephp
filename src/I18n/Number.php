@@ -253,19 +253,19 @@ class Number
     /**
      * Getter/setter for default currency
      *
-     * @param string|bool|null $currency Default currency string to be used by currency()
+     * @param string|false|null $currency Default currency string to be used by currency()
      * if $currency argument is not provided. If boolean false is passed, it will clear the
      * currently stored value
      * @return string|null Currency
      */
     public static function defaultCurrency($currency = null)
     {
-        if ($currency !== null && $currency !== false) {
-            return static::$_defaultCurrency = $currency;
-        }
-
         if ($currency === false) {
             return static::$_defaultCurrency = null;
+        }
+
+        if ($currency !== null) {
+            return static::$_defaultCurrency = $currency;
         }
 
         if (static::$_defaultCurrency === null) {
@@ -280,19 +280,19 @@ class Number
     /**
      * Getter/setter for default currency format
      *
-     * @param string|bool|null $currencyFormat Default currency format to be used by currency()
+     * @param string|false|null $currencyFormat Default currency format to be used by currency()
      * if $currencyFormat argument is not provided. If boolean false is passed, it will clear the
      * currently stored value
      * @return string CurrencyFormat
      */
     public static function defaultCurrencyFormat($currencyFormat = null)
     {
-        if ($currencyFormat !== null && $currencyFormat !== false) {
-            return static::$_defaultCurrencyFormat = $currencyFormat;
-        }
-
         if ($currencyFormat === false) {
             return static::$_defaultCurrencyFormat = null;
+        }
+
+        if ($currencyFormat !== null) {
+            return static::$_defaultCurrencyFormat = $currencyFormat;
         }
 
         if (static::$_defaultCurrencyFormat === null) {
