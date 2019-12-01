@@ -21,6 +21,7 @@ use Cake\Core\InstanceConfigTrait;
 use Cake\Error\ErrorHandler;
 use Cake\Error\ExceptionRenderer;
 use Cake\Http\Response;
+use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -39,6 +40,8 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
 
     /**
      * Default configuration values.
+     *
+     * Ignored if contructor is passed an ErrorHandler instance.
      *
      * - `log` Enable logging of exceptions.
      * - `skipLog` List of exceptions to skip logging. Exceptions that
@@ -72,18 +75,34 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
     /**
      * Constructor
      *
-     * @param \Cake\Error\ErrorHandler|null $errorHandler The error handler.
-     * @param array $config Configuration options for error handler.
-     *   These options will be ignored if an ErrorHandler instance is passed as
-     *   first argument.
+     * @param \Cake\Error\ErrorHandler|array $errorHandler The error handler instance
+     *  or config array.
      */
-    public function __construct($errorHandler = null, array $config = [])
+    public function __construct($errorHandler = [])
     {
-        $this->setConfig($config);
+        if (func_num_args() > 1) {
+            deprecationWarning(
+                'The signature of ErrorHandlerMiddleware::__construct() has changed. '
+                . 'Pass the config array as 1st argument instead.'
+            );
 
-        if ($errorHandler !== null) {
-            $this->errorHandler = $errorHandler;
+            $errorHandler = func_get_arg(1);
         }
+
+        if (is_array($errorHandler)) {
+            $this->setConfig($errorHandler);
+
+            return;
+        }
+
+        if (!$errorHandler instanceof ErrorHandler) {
+            throw new InvalidArgumentException(sprintf(
+                '$errorHandler argument must be a config array or ErrorHandler instance. Got `%s` instead.',
+                getTypeName($errorHandler)
+            ));
+        }
+
+        $this->errorHandler = $errorHandler;
     }
 
     /**
