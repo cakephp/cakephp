@@ -96,6 +96,10 @@ class Curl implements AdapterInterface
         if ($body) {
             $body->rewind();
             $out[CURLOPT_POSTFIELDS] = $body->getContents();
+            // GET requests with bodies require custom request to be used.
+            if (isset($out[CURLOPT_HTTPGET])) {
+                $out[CURLOPT_CUSTOMREQUEST] = 'get';
+            }
         }
 
         if (empty($options['ssl_cafile'])) {

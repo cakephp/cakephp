@@ -119,6 +119,42 @@ class CurlTest extends TestCase
      *
      * @return void
      */
+    public function testBuildOptionsGetWithBody()
+    {
+        $options = [
+            'timeout' => 5,
+        ];
+        $request = new Request(
+            'http://localhost/things',
+            'GET',
+            ['Cookie' => 'testing=value'],
+            '{"some":"body"}'
+        );
+        $result = $this->curl->buildOptions($request, $options);
+        $expected = [
+            CURLOPT_URL => 'http://localhost/things',
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HEADER => true,
+            CURLOPT_HTTPHEADER => [
+                'Cookie: testing=value',
+                'Connection: close',
+                'User-Agent: CakePHP',
+            ],
+            CURLOPT_HTTPGET => true,
+            CURLOPT_POSTFIELDS => '{"some":"body"}',
+            CURLOPT_CUSTOMREQUEST => 'get',
+            CURLOPT_TIMEOUT => 5,
+            CURLOPT_CAINFO => $this->caFile,
+        ];
+        $this->assertSame($expected, $result);
+    }
+
+    /**
+     * Test converting client options into curl ones.
+     *
+     * @return void
+     */
     public function testBuildOptionsPost()
     {
         $options = [];
