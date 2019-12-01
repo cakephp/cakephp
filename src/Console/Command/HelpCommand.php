@@ -14,11 +14,11 @@ declare(strict_types=1);
  * @since         3.6.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Command;
+namespace Cake\Console\Command;
 
 use ArrayIterator;
 use Cake\Console\Arguments;
-use Cake\Console\Command;
+use Cake\Console\BaseCommand;
 use Cake\Console\CommandCollection;
 use Cake\Console\CommandCollectionAwareInterface;
 use Cake\Console\ConsoleIo;
@@ -31,7 +31,7 @@ use SimpleXMLElement;
 /**
  * Print out command list
  */
-class HelpCommand extends Command implements CommandCollectionAwareInterface
+class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
 {
     /**
      * The command collection to get help on.

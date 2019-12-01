@@ -18,7 +18,6 @@ namespace Cake\Command;
 
 use Cake\Cache\Cache;
 use Cake\Console\Arguments;
-use Cake\Console\Command;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 

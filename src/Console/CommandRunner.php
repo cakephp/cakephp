@@ -16,8 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Console;
 
-use Cake\Command\HelpCommand;
 use Cake\Command\VersionCommand;
+use Cake\Console\Command\HelpCommand;
 use Cake\Console\Exception\MissingOptionException;
 use Cake\Console\Exception\StopException;
 use Cake\Core\ConsoleApplicationInterface;
@@ -132,9 +132,11 @@ class CommandRunner implements EventDispatcherInterface
         $this->bootstrap();
 
         $commands = new CommandCollection([
-            'version' => VersionCommand::class,
             'help' => HelpCommand::class,
         ]);
+        if (class_exists(VersionCommand::class)) {
+            $commands->add('version', VersionCommand::class);
+        }
         $commands = $this->app->console($commands);
 
         if ($this->app instanceof PluginApplicationInterface) {
@@ -157,11 +159,11 @@ class CommandRunner implements EventDispatcherInterface
         } catch (MissingOptionException $e) {
             $io->error($e->getFullMessage());
 
-            return Command::CODE_ERROR;
+            return CommandInterface::CODE_ERROR;
         }
 
-        $result = Command::CODE_ERROR;
-        $shell = $this->getShell($io, $commands, $name);
+        $result = CommandInterface::CODE_ERROR;
+        $shell = $this->getCommand($io, $commands, $name);
         if ($shell instanceof Shell) {
             $result = $this->runShell($shell, $argv);
         }
@@ -170,13 +172,13 @@ class CommandRunner implements EventDispatcherInterface
         }
 
         if ($result === null || $result === true) {
-            return Command::CODE_SUCCESS;
+            return CommandInterface::CODE_SUCCESS;
         }
         if (is_int($result) && $result >= 0 && $result <= 255) {
             return $result;
         }
 
-        return Command::CODE_ERROR;
+        return CommandInterface::CODE_ERROR;
     }
 
     /**
@@ -239,11 +241,11 @@ class CommandRunner implements EventDispatcherInterface
      * @param string $name The command name to find
      * @return \Cake\Console\Shell|\Cake\Console\CommandInterface
      */
-    protected function getShell(ConsoleIo $io, CommandCollection $commands, string $name)
+    protected function getCommand(ConsoleIo $io, CommandCollection $commands, string $name)
     {
         $instance = $commands->get($name);
         if (is_string($instance)) {
-            $instance = $this->createShell($instance, $io);
+            $instance = $this->createCommand($instance, $io);
         }
         if ($instance instanceof Shell) {
             $instance->setRootName($this->root);
@@ -364,7 +366,7 @@ class CommandRunner implements EventDispatcherInterface
      * @param \Cake\Console\ConsoleIo $io The IO wrapper for the created shell class.
      * @return \Cake\Console\Shell|\Cake\Console\CommandInterface
      */
-    protected function createShell(string $className, ConsoleIo $io)
+    protected function createCommand(string $className, ConsoleIo $io)
     {
         $shell = $this->factory->create($className);
         if ($shell instanceof Shell) {

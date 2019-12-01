@@ -268,7 +268,7 @@ class ConsoleIo
      * @return void
      * @throws \Cake\Console\Exception\StopException
      */
-    public function abort($message, $code = Command::CODE_ERROR): void
+    public function abort($message, $code = CommandInterface::CODE_ERROR): void
     {
         $this->error($message);
 
