@@ -616,6 +616,7 @@ class Email implements JsonSerializable, Serializable
      */
     public static function __callStatic($name, $arguments)
     {
+        /** @psalm-suppress InvalidArgument */
         return call_user_func_array('\Cake\Mailer\Mailer::' . $name, $arguments);
     }
 }

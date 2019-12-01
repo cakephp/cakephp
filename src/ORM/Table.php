@@ -882,6 +882,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         [$name, $next] = array_pad(explode('.', $name, 2), 2, null);
+        /** @psalm-suppress PossiblyNullArgument */
         $result = $this->_associations->get($name);
 
         if ($result !== null && $next !== null) {
