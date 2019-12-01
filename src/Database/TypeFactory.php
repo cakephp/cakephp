@@ -41,7 +41,6 @@ class TypeFactory
         'date' => Type\DateType::class,
         'datetime' => Type\DateTimeType::class,
         'datetimefractional' => Type\DateTimeFractionalType::class,
-        'datetimetimezone' => Type\DateTimeTimezoneType::class,
         'decimal' => Type\DecimalType::class,
         'float' => Type\FloatType::class,
         'json' => Type\JsonType::class,

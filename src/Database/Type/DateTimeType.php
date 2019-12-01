@@ -225,7 +225,8 @@ class DateTimeType extends BaseType
      * If your database date times are in a specific time zone that you want
      * to keep in the DateTime instance then set this to true.
      *
-     * Defaults to false. Time zone is converted to default time zone.
+     * When false, datetime timezones are converted to default time zone.
+     * This is default behavior.
      *
      * @param bool $keep If true, database time zone is kept when converting
      *      to DateTime instances.
@@ -250,7 +251,31 @@ class DateTimeType extends BaseType
                 continue;
             }
 
-            $values[$field] = $this->toPHP($values[$field], $driver);
+            $value = $values[$field];
+            if (strpos($value, '0000-00-00') === 0) {
+                $values[$field] = null;
+                continue;
+            }
+
+            $class = $this->_className;
+            if (is_int($value)) {
+                $instance = new $class('@' . $value);
+            } else {
+                $instance = new $class($value, $this->dbTimezone);
+            }
+
+            if (
+                !$this->keepDatabaseTimezone &&
+                $instance->getTimezone()->getName() !== $this->defaultTimezone->getName()
+            ) {
+                $instance = $instance->setTimezone($this->defaultTimezone);
+            }
+
+            if ($this->setToDateStart) {
+                $instance = $instance->setTime(0, 0, 0);
+            }
+
+            $values[$field] = $instance;
         }
 
         return $values;

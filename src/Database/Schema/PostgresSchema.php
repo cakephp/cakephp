@@ -389,7 +389,6 @@ class PostgresSchema extends BaseSchema
             TableSchema::TYPE_TIME => ' TIME',
             TableSchema::TYPE_DATETIME => ' TIMESTAMP',
             TableSchema::TYPE_DATETIME_FRACTIONAL => ' TIMESTAMP',
-            TableSchema::TYPE_DATETIME_TIMEZONE => ' TIMESTAMPTZ',
             TableSchema::TYPE_TIMESTAMP => ' TIMESTAMP',
             TableSchema::TYPE_TIMESTAMP_FRACTIONAL => ' TIMESTAMP',
             TableSchema::TYPE_TIMESTAMP_TIMEZONE => ' TIMESTAMPTZ',
@@ -444,7 +443,6 @@ class PostgresSchema extends BaseSchema
             TableSchema::TYPE_FLOAT,
             TableSchema::TYPE_DATETIME,
             TableSchema::TYPE_DATETIME_FRACTIONAL,
-            TableSchema::TYPE_DATETIME_TIMEZONE,
             TableSchema::TYPE_TIMESTAMP,
             TableSchema::TYPE_TIMESTAMP_FRACTIONAL,
             TableSchema::TYPE_TIMESTAMP_TIMEZONE,
@@ -470,7 +468,6 @@ class PostgresSchema extends BaseSchema
         $datetimeTypes = [
             TableSchema::TYPE_DATETIME,
             TableSchema::TYPE_DATETIME_FRACTIONAL,
-            TableSchema::TYPE_DATETIME_TIMEZONE,
             TableSchema::TYPE_TIMESTAMP,
             TableSchema::TYPE_TIMESTAMP_FRACTIONAL,
             TableSchema::TYPE_TIMESTAMP_TIMEZONE,

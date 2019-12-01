@@ -59,13 +59,6 @@ interface TableSchemaInterface extends SchemaInterface
     public const TYPE_DATETIME_FRACTIONAL = 'datetimefractional';
 
     /**
-     * Datetime with time zone column type
-     *
-     * @var string
-     */
-    public const TYPE_DATETIME_TIMEZONE = 'datetimetimezone';
-
-    /**
      * Time column type
      *
      * @var string
