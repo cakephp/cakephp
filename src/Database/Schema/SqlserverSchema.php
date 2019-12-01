@@ -384,6 +384,7 @@ class SqlserverSchema extends BaseSchema
             TableSchema::TYPE_DATETIME_FRACTIONAL => ' DATETIME2',
             TableSchema::TYPE_TIMESTAMP => ' DATETIME2',
             TableSchema::TYPE_TIMESTAMP_FRACTIONAL => ' DATETIME2',
+            TableSchema::TYPE_TIMESTAMP_TIMEZONE => ' DATETIME2',
             TableSchema::TYPE_UUID => ' UNIQUEIDENTIFIER',
             TableSchema::TYPE_JSON => ' NVARCHAR(MAX)',
         ];
