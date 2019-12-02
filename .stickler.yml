@@ -1,12 +1,9 @@
 ---
 linters:
   phpcs:
-    standard: ./phpcs.xml.dist
+    standard: CakePHP4
     extensions: 'php,ctp'
     fixer: true
-
-branches:
-  ignore: ['2.x', '4.x']
 
 fixers:
   enable: true
