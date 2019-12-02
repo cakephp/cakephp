@@ -5,13 +5,10 @@ dist: precise
 
 php:
   - 5.3
-  - 5.4
-  - 5.5
   - 5.6
   - 7.0
-  - 7.1
-  - 7.2
   - 7.3
+  - 7.4snapshot
 
 env:
   matrix:
@@ -31,10 +28,10 @@ matrix:
     - php: 5.4
       env: DB=pgsql
 
-    - php: 5.4
+    - php: 5.5
       env: DB=sqlite
 
-    - php: 7.0
+    - php: 7.3
       env: PHPCS=1
 
     - php: 7.1
@@ -50,7 +47,6 @@ matrix:
       env: DB=mysql
     - php: 7.3
       env: DB=mysql
-
 
 before_script:
   - if [[ ${TRAVIS_PHP_VERSION:0:3} =~ ^7\.[23]$ ]] ; then pear config-set preferred_state snapshot && yes "" | pecl install mcrypt ; fi
