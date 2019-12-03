@@ -38,7 +38,7 @@ class QueryCompiler
         'order' => ' %s',
         'limit' => ' LIMIT %s',
         'offset' => ' OFFSET %s',
-        'epilog' => ' %s',
+        'epilog' => ' %s'
     ];
 
     /**
@@ -48,7 +48,7 @@ class QueryCompiler
      */
     protected $_selectParts = [
         'select', 'from', 'join', 'where', 'group', 'having', 'order', 'limit',
-        'offset', 'union', 'epilog',
+        'offset', 'union', 'epilog'
     ];
 
     /**
@@ -124,8 +124,7 @@ class QueryCompiler
     protected function _sqlCompiler(&$sql, $query, $generator)
     {
         return function ($parts, $name) use (&$sql, $query, $generator) {
-            if (
-                !isset($parts) ||
+            if (!isset($parts) ||
                 ((is_array($parts) || $parts instanceof \Countable) && !count($parts))
             ) {
                 return;
@@ -223,30 +222,45 @@ class QueryCompiler
      */
     protected function _buildJoinPart($parts, $query, $generator)
     {
+        $joins = $this->_arrangeJoins($query->getEagerLoader()->getContain(), $parts, $query, $generator);
+        
+        return $joins;
+    }
+    
+    protected function _arrangeJoins($associations, $parts, $query, $generator) {
         $joins = '';
-        foreach ($parts as $join) {
+        foreach($associations as $association => $subAssociation){
+            if(!isset($parts[$association])){
+                continue;
+            }
+            
+            $join = $parts[$association];
             $subquery = $join['table'] instanceof Query || $join['table'] instanceof QueryExpression;
             if ($join['table'] instanceof ExpressionInterface) {
                 $join['table'] = $join['table']->sql($generator);
             }
-
+            
             if ($subquery) {
                 $join['table'] = '(' . $join['table'] . ')';
             }
-
-            $joins .= sprintf(' %s JOIN %s %s', $join['type'], $join['table'], $join['alias']);
-
+            
+            $joins .= sprintf(' %s JOIN (%s %s', $join['type'], $join['table'], $join['alias']);
+            if(is_array($subAssociation) && sizeof($subAssociation)){
+                $joins .= $this->_arrangeJoins($subAssociation, $parts, $query, $generator);
+            }
+            $joins .= ')';
+            
             $condition = '';
             if (isset($join['conditions']) && $join['conditions'] instanceof ExpressionInterface) {
                 $condition = $join['conditions']->sql($generator);
             }
+            
             if (strlen($condition)) {
                 $joins .= " ON {$condition}";
             } else {
                 $joins .= ' ON 1 = 1';
             }
         }
-
         return $joins;
     }
 
