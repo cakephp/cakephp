@@ -220,10 +220,10 @@ class QueryCompiler
     protected function _buildJoinPart($parts, $query, $generator)
     {
         $joins = $this->_arrangeJoins($query->getEagerLoader()->getContain(), $parts, $query, $generator);
-        
+
         return $joins;
     }
-    
+
     /**
      * Helper function used to build the string representation of multiple JOIN clauses,
      * it constructs the joins list taking care of aliasing and converting
@@ -236,40 +236,42 @@ class QueryCompiler
      * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
      * @return string
      */
-    protected function _arrangeJoins($associations, $parts, $query, $generator) {
+    protected function _arrangeJoins($associations, $parts, $query, $generator)
+    {
         $joins = '';
-        foreach($associations as $association => $subAssociation){
-            if(!isset($parts[$association])){
+        foreach ($associations as $association => $subAssociation) {
+            if (!isset($parts[$association])) {
                 continue;
             }
-            
+
             $join = $parts[$association];
             $subquery = $join['table'] instanceof Query || $join['table'] instanceof QueryExpression;
             if ($join['table'] instanceof ExpressionInterface) {
                 $join['table'] = $join['table']->sql($generator);
             }
-            
+
             if ($subquery) {
                 $join['table'] = '(' . $join['table'] . ')';
             }
-            
+
             $joins .= sprintf(' %s JOIN (%s %s', $join['type'], $join['table'], $join['alias']);
-            if(is_array($subAssociation) && count($subAssociation)){
+            if (is_array($subAssociation) && count($subAssociation)) {
                 $joins .= $this->_arrangeJoins($subAssociation, $parts, $query, $generator);
             }
             $joins .= ')';
-            
+
             $condition = '';
             if (isset($join['conditions']) && $join['conditions'] instanceof ExpressionInterface) {
                 $condition = $join['conditions']->sql($generator);
             }
-            
+
             if (strlen($condition)) {
                 $joins .= " ON {$condition}";
             } else {
                 $joins .= ' ON 1 = 1';
             }
         }
+
         return $joins;
     }
 
