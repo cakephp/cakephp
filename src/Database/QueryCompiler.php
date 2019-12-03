@@ -223,44 +223,46 @@ class QueryCompiler
     protected function _buildJoinPart($parts, $query, $generator)
     {
         $joins = $this->_arrangeJoins($query->getEagerLoader()->getContain(), $parts, $query, $generator);
-        
+
         return $joins;
     }
-    
-    protected function _arrangeJoins($associations, $parts, $query, $generator) {
+
+    protected function _arrangeJoins($associations, $parts, $query, $generator)
+    {
         $joins = '';
-        foreach($associations as $association => $subAssociation){
-            if(!isset($parts[$association])){
+        foreach ($associations as $association => $subAssociation) {
+            if (!isset($parts[$association])) {
                 continue;
             }
-            
+
             $join = $parts[$association];
             $subquery = $join['table'] instanceof Query || $join['table'] instanceof QueryExpression;
             if ($join['table'] instanceof ExpressionInterface) {
                 $join['table'] = $join['table']->sql($generator);
             }
-            
+
             if ($subquery) {
                 $join['table'] = '(' . $join['table'] . ')';
             }
-            
+
             $joins .= sprintf(' %s JOIN (%s %s', $join['type'], $join['table'], $join['alias']);
-            if(is_array($subAssociation) && sizeof($subAssociation)){
+            if (is_array($subAssociation) && sizeof($subAssociation)) {
                 $joins .= $this->_arrangeJoins($subAssociation, $parts, $query, $generator);
             }
             $joins .= ')';
-            
+
             $condition = '';
             if (isset($join['conditions']) && $join['conditions'] instanceof ExpressionInterface) {
                 $condition = $join['conditions']->sql($generator);
             }
-            
+
             if (strlen($condition)) {
                 $joins .= " ON {$condition}";
             } else {
                 $joins .= ' ON 1 = 1';
             }
         }
+
         return $joins;
     }
 
