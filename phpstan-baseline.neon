@@ -1,11 +1,44 @@
-
-
 parameters:
 	ignoreErrors:
+		-
+			message: "#^Method Cake\\\\Auth\\\\BaseAuthenticate\\:\\:unauthenticated\\(\\) should return Cake\\\\Http\\\\Response\\|void\\|null but return statement is missing\\.$#"
+			count: 1
+			path: src/Auth/BaseAuthenticate.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between string and false will always evaluate to false\\.$#"
+			count: 1
+			path: src/Auth/DigestAuthenticate.php
+
+		-
+			message: "#^Method Cake\\\\Auth\\\\Storage\\\\MemoryStorage\\:\\:redirectUrl\\(\\) should return array\\|string\\|null but return statement is missing\\.$#"
+			count: 1
+			path: src/Auth/Storage/MemoryStorage.php
+
 		-
 			message: "#^Constructor of class Cake\\\\Auth\\\\Storage\\\\SessionStorage has an unused parameter \\$response\\.$#"
 			count: 1
 			path: src/Auth/Storage/SessionStorage.php
+
+		-
+			message: "#^Method Cake\\\\Auth\\\\Storage\\\\SessionStorage\\:\\:redirectUrl\\(\\) should return array\\|string\\|null but return statement is missing\\.$#"
+			count: 1
+			path: src/Auth/Storage/SessionStorage.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 2
+			path: src/Cache/CacheEngine.php
+
+		-
+			message: "#^Array \\(array\\<string, int\\>\\) does not accept int\\.$#"
+			count: 1
+			path: src/Cache/Engine/MemcachedEngine.php
+
+		-
+			message: "#^Array \\(array\\<string, int\\>\\) does not accept key 'msgpack'\\.$#"
+			count: 1
+			path: src/Cache/Engine/MemcachedEngine.php
 
 		-
 			message: "#^Access to undefined constant Memcached\\:\\:OPT_CLIENT_MODE\\.$#"
@@ -23,8 +56,18 @@ parameters:
 			path: src/Collection/Collection.php
 
 		-
+			message: "#^Strict comparison using \\=\\=\\= between class\\-string\\<ArrayObject\\> and 'ArrayIterator' will always evaluate to false\\.$#"
+			count: 1
+			path: src/Collection/Collection.php
+
+		-
 			message: "#^Parameter \\#1 \\$it of method AppendIterator\\:\\:append\\(\\) expects Iterator, Traversable given\\.$#"
 			count: 2
+			path: src/Collection/Iterator/TreeIterator.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between class\\-string\\<ArrayObject\\> and 'ArrayIterator' will always evaluate to false\\.$#"
+			count: 1
 			path: src/Collection/Iterator/TreeIterator.php
 
 		-
@@ -33,8 +76,18 @@ parameters:
 			path: src/Collection/Iterator/TreePrinter.php
 
 		-
+			message: "#^Strict comparison using \\=\\=\\= between class\\-string\\<ArrayObject\\> and 'ArrayIterator' will always evaluate to false\\.$#"
+			count: 1
+			path: src/Collection/Iterator/TreePrinter.php
+
+		-
 			message: "#^Parameter \\#1 \\$it of method AppendIterator\\:\\:append\\(\\) expects Iterator, Traversable given\\.$#"
 			count: 2
+			path: src/Collection/Iterator/ZipIterator.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between class\\-string\\<ArrayObject\\> and 'ArrayIterator' will always evaluate to false\\.$#"
+			count: 1
 			path: src/Collection/Iterator/ZipIterator.php
 
 		-
@@ -43,9 +96,34 @@ parameters:
 			path: src/ORM/ResultSet.php
 
 		-
+			message: "#^Strict comparison using \\=\\=\\= between class\\-string\\<ArrayObject\\> and 'ArrayIterator' will always evaluate to false\\.$#"
+			count: 1
+			path: src/ORM/ResultSet.php
+
+		-
+			message: "#^Method Cake\\\\ORM\\\\ResultSet\\:\\:first\\(\\) should return array\\|object but return statement is missing\\.$#"
+			count: 1
+			path: src/ORM/ResultSet.php
+
+		-
 			message: "#^Call to an undefined method Traversable\\:\\:getArrayCopy\\(\\)\\.$#"
 			count: 1
 			path: src/Collection/Iterator/ExtractIterator.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: src/Collection/Iterator/NestIterator.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: src/Collection/Iterator/NoChildrenIterator.php
+
+		-
+			message: "#^Method Cake\\\\Command\\\\Command\\:\\:execute\\(\\) should return int\\|void\\|null but return statement is missing\\.$#"
+			count: 1
+			path: src/Command/Command.php
 
 		-
 			message: "#^Parameter \\#1 \\$var_array of function extract is passed by reference, so it expects variables only\\.$#"
@@ -63,9 +141,44 @@ parameters:
 			path: src/Command/I18nExtractCommand.php
 
 		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: src/Command/I18nExtractCommand.php
+
+		-
+			message: "#^Else branch is unreachable because ternary operator condition is always true\\.$#"
+			count: 1
+			path: src/Console/CommandCollection.php
+
+		-
 			message: "#^Strict comparison using \\=\\=\\= between int and null will always evaluate to false\\.$#"
 			count: 1
 			path: src/Console/CommandRunner.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: src/Console/ConsoleInputSubcommand.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 2
+			path: src/Console/ConsoleOptionParser.php
+
+		-
+			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
+			count: 1
+			path: src/Console/HelperRegistry.php
+
+		-
+			message: "#^PHPDoc tag @return with type Cake\\\\Console\\\\never\\-return is incompatible with native type void\\.$#"
+			count: 1
+			path: src/Console/Shell.php
+
+		-
+			message: "#^Return typehint of method Cake\\\\Console\\\\Shell\\:\\:abort\\(\\) has invalid type Cake\\\\Console\\\\never\\-return\\.$#"
+			count: 1
+			path: src/Console/Shell.php
 
 		-
 			message: "#^Strict comparison using \\=\\=\\= between int and null will always evaluate to false\\.$#"
@@ -73,14 +186,9 @@ parameters:
 			path: src/Console/ShellDispatcher.php
 
 		-
-			message: "#^Call to function method_exists\\(\\) with string and 'authorize' will always evaluate to false\\.$#"
+			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
 			count: 1
-			path: src/Controller/Component/AuthComponent.php
-
-		-
-			message: "#^Call to function method_exists\\(\\) with string and 'authenticate' will always evaluate to false\\.$#"
-			count: 1
-			path: src/Controller/Component/AuthComponent.php
+			path: src/Console/TaskRegistry.php
 
 		-
 			message: "#^Call to an undefined method Cake\\\\Auth\\\\Storage\\\\StorageInterface\\:\\:getConfig\\(\\)\\.$#"
@@ -93,7 +201,32 @@ parameters:
 			path: src/Controller/Component/AuthComponent.php
 
 		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: src/Controller/Component/RequestHandlerComponent.php
+
+		-
 			message: "#^Property Cake\\\\Controller\\\\Controller\\:\\:\\$response \\(Cake\\\\Http\\\\Response\\) does not accept Psr\\\\Http\\\\Message\\\\ResponseInterface\\.$#"
+			count: 1
+			path: src/Controller/Controller.php
+
+		-
+			message: "#^Method Cake\\\\Controller\\\\Controller\\:\\:beforeFilter\\(\\) should return Cake\\\\Http\\\\Response\\|void\\|null but return statement is missing\\.$#"
+			count: 1
+			path: src/Controller/Controller.php
+
+		-
+			message: "#^Method Cake\\\\Controller\\\\Controller\\:\\:beforeRender\\(\\) should return Cake\\\\Http\\\\Response\\|void\\|null but return statement is missing\\.$#"
+			count: 1
+			path: src/Controller/Controller.php
+
+		-
+			message: "#^Method Cake\\\\Controller\\\\Controller\\:\\:beforeRedirect\\(\\) should return Cake\\\\Http\\\\Response\\|void\\|null but return statement is missing\\.$#"
+			count: 1
+			path: src/Controller/Controller.php
+
+		-
+			message: "#^Method Cake\\\\Controller\\\\Controller\\:\\:afterFilter\\(\\) should return Cake\\\\Http\\\\Response\\|void\\|null but return statement is missing\\.$#"
 			count: 1
 			path: src/Controller/Controller.php
 
@@ -108,9 +241,89 @@ parameters:
 			path: src/Controller/ControllerFactory.php
 
 		-
+			message: "#^Method Cake\\\\Controller\\\\ErrorController\\:\\:beforeRender\\(\\) should return Cake\\\\Http\\\\Response\\|void\\|null but return statement is missing\\.$#"
+			count: 1
+			path: src/Controller/ErrorController.php
+
+		-
+			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
+			count: 2
+			path: src/Core/App.php
+
+		-
 			message: "#^Parameter \\#1 \\$autoload_function of function spl_autoload_register expects callable\\(string\\)\\: void, array\\(\\$this\\(Cake\\\\Core\\\\ClassLoader\\), 'loadClass'\\) given\\.$#"
 			count: 1
 			path: src/Core/ClassLoader.php
+
+		-
+			message: "#^Method Cake\\\\Core\\\\ObjectRegistry\\:\\:get\\(\\) should return TObject but returns TObject\\.$#"
+			count: 1
+			path: src/Core/ObjectRegistry.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$object with type TObject is not subtype of native type object\\.$#"
+			count: 1
+			path: src/Core/ObjectRegistry.php
+
+		-
+			message: "#^Array \\(array\\<string, TObject\\>\\) does not accept object\\.$#"
+			count: 1
+			path: src/Core/ObjectRegistry.php
+
+		-
+			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
+			count: 2
+			path: src/Core/PluginCollection.php
+
+		-
+			message: "#^Variable \\$_registry in PHPDoc tag @var does not exist\\.$#"
+			count: 1
+			path: src/Cache/Cache.php
+
+		-
+			message: "#^Variable \\$_registry in PHPDoc tag @var does not exist\\.$#"
+			count: 1
+			path: src/Datasource/ConnectionManager.php
+
+		-
+			message: "#^Variable \\$_registry in PHPDoc tag @var does not exist\\.$#"
+			count: 1
+			path: src/Log/Log.php
+
+		-
+			message: "#^Variable \\$_registry in PHPDoc tag @var does not exist\\.$#"
+			count: 1
+			path: src/Mailer/Mailer.php
+
+		-
+			message: "#^Variable \\$_registry in PHPDoc tag @var does not exist\\.$#"
+			count: 1
+			path: src/Mailer/TransportFactory.php
+
+		-
+			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
+			count: 1
+			path: src/Core/functions.php
+
+		-
+			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
+			count: 1
+			path: src/Database/Driver/Sqlserver.php
+
+		-
+			message: "#^If condition is always true\\.$#"
+			count: 1
+			path: src/Database/Driver/Sqlserver.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: src/Database/Driver/Sqlserver.php
+
+		-
+			message: "#^Instanceof between mixed and int\\|string results in an error\\.$#"
+			count: 1
+			path: src/Database/Driver/Sqlserver.php
 
 		-
 			message: "#^Property Cake\\\\Database\\\\Driver\\:\\:\\$_connection \\(PDO\\) does not accept null\\.$#"
@@ -118,7 +331,27 @@ parameters:
 			path: src/Database/Driver.php
 
 		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: src/Database/Driver.php
+
+		-
+			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
+			count: 1
+			path: src/Database/Driver.php
+
+		-
 			message: "#^If condition is always true\\.$#"
+			count: 1
+			path: src/Database/Driver/Mysql.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: src/Database/Driver/Mysql.php
+
+		-
+			message: "#^Instanceof between mixed and int\\|string results in an error\\.$#"
 			count: 1
 			path: src/Database/Driver/Mysql.php
 
@@ -128,24 +361,39 @@ parameters:
 			path: src/Database/Driver/Postgres.php
 
 		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: src/Database/Driver/Postgres.php
+
+		-
+			message: "#^Instanceof between mixed and int\\|string results in an error\\.$#"
+			count: 1
+			path: src/Database/Driver/Postgres.php
+
+		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: src/Database/Driver/Sqlite.php
 
 		-
-			message: "#^If condition is always true\\.$#"
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
 			count: 1
-			path: src/Database/Driver/Sqlserver.php
+			path: src/Database/Driver/Sqlite.php
 
 		-
-			message: "#^Access to undefined constant PDO\\:\\:SQLSRV_ATTR_ENCODING\\.$#"
+			message: "#^Instanceof between mixed and int\\|string results in an error\\.$#"
 			count: 1
-			path: src/Database/Driver/Sqlserver.php
+			path: src/Database/Driver/Sqlite.php
 
 		-
-			message: "#^Cake\\\\Database\\\\Expression\\\\TupleComparison\\:\\:__construct\\(\\) does not call parent constructor from Cake\\\\Database\\\\Expression\\\\Comparison\\.$#"
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 7
+			path: src/Database/Expression/QueryExpression.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
 			count: 1
-			path: src/Database/Expression/TupleComparison.php
+			path: src/Database/Expression/QueryExpression.php
 
 		-
 			message: "#^Access to an undefined property Exception\\:\\:\\$queryString\\.$#"
@@ -158,9 +406,49 @@ parameters:
 			path: src/Database/Query.php
 
 		-
-			message: "#^Cake\\\\Database\\\\Statement\\\\PDOStatement\\:\\:__construct\\(\\) does not call parent constructor from Cake\\\\Database\\\\Statement\\\\StatementDecorator\\.$#"
+			message: "#^Return type \\(Cake\\\\Database\\\\StatementInterface\\) of method Cake\\\\Database\\\\Query\\:\\:getIterator\\(\\) should be compatible with return type \\(Traversable\\<mixed, mixed\\>\\) of method IteratorAggregate\\<mixed,mixed\\>\\:\\:getIterator\\(\\)$#"
 			count: 1
-			path: src/Database/Statement/PDOStatement.php
+			path: src/Database/Query.php
+
+		-
+			message: "#^PHPDoc tag @uses has invalid value \\(\\\\Cake\\\\Database\\\\Schema\\\\BaseSchema\\:\\:convertColumnDescription\\)\\: Unexpected token \"\\:\\:\", expected '\\<' at offset 683$#"
+			count: 1
+			path: src/Database/Schema/Collection.php
+
+		-
+			message: "#^PHPDoc tag @uses has invalid value \\(\\\\Cake\\\\Database\\\\Schema\\\\BaseSchema\\:\\:convertForeignKeyDescription\\)\\: Unexpected token \"\\:\\:\", expected '\\<' at offset 826$#"
+			count: 1
+			path: src/Database/Schema/Collection.php
+
+		-
+			message: "#^PHPDoc tag @uses has invalid value \\(\\\\Cake\\\\Database\\\\Schema\\\\BaseSchema\\:\\:convertIndexDescription\\)\\: Unexpected token \"\\:\\:\", expected '\\<' at offset 755$#"
+			count: 1
+			path: src/Database/Schema/Collection.php
+
+		-
+			message: "#^PHPDoc tag @uses has invalid value \\(\\\\Cake\\\\Database\\\\Schema\\\\BaseSchema\\:\\:convertOptionsDescription\\)\\: Unexpected token \"\\:\\:\", expected '\\<' at offset 902$#"
+			count: 1
+			path: src/Database/Schema/Collection.php
+
+		-
+			message: "#^PHPDoc tag @uses has invalid value \\(\\\\Cake\\\\Database\\\\Schema\\\\BaseSchema\\:\\:describeColumnSql\\)\\: Unexpected token \"\\:\\:\", expected '\\<' at offset 419$#"
+			count: 1
+			path: src/Database/Schema/Collection.php
+
+		-
+			message: "#^PHPDoc tag @uses has invalid value \\(\\\\Cake\\\\Database\\\\Schema\\\\BaseSchema\\:\\:describeForeignKeySql\\)\\: Unexpected token \"\\:\\:\", expected '\\<' at offset 548$#"
+			count: 1
+			path: src/Database/Schema/Collection.php
+
+		-
+			message: "#^PHPDoc tag @uses has invalid value \\(\\\\Cake\\\\Database\\\\Schema\\\\BaseSchema\\:\\:describeIndexSql\\)\\: Unexpected token \"\\:\\:\", expected '\\<' at offset 484$#"
+			count: 1
+			path: src/Database/Schema/Collection.php
+
+		-
+			message: "#^PHPDoc tag @uses has invalid value \\(\\\\Cake\\\\Database\\\\Schema\\\\BaseSchema\\:\\:describeOptionsSql\\)\\: Unexpected token \"\\:\\:\", expected '\\<' at offset 617$#"
+			count: 1
+			path: src/Database/Schema/Collection.php
 
 		-
 			message: "#^Access to undefined constant PDO\\:\\:SQLSRV_ENCODING_BINARY\\.$#"
@@ -168,9 +456,64 @@ parameters:
 			path: src/Database/Statement/SqlserverStatement.php
 
 		-
+			message: "#^Return type \\(Cake\\\\Database\\\\StatementInterface\\) of method Cake\\\\Database\\\\Statement\\\\StatementDecorator\\:\\:getIterator\\(\\) should be compatible with return type \\(Traversable\\<mixed, mixed\\>\\) of method IteratorAggregate\\<mixed,mixed\\>\\:\\:getIterator\\(\\)$#"
+			count: 1
+			path: src/Database/Statement/StatementDecorator.php
+
+		-
+			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
+			count: 2
+			path: src/Database/Type/DateTimeType.php
+
+		-
+			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
+			count: 1
+			path: src/Database/TypeFactory.php
+
+		-
+			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
+			count: 1
+			path: src/Datasource/ConnectionRegistry.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: src/ORM/Entity.php
+
+		-
 			message: "#^Result of && is always false\\.$#"
 			count: 2
 			path: src/Datasource/QueryCacher.php
+
+		-
+			message: "#^Cannot unset offset 'args' on array\\('path' \\=\\> string, 'reference' \\=\\> mixed\\)\\.$#"
+			count: 1
+			path: src/Error/Debugger.php
+
+		-
+			message: "#^Cannot unset offset 'object' on array\\('path' \\=\\> string, 'reference' \\=\\> mixed\\)\\.$#"
+			count: 1
+			path: src/Error/Debugger.php
+
+		-
+			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
+			count: 1
+			path: src/Error/ErrorHandler.php
+
+		-
+			message: "#^Method Cake\\\\Event\\\\Event\\:\\:getSubject\\(\\) should return TSubject but returns TSubject\\.$#"
+			count: 1
+			path: src/Event/Event.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: src/Event/EventManager.php
+
+		-
+			message: "#^Method Cake\\\\Event\\\\EventManager\\:\\:instance\\(\\) should return static\\(Cake\\\\Event\\\\EventManager\\) but returns Cake\\\\Event\\\\EventManager\\.$#"
+			count: 1
+			path: src/Event/EventManager.php
 
 		-
 			message: "#^Call to function is_int\\(\\) with bool\\|string will always evaluate to false\\.$#"
@@ -193,9 +536,49 @@ parameters:
 			path: src/Http/Client/Auth/Digest.php
 
 		-
+			message: "#^Property Cake\\\\Http\\\\Cookie\\\\Cookie\\:\\:\\$sameSite \\(Cake\\\\Http\\\\Cookie\\\\CookieInterface\\) does not accept string\\.$#"
+			count: 1
+			path: src/Http/Cookie/Cookie.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: src/Http/Cookie/Cookie.php
+
+		-
 			message: "#^Call to an undefined method DateTimeInterface\\:\\:setTimezone\\(\\)\\.$#"
 			count: 1
 			path: src/Http/Cookie/Cookie.php
+
+		-
+			message: "#^Method Cake\\\\Http\\\\Cookie\\\\Cookie\\:\\:createFromHeaderString\\(\\) should return static\\(Cake\\\\Http\\\\Cookie\\\\Cookie\\) but returns Cake\\\\Http\\\\Cookie\\\\Cookie\\.$#"
+			count: 1
+			path: src/Http/Cookie/Cookie.php
+
+		-
+			message: "#^If condition is always true\\.$#"
+			count: 1
+			path: src/Http/Cookie/Cookie.php
+
+		-
+			message: "#^Parameter \\#2 \\.\\.\\.\\$args of function sprintf expects bool\\|float\\|int\\|string\\|null, Cake\\\\Http\\\\Cookie\\\\CookieInterface given\\.$#"
+			count: 1
+			path: src/Http/Cookie/Cookie.php
+
+		-
+			message: "#^Method Cake\\\\Http\\\\Cookie\\\\Cookie\\:\\:getSameSite\\(\\) should return string\\|null but returns Cake\\\\Http\\\\Cookie\\\\CookieInterface\\.$#"
+			count: 1
+			path: src/Http/Cookie/Cookie.php
+
+		-
+			message: "#^Property Cake\\\\Http\\\\Cookie\\\\Cookie\\:\\:\\$sameSite \\(Cake\\\\Http\\\\Cookie\\\\CookieInterface\\) does not accept string\\|null\\.$#"
+			count: 1
+			path: src/Http/Cookie/Cookie.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 2
+			path: src/Http/Cookie/CookieCollection.php
 
 		-
 			message: "#^Method Cake\\\\Http\\\\Middleware\\\\CspMiddleware\\:\\:process\\(\\) should return Psr\\\\Http\\\\Message\\\\ResponseInterface but returns Psr\\\\Http\\\\Message\\\\MessageInterface\\.$#"
@@ -203,14 +586,14 @@ parameters:
 			path: src/Http/Middleware/CspMiddleware.php
 
 		-
+			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
+			count: 1
+			path: src/Http/Middleware/CspMiddleware.php
+
+		-
 			message: "#^Call to an undefined method DateTimeInterface\\:\\:setTimezone\\(\\)\\.$#"
 			count: 1
 			path: src/Http/Response.php
-
-		-
-			message: "#^Parameter \\#3 \\$expires of function setcookie expects int, array given\\.$#"
-			count: 1
-			path: src/Http/ResponseEmitter.php
 
 		-
 			message: "#^Access to an undefined property Psr\\\\Http\\\\Message\\\\UriInterface\\:\\:\\$webroot\\.$#"
@@ -223,6 +606,11 @@ parameters:
 			path: src/Http/ServerRequestFactory.php
 
 		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: src/Http/Session.php
+
+		-
 			message: "#^Variable \\$_SESSION in isset\\(\\) always exists and is not nullable\\.$#"
 			count: 2
 			path: src/Http/Session.php
@@ -233,32 +621,32 @@ parameters:
 			path: src/I18n/Date.php
 
 		-
-			message: "#^Parameter \\#4 \\$timezone of function datefmt_create expects int, string given\\.$#"
+			message: "#^Call to function is_subclass_of\\(\\) with class\\-string\\<static\\(Cake\\\\I18n\\\\Date\\)\\> and 'Cake\\\\\\\\Chronos\\\\\\\\Date' will always evaluate to false\\.$#"
 			count: 1
 			path: src/I18n/Date.php
 
 		-
-			message: "#^Parameter \\#4 \\$timezone of function datefmt_create expects int, DateTimeZone\\|string\\|null given\\.$#"
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/I18n/Date.php
 
 		-
-			message: "#^Parameter \\#5 \\$calendar of function datefmt_create expects int\\|IntlCalendar, null given\\.$#"
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
 			count: 1
 			path: src/I18n/Date.php
 
 		-
-			message: "#^Parameter \\#4 \\$timezone of function datefmt_create expects int, string given\\.$#"
+			message: "#^Result of \\|\\| is always true\\.$#"
 			count: 1
 			path: src/I18n/FrozenDate.php
 
 		-
-			message: "#^Parameter \\#4 \\$timezone of function datefmt_create expects int, DateTimeZone\\|string\\|null given\\.$#"
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/I18n/FrozenDate.php
 
 		-
-			message: "#^Parameter \\#5 \\$calendar of function datefmt_create expects int\\|IntlCalendar, null given\\.$#"
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
 			count: 1
 			path: src/I18n/FrozenDate.php
 
@@ -268,17 +656,17 @@ parameters:
 			path: src/I18n/FrozenDate.php
 
 		-
-			message: "#^Parameter \\#4 \\$timezone of function datefmt_create expects int, string given\\.$#"
+			message: "#^Call to function is_subclass_of\\(\\) with class\\-string\\<static\\(Cake\\\\I18n\\\\FrozenTime\\)\\> and 'Cake\\\\\\\\Chronos\\\\\\\\Date' will always evaluate to false\\.$#"
 			count: 1
 			path: src/I18n/FrozenTime.php
 
 		-
-			message: "#^Parameter \\#4 \\$timezone of function datefmt_create expects int, DateTimeZone\\|string\\|null given\\.$#"
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/I18n/FrozenTime.php
 
 		-
-			message: "#^Parameter \\#5 \\$calendar of function datefmt_create expects int\\|IntlCalendar, null given\\.$#"
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
 			count: 1
 			path: src/I18n/FrozenTime.php
 
@@ -288,17 +676,17 @@ parameters:
 			path: src/I18n/FrozenTime.php
 
 		-
-			message: "#^Parameter \\#4 \\$timezone of function datefmt_create expects int, string given\\.$#"
+			message: "#^Call to function is_subclass_of\\(\\) with class\\-string\\<static\\(Cake\\\\I18n\\\\Time\\)\\> and 'Cake\\\\\\\\Chronos\\\\\\\\Date' will always evaluate to false\\.$#"
 			count: 1
 			path: src/I18n/Time.php
 
 		-
-			message: "#^Parameter \\#4 \\$timezone of function datefmt_create expects int, DateTimeZone\\|string\\|null given\\.$#"
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/I18n/Time.php
 
 		-
-			message: "#^Parameter \\#5 \\$calendar of function datefmt_create expects int\\|IntlCalendar, null given\\.$#"
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
 			count: 1
 			path: src/I18n/Time.php
 
@@ -306,11 +694,36 @@ parameters:
 			message: "#^Call to an undefined method Cake\\\\Chronos\\\\DifferenceFormatterInterface\\:\\:timeAgoInWords\\(\\)\\.$#"
 			count: 1
 			path: src/I18n/Time.php
+
+		-
+			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
+			count: 1
+			path: src/I18n/TranslatorFactory.php
+
+		-
+			message: "#^Method Cake\\\\Mailer\\\\Email\\:\\:deliver\\(\\) should return static\\(Cake\\\\Mailer\\\\Email\\) but returns Cake\\\\Mailer\\\\Email\\.$#"
+			count: 1
+			path: src/Mailer/Email.php
 
 		-
 			message: "#^Call to sprintf contains 0 placeholders, 1 value given\\.$#"
 			count: 1
 			path: src/Mailer/Message.php
+
+		-
+			message: "#^Method Cake\\\\Mailer\\\\Renderer\\:\\:render\\(\\) should return array\\(\\)\\|array\\('html' \\=\\> string, 'text' \\=\\> string\\) but returns array\\<string, string\\>\\.$#"
+			count: 2
+			path: src/Mailer/Renderer.php
+
+		-
+			message: "#^Access to an undefined property Cake\\\\Mailer\\\\Renderer\\:\\:\\$request\\.$#"
+			count: 1
+			path: src/Mailer/Renderer.php
+
+		-
+			message: "#^Access to an undefined property Cake\\\\Mailer\\\\Renderer\\:\\:\\$response\\.$#"
+			count: 1
+			path: src/Mailer/Renderer.php
 
 		-
 			message: "#^Strict comparison using \\=\\=\\= between int and true will always evaluate to false\\.$#"
@@ -321,6 +734,26 @@ parameters:
 			message: "#^Parameter \\#2 \\$callback of function array_filter expects callable\\(mixed, mixed\\)\\: bool, 'strlen' given\\.$#"
 			count: 1
 			path: src/ORM/Association/BelongsToMany.php
+
+		-
+			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
+			count: 1
+			path: src/ORM/Behavior/TranslateBehavior.php
+
+		-
+			message: "#^Call to an undefined method Cake\\\\Collection\\\\CollectionInterface\\:\\:printer\\(\\)\\.$#"
+			count: 1
+			path: src/ORM/Behavior/TreeBehavior.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 2
+			path: src/ORM/EagerLoader.php
+
+		-
+			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
+			count: 1
+			path: src/ORM/Locator/TableLocator.php
 
 		-
 			message: "#^Parameter \\#1 \\$assoc of method Cake\\\\ORM\\\\Marshaller\\:\\:_belongsToMany\\(\\) expects Cake\\\\ORM\\\\Association\\\\BelongsToMany, Cake\\\\ORM\\\\Association given\\.$#"
@@ -338,6 +771,11 @@ parameters:
 			path: src/ORM/Marshaller.php
 
 		-
+			message: "#^Parameter \\#1 \\$entities of method Cake\\\\ORM\\\\Marshaller\\:\\:mergeMany\\(\\) expects iterable\\<Cake\\\\Datasource\\\\EntityInterface\\>&Traversable\\<mixed, Cake\\\\Datasource\\\\EntityInterface\\>, array\\<Cake\\\\Datasource\\\\EntityInterface\\> given\\.$#"
+			count: 3
+			path: src/ORM/Marshaller.php
+
+		-
 			message: "#^Parameter \\#1 \\$table of method Cake\\\\ORM\\\\Query\\:\\:addDefaultTypes\\(\\) expects Cake\\\\ORM\\\\Table, Cake\\\\Datasource\\\\RepositoryInterface given\\.$#"
 			count: 1
 			path: src/ORM/Query.php
@@ -345,6 +783,16 @@ parameters:
 		-
 			message: "#^Parameter \\#1 \\$table of method Cake\\\\ORM\\\\Query\\:\\:_addAssociationsToTypeMap\\(\\) expects Cake\\\\ORM\\\\Table, Cake\\\\Datasource\\\\RepositoryInterface given\\.$#"
 			count: 5
+			path: src/ORM/Query.php
+
+		-
+			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
+			count: 1
+			path: src/ORM/Query.php
+
+		-
+			message: "#^Method Cake\\\\ORM\\\\Query\\:\\:find\\(\\) should return static\\(Cake\\\\ORM\\\\Query\\) but returns Cake\\\\ORM\\\\Query\\.$#"
+			count: 1
 			path: src/ORM/Query.php
 
 		-
@@ -356,6 +804,26 @@ parameters:
 			message: "#^Result of && is always false\\.$#"
 			count: 1
 			path: src/ORM/Rule/LinkConstraint.php
+
+		-
+			message: "#^Negated boolean expression is always true\\.$#"
+			count: 1
+			path: src/ORM/Table.php
+
+		-
+			message: "#^Variable \\$entities in PHPDoc tag @var does not match any variable in the foreach loop\\: \\$key, \\$entity$#"
+			count: 1
+			path: src/ORM/Table.php
+
+		-
+			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
+			count: 1
+			path: src/ORM/Table.php
+
+		-
+			message: "#^Parameter \\#1 \\$entities of method Cake\\\\ORM\\\\Marshaller\\:\\:mergeMany\\(\\) expects iterable\\<Cake\\\\Datasource\\\\EntityInterface\\>&Traversable\\<mixed, Cake\\\\Datasource\\\\EntityInterface\\>, iterable\\<Cake\\\\Datasource\\\\EntityInterface\\>&Traversable given\\.$#"
+			count: 1
+			path: src/ORM/Table.php
 
 		-
 			message: "#^Parameter \\#1 \\$request of static method Cake\\\\Routing\\\\Router\\:\\:setRequest\\(\\) expects Cake\\\\Http\\\\ServerRequest, Psr\\\\Http\\\\Message\\\\ServerRequestInterface given\\.$#"
@@ -373,6 +841,16 @@ parameters:
 			path: src/Routing/Route/EntityRoute.php
 
 		-
+			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
+			count: 1
+			path: src/Routing/Route/Route.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: src/Routing/RouteBuilder.php
+
+		-
 			message: "#^Property Cake\\\\TestSuite\\\\ConsoleIntegrationTestCase\\:\\:\\$_out \\(Cake\\\\TestSuite\\\\Stub\\\\ConsoleOutput\\) does not accept null\\.$#"
 			count: 1
 			path: src/TestSuite/ConsoleIntegrationTestCase.php
@@ -388,9 +866,19 @@ parameters:
 			path: src/TestSuite/ConsoleIntegrationTestCase.php
 
 		-
+			message: "#^Variable \\$event in PHPDoc tag @var does not match assigned variable \\$events\\.$#"
+			count: 1
+			path: src/TestSuite/Constraint/EventFiredWith.php
+
+		-
 			message: "#^Access to an undefined property PHPUnit\\\\Framework\\\\Test\\:\\:\\$fixtureManager\\.$#"
 			count: 1
 			path: src/TestSuite/Fixture/FixtureInjector.php
+
+		-
+			message: "#^Variable \\$fixtures in PHPDoc tag @var does not match any variable in the foreach loop\\: \\$fixture$#"
+			count: 1
+			path: src/TestSuite/Fixture/FixtureManager.php
 
 		-
 			message: "#^Call to an undefined method Cake\\\\Database\\\\ConstraintsInterface\\:\\:sourceName\\(\\)\\.$#"
@@ -468,19 +956,34 @@ parameters:
 			path: src/TestSuite/IntegrationTestCase.php
 
 		-
+			message: "#^Variable \\$tags in PHPDoc tag @var does not match any variable in the foreach loop\\: \\$tag, \\$attributes$#"
+			count: 1
+			path: src/TestSuite/TestCase.php
+
+		-
 			message: "#^Result of \\|\\| is always true\\.$#"
 			count: 2
 			path: src/Utility/Hash.php
 
 		-
-			message: "#^Method Cake\\\\Utility\\\\Security\\:\\:engine\\(\\) should return Cake\\\\Utility\\\\Crypto\\\\OpenSsl but returns object\\.$#"
+			message: "#^Variable \\$tempData in PHPDoc tag @var does not match any variable in the foreach loop\\: \\$key, \\$hashVal$#"
 			count: 1
-			path: src/Utility/Security.php
+			path: src/Utility/Text.php
 
 		-
-			message: "#^Call to function method_exists\\(\\) with \\*NEVER\\* and 'viewBuilder' will always evaluate to false\\.$#"
+			message: "#^Return type \\(array\\<string, array\\|string\\>\\) of method Cake\\\\View\\\\Exception\\\\MissingCellTemplateException\\:\\:getAttributes\\(\\) should be compatible with return type \\(array\\<string, array\\|string\\>\\) of method Cake\\\\View\\\\Exception\\\\MissingTemplateException\\:\\:getAttributes\\(\\)$#"
 			count: 1
-			path: src/View/View.php
+			path: src/View/Exception/MissingCellTemplateException.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: src/View/Form/ContextFactory.php
+
+		-
+			message: "#^Call to an undefined method Cake\\\\ORM\\\\Association\\:\\:junction\\(\\)\\.$#"
+			count: 1
+			path: src/View/Form/EntityContext.php
 
 		-
 			message: "#^Constructor of class Cake\\\\View\\\\Form\\\\NullContext has an unused parameter \\$context\\.$#"
@@ -488,24 +991,29 @@ parameters:
 			path: src/View/Form/NullContext.php
 
 		-
+			message: "#^Method Cake\\\\View\\\\Helper\\:\\:__get\\(\\) should return Cake\\\\View\\\\Helper\\|null but return statement is missing\\.$#"
+			count: 1
+			path: src/View/Helper.php
+
+		-
+			message: "#^Offset 'debug' does not exist on array\\('fields' \\=\\> string, 'unlocked' \\=\\> string\\)\\.$#"
+			count: 1
+			path: src/View/Helper/FormHelper.php
+
+		-
 			message: "#^Call to an undefined method DateTimeInterface\\:\\:setTimezone\\(\\)\\.$#"
 			count: 1
 			path: src/View/Helper/TimeHelper.php
 
 		-
-			message: "#^Method Cake\\\\View\\\\HelperRegistry\\:\\:__get\\(\\) should return Cake\\\\View\\\\Helper\\|null but returns object\\.$#"
-			count: 2
-			path: src/View/HelperRegistry.php
+			message: "#^Parameter \\#3 \\$options of method Cake\\\\View\\\\View\\:\\:_elementCache\\(\\) expects array\\('cache' \\=\\> array\\('key' \\=\\> string, 'config' \\=\\> string\\)\\|string, \\?'callbacks' \\=\\> mixed, \\?'plugin' \\=\\> mixed\\), array given\\.$#"
+			count: 1
+			path: src/View/View.php
 
 		-
-			message: "#^Access to an undefined property Cake\\\\Mailer\\\\Renderer\\:\\:\\$request\\.$#"
+			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
 			count: 1
-			path: src/Mailer/Renderer.php
-
-		-
-			message: "#^Access to an undefined property Cake\\\\Mailer\\\\Renderer\\:\\:\\$response\\.$#"
-			count: 1
-			path: src/Mailer/Renderer.php
+			path: src/View/ViewBuilder.php
 
 		-
 			message: "#^Call to function is_int\\(\\) with string will always evaluate to false\\.$#"
@@ -513,23 +1021,12 @@ parameters:
 			path: src/View/Widget/DateTimeWidget.php
 
 		-
-			message: "#^Cake\\\\View\\\\Widget\\\\MultiCheckboxWidget\\:\\:__construct\\(\\) does not call parent constructor from Cake\\\\View\\\\Widget\\\\BasicWidget\\.$#"
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
 			count: 1
-			path: src/View/Widget/MultiCheckboxWidget.php
-
-		-
-			message: "#^Cake\\\\View\\\\Widget\\\\RadioWidget\\:\\:__construct\\(\\) does not call parent constructor from Cake\\\\View\\\\Widget\\\\BasicWidget\\.$#"
-			count: 1
-			path: src/View/Widget/RadioWidget.php
-
-		-
-			message: "#^Cake\\\\View\\\\Widget\\\\YearWidget\\:\\:__construct\\(\\) does not call parent constructor from Cake\\\\View\\\\Widget\\\\BasicWidget\\.$#"
-			count: 1
-			path: src/View/Widget/YearWidget.php
+			path: src/View/Widget/SelectBoxWidget.php
 
 		-
 			message: "#^Class Psy\\\\Shell not found\\.$#"
 			count: 1
 			path: src/basics.php
-
 
