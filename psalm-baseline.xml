@@ -23,16 +23,15 @@
     </DeprecatedClass>
   </file>
   <file src="src/Console/ShellDispatcher.php">
-    <DeprecatedClass occurrences="3">
-      <code>Shell</code>
+    <DeprecatedClass occurrences="5">
+      <code>\Cake\Console\Shell</code>
       <code>Shell</code>
       <code>$instance</code>
     </DeprecatedClass>
   </file>
   <file src="src/Console/TaskRegistry.php">
-    <DeprecatedClass occurrences="4">
+    <DeprecatedClass occurrences="5">
       <code>TaskRegistry</code>
-      <code>\Cake\Console\Shell</code>
       <code>\Cake\Console\Shell</code>
       <code>Shell</code>
     </DeprecatedClass>
@@ -79,9 +78,10 @@
     </DeprecatedInterface>
   </file>
   <file src="src/TestSuite/LegacyShellDispatcher.php">
-    <DeprecatedClass occurrences="4">
+    <DeprecatedClass occurrences="5">
       <code>ShellDispatcher</code>
       <code>parent::__construct($args, $bootstrap)</code>
+      <code>\Cake\Console\Shell</code>
       <code>Shell</code>
       <code>$instance</code>
     </DeprecatedClass>

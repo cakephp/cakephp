@@ -52,7 +52,7 @@
         "cakephp/cakephp-codesniffer": "dev-next",
         "mikey179/vfsstream": "^1.6",
         "paragonie/csp-builder": "^2.3",
-        "phpunit/phpunit": "^8.3.3|^8.4"
+        "phpunit/phpunit": "~8.4.0"
     },
     "autoload": {
         "psr-4": {
@@ -81,12 +81,14 @@
     "replace": {
         "cakephp/cache": "self.version",
         "cakephp/collection": "self.version",
+        "cakephp/console": "self.version",
         "cakephp/core": "self.version",
         "cakephp/datasource": "self.version",
         "cakephp/database": "self.version",
         "cakephp/event": "self.version",
         "cakephp/filesystem": "self.version",
         "cakephp/form": "self.version",
+        "cakephp/http": "self.version",
         "cakephp/i18n": "self.version",
         "cakephp/log": "self.version",
         "cakephp/orm": "self.version",
