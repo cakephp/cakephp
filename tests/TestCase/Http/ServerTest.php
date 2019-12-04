@@ -24,6 +24,7 @@ use Cake\Http\CallbackStream;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\Server;
 use Cake\Http\ServerRequest;
+use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use TestApp\Http\MiddlewareApplication;
@@ -42,6 +43,11 @@ class ServerTest extends TestCase
     protected $config;
 
     /**
+     * @var array
+     */
+    private $server;
+
+    /**
      * Setup
      *
      * @return void
@@ -50,7 +56,7 @@ class ServerTest extends TestCase
     {
         parent::setUp();
         $this->server = $_SERVER;
-        $this->config = dirname(dirname(__DIR__));
+        $this->config = dirname(dirname(__DIR__)) . '/test_app/config';
         $GLOBALS['mockedHeaders'] = [];
         $GLOBALS['mockedHeadersSent'] = true;
     }
@@ -120,7 +126,6 @@ class ServerTest extends TestCase
      */
     public function testRunCallingPluginHooks()
     {
-        $response = new Response('php://memory', 200, ['X-testing' => 'source header']);
         $request = new ServerRequest();
         $request = $request->withHeader('X-pass', 'request header');
 
@@ -184,6 +189,34 @@ class ServerTest extends TestCase
         $res = $server->run();
         $this->assertSame('first', $res->getHeaderLine('X-First'));
         $this->assertSame('second', $res->getHeaderLine('X-Second'));
+    }
+
+    /**
+     * Test that run closes session after invoking the application.
+     */
+    public function testRunClosesSession()
+    {
+        $sessionMock = $this->createMock(Session::class);
+
+        $sessionMock->expects($this->once())
+            ->method('close');
+
+        $app = new MiddlewareApplication($this->config);
+        $server = new Server($app);
+        $request = new ServerRequest(['session' => $sessionMock]);
+        $res = $server->run($request);
+
+        // assert that app was executed correctly
+        $this->assertSame(
+            200,
+            $res->getStatusCode(),
+            "Application was expected to be executed"
+        );
+        $this->assertSame(
+            'source header',
+            $res->getHeaderLine('X-testing'),
+            "Application was expected to be executed"
+        );
     }
 
     /**
