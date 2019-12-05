@@ -18,7 +18,8 @@ namespace Cake\Test\TestCase\Http;
 
 use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
-use RuntimeException;
+use InvalidArgumentException;
+use TestApp\Http\Session\TestAppLibSession;
 use TestApp\Http\Session\TestWebSession;
 
 /**
@@ -261,18 +262,13 @@ class SessionTest extends TestCase
      *
      * @return void
      */
-    public function testCloseFailure()
+    public function testCloseNotStarted()
     {
         $session = new Session();
-        $session->started();
         $this->assertTrue($session->start());
-        try {
-            $session->close();
-        } catch (RuntimeException $e) {
-            // closing the session in CLI should raise an error
-            // and won't close the session.
-            $this->assertTrue($session->started());
-        }
+
+        $session->close();
+        $this->assertFalse($session->started());
     }
 
     /**
@@ -489,7 +485,7 @@ class SessionTest extends TestCase
     public function testEngineWithPreMadeInstance()
     {
         static::setAppNamespace();
-        $engine = new \TestApp\Http\Session\TestAppLibSession();
+        $engine = new TestAppLibSession();
         $session = new Session(['handler' => ['engine' => $engine]]);
         $this->assertSame($engine, $session->engine());
 
@@ -505,7 +501,7 @@ class SessionTest extends TestCase
      */
     public function testBadEngine()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The class "Derp" does not exist and cannot be used as a session engine');
         $session = new Session();
         $session->engine('Derp');

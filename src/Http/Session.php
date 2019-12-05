@@ -378,6 +378,12 @@ class Session
             return true;
         }
 
+        if ($this->_isCLI) {
+            $this->_started = false;
+
+            return true;
+        }
+
         if (!session_write_close()) {
             throw new RuntimeException('Could not close the session');
         }
