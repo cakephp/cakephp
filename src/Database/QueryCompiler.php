@@ -13,9 +13,7 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Database;
-
 use Cake\Database\Expression\QueryExpression;
-
 /**
  * Responsible for compiling a Query object into its SQL representation
  *
@@ -38,9 +36,8 @@ class QueryCompiler
         'order' => ' %s',
         'limit' => ' LIMIT %s',
         'offset' => ' OFFSET %s',
-        'epilog' => ' %s'
+        'epilog' => ' %s',
     ];
-
     /**
      * The list of query clauses to traverse for generating a SELECT statement
      *
@@ -48,30 +45,26 @@ class QueryCompiler
      */
     protected $_selectParts = [
         'select', 'from', 'join', 'where', 'group', 'having', 'order', 'limit',
-        'offset', 'union', 'epilog'
+        'offset', 'union', 'epilog',
     ];
-
     /**
      * The list of query clauses to traverse for generating an UPDATE statement
      *
      * @var array
      */
     protected $_updateParts = ['update', 'set', 'where', 'epilog'];
-
     /**
      * The list of query clauses to traverse for generating a DELETE statement
      *
      * @var array
      */
     protected $_deleteParts = ['delete', 'modifier', 'from', 'where', 'epilog'];
-
     /**
      * The list of query clauses to traverse for generating an INSERT statement
      *
      * @var array
      */
     protected $_insertParts = ['insert', 'values', 'epilog'];
-
     /**
      * Indicate whether or not this query dialect supports ordered unions.
      *
@@ -80,7 +73,6 @@ class QueryCompiler
      * @var bool
      */
     protected $_orderedUnion = true;
-
     /**
      * Returns the SQL representation of the provided query after generating
      * the placeholders for the bound values using the provided generator
@@ -96,8 +88,7 @@ class QueryCompiler
         $query->traverse(
             $this->_sqlCompiler($sql, $query, $generator),
             $this->{'_' . $type . 'Parts'}
-        );
-
+            );
         // Propagate bound parameters from sub-queries if the
         // placeholders can be found in the SQL statement.
         if ($query->getValueBinder() !== $generator) {
@@ -108,10 +99,8 @@ class QueryCompiler
                 }
             }
         }
-
         return $sql;
     }
-
     /**
      * Returns a callable object that can be used to compile a SQL string representation
      * of this query.
@@ -124,24 +113,22 @@ class QueryCompiler
     protected function _sqlCompiler(&$sql, $query, $generator)
     {
         return function ($parts, $name) use (&$sql, $query, $generator) {
-            if (!isset($parts) ||
+            if (
+                !isset($parts) ||
                 ((is_array($parts) || $parts instanceof \Countable) && !count($parts))
-            ) {
-                return;
-            }
-            if ($parts instanceof ExpressionInterface) {
-                $parts = [$parts->sql($generator)];
-            }
-            if (isset($this->_templates[$name])) {
-                $parts = $this->_stringifyExpressions((array)$parts, $generator);
-
-                return $sql .= sprintf($this->_templates[$name], implode(', ', $parts));
-            }
-
-            return $sql .= $this->{'_build' . ucfirst($name) . 'Part'}($parts, $query, $generator);
+                ) {
+                    return;
+                }
+                if ($parts instanceof ExpressionInterface) {
+                    $parts = [$parts->sql($generator)];
+                }
+                if (isset($this->_templates[$name])) {
+                    $parts = $this->_stringifyExpressions((array)$parts, $generator);
+                    return $sql .= sprintf($this->_templates[$name], implode(', ', $parts));
+                }
+                return $sql .= $this->{'_build' . ucfirst($name) . 'Part'}($parts, $query, $generator);
         };
     }
-
     /**
      * Helper function used to build the string representation of a SELECT clause,
      * it constructs the field list taking care of aliasing and
@@ -162,7 +149,6 @@ class QueryCompiler
         }
         $distinct = $query->clause('distinct');
         $modifiers = $this->_buildModifierPart($query->clause('modifier'), $query, $generator);
-
         $normalized = [];
         $parts = $this->_stringifyExpressions($parts, $generator);
         foreach ($parts as $k => $p) {
@@ -171,19 +157,15 @@ class QueryCompiler
             }
             $normalized[] = $p;
         }
-
         if ($distinct === true) {
             $distinct = 'DISTINCT ';
         }
-
         if (is_array($distinct)) {
             $distinct = $this->_stringifyExpressions($distinct, $generator);
             $distinct = sprintf('DISTINCT ON (%s) ', implode(', ', $distinct));
         }
-
         return sprintf($select, $modifiers, $distinct, implode(', ', $normalized));
     }
-
     /**
      * Helper function used to build the string representation of a FROM clause,
      * it constructs the tables list taking care of aliasing and
@@ -205,78 +187,75 @@ class QueryCompiler
             }
             $normalized[] = $p;
         }
-
         return sprintf($select, implode(', ', $normalized));
     }
-
     /**
-     * Function used to start JOIN builder
+     * Method called to start _buildNestedJoins method.
      *
      * @param array $parts list of joins to be transformed to string
      * @param \Cake\Database\Query $query The query that is being compiled
      * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
      * @return string
      */
-    protected function _buildJoinPart($parts, Query $query, $generator)
+    protected function _buildJoinPart($parts, $query, $generator)
     {
-        $joins = $this->_arrangeJoins($query->getEagerLoader()->getContain(), $parts, $query, $generator);
-
+        $joins = $this->_buildNestedJoins($parts, $query, $generator, $query->getEagerLoader()->getContain());
         return $joins;
     }
-
     /**
      * Helper function used to build the string representation of multiple JOIN clauses,
      * it constructs the joins list taking care of aliasing and converting
      * expression objects to string in both the table to be joined and the conditions
      * to be used.
      *
-     * @param array $associations associations structure
      * @param array $parts list of joins to be transformed to string
      * @param \Cake\Database\Query $query The query that is being compiled
      * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
+     * @param array $associations the query associations tree
      * @return string
      */
-    protected function _arrangeJoins($associations, $parts, $query, $generator)
+    protected function _buildNestedJoins(&$parts, $query, $generator, $associations)
     {
         $joins = '';
-        foreach ($associations as $association => $subAssociation) {
-            if (!isset($parts[$association])) {
+        foreach($associations as $association => $subAssociation){
+            if(!isset($parts[$association])){
                 continue;
             }
-
             $join = $parts[$association];
             unset($parts[$association]);
-
             $subquery = $join['table'] instanceof Query || $join['table'] instanceof QueryExpression;
             if ($join['table'] instanceof ExpressionInterface) {
                 $join['table'] = $join['table']->sql($generator);
             }
-
             if ($subquery) {
                 $join['table'] = '(' . $join['table'] . ')';
             }
-
             $joins .= sprintf(' %s JOIN (%s %s', $join['type'], $join['table'], $join['alias']);
-            if (is_array($subAssociation) && count($subAssociation)) {
-                $joins .= $this->_arrangeJoins($subAssociation, $parts, $query, $generator);
+            if(is_array($subAssociation) && count($subAssociation)){
+                $joins .= $this->_buildNestedJoins($parts, $query, $generator, $subAssociation);
             }
             $joins .= ')';
-
             $condition = '';
             if (isset($join['conditions']) && $join['conditions'] instanceof ExpressionInterface) {
                 $condition = $join['conditions']->sql($generator);
             }
-
             if (strlen($condition)) {
                 $joins .= " ON {$condition}";
             } else {
                 $joins .= ' ON 1 = 1';
             }
         }
-
+        
+        if($associations == $query->getEagerLoader()->getContain() && count($parts)){
+            $associations = [];
+            foreach(array_keys($parts) as $part){
+                $associations[$part] = [];
+            }
+            $joins .= $this->_buildNestedJoins($parts, $query, $generator, $associations);
+        }
+        
         return $joins;
     }
-
     /**
      * Helper function to generate SQL for SET expressions.
      *
@@ -297,10 +276,8 @@ class QueryCompiler
             }
             $set[] = $part;
         }
-
         return ' SET ' . implode('', $set);
     }
-
     /**
      * Builds the SQL string for all the UNION clauses in this query, when dealing
      * with query objects it will also transform them using their configured SQL
@@ -320,17 +297,13 @@ class QueryCompiler
             if ($this->_orderedUnion) {
                 return "{$prefix}({$p['query']})";
             }
-
             return $prefix . $p['query'];
         }, $parts);
-
-        if ($this->_orderedUnion) {
-            return sprintf(")\nUNION %s", implode("\nUNION ", $parts));
-        }
-
-        return sprintf("\nUNION %s", implode("\nUNION ", $parts));
+            if ($this->_orderedUnion) {
+                return sprintf(")\nUNION %s", implode("\nUNION ", $parts));
+            }
+            return sprintf("\nUNION %s", implode("\nUNION ", $parts));
     }
-
     /**
      * Builds the SQL fragment for INSERT INTO.
      *
@@ -344,10 +317,8 @@ class QueryCompiler
         $table = $parts[0];
         $columns = $this->_stringifyExpressions($parts[1], $generator);
         $modifiers = $this->_buildModifierPart($query->clause('modifier'), $query, $generator);
-
         return sprintf('INSERT%s INTO %s (%s)', $modifiers, $table, implode(', ', $columns));
     }
-
     /**
      * Builds the SQL fragment for INSERT INTO.
      *
@@ -360,7 +331,6 @@ class QueryCompiler
     {
         return implode('', $this->_stringifyExpressions($parts, $generator));
     }
-
     /**
      * Builds the SQL fragment for UPDATE.
      *
@@ -373,10 +343,8 @@ class QueryCompiler
     {
         $table = $this->_stringifyExpressions($parts, $generator);
         $modifiers = $this->_buildModifierPart($query->clause('modifier'), $query, $generator);
-
         return sprintf('UPDATE%s %s', $modifiers, implode(',', $table));
     }
-
     /**
      * Builds the SQL modifier fragment
      *
@@ -390,10 +358,8 @@ class QueryCompiler
         if ($parts === []) {
             return '';
         }
-
         return ' ' . implode(' ', $this->_stringifyExpressions($parts, $generator, false));
     }
-
     /**
      * Helper function used to covert ExpressionInterface objects inside an array
      * into their string representation.
@@ -413,7 +379,6 @@ class QueryCompiler
             }
             $result[$k] = $expression;
         }
-
         return $result;
     }
 }
