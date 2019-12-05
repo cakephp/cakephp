@@ -88,7 +88,7 @@ class QueryCompiler
         $query->traverse(
             $this->_sqlCompiler($sql, $query, $generator),
             $this->{'_' . $type . 'Parts'}
-            );
+        );
         // Propagate bound parameters from sub-queries if the
         // placeholders can be found in the SQL statement.
         if ($query->getValueBinder() !== $generator) {
@@ -113,19 +113,20 @@ class QueryCompiler
     protected function _sqlCompiler(&$sql, $query, $generator)
     {
         return function ($parts, $name) use (&$sql, $query, $generator) {
-            if (
-                !isset($parts) ||
+            if (!isset($parts) ||
                 ((is_array($parts) || $parts instanceof \Countable) && !count($parts))
                 ) {
                     return;
-                }
-                if ($parts instanceof ExpressionInterface) {
-                    $parts = [$parts->sql($generator)];
-                }
-                if (isset($this->_templates[$name])) {
-                    $parts = $this->_stringifyExpressions((array)$parts, $generator);
-                    return $sql .= sprintf($this->_templates[$name], implode(', ', $parts));
-                }
+            }
+            if ($parts instanceof ExpressionInterface) {
+                $parts = [$parts->sql($generator)];
+            }
+            if (isset($this->_templates[$name])) {
+                $parts = $this->_stringifyExpressions((array)$parts, $generator);
+
+                return $sql .= sprintf($this->_templates[$name], implode(', ', $parts));
+            }
+
                 return $sql .= $this->{'_build' . ucfirst($name) . 'Part'}($parts, $query, $generator);
         };
     }
@@ -187,6 +188,7 @@ class QueryCompiler
             }
             $normalized[] = $p;
         }
+
         return sprintf($select, implode(', ', $normalized));
     }
     /**
@@ -217,8 +219,8 @@ class QueryCompiler
     protected function _buildNestedJoins(&$parts, $query, $generator, $associations)
     {
         $joins = '';
-        foreach($associations as $association => $subAssociation){
-            if(!isset($parts[$association])){
+        foreach ($associations as $association => $subAssociation) {
+            if (!isset($parts[$association])) {
                 continue;
             }
             $join = $parts[$association];
@@ -231,7 +233,7 @@ class QueryCompiler
                 $join['table'] = '(' . $join['table'] . ')';
             }
             $joins .= sprintf(' %s JOIN (%s %s', $join['type'], $join['table'], $join['alias']);
-            if(is_array($subAssociation) && count($subAssociation)){
+            if (is_array($subAssociation) && count($subAssociation)) {
                 $joins .= $this->_buildNestedJoins($parts, $query, $generator, $subAssociation);
             }
             $joins .= ')';
@@ -245,15 +247,15 @@ class QueryCompiler
                 $joins .= ' ON 1 = 1';
             }
         }
-        
-        if($associations == $query->getEagerLoader()->getContain() && count($parts)){
+
+        if ($associations == $query->getEagerLoader()->getContain() && count($parts)) {
             $associations = [];
-            foreach(array_keys($parts) as $part){
+            foreach (array_keys($parts) as $part) {
                 $associations[$part] = [];
             }
             $joins .= $this->_buildNestedJoins($parts, $query, $generator, $associations);
         }
-        
+
         return $joins;
     }
     /**
@@ -297,11 +299,13 @@ class QueryCompiler
             if ($this->_orderedUnion) {
                 return "{$prefix}({$p['query']})";
             }
+
             return $prefix . $p['query'];
         }, $parts);
-            if ($this->_orderedUnion) {
-                return sprintf(")\nUNION %s", implode("\nUNION ", $parts));
-            }
+        if ($this->_orderedUnion) {
+            return sprintf(")\nUNION %s", implode("\nUNION ", $parts));
+        }
+
             return sprintf("\nUNION %s", implode("\nUNION ", $parts));
     }
     /**
