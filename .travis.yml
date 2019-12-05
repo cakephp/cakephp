@@ -1,5 +1,6 @@
 language: php
 
+os: linux
 dist: xenial
 
 php:
@@ -8,7 +9,7 @@ php:
   - 7.4
 
 env:
-  matrix:
+  jobs:
     - DB=mysql
   global:
     - PHPUNIT=5.7.19
@@ -19,7 +20,7 @@ services:
   - postgresql
   - mysql
 
-matrix:
+jobs:
   fast_finish: true
   include:
     - php: 5.3
@@ -41,11 +42,8 @@ matrix:
     - php: 7.3
       env: DB=sqlite
 
-    - php: 7.2
+    - php: 7.0
       env: PHPCS=1
-
-  allow_failures:
-    - php: 7.4
 
 before_script:
   - if [[ ${TRAVIS_PHP_VERSION:0:3} =~ ^7\.[234]$ ]] ; then pear config-set preferred_state snapshot && yes "" | pecl install mcrypt ; fi
