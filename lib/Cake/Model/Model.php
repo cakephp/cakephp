@@ -1358,7 +1358,7 @@ class Model extends CakeObject implements CakeEventListener {
 					}
 				}
 
-				if (!isset($data[$val]) || isset($data[$val]) && (empty($data[$val]) || $data[$val][0] === '-')) {
+				if (!isset($data[$val]) || isset($data[$val]) && (empty($data[$val]) || substr($data[$val], 0, 1) === '-')) {
 					return null;
 				}
 
@@ -1991,7 +1991,7 @@ class Model extends CakeObject implements CakeEventListener {
  */
 	protected function _isUUIDField($field) {
 		$field = $this->schema($field);
-		return $field['length'] == 36 && in_array($field['type'], array('string', 'binary', 'uuid'));
+		return $field !== null && $field['length'] == 36 && in_array($field['type'], array('string', 'binary', 'uuid'));
 	}
 
 /**

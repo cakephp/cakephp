@@ -357,41 +357,6 @@ class MysqlTest extends CakeTestCase {
 	}
 
 /**
- * testBuildColumn method
- *
- * @return void
- */
-	public function testBuildColumn() {
-		$restore = $this->Dbo->columns;
-		$this->Dbo->columns = array('varchar(255)' => 1);
-		$data = array(
-			'name' => 'testName',
-			'type' => 'varchar(255)',
-			'default',
-			'null' => true,
-			'key',
-			'comment' => 'test'
-		);
-		$result = $this->Dbo->buildColumn($data);
-		$expected = '`testName`  DEFAULT NULL COMMENT \'test\'';
-		$this->assertEquals($expected, $result);
-
-		$data = array(
-			'name' => 'testName',
-			'type' => 'varchar(255)',
-			'default',
-			'null' => true,
-			'key',
-			'charset' => 'utf8',
-			'collate' => 'utf8_unicode_ci'
-		);
-		$result = $this->Dbo->buildColumn($data);
-		$expected = '`testName`  CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL';
-		$this->assertEquals($expected, $result);
-		$this->Dbo->columns = $restore;
-	}
-
-/**
  * MySQL 4.x returns index data in a different format,
  * Using a mock ensure that MySQL 4.x output is properly parsed.
  *
@@ -3166,7 +3131,7 @@ SQL;
  *
  * @return void
  */
-	public function testBuildColumn2() {
+	public function testBuildColumn() {
 		$data = array(
 			'name' => 'testName',
 			'type' => 'string',

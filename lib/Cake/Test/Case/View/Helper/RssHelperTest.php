@@ -245,7 +245,11 @@ class RssHelperTest extends CakeTestCase {
 			array('title' => 'title3', 'guid' => 'http://www.example.com/guid3', 'link' => 'http://www.example.com/link3', 'description' => 'description3')
 		);
 
-		$result = $this->Rss->items($items, create_function('$v', '$v[\'title\'] = $v[\'title\'] . \'-transformed\'; return $v;'));
+		$result = $this->Rss->items($items, function ($v) {
+			$v['title'] = $v['title'] . '-transformed';
+
+			return $v;
+		});
 		$expected = array(
 			'<item',
 				'<title', 'title1-transformed', '/title',

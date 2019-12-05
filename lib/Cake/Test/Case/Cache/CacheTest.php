@@ -189,8 +189,12 @@ class CacheTest extends CakeTestCase {
 		$result = Cache::config('tests', array('engine' => 'File', 'path' => TMP . 'tests'));
 		$this->assertEquals(Cache::settings('tests'), $result['settings']);
 
-		Cache::config('sessions', $_cacheConfigSessions['settings']);
-		Cache::config('tests', $_cacheConfigTests['settings']);
+		if ($_cacheConfigSessions !== false) {
+			Cache::config('sessions', $_cacheConfigSessions['settings']);
+		}
+		if ($_cacheConfigTests !== false) {
+			Cache::config('tests', $_cacheConfigTests['settings']);
+		}
 	}
 
 /**

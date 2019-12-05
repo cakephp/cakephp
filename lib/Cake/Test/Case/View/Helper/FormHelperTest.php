@@ -7975,7 +7975,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$this->request->data['Contact']['published'] = '';
+		$this->Form->request->data['Contact']['published'] = '';
 		$result = $this->Form->year('Contact.published', 2006, 2007, array('class' => 'year'));
 		$expected = array(
 			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear', 'class' => 'year')),

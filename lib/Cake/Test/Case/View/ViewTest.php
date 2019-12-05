@@ -1495,13 +1495,13 @@ class ViewTest extends CakeTestCase {
 /**
  * Test setting a block's content to an object without __toString magic method
  *
- * This should produce a "Object of class TestObjectWithoutToString could not be converted to string" error
- * which gets thrown as a PHPUnit_Framework_Error Exception by PHPUnit.
- *
- * @expectedException PHPUnit_Framework_Error
  * @return void
  */
 	public function testBlockSetObjectWithoutToString() {
+		$this->_checkException(
+			'Object of class TestObjectWithoutToString could not be converted to string'
+		);
+
 		$objectWithToString = new TestObjectWithoutToString();
 		$this->View->assign('testWithObjectWithoutToString', $objectWithToString);
 	}
@@ -1547,13 +1547,13 @@ class ViewTest extends CakeTestCase {
 /**
  * Test appending an object without __toString magic method to a block with append.
  *
- * This should produce a "Object of class TestObjectWithoutToString could not be converted to string" error
- * which gets thrown as a PHPUnit_Framework_Error Exception by PHPUnit.
- *
- * @expectedException PHPUnit_Framework_Error
  * @return void
  */
 	public function testBlockAppendObjectWithoutToString() {
+		$this->_checkException(
+			'Object of class TestObjectWithoutToString could not be converted to string'
+		);
+
 		$object = new TestObjectWithoutToString();
 		$this->View->assign('testBlock', 'Block ');
 		$this->View->append('testBlock', $object);
@@ -1576,13 +1576,13 @@ class ViewTest extends CakeTestCase {
 /**
  * Test prepending an object without __toString magic method to a block with prepend.
  *
- * This should produce a "Object of class TestObjectWithoutToString could not be converted to string" error
- * which gets thrown as a PHPUnit_Framework_Error Exception by PHPUnit.
- *
- * @expectedException PHPUnit_Framework_Error
  * @return void
  */
 	public function testBlockPrependObjectWithoutToString() {
+		$this->_checkException(
+			'Object of class TestObjectWithoutToString could not be converted to string'
+		);
+
 		$object = new TestObjectWithoutToString();
 		$this->View->assign('test', 'Block ');
 		$this->View->prepend('test', $object);
@@ -1838,5 +1838,13 @@ TEXT;
 		$this->View->set('title', $expected);
 		$result = $this->View->get('title', $default);
 		$this->assertEquals($expected, $result);
+	}
+
+	protected function _checkException($message) {
+		if (version_compare(PHP_VERSION, '7.4', '>=')) {
+			$this->setExpectedException('Error', $message);
+		} else {
+			$this->setExpectedException('PHPUnit_Framework_Error', $message);
+		}
 	}
 }
