@@ -248,7 +248,7 @@ class CookieComponent extends Component {
  * $this->Cookie->read(Name.key);
  *
  * @param string $key Key of the value to be obtained. If none specified, obtain map key => values
- * @return string|null Value for specified key
+ * @return string|array|null Value for specified key
  * @link https://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::read
  */
 	public function read($key = null) {
