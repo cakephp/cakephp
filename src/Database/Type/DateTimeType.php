@@ -81,14 +81,6 @@ class DateTimeType extends BaseType
     protected $_localeMarshalFormat;
 
     /**
-     * An instance of the configured dateTimeClass, used to quickly generate
-     * new instances without calling the constructor.
-     *
-     * @var \DateTime|\DateTimeImmutable
-     */
-    protected $_datetimeInstance;
-
-    /**
      * The classname to use when creating objects.
      *
      * @var string
@@ -96,11 +88,25 @@ class DateTimeType extends BaseType
     protected $_className;
 
     /**
-     * Timezone instance.
+     * Database time zone.
      *
      * @var \DateTimeZone|null
      */
     protected $dbTimezone;
+
+    /**
+     * Default time zone.
+     *
+     * @var \DateTimeZone
+     */
+    protected $defaultTimezone;
+
+    /**
+     * Whether database time zone is kept when converting
+     *
+     * @var bool
+     */
+    protected $keepDatabaseTimezone = false;
 
     /**
      * {@inheritDoc}
@@ -111,6 +117,7 @@ class DateTimeType extends BaseType
     {
         parent::__construct($name);
 
+        $this->defaultTimezone = new DateTimeZone(date_default_timezone_get());
         $this->useImmutable();
     }
 
@@ -145,32 +152,40 @@ class DateTimeType extends BaseType
     }
 
     /**
-     * Set database timezone.
-     *
-     * Specified timezone will be set for DateTime objects before generating
-     * datetime string for saving to database. If `null` no timezone conversion
-     * will be done.
+     * Alias for `setDatabaseTimezone()`.
      *
      * @param string|\DateTimeZone|null $timezone Database timezone.
      * @return $this
      */
     public function setTimezone($timezone)
     {
+        return $this->setDatabaseTimezone($timezone);
+    }
+
+    /**
+     * Set database timezone.
+     *
+     * This is the time zone used when converting database strings to DateTime
+     * instances and converting DateTime instances to database strings.
+     *
+     * @see DateTimeType::setKeepDatabaseTimezone
+     *
+     * @param string|\DateTimeZone|null $timezone Database timezone.
+     * @return $this
+     */
+    public function setDatabaseTimezone($timezone)
+    {
         if (is_string($timezone)) {
             $timezone = new DateTimeZone($timezone);
         }
         $this->dbTimezone = $timezone;
 
-        $this->_datetimeInstance = new $this->_className(null, $this->dbTimezone);
-
         return $this;
     }
 
     /**
-     * Convert strings into DateTime instances.
+     * {@inheritDoc}
      *
-     * @param mixed $value The value to convert.
-     * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
      * @return \DateTimeInterface|null
      */
     public function toPHP($value, DriverInterface $driver)
@@ -179,18 +194,21 @@ class DateTimeType extends BaseType
             return null;
         }
 
-        $instance = clone $this->_datetimeInstance;
+        $class = $this->_className;
         if (is_int($value)) {
-            $instance = $instance->setTimestamp($value);
+            $instance = new $class('@' . $value);
         } else {
             if (strpos($value, '0000-00-00') === 0) {
                 return null;
             }
-            $instance = $instance->modify($value);
+            $instance = new $class($value, $this->dbTimezone);
         }
 
-        if ($instance->getTimezone()->getName() !== date_default_timezone_get()) {
-            $instance = $instance->setTimezone(new DateTimeZone(date_default_timezone_get()));
+        if (
+            !$this->keepDatabaseTimezone &&
+            $instance->getTimezone()->getName() !== $this->defaultTimezone->getName()
+        ) {
+            $instance = $instance->setTimezone($this->defaultTimezone);
         }
 
         if ($this->setToDateStart) {
@@ -198,6 +216,27 @@ class DateTimeType extends BaseType
         }
 
         return $instance;
+    }
+
+    /**
+     * Set whether DateTime object created from database string is converted
+     * to default time zone.
+     *
+     * If your database date times are in a specific time zone that you want
+     * to keep in the DateTime instance then set this to true.
+     *
+     * When false, datetime timezones are converted to default time zone.
+     * This is default behavior.
+     *
+     * @param bool $keep If true, database time zone is kept when converting
+     *      to DateTime instances.
+     * @return $this
+     */
+    public function setKeepDatabaseTimezone(bool $keep)
+    {
+        $this->keepDatabaseTimezone = $keep;
+
+        return $this;
     }
 
     /**
@@ -212,15 +251,24 @@ class DateTimeType extends BaseType
                 continue;
             }
 
-            if (strpos($values[$field], '0000-00-00') === 0) {
+            $value = $values[$field];
+            if (strpos($value, '0000-00-00') === 0) {
                 $values[$field] = null;
                 continue;
             }
 
-            $instance = clone $this->_datetimeInstance;
-            $instance = $instance->modify($values[$field]);
-            if ($instance->getTimezone()->getName() !== date_default_timezone_get()) {
-                $instance = $instance->setTimezone(new DateTimeZone(date_default_timezone_get()));
+            $class = $this->_className;
+            if (is_int($value)) {
+                $instance = new $class('@' . $value);
+            } else {
+                $instance = new $class($value, $this->dbTimezone);
+            }
+
+            if (
+                !$this->keepDatabaseTimezone &&
+                $instance->getTimezone()->getName() !== $this->defaultTimezone->getName()
+            ) {
+                $instance = $instance->setTimezone($this->defaultTimezone);
             }
 
             if ($this->setToDateStart) {
@@ -314,7 +362,7 @@ class DateTimeType extends BaseType
 
             return $this;
         }
-        if ($this->_datetimeInstance instanceof I18nDateTimeInterface) {
+        if (is_subclass_of($this->_className, I18nDateTimeInterface::class)) {
             $this->_useLocaleMarshal = $enable;
 
             return $this;
@@ -365,7 +413,6 @@ class DateTimeType extends BaseType
             $class = $fallback;
         }
         $this->_className = $class;
-        $this->_datetimeInstance = new $this->_className(null, $this->dbTimezone);
     }
 
     /**

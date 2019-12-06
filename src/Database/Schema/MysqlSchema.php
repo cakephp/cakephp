@@ -338,6 +338,7 @@ class MysqlSchema extends BaseSchema
             TableSchema::TYPE_DATETIME_FRACTIONAL => ' DATETIME',
             TableSchema::TYPE_TIMESTAMP => ' TIMESTAMP',
             TableSchema::TYPE_TIMESTAMP_FRACTIONAL => ' TIMESTAMP',
+            TableSchema::TYPE_TIMESTAMP_TIMEZONE => ' TIMESTAMP',
             TableSchema::TYPE_CHAR => ' CHAR',
             TableSchema::TYPE_UUID => ' CHAR(36)',
             TableSchema::TYPE_JSON => $nativeJson ? ' JSON' : ' LONGTEXT',
@@ -461,7 +462,11 @@ class MysqlSchema extends BaseSchema
             $out .= ' AUTO_INCREMENT';
         }
 
-        $timestampTypes = [TableSchema::TYPE_TIMESTAMP, TableSchema::TYPE_TIMESTAMP_FRACTIONAL];
+        $timestampTypes = [
+            TableSchema::TYPE_TIMESTAMP,
+            TableSchema::TYPE_TIMESTAMP_FRACTIONAL,
+            TableSchema::TYPE_TIMESTAMP_TIMEZONE,
+        ];
         if (isset($data['null']) && $data['null'] === true && in_array($data['type'], $timestampTypes, true)) {
             $out .= ' NULL';
             unset($data['default']);
@@ -472,6 +477,7 @@ class MysqlSchema extends BaseSchema
             TableSchema::TYPE_DATETIME_FRACTIONAL,
             TableSchema::TYPE_TIMESTAMP,
             TableSchema::TYPE_TIMESTAMP_FRACTIONAL,
+            TableSchema::TYPE_TIMESTAMP_TIMEZONE,
         ];
         if (
             isset($data['default']) &&

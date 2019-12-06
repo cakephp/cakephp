@@ -50,6 +50,7 @@ class TypeFactory
         'time' => Type\TimeType::class,
         'timestamp' => Type\DateTimeType::class,
         'timestampfractional' => Type\DateTimeFractionalType::class,
+        'timestamptimezone' => Type\DateTimeTimezoneType::class,
         'uuid' => Type\UuidType::class,
     ];
 

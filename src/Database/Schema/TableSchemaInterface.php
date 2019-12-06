@@ -80,6 +80,13 @@ interface TableSchemaInterface extends SchemaInterface
     public const TYPE_TIMESTAMP_FRACTIONAL = 'timestampfractional';
 
     /**
+     * Timestamp with time zone column type
+     *
+     * @var string
+     */
+    public const TYPE_TIMESTAMP_TIMEZONE = 'timestamptimezone';
+
+    /**
      * JSON column type
      *
      * @var string

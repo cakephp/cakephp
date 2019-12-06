@@ -120,7 +120,17 @@ class SqliteSchema extends BaseSchema
         if (in_array($col, ['blob', 'clob', 'binary', 'varbinary'])) {
             return ['type' => TableSchema::TYPE_BINARY, 'length' => $length];
         }
-        if (in_array($col, ['date', 'time', 'timestamp', 'datetime'])) {
+
+        $datetimeTypes = [
+            'date',
+            'time',
+            'timestamp',
+            'timestampfractional',
+            'timestamptimezone',
+            'datetime',
+            'datetimefractional',
+        ];
+        if (in_array($col, $datetimeTypes)) {
             return ['type' => $col, 'length' => null];
         }
 
@@ -318,7 +328,10 @@ class SqliteSchema extends BaseSchema
             TableSchema::TYPE_DATE => ' DATE',
             TableSchema::TYPE_TIME => ' TIME',
             TableSchema::TYPE_DATETIME => ' DATETIME',
+            TableSchema::TYPE_DATETIME_FRACTIONAL => ' DATETIMEFRACTIONAL',
             TableSchema::TYPE_TIMESTAMP => ' TIMESTAMP',
+            TableSchema::TYPE_TIMESTAMP_FRACTIONAL => ' TIMESTAMPFRACTIONAL',
+            TableSchema::TYPE_TIMESTAMP_TIMEZONE => ' TIMESTAMPTIMEZONE',
             TableSchema::TYPE_JSON => ' TEXT',
         ];
 
@@ -408,7 +421,14 @@ class SqliteSchema extends BaseSchema
             $out .= ' PRIMARY KEY AUTOINCREMENT';
         }
 
-        if (isset($data['null']) && $data['null'] === true && $data['type'] === TableSchema::TYPE_TIMESTAMP) {
+        $timestampTypes = [
+            TableSchema::TYPE_DATETIME,
+            TableSchema::TYPE_DATETIME_FRACTIONAL,
+            TableSchema::TYPE_TIMESTAMP,
+            TableSchema::TYPE_TIMESTAMP_FRACTIONAL,
+            TableSchema::TYPE_TIMESTAMP_TIMEZONE,
+        ];
+        if (isset($data['null']) && $data['null'] === true && in_array($data['type'], $timestampTypes, true)) {
             $out .= ' DEFAULT NULL';
         }
         if (isset($data['default'])) {
