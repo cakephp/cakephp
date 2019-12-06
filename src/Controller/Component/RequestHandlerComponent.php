@@ -177,8 +177,8 @@ class RequestHandlerComponent extends Component
             $input = $request->input();
             if (!in_array($input, ['', '[]', '{}'], true)) {
                 deprecationWarning(
-                    'Request input data parsing feature has been removed from RequestHandler. '
-                    . 'Use the BodyParserMiddleware in your Application class instead.'
+                    'Request input data parsing feature has been removed from RequestHandler. ' .
+                    'Use the BodyParserMiddleware in your Application class instead.'
                 );
             }
         }
