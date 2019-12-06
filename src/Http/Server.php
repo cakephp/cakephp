@@ -89,7 +89,9 @@ class Server implements EventDispatcherInterface
 
         $response = $this->runner->run($middleware, $request, $this->app);
 
-        $request->getSession()->close();
+        if ($request instanceof ServerRequest) {
+            $request->getSession()->close();
+        }
 
         return $response;
     }

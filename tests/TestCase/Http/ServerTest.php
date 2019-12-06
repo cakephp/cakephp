@@ -192,9 +192,9 @@ class ServerTest extends TestCase
     }
 
     /**
-     * Test that run closes session after invoking the application.
+     * Test that run closes session after invoking the application (if CakePHP ServerRequest is used).
      */
-    public function testRunClosesSession()
+    public function testRunClosesSessionIfServerRequestUsed()
     {
         $sessionMock = $this->createMock(Session::class);
 
@@ -204,6 +204,30 @@ class ServerTest extends TestCase
         $app = new MiddlewareApplication($this->config);
         $server = new Server($app);
         $request = new ServerRequest(['session' => $sessionMock]);
+        $res = $server->run($request);
+
+        // assert that app was executed correctly
+        $this->assertSame(
+            200,
+            $res->getStatusCode(),
+            "Application was expected to be executed"
+        );
+        $this->assertSame(
+            'source header',
+            $res->getHeaderLine('X-testing'),
+            "Application was expected to be executed"
+        );
+    }
+
+    /**
+     * Test that run does not close the session if CakePHP ServerRequest is not used.
+     */
+    public function testRunDoesNotCloseSessionIfServerRequestNotUsed()
+    {
+        $request = new \Zend\Diactoros\ServerRequest();
+
+        $app = new MiddlewareApplication($this->config);
+        $server = new Server($app);
         $res = $server->run($request);
 
         // assert that app was executed correctly
