@@ -33,6 +33,7 @@
         "cakephp/validation": "^4.0"
     },
     "suggest": {
+        "cakephp/cache": "If you decide to use Query caching.",
         "cakephp/i18n": "If you are using Translate / Timestamp Behavior."
     },
     "autoload": {

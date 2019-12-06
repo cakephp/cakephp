@@ -151,6 +151,7 @@ $articles->delete($article);
 
 It is recommended to enable meta data cache for production systems to avoid performance issues.
 For e.g. file system strategy your bootstrap file could look like this:
+
 ```php
 use Cake\Cache\Engine\FileEngine;
 
@@ -162,6 +163,8 @@ $cacheConfig = [
 ],
 Cache::setConfig('_cake_model_', $cacheConfig);
 ```
+
+Cache configs are optional so you must require ``cachephp/cache`` to add one.
 
 ## Creating Custom Table and Entity Classes
 
