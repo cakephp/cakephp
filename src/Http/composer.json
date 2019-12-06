@@ -33,6 +33,9 @@
         "zendframework/zend-diactoros": "^2.1",
         "zendframework/zend-httphandlerrunner": "^1.0"
     },
+    "provide": {
+        "psr/http-client-implementation": "^1.0"
+    },
     "suggest": {
         "cakephp/cache": "To use cache session storage",
         "cakephp/orm": "To use database session storage"
