@@ -180,7 +180,7 @@ class Paginator implements PaginatorInterface
         if ($pagingParams['requestedPage'] > $pagingParams['page']) {
             throw new PageOutOfBoundsException([
                 'requestedPage' => $pagingParams['requestedPage'],
-                'pagingParams' => $this->_pagingParams
+                'pagingParams' => $this->_pagingParams,
             ]);
         }
 

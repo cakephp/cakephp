@@ -308,7 +308,7 @@ class ServerRequestFactoryTest extends TestCase
                 'error' => 0,
                 'name' => 'file.txt',
                 'type' => 'text/plain',
-                'size' => 1234
+                'size' => 1234,
             ],
         ];
         $this->assertEquals($expected, $request->getData());
@@ -340,7 +340,7 @@ class ServerRequestFactoryTest extends TestCase
                 'error' => 0,
                 'name' => 'file.txt',
                 'type' => 'text/plain',
-                'size' => 1234
+                'size' => 1234,
             ],
         ];
         $this->assertEquals($expected, $request->getData());

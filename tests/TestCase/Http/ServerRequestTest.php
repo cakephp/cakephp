@@ -633,9 +633,9 @@ class ServerRequestTest extends TestCase
             'files' => [
                 [
                     'invalid' => [
-                        'data'
-                    ]
-                ]
+                        'data',
+                    ],
+                ],
             ],
         ]);
     }
@@ -704,12 +704,12 @@ class ServerRequestTest extends TestCase
             'flat' => ['existing'],
             'nested' => [
                 'name' => 'nested',
-                'file' => ['existing']
+                'file' => ['existing'],
             ],
             'deep' => [
                 0 => [
                     'name' => 'deep 1',
-                    'file' => ['existing']
+                    'file' => ['existing'],
                 ],
                 1 => [
                     'name' => 'deep 2',
@@ -736,7 +736,7 @@ class ServerRequestTest extends TestCase
                     0,
                     'nested.txt',
                     'text/plain'
-                )
+                ),
             ],
             'deep' => [
                 0 => [
@@ -747,7 +747,7 @@ class ServerRequestTest extends TestCase
                         0,
                         'deep-1.txt',
                         'text/plain'
-                    )
+                    ),
                 ],
                 1 => [
                     'name' => 'deep 2',
@@ -757,7 +757,7 @@ class ServerRequestTest extends TestCase
                         0,
                         'deep-2.txt',
                         'text/plain'
-                    )
+                    ),
                 ],
             ],
             0 => new UploadedFile(
@@ -775,14 +775,14 @@ class ServerRequestTest extends TestCase
                     0,
                     'numeric-nested.txt',
                     'text/plain'
-                )
+                ),
             ],
         ];
 
         $request = new ServerRequest([
             'files' => $files,
             'post' => $post,
-            'mergeFilesAsObjects' => true
+            'mergeFilesAsObjects' => true,
         ]);
 
         $this->assertEquals($expected, $request->getData());

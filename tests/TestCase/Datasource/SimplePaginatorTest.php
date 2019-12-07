@@ -117,7 +117,7 @@ class SimplePaginatorTest extends PaginatorTest
         $settings = [
             'finder' => 'list',
             'conditions' => ['PaginatorPosts.published' => 'Y'],
-            'limit' => 2
+            'limit' => 2,
         ];
         $results = $this->Paginator->paginate($table, [], $settings);
 
@@ -148,7 +148,7 @@ class SimplePaginatorTest extends PaginatorTest
                 'finder' => 'published',
                 'fields' => ['id', 'title'],
                 'maxLimit' => 10,
-            ]
+            ],
         ];
 
         $this->loadFixtures('Posts');

@@ -925,7 +925,7 @@ class HtmlHelper extends Helper
 
             $out[] = $this->formatTemplate('tableheader', [
                 'attrs' => $this->templater()->formatAttributes($attrs),
-                'content' => $content
+                'content' => $content,
             ]);
         }
 

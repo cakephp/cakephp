@@ -33,7 +33,7 @@ class PaginatorTest extends TestCase
      */
     public $fixtures = [
         'core.Posts', 'core.Articles', 'core.ArticlesTags',
-        'core.Authors', 'core.AuthorsTags', 'core.Tags'
+        'core.Authors', 'core.AuthorsTags', 'core.Tags',
     ];
 
     /**
@@ -153,7 +153,7 @@ class PaginatorTest extends TestCase
                 'finder' => 'published',
                 'fields' => ['id', 'title'],
                 'maxLimit' => 10,
-            ]
+            ],
         ];
 
         $this->loadFixtures('Posts');
