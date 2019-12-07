@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\TestSuite\Constraint\Session;
 
 use Cake\Http\Session;
+use Cake\Utility\Hash;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Constraint\Constraint;
 
@@ -76,9 +77,13 @@ class FlashParamEquals extends Constraint
      */
     public function matches($other): bool
     {
-        $messages = (array)$this->session->read('Flash.' . $this->key);
+        // Server::run calls Session::close at the end of the request.
+        // Which means, that we cannot use Session object here to access the session data.
+        // Call to Session::read will start new session (and will erase the data).
+
+        $messages = (array)Hash::get($_SESSION, 'Flash.' . $this->key);
         if ($this->at) {
-            $messages = [$this->session->read('Flash.' . $this->key . '.' . $this->at)];
+            $messages = [Hash::get($_SESSION, 'Flash.' . $this->key . '.' . $this->at)];
         }
 
         foreach ($messages as $message) {

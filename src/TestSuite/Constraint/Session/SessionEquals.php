@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\TestSuite\Constraint\Session;
 
 use Cake\Http\Session;
+use Cake\Utility\Hash;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Constraint\Constraint;
 
@@ -65,7 +66,10 @@ class SessionEquals extends Constraint
      */
     public function matches($other): bool
     {
-        return $this->session->read($this->path) === $other;
+        // Server::run calls Session::close at the end of the request.
+        // Which means, that we cannot use Session object here to access the session data.
+        // Call to Session::read will start new session (and will erase the data).
+        return Hash::get($_SESSION, $this->path) === $other;
     }
 
     /**
