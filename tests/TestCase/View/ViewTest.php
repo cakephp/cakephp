@@ -23,6 +23,7 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Event\EventInterface;
 use Cake\Http\ServerRequest;
+use Cake\Http\Response;
 use Cake\TestSuite\TestCase;
 use Cake\View\View;
 use RuntimeException;
@@ -358,9 +359,6 @@ class ViewTest extends TestCase
             'name' => 'Pages',
             'templatePath' => 'Pages',
         ];
-        $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
-        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
-
         $View = new TestView(null, null, null, $viewOptions);
 
         $expected = TEST_APP . 'templates' . DS . 'Pages' . DS . 'home.php';
@@ -403,8 +401,6 @@ class ViewTest extends TestCase
             'name' => 'Pages',
             'templatePath' => 'Pages',
         ];
-        $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
-        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $view = new TestView(null, null, null, $viewOptions);
         $view->ext('.php');
@@ -567,8 +563,6 @@ class ViewTest extends TestCase
             'name' => 'Pages',
             'viewPath' => 'Pages',
         ];
-        $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
-        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $view = new TestView(null, null, null, $viewOptions);
         $view->ext('.php');
@@ -590,8 +584,8 @@ class ViewTest extends TestCase
             'name' => 'Pages',
             'viewPath' => 'Pages',
         ];
-        $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
-        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
+        $request = new ServerRequest();
+        $response = new Response();
 
         $View = new TestView($request, $response, null, $viewOptions);
         $View->getTemplateFileName('does_not_exist');

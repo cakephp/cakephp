@@ -762,11 +762,9 @@ class ResponseTest extends TestCase
         $request = new ServerRequest();
         $request = $request->withHeader('If-None-Match', 'W/"something", "other"')
             ->withHeader('If-Modified-Since', '2012-01-01 00:00:00');
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods(['notModified'])
-            ->getMock();
-        $response->expects($this->never())->method('notModified');
+        $response = new Response();
         $this->assertFalse($response->checkNotModified($request));
+        $this->assertSame(200, $response->getStatusCode());
     }
 
     /**

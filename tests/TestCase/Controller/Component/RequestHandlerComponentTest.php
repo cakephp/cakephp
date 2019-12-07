@@ -81,10 +81,7 @@ class RequestHandlerComponentTest extends TestCase
     protected function _init(): void
     {
         $request = new ServerRequest(['url' => 'controller_posts/index']);
-        /** @var \Cake\Http\Response|\PHPUnit\Framework\MockObject\MockObject $response */
-        $response = $this->getMockBuilder(Response::class)
-            ->setMethods(['_sendHeader', 'stop'])
-            ->getMock();
+        $response = new Response();
         $this->Controller = new RequestHandlerTestController($request, $response);
         $this->RequestHandler = $this->Controller->components()->load(RequestHandlerExtComponent::class);
         $this->request = $request;
@@ -877,15 +874,13 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testCheckNotModifiedNoInfo(): void
     {
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods(['notModified', 'stop'])
-            ->getMock();
-        $response->expects($this->never())->method('notModified');
+        $response = new Response();
         $this->Controller->setResponse($response);
 
         $event = new Event('Controller.beforeRender', $this->Controller);
         $requestHandler = new RequestHandlerComponent($this->Controller->components());
         $this->assertNull($requestHandler->beforeRender($event));
+        $this->assertSame(200, $response->getStatusCode());
     }
 
     /**
