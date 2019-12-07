@@ -1132,7 +1132,7 @@ class FormHelper extends Helper
      * ### Options
      *
      * See each field type method for more information. Any options that are part of
-     * $attributes or $options for the different **type** methods can be included in `$options` for input().
+     * $attributes or $options for the different **type** methods can be included in `$options` for control().
      * Additionally, any unknown keys that are not in the list below, or part of the selected type's options
      * will be treated as a regular HTML attribute for the generated input.
      *
