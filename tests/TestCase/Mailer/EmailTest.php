@@ -1603,8 +1603,8 @@ class EmailTest extends TestCase
         $this->Email->setAttachments([
             'gâteau.png' => [
                 'file' => CORE_PATH . 'VERSION.txt',
-                'contentId' => 'abc123'
-            ]
+                'contentId' => 'abc123',
+            ],
         ]);
         $result = $this->Email->send('Hello');
 

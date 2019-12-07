@@ -833,7 +833,8 @@ class ValidatorTest extends TestCase
             'very required',
             function ($context) {
                 return $context['data']['otherField'] === true;
-            })
+            }
+        )
             ->scalar('title');
 
         $data = [
