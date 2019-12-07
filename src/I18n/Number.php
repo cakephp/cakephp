@@ -256,7 +256,7 @@ class Number
         if ($currency === false) {
             static::setDefaultCurrency(null);
 
-            // This doesn't sem like a useful result to return, but it's what the old version did.
+            // This doesn't seem like a useful result to return, but it's what the old version did.
             // Retaining it for backward compatibility.
             return null;
         } elseif ($currency !== null) {
