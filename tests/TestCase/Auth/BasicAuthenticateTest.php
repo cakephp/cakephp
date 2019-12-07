@@ -45,8 +45,8 @@ class BasicAuthenticateTest extends TestCase
     {
         parent::setUp();
 
-        $this->Collection = $this->getMockBuilder(ComponentRegistry::class)->getMock();
-        $this->auth = new BasicAuthenticate($this->Collection, [
+        $this->collection = new ComponentRegistry();
+        $this->auth = new BasicAuthenticate($this->collection, [
             'userModel' => 'Users',
             'realm' => 'localhost',
         ]);
@@ -54,7 +54,6 @@ class BasicAuthenticateTest extends TestCase
         $password = password_hash('password', PASSWORD_BCRYPT);
         $User = $this->getTableLocator()->get('Users');
         $User->updateAll(['password' => $password], []);
-        $this->response = $this->getMockBuilder(Response::class)->getMock();
     }
 
     /**
@@ -64,7 +63,7 @@ class BasicAuthenticateTest extends TestCase
      */
     public function testConstructor(): void
     {
-        $object = new BasicAuthenticate($this->Collection, [
+        $object = new BasicAuthenticate($this->collection, [
             'userModel' => 'AuthUser',
             'fields' => ['username' => 'user', 'password' => 'password'],
         ]);
@@ -81,9 +80,6 @@ class BasicAuthenticateTest extends TestCase
     {
         $request = new ServerRequest(['url' => 'posts/index']);
 
-        $this->response->expects($this->never())
-            ->method('withHeader');
-
         $this->assertFalse($this->auth->getUser($request));
     }
 
@@ -99,7 +95,7 @@ class BasicAuthenticateTest extends TestCase
             'environment' => ['PHP_AUTH_PW' => 'foobar'],
         ]);
 
-        $this->assertFalse($this->auth->authenticate($request, $this->response));
+        $this->assertFalse($this->auth->authenticate($request, new Response()));
     }
 
     /**
@@ -114,7 +110,7 @@ class BasicAuthenticateTest extends TestCase
             'environment' => ['PHP_AUTH_USER' => 'mariano'],
         ]);
 
-        $this->assertFalse($this->auth->authenticate($request, $this->response));
+        $this->assertFalse($this->auth->authenticate($request, new Response()));
     }
 
     /**
@@ -133,7 +129,7 @@ class BasicAuthenticateTest extends TestCase
         ]);
 
         $this->assertFalse($this->auth->getUser($request));
-        $this->assertFalse($this->auth->authenticate($request, $this->response));
+        $this->assertFalse($this->auth->authenticate($request, new Response()));
     }
 
     /**
@@ -164,7 +160,7 @@ class BasicAuthenticateTest extends TestCase
             'created' => new Time('2007-03-17 01:16:23'),
             'updated' => new Time('2007-03-17 01:18:31'),
         ];
-        $this->assertEquals($expected, $this->auth->authenticate($request, $this->response));
+        $this->assertEquals($expected, $this->auth->authenticate($request, new Response()));
     }
 
     /**
@@ -177,7 +173,7 @@ class BasicAuthenticateTest extends TestCase
         $request = new ServerRequest(['url' => 'posts/index']);
 
         try {
-            $this->auth->unauthenticated($request, $this->response);
+            $this->auth->unauthenticated($request, new Response());
         } catch (UnauthorizedException $e) {
         }
 
@@ -202,7 +198,7 @@ class BasicAuthenticateTest extends TestCase
             ],
         ]);
 
-        $result = $this->auth->authenticate($request, $this->response);
+        $result = $this->auth->authenticate($request, new Response());
         $expected = [
             'id' => 1,
             'username' => 'mariano',

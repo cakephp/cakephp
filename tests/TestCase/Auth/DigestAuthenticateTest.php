@@ -41,7 +41,7 @@ class DigestAuthenticateTest extends TestCase
     protected $fixtures = ['core.AuthUsers', 'core.Users'];
 
     /**
-     * @var \Cake\Controller\ComponentRegistry|\PHPUnit\Framework\MockObject\MockObject
+     * @var \Cake\Controller\ComponentRegistry
      */
     protected $collection;
 
@@ -54,7 +54,7 @@ class DigestAuthenticateTest extends TestCase
     {
         parent::setUp();
 
-        $this->collection = $this->getMockBuilder(ComponentRegistry::class)->getMock();
+        $this->collection = new ComponentRegistry();
         $this->auth = new DigestAuthenticate($this->collection, [
             'realm' => 'localhost',
             'nonce' => 123,
@@ -65,8 +65,6 @@ class DigestAuthenticateTest extends TestCase
         $password = DigestAuthenticate::password('mariano', 'cake', 'localhost');
         $User = $this->getTableLocator()->get('Users');
         $User->updateAll(['password' => $password], []);
-
-        $this->response = $this->getMockBuilder(Response::class)->getMock();
     }
 
     /**
@@ -96,10 +94,7 @@ class DigestAuthenticateTest extends TestCase
     {
         $request = new ServerRequest(['url' => 'posts/index']);
 
-        $this->response->expects($this->never())
-            ->method('withHeader');
-
-        $this->assertFalse($this->auth->getUser($request, $this->response));
+        $this->assertFalse($this->auth->getUser($request));
     }
 
     /**
@@ -125,7 +120,7 @@ class DigestAuthenticateTest extends TestCase
         $data['response'] = $this->auth->generateResponseHash($data, '09faa9931501bf30f0d4253fa7763022', 'GET');
         $request = $request->withEnv('PHP_AUTH_DIGEST', $this->digestHeader($data));
 
-        $this->auth->unauthenticated($request, $this->response);
+        $this->auth->unauthenticated($request, new Response());
     }
 
     /**
@@ -141,7 +136,7 @@ class DigestAuthenticateTest extends TestCase
         ]);
 
         try {
-            $this->auth->unauthenticated($request, $this->response);
+            $this->auth->unauthenticated($request, new Response());
         } catch (UnauthorizedException $e) {
         }
 
@@ -176,7 +171,7 @@ class DigestAuthenticateTest extends TestCase
         $request = $request->withEnv('PHP_AUTH_DIGEST', $this->digestHeader($data));
 
         try {
-            $this->auth->unauthenticated($request, $this->response);
+            $this->auth->unauthenticated($request, new Response());
         } catch (UnauthorizedException $e) {
         }
         $this->assertNotEmpty($e);
@@ -206,7 +201,7 @@ class DigestAuthenticateTest extends TestCase
         ];
         $data['response'] = $this->auth->generateResponseHash($data, '09faa9931501bf30f0d4253fa7763022', 'GET');
         $request = $request->withEnv('PHP_AUTH_DIGEST', $this->digestHeader($data));
-        $result = $this->auth->authenticate($request, $this->response);
+        $result = $this->auth->authenticate($request, new Response());
         $this->assertFalse($result, 'Stale nonce should fail');
     }
 
@@ -233,7 +228,7 @@ class DigestAuthenticateTest extends TestCase
         ];
         $data['response'] = $this->auth->generateResponseHash($data, '09faa9931501bf30f0d4253fa7763022', 'GET');
         $request = $request->withEnv('PHP_AUTH_DIGEST', $this->digestHeader($data));
-        $result = $this->auth->authenticate($request, $this->response);
+        $result = $this->auth->authenticate($request, new Response());
         $this->assertFalse($result, 'Empty nonce should fail');
     }
 
@@ -259,7 +254,7 @@ class DigestAuthenticateTest extends TestCase
         $data['response'] = $this->auth->generateResponseHash($data, '09faa9931501bf30f0d4253fa7763022', 'GET');
         $request = $request->withEnv('PHP_AUTH_DIGEST', $this->digestHeader($data));
 
-        $result = $this->auth->authenticate($request, $this->response);
+        $result = $this->auth->authenticate($request, new Response());
         $expected = [
             'id' => 1,
             'username' => 'mariano',
@@ -294,7 +289,7 @@ class DigestAuthenticateTest extends TestCase
         $data['response'] = $this->auth->generateResponseHash($data, '09faa9931501bf30f0d4253fa7763022', 'GET');
         $request = $request->withEnv('PHP_AUTH_DIGEST', $this->digestHeader($data));
 
-        $result = $this->auth->authenticate($request, $this->response);
+        $result = $this->auth->authenticate($request, new Response());
         $expected = [
             'id' => 1,
             'username' => 'mariano',
@@ -328,7 +323,7 @@ class DigestAuthenticateTest extends TestCase
         $data['response'] = $this->auth->generateResponseHash($data, '09faa9931501bf30f0d4253fa7763022', 'GET');
         $request = $request->withEnv('PHP_AUTH_DIGEST', $this->digestHeader($data));
 
-        $result = $this->auth->authenticate($request, $this->response);
+        $result = $this->auth->authenticate($request, new Response());
         $expected = [
             'id' => 1,
             'username' => 'mariano',
