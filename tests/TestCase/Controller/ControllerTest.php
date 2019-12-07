@@ -413,23 +413,16 @@ class ControllerTest extends TestCase
      */
     public function testReferer(): void
     {
-        $request = $this->getMockBuilder('Cake\Http\ServerRequest')
-            ->setMethods(['referer'])
-            ->getMock();
-        $request->expects($this->any())->method('referer')
-            ->with(true)
-            ->will($this->returnValue('/posts/index'));
-
+        $request = new ServerRequest([
+            'environment' => ['HTTP_REFERER' => 'http://localhost/posts/index']
+        ]);
         $Controller = new Controller($request);
         $result = $Controller->referer();
         $this->assertSame('/posts/index', $result);
 
-        $request = $this->getMockBuilder('Cake\Http\ServerRequest')
-            ->setMethods(['referer'])
-            ->getMock();
-        $request->expects($this->any())->method('referer')
-            ->with(true)
-            ->will($this->returnValue('/posts/index'));
+        $request = new ServerRequest([
+            'environment' => ['HTTP_REFERER' => 'http://localhost/posts/index']
+        ]);
         $Controller = new Controller($request);
         $result = $Controller->referer(['controller' => 'posts', 'action' => 'index'], true);
         $this->assertSame('/posts/index', $result);
@@ -438,10 +431,9 @@ class ControllerTest extends TestCase
             ->setMethods(['referer'])
             ->getMock();
 
-        $request->expects($this->any())->method('referer')
-            ->with(false)
-            ->will($this->returnValue('http://localhost/posts/index'));
-
+        $request = new ServerRequest([
+            'environment' => ['HTTP_REFERER' => 'http://localhost/posts/index']
+        ]);
         $Controller = new Controller($request);
         $result = $Controller->referer(null, false);
         $this->assertSame('http://localhost/posts/index', $result);
@@ -460,15 +452,9 @@ class ControllerTest extends TestCase
      */
     public function testRefererSlash(): void
     {
-        /** @var \Cake\Http\ServerRequest|\PHPUnit\Framework\MockObject\MockObject $request */
-        $request = $this->getMockBuilder(ServerRequest::class)
-            ->setMethods(['referer'])
-            ->getMock();
+        $request = new ServerRequest();
         $request = $request->withAttribute('base', '/base');
         Router::setRequest($request);
-
-        $request->expects($this->any())->method('referer')
-            ->will($this->returnValue(null));
 
         $controller = new Controller($request);
         $result = $controller->referer('/', true);

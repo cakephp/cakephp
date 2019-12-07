@@ -304,15 +304,10 @@ class RequestHandlerComponentTest extends TestCase
         $extensions = Router::extensions();
         Router::extensions('xml', false);
 
-        /** @var \Cake\Http\ServerRequest|\PHPUnit\Framework\MockObject\MockObject $request */
-        $request = $this->getMockBuilder(ServerRequest::class)
-            ->setMethods(['accepts'])
-            ->getMock();
-
+        $request = new ServerRequest([
+            'environment' => ['HTTP_ACCEPT' => 'text/plain'],
+        ]);
         $this->Controller->setRequest($request);
-        $this->Controller->getRequest()->expects($this->any())
-            ->method('accepts')
-            ->will($this->returnValue(['application/json']));
 
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
         $this->assertNull($this->RequestHandler->ext);
