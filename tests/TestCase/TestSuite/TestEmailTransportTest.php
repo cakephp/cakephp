@@ -37,10 +37,10 @@ class TestEmailTransportTest extends TestCase
         TransportFactory::drop('transport_alternate');
 
         TransportFactory::setConfig('transport_default', [
-            'className' => DebugTransport::class
+            'className' => DebugTransport::class,
         ]);
         TransportFactory::setConfig('transport_alternate', [
-            'className' => DebugTransport::class
+            'className' => DebugTransport::class,
         ]);
 
         Email::setConfig('default', [

@@ -109,7 +109,7 @@ class SelectBoxWidget extends BasicWidget
             'options' => [],
             'disabled' => null,
             'val' => null,
-            'templateVars' => []
+            'templateVars' => [],
         ];
 
         $options = $this->_renderContent($data);
@@ -234,7 +234,8 @@ class SelectBoxWidget extends BasicWidget
         foreach ($options as $key => $val) {
             // Option groups
             $arrayVal = (is_array($val) || $val instanceof Traversable);
-            if ((!is_int($key) && $arrayVal) ||
+            if (
+                (!is_int($key) && $arrayVal) ||
                 (is_int($key) && $arrayVal && (isset($val['options']) || !isset($val['value'])))
             ) {
                 $out[] = $this->_renderOptgroup($key, $val, $disabled, $selected, $templateVars, $escape);

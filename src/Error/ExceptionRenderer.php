@@ -161,7 +161,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
                 $class = App::className('Error', 'Controller', 'Controller');
             }
 
-            /* @var \Cake\Controller\Controller $controller */
+            /** @var \Cake\Controller\Controller $controller */
             $controller = new $class($request, $response);
             $controller->startupProcess();
             $startup = true;
@@ -219,14 +219,14 @@ class ExceptionRenderer implements ExceptionRendererInterface
             'url' => h($url),
             'error' => $unwrapped,
             'code' => $code,
-            '_serialize' => ['message', 'url', 'code']
+            '_serialize' => ['message', 'url', 'code'],
         ];
 
         $isDebug = Configure::read('debug');
         if ($isDebug) {
             $viewVars['trace'] = Debugger::formatTrace($unwrapped->getTrace(), [
                 'format' => 'array',
-                'args' => false
+                'args' => false,
             ]);
             $viewVars['file'] = $exception->getFile() ?: 'null';
             $viewVars['line'] = $exception->getLine() ?: 'null';
@@ -293,7 +293,8 @@ class ExceptionRenderer implements ExceptionRendererInterface
         $exception = $this->_unwrap($exception);
         $message = $exception->getMessage();
 
-        if (!Configure::read('debug') &&
+        if (
+            !Configure::read('debug') &&
             !($exception instanceof HttpException)
         ) {
             if ($code < 500) {
@@ -428,7 +429,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
         }
         $args = [
             'request' => $this->controller->request,
-            'response' => $this->controller->response
+            'response' => $this->controller->response,
         ];
         $result = $dispatcher->dispatchEvent('Dispatcher.afterDispatch', $args);
 

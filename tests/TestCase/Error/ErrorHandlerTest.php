@@ -89,8 +89,8 @@ class ErrorHandlerTest extends TestCase
         $request = new ServerRequest([
             'base' => '',
             'environment' => [
-                'HTTP_REFERER' => '/referer'
-            ]
+                'HTTP_REFERER' => '/referer',
+            ],
         ]);
 
         Router::setRequestInfo($request);
@@ -100,7 +100,7 @@ class ErrorHandlerTest extends TestCase
 
         Log::reset();
         Log::setConfig('error_test', [
-            'engine' => $this->_logger
+            'engine' => $this->_logger,
         ]);
     }
 
@@ -476,7 +476,7 @@ class ErrorHandlerTest extends TestCase
      */
     public function testHandlePHP7Error()
     {
-        $this->skipIf(!class_exists('Error'), 'Requires PHP7');
+        $this->skipIf(version_compare(PHP_VERSION, '7.0.0', '<'), 'Requires PHP7');
         $error = new PHP7ErrorException(new ParseError('Unexpected variable foo'));
         $errorHandler = new TestErrorHandler();
 

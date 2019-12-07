@@ -94,7 +94,7 @@ class Inflector
         '/(n)ews$/i' => '\1\2ews',
         '/eaus$/' => 'eau',
         '/^(.*us)$/' => '\\1',
-        '/s$/i' => ''
+        '/s$/i' => '',
     ];
 
     /**
@@ -157,7 +157,7 @@ class Inflector
         '.*pox', '.*sheep', 'people', 'feedback', 'stadia', '.*?media',
         'chassis', 'clippers', 'debris', 'diabetes', 'equipment', 'gallows',
         'graffiti', 'headquarters', 'information', 'innings', 'news', 'nexus',
-        'pokemon', 'proceedings', 'research', 'sea[- ]bass', 'series', 'species', 'weather'
+        'pokemon', 'proceedings', 'research', 'sea[- ]bass', 'series', 'species', 'weather',
     ];
 
     /**

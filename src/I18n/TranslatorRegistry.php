@@ -86,7 +86,7 @@ class TranslatorRegistry extends TranslatorLocator
         $this->registerLoader($this->_fallbackLoader, function ($name, $locale) {
             $chain = new ChainMessagesLoader([
                 new MessagesFileLoader($name, $locale, 'mo'),
-                new MessagesFileLoader($name, $locale, 'po')
+                new MessagesFileLoader($name, $locale, 'po'),
             ]);
 
             // \Aura\Intl\Package by default uses formatter configured with key "basic".
@@ -285,7 +285,7 @@ class TranslatorRegistry extends TranslatorLocator
             return $loader;
         }
         $loader = function () use ($loader, $fallbackDomain) {
-            /* @var \Aura\Intl\Package $package */
+            /** @var \Aura\Intl\Package $package */
             $package = $loader();
             if (!$package->getFallback()) {
                 $package->setFallback($fallbackDomain);

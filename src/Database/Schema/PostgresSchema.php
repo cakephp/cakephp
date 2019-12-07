@@ -115,7 +115,8 @@ class PostgresSchema extends BaseSchema
         }
         // money is 'string' as it includes arbitrary text content
         // before the number value.
-        if (strpos($col, 'char') !== false ||
+        if (
+            strpos($col, 'char') !== false ||
             strpos($col, 'money') !== false
         ) {
             return ['type' => TableSchema::TYPE_STRING, 'length' => $length];
@@ -129,7 +130,8 @@ class PostgresSchema extends BaseSchema
         if ($col === 'real' || strpos($col, 'double') !== false) {
             return ['type' => TableSchema::TYPE_FLOAT, 'length' => null];
         }
-        if (strpos($col, 'numeric') !== false ||
+        if (
+            strpos($col, 'numeric') !== false ||
             strpos($col, 'decimal') !== false
         ) {
             return ['type' => TableSchema::TYPE_DECIMAL, 'length' => null];
@@ -165,7 +167,7 @@ class PostgresSchema extends BaseSchema
             'default' => $this->_defaultValue($row['default']),
             'null' => $row['null'] === 'YES',
             'collate' => $row['collation_name'],
-            'comment' => $row['comment']
+            'comment' => $row['comment'],
         ];
         $field['length'] = $row['char_length'] ?: $field['length'];
 
@@ -257,7 +259,7 @@ class PostgresSchema extends BaseSchema
         if (!$index) {
             $index = [
                 'type' => $type,
-                'columns' => []
+                'columns' => [],
             ];
         }
         $index['columns'][] = $row['attname'];
@@ -279,7 +281,7 @@ class PostgresSchema extends BaseSchema
         if (!$constraint) {
             $constraint = [
                 'type' => $type,
-                'columns' => []
+                'columns' => [],
             ];
         }
         $constraint['columns'][] = $row['attname'];
@@ -366,7 +368,7 @@ class PostgresSchema extends BaseSchema
             TableSchema::TYPE_DATETIME => ' TIMESTAMP',
             TableSchema::TYPE_TIMESTAMP => ' TIMESTAMP',
             TableSchema::TYPE_UUID => ' UUID',
-            TableSchema::TYPE_JSON => ' JSONB'
+            TableSchema::TYPE_JSON => ' JSONB',
         ];
 
         if (isset($typeMap[$data['type']])) {
@@ -389,7 +391,8 @@ class PostgresSchema extends BaseSchema
             $out .= ' BYTEA';
         }
 
-        if ($data['type'] === TableSchema::TYPE_STRING ||
+        if (
+            $data['type'] === TableSchema::TYPE_STRING ||
             ($data['type'] === TableSchema::TYPE_TEXT && $data['length'] === TableSchema::LENGTH_TINY)
         ) {
             $isFixed = !empty($data['fixed']);
@@ -412,7 +415,8 @@ class PostgresSchema extends BaseSchema
             $out .= '(' . (int)$data['precision'] . ')';
         }
 
-        if ($data['type'] === TableSchema::TYPE_DECIMAL &&
+        if (
+            $data['type'] === TableSchema::TYPE_DECIMAL &&
             (isset($data['length']) || isset($data['precision']))
         ) {
             $out .= '(' . (int)$data['length'] . ',' . (int)$data['precision'] . ')';
@@ -422,7 +426,8 @@ class PostgresSchema extends BaseSchema
             $out .= ' NOT NULL';
         }
 
-        if (isset($data['default']) &&
+        if (
+            isset($data['default']) &&
             in_array($data['type'], [TableSchema::TYPE_TIMESTAMP, TableSchema::TYPE_DATETIME]) &&
             strtolower($data['default']) === 'current_timestamp'
         ) {
@@ -579,7 +584,7 @@ class PostgresSchema extends BaseSchema
         $name = $this->_driver->quoteIdentifier($schema->name());
 
         return [
-            sprintf('TRUNCATE %s RESTART IDENTITY CASCADE', $name)
+            sprintf('TRUNCATE %s RESTART IDENTITY CASCADE', $name),
         ];
     }
 

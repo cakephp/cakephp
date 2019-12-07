@@ -14,7 +14,7 @@
 namespace Cake\TestSuite\Stub;
 
 use Cake\Console\ConsoleInput as ConsoleInputBase;
-use Cake\Console\Exception\ConsoleException;
+use Cake\TestSuite\Stub\MissingConsoleInputException;
 use NumberFormatter;
 
 /**
@@ -28,7 +28,7 @@ class ConsoleInput extends ConsoleInputBase
     /**
      * Reply values for ask() and askChoice()
      *
-     * @var array
+     * @var string[]
      */
     protected $replies = [];
 
@@ -54,7 +54,7 @@ class ConsoleInput extends ConsoleInputBase
     /**
      * Read a reply
      *
-     * @return mixed The value of the reply
+     * @return string|false The value of the reply
      */
     public function read()
     {
@@ -67,8 +67,8 @@ class ConsoleInput extends ConsoleInputBase
 
             $replies = implode(', ', $this->replies);
             $message = "There are no more input replies available. This is the {$nth} read operation, " .
-                "only {$total} replies were set. The provided replies are: {$replies}";
-            throw new ConsoleException($message);
+                "only {$total} replies were set.\nThe provided replies are: {$replies}";
+            throw new MissingConsoleInputException($message);
         }
 
         return $this->replies[$this->currentIndex];

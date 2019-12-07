@@ -227,7 +227,7 @@ class ResponseEmitter implements EmitterInterface
                 'path' => '',
                 'domain' => '',
                 'secure' => false,
-                'httponly' => false
+                'httponly' => false,
             ];
 
             foreach ($parts as $part) {
@@ -241,7 +241,7 @@ class ResponseEmitter implements EmitterInterface
                 $key = strtolower($key);
                 $data[$key] = $value;
             }
-            if (!empty($data['expires'])) {
+            if (is_string($data['expires'])) {
                 $data['expires'] = strtotime($data['expires']);
             }
             setcookie(

@@ -108,8 +108,8 @@ class SessionTest extends TestCase
             'timeout' => 86400,
             'ini' => [
                 'session.referer_check' => 'example.com',
-                'session.use_trans_sid' => false
-            ]
+                'session.use_trans_sid' => false,
+            ],
         ];
 
         Session::create($config);
@@ -218,7 +218,7 @@ class SessionTest extends TestCase
             'one' => 1,
             'two' => 2,
             'three' => ['something'],
-            'null' => null
+            'null' => null,
         ]);
         $this->assertEquals(1, $session->read('one'));
         $this->assertEquals(['something'], $session->read('three'));
@@ -496,8 +496,8 @@ class SessionTest extends TestCase
             'handler' => [
                 'engine' => 'TestAppLibSession',
                 'these' => 'are',
-                'a few' => 'options'
-            ]
+                'a few' => 'options',
+            ],
         ];
 
         $session = Session::create($config);
@@ -521,8 +521,8 @@ class SessionTest extends TestCase
         $config = [
             'defaults' => 'cake',
             'handler' => [
-                'engine' => 'TestPlugin.TestPluginSession'
-            ]
+                'engine' => 'TestPlugin.TestPluginSession',
+            ],
         ];
 
         $session = Session::create($config);
@@ -609,7 +609,7 @@ class SessionTest extends TestCase
             'ini' => [
                 'session.use_cookies' => 0,
                 'session.use_trans_sid' => 0,
-            ]
+            ],
         ]);
 
         $this->assertFalse($session->started());
@@ -629,7 +629,7 @@ class SessionTest extends TestCase
             'ini' => [
                 'session.use_cookies' => 1,
                 'session.use_trans_sid' => 0,
-            ]
+            ],
         ]);
 
         $this->assertFalse($session->started());
@@ -653,7 +653,7 @@ class SessionTest extends TestCase
             'ini' => [
                 'session.use_cookies' => 1,
                 'session.use_trans_sid' => 1,
-            ]
+            ],
         ]);
 
         $this->assertFalse($session->started());
@@ -673,7 +673,7 @@ class SessionTest extends TestCase
             'ini' => [
                 'session.use_cookies' => 1,
                 'session.use_trans_sid' => 0,
-            ]
+            ],
         ]);
 
         $this->assertFalse($session->started());

@@ -45,13 +45,6 @@ use ReflectionMethod;
  */
 class Form implements EventListenerInterface, EventDispatcherInterface, ValidatorAwareInterface
 {
-    /**
-     * Schema class.
-     *
-     * @var string
-     */
-    protected $_schemaClass = Schema::class;
-
     use EventDispatcherTrait;
     use ValidatorAwareTrait;
 
@@ -68,6 +61,13 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * @var string
      */
     const BUILD_VALIDATOR_EVENT = 'Form.buildValidator';
+
+    /**
+     * Schema class.
+     *
+     * @var string
+     */
+    protected $_schemaClass = Schema::class;
 
     /**
      * The schema used by this form.
@@ -239,7 +239,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
                 $validator = $this->validator();
             }
         }
-        $this->_errors = $validator->errors($data);
+        $this->_errors = $validator->validate($data);
 
         return count($this->_errors) === 0;
     }
@@ -373,7 +373,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
         $special = [
             '_schema' => $this->schema()->__debugInfo(),
             '_errors' => $this->getErrors(),
-            '_validator' => $this->getValidator()->__debugInfo()
+            '_validator' => $this->getValidator()->__debugInfo(),
         ];
 
         return $special + get_object_vars($this);

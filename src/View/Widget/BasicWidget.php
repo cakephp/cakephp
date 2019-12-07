@@ -64,7 +64,7 @@ class BasicWidget implements WidgetInterface
             'val' => null,
             'type' => 'text',
             'escape' => true,
-            'templateVars' => []
+            'templateVars' => [],
         ];
         $data['value'] = $data['val'];
         unset($data['val']);

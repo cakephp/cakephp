@@ -129,7 +129,7 @@ class Router
         'Month' => Router::MONTH,
         'Day' => Router::DAY,
         'ID' => Router::ID,
-        'UUID' => Router::UUID
+        'UUID' => Router::UUID,
     ];
 
     /**
@@ -419,7 +419,7 @@ class Router
             $requestData[0] += [
                 'controller' => false,
                 'action' => false,
-                'plugin' => null
+                'plugin' => null,
             ];
             $request = new ServerRequest([
                 'params' => $requestData[0],
@@ -646,10 +646,10 @@ class Router
      * - `_name` - Name of route. If you have setup named routes you can use this key
      *   to specify it.
      *
-     * @param string|array|null $url An array specifying any of the following:
+     * @param string|array|\Psr\Http\Message\UriInterface|null $url An array specifying any of the following:
      *   'controller', 'action', 'plugin' additionally, you can provide routed
      *   elements or query string parameters. If string it can be name any valid url
-     *   string.
+     *   string or it can be an UriInterface instance.
      * @param bool $full If true, the full base URL will be prepended to the result.
      *   Default is false.
      * @return string Full translated URL with base path.
@@ -705,7 +705,8 @@ class Router
 
             if (!isset($url['_name'])) {
                 // Copy the current action if the controller is the current one.
-                if (empty($url['action']) &&
+                if (
+                    empty($url['action']) &&
                     (empty($url['controller']) || $params['controller'] === $url['controller'])
                 ) {
                     $url['action'] = $params['action'];
@@ -720,7 +721,7 @@ class Router
                     'plugin' => $params['plugin'],
                     'controller' => $params['controller'],
                     'action' => 'index',
-                    '_ext' => null
+                    '_ext' => null,
                 ];
             }
 
@@ -733,6 +734,8 @@ class Router
 
             $output = static::$_collection->match($url, $context);
         } else {
+            $url = (string)$url;
+
             $plainString = (
                 strpos($url, 'javascript:') === 0 ||
                 strpos($url, 'mailto:') === 0 ||
@@ -1011,7 +1014,7 @@ class Router
                         $arr = [$arr];
                     } else {
                         $arr = [
-                            $match[1] => $arr
+                            $match[1] => $arr,
                         ];
                     }
                 }

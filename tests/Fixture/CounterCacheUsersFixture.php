@@ -28,7 +28,7 @@ class CounterCacheUsersFixture extends TestFixture
         'post_count' => ['type' => 'integer', 'null' => true],
         'comment_count' => ['type' => 'integer', 'null' => true],
         'posts_published' => ['type' => 'integer', 'null' => true],
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
     ];
 
     public $records = [

@@ -93,105 +93,105 @@ SQL;
                 null,
                 null,
                 null,
-                ['type' => 'timestamp', 'length' => null]
+                ['type' => 'timestamp', 'length' => null],
             ],
             [
                 'DATE',
                 null,
                 null,
                 null,
-                ['type' => 'date', 'length' => null]
+                ['type' => 'date', 'length' => null],
             ],
             [
                 'TIME',
                 null,
                 null,
                 null,
-                ['type' => 'time', 'length' => null]
+                ['type' => 'time', 'length' => null],
             ],
             [
                 'TINYINT',
                 null,
                 2,
                 null,
-                ['type' => 'tinyinteger', 'length' => 2]
+                ['type' => 'tinyinteger', 'length' => 2],
             ],
             [
                 'TINYINT',
                 null,
                 null,
                 null,
-                ['type' => 'tinyinteger', 'length' => 3]
+                ['type' => 'tinyinteger', 'length' => 3],
             ],
             [
                 'SMALLINT',
                 null,
                 3,
                 null,
-                ['type' => 'smallinteger', 'length' => 3]
+                ['type' => 'smallinteger', 'length' => 3],
             ],
             [
                 'SMALLINT',
                 null,
                 null,
                 null,
-                ['type' => 'smallinteger', 'length' => 5]
+                ['type' => 'smallinteger', 'length' => 5],
             ],
             [
                 'INTEGER',
                 null,
                 null,
                 null,
-                ['type' => 'integer', 'length' => 10]
+                ['type' => 'integer', 'length' => 10],
             ],
             [
                 'INTEGER',
                 null,
                 8,
                 null,
-                ['type' => 'integer', 'length' => 8]
+                ['type' => 'integer', 'length' => 8],
             ],
             [
                 'BIGINT',
                 null,
                 null,
                 null,
-                ['type' => 'biginteger', 'length' => 20]
+                ['type' => 'biginteger', 'length' => 20],
             ],
             [
                 'NUMERIC',
                 null,
                 15,
                 5,
-                ['type' => 'decimal', 'length' => 15, 'precision' => 5]
+                ['type' => 'decimal', 'length' => 15, 'precision' => 5],
             ],
             [
                 'DECIMAL',
                 null,
                 11,
                 3,
-                ['type' => 'decimal', 'length' => 11, 'precision' => 3]
+                ['type' => 'decimal', 'length' => 11, 'precision' => 3],
             ],
             [
                 'MONEY',
                 null,
                 null,
                 null,
-                ['type' => 'decimal', 'length' => null, 'precision' => null]
+                ['type' => 'decimal', 'length' => null, 'precision' => null],
             ],
             [
                 'VARCHAR',
                 null,
                 null,
                 null,
-                ['type' => 'string', 'length' => 255, 'collate' => 'Japanese_Unicode_CI_AI']
+                ['type' => 'string', 'length' => 255, 'collate' => 'Japanese_Unicode_CI_AI'],
             ],
             [
                 'VARCHAR',
                 10,
                 null,
                 null,
-                ['type' => 'string', 'length' => 10, 'collate' => 'Japanese_Unicode_CI_AI']
+                ['type' => 'string', 'length' => 10, 'collate' => 'Japanese_Unicode_CI_AI'],
             ],
             [
                 'NVARCHAR',
@@ -199,14 +199,14 @@ SQL;
                 null,
                 null,
                 // Sqlserver returns double lengths for unicode columns
-                ['type' => 'string', 'length' => 25, 'collate' => 'Japanese_Unicode_CI_AI']
+                ['type' => 'string', 'length' => 25, 'collate' => 'Japanese_Unicode_CI_AI'],
             ],
             [
                 'CHAR',
                 10,
                 null,
                 null,
-                ['type' => 'string', 'fixed' => true, 'length' => 10, 'collate' => 'Japanese_Unicode_CI_AI']
+                ['type' => 'string', 'fixed' => true, 'length' => 10, 'collate' => 'Japanese_Unicode_CI_AI'],
             ],
             [
                 'NCHAR',
@@ -214,63 +214,63 @@ SQL;
                 null,
                 null,
                 // SQLServer returns double length for unicode columns.
-                ['type' => 'string', 'fixed' => true, 'length' => 5, 'collate' => 'Japanese_Unicode_CI_AI']
+                ['type' => 'string', 'fixed' => true, 'length' => 5, 'collate' => 'Japanese_Unicode_CI_AI'],
             ],
             [
                 'UNIQUEIDENTIFIER',
                 null,
                 null,
                 null,
-                ['type' => 'uuid']
+                ['type' => 'uuid'],
             ],
             [
                 'TEXT',
                 null,
                 null,
                 null,
-                ['type' => 'text', 'length' => null, 'collate' => 'Japanese_Unicode_CI_AI']
+                ['type' => 'text', 'length' => null, 'collate' => 'Japanese_Unicode_CI_AI'],
             ],
             [
                 'REAL',
                 null,
                 null,
                 null,
-                ['type' => 'float', 'length' => null]
+                ['type' => 'float', 'length' => null],
             ],
             [
                 'VARCHAR',
                 -1,
                 null,
                 null,
-                ['type' => 'text', 'length' => null, 'collate' => 'Japanese_Unicode_CI_AI']
+                ['type' => 'text', 'length' => null, 'collate' => 'Japanese_Unicode_CI_AI'],
             ],
             [
                 'IMAGE',
                 10,
                 null,
                 null,
-                ['type' => 'binary', 'length' => 10]
+                ['type' => 'binary', 'length' => 10],
             ],
             [
                 'BINARY',
                 20,
                 null,
                 null,
-                ['type' => 'binary', 'length' => 20]
+                ['type' => 'binary', 'length' => 20],
             ],
             [
                 'VARBINARY',
                 30,
                 null,
                 null,
-                ['type' => 'binary', 'length' => 30]
+                ['type' => 'binary', 'length' => 30],
             ],
             [
                 'VARBINARY',
                 -1,
                 null,
                 null,
-                ['type' => 'binary', 'length' => TableSchema::LENGTH_LONG]
+                ['type' => 'binary', 'length' => TableSchema::LENGTH_LONG],
             ],
         ];
     }
@@ -506,12 +506,12 @@ SQL;
             'primary' => [
                 'type' => 'primary',
                 'columns' => ['id'],
-                'length' => []
+                'length' => [],
             ],
             'content_idx' => [
                 'type' => 'unique',
                 'columns' => ['title', 'body'],
-                'length' => []
+                'length' => [],
             ],
             'author_idx' => [
                 'type' => 'foreign',
@@ -520,7 +520,7 @@ SQL;
                 'length' => [],
                 'update' => 'cascade',
                 'delete' => 'cascade',
-            ]
+            ],
         ];
         $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
         $this->assertEquals($expected['content_idx'], $result->getConstraint('content_idx'));
@@ -530,7 +530,7 @@ SQL;
         $expected = [
             'type' => 'index',
             'columns' => ['author_id'],
-            'length' => []
+            'length' => [],
         ];
         $this->assertEquals($expected, $result->getIndex('author_idx'));
     }
@@ -547,201 +547,201 @@ SQL;
             [
                 'title',
                 ['type' => 'string', 'length' => 25, 'null' => false],
-                '[title] NVARCHAR(25) NOT NULL'
+                '[title] NVARCHAR(25) NOT NULL',
             ],
             [
                 'title',
                 ['type' => 'string', 'length' => 25, 'null' => true, 'default' => 'ignored'],
-                "[title] NVARCHAR(25) DEFAULT 'ignored'"
+                "[title] NVARCHAR(25) DEFAULT 'ignored'",
             ],
             [
                 'id',
                 ['type' => 'string', 'length' => 32, 'fixed' => true, 'null' => false],
-                '[id] NCHAR(32) NOT NULL'
+                '[id] NCHAR(32) NOT NULL',
             ],
             [
                 'id',
                 ['type' => 'uuid', 'null' => false],
-                '[id] UNIQUEIDENTIFIER NOT NULL'
+                '[id] UNIQUEIDENTIFIER NOT NULL',
             ],
             [
                 'id',
                 ['type' => 'binaryuuid', 'null' => false],
-                '[id] UNIQUEIDENTIFIER NOT NULL'
+                '[id] UNIQUEIDENTIFIER NOT NULL',
             ],
             [
                 'role',
                 ['type' => 'string', 'length' => 10, 'null' => false, 'default' => 'admin'],
-                "[role] NVARCHAR(10) NOT NULL DEFAULT 'admin'"
+                "[role] NVARCHAR(10) NOT NULL DEFAULT 'admin'",
             ],
             [
                 'title',
                 ['type' => 'string'],
-                '[title] NVARCHAR(255)'
+                '[title] NVARCHAR(255)',
             ],
             [
                 'title',
                 ['type' => 'string', 'length' => 25, 'null' => false, 'collate' => 'Japanese_Unicode_CI_AI'],
-                '[title] NVARCHAR(25) COLLATE Japanese_Unicode_CI_AI NOT NULL'
+                '[title] NVARCHAR(25) COLLATE Japanese_Unicode_CI_AI NOT NULL',
             ],
             // Text
             [
                 'body',
                 ['type' => 'text', 'null' => false],
-                '[body] NVARCHAR(MAX) NOT NULL'
+                '[body] NVARCHAR(MAX) NOT NULL',
             ],
             [
                 'body',
                 ['type' => 'text', 'length' => TableSchema::LENGTH_TINY, 'null' => false],
-                sprintf('[body] NVARCHAR(%s) NOT NULL', TableSchema::LENGTH_TINY)
+                sprintf('[body] NVARCHAR(%s) NOT NULL', TableSchema::LENGTH_TINY),
             ],
             [
                 'body',
                 ['type' => 'text', 'length' => TableSchema::LENGTH_MEDIUM, 'null' => false],
-                '[body] NVARCHAR(MAX) NOT NULL'
+                '[body] NVARCHAR(MAX) NOT NULL',
             ],
             [
                 'body',
                 ['type' => 'text', 'length' => TableSchema::LENGTH_LONG, 'null' => false],
-                '[body] NVARCHAR(MAX) NOT NULL'
+                '[body] NVARCHAR(MAX) NOT NULL',
             ],
             [
                 'body',
                 ['type' => 'text', 'null' => false, 'collate' => 'Japanese_Unicode_CI_AI'],
-                '[body] NVARCHAR(MAX) COLLATE Japanese_Unicode_CI_AI NOT NULL'
+                '[body] NVARCHAR(MAX) COLLATE Japanese_Unicode_CI_AI NOT NULL',
             ],
             // Integers
             [
                 'post_id',
                 ['type' => 'smallinteger', 'length' => 11],
-                '[post_id] SMALLINT'
+                '[post_id] SMALLINT',
             ],
             [
                 'post_id',
                 ['type' => 'tinyinteger', 'length' => 11],
-                '[post_id] TINYINT'
+                '[post_id] TINYINT',
             ],
             [
                 'post_id',
                 ['type' => 'integer', 'length' => 11],
-                '[post_id] INTEGER'
+                '[post_id] INTEGER',
             ],
             [
                 'post_id',
                 ['type' => 'biginteger', 'length' => 20],
-                '[post_id] BIGINT'
+                '[post_id] BIGINT',
             ],
             // Decimal
             [
                 'value',
                 ['type' => 'decimal'],
-                '[value] DECIMAL'
+                '[value] DECIMAL',
             ],
             [
                 'value',
                 ['type' => 'decimal', 'length' => 11],
-                '[value] DECIMAL(11,0)'
+                '[value] DECIMAL(11,0)',
             ],
             [
                 'value',
                 ['type' => 'decimal', 'length' => 12, 'precision' => 5],
-                '[value] DECIMAL(12,5)'
+                '[value] DECIMAL(12,5)',
             ],
             // Float
             [
                 'value',
                 ['type' => 'float'],
-                '[value] FLOAT'
+                '[value] FLOAT',
             ],
             [
                 'value',
                 ['type' => 'float', 'length' => 11, 'precision' => 3],
-                '[value] FLOAT(3)'
+                '[value] FLOAT(3)',
             ],
             // Binary
             [
                 'img',
                 ['type' => 'binary', 'length' => null],
-                '[img] VARBINARY(MAX)'
+                '[img] VARBINARY(MAX)',
             ],
             [
                 'img',
                 ['type' => 'binary', 'length' => TableSchema::LENGTH_TINY],
-                sprintf('[img] VARBINARY(%s)', TableSchema::LENGTH_TINY)
+                sprintf('[img] VARBINARY(%s)', TableSchema::LENGTH_TINY),
             ],
             [
                 'img',
                 ['type' => 'binary', 'length' => TableSchema::LENGTH_MEDIUM],
-                '[img] VARBINARY(MAX)'
+                '[img] VARBINARY(MAX)',
             ],
             [
                 'img',
                 ['type' => 'binary', 'length' => TableSchema::LENGTH_LONG],
-                '[img] VARBINARY(MAX)'
+                '[img] VARBINARY(MAX)',
             ],
             [
                 'bytes',
                 ['type' => 'binary', 'length' => 5],
-                '[bytes] VARBINARY(5)'
+                '[bytes] VARBINARY(5)',
             ],
             [
                 'bytes',
                 ['type' => 'binary', 'length' => 1],
-                '[bytes] BINARY(1)'
+                '[bytes] BINARY(1)',
             ],
             // Boolean
             [
                 'checked',
                 ['type' => 'boolean', 'default' => false],
-                '[checked] BIT DEFAULT 0'
+                '[checked] BIT DEFAULT 0',
             ],
             [
                 'checked',
                 ['type' => 'boolean', 'default' => true, 'null' => false],
-                '[checked] BIT NOT NULL DEFAULT 1'
+                '[checked] BIT NOT NULL DEFAULT 1',
             ],
             // Datetime
             [
                 'created',
                 ['type' => 'datetime'],
-                '[created] DATETIME'
+                '[created] DATETIME',
             ],
             [
                 'open_date',
                 ['type' => 'datetime', 'null' => false, 'default' => '2016-12-07 23:04:00'],
-                '[open_date] DATETIME NOT NULL DEFAULT \'2016-12-07 23:04:00\''
+                '[open_date] DATETIME NOT NULL DEFAULT \'2016-12-07 23:04:00\'',
             ],
             [
                 'open_date',
                 ['type' => 'datetime', 'null' => false, 'default' => 'current_timestamp'],
-                '[open_date] DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP'
+                '[open_date] DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP',
             ],
             [
                 'null_date',
                 ['type' => 'datetime', 'null' => true, 'default' => 'current_timestamp'],
-                '[null_date] DATETIME DEFAULT CURRENT_TIMESTAMP'
+                '[null_date] DATETIME DEFAULT CURRENT_TIMESTAMP',
             ],
             [
                 'null_date',
                 ['type' => 'datetime', 'null' => true],
-                '[null_date] DATETIME DEFAULT NULL'
+                '[null_date] DATETIME DEFAULT NULL',
             ],
             // Date & Time
             [
                 'start_date',
                 ['type' => 'date'],
-                '[start_date] DATE'
+                '[start_date] DATE',
             ],
             [
                 'start_time',
                 ['type' => 'time'],
-                '[start_time] TIME'
+                '[start_time] TIME',
             ],
             // Timestamp
             [
                 'created',
                 ['type' => 'timestamp', 'null' => true],
-                '[created] DATETIME DEFAULT NULL'
+                '[created] DATETIME DEFAULT NULL',
             ],
         ];
     }
@@ -772,42 +772,42 @@ SQL;
             [
                 'primary',
                 ['type' => 'primary', 'columns' => ['title']],
-                'PRIMARY KEY ([title])'
+                'PRIMARY KEY ([title])',
             ],
             [
                 'unique_idx',
                 ['type' => 'unique', 'columns' => ['title', 'author_id']],
-                'CONSTRAINT [unique_idx] UNIQUE ([title], [author_id])'
+                'CONSTRAINT [unique_idx] UNIQUE ([title], [author_id])',
             ],
             [
                 'author_id_idx',
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id']],
                 'CONSTRAINT [author_id_idx] FOREIGN KEY ([author_id]) ' .
-                'REFERENCES [authors] ([id]) ON UPDATE SET NULL ON DELETE SET NULL'
+                'REFERENCES [authors] ([id]) ON UPDATE SET NULL ON DELETE SET NULL',
             ],
             [
                 'author_id_idx',
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'cascade'],
                 'CONSTRAINT [author_id_idx] FOREIGN KEY ([author_id]) ' .
-                'REFERENCES [authors] ([id]) ON UPDATE CASCADE ON DELETE SET NULL'
+                'REFERENCES [authors] ([id]) ON UPDATE CASCADE ON DELETE SET NULL',
             ],
             [
                 'author_id_idx',
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'setDefault'],
                 'CONSTRAINT [author_id_idx] FOREIGN KEY ([author_id]) ' .
-                'REFERENCES [authors] ([id]) ON UPDATE SET DEFAULT ON DELETE SET NULL'
+                'REFERENCES [authors] ([id]) ON UPDATE SET DEFAULT ON DELETE SET NULL',
             ],
             [
                 'author_id_idx',
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'setNull'],
                 'CONSTRAINT [author_id_idx] FOREIGN KEY ([author_id]) ' .
-                'REFERENCES [authors] ([id]) ON UPDATE SET NULL ON DELETE SET NULL'
+                'REFERENCES [authors] ([id]) ON UPDATE SET NULL ON DELETE SET NULL',
             ],
             [
                 'author_id_idx',
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'noAction'],
                 'CONSTRAINT [author_id_idx] FOREIGN KEY ([author_id]) ' .
-                'REFERENCES [authors] ([id]) ON UPDATE NO ACTION ON DELETE SET NULL'
+                'REFERENCES [authors] ([id]) ON UPDATE NO ACTION ON DELETE SET NULL',
             ],
         ];
     }
@@ -824,7 +824,7 @@ SQL;
 
         $table = (new TableSchema('schema_articles'))->addColumn('title', [
             'type' => 'string',
-            'length' => 255
+            'length' => 255,
         ])->addColumn('author_id', [
             'type' => 'integer',
         ])->addConstraint($name, $data);
@@ -849,34 +849,34 @@ SQL;
         $table = (new TableSchema('posts'))
             ->addColumn('author_id', [
                 'type' => 'integer',
-                'null' => false
+                'null' => false,
             ])
             ->addColumn('category_id', [
                 'type' => 'integer',
-                'null' => false
+                'null' => false,
             ])
             ->addColumn('category_name', [
                 'type' => 'integer',
-                'null' => false
+                'null' => false,
             ])
             ->addConstraint('author_fk', [
                 'type' => 'foreign',
                 'columns' => ['author_id'],
                 'references' => ['authors', 'id'],
                 'update' => 'cascade',
-                'delete' => 'cascade'
+                'delete' => 'cascade',
             ])
             ->addConstraint('category_fk', [
                 'type' => 'foreign',
                 'columns' => ['category_id', 'category_name'],
                 'references' => ['categories', ['id', 'name']],
                 'update' => 'cascade',
-                'delete' => 'cascade'
+                'delete' => 'cascade',
             ]);
 
         $expected = [
             'ALTER TABLE [posts] ADD CONSTRAINT [author_fk] FOREIGN KEY ([author_id]) REFERENCES [authors] ([id]) ON UPDATE CASCADE ON DELETE CASCADE;',
-            'ALTER TABLE [posts] ADD CONSTRAINT [category_fk] FOREIGN KEY ([category_id], [category_name]) REFERENCES [categories] ([id], [name]) ON UPDATE CASCADE ON DELETE CASCADE;'
+            'ALTER TABLE [posts] ADD CONSTRAINT [category_fk] FOREIGN KEY ([category_id], [category_name]) REFERENCES [categories] ([id], [name]) ON UPDATE CASCADE ON DELETE CASCADE;',
         ];
         $result = $table->addConstraintSql($connection);
         $this->assertCount(2, $result);
@@ -900,34 +900,34 @@ SQL;
         $table = (new TableSchema('posts'))
             ->addColumn('author_id', [
                 'type' => 'integer',
-                'null' => false
+                'null' => false,
             ])
             ->addColumn('category_id', [
                 'type' => 'integer',
-                'null' => false
+                'null' => false,
             ])
             ->addColumn('category_name', [
                 'type' => 'integer',
-                'null' => false
+                'null' => false,
             ])
             ->addConstraint('author_fk', [
                 'type' => 'foreign',
                 'columns' => ['author_id'],
                 'references' => ['authors', 'id'],
                 'update' => 'cascade',
-                'delete' => 'cascade'
+                'delete' => 'cascade',
             ])
             ->addConstraint('category_fk', [
                 'type' => 'foreign',
                 'columns' => ['category_id', 'category_name'],
                 'references' => ['categories', ['id', 'name']],
                 'update' => 'cascade',
-                'delete' => 'cascade'
+                'delete' => 'cascade',
             ]);
 
         $expected = [
             'ALTER TABLE [posts] DROP CONSTRAINT [author_fk];',
-            'ALTER TABLE [posts] DROP CONSTRAINT [category_fk];'
+            'ALTER TABLE [posts] DROP CONSTRAINT [category_fk];',
         ];
         $result = $table->dropConstraintSql($connection);
         $this->assertCount(2, $result);
@@ -950,7 +950,7 @@ SQL;
 
         $table = (new TableSchema('schema_articles'))->addColumn('id', [
                 'type' => 'integer',
-                'null' => false
+                'null' => false,
             ])
             ->addColumn('title', [
                 'type' => 'string',
@@ -1034,7 +1034,7 @@ SQL;
         $table->addColumn('id', 'integer')
             ->addConstraint('primary', [
                 'type' => 'primary',
-                'columns' => ['id']
+                'columns' => ['id'],
             ]);
         $result = $table->truncateSql($connection);
         $this->assertCount(2, $result);

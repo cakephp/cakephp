@@ -133,7 +133,7 @@ class Plugin
             'console' => true,
             'classBase' => 'src',
             'ignoreMissing' => false,
-            'name' => $plugin
+            'name' => $plugin,
         ];
 
         if (!isset($config['path'])) {

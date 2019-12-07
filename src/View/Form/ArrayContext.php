@@ -105,7 +105,8 @@ class ArrayContext implements ContextInterface
      */
     public function primaryKey()
     {
-        if (empty($this->_context['schema']['_constraints']) ||
+        if (
+            empty($this->_context['schema']['_constraints']) ||
             !is_array($this->_context['schema']['_constraints'])
         ) {
             return [];
@@ -169,7 +170,7 @@ class ArrayContext implements ContextInterface
     {
         $options += [
             'default' => null,
-            'schemaDefault' => true
+            'schemaDefault' => true,
         ];
 
         $val = $this->_request->getData($field);

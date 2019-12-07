@@ -179,7 +179,7 @@ class BehaviorRegistryTest extends TestCase
             ],
             'implementedMethods' => [
                 'renamed' => 'slugify',
-            ]
+            ],
         ]);
         $this->assertTrue($this->Behaviors->hasMethod('renamed'));
     }
@@ -208,7 +208,7 @@ class BehaviorRegistryTest extends TestCase
         $this->Behaviors->load('Duplicate', [
             'implementedFinders' => [
                 'renamed' => 'findChildren',
-            ]
+            ],
         ]);
         $this->assertTrue($this->Behaviors->hasFinder('renamed'));
     }

@@ -53,7 +53,7 @@ class PaginatorComponent extends Component
         'page' => 1,
         'limit' => 20,
         'maxLimit' => 100,
-        'whitelist' => ['limit', 'sort', 'page', 'direction']
+        'whitelist' => ['limit', 'sort', 'page', 'direction'],
     ];
 
     /**

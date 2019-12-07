@@ -83,7 +83,7 @@ txt;
             ->addArgument('type', [
                 'help' => 'Resource type.',
                 'choices' => ['aco', 'aro'],
-                'required' => true
+                'required' => true,
             ])
             ->addArgument('other_longer', ['help' => 'Another argument.']);
 
@@ -191,7 +191,7 @@ txt;
         $parser = new ConsoleOptionParser('mycommand', false);
         $parser->addOption('test', ['help' => 'A test option.'])
             ->addOption('connection', [
-                'short' => 'c', 'help' => 'The connection to use.', 'default' => 'default'
+                'short' => 'c', 'help' => 'The connection to use.', 'default' => 'default',
             ]);
 
         $formatter = new HelpFormatter($parser);
@@ -334,7 +334,7 @@ xml;
             ->addArgument('type', [
                 'help' => 'Resource type.',
                 'choices' => ['aco', 'aro'],
-                'required' => true
+                'required' => true,
             ])
             ->addArgument('other_longer', ['help' => 'Another argument.']);
 
@@ -466,7 +466,7 @@ xml;
         $parser = new ConsoleOptionParser('mycommand', false);
         $parser->addOption('test', ['help' => 'A test option.'])
             ->addOption('connection', [
-                'short' => 'c', 'help' => 'The connection to use.', 'default' => 'default'
+                'short' => 'c', 'help' => 'The connection to use.', 'default' => 'default',
             ]);
 
         $formatter = new HelpFormatter($parser);

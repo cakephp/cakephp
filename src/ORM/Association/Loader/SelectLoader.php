@@ -138,7 +138,7 @@ class SelectLoader
             'conditions' => [],
             'strategy' => $this->strategy,
             'nestKey' => $this->alias,
-            'sort' => $this->sort
+            'sort' => $this->sort,
         ];
     }
 
@@ -162,7 +162,7 @@ class SelectLoader
             $options['fields'] = [];
         }
 
-        /* @var \Cake\ORM\Query $query */
+        /** @var \Cake\ORM\Query $query */
         $query = $finder();
         if (isset($options['finder'])) {
             list($finderName, $opts) = $this->_extractFinder($options['finder']);

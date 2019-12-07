@@ -128,7 +128,7 @@ class App
 
         $nonPluginNamespaces = [
             'Cake',
-            str_replace('\\', '/', Configure::read('App.namespace'))
+            str_replace('\\', '/', Configure::read('App.namespace')),
         ];
         if (in_array($pluginName, $nonPluginNamespaces)) {
             return $name;
@@ -171,7 +171,7 @@ class App
      *
      * @param string $type type of path
      * @param string|null $plugin name of plugin
-     * @return array
+     * @return string[]
      * @link https://book.cakephp.org/3/en/core-libraries/app.html#finding-paths-to-namespaces
      */
     public static function path($type, $plugin = null)
@@ -204,7 +204,7 @@ class App
      * Will return the full path to the cache engines package.
      *
      * @param string $type Package type.
-     * @return array Full path to package
+     * @return string[] Full path to package
      */
     public static function core($type)
     {

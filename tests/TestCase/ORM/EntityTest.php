@@ -753,7 +753,7 @@ class EntityTest extends TestCase
         $entity = new Entity([
             'id' => 1,
             'title' => 'Foo',
-            'author_id' => 3
+            'author_id' => 3,
         ]);
         $expected = ['author_id' => 3, 'title' => 'Foo', ];
         $this->assertEquals($expected, $entity->extract(['author_id', 'title']));
@@ -778,7 +778,7 @@ class EntityTest extends TestCase
         $entity = new Entity([
             'id' => 1,
             'title' => 'Foo',
-            'author_id' => 3
+            'author_id' => 3,
         ]);
         $this->assertTrue($entity->isDirty('id'));
         $this->assertTrue($entity->isDirty('title'));
@@ -808,7 +808,7 @@ class EntityTest extends TestCase
         $entity = new Entity([
             'id' => 1,
             'title' => 'Foo',
-            'author_id' => 3
+            'author_id' => 3,
         ], ['markClean' => true]);
 
         $this->assertFalse($entity->isDirty());
@@ -854,7 +854,7 @@ class EntityTest extends TestCase
         $entity = new Entity([
             'id' => 1,
             'title' => 'Foo',
-            'author_id' => 3
+            'author_id' => 3,
         ]);
         $entity->setDirty('id', false);
         $entity->setDirty('title', false);
@@ -873,13 +873,13 @@ class EntityTest extends TestCase
         $entity = new Entity([
             'id' => 1,
             'title' => 'Foo',
-            'author_id' => 3
+            'author_id' => 3,
         ]);
 
         $expected = [
             'id',
             'title',
-            'author_id'
+            'author_id',
         ];
         $result = $entity->getDirty();
         $this->assertSame($expected, $entity->getDirty());
@@ -895,7 +895,7 @@ class EntityTest extends TestCase
         $entity = new Entity([
             'id' => 1,
             'title' => 'Foo',
-            'author_id' => 3
+            'author_id' => 3,
         ]);
         $this->assertTrue($entity->isDirty('id'));
         $this->assertTrue($entity->isDirty('title'));
@@ -917,18 +917,15 @@ class EntityTest extends TestCase
         $data = [
             'id' => 1,
             'title' => 'Foo',
-            'author_id' => 3
+            'author_id' => 3,
         ];
         $entity = new Entity($data);
         $this->assertTrue($entity->isNew());
 
-        $entity->isNew(true);
+        $entity->setNew(true);
         $this->assertTrue($entity->isNew());
 
-        $entity->isNew('derpy');
-        $this->assertTrue($entity->isNew());
-
-        $entity->isNew(false);
+        $entity->setNew(false);
         $this->assertFalse($entity->isNew());
     }
 
@@ -961,18 +958,18 @@ class EntityTest extends TestCase
      */
     public function testConstructorWithMarkNew()
     {
-        $entity = $this->getMockBuilder('\Cake\ORM\Entity')
-            ->setMethods(['isNew', 'clean'])
+        $entity = $this->getMockBuilder('Cake\ORM\Entity')
+            ->setMethods(['setNew', 'clean'])
             ->disableOriginalConstructor()
             ->getMock();
         $entity->expects($this->never())->method('clean');
         $entity->__construct(['a' => 'b', 'c' => 'd']);
 
-        $entity = $this->getMockBuilder('\Cake\ORM\Entity')
-            ->setMethods(['isNew'])
+        $entity = $this->getMockBuilder('Cake\ORM\Entity')
+            ->setMethods(['setNew'])
             ->disableOriginalConstructor()
             ->getMock();
-        $entity->expects($this->once())->method('isNew');
+        $entity->expects($this->once())->method('setNew');
         $entity->__construct(['a' => 'b', 'c' => 'd'], ['markNew' => true]);
     }
 
@@ -1014,7 +1011,7 @@ class EntityTest extends TestCase
             'comments' => [
                 ['user_id' => 1, 'body' => 'Comment 1'],
                 ['user_id' => 1, 'body' => 'Comment 2'],
-            ]
+            ],
         ];
         $this->assertEquals($expected, $user->toArray());
     }
@@ -1030,15 +1027,15 @@ class EntityTest extends TestCase
             'id' => 1,
             'foo' => [
                 new Entity(['hi' => 'test']),
-                'notentity' => 1
-            ]
+                'notentity' => 1,
+            ],
         ]);
         $expected = [
             'id' => 1,
             'foo' => [
                 ['hi' => 'test'],
-                'notentity' => 1
-            ]
+                'notentity' => 1,
+            ],
         ];
         $this->assertEquals($expected, $test->toArray());
     }
@@ -1190,7 +1187,7 @@ class EntityTest extends TestCase
             $this->assertEquals([], $entity->errors('boo'));
             $entity['boo'] = [
                 'something' => 'stupid',
-                'and' => false
+                'and' => false,
             ];
             $this->assertEquals([], $entity->errors('boo'));
 
@@ -1224,7 +1221,7 @@ class EntityTest extends TestCase
         $this->assertEquals(['bar'], $entity->getError('foo'));
 
         $expected = [
-            'foo' => ['bar']
+            'foo' => ['bar'],
         ];
         $result = $entity->getErrors();
         $this->assertEquals($expected, $result);
@@ -1234,7 +1231,7 @@ class EntityTest extends TestCase
         $entity->setError('indexes', $indexedErrors);
 
         $expectedIndexed = [
-            'indexes' => ['2' => ['foo' => 'bar']]
+            'indexes' => ['2' => ['foo' => 'bar']],
         ];
         $result = $entity->getErrors();
         $this->assertEquals($expectedIndexed, $result);
@@ -1251,7 +1248,7 @@ class EntityTest extends TestCase
         $entity->setError('options', ['subpages' => ['_empty' => 'required']]);
 
         $expected = [
-            'subpages' => ['_empty' => 'required']
+            'subpages' => ['_empty' => 'required'],
         ];
         $this->assertEquals($expected, $entity->getError('options'));
 
@@ -1272,7 +1269,7 @@ class EntityTest extends TestCase
             'foo' => 'bar',
             'thing' => 'baz',
             'user' => $user,
-            'owner' => $owner
+            'owner' => $owner,
         ]);
         $author->setError('thing', ['this is a mistake']);
         $user->setErrors(['a' => ['error1'], 'b' => ['error2']]);
@@ -1287,7 +1284,7 @@ class EntityTest extends TestCase
         $author->set('multiple', [$user, $owner]);
         $expected = [
             ['a' => ['error1'], 'b' => ['error2']],
-            ['c' => ['error3'], 'd' => ['error4']]
+            ['c' => ['error3'], 'd' => ['error4']],
         ];
         $this->assertEquals($expected, $author->getError('multiple'));
 
@@ -1295,7 +1292,7 @@ class EntityTest extends TestCase
             'thing' => $author->getError('thing'),
             'user' => $author->getError('user'),
             'owner' => $author->getError('owner'),
-            'multiple' => $author->getError('multiple')
+            'multiple' => $author->getError('multiple'),
         ];
         $this->assertEquals($expected, $author->getErrors());
     }
@@ -1351,7 +1348,7 @@ class EntityTest extends TestCase
         $entity = new Extending([
             'field' => 'value',
             'one' => $assoc,
-            'many' => [$assoc2]
+            'many' => [$assoc2],
         ]);
         $entity->setError('wrong', 'Bad stuff');
         $assoc->setError('nope', 'Terrible things');
@@ -1584,7 +1581,7 @@ class EntityTest extends TestCase
             '[hasErrors]' => true,
             '[errors]' => ['foo' => ['An error']],
             '[invalid]' => ['foo' => 'a value'],
-            '[repository]' => 'foos'
+            '[repository]' => 'foos',
         ];
         $this->assertSame($expected, $result);
     }
@@ -1668,7 +1665,7 @@ class EntityTest extends TestCase
         $this->assertFalse($entity->isDirty());
 
         $cloned = clone $entity;
-        $cloned->isNew(true);
+        $cloned->setNew(true);
 
         $this->assertTrue($cloned->isDirty());
         $this->assertTrue($cloned->isDirty('a'));
@@ -1711,31 +1708,31 @@ class EntityTest extends TestCase
         $entity = new Entity();
         $return = $entity->setInvalid([
             'title' => 'albert',
-            'body' => 'einstein'
+            'body' => 'einstein',
         ]);
         $this->assertSame($entity, $return);
         $this->assertSame([
             'title' => 'albert',
-            'body' => 'einstein'
+            'body' => 'einstein',
         ], $entity->getInvalid());
 
         $set = $entity->setInvalid([
             'title' => 'nikola',
-            'body' => 'tesla'
+            'body' => 'tesla',
         ]);
         $this->assertSame([
             'title' => 'albert',
-            'body' => 'einstein'
+            'body' => 'einstein',
         ], $set->getInvalid());
 
         $overwrite = $entity->setInvalid([
             'title' => 'nikola',
-            'body' => 'tesla'
+            'body' => 'tesla',
         ], true);
         $this->assertSame($entity, $overwrite);
         $this->assertSame([
             'title' => 'nikola',
-            'body' => 'tesla'
+            'body' => 'tesla',
         ], $entity->getInvalid());
     }
 
@@ -1784,7 +1781,7 @@ class EntityTest extends TestCase
             'intNotZero' => 1,
             'floatZero' => 0.0,
             'floatNonZero' => 1.5,
-            'null' => null
+            'null' => null,
         ]);
 
         $this->assertFalse($entity->isEmpty('array'));
@@ -1816,7 +1813,7 @@ class EntityTest extends TestCase
             'intNotZero' => 1,
             'floatZero' => 0.0,
             'floatNonZero' => 1.5,
-            'null' => null
+            'null' => null,
         ]);
 
         $this->assertTrue($entity->hasValue('array'));

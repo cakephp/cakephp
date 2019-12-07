@@ -91,7 +91,7 @@ class FileWidgetTest extends TestCase
             'input' => [
                 'type' => 'file',
                 'name' => 'files',
-                'custom' => 'value'
+                'custom' => 'value',
             ],
         ];
         $this->assertHtml($expected, $result);

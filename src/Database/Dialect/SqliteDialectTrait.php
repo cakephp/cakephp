@@ -62,7 +62,7 @@ trait SqliteDialectTrait
         'minute' => 'M',
         'second' => 'S',
         'week' => 'W',
-        'year' => 'Y'
+        'year' => 'Y',
     ];
 
     /**
@@ -77,7 +77,7 @@ trait SqliteDialectTrait
 
         return [
             $namespace . '\FunctionExpression' => '_transformFunctionExpression',
-            $namespace . '\TupleComparison' => '_transformTupleComparison'
+            $namespace . '\TupleComparison' => '_transformTupleComparison',
         ];
     }
 

@@ -18,6 +18,7 @@ use Cake\Database\Driver;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Query;
 use Cake\Database\QueryCompiler;
+use Cake\Database\Schema\TableSchema;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
 use PDO;
@@ -268,6 +269,19 @@ class DriverTest extends TestCase
     }
 
     /**
+     * Test newTableSchema().
+     *
+     * @return void
+     */
+    public function testNewTableSchema()
+    {
+        $tableName = 'articles';
+        $actual = $this->driver->newTableSchema($tableName);
+        $this->assertInstanceOf(TableSchema::class, $actual);
+        $this->assertEquals($tableName, $actual->name());
+    }
+
+    /**
      * Test __destruct().
      *
      * @return void
@@ -293,7 +307,7 @@ class DriverTest extends TestCase
             [true, 'TRUE'],
             [1, '1'],
             ['0', '0'],
-            ['42', '42']
+            ['42', '42'],
         ];
     }
 }

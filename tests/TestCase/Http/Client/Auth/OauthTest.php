@@ -179,9 +179,9 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
                 'search' => [
                     'filters' => [
                         'field' => 'date',
-                        'value' => 'one two'
-                    ]
-                ]
+                        'value' => 'one two',
+                    ],
+                ],
             ]
         );
 
@@ -236,7 +236,7 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
             [
                 'address' => 'post',
                 'zed' => 'last',
-                'tags' => ['oauth', 'cake']
+                'tags' => ['oauth', 'cake'],
             ]
         );
 
@@ -295,7 +295,7 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
             'tokenSecret' => 'pfkkdhi9sl3r4s00',
             'token' => 'nnch734d00sl2jdk',
             'nonce' => 'kllo9940pd9333jh',
-            'timestamp' => '1191242096'
+            'timestamp' => '1191242096',
         ];
         $auth = new Oauth();
         $request = $auth->authentication($request, $options);
@@ -331,7 +331,7 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
             'consumerKey' => 'dpf43f3p2l4k3l03',
             'nonce' => '13917289812797014437',
             'timestamp' => '1196666512',
-            'privateKey' => $privateKey
+            'privateKey' => $privateKey,
         ];
         $auth = new Oauth();
         $request = $auth->authentication($request, $options);
@@ -367,7 +367,7 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
             'consumerKey' => 'dpf43f3p2l4k3l03',
             'nonce' => '13917289812797014437',
             'timestamp' => '1196666512',
-            'privateKey' => $privateKey
+            'privateKey' => $privateKey,
         ];
         $auth = new Oauth();
         $request = $auth->authentication($request, $options);

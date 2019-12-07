@@ -18,6 +18,7 @@ use Cake\Core\Configure;
 use Cake\Http\ServerRequestFactory;
 use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
+use Zend\Diactoros\UploadedFile;
 
 /**
  * Test case for the server factory.
@@ -87,7 +88,7 @@ class ServerRequestFactoryTest extends TestCase
     public function testFromGlobalsSuperGlobals()
     {
         $_POST = [
-            'title' => 'custom'
+            'title' => 'custom',
         ];
         $_FILES = [
             'image' => [
@@ -95,8 +96,8 @@ class ServerRequestFactoryTest extends TestCase
                 'error' => 0,
                 'name' => 'cats.png',
                 'type' => 'image/png',
-                'size' => 2112
-            ]
+                'size' => 2112,
+            ],
         ];
         $_COOKIE = ['key' => 'value'];
         $_GET = ['query' => 'string'];
@@ -212,7 +213,7 @@ class ServerRequestFactoryTest extends TestCase
             'dir' => 'app',
             'webroot' => 'www',
             'base' => false,
-            'baseUrl' => '/cake/index.php'
+            'baseUrl' => '/cake/index.php',
         ]);
         $server = [
             'DOCUMENT_ROOT' => '/Users/markstory/Sites',
@@ -239,7 +240,7 @@ class ServerRequestFactoryTest extends TestCase
             'dir' => 'app',
             'webroot' => 'webroot',
             'base' => false,
-            'baseUrl' => '/cake/index.php'
+            'baseUrl' => '/cake/index.php',
         ]);
         $server = [
             'DOCUMENT_ROOT' => '/Users/markstory/Sites',
@@ -266,7 +267,7 @@ class ServerRequestFactoryTest extends TestCase
             'dir' => 'cake',
             'webroot' => 'webroot',
             'base' => false,
-            'baseUrl' => '/index.php'
+            'baseUrl' => '/index.php',
         ]);
         $server = [
             'DOCUMENT_ROOT' => '/Users/markstory/Sites/cake',
@@ -279,5 +280,101 @@ class ServerRequestFactoryTest extends TestCase
         $this->assertEquals('/webroot/', $res->getAttribute('webroot'));
         $this->assertEquals('/index.php', $res->getAttribute('base'));
         $this->assertEquals('/posts/add', $res->getUri()->getPath());
+    }
+
+    /**
+     * Tests the default file upload merging behavior.
+     *
+     * @return void
+     */
+    public function testFromGlobalsWithFilesAsObjectsDefault()
+    {
+        $this->assertNull(Configure::read('App.uploadedFilesAsObjects'));
+
+        $files = [
+            'file' => [
+                'name' => 'file.txt',
+                'type' => 'text/plain',
+                'tmp_name' => __FILE__,
+                'error' => 0,
+                'size' => 1234,
+            ],
+        ];
+        $request = ServerRequestFactory::fromGlobals(null, null, null, null, $files);
+
+        $expected = [
+            'file' => [
+                'tmp_name' => __FILE__,
+                'error' => 0,
+                'name' => 'file.txt',
+                'type' => 'text/plain',
+                'size' => 1234,
+            ],
+        ];
+        $this->assertEquals($expected, $request->getData());
+    }
+
+    /**
+     * Tests the "as arrays" file upload merging behavior.
+     *
+     * @return void
+     */
+    public function testFromGlobalsWithFilesAsObjectsDisabled()
+    {
+        Configure::write('App.uploadedFilesAsObjects', false);
+
+        $files = [
+            'file' => [
+                'name' => 'file.txt',
+                'type' => 'text/plain',
+                'tmp_name' => __FILE__,
+                'error' => 0,
+                'size' => 1234,
+            ],
+        ];
+        $request = ServerRequestFactory::fromGlobals(null, null, null, null, $files);
+
+        $expected = [
+            'file' => [
+                'tmp_name' => __FILE__,
+                'error' => 0,
+                'name' => 'file.txt',
+                'type' => 'text/plain',
+                'size' => 1234,
+            ],
+        ];
+        $this->assertEquals($expected, $request->getData());
+    }
+
+    /**
+     * Tests the "as objects" file upload merging behavior.
+     *
+     * @return void
+     */
+    public function testFromGlobalsWithFilesAsObjectsEnabled()
+    {
+        Configure::write('App.uploadedFilesAsObjects', true);
+
+        $files = [
+            'file' => [
+                'name' => 'file.txt',
+                'type' => 'text/plain',
+                'tmp_name' => __FILE__,
+                'error' => 0,
+                'size' => 1234,
+            ],
+        ];
+        $request = ServerRequestFactory::fromGlobals(null, null, null, null, $files);
+
+        $expected = [
+            'file' => new UploadedFile(
+                __FILE__,
+                1234,
+                0,
+                'file.txt',
+                'text/plain'
+            ),
+        ];
+        $this->assertEquals($expected, $request->getData());
     }
 }

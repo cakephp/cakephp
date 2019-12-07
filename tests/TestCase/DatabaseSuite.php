@@ -62,7 +62,7 @@ class DatabaseSuite extends TestSuite
             },
             'No identifier quoting' => function () {
                 ConnectionManager::get('test')->getDriver()->enableAutoQuoting(false);
-            }
+            },
         ];
 
         foreach ($permutations as $permutation) {

@@ -600,7 +600,7 @@ class NumberTest extends TestCase
         $this->assertEquals('₹ 15,000.00', $result);
 
         Number::config('en_IN', \NumberFormatter::CURRENCY, [
-            'pattern' => '¤ #,##,##0'
+            'pattern' => '¤ #,##,##0',
         ]);
 
         $result = $this->Number->currency(15000, 'INR', ['locale' => 'en_IN']);
@@ -622,7 +622,7 @@ class NumberTest extends TestCase
         $this->assertEquals('2nd', $result);
 
         $result = $this->Number->ordinal(2, [
-            'locale' => 'fr_FR'
+            'locale' => 'fr_FR',
         ]);
         $this->assertEquals('2e', $result);
 
