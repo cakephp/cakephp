@@ -414,14 +414,14 @@ class ControllerTest extends TestCase
     public function testReferer(): void
     {
         $request = new ServerRequest([
-            'environment' => ['HTTP_REFERER' => 'http://localhost/posts/index']
+            'environment' => ['HTTP_REFERER' => 'http://localhost/posts/index'],
         ]);
         $Controller = new Controller($request);
         $result = $Controller->referer();
         $this->assertSame('/posts/index', $result);
 
         $request = new ServerRequest([
-            'environment' => ['HTTP_REFERER' => 'http://localhost/posts/index']
+            'environment' => ['HTTP_REFERER' => 'http://localhost/posts/index'],
         ]);
         $Controller = new Controller($request);
         $result = $Controller->referer(['controller' => 'posts', 'action' => 'index'], true);
@@ -432,7 +432,7 @@ class ControllerTest extends TestCase
             ->getMock();
 
         $request = new ServerRequest([
-            'environment' => ['HTTP_REFERER' => 'http://localhost/posts/index']
+            'environment' => ['HTTP_REFERER' => 'http://localhost/posts/index'],
         ]);
         $Controller = new Controller($request);
         $result = $Controller->referer(null, false);
