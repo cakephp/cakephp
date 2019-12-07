@@ -17,8 +17,8 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\View;
 
 use Cake\Cache\Cache;
-use Cake\Http\ServerRequest;
 use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Cake\View\Cell;
 use Cake\View\Exception\MissingCellTemplateException;
