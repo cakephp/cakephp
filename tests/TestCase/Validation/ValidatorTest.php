@@ -833,6 +833,35 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Test allowEmptyString with callback
+     *
+     */
+    public function testAllowEmptyStringCallbackWhen()
+    {
+        $validator = new Validator();
+        $validator->allowEmptyString(
+            'title',
+            'very required',
+            function ($context) {
+                return $context['data']['otherField'] === true;
+            }
+        )
+            ->scalar('title');
+
+        $data = [
+            'title' => '',
+            'otherField' => false,
+        ];
+        $this->assertNotEmpty($validator->errors($data));
+
+        $data = [
+            'title' => '',
+            'otherField' => true,
+        ];
+        $this->assertEmpty($validator->errors($data));
+    }
+
+    /**
      * Same as testAllowEmptyDateUpdateDeprecatedArguments but without message
      *
      * @return void
