@@ -28,6 +28,13 @@ use Cake\TestSuite\TestCase;
 class NumberTest extends TestCase
 {
     /**
+     * Backup the locale property
+     *
+     * @var string
+     */
+    protected $locale;
+
+    /**
      * setUp method
      *
      * @return void
@@ -49,7 +56,7 @@ class NumberTest extends TestCase
         parent::tearDown();
         unset($this->Number);
         I18n::setLocale($this->locale);
-        Number::defaultCurrency(false);
+        Number::setDefaultCurrency();
     }
 
     /**
@@ -311,19 +318,46 @@ class NumberTest extends TestCase
     /**
      * Test default currency
      *
+     * @group deprecated
      * @return void
      */
     public function testDefaultCurrency()
     {
-        $result = $this->Number->defaultCurrency();
-        $this->assertSame('USD', $result);
+        $this->deprecated(function () {
+            $this->assertEquals('USD', $this->Number->defaultCurrency());
 
-        $this->Number->defaultCurrency(false);
+            $this->Number->defaultCurrency(false);
+            I18n::setLocale('es_ES');
+            $this->assertEquals('EUR', $this->Number->defaultCurrency());
+
+            $this->Number->defaultCurrency('JPY');
+            $this->assertEquals('JPY', $this->Number->defaultCurrency());
+        });
+    }
+
+    /**
+     * Test get default currency
+     *
+     * @return void
+     */
+    public function testGetDefaultCurrency()
+    {
+        $this->assertEquals('USD', $this->Number->getDefaultCurrency());
+    }
+
+    /**
+     * Test set default currency
+     *
+     * @return void
+     */
+    public function testSetDefaultCurrency()
+    {
+        $this->Number->setDefaultCurrency();
         I18n::setLocale('es_ES');
-        $this->assertSame('EUR', $this->Number->defaultCurrency());
+        $this->assertEquals('EUR', $this->Number->getDefaultCurrency());
 
-        $this->Number->defaultCurrency('JPY');
-        $this->assertSame('JPY', $this->Number->defaultCurrency());
+        $this->Number->setDefaultCurrency('JPY');
+        $this->assertEquals('JPY', $this->Number->getDefaultCurrency());
     }
 
     /**
