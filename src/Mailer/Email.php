@@ -257,7 +257,7 @@ class Email implements JsonSerializable, Serializable
         '8bit',
         'base64',
         'binary',
-        'quoted-printable'
+        'quoted-printable',
     ];
 
     /**
@@ -294,7 +294,7 @@ class Email implements JsonSerializable, Serializable
      * An array mapping url schemes to fully qualified Transport class names.
      * Unused.
      *
-     * @var array
+     * @var string[]
      * @deprecated 3.7.0 This property is unused and will be removed in 4.0.0.
      */
     protected static $_dsnClassMap = [];
@@ -320,7 +320,7 @@ class Email implements JsonSerializable, Serializable
      * @var array
      */
     protected $_contentTypeCharset = [
-        'ISO-2022-JP-MS' => 'ISO-2022-JP'
+        'ISO-2022-JP-MS' => 'ISO-2022-JP',
     ];
 
     /**
@@ -1165,7 +1165,7 @@ class Email implements JsonSerializable, Serializable
             'from' => 'From',
             'replyTo' => 'Reply-To',
             'readReceipt' => 'Disposition-Notification-To',
-            'returnPath' => 'Return-Path'
+            'returnPath' => 'Return-Path',
         ];
         foreach ($relation as $var => $header) {
             if ($include[$var]) {
@@ -1336,7 +1336,7 @@ class Email implements JsonSerializable, Serializable
         if ($template === false) {
             return [
                 'template' => $this->viewBuilder()->getTemplate(),
-                'layout' => $this->viewBuilder()->getLayout()
+                'layout' => $this->viewBuilder()->getLayout(),
             ];
         }
         $this->viewBuilder()->setTemplate($template);
@@ -2161,7 +2161,7 @@ class Email implements JsonSerializable, Serializable
         }
         $config = [
             'level' => 'debug',
-            'scope' => 'email'
+            'scope' => 'email',
         ];
         if ($this->_profile['log'] !== true) {
             if (!is_array($this->_profile['log'])) {
@@ -2205,7 +2205,7 @@ class Email implements JsonSerializable, Serializable
         if (is_array($config) && !isset($config['transport'])) {
             $config['transport'] = 'default';
         }
-        /* @var \Cake\Mailer\Email $instance */
+        /** @var \Cake\Mailer\Email $instance */
         $instance = new $class($config);
         if ($to !== null) {
             $instance->setTo($to);
@@ -2250,7 +2250,7 @@ class Email implements JsonSerializable, Serializable
         $simpleMethods = [
             'from', 'sender', 'to', 'replyTo', 'readReceipt', 'returnPath',
             'cc', 'bcc', 'messageId', 'domain', 'subject', 'attachments',
-            'transport', 'emailFormat', 'emailPattern', 'charset', 'headerCharset'
+            'transport', 'emailFormat', 'emailPattern', 'charset', 'headerCharset',
         ];
         foreach ($simpleMethods as $method) {
             if (isset($config[$method])) {
@@ -2266,7 +2266,7 @@ class Email implements JsonSerializable, Serializable
         }
 
         $viewBuilderMethods = [
-            'template', 'layout', 'theme'
+            'template', 'layout', 'theme',
         ];
         foreach ($viewBuilderMethods as $method) {
             if (array_key_exists($method, $config)) {
@@ -2521,7 +2521,7 @@ class Email implements JsonSerializable, Serializable
                 !isset($fileInfo['contentDisposition']) ||
                 $fileInfo['contentDisposition']
             );
-            $part = new FormDataPart(false, $data, false);
+            $part = new FormDataPart('', $data, '', $this->getHeaderCharset());
 
             if ($hasDisposition) {
                 $part->disposition('attachment');
@@ -2571,7 +2571,7 @@ class Email implements JsonSerializable, Serializable
             $data = isset($fileInfo['data']) ? $fileInfo['data'] : $this->_readFile($fileInfo['file']);
 
             $msg[] = '--' . $boundary;
-            $part = new FormDataPart(false, $data, 'inline');
+            $part = new FormDataPart('', $data, 'inline', $this->getHeaderCharset());
             $part->type($fileInfo['mimetype']);
             $part->transferEncoding('base64');
             $part->contentId($fileInfo['contentId']);
@@ -2799,7 +2799,7 @@ class Email implements JsonSerializable, Serializable
         $properties = [
             '_to', '_from', '_sender', '_replyTo', '_cc', '_bcc', '_subject',
             '_returnPath', '_readReceipt', '_emailFormat', '_emailPattern', '_domain',
-            '_attachments', '_messageId', '_headers', '_appCharset', 'viewVars', 'charset', 'headerCharset'
+            '_attachments', '_messageId', '_headers', '_appCharset', 'viewVars', 'charset', 'headerCharset',
         ];
 
         $array = ['viewConfig' => $this->viewBuilder()->jsonSerialize()];
@@ -2835,7 +2835,8 @@ class Email implements JsonSerializable, Serializable
             $item = (string)$item;
         }
 
-        if (is_resource($item) ||
+        if (
+            is_resource($item) ||
             $item instanceof Closure ||
             $item instanceof PDO
         ) {

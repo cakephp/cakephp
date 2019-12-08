@@ -129,7 +129,7 @@ class DispatcherFactoryTest extends TestCase
                 'action' => 'index',
                 'pass' => [],
                 'bare' => true,
-            ]
+            ],
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['send'])

@@ -254,7 +254,7 @@ class XcacheEngineTest extends TestCase
             'engine' => 'Xcache',
             'duration' => 0,
             'groups' => ['group_a', 'group_b'],
-            'prefix' => 'test_'
+            'prefix' => 'test_',
         ]);
         $this->assertTrue(Cache::write('test_groups', 'value', 'xcache_groups'));
         $this->assertEquals('value', Cache::read('test_groups', 'xcache_groups'));
@@ -281,7 +281,7 @@ class XcacheEngineTest extends TestCase
             'engine' => 'Xcache',
             'duration' => 0,
             'groups' => ['group_a', 'group_b'],
-            'prefix' => 'test_'
+            'prefix' => 'test_',
         ]);
         $this->assertTrue(Cache::write('test_groups', 'value', 'xcache_groups'));
         $this->assertEquals('value', Cache::read('test_groups', 'xcache_groups'));
@@ -301,7 +301,7 @@ class XcacheEngineTest extends TestCase
             'engine' => 'Xcache',
             'duration' => 0,
             'groups' => ['group_a', 'group_b'],
-            'prefix' => 'test_'
+            'prefix' => 'test_',
         ]);
 
         $this->assertTrue(Cache::write('test_groups', 'value', 'xcache_groups'));

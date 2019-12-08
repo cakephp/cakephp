@@ -45,7 +45,7 @@ class XcacheEngine extends CacheEngine
         'prefix' => null,
         'probability' => 100,
         'PHP_AUTH_USER' => 'user',
-        'PHP_AUTH_PW' => 'password'
+        'PHP_AUTH_PW' => 'password',
     ];
 
     /**
@@ -186,7 +186,7 @@ class XcacheEngine extends CacheEngine
      * If the group initial value was not found, then it initializes
      * the group accordingly.
      *
-     * @return array
+     * @return string[]
      */
     public function groups()
     {

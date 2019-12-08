@@ -54,9 +54,9 @@ class HasManyTest extends TestCase
                 'id' => ['type' => 'integer'],
                 'name' => ['type' => 'string'],
                 '_constraints' => [
-                    'primary' => ['type' => 'primary', 'columns' => ['id']]
-                ]
-            ]
+                    'primary' => ['type' => 'primary', 'columns' => ['id']],
+                ],
+            ],
         ]);
         $connection = ConnectionManager::get('test');
         $this->article = $this->getMockBuilder('Cake\ORM\Table')
@@ -68,8 +68,8 @@ class HasManyTest extends TestCase
             'title' => ['type' => 'string'],
             'author_id' => ['type' => 'integer'],
             '_constraints' => [
-                'primary' => ['type' => 'primary', 'columns' => ['id']]
-            ]
+                'primary' => ['type' => 'primary', 'columns' => ['id']],
+            ],
         ]);
 
         $this->articlesTypeMap = new TypeMap([
@@ -105,7 +105,7 @@ class HasManyTest extends TestCase
     public function testSetForeignKey()
     {
         $assoc = new HasMany('Articles', [
-            'sourceTable' => $this->author
+            'sourceTable' => $this->author,
         ]);
         $this->assertEquals('author_id', $assoc->getForeignKey());
         $this->assertSame($assoc, $assoc->setForeignKey('another_key'));
@@ -122,7 +122,7 @@ class HasManyTest extends TestCase
     {
         $this->deprecated(function () {
             $assoc = new HasMany('Articles', [
-                'sourceTable' => $this->author
+                'sourceTable' => $this->author,
             ]);
             $this->assertEquals('author_id', $assoc->foreignKey());
             $this->assertEquals('another_key', $assoc->foreignKey('another_key'));
@@ -139,7 +139,7 @@ class HasManyTest extends TestCase
     {
         $this->author->setTable('schema.authors');
         $assoc = new HasMany('Articles', [
-            'sourceTable' => $this->author
+            'sourceTable' => $this->author,
         ]);
         $this->assertEquals('author_id', $assoc->getForeignKey());
     }
@@ -224,7 +224,7 @@ class HasManyTest extends TestCase
         $config = [
             'sourceTable' => $this->author,
             'targetTable' => $this->article,
-            'strategy' => 'select'
+            'strategy' => 'select',
         ];
         $association = new HasMany('Articles', $config);
         $query = $this->article->query();
@@ -267,7 +267,7 @@ class HasManyTest extends TestCase
             'targetTable' => $this->article,
             'conditions' => ['Articles.published' => 'Y'],
             'sort' => ['id' => 'ASC'],
-            'strategy' => 'select'
+            'strategy' => 'select',
         ];
         $association = new HasMany('Articles', $config);
         $keys = [1, 2, 3, 4];
@@ -301,7 +301,7 @@ class HasManyTest extends TestCase
             'targetTable' => $this->article,
             'conditions' => ['Articles.published' => 'Y'],
             'sort' => ['id' => 'ASC'],
-            'strategy' => 'select'
+            'strategy' => 'select',
         ];
         $this->article->hasMany('Comments');
 
@@ -322,11 +322,11 @@ class HasManyTest extends TestCase
             'fields' => ['title', 'author_id'],
             'contain' => ['Comments' => ['fields' => ['comment', 'article_id']]],
             'keys' => $keys,
-            'query' => $query
+            'query' => $query,
         ]);
         $expected = [
             'Articles__title' => 'Articles.title',
-            'Articles__author_id' => 'Articles.author_id'
+            'Articles__author_id' => 'Articles.author_id',
         ];
         $this->assertSelectClause($expected, $query);
 
@@ -334,7 +334,7 @@ class HasManyTest extends TestCase
             [
                 'Articles.published' => 'Y',
                 'Articles.id !=' => 3,
-                'Articles.author_id IN' => $keys
+                'Articles.author_id IN' => $keys,
             ],
             $query->getTypeMap()
         );
@@ -358,7 +358,7 @@ class HasManyTest extends TestCase
         $config = [
             'sourceTable' => $this->author,
             'targetTable' => $this->article,
-            'strategy' => 'select'
+            'strategy' => 'select',
         ];
         $association = new HasMany('Articles', $config);
         $keys = [1, 2, 3, 4];
@@ -370,7 +370,7 @@ class HasManyTest extends TestCase
         $association->eagerLoader([
             'fields' => ['id', 'title'],
             'keys' => $keys,
-            'query' => $query
+            'query' => $query,
         ]);
     }
 
@@ -384,7 +384,7 @@ class HasManyTest extends TestCase
         $config = [
             'sourceTable' => $this->author,
             'targetTable' => $this->article,
-            'strategy' => 'select'
+            'strategy' => 'select',
         ];
         $association = new HasMany('Articles', $config);
         $keys = [1, 2, 3, 4];
@@ -401,7 +401,7 @@ class HasManyTest extends TestCase
         $association->eagerLoader(compact('keys', 'query', 'queryBuilder'));
 
         $expected = [
-            'Articles__author_id' => 'Articles.author_id'
+            'Articles__author_id' => 'Articles.author_id',
         ];
         $this->assertSelectClause($expected, $query);
 
@@ -411,7 +411,7 @@ class HasManyTest extends TestCase
                 'alias' => null,
                 'table' => 'comments',
                 'conditions' => new QueryExpression([], $query->getTypeMap()),
-            ]
+            ],
         ];
         $this->assertJoin($expected, $query);
 
@@ -436,7 +436,7 @@ class HasManyTest extends TestCase
             'sourceTable' => $this->author,
             'targetTable' => $this->article,
             'strategy' => 'select',
-            'foreignKey' => ['author_id', 'site_id']
+            'foreignKey' => ['author_id', 'site_id'],
         ];
 
         $this->author->setPrimaryKey(['id', 'site_id']);
@@ -452,7 +452,7 @@ class HasManyTest extends TestCase
 
         $results = [
             ['id' => 1, 'title' => 'article 1', 'author_id' => 2, 'site_id' => 10],
-            ['id' => 2, 'title' => 'article 2', 'author_id' => 1, 'site_id' => 20]
+            ['id' => 2, 'title' => 'article 2', 'author_id' => 1, 'site_id' => 20],
         ];
         $query->method('all')
             ->will($this->returnValue($results));
@@ -471,14 +471,14 @@ class HasManyTest extends TestCase
         $row = ['Authors__id' => 2, 'Authors__site_id' => 10, 'username' => 'author 1'];
         $result = $callable($row);
         $row['Articles'] = [
-            ['id' => 1, 'title' => 'article 1', 'author_id' => 2, 'site_id' => 10]
+            ['id' => 1, 'title' => 'article 1', 'author_id' => 2, 'site_id' => 10],
         ];
         $this->assertEquals($row, $result);
 
         $row = ['Authors__id' => 1, 'username' => 'author 2', 'Authors__site_id' => 20];
         $result = $callable($row);
         $row['Articles'] = [
-            ['id' => 2, 'title' => 'article 2', 'author_id' => 1, 'site_id' => 20]
+            ['id' => 2, 'title' => 'article 2', 'author_id' => 1, 'site_id' => 20],
         ];
         $this->assertEquals($row, $result);
     }
@@ -502,7 +502,7 @@ class HasManyTest extends TestCase
             ->method('deleteAll')
             ->with([
                 'Articles.is_active' => true,
-                'Articles.author_id' => 1
+                'Articles.author_id' => 1,
             ]);
 
         $entity = new Entity(['id' => 1, 'name' => 'PHP']);
@@ -558,7 +558,7 @@ class HasManyTest extends TestCase
             'articles' => [
                 ['title' => 'First Post'],
                 new Entity(['title' => 'Second Post']),
-            ]
+            ],
         ]);
 
         $mock->expects($this->never())
@@ -607,7 +607,7 @@ class HasManyTest extends TestCase
     {
         $Authors = $this->getTableLocator()->get('Authors');
         $Authors->hasMany('Articles', [
-            'strategy' => Association::STRATEGY_SUBQUERY
+            'strategy' => Association::STRATEGY_SUBQUERY,
         ]);
 
         $query = $Authors->find();
@@ -616,8 +616,8 @@ class HasManyTest extends TestCase
                 'id',
                 'slug' => $query->func()->concat([
                     '---',
-                    'name' => 'identifier'
-                ])
+                    'name' => 'identifier',
+                ]),
             ])
             ->contain('Articles')
             ->where(['name' => 'mariano'])
@@ -709,7 +709,7 @@ class HasManyTest extends TestCase
         $articles = $this->getTableLocator()->get('Articles');
         $assoc = $this->author->hasMany('Articles', [
             'sourceTable' => $this->author,
-            'targetTable' => $articles
+            'targetTable' => $articles,
         ]);
 
         $entity = $this->author->get(1, ['contain' => 'Articles']);
@@ -735,7 +735,7 @@ class HasManyTest extends TestCase
         $articles = $this->getTableLocator()->get('Articles');
         $assoc = $this->author->hasMany('Articles', [
             'sourceTable' => $this->author,
-            'targetTable' => $articles
+            'targetTable' => $articles,
         ]);
 
         $entity = $this->author->get(1, ['contain' => 'Articles']);
@@ -760,7 +760,7 @@ class HasManyTest extends TestCase
         $articles = $this->getTableLocator()->get('Articles');
         $assoc = $this->author->hasMany('Articles', [
             'sourceTable' => $this->author,
-            'targetTable' => $articles
+            'targetTable' => $articles,
         ]);
 
         // Ensure author in fixture has zero associated articles
@@ -796,7 +796,7 @@ class HasManyTest extends TestCase
         $this->expectExceptionMessage('Could not save comments, it cannot be traversed');
         $articles = $this->getTableLocator()->get('Articles');
         $association = $articles->hasMany('Comments', [
-            'saveStrategy' => HasMany::SAVE_APPEND
+            'saveStrategy' => HasMany::SAVE_APPEND,
         ]);
 
         $entity = $articles->newEntity();
@@ -816,7 +816,7 @@ class HasManyTest extends TestCase
             [''],
             [false],
             [null],
-            [[]]
+            [[]],
         ];
     }
 
@@ -832,7 +832,7 @@ class HasManyTest extends TestCase
     {
         $articles = $this->getTableLocator()->get('Articles');
         $association = $articles->hasMany('Comments', [
-            'saveStrategy' => HasMany::SAVE_APPEND
+            'saveStrategy' => HasMany::SAVE_APPEND,
         ]);
 
         $comments = $association->find();
@@ -858,11 +858,11 @@ class HasManyTest extends TestCase
     {
         $articles = $this->getTableLocator()->get('Articles');
         $association = $articles->hasMany('Comments', [
-            'saveStrategy' => HasMany::SAVE_APPEND
+            'saveStrategy' => HasMany::SAVE_APPEND,
         ]);
 
         $entity = $articles->get(1, [
-            'contain' => ['Comments']
+            'contain' => ['Comments'],
         ]);
         $comments = $entity->get('comments');
         $this->assertNotEmpty($comments);
@@ -872,7 +872,7 @@ class HasManyTest extends TestCase
         $this->assertEquals($value, $entity->get('comments'));
 
         $entity = $articles->get(1, [
-            'contain' => ['Comments']
+            'contain' => ['Comments'],
         ]);
         $this->assertEquals($comments, $entity->get('comments'));
     }
@@ -889,7 +889,7 @@ class HasManyTest extends TestCase
     {
         $articles = $this->getTableLocator()->get('Articles');
         $association = $articles->hasMany('Comments', [
-            'saveStrategy' => HasMany::SAVE_REPLACE
+            'saveStrategy' => HasMany::SAVE_REPLACE,
         ]);
 
         $comments = $association->find();
@@ -915,11 +915,11 @@ class HasManyTest extends TestCase
     {
         $articles = $this->getTableLocator()->get('Articles');
         $association = $articles->hasMany('Comments', [
-            'saveStrategy' => HasMany::SAVE_REPLACE
+            'saveStrategy' => HasMany::SAVE_REPLACE,
         ]);
 
         $entity = $articles->get(1, [
-            'contain' => ['Comments']
+            'contain' => ['Comments'],
         ]);
         $comments = $entity->get('comments');
         $this->assertNotEmpty($comments);
@@ -929,7 +929,7 @@ class HasManyTest extends TestCase
         $this->assertEquals([], $entity->get('comments'));
 
         $entity = $articles->get(1, [
-            'contain' => ['Comments']
+            'contain' => ['Comments'],
         ]);
         $this->assertEmpty($entity->get('comments'));
     }
@@ -994,8 +994,8 @@ class HasManyTest extends TestCase
             'articles' => [
                 ['title' => 'One Random Post', 'body' => 'The cake is not a lie'],
                 ['title' => 'Another Random Post', 'body' => 'The cake is nice'],
-                ['title' => 'One more random post', 'body' => 'The cake is forever']
-            ]
+                ['title' => 'One more random post', 'body' => 'The cake is forever'],
+            ],
         ], ['associated' => ['Articles']]);
 
         $entity = $authors->save($entity, ['associated' => ['Articles']]);
@@ -1027,8 +1027,8 @@ class HasManyTest extends TestCase
             'articles' => [
                 ['title' => 'One Random Post', 'body' => 'The cake is not a lie'],
                 ['title' => 'Another Random Post', 'body' => 'The cake is nice'],
-                ['title' => 'One more random post', 'body' => 'The cake is forever']
-            ]
+                ['title' => 'One more random post', 'body' => 'The cake is forever'],
+            ],
         ], ['associated' => ['Articles']]);
 
         $entity = $authors->save($entity, ['associated' => ['Articles']]);
@@ -1057,8 +1057,8 @@ class HasManyTest extends TestCase
             'articles' => [
                 ['title' => 'One Random Post', 'body' => 'The cake is not a lie'],
                 ['title' => 'Another Random Post', 'body' => 'The cake is nice'],
-                ['title' => 'One more random post', 'body' => 'The cake is forever']
-            ]
+                ['title' => 'One more random post', 'body' => 'The cake is forever'],
+            ],
         ], ['associated' => ['Articles']]);
 
         $entity = $authors->save($entity, ['associated' => ['Articles']]);
@@ -1103,8 +1103,8 @@ class HasManyTest extends TestCase
             'articles' => [
                 ['title' => 'One Random Post', 'body' => 'The cake is not a lie'],
                 ['title' => 'Another Random Post', 'body' => 'The cake is nice'],
-                ['title' => 'One more random post', 'body' => 'The cake is forever']
-            ]
+                ['title' => 'One more random post', 'body' => 'The cake is forever'],
+            ],
         ], ['associated' => ['Articles']]);
 
         $entity = $authors->save($entity, ['associated' => ['Articles']]);
@@ -1137,8 +1137,8 @@ class HasManyTest extends TestCase
             'articles' => [
                 ['title' => 'One Random Post', 'body' => 'The cake is not a lie'],
                 ['title' => 'Another Random Post', 'body' => 'The cake is nice'],
-                ['title' => 'One more random post', 'body' => 'The cake is forever']
-            ]
+                ['title' => 'One more random post', 'body' => 'The cake is forever'],
+            ],
         ], ['associated' => ['Articles']]);
 
         $entity = $authors->saveOrFail($entity, ['associated' => ['Articles']]);
@@ -1182,8 +1182,8 @@ class HasManyTest extends TestCase
         $data = [
             'name' => 'updated',
             'articles' => [
-                ['title' => 'First Article', 'body' => 'New First', 'published' => 'N']
-            ]
+                ['title' => 'First Article', 'body' => 'New First', 'published' => 'N'],
+            ],
         ];
         $entity = $authors->patchEntity($entity, $data, ['associated' => ['Articles']]);
         $entity = $authors->save($entity, ['associated' => ['Articles']]);
@@ -1220,13 +1220,13 @@ class HasManyTest extends TestCase
             'comments' => [
                 [
                     'user_id' => 1,
-                    'comment' => 'That is true!'
+                    'comment' => 'That is true!',
                 ],
                 [
                     'user_id' => 2,
-                    'comment' => 'Of course'
-                ]
-            ]
+                    'comment' => 'Of course',
+                ],
+            ],
         ], ['associated' => ['Comments']]);
 
         $article = $articles->save($article, ['associated' => ['Comments']]);
@@ -1260,13 +1260,13 @@ class HasManyTest extends TestCase
             'comments' => [
                 [
                     'user_id' => 1,
-                    'comment' => 'That is true!'
+                    'comment' => 'That is true!',
                 ],
                 [
                     'user_id' => 2,
-                    'comment' => 'Of course'
-                ]
-            ]
+                    'comment' => 'Of course',
+                ],
+            ],
         ], ['associated' => ['Comments']]);
 
         $article = $articles->save($article, ['associated' => ['Comments']]);
@@ -1280,7 +1280,7 @@ class HasManyTest extends TestCase
         unset($article->comments[0]);
         $article->comments[] = $articles->Comments->newEntity([
             'user_id' => 1,
-            'comment' => 'new comment'
+            'comment' => 'new comment',
         ]);
 
         $article->setDirty('comments', true);
@@ -1305,8 +1305,8 @@ class HasManyTest extends TestCase
             'cascadeCallbacks' => false,
             'saveStrategy' => HasMany::SAVE_REPLACE,
             'conditions' => [
-                'Comments.published' => 'Y'
-            ]
+                'Comments.published' => 'Y',
+            ],
         ]);
 
         $article = $Articles->newEntity([
@@ -1316,14 +1316,14 @@ class HasManyTest extends TestCase
                 [
                     'user_id' => 1,
                     'comment' => 'First comment',
-                    'published' => 'Y'
+                    'published' => 'Y',
                 ],
                 [
                     'user_id' => 1,
                     'comment' => 'Second comment',
-                    'published' => 'Y'
-                ]
-            ]
+                    'published' => 'Y',
+                ],
+            ],
         ]);
         $article = $Articles->save($article);
         $this->assertNotEmpty($article);
@@ -1332,7 +1332,7 @@ class HasManyTest extends TestCase
             'article_id' => $article->get('id'),
             'user_id' => 1,
             'comment' => 'Third comment',
-            'published' => 'N'
+            'published' => 'N',
         ]);
         $comment3 = $Comments->getTarget()->save($comment3);
         $this->assertNotEmpty($comment3);
@@ -1367,8 +1367,8 @@ class HasManyTest extends TestCase
             'cascadeCallbacks' => false,
             'saveStrategy' => HasMany::SAVE_REPLACE,
             'conditions' => [
-                'Articles.published' => 'Y'
-            ]
+                'Articles.published' => 'Y',
+            ],
         ]);
 
         $author = $Authors->newEntity([
@@ -1377,14 +1377,14 @@ class HasManyTest extends TestCase
                 [
                     'title' => 'First article',
                     'body' => 'First article',
-                    'published' => 'Y'
+                    'published' => 'Y',
                 ],
                 [
                     'title' => 'Second article',
                     'body' => 'Second article',
-                    'published' => 'Y'
-                ]
-            ]
+                    'published' => 'Y',
+                ],
+            ],
         ]);
         $author = $Authors->save($author);
         $this->assertNotEmpty($author);
@@ -1393,7 +1393,7 @@ class HasManyTest extends TestCase
             'author_id' => $author->get('id'),
             'title' => 'Third article',
             'body' => 'Third article',
-            'published' => 'N'
+            'published' => 'N',
         ]);
         $article3 = $Articles->getTarget()->save($article3);
         $this->assertNotEmpty($article3);

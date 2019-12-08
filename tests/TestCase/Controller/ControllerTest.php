@@ -26,6 +26,7 @@ use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Error\Notice;
 use TestApp\Controller\Admin\PostsController;
 use TestPlugin\Controller\TestPluginController;
+use Zend\Diactoros\Uri;
 
 /**
  * AppController class
@@ -110,7 +111,7 @@ class TestController extends ControllerTestAppController
     {
         $this->request = $this->request->withParsedBody([
             'testId' => $testId,
-            'test2Id' => $testTwoId
+            'test2Id' => $testTwoId,
         ]);
     }
 
@@ -125,7 +126,7 @@ class TestController extends ControllerTestAppController
     {
         $this->request = $this->request->withParsedBody([
             'testId' => $testId,
-            'test2Id' => $testTwoId
+            'test2Id' => $testTwoId,
         ]);
     }
 
@@ -233,7 +234,7 @@ class ControllerTest extends TestCase
      */
     public $fixtures = [
         'core.Comments',
-        'core.Posts'
+        'core.Posts',
     ];
 
     /**
@@ -410,8 +411,8 @@ class ControllerTest extends TestCase
         $request = new ServerRequest([
             'url' => 'controller_posts/index',
             'params' => [
-                'action' => 'header'
-            ]
+                'action' => 'header',
+            ],
         ]);
 
         $Controller = new Controller($request, new Response());
@@ -438,8 +439,8 @@ class ControllerTest extends TestCase
         $request = new ServerRequest([
             'url' => 'controller_posts/index',
             'params' => [
-                'action' => 'header'
-            ]
+                'action' => 'header',
+            ],
         ]);
 
         $controller = new Controller($request, new Response());
@@ -467,7 +468,7 @@ class ControllerTest extends TestCase
 
         $Controller->set([
             'test' => 'value',
-            '_serialize' => ['test']
+            '_serialize' => ['test'],
         ]);
         $debug = Configure::read('debug');
         Configure::write('debug', false);
@@ -491,6 +492,19 @@ class ControllerTest extends TestCase
 
         $result = $Controller->render('index');
         $this->assertInstanceOf('Cake\Http\Response', $result);
+    }
+
+    public function testControllerRedirect()
+    {
+        $Controller = new Controller();
+        $uri = new Uri('/foo/bar');
+        $response = $Controller->redirect($uri);
+        $this->assertEquals('http://localhost/foo/bar', $response->getHeaderLine('Location'));
+
+        $Controller = new Controller();
+        $uri = new Uri('http://cakephp.org/foo/bar');
+        $response = $Controller->redirect($uri);
+        $this->assertEquals('http://cakephp.org/foo/bar', $response->getHeaderLine('Location'));
     }
 
     /**
@@ -776,7 +790,7 @@ class ControllerTest extends TestCase
             'posts' => [
                 'page' => 2,
                 'limit' => 2,
-            ]
+            ],
         ]);
 
         $this->assertEquals([], $Controller->paginate);
@@ -843,7 +857,7 @@ class ControllerTest extends TestCase
         $this->expectExceptionMessage('Action TestController::missing() could not be found, or is not accessible.');
         $url = new ServerRequest([
             'url' => 'test/missing',
-            'params' => ['controller' => 'Test', 'action' => 'missing']
+            'params' => ['controller' => 'Test', 'action' => 'missing'],
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
@@ -862,7 +876,7 @@ class ControllerTest extends TestCase
         $this->expectExceptionMessage('Action TestController::private_m() could not be found, or is not accessible.');
         $url = new ServerRequest([
             'url' => 'test/private_m/',
-            'params' => ['controller' => 'Test', 'action' => 'private_m']
+            'params' => ['controller' => 'Test', 'action' => 'private_m'],
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
@@ -881,7 +895,7 @@ class ControllerTest extends TestCase
         $this->expectExceptionMessage('Action TestController::protected_m() could not be found, or is not accessible.');
         $url = new ServerRequest([
             'url' => 'test/protected_m/',
-            'params' => ['controller' => 'Test', 'action' => 'protected_m']
+            'params' => ['controller' => 'Test', 'action' => 'protected_m'],
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
@@ -900,7 +914,7 @@ class ControllerTest extends TestCase
         $this->expectExceptionMessage('Action TestController::redirect() could not be found, or is not accessible.');
         $url = new ServerRequest([
             'url' => 'test/redirect/',
-            'params' => ['controller' => 'Test', 'action' => 'redirect']
+            'params' => ['controller' => 'Test', 'action' => 'redirect'],
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
@@ -920,8 +934,8 @@ class ControllerTest extends TestCase
             'params' => [
                 'controller' => 'Test',
                 'action' => 'returner',
-                'pass' => []
-            ]
+                'pass' => [],
+            ],
         ]);
         $response = new Response();
 
@@ -944,8 +958,8 @@ class ControllerTest extends TestCase
             'params' => [
                 'controller' => 'Test',
                 'action' => 'index',
-                'pass' => ['param1' => '1', 'param2' => '2']
-            ]
+                'pass' => ['param1' => '1', 'param2' => '2'],
+            ],
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
@@ -966,7 +980,7 @@ class ControllerTest extends TestCase
     {
         $request = new ServerRequest([
             'url' => 'admin/posts',
-            'params' => ['prefix' => 'admin']
+            'params' => ['prefix' => 'admin'],
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $Controller = new \TestApp\Controller\Admin\PostsController($request, $response);
@@ -988,8 +1002,8 @@ class ControllerTest extends TestCase
         $request = new ServerRequest([
             'url' => 'pages/home',
             'params' => [
-                'prefix' => false
-            ]
+                'prefix' => false,
+            ],
         ]);
         $Controller = new \TestApp\Controller\PagesController($request, $response);
         $Controller->getEventManager()->on('Controller.beforeRender', function (Event $e) {
@@ -1117,7 +1131,7 @@ class ControllerTest extends TestCase
         $controller = new PostsController();
 
         $controller->getEventManager()->on('Controller.beforeRender', function (Event $event) {
-            /* @var Controller $controller */
+            /** @var Controller $controller */
             $controller = $event->getSubject();
 
             $controller->set('testVariable', 'test');
@@ -1171,9 +1185,9 @@ class ControllerTest extends TestCase
                 'plugin' => 'Posts',
                 'pass' => [
                     'foo',
-                    'bar'
-                ]
-            ]
+                    'bar',
+                ],
+            ],
         ]);
         $this->assertSame($controller, $controller->setRequest($request));
         $this->assertSame($request, $controller->getRequest());

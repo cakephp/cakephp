@@ -66,7 +66,7 @@ trait StaticConfigTrait
      * ```
      *
      * @param string|array $key The name of the configuration, or an array of multiple configs.
-     * @param array $config An array of name => configuration data for adapter.
+     * @param array|object|null $config An array of name => configuration data for adapter.
      * @throws \BadMethodCallException When trying to modify an existing config.
      * @throws \LogicException When trying to store an invalid structured config array.
      * @return void
@@ -109,7 +109,7 @@ trait StaticConfigTrait
      * Reads existing configuration.
      *
      * @param string $key The name of the configuration.
-     * @return mixed Configuration data at the named key or null if the key does not exist.
+     * @return mixed|null Configuration data at the named key or null if the key does not exist.
      */
     public static function getConfig($key)
     {
@@ -174,6 +174,27 @@ trait StaticConfigTrait
         }
 
         return static::getConfig($key);
+    }
+
+    /**
+     * Reads existing configuration for a specific key.
+     *
+     * The config value for this key must exist, it can never be null.
+     *
+     * @param string|null $key The name of the configuration.
+     * @return mixed Configuration data at the named key.
+     * @throws \InvalidArgumentException If value does not exist.
+     */
+    public static function getConfigOrFail($key)
+    {
+        if (!isset($key)) {
+            throw new InvalidArgumentException('$key must not be null.');
+        }
+        if (!isset(static::$_config[$key])) {
+            throw new InvalidArgumentException(sprintf('Expected configuration `%s` not found.', $key));
+        }
+
+        return static::$_config[$key];
     }
 
     /**
@@ -339,7 +360,7 @@ REGEXP;
     /**
      * Updates the DSN class map for this class.
      *
-     * @param array $map Additions/edits to the class map to apply.
+     * @param string[] $map Additions/edits to the class map to apply.
      * @return void
      */
     public static function setDsnClassMap(array $map)
@@ -350,7 +371,7 @@ REGEXP;
     /**
      * Returns the DSN class map for this class.
      *
-     * @return array
+     * @return string[]
      */
     public static function getDsnClassMap()
     {
@@ -361,8 +382,8 @@ REGEXP;
      * Returns or updates the DSN class map for this class.
      *
      * @deprecated 3.4.0 Use setDsnClassMap()/getDsnClassMap() instead.
-     * @param array|null $map Additions/edits to the class map to apply.
-     * @return array
+     * @param string[]|null $map Additions/edits to the class map to apply.
+     * @return string[]
      */
     public static function dsnClassMap(array $map = null)
     {

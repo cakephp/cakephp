@@ -56,7 +56,7 @@ class SimpleCacheEngineTest extends TestCase
             'prefix' => '',
             'path' => TMP . 'tests',
             'duration' => 5,
-            'groups' => ['blog', 'category']
+            'groups' => ['blog', 'category'],
         ]);
         $this->cache = new SimpleCacheEngine($this->innerEngine);
     }

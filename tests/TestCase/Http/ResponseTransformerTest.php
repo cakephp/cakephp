@@ -105,7 +105,7 @@ class ResponseTransformerTest extends TestCase
         $result = ResponseTransformer::toCake($psr);
         $expected = [
             'Content-Type' => 'text/html; charset=UTF-8',
-            'X-testing' => 'value'
+            'X-testing' => 'value',
         ];
         $this->assertSame($expected, $result->header());
     }
@@ -169,7 +169,7 @@ class ResponseTransformerTest extends TestCase
     {
         $cookies = [
             'remember_me=1";"1',
-            'forever=yes; Expires=Wed, 13 Jan 2021 12:30:40 GMT; Path=/some/path; Domain=example.com; HttpOnly; Secure'
+            'forever=yes; Expires=Wed, 13 Jan 2021 12:30:40 GMT; Path=/some/path; Domain=example.com; HttpOnly; Secure',
         ];
         $psr = new PsrResponse('php://memory', 200, ['Set-Cookie' => $cookies]);
         $result = ResponseTransformer::toCake($psr);
@@ -218,7 +218,7 @@ class ResponseTransformerTest extends TestCase
         $cake = new CakeResponse(['status' => 200]);
         $cake->cookie([
             'name' => 'remember_me',
-            'value' => 1
+            'value' => 1,
         ]);
         $result = ResponseTransformer::toPsr($cake);
         $this->assertEquals('remember_me=1; Path=/', $result->getHeader('Set-Cookie')[0]);
@@ -234,11 +234,11 @@ class ResponseTransformerTest extends TestCase
         $cake = new CakeResponse(['status' => 200]);
         $cake->cookie([
             'name' => 'remember_me',
-            'value' => 1
+            'value' => 1,
         ]);
         $cake->cookie([
             'name' => 'forever',
-            'value' => 2
+            'value' => 2,
         ]);
         $result = ResponseTransformer::toPsr($cake);
         $this->assertEquals('remember_me=1; Path=/', $result->getHeader('Set-Cookie')[0]);
@@ -313,7 +313,7 @@ class ResponseTransformerTest extends TestCase
         $cake = new CakeResponse(['status' => 403]);
         $cake->header([
             'X-testing' => ['one', 'two'],
-            'Location' => 'http://example.com/testing'
+            'Location' => 'http://example.com/testing',
         ]);
         $result = ResponseTransformer::toPsr($cake);
         $expected = [

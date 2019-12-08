@@ -247,7 +247,8 @@ trait EntityTrait
 
             $this->setDirty($p, true);
 
-            if (!array_key_exists($p, $this->_original) &&
+            if (
+                !array_key_exists($p, $this->_original) &&
                 array_key_exists($p, $this->_properties) &&
                 $this->_properties[$p] !== $value
             ) {
@@ -391,7 +392,8 @@ trait EntityTrait
     public function isEmpty($property)
     {
         $value = $this->get($property);
-        if ($value === null
+        if (
+            $value === null
             || (is_array($value) && empty($value)
             || (is_string($value) && empty($value)))
         ) {
@@ -883,32 +885,41 @@ trait EntityTrait
     }
 
     /**
-     * Returns whether or not this entity has already been persisted.
-     * This method can return null in the case there is no prior information on
-     * the status of this entity.
+     * Set the status of this entity.
      *
-     * If called with a boolean it will set the known status of this instance,
-     * true means that the instance is not yet persisted in the database, false
-     * that it already is.
+     * Using `true` means that the entity has not been persisted in the database,
+     * `false` that it already is.
      *
-     * @param bool|null $new true if it is known this instance was not yet persisted
-     * @return bool Whether or not the entity has been persisted.
+     * @param bool $new Indicate whether or not this entity has been persisted.
+     * @return $this
      */
-    public function isNew($new = null)
+    public function setNew($new)
     {
-        if ($new === null) {
-            return $this->_new;
-        }
-
-        $new = (bool)$new;
-
         if ($new) {
             foreach ($this->_properties as $k => $p) {
                 $this->_dirty[$k] = true;
             }
         }
 
-        return $this->_new = $new;
+        $this->_new = $new;
+
+        return $this;
+    }
+
+    /**
+     * Returns whether or not this entity has already been persisted.
+     *
+     * @param bool|null $new true if it is known this instance was not yet persisted.
+     * This will be deprecated in 4.0, use `setNew()` instead.
+     * @return bool Whether or not the entity has been persisted.
+     */
+    public function isNew($new = null)
+    {
+        if ($new !== null) {
+            $this->setNew($new);
+        }
+
+        return $this->_new;
     }
 
     /**
@@ -1124,7 +1135,8 @@ trait EntityTrait
                 $val = isset($entity[$part]) ? $entity[$part] : false;
             }
 
-            if (is_array($val) ||
+            if (
+                is_array($val) ||
                 $val instanceof Traversable ||
                 $val instanceof EntityInterface
             ) {
@@ -1487,7 +1499,7 @@ trait EntityTrait
             '[hasErrors]' => $this->hasErrors(),
             '[errors]' => $this->_errors,
             '[invalid]' => $this->_invalid,
-            '[repository]' => $this->_registryAlias
+            '[repository]' => $this->_registryAlias,
         ];
     }
 }

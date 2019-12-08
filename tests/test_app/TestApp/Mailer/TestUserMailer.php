@@ -32,7 +32,7 @@ class TestUserMailer extends TestMailer
             ->addBcc('antograssiot@cakephp.org')
             ->setAttachments([
                 dirname(__FILE__) . DS . 'TestMailer.php',
-                dirname(__FILE__) . DS . 'TestUserMailer.php'
+                dirname(__FILE__) . DS . 'TestUserMailer.php',
             ])
             ->send('Hello ' . $email);
     }

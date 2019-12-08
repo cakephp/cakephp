@@ -30,7 +30,7 @@ class BindingKeyTest extends TestCase
     public $fixtures = [
         'core.AuthUsers',
         'core.SiteAuthors',
-        'core.Users'
+        'core.Users',
     ];
 
     /**
@@ -65,7 +65,7 @@ class BindingKeyTest extends TestCase
         $users->belongsTo('AuthUsers', [
             'bindingKey' => 'username',
             'foreignKey' => 'username',
-            'strategy' => $strategy
+            'strategy' => $strategy,
         ]);
 
         $result = $users->find()
@@ -97,7 +97,7 @@ class BindingKeyTest extends TestCase
         $users->hasOne('SiteAuthors', [
             'bindingKey' => 'username',
             'foreignKey' => 'name',
-            'strategy' => $strategy
+            'strategy' => $strategy,
         ]);
 
         $users->updateAll(['username' => 'jose'], ['username' => 'garrett']);
@@ -121,7 +121,7 @@ class BindingKeyTest extends TestCase
         $authors = $users->hasMany('SiteAuthors', [
             'bindingKey' => 'username',
             'foreignKey' => 'name',
-            'strategy' => $strategy
+            'strategy' => $strategy,
         ]);
 
         $authors->updateAll(['name' => 'garrett'], ['id >' => 2]);

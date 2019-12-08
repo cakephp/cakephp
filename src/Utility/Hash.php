@@ -173,7 +173,8 @@ class Hash
             if ($conditions) {
                 $filter = [];
                 foreach ($next as $item) {
-                    if ((is_array($item) || $item instanceof ArrayAccess) &&
+                    if (
+                        (is_array($item) || $item instanceof ArrayAccess) &&
                         static::_matches($item, $conditions)
                     ) {
                         $filter[] = $item;
@@ -280,7 +281,8 @@ class Hash
                 if (!preg_match($val, $prop)) {
                     return false;
                 }
-            } elseif (($op === '=' && $prop != $val) ||
+            } elseif (
+                ($op === '=' && $prop != $val) ||
                 ($op === '!=' && $prop == $val) ||
                 ($op === '>' && $prop <= $val) ||
                 ($op === '<' && $prop >= $val) ||
@@ -719,12 +721,12 @@ class Hash
             $keys = explode($separator, $flat);
             $keys = array_reverse($keys);
             $child = [
-                $keys[0] => $value
+                $keys[0] => $value,
             ];
             array_shift($keys);
             foreach ($keys as $k) {
                 $child = [
-                    $k => $child
+                    $k => $child,
                 ];
             }
 
@@ -1188,7 +1190,7 @@ class Hash
             'idPath' => "{n}.$alias.id",
             'parentPath' => "{n}.$alias.parent_id",
             'children' => 'children',
-            'root' => null
+            'root' => null,
         ];
 
         $return = $idMap = [];

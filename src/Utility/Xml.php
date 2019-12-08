@@ -272,7 +272,7 @@ class Xml
             'version' => '1.0',
             'encoding' => mb_internal_encoding(),
             'return' => 'simplexml',
-            'pretty' => false
+            'pretty' => false,
         ];
         $options += $defaults;
 

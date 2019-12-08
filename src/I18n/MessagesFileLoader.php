@@ -153,7 +153,7 @@ class MessagesFileLoader
 
         $folders = [
             implode('_', [$locale['language'], $locale['region']]),
-            $locale['language']
+            $locale['language'],
         ];
 
         $searchPaths = [];

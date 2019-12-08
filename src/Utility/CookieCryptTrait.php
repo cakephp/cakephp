@@ -93,10 +93,10 @@ trait CookieCryptTrait
     /**
      * Decrypts $value using public $type method in Security class
      *
-     * @param string[] $values Values to decrypt
+     * @param string[]|string $values Values to decrypt
      * @param string|bool $mode Encryption mode
      * @param string|null $key Used as the security salt if specified.
-     * @return string|string[] Decrypted values
+     * @return string|array Decrypted values
      */
     protected function _decrypt($values, $mode, $key = null)
     {

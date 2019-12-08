@@ -178,7 +178,8 @@ class DecimalType extends Type implements TypeInterface, BatchCastingInterface
 
             return $this;
         }
-        if (static::$numberClass === 'Cake\I18n\Number' ||
+        if (
+            static::$numberClass === 'Cake\I18n\Number' ||
             is_subclass_of(static::$numberClass, 'Cake\I18n\Number')
         ) {
             $this->_useLocaleParser = $enable;
@@ -199,7 +200,7 @@ class DecimalType extends Type implements TypeInterface, BatchCastingInterface
      */
     protected function _parseValue($value)
     {
-        /* @var \Cake\I18n\Number $class */
+        /** @var \Cake\I18n\Number $class */
         $class = static::$numberClass;
 
         return $class::parseFloat($value);

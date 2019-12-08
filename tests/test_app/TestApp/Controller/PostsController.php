@@ -30,7 +30,7 @@ class PostsController extends AppController
     public $components = [
         'Flash',
         'RequestHandler' => [
-            'enableBeforeRedirect' => false
+            'enableBeforeRedirect' => false,
         ],
         'Security',
     ];

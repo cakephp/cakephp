@@ -151,7 +151,7 @@ abstract class BaseErrorHandler
             $data += [
                 'context' => $context,
                 'start' => 3,
-                'path' => Debugger::trimPath($file)
+                'path' => Debugger::trimPath($file),
             ];
         }
         $this->_displayError($data, $debug);
@@ -282,7 +282,7 @@ abstract class BaseErrorHandler
         if (!empty($this->_options['trace'])) {
             $trace = Debugger::trace([
                 'start' => 1,
-                'format' => 'log'
+                'format' => 'log',
             ]);
 
             $request = Router::getRequest();

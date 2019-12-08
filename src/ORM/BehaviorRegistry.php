@@ -125,7 +125,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
     {
         throw new MissingBehaviorException([
             'class' => $class . 'Behavior',
-            'plugin' => $plugin
+            'plugin' => $plugin,
         ]);
     }
 

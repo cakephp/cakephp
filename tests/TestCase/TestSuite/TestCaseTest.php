@@ -80,7 +80,7 @@ class TestCaseTest extends TestCase
         $manager->trackEvents(true);
 
         $event = new Event('my.event', $this, [
-            'some' => 'data'
+            'some' => 'data',
         ]);
         $manager->dispatch($event);
         $this->assertEventFiredWith('my.event', 'some', 'data');
@@ -90,7 +90,7 @@ class TestCaseTest extends TestCase
         $manager->trackEvents(true);
 
         $event = new Event('my.event', $this, [
-            'other' => 'data'
+            'other' => 'data',
         ]);
         $manager->dispatch($event);
         $this->assertEventFiredWith('my.event', 'other', 'data', $manager);

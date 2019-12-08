@@ -47,7 +47,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         'controller' => null,
         'action' => null,
         '_ext' => null,
-        'pass' => []
+        'pass' => [],
     ];
 
     /**
@@ -243,6 +243,13 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     ];
 
     /**
+     * Whether to merge file uploads as objects (`true`) or arrays (`false`).
+     *
+     * @var bool
+     */
+    private $mergeFilesAsObjects = false;
+
+    /**
      * Wrapper method to create a new request from PHP superglobals.
      *
      * Uses the $_GET, $_POST, $_FILES, $_COOKIE, $_SERVER, $_ENV and php://input data to construct
@@ -280,6 +287,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * - `input` The data that would come from php://input this is useful for simulating
      *   requests with put, patch or delete data.
      * - `session` An instance of a Session object
+     * - `mergeFilesAsObjects` Whether to merge file uploads as objects (`true`) or arrays (`false`).
      *
      * @param string|array $config An array of request data to create a request with.
      *   The string version of this argument is *deprecated* and will be removed in 4.0.0
@@ -301,6 +309,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
             'base' => '',
             'webroot' => '',
             'input' => null,
+            'mergeFilesAsObjects' => false,
         ];
 
         $this->_setConfig($config);
@@ -320,7 +329,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
 
         if (empty($config['session'])) {
             $config['session'] = new Session([
-                'cookiePath' => $config['base']
+                'cookiePath' => $config['base'],
             ]);
         }
 
@@ -363,6 +372,8 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         }
         $this->stream = $stream;
 
+        $this->mergeFilesAsObjects = $config['mergeFilesAsObjects'];
+
         $config['post'] = $this->_processPost($config['post']);
         $this->data = $this->_processFiles($config['post'], $config['files']);
         $this->query = $this->_processGet($config['query'], $querystr);
@@ -383,7 +394,8 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         $method = $this->getEnv('REQUEST_METHOD');
         $override = false;
 
-        if (in_array($method, ['PUT', 'DELETE', 'PATCH'], true) &&
+        if (
+            in_array($method, ['PUT', 'DELETE', 'PATCH'], true) &&
             strpos($this->contentType(), 'application/x-www-form-urlencoded') === 0
         ) {
             $data = $this->input();
@@ -435,7 +447,10 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     protected function _processFiles($post, $files)
     {
-        if (!is_array($files)) {
+        if (
+            empty($files) ||
+            !is_array($files)
+        ) {
             return $post;
         }
         $fileData = [];
@@ -456,6 +471,10 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
             ));
         }
         $this->uploadedFiles = $fileData;
+
+        if ($this->mergeFilesAsObjects) {
+            return Hash::merge($post, $fileData);
+        }
 
         // Make a flat map that can be inserted into $post for BC.
         $fileMap = Hash::flatten($fileData);
@@ -1335,7 +1354,8 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     {
         $new = clone $this;
 
-        if (!is_string($method) ||
+        if (
+            !is_string($method) ||
             !preg_match('/^[!#$%&\'*+.^_`\|~0-9a-z-]+$/i', $method)
         ) {
             throw new InvalidArgumentException(sprintf(
@@ -2227,7 +2247,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
             'params' => $this->params,
             'webroot' => $this->webroot,
             'base' => $this->base,
-            'here' => $this->here
+            'here' => $this->here,
         ];
 
         return $this->attributes + $emulated;

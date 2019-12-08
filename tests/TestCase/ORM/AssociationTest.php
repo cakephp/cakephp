@@ -62,12 +62,12 @@ class AssociationTest extends TestCase
             'conditions' => ['field' => 'value'],
             'dependent' => true,
             'sourceTable' => $this->source,
-            'joinType' => 'INNER'
+            'joinType' => 'INNER',
         ];
         $this->association = $this->getMockBuilder('\Cake\ORM\Association')
             ->setMethods([
                 '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
-                'saveAssociated', 'eagerLoader', 'type', 'requiresKeys'
+                'saveAssociated', 'eagerLoader', 'type', 'requiresKeys',
             ])
             ->setConstructorArgs(['Foo', $config])
             ->getMock();
@@ -252,7 +252,7 @@ class AssociationTest extends TestCase
         $this->association = $this->getMockBuilder('\Cake\ORM\Association')
             ->setMethods([
                 '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
-                'saveAssociated', 'eagerLoader', 'type', 'requiresKeys'
+                'saveAssociated', 'eagerLoader', 'type', 'requiresKeys',
             ])
             ->setConstructorArgs(['Foo', $config])
             ->getMock();
@@ -277,7 +277,7 @@ class AssociationTest extends TestCase
         $this->association = $this->getMockBuilder('\Cake\ORM\Association')
             ->setMethods([
                 '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
-                'saveAssociated', 'eagerLoader', 'type', 'requiresKeys'
+                'saveAssociated', 'eagerLoader', 'type', 'requiresKeys',
             ])
             ->setConstructorArgs(['Test', $config])
             ->getMock();
@@ -293,7 +293,7 @@ class AssociationTest extends TestCase
     public function testTargetTableDescendant()
     {
         $this->getTableLocator()->get('Test', [
-            'className' => '\Cake\Test\TestCase\ORM\TestTable'
+            'className' => '\Cake\Test\TestCase\ORM\TestTable',
         ]);
         $className = '\Cake\ORM\Table';
 
@@ -303,7 +303,7 @@ class AssociationTest extends TestCase
         $this->association = $this->getMockBuilder('\Cake\ORM\Association')
             ->setMethods([
                 '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
-                'saveAssociated', 'eagerLoader', 'type', 'requiresKeys'
+                'saveAssociated', 'eagerLoader', 'type', 'requiresKeys',
             ])
             ->setConstructorArgs(['Test', $config])
             ->getMock();
@@ -513,13 +513,13 @@ class AssociationTest extends TestCase
             'conditions' => ['field' => 'value'],
             'dependent' => true,
             'sourceTable' => $this->source,
-            'joinType' => 'INNER'
+            'joinType' => 'INNER',
         ];
 
         $this->association = $this->getMockBuilder('\Cake\ORM\Association')
             ->setMethods([
                 'type', 'eagerLoader', 'cascadeDelete', 'isOwningSide', 'saveAssociated',
-                'requiresKeys'
+                'requiresKeys',
             ])
             ->setConstructorArgs(['ThisAssociationName', $config])
             ->getMock();
@@ -674,12 +674,12 @@ class AssociationTest extends TestCase
             'dependent' => true,
             'sourceTable' => $this->source,
             'joinType' => 'INNER',
-            'propertyName' => 'foo'
+            'propertyName' => 'foo',
         ];
         $association = $this->getMockBuilder('\Cake\ORM\Association')
             ->setMethods([
                 '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
-                'saveAssociated', 'eagerLoader', 'type', 'requiresKeys'
+                'saveAssociated', 'eagerLoader', 'type', 'requiresKeys',
             ])
             ->setConstructorArgs(['Foo', $config])
             ->getMock();
@@ -774,12 +774,12 @@ class AssociationTest extends TestCase
             'dependent' => true,
             'sourceTable' => $this->source,
             'joinType' => 'INNER',
-            'finder' => 'published'
+            'finder' => 'published',
         ];
         $assoc = $this->getMockBuilder('\Cake\ORM\Association')
             ->setMethods([
                 'type', 'eagerLoader', 'cascadeDelete', 'isOwningSide', 'saveAssociated',
-                'requiresKeys'
+                'requiresKeys',
             ])
             ->setConstructorArgs(['Foo', $config])
             ->getMock();
@@ -811,12 +811,12 @@ class AssociationTest extends TestCase
         $locator = $this->getMockBuilder('Cake\ORM\Locator\LocatorInterface')->getMock();
         $config = [
             'className' => '\Cake\Test\TestCase\ORM\TestTable',
-            'tableLocator' => $locator
+            'tableLocator' => $locator,
         ];
         $assoc = $this->getMockBuilder('\Cake\ORM\Association')
             ->setMethods([
                 'type', 'eagerLoader', 'cascadeDelete', 'isOwningSide', 'saveAssociated',
-                'requiresKeys'
+                'requiresKeys',
             ])
             ->setConstructorArgs(['Foo', $config])
             ->getMock();

@@ -183,7 +183,7 @@ class ConsoleInputOption
     /**
      * Get the default value for this option
      *
-     * @return mixed
+     * @return string|bool
      */
     public function defaultValue()
     {

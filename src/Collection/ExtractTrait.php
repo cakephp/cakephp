@@ -70,8 +70,10 @@ trait ExtractTrait
                 continue;
             }
 
-            if ($collectionTransform &&
-                !($data instanceof Traversable || is_array($data))) {
+            if (
+                $collectionTransform &&
+                !($data instanceof Traversable || is_array($data))
+            ) {
                 return null;
             }
 

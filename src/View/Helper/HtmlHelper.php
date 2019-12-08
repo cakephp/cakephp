@@ -81,8 +81,8 @@ class HtmlHelper extends Helper
             'javascriptstart' => '<script>',
             'javascriptlink' => '<script src="{{url}}"{{attrs}}></script>',
             'javascriptend' => '</script>',
-            'confirmJs' => '{{confirm}}'
-        ]
+            'confirmJs' => '{{confirm}}',
+        ],
     ];
 
     /**
@@ -120,7 +120,7 @@ class HtmlHelper extends Helper
         'xhtml-strict' => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">',
         'xhtml-trans' => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">',
         'xhtml-frame' => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">',
-        'xhtml11' => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">'
+        'xhtml11' => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">',
     ];
 
     /**
@@ -185,9 +185,12 @@ class HtmlHelper extends Helper
      * @param string $type Doctype to use.
      * @return string|null Doctype string
      * @link https://book.cakephp.org/3/en/views/helpers/html.html#creating-doctype-tags
+     * @deprecated 3.9.0 This method will be removed in 4.0.0.
      */
     public function docType($type = 'html5')
     {
+        deprecationWarning('HtmlHelper::docType() is deprecated and will be removed in 4.0.0');
+
         if (isset($this->_docTypes[$type])) {
             return $this->_docTypes[$type];
         }
@@ -250,7 +253,7 @@ class HtmlHelper extends Helper
                 'next' => ['rel' => 'next', 'link' => $content],
                 'prev' => ['rel' => 'prev', 'link' => $content],
                 'first' => ['rel' => 'first', 'link' => $content],
-                'last' => ['rel' => 'last', 'link' => $content]
+                'last' => ['rel' => 'last', 'link' => $content],
             ];
 
             if ($type === 'icon' && $content === null) {
@@ -277,21 +280,25 @@ class HtmlHelper extends Helper
         $out = null;
 
         if (isset($options['link'])) {
-            $options['link'] = $this->Url->assetUrl($options['link']);
+            if (is_array($options['link'])) {
+                $options['link'] = $this->Url->build($options['link']);
+            } else {
+                $options['link'] = $this->Url->assetUrl($options['link']);
+            }
             if (isset($options['rel']) && $options['rel'] === 'icon') {
                 $out = $this->formatTemplate('metalink', [
                     'url' => $options['link'],
-                    'attrs' => $this->templater()->formatAttributes($options, ['block', 'link'])
+                    'attrs' => $this->templater()->formatAttributes($options, ['block', 'link']),
                 ]);
                 $options['rel'] = 'shortcut icon';
             }
             $out .= $this->formatTemplate('metalink', [
                 'url' => $options['link'],
-                'attrs' => $this->templater()->formatAttributes($options, ['block', 'link'])
+                'attrs' => $this->templater()->formatAttributes($options, ['block', 'link']),
             ]);
         } else {
             $out = $this->formatTemplate('meta', [
-                'attrs' => $this->templater()->formatAttributes($options, ['block', 'type'])
+                'attrs' => $this->templater()->formatAttributes($options, ['block', 'type']),
             ]);
         }
 
@@ -319,7 +326,7 @@ class HtmlHelper extends Helper
         }
 
         return $this->formatTemplate('charset', [
-            'charset' => !empty($charset) ? $charset : 'utf-8'
+            'charset' => !empty($charset) ? $charset : 'utf-8',
         ]);
     }
 
@@ -383,14 +390,14 @@ class HtmlHelper extends Helper
             $confirm = $this->_confirm($confirmMessage, 'return true;', 'return false;', $options);
             $options['onclick'] = $templater->format('confirmJs', [
                 'confirmMessage' => $this->_cleanConfirmMessage($confirmMessage),
-                'confirm' => $confirm
+                'confirm' => $confirm,
             ]);
         }
 
         return $templater->format('link', [
             'url' => $url,
             'attrs' => $templater->formatAttributes($options),
-            'content' => $title
+            'content' => $title,
         ]);
     }
 
@@ -600,7 +607,7 @@ class HtmlHelper extends Helper
 
         $out = $this->formatTemplate('javascriptblock', [
             'attrs' => $this->templater()->formatAttributes($options, ['block']),
-            'content' => $script
+            'content' => $script,
         ]);
 
         if (empty($options['block'])) {
@@ -782,13 +789,13 @@ class HtmlHelper extends Helper
             }
             $result .= $this->formatTemplate('li', [
                 'content' => $elementContent,
-                'attrs' => $this->templater()->formatAttributes($options)
+                'attrs' => $this->templater()->formatAttributes($options),
             ]);
         }
 
         return $this->formatTemplate('ul', [
             'content' => $result,
-            'attrs' => $this->templater()->formatAttributes($ulOptions)
+            'attrs' => $this->templater()->formatAttributes($ulOptions),
         ]);
     }
 
@@ -812,7 +819,7 @@ class HtmlHelper extends Helper
             if (!is_array($startText)) {
                 $startText = [
                     'url' => '/',
-                    'text' => $startText
+                    'text' => $startText,
                 ];
             }
             $startText += ['url' => '/', 'text' => __d('cake', 'Home')];
@@ -850,14 +857,18 @@ class HtmlHelper extends Helper
      * - `fullBase` If true the src attribute will get a full address for the image file.
      * - `plugin` False value will prevent parsing path as a plugin
      *
-     * @param string|array $path Path to the image file, relative to the app/webroot/img/ directory.
+     * @param string|array $path Path to the image file, relative to the webroot/img/ directory.
      * @param array $options Array of HTML attributes. See above for special options.
      * @return string completed img tag
      * @link https://book.cakephp.org/3/en/views/helpers/html.html#linking-to-images
      */
     public function image($path, array $options = [])
     {
-        $path = $this->Url->image($path, $options);
+        if (is_string($path)) {
+            $path = $this->Url->image($path, $options);
+        } else {
+            $path = $this->Url->build($path, $options);
+        }
         $options = array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
 
         if (!isset($options['alt'])) {
@@ -880,7 +891,7 @@ class HtmlHelper extends Helper
             return $templater->format('link', [
                 'url' => $this->Url->build($url),
                 'attrs' => null,
-                'content' => $image
+                'content' => $image,
             ]);
         }
 
@@ -890,7 +901,7 @@ class HtmlHelper extends Helper
     /**
      * Returns a row of formatted and named TABLE headers.
      *
-     * @param array $names Array of tablenames. Each tablename also can be a key that points to an array with a set
+     * @param array $names Array of tablenames. Each tablename can be string, or array with name and an array with a set
      *     of attributes to its specific tag
      * @param array|null $trOptions HTML options for TR elements.
      * @param array|null $thOptions HTML options for TH elements.
@@ -902,16 +913,20 @@ class HtmlHelper extends Helper
         $out = [];
         foreach ($names as $arg) {
             if (!is_array($arg)) {
-                $out[] = $this->formatTemplate('tableheader', [
-                    'attrs' => $this->templater()->formatAttributes($thOptions),
-                    'content' => $arg
-                ]);
+                $content = $arg;
+                $attrs = $thOptions;
+            } elseif (isset($arg[0], $arg[1])) {
+                $content = $arg[0];
+                $attrs = $arg[1];
             } else {
-                $out[] = $this->formatTemplate('tableheader', [
-                    'attrs' => $this->templater()->formatAttributes(current($arg)),
-                    'content' => key($arg)
-                ]);
+                $content = key($arg);
+                $attrs = current($arg);
             }
+
+            $out[] = $this->formatTemplate('tableheader', [
+                'attrs' => $this->templater()->formatAttributes($attrs),
+                'content' => $content,
+            ]);
         }
 
         return $this->tableRow(implode(' ', $out), (array)$trOptions);
@@ -1010,7 +1025,7 @@ class HtmlHelper extends Helper
     {
         return $this->formatTemplate('tablerow', [
             'attrs' => $this->templater()->formatAttributes($options),
-            'content' => $content
+            'content' => $content,
         ]);
     }
 
@@ -1025,7 +1040,7 @@ class HtmlHelper extends Helper
     {
         return $this->formatTemplate('tablecell', [
             'attrs' => $this->templater()->formatAttributes($options),
-            'content' => $content
+            'content' => $content,
         ]);
     }
 
@@ -1182,7 +1197,7 @@ class HtmlHelper extends Helper
         $options += [
             'tag' => null,
             'pathPrefix' => 'files/',
-            'text' => ''
+            'text' => '',
         ];
 
         if (!empty($options['tag'])) {
@@ -1206,7 +1221,7 @@ class HtmlHelper extends Helper
                 $source['src'] = $this->Url->assetUrl($source['src'], $options);
                 $sourceTags .= $this->formatTemplate('tagselfclosing', [
                     'tag' => 'source',
-                    'attrs' => $this->templater()->formatAttributes($source)
+                    'attrs' => $this->templater()->formatAttributes($source),
                 ]);
             }
             unset($source);
@@ -1241,7 +1256,7 @@ class HtmlHelper extends Helper
             'tag' => null,
             'fullBase' => null,
             'pathPrefix' => null,
-            'text' => null
+            'text' => null,
         ]);
 
         return $this->tag($tag, $text, $options);
@@ -1272,7 +1287,7 @@ class HtmlHelper extends Helper
 
         return $this->formatTemplate($options['tag'], [
             'attrs' => $this->templater()->formatAttributes($options, ['tag']),
-            'content' => $items
+            'content' => $items,
         ]);
     }
 
@@ -1301,7 +1316,7 @@ class HtmlHelper extends Helper
             }
             $out .= $this->formatTemplate('li', [
                 'attrs' => $this->templater()->formatAttributes($itemOptions, ['even', 'odd']),
-                'content' => $item
+                'content' => $item,
             ]);
             $index++;
         }

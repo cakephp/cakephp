@@ -25,6 +25,12 @@ use Cake\TestSuite\TestCase;
  */
 class NumberTest extends TestCase
 {
+    /**
+     * Backup the locale property
+     *
+     * @var string
+     */
+    protected $locale;
 
     /**
      * setUp method
@@ -48,7 +54,7 @@ class NumberTest extends TestCase
         parent::tearDown();
         unset($this->Number);
         I18n::setLocale($this->locale);
-        Number::defaultCurrency(false);
+        Number::setDefaultCurrency();
         Number::setDefaultCurrencyFormat();
     }
 
@@ -311,19 +317,46 @@ class NumberTest extends TestCase
     /**
      * Test default currency
      *
+     * @group deprecated
      * @return void
      */
     public function testDefaultCurrency()
     {
-        $result = $this->Number->defaultCurrency();
-        $this->assertEquals('USD', $result);
+        $this->deprecated(function () {
+            $this->assertEquals('USD', $this->Number->defaultCurrency());
 
-        $this->Number->defaultCurrency(false);
+            $this->Number->defaultCurrency(false);
+            I18n::setLocale('es_ES');
+            $this->assertEquals('EUR', $this->Number->defaultCurrency());
+
+            $this->Number->defaultCurrency('JPY');
+            $this->assertEquals('JPY', $this->Number->defaultCurrency());
+        });
+    }
+
+    /**
+     * Test get default currency
+     *
+     * @return void
+     */
+    public function testGetDefaultCurrency()
+    {
+        $this->assertEquals('USD', $this->Number->getDefaultCurrency());
+    }
+
+    /**
+     * Test set default currency
+     *
+     * @return void
+     */
+    public function testSetDefaultCurrency()
+    {
+        $this->Number->setDefaultCurrency();
         I18n::setLocale('es_ES');
-        $this->assertEquals('EUR', $this->Number->defaultCurrency());
+        $this->assertEquals('EUR', $this->Number->getDefaultCurrency());
 
-        $this->Number->defaultCurrency('JPY');
-        $this->assertEquals('JPY', $this->Number->defaultCurrency());
+        $this->Number->setDefaultCurrency('JPY');
+        $this->assertEquals('JPY', $this->Number->getDefaultCurrency());
     }
 
     /**
@@ -591,7 +624,7 @@ class NumberTest extends TestCase
         $this->assertEquals('₹ 15,000.00', $result);
 
         Number::config('en_IN', \NumberFormatter::CURRENCY, [
-            'pattern' => '¤ #,##,##0'
+            'pattern' => '¤ #,##,##0',
         ]);
 
         $result = $this->Number->currency(15000, 'INR', ['locale' => 'en_IN']);
@@ -613,7 +646,7 @@ class NumberTest extends TestCase
         $this->assertEquals('2nd', $result);
 
         $result = $this->Number->ordinal(2, [
-            'locale' => 'fr_FR'
+            'locale' => 'fr_FR',
         ]);
         $this->assertEquals('2e', $result);
 

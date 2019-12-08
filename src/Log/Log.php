@@ -110,7 +110,7 @@ class Log
     /**
      * An array mapping url schemes to fully qualified Log engine class names
      *
-     * @var array
+     * @var string[]
      */
     protected static $_dsnClassMap = [
         'console' => 'Cake\Log\Engine\ConsoleLog',
@@ -135,7 +135,7 @@ class Log
     /**
      * Handled log levels
      *
-     * @var array
+     * @var string[]
      */
     protected static $_levels = [
         'emergency',
@@ -145,7 +145,7 @@ class Log
         'warning',
         'notice',
         'info',
-        'debug'
+        'debug',
     ];
 
     /**
@@ -222,7 +222,7 @@ class Log
      * Call this method to obtain current
      * level configuration.
      *
-     * @return array active log levels
+     * @return string[] active log levels
      */
     public static function levels()
     {

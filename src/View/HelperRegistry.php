@@ -125,7 +125,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
     {
         throw new MissingHelperException([
             'class' => $class . 'Helper',
-            'plugin' => $plugin
+            'plugin' => $plugin,
         ]);
     }
 

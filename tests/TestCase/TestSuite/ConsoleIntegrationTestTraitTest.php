@@ -17,6 +17,7 @@ use Cake\Console\Exception\ConsoleException;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
 use Cake\TestSuite\ConsoleIntegrationTestCase;
+use Cake\TestSuite\Stub\MissingConsoleInputException;
 use PHPUnit\Framework\AssertionFailedError;
 
 class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
@@ -150,7 +151,7 @@ class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
      */
     public function testExecWithMissingInput()
     {
-        $this->expectException(ConsoleException::class);
+        $this->expectException(MissingConsoleInputException::class);
         $this->expectExceptionMessage('no more input');
         $this->exec('integration bridge', ['cake']);
     }
@@ -211,7 +212,7 @@ class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
         $json = json_encode(['key' => '"val"', 'this' => true]);
         $result = $this->commandStringToArgs("   --json='$json'");
         $expected = [
-            '--json=' . $json
+            '--json=' . $json,
         ];
         $this->assertSame($expected, $result);
     }

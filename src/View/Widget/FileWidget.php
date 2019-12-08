@@ -72,7 +72,7 @@ class FileWidget implements WidgetInterface
             'attrs' => $this->_templates->formatAttributes(
                 $data,
                 ['name']
-            )
+            ),
         ]);
     }
 

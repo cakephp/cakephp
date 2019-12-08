@@ -121,7 +121,7 @@ class StringTemplate
     {
         $this->_configStack[] = [
             $this->_config,
-            $this->_compiled
+            $this->_compiled,
         ];
     }
 
@@ -182,7 +182,7 @@ class StringTemplate
             preg_match_all('#\{\{([\w\._]+)\}\}#', $template, $matches);
             $this->_compiled[$name] = [
                 str_replace($matches[0], '%s', $template),
-                $matches[1]
+                $matches[1],
             ];
         }
     }

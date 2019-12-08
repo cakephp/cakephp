@@ -44,7 +44,7 @@ class TimestampBehaviorTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.Users'
+        'core.Users',
     ];
 
     /**
@@ -58,7 +58,7 @@ class TimestampBehaviorTest extends TestCase
         $this->Behavior = new TimestampBehavior($table);
 
         $expected = [
-            'Model.beforeSave' => 'handleEvent'
+            'Model.beforeSave' => 'handleEvent',
         ];
         $this->assertEquals($expected, $this->Behavior->implementedEvents());
     }
@@ -77,7 +77,7 @@ class TimestampBehaviorTest extends TestCase
         $this->Behavior = new TimestampBehavior($table, $settings);
 
         $expected = [
-            'Something.special' => 'handleEvent'
+            'Something.special' => 'handleEvent',
         ];
         $this->assertEquals($expected, $this->Behavior->implementedEvents());
     }
@@ -141,7 +141,7 @@ class TimestampBehaviorTest extends TestCase
 
         $event = new Event('Model.beforeSave');
         $entity = new Entity(['name' => 'Foo']);
-        $entity->isNew(false);
+        $entity->setNew(false);
 
         $return = $this->Behavior->handleEvent($event, $entity);
         $this->assertTrue($return, 'Handle Event is expected to always return true');
@@ -163,7 +163,7 @@ class TimestampBehaviorTest extends TestCase
 
         $event = new Event('Model.beforeSave');
         $entity = new Entity(['name' => 'Foo']);
-        $entity->isNew(false);
+        $entity->setNew(false);
 
         $return = $this->Behavior->handleEvent($event, $entity);
         $this->assertTrue($return, 'Handle Event is expected to always return true');
@@ -188,7 +188,7 @@ class TimestampBehaviorTest extends TestCase
         $existingValue = new \DateTime('2011-11-11');
         $entity = new Entity(['name' => 'Foo', 'modified' => $existingValue]);
         $entity->clean();
-        $entity->isNew(false);
+        $entity->setNew(false);
 
         $return = $this->Behavior->handleEvent($event, $entity);
         $this->assertTrue($return, 'Handle Event is expected to always return true');
@@ -257,7 +257,7 @@ class TimestampBehaviorTest extends TestCase
             'events' => [
                 'Model.beforeSave' => [
                     'timestamp_str' => 'always',
-                ]
+                ],
             ],
         ]);
 
@@ -403,8 +403,8 @@ class TimestampBehaviorTest extends TestCase
             'events' => [
                 'Model.beforeSave' => [
                     'created' => 'new',
-                ]
-            ]
+                ],
+            ],
         ];
 
         $this->Behavior = new TimestampBehavior($table, $config);
@@ -456,9 +456,9 @@ class TimestampBehaviorTest extends TestCase
             'events' => [
                 'Model.beforeSave' => [
                     'created' => 'new',
-                    'updated' => 'always'
-                ]
-            ]
+                    'updated' => 'always',
+                ],
+            ],
         ]);
 
         $entity = new Entity(['username' => 'timestamp test']);

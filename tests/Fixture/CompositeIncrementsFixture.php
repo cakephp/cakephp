@@ -28,7 +28,7 @@ class CompositeIncrementsFixture extends TestFixture
         'id' => ['type' => 'integer', 'null' => false, 'autoIncrement' => true],
         'account_id' => ['type' => 'integer', 'null' => false],
         'name' => ['type' => 'string', 'default' => null],
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id', 'account_id']]]
+        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id', 'account_id']]],
     ];
 
     /**

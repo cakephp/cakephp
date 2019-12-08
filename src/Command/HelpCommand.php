@@ -201,7 +201,7 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
             'Get the list of available commands for this application.'
         )->addOption('xml', [
             'help' => 'Get the listing as XML.',
-            'boolean' => true
+            'boolean' => true,
         ]);
 
         return $parser;

@@ -32,7 +32,7 @@ class OrderedUuidItemsFixture extends TestFixture
         'id' => ['type' => 'string', 'length' => 32],
         'published' => ['type' => 'boolean', 'null' => false],
         'name' => ['type' => 'string', 'null' => false],
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
     ];
 
     /**

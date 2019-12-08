@@ -28,7 +28,7 @@ HTML;
             'h4' => ['class' => 'widget-title'], 'Popular tags',
             'i' => ['class' => 'i-icon'], '/i',
             '/h4',
-            '/div'
+            '/div',
         ];
         $this->assertHtml($pattern, $input);
     }
@@ -68,7 +68,7 @@ HTML;
         $pattern = [
             'a' => ['href' => '/test.html', 'class' => 'active'],
             'My link',
-            '/a'
+            '/a',
         ];
         $this->assertHtml($pattern, $input);
 
@@ -76,7 +76,7 @@ HTML;
         $pattern = [
             'a' => ['href' => '/test.html', 'class' => 'active'],
             'My link',
-            '/a'
+            '/a',
         ];
         $this->assertHtml($pattern, $input);
 
@@ -84,7 +84,7 @@ HTML;
         $pattern = [
             'a' => ['href' => 'preg:/.*\.html/', 'class' => 'active'],
             'My link',
-            '/a'
+            '/a',
         ];
         $this->assertHtml($pattern, $input);
 
@@ -94,7 +94,7 @@ HTML;
             '<strong',
             'Text',
             '/strong',
-            '/span'
+            '/span',
         ];
         $this->assertHtml($pattern, $input);
 
@@ -104,7 +104,7 @@ HTML;
             '<strong',
             'Text',
             '/strong',
-            '/span'
+            '/span',
         ];
         $this->assertHtml($pattern, $input);
     }
@@ -128,7 +128,7 @@ HTML;
                 'attr8' => 'val8',
             ],
             'My div',
-            '/div'
+            '/div',
         ];
         $input = '<div attr8="val8" attr6="val6" attr4="val4" attr2="val2"' .
             ' attr1="val1" attr3="val3" attr5="val5" attr7="val7" />' .
@@ -148,7 +148,7 @@ HTML;
         $pattern = [
             'a' => ['href' => '/test.html', 'class' => 'active'],
             'My link',
-            '/a'
+            '/a',
         ];
         $this->assertHtml($pattern, $input);
 
@@ -156,7 +156,7 @@ HTML;
         $pattern = [
             'a' => ['href' => '/test.html', 'class' => 'active'],
             'My link',
-            '/a'
+            '/a',
         ];
         $this->assertHtml($pattern, $input);
 
@@ -164,7 +164,7 @@ HTML;
         $pattern = [
             'a' => ['href' => 'preg:/.*\.html/', 'class' => 'active'],
             'My link',
-            '/a'
+            '/a',
         ];
         $this->assertHtml($pattern, $input);
     }
@@ -184,7 +184,7 @@ HTML;
                 '<strong',
                     $value,
                 '/strong',
-            '/p'
+            '/p',
         ];
         $this->assertHtml($pattern, $input);
 
@@ -230,7 +230,7 @@ HTML;
         $pattern = [
             'a' => ['hRef' => '/test.html', 'clAss' => 'active'],
             'My link2',
-            '/a'
+            '/a',
         ];
         try {
             $this->assertHtml($pattern, $input);
@@ -254,7 +254,7 @@ HTML;
         $pattern = [
             '<a' => ['href' => '/test.html', 'class' => 'active'],
             'My link',
-            '/a'
+            '/a',
         ];
         try {
             $this->assertHtml($pattern, $input);

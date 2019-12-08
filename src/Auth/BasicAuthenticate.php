@@ -108,7 +108,7 @@ class BasicAuthenticate extends BaseAuthenticate
         $realm = $this->getConfig('realm') ?: $request->getEnv('SERVER_NAME');
 
         return [
-            'WWW-Authenticate' => sprintf('Basic realm="%s"', $realm)
+            'WWW-Authenticate' => sprintf('Basic realm="%s"', $realm),
         ];
     }
 }

@@ -30,7 +30,7 @@ class GroupsFixture extends TestFixture
     public $fields = [
         'id' => ['type' => 'integer'],
         'title' => ['type' => 'string'],
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
     ];
 
     /**

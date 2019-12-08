@@ -230,7 +230,7 @@ class Number
     public static function currency($value, $currency = null, array $options = [])
     {
         $value = (float)$value;
-        $currency = $currency ?: static::defaultCurrency();
+        $currency = $currency ?: static::getDefaultCurrency();
 
         if (isset($options['zero']) && !$value) {
             return $options['zero'];
@@ -252,8 +252,10 @@ class Number
     }
 
     /**
-     * Getter/setter for default currency
+     * Getter/setter for default currency. This behavior is *deprecated* and will be
+     * removed in future versions of CakePHP.
      *
+     * @deprecated 3.9 Use getDefaultCurrency() and setDefaultCurrency()
      * @param string|false|null $currency Default currency string to be used by currency()
      * if $currency argument is not provided. If boolean false is passed, it will clear the
      * currently stored value
@@ -261,14 +263,31 @@ class Number
      */
     public static function defaultCurrency($currency = null)
     {
+        deprecationWarning(
+            'Number::defaultCurrency() is deprecated. ' .
+            'Use Number::setDefaultCurrency()/getDefaultCurrency() instead.'
+        );
+
         if ($currency === false) {
-            return static::$_defaultCurrency = null;
+            static::setDefaultCurrency(null);
+
+            // This doesn't seem like a useful result to return, but it's what the old version did.
+            // Retaining it for backward compatibility.
+            return null;
+        } elseif ($currency !== null) {
+            static::setDefaultCurrency($currency);
         }
 
-        if ($currency !== null) {
-            return static::$_defaultCurrency = $currency;
-        }
+        return static::getDefaultCurrency();
+    }
 
+    /**
+     * Getter for default currency
+     *
+     * @return string Currency
+     */
+    public static function getDefaultCurrency()
+    {
         if (static::$_defaultCurrency === null) {
             $locale = ini_get('intl.default_locale') ?: static::DEFAULT_LOCALE;
             $formatter = new NumberFormatter($locale, NumberFormatter::CURRENCY);
@@ -276,6 +295,19 @@ class Number
         }
 
         return static::$_defaultCurrency;
+    }
+
+    /**
+     * Setter for default currency
+     *
+     * @param string|null $currency Default currency string to be used by currency()
+     * if $currency argument is not provided. If null is passed, it will clear the
+     * currently stored value
+     * @return void
+     */
+    public static function setDefaultCurrency($currency = null)
+    {
+        static::$_defaultCurrency = $currency;
     }
 
     /**
@@ -351,13 +383,14 @@ class Number
             static::$_formatters[$locale][$type] = new NumberFormatter($locale, $type);
         }
 
+        /** @var \NumberFormatter $formatter */
         $formatter = static::$_formatters[$locale][$type];
 
         $options = array_intersect_key($options, [
             'places' => null,
             'precision' => null,
             'pattern' => null,
-            'useIntlCode' => null
+            'useIntlCode' => null,
         ]);
         if (empty($options)) {
             return $formatter;

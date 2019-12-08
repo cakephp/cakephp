@@ -163,7 +163,7 @@ class FolderTest extends TestCase
         return [
             [''],
             ['relative/path/'],
-            ['unknown://stream-wrapper']
+            ['unknown://stream-wrapper'],
         ];
     }
 
@@ -476,11 +476,11 @@ class FolderTest extends TestCase
         $expected = [
             [
                 '.svn',
-                'some_folder'
+                'some_folder',
             ],
             [
                 '.hidden.txt',
-                'not_hidden.txt'
+                'not_hidden.txt',
             ],
         ];
         $result = $Folder->read(true);
@@ -500,7 +500,7 @@ class FolderTest extends TestCase
         $expected = [
             $path . DS . 'Exception',
             $path . DS . 'Http',
-            $path . DS . 'Session'
+            $path . DS . 'Session',
         ];
         $result = $folder->subdirectories();
         $this->assertSame([], array_diff($expected, $result));
@@ -510,7 +510,7 @@ class FolderTest extends TestCase
         $expected = [
             'Exception',
             'Http',
-            'Session'
+            'Session',
         ];
         $result = $folder->subdirectories(null, false);
         $this->assertSame([], array_diff($expected, $result));
@@ -538,7 +538,7 @@ class FolderTest extends TestCase
             ],
             [
                 CORE_PATH . 'config' . DS . 'config.php',
-            ]
+            ],
         ];
 
         $result = $Folder->tree(CORE_PATH . 'config', false);
@@ -829,14 +829,14 @@ class FolderTest extends TestCase
         $Folder = new Folder(CORE_PATH . 'config');
         $result = $Folder->findRecursive('(config|paths)\.php');
         $expected = [
-            CORE_PATH . 'config' . DS . 'config.php'
+            CORE_PATH . 'config' . DS . 'config.php',
         ];
         $this->assertSame([], array_diff($expected, $result));
 
         $result = $Folder->findRecursive('(config|bootstrap)\.php', true);
         $expected = [
             CORE_PATH . 'config' . DS . 'bootstrap.php',
-            CORE_PATH . 'config' . DS . 'config.php'
+            CORE_PATH . 'config' . DS . 'config.php',
         ];
         $this->assertSame($expected, $result);
 
@@ -863,14 +863,14 @@ class FolderTest extends TestCase
         $result = $Folder->findRecursive('(paths|my)\.php');
         $expected = [
             $path . 'testme' . DS . 'my.php',
-            $path . 'testme' . DS . 'paths.php'
+            $path . 'testme' . DS . 'paths.php',
         ];
         $this->assertSame(sort($expected), sort($result));
 
         $result = $Folder->findRecursive('(paths|my)\.php', true);
         $expected = [
             $path . 'testme' . DS . 'my.php',
-            $path . 'testme' . DS . 'paths.php'
+            $path . 'testme' . DS . 'paths.php',
         ];
         $this->assertSame($expected, $result);
     }
@@ -989,7 +989,7 @@ class FolderTest extends TestCase
             $path . DS . 'level_1_1' . DS . 'level_2_1 removed',
             $path . DS . 'level_1_1' . DS . 'level_2_2 removed',
             $path . DS . 'level_1_1 removed',
-            $path . ' removed'
+            $path . ' removed',
         ];
         sort($expected);
         sort($messages);

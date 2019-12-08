@@ -419,7 +419,7 @@ class ConfigureTest extends TestCase
         Cache::enable();
         Cache::setConfig('configure', [
             'className' => 'File',
-            'path' => TMP . 'tests'
+            'path' => TMP . 'tests',
         ]);
 
         Configure::write('Testing', 'yummy');
@@ -445,7 +445,7 @@ class ConfigureTest extends TestCase
         Cache::enable();
         Cache::setConfig('configure', [
             'className' => 'File',
-            'path' => TMP . 'tests'
+            'path' => TMP . 'tests',
         ]);
 
         Configure::write('testing', 'value');

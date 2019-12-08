@@ -33,7 +33,7 @@ class TestHelper extends Helper
      */
     protected $_defaultConfig = [
         'key1' => 'val1',
-        'key2' => ['key2.1' => 'val2.1', 'key2.2' => 'val2.2']
+        'key2' => ['key2.1' => 'val2.1', 'key2.2' => 'val2.2'],
     ];
 
     /**
@@ -91,12 +91,12 @@ class HelperTest extends TestCase
     {
         $Helper = new TestHelper($this->View, [
             'key3' => 'val3',
-            'key2' => ['key2.2' => 'newval']
+            'key2' => ['key2.2' => 'newval'],
         ]);
         $expected = [
             'key1' => 'val1',
             'key2' => ['key2.1' => 'val2.1', 'key2.2' => 'newval'],
-            'key3' => 'val3'
+            'key3' => 'val3',
         ];
         $this->assertEquals($expected, $Helper->getConfig());
     }
@@ -170,14 +170,14 @@ class HelperTest extends TestCase
         $expected = [
             'helpers' => [
                 'Html',
-                'TestPlugin.OtherHelper'
+                'TestPlugin.OtherHelper',
             ],
             'implementedEvents' => [
             ],
             '_config' => [
                 'key1' => 'val1',
-                'key2' => ['key2.1' => 'val2.1', 'key2.2' => 'val2.2']
-            ]
+                'key2' => ['key2.1' => 'val2.1', 'key2.2' => 'val2.2'],
+            ],
         ];
         $result = $Helper->__debugInfo();
         $this->assertEquals($expected, $result);
@@ -195,7 +195,7 @@ class HelperTest extends TestCase
         $expected = ['class' => [
             'element1',
             'element2',
-            'element3'
+            'element3',
         ]];
 
         $this->assertEquals($expected, $helper->addClass($input, 'element3'));

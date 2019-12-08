@@ -89,7 +89,7 @@ class ValidationRuleTest extends TestCase
         $providers = ['default' => ''];
 
         $rule = new ValidationRule([
-            'rule' => [$this, 'willFail']
+            'rule' => [$this, 'willFail'],
         ]);
         $this->assertFalse($rule->process($data, $providers, $context));
     }
@@ -123,19 +123,19 @@ class ValidationRuleTest extends TestCase
 
         $Rule = new ValidationRule([
             'rule' => 'willFail',
-            'on' => 'create'
+            'on' => 'create',
         ]);
         $this->assertFalse($Rule->process($data, $providers, ['newRecord' => true]));
 
         $Rule = new ValidationRule([
             'rule' => 'willFail',
-            'on' => 'update'
+            'on' => 'update',
         ]);
         $this->assertTrue($Rule->process($data, $providers, ['newRecord' => true]));
 
         $Rule = new ValidationRule([
             'rule' => 'willFail',
-            'on' => 'update'
+            'on' => 'update',
         ]);
         $this->assertFalse($Rule->process($data, $providers, ['newRecord' => false]));
     }
@@ -157,7 +157,7 @@ class ValidationRuleTest extends TestCase
                 $this->assertEquals($expected, $context);
 
                 return true;
-            }
+            },
         ]);
         $this->assertFalse($Rule->process($data, $providers, ['newRecord' => true]));
 
@@ -168,7 +168,7 @@ class ValidationRuleTest extends TestCase
                 $this->assertEquals($expected, $context);
 
                 return false;
-            }
+            },
         ]);
         $this->assertTrue($Rule->process($data, $providers, ['newRecord' => true]));
     }

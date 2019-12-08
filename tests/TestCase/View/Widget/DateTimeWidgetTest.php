@@ -37,7 +37,7 @@ class DateTimeWidgetTest extends TestCase
             'select' => '<select name="{{name}}"{{attrs}}>{{content}}</select>',
             'option' => '<option value="{{value}}"{{attrs}}>{{text}}</option>',
             'optgroup' => '<optgroup label="{{label}}"{{attrs}}>{{content}}</optgroup>',
-            'dateWidget' => '{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}{{meridian}}'
+            'dateWidget' => '{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}{{meridian}}',
         ];
         $this->templates = new StringTemplate($templates);
         $this->context = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
@@ -57,8 +57,8 @@ class DateTimeWidgetTest extends TestCase
             'true' => [true],
             'string' => ['Bag of poop'],
             'array' => [[
-                'derp' => 'hurt'
-            ]]
+                'derp' => 'hurt',
+            ]],
         ];
     }
 
@@ -120,7 +120,7 @@ class DateTimeWidgetTest extends TestCase
             'val' => '',
             'year' => [
                 'empty' => ['nope' => '(choose one)'],
-            ]
+            ],
         ], $this->context);
         $this->assertContains('<option value="nope">(choose one)</option>', $result);
         $this->assertNotContains('<optgroup', $result, 'No optgroups should be present.');
@@ -143,7 +143,7 @@ class DateTimeWidgetTest extends TestCase
             'array' => [[
                 'year' => '2014', 'month' => '01', 'day' => '20',
                 'hour' => '12', 'minute' => '30', 'second' => '45',
-            ]]
+            ]],
         ];
     }
 
@@ -188,7 +188,7 @@ class DateTimeWidgetTest extends TestCase
     {
         $selected = [
             'year' => '2014', 'month' => '01', 'day' => '20',
-            'hour' => '12', 'minute' => '30'
+            'hour' => '12', 'minute' => '30',
         ];
         $result = $this->DateTime->render(['name' => 'created', 'val' => $selected], $this->context);
         $this->assertContains('name="created[year]"', $result);
@@ -214,7 +214,7 @@ class DateTimeWidgetTest extends TestCase
     {
         $selected = [
             'year' => '2014', 'month' => '01', 'day' => '20',
-            'hour' => '7', 'minute' => '30', 'meridian' => 'pm'
+            'hour' => '7', 'minute' => '30', 'meridian' => 'pm',
         ];
         $result = $this->DateTime->render(['val' => $selected], $this->context);
         $this->assertContains('<option value="2014" selected="selected">2014</option>', $result);
@@ -319,7 +319,7 @@ class DateTimeWidgetTest extends TestCase
             'year' => [
                 'start' => 2013,
                 'end' => 2015,
-                'order' => 'desc'
+                'order' => 'desc',
             ],
             'month' => false,
             'day' => false,
@@ -544,7 +544,7 @@ class DateTimeWidgetTest extends TestCase
             'minute' => false,
             'second' => false,
             'month' => [
-                'names' => ['01' => 'Jan', '02' => 'Feb']
+                'names' => ['01' => 'Jan', '02' => 'Feb'],
             ],
             'val' => $now,
         ], $this->context);
@@ -630,7 +630,7 @@ class DateTimeWidgetTest extends TestCase
             'day' => false,
             'hour' => [
                 'start' => 8,
-                'end' => 16
+                'end' => 16,
             ],
             'minute' => false,
             'second' => false,
@@ -675,7 +675,7 @@ class DateTimeWidgetTest extends TestCase
             'day' => false,
             'hour' => [
                 'format' => 24,
-                'data-foo' => 'test'
+                'data-foo' => 'test',
             ],
             'minute' => false,
             'second' => false,
@@ -748,7 +748,7 @@ class DateTimeWidgetTest extends TestCase
             'day' => false,
             'hour' => [
                 'format' => 12,
-                'data-foo' => 'test'
+                'data-foo' => 'test',
             ],
             'minute' => false,
             'second' => false,
@@ -845,7 +845,7 @@ class DateTimeWidgetTest extends TestCase
             'day' => false,
             'hour' => [
                 'start' => 8,
-                'end' => 12
+                'end' => 12,
             ],
             'minute' => false,
             'second' => false,
@@ -995,7 +995,7 @@ class DateTimeWidgetTest extends TestCase
             'day' => false,
             'hour' => false,
             'minute' => [
-                'interval' => 5
+                'interval' => 5,
             ],
             'second' => false,
             'val' => $now,
@@ -1208,16 +1208,16 @@ class DateTimeWidgetTest extends TestCase
             'select' => '<select data-s="{{svar}}" name="{{name}}"{{attrs}}>{{content}}</select>',
             'option' => '<option data-o="{{ovar}}" value="{{value}}"{{attrs}}>{{text}}</option>',
             'optgroup' => '<optgroup label="{{label}}"{{attrs}}>{{content}}</optgroup>',
-            'dateWidget' => '{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}{{meridian}}{{help}}'
+            'dateWidget' => '{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}{{meridian}}{{help}}',
         ];
         $this->templates->add($templates);
         $result = $this->DateTime->render([
             'name' => 'date',
             'year' => [
-                'templateVars' => ['ovar' => 'not-default']
+                'templateVars' => ['ovar' => 'not-default'],
             ],
             'month' => [
-                'names' => true
+                'names' => true,
             ],
             'hour' => false,
             'minute' => false,
@@ -1227,7 +1227,7 @@ class DateTimeWidgetTest extends TestCase
                 'svar' => 's-val',
                 'ovar' => 'o-val',
                 'help' => 'some help',
-            ]
+            ],
         ], $this->context);
 
         $this->assertContains('<option data-o="not-default" value="2015">2015</option>', $result);
@@ -1256,7 +1256,7 @@ class DateTimeWidgetTest extends TestCase
 
         $data = [
             'name' => 'date',
-            'hour' => ['format' => 24]
+            'hour' => ['format' => 24],
         ];
         $result = $this->DateTime->secureFields($data);
         $this->assertEquals($expected, $result, 'No meridian on 24hr input');
@@ -1268,14 +1268,14 @@ class DateTimeWidgetTest extends TestCase
             'day' => false,
             'hour' => [
                 'format' => 12,
-                'data-foo' => 'test'
+                'data-foo' => 'test',
             ],
             'minute' => false,
             'second' => false,
         ];
         $result = $this->DateTime->secureFields($data);
         $expected = [
-            'date[hour]', 'date[meridian]'
+            'date[hour]', 'date[meridian]',
         ];
         $this->assertEquals($expected, $result);
     }

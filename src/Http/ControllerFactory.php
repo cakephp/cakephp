@@ -81,7 +81,8 @@ class ControllerFactory
         // Disallow plugin short forms, / and \\ from
         // controller names as they allow direct references to
         // be created.
-        if (strpos($controller, '\\') !== false ||
+        if (
+            strpos($controller, '\\') !== false ||
             strpos($controller, '/') !== false ||
             strpos($controller, '.') !== false ||
             $firstChar === strtolower($firstChar)
@@ -105,7 +106,7 @@ class ControllerFactory
             'class' => $request->getParam('controller'),
             'plugin' => $request->getParam('plugin'),
             'prefix' => $request->getParam('prefix'),
-            '_ext' => $request->getParam('_ext')
+            '_ext' => $request->getParam('_ext'),
         ]);
     }
 }
