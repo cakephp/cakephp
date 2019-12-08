@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <phpunit
     colors="true"
-    processIsolation="false"
-    stopOnFailure="false"
     bootstrap="tests/bootstrap.php"
-    backupGlobals="true"
     >
     <php>
         <ini name="memory_limit" value="-1"/>
@@ -29,7 +25,7 @@
     <listeners>
         <listener class="Cake\TestSuite\Fixture\FixtureInjector">
             <arguments>
-                <object class="Cake\TestSuite\Fixture\FixtureManager" />
+                <object class="Cake\TestSuite\Fixture\FixtureManager"/>
             </arguments>
         </listener>
     </listeners>
