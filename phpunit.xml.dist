@@ -2,6 +2,7 @@
 <phpunit
     colors="true"
     bootstrap="tests/bootstrap.php"
+    backupGlobals="true"
     >
     <php>
         <ini name="memory_limit" value="-1"/>
