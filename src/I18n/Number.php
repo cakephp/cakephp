@@ -313,9 +313,9 @@ class Number
     /**
      * Getter for default currency format
      *
-     * @return string CurrencyFormat
+     * @return string Currency Format
      */
-    public static function getDefaultCurrencyFormat($currencyFormat = null)
+    public static function getDefaultCurrencyFormat()
     {
         if (static::$_defaultCurrencyFormat === null) {
             static::$_defaultCurrencyFormat = static::FORMAT_CURRENCY;
