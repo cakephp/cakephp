@@ -49,7 +49,7 @@ class NumberTest extends TestCase
         unset($this->Number);
         I18n::setLocale($this->locale);
         Number::defaultCurrency(false);
-        Number::defaultCurrencyFormat(false);
+        Number::setDefaultCurrencyFormat();
     }
 
     /**
@@ -327,16 +327,24 @@ class NumberTest extends TestCase
     }
 
     /**
-     * Test default currency format
+     * Test get default currency format
      *
      * @return void
      */
-    public function testDefaultCurrencyFormat()
+    public function testGetDefaultCurrencyFormat()
     {
-        $this->assertEquals('currency', $this->Number->defaultCurrencyFormat());
+        $this->assertEquals('currency', $this->Number->getDefaultCurrencyFormat());
+    }
 
-        $this->Number->defaultCurrencyFormat(Number::FORMAT_CURRENCY_ACCOUNTING);
-        $this->assertEquals('currency_accounting', $this->Number->defaultCurrencyFormat());
+    /**
+     * Test set default currency format
+     *
+     * @return void
+     */
+    public function testSetDefaultCurrencyFormat()
+    {
+        $this->Number->setDefaultCurrencyFormat(Number::FORMAT_CURRENCY_ACCOUNTING);
+        $this->assertEquals('currency_accounting', $this->Number->getDefaultCurrencyFormat());
 
         $this->assertEquals('($123.45)', $this->Number->currency(-123.45));
     }
