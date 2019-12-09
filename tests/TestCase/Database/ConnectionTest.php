@@ -946,21 +946,13 @@ class ConnectionTest extends TestCase
      */
     public function testLogFunction()
     {
-        $logger = $this->getMockBuilder(QueryLogger::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->connection->setLogger($logger);
-        $logger
-            ->expects($this->once())
-            ->method('debug')
-            ->with(
-                'duration=0 rows=0 SELECT 1',
-                $this->callback(function ($context) {
-                    return $context['query'] instanceof LoggedQuery
-                        && (string)$context['query'] === 'duration=0 rows=0 SELECT 1';
-                })
-            );
+        Log::setConfig('queries', ['className' => 'Array']);
+        $this->connection->enableQueryLogging();
         $this->connection->log('SELECT 1');
+
+        $messages = Log::engine('queries')->read();
+        $this->assertCount(1, $messages);
+        $this->assertSame('duration=0 rows=0 SELECT 1', $messages[0]);
     }
 
     /**
@@ -970,6 +962,8 @@ class ConnectionTest extends TestCase
      */
     public function testLogBeginRollbackTransaction()
     {
+        Log::setConfig('queries', ['className' => 'Array']);
+
         $connection = $this
             ->getMockBuilder(Connection::class)
             ->setMethods(['connect'])
@@ -980,35 +974,14 @@ class ConnectionTest extends TestCase
         $driver = $this->getMockFormDriver();
         $connection->setDriver($driver);
 
-        $logger = $this->getMockBuilder(QueryLogger::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $connection->setLogger($logger);
-
-        $logger
-            ->expects($this->at(0))
-            ->method('debug')
-            ->with(
-                'duration=0 rows=0 BEGIN',
-                $this->callback(function ($context) {
-                    return $context['query'] instanceof LoggedQuery
-                        && (string)$context['query'] === 'duration=0 rows=0 BEGIN';
-                })
-            );
-        $logger
-            ->expects($this->at(1))
-            ->method('debug')
-            ->with(
-                'duration=0 rows=0 ROLLBACK',
-                $this->callback(function ($context) {
-                    return $context['query'] instanceof LoggedQuery
-                        && (string)$context['query'] === 'duration=0 rows=0 ROLLBACK';
-                })
-            );
-
         $connection->begin();
         $connection->begin(); //This one will not be logged
         $connection->rollback();
+
+        $messages = Log::engine('queries')->read();
+        $this->assertCount(2, $messages);
+        $this->assertSame('duration=0 rows=0 BEGIN', $messages[0]);
+        $this->assertSame('duration=0 rows=0 ROLLBACK', $messages[1]);
     }
 
     /**
@@ -1024,25 +997,15 @@ class ConnectionTest extends TestCase
             ->setConstructorArgs([['driver' => $driver]])
             ->getMock();
 
-        $logger = $this->getMockBuilder(QueryLogger::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $connection->setLogger($logger);
-
-        $logger
-            ->expects($this->at(1))
-            ->method('debug')
-            ->with(
-                'duration=0 rows=0 COMMIT',
-                $this->callback(function ($context) {
-                    return $context['query'] instanceof LoggedQuery
-                        && (string)$context['query'] === 'duration=0 rows=0 COMMIT';
-                })
-            );
-
+        Log::setConfig('queries', ['className' => 'Array']);
         $connection->enableQueryLogging(true);
         $connection->begin();
         $connection->commit();
+
+        $messages = Log::engine('queries')->read();
+        $this->assertCount(2, $messages);
+        $this->assertSame('duration=0 rows=0 BEGIN', $messages[0]);
+        $this->assertSame('duration=0 rows=0 COMMIT', $messages[1]);
     }
 
     /**
