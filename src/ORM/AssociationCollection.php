@@ -340,7 +340,7 @@ class AssociationCollection implements IteratorAggregate
      * @param array $options The options used in the delete operation.
      * @return \Cake\ORM\Association[]
      */
-    protected function _getNoCascadeItems(EntityInterface $entity, array $options)
+    protected function _getNoCascadeItems(EntityInterface $entity, array $options): array
     {
         $noCascade = [];
         foreach ($this->_items as $assoc) {

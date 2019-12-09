@@ -31,16 +31,6 @@ parameters:
 			path: src/Cache/CacheEngine.php
 
 		-
-			message: "#^Array \\(array\\<string, int\\>\\) does not accept int\\.$#"
-			count: 1
-			path: src/Cache/Engine/MemcachedEngine.php
-
-		-
-			message: "#^Array \\(array\\<string, int\\>\\) does not accept key 'msgpack'\\.$#"
-			count: 1
-			path: src/Cache/Engine/MemcachedEngine.php
-
-		-
 			message: "#^Access to undefined constant Memcached\\:\\:OPT_CLIENT_MODE\\.$#"
 			count: 1
 			path: src/Cache/Engine/MemcachedEngine.php
@@ -51,6 +41,11 @@ parameters:
 			path: src/Cache/Engine/MemcachedEngine.php
 
 		-
+			message: "#^Parameter \\#1 \\$iterator of class LimitIterator constructor expects Iterator, Countable&Traversable given\\.$#"
+			count: 2
+			path: src/Collection/Collection.php
+
+		-
 			message: "#^Parameter \\#1 \\$it of method AppendIterator\\:\\:append\\(\\) expects Iterator, Traversable given\\.$#"
 			count: 2
 			path: src/Collection/Collection.php
@@ -59,6 +54,11 @@ parameters:
 			message: "#^Strict comparison using \\=\\=\\= between class\\-string\\<ArrayObject\\> and 'ArrayIterator' will always evaluate to false\\.$#"
 			count: 1
 			path: src/Collection/Collection.php
+
+		-
+			message: "#^Parameter \\#1 \\$iterator of class LimitIterator constructor expects Iterator, Countable&Traversable given\\.$#"
+			count: 2
+			path: src/Collection/Iterator/TreeIterator.php
 
 		-
 			message: "#^Parameter \\#1 \\$it of method AppendIterator\\:\\:append\\(\\) expects Iterator, Traversable given\\.$#"
@@ -71,6 +71,11 @@ parameters:
 			path: src/Collection/Iterator/TreeIterator.php
 
 		-
+			message: "#^Parameter \\#1 \\$iterator of class LimitIterator constructor expects Iterator, Countable&Traversable given\\.$#"
+			count: 2
+			path: src/Collection/Iterator/TreePrinter.php
+
+		-
 			message: "#^Parameter \\#1 \\$it of method AppendIterator\\:\\:append\\(\\) expects Iterator, Traversable given\\.$#"
 			count: 2
 			path: src/Collection/Iterator/TreePrinter.php
@@ -81,6 +86,11 @@ parameters:
 			path: src/Collection/Iterator/TreePrinter.php
 
 		-
+			message: "#^Parameter \\#1 \\$iterator of class LimitIterator constructor expects Iterator, Countable&Traversable given\\.$#"
+			count: 2
+			path: src/Collection/Iterator/ZipIterator.php
+
+		-
 			message: "#^Parameter \\#1 \\$it of method AppendIterator\\:\\:append\\(\\) expects Iterator, Traversable given\\.$#"
 			count: 2
 			path: src/Collection/Iterator/ZipIterator.php
@@ -89,6 +99,11 @@ parameters:
 			message: "#^Strict comparison using \\=\\=\\= between class\\-string\\<ArrayObject\\> and 'ArrayIterator' will always evaluate to false\\.$#"
 			count: 1
 			path: src/Collection/Iterator/ZipIterator.php
+
+		-
+			message: "#^Parameter \\#1 \\$iterator of class LimitIterator constructor expects Iterator, Countable&Traversable given\\.$#"
+			count: 2
+			path: src/ORM/ResultSet.php
 
 		-
 			message: "#^Parameter \\#1 \\$it of method AppendIterator\\:\\:append\\(\\) expects Iterator, Traversable given\\.$#"
@@ -154,11 +169,6 @@ parameters:
 			message: "#^Strict comparison using \\=\\=\\= between int and null will always evaluate to false\\.$#"
 			count: 1
 			path: src/Console/CommandRunner.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: src/Console/ConsoleInputSubcommand.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
@@ -406,59 +416,9 @@ parameters:
 			path: src/Database/Query.php
 
 		-
-			message: "#^Return type \\(Cake\\\\Database\\\\StatementInterface\\) of method Cake\\\\Database\\\\Query\\:\\:getIterator\\(\\) should be compatible with return type \\(Traversable\\<mixed, mixed\\>\\) of method IteratorAggregate\\<mixed,mixed\\>\\:\\:getIterator\\(\\)$#"
-			count: 1
-			path: src/Database/Query.php
-
-		-
-			message: "#^PHPDoc tag @uses has invalid value \\(\\\\Cake\\\\Database\\\\Schema\\\\BaseSchema\\:\\:convertColumnDescription\\)\\: Unexpected token \"\\:\\:\", expected '\\<' at offset 683$#"
-			count: 1
-			path: src/Database/Schema/Collection.php
-
-		-
-			message: "#^PHPDoc tag @uses has invalid value \\(\\\\Cake\\\\Database\\\\Schema\\\\BaseSchema\\:\\:convertForeignKeyDescription\\)\\: Unexpected token \"\\:\\:\", expected '\\<' at offset 826$#"
-			count: 1
-			path: src/Database/Schema/Collection.php
-
-		-
-			message: "#^PHPDoc tag @uses has invalid value \\(\\\\Cake\\\\Database\\\\Schema\\\\BaseSchema\\:\\:convertIndexDescription\\)\\: Unexpected token \"\\:\\:\", expected '\\<' at offset 755$#"
-			count: 1
-			path: src/Database/Schema/Collection.php
-
-		-
-			message: "#^PHPDoc tag @uses has invalid value \\(\\\\Cake\\\\Database\\\\Schema\\\\BaseSchema\\:\\:convertOptionsDescription\\)\\: Unexpected token \"\\:\\:\", expected '\\<' at offset 902$#"
-			count: 1
-			path: src/Database/Schema/Collection.php
-
-		-
-			message: "#^PHPDoc tag @uses has invalid value \\(\\\\Cake\\\\Database\\\\Schema\\\\BaseSchema\\:\\:describeColumnSql\\)\\: Unexpected token \"\\:\\:\", expected '\\<' at offset 419$#"
-			count: 1
-			path: src/Database/Schema/Collection.php
-
-		-
-			message: "#^PHPDoc tag @uses has invalid value \\(\\\\Cake\\\\Database\\\\Schema\\\\BaseSchema\\:\\:describeForeignKeySql\\)\\: Unexpected token \"\\:\\:\", expected '\\<' at offset 548$#"
-			count: 1
-			path: src/Database/Schema/Collection.php
-
-		-
-			message: "#^PHPDoc tag @uses has invalid value \\(\\\\Cake\\\\Database\\\\Schema\\\\BaseSchema\\:\\:describeIndexSql\\)\\: Unexpected token \"\\:\\:\", expected '\\<' at offset 484$#"
-			count: 1
-			path: src/Database/Schema/Collection.php
-
-		-
-			message: "#^PHPDoc tag @uses has invalid value \\(\\\\Cake\\\\Database\\\\Schema\\\\BaseSchema\\:\\:describeOptionsSql\\)\\: Unexpected token \"\\:\\:\", expected '\\<' at offset 617$#"
-			count: 1
-			path: src/Database/Schema/Collection.php
-
-		-
 			message: "#^Access to undefined constant PDO\\:\\:SQLSRV_ENCODING_BINARY\\.$#"
 			count: 1
 			path: src/Database/Statement/SqlserverStatement.php
-
-		-
-			message: "#^Return type \\(Cake\\\\Database\\\\StatementInterface\\) of method Cake\\\\Database\\\\Statement\\\\StatementDecorator\\:\\:getIterator\\(\\) should be compatible with return type \\(Traversable\\<mixed, mixed\\>\\) of method IteratorAggregate\\<mixed,mixed\\>\\:\\:getIterator\\(\\)$#"
-			count: 1
-			path: src/Database/Statement/StatementDecorator.php
 
 		-
 			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
@@ -591,7 +551,27 @@ parameters:
 			path: src/Http/Middleware/CspMiddleware.php
 
 		-
+			message: "#^Method Cake\\\\Http\\\\Response\\:\\:withDisabledCache\\(\\) should return static\\(Cake\\\\Http\\\\Response\\) but returns Cake\\\\Http\\\\Response\\.$#"
+			count: 1
+			path: src/Http/Response.php
+
+		-
+			message: "#^Method Cake\\\\Http\\\\Response\\:\\:withCache\\(\\) should return static\\(Cake\\\\Http\\\\Response\\) but returns Cake\\\\Http\\\\Response\\.$#"
+			count: 1
+			path: src/Http/Response.php
+
+		-
+			message: "#^Method Cake\\\\Http\\\\Response\\:\\:withNotModified\\(\\) should return static\\(Cake\\\\Http\\\\Response\\) but returns Cake\\\\Http\\\\Response\\.$#"
+			count: 1
+			path: src/Http/Response.php
+
+		-
 			message: "#^Call to an undefined method DateTimeInterface\\:\\:setTimezone\\(\\)\\.$#"
+			count: 1
+			path: src/Http/Response.php
+
+		-
+			message: "#^Method Cake\\\\Http\\\\Response\\:\\:withFile\\(\\) should return static\\(Cake\\\\Http\\\\Response\\) but returns Cake\\\\Http\\\\Response\\.$#"
 			count: 1
 			path: src/Http/Response.php
 
@@ -699,6 +679,11 @@ parameters:
 			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
 			count: 1
 			path: src/I18n/TranslatorFactory.php
+
+		-
+			message: "#^PHPDoc tag @var has invalid value \\(\\\\Psr\\\\SimpleCache\\\\CacheInterface&\\\\Cake\\\\Cache\\\\CacheEngineInterface\\|null\\)\\: Unexpected token \"\\|\", expected TOKEN_OTHER at offset 175$#"
+			count: 1
+			path: src/I18n/TranslatorRegistry.php
 
 		-
 			message: "#^Method Cake\\\\Mailer\\\\Email\\:\\:deliver\\(\\) should return static\\(Cake\\\\Mailer\\\\Email\\) but returns Cake\\\\Mailer\\\\Email\\.$#"
@@ -817,11 +802,6 @@ parameters:
 
 		-
 			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
-			count: 1
-			path: src/ORM/Table.php
-
-		-
-			message: "#^Parameter \\#1 \\$entities of method Cake\\\\ORM\\\\Marshaller\\:\\:mergeMany\\(\\) expects iterable\\<Cake\\\\Datasource\\\\EntityInterface\\>&Traversable\\<mixed, Cake\\\\Datasource\\\\EntityInterface\\>, iterable\\<Cake\\\\Datasource\\\\EntityInterface\\>&Traversable given\\.$#"
 			count: 1
 			path: src/ORM/Table.php
 
@@ -1014,11 +994,6 @@ parameters:
 			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
 			count: 1
 			path: src/View/ViewBuilder.php
-
-		-
-			message: "#^Call to function is_int\\(\\) with string will always evaluate to false\\.$#"
-			count: 1
-			path: src/View/Widget/DateTimeWidget.php
 
 		-
 			message: "#^Unreachable statement \\- code above always terminates\\.$#"

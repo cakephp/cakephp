@@ -46,7 +46,7 @@ class ConsoleInputSubcommand
     /**
      * The ConsoleOptionParser for this subcommand.
      *
-     * @var \Cake\Console\ConsoleOptionParser
+     * @var \Cake\Console\ConsoleOptionParser|null
      */
     protected $_parser;
 
@@ -124,11 +124,7 @@ class ConsoleInputSubcommand
      */
     public function parser(): ?ConsoleOptionParser
     {
-        if ($this->_parser instanceof ConsoleOptionParser) {
-            return $this->_parser;
-        }
-
-        return null;
+        return $this->_parser;
     }
 
     /**

@@ -139,8 +139,7 @@ class CommandScanner
             ) {
                 continue;
             }
-            if (is_subclass_of($class, CommandInterface::class)) {
-                /** @var \Cake\Console\BaseCommand $class */
+            if (is_subclass_of($class, BaseCommand::class)) {
                 $name = $class::defaultName();
             }
             $shells[$path . $file] = [

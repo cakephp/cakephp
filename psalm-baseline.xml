@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="3.6.1@7857b07f91bed5afae98574243fed7ec4088d623">
+<files psalm-version="3.7.2@d9cae720c1af31db9ba27c2bc1fcf9b0dd092fb0">
   <file src="src/Command/CompletionCommand.php">
     <DeprecatedClass occurrences="1">
       <code>\Cake\Console\Shell</code>
@@ -24,8 +24,10 @@
   </file>
   <file src="src/Console/ShellDispatcher.php">
     <DeprecatedClass occurrences="5">
+      <code>Shell</code>
       <code>\Cake\Console\Shell</code>
       <code>Shell</code>
+      <code>\Cake\Console\Shell</code>
       <code>$instance</code>
     </DeprecatedClass>
   </file>
@@ -33,7 +35,9 @@
     <DeprecatedClass occurrences="5">
       <code>TaskRegistry</code>
       <code>\Cake\Console\Shell</code>
+      <code>\Cake\Console\Shell</code>
       <code>Shell</code>
+      <code>\Cake\Console\Shell</code>
     </DeprecatedClass>
   </file>
   <file src="src/Datasource/ModelAwareTrait.php">
@@ -81,8 +85,8 @@
     <DeprecatedClass occurrences="5">
       <code>ShellDispatcher</code>
       <code>parent::__construct($args, $bootstrap)</code>
-      <code>\Cake\Console\Shell</code>
       <code>Shell</code>
+      <code>\Cake\Console\Shell</code>
       <code>$instance</code>
     </DeprecatedClass>
   </file>
@@ -94,5 +98,10 @@
       <code>addTestFile</code>
       <code>addTestFile</code>
     </InternalMethod>
+  </file>
+  <file src="src/View/Helper/NumberHelper.php">
+    <DeprecatedMethod occurrences="1">
+      <code>defaultCurrency</code>
+    </DeprecatedMethod>
   </file>
 </files>
