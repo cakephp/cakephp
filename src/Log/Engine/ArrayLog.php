@@ -43,7 +43,7 @@ class ArrayLog extends BaseLog
      */
     public function log($level, $message, array $context = [])
     {
-        $this->content[] = $this->_format($message, $context);
+        $this->content[] = $level . ' ' . $this->_format($message, $context);
     }
 
     /**

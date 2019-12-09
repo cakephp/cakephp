@@ -200,8 +200,9 @@ class ErrorHandlerTest extends TestCase
         $out = $out + 1;
 
         $messages = $this->logger->read();
+        $this->assertRegExp('/^(notice|debug)/', $messages[0]);
         $this->assertStringContainsString(
-            'Notice (8): Undefined variable: out in [' . __FILE__ . ', line ' . (__LINE__ - 4) . ']' . "\n\n",
+            'Notice (8): Undefined variable: out in [' . __FILE__ . ', line ' . (__LINE__ - 5) . ']' . "\n\n",
             $messages[0]
         );
     }
@@ -221,8 +222,9 @@ class ErrorHandlerTest extends TestCase
         $out = $out + 1;
 
         $messages = $this->logger->read();
+        $this->assertRegExp('/^(notice|debug)/', $messages[0]);
         $this->assertStringContainsString(
-            'Notice (8): Undefined variable: out in [' . __FILE__ . ', line ' . (__LINE__ - 4) . ']',
+            'Notice (8): Undefined variable: out in [' . __FILE__ . ', line ' . (__LINE__ - 5) . ']',
             $messages[0]
         );
         $this->assertStringContainsString('Trace:', $messages[0]);
@@ -262,6 +264,7 @@ class ErrorHandlerTest extends TestCase
         $this->assertStringContainsString('Kaboom!', (string)$errorHandler->response->getBody(), 'message missing.');
 
         $messages = $this->logger->read();
+        $this->assertRegExp('/^error/', $messages[0]);
         $this->assertStringContainsString('[Cake\Http\Exception\NotFoundException] Kaboom!', $messages[0]);
         $this->assertStringContainsString(
             str_replace('/', DS, 'vendor/phpunit/phpunit/src/Framework/TestCase.php'),
@@ -275,6 +278,7 @@ class ErrorHandlerTest extends TestCase
         $errorHandler->handleException($error);
 
         $messages = $this->logger->read();
+        $this->assertRegExp('/^error/', $messages[1]);
         $this->assertStringContainsString('[Cake\Http\Exception\NotFoundException] Kaboom!', $messages[1]);
         $this->assertStringNotContainsString(
             str_replace('/', DS, 'vendor/phpunit/phpunit/src/Framework/TestCase.php'), 
@@ -301,6 +305,7 @@ class ErrorHandlerTest extends TestCase
         $errorHandler->handleException($error);
 
         $messages = $this->logger->read();
+        $this->assertRegExp('/^error/', $messages[0]);
         $this->assertStringContainsString(
             '[Cake\Http\Exception\MissingControllerException] Controller class Derp could not be found.',
             $messages[0]
@@ -366,6 +371,7 @@ class ErrorHandlerTest extends TestCase
 
         $messages = $this->logger->read();
         $this->assertCount(1, $messages);
+        $this->assertRegExp('/^error/', $messages[0]);
         $this->assertStringContainsString(
             '[Cake\Http\Exception\ForbiddenException] Fooled you!',
             $messages[0]
