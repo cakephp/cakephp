@@ -22,7 +22,6 @@ use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Exception\NestedTransactionRollbackException;
-use Cake\Database\Log\LoggedQuery;
 use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
 use Cake\Database\Schema\CachedCollection;
@@ -55,17 +54,29 @@ class ConnectionTest extends TestCase
      */
     protected $nestedTransactionStates = [];
 
+
+    /**
+     * @var bool|null
+     */
+    protected $logState;
+
     public function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
+
+        $this->logState = $this->connection->isQueryLoggingEnabled();
+        $this->connection->disableQueryLogging();
+
         static::setAppNamespace();
     }
 
     public function tearDown(): void
     {
-        Log::reset();
         $this->connection->disableSavePoints();
+        $this->connection->enableQueryLogging($this->logState);
+
+        Log::reset();
         unset($this->connection);
         parent::tearDown();
     }

@@ -16,7 +16,6 @@ namespace Cake\Test\TestCase\Mailer;
 
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
-use Cake\Log\Engine\BaseLog;
 use Cake\Log\Log;
 use Cake\Mailer\AbstractTransport;
 use Cake\Mailer\Exception\MissingActionException;

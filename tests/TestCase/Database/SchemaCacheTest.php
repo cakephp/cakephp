@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database;
 
 use Cake\Cache\Cache;
-use Cake\Cache\Engine\NullEngine;
 use Cake\Database\Schema\CachedCollection;
 use Cake\Database\SchemaCache;
 use Cake\Datasource\ConnectionManager;

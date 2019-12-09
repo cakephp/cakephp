@@ -26,7 +26,6 @@ use Cake\Http\ServerRequest;
 use Cake\Log\Log;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
-use Psr\Log\LoggerInterface;
 use RuntimeException;
 use TestApp\Error\TestErrorHandler;
 
@@ -281,7 +280,7 @@ class ErrorHandlerTest extends TestCase
         $this->assertRegExp('/^error/', $messages[1]);
         $this->assertStringContainsString('[Cake\Http\Exception\NotFoundException] Kaboom!', $messages[1]);
         $this->assertStringNotContainsString(
-            str_replace('/', DS, 'vendor/phpunit/phpunit/src/Framework/TestCase.php'), 
+            str_replace('/', DS, 'vendor/phpunit/phpunit/src/Framework/TestCase.php'),
             $messages[1]
         );
     }
