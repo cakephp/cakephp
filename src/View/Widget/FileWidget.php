@@ -21,8 +21,8 @@ use Cake\View\Form\ContextInterface;
 /**
  * Input widget class for generating a file upload control.
  *
- * This class is intended as an internal implementation detail
- * of Cake\View\Helper\FormHelper and is not intended for direct use.
+ * This class is usually used internally by `Cake\View\Helper\FormHelper`,
+ * it but can be used to generate standalone file upload controls.
  */
 class FileWidget extends BasicWidget
 {

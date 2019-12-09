@@ -24,8 +24,8 @@ use Traversable;
 /**
  * Input widget class for generating a set of radio buttons.
  *
- * This class is intended as an internal implementation detail
- * of Cake\View\Helper\FormHelper and is not intended for direct use.
+ * This class is usually used internally by `Cake\View\Helper\FormHelper`,
+ * it but can be used to generate standalone radio buttons.
  */
 class RadioWidget extends BasicWidget
 {

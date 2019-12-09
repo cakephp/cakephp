@@ -20,6 +20,9 @@ use Cake\View\Form\ContextInterface;
 
 /**
  * Input widget for creating checkbox widgets.
+ *
+ * This class is usually used internally by `Cake\View\Helper\FormHelper`,
+ * it but can be used to generate standalone checkboxes.
  */
 class CheckboxWidget extends BasicWidget
 {
