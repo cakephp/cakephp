@@ -28,17 +28,6 @@ use Psr\Log\LogLevel;
 class QueryLoggerTest extends TestCase
 {
     /**
-     * Set up
-     *
-     * @return void
-     */
-    public function setUp(): void
-    {
-        parent::setUp();
-        Log::reset();
-    }
-
-    /**
      * Tear down
      *
      * @return void
@@ -46,7 +35,8 @@ class QueryLoggerTest extends TestCase
     public function tearDown(): void
     {
         parent::tearDown();
-        Log::reset();
+        Log::drop('queryLoggerTest');
+        Log::drop('queryLoggerTest2');
     }
 
     /**
@@ -62,19 +52,17 @@ class QueryLoggerTest extends TestCase
         $query->query = 'SELECT a FROM b where a = ? AND b = ? AND c = ?';
         $query->params = ['string', '3', null];
 
-        $this->getMockBuilder('Cake\Log\Engine\BaseLog')
-            ->setMethods(['log'])
-            ->setConstructorArgs(['scopes' => ['queriesLog']])
-            ->getMock();
-        Log::engine('queryLoggerTest');
-
-        $engine2 = $this->getMockBuilder('Cake\Log\Engine\BaseLog')
-            ->setMethods(['log'])
-            ->setConstructorArgs(['scopes' => ['foo']])
-            ->getMock();
-        Log::engine('queryLoggerTest2');
-
-        $engine2->expects($this->never())->method('log');
+        Log::setConfig('queryLoggerTest', [
+            'className' => 'Array',
+            'scopes' => ['queriesLog'],
+        ]);
+        Log::setConfig('queryLoggerTest2', [
+            'className' => 'Array',
+            'scopes' => ['foo'],
+        ]);
         $logger->log(LogLevel::DEBUG, (string)$query, compact('query'));
+
+        $this->assertCount(1, Log::engine('queryLoggerTest')->read());
+        $this->assertCount(0, Log::engine('queryLoggerTest2')->read());
     }
 }

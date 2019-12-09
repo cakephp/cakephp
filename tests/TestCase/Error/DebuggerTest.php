@@ -440,29 +440,21 @@ TEXT;
      */
     public function testLog()
     {
-        $mock = $this->getMockBuilder('Cake\Log\Engine\BaseLog')
-            ->setMethods(['log'])
-            ->getMock();
-        Log::setConfig('test', ['engine' => $mock]);
-
-        $mock->expects($this->at(0))
-            ->method('log')
-            ->with('debug', $this->logicalAnd(
-                $this->stringContains('DebuggerTest::testLog'),
-                $this->stringContains('cool')
-            ));
-
-        $mock->expects($this->at(1))
-            ->method('log')
-            ->with('debug', $this->logicalAnd(
-                $this->stringContains('DebuggerTest::testLog'),
-                $this->stringContains('[main]'),
-                $this->stringContains("'whatever',"),
-                $this->stringContains("'here'")
-            ));
-
+        Log::setConfig('test', [
+            'className' => 'Array',
+        ]);
         Debugger::log('cool');
         Debugger::log(['whatever', 'here']);
+
+        $messages = Log::engine('test')->read();
+        $this->assertCount(2, $messages);
+        $this->assertStringContainsString('DebuggerTest::testLog', $messages[0]);
+        $this->assertStringContainsString('cool', $messages[0]);
+
+        $this->assertStringContainsString('DebuggerTest::testLog', $messages[1]);
+        $this->assertStringContainsString('[main]', $messages[1]);
+        $this->assertStringContainsString("'whatever'", $messages[1]);
+        $this->assertStringContainsString("'here'", $messages[1]);
 
         Log::drop('test');
     }
@@ -474,23 +466,18 @@ TEXT;
      */
     public function testLogDepth()
     {
-        $mock = $this->getMockBuilder('Cake\Log\Engine\BaseLog')
-            ->setMethods(['log'])
-            ->getMock();
-        Log::setConfig('test', ['engine' => $mock]);
-
-        $mock->expects($this->at(0))
-            ->method('log')
-            ->with('debug', $this->logicalAnd(
-                $this->stringContains('DebuggerTest::testLog'),
-                $this->stringContains('test'),
-                $this->logicalNot($this->stringContains('val'))
-            ));
-
+        Log::setConfig('test', [
+            'className' => 'Array',
+        ]);
         $val = [
             'test' => ['key' => 'val'],
         ];
         Debugger::log($val, 'debug', 0);
+
+        $messages = Log::engine('test')->read();
+        $this->assertStringContainsString('DebuggerTest::testLogDepth', $messages[0]);
+        $this->assertStringContainsString('test', $messages[0]);
+        $this->assertStringNotContainsString('val', $messages[0]);
     }
 
     /**
