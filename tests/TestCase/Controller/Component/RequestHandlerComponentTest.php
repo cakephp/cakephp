@@ -29,6 +29,7 @@ use Cake\TestSuite\TestCase;
 use Cake\View\AjaxView;
 use Cake\View\JsonView;
 use Cake\View\XmlView;
+use PHPUnit\Framework\Error\Deprecated;
 use TestApp\Controller\Component\RequestHandlerExtComponent;
 use TestApp\Controller\RequestHandlerTestController;
 use TestApp\View\AppView;
@@ -81,10 +82,7 @@ class RequestHandlerComponentTest extends TestCase
     protected function _init(): void
     {
         $request = new ServerRequest(['url' => 'controller_posts/index']);
-        /** @var \Cake\Http\Response|\PHPUnit\Framework\MockObject\MockObject $response */
-        $response = $this->getMockBuilder(Response::class)
-            ->setMethods(['_sendHeader', 'stop'])
-            ->getMock();
+        $response = new Response();
         $this->Controller = new RequestHandlerTestController($request, $response);
         $this->RequestHandler = $this->Controller->components()->load(RequestHandlerExtComponent::class);
         $this->request = $request;
@@ -307,15 +305,10 @@ class RequestHandlerComponentTest extends TestCase
         $extensions = Router::extensions();
         Router::extensions('xml', false);
 
-        /** @var \Cake\Http\ServerRequest|\PHPUnit\Framework\MockObject\MockObject $request */
-        $request = $this->getMockBuilder(ServerRequest::class)
-            ->setMethods(['accepts'])
-            ->getMock();
-
+        $request = new ServerRequest([
+            'environment' => ['HTTP_ACCEPT' => 'text/plain'],
+        ]);
         $this->Controller->setRequest($request);
-        $this->Controller->getRequest()->expects($this->any())
-            ->method('accepts')
-            ->will($this->returnValue(['application/json']));
 
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
         $this->assertNull($this->RequestHandler->ext);
@@ -335,11 +328,23 @@ class RequestHandlerComponentTest extends TestCase
         ]);
         $this->Controller->setRequest($request->withMethod('POST'));
 
-        $this->deprecated(function () {
-            $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
-        });
+        $this->expectException(Deprecated::class);
+        $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
+    }
 
-        $this->assertEmpty($request->getData());
+    /**
+     * Test that startup() throws deprecation warning if input data is available and request data is not populated.
+     *
+     * @return void
+     */
+    public function testInitializeInputNoWarningEmptyJsonObject()
+    {
+        $request = new ServerRequest([
+            'input' => json_encode([]),
+        ]);
+        $this->Controller->setRequest($request->withMethod('POST'));
+        $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
+        $this->assertSame([], $request->getParsedBody());
     }
 
     /**
@@ -877,15 +882,13 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testCheckNotModifiedNoInfo(): void
     {
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods(['notModified', 'stop'])
-            ->getMock();
-        $response->expects($this->never())->method('notModified');
+        $response = new Response();
         $this->Controller->setResponse($response);
 
         $event = new Event('Controller.beforeRender', $this->Controller);
         $requestHandler = new RequestHandlerComponent($this->Controller->components());
         $this->assertNull($requestHandler->beforeRender($event));
+        $this->assertSame(200, $response->getStatusCode());
     }
 
     /**

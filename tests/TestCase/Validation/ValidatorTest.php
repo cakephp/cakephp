@@ -873,152 +873,32 @@ class ValidatorTest extends TestCase
     }
 
     /**
-     * Tests the notEmptyString method
+     * Test allowEmptyString with callback
      *
-     * @return void
      */
-    public function testNotEmptyString()
+    public function testAllowEmptyStringCallbackWhen()
     {
         $validator = new Validator();
-        $validator->notEmptyString('title', 'not empty');
-
-        $this->assertFalse($validator->isEmptyAllowed('title', true));
-        $this->assertFalse($validator->isEmptyAllowed('title', false));
-
-        $data = ['title' => '0'];
-        $this->assertEmpty($validator->validate($data));
-
-        $data = ['title' => 0];
-        $this->assertEmpty($validator->validate($data), 'empty ok on create');
-        $this->assertEmpty($validator->validate($data, false), 'empty ok on update');
-
-        $data = ['title' => []];
-        $this->assertEmpty($validator->validate($data), 'empty array is no good');
-
-        $expected = [
-            'title' => ['_empty' => 'not empty'],
-        ];
-        $data = ['title' => ''];
-        $this->assertSame($expected, $validator->validate($data, true));
-    }
-
-    /**
-     * Test notEmptyString with explicit create.
-     *
-     * @return void
-     */
-    public function testNotEmptyStringCreate()
-    {
-        $validator = new Validator();
-        $validator->notEmptyString('title', 'message', 'create');
-        $this->assertFalse($validator->isEmptyAllowed('title', true));
-        $this->assertTrue($validator->isEmptyAllowed('title', false));
-
-        $expected = [
-            'title' => ['_empty' => 'message'],
-        ];
-        $data = ['title' => null];
-        $this->assertSame($expected, $validator->validate($data, true));
-
-        $data = ['title' => ''];
-        $this->assertSame($expected, $validator->validate($data, true));
-
-        $data = ['title' => ''];
-        $this->assertEmpty($validator->validate($data, false), 'empty allowed on update');
-    }
-
-    /**
-     * Test notEmptyString with callback
-     *
-     * @return void
-     */
-    public function testNotEmptyStringCallbackWhen()
-    {
-        $validator = new Validator();
-        $validator->notEmptyString('title', 'message', function ($context) {
-            if (!isset($context['data']['emptyOk'])) {
-                return true;
+        $validator->allowEmptyString(
+            'title',
+            'very required',
+            function ($context) {
+                return $context['data']['otherField'] === true;
             }
+        )
+            ->scalar('title');
 
-            return $context['data']['emptyOk'];
-        });
-
-        $error = [
-            'title' => ['_empty' => 'message'],
+        $data = [
+            'title' => '',
+            'otherField' => false,
         ];
-        $data = ['title' => ''];
-        $this->assertSame($error, $validator->validate($data));
+        $this->assertNotEmpty($validator->validate($data));
 
-        $data = ['title' => '', 'emptyOk' => false];
+        $data = [
+            'title' => '',
+            'otherField' => true,
+        ];
         $this->assertEmpty($validator->validate($data));
-
-        $data = ['title' => '', 'emptyOk' => true];
-        $this->assertSame($error, $validator->validate($data));
-    }
-
-    /**
-     * Tests the allowEmptyArray method
-     *
-     * @return void
-     */
-    public function testAllowEmptyArray()
-    {
-        $validator = new Validator();
-        $validator->allowEmptyArray('items')
-            ->hasAtMost('items', 3);
-
-        $this->assertTrue($validator->field('items')->isEmptyAllowed());
-
-        $data = [
-            'items' => '',
-        ];
-        $result = $validator->validate($data);
-        $this->assertEmpty($result);
-
-        $data = [
-            'items' => null,
-        ];
-        $result = $validator->validate($data);
-        $this->assertEmpty($result);
-
-        $data = [
-            'items' => [],
-        ];
-        $result = $validator->validate($data);
-        $this->assertEmpty($result);
-
-        $data = [
-            'items' => [1, 2, 3, 4, 5],
-        ];
-        $expected = [
-            'items' => [
-                'hasAtMost' => 'The provided value is invalid',
-            ],
-        ];
-        $result = $validator->validate($data);
-        $this->assertSame($expected, $result);
-    }
-
-    /**
-     * Test allowEmptyArray with update mode
-     *
-     * @return void
-     */
-    public function testAllowEmptyArrayUpdate()
-    {
-        $validator = new Validator();
-        $validator->allowEmptyArray('items', 'message', 'update');
-        $this->assertFalse($validator->isEmptyAllowed('items', true));
-        $this->assertTrue($validator->isEmptyAllowed('items', false));
-
-        $data = [
-            'items' => null,
-        ];
-        $expected = [
-            'items' => ['_empty' => 'message'],
-        ];
-        $this->assertSame($expected, $validator->validate($data, true));
-        $this->assertEmpty($validator->validate($data, false));
     }
 
     /**

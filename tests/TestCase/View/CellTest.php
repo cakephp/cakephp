@@ -17,6 +17,8 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\View;
 
 use Cake\Cache\Cache;
+use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Cake\View\Cell;
 use Cake\View\Exception\MissingCellTemplateException;
@@ -47,8 +49,8 @@ class CellTest extends TestCase
         parent::setUp();
         static::setAppNamespace();
         $this->loadPlugins(['TestPlugin', 'TestTheme']);
-        $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
-        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
+        $request = new ServerRequest();
+        $response = new Response();
         $this->View = new View($request, $response);
     }
 
@@ -351,8 +353,8 @@ class CellTest extends TestCase
      */
     public function testCellInheritsHelperConfig()
     {
-        $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
-        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
+        $request = new ServerRequest();
+        $response = new Response();
         $helpers = ['Url', 'Form', 'Banana'];
 
         $view = new View($request, $response, null, ['helpers' => $helpers]);
@@ -368,8 +370,8 @@ class CellTest extends TestCase
      */
     public function testCellInheritsCustomViewClass()
     {
-        $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
-        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
+        $request = new ServerRequest();
+        $response = new Response();
         $view = new CustomJsonView($request, $response);
         $view->setTheme('Pretty');
         $cell = $view->cell('Articles');
@@ -384,8 +386,8 @@ class CellTest extends TestCase
      */
     public function testCellInheritsController()
     {
-        $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
-        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
+        $request = new ServerRequest();
+        $response = new Response();
         $controller = new CellTraitTestController($request, $response);
         $controller->viewBuilder()->setTheme('Pretty');
         $controller->viewBuilder()->setClassName('Json');

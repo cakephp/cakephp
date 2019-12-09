@@ -810,7 +810,7 @@ class ExceptionRendererTest extends TestCase
             ->setMethods(['render'])
             ->getMock();
         $controller->setPlugin('TestPlugin');
-        $controller->request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
+        $controller->request = new ServerRequest();
 
         $exception = new MissingPluginException(['plugin' => 'TestPlugin']);
         $controller->expects($this->once())
@@ -842,7 +842,7 @@ class ExceptionRendererTest extends TestCase
             ->setMethods(['render'])
             ->getMock();
         $controller->setPlugin('TestPlugin');
-        $controller->request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
+        $controller->request = new ServerRequest();
 
         $exception = new MissingPluginException(['plugin' => 'TestPluginTwo']);
         $controller->expects($this->once())
