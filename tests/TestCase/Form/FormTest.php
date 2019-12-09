@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Form;
 
 use Cake\Form\Form;
+use Cake\Form\Schema;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 use TestApp\Form\AppForm;
@@ -40,7 +41,7 @@ class FormTest extends TestCase
         $this->assertInstanceOf('Cake\Form\Schema', $schema);
         $this->assertSame($schema, $form->schema(), 'Same instance each time');
 
-        $schema = $this->getMockBuilder('Cake\Form\Schema')->getMock();
+        $schema = new Schema();
         $this->assertSame($schema, $form->schema($schema));
         $this->assertSame($schema, $form->schema());
 
@@ -73,7 +74,7 @@ class FormTest extends TestCase
     public function testSetValidator()
     {
         $form = new Form();
-        $validator = $this->getMockBuilder('Cake\Validation\Validator')->getMock();
+        $validator = new Validator();
 
         $form->setValidator('default', $validator);
         $this->assertSame($validator, $form->getValidator());
@@ -179,18 +180,12 @@ class FormTest extends TestCase
      */
     public function testExecuteValid()
     {
-        $form = $this->getMockBuilder('Cake\Form\Form')
-            ->setMethods(['_execute'])
-            ->getMock();
+        $form = new Form();
         $form->getValidator()
             ->add('email', 'format', ['rule' => 'email']);
         $data = [
             'email' => 'test@example.com',
         ];
-        $form->expects($this->once())
-            ->method('_execute')
-            ->with($data)
-            ->will($this->returnValue(true));
 
         $this->assertTrue($form->execute($data));
     }

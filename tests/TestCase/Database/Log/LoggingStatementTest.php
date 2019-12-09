@@ -208,9 +208,7 @@ class LoggingStatementTest extends TestCase
      */
     public function testSetAndGetLogger()
     {
-        $logger = $this->getMockBuilder(QueryLogger::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $logger = new QueryLogger();
         $st = new LoggingStatement(
             $this->getMockBuilder(StatementInterface::class)->getMock(),
             $this->getMockBuilder(DriverInterface::class)->getMock()

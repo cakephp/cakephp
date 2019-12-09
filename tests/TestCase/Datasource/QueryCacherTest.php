@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Datasource;
 use Cake\Cache\Cache;
 use Cake\Datasource\QueryCacher;
 use Cake\TestSuite\TestCase;
+use stdClass;
 
 /**
  * Query cacher test
@@ -61,7 +62,7 @@ class QueryCacherTest extends TestCase
     public function testFetchFunctionKey()
     {
         $this->_mockRead('my_key', 'A winner');
-        $query = $this->getMockBuilder('stdClass')->getMock();
+        $query = new stdClass();
 
         $cacher = new QueryCacher(function ($q) use ($query) {
             $this->assertSame($query, $q);
@@ -83,7 +84,7 @@ class QueryCacherTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Cache key functions must return a string. Got false.');
         $this->_mockRead('my_key', 'A winner');
-        $query = $this->getMockBuilder('stdClass')->getMock();
+        $query = new stdClass();
 
         $cacher = new QueryCacher(function ($q) {
             return false;
@@ -101,7 +102,7 @@ class QueryCacherTest extends TestCase
     {
         $this->_mockRead('my_key', 'A winner');
         $cacher = new QueryCacher('my_key', 'queryCache');
-        $query = $this->getMockBuilder('stdClass')->getMock();
+        $query = new stdClass();
         $result = $cacher->fetch($query);
         $this->assertSame('A winner', $result);
     }
@@ -115,7 +116,7 @@ class QueryCacherTest extends TestCase
     {
         $this->_mockRead('my_key', 'A winner');
         $cacher = new QueryCacher('my_key', $this->engine);
-        $query = $this->getMockBuilder('stdClass')->getMock();
+        $query = new stdClass();
         $result = $cacher->fetch($query);
         $this->assertSame('A winner', $result);
     }
@@ -129,7 +130,7 @@ class QueryCacherTest extends TestCase
     {
         $this->_mockRead('my_key', false);
         $cacher = new QueryCacher('my_key', $this->engine);
-        $query = $this->getMockBuilder('stdClass')->getMock();
+        $query = new stdClass();
         $result = $cacher->fetch($query);
         $this->assertNull($result, 'Cache miss should not have an isset() return.');
     }

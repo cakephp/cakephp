@@ -351,10 +351,7 @@ class SmtpTransportTest extends TestCase
      */
     public function testSendData()
     {
-        $message = $this->getMockBuilder(Message::class)
-            ->setMethods(['getBody'])
-            ->getMock();
-        /** @var \Cake\Mailer\Message $message */
+        $message = new Message();
         $message->setFrom('noreply@cakephp.org', 'CakePHP Test');
         $message->setReturnPath('pleasereply@cakephp.org', 'CakePHP Return');
         $message->setTo('cake@cakephp.org', 'CakePHP');
@@ -364,9 +361,7 @@ class SmtpTransportTest extends TestCase
         $message->setSubject('Testing SMTP');
         $date = date(DATE_RFC2822);
         $message->setHeaders(['Date' => $date]);
-        $message->expects($this->once())
-            ->method('getBody')
-            ->will($this->returnValue(['First Line', 'Second Line', '.Third Line', '']));
+        $message->setBody(['text' => "First Line\nSecond Line\n.Third Line"]);
 
         $data = "From: CakePHP Test <noreply@cakephp.org>\r\n";
         $data .= "Return-Path: CakePHP Return <pleasereply@cakephp.org>\r\n";
@@ -381,7 +376,7 @@ class SmtpTransportTest extends TestCase
         $data .= "\r\n";
         $data .= "First Line\r\n";
         $data .= "Second Line\r\n";
-        $data .= "..Third Line\r\n"; // RFC5321 4.5.2.Transparency
+        $data .= "..Third Line\r\n\r\n"; // RFC5321 4.5.2.Transparency
         $data .= "\r\n";
         $data .= "\r\n\r\n.\r\n";
 
