@@ -21,7 +21,6 @@ use Aura\Intl\FormatterLocator;
 use Aura\Intl\PackageLocator;
 use Aura\Intl\TranslatorInterface;
 use Aura\Intl\TranslatorLocator;
-use Cake\Cache\CacheEngine;
 use Closure;
 
 /**
@@ -66,7 +65,7 @@ class TranslatorRegistry extends TranslatorLocator
      * A CacheEngine object that is used to remember translator across
      * requests.
      *
-     * @var \Cake\Cache\CacheEngine|null
+     * @var \Psr\SimpleCache\CacheInterface&\Cake\Cache\CacheEngineInterface|null
      */
     protected $_cacher;
 
@@ -111,10 +110,10 @@ class TranslatorRegistry extends TranslatorLocator
      * Sets the CacheEngine instance used to remember translators across
      * requests.
      *
-     * @param \Cake\Cache\CacheEngine $cacher The cacher instance.
+     * @param \Psr\SimpleCache\CacheInterface&\Cake\Cache\CacheEngineInterface $cacher The cacher instance.
      * @return void
      */
-    public function setCacher(CacheEngine $cacher): void
+    public function setCacher($cacher): void
     {
         $this->_cacher = $cacher;
     }
