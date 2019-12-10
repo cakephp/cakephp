@@ -54,7 +54,6 @@ class ConnectionTest extends TestCase
      */
     protected $nestedTransactionStates = [];
 
-
     /**
      * @var bool|null
      */
