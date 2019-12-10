@@ -55,7 +55,6 @@ class TableTest extends TestCase
 
     public function tearDown()
     {
-        $this->getTableLocator()->clear();
         Type::clear();
         Type::setMap($this->_map);
         parent::tearDown();

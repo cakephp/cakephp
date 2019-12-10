@@ -74,17 +74,6 @@ class AssociationTest extends TestCase
     }
 
     /**
-     * Tear down
-     *
-     * @return void
-     */
-    public function tearDown()
-    {
-        parent::tearDown();
-        $this->getTableLocator()->clear();
-    }
-
-    /**
      * Tests that _options acts as a callback where subclasses can add their own
      * initialization code based on the passed configuration array
      *

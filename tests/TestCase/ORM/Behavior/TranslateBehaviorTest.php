@@ -57,7 +57,6 @@ class TranslateBehaviorTest extends TestCase
     {
         parent::tearDown();
         I18n::setLocale(I18n::getDefaultLocale());
-        $this->getTableLocator()->clear();
     }
 
     /**

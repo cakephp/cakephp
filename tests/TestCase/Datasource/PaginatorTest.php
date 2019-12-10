@@ -63,17 +63,6 @@ class PaginatorTest extends TestCase
     }
 
     /**
-     * tearDown
-     *
-     * @return void
-     */
-    public function tearDown()
-    {
-        parent::tearDown();
-        $this->getTableLocator()->clear();
-    }
-
-    /**
      * Test that non-numeric values are rejected for page, and limit
      *
      * @return void
