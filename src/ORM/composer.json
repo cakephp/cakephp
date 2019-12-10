@@ -34,7 +34,7 @@
     },
     "suggest": {
         "cakephp/cache": "If you decide to use Query caching.",
-        "cakephp/i18n": "If you are using Translate / Timestamp Behavior."
+        "cakephp/i18n": "If you are using Translate/TimestampBehavior or Chronos types."
     },
     "autoload": {
         "psr-4": {
