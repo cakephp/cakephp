@@ -2151,6 +2151,33 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Ensure using limit() in the queryBuilder option works.
+     *
+     * @return void
+     */
+    public function testContainWithQueryBuilderWithLimit()
+    {
+        // test that limit() in queryBuilder restricts associations
+        // and does not restrict outer query
+        $table = $this->getTableLocator()->get('Authors');
+        $table->hasMany('Articles');
+        $query = new Query($this->connection, $table);
+        $query->select()
+            ->distinct('Authors.id')
+            ->contain([
+                'Articles' => [
+                    'queryBuilder' => function ($q) {
+                        return $q->order(['Articles.id' => 'DESC'])->limit(1);
+                    },
+                ],
+            ]);
+        $result = $query->toArray();
+        $this->assertCount(4, $result);
+        $this->assertCount(1, $result[0]->articles);
+        $this->assertEquals(3, $result[0]->articles[0]->id);
+    }
+
+    /**
      * Test containing associations that have empty conditions.
      *
      * @return void
