@@ -25,6 +25,8 @@ use RuntimeException;
  * can prevent thundering herd effects on the metadata cache when new
  * versions of your application are deployed, or when migrations
  * requiring updated metadata are required.
+ *
+ * @link https://en.wikipedia.org/wiki/Thundering_herd_problem About the thundering herd problem
  */
 class SchemaCache
 {
