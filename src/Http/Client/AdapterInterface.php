@@ -17,6 +17,9 @@ namespace Cake\Http\Client;
 
 use Psr\Http\Message\RequestInterface;
 
+/**
+ * Http client adapter interface.
+ */
 interface AdapterInterface
 {
     /**

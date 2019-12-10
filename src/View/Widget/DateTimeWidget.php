@@ -27,8 +27,8 @@ use InvalidArgumentException;
 /**
  * Input widget class for generating a date time input widget.
  *
- * This class is intended as an internal implementation detail
- * of Cake\View\Helper\FormHelper and is not intended for direct use.
+ * This class is usually used internally by `Cake\View\Helper\FormHelper`,
+ * it but can be used to generate standalone date time inputs.
  */
 class DateTimeWidget extends BasicWidget
 {

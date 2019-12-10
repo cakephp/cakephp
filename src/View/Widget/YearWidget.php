@@ -20,6 +20,12 @@ use Cake\View\Form\ContextInterface;
 use Cake\View\StringTemplate;
 use InvalidArgumentException;
 
+/**
+ * Input widget class for generating a calendar year select box.
+ *
+ * This class is usually used internally by `Cake\View\Helper\FormHelper`,
+ * it but can be used to generate standalone calendar year select boxes.
+ */
 class YearWidget extends BasicWidget
 {
     /**
