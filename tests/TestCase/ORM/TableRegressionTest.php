@@ -33,18 +33,6 @@ class TableRegressionTest extends TestCase
     ];
 
     /**
-     * Tear down
-     *
-     * @return void
-     */
-    public function tearDown()
-    {
-        parent::tearDown();
-
-        $this->getTableLocator()->clear();
-    }
-
-    /**
      * Tests that an exception is thrown if the transaction is aborted
      * in the afterSave callback
      *

@@ -41,12 +41,6 @@ class TreeBehaviorTest extends TestCase
         $this->table->addBehavior('Tree');
     }
 
-    public function tearDown()
-    {
-        parent::tearDown();
-        $this->getTableLocator()->clear();
-    }
-
     /**
      * Sanity test
      *

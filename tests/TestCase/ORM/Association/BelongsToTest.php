@@ -72,17 +72,6 @@ class BelongsToTest extends TestCase
     }
 
     /**
-     * Tear down
-     *
-     * @return void
-     */
-    public function tearDown()
-    {
-        parent::tearDown();
-        $this->getTableLocator()->clear();
-    }
-
-    /**
      * Test that foreignKey generation
      *
      * @return void
