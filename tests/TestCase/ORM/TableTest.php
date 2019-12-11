@@ -166,7 +166,6 @@ class TableTest extends TestCase
     public function tearDown(): void
     {
         parent::tearDown();
-        $this->getTableLocator()->clear();
         $this->clearPlugins();
     }
 

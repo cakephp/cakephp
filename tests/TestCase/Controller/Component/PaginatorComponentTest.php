@@ -91,17 +91,6 @@ class PaginatorComponentTest extends TestCase
     }
 
     /**
-     * tearDown
-     *
-     * @return void
-     */
-    public function tearDown(): void
-    {
-        parent::tearDown();
-        $this->getTableLocator()->clear();
-    }
-
-    /**
      * testPaginatorSetting
      *
      * @return void

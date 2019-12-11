@@ -138,7 +138,6 @@ class FormHelperTest extends TestCase
     {
         parent::tearDown();
         unset($this->Form, $this->Controller, $this->View);
-        $this->getTableLocator()->clear();
     }
 
     /**

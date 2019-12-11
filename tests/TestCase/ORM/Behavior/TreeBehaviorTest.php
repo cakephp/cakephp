@@ -51,15 +51,6 @@ class TreeBehaviorTest extends TestCase
     }
 
     /**
-     * @return void
-     */
-    public function tearDown(): void
-    {
-        parent::tearDown();
-        $this->getTableLocator()->clear();
-    }
-
-    /**
      * Sanity test
      *
      * Make sure the assert method acts as you'd expect, this is the expected

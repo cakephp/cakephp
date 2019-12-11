@@ -97,7 +97,6 @@ class CounterCacheBehaviorTest extends TestCase
         parent::tearDown();
 
         unset($this->user, $this->post);
-        $this->getTableLocator()->clear();
     }
 
     /**

@@ -104,17 +104,6 @@ class QueryTest extends TestCase
     }
 
     /**
-     * tearDown method
-     *
-     * @return void
-     */
-    public function tearDown(): void
-    {
-        parent::tearDown();
-        $this->getTableLocator()->clear();
-    }
-
-    /**
      * Data provider for the two types of strategies HasMany implements
      *
      * @return array

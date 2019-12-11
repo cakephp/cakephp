@@ -106,7 +106,6 @@ class MarshallerTest extends TestCase
     public function tearDown(): void
     {
         parent::tearDown();
-        $this->getTableLocator()->clear();
         unset($this->articles, $this->comments, $this->users, $this->tags);
     }
 

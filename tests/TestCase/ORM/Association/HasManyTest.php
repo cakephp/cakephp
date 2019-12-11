@@ -96,17 +96,6 @@ class HasManyTest extends TestCase
     }
 
     /**
-     * Tear down
-     *
-     * @return void
-     */
-    public function tearDown(): void
-    {
-        parent::tearDown();
-        $this->getTableLocator()->clear();
-    }
-
-    /**
      * Tests that foreignKey() returns the correct configured value
      *
      * @return void

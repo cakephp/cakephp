@@ -52,18 +52,6 @@ class QueryRegressionTest extends TestCase
     public $autoFixtures = false;
 
     /**
-     * Tear down
-     *
-     * @return void
-     */
-    public function tearDown(): void
-    {
-        parent::tearDown();
-
-        $this->getTableLocator()->clear();
-    }
-
-    /**
      * Test for https://github.com/cakephp/cakephp/issues/3087
      *
      * @return void

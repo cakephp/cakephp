@@ -45,7 +45,6 @@ class TableSchemaTest extends TestCase
 
     public function tearDown(): void
     {
-        $this->getTableLocator()->clear();
         TypeFactory::clear();
         TypeFactory::setMap($this->_map);
         parent::tearDown();
