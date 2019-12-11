@@ -33,17 +33,6 @@ class AssociationProxyTest extends TestCase
     ];
 
     /**
-     * Teardown
-     *
-     * @return void
-     */
-    public function tearDown()
-    {
-        parent::tearDown();
-        $this->getTableLocator()->clear();
-    }
-
-    /**
      * Tests that it is possible to get associations as a property
      *
      * @return void

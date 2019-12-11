@@ -48,17 +48,6 @@ class TableUuidTest extends TestCase
     }
 
     /**
-     * teardown
-     *
-     * @return void
-     */
-    public function tearDown()
-    {
-        parent::tearDown();
-        $this->getTableLocator()->clear();
-    }
-
-    /**
      * Provider for testing that string and binary uuids work the same
      *
      * @return array

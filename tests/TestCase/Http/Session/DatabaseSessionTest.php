@@ -54,7 +54,6 @@ class DatabaseSessionTest extends TestCase
     public function tearDown()
     {
         unset($this->storage);
-        $this->getTableLocator()->clear();
         parent::tearDown();
     }
 

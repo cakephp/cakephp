@@ -128,17 +128,6 @@ class EagerLoaderTest extends TestCase
     }
 
     /**
-     * tearDown method
-     *
-     * @return void
-     */
-    public function tearDown()
-    {
-        parent::tearDown();
-        $this->getTableLocator()->clear();
-    }
-
-    /**
      * Tests that fully defined belongsTo and hasOne relationships are joined correctly
      *
      * @return void

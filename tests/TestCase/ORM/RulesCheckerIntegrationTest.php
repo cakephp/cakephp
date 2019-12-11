@@ -37,17 +37,6 @@ class RulesCheckerIntegrationTest extends TestCase
     ];
 
     /**
-     * Tear down
-     *
-     * @return void
-     */
-    public function tearDown()
-    {
-        parent::tearDown();
-        $this->getTableLocator()->clear();
-    }
-
-    /**
      * Tests saving belongsTo association and get a validation error
      *
      * @group save
