@@ -28,6 +28,9 @@
         "cakephp/core": "^4.0",
         "cakephp/datasource": "^4.0"
     },
+    "suggest": {
+        "cakephp/i18n": "If you are using locale-aware datetime formats or Chronos types."
+    },
     "autoload": {
         "psr-4": {
             "Cake\\Database\\": "."
