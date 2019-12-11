@@ -403,20 +403,15 @@ class CellTest extends TestCase
      */
     public function testCachedRenderSimple()
     {
-        $mock = $this->getMockBuilder('Cake\Cache\CacheEngine')->getMock();
-        $mock->method('init')
-            ->will($this->returnValue(true));
-        $mock->method('get')
-            ->will($this->returnValue(null));
-        $mock->expects($this->once())
-            ->method('set')
-            ->with('cell_test_app_view_cell_articles_cell_display_default', "dummy\n")
-            ->will($this->returnValue(true));
-        Cache::setConfig('default', $mock);
+        Cache::setConfig('default', ['className' => 'Array']);
 
         $cell = $this->View->cell('Articles', [], ['cache' => true]);
         $result = $cell->render();
-        $this->assertEquals("dummy\n", $result);
+        $expected = "dummy\n";
+        $this->assertEquals($expected, $result);
+
+        $result = Cache::read('cell_test_app_view_cell_articles_cell_display_default', 'default');
+        $this->assertEquals($expected, $result);
         Cache::drop('default');
     }
 
@@ -427,18 +422,12 @@ class CellTest extends TestCase
      */
     public function testReadCachedCell()
     {
-        $mock = $this->getMockBuilder('Cake\Cache\CacheEngine')->getMock();
-        $mock->method('init')
-            ->will($this->returnValue(true));
-        $mock->method('get')
-            ->will($this->returnValue("dummy\n"));
-        $mock->expects($this->never())
-            ->method('set');
-        Cache::setConfig('default', $mock);
+        Cache::setConfig('default', ['className' => 'Array']);
+        Cache::write('cell_test_app_view_cell_articles_cell_display_default', 'from cache');
 
         $cell = $this->View->cell('Articles', [], ['cache' => true]);
         $result = $cell->render();
-        $this->assertEquals("dummy\n", $result);
+        $this->assertEquals('from cache', $result);
         Cache::drop('default');
     }
 
@@ -449,22 +438,14 @@ class CellTest extends TestCase
      */
     public function testCachedRenderArrayConfig()
     {
-        $mock = $this->getMockBuilder('Cake\Cache\CacheEngine')->getMock();
-        $mock->method('init')
-            ->will($this->returnValue(true));
-        $mock->method('get')
-            ->will($this->returnValue(null));
-        $mock->expects($this->once())
-            ->method('set')
-            ->with('my_key', "dummy\n")
-            ->will($this->returnValue(true));
-        Cache::setConfig('cell', $mock);
+        Cache::setConfig('cell', ['className' => 'Array']);
+        Cache::write('my_key', 'from cache', 'cell');
 
         $cell = $this->View->cell('Articles', [], [
             'cache' => ['key' => 'my_key', 'config' => 'cell'],
         ]);
         $result = $cell->render();
-        $this->assertEquals("dummy\n", $result);
+        $this->assertEquals('from cache', $result);
         Cache::drop('cell');
     }
 
@@ -475,21 +456,15 @@ class CellTest extends TestCase
      */
     public function testCachedRenderSimpleCustomTemplate()
     {
-        $mock = $this->getMockBuilder('Cake\Cache\CacheEngine')->getMock();
-        $mock->method('init')
-            ->will($this->returnValue(true));
-        $mock->method('get')
-            ->will($this->returnValue(null));
-        $mock->expects($this->once())
-            ->method('set')
-            ->with('cell_test_app_view_cell_articles_cell_customTemplateViewBuilder_default', "<h1>This is the alternate template</h1>\n")
-            ->will($this->returnValue(true));
-        Cache::setConfig('default', $mock);
+        Cache::setConfig('default', ['className' => 'Array']);
 
         $cell = $this->View->cell('Articles::customTemplateViewBuilder', [], ['cache' => true]);
         $result = $cell->render();
-        $this->assertStringContainsString('This is the alternate template', $result);
+        $expected = 'This is the alternate template';
+        $this->assertStringContainsString($expected, $result);
 
+        $result = Cache::read('cell_test_app_view_cell_articles_cell_customTemplateViewBuilder_default');
+        $this->assertStringContainsString($expected, $result);
         Cache::drop('default');
     }
 
@@ -501,17 +476,14 @@ class CellTest extends TestCase
      */
     public function testCachedRenderSimpleCustomTemplateViewBuilder()
     {
-        Cache::setConfig('default', [
-            'className' => 'File',
-            'path' => CACHE,
-        ]);
+        Cache::setConfig('default', ['className' => 'Array']);
         $cell = $this->View->cell('Articles::customTemplateViewBuilder', [], ['cache' => ['key' => 'celltest']]);
         $result = $cell->render();
         $this->assertEquals(1, $cell->counter);
         $cell->render();
+
         $this->assertEquals(1, $cell->counter);
         $this->assertStringContainsString('This is the alternate template', $result);
-        Cache::delete('celltest');
         Cache::drop('default');
     }
 
@@ -523,10 +495,7 @@ class CellTest extends TestCase
      */
     public function testACachedViewCellReRendersWhenGivenADifferentTemplate()
     {
-        Cache::setConfig('default', [
-            'className' => 'File',
-            'path' => CACHE,
-        ]);
+        Cache::setConfig('default', ['className' => 'Array']);
         $cell = $this->View->cell('Articles::customTemplateViewBuilder', [], ['cache' => true]);
         $result = $cell->render('alternate_teaser_list');
         $result2 = $cell->render('not_the_alternate_teaser_list');

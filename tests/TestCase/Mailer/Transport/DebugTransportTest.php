@@ -45,9 +45,7 @@ class DebugTransportTest extends TestCase
      */
     public function testSend()
     {
-        $message = $this->getMockBuilder(Message::class)
-            ->setMethods(['getBody'])
-            ->getMock();
+        $message = new Message();
         $message->setFrom('noreply@cakephp.org', 'CakePHP Test');
         $message->setTo('cake@cakephp.org', 'CakePHP');
         $message->setCc(['mark@cakephp.org' => 'Mark Story', 'juan@cakephp.org' => 'Juan Basso']);
@@ -56,7 +54,7 @@ class DebugTransportTest extends TestCase
         $message->setSubject('Testing Message');
         $date = date(DATE_RFC2822);
         $message->setHeaders(['Date' => $date, 'o:tag' => ['foo', 'bar']]);
-        $message->expects($this->once())->method('getBody')->will($this->returnValue(['First Line', 'Second Line', '.Third Line', '']));
+        $message->setBody(['text' => "First Line\nSecond Line\n.Third Line\n"]);
 
         $headers = "From: CakePHP Test <noreply@cakephp.org>\r\n";
         $headers .= "To: CakePHP <cake@cakephp.org>\r\n";
@@ -72,7 +70,7 @@ class DebugTransportTest extends TestCase
 
         $data = "First Line\r\n";
         $data .= "Second Line\r\n";
-        $data .= ".Third Line\r\n"; // Not use 'RFC5321 4.5.2.Transparency' in DebugTransport.
+        $data .= ".Third Line\r\n\r\n"; // Not use 'RFC5321 4.5.2.Transparency' in DebugTransport.
 
         $result = $this->DebugTransport->send($message);
 

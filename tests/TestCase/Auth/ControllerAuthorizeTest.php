@@ -41,10 +41,7 @@ class ControllerAuthorizeTest extends TestCase
             ->setMethods(['isAuthorized'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->components = $this->getMockBuilder(ComponentRegistry::class)->getMock();
-        $this->components->expects($this->any())
-            ->method('getController')
-            ->will($this->returnValue($this->controller));
+        $this->components = new ComponentRegistry($this->controller);
 
         $this->auth = new ControllerAuthorize($this->components);
     }

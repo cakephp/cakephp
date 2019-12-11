@@ -62,9 +62,7 @@ class MailTransportTest extends TestCase
      */
     public function testSendData()
     {
-        $message = $this->getMockBuilder(Message::class)
-            ->setMethods(['getBody'])
-            ->getMock();
+        $message = new Message();
         $message->setFrom('noreply@cakephp.org', 'CakePHP Test');
         $message->setReturnPath('pleasereply@cakephp.org', 'CakePHP Return');
         $message->setTo('cake@cakephp.org', 'CakePHP');
@@ -79,8 +77,7 @@ class MailTransportTest extends TestCase
             'Date' => $date,
             'X-add' => mb_encode_mimeheader($longNonAscii, 'utf8', 'B'),
         ]);
-        $message->expects($this->any())->method('getBody')
-            ->will($this->returnValue(['First Line', 'Second Line', '.Third Line', '']));
+        $message->setBody(['text' => "First Line\nSecond Line\n.Third Line"]);
 
         $encoded = '=?UTF-8?B?Rm/DuCBCw6VyIELDqXogRm/DuCBCw6VyIELDqXogRm/DuCBCw6VyIELDqXog?=';
         $encoded .= ' =?UTF-8?B?Rm/DuCBCw6VyIELDqXo=?=';
@@ -101,7 +98,7 @@ class MailTransportTest extends TestCase
             ->with(
                 'CakePHP <cake@cakephp.org>',
                 $encoded,
-                implode(PHP_EOL, ['First Line', 'Second Line', '.Third Line', '']),
+                implode(PHP_EOL, ['First Line', 'Second Line', '.Third Line', '', '']),
                 $data,
                 '-f'
             );

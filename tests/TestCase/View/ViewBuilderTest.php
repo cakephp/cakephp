@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\View;
 
+use Cake\Event\EventManager;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
@@ -196,7 +197,7 @@ class ViewBuilderTest extends TestCase
     {
         $request = new ServerRequest();
         $response = new Response();
-        $events = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
+        $events = new EventManager();
 
         $builder = new ViewBuilder();
         $builder->setName('Articles')

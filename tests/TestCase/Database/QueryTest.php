@@ -29,6 +29,7 @@ use Cake\TestSuite\TestCase;
 use DateTimeImmutable;
 use InvalidArgumentException;
 use ReflectionProperty;
+use stdClass;
 use TestApp\Database\Type\BarType;
 
 /**
@@ -3600,7 +3601,9 @@ class QueryTest extends TestCase
         $result = $query
             ->select(['d' => $query->func()->now('date')])
             ->execute();
-        $this->assertEquals([(object)['d' => date('Y-m-d')]], $result->fetchAll('obj'));
+
+        $result = $result->fetchAll('assoc');
+        $this->assertEquals([['d' => date('Y-m-d')]], $result);
 
         $query = new Query($this->connection);
         $result = $query
@@ -4794,6 +4797,7 @@ class QueryTest extends TestCase
 
     /**
      * Test that calling fetch with with FETCH_TYPE_OBJ return stdClass object.
+     *
      * @return void
      * @throws \Exception
      */
@@ -4801,17 +4805,19 @@ class QueryTest extends TestCase
     {
         $this->loadFixtures('Profiles');
         $query = new Query($this->connection);
-        $results = $query
-            ->select([
+        $stmt = $query->select([
                 'id',
                 'user_id',
                 'is_active',
             ])
             ->from('profiles')
             ->limit(1)
-            ->execute()
-            ->fetch(StatementDecorator::FETCH_TYPE_OBJ);
-        $this->assertInstanceOf(\stdClass::class, $results);
+            ->enableBufferedResults(false)
+            ->execute();
+        $results = $stmt->fetch(StatementDecorator::FETCH_TYPE_OBJ);
+        $stmt->closeCursor();
+
+        $this->assertInstanceOf(stdClass::class, $results);
     }
 
     /**

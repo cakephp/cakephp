@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database;
 
 use Cake\Cache\Cache;
-use Cake\Cache\Engine\NullEngine;
 use Cake\Database\Schema\CachedCollection;
 use Cake\Database\SchemaCache;
 use Cake\Datasource\ConnectionManager;
@@ -53,10 +52,8 @@ class SchemaCacheTest extends TestCase
     {
         parent::setUp();
 
-        $this->cache = $this->getMockBuilder(NullEngine::class)
-            ->setMethods(['set', 'get', 'delete'])
-            ->getMock();
-        Cache::setConfig('orm_cache', $this->cache);
+        Cache::setConfig('orm_cache', ['className' => 'Array']);
+        $this->cache = Cache::pool('orm_cache');
 
         $this->connection = ConnectionManager::get('test');
         $this->connection->cacheMetadata('orm_cache');
@@ -113,13 +110,10 @@ class SchemaCacheTest extends TestCase
      */
     public function testBuildNoArgs()
     {
-        $this->cache->expects($this->at(0))
-            ->method('set')
-            ->with('test_articles')
-            ->will($this->returnValue(true));
-
         $ormCache = new SchemaCache($this->connection);
         $ormCache->build();
+
+        $this->assertNotEmpty($this->cache->get('test_articles'));
     }
 
     /**
@@ -129,15 +123,10 @@ class SchemaCacheTest extends TestCase
      */
     public function testBuildNamedModel()
     {
-        $this->cache->expects($this->once())
-            ->method('set')
-            ->with('test_articles')
-            ->will($this->returnValue(true));
-        $this->cache->expects($this->never())
-            ->method('delete');
-
         $ormCache = new SchemaCache($this->connection);
         $ormCache->build('articles');
+
+        $this->assertNotEmpty($this->cache->get('test_articles'));
     }
 
     /**
@@ -147,17 +136,12 @@ class SchemaCacheTest extends TestCase
      */
     public function testBuildOverwritesExistingData()
     {
-        $this->cache->expects($this->once())
-            ->method('set')
-            ->with('test_articles')
-            ->will($this->returnValue(true));
-        $this->cache->expects($this->never())
-            ->method('get');
-        $this->cache->expects($this->never())
-            ->method('delete');
+        $this->cache->set('test_articles', 'dummy data');
 
         $ormCache = new SchemaCache($this->connection);
         $ormCache->build('articles');
+
+        $this->assertNotSame('dummy data', $this->cache->get('test_articles'));
     }
 
     /**
@@ -167,13 +151,11 @@ class SchemaCacheTest extends TestCase
      */
     public function testClearNoArgs()
     {
-        $this->cache->expects($this->at(0))
-            ->method('delete')
-            ->with('test_articles')
-            ->will($this->returnValue(true));
+        $this->cache->set('test_articles', 'dummy data');
 
         $ormCache = new SchemaCache($this->connection);
         $ormCache->clear();
+        $this->assertFalse($this->cache->has('test_articles'));
     }
 
     /**
@@ -183,15 +165,11 @@ class SchemaCacheTest extends TestCase
      */
     public function testClearNamedModel()
     {
-        $this->cache->expects($this->never())
-            ->method('set');
-        $this->cache->expects($this->once())
-            ->method('delete')
-            ->with('test_articles')
-            ->will($this->returnValue(true));
+        $this->cache->set('test_articles', 'dummy data');
 
         $ormCache = new SchemaCache($this->connection);
         $ormCache->clear('articles');
+        $this->assertFalse($this->cache->has('test_articles'));
     }
 
     /**

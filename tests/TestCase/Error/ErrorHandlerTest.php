@@ -26,7 +26,6 @@ use Cake\Http\ServerRequest;
 use Cake\Log\Log;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
-use Psr\Log\LoggerInterface;
 use RuntimeException;
 use TestApp\Error\TestErrorHandler;
 
@@ -38,13 +37,12 @@ class ErrorHandlerTest extends TestCase
     protected $_restoreError = false;
 
     /**
-     * @var \Psr\Log\LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var \Cake\Log\Engine\ArrayLog
      */
-    protected $_logger;
+    protected $logger;
 
     /**
      * error level property
-     *
      */
     private static $errorLevel;
 
@@ -68,12 +66,9 @@ class ErrorHandlerTest extends TestCase
         Router::setRequest($request);
         Configure::write('debug', true);
 
-        $this->_logger = $this->getMockBuilder(LoggerInterface::class)->getMock();
-
         Log::reset();
-        Log::setConfig('error_test', [
-            'engine' => $this->_logger,
-        ]);
+        Log::setConfig('error_test', ['className' => 'Array']);
+        $this->logger = Log::engine('error_test');
     }
 
     /**
@@ -201,14 +196,14 @@ class ErrorHandlerTest extends TestCase
         $errorHandler->register();
         $this->_restoreError = true;
 
-        $this->_logger->expects($this->once())
-            ->method('log')
-            ->with(
-                $this->matchesRegularExpression('(notice|debug)'),
-                'Notice (8): Undefined variable: out in [' . __FILE__ . ', line ' . (__LINE__ + 3) . ']' . "\n\n"
-            );
-
         $out = $out + 1;
+
+        $messages = $this->logger->read();
+        $this->assertRegExp('/^(notice|debug)/', $messages[0]);
+        $this->assertStringContainsString(
+            'Notice (8): Undefined variable: out in [' . __FILE__ . ', line ' . (__LINE__ - 5) . ']' . "\n\n",
+            $messages[0]
+        );
     }
 
     /**
@@ -223,20 +218,18 @@ class ErrorHandlerTest extends TestCase
         $errorHandler->register();
         $this->_restoreError = true;
 
-        $this->_logger->expects($this->once())
-            ->method('log')
-            ->with(
-                $this->matchesRegularExpression('(notice|debug)'),
-                $this->logicalAnd(
-                    $this->stringContains('Notice (8): Undefined variable: out in '),
-                    $this->stringContains('Trace:'),
-                    $this->stringContains(__NAMESPACE__ . '\ErrorHandlerTest::testHandleErrorLoggingTrace()'),
-                    $this->stringContains('Request URL:'),
-                    $this->stringContains('Referer URL:')
-                )
-            );
-
         $out = $out + 1;
+
+        $messages = $this->logger->read();
+        $this->assertRegExp('/^(notice|debug)/', $messages[0]);
+        $this->assertStringContainsString(
+            'Notice (8): Undefined variable: out in [' . __FILE__ . ', line ' . (__LINE__ - 5) . ']',
+            $messages[0]
+        );
+        $this->assertStringContainsString('Trace:', $messages[0]);
+        $this->assertStringContainsString(__NAMESPACE__ . '\ErrorHandlerTest::testHandleErrorLoggingTrace()', $messages[0]);
+        $this->assertStringContainsString('Request URL:', $messages[0]);
+        $this->assertStringContainsString('Referer URL:', $messages[0]);
     }
 
     /**
@@ -266,29 +259,30 @@ class ErrorHandlerTest extends TestCase
         ]);
 
         $error = new NotFoundException('Kaboom!');
-
-        $this->_logger->expects($this->at(0))
-            ->method('log')
-            ->with('error', $this->logicalAnd(
-                $this->stringContains('[Cake\Http\Exception\NotFoundException] Kaboom!'),
-                $this->stringContains(str_replace('/', DS, 'vendor/phpunit/phpunit/src/Framework/TestCase.php'))
-            ));
-
-        $this->_logger->expects($this->at(1))
-            ->method('log')
-            ->with('error', $this->logicalAnd(
-                $this->stringContains('[Cake\Http\Exception\NotFoundException] Kaboom!'),
-                $this->logicalNot($this->stringContains(str_replace('/', DS, 'vendor/phpunit/phpunit/src/Framework/TestCase.php')))
-            ));
-
         $errorHandler->handleException($error);
         $this->assertStringContainsString('Kaboom!', (string)$errorHandler->response->getBody(), 'message missing.');
+
+        $messages = $this->logger->read();
+        $this->assertRegExp('/^error/', $messages[0]);
+        $this->assertStringContainsString('[Cake\Http\Exception\NotFoundException] Kaboom!', $messages[0]);
+        $this->assertStringContainsString(
+            str_replace('/', DS, 'vendor/phpunit/phpunit/src/Framework/TestCase.php'),
+            $messages[0]
+        );
 
         $errorHandler = new TestErrorHandler([
             'log' => true,
             'trace' => false,
         ]);
         $errorHandler->handleException($error);
+
+        $messages = $this->logger->read();
+        $this->assertRegExp('/^error/', $messages[1]);
+        $this->assertStringContainsString('[Cake\Http\Exception\NotFoundException] Kaboom!', $messages[1]);
+        $this->assertStringNotContainsString(
+            str_replace('/', DS, 'vendor/phpunit/phpunit/src/Framework/TestCase.php'),
+            $messages[1]
+        );
     }
 
     /**
@@ -304,32 +298,26 @@ class ErrorHandlerTest extends TestCase
         ]);
 
         $error = new MissingControllerException(['class' => 'Derp']);
-
-        $this->_logger->expects($this->at(0))
-            ->method('log')
-            ->with('error', $this->logicalAnd(
-                $this->stringContains(
-                    '[Cake\Http\Exception\MissingControllerException] ' .
-                    'Controller class Derp could not be found.'
-                ),
-                $this->stringContains('Exception Attributes:'),
-                $this->stringContains('Request URL:'),
-                $this->stringContains('Referer URL:')
-            ));
-
-        $this->_logger->expects($this->at(1))
-            ->method('log')
-            ->with('error', $this->logicalAnd(
-                $this->stringContains(
-                    '[Cake\Http\Exception\MissingControllerException] ' .
-                    'Controller class Derp could not be found.'
-                ),
-                $this->logicalNot($this->stringContains('Exception Attributes:'))
-            ));
         $errorHandler->handleException($error);
 
         Configure::write('debug', false);
         $errorHandler->handleException($error);
+
+        $messages = $this->logger->read();
+        $this->assertRegExp('/^error/', $messages[0]);
+        $this->assertStringContainsString(
+            '[Cake\Http\Exception\MissingControllerException] Controller class Derp could not be found.',
+            $messages[0]
+        );
+        $this->assertStringContainsString('Exception Attributes:', $messages[0]);
+        $this->assertStringContainsString('Request URL:', $messages[0]);
+        $this->assertStringContainsString('Referer URL:', $messages[0]);
+
+        $this->assertStringContainsString(
+            '[Cake\Http\Exception\MissingControllerException] Controller class Derp could not be found.',
+            $messages[1]
+        );
+        $this->assertStringNotContainsString('Exception Attributes:', $messages[1]);
     }
 
     /**
@@ -346,16 +334,18 @@ class ErrorHandlerTest extends TestCase
 
         $previous = new RecordNotFoundException('Previous logged');
         $error = new NotFoundException('Kaboom!', null, $previous);
-
-        $this->_logger->expects($this->at(0))
-            ->method('log')
-            ->with('error', $this->logicalAnd(
-                $this->stringContains('[Cake\Http\Exception\NotFoundException] Kaboom!'),
-                $this->stringContains('Caused by: [Cake\Datasource\Exception\RecordNotFoundException] Previous logged'),
-                $this->stringContains(str_replace('/', DS, 'vendor/phpunit/phpunit/src/Framework/TestCase.php'))
-            ));
-
         $errorHandler->handleException($error);
+
+        $messages = $this->logger->read();
+        $this->assertStringContainsString('[Cake\Http\Exception\NotFoundException] Kaboom!', $messages[0]);
+        $this->assertStringContainsString(
+            'Caused by: [Cake\Datasource\Exception\RecordNotFoundException] Previous logged',
+            $messages[0]
+        );
+        $this->assertStringContainsString(
+            str_replace('/', DS, 'vendor/phpunit/phpunit/src/Framework/TestCase.php'),
+            $messages[0]
+        );
     }
 
     /**
@@ -367,14 +357,6 @@ class ErrorHandlerTest extends TestCase
     {
         $notFound = new NotFoundException('Kaboom!');
         $forbidden = new ForbiddenException('Fooled you!');
-
-        $this->_logger->expects($this->once())
-            ->method('log')
-            ->with(
-                'error',
-                $this->stringContains('[Cake\Http\Exception\ForbiddenException] Fooled you!')
-            );
-
         $errorHandler = new TestErrorHandler([
             'log' => true,
             'skipLog' => ['Cake\Http\Exception\NotFoundException'],
@@ -385,6 +367,14 @@ class ErrorHandlerTest extends TestCase
 
         $errorHandler->handleException($forbidden);
         $this->assertStringContainsString('Fooled you!', (string)$errorHandler->response->getBody(), 'message missing.');
+
+        $messages = $this->logger->read();
+        $this->assertCount(1, $messages);
+        $this->assertRegExp('/^error/', $messages[0]);
+        $this->assertStringContainsString(
+            '[Cake\Http\Exception\ForbiddenException] Fooled you!',
+            $messages[0]
+        );
     }
 
     /**
@@ -440,19 +430,15 @@ class ErrorHandlerTest extends TestCase
      */
     public function testHandleFatalErrorLog()
     {
-        $this->_logger->expects($this->at(0))
-            ->method('log')
-            ->with('error', $this->logicalAnd(
-                $this->stringContains(__FILE__ . ', line ' . (__LINE__ + 9)),
-                $this->stringContains('Fatal Error (1)'),
-                $this->stringContains('Something wrong')
-            ));
-        $this->_logger->expects($this->at(1))
-            ->method('log')
-            ->with('error', $this->stringContains('[Cake\Error\FatalErrorException] Something wrong'));
-
         $errorHandler = new TestErrorHandler(['log' => true]);
         $errorHandler->handleFatalError(E_ERROR, 'Something wrong', __FILE__, __LINE__);
+
+        $messages = $this->logger->read();
+        $this->assertCount(2, $messages);
+        $this->assertStringContainsString(__FILE__ . ', line ' . (__LINE__ - 4), $messages[0]);
+        $this->assertStringContainsString('Fatal Error (1)', $messages[0]);
+        $this->assertStringContainsString('Something wrong', $messages[0]);
+        $this->assertStringContainsString('[Cake\Error\FatalErrorException] Something wrong', $messages[1]);
     }
 
     /**

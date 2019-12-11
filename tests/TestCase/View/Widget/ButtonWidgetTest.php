@@ -16,7 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\View\Widget;
 
+use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
+use Cake\View\Form\NullContext;
 use Cake\View\StringTemplate;
 use Cake\View\Widget\ButtonWidget;
 
@@ -32,7 +34,7 @@ class ButtonWidgetTest extends TestCase
             'button' => '<button{{attrs}}>{{text}}</button>',
         ];
         $this->templates = new StringTemplate($templates);
-        $this->context = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
+        $this->context = new NullContext(new ServerRequest(), []);
     }
 
     /**

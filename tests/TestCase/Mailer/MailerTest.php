@@ -16,7 +16,6 @@ namespace Cake\Test\TestCase\Mailer;
 
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
-use Cake\Log\Engine\BaseLog;
 use Cake\Log\Log;
 use Cake\Mailer\AbstractTransport;
 use Cake\Mailer\Exception\MissingActionException;
@@ -1323,34 +1322,25 @@ class MailerTest extends TestCase
      */
     public function testSendWithLog()
     {
-        $log = $this->getMockBuilder(BaseLog::class)
-            ->setMethods(['log'])
-            ->setConstructorArgs([['scopes' => 'email']])
-            ->getMock();
-
-        $message = 'Logging This';
-
-        $log->expects($this->once())
-            ->method('log')
-            ->with(
-                'debug',
-                $this->logicalAnd(
-                    $this->stringContains($message),
-                    $this->stringContains('cake@cakephp.org'),
-                    $this->stringContains('me@cakephp.org')
-                )
-            );
-
-        Log::setConfig('email', $log);
+        Log::setConfig('email', [
+            'className' => 'Array',
+        ]);
 
         $this->mailer->setTransport('debug');
         $this->mailer->setTo('me@cakephp.org');
         $this->mailer->setFrom('cake@cakephp.org');
         $this->mailer->setSubject('My title');
         $this->mailer->setProfile(['log' => 'debug']);
-        $result = $this->mailer->deliver($message);
 
+        $text = 'Logging This';
+        $result = $this->mailer->deliver($text);
         $this->assertNotEmpty($result);
+
+        $messages = Log::engine('email')->read();
+        $this->assertCount(1, $messages);
+        $this->assertStringContainsString($text, $messages[0]);
+        $this->assertStringContainsString('cake@cakephp.org', $messages[0]);
+        $this->assertStringContainsString('me@cakephp.org', $messages[0]);
     }
 
     /**
@@ -1360,31 +1350,24 @@ class MailerTest extends TestCase
      */
     public function testSendWithLogAndScope()
     {
-        $message = 'Logging This';
-
-        $log = $this->getMockBuilder(BaseLog::class)
-            ->setMethods(['log'])
-            ->setConstructorArgs(['scopes' => ['email']])
-            ->getMock();
-        $log->expects($this->once())
-            ->method('log')
-            ->with(
-                'debug',
-                $this->logicalAnd(
-                    $this->stringContains($message),
-                    $this->stringContains('cake@cakephp.org'),
-                    $this->stringContains('me@cakephp.org')
-                )
-            );
-
-        Log::setConfig('email', $log);
+        Log::setConfig('email', [
+            'className' => 'Array',
+            'scopes' => ['email'],
+        ]);
 
         $this->mailer->setTransport('debug');
         $this->mailer->setTo('me@cakephp.org');
         $this->mailer->setFrom('cake@cakephp.org');
         $this->mailer->setSubject('My title');
         $this->mailer->setProfile(['log' => ['scope' => 'email']]);
-        $this->mailer->deliver($message);
+        $text = 'Logging This';
+        $this->mailer->deliver($text);
+
+        $messages = Log::engine('email')->read();
+        $this->assertCount(1, $messages);
+        $this->assertStringContainsString($text, $messages[0]);
+        $this->assertStringContainsString('cake@cakephp.org', $messages[0]);
+        $this->assertStringContainsString('me@cakephp.org', $messages[0]);
     }
 
     /**
