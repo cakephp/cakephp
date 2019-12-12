@@ -121,6 +121,7 @@ class Connection implements ConnectionInterface
      * Constructor.
      *
      * ### Available options:
+     *
      * - `driver` Sort name or FCQN for driver.
      * - `log` Boolean indicating whether to use query logging.
      * - `name` Connection name.

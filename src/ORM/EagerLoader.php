@@ -229,6 +229,7 @@ class EagerLoader
      * `matching` option.
      *
      *  ### Options
+     *
      *  - 'joinType': INNER, OUTER, ...
      *  - 'fields': Fields to contain
      *

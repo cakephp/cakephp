@@ -1193,6 +1193,7 @@ class FolderTest extends TestCase
     /**
      * Setup filesystem for copy tests
      * $path: folder_test/
+     *
      * - folder1/file1.php
      * - folder1/folderA/fileA.php
      * - folder2/file2.php
