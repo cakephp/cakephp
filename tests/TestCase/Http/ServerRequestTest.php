@@ -1800,6 +1800,7 @@ class ServerRequestTest extends TestCase
      * CakePHP gets called with index.php in URL nonetheless.
      *
      * Tests uri with
+     *
      * - index.php/
      * - index.php/
      * - index.php/apples/

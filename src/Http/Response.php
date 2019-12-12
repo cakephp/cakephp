@@ -430,10 +430,12 @@ class Response implements ResponseInterface
      * Constructor
      *
      * @param array $options list of parameters to setup the response. Possible values are:
+     *
      *  - body: the response text that should be sent to the client
      *  - status: the HTTP status code to respond with
      *  - type: a complete mime-type string or an extension mapped in this class
      *  - charset: the charset for the response body
+     *
      * @throws \InvalidArgumentException
      */
     public function __construct(array $options = [])

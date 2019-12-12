@@ -370,9 +370,10 @@ class Shell
      * ```
      *
      * With an array having two key / value pairs:
+     *
      *  - `command` can accept either a string or an array. Represents the command to dispatch
      *  - `extra` can accept an array of extra parameters to pass on to the dispatcher. This
-     *  parameters will be available in the `param` property of the called `Shell`
+     *    parameters will be available in the `param` property of the called `Shell`
      *
      * `return $this->dispatchShell([
      *      'command' => 'schema create DbAcl',
@@ -459,7 +460,9 @@ class Shell
      * @param array $extra Extra parameters that you can manually pass to the Shell
      * to be dispatched.
      * Built-in extra parameter is :
+     *
      * - `requested` : if used, will prevent the Shell welcome message to be displayed
+     *
      * @return int|bool|null
      * @link https://book.cakephp.org/4/en/console-and-shells.html#the-cakephp-console
      */

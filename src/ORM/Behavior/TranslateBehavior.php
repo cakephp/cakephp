@@ -82,6 +82,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * Constructor
      *
      * ### Options
+     *
      * - `fields`: List of fields which need to be translated. Providing this fields
      *   list is mandatory when using `EavStrategy`. If the fields list is empty when
      *   using `ShadowTableStrategy` then the list will be auto generated based on

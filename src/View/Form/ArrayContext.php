@@ -161,10 +161,12 @@ class ArrayContext implements ContextInterface
      * @param string $field A dot separated path to the field a value
      *   is needed for.
      * @param array $options Options:
+     *
      *   - `default`: Default value to return if no value found in request
      *     data or context record.
      *   - `schemaDefault`: Boolean indicating whether default value from
      *      context's schema should be used if it's not explicitly provided.
+     *
      * @return mixed
      */
     public function val(string $field, array $options = [])

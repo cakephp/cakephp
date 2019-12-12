@@ -981,6 +981,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * Be careful about using it without proper sanity checks.
      *
      * Options:
+     *
      * - `types` - Associative array of type names used to bind values to query
      * - `allowEmpty` - Allow empty array.
      *

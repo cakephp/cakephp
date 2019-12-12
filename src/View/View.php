@@ -619,15 +619,19 @@ class View implements EventDispatcherInterface
      *   is not found in the plugin, the normal view path cascade will be searched.
      * @param array $data Array of data to be made available to the rendered view (i.e. the Element)
      * @param array $options Array of options. Possible keys are:
+     *
      * - `cache` - Can either be `true`, to enable caching using the config in View::$elementCache. Or an array
      *   If an array, the following keys can be used:
+     *
      *   - `config` - Used to store the cached element in a custom cache configuration.
      *   - `key` - Used to define the key used in the Cache::write(). It will be prefixed with `element_`
+     *
      * - `callbacks` - Set to true to fire beforeRender and afterRender helper callbacks for this element.
      *   Defaults to false.
      * - `ignoreMissing` - Used to allow missing elements. Set to true to not throw exceptions.
      * - `plugin` - setting to false will force to use the application's element from plugin templates, when the
      *   plugin has element with same name. Defaults to true
+     *
      * @return string Rendered Element
      * @throws \Cake\View\Exception\MissingElementException When an element is missing and `ignoreMissing`
      *   is false.

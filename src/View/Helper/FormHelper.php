@@ -870,11 +870,13 @@ class FormHelper extends Helper
      * @param array $fields An array of customizations for the fields that will be
      *   generated. This array allows you to set custom types, labels, or other options.
      * @param array $options Options array. Valid keys are:
+     *
      * - `fieldset` Set to false to disable the fieldset. You can also pass an array of params to be
      *    applied as HTML attributes to the fieldset tag. If you pass an empty array, the fieldset will
      *    be enabled
      * - `legend` Set to false to disable the legend for the generated control set. Or supply a string
      *    to customize the legend text.
+     *
      * @return string Completed form controls.
      * @link https://book.cakephp.org/4/en/views/helpers/form.html#generating-entire-forms
      */
@@ -906,11 +908,13 @@ class FormHelper extends Helper
      * @param array $fields An array of the fields to generate. This array allows
      *   you to set custom types, labels, or other options.
      * @param array $options Options array. Valid keys are:
+     *
      * - `fieldset` Set to false to disable the fieldset. You can also pass an
      *    array of params to be applied as HTML attributes to the fieldset tag.
      *    If you pass an empty array, the fieldset will be enabled.
      * - `legend` Set to false to disable the legend for the generated input set.
      *    Or supply a string to customize the legend text.
+     *
      * @return string Completed form inputs.
      * @link https://book.cakephp.org/4/en/views/helpers/form.html#generating-entire-forms
      */
@@ -935,11 +939,13 @@ class FormHelper extends Helper
      *
      * @param string $fields the form inputs to wrap in a fieldset
      * @param array $options Options array. Valid keys are:
+     *
      * - `fieldset` Set to false to disable the fieldset. You can also pass an array of params to be
      *    applied as HTML attributes to the fieldset tag. If you pass an empty array, the fieldset will
      *    be enabled
      * - `legend` Set to false to disable the legend for the generated input set. Or supply a string
      *    to customize the legend text.
+     *
      * @return string Completed form inputs.
      */
     public function fieldset(string $fields = '', array $options = []): string
