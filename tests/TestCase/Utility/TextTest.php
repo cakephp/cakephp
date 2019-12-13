@@ -1887,6 +1887,14 @@ HTML;
                 'Foo Bar: Not just for (breakfast) any-more', ['preserve' => ' ()'],
                 'Foo Bar- Not just for (breakfast) any-more',
             ],
+            [
+                'Foo Bar: Not just for breakfast any-more', ['replacement' => null],
+                'FooBarNotjustforbreakfastanymore',
+            ],
+            [
+                'Foo Bar: Not just for breakfast any-more', ['replacement' => false],
+                'FooBarNotjustforbreakfastanymore',
+            ],
         ];
     }
 
