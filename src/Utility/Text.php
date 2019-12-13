@@ -1179,7 +1179,7 @@ class Text
             '/[' . $regex . ']/mu' => $options['replacement'],
             sprintf('/^[%s]+|[%s]+$/', $quotedReplacement, $quotedReplacement) => '',
         ];
-        if ($options['replacement']) {
+        if (isset($options['replacement']) && strlen($options['replacement'])) {
             $map[sprintf('/[%s]+/mu', $quotedReplacement)] = $options['replacement'];
         }
         $string = preg_replace(array_keys($map), $map, $string);
