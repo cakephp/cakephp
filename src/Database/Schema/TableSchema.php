@@ -522,6 +522,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
 
     /**
      * @inheritDoc
+     * @deprecated 4.0.0 Renamed to getPrimaryKey()
      */
     public function primaryKey(): array
     {
