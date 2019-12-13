@@ -74,7 +74,7 @@ class FormContextTest extends TestCase
     public function testPrimaryKey()
     {
         $context = new FormContext($this->request, ['entity' => new Form()]);
-        $this->assertEquals([], $context->primaryKey());
+        $this->assertEquals([], $context->getPrimaryKey());
     }
 
     /**

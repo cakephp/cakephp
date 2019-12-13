@@ -61,14 +61,14 @@ class ArrayContextTest extends TestCase
     public function testPrimaryKey()
     {
         $context = new ArrayContext($this->request, []);
-        $this->assertEquals([], $context->primaryKey());
+        $this->assertEquals([], $context->getPrimaryKey());
 
         $context = new ArrayContext($this->request, [
             'schema' => [
                 '_constraints' => 'mistake',
             ],
         ]);
-        $this->assertEquals([], $context->primaryKey());
+        $this->assertEquals([], $context->getPrimaryKey());
 
         $data = [
             'schema' => [
@@ -80,7 +80,7 @@ class ArrayContextTest extends TestCase
         $context = new ArrayContext($this->request, $data);
 
         $expected = ['id'];
-        $this->assertEquals($expected, $context->primaryKey());
+        $this->assertEquals($expected, $context->getPrimaryKey());
     }
 
     /**

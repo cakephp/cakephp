@@ -177,8 +177,21 @@ class EntityContext implements ContextInterface
      * Gets the primary key columns from the root entity's schema.
      *
      * @return string[]
+     * @deprecated 4.0.0 Renamed to getPrimaryKey()
      */
     public function primaryKey(): array
+    {
+        return (array)$this->_tables[$this->_rootName]->getPrimaryKey();
+    }
+
+    /**
+     * Get the primary key data for the context.
+     *
+     * Gets the primary key columns from the root entity's schema.
+     *
+     * @return string[]
+     */
+    public function getPrimaryKey(): array
     {
         return (array)$this->_tables[$this->_rootName]->getPrimaryKey();
     }

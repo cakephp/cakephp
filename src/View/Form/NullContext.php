@@ -45,9 +45,20 @@ class NullContext implements ContextInterface
     }
 
     /**
-     * @inheritDoc
+     * Get the fields used in the context as a primary key.
+     *
+     * @return string[]
+     * @deprecated 4.0.0 Renamed to getPrimaryKey()
      */
     public function primaryKey(): array
+    {
+        return [];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getPrimaryKey(): array
     {
         return [];
     }
