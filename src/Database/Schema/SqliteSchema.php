@@ -350,7 +350,7 @@ class SqliteSchema extends BaseSchema
             isset($data['unsigned']) &&
             $data['unsigned'] === true
         ) {
-            if ($data['type'] !== TableSchema::TYPE_INTEGER || (array)$schema->primaryKey() !== [$name]) {
+            if ($data['type'] !== TableSchema::TYPE_INTEGER || (array)$schema->getPrimaryKey() !== [$name]) {
                 $out .= ' UNSIGNED';
             }
         }
@@ -397,7 +397,7 @@ class SqliteSchema extends BaseSchema
         if (
             in_array($data['type'], $integerTypes, true) &&
             isset($data['length']) &&
-            (array)$schema->primaryKey() !== [$name]
+            (array)$schema->getPrimaryKey() !== [$name]
         ) {
             $out .= '(' . (int)$data['length'] . ')';
         }
@@ -417,7 +417,7 @@ class SqliteSchema extends BaseSchema
             $out .= ' NOT NULL';
         }
 
-        if ($data['type'] === TableSchema::TYPE_INTEGER && (array)$schema->primaryKey() === [$name]) {
+        if ($data['type'] === TableSchema::TYPE_INTEGER && (array)$schema->getPrimaryKey() === [$name]) {
             $out .= ' PRIMARY KEY AUTOINCREMENT';
         }
 

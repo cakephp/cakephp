@@ -497,13 +497,13 @@ class TableSchemaTest extends TestCase
                 'type' => 'primary',
                 'columns' => ['id'],
             ]);
-        $this->assertEquals(['id'], $table->primaryKey());
+        $this->assertEquals(['id'], $table->getPrimaryKey());
 
         $table = new TableSchema('articles');
         $table->addColumn('id', 'integer')
             ->addColumn('title', 'string')
             ->addColumn('author_id', 'integer');
-        $this->assertEquals([], $table->primaryKey());
+        $this->assertEquals([], $table->getPrimaryKey());
     }
 
     /**

@@ -525,6 +525,14 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      */
     public function primaryKey(): array
     {
+        return $this->getPrimarykey();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getPrimaryKey(): array
+    {
         foreach ($this->_constraints as $data) {
             if ($data['type'] === static::CONSTRAINT_PRIMARY) {
                 return $data['columns'];

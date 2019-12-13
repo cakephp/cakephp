@@ -448,7 +448,7 @@ class MysqlSchema extends BaseSchema
             $out .= ' NOT NULL';
         }
         $addAutoIncrement = (
-            (array)$schema->primaryKey() === [$name] &&
+            (array)$schema->getPrimaryKey() === [$name] &&
             !$schema->hasAutoincrement() &&
             !isset($data['autoIncrement'])
         );

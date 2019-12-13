@@ -406,7 +406,7 @@ SQL;
                 'comment' => null,
             ],
         ];
-        $this->assertEquals(['id'], $result->primaryKey());
+        $this->assertEquals(['id'], $result->getPrimaryKey());
         foreach ($expected as $field => $definition) {
             $this->assertEquals(
                 $definition,

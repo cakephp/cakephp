@@ -309,7 +309,7 @@ SQL;
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('public.schema_articles');
-        $this->assertEquals(['id'], $result->primaryKey());
+        $this->assertEquals(['id'], $result->getPrimaryKey());
         $this->assertSame('schema_articles', $result->name());
     }
 
@@ -448,7 +448,7 @@ SQL;
                 'comment' => null,
             ],
         ];
-        $this->assertEquals(['id'], $result->primaryKey());
+        $this->assertEquals(['id'], $result->getPrimaryKey());
         foreach ($expected as $field => $definition) {
             $this->assertEquals($definition, $result->getColumn($field));
         }
@@ -476,7 +476,7 @@ SQL;
         $result = $schema->describe('schema_composite');
         $connection->execute('DROP TABLE schema_composite');
 
-        $this->assertEquals(['id', 'site_id'], $result->primaryKey());
+        $this->assertEquals(['id', 'site_id'], $result->getPrimaryKey());
         $this->assertTrue($result->getColumn('id')['autoIncrement'], 'id should be autoincrement');
         $this->assertNull($result->getColumn('site_id')['autoIncrement'], 'site_id should not be autoincrement');
     }
@@ -540,7 +540,7 @@ SQL;
                 'comment' => null,
             ],
         ];
-        $this->assertEquals(['id'], $result->primaryKey());
+        $this->assertEquals(['id'], $result->getPrimaryKey());
         foreach ($expected as $field => $definition) {
             $this->assertEquals($definition, $result->getColumn($field), "Mismatch in $field column");
         }

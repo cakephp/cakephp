@@ -394,7 +394,7 @@ class SqlserverSchema extends BaseSchema
         }
 
         if ($data['type'] === TableSchema::TYPE_INTEGER || $data['type'] === TableSchema::TYPE_BIGINTEGER) {
-            if ($schema->primaryKey() === [$name] || $data['autoIncrement'] === true) {
+            if ($schema->getPrimaryKey() === [$name] || $data['autoIncrement'] === true) {
                 unset($data['null'], $data['default']);
                 $out .= ' IDENTITY(1, 1)';
             }
@@ -633,7 +633,7 @@ class SqlserverSchema extends BaseSchema
         ];
 
         // Restart identity sequences
-        $pk = $schema->primaryKey();
+        $pk = $schema->getPrimaryKey();
         if (count($pk) === 1) {
             /** @var array $column */
             $column = $schema->getColumn($pk[0]);
