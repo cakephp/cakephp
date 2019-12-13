@@ -780,6 +780,23 @@ class TimeTest extends TestCase
     }
 
     /**
+     * Tests change json encoding format
+     *
+     * @dataProvider classNameProvider
+     * @return void
+     */
+    public function testSetJsonEncodeFormat($class)
+    {
+        $time = new $class('2014-04-20 10:10:10');
+
+        $class::setJsonEncodeFormat(static function ($t) { return $t->format(DATE_ATOM); });
+        $this->assertEquals('"2014-04-20T10:10:10+00:00"', json_encode($time));
+
+        $class::setJsonEncodeFormat("yyyy-MM-dd'T'HH':'mm':'ssZZZZZ");
+        $this->assertEquals('"2014-04-20T10:10:10Z"', json_encode($time));
+    }
+
+    /**
      * Tests debugInfo
      *
      * @dataProvider classNameProvider
