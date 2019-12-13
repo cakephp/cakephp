@@ -181,7 +181,7 @@ class FunctionsBuilder
      */
     public function datePart($part, $expression, $types = [])
     {
-        return $this->extract($part, $expression);
+        return $this->extract($part, $expression, $types);
     }
 
     /**
