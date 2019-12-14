@@ -176,29 +176,9 @@ parameters:
 			path: src/Console/ConsoleOptionParser.php
 
 		-
-			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
-			count: 1
-			path: src/Console/HelperRegistry.php
-
-		-
-			message: "#^PHPDoc tag @return with type Cake\\\\Console\\\\never\\-return is incompatible with native type void\\.$#"
-			count: 1
-			path: src/Console/Shell.php
-
-		-
-			message: "#^Return typehint of method Cake\\\\Console\\\\Shell\\:\\:abort\\(\\) has invalid type Cake\\\\Console\\\\never\\-return\\.$#"
-			count: 1
-			path: src/Console/Shell.php
-
-		-
 			message: "#^Strict comparison using \\=\\=\\= between int and null will always evaluate to false\\.$#"
 			count: 1
 			path: src/Console/ShellDispatcher.php
-
-		-
-			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
-			count: 1
-			path: src/Console/TaskRegistry.php
 
 		-
 			message: "#^Call to an undefined method Cake\\\\Auth\\\\Storage\\\\StorageInterface\\:\\:getConfig\\(\\)\\.$#"
@@ -256,19 +236,9 @@ parameters:
 			path: src/Controller/ErrorController.php
 
 		-
-			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
-			count: 2
-			path: src/Core/App.php
-
-		-
 			message: "#^Parameter \\#1 \\$autoload_function of function spl_autoload_register expects callable\\(string\\)\\: void, array\\(\\$this\\(Cake\\\\Core\\\\ClassLoader\\), 'loadClass'\\) given\\.$#"
 			count: 1
 			path: src/Core/ClassLoader.php
-
-		-
-			message: "#^Method Cake\\\\Core\\\\ObjectRegistry\\:\\:get\\(\\) should return TObject but returns TObject\\.$#"
-			count: 1
-			path: src/Core/ObjectRegistry.php
 
 		-
 			message: "#^PHPDoc tag @param for parameter \\$object with type TObject is not subtype of native type object\\.$#"
@@ -279,11 +249,6 @@ parameters:
 			message: "#^Array \\(array\\<string, TObject\\>\\) does not accept object\\.$#"
 			count: 1
 			path: src/Core/ObjectRegistry.php
-
-		-
-			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
-			count: 2
-			path: src/Core/PluginCollection.php
 
 		-
 			message: "#^Variable \\$_registry in PHPDoc tag @var does not exist\\.$#"
@@ -311,12 +276,7 @@ parameters:
 			path: src/Mailer/TransportFactory.php
 
 		-
-			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
-			count: 1
-			path: src/Core/functions.php
-
-		-
-			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
+			message: "#^Access to an undefined property PDO\\:\\:\\$_connection\\.$#"
 			count: 1
 			path: src/Database/Driver/Sqlserver.php
 
@@ -342,11 +302,6 @@ parameters:
 
 		-
 			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: src/Database/Driver.php
-
-		-
-			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
 			count: 1
 			path: src/Database/Driver.php
 
@@ -421,21 +376,6 @@ parameters:
 			path: src/Database/Statement/SqlserverStatement.php
 
 		-
-			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
-			count: 2
-			path: src/Database/Type/DateTimeType.php
-
-		-
-			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
-			count: 1
-			path: src/Database/TypeFactory.php
-
-		-
-			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
-			count: 1
-			path: src/Datasource/ConnectionRegistry.php
-
-		-
 			message: "#^Unreachable statement \\- code above always terminates\\.$#"
 			count: 1
 			path: src/ORM/Entity.php
@@ -454,16 +394,6 @@ parameters:
 			message: "#^Cannot unset offset 'object' on array\\('path' \\=\\> string, 'reference' \\=\\> mixed\\)\\.$#"
 			count: 1
 			path: src/Error/Debugger.php
-
-		-
-			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
-			count: 1
-			path: src/Error/ErrorHandler.php
-
-		-
-			message: "#^Method Cake\\\\Event\\\\Event\\:\\:getSubject\\(\\) should return TSubject but returns TSubject\\.$#"
-			count: 1
-			path: src/Event/Event.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
@@ -539,16 +469,6 @@ parameters:
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 2
 			path: src/Http/Cookie/CookieCollection.php
-
-		-
-			message: "#^Method Cake\\\\Http\\\\Middleware\\\\CspMiddleware\\:\\:process\\(\\) should return Psr\\\\Http\\\\Message\\\\ResponseInterface but returns Psr\\\\Http\\\\Message\\\\MessageInterface\\.$#"
-			count: 1
-			path: src/Http/Middleware/CspMiddleware.php
-
-		-
-			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
-			count: 1
-			path: src/Http/Middleware/CspMiddleware.php
 
 		-
 			message: "#^Method Cake\\\\Http\\\\Response\\:\\:withDisabledCache\\(\\) should return static\\(Cake\\\\Http\\\\Response\\) but returns Cake\\\\Http\\\\Response\\.$#"
@@ -676,11 +596,6 @@ parameters:
 			path: src/I18n/Time.php
 
 		-
-			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
-			count: 1
-			path: src/I18n/TranslatorFactory.php
-
-		-
 			message: "#^PHPDoc tag @var has invalid value \\(\\\\Psr\\\\SimpleCache\\\\CacheInterface&\\\\Cake\\\\Cache\\\\CacheEngineInterface\\|null\\)\\: Unexpected token \"\\|\", expected TOKEN_OTHER at offset 175$#"
 			count: 1
 			path: src/I18n/TranslatorRegistry.php
@@ -721,11 +636,6 @@ parameters:
 			path: src/ORM/Association/BelongsToMany.php
 
 		-
-			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
-			count: 1
-			path: src/ORM/Behavior/TranslateBehavior.php
-
-		-
 			message: "#^Call to an undefined method Cake\\\\Collection\\\\CollectionInterface\\:\\:printer\\(\\)\\.$#"
 			count: 1
 			path: src/ORM/Behavior/TreeBehavior.php
@@ -734,11 +644,6 @@ parameters:
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 2
 			path: src/ORM/EagerLoader.php
-
-		-
-			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
-			count: 1
-			path: src/ORM/Locator/TableLocator.php
 
 		-
 			message: "#^Parameter \\#1 \\$assoc of method Cake\\\\ORM\\\\Marshaller\\:\\:_belongsToMany\\(\\) expects Cake\\\\ORM\\\\Association\\\\BelongsToMany, Cake\\\\ORM\\\\Association given\\.$#"
@@ -771,11 +676,6 @@ parameters:
 			path: src/ORM/Query.php
 
 		-
-			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
-			count: 1
-			path: src/ORM/Query.php
-
-		-
 			message: "#^Method Cake\\\\ORM\\\\Query\\:\\:find\\(\\) should return static\\(Cake\\\\ORM\\\\Query\\) but returns Cake\\\\ORM\\\\Query\\.$#"
 			count: 1
 			path: src/ORM/Query.php
@@ -801,11 +701,6 @@ parameters:
 			path: src/ORM/Table.php
 
 		-
-			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
-			count: 1
-			path: src/ORM/Table.php
-
-		-
 			message: "#^Parameter \\#1 \\$request of static method Cake\\\\Routing\\\\Router\\:\\:setRequest\\(\\) expects Cake\\\\Http\\\\ServerRequest, Psr\\\\Http\\\\Message\\\\ServerRequestInterface given\\.$#"
 			count: 2
 			path: src/Routing/Middleware/RoutingMiddleware.php
@@ -819,11 +714,6 @@ parameters:
 			message: "#^Result of && is always false\\.$#"
 			count: 1
 			path: src/Routing/Route/EntityRoute.php
-
-		-
-			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
-			count: 1
-			path: src/Routing/Route/Route.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
@@ -989,11 +879,6 @@ parameters:
 			message: "#^Parameter \\#3 \\$options of method Cake\\\\View\\\\View\\:\\:_elementCache\\(\\) expects array\\('cache' \\=\\> array\\('key' \\=\\> string, 'config' \\=\\> string\\)\\|string, \\?'callbacks' \\=\\> mixed, \\?'plugin' \\=\\> mixed\\), array given\\.$#"
 			count: 1
 			path: src/View/View.php
-
-		-
-			message: "#^PHPDoc tag @var does not specify variable name\\.$#"
-			count: 1
-			path: src/View/ViewBuilder.php
 
 		-
 			message: "#^Unreachable statement \\- code above always terminates\\.$#"
