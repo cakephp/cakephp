@@ -107,19 +107,7 @@ class ArrayContext implements ContextInterface
      */
     public function primaryKey(): array
     {
-        if (
-            empty($this->_context['schema']['_constraints']) ||
-            !is_array($this->_context['schema']['_constraints'])
-        ) {
-            return [];
-        }
-        foreach ($this->_context['schema']['_constraints'] as $data) {
-            if (isset($data['type']) && $data['type'] === 'primary') {
-                return (array)($data['columns'] ?? []);
-            }
-        }
-
-        return [];
+        return $this->getPrimaryKey();
     }
 
     /**
