@@ -17,8 +17,6 @@ declare(strict_types=1);
 namespace Cake\Log\Engine;
 
 use Cake\Core\InstanceConfigTrait;
-use Cake\Datasource\EntityInterface;
-use JsonSerializable;
 use Psr\Log\AbstractLogger;
 
 /**
@@ -81,34 +79,17 @@ abstract class BaseLog extends AbstractLogger
     }
 
     /**
-     * Converts to string the provided data so it can be logged. The context
-     * can optionally be used by log engines to interpolate variables
+     * Formats the message to be logged.
+     *
+     * The context can optionally be used by log engines to interpolate variables
      * or add additional info to the logged message.
      *
-     * @param mixed $data The data to be converted to string and logged.
+     * @param string $message The message to be formatted.
      * @param array $context Additional logging information for the message.
      * @return string
      */
-    protected function _format($data, array $context = []): string
+    protected function _format(string $message, array $context = []): string
     {
-        if (is_string($data)) {
-            return $data;
-        }
-
-        $isObject = is_object($data);
-
-        if ($isObject && $data instanceof EntityInterface) {
-            return json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-        }
-
-        if ($isObject && method_exists($data, '__toString')) {
-            return (string)$data;
-        }
-
-        if ($isObject && $data instanceof JsonSerializable) {
-            return json_encode($data, JSON_UNESCAPED_UNICODE);
-        }
-
-        return print_r($data, true);
+        return $message;
     }
 }

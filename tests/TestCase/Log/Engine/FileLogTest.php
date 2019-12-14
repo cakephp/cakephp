@@ -20,8 +20,6 @@ namespace Cake\Test\TestCase\Log\Engine;
 
 use Cake\Log\Engine\FileLog;
 use Cake\TestSuite\TestCase;
-use TestApp\Log\Object\JsonObject;
-use TestApp\Log\Object\StringObject;
 
 /**
  * FileLogTest class
@@ -55,23 +53,6 @@ class FileLogTest extends TestCase
 
         $result = file_get_contents(LOGS . 'random.log');
         $this->assertRegExp('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Random: Test warning/', $result);
-
-        $object = new StringObject();
-        $log->log('debug', $object);
-        $this->assertFileExists(LOGS . 'debug.log');
-        $result = file_get_contents(LOGS . 'debug.log');
-        $this->assertStringContainsString('Debug: Hey!', $result);
-
-        $object = new JsonObject();
-        $log->log('debug', $object);
-        $this->assertFileExists(LOGS . 'debug.log');
-        $result = file_get_contents(LOGS . 'debug.log');
-        $this->assertStringContainsString('Debug: ' . json_encode(['hello' => 'world']), $result);
-
-        $log->log('debug', [1, 2]);
-        $this->assertFileExists(LOGS . 'debug.log');
-        $result = file_get_contents(LOGS . 'debug.log');
-        $this->assertStringContainsString('Debug: ' . print_r([1, 2], true), $result);
     }
 
     /**
