@@ -5,6 +5,10 @@ parameters:
     level: 5
     autoload_files:
         - tests/bootstrap.php
+<<<<<<< HEAD
+=======
+    ignoreErrors:
+        - '#Access to undefined constant NumberFormatter::CURRENCY_ACCOUNTING#'
     earlyTerminatingMethodCalls:
         Cake\Console\Shell:
             - abort

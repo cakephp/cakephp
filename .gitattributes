@@ -1,7 +1,6 @@
 # Define the line ending behavior of the different file extensions
 # Set default behavior, in case users don't have core.autocrlf set.
-* text=auto
-* text eol=lf
+* text=auto eol=lf
 
 # Explicitly declare text files we want to always be normalized and converted
 # to native line endings on checkout.
@@ -55,7 +54,6 @@ tests/TestCase export-ignore
 .mailmap export-ignore
 .stickler.yml export-ignore
 .travis.yml export-ignore
-.varci.yml export-ignore
 phpcs.xml.dist export-ignore
 phpstan.neon export-ignore
 phpstan-baseline.neon export-ignore

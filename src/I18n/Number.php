@@ -29,17 +29,25 @@ class Number
 {
     /**
      * Default locale
-     *
-     * @var string
      */
     public const DEFAULT_LOCALE = 'en_US';
 
     /**
      * Format type to format as currency
-     *
-     * @var string
      */
     public const FORMAT_CURRENCY = 'currency';
+
+    /**
+     * Format type to format as currency, accounting style (negative numbers in parentheses)
+     */
+    const FORMAT_CURRENCY_ACCOUNTING = 'currency_accounting';
+
+    /**
+     * ICU Constant for accounting format; not yet widely supported by INTL library.
+     * This will be able to go away once CakePHP minimum PHP requirement is 7.5 or higher.
+     * See UNUM_CURRENCY_ACCOUNTING in https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/unum_8h.html
+     */
+    const CURRENCY_ACCOUNTING = 12;
 
     /**
      * A list of number formatters indexed by locale and type
@@ -54,6 +62,13 @@ class Number
      * @var string|null
      */
     protected static $_defaultCurrency;
+
+    /**
+     * Default currency format used by Number::currency()
+     *
+     * @var string
+     */
+    protected static $_defaultCurrencyFormat;
 
     /**
      * Formats a number with a level of precision.
@@ -225,7 +240,7 @@ class Number
             return $options['zero'];
         }
 
-        $formatter = static::formatter(['type' => static::FORMAT_CURRENCY] + $options);
+        $formatter = static::formatter(['type' => static::getDefaultCurrencyFormat()] + $options);
         $abs = abs($value);
         if (!empty($options['fractionSymbol']) && $abs > 0 && $abs < 1) {
             $value *= 100;
@@ -306,6 +321,33 @@ class Number
     }
 
     /**
+     * Getter for default currency format
+     *
+     * @return string Currency Format
+     */
+    public static function getDefaultCurrencyFormat()
+    {
+        if (static::$_defaultCurrencyFormat === null) {
+            static::$_defaultCurrencyFormat = static::FORMAT_CURRENCY;
+        }
+
+        return static::$_defaultCurrencyFormat;
+    }
+
+    /**
+     * Setter for default currency format
+     *
+     * @param string|null $currencyFormat Default currency format to be used by currency()
+     * if $currencyFormat argument is not provided. If null is passed, it will clear the
+     * currently stored value
+     * @return void
+     */
+    public static function setDefaultCurrencyFormat($currencyFormat = null)
+    {
+        static::$_defaultCurrencyFormat = $currencyFormat;
+    }
+
+    /**
      * Returns a formatter object that can be reused for similar formatting task
      * under the same locale and options. This is often a speedier alternative to
      * using other methods in this class as only one formatter object needs to be
@@ -338,6 +380,12 @@ class Number
             $type = $options['type'];
             if ($options['type'] === static::FORMAT_CURRENCY) {
                 $type = NumberFormatter::CURRENCY;
+            } elseif ($options['type'] === static::FORMAT_CURRENCY_ACCOUNTING) {
+                if (defined('NumberFormatter::CURRENCY_ACCOUNTING')) {
+                    $type = NumberFormatter::CURRENCY_ACCOUNTING;
+                } else {
+                    $type = static::CURRENCY_ACCOUNTING;
+                }
             }
         }
 

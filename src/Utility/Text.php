@@ -1160,16 +1160,18 @@ class Text
             $string = static::transliterate($string, $options['transliteratorId']);
         }
 
-        $regex = '^\s\p{Ll}\p{Lm}\p{Lo}\p{Lt}\p{Lu}\p{Nd}';
+        $regex = '^\p{Ll}\p{Lm}\p{Lo}\p{Lt}\p{Lu}\p{Nd}';
         if ($options['preserve']) {
             $regex .= preg_quote($options['preserve'], '/');
         }
         $quotedReplacement = preg_quote($options['replacement'], '/');
         $map = [
-            '/[' . $regex . ']/mu' => ' ',
-            '/[\s]+/mu' => $options['replacement'],
+            '/[' . $regex . ']/mu' => $options['replacement'],
             sprintf('/^[%s]+|[%s]+$/', $quotedReplacement, $quotedReplacement) => '',
         ];
+        if (is_string($options['replacement']) && strlen($options['replacement']) > 0) {
+            $map[sprintf('/[%s]+/mu', $quotedReplacement)] = $options['replacement'];
+        }
         $string = preg_replace(array_keys($map), $map, $string);
 
         return $string;
