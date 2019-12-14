@@ -1164,7 +1164,7 @@ class Text
         if ($options['preserve']) {
             $regex .= preg_quote($options['preserve'], '/');
         }
-        $quotedReplacement = preg_quote($options['replacement'], '/');
+        $quotedReplacement = preg_quote((string)$options['replacement'], '/');
         $map = [
             '/[' . $regex . ']/mu' => $options['replacement'],
             sprintf('/^[%s]+|[%s]+$/', $quotedReplacement, $quotedReplacement) => '',
