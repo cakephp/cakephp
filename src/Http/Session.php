@@ -614,7 +614,7 @@ class Session
             $params['httponly']
         );
 
-        if (session_id()) {
+        if (session_id() !== '') {
             session_regenerate_id(true);
         }
     }
