@@ -325,7 +325,7 @@ class Number
      *
      * @return string Currency Format
      */
-    public static function getDefaultCurrencyFormat()
+    public static function getDefaultCurrencyFormat(): string
     {
         if (static::$_defaultCurrencyFormat === null) {
             static::$_defaultCurrencyFormat = static::FORMAT_CURRENCY;
@@ -342,7 +342,7 @@ class Number
      * currently stored value
      * @return void
      */
-    public static function setDefaultCurrencyFormat($currencyFormat = null)
+    public static function setDefaultCurrencyFormat($currencyFormat = null): void
     {
         static::$_defaultCurrencyFormat = $currencyFormat;
     }
