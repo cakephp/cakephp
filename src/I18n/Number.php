@@ -40,14 +40,14 @@ class Number
     /**
      * Format type to format as currency, accounting style (negative numbers in parentheses)
      */
-    const FORMAT_CURRENCY_ACCOUNTING = 'currency_accounting';
+    public const FORMAT_CURRENCY_ACCOUNTING = 'currency_accounting';
 
     /**
      * ICU Constant for accounting format; not yet widely supported by INTL library.
      * This will be able to go away once CakePHP minimum PHP requirement is 7.5 or higher.
      * See UNUM_CURRENCY_ACCOUNTING in https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/unum_8h.html
      */
-    const CURRENCY_ACCOUNTING = 12;
+    public const CURRENCY_ACCOUNTING = 12;
 
     /**
      * A list of number formatters indexed by locale and type
