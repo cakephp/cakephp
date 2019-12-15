@@ -595,7 +595,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function getPrimaryKey()
     {
         if ($this->_primaryKey === null) {
-            $key = (array)$this->getSchema()->primaryKey();
+            $key = (array)$this->getSchema()->getPrimaryKey();
             if (count($key) === 1) {
                 $key = $key[0];
             }

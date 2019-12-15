@@ -483,7 +483,7 @@ SQL;
                 'collate' => 'SQL_Latin1_General_CP1_CI_AS',
             ],
         ];
-        $this->assertEquals(['id'], $result->primaryKey());
+        $this->assertEquals(['id'], $result->getPrimaryKey());
         foreach ($expected as $field => $definition) {
             $column = $result->getColumn($field);
             $this->assertEquals($definition, $column, 'Failed to match field ' . $field);
@@ -514,7 +514,7 @@ SQL;
         $result = $schema->describe('schema_composite');
         $connection->execute('DROP TABLE schema_composite');
 
-        $this->assertEquals(['id', 'site_id'], $result->primaryKey());
+        $this->assertEquals(['id', 'site_id'], $result->getPrimaryKey());
         $this->assertNull($result->getColumn('site_id')['autoIncrement'], 'site_id should not be autoincrement');
         $this->assertTrue($result->getColumn('id')['autoIncrement'], 'id should be autoincrement');
     }
@@ -531,7 +531,7 @@ SQL;
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('dbo.schema_articles');
-        $this->assertEquals(['id'], $result->primaryKey());
+        $this->assertEquals(['id'], $result->getPrimaryKey());
         $this->assertSame('schema_articles', $result->name());
     }
 

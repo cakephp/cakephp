@@ -403,7 +403,7 @@ class PostgresSchema extends BaseSchema
 
         if ($data['type'] === TableSchema::TYPE_INTEGER || $data['type'] === TableSchema::TYPE_BIGINTEGER) {
             $type = $data['type'] === TableSchema::TYPE_INTEGER ? ' INTEGER' : ' BIGINT';
-            if ($schema->primaryKey() === [$name] || $data['autoIncrement'] === true) {
+            if ($schema->getPrimaryKey() === [$name] || $data['autoIncrement'] === true) {
                 $type = $data['type'] === TableSchema::TYPE_INTEGER ? ' SERIAL' : ' BIGSERIAL';
                 unset($data['null'], $data['default']);
             }

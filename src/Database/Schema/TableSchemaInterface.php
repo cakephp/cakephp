@@ -198,7 +198,7 @@ interface TableSchemaInterface extends SchemaInterface
      * @return array Column name(s) for the primary key. An
      *   empty list will be returned when the table has no primary key.
      */
-    public function primaryKey(): array;
+    public function getPrimaryKey(): array;
 
     /**
      * Add an index.

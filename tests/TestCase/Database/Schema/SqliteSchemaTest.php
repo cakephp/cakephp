@@ -213,7 +213,7 @@ class SqliteSchemaTest extends TestCase
         $table = new TableSchema('table');
         $dialect->convertColumnDescription($table, $field1);
         $dialect->convertColumnDescription($table, $field2);
-        $this->assertEquals(['field1', 'field2'], $table->primaryKey());
+        $this->assertEquals(['field1', 'field2'], $table->getPrimaryKey());
     }
 
     /**
@@ -378,7 +378,7 @@ SQL;
             ],
         ];
         $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
-        $this->assertEquals(['id'], $result->primaryKey());
+        $this->assertEquals(['id'], $result->getPrimaryKey());
         foreach ($expected as $field => $definition) {
             $this->assertEquals($definition, $result->getColumn($field));
         }
@@ -399,7 +399,7 @@ SQL;
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_composite');
 
-        $this->assertEquals(['id', 'site_id'], $result->primaryKey());
+        $this->assertEquals(['id', 'site_id'], $result->getPrimaryKey());
         $this->assertNull($result->getColumn('site_id')['autoIncrement'], 'site_id should not be autoincrement');
         $this->assertNull($result->getColumn('id')['autoIncrement'], 'id should not be autoincrement');
     }
