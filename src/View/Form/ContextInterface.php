@@ -26,7 +26,7 @@ interface ContextInterface
      *
      * @return string[]
      */
-    public function primaryKey(): array;
+    public function getPrimaryKey(): array;
 
     /**
      * Returns true if the passed field name is part of the primary key for this context

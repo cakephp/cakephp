@@ -100,7 +100,7 @@ class EntityContextTest extends TestCase
         $context = new EntityContext($this->request, [
             'entity' => $row,
         ]);
-        $this->assertEquals(['id'], $context->primaryKey());
+        $this->assertEquals(['id'], $context->getPrimaryKey());
     }
 
     /**

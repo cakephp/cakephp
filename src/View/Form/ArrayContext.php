@@ -103,8 +103,19 @@ class ArrayContext implements ContextInterface
      * Get the fields used in the context as a primary key.
      *
      * @return string[]
+     * @deprecated 4.0.0 Renamed to getPrimaryKey()
      */
     public function primaryKey(): array
+    {
+        return $this->getPrimaryKey();
+    }
+
+    /**
+     * Get the fields used in the context as a primary key.
+     *
+     * @return string[]
+     */
+    public function getPrimaryKey(): array
     {
         if (
             empty($this->_context['schema']['_constraints']) ||
@@ -126,7 +137,7 @@ class ArrayContext implements ContextInterface
      */
     public function isPrimaryKey(string $field): bool
     {
-        $primaryKey = $this->primaryKey();
+        $primaryKey = $this->getPrimaryKey();
 
         return in_array($field, $primaryKey, true);
     }
@@ -142,7 +153,7 @@ class ArrayContext implements ContextInterface
      */
     public function isCreate(): bool
     {
-        $primary = $this->primaryKey();
+        $primary = $this->getPrimaryKey();
         foreach ($primary as $column) {
             if (!empty($this->_context['defaults'][$column])) {
                 return false;
