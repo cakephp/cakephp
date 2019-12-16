@@ -49,7 +49,7 @@
         "paragonie/csp-builder": "CSP builder, to use the CSP Middleware"
     },
     "require-dev": {
-        "cakephp/cakephp-codesniffer": "dev-next",
+        "cakephp/cakephp-codesniffer": "^4.0",
         "mikey179/vfsstream": "^1.6",
         "paragonie/csp-builder": "^2.3",
         "phpunit/phpunit": "~8.4.0"
