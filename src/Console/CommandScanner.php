@@ -19,7 +19,6 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Filesystem\Folder;
 use Cake\Utility\Inflector;
-use InvalidArgumentException;
 
 /**
  * Used by CommandCollection and CommandTask to scan the filesystem
@@ -64,13 +63,13 @@ class CommandScanner
             App::path('Shell')[0],
             $appNamespace . '\Shell\\',
             '',
-            ['app']
+            []
         );
         $appCommands = $this->scanDir(
             App::path('Command')[0],
             $appNamespace . '\Command\\',
             '',
-            ['app']
+            []
         );
 
         return array_merge($appShells, $appCommands);
@@ -84,7 +83,7 @@ class CommandScanner
      */
     public function scanPlugin($plugin)
     {
-        if (!Plugin::loaded($plugin)) {
+        if (!Plugin::isLoaded($plugin)) {
             return [];
         }
         $path = Plugin::classPath($plugin);
@@ -104,7 +103,7 @@ class CommandScanner
      * @param string $path The directory to read.
      * @param string $namespace The namespace the shells live in.
      * @param string $prefix The prefix to apply to commands for their full name.
-     * @param array $hide A list of command names to hide as they are internal commands.
+     * @param string[] $hide A list of command names to hide as they are internal commands.
      * @return array The list of shell info arrays based on scanning the filesystem and inflection.
      */
     protected function scanDir($path, $namespace, $prefix, array $hide)
@@ -140,7 +139,7 @@ class CommandScanner
                 'file' => $path . $file,
                 'fullName' => $prefix . $name,
                 'name' => $name,
-                'class' => $class
+                'class' => $class,
             ];
         }
 

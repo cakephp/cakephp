@@ -43,7 +43,7 @@ class Paginator implements PaginatorInterface
         'page' => 1,
         'limit' => 20,
         'maxLimit' => 100,
-        'whitelist' => ['limit', 'sort', 'page', 'direction']
+        'whitelist' => ['limit', 'sort', 'page', 'direction'],
     ];
 
     /**
@@ -166,6 +166,68 @@ class Paginator implements PaginatorInterface
             $object = $query->getRepository();
         }
 
+        $data = $this->extractData($object, $params, $settings);
+        $query = $this->getQuery($object, $query, $data);
+
+        $cleanQuery = clone $query;
+        $results = $query->all();
+        $data['numResults'] = count($results);
+        $data['count'] = $this->getCount($cleanQuery, $data);
+
+        $pagingParams = $this->buildParams($data);
+        $alias = $object->getAlias();
+        $this->_pagingParams = [$alias => $pagingParams];
+        if ($pagingParams['requestedPage'] > $pagingParams['page']) {
+            throw new PageOutOfBoundsException([
+                'requestedPage' => $pagingParams['requestedPage'],
+                'pagingParams' => $this->_pagingParams,
+            ]);
+        }
+
+        return $results;
+    }
+
+    /**
+     * Get query for fetching paginated results.
+     *
+     * @param \Cake\Datasource\RepositoryInterface $object Repository instance.
+     * @param \Cake\Datasource\QueryInterface|null $query Query Instance.
+     * @param array $data Pagination data.
+     * @return \Cake\Datasource\QueryInterface
+     */
+    protected function getQuery(RepositoryInterface $object, QueryInterface $query = null, array $data)
+    {
+        if ($query === null) {
+            $query = $object->find($data['finder'], $data['options']);
+        } else {
+            $query->applyOptions($data['options']);
+        }
+
+        return $query;
+    }
+
+    /**
+     * Get total count of records.
+     *
+     * @param \Cake\Datasource\QueryInterface $query Query instance.
+     * @param array $data Pagination data.
+     * @return int|null
+     */
+    protected function getCount(QueryInterface $query, array $data)
+    {
+        return $query->count();
+    }
+
+    /**
+     * Extract pagination data needed
+     *
+     * @param \Cake\Datasource\RepositoryInterface $object The repository object.
+     * @param array $params Request params
+     * @param array $settings The settings/configuration used for pagination.
+     * @return array Array with keys 'defaults', 'options' and 'finder'
+     */
+    protected function extractData(RepositoryInterface $object, array $params, array $settings)
+    {
         $alias = $object->getAlias();
         $defaults = $this->getDefaults($alias, $settings);
         $options = $this->mergeOptions($params, $defaults);
@@ -176,58 +238,135 @@ class Paginator implements PaginatorInterface
         $options['page'] = (int)$options['page'] < 1 ? 1 : (int)$options['page'];
         list($finder, $options) = $this->_extractFinder($options);
 
-        if (empty($query)) {
-            $query = $object->find($finder, $options);
-        } else {
-            $query->applyOptions($options);
+        return compact('defaults', 'options', 'finder');
+    }
+
+    /**
+     * Build pagination params.
+     *
+     * @param array $data Paginator data containing keys 'options',
+     *   'count', 'defaults', 'finder', 'numResults'.
+     * @return array Paging params.
+     */
+    protected function buildParams(array $data)
+    {
+        $limit = $data['options']['limit'];
+
+        $paging = [
+            'count' => $data['count'],
+            'current' => $data['numResults'],
+            'perPage' => $limit,
+            'page' => $data['options']['page'],
+            'requestedPage' => $data['options']['page'],
+        ];
+
+        $paging = $this->addPageCountParams($paging, $data);
+        $paging = $this->addStartEndParams($paging, $data);
+        $paging = $this->addPrevNextParams($paging, $data);
+        $paging = $this->addSortingParams($paging, $data);
+
+        $paging += [
+            'limit' => $data['defaults']['limit'] != $limit ? $limit : null,
+            'scope' => $data['options']['scope'],
+            'finder' => $data['finder'],
+        ];
+
+        return $paging;
+    }
+
+    /**
+     * Add "page" and "pageCount" params.
+     *
+     * @param array $params Paging params.
+     * @param array $data Paginator data.
+     * @return array Updated params.
+     */
+    protected function addPageCountParams(array $params, array $data)
+    {
+        $page = $params['page'];
+        $pageCount = 0;
+
+        if ($params['count'] !== null) {
+            $pageCount = max((int)ceil($params['count'] / $params['perPage']), 1);
+            $page = min($page, $pageCount);
+        } elseif ($params['current'] === 0 && $params['requestedPage'] > 1) {
+            $page = 1;
         }
 
-        $cleanQuery = clone $query;
-        $results = $query->all();
-        $numResults = count($results);
-        $count = $cleanQuery->count();
+        $params['page'] = $page;
+        $params['pageCount'] = $pageCount;
 
-        $page = $options['page'];
-        $limit = $options['limit'];
-        $pageCount = max((int)ceil($count / $limit), 1);
-        $requestedPage = $page;
-        $page = min($page, $pageCount);
+        return $params;
+    }
 
-        $order = (array)$options['order'];
+    /**
+     * Add "start" and "end" params.
+     *
+     * @param array $params Paging params.
+     * @param array $data Paginator data.
+     * @return array Updated params.
+     */
+    protected function addStartEndParams(array $params, array $data)
+    {
+        $start = $end = 0;
+
+        if ($params['current'] > 0) {
+            $start = (($params['page'] - 1) * $params['perPage']) + 1;
+            $end = $start + $params['current'] - 1;
+        }
+
+        $params['start'] = $start;
+        $params['end'] = $end;
+
+        return $params;
+    }
+
+    /**
+     * Add "prevPage" and "nextPage" params.
+     *
+     * @param array $params Paginator params.
+     * @param array $data Paging data.
+     * @return array Updated params.
+     */
+    protected function addPrevNextParams(array $params, array $data)
+    {
+        $params['prevPage'] = $params['page'] > 1;
+        if ($params['count'] === null) {
+            $params['nextPage'] = true;
+        } else {
+            $params['nextPage'] = $params['count'] > ($params['page'] * $params['perPage']);
+        }
+
+        return $params;
+    }
+
+    /**
+     * Add sorting / ordering params.
+     *
+     * @param array $params Paginator params.
+     * @param array $data Paging data.
+     * @return array Updated params.
+     */
+    protected function addSortingParams(array $params, array $data)
+    {
+        $defaults = $data['defaults'];
+        $order = (array)$data['options']['order'];
         $sortDefault = $directionDefault = false;
+
         if (!empty($defaults['order']) && count($defaults['order']) === 1) {
             $sortDefault = key($defaults['order']);
             $directionDefault = current($defaults['order']);
         }
 
-        $paging = [
-            'finder' => $finder,
-            'page' => $page,
-            'current' => $numResults,
-            'count' => $count,
-            'perPage' => $limit,
-            'prevPage' => $page > 1,
-            'nextPage' => $count > ($page * $limit),
-            'pageCount' => $pageCount,
-            'sort' => $options['sort'],
-            'direction' => current($order),
-            'limit' => $defaults['limit'] != $limit ? $limit : null,
+        $params += [
+            'sort' => $data['options']['sort'],
+            'direction' => isset($data['options']['sort']) ? current($order) : null,
             'sortDefault' => $sortDefault,
             'directionDefault' => $directionDefault,
-            'scope' => $options['scope'],
             'completeSort' => $order,
         ];
 
-        $this->_pagingParams = [$alias => $paging];
-
-        if ($requestedPage > $page) {
-            throw new PageOutOfBoundsException([
-                'requestedPage' => $requestedPage,
-                'pagingParams' => $this->_pagingParams
-            ]);
-        }
-
-        return $results;
+        return $params;
     }
 
     /**
@@ -352,7 +491,12 @@ class Paginator implements PaginatorInterface
             if (!in_array($direction, ['asc', 'desc'])) {
                 $direction = 'asc';
             }
+
             $order = (isset($options['order']) && is_array($options['order'])) ? $options['order'] : [];
+            if ($order && $options['sort'] && strpos($options['sort'], '.') === false) {
+                $order = $this->_removeAliases($order, $object->getAlias());
+            }
+
             $options['order'] = [$options['sort'] => $direction] + $order;
         } else {
             $options['sort'] = null;
@@ -378,7 +522,8 @@ class Paginator implements PaginatorInterface
             }
         }
 
-        if ($options['sort'] === null
+        if (
+            $options['sort'] === null
             && count($options['order']) === 1
             && !is_numeric(key($options['order']))
         ) {
@@ -388,6 +533,35 @@ class Paginator implements PaginatorInterface
         $options['order'] = $this->_prefix($object, $options['order'], $inWhitelist);
 
         return $options;
+    }
+
+    /**
+     * Remove alias if needed.
+     *
+     * @param array $fields Current fields
+     * @param string $model Current model alias
+     * @return array $fields Unaliased fields where applicable
+     */
+    protected function _removeAliases($fields, $model)
+    {
+        $result = [];
+        foreach ($fields as $field => $sort) {
+            if (strpos($field, '.') === false) {
+                $result[$field] = $sort;
+                continue;
+            }
+
+            list ($alias, $currentField) = explode('.', $field);
+
+            if ($alias === $model) {
+                $result[$currentField] = $sort;
+                continue;
+            }
+
+            $result[$field] = $sort;
+        }
+
+        return $result;
     }
 
     /**

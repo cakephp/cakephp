@@ -24,7 +24,6 @@ use Cake\Http\ServerRequest;
  */
 class NullContext implements ContextInterface
 {
-
     /**
      * The request object.
      *
@@ -81,6 +80,22 @@ class NullContext implements ContextInterface
     public function isRequired($field)
     {
         return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getRequiredMessage($field)
+    {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getMaxLength($field)
+    {
+        return null;
     }
 
     /**

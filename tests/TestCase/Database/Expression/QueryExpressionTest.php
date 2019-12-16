@@ -124,7 +124,7 @@ class QueryExpressionTest extends TestCase
             ],
             [
                 'Users.username' => 'string',
-                'Users.active' => 'boolean'
+                'Users.active' => 'boolean',
             ]
         );
 
@@ -199,7 +199,7 @@ class QueryExpressionTest extends TestCase
     {
         return [
             ['eq'], ['notEq'], ['gt'], ['lt'], ['gte'], ['lte'], ['like'],
-            ['notLike'], ['in'], ['notIn']
+            ['notLike'], ['in'], ['notIn'],
         ];
     }
 
@@ -221,5 +221,24 @@ class QueryExpressionTest extends TestCase
         $type = current($bindings)['type'];
 
         $this->assertEquals('date', $type);
+    }
+
+    /**
+     * Tests that creating query expressions with either the
+     * array notation or using the combinators will produce a
+     * zero-count expression object.
+     *
+     * @see https://github.com/cakephp/cakephp/issues/12081
+     * @return void
+     */
+    public function testEmptyOr()
+    {
+        $expr = new QueryExpression();
+        $expr = $expr->or([]);
+        $expr = $expr->or([]);
+        $this->assertCount(0, $expr);
+
+        $expr = new QueryExpression(['OR' => []]);
+        $this->assertCount(0, $expr);
     }
 }

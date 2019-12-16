@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\Console;
 
-use Cake\Console\Command;
 use Cake\Console\CommandCollection;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
@@ -45,7 +44,7 @@ class CommandCollectionTest extends TestCase
     {
         $collection = new CommandCollection([
             'i18n' => I18nShell::class,
-            'routes' => RoutesShell::class
+            'routes' => RoutesShell::class,
         ]);
         $this->assertTrue($collection->has('routes'));
         $this->assertTrue($collection->has('i18n'));
@@ -63,7 +62,7 @@ class CommandCollectionTest extends TestCase
         $this->expectExceptionMessage('Cannot use \'stdClass\' for command \'nope\' it is not a subclass of Cake\Console\Shell');
         new CommandCollection([
             'i18n' => I18nShell::class,
-            'nope' => stdClass::class
+            'nope' => stdClass::class,
         ]);
     }
 
@@ -139,6 +138,39 @@ class CommandCollectionTest extends TestCase
     }
 
     /**
+     * Provider for invalid names.
+     *
+     * @return array
+     */
+    public function invalidNameProvider()
+    {
+        return [
+            // Empty
+            [''],
+            // Leading spaces
+            [' spaced'],
+            // Trailing spaces
+            ['spaced '],
+            // Too many words
+            ['one two three four'],
+        ];
+    }
+
+    /**
+     * test adding a command instance.
+     *
+     * @dataProvider invalidNameProvider
+     * @return void
+     */
+    public function testAddCommandInvalidName($name)
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("The command name `$name` is invalid.");
+        $collection = new CommandCollection();
+        $collection->add($name, DemoCommand::class);
+    }
+
+    /**
      * Class names that are not shells should fail
      *
      */
@@ -184,7 +216,7 @@ class CommandCollectionTest extends TestCase
     {
         $in = [
             'i18n' => I18nShell::class,
-            'routes' => RoutesShell::class
+            'routes' => RoutesShell::class,
         ];
         $collection = new CommandCollection($in);
         $out = [];
@@ -204,11 +236,13 @@ class CommandCollectionTest extends TestCase
         $collection = new CommandCollection();
         $collection->addMany($collection->autoDiscover());
 
+        $this->assertTrue($collection->has('app'));
         $this->assertTrue($collection->has('demo'));
         $this->assertTrue($collection->has('i18m'));
         $this->assertTrue($collection->has('sample'));
         $this->assertTrue($collection->has('testing_dispatch'));
 
+        $this->assertSame('TestApp\Shell\AppShell', $collection->get('app'));
         $this->assertSame('TestApp\Command\DemoCommand', $collection->get('demo'));
         $this->assertSame('TestApp\Shell\I18mShell', $collection->get('i18m'));
         $this->assertSame('TestApp\Shell\SampleShell', $collection->get('sample'));
@@ -256,8 +290,7 @@ class CommandCollectionTest extends TestCase
      */
     public function testDiscoverPlugin()
     {
-        Plugin::load('TestPlugin');
-        Plugin::load('Company/TestPluginThree');
+        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
 
         $collection = new CommandCollection();
         // Add a dupe to test de-duping
@@ -297,5 +330,6 @@ class CommandCollectionTest extends TestCase
             'Long names are stored as well'
         );
         $this->assertSame($result['company'], $result['company/test_plugin_three.company']);
+        $this->clearPlugins();
     }
 }

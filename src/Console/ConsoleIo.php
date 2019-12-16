@@ -29,7 +29,6 @@ use SplFileObject;
  */
 class ConsoleIo
 {
-
     /**
      * The output stream
      *
@@ -84,7 +83,7 @@ class ConsoleIo
      *
      * @var int
      */
-    protected $_level = ConsoleIo::NORMAL;
+    protected $_level = self::NORMAL;
 
     /**
      * The number of bytes last written to the output stream
@@ -121,7 +120,7 @@ class ConsoleIo
     /**
      * Get/set the current output level.
      *
-     * @param null|int $level The current output level.
+     * @param int|null $level The current output level.
      * @return int The current output level.
      */
     public function level($level = null)
@@ -136,7 +135,7 @@ class ConsoleIo
     /**
      * Output at the verbose level.
      *
-     * @param string|array $message A string or an array of strings to output
+     * @param string|string[] $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int|bool The number of bytes returned from writing to stdout.
      */
@@ -148,7 +147,7 @@ class ConsoleIo
     /**
      * Output at all levels.
      *
-     * @param string|array $message A string or an array of strings to output
+     * @param string|string[] $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int|bool The number of bytes returned from writing to stdout.
      */
@@ -163,17 +162,17 @@ class ConsoleIo
      *
      * ### Output levels
      *
-     * There are 3 built-in output level. Shell::QUIET, Shell::NORMAL, Shell::VERBOSE.
+     * There are 3 built-in output level. ConsoleIo::QUIET, ConsoleIo::NORMAL, ConsoleIo::VERBOSE.
      * The verbose and quiet output levels, map to the `verbose` and `quiet` output switches
-     * present in most shells. Using Shell::QUIET for a message means it will always display.
-     * While using Shell::VERBOSE means it will only display when verbose output is toggled.
+     * present in most shells. Using ConsoleIo::QUIET for a message means it will always display.
+     * While using ConsoleIo::VERBOSE means it will only display when verbose output is toggled.
      *
-     * @param string|array $message A string or an array of strings to output
+     * @param string|string[] $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
      * @return int|bool The number of bytes returned from writing to stdout.
      */
-    public function out($message = '', $newlines = 1, $level = ConsoleIo::NORMAL)
+    public function out($message = '', $newlines = 1, $level = self::NORMAL)
     {
         if ($level <= $this->_level) {
             $this->_lastWritten = (int)$this->_out->write($message, $newlines);
@@ -187,14 +186,18 @@ class ConsoleIo
     /**
      * Convenience method for out() that wraps message between <info /> tag
      *
-     * @param string|array|null $message A string or an array of strings to output
+     * @param string|string[]|null $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
      * @return int|bool The number of bytes returned from writing to stdout.
-     * @see https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::out
+     * @see https://book.cakephp.org/3/en/console-and-shells.html#ConsoleIo::out
      */
-    public function info($message = null, $newlines = 1, $level = Shell::NORMAL)
+    public function info($message = null, $newlines = 1, $level = self::NORMAL)
     {
+        if ($message === null) {
+            deprecationWarning('ConsoleIo::info() in 4.x will not allow null anymore.');
+        }
+
         $messageType = 'info';
         $message = $this->wrapMessageWithType($messageType, $message);
 
@@ -204,13 +207,17 @@ class ConsoleIo
     /**
      * Convenience method for err() that wraps message between <warning /> tag
      *
-     * @param string|array|null $message A string or an array of strings to output
+     * @param string|string[]|null $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int|bool The number of bytes returned from writing to stderr.
-     * @see https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::err
+     * @see https://book.cakephp.org/3/en/console-and-shells.html#ConsoleIo::err
      */
     public function warning($message = null, $newlines = 1)
     {
+        if ($message === null) {
+            deprecationWarning('ConsoleIo::warning() in 4.x will not allow null anymore.');
+        }
+
         $messageType = 'warning';
         $message = $this->wrapMessageWithType($messageType, $message);
 
@@ -220,13 +227,17 @@ class ConsoleIo
     /**
      * Convenience method for err() that wraps message between <error /> tag
      *
-     * @param string|array|null $message A string or an array of strings to output
+     * @param string|string[]|null $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int|bool The number of bytes returned from writing to stderr.
-     * @see https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::err
+     * @see https://book.cakephp.org/3/en/console-and-shells.html#ConsoleIo::err
      */
     public function error($message = null, $newlines = 1)
     {
+        if ($message === null) {
+            deprecationWarning('ConsoleIo::error() in 4.x will not allow null anymore.');
+        }
+
         $messageType = 'error';
         $message = $this->wrapMessageWithType($messageType, $message);
 
@@ -236,14 +247,18 @@ class ConsoleIo
     /**
      * Convenience method for out() that wraps message between <success /> tag
      *
-     * @param string|array|null $message A string or an array of strings to output
+     * @param string|string[]|null $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
      * @return int|bool The number of bytes returned from writing to stdout.
-     * @see https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::out
+     * @see https://book.cakephp.org/3/en/console-and-shells.html#ConsoleIo::out
      */
-    public function success($message = null, $newlines = 1, $level = Shell::NORMAL)
+    public function success($message = null, $newlines = 1, $level = self::NORMAL)
     {
+        if ($message === null) {
+            deprecationWarning('ConsoleIo::success() in 4.x will not allow null anymore.');
+        }
+
         $messageType = 'success';
         $message = $this->wrapMessageWithType($messageType, $message);
 
@@ -251,11 +266,26 @@ class ConsoleIo
     }
 
     /**
+     * Halts the the current process with a StopException.
+     *
+     * @param string $message Error message.
+     * @param int $code Error code.
+     * @return void
+     * @throws \Cake\Console\Exception\StopException
+     */
+    public function abort($message, $code = Command::CODE_ERROR)
+    {
+        $this->error($message);
+
+        throw new StopException($message, $code);
+    }
+
+    /**
      * Wraps a message with a given message type, e.g. <warning>
      *
      * @param string $messageType The message type, e.g. "warning".
-     * @param string|array $message The message to wrap.
-     * @return array|string The message wrapped with the given message type.
+     * @param string|string[] $message The message to wrap.
+     * @return string|string[] The message wrapped with the given message type.
      */
     protected function wrapMessageWithType($messageType, $message)
     {
@@ -314,7 +344,7 @@ class ConsoleIo
      * Outputs a single or multiple error messages to stderr. If no parameters
      * are passed outputs just a newline.
      *
-     * @param string|array $message A string or an array of strings to output
+     * @param string|string[] $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int|bool The number of bytes returned from writing to stderr.
      */
@@ -353,7 +383,7 @@ class ConsoleIo
      *
      * @param string $prompt Prompt text.
      * @param string|null $default Default input value.
-     * @return mixed Either the default value, or the user-provided input.
+     * @return string Either the default value, or the user-provided input.
      */
     public function ask($prompt, $default = null)
     {
@@ -390,15 +420,15 @@ class ConsoleIo
      * Add a new output style or get defined styles.
      *
      * @param string|null $style The style to get or create.
-     * @param array|bool|null $definition The array definition of the style to change or create a style
+     * @param array|false|null $definition The array definition of the style to change or create a style
      *   or false to remove a style.
-     * @return mixed If you are getting styles, the style or null will be returned. If you are creating/modifying
+     * @return array|true|null If you are getting styles, the style or null will be returned. If you are creating/modifying
      *   styles true will be returned.
      * @see \Cake\Console\ConsoleOutput::styles()
      */
     public function styles($style = null, $definition = null)
     {
-        $this->_out->styles($style, $definition);
+        return $this->_out->styles($style, $definition);
     }
 
     /**
@@ -407,7 +437,7 @@ class ConsoleIo
      * @param string $prompt Prompt text.
      * @param string|array $options Array or string of options.
      * @param string|null $default Default input value.
-     * @return mixed Either the default value, or the user-provided input.
+     * @return string Either the default value, or the user-provided input.
      */
     public function askChoice($prompt, $options, $default = null)
     {
@@ -492,7 +522,7 @@ class ConsoleIo
         if ($enable !== static::QUIET) {
             $stdout = new ConsoleLog([
                 'types' => $outLevels,
-                'stream' => $this->_out
+                'stream' => $this->_out,
             ]);
             Log::setConfig('stdout', ['engine' => $stdout]);
         }
@@ -540,12 +570,6 @@ class ConsoleIo
      */
     public function createFile($path, $contents, $forceOverwrite = false)
     {
-        $path = str_replace(
-            DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR,
-            DIRECTORY_SEPARATOR,
-            $path
-        );
-
         $this->out();
         $forceOverwrite = $forceOverwrite || $this->forceOverwrite;
 
@@ -572,6 +596,12 @@ class ConsoleIo
         }
 
         try {
+            // Create the directory using the current user permissions.
+            $directory = dirname($path);
+            if (!file_exists($directory)) {
+                mkdir($directory, 0777 ^ umask(), true);
+            }
+
             $file = new SplFileObject($path, 'w');
         } catch (RuntimeException $e) {
             $this->error("Could not write to `{$path}`. Permission denied.", 2);

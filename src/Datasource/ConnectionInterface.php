@@ -18,6 +18,7 @@ namespace Cake\Datasource;
  * This interface defines the methods you can depend on in
  * a connection.
  *
+ * @method object getDriver() Gets the driver instance.
  * @method object getLogger() Get the current logger instance
  * @method $this setLogger($logger) Set the current logger.
  * @method bool supportsDynamicConstraints()
@@ -25,6 +26,11 @@ namespace Cake\Datasource;
  * @method \Cake\Database\Query newQuery()
  * @method \Cake\Database\StatementInterface prepare($sql)
  * @method \Cake\Database\StatementInterface execute($query, $params = [], array $types = [])
+ * @method \Cake\Database\StatementInterface query(string $sql)
+ * @method $this enableQueryLogging($value)
+ * @method $this disableQueryLogging()
+ * @method $this disableSavePoints()
+ * @method bool isQueryLoggingEnabled()
  * @method string quote($value, $type = null)
  */
 interface ConnectionInterface

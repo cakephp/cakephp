@@ -25,10 +25,10 @@ class EventFiredWithTest extends TestCase
         $manager->trackEvents(true);
 
         $myEvent = new Event('my.event', $this, [
-            'key' => 'value'
+            'key' => 'value',
         ]);
         $myOtherEvent = new Event('my.other.event', $this, [
-            'key' => null
+            'key' => null,
         ]);
 
         $manager->getEventList()->add($myEvent);
@@ -59,7 +59,7 @@ class EventFiredWithTest extends TestCase
         $manager->trackEvents(true);
 
         $myEvent = new Event('my.event', $this, [
-            'key' => 'value'
+            'key' => 'value',
         ]);
 
         $manager->getEventList()->add($myEvent);

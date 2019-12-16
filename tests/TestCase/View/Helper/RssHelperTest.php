@@ -73,17 +73,17 @@ class RssHelperTest extends TestCase
         $result = $this->Rss->document();
         $expected = [
             'rss' => [
-                'version' => '2.0'
-            ]
+                'version' => '2.0',
+            ],
         ];
         $this->assertHtml($expected, $result);
 
         $result = $this->Rss->document(null, 'content');
         $expected = [
             'rss' => [
-                'version' => '2.0'
+                'version' => '2.0',
             ],
-            'content'
+            'content',
         ];
         $this->assertHtml($expected, $result);
 
@@ -91,9 +91,9 @@ class RssHelperTest extends TestCase
         $expected = [
             'rss' => [
                 'contrived' => 'parameter',
-                'version' => '2.0'
+                'version' => '2.0',
             ],
-            'content'
+            'content',
         ];
         $this->assertHtml($expected, $result);
     }
@@ -113,7 +113,7 @@ class RssHelperTest extends TestCase
         $expected = [
             'channel' => [
                 'a' => '1',
-                'b' => '2'
+                'b' => '2',
             ],
             '<title',
             'Title',
@@ -123,7 +123,7 @@ class RssHelperTest extends TestCase
             '/link',
             '<description',
             'content',
-            '/channel'
+            '/channel',
         ];
         $this->assertHtml($expected, $result);
     }
@@ -143,15 +143,15 @@ class RssHelperTest extends TestCase
             'image' => [
                 'title' => 'Title of image',
                 'url' => 'http://example.com/example.png',
-                'link' => 'http://example.com'
+                'link' => 'http://example.com',
             ],
             'cloud' => [
                 'domain' => 'rpc.sys.com',
                 'port' => '80',
                 'path' => '/RPC2',
                 'registerProcedure' => 'myCloud.rssPleaseNotify',
-                'protocol' => 'xml-rpc'
-            ]
+                'protocol' => 'xml-rpc',
+            ],
         ];
         $content = 'content-here';
         $result = $this->Rss->channel($attrib, $elements, $content);
@@ -190,14 +190,14 @@ class RssHelperTest extends TestCase
             'image' => [
                 'title' => 'Title of image',
                 'url' => 'http://example.com/example.png',
-                'link' => 'http://example.com'
+                'link' => 'http://example.com',
             ],
             'atom:link' => [
                 'attrib' => [
                     'href' => 'http://www.example.com/rss.xml',
                     'rel' => 'self',
-                    'type' => 'application/rss+xml']
-            ]
+                    'type' => 'application/rss+xml'],
+            ],
         ];
         $content = 'content-here';
         $result = $this->Rss->channel($attrib, $elements, $content);
@@ -235,7 +235,7 @@ class RssHelperTest extends TestCase
         $items = [
             ['title' => 'title1', 'guid' => 'http://www.example.com/guid1', 'link' => 'http://www.example.com/link1', 'description' => 'description1'],
             ['title' => 'title2', 'guid' => 'http://www.example.com/guid2', 'link' => 'http://www.example.com/link2', 'description' => 'description2'],
-            ['title' => 'title3', 'guid' => 'http://www.example.com/guid3', 'link' => 'http://www.example.com/link3', 'description' => 'description3']
+            ['title' => 'title3', 'guid' => 'http://www.example.com/guid3', 'link' => 'http://www.example.com/link3', 'description' => 'description3'],
         ];
 
         $result = $this->Rss->items($items);
@@ -257,14 +257,14 @@ class RssHelperTest extends TestCase
                 '<guid', 'http://www.example.com/guid3', '/guid',
                 '<link', 'http://www.example.com/link3', '/link',
                 '<description', 'description3', '/description',
-            '/item'
+            '/item',
         ];
         $this->assertHtml($expected, $result);
 
         $items = [
             ['title' => 'title1', 'guid' => 'http://www.example.com/guid1', 'link' => 'http://www.example.com/link1', 'description' => 'description1'],
             ['title' => 'title2', 'guid' => 'http://www.example.com/guid2', 'link' => 'http://www.example.com/link2', 'description' => 'description2'],
-            ['title' => 'title3', 'guid' => 'http://www.example.com/guid3', 'link' => 'http://www.example.com/link3', 'description' => 'description3']
+            ['title' => 'title3', 'guid' => 'http://www.example.com/guid3', 'link' => 'http://www.example.com/link3', 'description' => 'description3'],
         ];
 
         $result = $this->Rss->items($items, function ($v) {
@@ -290,7 +290,7 @@ class RssHelperTest extends TestCase
                 '<guid', 'http://www.example.com/guid3', '/guid',
                 '<link', 'http://www.example.com/link3', '/link',
                 '<description', 'description3', '/description',
-            '/item'
+            '/item',
         ];
         $this->assertHtml($expected, $result);
 
@@ -309,7 +309,7 @@ class RssHelperTest extends TestCase
         $item = [
             'title' => 'My title',
             'description' => 'My description',
-            'link' => 'http://www.google.com/'
+            'link' => 'http://www.google.com/',
         ];
         $result = $this->Rss->item(null, $item);
         $expected = [
@@ -326,7 +326,7 @@ class RssHelperTest extends TestCase
             '<guid',
             'http://www.google.com/',
             '/guid',
-            '/item'
+            '/item',
         ];
         $this->assertHtml($expected, $result);
 
@@ -336,7 +336,7 @@ class RssHelperTest extends TestCase
             'description' => 'descriptive words',
             'pubDate' => '2008-05-31 12:00:00',
             'source' => ['http://www.google.com/', 'Google'],
-            'guid' => 'http://www.example.com/1'
+            'guid' => 'http://www.example.com/1',
         ];
         $result = $this->Rss->item(null, $item);
 
@@ -360,18 +360,18 @@ class RssHelperTest extends TestCase
             '<guid',
             'http://www.example.com/1',
             '/guid',
-            '/item'
+            '/item',
         ];
         $this->assertHtml($expected, $result);
 
         $item = [
-            'title' => 'My Title & more'
+            'title' => 'My Title & more',
         ];
         $result = $this->Rss->item(null, $item);
         $expected = [
             '<item',
             '<title', 'My Title &amp; more', '/title',
-            '/item'
+            '/item',
         ];
         $this->assertHtml($expected, $result);
 
@@ -379,14 +379,14 @@ class RssHelperTest extends TestCase
             'title' => 'Foo bar',
             'link' => [
                 'url' => 'http://example.com/foo?a=1&b=2',
-                'convertEntities' => false
+                'convertEntities' => false,
             ],
             'description' => [
                 'value' => 'descriptive words',
                 'cdata' => true,
             ],
             'pubDate' => '2008-05-31 12:00:00',
-            'source' => 'http://www.google.com/'
+            'source' => 'http://www.google.com/',
         ];
         $result = $this->Rss->item(null, $item);
         $expected = [
@@ -409,7 +409,7 @@ class RssHelperTest extends TestCase
             '<guid',
             'http://example.com/foo?a=1&amp;b=2',
             '/guid',
-            '/item'
+            '/item',
         ];
         $this->assertHtml($expected, $result);
 
@@ -417,7 +417,7 @@ class RssHelperTest extends TestCase
             'title' => 'My title',
             'description' => 'My description',
             'link' => 'http://www.google.com/',
-            'source' => ['url' => 'http://www.example.com/', 'title' => 'Example website']
+            'source' => ['url' => 'http://www.example.com/', 'title' => 'Example website'],
         ];
         $result = $this->Rss->item(null, $item);
         $expected = [
@@ -437,7 +437,7 @@ class RssHelperTest extends TestCase
             '<guid',
             'http://www.google.com/',
             '/guid',
-            '/item'
+            '/item',
         ];
         $this->assertHtml($expected, $result);
 
@@ -445,7 +445,7 @@ class RssHelperTest extends TestCase
             'title' => 'My title',
             'description' => 'My description',
             'link' => 'http://www.google.com/',
-            'category' => ['Category One', 'Category Two']
+            'category' => ['Category One', 'Category Two'],
         ];
         $result = $this->Rss->item(null, $item);
         $expected = [
@@ -468,7 +468,7 @@ class RssHelperTest extends TestCase
             '<guid',
             'http://www.google.com/',
             '/guid',
-            '/item'
+            '/item',
         ];
         $this->assertHtml($expected, $result);
     }
@@ -485,7 +485,7 @@ class RssHelperTest extends TestCase
                 'value' => 'My Title & more',
                 'cdata' => true,
                 'convertEntities' => false,
-            ]
+            ],
         ];
         $result = $this->Rss->item(null, $item);
         $expected = [
@@ -493,7 +493,7 @@ class RssHelperTest extends TestCase
             '<title',
             '<![CDATA[My Title & more]]',
             '/title',
-            '/item'
+            '/item',
         ];
         $this->assertHtml($expected, $result);
 
@@ -502,7 +502,7 @@ class RssHelperTest extends TestCase
                 'value' => 'CakePHP',
                 'cdata' => true,
                 'domain' => 'http://www.cakephp.org',
-            ]
+            ],
         ];
         $result = $this->Rss->item(null, $item);
         $expected = [
@@ -510,7 +510,7 @@ class RssHelperTest extends TestCase
             'category' => ['domain' => 'http://www.cakephp.org'],
             '<![CDATA[CakePHP]]',
             '/category',
-            '/item'
+            '/item',
         ];
         $this->assertHtml($expected, $result);
 
@@ -519,13 +519,13 @@ class RssHelperTest extends TestCase
                 [
                     'value' => 'CakePHP',
                     'cdata' => true,
-                    'domain' => 'http://www.cakephp.org'
+                    'domain' => 'http://www.cakephp.org',
                 ],
                 [
                     'value' => 'Bakery',
-                    'cdata' => true
-                ]
-            ]
+                    'cdata' => true,
+                ],
+            ],
         ];
         $result = $this->Rss->item(null, $item);
         $expected = [
@@ -536,7 +536,7 @@ class RssHelperTest extends TestCase
             '<category',
             '<![CDATA[Bakery]]',
             '/category',
-            '/item'
+            '/item',
         ];
         $this->assertHtml($expected, $result);
 
@@ -551,7 +551,7 @@ class RssHelperTest extends TestCase
                 'cdata' => true,
             ],
             'enclosure' => [
-                'url' => '/test.flv'
+                'url' => '/test.flv',
             ],
             'pubDate' => '2008-05-31 12:00:00',
             'guid' => 'http://www.example.com/1',
@@ -559,13 +559,13 @@ class RssHelperTest extends TestCase
                 [
                     'value' => 'CakePHP',
                     'cdata' => true,
-                    'domain' => 'http://www.cakephp.org'
+                    'domain' => 'http://www.cakephp.org',
                 ],
                 [
                     'value' => 'Bakery',
-                    'cdata' => true
-                ]
-            ]
+                    'cdata' => true,
+                ],
+            ],
         ];
         $result = $this->Rss->item(null, $item);
         $expected = [
@@ -592,7 +592,7 @@ class RssHelperTest extends TestCase
             '<category',
             '<![CDATA[Bakery]]',
             '/category',
-            '/item'
+            '/item',
         ];
         $this->assertHtml($expected, $result);
     }
@@ -627,7 +627,7 @@ class RssHelperTest extends TestCase
                 'cdata' => true,
             ],
             'enclosure' => [
-                'url' => '/tests/cakephp.file.test.tmp'
+                'url' => '/tests/cakephp.file.test.tmp',
             ],
             'pubDate' => '2008-05-31 12:00:00',
             'guid' => 'http://www.example.com/1',
@@ -635,13 +635,13 @@ class RssHelperTest extends TestCase
                 [
                     'value' => 'CakePHP',
                     'cdata' => true,
-                    'domain' => 'http://www.cakephp.org'
+                    'domain' => 'http://www.cakephp.org',
                 ],
                 [
                     'value' => 'Bakery',
-                    'cdata' => true
-                ]
-            ]
+                    'cdata' => true,
+                ],
+            ],
         ];
         $result = $this->Rss->item(null, $item);
         if (!function_exists('mime_content_type')) {
@@ -664,7 +664,7 @@ class RssHelperTest extends TestCase
             'enclosure' => [
                 'url' => $this->Rss->Url->build('/tests/cakephp.file.test.tmp', true),
                 'length' => filesize($tmpFile),
-                'type' => $type
+                'type' => $type,
             ],
             '<pubDate',
             date('r', strtotime('2008-05-31 12:00:00')),
@@ -678,7 +678,7 @@ class RssHelperTest extends TestCase
             '<category',
             '<![CDATA[Bakery]]',
             '/category',
-            '/item'
+            '/item',
         ];
         if ($type === null) {
             unset($expected['enclosure']['type']);
@@ -703,7 +703,7 @@ class RssHelperTest extends TestCase
         $attributes = [
             'title' => 'Some Title',
             'link' => 'http://link.com',
-            'description' => 'description'
+            'description' => 'description',
         ];
         $elements = ['enclosure' => ['url' => 'http://test.com']];
 
@@ -712,12 +712,12 @@ class RssHelperTest extends TestCase
             'item' => [
                 'title' => 'Some Title',
                 'link' => 'http://link.com',
-                'description' => 'description'
+                'description' => 'description',
             ],
             'enclosure' => [
-                'url' => 'http://test.com'
+                'url' => 'http://test.com',
             ],
-            '/item'
+            '/item',
         ];
         $this->assertHtml($expected, $result);
     }
@@ -728,19 +728,19 @@ class RssHelperTest extends TestCase
                 'creator' => 'Alex',
             ];
         $attributes = [
-                'namespace' => 'http://link.com'
+                'namespace' => 'http://link.com',
         ];
         $result = $this->Rss->item($attributes, $item);
         $expected = [
             'item' => [
-                    'xmlns' => 'http://link.com'
+                    'xmlns' => 'http://link.com',
             ],
             'creator' => [
-                    'xmlns' => 'http://link.com'
+                    'xmlns' => 'http://link.com',
             ],
             'Alex',
             '/creator',
-            '/item'
+            '/item',
         ];
         $this->assertHtml($expected, $result, true);
     }
@@ -750,35 +750,35 @@ class RssHelperTest extends TestCase
         $item = [
             'title' => 'Title',
             'dc:creator' => 'Alex',
-            'dc:description' => 'descriptive words'
+            'dc:description' => 'descriptive words',
         ];
         $attributes = [
             'namespace' => [
                 'prefix' => 'dc',
-                'url' => 'http://link.com'
-            ]
+                'url' => 'http://link.com',
+            ],
         ];
         $result = $this->Rss->item($attributes, $item);
         $expected = [
             'item' => [
-                'xmlns:dc' => 'http://link.com'
+                'xmlns:dc' => 'http://link.com',
             ],
             'title' => [
-                'xmlns:dc' => 'http://link.com'
+                'xmlns:dc' => 'http://link.com',
             ],
             'Title',
             '/title',
             'dc:creator' => [
-                'xmlns:dc' => 'http://link.com'
+                'xmlns:dc' => 'http://link.com',
             ],
             'Alex',
             '/dc:creator',
             'dc:description' => [
-                'xmlns:dc' => 'http://link.com'
+                'xmlns:dc' => 'http://link.com',
             ],
             'descriptive words',
             '/dc:description',
-            '/item'
+            '/item',
         ];
         $this->assertHtml($expected, $result, true);
     }

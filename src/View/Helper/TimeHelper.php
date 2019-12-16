@@ -24,12 +24,11 @@ use Exception;
  *
  * Manipulation of time data.
  *
- * @link https://book.cakephp.org/3.0/en/views/helpers/time.html
+ * @link https://book.cakephp.org/3/en/views/helpers/time.html
  * @see \Cake\I18n\Time
  */
 class TimeHelper extends Helper
 {
-
     use StringTemplateTrait;
 
     /**
@@ -38,7 +37,7 @@ class TimeHelper extends Helper
      * @var array
      */
     protected $_defaultConfig = [
-        'outputTimezone' => null
+        'outputTimezone' => null,
     ];
 
     /**
@@ -46,8 +45,8 @@ class TimeHelper extends Helper
      *
      * Will use the provided timezone, or default output timezone if defined.
      *
-     * @param null|string|\DateTimeZone $timezone The override timezone if applicable.
-     * @return null|string|\DateTimeZone The chosen timezone or null.
+     * @param \DateTimeZone|string|null $timezone The override timezone if applicable.
+     * @return \DateTimeZone|string|null The chosen timezone or null.
      */
     protected function _getTimezone($timezone)
     {
@@ -258,7 +257,7 @@ class TimeHelper extends Helper
         $element = null;
         $options += [
             'element' => null,
-            'timezone' => null
+            'timezone' => null,
         ];
         $options['timezone'] = $this->_getTimezone($options['timezone']);
         if ($options['timezone']) {
@@ -270,7 +269,7 @@ class TimeHelper extends Helper
             $element = [
                 'tag' => 'span',
                 'class' => 'time-ago-in-words',
-                'title' => $dateTime
+                'title' => $dateTime,
             ];
 
             if (is_array($options['element'])) {
@@ -371,7 +370,7 @@ class TimeHelper extends Helper
      */
     public function i18nFormat($date, $format = null, $invalid = false, $timezone = null)
     {
-        if (!isset($date)) {
+        if ($date === null) {
             return $invalid;
         }
         $timezone = $this->_getTimezone($timezone);

@@ -17,7 +17,6 @@ namespace Cake\Collection;
 use ArrayIterator;
 use InvalidArgumentException;
 use IteratorIterator;
-use LogicException;
 use Serializable;
 use Traversable;
 
@@ -27,7 +26,6 @@ use Traversable;
  */
 class Collection extends IteratorIterator implements CollectionInterface, Serializable
 {
-
     use CollectionTrait;
 
     /**

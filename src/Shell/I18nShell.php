@@ -15,6 +15,7 @@
 namespace Cake\Shell;
 
 use Cake\Console\Shell;
+use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\Utility\Inflector;
 use DirectoryIterator;
@@ -26,7 +27,6 @@ use DirectoryIterator;
  */
 class I18nShell extends Shell
 {
-
     /**
      * Contains tasks to load and instantiate
      *
@@ -94,13 +94,13 @@ class I18nShell extends Shell
             $this->abort('Invalid language code. Valid is `en`, `eng`, `en_US` etc.');
         }
 
-        $this->_paths = [APP];
+        $this->_paths = App::path('Locale');
         if ($this->param('plugin')) {
             $plugin = Inflector::camelize($this->param('plugin'));
-            $this->_paths = [Plugin::classPath($plugin)];
+            $this->_paths = App::path('Locale', $plugin);
         }
 
-        $response = $this->in('What folder?', null, rtrim($this->_paths[0], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'Locale');
+        $response = $this->in('What folder?', null, rtrim($this->_paths[0], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR);
         $sourceFolder = rtrim($response, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         $targetFolder = $sourceFolder . $language . DIRECTORY_SEPARATOR;
         if (!is_dir($targetFolder)) {
@@ -137,30 +137,30 @@ class I18nShell extends Shell
             'options' => [
                 'plugin' => [
                     'help' => 'Plugin name.',
-                    'short' => 'p'
+                    'short' => 'p',
                 ],
                 'force' => [
                     'help' => 'Force overwriting.',
                     'short' => 'f',
-                    'boolean' => true
-                ]
+                    'boolean' => true,
+                ],
             ],
             'arguments' => [
                 'language' => [
-                    'help' => 'Two-letter language code.'
-                ]
-            ]
+                    'help' => 'Two-letter language code.',
+                ],
+            ],
         ];
 
         $parser->setDescription(
             'I18n Shell generates .pot files(s) with translations.'
         )->addSubcommand('extract', [
             'help' => 'Extract the po translations from your application',
-            'parser' => $this->Extract->getOptionParser()
+            'parser' => $this->Extract->getOptionParser(),
         ])
         ->addSubcommand('init', [
             'help' => 'Init PO language file from POT file',
-            'parser' => $initParser
+            'parser' => $initParser,
         ]);
 
         return $parser;

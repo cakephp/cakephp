@@ -31,8 +31,8 @@ class TableUuidTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.binary_uuiditems',
-        'core.uuiditems',
+        'core.BinaryUuiditems',
+        'core.Uuiditems',
     ];
 
     /**
@@ -45,17 +45,6 @@ class TableUuidTest extends TestCase
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
         static::setAppNamespace();
-    }
-
-    /**
-     * teardown
-     *
-     * @return void
-     */
-    public function tearDown()
-    {
-        parent::tearDown();
-        $this->getTableLocator()->clear();
     }
 
     /**

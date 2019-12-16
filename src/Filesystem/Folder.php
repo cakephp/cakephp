@@ -24,11 +24,10 @@ use RecursiveIteratorIterator;
  * Folder structure browser, lists folders and files.
  * Provides an Object interface for Common directory related tasks.
  *
- * @link https://book.cakephp.org/3.0/en/core-libraries/file-folder.html#folder-api
+ * @link https://book.cakephp.org/3/en/core-libraries/file-folder.html#folder-api
  */
 class Folder
 {
-
     /**
      * Default scheme for Folder::copy
      * Recursively merges subfolders with the same name
@@ -86,7 +85,7 @@ class Folder
      * Mode to be used on create. Does nothing on windows platforms.
      *
      * @var int
-     * https://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\Folder::$mode
+     * https://book.cakephp.org/3/en/core-libraries/file-folder.html#Cake\Filesystem\Folder::$mode
      */
     public $mode = 0755;
 
@@ -95,7 +94,7 @@ class Folder
      */
     protected $_fsorts = [
         self::SORT_NAME => 'getPathname',
-        self::SORT_TIME => 'getCTime'
+        self::SORT_TIME => 'getCTime',
     ];
 
     /**
@@ -345,7 +344,7 @@ class Folder
      */
     public static function isRegisteredStreamWrapper($path)
     {
-        return preg_match('/^[^:\/\/]+?(?=:\/\/)/i', $path, $matches) &&
+        return preg_match('/^[^:\/\/]+?(?=:\/\/)/', $path, $matches) &&
             in_array($matches[0], stream_get_wrappers());
     }
 
@@ -354,10 +353,28 @@ class Folder
      *
      * @param string $path Path to check
      * @return string Set of slashes ("\\" or "/")
+     *
+     * @deprecated 3.7.0 This method will be removed in 4.0.0. Use correctSlashFor() instead.
      */
     public static function normalizePath($path)
     {
+        deprecationWarning('Folder::normalizePath() is deprecated. Use Folder::correctSlashFor() instead.');
+
         return Folder::correctSlashFor($path);
+    }
+
+    /**
+     * Returns a correct set of slashes for given $path. (\\ for Windows paths and / for other paths.)
+     *
+     * @param string $path Path to transform
+     * @return string Path with the correct set of slashes ("\\" or "/")
+     */
+    public static function normalizeFullPath($path)
+    {
+        $to = Folder::correctSlashFor($path);
+        $from = ($to == '/' ? '\\' : '/');
+
+        return str_replace($from, $to, $path);
     }
 
     /**
@@ -571,13 +588,18 @@ class Folder
             return [];
         }
 
+        /**
+         * @var string $itemPath
+         * @var \RecursiveDirectoryIterator $fsIterator
+         */
         foreach ($iterator as $itemPath => $fsIterator) {
             if ($skipHidden) {
                 $subPathName = $fsIterator->getSubPathname();
-                if ($subPathName{0} === '.' || strpos($subPathName, DIRECTORY_SEPARATOR . '.') !== false) {
+                if ($subPathName[0] === '.' || strpos($subPathName, DIRECTORY_SEPARATOR . '.') !== false) {
                     continue;
                 }
             }
+            /** @var \FilesystemIterator $item */
             $item = $fsIterator->current();
             if (!empty($exceptions) && isset($exceptions[$item->getFilename()])) {
                 continue;
@@ -662,7 +684,7 @@ class Folder
         $directory = Folder::slashTerm($this->path);
         $stack = [$directory];
         $count = count($stack);
-        for ($i = 0, $j = $count; $i < $j; ++$i) {
+        for ($i = 0, $j = $count; $i < $j; $i++) {
             if (is_file($stack[$i])) {
                 $size += filesize($stack[$i]);
             } elseif (is_dir($stack[$i])) {
@@ -780,7 +802,7 @@ class Folder
             'mode' => $this->mode,
             'skip' => [],
             'scheme' => Folder::MERGE,
-            'recursive' => true
+            'recursive' => true,
         ];
 
         $fromDir = $options['from'];

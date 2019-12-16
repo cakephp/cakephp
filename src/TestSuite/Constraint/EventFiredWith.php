@@ -1,17 +1,6 @@
 <?php
 namespace Cake\TestSuite\Constraint;
 
-if (class_exists('PHPUnit_Runner_Version', false)
-    && !class_exists('PHPUnit\Framework\Constraint\Constraint', false)
-) {
-    class_alias('PHPUnit_Framework_Constraint', 'PHPUnit\Framework\Constraint\Constraint');
-}
-if (class_exists('PHPUnit_Runner_Version', false)
-    && !class_exists('PHPUnit\Framework\AssertionFailedError', false)
-) {
-    class_alias('PHPUnit_Framework_AssertionFailedError', 'PHPUnit\Framework\AssertionFailedError');
-}
-
 use Cake\Event\Event;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Constraint\Constraint;
@@ -19,7 +8,7 @@ use PHPUnit\Framework\Constraint\Constraint;
 /**
  * EventFiredWith constraint
  *
- * Another glorified in_array check
+ * @internal
  */
 class EventFiredWith extends Constraint
 {
@@ -94,7 +83,7 @@ class EventFiredWith extends Constraint
             throw new AssertionFailedError(sprintf('Event "%s" was fired %d times, cannot make data assertion', $other, count($events)));
         }
 
-        /* @var \Cake\Event\Event $event */
+        /** @var \Cake\Event\Event $event */
         $event = $events[0];
 
         if (array_key_exists($this->_dataKey, $event->getData()) === false) {

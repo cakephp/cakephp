@@ -21,15 +21,14 @@ use RuntimeException;
  *
  * Provides the encrypt/decrypt logic for the CookieComponent.
  *
- * @link https://book.cakephp.org/3.0/en/controllers/components/cookie.html
+ * @link https://book.cakephp.org/3/en/controllers/components/cookie.html
  */
 trait CookieCryptTrait
 {
-
     /**
      * Valid cipher names for encrypted cookies.
      *
-     * @var array
+     * @var string[]
      */
     protected $_validCiphers = ['aes', 'rijndael'];
 
@@ -84,7 +83,7 @@ trait CookieCryptTrait
     {
         if (!in_array($encrypt, $this->_validCiphers)) {
             $msg = sprintf(
-                'Invalid encryption cipher. Must be one of %s.',
+                'Invalid encryption cipher. Must be one of %s or false.',
                 implode(', ', $this->_validCiphers)
             );
             throw new RuntimeException($msg);
@@ -94,7 +93,7 @@ trait CookieCryptTrait
     /**
      * Decrypts $value using public $type method in Security class
      *
-     * @param array $values Values to decrypt
+     * @param string[]|string $values Values to decrypt
      * @param string|bool $mode Encryption mode
      * @param string|null $key Used as the security salt if specified.
      * @return string|array Decrypted values
@@ -128,7 +127,18 @@ trait CookieCryptTrait
         }
         $this->_checkCipher($encrypt);
         $prefix = 'Q2FrZQ==.';
-        $value = base64_decode(substr($value, strlen($prefix)));
+        $prefixLength = strlen($prefix);
+
+        if (strncmp($value, $prefix, $prefixLength) !== 0) {
+            return '';
+        }
+
+        $value = base64_decode(substr($value, $prefixLength), true);
+
+        if ($value === false || $value === '') {
+            return '';
+        }
+
         if ($key === null) {
             $key = $this->_getCookieEncryptionKey();
         }
@@ -137,6 +147,10 @@ trait CookieCryptTrait
         }
         if ($encrypt === 'aes') {
             $value = Security::decrypt($value, $key);
+        }
+
+        if ($value === false) {
+            return '';
         }
 
         return $this->_explode($value);

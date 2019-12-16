@@ -26,7 +26,7 @@ class CounterCacheCategoriesFixture extends TestFixture
         'id' => ['type' => 'integer'],
         'name' => ['type' => 'string', 'length' => 255, 'null' => false],
         'post_count' => ['type' => 'integer', 'null' => true],
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
     ];
 
     public $records = [

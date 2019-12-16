@@ -16,6 +16,7 @@ namespace Cake\Shell\Task;
 
 use Cake\Console\Shell;
 use Cake\Core\App;
+use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\Plugin;
 use Cake\Filesystem\File;
 use Cake\Filesystem\Folder;
@@ -26,7 +27,6 @@ use Cake\Utility\Inflector;
  */
 class ExtractTask extends Shell
 {
-
     /**
      * Paths to use when looking for strings
      *
@@ -47,6 +47,13 @@ class ExtractTask extends Shell
      * @var bool
      */
     protected $_merge = false;
+
+    /**
+     * Use relative paths in the pot files rather than full path
+     *
+     * @var bool
+     */
+    protected $_relativePaths = false;
 
     /**
      * Current file being processed
@@ -103,6 +110,18 @@ class ExtractTask extends Shell
      * @var bool
      */
     protected $_extractCore = false;
+
+    /**
+     * Displays marker error(s) if true
+     * @var bool
+     */
+    protected $_markerError;
+
+    /**
+     * Count number of marker errors found
+     * @var bool
+     */
+    protected $_countMarkerError = 0;
 
     /**
      * No welcome message.
@@ -168,8 +187,8 @@ class ExtractTask extends Shell
             $this->_paths = explode(',', $this->params['paths']);
         } elseif (isset($this->params['plugin'])) {
             $plugin = Inflector::camelize($this->params['plugin']);
-            if (!Plugin::loaded($plugin)) {
-                Plugin::load($plugin);
+            if (!Plugin::isLoaded($plugin)) {
+                throw new MissingPluginException(['plugin' => $plugin]);
             }
             $this->_paths = [Plugin::classPath($plugin)];
             $this->params['plugin'] = $plugin;
@@ -232,6 +251,9 @@ class ExtractTask extends Shell
             $this->_merge = strtolower($response) === 'y';
         }
 
+        $this->_markerError = $this->param('marker-error');
+        $this->_relativePaths = $this->param('relative-paths');
+
         if (empty($this->_files)) {
             $this->_searchFiles();
         }
@@ -263,7 +285,7 @@ class ExtractTask extends Shell
 
         if (empty($this->_translations[$domain][$msgid][$context])) {
             $this->_translations[$domain][$msgid][$context] = [
-                'msgid_plural' => false
+                'msgid_plural' => false,
             ];
         }
 
@@ -300,6 +322,11 @@ class ExtractTask extends Shell
         $this->_paths = $this->_files = $this->_storage = [];
         $this->_translations = $this->_tokens = [];
         $this->out();
+        if ($this->_countMarkerError) {
+            $this->err("{$this->_countMarkerError} marker error(s) detected.");
+            $this->err(" => Use the --marker-error option to display errors.");
+        }
+
         $this->out('Done.');
     }
 
@@ -314,44 +341,53 @@ class ExtractTask extends Shell
         $parser->setDescription(
             'CakePHP Language String Extraction:'
         )->addOption('app', [
-            'help' => 'Directory where your application is located.'
+            'help' => 'Directory where your application is located.',
         ])->addOption('paths', [
-            'help' => 'Comma separated list of paths.'
+            'help' => 'Comma separated list of paths.',
         ])->addOption('merge', [
             'help' => 'Merge all domain strings into the default.po file.',
-            'choices' => ['yes', 'no']
+            'choices' => ['yes', 'no'],
+        ])->addOption('relative-paths', [
+            'help' => 'Use relative paths in the .pot file',
+            'boolean' => true,
+            'default' => false,
         ])->addOption('output', [
-            'help' => 'Full path to output directory.'
+            'help' => 'Full path to output directory.',
         ])->addOption('files', [
-            'help' => 'Comma separated list of files.'
+            'help' => 'Comma separated list of files.',
         ])->addOption('exclude-plugins', [
             'boolean' => true,
             'default' => true,
-            'help' => 'Ignores all files in plugins if this command is run inside from the same app directory.'
+            'help' => 'Ignores all files in plugins if this command is run inside from the same app directory.',
         ])->addOption('plugin', [
-            'help' => 'Extracts tokens only from the plugin specified and puts the result in the plugin\'s Locale directory.'
+            'help' => 'Extracts tokens only from the plugin specified and puts the result in the plugin\'s Locale directory.',
+            'short' => 'p',
         ])->addOption('ignore-model-validation', [
             'boolean' => true,
             'default' => false,
             'help' => 'Ignores validation messages in the $validate property.' .
                 ' If this flag is not set and the command is run from the same app directory,' .
-                ' all messages in model validation rules will be extracted as tokens.'
+                ' all messages in model validation rules will be extracted as tokens.',
         ])->addOption('validation-domain', [
-            'help' => 'If set to a value, the localization domain to be used for model validation messages.'
+            'help' => 'If set to a value, the localization domain to be used for model validation messages.',
         ])->addOption('exclude', [
             'help' => 'Comma separated list of directories to exclude.' .
-                ' Any path containing a path segment with the provided values will be skipped. E.g. test,vendors'
+                ' Any path containing a path segment with the provided values will be skipped. E.g. test,vendors',
         ])->addOption('overwrite', [
             'boolean' => true,
             'default' => false,
-            'help' => 'Always overwrite existing .pot files.'
+            'help' => 'Always overwrite existing .pot files.',
         ])->addOption('extract-core', [
             'help' => 'Extract messages from the CakePHP core libs.',
-            'choices' => ['yes', 'no']
+            'choices' => ['yes', 'no'],
         ])->addOption('no-location', [
             'boolean' => true,
             'default' => false,
             'help' => 'Do not write file locations for each extracted message.',
+        ])->addOption('marker-error', [
+            'boolean' => true,
+            'default' => false,
+            'help' => 'Do not display marker error.',
         ]);
 
         return $parser;
@@ -369,6 +405,18 @@ class ExtractTask extends Shell
         $progress->init(['total' => count($this->_files)]);
         $isVerbose = $this->param('verbose');
 
+        $functions = [
+            '__' => ['singular'],
+            '__n' => ['singular', 'plural'],
+            '__d' => ['domain', 'singular'],
+            '__dn' => ['domain', 'singular', 'plural'],
+            '__x' => ['context', 'singular'],
+            '__xn' => ['context', 'singular', 'plural'],
+            '__dx' => ['domain', 'context', 'singular'],
+            '__dxn' => ['domain', 'context', 'singular', 'plural'],
+        ];
+        $pattern = '/(' . implode('|', array_keys($functions)) . ')\s*\(/';
+
         foreach ($this->_files as $file) {
             $this->_file = $file;
             if ($isVerbose) {
@@ -376,23 +424,22 @@ class ExtractTask extends Shell
             }
 
             $code = file_get_contents($file);
-            $allTokens = token_get_all($code);
 
-            $this->_tokens = [];
-            foreach ($allTokens as $token) {
-                if (!is_array($token) || ($token[0] !== T_WHITESPACE && $token[0] !== T_INLINE_HTML)) {
-                    $this->_tokens[] = $token;
+            if (preg_match($pattern, $code) === 1) {
+                $allTokens = token_get_all($code);
+
+                $this->_tokens = [];
+                foreach ($allTokens as $token) {
+                    if (!is_array($token) || ($token[0] !== T_WHITESPACE && $token[0] !== T_INLINE_HTML)) {
+                        $this->_tokens[] = $token;
+                    }
+                }
+                unset($allTokens);
+
+                foreach ($functions as $functionName => $map) {
+                    $this->_parse($functionName, $map);
                 }
             }
-            unset($allTokens);
-            $this->_parse('__', ['singular']);
-            $this->_parse('__n', ['singular', 'plural']);
-            $this->_parse('__d', ['domain', 'singular']);
-            $this->_parse('__dn', ['domain', 'singular', 'plural']);
-            $this->_parse('__x', ['context', 'singular']);
-            $this->_parse('__xn', ['context', 'singular', 'plural']);
-            $this->_parse('__dx', ['domain', 'context', 'singular']);
-            $this->_parse('__dxn', ['domain', 'context', 'singular', 'plural']);
 
             if (!$isVerbose) {
                 $progress->increment(1);
@@ -439,21 +486,29 @@ class ExtractTask extends Shell
                 $strings = $this->_getStrings($position, $mapCount);
 
                 if ($mapCount === count($strings)) {
-                    $singular = null;
+                    $singular = $plural = $context = null;
+                    /**
+                     * @var string $singular
+                     * @var string|null $plural
+                     * @var string|null $context
+                     */
                     extract(array_combine($map, $strings));
                     $domain = isset($domain) ? $domain : 'default';
                     $details = [
                         'file' => $this->_file,
                         'line' => $line,
                     ];
-                    if (isset($plural)) {
+                    if ($this->_relativePaths) {
+                        $details['file'] = '.' . str_replace(ROOT, '', $details['file']);
+                    }
+                    if ($plural !== null) {
                         $details['msgid_plural'] = $plural;
                     }
-                    if (isset($context)) {
+                    if ($context !== null) {
                         $details['msgctxt'] = $context;
                     }
                     $this->_addTranslation($domain, $singular, $details);
-                } elseif (strpos($this->_file, CAKE_CORE_INCLUDE_PATH) === false) {
+                } else {
                     $this->_markerError($this->_file, $line, $functionName, $count);
                 }
             }
@@ -480,14 +535,18 @@ class ExtractTask extends Shell
                 foreach ($contexts as $context => $details) {
                     $plural = $details['msgid_plural'];
                     $files = $details['references'];
-                    $occurrences = [];
-                    foreach ($files as $file => $lines) {
-                        $lines = array_unique($lines);
-                        $occurrences[] = $file . ':' . implode(';', $lines);
-                    }
-                    $occurrences = implode("\n#: ", $occurrences);
                     $header = '';
+
                     if (!$this->param('no-location')) {
+                        $occurrences = [];
+                        foreach ($files as $file => $lines) {
+                            $lines = array_unique($lines);
+                            foreach ($lines as $line) {
+                                $occurrences[] = $file . ':' . $line;
+                            }
+                        }
+                        $occurrences = implode("\n#: ", $occurrences);
+
                         $header = '#: ' . str_replace(DIRECTORY_SEPARATOR, '/', str_replace($paths, '', $occurrences)) . "\n";
                     }
 
@@ -674,6 +733,14 @@ class ExtractTask extends Shell
      */
     protected function _markerError($file, $line, $marker, $count)
     {
+        if (strpos($this->_file, CAKE_CORE_INCLUDE_PATH) === false) {
+            $this->_countMarkerError++;
+        }
+
+        if (!$this->_markerError) {
+            return;
+        }
+
         $this->err(sprintf("Invalid marker content in %s:%s\n* %s(", $file, $line, $marker));
         $count += 2;
         $tokenCount = count($this->_tokens);

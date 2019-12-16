@@ -29,19 +29,8 @@ class AssociationProxyTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.articles', 'core.authors', 'core.comments'
+        'core.Articles', 'core.Authors', 'core.Comments',
     ];
-
-    /**
-     * Teardown
-     *
-     * @return void
-     */
-    public function tearDown()
-    {
-        parent::tearDown();
-        $this->getTableLocator()->clear();
-    }
 
     /**
      * Tests that it is possible to get associations as a property
@@ -68,7 +57,7 @@ class AssociationProxyTest extends TestCase
     public function testGetBadAssociation()
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Table "Cake\ORM\Table" is not associated with "posts"');
+        $this->expectExceptionMessage('You have not defined');
         $articles = $this->getTableLocator()->get('articles');
         $articles->posts;
     }
@@ -146,7 +135,7 @@ class AssociationProxyTest extends TestCase
             ->setMethods(['crazy'])
             ->getMock();
         $articles->belongsTo('authors', [
-            'targetTable' => $mock
+            'targetTable' => $mock,
         ]);
 
         $mock->expects($this->once())->method('crazy')

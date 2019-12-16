@@ -362,9 +362,9 @@ class SmtpTransportTest extends TestCase
     public function testRcptWithReturnPath()
     {
         $email = new Email();
-        $email->from('noreply@cakephp.org', 'CakePHP Test');
+        $email->setFrom('noreply@cakephp.org', 'CakePHP Test');
         $email->setTo('cake@cakephp.org', 'CakePHP');
-        $email->returnPath('pleasereply@cakephp.org', 'CakePHP Return');
+        $email->setReturnPath('pleasereply@cakephp.org', 'CakePHP Return');
 
         $this->socket->expects($this->at(0))->method('write')->with("MAIL FROM:<pleasereply@cakephp.org>\r\n");
         $this->socket->expects($this->at(1))->method('read')->will($this->returnValue("250 OK\r\n"));
@@ -443,7 +443,7 @@ class SmtpTransportTest extends TestCase
     {
         $this->SmtpTransport->setConfig([
             'client' => 'myhost.com',
-            'port' => 666
+            'port' => 666,
         ]);
         $expected = $this->SmtpTransport->getConfig();
 
@@ -492,7 +492,7 @@ class SmtpTransportTest extends TestCase
             ['code' => '250', 'message' => 'AUTH=PLAIN LOGIN'],
             ['code' => '250', 'message' => 'ENHANCEDSTATUSCODES'],
             ['code' => '250', 'message' => '8BITMIME'],
-            ['code' => '250', 'message' => 'DSN']
+            ['code' => '250', 'message' => 'DSN'],
         ];
         $result = $this->SmtpTransport->getLastResponse();
         $this->assertEquals($expected, $result);
@@ -506,7 +506,7 @@ class SmtpTransportTest extends TestCase
     public function testGetLastResponseMultipleOperations()
     {
         $email = new Email();
-        $email->from('noreply@cakephp.org', 'CakePHP Test');
+        $email->setFrom('noreply@cakephp.org', 'CakePHP Test');
         $email->setTo('cake@cakephp.org', 'CakePHP');
 
         $this->socket->expects($this->at(0))->method('write')->with("MAIL FROM:<noreply@cakephp.org>\r\n");
@@ -546,7 +546,7 @@ class SmtpTransportTest extends TestCase
             ['code' => '250', 'message' => 'PIPELINING'],
             ['code' => '250', 'message' => 'ENHANCEDSTATUSCODES'],
             ['code' => '250', 'message' => '8BITMIME'],
-            ['code' => '250', 'message' => 'DSN']
+            ['code' => '250', 'message' => 'DSN'],
         ];
         $result = $this->SmtpTransport->getLastResponse();
         $this->assertEquals($expected, $result);
@@ -631,7 +631,7 @@ class SmtpTransportTest extends TestCase
         $email = $this->getMockBuilder('Cake\Mailer\Email')
             ->setMethods(['message'])
             ->getMock();
-        $email->from('noreply@cakephp.org', 'CakePHP Test');
+        $email->setFrom('noreply@cakephp.org', 'CakePHP Test');
         $email->setTo('cake@cakephp.org', 'CakePHP');
         $email->expects($this->exactly(2))->method('message')->will($this->returnValue(['First Line']));
 
@@ -684,7 +684,7 @@ class SmtpTransportTest extends TestCase
         $email = $this->getMockBuilder('Cake\Mailer\Email')
             ->setMethods(['message'])
             ->getMock();
-        $email->from('noreply@cakephp.org', 'CakePHP Test');
+        $email->setFrom('noreply@cakephp.org', 'CakePHP Test');
         $email->setTo('cake@cakephp.org', 'CakePHP');
         $email->expects($this->once())->method('message')->will($this->returnValue(['First Line']));
 
@@ -708,5 +708,26 @@ class SmtpTransportTest extends TestCase
         $this->socket->expects($this->at(13))->method('disconnect');
 
         $this->SmtpTransport->send($email);
+    }
+
+    /**
+     * Ensure that unserialized transports have no connection.
+     *
+     * @return void
+     */
+    public function testSerializeCleanupSocket()
+    {
+        $this->socket->expects($this->at(0))->method('connect')->will($this->returnValue(true));
+        $this->socket->expects($this->at(1))->method('read')->will($this->returnValue("220 Welcome message\r\n"));
+        $this->socket->expects($this->at(2))->method('write')->with("EHLO localhost\r\n");
+        $this->socket->expects($this->at(3))->method('read')->will($this->returnValue("250 OK\r\n"));
+
+        $smtpTransport = new SmtpTestTransport();
+        $smtpTransport->setSocket($this->socket);
+        $smtpTransport->connect();
+
+        $result = unserialize(serialize($smtpTransport));
+        $this->assertAttributeEquals(null, '_socket', $result);
+        $this->assertFalse($result->connected());
     }
 }

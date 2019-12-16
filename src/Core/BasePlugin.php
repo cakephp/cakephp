@@ -13,7 +13,6 @@
  */
 namespace Cake\Core;
 
-use Cake\Event\EventManagerInterface;
 use InvalidArgumentException;
 use ReflectionClass;
 
@@ -25,7 +24,6 @@ use ReflectionClass;
  */
 class BasePlugin implements PluginInterface
 {
-
     /**
      * Do bootstrapping or not
      *

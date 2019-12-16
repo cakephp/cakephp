@@ -16,12 +16,14 @@ namespace Cake\Test\TestCase\Http;
 
 include_once CORE_TEST_CASES . DS . 'Http' . DS . 'server_mocks.php';
 
+use Cake\Chronos\Chronos;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\CorsBuilder;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
+use Cake\I18n\FrozenTime;
 use Cake\TestSuite\TestCase;
 use Zend\Diactoros\Stream;
 
@@ -78,7 +80,7 @@ class ResponseTest extends TestCase
             'body' => 'This is the body',
             'charset' => 'my-custom-charset',
             'type' => 'mp3',
-            'status' => '203'
+            'status' => '203',
         ];
         $response = new Response($options);
         $this->assertEquals('This is the body', (string)$response->getBody());
@@ -103,8 +105,8 @@ class ResponseTest extends TestCase
                 'type' => 'txt',
                 'status' => '422',
                 'statusCodes' => [
-                    422 => 'Unprocessable Entity'
-                ]
+                    422 => 'Unprocessable Entity',
+                ],
             ];
             $response = new Response($options);
             $this->assertEquals($options['body'], (string)$response->getBody());
@@ -266,6 +268,30 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testSetTypeMap()
+    {
+        $response = new Response();
+        $response->setTypeMap('ical', 'text/calendar');
+
+        $response = $response->withType('ical')->getType();
+        $this->assertEquals('text/calendar', $response);
+    }
+
+    /**
+     * @return void
+     */
+    public function testSetTypeMapAsArray()
+    {
+        $response = new Response();
+        $response->setTypeMap('ical', ['text/calendar']);
+
+        $response = $response->withType('ical')->getType();
+        $this->assertEquals('text/calendar', $response);
+    }
+
+    /**
      * Tests the withType method
      *
      * @return void
@@ -289,7 +315,7 @@ class ResponseTest extends TestCase
         );
         $this->assertSame('application/pdf', $new->getHeaderLine('Content-Type'));
         $this->assertSame(
-            'application/json; charset=UTF-8',
+            'application/json',
             $new->withType('json')->getHeaderLine('Content-Type')
         );
     }
@@ -350,7 +376,7 @@ class ResponseTest extends TestCase
             $response->header('Location', 'http://example2.com');
             $headers = [
                 'Content-Type' => 'text/html; charset=UTF-8',
-                'Location' => 'http://example2.com'
+                'Location' => 'http://example2.com',
             ];
             $this->assertEquals($headers, $response->header());
 
@@ -437,7 +463,6 @@ class ResponseTest extends TestCase
         return [
             ['mp3', 'audio/mpeg'],
             ['js', 'application/javascript; charset=UTF-8'],
-            ['json', 'application/json; charset=UTF-8'],
             ['xml', 'application/xml; charset=UTF-8'],
             ['txt', 'text/plain; charset=UTF-8'],
         ];
@@ -763,7 +788,7 @@ class ResponseTest extends TestCase
 
             $codes = [
                 381 => 'Unicorn Moved',
-                555 => 'Unexpected Minotaur'
+                555 => 'Unexpected Minotaur',
             ];
 
             $result = $response->httpCodes($codes);
@@ -788,7 +813,7 @@ class ResponseTest extends TestCase
                 0 => 'Nothing Here',
                 -1 => 'Reverse Infinity',
                 12345 => 'Universal Password',
-                'Hello' => 'World'
+                'Hello' => 'World',
             ]);
         });
     }
@@ -805,7 +830,7 @@ class ResponseTest extends TestCase
             $response = new Response();
             $expected = [
                 'Content-Type' => 'text/html; charset=UTF-8',
-                'Content-Disposition' => 'attachment; filename="myfile.mp3"'
+                'Content-Disposition' => 'attachment; filename="myfile.mp3"',
             ];
             $response->download('myfile.mp3');
             $this->assertEquals($expected, $response->header());
@@ -1064,7 +1089,11 @@ class ResponseTest extends TestCase
 
         $now = time();
         $new = $response->withModified($now);
-        $this->assertEquals(gmdate($format) . ' GMT', $new->getHeaderLine('Last-Modified'));
+        $this->assertEquals(gmdate($format, $now) . ' GMT', $new->getHeaderLine('Last-Modified'));
+
+        $now = new \DateTimeImmutable();
+        $new = $response->withModified($now);
+        $this->assertEquals(gmdate($format, $now->getTimestamp()) . ' GMT', $new->getHeaderLine('Last-Modified'));
 
         $time = new \DateTime('+1 day', new \DateTimeZone('UTC'));
         $new = $response->withModified('+1 day');
@@ -1074,28 +1103,31 @@ class ResponseTest extends TestCase
     /**
      * Tests setting of public/private Cache-Control directives
      *
+     * @deprecated
      * @return void
      */
     public function testSharable()
     {
-        $response = new Response();
-        $this->assertNull($response->sharable());
-        $response->sharable(true);
-        $this->assertTrue($response->sharable());
-        $this->assertEquals('public', $response->getHeaderLine('Cache-Control'));
+        $this->deprecated(function () {
+            $response = new Response();
+            $this->assertNull($response->sharable());
+            $response->sharable(true);
+            $this->assertTrue($response->sharable());
+            $this->assertEquals('public', $response->getHeaderLine('Cache-Control'));
 
-        $response = new Response();
-        $response->sharable(false);
-        $this->assertFalse($response->sharable());
-        $this->assertEquals('private', $response->getHeaderLine('Cache-Control'));
+            $response = new Response();
+            $response->sharable(false);
+            $this->assertFalse($response->sharable());
+            $this->assertEquals('private', $response->getHeaderLine('Cache-Control'));
 
-        $response = new Response();
-        $response->sharable(true, 3600);
-        $this->assertEquals('public, max-age=3600', $response->getHeaderLine('Cache-Control'));
+            $response = new Response();
+            $response->sharable(true, 3600);
+            $this->assertEquals('public, max-age=3600', $response->getHeaderLine('Cache-Control'));
 
-        $response = new Response();
-        $response->sharable(false, 3600);
-        $this->assertEquals('private, max-age=3600', $response->getHeaderLine('Cache-Control'));
+            $response = new Response();
+            $response->sharable(false, 3600);
+            $this->assertEquals('private, max-age=3600', $response->getHeaderLine('Cache-Control'));
+        });
     }
 
     /**
@@ -1123,20 +1155,23 @@ class ResponseTest extends TestCase
     /**
      * Tests setting of max-age Cache-Control directive
      *
+     * @deprecated
      * @return void
      */
     public function testMaxAge()
     {
-        $response = new Response();
-        $this->assertNull($response->maxAge());
-        $response->maxAge(3600);
-        $this->assertEquals(3600, $response->maxAge());
-        $this->assertEquals('max-age=3600', $response->getHeaderLine('Cache-Control'));
+        $this->deprecated(function () {
+            $response = new Response();
+            $this->assertNull($response->maxAge());
+            $response->maxAge(3600);
+            $this->assertEquals(3600, $response->maxAge());
+            $this->assertEquals('max-age=3600', $response->getHeaderLine('Cache-Control'));
 
-        $response = new Response();
-        $response->maxAge(3600);
-        $response->sharable(false);
-        $this->assertEquals('max-age=3600, private', $response->getHeaderLine('Cache-Control'));
+            $response = new Response();
+            $response->maxAge(3600);
+            $response->sharable(false);
+            $this->assertEquals('max-age=3600, private', $response->getHeaderLine('Cache-Control'));
+        });
     }
 
     /**
@@ -1160,20 +1195,23 @@ class ResponseTest extends TestCase
     /**
      * Tests setting of s-maxage Cache-Control directive
      *
+     * @deprecated
      * @return void
      */
     public function testSharedMaxAge()
     {
-        $response = new Response();
-        $this->assertNull($response->maxAge());
-        $response->sharedMaxAge(3600);
-        $this->assertEquals(3600, $response->sharedMaxAge());
-        $this->assertEquals('s-maxage=3600', $response->getHeaderLine('Cache-Control'));
+        $this->deprecated(function () {
+            $response = new Response();
+            $this->assertNull($response->maxAge());
+            $response->sharedMaxAge(3600);
+            $this->assertEquals(3600, $response->sharedMaxAge());
+            $this->assertEquals('s-maxage=3600', $response->getHeaderLine('Cache-Control'));
 
-        $response = new Response();
-        $response->sharedMaxAge(3600);
-        $response->sharable(true);
-        $this->assertEquals('s-maxage=3600, public', $response->getHeaderLine('Cache-Control'));
+            $response = new Response();
+            $response->sharedMaxAge(3600);
+            $response->sharable(true);
+            $this->assertEquals('s-maxage=3600, public', $response->getHeaderLine('Cache-Control'));
+        });
     }
 
     /**
@@ -1499,7 +1537,7 @@ class ResponseTest extends TestCase
         $this->deprecated(function () {
             $response = new Response();
             $cookie = [
-                'name' => 'CakeTestCookie[Testing]'
+                'name' => 'CakeTestCookie[Testing]',
             ];
             $response->cookie($cookie);
             $expected = [
@@ -1509,7 +1547,7 @@ class ResponseTest extends TestCase
                 'path' => '/',
                 'domain' => '',
                 'secure' => false,
-                'httpOnly' => false
+                'httpOnly' => false,
             ];
             $result = $response->cookie('CakeTestCookie[Testing]');
             $this->assertEquals($expected, $result);
@@ -1519,7 +1557,7 @@ class ResponseTest extends TestCase
                 'value' => '[a,b,c]',
                 'expire' => 1000,
                 'path' => '/test',
-                'secure' => true
+                'secure' => true,
             ];
             $response->cookie($cookie);
             $expected = [
@@ -1530,7 +1568,7 @@ class ResponseTest extends TestCase
                     'path' => '/',
                     'domain' => '',
                     'secure' => false,
-                    'httpOnly' => false
+                    'httpOnly' => false,
                 ],
                 'CakeTestCookie[Testing2]' => [
                     'name' => 'CakeTestCookie[Testing2]',
@@ -1539,8 +1577,8 @@ class ResponseTest extends TestCase
                     'path' => '/test',
                     'domain' => '',
                     'secure' => true,
-                    'httpOnly' => false
-                ]
+                    'httpOnly' => false,
+                ],
             ];
 
             $result = $response->cookie();
@@ -1557,7 +1595,7 @@ class ResponseTest extends TestCase
                     'path' => '/',
                     'domain' => '',
                     'secure' => false,
-                    'httpOnly' => false
+                    'httpOnly' => false,
                 ],
                 'CakeTestCookie[Testing2]' => [
                     'name' => 'CakeTestCookie[Testing2]',
@@ -1566,8 +1604,8 @@ class ResponseTest extends TestCase
                     'path' => '/test',
                     'domain' => '',
                     'secure' => true,
-                    'httpOnly' => false
-                ]
+                    'httpOnly' => false,
+                ],
             ];
 
             $result = $response->cookie();
@@ -1583,7 +1621,7 @@ class ResponseTest extends TestCase
     public function testWithCookieEmpty()
     {
         $response = new Response();
-        $new = $response->withCookie('testing');
+        $new = $response->withCookie(new Cookie('testing'));
         $this->assertNull($response->getCookie('testing'), 'withCookie does not mutate');
 
         $expected = [
@@ -1606,46 +1644,56 @@ class ResponseTest extends TestCase
     public function testWithCookieScalar()
     {
         $response = new Response();
-        $new = $response->withCookie('testing', 'abc123');
+        $new = $response->withCookie(new Cookie('testing', 'abc123'));
         $this->assertNull($response->getCookie('testing'), 'withCookie does not mutate');
         $this->assertEquals('abc123', $new->getCookie('testing')['value']);
 
-        $new = $response->withCookie('testing', 99);
+        $new = $response->withCookie(new Cookie('testing', 99));
         $this->assertEquals(99, $new->getCookie('testing')['value']);
 
-        $new = $response->withCookie('testing', false);
+        $new = $response->withCookie(new Cookie('testing', false));
         $this->assertFalse($new->getCookie('testing')['value']);
 
-        $new = $response->withCookie('testing', true);
+        $new = $response->withCookie(new Cookie('testing', true));
         $this->assertTrue($new->getCookie('testing')['value']);
     }
 
     /**
-     * Test withCookie() and array data.
+     * Test withCookie() and duplicate data
      *
      * @return void
+     * @throws \Exception
      */
-    public function testWithCookieArray()
+    public function testWithDuplicateCookie()
     {
+        $expiry = new \DateTimeImmutable('+24 hours');
+
         $response = new Response();
-        $cookie = [
-            'name' => 'ignored key',
-            'value' => '[a,b,c]',
-            'expire' => 1000,
-            'path' => '/test',
-            'secure' => true
-        ];
-        $new = $response->withCookie('testing', $cookie);
+        $cookie = new Cookie(
+            'testing',
+            '[a,b,c]',
+            $expiry,
+            '/test',
+            '',
+            true
+        );
+
+        $new = $response->withCookie($cookie);
         $this->assertNull($response->getCookie('testing'), 'withCookie does not mutate');
+
         $expected = [
             'name' => 'testing',
             'value' => '[a,b,c]',
-            'expire' => 1000,
+            'expire' => $expiry,
             'path' => '/test',
             'domain' => '',
             'secure' => true,
-            'httpOnly' => false
+            'httpOnly' => false,
         ];
+
+        // Match the date time formatting to Response::convertCookieToArray
+        $expected['expire'] = $expiry->format('U');
+
         $this->assertEquals($expected, $new->getCookie('testing'));
     }
 
@@ -1668,15 +1716,18 @@ class ResponseTest extends TestCase
     public function testWithExpiredCookieScalar()
     {
         $response = new Response();
-        $response = $response->withCookie('testing', 'abc123');
+        $response = $response->withCookie(new Cookie('testing', 'abc123'));
         $this->assertEquals('abc123', $response->getCookie('testing')['value']);
 
-        $new = $response->withExpiredCookie('testing');
+        $new = $response->withExpiredCookie(new Cookie('testing'));
 
         $this->assertNull($response->getCookie('testing')['expire']);
-        $this->assertEquals('1', $new->getCookie('testing')['expire']);
+        $this->assertLessThan(FrozenTime::createFromTimestamp(1), $new->getCookie('testing')['expire']);
     }
 
+    /**
+     * @throws \Exception If DateImmutable emits an error.
+     */
     public function testWithExpiredCookieOptions()
     {
         $options = [
@@ -1686,18 +1737,30 @@ class ResponseTest extends TestCase
             'path' => '/custompath/',
             'secure' => true,
             'httpOnly' => true,
-            'expire' => (string)strtotime('+14 days'),
+            'expire' => new \DateTimeImmutable('+14 days'),
         ];
 
+        $cookie = new Cookie(
+            $options['name'],
+            $options['value'],
+            $options['expire'],
+            $options['path'],
+            $options['domain'],
+            $options['secure'],
+            $options['httpOnly']
+        );
+
         $response = new Response();
-        $response = $response->withCookie('testing', $options);
+        $response = $response->withCookie($cookie);
+
+        // Change the timestamp format to match the Response::convertCookieToArray
+        $options['expire'] = $options['expire']->format('U');
         $this->assertEquals($options, $response->getCookie('testing'));
 
-        $new = $response->withExpiredCookie('testing', $options);
+        $expiredCookie = $response->withExpiredCookie($cookie);
 
         $this->assertEquals($options['expire'], $response->getCookie('testing')['expire']);
-        $this->assertEquals('1', $new->getCookie('testing')['expire']);
-        $this->assertEquals('', $new->getCookie('testing')['value']);
+        $this->assertLessThan(Chronos::createFromTimestamp(1), $expiredCookie->getCookie('testing')['expire']);
     }
 
     public function testWithExpiredCookieObject()
@@ -1721,8 +1784,8 @@ class ResponseTest extends TestCase
     public function testGetCookies()
     {
         $response = new Response();
-        $new = $response->withCookie('testing', 'a')
-            ->withCookie('test2', ['value' => 'b', 'path' => '/test', 'secure' => true]);
+        $new = $response->withCookie(new Cookie('testing', 'a'))
+            ->withCookie(new Cookie('test2', 'b', null, '/test', '', true));
         $expected = [
             'testing' => [
                 'name' => 'testing',
@@ -1731,7 +1794,7 @@ class ResponseTest extends TestCase
                 'path' => '/',
                 'domain' => '',
                 'secure' => false,
-                'httpOnly' => false
+                'httpOnly' => false,
             ],
             'test2' => [
                 'name' => 'test2',
@@ -1740,8 +1803,8 @@ class ResponseTest extends TestCase
                 'path' => '/test',
                 'domain' => '',
                 'secure' => true,
-                'httpOnly' => false
-            ]
+                'httpOnly' => false,
+            ],
         ];
         $this->assertEquals($expected, $new->getCookies());
     }
@@ -1764,10 +1827,10 @@ class ResponseTest extends TestCase
                 'name' => 'urmc',
                 'value' => '{"user_id":1,"token":"abc123"}',
                 'expire' => null,
-                'path' => '',
+                'path' => '/',
                 'domain' => '',
                 'secure' => false,
-                'httpOnly' => true
+                'httpOnly' => true,
             ],
         ];
         $this->assertEquals($expected, $new->getCookies());
@@ -1781,8 +1844,8 @@ class ResponseTest extends TestCase
     public function testGetCookieCollection()
     {
         $response = new Response();
-        $new = $response->withCookie('testing', 'a')
-            ->withCookie('test2', ['value' => 'b', 'path' => '/test', 'secure' => true]);
+        $new = $response->withCookie(new Cookie('testing', 'a'))
+            ->withCookie(new Cookie('test2', 'b', null, '/test', '', true));
         $cookies = $response->getCookieCollection();
         $this->assertInstanceOf(CookieCollection::class, $cookies);
         $this->assertCount(0, $cookies, 'Original response not mutated');
@@ -1796,6 +1859,22 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Test withCookieCollection()
+     *
+     * @return void
+     */
+    public function testWithCookieCollection()
+    {
+        $response = new Response();
+        $collection = new CookieCollection([new Cookie('foo', 'bar')]);
+        $newResponse = $response->withCookieCollection($collection);
+
+        $this->assertNotSame($response, $newResponse);
+        $this->assertNotSame($response->getCookieCollection(), $newResponse->getCookieCollection());
+        $this->assertSame($newResponse->getCookie('foo')['value'], 'bar');
+    }
+
+    /**
      * Test that cors() returns a builder.
      *
      * @return void
@@ -1803,7 +1882,7 @@ class ResponseTest extends TestCase
     public function testCors()
     {
         $request = new ServerRequest([
-            'environment' => ['HTTP_ORIGIN' => 'http://example.com']
+            'environment' => ['HTTP_ORIGIN' => 'http://example.com'],
         ]);
         $response = new Response();
         $builder = $response->cors($request);
@@ -2232,7 +2311,7 @@ class ResponseTest extends TestCase
                 ->will($this->returnValue(true));
 
             $response->file(CONFIG . 'no_section.ini', [
-                'name' => 'config.ini'
+                'name' => 'config.ini',
             ]);
 
             ob_start();
@@ -2279,7 +2358,7 @@ class ResponseTest extends TestCase
                 ->method('download');
 
             $response->file(CONFIG . 'no_section.ini', [
-                'download' => false
+                'download' => false,
             ]);
             $this->assertEquals('bytes', $response->getHeaderLine('Accept-Ranges'));
             $this->assertEquals('text/html', $response->getType());
@@ -2295,7 +2374,7 @@ class ResponseTest extends TestCase
     {
         $response = new Response();
         $new = $response->withFile(CONFIG . 'no_section.ini', [
-            'download' => false
+            'download' => false,
         ]);
         $this->assertEquals(
             'text/html; charset=UTF-8',
@@ -2394,24 +2473,24 @@ class ResponseTest extends TestCase
         return [
             // suffix-byte-range
             [
-                'bytes=-25', 25, 'bytes 13-37/38'
+                'bytes=-25', 25, 'bytes 13-37/38',
             ],
 
             [
-                'bytes=0-', 38, 'bytes 0-37/38'
+                'bytes=0-', 38, 'bytes 0-37/38',
             ],
 
             [
-                'bytes=10-', 28, 'bytes 10-37/38'
+                'bytes=10-', 28, 'bytes 10-37/38',
             ],
 
             [
-                'bytes=10-20', 11, 'bytes 10-20/38'
+                'bytes=10-20', 11, 'bytes 10-20/38',
             ],
 
             // Spaced out
             [
-                'bytes = 10 - 20', 11, 'bytes 10-20/38'
+                'bytes = 10 - 20', 11, 'bytes 10-20/38',
             ],
         ];
     }
@@ -2560,12 +2639,12 @@ class ResponseTest extends TestCase
         return [
             // malformed range
             [
-                'bytes=0,38'
+                'bytes=0,38',
             ],
 
             // malformed punctuation
             [
-                'bytes: 0 - 38'
+                'bytes: 0 - 38',
             ],
         ];
     }
@@ -2998,7 +3077,7 @@ class ResponseTest extends TestCase
         $result = $response2->getHeaders();
         $expected = [
             'Content-Type' => ['text/html; charset=UTF-8'],
-            'Accept' => ['application/json']
+            'Accept' => ['application/json'],
         ];
         $this->assertEquals($expected, $result);
 
@@ -3022,7 +3101,7 @@ class ResponseTest extends TestCase
         $expected = [
             'Content-Type' => ['text/html; charset=UTF-8'],
             'Location' => ['localhost'],
-            'Accept' => ['application/json']
+            'Accept' => ['application/json'],
         ];
 
         $this->assertEquals($expected, $headers);
@@ -3044,7 +3123,7 @@ class ResponseTest extends TestCase
 
         $expected = [
             'Content-Type' => ['text/html; charset=UTF-8'],
-            'Accept' => ['application/json']
+            'Accept' => ['application/json'],
         ];
 
         $this->assertEquals($expected, $headers);
@@ -3124,13 +3203,13 @@ class ResponseTest extends TestCase
             'status' => 200,
             'contentType' => 'text/html',
             'headers' => [
-                'Content-Type' => ['text/html; charset=UTF-8']
+                'Content-Type' => ['text/html; charset=UTF-8'],
             ],
             'file' => null,
             'fileRange' => [],
             'cookies' => new CookieCollection(),
             'cacheDirectives' => [],
-            'body' => 'Foo'
+            'body' => 'Foo',
         ];
         $this->assertEquals($expected, $result);
     }

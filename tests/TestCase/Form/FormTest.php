@@ -114,17 +114,17 @@ class FormTest extends TestCase
 
         $data = [
             'email' => 'rong',
-            'body' => 'too short'
+            'body' => 'too short',
         ];
         $this->assertFalse($form->validate($data));
-        $this->assertCount(2, $form->errors());
+        $this->assertCount(2, $form->getErrors());
 
         $data = [
             'email' => 'test@example.com',
-            'body' => 'Some content goes here'
+            'body' => 'Some content goes here',
         ];
         $this->assertTrue($form->validate($data));
-        $this->assertCount(0, $form->errors());
+        $this->assertCount(0, $form->getErrors());
     }
 
     /**
@@ -136,9 +136,11 @@ class FormTest extends TestCase
     {
         $this->deprecated(function () {
             $form = new ValidateForm();
+            $this->assertCount(1, $form->validator(), 'should have one rule');
+
             $data = [];
             $this->assertFalse($form->validate($data));
-            $this->assertCount(1, $form->errors());
+            $this->assertCount(1, $form->getErrors());
         });
     }
 
@@ -149,11 +151,42 @@ class FormTest extends TestCase
      */
     public function testErrors()
     {
+        $this->deprecated(function () {
+            $form = new Form();
+            $form->getValidator()
+                ->add('email', 'format', [
+                    'message' => 'Must be a valid email',
+                    'rule' => 'email',
+                ])
+                ->add('body', 'length', [
+                    'message' => 'Must be so long',
+                    'rule' => ['minLength', 12],
+                ]);
+
+            $data = [
+                'email' => 'rong',
+                'body' => 'too short',
+            ];
+            $form->validate($data);
+            $errors = $form->errors();
+            $this->assertCount(2, $errors);
+            $this->assertEquals('Must be a valid email', $errors['email']['format']);
+            $this->assertEquals('Must be so long', $errors['body']['length']);
+        });
+    }
+
+    /**
+     * Test the get errors methods.
+     *
+     * @return void
+     */
+    public function testGetErrors()
+    {
         $form = new Form();
         $form->getValidator()
             ->add('email', 'format', [
                 'message' => 'Must be a valid email',
-                'rule' => 'email'
+                'rule' => 'email',
             ])
             ->add('body', 'length', [
                 'message' => 'Must be so long',
@@ -162,10 +195,10 @@ class FormTest extends TestCase
 
         $data = [
             'email' => 'rong',
-            'body' => 'too short'
+            'body' => 'too short',
         ];
         $form->validate($data);
-        $errors = $form->errors();
+        $errors = $form->getErrors();
         $this->assertCount(2, $errors);
         $this->assertEquals('Must be a valid email', $errors['email']['format']);
         $this->assertEquals('Must be so long', $errors['body']['length']);
@@ -180,11 +213,11 @@ class FormTest extends TestCase
     {
         $form = new Form();
         $expected = [
-           'field_name' => ['rule_name' => 'message']
+           'field_name' => ['rule_name' => 'message'],
         ];
 
         $form->setErrors($expected);
-        $this->assertSame($expected, $form->errors());
+        $this->assertSame($expected, $form->getErrors());
     }
 
     /**
@@ -200,7 +233,7 @@ class FormTest extends TestCase
         $form->getValidator()
             ->add('email', 'format', ['rule' => 'email']);
         $data = [
-            'email' => 'rong'
+            'email' => 'rong',
         ];
         $form->expects($this->never())
             ->method('_execute');
@@ -221,7 +254,7 @@ class FormTest extends TestCase
         $form->getValidator()
             ->add('email', 'format', ['rule' => 'email']);
         $data = [
-            'email' => 'test@example.com'
+            'email' => 'test@example.com',
         ];
         $form->expects($this->once())
             ->method('_execute')
@@ -229,6 +262,22 @@ class FormTest extends TestCase
             ->will($this->returnValue(true));
 
         $this->assertTrue($form->execute($data));
+    }
+
+    /**
+     * Test setting and getting form data.
+     *
+     * @return void
+     */
+    public function testDataSetGet()
+    {
+        $form = new Form();
+        $expected = ['title' => 'title', 'is_published' => true];
+        $form->setData(['title' => 'title', 'is_published' => true]);
+
+        $this->assertSame($expected, $form->getData());
+        $this->assertEquals('title', $form->getData('title'));
+        $this->assertNull($form->getData('non-existent'));
     }
 
     /**
@@ -243,5 +292,6 @@ class FormTest extends TestCase
         $this->assertArrayHasKey('_schema', $result);
         $this->assertArrayHasKey('_errors', $result);
         $this->assertArrayHasKey('_validator', $result);
+        $this->assertArrayHasKey('_data', $result);
     }
 }

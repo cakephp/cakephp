@@ -32,7 +32,7 @@ class RequestActionTraitTest extends TestCase
      *
      * @var string
      */
-    public $fixtures = ['core.comments', 'core.posts', 'core.test_plugin_comments'];
+    public $fixtures = ['core.Comments', 'core.Posts', 'core.TestPluginComments'];
 
     /**
      * Setup
@@ -65,6 +65,7 @@ class RequestActionTraitTest extends TestCase
         parent::tearDown();
         DispatcherFactory::clear();
         Router::reload();
+        $this->clearPlugins();
 
         error_reporting($this->errorLevel);
     }
@@ -125,7 +126,7 @@ class RequestActionTraitTest extends TestCase
      */
     public function testRequestActionPlugins()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         Router::reload();
         Router::connect('/test_plugin/tests/:action/*', ['controller' => 'Tests', 'plugin' => 'TestPlugin']);
 
@@ -162,7 +163,7 @@ class RequestActionTraitTest extends TestCase
      */
     public function testRequestActionArray()
     {
-        Plugin::load(['TestPlugin']);
+        $this->loadPlugins(['TestPlugin']);
 
         $result = $this->object->requestAction(
             ['controller' => 'RequestAction', 'action' => 'test_request_action']
@@ -260,7 +261,7 @@ class RequestActionTraitTest extends TestCase
     {
         $request = new ServerRequest([
             'base' => '/subdir',
-            'webroot' => '/subdir/'
+            'webroot' => '/subdir/',
         ]);
         Router::setRequestInfo($request);
         $result = $this->object->requestAction('/request_action/params_pass');
@@ -278,7 +279,7 @@ class RequestActionTraitTest extends TestCase
     public function testRequestActionNoPostPassing()
     {
         $_POST = [
-            'item' => 'value'
+            'item' => 'value',
         ];
         $result = $this->object->requestAction(['controller' => 'RequestAction', 'action' => 'post_pass']);
         $result = json_decode($result, true);
@@ -311,7 +312,7 @@ class RequestActionTraitTest extends TestCase
         $result = $this->object->requestAction([
             'controller' => 'RequestAction',
             'action' => 'query_pass',
-            '?' => $query
+            '?' => $query,
         ]);
         $result = json_decode($result, true);
         $this->assertEquals($query, $result);
@@ -332,7 +333,7 @@ class RequestActionTraitTest extends TestCase
     public function testRequestActionPostWithData()
     {
         $data = [
-            'Post' => ['id' => 2]
+            'Post' => ['id' => 2],
         ];
         $result = $this->object->requestAction(
             ['controller' => 'RequestAction', 'action' => 'post_pass'],
@@ -378,7 +379,7 @@ class RequestActionTraitTest extends TestCase
     public function testRequestActionCookies()
     {
         $cookies = [
-            'foo' => 'bar'
+            'foo' => 'bar',
         ];
         $result = $this->object->requestAction(
             '/request_action/cookie_pass',

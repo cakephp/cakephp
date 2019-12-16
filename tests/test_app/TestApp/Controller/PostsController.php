@@ -15,6 +15,7 @@
 namespace TestApp\Controller;
 
 use Cake\Event\Event;
+use Cake\Http\Cookie\Cookie;
 
 /**
  * PostsController class
@@ -29,7 +30,7 @@ class PostsController extends AppController
     public $components = [
         'Flash',
         'RequestHandler' => [
-            'enableBeforeRedirect' => false
+            'enableBeforeRedirect' => false,
         ],
         'Security',
     ];
@@ -44,6 +45,8 @@ class PostsController extends AppController
         if ($this->request->getParam('action') !== 'securePost') {
             $this->getEventManager()->off($this->Security);
         }
+
+        $this->Security->setConfig('unlockedFields', ['some_unlocked_field']);
     }
 
     /**
@@ -55,7 +58,7 @@ class PostsController extends AppController
     public function index($layout = 'default')
     {
         $this->Flash->error('An error message');
-        $this->response = $this->response->withCookie('remember_me', 1);
+        $this->response = $this->response->withCookie(new Cookie('remember_me', 1));
         $this->set('test', 'value');
         $this->viewBuilder()->setLayout($layout);
     }
@@ -63,7 +66,7 @@ class PostsController extends AppController
     /**
      * Sets a flash message and redirects (no rendering)
      *
-     * @return \Cake\Network\Response
+     * @return \Cake\Http\Response
      */
     public function flashNoRender()
     {
@@ -83,6 +86,19 @@ class PostsController extends AppController
     }
 
     /**
+     * Stub AJAX method
+     *
+     * @return void
+     */
+    public function ajax()
+    {
+        $data = [];
+
+        $this->set(compact('data'));
+        $this->set('_serialize', ['data']);
+    }
+
+    /**
      * Post endpoint for integration testing with security component.
      *
      * @return void
@@ -95,5 +111,41 @@ class PostsController extends AppController
     public function file()
     {
         return $this->response->withFile(__FILE__);
+    }
+
+    public function header()
+    {
+        return $this->getResponse()->withHeader('X-Cake', 'custom header');
+    }
+
+    public function hostData()
+    {
+        $data = [
+            'host' => $this->request->host(),
+            'isSsl' => $this->request->is('ssl'),
+        ];
+
+        return $this->getResponse()->withStringBody(json_encode($data));
+    }
+
+    public function empty_response()
+    {
+        return $this->getResponse()->withStringBody('');
+    }
+
+    public function stacked_flash()
+    {
+        $this->Flash->error('Error 1');
+        $this->Flash->error('Error 2');
+        $this->Flash->success('Success 1', ['key' => 'custom']);
+        $this->Flash->success('Success 2', ['key' => 'custom']);
+
+        return $this->getResponse()->withStringBody('');
+    }
+
+    public function throw_exception()
+    {
+        $this->Flash->error('Error 1');
+        throw new \OutOfBoundsException('oh no!');
     }
 }

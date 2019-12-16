@@ -12,8 +12,6 @@
  */
 namespace Cake\Core;
 
-use Cake\Event\EventManagerInterface;
-
 /**
  * Plugin Interface
  */
@@ -89,7 +87,7 @@ interface PluginInterface
      * can override this method to replace that behavior.
      *
      * @param \Cake\Routing\RouteBuilder $routes The route builder to update.
-     * @return \Cake\Routing\RouteBuilder
+     * @return void
      */
     public function routes($routes);
 

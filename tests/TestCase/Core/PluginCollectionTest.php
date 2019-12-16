@@ -13,6 +13,7 @@
  */
 namespace Cake\Test\TestCase\Core;
 
+use Cake\Core\Configure;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\PluginCollection;
 use Cake\Core\PluginInterface;
@@ -99,7 +100,7 @@ class PluginCollectionTest extends TestCase
     {
         $data = [
             new TestPlugin(),
-            new TestPluginThree()
+            new TestPluginThree(),
         ];
         $plugins = new PluginCollection($data);
         $out = [];
@@ -129,6 +130,36 @@ class PluginCollectionTest extends TestCase
         $this->assertSame($pluginThree, $out[0]);
     }
 
+    /**
+     * Test that looping over the plugin collection during
+     * a with loop doesn't lose iteration state.
+     *
+     * This situation can happen when a plugin like bake
+     * needs to discover things inside other plugins.
+     *
+     * @return
+     */
+    public function testWithInnerIteration()
+    {
+        $plugins = new PluginCollection();
+        $plugin = new TestPlugin();
+        $pluginThree = new TestPluginThree();
+
+        $plugins->add($plugin);
+        $plugins->add($pluginThree);
+
+        $out = [];
+        foreach ($plugins->with('routes') as $p) {
+            foreach ($plugins as $i) {
+                // Do nothing, we just need to enumerate the collection
+            }
+            $out[] = $p;
+        }
+        $this->assertCount(2, $out);
+        $this->assertSame($plugin, $out[0]);
+        $this->assertSame($pluginThree, $out[1]);
+    }
+
     public function testWithInvalidHook()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -136,5 +167,54 @@ class PluginCollectionTest extends TestCase
         $plugins = new PluginCollection();
         foreach ($plugins->with('bad') as $p) {
         }
+    }
+
+    public function testFindPathNoConfigureData()
+    {
+        Configure::write('plugins', []);
+        $plugins = new PluginCollection();
+        $path = $plugins->findPath('TestPlugin');
+
+        $this->assertEquals(TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS, $path);
+    }
+
+    public function testFindPathLoadsConfigureData()
+    {
+        $configPath = ROOT . DS . 'cakephp-plugins.php';
+        $this->skipIf(file_exists($configPath), 'cakephp-plugins.php exists, skipping overwrite');
+        $file = <<<PHP
+<?php
+return [
+    'plugins' => [
+        'TestPlugin' => '/config/path'
+    ]
+];
+PHP;
+        file_put_contents($configPath, $file);
+
+        Configure::delete('plugins');
+        $plugins = new PluginCollection();
+        $path = $plugins->findPath('TestPlugin');
+        unlink($configPath);
+
+        $this->assertEquals('/config/path', $path);
+    }
+
+    public function testFindPathConfigureData()
+    {
+        Configure::write('plugins', ['TestPlugin' => '/some/path']);
+        $plugins = new PluginCollection();
+        $path = $plugins->findPath('TestPlugin');
+
+        $this->assertEquals('/some/path', $path);
+    }
+
+    public function testFindPathMissingPlugin()
+    {
+        Configure::write('plugins', []);
+        $plugins = new PluginCollection();
+
+        $this->expectException(MissingPluginException::class);
+        $plugins->findPath('InvalidPlugin');
     }
 }

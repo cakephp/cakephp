@@ -21,11 +21,17 @@ use InvalidArgumentException;
  */
 class Text
 {
+    /**
+     * Default transliterator.
+     *
+     * @var \Transliterator Transliterator instance.
+     */
+    protected static $_defaultTransliterator;
 
     /**
      * Default transliterator id string.
      *
-     * @param string $_defaultTransliteratorId Transliterator identifier string.
+     * @var string $_defaultTransliteratorId Transliterator identifier string.
      */
     protected static $_defaultTransliteratorId = 'Any-Latin; Latin-ASCII; [\u0080-\u7fff] remove';
 
@@ -36,7 +42,7 @@ class Text
      */
     protected static $_defaultHtmlNoCount = [
         'style',
-        'script'
+        'script',
     ];
 
     /**
@@ -54,25 +60,23 @@ class Text
      */
     public static function uuid()
     {
-        $random = function_exists('random_int') ? 'random_int' : 'mt_rand';
-
         return sprintf(
             '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
             // 32 bits for "time_low"
-            $random(0, 65535),
-            $random(0, 65535),
+            random_int(0, 65535),
+            random_int(0, 65535),
             // 16 bits for "time_mid"
-            $random(0, 65535),
+            random_int(0, 65535),
             // 12 bits before the 0100 of (version) 4 for "time_hi_and_version"
-            $random(0, 4095) | 0x4000,
+            random_int(0, 4095) | 0x4000,
             // 16 bits, 8 bits for "clk_seq_hi_res",
             // 8 bits for "clk_seq_low",
             // two most significant bits holds zero and one for variant DCE1.1
-            $random(0, 0x3fff) | 0x8000,
+            random_int(0, 0x3fff) | 0x8000,
             // 48 bits for "node"
-            $random(0, 65535),
-            $random(0, 65535),
-            $random(0, 65535)
+            random_int(0, 65535),
+            random_int(0, 65535),
+            random_int(0, 65535)
         );
     }
 
@@ -84,7 +88,7 @@ class Text
      * @param string $separator The token to split the data on.
      * @param string $leftBound The left boundary to ignore separators in.
      * @param string $rightBound The right boundary to ignore separators in.
-     * @return array|string Array of tokens in $data or original input if empty.
+     * @return string|string[] Array of tokens in $data or original input if empty.
      */
     public static function tokenize($data, $separator = ',', $leftBound = '(', $rightBound = ')')
     {
@@ -104,7 +108,7 @@ class Text
             $offsets = [
                 mb_strpos($data, $separator, $offset),
                 mb_strpos($data, $leftBound, $offset),
-                mb_strpos($data, $rightBound, $offset)
+                mb_strpos($data, $rightBound, $offset),
             ];
             for ($i = 0; $i < 3; $i++) {
                 if ($offsets[$i] !== false && ($offsets[$i] < $tmpOffset || $tmpOffset == -1)) {
@@ -138,7 +142,8 @@ class Text
                         }
                     }
                 }
-                $offset = ++$tmpOffset;
+                $tmpOffset += 1;
+                $offset = $tmpOffset;
             } else {
                 $results[] = $buffer . mb_substr($data, $offset);
                 $offset = $length + 1;
@@ -182,7 +187,7 @@ class Text
     public static function insert($str, $data, array $options = [])
     {
         $defaults = [
-            'before' => ':', 'after' => null, 'escape' => '\\', 'format' => null, 'clean' => false
+            'before' => ':', 'after' => null, 'escape' => '\\', 'format' => null, 'clean' => false,
         ];
         $options += $defaults;
         $format = $options['format'];
@@ -476,7 +481,7 @@ class Text
      * @param string|array $phrase The phrase or phrases that will be searched.
      * @param array $options An array of HTML attributes and options.
      * @return string The highlighted text
-     * @link https://book.cakephp.org/3.0/en/core-libraries/text.html#highlighting-substrings
+     * @link https://book.cakephp.org/3/en/core-libraries/text.html#highlighting-substrings
      */
     public static function highlight($text, $phrase, array $options = [])
     {
@@ -491,7 +496,13 @@ class Text
             'limit' => -1,
         ];
         $options += $defaults;
-        $html = $format = $ellipsis = $exact = $limit = null;
+
+        $html = $format = $limit = null;
+        /**
+         * @var bool $html
+         * @var string|array $format
+         * @var int $limit
+         */
         extract($options);
 
         if (is_array($phrase)) {
@@ -547,7 +558,7 @@ class Text
      *
      * ### Options:
      *
-     * - `ellipsis` Will be used as Beginning and prepended to the trimmed string
+     * - `ellipsis` Will be used as beginning and prepended to the trimmed string
      * - `exact` If false, $text will not be cut mid-word
      *
      * @param string $text String to truncate.
@@ -558,10 +569,14 @@ class Text
     public static function tail($text, $length = 100, array $options = [])
     {
         $default = [
-            'ellipsis' => '...', 'exact' => true
+            'ellipsis' => '...', 'exact' => true,
         ];
         $options += $default;
         $exact = $ellipsis = null;
+        /**
+         * @var string $ellipsis
+         * @var bool $exact
+         */
         extract($options);
 
         if (mb_strlen($text) <= $length) {
@@ -594,7 +609,7 @@ class Text
      * @param int $length Length of returned string, including ellipsis.
      * @param array $options An array of HTML attributes and options.
      * @return string Trimmed string.
-     * @link https://book.cakephp.org/3.0/en/core-libraries/text.html#truncating-text
+     * @link https://book.cakephp.org/3/en/core-libraries/text.html#truncating-text
      */
     public static function truncate($text, $length = 100, array $options = [])
     {
@@ -629,7 +644,7 @@ class Text
                         if (preg_match('/<[\w]+[^>]*>/', $tag[0])) {
                             array_unshift($openTags, $tag[2]);
                         } elseif (preg_match('/<\/([\w]+)[^>]*>/', $tag[0], $closeTag)) {
-                            $pos = array_search($closeTag[1], $openTags);
+                            $pos = array_search($closeTag[1], $openTags, true);
                             if ($pos !== false) {
                                 array_splice($openTags, $pos, 1);
                             }
@@ -810,7 +825,8 @@ class Text
 
             $len = self::_strlen($part, $options);
             if ($offset !== 0 || $totalLength + $len > $length) {
-                if (strpos($part, '&') === 0 && preg_match($pattern, $part)
+                if (
+                    strpos($part, '&') === 0 && preg_match($pattern, $part)
                     && $part !== html_entity_decode($part, ENT_HTML5 | ENT_QUOTES, 'UTF-8')
                 ) {
                     // Entities cannot be passed substr.
@@ -865,7 +881,7 @@ class Text
      * @param int $radius The amount of characters that will be returned on each side of the founded phrase
      * @param string $ellipsis Ending that will be appended
      * @return string Modified string
-     * @link https://book.cakephp.org/3.0/en/core-libraries/text.html#extracting-an-excerpt
+     * @link https://book.cakephp.org/3/en/core-libraries/text.html#extracting-an-excerpt
      */
     public static function excerpt($text, $phrase, $radius = 100, $ellipsis = '...')
     {
@@ -878,7 +894,7 @@ class Text
         $phraseLen = mb_strlen($phrase);
         $textLen = mb_strlen($text);
 
-        $pos = mb_strpos(mb_strtolower($text), mb_strtolower($phrase));
+        $pos = mb_stripos($text, $phrase);
         if ($pos === false) {
             return mb_substr($text, 0, $radius) . $ellipsis;
         }
@@ -904,11 +920,11 @@ class Text
     /**
      * Creates a comma separated list where the last two items are joined with 'and', forming natural language.
      *
-     * @param array $list The list to be joined.
+     * @param string[] $list The list to be joined.
      * @param string|null $and The word used to join the last and second last items together with. Defaults to 'and'.
      * @param string $separator The separator used to join all the other items together. Defaults to ', '.
      * @return string The glued together string.
-     * @link https://book.cakephp.org/3.0/en/core-libraries/text.html#converting-an-array-to-sentence-form
+     * @link https://book.cakephp.org/3/en/core-libraries/text.html#converting-an-array-to-sentence-form
      */
     public static function toList(array $list, $and = null, $separator = ', ')
     {
@@ -1017,7 +1033,7 @@ class Text
      * @param mixed $default Value to be returned when invalid size was used, for example 'Unknown type'
      * @return mixed Number of bytes as integer on success, `$default` on failure if not false
      * @throws \InvalidArgumentException On invalid Unit type.
-     * @link https://book.cakephp.org/3.0/en/core-libraries/text.html#Cake\Utility\Text::parseFileSize
+     * @link https://book.cakephp.org/3/en/core-libraries/text.html#Cake\Utility\Text::parseFileSize
      */
     public static function parseFileSize($size, $default = false)
     {
@@ -1027,13 +1043,13 @@ class Text
         $size = strtoupper($size);
 
         $l = -2;
-        $i = array_search(substr($size, -2), ['KB', 'MB', 'GB', 'TB', 'PB']);
+        $i = array_search(substr($size, -2), ['KB', 'MB', 'GB', 'TB', 'PB'], true);
         if ($i === false) {
             $l = -1;
-            $i = array_search(substr($size, -1), ['K', 'M', 'G', 'T', 'P']);
+            $i = array_search(substr($size, -1), ['K', 'M', 'G', 'T', 'P'], true);
         }
         if ($i !== false) {
-            $size = substr($size, 0, $l);
+            $size = (float)substr($size, 0, $l);
 
             return $size * pow(1024, $i + 1);
         }
@@ -1048,6 +1064,30 @@ class Text
             return $default;
         }
         throw new InvalidArgumentException('No unit type.');
+    }
+
+    /**
+     * Get the default transliterator.
+     *
+     * @return \Transliterator|null Either a Transliterator instance, or `null`
+     *   in case no transliterator has been set yet.
+     * @since 3.7.0
+     */
+    public static function getTransliterator()
+    {
+        return static::$_defaultTransliterator;
+    }
+
+    /**
+     * Set the default transliterator.
+     *
+     * @param \Transliterator $transliterator A `Transliterator` instance.
+     * @return void
+     * @since 3.7.0
+     */
+    public static function setTransliterator(\Transliterator $transliterator)
+    {
+        static::$_defaultTransliterator = $transliterator;
     }
 
     /**
@@ -1068,6 +1108,7 @@ class Text
      */
     public static function setTransliteratorId($transliteratorId)
     {
+        static::setTransliterator(transliterator_create($transliteratorId));
         static::$_defaultTransliteratorId = $transliteratorId;
     }
 
@@ -1075,16 +1116,20 @@ class Text
      * Transliterate string.
      *
      * @param string $string String to transliterate.
-     * @param string|null $transliteratorId Transliterator identifier. If null
-     *   Text::$_defaultTransliteratorId will be used.
+     * @param \Transliterator|string|null $transliterator Either a Transliterator
+     *   instance, or a transliterator identifier string. If `null`, the default
+     *   transliterator (identifier) set via `setTransliteratorId()` or
+     *   `setTransliterator()` will be used.
      * @return string
      * @see https://secure.php.net/manual/en/transliterator.transliterate.php
      */
-    public static function transliterate($string, $transliteratorId = null)
+    public static function transliterate($string, $transliterator = null)
     {
-        $transliteratorId = $transliteratorId ?: static::$_defaultTransliteratorId;
+        if (!$transliterator) {
+            $transliterator = static::$_defaultTransliterator ?: static::$_defaultTransliteratorId;
+        }
 
-        return transliterator_transliterate($transliteratorId, $string);
+        return transliterator_transliterate($transliterator, $string);
     }
 
     /**
@@ -1094,8 +1139,9 @@ class Text
      * ### Options:
      *
      * - `replacement`: Replacement string. Default '-'.
-     * - `transliteratorId`: A valid tranliterator id string.
-     *   If default `null` Text::$_defaultTransliteratorId to be used.
+     * - `transliteratorId`: A valid transliterator id string.
+     *   If `null` (default) the transliterator (identifier) set via
+     *   `setTransliteratorId()` or `setTransliterator()` will be used.
      *   If `false` no transliteration will be done, only non words will be removed.
      * - `preserve`: Specific non-word character to preserve. Default `null`.
      *   For e.g. this option can be set to '.' to generate clean file names.
@@ -1104,6 +1150,8 @@ class Text
      * @param array $options If string it will be use as replacement character
      *   or an array of options.
      * @return string
+     * @see setTransliterator()
+     * @see setTransliteratorId()
      */
     public static function slug($string, $options = [])
     {
@@ -1113,23 +1161,25 @@ class Text
         $options += [
             'replacement' => '-',
             'transliteratorId' => null,
-            'preserve' => null
+            'preserve' => null,
         ];
 
         if ($options['transliteratorId'] !== false) {
             $string = static::transliterate($string, $options['transliteratorId']);
         }
 
-        $regex = '^\s\p{Ll}\p{Lm}\p{Lo}\p{Lt}\p{Lu}\p{Nd}';
+        $regex = '^\p{Ll}\p{Lm}\p{Lo}\p{Lt}\p{Lu}\p{Nd}';
         if ($options['preserve']) {
             $regex .= preg_quote($options['preserve'], '/');
         }
         $quotedReplacement = preg_quote($options['replacement'], '/');
         $map = [
-            '/[' . $regex . ']/mu' => ' ',
-            '/[\s]+/mu' => $options['replacement'],
+            '/[' . $regex . ']/mu' => $options['replacement'],
             sprintf('/^[%s]+|[%s]+$/', $quotedReplacement, $quotedReplacement) => '',
         ];
+        if (is_string($options['replacement']) && strlen($options['replacement']) > 0) {
+            $map[sprintf('/[%s]+/mu', $quotedReplacement)] = $options['replacement'];
+        }
         $string = preg_replace(array_keys($map), $map, $string);
 
         return $string;

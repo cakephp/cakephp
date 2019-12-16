@@ -16,8 +16,6 @@ namespace Cake\Database;
 
 use Cake\Cache\Cache;
 use Cake\Database\Connection;
-use Cake\Datasource\ConnectionManager;
-use InvalidArgumentException;
 use RuntimeException;
 
 /**
@@ -27,10 +25,11 @@ use RuntimeException;
  * can prevent thundering herd effects on the metadata cache when new
  * versions of your application are deployed, or when migrations
  * requiring updated metadata are required.
+ *
+ * @link https://en.wikipedia.org/wiki/Thundering_herd_problem About the thundering herd problem
  */
 class SchemaCache
 {
-
     /**
      * Schema
      *
@@ -95,6 +94,7 @@ class SchemaCache
      *
      * @param \Cake\Database\Connection $connection Connection object
      * @return \Cake\Database\Schema\Collection|\Cake\Database\Schema\CachedCollection
+     * @throws \RuntimeException If given connection object is not compatible with schema caching
      */
     public function getSchema(Connection $connection)
     {

@@ -23,7 +23,6 @@ use Cake\Http\Client\Request;
  */
 class Basic
 {
-
     /**
      * Add Authorization header to the request.
      *
@@ -73,5 +72,5 @@ class Basic
     }
 }
 
-// @deprecated Add backwards compat alias.
+// @deprecated 3.4.0 Add backwards compat alias.
 class_alias('Cake\Http\Client\Auth\Basic', 'Cake\Network\Http\Auth\Basic');

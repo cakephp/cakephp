@@ -35,7 +35,6 @@ use Exception;
  */
 class Connection implements ConnectionInterface
 {
-
     use TypeConverterTrait;
 
     /**
@@ -107,7 +106,15 @@ class Connection implements ConnectionInterface
     /**
      * Constructor.
      *
-     * @param array $config configuration for connecting to database
+     * ### Available options:
+     * - `driver` Sort name or FCQN for driver.
+     * - `log` Boolean indicating whether to use query logging.
+     * - `name` Connection name.
+     * - `cacheMetaData` Boolean indicating whether metadata (datasource schemas) should be cached.
+     *    If set to a string it will be used as the name of cache config to use.
+     * - `cacheKeyPrefix` Custom prefix to use when generation cache keys. Defaults to connection name.
+     *
+     * @param array $config Configuration array.
      */
     public function __construct($config)
     {
@@ -120,7 +127,7 @@ class Connection implements ConnectionInterface
         $this->setDriver($driver, $config);
 
         if (!empty($config['log'])) {
-            $this->logQueries($config['log']);
+            $this->enableQueryLogging($config['log']);
         }
     }
 
@@ -599,6 +606,18 @@ class Connection implements ConnectionInterface
     }
 
     /**
+     * Disables the usage of savepoints.
+     *
+     * @return $this
+     */
+    public function disableSavePoints()
+    {
+        $this->_useSavePoints = false;
+
+        return $this;
+    }
+
+    /**
      * Returns whether this connection is using savepoints for nested transactions
      *
      * @return bool true if enabled, false otherwise
@@ -642,7 +661,7 @@ class Connection implements ConnectionInterface
     /**
      * Creates a new save point for nested transactions.
      *
-     * @param string $name The save point name.
+     * @param string|int $name The save point name.
      * @return void
      */
     public function createSavePoint($name)
@@ -653,7 +672,7 @@ class Connection implements ConnectionInterface
     /**
      * Releases a save point by its name.
      *
-     * @param string $name The save point name.
+     * @param string|int $name The save point name.
      * @return void
      */
     public function releaseSavePoint($name)
@@ -664,7 +683,7 @@ class Connection implements ConnectionInterface
     /**
      * Rollback a save point by its name.
      *
-     * @param string $name The save point name.
+     * @param string|int $name The save point name.
      * @return void
      */
     public function rollbackSavepoint($name)
@@ -847,13 +866,54 @@ class Connection implements ConnectionInterface
 
     /**
      * {@inheritDoc}
+     *
+     * @deprecated 3.7.0 Use enableQueryLogging() and isQueryLoggingEnabled() instead.
      */
     public function logQueries($enable = null)
     {
+        deprecationWarning(
+            'Connection::logQueries() is deprecated. ' .
+            'Use enableQueryLogging() and isQueryLoggingEnabled() instead.'
+        );
         if ($enable === null) {
             return $this->_logQueries;
         }
         $this->_logQueries = $enable;
+    }
+
+    /**
+     * Enable/disable query logging
+     *
+     * @param bool $value Enable/disable query logging
+     * @return $this
+     */
+    public function enableQueryLogging($value)
+    {
+        $this->_logQueries = (bool)$value;
+
+        return $this;
+    }
+
+    /**
+     * Disable query logging
+     *
+     * @return $this
+     */
+    public function disableQueryLogging()
+    {
+        $this->_logQueries = false;
+
+        return $this;
+    }
+
+    /**
+     * Check if query logging is enabled.
+     *
+     * @return bool
+     */
+    public function isQueryLoggingEnabled()
+    {
+        return $this->_logQueries;
     }
 
     /**
@@ -942,7 +1002,7 @@ class Connection implements ConnectionInterface
             'username' => '*****',
             'host' => '*****',
             'database' => '*****',
-            'port' => '*****'
+            'port' => '*****',
         ];
         $replace = array_intersect_key($secrets, $this->_config);
         $config = $replace + $this->_config;
@@ -954,7 +1014,7 @@ class Connection implements ConnectionInterface
             'transactionStarted' => $this->_transactionStarted,
             'useSavePoints' => $this->_useSavePoints,
             'logQueries' => $this->_logQueries,
-            'logger' => $this->_logger
+            'logger' => $this->_logger,
         ];
     }
 }

@@ -15,8 +15,10 @@ namespace Cake\TestSuite;
 
 use Cake\Core\App;
 use Cake\Core\Configure;
+use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
 use Cake\Event\EventManager;
+use Cake\Http\BaseApplication;
 use Cake\ORM\Entity;
 use Cake\ORM\Exception\MissingTableClassException;
 use Cake\ORM\Locator\LocatorAwareTrait;
@@ -32,7 +34,6 @@ use PHPUnit\Framework\TestCase as BaseTestCase;
  */
 abstract class TestCase extends BaseTestCase
 {
-
     use LocatorAwareTrait;
 
     /**
@@ -41,6 +42,13 @@ abstract class TestCase extends BaseTestCase
      * @var \Cake\TestSuite\Fixture\FixtureManager|null
      */
     public $fixtureManager;
+
+    /**
+     * Fixtures used by this test case.
+     *
+     * @var array|string|null
+     */
+    public $fixtures;
 
     /**
      * By default, all fixtures attached to this class will be truncated and reloaded after each test.
@@ -66,13 +74,6 @@ abstract class TestCase extends BaseTestCase
      * @var array
      */
     protected $_configure = [];
-
-    /**
-     * Path settings to restore at the end of the test.
-     *
-     * @var array
-     */
-    protected $_pathRestore = [];
 
     /**
      * Overrides SimpleTestCase::skipIf to provide a boolean return value
@@ -159,6 +160,9 @@ abstract class TestCase extends BaseTestCase
             Configure::write($this->_configure);
         }
         $this->getTableLocator()->clear();
+        $this->_configure = [];
+        $this->_tableLocator = null;
+        $this->fixtureManager = null;
     }
 
     /**
@@ -187,6 +191,65 @@ abstract class TestCase extends BaseTestCase
             $this->fixtureManager->load($this);
             $this->autoFixtures = $autoFixtures;
         }
+    }
+
+    /**
+     * Load plugins into a simulated application.
+     *
+     * Useful to test how plugins being loaded/not loaded interact with other
+     * elements in CakePHP or applications.
+     *
+     * @param array $plugins List of Plugins to load.
+     * @return \Cake\Http\BaseApplication
+     */
+    public function loadPlugins(array $plugins = [])
+    {
+        /** @var \Cake\Http\BaseApplication $app */
+        $app = $this->getMockForAbstractClass(
+            BaseApplication::class,
+            ['']
+        );
+
+        foreach ($plugins as $pluginName => $config) {
+            if (is_array($config)) {
+                $app->addPlugin($pluginName, $config);
+            } else {
+                $app->addPlugin($config);
+            }
+        }
+        $app->pluginBootstrap();
+        $builder = Router::createRouteBuilder('/');
+        $app->pluginRoutes($builder);
+
+        return $app;
+    }
+
+    /**
+     * Remove plugins from the global plugin collection.
+     *
+     * Useful in test case teardown methods.
+     *
+     * @param string[] $names A list of plugins you want to remove.
+     * @return void
+     */
+    public function removePlugins(array $names = [])
+    {
+        $collection = Plugin::getCollection();
+        foreach ($names as $name) {
+            $collection->remove($name);
+        }
+    }
+
+    /**
+     * Clear all plugins from the global plugin collection.
+     *
+     * Useful in test case teardown methods.
+     *
+     * @return void
+     */
+    public function clearPlugins()
+    {
+        Plugin::getCollection()->clear();
     }
 
     /**
@@ -431,7 +494,7 @@ abstract class TestCase extends BaseTestCase
                 $tags = (string)$tags;
             }
             $i++;
-            if (is_string($tags) && $tags{0} === '<') {
+            if (is_string($tags) && $tags[0] === '<') {
                 $tags = [substr($tags, 1) => []];
             } elseif (is_string($tags)) {
                 $tagsTrimmed = preg_replace('/\s+/m', '', $tags);
@@ -673,12 +736,12 @@ abstract class TestCase extends BaseTestCase
      * Mock a model, maintain fixtures and table association
      *
      * @param string $alias The model to get a mock for.
-     * @param array $methods The list of methods to mock
+     * @param string[]|null $methods The list of methods to mock
      * @param array $options The config data for the mock's constructor.
      * @throws \Cake\ORM\Exception\MissingTableClassException
      * @return \Cake\ORM\Table|\PHPUnit_Framework_MockObject_MockObject
      */
-    public function getMockForModel($alias, array $methods = [], array $options = [])
+    public function getMockForModel($alias, $methods = [], array $options = [])
     {
         /** @var \Cake\ORM\Table $className */
         $className = $this->_getTableClassName($alias, $options);
@@ -699,7 +762,7 @@ abstract class TestCase extends BaseTestCase
 
         if (empty($options['entityClass']) && $mock->getEntityClass() === Entity::class) {
             $parts = explode('\\', $className);
-            $entityAlias = Inflector::singularize(substr(array_pop($parts), 0, -5));
+            $entityAlias = Inflector::classify(Inflector::underscore(substr(array_pop($parts), 0, -5)));
             $entityClass = implode('\\', array_slice($parts, 0, -1)) . '\\Entity\\' . $entityAlias;
             if (class_exists($entityClass)) {
                 $mock->setEntityClass($entityClass);
@@ -747,5 +810,27 @@ abstract class TestCase extends BaseTestCase
     public static function setAppNamespace($appNamespace = 'TestApp')
     {
         Configure::write('App.namespace', $appNamespace);
+    }
+
+    /**
+     * Gets fixtures.
+     *
+     * @return array
+     */
+    public function getFixtures()
+    {
+        if (!isset($this->fixtures)) {
+            return [];
+        }
+        if (is_string($this->fixtures)) {
+            deprecationWarning(
+                'Setting fixtures as string is deprecated and will be removed in 4.0.' .
+                ' Set TestCase::$fixtures as array instead.'
+            );
+
+            return array_map('trim', explode(',', $this->fixtures));
+        }
+
+        return $this->fixtures;
     }
 }

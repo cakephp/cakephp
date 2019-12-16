@@ -1,0 +1,96 @@
+build: false
+platform: 'x64'
+clone_folder: C:\projects\cakephp
+clone_depth: 10
+
+cache:
+  - '%LOCALAPPDATA%\Composer\files'
+
+branches:
+  only:
+    - master
+    - 3.next
+    - 4.x
+environment:
+  matrix:
+    - db: '2012'
+      db_dsn: 'sqlserver://sa:Password12!@.\SQL2012SP1/cakephp?MultipleActiveResultSets=false'
+
+services:
+  - mssql2012sp1
+
+init:
+  - SET PATH=C:\Program Files\OpenSSL;C:\php;%PATH%
+  - SET COMPOSER_NO_INTERACTION=1
+  - SET ANSICON=121x90 (121x90)
+
+install:
+  - curl -fsS https://windows.php.net/downloads/releases/latest/php-7.2-nts-Win32-VC15-x64-latest.zip -o php.zip
+  - 7z x php.zip -oC:\php\ -aoa > nul
+
+  - cd C:\php
+  - copy php.ini-production php.ini /Y
+  - echo date.timezone="UTC" >> php.ini
+  - echo extension_dir=ext >> php.ini
+  - echo extension=openssl >> php.ini
+  - echo extension=mbstring >> php.ini
+  - echo extension=intl >> php.ini
+  - echo extension=fileinfo >> php.ini
+  - php -v
+
+  - curl -fsS https://windows.php.net/downloads/pecl/releases/pdo_sqlsrv/5.6.1/php_pdo_sqlsrv-5.6.1-7.2-nts-vc15-x64.zip -o pdosqlsrv.zip
+  - 7z x pdosqlsrv.zip -oC:\php\ext php_pdo_sqlsrv.dll -aoa > nul
+  - curl -fsS https://windows.php.net/downloads/pecl/releases/sqlsrv/5.6.1/php_sqlsrv-5.6.1-7.2-nts-vc15-x64.zip -o sqlsrv.zip
+  - 7z x sqlsrv.zip -oC:\php\ext php_sqlsrv.dll -aoa > nul
+  - echo extension=pdo_sqlsrv >> php.ini
+  - echo extension=sqlsrv >> php.ini
+
+  - curl -fsS https://windows.php.net/downloads/pecl/releases/wincache/2.0.0.8/php_wincache-2.0.0.8-7.2-nts-vc15-x64.zip -o wincache.zip
+  - 7z x wincache.zip -oC:\php\ext php_wincache.dll -aoa > nul
+  - echo extension=wincache >> php.ini
+  - echo wincache.enablecli = 1 >> php.ini
+
+  - cd C:\projects\cakephp
+  - appveyor-retry appveyor DownloadFile https://getcomposer.org/composer.phar
+  - php composer.phar install --no-progress
+  - php -i | grep "ICU version"
+
+before_test:
+# This script solves the "Database 'model' is being recovered. Waiting until recovery is finished."
+# This solution comes from https://gist.github.com/jonathanhickford/1cb0d6665adab8b9c664
+# and is follow by http://help.appveyor.com/discussions/suggestions/264-database-mssqlsystemresource-is-being-recovered-waiting-for-sql-server-to-start
+- ps: >-
+    $tries = 5;
+
+    $pause = 10; # Seconds to wait between tries
+
+    While ($tries -gt 0) {
+      try {
+        $ServerConnectionString = "Data Source=(local)\SQL2012SP1;Initial Catalog=master;User Id=sa;PWD=Password12!";
+        $ServerConnection = new-object system.data.SqlClient.SqlConnection($ServerConnectionString);
+        $query = "exec sp_configure 'clr enabled', 1;`n"
+        $query = $query + "RECONFIGURE;`n"
+        $cmd = new-object system.data.sqlclient.sqlcommand($query, $ServerConnection);
+        $ServerConnection.Open();
+        "Running:"
+        $query
+        if ($cmd.ExecuteNonQuery() -ne -1) {
+          "SQL Error";
+        } else {
+          "Success"
+        }
+        $ServerConnection.Close();
+        $tries = 0;
+      } catch {
+        "Error:"
+        $_.Exception.Message
+        "Retry in $pause seconds.  Attempts left: $tries";
+        Start-Sleep -s $pause;
+      }
+      $tries = $tries -1;
+    }
+
+test_script:
+  - sqlcmd -S ".\SQL2012SP1" -U sa -P Password12! -Q "create database cakephp;"
+  - cd C:\projects\cakephp
+  - vendor\bin\phpunit.bat

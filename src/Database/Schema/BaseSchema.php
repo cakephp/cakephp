@@ -24,7 +24,6 @@ use Cake\Database\Driver;
  */
 abstract class BaseSchema
 {
-
     /**
      * The driver instance being used.
      *
@@ -216,10 +215,10 @@ abstract class BaseSchema
      * Generate the SQL to create a table.
      *
      * @param \Cake\Database\Schema\TableSchema $schema Table instance.
-     * @param array $columns The columns to go inside the table.
-     * @param array $constraints The constraints for the table.
-     * @param array $indexes The indexes for the table.
-     * @return array SQL statements to create a table.
+     * @param string[] $columns The columns to go inside the table.
+     * @param string[] $constraints The constraints for the table.
+     * @param string[] $indexes The indexes for the table.
+     * @return string[] SQL statements to create a table.
      */
     abstract public function createTableSql(TableSchema $schema, $columns, $constraints, $indexes);
 

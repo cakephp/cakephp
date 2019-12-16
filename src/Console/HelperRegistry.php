@@ -21,10 +21,11 @@ use Cake\Core\ObjectRegistry;
 /**
  * Registry for Helpers. Provides features
  * for lazily loading helpers.
+ *
+ * @extends \Cake\Core\ObjectRegistry<\Cake\Console\Helper>
  */
 class HelperRegistry extends ObjectRegistry
 {
-
     /**
      * Shell to use to set params to tasks.
      *
@@ -79,7 +80,7 @@ class HelperRegistry extends ObjectRegistry
     {
         throw new MissingHelperException([
             'class' => $class,
-            'plugin' => $plugin
+            'plugin' => $plugin,
         ]);
     }
 

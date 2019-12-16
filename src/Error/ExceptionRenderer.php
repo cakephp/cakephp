@@ -22,6 +22,7 @@ use Cake\Core\Exception\MissingPluginException;
 use Cake\Event\Event;
 use Cake\Http\Exception\HttpException;
 use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
@@ -34,7 +35,7 @@ use PDOException;
  * Exception Renderer.
  *
  * Captures and handles all unhandled exceptions. Displays helpful framework errors when debug is true.
- * When debug is false a CakeException will render 404 or 500 errors. If an uncaught exception is thrown
+ * When debug is false a ExceptionRenderer will render 404 or 500 errors. If an uncaught exception is thrown
  * and it is a type that ExceptionHandler does not know about it will be treated as a 500 error.
  *
  * ### Implementing application specific exception rendering
@@ -49,34 +50,41 @@ use PDOException;
  */
 class ExceptionRenderer implements ExceptionRendererInterface
 {
-
     /**
      * The exception being handled.
      *
      * @var \Exception
      */
-    public $error;
+    protected $error;
 
     /**
      * Controller instance.
      *
      * @var \Cake\Controller\Controller
      */
-    public $controller;
+    protected $controller;
 
     /**
      * Template to render for Cake\Core\Exception\Exception
      *
      * @var string
      */
-    public $template = '';
+    protected $template = '';
 
     /**
      * The method corresponding to the Exception this object is for.
      *
      * @var string
      */
-    public $method = '';
+    protected $method = '';
+
+    /**
+     * If set, this will be request used to create the controller that will render
+     * the error.
+     *
+     * @var \Cake\Http\ServerRequest|null
+     */
+    protected $request = null;
 
     /**
      * Creates the controller to perform rendering on the error response.
@@ -84,10 +92,12 @@ class ExceptionRenderer implements ExceptionRendererInterface
      * code error depending on the code used to construct the error.
      *
      * @param \Exception $exception Exception.
+     * @param \Cake\Http\ServerRequest $request The request - if this is set it will be used instead of creating a new one
      */
-    public function __construct(Exception $exception)
+    public function __construct(Exception $exception, ServerRequest $request = null)
     {
         $this->error = $exception;
+        $this->request = $request;
         $this->controller = $this->_getController();
     }
 
@@ -114,15 +124,44 @@ class ExceptionRenderer implements ExceptionRendererInterface
      */
     protected function _getController()
     {
-        if (!$request = Router::getRequest(true)) {
-            $request = ServerRequestFactory::fromGlobals();
+        $request = $this->request;
+        $routerRequest = Router::getRequest(true);
+        // Fallback to the request in the router or make a new one from
+        // $_SERVER
+        if ($request === null) {
+            $request = $routerRequest ?: ServerRequestFactory::fromGlobals();
         }
+
+        // If the current request doesn't have routing data, but we
+        // found a request in the router context copy the params over
+        if ($request->getParam('controller') === false && $routerRequest !== null) {
+            $request = $request->withAttribute('params', $routerRequest->getAttribute('params'));
+        }
+
         $response = new Response();
         $controller = null;
 
         try {
-            $class = App::className('Error', 'Controller', 'Controller');
-            /* @var \Cake\Controller\Controller $controller */
+            $namespace = 'Controller';
+            $prefix = $request->getParam('prefix');
+            if ($prefix) {
+                if (strpos($prefix, '/') === false) {
+                    $namespace .= '/' . Inflector::camelize($prefix);
+                } else {
+                    $prefixes = array_map(
+                        'Cake\Utility\Inflector::camelize',
+                        explode('/', $prefix)
+                    );
+                    $namespace .= '/' . implode('/', $prefixes);
+                }
+            }
+
+            $class = App::className('Error', $namespace, 'Controller');
+            if (!$class && $namespace !== 'Controller') {
+                $class = App::className('Error', 'Controller', 'Controller');
+            }
+
+            /** @var \Cake\Controller\Controller $controller */
             $controller = new $class($request, $response);
             $controller->startupProcess();
             $startup = true;
@@ -160,16 +199,13 @@ class ExceptionRenderer implements ExceptionRendererInterface
         $template = $this->_template($exception, $method, $code);
         $unwrapped = $this->_unwrap($exception);
 
-        $isDebug = Configure::read('debug');
-        if (($isDebug || $exception instanceof HttpException) &&
-            method_exists($this, $method)
-        ) {
+        if (method_exists($this, $method)) {
             return $this->_customMethod($method, $unwrapped);
         }
 
         $message = $this->_message($exception, $code);
-        $url = $this->controller->request->getRequestTarget();
-        $response = $this->controller->response;
+        $url = $this->controller->getRequest()->getRequestTarget();
+        $response = $this->controller->getResponse();
 
         if ($exception instanceof CakeException) {
             foreach ((array)$exception->responseHeader() as $key => $value) {
@@ -183,12 +219,14 @@ class ExceptionRenderer implements ExceptionRendererInterface
             'url' => h($url),
             'error' => $unwrapped,
             'code' => $code,
-            '_serialize' => ['message', 'url', 'code']
+            '_serialize' => ['message', 'url', 'code'],
         ];
+
+        $isDebug = Configure::read('debug');
         if ($isDebug) {
             $viewVars['trace'] = Debugger::formatTrace($unwrapped->getTrace(), [
                 'format' => 'array',
-                'args' => false
+                'args' => false,
             ]);
             $viewVars['file'] = $exception->getFile() ?: 'null';
             $viewVars['line'] = $exception->getLine() ?: 'null';
@@ -255,7 +293,8 @@ class ExceptionRenderer implements ExceptionRendererInterface
         $exception = $this->_unwrap($exception);
         $message = $exception->getMessage();
 
-        if (!Configure::read('debug') &&
+        if (
+            !Configure::read('debug') &&
             !($exception instanceof HttpException)
         ) {
             if ($code < 500) {
@@ -300,17 +339,18 @@ class ExceptionRenderer implements ExceptionRendererInterface
     }
 
     /**
-     * Get an error code value within range 400 to 506
+     * Get HTTP status code.
      *
      * @param \Exception $exception Exception.
-     * @return int Error code value within range 400 to 506
+     * @return int A valid HTTP error status code.
      */
     protected function _code(Exception $exception)
     {
         $code = 500;
+
         $exception = $this->_unwrap($exception);
         $errorCode = $exception->getCode();
-        if ($errorCode >= 400 && $errorCode < 506) {
+        if ($errorCode >= 400 && $errorCode < 600) {
             $code = $errorCode;
         }
 
@@ -389,10 +429,76 @@ class ExceptionRenderer implements ExceptionRendererInterface
         }
         $args = [
             'request' => $this->controller->request,
-            'response' => $this->controller->response
+            'response' => $this->controller->response,
         ];
         $result = $dispatcher->dispatchEvent('Dispatcher.afterDispatch', $args);
 
         return $result->getData('response');
+    }
+
+    /**
+     * Magic accessor for properties made protected.
+     *
+     * @param string $name Name of the attribute to get.
+     * @return mixed
+     */
+    public function __get($name)
+    {
+        $protected = [
+            'error',
+            'controller',
+            'template',
+            'method',
+        ];
+        if (in_array($name, $protected, true)) {
+            deprecationWarning(sprintf(
+                'ExceptionRenderer::$%s is now protected and should no longer be accessed in public context.',
+                $name
+            ));
+        }
+
+        return $this->{$name};
+    }
+
+    /**
+     * Magic setter for properties made protected.
+     *
+     * @param string $name Name to property.
+     * @param mixed $value Value for property.
+     * @return void
+     */
+    public function __set($name, $value)
+    {
+        $protected = [
+            'error',
+            'controller',
+            'template',
+            'method',
+        ];
+        if (in_array($name, $protected, true)) {
+            deprecationWarning(sprintf(
+                'ExceptionRenderer::$%s is now protected and should no longer be accessed in public context.',
+                $name
+            ));
+        }
+
+        $this->{$name} = $value;
+    }
+
+    /**
+     * Returns an array that can be used to describe the internal state of this
+     * object.
+     *
+     * @return array
+     */
+    public function __debugInfo()
+    {
+        return [
+            'error' => $this->error,
+            'request' => $this->request,
+            'controller' => $this->controller,
+            'template' => $this->template,
+            'method' => $this->method,
+        ];
     }
 }

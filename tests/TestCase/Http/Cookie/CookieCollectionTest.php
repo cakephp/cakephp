@@ -47,7 +47,7 @@ class CookieCollectionTest extends TestCase
     {
         $cookies = [
             new Cookie('one', 'one'),
-            new Cookie('two', 'two')
+            new Cookie('two', 'two'),
         ];
 
         $collection = new CookieCollection($cookies);
@@ -64,7 +64,7 @@ class CookieCollectionTest extends TestCase
         $cookies = [
             new Cookie('remember_me', 'a'),
             new Cookie('gtm', 'b'),
-            new Cookie('three', 'tree')
+            new Cookie('three', 'tree'),
         ];
 
         $collection = new CookieCollection($cookies);
@@ -126,7 +126,7 @@ class CookieCollectionTest extends TestCase
     {
         $cookies = [
             new Cookie('remember_me', 'a'),
-            new Cookie('gtm', 'b')
+            new Cookie('gtm', 'b'),
         ];
 
         $collection = new CookieCollection($cookies);
@@ -144,7 +144,7 @@ class CookieCollectionTest extends TestCase
     {
         $cookies = [
             new Cookie('remember_me', 'a'),
-            new Cookie('gtm', 'b')
+            new Cookie('gtm', 'b'),
         ];
 
         $collection = new CookieCollection($cookies);
@@ -166,7 +166,7 @@ class CookieCollectionTest extends TestCase
     {
         $cookies = [
             new Cookie('remember_me', 'a'),
-            new Cookie('gtm', 'b')
+            new Cookie('gtm', 'b'),
         ];
 
         $collection = new CookieCollection($cookies);
@@ -188,7 +188,7 @@ class CookieCollectionTest extends TestCase
         $this->expectExceptionMessage('Expected `Cake\Http\Cookie\CookieCollection[]` as $cookies but instead got `array` at index 1');
         $array = [
             new Cookie('one', 'one'),
-            []
+            [],
         ];
 
         new CookieCollection($array);
@@ -203,7 +203,7 @@ class CookieCollectionTest extends TestCase
     {
         $collection = new CookieCollection();
         $request = new ServerRequest([
-            'url' => '/app'
+            'url' => '/app',
         ]);
         $response = (new Response())
             ->withAddedHeader('Set-Cookie', 'test=value')
@@ -251,7 +251,7 @@ class CookieCollectionTest extends TestCase
     {
         $collection = new CookieCollection();
         $request = new ServerRequest([
-            'url' => '/app'
+            'url' => '/app',
         ]);
         $response = (new Response())
             ->withAddedHeader('Set-Cookie', 'test=val%3Bue; Path=/example; Secure;');
@@ -264,6 +264,23 @@ class CookieCollectionTest extends TestCase
     }
 
     /**
+     * Test adding cookies from a response ignores empty headers
+     *
+     * @return void
+     */
+    public function testAddFromResponseIgnoreEmpty()
+    {
+        $collection = new CookieCollection();
+        $request = new ServerRequest([
+            'url' => '/app',
+        ]);
+        $response = (new Response())
+            ->withAddedHeader('Set-Cookie', '');
+        $new = $collection->addFromResponse($response, $request);
+        $this->assertCount(0, $new, 'no cookies parsed');
+    }
+
+    /**
      * Test adding cookies from a response ignores expired cookies
      *
      * @return void
@@ -272,7 +289,7 @@ class CookieCollectionTest extends TestCase
     {
         $collection = new CookieCollection();
         $request = new ServerRequest([
-            'url' => '/app'
+            'url' => '/app',
         ]);
         $response = (new Response())
             ->withAddedHeader('Set-Cookie', 'test=value')
@@ -290,19 +307,40 @@ class CookieCollectionTest extends TestCase
     public function testAddFromResponseRemoveExpired()
     {
         $collection = new CookieCollection([
-            new Cookie('expired', 'not yet', null, '/', 'example.com')
+            new Cookie('expired', 'not yet', null, '/', 'example.com'),
         ]);
         $request = new ServerRequest([
             'url' => '/app',
             'environment' => [
-                'HTTP_HOST' => 'example.com'
-            ]
+                'HTTP_HOST' => 'example.com',
+            ],
         ]);
         $response = (new Response())
             ->withAddedHeader('Set-Cookie', 'test=value')
             ->withAddedHeader('Set-Cookie', 'expired=soon; Expires=Wed, 09-Jun-2012 10:18:14 GMT; Path=/;');
         $new = $collection->addFromResponse($response, $request);
         $this->assertFalse($new->has('expired'), 'Should drop expired cookies');
+    }
+
+    /**
+     * Test adding cookies from a response with bad expires values
+     *
+     * @return void
+     */
+    public function testAddFromResponseInvalidExpires()
+    {
+        $collection = new CookieCollection();
+        $request = new ServerRequest([
+            'url' => '/app',
+        ]);
+        $response = (new Response())
+            ->withAddedHeader('Set-Cookie', 'test=value')
+            ->withAddedHeader('Set-Cookie', 'expired=no; Expires=1w; Path=/; HttpOnly; Secure;');
+        $new = $collection->addFromResponse($response, $request);
+        $this->assertTrue($new->has('test'));
+        $this->assertTrue($new->has('expired'));
+        $expired = $new->get('expired');
+        $this->assertNull($expired->getExpiry());
     }
 
     /**
@@ -313,13 +351,13 @@ class CookieCollectionTest extends TestCase
     public function testAddFromResponseUpdateExisting()
     {
         $collection = new CookieCollection([
-            new Cookie('key', 'old value', null, '/', 'example.com')
+            new Cookie('key', 'old value', null, '/', 'example.com'),
         ]);
         $request = new ServerRequest([
             'url' => '/',
             'environment' => [
-                'HTTP_HOST' => 'example.com'
-            ]
+                'HTTP_HOST' => 'example.com',
+            ],
         ]);
         $response = (new Response())->withAddedHeader('Set-Cookie', 'key=new value');
         $new = $collection->addFromResponse($response, $request);
@@ -483,7 +521,7 @@ class CookieCollectionTest extends TestCase
 
         $cookie = $cookies->get('name');
         $this->assertSame('val', $cookie->getValue());
-        $this->assertSame('', $cookie->getPath(), 'No path on request cookies');
+        $this->assertSame('/', $cookie->getPath());
         $this->assertSame('', $cookie->getDomain(), 'No domain on request cookies');
     }
 }

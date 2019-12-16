@@ -13,7 +13,6 @@
 namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\CommandFactory;
-use Cake\Console\ConsoleIo;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use TestApp\Command\DemoCommand;

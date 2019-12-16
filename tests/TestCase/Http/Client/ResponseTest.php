@@ -77,9 +77,8 @@ class ResponseTest extends TestCase
 
         $this->assertEquals(
             'text/html;charset="UTF-8"',
-            $response->headers['Content-Type']
+            $response->getHeaderLine('Content-Type')
         );
-        $this->assertTrue(isset($response->headers));
 
         $headers = [
             'HTTP/1.0 200',
@@ -97,20 +96,35 @@ class ResponseTest extends TestCase
      */
     public function testBody()
     {
-        $data = [
-            'property' => 'value'
-        ];
-        $encoded = json_encode($data);
+        $this->deprecated(function () {
+            $data = [
+                'property' => 'value',
+            ];
+            $encoded = json_encode($data);
 
-        $response = new Response([], $encoded);
+            $response = new Response([], $encoded);
 
-        $this->assertEquals($encoded, $response->getBody()->getContents());
-        $this->assertEquals($encoded, $response->body());
+            $this->assertEquals($encoded, $response->getBody()->getContents());
+            $this->assertEquals($encoded, $response->body());
 
-        $result = $response->body('json_decode');
-        $this->assertEquals($data['property'], $result->property);
-        $this->assertEquals($encoded, $response->body);
-        $this->assertTrue(isset($response->body));
+            $result = $response->body('json_decode');
+            $this->assertEquals($data['property'], $result->property);
+            $stream = $response->getBody();
+            $stream->rewind();
+            $this->assertEquals($encoded, $stream->getContents());
+        });
+    }
+
+    /**
+     * Test getStringBody()
+     *
+     * @return void
+     */
+    public function getStringBody()
+    {
+        $response = new Response([], 'string');
+
+        $this->assertEquals('string', $response->getStringBody());
     }
 
     /**
@@ -121,32 +135,31 @@ class ResponseTest extends TestCase
     public function testBodyJson()
     {
         $data = [
-            'property' => 'value'
+            'property' => 'value',
         ];
         $encoded = json_encode($data);
         $response = new Response([], $encoded);
-        $this->assertTrue(isset($response->json));
-        $this->assertEquals($data['property'], $response->json['property']);
+        $this->assertEquals($data['property'], $response->getJson()['property']);
 
         $data = '';
         $response = new Response([], $data);
-        $this->assertNull($response->json);
+        $this->assertNull($response->getJson());
 
         $data = json_encode([]);
         $response = new Response([], $data);
-        $this->assertInternalType('array', $response->json);
+        $this->assertInternalType('array', $response->getJson());
 
         $data = json_encode(null);
         $response = new Response([], $data);
-        $this->assertNull($response->json);
+        $this->assertNull($response->getJson());
 
         $data = json_encode(false);
         $response = new Response([], $data);
-        $this->assertFalse($response->json);
+        $this->assertFalse($response->getJson());
 
         $data = json_encode('');
         $response = new Response([], $data);
-        $this->assertSame('', $response->json);
+        $this->assertSame('', $response->getJson());
     }
 
     /**
@@ -157,12 +170,12 @@ class ResponseTest extends TestCase
     public function testBodyJsonPsr7()
     {
         $data = [
-            'property' => 'value'
+            'property' => 'value',
         ];
         $encoded = json_encode($data);
         $response = new Response([], '');
         $response->getBody()->write($encoded);
-        $this->assertEquals($data, $response->json);
+        $this->assertEquals($data, $response->getJson());
     }
 
     /**
@@ -179,12 +192,11 @@ class ResponseTest extends TestCase
 </root>
 XML;
         $response = new Response([], $data);
-        $this->assertTrue(isset($response->xml));
-        $this->assertEquals('Test', (string)$response->xml->test);
+        $this->assertEquals('Test', (string)$response->getXml()->test);
 
         $data = '';
         $response = new Response([], $data);
-        $this->assertFalse(isset($response->xml));
+        $this->assertNull($response->getXml());
     }
 
     /**
@@ -196,49 +208,49 @@ XML;
     {
         $headers = [
             'HTTP/1.1 200 OK',
-            'Content-Type: text/html'
+            'Content-Type: text/html',
         ];
         $response = new Response($headers, 'ok');
         $this->assertTrue($response->isOk());
 
         $headers = [
             'HTTP/1.1 201 Created',
-            'Content-Type: text/html'
+            'Content-Type: text/html',
         ];
         $response = new Response($headers, 'ok');
         $this->assertTrue($response->isOk());
 
         $headers = [
             'HTTP/1.1 202 Accepted',
-            'Content-Type: text/html'
+            'Content-Type: text/html',
         ];
         $response = new Response($headers, 'ok');
         $this->assertTrue($response->isOk());
 
         $headers = [
             'HTTP/1.1 203 Non-Authoritative Information',
-            'Content-Type: text/html'
+            'Content-Type: text/html',
         ];
         $response = new Response($headers, 'ok');
         $this->assertTrue($response->isOk());
 
         $headers = [
             'HTTP/1.1 204 No Content',
-            'Content-Type: text/html'
+            'Content-Type: text/html',
         ];
         $response = new Response($headers, 'ok');
         $this->assertTrue($response->isOk());
 
         $headers = [
             'HTTP/1.1 301 Moved Permanently',
-            'Content-Type: text/html'
+            'Content-Type: text/html',
         ];
         $response = new Response($headers, '');
         $this->assertFalse($response->isOk());
 
         $headers = [
             'HTTP/1.0 404 Not Found',
-            'Content-Type: text/html'
+            'Content-Type: text/html',
         ];
         $response = new Response($headers, '');
         $this->assertFalse($response->isOk());
@@ -253,7 +265,7 @@ XML;
     {
         $headers = [
             'HTTP/1.1 200 OK',
-            'Content-Type: text/html'
+            'Content-Type: text/html',
         ];
         $response = new Response($headers, 'ok');
         $this->assertFalse($response->isRedirect());
@@ -261,14 +273,14 @@ XML;
         $headers = [
             'HTTP/1.1 301 Moved Permanently',
             'Location: /',
-            'Content-Type: text/html'
+            'Content-Type: text/html',
         ];
         $response = new Response($headers, '');
         $this->assertTrue($response->isRedirect());
 
         $headers = [
             'HTTP/1.0 404 Not Found',
-            'Content-Type: text/html'
+            'Content-Type: text/html',
         ];
         $response = new Response($headers, '');
         $this->assertFalse($response->isRedirect());
@@ -382,13 +394,15 @@ XML;
     {
         $headers = [
             'HTTP/1.0 404 Not Found',
-            'Content-Type: text/html'
+            'Content-Type: text/html',
         ];
         $response = new Response($headers, '');
         $this->assertSame(404, $response->getStatusCode());
 
-        $this->assertSame(404, $response->code);
-        $this->assertTrue(isset($response->code));
+        $this->deprecated(function () use ($response) {
+            $this->assertSame(404, $response->code);
+            $this->assertTrue(isset($response->code));
+        });
     }
 
     /**
@@ -402,7 +416,7 @@ XML;
         $this->deprecated(function () {
             $headers = [
                 'HTTP/1.0 404 Not Found',
-                'Content-Type: text/html'
+                'Content-Type: text/html',
             ];
             $response = new Response($headers, '');
             $this->assertSame(404, $response->statusCode());
@@ -426,21 +440,21 @@ XML;
 
         $headers = [
             'HTTP/1.0 200 Ok',
-            'Content-Type: text/html'
+            'Content-Type: text/html',
         ];
         $response = new Response($headers, '');
         $this->assertNull($response->getEncoding());
 
         $headers = [
             'HTTP/1.0 200 Ok',
-            'Content-Type: text/html; charset="UTF-8"'
+            'Content-Type: text/html; charset="UTF-8"',
         ];
         $response = new Response($headers, '');
         $this->assertEquals('UTF-8', $response->getEncoding());
 
         $headers = [
             'HTTP/1.0 200 Ok',
-            "Content-Type: text/html; charset='ISO-8859-1'"
+            "Content-Type: text/html; charset='ISO-8859-1'",
         ];
         $response = new Response($headers, '');
         $this->assertEquals('ISO-8859-1', $response->getEncoding());
@@ -463,21 +477,21 @@ XML;
 
             $headers = [
                 'HTTP/1.0 200 Ok',
-                'Content-Type: text/html'
+                'Content-Type: text/html',
             ];
             $response = new Response($headers, '');
             $this->assertNull($response->encoding());
 
             $headers = [
                 'HTTP/1.0 200 Ok',
-                'Content-Type: text/html; charset="UTF-8"'
+                'Content-Type: text/html; charset="UTF-8"',
             ];
             $response = new Response($headers, '');
             $this->assertEquals('UTF-8', $response->encoding());
 
             $headers = [
                 'HTTP/1.0 200 Ok',
-                "Content-Type: text/html; charset='ISO-8859-1'"
+                "Content-Type: text/html; charset='ISO-8859-1'",
             ];
             $response = new Response($headers, '');
             $this->assertEquals('ISO-8859-1', $response->encoding());
@@ -495,10 +509,10 @@ XML;
             'HTTP/1.0 200 OK',
             'Content-Encoding: gzip',
             'Content-Length: 32',
-            'Content-Type: text/html; charset=UTF-8'
+            'Content-Type: text/html; charset=UTF-8',
         ];
         $body = base64_decode('H4sIAAAAAAAAA/NIzcnJVyjPL8pJUQQAlRmFGwwAAAA=');
         $response = new Response($headers, $body);
-        $this->assertEquals('Hello world!', $response->body);
+        $this->assertEquals('Hello world!', $response->getBody()->getContents());
     }
 }

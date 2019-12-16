@@ -36,7 +36,7 @@ class TranslateTraitTest extends TestCase
      */
     public function testTranslationCreate()
     {
-        $entity = new TestEntity;
+        $entity = new TestEntity();
         $entity->translation('eng')->set('title', 'My Title');
         $this->assertEquals('My Title', $entity->translation('eng')->get('title'));
 
@@ -54,10 +54,10 @@ class TranslateTraitTest extends TestCase
      */
     public function testTranslationModify()
     {
-        $entity = new TestEntity;
+        $entity = new TestEntity();
         $entity->set('_translations', [
             'eng' => new Entity(['title' => 'My Title']),
-            'spa' => new Entity(['title' => 'Titulo'])
+            'spa' => new Entity(['title' => 'Titulo']),
         ]);
         $this->assertEquals('My Title', $entity->translation('eng')->get('title'));
         $this->assertEquals('Titulo', $entity->translation('spa')->get('title'));
@@ -70,10 +70,10 @@ class TranslateTraitTest extends TestCase
      */
     public function testTranslationEmpty()
     {
-        $entity = new TestEntity;
+        $entity = new TestEntity();
         $entity->set('_translations', [
             'eng' => new Entity(['title' => 'My Title']),
-            'spa' => new Entity(['title' => 'Titulo'])
+            'spa' => new Entity(['title' => 'Titulo']),
         ]);
         $this->assertTrue($entity->translation('pol')->isNew());
         $this->assertInstanceOf('Cake\Test\TestCase\ORM\Behavior\Translate\TestEntity', $entity->translation('pol'));
@@ -88,10 +88,10 @@ class TranslateTraitTest extends TestCase
      */
     public function testTranslationDirty()
     {
-        $entity = new TestEntity;
+        $entity = new TestEntity();
         $entity->set('_translations', [
             'eng' => new Entity(['title' => 'My Title']),
-            'spa' => new Entity(['title' => 'Titulo'])
+            'spa' => new Entity(['title' => 'Titulo']),
         ]);
         $entity->clean();
         $this->assertEquals('My Title', $entity->translation('eng')->get('title'));

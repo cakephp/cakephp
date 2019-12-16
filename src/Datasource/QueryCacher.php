@@ -28,7 +28,6 @@ use Traversable;
  */
 class QueryCacher
 {
-
     /**
      * The key or function to generate a key.
      *
@@ -67,7 +66,7 @@ class QueryCacher
      * Load the cached results from the cache or run the query.
      *
      * @param object $query The query the cache read is for.
-     * @return \Cake\ORM\ResultSet|null Either the cached results or null.
+     * @return \Cake\Datasource\ResultSetInterface|null Either the cached results or null.
      */
     public function fetch($query)
     {

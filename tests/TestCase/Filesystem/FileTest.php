@@ -80,9 +80,10 @@ class FileTest extends TestCase
             'basename' => basename($file),
             'filename' => 'LICENSE',
             'filesize' => filesize($file),
-            'mime' => 'text/plain'
+            'mime' => 'text/plain',
         ];
-        if (!function_exists('finfo_open') &&
+        if (
+            !function_exists('finfo_open') &&
             (!function_exists('mime_content_type') ||
             function_exists('mime_content_type') &&
             mime_content_type($this->File->pwd()) === false)
@@ -507,9 +508,7 @@ class FileTest extends TestCase
      */
     public function testWrite()
     {
-        if (!$tmpFile = $this->_getTmpFile()) {
-            return false;
-        }
+        $tmpFile = $this->_getTmpFile();
         if (file_exists($tmpFile)) {
             unlink($tmpFile);
         }
@@ -537,9 +536,7 @@ class FileTest extends TestCase
      */
     public function testAppend()
     {
-        if (!$tmpFile = $this->_getTmpFile()) {
-            return false;
-        }
+        $tmpFile = $this->_getTmpFile();
         if (file_exists($tmpFile)) {
             unlink($tmpFile);
         }
@@ -574,10 +571,7 @@ class FileTest extends TestCase
      */
     public function testDelete()
     {
-        if (!$tmpFile = $this->_getTmpFile()) {
-            return false;
-        }
-
+        $tmpFile = $this->_getTmpFile();
         if (!file_exists($tmpFile)) {
             touch($tmpFile);
         }
@@ -600,9 +594,7 @@ class FileTest extends TestCase
      */
     public function testDeleteAfterRead()
     {
-        if (!$tmpFile = $this->_getTmpFile()) {
-            return false;
-        }
+        $tmpFile = $this->_getTmpFile();
         if (!file_exists($tmpFile)) {
             touch($tmpFile);
         }
@@ -663,23 +655,19 @@ class FileTest extends TestCase
      * @param bool $paintSkip
      * @return void
      */
-    protected function _getTmpFile($paintSkip = true)
+    protected function _getTmpFile()
     {
         $tmpFile = TMP . 'tests/cakephp.file.test.tmp';
         if (is_writable(dirname($tmpFile)) && (!file_exists($tmpFile) || is_writable($tmpFile))) {
             return $tmpFile;
         }
 
-        if ($paintSkip) {
-            $trace = debug_backtrace();
-            $caller = $trace[0]['function'];
-            $shortPath = dirname($tmpFile);
+        $trace = debug_backtrace();
+        $caller = $trace[0]['function'];
+        $shortPath = dirname($tmpFile);
 
-            $message = sprintf('[FileTest] Skipping %s because "%s" not writeable!', $caller, $shortPath);
-            $this->markTestSkipped($message);
-        }
-
-        return false;
+        $message = sprintf('[FileTest] Skipping %s because "%s" not writeable!', $caller, $shortPath);
+        $this->markTestSkipped($message);
     }
 
     /**

@@ -14,6 +14,7 @@
 namespace Cake\Http\Client\Adapter;
 
 use Cake\Core\Exception\Exception;
+use Cake\Http\Client\AdapterInterface;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
 use Cake\Http\Exception\HttpException;
@@ -24,9 +25,8 @@ use Cake\Http\Exception\HttpException;
  *
  * This approach and implementation is partly inspired by Aura.Http
  */
-class Stream
+class Stream implements AdapterInterface
 {
-
     /**
      * Context resource used by the stream API.
      *
@@ -63,11 +63,7 @@ class Stream
     protected $_connectionErrors = [];
 
     /**
-     * Send a request and get a response back.
-     *
-     * @param \Cake\Http\Client\Request $request The request object to send.
-     * @param array $options Array of options for the stream.
-     * @return array Array of populated Response objects
+     * {@inheritDoc}
      */
     public function send(Request $request, array $options)
     {
@@ -306,8 +302,11 @@ class Stream
         set_error_handler(function ($code, $message) {
             $this->_connectionErrors[] = $message;
         });
-        $this->_stream = fopen($url, 'rb', false, $this->_context);
-        restore_error_handler();
+        try {
+            $this->_stream = fopen($url, 'rb', false, $this->_context);
+        } finally {
+            restore_error_handler();
+        }
 
         if (!$this->_stream || !empty($this->_connectionErrors)) {
             throw new Exception(implode("\n", $this->_connectionErrors));
@@ -327,5 +326,5 @@ class Stream
     }
 }
 
-// @deprecated Add backwards compat alias.
+// @deprecated 3.4.0 Add backwards compat alias.
 class_alias('Cake\Http\Client\Adapter\Stream', 'Cake\Network\Http\Adapter\Stream');

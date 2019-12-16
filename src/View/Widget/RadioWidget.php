@@ -26,7 +26,6 @@ use Traversable;
  */
 class RadioWidget implements WidgetInterface
 {
-
     use IdGeneratorTrait;
 
     /**
@@ -122,7 +121,7 @@ class RadioWidget implements WidgetInterface
      * Disabled attribute detection.
      *
      * @param array $radio Radio info.
-     * @param array|null|true $disabled The disabled values.
+     * @param array|true|null $disabled The disabled values.
      * @return bool
      */
     protected function _isDisabled($radio, $disabled)
@@ -165,7 +164,14 @@ class RadioWidget implements WidgetInterface
         }
 
         if (empty($radio['id'])) {
-            $radio['id'] = $this->_id($radio['name'], $radio['value']);
+            if (isset($data['id'])) {
+                $radio['id'] = $data['id'] . '-' . trim(
+                    $this->_idSuffix($radio['value']),
+                    '-'
+                );
+            } else {
+                $radio['id'] = $this->_id($radio['name'], $radio['value']);
+            }
         }
         if (isset($data['val']) && is_bool($data['val'])) {
             $data['val'] = $data['val'] ? 1 : 0;
@@ -176,7 +182,8 @@ class RadioWidget implements WidgetInterface
         }
 
         if (!is_bool($data['label']) && isset($radio['checked']) && $radio['checked']) {
-            $data['label'] = $this->_templates->addClass($data['label'], 'selected');
+            $selectedClass = $this->_templates->format('selectedClass', []);
+            $data['label'] = $this->_templates->addClass($data['label'], $selectedClass);
         }
 
         $radio['disabled'] = $this->_isDisabled($radio, $data['disabled']);
@@ -202,7 +209,8 @@ class RadioWidget implements WidgetInterface
             $escape
         );
 
-        if ($label === false &&
+        if (
+            $label === false &&
             strpos($this->_templates->get('radioWrapper'), '{{input}}') === false
         ) {
             $label = $input;
@@ -222,7 +230,7 @@ class RadioWidget implements WidgetInterface
      * input types (multi-checkboxes) will also need labels generated.
      *
      * @param array $radio The input properties.
-     * @param false|string|array $label The properties for a label.
+     * @param array|string|false $label The properties for a label.
      * @param string $input The input widget.
      * @param \Cake\View\Form\ContextInterface $context The form context.
      * @param bool $escape Whether or not to HTML escape the label.
@@ -230,7 +238,9 @@ class RadioWidget implements WidgetInterface
      */
     protected function _renderLabel($radio, $label, $input, $context, $escape)
     {
-        if ($label === false) {
+        if (isset($radio['label'])) {
+            $label = $radio['label'];
+        } elseif ($label === false) {
             return false;
         }
         $labelAttrs = is_array($label) ? $label : [];

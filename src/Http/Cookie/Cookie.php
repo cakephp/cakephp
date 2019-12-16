@@ -47,7 +47,6 @@ use InvalidArgumentException;
  */
 class Cookie implements CookieInterface
 {
-
     /**
      * Cookie name
      *
@@ -81,7 +80,7 @@ class Cookie implements CookieInterface
      *
      * @var string
      */
-    protected $path = '';
+    protected $path = '/';
 
     /**
      * Domain
@@ -124,7 +123,7 @@ class Cookie implements CookieInterface
         $name,
         $value = '',
         $expiresAt = null,
-        $path = '',
+        $path = '/',
         $domain = '',
         $secure = false,
         $httpOnly = false
@@ -200,9 +199,7 @@ class Cookie implements CookieInterface
      */
     public function getId()
     {
-        $name = mb_strtolower($this->name);
-
-        return "{$name};{$this->domain};{$this->path}";
+        return "{$this->name};{$this->domain};{$this->path}";
     }
 
     /**

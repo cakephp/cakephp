@@ -24,7 +24,6 @@ use RuntimeException;
  */
 class Security
 {
-
     /**
      * Default hash method. If `$type` param for `Security::hash()` is not specified
      * this value is used. Defaults to 'sha1'.
@@ -57,7 +56,8 @@ class Security
      * @param mixed $salt If true, automatically prepends the application's salt
      *   value to $string (Security.salt).
      * @return string Hash
-     * @link https://book.cakephp.org/3.0/en/core-libraries/security.html#hashing-data
+     * @throws \RuntimeException
+     * @link https://book.cakephp.org/3/en/core-libraries/security.html#hashing-data
      */
     public static function hash($string, $algorithm = null, $salt = false)
     {
@@ -67,7 +67,7 @@ class Security
         $algorithm = strtolower($algorithm);
 
         $availableAlgorithms = hash_algos();
-        if (!in_array($algorithm, $availableAlgorithms)) {
+        if (!in_array($algorithm, $availableAlgorithms, true)) {
             throw new RuntimeException(sprintf(
                 'The hash type `%s` was not found. Available algorithms are: %s',
                 $algorithm,
@@ -208,7 +208,12 @@ class Security
      * @param string $key Key to use as the encryption key for encrypted data.
      * @param string $operation Operation to perform, encrypt or decrypt
      * @throws \InvalidArgumentException When there are errors.
-     * @return string Encrypted/Decrypted string
+     * @return string Encrypted/Decrypted string.
+     * @deprecated 3.6.3 This method relies on functions provided by mcrypt
+     *   extension which has been deprecated in PHP 7.1 and removed in PHP 7.2.
+     *   There's no 1:1 replacement for this method.
+     *   Upgrade your code to use Security::encrypt()/Security::decrypt() with
+     *   OpenSsl engine instead.
      */
     public static function rijndael($text, $key, $operation)
     {

@@ -139,7 +139,8 @@ class DateTimeType extends Type implements TypeInterface, BatchCastingInterface
 
         $format = (array)$this->_format;
 
-        if ($this->dbTimezone !== null
+        if (
+            $this->dbTimezone !== null
             && $this->dbTimezone->getName() !== $value->getTimezone()->getName()
         ) {
             if (!$value instanceof DateTimeImmutable) {
@@ -267,7 +268,8 @@ class DateTimeType extends Type implements TypeInterface, BatchCastingInterface
         $value += ['hour' => 0, 'minute' => 0, 'second' => 0];
 
         $format = '';
-        if (isset($value['year'], $value['month'], $value['day']) &&
+        if (
+            isset($value['year'], $value['month'], $value['day']) &&
             (is_numeric($value['year']) && is_numeric($value['month']) && is_numeric($value['day']))
         ) {
             $format .= sprintf('%d-%02d-%02d', $value['year'], $value['month'], $value['day']);
@@ -372,7 +374,7 @@ class DateTimeType extends Type implements TypeInterface, BatchCastingInterface
             $class = $fallback;
         }
         $this->_className = $class;
-        $this->_datetimeInstance = new $this->_className;
+        $this->_datetimeInstance = new $this->_className();
     }
 
     /**
@@ -406,7 +408,7 @@ class DateTimeType extends Type implements TypeInterface, BatchCastingInterface
      */
     protected function _parseValue($value)
     {
-        /* @var \Cake\I18n\Time $class */
+        /** @var \Cake\I18n\Time $class */
         $class = $this->_className;
 
         return $class::parseDateTime($value, $this->_localeFormat);

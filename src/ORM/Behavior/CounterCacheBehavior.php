@@ -14,7 +14,6 @@
  */
 namespace Cake\ORM\Behavior;
 
-use ArrayObject;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\ORM\Association;
@@ -101,7 +100,6 @@ use RuntimeException;
  */
 class CounterCacheBehavior extends Behavior
 {
-
     /**
      * Store the fields which should be ignored
      *
@@ -119,7 +117,7 @@ class CounterCacheBehavior extends Behavior
      * @param \ArrayObject $options The options for the query
      * @return void
      */
-    public function beforeSave(Event $event, EntityInterface $entity, ArrayObject $options)
+    public function beforeSave(Event $event, EntityInterface $entity, $options)
     {
         if (isset($options['ignoreCounterCache']) && $options['ignoreCounterCache'] === true) {
             return;
@@ -135,7 +133,8 @@ class CounterCacheBehavior extends Behavior
                 $registryAlias = $assoc->getTarget()->getRegistryAlias();
                 $entityAlias = $assoc->getProperty();
 
-                if (!is_callable($config) &&
+                if (
+                    !is_callable($config) &&
                     isset($config['ignoreDirty']) &&
                     $config['ignoreDirty'] === true &&
                     $entity->$entityAlias->isDirty($field)
@@ -156,7 +155,7 @@ class CounterCacheBehavior extends Behavior
      * @param \ArrayObject $options The options for the query
      * @return void
      */
-    public function afterSave(Event $event, EntityInterface $entity, ArrayObject $options)
+    public function afterSave(Event $event, EntityInterface $entity, $options)
     {
         if (isset($options['ignoreCounterCache']) && $options['ignoreCounterCache'] === true) {
             return;
@@ -176,7 +175,7 @@ class CounterCacheBehavior extends Behavior
      * @param \ArrayObject $options The options for the query
      * @return void
      */
-    public function afterDelete(Event $event, EntityInterface $entity, ArrayObject $options)
+    public function afterDelete(Event $event, EntityInterface $entity, $options)
     {
         if (isset($options['ignoreCounterCache']) && $options['ignoreCounterCache'] === true) {
             return;
@@ -228,7 +227,8 @@ class CounterCacheBehavior extends Behavior
                 $config = [];
             }
 
-            if (isset($this->_ignoreDirty[$assoc->getTarget()->getRegistryAlias()][$field]) &&
+            if (
+                isset($this->_ignoreDirty[$assoc->getTarget()->getRegistryAlias()][$field]) &&
                 $this->_ignoreDirty[$assoc->getTarget()->getRegistryAlias()][$field] === true
             ) {
                 continue;

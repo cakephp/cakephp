@@ -44,18 +44,20 @@ use RuntimeException;
  * In general all Cache operations are supported by all cache engines.
  * However, Cache::increment() and Cache::decrement() are not supported by File caching.
  *
- * There are 6 built-in caching engines:
+ * There are 7 built-in caching engines:
  *
+ * - `ApcuEngine` - Uses the APCu object cache, one of the fastest caching engines.
+ * - `ArrayEngine` - Uses only memory to store all data, not actually a persistent engine.
+ *    Can be useful in test or CLI environment.
  * - `FileEngine` - Uses simple files to store content. Poor performance, but good for
  *    storing large objects, or things that are not IO sensitive. Well suited to development
  *    as it is an easy cache to inspect and manually flush.
- * - `ApcuEngine` - Uses the APCu object cache, one of the fastest caching engines.
  * - `MemcacheEngine` - Uses the PECL::Memcache extension and Memcached for storage.
  *    Fast reads/writes, and benefits from memcache being distributed.
- * - `XcacheEngine` - Uses the Xcache extension, an alternative to APCu.
+ * - `RedisEngine` - Uses redis and php-redis extension to store cache data.
  * - `WincacheEngine` - Uses Windows Cache Extension for PHP. Supports wincache 1.1.0 and higher.
  *    This engine is recommended to people deploying on windows with IIS.
- * - `RedisEngine` - Uses redis and php-redis extension to store cache data.
+ * - `XcacheEngine` - Uses the Xcache extension, an alternative to APCu.
  *
  * See Cache engine documentation for expected configuration keys.
  *
@@ -63,16 +65,16 @@ use RuntimeException;
  */
 class Cache
 {
-
     use StaticConfigTrait;
 
     /**
      * An array mapping url schemes to fully qualified caching engine
      * class names.
      *
-     * @var array
+     * @var string[]
      */
     protected static $_dsnClassMap = [
+        'array' => 'Cake\Cache\Engine\ArrayEngine',
         'apc' => 'Cake\Cache\Engine\ApcuEngine', // @deprecated Since 3.6. Use apcu instead.
         'apcu' => 'Cake\Cache\Engine\ApcuEngine',
         'file' => 'Cake\Cache\Engine\FileEngine',
@@ -216,6 +218,8 @@ class Cache
      *
      * @param string $config The configuration name you want an engine for.
      * @return \Cake\Cache\CacheEngine When caching is disabled a null engine will be returned.
+     * @deprecated 3.7.0 Use Cache::pool() instead. In 4.0 all cache engines will implement the
+     *   PSR16 interface and this method does not return objects implementing that interface.
      */
     public static function engine($config)
     {
@@ -235,6 +239,17 @@ class Cache
     }
 
     /**
+     * Get a SimpleCacheEngine object for the named cache pool.
+     *
+     * @param string $config The name of the configured cache backend.
+     * @return \Cake\Cache\SimpleCacheEngine
+     */
+    public static function pool($config)
+    {
+        return new SimpleCacheEngine(static::engine($config));
+    }
+
+    /**
      * Garbage collection
      *
      * Permanently remove all expired and deleted data
@@ -242,6 +257,7 @@ class Cache
      * @param string $config [optional] The config name you wish to have garbage collected. Defaults to 'default'
      * @param int|null $expires [optional] An expires timestamp. Defaults to NULL
      * @return void
+     * @deprecated 3.7.0 Will be removed in 4.0
      */
     public static function gc($config = 'default', $expires = null)
     {
@@ -273,19 +289,19 @@ class Cache
      */
     public static function write($key, $value, $config = 'default')
     {
-        $engine = static::engine($config);
         if (is_resource($value)) {
             return false;
         }
 
-        $success = $engine->write($key, $value);
+        $backend = static::pool($config);
+        $success = $backend->set($key, $value);
         if ($success === false && $value !== '') {
             trigger_error(
                 sprintf(
                     "%s cache was unable to write '%s' to %s cache",
                     $config,
                     $key,
-                    get_class($engine)
+                    get_class($backend)
                 ),
                 E_USER_WARNING
             );
@@ -319,6 +335,7 @@ class Cache
     public static function writeMany($data, $config = 'default')
     {
         $engine = static::engine($config);
+
         $return = $engine->writeMany($data);
         foreach ($return as $key => $success) {
             if ($success === false && $data[$key] !== '') {
@@ -357,6 +374,7 @@ class Cache
      */
     public static function read($key, $config = 'default')
     {
+        // TODO In 4.x this needs to change to use pool()
         $engine = static::engine($config);
 
         return $engine->read($key);
@@ -386,6 +404,7 @@ class Cache
      */
     public static function readMany($keys, $config = 'default')
     {
+        // In 4.x this needs to change to use pool()
         $engine = static::engine($config);
 
         return $engine->readMany($keys);
@@ -397,12 +416,12 @@ class Cache
      * @param string $key Identifier for the data
      * @param int $offset How much to add
      * @param string $config Optional string configuration name. Defaults to 'default'
-     * @return mixed new value, or false if the data doesn't exist, is not integer,
+     * @return int|false New value, or false if the data doesn't exist, is not integer,
      *    or if there was an error fetching it.
      */
     public static function increment($key, $offset = 1, $config = 'default')
     {
-        $engine = static::engine($config);
+        $engine = static::pool($config);
         if (!is_int($offset) || $offset < 0) {
             return false;
         }
@@ -416,12 +435,12 @@ class Cache
      * @param string $key Identifier for the data
      * @param int $offset How much to subtract
      * @param string $config Optional string configuration name. Defaults to 'default'
-     * @return mixed new value, or false if the data doesn't exist, is not integer,
+     * @return int|false New value, or false if the data doesn't exist, is not integer,
      *   or if there was an error fetching it
      */
     public static function decrement($key, $offset = 1, $config = 'default')
     {
-        $engine = static::engine($config);
+        $engine = static::pool($config);
         if (!is_int($offset) || $offset < 0) {
             return false;
         }
@@ -452,9 +471,9 @@ class Cache
      */
     public static function delete($key, $config = 'default')
     {
-        $engine = static::engine($config);
+        $backend = static::pool($config);
 
-        return $engine->delete($key);
+        return $backend->delete($key);
     }
 
     /**
@@ -476,20 +495,26 @@ class Cache
      *
      * @param array $keys Array of cache keys to be deleted
      * @param string $config name of the configuration to use. Defaults to 'default'
-     * @return array of boolean values that are true if the value was successfully deleted, false if it didn't exist or
-     * couldn't be removed
+     * @return array of boolean values that are true if the value was successfully deleted,
+     * false if it didn't exist or couldn't be removed.
      */
     public static function deleteMany($keys, $config = 'default')
     {
-        $engine = static::engine($config);
+        $backend = static::pool($config);
 
-        return $engine->deleteMany($keys);
+        $return = [];
+        foreach ($keys as $key) {
+            $return[$key] = $backend->delete($key);
+        }
+
+        return $return;
     }
 
     /**
      * Delete all keys from the cache.
      *
-     * @param bool $check if true will check expiration, otherwise delete all
+     * @param bool $check if true will check expiration, otherwise delete all. This parameter
+     *   will become a no-op value in 4.0 as it is deprecated.
      * @param string $config name of the configuration to use. Defaults to 'default'
      * @return bool True if the cache was successfully cleared, false otherwise
      */
@@ -503,7 +528,8 @@ class Cache
     /**
      * Delete all keys from the cache from all configurations.
      *
-     * @param bool $check if true will check expiration, otherwise delete all
+     * @param bool $check if true will check expiration, otherwise delete all. This parameter
+     *   will become a no-op value in 4.0 as it is deprecated.
      * @return array Status code. For each configuration, it reports the status of the operation
      */
     public static function clearAll($check = false)
@@ -526,7 +552,7 @@ class Cache
      */
     public static function clearGroup($group, $config = 'default')
     {
-        $engine = static::engine($config);
+        $engine = static::pool($config);
 
         return $engine->clearGroup($group);
     }
@@ -660,11 +686,11 @@ class Cache
      */
     public static function add($key, $value, $config = 'default')
     {
-        $engine = static::engine($config);
+        $pool = static::pool($config);
         if (is_resource($value)) {
             return false;
         }
 
-        return $engine->add($key, $value);
+        return $pool->add($key, $value);
     }
 }

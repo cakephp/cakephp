@@ -27,7 +27,7 @@ class ThingsFixture extends TestFixture
     public $fields = [
         'id' => ['type' => 'integer'],
         'title' => ['type' => 'string', 'length' => 20],
-        'body' => ['type' => 'string', 'length' => 50]
+        'body' => ['type' => 'string', 'length' => 50],
     ];
 
     /**
@@ -37,6 +37,6 @@ class ThingsFixture extends TestFixture
      */
     public $records = [
         ['id' => 1, 'title' => 'a title', 'body' => 'a body'],
-        ['id' => 2, 'title' => 'another title', 'body' => 'another body']
+        ['id' => 2, 'title' => 'another title', 'body' => 'another body'],
     ];
 }

@@ -21,7 +21,6 @@ use Cake\Datasource\SchemaInterface;
  */
 interface TableSchemaInterface extends SchemaInterface
 {
-
     /**
      * Binary column type
      *
@@ -199,7 +198,7 @@ interface TableSchemaInterface extends SchemaInterface
     /**
      * Get the names of all the indexes in the table.
      *
-     * @return array
+     * @return string[]
      */
     public function indexes();
 
@@ -244,7 +243,7 @@ interface TableSchemaInterface extends SchemaInterface
     /**
      * Get the names of all the constraints in the table.
      *
-     * @return array
+     * @return string[]
      */
     public function constraints();
 }

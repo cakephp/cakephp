@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\Database\Type;
 
-use Cake\Database\Type;
 use Cake\Database\Type\BinaryUuidType;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Text;

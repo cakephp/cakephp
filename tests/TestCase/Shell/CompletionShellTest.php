@@ -48,7 +48,7 @@ class CompletionShellTest extends TestCase
     {
         parent::setUp();
         static::setAppNamespace();
-        Plugin::load(['TestPlugin', 'TestPluginTwo']);
+        $this->loadPlugins(['TestPlugin', 'TestPluginTwo']);
 
         $this->out = new TestCompletionStringOutput();
         $io = new ConsoleIo($this->out);
@@ -74,7 +74,7 @@ class CompletionShellTest extends TestCase
         parent::tearDown();
         unset($this->Shell);
         static::setAppNamespace('App');
-        Plugin::unload();
+        $this->clearPlugins();
     }
 
     /**
@@ -117,7 +117,7 @@ class CompletionShellTest extends TestCase
 
         $expected = 'TestPlugin.example TestPlugin.sample TestPluginTwo.example unique welcome ' .
             'cache help i18n orm_cache plugin routes schema_cache server version ' .
-            "demo i18m integration merge sample shell_test testing_dispatch\n";
+            "abort auto_load_model demo i18m integration merge sample shell_test testing_dispatch\n";
         $this->assertTextEquals($expected, $output);
     }
 

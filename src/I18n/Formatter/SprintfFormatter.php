@@ -22,7 +22,6 @@ use Aura\Intl\FormatterInterface;
  */
 class SprintfFormatter implements FormatterInterface
 {
-
     /**
      * Returns a string with all passed variables interpolated into the original
      * message. Variables are interpolated using the sprintf format.

@@ -16,13 +16,13 @@ namespace Cake\Test\TestCase\Datasource;
 use Cake\Datasource\FactoryLocator;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\TestSuite\TestCase;
+use TestApp\Model\Table\PaginatorPostsTable;
 
 /**
  * Testing stub.
  */
 class Stub
 {
-
     use ModelAwareTrait;
 
     public function setProps($name)
@@ -69,6 +69,11 @@ class ModelAwareTraitTest extends TestCase
         $result = $stub->loadModel('Comments');
         $this->assertInstanceOf('Cake\ORM\Table', $result);
         $this->assertInstanceOf('Cake\ORM\Table', $stub->Comments);
+
+        $result = $stub->loadModel(PaginatorPostsTable::class);
+        $this->assertInstanceOf(PaginatorPostsTable::class, $result);
+        $this->assertInstanceOf(PaginatorPostsTable::class, $stub->PaginatorPosts);
+        $this->assertSame('PaginatorPosts', $result->getAlias());
     }
 
     /**

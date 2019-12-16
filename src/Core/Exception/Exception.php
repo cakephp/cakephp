@@ -19,7 +19,6 @@ use RuntimeException;
  */
 class Exception extends RuntimeException
 {
-
     /**
      * Array of attributes that are passed in from the constructor, and
      * made available in the view when a development error is displayed.
@@ -53,7 +52,7 @@ class Exception extends RuntimeException
      * Constructor.
      *
      * Allows you to create exceptions that are treated as framework errors and disabled
-     * when debug = 0.
+     * when debug mode is off.
      *
      * @param string|array $message Either the string of the error message, or an array of attributes
      *   that are made available in the view, and sprintf()'d into Exception::$_messageTemplate

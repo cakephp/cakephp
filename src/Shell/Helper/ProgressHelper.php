@@ -33,11 +33,10 @@ use RuntimeException;
  */
 class ProgressHelper extends Helper
 {
-
     /**
      * The current progress.
      *
-     * @var int
+     * @var int|float
      */
     protected $_progress = 0;
 
@@ -112,7 +111,7 @@ class ProgressHelper extends Helper
     /**
      * Increment the progress bar.
      *
-     * @param int $num The amount of progress to advance by.
+     * @param int|float $num The amount of progress to advance by.
      * @return $this
      */
     public function increment($num = 1)

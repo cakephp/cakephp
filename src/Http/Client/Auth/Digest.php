@@ -24,7 +24,6 @@ use Cake\Http\Client\Request;
  */
 class Digest
 {
-
     /**
      * Instance of Cake\Http\Client
      *
@@ -144,5 +143,5 @@ class Digest
     }
 }
 
-// @deprecated Add backwards compat alias.
+// @deprecated 3.4.0 Add backwards compat alias.
 class_alias('Cake\Http\Client\Auth\Digest', 'Cake\Network\Http\Auth\Digest');

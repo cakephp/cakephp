@@ -20,6 +20,9 @@ use Cake\ORM\Locator\TableLocator;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
+use TestApp\Infrastructure\Table\AddressesTable;
+use TestApp\Model\Table\ArticlesTable;
+use TestPlugin\Infrastructure\Table\AddressesTable as PluginAddressesTable;
 
 /**
  * Used to test correct class is instantiated when using $this->_locator->get();
@@ -58,7 +61,18 @@ class TableLocatorTest extends TestCase
         parent::setUp();
         static::setAppNamespace();
 
-        $this->_locator = new TableLocator;
+        $this->_locator = new TableLocator();
+    }
+
+    /**
+     * tearDown
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        $this->clearPlugins();
+        parent::tearDown();
     }
 
     /**
@@ -113,7 +127,7 @@ class TableLocatorTest extends TestCase
      */
     public function testConfigPlugin()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $data = [
             'connection' => 'testing',
@@ -253,7 +267,7 @@ class TableLocatorTest extends TestCase
     {
         ConnectionManager::alias('test', 'testing');
         $result = $this->_locator->get('Articles', [
-            'connectionName' => 'testing'
+            'connectionName' => 'testing',
         ]);
         $this->assertEquals('articles', $result->getTable());
         $this->assertEquals('test', $result->getConnection()->configName());
@@ -325,7 +339,7 @@ class TableLocatorTest extends TestCase
      */
     public function testGetPlugin()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $table = $this->_locator->get('TestPlugin.TestPluginComments');
 
         $this->assertInstanceOf('TestPlugin\Model\Table\TestPluginCommentsTable', $table);
@@ -351,8 +365,7 @@ class TableLocatorTest extends TestCase
      */
     public function testGetMultiplePlugins()
     {
-        Plugin::load('TestPlugin');
-        Plugin::load('TestPluginTwo');
+        $this->loadPlugins(['TestPlugin', 'TestPluginTwo']);
 
         $app = $this->_locator->get('Comments');
         $plugin1 = $this->_locator->get('TestPlugin.Comments');
@@ -378,7 +391,7 @@ class TableLocatorTest extends TestCase
      */
     public function testGetPluginWithClassNameOption()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $table = $this->_locator->get('Comments', [
             'className' => 'TestPlugin.TestPluginComments',
         ]);
@@ -399,7 +412,7 @@ class TableLocatorTest extends TestCase
      */
     public function testGetPluginWithFullNamespaceName()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $class = 'TestPlugin\Model\Table\TestPluginCommentsTable';
         $table = $this->_locator->get('Comments', [
             'className' => $class,
@@ -484,7 +497,7 @@ class TableLocatorTest extends TestCase
                 'default' => $validator1,
                 'secondary' => $validator2,
                 'tertiary' => $validator3,
-            ]
+            ],
         ]);
         $table = $this->_locator->get('users');
 
@@ -512,7 +525,7 @@ class TableLocatorTest extends TestCase
      */
     public function testSetPlugin()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $mock = $this->getMockBuilder('TestPlugin\Model\Table\CommentsTable')->getMock();
 
@@ -566,8 +579,7 @@ class TableLocatorTest extends TestCase
      */
     public function testRemovePlugin()
     {
-        Plugin::load('TestPlugin');
-        Plugin::load('TestPluginTwo');
+        $this->loadPlugins(['TestPlugin', 'TestPluginTwo']);
 
         $app = $this->_locator->get('Comments');
         $this->_locator->get('TestPlugin.Comments');
@@ -598,5 +610,104 @@ class TableLocatorTest extends TestCase
         $plugin3 = $this->_locator->get('TestPluginTwo.Comments');
 
         $this->assertSame($plugin, $plugin3, 'Should be the same TestPluginTwo.Comments object');
+    }
+
+    /**
+     * testCustomLocation
+     *
+     * Tests that the correct table is returned when non-standard namespace is defined.
+     *
+     * @return void
+     */
+    public function testCustomLocation()
+    {
+        $locator = new TableLocator(['Infrastructure/Table']);
+
+        $table = $locator->get('Addresses');
+        $this->assertInstanceOf(AddressesTable::class, $table);
+    }
+
+    /**
+     * testCustomLocationPlugin
+     *
+     * Tests that the correct plugin table is returned when non-standard namespace is defined.
+     *
+     * @return void
+     */
+    public function testCustomLocationPlugin()
+    {
+        $locator = new TableLocator(['Infrastructure/Table']);
+
+        $table = $locator->get('TestPlugin.Addresses');
+        $this->assertInstanceOf(PluginAddressesTable::class, $table);
+    }
+
+    /**
+     * testCustomLocationDefaultWhenNone
+     *
+     * Tests that the default table is returned when no namespace is defined.
+     *
+     * @return void
+     */
+    public function testCustomLocationDefaultWhenNone()
+    {
+        $locator = new TableLocator([]);
+
+        $table = $locator->get('Addresses');
+        $this->assertInstanceOf(Table::class, $table);
+    }
+
+    /**
+     * testCustomLocationDefaultWhenMissing
+     *
+     * Tests that the default table is returned when the class cannot be found in a non-standard namespace.
+     *
+     * @return void
+     */
+    public function testCustomLocationDefaultWhenMissing()
+    {
+        $locator = new TableLocator(['Infrastructure/Table']);
+
+        $table = $locator->get('Articles');
+        $this->assertInstanceOf(Table::class, $table);
+    }
+
+    /**
+     * testCustomLocationMultiple
+     *
+     * Tests that the correct table is returned when multiple namespaces are defined.
+     *
+     * @return void
+     */
+    public function testCustomLocationMultiple()
+    {
+        $locator = new TableLocator([
+            'Infrastructure/Table',
+            'Model/Table',
+        ]);
+
+        $table = $locator->get('Articles');
+        $this->assertInstanceOf(Table::class, $table);
+    }
+
+    /**
+     * testAddLocation
+     *
+     * Tests that adding a namespace takes effect.
+     *
+     * @return void
+     */
+    public function testAddLocation()
+    {
+        $locator = new TableLocator([]);
+
+        $table = $locator->get('Addresses');
+        $this->assertInstanceOf(Table::class, $table);
+
+        $locator->clear();
+        $locator->addLocation('Infrastructure/Table');
+
+        $table = $locator->get('Addresses');
+        $this->assertInstanceOf(AddressesTable::class, $table);
     }
 }

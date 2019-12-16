@@ -73,15 +73,15 @@ class TimeHelperTest extends TestCase
         $timestamp = strtotime('+8 years, +4 months +2 weeks +3 days');
         $result = $Time->timeAgoInWords($timestamp, [
             'end' => '1 years',
-            'element' => 'span'
+            'element' => 'span',
         ]);
         $expected = [
             'span' => [
                 'title' => $timestamp,
-                'class' => 'time-ago-in-words'
+                'class' => 'time-ago-in-words',
             ],
             'on ' . date('n/j/y', $timestamp),
-            '/span'
+            '/span',
         ];
         $this->assertHtml($expected, $result);
 
@@ -89,17 +89,17 @@ class TimeHelperTest extends TestCase
             'end' => '1 years',
             'element' => [
                 'title' => 'testing',
-                'rel' => 'test'
-            ]
+                'rel' => 'test',
+            ],
         ]);
         $expected = [
             'span' => [
                 'title' => 'testing',
                 'class' => 'time-ago-in-words',
-                'rel' => 'test'
+                'rel' => 'test',
             ],
             'on ' . date('n/j/y', $timestamp),
-            '/span'
+            '/span',
         ];
         $this->assertHtml($expected, $result);
 
@@ -111,10 +111,10 @@ class TimeHelperTest extends TestCase
         $expected = [
             'div' => [
                 'title' => $timestamp,
-                'class' => 'time-ago-in-words'
+                'class' => 'time-ago-in-words',
             ],
             '2 weeks',
-            '/div'
+            '/div',
         ];
         $this->assertHtml($expected, $result);
     }
@@ -130,7 +130,7 @@ class TimeHelperTest extends TestCase
         $timestamp = new Time('+8 years, +4 months +2 weeks +3 days');
         $result = $Time->timeAgoInWords($timestamp, [
             'end' => '1 years',
-            'element' => 'span'
+            'element' => 'span',
         ]);
         $vancouver = clone $timestamp;
         $vancouver->timezone('America/Vancouver');
@@ -138,10 +138,10 @@ class TimeHelperTest extends TestCase
         $expected = [
             'span' => [
                 'title' => $vancouver->__toString(),
-                'class' => 'time-ago-in-words'
+                'class' => 'time-ago-in-words',
             ],
             'on ' . $vancouver->format('n/j/y'),
-            '/span'
+            '/span',
         ];
         $this->assertHtml($expected, $result);
     }
@@ -153,7 +153,7 @@ class TimeHelperTest extends TestCase
      */
     public function testToQuarter()
     {
-        $this->assertEquals(4, $this->Time->toQuarter('2007-12-25'));
+        $this->assertSame(4, $this->Time->toQuarter('2007-12-25'));
         $this->assertEquals(['2007-10-01', '2007-12-31'], $this->Time->toQuarter('2007-12-25', true));
     }
 
@@ -200,7 +200,7 @@ class TimeHelperTest extends TestCase
      */
     public function testToAtom()
     {
-        $dateTime = new \DateTime;
+        $dateTime = new \DateTime();
         $this->assertEquals($dateTime->format($dateTime::ATOM), $this->Time->toAtom($dateTime->getTimestamp()));
     }
 
@@ -212,7 +212,7 @@ class TimeHelperTest extends TestCase
     public function testToAtomOutputTimezone()
     {
         $this->Time->setConfig('outputTimezone', 'America/Vancouver');
-        $dateTime = new Time;
+        $dateTime = new Time();
         $vancouver = clone $dateTime;
         $vancouver->timezone('America/Vancouver');
         $this->assertEquals($vancouver->format(Time::ATOM), $this->Time->toAtom($vancouver));
@@ -246,7 +246,7 @@ class TimeHelperTest extends TestCase
     public function testToRssOutputTimezone()
     {
         $this->Time->setConfig('outputTimezone', 'America/Vancouver');
-        $dateTime = new Time;
+        $dateTime = new Time();
         $vancouver = clone $dateTime;
         $vancouver->timezone('America/Vancouver');
 
@@ -330,7 +330,7 @@ class TimeHelperTest extends TestCase
         $map = [
             'Mon' => [-1, 7], 'Tue' => [-2, 6], 'Wed' => [-3, 5],
             'Thu' => [-4, 4], 'Fri' => [-5, 3], 'Sat' => [-6, 2],
-            'Sun' => [-7, 1]
+            'Sun' => [-7, 1],
         ];
         $days = $map[date('D')];
 
@@ -526,8 +526,8 @@ class TimeHelperTest extends TestCase
         $this->assertTimeFormat($expected, $result);
 
         $result = $this->Time->format($time, \IntlDateFormatter::FULL);
-        $expected = 'Thursday, January 14, 2010 at 1:59:28 PM GMT';
-        $this->assertTimeFormat($expected, $result);
+        $expected = 'Thursday, January 14, 2010 at 1:59:28 PM';
+        $this->assertStringStartsWith($expected, $result);
 
         $result = $this->Time->format('invalid date', null, 'Date invalid');
         $expected = 'Date invalid';
@@ -537,8 +537,8 @@ class TimeHelperTest extends TestCase
         Time::$defaultLocale = 'fr_FR';
         $time = new \Cake\I18n\FrozenTime('Thu Jan 14 13:59:28 2010');
         $result = $this->Time->format($time, \IntlDateFormatter::FULL);
-        $expected = 'jeudi 14 janvier 2010 13:59:28 UTC';
-        $this->assertTimeFormat($expected, $result);
+        $this->assertContains('jeudi 14 janvier 2010', $result);
+        $this->assertContains('13:59:28', $result);
     }
 
     /**

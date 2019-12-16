@@ -7,9 +7,12 @@
 /phpunit.xml
 /phpcs.xml
 /vendor
+/vendors
+/composer.phar
 *.mo
 debug.log
 error.log
+.phpunit.result.cache
 
 # OS generated files #
 ######################
@@ -35,6 +38,8 @@ Thumbs.db
 *.tmPreferences.cache
 # Eclipse
 .settings/*
+/.project
+/.buildpath
 # JetBrains, aka PHPStorm, IntelliJ IDEA
 .idea/*
 # NetBeans

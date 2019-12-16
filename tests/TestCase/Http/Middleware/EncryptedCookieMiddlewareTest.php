@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\Http\Middleware;
 
+use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Middleware\EncryptedCookieMiddleware;
 use Cake\Http\Response;
@@ -57,7 +58,7 @@ class EncryptedCookieMiddlewareTest extends TestCase
         $request = new ServerRequest(['url' => '/cookies/nom']);
         $request = $request->withCookieParams([
             'plain' => 'always plain',
-            'secret' => $this->_encrypt('decoded', 'aes')
+            'secret' => $this->_encrypt('decoded', 'aes'),
         ]);
         $this->assertNotEquals('decoded', $request->getCookie('decoded'));
 
@@ -71,6 +72,49 @@ class EncryptedCookieMiddlewareTest extends TestCase
         $middleware = $this->middleware;
         $response = $middleware($request, $response, $next);
         $this->assertSame('yes', $response->getHeaderLine('called'), 'Inner middleware not invoked');
+    }
+
+    /**
+     * Test decoding malformed cookies
+     *
+     * @dataProvider malformedCookies
+     * @param string $cookie
+     * @return void
+     */
+    public function testDecodeMalformedCookies($cookie)
+    {
+        $request = new ServerRequest(['url' => '/cookies/nom']);
+        $request = $request->withCookieParams(['secret' => $cookie]);
+
+        $response = new Response();
+        $next = function ($req, $res) {
+            $this->assertSame('', $req->getCookie('secret'));
+
+            return $res;
+        };
+        $middleware = new EncryptedCookieMiddleware(
+            ['secret'],
+            $this->_getCookieEncryptionKey(),
+            'aes'
+        );
+        $response = $middleware($request, $response, $next);
+    }
+
+    /**
+     * Data provider for malformed cookies.
+     *
+     * @return array
+     */
+    public function malformedCookies()
+    {
+        $encrypted = $this->_encrypt('secret data', 'aes');
+
+        return [
+            'empty' => [''],
+            'wrong prefix' => [substr_replace($encrypted, 'foo', 0, 3)],
+            'altered' => [str_replace('M', 'A', $encrypted)],
+            'invalid chars' => [str_replace('M', 'M#', $encrypted)],
+        ];
     }
 
     /**
@@ -110,9 +154,9 @@ class EncryptedCookieMiddlewareTest extends TestCase
         $request = new ServerRequest(['url' => '/cookies/nom']);
         $response = new Response();
         $next = function ($req, $res) {
-            return $res->withCookie('secret', 'be quiet')
-                ->withCookie('plain', 'in clear')
-                ->withCookie('ninja', 'shuriken');
+            return $res->withCookie(new Cookie('secret', 'be quiet'))
+                ->withCookie(new Cookie('plain', 'in clear'))
+                ->withCookie(new Cookie('ninja', 'shuriken'));
         };
         $middleware = $this->middleware;
         $response = $middleware($request, $response, $next);

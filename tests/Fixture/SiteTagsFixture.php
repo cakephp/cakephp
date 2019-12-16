@@ -28,7 +28,7 @@ class SiteTagsFixture extends TestFixture
         'id' => ['type' => 'integer'],
         'site_id' => ['type' => 'integer'],
         'name' => ['type' => 'string', 'null' => false],
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id', 'site_id']]]
+        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id', 'site_id']]],
     ];
 
     /**
@@ -40,6 +40,6 @@ class SiteTagsFixture extends TestFixture
         ['id' => 1, 'site_id' => 1, 'name' => 'tag1'],
         ['id' => 2, 'site_id' => 2, 'name' => 'tag2'],
         ['id' => 3, 'site_id' => 1, 'name' => 'tag3'],
-        ['id' => 4, 'site_id' => 2, 'name' => 'tag4']
+        ['id' => 4, 'site_id' => 2, 'name' => 'tag4'],
     ];
 }

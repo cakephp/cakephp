@@ -46,7 +46,7 @@ class JsonObject implements JsonSerializable
     /**
      * String representation of the object
      *
-     * @return string
+     * @return array
      */
     public function jsonSerialize()
     {
@@ -88,13 +88,13 @@ class FileLogTest extends TestCase
         $result = file_get_contents(LOGS . 'random.log');
         $this->assertRegExp('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Random: Test warning/', $result);
 
-        $object = new StringObject;
+        $object = new StringObject();
         $log->log('debug', $object);
         $this->assertFileExists(LOGS . 'debug.log');
         $result = file_get_contents(LOGS . 'debug.log');
         $this->assertContains('Debug: Hey!', $result);
 
-        $object = new JsonObject;
+        $object = new JsonObject();
         $log->log('debug', $object);
         $this->assertFileExists(LOGS . 'debug.log');
         $result = file_get_contents(LOGS . 'debug.log');
@@ -135,7 +135,7 @@ class FileLogTest extends TestCase
         $log = new FileLog([
             'path' => $path,
             'size' => 35,
-            'rotate' => 2
+            'rotate' => 2,
         ]);
         $log->log('warning', 'Test warning one');
         $this->assertFileExists($path . 'error.log');
@@ -193,7 +193,7 @@ class FileLogTest extends TestCase
         $log = new FileLog([
             'path' => $path,
             'size' => 35,
-            'rotate' => 0
+            'rotate' => 0,
         ]);
         file_put_contents($path . 'debug.log.0000000000', "The oldest log file with over 35 bytes.\n");
         $log->log('debug', 'Test debug');

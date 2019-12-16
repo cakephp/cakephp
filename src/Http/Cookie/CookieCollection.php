@@ -17,6 +17,7 @@ use ArrayIterator;
 use Countable;
 use DateTimeImmutable;
 use DateTimeZone;
+use Exception;
 use InvalidArgumentException;
 use IteratorAggregate;
 use Psr\Http\Message\RequestInterface;
@@ -31,7 +32,6 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class CookieCollection implements IteratorAggregate, Countable
 {
-
     /**
      * Cookie objects
      *
@@ -350,7 +350,7 @@ class CookieCollection implements IteratorAggregate, Countable
                 'secure' => false,
                 'httponly' => false,
                 'expires' => null,
-                'max-age' => null
+                'max-age' => null,
             ];
             foreach ($parts as $i => $part) {
                 if (strpos($part, '=') !== false) {
@@ -369,22 +369,30 @@ class CookieCollection implements IteratorAggregate, Countable
                     $cookie[$key] = $value;
                 }
             }
-            $expires = null;
-            if ($cookie['max-age'] !== null) {
-                $expires = new DateTimeImmutable('@' . (time() + $cookie['max-age']));
-            } elseif ($cookie['expires']) {
-                $expires = new DateTimeImmutable('@' . strtotime($cookie['expires']));
+            try {
+                $expires = null;
+                if ($cookie['max-age'] !== null) {
+                    $expires = new DateTimeImmutable('@' . (time() + $cookie['max-age']));
+                } elseif ($cookie['expires']) {
+                    $expires = new DateTimeImmutable('@' . strtotime($cookie['expires']));
+                }
+            } catch (Exception $e) {
+                $expires = null;
             }
 
-            $cookies[] = new Cookie(
-                $name,
-                $cookie['value'],
-                $expires,
-                $cookie['path'],
-                $cookie['domain'],
-                $cookie['secure'],
-                $cookie['httponly']
-            );
+            try {
+                $cookies[] = new Cookie(
+                    $name,
+                    $cookie['value'],
+                    $expires,
+                    $cookie['path'],
+                    $cookie['domain'],
+                    $cookie['secure'],
+                    $cookie['httponly']
+                );
+            } catch (Exception $e) {
+                // Don't blow up on invalid cookies
+            }
         }
 
         return $cookies;

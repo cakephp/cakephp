@@ -25,7 +25,6 @@ namespace Cake\Utility\Crypto;
  */
 class Mcrypt
 {
-
     /**
      * Encrypts/Decrypts a text using the given key using rijndael method.
      *
@@ -33,7 +32,7 @@ class Mcrypt
      * @param string $key Key to use as the encryption key for encrypted data.
      * @param string $operation Operation to perform, encrypt or decrypt
      * @throws \LogicException When there are errors.
-     * @return string Encrytped binary string data, or decrypted data depending on operation.
+     * @return string Encrypted binary string data, or decrypted data depending on operation.
      * @deprecated 3.3.0 This method will be removed in 4.0.0.
      */
     public static function rijndael($text, $key, $operation)

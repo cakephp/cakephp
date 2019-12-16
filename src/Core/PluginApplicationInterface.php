@@ -15,7 +15,6 @@
 namespace Cake\Core;
 
 use Cake\Event\EventDispatcherInterface;
-use Cake\Event\EventManagerInterface;
 
 /**
  * Interface for Applications that leverage plugins & events.
@@ -27,6 +26,10 @@ interface PluginApplicationInterface extends EventDispatcherInterface
 {
     /**
      * Add a plugin to the loaded plugin set.
+     *
+     * If the named plugin does not exist, or does not define a Plugin class, an
+     * instance of `Cake\Core\BasePlugin` will be used. This generated class will have
+     * all plugin hooks enabled.
      *
      * @param string|\Cake\Core\PluginInterface $name The plugin name or plugin object.
      * @param array $config The configuration data for the plugin if using a string for $name

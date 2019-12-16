@@ -14,13 +14,13 @@ namespace Cake\ORM\Exception;
 
 use Cake\Core\Exception\Exception;
 use Cake\Datasource\EntityInterface;
+use Cake\Utility\Hash;
 
 /**
  * Used when a strict save or delete fails
  */
 class PersistenceFailedException extends Exception
 {
-
     /**
      * The entity on which the persistence operation failed
      *
@@ -47,33 +47,15 @@ class PersistenceFailedException extends Exception
         $this->_entity = $entity;
         if (is_array($message)) {
             $errors = [];
-            foreach ($entity->getErrors() as $field => $error) {
-                $errors[] = $field . ': "' . $this->buildError($error) . '"';
+            foreach (Hash::flatten($entity->getErrors()) as $field => $error) {
+                $errors[] = $field . ': "' . $error . '"';
             }
             if ($errors) {
                 $message[] = implode(', ', $errors);
-                $this->_messageTemplate = 'Entity %s failure (%s).';
+                $this->_messageTemplate = 'Entity %s failure. Found the following errors (%s).';
             }
         }
         parent::__construct($message, $code, $previous);
-    }
-
-    /**
-     * @param string|array $error Error message.
-     * @return string
-     */
-    protected function buildError($error)
-    {
-        if (!is_array($error)) {
-            return $error;
-        }
-
-        $errors = [];
-        foreach ($error as $key => $message) {
-            $errors[] = is_int($key) ? $message : $key;
-        }
-
-        return implode(', ', $errors);
     }
 
     /**

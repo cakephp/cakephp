@@ -19,7 +19,6 @@ namespace Cake\Form;
  */
 class Schema
 {
-
     /**
      * The fields in this schema.
      *
@@ -89,7 +88,7 @@ class Schema
     /**
      * Get the list of fields in the schema.
      *
-     * @return array The list of field names.
+     * @return string[] The list of field names.
      */
     public function fields()
     {
@@ -100,7 +99,7 @@ class Schema
      * Get the attributes for a given field.
      *
      * @param string $name The field name.
-     * @return null|array The attributes for a field, or null.
+     * @return array|null The attributes for a field, or null.
      */
     public function field($name)
     {
@@ -136,7 +135,7 @@ class Schema
     public function __debugInfo()
     {
         return [
-            '_fields' => $this->_fields
+            '_fields' => $this->_fields,
         ];
     }
 }

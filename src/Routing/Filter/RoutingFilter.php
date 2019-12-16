@@ -27,7 +27,6 @@ use Cake\Routing\Router;
  */
 class RoutingFilter extends DispatcherFilter
 {
-
     /**
      * Priority setting.
      *
@@ -47,7 +46,7 @@ class RoutingFilter extends DispatcherFilter
      */
     public function beforeDispatch(Event $event)
     {
-        /* @var \Cake\Http\ServerRequest $request */
+        /** @var \Cake\Http\ServerRequest $request */
         $request = $event->getData('request');
         if (Router::getRequest(true) !== $request) {
             Router::setRequestInfo($request);
@@ -62,7 +61,7 @@ class RoutingFilter extends DispatcherFilter
             return null;
         } catch (RedirectException $e) {
             $event->stopPropagation();
-            /* @var \Cake\Http\Response $response */
+            /** @var \Cake\Http\Response $response */
             $response = $event->getData('response');
             $response = $response->withStatus($e->getCode())
                 ->withLocation($e->getMessage());

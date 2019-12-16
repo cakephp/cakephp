@@ -43,12 +43,11 @@ class UrlHelperTest extends TestCase
         parent::setUp();
 
         Router::reload();
-        $this->View = new View();
+        $this->View = new View(new ServerRequest());
         $this->Helper = new UrlHelper($this->View);
-        $this->Helper->request = new ServerRequest();
 
         static::setAppNamespace();
-        Plugin::load(['TestTheme']);
+        $this->loadPlugins(['TestTheme']);
     }
 
     /**
@@ -61,7 +60,7 @@ class UrlHelperTest extends TestCase
         parent::tearDown();
         Configure::delete('Asset');
 
-        Plugin::unload();
+        $this->clearPlugins();
         unset($this->Helper, $this->View);
     }
 
@@ -93,13 +92,13 @@ class UrlHelperTest extends TestCase
         $this->assertEquals('/controller/action/1/param:%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24', $result);
 
         $result = $this->Helper->build([
-            'controller' => 'posts', 'action' => 'index', 'param' => '%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24'
+            'controller' => 'posts', 'action' => 'index', 'param' => '%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24',
         ]);
         $this->assertEquals('/posts/index?param=%257Baround%2520here%257D%255Bthings%255D%255Bare%255D%2524%2524', $result);
 
         $result = $this->Helper->build([
             'controller' => 'posts', 'action' => 'index', 'page' => '1',
-            '?' => ['one' => 'value', 'two' => 'value', 'three' => 'purple']
+            '?' => ['one' => 'value', 'two' => 'value', 'three' => 'purple'],
         ]);
         $this->assertEquals('/posts/index?one=value&amp;two=value&amp;three=purple&amp;page=1', $result);
     }
@@ -120,7 +119,7 @@ class UrlHelperTest extends TestCase
             ],
             'url' => '/subscribe',
             'base' => '/magazine',
-            'webroot' => '/magazine/'
+            'webroot' => '/magazine/',
         ]);
         Router::pushRequest($request);
 
@@ -145,8 +144,8 @@ class UrlHelperTest extends TestCase
             'param' => '%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24',
             '?' => [
                 'k' => 'v',
-                '1' => '2'
-            ]
+                '1' => '2',
+            ],
         ], ['escape' => false]);
         $this->assertEquals('/posts/view?k=v&1=2&param=%257Baround%2520here%257D%255Bthings%255D%255Bare%255D%2524%2524', $result);
     }
@@ -185,7 +184,7 @@ class UrlHelperTest extends TestCase
         $result = $this->Helper->assetTimestamp(Configure::read('App.cssBaseUrl') . 'cake.generic.css?someparam');
         $this->assertEquals(Configure::read('App.cssBaseUrl') . 'cake.generic.css?someparam', $result);
 
-        $this->Helper->request = $this->Helper->request->withAttribute('webroot', '/some/dir/');
+        $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/some/dir/'));
         $result = $this->Helper->assetTimestamp('/some/dir/' . Configure::read('App.cssBaseUrl') . 'cake.generic.css');
         $this->assertRegExp('/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/', $result);
     }
@@ -204,7 +203,7 @@ class UrlHelperTest extends TestCase
             [
                 'controller' => 'js',
                 'action' => 'post',
-                '_ext' => 'js'
+                '_ext' => 'js',
             ],
             ['fullBase' => true]
         );
@@ -239,11 +238,11 @@ class UrlHelperTest extends TestCase
      */
     public function testAssetUrlDataUri()
     {
-        $request = $this->Helper->request
+        $request = $this->View->getRequest()
             ->withAttribute('base', 'subdir')
             ->withAttribute('webroot', 'subdir/');
 
-        $this->Helper->request = $request;
+        $this->View->setRequest($request);
         Router::pushRequest($request);
 
         $data = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4' .
@@ -263,10 +262,10 @@ class UrlHelperTest extends TestCase
      */
     public function testAssetUrlNoRewrite()
     {
-        $this->Helper->request = $this->Helper->request
+        $this->View->setRequest($this->View->getRequest()
             ->withAttribute('base', '/cake_dev/index.php')
             ->withAttribute('webroot', '/cake_dev/app/webroot/')
-            ->withRequestTarget('/cake_dev/index.php/tasks');
+            ->withRequestTarget('/cake_dev/index.php/tasks'));
         $result = $this->Helper->assetUrl('img/cake.icon.png', ['fullBase' => true]);
         $expected = Configure::read('App.fullBaseUrl') . '/cake_dev/app/webroot/img/cake.icon.png';
         $this->assertEquals($expected, $result);
@@ -280,7 +279,7 @@ class UrlHelperTest extends TestCase
     public function testAssetUrlPlugin()
     {
         $this->Helper->webroot = '';
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $result = $this->Helper->assetUrl('TestPlugin.style', ['ext' => '.css']);
         $this->assertEquals('test_plugin/style.css', $result);
@@ -288,7 +287,21 @@ class UrlHelperTest extends TestCase
         $result = $this->Helper->assetUrl('TestPlugin.style', ['ext' => '.css', 'plugin' => false]);
         $this->assertEquals('TestPlugin.style.css', $result);
 
-        Plugin::unload('TestPlugin');
+        $this->removePlugins(['TestPlugin']);
+    }
+
+    /**
+     * Tests assetUrl() with full base URL.
+     *
+     * @return void
+     */
+    public function testAssetUrlFullBase()
+    {
+        $result = $this->Helper->assetUrl('img/foo.jpg', ['fullBase' => true]);
+        $this->assertEquals(Router::fullBaseUrl() . '/img/foo.jpg', $result);
+
+        $result = $this->Helper->assetUrl('img/foo.jpg', ['fullBase' => 'https://xyz/']);
+        $this->assertEquals('https://xyz/img/foo.jpg', $result);
     }
 
     /**
@@ -328,7 +341,7 @@ class UrlHelperTest extends TestCase
     public function testAssetTimestampPluginsAndThemes()
     {
         Configure::write('Asset.timestamp', 'force');
-        Plugin::load(['TestPlugin']);
+        $this->loadPlugins(['TestPlugin']);
 
         $result = $this->Helper->assetTimestamp('/test_plugin/css/test_plugin_asset.css');
         $this->assertRegExp('#/test_plugin/css/test_plugin_asset.css\?[0-9]+$#', $result, 'Missing timestamp plugin');
@@ -357,7 +370,7 @@ class UrlHelperTest extends TestCase
             [
                 'controller' => 'js',
                 'action' => 'post',
-                '_ext' => 'js'
+                '_ext' => 'js',
             ],
             ['fullBase' => true]
         );
@@ -493,12 +506,14 @@ class UrlHelperTest extends TestCase
      */
     public function testWebrootPaths()
     {
-        $this->Helper->request = $this->Helper->request->withAttribute('webroot', '/');
+        $this->View->setRequest(
+            $this->View->getRequest()->withAttribute('webroot', '/')
+        );
         $result = $this->Helper->webroot('/img/cake.power.gif');
         $expected = '/img/cake.power.gif';
         $this->assertEquals($expected, $result);
 
-        $this->Helper->theme = 'TestTheme';
+        $this->Helper->getView()->setTheme('TestTheme');
 
         $result = $this->Helper->webroot('/img/cake.power.gif');
         $expected = '/test_theme/img/cake.power.gif';
@@ -528,5 +543,32 @@ class UrlHelperTest extends TestCase
         $this->assertEquals($expected, $result);
 
         Configure::write('App.wwwRoot', $webRoot);
+    }
+
+    /**
+     * Test plugin based assets will NOT use the plugin name
+     *
+     * @return void
+     */
+    public function testPluginAssetsPrependImageBaseUrl()
+    {
+        $cdnPrefix = 'https://cdn.example.com/';
+        $imageBaseUrl = Configure::read('App.imageBaseUrl');
+        $jsBaseUrl = Configure::read('App.jsBaseUrl');
+        $cssBaseUrl = Configure::read('App.cssBaseUrl');
+        Configure::write('App.imageBaseUrl', $cdnPrefix);
+        $result = $this->Helper->image('TestTheme.text.jpg');
+        $expected = $cdnPrefix . 'text.jpg';
+        $this->assertSame($expected, $result);
+
+        Configure::write('App.jsBaseUrl', $cdnPrefix);
+        $result = $this->Helper->script('TestTheme.app.js');
+        $expected = $cdnPrefix . 'app.js';
+        $this->assertSame($expected, $result);
+
+        Configure::write('App.cssBaseUrl', $cdnPrefix);
+        $result = $this->Helper->css('TestTheme.app.css');
+        $expected = $cdnPrefix . 'app.css';
+        $this->assertSame($expected, $result);
     }
 }

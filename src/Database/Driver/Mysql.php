@@ -20,9 +20,11 @@ use Cake\Database\Query;
 use Cake\Database\Statement\MysqlStatement;
 use PDO;
 
+/**
+ * Class Mysql
+ */
 class Mysql extends Driver
 {
-
     use MysqlDialectTrait;
 
     /**
@@ -119,7 +121,7 @@ class Mysql extends Driver
      */
     public function enabled()
     {
-        return in_array('mysql', PDO::getAvailableDrivers());
+        return in_array('mysql', PDO::getAvailableDrivers(), true);
     }
 
     /**

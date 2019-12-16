@@ -100,13 +100,13 @@ class DecimalTypeTest extends TestCase
             'a' => null,
             'b' => '2.3',
             'c' => '15',
-            'c' => '0.0',
+            'd' => '0.0',
         ];
         $expected = [
             'a' => null,
             'b' => 2.3,
             'c' => 15,
-            'c' => 0.0,
+            'd' => 0.0,
         ];
         $this->assertEquals(
             $expected,
@@ -159,7 +159,7 @@ class DecimalTypeTest extends TestCase
     public function testMarshal()
     {
         $result = $this->type->marshal('some data');
-        $this->assertSame('some data', $result);
+        $this->assertNull($result);
 
         $result = $this->type->marshal('');
         $this->assertNull($result);
@@ -167,11 +167,15 @@ class DecimalTypeTest extends TestCase
         $result = $this->type->marshal('2.51');
         $this->assertSame(2.51, $result);
 
+        // allow custom decimal format (@see https://github.com/cakephp/cakephp/issues/12800)
+        $result = $this->type->marshal('1 230,73');
+        $this->assertSame('1 230,73', $result);
+
         $result = $this->type->marshal('3.5 bears');
-        $this->assertSame('3.5 bears', $result);
+        $this->assertNull($result);
 
         $result = $this->type->marshal(['3', '4']);
-        $this->assertSame(1, $result);
+        $this->assertNull($result);
     }
 
     /**
@@ -201,11 +205,11 @@ class DecimalTypeTest extends TestCase
     }
 
     /**
-     * test marshall() number in the danish locale which uses . for thousands separator.
+     * test marshal() number in the danish locale which uses . for thousands separator.
      *
      * @return void
      */
-    public function testMarshallWithLocaleParsingDanish()
+    public function testMarshalWithLocaleParsingDanish()
     {
         I18n::setLocale('da_DK');
 

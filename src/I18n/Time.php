@@ -30,7 +30,7 @@ class Time extends MutableDateTime implements JsonSerializable
 
     /**
      * The format to use when formatting a time using `Cake\I18n\Time::i18nFormat()`
-     * and `__toString`
+     * and `__toString`. This format is also used by `parseDateTime()`.
      *
      * The format should be either the formatting constants from IntlDateFormatter as
      * described in (https://secure.php.net/manual/en/class.intldateformatter.php) or a pattern
@@ -74,7 +74,7 @@ class Time extends MutableDateTime implements JsonSerializable
      * The format to use when formatting a time using `Time::timeAgoInWords()`
      * and the difference is less than `Time::$wordEnd`
      *
-     * @var array
+     * @var string[]
      * @see \Cake\I18n\Time::timeAgoInWords()
      */
     public static $wordAccuracy = [
@@ -109,7 +109,7 @@ class Time extends MutableDateTime implements JsonSerializable
     {
         if ($time instanceof DateTimeInterface) {
             $tz = $time->getTimezone();
-            $time = $time->format('Y-m-d H:i:s');
+            $time = $time->format('Y-m-d H:i:s.u');
         }
 
         if (is_numeric($time)) {
@@ -172,7 +172,7 @@ class Time extends MutableDateTime implements JsonSerializable
      */
     public function toQuarter($range = false)
     {
-        $quarter = ceil($this->format('m') / 3);
+        $quarter = (int)ceil($this->format('m') / 3);
         if ($range === false) {
             return $quarter;
         }

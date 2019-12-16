@@ -35,7 +35,7 @@ class ProfilesFixture extends TestFixture
         'is_active' => ['type' => 'boolean', 'null' => false, 'default' => true],
         '_constraints' => [
             'primary' => ['type' => 'primary', 'columns' => ['id']],
-        ]
+        ],
     ];
 
     /**

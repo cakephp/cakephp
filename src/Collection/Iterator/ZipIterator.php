@@ -44,13 +44,12 @@ use Serializable;
  */
 class ZipIterator extends MultipleIterator implements CollectionInterface, Serializable
 {
-
     use CollectionTrait;
 
     /**
      * The function to use for zipping items together
      *
-     * @var callable
+     * @var callable|null
      */
     protected $_callback;
 
@@ -87,7 +86,7 @@ class ZipIterator extends MultipleIterator implements CollectionInterface, Seria
      * Returns the value resulting out of zipping all the elements for all the
      * iterators with the same positional index.
      *
-     * @return mixed
+     * @return array|false
      */
     public function current()
     {

@@ -26,7 +26,6 @@ use PDOException;
  */
 trait PDODriverTrait
 {
-
     /**
      * Instance of PDO.
      *
@@ -59,7 +58,7 @@ trait PDODriverTrait
      * If first argument is passed, it will set internal connection object or
      * result to the value passed
      *
-     * @param null|\PDO $connection The PDO connection instance.
+     * @param \PDO|null $connection The PDO connection instance.
      * @return \PDO connection object used internally
      */
     public function connection($connection = null)
@@ -158,7 +157,7 @@ trait PDODriverTrait
             return false;
         }
 
-        return $this->_connection->rollback();
+        return $this->_connection->rollBack();
     }
 
     /**

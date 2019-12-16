@@ -24,8 +24,8 @@ class TestsAppsController extends AppController
 {
     public $components = [
         'RequestHandler' => [
-           'enableBeforeRedirect' => false
-        ]
+           'enableBeforeRedirect' => false,
+        ],
     ];
 
     public function index()

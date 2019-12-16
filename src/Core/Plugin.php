@@ -22,11 +22,10 @@ use DirectoryIterator;
  *
  * It also can retrieve plugin paths and load their bootstrap and routes files.
  *
- * @link https://book.cakephp.org/3.0/en/plugins.html
+ * @link https://book.cakephp.org/3/en/plugins.html
  */
 class Plugin
 {
-
     /**
      * Holds a list of all loaded plugins and their configuration
      *
@@ -108,9 +107,16 @@ class Plugin
      * @param array $config configuration options for the plugin
      * @throws \Cake\Core\Exception\MissingPluginException if the folder for the plugin to be loaded is not found
      * @return void
+     * @deprecated 3.7.0 This method will be removed in 4.0.0. Use Application::addPlugin() instead.
      */
     public static function load($plugin, array $config = [])
     {
+        deprecationWarning(
+            'Plugin::load() is deprecated. ' .
+            'Use Application::addPlugin() instead. ' .
+            'This method will be removed in 4.0.0.'
+        );
+
         if (is_array($plugin)) {
             foreach ($plugin as $name => $conf) {
                 list($name, $conf) = is_numeric($name) ? [$conf, $config] : [$name, $conf];
@@ -120,8 +126,6 @@ class Plugin
             return;
         }
 
-        static::_loadConfig();
-
         $config += [
             'autoload' => false,
             'bootstrap' => false,
@@ -129,35 +133,25 @@ class Plugin
             'console' => true,
             'classBase' => 'src',
             'ignoreMissing' => false,
-            'name' => $plugin
+            'name' => $plugin,
         ];
 
         if (!isset($config['path'])) {
-            $config['path'] = Configure::read('plugins.' . $plugin);
-        }
-
-        if (empty($config['path'])) {
-            $paths = App::path('Plugin');
-            $pluginPath = str_replace('/', DIRECTORY_SEPARATOR, $plugin);
-            foreach ($paths as $path) {
-                if (is_dir($path . $pluginPath)) {
-                    $config['path'] = $path . $pluginPath . DIRECTORY_SEPARATOR;
-                    break;
-                }
-            }
-        }
-
-        if (empty($config['path'])) {
-            throw new MissingPluginException(['plugin' => $plugin]);
+            $config['path'] = static::getCollection()->findPath($plugin);
         }
 
         $config['classPath'] = $config['path'] . $config['classBase'] . DIRECTORY_SEPARATOR;
         if (!isset($config['configPath'])) {
             $config['configPath'] = $config['path'] . 'config' . DIRECTORY_SEPARATOR;
         }
-
-        // Use stub plugins as this method will be removed long term.
-        static::getCollection()->add(new BasePlugin($config));
+        $pluginClass = str_replace('/', '\\', $plugin) . '\\Plugin';
+        if (class_exists($pluginClass)) {
+            $instance = new $pluginClass($config);
+        } else {
+            // Use stub plugin as this method will be removed long term.
+            $instance = new BasePlugin($config);
+        }
+        static::getCollection()->add($instance);
 
         if ($config['autoload'] === true) {
             if (empty(static::$_loader)) {
@@ -177,30 +171,6 @@ class Plugin
         if ($config['bootstrap'] === true) {
             static::bootstrap($plugin);
         }
-    }
-
-    /**
-     * Load the plugin path configuration file.
-     *
-     * @return void
-     */
-    protected static function _loadConfig()
-    {
-        if (Configure::check('plugins')) {
-            return;
-        }
-        $vendorFile = dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'cakephp-plugins.php';
-        if (!file_exists($vendorFile)) {
-            $vendorFile = dirname(dirname(dirname(dirname(__DIR__)))) . DIRECTORY_SEPARATOR . 'cakephp-plugins.php';
-            if (!file_exists($vendorFile)) {
-                Configure::write(['plugins' => []]);
-
-                return;
-            }
-        }
-
-        $config = require $vendorFile;
-        Configure::write($config);
     }
 
     /**
@@ -224,10 +194,10 @@ class Plugin
      * @param array $options Options.
      * @return void
      * @throws \Cake\Core\Exception\MissingPluginException
+     * @deprecated 3.7.0 This method will be removed in 4.0.0.
      */
     public static function loadAll(array $options = [])
     {
-        static::_loadConfig();
         $plugins = [];
         foreach (App::path('Plugin') as $path) {
             if (!is_dir($path)) {
@@ -306,9 +276,14 @@ class Plugin
      * @param string $name name of the plugin
      * @return mixed
      * @see \Cake\Core\Plugin::load() for examples of bootstrap configuration
+     * @deprecated 3.7.0 This method will be removed in 4.0.0.
      */
     public static function bootstrap($name)
     {
+        deprecationWarning(
+            'Plugin::bootstrap() is deprecated. ' .
+            'This method will be removed in 4.0.0.'
+        );
         $plugin = static::getCollection()->get($name);
         if (!$plugin->isEnabled('bootstrap')) {
             return false;
@@ -332,9 +307,16 @@ class Plugin
      * @param string|null $name name of the plugin, if null will operate on all
      *   plugins having enabled the loading of routes files.
      * @return bool
+     * @deprecated 3.6.5 This method is no longer needed when using HttpApplicationInterface based applications.
+     *   This method will be removed in 4.0.0
      */
     public static function routes($name = null)
     {
+        deprecationWarning(
+            'You no longer need to call `Plugin::routes()` after upgrading to use Http\Server. ' .
+            'See https://book.cakephp.org/3/en/development/application.html#adding-the-new-http-stack-to-an-existing-application ' .
+            'for upgrade information.'
+        );
         if ($name === null) {
             foreach (static::loaded() as $p) {
                 static::routes($p);
@@ -354,8 +336,23 @@ class Plugin
     }
 
     /**
-     * Returns true if the plugin $plugin is already loaded
-     * If plugin is null, it will return a list of all loaded plugins
+     * Check whether or not a plugin is loaded.
+     *
+     * @param string $plugin The name of the plugin to check.
+     * @return bool
+     * @since 3.7.0
+     */
+    public static function isLoaded($plugin)
+    {
+        return static::getCollection()->has($plugin);
+    }
+
+    /**
+     * Return a list of loaded plugins.
+     *
+     * If a plugin name is provided, the return value will be a bool
+     * indicating whether or not the named plugin is loaded. This usage
+     * is deprecated. Instead you should use Plugin::isLoaded($name)
      *
      * @param string|null $plugin Plugin name.
      * @return bool|array Boolean true if $plugin is already loaded.
@@ -364,6 +361,11 @@ class Plugin
     public static function loaded($plugin = null)
     {
         if ($plugin !== null) {
+            deprecationWarning(
+                'Checking a single plugin with Plugin::loaded() is deprecated. ' .
+                'Use Plugin::isLoaded() instead.'
+            );
+
             return static::getCollection()->has($plugin);
         }
         $names = [];
@@ -379,12 +381,14 @@ class Plugin
      * Forgets a loaded plugin or all of them if first parameter is null
      *
      * @param string|null $plugin name of the plugin to forget
+     * @deprecated 3.7.0 This method will be removed in 4.0.0. Use PluginCollection::remove() or clear() instead.
      * @return void
      */
     public static function unload($plugin = null)
     {
+        deprecationWarning('Plugin::unload() will be removed in 4.0. Use PluginCollection::remove() or clear()');
         if ($plugin === null) {
-            static::$plugins = null;
+            static::getCollection()->clear();
         } else {
             static::getCollection()->remove($plugin);
         }
@@ -409,7 +413,9 @@ class Plugin
     /**
      * Get the shared plugin collection.
      *
-     * @internal
+     * This method should generally not be used during application
+     * runtime as plugins should be set during Application startup.
+     *
      * @return \Cake\Core\PluginCollection
      */
     public static function getCollection()

@@ -30,7 +30,6 @@ use LogicException;
  */
 class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterface
 {
-
     use EventDispatcherTrait;
 
     /**
@@ -126,7 +125,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
     {
         throw new MissingBehaviorException([
             'class' => $class . 'Behavior',
-            'plugin' => $plugin
+            'plugin' => $plugin,
         ]);
     }
 

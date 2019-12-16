@@ -21,7 +21,6 @@ use Cake\Utility\Inflector;
  */
 trait ConventionsTrait
 {
-
     /**
      * Creates a fixture name
      *
@@ -30,7 +29,7 @@ trait ConventionsTrait
      */
     protected function _fixtureName($name)
     {
-        return Inflector::underscore($name);
+        return Inflector::camelize($name);
     }
 
     /**
@@ -135,7 +134,7 @@ trait ConventionsTrait
      */
     protected function _pluginPath($pluginName)
     {
-        if (Plugin::loaded($pluginName)) {
+        if (Plugin::isLoaded($pluginName)) {
             return Plugin::path($pluginName);
         }
 

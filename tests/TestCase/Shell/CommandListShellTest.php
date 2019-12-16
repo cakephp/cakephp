@@ -33,7 +33,7 @@ class CommandListShellTest extends ConsoleIntegrationTestCase
     public function setUp()
     {
         parent::setUp();
-        Plugin::load(['TestPlugin', 'TestPluginTwo']);
+        $this->loadPlugins(['TestPlugin', 'TestPluginTwo']);
     }
 
     /**
@@ -44,7 +44,7 @@ class CommandListShellTest extends ConsoleIntegrationTestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::unload();
+        $this->clearPlugins();
     }
 
     /**
@@ -65,7 +65,7 @@ class CommandListShellTest extends ConsoleIntegrationTestCase
         $expected = "/\[.*CORE.*\] cache, help, i18n, orm_cache, plugin, routes, schema_cache, server/";
         $this->assertOutputRegExp($expected);
 
-        $expected = "/\[.*app.*\] demo, i18m, integration, merge, sample/";
+        $expected = "/\[.*app.*\] abort, auto_load_model, demo, i18m, integration, merge, sample/";
         $this->assertOutputRegExp($expected);
         $this->assertExitCode(Shell::CODE_SUCCESS);
         $this->assertErrorEmpty();
@@ -86,7 +86,7 @@ class CommandListShellTest extends ConsoleIntegrationTestCase
         $expected = "/\[.*CORE.*\] cache, help, orm_cache, plugin, routes, schema_cache, server, version/";
         $this->assertOutputRegExp($expected);
 
-        $expected = "/\[.*app.*\] demo, i18n, integration, merge, sample/";
+        $expected = "/\[.*app.*\] abort, auto_load_model, demo, i18n, integration, merge, sample/";
         $this->assertOutputRegExp($expected);
         $this->assertExitCode(Shell::CODE_SUCCESS);
         $this->assertErrorEmpty();

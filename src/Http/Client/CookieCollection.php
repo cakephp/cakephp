@@ -26,7 +26,6 @@ use Cake\Http\Cookie\CookieInterface;
  */
 class CookieCollection extends BaseCollection
 {
-
     /**
      * {@inheritDoc}
      */
@@ -112,10 +111,10 @@ class CookieCollection extends BaseCollection
             'domain' => $cookie->getDomain(),
             'secure' => $cookie->isSecure(),
             'httponly' => $cookie->isHttpOnly(),
-            'expires' => $cookie->getExpiresTimestamp()
+            'expires' => $cookie->getExpiresTimestamp(),
         ];
     }
 }
 
-// @deprecated Add backwards compat alias.
+// @deprecated 3.4.0 Add backwards compat alias.
 class_alias('Cake\Http\Client\CookieCollection', 'Cake\Network\Http\CookieCollection');

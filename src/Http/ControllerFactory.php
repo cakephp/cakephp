@@ -30,6 +30,7 @@ class ControllerFactory
      * @param \Cake\Http\ServerRequest $request The request to build a controller for.
      * @param \Cake\Http\Response $response The response to use.
      * @return \Cake\Controller\Controller
+     * @throws \ReflectionException
      */
     public function create(ServerRequest $request, Response $response)
     {
@@ -42,7 +43,10 @@ class ControllerFactory
             $this->missingController($request);
         }
 
-        return $reflection->newInstance($request, $response);
+        /** @var \Cake\Controller\Controller $controller */
+        $controller = $reflection->newInstance($request, $response);
+
+        return $controller;
     }
 
     /**
@@ -77,7 +81,8 @@ class ControllerFactory
         // Disallow plugin short forms, / and \\ from
         // controller names as they allow direct references to
         // be created.
-        if (strpos($controller, '\\') !== false ||
+        if (
+            strpos($controller, '\\') !== false ||
             strpos($controller, '/') !== false ||
             strpos($controller, '.') !== false ||
             $firstChar === strtolower($firstChar)
@@ -101,7 +106,7 @@ class ControllerFactory
             'class' => $request->getParam('controller'),
             'plugin' => $request->getParam('plugin'),
             'prefix' => $request->getParam('prefix'),
-            '_ext' => $request->getParam('_ext')
+            '_ext' => $request->getParam('_ext'),
         ]);
     }
 }

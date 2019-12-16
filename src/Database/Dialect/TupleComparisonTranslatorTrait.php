@@ -26,12 +26,11 @@ use Cake\Database\Query;
  */
 trait TupleComparisonTranslatorTrait
 {
-
     /**
      * Receives a TupleExpression and changes it so that it conforms to this
      * SQL dialect.
      *
-     * It transforms expressions looking like '(a, b) IN ((c, d), (e, f)' into an
+     * It transforms expressions looking like '(a, b) IN ((c, d), (e, f))' into an
      * equivalent expression of the form '((a = c) AND (b = d)) OR ((a = e) AND (b = f))'.
      *
      * It can also transform transform expressions where the right hand side is a query

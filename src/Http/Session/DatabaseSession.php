@@ -62,7 +62,7 @@ class DatabaseSession implements SessionHandlerInterface
             $this->_table = $tableLocator->get($config['model']);
         }
 
-        $this->_timeout = ini_get('session.gc_maxlifetime');
+        $this->_timeout = (int)ini_get('session.gc_maxlifetime');
     }
 
     /**
@@ -114,7 +114,7 @@ class DatabaseSession implements SessionHandlerInterface
             ->find('all')
             ->select(['data'])
             ->where([$this->_table->getPrimaryKey() => $id])
-            ->enableHydration(false)
+            ->disableHydration()
             ->first();
 
         if (empty($result)) {

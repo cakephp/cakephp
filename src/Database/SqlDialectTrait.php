@@ -15,13 +15,13 @@
 namespace Cake\Database;
 
 use Cake\Database\Expression\Comparison;
+use Cake\Database\Expression\IdentifierExpression;
 
 /**
  * Sql dialect trait
  */
 trait SqlDialectTrait
 {
-
     /**
      * Quotes a database identifier (a column name, table name, etc..) to
      * be used safely in queries without the risk of using reserved words
@@ -33,42 +33,46 @@ trait SqlDialectTrait
     {
         $identifier = trim($identifier);
 
-        if ($identifier === '*') {
-            return '*';
-        }
-
-        if ($identifier === '') {
-            return '';
+        if ($identifier === '*' || $identifier === '') {
+            return $identifier;
         }
 
         // string
-        if (preg_match('/^[\w-]+$/', $identifier)) {
+        if (preg_match('/^[\w-]+$/u', $identifier)) {
             return $this->_startQuote . $identifier . $this->_endQuote;
         }
 
-        if (preg_match('/^[\w-]+\.[^ \*]*$/', $identifier)) {
-// string.string
+        // string.string
+        if (preg_match('/^[\w-]+\.[^ \*]*$/u', $identifier)) {
             $items = explode('.', $identifier);
 
             return $this->_startQuote . implode($this->_endQuote . '.' . $this->_startQuote, $items) . $this->_endQuote;
         }
 
-        if (preg_match('/^[\w-]+\.\*$/', $identifier)) {
-// string.*
+        // string.*
+        if (preg_match('/^[\w-]+\.\*$/u', $identifier)) {
             return $this->_startQuote . str_replace('.*', $this->_endQuote . '.*', $identifier);
         }
 
+        // Functions
         if (preg_match('/^([\w-]+)\((.*)\)$/', $identifier, $matches)) {
-// Functions
             return $matches[1] . '(' . $this->quoteIdentifier($matches[2]) . ')';
         }
 
         // Alias.field AS thing
-        if (preg_match('/^([\w-]+(\.[\w-]+|\(.*\))*)\s+AS\s*([\w-]+)$/i', $identifier, $matches)) {
+        if (preg_match('/^([\w-]+(\.[\w\s-]+|\(.*\))*)\s+AS\s*([\w-]+)$/ui', $identifier, $matches)) {
             return $this->quoteIdentifier($matches[1]) . ' AS ' . $this->quoteIdentifier($matches[3]);
         }
 
-        if (preg_match('/^[\w-_\s]*[\w-_]+/', $identifier)) {
+        // string.string with spaces
+        if (preg_match('/^([\w-]+\.[\w][\w\s\-]*[\w])(.*)/u', $identifier, $matches)) {
+            $items = explode('.', $matches[1]);
+            $field = implode($this->_endQuote . '.' . $this->_startQuote, $items);
+
+            return $this->_startQuote . $field . $this->_endQuote . $matches[2];
+        }
+
+        if (preg_match('/^[\w_\s-]*[\w_-]+/u', $identifier)) {
             return $this->_startQuote . $identifier . $this->_endQuote;
         }
 
@@ -218,20 +222,31 @@ trait SqlDialectTrait
 
         $conditions = $query->clause('where');
         if ($conditions) {
-            $conditions->traverse(function ($condition) {
-                if (!($condition instanceof Comparison)) {
-                    return $condition;
+            $conditions->traverse(function ($expression) {
+                if ($expression instanceof Comparison) {
+                    $field = $expression->getField();
+                    if (
+                        is_string($field) &&
+                        strpos($field, '.') !== false
+                    ) {
+                        list(, $unaliasedField) = explode('.', $field, 2);
+                        $expression->setField($unaliasedField);
+                    }
+
+                    return $expression;
                 }
 
-                $field = $condition->getField();
-                if ($field instanceof ExpressionInterface || strpos($field, '.') === false) {
-                    return $condition;
+                if ($expression instanceof IdentifierExpression) {
+                    $identifier = $expression->getIdentifier();
+                    if (strpos($identifier, '.') !== false) {
+                        list(, $unaliasedIdentifier) = explode('.', $identifier, 2);
+                        $expression->setIdentifier($unaliasedIdentifier);
+                    }
+
+                    return $expression;
                 }
 
-                list(, $field) = explode('.', $field);
-                $condition->setField($field);
-
-                return $condition;
+                return $expression;
             });
         }
 

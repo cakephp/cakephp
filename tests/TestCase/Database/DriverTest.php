@@ -18,6 +18,7 @@ use Cake\Database\Driver;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Query;
 use Cake\Database\QueryCompiler;
+use Cake\Database\Schema\TableSchema;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
 use PDO;
@@ -198,7 +199,7 @@ class DriverTest extends TestCase
         $this->assertSame($this->driver, $this->driver->enableAutoQuoting(true));
         $this->assertTrue($this->driver->isAutoQuotingEnabled());
 
-        $this->driver->enableAutoQuoting(false);
+        $this->driver->disableAutoQuoting();
         $this->assertFalse($this->driver->isAutoQuotingEnabled());
 
         $this->driver->enableAutoQuoting('string');
@@ -250,7 +251,7 @@ class DriverTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $result = $driver->compileQuery($query, new ValueBinder);
+        $result = $driver->compileQuery($query, new ValueBinder());
 
         $this->assertInternalType('array', $result);
         $this->assertSame($query, $result[0]);
@@ -265,6 +266,19 @@ class DriverTest extends TestCase
     public function testNewCompiler()
     {
         $this->assertInstanceOf(QueryCompiler::class, $this->driver->newCompiler());
+    }
+
+    /**
+     * Test newTableSchema().
+     *
+     * @return void
+     */
+    public function testNewTableSchema()
+    {
+        $tableName = 'articles';
+        $actual = $this->driver->newTableSchema($tableName);
+        $this->assertInstanceOf(TableSchema::class, $actual);
+        $this->assertEquals($tableName, $actual->name());
     }
 
     /**
@@ -293,7 +307,7 @@ class DriverTest extends TestCase
             [true, 'TRUE'],
             [1, '1'],
             ['0', '0'],
-            ['42', '42']
+            ['42', '42'],
         ];
     }
 }

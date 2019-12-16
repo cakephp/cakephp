@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 
@@ -30,20 +29,8 @@ class TableRegressionTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.authors',
+        'core.Authors',
     ];
-
-    /**
-     * Tear down
-     *
-     * @return void
-     */
-    public function tearDown()
-    {
-        parent::tearDown();
-
-        $this->getTableLocator()->clear();
-    }
 
     /**
      * Tests that an exception is thrown if the transaction is aborted

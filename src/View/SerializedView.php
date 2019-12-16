@@ -24,7 +24,6 @@ use RuntimeException;
  */
 abstract class SerializedView extends View
 {
-
     /**
      * Response type.
      *
@@ -55,13 +54,15 @@ abstract class SerializedView extends View
     /**
      * Load helpers only if serialization is disabled.
      *
-     * @return void
+     * @return $this
      */
     public function loadHelpers()
     {
         if (empty($this->viewVars['_serialize'])) {
             parent::loadHelpers();
         }
+
+        return $this;
     }
 
     /**

@@ -26,7 +26,6 @@ use Cake\Database\SqliteCompiler;
  */
 trait SqliteDialectTrait
 {
-
     use SqlDialectTrait;
     use TupleComparisonTranslatorTrait;
 
@@ -63,7 +62,7 @@ trait SqliteDialectTrait
         'minute' => 'M',
         'second' => 'S',
         'week' => 'W',
-        'year' => 'Y'
+        'year' => 'Y',
     ];
 
     /**
@@ -78,7 +77,7 @@ trait SqliteDialectTrait
 
         return [
             $namespace . '\FunctionExpression' => '_transformFunctionExpression',
-            $namespace . '\TupleComparison' => '_transformTupleComparison'
+            $namespace . '\TupleComparison' => '_transformTupleComparison',
         ];
     }
 
@@ -107,6 +106,11 @@ trait SqliteDialectTrait
                 break;
             case 'NOW':
                 $expression->setName('DATETIME')->add(["'now'" => 'literal']);
+                break;
+            case 'RAND':
+                $expression
+                    ->setName('ABS')
+                    ->add(["RANDOM() % 1" => 'literal'], [], true);
                 break;
             case 'CURRENT_DATE':
                 $expression->setName('DATE')->add(["'now'" => 'literal']);

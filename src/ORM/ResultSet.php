@@ -30,7 +30,6 @@ use SplFixedArray;
  */
 class ResultSet implements ResultSetInterface
 {
-
     use CollectionTrait;
 
     /**
@@ -65,7 +64,7 @@ class ResultSet implements ResultSetInterface
     /**
      * Default table instance
      *
-     * @var \Cake\ORM\Table
+     * @var \Cake\ORM\Table|\Cake\Datasource\RepositoryInterface
      */
     protected $_defaultTable;
 
@@ -155,6 +154,7 @@ class ResultSet implements ResultSetInterface
      * Converters are indexed by alias and column name.
      *
      * @var array
+     * @deprecated 3.2.0 Not used anymore. Type casting is done at the statement level
      */
     protected $_types = [];
 
@@ -175,6 +175,7 @@ class ResultSet implements ResultSetInterface
      */
     public function __construct($query, $statement)
     {
+        /** @var \Cake\ORM\Table $repository */
         $repository = $query->getRepository();
         $this->_statement = $statement;
         $this->_driver = $query->getConnection()->getDriver();
@@ -442,12 +443,13 @@ class ResultSet implements ResultSetInterface
      * @param \Cake\ORM\Table $table The table from which to get the schema
      * @param array $fields The fields whitelist to use for fields in the schema.
      * @return array
+     * @deprecated 3.2.0 Not used anymore. Type casting is done at the statement level
      */
     protected function _getTypes($table, $fields)
     {
         $types = [];
         $schema = $table->getSchema();
-        $map = array_keys(Type::map() + ['string' => 1, 'text' => 1, 'boolean' => 1]);
+        $map = array_keys((array)Type::getMap() + ['string' => 1, 'text' => 1, 'boolean' => 1]);
         $typeMap = array_combine(
             $map,
             array_map(['Cake\Database\Type', 'build'], $map)
@@ -503,7 +505,7 @@ class ResultSet implements ResultSetInterface
             'useSetters' => false,
             'markClean' => true,
             'markNew' => false,
-            'guard' => false
+            'guard' => false,
         ];
 
         foreach ($this->_matchingMapColumns as $alias => $keys) {
@@ -513,10 +515,10 @@ class ResultSet implements ResultSetInterface
                 array_intersect_key($row, $keys)
             );
             if ($this->_hydrate) {
-                /* @var \Cake\ORM\Table $table */
+                /** @var \Cake\ORM\Table $table */
                 $table = $matching['instance'];
                 $options['source'] = $table->getRegistryAlias();
-                /* @var \Cake\Datasource\EntityInterface $entity */
+                /** @var \Cake\Datasource\EntityInterface $entity */
                 $entity = new $matching['entityClass']($results['_matchingData'][$alias], $options);
                 $results['_matchingData'][$alias] = $entity;
             }
@@ -525,6 +527,13 @@ class ResultSet implements ResultSetInterface
         foreach ($this->_map as $table => $keys) {
             $results[$table] = array_combine($keys, array_intersect_key($row, $keys));
             $presentAliases[$table] = true;
+        }
+
+        // If the default table is not in the results, set
+        // it to an empty array so that any contained
+        // associations hydrate correctly.
+        if (!isset($results[$defaultAlias])) {
+            $results[$defaultAlias] = [];
         }
 
         unset($presentAliases[$defaultAlias]);
@@ -536,7 +545,7 @@ class ResultSet implements ResultSetInterface
                 continue;
             }
 
-            /* @var \Cake\ORM\Association $instance */
+            /** @var \Cake\ORM\Association $instance */
             $instance = $assoc['instance'];
 
             if (!$assoc['canBeJoined'] && !isset($row[$alias])) {

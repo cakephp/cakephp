@@ -18,7 +18,6 @@ use Cake\TestSuite\TestCase;
 use Cake\Utility\Crypto\Mcrypt;
 use Cake\Utility\Crypto\OpenSsl;
 use Cake\Utility\Security;
-use RuntimeException;
 
 /**
  * SecurityTest class

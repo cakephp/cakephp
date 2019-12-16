@@ -38,7 +38,7 @@ recommend using the [app skeleton](https://github.com/cakephp/app) as
 a starting point. For existing applications you can run the following:
 
 ``` bash
-$ composer require cakephp/cakephp:"~3.6"
+$ composer require cakephp/cakephp
 ```
 
 ## Running Tests
@@ -76,7 +76,7 @@ tests for CakePHP by doing the following:
 ## Contributing
 
 * [CONTRIBUTING.md](.github/CONTRIBUTING.md) - Quick pointers for contributing to the CakePHP project.
-* [CookBook "Contributing" Section](https://book.cakephp.org/3.0/en/contributing.html) - Details about contributing to the project.
+* [CookBook "Contributing" Section](https://book.cakephp.org/3/en/contributing.html) - Details about contributing to the project.
 
 # Security
 

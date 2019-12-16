@@ -16,16 +16,14 @@ namespace Cake\Console;
 
 use Cake\Command\HelpCommand;
 use Cake\Command\VersionCommand;
-use Cake\Console\CommandCollection;
-use Cake\Console\CommandCollectionAwareInterface;
-use Cake\Console\ConsoleIo;
 use Cake\Console\Exception\StopException;
-use Cake\Console\Shell;
 use Cake\Core\ConsoleApplicationInterface;
+use Cake\Core\HttpApplicationInterface;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
+use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
 use RuntimeException;
@@ -104,7 +102,7 @@ class CommandRunner implements EventDispatcherInterface
      * $runner->setAliases(['--version' => 'version']);
      * ```
      *
-     * @param array $aliases The map of aliases to replace.
+     * @param string[] $aliases The map of aliases to replace.
      * @return $this
      */
     public function setAliases(array $aliases)
@@ -145,6 +143,7 @@ class CommandRunner implements EventDispatcherInterface
         }
         $this->checkCollection($commands, 'pluginConsole');
         $this->dispatchEvent('Console.buildCommands', ['commands' => $commands]);
+        $this->loadRoutes();
 
         if (empty($argv)) {
             throw new RuntimeException("Cannot run any commands. No arguments received.");
@@ -153,25 +152,27 @@ class CommandRunner implements EventDispatcherInterface
         array_shift($argv);
 
         $io = $io ?: new ConsoleIo();
-        $name = $this->resolveName($commands, $io, array_shift($argv));
 
-        $result = Shell::CODE_ERROR;
+        list($name, $argv) = $this->longestCommandName($commands, $argv);
+        $name = $this->resolveName($commands, $io, $name);
+
+        $result = Command::CODE_ERROR;
         $shell = $this->getShell($io, $commands, $name);
         if ($shell instanceof Shell) {
             $result = $this->runShell($shell, $argv);
         }
         if ($shell instanceof Command) {
-            $result = $shell->run($argv, $io);
+            $result = $this->runCommand($shell, $argv, $io);
         }
 
         if ($result === null || $result === true) {
-            return Shell::CODE_SUCCESS;
+            return Command::CODE_SUCCESS;
         }
-        if (is_int($result)) {
+        if (is_int($result) && $result >= 0 && $result <= 255) {
             return $result;
         }
 
-        return Shell::CODE_ERROR;
+        return Command::CODE_ERROR;
     }
 
     /**
@@ -293,14 +294,42 @@ class CommandRunner implements EventDispatcherInterface
     }
 
     /**
+     * Build the longest command name that exists in the collection
+     *
+     * Build the longest command name that matches a
+     * defined command. This will traverse a maximum of 3 tokens.
+     *
+     * @param \Cake\Console\CommandCollection $commands The command collection to check.
+     * @param array $argv The CLI arguments.
+     * @return array An array of the resolved name and modified argv.
+     */
+    protected function longestCommandName($commands, $argv)
+    {
+        for ($i = 3; $i > 1; $i--) {
+            $parts = array_slice($argv, 0, $i);
+            $name = implode(' ', $parts);
+            if ($commands->has($name)) {
+                return [$name, array_slice($argv, $i)];
+            }
+        }
+        $name = array_shift($argv);
+
+        return [$name, $argv];
+    }
+
+    /**
      * Resolve the command name into a name that exists in the collection.
      *
-     * Apply backwards compatibile inflections and aliases.
+     * Apply backwards compatible inflections and aliases.
+     * Will step forward up to 3 tokens in $argv to generate
+     * a command name in the CommandCollection. More specific
+     * command names take precedence over less specific ones.
      *
      * @param \Cake\Console\CommandCollection $commands The command collection to check.
      * @param \Cake\Console\ConsoleIo $io ConsoleIo object for errors.
-     * @param string $name The name from the CLI args.
-     * @return string The resolved name.
+     * @param string $name The name
+     * @return string The resolved class name
+     * @throws \RuntimeException
      */
     protected function resolveName($commands, $io, $name)
     {
@@ -322,6 +351,23 @@ class CommandRunner implements EventDispatcherInterface
         }
 
         return $name;
+    }
+
+    /**
+     * Execute a Command class.
+     *
+     * @param \Cake\Console\Command $command The command to run.
+     * @param array $argv The CLI arguments to invoke.
+     * @param \Cake\Console\ConsoleIo $io The console io
+     * @return int Exit code
+     */
+    protected function runCommand(Command $command, array $argv, ConsoleIo $io)
+    {
+        try {
+            return $command->run($argv, $io);
+        } catch (StopException $e) {
+            return $e->getCode();
+        }
     }
 
     /**
@@ -357,5 +403,24 @@ class CommandRunner implements EventDispatcherInterface
         }
 
         return $shell;
+    }
+
+    /**
+     * Ensure that the application's routes are loaded.
+     *
+     * Console commands and shells often need to generate URLs.
+     *
+     * @return void
+     */
+    protected function loadRoutes()
+    {
+        $builder = Router::createRouteBuilder('/');
+
+        if ($this->app instanceof HttpApplicationInterface) {
+            $this->app->routes($builder);
+        }
+        if ($this->app instanceof PluginApplicationInterface) {
+            $this->app->pluginRoutes($builder);
+        }
     }
 }

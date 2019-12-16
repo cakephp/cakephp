@@ -21,6 +21,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Event\Event;
+use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\Routing\Router;
 use Cake\Utility\Exception\XmlException;
@@ -35,11 +36,10 @@ use RuntimeException;
  * and the like. These units have no use for AJAX requests, and this Component can tell how Cake
  * should respond to the different needs of a handheld computer and a desktop machine.
  *
- * @link https://book.cakephp.org/3.0/en/controllers/components/request-handling.html
+ * @link https://book.cakephp.org/3/en/controllers/components/request-handling.html
  */
 class RequestHandlerComponent extends Component
 {
-
     /**
      * @var bool
      * @deprecated 3.4.0 Unused. Will be removed in 4.0.0
@@ -48,6 +48,8 @@ class RequestHandlerComponent extends Component
 
     /**
      * Contains the file extension parsed out by the Router
+     *
+     * Deprecated as of 3.7.0. This property will be made protected in 4.0.0.
      *
      * @var string|null
      * @see \Cake\Routing\Router::extensions()
@@ -80,7 +82,7 @@ class RequestHandlerComponent extends Component
         'checkHttpCache' => true,
         'viewClassMap' => [],
         'inputTypeMap' => [],
-        'enableBeforeRedirect' => true
+        'enableBeforeRedirect' => true,
     ];
 
     /**
@@ -104,12 +106,12 @@ class RequestHandlerComponent extends Component
             'viewClassMap' => [
                 'json' => 'Json',
                 'xml' => 'Xml',
-                'ajax' => 'Ajax'
+                'ajax' => 'Ajax',
             ],
             'inputTypeMap' => [
                 'json' => ['json_decode', true],
                 'xml' => [[$this, 'convertXml']],
-            ]
+            ],
         ];
         parent::__construct($registry, $config);
     }
@@ -191,8 +193,8 @@ class RequestHandlerComponent extends Component
     {
         /** @var \Cake\Controller\Controller $controller */
         $controller = $event->getSubject();
-        $request = $controller->request;
-        $response = $controller->response;
+        $request = $controller->getRequest();
+        $response = $controller->getResponse();
 
         if ($request->getParam('_ext')) {
             $this->ext = $request->getParam('_ext');
@@ -202,7 +204,7 @@ class RequestHandlerComponent extends Component
         }
 
         $isAjax = $request->is('ajax');
-        $controller->request = $request->withParam('isAjax', $isAjax);
+        $controller->setRequest($request->withParam('isAjax', $isAjax));
 
         if (!$this->ext && $isAjax) {
             $this->ext = 'ajax';
@@ -221,7 +223,7 @@ class RequestHandlerComponent extends Component
             }
             if ($this->requestedWith($type)) {
                 $input = $request->input(...$handler);
-                $controller->request = $request->withParsedBody((array)$input);
+                $controller->setRequest($request->withParsedBody((array)$input));
             }
         }
     }
@@ -238,7 +240,7 @@ class RequestHandlerComponent extends Component
         try {
             $xml = Xml::build($xml, ['return' => 'domdocument', 'readFile' => false]);
             // We might not get child nodes if there are nested inline entities.
-            if ($xml->childNodes->length > 0) {
+            if ((int)$xml->childNodes->length > 0) {
                 return Xml::toArray($xml);
             }
 
@@ -268,7 +270,7 @@ class RequestHandlerComponent extends Component
             'This functionality will be removed in 4.0.0. Set the `enableBeforeRedirect` ' .
             'option to `false` to disable this warning.'
         );
-        $request = $this->request;
+        $request = $this->getController()->getRequest();
         if (!$request->is('ajax')) {
             return null;
         }
@@ -289,10 +291,10 @@ class RequestHandlerComponent extends Component
             'return',
             'bare' => false,
             'environment' => [
-                'REQUEST_METHOD' => 'GET'
+                'REQUEST_METHOD' => 'GET',
             ],
             'query' => $query,
-            'cookies' => $request->getCookieParams()
+            'cookies' => $request->getCookieParams(),
         ]));
 
         return $response->withStatus(200);
@@ -320,43 +322,49 @@ class RequestHandlerComponent extends Component
      *
      * @param \Cake\Event\Event $event The Controller.beforeRender event.
      * @return bool false if the render process should be aborted
+     * @throws \Cake\Http\Exception\NotFoundException If invoked extension is not configured.
      */
     public function beforeRender(Event $event)
     {
         /** @var \Cake\Controller\Controller $controller */
         $controller = $event->getSubject();
-        $response = $controller->response;
-        $request = $controller->request;
+        $response = $controller->getResponse();
+        $request = $controller->getRequest();
 
-        $isRecognized = (
-            !in_array($this->ext, ['html', 'htm']) &&
-            $response->getMimeType($this->ext)
-        );
+        if ($this->ext && !in_array($this->ext, ['html', 'htm'])) {
+            if (!$response->getMimeType($this->ext)) {
+                throw new NotFoundException('Invoked extension not recognized/configured: ' . $this->ext);
+            }
 
-        if ($this->ext && $isRecognized) {
             $this->renderAs($controller, $this->ext);
             $response = $controller->response;
         } else {
             $response = $response->withCharset(Configure::read('App.encoding'));
         }
 
-        if ($this->_config['checkHttpCache'] &&
+        if (
+            $this->_config['checkHttpCache'] &&
             $response->checkNotModified($request)
         ) {
-            $controller->response = $response;
+            $controller->setResponse($response);
 
             return false;
         }
-        $controller->response = $response;
+        $controller->setResponse($response);
     }
 
     /**
      * Returns true if the current call accepts an XML response, false otherwise
      *
      * @return bool True if client accepts an XML response
+     * @deprecated 3.7.0 Use RequestHandler::prefers('xml') instead.
      */
     public function isXml()
     {
+        deprecationWarning(
+            'RequestHandlerComponent::isXml() is deprecated. Use RequestHandlerComponent::prefers(\'xml\') instead.'
+        );
+
         return $this->prefers('xml');
     }
 
@@ -364,19 +372,29 @@ class RequestHandlerComponent extends Component
      * Returns true if the current call accepts an RSS response, false otherwise
      *
      * @return bool True if client accepts an RSS response
+     * @deprecated 3.7.0 Use RequestHandler::prefers('rss') instead.
      */
     public function isRss()
     {
+        deprecationWarning(
+            'RequestHandlerComponent::isRss() is deprecated. Use RequestHandlerComponent::prefers(\'rss\') instead.'
+        );
+
         return $this->prefers('rss');
     }
 
     /**
      * Returns true if the current call accepts an Atom response, false otherwise
      *
-     * @return bool True if client accepts an RSS response
+     * @return bool True if client accepts an Atom response
+     * @deprecated 3.7.0 Use RequestHandler::prefers('atom') instead.
      */
     public function isAtom()
     {
+        deprecationWarning(
+            'RequestHandlerComponent::isAtom() is deprecated. Use RequestHandlerComponent::prefers(\'atom\') instead.'
+        );
+
         return $this->prefers('atom');
     }
 
@@ -385,10 +403,15 @@ class RequestHandlerComponent extends Component
      * client accepts WAP content.
      *
      * @return bool True if user agent is a mobile web browser
+     * @deprecated 3.7.0 Use ServerRequest::is('mobile') instead.
      */
     public function isMobile()
     {
-        $request = $this->request;
+        deprecationWarning(
+            'RequestHandlerComponent::isMobile() is deprecated. Use ServerRequest::is(\'mobile\') instead.'
+        );
+
+        $request = $this->getController()->getRequest();
 
         return $request->is('mobile') || $this->accepts('wap');
     }
@@ -397,9 +420,14 @@ class RequestHandlerComponent extends Component
      * Returns true if the client accepts WAP content
      *
      * @return bool
+     * @deprecated 3.7.0 Use RequestHandler::prefers('wap') instead.
      */
     public function isWap()
     {
+        deprecationWarning(
+            'RequestHandlerComponent::isWap() is deprecated. Use RequestHandlerComponent::prefers(\'wap\') instead.'
+        );
+
         return $this->prefers('wap');
     }
 
@@ -432,8 +460,8 @@ class RequestHandlerComponent extends Component
     public function accepts($type = null)
     {
         $controller = $this->getController();
-        $request = $controller->request;
-        $response = $controller->response;
+        $request = $controller->getRequest();
+        $response = $controller->getResponse();
         $accepted = $request->accepts();
 
         if (!$type) {
@@ -467,10 +495,11 @@ class RequestHandlerComponent extends Component
     public function requestedWith($type = null)
     {
         $controller = $this->getController();
-        $request = $controller->request;
-        $response = $controller->response;
+        $request = $controller->getRequest();
+        $response = $controller->getResponse();
 
-        if (!$request->is('post') &&
+        if (
+            !$request->is('post') &&
             !$request->is('put') &&
             !$request->is('patch') &&
             !$request->is('delete')
@@ -515,8 +544,8 @@ class RequestHandlerComponent extends Component
     public function prefers($type = null)
     {
         $controller = $this->getController();
-        $request = $controller->request;
-        $response = $controller->response;
+        $request = $controller->getRequest();
+        $response = $controller->getResponse();
         $acceptRaw = $request->parseAccept();
 
         if (empty($acceptRaw)) {
@@ -639,8 +668,8 @@ class RequestHandlerComponent extends Component
 
         $cType = $type;
         $controller = $this->getController();
-        $response = $controller->response;
-        $request = $controller->request;
+        $response = $controller->getResponse();
+        $request = $controller->getRequest();
 
         if (strpos($type, '/') === false) {
             $cType = $response->getMimeType($type);
@@ -669,7 +698,7 @@ class RequestHandlerComponent extends Component
         if (!empty($options['attachment'])) {
             $response = $response->withDownload($options['attachment']);
         }
-        $controller->response = $response;
+        $controller->setResponse($response);
 
         return true;
     }
@@ -679,9 +708,14 @@ class RequestHandlerComponent extends Component
      *
      * @return mixed A string content type alias, or raw content type if no alias map exists,
      *  otherwise null
+     * @deprecated 3.7.0 Use $response->mapType($response->getType()) instead.
      */
     public function responseType()
     {
+        deprecationWarning(
+            'RequestHandlerComponent::responseType() is deprecated. Use $response->mapType($response->getType()) instead.'
+        );
+
         $response = $this->getController()->response;
 
         return $response->mapType($response->getType());
@@ -691,7 +725,7 @@ class RequestHandlerComponent extends Component
      * Maps a content type alias back to its mime-type(s)
      *
      * @param string|array $alias String alias to convert back into a content type. Or an array of aliases to map.
-     * @return string|null|array Null on an undefined alias. String value of the mapped alias type. If an
+     * @return string|array|null Null on an undefined alias. String value of the mapped alias type. If an
      *   alias maps to more than one content type, the first one will be returned. If an array is provided
      *   for $alias, an array of mapped types will be returned.
      */

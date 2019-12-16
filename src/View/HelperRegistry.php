@@ -26,7 +26,6 @@ use Cake\View\Exception\MissingHelperException;
  */
 class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
 {
-
     use EventDispatcherTrait;
 
     /**
@@ -66,8 +65,8 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
         try {
             $this->load($helper);
         } catch (Exception\MissingHelperException $exception) {
-            if ($this->_View->plugin) {
-                $this->load($this->_View->plugin . '.' . $helper);
+            if ($this->_View->getPlugin()) {
+                $this->load($this->_View->getPlugin() . '.' . $helper);
 
                 return true;
             }
@@ -126,7 +125,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
     {
         throw new MissingHelperException([
             'class' => $class . 'Helper',
-            'plugin' => $plugin
+            'plugin' => $plugin,
         ]);
     }
 
@@ -139,15 +138,12 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      * @param string $class The class to create.
      * @param string $alias The alias of the loaded helper.
      * @param array $settings An array of settings to use for the helper.
-     * @return \Cake\Controller\Component The constructed helper class.
+     * @return \Cake\View\Helper The constructed helper class.
      */
     protected function _create($class, $alias, $settings)
     {
         $instance = new $class($this->_View, $settings);
-        $vars = ['request', 'theme', 'plugin'];
-        foreach ($vars as $var) {
-            $instance->{$var} = $this->_View->{$var};
-        }
+
         $enable = isset($settings['enabled']) ? $settings['enabled'] : true;
         if ($enable) {
             $this->getEventManager()->on($instance);

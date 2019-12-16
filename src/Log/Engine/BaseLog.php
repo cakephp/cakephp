@@ -21,12 +21,9 @@ use Psr\Log\AbstractLogger;
 
 /**
  * Base log engine class.
- *
- * @mixin \Cake\Core\InstanceConfigTrait
  */
 abstract class BaseLog extends AbstractLogger
 {
-
     use InstanceConfigTrait;
 
     /**
@@ -36,7 +33,7 @@ abstract class BaseLog extends AbstractLogger
      */
     protected $_defaultConfig = [
         'levels' => [],
-        'scopes' => []
+        'scopes' => [],
     ];
 
     /**
@@ -74,7 +71,7 @@ abstract class BaseLog extends AbstractLogger
     /**
      * Get the scopes this logger is interested in.
      *
-     * @return array
+     * @return array|false
      */
     public function scopes()
     {

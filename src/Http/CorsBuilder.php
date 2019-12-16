@@ -30,7 +30,6 @@ use Psr\Http\Message\MessageInterface;
  */
 class CorsBuilder
 {
-
     /**
      * The response object this builder is attached to.
      *
@@ -103,12 +102,12 @@ class CorsBuilder
      * Accepts a string or an array of domains that have CORS enabled.
      * You can use `*.example.com` wildcards to accept subdomains, or `*` to allow all domains
      *
-     * @param string|array $domain The allowed domains
+     * @param string|string[] $domains The allowed domains
      * @return $this
      */
-    public function allowOrigin($domain)
+    public function allowOrigin($domains)
     {
-        $allowed = $this->_normalizeDomains((array)$domain);
+        $allowed = $this->_normalizeDomains((array)$domains);
         foreach ($allowed as $domain) {
             if (!preg_match($domain['preg'], $this->_origin)) {
                 continue;
@@ -124,7 +123,7 @@ class CorsBuilder
     /**
      * Normalize the origin to regular expressions and put in an array format
      *
-     * @param array $domains Domain names to normalize.
+     * @param string[] $domains Domain names to normalize.
      * @return array
      */
     protected function _normalizeDomains($domains)
@@ -150,7 +149,7 @@ class CorsBuilder
     /**
      * Set the list of allowed HTTP Methods.
      *
-     * @param array $methods The allowed HTTP methods
+     * @param string[] $methods The allowed HTTP methods
      * @return $this
      */
     public function allowMethods(array $methods)
@@ -175,7 +174,7 @@ class CorsBuilder
     /**
      * Whitelist headers that can be sent in CORS requests.
      *
-     * @param array $headers The list of headers to accept in CORS requests.
+     * @param string[] $headers The list of headers to accept in CORS requests.
      * @return $this
      */
     public function allowHeaders(array $headers)
@@ -188,7 +187,7 @@ class CorsBuilder
     /**
      * Define the headers a client library/browser can expose to scripting
      *
-     * @param array $headers The list of headers to expose CORS responses
+     * @param string[] $headers The list of headers to expose CORS responses
      * @return $this
      */
     public function exposeHeaders(array $headers)

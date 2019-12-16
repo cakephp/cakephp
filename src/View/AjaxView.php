@@ -25,12 +25,10 @@ use Cake\Http\ServerRequest;
  */
 class AjaxView extends View
 {
-
     /**
-     *
-     * @var string
+     * {@inheritDoc}
      */
-    public $layout = 'ajax';
+    protected $layout = 'ajax';
 
     /**
      * Constructor

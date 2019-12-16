@@ -29,13 +29,17 @@ use Exception;
  */
 abstract class BaseErrorHandler
 {
-
     /**
      * Options to use for the Error handling.
      *
      * @var array
      */
     protected $_options = [];
+
+    /**
+     * @var bool
+     */
+    protected $_handled = false;
 
     /**
      * Display an error message in an environment specific way.
@@ -75,7 +79,7 @@ abstract class BaseErrorHandler
         set_error_handler([$this, 'handleError'], $level);
         set_exception_handler([$this, 'wrapAndHandleException']);
         register_shutdown_function(function () {
-            if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
+            if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') && $this->_handled) {
                 return;
             }
             $megabytes = Configure::read('Error.extraFatalErrorMemory');
@@ -110,8 +114,8 @@ abstract class BaseErrorHandler
      * Set as the default error handler by CakePHP.
      *
      * Use config/error.php to customize or replace this error handler.
-     * This function will use Debugger to display errors when debug > 0. And
-     * will log errors to Log, when debug == 0.
+     * This function will use Debugger to display errors when debug mode is on. And
+     * will log errors to Log, when debug mode is off.
      *
      * You can use the 'errorLevel' option to set what type of errors will be handled.
      * Stack traces for errors can be enabled with the 'trace' option.
@@ -128,6 +132,7 @@ abstract class BaseErrorHandler
         if (error_reporting() === 0) {
             return false;
         }
+        $this->_handled = true;
         list($error, $log) = static::mapErrorCode($code);
         if ($log === LOG_ERR) {
             return $this->handleFatalError($code, $description, $file, $line);
@@ -146,7 +151,7 @@ abstract class BaseErrorHandler
             $data += [
                 'context' => $context,
                 'start' => 3,
-                'path' => Debugger::trimPath($file)
+                'path' => Debugger::trimPath($file),
             ];
         }
         $this->_displayError($data, $debug);
@@ -277,7 +282,7 @@ abstract class BaseErrorHandler
         if (!empty($this->_options['trace'])) {
             $trace = Debugger::trace([
                 'start' => 1,
-                'format' => 'log'
+                'format' => 'log',
             ]);
 
             $request = Router::getRequest();
@@ -349,12 +354,33 @@ abstract class BaseErrorHandler
      */
     protected function _getMessage(Exception $exception)
     {
+        $message = $this->getMessageForException($exception);
+
+        $request = Router::getRequest();
+        if ($request) {
+            $message .= $this->_requestContext($request);
+        }
+
+        return $message;
+    }
+
+    /**
+     * Generate the message for the exception
+     *
+     * @param \Exception $exception The exception to log a message for.
+     * @param bool $isPrevious False for original exception, true for previous
+     * @return string Error message
+     */
+    protected function getMessageForException($exception, $isPrevious = false)
+    {
         $exception = $exception instanceof PHP7ErrorException ?
             $exception->getError() :
             $exception;
         $config = $this->_options;
+
         $message = sprintf(
-            '[%s] %s in %s on line %s',
+            '%s[%s] %s in %s on line %s',
+            $isPrevious ? "\nCaused by: " : '',
             get_class($exception),
             $exception->getMessage(),
             $exception->getFile(),
@@ -369,13 +395,13 @@ abstract class BaseErrorHandler
             }
         }
 
-        $request = Router::getRequest();
-        if ($request) {
-            $message .= $this->_requestContext($request);
-        }
-
         if (!empty($config['trace'])) {
             $message .= "\nStack Trace:\n" . $exception->getTraceAsString() . "\n\n";
+        }
+
+        $previous = $exception->getPrevious();
+        if ($previous) {
+            $message .= $this->getMessageForException($previous, true);
         }
 
         return $message;

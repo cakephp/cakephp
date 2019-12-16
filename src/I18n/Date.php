@@ -29,7 +29,7 @@ class Date extends MutableDate implements JsonSerializable
 
     /**
      * The format to use when formatting a time using `Cake\I18n\Date::i18nFormat()`
-     * and `__toString`
+     * and `__toString`. This format is also used by `parseDateTime()`.
      *
      * The format should be either the formatting constants from IntlDateFormatter as
      * described in (https://secure.php.net/manual/en/class.intldateformatter.php) or a pattern
@@ -73,7 +73,7 @@ class Date extends MutableDate implements JsonSerializable
      * The format to use when formatting a time using `Date::timeAgoInWords()`
      * and the difference is less than `Date::$wordEnd`
      *
-     * @var array
+     * @var string[]
      * @see \Cake\I18n\Date::timeAgoInWords()
      */
     public static $wordAccuracy = [

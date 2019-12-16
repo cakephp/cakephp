@@ -24,7 +24,6 @@ use InvalidArgumentException;
  */
 class EventManager implements EventManagerInterface
 {
-
     /**
      * The default priority queue value for new, attached listeners
      *
@@ -141,7 +140,7 @@ class EventManager implements EventManagerInterface
         $argCount = func_num_args();
         if ($argCount === 2) {
             $this->_listeners[$eventKey][static::$defaultPriority][] = [
-                'callable' => $options
+                'callable' => $options,
             ];
 
             return $this;
@@ -149,7 +148,7 @@ class EventManager implements EventManagerInterface
         if ($argCount === 3) {
             $priority = isset($options['priority']) ? $options['priority'] : static::$defaultPriority;
             $this->_listeners[$eventKey][$priority][] = [
-                'callable' => $callable
+                'callable' => $callable,
             ];
 
             return $this;

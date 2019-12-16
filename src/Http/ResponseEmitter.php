@@ -33,6 +33,9 @@ use Zend\Diactoros\Response\EmitterInterface;
  *
  * - It logs headers sent using CakePHP's logging tools.
  * - Cookies are emitted using setcookie() to not conflict with ext/session
+ * - For fastcgi servers with PHP-FPM session_write_close() is called just
+ *   before fastcgi_finish_request() to make sure session data is saved
+ *   correctly (especially on slower session backends).
  */
 class ResponseEmitter implements EmitterInterface
 {
@@ -63,6 +66,7 @@ class ResponseEmitter implements EmitterInterface
         }
 
         if (function_exists('fastcgi_finish_request')) {
+            session_write_close();
             fastcgi_finish_request();
         }
     }
@@ -223,7 +227,7 @@ class ResponseEmitter implements EmitterInterface
                 'path' => '',
                 'domain' => '',
                 'secure' => false,
-                'httponly' => false
+                'httponly' => false,
             ];
 
             foreach ($parts as $part) {
@@ -237,7 +241,7 @@ class ResponseEmitter implements EmitterInterface
                 $key = strtolower($key);
                 $data[$key] = $value;
             }
-            if (!empty($data['expires'])) {
+            if (is_string($data['expires'])) {
                 $data['expires'] = strtotime($data['expires']);
             }
             setcookie(
@@ -275,7 +279,7 @@ class ResponseEmitter implements EmitterInterface
      * https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.16
      *
      * @param string $header The Content-Range header to parse.
-     * @return false|array [unit, first, last, length]; returns false if no
+     * @return array|false [unit, first, last, length]; returns false if no
      *     content range or an invalid content range is provided
      */
     protected function parseContentRange($header)

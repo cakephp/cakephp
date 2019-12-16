@@ -25,7 +25,6 @@ use Exception;
  */
 class SmtpTransport extends AbstractTransport
 {
-
     /**
      * Default config for this class
      *
@@ -39,13 +38,13 @@ class SmtpTransport extends AbstractTransport
         'password' => null,
         'client' => null,
         'tls' => false,
-        'keepAlive' => false
+        'keepAlive' => false,
     ];
 
     /**
      * Socket to SMTP server
      *
-     * @var \Cake\Network\Socket
+     * @var \Cake\Network\Socket|null
      */
     protected $_socket;
 
@@ -76,6 +75,18 @@ class SmtpTransport extends AbstractTransport
         } catch (Exception $e) {
             // avoid fatal error on script termination
         }
+    }
+
+    /**
+     * Unserialize handler.
+     *
+     * Ensure that the socket property isn't reinitialized in a broken state.
+     *
+     * @return void
+     */
+    public function __wakeup()
+    {
+        $this->_socket = null;
     }
 
     /**
@@ -178,7 +189,7 @@ class SmtpTransport extends AbstractTransport
     /**
      * Parses and stores the response lines in `'code' => 'message'` format.
      *
-     * @param array $responseLines Response lines to parse.
+     * @param string[] $responseLines Response lines to parse.
      * @return void
      */
     protected function _bufferResponseLines(array $responseLines)
@@ -188,7 +199,7 @@ class SmtpTransport extends AbstractTransport
             if (preg_match('/^(\d{3})(?:[ -]+(.*))?$/', $responseLine, $match)) {
                 $response[] = [
                     'code' => $match[1],
-                    'message' => isset($match[2]) ? $match[2] : null
+                    'message' => isset($match[2]) ? $match[2] : null,
                 ];
             }
         }
@@ -342,7 +353,7 @@ class SmtpTransport extends AbstractTransport
         $lines = $email->message();
         $messages = [];
         foreach ($lines as $line) {
-            if ((!empty($line)) && ($line[0] === '.')) {
+            if (!empty($line) && ($line[0] === '.')) {
                 $messages[] = '.' . $line;
             } else {
                 $messages[] = $line;

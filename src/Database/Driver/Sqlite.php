@@ -21,9 +21,11 @@ use Cake\Database\Statement\PDOStatement;
 use Cake\Database\Statement\SqliteStatement;
 use PDO;
 
+/**
+ * Class Sqlite
+ */
 class Sqlite extends Driver
 {
-
     use SqliteDialectTrait;
 
     /**
@@ -58,7 +60,7 @@ class Sqlite extends Driver
         $config['flags'] += [
             PDO::ATTR_PERSISTENT => $config['persistent'],
             PDO::ATTR_EMULATE_PREPARES => false,
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
 
         $databaseExists = file_exists($config['database']);
@@ -88,7 +90,7 @@ class Sqlite extends Driver
      */
     public function enabled()
     {
-        return in_array('sqlite', PDO::getAvailableDrivers());
+        return in_array('sqlite', PDO::getAvailableDrivers(), true);
     }
 
     /**

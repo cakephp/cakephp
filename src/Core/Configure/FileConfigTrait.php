@@ -22,7 +22,6 @@ use Cake\Core\Plugin;
  */
 trait FileConfigTrait
 {
-
     /**
      * The path this engine finds files on.
      *
@@ -60,8 +59,9 @@ trait FileConfigTrait
             return $file;
         }
 
-        if (is_file(realpath($file))) {
-            return realpath($file);
+        $realPath = realpath($file);
+        if ($realPath !== false && is_file($realPath)) {
+            return $realPath;
         }
 
         throw new Exception(sprintf('Could not load configuration file: %s', $file));

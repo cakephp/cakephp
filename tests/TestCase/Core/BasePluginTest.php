@@ -18,8 +18,9 @@ use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Core\PluginApplicationInterface;
-use Cake\Event\EventManager;
 use Cake\Http\MiddlewareQueue;
+use Cake\Routing\RouteBuilder;
+use Cake\Routing\RouteCollection;
 use Cake\TestSuite\TestCase;
 use Company\TestPluginThree\Plugin as TestPluginThree;
 use TestPlugin\Plugin as TestPlugin;
@@ -38,7 +39,7 @@ class BasePluginTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::unload();
+        $this->clearPlugins();
     }
 
     /**
@@ -50,7 +51,7 @@ class BasePluginTest extends TestCase
     {
         $plugin = new BasePlugin([
             'bootstrap' => false,
-            'routes' => false
+            'routes' => false,
         ]);
 
         $this->assertFalse($plugin->isEnabled('routes'));
@@ -112,13 +113,34 @@ class BasePluginTest extends TestCase
         $this->assertTrue(Configure::check('PluginTest.test_plugin.bootstrap'));
     }
 
+    /**
+     * No errors should be emitted when a plugin doesn't have a bootstrap file.
+     */
+    public function testBootstrapSkipMissingFile()
+    {
+        $app = $this->createMock(PluginApplicationInterface::class);
+        $plugin = new BasePlugin();
+        $this->assertNull($plugin->bootstrap($app));
+    }
+
+    /**
+     * No errors should be emitted when a plugin doesn't have a routes file.
+     */
+    public function testRoutesSkipMissingFile()
+    {
+        $app = $this->createMock(PluginApplicationInterface::class);
+        $plugin = new BasePlugin();
+        $routeBuilder = new RouteBuilder(new RouteCollection(), '/');
+        $this->assertNull($plugin->routes($routeBuilder));
+    }
+
     public function testConstructorArguments()
     {
         $plugin = new BasePlugin([
             'routes' => false,
             'bootstrap' => false,
             'console' => false,
-            'middleware' => false
+            'middleware' => false,
         ]);
         $this->assertFalse($plugin->isEnabled('routes'));
         $this->assertFalse($plugin->isEnabled('bootstrap'));

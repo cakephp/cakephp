@@ -31,7 +31,7 @@ class HasOneTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.users', 'core.profiles'];
+    public $fixtures = ['core.Users', 'core.Profiles'];
 
     /**
      * @var bool
@@ -52,17 +52,6 @@ class HasOneTest extends TestCase
     }
 
     /**
-     * Tear down
-     *
-     * @return void
-     */
-    public function tearDown()
-    {
-        parent::tearDown();
-        $this->getTableLocator()->clear();
-    }
-
-    /**
      * Tests that foreignKey() returns the correct configured value
      *
      * @group deprecated
@@ -72,7 +61,7 @@ class HasOneTest extends TestCase
     {
         $this->deprecated(function () {
             $assoc = new HasOne('Profiles', [
-                'sourceTable' => $this->user
+                'sourceTable' => $this->user,
             ]);
             $this->assertEquals('user_id', $assoc->foreignKey());
             $this->assertEquals('another_key', $assoc->foreignKey('another_key'));
@@ -88,7 +77,7 @@ class HasOneTest extends TestCase
     public function testSetForeignKey()
     {
         $assoc = new HasOne('Profiles', [
-            'sourceTable' => $this->user
+            'sourceTable' => $this->user,
         ]);
         $this->assertEquals('user_id', $assoc->getForeignKey());
         $this->assertEquals($assoc, $assoc->setForeignKey('another_key'));
@@ -120,7 +109,7 @@ class HasOneTest extends TestCase
             'targetTable' => $this->profile,
             'property' => 'profile',
             'joinType' => 'INNER',
-            'conditions' => ['Profiles.is_active' => true]
+            'conditions' => ['Profiles.is_active' => true],
         ];
         $association = new HasOne('Profiles', $config);
         $query = $this->user->find();
@@ -141,7 +130,7 @@ class HasOneTest extends TestCase
         $config = [
             'sourceTable' => $this->user,
             'targetTable' => $this->profile,
-            'conditions' => ['Profiles.is_active' => true]
+            'conditions' => ['Profiles.is_active' => true],
         ];
         $association = new HasOne('Profiles', $config);
         $query = $this->user->query();
@@ -178,7 +167,7 @@ class HasOneTest extends TestCase
             'sourceTable' => $this->user,
             'targetTable' => $this->profile,
             'conditions' => ['Profiles.is_active' => true],
-            'foreignKey' => ['user_id', 'user_site_id']
+            'foreignKey' => ['user_id', 'user_site_id'],
         ];
 
         $this->user->setPrimaryKey(['id', 'site_id']);
@@ -197,8 +186,8 @@ class HasOneTest extends TestCase
                     ['Users.id' => $field1, 'Users.site_id' => $field2],
                 ], $selectTypeMap),
                 'type' => 'LEFT',
-                'table' => 'profiles'
-            ]
+                'table' => 'profiles',
+            ],
         ]);
         $query->expects($this->never())->method('select');
         $association->attachTo($query, ['includeFields' => false]);
@@ -249,7 +238,7 @@ class HasOneTest extends TestCase
         $entity = new Entity([
             'username' => 'Mark',
             'email' => 'mark@example.com',
-            'profile' => ['twitter' => '@cakephp']
+            'profile' => ['twitter' => '@cakephp'],
         ]);
 
         $association = new HasOne('Profiles', $config);

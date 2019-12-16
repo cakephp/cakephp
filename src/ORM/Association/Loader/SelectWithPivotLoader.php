@@ -23,7 +23,6 @@ use RuntimeException;
  */
 class SelectWithPivotLoader extends SelectLoader
 {
-
     /**
      * The name of the junction association
      *
@@ -133,7 +132,7 @@ class SelectWithPivotLoader extends SelectLoader
      * which the filter should be applied
      *
      * @param array $options the options to use for getting the link field.
-     * @return array|string
+     * @return string|string[]
      */
     protected function _linkField($options)
     {

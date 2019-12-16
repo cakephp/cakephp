@@ -16,7 +16,6 @@ namespace Cake\Database\Type;
 
 use Cake\Core\Exception\Exception;
 use Cake\Database\Driver;
-use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Type;
 use Cake\Database\TypeInterface;
 use Cake\Utility\Text;
@@ -84,7 +83,7 @@ class BinaryUuidType extends Type implements TypeInterface
     /**
      * Convert binary uuid into resource handles
      *
-     * @param null|string|resource $value The value to convert.
+     * @param resource|string|null $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return resource|string|null
      * @throws \Cake\Core\Exception\Exception
@@ -117,7 +116,7 @@ class BinaryUuidType extends Type implements TypeInterface
     }
 
     /**
-     * Marshalls flat data into PHP objects.
+     * Marshals flat data into PHP objects.
      *
      * Most useful for converting request data into PHP objects
      * that make sense for the rest of the ORM/Database layers.
@@ -156,9 +155,9 @@ class BinaryUuidType extends Type implements TypeInterface
      * Converts a string uuid to a binary representation
      *
      *
-     * @param mixed $string The value to convert.
+     * @param string $string The value to convert.
      *
-     * @return mixed Converted value.
+     * @return string Converted value.
      */
     protected function convertStringToBinaryUuid($string)
     {

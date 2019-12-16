@@ -32,7 +32,7 @@ class DatabaseSessionTest extends TestCase
      *
      * @var string
      */
-    public $fixtures = ['core.sessions'];
+    public $fixtures = ['core.Sessions'];
 
     /**
      * setUp
@@ -54,7 +54,6 @@ class DatabaseSessionTest extends TestCase
     public function tearDown()
     {
         unset($this->storage);
-        $this->getTableLocator()->clear();
         parent::tearDown();
     }
 

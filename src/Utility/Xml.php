@@ -28,7 +28,6 @@ use SimpleXMLElement;
  */
 class Xml
 {
-
     /**
      * Initialize SimpleXMLElement or DOMDocument from a given XML string, file path, URL or array.
      *
@@ -157,18 +156,61 @@ class Xml
                 $xml = new DOMDocument();
                 $xml->loadXML($input, $flags);
             }
-        } catch (Exception $e) {
-            $xml = null;
-        }
-        if ($hasDisable && !$options['loadEntities']) {
-            libxml_disable_entity_loader(false);
-        }
-        libxml_use_internal_errors($internalErrors);
-        if ($xml === null) {
-            throw new XmlException('Xml cannot be read.');
-        }
 
-        return $xml;
+            return $xml;
+        } catch (Exception $e) {
+            throw new XmlException('Xml cannot be read. ' . $e->getMessage(), null, $e);
+        } finally {
+            if ($hasDisable && !$options['loadEntities']) {
+                libxml_disable_entity_loader(false);
+            }
+            libxml_use_internal_errors($internalErrors);
+        }
+    }
+
+    /**
+     * Parse the input html string and create either a SimpleXmlElement object or a DOMDocument.
+     *
+     * @param string $input The input html string to load.
+     * @param array $options The options to use. See Xml::build()
+     * @return \SimpleXMLElement|\DOMDocument
+     * @throws \Cake\Utility\Exception\XmlException
+     */
+    public static function loadHtml($input, $options = [])
+    {
+        $defaults = [
+            'return' => 'simplexml',
+            'loadEntities' => false,
+        ];
+        $options += $defaults;
+
+        $hasDisable = function_exists('libxml_disable_entity_loader');
+        $internalErrors = libxml_use_internal_errors(true);
+        if ($hasDisable && !$options['loadEntities']) {
+            libxml_disable_entity_loader(true);
+        }
+        $flags = 0;
+        if (!empty($options['parseHuge'])) {
+            $flags |= LIBXML_PARSEHUGE;
+        }
+        try {
+            $xml = new DOMDocument();
+            $xml->loadHTML($input, $flags);
+
+            if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
+                $flags |= LIBXML_NOCDATA;
+                $xml = simplexml_import_dom($xml);
+            }
+
+            return $xml;
+        } catch (Exception $e) {
+            throw new XmlException('Xml cannot be read. ' . $e->getMessage(), null, $e);
+        } finally {
+            if ($hasDisable && !$options['loadEntities']) {
+                libxml_disable_entity_loader(false);
+            }
+            libxml_use_internal_errors($internalErrors);
+        }
     }
 
     /**
@@ -230,7 +272,7 @@ class Xml
             'version' => '1.0',
             'encoding' => mb_internal_encoding(),
             'return' => 'simplexml',
-            'pretty' => false
+            'pretty' => false,
         ];
         $options += $defaults;
 
@@ -400,7 +442,7 @@ class Xml
      * @param \SimpleXMLElement $xml SimpleXMLElement object
      * @param array $parentData Parent array with data
      * @param string $ns Namespace of current child
-     * @param array $namespaces List of namespaces in XML
+     * @param string[] $namespaces List of namespaces in XML
      * @return void
      */
     protected static function _toArray($xml, &$parentData, $ns, $namespaces)

@@ -40,7 +40,7 @@ class BodyParserMiddleware
     /**
      * The HTTP methods to parse data on.
      *
-     * @var array
+     * @var string[]
      */
     protected $methods = ['PUT', 'POST', 'PATCH', 'DELETE'];
 
@@ -79,7 +79,7 @@ class BodyParserMiddleware
     /**
      * Set the HTTP methods to parse request bodies on.
      *
-     * @param array $methods The methods to parse data on.
+     * @param string[] $methods The methods to parse data on.
      * @return $this
      */
     public function setMethods(array $methods)
@@ -104,7 +104,7 @@ class BodyParserMiddleware
      * });
      * ```
      *
-     * @param array $types An array of content-type header values to match. eg. application/json
+     * @param string[] $types An array of content-type header values to match. eg. application/json
      * @param callable $parser The parser function. Must return an array of data to be inserted
      *   into the request.
      * @return $this
@@ -131,7 +131,7 @@ class BodyParserMiddleware
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
     {
-        if (!in_array($request->getMethod(), $this->methods)) {
+        if (!in_array($request->getMethod(), $this->methods, true)) {
             return $next($request, $response);
         }
         list($type) = explode(';', $request->getHeaderLine('Content-Type'));
@@ -172,7 +172,7 @@ class BodyParserMiddleware
         try {
             $xml = Xml::build($body, ['return' => 'domdocument', 'readFile' => false]);
             // We might not get child nodes if there are nested inline entities.
-            if ($xml->childNodes->length > 0) {
+            if ((int)$xml->childNodes->length > 0) {
                 return Xml::toArray($xml);
             }
 

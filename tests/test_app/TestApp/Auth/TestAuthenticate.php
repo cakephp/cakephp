@@ -28,11 +28,14 @@ class TestAuthenticate extends BaseAuthenticate
 
     public $authenticationProvider;
 
+    /**
+     * @return array
+     */
     public function implementedEvents()
     {
         return [
             'Auth.afterIdentify' => 'afterIdentify',
-            'Auth.logout' => 'logout'
+            'Auth.logout' => 'logout',
         ];
     }
 
@@ -54,7 +57,7 @@ class TestAuthenticate extends BaseAuthenticate
     public function afterIdentify(Event $event, array $user)
     {
         $this->callStack[] = __FUNCTION__;
-        $this->authenticationProvider = $event->data(1);
+        $this->authenticationProvider = $event->getData(1);
 
         if (!empty($this->modifiedUser)) {
             return $user + ['extra' => 'foo'];

@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
+use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
@@ -54,33 +55,22 @@ class AssociationTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->source = new TestTable;
+        $this->source = new TestTable();
         $config = [
             'className' => '\Cake\Test\TestCase\ORM\TestTable',
             'foreignKey' => 'a_key',
             'conditions' => ['field' => 'value'],
             'dependent' => true,
             'sourceTable' => $this->source,
-            'joinType' => 'INNER'
+            'joinType' => 'INNER',
         ];
         $this->association = $this->getMockBuilder('\Cake\ORM\Association')
             ->setMethods([
                 '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
-                'saveAssociated', 'eagerLoader', 'type', 'requiresKeys'
+                'saveAssociated', 'eagerLoader', 'type', 'requiresKeys',
             ])
             ->setConstructorArgs(['Foo', $config])
             ->getMock();
-    }
-
-    /**
-     * Tear down
-     *
-     * @return void
-     */
-    public function tearDown()
-    {
-        parent::tearDown();
-        $this->getTableLocator()->clear();
     }
 
     /**
@@ -139,7 +129,7 @@ class AssociationTest extends TestCase
      *
      * @return void
      */
-    public function testSetNameAfterTarger()
+    public function testSetNameAfterTarget()
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Association name does not match target table alias.');
@@ -162,11 +152,80 @@ class AssociationTest extends TestCase
     /**
      * Tests that className() returns the correct association className
      *
+     * @group deprecated
      * @return void
      */
     public function testClassName()
     {
-        $this->assertEquals('\Cake\Test\TestCase\ORM\TestTable', $this->association->className());
+        $this->deprecated(function () {
+            $this->assertEquals('\Cake\Test\TestCase\ORM\TestTable', $this->association->className());
+        });
+    }
+
+    /**
+     * Tests that setClassName() succeeds before the target table is resolved.
+     *
+     * @return void
+     */
+    public function testSetClassNameBeforeTarget()
+    {
+        $this->assertEquals('\Cake\Test\TestCase\ORM\TestTable', $this->association->getClassName());
+        $this->assertSame($this->association, $this->association->setClassName('\TestApp\Model\Table\AuthorsTable'));
+        $this->assertEquals('\TestApp\Model\Table\AuthorsTable', $this->association->getClassName());
+    }
+
+    /**
+     * Tests that setClassName() fails after the target table is resolved.
+     *
+     * @return void
+     */
+    public function testSetClassNameAfterTarget()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The class name doesn\'t match the target table\'s class name.');
+        $this->association->getTarget();
+        $this->association->setClassName('\TestApp\Model\Table\AuthorsTable');
+    }
+
+    /**
+     * Tests that setClassName() fails after the target table is resolved.
+     *
+     * @return void
+     */
+    public function testSetClassNameWithShortSyntaxAfterTarget()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The class name doesn\'t match the target table\'s class name.');
+        $this->association->getTarget();
+        $this->association->setClassName('Authors');
+    }
+
+    /**
+     * Tests that setClassName() succeeds if name equals target table's class name.
+     *
+     * @return void
+     */
+    public function testSetClassNameToTargetClassName()
+    {
+        $className = get_class($this->association->getTarget());
+        $this->association->setClassName($className);
+        $this->assertEquals($className, $this->association->getClassName());
+    }
+
+    /**
+     * Tests that setClassName() succeeds if the short name resolves to the target table's class name.
+     *
+     * @return void
+     */
+    public function testSetClassNameWithShortSyntaxToTargetClassName()
+    {
+        Configure::write('App.namespace', 'TestApp');
+
+        $this->association->setClassName('\TestApp\Model\Table\AuthorsTable');
+        $className = get_class($this->association->getTarget());
+        $this->assertEquals('TestApp\Model\Table\AuthorsTable', $className);
+        $this->association->setClassName('Authors');
+        $this->assertEquals('Authors', $this->association->getClassName());
     }
 
     /**
@@ -182,12 +241,12 @@ class AssociationTest extends TestCase
         $this->association = $this->getMockBuilder('\Cake\ORM\Association')
             ->setMethods([
                 '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
-                'saveAssociated', 'eagerLoader', 'type', 'requiresKeys'
+                'saveAssociated', 'eagerLoader', 'type', 'requiresKeys',
             ])
             ->setConstructorArgs(['Foo', $config])
             ->getMock();
 
-        $this->assertEquals('Test', $this->association->className());
+        $this->assertEquals('Test', $this->association->getClassName());
     }
 
     /**
@@ -207,7 +266,7 @@ class AssociationTest extends TestCase
         $this->association = $this->getMockBuilder('\Cake\ORM\Association')
             ->setMethods([
                 '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
-                'saveAssociated', 'eagerLoader', 'type', 'requiresKeys'
+                'saveAssociated', 'eagerLoader', 'type', 'requiresKeys',
             ])
             ->setConstructorArgs(['Test', $config])
             ->getMock();
@@ -223,7 +282,7 @@ class AssociationTest extends TestCase
     public function testTargetTableDescendant()
     {
         $this->getTableLocator()->get('Test', [
-            'className' => '\Cake\Test\TestCase\ORM\TestTable'
+            'className' => '\Cake\Test\TestCase\ORM\TestTable',
         ]);
         $className = '\Cake\ORM\Table';
 
@@ -233,7 +292,7 @@ class AssociationTest extends TestCase
         $this->association = $this->getMockBuilder('\Cake\ORM\Association')
             ->setMethods([
                 '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
-                'saveAssociated', 'eagerLoader', 'type', 'requiresKeys'
+                'saveAssociated', 'eagerLoader', 'type', 'requiresKeys',
             ])
             ->setConstructorArgs(['Test', $config])
             ->getMock();
@@ -318,7 +377,7 @@ class AssociationTest extends TestCase
      */
     public function testBindingDefaultNoOwningSide()
     {
-        $target = new Table;
+        $target = new Table();
         $target->setPrimaryKey(['foo', 'site_id']);
         $this->association->setTarget($target);
 
@@ -408,7 +467,7 @@ class AssociationTest extends TestCase
             $table = $this->association->target();
             $this->assertInstanceOf(__NAMESPACE__ . '\TestTable', $table);
 
-            $other = new Table;
+            $other = new Table();
             $this->association->target($other);
             $this->assertSame($other, $this->association->target());
         });
@@ -424,7 +483,7 @@ class AssociationTest extends TestCase
         $table = $this->association->getTarget();
         $this->assertInstanceOf(__NAMESPACE__ . '\TestTable', $table);
 
-        $other = new Table;
+        $other = new Table();
         $this->assertSame($this->association, $this->association->setTarget($other));
         $this->assertSame($other, $this->association->getTarget());
     }
@@ -436,20 +495,20 @@ class AssociationTest extends TestCase
      */
     public function testTargetPlugin()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $config = [
             'className' => 'TestPlugin.Comments',
             'foreignKey' => 'a_key',
             'conditions' => ['field' => 'value'],
             'dependent' => true,
             'sourceTable' => $this->source,
-            'joinType' => 'INNER'
+            'joinType' => 'INNER',
         ];
 
         $this->association = $this->getMockBuilder('\Cake\ORM\Association')
             ->setMethods([
                 'type', 'eagerLoader', 'cascadeDelete', 'isOwningSide', 'saveAssociated',
-                'requiresKeys'
+                'requiresKeys',
             ])
             ->setConstructorArgs(['ThisAssociationName', $config])
             ->getMock();
@@ -470,6 +529,7 @@ class AssociationTest extends TestCase
         $this->assertSame('TestPlugin.ThisAssociationName', $table->getRegistryAlias());
         $this->assertSame('comments', $table->getTable());
         $this->assertSame('ThisAssociationName', $table->getAlias());
+        $this->clearPlugins();
     }
 
     /**
@@ -484,7 +544,7 @@ class AssociationTest extends TestCase
             $table = $this->association->source();
             $this->assertSame($this->source, $table);
 
-            $other = new Table;
+            $other = new Table();
             $this->association->source($other);
             $this->assertSame($other, $this->association->source());
         });
@@ -500,7 +560,7 @@ class AssociationTest extends TestCase
         $table = $this->association->getSource();
         $this->assertSame($this->source, $table);
 
-        $other = new Table;
+        $other = new Table();
         $this->assertSame($this->association, $this->association->setSource($other));
         $this->assertSame($other, $this->association->getSource());
     }
@@ -603,12 +663,12 @@ class AssociationTest extends TestCase
             'dependent' => true,
             'sourceTable' => $this->source,
             'joinType' => 'INNER',
-            'propertyName' => 'foo'
+            'propertyName' => 'foo',
         ];
         $association = $this->getMockBuilder('\Cake\ORM\Association')
             ->setMethods([
                 '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
-                'saveAssociated', 'eagerLoader', 'type', 'requiresKeys'
+                'saveAssociated', 'eagerLoader', 'type', 'requiresKeys',
             ])
             ->setConstructorArgs(['Foo', $config])
             ->getMock();
@@ -703,12 +763,12 @@ class AssociationTest extends TestCase
             'dependent' => true,
             'sourceTable' => $this->source,
             'joinType' => 'INNER',
-            'finder' => 'published'
+            'finder' => 'published',
         ];
         $assoc = $this->getMockBuilder('\Cake\ORM\Association')
             ->setMethods([
                 'type', 'eagerLoader', 'cascadeDelete', 'isOwningSide', 'saveAssociated',
-                'requiresKeys'
+                'requiresKeys',
             ])
             ->setConstructorArgs(['Foo', $config])
             ->getMock();
@@ -740,12 +800,12 @@ class AssociationTest extends TestCase
         $locator = $this->getMockBuilder('Cake\ORM\Locator\LocatorInterface')->getMock();
         $config = [
             'className' => '\Cake\Test\TestCase\ORM\TestTable',
-            'tableLocator' => $locator
+            'tableLocator' => $locator,
         ];
         $assoc = $this->getMockBuilder('\Cake\ORM\Association')
             ->setMethods([
                 'type', 'eagerLoader', 'cascadeDelete', 'isOwningSide', 'saveAssociated',
-                'requiresKeys'
+                'requiresKeys',
             ])
             ->setConstructorArgs(['Foo', $config])
             ->getMock();

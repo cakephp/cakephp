@@ -27,12 +27,12 @@ class CounterCacheUserCategoryPostsFixture extends TestFixture
         'category_id' => ['type' => 'integer'],
         'user_id' => ['type' => 'integer'],
         'post_count' => ['type' => 'integer', 'null' => true],
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
     ];
 
     public $records = [
         ['category_id' => 1, 'user_id' => 1, 'post_count' => 1],
         ['category_id' => 2, 'user_id' => 1, 'post_count' => 1],
-        ['category_id' => 2, 'user_id' => 2, 'post_count' => 1]
+        ['category_id' => 2, 'user_id' => 2, 'post_count' => 1],
     ];
 }

@@ -24,11 +24,10 @@ use Cake\Datasource\Exception\RecordNotFoundException;
  */
 trait QueryTrait
 {
-
     /**
      * Instance of a table object this query is bound to
      *
-     * @var \Cake\ORM\Table|\Cake\Datasource\RepositoryInterface
+     * @var \Cake\Datasource\RepositoryInterface
      */
     protected $_repository;
 
@@ -61,7 +60,7 @@ trait QueryTrait
     /**
      * A query cacher instance if this query has caching enabled.
      *
-     * @var \Cake\Datasource\QueryCacher
+     * @var \Cake\Datasource\QueryCacher|null
      */
     protected $_cache;
 
@@ -87,8 +86,10 @@ trait QueryTrait
      * When called with a Table argument, the default table object will be set
      * and this query object will be returned for chaining.
      *
-     * @param \Cake\Datasource\RepositoryInterface|\Cake\ORM\Table|null $table The default table object to use
-     * @return \Cake\Datasource\RepositoryInterface|\Cake\ORM\Table|$this
+     * Deprecated: 3.6.0 Using Query::repository() as getter is deprecated. Use getRepository() instead.
+     *
+     * @param \Cake\Datasource\RepositoryInterface|null $table The default table object to use
+     * @return \Cake\Datasource\RepositoryInterface|$this
      */
     public function repository(RepositoryInterface $table = null)
     {
@@ -110,7 +111,7 @@ trait QueryTrait
      * Returns the default table object that will be used by this query,
      * that is, the table that will appear in the from clause.
      *
-     * @return \Cake\Datasource\RepositoryInterface|\Cake\ORM\Table
+     * @return \Cake\Datasource\RepositoryInterface
      */
     public function getRepository()
     {
@@ -179,7 +180,7 @@ trait QueryTrait
      * $query->cache(false);
      * ```
      *
-     * @param false|string|\Closure $key Either the cache key or a function to generate the cache key.
+     * @param \Closure|string|false $key Either the cache key or a function to generate the cache key.
      *   When using a function, this query instance will be supplied as an argument.
      * @param string|\Cake\Cache\CacheEngine $config Either the name of the cache config to use, or
      *   a cache config instance.
@@ -213,7 +214,7 @@ trait QueryTrait
      *
      * @deprecated 3.5.0 Use isEagerLoaded() for the getter part instead.
      * @param bool|null $value Whether or not to eager load.
-     * @return $this|\Cake\ORM\Query
+     * @return $this|bool
      */
     public function eagerLoaded($value = null)
     {
@@ -481,9 +482,11 @@ trait QueryTrait
     {
         $entity = $this->first();
         if (!$entity) {
+            /** @var \Cake\ORM\Table $table */
+            $table = $this->getRepository();
             throw new RecordNotFoundException(sprintf(
                 'Record not found in table "%s"',
-                $this->getRepository()->getTable()
+                $table->getTable()
             ));
         }
 
@@ -501,7 +504,7 @@ trait QueryTrait
      *  $query->getOptions(); // Returns ['doABarrelRoll' => true]
      * ```
      *
-     * @see \Cake\ORM\Query::applyOptions() to read about the options that will
+     * @see \Cake\Datasource\QueryInterface::applyOptions() to read about the options that will
      * be processed by this class and not returned by this function
      * @return array
      */

@@ -24,7 +24,6 @@ use RedisException;
  */
 class RedisEngine extends CacheEngine
 {
-
     /**
      * Redis wrapper.
      *
@@ -140,7 +139,7 @@ class RedisEngine extends CacheEngine
             return $this->_Redis->set($key, $value);
         }
 
-        return $this->_Redis->setex($key, $duration, $value);
+        return $this->_Redis->setEx($key, $duration, $value);
     }
 
     /**
@@ -169,7 +168,7 @@ class RedisEngine extends CacheEngine
      *
      * @param string $key Identifier for the data
      * @param int $offset How much to increment
-     * @return bool|int New incremented value, false otherwise
+     * @return int|false New incremented value, false otherwise
      */
     public function increment($key, $offset = 1)
     {
@@ -178,7 +177,7 @@ class RedisEngine extends CacheEngine
 
         $value = (int)$this->_Redis->incrBy($key, $offset);
         if ($duration > 0) {
-            $this->_Redis->setTimeout($key, $duration);
+            $this->_Redis->expire($key, $duration);
         }
 
         return $value;
@@ -189,7 +188,7 @@ class RedisEngine extends CacheEngine
      *
      * @param string $key Identifier for the data
      * @param int $offset How much to subtract
-     * @return bool|int New decremented value, false otherwise
+     * @return int|false New decremented value, false otherwise
      */
     public function decrement($key, $offset = 1)
     {
@@ -198,7 +197,7 @@ class RedisEngine extends CacheEngine
 
         $value = (int)$this->_Redis->decrBy($key, $offset);
         if ($duration > 0) {
-            $this->_Redis->setTimeout($key, $duration);
+            $this->_Redis->expire($key, $duration);
         }
 
         return $value;
@@ -214,7 +213,7 @@ class RedisEngine extends CacheEngine
     {
         $key = $this->_key($key);
 
-        return $this->_Redis->delete($key) > 0;
+        return $this->_Redis->del($key) > 0;
     }
 
     /**
@@ -228,14 +227,27 @@ class RedisEngine extends CacheEngine
         if ($check) {
             return true;
         }
-        $keys = $this->_Redis->getKeys($this->_config['prefix'] . '*');
 
-        $result = [];
-        foreach ($keys as $key) {
-            $result[] = $this->_Redis->delete($key) > 0;
+        $this->_Redis->setOption(Redis::OPT_SCAN, Redis::SCAN_RETRY);
+
+        $isAllDeleted = true;
+        $iterator = null;
+        $pattern = $this->_config['prefix'] . '*';
+
+        while (true) {
+            $keys = $this->_Redis->scan($iterator, $pattern);
+
+            if ($keys === false) {
+                break;
+            }
+
+            foreach ($keys as $key) {
+                $isDeleted = ($this->_Redis->del($key) > 0);
+                $isAllDeleted = $isAllDeleted && $isDeleted;
+            }
         }
 
-        return !in_array(false, $result);
+        return $isAllDeleted;
     }
 
     /**
@@ -245,7 +257,7 @@ class RedisEngine extends CacheEngine
      * @param string $key Identifier for the data.
      * @param mixed $value Data to be cached.
      * @return bool True if the data was successfully cached, false on failure.
-     * @link https://github.com/phpredis/phpredis#setnx
+     * @link https://github.com/phpredis/phpredis#set
      */
     public function add($key, $value)
     {
@@ -256,9 +268,8 @@ class RedisEngine extends CacheEngine
             $value = serialize($value);
         }
 
-        // setnx() doesn't have an expiry option, so follow up with an expiry
-        if ($this->_Redis->setnx($key, $value)) {
-            return $this->_Redis->setTimeout($key, $duration);
+        if ($this->_Redis->set($key, $value, ['nx', 'ex' => $duration])) {
+            return true;
         }
 
         return false;
@@ -269,7 +280,7 @@ class RedisEngine extends CacheEngine
      * If the group initial value was not found, then it initializes
      * the group accordingly.
      *
-     * @return array
+     * @return string[]
      */
     public function groups()
     {

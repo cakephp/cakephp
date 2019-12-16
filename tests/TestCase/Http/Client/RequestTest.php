@@ -42,6 +42,7 @@ class RequestTest extends TestCase
         $this->assertEquals('application/json', $request->getHeaderLine('Content-Type'));
         $this->assertEquals(json_encode($data), $request->body());
     }
+
     /**
      * @param array $headers The HTTP headers to set.
      * @param array|string|null $data The request body to use.
@@ -58,6 +59,7 @@ class RequestTest extends TestCase
         $this->assertEquals('application/json', $request->getHeaderLine('Content-Type'));
         $this->assertEquals(json_encode($data), $request->body());
     }
+
     /**
      * @dataProvider additionProvider
      */
@@ -233,7 +235,7 @@ class RequestTest extends TestCase
         $data = [
             'a' => 'b',
             'c' => 'd',
-            'e' => ['f', 'g']
+            'e' => ['f', 'g'],
         ];
         $request->body($data);
         $this->assertEquals('application/x-www-form-urlencoded', $request->getHeaderLine('content-type'));
@@ -283,7 +285,7 @@ class RequestTest extends TestCase
 
             $result = $request->header([
                 'Connection' => 'close',
-                'user-agent' => 'CakePHP'
+                'user-agent' => 'CakePHP',
             ]);
             $this->assertSame($result, $request, 'Should return self');
 

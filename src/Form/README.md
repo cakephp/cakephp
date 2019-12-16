@@ -55,9 +55,9 @@ You can always define additional public methods as you need as well.
 ```php
 $contact = new ContactForm();
 $success = $contact->execute($data);
-$errors = $contact->errors();
+$errors = $contact->getErrors();
 ```
 
 ## Documentation
 
-Please make sure you check the [official documentation](https://book.cakephp.org/3.0/en/core-libraries/form.html)
+Please make sure you check the [official documentation](https://book.cakephp.org/3/en/core-libraries/form.html)

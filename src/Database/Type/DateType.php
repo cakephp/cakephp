@@ -14,12 +14,13 @@
  */
 namespace Cake\Database\Type;
 
-use Cake\Database\Driver;
 use DateTime;
 
+/**
+ * Class DateType
+ */
 class DateType extends DateTimeType
 {
-
     /**
      * The class to use for representing date objects
      *
@@ -91,7 +92,7 @@ class DateType extends DateTimeType
      */
     protected function _parseValue($value)
     {
-        /* @var \Cake\I18n\Time $class */
+        /** @var \Cake\I18n\Time $class */
         $class = $this->_className;
 
         return $class::parseDate($value, $this->_localeFormat);

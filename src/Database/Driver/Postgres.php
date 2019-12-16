@@ -18,9 +18,11 @@ use Cake\Database\Dialect\PostgresDialectTrait;
 use Cake\Database\Driver;
 use PDO;
 
+/**
+ * Class Postgres
+ */
 class Postgres extends Driver
 {
-
     use PostgresDialectTrait;
 
     /**
@@ -56,7 +58,7 @@ class Postgres extends Driver
         $config['flags'] += [
             PDO::ATTR_PERSISTENT => $config['persistent'],
             PDO::ATTR_EMULATE_PREPARES => false,
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
         if (empty($config['unix_socket'])) {
             $dsn = "pgsql:host={$config['host']};port={$config['port']};dbname={$config['database']}";
@@ -92,7 +94,7 @@ class Postgres extends Driver
      */
     public function enabled()
     {
-        return in_array('pgsql', PDO::getAvailableDrivers());
+        return in_array('pgsql', PDO::getAvailableDrivers(), true);
     }
 
     /**

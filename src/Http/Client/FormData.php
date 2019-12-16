@@ -25,7 +25,6 @@ use finfo;
  */
 class FormData implements Countable
 {
-
     /**
      * Boundary marker.
      *
@@ -100,12 +99,6 @@ class FormData implements Countable
         if (is_array($value)) {
             $this->addRecursive($name, $value);
         } elseif (is_resource($value)) {
-            $this->addFile($name, $value);
-        } elseif (is_string($value) && strlen($value) && $value[0] === '@') {
-            deprecationWarning(
-                'Using the @ syntax for file uploads is not safe and is deprecated. ' .
-                'Instead you should use file handles.'
-            );
             $this->addFile($name, $value);
         } elseif ($name instanceof FormDataPart && $value === null) {
             $this->_hasComplexPart = true;
@@ -237,7 +230,7 @@ class FormData implements Countable
             return 'application/x-www-form-urlencoded';
         }
 
-        return 'multipart/form-data; boundary="' . $this->boundary() . '"';
+        return 'multipart/form-data; boundary=' . $this->boundary();
     }
 
     /**
@@ -256,7 +249,7 @@ class FormData implements Countable
                 $out .= (string)$part;
                 $out .= "\r\n";
             }
-            $out .= "--$boundary--\r\n\r\n";
+            $out .= "--$boundary--\r\n";
 
             return $out;
         }
@@ -269,5 +262,5 @@ class FormData implements Countable
     }
 }
 
-// @deprecated Add backwards compat alias.
+// @deprecated 3.4.0 Add backwards compat alias.
 class_alias('Cake\Http\Client\FormData', 'Cake\Network\Http\FormData');

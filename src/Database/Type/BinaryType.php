@@ -69,7 +69,7 @@ class BinaryType extends Type implements TypeInterface
     /**
      * Convert binary into resource handles
      *
-     * @param null|string|resource $value The value to convert.
+     * @param resource|string|null $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return resource|null
      * @throws \Cake\Core\Exception\Exception
@@ -79,7 +79,11 @@ class BinaryType extends Type implements TypeInterface
         if ($value === null) {
             return null;
         }
-        if (is_string($value) && $driver instanceof Sqlserver) {
+        if (
+            is_string($value)
+            && $driver instanceof Sqlserver
+            && version_compare(PHP_VERSION, '7.0', '<')
+        ) {
             $value = pack('H*', $value);
         }
         if (is_string($value)) {
@@ -104,7 +108,7 @@ class BinaryType extends Type implements TypeInterface
     }
 
     /**
-     * Marshalls flat data into PHP objects.
+     * Marshals flat data into PHP objects.
      *
      * Most useful for converting request data into PHP objects
      * that make sense for the rest of the ORM/Database layers.

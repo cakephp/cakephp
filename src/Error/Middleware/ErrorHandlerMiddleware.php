@@ -30,8 +30,6 @@ use Throwable;
  *
  * Traps exceptions and converts them into HTML or content-type appropriate
  * error pages using the CakePHP ExceptionRenderer.
- *
- * @mixin \Cake\Core\InstanceConfigTrait
  */
 class ErrorHandlerMiddleware
 {
@@ -113,7 +111,7 @@ class ErrorHandlerMiddleware
      */
     public function handleException($exception, $request, $response)
     {
-        $renderer = $this->getRenderer($exception);
+        $renderer = $this->getRenderer($exception, $request);
         try {
             $res = $renderer->render();
             $this->logException($request, $exception);
@@ -148,10 +146,11 @@ class ErrorHandlerMiddleware
      * Get a renderer instance
      *
      * @param \Exception $exception The exception being rendered.
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request.
      * @return \Cake\Error\ExceptionRendererInterface The exception renderer.
      * @throws \Exception When the renderer class cannot be found.
      */
-    protected function getRenderer($exception)
+    protected function getRenderer($exception, $request)
     {
         if (!$this->exceptionRenderer) {
             $this->exceptionRenderer = $this->getConfig('exceptionRenderer') ?: ExceptionRenderer::class;
@@ -171,11 +170,11 @@ class ErrorHandlerMiddleware
                 ));
             }
 
-            return new $class($exception);
+            return new $class($exception, $request);
         }
         $factory = $this->exceptionRenderer;
 
-        return $factory($exception);
+        return $factory($exception, $request);
     }
 
     /**
@@ -209,10 +208,34 @@ class ErrorHandlerMiddleware
      */
     protected function getMessage($request, $exception)
     {
+        $message = $this->getMessageForException($exception);
+
+        $message .= "\nRequest URL: " . $request->getRequestTarget();
+        $referer = $request->getHeaderLine('Referer');
+        if ($referer) {
+            $message .= "\nReferer URL: " . $referer;
+        }
+        $message .= "\n\n";
+
+        return $message;
+    }
+
+    /**
+     * Generate the message for the exception
+     *
+     * @param \Exception $exception The exception to log a message for.
+     * @param bool $isPrevious False for original exception, true for previous
+     * @return string Error message
+     */
+    protected function getMessageForException($exception, $isPrevious = false)
+    {
         $message = sprintf(
-            '[%s] %s',
+            '%s[%s] %s (%s:%s)',
+            $isPrevious ? "\nCaused by: " : '',
             get_class($exception),
-            $exception->getMessage()
+            $exception->getMessage(),
+            $exception->getFile(),
+            $exception->getLine()
         );
         $debug = Configure::read('debug');
 
@@ -222,13 +245,14 @@ class ErrorHandlerMiddleware
                 $message .= "\nException Attributes: " . var_export($exception->getAttributes(), true);
             }
         }
-        $message .= "\nRequest URL: " . $request->getRequestTarget();
-        $referer = $request->getHeaderLine('Referer');
-        if ($referer) {
-            $message .= "\nReferer URL: " . $referer;
-        }
+
         if ($this->getConfig('trace')) {
-            $message .= "\nStack Trace:\n" . $exception->getTraceAsString() . "\n\n";
+            $message .= "\n" . $exception->getTraceAsString();
+        }
+
+        $previous = $exception->getPrevious();
+        if ($previous) {
+            $message .= $this->getMessageForException($previous, true);
         }
 
         return $message;

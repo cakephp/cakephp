@@ -27,7 +27,6 @@ use Cake\Routing\Router;
  */
 class RedirectRoute extends Route
 {
-
     /**
      * A Response object
      *
@@ -88,7 +87,7 @@ class RedirectRoute extends Route
                     }
                 }
             }
-            $redirect = Router::reverse($redirect);
+            $redirect = Router::reverseToArray($redirect);
         }
         $status = 301;
         if (isset($this->options['status']) && ($this->options['status'] >= 300 && $this->options['status'] < 400)) {
@@ -107,5 +106,18 @@ class RedirectRoute extends Route
     public function match(array $url, array $context = [])
     {
         return false;
+    }
+
+    /**
+     * Sets the HTTP status
+     *
+     * @param int $status The status code for this route
+     * @return $this
+     */
+    public function setStatus($status)
+    {
+        $this->options['status'] = $status;
+
+        return $this;
     }
 }

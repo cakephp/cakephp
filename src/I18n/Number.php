@@ -21,24 +21,31 @@ use NumberFormatter;
  *
  * Methods to make numbers more readable.
  *
- * @link https://book.cakephp.org/3.0/en/core-libraries/number.html
+ * @link https://book.cakephp.org/3/en/core-libraries/number.html
  */
 class Number
 {
-
     /**
      * Default locale
-     *
-     * @var string
      */
     const DEFAULT_LOCALE = 'en_US';
 
     /**
      * Format type to format as currency
-     *
-     * @var string
      */
     const FORMAT_CURRENCY = 'currency';
+
+    /**
+     * Format type to format as currency, accounting style (negative numbers in parentheses)
+     */
+    const FORMAT_CURRENCY_ACCOUNTING = 'currency_accounting';
+
+    /**
+     * ICU Constant for accounting format; not yet widely supported by INTL library.
+     * This will be able to go away once CakePHP minimum PHP requirement is 7.5 or higher.
+     * See UNUM_CURRENCY_ACCOUNTING in https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/unum_8h.html
+     */
+    const CURRENCY_ACCOUNTING = 12;
 
     /**
      * A list of number formatters indexed by locale and type
@@ -55,6 +62,13 @@ class Number
     protected static $_defaultCurrency;
 
     /**
+     * Default currency format used by Number::currency()
+     *
+     * @var string
+     */
+    protected static $_defaultCurrencyFormat;
+
+    /**
      * Formats a number with a level of precision.
      *
      * Options:
@@ -65,7 +79,7 @@ class Number
      * @param int $precision The precision of the returned number.
      * @param array $options Additional options
      * @return string Formatted float.
-     * @link https://book.cakephp.org/3.0/en/core-libraries/number.html#formatting-floating-point-numbers
+     * @link https://book.cakephp.org/3/en/core-libraries/number.html#formatting-floating-point-numbers
      */
     public static function precision($value, $precision = 3, array $options = [])
     {
@@ -79,7 +93,7 @@ class Number
      *
      * @param int $size Size in bytes
      * @return string Human readable size
-     * @link https://book.cakephp.org/3.0/en/core-libraries/number.html#interacting-with-human-readable-values
+     * @link https://book.cakephp.org/3/en/core-libraries/number.html#interacting-with-human-readable-values
      */
     public static function toReadableSize($size)
     {
@@ -109,16 +123,16 @@ class Number
      * @param int $precision The precision of the returned number
      * @param array $options Options
      * @return string Percentage string
-     * @link https://book.cakephp.org/3.0/en/core-libraries/number.html#formatting-percentages
+     * @link https://book.cakephp.org/3/en/core-libraries/number.html#formatting-percentages
      */
     public static function toPercentage($value, $precision = 2, array $options = [])
     {
-        $options += ['multiply' => false];
-        if ($options['multiply']) {
-            $value *= 100;
+        $options += ['multiply' => false, 'type' => NumberFormatter::PERCENT];
+        if (!$options['multiply']) {
+            $value /= 100;
         }
 
-        return static::precision($value, $precision, $options) . '%';
+        return static::precision($value, $precision, $options);
     }
 
     /**
@@ -128,7 +142,7 @@ class Number
      *
      * - `places` - Minimum number or decimals to use, e.g 0
      * - `precision` - Maximum Number of decimal places to use, e.g. 2
-     * - `pattern` - An ICU number pattern to use for formatting the number. e.g #,###.00
+     * - `pattern` - An ICU number pattern to use for formatting the number. e.g #,##0.00
      * - `locale` - The locale name to use for formatting the number, e.g. fr_FR
      * - `before` - The string to place before whole numbers, e.g. '['
      * - `after` - The string to place after decimal numbers, e.g. ']'
@@ -204,7 +218,7 @@ class Number
      * - `zero` - The text to use for zero values, can be a string or a number. e.g. 0, 'Free!'
      * - `places` - Number of decimal places to use. e.g. 2
      * - `precision` - Maximum Number of decimal places to use, e.g. 2
-     * - `pattern` - An ICU number pattern to use for formatting the number. e.g #,###.00
+     * - `pattern` - An ICU number pattern to use for formatting the number. e.g #,##0.00
      * - `useIntlCode` - Whether or not to replace the currency symbol with the international
      *   currency code.
      *
@@ -216,13 +230,13 @@ class Number
     public static function currency($value, $currency = null, array $options = [])
     {
         $value = (float)$value;
-        $currency = $currency ?: static::defaultCurrency();
+        $currency = $currency ?: static::getDefaultCurrency();
 
         if (isset($options['zero']) && !$value) {
             return $options['zero'];
         }
 
-        $formatter = static::formatter(['type' => static::FORMAT_CURRENCY] + $options);
+        $formatter = static::formatter(['type' => static::getDefaultCurrencyFormat()] + $options);
         $abs = abs($value);
         if (!empty($options['fractionSymbol']) && $abs > 0 && $abs < 1) {
             $value *= 100;
@@ -238,30 +252,89 @@ class Number
     }
 
     /**
-     * Getter/setter for default currency
+     * Getter/setter for default currency. This behavior is *deprecated* and will be
+     * removed in future versions of CakePHP.
      *
-     * @param string|bool|null $currency Default currency string to be used by currency()
+     * @deprecated 3.9 Use getDefaultCurrency() and setDefaultCurrency()
+     * @param string|false|null $currency Default currency string to be used by currency()
      * if $currency argument is not provided. If boolean false is passed, it will clear the
      * currently stored value
      * @return string|null Currency
      */
     public static function defaultCurrency($currency = null)
     {
-        if (!empty($currency)) {
-            return self::$_defaultCurrency = $currency;
-        }
+        deprecationWarning(
+            'Number::defaultCurrency() is deprecated. ' .
+            'Use Number::setDefaultCurrency()/getDefaultCurrency() instead.'
+        );
 
         if ($currency === false) {
-            return self::$_defaultCurrency = null;
+            static::setDefaultCurrency(null);
+
+            // This doesn't seem like a useful result to return, but it's what the old version did.
+            // Retaining it for backward compatibility.
+            return null;
+        } elseif ($currency !== null) {
+            static::setDefaultCurrency($currency);
         }
 
-        if (empty(self::$_defaultCurrency)) {
+        return static::getDefaultCurrency();
+    }
+
+    /**
+     * Getter for default currency
+     *
+     * @return string Currency
+     */
+    public static function getDefaultCurrency()
+    {
+        if (static::$_defaultCurrency === null) {
             $locale = ini_get('intl.default_locale') ?: static::DEFAULT_LOCALE;
             $formatter = new NumberFormatter($locale, NumberFormatter::CURRENCY);
-            self::$_defaultCurrency = $formatter->getTextAttribute(NumberFormatter::CURRENCY_CODE);
+            static::$_defaultCurrency = $formatter->getTextAttribute(NumberFormatter::CURRENCY_CODE);
         }
 
-        return self::$_defaultCurrency;
+        return static::$_defaultCurrency;
+    }
+
+    /**
+     * Setter for default currency
+     *
+     * @param string|null $currency Default currency string to be used by currency()
+     * if $currency argument is not provided. If null is passed, it will clear the
+     * currently stored value
+     * @return void
+     */
+    public static function setDefaultCurrency($currency = null)
+    {
+        static::$_defaultCurrency = $currency;
+    }
+
+    /**
+     * Getter for default currency format
+     *
+     * @return string Currency Format
+     */
+    public static function getDefaultCurrencyFormat()
+    {
+        if (static::$_defaultCurrencyFormat === null) {
+            static::$_defaultCurrencyFormat = static::FORMAT_CURRENCY;
+        }
+
+        return static::$_defaultCurrencyFormat;
+    }
+
+    /**
+     * Setter for default currency format
+     *
+     * @param string|null $currencyFormat Default currency format to be used by currency()
+     * if $currencyFormat argument is not provided. If null is passed, it will clear the
+     * currently stored value
+     * @return void
+     */
+    public static function setDefaultCurrencyFormat($currencyFormat = null)
+    {
+        static::$_defaultCurrencyFormat = $currencyFormat;
     }
 
     /**
@@ -277,7 +350,7 @@ class Number
      *    numbers representing money or a NumberFormatter constant.
      * - `places` - Number of decimal places to use. e.g. 2
      * - `precision` - Maximum Number of decimal places to use, e.g. 2
-     * - `pattern` - An ICU number pattern to use for formatting the number. e.g #,###.00
+     * - `pattern` - An ICU number pattern to use for formatting the number. e.g #,##0.00
      * - `useIntlCode` - Whether or not to replace the currency symbol with the international
      *   currency code.
      *
@@ -297,6 +370,12 @@ class Number
             $type = $options['type'];
             if ($options['type'] === static::FORMAT_CURRENCY) {
                 $type = NumberFormatter::CURRENCY;
+            } elseif ($options['type'] === static::FORMAT_CURRENCY_ACCOUNTING) {
+                if (defined('NumberFormatter::CURRENCY_ACCOUNTING')) {
+                    $type = NumberFormatter::CURRENCY_ACCOUNTING;
+                } else {
+                    $type = static::CURRENCY_ACCOUNTING;
+                }
             }
         }
 
@@ -304,13 +383,14 @@ class Number
             static::$_formatters[$locale][$type] = new NumberFormatter($locale, $type);
         }
 
+        /** @var \NumberFormatter $formatter */
         $formatter = static::$_formatters[$locale][$type];
 
         $options = array_intersect_key($options, [
             'places' => null,
             'precision' => null,
             'pattern' => null,
-            'useIntlCode' => null
+            'useIntlCode' => null,
         ]);
         if (empty($options)) {
             return $formatter;

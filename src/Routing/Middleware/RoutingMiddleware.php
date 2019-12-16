@@ -15,9 +15,8 @@
 namespace Cake\Routing\Middleware;
 
 use Cake\Cache\Cache;
-use Cake\Core\Configure;
+use Cake\Core\HttpApplicationInterface;
 use Cake\Core\PluginApplicationInterface;
-use Cake\Http\BaseApplication;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\Runner;
 use Cake\Routing\Exception\RedirectException;
@@ -40,7 +39,7 @@ class RoutingMiddleware
     /**
      * The application that will have its routing hook invoked.
      *
-     * @var \Cake\Http\BaseApplication
+     * @var \Cake\Core\HttpApplicationInterface|null
      */
     protected $app;
 
@@ -48,18 +47,24 @@ class RoutingMiddleware
      * The cache configuration name to use for route collection caching,
      * null to disable caching
      *
-     * @var string
+     * @var string|null
      */
     protected $cacheConfig;
 
     /**
      * Constructor
      *
-     * @param \Cake\Http\BaseApplication $app The application instance that routes are defined on.
+     * @param \Cake\Core\HttpApplicationInterface|null $app The application instance that routes are defined on.
      * @param string|null $cacheConfig The cache config name to use or null to disable routes cache
      */
-    public function __construct(BaseApplication $app = null, $cacheConfig = null)
+    public function __construct(HttpApplicationInterface $app = null, $cacheConfig = null)
     {
+        if ($app === null) {
+            deprecationWarning(
+                'RoutingMiddleware should be passed an application instance. ' .
+                'Failing to do so can cause plugin routes to not behave correctly.'
+            );
+        }
         $this->app = $app;
         $this->cacheConfig = $cacheConfig;
     }
@@ -125,7 +130,6 @@ class RoutingMiddleware
      * @param \Psr\Http\Message\ResponseInterface $response The response.
      * @param callable $next The next middleware to call.
      * @return \Psr\Http\Message\ResponseInterface A response.
-     * @throws \Cake\Routing\InvalidArgumentException
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
     {
@@ -149,7 +153,7 @@ class RoutingMiddleware
         } catch (RedirectException $e) {
             return new RedirectResponse(
                 $e->getMessage(),
-                $e->getCode(),
+                (int)$e->getCode(),
                 $response->getHeaders()
             );
         }

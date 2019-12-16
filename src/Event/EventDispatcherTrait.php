@@ -19,12 +19,11 @@ namespace Cake\Event;
  */
 trait EventDispatcherTrait
 {
-
     /**
      * Instance of the Cake\Event\EventManager this object is using
      * to dispatch inner events.
      *
-     * @var \Cake\Event\EventManager
+     * @var \Cake\Event\EventManagerInterface|\Cake\Event\EventManager
      */
     protected $_eventManager;
 

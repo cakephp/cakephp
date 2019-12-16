@@ -27,38 +27,37 @@ use Cake\Http\ServerRequest;
  *
  * ### Using Basic auth
  *
- * In your controller's components array, add auth + the required config
+ * Load `AuthComponent` in your controller's `initialize()` and add 'Basic' in 'authenticate' key
  * ```
- *  public $components = [
- *      'Auth' => [
- *          'authenticate' => ['Basic']
- *      ]
- *  ];
+ *  $this->loadComponent('Auth', [
+ *      'authenticate' => ['Basic']
+ *      'storage' => 'Memory',
+ *      'unauthorizedRedirect' => false,
+ *  ]);
  * ```
  *
- * You should also set `AuthComponent::$sessionKey = false;` in your AppController's
- * beforeFilter() to prevent CakePHP from sending a session cookie to the client.
+ * You should set `storage` to `Memory` to prevent CakePHP from sending a
+ * session cookie to the client.
  *
- * Since HTTP Basic Authentication is stateless you don't need a login() action
+ * You should set `unauthorizedRedirect` to `false`. This causes `AuthComponent` to
+ * throw a `ForbiddenException` exception instead of redirecting to another page.
+ *
+ * Since HTTP Basic Authentication is stateless you don't need call `setUser()`
  * in your controller. The user credentials will be checked on each request. If
  * valid credentials are not provided, required authentication headers will be sent
  * by this authentication provider which triggers the login dialog in the browser/client.
  *
- * You may also want to use `$this->Auth->unauthorizedRedirect = false;`.
- * By default, unauthorized users are redirected to the referrer URL,
- * `AuthComponent::$loginAction`, or '/'. If unauthorizedRedirect is set to
- * false, a ForbiddenException exception is thrown instead of redirecting.
+ * @see https://book.cakephp.org/3/en/controllers/components/authentication.html
  */
 class BasicAuthenticate extends BaseAuthenticate
 {
-
     /**
      * Authenticate a user using HTTP auth. Will use the configured User model and attempt a
      * login using HTTP auth.
      *
      * @param \Cake\Http\ServerRequest $request The request to authenticate with.
      * @param \Cake\Http\Response $response The response to add headers to.
-     * @return mixed Either false on failure, or an array of user data on success.
+     * @return array|false Either false on failure, or an array of user data on success.
      */
     public function authenticate(ServerRequest $request, Response $response)
     {
@@ -69,7 +68,7 @@ class BasicAuthenticate extends BaseAuthenticate
      * Get a user based on information in the request. Used by cookie-less auth for stateless clients.
      *
      * @param \Cake\Http\ServerRequest $request Request object.
-     * @return mixed Either false or an array of user information
+     * @return array|false Either false or an array of user information
      */
     public function getUser(ServerRequest $request)
     {
@@ -102,14 +101,14 @@ class BasicAuthenticate extends BaseAuthenticate
      * Generate the login headers
      *
      * @param \Cake\Http\ServerRequest $request Request object.
-     * @return array Headers for logging in.
+     * @return string[] Headers for logging in.
      */
     public function loginHeaders(ServerRequest $request)
     {
         $realm = $this->getConfig('realm') ?: $request->getEnv('SERVER_NAME');
 
         return [
-            'WWW-Authenticate' => sprintf('Basic realm="%s"', $realm)
+            'WWW-Authenticate' => sprintf('Basic realm="%s"', $realm),
         ];
     }
 }

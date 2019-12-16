@@ -7,12 +7,13 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- * @link          https://book.cakephp.org/3.0/en/development/errors.html#error-exception-configuration
+ * @link          https://book.cakephp.org/3/en/development/errors.html#error-exception-configuration
  * @since         3.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Console\Exception;
 
+use Cake\Console\Command;
 use Cake\Core\Exception\Exception;
 
 /**
@@ -21,4 +22,10 @@ use Cake\Core\Exception\Exception;
  */
 class ConsoleException extends Exception
 {
+    /**
+     * Default exception code
+     *
+     * @var int
+     */
+    protected $_defaultCode = Command::CODE_ERROR;
 }

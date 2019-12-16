@@ -28,7 +28,6 @@ use Cake\Datasource\Exception\MissingDatasourceConfigException;
  */
 class ConnectionManager
 {
-
     use StaticConfigTrait {
         setConfig as protected _setConfig;
         parseDsn as protected _parseDsn;
@@ -44,7 +43,7 @@ class ConnectionManager
     /**
      * An array mapping url schemes to fully qualified driver class names
      *
-     * @return array
+     * @return string[]
      */
     protected static $_dsnClassMap = [
         'mysql' => 'Cake\Database\Driver\Mysql',

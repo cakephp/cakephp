@@ -22,7 +22,6 @@ use Cake\Datasource\ConnectionInterface;
  */
 class CachedCollection extends Collection
 {
-
     /**
      * The name of the cache config key to use for caching table metadata,
      * of false if disabled.
@@ -77,7 +76,13 @@ class CachedCollection extends Collection
      */
     public function cacheKey($name)
     {
-        return $this->_connection->configName() . '_' . $name;
+        $cachePrefix = $this->_connection->configName();
+        $config = $this->_connection->config();
+        if (isset($config['cacheKeyPrefix'])) {
+            $cachePrefix = $config['cacheKeyPrefix'];
+        }
+
+        return $cachePrefix . '_' . $name;
     }
 
     /**

@@ -55,20 +55,19 @@ use Cake\Core\Configure;
  */
 class JsonView extends SerializedView
 {
-
     /**
      * JSON layouts are located in the json sub directory of `Layouts/`
      *
      * @var string
      */
-    public $layoutPath = 'json';
+    protected $layoutPath = 'json';
 
     /**
      * JSON views are located in the 'json' sub directory for controllers' views.
      *
      * @var string
      */
-    public $subDir = 'json';
+    protected $subDir = 'json';
 
     /**
      * Response type.

@@ -27,7 +27,6 @@ use Iterator;
  */
 class FilterIterator extends Collection
 {
-
     /**
      * The callback used to filter the elements in this collection
      *
@@ -43,7 +42,7 @@ class FilterIterator extends Collection
      * in the current iteration, the key of the element and the passed $items iterator
      * as arguments, in that order.
      *
-     * @param \Iterator $items The items to be filtered.
+     * @param \Traversable|array $items The items to be filtered.
      * @param callable $callback Callback.
      */
     public function __construct($items, callable $callback)
@@ -67,6 +66,7 @@ class FilterIterator extends Collection
      */
     public function unwrap()
     {
+        /** @var \IteratorIterator $filter */
         $filter = $this->getInnerIterator();
         $iterator = $filter->getInnerIterator();
 

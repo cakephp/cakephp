@@ -80,7 +80,7 @@ class TestCaseTest extends TestCase
         $manager->trackEvents(true);
 
         $event = new Event('my.event', $this, [
-            'some' => 'data'
+            'some' => 'data',
         ]);
         $manager->dispatch($event);
         $this->assertEventFiredWith('my.event', 'some', 'data');
@@ -90,7 +90,7 @@ class TestCaseTest extends TestCase
         $manager->trackEvents(true);
 
         $event = new Event('my.event', $this, [
-            'other' => 'data'
+            'other' => 'data',
         ]);
         $manager->dispatch($event);
         $this->assertEventFiredWith('my.event', 'other', 'data', $manager);
@@ -440,7 +440,7 @@ class TestCaseTest extends TestCase
     public function testGetMockForModelWithPlugin()
     {
         static::setAppNamespace();
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $TestPluginComment = $this->getMockForModel('TestPlugin.TestPluginComments');
 
         $result = $this->getTableLocator()->get('TestPlugin.TestPluginComments');
@@ -465,6 +465,7 @@ class TestCaseTest extends TestCase
         $TestPluginAuthors = $this->getMockForModel('TestPlugin.Authors', ['doSomething']);
         $this->assertInstanceOf('TestPlugin\Model\Table\AuthorsTable', $TestPluginAuthors);
         $this->assertEquals('TestPlugin\Model\Entity\Author', $TestPluginAuthors->getEntityClass());
+        $this->clearPlugins();
     }
 
     /**
@@ -494,6 +495,26 @@ class TestCaseTest extends TestCase
         $entity = new Entity([]);
         $this->assertTrue($Mock->save($entity));
         $this->assertFalse($Mock->save($entity));
+
+        $allMethodsStubs = $this->getMockForModel(
+            'Table',
+            [],
+            ['alias' => 'Comments', 'className' => '\Cake\ORM\Table']
+        );
+        $result = $this->getTableLocator()->get('Comments');
+        $this->assertInstanceOf('Cake\ORM\Table', $result);
+        $this->assertEmpty([], $allMethodsStubs->getAlias());
+
+        $allMethodsMocks = $this->getMockForModel(
+            'Table',
+            null,
+            ['alias' => 'Comments', 'className' => '\Cake\ORM\Table']
+        );
+        $result = $this->getTableLocator()->get('Comments');
+        $this->assertInstanceOf('Cake\ORM\Table', $result);
+        $this->assertEquals('Comments', $allMethodsMocks->getAlias());
+
+        $this->assertNotEquals($allMethodsStubs, $allMethodsMocks);
     }
 
     /**

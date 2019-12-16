@@ -22,9 +22,11 @@ use Cake\ORM\Behavior;
 use DateTime;
 use UnexpectedValueException;
 
+/**
+ * Class TimestampBehavior
+ */
 class TimestampBehavior extends Behavior
 {
-
     /**
      * Default config
      *
@@ -44,21 +46,21 @@ class TimestampBehavior extends Behavior
         'implementedFinders' => [],
         'implementedMethods' => [
             'timestamp' => 'timestamp',
-            'touch' => 'touch'
+            'touch' => 'touch',
         ],
         'events' => [
             'Model.beforeSave' => [
                 'created' => 'new',
-                'modified' => 'always'
-            ]
+                'modified' => 'always',
+            ],
         ],
-        'refreshTimestamp' => true
+        'refreshTimestamp' => true,
     ];
 
     /**
      * Current timestamp
      *
-     * @var \DateTime
+     * @var \Cake\I18n\Time
      */
     protected $_ts;
 
@@ -101,7 +103,8 @@ class TimestampBehavior extends Behavior
                     sprintf('When should be one of "always", "new" or "existing". The passed value "%s" is invalid', $when)
                 );
             }
-            if ($when === 'always' ||
+            if (
+                $when === 'always' ||
                 ($when === 'new' && $new) ||
                 ($when === 'existing' && !$new)
             ) {
@@ -133,7 +136,7 @@ class TimestampBehavior extends Behavior
      *
      * @param \DateTime|null $ts Timestamp
      * @param bool $refreshTimestamp If true timestamp is refreshed.
-     * @return \DateTime
+     * @return \Cake\I18n\Time
      */
     public function timestamp(DateTime $ts = null, $refreshTimestamp = false)
     {

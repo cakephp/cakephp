@@ -23,12 +23,12 @@ use Throwable;
 
 /**
  * Error Handler provides basic error and exception handling for your application. It captures and
- * handles all unhandled exceptions and errors. Displays helpful framework errors when debug > 1.
+ * handles all unhandled exceptions and errors. Displays helpful framework errors when debug mode is on.
  *
  * ### Uncaught exceptions
  *
- * When debug < 1 a CakeException will render 404 or 500 errors. If an uncaught exception is thrown
- * and it is a type that ErrorHandler does not know about it will be treated as a 500 error.
+ * When debug mode is off a ExceptionRenderer will render 404 or 500 errors. If an uncaught exception is thrown
+ * and it is a type that ExceptionRenderer does not know about it will be treated as a 500 error.
  *
  * ### Implementing application specific exception handling
  *

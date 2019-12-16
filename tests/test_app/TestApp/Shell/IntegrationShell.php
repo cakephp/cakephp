@@ -36,17 +36,18 @@ class IntegrationShell extends Shell
         $parser = new ConsoleOptionParser();
         $argAndOptionParser = (new ConsoleOptionParser())
             ->addArgument('arg', [
-                'required' => true
+                'required' => true,
             ])
             ->addOption('opt', [
-                'short' => 'o'
+                'short' => 'o',
             ]);
 
         $parser
             ->addSubcommand('argsAndOptions', [
-                'parser' => $argAndOptionParser
+                'parser' => $argAndOptionParser,
             ])
-            ->addSubcommand('bridge');
+            ->addSubcommand('bridge')
+            ->addSubcommand('abort_shell');
 
         return $parser;
     }
@@ -84,5 +85,13 @@ class IntegrationShell extends Shell
     {
         $this->out('arg: ' . $this->args[0]);
         $this->out('opt: ' . $this->param('opt'));
+    }
+
+    /**
+     * @throws \Cake\Console\Exception\StopException
+     */
+    public function abortShell()
+    {
+        $this->abort('Shell aborted');
     }
 }

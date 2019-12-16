@@ -26,7 +26,6 @@ use Locale;
  */
 class I18n
 {
-
     /**
      * Default locale
      *
@@ -62,7 +61,7 @@ class I18n
         }
 
         static::$_collection = new TranslatorRegistry(
-            new PackageLocator,
+            new PackageLocator(),
             new FormatterLocator([
                 'sprintf' => function () {
                     return new SprintfFormatter();
@@ -71,7 +70,7 @@ class I18n
                     return new IcuFormatter();
                 },
             ]),
-            new TranslatorFactory,
+            new TranslatorFactory(),
             static::getLocale()
         );
 
@@ -122,6 +121,7 @@ class I18n
      * @param callable|null $loader A callback function or callable class responsible for
      * constructing a translations package instance.
      * @return \Aura\Intl\TranslatorInterface|null The configured translator.
+     * @throws \Aura\Intl\Exception
      */
     public static function translator($name = 'default', $locale = null, callable $loader = null)
     {
@@ -195,6 +195,7 @@ class I18n
      * @param string $name The domain of the translation messages.
      * @param string|null $locale The locale for the translator.
      * @return \Aura\Intl\TranslatorInterface The configured translator.
+     * @throws \Aura\Intl\Exception
      */
     public static function getTranslator($name = 'default', $locale = null)
     {

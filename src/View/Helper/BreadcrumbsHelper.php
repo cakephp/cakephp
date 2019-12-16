@@ -25,7 +25,6 @@ use LogicException;
  */
 class BreadcrumbsHelper extends Helper
 {
-
     use StringTemplateTrait;
 
     /**
@@ -45,8 +44,8 @@ class BreadcrumbsHelper extends Helper
             'wrapper' => '<ul{{attrs}}>{{content}}</ul>',
             'item' => '<li{{attrs}}><a href="{{url}}"{{innerAttrs}}>{{title}}</a></li>{{separator}}',
             'itemWithoutLink' => '<li{{attrs}}><span{{innerAttrs}}>{{title}}</span></li>{{separator}}',
-            'separator' => '<li{{attrs}}><span{{innerAttrs}}>{{separator}}</span></li>'
-        ]
+            'separator' => '<li{{attrs}}><span{{innerAttrs}}>{{separator}}</span></li>',
+        ],
     ];
 
     /**
@@ -142,7 +141,7 @@ class BreadcrumbsHelper extends Helper
      * the link)
      * - *templateVars*: Specific template vars in case you override the templates provided.
      * @return $this
-     * @throws LogicException In case the index is out of bound
+     * @throws \LogicException In case the index is out of bound
      */
     public function insertAt($index, $title, $url = null, array $options = [])
     {
@@ -171,7 +170,7 @@ class BreadcrumbsHelper extends Helper
      * the link)
      * - *templateVars*: Specific template vars in case you override the templates provided.
      * @return $this
-     * @throws LogicException In case the matching crumb can not be found
+     * @throws \LogicException In case the matching crumb can not be found
      */
     public function insertBefore($matchingTitle, $title, $url = null, array $options = [])
     {
@@ -200,7 +199,7 @@ class BreadcrumbsHelper extends Helper
      * the link)
      * - *templateVars*: Specific template vars in case you override the templates provided.
      * @return $this
-     * @throws LogicException In case the matching crumb can not be found.
+     * @throws \LogicException In case the matching crumb can not be found.
      */
     public function insertAfter($matchingTitle, $title, $url = null, array $options = [])
     {
@@ -292,7 +291,7 @@ class BreadcrumbsHelper extends Helper
                 'title' => $title,
                 'url' => $url,
                 'separator' => '',
-                'templateVars' => isset($options['templateVars']) ? $options['templateVars'] : []
+                'templateVars' => isset($options['templateVars']) ? $options['templateVars'] : [],
             ];
 
             if (!$url) {
@@ -309,7 +308,7 @@ class BreadcrumbsHelper extends Helper
         $crumbTrail = $this->formatTemplate('wrapper', [
             'content' => $crumbTrail,
             'attrs' => $templater->formatAttributes($attributes, ['templateVars']),
-            'templateVars' => isset($attributes['templateVars']) ? $attributes['templateVars'] : []
+            'templateVars' => isset($attributes['templateVars']) ? $attributes['templateVars'] : [],
         ]);
 
         return $crumbTrail;

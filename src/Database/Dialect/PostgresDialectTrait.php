@@ -26,7 +26,6 @@ use Cake\Database\SqlDialectTrait;
  */
 trait PostgresDialectTrait
 {
-
     use SqlDialectTrait;
 
     /**
@@ -88,7 +87,7 @@ trait PostgresDialectTrait
         $namespace = 'Cake\Database\Expression';
 
         return [
-            $namespace . '\FunctionExpression' => '_transformFunctionExpression'
+            $namespace . '\FunctionExpression' => '_transformFunctionExpression',
         ];
     }
 
@@ -131,6 +130,9 @@ trait PostgresDialectTrait
                 break;
             case 'NOW':
                 $expression->setName('LOCALTIMESTAMP')->add([' 0 ' => 'literal']);
+                break;
+            case 'RAND':
+                $expression->setName('RANDOM');
                 break;
             case 'DATE_ADD':
                 $expression

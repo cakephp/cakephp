@@ -76,9 +76,8 @@ class ArticlesCell extends \Cake\View\Cell
      */
     public function customTemplateViewBuilder()
     {
-        $this->template = 'derp';
         $this->counter++;
-        $this->viewBuilder()->template('alternate_teaser_list');
+        $this->viewBuilder()->setTemplate('alternate_teaser_list');
     }
 
     /**
@@ -89,7 +88,7 @@ class ArticlesCell extends \Cake\View\Cell
      */
     public function customTemplatePath()
     {
-        $this->viewBuilder()->templatePath('Cell/Articles/Subdir');
+        $this->viewBuilder()->setTemplatePath('Cell/Articles/Subdir');
     }
 
     /**

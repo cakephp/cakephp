@@ -33,14 +33,14 @@ class JsonConfigTest extends TestCase
         'One' => [
             'two' => 'value',
             'three' => [
-                'four' => 'value four'
+                'four' => 'value four',
             ],
             'is_null' => null,
             'bool_false' => false,
             'bool_true' => true,
         ],
         'Asset' => [
-            'timestamp' => 'force'
+            'timestamp' => 'force',
         ],
     ];
 
@@ -137,12 +137,12 @@ class JsonConfigTest extends TestCase
      */
     public function testReadPluginValue()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $engine = new JsonConfig($this->path);
         $result = $engine->read('TestPlugin.load');
         $this->assertArrayHasKey('plugin_load', $result);
 
-        Plugin::unload();
+        $this->clearPlugins();
     }
 
     /**

@@ -28,7 +28,7 @@ class DuplicateBehavior extends Behavior
         ],
         'implementedMethods' => [
             'slugify' => 'slugify',
-        ]
+        ],
     ];
 
     public function findChildren()

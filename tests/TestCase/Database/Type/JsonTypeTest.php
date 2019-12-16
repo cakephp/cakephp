@@ -58,7 +58,7 @@ class JsonTypeTest extends TestCase
     }
 
     /**
-     * Test converting json stirngs to PHP values.
+     * Test converting json strings to PHP values.
      *
      * @return void
      */
@@ -68,13 +68,13 @@ class JsonTypeTest extends TestCase
             'a' => null,
             'b' => json_encode([1, 2, 3]),
             'c' => json_encode('123'),
-            'c' => json_encode(2.3),
+            'd' => json_encode(2.3),
         ];
         $expected = [
             'a' => null,
             'b' => [1, 2, 3],
             'c' => 123,
-            'c' => 2.3,
+            'd' => 2.3,
         ];
         $this->assertEquals(
             $expected,

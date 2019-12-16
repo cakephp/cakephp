@@ -25,14 +25,15 @@ if (!function_exists('h')) {
     /**
      * Convenience method for htmlspecialchars.
      *
-     * @param string|array|object $text Text to wrap through htmlspecialchars. Also works with arrays, and objects.
+     * @param mixed $text Text to wrap through htmlspecialchars. Also works with arrays, and objects.
      *    Arrays will be mapped and have all their elements escaped. Objects will be string cast if they
      *    implement a `__toString` method. Otherwise the class name will be used.
+     *    Other scalar types will be returned unchanged.
      * @param bool $double Encode existing html entities.
      * @param string|null $charset Character set to use when escaping. Defaults to config value in `mb_internal_encoding()`
      * or 'UTF-8'.
-     * @return string|array Wrapped text.
-     * @link https://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#h
+     * @return mixed Wrapped text.
+     * @link https://book.cakephp.org/3/en/core-libraries/global-constants-and-functions.html#h
      */
     function h($text, $double = true, $charset = null)
     {
@@ -51,7 +52,7 @@ if (!function_exists('h')) {
             } else {
                 $text = '(object)' . get_class($text);
             }
-        } elseif (is_bool($text) || is_null($text) || is_int($text)) {
+        } elseif ($text === null || is_scalar($text)) {
             return $text;
         }
 
@@ -63,7 +64,12 @@ if (!function_exists('h')) {
             }
         }
         if (is_string($double)) {
+            deprecationWarning(
+                'Passing charset string for 2nd argument is deprecated. ' .
+                'Use the 3rd argument instead.'
+            );
             $charset = $double;
+            $double = true;
         }
 
         return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, $charset ?: $defaultCharset, $double);
@@ -85,7 +91,7 @@ if (!function_exists('pluginSplit')) {
      * @param bool $dotAppend Set to true if you want the plugin to have a '.' appended to it.
      * @param string|null $plugin Optional default plugin to use if no plugin is found. Defaults to null.
      * @return array Array with 2 indexes. 0 => plugin name, 1 => class name.
-     * @link https://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#pluginSplit
+     * @link https://book.cakephp.org/3/en/core-libraries/global-constants-and-functions.html#pluginSplit
      */
     function pluginSplit($name, $dotAppend = false, $plugin = null)
     {
@@ -135,7 +141,7 @@ if (!function_exists('pr')) {
      *
      * @param mixed $var Variable to print out.
      * @return mixed the same $var that was passed to this function
-     * @link https://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#pr
+     * @link https://book.cakephp.org/3/en/core-libraries/global-constants-and-functions.html#pr
      * @see debug()
      */
     function pr($var)
@@ -164,7 +170,7 @@ if (!function_exists('pj')) {
      * @param mixed $var Variable to print out.
      * @return mixed the same $var that was passed to this function
      * @see pr()
-     * @link https://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#pj
+     * @link https://book.cakephp.org/3/en/core-libraries/global-constants-and-functions.html#pj
      */
     function pj($var)
     {
@@ -188,9 +194,9 @@ if (!function_exists('env')) {
      * environment information.
      *
      * @param string $key Environment variable name.
-     * @param string|null $default Specify a default value in case the environment variable is not defined.
+     * @param string|bool|null $default Specify a default value in case the environment variable is not defined.
      * @return string|bool|null Environment variable setting.
-     * @link https://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#env
+     * @link https://book.cakephp.org/3/en/core-libraries/global-constants-and-functions.html#env
      */
     function env($key, $default = null)
     {
@@ -202,10 +208,8 @@ if (!function_exists('env')) {
             return (strpos((string)env('SCRIPT_URI'), 'https://') === 0);
         }
 
-        if ($key === 'SCRIPT_NAME') {
-            if (env('CGI_MODE') && isset($_ENV['SCRIPT_URL'])) {
-                $key = 'SCRIPT_URL';
-            }
+        if ($key === 'SCRIPT_NAME' && env('CGI_MODE') && isset($_ENV['SCRIPT_URL'])) {
+            $key = 'SCRIPT_URL';
         }
 
         $val = null;

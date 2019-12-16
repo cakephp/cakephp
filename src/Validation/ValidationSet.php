@@ -25,7 +25,6 @@ use IteratorAggregate;
  */
 class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
 {
-
     /**
      * Holds the ValidationRule objects
      *

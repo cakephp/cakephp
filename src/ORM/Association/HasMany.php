@@ -35,7 +35,6 @@ use Traversable;
  */
 class HasMany extends Association
 {
-
     /**
      * Order in which target records should be returned
      *
@@ -60,11 +59,11 @@ class HasMany extends Association
     /**
      * Valid strategies for this type of association
      *
-     * @var array
+     * @var string[]
      */
     protected $_validStrategies = [
         self::STRATEGY_SELECT,
-        self::STRATEGY_SUBQUERY
+        self::STRATEGY_SUBQUERY,
     ];
 
     /**
@@ -110,7 +109,7 @@ class HasMany extends Association
      */
     public function setSaveStrategy($strategy)
     {
-        if (!in_array($strategy, [self::SAVE_APPEND, self::SAVE_REPLACE])) {
+        if (!in_array($strategy, [self::SAVE_APPEND, self::SAVE_REPLACE], true)) {
             $msg = sprintf('Invalid save strategy "%s"', $strategy);
             throw new InvalidArgumentException($msg);
         }
@@ -160,7 +159,7 @@ class HasMany extends Association
      *
      * @param \Cake\Datasource\EntityInterface $entity an entity from the source table
      * @param array $options options to be passed to the save method in the target table
-     * @return bool|\Cake\Datasource\EntityInterface false if $entity could not be saved, otherwise it returns
+     * @return \Cake\Datasource\EntityInterface|false False if $entity could not be saved, otherwise it returns
      * the saved entity
      * @see \Cake\ORM\Table::save()
      * @throws \InvalidArgumentException when the association data cannot be traversed.
@@ -171,7 +170,8 @@ class HasMany extends Association
 
         $isEmpty = in_array($targetEntities, [null, [], '', false], true);
         if ($isEmpty) {
-            if ($entity->isNew() ||
+            if (
+                $entity->isNew() ||
                 $this->getSaveStrategy() !== self::SAVE_REPLACE
             ) {
                 return $entity;
@@ -180,7 +180,8 @@ class HasMany extends Association
             $targetEntities = [];
         }
 
-        if (!is_array($targetEntities) &&
+        if (
+            !is_array($targetEntities) &&
             !($targetEntities instanceof Traversable)
         ) {
             $name = $this->getProperty();
@@ -195,7 +196,8 @@ class HasMany extends Association
 
         $options['_sourceTable'] = $this->getSource();
 
-        if ($this->_saveStrategy === self::SAVE_REPLACE &&
+        if (
+            $this->_saveStrategy === self::SAVE_REPLACE &&
             !$this->_unlinkAssociated($foreignKeyReference, $entity, $this->getTarget(), $targetEntities, $options)
         ) {
             return false;
@@ -357,7 +359,7 @@ class HasMany extends Association
     {
         if (is_bool($options)) {
             $options = [
-                'cleanProperty' => $options
+                'cleanProperty' => $options,
             ];
         } else {
             $options += ['cleanProperty' => true];
@@ -374,9 +376,10 @@ class HasMany extends Association
         $conditions = [
             'OR' => (new Collection($targetEntities))
                 ->map(function ($entity) use ($targetPrimaryKey) {
+                    /** @var \Cake\Datasource\EntityInterface $entity */
                     return $entity->extract($targetPrimaryKey);
                 })
-                ->toList()
+                ->toList(),
         ];
 
         $this->_unlink($foreignKey, $target, $conditions, $options);
@@ -476,24 +479,25 @@ class HasMany extends Association
         $exclusions = new Collection($remainingEntities);
         $exclusions = $exclusions->map(
             function ($ent) use ($primaryKey) {
+                /** @var \Cake\Datasource\EntityInterface $ent */
                 return $ent->extract($primaryKey);
             }
         )
         ->filter(
             function ($v) {
-                return !in_array(null, array_values($v), true);
+                return !in_array(null, $v, true);
             }
         )
-        ->toArray();
+        ->toList();
 
         $conditions = $foreignKeyReference;
 
         if (count($exclusions) > 0) {
             $conditions = [
                 'NOT' => [
-                    'OR' => $exclusions
+                    'OR' => $exclusions,
                 ],
-                $foreignKeyReference
+                $foreignKeyReference,
             ];
         }
 
@@ -689,7 +693,7 @@ class HasMany extends Association
             'strategy' => $this->getStrategy(),
             'associationType' => $this->type(),
             'sort' => $this->getSort(),
-            'finder' => [$this, 'find']
+            'finder' => [$this, 'find'],
         ]);
 
         return $loader->buildEagerLoader($options);

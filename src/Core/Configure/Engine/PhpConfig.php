@@ -30,7 +30,7 @@ use Cake\Core\Exception\Exception;
  * ```
  * <?php
  * return [
- *     'debug' => 0,
+ *     'debug' => false,
  *     'Security' => [
  *         'salt' => 'its-secret'
  *     ],
@@ -44,7 +44,6 @@ use Cake\Core\Exception\Exception;
  */
 class PhpConfig implements ConfigEngineInterface
 {
-
     use FileConfigTrait;
 
     /**
@@ -85,15 +84,20 @@ class PhpConfig implements ConfigEngineInterface
     {
         $file = $this->_getFilePath($key, true);
 
+        $config = null;
+
         $return = include $file;
         if (is_array($return)) {
             return $return;
         }
 
-        if (!isset($config)) {
+        if ($config === null) {
             throw new Exception(sprintf('Config file "%s" did not return an array', $key . '.php'));
         }
-        deprecationWarning('PHP configuration files should not set `$config. Instead return an array.');
+        deprecationWarning(sprintf(
+            'PHP configuration files like "%s" should not set `$config`. Instead return an array.',
+            $key . '.php'
+        ));
 
         return $config;
     }

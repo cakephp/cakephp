@@ -117,7 +117,7 @@ class ComponentTest extends TestCase
     public function testDuplicateComponentInitialize()
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('The "Banana" alias has already been loaded with the following config:');
+        $this->expectExceptionMessage('The "Banana" alias has already been loaded. The `property` key');
         $Collection = new ComponentRegistry();
         $Collection->load('Banana', ['property' => ['closure' => function () {
         }]]);
@@ -156,12 +156,12 @@ class ComponentTest extends TestCase
 
         $expected = [
             'components' => [
-                'Orange'
+                'Orange',
             ],
             'implementedEvents' => [
-                'Controller.startup' => 'startup'
+                'Controller.startup' => 'startup',
             ],
-            '_config' => []
+            '_config' => [],
         ];
         $result = $Component->__debugInfo();
         $this->assertEquals($expected, $result);

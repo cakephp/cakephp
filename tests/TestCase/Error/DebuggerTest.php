@@ -240,7 +240,7 @@ class DebuggerTest extends TestCase
             'file' => __FILE__,
             'line' => __LINE__,
             'description' => 'Error description',
-            'start' => 1
+            'start' => 1,
         ];
         $debugger->outputError($data);
         $result = ob_get_clean();
@@ -257,7 +257,7 @@ class DebuggerTest extends TestCase
     {
         Debugger::addFormat('js', [
             'traceLine' => '{:reference} - <a href="txmt://open?url=file://{:file}' .
-                '&line={:line}">{:path}</a>, line {:line}'
+                '&line={:line}">{:path}</a>, line {:line}',
         ]);
         Debugger::setOutputFormat('js');
 
@@ -287,7 +287,7 @@ class DebuggerTest extends TestCase
             '<file', 'preg:/[^<]+/', '/file',
             '<line', '' . ((int)__LINE__ - 9), '/line',
             'preg:/Undefined variable:\s+foo/',
-            '/error'
+            '/error',
         ];
         $this->assertHtml($expected, $result, true);
     }
@@ -356,26 +356,9 @@ class DebuggerTest extends TestCase
         $result = Debugger::exportVar($View);
         $expected = <<<TEXT
 object(Cake\View\View) {
-	Blocks => object(Cake\View\ViewBlock) {}
-	plugin => null
-	name => ''
 	passedArgs => []
-	helpers => [
-		(int) 0 => 'Html',
-		(int) 1 => 'Form'
-	]
-	templatePath => null
-	template => null
-	layout => 'default'
-	layoutPath => null
-	autoLayout => true
-	subDir => null
-	theme => null
 	hasRendered => false
 	uuids => []
-	request => object(Cake\Http\ServerRequest) {}
-	response => object(Cake\Http\Response) {}
-	elementCache => 'default'
 	viewClass => null
 	viewVars => []
 	Html => object(Cake\View\Helper\HtmlHelper) {}
@@ -384,7 +367,24 @@ object(Cake\View\View) {
 	float => (float) 1.333
 	string => '  '
 	[protected] _helpers => object(Cake\View\HelperRegistry) {}
+	[protected] Blocks => object(Cake\View\ViewBlock) {}
+	[protected] plugin => null
+	[protected] name => ''
+	[protected] helpers => [
+		(int) 0 => 'Html',
+		(int) 1 => 'Form'
+	]
+	[protected] templatePath => null
+	[protected] template => null
+	[protected] layout => 'default'
+	[protected] layoutPath => null
+	[protected] autoLayout => true
 	[protected] _ext => '.ctp'
+	[protected] subDir => ''
+	[protected] theme => null
+	[protected] request => object(Cake\Http\ServerRequest) {}
+	[protected] response => object(Cake\Http\Response) {}
+	[protected] elementCache => 'default'
 	[protected] _passedVars => [
 		(int) 0 => 'viewVars',
 		(int) 1 => 'autoLayout',
@@ -415,7 +415,7 @@ TEXT;
 
         $data = [
             1 => 'Index one',
-            5 => 'Index five'
+            5 => 'Index five',
         ];
         $result = Debugger::exportVar($data);
         $expected = <<<TEXT
@@ -428,8 +428,8 @@ TEXT;
 
         $data = [
             'key' => [
-                'value'
-            ]
+                'value',
+            ],
         ];
         $result = Debugger::exportVar($data, 1);
         $expected = <<<TEXT
@@ -466,7 +466,7 @@ TEXT;
             'null' => null,
             'false' => false,
             'szero' => '0',
-            'zero' => 0
+            'zero' => 0,
         ];
         $result = Debugger::exportVar($data);
         $expected = <<<TEXT
@@ -536,7 +536,7 @@ TEXT;
             ));
 
         $val = [
-            'test' => ['key' => 'val']
+            'test' => ['key' => 'val'],
         ];
         Debugger::log($val, 'debug', 0);
     }
@@ -552,13 +552,13 @@ TEXT;
             [
                 'name' => 'joeseph',
                 'coat' => 'technicolor',
-                'hair_color' => 'brown'
+                'hair_color' => 'brown',
             ],
             [
                 'name' => 'Shaft',
                 'coat' => 'black',
-                'hair' => 'black'
-            ]
+                'hair' => 'black',
+            ],
         ]];
         ob_start();
         Debugger::dump($var);
@@ -640,7 +640,7 @@ TEXT;
         $this->assertRegExp('/^Cake\\\Test\\\TestCase\\\Error\\\DebuggerTest::testTraceExclude/', $result);
 
         $result = Debugger::trace([
-            'exclude' => ['Cake\Test\TestCase\Error\DebuggerTest::testTraceExclude']
+            'exclude' => ['Cake\Test\TestCase\Error\DebuggerTest::testTraceExclude'],
         ]);
         $this->assertNotRegExp('/^Cake\\\Test\\\TestCase\\\Error\\\DebuggerTest::testTraceExclude/', $result);
     }
@@ -733,7 +733,7 @@ EXPECTED;
         Debugger::printVar($value, ['file' => __FILE__, 'line' => __LINE__], true);
         $result = ob_get_clean();
         $expectedHtml = <<<EXPECTED
-<div class="cake-debug-output">
+<div class="cake-debug-output" style="direction:ltr">
 <span><strong>%s</strong> (line <strong>%d</strong>)</span>
 <pre class="cake-debug">
 &#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
@@ -747,7 +747,7 @@ EXPECTED;
         Debugger::printVar('<div>this-is-a-test</div>', ['file' => __FILE__, 'line' => __LINE__], true);
         $result = ob_get_clean();
         $expected = <<<EXPECTED
-<div class="cake-debug-output">
+<div class="cake-debug-output" style="direction:ltr">
 <span><strong>%s</strong> (line <strong>%d</strong>)</span>
 <pre class="cake-debug">
 &#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
@@ -761,7 +761,7 @@ EXPECTED;
         Debugger::printVar('<div>this-is-a-test</div>', [], true);
         $result = ob_get_clean();
         $expected = <<<EXPECTED
-<div class="cake-debug-output">
+<div class="cake-debug-output" style="direction:ltr">
 
 <pre class="cake-debug">
 &#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
@@ -775,7 +775,7 @@ EXPECTED;
         Debugger::printVar('<div>this-is-a-test</div>', ['file' => __FILE__, 'line' => __LINE__]);
         $result = ob_get_clean();
         $expectedHtml = <<<EXPECTED
-<div class="cake-debug-output">
+<div class="cake-debug-output" style="direction:ltr">
 <span><strong>%s</strong> (line <strong>%d</strong>)</span>
 <pre class="cake-debug">
 &#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
@@ -800,7 +800,7 @@ EXPECTED;
         Debugger::printVar('<div>this-is-a-test</div>');
         $result = ob_get_clean();
         $expectedHtml = <<<EXPECTED
-<div class="cake-debug-output">
+<div class="cake-debug-output" style="direction:ltr">
 
 <pre class="cake-debug">
 &#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;

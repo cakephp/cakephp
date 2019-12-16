@@ -20,7 +20,6 @@ use Cake\Http\Response as Base;
  */
 class Response extends Base
 {
-
     /**
      * Stub the send() method so headers and output are not sent.
      *

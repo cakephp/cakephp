@@ -20,7 +20,6 @@ namespace Cake\I18n;
  */
 class PluralRules
 {
-
     /**
      * A map of locale => plurals group used to determine
      * which plural rules apply to the language
@@ -116,7 +115,7 @@ class PluralRules
         'th' => 0,
         'ti' => 2,
         'tk' => 1,
-        'tr' => 0,
+        'tr' => 1,
         'uk' => 3,
         'ur' => 1,
         'vi' => 0,

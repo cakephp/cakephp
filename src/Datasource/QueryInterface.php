@@ -24,7 +24,6 @@ namespace Cake\Datasource;
  */
 interface QueryInterface
 {
-
     const JOIN_TYPE_INNER = 'INNER';
     const JOIN_TYPE_LEFT = 'LEFT';
     const JOIN_TYPE_RIGHT = 'RIGHT';
@@ -347,8 +346,8 @@ interface QueryInterface
      *  $query
      *  ->where(['title !=' => 'Hello World'])
      *  ->where(function ($exp, $query) {
-     *      $or = $exp->or_(['id' => 1]);
-     *      $and = $exp->and_(['id >' => 2, 'id <' => 10]);
+     *      $or = $exp->or(['id' => 1]);
+     *      $and = $exp->and(['id >' => 2, 'id <' => 10]);
      *  return $or->add($and);
      *  });
      * ```

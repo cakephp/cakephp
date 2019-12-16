@@ -16,6 +16,7 @@ namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
 use Cake\Utility\Inflector;
+use CallbackFilterIterator;
 use Exception;
 use LogicException;
 use RecursiveDirectoryIterator;
@@ -32,7 +33,6 @@ use SplFileObject;
  */
 class FileEngine extends CacheEngine
 {
-
     /**
      * Instance of SplFileObject class
      *
@@ -67,7 +67,7 @@ class FileEngine extends CacheEngine
         'path' => null,
         'prefix' => 'cake_',
         'probability' => 100,
-        'serialize' => true
+        'serialize' => true,
     ];
 
     /**
@@ -193,7 +193,7 @@ class FileEngine extends CacheEngine
         $time = time();
         $cachetime = (int)$this->_File->current();
 
-        if ($cachetime < $time || ($time + $this->_config['duration']) < $cachetime) {
+        if ($cachetime < $time) {
             if ($this->_config['lock']) {
                 $this->_File->flock(LOCK_UN);
             }
@@ -268,7 +268,10 @@ class FileEngine extends CacheEngine
 
         $this->_clearDirectory($this->_config['path'], $now, $threshold);
 
-        $directory = new RecursiveDirectoryIterator($this->_config['path']);
+        $directory = new RecursiveDirectoryIterator(
+            $this->_config['path'],
+            \FilesystemIterator::SKIP_DOTS
+        );
         $contents = new RecursiveIteratorIterator(
             $directory,
             RecursiveIteratorIterator::SELF_FIRST
@@ -280,7 +283,7 @@ class FileEngine extends CacheEngine
             }
 
             $path = $path->getRealPath() . DIRECTORY_SEPARATOR;
-            if (!in_array($path, $cleared)) {
+            if (!in_array($path, $cleared, true)) {
                 $this->_clearDirectory($path, $now, $threshold);
                 $cleared[] = $path;
             }
@@ -336,6 +339,8 @@ class FileEngine extends CacheEngine
                 //@codingStandardsIgnoreEnd
             }
         }
+
+        $dir->close();
     }
 
     /**
@@ -389,7 +394,11 @@ class FileEngine extends CacheEngine
         if (!$createKey && !$path->isFile()) {
             return false;
         }
-        if (empty($this->_File) || $this->_File->getBasename() !== $key) {
+        if (
+            empty($this->_File) ||
+            $this->_File->getBasename() !== $key ||
+            $this->_File->valid() === false
+        ) {
             $exists = file_exists($path->getPathname());
             try {
                 $this->_File = $path->openFile('c+');
@@ -413,7 +422,7 @@ class FileEngine extends CacheEngine
     }
 
     /**
-     * Determine is cache directory is writable
+     * Determine if cache directory is writable
      *
      * @return bool
      */
@@ -470,24 +479,40 @@ class FileEngine extends CacheEngine
     public function clearGroup($group)
     {
         $this->_File = null;
+
+        $prefix = (string)$this->_config['prefix'];
+
         $directoryIterator = new RecursiveDirectoryIterator($this->_config['path']);
         $contents = new RecursiveIteratorIterator(
             $directoryIterator,
             RecursiveIteratorIterator::CHILD_FIRST
         );
-        foreach ($contents as $object) {
-            $containsGroup = strpos($object->getPathname(), DIRECTORY_SEPARATOR . $group . DIRECTORY_SEPARATOR) !== false;
-            $hasPrefix = true;
-            if (strlen($this->_config['prefix']) !== 0) {
-                $hasPrefix = strpos($object->getBasename(), $this->_config['prefix']) === 0;
+        $filtered = new CallbackFilterIterator(
+            $contents,
+            function (SplFileInfo $current) use ($group, $prefix) {
+                if (!$current->isFile()) {
+                    return false;
+                }
+
+                $hasPrefix = $prefix === ''
+                    || strpos($current->getBasename(), $prefix) === 0;
+                if ($hasPrefix === false) {
+                    return false;
+                }
+
+                $pos = strpos(
+                    $current->getPathname(),
+                    DIRECTORY_SEPARATOR . $group . DIRECTORY_SEPARATOR
+                );
+
+                return $pos !== false;
             }
-            if ($object->isFile() && $containsGroup && $hasPrefix) {
-                $path = $object->getPathname();
-                $object = null;
-                //@codingStandardsIgnoreStart
-                @unlink($path);
-                //@codingStandardsIgnoreEnd
-            }
+        );
+        foreach ($filtered as $object) {
+            $path = $object->getPathname();
+            $object = null;
+            // @codingStandardsIgnoreLine
+            @unlink($path);
         }
 
         return true;

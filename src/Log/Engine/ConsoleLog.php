@@ -22,7 +22,6 @@ use InvalidArgumentException;
  */
 class ConsoleLog extends BaseLog
 {
-
     /**
      * Default config for this class
      *
@@ -32,7 +31,7 @@ class ConsoleLog extends BaseLog
         'stream' => 'php://stderr',
         'levels' => null,
         'scopes' => [],
-        'outputAs' => 'see constructor'
+        'outputAs' => null,
     ];
 
     /**
@@ -57,14 +56,6 @@ class ConsoleLog extends BaseLog
      */
     public function __construct(array $config = [])
     {
-        if ((DIRECTORY_SEPARATOR === '\\' && !(bool)env('ANSICON') && env('ConEmuANSI') !== 'ON') ||
-            (function_exists('posix_isatty') && !posix_isatty($this->_output))
-        ) {
-            $this->_defaultConfig['outputAs'] = ConsoleOutput::PLAIN;
-        } else {
-            $this->_defaultConfig['outputAs'] = ConsoleOutput::COLOR;
-        }
-
         parent::__construct($config);
 
         $config = $this->_config;
@@ -75,7 +66,10 @@ class ConsoleLog extends BaseLog
         } else {
             throw new InvalidArgumentException('`stream` not a ConsoleOutput nor string');
         }
-        $this->_output->setOutputAs($config['outputAs']);
+
+        if (isset($config['outputAs'])) {
+            $this->_output->setOutputAs($config['outputAs']);
+        }
     }
 
     /**

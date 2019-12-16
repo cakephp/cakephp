@@ -29,7 +29,6 @@ use RuntimeException;
  */
 class MessagesFileLoader
 {
-
     /**
      * The package (domain) name.
      *
@@ -135,7 +134,7 @@ class MessagesFileLoader
             throw new RuntimeException(sprintf('Could not find class %s', "{$name}FileParser"));
         }
 
-        $messages = (new $class)->parse($file);
+        $messages = (new $class())->parse($file);
         $package = new Package('default');
         $package->setMessages($messages);
 
@@ -154,7 +153,7 @@ class MessagesFileLoader
 
         $folders = [
             implode('_', [$locale['language'], $locale['region']]),
-            $locale['language']
+            $locale['language'],
         ];
 
         $searchPaths = [];
@@ -171,7 +170,7 @@ class MessagesFileLoader
 
         // If space is not added after slash, the character after it remains lowercased
         $pluginName = Inflector::camelize(str_replace('/', '/ ', $this->_name));
-        if (Plugin::loaded($pluginName)) {
+        if (Plugin::isLoaded($pluginName)) {
             $basePath = Plugin::classPath($pluginName) . 'Locale' . DIRECTORY_SEPARATOR;
             foreach ($folders as $folder) {
                 $searchPaths[] = $basePath . $folder . DIRECTORY_SEPARATOR;

@@ -16,7 +16,6 @@ namespace Cake\Test\TestCase;
 
 use Cake\Core\HttpApplicationInterface;
 use Cake\Event\Event;
-use Cake\Event\EventList;
 use Cake\Event\EventManager;
 use Cake\Http\BaseApplication;
 use Cake\Http\CallbackStream;
@@ -24,10 +23,8 @@ use Cake\Http\MiddlewareQueue;
 use Cake\Http\Server;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
-use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 use TestApp\Http\BadResponseApplication;
-use TestApp\Http\EventApplication;
 use TestApp\Http\InvalidMiddlewareApplication;
 use TestApp\Http\MiddlewareApplication;
 use Zend\Diactoros\Response;

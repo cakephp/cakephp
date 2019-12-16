@@ -1,7 +1,6 @@
 # Define the line ending behavior of the different file extensions
-# Set default behaviour, in case users don't have core.autocrlf set.
-* text=auto
-* text eol=lf
+# Set default behavior, in case users don't have core.autocrlf set.
+* text=auto eol=lf
 
 # Explicitly declare text files we want to always be normalized and converted
 # to native line endings on checkout.
@@ -42,7 +41,7 @@
 *.eot binary
 
 # Remove files for archives generated using `git archive`
-appveyor.yml export-ignore
+.appveyor.yml export-ignore
 CONTRIBUTING.md export-ignore
 .editorconfig export-ignore
 .gitattributes export-ignore
@@ -55,3 +54,7 @@ phpunit.xml.dist export-ignore
 tests/test_app export-ignore
 tests/TestCase export-ignore
 .github export-ignore
+.mailmap export-ignore
+phpcs.xml.dist export-ignore
+phpstan.neon export-ignore
+contrib export-ignore

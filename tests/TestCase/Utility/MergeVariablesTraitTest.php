@@ -19,7 +19,6 @@ use Cake\Utility\MergeVariablesTrait;
 
 class Base
 {
-
     use MergeVariablesTrait;
 
     public $hasBoolean = false;
@@ -43,7 +42,7 @@ class Child extends Base
 
     public $assocProperty = [
         'Green' => ['lime'],
-        'Orange'
+        'Orange',
     ];
 
     public $nestedProperty = [
@@ -51,7 +50,7 @@ class Child extends Base
             'apple' => 'gala',
         ],
         'Green' => [
-            'citrus' => 'lime'
+            'citrus' => 'lime',
         ],
     ];
 }
@@ -63,7 +62,7 @@ class Grandchild extends Child
 
     public $assocProperty = [
         'Green' => ['apple'],
-        'Yellow' => ['banana']
+        'Yellow' => ['banana'],
     ];
 
     public $nestedProperty = [
@@ -71,7 +70,7 @@ class Grandchild extends Child
             'citrus' => 'blood orange',
         ],
         'Green' => [
-            'citrus' => 'key lime'
+            'citrus' => 'key lime',
         ],
     ];
 }

@@ -26,7 +26,6 @@ use Traversable;
  */
 class MapReduce implements IteratorAggregate
 {
-
     /**
      * Holds the shuffled results that were emitted from the map
      * phase
@@ -183,6 +182,7 @@ class MapReduce implements IteratorAggregate
             throw new LogicException('No reducer function was provided');
         }
 
+        /** @var callable $reducer */
         $reducer = $this->_reducer;
         foreach ($this->_intermediate as $key => $list) {
             $reducer($list, $key, $this);

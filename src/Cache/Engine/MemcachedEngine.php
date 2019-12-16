@@ -23,14 +23,12 @@ use Memcached;
  * control you have over expire times far in the future. See MemcachedEngine::write() for
  * more information.
  *
- * Main advantage of this Memcached engine over the memcached engine is
- * support of binary protocol, and igbinary serialization
- * (if memcached extension compiled with --enable-igbinary)
- * Compressed keys can also be incremented/decremented
+ * Memcached engine supports binary protocol and igbinary
+ * serialization (if memcached extension is compiled with --enable-igbinary).
+ * Compressed keys can also be incremented/decremented.
  */
 class MemcachedEngine extends CacheEngine
 {
-
     /**
      * memcached wrapper.
      *
@@ -112,7 +110,7 @@ class MemcachedEngine extends CacheEngine
         $this->_serializers = [
             'igbinary' => Memcached::SERIALIZER_IGBINARY,
             'json' => Memcached::SERIALIZER_JSON,
-            'php' => Memcached::SERIALIZER_PHP
+            'php' => Memcached::SERIALIZER_PHP,
         ];
         if (defined('Memcached::HAVE_MSGPACK') && Memcached::HAVE_MSGPACK) {
             $this->_serializers['msgpack'] = Memcached::SERIALIZER_MSGPACK;
@@ -206,7 +204,8 @@ class MemcachedEngine extends CacheEngine
             );
         }
 
-        if ($serializer !== 'php' &&
+        if (
+            $serializer !== 'php' &&
             !constant('Memcached::HAVE_' . strtoupper($serializer))
         ) {
             throw new InvalidArgumentException(
@@ -220,7 +219,8 @@ class MemcachedEngine extends CacheEngine
         );
 
         // Check for Amazon ElastiCache instance
-        if (defined('Memcached::OPT_CLIENT_MODE') &&
+        if (
+            defined('Memcached::OPT_CLIENT_MODE') &&
             defined('Memcached::DYNAMIC_CLIENT_MODE')
         ) {
             $this->_Memcached->setOption(
@@ -282,7 +282,7 @@ class MemcachedEngine extends CacheEngine
      * Read an option value from the memcached connection.
      *
      * @param string $name The option name to read.
-     * @return string|int|null|bool
+     * @return string|int|bool|null
      */
     public function getOption($name)
     {
@@ -293,20 +293,16 @@ class MemcachedEngine extends CacheEngine
      * Write data for key into cache. When using memcached as your cache engine
      * remember that the Memcached pecl extension does not support cache expiry
      * times greater than 30 days in the future. Any duration greater than 30 days
-     * will be treated as never expiring.
+     * will be treated as real Unix time value rather than an offset from current time.
      *
      * @param string $key Identifier for the data
      * @param mixed $value Data to be cached
      * @return bool True if the data was successfully cached, false on failure
-     * @see https://secure.php.net/manual/en/memcache.set.php
+     * @see https://www.php.net/manual/en/memcached.set.php
      */
     public function write($key, $value)
     {
         $duration = $this->_config['duration'];
-        if ($duration > 30 * DAY) {
-            $duration = 0;
-        }
-
         $key = $this->_key($key);
 
         return $this->_Memcached->set($key, $value, $duration);
@@ -379,7 +375,7 @@ class MemcachedEngine extends CacheEngine
      *
      * @param string $key Identifier for the data
      * @param int $offset How much to increment
-     * @return bool|int New incremented value, false otherwise
+     * @return int|false New incremented value, false otherwise
      */
     public function increment($key, $offset = 1)
     {
@@ -393,7 +389,7 @@ class MemcachedEngine extends CacheEngine
      *
      * @param string $key Identifier for the data
      * @param int $offset How much to subtract
-     * @return bool|int New decremented value, false otherwise
+     * @return int|false New decremented value, false otherwise
      */
     public function decrement($key, $offset = 1)
     {
@@ -476,10 +472,6 @@ class MemcachedEngine extends CacheEngine
     public function add($key, $value)
     {
         $duration = $this->_config['duration'];
-        if ($duration > 30 * DAY) {
-            $duration = 0;
-        }
-
         $key = $this->_key($key);
 
         return $this->_Memcached->add($key, $value, $duration);
@@ -490,7 +482,7 @@ class MemcachedEngine extends CacheEngine
      * If the group initial value was not found, then it initializes
      * the group accordingly.
      *
-     * @return array
+     * @return string[]
      */
     public function groups()
     {

@@ -12,13 +12,10 @@
  */
 namespace Cake\Console\Exception;
 
-use Cake\Core\Exception\Exception;
-
 /**
  * Used when a shell method cannot be found.
  */
-class MissingShellMethodException extends Exception
+class MissingShellMethodException extends ConsoleException
 {
-
     protected $_messageTemplate = "Unknown command %1\$s %2\$s.\nFor usage try `cake %1\$s --help`";
 }

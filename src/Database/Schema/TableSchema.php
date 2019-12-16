@@ -31,7 +31,6 @@ use Cake\Database\Type;
  */
 class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
 {
-
     /**
      * The name of the table
      *
@@ -110,7 +109,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     public static $columnLengths = [
         'tiny' => self::LENGTH_TINY,
         'medium' => self::LENGTH_MEDIUM,
-        'long' => self::LENGTH_LONG
+        'long' => self::LENGTH_LONG,
     ];
 
     /**
@@ -440,7 +439,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
             return null;
         }
 
-        if (Type::map($type)) {
+        if (Type::getMap($type)) {
             $type = Type::build($type)->getBaseType();
         }
 
@@ -780,7 +779,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     {
         deprecationWarning(
             'TableSchema::temporary() is deprecated. ' .
-            'Use TableSchema::setTemporary()/getTemporary() instead.'
+            'Use TableSchema::setTemporary()/isTemporary() instead.'
         );
         if ($temporary !== null) {
             return $this->setTemporary($temporary);
@@ -868,5 +867,5 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 }
 
-// @deprecated Add backwards compat alias.
+// @deprecated 3.4.0 Add backwards compat alias.
 class_alias('Cake\Database\Schema\TableSchema', 'Cake\Database\Schema\Table');

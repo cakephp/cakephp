@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\I18n;
 
+use Cake\Chronos\Chronos;
 use Cake\I18n\FrozenTime;
 use Cake\I18n\I18n;
 use Cake\I18n\Time;
@@ -33,7 +34,6 @@ class TimeTest extends TestCase
     {
         parent::setUp();
         $this->now = Time::getTestNow();
-        $this->frozenNow = FrozenTime::getTestNow();
         $this->locale = Time::getDefaultLocale();
         Time::setDefaultLocale('en_US');
         FrozenTime::setDefaultLocale('en_US');
@@ -50,12 +50,11 @@ class TimeTest extends TestCase
         Time::setTestNow($this->now);
         Time::setDefaultLocale($this->locale);
         Time::resetToStringFormat();
-        Time::setJsonEncodeFormat("yyyy-MM-dd'T'HH:mm:ssxxx");
+        Time::setJsonEncodeFormat("yyyy-MM-dd'T'HH':'mm':'ssxxx");
 
-        FrozenTime::setTestNow($this->frozenNow);
         FrozenTime::setDefaultLocale($this->locale);
         FrozenTime::resetToStringFormat();
-        FrozenTime::setJsonEncodeFormat("yyyy-MM-dd'T'HH:mm:ssxxx");
+        FrozenTime::setJsonEncodeFormat("yyyy-MM-dd'T'HH':'mm':'ssxxx");
 
         date_default_timezone_set('UTC');
         I18n::setLocale(I18n::DEFAULT_LOCALE);
@@ -74,7 +73,7 @@ class TimeTest extends TestCase
     /**
      * Provider for ensuring that Time and FrozenTime work the same way.
      *
-     * @return void
+     * @return array
      */
     public static function classNameProvider()
     {
@@ -89,14 +88,22 @@ class TimeTest extends TestCase
      */
     public function testConstructFromAnotherInstance($class)
     {
-        $time = '2015-01-22 10:33:44';
+        $time = '2015-01-22 10:33:44.123456';
         $frozen = new FrozenTime($time, 'America/Chicago');
         $subject = new $class($frozen);
-        $this->assertEquals($time, $subject->format('Y-m-d H:i:s'), 'frozen time construction');
+        $this->assertEquals($time, $subject->format('Y-m-d H:i:s.u'), 'frozen time construction');
 
         $mut = new Time($time, 'America/Chicago');
         $subject = new $class($mut);
-        $this->assertEquals($time, $subject->format('Y-m-d H:i:s'), 'mutable time construction');
+        $this->assertEquals($time, $subject->format('Y-m-d H:i:s.u'), 'mutable time construction');
+
+        $mut = new Chronos($time, 'America/Chicago');
+        $subject = new $class($mut);
+        $this->assertEquals($time, $subject->format('Y-m-d H:i:s.u'), 'mutable time construction');
+
+        $mut = new \DateTime($time, new \DateTimeZone('America/Chicago'));
+        $subject = new $class($mut);
+        $this->assertEquals($time, $subject->format('Y-m-d H:i:s.u'), 'mutable time construction');
     }
 
     /**
@@ -152,7 +159,7 @@ class TimeTest extends TestCase
     /**
      * provider for timeAgo with an end date.
      *
-     * @return void
+     * @return array
      */
     public function timeAgoEndProvider()
     {
@@ -160,40 +167,41 @@ class TimeTest extends TestCase
             [
                 '+4 months +2 weeks +3 days',
                 '4 months, 2 weeks, 3 days',
-                '8 years'
+                '8 years',
             ],
             [
                 '+4 months +2 weeks +1 day',
                 '4 months, 2 weeks, 1 day',
-                '8 years'
+                '8 years',
             ],
             [
                 '+3 months +2 weeks',
                 '3 months, 2 weeks',
-                '8 years'
+                '8 years',
             ],
             [
                 '+3 months +2 weeks +1 day',
                 '3 months, 2 weeks, 1 day',
-                '8 years'
+                '8 years',
             ],
             [
                 '+1 months +1 week +1 day',
                 '1 month, 1 week, 1 day',
-                '8 years'
+                '8 years',
             ],
             [
                 '+2 months +2 days',
                 '2 months, 2 days',
-                '+2 months +2 days'
+                '+2 months +2 days',
             ],
             [
                 '+2 months +12 days',
                 '2 months, 1 week, 5 days',
-                '3 months'
+                '3 months',
             ],
         ];
     }
+
     /**
      * test the timezone option for timeAgoInWords
      *
@@ -207,7 +215,7 @@ class TimeTest extends TestCase
             [
                 'timezone' => 'America/Vancouver',
                 'end' => '+1month',
-                'format' => 'dd-MM-YYYY HH:mm:ss'
+                'format' => 'dd-MM-YYYY HH:mm:ss',
             ]
         );
         $this->assertEquals('on 31-07-1990 13:33:00', $result);
@@ -238,7 +246,7 @@ class TimeTest extends TestCase
         $result = $time->timeAgoInWords([
             'relativeString' => 'at least %s ago',
             'accuracy' => ['year' => 'year'],
-            'end' => '+10 years'
+            'end' => '+10 years',
         ]);
         $expected = 'at least 8 years ago';
         $this->assertEquals($expected, $result);
@@ -247,7 +255,7 @@ class TimeTest extends TestCase
         $result = $time->timeAgoInWords([
             'absoluteString' => 'exactly on %s',
             'accuracy' => ['year' => 'year'],
-            'end' => '+2 months'
+            'end' => '+2 months',
         ]);
         $expected = 'exactly on ' . date('n/j/y', strtotime('+4 months +2 weeks +3 days'));
         $this->assertEquals($expected, $result);
@@ -264,7 +272,7 @@ class TimeTest extends TestCase
         $time = new $class('+8 years +4 months +2 weeks +3 days');
         $result = $time->timeAgoInWords([
             'accuracy' => ['year' => 'year'],
-            'end' => '+10 years'
+            'end' => '+10 years',
         ]);
         $expected = '8 years';
         $this->assertEquals($expected, $result);
@@ -272,7 +280,7 @@ class TimeTest extends TestCase
         $time = new $class('+8 years +4 months +2 weeks +3 days');
         $result = $time->timeAgoInWords([
             'accuracy' => ['year' => 'month'],
-            'end' => '+10 years'
+            'end' => '+10 years',
         ]);
         $expected = '8 years, 4 months';
         $this->assertEquals($expected, $result);
@@ -280,7 +288,7 @@ class TimeTest extends TestCase
         $time = new $class('+8 years +4 months +2 weeks +3 days');
         $result = $time->timeAgoInWords([
             'accuracy' => ['year' => 'week'],
-            'end' => '+10 years'
+            'end' => '+10 years',
         ]);
         $expected = '8 years, 4 months, 2 weeks';
         $this->assertEquals($expected, $result);
@@ -288,7 +296,7 @@ class TimeTest extends TestCase
         $time = new $class('+8 years +4 months +2 weeks +3 days');
         $result = $time->timeAgoInWords([
             'accuracy' => ['year' => 'day'],
-            'end' => '+10 years'
+            'end' => '+10 years',
         ]);
         $expected = '8 years, 4 months, 2 weeks, 3 days';
         $this->assertEquals($expected, $result);
@@ -296,21 +304,21 @@ class TimeTest extends TestCase
         $time = new $class('+1 years +5 weeks');
         $result = $time->timeAgoInWords([
             'accuracy' => ['year' => 'year'],
-            'end' => '+10 years'
+            'end' => '+10 years',
         ]);
         $expected = '1 year';
         $this->assertEquals($expected, $result);
 
         $time = new $class('+58 minutes');
         $result = $time->timeAgoInWords([
-            'accuracy' => 'hour'
+            'accuracy' => 'hour',
         ]);
         $expected = 'in about an hour';
         $this->assertEquals($expected, $result);
 
         $time = new $class('+23 hours');
         $result = $time->timeAgoInWords([
-            'accuracy' => 'day'
+            'accuracy' => 'day',
         ]);
         $expected = 'in about a day';
         $this->assertEquals($expected, $result);
@@ -459,15 +467,15 @@ class TimeTest extends TestCase
         $this->assertTimeFormat($expected, $result, 'Default locale should not be used');
 
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'fa-SA');
-        $expected = 'پنجشنبه ۱۴ ژانویهٔ ۲۰۱۰، ساعت ۱۳:۵۹:۲۸ (GMT)';
+        $expected = 'پنجشنبه ۱۴ ژانویهٔ ۲۰۱۰، ساعت ۱۳:۵۹:۲۸ GMT';
         $this->assertTimeFormat($expected, $result, 'fa-SA locale should be used');
 
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'en-IR@calendar=persian');
         $expected = 'Thursday, Dey 24, 1388 at 1:59:28 PM GMT';
         $this->assertTimeFormat($expected, $result);
 
-        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'ps-IR@calendar=persian');
-        $expected = 'پنجشنبه د  ۱۳۸۸ د مرغومی ۲۴ ۱۳:۵۹:۲۸ (GMT)';
+        $result = $time->i18nFormat(\IntlDateFormatter::SHORT, null, 'fa-IR@calendar=persian');
+        $expected = '۱۳۸۸/۱۰/۲۴،‏ ۱۳:۵۹:۲۸ GMT';
         $this->assertTimeFormat($expected, $result);
 
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'en-KW@calendar=islamic');
@@ -481,6 +489,27 @@ class TimeTest extends TestCase
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, 'Asia/Tokyo', 'ja-JP@calendar=japanese');
         $expected = '平成22年1月14日木曜日 22時59分28秒 日本標準時';
         $this->assertTimeFormat($expected, $result);
+    }
+
+    /**
+     * testI18nFormatUsingSystemLocale
+     *
+     * @return void
+     */
+    public function testI18nFormatUsingSystemLocale()
+    {
+        // Unset default locale for the Time class to ensure system's locale is used.
+        Time::setDefaultLocale();
+        $locale = I18n::getLocale();
+
+        $time = new Time(1556864870);
+        I18n::setLocale('ar');
+        $this->assertEquals('٢٠١٩-٠٥-٠٣', $time->i18nFormat('yyyy-MM-dd'));
+
+        I18n::setLocale('en');
+        $this->assertEquals('2019-05-03', $time->i18nFormat('yyyy-MM-dd'));
+
+        I18n::setLocale($locale);
     }
 
     /**
@@ -682,7 +711,7 @@ class TimeTest extends TestCase
      */
     public function testDiffForHumansAbsolute($class)
     {
-        $class::setTestNow(new $class('2015-12-12 10:10:10'));
+        Time::setTestNow(new $class('2015-12-12 10:10:10'));
         $time = new $class('2014-04-20 10:10:10');
         $this->assertEquals('1 year', $time->diffForHumans(null, ['absolute' => true]));
 
@@ -701,7 +730,7 @@ class TimeTest extends TestCase
      */
     public function testDiffForHumansNow($class)
     {
-        $class::setTestNow(new $class('2015-12-12 10:10:10'));
+        Time::setTestNow(new $class('2015-12-12 10:10:10'));
         $time = new $class('2014-04-20 10:10:10');
         $this->assertEquals('1 year ago', $time->diffForHumans());
 
@@ -760,9 +789,9 @@ class TimeTest extends TestCase
     {
         $time = new $class('2014-04-20 10:10:10');
         $expected = [
-            'time' => '2014-04-20T10:10:10+00:00',
+            'time' => '2014-04-20 10:10:10.000000+00:00',
             'timezone' => 'UTC',
-            'fixedNowTime' => $class::getTestNow()->toIso8601String()
+            'fixedNowTime' => $class::getTestNow()->format('Y-m-d H:i:s.uP'),
         ];
         $this->assertEquals($expected, $time->__debugInfo());
     }
@@ -917,8 +946,14 @@ class TimeTest extends TestCase
         $expected = str_replace([',', '(', ')', ' at', ' م.', ' ه‍.ش.', ' AP', ' AH', ' SAKA', 'à '], '', $expected);
         $expected = str_replace(['  '], ' ', $expected);
 
+        $result = str_replace('Temps universel coordonné', 'UTC', $result);
+        $result = str_replace('tiempo universal coordinado', 'GMT', $result);
+        $result = str_replace('Coordinated Universal Time', 'GMT', $result);
+
         $result = str_replace([',', '(', ')', ' at', ' م.', ' ه‍.ش.', ' AP', ' AH', ' SAKA', 'à '], '', $result);
         $result = str_replace(['گرینویچ'], 'GMT', $result);
+        $result = str_replace('زمان هماهنگ جهانی', 'GMT', $result);
+        $result = str_replace('همغږۍ نړیواله موده', 'GMT', $result);
         $result = str_replace(['  '], ' ', $result);
 
         $this->assertSame($expected, $result, $message);

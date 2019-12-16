@@ -21,7 +21,6 @@ use Cake\Console\Helper;
  */
 class TableHelper extends Helper
 {
-
     /**
      * Default config for this helper.
      *
@@ -37,14 +36,14 @@ class TableHelper extends Helper
      * Calculate the column widths
      *
      * @param array $rows The rows on which the columns width will be calculated on.
-     * @return array
+     * @return int[]
      */
     protected function _calculateWidths($rows)
     {
         $widths = [];
         foreach ($rows as $line) {
             foreach (array_values($line) as $k => $v) {
-                $columnLength = mb_strwidth($v);
+                $columnLength = $this->_cellWidth($v);
                 if ($columnLength >= (isset($widths[$k]) ? $widths[$k] : 0)) {
                     $widths[$k] = $columnLength;
                 }
@@ -55,9 +54,29 @@ class TableHelper extends Helper
     }
 
     /**
+     * Get the width of a cell exclusive of style tags.
+     *
+     * @param string $text The text to calculate a width for.
+     * @return int The width of the textual content in visible characters.
+     */
+    protected function _cellWidth($text)
+    {
+        if (strpos($text, '<') === false && strpos($text, '>') === false) {
+            return mb_strwidth($text);
+        }
+
+        /** @var array $styles */
+        $styles = $this->_io->styles();
+        $tags = implode('|', array_keys($styles));
+        $text = preg_replace('#</?(?:' . $tags . ')>#', '', $text);
+
+        return mb_strwidth($text);
+    }
+
+    /**
      * Output a row separator.
      *
-     * @param array $widths The widths of each column to output.
+     * @param int[] $widths The widths of each column to output.
      * @return void
      */
     protected function _rowSeparator($widths)
@@ -74,7 +93,7 @@ class TableHelper extends Helper
      * Output a row.
      *
      * @param array $row The row to output.
-     * @param array $widths The widths of each column to output.
+     * @param int[] $widths The widths of each column to output.
      * @param array $options Options to be passed.
      * @return void
      */
@@ -86,7 +105,7 @@ class TableHelper extends Helper
 
         $out = '';
         foreach (array_values($row) as $i => $column) {
-            $pad = $widths[$i] - mb_strwidth($column);
+            $pad = $widths[$i] - $this->_cellWidth($column);
             if (!empty($options['style'])) {
                 $column = $this->_addStyle($column, $options['style']);
             }

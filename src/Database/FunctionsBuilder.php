@@ -23,7 +23,6 @@ use Cake\Database\Expression\FunctionExpression;
  */
 class FunctionsBuilder
 {
-
     /**
      * Returns a new instance of a FunctionExpression. This is used for generating
      * arbitrary function calls in the final SQL string.
@@ -58,6 +57,16 @@ class FunctionsBuilder
         }
 
         return $this->_build($name, $expression, $types, $return);
+    }
+
+    /**
+     * Returns a FunctionExpression representing a call to SQL RAND function.
+     *
+     * @return \Cake\Database\Expression\FunctionExpression
+     */
+    public function rand()
+    {
+        return $this->_build('RAND', [], [], 'float');
     }
 
     /**
@@ -172,7 +181,7 @@ class FunctionsBuilder
      */
     public function datePart($part, $expression, $types = [])
     {
-        return $this->extract($part, $expression);
+        return $this->extract($part, $expression, $types);
     }
 
     /**
@@ -195,7 +204,7 @@ class FunctionsBuilder
      * Add the time unit to the date expression
      *
      * @param string $expression Expression to obtain the date part from.
-     * @param string $value Value to be added. Use negative to substract.
+     * @param string $value Value to be added. Use negative to subtract.
      * @param string $unit Unit of the value e.g. hour or day.
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\FunctionExpression

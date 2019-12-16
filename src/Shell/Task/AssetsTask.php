@@ -24,7 +24,6 @@ use Cake\Utility\Inflector;
  */
 class AssetsTask extends Shell
 {
-
     /**
      * Attempt to symlink plugin assets to app's webroot. If symlinking fails it
      * fallbacks to copying the assets. For vendor namespaced plugin, parent folder
@@ -88,7 +87,7 @@ class AssetsTask extends Shell
         if ($name === null) {
             $pluginsList = Plugin::loaded();
         } else {
-            if (!Plugin::loaded($name)) {
+            if (!Plugin::isLoaded($name)) {
                 $this->err(sprintf('Plugin %s is not loaded.', $name));
 
                 return [];
@@ -123,7 +122,7 @@ class AssetsTask extends Shell
                 'srcPath' => Plugin::path($plugin) . 'webroot',
                 'destDir' => $dir,
                 'link' => $link,
-                'namespaced' => $namespaced
+                'namespaced' => $namespaced,
             ];
         }
 
@@ -147,7 +146,8 @@ class AssetsTask extends Shell
             $this->out('For plugin: ' . $plugin);
             $this->hr();
 
-            if ($config['namespaced'] &&
+            if (
+                $config['namespaced'] &&
                 !is_dir($config['destDir']) &&
                 !$this->_createDirectory($config['destDir'])
             ) {
@@ -320,18 +320,18 @@ class AssetsTask extends Shell
         $parser = parent::getOptionParser();
 
         $parser->addSubcommand('symlink', [
-            'help' => 'Symlink (copy as fallback) plugin assets to app\'s webroot.'
+            'help' => 'Symlink (copy as fallback) plugin assets to app\'s webroot.',
         ])->addSubcommand('copy', [
-            'help' => 'Copy plugin assets to app\'s webroot.'
+            'help' => 'Copy plugin assets to app\'s webroot.',
         ])->addSubcommand('remove', [
-            'help' => 'Remove plugin assets from app\'s webroot.'
+            'help' => 'Remove plugin assets from app\'s webroot.',
         ])->addArgument('name', [
             'help' => 'A specific plugin you want to symlink assets for.',
             'optional' => true,
         ])->addOption('overwrite', [
             'help' => 'Overwrite existing symlink / folder / files.',
             'default' => false,
-            'boolean' => true
+            'boolean' => true,
         ]);
 
         return $parser;

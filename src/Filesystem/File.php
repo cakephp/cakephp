@@ -22,12 +22,11 @@ use SplFileInfo;
  */
 class File
 {
-
     /**
      * Folder object of the file
      *
      * @var \Cake\Filesystem\Folder
-     * @link https://book.cakephp.org/3.0/en/core-libraries/file-folder.html
+     * @link https://book.cakephp.org/3/en/core-libraries/file-folder.html
      */
     public $Folder;
 
@@ -35,7 +34,7 @@ class File
      * File name
      *
      * @var string
-     * https://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$name
+     * https://book.cakephp.org/3/en/core-libraries/file-folder.html#Cake\Filesystem\File::$name
      */
     public $name;
 
@@ -43,7 +42,7 @@ class File
      * File info
      *
      * @var array
-     * https://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$info
+     * https://book.cakephp.org/3/en/core-libraries/file-folder.html#Cake\Filesystem\File::$info
      */
     public $info = [];
 
@@ -51,7 +50,7 @@ class File
      * Holds the file handler resource if the file is opened
      *
      * @var resource|null
-     * https://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$handle
+     * https://book.cakephp.org/3/en/core-libraries/file-folder.html#Cake\Filesystem\File::$handle
      */
     public $handle;
 
@@ -59,7 +58,7 @@ class File
      * Enable locking for file reading and writing
      *
      * @var bool|null
-     * https://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$lock
+     * https://book.cakephp.org/3/en/core-libraries/file-folder.html#Cake\Filesystem\File::$lock
      */
     public $lock;
 
@@ -69,7 +68,7 @@ class File
      * Current file's absolute path
      *
      * @var string|null
-     * https://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$path
+     * https://book.cakephp.org/3/en/core-libraries/file-folder.html#Cake\Filesystem\File::$path
      */
     public $path;
 
@@ -79,7 +78,7 @@ class File
      * @param string $path Path to file
      * @param bool $create Create file if it does not exist (if true)
      * @param int $mode Mode to apply to the folder holding the file
-     * @link https://book.cakephp.org/3.0/en/core-libraries/file-folder.html#file-api
+     * @link https://book.cakephp.org/3/en/core-libraries/file-folder.html#file-api
      */
     public function __construct($path, $create = false, $mode = 0755)
     {
@@ -109,10 +108,8 @@ class File
     {
         $dir = $this->Folder->pwd();
 
-        if (is_dir($dir) && is_writable($dir) && !$this->exists()) {
-            if (touch($this->path)) {
-                return true;
-            }
+        if (is_dir($dir) && is_writable($dir) && !$this->exists() && touch($this->path)) {
+            return true;
         }
 
         return false;
@@ -365,7 +362,7 @@ class File
     {
         // check for multibyte string and use basename() if not found
         if (mb_strlen($path) === strlen($path)) {
-            return ($ext === null)? basename($path) : basename($path, $ext);
+            return ($ext === null) ? basename($path) : basename($path, $ext);
         }
 
         $splInfo = new SplFileInfo($path);
@@ -378,7 +375,7 @@ class File
         $new = preg_replace("/({$ext})$/u", "", $name);
 
         // basename of '/etc/.d' is '.d' not ''
-        return ($new === '')? $name : $new;
+        return ($new === '') ? $name : $new;
     }
 
     /**
@@ -576,7 +573,7 @@ class File
     /**
      * Copy the File to $dest
      *
-     * @param string $dest Destination for the copy
+     * @param string $dest Absolute path to copy the file to.
      * @param bool $overwrite Overwrite $dest if exists
      * @return bool Success
      */
@@ -593,7 +590,7 @@ class File
      * Gets the mime type of the file. Uses the finfo extension if
      * it's available, otherwise falls back to mime_content_type().
      *
-     * @return false|string The mimetype of the file, or false if reading fails.
+     * @return string|false The mimetype of the file, or false if reading fails.
      */
     public function mime()
     {

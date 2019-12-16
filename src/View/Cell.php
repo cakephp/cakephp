@@ -35,7 +35,6 @@ use ReflectionMethod;
  */
 abstract class Cell
 {
-
     use EventDispatcherTrait;
     use LocatorAwareTrait;
     use ModelAwareTrait;
@@ -43,27 +42,11 @@ abstract class Cell
 
     /**
      * Instance of the View created during rendering. Won't be set until after
-     * Cell::__toString() is called.
+     * Cell::__toString()/render() is called.
      *
      * @var \Cake\View\View
-     * @deprecated 3.1.0 Use createView() instead.
      */
-    public $View;
-
-    /**
-     * Name of the template that will be rendered.
-     * This property is inflected from the action name that was invoked.
-     *
-     * @var string
-     */
-    public $template;
-
-    /**
-     * Automatically set to the name of a plugin.
-     *
-     * @var string
-     */
-    public $plugin;
+    protected $View;
 
     /**
      * An instance of a Cake\Http\ServerRequest object that contains information about the current request.
@@ -72,46 +55,38 @@ abstract class Cell
      *
      * @var \Cake\Http\ServerRequest
      */
-    public $request;
+    protected $request;
 
     /**
      * An instance of a Response object that contains information about the impending response
      *
      * @var \Cake\Http\Response
      */
-    public $response;
-
-    /**
-     * The helpers this cell uses.
-     *
-     * This property is copied automatically when using the CellTrait
-     *
-     * @var array
-     */
-    public $helpers = [];
+    protected $response;
 
     /**
      * The cell's action to invoke.
      *
      * @var string
      */
-    public $action;
+    protected $action;
 
     /**
      * Arguments to pass to cell's action.
      *
      * @var array
      */
-    public $args = [];
+    protected $args = [];
 
     /**
      * These properties can be set directly on Cell and passed to the View as options.
      *
      * @var array
      * @see \Cake\View\View
+     * @deprecated 3.7.0 Use ViewBuilder::setOptions() or any one of it's setter methods instead.
      */
     protected $_validViewOptions = [
-        'viewPath'
+        'viewPath',
     ];
 
     /**
@@ -203,19 +178,11 @@ abstract class Cell
                 ));
             }
 
-            $builder = $this->viewBuilder();
+            $builder = $this->viewBuilder()->setLayout(false);
 
-            if ($template !== null &&
-                strpos($template, '/') === false &&
-                strpos($template, '.') === false
-            ) {
-                $template = Inflector::underscore($template);
+            if ($template !== null) {
+                $builder->setTemplate($template);
             }
-            if ($template === null) {
-                $template = $builder->getTemplate() ?: $this->template;
-            }
-            $builder->setLayout(false)
-                ->setTemplate($template);
 
             $className = get_class($this);
             $namePrefix = '\View\Cell\\';
@@ -224,12 +191,16 @@ abstract class Cell
             if (!$builder->getTemplatePath()) {
                 $builder->setTemplatePath('Cell' . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $name));
             }
+            $template = $builder->getTemplate();
 
             $this->View = $this->createView();
             try {
                 return $this->View->render($template);
             } catch (MissingTemplateException $e) {
-                throw new MissingCellViewException(['file' => $template, 'name' => $name], null, $e);
+                $attributes = $e->getAttributes();
+                $attributes = ['file' => basename($attributes['file']), 'name' => $name];
+
+                throw new MissingCellViewException($attributes, null, $e);
             }
         };
 
@@ -259,7 +230,7 @@ abstract class Cell
         $key = str_replace('\\', '_', $key);
         $default = [
             'config' => 'default',
-            'key' => $key
+            'key' => $key,
         ];
         if ($this->_cache === true) {
             return $default;
@@ -293,6 +264,90 @@ abstract class Cell
     }
 
     /**
+     * Magic accessor for removed properties.
+     *
+     * @param string $name Property name
+     * @return mixed
+     */
+    public function __get($name)
+    {
+        $deprecated = [
+            'template' => 'getTemplate',
+            'plugin' => 'getPlugin',
+            'helpers' => 'getHelpers',
+        ];
+        if (isset($deprecated[$name])) {
+            $method = $deprecated[$name];
+            deprecationWarning(sprintf(
+                'Cell::$%s is deprecated. Use $cell->viewBuilder()->%s() instead.',
+                $name,
+                $method
+            ));
+
+            return $this->viewBuilder()->{$method}();
+        }
+
+        $protected = [
+            'action',
+            'args',
+            'request',
+            'response',
+            'View',
+        ];
+        if (in_array($name, $protected, true)) {
+            deprecationWarning(sprintf(
+                'Cell::$%s is now protected and shouldn\'t be accessed from outside a child class.',
+                $name
+            ));
+        }
+
+        return $this->{$name};
+    }
+
+    /**
+     * Magic setter for removed properties.
+     *
+     * @param string $name Property name.
+     * @param mixed $value Value to set.
+     * @return void
+     */
+    public function __set($name, $value)
+    {
+        $deprecated = [
+            'template' => 'setTemplate',
+            'plugin' => 'setPlugin',
+            'helpers' => 'setHelpers',
+        ];
+        if (isset($deprecated[$name])) {
+            $method = $deprecated[$name];
+            deprecationWarning(sprintf(
+                'Cell::$%s is deprecated. Use $cell->viewBuilder()->%s() instead.',
+                $name,
+                $method
+            ));
+            $this->viewBuilder()->{$method}($value);
+
+            return;
+        }
+
+        $protected = [
+            'action',
+            'args',
+            'request',
+            'response',
+            'View',
+        ];
+        if (in_array($name, $protected, true)) {
+            deprecationWarning(sprintf(
+                'Cell::$%s is now protected and shouldn\'t be accessed from outside a child class.',
+                $name
+            ));
+        }
+
+        $this->{$name} = $value;
+    }
+
+    /**
      * Debug info.
      *
      * @return array
@@ -300,13 +355,11 @@ abstract class Cell
     public function __debugInfo()
     {
         return [
-            'plugin' => $this->plugin,
             'action' => $this->action,
             'args' => $this->args,
-            'template' => $this->template,
-            'viewClass' => $this->viewClass,
             'request' => $this->request,
             'response' => $this->response,
+            'viewBuilder' => $this->viewBuilder(),
         ];
     }
 }

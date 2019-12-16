@@ -235,7 +235,7 @@ class TextTest extends TestCase
         $result = Text::insert($string, [
             'user.email' => 'security@example.com',
             'user.id' => 2,
-            'user.created' => Time::parse('2016-01-01')
+            'user.created' => Time::parse('2016-01-01'),
         ]);
         $this->assertEquals($expected, $result);
     }
@@ -248,7 +248,7 @@ class TextTest extends TestCase
     public function testCleanInsert()
     {
         $result = Text::cleanInsert(':incomplete', [
-            'clean' => true, 'before' => ':', 'after' => ''
+            'clean' => true, 'before' => ':', 'after' => '',
         ]);
         $this->assertEquals('', $result);
 
@@ -261,7 +261,7 @@ class TextTest extends TestCase
         $this->assertEquals('complete', $result);
 
         $result = Text::cleanInsert(':in.complete', [
-            'clean' => true, 'before' => ':', 'after' => ''
+            'clean' => true, 'before' => ':', 'after' => '',
         ]);
         $this->assertEquals('', $result);
 
@@ -273,7 +273,7 @@ class TextTest extends TestCase
         $this->assertEquals('', $result);
 
         $result = Text::cleanInsert(':in.complete or stuff', [
-            'clean' => true, 'before' => ':', 'after' => ''
+            'clean' => true, 'before' => ':', 'after' => '',
         ]);
         $this->assertEquals('stuff', $result);
 
@@ -365,15 +365,15 @@ class TextTest extends TestCase
         return [
             [
                 'The quick brown fox jumped over the lazy dog.',
-                33
+                33,
             ],
             [
                 'A very long woooooooooooord.',
-                8
+                8,
             ],
             [
                 'A very long woooooooooooord. Right.',
-                8
+                8,
             ],
         ];
     }
@@ -468,7 +468,7 @@ TEXT;
     }
 
     /**
-     * test wrapBlock() indentical to wrap()
+     * test wrapBlock() identical to wrap()
      *
      * @return void
      */
@@ -604,7 +604,7 @@ TEXT;
         $result = $this->Text->truncate($text, 10, [
             'ellipsis' => '...',
             'exact' => false,
-            'html' => true
+            'html' => true,
         ]);
         $expected = '<p><span style="font-size: medium;"><a>Iamatestwi...</a></span></p>';
         $this->assertEquals($expected, $result);
@@ -626,7 +626,7 @@ TEXT;
         $result = Text::truncate($text, 6, [
             'ellipsis' => '..',
             'exact' => true,
-            'html' => true
+            'html' => true,
         ]);
         $this->assertEquals($expected, $result);
 
@@ -634,7 +634,7 @@ TEXT;
         $result = Text::truncate($text, 6, [
             'ellipsis' => '..',
             'exact' => false,
-            'html' => true
+            'html' => true,
         ]);
         $this->assertEquals($expected, $result);
     }
@@ -1676,8 +1676,27 @@ HTML;
             [['size' => '1G', 'default' => false], 1073741824],
             [['size' => '1.5G', 'default' => false], 1610612736],
             [['size' => '512', 'default' => 'Unknown type'], 512],
-            [['size' => '2VB', 'default' => 'Unknown type'], 'Unknown type']
+            [['size' => '2VB', 'default' => 'Unknown type'], 'Unknown type'],
         ];
+    }
+
+    /**
+     * Test getting/setting default transliterator.
+     *
+     * @return void
+     */
+    public function testGetSetTransliterator()
+    {
+        $this->assertNull(Text::getTransliterator());
+
+        $transliterator = \Transliterator::createFromRules('
+            $nonletter = [:^Letter:];
+            $nonletter → \'*\';
+            ::Latin-ASCII;
+        ');
+        $this->assertInstanceOf(\Transliterator::class, $transliterator);
+        Text::setTransliterator($transliterator);
+        $this->assertSame($transliterator, Text::getTransliterator());
     }
 
     /**
@@ -1690,9 +1709,12 @@ HTML;
         $defaultTransliteratorId = 'Any-Latin; Latin-ASCII; [\u0080-\u7fff] remove';
         $this->assertEquals($defaultTransliteratorId, Text::getTransliteratorId());
 
-        $expected = 'Latin-ASCII; [\u0080-\u7fff] remove';
+        $expected = 'Latin-ASCII;[\u0080-\u7fff] remove';
         Text::setTransliteratorId($expected);
         $this->assertEquals($expected, Text::getTransliteratorId());
+
+        $this->assertInstanceOf(\Transliterator::class, Text::getTransliterator());
+        $this->assertEquals($expected, Text::getTransliterator()->id);
 
         Text::setTransliteratorId($defaultTransliteratorId);
     }
@@ -1707,40 +1729,55 @@ HTML;
         return [
             [
                 'Foo Bar: Not just for breakfast any-more', null,
-                'Foo Bar: Not just for breakfast any-more'
+                'Foo Bar: Not just for breakfast any-more',
             ],
             [
                 'A æ Übérmensch på høyeste nivå! И я люблю PHP! ест. ﬁ ¦', null,
-                'A ae Ubermensch pa hoyeste niva! I a lublu PHP! est. fi '
+                'A ae Ubermensch pa hoyeste niva! I a lublu PHP! est. fi ',
             ],
             [
-                'Äpfel Über Öl grün ärgert groß öko', null,
-                'Apfel Uber Ol grun argert gross oko'
+                'Äpfel Über Öl grün ärgert groß öko',
+                transliterator_create_from_rules('
+                    $AE = [Ä {A \u0308}];
+                    $OE = [Ö {O \u0308}];
+                    $UE = [Ü {U \u0308}];
+                    [ä {a \u0308}] → ae;
+                    [ö {o \u0308}] → oe;
+                    [ü {u \u0308}] → ue;
+                    {$AE} [:Lowercase:] → Ae;
+                    {$OE} [:Lowercase:] → Oe;
+                    {$UE} [:Lowercase:] → Ue;
+                    $AE → AE;
+                    $OE → OE;
+                    $UE → UE;
+                    ::Latin-ASCII;
+                '),
+                'Aepfel Ueber Oel gruen aergert gross oeko',
             ],
             [
                 'La langue française est un attribut de souveraineté en France', null,
-                'La langue francaise est un attribut de souverainete en France'
+                'La langue francaise est un attribut de souverainete en France',
             ],
             [
                 '!@$#exciting stuff! - what !@-# was that?', null,
-                '!@$#exciting stuff! - what !@-# was that?'
+                '!@$#exciting stuff! - what !@-# was that?',
             ],
             [
                 'controller/action/りんご/1', null,
-                'controller/action/ringo/1'
+                'controller/action/ringo/1',
             ],
             [
                 'の話が出たので大丈夫かなあと', null,
-                'no huaga chutanode da zhang fukanaato'
+                'no huaga chutanode da zhang fukanaato',
             ],
             [
                 'posts/view/한국어/page:1/sort:asc', null,
-                'posts/view/hangug-eo/page:1/sort:asc'
+                'posts/view/hangug-eo/page:1/sort:asc',
             ],
             [
                 "non\xc2\xa0breaking\xc2\xa0space", null,
-                'non breaking space'
-            ]
+                'non breaking space',
+            ],
         ];
     }
 
@@ -1748,14 +1785,14 @@ HTML;
      * testTransliterate method
      *
      * @param string $string String
-     * @param string $transliteratorId Transliterator Id
-     * @param String $expected Exepected string
+     * @param \Transliterator|string|null $transliterator Transliterator
+     * @param String $expected Expected string
      * @return void
      * @dataProvider transliterateInputProvider
      */
-    public function testTransliterate($string, $transliteratorId, $expected)
+    public function testTransliterate($string, $transliterator, $expected)
     {
-        $result = Text::transliterate($string, $transliteratorId);
+        $result = Text::transliterate($string, $transliterator);
         $this->assertEquals($expected, $result);
     }
 
@@ -1764,83 +1801,99 @@ HTML;
         return [
             [
                 'Foo Bar: Not just for breakfast any-more', [],
-                'Foo-Bar-Not-just-for-breakfast-any-more'
+                'Foo-Bar-Not-just-for-breakfast-any-more',
             ],
             [
                 'Foo Bar: Not just for breakfast any-more', ['replacement' => '_'],
-                'Foo_Bar_Not_just_for_breakfast_any_more'
+                'Foo_Bar_Not_just_for_breakfast_any_more',
             ],
             [
                 'Foo Bar: Not just for breakfast any-more', ['replacement' => '+'],
-                'Foo+Bar+Not+just+for+breakfast+any+more'
+                'Foo+Bar+Not+just+for+breakfast+any+more',
             ],
             [
                 'A æ Übérmensch på høyeste nivå! И я люблю PHP! есть. ﬁ ¦', [],
-                'A-ae-Ubermensch-pa-hoyeste-niva-I-a-lublu-PHP-est-fi'
+                'A-ae-Ubermensch-pa-hoyeste-niva-I-a-lublu-PHP-est-fi',
             ],
             [
                 'A æ Übérmensch på høyeste nivå! И я люблю PHP! есть. ﬁ ¦', ['transliteratorId' => 'Latin-ASCII'],
-                'A-ae-Ubermensch-pa-hoyeste-niva-И-я-люблю-PHP-есть-fi'
+                'A-ae-Ubermensch-pa-hoyeste-niva-И-я-люблю-PHP-есть-fi',
             ],
             [
                 'Äpfel Über Öl grün ärgert groß öko', [],
-                'Apfel-Uber-Ol-grun-argert-gross-oko'
+                'Apfel-Uber-Ol-grun-argert-gross-oko',
             ],
             [
                 'The truth - and- more- news', [],
-                'The-truth-and-more-news'
+                'The-truth-and-more-news',
             ],
             [
                 'The truth: and more news', [],
-                'The-truth-and-more-news'
+                'The-truth-and-more-news',
             ],
             [
                 'La langue française est un attribut de souveraineté en France', [],
-                'La-langue-francaise-est-un-attribut-de-souverainete-en-France'
+                'La-langue-francaise-est-un-attribut-de-souverainete-en-France',
             ],
             [
                 '!@$#exciting stuff! - what !@-# was that?', [],
-                'exciting-stuff-what-was-that'
+                'exciting-stuff-what-was-that',
             ],
             [
                 '20% of profits went to me!', [],
-                '20-of-profits-went-to-me'
+                '20-of-profits-went-to-me',
             ],
             [
                 '#this melts your face1#2#3', [],
-                'this-melts-your-face1-2-3'
+                'this-melts-your-face1-2-3',
             ],
             [
                 'controller/action/りんご/1', ['transliteratorId' => false],
-                'controller-action-りんご-1'
+                'controller-action-りんご-1',
             ],
             [
                 'の話が出たので大丈夫かなあと', ['transliteratorId' => false],
-                'の話が出たので大丈夫かなあと'
+                'の話が出たので大丈夫かなあと',
             ],
             [
                 'posts/view/한국어/page:1/sort:asc', ['transliteratorId' => false],
-                'posts-view-한국어-page-1-sort-asc'
+                'posts-view-한국어-page-1-sort-asc',
             ],
             [
                 "non\xc2\xa0breaking\xc2\xa0space", [],
-                'non-breaking-space'
+                'non-breaking-space',
             ],
             [
                 'Foo Bar: Not just for breakfast any-more', ['replacement' => ''],
-                'FooBarNotjustforbreakfastanymore'
+                'FooBarNotjustforbreakfastanymore',
             ],
             [
                 'clean!_me.tar.gz', ['preserve' => '.'],
-                'clean-me.tar.gz'
+                'clean-me.tar.gz',
             ],
             [
                 'cl#ean(me', [],
-                'cl-ean-me'
+                'cl-ean-me',
             ],
             [
                 'cl#e|an(me.jpg', ['preserve' => '.'],
-                'cl-e-an-me.jpg'
+                'cl-e-an-me.jpg',
+            ],
+            [
+                'Foo Bar: Not just for breakfast any-more', ['preserve' => ' '],
+                'Foo Bar- Not just for breakfast any-more',
+            ],
+            [
+                'Foo Bar: Not just for (breakfast) any-more', ['preserve' => ' ()'],
+                'Foo Bar- Not just for (breakfast) any-more',
+            ],
+            [
+                'Foo Bar: Not just for breakfast any-more', ['replacement' => null],
+                'FooBarNotjustforbreakfastanymore',
+            ],
+            [
+                'Foo Bar: Not just for breakfast any-more', ['replacement' => false],
+                'FooBarNotjustforbreakfastanymore',
             ],
         ];
     }
@@ -1850,7 +1903,7 @@ HTML;
      *
      * @param string $string String
      * @param array $options Options
-     * @param String $expected Exepected string
+     * @param String $expected Expected string
      * @return void
      * @dataProvider slugInputProvider
      */

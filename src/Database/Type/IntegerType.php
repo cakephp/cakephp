@@ -52,6 +52,23 @@ class IntegerType extends Type implements TypeInterface, BatchCastingInterface
     }
 
     /**
+     * Checks if the value is not a numeric value
+     *
+     * @throws \InvalidArgumentException
+     * @param mixed $value Value to check
+     * @return void
+     */
+    protected function checkNumeric($value)
+    {
+        if (!is_numeric($value)) {
+            throw new InvalidArgumentException(sprintf(
+                'Cannot convert value of type `%s` to integer',
+                getTypeName($value)
+            ));
+        }
+    }
+
+    /**
      * Convert integer data into the database format.
      *
      * @param mixed $value The value to convert.
@@ -64,12 +81,7 @@ class IntegerType extends Type implements TypeInterface, BatchCastingInterface
             return null;
         }
 
-        if (!is_scalar($value)) {
-            throw new InvalidArgumentException(sprintf(
-                'Cannot convert value of type `%s` to integer',
-                getTypeName($value)
-            ));
-        }
+        $this->checkNumeric($value);
 
         return (int)$value;
     }
@@ -93,7 +105,7 @@ class IntegerType extends Type implements TypeInterface, BatchCastingInterface
     /**
      * {@inheritDoc}
      *
-     * @return array
+     * @return int[]
      */
     public function manyToPHP(array $values, array $fields, Driver $driver)
     {
@@ -101,6 +113,9 @@ class IntegerType extends Type implements TypeInterface, BatchCastingInterface
             if (!isset($values[$field])) {
                 continue;
             }
+
+            $this->checkNumeric($values[$field]);
+
             $values[$field] = (int)$values[$field];
         }
 
@@ -120,7 +135,7 @@ class IntegerType extends Type implements TypeInterface, BatchCastingInterface
     }
 
     /**
-     * Marshalls request data into PHP floats.
+     * Marshals request data into PHP floats.
      *
      * @param mixed $value The value to convert.
      * @return int|null Converted value.
@@ -130,11 +145,8 @@ class IntegerType extends Type implements TypeInterface, BatchCastingInterface
         if ($value === null || $value === '') {
             return null;
         }
-        if (is_numeric($value) || ctype_digit($value)) {
+        if (is_numeric($value)) {
             return (int)$value;
-        }
-        if (is_array($value)) {
-            return 1;
         }
 
         return null;

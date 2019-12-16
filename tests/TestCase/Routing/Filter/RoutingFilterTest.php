@@ -18,6 +18,7 @@ use Cake\Event\Event;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Filter\RoutingFilter;
+use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 
@@ -41,7 +42,7 @@ class RoutingFilterTest extends TestCase
 
         $request = new ServerRequest([
             'url' => '/testcontroller/testaction/params1/params2/params3',
-            'params' => ['controller' => 'articles']
+            'params' => ['controller' => 'articles'],
         ]);
         $event = new Event(__CLASS__, $this, compact('request'));
         $filter->beforeDispatch($event);
@@ -82,7 +83,7 @@ class RoutingFilterTest extends TestCase
      */
     public function testBeforeDispatchRedirectRoute()
     {
-        Router::scope('/', function ($routes) {
+        Router::scope('/', function (RouteBuilder $routes) {
             $routes->redirect('/home', ['controller' => 'articles']);
             $routes->connect('/:controller/:action/*');
         });

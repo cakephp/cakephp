@@ -82,11 +82,10 @@ use RuntimeException;
  * @property \Cake\Controller\Component\RequestHandlerComponent $RequestHandler
  * @property \Cake\Controller\Component\SecurityComponent $Security
  * @method bool isAuthorized($user)
- * @link https://book.cakephp.org/3.0/en/controllers.html
+ * @link https://book.cakephp.org/3/en/controllers.html
  */
 class Controller implements EventListenerInterface, EventDispatcherInterface
 {
-
     use EventDispatcherTrait;
     use LocatorAwareTrait;
     use LogTrait;
@@ -114,7 +113,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * ```
      *
      * @var array
-     * @link https://book.cakephp.org/3.0/en/controllers.html#configuring-helpers-to-load
+     * @link https://book.cakephp.org/3/en/controllers.html#configuring-helpers-to-load
      *
      * @deprecated 3.0.0 You should configure helpers in your AppView::initialize() method.
      */
@@ -125,18 +124,20 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * This object contains all the information about a request and several methods for reading
      * additional information about the request.
      *
-     * @var \Cake\Http\ServerRequest|null
-     * @link https://book.cakephp.org/3.0/en/controllers/request-response.html#request
-     * @deprecated 3.6.0 The property will become protected in 4.0.0. Use getRequest()/setRequest instead.
+     * Deprecated 3.6.0: The property will become protected in 4.0.0. Use getRequest()/setRequest instead.
+     *
+     * @var \Cake\Http\ServerRequest
+     * @link https://book.cakephp.org/3/en/controllers/request-response.html#request
      */
     public $request;
 
     /**
      * An instance of a Response object that contains information about the impending response
      *
-     * @var \Cake\Http\Response|null
-     * @link https://book.cakephp.org/3.0/en/controllers/request-response.html#response
-     * @deprecated 3.6.0 The property will become protected in 4.0.0. Use getResponse()/setResponse instead.
+     * Deprecated 3.6.0: The property will become protected in 4.0.0. Use getResponse()/setResponse instead.
+
+     * @var \Cake\Http\Response
+     * @link https://book.cakephp.org/3/en/controllers/request-response.html#response
      */
     public $response;
 
@@ -145,7 +146,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @var string
      */
-    protected $_responseClass = 'Cake\Http\Response';
+    protected $_responseClass = Response::class;
 
     /**
      * Settings for pagination.
@@ -183,7 +184,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * ```
      *
      * @var array
-     * @link https://book.cakephp.org/3.0/en/controllers/components.html
+     * @link https://book.cakephp.org/3/en/controllers/components.html
      *
      * @deprecated 3.0.0 You should configure components in your Controller::initialize() method.
      */
@@ -203,9 +204,10 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @var array
      * @see \Cake\View\View
+     * @deprecated 3.7.0 Use ViewBuilder::setOptions() or any one of it's setter methods instead.
      */
     protected $_validViewOptions = [
-        'passedArgs'
+        'passedArgs',
     ];
 
     /**
@@ -252,7 +254,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
 
         $this->setRequest($request ?: new ServerRequest());
-        $this->setResponse($response ?: new Response());
+        $this->response = $response ?: new Response();
 
         if ($eventManager !== null) {
             $this->setEventManager($eventManager);
@@ -323,6 +325,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param string $name The name of the component to load.
      * @param array $config The config for the component.
      * @return \Cake\Controller\Component
+     * @throws \Exception
      */
     public function loadComponent($name, array $config = [])
     {
@@ -367,11 +370,24 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
 
         list($plugin, $class) = pluginSplit($this->modelClass, true);
-        if ($class !== $name) {
-            return false;
+        if ($class === $name) {
+            return $this->loadModel($plugin . $class);
         }
 
-        return $this->loadModel($plugin . $class);
+        $trace = debug_backtrace();
+        $parts = explode('\\', get_class($this));
+        trigger_error(
+            sprintf(
+                'Undefined property: %s::$%s in %s on line %s',
+                array_pop($parts),
+                $name,
+                $trace[0]['file'],
+                $trace[0]['line']
+            ),
+            E_USER_NOTICE
+        );
+
+        return false;
     }
 
     /**
@@ -385,7 +401,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     {
         $deprecated = [
             'name' => 'setName',
-            'plugin' => 'setPlugin'
+            'plugin' => 'setPlugin',
         ];
         if (isset($deprecated[$name])) {
             $method = $deprecated[$name];
@@ -495,7 +511,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     }
 
     /**
-     * Disbale automatic action rendering.
+     * Disable automatic action rendering.
      *
      * @return $this
      * @since 3.6.0
@@ -571,13 +587,12 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * exists and isn't private.
      *
      * @return mixed The resulting response.
-     * @throws \LogicException When request is not set.
-     * @throws \Cake\Controller\Exception\MissingActionException When actions are not defined or inaccessible.
+     * @throws \ReflectionException
      */
     public function invokeAction()
     {
         $request = $this->request;
-        if (!isset($request)) {
+        if (!$request) {
             throw new LogicException('No Request object configured. Cannot invoke action');
         }
         if (!$this->isAction($request->getParam('action'))) {
@@ -588,10 +603,15 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
                 'plugin' => $request->getParam('plugin'),
             ]);
         }
-        /* @var callable $callable */
+        /** @var callable $callable */
         $callable = [$this, $request->getParam('action')];
 
-        return $callable(...array_values($request->getParam('pass')));
+        $result = $callable(...array_values($request->getParam('pass')));
+        if ($result instanceof Response) {
+            $this->response = $result;
+        }
+
+        return $result;
     }
 
     /**
@@ -687,11 +707,10 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * Redirects to given $url, after turning off $this->autoRender.
      *
-     * @param string|array $url A string or array-based URL pointing to another location within the app,
-     *     or an absolute URL
-     * @param int $status HTTP status code (eg: 301)
+     * @param string|array|\Psr\Http\Message\UriInterface $url A string, array-based URL or UriInterface instance.
+     * @param int $status HTTP status code. Defaults to `302`.
      * @return \Cake\Http\Response|null
-     * @link https://book.cakephp.org/3.0/en/controllers.html#Controller::redirect
+     * @link https://book.cakephp.org/3/en/controllers.html#Controller::redirect
      */
     public function redirect($url, $status = 302)
     {
@@ -734,7 +753,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function setAction($action, ...$args)
     {
-        $this->request = $this->request->withParam('action', $action);
+        $this->setRequest($this->request->withParam('action', $action));
 
         return $this->$action(...$args);
     }
@@ -745,7 +764,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param string|null $view View to use for rendering
      * @param string|null $layout Layout to use
      * @return \Cake\Http\Response A response object containing the rendered view.
-     * @link https://book.cakephp.org/3.0/en/controllers.html#rendering-a-view
+     * @link https://book.cakephp.org/3/en/controllers.html#rendering-a-view
      */
     public function render($view = null, $layout = null)
     {
@@ -755,10 +774,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
 
         if ($this->request->getParam('bare')) {
-            $builder->enableAutoLayout(false);
+            $builder->disableAutoLayout();
         }
-        $builder->getClassName($this->viewClass);
-
         $this->autoRender = false;
 
         $event = $this->dispatchEvent('Controller.beforeRender');
@@ -775,7 +792,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
 
         $this->View = $this->createView();
         $contents = $this->View->render($view, $layout);
-        $this->response = $this->View->response->withStringBody($contents);
+        $this->setResponse($this->View->getResponse()->withStringBody($contents));
 
         return $this->response;
     }
@@ -843,7 +860,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * (e.g: Table instance, 'TableName' or a Query object)
      * @param array $settings The settings/configuration used for pagination.
      * @return \Cake\ORM\ResultSet|\Cake\Datasource\ResultSetInterface Query results
-     * @link https://book.cakephp.org/3.0/en/controllers.html#paginating-a-model
+     * @link https://book.cakephp.org/3/en/controllers.html#paginating-a-model
      * @throws \RuntimeException When no compatible table object can be found.
      */
     public function paginate($object = null, array $settings = [])
@@ -881,6 +898,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @param string $action The action to check.
      * @return bool Whether or not the method is accessible from a URL.
+     * @throws \ReflectionException
      */
     public function isAction($action)
     {
@@ -903,7 +921,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @param \Cake\Event\Event $event An Event instance
      * @return \Cake\Http\Response|null
-     * @link https://book.cakephp.org/3.0/en/controllers.html#request-life-cycle-callbacks
+     * @link https://book.cakephp.org/3/en/controllers.html#request-life-cycle-callbacks
      */
     public function beforeFilter(Event $event)
     {
@@ -916,7 +934,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @param \Cake\Event\Event $event An Event instance
      * @return \Cake\Http\Response|null
-     * @link https://book.cakephp.org/3.0/en/controllers.html#request-life-cycle-callbacks
+     * @link https://book.cakephp.org/3/en/controllers.html#request-life-cycle-callbacks
      */
     public function beforeRender(Event $event)
     {
@@ -937,7 +955,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *     or an absolute URL
      * @param \Cake\Http\Response $response The response object.
      * @return \Cake\Http\Response|null
-     * @link https://book.cakephp.org/3.0/en/controllers.html#request-life-cycle-callbacks
+     * @link https://book.cakephp.org/3/en/controllers.html#request-life-cycle-callbacks
      */
     public function beforeRedirect(Event $event, $url, Response $response)
     {
@@ -949,7 +967,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @param \Cake\Event\Event $event An Event instance
      * @return \Cake\Http\Response|null
-     * @link https://book.cakephp.org/3.0/en/controllers.html#request-life-cycle-callbacks
+     * @link https://book.cakephp.org/3/en/controllers.html#request-life-cycle-callbacks
      */
     public function afterFilter(Event $event)
     {

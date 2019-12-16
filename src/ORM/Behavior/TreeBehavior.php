@@ -14,7 +14,6 @@
  */
 namespace Cake\ORM\Behavior;
 
-use ArrayObject;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\RecordNotFoundException;
@@ -38,7 +37,6 @@ use RuntimeException;
  */
 class TreeBehavior extends Behavior
 {
-
     /**
      * Cached copy of the first column in a table's primary key.
      *
@@ -92,11 +90,10 @@ class TreeBehavior extends Behavior
      *
      * @param \Cake\Event\Event $event The beforeSave event that was fired
      * @param \Cake\Datasource\EntityInterface $entity the entity that is going to be saved
-     * @param \ArrayObject $options Options.
      * @return void
      * @throws \RuntimeException if the parent to set for the node is invalid
      */
-    public function beforeSave(Event $event, EntityInterface $entity, ArrayObject $options)
+    public function beforeSave(Event $event, EntityInterface $entity)
     {
         $isNew = $entity->isNew();
         $config = $this->getConfig();
@@ -162,10 +159,9 @@ class TreeBehavior extends Behavior
      *
      * @param \Cake\Event\Event $event The afterSave event that was fired
      * @param \Cake\Datasource\EntityInterface $entity the entity that is going to be saved
-     * @param \ArrayObject $options Options.
      * @return void
      */
-    public function afterSave(Event $event, EntityInterface $entity, ArrayObject $options)
+    public function afterSave(Event $event, EntityInterface $entity)
     {
         if (!$this->_config['level'] || $entity->isNew()) {
             return;
@@ -198,7 +194,7 @@ class TreeBehavior extends Behavior
             'order' => $config['left'],
         ]);
 
-        /* @var \Cake\Datasource\EntityInterface $node */
+        /** @var \Cake\Datasource\EntityInterface $node */
         foreach ($children as $node) {
             $parentIdValue = $node->get($config['parent']);
             $depth = $depths[$parentIdValue] + 1;
@@ -216,10 +212,9 @@ class TreeBehavior extends Behavior
      *
      * @param \Cake\Event\Event $event The beforeDelete event that was fired
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
-     * @param \ArrayObject $options Options.
      * @return void
      */
-    public function beforeDelete(Event $event, EntityInterface $entity, ArrayObject $options)
+    public function beforeDelete(Event $event, EntityInterface $entity)
     {
         $config = $this->getConfig();
         $this->_ensureFields($entity);
@@ -231,7 +226,7 @@ class TreeBehavior extends Behavior
             $query = $this->_scope($this->_table->query())
                 ->delete()
                 ->where(function ($exp) use ($config, $left, $right) {
-                    /* @var \Cake\Database\Expression\QueryExpression $exp */
+                    /** @var \Cake\Database\Expression\QueryExpression $exp */
                     return $exp
                         ->gte($config['leftField'], $left + 1)
                         ->lte($config['leftField'], $right - 1);
@@ -351,7 +346,7 @@ class TreeBehavior extends Behavior
         $config = $this->getConfig();
         $this->_table->updateAll(
             function ($exp) use ($config) {
-                /* @var \Cake\Database\Expression\QueryExpression $exp */
+                /** @var \Cake\Database\Expression\QueryExpression $exp */
                 $leftInverse = clone $exp;
                 $leftInverse->setConjunction('*')->add('-1');
                 $rightInverse = clone $leftInverse;
@@ -361,7 +356,7 @@ class TreeBehavior extends Behavior
                     ->eq($config['rightField'], $rightInverse->add($config['rightField']));
             },
             function ($exp) use ($config) {
-                /* @var \Cake\Database\Expression\QueryExpression $exp */
+                /** @var \Cake\Database\Expression\QueryExpression $exp */
                 return $exp->lt($config['leftField'], 0);
             }
         );
@@ -525,7 +520,7 @@ class TreeBehavior extends Behavior
     public function formatTreeList(Query $query, array $options = [])
     {
         return $query->formatResults(function ($results) use ($options) {
-            /* @var \Cake\Collection\CollectionTrait $results */
+            /** @var \Cake\Collection\CollectionTrait $results */
             $options += [
                 'keyPath' => $this->_getPrimaryKey(),
                 'valuePath' => $this->_table->getDisplayField(),
@@ -643,7 +638,7 @@ class TreeBehavior extends Behavior
                 ->select([$left, $right])
                 ->where(["$parent IS" => $nodeParent])
                 ->where(function ($exp) use ($config, $nodeLeft) {
-                    /* @var \Cake\Database\Expression\QueryExpression $exp */
+                    /** @var \Cake\Database\Expression\QueryExpression $exp */
                     return $exp->lt($config['rightField'], $nodeLeft);
                 })
                 ->orderDesc($config['leftField'])
@@ -656,7 +651,7 @@ class TreeBehavior extends Behavior
                 ->select([$left, $right])
                 ->where(["$parent IS" => $nodeParent])
                 ->where(function ($exp) use ($config, $nodeLeft) {
-                    /* @var \Cake\Database\Expression\QueryExpression $exp */
+                    /** @var \Cake\Database\Expression\QueryExpression $exp */
                     return $exp->lt($config['rightField'], $nodeLeft);
                 })
                 ->orderAsc($config['leftField'])
@@ -733,7 +728,7 @@ class TreeBehavior extends Behavior
                 ->select([$left, $right])
                 ->where(["$parent IS" => $nodeParent])
                 ->where(function ($exp) use ($config, $nodeRight) {
-                    /* @var \Cake\Database\Expression\QueryExpression $exp */
+                    /** @var \Cake\Database\Expression\QueryExpression $exp */
                     return $exp->gt($config['leftField'], $nodeRight);
                 })
                 ->orderAsc($config['leftField'])
@@ -746,7 +741,7 @@ class TreeBehavior extends Behavior
                 ->select([$left, $right])
                 ->where(["$parent IS" => $nodeParent])
                 ->where(function ($exp) use ($config, $nodeRight) {
-                    /* @var \Cake\Database\Expression\QueryExpression $exp */
+                    /** @var \Cake\Database\Expression\QueryExpression $exp */
                     return $exp->gt($config['leftField'], $nodeRight);
                 })
                 ->orderDesc($config['leftField'])
@@ -841,7 +836,7 @@ class TreeBehavior extends Behavior
             ->select([$aliasedPrimaryKey])
             ->where([$this->_table->aliasField($parent) . ' IS' => $parentId])
             ->order($order)
-            ->enableHydration(false);
+            ->disableHydration();
 
         $leftCounter = $counter;
         $nextLevel = $level + 1;
@@ -909,7 +904,7 @@ class TreeBehavior extends Behavior
             $exp = $query->newExpr();
 
             $movement = clone $exp;
-            $movement->add($field)->add("$shift")->setConjunction($dir);
+            $movement->add($field)->add((string)$shift)->setConjunction($dir);
 
             $inverse = clone $exp;
             $movement = $mark ?

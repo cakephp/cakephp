@@ -15,6 +15,7 @@
 namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
+use Cake\Database\Query;
 use Cake\Database\TypedResultInterface;
 use Cake\Database\TypedResultTrait;
 use Cake\Database\Type\ExpressionTypeCasterTrait;
@@ -28,7 +29,6 @@ use Cake\Database\ValueBinder;
  */
 class FunctionExpression extends QueryExpression implements TypedResultInterface
 {
-
     use ExpressionTypeCasterTrait;
     use TypedResultTrait;
 
@@ -171,8 +171,10 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
     {
         $parts = [];
         foreach ($this->_conditions as $condition) {
-            if ($condition instanceof ExpressionInterface) {
-                $condition = sprintf('%s', $condition->sql($generator));
+            if ($condition instanceof Query) {
+                $condition = sprintf('(%s)', $condition->sql($generator));
+            } elseif ($condition instanceof ExpressionInterface) {
+                $condition = $condition->sql($generator);
             } elseif (is_array($condition)) {
                 $p = $generator->placeholder('param');
                 $generator->bind($p, $condition['value'], $condition['type']);

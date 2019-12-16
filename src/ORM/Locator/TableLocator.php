@@ -26,6 +26,12 @@ use RuntimeException;
  */
 class TableLocator implements LocatorInterface
 {
+    /**
+     * Contains a list of locations where table classes should be looked for.
+     *
+     * @var array
+     */
+    protected $locations = [];
 
     /**
      * Configuration for aliases.
@@ -55,6 +61,25 @@ class TableLocator implements LocatorInterface
      * @var array
      */
     protected $_options = [];
+
+    /**
+     * Constructor.
+     *
+     * @param array|null $locations Locations where tables should be looked for.
+     *   If none provided, the default `Model\Table` under your app's namespace is used.
+     */
+    public function __construct(array $locations = null)
+    {
+        if ($locations === null) {
+            $locations = [
+                'Model/Table',
+            ];
+        }
+
+        foreach ($locations as $location) {
+            $this->addLocation($location);
+        }
+    }
 
     /**
      * Stores a list of options to be used when instantiating an object
@@ -191,14 +216,13 @@ class TableLocator implements LocatorInterface
             $options += $this->_config[$alias];
         }
 
-        if (empty($options['className'])) {
-            $options['className'] = Inflector::camelize($alias);
-        }
-
         $className = $this->_getClassName($alias, $options);
         if ($className) {
             $options['className'] = $className;
         } else {
+            if (empty($options['className'])) {
+                $options['className'] = Inflector::camelize($alias);
+            }
             if (!isset($options['table']) && strpos($options['className'], '\\') === false) {
                 list(, $table) = pluginSplit($options['className']);
                 $options['table'] = Inflector::underscore($table);
@@ -210,7 +234,7 @@ class TableLocator implements LocatorInterface
             if (!empty($options['connectionName'])) {
                 $connectionName = $options['connectionName'];
             } else {
-                /* @var \Cake\ORM\Table $className */
+                /** @var \Cake\ORM\Table $className */
                 $className = $options['className'];
                 $connectionName = $className::defaultConnectionName();
             }
@@ -244,7 +268,18 @@ class TableLocator implements LocatorInterface
             $options['className'] = Inflector::camelize($alias);
         }
 
-        return App::className($options['className'], 'Model/Table', 'Table');
+        if (strpos($options['className'], '\\') !== false && class_exists($options['className'])) {
+            return $options['className'];
+        }
+
+        foreach ($this->locations as $location) {
+            $class = App::className($options['className'], $location, 'Table');
+            if ($class !== false) {
+                return $class;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -282,6 +317,7 @@ class TableLocator implements LocatorInterface
         $this->_instances = [];
         $this->_config = [];
         $this->_fallbacked = [];
+        $this->_options = [];
     }
 
     /**
@@ -307,5 +343,21 @@ class TableLocator implements LocatorInterface
             $this->_config[$alias],
             $this->_fallbacked[$alias]
         );
+    }
+
+    /**
+     * Adds a location where tables should be looked for.
+     *
+     * @param string $location Location to add.
+     * @return $this
+     *
+     * @since 3.8.0
+     */
+    public function addLocation($location)
+    {
+        $location = str_replace('\\', '/', $location);
+        $this->locations[] = trim($location, '/');
+
+        return $this;
     }
 }

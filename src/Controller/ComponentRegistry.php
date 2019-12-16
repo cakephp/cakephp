@@ -24,16 +24,17 @@ use Cake\Event\EventDispatcherTrait;
  * ComponentRegistry is a registry for loaded components
  *
  * Handles loading, constructing and binding events for component class objects.
+ *
+ * @extends \Cake\Core\ObjectRegistry<\Cake\Controller\Component>
  */
 class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterface
 {
-
     use EventDispatcherTrait;
 
     /**
      * The controller that this collection was initialized with.
      *
-     * @var \Cake\Controller\Controller
+     * @var \Cake\Controller\Controller|null
      */
     protected $_Controller;
 
@@ -52,7 +53,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
     /**
      * Get the controller associated with the collection.
      *
-     * @return \Cake\Controller\Controller Controller instance
+     * @return \Cake\Controller\Controller|null Controller instance or null if not set.
      */
     public function getController()
     {
@@ -99,7 +100,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
     {
         throw new MissingComponentException([
             'class' => $class . 'Component',
-            'plugin' => $plugin
+            'plugin' => $plugin,
         ]);
     }
 
