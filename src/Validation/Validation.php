@@ -1560,7 +1560,6 @@ class Validation
         return static::_check($check, '/^#[0-9a-f]{6}$/iD');
     }
 
-
     const ISBN_10 = 'isbn10';
     const ISBN_13 = 'isbn13';
 
