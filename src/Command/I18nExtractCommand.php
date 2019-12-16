@@ -197,7 +197,7 @@ class I18nExtractCommand extends Command
             $this->_getPaths($io);
         }
 
-        if ($args->hasOption('extract-core')) {
+        if ($args->getOption('extract-core')) {
             $this->_extractCore = !(strtolower((string)$args->getOption('extract-core')) === 'no');
         } else {
             $response = $io->askChoice(
@@ -208,7 +208,7 @@ class I18nExtractCommand extends Command
             $this->_extractCore = strtolower((string)$response) === 'y';
         }
 
-        if ($args->hasOption('exclude-plugins') && $this->_isExtractingApp()) {
+        if ($args->getOption('exclude-plugins') && $this->_isExtractingApp()) {
             $this->_exclude = array_merge($this->_exclude, App::path('plugins'));
         }
 
@@ -216,9 +216,9 @@ class I18nExtractCommand extends Command
             $this->_paths[] = CAKE;
         }
 
-        if ($args->hasOption('output')) {
+        if ($args->getOption('output')) {
             $this->_output = (string)$args->getOption('output');
-        } elseif ($args->hasOption('plugin')) {
+        } elseif ($args->getOption('plugin')) {
             $this->_output = Plugin::path($plugin)
                 . 'resources' . DIRECTORY_SEPARATOR
                 . 'locales' . DIRECTORY_SEPARATOR;
@@ -252,7 +252,7 @@ class I18nExtractCommand extends Command
             }
         }
 
-        if ($args->hasOption('merge')) {
+        if ($args->getOption('merge')) {
             $this->_merge = !(strtolower((string)$args->getOption('merge')) === 'no');
         } else {
             $io->out();

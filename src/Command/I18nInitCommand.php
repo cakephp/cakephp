@@ -57,7 +57,7 @@ class I18nInitCommand extends Command
         }
 
         $paths = App::path('locales');
-        if ($args->hasOption('plugin')) {
+        if ($args->getOption('plugin')) {
             $plugin = Inflector::camelize((string)$args->getOption('plugin'));
             $paths = [Plugin::path($plugin) . 'resources' . DIRECTORY_SEPARATOR . 'locales' . DIRECTORY_SEPARATOR];
         }
