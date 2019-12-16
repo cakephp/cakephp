@@ -8,6 +8,7 @@ use Cake\Event\EventList;
 use Cake\Event\EventManager;
 use Cake\TestSuite\Constraint\EventFiredWith;
 use Cake\TestSuite\TestCase;
+use stdClass;
 
 /**
  * EventFiredWith Test
@@ -32,8 +33,14 @@ class EventFiredWithTest extends TestCase
             'key' => null,
         ]);
 
+        $obj = new stdClass();
+        $myEventWithObject = new Event('my.obj.event', $this, [
+            'key' => $obj,
+        ]);
+
         $manager->getEventList()->add($myEvent);
         $manager->getEventList()->add($myOtherEvent);
+        $manager->getEventList()->add($myEventWithObject);
 
         $constraint = new EventFiredWith($manager, 'key', 'value');
 
@@ -45,6 +52,10 @@ class EventFiredWithTest extends TestCase
 
         $this->assertTrue($constraint->matches('my.other.event'));
         $this->assertFalse($constraint->matches('my.event'));
+
+        $constraint = new EventFiredWith($manager, 'key', $obj);
+
+        $this->assertTrue($constraint->matches('my.obj.event'));
     }
 
     /**
