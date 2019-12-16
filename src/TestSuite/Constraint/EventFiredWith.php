@@ -32,7 +32,7 @@ class EventFiredWith extends Constraint
     /**
      * Event data value
      *
-     * @var string|null
+     * @var mixed
      */
     protected $_dataValue;
 
@@ -41,9 +41,9 @@ class EventFiredWith extends Constraint
      *
      * @param \Cake\Event\EventManager $eventManager Event manager to check
      * @param string $dataKey Data key
-     * @param string|null $dataValue Data value
+     * @param mixed $dataValue Data value
      */
-    public function __construct(EventManager $eventManager, string $dataKey, ?string $dataValue)
+    public function __construct(EventManager $eventManager, string $dataKey, $dataValue)
     {
         $this->_eventManager = $eventManager;
         $this->_dataKey = $dataKey;

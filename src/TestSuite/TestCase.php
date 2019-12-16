@@ -277,7 +277,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @param string $name Event name
      * @param string $dataKey Data key
-     * @param string $dataValue Data value
+     * @param mixed $dataValue Data value
      * @param \Cake\Event\EventManager|null $eventManager Event manager to check, defaults to global event manager
      * @param string $message Assertion failure message
      * @return void
@@ -285,7 +285,7 @@ abstract class TestCase extends BaseTestCase
     public function assertEventFiredWith(
         string $name,
         string $dataKey,
-        string $dataValue,
+        $dataValue,
         ?EventManager $eventManager = null,
         string $message = ''
     ): void {
