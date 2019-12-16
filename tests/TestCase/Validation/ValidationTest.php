@@ -3172,4 +3172,28 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::hexColor('#fff'));
         $this->assertFalse(Validation::hexColor('ffffff'));
     }
+
+    /**
+     * testValidateISBN
+     *
+     * @return void
+     */
+    public function testValidateISBN()
+    {
+        $this->assertTrue(Validation::isbn(9785511438450));
+        $this->assertTrue(Validation::isbn('9785511438450'));
+        $this->assertTrue(Validation::isbn('978-0553593716'));
+
+        $this->assertFalse(Validation::isbn(123));
+        $this->assertFalse(Validation::isbn(1234567890123));
+        $this->assertFalse(Validation::isbn('1-2-3456---7890123'));
+    }
+
+    /**
+     * @return void
+     */
+    public function testContainsISBN()
+    {
+        $this->assertEquals(Validation::ISBN_13, Validation::containsISBN('978-0553593716'));
+    }
 }
