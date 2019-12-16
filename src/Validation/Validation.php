@@ -81,6 +81,16 @@ class Validation
     const DATETIME_ISO8601 = 'iso8601';
 
     /**
+     * ISBN 10 flag
+     */
+    const ISBN_10 = 'isbn10';
+
+    /**
+     * ISBN 13 flag
+     */
+    const ISBN_13 = 'isbn13';
+
+    /**
      * Some complex patterns needed in multiple places
      *
      * @var array
@@ -1641,9 +1651,6 @@ class Validation
     {
         return static::_check($check, '/^#[0-9a-f]{6}$/iD');
     }
-
-    const ISBN_10 = 'isbn10';
-    const ISBN_13 = 'isbn13';
 
     /**
      * ISBN 10 Validation
