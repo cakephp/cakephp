@@ -160,8 +160,8 @@ class ConsoleOptionParserTest extends TestCase
             ->addOption('no-default', [
             ]);
         $result = $parser->parse(['--test']);
-        $this->assertEquals(
-            ['test' => 'default value', 'help' => false, 'no-default' => null],
+        $this->assertSame(
+            ['test' => 'default value', 'help' => false],
             $result[0],
             'Default value did not parse out'
         );

@@ -421,7 +421,7 @@ class ConsoleOptionParser
             $defaults = [
                 'short' => '',
                 'help' => '',
-                'default' => '',
+                'default' => null,
                 'boolean' => false,
                 'multiple' => false,
                 'choices' => [],
