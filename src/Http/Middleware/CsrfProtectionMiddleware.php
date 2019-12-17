@@ -26,7 +26,6 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Zend\Diactoros\Response\RedirectResponse;
 
 /**
  * Provides CSRF protection & validation.
@@ -121,9 +120,6 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
             $request = $request->withAttribute('csrfToken', $token);
             /** @var mixed $response */
             $response = $handler->handle($request);
-            if ($response instanceof RedirectResponse) {
-                return $response;
-            }
 
             return $this->_addTokenCookie($token, $request, $response);
         }
@@ -184,10 +180,10 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      *
      * @param string $token The token to add.
      * @param \Psr\Http\Message\ServerRequestInterface $request The request to validate against.
-     * @param \Cake\Http\Response $response The response.
+     * @param \Psr\Http\Message\ResponseInterface $response The response.
      * @return \Cake\Http\Response $response Modified response.
      */
-    protected function _addTokenCookie(string $token, ServerRequestInterface $request, Response $response): Response
+    protected function _addTokenCookie(string $token, ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $cookie = Cookie::create(
             $this->_config['cookieName'],
@@ -199,8 +195,11 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
                 'httponly' => $this->_config['httpOnly'],
             ]
         );
+        if ($response instanceof Response) {
+            return $response->withCookie($cookie);
+        }
 
-        return $response->withCookie($cookie);
+        return $response->withAddedHeader('Set-Cookie', $cookie->toHeaderValue());
     }
 
     /**
