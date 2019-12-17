@@ -183,8 +183,11 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      * @param \Psr\Http\Message\ResponseInterface $response The response.
      * @return \Psr\Http\Message\ResponseInterface $response Modified response.
      */
-    protected function _addTokenCookie(string $token, ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
-    {
+    protected function _addTokenCookie(
+        string $token,
+        ServerRequestInterface $request,
+        ResponseInterface $response
+    ): ResponseInterface {
         $cookie = Cookie::create(
             $this->_config['cookieName'],
             $token,
