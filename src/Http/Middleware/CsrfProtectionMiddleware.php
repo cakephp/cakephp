@@ -181,7 +181,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      * @param string $token The token to add.
      * @param \Psr\Http\Message\ServerRequestInterface $request The request to validate against.
      * @param \Psr\Http\Message\ResponseInterface $response The response.
-     * @return \Cake\Http\Response $response Modified response.
+     * @return \Psr\Http\Message\ResponseInterface $response Modified response.
      */
     protected function _addTokenCookie(string $token, ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
