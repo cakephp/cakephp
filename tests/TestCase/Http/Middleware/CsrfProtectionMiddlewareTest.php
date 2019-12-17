@@ -22,8 +22,8 @@ use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use TestApp\Http\TestRequestHandler;
-use Zend\Diactoros\Response\RedirectResponse;
 use Zend\Diactoros\Response as DiactorosResponse;
+use Zend\Diactoros\Response\RedirectResponse;
 
 /**
  * Test for CsrfProtection
