@@ -22,6 +22,7 @@ use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use TestApp\Http\TestRequestHandler;
+use Zend\Diactoros\Response as DiactorosResponse;
 use Zend\Diactoros\Response\RedirectResponse;
 
 /**
@@ -121,28 +122,41 @@ class CsrfProtectionMiddlewareTest extends TestCase
     }
 
     /**
-     * Test that the CSRF tokens are not set for redirect responses
+     * Test that the CSRF tokens are set for redirect responses
      *
      * @return void
      */
-    public function testRedirectResponseCookiesNotSet()
+    public function testRedirectResponseCookies()
     {
         $request = new ServerRequest([
             'environment' => ['REQUEST_METHOD' => 'GET'],
         ]);
-        $expectedResponse = new RedirectResponse('/');
-        $handler = new TestRequestHandler(function ($request) use ($expectedResponse) {
-
-            return $expectedResponse;
+        $handler = new TestRequestHandler(function () {
+            return new RedirectResponse('/');
         });
 
-        $middleware = $this->getMockBuilder(CsrfProtectionMiddleware::class)
-            ->onlyMethods(['_addTokenCookie'])
-            ->getMock();
-        $middleware->expects($this->never())
-            ->method('_addTokenCookie');
+        $middleware = new CsrfProtectionMiddleware();
         $response = $middleware->process($request, $handler);
-        $this->assertSame($expectedResponse, $response);
+        $this->assertStringContainsString('csrfToken=', $response->getHeaderLine('Set-Cookie'));
+    }
+
+    /**
+     * Test that the CSRF tokens are set for diactoros responses
+     *
+     * @return void
+     */
+    public function testDiactorosResponseCookies()
+    {
+        $request = new ServerRequest([
+            'environment' => ['REQUEST_METHOD' => 'GET'],
+        ]);
+        $handler = new TestRequestHandler(function () {
+            return new DiactorosResponse();
+        });
+
+        $middleware = new CsrfProtectionMiddleware();
+        $response = $middleware->process($request, $handler);
+        $this->assertStringContainsString('csrfToken=', $response->getHeaderLine('Set-Cookie'));
     }
 
     /**
