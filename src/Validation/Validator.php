@@ -472,6 +472,13 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             if (is_array($rule)) {
                 $rule += ['rule' => $name];
             }
+            if (!is_string($name)) {
+                $name = $rule['rule'];
+                if (isset($this->_rules[$name])) {
+                    throw new InvalidArgumentException('You cannot add a rule without a unique name, already existing rule found: ' . $name);
+                }
+            }
+
             $validationSet->add($name, $rule);
         }
 
