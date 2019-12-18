@@ -456,6 +456,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field The name of the field from which the rule will be added
      * @param array|string $name The alias for a single rule or multiple rules array
      * @param array|\Cake\Validation\ValidationRule $rule the rule to add
+     * @throws \InvalidArgumentException If numeric index cannot be resolved to a string one
      * @return $this
      */
     public function add(string $field, $name, $rule = [])
@@ -474,9 +475,18 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             }
             if (!is_string($name)) {
                 $name = $rule['rule'];
-                if (isset($this->_rules[$name])) {
-                    throw new InvalidArgumentException('You cannot add a rule without a unique name, already existing rule found: ' . $name);
+                if (is_array($name)) {
+                    $name = array_shift($name);
                 }
+
+                if ($validationSet->offsetExists($name)) {
+                    $message = 'You cannot add a rule without a unique name, already existing rule found: ' . $name;
+                    throw new InvalidArgumentException($message);
+                }
+
+                deprecationWarning(
+                    'Using numeric indexes for adding validation rules is deprecated. Use string indexes instead.'
+                );
             }
 
             $validationSet->add($name, $rule);
