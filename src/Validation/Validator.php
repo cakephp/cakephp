@@ -485,7 +485,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 }
 
                 deprecationWarning(
-                    'Using numeric indexes for adding validation rules is deprecated. Use string indexes instead.'
+                    'Adding validation rules without a name key is deprecated. Update rules array to have string keys.'
                 );
             }
 
