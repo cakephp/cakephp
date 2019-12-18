@@ -21,6 +21,7 @@ use Cake\Validation\Validation;
 use Cake\Validation\ValidationRule;
 use Cake\Validation\ValidationSet;
 use Cake\Validation\Validator;
+use InvalidArgumentException;
 use Zend\Diactoros\UploadedFile;
 
 /**
@@ -85,7 +86,7 @@ class ValidatorTest extends TestCase
         $validator = new Validator();
         $validator->add('title', 'not-blank', ['rule' => 'notBlank']);
         $set = $validator->field('title');
-        $this->assertInstanceOf('Cake\Validation\ValidationSet', $set);
+        $this->assertInstanceOf(ValidationSet::class, $set);
         $this->assertCount(1, $set);
 
         $validator->add('title', 'another', ['rule' => 'alphanumeric']);
@@ -255,7 +256,7 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->hasField('foo'));
 
         $field = $validator->field('foo');
-        $this->assertInstanceOf('Cake\Validation\ValidationSet', $field);
+        $this->assertInstanceOf(ValidationSet::class, $field);
         $this->assertCount(0, $field);
         $this->assertTrue($validator->hasField('foo'));
     }
@@ -2042,8 +2043,58 @@ class ValidatorTest extends TestCase
             ],
         ]);
         $set = $validator->field('title');
-        $this->assertInstanceOf('Cake\Validation\ValidationSet', $set);
+        $this->assertInstanceOf(ValidationSet::class, $set);
         $this->assertCount(2, $set);
+    }
+
+    /**
+     * Tests adding rules via alternative syntax and numeric keys
+     *
+     * @return void
+     */
+    public function testAddMultipleNumericKeyArrays()
+    {
+        $validator = new Validator();
+
+        $this->deprecated(function () use ($validator) {
+            $validator->add('title', [
+                [
+                    'rule' => 'notBlank',
+                ],
+                [
+                    'rule' => ['minLength', 10],
+                    'message' => 'Titles need to be at least 10 characters long',
+                ],
+            ]);
+        });
+
+        $set = $validator->field('title');
+        $this->assertInstanceOf(ValidationSet::class, $set);
+        $this->assertCount(2, $set);
+    }
+
+    /**
+     * Tests adding rules via alternative syntax and numeric keys
+     *
+     * @return void
+     */
+    public function testAddMultipleNumericKeyArraysInvalid()
+    {
+        $validator = new Validator();
+        $validator->add('title', 'notBlank', ['rule' => 'notBlank']);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('You cannot add a rule without a unique name, already existing rule found: notBlank');
+
+        $validator->add('title', [
+            [
+                'rule' => 'notBlank',
+            ],
+            [
+                'rule' => ['minLength', 10],
+                'message' => 'Titles need to be at least 10 characters long',
+            ],
+        ]);
     }
 
     /**
