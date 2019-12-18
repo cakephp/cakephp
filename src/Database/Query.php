@@ -37,8 +37,19 @@ class Query implements ExpressionInterface, IteratorAggregate
 {
     use TypeMapTrait;
 
+    /**
+     * @var string
+     */
     public const JOIN_TYPE_INNER = 'INNER';
+
+    /**
+     * @var string
+     */
     public const JOIN_TYPE_LEFT = 'LEFT';
+
+    /**
+     * @var string
+     */
     public const JOIN_TYPE_RIGHT = 'RIGHT';
 
     /**
