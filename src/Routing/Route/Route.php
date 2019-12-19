@@ -30,7 +30,7 @@ class Route
 {
     /**
      * An array of named segments in a Route.
-     * `/:controller/:action/:id` has 3 key elements
+     * `/{controller}/{action}/{id}` has 3 key elements
      *
      * @var array
      */
