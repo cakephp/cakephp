@@ -8,8 +8,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version: ['7.2', '7.3']
-        db-type: [sqlite, mysql, postgres]
+        php-version: ['7.2', '7.4']
+        db-type: [sqlite, mysql, pgsql]
     name: PHP ${{ matrix.php-version }} & ${{ matrix.db-type }}
 
     services:
@@ -27,38 +27,23 @@ jobs:
       with:
         fetch-depth: 1
 
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v1
+      with:
+        php-version: ${{ matrix.php-version }}
+        extensions: mbstring, intl, apcu, pdo_${{ matrix.db-type }}
+        ini-values: apc.enable_cli = 1
+        coverage: pcov
+        pecl: false
+
     - name: Install packages
       run: |
-        # Without removing php-fpm extensions installation fails for some reason
-        sudo apt remove php${{ matrix.php-version }}-fpm
-
-        sudo apt install php${{ matrix.php-version }}-intl
-
-        sudo update-alternatives --set php /usr/bin/php${{ matrix.php-version }}
-        sudo update-alternatives --set phar /usr/bin/phar${{ matrix.php-version }}
-        sudo update-alternatives --set phar.phar /usr/bin/phar.phar${{ matrix.php-version }}
-
-        sudo phpenmod apcu
-        echo 'apc.enable_cli = 1' | sudo tee -a /etc/php/${{ matrix.php-version }}/php.ini
-
-        sudo phpdismod xdebug
-
         # memcached installation fails without updating packages.
-        # Packages updating is not done earlier to avoid all wasting time as all
-        # php packages get updated when installing php-intl.
         sudo apt update
         sudo apt install memcached
 
         sudo locale-gen da_DK.UTF-8
         sudo locale-gen de_DE.UTF-8
-
-        if [[ ${{ matrix.php-version }} == '7.2' ]]; then sudo apt install php-pcov; fi
-
-    - name: Set ENV vars
-      run: |
-        if [[ ${{ matrix.db-type }} == 'sqlite' ]]; then export DB_DSN='sqlite:///:memory:'; fi
-        if [[ ${{ matrix.db-type }} == 'mysql' ]]; then export DB_DSN='mysql://root@127.0.0.1/cakephp_test?init[]=SET sql_mode = "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"'; fi
-        if [[ ${{ matrix.db-type }} == 'postgres' ]]; then export DB_DSN='postgres://postgres@127.0.0.1:${{ job.services.postgres.ports['5432'] }}/cakephp_test'; fi
 
     - name: composer install
       run: composer install
@@ -67,6 +52,12 @@ jobs:
       env:
         REDIS_PORT: ${{ job.services.redis.ports['6379'] }}
       run: |
+        if [ ${{ matrix.db-type }} == 'mysql' ]; then mysql -u root -proot -e 'CREATE DATABASE cakephp_test;'; fi
+
+        if [[ ${{ matrix.db-type }} == 'sqlite' ]]; then export DB_DSN='sqlite:///:memory:'; fi
+        if [[ ${{ matrix.db-type }} == 'mysql' ]]; then export DB_DSN='mysql://root:root@127.0.0.1/cakephp_test?init[]=SET sql_mode = "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"'; fi
+        if [[ ${{ matrix.db-type }} == 'pgsql' ]]; then export DB_DSN='postgres://postgres@127.0.0.1:${{ job.services.postgres.ports['5432'] }}/postgres'; fi
+
         if [[ ${{ matrix.php-version }} == '7.2' ]]; then
           vendor/bin/phpunit
         else
@@ -83,17 +74,15 @@ jobs:
         fetch-depth: 1
 
     - name: Setup PHP
-      run: |
-        # Without removing php-fpm extensions installation fails for some reason
-        sudo apt remove php7.2-fpm
-        sudo apt install php7.2-intl
-        sudo update-alternatives --set php /usr/bin/php7.2
-        sudo update-alternatives --set phar /usr/bin/phar7.2
-        sudo update-alternatives --set phar.phar /usr/bin/phar.phar7.2
-        sudo phpdismod xdebug
+      uses: shivammathur/setup-php@v1
+      with:
+        php-version: '7.2'
+        extensions: mbstring, intl, apcu
+        coverage: none
+        pecl: false
 
     - name: composer install
-      run: composer stan-setup
+      run: composer install
 
     - name: Run PHP CodeSniffer
       run: composer cs-check
@@ -108,14 +97,12 @@ jobs:
         fetch-depth: 1
 
     - name: Setup PHP
-      run: |
-        # Without removing php-fpm extensions installation fails for some reason
-        sudo apt remove php7.3-fpm
-        sudo apt install php7.3-intl
-        sudo update-alternatives --set php /usr/bin/php7.3
-        sudo update-alternatives --set phar /usr/bin/phar7.3
-        sudo update-alternatives --set phar.phar /usr/bin/phar.phar7.3
-        sudo phpdismod xdebug
+      uses: shivammathur/setup-php@v1
+      with:
+        php-version: '7.2'
+        extensions: mbstring, intl, apcu
+        coverage: none
+        pecl: false
 
     - name: composer install
       run: composer stan-setup
