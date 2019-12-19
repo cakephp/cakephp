@@ -64,7 +64,7 @@ class FormContext implements ContextInterface
      */
     public function primaryKey(): array
     {
-        deprecationWarning('`FormContext::primaryKey()` is deprecated. Use `FormContext::getPrimaryKey()` instead.');
+        deprecationWarning('`FormContext::primaryKey()` is deprecated. Use `FormContext::getPrimaryKey()`.');
 
         return [];
     }

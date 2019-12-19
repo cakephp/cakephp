@@ -107,7 +107,7 @@ class ArrayContext implements ContextInterface
      */
     public function primaryKey(): array
     {
-        deprecationWarning('`ArrayContext::primaryKey()` is deprecated. Use `ArrayContext::getPrimaryKey()` instead.');
+        deprecationWarning('`ArrayContext::primaryKey()` is deprecated. Use `ArrayContext::getPrimaryKey()`.');
 
         return $this->getPrimaryKey();
     }
