@@ -636,6 +636,11 @@ class EagerLoader
         $driver = $query->getConnection()->getDriver();
         [$collected, $statement] = $this->_collectKeys($external, $query, $statement);
 
+        // No records found, skip trying to attach associations.
+        if (empty($collected) && $statement->count() === 0) {
+            return $statement;
+        }
+
         foreach ($external as $meta) {
             $contain = $meta->associations();
             $instance = $meta->instance();
@@ -644,8 +649,23 @@ class EagerLoader
             $path = $meta->aliasPath();
 
             $requiresKeys = $instance->requiresKeys($config);
-            if ($requiresKeys && empty($collected[$path][$alias])) {
-                continue;
+            if ($requiresKeys) {
+                // If the path or alias has no key the required association load will fail.
+                // Nested paths are not subject to this condition because they could
+                // be attached to joined associations.
+                if (
+                    strpos($path, '.') === false &&
+                    (!array_key_exists($path, $collected) || !array_key_exists($alias, $collected[$path]))
+                ) {
+                    $message = "Unable to load `{$path}` association. Ensure foreign key in `{$alias}` is selected.";
+                    throw new InvalidArgumentException($message);
+                }
+
+                // If the association foreign keys are missing skip loading
+                // as the association could be optional.
+                if (empty($collected[$path][$alias])) {
+                    continue;
+                }
             }
 
             $keys = $collected[$path][$alias] ?? null;
@@ -786,7 +806,6 @@ class EagerLoader
             }
             $collectKeys[$meta->aliasPath()] = [$alias, $pkFields, count($pkFields) === 1];
         }
-
         if (empty($collectKeys)) {
             return [[], $statement];
         }
