@@ -25,7 +25,7 @@ use Cake\Database\Query;
 use Cake\Database\QueryCompiler;
 use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\Schema\SqlserverSchemaDialect;
-use Cake\Database\PostgresCompiler;
+use Cake\Database\SqlserverCompiler;
 use Cake\Database\Statement\SqlserverStatement;
 use Cake\Database\StatementInterface;
 use Cake\Database\ValueBinder;
