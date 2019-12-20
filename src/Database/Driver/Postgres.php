@@ -24,6 +24,7 @@ use Cake\Database\QueryCompiler;
 use Cake\Database\Schema\PostgresSchemaDialect;
 use Cake\Database\Schema\SchemaDialect;
 use PDO;
+use Cake\Database\PostgresCompiler;
 
 /**
  * Class Postgres

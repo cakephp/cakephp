@@ -3830,4 +3830,36 @@ class QueryTest extends TestCase
                 ->find()
                 ->selectAllExcept([], ['body']);
     }
+
+    /**
+     * Tests that using Having on an aggregated field returns the correct result
+     * model in the query
+     *
+     * @return void
+     */
+    public function testHavingOnAnAggregatedField()
+    {
+        $post = $this->getTableLocator()->get('posts');
+
+        $query = new Query($this->connection, $post);
+
+        $results = $query
+            ->select([
+                'posts.author_id',
+                'highest_post_id' => $query->func()->max('posts.id')
+            ])
+            ->group(['posts.author_id'])
+            ->having(['highest_post_id >=' => 3])
+            ->enableHydration(false)
+            ->toArray();
+
+        $expected = [
+            [
+                'author_id' => 1,
+                'highest_post_id' => '3',
+            ],
+        ];
+
+        $this->assertEquals($expected, $results);
+    }
 }

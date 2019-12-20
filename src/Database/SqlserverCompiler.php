@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Database;
 
+use Cake\Database\Expression\FunctionExpression;
+
 /**
  * Responsible for compiling a Query object into its SQL representation
  * for SQL Server
@@ -38,7 +40,6 @@ class SqlserverCompiler extends QueryCompiler
         'delete' => 'DELETE',
         'where' => ' WHERE %s',
         'group' => ' GROUP BY %s ',
-        'having' => ' HAVING %s ',
         'order' => ' %s',
         'offset' => ' OFFSET %s ROWS',
         'epilog' => ' %s',
@@ -92,5 +93,30 @@ class SqlserverCompiler extends QueryCompiler
         }
 
         return sprintf(' FETCH FIRST %d ROWS ONLY', $limit);
+    }
+
+    /**
+     * Helper function used to build the string representation of a HAVING clause,
+     * it constructs the field list taking care of aliasing and
+     * converting expression objects to string.
+     *
+     * @param array $parts list of fields to be transformed to string
+     * @param \Cake\Database\Query $query The query that is being compiled
+     * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
+     * @return string
+     */
+    protected function _buildHavingPart($parts, $query, $generator)
+    {
+        $selectParts = $query->clause('select');
+        foreach ($selectParts as $selectKey => $selectPart) {
+            foreach ($parts as $k => $p) {
+                if (strpos($p, $selectKey) !== false && $selectPart instanceof FunctionExpression) {
+                    $parts[$k] = str_replace($selectKey, $selectPart->sql($generator), $p);
+                }
+            }
+        }
+
+        $parts = $this->_stringifyExpressions((array)$parts, $generator);
+        return sprintf(' HAVING %s ', implode(', ', $parts));
     }
 }

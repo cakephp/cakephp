@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Database;
 
+use Cake\Database\Expression\FunctionExpression;
+
 /**
  * Responsible for compiling a Query object into its SQL representation
  * for Postgres
@@ -32,4 +34,42 @@ class PostgresCompiler extends QueryCompiler
      * @var bool
      */
     protected $_quotedSelectAliases = true;
+
+    /**
+     * {@inheritDoc}
+     */
+    protected $_templates = [
+        'delete' => 'DELETE',
+        'where' => ' WHERE %s',
+        'group' => ' GROUP BY %s ',
+        'order' => ' %s',
+        'limit' => ' LIMIT %s',
+        'offset' => ' OFFSET %s',
+        'epilog' => ' %s',
+    ];
+
+    /**
+     * Helper function used to build the string representation of a HAVING clause,
+     * it constructs the field list taking care of aliasing and
+     * converting expression objects to string.
+     *
+     * @param array $parts list of fields to be transformed to string
+     * @param \Cake\Database\Query $query The query that is being compiled
+     * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
+     * @return string
+     */
+    protected function _buildHavingPart($parts, $query, $generator)
+    {
+        $selectParts = $query->clause('select');
+        foreach ($selectParts as $selectKey => $selectPart) {
+            foreach ($parts as $k => $p) {
+                if (strpos($p, $selectKey) !== false && $selectPart instanceof FunctionExpression) {
+                    $parts[$k] = str_replace($selectKey, $selectPart->sql($generator), $p);
+                }
+            }
+        }
+
+        $parts = $this->_stringifyExpressions((array)$parts, $generator);
+        return sprintf(' HAVING %s ', implode(', ', $parts));
+    }
 }
