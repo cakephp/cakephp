@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Log\Engine;
 
+use ArrayObject;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Psr\Log\LogLevel;
@@ -69,12 +70,14 @@ class BaseLogTest extends TestCase
             'bool' => true,
             'json' => new Entity(['foo' => 'bar']),
             'array' => ['arr'],
+            'serializable' => new ArrayObject(['x' => 'y']),
             'obj' => function () {
             },
         ];
         $this->logger->log(
             LogLevel::INFO,
-            '1: {string}, 2: {bool}, 3: {json}, 4: {not a placeholder}, 5: {array}, 6: {obj}, 8: {valid-ph-not-in-context}',
+            '1: {string}, 2: {bool}, 3: {json}, 4: {not a placeholder}, 5: {array}, '
+            . '6: {serializable} 7: {obj}, 8: {valid-ph-not-in-context}',
             $context
         );
 
@@ -85,7 +88,8 @@ class BaseLogTest extends TestCase
         $this->assertStringContainsString("3: {\n    \"foo\": \"bar\"\n}", $message);
         $this->assertStringContainsString('4: {not a placeholder}', $message);
         $this->assertStringContainsString("5: Array\n(\n    [0] => arr\n)", $message);
-        $this->assertStringContainsString("6: Closure Object", $message);
+        $this->assertStringContainsString('6: x:i:0;a:1:{s:1:"x";s:1:"y";};m:a:0:{}', $message);
+        $this->assertStringContainsString("7: Closure Object", $message);
         $this->assertStringContainsString('8: {valid-ph-not-in-context}', $message);
     }
 }

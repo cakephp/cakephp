@@ -19,6 +19,7 @@ namespace Cake\Log\Engine;
 use Cake\Core\InstanceConfigTrait;
 use JsonSerializable;
 use Psr\Log\AbstractLogger;
+use Serializable;
 
 /**
  * Base log engine class.
@@ -119,6 +120,11 @@ abstract class BaseLog extends AbstractLogger
 
                 if ($value instanceof JsonSerializable) {
                     $replacements['{' . $key . '}'] = json_encode($value, JSON_UNESCAPED_UNICODE);
+                    continue;
+                }
+
+                if ($value instanceof Serializable) {
+                    $replacements['{' . $key . '}'] = $value->serialize();
                     continue;
                 }
 
