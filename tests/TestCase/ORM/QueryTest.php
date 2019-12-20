@@ -3846,7 +3846,7 @@ class QueryTest extends TestCase
         $results = $query
             ->select([
                 'posts.author_id',
-                'highest_post_id' => $query->func()->max('posts.id')
+                'highest_post_id' => $query->func()->max('posts.id'),
             ])
             ->group(['posts.author_id'])
             ->having(['highest_post_id >=' => 3])

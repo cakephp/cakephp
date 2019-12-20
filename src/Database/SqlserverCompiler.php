@@ -117,6 +117,7 @@ class SqlserverCompiler extends QueryCompiler
         }
 
         $parts = $this->_stringifyExpressions((array)$parts, $generator);
+
         return sprintf(' HAVING %s ', implode(', ', $parts));
     }
 }
