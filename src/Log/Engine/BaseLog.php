@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Log\Engine;
 
+use ArrayObject;
 use Cake\Core\InstanceConfigTrait;
 use JsonSerializable;
 use Psr\Log\AbstractLogger;
@@ -119,6 +120,11 @@ abstract class BaseLog extends AbstractLogger
 
             if ($value instanceof JsonSerializable) {
                 $replacements['{' . $key . '}'] = json_encode($value, JSON_UNESCAPED_UNICODE);
+                continue;
+            }
+
+            if ($value instanceof ArrayObject) {
+                $replacements['{' . $key . '}'] = print_r($value->getArrayCopy(), true);
                 continue;
             }
 

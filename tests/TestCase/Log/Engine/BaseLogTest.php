@@ -71,7 +71,7 @@ class BaseLogTest extends TestCase
             'bool' => true,
             'json' => new Entity(['foo' => 'bar']),
             'array' => ['arr'],
-            'serializable' => new ArrayObject(['x' => 'y']),
+            'array-obj' => new ArrayObject(['x' => 'y']),
             'debug-info' => ConnectionManager::get('test'),
             'obj' => function () {
             },
@@ -79,7 +79,7 @@ class BaseLogTest extends TestCase
         $this->logger->log(
             LogLevel::INFO,
             '1: {string}, 2: {bool}, 3: {json}, 4: {not a placeholder}, 5: {array}, '
-            . '6: {serializable} 7: {obj}, 8: {debug-info} 9: {valid-ph-not-in-context}',
+            . '6: {array-obj} 7: {obj}, 8: {debug-info} 9: {valid-ph-not-in-context}',
             $context
         );
 
@@ -90,7 +90,7 @@ class BaseLogTest extends TestCase
         $this->assertStringContainsString('3: {"foo":"bar"}', $message);
         $this->assertStringContainsString('4: {not a placeholder}', $message);
         $this->assertStringContainsString("5: Array\n(\n    [0] => arr\n)", $message);
-        $this->assertStringContainsString('6: x:i:0;a:1:{s:1:"x";s:1:"y";};m:a:0:{}', $message);
+        $this->assertStringContainsString("6: Array\n(\n    [x] => y\n)", $message);
         $this->assertStringContainsString('7: [unhandled value of type Closure]', $message);
         $this->assertStringContainsString("8: Array\n(\n    [config] => Array\n", $message);
         $this->assertStringContainsString('9: {valid-ph-not-in-context}', $message);
