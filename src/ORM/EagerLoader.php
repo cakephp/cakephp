@@ -809,7 +809,7 @@ class EagerLoader
     protected function _groupKeys(BufferedStatement $statement, array $collectKeys): array
     {
         $keys = [];
-        foreach ($statement->fetchAll('assoc') as $result) {
+        foreach (($statement->fetchAll('assoc') ?: []) as $result) {
             foreach ($collectKeys as $nestKey => $parts) {
                 // Missed joins will have null in the results.
                 if ($parts[2] === true && !isset($result[$parts[1][0]])) {
