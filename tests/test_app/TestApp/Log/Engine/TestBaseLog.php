@@ -31,7 +31,7 @@ class TestBaseLog extends BaseLog
         $this->message = $this->_format($message, $context);
     }
 
-    public function getMessage()
+    public function getMessage(): string
     {
         return $this->message;
     }
