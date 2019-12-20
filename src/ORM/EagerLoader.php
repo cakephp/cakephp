@@ -650,14 +650,14 @@ class EagerLoader
 
             $requiresKeys = $instance->requiresKeys($config);
             if ($requiresKeys) {
-                // If the path or alias has no key the required assoication load will fail.
+                // If the path or alias has no key the required association load will fail.
                 // Nested paths are not subject to this condition because they could
                 // be attached to joined associations.
                 if (
                     strpos($path, '.') === false &&
                     (!array_key_exists($path, $collected) || !array_key_exists($alias, $collected[$path]))
                 ) {
-                    $message = "Unable to load `{$path}` association. Ensure foreign key on `{$alias}` is selected.";
+                    $message = "Unable to load `{$path}` association. Ensure foreign key in `{$alias}` is selected.";
                     throw new InvalidArgumentException($message);
                 }
 

@@ -453,7 +453,7 @@ class BelongsToTest extends TestCase
             ->contain('Authors');
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Unable to load `Authors` association. Ensure foreign key on `Articles`');
+        $this->expectExceptionMessage('Unable to load `Authors` association. Ensure foreign key in `Articles`');
         $query->first();
     }
 }

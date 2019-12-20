@@ -465,7 +465,7 @@ class HasManyTest extends TestCase
         $authors->hasMany('Articles');
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Unable to load `Articles` association. Ensure foreign key on `Authors`');
+        $this->expectExceptionMessage('Unable to load `Articles` association. Ensure foreign key in `Authors`');
         $query = $authors->find()
             ->select(['Authors.name'])
             ->where(['Authors.id' => 1])
