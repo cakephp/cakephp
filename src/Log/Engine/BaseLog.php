@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Log\Engine;
 
 use Cake\Core\InstanceConfigTrait;
+use JsonSerializable;
 use Psr\Log\AbstractLogger;
 
 /**
@@ -90,6 +91,46 @@ abstract class BaseLog extends AbstractLogger
      */
     protected function _format(string $message, array $context = []): string
     {
-        return $message;
+        if (strpos($message, '{') === false && strpos($message, '}') === false) {
+            return $message;
+        }
+
+        preg_match_all('/\{([a-z][a-z0-9-_]*)\}/i', $message, $matches);
+        if (empty($matches)) {
+            return $message;
+        }
+
+        $placeholders = array_intersect($matches[1], array_keys($context));
+        $replacements = [];
+
+        foreach ($placeholders as $key) {
+            $value = $context[$key];
+
+            if (is_scalar($value)) {
+                $replacements['{' . $key . '}'] = (string)$value;
+                continue;
+            }
+
+            if (is_object($value)) {
+                if (method_exists($value, '__toString')) {
+                    $replacements['{' . $key . '}'] = (string)$value;
+                    continue;
+                }
+
+                if ($value instanceof JsonSerializable) {
+                    $replacements['{' . $key . '}'] = json_encode($value, JSON_UNESCAPED_UNICODE);
+                    continue;
+                }
+
+                if (method_exists($value, 'toArray')) {
+                    $replacements['{' . $key . '}'] = print_r($value->toArray(), true);
+                    continue;
+                }
+            }
+
+            $replacements['{' . $key . '}'] = print_r($value, true);
+        }
+
+        return str_replace(array_keys($replacements), $replacements, $message);
     }
 }

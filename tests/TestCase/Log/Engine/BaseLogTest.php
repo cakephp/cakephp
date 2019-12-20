@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Log\Engine;
 
+use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Psr\Log\LogLevel;
 use TestApp\Log\Engine\TestBaseLog;
@@ -23,6 +24,9 @@ class BaseLogTest extends TestCase
 {
     private $testData = ['ä', 'ö', 'ü'];
 
+    /**
+     * @var \TestApp\Log\Engine\TestBaseLog
+     */
     private $logger;
 
     /**
@@ -52,8 +56,36 @@ class BaseLogTest extends TestCase
      */
     public function testLogUnicodeString()
     {
-        $logged = $this->logger->log(LogLevel::INFO, implode($this->testData));
+        $this->logger->log(LogLevel::INFO, implode($this->testData));
 
-        $this->assertUnescapedUnicode($this->testData, $logged);
+        $this->assertUnescapedUnicode($this->testData, $this->logger->getMessage());
+    }
+
+    public function testPlaceHoldersInMessage()
+    {
+        $context = [
+            'no-placholder' => 'no-placholder',
+            'string' => 'a-string',
+            'bool' => true,
+            'json' => new Entity(['foo' => 'bar']),
+            'array' => ['arr'],
+            'obj' => function () {
+            },
+        ];
+        $this->logger->log(
+            LogLevel::INFO,
+            '1: {string}, 2: {bool}, 3: {json}, 4: {not a placeholder}, 5: {array}, 6: {obj}, 8: {valid-ph-not-in-context}',
+            $context
+        );
+
+        $message = $this->logger->getMessage();
+
+        $this->assertStringContainsString('1: a-string', $message);
+        $this->assertStringContainsString('2: 1', $message);
+        $this->assertStringContainsString("3: {\n    \"foo\": \"bar\"\n}", $message);
+        $this->assertStringContainsString('4: {not a placeholder}', $message);
+        $this->assertStringContainsString("5: Array\n(\n    [0] => arr\n)", $message);
+        $this->assertStringContainsString("6: Closure Object", $message);
+        $this->assertStringContainsString('8: {valid-ph-not-in-context}', $message);
     }
 }
