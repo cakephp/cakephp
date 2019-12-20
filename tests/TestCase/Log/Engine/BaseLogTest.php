@@ -16,7 +16,9 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Log\Engine;
 
 use ArrayObject;
+use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
+use Cake\Http\Response;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Psr\Log\LogLevel;
@@ -75,6 +77,8 @@ class BaseLogTest extends TestCase
             'debug-info' => ConnectionManager::get('test'),
             'obj' => function () {
             },
+            'to-string' => new Response(['body' => 'response body']),
+            'to-array' => new TypeMap(['my-type']),
         ];
         $this->logger->log(
             LogLevel::INFO,
@@ -94,5 +98,26 @@ class BaseLogTest extends TestCase
         $this->assertStringContainsString('7: [unhandled value of type Closure]', $message);
         $this->assertStringContainsString("8: Array\n(\n    [config] => Array\n", $message);
         $this->assertStringContainsString('9: {valid-ph-not-in-context}', $message);
+
+        $this->logger->log(
+            LogLevel::INFO,
+            '1: {to-string}',
+            $context
+        );
+        $this->assertSame('1: response body', $this->logger->getMessage());
+
+        $this->logger->log(
+            LogLevel::INFO,
+            'no placeholder holders',
+            $context
+        );
+        $this->assertSame('no placeholder holders', $this->logger->getMessage());
+
+        $this->logger->log(
+            LogLevel::INFO,
+            '{to-array}',
+            $context
+        );
+        $this->assertSame("Array\n(\n    [0] => my-type\n)\n", $this->logger->getMessage());
     }
 }
