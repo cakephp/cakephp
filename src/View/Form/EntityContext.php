@@ -181,6 +181,8 @@ class EntityContext implements ContextInterface
      */
     public function primaryKey(): array
     {
+        deprecationWarning('`EntityContext::primaryKey()` is deprecated. Use `EntityContext::getPrimaryKey()`.');
+
         return (array)$this->_tables[$this->_rootName]->getPrimaryKey();
     }
 

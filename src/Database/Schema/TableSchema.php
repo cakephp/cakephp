@@ -529,6 +529,8 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      */
     public function primaryKey(): array
     {
+        deprecationWarning('`TableSchema::primaryKey()` is deprecated. Use `TableSchema::getPrimaryKey()`.');
+
         return $this->getPrimarykey();
     }
 
