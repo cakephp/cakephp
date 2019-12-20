@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Log\Engine;
 
 use ArrayObject;
+use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Psr\Log\LogLevel;
@@ -71,13 +72,14 @@ class BaseLogTest extends TestCase
             'json' => new Entity(['foo' => 'bar']),
             'array' => ['arr'],
             'serializable' => new ArrayObject(['x' => 'y']),
+            'debug-info' => ConnectionManager::get('test'),
             'obj' => function () {
             },
         ];
         $this->logger->log(
             LogLevel::INFO,
             '1: {string}, 2: {bool}, 3: {json}, 4: {not a placeholder}, 5: {array}, '
-            . '6: {serializable} 7: {obj}, 8: {valid-ph-not-in-context}',
+            . '6: {serializable} 7: {obj}, 8: {debug-info} 9: {valid-ph-not-in-context}',
             $context
         );
 
@@ -90,6 +92,7 @@ class BaseLogTest extends TestCase
         $this->assertStringContainsString("5: Array\n(\n    [0] => arr\n)", $message);
         $this->assertStringContainsString('6: x:i:0;a:1:{s:1:"x";s:1:"y";};m:a:0:{}', $message);
         $this->assertStringContainsString('7: [unhandled value of type Closure]', $message);
-        $this->assertStringContainsString('8: {valid-ph-not-in-context}', $message);
+        $this->assertStringContainsString("8: Array\n(\n    [config] => Array\n", $message);
+        $this->assertStringContainsString('9: {valid-ph-not-in-context}', $message);
     }
 }

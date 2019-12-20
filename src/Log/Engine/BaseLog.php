@@ -137,6 +137,11 @@ abstract class BaseLog extends AbstractLogger
                     $replacements['{' . $key . '}'] = print_r($value->toArray(), true);
                     continue;
                 }
+
+                if (method_exists($value, '__debugInfo')) {
+                    $replacements['{' . $key . '}'] = print_r($value->__debugInfo(), true);
+                    continue;
+                }
             }
 
             $replacements['{' . $key . '}'] = sprintf('[unhandled value of type %s]', getTypeName($value));
