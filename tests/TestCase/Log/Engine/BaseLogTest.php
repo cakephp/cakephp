@@ -89,7 +89,7 @@ class BaseLogTest extends TestCase
         $this->assertStringContainsString('4: {not a placeholder}', $message);
         $this->assertStringContainsString("5: Array\n(\n    [0] => arr\n)", $message);
         $this->assertStringContainsString('6: x:i:0;a:1:{s:1:"x";s:1:"y";};m:a:0:{}', $message);
-        $this->assertStringContainsString("7: Closure Object", $message);
+        $this->assertStringContainsString('7: [unhandled value of type Closure]', $message);
         $this->assertStringContainsString('8: {valid-ph-not-in-context}', $message);
     }
 }

@@ -112,6 +112,11 @@ abstract class BaseLog extends AbstractLogger
                 continue;
             }
 
+            if (is_array($value)) {
+                $replacements['{' . $key . '}'] = print_r($value, true);
+                continue;
+            }
+
             if (is_object($value)) {
                 if (method_exists($value, '__toString')) {
                     $replacements['{' . $key . '}'] = (string)$value;
@@ -134,7 +139,7 @@ abstract class BaseLog extends AbstractLogger
                 }
             }
 
-            $replacements['{' . $key . '}'] = print_r($value, true);
+            $replacements['{' . $key . '}'] = sprintf('[unhandled value of type %s]', getTypeName($value));
         }
 
         return str_replace(array_keys($replacements), $replacements, $message);
