@@ -117,19 +117,19 @@ abstract class BaseLog extends AbstractLogger
                 continue;
             }
 
+            if ($value instanceof JsonSerializable) {
+                $replacements['{' . $key . '}'] = json_encode($value, JSON_UNESCAPED_UNICODE);
+                continue;
+            }
+
+            if ($value instanceof Serializable) {
+                $replacements['{' . $key . '}'] = $value->serialize();
+                continue;
+            }
+
             if (is_object($value)) {
                 if (method_exists($value, '__toString')) {
                     $replacements['{' . $key . '}'] = (string)$value;
-                    continue;
-                }
-
-                if ($value instanceof JsonSerializable) {
-                    $replacements['{' . $key . '}'] = json_encode($value, JSON_UNESCAPED_UNICODE);
-                    continue;
-                }
-
-                if ($value instanceof Serializable) {
-                    $replacements['{' . $key . '}'] = $value->serialize();
                     continue;
                 }
 

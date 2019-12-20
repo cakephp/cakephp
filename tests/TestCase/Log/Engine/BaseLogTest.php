@@ -87,7 +87,7 @@ class BaseLogTest extends TestCase
 
         $this->assertStringContainsString('1: a-string', $message);
         $this->assertStringContainsString('2: 1', $message);
-        $this->assertStringContainsString("3: {\n    \"foo\": \"bar\"\n}", $message);
+        $this->assertStringContainsString('3: {"foo":"bar"}', $message);
         $this->assertStringContainsString('4: {not a placeholder}', $message);
         $this->assertStringContainsString("5: Array\n(\n    [0] => arr\n)", $message);
         $this->assertStringContainsString('6: x:i:0;a:1:{s:1:"x";s:1:"y";};m:a:0:{}', $message);
