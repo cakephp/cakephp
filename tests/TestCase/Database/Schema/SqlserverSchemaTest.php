@@ -99,7 +99,7 @@ SQL;
                 null,
                 null,
                 3,
-                ['type' => 'datetimefractional', 'length' => null, 'precision' => 3],
+                ['type' => 'datetime', 'length' => null, 'precision' => null],
             ],
             [
                 'DATETIME2',
@@ -416,11 +416,11 @@ SQL;
                 'comment' => null,
             ],
             'created' => [
-                'type' => 'datetimefractional',
+                'type' => 'datetime',
                 'null' => true,
                 'default' => null,
                 'length' => null,
-                'precision' => 3,
+                'precision' => null,
                 'comment' => null,
             ],
             'created2' => [
