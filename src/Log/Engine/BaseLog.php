@@ -97,7 +97,11 @@ abstract class BaseLog extends AbstractLogger
             return $message;
         }
 
-        preg_match_all('/\{([a-z][a-z0-9-_]*)\}/i', $message, $matches);
+        preg_match_all(
+            '/(?<!' . preg_quote('\\', '/') . ')\{([a-z][a-z0-9-_]*)\}/i',
+            $message,
+            $matches
+        );
         if (empty($matches)) {
             return $message;
         }

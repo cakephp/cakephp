@@ -122,5 +122,12 @@ class BaseLogTest extends TestCase
             $context
         );
         $this->assertSame('["my-type"]', $this->logger->getMessage());
+
+        $this->logger->log(
+            LogLevel::INFO,
+            '\{string}',
+            ['string' => 'a-string']
+        );
+        $this->assertSame('\{string}', $this->logger->getMessage());
     }
 }
