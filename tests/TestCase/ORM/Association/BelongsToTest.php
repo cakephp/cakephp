@@ -450,4 +450,28 @@ class BelongsToTest extends TestCase
         $this->expectExceptionMessage('Unable to load `Authors` association. Ensure foreign key in `Articles`');
         $query->first();
     }
+
+    /**
+     * Test that formatResults in a joined association finder doesn't dirty
+     * the root entity.
+     *
+     * @return void
+     */
+    public function testAttachToFormatResultsNoDirtyResults()
+    {
+        $this->setAppNamespace('TestApp');
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->belongsTo('Authors')
+            ->setFinder('formatted');
+
+        $query = $articles->find()
+            ->where(['Articles.id' => 1])
+            ->contain('Authors');
+        $result = $query->firstOrFail();
+
+        $this->assertNotEmpty($result->author);
+        $this->assertNotEmpty($result->author->formatted);
+        $this->assertFalse($result->isDirty(), 'Record should be clean as it was pulled from the db.');
+>>>>>>> 165bdab680... Fix dirty associations that use formatResults
+    }
 }
