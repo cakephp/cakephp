@@ -114,7 +114,7 @@ abstract class BaseLog extends AbstractLogger
             }
 
             if (is_array($value)) {
-                $replacements['{' . $key . '}'] = print_r($value, true);
+                $replacements['{' . $key . '}'] = json_encode($value, JSON_UNESCAPED_UNICODE);
                 continue;
             }
 
@@ -124,7 +124,7 @@ abstract class BaseLog extends AbstractLogger
             }
 
             if ($value instanceof ArrayObject) {
-                $replacements['{' . $key . '}'] = print_r($value->getArrayCopy(), true);
+                $replacements['{' . $key . '}'] = json_encode($value->getArrayCopy(), JSON_UNESCAPED_UNICODE);
                 continue;
             }
 
@@ -140,12 +140,12 @@ abstract class BaseLog extends AbstractLogger
                 }
 
                 if (method_exists($value, 'toArray')) {
-                    $replacements['{' . $key . '}'] = print_r($value->toArray(), true);
+                    $replacements['{' . $key . '}'] = json_encode($value->toArray(), JSON_UNESCAPED_UNICODE);
                     continue;
                 }
 
                 if (method_exists($value, '__debugInfo')) {
-                    $replacements['{' . $key . '}'] = print_r($value->__debugInfo(), true);
+                    $replacements['{' . $key . '}'] = json_encode($value->__debugInfo(), JSON_UNESCAPED_UNICODE);
                     continue;
                 }
             }

@@ -93,10 +93,13 @@ class BaseLogTest extends TestCase
         $this->assertStringContainsString('2: 1', $message);
         $this->assertStringContainsString('3: {"foo":"bar"}', $message);
         $this->assertStringContainsString('4: {not a placeholder}', $message);
-        $this->assertStringContainsString("5: Array\n(\n    [0] => arr\n)", $message);
-        $this->assertStringContainsString("6: Array\n(\n    [x] => y\n)", $message);
+        $this->assertStringContainsString('5: ["arr"]', $message);
+        $this->assertStringContainsString('6: {"x":"y"}', $message);
         $this->assertStringContainsString('7: [unhandled value of type Closure]', $message);
-        $this->assertStringContainsString("8: Array\n(\n    [config] => Array\n", $message);
+        $this->assertStringContainsString(
+            '8: ' . json_encode(ConnectionManager::get('test')->__debugInfo(), JSON_UNESCAPED_UNICODE),
+            $message
+        );
         $this->assertStringContainsString('9: {valid-ph-not-in-context}', $message);
 
         $this->logger->log(
@@ -118,6 +121,6 @@ class BaseLogTest extends TestCase
             '{to-array}',
             $context
         );
-        $this->assertSame("Array\n(\n    [0] => my-type\n)\n", $this->logger->getMessage());
+        $this->assertSame('["my-type"]', $this->logger->getMessage());
     }
 }
