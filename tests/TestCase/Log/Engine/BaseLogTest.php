@@ -129,5 +129,19 @@ class BaseLogTest extends TestCase
             ['string' => 'a-string']
         );
         $this->assertSame('\{string}', $this->logger->getMessage());
+
+        $this->logger->log(
+            LogLevel::INFO,
+            '1: {_ph1}, 2: {0ph2}',
+            ['_ph1' => '1st-string', '0ph2' => '2nd-string']
+        );
+        $this->assertSame('1: 1st-string, 2: 2nd-string', $this->logger->getMessage());
+
+        $this->logger->log(
+            LogLevel::INFO,
+            '{0}',
+            ['val']
+        );
+        $this->assertSame('val', $this->logger->getMessage());
     }
 }
