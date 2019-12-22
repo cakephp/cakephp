@@ -730,6 +730,14 @@ abstract class TestCase extends BaseTestCase
 // @codingStandardsIgnoreEnd
 
     /**
+     * @inheritDoc
+     */
+    public function getMockBuilder($className)
+    {
+        return new MockBuilder($this, $className);
+    }
+
+    /**
      * Mock a model, maintain fixtures and table association
      *
      * @param string $alias The model to get a mock for.
