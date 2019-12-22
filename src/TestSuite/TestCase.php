@@ -738,6 +738,68 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
+     * @inheritDoc
+     */
+    protected function getMockClass(
+        $originalClassName,
+        $methods = [],
+        array $arguments = [],
+        $mockClassName = '',
+        $callOriginalConstructor = false,
+        $callOriginalClone = true,
+        $callAutoload = true,
+        $cloneArguments = false
+    ) {
+        $errorLevel = error_reporting();
+        error_reporting(E_ALL ^ E_DEPRECATED);
+        try {
+            return parent::getMockClass(
+                $originalClassName,
+                $methods,
+                $arguments,
+                $mockClassName,
+                $callOriginalConstructor,
+                $callOriginalClone,
+                $callAutoload,
+                $cloneArguments
+            );
+        } finally {
+            error_reporting($errorLevel);
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getMockForAbstractClass(
+        $originalClassName,
+        array $arguments = [],
+        $mockClassName = '',
+        $callOriginalConstructor = true,
+        $callOriginalClone = true,
+        $callAutoload = true,
+        $mockedMethods = [],
+        $cloneArguments = false
+    ) {
+        $errorLevel = error_reporting();
+        error_reporting(E_ALL ^ E_DEPRECATED);
+        try {
+            return parent::getMockForAbstractClass(
+                $originalClassName,
+                $arguments,
+                $mockClassName,
+                $callOriginalConstructor,
+                $callOriginalClone,
+                $callAutoload,
+                $mockedMethods,
+                $cloneArguments
+            );
+        } finally {
+            error_reporting($errorLevel);
+        }
+    }
+
+    /**
      * Mock a model, maintain fixtures and table association
      *
      * @param string $alias The model to get a mock for.
