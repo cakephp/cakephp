@@ -96,7 +96,7 @@ class TupleComparison extends Comparison
             if ($isMulti) {
                 $bound = [];
                 foreach ($value as $k => $val) {
-                    $valType = $multiType ? $type[$k] : $type;
+                    $valType = $multiType && isset($type[$k]) ? $type[$k] : $type;
                     $bound[] = $this->_bindValue($generator, $val, $valType);
                 }
 
