@@ -3846,17 +3846,17 @@ class QueryTest extends TestCase
         $results = $query
             ->select([
                 'posts.author_id',
-                'highest_post_id' => $query->func()->max('posts.id'),
+                'post_count' => $query->func()->count('posts.id'),
             ])
             ->group(['posts.author_id'])
-            ->having(['highest_post_id >=' => 3])
+            ->having([$query->newExpr()->gte('post_count', 2, 'integer')])
             ->enableHydration(false)
             ->toArray();
 
         $expected = [
             [
                 'author_id' => 1,
-                'highest_post_id' => '3',
+                'post_count' => 2,
             ],
         ];
 

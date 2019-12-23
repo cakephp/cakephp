@@ -173,4 +173,38 @@ class PostgresTest extends TestCase
         $query = $translator($query);
         $this->assertSame('FOO', $query->clause('epilog'));
     }
+
+    /**
+     * Test that having queries replace the aggregated alias field.
+     *
+     * @return void
+     */
+    public function testHavingReplacesAlias()
+    {
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
+            ->setMethods(['_connect', 'getConnection', '_version'])
+            ->setConstructorArgs([[]])
+            ->getMock();
+
+        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect', 'getDriver', 'setDriver'])
+            ->setConstructorArgs([['log' => false]])
+            ->getMock();
+        $connection->expects($this->any())
+            ->method('getDriver')
+            ->will($this->returnValue($driver));
+
+        $query = new Query($connection);
+        $query
+            ->select([
+                'posts.author_id',
+                'post_count' => $query->func()->count('posts.id'),
+            ])
+            ->group(['posts.author_id'])
+            ->having([$query->newExpr()->gte('post_count', 2, 'integer')]);
+
+        $expected = 'SELECT posts.author_id, (COUNT(posts.id)) AS [post_count] ' .
+            'GROUP BY posts.author_id HAVING COUNT(posts.id) >= :c0';
+        $this->assertEquals($expected, $query->sql());
+    }
 }
