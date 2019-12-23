@@ -16,8 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Database;
 
-use Cake\Database\Expression\FunctionExpression;
-
 /**
  * Responsible for compiling a Query object into its SQL representation
  * for Postgres
@@ -26,6 +24,8 @@ use Cake\Database\Expression\FunctionExpression;
  */
 class PostgresCompiler extends QueryCompiler
 {
+    use HavingBuilderTrait;
+
     /**
      * Always quote aliases in SELECT clause.
      *
@@ -47,30 +47,4 @@ class PostgresCompiler extends QueryCompiler
         'offset' => ' OFFSET %s',
         'epilog' => ' %s',
     ];
-
-    /**
-     * Helper function used to build the string representation of a HAVING clause,
-     * it constructs the field list taking care of aliasing and
-     * converting expression objects to string.
-     *
-     * @param array $parts list of fields to be transformed to string
-     * @param \Cake\Database\Query $query The query that is being compiled
-     * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
-     * @return string
-     */
-    protected function _buildHavingPart($parts, $query, $generator)
-    {
-        $selectParts = $query->clause('select');
-        foreach ($selectParts as $selectKey => $selectPart) {
-            foreach ($parts as $k => $p) {
-                if (strpos($p, $selectKey) !== false && $selectPart instanceof FunctionExpression) {
-                    $parts[$k] = str_replace($selectKey, $selectPart->sql($generator), $p);
-                }
-            }
-        }
-
-        $parts = $this->_stringifyExpressions((array)$parts, $generator);
-
-        return sprintf(' HAVING %s ', implode(', ', $parts));
-    }
 }
