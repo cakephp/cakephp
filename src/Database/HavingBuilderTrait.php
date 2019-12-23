@@ -44,7 +44,7 @@ trait HavingBuilderTrait
                     continue;
                 }
                 preg_match_all(
-                    '/\b'.trim($selectKey, '"').'\b/i',
+                    '/\b' . trim($selectKey, '"') . '\b/i',
                     $p,
                     $matches
                 );
@@ -54,7 +54,7 @@ trait HavingBuilderTrait
                 }
 
                 $parts[$k] = preg_replace(
-                    ['/"/', '/\b'.trim($selectKey, '"').'\b/i'],
+                    ['/"/', '/\b' . trim($selectKey, '"') . '\b/i'],
                     ['', $selectPart->sql($generator)],
                     $p
                 );
