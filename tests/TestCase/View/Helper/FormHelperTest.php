@@ -6392,6 +6392,45 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * Test datetime with array empty value, ensuring
+     * empty options aren't duplicated.
+     *
+     * @return void
+     */
+    public function testDatetimeEmptyArrayFormKeyValue()
+    {
+        extract($this->dateRegex);
+
+        $result = $this->Form->dateTime('Contact.date', [
+            'minYear' => '2017',
+            'maxYear' => '2019',
+            'empty' => [
+                '' => '-',
+            ],
+            'hour' => false,
+            'minute' => false,
+            'second' => false,
+            'meridian' => false,
+        ]);
+        $expected = [
+            ['select' => ['name' => 'Contact[date][year]']],
+            ['option' => ['value' => '', 'selected' => 'selected']], '-', '/option',
+            '*/select',
+
+            ['select' => ['name' => 'Contact[date][month]']],
+            ['option' => ['value' => '', 'selected' => 'selected']], '-', '/option',
+            $monthsRegex,
+            '*/select',
+
+            ['select' => ['name' => 'Contact[date][day]']],
+            ['option' => ['value' => '', 'selected' => 'selected']], '-', '/option',
+            $daysRegex,
+            '*/select',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * testDatetimeMinuteInterval method
      *
      * Test datetime with interval option.
