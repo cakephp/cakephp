@@ -30,7 +30,7 @@ class Route
 {
     /**
      * An array of named segments in a Route.
-     * `/:controller/:action/:id` has 3 key elements
+     * `/{controller}/{action}/{id}` has 3 key elements
      *
      * @var array
      */
@@ -707,7 +707,7 @@ class Route
         // check patterns for routed params
         if (!empty($this->options)) {
             foreach ($this->options as $key => $pattern) {
-                if (isset($url[$key]) && !preg_match('#^' . $pattern . '$#u', $url[$key])) {
+                if (isset($url[$key]) && !preg_match('#^' . $pattern . '$#u', (string)$url[$key])) {
                     return null;
                 }
             }

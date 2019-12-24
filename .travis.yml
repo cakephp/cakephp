@@ -14,13 +14,11 @@ cache:
     - $HOME/.composer/cache
 
 php:
-  - 7.2
-  - 7.4
+  - 7.3
 
 env:
   global:
-    - DEFAULT=1
-    - CHECKS=0
+    - CODECOVERAGE=1
   matrix:
     - DB=mysql DB_DSN='mysql://root@127.0.0.1/cakephp_test?init[]=SET sql_mode = "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"'
     - DB=pgsql DB_DSN='postgres://postgres@127.0.0.1/cakephp_test'
@@ -29,20 +27,17 @@ env:
 matrix:
   fast_finish: true
 
-  include:
-    - php: 7.3
-      env: CHECKS=1 DEFAULT=0
-
 before_install:
   - echo cakephp version && tail -1 VERSION.txt
 
   - if [[ $DB == 'mysql' ]]; then mysql -u root -e 'CREATE DATABASE cakephp_test;'; fi
   - if [[ $DB == 'pgsql' ]]; then psql -c 'CREATE DATABASE cakephp_test;' -U postgres; fi
 
-  - if [[ $TRAVIS_PHP_VERSION != '7.4' ]]; then phpenv config-rm xdebug.ini; fi
-
   - pecl channel-update pecl.php.net
-  - if [[ $TRAVIS_PHP_VERSION == '7.4' ]]; then pecl install pcov; fi
+  - pecl install pcov
+
+  - phpenv config-rm xdebug.ini
+
   - echo 'extension = memcached.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini;
   - echo 'extension = redis.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - echo 'extension = apcu.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
@@ -54,33 +49,13 @@ install:
   - composer install --prefer-dist --no-interaction
 
 script:
-  - |
-      if [[ $TRAVIS_PHP_VERSION == '7.4' ]]; then
-        # This is necessary to skip memory usage tests
-        CODECOVERAGE=1 vendor/bin/phpunit --verbose --coverage-clover=clover.xml
-      elif [[ $DEFAULT == '1' ]]; then
-        vendor/bin/phpunit
-      fi
-  - |
-      if [[ $CHECKS == 1 ]]; then
-        composer stan-setup
-      fi
-  - |
-      if [[ $CHECKS == 1 ]]; then
-        composer stan
-      fi
-  - |
-      if [[ $CHECKS == 1 ]]; then
-        composer cs-check
-      fi
+  - vendor/bin/phpunit --verbose --coverage-clover=clover.xml
 
 after_success:
   - |
-      if [[ $TRAVIS_PHP_VERSION == '7.4' ]]; then
-        wget https://github.com/php-coveralls/php-coveralls/releases/download/v2.1.0/php-coveralls.phar
-        chmod +x php-coveralls.phar
-        ./php-coveralls.phar
-      fi
+      wget https://github.com/php-coveralls/php-coveralls/releases/download/v2.1.0/php-coveralls.phar
+      chmod +x php-coveralls.phar
+      ./php-coveralls.phar
 
 notifications:
   email: false

@@ -29,6 +29,7 @@ use Cake\ORM\Entity;
 use Cake\ORM\ResultSet;
 use Cake\TestSuite\TestCase;
 use Closure;
+use InvalidArgumentException;
 
 /**
  * Tests HasMany class
@@ -283,12 +284,13 @@ class HasManyTest extends TestCase
         $association->eagerLoader([
             'conditions' => ['Articles.id !=' => 3],
             'sort' => ['title' => 'DESC'],
-            'fields' => ['title', 'author_id'],
+            'fields' => ['id', 'title', 'author_id'],
             'contain' => ['Comments' => ['fields' => ['comment', 'article_id']]],
             'keys' => $keys,
             'query' => $query,
         ]);
         $expected = [
+            'Articles__id' => 'Articles.id',
             'Articles__title' => 'Articles.title',
             'Articles__author_id' => 'Articles.author_id',
         ];
@@ -450,6 +452,25 @@ class HasManyTest extends TestCase
             ['id' => 2, 'title' => 'article 2', 'author_id' => 1, 'site_id' => 20],
         ];
         $this->assertEquals($row, $result);
+    }
+
+    /**
+     * Test that not selecting join keys fails with an error
+     *
+     * @return void
+     */
+    public function testEagerloaderNoForeignKeys()
+    {
+        $authors = $this->getTableLocator()->get('Authors');
+        $authors->hasMany('Articles');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unable to load `Articles` association. Ensure foreign key in `Authors`');
+        $query = $authors->find()
+            ->select(['Authors.name'])
+            ->where(['Authors.id' => 1])
+            ->contain('Articles');
+        $query->first();
     }
 
     /**

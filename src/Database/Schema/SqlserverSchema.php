@@ -90,6 +90,11 @@ class SqlserverSchema extends BaseSchema
         if (in_array($col, ['date', 'time'])) {
             return ['type' => $col, 'length' => null];
         }
+
+        if ($col === 'datetime') {
+            // datetime cannot parse more than 3 digits of precision and isn't accurate
+            return ['type' => TableSchema::TYPE_DATETIME, 'length' => null];
+        }
         if (strpos($col, 'datetime') !== false) {
             $typeName = TableSchema::TYPE_DATETIME;
             if ($scale > 0) {
@@ -338,7 +343,7 @@ class SqlserverSchema extends BaseSchema
     {
         $parent = parent::_foreignOnClause($on);
 
-        return $parent === 'RESTRICT' ? parent::_foreignOnClause(TableSchema::ACTION_SET_NULL) : $parent;
+        return $parent === 'RESTRICT' ? parent::_foreignOnClause(TableSchema::ACTION_NO_ACTION) : $parent;
     }
 
     /**

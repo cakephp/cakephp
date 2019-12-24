@@ -22,6 +22,7 @@ use Cake\Database\TypeMap;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 
 /**
  * Tests BelongsTo class
@@ -407,15 +408,15 @@ class BelongsToTest extends TestCase
     }
 
     /**
-     * Test that failing to add the foreignKey to the list of fields will throw an
-     * exception
+     * Test that failing to add the foreignKey to the list of fields will
+     * still attach associated data.
      *
      * @return void
      */
     public function testAttachToNoFieldsSelected()
     {
         $articles = $this->getTableLocator()->get('Articles');
-        $association = $articles->belongsTo('Authors');
+        $articles->belongsTo('Authors');
 
         $query = $articles->find()
             ->select(['Authors.name'])
@@ -426,5 +427,33 @@ class BelongsToTest extends TestCase
         $this->assertNotEmpty($result->author);
         $this->assertSame('mariano', $result->author->name);
         $this->assertSame(['author'], array_keys($result->toArray()), 'No other properties included.');
+    }
+
+    /**
+     * Test that not selecting join keys with strategy=select fails
+     *
+     * @return void
+     */
+    public function testAttachToNoForeignKeySelect()
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->belongsTo('Authors')->setStrategy('select');
+
+        $query = $articles->find()
+            ->select(['Articles.title', 'Articles.author_id'])
+            ->where(['Articles.id' => 1])
+            ->contain('Authors');
+        $result = $query->firstOrFail();
+        $this->assertNotEmpty($result->author);
+        $this->assertSame(1, $result->author->id);
+
+        $query = $articles->find()
+            ->select(['Articles.title'])
+            ->where(['Articles.id' => 1])
+            ->contain('Authors');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unable to load `Authors` association. Ensure foreign key in `Articles`');
+        $query->first();
     }
 }
