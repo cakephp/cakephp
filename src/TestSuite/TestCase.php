@@ -219,7 +219,7 @@ abstract class TestCase extends BaseTestCase
             /** @var \Cake\Routing\RoutingApplicationInterface $app */
             $app = $reflect->newInstanceArgs($appArgs);
         } catch (ReflectionException $e) {
-            throw new LogicException(sprintf('Cannot load "%s" to load routes from.', $className), null, $e);
+            throw new LogicException(sprintf('Cannot load "%s" to load routes from.', $className), 0, $e);
         }
         $builder = Router::createRouteBuilder('/');
         $app->routes($builder);
