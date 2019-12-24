@@ -90,7 +90,7 @@ class MiddlewareDispatcher
             $app = $reflect->newInstanceArgs($this->_constructorArgs);
             $this->app = $app;
         } catch (ReflectionException $e) {
-            throw new LogicException(sprintf('Cannot load "%s" for use in integration testing.', $this->_class));
+            throw new LogicException("Cannot load `{$this->_class}` for use in integration testing.", 0, $e);
         }
     }
 

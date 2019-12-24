@@ -28,7 +28,10 @@ use Cake\Routing\Router;
 use Cake\TestSuite\Constraint\EventFired;
 use Cake\TestSuite\Constraint\EventFiredWith;
 use Cake\Utility\Inflector;
+use LogicException;
 use PHPUnit\Framework\TestCase as BaseTestCase;
+use ReflectionClass;
+use ReflectionException;
 use RuntimeException;
 
 /**
@@ -193,6 +196,33 @@ abstract class TestCase extends BaseTestCase
             $this->fixtureManager->load($this);
             $this->autoFixtures = $autoFixtures;
         }
+    }
+
+    /**
+     * Load routes for the application.
+     *
+     * If no application class can be found an exception will be raised.
+     * Routes for plugins will *not* be loaded. Use `loadPlugins()` or use
+     * `Cake\TestSuite\IntegrationTestCaseTrait` to better simulate all routes
+     * and plugins being loaded.
+     *
+     * @param array|null $appArgs Constuctor parameters for the application class.
+     * @return void
+     * @since 4.0.1
+     */
+    public function loadRoutes(?array $appArgs = null): void
+    {
+        $appArgs = $appArgs ?? [rtrim(CONFIG, DIRECTORY_SEPARATOR)];
+        $className = Configure::read('App.namespace') . '\\Application';
+        try {
+            $reflect = new ReflectionClass($className);
+            /** @var \Cake\Routing\RoutingApplicationInterface $app */
+            $app = $reflect->newInstanceArgs($appArgs);
+        } catch (ReflectionException $e) {
+            throw new LogicException(sprintf('Cannot load "%s" to load routes from.', $className), 0, $e);
+        }
+        $builder = Router::createRouteBuilder('/');
+        $app->routes($builder);
     }
 
     /**
