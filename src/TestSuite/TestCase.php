@@ -28,6 +28,7 @@ use Cake\Routing\Router;
 use Cake\TestSuite\Constraint\EventFired;
 use Cake\TestSuite\Constraint\EventFiredWith;
 use Cake\Utility\Inflector;
+use LogicException;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use ReflectionClass;
 use ReflectionException;
@@ -211,11 +212,11 @@ abstract class TestCase extends BaseTestCase
      */
     public function loadRoutes(?array $appArgs = null): void
     {
-        $appArgs = $appArgs === null ? [CONFIG] : $appArgs;
+        $appArgs = $appArgs ?? [CONFIG];
         $className = Configure::read('App.namespace') . '\\Application';
         try {
             $reflect = new ReflectionClass($className);
-            /** @var \Cake\Core\HttpApplicationInterface $app */
+            /** @var \Cake\Routing\RoutingApplicationInterface $app */
             $app = $reflect->newInstanceArgs($appArgs);
         } catch (ReflectionException $e) {
             throw new LogicException(sprintf('Cannot load "%s" to load routes from.', $className), null, $e);
