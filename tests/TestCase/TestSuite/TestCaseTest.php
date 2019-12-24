@@ -476,8 +476,8 @@ class TestCaseTest extends TestCase
         $url = ['controller' => 'Articles', 'action' => 'index'];
         try {
             Router::url($url);
+            $this->fail('Missing URL should throw an exception');
         } catch (MissingRouteException $e) {
-            $this->assertTrue(true, 'Route should fail.');
         }
         Configure::write('App.namespace', 'TestApp');
         $this->loadRoutes();
