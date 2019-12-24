@@ -25,21 +25,21 @@ use Cake\Log\Log;
 class QueryLogger
 {
     /**
-     * The database connection id.
+     * Meta data.
      *
-     * @var int|null
+     * @var array
      */
-    protected $_connectionId;
+    protected $_metaData = [];
 
     /**
-     * Sets the database connection id.
+     * Adds meta data such as a connection id.
      *
-     * @param int|null $connectionId Database connection id.
+     * @param array $data Meta data.
      * @return void
      */
-    public function setConnectionId($connectionId)
+    public function addMetaData($data)
     {
-        $this->_connectionId = $connectionId;
+        $this->_metaData += $data;
     }
 
     /**
@@ -66,8 +66,8 @@ class QueryLogger
     protected function _log($query)
     {
         $message = $query->__toString();
-        if ($this->_connectionId !== null) {
-            $message = "connection_id={$this->_connectionId} $message";
+        if (isset($this->_metaData['connection_id'])) {
+            $message = "connection_id={$this->_metaData['connection_id']} $message";
         }
         Log::write('debug', $message, ['queriesLog']);
     }

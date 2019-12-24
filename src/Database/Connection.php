@@ -963,7 +963,7 @@ class Connection implements ConnectionInterface
     {
         if ($this->_logger === null) {
             $this->_logger = new QueryLogger();
-            $this->_logger->setConnectionId($this->getConnectionId());
+            $this->_logger->addMetaData(['connection_id' => $this->getConnectionId()]);
         }
 
         return $this->_logger;
