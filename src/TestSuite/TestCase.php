@@ -212,7 +212,7 @@ abstract class TestCase extends BaseTestCase
      */
     public function loadRoutes(?array $appArgs = null): void
     {
-        $appArgs = $appArgs ?? [CONFIG];
+        $appArgs = $appArgs ?? [rtrim(CONFIG, DIRECTORY_SEPARATOR)];
         $className = Configure::read('App.namespace') . '\\Application';
         try {
             $reflect = new ReflectionClass($className);
