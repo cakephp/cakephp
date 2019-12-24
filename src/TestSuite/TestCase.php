@@ -30,6 +30,7 @@ use Cake\TestSuite\Constraint\EventFiredWith;
 use Cake\Utility\Inflector;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use ReflectionClass;
+use ReflectionException;
 use RuntimeException;
 
 /**
