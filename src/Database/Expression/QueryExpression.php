@@ -456,6 +456,7 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function and_($conditions, $types = [])
     {
+        deprecationWarning('QueryExpression::and_() is deprecated use and() instead.');
         return $this->and($conditions, $types);
     }
 
@@ -471,6 +472,7 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function or_($conditions, $types = [])
     {
+        deprecationWarning('QueryExpression::or_() is deprecated use or() instead.');
         return $this->or($conditions, $types);
     }
 // phpcs:enable
