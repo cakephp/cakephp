@@ -678,6 +678,22 @@ class ConsoleIoTest extends TestCase
         $this->assertStringEqualsFile($file, $contents);
     }
 
+    public function testCreateFileEmptySuccess()
+    {
+        $this->err->expects($this->never())
+            ->method('write');
+        $path = TMP . 'shell_test';
+        mkdir($path);
+
+        $file = $path . DS . 'file_empty.php';
+        $contents = '';
+        $result = $this->io->createFile($file, $contents);
+
+        $this->assertTrue($result);
+        $this->assertFileExists($file);
+        $this->assertStringEqualsFile($file, $contents);
+    }
+
     public function testCreateFileDirectoryCreation()
     {
         $this->err->expects($this->never())
