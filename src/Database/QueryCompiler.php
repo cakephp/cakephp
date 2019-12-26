@@ -209,6 +209,7 @@ class QueryCompiler
 
         return sprintf($select, implode(', ', $normalized));
     }
+
     /**
      * Method called to start _buildNestedJoins method.
      *
@@ -220,8 +221,10 @@ class QueryCompiler
     protected function _buildJoinPart($parts, $query, $generator)
     {
         $joins = $this->_buildNestedJoins($parts, $query, $generator, $query->getEagerLoader()->getContain());
+
         return $joins;
     }
+
     /**
      * Helper function used to build the string representation of multiple JOIN clauses,
      * it constructs the joins list taking care of aliasing and converting
@@ -237,8 +240,8 @@ class QueryCompiler
     protected function _buildNestedJoins(&$parts, $query, $generator, $associations)
     {
         $joins = '';
-        foreach($associations as $association => $subAssociation){
-            if(!isset($parts[$association])){
+        foreach ($associations as $association => $subAssociation) {
+            if (!isset($parts[$association])) {
                 continue;
             }
             $join = $parts[$association];
@@ -252,7 +255,7 @@ class QueryCompiler
                 $join['table'] = '(' . $join['table'] . ')';
             }
             $joins .= sprintf(' %s JOIN (%s %s', $join['type'], $join['table'], $join['alias']);
-            if(is_array($subAssociation) && count($subAssociation)){
+            if (is_array($subAssociation) && count($subAssociation)) {
                 $joins .= $this->_buildNestedJoins($parts, $query, $generator, $subAssociation);
             }
             $joins .= ')';
@@ -266,15 +269,15 @@ class QueryCompiler
                 $joins .= ' ON 1 = 1';
             }
         }
-        
-        if($associations == $query->getEagerLoader()->getContain() && count($parts)){
+
+        if ($associations == $query->getEagerLoader()->getContain() && count($parts)) {
             $associations = [];
-            foreach(array_keys($parts) as $part){
+            foreach (array_keys($parts) as $part) {
                 $associations[$part] = [];
             }
             $joins .= $this->_buildNestedJoins($parts, $query, $generator, $associations);
         }
-        
+
         return $joins;
     }
 
