@@ -18,7 +18,7 @@ namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Schema\Collection as SchemaCollection;
-use Cake\Database\Schema\MysqlSchema;
+use Cake\Database\Schema\MysqlSchemaDialect;
 use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
@@ -241,7 +241,7 @@ class MysqlSchemaTest extends TestCase
             'comment' => 'Comment section',
         ];
         $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')->getMock();
-        $dialect = new MysqlSchema($driver);
+        $dialect = new MysqlSchemaDialect($driver);
 
         $table = new TableSchema('table');
         $dialect->convertColumnDescription($table, $field);
@@ -304,7 +304,7 @@ SQL;
     }
 
     /**
-     * Integration test for SchemaCollection & MysqlDialect.
+     * Integration test for SchemaCollection & MysqlSchemaDialect.
      *
      * @return void
      */
@@ -818,7 +818,7 @@ SQL;
     public function testColumnSql($name, $data, $expected)
     {
         $driver = $this->_getMockedDriver();
-        $schema = new MysqlSchema($driver);
+        $schema = new MysqlSchemaDialect($driver);
 
         $table = (new TableSchema('articles'))->addColumn($name, $data);
         $this->assertEquals($expected, $schema->columnSql($table, $name));
@@ -892,7 +892,7 @@ SQL;
     public function testConstraintSql($name, $data, $expected)
     {
         $driver = $this->_getMockedDriver();
-        $schema = new MysqlSchema($driver);
+        $schema = new MysqlSchemaDialect($driver);
 
         $table = (new TableSchema('articles'))->addColumn('title', [
             'type' => 'string',
@@ -933,7 +933,7 @@ SQL;
     public function testIndexSql($name, $data, $expected)
     {
         $driver = $this->_getMockedDriver();
-        $schema = new MysqlSchema($driver);
+        $schema = new MysqlSchemaDialect($driver);
 
         $table = (new TableSchema('articles'))->addColumn('title', [
             'type' => 'string',
@@ -1055,7 +1055,7 @@ SQL;
     public function testColumnSqlPrimaryKey()
     {
         $driver = $this->_getMockedDriver();
-        $schema = new MysqlSchema($driver);
+        $schema = new MysqlSchemaDialect($driver);
 
         $table = new TableSchema('articles');
         $table->addColumn('id', [
@@ -1338,7 +1338,7 @@ SQL;
         $driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
         $driver->expects($this->once())
             ->method('connect');
-        $schema = new MysqlSchema($driver);
+        $schema = new MysqlSchemaDialect($driver);
     }
 
     /**
@@ -1373,7 +1373,7 @@ SQL;
     /**
      * Get a schema instance with a mocked driver/pdo instances
      *
-     * @return MysqlSchema
+     * @return \Cake\Database\Schema\MysqlSchemaDialect
      */
     protected function _getMockedDriver()
     {

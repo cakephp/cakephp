@@ -18,8 +18,8 @@ namespace Cake\Database\Dialect;
 
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Query;
-use Cake\Database\Schema\BaseSchema;
-use Cake\Database\Schema\PostgresSchema;
+use Cake\Database\Schema\PostgresSchemaDialect;
+use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\SqlDialectTrait;
 
 /**
@@ -49,7 +49,7 @@ trait PostgresDialectTrait
     /**
      * The schema dialect class for this driver
      *
-     * @var \Cake\Database\Schema\PostgresSchema
+     * @var \Cake\Database\Schema\PostgresSchemaDialect
      */
     protected $_schemaDialect;
 
@@ -166,12 +166,12 @@ trait PostgresDialectTrait
      * Used by Cake\Database\Schema package to reflect schema and
      * generate schema.
      *
-     * @return \Cake\Database\Schema\BaseSchema
+     * @return \Cake\Database\Schema\SchemaDialect
      */
-    public function schemaDialect(): BaseSchema
+    public function schemaDialect(): SchemaDialect
     {
         if ($this->_schemaDialect === null) {
-            $this->_schemaDialect = new PostgresSchema($this);
+            $this->_schemaDialect = new PostgresSchemaDialect($this);
         }
 
         return $this->_schemaDialect;
