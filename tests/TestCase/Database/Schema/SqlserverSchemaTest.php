@@ -783,31 +783,31 @@ SQL;
                 'author_id_idx',
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id']],
                 'CONSTRAINT [author_id_idx] FOREIGN KEY ([author_id]) ' .
-                'REFERENCES [authors] ([id]) ON UPDATE SET NULL ON DELETE SET NULL',
+                'REFERENCES [authors] ([id]) ON UPDATE NO ACTION ON DELETE NO ACTION',
             ],
             [
                 'author_id_idx',
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'cascade'],
                 'CONSTRAINT [author_id_idx] FOREIGN KEY ([author_id]) ' .
-                'REFERENCES [authors] ([id]) ON UPDATE CASCADE ON DELETE SET NULL',
+                'REFERENCES [authors] ([id]) ON UPDATE CASCADE ON DELETE NO ACTION',
             ],
             [
                 'author_id_idx',
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'setDefault'],
                 'CONSTRAINT [author_id_idx] FOREIGN KEY ([author_id]) ' .
-                'REFERENCES [authors] ([id]) ON UPDATE SET DEFAULT ON DELETE SET NULL',
+                'REFERENCES [authors] ([id]) ON UPDATE SET DEFAULT ON DELETE NO ACTION',
             ],
             [
                 'author_id_idx',
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'setNull'],
                 'CONSTRAINT [author_id_idx] FOREIGN KEY ([author_id]) ' .
-                'REFERENCES [authors] ([id]) ON UPDATE SET NULL ON DELETE SET NULL',
+                'REFERENCES [authors] ([id]) ON UPDATE SET NULL ON DELETE NO ACTION',
             ],
             [
                 'author_id_idx',
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'noAction'],
                 'CONSTRAINT [author_id_idx] FOREIGN KEY ([author_id]) ' .
-                'REFERENCES [authors] ([id]) ON UPDATE NO ACTION ON DELETE SET NULL',
+                'REFERENCES [authors] ([id]) ON UPDATE NO ACTION ON DELETE NO ACTION',
             ],
         ];
     }

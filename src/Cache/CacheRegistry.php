@@ -93,7 +93,7 @@ class CacheRegistry extends ObjectRegistry
         }
 
         $config = $instance->getConfig();
-        if ($config['probability'] && time() % $config['probability'] === 0) {
+        if (isset($config['probability']) && time() % $config['probability'] === 0) {
             $instance->gc();
         }
 

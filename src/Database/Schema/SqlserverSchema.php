@@ -314,7 +314,7 @@ class SqlserverSchema extends BaseSchema
     {
         $parent = parent::_foreignOnClause($on);
 
-        return $parent === 'RESTRICT' ? parent::_foreignOnClause(TableSchema::ACTION_SET_NULL) : $parent;
+        return $parent === 'RESTRICT' ? parent::_foreignOnClause(TableSchema::ACTION_NO_ACTION) : $parent;
     }
 
     /**
