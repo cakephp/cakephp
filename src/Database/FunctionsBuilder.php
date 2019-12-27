@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database;
 
+use Cake\Database\Expression\AggregateExpression;
 use Cake\Database\Expression\FunctionExpression;
 use InvalidArgumentException;
 
@@ -71,6 +72,26 @@ class FunctionsBuilder
     }
 
     /**
+     * Helper to build an aggregate function with a single literal argument.
+     *
+     * @param string $name name of the function to build
+     * @param mixed $expression the function argument
+     * @param array $types list of types to bind to the arguments
+     * @param string $return The return type for the function
+     * @return \Cake\Database\Expression\AggregateExpression
+     */
+    protected function singleLiteralAggregate(string $name, $expression, array $types, string $return)
+    {
+        if (!is_string($expression)) {
+            $expression = [$expression];
+        } else {
+            $expression = [$expression => 'literal'];
+        }
+
+        return $this->aggregate($name, $expression, $types, $return);
+    }
+
+    /**
      * Returns a FunctionExpression representing a call to SQL RAND function.
      *
      * @return \Cake\Database\Expression\FunctionExpression
@@ -81,68 +102,68 @@ class FunctionsBuilder
     }
 
     /**
-     * Returns a FunctionExpression representing a call to SQL SUM function.
+     * Returns a AggregateExpression representing a call to SQL SUM function.
      *
      * @param mixed $expression the function argument
      * @param array $types list of types to bind to the arguments
-     * @return \Cake\Database\Expression\FunctionExpression
+     * @return \Cake\Database\Expression\AggregateExpression
      */
-    public function sum($expression, $types = []): FunctionExpression
+    public function sum($expression, $types = []): AggregateExpression
     {
         $returnType = 'float';
         if (current($types) === 'integer') {
             $returnType = 'integer';
         }
 
-        return $this->_literalArgumentFunction('SUM', $expression, $types, $returnType);
+        return $this->singleLiteralAggregate('SUM', $expression, $types, $returnType);
     }
 
     /**
-     * Returns a FunctionExpression representing a call to SQL AVG function.
+     * Returns a AggregateExpression representing a call to SQL AVG function.
      *
      * @param mixed $expression the function argument
      * @param array $types list of types to bind to the arguments
-     * @return \Cake\Database\Expression\FunctionExpression
+     * @return \Cake\Database\Expression\AggregateExpression
      */
-    public function avg($expression, $types = []): FunctionExpression
+    public function avg($expression, $types = []): AggregateExpression
     {
-        return $this->_literalArgumentFunction('AVG', $expression, $types, 'float');
+        return $this->singleLiteralAggregate('AVG', $expression, $types, 'float');
     }
 
     /**
-     * Returns a FunctionExpression representing a call to SQL MAX function.
+     * Returns a AggregateExpression representing a call to SQL MAX function.
      *
      * @param mixed $expression the function argument
      * @param array $types list of types to bind to the arguments
-     * @return \Cake\Database\Expression\FunctionExpression
+     * @return \Cake\Database\Expression\AggregateExpression
      */
-    public function max($expression, $types = []): FunctionExpression
+    public function max($expression, $types = []): AggregateExpression
     {
-        return $this->_literalArgumentFunction('MAX', $expression, $types, current($types) ?: 'string');
+        return $this->singleLiteralAggregate('MAX', $expression, $types, current($types) ?: 'string');
     }
 
     /**
-     * Returns a FunctionExpression representing a call to SQL MIN function.
+     * Returns a AggregateExpression representing a call to SQL MIN function.
      *
      * @param mixed $expression the function argument
      * @param array $types list of types to bind to the arguments
-     * @return \Cake\Database\Expression\FunctionExpression
+     * @return \Cake\Database\Expression\AggregateExpression
      */
-    public function min($expression, $types = []): FunctionExpression
+    public function min($expression, $types = []): AggregateExpression
     {
-        return $this->_literalArgumentFunction('MIN', $expression, $types, current($types) ?: 'string');
+        return $this->singleLiteralAggregate('MIN', $expression, $types, current($types) ?: 'string');
     }
 
     /**
-     * Returns a FunctionExpression representing a call to SQL COUNT function.
+     * Returns a AggregateExpression representing a call to SQL COUNT function.
      *
      * @param mixed $expression the function argument
      * @param array $types list of types to bind to the arguments
-     * @return \Cake\Database\Expression\FunctionExpression
+     * @return \Cake\Database\Expression\AggregateExpression
      */
-    public function count($expression, $types = []): FunctionExpression
+    public function count($expression, $types = []): AggregateExpression
     {
-        return $this->_literalArgumentFunction('COUNT', $expression, $types, 'integer');
+        return $this->singleLiteralAggregate('COUNT', $expression, $types, 'integer');
     }
 
     /**
@@ -282,6 +303,23 @@ class FunctionsBuilder
     }
 
     /**
+     * Helper method to create arbitrary SQL aggregate function calls.
+     *
+     * @param string $name The SQL aggregate function name
+     * @param array $params Array of arguments to be passed to the function.
+     *     Can be an associative array with the literal value or identifier:
+     *     `['value' => 'literal']` or `['value' => 'identifier']
+     * @param array $types Array of types that match the names used in `$params`:
+     *     `['name' => 'type']`
+     * @param string $return Return type of the entire expression. Defaults to float.
+     * @return \Cake\Database\Expression\AggregateExpression
+     */
+    public function aggregate(string $name, array $params = [], array $types = [], string $return = 'float')
+    {
+        return new AggregateExpression($name, $params, $types, $return);
+    }
+
+    /**
      * Magic method dispatcher to create custom SQL function calls
      *
      * @param string $name the SQL function name to construct
@@ -292,15 +330,6 @@ class FunctionsBuilder
      */
     public function __call(string $name, array $args): FunctionExpression
     {
-        switch (count($args)) {
-            case 0:
-                return $this->_build($name);
-            case 1:
-                return $this->_build($name, $args[0]);
-            case 2:
-                return $this->_build($name, $args[0], $args[1]);
-            default:
-                return $this->_build($name, $args[0], $args[1], $args[2]);
-        }
+        return $this->_build($name, ...$args);
     }
 }

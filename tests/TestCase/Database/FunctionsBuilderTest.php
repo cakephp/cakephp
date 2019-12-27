@@ -15,6 +15,8 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database;
 
+use Cake\Database\Expression\AggregateExpression;
+use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\FunctionsBuilder;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
@@ -43,11 +45,27 @@ class FunctionsBuilderTest extends TestCase
     public function testArbitrary()
     {
         $function = $this->functions->MyFunc(['b' => 'literal']);
-        $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
+        $this->assertInstanceOf(FunctionExpression::class, $function);
         $this->assertSame('MyFunc', $function->getName());
         $this->assertSame('MyFunc(b)', $function->sql(new ValueBinder()));
 
         $function = $this->functions->MyFunc(['b'], ['string'], 'integer');
+        $this->assertSame('integer', $function->getReturnType());
+    }
+
+    /**
+     * Tests generating a generic aggregate call
+     *
+     * @return void
+     */
+    public function testArbitraryAggregate()
+    {
+        $function = $this->functions->aggregate('MyFunc', ['b' => 'literal']);
+        $this->assertInstanceOf(AggregateExpression::class, $function);
+        $this->assertSame('MyFunc', $function->getName());
+        $this->assertSame('MyFunc(b)', $function->sql(new ValueBinder()));
+
+        $function = $this->functions->aggregate('MyFunc', ['b'], ['string'], 'integer');
         $this->assertSame('integer', $function->getReturnType());
     }
 
@@ -59,12 +77,12 @@ class FunctionsBuilderTest extends TestCase
     public function testSum()
     {
         $function = $this->functions->sum('total');
-        $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
+        $this->assertInstanceOf(AggregateExpression::class, $function);
         $this->assertSame('SUM(total)', $function->sql(new ValueBinder()));
         $this->assertSame('float', $function->getReturnType());
 
         $function = $this->functions->sum('total', ['integer']);
-        $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
+        $this->assertInstanceOf(AggregateExpression::class, $function);
         $this->assertSame('SUM(total)', $function->sql(new ValueBinder()));
         $this->assertSame('integer', $function->getReturnType());
     }
@@ -77,7 +95,7 @@ class FunctionsBuilderTest extends TestCase
     public function testAvg()
     {
         $function = $this->functions->avg('salary');
-        $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
+        $this->assertInstanceOf(AggregateExpression::class, $function);
         $this->assertSame('AVG(salary)', $function->sql(new ValueBinder()));
         $this->assertSame('float', $function->getReturnType());
     }
@@ -90,7 +108,7 @@ class FunctionsBuilderTest extends TestCase
     public function testMAX()
     {
         $function = $this->functions->max('created', ['datetime']);
-        $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
+        $this->assertInstanceOf(AggregateExpression::class, $function);
         $this->assertSame('MAX(created)', $function->sql(new ValueBinder()));
         $this->assertSame('datetime', $function->getReturnType());
     }
@@ -103,7 +121,7 @@ class FunctionsBuilderTest extends TestCase
     public function testMin()
     {
         $function = $this->functions->min('created', ['date']);
-        $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
+        $this->assertInstanceOf(AggregateExpression::class, $function);
         $this->assertSame('MIN(created)', $function->sql(new ValueBinder()));
         $this->assertSame('date', $function->getReturnType());
     }
@@ -116,7 +134,7 @@ class FunctionsBuilderTest extends TestCase
     public function testCount()
     {
         $function = $this->functions->count('*');
-        $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
+        $this->assertInstanceOf(AggregateExpression::class, $function);
         $this->assertSame('COUNT(*)', $function->sql(new ValueBinder()));
         $this->assertSame('integer', $function->getReturnType());
     }
@@ -129,7 +147,7 @@ class FunctionsBuilderTest extends TestCase
     public function testConcat()
     {
         $function = $this->functions->concat(['title' => 'literal', ' is a string']);
-        $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
+        $this->assertInstanceOf(FunctionExpression::class, $function);
         $this->assertSame('CONCAT(title, :param0)', $function->sql(new ValueBinder()));
         $this->assertSame('string', $function->getReturnType());
     }
@@ -142,7 +160,7 @@ class FunctionsBuilderTest extends TestCase
     public function testCoalesce()
     {
         $function = $this->functions->coalesce(['NULL' => 'literal', '1', 'a'], ['a' => 'date']);
-        $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
+        $this->assertInstanceOf(FunctionExpression::class, $function);
         $this->assertSame('COALESCE(NULL, :param0, :param1)', $function->sql(new ValueBinder()));
         $this->assertSame('date', $function->getReturnType());
     }
@@ -155,17 +173,17 @@ class FunctionsBuilderTest extends TestCase
     public function testNow()
     {
         $function = $this->functions->now();
-        $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
+        $this->assertInstanceOf(FunctionExpression::class, $function);
         $this->assertSame('NOW()', $function->sql(new ValueBinder()));
         $this->assertSame('datetime', $function->getReturnType());
 
         $function = $this->functions->now('date');
-        $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
+        $this->assertInstanceOf(FunctionExpression::class, $function);
         $this->assertSame('CURRENT_DATE()', $function->sql(new ValueBinder()));
         $this->assertSame('date', $function->getReturnType());
 
         $function = $this->functions->now('time');
-        $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
+        $this->assertInstanceOf(FunctionExpression::class, $function);
         $this->assertSame('CURRENT_TIME()', $function->sql(new ValueBinder()));
         $this->assertSame('time', $function->getReturnType());
     }
@@ -178,12 +196,12 @@ class FunctionsBuilderTest extends TestCase
     public function testExtract()
     {
         $function = $this->functions->extract('day', 'created');
-        $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
+        $this->assertInstanceOf(FunctionExpression::class, $function);
         $this->assertSame('EXTRACT(day FROM created)', $function->sql(new ValueBinder()));
         $this->assertSame('integer', $function->getReturnType());
 
         $function = $this->functions->datePart('year', 'modified');
-        $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
+        $this->assertInstanceOf(FunctionExpression::class, $function);
         $this->assertSame('EXTRACT(year FROM modified)', $function->sql(new ValueBinder()));
         $this->assertSame('integer', $function->getReturnType());
     }
@@ -196,7 +214,7 @@ class FunctionsBuilderTest extends TestCase
     public function testDateAdd()
     {
         $function = $this->functions->dateAdd('created', -3, 'day');
-        $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
+        $this->assertInstanceOf(FunctionExpression::class, $function);
         $this->assertSame('DATE_ADD(created, INTERVAL -3 day)', $function->sql(new ValueBinder()));
         $this->assertSame('datetime', $function->getReturnType());
     }
@@ -209,12 +227,12 @@ class FunctionsBuilderTest extends TestCase
     public function testDayOfWeek()
     {
         $function = $this->functions->dayOfWeek('created');
-        $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
+        $this->assertInstanceOf(FunctionExpression::class, $function);
         $this->assertSame('DAYOFWEEK(created)', $function->sql(new ValueBinder()));
         $this->assertSame('integer', $function->getReturnType());
 
         $function = $this->functions->weekday('created');
-        $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
+        $this->assertInstanceOf(FunctionExpression::class, $function);
         $this->assertSame('DAYOFWEEK(created)', $function->sql(new ValueBinder()));
         $this->assertSame('integer', $function->getReturnType());
     }
@@ -227,7 +245,7 @@ class FunctionsBuilderTest extends TestCase
     public function testRand()
     {
         $function = $this->functions->rand();
-        $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
+        $this->assertInstanceOf(FunctionExpression::class, $function);
         $this->assertSame('RAND()', $function->sql(new ValueBinder()));
         $this->assertSame('float', $function->getReturnType());
     }
