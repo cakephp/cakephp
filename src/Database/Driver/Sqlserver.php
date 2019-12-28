@@ -32,6 +32,11 @@ class Sqlserver extends Driver
     use SqlserverDialectTrait;
 
     /**
+     * @var int|null Maximum alias length or null if no limit
+     */
+    protected const MAX_ALIAS_LENGTH = 128;
+
+    /**
      * Base configuration settings for Sqlserver driver
      *
      * @var array

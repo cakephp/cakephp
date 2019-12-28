@@ -28,6 +28,11 @@ class Postgres extends Driver
     use PostgresDialectTrait;
 
     /**
+     * @var int|null Maximum alias length or null if no limit
+     */
+    protected const MAX_ALIAS_LENGTH = 63;
+
+    /**
      * Base configuration settings for Postgres driver
      *
      * @var array

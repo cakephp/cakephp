@@ -19,6 +19,7 @@ namespace Cake\ORM;
 use ArrayObject;
 use BadMethodCallException;
 use Cake\Core\App;
+use Cake\Core\Configure;
 use Cake\Database\Connection;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Database\TypeFactory;
@@ -498,6 +499,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                     ->getSchemaCollection()
                     ->describe($this->getTable())
             );
+            if (Configure::read('debug')) {
+                $this->checkAliasLengths();
+            }
         }
 
         return $this->_schema;
@@ -530,8 +534,46 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         $this->_schema = $schema;
+        if (Configure::read('debug')) {
+            $this->checkAliasLengths();
+        }
 
         return $this;
+    }
+
+    /**
+     * Checks if all table name + column name combinations used for
+     * queries fit into the max length allowed by database driver.
+     *
+     * @return void
+     * @throws \RuntimeException When an alias combination is too long
+     */
+    protected function checkAliasLengths(): void
+    {
+        if ($this->_schema === null) {
+            throw new RuntimeException("Unable to check max alias lengths for  `{$this->getAlias()}` without schema.");
+        }
+
+        $maxLength = null;
+        if (method_exists($this->getConnection()->getDriver(), "getMaxAliasLength")) {
+            $maxLength = $this->getConnection()->getDriver()->getMaxAliasLength();
+        }
+        if ($maxLength === null) {
+            return;
+        }
+
+        $table = $this->getAlias();
+        foreach ($this->_schema->columns() as $name) {
+            if (strlen($table . '__' . $name) > $maxLength) {
+                $nameLength = $maxLength - 2;
+                throw new RuntimeException(
+                    "ORM queries generate field aliases using the table name/alias and column name. " .
+                    "The table alias `{$table}` and column `{$name}` create an alias longer than ({$nameLength}). " .
+                    "You must change the table schema in the database and shorten either the table or column " .
+                    "identifier so they fit within the database alias limits."
+                );
+            }
+        }
     }
 
     /**
