@@ -21,7 +21,7 @@ use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Behavior;
-use RuntimeException;
+use Closure;
 
 /**
  * CounterCache behavior
@@ -241,10 +241,7 @@ class CounterCacheBehavior extends Behavior
                 continue;
             }
 
-            if (is_callable($config)) {
-                if (is_string($config)) {
-                    throw new RuntimeException('You must not use a string as callable.');
-                }
+            if ($config instanceof Closure) {
                 $count = $config($event, $entity, $this->_table, false);
             } else {
                 $count = $this->_getCount($config, $countConditions);
@@ -254,10 +251,7 @@ class CounterCacheBehavior extends Behavior
             }
 
             if (isset($updateOriginalConditions)) {
-                if (is_callable($config)) {
-                    if (is_string($config)) {
-                        throw new RuntimeException('You must not use a string as callable.');
-                    }
+                if ($config instanceof Closure) {
                     $count = $config($event, $entity, $this->_table, true);
                 } else {
                     $count = $this->_getCount($config, $countOriginalConditions);

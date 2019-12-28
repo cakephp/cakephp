@@ -612,7 +612,8 @@ class ConsoleIo
         }
 
         $file->rewind();
-        if ($file->fwrite($contents) > 0) {
+        $file->fwrite($contents);
+        if (file_exists($path)) {
             $this->out("<success>Wrote</success> `{$path}`");
 
             return true;
