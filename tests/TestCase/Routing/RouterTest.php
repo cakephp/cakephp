@@ -68,7 +68,7 @@ class RouterTest extends TestCase
         });
         $this->assertRegExp('/^http(s)?:\/\//', Router::url('/', true));
         $this->assertRegExp('/^http(s)?:\/\//', Router::url(null, true));
-        $this->assertRegExp('/^http(s)?:\/\//', Router::url(['_full' => true]));
+        $this->assertRegExp('/^http(s)?:\/\//', Router::url(['controller' => 'test', '_full' => true]));
     }
 
     /**
@@ -174,25 +174,14 @@ class RouterTest extends TestCase
     }
 
     /**
-     * testRouteDefaultParams method
-     *
-     * @return void
-     */
-    public function testRouteDefaultParams()
-    {
-        Router::connect('/:controller', ['controller' => 'posts']);
-        $this->assertEquals(Router::url(['action' => 'index']), '/');
-    }
-
-    /**
      * testRouteExists method
      *
      * @return void
      */
     public function testRouteExists()
     {
-        Router::connect('/:controller/:action', ['controller' => 'posts']);
-        $this->assertTrue(Router::routeExists(['action' => 'view']));
+        Router::connect('/posts/:action', ['controller' => 'posts']);
+        $this->assertTrue(Router::routeExists(['controller' => 'posts', 'action' => 'view']));
 
         $this->assertFalse(Router::routeExists(['action' => 'view', 'controller' => 'users', 'plugin' => 'test']));
     }

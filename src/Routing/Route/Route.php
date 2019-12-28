@@ -714,6 +714,14 @@ class Route
         }
         $url += $hostOptions;
 
+        // Ensure controller/action keys are not null.
+        if (
+            (isset($keyNames['controller']) && !isset($url['controller'])) ||
+            (isset($keyNames['action']) && !isset($url['action']))
+        ) {
+            return null;
+        }
+
         return $this->_writeUrl($url, $pass, $query);
     }
 
@@ -759,12 +767,10 @@ class Route
 
         $search = $replace = [];
         foreach ($this->keys as $key) {
-            $string = null;
-            if (isset($params[$key])) {
-                $string = $params[$key];
-            } elseif (strpos($out, $key) !== strlen($out) - strlen($key)) {
-                $key .= '/';
+            if (!array_key_exists($key, $params)) {
+                throw new InvalidArgumentException("Missing required route key `{$key}`");
             }
+            $string = $params[$key];
             if ($this->braceKeys) {
                 $search[] = "{{$key}}";
             } else {

@@ -1445,6 +1445,34 @@ class RouteTest extends TestCase
     }
 
     /**
+     * Test match handles optional keys
+     *
+     * @return void
+     */
+    public function testMatchNullValueOptionalKey()
+    {
+        $route = new Route('/path/:optional/fixed');
+        $this->assertSame('/path/fixed', $route->match(['optional' => null]));
+
+        $route = new Route('/path/{optional}/fixed');
+        $this->assertSame('/path/fixed', $route->match(['optional' => null]));
+    }
+
+    /**
+     * Test matching fails on required keys (controller/action)
+     *
+     * @return void
+     */
+    public function testMatchControllerRequiredKeys()
+    {
+        $route = new Route('/:controller/', ['action' => 'index']);
+        $this->assertNull($route->match(['controller' => null, 'action' => 'index']));
+
+        $route = new Route('/test/:action', ['controller' => 'thing']);
+        $this->assertNull($route->match(['action' => null, 'controller' => 'thing']));
+    }
+
+    /**
      * Test restructuring args with pass key
      *
      * @return void

@@ -56,6 +56,11 @@ class PaginatorHelperTest extends TestCase
         Configure::write('Config.language', 'eng');
         $request = new ServerRequest([
             'url' => '/',
+            'params' => [
+                'plugin' => null,
+                'controller' => '',
+                'action' => 'index',
+            ]
         ]);
         $request = $request->withAttribute('paging', [
             'Article' => [
@@ -76,6 +81,7 @@ class PaginatorHelperTest extends TestCase
         Router::reload();
         Router::connect('/:controller/:action/*');
         Router::connect('/:plugin/:controller/:action/*');
+        Router::setRequest($request);
 
         $this->locale = I18n::getLocale();
     }
@@ -1877,41 +1883,50 @@ class PaginatorHelperTest extends TestCase
     {
         Router::reload();
         Router::connect('/:controller/:action/:page');
-
-        $this->View->setRequest($this->View->getRequest()->withAttribute('paging', [
-            'Client' => [
-                'page' => 8,
-                'current' => 3,
-                'count' => 30,
-                'prevPage' => false,
-                'nextPage' => 2,
-                'pageCount' => 15,
-            ],
-        ]));
+        $request = $this->View
+            ->getRequest()
+            ->withAttribute('params', [
+                'plugin' => null,
+                'controller' => 'clients',
+                'action' => 'index',
+            ])
+            ->withAttribute('paging', [
+                'Client' => [
+                    'page' => 8,
+                    'current' => 3,
+                    'count' => 30,
+                    'prevPage' => false,
+                    'nextPage' => 2,
+                    'pageCount' => 15,
+                ],
+            ]);
+        $this->View->setRequest($request);
+        Router::setRequest($request);
 
         $this->Paginator->options(['routePlaceholders' => ['page']]);
 
         $result = $this->Paginator->numbers();
         $expected = [
-            ['li' => []], ['a' => ['href' => '/index/4']], '4', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/index/5']], '5', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/index/6']], '6', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/index/7']], '7', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/clients/index/4']], '4', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/clients/index/5']], '5', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/clients/index/6']], '6', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/clients/index/7']], '7', '/a', '/li',
             ['li' => ['class' => 'active']], '<a href=""', '8', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/index/9']], '9', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/index/10']], '10', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/index/11']], '11', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/index/12']], '12', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/clients/index/9']], '9', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/clients/index/10']], '10', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/clients/index/11']], '11', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/clients/index/12']], '12', '/a', '/li',
         ];
         $this->assertHtml($expected, $result);
 
         Router::reload();
         Router::connect('/:controller/:action/:sort/:direction');
+        Router::setRequest($request);
 
         $this->Paginator->options(['routePlaceholders' => ['sort', 'direction']]);
         $result = $this->Paginator->sort('title');
         $expected = [
-            'a' => ['href' => '/index/title/asc'],
+            'a' => ['href' => '/clients/index/title/asc'],
             'Title',
             '/a',
         ];
