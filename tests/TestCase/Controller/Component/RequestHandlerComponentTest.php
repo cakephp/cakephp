@@ -29,7 +29,6 @@ use Cake\TestSuite\TestCase;
 use Cake\View\AjaxView;
 use Cake\View\JsonView;
 use Cake\View\XmlView;
-use PHPUnit\Framework\Error\Deprecated;
 use TestApp\Controller\Component\RequestHandlerExtComponent;
 use TestApp\Controller\RequestHandlerTestController;
 use TestApp\View\AppView;
@@ -314,22 +313,6 @@ class RequestHandlerComponentTest extends TestCase
         $this->assertNull($this->RequestHandler->ext);
 
         Router::extensions($extensions, false);
-    }
-
-    /**
-     * Test that startup() throws deprecation warning if input data is available and request data is not populated.
-     *
-     * @return void
-     */
-    public function testInitializeInputDataWarning()
-    {
-        $request = new ServerRequest([
-            'input' => json_encode(['foo' => 'bar']),
-        ]);
-        $this->Controller->setRequest($request->withMethod('POST'));
-
-        $this->expectException(Deprecated::class);
-        $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
     }
 
     /**
