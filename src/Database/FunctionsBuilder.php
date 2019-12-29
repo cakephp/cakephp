@@ -50,7 +50,7 @@ class FunctionsBuilder
      * argument.
      *
      * @param string $name name of the function to build
-     * @param mixed $expression the function argument
+     * @param string|\Cake\Database\ExpressionInterface $expression the function argument
      * @param array $types list of types to bind to the arguments
      * @param string $return The return type for the function
      * @return \Cake\Database\Expression\FunctionExpression
@@ -83,7 +83,7 @@ class FunctionsBuilder
     /**
      * Returns a FunctionExpression representing a call to SQL SUM function.
      *
-     * @param mixed $expression the function argument
+     * @param string|\Cake\Database\ExpressionInterface $expression the function argument
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\FunctionExpression
      */
@@ -100,7 +100,7 @@ class FunctionsBuilder
     /**
      * Returns a FunctionExpression representing a call to SQL AVG function.
      *
-     * @param mixed $expression the function argument
+     * @param string|\Cake\Database\ExpressionInterface $expression the function argument
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\FunctionExpression
      */
@@ -112,7 +112,7 @@ class FunctionsBuilder
     /**
      * Returns a FunctionExpression representing a call to SQL MAX function.
      *
-     * @param mixed $expression the function argument
+     * @param string|\Cake\Database\ExpressionInterface $expression the function argument
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\FunctionExpression
      */
@@ -124,7 +124,7 @@ class FunctionsBuilder
     /**
      * Returns a FunctionExpression representing a call to SQL MIN function.
      *
-     * @param mixed $expression the function argument
+     * @param string|\Cake\Database\ExpressionInterface $expression the function argument
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\FunctionExpression
      */
@@ -136,7 +136,7 @@ class FunctionsBuilder
     /**
      * Returns a FunctionExpression representing a call to SQL COUNT function.
      *
-     * @param mixed $expression the function argument
+     * @param string|\Cake\Database\ExpressionInterface $expression the function argument
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\FunctionExpression
      */
@@ -186,7 +186,7 @@ class FunctionsBuilder
      * Returns the specified date part from the SQL expression.
      *
      * @param string $part Part of the date to return.
-     * @param mixed $expression Expression to obtain the date part from.
+     * @param string|\Cake\Database\ExpressionInterface $expression Expression to obtain the date part from.
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\FunctionExpression
      */
@@ -199,7 +199,7 @@ class FunctionsBuilder
      * Returns the specified date part from the SQL expression.
      *
      * @param string $part Part of the date to return.
-     * @param mixed $expression Expression to obtain the date part from.
+     * @param string|\Cake\Database\ExpressionInterface $expression Expression to obtain the date part from.
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\FunctionExpression
      */
@@ -214,7 +214,7 @@ class FunctionsBuilder
     /**
      * Add the time unit to the date expression
      *
-     * @param mixed $expression Expression to obtain the date part from.
+     * @param string|\Cake\Database\ExpressionInterface $expression Expression to obtain the date part from.
      * @param string|int $value Value to be added. Use negative to subtract.
      * @param string $unit Unit of the value e.g. hour or day.
      * @param array $types list of types to bind to the arguments
@@ -236,7 +236,7 @@ class FunctionsBuilder
      * Returns a FunctionExpression representing a call to SQL WEEKDAY function.
      * 1 - Sunday, 2 - Monday, 3 - Tuesday...
      *
-     * @param mixed $expression the function argument
+     * @param string|\Cake\Database\ExpressionInterface $expression the function argument
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\FunctionExpression
      */
@@ -249,7 +249,7 @@ class FunctionsBuilder
      * Returns a FunctionExpression representing a call to SQL WEEKDAY function.
      * 1 - Sunday, 2 - Monday, 3 - Tuesday...
      *
-     * @param mixed $expression the function argument
+     * @param string|\Cake\Database\ExpressionInterface $expression the function argument
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\FunctionExpression
      */
