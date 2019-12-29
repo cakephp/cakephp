@@ -126,7 +126,7 @@ class HtmlHelperTest extends TestCase
         $expected = ['a' => ['href' => '/home'], 'preg:/\/home/', '/a'];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Html->link(['controller' => 'users',  'action' => 'login', '<[You]>']);
+        $result = $this->Html->link(['controller' => 'users', 'action' => 'login', '<[You]>']);
         $expected = [
             'a' => ['href' => '/users/login/%3C%5BYou%5D%3E'],
             'preg:/\/users\/login\/&lt;\[You\]&gt;/',
