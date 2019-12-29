@@ -111,7 +111,11 @@ class ErrorLogger
             $trace = Debugger::formatTrace($exception, ['format' => 'points']);
             $message .= "\nStack Trace:\n";
             foreach ($trace as $line) {
-                $message .= "- {$line['file']}:{$line['line']}\n";
+                if (is_string($line)) {
+                    $message .= '- ' . $line;
+                } else {
+                    $message .= "- {$line['file']}:{$line['line']}\n";
+                }
             }
         }
 
