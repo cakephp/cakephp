@@ -156,6 +156,7 @@ class RouterTest extends TestCase
     }
 
     /**
+<<<<<<< HEAD
      * Test that full base URL can be generated from request context too if
      * App.fullBaseUrl is not set.
      *
@@ -174,6 +175,8 @@ class RouterTest extends TestCase
     }
 
     /**
+=======
+>>>>>>> 3.next
      * testRouteExists method
      *
      * @return void
