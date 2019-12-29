@@ -55,6 +55,9 @@ class PaginatorHelperTest extends TestCase
         $request = new ServerRequest([
             'url' => '/',
             'params' => [
+                'plugin' => null,
+                'controller' => '',
+                'action' => 'index',
                 'paging' => [
                     'Article' => [
                         'page' => 1,
@@ -76,6 +79,7 @@ class PaginatorHelperTest extends TestCase
         Router::reload();
         Router::connect('/:controller/:action/*');
         Router::connect('/:plugin/:controller/:action/*');
+        Router::pushRequest($request);
 
         $this->locale = I18n::getLocale();
     }
