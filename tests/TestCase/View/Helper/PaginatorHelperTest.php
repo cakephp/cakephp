@@ -60,7 +60,7 @@ class PaginatorHelperTest extends TestCase
                 'plugin' => null,
                 'controller' => '',
                 'action' => 'index',
-            ]
+            ],
         ]);
         $request = $request->withAttribute('paging', [
             'Article' => [
