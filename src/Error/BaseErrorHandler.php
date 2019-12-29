@@ -168,9 +168,19 @@ abstract class BaseErrorHandler
 
         $debug = Configure::read('debug');
         if ($debug) {
+            // By default trim 3 frames off for the public and protected methods
+            // used by ErrorHandler instances.
+            $start = 3;
+
+            // Can be used by error handlers that wrap other error handlers
+            // to coerce the generated stack trace to the correct point.
+            if (isset($context['_trace_frame_offset'])) {
+                $start += $context['_trace_frame_offset'];
+                unset($context['_trace_frame_offset']);
+            }
             $data += [
                 'context' => $context,
-                'start' => 3,
+                'start' => $start,
                 'path' => Debugger::trimPath((string)$file),
             ];
         }
