@@ -290,7 +290,7 @@ class ArrayContext implements ContextInterface
      *
      * @param string $field A dot separated path to get a schema type for.
      * @return string|null An abstract data type or null.
-     * @see \Cake\Database\Type
+     * @see \Cake\Database\TypeFactory
      */
     public function type(string $field): ?string
     {
