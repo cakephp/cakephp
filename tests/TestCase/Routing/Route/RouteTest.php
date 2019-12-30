@@ -1011,9 +1011,6 @@ class RouteTest extends TestCase
         $result = $route->match(['plugin' => null, 'controller' => 'posts', 'action' => 'view', 'id' => 9]);
         $this->assertSame('/posts/view/9', $result);
 
-        $result = $route->match(['plugin' => null, 'controller' => 'posts', 'action' => 'view', 'id' => 9]);
-        $this->assertSame('/posts/view/9', $result);
-
         $result = $route->match(['plugin' => null, 'controller' => 'posts', 'action' => 'view', 'id' => '9']);
         $this->assertSame('/posts/view/9', $result);
 
