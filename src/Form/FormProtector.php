@@ -47,20 +47,6 @@ class FormProtector
     protected $unlockedFields = [];
 
     /**
-     * Form URL
-     *
-     * @var string
-     */
-    protected $url = '';
-
-    /**
-     * Session Id
-     *
-     * @var string
-     */
-    protected $sessionId = '';
-
-    /**
      * Error message providing detail for failed validation.
      *
      * @var string|null
@@ -70,15 +56,10 @@ class FormProtector
     /**
      * Construct.
      *
-     * @param string $url Form URL.
-     * @param string $sessionId Session Id.
      * @param array $data Data array, can contain key `unlockedFields` with list of unlocked fields.
      */
-    public function __construct(string $url = '', string $sessionId = '', array $data = [])
+    public function __construct(array $data = [])
     {
-        $this->url = $url;
-        $this->sessionId = $sessionId;
-
         if (!empty($data['unlockedFields'])) {
             $this->unlockedFields = $data['unlockedFields'];
         }
@@ -392,10 +373,12 @@ class FormProtector
     /**
      * Generate the token data.
      *
+     * @param string $url Form URL.
+     * @param string $sessionId Session Id.
      * @return array The token data.
      * @psalm-return array{fields: string, unlocked: string}
      */
-    public function buildTokenData(): array
+    public function buildTokenData(string $url = '', string $sessionId = ''): array
     {
         $fields = $this->fields;
         $unlockedFields = $this->unlockedFields;
@@ -416,14 +399,14 @@ class FormProtector
         ksort($locked, SORT_STRING);
         $fields += $locked;
 
-        $fields = $this->generateHash($fields, $unlockedFields, $this->url, $this->sessionId);
+        $fields = $this->generateHash($fields, $unlockedFields, $url, $sessionId);
         $locked = implode('|', array_keys($locked));
 
         return [
             'fields' => urlencode($fields . ':' . $locked),
             'unlocked' => urlencode(implode('|', $unlockedFields)),
             'debug' => urlencode(json_encode([
-                $this->url,
+                $url,
                 $this->fields,
                 $this->unlockedFields,
             ])),
@@ -595,8 +578,6 @@ class FormProtector
     public function __debugInfo(): array
     {
         return [
-            'url' => $this->url,
-            'sessionId' => $this->sessionId,
             'fields' => $this->fields,
             'unlockedFields' => $this->unlockedFields,
             'debugMessage' => $this->debugMessage,
