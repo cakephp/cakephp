@@ -833,7 +833,7 @@ class IntegrationTestTraitTest extends TestCase
         ];
         $this->post('/posts/securePost', $data);
         $this->assertResponseCode(400);
-        $this->assertResponseContains('Invalid security debug token.');
+        $this->assertResponseContains('Invalid form protection debug token.');
     }
 
     /**
