@@ -1011,6 +1011,9 @@ class RouteTest extends TestCase
         $result = $route->match(['plugin' => null, 'controller' => 'posts', 'action' => 'view', 'id' => 9]);
         $this->assertSame('/posts/view/9', $result);
 
+        $result = $route->match(['plugin' => null, 'controller' => 'posts', 'action' => 'view', 'id' => 9]);
+        $this->assertSame('/posts/view/9', $result);
+
         $result = $route->match(['plugin' => null, 'controller' => 'posts', 'action' => 'view', 'id' => '9']);
         $this->assertSame('/posts/view/9', $result);
 
@@ -1442,6 +1445,34 @@ class RouteTest extends TestCase
         ]);
         $expected = '/pages/test/%20spaces/%E6%BC%A2%E5%AD%97/la%E2%80%A0%C3%AEn';
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test match handles optional keys
+     *
+     * @return void
+     */
+    public function testMatchNullValueOptionalKey()
+    {
+        $route = new Route('/path/:optional/fixed');
+        $this->assertSame('/path/fixed', $route->match(['optional' => null]));
+
+        $route = new Route('/path/{optional}/fixed');
+        $this->assertSame('/path/fixed', $route->match(['optional' => null]));
+    }
+
+    /**
+     * Test matching fails on required keys (controller/action)
+     *
+     * @return void
+     */
+    public function testMatchControllerRequiredKeys()
+    {
+        $route = new Route('/:controller/', ['action' => 'index']);
+        $this->assertNull($route->match(['controller' => null, 'action' => 'index']));
+
+        $route = new Route('/test/:action', ['controller' => 'thing']);
+        $this->assertNull($route->match(['action' => null, 'controller' => 'thing']));
     }
 
     /**

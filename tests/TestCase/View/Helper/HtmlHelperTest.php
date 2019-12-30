@@ -107,7 +107,9 @@ class HtmlHelperTest extends TestCase
     public function testLink()
     {
         Router::reload();
+        Router::connect('/:controller', ['action' => 'index']);
         Router::connect('/:controller/:action/*');
+        Router::setRequest(new ServerRequest());
 
         $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', ''));
 
@@ -115,18 +117,13 @@ class HtmlHelperTest extends TestCase
         $expected = ['a' => ['href' => '/home'], 'preg:/\/home/', '/a'];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Html->link(['action' => 'login', '<[You]>']);
+        $result = $this->Html->link(['controller' => 'users', 'action' => 'login', '<[You]>']);
         $expected = [
-            'a' => ['href' => '/login/%3C%5BYou%5D%3E'],
-            'preg:/\/login\/&lt;\[You\]&gt;/',
+            'a' => ['href' => '/users/login/%3C%5BYou%5D%3E'],
+            'preg:/\/users\/login\/&lt;\[You\]&gt;/',
             '/a',
         ];
         $this->assertHtml($expected, $result);
-
-        Router::reload();
-        Router::setRequest(new ServerRequest());
-        Router::connect('/:controller', ['action' => 'index']);
-        Router::connect('/:controller/:action/*');
 
         $result = $this->Html->link('Posts', ['controller' => 'posts', 'action' => 'index', '_full' => true]);
         $expected = ['a' => ['href' => Router::fullBaseUrl() . '/posts'], 'Posts', '/a'];
