@@ -35,7 +35,9 @@
         "aura/intl": "^3.0.0",
         "psr/log": "^1.0.0",
         "psr/simple-cache": "^1.0.0",
-        "zendframework/zend-diactoros": "^1.4.0"
+        "zendframework/zend-diactoros": "^1.4.0",
+        "paragonie/random_compat": "^1.4|9.99.99",
+        "paragonie/csp-builder": "^1.4"
     },
     "suggest": {
         "ext-openssl": "To use Security::encrypt() or have secure CSRF token generation.",
@@ -46,7 +48,6 @@
     "require-dev": {
         "cakephp/cakephp-codesniffer": "^3.0",
         "cakephp/chronos": "^1.2.1",
-        "paragonie/csp-builder": "^1.4",
         "phpunit/phpunit": "^5.7.14|^6.0"
     },
     "autoload": {
