@@ -515,7 +515,7 @@ class Cookie implements CookieInterface
      * @return void
      * @throws \InvalidArgumentException
      */
-    protected static function validateSameSiteValue(string $sameSite)
+    protected static function validateSameSiteValue($sameSite)
     {
         if (!in_array($sameSite, CookieInterface::SAMESITE_VALUES, true)) {
             throw new InvalidArgumentException(
