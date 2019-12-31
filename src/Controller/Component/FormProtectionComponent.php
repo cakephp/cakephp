@@ -85,12 +85,11 @@ class FormProtectionComponent extends Component
             && $this->_config['validate']
         ) {
             $session = $request->getSession();
-
             $session->start();
-            $sessionId = $session->id();
             $url = Router::url($request->getRequestTarget());
-            $formProtector = new FormProtector($url, $sessionId, $this->_config);
-            $isValid = $formProtector->validate($data, $url, $sessionId);
+
+            $formProtector = new FormProtector($this->_config);
+            $isValid = $formProtector->validate($data, $url, $session->id());
 
             if (!$isValid) {
                 return $this->validationFailure($formProtector);
