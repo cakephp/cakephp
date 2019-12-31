@@ -62,9 +62,11 @@ class CspMiddleware
      * @param callable $next
      * @return \Psr\Http\Message\MessageInterface
      */
-    public function __invoke(ServerRequestInterface $requestInterface, ResponseInterface $responseInterface, callable $next) {
+    public function __invoke(ServerRequestInterface $requestInterface, ResponseInterface $responseInterface, callable $next)
+    {
 
         $response = $this->csp->injectCSPHeader($responseInterface);
+
         return $next($requestInterface, $response, $next);
     }
 }

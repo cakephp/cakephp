@@ -103,7 +103,6 @@ class Cookie implements CookieInterface
      */
     protected $httpOnly = false;
 
-
     /**
      * Samesite
      *
