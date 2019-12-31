@@ -126,6 +126,7 @@ class Cookie implements CookieInterface
      * @param string $domain Domain
      * @param bool $secure Is secure
      * @param bool $httpOnly HTTP Only
+     * @param null $sameSite Samesite
      */
     public function __construct(
         $name,
@@ -134,7 +135,8 @@ class Cookie implements CookieInterface
         $path = '/',
         $domain = '',
         $secure = false,
-        $httpOnly = false
+        $httpOnly = false,
+        $sameSite = null
     ) {
         $this->validateName($name);
         $this->name = $name;
@@ -156,6 +158,12 @@ class Cookie implements CookieInterface
             $expiresAt = $expiresAt->setTimezone(new DateTimeZone('GMT'));
         }
         $this->expiresAt = $expiresAt;
+
+        if ($sameSite !== null) {
+            $this->validateSameSiteValue($sameSite);
+            $this->sameSite = $sameSite;
+        }
+        $this->sameSite = $sameSite;
     }
 
     /**

@@ -114,8 +114,8 @@ class ResponseEmitterTest extends TestCase
             ->withCookie(new Cookie('simple', 'val', null, '/', '', true))
             ->withAddedHeader('Set-Cookie', 'google=not=nice;Path=/accounts; HttpOnly')
             ->withHeader('Content-Type', 'text/plain');
-        $response->getBody()->write('ok');
 
+        $response->getBody()->write('ok');
         ob_start();
         $this->emitter->emit($response);
         $out = ob_get_clean();

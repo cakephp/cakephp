@@ -2222,6 +2222,7 @@ class Response implements ResponseInterface
      * - `domain`: Domain the cookie is for.
      * - `secure`: Is the cookie https?
      * - `httpOnly`: Is the cookie available in the client?
+     * - `sameSite`: Is the cookie available in the client?
      *
      * ### Examples
      *
@@ -2260,6 +2261,7 @@ class Response implements ResponseInterface
                 'domain' => '',
                 'secure' => false,
                 'httpOnly' => false,
+                'sameSite' => null,
             ];
             $expires = $data['expire'] ? new DateTime('@' . $data['expire']) : null;
             $cookie = new Cookie(
@@ -2269,7 +2271,8 @@ class Response implements ResponseInterface
                 $data['path'],
                 $data['domain'],
                 $data['secure'],
-                $data['httpOnly']
+                $data['httpOnly'],
+                $data['sameSite']
             );
         }
 

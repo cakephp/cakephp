@@ -200,15 +200,20 @@ class ResponseEmitter implements EmitterInterface
     {
         foreach ($cookies as $cookie) {
             if (is_array($cookie)) {
+                $path = $cookie['path'];
+                $sameSite = array_key_exists('sameSite', $cookie) ? $cookie['sameSite'] : null;
+                if ($sameSite !== null) {
+                    $path .= '; samesite=' . $sameSite;
+                }
+
                 setcookie(
                     $cookie['name'],
                     $cookie['value'],
                     $cookie['expire'],
-                    $cookie['path'],
+                    $path,
                     $cookie['domain'],
                     $cookie['secure'],
-                    $cookie['httpOnly'],
-                    $cookie['sameSite']
+                    $cookie['httpOnly']
                 );
                 continue;
             }
@@ -229,7 +234,6 @@ class ResponseEmitter implements EmitterInterface
                 'domain' => '',
                 'secure' => false,
                 'httponly' => false,
-                'samesite' => null,
             ];
 
             foreach ($parts as $part) {
@@ -253,8 +257,7 @@ class ResponseEmitter implements EmitterInterface
                 $data['path'],
                 $data['domain'],
                 $data['secure'],
-                $data['httponly'],
-                $data['samesite'],
+                $data['httponly']
             );
         }
     }
