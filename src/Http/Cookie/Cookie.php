@@ -126,7 +126,7 @@ class Cookie implements CookieInterface
      * @param string $domain Domain
      * @param bool $secure Is secure
      * @param bool $httpOnly HTTP Only
-     * @param null $sameSite Samesite
+     * @param string|null $sameSite Samesite
      */
     public function __construct(
         $name,
