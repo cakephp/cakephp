@@ -381,7 +381,7 @@ class IntegrationTestTraitTest extends TestCase
     public function testConfigApplication()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Cannot load "TestApp\MissingApp" for use in integration');
+        $this->expectExceptionMessage('Cannot load `TestApp\MissingApp` for use in integration');
         $this->configApplication('TestApp\MissingApp', []);
         $this->get('/request_action/test_request_action');
     }

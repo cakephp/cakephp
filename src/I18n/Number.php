@@ -44,7 +44,7 @@ class Number
 
     /**
      * ICU Constant for accounting format; not yet widely supported by INTL library.
-     * This will be able to go away once CakePHP minimum PHP requirement is 7.5 or higher.
+     * This will be able to go away once CakePHP minimum PHP requirement is 7.4.1 or higher.
      * See UNUM_CURRENCY_ACCOUNTING in https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/unum_8h.html
      */
     public const CURRENCY_ACCOUNTING = 12;

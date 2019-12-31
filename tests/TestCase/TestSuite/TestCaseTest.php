@@ -16,12 +16,15 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\TestSuite;
 
+use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
 use Cake\Event\Event;
 use Cake\Event\EventList;
 use Cake\Event\EventManager;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
+use Cake\Routing\Exception\MissingRouteException;
+use Cake\Routing\Router;
 use Cake\Test\Fixture\FixturizedTestCase;
 use Cake\TestSuite\Fixture\FixtureManager;
 use Cake\TestSuite\TestCase;
@@ -236,7 +239,6 @@ class TestCaseTest extends TestCase
     public function testAssertTextStartsWith()
     {
         $stringDirty = "some\nstring\r\nwith\rdifferent\nline endings!";
-        $stringClean = "some\nstring\nwith\ndifferent\nline endings!";
 
         $this->assertStringStartsWith("some\nstring", $stringDirty);
         $this->assertStringStartsNotWith("some\r\nstring\r\nwith", $stringDirty);
@@ -254,7 +256,6 @@ class TestCaseTest extends TestCase
     public function testAssertTextStartsNotWith()
     {
         $stringDirty = "some\nstring\r\nwith\rdifferent\nline endings!";
-        $stringClean = "some\nstring\nwith\ndifferent\nline endings!";
 
         $this->assertTextStartsNotWith("some\nstring\nwithout", $stringDirty);
     }
@@ -267,7 +268,6 @@ class TestCaseTest extends TestCase
     public function testAssertTextEndsWith()
     {
         $stringDirty = "some\nstring\r\nwith\rdifferent\nline endings!";
-        $stringClean = "some\nstring\nwith\ndifferent\nline endings!";
 
         $this->assertTextEndsWith("string\nwith\r\ndifferent\rline endings!", $stringDirty);
         $this->assertTextEndsWith("string\r\nwith\ndifferent\nline endings!", $stringDirty);
@@ -281,7 +281,6 @@ class TestCaseTest extends TestCase
     public function testAssertTextEndsNotWith()
     {
         $stringDirty = "some\nstring\r\nwith\rdifferent\nline endings!";
-        $stringClean = "some\nstring\nwith\ndifferent\nline endings!";
 
         $this->assertStringEndsNotWith("different\nline endings", $stringDirty);
         $this->assertTextEndsNotWith("different\rline endings", $stringDirty);
@@ -295,7 +294,6 @@ class TestCaseTest extends TestCase
     public function testAssertTextContains()
     {
         $stringDirty = "some\nstring\r\nwith\rdifferent\nline endings!";
-        $stringClean = "some\nstring\nwith\ndifferent\nline endings!";
 
         $this->assertStringContainsString('different', $stringDirty);
         $this->assertStringNotContainsString("different\rline", $stringDirty);
@@ -311,7 +309,6 @@ class TestCaseTest extends TestCase
     public function testAssertTextNotContains()
     {
         $stringDirty = "some\nstring\r\nwith\rdifferent\nline endings!";
-        $stringClean = "some\nstring\nwith\ndifferent\nline endings!";
 
         $this->assertTextNotContains("different\rlines", $stringDirty);
     }
@@ -467,5 +464,25 @@ class TestCaseTest extends TestCase
 
         $Tags = $this->getMockForModel('Tags', ['save']);
         $this->assertSame('tags', $Tags->getTable());
+    }
+
+    /**
+     * Test loadRoutes() helper
+     *
+     * @return void
+     */
+    public function testLoadRoutes()
+    {
+        $url = ['controller' => 'Articles', 'action' => 'index'];
+        try {
+            Router::url($url);
+            $this->fail('Missing URL should throw an exception');
+        } catch (MissingRouteException $e) {
+        }
+        Configure::write('App.namespace', 'TestApp');
+        $this->loadRoutes();
+
+        $result = Router::url($url);
+        $this->assertSame('/app/articles', $result);
     }
 }

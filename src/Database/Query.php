@@ -637,7 +637,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param array|string $tables list of tables to be joined in the query
      * @param array $types associative array of type names used to bind values to query
      * @param bool $overwrite whether to reset joins with passed list or not
-     * @see \Cake\Database\Type
+     * @see \Cake\Database\TypeFactory
      * @return $this
      */
     public function join($tables, $types = [], $overwrite = false)
@@ -925,7 +925,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param string|array|\Cake\Database\ExpressionInterface|\Closure|null $conditions The conditions to filter on.
      * @param array $types associative array of type names used to bind values to query
      * @param bool $overwrite whether to reset conditions with passed list or not
-     * @see \Cake\Database\Type
+     * @see \Cake\Database\TypeFactory
      * @see \Cake\Database\Expression\QueryExpression
      * @return $this
      */
@@ -1095,7 +1095,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param string|array|\Cake\Database\ExpressionInterface|\Closure $conditions The conditions to add with AND.
      * @param array $types associative array of type names used to bind values to query
      * @see \Cake\Database\Query::where()
-     * @see \Cake\Database\Type
+     * @see \Cake\Database\TypeFactory
      * @return $this
      */
     public function andWhere($conditions, array $types = [])

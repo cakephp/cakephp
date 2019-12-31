@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\Expression\AggregateExpression;
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\FunctionsBuilder;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
@@ -217,6 +218,10 @@ class FunctionsBuilderTest extends TestCase
         $this->assertInstanceOf(FunctionExpression::class, $function);
         $this->assertSame('DATE_ADD(created, INTERVAL -3 day)', $function->sql(new ValueBinder()));
         $this->assertSame('datetime', $function->getReturnType());
+
+        $function = $this->functions->dateAdd(new IdentifierExpression('created'), -3, 'day');
+        $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
+        $this->assertSame('DATE_ADD(created, INTERVAL -3 day)', $function->sql(new ValueBinder()));
     }
 
     /**

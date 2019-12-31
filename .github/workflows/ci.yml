@@ -1,6 +1,13 @@
 name: CakePHP CI
 
-on: [pull_request]
+on:
+  push:
+    branches:
+      - master
+      - '4.next'
+  pull_request:
+    branches:
+      - '*'
 
 jobs:
   testsuite:

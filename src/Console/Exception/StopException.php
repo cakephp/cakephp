@@ -20,7 +20,7 @@ namespace Cake\Console\Exception;
  *
  * @see \Cake\Console\Shell::_stop()
  * @see \Cake\Console\Shell::error()
- * @see \Cake\Console\Command::abort()
+ * @see \Cake\Command\BaseCommand::abort()
  */
 class StopException extends ConsoleException
 {
