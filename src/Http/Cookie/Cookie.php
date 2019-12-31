@@ -103,6 +103,15 @@ class Cookie implements CookieInterface
      */
     protected $httpOnly = false;
 
+
+    /**
+     * Samesite
+     *
+     * @var string|null
+     * @psalm-var CookieInterface::SAMESITE_LAX|CookieInterface::SAMESITE_STRICT|CookieInterface::SAMESITE_NONE|null
+     */
+    protected $sameSite = null;
+
     /**
      * Constructor
      *
@@ -171,6 +180,9 @@ class Cookie implements CookieInterface
         }
         if ($this->domain !== '') {
             $headerValue[] = sprintf('domain=%s', $this->domain);
+        }
+        if ($this->sameSite) {
+            $headerValue[] = sprintf('samesite=%s', $this->sameSite);
         }
         if ($this->secure) {
             $headerValue[] = 'secure';
@@ -464,6 +476,45 @@ class Cookie implements CookieInterface
         $new->expiresAt = Chronos::createFromTimestamp(1);
 
         return $new;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getSameSite()
+    {
+        return $this->sameSite;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function withSameSite($sameSite)
+    {
+        if ($sameSite !== null) {
+            $this->validateSameSiteValue($sameSite);
+        }
+
+        $new = clone $this;
+        $new->sameSite = $sameSite;
+
+        return $new;
+    }
+
+    /**
+     * Check that value passed for SameSite is valid.
+     *
+     * @param string $sameSite SameSite value
+     * @return void
+     * @throws \InvalidArgumentException
+     */
+    protected static function validateSameSiteValue(string $sameSite)
+    {
+        if (!in_array($sameSite, CookieInterface::SAMESITE_VALUES, true)) {
+            throw new InvalidArgumentException(
+                'Samesite value must be either of: ' . implode(', ', CookieInterface::SAMESITE_VALUES)
+            );
+        }
     }
 
     /**

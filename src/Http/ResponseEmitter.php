@@ -207,7 +207,8 @@ class ResponseEmitter implements EmitterInterface
                     $cookie['path'],
                     $cookie['domain'],
                     $cookie['secure'],
-                    $cookie['httpOnly']
+                    $cookie['httpOnly'],
+                    $cookie['sameSite']
                 );
                 continue;
             }
@@ -228,6 +229,7 @@ class ResponseEmitter implements EmitterInterface
                 'domain' => '',
                 'secure' => false,
                 'httponly' => false,
+                'samesite' => null,
             ];
 
             foreach ($parts as $part) {
@@ -251,7 +253,8 @@ class ResponseEmitter implements EmitterInterface
                 $data['path'],
                 $data['domain'],
                 $data['secure'],
-                $data['httponly']
+                $data['httponly'],
+                $data['samesite'],
             );
         }
     }

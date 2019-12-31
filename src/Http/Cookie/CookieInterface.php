@@ -26,6 +26,36 @@ interface CookieInterface
     const EXPIRES_FORMAT = 'D, d-M-Y H:i:s T';
 
     /**
+     * SameSite attribute value: Lax
+     *
+     * @var string
+     */
+    const SAMESITE_LAX = 'Lax';
+
+    /**
+     * SameSite attribute value: Strict
+     *
+     * @var string
+     */
+    const SAMESITE_STRICT = 'Strict';
+
+    /**
+     * SameSite attribute value: None
+     *
+     * @var string
+     */
+    const SAMESITE_NONE = 'None';
+
+    /**
+     * Valid values for "SameSite" attribute.
+     */
+    const SAMESITE_VALUES = [
+        self::SAMESITE_LAX,
+        self::SAMESITE_STRICT,
+        self::SAMESITE_NONE,
+    ];
+
+    /**
      * Sets the cookie name
      *
      * @param string $name Name of the cookie

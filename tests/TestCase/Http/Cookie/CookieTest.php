@@ -14,6 +14,7 @@ namespace Cake\Test\TestCase\Http\Cookie;
 
 use Cake\Chronos\Chronos;
 use Cake\Http\Cookie\Cookie;
+use Cake\Http\Cookie\CookieInterface;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -80,10 +81,11 @@ class CookieTest extends TestCase
         $cookie = $cookie->withDomain('cakephp.org')
             ->withExpiry($date)
             ->withHttpOnly(true)
+            ->withSameSite(CookieInterface::SAMESITE_STRICT)
             ->withSecure(true);
         $result = $cookie->toHeaderValue();
 
-        $expected = 'cakephp=cakephp-rocks; expires=Wed, 01-Dec-2027 12:00:00 GMT; path=/; domain=cakephp.org; secure; httponly';
+        $expected = 'cakephp=cakephp-rocks; expires=Wed, 01-Dec-2027 12:00:00 GMT; path=/; domain=cakephp.org; samesite=Strict; secure; httponly';
         $this->assertEquals($expected, $result);
     }
 
@@ -221,6 +223,34 @@ class CookieTest extends TestCase
     {
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $this->assertContains('path=/', $cookie->toHeaderValue());
+    }
+
+    /**
+     * Test setting SameSite in cookies
+     *
+     * @return void
+     */
+    public function testWithSameSite()
+    {
+        $cookie = new Cookie('cakephp', 'cakephp-rocks');
+        $new = $cookie->withSameSite(CookieInterface::SAMESITE_LAX);
+        $this->assertNotSame($new, $cookie, 'Should make a clone');
+        $this->assertTextNotContains('samesite=Lax', $cookie->toHeaderValue(), 'old instance not modified');
+        $this->assertTextContains('samesite=Lax', $new->toHeaderValue());
+    }
+
+    /**
+     * Test setting SameSite in cookies
+     *
+     * @return void
+     */
+    public function testWithSameSiteException()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Samesite value must be either of: ' . implode(', ', CookieInterface::SAMESITE_VALUES));
+
+        $cookie = new Cookie('cakephp', 'cakephp-rocks');
+        $cookie->withSameSite('invalid');
     }
 
     /**
