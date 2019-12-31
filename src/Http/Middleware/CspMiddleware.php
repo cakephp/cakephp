@@ -57,14 +57,13 @@ class CspMiddleware
      * Apply the middleware.
      *
      * This will inject CSP header into the response.
-     * @param ServerRequestInterface $requestInterface
-     * @param ResponseInterface $responseInterface
-     * @param callable $next
+     * @param ServerRequestInterface $requestInterface The Request.
+     * @param ResponseInterface $responseInterface The Response.
+     * @param callable $next Callback to invoke the next middleware.
      * @return \Psr\Http\Message\MessageInterface
      */
     public function __invoke(ServerRequestInterface $requestInterface, ResponseInterface $responseInterface, callable $next)
     {
-
         $response = $this->csp->injectCSPHeader($responseInterface);
 
         return $next($requestInterface, $response, $next);
