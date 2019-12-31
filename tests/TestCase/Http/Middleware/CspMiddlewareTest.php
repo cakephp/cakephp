@@ -21,7 +21,6 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use ParagonIE\CSPBuilder\CSPBuilder;
-use TestApp\Http\TestRequestHandler;
 
 /**
  * Content Security Policy Middleware Test
