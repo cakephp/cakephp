@@ -1282,7 +1282,13 @@ abstract class Association
             }
 
             /** @var \Cake\Collection\CollectionInterface $results */
-            return $results->insert($property, $extracted);
+            return $results
+                ->insert($property, $extracted)
+                ->map(function ($result) {
+                    $result->clean();
+
+                    return $result;
+                });
         }, Query::PREPEND);
     }
 
