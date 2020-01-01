@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Database;
 
 use Cake\Database\Exception\MissingConnectionException;
-use Cake\Database\Schema\BaseSchema;
+use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\Statement\PDOStatement;
 use Closure;
@@ -270,7 +270,7 @@ abstract class Driver implements DriverInterface
     /**
      * @inheritDoc
      */
-    abstract public function schemaDialect(): BaseSchema;
+    abstract public function schemaDialect(): SchemaDialect;
 
     /**
      * @inheritDoc

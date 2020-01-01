@@ -18,7 +18,7 @@ namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Schema\Collection as SchemaCollection;
-use Cake\Database\Schema\SqlserverSchema;
+use Cake\Database\Schema\SqlserverSchemaDialect;
 use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
@@ -319,7 +319,7 @@ SQL;
         ];
 
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')->getMock();
-        $dialect = new SqlserverSchema($driver);
+        $dialect = new SqlserverSchemaDialect($driver);
 
         $table = new TableSchema('table');
         $dialect->convertColumnDescription($table, $field);
@@ -827,7 +827,7 @@ SQL;
     public function testColumnSql($name, $data, $expected)
     {
         $driver = $this->_getMockedDriver();
-        $schema = new SqlserverSchema($driver);
+        $schema = new SqlserverSchemaDialect($driver);
 
         $table = (new TableSchema('schema_articles'))->addColumn($name, $data);
         $this->assertEquals($expected, $schema->columnSql($table, $name));
@@ -892,7 +892,7 @@ SQL;
     public function testConstraintSql($name, $data, $expected)
     {
         $driver = $this->_getMockedDriver();
-        $schema = new SqlserverSchema($driver);
+        $schema = new SqlserverSchemaDialect($driver);
 
         $table = (new TableSchema('schema_articles'))->addColumn('title', [
             'type' => 'string',
