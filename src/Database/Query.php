@@ -329,9 +329,8 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function traverse($visitor)
     {
-        $parts = array_keys($this->_parts);
-        foreach ($parts as $name) {
-            $visitor($this->_parts[$name], $name);
+        foreach ($this->_parts as $name => $part) {
+            $visitor($part, $name);
         }
 
         return $this;
