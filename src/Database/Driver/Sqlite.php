@@ -16,11 +16,13 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Driver;
 
-use Cake\Database\Dialect\SqliteDialectTrait;
 use Cake\Database\Driver;
+use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Query;
+use Cake\Database\QueryCompiler;
 use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\Schema\SqliteSchemaDialect;
+use Cake\Database\SqliteCompiler;
 use Cake\Database\Statement\PDOStatement;
 use Cake\Database\Statement\SqliteStatement;
 use Cake\Database\StatementInterface;
@@ -29,10 +31,13 @@ use PDO;
 
 /**
  * Class Sqlite
+ *
+ * @internal
  */
 class Sqlite extends Driver
 {
-    use SqliteDialectTrait;
+    use SqlDialectTrait;
+    use TupleComparisonTranslatorTrait;
 
     /**
      * Base configuration settings for Sqlite driver
@@ -58,6 +63,35 @@ class Sqlite extends Driver
      * @var \Cake\Database\Schema\SqliteSchemaDialect
      */
     protected $_schemaDialect;
+
+    /**
+     * String used to start a database identifier quoting to make it safe
+     *
+     * @var string
+     */
+    protected $_startQuote = '"';
+
+    /**
+     * String used to end a database identifier quoting to make it safe
+     *
+     * @var string
+     */
+    protected $_endQuote = '"';
+
+    /**
+     * Mapping of date parts.
+     *
+     * @var array
+     */
+    protected $_dateParts = [
+        'day' => 'd',
+        'hour' => 'H',
+        'month' => 'm',
+        'minute' => 'M',
+        'second' => 'S',
+        'week' => 'W',
+        'year' => 'Y',
+    ];
 
     /**
      * Establishes a connection to the database server
@@ -139,18 +173,29 @@ class Sqlite extends Driver
     /**
      * @inheritDoc
      */
+    public function disableForeignKeySQL(): string
+    {
+        return 'PRAGMA foreign_keys = OFF';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function enableForeignKeySQL(): string
+    {
+        return 'PRAGMA foreign_keys = ON';
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function supportsDynamicConstraints(): bool
     {
         return false;
     }
 
     /**
-     * Get the schema dialect.
-     *
-     * Used by Cake\Database\Schema package to reflect schema and
-     * generate schema.
-     *
-     * @return \Cake\Database\Schema\SchemaDialect
+     * @inheritDoc
      */
     public function schemaDialect(): SchemaDialect
     {
@@ -159,5 +204,95 @@ class Sqlite extends Driver
         }
 
         return $this->_schemaDialect;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function newCompiler(): QueryCompiler
+    {
+        return new SqliteCompiler();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function _expressionTranslators(): array
+    {
+        $namespace = 'Cake\Database\Expression';
+
+        return [
+            $namespace . '\FunctionExpression' => '_transformFunctionExpression',
+            $namespace . '\TupleComparison' => '_transformTupleComparison',
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function _transformFunctionExpression(FunctionExpression $expression): void
+    {
+        switch ($expression->getName()) {
+            case 'CONCAT':
+                // CONCAT function is expressed as exp1 || exp2
+                $expression->setName('')->setConjunction(' ||');
+                break;
+            case 'DATEDIFF':
+                $expression
+                    ->setName('ROUND')
+                    ->setConjunction('-')
+                    ->iterateParts(function ($p) {
+                        return new FunctionExpression('JULIANDAY', [$p['value']], [$p['type']]);
+                    });
+                break;
+            case 'NOW':
+                $expression->setName('DATETIME')->add(["'now'" => 'literal']);
+                break;
+            case 'RAND':
+                $expression
+                    ->setName('ABS')
+                    ->add(["RANDOM() % 1" => 'literal'], [], true);
+                break;
+            case 'CURRENT_DATE':
+                $expression->setName('DATE')->add(["'now'" => 'literal']);
+                break;
+            case 'CURRENT_TIME':
+                $expression->setName('TIME')->add(["'now'" => 'literal']);
+                break;
+            case 'EXTRACT':
+                $expression
+                    ->setName('STRFTIME')
+                    ->setConjunction(' ,')
+                    ->iterateParts(function ($p, $key) {
+                        if ($key === 0) {
+                            $value = rtrim(strtolower($p), 's');
+                            if (isset($this->_dateParts[$value])) {
+                                $p = ['value' => '%' . $this->_dateParts[$value], 'type' => null];
+                            }
+                        }
+
+                        return $p;
+                    });
+                break;
+            case 'DATE_ADD':
+                $expression
+                    ->setName('DATE')
+                    ->setConjunction(',')
+                    ->iterateParts(function ($p, $key) {
+                        if ($key === 1) {
+                            $p = ['value' => $p, 'type' => null];
+                        }
+
+                        return $p;
+                    });
+                break;
+            case 'DAYOFWEEK':
+                $expression
+                    ->setName('STRFTIME')
+                    ->setConjunction(' ')
+                    ->add(["'%w', " => 'literal'], [], true)
+                    ->add([') + (1' => 'literal']); // Sqlite starts on index 0 but Sunday should be 1
+                break;
+        }
     }
 }

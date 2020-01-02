@@ -16,18 +16,21 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Driver;
 
-use Cake\Database\Dialect\PostgresDialectTrait;
 use Cake\Database\Driver;
+use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Query;
 use Cake\Database\Schema\PostgresSchemaDialect;
 use Cake\Database\Schema\SchemaDialect;
 use PDO;
 
 /**
  * Class Postgres
+ *
+ * @internal
  */
 class Postgres extends Driver
 {
-    use PostgresDialectTrait;
+    use SqlDialectTrait;
 
     /**
      * Base configuration settings for Postgres driver
@@ -54,6 +57,20 @@ class Postgres extends Driver
      * @var \Cake\Database\Schema\PostgresSchemaDialect
      */
     protected $_schemaDialect;
+
+    /**
+     * String used to start a database identifier quoting to make it safe
+     *
+     * @var string
+     */
+    protected $_startQuote = '"';
+
+    /**
+     * String used to end a database identifier quoting to make it safe
+     *
+     * @var string
+     */
+    protected $_endQuote = '"';
 
     /**
      * Establishes a connection to the database server
@@ -109,12 +126,7 @@ class Postgres extends Driver
     }
 
     /**
-     * Get the schema dialect.
-     *
-     * Used by Cake\Database\Schema package to reflect schema and
-     * generate schema.
-     *
-     * @return \Cake\Database\Schema\SchemaDialect
+     * @inheritDoc
      */
     public function schemaDialect(): SchemaDialect
     {
@@ -153,8 +165,121 @@ class Postgres extends Driver
     /**
      * @inheritDoc
      */
+    public function disableForeignKeySQL(): string
+    {
+        return 'SET CONSTRAINTS ALL DEFERRED';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function enableForeignKeySQL(): string
+    {
+        return 'SET CONSTRAINTS ALL IMMEDIATE';
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function supportsDynamicConstraints(): bool
     {
         return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function _transformDistinct(Query $query): Query
+    {
+        return $query;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function _insertQueryTranslator(Query $query): Query
+    {
+        if (!$query->clause('epilog')) {
+            $query->epilog('RETURNING *');
+        }
+
+        return $query;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function _expressionTranslators(): array
+    {
+        $namespace = 'Cake\Database\Expression';
+
+        return [
+            $namespace . '\FunctionExpression' => '_transformFunctionExpression',
+        ];
+    }
+
+    /**
+     * Receives a FunctionExpression and changes it so that it conforms to this
+     * SQL dialect.
+     *
+     * @param \Cake\Database\Expression\FunctionExpression $expression The function expression to convert
+     *   to postgres SQL.
+     * @return void
+     */
+    protected function _transformFunctionExpression(FunctionExpression $expression): void
+    {
+        switch ($expression->getName()) {
+            case 'CONCAT':
+                // CONCAT function is expressed as exp1 || exp2
+                $expression->setName('')->setConjunction(' ||');
+                break;
+            case 'DATEDIFF':
+                $expression
+                    ->setName('')
+                    ->setConjunction('-')
+                    ->iterateParts(function ($p) {
+                        if (is_string($p)) {
+                            $p = ['value' => [$p => 'literal'], 'type' => null];
+                        } else {
+                            $p['value'] = [$p['value']];
+                        }
+
+                        return new FunctionExpression('DATE', $p['value'], [$p['type']]);
+                    });
+                break;
+            case 'CURRENT_DATE':
+                $time = new FunctionExpression('LOCALTIMESTAMP', [' 0 ' => 'literal']);
+                $expression->setName('CAST')->setConjunction(' AS ')->add([$time, 'date' => 'literal']);
+                break;
+            case 'CURRENT_TIME':
+                $time = new FunctionExpression('LOCALTIMESTAMP', [' 0 ' => 'literal']);
+                $expression->setName('CAST')->setConjunction(' AS ')->add([$time, 'time' => 'literal']);
+                break;
+            case 'NOW':
+                $expression->setName('LOCALTIMESTAMP')->add([' 0 ' => 'literal']);
+                break;
+            case 'RAND':
+                $expression->setName('RANDOM');
+                break;
+            case 'DATE_ADD':
+                $expression
+                    ->setName('')
+                    ->setConjunction(' + INTERVAL')
+                    ->iterateParts(function ($p, $key) {
+                        if ($key === 1) {
+                            $p = sprintf("'%s'", $p);
+                        }
+
+                        return $p;
+                    });
+                break;
+            case 'DAYOFWEEK':
+                $expression
+                    ->setName('EXTRACT')
+                    ->setConjunction(' ')
+                    ->add(['DOW FROM' => 'literal'], [], true)
+                    ->add([') + (1' => 'literal']); // Postgres starts on index 0 but Sunday should be 1
+                break;
+        }
     }
 }

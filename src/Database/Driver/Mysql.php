@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Driver;
 
-use Cake\Database\Dialect\MysqlDialectTrait;
 use Cake\Database\Driver;
 use Cake\Database\Query;
 use Cake\Database\Schema\MysqlSchemaDialect;
@@ -27,10 +26,12 @@ use PDO;
 
 /**
  * Class Mysql
+ *
+ * @internal
  */
 class Mysql extends Driver
 {
-    use MysqlDialectTrait;
+    use SqlDialectTrait;
 
     /**
      * Base configuration settings for MySQL driver
@@ -70,6 +71,20 @@ class Mysql extends Driver
      * @var bool
      */
     protected $_supportsNativeJson;
+
+    /**
+     * String used to start a database identifier quoting to make it safe
+     *
+     * @var string
+     */
+    protected $_startQuote = '`';
+
+    /**
+     * String used to end a database identifier quoting to make it safe
+     *
+     * @var string
+     */
+    protected $_endQuote = '`';
 
     /**
      * Establishes a connection to the database server
@@ -162,12 +177,7 @@ class Mysql extends Driver
     }
 
     /**
-     * Get the schema dialect.
-     *
-     * Used by Cake\Database\Schema package to reflect schema and
-     * generate schema.
-     *
-     * @return \Cake\Database\Schema\SchemaDialect
+     * @inheritDoc
      */
     public function schemaDialect(): SchemaDialect
     {
@@ -184,6 +194,22 @@ class Mysql extends Driver
     public function schema(): string
     {
         return $this->_config['database'];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function disableForeignKeySQL(): string
+    {
+        return 'SET foreign_key_checks = 0';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function enableForeignKeySQL(): string
+    {
+        return 'SET foreign_key_checks = 1';
     }
 
     /**
