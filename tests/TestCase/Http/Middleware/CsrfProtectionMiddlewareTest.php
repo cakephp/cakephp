@@ -20,10 +20,10 @@ use Cake\Http\Middleware\CsrfProtectionMiddleware;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
+use Laminas\Diactoros\Response as DiactorosResponse;
+use Laminas\Diactoros\Response\RedirectResponse;
 use Psr\Http\Message\ServerRequestInterface;
 use TestApp\Http\TestRequestHandler;
-use Zend\Diactoros\Response as DiactorosResponse;
-use Zend\Diactoros\Response\RedirectResponse;
 
 /**
  * Test for CsrfProtection

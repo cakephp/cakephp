@@ -829,7 +829,7 @@ class ClientTest extends TestCase
         $mock->expects($this->once())
             ->method('send')
             ->with($this->callback(function ($request) use ($headers) {
-                $this->assertInstanceOf('Zend\Diactoros\Request', $request);
+                $this->assertInstanceOf('Laminas\Diactoros\Request', $request);
                 $this->assertEquals(Request::METHOD_GET, $request->getMethod());
                 $this->assertSame('http://cakephp.org/test.html', $request->getUri() . '');
                 $this->assertEquals($headers['Content-Type'], $request->getHeaderLine('content-type'));
@@ -840,7 +840,7 @@ class ClientTest extends TestCase
             ->will($this->returnValue([$response]));
 
         $http = new Client(['adapter' => $mock]);
-        $request = new \Zend\Diactoros\Request(
+        $request = new \Laminas\Diactoros\Request(
             'http://cakephp.org/test.html',
             Request::METHOD_GET,
             'php://temp',

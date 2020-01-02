@@ -58,10 +58,10 @@ use Cake\Utility\Hash;
 use Cake\Utility\Security;
 use Cake\Utility\Text;
 use Exception;
+use Laminas\Diactoros\Uri;
 use LogicException;
 use PHPUnit\Framework\Error\Error as PhpUnitError;
 use Throwable;
-use Zend\Diactoros\Uri;
 
 /**
  * A trait intended to make integration tests of your controllers easier.

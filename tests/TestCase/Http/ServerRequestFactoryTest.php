@@ -20,8 +20,8 @@ use Cake\Core\Configure;
 use Cake\Http\ServerRequestFactory;
 use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
+use Laminas\Diactoros\UploadedFile;
 use Psr\Http\Message\UploadedFileInterface;
-use Zend\Diactoros\UploadedFile;
 
 /**
  * Test case for the server factory.
@@ -111,7 +111,7 @@ class ServerRequestFactoryTest extends TestCase
         $this->assertArrayHasKey('image', $res->getData());
         $this->assertCount(1, $res->getUploadedFiles());
 
-        /** @var \Zend\Diactoros\UploadedFile $expected */
+        /** @var \Laminas\Diactoros\UploadedFile $expected */
         $expected = $res->getData('image');
         $this->assertInstanceOf(UploadedFileInterface::class, $expected);
         $this->assertSame($_FILES['image']['size'], $expected->getSize());
@@ -312,7 +312,7 @@ class ServerRequestFactoryTest extends TestCase
         ];
         $request = ServerRequestFactory::fromGlobals(null, null, null, null, $files);
 
-        /** @var \Zend\Diactoros\UploadedFile $expected */
+        /** @var \Laminas\Diactoros\UploadedFile $expected */
         $expected = $request->getData('file');
         $this->assertSame($files['file']['size'], $expected->getSize());
         $this->assertSame($files['file']['error'], $expected->getError());

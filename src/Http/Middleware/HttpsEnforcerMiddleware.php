@@ -18,11 +18,11 @@ namespace Cake\Http\Middleware;
 
 use Cake\Core\Configure;
 use Cake\Http\Exception\BadRequestException;
+use Laminas\Diactoros\Response\RedirectResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Zend\Diactoros\Response\RedirectResponse;
 
 /**
  * Enforces use of HTTPS (SSL) for requests.

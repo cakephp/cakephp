@@ -24,8 +24,8 @@ use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
 use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
-use Zend\Diactoros\UploadedFile;
-use Zend\Diactoros\Uri;
+use Laminas\Diactoros\UploadedFile;
+use Laminas\Diactoros\Uri;
 
 /**
  * ServerRequest Test
