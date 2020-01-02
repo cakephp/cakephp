@@ -19,7 +19,7 @@ use Cake\Validation\Validation;
 use Cake\Validation\ValidationRule;
 use Cake\Validation\ValidationSet;
 use Cake\Validation\Validator;
-use Zend\Diactoros\UploadedFile;
+use Laminas\Diactoros\UploadedFile;
 
 /**
  * Tests Validator class

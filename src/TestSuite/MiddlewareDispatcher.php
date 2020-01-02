@@ -20,10 +20,10 @@ use Cake\Event\EventManager;
 use Cake\Http\Server;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Router;
+use Laminas\Diactoros\Stream;
 use LogicException;
 use ReflectionClass;
 use ReflectionException;
-use Zend\Diactoros\Stream;
 
 /**
  * Dispatches a request capturing the response for integration

@@ -23,10 +23,10 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
+use Laminas\Diactoros\Uri;
 use PHPUnit\Framework\Error\Notice;
 use TestApp\Controller\Admin\PostsController;
 use TestPlugin\Controller\TestPluginController;
-use Zend\Diactoros\Uri;
 
 /**
  * AppController class

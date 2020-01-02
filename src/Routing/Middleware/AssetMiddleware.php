@@ -17,10 +17,10 @@ namespace Cake\Routing\Middleware;
 use Cake\Core\Plugin;
 use Cake\Filesystem\File;
 use Cake\Utility\Inflector;
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\Stream;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\Stream;
 
 /**
  * Handles serving plugin assets in development mode.

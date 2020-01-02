@@ -17,10 +17,10 @@ namespace Cake\Http\Client;
 // with the deprecated class in this namespace.
 use Cake\Http\Cookie\CookieCollection as CookiesCollection;
 use Cake\Http\Cookie\CookieInterface;
+use Laminas\Diactoros\MessageTrait;
+use Laminas\Diactoros\Stream;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
-use Zend\Diactoros\MessageTrait;
-use Zend\Diactoros\Stream;
 
 /**
  * Implements methods for HTTP responses.

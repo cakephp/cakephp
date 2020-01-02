@@ -27,10 +27,10 @@ use DateTime;
 use DateTimeInterface;
 use DateTimeZone;
 use InvalidArgumentException;
+use Laminas\Diactoros\MessageTrait;
+use Laminas\Diactoros\Stream;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
-use Zend\Diactoros\MessageTrait;
-use Zend\Diactoros\Stream;
 
 /**
  * Responses contain the response text, status and headers of a HTTP response.

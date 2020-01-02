@@ -21,9 +21,9 @@ use Cake\Http\MiddlewareQueue;
 use Cake\Http\Runner;
 use Cake\Routing\Exception\RedirectException;
 use Cake\Routing\Router;
+use Laminas\Diactoros\Response\RedirectResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Diactoros\Response\RedirectResponse;
 
 /**
  * Applies routing rules to the request and creates the controller

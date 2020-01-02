@@ -20,10 +20,10 @@ use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
 use InvalidArgumentException;
+use Laminas\Diactoros\Response\EmitterInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
-use Zend\Diactoros\Response\EmitterInterface;
 
 /**
  * Runs an application invoking all the PSR7 middleware and the registered application.
@@ -128,7 +128,7 @@ class Server implements EventDispatcherInterface
      * Emit the response using the PHP SAPI.
      *
      * @param \Psr\Http\Message\ResponseInterface $response The response to emit
-     * @param \Zend\Diactoros\Response\EmitterInterface|null $emitter The emitter to use.
+     * @param \Laminas\Diactoros\Response\EmitterInterface|null $emitter The emitter to use.
      *   When null, a SAPI Stream Emitter will be used.
      * @return void
      */
