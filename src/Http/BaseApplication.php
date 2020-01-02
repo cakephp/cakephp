@@ -136,7 +136,7 @@ abstract class BaseApplication implements
      */
     public function bootstrap(): void
     {
-        require_once $this->configDir . '/bootstrap.php';
+        require_once $this->configDir . 'bootstrap.php';
     }
 
     /**
@@ -161,7 +161,7 @@ abstract class BaseApplication implements
     {
         // Only load routes if the router is empty
         if (!Router::routes()) {
-            require $this->configDir . '/routes.php';
+            require $this->configDir . 'routes.php';
         }
     }
 
