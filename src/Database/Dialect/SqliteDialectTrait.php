@@ -18,8 +18,6 @@ namespace Cake\Database\Dialect;
 
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\QueryCompiler;
-use Cake\Database\Schema\SchemaDialect;
-use Cake\Database\Schema\SqliteSchemaDialect;
 use Cake\Database\SqlDialectTrait;
 use Cake\Database\SqliteCompiler;
 
@@ -46,13 +44,6 @@ trait SqliteDialectTrait
      * @var string
      */
     protected $_endQuote = '"';
-
-    /**
-     * The schema dialect class for this driver
-     *
-     * @var \Cake\Database\Schema\SqliteSchemaDialect
-     */
-    protected $_schemaDialect;
 
     /**
      * Mapping of date parts.
@@ -157,23 +148,6 @@ trait SqliteDialectTrait
                     ->add([') + (1' => 'literal']); // Sqlite starts on index 0 but Sunday should be 1
                 break;
         }
-    }
-
-    /**
-     * Get the schema dialect.
-     *
-     * Used by Cake\Database\Schema package to reflect schema and
-     * generate schema.
-     *
-     * @return \Cake\Database\Schema\SchemaDialect
-     */
-    public function schemaDialect(): SchemaDialect
-    {
-        if ($this->_schemaDialect === null) {
-            $this->_schemaDialect = new SqliteSchemaDialect($this);
-        }
-
-        return $this->_schemaDialect;
     }
 
     /**

@@ -19,6 +19,8 @@ namespace Cake\Database\Driver;
 use Cake\Database\Dialect\MysqlDialectTrait;
 use Cake\Database\Driver;
 use Cake\Database\Query;
+use Cake\Database\Schema\MysqlSchemaDialect;
+use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\Statement\MysqlStatement;
 use Cake\Database\StatementInterface;
 use PDO;
@@ -47,6 +49,13 @@ class Mysql extends Driver
         'timezone' => null,
         'init' => [],
     ];
+
+    /**
+     * The schema dialect for this driver
+     *
+     * @var \Cake\Database\Schema\MysqlSchemaDialect
+     */
+    protected $_schemaDialect;
 
     /**
      * The server version
@@ -150,6 +159,23 @@ class Mysql extends Driver
         }
 
         return $result;
+    }
+
+    /**
+     * Get the schema dialect.
+     *
+     * Used by Cake\Database\Schema package to reflect schema and
+     * generate schema.
+     *
+     * @return \Cake\Database\Schema\SchemaDialect
+     */
+    public function schemaDialect(): SchemaDialect
+    {
+        if ($this->_schemaDialect === null) {
+            $this->_schemaDialect = new MysqlSchemaDialect($this);
+        }
+
+        return $this->_schemaDialect;
     }
 
     /**

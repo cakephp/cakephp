@@ -18,6 +18,8 @@ namespace Cake\Database\Driver;
 
 use Cake\Database\Dialect\PostgresDialectTrait;
 use Cake\Database\Driver;
+use Cake\Database\Schema\PostgresSchemaDialect;
+use Cake\Database\Schema\SchemaDialect;
 use PDO;
 
 /**
@@ -45,6 +47,13 @@ class Postgres extends Driver
         'flags' => [],
         'init' => [],
     ];
+
+    /**
+     * The schema dialect class for this driver
+     *
+     * @var \Cake\Database\Schema\PostgresSchemaDialect
+     */
+    protected $_schemaDialect;
 
     /**
      * Establishes a connection to the database server
@@ -97,6 +106,23 @@ class Postgres extends Driver
     public function enabled(): bool
     {
         return in_array('pgsql', PDO::getAvailableDrivers(), true);
+    }
+
+    /**
+     * Get the schema dialect.
+     *
+     * Used by Cake\Database\Schema package to reflect schema and
+     * generate schema.
+     *
+     * @return \Cake\Database\Schema\SchemaDialect
+     */
+    public function schemaDialect(): SchemaDialect
+    {
+        if ($this->_schemaDialect === null) {
+            $this->_schemaDialect = new PostgresSchemaDialect($this);
+        }
+
+        return $this->_schemaDialect;
     }
 
     /**

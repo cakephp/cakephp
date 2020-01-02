@@ -19,6 +19,8 @@ namespace Cake\Database\Driver;
 use Cake\Database\Dialect\SqlserverDialectTrait;
 use Cake\Database\Driver;
 use Cake\Database\Query;
+use Cake\Database\Schema\SchemaDialect;
+use Cake\Database\Schema\SqlserverSchemaDialect;
 use Cake\Database\Statement\SqlserverStatement;
 use Cake\Database\StatementInterface;
 use InvalidArgumentException;
@@ -54,6 +56,13 @@ class Sqlserver extends Driver
         'loginTimeout' => null,
         'multiSubnetFailover' => null,
     ];
+
+    /**
+     * The schema dialect class for this driver
+     *
+     * @var \Cake\Database\Schema\SqlserverSchemaDialect
+     */
+    protected $_schemaDialect;
 
     /**
      * Establishes a connection to the database server.
@@ -172,5 +181,22 @@ class Sqlserver extends Driver
     public function supportsDynamicConstraints(): bool
     {
         return true;
+    }
+
+    /**
+     * Get the schema dialect.
+     *
+     * Used by Cake\Schema package to reflect schema and
+     * generate schema.
+     *
+     * @return \Cake\Database\Schema\SchemaDialect
+     */
+    public function schemaDialect(): SchemaDialect
+    {
+        if ($this->_schemaDialect === null) {
+            $this->_schemaDialect = new SqlserverSchemaDialect($this);
+        }
+
+        return $this->_schemaDialect;
     }
 }

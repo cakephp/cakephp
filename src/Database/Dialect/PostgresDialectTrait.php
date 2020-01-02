@@ -18,8 +18,6 @@ namespace Cake\Database\Dialect;
 
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Query;
-use Cake\Database\Schema\PostgresSchemaDialect;
-use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\SqlDialectTrait;
 
 /**
@@ -45,13 +43,6 @@ trait PostgresDialectTrait
      * @var string
      */
     protected $_endQuote = '"';
-
-    /**
-     * The schema dialect class for this driver
-     *
-     * @var \Cake\Database\Schema\PostgresSchemaDialect
-     */
-    protected $_schemaDialect;
 
     /**
      * Distinct clause needs no transformation
@@ -158,23 +149,6 @@ trait PostgresDialectTrait
                     ->add([') + (1' => 'literal']); // Postgres starts on index 0 but Sunday should be 1
                 break;
         }
-    }
-
-    /**
-     * Get the schema dialect.
-     *
-     * Used by Cake\Database\Schema package to reflect schema and
-     * generate schema.
-     *
-     * @return \Cake\Database\Schema\SchemaDialect
-     */
-    public function schemaDialect(): SchemaDialect
-    {
-        if ($this->_schemaDialect === null) {
-            $this->_schemaDialect = new PostgresSchemaDialect($this);
-        }
-
-        return $this->_schemaDialect;
     }
 
     /**
