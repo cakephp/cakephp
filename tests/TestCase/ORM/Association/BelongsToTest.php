@@ -16,11 +16,14 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM\Association;
 
+use ArrayObject;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\TypeMap;
+use Cake\Event\Event;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Entity;
+use Cake\ORM\Query;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 
@@ -360,19 +363,16 @@ class BelongsToTest extends TestCase
             'sourceTable' => $this->client,
             'targetTable' => $this->company,
         ];
-        $listener = $this->getMockBuilder('stdClass')
-            ->setMethods(['__invoke'])
-            ->getMock();
-        $this->company->getEventManager()->on('Model.beforeFind', $listener);
+        $called = false;
+        $this->company->getEventManager()->on('Model.beforeFind', function ($event, $query, $options) use (&$called) {
+            $this->assertInstanceOf(Event::class, $event);
+            $this->assertInstanceOf(Query::class, $query);
+            $this->assertInstanceOf(ArrayObject::class, $options);
+            $called = true;
+        });
         $association = new BelongsTo('Companies', $config);
-        $listener->expects($this->once())->method('__invoke')
-            ->with(
-                $this->isInstanceOf('Cake\Event\Event'),
-                $this->isInstanceOf('Cake\ORM\Query'),
-                $this->isInstanceOf('\ArrayObject'),
-                false
-            );
         $association->attachTo($this->client->query());
+        $this->assertTrue($called, 'Listener should be called.');
     }
 
     /**
@@ -388,23 +388,17 @@ class BelongsToTest extends TestCase
             'sourceTable' => $this->client,
             'targetTable' => $this->company,
         ];
-        $listener = $this->getMockBuilder('stdClass')
-            ->setMethods(['__invoke'])
-            ->getMock();
-        $this->company->getEventManager()->on('Model.beforeFind', $listener);
+        $called = false;
+        $this->company->getEventManager()->on('Model.beforeFind', function ($event, $query, $options) use (&$called) {
+            $this->assertSame('more', $options['something']);
+            $called = true;
+        });
         $association = new BelongsTo('Companies', $config);
-        $options = new \ArrayObject(['something' => 'more']);
-        $listener->expects($this->once())->method('__invoke')
-            ->with(
-                $this->isInstanceOf('Cake\Event\Event'),
-                $this->isInstanceOf('Cake\ORM\Query'),
-                $options,
-                false
-            );
         $query = $this->client->query();
         $association->attachTo($query, ['queryBuilder' => function ($q) {
             return $q->applyOptions(['something' => 'more']);
         }]);
+        $this->assertTrue($called, 'Listener should be called.');
     }
 
     /**
