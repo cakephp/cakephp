@@ -395,17 +395,17 @@ class BelongsToManyTest extends TestCase
         $association->junction($articleTag);
         $this->article->getAssociation($articleTag->getAlias());
 
-        $counter = $this->getMockBuilder('StdClass')
-            ->setMethods(['__invoke'])
-            ->getMock();
-        $counter->expects($this->exactly(2))->method('__invoke');
-        $articleTag->getEventManager()->on('Model.beforeDelete', $counter);
+        $counter = 0;
+        $articleTag->getEventManager()->on('Model.beforeDelete', function () use (&$counter) {
+            $counter++;
+        });
 
         $this->assertEquals(2, $articleTag->find()->where(['article_id' => 1])->count());
         $entity = new Entity(['id' => 1, 'name' => 'PHP']);
         $association->cascadeDelete($entity);
 
         $this->assertSame(0, $articleTag->find()->where(['article_id' => 1])->count());
+        $this->assertSame(2, $counter);
     }
 
     /**
