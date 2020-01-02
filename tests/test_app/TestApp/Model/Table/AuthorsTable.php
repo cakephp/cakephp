@@ -34,4 +34,22 @@ class AuthorsTable extends Table
 
         return $query;
     }
+
+    /**
+     * Finder that applies a formatter to test dirty associations
+     *
+     * @param \Cake\ORM\Query $query The query
+     * @param array $options The options
+     * @return \Cake\ORM\Query
+     */
+    public function findFormatted(Query $query, array $options = [])
+    {
+        return $query->formatResults(function ($results) {
+            return $results->map(function ($author) {
+                $author->formatted = $author->name . '!!';
+
+                return $author;
+            });
+        });
+    }
 }
