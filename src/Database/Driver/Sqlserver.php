@@ -34,8 +34,6 @@ use PDO;
 
 /**
  * SQLServer driver.
- *
- * @internal
  */
 class Sqlserver extends Driver
 {

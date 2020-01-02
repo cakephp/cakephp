@@ -26,8 +26,6 @@ use PDO;
 
 /**
  * Class Mysql
- *
- * @internal
  */
 class Mysql extends Driver
 {

@@ -31,8 +31,6 @@ use PDO;
 
 /**
  * Class Sqlite
- *
- * @internal
  */
 class Sqlite extends Driver
 {

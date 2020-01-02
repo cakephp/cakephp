@@ -25,8 +25,6 @@ use PDO;
 
 /**
  * Class Postgres
- *
- * @internal
  */
 class Postgres extends Driver
 {
