@@ -19,6 +19,8 @@ namespace Cake\Database\Driver;
 use Cake\Database\Dialect\SqliteDialectTrait;
 use Cake\Database\Driver;
 use Cake\Database\Query;
+use Cake\Database\Schema\SchemaDialect;
+use Cake\Database\Schema\SqliteSchemaDialect;
 use Cake\Database\Statement\PDOStatement;
 use Cake\Database\Statement\SqliteStatement;
 use Cake\Database\StatementInterface;
@@ -49,6 +51,13 @@ class Sqlite extends Driver
         'flags' => [],
         'init' => [],
     ];
+
+    /**
+     * The schema dialect class for this driver
+     *
+     * @var \Cake\Database\Schema\SqliteSchemaDialect
+     */
+    protected $_schemaDialect;
 
     /**
      * Establishes a connection to the database server
@@ -133,5 +142,22 @@ class Sqlite extends Driver
     public function supportsDynamicConstraints(): bool
     {
         return false;
+    }
+
+    /**
+     * Get the schema dialect.
+     *
+     * Used by Cake\Database\Schema package to reflect schema and
+     * generate schema.
+     *
+     * @return \Cake\Database\Schema\SchemaDialect
+     */
+    public function schemaDialect(): SchemaDialect
+    {
+        if ($this->_schemaDialect === null) {
+            $this->_schemaDialect = new SqliteSchemaDialect($this);
+        }
+
+        return $this->_schemaDialect;
     }
 }

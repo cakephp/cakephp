@@ -22,8 +22,6 @@ use Cake\Database\Expression\UnaryExpression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
 use Cake\Database\QueryCompiler;
-use Cake\Database\Schema\SchemaDialect;
-use Cake\Database\Schema\SqlserverSchemaDialect;
 use Cake\Database\SqlDialectTrait;
 use Cake\Database\SqlserverCompiler;
 use Cake\Database\ValueBinder;
@@ -322,19 +320,6 @@ trait SqlserverDialectTrait
 
                 break;
         }
-    }
-
-    /**
-     * Get the schema dialect.
-     *
-     * Used by Cake\Schema package to reflect schema and
-     * generate schema.
-     *
-     * @return \Cake\Database\Schema\SchemaDialect
-     */
-    public function schemaDialect(): SchemaDialect
-    {
-        return new SqlserverSchemaDialect($this);
     }
 
     /**
