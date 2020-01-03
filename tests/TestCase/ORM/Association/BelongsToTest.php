@@ -472,6 +472,5 @@ class BelongsToTest extends TestCase
         $this->assertNotEmpty($result->author);
         $this->assertNotEmpty($result->author->formatted);
         $this->assertFalse($result->isDirty(), 'Record should be clean as it was pulled from the db.');
->>>>>>> 165bdab680... Fix dirty associations that use formatResults
     }
 }
