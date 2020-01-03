@@ -26,12 +26,20 @@ use Cake\TestSuite\TestCase;
  */
 class SaveOptionsBuilderTest extends TestCase
 {
+    /**
+     * @var array
+     */
     protected $fixtures = [
         'core.Articles',
         'core.Authors',
         'core.Comments',
         'core.Users',
     ];
+
+    /**
+     * @var \Cake\ORM\Table
+     */
+    protected $table;
 
     /**
      * setup

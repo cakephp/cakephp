@@ -25,11 +25,16 @@ use Cake\TestSuite\TestCase;
 class PhpConfigTest extends TestCase
 {
     /**
+     * @var string
+     */
+    protected $path;
+
+    /**
      * Test data to serialize and unserialize.
      *
      * @var array
      */
-    public $testData = [
+    protected $testData = [
         'One' => [
             'two' => 'value',
             'three' => [
@@ -144,10 +149,10 @@ class PhpConfigTest extends TestCase
         $expected = <<<PHP
 <?php
 return array (
-  'One' => 
+  'One' =>
   array (
     'two' => 'value',
-    'three' => 
+    'three' =>
     array (
       'four' => 'value four',
     ),
@@ -155,7 +160,7 @@ return array (
     'bool_false' => false,
     'bool_true' => true,
   ),
-  'Asset' => 
+  'Asset' =>
   array (
     'timestamp' => 'force',
   ),

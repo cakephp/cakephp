@@ -29,7 +29,7 @@ class CollectionTest extends TestCase
     /**
      * @var \Cake\Database\Connection
      */
-    public $connection;
+    protected $connection;
 
     /**
      * @var array

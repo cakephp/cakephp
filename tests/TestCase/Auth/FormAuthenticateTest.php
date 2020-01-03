@@ -37,6 +37,16 @@ class FormAuthenticateTest extends TestCase
     protected $fixtures = ['core.AuthUsers', 'core.Users'];
 
     /**
+     * @var \Cake\Controller\ComponentRegistry
+     */
+    protected $collection;
+
+    /**
+     * @var \Cake\Auth\FormAuthenticate
+     */
+    protected $auth;
+
+    /**
      * setup
      *
      * @return void

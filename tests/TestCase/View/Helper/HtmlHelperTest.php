@@ -20,6 +20,7 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Filesystem\File;
 use Cake\Http\ServerRequest;
+use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\HtmlHelper;
@@ -34,28 +35,28 @@ class HtmlHelperTest extends TestCase
      *
      * @var string
      */
-    public $cDataStart = 'preg:/^\/\/<!\[CDATA\[[\n\r]*/';
+    protected $cDataStart = 'preg:/^\/\/<!\[CDATA\[[\n\r]*/';
 
     /**
      * Regexp for CDATA end block
      *
      * @var string
      */
-    public $cDataEnd = 'preg:/[^\]]*\]\]\>[\s\r\n]*/';
+    protected $cDataEnd = 'preg:/[^\]]*\]\]\>[\s\r\n]*/';
 
     /**
      * Helper to be tested
      *
      * @var \Cake\View\Helper\HtmlHelper
      */
-    public $Html;
+    protected $Html;
 
     /**
      * Mocked view
      *
-     * @var \Cake\View\View|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Cake\View\View|\PHPUnit\Framework\MockObject\MockObject
      */
-    public $View;
+    protected $View;
 
     /**
      * setUp method
@@ -82,7 +83,7 @@ class HtmlHelperTest extends TestCase
         static::setAppNamespace();
         Configure::write('Asset.timestamp', false);
 
-        Router::scope('/', function ($routes) {
+        Router::scope('/', function (RouteBuilder $routes) {
             $routes->fallbacks();
         });
     }

@@ -25,6 +25,14 @@ use Cake\TestSuite\TestCase;
  */
 class TransportFactoryTest extends TestCase
 {
+    /**
+     * @var array
+     */
+    protected $transports;
+
+    /**
+     * @return void
+     */
     public function setUp(): void
     {
         parent::setUp();
@@ -80,8 +88,7 @@ class TransportFactoryTest extends TestCase
             'log' => true,
         ];
         TransportFactory::drop('debug');
-        $result = TransportFactory::setConfig('debug', $settings);
-        $this->assertNull($result, 'No return.');
+        TransportFactory::setConfig('debug', $settings);
 
         $result = TransportFactory::getConfig('debug');
         $this->assertEquals($settings, $result);

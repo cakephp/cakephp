@@ -26,6 +26,11 @@ use Cake\View\Form\ArrayContext;
 class ArrayContextTest extends TestCase
 {
     /**
+     * @var \Cake\Http\ServerRequest
+     */
+    protected $request;
+
+    /**
      * setup method.
      *
      * @return void

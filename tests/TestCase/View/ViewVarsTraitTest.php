@@ -26,7 +26,7 @@ class ViewVarsTraitTest extends TestCase
     /**
      * @var \Cake\Controller\Controller;
      */
-    public $subject;
+    protected $subject;
 
     /**
      * setup

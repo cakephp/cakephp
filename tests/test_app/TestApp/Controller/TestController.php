@@ -23,15 +23,15 @@ class TestController extends ControllerTestAppController
      *
      * @var string
      */
-    public $modelClass = 'Comments';
+    protected $modelClass = 'Comments';
 
     /**
      * beforeFilter handler
      *
      * @param \Cake\Event\EventInterface $event
-     * @return \Cake\Http\Response|null
+     * @return \Cake\Http\Response|null|void
      */
-    public function beforeFilter(EventInterface $event): ?Response
+    public function beforeFilter(EventInterface $event)
     {
     }
 

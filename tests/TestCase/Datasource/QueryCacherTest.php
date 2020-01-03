@@ -27,6 +27,11 @@ use stdClass;
 class QueryCacherTest extends TestCase
 {
     /**
+     * @var \Cake\Cache\CacheEngineInterface
+     */
+    protected $engine;
+
+    /**
      * Setup method
      *
      * @return void
@@ -35,7 +40,7 @@ class QueryCacherTest extends TestCase
     {
         parent::setUp();
         Cache::setConfig('queryCache', ['className' => 'Array']);
-        $this->engine = Cache::engine('queryCache');
+        $this->engine = Cache::pool('queryCache');
         Cache::enable();
     }
 

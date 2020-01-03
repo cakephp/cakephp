@@ -36,7 +36,7 @@ class EmailTest extends TestCase
     protected $fixtures = ['core.Users'];
 
     /**
-     * @var \TestApp\Mailer\Email\TestEmail
+     * @var \TestApp\Mailer\TestEmail
      */
     protected $Email;
 
@@ -895,7 +895,7 @@ class EmailTest extends TestCase
     public function testTransportInstanceInvalid()
     {
         $this->expectException(\LogicException::class);
-        $this->Email->setTransport(new \StdClass());
+        $this->Email->setTransport(new \stdClass());
     }
 
     /**

@@ -29,9 +29,14 @@ use TestApp\Model\Table\TestTable;
 class AssociationTest extends TestCase
 {
     /**
-     * @var \Cake\ORM\Association|\PHPUnit_Framework_MockObject_MockObject
+     * @var \TestApp\Model\Table\TestTable
      */
-    public $association;
+    protected $source;
+
+    /**
+     * @var \Cake\ORM\Association|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $association;
 
     /**
      * Set up

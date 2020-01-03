@@ -26,6 +26,11 @@ use Cake\TestSuite\TestCase;
 class MessagesFileLoaderTest extends TestCase
 {
     /**
+     * @var string[]
+     */
+    protected $localePaths;
+
+    /**
      * Set Up
      *
      * @return void

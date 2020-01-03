@@ -154,7 +154,7 @@ class WidgetLocatorTest extends TestCase
         );
         $inputs = new WidgetLocator($this->templates, $this->view);
         $inputs->add([
-            'text' => new \StdClass(),
+            'text' => new \stdClass(),
         ]);
     }
 

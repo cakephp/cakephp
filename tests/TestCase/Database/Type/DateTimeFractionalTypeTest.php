@@ -30,12 +30,12 @@ class DateTimeFractionalTypeTest extends TestCase
     /**
      * @var \Cake\Database\Type\DateTimeFractionalType
      */
-    public $type;
+    protected $type;
 
     /**
      * @var \Cake\Database\Driver
      */
-    public $driver;
+    protected $driver;
 
     /**
      * Setup

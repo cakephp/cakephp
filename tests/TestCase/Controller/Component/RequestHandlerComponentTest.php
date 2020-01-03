@@ -41,17 +41,17 @@ class RequestHandlerComponentTest extends TestCase
     /**
      * @var \TestApp\Controller\RequestHandlerTestController
      */
-    public $Controller;
+    protected $Controller;
 
     /**
      * @var \TestApp\Controller\Component\RequestHandlerExtComponent
      */
-    public $RequestHandler;
+    protected $RequestHandler;
 
     /**
      * @var \Cake\Http\ServerRequest
      */
-    public $request;
+    protected $request;
 
     /**
      * Backup of $_SERVER

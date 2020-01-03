@@ -36,7 +36,7 @@ class ValidationTest extends TestCase
     /**
      * @var string
      */
-    public $locale;
+    protected $locale;
 
     /**
      * @var string
@@ -3156,7 +3156,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::isInteger('2.5'));
         $this->assertFalse(Validation::isInteger(2.5));
         $this->assertFalse(Validation::isInteger([]));
-        $this->assertFalse(Validation::isInteger(new \StdClass()));
+        $this->assertFalse(Validation::isInteger(new \stdClass()));
         $this->assertFalse(Validation::isInteger('2 bears'));
         $this->assertFalse(Validation::isInteger(true));
         $this->assertFalse(Validation::isInteger(false));
@@ -3175,7 +3175,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::ascii([]));
         $this->assertFalse(Validation::ascii(1001));
         $this->assertFalse(Validation::ascii(3.14));
-        $this->assertFalse(Validation::ascii(new \StdClass()));
+        $this->assertFalse(Validation::ascii(new \stdClass()));
 
         // Latin-1 supplement
         $this->assertFalse(Validation::ascii('some' . "\xc2\x82" . 'value'));
@@ -3198,7 +3198,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::utf8([]));
         $this->assertFalse(Validation::utf8(1001));
         $this->assertFalse(Validation::utf8(3.14));
-        $this->assertFalse(Validation::utf8(new \StdClass()));
+        $this->assertFalse(Validation::utf8(new \stdClass()));
         $this->assertTrue(Validation::utf8('1 big blue bus.'));
         $this->assertTrue(Validation::utf8(',.<>[]{;/?\)()'));
 
@@ -3226,7 +3226,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::utf8([], ['extended' => true]));
         $this->assertFalse(Validation::utf8(1001, ['extended' => true]));
         $this->assertFalse(Validation::utf8(3.14, ['extended' => true]));
-        $this->assertFalse(Validation::utf8(new \StdClass(), ['extended' => true]));
+        $this->assertFalse(Validation::utf8(new \stdClass(), ['extended' => true]));
         $this->assertTrue(Validation::utf8('1 big blue bus.', ['extended' => true]));
         $this->assertTrue(Validation::utf8(',.<>[]{;/?\)()', ['extended' => true]));
 

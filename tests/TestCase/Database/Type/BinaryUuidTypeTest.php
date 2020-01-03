@@ -30,12 +30,12 @@ class BinaryUuidTypeTest extends TestCase
     /**
      * @var \Cake\Database\Type\BinaryUuidType
      */
-    public $type;
+    protected $type;
 
     /**
      * @var \Cake\Database\Driver
      */
-    public $driver;
+    protected $driver;
 
     /**
      * Setup

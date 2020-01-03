@@ -34,5 +34,5 @@ class MergeShell extends Shell
     /**
      * @var string
      */
-    public $modelClass = 'Articles';
+    protected $modelClass = 'Articles';
 }

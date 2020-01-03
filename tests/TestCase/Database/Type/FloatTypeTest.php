@@ -30,22 +30,22 @@ class FloatTypeTest extends TestCase
     /**
      * @var \Cake\Database\Type\FloatType
      */
-    public $type;
+    protected $type;
 
     /**
      * @var \Cake\Database\Driver
      */
-    public $driver;
+    protected $driver;
 
     /**
      * @var string
      */
-    public $numberClass;
+    protected $numberClass;
 
     /**
      * @var string
      */
-    public $localeString;
+    protected $localeString;
 
     /**
      * Setup

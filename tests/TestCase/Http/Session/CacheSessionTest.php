@@ -30,6 +30,11 @@ class CacheSessionTest extends TestCase
     protected static $_sessionBackup;
 
     /**
+     * @var \Cake\Http\Session\CacheSession
+     */
+    protected $storage;
+
+    /**
      * setup
      *
      * @return void

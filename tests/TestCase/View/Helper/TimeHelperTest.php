@@ -30,12 +30,17 @@ class TimeHelperTest extends TestCase
     /**
      * @var \Cake\View\Helper\TimeHelper
      */
-    public $Time;
+    protected $Time;
+
+    /**
+     * @var \Cake\View\View
+     */
+    protected $View;
 
     /**
      * @var string
      */
-    public $locale;
+    protected $locale;
 
     /**
      * setUp method

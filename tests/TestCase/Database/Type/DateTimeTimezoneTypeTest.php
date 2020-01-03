@@ -30,12 +30,12 @@ class DateTimeTimezoneTypeTest extends TestCase
     /**
      * @var \Cake\Database\Type\DateTimeTimezoneType
      */
-    public $type;
+    protected $type;
 
     /**
      * @var \Cake\Database\Driver
      */
-    public $driver;
+    protected $driver;
 
     /**
      * Setup

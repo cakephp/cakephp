@@ -75,7 +75,7 @@ class CommandRetryTest extends TestCase
         $strategy
             ->expects($this->exactly(4))
             ->method('shouldRetry')
-            ->will($this->returnCallback(function ($e) use ($exception) {
+            ->will($this->returnCallback(function ($e) {
                 return true;
             }));
 

@@ -28,6 +28,11 @@ use Cake\TestSuite\TestCase;
 class SessionStorageTest extends TestCase
 {
     /**
+     * @var \Cake\Auth\Storage\SessionStorage
+     */
+    protected $storage;
+
+    /**
      * setup
      *
      * @return void

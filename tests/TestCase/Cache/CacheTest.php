@@ -263,7 +263,7 @@ class CacheTest extends TestCase
     public function testConfigInvalidClassType()
     {
         Cache::setConfig('tests', [
-            'className' => '\StdClass',
+            'className' => '\stdClass',
         ]);
 
         $this->expectException(Error::class);
@@ -841,9 +841,9 @@ class CacheTest extends TestCase
      */
     public function testEnableDisableEnabled()
     {
-        $this->assertNull(Cache::enable());
+        Cache::enable();
         $this->assertTrue(Cache::enabled(), 'Should be on');
-        $this->assertNull(Cache::disable());
+        Cache::disable();
         $this->assertFalse(Cache::enabled(), 'Should be off');
     }
 
