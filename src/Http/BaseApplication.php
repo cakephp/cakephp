@@ -82,7 +82,7 @@ abstract class BaseApplication implements
         ?EventManagerInterface $eventManager = null,
         ?ControllerFactoryInterface $controllerFactory = null
     ) {
-        $this->configDir = $configDir;
+        $this->configDir = rtrim($configDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         $this->plugins = Plugin::getCollection();
         $this->_eventManager = $eventManager ?: EventManager::instance();
         $this->controllerFactory = $controllerFactory;
