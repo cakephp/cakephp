@@ -30,6 +30,11 @@ use Cake\TestSuite\TestCase;
 class ControllerAuthorizeTest extends TestCase
 {
     /**
+     * @var \Cake\Auth\ControllerAuthorize
+     */
+    protected $auth;
+
+    /**
      * setup
      *
      * @return void
