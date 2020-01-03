@@ -196,8 +196,8 @@ class Log
             if (isset($properties['engine'])) {
                 $properties['className'] = $properties['engine'];
             }
-            if (!static::$_registry->has($name)) {
-                static::$_registry->load($name, $properties);
+            if (!static::$_registry->has((string)$name)) {
+                static::$_registry->load((string)$name, $properties);
             }
         }
     }
