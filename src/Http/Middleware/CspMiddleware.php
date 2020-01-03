@@ -10,7 +10,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         4.0.0
+ * @since         3.9.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
@@ -56,7 +56,7 @@ class CspMiddleware
     /**
      * Apply the middleware.
      *
-     * This will inject CSP header into the response.
+     * This will inject the CSP header into the response.
      * @param ServerRequestInterface $requestInterface The Request.
      * @param ResponseInterface $responseInterface The Response.
      * @param callable $next Callback to invoke the next middleware.
