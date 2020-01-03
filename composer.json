@@ -36,17 +36,19 @@
         "psr/log": "^1.0.0",
         "psr/simple-cache": "^1.0.0",
         "zendframework/zend-diactoros": "^1.4.0",
-        "paragonie/random_compat": "^2.0|9.99.99"
+        "paragonie/random_compat": "^1.4|^2.0|9.99.99"
     },
     "suggest": {
         "ext-openssl": "To use Security::encrypt() or have secure CSRF token generation.",
         "ext-curl": "To enable more efficient network calls in Http\\Client.",
-        "lib-ICU": "The intl PHP library, to use Text::transliterate() or Text::slug()"
+        "lib-ICU": "The intl PHP library, to use Text::transliterate() or Text::slug()",
+        "paragonie/csp-builder": "CSP builder, to use the CSP Middleware"
     },
     "require-dev": {
         "cakephp/cakephp-codesniffer": "^3.0",
         "cakephp/chronos": "^1.2.1",
-        "phpunit/phpunit": "^5.7.14|^6.0"
+        "phpunit/phpunit": "^5.7.14|^6.0",
+        "paragonie/csp-builder": "^1.4|^2.3"
     },
     "autoload": {
         "psr-4": {
