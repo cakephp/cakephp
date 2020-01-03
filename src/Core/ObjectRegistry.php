@@ -315,7 +315,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
     public function reset()
     {
         foreach (array_keys($this->_loaded) as $name) {
-            $this->unload($name);
+            $this->unload((string)$name);
         }
 
         return $this;
