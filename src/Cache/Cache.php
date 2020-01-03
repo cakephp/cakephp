@@ -505,7 +505,7 @@ class Cache
      */
     public static function groupConfigs(?string $group = null): array
     {
-        foreach (array_keys(static::$_config) as $config) {
+        foreach (static::configured() as $config) {
             static::pool($config);
         }
         if ($group === null) {

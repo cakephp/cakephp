@@ -104,8 +104,6 @@ class CacheTest extends TestCase
      */
     public function testCachePoolFallbackDisabled()
     {
-        $this->expectException(Error::class);
-
         $filename = tempnam(CACHE, 'tmp_');
 
         Cache::setConfig('tests', [
@@ -115,7 +113,9 @@ class CacheTest extends TestCase
             'fallback' => false,
         ]);
 
-        $engine = Cache::pool('tests');
+        $this->expectException(Error::class);
+
+        Cache::pool('tests');
     }
 
     /**
@@ -262,14 +262,14 @@ class CacheTest extends TestCase
      */
     public function testConfigInvalidClassType()
     {
-        $this->expectException(Error::class);
-        $this->expectExceptionMessage('Cache engines must use Cake\Cache\CacheEngine');
-
         Cache::setConfig('tests', [
             'className' => '\StdClass',
         ]);
-        $result = Cache::pool('tests');
-        $this->assertInstanceOf(NullEngine::class, $result);
+
+        $this->expectException(Error::class);
+        $this->expectExceptionMessage('Cache engines must use Cake\Cache\CacheEngine');
+
+        Cache::pool('tests');
     }
 
     /**
@@ -279,16 +279,16 @@ class CacheTest extends TestCase
      */
     public function testConfigFailedInit()
     {
-        $this->expectException(Error::class);
-        $this->expectExceptionMessage('is not properly configured');
-
         $mock = $this->getMockForAbstractClass('Cake\Cache\CacheEngine', [], '', true, true, true, ['init']);
         $mock->method('init')->will($this->returnValue(false));
         Cache::setConfig('tests', [
             'engine' => $mock,
         ]);
-        $result = Cache::pool('tests');
-        $this->assertInstanceOf(NullEngine::class, $result);
+
+        $this->expectException(Error::class);
+        $this->expectExceptionMessage('is not properly configured');
+
+        Cache::pool('tests');
     }
 
     /**
@@ -307,7 +307,7 @@ class CacheTest extends TestCase
         $this->assertInstanceOf('TestApp\Cache\Engine\TestAppCacheEngine', $engine);
 
         $config = ['engine' => 'TestPlugin.TestPluginCache', 'path' => CACHE, 'prefix' => 'cake_test_'];
-        $result = Cache::setConfig('pluginLibEngine', $config);
+        Cache::setConfig('pluginLibEngine', $config);
         $engine = Cache::pool('pluginLibEngine');
         $this->assertInstanceOf('TestPlugin\Cache\Engine\TestPluginCacheEngine', $engine);
 
@@ -325,7 +325,8 @@ class CacheTest extends TestCase
     public function testWriteNonExistingConfig()
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->assertFalse(Cache::write('key', 'value', 'totally fake'));
+
+        Cache::write('key', 'value', 'totally fake');
     }
 
     /**
@@ -336,7 +337,8 @@ class CacheTest extends TestCase
     public function testIncrementNonExistingConfig()
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->assertFalse(Cache::increment('key', 1, 'totally fake'));
+
+        Cache::increment('key', 1, 'totally fake');
     }
 
     /**
@@ -347,7 +349,8 @@ class CacheTest extends TestCase
     public function testIncrementSubZero()
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->assertFalse(Cache::increment('key', -1));
+
+        Cache::increment('key', -1);
     }
 
     /**
@@ -358,7 +361,8 @@ class CacheTest extends TestCase
     public function testDecrementNonExistingConfig()
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->assertFalse(Cache::decrement('key', 1, 'totally fake'));
+
+        Cache::decrement('key', 1, 'totally fake');
     }
 
     /**
@@ -369,7 +373,8 @@ class CacheTest extends TestCase
     public function testDecrementSubZero()
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->assertFalse(Cache::decrement('key', -1));
+
+        Cache::decrement('key', -1);
     }
 
     /**
@@ -417,9 +422,11 @@ class CacheTest extends TestCase
      */
     public function testConfigInvalidEngine()
     {
-        $this->expectException(\BadMethodCallException::class);
         $config = ['engine' => 'Imaginary'];
         Cache::setConfig('test', $config);
+
+        $this->expectException(\BadMethodCallException::class);
+
         Cache::pool('test');
     }
 
@@ -430,14 +437,15 @@ class CacheTest extends TestCase
      */
     public function testConfigInvalidObject()
     {
-        $this->expectException(\BadMethodCallException::class);
-        $this->getMockBuilder(\StdClass::class)
+        $this->getMockBuilder(\stdClass::class)
             ->setMockClassName('RubbishEngine')
             ->getMock();
+
+        $this->expectException(\BadMethodCallException::class);
+
         Cache::setConfig('test', [
             'engine' => '\RubbishEngine',
         ]);
-        Cache::pool('tests');
     }
 
     /**
@@ -447,8 +455,10 @@ class CacheTest extends TestCase
      */
     public function testConfigErrorOnReconfigure()
     {
-        $this->expectException(\BadMethodCallException::class);
         Cache::setConfig('tests', ['engine' => 'File', 'path' => CACHE]);
+
+        $this->expectException(\BadMethodCallException::class);
+
         Cache::setConfig('tests', ['engine' => 'Apc']);
     }
 
@@ -469,6 +479,25 @@ class CacheTest extends TestCase
         $expected['className'] = $config['engine'];
         unset($expected['engine']);
         $this->assertEquals($expected, Cache::getConfig('tests'));
+    }
+
+    /**
+     * Test reading configuration with numeric string.
+     *
+     * @return void
+     */
+    public function testConfigReadNumeric()
+    {
+        $config = [
+            'engine' => 'File',
+            'path' => CACHE,
+            'prefix' => 'cake_',
+        ];
+        Cache::setConfig('123', $config);
+        $expected = $config;
+        $expected['className'] = $config['engine'];
+        unset($expected['engine']);
+        $this->assertEquals($expected, Cache::getConfig('123'));
     }
 
     /**
@@ -642,9 +671,11 @@ class CacheTest extends TestCase
      */
     public function testWriteEmptyKey()
     {
+        $this->_configCache();
+
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('A cache key must be a non-empty string');
-        $this->_configCache();
+
         Cache::write('', 'not null', 'tests');
     }
 
@@ -709,12 +740,13 @@ class CacheTest extends TestCase
      */
     public function testWriteTriggerError()
     {
-        $this->expectException(\PHPUnit\Framework\Error\Error::class);
         static::setAppNamespace();
         Cache::setConfig('test_trigger', [
             'engine' => 'TestAppCache',
             'prefix' => '',
         ]);
+
+        $this->expectException(\PHPUnit\Framework\Error\Error::class);
 
         Cache::write('fail', 'value', 'test_trigger');
     }

@@ -274,7 +274,11 @@ class Configure
      */
     public static function configured(): array
     {
-        return array_keys(static::$_engines);
+        $engines = array_keys(static::$_engines);
+
+        return array_map(function ($key) {
+            return (string)$key;
+        }, $engines);
     }
 
     /**
