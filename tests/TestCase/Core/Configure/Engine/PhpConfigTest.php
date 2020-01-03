@@ -146,7 +146,7 @@ class PhpConfigTest extends TestCase
         $engine = new PhpConfig(TMP);
         $result = $engine->dump('test', $this->testData);
         $this->assertGreaterThan(0, $result);
-        $expected = trim(file_get_contents(CONFIG . 'dump_test.php'));
+        $expected = trim(file_get_contents(CONFIG . 'dump_test.txt'));
 
         $file = TMP . 'test.php';
         $contents = file_get_contents($file);
