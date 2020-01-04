@@ -27,6 +27,7 @@
         "cakephp/core": "^4.0",
         "cakephp/event": "^4.0",
         "cakephp/utility": "^4.0",
+        "composer/ca-bundle": "^1.2",
         "psr/http-client": "^1.0",
         "psr/http-server-handler": "^1.0",
         "psr/http-server-middleware": "^1.0",
