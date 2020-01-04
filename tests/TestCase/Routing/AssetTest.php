@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Routing;
 use Cake\Core\Configure;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Asset;
+use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 
@@ -44,7 +45,7 @@ class AssetTest extends TestCase
 
         static::setAppNamespace();
         $this->loadPlugins(['TestTheme']);
-        Router::scope('/', function ($routes) {
+        Router::scope('/', function (RouteBuilder $routes) {
             $routes->fallbacks();
         });
     }

@@ -28,7 +28,7 @@ class StringTemplateTraitTest extends TestCase
     /**
      * @var \TestApp\View\TestStringTemplate
      */
-    public $Template;
+    protected $Template;
 
     /**
      * setUp method

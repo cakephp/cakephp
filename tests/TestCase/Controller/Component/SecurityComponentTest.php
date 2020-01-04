@@ -48,14 +48,14 @@ class SecurityComponentTest extends TestCase
      *
      * @var \TestApp\Controller\SecurityTestController
      */
-    public $Controller;
+    protected $Controller;
 
     /**
      * oldSalt property
      *
      * @var string
      */
-    public $oldSalt;
+    protected $oldSalt;
 
     /**
      * setUp method

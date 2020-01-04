@@ -299,7 +299,7 @@ class FormHelperTest extends TestCase
     public function testAddWidgetInvalid()
     {
         $this->expectException(\RuntimeException::class);
-        $mock = new \StdClass();
+        $mock = new \stdClass();
         $this->Form->addWidget('test', $mock);
         $this->Form->widget('test');
     }
@@ -371,7 +371,7 @@ class FormHelperTest extends TestCase
         $this->expectExceptionMessage('Return value of Cake\View\Form\ContextFactory::get() must implement interface Cake\View\Form\ContextInterface, instance of stdClass returned');
         $context = 'My data';
         $this->Form->addContextProvider('test', function ($request, $data) use ($context) {
-            return new \StdClass();
+            return new \stdClass();
         });
         $this->Form->create($context);
     }

@@ -31,7 +31,7 @@ class FileTest extends TestCase
      *
      * @var File
      */
-    public $File;
+    protected $File;
 
     /**
      * setup the test case
@@ -653,8 +653,7 @@ class FileTest extends TestCase
     /**
      * getTmpFile method
      *
-     * @param bool $paintSkip
-     * @return void
+     * @return string
      */
     protected function _getTmpFile()
     {

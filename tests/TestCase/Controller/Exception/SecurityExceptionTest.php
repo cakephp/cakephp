@@ -25,6 +25,11 @@ use Cake\TestSuite\TestCase;
 class SecurityExceptionTest extends TestCase
 {
     /**
+     * @var \Cake\Controller\Exception\SecurityException
+     */
+    protected $securityException;
+
+    /**
      * setUp method
      *
      * @return void

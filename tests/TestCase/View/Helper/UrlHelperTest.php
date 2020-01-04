@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\View\Helper;
 
 use Cake\Core\Configure;
 use Cake\Http\ServerRequest;
+use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\UrlHelper;
@@ -31,7 +32,12 @@ class UrlHelperTest extends TestCase
     /**
      * @var \Cake\View\Helper\UrlHelper
      */
-    public $Helper;
+    protected $Helper;
+
+    /**
+     * @var \Cake\View\View
+     */
+    protected $View;
 
     /**
      * setUp method
@@ -51,7 +57,7 @@ class UrlHelperTest extends TestCase
 
         static::setAppNamespace();
         $this->loadPlugins(['TestTheme']);
-        Router::scope('/', function ($routes) {
+        Router::scope('/', function (RouteBuilder $routes) {
             $routes->fallbacks();
         });
     }

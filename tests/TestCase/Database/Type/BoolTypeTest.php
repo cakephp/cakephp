@@ -28,12 +28,12 @@ class BoolTypeTest extends TestCase
     /**
      * @var \Cake\Database\Type\BoolType
      */
-    public $type;
+    protected $type;
 
     /**
      * @var \Cake\Database\Driver
      */
-    public $driver;
+    protected $driver;
 
     /**
      * Setup

@@ -29,6 +29,11 @@ use Zend\Diactoros\ServerRequestFactory;
 class LocaleSelectorMiddlewareTest extends TestCase
 {
     /**
+     * @var string
+     */
+    protected $locale;
+
+    /**
      * setup
      *
      * @return void

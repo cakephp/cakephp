@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\View\Helper;
 
+use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\BreadcrumbsHelper;
@@ -28,7 +29,7 @@ class BreadcrumbsHelperTest extends TestCase
      *
      * @var BreadcrumbsHelper
      */
-    public $breadcrumbs;
+    protected $breadcrumbs;
 
     /**
      * setUp method
@@ -42,7 +43,7 @@ class BreadcrumbsHelperTest extends TestCase
         $this->breadcrumbs = new BreadcrumbsHelper($view);
 
         Router::reload();
-        Router::scope('/', function ($routes) {
+        Router::scope('/', function (RouteBuilder $routes) {
             $routes->fallbacks();
         });
     }

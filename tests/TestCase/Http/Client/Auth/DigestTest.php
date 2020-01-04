@@ -27,14 +27,14 @@ use Cake\TestSuite\TestCase;
 class DigestTest extends TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\Cake\Http\Client
+     * @var \PHPUnit\Framework\MockObject\MockObject|\Cake\Http\Client
      */
-    public $client;
+    protected $client;
 
     /**
      * @var \Cake\Http\Client\Auth\Digest
      */
-    public $auth;
+    protected $auth;
 
     /**
      * Setup
@@ -50,7 +50,7 @@ class DigestTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|\Cake\Http\Client
+     * @return \PHPUnit\Framework\MockObject\MockObject|\Cake\Http\Client
      */
     protected function getClientMock()
     {

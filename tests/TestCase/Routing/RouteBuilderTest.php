@@ -32,6 +32,11 @@ use InvalidArgumentException;
 class RouteBuilderTest extends TestCase
 {
     /**
+     * @var \Cake\Routing\RouteCollection
+     */
+    protected $collection;
+
+    /**
      * Setup method
      *
      * @return void
@@ -395,7 +400,7 @@ class RouteBuilderTest extends TestCase
             [],
             ['extensions' => ['json']]
         );
-        $routes->connect('/:controller', [], ['routeClass' => '\StdClass']);
+        $routes->connect('/:controller', [], ['routeClass' => '\stdClass']);
     }
 
     /**

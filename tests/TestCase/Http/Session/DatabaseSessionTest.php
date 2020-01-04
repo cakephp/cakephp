@@ -36,6 +36,11 @@ class DatabaseSessionTest extends TestCase
     protected $fixtures = ['core.Sessions'];
 
     /**
+     * @var \Cake\Http\Session\DatabaseSession
+     */
+    protected $storage;
+
+    /**
      * setUp
      *
      * @return void

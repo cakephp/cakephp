@@ -46,6 +46,11 @@ class DigestAuthenticateTest extends TestCase
     protected $collection;
 
     /**
+     * @var \Cake\Auth\DigestAuthenticate
+     */
+    protected $auth;
+
+    /**
      * setup
      *
      * @return void

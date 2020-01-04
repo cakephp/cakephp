@@ -29,7 +29,7 @@ class RequestActionController extends AppController
      *
      * @var string
      */
-    public $modelClass = 'Posts';
+    protected $modelClass = 'Posts';
 
     /**
      * test_request_action method

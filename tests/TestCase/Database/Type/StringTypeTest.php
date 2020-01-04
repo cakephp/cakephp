@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Type;
 
+use Cake\Database\Driver;
 use Cake\Database\TypeFactory;
 use Cake\TestSuite\TestCase;
 use PDO;
@@ -26,6 +27,16 @@ use PDO;
 class StringTypeTest extends TestCase
 {
     /**
+     * @var \Cake\Database\TypeInterface
+     */
+    protected $type;
+
+    /**
+     * @var \Cake\Database\Driver|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $driver;
+
+    /**
      * Setup
      *
      * @return void
@@ -34,7 +45,7 @@ class StringTypeTest extends TestCase
     {
         parent::setUp();
         $this->type = TypeFactory::build('string');
-        $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+        $this->driver = $this->getMockBuilder(Driver::class)->getMock();
     }
 
     /**

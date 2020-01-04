@@ -44,7 +44,7 @@ class AuthComponentTest extends TestCase
      *
      * @var \TestApp\Controller\Component\TestAuthComponent
      */
-    public $Auth;
+    protected $Auth;
 
     /**
      * fixtures property

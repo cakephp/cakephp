@@ -26,6 +26,11 @@ use Cake\TestSuite\TestCase;
 class SocketTest extends TestCase
 {
     /**
+     * @var \Cake\Network\Socket
+     */
+    protected $Socket;
+
+    /**
      * setUp method
      *
      * @return void
@@ -95,7 +100,7 @@ class SocketTest extends TestCase
      *
      * @return void
      */
-    public function testAddreses()
+    public function testAddresses()
     {
         $this->Socket = new Socket();
         $this->assertSame(['127.0.0.1'], $this->Socket->addresses());

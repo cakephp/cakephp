@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Database;
 use Cake\Cache\Engine\NullEngine;
 use Cake\Collection\Collection;
 use Cake\Database\Connection;
+use Cake\Database\Driver;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Exception\NestedTransactionRollbackException;
@@ -38,6 +39,9 @@ use ReflectionProperty;
  */
 class ConnectionTest extends TestCase
 {
+    /**
+     * @var array
+     */
     protected $fixtures = ['core.Things'];
 
     /**
@@ -55,10 +59,18 @@ class ConnectionTest extends TestCase
     protected $nestedTransactionStates = [];
 
     /**
-     * @var bool|null
+     * @var bool
      */
     protected $logState;
 
+    /**
+     * @var \Cake\Datasource\ConnectionInterface
+     */
+    protected $connection;
+
+    /**
+     * @return void
+     */
     public function setUp(): void
     {
         parent::setUp();
@@ -70,6 +82,9 @@ class ConnectionTest extends TestCase
         static::setAppNamespace();
     }
 
+    /**
+     * @return void
+     */
     public function tearDown(): void
     {
         $this->connection->disableSavePoints();
@@ -84,11 +99,11 @@ class ConnectionTest extends TestCase
      * Auxiliary method to build a mock for a driver so it can be injected into
      * the connection object
      *
-     * @return \Cake\Database\Driver|\PHPUnit_Framework_MockObject_MockObject
+     * @return \Cake\Database\Driver|\PHPUnit\Framework\MockObject\MockObject
      */
     public function getMockFormDriver()
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+        $driver = $this->getMockBuilder(Driver::class)->getMock();
         $driver->expects($this->once())
             ->method('enabled')
             ->will($this->returnValue(true));
@@ -1311,7 +1326,7 @@ class ConnectionTest extends TestCase
         $prop = new ReflectionProperty($conn, '_driver');
         $prop->setAccessible(true);
         $oldDriver = $prop->getValue($conn);
-        $newDriver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+        $newDriver = $this->getMockBuilder(Driver::class)->getMock();
         $prop->setValue($conn, $newDriver);
 
         $newDriver->expects($this->at(0))
@@ -1346,7 +1361,7 @@ class ConnectionTest extends TestCase
         $prop = new ReflectionProperty($conn, '_driver');
         $prop->setAccessible(true);
         $oldDriver = $prop->getValue($conn);
-        $newDriver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+        $newDriver = $this->getMockBuilder(Driver::class)->getMock();
         $prop->setValue($conn, $newDriver);
 
         $newDriver->expects($this->once())

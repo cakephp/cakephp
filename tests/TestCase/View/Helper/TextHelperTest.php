@@ -33,7 +33,12 @@ class TextHelperTest extends TestCase
     /**
      * @var \Cake\View\Helper\TextHelper
      */
-    public $Text;
+    protected $Text;
+
+    /**
+     * @var \Cake\View\View
+     */
+    protected $View;
 
     /**
      * setUp method

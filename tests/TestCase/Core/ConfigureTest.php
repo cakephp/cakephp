@@ -135,11 +135,11 @@ class ConfigureTest extends TestCase
      */
     public function testWrite()
     {
-        $this->assertNull(Configure::write('SomeName.someKey', 'myvalue'));
+        Configure::write('SomeName.someKey', 'myvalue');
         $result = Configure::read('SomeName.someKey');
         $this->assertSame('myvalue', $result);
 
-        $this->assertNull(Configure::write('SomeName.someKey', null));
+        Configure::write('SomeName.someKey', null);
         $result = Configure::read('SomeName.someKey');
         $this->assertNull($result);
 
@@ -468,7 +468,7 @@ class ConfigureTest extends TestCase
         $this->assertTrue(version_compare($original, '4.0', '>='));
 
         Configure::write('Cake.version', 'banana');
-        $this->assertSame('banana', Configure::version('Cake.version'));
+        $this->assertSame('banana', Configure::version());
 
         Configure::delete('Cake.version');
         $this->assertSame($original, Configure::version());

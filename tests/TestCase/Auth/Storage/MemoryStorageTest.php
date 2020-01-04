@@ -25,6 +25,11 @@ use Cake\TestSuite\TestCase;
 class MemoryStorageTest extends TestCase
 {
     /**
+     * @var \Cake\Auth\Storage\MemoryStorage
+     */
+    protected $storage;
+
+    /**
      * Setup
      *
      * @return void

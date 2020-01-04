@@ -29,17 +29,17 @@ class TableHelperTest extends TestCase
     /**
      * @var \Cake\Console\ConsoleOutput
      */
-    public $stub;
+    protected $stub;
 
     /**
      * @var \Cake\Console\ConsoleIo
      */
-    public $io;
+    protected $io;
 
     /**
      * @var \Cake\Shell\Helper\TableHelper
      */
-    public $helper;
+    protected $helper;
 
     /**
      * setUp method

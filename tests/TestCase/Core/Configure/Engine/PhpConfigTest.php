@@ -25,11 +25,16 @@ use Cake\TestSuite\TestCase;
 class PhpConfigTest extends TestCase
 {
     /**
+     * @var string
+     */
+    protected $path;
+
+    /**
      * Test data to serialize and unserialize.
      *
      * @var array
      */
-    public $testData = [
+    protected $testData = [
         'One' => [
             'two' => 'value',
             'three' => [
@@ -141,26 +146,8 @@ class PhpConfigTest extends TestCase
         $engine = new PhpConfig(TMP);
         $result = $engine->dump('test', $this->testData);
         $this->assertGreaterThan(0, $result);
-        $expected = <<<PHP
-<?php
-return array (
-  'One' => 
-  array (
-    'two' => 'value',
-    'three' => 
-    array (
-      'four' => 'value four',
-    ),
-    'is_null' => NULL,
-    'bool_false' => false,
-    'bool_true' => true,
-  ),
-  'Asset' => 
-  array (
-    'timestamp' => 'force',
-  ),
-);
-PHP;
+        $expected = trim(file_get_contents(CONFIG . 'dump_test.txt'));
+
         $file = TMP . 'test.php';
         $contents = file_get_contents($file);
 

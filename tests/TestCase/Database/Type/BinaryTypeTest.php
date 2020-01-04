@@ -28,12 +28,12 @@ class BinaryTypeTest extends TestCase
     /**
      * @var \Cake\Database\Type\BinaryType
      */
-    public $type;
+    protected $type;
 
     /**
      * @var \Cake\Database\Driver
      */
-    public $driver;
+    protected $driver;
 
     /**
      * Setup

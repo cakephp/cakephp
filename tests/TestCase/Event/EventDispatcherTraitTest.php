@@ -28,7 +28,7 @@ class EventDispatcherTraitTest extends TestCase
     /**
      * @var \Cake\Event\EventDispatcherTrait
      */
-    public $subject;
+    protected $subject;
 
     /**
      * setup

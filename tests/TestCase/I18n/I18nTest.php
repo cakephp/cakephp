@@ -32,7 +32,7 @@ class I18nTest extends TestCase
      *
      * @var string
      */
-    public $locale;
+    protected $locale;
 
     /**
      * Set Up

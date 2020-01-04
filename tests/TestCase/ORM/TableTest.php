@@ -74,8 +74,16 @@ class TableTest extends TestCase
      *
      * @var int
      */
-    public static $nextUserId = 5;
+    protected static $nextUserId = 5;
 
+    /**
+     * @var \Cake\Datasource\ConnectionInterface
+     */
+    protected $connection;
+
+    /**
+     * @return void
+     */
     public function setUp(): void
     {
         parent::setUp();

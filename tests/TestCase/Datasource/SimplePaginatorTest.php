@@ -23,22 +23,8 @@ use Cake\ORM\Entity;
 class SimplePaginatorTest extends PaginatorTest
 {
     /**
-     * fixtures property
-     *
-     * @var array
+     * @return void
      */
-    protected $fixtures = [
-        'core.Posts', 'core.Articles', 'core.ArticlesTags',
-        'core.Authors', 'core.AuthorsTags', 'core.Tags',
-    ];
-
-    /**
-     * Don't load data for fixtures for all tests
-     *
-     * @var bool
-     */
-    public $autoFixtures = false;
-
     public function setUp(): void
     {
         parent::setUp();
@@ -46,8 +32,6 @@ class SimplePaginatorTest extends PaginatorTest
         Configure::write('App.namespace', 'TestApp');
 
         $this->Paginator = new SimplePaginator();
-
-        $this->Post = $this->getMockRepository();
     }
 
     /**

@@ -28,7 +28,20 @@ use Cake\TestSuite\TestCase;
  */
 class ResultSetTest extends TestCase
 {
+    /**
+     * @var array
+     */
     protected $fixtures = ['core.Articles', 'core.Authors', 'core.Comments'];
+
+    /**
+     * @var \Cake\ORM\Table
+     */
+    protected $table;
+
+    /**
+     * @var array
+     */
+    protected $fixtureData;
 
     /**
      * setup

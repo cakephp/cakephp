@@ -533,14 +533,14 @@ class RoutingMiddlewareTest extends TestCase
     /**
      * Create a stub application for testing.
      *
-     * @param callable $handleCallack Callback for "handle" method.
+     * @param callable|null $handleCallback Callback for "handle" method.
      * @return \Cake\Core\HttpApplicationInterface
      */
     protected function app($handleCallback = null)
     {
         $mock = $this->createMock(Application::class);
         $mock->method('routes')
-            ->will($this->returnCallback(function ($routes) {
+            ->will($this->returnCallback(function (RouteBuilder $routes) {
                 return $routes;
             }));
 

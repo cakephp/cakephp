@@ -29,7 +29,7 @@ class IniConfigTest extends TestCase
      *
      * @var array
      */
-    public $testData = [
+    protected $testData = [
         'One' => [
             'two' => 'value',
             'three' => [
@@ -43,6 +43,11 @@ class IniConfigTest extends TestCase
             'timestamp' => 'force',
         ],
     ];
+
+    /**
+     * @var string
+     */
+    protected $path;
 
     /**
      * setup

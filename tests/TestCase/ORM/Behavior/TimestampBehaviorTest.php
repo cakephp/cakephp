@@ -50,6 +50,11 @@ class TimestampBehaviorTest extends TestCase
     ];
 
     /**
+     * @var \Cake\ORM\Behavior\TimestampBehavior
+     */
+    protected $Behavior;
+
+    /**
      * Sanity check Implemented events
      *
      * @return void
