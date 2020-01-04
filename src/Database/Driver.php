@@ -32,6 +32,11 @@ use PDOException;
 abstract class Driver implements DriverInterface
 {
     /**
+     * @var int|null Maximum alias length or null if no limit
+     */
+    protected const MAX_ALIAS_LENGTH = null;
+
+    /**
      * Instance of PDO.
      *
      * @var \PDO
@@ -413,6 +418,17 @@ abstract class Driver implements DriverInterface
 
         /** @var \Cake\Database\Schema\TableSchema */
         return new $className($table, $columns);
+    }
+
+    /**
+     * Returns the maximum alias length allowed.
+     * This can be different than the maximum identifier length for columns.
+     *
+     * @return int|null Maximum alias length or null if no limit
+     */
+    public function getMaxAliasLength(): ?int
+    {
+        return static::MAX_ALIAS_LENGTH;
     }
 
     /**

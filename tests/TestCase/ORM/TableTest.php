@@ -382,6 +382,37 @@ class TableTest extends TestCase
     }
 
     /**
+     * Tests schema method with long identifiers
+     *
+     * @return void
+     */
+    public function testSetSchemaLongIdentifiers()
+    {
+        $schema = new TableSchema('long_identifiers', [
+            'this_is_invalid_because_it_is_very_very_very_long' => [
+                'type' => 'string',
+            ],
+        ]);
+        $table = new Table([
+            'table' => 'very_long_alias_name',
+            'connection' => $this->connection,
+        ]);
+
+        $maxAlias = $this->connection->getDriver()->getMaxAliasLength();
+        if ($maxAlias && $maxAlias < 72) {
+            $nameLength = $maxAlias - 2;
+            $this->expectException(RuntimeException::class);
+            $this->expectExceptionMessage(
+                "ORM queries generate field aliases using the table name/alias and column name. " .
+                "The table alias `very_long_alias_name` and column `this_is_invalid_because_it_is_very_very_very_long` create an alias longer than ({$nameLength}). " .
+                "You must change the table schema in the database and shorten either the table or column " .
+                "identifier so they fit within the database alias limits."
+            );
+        }
+        $this->assertNotNull($table->setSchema($schema));
+    }
+
+    /**
      * Tests that _initializeSchema can be used to alter the database schema
      *
      * @return void

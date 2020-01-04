@@ -23,6 +23,7 @@ use Closure;
 /**
  * Interface for database driver.
  *
+ * @method int|null getMaxAliasLength() Returns the maximum alias length allowed.
  */
 interface DriverInterface
 {

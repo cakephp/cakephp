@@ -31,6 +31,11 @@ class Mysql extends Driver
     use MysqlDialectTrait;
 
     /**
+     * @var int|null Maximum alias length or null if no limit
+     */
+    protected const MAX_ALIAS_LENGTH = 256;
+
+    /**
      * Base configuration settings for MySQL driver
      *
      * @var array
