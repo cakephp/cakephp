@@ -168,7 +168,7 @@ class ErrorHandlerTest extends TestCase
 
         set_error_handler(function ($code, $message, $file, $line, $context = null) {
             $errorHandler = new ErrorHandler();
-            $context['_trace_offset'] = 3;
+            $context['_trace_frame_offset'] = 3;
             $errorHandler->handleError($code, $message, $file, $line, $context);
         });
 
@@ -181,7 +181,7 @@ class ErrorHandlerTest extends TestCase
             $result,
             'Should not contain file and line reference'
         );
-        $this->assertNotContains('_trace_offset', $result);
+        $this->assertNotContains('_trace_frame_offset', $result);
     }
 
     /**
