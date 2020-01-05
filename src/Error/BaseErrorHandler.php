@@ -154,9 +154,9 @@ abstract class BaseErrorHandler
 
             // Can be used by error handlers that wrap other error handlers
             // to coerce the generated stack trace to the correct point.
-            if (isset($context['_trace_offset'])) {
-                $start += $context['_trace_offset'];
-                unset($context['_trace_offset']);
+            if (isset($context['_trace_frame_offset'])) {
+                $start += $context['_trace_frame_offset'];
+                unset($context['_trace_frame_offset']);
             }
             $data += [
                 'context' => $context,
