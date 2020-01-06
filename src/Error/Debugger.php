@@ -25,8 +25,6 @@ use Exception;
 use InvalidArgumentException;
 use ReflectionObject;
 use ReflectionProperty;
-use SplObjectStorage;
-use stdClass;
 use Throwable;
 
 /**
@@ -497,12 +495,7 @@ class Debugger
      */
     public static function exportVar($var, int $depth = 3): string
     {
-        $context = new stdClass();
-        $context->indent = 0;
-        $context->depth = 0;
-        $context->maxDepth = $depth;
-        $context->refs = new SplObjectStorage();
-
+        $context = new DumpContext($depth);
         return static::_export($var, $context);
     }
 
@@ -510,10 +503,10 @@ class Debugger
      * Protected export function used to keep track of indentation and recursion.
      *
      * @param mixed $var The variable to dump.
-     * @param object $context Dump context
+     * @param \Cake\Error\DumpContext $context Dump context
      * @return string The dumped variable.
      */
-    protected static function _export($var, $context): string
+    protected static function _export($var, DumpContext $context): string
     {
         switch (static::getType($var)) {
             case 'boolean':
@@ -529,10 +522,7 @@ class Debugger
 
                 return "'" . $var . "'";
             case 'array':
-                $next = clone $context;
-                $next->depth += 1;
-                $next->indent += 1;
-                return static::_array($var, $next);
+                return static::_array($var, $context->withAddedDepthAndIndent());
             case 'resource':
                 return strtolower(gettype($var));
             case 'null':
@@ -540,10 +530,7 @@ class Debugger
             case 'unknown':
                 return 'unknown';
             default:
-                $next = clone $context;
-                $next->depth += 1;
-                $next->indent += 1;
-                return static::_object($var, $next);
+                return static::_object($var, $context->withAddedDepthAndIndent());
         }
     }
 
@@ -565,17 +552,18 @@ class Debugger
      * @param int $indent The current indentation level.
      * @return string Exported array.
      */
-    protected static function _array(array $var, $context): string
+    protected static function _array(array $var, DumpContext $context): string
     {
         $out = '[';
         $break = $end = '';
         if (!empty($var)) {
-            $break = "\n" . str_repeat("\t", $context->indent);
-            $end = "\n" . str_repeat("\t", $context->indent - 1);
+            $indent = $context->getIndent();
+            $break = "\n" . str_repeat("\t", $indent);
+            $end = "\n" . str_repeat("\t", $indent - 1);
         }
         $vars = [];
 
-        $remaining = $context->maxDepth - $context->depth;
+        $remaining = $context->remainingDepth();
         if ($remaining >= 0) {
             $outputMask = (array)static::outputMask();
             foreach ($var as $key => $val) {
@@ -602,39 +590,30 @@ class Debugger
      * Handles object to string conversion.
      *
      * @param object $var Object to convert.
-     * @param int $depth The current depth, used for tracking recursion.
-     * @param int $indent The current indentation level.
+     * @param \Cake\Error\DumpContext $context The dump context.
      * @return string
      * @see \Cake\Error\Debugger::exportVar()
      */
-    protected static function _object(object $var, $context): string
+    protected static function _object(object $var, DumpContext $context): string
     {
         $out = '';
         $props = [];
 
-        $isRef = false;
-        $refNum = null;
-        if ($context->refs->contains($var)) {
-            $isRef = true;
-            $refNum = $context->refs[$var];
-        } else {
-            $refNum = $context->refs->count();
-            $context->refs->attach($var, $refNum);
-        }
+        $isRef = $context->hasReference($var);
+        $refNum = $context->getReferenceId($var);
 
         $className = get_class($var);
         $out .= "object({$className}) #{$refNum} {";
-        $break = "\n" . str_repeat("\t", $context->indent);
-        $end = "\n" . str_repeat("\t", $context->indent - 1);
+        $indent = $context->getIndent();
+        $break = "\n" . str_repeat("\t", $indent);
+        $end = "\n" . str_repeat("\t", $indent - 1);
 
-        $remaining = $context->maxDepth - $context->depth;
+        $remaining = $context->remainingDepth();
         if ($remaining > 0 && $isRef === false) {
             if (method_exists($var, '__debugInfo')) {
                 try {
-                    $next = clone $context;
-                    $next->depth += 1;
                     return $out . "\n" .
-                        substr(static::_array($var->__debugInfo(), $next), 1, -1) .
+                        substr(static::_array($var->__debugInfo(), $context->withAddedDepth()), 1, -1) .
                         $end . '}';
                 } catch (Exception $e) {
                     $message = $e->getMessage();
@@ -649,9 +628,7 @@ class Debugger
                 if (array_key_exists($key, $outputMask)) {
                     $value = $outputMask[$key];
                 } else {
-                    $next = clone $context;
-                    $next->depth += 1;
-                    $value = static::_export($value, $next);
+                    $value = static::_export($value, $context->withAddedDepth());
                 }
                 $props[] = "$key => " . $value;
             }
@@ -668,9 +645,7 @@ class Debugger
                     $reflectionProperty->setAccessible(true);
                     $property = $reflectionProperty->getValue($var);
 
-                    $next = clone $context;
-                    $next->depth += 1;
-                    $value = static::_export($property, $next);
+                    $value = static::_export($property, $context->withAddedDepth());
                     $key = $reflectionProperty->name;
                     $props[] = sprintf(
                         '[%s] %s => %s',
