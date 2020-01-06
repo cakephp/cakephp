@@ -496,6 +496,7 @@ class Debugger
     public static function exportVar($var, int $depth = 3): string
     {
         $context = new DumpContext($depth);
+
         return static::_export($var, $context);
     }
 

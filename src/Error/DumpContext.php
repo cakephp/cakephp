@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -48,6 +49,11 @@ class DumpContext
      */
     private $refs;
 
+    /**
+     * Constructor
+     *
+     * @param int $maxDepth The desired depth of dump output.
+     */
     public function __construct(int $maxDepth)
     {
         $this->maxDepth = $maxDepth;

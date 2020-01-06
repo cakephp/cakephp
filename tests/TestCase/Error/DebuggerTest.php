@@ -622,10 +622,10 @@ TEXT;
         $object = new DebuggableThing();
         $result = Debugger::exportVar($object, 2);
         $expected = <<<eos
-object(TestApp\Error\Thing\DebuggableThing) {
+object(TestApp\Error\Thing\DebuggableThing) #0 {
 
 	'foo' => 'bar',
-	'inner' => object(TestApp\Error\Thing\DebuggableThing) {}
+	'inner' => object(TestApp\Error\Thing\DebuggableThing) #1 {}
 
 }
 eos;
@@ -670,7 +670,7 @@ eos;
         Debugger::setOutputMask(['password' => '[**********]']);
         $object = new SecurityThing();
         $result = Debugger::exportVar($object);
-        $expected = 'object(TestApp\\Error\\Thing\\SecurityThing){password=>[**********]}';
+        $expected = 'object(TestApp\\Error\\Thing\\SecurityThing)#0{password=>[**********]}';
         $this->assertEquals($expected, preg_replace('/\s+/', '', $result));
     }
 
