@@ -146,7 +146,7 @@ class QueryCompiler
                 return;
             }
 
-            $sql .= $this->{'_build' . ucfirst($partName) . 'Part'}($part, $query, $generator);
+            $sql .= $this->{'_build' . $partName . 'Part'}($part, $query, $generator);
         };
     }
 
