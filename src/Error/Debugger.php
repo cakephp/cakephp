@@ -549,8 +549,7 @@ class Debugger
      * - schema
      *
      * @param array $var The array to export.
-     * @param int $depth The current depth, used for recursion tracking.
-     * @param int $indent The current indentation level.
+     * @param \Cake\Error\DumpContext $context The current dump context.
      * @return string Exported array.
      */
     protected static function _array(array $var, DumpContext $context): string
