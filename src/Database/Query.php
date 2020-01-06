@@ -1900,27 +1900,56 @@ class Query implements ExpressionInterface, IteratorAggregate
      *   found inside this query.
      * @return $this
      */
+
+    /**
+     * This function works similar to the traverse() function, with the difference
+     * that it does a full depth traversal of the entire expression tree. This will execute
+     * the provided callback function for each ExpressionInterface object that is
+     * stored inside this query at any nesting depth in any part of the query.
+     *
+     * Callback will receive as first parameter the currently visited expression.
+     *
+     * @param callable $callback the function to be executed for each ExpressionInterface
+     *   found inside this query.
+     * @return $this
+     */
     public function traverseExpressions(callable $callback)
     {
-        $visitor = function ($expression) use (&$visitor, $callback) {
-            if (is_array($expression)) {
-                foreach ($expression as $e) {
-                    $visitor($e);
-                }
+        if (!$callback instanceof Closure) {
+            $callback = Closure::fromCallable($callback);
+        }
 
-                return null;
+        $parts = array_keys($this->_parts);
+        foreach ($parts as $name) {
+            $this->_visitor($this->_parts[$name], $callback);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Query parts traversal method used by traverseExpressions()
+     *
+     * @param \Cake\Database\ExpressionInterface|\Cake\Database\ExpressionInterface[] $expression Query expression or
+     *   array of expressions.
+     * @param \Closure $callback The callback to be executed for each ExpressionInterface
+     *   found inside this query.
+     * @return void
+     */
+    protected function _visitor($expression, Closure $callback)
+    {
+        if (is_array($expression)) {
+            foreach ($expression as $e) {
+                $this->_visitor($e, $callback);
             }
 
-            if ($expression instanceof ExpressionInterface) {
-                $expression->traverse($visitor);
+            return;
+        }
 
-                if (!($expression instanceof self)) {
-                    $callback($expression);
-                }
-            }
-        };
-
-        return $this->traverse($visitor);
+        if ($expression instanceof ExpressionInterface) {
+            $expression->traverse($callback);
+            $callback($expression);
+        }
     }
 
     /**
