@@ -28,6 +28,11 @@ use Cake\TestSuite\TestCase;
 class NumberTest extends TestCase
 {
     /**
+     * @var \Cake\I18n\Number
+     */
+    protected $Number;
+
+    /**
      * Backup the locale property
      *
      * @var string

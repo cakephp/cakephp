@@ -25,11 +25,16 @@ use Cake\TestSuite\TestCase;
 class JsonConfigTest extends TestCase
 {
     /**
+     * @var string
+     */
+    protected $path;
+
+    /**
      * Test data to serialize and unserialize.
      *
      * @var array
      */
-    public $testData = [
+    protected $testData = [
         'One' => [
             'two' => 'value',
             'three' => [

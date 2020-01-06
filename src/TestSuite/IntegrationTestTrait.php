@@ -660,12 +660,12 @@ trait IntegrationTestTrait
                 return preg_replace('/(\.\d+)+$/', '', $field);
             }, array_keys(Hash::flatten($fields)));
 
-            $formProtector = new FormProtector($url, 'cli', ['unlockedFields' => $this->_unlockedFields]);
+            $formProtector = new FormProtector(['unlockedFields' => $this->_unlockedFields]);
             foreach ($keys as $field) {
                 /** @psalm-suppress PossiblyNullArgument */
                 $formProtector->addField($field);
             }
-            $tokenData = $formProtector->buildTokenData();
+            $tokenData = $formProtector->buildTokenData($url, 'cli');
 
             $data['_Token'] = $tokenData;
             $data['_Token']['debug'] = 'FormProtector debug data would be added here';

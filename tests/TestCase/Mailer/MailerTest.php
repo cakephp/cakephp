@@ -115,7 +115,7 @@ class MailerTest extends TestCase
     public function testTransportInstanceInvalid()
     {
         $this->expectException(Exception::class);
-        $this->mailer->setTransport(new \StdClass());
+        $this->mailer->setTransport(new \stdClass());
     }
 
     /**

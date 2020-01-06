@@ -28,7 +28,7 @@ class PostsController extends AppController
     {
         $this->loadComponent('Flash');
         $this->loadComponent('RequestHandler');
-        $this->loadComponent('Security');
+        $this->loadComponent('FormProtection');
     }
 
     /**
@@ -39,10 +39,10 @@ class PostsController extends AppController
     public function beforeFilter(EventInterface $event)
     {
         if ($this->request->getParam('action') !== 'securePost') {
-            $this->getEventManager()->off($this->Security);
+            $this->getEventManager()->off($this->FormProtection);
         }
 
-        $this->Security->setConfig('unlockedFields', ['some_unlocked_field']);
+        $this->FormProtection->setConfig('unlockedFields', ['some_unlocked_field']);
     }
 
     /**

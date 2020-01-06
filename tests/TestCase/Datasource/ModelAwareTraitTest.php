@@ -140,7 +140,7 @@ class ModelAwareTraitTest extends TestCase
         $stub->setProps('Articles');
 
         FactoryLocator::add('Test', function ($name) {
-            $mock = new \StdClass();
+            $mock = new \stdClass();
             $mock->name = $name;
 
             return $mock;

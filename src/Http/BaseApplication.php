@@ -82,7 +82,7 @@ abstract class BaseApplication implements
         ?EventManagerInterface $eventManager = null,
         ?ControllerFactoryInterface $controllerFactory = null
     ) {
-        $this->configDir = $configDir;
+        $this->configDir = rtrim($configDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         $this->plugins = Plugin::getCollection();
         $this->_eventManager = $eventManager ?: EventManager::instance();
         $this->controllerFactory = $controllerFactory;
@@ -136,7 +136,7 @@ abstract class BaseApplication implements
      */
     public function bootstrap(): void
     {
-        require_once $this->configDir . '/bootstrap.php';
+        require_once $this->configDir . 'bootstrap.php';
     }
 
     /**
@@ -161,7 +161,7 @@ abstract class BaseApplication implements
     {
         // Only load routes if the router is empty
         if (!Router::routes()) {
-            require $this->configDir . '/routes.php';
+            require $this->configDir . 'routes.php';
         }
     }
 

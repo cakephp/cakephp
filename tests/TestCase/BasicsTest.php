@@ -18,6 +18,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase;
 
+use Cake\Collection\Collection;
 use Cake\Event\EventManager;
 use Cake\Http\Response;
 use Cake\TestSuite\TestCase;
@@ -557,7 +558,7 @@ EXPECTED;
     {
         $items = [1, 2, 3];
         $collection = collection($items);
-        $this->assertInstanceOf('Cake\Collection\Collection', $collection);
+        $this->assertInstanceOf(Collection::class, $collection);
         $this->assertSame($items, $collection->toArray());
     }
 

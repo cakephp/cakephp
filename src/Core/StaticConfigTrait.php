@@ -172,7 +172,11 @@ trait StaticConfigTrait
      */
     public static function configured(): array
     {
-        return array_keys(static::$_config);
+        $configurations = array_keys(static::$_config);
+
+        return array_map(function ($key) {
+            return (string)$key;
+        }, $configurations);
     }
 
     /**

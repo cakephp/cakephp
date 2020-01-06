@@ -32,17 +32,17 @@ class HelperRegistryTest extends TestCase
     /**
      * @var \Cake\View\HelperRegistry
      */
-    public $Helpers;
+    protected $Helpers;
 
     /**
      * @var \Cake\Event\EventManager
      */
-    public $Events;
+    protected $Events;
 
     /**
      * @var \Cake\View\View
      */
-    public $View;
+    protected $View;
 
     /**
      * setUp

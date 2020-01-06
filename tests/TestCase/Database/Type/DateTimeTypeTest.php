@@ -30,12 +30,12 @@ class DateTimeTypeTest extends TestCase
     /**
      * @var \Cake\Database\Type\DateTimeType
      */
-    public $type;
+    protected $type;
 
     /**
      * @var \Cake\Database\Driver
      */
-    public $driver;
+    protected $driver;
 
     /**
      * Original type map

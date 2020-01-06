@@ -797,6 +797,58 @@ class TranslateBehaviorTest extends TestCase
     }
 
     /**
+     * Tests that parent entity isn't dirty when containing a translated association
+     *
+     * @return void
+     */
+    public function testGetAssociationNotDirtyBelongsTo()
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $authors = $table->belongsTo('Authors')->getTarget();
+        $authors->addBehavior('Translate', ['fields' => ['name']]);
+
+        $authors->setLocale('eng');
+
+        $entity = $table->get(1);
+        $this->assertNotEmpty($entity);
+        $entity = $table->loadInto($entity, ['Authors']);
+        $this->assertFalse($entity->isDirty());
+        $this->assertNotEmpty($entity->author);
+        $this->assertFalse($entity->author->isDirty());
+
+        $entity = $table->get(1, ['contain' => ['Authors']]);
+        $this->assertNotEmpty($entity);
+        $this->assertFalse($entity->isDirty());
+        $this->assertNotEmpty($entity->author);
+        $this->assertFalse($entity->author->isDirty());
+    }
+
+    /**
+     * Tests that parent entity isn't dirty when containing a translated association
+     *
+     * @return void
+     */
+    public function testGetAssociationNotDirtyHasOne()
+    {
+        $table = $this->getTableLocator()->get('Authors');
+        $table->hasOne('Articles');
+        $table->Articles->addBehavior('Translate', ['fields' => ['title']]);
+
+        $entity = $table->get(1);
+        $this->assertNotEmpty($entity);
+        $entity = $table->loadInto($entity, ['Articles']);
+        $this->assertFalse($entity->isDirty());
+        $this->assertNotEmpty($entity->article);
+        $this->assertFalse($entity->article->isDirty());
+
+        $entity = $table->get(1, ['contain' => 'Articles']);
+        $this->assertNotEmpty($entity);
+        $this->assertFalse($entity->isDirty());
+        $this->assertNotEmpty($entity->article);
+        $this->assertFalse($entity->article->isDirty());
+    }
+
+    /**
      * Tests that updating an existing record translations work
      *
      * @return void

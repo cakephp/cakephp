@@ -32,6 +32,11 @@ use PDO;
 class DriverTest extends TestCase
 {
     /**
+     * @var \Cake\Database\Driver|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $driver;
+
+    /**
      * Setup.
      */
     public function setUp(): void

@@ -30,6 +30,11 @@ use Cake\View\View;
 class FlashHelperTest extends TestCase
 {
     /**
+     * @var \Cake\View\View
+     */
+    protected $View;
+
+    /**
      * setUp method
      *
      * @return void

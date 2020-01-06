@@ -32,6 +32,11 @@ use TestPlugin\Utility\TestPluginEngine;
 class NumberHelperTest extends TestCase
 {
     /**
+     * @var \Cake\View\View
+     */
+    protected $View;
+
+    /**
      * setUp method
      *
      * @return void

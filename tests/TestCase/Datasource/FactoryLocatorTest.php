@@ -55,7 +55,7 @@ class FactoryLocatorTest extends TestCase
     public function testAdd()
     {
         FactoryLocator::add('Test', function ($name) {
-            $mock = new \StdClass();
+            $mock = new \stdClass();
             $mock->name = $name;
 
             return $mock;

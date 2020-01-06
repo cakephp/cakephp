@@ -32,7 +32,7 @@ class AssociationCollectionTest extends TestCase
     /**
      * @var AssociationCollection
      */
-    public $associations;
+    protected $associations;
 
     /**
      * setup

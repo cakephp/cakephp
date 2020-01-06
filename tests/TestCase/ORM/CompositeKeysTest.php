@@ -46,6 +46,11 @@ class CompositeKeysTest extends TestCase
     ];
 
     /**
+     * @var \Cake\Datasource\ConnectionInterface
+     */
+    protected $connection;
+
+    /**
      * setUp method
      *
      * @return void

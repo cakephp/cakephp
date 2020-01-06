@@ -32,7 +32,7 @@ class HelperTest extends TestCase
     /**
      * @var \Cake\View\View
      */
-    public $View;
+    protected $View;
 
     /**
      * setUp method

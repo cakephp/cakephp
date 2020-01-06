@@ -39,8 +39,11 @@ class SchemaCacheTest extends TestCase
      *
      * @var \Cake\Cache\CacheEngine
      */
-    public $cache;
+    protected $cache;
 
+    /**
+     * @var \Cake\Datasource\ConnectionInterface
+     */
     protected $connection;
 
     /**

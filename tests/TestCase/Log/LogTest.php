@@ -92,14 +92,31 @@ class LogTest extends TestCase
     }
 
     /**
+     * test config() with valid numeric key name
+     *
+     * @return void
+     */
+    public function testValidKeyNameNumeric()
+    {
+        Log::setConfig('404', ['engine' => 'File']);
+        $stream = Log::engine('404');
+        $this->assertInstanceOf(FileLog::class, $stream);
+
+        $configured = Log::configured();
+        $this->assertSame(['404'], $configured);
+    }
+
+    /**
      * test that loggers have to implement the correct interface.
      *
      * @return void
      */
     public function testNotImplementingInterface()
     {
-        $this->expectException(\RuntimeException::class);
         Log::setConfig('fail', ['engine' => '\stdClass']);
+
+        $this->expectException(\RuntimeException::class);
+
         Log::engine('fail');
     }
 
@@ -193,7 +210,7 @@ class LogTest extends TestCase
     public function testConfigInjectErrorOnWrongType()
     {
         $this->expectException(\RuntimeException::class);
-        Log::setConfig('test', new \StdClass());
+        Log::setConfig('test', new \stdClass());
         Log::info('testing');
     }
 
@@ -206,7 +223,7 @@ class LogTest extends TestCase
     public function testSetConfigInjectErrorOnWrongType()
     {
         $this->expectException(\RuntimeException::class);
-        Log::setConfig('test', new \StdClass());
+        Log::setConfig('test', new \stdClass());
         Log::info('testing');
     }
 

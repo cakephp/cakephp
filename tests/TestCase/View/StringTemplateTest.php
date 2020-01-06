@@ -362,7 +362,7 @@ class StringTemplateTest extends TestCase
         $result = $this->template->addClass(false, 'new_class');
         $this->assertEquals($result, ['class' => ['new_class']]);
 
-        $result = $this->template->addClass(new \StdClass(), 'new_class');
+        $result = $this->template->addClass(new \stdClass(), 'new_class');
         $this->assertEquals($result, ['class' => ['new_class']]);
     }
 

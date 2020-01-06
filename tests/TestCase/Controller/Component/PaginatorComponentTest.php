@@ -1361,7 +1361,7 @@ class PaginatorComponentTest extends TestCase
      * Helper method for making mocks.
      *
      * @param array $methods
-     * @return \Cake\ORM\Table|\PHPUnit_Framework_MockObject_MockObject
+     * @return \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function _getMockPosts(array $methods = [])
     {
@@ -1387,11 +1387,11 @@ class PaginatorComponentTest extends TestCase
      *
      * @param RepositoryInterface|null $table
      *
-     * @return \Cake\ORM\Query|\PHPUnit_Framework_MockObject_MockObject
+     * @return \Cake\ORM\Query|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function _getMockFindQuery(?RepositoryInterface $table = null)
     {
-        /** @var \Cake\ORM\Query|\PHPUnit_Framework_MockObject_MockObject $query */
+        /** @var \Cake\ORM\Query|\PHPUnit\Framework\MockObject\MockObject $query */
         $query = $this->getMockBuilder('Cake\ORM\Query')
             ->setMethods(['total', 'all', 'count', 'applyOptions'])
             ->disableOriginalConstructor()

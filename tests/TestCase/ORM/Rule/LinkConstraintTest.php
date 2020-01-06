@@ -36,7 +36,7 @@ class LinkConstraintTest extends TestCase
      *
      * @var string[]
      */
-    public $fixtures = [
+    protected $fixtures = [
         'core.Articles',
         'core.ArticlesTags',
         'core.Attachments',

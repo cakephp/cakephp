@@ -50,17 +50,17 @@ class ViewTest extends TestCase
     /**
      * @var \Cake\View\View
      */
-    public $View;
+    protected $View;
 
     /**
      * @var \TestApp\Controller\ViewPostsController
      */
-    public $PostsController;
+    protected $PostsController;
 
     /**
      * @var \TestApp\Controller\ThemePostsController
      */
-    public $ThemePostsController;
+    protected $ThemePostsController;
 
     /**
      * setUp method

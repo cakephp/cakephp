@@ -28,7 +28,7 @@ trait PaginatorTestTrait
     /**
      * @var \Cake\Datasource\Paginator
      */
-    public $Paginator;
+    protected $Paginator;
 
     /**
      * setup

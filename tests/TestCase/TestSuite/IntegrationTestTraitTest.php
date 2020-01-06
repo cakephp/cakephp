@@ -24,6 +24,7 @@ use Cake\Http\Middleware\EncryptedCookieMiddleware;
 use Cake\Http\Response;
 use Cake\Http\Session;
 use Cake\Routing\Route\InflectedRoute;
+use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\Test\Fixture\AssertIntegrationTestCase;
 use Cake\TestSuite\IntegrationTestTrait;
@@ -44,7 +45,7 @@ class IntegrationTestTraitTest extends TestCase
      *
      * @var string
      */
-    public $key = 'abcdabcdabcdabcdabcdabcdabcdabcdabcd';
+    protected $key = 'abcdabcdabcdabcdabcdabcdabcdabcdabcd';
 
     /**
      * Setup method
@@ -58,7 +59,7 @@ class IntegrationTestTraitTest extends TestCase
 
         Router::reload();
         Router::extensions(['json']);
-        Router::scope('/', function ($routes) {
+        Router::scope('/', function (RouteBuilder $routes) {
             $routes->registerMiddleware('cookie', new EncryptedCookieMiddleware(['secrets'], $this->key));
             $routes->applyMiddleware('cookie');
 
@@ -833,7 +834,7 @@ class IntegrationTestTraitTest extends TestCase
         ];
         $this->post('/posts/securePost', $data);
         $this->assertResponseCode(400);
-        $this->assertResponseContains('Invalid security debug token.');
+        $this->assertResponseContains('Invalid form protection debug token.');
     }
 
     /**

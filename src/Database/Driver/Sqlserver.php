@@ -41,6 +41,11 @@ class Sqlserver extends Driver
     use TupleComparisonTranslatorTrait;
 
     /**
+     * @var int|null Maximum alias length or null if no limit
+     */
+    protected const MAX_ALIAS_LENGTH = 128;
+
+    /**
      * Base configuration settings for Sqlserver driver
      *
      * @var array

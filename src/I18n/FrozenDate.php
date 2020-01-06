@@ -145,12 +145,10 @@ class FrozenDate extends ChronosDate implements I18nDateTimeInterface
      * - `from` => another Date object representing the "now" date
      * - `format` => a fall back format if the relative time is longer than the duration specified by end
      * - `accuracy` => Specifies how accurate the date should be described (array)
-     *
-     *    - year =>   The format if years > 0   (default "day")
-     *    - month =>  The format if months > 0  (default "day")
-     *    - week =>   The format if weeks > 0   (default "day")
-     *    - day =>    The format if weeks > 0   (default "day")
-     *
+     *     - year =>   The format if years > 0   (default "day")
+     *     - month =>  The format if months > 0  (default "day")
+     *     - week =>   The format if weeks > 0   (default "day")
+     *     - day =>    The format if weeks > 0   (default "day")
      * - `end` => The end of relative date telling
      * - `relativeString` => The printf compatible string when outputting relative date
      * - `absoluteString` => The printf compatible string when outputting absolute date

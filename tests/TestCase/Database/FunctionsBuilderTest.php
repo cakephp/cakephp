@@ -28,6 +28,11 @@ use Cake\TestSuite\TestCase;
 class FunctionsBuilderTest extends TestCase
 {
     /**
+     * @var \Cake\Database\FunctionsBuilder
+     */
+    protected $functions;
+
+    /**
      * Setups a mock for FunctionsBuilder
      *
      * @return void
@@ -220,7 +225,7 @@ class FunctionsBuilderTest extends TestCase
         $this->assertSame('datetime', $function->getReturnType());
 
         $function = $this->functions->dateAdd(new IdentifierExpression('created'), -3, 'day');
-        $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
+        $this->assertInstanceOf(FunctionExpression::class, $function);
         $this->assertSame('DATE_ADD(created, INTERVAL -3 day)', $function->sql(new ValueBinder()));
     }
 

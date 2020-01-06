@@ -28,7 +28,7 @@ DASH_VERSION=$(shell echo $(VERSION) | sed -e s/\\./-/g)
 # correct tag in that repo.
 # For 3.1.x use 3.1.2
 # For 3.0.x use 3.0.5
-APP_VERSION:=3.x
+APP_VERSION:=master
 
 ALL: help
 .PHONY: help install test need-version bump-version tag-version
@@ -125,7 +125,7 @@ dist/cakephp-$(DASH_VERSION).zip: build/app build/cakephp composer.phar
 	mkdir -p dist
 	@echo "Installing app dependencies with composer"
 	# Install deps with composer
-	cd build/app && php ../../composer.phar install
+	cd build/app && php ../../composer.phar install && ../../composer.phar run-script post-install-cmd --no-interaction
 	# Copy the current cakephp libs up so we don't have to wait
 	# for packagist to refresh.
 	rm -rf build/app/vendor/cakephp/cakephp

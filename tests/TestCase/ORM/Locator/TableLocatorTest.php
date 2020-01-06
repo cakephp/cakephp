@@ -182,7 +182,7 @@ class TableLocatorTest extends TestCase
         $result = $this->_locator->get('Articles', [
             'table' => 'my_articles',
         ]);
-        $this->assertInstanceOf('Cake\ORM\Table', $result);
+        $this->assertInstanceOf(Table::class, $result);
         $this->assertSame('my_articles', $result->getTable());
 
         $result2 = $this->_locator->get('Articles');
@@ -200,32 +200,32 @@ class TableLocatorTest extends TestCase
     public function testGetFallbacks()
     {
         $result = $this->_locator->get('Droids');
-        $this->assertInstanceOf('Cake\ORM\Table', $result);
+        $this->assertInstanceOf(Table::class, $result);
         $this->assertSame('droids', $result->getTable());
         $this->assertSame('Droids', $result->getAlias());
 
         $result = $this->_locator->get('R2D2', ['className' => 'Droids']);
-        $this->assertInstanceOf('Cake\ORM\Table', $result);
+        $this->assertInstanceOf(Table::class, $result);
         $this->assertSame('droids', $result->getTable(), 'The table should be derived from the className');
         $this->assertSame('R2D2', $result->getAlias());
 
         $result = $this->_locator->get('C3P0', ['className' => 'Droids', 'table' => 'rebels']);
-        $this->assertInstanceOf('Cake\ORM\Table', $result);
+        $this->assertInstanceOf(Table::class, $result);
         $this->assertSame('rebels', $result->getTable(), 'The table should be taken from options');
         $this->assertSame('C3P0', $result->getAlias());
 
         $result = $this->_locator->get('Funky.Chipmunks');
-        $this->assertInstanceOf('Cake\ORM\Table', $result);
+        $this->assertInstanceOf(Table::class, $result);
         $this->assertSame('chipmunks', $result->getTable(), 'The table should be derived from the alias');
         $this->assertSame('Chipmunks', $result->getAlias());
 
         $result = $this->_locator->get('Awesome', ['className' => 'Funky.Monkies']);
-        $this->assertInstanceOf('Cake\ORM\Table', $result);
+        $this->assertInstanceOf(Table::class, $result);
         $this->assertSame('monkies', $result->getTable(), 'The table should be derived from the classname');
         $this->assertSame('Awesome', $result->getAlias());
 
-        $result = $this->_locator->get('Stuff', ['className' => 'Cake\ORM\Table']);
-        $this->assertInstanceOf('Cake\ORM\Table', $result);
+        $result = $this->_locator->get('Stuff', ['className' => Table::class]);
+        $this->assertInstanceOf(Table::class, $result);
         $this->assertSame('stuff', $result->getTable(), 'The table should be derived from the alias');
         $this->assertSame('Stuff', $result->getAlias());
     }
@@ -360,7 +360,7 @@ class TableLocatorTest extends TestCase
         $plugin1 = $this->_locator->get('TestPlugin.Comments');
         $plugin2 = $this->_locator->get('TestPluginTwo.Comments');
 
-        $this->assertInstanceOf('Cake\ORM\Table', $app, 'Should be an app table instance');
+        $this->assertInstanceOf(Table::class, $app, 'Should be an app table instance');
         $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $plugin1, 'Should be a plugin 1 table instance');
         $this->assertInstanceOf('TestPluginTwo\Model\Table\CommentsTable', $plugin2, 'Should be a plugin 2 table instance');
 
@@ -368,7 +368,7 @@ class TableLocatorTest extends TestCase
         $plugin1 = $this->_locator->get('TestPlugin.Comments');
         $app = $this->_locator->get('Comments');
 
-        $this->assertInstanceOf('Cake\ORM\Table', $app, 'Should still be an app table instance');
+        $this->assertInstanceOf(Table::class, $app, 'Should still be an app table instance');
         $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $plugin1, 'Should still be a plugin 1 table instance');
         $this->assertInstanceOf('TestPluginTwo\Model\Table\CommentsTable', $plugin2, 'Should still be a plugin 2 table instance');
     }
@@ -435,7 +435,7 @@ class TableLocatorTest extends TestCase
         $this->_locator->setConfig('users', $options);
 
         $table = $this->_locator->get('users', ['table' => 'users']);
-        $this->assertInstanceOf('Cake\ORM\Table', $table);
+        $this->assertInstanceOf(Table::class, $table);
         $this->assertSame('users', $table->getTable());
         $this->assertSame('users', $table->getAlias());
         $this->assertSame($connection, $table->getConnection());
@@ -502,7 +502,7 @@ class TableLocatorTest extends TestCase
      */
     public function testSet()
     {
-        $mock = $this->getMockBuilder('Cake\ORM\Table')->getMock();
+        $mock = $this->getMockBuilder(Table::class)->getMock();
         $this->assertSame($mock, $this->_locator->set('Articles', $mock));
         $this->assertSame($mock, $this->_locator->get('Articles'));
     }

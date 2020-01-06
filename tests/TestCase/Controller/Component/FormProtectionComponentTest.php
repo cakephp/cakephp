@@ -216,6 +216,55 @@ class FormProtectionComponentTest extends TestCase
         $this->FormProtection->startup($event);
     }
 
+    public function testValidationUnlockedFieldsMismatch()
+    {
+        // Unlocked is empty when the token is created.
+        $unlocked = '';
+        $fields = ['open', 'title'];
+        $debug = urlencode(json_encode([
+            '/articles/index',
+            $fields,
+            [''],
+        ]));
+        $fields = hash_hmac('sha1', '/articles/index' . serialize($fields) . $unlocked . 'cli', Security::getSalt());
+
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
+            'open' => 'yes',
+            'title' => 'yay',
+            '_Token' => compact('fields', 'unlocked', 'debug'),
+        ]));
+
+        $this->expectException(BadRequestException::class);
+        $this->expectExceptionMessage('Missing unlocked field');
+
+        $event = new Event('Controller.startup', $this->Controller);
+        $this->FormProtection->setConfig('unlockedFields', ['open']);
+        $this->FormProtection->startup($event);
+    }
+
+    public function testValidationUnlockedFieldsSuccess()
+    {
+        $unlocked = 'open';
+        $fields = ['title'];
+        $debug = urlencode(json_encode([
+            '/articles/index',
+            $fields,
+            ['open'],
+        ]));
+        $fields = hash_hmac('sha1', '/articles/index' . serialize($fields) . $unlocked . 'cli', Security::getSalt());
+
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
+            'title' => 'yay',
+            'open' => 'yes',
+            '_Token' => compact('fields', 'unlocked', 'debug'),
+        ]));
+
+        $event = new Event('Controller.startup', $this->Controller);
+        $this->FormProtection->setConfig('unlockedFields', ['open']);
+        $result = $this->FormProtection->startup($event);
+        $this->assertNull($result);
+    }
+
     public function testCallbackReturnResponse()
     {
         $this->FormProtection->setConfig('validationFailureCallback', function (BadRequestException $exception) {

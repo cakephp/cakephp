@@ -135,11 +135,11 @@ class ConfigureTest extends TestCase
      */
     public function testWrite()
     {
-        $this->assertNull(Configure::write('SomeName.someKey', 'myvalue'));
+        Configure::write('SomeName.someKey', 'myvalue');
         $result = Configure::read('SomeName.someKey');
         $this->assertSame('myvalue', $result);
 
-        $this->assertNull(Configure::write('SomeName.someKey', null));
+        Configure::write('SomeName.someKey', null);
         $result = Configure::read('SomeName.someKey');
         $this->assertNull($result);
 
@@ -468,14 +468,14 @@ class ConfigureTest extends TestCase
         $this->assertTrue(version_compare($original, '4.0', '>='));
 
         Configure::write('Cake.version', 'banana');
-        $this->assertSame('banana', Configure::version('Cake.version'));
+        $this->assertSame('banana', Configure::version());
 
         Configure::delete('Cake.version');
         $this->assertSame($original, Configure::version());
     }
 
     /**
-     * test adding new engines.
+     * Tests adding new engines.
      *
      * @return void
      */
@@ -492,6 +492,25 @@ class ConfigureTest extends TestCase
 
         $this->assertTrue(Configure::drop('test'));
         $this->assertFalse(Configure::drop('test'), 'dropping things that do not exist should return false.');
+    }
+
+    /**
+     * Tests adding new engines as numeric strings.
+     *
+     * @return void
+     */
+    public function testEngineSetupNumeric()
+    {
+        $engine = new PhpConfig();
+        Configure::config('123', $engine);
+        $configured = Configure::configured();
+
+        $this->assertContains('123', $configured);
+
+        $this->assertTrue(Configure::isConfigured('123'));
+
+        $this->assertTrue(Configure::drop('123'));
+        $this->assertFalse(Configure::drop('123'), 'dropping things that do not exist should return false.');
     }
 
     /**
