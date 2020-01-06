@@ -25,6 +25,7 @@ use Exception;
 use InvalidArgumentException;
 use ReflectionObject;
 use ReflectionProperty;
+use SplObjectStorage;
 use stdClass;
 use Throwable;
 
@@ -500,6 +501,7 @@ class Debugger
         $context->indent = 0;
         $context->depth = 0;
         $context->maxDepth = $depth;
+        $context->refs = new SplObjectStorage();
 
         return static::_export($var, $context);
     }
@@ -610,27 +612,37 @@ class Debugger
         $out = '';
         $props = [];
 
+        $isRef = false;
+        $refNum = null;
+        if ($context->refs->contains($var)) {
+            $isRef = true;
+            $refNum = $context->refs[$var];
+        } else {
+            $refNum = $context->refs->count();
+            $context->refs->attach($var, $refNum);
+        }
+
         $className = get_class($var);
-        $out .= 'object(' . $className . ') {';
+        $out .= "object({$className}) #{$refNum} {";
         $break = "\n" . str_repeat("\t", $context->indent);
         $end = "\n" . str_repeat("\t", $context->indent - 1);
 
         $remaining = $context->maxDepth - $context->depth;
-        if ($remaining > 0 && method_exists($var, '__debugInfo')) {
-            try {
-                $next = clone $context;
-                $next->depth += 1;
-                return $out . "\n" .
-                    substr(static::_array($var->__debugInfo(), $next), 1, -1) .
-                    $end . '}';
-            } catch (Exception $e) {
-                $message = $e->getMessage();
+        if ($remaining > 0 && $isRef === false) {
+            if (method_exists($var, '__debugInfo')) {
+                try {
+                    $next = clone $context;
+                    $next->depth += 1;
+                    return $out . "\n" .
+                        substr(static::_array($var->__debugInfo(), $next), 1, -1) .
+                        $end . '}';
+                } catch (Exception $e) {
+                    $message = $e->getMessage();
 
-                return $out . "\n(unable to export object: $message)\n }";
+                    return $out . "\n(unable to export object: $message)\n }";
+                }
             }
-        }
 
-        if ($remaining > 0) {
             $outputMask = (array)static::outputMask();
             $objectVars = get_object_vars($var);
             foreach ($objectVars as $key => $value) {

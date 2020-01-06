@@ -21,6 +21,7 @@ use Cake\Core\Configure;
 use Cake\Error\Debugger;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
+use stdClass;
 use TestApp\Error\TestDebugger;
 use TestApp\Error\Thing\DebuggableThing;
 use TestApp\Error\Thing\SecurityThing;
@@ -310,14 +311,14 @@ class DebuggerTest extends TestCase
 
         $result = Debugger::exportVar($View);
         $expected = <<<TEXT
-object(Cake\View\View) {
-	Html => object(Cake\View\Helper\HtmlHelper) {}
-	Form => object(Cake\View\Helper\FormHelper) {}
+object(Cake\View\View) #0 {
+	Html => object(Cake\View\Helper\HtmlHelper) #1 {}
+	Form => object(Cake\View\Helper\FormHelper) #2 {}
 	int => (int) 2
 	float => (float) 1.333
 	string => '  '
-	[protected] _helpers => object(Cake\View\HelperRegistry) {}
-	[protected] Blocks => object(Cake\View\ViewBlock) {}
+	[protected] _helpers => object(Cake\View\HelperRegistry) #3 {}
+	[protected] Blocks => object(Cake\View\ViewBlock) #4 {}
 	[protected] plugin => null
 	[protected] name => ''
 	[protected] helpers => [
@@ -333,8 +334,8 @@ object(Cake\View\View) {
 	[protected] _ext => '.php'
 	[protected] subDir => ''
 	[protected] theme => null
-	[protected] request => object(Cake\Http\ServerRequest) {}
-	[protected] response => object(Cake\Http\Response) {}
+	[protected] request => object(Cake\Http\ServerRequest) #5 {}
+	[protected] response => object(Cake\Http\Response) #6 {}
 	[protected] elementCache => 'default'
 	[protected] _passedVars => [
 		(int) 0 => 'viewVars',
@@ -356,13 +357,12 @@ object(Cake\View\View) {
 	[protected] _currentType => ''
 	[protected] _stack => []
 	[protected] _viewBlockClass => 'Cake\View\ViewBlock'
-	[protected] _eventManager => object(Cake\Event\EventManager) {}
+	[protected] _eventManager => object(Cake\Event\EventManager) #7 {}
 	[protected] _eventClass => 'Cake\Event\Event'
 	[protected] _config => []
 	[protected] _configInitialized => true
 }
 TEXT;
-
         $this->assertTextEquals($expected, $result);
 
         $data = [
@@ -429,6 +429,34 @@ TEXT;
 	'szero' => '0',
 	'zero' => (int) 0
 ]
+TEXT;
+        $this->assertTextEquals($expected, $result);
+    }
+
+    /**
+     * test exportVar with cyclic objects.
+     *
+     * @return void
+     */
+    public function testExportVarCyclicRef()
+    {
+        $parent = new stdClass();
+        $parent->name = 'cake';
+        $middle = new stdClass();
+        $parent->child = $middle;
+
+        $middle->name = 'php';
+        $middle->child = $parent;
+
+        $result = Debugger::exportVar($parent, 6);
+        $expected = <<<TEXT
+object(stdClass) #0 {
+	name => 'cake'
+	child => object(stdClass) #1 {
+		name => 'php'
+		child => object(stdClass) #0 {}
+	}
+}
 TEXT;
         $this->assertTextEquals($expected, $result);
     }
