@@ -1285,7 +1285,9 @@ abstract class Association
             return $results
                 ->insert($property, $extracted)
                 ->map(function ($result) {
-                    $result->clean();
+                    if ($result instanceof EntityInterface) {
+                        $result->clean();
+                    }
 
                     return $result;
                 });
