@@ -25,6 +25,7 @@ use Exception;
 use InvalidArgumentException;
 use ReflectionObject;
 use ReflectionProperty;
+use stdClass;
 use Throwable;
 
 /**
@@ -495,18 +496,22 @@ class Debugger
      */
     public static function exportVar($var, int $depth = 3): string
     {
-        return static::_export($var, $depth, 0);
+        $context = new stdClass();
+        $context->indent = 0;
+        $context->depth = 0;
+        $context->maxDepth = $depth;
+
+        return static::_export($var, $context);
     }
 
     /**
      * Protected export function used to keep track of indentation and recursion.
      *
      * @param mixed $var The variable to dump.
-     * @param int $depth The remaining depth.
-     * @param int $indent The current indentation level.
+     * @param object $context Dump context
      * @return string The dumped variable.
      */
-    protected static function _export($var, int $depth, int $indent): string
+    protected static function _export($var, $context): string
     {
         switch (static::getType($var)) {
             case 'boolean':
@@ -522,7 +527,10 @@ class Debugger
 
                 return "'" . $var . "'";
             case 'array':
-                return static::_array($var, $depth - 1, $indent + 1);
+                $next = clone $context;
+                $next->depth += 1;
+                $next->indent += 1;
+                return static::_array($var, $next);
             case 'resource':
                 return strtolower(gettype($var));
             case 'null':
@@ -530,7 +538,10 @@ class Debugger
             case 'unknown':
                 return 'unknown';
             default:
-                return static::_object($var, $depth - 1, $indent + 1);
+                $next = clone $context;
+                $next->depth += 1;
+                $next->indent += 1;
+                return static::_object($var, $next);
         }
     }
 
@@ -552,17 +563,18 @@ class Debugger
      * @param int $indent The current indentation level.
      * @return string Exported array.
      */
-    protected static function _array(array $var, int $depth, int $indent): string
+    protected static function _array(array $var, $context): string
     {
         $out = '[';
         $break = $end = '';
         if (!empty($var)) {
-            $break = "\n" . str_repeat("\t", $indent);
-            $end = "\n" . str_repeat("\t", $indent - 1);
+            $break = "\n" . str_repeat("\t", $context->indent);
+            $end = "\n" . str_repeat("\t", $context->indent - 1);
         }
         $vars = [];
 
-        if ($depth >= 0) {
+        $remaining = $context->maxDepth - $context->depth;
+        if ($remaining >= 0) {
             $outputMask = (array)static::outputMask();
             foreach ($var as $key => $val) {
                 // Sniff for globals as !== explodes in < 5.4
@@ -571,9 +583,9 @@ class Debugger
                 } elseif (array_key_exists($key, $outputMask)) {
                     $val = (string)$outputMask[$key];
                 } elseif ($val !== $var) {
-                    $val = static::_export($val, $depth, $indent);
+                    $val = static::_export($val, $context);
                 }
-                $vars[] = $break . static::exportVar($key) .
+                $vars[] = $break . static::_export($key, $context) .
                     ' => ' .
                     $val;
             }
@@ -593,20 +605,23 @@ class Debugger
      * @return string
      * @see \Cake\Error\Debugger::exportVar()
      */
-    protected static function _object(object $var, int $depth, int $indent): string
+    protected static function _object(object $var, $context): string
     {
         $out = '';
         $props = [];
 
         $className = get_class($var);
         $out .= 'object(' . $className . ') {';
-        $break = "\n" . str_repeat("\t", $indent);
-        $end = "\n" . str_repeat("\t", $indent - 1);
+        $break = "\n" . str_repeat("\t", $context->indent);
+        $end = "\n" . str_repeat("\t", $context->indent - 1);
 
-        if ($depth > 0 && method_exists($var, '__debugInfo')) {
+        $remaining = $context->maxDepth - $context->depth;
+        if ($remaining > 0 && method_exists($var, '__debugInfo')) {
             try {
+                $next = clone $context;
+                $next->depth += 1;
                 return $out . "\n" .
-                    substr(static::_array($var->__debugInfo(), $depth - 1, $indent), 1, -1) .
+                    substr(static::_array($var->__debugInfo(), $next), 1, -1) .
                     $end . '}';
             } catch (Exception $e) {
                 $message = $e->getMessage();
@@ -615,13 +630,17 @@ class Debugger
             }
         }
 
-        if ($depth > 0) {
+        if ($remaining > 0) {
             $outputMask = (array)static::outputMask();
             $objectVars = get_object_vars($var);
             foreach ($objectVars as $key => $value) {
-                $value = array_key_exists($key, $outputMask)
-                    ? $outputMask[$key]
-                    : static::_export($value, $depth - 1, $indent);
+                if (array_key_exists($key, $outputMask)) {
+                    $value = $outputMask[$key];
+                } else {
+                    $next = clone $context;
+                    $next->depth += 1;
+                    $value = static::_export($value, $next);
+                }
                 $props[] = "$key => " . $value;
             }
 
@@ -637,7 +656,9 @@ class Debugger
                     $reflectionProperty->setAccessible(true);
                     $property = $reflectionProperty->getValue($var);
 
-                    $value = static::_export($property, $depth - 1, $indent);
+                    $next = clone $context;
+                    $next->depth += 1;
+                    $value = static::_export($property, $next);
                     $key = $reflectionProperty->name;
                     $props[] = sprintf(
                         '[%s] %s => %s',
