@@ -27,14 +27,21 @@ env:
 matrix:
   fast_finish: true
 
+  include:
+    - php: 7.2
+      env: PREFER_LOWEST=1 CODECOVERAGE=0
+
 before_install:
   - echo cakephp version && tail -1 VERSION.txt
 
   - if [[ $DB == 'mysql' ]]; then mysql -u root -e 'CREATE DATABASE cakephp_test;'; fi
   - if [[ $DB == 'pgsql' ]]; then psql -c 'CREATE DATABASE cakephp_test;' -U postgres; fi
 
-  - pecl channel-update pecl.php.net
-  - pecl install pcov
+  - |
+      if [[ $CODECOVERAGE == 1 ]]; then
+        pecl channel-update pecl.php.net
+        pecl install pcov
+      fi
 
   - phpenv config-rm xdebug.ini
 
@@ -46,16 +53,28 @@ before_install:
   - sudo locale-gen da_DK.UTF-8
 
 install:
-  - composer install --prefer-dist --no-interaction
+  - |
+      if [[ $CODECOVERAGE == 1 ]]; then
+        composer install --prefer-dist --no-interaction
+      else
+        composer update --prefer-lowest --prefer-stable --no-interaction
+      fi
 
 script:
-  - vendor/bin/phpunit --verbose --coverage-clover=clover.xml
+  - |
+      if [[ $CODECOVERAGE == 1 ]]; then
+        vendor/bin/phpunit --verbose --coverage-clover=clover.xml
+      else
+        vendor/bin/phpunit --verbose
+      fi
 
 after_success:
   - |
-      wget https://github.com/php-coveralls/php-coveralls/releases/download/v2.1.0/php-coveralls.phar
-      chmod +x php-coveralls.phar
-      ./php-coveralls.phar
+      if [[ $CODECOVERAGE == 1 ]]; then
+        wget https://github.com/php-coveralls/php-coveralls/releases/download/v2.1.0/php-coveralls.phar
+        chmod +x php-coveralls.phar
+        ./php-coveralls.phar
+      fi
 
 notifications:
   email: false
