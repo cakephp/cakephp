@@ -1087,7 +1087,7 @@ class Response implements ResponseInterface
         } elseif (is_int($time)) {
             $result = new DateTime(date('Y-m-d H:i:s', $time));
         } else {
-            $result = new DateTime($time);
+            $result = new DateTime($time ?? 'now');
         }
 
         /** @psalm-suppress UndefinedInterfaceMethod */

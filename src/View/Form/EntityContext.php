@@ -658,11 +658,11 @@ class EntityContext implements ContextInterface
         }
 
         $table = $this->_tables[$this->_rootName];
-        /** @var \Cake\ORM\Association\BelongsToMany|null $assoc */
         $assoc = null;
         foreach ($normalized as $part) {
             if ($part === '_joinData') {
                 if ($assoc) {
+                    /** @var \Cake\ORM\Association\BelongsToMany $assoc */
                     $table = $assoc->junction();
                     $assoc = null;
                     continue;
