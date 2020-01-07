@@ -228,14 +228,14 @@ class Debugger
      * Recursively formats and outputs the contents of the supplied variable.
      *
      * @param mixed $var The variable to dump.
-     * @param int $depth The depth to output to. Defaults to 3.
+     * @param int $maxDepth The depth to output to. Defaults to 3.
      * @return void
      * @see \Cake\Error\Debugger::exportVar()
      * @link https://book.cakephp.org/4/en/development/debugging.html#outputting-values
      */
-    public static function dump($var, int $depth = 3): void
+    public static function dump($var, int $maxDepth = 3): void
     {
-        pr(static::exportVar($var, $depth));
+        pr(static::exportVar($var, $maxDepth));
     }
 
     /**
@@ -244,16 +244,16 @@ class Debugger
      *
      * @param mixed $var Variable or content to log.
      * @param int|string $level Type of log to use. Defaults to 'debug'.
-     * @param int $depth The depth to output to. Defaults to 3.
+     * @param int $maxDepth The depth to output to. Defaults to 3.
      * @return void
      */
-    public static function log($var, $level = 'debug', int $depth = 3): void
+    public static function log($var, $level = 'debug', int $maxDepth = 3): void
     {
         /** @var string $source */
         $source = static::trace(['start' => 1]);
         $source .= "\n";
 
-        Log::write($level, "\n" . $source . static::exportVar($var, $depth));
+        Log::write($level, "\n" . $source . static::exportVar($var, $maxDepth));
     }
 
     /**
@@ -490,12 +490,12 @@ class Debugger
      * shown in an error message if CakePHP is deployed in development mode.
      *
      * @param mixed $var Variable to convert.
-     * @param int $depth The depth to output to. Defaults to 3.
+     * @param int $maxDepth The depth to output to. Defaults to 3.
      * @return string Variable as a formatted string
      */
-    public static function exportVar($var, int $depth = 3): string
+    public static function exportVar($var, int $maxDepth = 3): string
     {
-        $context = new DumpContext($depth);
+        $context = new DumpContext($maxDepth);
 
         return static::_export($var, $context);
     }
