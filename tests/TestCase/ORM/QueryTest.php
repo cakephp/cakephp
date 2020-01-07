@@ -2745,7 +2745,7 @@ class QueryTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $result = $table->find('all')
             ->select(['myField' => '(SELECT 20)'])
-            ->enableAutoFields(true)
+            ->enableAutoFields()
             ->enableHydration(false)
             ->first();
 
@@ -2766,7 +2766,7 @@ class QueryTest extends TestCase
 
         $result = $table->find()
             ->select(['myField' => '(SELECT 2 + 2)'])
-            ->enableAutoFields(true)
+            ->enableAutoFields()
             ->enableHydration(false)
             ->contain('Authors')
             ->first();
@@ -2790,12 +2790,12 @@ class QueryTest extends TestCase
 
         $result = $table->find()
             ->select(['myField' => '(SELECT 2 + 2)'])
-            ->enableAutoFields(true)
+            ->enableAutoFields()
             ->enableHydration(false)
             ->contain([
                 'Authors' => function ($q) {
                     return $q->select(['compute' => '(SELECT 2 + 20)'])
-                        ->enableAutoFields(true);
+                        ->enableAutoFields();
                 },
             ])
             ->first();
@@ -2819,7 +2819,7 @@ class QueryTest extends TestCase
 
         $result = $table->find()
             ->select(['myField' => '(SELECT (2 + 2))'])
-            ->enableAutoFields(true)
+            ->enableAutoFields()
             ->count();
 
         $this->assertEquals(3, $result);
@@ -3247,7 +3247,7 @@ class QueryTest extends TestCase
             ->select(function ($q) {
                 return ['foo' => $q->newExpr('1 + 1')];
             })
-            ->enableAutoFields(true)
+            ->enableAutoFields()
             ->contain(['authors'])
             ->first();
 
@@ -3297,7 +3297,7 @@ class QueryTest extends TestCase
         $results = $table
             ->find()
             ->select(['total_articles' => 'count(articles.id)'])
-            ->enableAutoFields(true)
+            ->enableAutoFields()
             ->leftJoinWith('articles')
             ->group(['authors.id', 'authors.name']);
 
@@ -3378,7 +3378,7 @@ class QueryTest extends TestCase
                     ->select(['articles.id', 'articles.title', 'tags.name'])
                     ->where(['tags.name' => 'tag3']);
             })
-            ->enableAutoFields(true)
+            ->enableAutoFields()
             ->where(['ArticlesTags.tag_id' => 3])
             ->all();
 
@@ -3406,7 +3406,7 @@ class QueryTest extends TestCase
         $results = $table
             ->find()
             ->leftJoinWith('authors', function ($q) {
-                return $q->enableAutoFields(true);
+                return $q->enableAutoFields();
             })
             ->all();
         $this->assertCount(3, $results);
@@ -3470,7 +3470,7 @@ class QueryTest extends TestCase
         $table->hasMany('articles');
         $results = $table
             ->find()
-            ->enableAutoFields(true)
+            ->enableAutoFields()
             ->innerJoinWith('articles', function ($q) {
                 return $q->select(['id', 'author_id', 'title', 'body', 'published']);
             })

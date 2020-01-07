@@ -591,7 +591,7 @@ class EagerLoaderTest extends TestCase
     {
         $loader = new EagerLoader();
         $this->assertTrue($loader->isAutoFieldsEnabled());
-        $this->assertSame($loader, $loader->enableAutoFields(false));
+        $this->assertSame($loader, $loader->disableAutoFields());
         $this->assertFalse($loader->isAutoFieldsEnabled());
     }
 

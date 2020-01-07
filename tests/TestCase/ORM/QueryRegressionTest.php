@@ -1606,7 +1606,7 @@ class QueryRegressionTest extends TestCase
         ]);
         $query = $table->find()
             ->select(['score' => 100])
-            ->enableAutoFields(true)
+            ->enableAutoFields()
             ->contain(['Comments'])
             ->limit(5)
             ->order(['score' => 'desc']);

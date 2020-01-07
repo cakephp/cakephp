@@ -575,7 +575,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *     ->select(['total_articles' => $query->func()->count('Articles.id')])
      *     ->leftJoinWith('Articles')
      *     ->group(['Users.id'])
-     *     ->enableAutoFields(true);
+     *     ->enableAutoFields();
      * ```
      *
      * You can also customize the conditions passed to the LEFT JOIN:
@@ -588,7 +588,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *         return $q->where(['Articles.votes >=' => 5]);
      *     })
      *     ->group(['Users.id'])
-     *     ->enableAutoFields(true);
+     *     ->enableAutoFields();
      * ```
      *
      * This will create the following SQL:
@@ -922,10 +922,10 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         $count = ['count' => $query->func()->count('*')];
 
         if (!$complex) {
-            $query->getEagerLoader()->enableAutoFields(false);
+            $query->getEagerLoader()->disableAutoFields();
             $statement = $query
                 ->select($count, true)
-                ->enableAutoFields(false)
+                ->disableAutoFields()
                 ->execute();
         } else {
             $statement = $this->getConnection()->newQuery()
