@@ -21,9 +21,9 @@ use Cake\Utility\Hash;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
-use function Zend\Diactoros\marshalHeadersFromSapi;
-use function Zend\Diactoros\marshalUriFromSapi;
-use function Zend\Diactoros\normalizeServer;
+use function Laminas\Diactoros\marshalHeadersFromSapi;
+use function Laminas\Diactoros\marshalUriFromSapi;
+use function Laminas\Diactoros\normalizeServer;
 
 /**
  * Factory for making ServerRequest instances.

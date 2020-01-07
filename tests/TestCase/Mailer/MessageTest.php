@@ -20,8 +20,8 @@ use Cake\Core\Configure;
 use Cake\Mailer\Message;
 use Cake\Mailer\Transport\DebugTransport;
 use Cake\TestSuite\TestCase;
+use Laminas\Diactoros\UploadedFile;
 use TestApp\Mailer\TestMessage;
-use Zend\Diactoros\UploadedFile;
 
 /**
  * MessageTest class

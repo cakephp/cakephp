@@ -22,13 +22,13 @@ use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Exception\MethodNotAllowedException;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
+use Laminas\Diactoros\PhpInputStream;
+use Laminas\Diactoros\Stream;
+use Laminas\Diactoros\UploadedFile;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
-use Zend\Diactoros\PhpInputStream;
-use Zend\Diactoros\Stream;
-use Zend\Diactoros\UploadedFile;
 
 /**
  * A class that helps wrap Request information and particulars about a single request.

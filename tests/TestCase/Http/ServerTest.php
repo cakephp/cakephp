@@ -27,8 +27,8 @@ use Cake\Http\ServerRequest;
 use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use Laminas\Diactoros\Response;
 use TestApp\Http\MiddlewareApplication;
-use Zend\Diactoros\Response;
 
 require_once __DIR__ . '/server_mocks.php';
 
@@ -224,7 +224,7 @@ class ServerTest extends TestCase
      */
     public function testRunDoesNotCloseSessionIfServerRequestNotUsed()
     {
-        $request = new \Zend\Diactoros\ServerRequest();
+        $request = new \Laminas\Diactoros\ServerRequest();
 
         $app = new MiddlewareApplication($this->config);
         $server = new Server($app);
@@ -257,7 +257,7 @@ class ServerTest extends TestCase
             ->withHeader('X-First', 'first')
             ->withHeader('X-Second', 'second');
 
-        $emitter = $this->getMockBuilder('Zend\HttpHandlerRunner\Emitter\EmitterInterface')->getMock();
+        $emitter = $this->getMockBuilder('Laminas\HttpHandlerRunner\Emitter\EmitterInterface')->getMock();
         $emitter->expects($this->once())
             ->method('emit')
             ->with($final);

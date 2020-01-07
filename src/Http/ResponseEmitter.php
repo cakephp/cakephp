@@ -22,9 +22,9 @@ declare(strict_types=1);
 namespace Cake\Http;
 
 use Cake\Http\Cookie\Cookie;
+use Laminas\Diactoros\RelativeStream;
+use Laminas\HttpHandlerRunner\Emitter\EmitterInterface;
 use Psr\Http\Message\ResponseInterface;
-use Zend\Diactoros\RelativeStream;
-use Zend\HttpHandlerRunner\Emitter\EmitterInterface;
 
 /**
  * Emits a Response to the PHP Server API.

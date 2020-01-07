@@ -25,13 +25,13 @@ use Cake\Http\ServerRequest;
 use Cake\ORM\Table;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
+use Laminas\Diactoros\Uri;
 use PHPUnit\Framework\Error\Notice;
 use PHPUnit\Framework\Error\Warning;
 use ReflectionFunction;
 use TestApp\Controller\Admin\PostsController;
 use TestApp\Controller\TestController;
 use TestPlugin\Controller\TestPluginController;
-use Zend\Diactoros\Uri;
 
 /**
  * ControllerTest class
@@ -966,7 +966,7 @@ class ControllerTest extends TestCase
         $controller = new PostsController();
 
         $controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $event): void {
-            /** @var Controller $controller */
+            /** @var \Cake\Controller\Controller $controller */
             $controller = $event->getSubject();
 
             $controller->set('testVariable', 'test');

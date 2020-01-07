@@ -34,13 +34,13 @@
         "aura/intl": "^3.0.0",
         "cakephp/chronos": "^2.0",
         "composer/ca-bundle": "^1.2",
+        "laminas/laminas-diactoros": "^2.2.2",
+        "laminas/laminas-httphandlerrunner": "^1.1",
         "psr/http-client": "^1.0",
         "psr/http-server-handler": "^1.0",
         "psr/http-server-middleware": "^1.0",
         "psr/log": "^1.0.0",
-        "psr/simple-cache": "^1.0.0",
-        "zendframework/zend-diactoros": "^2.0",
-        "zendframework/zend-httphandlerrunner": "^1.0"
+        "psr/simple-cache": "^1.0.0"
     },
     "suggest": {
         "ext-openssl": "To use Security::encrypt() or have secure CSRF token generation.",

@@ -19,8 +19,8 @@ namespace Cake\Test\TestCase\Http\Middleware;
 use Cake\Http\Middleware\SecurityHeadersMiddleware;
 use Cake\Http\ServerRequestFactory;
 use Cake\TestSuite\TestCase;
+use Laminas\Diactoros\Response;
 use TestApp\Http\TestRequestHandler;
-use Zend\Diactoros\Response;
 
 /**
  * Test for SecurityMiddleware
