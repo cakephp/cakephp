@@ -40,6 +40,7 @@ class Basic
             $request = $request->withHeader('Authorization', $value);
         }
 
+        /** @var \Cake\Http\Client\Request */
         return $request;
     }
 
@@ -58,6 +59,7 @@ class Basic
             $request = $request->withHeader('Proxy-Authorization', $value);
         }
 
+        /** @var \Cake\Http\Client\Request */
         return $request;
     }
 
