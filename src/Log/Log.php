@@ -358,7 +358,8 @@ class Log
         }
 
         if (!in_array($level, static::$_levels, true)) {
-            throw new InvalidArgumentException(sprintf('Invalid log level "%s"', $level));
+            /** @psalm-suppress PossiblyFalseArgument */
+            throw new InvalidArgumentException(sprintf('Invalid log level `%s`', $level));
         }
 
         $logged = false;

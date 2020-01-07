@@ -131,7 +131,7 @@ interface StatementInterface
      * ```
      *
      * @param string|int $type 'num' for positional columns, assoc for named columns, or PDO fetch mode constants.
-     * @return array|false Result array containing columns and values or false if no results
+     * @return mixed Result array containing columns and values or false if no results
      * are left
      */
     public function fetch($type = 'num');
