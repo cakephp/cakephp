@@ -311,14 +311,14 @@ class DebuggerTest extends TestCase
 
         $result = Debugger::exportVar($View);
         $expected = <<<TEXT
-object(Cake\View\View) #0 {
-	Html => object(Cake\View\Helper\HtmlHelper) #1 {}
-	Form => object(Cake\View\Helper\FormHelper) #2 {}
+object(Cake\View\View) id:0 {
+	Html => object(Cake\View\Helper\HtmlHelper) id:1 {}
+	Form => object(Cake\View\Helper\FormHelper) id:2 {}
 	int => (int) 2
 	float => (float) 1.333
 	string => '  '
-	[protected] _helpers => object(Cake\View\HelperRegistry) #3 {}
-	[protected] Blocks => object(Cake\View\ViewBlock) #4 {}
+	[protected] _helpers => object(Cake\View\HelperRegistry) id:3 {}
+	[protected] Blocks => object(Cake\View\ViewBlock) id:4 {}
 	[protected] plugin => null
 	[protected] name => ''
 	[protected] helpers => [
@@ -334,8 +334,8 @@ object(Cake\View\View) #0 {
 	[protected] _ext => '.php'
 	[protected] subDir => ''
 	[protected] theme => null
-	[protected] request => object(Cake\Http\ServerRequest) #5 {}
-	[protected] response => object(Cake\Http\Response) #6 {}
+	[protected] request => object(Cake\Http\ServerRequest) id:5 {}
+	[protected] response => object(Cake\Http\Response) id:6 {}
 	[protected] elementCache => 'default'
 	[protected] _passedVars => [
 		(int) 0 => 'viewVars',
@@ -357,7 +357,7 @@ object(Cake\View\View) #0 {
 	[protected] _currentType => ''
 	[protected] _stack => []
 	[protected] _viewBlockClass => 'Cake\View\ViewBlock'
-	[protected] _eventManager => object(Cake\Event\EventManager) #7 {}
+	[protected] _eventManager => object(Cake\Event\EventManager) id:7 {}
 	[protected] _eventClass => 'Cake\Event\Event'
 	[protected] _config => []
 	[protected] _configInitialized => true
@@ -450,11 +450,11 @@ TEXT;
 
         $result = Debugger::exportVar($parent, 6);
         $expected = <<<TEXT
-object(stdClass) #0 {
+object(stdClass) id:0 {
 	name => 'cake'
-	child => object(stdClass) #1 {
+	child => object(stdClass) id:1 {
 		name => 'php'
-		child => object(stdClass) #0 {}
+		child => object(stdClass) id:0 {}
 	}
 }
 TEXT;
@@ -622,10 +622,10 @@ TEXT;
         $object = new DebuggableThing();
         $result = Debugger::exportVar($object, 2);
         $expected = <<<eos
-object(TestApp\Error\Thing\DebuggableThing) #0 {
+object(TestApp\Error\Thing\DebuggableThing) id:0 {
 
 	'foo' => 'bar',
-	'inner' => object(TestApp\Error\Thing\DebuggableThing) #1 {}
+	'inner' => object(TestApp\Error\Thing\DebuggableThing) id:1 {}
 
 }
 eos;
@@ -670,7 +670,7 @@ eos;
         Debugger::setOutputMask(['password' => '[**********]']);
         $object = new SecurityThing();
         $result = Debugger::exportVar($object);
-        $expected = 'object(TestApp\\Error\\Thing\\SecurityThing)#0{password=>[**********]}';
+        $expected = 'object(TestApp\\Error\\Thing\\SecurityThing)id:0{password=>[**********]}';
         $this->assertEquals($expected, preg_replace('/\s+/', '', $result));
     }
 

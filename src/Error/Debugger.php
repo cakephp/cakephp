@@ -603,7 +603,7 @@ class Debugger
         $refNum = $context->getReferenceId($var);
 
         $className = get_class($var);
-        $out .= "object({$className}) #{$refNum} {";
+        $out .= "object({$className}) id:{$refNum} {";
         $indent = $context->getIndent();
         $break = "\n" . str_repeat("\t", $indent);
         $end = "\n" . str_repeat("\t", $indent - 1);
