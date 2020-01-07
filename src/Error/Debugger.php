@@ -228,14 +228,14 @@ class Debugger
      * Recursively formats and outputs the contents of the supplied variable.
      *
      * @param mixed $var The variable to dump.
-     * @param int $depth The depth to output to. Defaults to 3.
+     * @param int $maxDepth The depth to output to. Defaults to 3.
      * @return void
      * @see \Cake\Error\Debugger::exportVar()
      * @link https://book.cakephp.org/4/en/development/debugging.html#outputting-values
      */
-    public static function dump($var, int $depth = 3): void
+    public static function dump($var, int $maxDepth = 3): void
     {
-        pr(static::exportVar($var, $depth));
+        pr(static::exportVar($var, $maxDepth));
     }
 
     /**
@@ -244,16 +244,16 @@ class Debugger
      *
      * @param mixed $var Variable or content to log.
      * @param int|string $level Type of log to use. Defaults to 'debug'.
-     * @param int $depth The depth to output to. Defaults to 3.
+     * @param int $maxDepth The depth to output to. Defaults to 3.
      * @return void
      */
-    public static function log($var, $level = 'debug', int $depth = 3): void
+    public static function log($var, $level = 'debug', int $maxDepth = 3): void
     {
         /** @var string $source */
         $source = static::trace(['start' => 1]);
         $source .= "\n";
 
-        Log::write($level, "\n" . $source . static::exportVar($var, $depth));
+        Log::write($level, "\n" . $source . static::exportVar($var, $maxDepth));
     }
 
     /**
@@ -490,23 +490,24 @@ class Debugger
      * shown in an error message if CakePHP is deployed in development mode.
      *
      * @param mixed $var Variable to convert.
-     * @param int $depth The depth to output to. Defaults to 3.
+     * @param int $maxDepth The depth to output to. Defaults to 3.
      * @return string Variable as a formatted string
      */
-    public static function exportVar($var, int $depth = 3): string
+    public static function exportVar($var, int $maxDepth = 3): string
     {
-        return static::_export($var, $depth, 0);
+        $context = new DumpContext($maxDepth);
+
+        return static::_export($var, $context);
     }
 
     /**
      * Protected export function used to keep track of indentation and recursion.
      *
      * @param mixed $var The variable to dump.
-     * @param int $depth The remaining depth.
-     * @param int $indent The current indentation level.
+     * @param \Cake\Error\DumpContext $context Dump context
      * @return string The dumped variable.
      */
-    protected static function _export($var, int $depth, int $indent): string
+    protected static function _export($var, DumpContext $context): string
     {
         switch (static::getType($var)) {
             case 'boolean':
@@ -522,7 +523,7 @@ class Debugger
 
                 return "'" . $var . "'";
             case 'array':
-                return static::_array($var, $depth - 1, $indent + 1);
+                return static::_array($var, $context->withAddedDepthAndIndent());
             case 'resource':
                 return strtolower(gettype($var));
             case 'null':
@@ -530,7 +531,7 @@ class Debugger
             case 'unknown':
                 return 'unknown';
             default:
-                return static::_object($var, $depth - 1, $indent + 1);
+                return static::_object($var, $context->withAddedDepthAndIndent());
         }
     }
 
@@ -548,21 +549,22 @@ class Debugger
      * - schema
      *
      * @param array $var The array to export.
-     * @param int $depth The current depth, used for recursion tracking.
-     * @param int $indent The current indentation level.
+     * @param \Cake\Error\DumpContext $context The current dump context.
      * @return string Exported array.
      */
-    protected static function _array(array $var, int $depth, int $indent): string
+    protected static function _array(array $var, DumpContext $context): string
     {
         $out = '[';
         $break = $end = '';
         if (!empty($var)) {
+            $indent = $context->getIndent();
             $break = "\n" . str_repeat("\t", $indent);
             $end = "\n" . str_repeat("\t", $indent - 1);
         }
         $vars = [];
 
-        if ($depth >= 0) {
+        $remaining = $context->remainingDepth();
+        if ($remaining >= 0) {
             $outputMask = (array)static::outputMask();
             foreach ($var as $key => $val) {
                 // Sniff for globals as !== explodes in < 5.4
@@ -571,9 +573,9 @@ class Debugger
                 } elseif (array_key_exists($key, $outputMask)) {
                     $val = (string)$outputMask[$key];
                 } elseif ($val !== $var) {
-                    $val = static::_export($val, $depth, $indent);
+                    $val = static::_export($val, $context);
                 }
-                $vars[] = $break . static::exportVar($key) .
+                $vars[] = $break . static::_export($key, $context) .
                     ' => ' .
                     $val;
             }
@@ -588,40 +590,46 @@ class Debugger
      * Handles object to string conversion.
      *
      * @param object $var Object to convert.
-     * @param int $depth The current depth, used for tracking recursion.
-     * @param int $indent The current indentation level.
+     * @param \Cake\Error\DumpContext $context The dump context.
      * @return string
      * @see \Cake\Error\Debugger::exportVar()
      */
-    protected static function _object(object $var, int $depth, int $indent): string
+    protected static function _object(object $var, DumpContext $context): string
     {
         $out = '';
         $props = [];
 
+        $isRef = $context->hasReference($var);
+        $refNum = $context->getReferenceId($var);
+
         $className = get_class($var);
-        $out .= 'object(' . $className . ') {';
+        $out .= "object({$className}) id:{$refNum} {";
+        $indent = $context->getIndent();
         $break = "\n" . str_repeat("\t", $indent);
         $end = "\n" . str_repeat("\t", $indent - 1);
 
-        if ($depth > 0 && method_exists($var, '__debugInfo')) {
-            try {
-                return $out . "\n" .
-                    substr(static::_array($var->__debugInfo(), $depth - 1, $indent), 1, -1) .
-                    $end . '}';
-            } catch (Exception $e) {
-                $message = $e->getMessage();
+        $remaining = $context->remainingDepth();
+        if ($remaining > 0 && $isRef === false) {
+            if (method_exists($var, '__debugInfo')) {
+                try {
+                    return $out . "\n" .
+                        substr(static::_array($var->__debugInfo(), $context->withAddedDepth()), 1, -1) .
+                        $end . '}';
+                } catch (Exception $e) {
+                    $message = $e->getMessage();
 
-                return $out . "\n(unable to export object: $message)\n }";
+                    return $out . "\n(unable to export object: $message)\n }";
+                }
             }
-        }
 
-        if ($depth > 0) {
             $outputMask = (array)static::outputMask();
             $objectVars = get_object_vars($var);
             foreach ($objectVars as $key => $value) {
-                $value = array_key_exists($key, $outputMask)
-                    ? $outputMask[$key]
-                    : static::_export($value, $depth - 1, $indent);
+                if (array_key_exists($key, $outputMask)) {
+                    $value = $outputMask[$key];
+                } else {
+                    $value = static::_export($value, $context->withAddedDepth());
+                }
                 $props[] = "$key => " . $value;
             }
 
@@ -637,7 +645,7 @@ class Debugger
                     $reflectionProperty->setAccessible(true);
                     $property = $reflectionProperty->getValue($var);
 
-                    $value = static::_export($property, $depth - 1, $indent);
+                    $value = static::_export($property, $context->withAddedDepth());
                     $key = $reflectionProperty->name;
                     $props[] = sprintf(
                         '[%s] %s => %s',
