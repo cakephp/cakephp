@@ -1804,15 +1804,16 @@ class View implements EventDispatcherInterface
         $plugin = null;
         list($plugin, $name) = $this->pluginSplit($name);
 
-        $underscored = null;
+        $pluginKey = null;
         if ($plugin) {
-            $underscored = Inflector::underscore($plugin);
+            $pluginKey = str_replace('/', '_', Inflector::underscore($plugin));
         }
+        $elementKey = str_replace(['\\', '/'], '_', $name);
 
         $cache = $options['cache'];
         unset($options['cache'], $options['callbacks'], $options['plugin']);
         $keys = array_merge(
-            [$underscored, $name],
+            [$pluginKey, $elementKey],
             array_keys($options),
             array_keys($data)
         );
