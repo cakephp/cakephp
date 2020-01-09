@@ -824,6 +824,33 @@ class ViewTest extends TestCase
     }
 
     /**
+     * Test elementCache method with namespaces and subfolder
+     *
+     * @return void
+     */
+    public function testElementCacheSubfolder()
+    {
+        Cache::drop('test_view');
+        Cache::setConfig('test_view', [
+            'engine' => 'File',
+            'duration' => '+1 day',
+            'path' => CACHE . 'views/',
+            'prefix' => '',
+        ]);
+        Cache::clear('test_view');
+
+        $View = $this->PostsController->createView();
+        $View->setElementCache('test_view');
+
+        $result = $View->element('subfolder/test_element', [], ['cache' => true]);
+        $expected = 'this is the test element in subfolder';
+        $this->assertEquals($expected, trim($result));
+
+        $result = Cache::read('element__subfolder_test_element', 'test_view');
+        $this->assertEquals($expected, trim($result));
+    }
+
+    /**
      * Test element events
      *
      * @return void
