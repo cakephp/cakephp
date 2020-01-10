@@ -1254,7 +1254,7 @@ class Validation
      * we accept.
      *
      * @param string|array|\Psr\Http\Message\UploadedFileInterface $check The data to read a filename out of.
-     * @return string|bool Either the filename or false on failure.
+     * @return string|false Either the filename or false on failure.
      */
     protected static function getFilename($check)
     {

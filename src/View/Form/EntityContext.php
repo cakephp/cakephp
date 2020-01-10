@@ -323,7 +323,7 @@ class EntityContext implements ContextInterface
      *
      * @param array|null $path Each one of the parts in a path for a field name
      *  or null to get the entity passed in constructor context.
-     * @return \Cake\Datasource\EntityInterface|\Traversable|array|bool
+     * @return \Cake\Datasource\EntityInterface|\Traversable|array|false
      * @throws \RuntimeException When properties cannot be read.
      */
     public function entity($path = null)
@@ -603,7 +603,7 @@ class EntityContext implements ContextInterface
      * @param array $parts Each one of the parts in a path for a field name
      * @param bool $fallback Whether or not to fallback to the last found table
      *  when a non-existent field/property is being encountered.
-     * @return \Cake\ORM\Table|bool Table instance or false
+     * @return \Cake\ORM\Table|false Table instance or false
      */
     protected function _getTable($parts, $fallback = true)
     {
