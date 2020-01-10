@@ -1103,7 +1103,7 @@ class HtmlHelper extends Helper
         if (!empty($options['escape'])) {
             $text = h($text);
         }
-        if ($class && !empty($class)) {
+        if ($class) {
             $options['class'] = $class;
         }
         $tag = 'para';

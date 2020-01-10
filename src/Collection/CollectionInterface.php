@@ -255,7 +255,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * @param callable|string $callback the callback or column name to use for sorting
      * @param int $type the type of comparison to perform, either SORT_STRING
      * SORT_NUMERIC or SORT_NATURAL
-     * @see \Cake\Collection\CollectionIterface::sortBy()
+     * @see \Cake\Collection\CollectionInterface::sortBy()
      * @return mixed The value of the top element in the collection
      */
     public function max($callback, $type = \SORT_NUMERIC);
