@@ -16,11 +16,11 @@ declare(strict_types=1);
 namespace Cake\Http\Client;
 
 use Cake\Http\Cookie\CookieCollection;
+use Laminas\Diactoros\MessageTrait;
+use Laminas\Diactoros\Stream;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 use SimpleXMLElement;
-use Zend\Diactoros\MessageTrait;
-use Zend\Diactoros\Stream;
 
 /**
  * Implements methods for HTTP responses.

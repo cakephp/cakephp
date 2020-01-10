@@ -24,11 +24,11 @@ use Cake\Routing\Exception\RedirectException;
 use Cake\Routing\RouteCollection;
 use Cake\Routing\Router;
 use Cake\Routing\RoutingApplicationInterface;
+use Laminas\Diactoros\Response\RedirectResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Zend\Diactoros\Response\RedirectResponse;
 
 /**
  * Applies routing rules to the request and creates the controller

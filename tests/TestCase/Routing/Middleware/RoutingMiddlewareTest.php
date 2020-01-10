@@ -25,10 +25,10 @@ use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
+use Laminas\Diactoros\Response;
 use TestApp\Application;
 use TestApp\Http\TestRequestHandler;
 use TestApp\Middleware\DumbMiddleware;
-use Zend\Diactoros\Response;
 
 /**
  * Test for RoutingMiddleware

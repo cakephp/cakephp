@@ -41,7 +41,6 @@ jobs:
         extensions: mbstring, intl, apcu, pdo_${{ matrix.db-type }}
         ini-values: apc.enable_cli = 1
         coverage: pcov
-        pecl: false
 
     - name: Install packages
       run: |
@@ -86,7 +85,6 @@ jobs:
         php-version: '7.2'
         extensions: mbstring, intl, apcu
         coverage: none
-        pecl: false
 
     - name: composer install
       run: composer install
@@ -109,7 +107,6 @@ jobs:
         php-version: '7.2'
         extensions: mbstring, intl, apcu
         coverage: none
-        pecl: false
 
     - name: composer install
       run: composer stan-setup

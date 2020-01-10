@@ -127,29 +127,26 @@ class QueryCompiler
      */
     protected function _sqlCompiler(string &$sql, Query $query, ValueBinder $generator): Closure
     {
-        return function ($parts, $name) use (&$sql, $query, $generator): ?string {
+        return function ($part, $partName) use (&$sql, $query, $generator) {
             if (
-                !isset($parts) ||
-                (
-                    (
-                        is_array($parts) ||
-                        $parts instanceof Countable
-                    ) &&
-                    !count($parts)
-                )
+                $part === null ||
+                (is_array($part) && empty($part)) ||
+                ($part instanceof Countable && count($part) === 0)
             ) {
-                return null;
-            }
-            if ($parts instanceof ExpressionInterface) {
-                $parts = [$parts->sql($generator)];
-            }
-            if (isset($this->_templates[$name])) {
-                $parts = $this->_stringifyExpressions((array)$parts, $generator);
-
-                return $sql .= sprintf($this->_templates[$name], implode(', ', $parts));
+                return;
             }
 
-            return $sql .= $this->{'_build' . ucfirst($name) . 'Part'}($parts, $query, $generator);
+            if ($part instanceof ExpressionInterface) {
+                $part = [$part->sql($generator)];
+            }
+            if (isset($this->_templates[$partName])) {
+                $part = $this->_stringifyExpressions((array)$part, $generator);
+                $sql .= sprintf($this->_templates[$partName], implode(', ', $part));
+
+                return;
+            }
+
+            $sql .= $this->{'_build' . $partName . 'Part'}($part, $query, $generator);
         };
     }
 

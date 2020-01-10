@@ -65,6 +65,7 @@ class Digest
         }
         $value = $this->_generateHeader($request, $credentials);
 
+        /** @var \Cake\Http\Client\Request */
         return $request->withHeader('Authorization', $value);
     }
 

@@ -27,7 +27,7 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\I18n\FrozenTime;
 use Cake\TestSuite\TestCase;
-use Zend\Diactoros\Stream;
+use Laminas\Diactoros\Stream;
 
 /**
  * ResponseTest
@@ -1136,7 +1136,7 @@ class ResponseTest extends TestCase
         $this->assertSame('bytes', $new->getHeaderLine('Accept-Ranges'));
         $this->assertSame('binary', $new->getHeaderLine('Content-Transfer-Encoding'));
         $body = $new->getBody();
-        $this->assertInstanceOf('Zend\Diactoros\Stream', $body);
+        $this->assertInstanceOf('Laminas\Diactoros\Stream', $body);
 
         $expected = '/* this is the test asset css file */';
         $this->assertEquals($expected, trim($body->getContents()));

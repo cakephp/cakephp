@@ -155,12 +155,14 @@ class QueryRegressionTest extends TestCase
      */
     public function testEagerLoadingBelongsToManyList()
     {
-        $this->expectException(\InvalidArgumentException::class);
         $this->loadFixtures('Articles', 'Tags', 'ArticlesTags');
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags', [
             'finder' => 'list',
         ]);
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('"_joinData" is missing from the belongsToMany results');
         $table->find()->contain('Tags')->toArray();
     }
 
@@ -1606,7 +1608,7 @@ class QueryRegressionTest extends TestCase
         ]);
         $query = $table->find()
             ->select(['score' => 100])
-            ->enableAutoFields(true)
+            ->enableAutoFields()
             ->contain(['Comments'])
             ->limit(5)
             ->order(['score' => 'desc']);

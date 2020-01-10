@@ -24,11 +24,11 @@ use DateTime;
 use DateTimeInterface;
 use DateTimeZone;
 use InvalidArgumentException;
+use Laminas\Diactoros\MessageTrait;
+use Laminas\Diactoros\Stream;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use SplFileInfo;
-use Zend\Diactoros\MessageTrait;
-use Zend\Diactoros\Stream;
 
 /**
  * Responses contain the response text, status and headers of a HTTP response.
@@ -1087,7 +1087,7 @@ class Response implements ResponseInterface
         } elseif (is_int($time)) {
             $result = new DateTime(date('Y-m-d H:i:s', $time));
         } else {
-            $result = new DateTime($time);
+            $result = new DateTime($time ?? 'now');
         }
 
         /** @psalm-suppress UndefinedInterfaceMethod */

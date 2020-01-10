@@ -990,7 +990,7 @@ abstract class Association
 
         $property = $options['propertyPath'];
         $propertyPath = explode('.', $property);
-        $query->formatResults(function ($results) use ($formatters, $property, $propertyPath) {
+        $query->formatResults(function ($results) use ($formatters, $property, $propertyPath, $query) {
             $extracted = [];
             foreach ($results as $result) {
                 foreach ($propertyPath as $propertyPathItem) {
@@ -1008,13 +1008,16 @@ abstract class Association
             }
 
             /** @var \Cake\Collection\CollectionInterface $results */
-            return $results
-                ->insert($property, $extracted)
-                ->map(function ($result) {
+            $results = $results->insert($property, $extracted);
+            if ($query->isHydrationEnabled()) {
+                $results = $results->map(function ($result) {
                     $result->clean();
 
                     return $result;
                 });
+            }
+
+            return $results;
         }, Query::PREPEND);
     }
 

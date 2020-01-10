@@ -30,8 +30,8 @@ use Cake\Test\Fixture\AssertIntegrationTestCase;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
+use Laminas\Diactoros\UploadedFile;
 use PHPUnit\Framework\AssertionFailedError;
-use Zend\Diactoros\UploadedFile;
 
 /**
  * Self test of the IntegrationTestTrait

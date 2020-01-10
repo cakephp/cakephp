@@ -16,12 +16,12 @@ declare(strict_types=1);
  */
 namespace Cake\Http;
 
-use Zend\Diactoros\CallbackStream as BaseCallbackStream;
+use Laminas\Diactoros\CallbackStream as BaseCallbackStream;
 
 /**
  * Implementation of PSR HTTP streams.
  *
- * This differs from Zend\Diactoros\Callback stream in that
+ * This differs from Laminas\Diactoros\Callback stream in that
  * it allows the use of `echo` inside the callback, and gracefully
  * handles the callback not returning a string.
  *

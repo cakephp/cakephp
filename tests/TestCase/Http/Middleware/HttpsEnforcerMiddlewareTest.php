@@ -22,9 +22,9 @@ use Cake\Http\Middleware\HttpsEnforcerMiddleware;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
+use Laminas\Diactoros\Response\RedirectResponse;
+use Laminas\Diactoros\Uri;
 use TestApp\Http\TestRequestHandler;
-use Zend\Diactoros\Response\RedirectResponse;
-use Zend\Diactoros\Uri;
 
 /**
  * Test for HttpsEnforcerMiddleware

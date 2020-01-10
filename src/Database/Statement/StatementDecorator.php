@@ -192,7 +192,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * ```
      *
      * @param string|int $type 'num' for positional columns, assoc for named columns
-     * @return array|false Result array containing columns and values or false if no results
+     * @return mixed Result array containing columns and values or false if no results
      * are left
      */
     public function fetch($type = self::FETCH_TYPE_NUM)

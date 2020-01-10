@@ -329,7 +329,7 @@ class ResultSetTest extends TestCase
             ->select(['Articles.id', 'Articles.title', 'Authors.name'])
             ->contain(['Authors'])
             ->where(['Articles.id' => $article->id])
-            ->enableAutoFields(false)
+            ->disableAutoFields()
             ->enableHydration(false)
             ->first();
 
@@ -373,7 +373,7 @@ class ResultSetTest extends TestCase
     {
         $comments = $this->getTableLocator()->get('Comments');
         $query = $comments->find()->select(['Other__field' => 'test']);
-        $query->enableAutoFields(false);
+        $query->disableAutoFields();
 
         $row = ['Other__field' => 'test'];
         $statement = $this->getMockBuilder('Cake\Database\StatementInterface')->getMock();

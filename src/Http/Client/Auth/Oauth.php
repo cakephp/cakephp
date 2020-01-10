@@ -88,6 +88,7 @@ class Oauth
                 throw new Exception(sprintf('Unknown Oauth signature method %s', $credentials['method']));
         }
 
+        /** @var \Cake\Http\Client\Request */
         return $request->withHeader('Authorization', $value);
     }
 
