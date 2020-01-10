@@ -2250,8 +2250,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface $entities Entities to delete.
      * @param array|\ArrayAccess $options Options used when calling Table::save() for each entity.
-     * @return bool|\Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface
-     *  False on failure, entities list on success.
+     * @return \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface|false Entities list
+     *   on success, false on failure.
      * @throws \Exception
      * @see \Cake\ORM\Table::delete() for options and events related to this method.
      */
