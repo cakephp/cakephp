@@ -178,7 +178,7 @@ class Session
                 PHP_VERSION_ID >= 70300
                 && ($name !== 'php' || empty(ini_get('session.cookie_samesite')))
             ) {
-                $defaults['php']['ini']['session.cookie_samesite'] = 'Strict';
+                $defaults['php']['ini']['session.cookie_samesite'] = 'Lax';
             }
 
             return $defaults[$name];
