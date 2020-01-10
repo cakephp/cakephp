@@ -406,7 +406,7 @@ parameters:
 			path: src/Event/EventManager.php
 
 		-
-			message: "#^Call to function is_int\\(\\) with bool\\|string will always evaluate to false\\.$#"
+			message: "#^Call to function is_int\\(\\) with string\\|false will always evaluate to false\\.$#"
 			count: 1
 			path: src/Filesystem/File.php
 
