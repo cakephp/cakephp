@@ -3187,7 +3187,7 @@ class QueryTest extends TestCase
         $entity->tiny = 1;
         $entity->small = 10;
 
-        $table->save($entity);
+        $table->saveOrFail($entity);
         $out = $table->find()
             ->where([
                 'cost' => $big,
@@ -3199,7 +3199,7 @@ class QueryTest extends TestCase
         $small = '0.123456789012345';
         $entity = $table->newEntity(['fraction' => $small]);
 
-        $table->save($entity);
+        $table->saveOrFail($entity);
         $out = $table->find()
             ->where([
                 'fraction' => $small,
@@ -3211,7 +3211,7 @@ class QueryTest extends TestCase
         $small = 0.123456789012345;
         $entity = $table->newEntity(['fraction' => $small]);
 
-        $table->save($entity);
+        $table->saveOrFail($entity);
         $out = $table->find()
             ->where([
                 'fraction' => $small,
