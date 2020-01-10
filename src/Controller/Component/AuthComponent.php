@@ -774,7 +774,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
      * Triggers `Auth.afterIdentify` event which the authenticate classes can listen
      * to.
      *
-     * @return array|bool User record data, or false, if the user could not be identified.
+     * @return array|false User record data, or false, if the user could not be identified.
      */
     public function identify()
     {
@@ -942,7 +942,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
     /**
      * Set a flash message. Uses the Flash component with values from `flash` config.
      *
-     * @param string|bool $message The message to set.
+     * @param string|false $message The message to set. False to skip.
      * @return void
      */
     public function flash($message): void
