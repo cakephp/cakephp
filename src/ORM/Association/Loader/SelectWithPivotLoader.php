@@ -130,7 +130,7 @@ class SelectWithPivotLoader extends SelectLoader
     /**
      * @inheritDoc
      */
-    protected function _assertFieldsPresent(Query $fetchQuery, array $key)
+    protected function _assertFieldsPresent($fetchQuery, $key)
     {
         // _buildQuery() manually adds in required fields from junction table
     }

@@ -1086,7 +1086,7 @@ class ViewTest extends TestCase
             'path' => CACHE . 'views/',
             'prefix' => '',
         ]);
-        Cache::clear('test_view');
+        Cache::clear(true, 'test_view');
 
         $View = $this->PostsController->createView();
         $View->setElementCache('test_view');
