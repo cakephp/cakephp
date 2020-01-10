@@ -744,7 +744,7 @@ class BelongsToMany extends Association
      * @param array $options list of options accepted by `Table::save()`
      * @throws \InvalidArgumentException if the property representing the association
      * in the parent entity cannot be traversed
-     * @return \Cake\Datasource\EntityInterface|bool The parent entity after all links have been
+     * @return \Cake\Datasource\EntityInterface|false The parent entity after all links have been
      * created if no errors happened, false otherwise
      */
     protected function _saveTarget(EntityInterface $parentEntity, $entities, $options)

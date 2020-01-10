@@ -139,10 +139,10 @@ class File
     /**
      * Return the contents of this file as a string.
      *
-     * @param string|bool $bytes where to start
+     * @param string|false $bytes where to start
      * @param string $mode A `fread` compatible mode.
      * @param bool $force If true then the file will be re-opened even if its already opened, otherwise it won't
-     * @return string|false string on success, false on failure
+     * @return string|false String on success, false on failure
      */
     public function read($bytes = false, $mode = 'rb', $force = false)
     {

@@ -353,7 +353,7 @@ class ShellDispatcher
      * Check if a shell class exists for the given name.
      *
      * @param string $shell The shell name to look for.
-     * @return string|bool Either the classname or false.
+     * @return string|false Either the classname or false.
      */
     protected function _shellExists($shell)
     {

@@ -270,7 +270,7 @@ class PaginatorHelper extends Helper
     /**
      * Generate an active/inactive link for next/prev methods.
      *
-     * @param string|bool $text The enabled text for the link.
+     * @param string|false $text The enabled text for the link.
      * @param bool $enabled Whether or not the enabled/disabled version should be created.
      * @param array $options An array of options from the calling method.
      * @param array $templates An array of templates with the 'active' and 'disabled' keys.
