@@ -56,6 +56,15 @@ class ConsoleOutputTest extends TestCase
         unset($this->output);
     }
 
+    public function testNoColorEnvironmentVariable()
+    {
+        $_SERVER['NO_COLOR'] = '1';
+        $output = new ConsoleOutput();
+        $this->assertSame(ConsoleOutput::PLAIN, $output->getOutputAs());
+
+        unset($_SERVER['NO_COLOR']);
+    }
+
     /**
      * test writing with no new line
      *
