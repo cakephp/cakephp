@@ -128,7 +128,7 @@ class FormContext implements ContextInterface
      */
     protected function _schemaDefault(string $field)
     {
-        $field = $this->_form->schema()->field($field);
+        $field = $this->_form->getSchema()->field($field);
         if ($field) {
             return $field['default'];
         }
@@ -201,7 +201,7 @@ class FormContext implements ContextInterface
      */
     public function fieldNames(): array
     {
-        return $this->_form->schema()->fields();
+        return $this->_form->getSchema()->fields();
     }
 
     /**
@@ -209,7 +209,7 @@ class FormContext implements ContextInterface
      */
     public function type(string $field): ?string
     {
-        return $this->_form->schema()->fieldType($field);
+        return $this->_form->getSchema()->fieldType($field);
     }
 
     /**
@@ -217,7 +217,7 @@ class FormContext implements ContextInterface
      */
     public function attributes(string $field): array
     {
-        $column = (array)$this->_form->schema()->field($field);
+        $column = (array)$this->_form->getSchema()->field($field);
         $whiteList = ['length' => null, 'precision' => null];
 
         return array_intersect_key($column, $whiteList);

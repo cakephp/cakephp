@@ -156,7 +156,7 @@ class FormContextTest extends TestCase
     public function testValDefault()
     {
         $form = new Form();
-        $form->schema()->addField('name', ['default' => 'schema default']);
+        $form->getSchema()->addField('name', ['default' => 'schema default']);
         $context = new FormContext($this->request, ['entity' => $form]);
 
         $result = $context->val('title');
@@ -204,7 +204,7 @@ class FormContextTest extends TestCase
     public function testType()
     {
         $form = new Form();
-        $form->schema()
+        $form->getSchema()
             ->addField('email', 'string')
             ->addField('user_id', 'integer');
 
@@ -232,7 +232,7 @@ class FormContextTest extends TestCase
         $result = $context->fieldNames();
         $this->assertEquals($expected, $result);
 
-        $form->schema()
+        $form->getSchema()
             ->addField('email', 'string')
             ->addField('password', 'string');
         $context = new FormContext($this->request, [
@@ -252,7 +252,7 @@ class FormContextTest extends TestCase
     public function testAttributes()
     {
         $form = new Form();
-        $form->schema()
+        $form->getSchema()
             ->addField('email', [
                 'type' => 'string',
                 'length' => 10,
