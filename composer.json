@@ -53,7 +53,7 @@
         "mikey179/vfsstream": "^1.6",
         "paragonie/csp-builder": "^2.3",
         "phpunit/phpunit": "~8.5.0",
-        "rector/rector-prefixed": "^0.6.9"
+        "rector/rector": "dev-master"
     },
     "autoload": {
         "psr-4": {

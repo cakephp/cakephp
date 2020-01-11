@@ -1,0 +1,14 @@
+parameters:
+    # see https://github.com/rectorphp/rector/issues/2743
+    project_type: "open-source"
+
+    paths:
+        - src
+
+    sets:
+        - dead-code
+
+
+    exclude_rectors:
+        # keep for xdebug
+        - 'Rector\CodeQuality\Rector\Return_\SimplifyUselessVariableRector'

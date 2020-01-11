@@ -1,0 +1,19 @@
+name: Rector CI
+
+on:
+  pull_request:
+
+jobs:
+  rector_ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: shivammathur/setup-php@v1
+        with:
+          php-version: 7.2
+          extensions: mbstring, intl, apcu
+          coverage: none
+
+      - run: composer install
+
+      - run: vendor/bin/rector process --dry-run --config rector-ci.yaml --ansi --no-progress-bar
