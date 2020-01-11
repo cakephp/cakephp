@@ -31,6 +31,7 @@ class FormTest extends TestCase
     /**
      * Test schema()
      *
+     * @group deprecated
      * @return void
      */
     public function testSchema()
@@ -47,6 +48,27 @@ class FormTest extends TestCase
 
         $form = new AppForm();
         $this->assertInstanceOf(FormSchema::class, $form->schema());
+    }
+
+    /**
+     * Test setSchema() and getSchema()
+     *
+     * @return void
+     */
+    public function testSetGetSchema()
+    {
+        $form = new Form();
+        $schema = $form->getSchema();
+
+        $this->assertInstanceOf('Cake\Form\Schema', $schema);
+        $this->assertSame($schema, $form->getSchema(), 'Same instance each time');
+
+        $schema = new Schema();
+        $this->assertSame($form, $form->setSchema($schema));
+        $this->assertSame($schema, $form->getSchema());
+
+        $form = new AppForm();
+        $this->assertInstanceOf(FormSchema::class, $form->getSchema());
     }
 
     /**
