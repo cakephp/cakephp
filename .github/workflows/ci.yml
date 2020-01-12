@@ -65,9 +65,9 @@ jobs:
         if [[ ${{ matrix.db-type }} == 'pgsql' ]]; then export DB_DSN='postgres://postgres@127.0.0.1:${{ job.services.postgres.ports['5432'] }}/postgres'; fi
 
         if [[ ${{ matrix.php-version }} == '7.2' ]]; then
-          vendor/bin/phpunit
+          vendor/bin/phpunit --filter testSelectLargeNumbers "tests\TestCase\ORM\QueryTest.php"
         else
-          vendor/bin/phpunit --verbose
+          vendor/bin/phpunit --verbose --filter testSelectLargeNumbers "tests\TestCase\ORM\QueryTest.php"
         fi
 
   coding-standard:
