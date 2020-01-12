@@ -77,10 +77,6 @@ class TypeFactory
             throw new InvalidArgumentException(sprintf('Unknown type "%s"', $name));
         }
 
-        if ($name === 'decimal' && static::$_types[$name] !== Type\DecimalType::class) {
-            throw new \RuntimeException('Not set to DecimalType');
-        }
-
         /** @var \Cake\Database\TypeInterface */
         return static::$_builtTypes[$name] = new static::$_types[$name]($name);
     }
@@ -109,6 +105,11 @@ class TypeFactory
      */
     public static function set(string $name, TypeInterface $instance): void
     {
+        if ($name === 'decimal' && !$instance instanceof Type\DecimalType) {
+            \debug_print_backtrace();
+            throw new \RuntimeException('Not set to DecimalType');
+        }
+
         static::$_builtTypes[$name] = $instance;
         static::$_types[$name] = get_class($instance);
     }
