@@ -3182,12 +3182,16 @@ class QueryTest extends TestCase
 
         $big = '1234567890123456789.2';
         $table = $this->getTableLocator()->get('Datatypes');
+        print_r($table->getSchema());
+
         $entity = $table->newEntity([]);
         $entity->cost = $big;
         $entity->tiny = 1;
         $entity->small = 10;
 
         $table->saveOrFail($entity);
+        print_r($table->find()->all()->toList());
+
         $out = $table->find()
             ->where([
                 'cost' => $big,
