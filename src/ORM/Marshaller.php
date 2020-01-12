@@ -169,8 +169,8 @@ class Marshaller
     public function one(array $data, array $options = []): EntityInterface
     {
         [$data, $options] = $this->_prepareDataAndOptions($data, $options);
-        echo 'Marshaller::one' . PHP_EOL;
-        print_r($data);
+        //echo 'Marshaller::one' . PHP_EOL;
+        //print_r($data);
 
         $primaryKey = (array)$this->_table->getPrimaryKey();
         $entityClass = $this->_table->getEntityClass();
@@ -184,8 +184,8 @@ class Marshaller
             }
         }
         $errors = $this->_validate($data, $options, true);
-        echo 'Marshaller::one - _validate' . PHP_EOL;
-        print_r($data);
+        //echo 'Marshaller::one - _validate' . PHP_EOL;
+        //print_r($data);
 
         $options['isMerge'] = false;
         $propertyMap = $this->_buildPropertyMap($data, $options);
@@ -209,8 +209,8 @@ class Marshaller
             }
         }
 
-        echo 'Marshaller::one - properties' . PHP_EOL;
-        print_r($properties);
+        //echo 'Marshaller::one - properties' . PHP_EOL;
+        //print_r($properties);
         if (isset($options['fields'])) {
             foreach ((array)$options['fields'] as $field) {
                 if (array_key_exists($field, $properties)) {
@@ -221,8 +221,8 @@ class Marshaller
             $entity->set($properties);
         }
 
-        echo 'Marshaller::one - set' . PHP_EOL;
-        print_r($entity);
+        //echo 'Marshaller::one - set' . PHP_EOL;
+        //print_r($entity);
 
         // Don't flag clean association entities as
         // dirty so we don't persist empty records.

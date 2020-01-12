@@ -3206,7 +3206,7 @@ class QueryTest extends TestCase
         print_r($entity);
         $extracted = $entity->extract(['fraction']);
         print_r($extracted);
-        echo 'fraction - ' . $extracted['fraction'] . PHP_EOL;
+        echo 'fraction - ' . gettype($extracted['fraction']) . PHP_EOL;
 
         Log::setConfig('queryLog', [
             'className' => 'Array',
