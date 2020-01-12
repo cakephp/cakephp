@@ -3196,7 +3196,7 @@ class QueryTest extends TestCase
         $this->assertNotEmpty($out, 'Should get a record');
         $this->assertSame($big, $out->cost);
 
-        $small = '0.12345678901234';
+        $small = '0.123456789012345';
         $entity = $table->newEntity(['fraction' => $small]);
 
         $table->saveOrFail($entity);
@@ -3206,9 +3206,9 @@ class QueryTest extends TestCase
             ])
             ->first();
         $this->assertNotEmpty($out, 'Should get a record');
-        $this->assertRegExp('/^0?\.12345678901234/', $out->fraction);
+        $this->assertRegExp('/^0?\.123456789012345/', $out->fraction);
 
-        $small = 0.12345678901234;
+        $small = 0.123456789012345;
         $entity = $table->newEntity(['fraction' => $small]);
 
         $table->saveOrFail($entity);
