@@ -3202,7 +3202,16 @@ class QueryTest extends TestCase
         $small = '0.123456789012345';
         $entity = $table->newEntity(['fraction' => $small]);
 
+        Log::setConfig('queryLog', [
+            'className' => 'Array',
+            'scopes' => ['queriesLog'],
+        ]);
+        $this->connection->enableQueryLogging();
         $table->saveOrFail($entity);
+        $this->connection->disableQueryLogging();
+        print_r(Log::engine('queryLog')->read());
+        Log::drop('queryLog');
+
         print_r($table->find()->all()->toList());
         $out = $table->find()
             ->where([
