@@ -18,7 +18,6 @@ namespace Cake\Test\TestCase\Database\Type;
 
 use Cake\Database\Driver;
 use Cake\Database\Type\DecimalType;
-use Cake\Database\TypeFactory;
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
 use PDO;
@@ -56,7 +55,7 @@ class DecimalTypeTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->type = TypeFactory::build('decimal');
+        $this->type = new DecimalType();
         $this->driver = $this->getMockBuilder(Driver::class)->getMock();
         $this->localeString = I18n::getLocale();
         $this->numberClass = DecimalType::$numberClass;
@@ -214,23 +213,24 @@ class DecimalTypeTest extends TestCase
      */
     public function testMarshalWithLocaleParsing()
     {
-        I18n::setLocale('de_DE');
         $this->type->useLocaleParser();
+
+        I18n::setLocale('de_DE');
         $expected = 1234.53;
         $result = $this->type->marshal('1.234,53');
         $this->assertEquals($expected, $result);
 
         I18n::setLocale('en_US');
-        $this->type->useLocaleParser();
         $expected = 1234;
         $result = $this->type->marshal('1,234');
         $this->assertEquals($expected, $result);
 
         I18n::setLocale('pt_BR');
-        $this->type->useLocaleParser();
         $expected = 5987123.231;
         $result = $this->type->marshal('5.987.123,231');
         $this->assertEquals($expected, $result);
+
+        $this->type->useLocaleParser(false);
     }
 
     /**
@@ -240,12 +240,14 @@ class DecimalTypeTest extends TestCase
      */
     public function testMarshalWithLocaleParsingDanish()
     {
-        I18n::setLocale('da_DK');
-
         $this->type->useLocaleParser();
+
+        I18n::setLocale('da_DK');
         $expected = '47500';
         $result = $this->type->marshal('47.500');
         $this->assertSame($expected, $result);
+
+        $this->type->useLocaleParser(false);
     }
 
     /**
