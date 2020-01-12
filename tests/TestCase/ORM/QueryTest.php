@@ -3201,7 +3201,9 @@ class QueryTest extends TestCase
         $this->assertSame($big, $out->cost);
 
         $small = '0.123456789012345';
+        print_r($small);
         $entity = $table->newEntity(['fraction' => $small]);
+        print_r($entity->extract(['fraction']));
 
         Log::setConfig('queryLog', [
             'className' => 'Array',
