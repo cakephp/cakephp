@@ -28,6 +28,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Event\EventInterface;
 use Cake\I18n\FrozenTime;
 use Cake\I18n\Time;
+use Cake\Log\Log;
 use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
 use Cake\TestSuite\TestCase;
