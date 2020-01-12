@@ -9,7 +9,7 @@ class PropertyNode implements NodeInterface
     private $visibility;
     private $value;
 
-    public function __construct(string $name, string $visibility, NodeInterface $value)
+    public function __construct(string $name, ?string $visibility, NodeInterface $value)
     {
         $this->name = $name;
         $this->visibility = $visibility;
@@ -21,7 +21,7 @@ class PropertyNode implements NodeInterface
         return $this->value;
     }
 
-    public function getVisibility(): string
+    public function getVisibility(): ?string
     {
         return $this->visibility;
     }

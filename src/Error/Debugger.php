@@ -17,6 +17,14 @@ declare(strict_types=1);
 namespace Cake\Error;
 
 use Cake\Core\InstanceConfigTrait;
+use Cake\Error\DumpFormatter\TextFormatter;
+use Cake\Error\DumpNode\ArrayNode;
+use Cake\Error\DumpNode\ClassNode;
+use Cake\Error\DumpNode\ItemNode;
+use Cake\Error\DumpNode\NodeInterface;
+use Cake\Error\DumpNode\PropertyNode;
+use Cake\Error\DumpNode\ReferenceNode;
+use Cake\Error\DumpNode\ScalarNode;
 use Cake\Log\Log;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
@@ -496,8 +504,10 @@ class Debugger
     public static function exportVar($var, int $maxDepth = 3): string
     {
         $context = new DumpContext($maxDepth);
+        $node = static::_export($var, $context);
 
-        return static::_export($var, $context);
+        $formatter = new TextFormatter();
+        return $formatter->dump($node);
     }
 
     /**
@@ -505,31 +515,27 @@ class Debugger
      *
      * @param mixed $var The variable to dump.
      * @param \Cake\Error\DumpContext $context Dump context
-     * @return string The dumped variable.
+     * @return \Cake\Error\DumpNode\NodeInterface The dumped variable.
      */
-    protected static function _export($var, DumpContext $context): string
+    protected static function _export($var, DumpContext $context): NodeInterface
     {
         switch (static::getType($var)) {
             case 'boolean':
-                return $var ? 'true' : 'false';
+                return new ScalarNode('bool', $var);
             case 'integer':
-                return '(int) ' . $var;
+                return new ScalarNode('int', $var);
             case 'float':
-                return '(float) ' . $var;
+                return new ScalarNode('float', $var);
             case 'string':
-                if (trim($var) === '' && ctype_space($var) === false) {
-                    return "''";
-                }
-
-                return "'" . $var . "'";
+                return new ScalarNode('string', $var);
             case 'array':
                 return static::_array($var, $context->withAddedDepthAndIndent());
             case 'resource':
-                return strtolower(gettype($var));
+                return new ScalarNode('resource', gettype($var));
             case 'null':
-                return 'null';
+                return new ScalarNode('null', null);
             case 'unknown':
-                return 'unknown';
+                return new ScalarNode('unknown', null);
             default:
                 return static::_object($var, $context->withAddedDepthAndIndent());
         }
@@ -550,18 +556,11 @@ class Debugger
      *
      * @param array $var The array to export.
      * @param \Cake\Error\DumpContext $context The current dump context.
-     * @return string Exported array.
+     * @return \Cake\Error\DumpNode\ArrayNode Exported array.
      */
-    protected static function _array(array $var, DumpContext $context): string
+    protected static function _array(array $var, DumpContext $context): ArrayNode
     {
-        $out = '[';
-        $break = $end = '';
-        if (!empty($var)) {
-            $indent = $context->getIndent();
-            $break = "\n" . str_repeat("\t", $indent);
-            $end = "\n" . str_repeat("\t", $indent - 1);
-        }
-        $vars = [];
+        $items = [];
 
         $remaining = $context->remainingDepth();
         if ($remaining >= 0) {
@@ -569,56 +568,51 @@ class Debugger
             foreach ($var as $key => $val) {
                 // Sniff for globals as !== explodes in < 5.4
                 if ($key === 'GLOBALS' && is_array($val) && isset($val['GLOBALS'])) {
-                    $val = '[recursion]';
+                    $node = new ScalarNode('string', '[recursion]');
                 } elseif (array_key_exists($key, $outputMask)) {
-                    $val = (string)$outputMask[$key];
+                    $node = new ScalarNode('string', $outputMask[$key]);
                 } elseif ($val !== $var) {
-                    $val = static::_export($val, $context);
+                    $node = static::_export($val, $context);
                 }
-                $vars[] = $break . static::_export($key, $context) .
-                    ' => ' .
-                    $val;
+                $items[] = new ItemNode($key, $node);
             }
         } else {
-            $vars[] = $break . '[maximum depth reached]';
+            $items[] = new ItemNode('', new ScalarNode('string', '[maximum depth reached]'));
         }
 
-        return $out . implode(',', $vars) . $end . ']';
+        return new ArrayNode($items);
     }
 
     /**
-     * Handles object to string conversion.
+     * Handles object to node conversion.
      *
      * @param object $var Object to convert.
      * @param \Cake\Error\DumpContext $context The dump context.
-     * @return string
+     * @return ClassNode|ReferenceNode
      * @see \Cake\Error\Debugger::exportVar()
      */
-    protected static function _object(object $var, DumpContext $context): string
+    protected static function _object(object $var, DumpContext $context): NodeInterface
     {
-        $out = '';
-        $props = [];
-
         $isRef = $context->hasReference($var);
         $refNum = $context->getReferenceId($var);
 
         $className = get_class($var);
-        $out .= "object({$className}) id:{$refNum} {";
-        $indent = $context->getIndent();
-        $break = "\n" . str_repeat("\t", $indent);
-        $end = "\n" . str_repeat("\t", $indent - 1);
+        if ($isRef) {
+            return new ReferenceNode($className, $refNum);
+        }
+        $node = new ClassNode($className, $refNum);
 
         $remaining = $context->remainingDepth();
         if ($remaining > 0 && $isRef === false) {
             if (method_exists($var, '__debugInfo')) {
                 try {
-                    return $out . "\n" .
-                        substr(static::_array($var->__debugInfo(), $context->withAddedDepth()), 1, -1) .
-                        $end . '}';
+                    foreach ($var->__debugInfo() as $key => $val) {
+                        $node->addProperty(new PropertyNode($key, null, static::_export($val, $context)));
+                    }
                 } catch (Exception $e) {
                     $message = $e->getMessage();
 
-                    return $out . "\n(unable to export object: $message)\n }";
+                    return new ScalarNode('string', "(unable to export object: $message)");
                 }
             }
 
@@ -627,10 +621,10 @@ class Debugger
             foreach ($objectVars as $key => $value) {
                 if (array_key_exists($key, $outputMask)) {
                     $value = $outputMask[$key];
-                } else {
-                    $value = static::_export($value, $context->withAddedDepth());
                 }
-                $props[] = "$key => " . $value;
+                $node->addProperty(
+                    new PropertyNode($key, 'public', static::_export($value, $context->withAddedDepth()))
+                );
             }
 
             $ref = new ReflectionObject($var);
@@ -643,24 +637,16 @@ class Debugger
                 $reflectionProperties = $ref->getProperties($filter);
                 foreach ($reflectionProperties as $reflectionProperty) {
                     $reflectionProperty->setAccessible(true);
-                    $property = $reflectionProperty->getValue($var);
+                    $value = $reflectionProperty->getValue($var);
 
-                    $value = static::_export($property, $context->withAddedDepth());
-                    $key = $reflectionProperty->name;
-                    $props[] = sprintf(
-                        '[%s] %s => %s',
-                        $visibility,
-                        $key,
-                        array_key_exists($key, $outputMask) ? $outputMask[$key] : $value
+                    $node->addProperty(
+                        new PropertyNode($key, $visibility, static::_export($value, $context->withAddedDepth()))
                     );
                 }
             }
-
-            $out .= $break . implode($break, $props) . $end;
         }
-        $out .= '}';
 
-        return $out;
+        return $node;
     }
 
     /**

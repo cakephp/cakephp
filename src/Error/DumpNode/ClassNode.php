@@ -9,7 +9,7 @@ class ClassNode implements NodeInterface
     private $id;
     private $properties = [];
 
-    public function __construct(string $class, string $id)
+    public function __construct(string $class, int $id)
     {
         $this->class = $class;
         $this->id = $id;
@@ -27,7 +27,7 @@ class ClassNode implements NodeInterface
         return $this->class;
     }
 
-    public function getId(): string
+    public function getId(): int
     {
         return $this->id;
     }

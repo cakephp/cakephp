@@ -8,7 +8,7 @@ class ReferenceNode implements NodeInterface
     private $class;
     private $id;
 
-    public function __construct(string $class, string $id)
+    public function __construct(string $class, int $id)
     {
         $this->class = $class;
         $this->id = $id;
@@ -19,9 +19,9 @@ class ReferenceNode implements NodeInterface
         return $this->class;
     }
 
-    public function getId(): string
+    public function getId(): int
     {
-        return $this->visibility;
+        return $this->id;
     }
 
     public function getChildren(): array

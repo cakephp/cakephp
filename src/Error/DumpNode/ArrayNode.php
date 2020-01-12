@@ -9,6 +9,7 @@ class ArrayNode implements NodeInterface
 
     public function __construct(array $items = [])
     {
+        $this->items = [];
         foreach ($items as $item) {
             $this->add($item);
         }
