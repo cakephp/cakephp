@@ -3203,6 +3203,7 @@ class QueryTest extends TestCase
         $small = '0.123456789012345';
         echo $small . ' - ' . gettype($small) . PHP_EOL;
         $entity = $table->newEntity(['fraction' => $small]);
+        print_r($entity);
         $extracted = $entity->extract(['fraction']);
         print_r($extracted);
         echo 'fraction - ' . $extracted['fraction'] . PHP_EOL;
