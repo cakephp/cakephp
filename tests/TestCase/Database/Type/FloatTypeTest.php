@@ -55,7 +55,7 @@ class FloatTypeTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->type = TypeFactory::build('float');
+        $this->type = new FloatType();
         $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
         $this->localeString = I18n::getLocale();
         $this->numberClass = FloatType::$numberClass;
@@ -176,23 +176,24 @@ class FloatTypeTest extends TestCase
      */
     public function testMarshalWithLocaleParsing()
     {
-        I18n::setLocale('de_DE');
         $this->type->useLocaleParser();
+
+        I18n::setLocale('de_DE');
         $expected = 1234.53;
         $result = $this->type->marshal('1.234,53');
         $this->assertEquals($expected, $result);
 
         I18n::setLocale('en_US');
-        $this->type->useLocaleParser();
         $expected = 1234;
         $result = $this->type->marshal('1,234');
         $this->assertEquals($expected, $result);
 
         I18n::setLocale('pt_BR');
-        $this->type->useLocaleParser();
         $expected = 5987123.231;
         $result = $this->type->marshal('5.987.123,231');
         $this->assertEquals($expected, $result);
+
+        $this->type->useLocaleParser(false);
     }
 
     /**
