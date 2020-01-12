@@ -2871,7 +2871,6 @@ class PaginatorHelperTest extends TestCase
         $result = $this->Paginator->last(3);
         $this->assertSame('', $result, 'When inside the last links range, no links should be made');
 
-
         $result = $this->Paginator->last('lastest', ['url' => ['action' => 'paged']]);
         $expected = [
             'li' => ['class' => 'last'],
