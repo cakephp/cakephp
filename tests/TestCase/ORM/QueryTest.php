@@ -3190,7 +3190,6 @@ class QueryTest extends TestCase
         $entity->small = 10;
 
         $table->saveOrFail($entity);
-        print_r($table->find()->all()->toList());
 
         $out = $table->find()
             ->where([
@@ -3204,6 +3203,7 @@ class QueryTest extends TestCase
         $entity = $table->newEntity(['fraction' => $small]);
 
         $table->saveOrFail($entity);
+        print_r($table->find()->all()->toList());
         $out = $table->find()
             ->where([
                 'fraction' => $small,
