@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Type;
 
 use Cake\Database\Type\FloatType;
-use Cake\Database\TypeFactory;
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
 use PDO;

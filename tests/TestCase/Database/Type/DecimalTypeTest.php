@@ -18,7 +18,6 @@ namespace Cake\Test\TestCase\Database\Type;
 
 use Cake\Database\Driver;
 use Cake\Database\Type\DecimalType;
-use Cake\Database\TypeFactory;
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
 use PDO;
