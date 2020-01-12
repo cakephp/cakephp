@@ -5,7 +5,14 @@ namespace Cake\Error\DumpNode;
 
 class ScalarNode implements NodeInterface
 {
+    /**
+     * @var string
+     */
     private $type;
+
+    /**
+     * @var string|int|float|bool|null
+     */
     private $value;
 
     public function __construct(string $type, $value)

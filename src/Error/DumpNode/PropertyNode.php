@@ -16,7 +16,7 @@ class PropertyNode implements NodeInterface
         $this->value = $value;
     }
 
-    public function getValue()
+    public function getValue(): NodeInterface
     {
         return $this->value;
     }

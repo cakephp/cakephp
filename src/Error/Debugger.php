@@ -25,6 +25,7 @@ use Cake\Error\DumpNode\NodeInterface;
 use Cake\Error\DumpNode\PropertyNode;
 use Cake\Error\DumpNode\ReferenceNode;
 use Cake\Error\DumpNode\ScalarNode;
+use Cake\Error\DumpNode\SpecialNode;
 use Cake\Log\Log;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
@@ -504,7 +505,7 @@ class Debugger
     public static function exportVar($var, int $maxDepth = 3): string
     {
         $context = new DumpContext($maxDepth);
-        $node = static::_export($var, $context);
+        $node = static::export($var, $context);
 
         $formatter = new TextFormatter();
         return $formatter->dump($node);
@@ -517,7 +518,7 @@ class Debugger
      * @param \Cake\Error\DumpContext $context Dump context
      * @return \Cake\Error\DumpNode\NodeInterface The dumped variable.
      */
-    protected static function _export($var, DumpContext $context): NodeInterface
+    protected static function export($var, DumpContext $context): NodeInterface
     {
         switch (static::getType($var)) {
             case 'boolean':
@@ -529,15 +530,15 @@ class Debugger
             case 'string':
                 return new ScalarNode('string', $var);
             case 'array':
-                return static::_array($var, $context->withAddedDepthAndIndent());
+                return static::exportArray($var, $context->withAddedDepth());
             case 'resource':
                 return new ScalarNode('resource', gettype($var));
             case 'null':
                 return new ScalarNode('null', null);
             case 'unknown':
-                return new ScalarNode('unknown', null);
+                return new SpecialNode('(unknown)');
             default:
-                return static::_object($var, $context->withAddedDepthAndIndent());
+                return static::exportObject($var, $context->withAddedDepth());
         }
     }
 
@@ -558,7 +559,7 @@ class Debugger
      * @param \Cake\Error\DumpContext $context The current dump context.
      * @return \Cake\Error\DumpNode\ArrayNode Exported array.
      */
-    protected static function _array(array $var, DumpContext $context): ArrayNode
+    protected static function exportArray(array $var, DumpContext $context): ArrayNode
     {
         $items = [];
 
@@ -566,18 +567,22 @@ class Debugger
         if ($remaining >= 0) {
             $outputMask = (array)static::outputMask();
             foreach ($var as $key => $val) {
-                // Sniff for globals as !== explodes in < 5.4
-                if ($key === 'GLOBALS' && is_array($val) && isset($val['GLOBALS'])) {
-                    $node = new ScalarNode('string', '[recursion]');
-                } elseif (array_key_exists($key, $outputMask)) {
+                if (array_key_exists($key, $outputMask)) {
                     $node = new ScalarNode('string', $outputMask[$key]);
                 } elseif ($val !== $var) {
-                    $node = static::_export($val, $context);
+                    // Dump all the items without increasing depth.
+                    $node = static::export($val, $context);
+                } else {
+                    // Likely recursion, so we increase depth.
+                    $node = static::export($val, $context->withAddedDepth());
                 }
-                $items[] = new ItemNode($key, $node);
+                $items[] = new ItemNode(static::export($key, $context), $node);
             }
         } else {
-            $items[] = new ItemNode('', new ScalarNode('string', '[maximum depth reached]'));
+            $items[] = new ItemNode(
+                new ScalarNode('string', ''),
+                new SpecialNode('[maximum depth reached]')
+            );
         }
 
         return new ArrayNode($items);
@@ -588,10 +593,10 @@ class Debugger
      *
      * @param object $var Object to convert.
      * @param \Cake\Error\DumpContext $context The dump context.
-     * @return ClassNode|ReferenceNode
+     * @return \Cake\Error\DumpNode\NodeInterface
      * @see \Cake\Error\Debugger::exportVar()
      */
-    protected static function _object(object $var, DumpContext $context): NodeInterface
+    protected static function exportObject(object $var, DumpContext $context): NodeInterface
     {
         $isRef = $context->hasReference($var);
         $refNum = $context->getReferenceId($var);
@@ -603,16 +608,16 @@ class Debugger
         $node = new ClassNode($className, $refNum);
 
         $remaining = $context->remainingDepth();
-        if ($remaining > 0 && $isRef === false) {
+        if ($remaining > 0) {
             if (method_exists($var, '__debugInfo')) {
                 try {
                     foreach ($var->__debugInfo() as $key => $val) {
-                        $node->addProperty(new PropertyNode($key, null, static::_export($val, $context)));
+                        $node->addProperty(new PropertyNode("'{$key}'", null, static::export($val, $context)));
                     }
                 } catch (Exception $e) {
                     $message = $e->getMessage();
 
-                    return new ScalarNode('string', "(unable to export object: $message)");
+                    return new SpecialNode("(unable to export object: $message)");
                 }
             }
 
@@ -623,7 +628,7 @@ class Debugger
                     $value = $outputMask[$key];
                 }
                 $node->addProperty(
-                    new PropertyNode($key, 'public', static::_export($value, $context->withAddedDepth()))
+                    new PropertyNode($key, 'public', static::export($value, $context->withAddedDepth()))
                 );
             }
 
@@ -640,7 +645,11 @@ class Debugger
                     $value = $reflectionProperty->getValue($var);
 
                     $node->addProperty(
-                        new PropertyNode($key, $visibility, static::_export($value, $context->withAddedDepth()))
+                        new PropertyNode(
+                            $reflectionProperty->getName(),
+                            $visibility,
+                            static::export($value, $context->withAddedDepth())
+                        )
                     );
                 }
             }

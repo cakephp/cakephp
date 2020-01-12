@@ -5,8 +5,19 @@ namespace Cake\Error\DumpNode;
 
 class ClassNode implements NodeInterface
 {
+    /**
+     * @var string
+     */
     private $class;
+
+    /**
+     * @var int
+     */
     private $id;
+
+    /**
+     * @var \Cake\Error\DumpNode\PropertyNode[]
+     */
     private $properties = [];
 
     public function __construct(string $class, int $id)
@@ -18,11 +29,9 @@ class ClassNode implements NodeInterface
     public function addProperty(PropertyNode $node)
     {
         $this->properties[] = $node;
-
-        return $this;
     }
 
-    public function getClass(): string
+    public function getValue(): string
     {
         return $this->class;
     }

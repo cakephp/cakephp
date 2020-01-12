@@ -5,6 +5,9 @@ namespace Cake\Error\DumpNode;
 
 class ArrayNode implements NodeInterface
 {
+    /**
+     * @var \Cake\Error\DumpNode\ItemNode[]
+     */
     private $items;
 
     public function __construct(array $items = [])
@@ -15,14 +18,12 @@ class ArrayNode implements NodeInterface
         }
     }
 
-    public function add(ItemNode $node)
+    public function add(ItemNode $node): void
     {
         $this->items[] = $node;
-
-        return $this;
     }
 
-    public function getValue()
+    public function getValue(): array
     {
         return $this->items;
     }

@@ -8,6 +8,7 @@ use Cake\Error\DumpNode\ClassNode;
 use Cake\Error\DumpNode\NodeInterface;
 use Cake\Error\DumpNode\ReferenceNode;
 use Cake\Error\DumpNode\ScalarNode;
+use Cake\Error\DumpNode\SpecialNode;
 use RuntimeException;
 
 class TextFormatter
@@ -18,7 +19,7 @@ class TextFormatter
         return $this->_export($node, $indent);
     }
 
-    protected function _export($var, int $indent): string
+    protected function _export(NodeInterface $var, int $indent): string
     {
         if ($var instanceof ScalarNode) {
             switch ($var->getType()) {
@@ -38,6 +39,9 @@ class TextFormatter
         if ($var instanceof ClassNode || $var instanceof ReferenceNode) {
             return $this->_object($var, $indent + 1);
         }
+        if ($var instanceof SpecialNode) {
+            return (string)$var->getValue();
+        }
         throw new RuntimeException('Unknown node received ' . get_class($var));
     }
 
@@ -51,23 +55,19 @@ class TextFormatter
     protected function _array(ArrayNode $var, int $indent): string
     {
         $out = '[';
-        $break = $end = '';
-        if (!empty($var)) {
-            $break = "\n" . str_repeat("\t", $indent);
-            $end = "\n" . str_repeat("\t", $indent - 1);
-        }
+        $break = "\n" . str_repeat("  ", $indent);
+        $end = "\n" . str_repeat("  ", $indent - 1);
         $vars = [];
 
         foreach ($var->getChildren() as $item) {
             $val = $item->getValue();
-            // Sniff for globals as !== explodes in < 5.4
-            if ($item->getKey() === 'GLOBALS' && is_array($val) && isset($val['GLOBALS'])) {
-                $val = '[recursion]';
-            }
-            $vars[] = $break . $item->getKey() . ' => ' . $this->_export($val, $indent);
+            $vars[] = $break . $this->_export($item->getKey(), $indent) . ' => ' . $this->_export($val, $indent);
+        }
+        if (count($vars)) {
+            return $out . implode(',', $vars) . $end . ']';
         }
 
-        return $out . implode(',', $vars) . $end . ']';
+        return $out . ']';
     }
 
     /**
@@ -88,20 +88,23 @@ class TextFormatter
         }
 
         /* @var \Cake\Error\DumpNode\ClassNode $var */
-        $out .= "object({$var->getClass()}) id:{$var->getId()} {";
-        $break = "\n" . str_repeat("\t", $indent);
-        $end = "\n" . str_repeat("\t", $indent - 1);
+        $out .= "object({$var->getValue()}) id:{$var->getId()} {";
+        $break = "\n" . str_repeat("  ", $indent);
+        $end = "\n" . str_repeat("  ", $indent - 1) . '}';
 
         foreach ($var->getChildren() as $property) {
             $visibility = $property->getVisibility();
             $name = $property->getName();
-            if ($visibility) {
+            if ($visibility && $visibility !== 'public') {
                 $props[] = "[{$visibility}] {$name} => " . $this->_export($property->getValue(), $indent);
             } else {
                 $props[] = "{$name} => " . $this->_export($property->getValue(), $indent);
             }
         }
+        if (count($props)) {
+            return $out . $break . implode($break, $props) . $end;
+        }
 
-        return $out . $break . implode($break, $props) . $end;
+        return $out . '}';
     }
 }

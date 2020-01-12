@@ -8,7 +8,7 @@ class ItemNode implements NodeInterface
     private $key;
     private $value;
 
-    public function __construct($key, NodeInterface $value)
+    public function __construct(NodeInterface $key, NodeInterface $value)
     {
         $this->key = $key;
         $this->value = $value;
