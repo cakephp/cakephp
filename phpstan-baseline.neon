@@ -1,11 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Method Cake\\\\Auth\\\\BaseAuthenticate\\:\\:unauthenticated\\(\\) should return Cake\\\\Http\\\\Response\\|void\\|null but return statement is missing\\.$#"
-			count: 1
-			path: src/Auth/BaseAuthenticate.php
-
-		-
 			message: "#^Strict comparison using \\=\\=\\= between string and false will always evaluate to false\\.$#"
 			count: 1
 			path: src/Auth/DigestAuthenticate.php
@@ -136,11 +131,6 @@ parameters:
 			path: src/Collection/Iterator/NoChildrenIterator.php
 
 		-
-			message: "#^Method Cake\\\\Command\\\\Command\\:\\:execute\\(\\) should return int\\|void\\|null but return statement is missing\\.$#"
-			count: 1
-			path: src/Command/Command.php
-
-		-
 			message: "#^Parameter \\#1 \\$var_array of function extract is passed by reference, so it expects variables only\\.$#"
 			count: 1
 			path: src/Command/I18nExtractCommand.php
@@ -148,16 +138,6 @@ parameters:
 		-
 			message: "#^Strict comparison using \\!\\=\\= between null and null will always evaluate to false\\.$#"
 			count: 2
-			path: src/Command/I18nExtractCommand.php
-
-		-
-			message: "#^Result of \\|\\| is always true\\.$#"
-			count: 1
-			path: src/Command/I18nExtractCommand.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
 			path: src/Command/I18nExtractCommand.php
 
 		-
@@ -201,26 +181,6 @@ parameters:
 			path: src/Controller/Controller.php
 
 		-
-			message: "#^Method Cake\\\\Controller\\\\Controller\\:\\:beforeFilter\\(\\) should return Cake\\\\Http\\\\Response\\|void\\|null but return statement is missing\\.$#"
-			count: 1
-			path: src/Controller/Controller.php
-
-		-
-			message: "#^Method Cake\\\\Controller\\\\Controller\\:\\:beforeRender\\(\\) should return Cake\\\\Http\\\\Response\\|void\\|null but return statement is missing\\.$#"
-			count: 1
-			path: src/Controller/Controller.php
-
-		-
-			message: "#^Method Cake\\\\Controller\\\\Controller\\:\\:beforeRedirect\\(\\) should return Cake\\\\Http\\\\Response\\|void\\|null but return statement is missing\\.$#"
-			count: 1
-			path: src/Controller/Controller.php
-
-		-
-			message: "#^Method Cake\\\\Controller\\\\Controller\\:\\:afterFilter\\(\\) should return Cake\\\\Http\\\\Response\\|void\\|null but return statement is missing\\.$#"
-			count: 1
-			path: src/Controller/Controller.php
-
-		-
 			message: "#^Parameter \\#1 \\$request of method Cake\\\\Controller\\\\ControllerFactory\\:\\:getControllerClass\\(\\) expects Cake\\\\Http\\\\ServerRequest, Psr\\\\Http\\\\Message\\\\ServerRequestInterface given\\.$#"
 			count: 1
 			path: src/Controller/ControllerFactory.php
@@ -229,11 +189,6 @@ parameters:
 			message: "#^Parameter \\#1 \\$request of method Cake\\\\Controller\\\\ControllerFactory\\:\\:missingController\\(\\) expects Cake\\\\Http\\\\ServerRequest, Psr\\\\Http\\\\Message\\\\ServerRequestInterface given\\.$#"
 			count: 2
 			path: src/Controller/ControllerFactory.php
-
-		-
-			message: "#^Method Cake\\\\Controller\\\\ErrorController\\:\\:beforeRender\\(\\) should return Cake\\\\Http\\\\Response\\|void\\|null but return statement is missing\\.$#"
-			count: 1
-			path: src/Controller/ErrorController.php
 
 		-
 			message: "#^Parameter \\#1 \\$autoload_function of function spl_autoload_register expects callable\\(string\\)\\: void, array\\(\\$this\\(Cake\\\\Core\\\\ClassLoader\\), 'loadClass'\\) given\\.$#"
