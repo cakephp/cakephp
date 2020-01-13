@@ -123,7 +123,6 @@ abstract class BaseAuthenticate implements EventListenerInterface
 
         if ($password !== null) {
             $hasher = $this->passwordHasher();
-            $hashedPassword = $result->get($passwordField);
             if (!$hasher->check($password, $hashedPassword)) {
                 return false;
             }
