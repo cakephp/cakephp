@@ -104,8 +104,10 @@ abstract class BaseAuthenticate implements EventListenerInterface
     protected function _findUser(string $username, ?string $password = null)
     {
         $result = $this->_query($username)->first();
+        $passwordField = $this->_config['fields']['password'];
+        $hashedPassword = $result->get($passwordField);
 
-        if ($result === null) {
+        if ($result === null || $hashedPassword === null) {
             // Waste time hashing the password, to prevent
             // timing side-channels. However, don't hash
             // null passwords as authentication systems
@@ -119,7 +121,6 @@ abstract class BaseAuthenticate implements EventListenerInterface
             return false;
         }
 
-        $passwordField = $this->_config['fields']['password'];
         if ($password !== null) {
             $hasher = $this->passwordHasher();
             $hashedPassword = $result->get($passwordField);
