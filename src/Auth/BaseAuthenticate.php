@@ -104,10 +104,25 @@ abstract class BaseAuthenticate implements EventListenerInterface
     protected function _findUser(string $username, ?string $password = null)
     {
         $result = $this->_query($username)->first();
+
+        if ($result === null) {
+            // Waste time hashing the password, to prevent
+            // timing side-channels. However, don't hash
+            // null passwords as authentication systems
+            // like digest auth don't use passwords
+            // and hashing *could* create a timing side-channel.
+            if ($password !== null) {
+                $hasher = $this->passwordHasher();
+                $hasher->hash($password);
+            }
+
+            return false;
+        }
+
         $passwordField = $this->_config['fields']['password'];
         $hashedPassword = $result->get($passwordField);
 
-        if ($result === null || $hashedPassword === null) {
+        if ($hashedPassword === null) {
             // Waste time hashing the password, to prevent
             // timing side-channels. However, don't hash
             // null passwords as authentication systems
