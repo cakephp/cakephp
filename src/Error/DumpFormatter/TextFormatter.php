@@ -1,6 +1,19 @@
 <?php
 declare(strict_types=1);
 
+/**
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
+ * @since         4.1.0
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
+ */
 namespace Cake\Error\DumpFormatter;
 
 use Cake\Error\DumpNode\ArrayNode;
@@ -11,14 +24,34 @@ use Cake\Error\DumpNode\ScalarNode;
 use Cake\Error\DumpNode\SpecialNode;
 use RuntimeException;
 
+/**
+ * A Debugger formatter for generating unstyled plain text output.
+ *
+ * Provides backwards compatible output with the historical output of
+ * `Debugger::exportVar()`
+ */
 class TextFormatter
 {
+    /**
+     * Convert a tree of NodeInterface objects into a plain text string.
+     *
+     * @param \Cake\Error\DumpNode\NodeInterface $node The node tree to dump.
+     * @return string
+     */
     public function dump(NodeInterface $node): string
     {
         $indent = 0;
+
         return $this->_export($node, $indent);
     }
 
+    /**
+     * Convert a tree of NodeInterface objects into a plain text string.
+     *
+     * @param \Cake\Error\DumpNode\NodeInterface $node The node tree to dump.
+     * @param int $indent The current indentation level.
+     * @return string
+     */
     protected function _export(NodeInterface $var, int $indent): string
     {
         if ($var instanceof ScalarNode) {
