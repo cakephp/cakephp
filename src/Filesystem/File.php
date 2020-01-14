@@ -139,14 +139,14 @@ class File
     /**
      * Return the contents of this file as a string.
      *
-     * @param string|false $bytes where to start
+     * @param int|false $lengthInBytes The length to read in bytes or `false` for the full file. Defaults to `false`.
      * @param string $mode A `fread` compatible mode.
      * @param bool $force If true then the file will be re-opened even if its already opened, otherwise it won't
      * @return string|false String on success, false on failure
      */
-    public function read($bytes = false, $mode = 'rb', $force = false)
+    public function read($lengthInBytes = false, $mode = 'rb', $force = false)
     {
-        if ($bytes === false && $this->lock === null) {
+        if ($lengthInBytes === false && $this->lock === null) {
             return file_get_contents($this->path);
         }
         if ($this->open($mode, $force) === false) {
@@ -155,8 +155,8 @@ class File
         if ($this->lock !== null && flock($this->handle, LOCK_SH) === false) {
             return false;
         }
-        if (is_int($bytes)) {
-            return fread($this->handle, $bytes);
+        if (is_int($lengthInBytes)) {
+            return fread($this->handle, $lengthInBytes);
         }
 
         $data = '';
@@ -167,7 +167,7 @@ class File
         if ($this->lock !== null) {
             flock($this->handle, LOCK_UN);
         }
-        if ($bytes === false) {
+        if ($lengthInBytes === false) {
             $this->close();
         }
 
