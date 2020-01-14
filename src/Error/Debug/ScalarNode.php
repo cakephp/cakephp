@@ -14,39 +14,49 @@ declare(strict_types=1);
  * @since         4.1.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Error\DumpNode;
+namespace Cake\Error\Debug;
 
 /**
- * Dump node for Array Items.
+ * Dump node for scalar values.
  */
-class ItemNode implements NodeInterface
+class ScalarNode implements NodeInterface
 {
     /**
-     * @var \Cake\Error\DumpNode\NodeInterface
+     * @var string
      */
-    private $key;
+    private $type;
 
     /**
-     * @var \Cake\Error\DumpNode\NodeInterface
+     * @var string|int|float|bool|null
      */
     private $value;
 
     /**
      * Constructor
      *
-     * @param \Cake\Error\DumpNode\NodeInterface $key The node for the item key
-     * @param \Cake\Error\DumpNode\NodeInterface $value The node for the array value
+     * @param string $type The type of scalar value.
+     * @param string|int|float|bool|null $value The wrapped value.
      */
-    public function __construct(NodeInterface $key, NodeInterface $value)
+    public function __construct(string $type, $value)
     {
-        $this->key = $key;
+        $this->type = $type;
         $this->value = $value;
+    }
+
+    /**
+     * Get the type of value
+     *
+     * @return string
+     */
+    public function getType(): string
+    {
+        return $this->type;
     }
 
     /**
      * Get the value
      *
-     * @return \Cake\Error\DumpNode\NodeInterface
+     * @return string|int|float|bool|null
      */
     public function getValue()
     {
@@ -54,20 +64,10 @@ class ItemNode implements NodeInterface
     }
 
     /**
-     * Get the key
-     *
-     * @return \Cake\Error\DumpNode\NodeInterface
-     */
-    public function getKey()
-    {
-        return $this->key;
-    }
-
-    /**
      * @inheritDoc
      */
     public function getChildren(): array
     {
-        return [$this->value];
+        return [];
     }
 }

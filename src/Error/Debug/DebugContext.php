@@ -14,7 +14,7 @@ declare(strict_types=1);
  * @since         4.1.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Error;
+namespace Cake\Error\Debug;
 
 use SplObjectStorage;
 
@@ -26,7 +26,7 @@ use SplObjectStorage;
  *
  * @internal
  */
-class DumpContext
+class DebugContext
 {
     /**
      * @var int

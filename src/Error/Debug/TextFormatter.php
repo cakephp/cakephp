@@ -14,14 +14,14 @@ declare(strict_types=1);
  * @since         4.1.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Error\DumpFormatter;
+namespace Cake\Error\Debug;
 
-use Cake\Error\DumpNode\ArrayNode;
-use Cake\Error\DumpNode\ClassNode;
-use Cake\Error\DumpNode\NodeInterface;
-use Cake\Error\DumpNode\ReferenceNode;
-use Cake\Error\DumpNode\ScalarNode;
-use Cake\Error\DumpNode\SpecialNode;
+use Cake\Error\Debug\ArrayNode;
+use Cake\Error\Debug\ClassNode;
+use Cake\Error\Debug\NodeInterface;
+use Cake\Error\Debug\ReferenceNode;
+use Cake\Error\Debug\ScalarNode;
+use Cake\Error\Debug\SpecialNode;
 use RuntimeException;
 
 /**
@@ -35,7 +35,7 @@ class TextFormatter
     /**
      * Convert a tree of NodeInterface objects into a plain text string.
      *
-     * @param \Cake\Error\DumpNode\NodeInterface $node The node tree to dump.
+     * @param \Cake\Error\Debug\NodeInterface $node The node tree to dump.
      * @return string
      */
     public function dump(NodeInterface $node): string
@@ -48,7 +48,7 @@ class TextFormatter
     /**
      * Convert a tree of NodeInterface objects into a plain text string.
      *
-     * @param \Cake\Error\DumpNode\NodeInterface $node The node tree to dump.
+     * @param \Cake\Error\Debug\NodeInterface $node The node tree to dump.
      * @param int $indent The current indentation level.
      * @return string
      */
@@ -61,7 +61,7 @@ class TextFormatter
                 case 'null':
                     return 'null';
                 case 'string':
-                    return "'" . $var->getValue() . "'";
+                    return "'" . (string)$var->getValue() . "'";
                 default:
                     return "({$var->getType()}) {$var->getValue()}";
             }
@@ -81,7 +81,7 @@ class TextFormatter
     /**
      * Export an array type object
      *
-     * @param \Cake\Error\DumpNode\ArrayNode $var The array to export.
+     * @param \Cake\Error\Debug\ArrayNode $var The array to export.
      * @param int $context The current dump context.
      * @return string Exported array.
      */
@@ -120,7 +120,7 @@ class TextFormatter
             return "object({$var->getValue()}) id:{$var->getId()} {}";
         }
 
-        /* @var \Cake\Error\DumpNode\ClassNode $var */
+        /* @var \Cake\Error\Debug\ClassNode $var */
         $out .= "object({$var->getValue()}) id:{$var->getId()} {";
         $break = "\n" . str_repeat("  ", $indent);
         $end = "\n" . str_repeat("  ", $indent - 1) . '}';

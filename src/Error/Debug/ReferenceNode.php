@@ -14,50 +14,57 @@ declare(strict_types=1);
  * @since         4.1.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Error\DumpNode;
+namespace Cake\Error\Debug;
 
 /**
- * Dump node for Array values.
+ * Dump node for class references.
+ *
+ * To prevent cyclic references from being output multiple times
+ * a reference node can be used after an object has been seen the
+ * first time.
  */
-class ArrayNode implements NodeInterface
+class ReferenceNode implements NodeInterface
 {
     /**
-     * @var \Cake\Error\DumpNode\ItemNode[]
+     * @var string
      */
-    private $items;
+    private $class;
+
+    /**
+     * @var int
+     */
+    private $id;
 
     /**
      * Constructor
      *
-     * @param \Cake\Error\DumpNode\ItemNode[] $items The items for the array
+     * @param string $class The class name
+     * @param int $id The id of the referenced class.
      */
-    public function __construct(array $items = [])
+    public function __construct(string $class, int $id)
     {
-        $this->items = [];
-        foreach ($items as $item) {
-            $this->add($item);
-        }
+        $this->class = $class;
+        $this->id = $id;
     }
 
     /**
-     * Add an item
+     * Get the class name/value
      *
-     * @param \Cake\Error\DumpNode\ItemNode
-     * @return void
+     * @return string
      */
-    public function add(ItemNode $node): void
+    public function getValue(): string
     {
-        $this->items[] = $node;
+        return $this->class;
     }
 
     /**
-     * Get the contained items
+     * Get the reference id for this node.
      *
-     * @return \Cake\Error\DumpNode\ItemNode[]
+     * @return int
      */
-    public function getValue(): array
+    public function getId(): int
     {
-        return $this->items;
+        return $this->id;
     }
 
     /**
@@ -65,6 +72,6 @@ class ArrayNode implements NodeInterface
      */
     public function getChildren(): array
     {
-        return $this->items;
+        return [];
     }
 }

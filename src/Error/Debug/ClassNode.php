@@ -14,7 +14,7 @@ declare(strict_types=1);
  * @since         4.1.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Error\DumpNode;
+namespace Cake\Error\Debug;
 
 /**
  * Dump node for objects/class instances.
@@ -32,7 +32,7 @@ class ClassNode implements NodeInterface
     private $id;
 
     /**
-     * @var \Cake\Error\DumpNode\PropertyNode[]
+     * @var \Cake\Error\Debug\PropertyNode[]
      */
     private $properties = [];
 
@@ -51,7 +51,7 @@ class ClassNode implements NodeInterface
     /**
      * Add a property
      *
-     * @param \Cake\Error\DumpNode\PropertyNode $node The property to add.
+     * @param \Cake\Error\Debug\PropertyNode $node The property to add.
      * @return void
      */
     public function addProperty(PropertyNode $node): void
@@ -80,7 +80,9 @@ class ClassNode implements NodeInterface
     }
 
     /**
-     * @inheritDoc
+     * Get property nodes
+     *
+     * @return \Cake\Error\Debug\PropertyNode[]
      */
     public function getChildren(): array
     {

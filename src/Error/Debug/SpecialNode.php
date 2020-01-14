@@ -14,26 +14,43 @@ declare(strict_types=1);
  * @since         4.1.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Error\DumpNode;
+namespace Cake\Error\Debug;
 
 /**
- * Interface for DumpNodes
- *
- * Provides methods to look at contained value and iterate child nodes in the tree.
+ * Debug node for special messages like errors or recursion warnings.
  */
-interface NodeInterface
+class SpecialNode implements NodeInterface
 {
     /**
-     * Get the child nodes of this node.
-     *
-     * @return \Cake\Error\DumpNode\NodeInterface[]
+     * @var string
      */
-    public function getChildren(): array;
+    private $value;
 
     /**
-     * Get the contained value.
+     * Constructor
      *
-     * @return mixed
+     * @param string $value The message/value to include in dump results.
      */
-    public function getValue();
+    public function __construct(string $value)
+    {
+        $this->value = $value;
+    }
+
+    /**
+     * Get the message/value
+     *
+     * @return string
+     */
+    public function getValue(): string
+    {
+        return $this->value;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getChildren(): array
+    {
+        return [];
+    }
 }

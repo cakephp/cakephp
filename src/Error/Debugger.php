@@ -17,15 +17,16 @@ declare(strict_types=1);
 namespace Cake\Error;
 
 use Cake\Core\InstanceConfigTrait;
-use Cake\Error\DumpFormatter\TextFormatter;
-use Cake\Error\DumpNode\ArrayNode;
-use Cake\Error\DumpNode\ClassNode;
-use Cake\Error\DumpNode\ItemNode;
-use Cake\Error\DumpNode\NodeInterface;
-use Cake\Error\DumpNode\PropertyNode;
-use Cake\Error\DumpNode\ReferenceNode;
-use Cake\Error\DumpNode\ScalarNode;
-use Cake\Error\DumpNode\SpecialNode;
+use Cake\Error\Debug\ArrayNode;
+use Cake\Error\Debug\ClassNode;
+use Cake\Error\Debug\DebugContext;
+use Cake\Error\Debug\ItemNode;
+use Cake\Error\Debug\NodeInterface;
+use Cake\Error\Debug\PropertyNode;
+use Cake\Error\Debug\ReferenceNode;
+use Cake\Error\Debug\ScalarNode;
+use Cake\Error\Debug\SpecialNode;
+use Cake\Error\Debug\TextFormatter;
 use Cake\Log\Log;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
@@ -39,7 +40,8 @@ use Throwable;
 /**
  * Provide custom logging and error handling.
  *
- * Debugger overrides PHP's default error handling to provide stack traces and enhanced logging
+ * Debugger extends PHP's default error handling and gives
+ * simpler to use more powerful interfaces.
  *
  * @link https://book.cakephp.org/4/en/development/debugging.html#namespace-Cake\Error
  */
@@ -504,7 +506,7 @@ class Debugger
      */
     public static function exportVar($var, int $maxDepth = 3): string
     {
-        $context = new DumpContext($maxDepth);
+        $context = new DebugContext($maxDepth);
         $node = static::export($var, $context);
 
         $formatter = new TextFormatter();
@@ -515,10 +517,10 @@ class Debugger
      * Protected export function used to keep track of indentation and recursion.
      *
      * @param mixed $var The variable to dump.
-     * @param \Cake\Error\DumpContext $context Dump context
-     * @return \Cake\Error\DumpNode\NodeInterface The dumped variable.
+     * @param \Cake\Error\Debug\DebugContext $context Dump context
+     * @return \Cake\Error\Debug\NodeInterface The dumped variable.
      */
-    protected static function export($var, DumpContext $context): NodeInterface
+    protected static function export($var, DebugContext $context): NodeInterface
     {
         switch (static::getType($var)) {
             case 'boolean':
@@ -556,10 +558,10 @@ class Debugger
      * - schema
      *
      * @param array $var The array to export.
-     * @param \Cake\Error\DumpContext $context The current dump context.
-     * @return \Cake\Error\DumpNode\ArrayNode Exported array.
+     * @param \Cake\Error\Debug\DebugContext $context The current dump context.
+     * @return \Cake\Error\Debug\ArrayNode Exported array.
      */
-    protected static function exportArray(array $var, DumpContext $context): ArrayNode
+    protected static function exportArray(array $var, DebugContext $context): ArrayNode
     {
         $items = [];
 
@@ -592,11 +594,11 @@ class Debugger
      * Handles object to node conversion.
      *
      * @param object $var Object to convert.
-     * @param \Cake\Error\DumpContext $context The dump context.
-     * @return \Cake\Error\DumpNode\NodeInterface
+     * @param \Cake\Error\Debug\DebugContext $context The dump context.
+     * @return \Cake\Error\Debug\NodeInterface
      * @see \Cake\Error\Debugger::exportVar()
      */
-    protected static function exportObject(object $var, DumpContext $context): NodeInterface
+    protected static function exportObject(object $var, DebugContext $context): NodeInterface
     {
         $isRef = $context->hasReference($var);
         $refNum = $context->getReferenceId($var);

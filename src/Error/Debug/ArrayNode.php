@@ -14,60 +14,59 @@ declare(strict_types=1);
  * @since         4.1.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Error\DumpNode;
+namespace Cake\Error\Debug;
 
 /**
- * Dump node for scalar values.
+ * Dump node for Array values.
  */
-class ScalarNode implements NodeInterface
+class ArrayNode implements NodeInterface
 {
     /**
-     * @var string
+     * @var \Cake\Error\Debug\ItemNode[]
      */
-    private $type;
-
-    /**
-     * @var string|int|float|bool|null
-     */
-    private $value;
+    private $items;
 
     /**
      * Constructor
      *
-     * @param string $type The type of scalar value.
-     * @param string|int|float|bool|null $value The wrapped value.
+     * @param \Cake\Error\Debug\ItemNode[] $items The items for the array
      */
-    public function __construct(string $type, $value)
+    public function __construct(array $items = [])
     {
-        $this->type = $type;
-        $this->value = $value;
+        $this->items = [];
+        foreach ($items as $item) {
+            $this->add($item);
+        }
     }
 
     /**
-     * Get the type of value
+     * Add an item
      *
-     * @return string
+     * @param \Cake\Error\Debug\ItemNode $node The item to add.
+     * @return void
      */
-    public function getType(): string
+    public function add(ItemNode $node): void
     {
-        return $this->type;
+        $this->items[] = $node;
     }
 
     /**
-     * Get the value
+     * Get the contained items
      *
-     * @return string|int|float|bool|null
+     * @return \Cake\Error\Debug\ItemNode[]
      */
-    public function getValue()
+    public function getValue(): array
     {
-        return $this->value;
+        return $this->items;
     }
 
     /**
-     * @inheritDoc
+     * Get Item nodes
+     *
+     * @return \Cake\Error\Debug\ItemNode[]
      */
     public function getChildren(): array
     {
-        return [];
+        return $this->items;
     }
 }

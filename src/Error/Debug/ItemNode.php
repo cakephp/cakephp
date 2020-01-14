@@ -14,70 +14,53 @@ declare(strict_types=1);
  * @since         4.1.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Error\DumpNode;
+namespace Cake\Error\Debug;
 
 /**
- * Dump node for object properties.
+ * Dump node for Array Items.
  */
-class PropertyNode implements NodeInterface
+class ItemNode implements NodeInterface
 {
     /**
-     * @var string
+     * @var \Cake\Error\Debug\NodeInterface
      */
-    private $name;
+    private $key;
 
     /**
-     * @var string
-     */
-    private $visibility;
-
-    /**
-     * @var \Cake\Error\DumpNode\NodeInterface
+     * @var \Cake\Error\Debug\NodeInterface
      */
     private $value;
 
     /**
      * Constructor
      *
-     * @param string $name The property name
-     * @param string $visibility The visibility of the property.
-     * @param \Cake\Error\DumpNode\NodeInterface $value The property value node.
+     * @param \Cake\Error\Debug\NodeInterface $key The node for the item key
+     * @param \Cake\Error\Debug\NodeInterface $value The node for the array value
      */
-    public function __construct(string $name, ?string $visibility, NodeInterface $value)
+    public function __construct(NodeInterface $key, NodeInterface $value)
     {
-        $this->name = $name;
-        $this->visibility = $visibility;
+        $this->key = $key;
         $this->value = $value;
     }
 
     /**
      * Get the value
      *
-     * @return \Cake\Error\DumpNode\NodeInterface
+     * @return \Cake\Error\Debug\NodeInterface
      */
-    public function getValue(): NodeInterface
+    public function getValue()
     {
         return $this->value;
     }
 
     /**
-     * Get the property visibility
+     * Get the key
      *
-     * @return string
+     * @return \Cake\Error\Debug\NodeInterface
      */
-    public function getVisibility(): ?string
+    public function getKey()
     {
-        return $this->visibility;
-    }
-
-    /**
-     * Get the property name
-     *
-     * @return string
-     */
-    public function getName(): string
-    {
-        return $this->name;
+        return $this->key;
     }
 
     /**
