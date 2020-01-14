@@ -65,6 +65,7 @@ class DigestAuthenticateTest extends TestCase
             'nonce' => 123,
             'opaque' => '123abc',
             'secret' => Security::getSalt(),
+            'passwordHasher' => 'ShouldNeverTryToUsePasswordHasher',
         ]);
 
         $password = DigestAuthenticate::password('mariano', 'cake', 'localhost');
@@ -109,8 +110,6 @@ class DigestAuthenticateTest extends TestCase
      */
     public function testAuthenticateWrongUsername(): void
     {
-        $this->expectException(\Cake\Http\Exception\UnauthorizedException::class);
-        $this->expectExceptionCode(401);
         $request = new ServerRequest(['url' => 'posts/index']);
 
         $data = [
@@ -125,6 +124,10 @@ class DigestAuthenticateTest extends TestCase
         $data['response'] = $this->auth->generateResponseHash($data, '09faa9931501bf30f0d4253fa7763022', 'GET');
         $request = $request->withEnv('PHP_AUTH_DIGEST', $this->digestHeader($data));
 
+        $this->assertFalse($this->auth->authenticate($request, new Response()));
+
+        $this->expectException(UnauthorizedException::class);
+        $this->expectExceptionCode(401);
         $this->auth->unauthenticated($request, new Response());
     }
 
@@ -497,7 +500,7 @@ DIGEST;
             'opaque' => '123abc',
         ];
         $digest = <<<DIGEST
-Digest username="mariano",
+Digest username="{$data['username']}",
 realm="{$data['realm']}",
 nonce="{$data['nonce']}",
 uri="{$data['uri']}",
