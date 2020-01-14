@@ -617,12 +617,14 @@ class I18nExtractCommand extends Command
      */
     protected function _writeFiles(Arguments $args, ConsoleIo $io): void
     {
+        $io->out();
         $overwriteAll = false;
         if ($args->getOption('overwrite')) {
             $overwriteAll = true;
         }
         foreach ($this->_storage as $domain => $sentences) {
             $output = $this->_writeHeader();
+            $headerLength = strlen($output);
             foreach ($sentences as $sentence => $header) {
                 $output .= $header . $sentence;
             }
@@ -634,12 +636,15 @@ class I18nExtractCommand extends Command
             }
 
             $filename = str_replace('/', '_', $domain) . '.pot';
+            $outputPath = $this->_output . $filename;
+
+            if ($this->checkUnchanged($outputPath, $headerLength, $output) === true) {
+                $io->out($filename . ' is unchanged. Skipping.');
+                continue;
+            }
+
             $response = '';
-            while (
-                $overwriteAll === false
-                && file_exists($this->_output . $filename)
-                && strtoupper($response) !== 'Y'
-            ) {
+            while ($overwriteAll === false && file_exists($outputPath) && strtoupper($response) !== 'Y') {
                 $io->out();
                 $response = $io->askChoice(
                     sprintf('Error: %s already exists in this location. Overwrite? [Y]es, [N]o, [A]ll', $filename),
@@ -685,6 +690,29 @@ class I18nExtractCommand extends Command
         $output .= "\"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\\n\"\n\n";
 
         return $output;
+    }
+
+    /**
+     * Check whether the old and new output are the same, thus unchanged
+     *
+     * Compares the sha1 hashes of the old and new file without header.
+     *
+     * @param string $oldFile The existing file.
+     * @param int $headerLength The length of the file header in bytes.
+     * @param string $newFileContent The content of the new file.
+     * @return bool Whether or not the old and new file are unchanged.
+     */
+    protected function checkUnchanged(string $oldFile, int $headerLength, string $newFileContent): bool
+    {
+        if (!file_exists($oldFile)) {
+            return false;
+        }
+        $oldFileContent = file_get_contents($oldFile);
+
+        $oldChecksum = sha1((string)substr($oldFileContent, $headerLength));
+        $newChecksum = sha1((string)substr($newFileContent, $headerLength));
+
+        return $oldChecksum === $newChecksum;
     }
 
     /**
