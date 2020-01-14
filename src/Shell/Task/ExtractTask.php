@@ -622,7 +622,7 @@ class ExtractTask extends Shell
             $filename = str_replace('/', '_', $domain) . '.pot';
             $File = new File($this->_output . $filename);
 
-            if ($this->_checkUnchanged($File, $headerLength, $output) === true) {
+            if ($File->exists() && $this->_checkUnchanged($File, $headerLength, $output) === true) {
                 $this->out($filename . ' is unchanged. Skipping.');
                 $File->close();
                 continue;
