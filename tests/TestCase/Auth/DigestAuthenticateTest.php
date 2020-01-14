@@ -25,6 +25,7 @@ use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Security;
 
 /**
  * Entity for testing with hidden fields.
@@ -61,6 +62,8 @@ class DigestAuthenticateTest extends TestCase
             'realm' => 'localhost',
             'nonce' => 123,
             'opaque' => '123abc',
+            'secret' => Security::getSalt(),
+            'passwordHasher' => 'ShouldNeverTryToUsePasswordHasher',
         ]);
 
         $password = DigestAuthenticate::password('mariano', 'cake', 'localhost');
@@ -110,8 +113,6 @@ class DigestAuthenticateTest extends TestCase
      */
     public function testAuthenticateWrongUsername()
     {
-        $this->expectException(\Cake\Http\Exception\UnauthorizedException::class);
-        $this->expectExceptionCode(401);
         $request = new ServerRequest(['url' => 'posts/index']);
 
         $data = [
@@ -126,6 +127,10 @@ class DigestAuthenticateTest extends TestCase
         $data['response'] = $this->auth->generateResponseHash($data, '09faa9931501bf30f0d4253fa7763022', 'GET');
         $request = $request->withEnv('PHP_AUTH_DIGEST', $this->digestHeader($data));
 
+        $this->assertFalse($this->auth->authenticate($request, new Response()));
+
+        $this->expectException(UnauthorizedException::class);
+        $this->expectExceptionCode(401);
         $this->auth->unauthenticated($request, $this->response);
     }
 
@@ -525,7 +530,7 @@ DIGEST;
             'opaque' => '123abc',
         ];
         $digest = <<<DIGEST
-Digest username="mariano",
+Digest username="{$data['username']}",
 realm="{$data['realm']}",
 nonce="{$data['nonce']}",
 uri="{$data['uri']}",
