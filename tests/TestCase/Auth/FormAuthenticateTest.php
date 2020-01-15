@@ -491,7 +491,7 @@ class FormAuthenticateTest extends TestCase
      * @return void
      * @dataProvider userList
      */
-    public function testAuthenticateSingleHash(string $username, ?string $password): void
+    public function testAuthenticateSingleHash($username, $password)
     {
         $this->auth = new FormAuthenticate($this->Collection, [
             'userModel' => 'Users',
