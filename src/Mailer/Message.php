@@ -1851,7 +1851,7 @@ class Message implements JsonSerializable, Serializable
         });
 
         return array_filter($array, function ($i) {
-            return !is_array($i) && !is_null($i) && strlen($i) || !empty($i);
+            return $i !== null && !is_array($i) && !is_bool($i) && strlen($i) || !empty($i);
         });
     }
 

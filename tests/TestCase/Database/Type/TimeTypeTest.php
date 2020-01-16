@@ -230,11 +230,13 @@ class TimeTypeTest extends TestCase
     public function testMarshalWithLocaleParsing()
     {
         $this->type->useLocaleParser();
+
         $expected = new Time('23:23:00');
         $result = $this->type->marshal('11:23pm');
         $this->assertEquals($expected->format('H:i'), $result->format('H:i'));
-
         $this->assertNull($this->type->marshal('derp:23'));
+
+        $this->type->useLocaleParser(false);
     }
 
     /**
@@ -247,11 +249,14 @@ class TimeTypeTest extends TestCase
         $updated = setlocale(LC_COLLATE, 'da_DK.utf8');
         $this->skipIf($updated === false, 'Could not set locale to da_DK.utf8, skipping test.');
 
-        I18n::setLocale('da_DK');
         $this->type->useLocaleParser();
+
+        I18n::setLocale('da_DK');
         $expected = new Time('03:20:00');
         $result = $this->type->marshal('03.20');
         $this->assertEquals($expected->format('H:i'), $result->format('H:i'));
+
+        $this->type->useLocaleParser(false);
     }
 
     /**

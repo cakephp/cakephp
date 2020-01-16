@@ -331,11 +331,13 @@ class DateTimeTypeTest extends TestCase
     public function testMarshalWithLocaleParsing()
     {
         $this->type->useLocaleParser();
+
         $expected = new Time('13-10-2013 23:28:00');
         $result = $this->type->marshal('10/13/2013 11:28pm');
         $this->assertEquals($expected, $result);
-
         $this->assertNull($this->type->marshal('11/derp/2013 11:28pm'));
+
+        $this->type->useLocaleParser(false);
     }
 
     /**
@@ -346,9 +348,12 @@ class DateTimeTypeTest extends TestCase
     public function testMarshalWithLocaleParsingWithFormat()
     {
         $this->type->useLocaleParser()->setLocaleFormat('dd MMM, y hh:mma');
+
         $expected = new Time('13-10-2013 13:54:00');
         $result = $this->type->marshal('13 Oct, 2013 01:54pm');
         $this->assertEquals($expected, $result);
+
+        $this->type->useLocaleParser(false)->setLocaleFormat(null);
     }
 
     /**

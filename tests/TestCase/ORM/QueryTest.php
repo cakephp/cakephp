@@ -3187,7 +3187,7 @@ class QueryTest extends TestCase
         $entity->tiny = 1;
         $entity->small = 10;
 
-        $table->saveOrFail($entity);
+        $table->save($entity);
         $out = $table->find()
             ->where([
                 'cost' => $big,
@@ -3196,22 +3196,22 @@ class QueryTest extends TestCase
         $this->assertNotEmpty($out, 'Should get a record');
         $this->assertSame($big, $out->cost);
 
-        $small = '0.12345678901234';
+        $small = '0.1234567890123456789';
         $entity = $table->newEntity(['fraction' => $small]);
 
-        $table->saveOrFail($entity);
+        $table->save($entity);
         $out = $table->find()
             ->where([
                 'fraction' => $small,
             ])
             ->first();
         $this->assertNotEmpty($out, 'Should get a record');
-        $this->assertRegExp('/^0?\.12345678901234/', $out->fraction);
+        $this->assertRegExp('/^0?\.1234567890123456789$/', $out->fraction);
 
-        $small = 0.12345678901234;
+        $small = 0.1234567890123456789;
         $entity = $table->newEntity(['fraction' => $small]);
 
-        $table->saveOrFail($entity);
+        $table->save($entity);
         $out = $table->find()
             ->where([
                 'fraction' => $small,
@@ -3219,7 +3219,7 @@ class QueryTest extends TestCase
             ->first();
         $this->assertNotEmpty($out, 'Should get a record');
         // There will be loss of precision if too large/small value is set as float instead of string.
-        $this->assertRegExp('/^0?\.1234567890123\d+$/', $out->fraction);
+        $this->assertRegExp('/^0?\.123456789012350+$/', $out->fraction);
     }
 
     /**
