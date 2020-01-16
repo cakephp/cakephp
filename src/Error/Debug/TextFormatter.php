@@ -16,12 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Error\Debug;
 
-use Cake\Error\Debug\ArrayNode;
-use Cake\Error\Debug\ClassNode;
-use Cake\Error\Debug\NodeInterface;
-use Cake\Error\Debug\ReferenceNode;
-use Cake\Error\Debug\ScalarNode;
-use Cake\Error\Debug\SpecialNode;
 use RuntimeException;
 
 /**
@@ -48,7 +42,7 @@ class TextFormatter
     /**
      * Convert a tree of NodeInterface objects into a plain text string.
      *
-     * @param \Cake\Error\Debug\NodeInterface $node The node tree to dump.
+     * @param \Cake\Error\Debug\NodeInterface $var The node tree to dump.
      * @param int $indent The current indentation level.
      * @return string
      */
@@ -82,7 +76,7 @@ class TextFormatter
      * Export an array type object
      *
      * @param \Cake\Error\Debug\ArrayNode $var The array to export.
-     * @param int $context The current dump context.
+     * @param int $indent The current indentation level.
      * @return string Exported array.
      */
     protected function _array(ArrayNode $var, int $indent): string
@@ -106,8 +100,8 @@ class TextFormatter
     /**
      * Handles object to string conversion.
      *
-     * @param ClassNode|ReferenceNode $var Object to convert.
-     * @param int $indent Current indent level
+     * @param \Cake\Error\Debug\ClassNode|\Cake\Error\Debug\ReferenceNode $var Object to convert.
+     * @param int $indent Current indentation level.
      * @return string
      * @see \Cake\Error\Debugger::exportVar()
      */
@@ -120,7 +114,7 @@ class TextFormatter
             return "object({$var->getValue()}) id:{$var->getId()} {}";
         }
 
-        /* @var \Cake\Error\Debug\ClassNode $var */
+        /** @var \Cake\Error\Debug\ClassNode $var */
         $out .= "object({$var->getValue()}) id:{$var->getId()} {";
         $break = "\n" . str_repeat("  ", $indent);
         $end = "\n" . str_repeat("  ", $indent - 1) . '}';

@@ -510,6 +510,7 @@ class Debugger
         $node = static::export($var, $context);
 
         $formatter = new TextFormatter();
+
         return $formatter->dump($node);
     }
 
