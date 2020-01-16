@@ -106,7 +106,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * @return array
      */
     public function getError(string $field): array;
-    
+
     /**
      * Returns all invalids values fields from entity
      * @return array
