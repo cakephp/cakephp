@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Expression;
 
 use Cake\Database\Expression\AggregateExpression;
+use Cake\Database\ValueBinder;
 
 /**
  * Tests FunctionExpression class
@@ -26,4 +27,15 @@ class AggregateExpressionTest extends FunctionExpressionTest
      * @var string The expression class to test with
      */
     protected $expressionClass = AggregateExpression::class;
+
+    /**
+     * Tests annotating an aggregate with an empty window expression
+     *
+     * @return void
+     */
+    public function testEmptyWindow()
+    {
+        $f = (new AggregateExpression('MyFunction'))->over();
+        $this->assertSame('MyFunction() OVER ()', $f->sql(new ValueBinder()));
+    }
 }

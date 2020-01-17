@@ -16,6 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Expression;
 
+use Cake\Database\ValueBinder;
+use Closure;
+
 /**
  * This represents a SQL aggregate function expression in a SQL statement.
  * Calls can be constructed by passing the name of the function and a list of params.
@@ -24,4 +27,64 @@ namespace Cake\Database\Expression;
  */
 class AggregateExpression extends FunctionExpression
 {
+    /**
+     * @var \Cake\Database\Expression\WindowExpression
+     */
+    protected $window;
+
+    /**
+     * Adds an empty `OVER()` window expression.
+     *
+     * If the window expression for this aggregate is already
+     * initialized, this does nothing.
+     *
+     * @return $this
+     */
+    public function over()
+    {
+        if ($this->window === null) {
+            $this->window = new WindowExpression();
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function sql(ValueBinder $generator): string
+    {
+        $sql = parent::sql($generator);
+        if ($this->window !== null) {
+            $sql .= ' ' . $this->window->sql($generator);
+        }
+
+        return $sql;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function traverse(Closure $visitor)
+    {
+        parent::traverse($visitor);
+        if ($this->window !== null) {
+            $this->window->traverse($visitor);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function count(): int
+    {
+        $count = parent::count();
+        if ($this->window !== null) {
+            $count = $count + 1;
+        }
+
+        return $count;
+    }
 }
