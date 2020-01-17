@@ -35,6 +35,8 @@
                 as they contain die; or breakpoint functionality.
                 -->
                 <file>src/basics.php</file>
+                <!-- This file is deprecated and unused -->
+                <file>src/Core/ClassLoader.php</file>
             </exclude>
         </whitelist>
     </filter>
