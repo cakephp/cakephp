@@ -236,7 +236,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $this->assertStringContainsString('error', $logs[0]);
         $this->assertStringContainsString('[Cake\Http\Exception\NotFoundException] Kaboom!', $logs[0]);
         $this->assertStringContainsString(
-            'Caused by: [Cake\Datasource\Exception\RecordNotFoundException]', 
+            'Caused by: [Cake\Datasource\Exception\RecordNotFoundException]',
             $logs[0]
         );
         $this->assertStringContainsString(

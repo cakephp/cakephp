@@ -137,7 +137,7 @@ class I18nExtractCommandTest extends ConsoleIntegrationTestCase
             '--output=' . $this->path . DS,
             [
                 TEST_APP . 'templates' . DS,
-                'D'
+                'D',
             ]
         );
         $this->assertExitSuccess();
