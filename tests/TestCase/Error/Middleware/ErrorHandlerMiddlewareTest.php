@@ -25,8 +25,8 @@ use Cake\Http\ServerRequestFactory;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use Error;
+use InvalidArgumentException;
 use LogicException;
-use Psr\Log\LoggerInterface;
 use TestApp\Http\TestRequestHandler;
 
 /**
@@ -34,6 +34,9 @@ use TestApp\Http\TestRequestHandler;
  */
 class ErrorHandlerMiddlewareTest extends TestCase
 {
+    /**
+     * @var \Cake\Log\Engine\ArrayLog
+     */
     protected $logger;
 
     /**
@@ -46,12 +49,12 @@ class ErrorHandlerMiddlewareTest extends TestCase
         parent::setUp();
 
         static::setAppNamespace();
-        $this->logger = $this->getMockBuilder(LoggerInterface::class)->getMock();
 
         Log::reset();
         Log::setConfig('error_test', [
-            'engine' => $this->logger,
+            'className' => 'Array',
         ]);
+        $this->logger = Log::engine('error_test');
     }
 
     /**
@@ -66,19 +69,30 @@ class ErrorHandlerMiddlewareTest extends TestCase
     }
 
     /**
+     * Test constructor error
+     *
+     * @return void
+     */
+    public function testConstructorInvalid()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('$errorHandler argument must be a config array or ErrorHandler');
+        new ErrorHandlerMiddleware('nope');
+    }
+
+    /**
      * Test returning a response works ok.
      *
      * @return void
      */
     public function testNoErrorResponse()
     {
-        $this->logger->expects($this->never())->method('log');
-
         $request = ServerRequestFactory::fromGlobals();
 
         $middleware = new ErrorHandlerMiddleware();
         $result = $middleware->process($request, new TestRequestHandler());
         $this->assertInstanceOf(Response::class, $result);
+        $this->assertCount(0, $this->logger->read());
     }
 
     /**
@@ -105,7 +119,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $middleware = new ErrorHandlerMiddleware(new ErrorHandler([
             'exceptionRenderer' => $factory,
         ]));
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler(function () {
             throw new LogicException('Something bad');
         });
         $middleware->process($request, $handler);
@@ -120,7 +134,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
     {
         $request = ServerRequestFactory::fromGlobals();
         $middleware = new ErrorHandlerMiddleware();
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler(function () {
             throw new \Cake\Http\Exception\NotFoundException('whoops');
         });
         $result = $middleware->process($request, $handler);
@@ -140,7 +154,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $request = $request->withHeader('Accept', 'application/json');
 
         $middleware = new ErrorHandlerMiddleware();
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler(function () {
             throw new \Cake\Http\Exception\NotFoundException('whoops');
         });
         $result = $middleware->process($request, $handler);
@@ -172,29 +186,29 @@ class ErrorHandlerMiddlewareTest extends TestCase
      */
     public function testHandleExceptionLogAndTrace()
     {
-        $this->logger->expects($this->at(0))
-            ->method('log')
-            ->with('error', $this->logicalAnd(
-                $this->stringContains('[Cake\Http\Exception\NotFoundException] Kaboom!'),
-                $this->stringContains(str_replace('/', DS, 'vendor/phpunit/phpunit/src/Framework/TestCase.php')),
-                $this->stringContains('Request URL: /target/url'),
-                $this->stringContains('Referer URL: /other/path'),
-                $this->logicalNot(
-                    $this->stringContains('Previous: ')
-                )
-            ));
-
         $request = ServerRequestFactory::fromGlobals([
             'REQUEST_URI' => '/target/url',
             'HTTP_REFERER' => '/other/path',
         ]);
         $middleware = new ErrorHandlerMiddleware(['log' => true, 'trace' => true]);
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler(function () {
             throw new \Cake\Http\Exception\NotFoundException('Kaboom!');
         });
         $result = $middleware->process($request, $handler);
         $this->assertEquals(404, $result->getStatusCode());
         $this->assertStringContainsString('was not found', '' . $result->getBody());
+
+        $logs = $this->logger->read();
+        $this->assertCount(1, $logs);
+        $this->assertStringContainsString('error', $logs[0]);
+        $this->assertStringContainsString('[Cake\Http\Exception\NotFoundException] Kaboom!', $logs[0]);
+        $this->assertStringContainsString(
+            str_replace('/', DS, 'vendor/phpunit/phpunit/src/Framework/TestCase.php'),
+            $logs[0]
+        );
+        $this->assertStringContainsString('Request URL: /target/url', $logs[0]);
+        $this->assertStringContainsString('Referer URL: /other/path', $logs[0]);
+        $this->assertStringNotContainsString('Previous:', $logs[0]);
     }
 
     /**
@@ -204,16 +218,6 @@ class ErrorHandlerMiddlewareTest extends TestCase
      */
     public function testHandleExceptionLogAndTraceWithPrevious()
     {
-        $this->logger->expects($this->at(0))
-            ->method('log')
-            ->with('error', $this->logicalAnd(
-                $this->stringContains('[Cake\Http\Exception\NotFoundException] Kaboom!'),
-                $this->stringContains('Caused by: [Cake\Datasource\Exception\RecordNotFoundException] Previous logged'),
-                $this->stringContains(str_replace('/', DS, 'vendor/phpunit/phpunit/src/Framework/TestCase.php')),
-                $this->stringContains('Request URL: /target/url'),
-                $this->stringContains('Referer URL: /other/path')
-            ));
-
         $request = ServerRequestFactory::fromGlobals([
             'REQUEST_URI' => '/target/url',
             'HTTP_REFERER' => '/other/path',
@@ -226,6 +230,21 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $result = $middleware->process($request, $handler);
         $this->assertEquals(404, $result->getStatusCode());
         $this->assertStringContainsString('was not found', '' . $result->getBody());
+
+        $logs = $this->logger->read();
+        $this->assertCount(1, $logs);
+        $this->assertStringContainsString('error', $logs[0]);
+        $this->assertStringContainsString('[Cake\Http\Exception\NotFoundException] Kaboom!', $logs[0]);
+        $this->assertStringContainsString(
+            'Caused by: [Cake\Datasource\Exception\RecordNotFoundException]',
+            $logs[0]
+        );
+        $this->assertStringContainsString(
+            str_replace('/', DS, 'vendor/phpunit/phpunit/src/Framework/TestCase.php'),
+            $logs[0]
+        );
+        $this->assertStringContainsString('Request URL: /target/url', $logs[0]);
+        $this->assertStringContainsString('Referer URL: /other/path', $logs[0]);
     }
 
     /**
@@ -235,19 +254,19 @@ class ErrorHandlerMiddlewareTest extends TestCase
      */
     public function testHandleExceptionSkipLog()
     {
-        $this->logger->expects($this->never())->method('log');
-
         $request = ServerRequestFactory::fromGlobals();
         $middleware = new ErrorHandlerMiddleware([
             'log' => true,
             'skipLog' => ['Cake\Http\Exception\NotFoundException'],
         ]);
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler(function () {
             throw new \Cake\Http\Exception\NotFoundException('Kaboom!');
         });
         $result = $middleware->process($request, $handler);
         $this->assertEquals(404, $result->getStatusCode());
         $this->assertStringContainsString('was not found', '' . $result->getBody());
+
+        $this->assertCount(0, $this->logger->read());
     }
 
     /**
@@ -257,25 +276,22 @@ class ErrorHandlerMiddlewareTest extends TestCase
      */
     public function testHandleExceptionLogAttributes()
     {
-        $this->logger->expects($this->at(0))
-            ->method('log')
-            ->with('error', $this->logicalAnd(
-                $this->stringContains(
-                    '[Cake\Http\Exception\MissingControllerException] ' .
-                    'Controller class Articles could not be found.'
-                ),
-                $this->stringContains('Exception Attributes:'),
-                $this->stringContains("'class' => 'Articles'"),
-                $this->stringContains('Request URL:')
-            ));
-
         $request = ServerRequestFactory::fromGlobals();
         $middleware = new ErrorHandlerMiddleware(['log' => true]);
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler(function () {
             throw new MissingControllerException(['class' => 'Articles']);
         });
         $result = $middleware->process($request, $handler);
         $this->assertEquals(404, $result->getStatusCode());
+
+        $logs = $this->logger->read();
+        $this->assertStringContainsString(
+            '[Cake\Http\Exception\MissingControllerException] Controller class Articles could not be found.',
+            $logs[0]
+        );
+        $this->assertStringContainsString('Exception Attributes:', $logs[0]);
+        $this->assertStringContainsString("'class' => 'Articles'", $logs[0]);
+        $this->assertStringContainsString('Request URL:', $logs[0]);
     }
 
     /**
@@ -300,7 +316,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $middleware = new ErrorHandlerMiddleware(new ErrorHandler([
             'exceptionRenderer' => $factory,
         ]));
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler(function () {
             throw new \Cake\Http\Exception\ServiceUnavailableException('whoops');
         });
         $response = $middleware->process($request, $handler);
