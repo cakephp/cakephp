@@ -14,20 +14,19 @@ declare(strict_types=1);
  * @since         4.1.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Error;
+namespace Cake\Error\Debug;
 
 use SplObjectStorage;
 
 /**
  * Context tracking for Debugger::exportVar()
  *
- * This class is used by Debugger to track element depth,
- * and indentation. In the longer term indentation should be extracted
- * into a formatter (cli/html).
+ * This class is used by Debugger to track element depth, and
+ * prevent cyclic references from being traversed multiple times.
  *
  * @internal
  */
-class DumpContext
+class DebugContext
 {
     /**
      * @var int
@@ -38,11 +37,6 @@ class DumpContext
      * @var int
      */
     private $depth = 0;
-
-    /**
-     * @var int
-     */
-    private $indent = 0;
 
     /**
      * @var \SplObjectStorage
@@ -71,30 +65,6 @@ class DumpContext
         $new->depth += 1;
 
         return $new;
-    }
-
-    /**
-     * Return a clone with increased depth and indent
-     *
-     * @return static
-     */
-    public function withAddedDepthAndIndent()
-    {
-        $new = clone $this;
-        $new->depth += 1;
-        $new->indent += 1;
-
-        return $new;
-    }
-
-    /**
-     * Get the current indent level.
-     *
-     * @return int
-     */
-    public function getIndent(): int
-    {
-        return $this->indent;
     }
 
     /**
