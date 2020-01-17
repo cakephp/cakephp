@@ -25,6 +25,7 @@ use Cake\Http\ServerRequestFactory;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use Error;
+use InvalidArgumentException;
 use LogicException;
 use TestApp\Http\TestRequestHandler;
 
@@ -65,6 +66,18 @@ class ErrorHandlerMiddlewareTest extends TestCase
     {
         parent::tearDown();
         Log::drop('error_test');
+    }
+
+    /**
+     * Test constructor error
+     *
+     * @return void
+     */
+    public function testConstructorInvalid()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('$errorHandler argument must be a config array or ErrorHandler');
+        new ErrorHandlerMiddleware('nope');
     }
 
     /**
