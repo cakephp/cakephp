@@ -22,14 +22,14 @@ namespace Cake\Error\Debug;
 class ArrayNode implements NodeInterface
 {
     /**
-     * @var \Cake\Error\Debug\ItemNode[]
+     * @var \Cake\Error\Debug\ArrayItemNode[]
      */
     private $items;
 
     /**
      * Constructor
      *
-     * @param \Cake\Error\Debug\ItemNode[] $items The items for the array
+     * @param \Cake\Error\Debug\ArrayItemNode[] $items The items for the array
      */
     public function __construct(array $items = [])
     {
@@ -42,10 +42,10 @@ class ArrayNode implements NodeInterface
     /**
      * Add an item
      *
-     * @param \Cake\Error\Debug\ItemNode $node The item to add.
+     * @param \Cake\Error\Debug\ArrayItemNode $node The item to add.
      * @return void
      */
-    public function add(ItemNode $node): void
+    public function add(ArrayItemNode $node): void
     {
         $this->items[] = $node;
     }
@@ -53,7 +53,7 @@ class ArrayNode implements NodeInterface
     /**
      * Get the contained items
      *
-     * @return \Cake\Error\Debug\ItemNode[]
+     * @return \Cake\Error\Debug\ArrayItemNode[]
      */
     public function getValue(): array
     {
@@ -63,7 +63,7 @@ class ArrayNode implements NodeInterface
     /**
      * Get Item nodes
      *
-     * @return \Cake\Error\Debug\ItemNode[]
+     * @return \Cake\Error\Debug\ArrayItemNode[]
      */
     public function getChildren(): array
     {

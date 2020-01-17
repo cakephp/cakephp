@@ -19,7 +19,7 @@ namespace Cake\Error\Debug;
 /**
  * Dump node for Array Items.
  */
-class ItemNode implements NodeInterface
+class ArrayItemNode implements NodeInterface
 {
     /**
      * @var \Cake\Error\Debug\NodeInterface

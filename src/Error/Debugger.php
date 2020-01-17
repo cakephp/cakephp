@@ -17,10 +17,10 @@ declare(strict_types=1);
 namespace Cake\Error;
 
 use Cake\Core\InstanceConfigTrait;
+use Cake\Error\Debug\ArrayItemNode;
 use Cake\Error\Debug\ArrayNode;
 use Cake\Error\Debug\ClassNode;
 use Cake\Error\Debug\DebugContext;
-use Cake\Error\Debug\ItemNode;
 use Cake\Error\Debug\NodeInterface;
 use Cake\Error\Debug\PropertyNode;
 use Cake\Error\Debug\ReferenceNode;
@@ -579,10 +579,10 @@ class Debugger
                     // Likely recursion, so we increase depth.
                     $node = static::export($val, $context->withAddedDepth());
                 }
-                $items[] = new ItemNode(static::export($key, $context), $node);
+                $items[] = new ArrayItemNode(static::export($key, $context), $node);
             }
         } else {
-            $items[] = new ItemNode(
+            $items[] = new ArrayItemNode(
                 new ScalarNode('string', ''),
                 new SpecialNode('[maximum depth reached]')
             );
