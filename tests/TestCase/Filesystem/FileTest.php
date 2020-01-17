@@ -576,10 +576,12 @@ class FileTest extends TestCase
         if (!file_exists($tmpFile)) {
             touch($tmpFile);
         }
-        $TmpFile = new File($tmpFile);
+        $file = new File($tmpFile);
         $this->assertFileExists($tmpFile);
-        $result = $TmpFile->delete();
-        $this->assertTrue($result);
+
+        $file->read();
+        $this->assertTrue($file->delete());
+        $this->assertFalse($file->exists());
         $this->assertFileNotExists($tmpFile);
 
         $TmpFile = new File('/this/does/not/exist');
