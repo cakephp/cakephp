@@ -2794,7 +2794,7 @@ class QueryTest extends TestCase
             ->enableHydration(false)
             ->contain([
                 'Authors' => function ($q) {
-                    return $q->select(['compute' => '(SELECT 2 + 20)'])
+                    return $q->select(['computed' => '(SELECT 2 + 20)'])
                         ->enableAutoFields();
                 },
             ])
@@ -2805,7 +2805,7 @@ class QueryTest extends TestCase
         $this->assertArrayHasKey('author', $result);
         $this->assertNotNull($result['author']);
         $this->assertArrayHasKey('name', $result['author']);
-        $this->assertArrayHasKey('compute', $result);
+        $this->assertArrayHasKey('computed', $result);
     }
 
     /**

@@ -163,7 +163,6 @@ class QueryCompiler
      */
     protected function _buildSelectPart(array $parts, Query $query, ValueBinder $generator): string
     {
-        $driver = $query->getConnection()->getDriver();
         $select = 'SELECT%s %s%s';
         if ($this->_orderedUnion && $query->clause('union')) {
             $select = '(SELECT%s %s%s';
@@ -171,11 +170,18 @@ class QueryCompiler
         $distinct = $query->clause('distinct');
         $modifiers = $this->_buildModifierPart($query->clause('modifier'), $query, $generator);
 
+        $driver = $query->getConnection()->getDriver();
+        $autoQuotingEnabled = $driver->isAutoQuotingEnabled();
         $normalized = [];
         $parts = $this->_stringifyExpressions($parts, $generator);
         foreach ($parts as $k => $p) {
             if (!is_numeric($k)) {
-                $p = $p . ' AS ' . $driver->quoteIdentifier($k);
+                $p = $p . ' AS ';
+                if ($autoQuotingEnabled) {
+                    $p .= $driver->quoteIdentifier($k);
+                } else {
+                    $p .= $k;
+                }
             }
             $normalized[] = $p;
         }
