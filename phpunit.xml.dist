@@ -29,6 +29,13 @@
     <filter>
         <whitelist>
             <directory suffix=".php">src/</directory>
+            <exclude>
+                <!--
+                This file contains a few functions that cannot be tested
+                as they contain die; or breakpoint functionality.
+                -->
+                <file>src/basics.php</file>
+            </exclude>
         </whitelist>
     </filter>
 
