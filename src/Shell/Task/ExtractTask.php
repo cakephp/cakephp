@@ -601,12 +601,14 @@ class ExtractTask extends Shell
      */
     protected function _writeFiles()
     {
+        $this->out();
         $overwriteAll = false;
         if (!empty($this->params['overwrite'])) {
             $overwriteAll = true;
         }
         foreach ($this->_storage as $domain => $sentences) {
             $output = $this->_writeHeader();
+            $headerLength = strlen($output);
             foreach ($sentences as $sentence => $header) {
                 $output .= $header . $sentence;
             }
@@ -619,6 +621,13 @@ class ExtractTask extends Shell
 
             $filename = str_replace('/', '_', $domain) . '.pot';
             $File = new File($this->_output . $filename);
+
+            if ($File->exists() && $this->_checkUnchanged($File, $headerLength, $output) === true) {
+                $this->out($filename . ' is unchanged. Skipping.');
+                $File->close();
+                continue;
+            }
+
             $response = '';
             while ($overwriteAll === false && $File->exists() && strtoupper($response) !== 'Y') {
                 $this->out();
@@ -667,6 +676,26 @@ class ExtractTask extends Shell
         $output .= "\"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\\n\"\n\n";
 
         return $output;
+    }
+
+    /**
+     * Check whether the old and new output are the same, thus unchanged
+     *
+     * Compares the sha1 hashes of the old and new file without header.
+     *
+     * @param File $oldFile The existing file.
+     * @param int $headerLength The length of the file header in bytes.
+     * @param string $newFileContent The content of the new file.
+     * @return bool Whether or not the old and new file are unchanged.
+     */
+    protected function _checkUnchanged(File $oldFile, $headerLength, $newFileContent)
+    {
+        $oldFileContent = $oldFile->read();
+
+        $oldChecksum = sha1(substr($oldFileContent, $headerLength));
+        $newChecksum = sha1(substr($newFileContent, $headerLength));
+
+        return $oldChecksum === $newChecksum;
     }
 
     /**
