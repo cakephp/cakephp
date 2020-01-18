@@ -6296,6 +6296,27 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $result = $this->Form->year('published', [
+            'empty' => false,
+            'value' => new Date('2008-01-12'),
+            'min' => 2007,
+            'max' => 2009,
+        ]);
+        $expected = [
+            ['select' => ['name' => 'published']],
+            ['option' => ['value' => '2009']],
+            '2009',
+            '/option',
+            ['option' => ['value' => '2008', 'selected' => 'selected']],
+            '2008',
+            '/option',
+            ['option' => ['value' => '2007']],
+            '2007',
+            '/option',
+            '/select',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->year('published', [
             'empty' => 'Published on',
         ]);
         $this->assertStringContainsString('Published on', $result);
