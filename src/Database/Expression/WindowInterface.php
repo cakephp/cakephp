@@ -22,6 +22,48 @@ namespace Cake\Database\Expression;
 interface WindowInterface
 {
     /**
+     * 'CURRENT ROW' frame start, end or exclusion
+     *
+     * @var int
+     */
+    public const CURRENT_ROW = 0;
+
+    /**
+     * 'UNBOUNDED PRECEDING' and '(offset) PRECEDING' frame start or end
+     *
+     * @var int
+     */
+    public const PRECEDING = 1;
+
+    /**
+     * 'UNBOUNDED FOLLOWING' and '(offset) FOLLOWING' frame start or end
+     *
+     * @var int
+     */
+    public const FOLLOWING = 2;
+
+    /**
+     * 'GROUP' frame exclusion
+     *
+     * @var int
+     */
+    public const GROUP = 1;
+
+    /**
+     * 'TIES' frame exclusion
+     *
+     * @var int
+     */
+    public const TIES = 2;
+
+    /**
+     * 'NO OTHERS' frame exclusion
+     *
+     * @var int
+     */
+    public const NO_OTHERS = 3;
+
+    /**
      * Adds one or more partition expressions to the window.
      *
      * @param (\Cake\Database\ExpressionInterface|string)[]|\Cake\Database\ExpressionInterface|string $partitions Partition expressions
@@ -41,28 +83,30 @@ interface WindowInterface
      * Adds a range frame clause to the window. Only one frame clause can be
      * specified per window.
      *
-     * `$start` assumes `PRECEDING`, and `$end` assumes `FOLLOWING. Both can be
+     * `$start` assumes `PRECEDING`, and `$end` assumes `FOLLOWING`. Both can be
      * overriden by passing an array with the order as the key. The SQL standard
      * for ordering must be followed.
      *
      * ```
-     * // this is the same as '1 FOLLOWING`
-     * $window->range(['following' => 1]);
+     * // this is produces 'ROWS BETWEEN 1 PRECEDING AND 2 FOLLOWING'
+     * $window->rows(1, 2);
+     *
+     * // this is the same as 'ROWS 1 FOLLOWING`
+     * $window->rows([WindowInterface::FOLLOWING => 1]);
      * ```
      *
-     * The SQL keywords `UNBOUNDED` and `CURRENT ROW` can be used directly or
-     * easier to read substitutes `null` and `0` instead.
+     * You can use `null` for 'UNBOUNDED' and `0` for 'CURRENT ROW'.
      *
      * ```
-     * // this is the same as 'CURRENT ROW'
-     * $window->range(0);
+     * // this is produces 'ROWS CURRENT ROW'
+     * $window->rows(0);
      *
-     * // this is the same as 'UNBOUNDED PRECEDING'
-     * $window->range(null)
+     * // this is produces 'ROWS UNBOUNDED PRECEDING'
+     * $window->rows(null)
      * ```
      *
-     * @param array|int|string|null $start Frame start
-     * @param array|int|string|null $end Frame end
+     * @param array|int|null $start Frame start
+     * @param array|int|null $end Frame end
      *  If not passed in, only frame start SQL will be generated.
      * @return $this
      */
@@ -74,8 +118,8 @@ interface WindowInterface
      *
      * See `range()` for details on `$start` and `$end` format.
      *
-     * @param array|int|string|null $start Frame start
-     * @param array|int|string|null $end Frame end
+     * @param array|int|null $start Frame start
+     * @param array|int|null $end Frame end
      *  If not passed in, only frame start SQL will be generated.
      * @return $this
      */
@@ -97,14 +141,8 @@ interface WindowInterface
     /**
      * Adds a frame exclusion to the window.
      *
-     * Known exclusion keywords are:
-     *  - CURRENT ROW
-     *  - GROUP
-     *  - TIES
-     *  - NO OTHERS
-     *
-     * @param string $exclusion Frame exclusion
+     * @param int $exclusion Frame exclusion
      * @return $this
      */
-    public function exclude(string $exclusion);
+    public function exclude(int $exclusion);
 }
