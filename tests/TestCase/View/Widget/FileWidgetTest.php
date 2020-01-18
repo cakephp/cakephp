@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\View\Widget;
 
+use Cake\Core\Configure;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Cake\View\Form\NullContext;
@@ -98,5 +99,23 @@ class FileWidgetTest extends TestCase
             ],
         ];
         $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * Test secureFields
+     *
+     * @return void
+     */
+    public function testSecureFields()
+    {
+        $input = new FileWidget($this->templates);
+        $data = ['name' => 'image', 'required' => true, 'val' => 'nope'];
+        $this->assertEquals(['image'], $input->secureFields($data));
+
+        Configure::write('App.uploadedFilesAsObjects', false);
+        $this->assertEquals(
+            ['image[name]', 'image[type]', 'image[tmp_name]', 'image[error]', 'image[size]'],
+            $input->secureFields($data)
+        );
     }
 }
