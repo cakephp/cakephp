@@ -32,7 +32,7 @@ class TranslatorFactory extends BaseTranslatorFactory
     /**
      * The class to use for new instances.
      *
-     * @var string
+     * @var class-string<\Cake\I18n\Translator>
      */
     protected $class = Translator::class;
 
@@ -60,7 +60,6 @@ class TranslatorFactory extends BaseTranslatorFactory
             ));
         }
 
-        /** @var \Cake\I18n\Translator */
         return new $class($locale, $package, $formatter, $fallback);
     }
 }

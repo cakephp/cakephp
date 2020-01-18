@@ -85,9 +85,8 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      * Resolve a behavior classname.
      *
      * @param string $class Partial classname to resolve.
-     * @return string|null Either the correct classname or null.
+     * @return class-string|null Either the correct classname or null.
      * @since 3.5.7
-     * @psalm-return class-string
      */
     public static function className(string $class): ?string
     {
@@ -101,8 +100,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
      * @param string $class Partial classname to resolve.
-     * @return string|null Either the correct class name or null.
-     * @psalm-return class-string
+     * @return class-string|null Either the correct class name or null.
      */
     protected function _resolveClassName(string $class): ?string
     {

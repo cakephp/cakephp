@@ -222,7 +222,7 @@ class PluginCollection implements Iterator, Countable
     /**
      * Create a plugin instance from a name/classname and configuration.
      *
-     * @param string $name The plugin name or classname
+     * @param string|class-string<\Cake\Core\PluginInterface> $name The plugin name or classname
      * @param array $config Configuration options for the plugin.
      * @return \Cake\Core\PluginInterface
      * @throws \Cake\Core\Exception\MissingPluginException When plugin instance could not be created.
@@ -230,11 +230,13 @@ class PluginCollection implements Iterator, Countable
     public function create(string $name, array $config = []): PluginInterface
     {
         if (strpos($name, '\\') !== false) {
+            // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.InvalidFormat
             /** @var \Cake\Core\PluginInterface */
             return new $name($config);
         }
 
         $config += ['name' => $name];
+        /** @var class-string<\Cake\Core\PluginInterface> $className */
         $className = str_replace('/', '\\', $name) . '\\' . 'Plugin';
         if (!class_exists($className)) {
             $className = BasePlugin::class;
@@ -243,7 +245,6 @@ class PluginCollection implements Iterator, Countable
             }
         }
 
-        /** @var \Cake\Core\PluginInterface */
         return new $className($config);
     }
 

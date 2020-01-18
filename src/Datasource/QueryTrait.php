@@ -552,7 +552,7 @@ trait QueryTrait
     /**
      * Returns the name of the class to be used for decorating results
      *
-     * @return string
+     * @return class-string<\Cake\Datasource\ResultSetInterface>
      */
     protected function _decoratorClass(): string
     {

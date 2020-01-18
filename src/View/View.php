@@ -734,7 +734,7 @@ class View implements EventDispatcherInterface
      */
     public function render(?string $template = null, $layout = null): string
     {
-        $defaultLayout = null;
+        $defaultLayout = '';
         $defaultAutoLayout = null;
         if ($layout === false) {
             $defaultAutoLayout = $this->autoLayout;
@@ -761,7 +761,6 @@ class View implements EventDispatcherInterface
             $this->Blocks->set('content', $this->renderLayout('', $this->layout));
         }
         if ($layout !== null) {
-            /** @var string $defaultLayout */
             $this->layout = $defaultLayout;
         }
         if ($defaultAutoLayout !== null) {

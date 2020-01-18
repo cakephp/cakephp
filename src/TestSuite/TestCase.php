@@ -566,8 +566,8 @@ abstract class TestCase extends BaseTestCase
                 ];
                 continue;
             }
-            /** @var array<string, true|array> $tags */
             foreach ($tags as $tag => $attributes) {
+                /** @psalm-suppress PossiblyFalseArgument */
                 $regex[] = [
                     sprintf('Open %s tag', $tag),
                     sprintf('[\s]*<%s', preg_quote($tag, '/')),
@@ -614,6 +614,7 @@ abstract class TestCase extends BaseTestCase
                         'attrs' => $attrs,
                     ];
                 }
+                /** @psalm-suppress PossiblyFalseArgument */
                 $regex[] = [
                     sprintf('End %s tag', $tag),
                     '[\s]*\/?[\s]*>[\n\r]*',
@@ -632,11 +633,8 @@ abstract class TestCase extends BaseTestCase
                 continue;
             }
 
-            /**
-             * If 'attrs' is not present then the array is just a regular int-offset one
-             *
-             * @var array<int, string> $assertion
-             */
+            // If 'attrs' is not present then the array is just a regular int-offset one
+            /** @psalm-suppress PossiblyUndefinedArrayOffset */
             [$description, $expressions, $itemNum] = $assertion;
             $expression = '';
             foreach ((array)$expressions as $expression) {

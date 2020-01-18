@@ -55,8 +55,7 @@ class HelperRegistry extends ObjectRegistry
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
      * @param string $class Partial classname to resolve.
-     * @return string|null Either the correct class name or null.
-     * @psalm-return class-string
+     * @return class-string|null Either the correct class name or null.
      */
     protected function _resolveClassName(string $class): ?string
     {
@@ -100,6 +99,7 @@ class HelperRegistry extends ObjectRegistry
      */
     protected function _create($class, string $alias, array $settings): Helper
     {
+        // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.InvalidFormat
         /** @var \Cake\Console\Helper */
         return new $class($this->_io, $settings);
     }

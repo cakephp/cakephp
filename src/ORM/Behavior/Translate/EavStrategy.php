@@ -354,6 +354,7 @@ class EavStrategy implements TranslateStrategyInterface
     protected function rowMapper($results, $locale)
     {
         return $results->map(function ($row) use ($locale) {
+            /** @var \Cake\Datasource\EntityInterface|array|null $row */
             if ($row === null) {
                 return $row;
             }
@@ -378,7 +379,6 @@ class EavStrategy implements TranslateStrategyInterface
 
             $row['_locale'] = $locale;
             if ($hydrated) {
-                /** @var \Cake\Datasource\EntityInterface $row */
                 $row->clean();
             }
 

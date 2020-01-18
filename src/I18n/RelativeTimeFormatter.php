@@ -222,11 +222,11 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
             $weeks = $days = $hours = $minutes = $seconds = 0;
 
             $years = (int)$future['Y'] - (int)$past['Y'];
-            $months = (int)$future['m'] + ((12 * $years) - (int)$past['m']);
+            $months = (int)$future['m'] + (12 * $years) - (int)$past['m'];
 
             if ($months >= 12) {
                 $years = floor($months / 12);
-                $months -= ($years * 12);
+                $months -= $years * 12;
             }
             if ((int)$future['m'] < (int)$past['m'] && (int)$future['Y'] - (int)$past['Y'] === 1) {
                 $years--;
@@ -249,7 +249,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
                 }
             }
 
-            if (!$months && $years >= 1 && $diff < ($years * 31536000)) {
+            if (!$months && $years >= 1 && $diff < $years * 31536000) {
                 $months = 11;
                 $years--;
             }
@@ -261,19 +261,19 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
 
             if ($days >= 7) {
                 $weeks = floor($days / 7);
-                $days -= ($weeks * 7);
+                $days -= $weeks * 7;
             }
         } else {
             $years = $months = $weeks = 0;
             $days = floor($diff / 86400);
 
-            $diff -= ($days * 86400);
+            $diff -= $days * 86400;
 
             $hours = floor($diff / 3600);
-            $diff -= ($hours * 3600);
+            $diff -= $hours * 3600;
 
             $minutes = floor($diff / 60);
-            $diff -= ($minutes * 60);
+            $diff -= $minutes * 60;
             $seconds = $diff;
         }
 

@@ -163,8 +163,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * Should resolve the classname for a given object type.
      *
      * @param string $class The class to resolve.
-     * @return string|null The resolved name or null for failure.
-     * @psalm-return class-string
+     * @return class-string|null The resolved name or null for failure.
      */
     abstract protected function _resolveClassName(string $class): ?string;
 

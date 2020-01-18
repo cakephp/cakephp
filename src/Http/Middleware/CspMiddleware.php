@@ -66,6 +66,7 @@ class CspMiddleware implements MiddlewareInterface
     {
         $response = $handler->handle($request);
 
+        // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.InvalidFormat
         /** @var \Psr\Http\Message\ResponseInterface */
         return $this->csp->injectCSPHeader($response);
     }

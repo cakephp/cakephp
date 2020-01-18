@@ -578,8 +578,7 @@ trait CollectionTrait
             'groupPath' => $groupPath ? $this->_propertyExtractor($groupPath) : null,
         ];
 
-        $mapper = function ($value, $key, $mapReduce) use ($options) {
-            /** @var \Cake\Collection\Iterator\MapReduce $mapReduce */
+        $mapper = function ($value, $key, MapReduce $mapReduce) use ($options) {
             $rowKey = $options['keyPath'];
             $rowVal = $options['valuePath'];
 
@@ -596,12 +595,11 @@ trait CollectionTrait
             );
         };
 
-        $reducer = function ($values, $key, $mapReduce): void {
+        $reducer = function ($values, $key, MapReduce $mapReduce): void {
             $result = [];
             foreach ($values as $value) {
                 $result += $value;
             }
-            /** @var \Cake\Collection\Iterator\MapReduce $mapReduce */
             $mapReduce->emit($result, $key);
         };
 
@@ -618,16 +616,15 @@ trait CollectionTrait
         $parentPath = $this->_propertyExtractor($parentPath);
         $isObject = true;
 
-        $mapper = function ($row, $key, $mapReduce) use (&$parents, $idPath, $parentPath, $nestingKey): void {
+        $mapper = function ($row, $key, MapReduce $mapReduce) use (&$parents, $idPath, $parentPath, $nestingKey): void {
             $row[$nestingKey] = [];
             $id = $idPath($row, $key);
             $parentId = $parentPath($row, $key);
             $parents[$id] =& $row;
-            /** @var \Cake\Collection\Iterator\MapReduce $mapReduce */
             $mapReduce->emitIntermediate($id, $parentId);
         };
 
-        $reducer = function ($values, $key, $mapReduce) use (&$parents, &$isObject, $nestingKey) {
+        $reducer = function ($values, $key, MapReduce $mapReduce) use (&$parents, &$isObject, $nestingKey) {
             static $foundOutType = false;
             if (!$foundOutType) {
                 $isObject = is_object(current($parents));
@@ -636,7 +633,6 @@ trait CollectionTrait
             if (empty($key) || !isset($parents[$key])) {
                 foreach ($values as $id) {
                     $parents[$id] = $isObject ? $parents[$id] : new ArrayIterator($parents[$id], 1);
-                    /** @var \Cake\Collection\Iterator\MapReduce $mapReduce */
                     $mapReduce->emit($parents[$id]);
                 }
 

@@ -46,11 +46,10 @@ class App
      * Return the class name namespaced. This method checks if the class is defined on the
      * application/plugin, otherwise try to load from the CakePHP core
      *
-     * @param string $class Class name
+     * @param string|class-string $class Class name
      * @param string $type Type of class
      * @param string $suffix Class name suffix
-     * @return string|null Namespaced class name, null if the class is not found.
-     * @psalm-return class-string|null
+     * @return class-string|null Namespaced class name, null if the class is not found.
      */
     public static function className(string $class, string $type = '', string $suffix = ''): ?string
     {
@@ -64,7 +63,8 @@ class App
         $fullname = '\\' . str_replace('/', '\\', $type . '\\' . $name) . $suffix;
 
         if (static::_classExistsInBase($fullname, $base)) {
-            /** @psalm-var class-string */
+            // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.InvalidFormat
+            /** @var class-string */
             return $base . $fullname;
         }
 
@@ -72,7 +72,8 @@ class App
             return null;
         }
 
-        /** @psalm-var class-string */
+        // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.InvalidFormat
+        /** @var class-string */
         return 'Cake' . $fullname;
     }
 
