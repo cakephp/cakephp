@@ -50,7 +50,7 @@ use Cake\Error\Debugger;
         font-size: 30px;
         margin: 0;
     }
-    .header-title small {
+    .header-title a {
         font-size: 18px;
         cursor: pointer;
         margin-left: 10px;
@@ -248,7 +248,7 @@ use Cake\Error\Debugger;
     <header>
         <h1 class="header-title">
             <?= Debugger::formatHtmlMessage($this->fetch('title')) ?>
-            <small>&#128203</small>
+            <a>&#128203</a>
         </h1>
         <span class="header-type"><?= get_class($error) ?></span>
     </header>
@@ -335,11 +335,11 @@ use Cake\Error\Debugger;
                 event.preventDefault();
             });
 
-            bindEvent('.header-title small', 'click', function(event) {
+            bindEvent('.header-title a', 'click', function(event) {
                 event.preventDefault();
                 var text = '';
                 each(this.parentNode.childNodes, function(el) {
-                    if (el.nodeName !== 'SMALL') {
+                    if (el.nodeName !== 'A') {
                         text += el.textContent.trim();
                     }
                 });
@@ -358,7 +358,7 @@ use Cake\Error\Debugger;
                     var original = el.innerText;
                     el.innerText = '\ud83c\udf70';
                     setTimeout(function () {
-                        el.textContent =  original;
+                        el.innerText =  original;
                     }, 1000);
                 } catch (err) {
                     alert('Unable to update clipboard ' + err);
