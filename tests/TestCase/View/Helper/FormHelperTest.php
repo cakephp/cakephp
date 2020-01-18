@@ -2258,11 +2258,7 @@ class FormHelperTest extends TestCase
         $this->Form->create();
 
         $this->Form->file('Attachment.file');
-        $expected = [
-            'Attachment.file.name', 'Attachment.file.type',
-            'Attachment.file.tmp_name', 'Attachment.file.error',
-            'Attachment.file.size',
-        ];
+        $expected = ['Attachment.file'];
         $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals($expected, $result);
     }
