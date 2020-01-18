@@ -86,6 +86,13 @@ class QueryCompiler
     protected $_orderedUnion = true;
 
     /**
+     * Indicate whether aliases in SELECT clause need to be always quoted.
+     *
+     * @var bool
+     */
+    protected $_quotedSelectAliases = false;
+
+    /**
      * Returns the SQL representation of the provided query after generating
      * the placeholders for the bound values using the provided generator
      *
@@ -171,13 +178,13 @@ class QueryCompiler
         $modifiers = $this->_buildModifierPart($query->clause('modifier'), $query, $generator);
 
         $driver = $query->getConnection()->getDriver();
-        $autoQuotingEnabled = $driver->isAutoQuotingEnabled();
+        $quoteIdentifiers = $driver->isAutoQuotingEnabled() || $this->_quotedSelectAliases;
         $normalized = [];
         $parts = $this->_stringifyExpressions($parts, $generator);
         foreach ($parts as $k => $p) {
             if (!is_numeric($k)) {
                 $p = $p . ' AS ';
-                if ($autoQuotingEnabled) {
+                if ($quoteIdentifiers) {
                     $p .= $driver->quoteIdentifier($k);
                 } else {
                     $p .= $k;
