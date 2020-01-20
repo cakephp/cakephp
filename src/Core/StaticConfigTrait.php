@@ -157,7 +157,6 @@ trait StaticConfigTrait
         }
         /** @psalm-suppress UndefinedPropertyFetch */
         if (isset(static::$_registry)) {
-            /** @var \Cake\Core\ObjectRegistry $_registry */
             static::$_registry->unload($config);
         }
         unset(static::$_config[$config]);

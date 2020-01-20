@@ -594,10 +594,10 @@ class SmtpTransportTest extends TestCase
     {
         $this->SmtpTransport->setConfig(['keepAlive' => true]);
 
+        /** @var \Cake\Mailer\Message $message */
         $message = $this->getMockBuilder(Message::class)
             ->setMethods(['getBody'])
             ->getMock();
-        /** @var \Cake\Mailer\Message $message */
         $message->setFrom('noreply@cakephp.org', 'CakePHP Test');
         $message->setTo('cake@cakephp.org', 'CakePHP');
         $message->expects($this->exactly(2))->method('getBody')->will($this->returnValue(['First Line']));
@@ -650,10 +650,10 @@ class SmtpTransportTest extends TestCase
      */
     public function testSendDefaults()
     {
+        /** @var \Cake\Mailer\Message $message */
         $message = $this->getMockBuilder(Message::class)
             ->setMethods(['getBody'])
             ->getMock();
-        /** @var \Cake\Mailer\Message $message */
         $message->setFrom('noreply@cakephp.org', 'CakePHP Test');
         $message->setTo('cake@cakephp.org', 'CakePHP');
         $message->expects($this->once())->method('getBody')->will($this->returnValue(['First Line']));

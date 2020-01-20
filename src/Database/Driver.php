@@ -413,10 +413,10 @@ abstract class Driver implements DriverInterface
     {
         $className = TableSchema::class;
         if (isset($this->_config['tableSchema'])) {
+            /** @var class-string<\Cake\Database\Schema\TableSchema> $className */
             $className = $this->_config['tableSchema'];
         }
 
-        /** @var \Cake\Database\Schema\TableSchema */
         return new $className($table, $columns);
     }
 

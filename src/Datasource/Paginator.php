@@ -341,7 +341,7 @@ class Paginator implements PaginatorInterface
         if ($params['count'] === null) {
             $params['nextPage'] = true;
         } else {
-            $params['nextPage'] = $params['count'] > ($params['page'] * $params['perPage']);
+            $params['nextPage'] = $params['count'] > $params['page'] * $params['perPage'];
         }
 
         return $params;

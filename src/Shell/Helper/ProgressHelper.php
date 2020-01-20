@@ -132,7 +132,7 @@ class ProgressHelper extends Helper
     {
         $numberLen = strlen(' 100%');
         $complete = round($this->_progress / $this->_total, 2);
-        $barLen = ($this->_width - $numberLen) * ($this->_progress / $this->_total);
+        $barLen = ($this->_width - $numberLen) * $this->_progress / $this->_total;
         $bar = '';
         if ($barLen > 1) {
             $bar = str_repeat('=', (int)$barLen - 1) . '>';

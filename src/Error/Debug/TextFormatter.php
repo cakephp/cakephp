@@ -114,7 +114,6 @@ class TextFormatter
             return "object({$var->getValue()}) id:{$var->getId()} {}";
         }
 
-        /** @var \Cake\Error\Debug\ClassNode $var */
         $out .= "object({$var->getValue()}) id:{$var->getId()} {";
         $break = "\n" . str_repeat("  ", $indent);
         $end = "\n" . str_repeat("  ", $indent - 1) . '}';

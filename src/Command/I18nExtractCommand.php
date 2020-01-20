@@ -474,7 +474,7 @@ class I18nExtractCommand extends Command
         $count = 0;
         $tokenCount = count($this->_tokens);
 
-        while (($tokenCount - $count) > 1) {
+        while ($tokenCount - $count > 1) {
             $countToken = $this->_tokens[$count];
             $firstParenthesis = $this->_tokens[$count + 1];
             if (!is_array($countToken)) {
@@ -802,7 +802,7 @@ class I18nExtractCommand extends Command
         $tokenCount = count($this->_tokens);
         $parenthesis = 1;
 
-        while ((($tokenCount - $count) > 0) && $parenthesis) {
+        while (($tokenCount - $count > 0) && $parenthesis) {
             if (is_array($this->_tokens[$count])) {
                 $io->err($this->_tokens[$count][1], 0);
             } else {

@@ -231,6 +231,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * The name of the class that represent a single row for this table
      *
      * @var string
+     * @psalm-var class-string<\Cake\Datasource\EntityInterface>
      */
     protected $_entityClass;
 
@@ -686,6 +687,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Returns the class used to hydrate rows for this table.
      *
      * @return string
+     * @psalm-suppress MoreSpecificReturnType
+     * @psalm-return class-string<\Cake\Datasource\EntityInterface>
      */
     public function getEntityClass(): string
     {
@@ -704,6 +707,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 return $this->_entityClass = $default;
             }
 
+            /** @var class-string<\Cake\Datasource\EntityInterface>|null $class */
             $class = App::className($name, 'Model/Entity');
             if (!$class) {
                 throw new MissingEntityException([$name]);
@@ -2599,7 +2603,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $class = $this->getEntityClass();
 
-        /** @var \Cake\Datasource\EntityInterface */
         return new $class([], ['source' => $this->getRegistryAlias()]);
     }
 

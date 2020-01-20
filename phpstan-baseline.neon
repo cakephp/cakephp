@@ -206,51 +206,6 @@ parameters:
 			path: src/Core/ObjectRegistry.php
 
 		-
-			message: "#^Variable \\$_registry in PHPDoc tag @var does not exist\\.$#"
-			count: 1
-			path: src/Cache/Cache.php
-
-		-
-			message: "#^Variable \\$_registry in PHPDoc tag @var does not exist\\.$#"
-			count: 1
-			path: src/Datasource/ConnectionManager.php
-
-		-
-			message: "#^Variable \\$_registry in PHPDoc tag @var does not exist\\.$#"
-			count: 1
-			path: src/Log/Log.php
-
-		-
-			message: "#^Variable \\$_registry in PHPDoc tag @var does not exist\\.$#"
-			count: 1
-			path: src/Mailer/Mailer.php
-
-		-
-			message: "#^Variable \\$_registry in PHPDoc tag @var does not exist\\.$#"
-			count: 1
-			path: src/Mailer/TransportFactory.php
-
-		-
-			message: "#^Access to an undefined property PDO\\:\\:\\$_connection\\.$#"
-			count: 1
-			path: src/Database/Driver/Sqlserver.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: src/Database/Driver/Sqlserver.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: src/Database/Driver/Sqlserver.php
-
-		-
-			message: "#^Instanceof between mixed and int\\|string results in an error\\.$#"
-			count: 1
-			path: src/Database/Driver/Sqlserver.php
-
-		-
 			message: "#^Property Cake\\\\Database\\\\Driver\\:\\:\\$_connection \\(PDO\\) does not accept null\\.$#"
 			count: 2
 			path: src/Database/Driver.php
@@ -304,6 +259,21 @@ parameters:
 			message: "#^Instanceof between mixed and int\\|string results in an error\\.$#"
 			count: 1
 			path: src/Database/Driver/Sqlite.php
+
+		-
+			message: "#^If condition is always true\\.$#"
+			count: 1
+			path: src/Database/Driver/Sqlserver.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: src/Database/Driver/Sqlserver.php
+
+		-
+			message: "#^Instanceof between mixed and int\\|string results in an error\\.$#"
+			count: 1
+			path: src/Database/Driver/Sqlserver.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
@@ -616,11 +586,6 @@ parameters:
 			path: src/ORM/Marshaller.php
 
 		-
-			message: "#^Parameter \\#1 \\$entities of method Cake\\\\ORM\\\\Marshaller\\:\\:mergeMany\\(\\) expects iterable\\<Cake\\\\Datasource\\\\EntityInterface\\>&Traversable\\<mixed, Cake\\\\Datasource\\\\EntityInterface\\>, array\\<Cake\\\\Datasource\\\\EntityInterface\\> given\\.$#"
-			count: 3
-			path: src/ORM/Marshaller.php
-
-		-
 			message: "#^Parameter \\#1 \\$table of method Cake\\\\ORM\\\\Query\\:\\:addDefaultTypes\\(\\) expects Cake\\\\ORM\\\\Table, Cake\\\\Datasource\\\\RepositoryInterface given\\.$#"
 			count: 1
 			path: src/ORM/Query.php
@@ -691,24 +656,9 @@ parameters:
 			path: src/TestSuite/ConsoleIntegrationTestCase.php
 
 		-
-			message: "#^Variable \\$event in PHPDoc tag @var does not match assigned variable \\$events\\.$#"
-			count: 1
-			path: src/TestSuite/Constraint/EventFiredWith.php
-
-		-
 			message: "#^Access to an undefined property PHPUnit\\\\Framework\\\\Test\\:\\:\\$fixtureManager\\.$#"
 			count: 1
 			path: src/TestSuite/Fixture/FixtureInjector.php
-
-		-
-			message: "#^Variable \\$fixtures in PHPDoc tag @var does not match any variable in the foreach loop\\: \\$fixture$#"
-			count: 1
-			path: src/TestSuite/Fixture/FixtureManager.php
-
-		-
-			message: "#^Call to an undefined method Cake\\\\Database\\\\ConstraintsInterface\\:\\:sourceName\\(\\)\\.$#"
-			count: 1
-			path: src/TestSuite/Fixture/FixtureManager.php
 
 		-
 			message: "#^Parameter \\#1 \\$connection of method Cake\\\\Database\\\\Schema\\\\SqlGeneratorInterface\\:\\:createSql\\(\\) expects Cake\\\\Database\\\\Connection, Cake\\\\Datasource\\\\ConnectionInterface given\\.$#"
@@ -781,19 +731,9 @@ parameters:
 			path: src/TestSuite/IntegrationTestCase.php
 
 		-
-			message: "#^Variable \\$tags in PHPDoc tag @var does not match any variable in the foreach loop\\: \\$tag, \\$attributes$#"
-			count: 1
-			path: src/TestSuite/TestCase.php
-
-		-
 			message: "#^Result of \\|\\| is always true\\.$#"
 			count: 2
 			path: src/Utility/Hash.php
-
-		-
-			message: "#^Variable \\$tempData in PHPDoc tag @var does not match any variable in the foreach loop\\: \\$key, \\$hashVal$#"
-			count: 1
-			path: src/Utility/Text.php
 
 		-
 			message: "#^Return type \\(array\\<string, array\\|string\\>\\) of method Cake\\\\View\\\\Exception\\\\MissingCellTemplateException\\:\\:getAttributes\\(\\) should be compatible with return type \\(array\\<string, array\\|string\\>\\) of method Cake\\\\View\\\\Exception\\\\MissingTemplateException\\:\\:getAttributes\\(\\)$#"
@@ -804,11 +744,6 @@ parameters:
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/View/Form/ContextFactory.php
-
-		-
-			message: "#^Call to an undefined method Cake\\\\ORM\\\\Association\\:\\:junction\\(\\)\\.$#"
-			count: 1
-			path: src/View/Form/EntityContext.php
 
 		-
 			message: "#^Constructor of class Cake\\\\View\\\\Form\\\\NullContext has an unused parameter \\$context\\.$#"

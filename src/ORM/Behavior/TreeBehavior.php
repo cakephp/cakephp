@@ -680,7 +680,7 @@ class TreeBehavior extends Behavior
         $this->_sync($nodeToHole, '-', "> {$edge}");
 
         $node->set($left, $targetLeft);
-        $node->set($right, $targetLeft + ($nodeRight - $nodeLeft));
+        $node->set($right, $targetLeft + $nodeRight - $nodeLeft);
 
         $node->setDirty($left, false);
         $node->setDirty($right, false);

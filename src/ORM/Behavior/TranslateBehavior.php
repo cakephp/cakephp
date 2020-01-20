@@ -67,7 +67,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     /**
      * Default strategy class name.
      *
-     * @var string
+     * @var class-string<\Cake\ORM\Behavior\Translate\TranslateStrategyInterface>
      */
     protected static $defaultStrategyClass = EavStrategy::class;
 
@@ -176,9 +176,9 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
             $this->_config,
             ['implementedFinders', 'implementedMethods', 'strategyClass']
         );
+        /** @var class-string<\Cake\ORM\Behavior\Translate\TranslateStrategyInterface> $className */
         $className = $this->getConfig('strategyClass', static::$defaultStrategyClass);
 
-        /** @var \Cake\ORM\Behavior\Translate\TranslateStrategyInterface */
         return new $className($this->_table, $config);
     }
 
@@ -308,8 +308,8 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
 
         return $query
             ->contain([$targetAlias => function ($query) use ($locales, $targetAlias) {
+                /** @var \Cake\Datasource\QueryInterface $query */
                 if ($locales) {
-                    /** @var \Cake\Datasource\QueryInterface $query */
                     $query->where(["$targetAlias.locale IN" => $locales]);
                 }
 

@@ -132,7 +132,7 @@ class EntityContext implements ContextInterface
     {
         /** @var \Cake\ORM\Table|null $table */
         $table = $this->_context['table'];
-        /** @var \Cake\ORM\Entity|\Traversable $entity */
+        /** @var \Cake\Datasource\EntityInterface|iterable $entity */
         $entity = $this->_context['entity'];
         if (empty($table)) {
             if (is_iterable($entity)) {
@@ -145,7 +145,7 @@ class EntityContext implements ContextInterface
             $isEntity = $entity instanceof EntityInterface;
 
             if ($isEntity) {
-                /** @var \Cake\ORM\Entity $entity */
+                /** @psalm-suppress PossiblyInvalidMethodCall */
                 $table = $entity->getSource();
             }
             if (!$table && $isEntity && get_class($entity) !== Entity::class) {
@@ -663,8 +663,8 @@ class EntityContext implements ContextInterface
         $assoc = null;
         foreach ($normalized as $part) {
             if ($part === '_joinData') {
-                if ($assoc) {
-                    /** @var \Cake\ORM\Association\BelongsToMany $assoc */
+                if ($assoc !== null) {
+                    /** @psalm-suppress UndefinedMagicMethod */
                     $table = $assoc->junction();
                     $assoc = null;
                     continue;
@@ -674,14 +674,14 @@ class EntityContext implements ContextInterface
                 $assoc = $associationCollection->getByProperty($part);
             }
 
-            if (!$assoc && $fallback) {
-                break;
-            }
-            if (!$assoc && !$fallback) {
+            if ($assoc === null) {
+                if ($fallback) {
+                    break;
+                }
+
                 return null;
             }
 
-            /** @var \Cake\ORM\Association $assoc  */
             $table = $assoc->getTarget();
         }
 

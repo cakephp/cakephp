@@ -84,6 +84,7 @@ class DateTimeType extends BaseType
      * The classname to use when creating objects.
      *
      * @var string
+     * @psalm-var class-string<\DateTime>|class-string<\DateTimeImmutable>
      */
     protected $_className;
 
@@ -293,6 +294,7 @@ class DateTimeType extends BaseType
             return $value;
         }
 
+        /** @var class-string<\DatetimeInterface> $class */
         $class = $this->_className;
         try {
             if ($value === '' || $value === null || is_bool($value)) {
@@ -300,7 +302,6 @@ class DateTimeType extends BaseType
             }
             $isString = is_string($value);
             if (ctype_digit($value)) {
-                /** @var \DateTimeInterface */
                 return new $class('@' . $value);
             } elseif ($isString && $this->_useLocaleMarshal) {
                 return $this->_parseLocaleValue($value);
@@ -344,7 +345,6 @@ class DateTimeType extends BaseType
         );
         $tz = $value['timezone'] ?? null;
 
-        /** @var \DateTimeInterface */
         return new $class($format, $tz);
     }
 
@@ -419,6 +419,7 @@ class DateTimeType extends BaseType
      * Get the classname used for building objects.
      *
      * @return string
+     * @psalm-return class-string<\DateTime>|class-string<\DateTimeImmutable>
      */
     public function getDateTimeClassName(): string
     {

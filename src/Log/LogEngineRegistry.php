@@ -35,7 +35,7 @@ class LogEngineRegistry extends ObjectRegistry
      *
      * @param string $class Partial classname to resolve.
      * @return string|null Either the correct class name or null.
-     * @psalm-return class-string
+     * @psalm-return class-string|null
      */
     protected function _resolveClassName(string $class): ?string
     {
@@ -79,7 +79,7 @@ class LogEngineRegistry extends ObjectRegistry
         }
 
         if (!isset($instance)) {
-            /** @var string $class */
+            /** @psalm-suppress UndefinedClass */
             $instance = new $class($settings);
         }
 

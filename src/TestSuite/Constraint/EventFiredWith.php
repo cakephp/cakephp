@@ -84,7 +84,7 @@ class EventFiredWith extends Constraint
             return false;
         }
 
-        /** @var \Cake\Event\EventInterface[] $event */
+        /** @var \Cake\Event\EventInterface[] $events */
         $events = $eventGroup[$other];
 
         if (count($events) > 1) {
@@ -97,7 +97,7 @@ class EventFiredWith extends Constraint
 
         $event = $events[0];
 
-        if (array_key_exists($this->_dataKey, $event->getData()) === false) {
+        if (array_key_exists($this->_dataKey, (array)$event->getData()) === false) {
             return false;
         }
 

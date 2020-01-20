@@ -226,10 +226,10 @@ class Text
 
         $dataKeys = array_keys($data);
         $hashKeys = array_map('crc32', $dataKeys);
+        /** @var array<string, string> $tempData */
         $tempData = array_combine($dataKeys, $hashKeys);
         krsort($tempData);
 
-        /** @var array<string, string> $tempData */
         foreach ($tempData as $key => $hashVal) {
             $key = sprintf($format, preg_quote($key, '/'));
             $str = preg_replace($key, $hashVal, $str);

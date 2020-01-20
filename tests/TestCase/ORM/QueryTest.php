@@ -1841,12 +1841,12 @@ class QueryTest extends TestCase
      */
     public function testClearContain()
     {
+        /** @var \Cake\ORM\Query $query */
         $query = $this->getMockBuilder('Cake\ORM\Query')
             ->setMethods(['all'])
             ->setConstructorArgs([$this->connection, $this->table])
             ->getMock();
 
-        /** @var \Cake\ORM\Query $query */
         $query->contain([
             'Articles',
         ]);

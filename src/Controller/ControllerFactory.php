@@ -46,7 +46,7 @@ class ControllerFactory implements ControllerFactoryInterface
             $this->missingController($request);
         }
 
-        /** @var string $className */
+        /** @psalm-suppress PossiblyNullArgument */
         $reflection = new ReflectionClass($className);
         if ($reflection->isAbstract()) {
             $this->missingController($request);
@@ -91,6 +91,7 @@ class ControllerFactory implements ControllerFactoryInterface
      *
      * @param \Cake\Http\ServerRequest $request The request to build a controller for.
      * @return string|null
+     * @psalm-return class-string<\Cake\Controller\Controller>|null
      */
     public function getControllerClass(ServerRequest $request): ?string
     {
@@ -140,6 +141,8 @@ class ControllerFactory implements ControllerFactoryInterface
             $this->missingController($request);
         }
 
+        // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.InvalidFormat
+        /** @var class-string<\Cake\Controller\Controller>|null */
         return App::className($pluginPath . $controller, $namespace, 'Controller');
     }
 

@@ -163,9 +163,8 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
     protected function getErrorHandler(): ErrorHandler
     {
         if ($this->errorHandler === null) {
-            /** @var string $className */
+            /** @var class-string<\Cake\Error\ErrorHandler> $className */
             $className = App::className('ErrorHandler', 'Error');
-            /** @var \Cake\Error\ErrorHandler $this->errorHandler */
             $this->errorHandler = new $className($this->getConfig());
         }
 

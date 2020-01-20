@@ -140,7 +140,7 @@ class ResponseEmitter implements EmitterInterface
         $pos = 0;
         $length = $last - $first + 1;
         while (!$body->eof() && $pos < $length) {
-            if (($pos + $this->maxBufferLength) > $length) {
+            if ($pos + $this->maxBufferLength > $length) {
                 echo $body->read($length - $pos);
                 break;
             }

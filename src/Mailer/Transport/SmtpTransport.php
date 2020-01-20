@@ -457,7 +457,7 @@ class SmtpTransport extends AbstractTransport
         while ($checkCode !== false) {
             $response = '';
             $startTime = time();
-            while (substr($response, -2) !== "\r\n" && ((time() - $startTime) < $timeout)) {
+            while (substr($response, -2) !== "\r\n" && (time() - $startTime < $timeout)) {
                 $bytes = $this->_socket()->read();
                 if ($bytes === null) {
                     break;
