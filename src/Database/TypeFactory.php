@@ -28,7 +28,8 @@ class TypeFactory
      * identifier is used as key and a complete namespaced class name as value
      * representing the class that will do actual type conversions.
      *
-     * @var string[]
+     * @var array<string, string>
+     * @psalm-var array<string, class-string<\Cake\Database\TypeInterface>>
      */
     protected static $_types = [
         'tinyinteger' => Type\IntegerType::class,
@@ -77,7 +78,6 @@ class TypeFactory
             throw new InvalidArgumentException(sprintf('Unknown type "%s"', $name));
         }
 
-        /** @var \Cake\Database\TypeInterface */
         return static::$_builtTypes[$name] = new static::$_types[$name]($name);
     }
 

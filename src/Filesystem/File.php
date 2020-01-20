@@ -414,7 +414,7 @@ class File
         }
 
         $size = $this->size();
-        if ($size && $size < ($maxsize * 1024) * 1024) {
+        if ($size && $size < $maxsize * 1024 * 1024) {
             return md5_file($this->path);
         }
 

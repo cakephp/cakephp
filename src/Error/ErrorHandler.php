@@ -157,6 +157,7 @@ class ErrorHandler extends BaseErrorHandler
         $renderer = $this->_config['exceptionRenderer'];
 
         if (is_string($renderer)) {
+            /** @var class-string<\Cake\Error\ExceptionRendererInterface>|null $class */
             $class = App::className($renderer, 'Error');
             if (!$class) {
                 throw new RuntimeException(sprintf(
@@ -165,7 +166,6 @@ class ErrorHandler extends BaseErrorHandler
                 ));
             }
 
-            /** @var \Cake\Error\ExceptionRendererInterface */
             return new $class($exception, $request);
         }
 

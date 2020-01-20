@@ -82,16 +82,18 @@ class LazyEagerLoader
             ->find()
             ->select((array)$primaryKey)
             ->where(function ($exp, $q) use ($primaryKey, $keys, $source) {
+                /**
+                 * @var \Cake\Database\Expression\QueryExpression $exp
+                 * @var \Cake\ORM\Query $q
+                 */
                 if (is_array($primaryKey) && count($primaryKey) === 1) {
                     $primaryKey = current($primaryKey);
                 }
 
                 if (is_string($primaryKey)) {
-                    /** @var \Cake\Database\Expression\QueryExpression $exp */
                     return $exp->in($source->aliasField($primaryKey), $keys->toList());
                 }
 
-                /** @var \Cake\ORM\Query $q */
                 $types = array_intersect_key($q->getDefaultTypes(), array_flip($primaryKey));
                 $primaryKey = array_map([$source, 'aliasField'], $primaryKey);
 

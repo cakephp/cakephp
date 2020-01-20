@@ -35,7 +35,7 @@ class TransportRegistry extends ObjectRegistry
      *
      * @param string $class Partial classname to resolve or transport instance.
      * @return string|null Either the correct classname or null.
-     * @psalm-return class-string
+     * @psalm-return class-string|null
      */
     protected function _resolveClassName(string $class): ?string
     {

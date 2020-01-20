@@ -961,6 +961,7 @@ class FolderTest extends TestCase
      */
     public function testCopy()
     {
+        // phpcs:disable
         /**
          * @var string $path
          * @var string $folderOne
@@ -974,6 +975,7 @@ class FolderTest extends TestCase
          * @var string $fileTwoB
          */
         extract($this->_setupFilesystem());
+        // phpcs:enable
 
         $Folder = new Folder($folderOne);
         $result = $Folder->copy($folderThree);
@@ -1003,6 +1005,7 @@ class FolderTest extends TestCase
      */
     public function testCopyWithMerge()
     {
+        // phpcs:disable
         /**
          * @var string $path
          * @var string $folderOne
@@ -1016,6 +1019,7 @@ class FolderTest extends TestCase
          * @var string $fileTwoB
          */
         extract($this->_setupFilesystem());
+        // phpcs:enable
 
         $Folder = new Folder($folderOne);
         $result = $Folder->copy($folderThree);
@@ -1044,6 +1048,7 @@ class FolderTest extends TestCase
      */
     public function testCopyWithSkip()
     {
+        // phpcs:disable
         /**
          * @var string $path
          * @var string $folderOne
@@ -1057,6 +1062,7 @@ class FolderTest extends TestCase
          * @var string $fileTwoB
          */
         extract($this->_setupFilesystem());
+        // phpcs:enable
 
         $Folder = new Folder($folderOne);
         $result = $Folder->copy($folderTwo, ['scheme' => Folder::SKIP]);
@@ -1122,6 +1128,7 @@ class FolderTest extends TestCase
      */
     public function testCopyWithOverwrite()
     {
+        // phpcs:disable
         /**
          * @var string $path
          * @var string $folderOne
@@ -1135,6 +1142,7 @@ class FolderTest extends TestCase
          * @var string $fileTwoB
          */
         extract($this->_setupFilesystem());
+        // phpcs:enable
 
         $Folder = new Folder($folderOne);
         $Folder->copy($folderThree, ['scheme' => Folder::OVERWRITE]);
@@ -1168,6 +1176,7 @@ class FolderTest extends TestCase
      */
     public function testCopyWithoutRecursive()
     {
+        // phpcs:disable
         /**
          * @var string $path
          * @var string $folderOne
@@ -1181,6 +1190,7 @@ class FolderTest extends TestCase
          * @var string $fileTwoB
          */
         extract($this->_setupFilesystem());
+        // phpcs:enable
 
         $Folder = new Folder($folderOne);
         $Folder->copy($folderThree, ['recursive' => false]);
@@ -1254,6 +1264,7 @@ class FolderTest extends TestCase
      */
     public function testMove()
     {
+        // phpcs:disable
         /**
          * @var string $path
          * @var string $folderOne
@@ -1267,6 +1278,7 @@ class FolderTest extends TestCase
          * @var string $fileTwoB
          */
         extract($this->_setupFilesystem());
+        // phpcs:enable
 
         $Folder = new Folder($folderOne);
         $result = $Folder->move($folderTwo);
@@ -1335,6 +1347,7 @@ class FolderTest extends TestCase
      */
     public function testMoveWithSkip()
     {
+        // phpcs:disable
         /**
          * @var string $path
          * @var string $folderOne
@@ -1348,6 +1361,7 @@ class FolderTest extends TestCase
          * @var string $fileTwoB
          */
         extract($this->_setupFilesystem());
+        // phpcs:enable
 
         $Folder = new Folder($folderOne);
         $result = $Folder->move($folderTwo, ['scheme' => Folder::SKIP]);
@@ -1404,6 +1418,7 @@ class FolderTest extends TestCase
 
     public function testMoveWithoutRecursive()
     {
+        // phpcs:disable
         /**
          * @var string $path
          * @var string $folderOne
@@ -1417,6 +1432,7 @@ class FolderTest extends TestCase
          * @var string $fileTwoB
          */
         extract($this->_setupFilesystem());
+        // phpcs:enable
 
         $Folder = new Folder($folderOne);
         $result = $Folder->move($folderTwo, ['recursive' => false]);

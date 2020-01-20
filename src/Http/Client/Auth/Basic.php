@@ -37,10 +37,10 @@ class Basic
     {
         if (isset($credentials['username'], $credentials['password'])) {
             $value = $this->_generateHeader($credentials['username'], $credentials['password']);
+            /** @var \Cake\Http\Client\Request $request */
             $request = $request->withHeader('Authorization', $value);
         }
 
-        /** @var \Cake\Http\Client\Request */
         return $request;
     }
 
@@ -56,10 +56,10 @@ class Basic
     {
         if (isset($credentials['username'], $credentials['password'])) {
             $value = $this->_generateHeader($credentials['username'], $credentials['password']);
+            /** @var \Cake\Http\Client\Request $request */
             $request = $request->withHeader('Proxy-Authorization', $value);
         }
 
-        /** @var \Cake\Http\Client\Request */
         return $request;
     }
 

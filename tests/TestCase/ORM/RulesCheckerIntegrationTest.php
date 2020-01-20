@@ -1573,7 +1573,7 @@ class RulesCheckerIntegrationTest extends TestCase
     {
         $rulesChecker = new RulesChecker();
 
-        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $Comments */
+        /** @var \Cake\ORM\Table&\PHPUnit\Framework\MockObject\MockObject $Articles */
         $Articles = $this->getMockForModel('Articles', ['rulesChecker'], ['className' => Table::class]);
         $Articles
             ->expects($this->any())

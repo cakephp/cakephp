@@ -1575,14 +1575,14 @@ class Validation
      */
     public static function isInteger($value): bool
     {
-        if (!is_numeric($value) || is_float($value)) {
-            return false;
-        }
         if (is_int($value)) {
             return true;
         }
 
-        /** @var string $value */
+        if (!is_string($value) || !is_numeric($value)) {
+            return false;
+        }
+
         return (bool)preg_match('/^-?[0-9]+$/', $value);
     }
 
@@ -1657,7 +1657,7 @@ class Validation
             $checksum %= 97;
         }
 
-        return (98 - $checksum) === $checkInt;
+        return $checkInt === 98 - $checksum;
     }
 
     /**

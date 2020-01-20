@@ -258,6 +258,7 @@ class TableLocator implements LocatorInterface
      */
     protected function _create(array $options): Table
     {
+        // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.InvalidFormat
         /** @var \Cake\ORM\Table */
         return new $options['className']($options);
     }

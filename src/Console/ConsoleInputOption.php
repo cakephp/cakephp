@@ -170,7 +170,7 @@ class ConsoleInputOption
      */
     public function usage(): string
     {
-        $name = strlen($this->_short) > 0 ? ('-' . $this->_short) : ('--' . $this->_name);
+        $name = strlen($this->_short) > 0 ? '-' . $this->_short : '--' . $this->_name;
         $default = '';
         if ($this->_default !== null && !is_bool($this->_default) && strlen($this->_default) > 0) {
             $default = ' ' . $this->_default;

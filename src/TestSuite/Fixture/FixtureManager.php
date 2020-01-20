@@ -283,13 +283,13 @@ class FixtureManager
 
         try {
             $createTables = function (ConnectionInterface $db, array $fixtures) use ($test): void {
+                /** @var \Cake\Datasource\FixtureInterface[] $fixtures */
                 $tables = $db->getSchemaCollection()->listTables();
                 $configName = $db->configName();
                 if (!isset($this->_insertionMap[$configName])) {
                     $this->_insertionMap[$configName] = [];
                 }
 
-                /** @var \Cake\Datasource\FixtureInterface[] $fixtures */
                 foreach ($fixtures as $fixture) {
                     if (!$fixture instanceof ConstraintsInterface) {
                         continue;

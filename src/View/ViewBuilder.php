@@ -98,6 +98,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * or a fully namespaced classname.
      *
      * @var string|null
+     * @psalm-var class-string<\Cake\View\View>|string|null
      */
     protected $_className;
 
@@ -526,13 +527,13 @@ class ViewBuilder implements JsonSerializable, Serializable
     ): View {
         $className = $this->_className;
         if ($className === null) {
-            $className = App::className('App', 'View', 'View') ?: View::class;
+            $className = App::className('App', 'View', 'View') ?? View::class;
         } elseif ($className === 'View') {
             $className = App::className($className, 'View');
         } else {
             $className = App::className($className, 'View', 'View');
         }
-        if (!$className) {
+        if ($className === null) {
             throw new MissingViewException(['class' => $this->_className]);
         }
 
@@ -550,6 +551,7 @@ class ViewBuilder implements JsonSerializable, Serializable
         ];
         $data += $this->_options;
 
+        // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.InvalidFormat
         /** @var \Cake\View\View */
         return new $className($request, $response, $events, $data);
     }
