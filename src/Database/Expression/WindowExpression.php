@@ -141,11 +141,12 @@ class WindowExpression implements ExpressionInterface, WindowInterface
     {
         $partitionSql = '';
         if ($this->partitions) {
-            $partitions = array_map(function ($partition) use ($generator) {
-                return $partition->sql($generator);
-            }, $this->partitions);
+            $expressions = [];
+            foreach ($this->partitions as $partition) {
+                $expressions[] = $partition->sql($generator);
+            }
 
-            $partitionSql = 'PARTITION BY ' . implode(', ', $partitions);
+            $partitionSql = 'PARTITION BY ' . implode(', ', $expressions);
         }
 
         return sprintf(
