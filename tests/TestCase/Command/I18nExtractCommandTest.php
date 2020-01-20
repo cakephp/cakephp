@@ -124,6 +124,27 @@ class I18nExtractCommandTest extends ConsoleIntegrationTestCase
     }
 
     /**
+     * testExecute with no paths
+     *
+     * @return void
+     */
+    public function testExecuteNoPathOption()
+    {
+        $this->exec(
+            'i18n extract ' .
+            '--merge=no ' .
+            '--extract-core=no ' .
+            '--output=' . $this->path . DS,
+            [
+                TEST_APP . 'templates' . DS,
+                'D',
+            ]
+        );
+        $this->assertExitSuccess();
+        $this->assertFileExists($this->path . DS . 'default.pot');
+    }
+
+    /**
      * testExecute with merging on method
      *
      * @return void

@@ -271,6 +271,8 @@ class DebuggerTest extends TestCase
         $result = ob_get_clean();
         $this->assertStringContainsString('Notice: I eated an error', $result);
         $this->assertStringContainsString('DebuggerTest.php', $result);
+
+        Debugger::setOutputFormat('js');
     }
 
     /**

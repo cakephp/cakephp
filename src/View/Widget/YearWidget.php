@@ -18,6 +18,7 @@ namespace Cake\View\Widget;
 
 use Cake\View\Form\ContextInterface;
 use Cake\View\StringTemplate;
+use DateTimeInterface;
 use InvalidArgumentException;
 
 /**
@@ -80,6 +81,10 @@ class YearWidget extends BasicWidget
 
         $data['min'] = (int)$data['min'];
         $data['max'] = (int)$data['max'];
+
+        if ($data['val'] instanceof DateTimeInterface) {
+            $data['val'] = $data['val']->format('Y');
+        }
 
         if (!empty($data['val'])) {
             $data['min'] = min((int)$data['val'], $data['min']);

@@ -17,6 +17,8 @@ namespace Cake\Core;
 
 /**
  * ClassLoader
+ *
+ * @deprecated 4.0.3 Use composer to generate autoload files instead.
  */
 class ClassLoader
 {

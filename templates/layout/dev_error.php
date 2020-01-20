@@ -45,14 +45,16 @@ use Cake\Error\Debugger;
         padding: 10px;
     }
     .header-title {
+        display: flex;
+        align-items: center;
         font-size: 30px;
         margin: 0;
     }
-    .header-title:hover:after {
-        content: attr(data-content);
+    .header-title a {
         font-size: 18px;
-        vertical-align: middle;
         cursor: pointer;
+        margin-left: 10px;
+        user-select: none;
     }
     .header-type {
         display: block;
@@ -244,8 +246,9 @@ use Cake\Error\Debugger;
 </head>
 <body>
     <header>
-        <h1 class="header-title" data-content="&#128203">
+        <h1 class="header-title">
             <?= Debugger::formatHtmlMessage($this->fetch('title')) ?>
+            <a>&#128203</a>
         </h1>
         <span class="header-type"><?= get_class($error) ?></span>
     </header>
@@ -332,11 +335,13 @@ use Cake\Error\Debugger;
                 event.preventDefault();
             });
 
-            bindEvent('.header-title', 'click', function(event) {
+            bindEvent('.header-title a', 'click', function(event) {
                 event.preventDefault();
                 var text = '';
-                each(this.childNodes, function(el) {
-                    text += el.textContent.trim();
+                each(this.parentNode.childNodes, function(el) {
+                    if (el.nodeName !== 'A') {
+                        text += el.textContent.trim();
+                    }
                 });
 
                 // Use execCommand(copy) as it has the widest support.
@@ -350,16 +355,16 @@ use Cake\Error\Debugger;
                     document.execCommand('copy');
 
                     // Show a success icon and then revert
-                    var original = el.getAttribute('data-content');
-                    el.setAttribute('data-content', '\ud83c\udf70');
+                    var original = el.innerText;
+                    el.innerText = '\ud83c\udf70';
                     setTimeout(function () {
-                        el.setAttribute('data-content', original);
+                        el.innerText =  original;
                     }, 1000);
                 } catch (err) {
                     alert('Unable to update clipboard ' + err);
                 }
                 document.body.removeChild(textArea);
-                this.parentNode.scrollIntoView(true);
+                this.parentNode.parentNode.scrollIntoView(true);
             });
         });
     </script>

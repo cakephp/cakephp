@@ -2258,11 +2258,7 @@ class FormHelperTest extends TestCase
         $this->Form->create();
 
         $this->Form->file('Attachment.file');
-        $expected = [
-            'Attachment.file.name', 'Attachment.file.type',
-            'Attachment.file.tmp_name', 'Attachment.file.error',
-            'Attachment.file.size',
-        ];
+        $expected = ['Attachment.file'];
         $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals($expected, $result);
     }
@@ -6290,6 +6286,27 @@ class FormHelperTest extends TestCase
             '/option',
             ['option' => ['value' => '2006', 'selected' => 'selected']],
             '2006',
+            '/option',
+            '/select',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->year('published', [
+            'empty' => false,
+            'value' => new Date('2008-01-12'),
+            'min' => 2007,
+            'max' => 2009,
+        ]);
+        $expected = [
+            ['select' => ['name' => 'published']],
+            ['option' => ['value' => '2009']],
+            '2009',
+            '/option',
+            ['option' => ['value' => '2008', 'selected' => 'selected']],
+            '2008',
+            '/option',
+            ['option' => ['value' => '2007']],
+            '2007',
             '/option',
             '/select',
         ];

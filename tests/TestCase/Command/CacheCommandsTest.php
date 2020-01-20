@@ -76,6 +76,21 @@ class CacheCommandsTest extends ConsoleIntegrationTestCase
     }
 
     /**
+     * Test list output
+     *
+     * @return void
+     */
+    public function testList()
+    {
+        $this->exec('cache list');
+
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertOutputContains('- test');
+        $this->assertOutputContains('- _cake_core_');
+        $this->assertOutputContains('- _cake_model_');
+    }
+
+    /**
      * Test help output
      *
      * @return void
