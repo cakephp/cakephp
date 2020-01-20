@@ -83,7 +83,8 @@ class DateTimeType extends BaseType
     /**
      * The classname to use when creating objects.
      *
-     * @var class-string<\DateTime>|class-string<\DateTimeImmutable>
+     * @var string
+     * @psalm-var class-string<\DateTime>|class-string<\DateTimeImmutable>
      */
     protected $_className;
 
@@ -417,7 +418,8 @@ class DateTimeType extends BaseType
     /**
      * Get the classname used for building objects.
      *
-     * @return class-string<\DateTime>|class-string<\DateTimeImmutable>
+     * @return string
+     * @psalm-return class-string<\DateTime>|class-string<\DateTimeImmutable>
      */
     public function getDateTimeClassName(): string
     {

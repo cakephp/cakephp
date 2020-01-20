@@ -87,7 +87,8 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
      * @param string $class Partial classname to resolve.
-     * @return class-string|null Either the correct class name or null.
+     * @return string|null Either the correct class name or null.
+     * @psalm-return class-string|null
      */
     protected function _resolveClassName(string $class): ?string
     {
@@ -119,11 +120,12 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      * Enabled components will be registered with the event manager.
      *
-     * @param class-string $class The classname to create.
+     * @param string $class The classname to create.
      * @param string $alias The alias of the component.
      * @param array $config An array of config to use for the component.
      * @return \Cake\Controller\Component The constructed component class.
      * @psalm-suppress MoreSpecificImplementedParamType
+     * @psalm-var class-string $class
      */
     protected function _create($class, string $alias, array $config): Component
     {

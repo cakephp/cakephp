@@ -97,7 +97,8 @@ class ViewBuilder implements JsonSerializable, Serializable
      * Can either use plugin notation, a short name
      * or a fully namespaced classname.
      *
-     * @var class-string<\Cake\View\View>|string|null
+     * @var string|null
+     * @psalm-var class-string<\Cake\View\View>|string|null
      */
     protected $_className;
 

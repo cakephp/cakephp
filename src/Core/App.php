@@ -46,10 +46,12 @@ class App
      * Return the class name namespaced. This method checks if the class is defined on the
      * application/plugin, otherwise try to load from the CakePHP core
      *
-     * @param string|class-string $class Class name
+     * @param string $class Class name
      * @param string $type Type of class
      * @param string $suffix Class name suffix
-     * @return class-string|null Namespaced class name, null if the class is not found.
+     * @return string|null Namespaced class name, null if the class is not found.
+     * @psalm-return class-string|null
+     * @psalm-var class-string $class
      */
     public static function className(string $class, string $type = '', string $suffix = ''): ?string
     {

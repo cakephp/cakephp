@@ -67,7 +67,8 @@ class TableRegistry
     /**
      * Default LocatorInterface implementation class.
      *
-     * @var class-string<\Cake\ORM\Locator\TableLocator>
+     * @var string
+     * @psalm-var class-string<\Cake\ORM\Locator\TableLocator>
      */
     protected static $_defaultLocatorClass = Locator\TableLocator::class;
 

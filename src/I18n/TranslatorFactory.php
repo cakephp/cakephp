@@ -32,7 +32,8 @@ class TranslatorFactory extends BaseTranslatorFactory
     /**
      * The class to use for new instances.
      *
-     * @var class-string<\Cake\I18n\Translator>
+     * @var string
+     * @psalm-var class-string<\Cake\I18n\Translator>
      */
     protected $class = Translator::class;
 
