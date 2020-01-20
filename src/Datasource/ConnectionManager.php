@@ -50,7 +50,8 @@ class ConnectionManager
     /**
      * An array mapping url schemes to fully qualified driver class names
      *
-     * @return string[]
+     * @var string[]
+     * @psalm-var array<string, class-string>
      */
     protected static $_dsnClassMap = [
         'mysql' => Mysql::class,

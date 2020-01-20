@@ -2,11 +2,11 @@ includes:
     - phpstan-baseline.neon
 
 parameters:
-    level: 5
+    level: 6
+    checkMissingIterableValueType: false
+    checkGenericClassInNonGenericObjectType: false
     autoload_files:
         - tests/bootstrap.php
-    ignoreErrors:
-        - '#Access to undefined constant NumberFormatter::CURRENCY_ACCOUNTING#'
     earlyTerminatingMethodCalls:
         Cake\Console\Shell:
             - abort
