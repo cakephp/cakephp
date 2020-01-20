@@ -22,46 +22,14 @@ namespace Cake\Database\Expression;
 interface WindowInterface
 {
     /**
-     * 'CURRENT ROW' frame start, end or exclusion
-     *
      * @var int
      */
-    public const CURRENT_ROW = 0;
+    public const PRECEDING = 0;
 
     /**
-     * 'UNBOUNDED PRECEDING' and '(offset) PRECEDING' frame start or end
-     *
      * @var int
      */
-    public const PRECEDING = 1;
-
-    /**
-     * 'UNBOUNDED FOLLOWING' and '(offset) FOLLOWING' frame start or end
-     *
-     * @var int
-     */
-    public const FOLLOWING = 2;
-
-    /**
-     * 'GROUP' frame exclusion
-     *
-     * @var int
-     */
-    public const GROUP = 1;
-
-    /**
-     * 'TIES' frame exclusion
-     *
-     * @var int
-     */
-    public const TIES = 2;
-
-    /**
-     * 'NO OTHERS' frame exclusion
-     *
-     * @var int
-     */
-    public const NO_OTHERS = 3;
+    public const FOLLOWING = 1;
 
     /**
      * Adds one or more partition expressions to the window.
@@ -80,69 +48,77 @@ interface WindowInterface
     public function order($fields);
 
     /**
-     * Adds a range frame clause to the window. Only one frame clause can be
-     * specified per window.
+     * Adds a simple range frame to the window.
      *
-     * `$start` assumes `PRECEDING`, and `$end` assumes `FOLLOWING`. Both can be
-     * overriden by passing an array with the order as the key. The SQL standard
-     * for ordering must be followed.
+     * `$start`:
+     *  - `0` - 'CURRENT ROW'
+     *  - `null` - 'UNBOUNDED PRECEDING'
+     *  - offset - 'offset PRECEDING'
      *
-     * ```
-     * // this is produces 'ROWS BETWEEN 1 PRECEDING AND 2 FOLLOWING'
-     * $window->rows(1, 2);
+     * `$end`:
+     *  - `0` - 'CURRENT ROW'
+     *  - `null` - 'UNBOUNDED FOLLOWING'
+     *  - offset - 'offset FOLLOWING'
      *
-     * // this is the same as 'ROWS 1 FOLLOWING`
-     * $window->rows([WindowInterface::FOLLOWING => 1]);
-     * ```
+     * If you need to use 'FOLLOWING' with frame start or
+     * 'PRECEDING' with frame end, use `frame()` instead.
      *
-     * You can use `null` for 'UNBOUNDED' and `0` for 'CURRENT ROW'.
-     *
-     * ```
-     * // this is produces 'ROWS CURRENT ROW'
-     * $window->rows(0);
-     *
-     * // this is produces 'ROWS UNBOUNDED PRECEDING'
-     * $window->rows(null)
-     * ```
-     *
-     * @param array|int|null $start Frame start
-     * @param array|int|null $end Frame end
+     * @param int|null $start Frame start
+     * @param int|null $end Frame end
      *  If not passed in, only frame start SQL will be generated.
      * @return $this
      */
-    public function range($start, $end = 0);
+    public function range(?int $start, ?int $end = 0);
 
     /**
-     * Adds a rows frame clause to the window. Only one frame clause can be
-     * specified per window.
+     * Adds a simple rows frame to the window.
      *
-     * See `range()` for details on `$start` and `$end` format.
+     * See `range()` for details.
      *
-     * @param array|int|null $start Frame start
-     * @param array|int|null $end Frame end
+     * @param int|null $start Frame start
+     * @param int|null $end Frame end
      *  If not passed in, only frame start SQL will be generated.
      * @return $this
      */
-    public function rows($start, $end = 0);
+    public function rows(?int $start, ?int $end = 0);
 
     /**
-     * Adds a groups frame clause to the window. Only one frame clause can be
-     * specified per window.
+     * Adds a simple groups frame to the window.
      *
-     * See `range()` for details on `$start` and `$end` format.
+     * See `range()` for details.
      *
-     * @param array|int|string|null $start Frame start
-     * @param array|int|string|null $end Frame end
+     * @param int|null $start Frame start
+     * @param int|null $end Frame end
      *  If not passed in, only frame start SQL will be generated.
      * @return $this
      */
-    public function groups($start, $end = 0);
+    public function groups(?int $start, ?int $end = 0);
 
     /**
-     * Adds a frame exclusion to the window.
+     * Adds current row frame exclusion.
      *
-     * @param int $exclusion Frame exclusion
      * @return $this
      */
-    public function exclude(int $exclusion);
+    public function excludeCurrent();
+
+    /**
+     * Adds group frame exclusion.
+     *
+     * @return $this
+     */
+    public function excludeGroup();
+
+    /**
+     * Adds ties frame exclusion.
+     *
+     * @return $this
+     */
+    public function excludeTies();
+
+    /**
+     * Adds no others frame exclusion.
+     *
+     * @return $this
+     */
+    public function excludeNoOthers();
 }
