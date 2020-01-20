@@ -54,7 +54,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
             }
         }
 
-        /** @var \Cake\Database\ExpressionInterface[] $partitions */
+        /** @psalm-suppress InvalidPropertyAssignmentValue */
         $this->partitions = array_merge($this->partitions, $partitions);
 
         return $this;
