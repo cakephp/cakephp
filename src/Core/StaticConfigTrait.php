@@ -304,6 +304,7 @@ REGEXP;
      *
      * @param string[] $map Additions/edits to the class map to apply.
      * @return void
+     * @psalm-param array<string, class-string> $map
      */
     public static function setDsnClassMap(array $map): void
     {
@@ -314,6 +315,7 @@ REGEXP;
      * Returns the DSN class map for this class.
      *
      * @return string[]
+     * @psalm-return array<string, class-string>
      */
     public static function getDsnClassMap(): array
     {
