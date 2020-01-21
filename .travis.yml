@@ -36,8 +36,7 @@ before_install:
 
   - |
       if [[ $DB == 'mysql' ]]; then
-        sudo service postgresql stop
-        docker pull -q mysql:8
+        docker pull --quiet mysql:8
         docker run --name=mysqld --rm -e MYSQL_ALLOW_EMPTY_PASSWORD=yes --net=host -p 3306:3306 -d mysql:8 --default-authentication-plugin=mysql_native_password
 
         count=0
@@ -49,6 +48,7 @@ before_install:
         done
 
         docker logs mysqld
+        docker stats mysqld
 
         mysql -h 127.0.0.1 -u root -e 'CREATE DATABASE cakephp_test;'
       fi

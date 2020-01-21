@@ -60,8 +60,8 @@ class TableTest extends TestCase
         'core.Authors',
         'core.Categories',
         'core.Comments',
-        'core.Groups',
-        'core.GroupsMembers',
+        'core.MyGroups',
+        'core.MyGroupsMembers',
         'core.Members',
         'core.PolymorphicTagged',
         'core.SiteArticles',
@@ -606,19 +606,19 @@ class TableTest extends TestCase
      */
     public function testAssociationDotSyntax()
     {
-        $groups = $this->getTableLocator()->get('Groups');
+        $groups = $this->getTableLocator()->get('MyGroups');
         $members = $this->getTableLocator()->get('Members');
-        $groupsMembers = $this->getTableLocator()->get('GroupsMembers');
+        $groupsMembers = $this->getTableLocator()->get('MyGroupsMembers');
 
         $groups->belongsToMany('Members');
-        $groups->hasMany('GroupsMembers');
+        $groups->hasMany('MyGroupsMembers');
         $groupsMembers->belongsTo('Members');
-        $members->belongsToMany('Groups');
+        $members->belongsToMany('MyGroups');
 
-        $association = $groups->getAssociation('GroupsMembers.Members.Groups');
+        $association = $groups->getAssociation('MyGroupsMembers.Members.MyGroups');
         $this->assertInstanceOf(BelongsToMany::class, $association);
         $this->assertSame(
-            $groups->getAssociation('GroupsMembers')->getAssociation('Members')->getAssociation('Groups'),
+            $groups->getAssociation('MyGroupsMembers')->getAssociation('Members')->getAssociation('MyGroups'),
             $association
         );
     }
@@ -632,7 +632,7 @@ class TableTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $this->getTableLocator()->get('Groups')->getAssociation('FooBar');
+        $this->getTableLocator()->get('MyGroups')->getAssociation('FooBar');
     }
 
     /**
@@ -3079,15 +3079,20 @@ class TableTest extends TestCase
      */
     public function testDeleteAssociationsCascadingCallbacksOrder()
     {
-        $groups = $this->getTableLocator()->get('Groups');
+        $groups = $this->getTableLocator()->get('MyGroups');
         $members = $this->getTableLocator()->get('Members');
-        $groupsMembers = $this->getTableLocator()->get('GroupsMembers');
+        $groupsMembers = $this->getTableLocator()->get('MyGroupsMembers');
 
-        $groups->belongsToMany('Members');
-        $groups->hasMany('GroupsMembers', [
+        $groups->belongsToMany('Members', [
+            'joinTable' => 'MyGroupsMembers',
+            'foreignKey' => 'group_id',
+        ]);
+        $groups->hasMany('MyGroupsMembers', [
             'dependent' => true,
             'cascadeCallbacks' => true,
+            'foreignKey' => 'group_id',
         ]);
+        $groupsMembers->belongsTo('MyGroups')->setForeignKey('group_id');
         $groupsMembers->belongsTo('Members');
         $groupsMembers->addBehavior('CounterCache', [
             'Members' => ['group_count'],

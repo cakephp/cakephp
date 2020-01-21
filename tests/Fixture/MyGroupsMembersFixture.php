@@ -19,7 +19,7 @@ use Cake\TestSuite\Fixture\TestFixture;
 /**
  * GroupsMembersFixture
  */
-class GroupsMembersFixture extends TestFixture
+class MyGroupsMembersFixture extends TestFixture
 {
     /**
      * fields property
