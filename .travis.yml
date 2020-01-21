@@ -3,10 +3,10 @@ language: php
 dist: xenial
 
 services:
+  - docker
   - memcached
-  - redis-server
   - postgresql
-  - mysql
+  - redis-server
 
 cache:
   directories:
@@ -20,7 +20,7 @@ env:
   global:
     - CODECOVERAGE=1
   matrix:
-    - DB=mysql DB_DSN='mysql://root@127.0.0.1/cakephp_test?init[]=SET sql_mode = "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"'
+    - DB=mysql DB_DSN='mysql://root@127.0.0.1/cakephp_test?init[]=SET sql_mode = "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"'
     - DB=pgsql DB_DSN='postgres://postgres@127.0.0.1/cakephp_test'
     - DB=sqlite DB_DSN='sqlite:///:memory:'
 
@@ -34,7 +34,25 @@ matrix:
 before_install:
   - echo cakephp version && tail -1 VERSION.txt
 
-  - if [[ $DB == 'mysql' ]]; then mysql -u root -e 'CREATE DATABASE cakephp_test;'; fi
+  - |
+      if [[ $DB == 'mysql' ]]; then
+        sudo service postgresql stop
+        docker pull -q mysql:8
+        docker run --name=mysqld --rm -e MYSQL_ALLOW_EMPTY_PASSWORD=yes --net=host -p 3306:3306 -d mysql:8 --default-authentication-plugin=mysql_native_password
+
+        count=0
+        until [ $count -ge 10 ]
+        do
+          if mysqladmin --silent -h 127.0.0.1 ping &> /dev/null; then break; fi
+          echo "Waiting for mysql to start..."
+          sleep 2
+        done
+
+        docker logs mysqld
+
+        mysql -h 127.0.0.1 -u root -e 'CREATE DATABASE cakephp_test;'
+      fi
+
   - if [[ $DB == 'pgsql' ]]; then psql -c 'CREATE DATABASE cakephp_test;' -U postgres; fi
 
   - |
