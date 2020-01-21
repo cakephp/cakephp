@@ -28,7 +28,7 @@ class MembersFixture extends TestFixture
      */
     public $fields = [
         'id' => ['type' => 'integer'],
-        'group_count' => ['type' => 'integer'],
+        'section_count' => ['type' => 'integer'],
         '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
     ];
 
@@ -38,6 +38,6 @@ class MembersFixture extends TestFixture
      * @var array
      */
     public $records = [
-        ['group_count' => 2],
+        ['section_count' => 2],
     ];
 }

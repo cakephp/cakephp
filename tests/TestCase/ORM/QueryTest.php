@@ -2377,7 +2377,7 @@ class QueryTest extends TestCase
         };
         $query = $table->find()
             ->contain(['Articles' => $builder, 'Articles.Authors' => $builder])
-            ->order(['Articles.id' => 'ASC']);
+            ->order(['ArticlesTags.article_id' => 'ASC']);
 
         $query->formatResults(function ($results) {
             return $results->map(function ($row) {

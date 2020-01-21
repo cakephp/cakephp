@@ -642,7 +642,7 @@ class EntityContextTest extends TestCase
             'user' => new Entity([
                 'username' => 'mark',
                 'fname' => 'Mark',
-                'groups' => [
+                'sections' => [
                     new Entity(['title' => 'PHP', 'id' => 1]),
                     new Entity(['title' => 'Javascript', 'id' => 2]),
                 ],
@@ -653,7 +653,7 @@ class EntityContextTest extends TestCase
             'table' => 'Articles',
         ]);
 
-        $result = $context->val('user.groups._ids');
+        $result = $context->val('user.sections._ids');
         $this->assertEquals([1, 2], $result);
     }
 
@@ -671,7 +671,7 @@ class EntityContextTest extends TestCase
             'user' => new Entity([
                 'username' => 'mark',
                 'fname' => 'Mark',
-                'groups' => [
+                'sections' => [
                     new Entity(['title' => 'PHP', 'thing' => 1]),
                     new Entity(['title' => 'Javascript', 'thing' => 4]),
                 ],
@@ -682,10 +682,10 @@ class EntityContextTest extends TestCase
             'table' => 'Articles',
         ]);
 
-        $this->getTableLocator()->get('Users')->belongsToMany('Groups');
-        $this->getTableLocator()->get('Groups')->setPrimaryKey('thing');
+        $this->getTableLocator()->get('Users')->belongsToMany('Sections');
+        $this->getTableLocator()->get('Sections')->setPrimaryKey('thing');
 
-        $result = $context->val('user.groups._ids');
+        $result = $context->val('user.sections._ids');
         $this->assertEquals([1, 4], $result);
     }
 

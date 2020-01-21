@@ -119,16 +119,16 @@ class MysqlSchemaDialect extends SchemaDialect
 
         $unsigned = (isset($matches[3]) && strtolower($matches[3]) === 'unsigned');
         if (strpos($col, 'bigint') !== false || $col === 'bigint') {
-            return ['type' => TableSchema::TYPE_BIGINTEGER, 'length' => $length, 'unsigned' => $unsigned];
+            return ['type' => TableSchema::TYPE_BIGINTEGER, 'length' => null, 'unsigned' => $unsigned];
         }
         if ($col === 'tinyint') {
-            return ['type' => TableSchema::TYPE_TINYINTEGER, 'length' => $length, 'unsigned' => $unsigned];
+            return ['type' => TableSchema::TYPE_TINYINTEGER, 'length' => null, 'unsigned' => $unsigned];
         }
         if ($col === 'smallint') {
-            return ['type' => TableSchema::TYPE_SMALLINTEGER, 'length' => $length, 'unsigned' => $unsigned];
+            return ['type' => TableSchema::TYPE_SMALLINTEGER, 'length' => null, 'unsigned' => $unsigned];
         }
         if (in_array($col, ['int', 'integer', 'mediumint'])) {
-            return ['type' => TableSchema::TYPE_INTEGER, 'length' => $length, 'unsigned' => $unsigned];
+            return ['type' => TableSchema::TYPE_INTEGER, 'length' => null, 'unsigned' => $unsigned];
         }
         if ($col === 'char' && $length === 36) {
             return ['type' => TableSchema::TYPE_UUID, 'length' => null];
@@ -263,7 +263,8 @@ class MysqlSchemaDialect extends SchemaDialect
                 kcu.CONSTRAINT_NAME = rc.CONSTRAINT_NAME
                 AND kcu.CONSTRAINT_SCHEMA = rc.CONSTRAINT_SCHEMA
             )
-            WHERE kcu.TABLE_SCHEMA = ? AND kcu.TABLE_NAME = ? AND rc.TABLE_NAME = ?';
+            WHERE kcu.TABLE_SCHEMA = ? AND kcu.TABLE_NAME = ? AND rc.TABLE_NAME = ?
+            ORDER BY kcu.ORDINAL_POSITION ASC';
 
         return [$sql, [$config['database'], $tableName, $tableName]];
     }
