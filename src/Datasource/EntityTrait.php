@@ -200,7 +200,7 @@ trait EntityTrait
      * the guarding for a single set call with the `guard` option:
      *
      * ```
-     * $entity->set(['name' => 'Andrew', 'id' => 1], ['guard' => true]);
+     * $entity->set(['name' => 'Andrew', 'id' => 1], ['guard' => false]);
      * ```
      *
      * You do not need to use the guard option when assigning fields individually:
