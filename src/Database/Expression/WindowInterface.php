@@ -32,6 +32,21 @@ interface WindowInterface
     public const FOLLOWING = 1;
 
     /**
+     * @var int
+     */
+    public const RANGE = 0;
+
+    /**
+     * @var int
+     */
+    public const ROWS = 1;
+
+    /**
+     * @var int
+     */
+    public const GROUPS = 2;
+
+    /**
      * Adds one or more partition expressions to the window.
      *
      * @param (\Cake\Database\ExpressionInterface|string)[]|\Cake\Database\ExpressionInterface|string $partitions Partition expressions
@@ -93,6 +108,23 @@ interface WindowInterface
      * @return $this
      */
     public function groups(?int $start, ?int $end = 0);
+
+    /**
+     * @param int $type Frame type
+     * @param string|int|null $startOffset Frame start offset
+     * @param int $startDirection Frame start direction
+     * @param string|int|null $endOffset Frame end offset
+     * @param int $endDirection Frame end direction
+     * @return $this
+     * @throws \InvalidArgumentException When wrong types are used or offsets are negative.
+     */
+    public function frame(
+        int $type,
+        $startOffset,
+        int $startDirection,
+        $endOffset = null,
+        int $endDirection = self::FOLLOWING
+    );
 
     /**
      * Adds current row frame exclusion.
