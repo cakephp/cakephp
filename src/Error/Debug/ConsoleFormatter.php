@@ -83,7 +83,7 @@ class ConsoleFormatter implements FormatterInterface
     {
         $code = $this->styles[$style];
 
-        return "\033[{$code};m{$text}\033[0m";
+        return "\033[{$code}m{$text}\033[0m";
     }
 
     /**
