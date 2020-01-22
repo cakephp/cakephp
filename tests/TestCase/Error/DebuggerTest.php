@@ -578,6 +578,8 @@ TEXT;
     public function testGetInstance()
     {
         $result = Debugger::getInstance();
+        $exporter = $result->getConfig('exportFormatter');
+
         $this->assertInstanceOf(Debugger::class, $result);
 
         $result = Debugger::getInstance(TestDebugger::class);
@@ -588,6 +590,7 @@ TEXT;
 
         $result = Debugger::getInstance(Debugger::class);
         $this->assertInstanceOf(Debugger::class, $result);
+        $result->setConfig('exportFormatter', $exporter);
     }
 
     /**
