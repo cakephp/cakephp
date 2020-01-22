@@ -24,7 +24,7 @@ use RuntimeException;
  * Provides backwards compatible output with the historical output of
  * `Debugger::exportVar()`
  */
-class TextFormatter
+class TextFormatter implements FormatterInterface
 {
     /**
      * Convert a tree of NodeInterface objects into a plain text string.

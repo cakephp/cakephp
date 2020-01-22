@@ -20,7 +20,9 @@ use Cake\Core\InstanceConfigTrait;
 use Cake\Error\Debug\ArrayItemNode;
 use Cake\Error\Debug\ArrayNode;
 use Cake\Error\Debug\ClassNode;
+use Cake\Error\Debug\ConsoleFormatter;
 use Cake\Error\Debug\DebugContext;
+use Cake\Error\Debug\FormatterInterface;
 use Cake\Error\Debug\NodeInterface;
 use Cake\Error\Debug\PropertyNode;
 use Cake\Error\Debug\ReferenceNode;
@@ -35,6 +37,7 @@ use Exception;
 use InvalidArgumentException;
 use ReflectionObject;
 use ReflectionProperty;
+use RuntimeException;
 use Throwable;
 
 /**
@@ -56,6 +59,7 @@ class Debugger
      */
     protected $_defaultConfig = [
         'outputMask' => [],
+        'exportFormatter' => null,
     ];
 
     /**
@@ -484,6 +488,32 @@ class Debugger
     }
 
     /**
+     * Get the configured export formatter or infer one based on the environment.
+     *
+     * @return \Cake\Error\Debug\FormatterInterface
+     */
+    public function getExportFormatter(): FormatterInterface
+    {
+        $instance = static::getInstance();
+        $class = $instance->getConfig('exportFormatter');
+        if (!$class) {
+            if (ConsoleFormatter::environmentMatches()) {
+                $class = ConsoleFormatter::class;
+            } else {
+                $class = TextFormatter::class;
+            }
+        }
+        $instance = new $class();
+        if (!$instance instanceof FormatterInterface) {
+            throw new RuntimeException(
+                "The `{$class}` formatter does not implement " . FormatterInterface::class
+            );
+        }
+
+        return $instance;
+    }
+
+    /**
      * Converts a variable to a string for debug output.
      *
      * *Note:* The following keys will have their contents
@@ -509,9 +539,7 @@ class Debugger
         $context = new DebugContext($maxDepth);
         $node = static::export($var, $context);
 
-        $formatter = new TextFormatter();
-
-        return $formatter->dump($node);
+        return static::getInstance()->getExportFormatter()->dump($node);
     }
 
     /**

@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Error;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Error\Debugger;
+use Cake\Error\Debug\TextFormatter;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use stdClass;
@@ -34,7 +35,15 @@ use TestApp\Error\Thing\SecurityThing;
  */
 class DebuggerTest extends TestCase
 {
-    protected $_restoreError = false;
+    /**
+     * @var bool
+     */
+    protected $restoreError = false;
+
+    /**
+     * @var string|null
+     */
+    protected $restoreFormatter = null;
 
     /**
      * setUp method
@@ -47,6 +56,8 @@ class DebuggerTest extends TestCase
         Configure::write('debug', true);
         Log::drop('stderr');
         Log::drop('stdout');
+        $this->restoreFormatter = Debugger::configInstance('exportFormatter');
+        Debugger::configInstance('exportFormatter', TextFormatter::class);
     }
 
     /**
@@ -57,9 +68,10 @@ class DebuggerTest extends TestCase
     public function tearDown(): void
     {
         parent::tearDown();
-        if ($this->_restoreError) {
+        if ($this->restoreError) {
             restore_error_handler();
         }
+        Debugger::configInstance('exportFormatter', $this->restoreFormatter);
     }
 
     /**
