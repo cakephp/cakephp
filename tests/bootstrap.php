@@ -17,6 +17,8 @@ use Cake\Cache\Cache;
 use Cake\Chronos\Chronos;
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
+use Cake\Error\Debugger;
+use Cake\Error\Debug\TextFormatter;
 use Cake\Log\Log;
 use Cake\Utility\Security;
 
@@ -129,6 +131,7 @@ Log::setConfig([
 
 Chronos::setTestNow(Chronos::now());
 Security::setSalt('a-long-but-not-random-value');
+Debugger::configInstance('exportFormatter', TextFormatter::class);
 
 ini_set('intl.default_locale', 'en_US');
 ini_set('session.gc_divisor', '1');

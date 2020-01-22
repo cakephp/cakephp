@@ -18,7 +18,6 @@ namespace Cake\Test\TestCase\Error;
 
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
-use Cake\Error\Debug\TextFormatter;
 use Cake\Error\Debugger;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
@@ -41,11 +40,6 @@ class DebuggerTest extends TestCase
     protected $restoreError = false;
 
     /**
-     * @var string|null
-     */
-    protected $restoreFormatter = null;
-
-    /**
      * setUp method
      *
      * @return void
@@ -56,8 +50,6 @@ class DebuggerTest extends TestCase
         Configure::write('debug', true);
         Log::drop('stderr');
         Log::drop('stdout');
-        $this->restoreFormatter = Debugger::configInstance('exportFormatter');
-        Debugger::configInstance('exportFormatter', TextFormatter::class);
     }
 
     /**
@@ -71,7 +63,6 @@ class DebuggerTest extends TestCase
         if ($this->restoreError) {
             restore_error_handler();
         }
-        Debugger::configInstance('exportFormatter', $this->restoreFormatter);
     }
 
     /**
