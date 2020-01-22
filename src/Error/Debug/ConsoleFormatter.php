@@ -185,7 +185,6 @@ class ConsoleFormatter implements FormatterInterface
                 $this->style('punct', ' {}');
         }
 
-        /** @var \Cake\Error\Debug\ClassNode $var */
         $out = $this->style('punct', 'object(') .
             $this->style('class', $var->getValue()) .
             $this->style('punct', ') id:') .
