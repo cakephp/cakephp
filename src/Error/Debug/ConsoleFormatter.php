@@ -62,7 +62,8 @@ class ConsoleFormatter implements FormatterInterface
             return false;
         }
         // Windows environment checks
-        if (DIRECTORY_SEPARATOR === '\\' &&
+        if (
+            DIRECTORY_SEPARATOR === '\\' &&
             (!(bool)env('ANSICON') || env('ConEmuANSI') !== 'ON')
         ) {
             return false;

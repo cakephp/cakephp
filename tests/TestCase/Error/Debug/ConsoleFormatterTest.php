@@ -16,10 +16,10 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Error\Debug;
 
-use Cake\Error\Debug\ConsoleFormatter;
 use Cake\Error\Debug\ArrayItemNode;
 use Cake\Error\Debug\ArrayNode;
 use Cake\Error\Debug\ClassNode;
+use Cake\Error\Debug\ConsoleFormatter;
 use Cake\Error\Debug\PropertyNode;
 use Cake\Error\Debug\ReferenceNode;
 use Cake\Error\Debug\ScalarNode;
