@@ -34,7 +34,7 @@ jobs:
       if: matrix.db-type == 'mysql'
       run: |
         sudo service mysql stop
-        docker run --rm --name=mysqld -e MYSQL_ALLOW_EMPTY_PASSWORD=yes -e MYSQL_DATABASE=cakephp --network=host -d mysql --default-authentication-plugin=mysql_native_password --disable-log-bin --innodb-flush-method=O_DIRECT_NO_FSYNC
+        docker run --rm --name=mysqld -e MYSQL_ALLOW_EMPTY_PASSWORD=yes -e MYSQL_DATABASE=cakephp --tmpfs /var/lib/mysql:rw --network=host -d mysql --default-authentication-plugin=mysql_native_password --disable-log-bin --innodb-flush-method=O_DIRECT_NO_FSYNC
 
     - uses: actions/checkout@v1
       with:
