@@ -96,9 +96,9 @@ class WindowExpression implements ExpressionInterface, WindowInterface
     {
         if (func_num_args() === 1) {
             return $this->frame(self::RANGE, $start, self::PRECEDING);
-        } else {
-            return $this->frame(self::RANGE, $start, self::PRECEDING, $end, self::FOLLOWING);
         }
+
+        return $this->frame(self::RANGE, $start, self::PRECEDING, $end, self::FOLLOWING);
     }
 
     /**
@@ -108,9 +108,9 @@ class WindowExpression implements ExpressionInterface, WindowInterface
     {
         if (func_num_args() === 1) {
             return $this->frame(self::ROWS, $start, self::PRECEDING);
-        } else {
-            return $this->frame(self::ROWS, $start, self::PRECEDING, $end, self::FOLLOWING);
         }
+
+        return $this->frame(self::ROWS, $start, self::PRECEDING, $end, self::FOLLOWING);
     }
 
     /**
@@ -120,9 +120,9 @@ class WindowExpression implements ExpressionInterface, WindowInterface
     {
         if (func_num_args() === 1) {
             return $this->frame(self::GROUPS, $start, self::PRECEDING);
-        } else {
-            return $this->frame(self::GROUPS, $start, self::PRECEDING, $end, self::FOLLOWING);
         }
+
+        return $this->frame(self::GROUPS, $start, self::PRECEDING, $end, self::FOLLOWING);
     }
 
     /**
