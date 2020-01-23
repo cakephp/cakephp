@@ -53,10 +53,10 @@ class ConsoleFormatterTest extends TestCase
         $formatter = new ConsoleFormatter();
         $result = $formatter->dump($node);
 
-        $this->assertStringContainsString("\033[1;33;m", $result, 'Should contain yellow code');
-        $this->assertStringContainsString("\033[0;32;m", $result, 'Should contain green code');
-        $this->assertStringContainsString("\033[1;34;m", $result, 'Should contain blue code');
-        $this->assertStringContainsString("\033[0;36;m", $result, 'Should contain cyan code');
+        $this->assertStringContainsString("\033[1;33m", $result, 'Should contain yellow code');
+        $this->assertStringContainsString("\033[0;32m", $result, 'Should contain green code');
+        $this->assertStringContainsString("\033[1;34m", $result, 'Should contain blue code');
+        $this->assertStringContainsString("\033[0;36m", $result, 'Should contain cyan code');
         $expected = <<<TEXT
 object(MyObject) id:1 {
   stringProp => 'value'
