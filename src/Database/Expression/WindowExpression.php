@@ -37,12 +37,12 @@ class WindowExpression implements ExpressionInterface, WindowInterface
     protected $order;
 
     /**
-     * @var array
+     * @var array|null
      */
     protected $frame;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $exclusion;
 
@@ -129,50 +129,14 @@ class WindowExpression implements ExpressionInterface, WindowInterface
      * @inheritDoc
      */
     public function frame(
-        int $type,
-        $startOffset,
-        int $startDirection,
-        $endOffset = null,
-        int $endDirection = self::FOLLOWING
+        string $type,
+        ?int $startOffset,
+        string $startDirection,
+        ?int $endOffset = null,
+        string $endDirection = self::FOLLOWING
     ) {
-        $validTypes = [self::RANGE, self::ROWS, self::GROUPS];
-        if (!in_array($type, $validTypes)) {
-            throw new InvalidArgumentException('Frame type must be RANGE, ROWS or GROUP.');
-        }
-
-        $validDirections = [self::PRECEDING, self::FOLLOWING];
-        if (
-            !in_array($startDirection, $validDirections) ||
-            !in_array($endDirection, $validDirections)
-        ) {
-            throw new InvalidArgumentException('Frame directions must be PRECEDING or FOLLOWING.');
-        }
-
-        if (
-            (is_int($startOffset) && $startOffset < 0) ||
-            (is_int($endOffset) && $endOffset < 0)
-        ) {
+        if ($startOffset < 0 || $endOffset < 0) {
             throw new InvalidArgumentException('Frame offsets must be non-negative.');
-        }
-
-        if (
-            in_array($type, [self::ROWS, self::GROUPS]) &&
-            (
-                ($startOffset !== null && !is_int($startOffset)) ||
-                ($endOffset !== null && !is_int($endOffset))
-            )
-        ) {
-            throw new InvalidArgumentException('Frame offsets for ROWS and GROUPS must be null or integers.');
-        }
-
-        if (
-            $type === self::RANGE &&
-            (
-                ($startOffset !== null && !is_int($startOffset) && !is_string($startOffset)) ||
-                ($endOffset !== null && !is_int($endOffset) && !is_string($endOffset))
-            )
-        ) {
-            throw new InvalidArgumentException('Frame offsets for RANGE must be null, integers or interval strings.');
         }
 
         $this->frame = [
@@ -252,8 +216,6 @@ class WindowExpression implements ExpressionInterface, WindowInterface
 
         $frameSql = '';
         if ($this->frame) {
-            $types = ['RANGE', 'ROWS', 'GROUPS'];
-
             $offset = $this->buildOffsetSql(
                 $generator,
                 $this->frame['start']['offset'],
@@ -262,7 +224,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
 
             $frameSql = sprintf(
                 '%s %s%s',
-                $types[$this->frame['type']],
+                $this->frame['type'],
                 isset($this->frame['end']) ? 'BETWEEN ' : '',
                 $offset
             );
@@ -314,27 +276,20 @@ class WindowExpression implements ExpressionInterface, WindowInterface
      * Builds frame offset sql.
      *
      * @param \Cake\Database\ValueBinder $generator Value binder
-     * @param string|int|null $offset Frame offset
-     * @param int $direction Frame offset direction
+     * @param int|null $offset Frame offset
+     * @param string $direction Frame offset direction
      * @return string
      */
-    protected function buildOffsetSql(ValueBinder $generator, $offset, int $direction): string
+    protected function buildOffsetSql(ValueBinder $generator, ?int $offset, string $direction): string
     {
         if ($offset === 0) {
             return 'CURRENT ROW';
         }
 
-        if (is_string($offset)) {
-            $placeholder = $generator->placeholder('param');
-            $generator->bind($placeholder, $offset, 'string');
-            $offset = $placeholder;
-        }
-
-        $directions = ['PRECEDING', 'FOLLOWING'];
         $sql = sprintf(
             '%s %s',
             $offset ?? 'UNBOUNDED',
-            $directions[$direction]
+            $direction
         );
 
         return $sql;

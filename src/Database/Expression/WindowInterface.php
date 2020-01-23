@@ -22,29 +22,29 @@ namespace Cake\Database\Expression;
 interface WindowInterface
 {
     /**
-     * @var int
+     * @var string
      */
-    public const PRECEDING = 0;
+    public const PRECEDING = 'PRECEDING';
 
     /**
-     * @var int
+     * @var string
      */
-    public const FOLLOWING = 1;
+    public const FOLLOWING = 'FOLLOWING';
 
     /**
-     * @var int
+     * @var string
      */
-    public const RANGE = 0;
+    public const RANGE = 'RANGE';
 
     /**
-     * @var int
+     * @var string
      */
-    public const ROWS = 1;
+    public const ROWS = 'ROWS';
 
     /**
-     * @var int
+     * @var string
      */
-    public const GROUPS = 2;
+    public const GROUPS = 'GROUPS';
 
     /**
      * Adds one or more partition expressions to the window.
@@ -110,20 +110,34 @@ interface WindowInterface
     public function groups(?int $start, ?int $end = 0);
 
     /**
-     * @param int $type Frame type
-     * @param string|int|null $startOffset Frame start offset
-     * @param int $startDirection Frame start direction
-     * @param string|int|null $endOffset Frame end offset
-     * @param int $endDirection Frame end direction
+     * Adds a frame to the window.
+     *
+     * Use the `range()`, `rows()` or `groups()` helpers if you need simple
+     * 'BETWEEN offset PRECEDING and offset FOLLOWING' frames.
+     *
+     * You can specify any direction for both frame start and frame end.
+     *
+     * With both `$startOffset` and `$endOffset`:
+     *  - `0` - 'CURRENT ROW'
+     *  - `null` - 'UNBOUNDED'
+     *
+     * @param string $type Frame type
+     * @param int|null $startOffset Frame start offset
+     * @param string $startDirection Frame start direction
+     * @param int|null $endOffset Frame end offset
+     * @param string $endDirection Frame end direction
      * @return $this
-     * @throws \InvalidArgumentException When wrong types are used or offsets are negative.
+     * @throws \InvalidArgumentException WHen offsets are negative.
+     * @psalm-param self::RANGE|self::ROWS|self::GROUPS $type
+     * @psalm-param self::PRECEDING|self::FOLLOWING $startDirection
+     * @psalm-param self::PRECEDING|self::FOLLOWING $endDirection
      */
     public function frame(
-        int $type,
-        $startOffset,
-        int $startDirection,
-        $endOffset = null,
-        int $endDirection = self::FOLLOWING
+        string $type,
+        ?int $startOffset,
+        string $startDirection,
+        ?int $endOffset = null,
+        string $endDirection = self::FOLLOWING
     );
 
     /**

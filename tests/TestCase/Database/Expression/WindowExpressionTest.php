@@ -144,18 +144,15 @@ class WindowExpressionTest extends TestCase
 
         $w = (new WindowExpression())->frame(
             WindowExpression::RANGE,
-            '2 hour',
+            2,
             WindowExpression::PRECEDING,
-            '1 hour',
+            1,
             WindowExpression::PRECEDING
         );
-        $b = new ValueBinder();
         $this->assertEqualsSql(
-            'OVER (RANGE BETWEEN :param0 PRECEDING AND :param1 PRECEDING)',
-            $w->sql($b)
+            'OVER (RANGE BETWEEN 2 PRECEDING AND 1 PRECEDING)',
+            $w->sql(new ValueBinder())
         );
-        $this->assertSame('2 hour', $b->bindings()[':param0']['value']);
-        $this->assertSame('1 hour', $b->bindings()[':param1']['value']);
     }
 
     /**
@@ -355,64 +352,24 @@ class WindowExpressionTest extends TestCase
     }
 
     /**
-     * Tests windows with invalid types
+     * Tests windows with invalid offsets
      *
      * @return void
      */
-    public function testInvalidType()
+    public function testInvalidStart()
     {
         $this->expectException(InvalidArgumentException::class);
-        $w = (new WindowExpression())->frame(4, 0, WindowExpression::PRECEDING);
+        $w = (new WindowExpression())->range(-2, 1);
     }
 
     /**
-     * Tests windows with invalid float offsets
+     * Tests windows with invalid offsets
      *
      * @return void
      */
-    public function testInvalidFloatStart()
+    public function testInvalidEnd()
     {
         $this->expectException(InvalidArgumentException::class);
-        $w = (new WindowExpression())->frame(WindowExpression::RANGE, 0.0, WindowExpression::PRECEDING);
-    }
-
-    /**
-     * Tests windows with invalid float offsets
-     *
-     * @return void
-     */
-    public function testInvalidFloatEnd()
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Frame offsets for RANGE must be');
-        $w = (new WindowExpression())->frame(
-            WindowExpression::RANGE,
-            0,
-            WindowExpression::PRECEDING,
-            0.0,
-            WindowExpression::FOLLOWING
-        );
-    }
-
-    /**
-     * Tests windows with invalid directions
-     *
-     * @return void
-     */
-    public function testInvalidStartDirection()
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $w = (new WindowExpression())->frame(WindowExpression::RANGE, 0, 2);
-    }
-
-    /**
-     * Tests windows with invalid directions
-     *
-     * @return void
-     */
-    public function testInvalidEndDirection()
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $w = (new WindowExpression())->frame(WindowExpression::RANGE, 0, WindowExpression::PRECEDING, 1, 2);
+        $w = (new WindowExpression())->range(0, -2);
     }
 }

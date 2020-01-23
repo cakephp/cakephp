@@ -286,16 +286,6 @@ parameters:
 			path: src/Database/Expression/QueryExpression.php
 
 		-
-			message: "#^Result of && is always false\\.$#"
-			count: 3
-			path: src/Database/Expression/WindowExpression.php
-
-		-
-			message: "#^Result of || is always false\\.$#"
-			count: 1
-			path: src/Database/Expression/WindowExpression.php
-
-		-
 			message: "#^Access to an undefined property Exception\\:\\:\\$queryString\\.$#"
 			count: 1
 			path: src/Database/Log/LoggingStatement.php
