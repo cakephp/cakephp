@@ -34,7 +34,10 @@ use TestApp\Error\Thing\SecurityThing;
  */
 class DebuggerTest extends TestCase
 {
-    protected $_restoreError = false;
+    /**
+     * @var bool
+     */
+    protected $restoreError = false;
 
     /**
      * setUp method
@@ -57,7 +60,7 @@ class DebuggerTest extends TestCase
     public function tearDown(): void
     {
         parent::tearDown();
-        if ($this->_restoreError) {
+        if ($this->restoreError) {
             restore_error_handler();
         }
     }
@@ -575,6 +578,8 @@ TEXT;
     public function testGetInstance()
     {
         $result = Debugger::getInstance();
+        $exporter = $result->getConfig('exportFormatter');
+
         $this->assertInstanceOf(Debugger::class, $result);
 
         $result = Debugger::getInstance(TestDebugger::class);
@@ -585,6 +590,7 @@ TEXT;
 
         $result = Debugger::getInstance(Debugger::class);
         $this->assertInstanceOf(Debugger::class, $result);
+        $result->setConfig('exportFormatter', $exporter);
     }
 
     /**
