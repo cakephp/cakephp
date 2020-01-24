@@ -31,10 +31,10 @@ jobs:
 
     steps:
     - name: Setup mysql 8
-      if: matrix.db-type == 'mysql'
+      if: matrix.db-type == 'mysql' && matrix.php-version == '7.2'
       run: |
         sudo service mysql stop
-        docker run --rm --name=mysqld -e MYSQL_ALLOW_EMPTY_PASSWORD=yes -e MYSQL_DATABASE=cakephp --tmpfs /var/lib/mysql:rw --network=host -d mysql --default-authentication-plugin=mysql_native_password --disable-log-bin --innodb-flush-method=O_DIRECT_NO_FSYNC
+        docker run --rm --name=mysqld -e MYSQL_ROOT_PASSWORD=root --tmpfs /var/lib/mysql:rw --network=host -d mysql --default-authentication-plugin=mysql_native_password --disable-log-bin --innodb-flush-method=O_DIRECT_NO_FSYNC
 
     - uses: actions/checkout@v1
       with:
@@ -64,8 +64,10 @@ jobs:
       env:
         REDIS_PORT: ${{ job.services.redis.ports['6379'] }}
       run: |
+        if [ ${{ matrix.db-type }} == 'mysql' ]; then mysql -h 127.0.0.1 -u root -proot -e 'CREATE DATABASE cakephp;'; fi
+
         if [[ ${{ matrix.db-type }} == 'sqlite' ]]; then export DB_DSN='sqlite:///:memory:'; fi
-        if [[ ${{ matrix.db-type }} == 'mysql' ]]; then export DB_DSN='mysql://root@127.0.0.1/cakephp?init[]=SET sql_mode = "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"'; fi
+        if [[ ${{ matrix.db-type }} == 'mysql' ]]; then export DB_DSN='mysql://root:root@127.0.0.1/cakephp?init[]=SET sql_mode = "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"'; fi
         if [[ ${{ matrix.db-type }} == 'pgsql' ]]; then export DB_DSN='postgres://postgres@127.0.0.1:${{ job.services.postgres.ports['5432'] }}/postgres'; fi
 
         if [[ ${{ matrix.php-version }} == '7.2' ]]; then
