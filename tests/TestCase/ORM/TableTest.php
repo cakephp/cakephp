@@ -60,8 +60,8 @@ class TableTest extends TestCase
         'core.Authors',
         'core.Categories',
         'core.Comments',
-        'core.Groups',
-        'core.GroupsMembers',
+        'core.Sections',
+        'core.SectionsMembers',
         'core.Members',
         'core.PolymorphicTagged',
         'core.SiteArticles',
@@ -606,19 +606,19 @@ class TableTest extends TestCase
      */
     public function testAssociationDotSyntax()
     {
-        $groups = $this->getTableLocator()->get('Groups');
+        $sections = $this->getTableLocator()->get('Sections');
         $members = $this->getTableLocator()->get('Members');
-        $groupsMembers = $this->getTableLocator()->get('GroupsMembers');
+        $sectionsMembers = $this->getTableLocator()->get('SectionsMembers');
 
-        $groups->belongsToMany('Members');
-        $groups->hasMany('GroupsMembers');
-        $groupsMembers->belongsTo('Members');
-        $members->belongsToMany('Groups');
+        $sections->belongsToMany('Members');
+        $sections->hasMany('SectionsMembers');
+        $sectionsMembers->belongsTo('Members');
+        $members->belongsToMany('Sections');
 
-        $association = $groups->getAssociation('GroupsMembers.Members.Groups');
+        $association = $sections->getAssociation('SectionsMembers.Members.Sections');
         $this->assertInstanceOf(BelongsToMany::class, $association);
         $this->assertSame(
-            $groups->getAssociation('GroupsMembers')->getAssociation('Members')->getAssociation('Groups'),
+            $sections->getAssociation('SectionsMembers')->getAssociation('Members')->getAssociation('Sections'),
             $association
         );
     }
@@ -632,7 +632,7 @@ class TableTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $this->getTableLocator()->get('Groups')->getAssociation('FooBar');
+        $this->getTableLocator()->get('Sections')->getAssociation('FooBar');
     }
 
     /**
@@ -3079,28 +3079,30 @@ class TableTest extends TestCase
      */
     public function testDeleteAssociationsCascadingCallbacksOrder()
     {
-        $groups = $this->getTableLocator()->get('Groups');
+        $sections = $this->getTableLocator()->get('Sections');
         $members = $this->getTableLocator()->get('Members');
-        $groupsMembers = $this->getTableLocator()->get('GroupsMembers');
+        $sectionsMembers = $this->getTableLocator()->get('SectionsMembers');
 
-        $groups->belongsToMany('Members');
-        $groups->hasMany('GroupsMembers', [
+        $sections->belongsToMany('Members', [
+            'joinTable' => 'sections_members',
+        ]);
+        $sections->hasMany('SectionsMembers', [
             'dependent' => true,
             'cascadeCallbacks' => true,
         ]);
-        $groupsMembers->belongsTo('Members');
-        $groupsMembers->addBehavior('CounterCache', [
-            'Members' => ['group_count'],
+        $sectionsMembers->belongsTo('Members');
+        $sectionsMembers->addBehavior('CounterCache', [
+            'Members' => ['section_count'],
         ]);
 
         $member = $members->get(1);
-        $this->assertEquals(2, $member->group_count);
+        $this->assertEquals(2, $member->section_count);
 
-        $group = $groups->get(1);
-        $groups->delete($group);
+        $section = $sections->get(1);
+        $sections->delete($section);
 
         $member = $members->get(1);
-        $this->assertEquals(1, $member->group_count);
+        $this->assertEquals(1, $member->section_count);
     }
 
     /**

@@ -295,12 +295,12 @@ class QueryTest extends TestCase
         $result->closeCursor();
 
         $query = new Query($this->connection);
-        $time = new \DateTime('2007-03-18 10:50:00');
+        $time = new \DateTime('2007-03-18 10:45:23');
         $types = ['created' => 'datetime'];
         $result = $query
             ->select(['title', 'comment' => 'c.comment'])
             ->from('articles')
-            ->join(['table' => 'comments', 'alias' => 'c', 'conditions' => ['created <=' => $time]], $types)
+            ->join(['table' => 'comments', 'alias' => 'c', 'conditions' => ['created' => $time]], $types)
             ->execute();
         $this->assertEquals(['title' => 'First Article', 'comment' => 'First Comment for First Article'], $result->fetch('assoc'));
         $result->closeCursor();
@@ -468,7 +468,7 @@ class QueryTest extends TestCase
             ->from('authors')
             ->innerJoin('comments', function ($exp, $q) use ($query, $types) {
                 $this->assertSame($q, $query);
-                $exp->add(['created >' => new \DateTime('2007-03-18 10:45:23')], $types);
+                $exp->add(['created' => new \DateTime('2007-03-18 10:47:23')], $types);
 
                 return $exp;
             })

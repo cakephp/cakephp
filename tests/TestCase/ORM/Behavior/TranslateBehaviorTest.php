@@ -40,7 +40,7 @@ class TranslateBehaviorTest extends TestCase
         'core.Articles',
         'core.ArticlesTags',
         'core.Authors',
-        'core.Groups',
+        'core.Sections',
         'core.SpecialTags',
         'core.Tags',
         'core.Comments',
@@ -1450,7 +1450,7 @@ class TranslateBehaviorTest extends TestCase
      */
     public function testSaveNewRecordWithOnlyTranslationsNotDefaultLocale()
     {
-        $table = $this->getTableLocator()->get('Groups');
+        $table = $this->getTableLocator()->get('Sections');
         $table->addBehavior('Translate', [
             'fields' => ['title'],
             'validator' => (new \Cake\Validation\Validator())->add('title', 'notBlank', ['rule' => 'notBlank']),

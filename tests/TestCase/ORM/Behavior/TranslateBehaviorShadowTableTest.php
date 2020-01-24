@@ -40,14 +40,14 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
         'core.TagsTranslations',
         'core.ArticlesTags',
         'core.SpecialTags',
-        'core.Groups',
+        'core.Sections',
         'core.ArticlesTranslations',
         'core.ArticlesMoreTranslations',
         'core.AuthorsTranslations',
         'core.CommentsTranslations',
         'core.TagsShadowTranslations',
         'core.SpecialTagsTranslations',
-        'core.GroupsTranslations',
+        'core.SectionsTranslations',
     ];
 
     /**
