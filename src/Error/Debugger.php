@@ -22,6 +22,7 @@ use Cake\Error\Debug\ArrayNode;
 use Cake\Error\Debug\ClassNode;
 use Cake\Error\Debug\ConsoleFormatter;
 use Cake\Error\Debug\DebugContext;
+use Cake\Error\Debug\HtmlFormatter;
 use Cake\Error\Debug\FormatterInterface;
 use Cake\Error\Debug\NodeInterface;
 use Cake\Error\Debug\PropertyNode;
@@ -491,6 +492,8 @@ class Debugger
      * Get the configured export formatter or infer one based on the environment.
      *
      * @return \Cake\Error\Debug\FormatterInterface
+     * @unstable This method is not stable and may change in the future.
+     * @since 4.1.0
      */
     public function getExportFormatter(): FormatterInterface
     {
@@ -499,6 +502,8 @@ class Debugger
         if (!$class) {
             if (ConsoleFormatter::environmentMatches()) {
                 $class = ConsoleFormatter::class;
+            } elseif (HtmlFormatter::environmentMatches()) {
+                $class = HtmlFormatter::class;
             } else {
                 $class = TextFormatter::class;
             }

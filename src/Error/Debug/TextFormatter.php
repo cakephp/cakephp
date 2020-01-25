@@ -23,6 +23,8 @@ use RuntimeException;
  *
  * Provides backwards compatible output with the historical output of
  * `Debugger::exportVar()`
+ *
+ * @internal
  */
 class TextFormatter implements FormatterInterface
 {
@@ -36,7 +38,7 @@ class TextFormatter implements FormatterInterface
     {
         $indent = 0;
 
-        return $this->_export($node, $indent);
+        return $this->export($node, $indent);
     }
 
     /**
@@ -46,7 +48,7 @@ class TextFormatter implements FormatterInterface
      * @param int $indent The current indentation level.
      * @return string
      */
-    protected function _export(NodeInterface $var, int $indent): string
+    protected function export(NodeInterface $var, int $indent): string
     {
         if ($var instanceof ScalarNode) {
             switch ($var->getType()) {
@@ -61,10 +63,10 @@ class TextFormatter implements FormatterInterface
             }
         }
         if ($var instanceof ArrayNode) {
-            return $this->_array($var, $indent + 1);
+            return $this->exportArray($var, $indent + 1);
         }
         if ($var instanceof ClassNode || $var instanceof ReferenceNode) {
-            return $this->_object($var, $indent + 1);
+            return $this->exportObject($var, $indent + 1);
         }
         if ($var instanceof SpecialNode) {
             return (string)$var->getValue();
@@ -79,7 +81,7 @@ class TextFormatter implements FormatterInterface
      * @param int $indent The current indentation level.
      * @return string Exported array.
      */
-    protected function _array(ArrayNode $var, int $indent): string
+    protected function exportArray(ArrayNode $var, int $indent): string
     {
         $out = '[';
         $break = "\n" . str_repeat("  ", $indent);
@@ -88,7 +90,7 @@ class TextFormatter implements FormatterInterface
 
         foreach ($var->getChildren() as $item) {
             $val = $item->getValue();
-            $vars[] = $break . $this->_export($item->getKey(), $indent) . ' => ' . $this->_export($val, $indent);
+            $vars[] = $break . $this->export($item->getKey(), $indent) . ' => ' . $this->export($val, $indent);
         }
         if (count($vars)) {
             return $out . implode(',', $vars) . $end . ']';
@@ -105,7 +107,7 @@ class TextFormatter implements FormatterInterface
      * @return string
      * @see \Cake\Error\Debugger::exportVar()
      */
-    protected function _object($var, int $indent): string
+    protected function exportObject($var, int $indent): string
     {
         $out = '';
         $props = [];
@@ -122,9 +124,9 @@ class TextFormatter implements FormatterInterface
             $visibility = $property->getVisibility();
             $name = $property->getName();
             if ($visibility && $visibility !== 'public') {
-                $props[] = "[{$visibility}] {$name} => " . $this->_export($property->getValue(), $indent);
+                $props[] = "[{$visibility}] {$name} => " . $this->export($property->getValue(), $indent);
             } else {
-                $props[] = "{$name} => " . $this->_export($property->getValue(), $indent);
+                $props[] = "{$name} => " . $this->export($property->getValue(), $indent);
             }
         }
         if (count($props)) {
