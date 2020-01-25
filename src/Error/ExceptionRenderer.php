@@ -403,9 +403,9 @@ class ExceptionRenderer implements ExceptionRendererInterface
      */
     protected function _outputMessageSafe(string $template): Response
     {
-        $helpers = ['Form', 'Html'];
         $builder = $this->controller->viewBuilder();
-        $builder->setHelpers($helpers, false)
+        $builder
+            ->setHelpers([], false)
             ->setLayoutPath('')
             ->setTemplatePath('Error');
         $view = $this->controller->createView('View');
