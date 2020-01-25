@@ -78,8 +78,6 @@ class HtmlFormatter implements FormatterInterface
      */
     public function dump(NodeInterface $node): string
     {
-        // TODO add CSS and javascript snippet on first dump to make HTML
-        // look good and be interactive.
         $html = $this->export($node);
 
         return '<div class="cake-dbg">' . $html . '</div>';
@@ -89,7 +87,6 @@ class HtmlFormatter implements FormatterInterface
      * Convert a tree of NodeInterface objects into HTML
      *
      * @param \Cake\Error\Debug\NodeInterface $var The node tree to dump.
-     * @param int $indent The current indentation level.
      * @return string
      */
     protected function export(NodeInterface $var): string
@@ -153,7 +150,6 @@ class HtmlFormatter implements FormatterInterface
      * Handles object to string conversion.
      *
      * @param \Cake\Error\Debug\ClassNode|\Cake\Error\Debug\ReferenceNode $var Object to convert.
-     * @param int $indent Current indentation level.
      * @return string
      * @see \Cake\Error\Debugger::exportVar()
      */
@@ -165,15 +161,13 @@ class HtmlFormatter implements FormatterInterface
             $objectId,
         );
 
-        $end = $this->style('punct', '}') . '</div>';
-        $props = [];
-
         if ($var instanceof ReferenceNode) {
             $link = sprintf(
                 '<a class="cake-dbg-ref" href="#%s">id: %s</a>',
                 $objectId,
                 $this->style('number', (string)$var->getId())
             );
+
             return '<div class="cake-dbg-ref">' .
                 $this->style('punct', 'object(') .
                 $this->style('class', $var->getValue()) .
@@ -189,8 +183,9 @@ class HtmlFormatter implements FormatterInterface
             $this->style('number', (string)$var->getId()) .
             $this->style('punct', ' {');
 
-        $arrow = $this->style('punct', ' => ');
+        $props = [];
         foreach ($var->getChildren() as $property) {
+            $arrow = $this->style('punct', ' => ');
             $visibility = $property->getVisibility();
             $name = $property->getName();
             if ($visibility && $visibility !== 'public') {
@@ -209,10 +204,12 @@ class HtmlFormatter implements FormatterInterface
                     '</span>';
             }
         }
+
+        $end = $this->style('punct', '}') . '</div>';
         if (count($props)) {
             return $out . implode("\n", $props) . $end;
         }
 
-        return $out . $this->style('punct', '}');
+        return $out . $end;
     }
 }
