@@ -72,6 +72,7 @@ class Cache
      * class names.
      *
      * @var string[]
+     * @psalm-var array<string, class-string>
      */
     protected static $_dsnClassMap = [
         'array' => Engine\ArrayEngine::class,

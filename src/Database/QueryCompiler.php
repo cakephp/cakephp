@@ -86,6 +86,13 @@ class QueryCompiler
     protected $_orderedUnion = true;
 
     /**
+     * Indicate whether aliases in SELECT clause need to be always quoted.
+     *
+     * @var bool
+     */
+    protected $_quotedSelectAliases = false;
+
+    /**
      * Returns the SQL representation of the provided query after generating
      * the placeholders for the bound values using the provided generator
      *
@@ -163,7 +170,6 @@ class QueryCompiler
      */
     protected function _buildSelectPart(array $parts, Query $query, ValueBinder $generator): string
     {
-        $driver = $query->getConnection()->getDriver();
         $select = 'SELECT%s %s%s';
         if ($this->_orderedUnion && $query->clause('union')) {
             $select = '(SELECT%s %s%s';
@@ -171,11 +177,18 @@ class QueryCompiler
         $distinct = $query->clause('distinct');
         $modifiers = $this->_buildModifierPart($query->clause('modifier'), $query, $generator);
 
+        $driver = $query->getConnection()->getDriver();
+        $quoteIdentifiers = $driver->isAutoQuotingEnabled() || $this->_quotedSelectAliases;
         $normalized = [];
         $parts = $this->_stringifyExpressions($parts, $generator);
         foreach ($parts as $k => $p) {
             if (!is_numeric($k)) {
-                $p = $p . ' AS ' . $driver->quoteIdentifier($k);
+                $p = $p . ' AS ';
+                if ($quoteIdentifiers) {
+                    $p .= $driver->quoteIdentifier($k);
+                } else {
+                    $p .= $k;
+                }
             }
             $normalized[] = $p;
         }

@@ -330,7 +330,11 @@ class SqlserverTest extends TestCase
         $query->select(['id', 'title'])
             ->from('articles')
             ->offset(10);
-        $expected = 'SELECT * FROM (SELECT id, title, (ROW_NUMBER() OVER (ORDER BY (SELECT NULL))) AS [_cake_page_rownum_] ' .
+        $identifier = '_cake_page_rownum_';
+        if ($connection->getDriver()->isAutoQuotingEnabled()) {
+            $identifier = $connection->getDriver()->quoteIdentifier($identifier);
+        }
+        $expected = 'SELECT * FROM (SELECT id, title, (ROW_NUMBER() OVER (ORDER BY (SELECT NULL))) AS ' . $identifier . ' ' .
             'FROM articles) _cake_paging_ ' .
             'WHERE _cake_paging_._cake_page_rownum_ > 10';
         $this->assertEquals($expected, $query->sql());
@@ -340,7 +344,7 @@ class SqlserverTest extends TestCase
             ->from('articles')
             ->order(['id'])
             ->offset(10);
-        $expected = 'SELECT * FROM (SELECT id, title, (ROW_NUMBER() OVER (ORDER BY id)) AS [_cake_page_rownum_] ' .
+        $expected = 'SELECT * FROM (SELECT id, title, (ROW_NUMBER() OVER (ORDER BY id)) AS ' . $identifier . ' ' .
             'FROM articles) _cake_paging_ ' .
             'WHERE _cake_paging_._cake_page_rownum_ > 10';
         $this->assertEquals($expected, $query->sql());
@@ -352,7 +356,7 @@ class SqlserverTest extends TestCase
             ->where(['title' => 'Something'])
             ->limit(10)
             ->offset(50);
-        $expected = 'SELECT * FROM (SELECT id, title, (ROW_NUMBER() OVER (ORDER BY id)) AS [_cake_page_rownum_] ' .
+        $expected = 'SELECT * FROM (SELECT id, title, (ROW_NUMBER() OVER (ORDER BY id)) AS ' . $identifier . ' ' .
             'FROM articles WHERE title = :c0) _cake_paging_ ' .
             'WHERE (_cake_paging_._cake_page_rownum_ > 50 AND _cake_paging_._cake_page_rownum_ <= 60)';
         $this->assertEquals($expected, $query->sql());

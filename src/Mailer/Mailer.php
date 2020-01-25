@@ -182,6 +182,7 @@ class Mailer implements EventListenerInterface
      * Mailer driver class map.
      *
      * @var array
+     * @psalm-var array<string, class-string>
      */
     protected static $_dsnClassMap = [];
 

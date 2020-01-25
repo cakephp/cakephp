@@ -1496,7 +1496,7 @@ class Message implements JsonSerializable, Serializable
         foreach ($content as $type => $text) {
             if (!in_array($type, $this->emailFormatAvailable, true)) {
                 throw new InvalidArgumentException(sprintf(
-                    'Invalid message type: "$s". Valid types are: "text", "html".',
+                    'Invalid message type: "%s". Valid types are: "text", "html".',
                     $type
                 ));
             }

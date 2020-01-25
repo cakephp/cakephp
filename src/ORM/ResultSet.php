@@ -276,8 +276,7 @@ class ResultSet implements ResultSetInterface
      *
      * This method will also close the underlying statement cursor.
      *
-     * @return array|object
-     * @psalm-suppress InvalidNullableReturnType
+     * @return array|object|null
      */
     public function first()
     {
@@ -288,6 +287,8 @@ class ResultSet implements ResultSetInterface
 
             return $result;
         }
+
+        return null;
     }
 
     /**

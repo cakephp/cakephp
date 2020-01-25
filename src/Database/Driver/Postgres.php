@@ -18,6 +18,8 @@ namespace Cake\Database\Driver;
 
 use Cake\Database\Driver;
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\PostgresCompiler;
+use Cake\Database\QueryCompiler;
 use Cake\Database\Query;
 use Cake\Database\Schema\PostgresSchemaDialect;
 use Cake\Database\Schema\SchemaDialect;
@@ -284,5 +286,15 @@ class Postgres extends Driver
                     ->add([') + (1' => 'literal']); // Postgres starts on index 0 but Sunday should be 1
                 break;
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return \Cake\Database\PostgresCompiler
+     */
+    public function newCompiler(): QueryCompiler
+    {
+        return new PostgresCompiler();
     }
 }

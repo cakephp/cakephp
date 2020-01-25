@@ -111,11 +111,6 @@ parameters:
 			path: src/ORM/ResultSet.php
 
 		-
-			message: "#^Method Cake\\\\ORM\\\\ResultSet\\:\\:first\\(\\) should return array\\|object but return statement is missing\\.$#"
-			count: 1
-			path: src/ORM/ResultSet.php
-
-		-
 			message: "#^Call to an undefined method Traversable\\:\\:getArrayCopy\\(\\)\\.$#"
 			count: 1
 			path: src/Collection/Iterator/ExtractIterator.php
@@ -521,7 +516,17 @@ parameters:
 			path: src/I18n/Time.php
 
 		-
+			message: "#^Access to undefined constant NumberFormatter\\:\\:CURRENCY_ACCOUNTING\\.$#"
+			count: 1
+			path: src/I18n/Number.php
+
+		-
 			message: "#^PHPDoc tag @var has invalid value \\(\\\\Psr\\\\SimpleCache\\\\CacheInterface&\\\\Cake\\\\Cache\\\\CacheEngineInterface\\|null\\)\\: Unexpected token \"\\|\", expected TOKEN_OTHER at offset 175$#"
+			count: 1
+			path: src/I18n/TranslatorRegistry.php
+
+		-
+			message: "#^Property Cake\\\\I18n\\\\TranslatorRegistry\\:\\:\\$_cacher has no typehint specified\\.$#"
 			count: 1
 			path: src/I18n/TranslatorRegistry.php
 
@@ -529,11 +534,6 @@ parameters:
 			message: "#^Method Cake\\\\Mailer\\\\Email\\:\\:deliver\\(\\) should return static\\(Cake\\\\Mailer\\\\Email\\) but returns Cake\\\\Mailer\\\\Email\\.$#"
 			count: 1
 			path: src/Mailer/Email.php
-
-		-
-			message: "#^Call to sprintf contains 0 placeholders, 1 value given\\.$#"
-			count: 1
-			path: src/Mailer/Message.php
 
 		-
 			message: "#^Method Cake\\\\Mailer\\\\Renderer\\:\\:render\\(\\) should return array\\(\\)\\|array\\('html' \\=\\> string, 'text' \\=\\> string\\) but returns array\\<string, string\\>\\.$#"
@@ -731,6 +731,11 @@ parameters:
 			path: src/TestSuite/IntegrationTestCase.php
 
 		-
+			message: "#^Unable to resolve the template type RealInstanceType in call to method PHPUnit\\\\Framework\\\\TestCase\\:\\:getMockBuilder\\(\\)$#"
+			count: 1
+			path: src/TestSuite/TestCase.php
+
+		-
 			message: "#^Result of \\|\\| is always true\\.$#"
 			count: 2
 			path: src/Utility/Hash.php
@@ -749,11 +754,6 @@ parameters:
 			message: "#^Constructor of class Cake\\\\View\\\\Form\\\\NullContext has an unused parameter \\$context\\.$#"
 			count: 1
 			path: src/View/Form/NullContext.php
-
-		-
-			message: "#^Method Cake\\\\View\\\\Helper\\:\\:__get\\(\\) should return Cake\\\\View\\\\Helper\\|null but return statement is missing\\.$#"
-			count: 1
-			path: src/View/Helper.php
 
 		-
 			message: "#^Offset 'debug' does not exist on array\\('fields' \\=\\> string, 'unlocked' \\=\\> string\\)\\.$#"
