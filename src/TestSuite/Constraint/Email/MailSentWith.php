@@ -75,7 +75,7 @@ class MailSentWith extends MailConstraintBase
             'template', 'layout', 'helpers',
             'theme',
         ];
-        if (in_array($this->method, $viewBuilderMethods)) {
+        if (in_array($this->method, $viewBuilderMethods, true)) {
             return $email->viewBuilder()->{'get' . ucfirst($this->method)}();
         }
 
