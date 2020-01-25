@@ -71,10 +71,7 @@ class MailSentWith extends MailConstraintBase
      */
     protected function getValue($email)
     {
-        $viewBuilderMethods = [
-            'template', 'layout', 'helpers',
-            'theme',
-        ];
+        $viewBuilderMethods = ['template', 'layout', 'helpers', 'theme'];
         if (in_array($this->method, $viewBuilderMethods, true)) {
             return $email->viewBuilder()->{'get' . ucfirst($this->method)}();
         }
