@@ -90,6 +90,9 @@ class EmailTraitTest extends TestCase
         $this->assertMailSentWith('cc@example.com', 'cc');
         $this->assertMailSentWith('bcc@example.com', 'bcc');
         $this->assertMailSentWith('cc2@example.com', 'cc');
+
+        $this->assertMailSentWith('default', 'template');
+        $this->assertMailSentWith('default', 'layout');
     }
 
     /**
@@ -231,11 +234,14 @@ class EmailTraitTest extends TestCase
             ->setEmailFormat(Email::MESSAGE_TEXT)
             ->send('text');
 
-        (new Email('alternate'))
+        $email = (new Email('alternate'))
             ->setTo('to2@example.com')
             ->setCc('cc2@example.com')
-            ->setEmailFormat(Email::MESSAGE_HTML)
-            ->send('html');
+            ->setEmailFormat(Email::MESSAGE_HTML);
+        $email->viewBuilder()
+            ->setTemplate('default')
+            ->setLayout('default');
+        $email->send('html');
 
         (new Email('alternate'))
             ->setTo(['to3@example.com' => null])
