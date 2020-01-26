@@ -478,7 +478,7 @@ class Response implements ResponseInterface
      * Formats the Content-Type header based on the configured contentType and charset
      * the charset will only be set in the header if the response is of type text/*
      *
-     * @param string|null $type The type to set.
+     * @param string $type The type to set.
      * @return void
      */
     protected function _setContentType(string $type): void
