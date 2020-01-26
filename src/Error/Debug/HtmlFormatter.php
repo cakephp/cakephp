@@ -158,7 +158,7 @@ class HtmlFormatter implements FormatterInterface
         $objectId = "cake-db-object-{$this->id}-{$var->getId()}";
         $out = sprintf(
             '<div class="cake-dbg-object" id="%s">',
-            $objectId,
+            $objectId
         );
 
         if ($var instanceof ReferenceNode) {
