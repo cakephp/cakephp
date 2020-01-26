@@ -110,13 +110,6 @@ class ServerRequest implements ServerRequestInterface
     protected $trustedProxies = [];
 
     /**
-     * Contents of php://input
-     *
-     * @var string
-     */
-    protected $_input;
-
-    /**
      * The built in detectors used with `is()` can be modified with `addDetector()`.
      *
      * There are several ways to specify a detector, see \Cake\Http\ServerRequest::addDetector() for the
@@ -1645,23 +1638,6 @@ class ServerRequest implements ServerRequestInterface
         $e = new MethodNotAllowedException();
         $e->responseHeader('Allow', $allowed);
         throw $e;
-    }
-
-    /**
-     * Read data from php://input, mocked in tests.
-     *
-     * @return string contents of php://input
-     */
-    protected function _readInput(): string
-    {
-        if (empty($this->_input)) {
-            $fh = fopen('php://input', 'rb');
-            $content = stream_get_contents($fh);
-            fclose($fh);
-            $this->_input = $content;
-        }
-
-        return $this->_input;
     }
 
     /**
