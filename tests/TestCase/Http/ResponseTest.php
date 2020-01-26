@@ -314,10 +314,10 @@ class ResponseTest extends TestCase
             'Original object should not be modified'
         );
         $this->assertSame('application/pdf', $new->getHeaderLine('Content-Type'));
-        $this->assertSame(
-            'application/json',
-            $new->withType('json')->getHeaderLine('Content-Type')
-        );
+
+        $json = $new->withType('json');
+        $this->assertSame('application/json', $json->getHeaderLine('Content-Type'));
+        $this->assertSame('application/json', $json->getType());
     }
 
     /**
@@ -337,6 +337,11 @@ class ResponseTest extends TestCase
             'custom/stuff',
             $response->withType('custom/stuff')->getHeaderLine('Content-Type'),
             'Should allow arbitrary types'
+        );
+        $this->assertEquals(
+            'text/html; charset=UTF-8',
+            $response->withType('text/html; charset=UTF-8')->getHeaderLine('Content-Type'),
+            'Should allow charset types'
         );
     }
 
@@ -556,12 +561,45 @@ class ResponseTest extends TestCase
         $new = $response->withType('pdf')
             ->withStatus(204);
         $this->assertFalse($new->hasHeader('Content-Type'));
-        $this->assertSame(204, $new->getStatusCode());
+        $this->assertSame('', $new->getType());
+        $this->assertSame(204, $new->getStatusCode(), 'Status code should clear content-type');
 
         $response = new Response();
         $new = $response->withStatus(304)
             ->withType('pdf');
-        $this->assertFalse($new->hasHeader('Content-Type'));
+        $this->assertSame('', $new->getType());
+        $this->assertFalse(
+            $new->hasHeader('Content-Type'),
+            'Type should not be retained because of status code.'
+        );
+
+        $response = new Response();
+        $new = $response
+            ->withHeader('Content-Type', 'application/json')
+            ->withStatus(204);
+        $this->assertFalse($new->hasHeader('Content-Type'), 'Should clear direct header');
+        $this->assertSame('', $new->getType());
+    }
+
+    /**
+     * Test that setting status codes doesn't overwrite content-type
+     *
+     * @return void
+     */
+    public function testWithStatusDoesNotChangeContentType()
+    {
+        $response = new Response();
+        $new = $response->withHeader('Content-Type', 'application/json')
+            ->withStatus(403);
+        $this->assertSame('application/json', $new->getHeaderLine('Content-Type'));
+        $this->assertSame(403, $new->getStatusCode());
+
+        $response = new Response();
+        $new = $response->withStatus(403)
+            ->withHeader('Content-Type', 'application/json');
+        $this->assertSame('application/json', $new->getHeaderLine('Content-Type'));
+        $this->assertSame(403, $new->getStatusCode());
+        $this->assertSame('application/json', $new->getType());
     }
 
     /**
