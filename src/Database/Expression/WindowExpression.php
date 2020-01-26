@@ -19,6 +19,7 @@ namespace Cake\Database\Expression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\ValueBinder;
 use Closure;
+use InvalidArgumentException;
 
 /**
  * This represents a SQL window expression used by aggregate and window functions.
@@ -34,6 +35,16 @@ class WindowExpression implements ExpressionInterface, WindowInterface
      * @var \Cake\Database\Expression\OrderByExpression|null
      */
     protected $order;
+
+    /**
+     * @var array|null
+     */
+    protected $frame;
+
+    /**
+     * @var string|null
+     */
+    protected $exclusion;
 
     /**
      * @inheritDoc
@@ -83,7 +94,11 @@ class WindowExpression implements ExpressionInterface, WindowInterface
      */
     public function range(?int $start, ?int $end = 0)
     {
-        return $this;
+        if (func_num_args() === 1) {
+            return $this->frame(self::RANGE, $start, self::PRECEDING);
+        }
+
+        return $this->frame(self::RANGE, $start, self::PRECEDING, $end, self::FOLLOWING);
     }
 
     /**
@@ -91,7 +106,11 @@ class WindowExpression implements ExpressionInterface, WindowInterface
      */
     public function rows(?int $start, ?int $end = 0)
     {
-        return $this;
+        if (func_num_args() === 1) {
+            return $this->frame(self::ROWS, $start, self::PRECEDING);
+        }
+
+        return $this->frame(self::ROWS, $start, self::PRECEDING, $end, self::FOLLOWING);
     }
 
     /**
@@ -99,6 +118,42 @@ class WindowExpression implements ExpressionInterface, WindowInterface
      */
     public function groups(?int $start, ?int $end = 0)
     {
+        if (func_num_args() === 1) {
+            return $this->frame(self::GROUPS, $start, self::PRECEDING);
+        }
+
+        return $this->frame(self::GROUPS, $start, self::PRECEDING, $end, self::FOLLOWING);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function frame(
+        string $type,
+        ?int $startOffset,
+        string $startDirection,
+        ?int $endOffset = null,
+        string $endDirection = self::FOLLOWING
+    ) {
+        if ($startOffset < 0 || $endOffset < 0) {
+            throw new InvalidArgumentException('Frame offsets must be non-negative.');
+        }
+
+        $this->frame = [
+            'type' => $type,
+            'start' => [
+                'offset' => $startOffset,
+                'direction' => $startDirection,
+            ],
+        ];
+
+        if (func_num_args() > 3) {
+            $this->frame['end'] = [
+                'offset' => $endOffset,
+                'direction' => $endDirection,
+            ];
+        }
+
         return $this;
     }
 
@@ -107,6 +162,8 @@ class WindowExpression implements ExpressionInterface, WindowInterface
      */
     public function excludeCurrent()
     {
+        $this->exclusion = 'CURRENT ROW';
+
         return $this;
     }
 
@@ -115,6 +172,8 @@ class WindowExpression implements ExpressionInterface, WindowInterface
      */
     public function excludeGroup()
     {
+        $this->exclusion = 'GROUP';
+
         return $this;
     }
 
@@ -123,6 +182,8 @@ class WindowExpression implements ExpressionInterface, WindowInterface
      */
     public function excludeTies()
     {
+        $this->exclusion = 'TIES';
+
         return $this;
     }
 
@@ -131,6 +192,8 @@ class WindowExpression implements ExpressionInterface, WindowInterface
      */
     public function excludeNoOthers()
     {
+        $this->exclusion = 'NO OTHERS';
+
         return $this;
     }
 
@@ -149,11 +212,45 @@ class WindowExpression implements ExpressionInterface, WindowInterface
             $partitionSql = 'PARTITION BY ' . implode(', ', $expressions);
         }
 
+        $orderSql = $this->order ? $orderSql = $this->order->sql($generator) : '';
+
+        $frameSql = '';
+        if ($this->frame) {
+            $offset = $this->buildOffsetSql(
+                $generator,
+                $this->frame['start']['offset'],
+                $this->frame['start']['direction']
+            );
+
+            $frameSql = sprintf(
+                '%s %s%s',
+                $this->frame['type'],
+                isset($this->frame['end']) ? 'BETWEEN ' : '',
+                $offset
+            );
+
+            if (isset($this->frame['end'])) {
+                $offset = $this->buildOffsetSql(
+                    $generator,
+                    $this->frame['end']['offset'],
+                    $this->frame['end']['direction']
+                );
+
+                $frameSql .= ' AND ' . $offset;
+            }
+
+            if ($this->exclusion !== null) {
+                $frameSql .= ' EXCLUDE ' . $this->exclusion;
+            }
+        }
+
         return sprintf(
-            'OVER (%s%s%s)',
+            'OVER (%s%s%s%s%s)',
             $partitionSql,
-            $partitionSql && $this->order ? ' ' : '',
-            $this->order ? $this->order->sql($generator) : ''
+            $partitionSql && $orderSql ? ' ' : '',
+            $orderSql,
+            ($partitionSql || $orderSql) && $frameSql ? ' ' : '',
+            $frameSql
         );
     }
 
@@ -173,5 +270,28 @@ class WindowExpression implements ExpressionInterface, WindowInterface
         }
 
         return $this;
+    }
+
+    /**
+     * Builds frame offset sql.
+     *
+     * @param \Cake\Database\ValueBinder $generator Value binder
+     * @param int|null $offset Frame offset
+     * @param string $direction Frame offset direction
+     * @return string
+     */
+    protected function buildOffsetSql(ValueBinder $generator, ?int $offset, string $direction): string
+    {
+        if ($offset === 0) {
+            return 'CURRENT ROW';
+        }
+
+        $sql = sprintf(
+            '%s %s',
+            $offset ?? 'UNBOUNDED',
+            $direction
+        );
+
+        return $sql;
     }
 }
