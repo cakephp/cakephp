@@ -18,6 +18,8 @@ namespace Cake\Error\Debug;
 
 /**
  * Interface for formatters used by Debugger::exportVar()
+ *
+ * @unstable This interface is not stable and may change in the future.
  */
 interface FormatterInterface
 {
