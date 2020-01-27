@@ -73,15 +73,15 @@ class BodyParserMiddlewareTest extends TestCase
      */
     public function testConstructorXmlOption()
     {
-        $parser = new BodyParserMiddleware(['json' => false]);
+        $parser = new BodyParserMiddleware(['json' => false, 'form-urlencoded' => false]);
         $this->assertEquals([], $parser->getParsers(), 'Xml off by default');
 
-        $parser = new BodyParserMiddleware(['json' => false, 'xml' => false]);
+        $parser = new BodyParserMiddleware(['json' => false, 'xml' => false, 'form-urlencoded' => false]);
         $this->assertEquals([], $parser->getParsers(), 'No Xml types set.');
 
         $parser = new BodyParserMiddleware(['json' => false, 'xml' => true]);
         $this->assertEquals(
-            ['application/xml', 'text/xml'],
+            ['application/x-www-form-urlencoded', 'application/xml', 'text/xml'],
             array_keys($parser->getParsers()),
             'Default XML parsers are not set.'
         );
@@ -94,12 +94,12 @@ class BodyParserMiddlewareTest extends TestCase
      */
     public function testConstructorJsonOption()
     {
-        $parser = new BodyParserMiddleware(['json' => false]);
+        $parser = new BodyParserMiddleware(['json' => false, 'form-urlencoded' => false]);
         $this->assertEquals([], $parser->getParsers(), 'No JSON types set.');
 
         $parser = new BodyParserMiddleware([]);
         $this->assertEquals(
-            ['application/json', 'text/json'],
+            ['application/x-www-form-urlencoded', 'application/json', 'text/json'],
             array_keys($parser->getParsers()),
             'Default JSON parsers are not set.'
         );
@@ -138,7 +138,7 @@ class BodyParserMiddlewareTest extends TestCase
      */
     public function testAddParserOverwrite()
     {
-        $parser = new BodyParserMiddleware(['json' => false]);
+        $parser = new BodyParserMiddleware(['json' => false, 'form-urlencoded' => false]);
 
         $f1 = function (string $body) {
             return json_decode($body, true);
@@ -273,6 +273,33 @@ class BodyParserMiddlewareTest extends TestCase
 
             return new Response();
         });
+        $parser->process($request, $handler);
+    }
+
+    /**
+     * test parsing form urlencoded bodies.
+     *
+     * @return void
+     */
+    public function testInvokeFormUrlEncoded()
+    {
+        $request = new ServerRequest([
+            'environment' => [
+                'REQUEST_METHOD' => 'POST',
+                'CONTENT_TYPE' => 'application/x-www-form-urlencoded',
+            ],
+            'input' => 'foo=bar&array[]=1&array[]=2',
+        ]);
+        $handler = new TestRequestHandler(function ($req) {
+            $expected = [
+                'foo' => 'bar',
+                'array' => ['1', '2'],
+            ];
+            $this->assertEquals($expected, $req->getParsedBody());
+
+            return new Response();
+        });
+        $parser = new BodyParserMiddleware();
         $parser->process($request, $handler);
     }
 

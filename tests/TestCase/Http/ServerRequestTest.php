@@ -272,62 +272,6 @@ class ServerRequestTest extends TestCase
     }
 
     /**
-     * Test parsing PUT data into the object.
-     *
-     * @return void
-     */
-    public function testPutParsing()
-    {
-        $data = [
-            'Article' => ['title'],
-        ];
-        $request = new ServerRequest([
-            'input' => 'Article[]=title',
-            'environment' => [
-                'REQUEST_METHOD' => 'PUT',
-                'CONTENT_TYPE' => 'application/x-www-form-urlencoded; charset=UTF-8',
-            ],
-        ]);
-        $this->assertEquals($data, $request->getData());
-
-        $data = ['one' => 1, 'two' => 'three'];
-        $request = new ServerRequest([
-            'input' => 'one=1&two=three',
-            'environment' => [
-                'REQUEST_METHOD' => 'PUT',
-                'CONTENT_TYPE' => 'application/x-www-form-urlencoded; charset=UTF-8',
-            ],
-        ]);
-        $this->assertEquals($data, $request->getData());
-
-        $request = new ServerRequest([
-            'input' => 'Article[title]=Testing&action=update',
-            'environment' => [
-                'REQUEST_METHOD' => 'DELETE',
-                'CONTENT_TYPE' => 'application/x-www-form-urlencoded; charset=UTF-8',
-            ],
-        ]);
-        $expected = [
-            'Article' => ['title' => 'Testing'],
-            'action' => 'update',
-        ];
-        $this->assertEquals($expected, $request->getData());
-
-        $data = [
-            'Article' => ['title'],
-            'Tag' => ['Tag' => [1, 2]],
-        ];
-        $request = new ServerRequest([
-            'input' => 'Article[]=title&Tag[Tag][]=1&Tag[Tag][]=2',
-            'environment' => [
-                'REQUEST_METHOD' => 'PATCH',
-                'CONTENT_TYPE' => 'application/x-www-form-urlencoded; charset=UTF-8',
-            ],
-        ]);
-        $this->assertEquals($data, $request->getData());
-    }
-
-    /**
      * Test parsing json PUT data into the object.
      *
      * @return void
@@ -2575,8 +2519,6 @@ class ServerRequestTest extends TestCase
             'environment' => $vars,
         ]);
         $expected = $vars + [
-            'CONTENT_TYPE' => null,
-            'HTTP_CONTENT_TYPE' => null,
             'ORIGINAL_REQUEST_METHOD' => 'PUT',
         ];
         $this->assertSame($expected, $request->getServerParams());

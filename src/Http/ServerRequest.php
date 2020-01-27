@@ -320,13 +320,6 @@ class ServerRequest implements ServerRequestInterface
         $method = $this->getEnv('REQUEST_METHOD');
         $override = false;
 
-        if (
-            in_array($method, ['PUT', 'DELETE', 'PATCH'], true) &&
-            strpos((string)$this->contentType(), 'application/x-www-form-urlencoded') === 0
-        ) {
-            $data = $this->input();
-            parse_str($data, $data);
-        }
         if ($this->hasHeader('X-Http-Method-Override')) {
             $data['_method'] = $this->getHeaderLine('X-Http-Method-Override');
             $override = true;

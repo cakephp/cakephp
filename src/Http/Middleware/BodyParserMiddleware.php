@@ -54,6 +54,7 @@ class BodyParserMiddleware implements MiddlewareInterface
      *
      * ### Options
      *
+     * - `form-urlencoded` Set to false to disable parsing 'application/x-www-form-urlencoded' encoded data.
      * - `json` Set to false to disable json body parsing.
      * - `xml` Set to true to enable XML parsing. Defaults to false, as XML
      *   handling requires more care than JSON does.
@@ -63,7 +64,13 @@ class BodyParserMiddleware implements MiddlewareInterface
      */
     public function __construct(array $options = [])
     {
-        $options += ['json' => true, 'xml' => false, 'methods' => null];
+        $options += ['form-urlencoded' => true, 'json' => true, 'xml' => false, 'methods' => null];
+        if ($options['form-urlencoded']) {
+            $this->addParser(
+                ['application/x-www-form-urlencoded'],
+                Closure::fromCallable([$this, 'parseString'])
+            );
+        }
         if ($options['json']) {
             $this->addParser(
                 ['application/json', 'text/json'],
@@ -160,7 +167,10 @@ class BodyParserMiddleware implements MiddlewareInterface
         }
         [$type] = explode(';', $request->getHeaderLine('Content-Type'));
         $type = strtolower($type);
-        if (!isset($this->parsers[$type])) {
+        if (
+            !isset($this->parsers[$type]) ||
+            ($type === 'x-www-form-urlencoded' && $request->getMethod() === 'POST')
+        ) {
             return $handler->handle($request);
         }
 
@@ -172,6 +182,19 @@ class BodyParserMiddleware implements MiddlewareInterface
         $request = $request->withParsedBody($result);
 
         return $handler->handle($request);
+    }
+
+    /**
+     * Parse form urlencoded data into array.
+     *
+     * @param string $body The request body to parse.
+     * @return array
+     */
+    protected function parseString(string $body): array
+    {
+        parse_str($body, $result);
+
+        return $result;
     }
 
     /**
