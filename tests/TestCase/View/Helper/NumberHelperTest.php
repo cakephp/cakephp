@@ -18,9 +18,11 @@ namespace Cake\Test\TestCase\View\Helper;
 
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\I18n\Number;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\NumberHelper;
 use Cake\View\View;
+use ReflectionMethod;
 
 /**
  * NumberHelperTestObject class
@@ -92,7 +94,6 @@ class NumberHelperTest extends TestCase
             ['toPercentage'],
             ['currency'],
             ['format'],
-            ['addFormat'],
             ['formatDelta'],
             ['defaultCurrency'],
             ['ordinal'],
@@ -116,6 +117,21 @@ class NumberHelperTest extends TestCase
             ->method($method)
             ->with(12.3);
         $helper->{$method}(12.3, ['options']);
+    }
+
+    /**
+     * Test that number of argument of helper's proxy methods matches
+     * corresponding method of Number class.
+     *
+     * @dataProvider methodProvider
+     * @return void
+     */
+    public function testParameterCountMatch($method)
+    {
+        $numberMethod = new ReflectionMethod(Number::class, $method);
+        $helperMethod = new ReflectionMethod(NumberHelper::class, $method);
+
+        $this->assertSame($numberMethod->getNumberOfParameters(), $helperMethod->getNumberOfParameters());
     }
 
     /**
