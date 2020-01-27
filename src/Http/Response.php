@@ -632,6 +632,7 @@ class Response implements ResponseInterface
         }
         $this->_reasonPhrase = $reasonPhrase;
 
+        // These status codes don't have bodies and can't have content-types.
         if (in_array($code, [304, 204], true)) {
             $this->_clearHeader('Content-Type');
         }
