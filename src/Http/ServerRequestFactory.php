@@ -24,6 +24,7 @@ use Psr\Http\Message\UriInterface;
 use function Laminas\Diactoros\marshalHeadersFromSapi;
 use function Laminas\Diactoros\marshalUriFromSapi;
 use function Laminas\Diactoros\normalizeServer;
+use function Laminas\Diactoros\normalizeUploadedFiles;
 
 /**
  * Factory for making ServerRequest instances.
@@ -46,7 +47,7 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
      * @see fromServer()
      * @param array $server $_SERVER superglobal
      * @param array $query $_GET superglobal
-     * @param array $body $_POST superglobal
+     * @param array $post $_POST superglobal
      * @param array $cookies $_COOKIE superglobal
      * @param array $files $_FILES superglobal
      * @return \Cake\Http\ServerRequest
@@ -55,33 +56,73 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
     public static function fromGlobals(
         ?array $server = null,
         ?array $query = null,
-        ?array $body = null,
+        ?array $post = null,
         ?array $cookies = null,
         ?array $files = null
     ): ServerRequest {
         $server = normalizeServer($server ?: $_SERVER);
         $uri = static::createUri($server);
+        $data = static::processFiles($files ?: $_FILES, $post ?: $_POST);
+        $files = $data['files'];
+        $post = $data['post'];
+
         /** @psalm-suppress NoInterfaceProperties */
         $sessionConfig = (array)Configure::read('Session') + [
             'defaults' => 'php',
             'cookiePath' => $uri->webroot,
         ];
         $session = Session::create($sessionConfig);
+
         /** @psalm-suppress NoInterfaceProperties */
         $request = new ServerRequest([
             'environment' => $server,
             'uri' => $uri,
-            'files' => $files ?: $_FILES,
+            'files' => $files,
             'cookies' => $cookies ?: $_COOKIE,
             'query' => $query ?: $_GET,
-            'post' => $body ?: $_POST,
+            'post' => $post,
             'webroot' => $uri->webroot,
             'base' => $uri->base,
             'session' => $session,
-            'mergeFilesAsObjects' => Configure::read('App.uploadedFilesAsObjects', true),
         ]);
 
         return $request;
+    }
+
+    /**
+     * Process uploaded files and move things onto the post data.
+     *
+     * @param array $files Files array for normalization and merging in post body.
+     * @param array $post Post body to merge files onto.
+     * @return array
+     * @psalm-return array{files: array, post: array}
+     */
+    protected static function processFiles($files, $post)
+    {
+        $files = normalizeUploadedFiles($files ?: $_FILES);
+
+        if (Configure::read('App.uploadedFilesAsObjects', true)) {
+            $post = Hash::merge($post, $files);
+        } else {
+            // Make a flat map that can be inserted into body for BC.
+            $fileMap = Hash::flatten($files);
+            foreach ($fileMap as $key => $file) {
+                $error = $file->getError();
+                $tmpName = '';
+                if ($error === UPLOAD_ERR_OK) {
+                    $tmpName = $file->getStream()->getMetadata('uri');
+                }
+                $post = Hash::insert($post, (string)$key, [
+                    'tmp_name' => $tmpName,
+                    'error' => $error,
+                    'name' => $file->getClientFilename(),
+                    'type' => $file->getClientMediaType(),
+                    'size' => $file->getSize(),
+                ]);
+            }
+        }
+
+        return ['files' => $files, 'post' => $post];
     }
 
     /**

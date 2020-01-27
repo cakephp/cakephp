@@ -195,13 +195,6 @@ class ServerRequest implements ServerRequestInterface
     protected $requestTarget;
 
     /**
-     * Whether to merge file uploads as objects (`true`) or arrays (`false`).
-     *
-     * @var bool
-     */
-    protected $mergeFilesAsObjects = true;
-
-    /**
      * Create a new request object.
      *
      * You can supply the data as either an array or as a string. If you use
@@ -210,7 +203,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * - `post` POST data or non query string data
      * - `query` Additional data from the query string.
-     * - `files` Uploaded file data formatted like $_FILES.
+     * - `files` Uploaded files in a normalized structure, with each leaf an instance of UploadedFileInterface.
      * - `cookies` Cookies for this request.
      * - `environment` $_SERVER and $_ENV data.
      * - `url` The URL without the base path for the request.
@@ -220,7 +213,6 @@ class ServerRequest implements ServerRequestInterface
      * - `input` The data that would come from php://input this is useful for simulating
      *   requests with put, patch or delete data.
      * - `session` An instance of a Session object
-     * - `mergeFilesAsObjects` Whether to merge file uploads as objects (`true`) or arrays (`false`).
      *
      * @param array $config An array of request data to create a request with.
      */
@@ -238,7 +230,6 @@ class ServerRequest implements ServerRequestInterface
             'base' => '',
             'webroot' => '',
             'input' => null,
-            'mergeFilesAsObjects' => true,
         ];
 
         $this->_setConfig($config);
@@ -298,10 +289,8 @@ class ServerRequest implements ServerRequestInterface
         }
         $this->stream = $stream;
 
-        $this->mergeFilesAsObjects = $config['mergeFilesAsObjects'];
-
-        $config['post'] = $this->_processPost($config['post']);
-        $this->data = $this->_processFiles($config['post'], $config['files']);
+        $this->data = $this->_processPost($config['post']);
+        $this->uploadedFiles = $config['files'];
         $this->query = $this->_processGet($config['query'], $querystr);
         $this->params = $config['params'];
         $this->session = $config['session'];
@@ -362,112 +351,6 @@ class ServerRequest implements ServerRequestInterface
         }
 
         return $query;
-    }
-
-    /**
-     * Process uploaded files and move things onto the post data.
-     *
-     * @param mixed $post Post data to merge files onto.
-     * @param mixed $files Uploaded files to merge in.
-     * @return array merged post + file data.
-     */
-    protected function _processFiles($post, $files)
-    {
-        if (!is_array($post) || !is_array($files) || empty($files)) {
-            return $post;
-        }
-
-        $fileData = [];
-        foreach ($files as $key => $value) {
-            if ($value instanceof UploadedFileInterface) {
-                $fileData[$key] = $value;
-                continue;
-            }
-
-            if (is_array($value) && isset($value['tmp_name'])) {
-                $fileData[$key] = $this->_createUploadedFile($value);
-                continue;
-            }
-
-            throw new InvalidArgumentException(sprintf(
-                'Invalid value in FILES "%s"',
-                json_encode($value)
-            ));
-        }
-        $this->uploadedFiles = $fileData;
-
-        if ($this->mergeFilesAsObjects) {
-            return Hash::merge($post, $fileData);
-        }
-
-        // Make a flat map that can be inserted into $post for BC.
-        $fileMap = Hash::flatten($fileData);
-        foreach ($fileMap as $key => $file) {
-            $error = $file->getError();
-            $tmpName = '';
-            if ($error === UPLOAD_ERR_OK) {
-                $tmpName = $file->getStream()->getMetadata('uri');
-            }
-            $post = Hash::insert($post, (string)$key, [
-                'tmp_name' => $tmpName,
-                'error' => $error,
-                'name' => $file->getClientFilename(),
-                'type' => $file->getClientMediaType(),
-                'size' => $file->getSize(),
-            ]);
-        }
-
-        return $post;
-    }
-
-    /**
-     * Create an UploadedFile instance from a $_FILES array.
-     *
-     * If the value represents an array of values, this method will
-     * recursively process the data.
-     *
-     * @param array $value $_FILES struct
-     * @return array|\Psr\Http\Message\UploadedFileInterface
-     */
-    protected function _createUploadedFile(array $value)
-    {
-        if (is_array($value['tmp_name'])) {
-            return $this->_normalizeNestedFiles($value);
-        }
-
-        return new UploadedFile(
-            $value['tmp_name'],
-            $value['size'],
-            $value['error'],
-            $value['name'],
-            $value['type']
-        );
-    }
-
-    /**
-     * Normalize an array of file specifications.
-     *
-     * Loops through all nested files and returns a normalized array of
-     * UploadedFileInterface instances.
-     *
-     * @param array $files The file data to normalize & convert.
-     * @return array An array of UploadedFileInterface objects.
-     */
-    protected function _normalizeNestedFiles(array $files = []): array
-    {
-        $normalizedFiles = [];
-        foreach (array_keys($files['tmp_name']) as $key) {
-            $spec = [
-                'tmp_name' => $files['tmp_name'][$key],
-                'size' => $files['size'][$key],
-                'error' => $files['error'][$key],
-                'name' => $files['name'][$key],
-                'type' => $files['type'][$key],
-            ];
-            $normalizedFiles[$key] = $this->_createUploadedFile($spec);
-        }
-
-        return $normalizedFiles;
     }
 
     /**
