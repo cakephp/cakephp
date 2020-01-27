@@ -391,27 +391,7 @@ parameters:
 			path: src/Http/Cookie/CookieCollection.php
 
 		-
-			message: "#^Method Cake\\\\Http\\\\Response\\:\\:withDisabledCache\\(\\) should return static\\(Cake\\\\Http\\\\Response\\) but returns Cake\\\\Http\\\\Response\\.$#"
-			count: 1
-			path: src/Http/Response.php
-
-		-
-			message: "#^Method Cake\\\\Http\\\\Response\\:\\:withCache\\(\\) should return static\\(Cake\\\\Http\\\\Response\\) but returns Cake\\\\Http\\\\Response\\.$#"
-			count: 1
-			path: src/Http/Response.php
-
-		-
-			message: "#^Method Cake\\\\Http\\\\Response\\:\\:withNotModified\\(\\) should return static\\(Cake\\\\Http\\\\Response\\) but returns Cake\\\\Http\\\\Response\\.$#"
-			count: 1
-			path: src/Http/Response.php
-
-		-
 			message: "#^Call to an undefined method DateTimeInterface\\:\\:setTimezone\\(\\)\\.$#"
-			count: 1
-			path: src/Http/Response.php
-
-		-
-			message: "#^Method Cake\\\\Http\\\\Response\\:\\:withFile\\(\\) should return static\\(Cake\\\\Http\\\\Response\\) but returns Cake\\\\Http\\\\Response\\.$#"
 			count: 1
 			path: src/Http/Response.php
 
