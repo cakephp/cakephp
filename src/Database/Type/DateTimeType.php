@@ -62,6 +62,7 @@ class DateTimeType extends BaseType
         'Y-m-d H:i:s',
         'Y-m-d\TH:i:s',
         'Y-m-d\TH:i:sP',
+        'Y-m-d\TH:i:s.v',
     ];
 
     /**
