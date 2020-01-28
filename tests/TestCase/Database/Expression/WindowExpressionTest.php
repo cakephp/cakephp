@@ -311,12 +311,6 @@ class WindowExpressionTest extends TestCase
             'OVER (RANGE UNBOUNDED PRECEDING EXCLUDE TIES)',
             $w->sql(new ValueBinder())
         );
-
-        $w = (new WindowExpression())->range(null)->excludeNoOthers();
-        $this->assertEqualsSql(
-            'OVER (RANGE UNBOUNDED PRECEDING EXCLUDE NO OTHERS)',
-            $w->sql(new ValueBinder())
-        );
     }
 
     /**

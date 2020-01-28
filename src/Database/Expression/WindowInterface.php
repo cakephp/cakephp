@@ -160,11 +160,4 @@ interface WindowInterface
      * @return $this
      */
     public function excludeTies();
-
-    /**
-     * Adds no others frame exclusion.
-     *
-     * @return $this
-     */
-    public function excludeNoOthers();
 }
