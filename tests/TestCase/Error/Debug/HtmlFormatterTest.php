@@ -58,9 +58,11 @@ class HtmlFormatterTest extends TestCase
         $this->assertStringContainsString('class="cake-dbg-const"', $result);
         $this->assertStringContainsString('class="cake-dbg-string"', $result);
         $this->assertStringContainsString('class="cake-dbg-number"', $result);
+        $this->assertStringContainsString('class="cake-dbg-array-items"', $result);
         $this->assertStringContainsString('class="cake-dbg-array-item"', $result);
         $this->assertStringContainsString('class="cake-dbg-array"', $result);
         $this->assertStringContainsString('class="cake-dbg-object"', $result);
+        $this->assertStringContainsString('class="cake-dbg-object-props"', $result);
         $this->assertStringContainsString('class="cake-dbg-special"', $result);
         $this->assertStringContainsString('class="cake-dbg-ref"', $result);
 
@@ -75,8 +77,8 @@ protected intProp =&gt; (int) 1
 protected floatProp =&gt; (float) 1.1
 protected boolProp =&gt; true
 private nullProp =&gt; null
-arrayProp =&gt; [&#039;&#039; =&gt; too much,(int) 1 =&gt; object(MyObject)id: 1 {}]}
+arrayProp =&gt; [&#039;&#039; =&gt; too much,(int) 1 =&gt; object(MyObject) id: 1 {},]}
 TEXT;
-        $this->assertEquals($expected, strip_tags($result));
+        $this->assertStringContainsString(str_replace("\n", '', $expected), strip_tags($result));
     }
 }
