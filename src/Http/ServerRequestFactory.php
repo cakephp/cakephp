@@ -47,7 +47,7 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
      * @see fromServer()
      * @param array $server $_SERVER superglobal
      * @param array $query $_GET superglobal
-     * @param array $post $_POST superglobal
+     * @param array $parsedBody $_POST superglobal
      * @param array $cookies $_COOKIE superglobal
      * @param array $files $_FILES superglobal
      * @return \Cake\Http\ServerRequest
@@ -56,15 +56,15 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
     public static function fromGlobals(
         ?array $server = null,
         ?array $query = null,
-        ?array $post = null,
+        ?array $parsedBody = null,
         ?array $cookies = null,
         ?array $files = null
     ): ServerRequest {
         $server = normalizeServer($server ?: $_SERVER);
         $uri = static::createUri($server);
-        $data = static::processFiles($files ?: $_FILES, $post ?: $_POST);
+        $data = static::processFiles($files ?: $_FILES, $parsedBody ?: $_POST);
         $files = $data['files'];
-        $post = $data['post'];
+        $parsedBody = $data['parsedBody'];
 
         /** @psalm-suppress NoInterfaceProperties */
         $sessionConfig = (array)Configure::read('Session') + [
@@ -80,7 +80,7 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
             'files' => $files,
             'cookies' => $cookies ?: $_COOKIE,
             'query' => $query ?: $_GET,
-            'post' => $post,
+            'post' => $parsedBody,
             'webroot' => $uri->webroot,
             'base' => $uri->base,
             'session' => $session,
@@ -90,19 +90,19 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
     }
 
     /**
-     * Process uploaded files and move things onto the post data.
+     * Process uploaded files and move things onto the parsed body.
      *
-     * @param array $files Files array for normalization and merging in post body.
-     * @param array $post Post body to merge files onto.
+     * @param array $files Files array for normalization and merging in parsed body.
+     * @param array $parsedBody Parsed body to merge files onto.
      * @return array
-     * @psalm-return array{files: array, post: array}
+     * @psalm-return array{files: array, parsedBody: array}
      */
-    protected static function processFiles($files, $post)
+    protected static function processFiles(array $files, array $parsedBody): array
     {
-        $files = normalizeUploadedFiles($files ?: $_FILES);
+        $files = normalizeUploadedFiles($files);
 
         if (Configure::read('App.uploadedFilesAsObjects', true)) {
-            $post = Hash::merge($post, $files);
+            $parsedBody = Hash::merge($parsedBody, $files);
         } else {
             // Make a flat map that can be inserted into body for BC.
             $fileMap = Hash::flatten($files);
@@ -112,7 +112,7 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
                 if ($error === UPLOAD_ERR_OK) {
                     $tmpName = $file->getStream()->getMetadata('uri');
                 }
-                $post = Hash::insert($post, (string)$key, [
+                $parsedBody = Hash::insert($parsedBody, (string)$key, [
                     'tmp_name' => $tmpName,
                     'error' => $error,
                     'name' => $file->getClientFilename(),
@@ -122,7 +122,7 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
             }
         }
 
-        return ['files' => $files, 'post' => $post];
+        return ['files' => $files, 'parsedBody' => $parsedBody];
     }
 
     /**
