@@ -190,7 +190,7 @@ class HtmlFormatter implements FormatterInterface
             $link = sprintf(
                 '<a class="cake-dbg-ref" href="#%s">id: %s</a>',
                 $objectId,
-                $this->style('number', (string)$var->getId())
+                $var->getId()
             );
 
             return '<span class="cake-dbg-ref">' .
