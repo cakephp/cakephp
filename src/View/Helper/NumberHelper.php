@@ -91,13 +91,14 @@ class NumberHelper extends Helper
      *
      * @param float|string $number A floating point number.
      * @param int $precision The precision of the returned number.
+     * @param array $options Additional options.
      * @return string Formatted float.
      * @see \Cake\I18n\Number::precision()
      * @link https://book.cakephp.org/4/en/views/helpers/number.html#formatting-floating-point-numbers
      */
-    public function precision($number, int $precision = 3): string
+    public function precision($number, int $precision = 3, array $options = []): string
     {
-        return $this->_engine->precision($number, $precision);
+        return $this->_engine->precision($number, $precision, $options);
     }
 
     /**

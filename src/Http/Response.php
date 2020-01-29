@@ -362,14 +362,6 @@ class Response implements ResponseInterface
     protected $_status = 200;
 
     /**
-     * Content type to send. This can be an 'extension' that will be transformed using the $_mimetypes array
-     * or a complete mime-type
-     *
-     * @var string
-     */
-    protected $_contentType = 'text/html';
-
-    /**
      * File object for file to be read out as response
      *
      * @var \SplFileInfo|null
@@ -464,10 +456,11 @@ class Response implements ResponseInterface
             $options['charset'] = Configure::read('App.encoding');
         }
         $this->_charset = $options['charset'];
+        $type = 'text/html';
         if (isset($options['type'])) {
-            $this->_contentType = $this->resolveType($options['type']);
+            $type = $this->resolveType($options['type']);
         }
-        $this->_setContentType();
+        $this->_setContentType($type);
         $this->_cookies = new CookieCollection();
     }
 
@@ -485,9 +478,10 @@ class Response implements ResponseInterface
      * Formats the Content-Type header based on the configured contentType and charset
      * the charset will only be set in the header if the response is of type text/*
      *
+     * @param string $type The type to set.
      * @return void
      */
-    protected function _setContentType(): void
+    protected function _setContentType(string $type): void
     {
         if (in_array($this->_status, [304, 204], true)) {
             $this->_clearHeader('Content-Type');
@@ -502,17 +496,17 @@ class Response implements ResponseInterface
         if (
             $this->_charset &&
             (
-                strpos($this->_contentType, 'text/') === 0 ||
-                in_array($this->_contentType, $whitelist, true)
+                strpos($type, 'text/') === 0 ||
+                in_array($type, $whitelist, true)
             )
         ) {
             $charset = true;
         }
 
-        if ($charset) {
-            $this->_setHeader('Content-Type', "{$this->_contentType}; charset={$this->_charset}");
+        if ($charset && strpos($type, ';') === false) {
+            $this->_setHeader('Content-Type', "{$type}; charset={$this->_charset}");
         } else {
-            $this->_setHeader('Content-Type', (string)$this->_contentType);
+            $this->_setHeader('Content-Type', $type);
         }
     }
 
@@ -637,7 +631,11 @@ class Response implements ResponseInterface
             $reasonPhrase = $this->_statusCodes[$code];
         }
         $this->_reasonPhrase = $reasonPhrase;
-        $this->_setContentType();
+
+        // These status codes don't have bodies and can't have content-types.
+        if (in_array($code, [304, 204], true)) {
+            $this->_clearHeader('Content-Type');
+        }
     }
 
     /**
@@ -681,7 +679,12 @@ class Response implements ResponseInterface
      */
     public function getType(): string
     {
-        return $this->_contentType;
+        $header = $this->getHeaderLine('Content-Type');
+        if (strpos($header, ';') !== false) {
+            return explode(';', $header)[0];
+        }
+
+        return $header;
     }
 
     /**
@@ -697,8 +700,7 @@ class Response implements ResponseInterface
     {
         $mappedType = $this->resolveType($contentType);
         $new = clone $this;
-        $new->_contentType = $mappedType;
-        $new->_setContentType();
+        $new->_setContentType($mappedType);
 
         return $new;
     }
@@ -783,7 +785,7 @@ class Response implements ResponseInterface
     {
         $new = clone $this;
         $new->_charset = $charset;
-        $new->_setContentType();
+        $new->_setContentType($this->getType());
 
         return $new;
     }
@@ -1556,7 +1558,7 @@ class Response implements ResponseInterface
     {
         return [
             'status' => $this->_status,
-            'contentType' => $this->_contentType,
+            'contentType' => $this->getType(),
             'headers' => $this->headers,
             'file' => $this->_file,
             'fileRange' => $this->_fileRange,
