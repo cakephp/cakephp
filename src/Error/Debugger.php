@@ -934,11 +934,9 @@ class Debugger
             $file = str_replace($search, '', $file);
         }
         $html = <<<HTML
-<div class="cake-debug-output" style="direction:ltr">
+<div class="cake-debug-output cake-debug" style="direction:ltr">
 %s
-<pre class="cake-debug">
 %s
-</pre>
 </div>
 HTML;
         $text = <<<TEXT
@@ -961,7 +959,6 @@ TEXT;
         $var = Debugger::exportVar($var, 25);
         if ($showHtml) {
             $template = $html;
-            $var = h($var);
             if ($file && $line) {
                 $lineInfo = sprintf('<span><strong>%s</strong> (line <strong>%s</strong>)</span>', $file, $line);
             }

@@ -26,6 +26,11 @@ use RuntimeException;
 class HtmlFormatter implements FormatterInterface
 {
     /**
+     * @var bool
+     */
+    protected static $outputHeader = false;
+
+    /**
      * Random id so that HTML ids are not shared between dump outputs.
      *
      * @var string
@@ -71,6 +76,20 @@ class HtmlFormatter implements FormatterInterface
     }
 
     /**
+     * Generate the CSS and Javascript for dumps
+     *
+     * Only output once per process as we don't need it more than once.
+     *
+     * @return string
+     */
+    protected function dumpHeader(): string
+    {
+        ob_start();
+        include __DIR__ . DIRECTORY_SEPARATOR . 'dumpHeader.php';
+        return ob_get_clean();
+    }
+
+    /**
      * Convert a tree of NodeInterface objects into HTML
      *
      * @param \Cake\Error\Debug\NodeInterface $node The node tree to dump.
@@ -79,8 +98,13 @@ class HtmlFormatter implements FormatterInterface
     public function dump(NodeInterface $node): string
     {
         $html = $this->export($node);
+        $head = '';
+        if (!static::$outputHeader) {
+            static::$outputHeader = true;
+            $head = $this->dumpHeader();
+        }
 
-        return '<div class="cake-dbg">' . $html . '</div>';
+        return $head . '<div class="cake-dbg">' . $html . '</div>';
     }
 
     /**
@@ -127,7 +151,9 @@ class HtmlFormatter implements FormatterInterface
      */
     protected function exportArray(ArrayNode $var): string
     {
-        $out = '<div class="cake-dbg-array">' . $this->style('punct', '[');
+        $open = '<span class="cake-dbg-array">' . 
+            $this->style('punct', '[') .
+            '<samp class="cake-dbg-array-items">';
         $vars = [];
 
         $arrow = $this->style('punct', ' => ');
@@ -135,15 +161,14 @@ class HtmlFormatter implements FormatterInterface
             $val = $item->getValue();
             $vars[] = '<span class="cake-dbg-array-item">' .
                 $this->export($item->getKey()) . $arrow . $this->export($val) .
+                $this->style('punct', ',') .
                 '</span>';
         }
 
-        $close = $this->style('punct', ']') . '</div>';
-        if (count($vars)) {
-            return $out . implode($this->style('punct', ','), $vars) . $close;
-        }
-
-        return $out . $close;
+        $close = '</samp>' .
+            $this->style('punct', ']') .
+            '</span>';
+        return $open . implode('', $vars) . $close;
     }
 
     /**
@@ -157,7 +182,7 @@ class HtmlFormatter implements FormatterInterface
     {
         $objectId = "cake-db-object-{$this->id}-{$var->getId()}";
         $out = sprintf(
-            '<div class="cake-dbg-object" id="%s">',
+            '<span class="cake-dbg-object" id="%s">',
             $objectId
         );
 
@@ -168,20 +193,21 @@ class HtmlFormatter implements FormatterInterface
                 $this->style('number', (string)$var->getId())
             );
 
-            return '<div class="cake-dbg-ref">' .
+            return '<span class="cake-dbg-ref">' .
                 $this->style('punct', 'object(') .
                 $this->style('class', $var->getValue()) .
-                $this->style('punct', ')') .
+                $this->style('punct', ') ') .
                 $link .
                 $this->style('punct', ' {}') .
-                '</div>';
+                '</span>';
         }
 
         $out .= $this->style('punct', 'object(') .
             $this->style('class', $var->getValue()) .
             $this->style('punct', ') id:') .
             $this->style('number', (string)$var->getId()) .
-            $this->style('punct', ' {');
+            $this->style('punct', ' {') .
+            '<samp class="cake-dbg-object-props">';
 
         $props = [];
         foreach ($var->getChildren() as $property) {
@@ -205,9 +231,12 @@ class HtmlFormatter implements FormatterInterface
             }
         }
 
-        $end = $this->style('punct', '}') . '</div>';
+        $end = '</samp>' . 
+            $this->style('punct', '}') .
+            '</span>';
+
         if (count($props)) {
-            return $out . implode("\n", $props) . $end;
+            return $out . implode("", $props) . $end;
         }
 
         return $out . $end;
