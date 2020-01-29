@@ -914,7 +914,9 @@ class Debugger
      * @param array $location If contains keys "file" and "line" their values will
      *    be used to show location info.
      * @param bool|null $showHtml If set to true, the method prints the debug
-     *    data in a browser-friendly way.
+     *    data encoded as HTML. If false, plain text formatting will be used.
+     *    If null, the format will be chosen based on the configured exportFormatter, or
+     *    environment conditions.
      * @return void
      */
     public static function printVar($var, array $location = [], ?bool $showHtml = null): void
