@@ -30,4 +30,13 @@ interface FormatterInterface
      * @return string
      */
     public function dump(NodeInterface $node): string;
+
+    /**
+     * Output a dump wrapper with location context.
+     *
+     * @param string $contents The contents to wrap and return
+     * @param array $location The file and line the contents came from.
+     * @return string
+     */
+    public function formatWrapper(string $contents, array $location);
 }

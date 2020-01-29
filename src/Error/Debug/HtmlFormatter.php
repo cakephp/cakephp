@@ -60,19 +60,26 @@ class HtmlFormatter implements FormatterInterface
     }
 
     /**
-     * Style text with HTML class names
-     *
-     * @param string $style The style name to use.
-     * @param string $text The text to style.
-     * @return string The styled output.
+     * {@inheritDoc}
      */
-    protected function style(string $style, string $text): string
+    public function formatWrapper(string $contents, array $location)
     {
-        return sprintf(
-            '<span class="cake-dbg-%s">%s</span>',
-            $style,
-            h($text)
-        );
+        $lineInfo = '';
+        if (isset($location['file'], $location['file'])) {
+            $lineInfo = sprintf(
+                '<span><strong>%s</strong> (line <strong>%s</strong>)</span>',
+                $location['file'],
+                $location['line']
+            );
+        }
+        $parts = [
+            '<div class="cake-debug-output cake-debug" style="direction:ltr">',
+            $lineInfo,
+            $contents,
+            '</div>',
+        ];
+
+        return implode("\n", $parts);
     }
 
     /**
@@ -86,6 +93,7 @@ class HtmlFormatter implements FormatterInterface
     {
         ob_start();
         include __DIR__ . DIRECTORY_SEPARATOR . 'dumpHeader.php';
+
         return ob_get_clean();
     }
 
@@ -151,7 +159,7 @@ class HtmlFormatter implements FormatterInterface
      */
     protected function exportArray(ArrayNode $var): string
     {
-        $open = '<span class="cake-dbg-array">' . 
+        $open = '<span class="cake-dbg-array">' .
             $this->style('punct', '[') .
             '<samp class="cake-dbg-array-items">';
         $vars = [];
@@ -168,6 +176,7 @@ class HtmlFormatter implements FormatterInterface
         $close = '</samp>' .
             $this->style('punct', ']') .
             '</span>';
+
         return $open . implode('', $vars) . $close;
     }
 
@@ -231,7 +240,7 @@ class HtmlFormatter implements FormatterInterface
             }
         }
 
-        $end = '</samp>' . 
+        $end = '</samp>' .
             $this->style('punct', '}') .
             '</span>';
 
@@ -240,5 +249,21 @@ class HtmlFormatter implements FormatterInterface
         }
 
         return $out . $end;
+    }
+
+    /**
+     * Style text with HTML class names
+     *
+     * @param string $style The style name to use.
+     * @param string $text The text to style.
+     * @return string The styled output.
+     */
+    protected function style(string $style, string $text): string
+    {
+        return sprintf(
+            '<span class="cake-dbg-%s">%s</span>',
+            $style,
+            h($text)
+        );
     }
 }
