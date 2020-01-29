@@ -97,9 +97,9 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
      * @return array
      * @psalm-return array{files: array, post: array}
      */
-    protected static function processFiles($files, $post)
+    protected static function processFiles(array $files, array $post): array
     {
-        $files = normalizeUploadedFiles($files ?: $_FILES);
+        $files = normalizeUploadedFiles($files);
 
         if (Configure::read('App.uploadedFilesAsObjects', true)) {
             $post = Hash::merge($post, $files);
