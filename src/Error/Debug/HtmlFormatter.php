@@ -92,7 +92,7 @@ class HtmlFormatter implements FormatterInterface
     protected function dumpHeader(): string
     {
         ob_start();
-        include __DIR__ . DIRECTORY_SEPARATOR . 'dumpHeader.php';
+        include __DIR__ . DIRECTORY_SEPARATOR . 'dumpHeader.html';
 
         return ob_get_clean();
     }
