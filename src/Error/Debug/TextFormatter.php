@@ -29,6 +29,26 @@ use RuntimeException;
 class TextFormatter implements FormatterInterface
 {
     /**
+     * {@inheritDoc}
+     */
+    public function formatWrapper(string $contents, array $location)
+    {
+        $template = <<<TEXT
+%s
+########## DEBUG ##########
+%s
+###########################
+
+TEXT;
+        $lineInfo = '';
+        if (isset($location['file'], $location['file'])) {
+            $lineInfo = sprintf('%s (line %s)', $location['file'], $location['line']);
+        }
+
+        return sprintf($template, $lineInfo, $contents);
+    }
+
+    /**
      * Convert a tree of NodeInterface objects into a plain text string.
      *
      * @param \Cake\Error\Debug\NodeInterface $node The node tree to dump.

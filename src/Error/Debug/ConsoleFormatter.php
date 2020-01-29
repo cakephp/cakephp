@@ -75,17 +75,23 @@ class ConsoleFormatter implements FormatterInterface
     }
 
     /**
-     * Style text with ANSI escape codes.
-     *
-     * @param string $style The style name to use.
-     * @param string $text The text to style.
-     * @return string The styled output.
+     * {@inheritDoc}
      */
-    protected function style(string $style, string $text): string
+    public function formatWrapper(string $contents, array $location)
     {
-        $code = $this->styles[$style];
+        $lineInfo = '';
+        if (isset($location['file'], $location['file'])) {
+            $lineInfo = sprintf('%s (line %s)', $location['file'], $location['line']);
+        }
+        $parts = [
+            $this->style('const', $lineInfo),
+            $this->style('special', '########## DEBUG ##########'),
+            $contents,
+            $this->style('special', '###########################'),
+            '',
+        ];
 
-        return "\033[{$code}m{$text}\033[0m";
+        return implode("\n", $parts);
     }
 
     /**
@@ -217,5 +223,19 @@ class ConsoleFormatter implements FormatterInterface
         }
 
         return $out . $this->style('punct', '}');
+    }
+
+    /**
+     * Style text with ANSI escape codes.
+     *
+     * @param string $style The style name to use.
+     * @param string $text The text to style.
+     * @return string The styled output.
+     */
+    protected function style(string $style, string $text): string
+    {
+        $code = $this->styles[$style];
+
+        return "\033[{$code}m{$text}\033[0m";
     }
 }
