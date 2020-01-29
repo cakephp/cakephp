@@ -60,9 +60,9 @@ class HtmlFormatter implements FormatterInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
-    public function formatWrapper(string $contents, array $location)
+    public function formatWrapper(string $contents, array $location): string
     {
         $lineInfo = '';
         if (isset($location['file'], $location['file'])) {

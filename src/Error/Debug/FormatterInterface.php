@@ -38,5 +38,5 @@ interface FormatterInterface
      * @param array $location The file and line the contents came from.
      * @return string
      */
-    public function formatWrapper(string $contents, array $location);
+    public function formatWrapper(string $contents, array $location): string;
 }
