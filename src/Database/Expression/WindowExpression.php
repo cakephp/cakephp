@@ -190,16 +190,6 @@ class WindowExpression implements ExpressionInterface, WindowInterface
     /**
      * @inheritDoc
      */
-    public function excludeNoOthers()
-    {
-        $this->exclusion = 'NO OTHERS';
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function sql(ValueBinder $generator): string
     {
         $partitionSql = '';

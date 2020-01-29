@@ -21,7 +21,7 @@ env:
     - CODECOVERAGE=1
   matrix:
     - DB=mysql DB_DSN='mysql://root@127.0.0.1/cakephp_test?init[]=SET sql_mode = "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"'
-    - DB=pgsql DB_DSN='postgres://postgres@127.0.0.1/cakephp_test'
+    - DB=pgsql DB_DSN='postgres://postgres@127.0.0.1/cakephp_test' ENABLE_WINDOW_TESTS=1
     - DB=sqlite DB_DSN='sqlite:///:memory:'
 
 matrix:

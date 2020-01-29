@@ -25,7 +25,7 @@ use Closure;
  * For security reasons, all params passed are quoted by default unless
  * explicitly told otherwise.
  */
-class AggregateExpression extends FunctionExpression
+class AggregateExpression extends FunctionExpression implements WindowInterface
 {
     /**
      * @var \Cake\Database\Expression\WindowExpression
@@ -45,6 +45,126 @@ class AggregateExpression extends FunctionExpression
         if ($this->window === null) {
             $this->window = new WindowExpression();
         }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function partition($partitions)
+    {
+        $this->over();
+        $this->window->partition($partitions);
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function order($fields)
+    {
+        $this->over();
+        $this->window->order($fields);
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function range(?int $start, ?int $end = 0)
+    {
+        $this->over();
+        if (func_num_args() === 1) {
+            $this->window->frame(self::RANGE, $start, self::PRECEDING);
+        } else {
+            $this->window->frame(self::RANGE, $start, self::PRECEDING, $end, self::FOLLOWING);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function rows(?int $start, ?int $end = 0)
+    {
+        $this->over();
+        if (func_num_args() === 1) {
+            $this->window->frame(self::ROWS, $start, self::PRECEDING);
+        } else {
+            $this->window->frame(self::ROWS, $start, self::PRECEDING, $end, self::FOLLOWING);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function groups(?int $start, ?int $end = 0)
+    {
+        $this->over();
+        if (func_num_args() === 1) {
+            $this->window->frame(self::GROUPS, $start, self::PRECEDING);
+        } else {
+            $this->window->frame(self::GROUPS, $start, self::PRECEDING, $end, self::FOLLOWING);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function frame(
+        string $type,
+        ?int $startOffset,
+        string $startDirection,
+        ?int $endOffset = null,
+        string $endDirection = self::FOLLOWING
+    ) {
+        $this->over();
+        if (func_num_args() === 3) {
+            $this->window->frame($type, $startOffset, $startDirection);
+        } else {
+            $this->window->frame($type, $startOffset, $startDirection, $endOffset, $endDirection);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function excludeCurrent()
+    {
+        $this->over();
+        $this->window->excludeCurrent();
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function excludeGroup()
+    {
+        $this->over();
+        $this->window->excludeGroup();
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function excludeTies()
+    {
+        $this->over();
+        $this->window->excludeTies();
 
         return $this;
     }
