@@ -7424,17 +7424,32 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * Provides fractional schema types
+     *
+     * @return array
+     */
+    public function fractionalTypeProvider()
+    {
+        return [
+            ['datetimefractional'],
+            ['timestampfractional'],
+            ['timestamptimezone'],
+        ];
+    }
+
+    /**
      * testDateTimeWithFractional method
      *
      * Test that datetime() works with datetimefractional.
      *
      * @return void
+     * @dataProvider fractionalTypeProvider
      */
-    public function testDateTimeWithFractional()
+    public function testDateTimeWithFractional(string $type)
     {
         $this->Form->create([
             'schema' => [
-                'created' => ['type' => 'datetimefractional'],
+                'created' => ['type' => $type],
             ],
         ]);
         $result = $this->Form->datetime('created', [
@@ -7458,12 +7473,13 @@ class FormHelperTest extends TestCase
      * Test that control() works with datetimefractional.
      *
      * @return void
+     * @dataProvider fractionalTypeProvider
      */
-    public function testControlWithFractional()
+    public function testControlWithFractional(string $type)
     {
         $this->Form->create([
             'schema' => [
-                'created' => ['type' => 'datetimefractional'],
+                'created' => ['type' => $type],
             ],
         ]);
         $result = $this->Form->control('created', [

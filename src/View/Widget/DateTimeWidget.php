@@ -145,6 +145,7 @@ class DateTimeWidget extends BasicWidget
         $fractionalTypes = [
             TableSchema::TYPE_DATETIME_FRACTIONAL,
             TableSchema::TYPE_TIMESTAMP_FRACTIONAL,
+            TableSchema::TYPE_TIMESTAMP_TIMEZONE,
         ];
 
         if (in_array($dbType, $fractionalTypes, true)) {
