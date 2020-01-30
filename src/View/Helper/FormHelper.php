@@ -72,6 +72,7 @@ class FormHelper extends Helper
             'datetimefractional' => 'datetime',
             'timestamp' => 'datetime',
             'timestampfractional' => 'datetime',
+            'timestamptimezone' => 'datetime',
             'date' => 'date',
             'time' => 'time',
             'year' => 'year',
