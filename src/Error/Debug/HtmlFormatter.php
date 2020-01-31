@@ -26,6 +26,11 @@ use RuntimeException;
 class HtmlFormatter implements FormatterInterface
 {
     /**
+     * @var bool
+     */
+    protected static $outputHeader = false;
+
+    /**
      * Random id so that HTML ids are not shared between dump outputs.
      *
      * @var string
@@ -55,19 +60,41 @@ class HtmlFormatter implements FormatterInterface
     }
 
     /**
-     * Style text with HTML class names
-     *
-     * @param string $style The style name to use.
-     * @param string $text The text to style.
-     * @return string The styled output.
+     * @inheritDoc
      */
-    protected function style(string $style, string $text): string
+    public function formatWrapper(string $contents, array $location): string
     {
-        return sprintf(
-            '<span class="cake-dbg-%s">%s</span>',
-            $style,
-            h($text)
-        );
+        $lineInfo = '';
+        if (isset($location['file'], $location['file'])) {
+            $lineInfo = sprintf(
+                '<span><strong>%s</strong> (line <strong>%s</strong>)</span>',
+                $location['file'],
+                $location['line']
+            );
+        }
+        $parts = [
+            '<div class="cake-debug-output cake-debug" style="direction:ltr">',
+            $lineInfo,
+            $contents,
+            '</div>',
+        ];
+
+        return implode("\n", $parts);
+    }
+
+    /**
+     * Generate the CSS and Javascript for dumps
+     *
+     * Only output once per process as we don't need it more than once.
+     *
+     * @return string
+     */
+    protected function dumpHeader(): string
+    {
+        ob_start();
+        include __DIR__ . DIRECTORY_SEPARATOR . 'dumpHeader.html';
+
+        return ob_get_clean();
     }
 
     /**
@@ -79,8 +106,13 @@ class HtmlFormatter implements FormatterInterface
     public function dump(NodeInterface $node): string
     {
         $html = $this->export($node);
+        $head = '';
+        if (!static::$outputHeader) {
+            static::$outputHeader = true;
+            $head = $this->dumpHeader();
+        }
 
-        return '<div class="cake-dbg">' . $html . '</div>';
+        return $head . '<div class="cake-dbg">' . $html . '</div>';
     }
 
     /**
@@ -127,7 +159,9 @@ class HtmlFormatter implements FormatterInterface
      */
     protected function exportArray(ArrayNode $var): string
     {
-        $out = '<div class="cake-dbg-array">' . $this->style('punct', '[');
+        $open = '<span class="cake-dbg-array">' .
+            $this->style('punct', '[') .
+            '<samp class="cake-dbg-array-items">';
         $vars = [];
 
         $arrow = $this->style('punct', ' => ');
@@ -135,15 +169,15 @@ class HtmlFormatter implements FormatterInterface
             $val = $item->getValue();
             $vars[] = '<span class="cake-dbg-array-item">' .
                 $this->export($item->getKey()) . $arrow . $this->export($val) .
+                $this->style('punct', ',') .
                 '</span>';
         }
 
-        $close = $this->style('punct', ']') . '</div>';
-        if (count($vars)) {
-            return $out . implode($this->style('punct', ','), $vars) . $close;
-        }
+        $close = '</samp>' .
+            $this->style('punct', ']') .
+            '</span>';
 
-        return $out . $close;
+        return $open . implode('', $vars) . $close;
     }
 
     /**
@@ -157,7 +191,7 @@ class HtmlFormatter implements FormatterInterface
     {
         $objectId = "cake-db-object-{$this->id}-{$var->getId()}";
         $out = sprintf(
-            '<div class="cake-dbg-object" id="%s">',
+            '<span class="cake-dbg-object" id="%s">',
             $objectId
         );
 
@@ -165,23 +199,24 @@ class HtmlFormatter implements FormatterInterface
             $link = sprintf(
                 '<a class="cake-dbg-ref" href="#%s">id: %s</a>',
                 $objectId,
-                $this->style('number', (string)$var->getId())
+                $var->getId()
             );
 
-            return '<div class="cake-dbg-ref">' .
+            return '<span class="cake-dbg-ref">' .
                 $this->style('punct', 'object(') .
                 $this->style('class', $var->getValue()) .
-                $this->style('punct', ')') .
+                $this->style('punct', ') ') .
                 $link .
                 $this->style('punct', ' {}') .
-                '</div>';
+                '</span>';
         }
 
         $out .= $this->style('punct', 'object(') .
             $this->style('class', $var->getValue()) .
             $this->style('punct', ') id:') .
             $this->style('number', (string)$var->getId()) .
-            $this->style('punct', ' {');
+            $this->style('punct', ' {') .
+            '<samp class="cake-dbg-object-props">';
 
         $props = [];
         foreach ($var->getChildren() as $property) {
@@ -205,11 +240,30 @@ class HtmlFormatter implements FormatterInterface
             }
         }
 
-        $end = $this->style('punct', '}') . '</div>';
+        $end = '</samp>' .
+            $this->style('punct', '}') .
+            '</span>';
+
         if (count($props)) {
-            return $out . implode("\n", $props) . $end;
+            return $out . implode("", $props) . $end;
         }
 
         return $out . $end;
+    }
+
+    /**
+     * Style text with HTML class names
+     *
+     * @param string $style The style name to use.
+     * @param string $text The text to style.
+     * @return string The styled output.
+     */
+    protected function style(string $style, string $text): string
+    {
+        return sprintf(
+            '<span class="cake-dbg-%s">%s</span>',
+            $style,
+            h($text)
+        );
     }
 }

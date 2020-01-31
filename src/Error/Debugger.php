@@ -914,59 +914,31 @@ class Debugger
      * @param array $location If contains keys "file" and "line" their values will
      *    be used to show location info.
      * @param bool|null $showHtml If set to true, the method prints the debug
-     *    data in a browser-friendly way.
+     *    data encoded as HTML. If false, plain text formatting will be used.
+     *    If null, the format will be chosen based on the configured exportFormatter, or
+     *    environment conditions.
      * @return void
      */
     public static function printVar($var, array $location = [], ?bool $showHtml = null): void
     {
         $location += ['file' => null, 'line' => null];
-        $file = $location['file'];
-        $line = $location['line'];
-        $lineInfo = '';
-        if ($file) {
-            $search = [];
-            if (defined('ROOT')) {
-                $search = [ROOT];
-            }
-            if (defined('CAKE_CORE_INCLUDE_PATH')) {
-                array_unshift($search, CAKE_CORE_INCLUDE_PATH);
-            }
-            $file = str_replace($search, '', $file);
+        if ($location['file']) {
+            $location['file'] = static::trimPath((string)$location['file']);
         }
-        $html = <<<HTML
-<div class="cake-debug-output" style="direction:ltr">
-%s
-<pre class="cake-debug">
-%s
-</pre>
-</div>
-HTML;
-        $text = <<<TEXT
-%s
-########## DEBUG ##########
-%s
-###########################
 
-TEXT;
-        $template = $html;
-        if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') || $showHtml === false) {
-            $template = $text;
-            if ($file && $line) {
-                $lineInfo = sprintf('%s (line %s)', $file, $line);
-            }
+        $debugger = static::getInstance();
+        $restore = null;
+        if ($showHtml !== null) {
+            $restore = $debugger->getConfig('exportFormatter');
+            $debugger->setConfig('exportFormatter', $showHtml ? HtmlFormatter::class : TextFormatter::class);
         }
-        if ($showHtml === null && $template !== $text) {
-            $showHtml = true;
+        $contents = static::exportVar($var, 25);
+        $formatter = $debugger->getExportFormatter();
+
+        if ($restore) {
+            $debugger->setConfig('exportFormatter', $restore);
         }
-        $var = Debugger::exportVar($var, 25);
-        if ($showHtml) {
-            $template = $html;
-            $var = h($var);
-            if ($file && $line) {
-                $lineInfo = sprintf('<span><strong>%s</strong> (line <strong>%s</strong>)</span>', $file, $line);
-            }
-        }
-        printf($template, $lineInfo, $var);
+        echo $formatter->formatWrapper($contents, $location);
     }
 
     /**

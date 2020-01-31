@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase;
 
 use Cake\Collection\Collection;
+use Cake\Error\Debugger;
 use Cake\Event\EventManager;
 use Cake\Http\Response;
 use Cake\TestSuite\TestCase;
@@ -230,7 +231,7 @@ class BasicsTest extends TestCase
 ###########################
 
 EXPECTED;
-        $expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 9);
+        $expected = sprintf($expectedText, Debugger::trimPath(__FILE__), __LINE__ - 9);
 
         $this->assertSame($expected, $result);
 
@@ -238,146 +239,23 @@ EXPECTED;
         $value = '<div>this-is-a-test</div>';
         $this->assertSame($value, debug($value, true));
         $result = ob_get_clean();
-        $expectedHtml = <<<EXPECTED
-<div class="cake-debug-output" style="direction:ltr">
-<span><strong>%s</strong> (line <strong>%d</strong>)</span>
-<pre class="cake-debug">
-&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
-</pre>
-</div>
-EXPECTED;
-        $expected = sprintf($expectedHtml, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 10);
-        $this->assertSame($expected, $result);
+        $this->assertStringContainsString('<div class="cake-debug-output', $result);
+        $this->assertStringContainsString('this-is-a-test', $result);
 
         ob_start();
         debug('<div>this-is-a-test</div>', true, true);
         $result = ob_get_clean();
         $expected = <<<EXPECTED
-<div class="cake-debug-output" style="direction:ltr">
+<div class="cake-debug-output cake-debug" style="direction:ltr">
 <span><strong>%s</strong> (line <strong>%d</strong>)</span>
-<pre class="cake-debug">
-&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
-</pre>
-</div>
 EXPECTED;
-        $expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 10);
-        $this->assertSame($expected, $result);
+        $expected = sprintf($expected, Debugger::trimPath(__FILE__), __LINE__ - 6);
+        $this->assertStringContainsString($expected, $result);
 
         ob_start();
         debug('<div>this-is-a-test</div>', true, false);
         $result = ob_get_clean();
-        $expected = <<<EXPECTED
-<div class="cake-debug-output" style="direction:ltr">
-
-<pre class="cake-debug">
-&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
-</pre>
-</div>
-EXPECTED;
-        $expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 10);
-        $this->assertSame($expected, $result);
-
-        ob_start();
-        debug('<div>this-is-a-test</div>', null);
-        $result = ob_get_clean();
-        $expectedHtml = <<<EXPECTED
-<div class="cake-debug-output" style="direction:ltr">
-<span><strong>%s</strong> (line <strong>%d</strong>)</span>
-<pre class="cake-debug">
-&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
-</pre>
-</div>
-EXPECTED;
-        $expectedText = <<<EXPECTED
-%s (line %d)
-########## DEBUG ##########
-'<div>this-is-a-test</div>'
-###########################
-
-EXPECTED;
-        if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg')) {
-            $expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 18);
-        } else {
-            $expected = sprintf($expectedHtml, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 19);
-        }
-        $this->assertSame($expected, $result);
-
-        ob_start();
-        debug('<div>this-is-a-test</div>', null, false);
-        $result = ob_get_clean();
-        $expectedHtml = <<<EXPECTED
-<div class="cake-debug-output" style="direction:ltr">
-
-<pre class="cake-debug">
-&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
-</pre>
-</div>
-EXPECTED;
-        $expectedText = <<<EXPECTED
-
-########## DEBUG ##########
-'<div>this-is-a-test</div>'
-###########################
-
-EXPECTED;
-        if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg')) {
-            $expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 18);
-        } else {
-            $expected = sprintf($expectedHtml, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 19);
-        }
-        $this->assertSame($expected, $result);
-
-        ob_start();
-        debug('<div>this-is-a-test</div>', false);
-        $result = ob_get_clean();
-        $expected = <<<EXPECTED
-%s (line %d)
-########## DEBUG ##########
-'<div>this-is-a-test</div>'
-###########################
-
-EXPECTED;
-        $expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 9);
-        $this->assertSame($expected, $result);
-
-        ob_start();
-        debug('<div>this-is-a-test</div>', false, true);
-        $result = ob_get_clean();
-        $expected = <<<EXPECTED
-%s (line %d)
-########## DEBUG ##########
-'<div>this-is-a-test</div>'
-###########################
-
-EXPECTED;
-        $expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 9);
-        $this->assertSame($expected, $result);
-
-        ob_start();
-        debug('<div>this-is-a-test</div>', false, false);
-        $result = ob_get_clean();
-        $expected = <<<EXPECTED
-
-########## DEBUG ##########
-'<div>this-is-a-test</div>'
-###########################
-
-EXPECTED;
-        $expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 9);
-        $this->assertSame($expected, $result);
-
-        ob_start();
-        $this->assertFalse(debug(false, false, false));
-        $result = ob_get_clean();
-        $expected = <<<EXPECTED
-
-########## DEBUG ##########
-false
-###########################
-
-EXPECTED;
-        $expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 9);
-        $this->assertSame($expected, $result);
+        $this->assertStringNotContainsString('(line', $result);
     }
 
     /**
