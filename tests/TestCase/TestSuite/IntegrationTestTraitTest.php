@@ -1360,18 +1360,18 @@ class IntegrationTestTraitTest extends TestCase
         $this->get('/posts/get');
         $this->assertFileResponse('foo');
     }
-
     /**
-     * Test disabling the error handler middleware.
+     * Test disabling the error handler middleware with exceptions
+     * in controllers.
      *
      * @return void
      */
     public function testDisableErrorHandlerMiddleware()
     {
-        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
-        $this->expectExceptionMessage('A route matching "/foo" could not be found.');
+        $this->expectException(\OutOfBoundsException::class);
+        $this->expectExceptionMessage('oh no!');
         $this->disableErrorHandlerMiddleware();
-        $this->get('/foo');
+        $this->get('/posts/throw_exception');
     }
 
     /**

@@ -18,6 +18,8 @@ namespace TestApp;
 
 use Cake\Console\CommandCollection;
 use Cake\Core\Configure;
+use Cake\Error\ExceptionRenderer;
+use Cake\Error\Middleware\ErrorHandlerMiddleware;
 use Cake\Http\BaseApplication;
 use Cake\Http\MiddlewareQueue;
 use Cake\Routing\Middleware\RoutingMiddleware;
@@ -66,6 +68,7 @@ class Application extends BaseApplication
 
             return $res->withHeader('X-Middleware', 'true');
         });
+        $middleware->add(new ErrorHandlerMiddleware(Configure::read('Error', [])));
         $middleware->add(new RoutingMiddleware($this));
 
         return $middleware;
