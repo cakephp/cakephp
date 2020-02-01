@@ -18,7 +18,6 @@ namespace TestApp;
 
 use Cake\Console\CommandCollection;
 use Cake\Core\Configure;
-use Cake\Error\ExceptionRenderer;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
 use Cake\Http\BaseApplication;
 use Cake\Http\MiddlewareQueue;
