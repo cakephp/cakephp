@@ -32,6 +32,28 @@ nesting works.
 .cake-dbg-array-items {
   display: block;
 }
+/** Collapser state **/
+.cake-dbg-array-items.cake-dbg-hidden,
+.cake-dbg-object-props.cake-dbg-hidden {
+  display: none;
+}
+.cake-dbg-collapse-open:before,
+.cake-dbg-collapse-close:before {
+  content: "\25b8";
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  font-size: 12px;
+  line-height: 12px;
+  background: hsla(0, 0%, 50%, 0.2);
+  padding: 4px 2px 4px 6px;
+  border-radius: 3px;
+  color: var(--color-blue);
+}
+.cake-dbg-collapse-open:before {
+  content: "\25be";
+}
+
 .cake-dbg-prop,
 .cake-dbg-array-item {
   display: block;
@@ -70,3 +92,37 @@ nesting works.
   font-style: italic;
 }
 </style>
+<script type="text/javascript">
+(function (win, doc) {
+
+function initialize() {
+  createCollapsibles(doc.querySelectorAll('.cake-dbg-array-items'));
+  createCollapsibles(doc.querySelectorAll('.cake-dbg-object-props'));
+}
+
+function createCollapsibles(nodes) {
+  nodes.forEach(function (node) {
+    // Hide the childnode container
+    node.classList.add('cake-dbg-hidden');
+
+    var collapser = doc.createElement('a');
+    collapser.classList.add('cake-dbg-collapse-close');
+    collapser.setAttribute('href', '#')
+    collapser.setAttribute('title', 'Toggle items');
+
+    // Add open/close behavior
+    collapser.addEventListener('click', function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      node.classList.toggle('cake-dbg-hidden');
+      collapser.classList.toggle('cake-dbg-collapse-close');
+      collapser.classList.toggle('cake-dbg-collapse-open');
+    });
+
+    node.parentNode.insertBefore(collapser, node);
+  });
+}
+
+doc.addEventListener('DOMContentLoaded', initialize);
+}(window, document))
+</script>
