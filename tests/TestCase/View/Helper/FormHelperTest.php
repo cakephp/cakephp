@@ -3433,7 +3433,7 @@ class FormHelperTest extends TestCase
                 'name' => 'prueba',
                 'id' => 'prueba',
                 'type' => 'datetime-local',
-                'value' => '2019-09-27T02:52:43.000',
+                'value' => '2019-09-27T02:52:43',
                 'step' => '1',
             ],
             '/div',
@@ -6083,7 +6083,7 @@ class FormHelperTest extends TestCase
             'input' => [
                 'type' => 'datetime-local',
                 'name' => 'date',
-                'value' => 'preg:/' . date('Y-m-d') . 'T\d{2}:\d{2}:\d{2}\.\d{3}/',
+                'value' => 'preg:/' . date('Y-m-d') . 'T\d{2}:\d{2}:\d{2}/',
                 'step' => '1',
             ],
         ];
@@ -6157,7 +6157,7 @@ class FormHelperTest extends TestCase
             'input' => [
                 'type' => 'datetime-local',
                 'name' => 'updated',
-                'value' => '2009-06-01T11:15:30.000',
+                'value' => '2009-06-01T11:15:30',
                 'step' => '1',
             ],
         ];
@@ -6170,7 +6170,7 @@ class FormHelperTest extends TestCase
             'input' => [
                 'type' => 'datetime-local',
                 'name' => 'updated',
-                'value' => '2009-06-01T11:15:30.000',
+                'value' => '2009-06-01T11:15:30',
                 'step' => '1',
             ],
         ];
@@ -7415,7 +7415,7 @@ class FormHelperTest extends TestCase
             'input' => [
                 'type' => 'datetime-local',
                 'name' => 'created',
-                'value' => 'preg:/' . date('Y-m-d') . 'T\d{2}:\d{2}:\d{2}\.\d{3}/',
+                'value' => 'preg:/' . date('Y-m-d') . 'T\d{2}:\d{2}:\d{2}/',
                 'step' => '1',
             ],
         ];
