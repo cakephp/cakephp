@@ -55,8 +55,11 @@ foreach ($trace as $i => $stack):
         <?php endforeach; ?>
         </table>
 
-        <div id="stack-args-<?= $i ?>" style="display: none;">
-            <pre><?= h(implode("\n", $params)) ?></pre>
+        <div id="stack-args-<?= $i ?>" class="cake-debug" style="display: none;">
+            <h4>Arguments</h4>
+            <?php foreach ($params as $param): ?>
+                <div class="cake-debug"><?= $param ?></div>
+            <?php endforeach; ?>
         </div>
     </div>
 <?php endforeach; ?>
