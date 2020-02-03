@@ -1360,6 +1360,7 @@ class IntegrationTestTraitTest extends TestCase
         $this->get('/posts/get');
         $this->assertFileResponse('foo');
     }
+
     /**
      * Test disabling the error handler middleware with exceptions
      * in controllers.
