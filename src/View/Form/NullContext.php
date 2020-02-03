@@ -27,7 +27,6 @@ class NullContext implements ContextInterface
     /**
      * Constructor.
      *
-     * @param \Cake\Http\ServerRequest $request The request object.
      * @param array $context Context info.
      */
     public function __construct(array $context)
