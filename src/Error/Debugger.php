@@ -88,12 +88,12 @@ class Debugger
             'code' => '',
             'context' => '',
             'links' => [],
-            'escapeContext' => true,
+            'escapeContext' => false,
         ],
         'html' => [
             'trace' => '<pre class="cake-error trace"><b>Trace</b> <p>{:trace}</p></pre>',
             'context' => '<pre class="cake-error context"><b>Context</b> <p>{:context}</p></pre>',
-            'escapeContext' => true,
+            'escapeContext' => false,
         ],
         'txt' => [
             'error' => "{:error}: {:code} :: {:description} on line {:line} of {:path}\n{:info}",
@@ -157,7 +157,7 @@ class Debugger
 
         $this->_templates['js']['links'] = $links;
 
-        $this->_templates['js']['context'] = '<pre id="{:id}-context" class="cake-context" ';
+        $this->_templates['js']['context'] = '<pre id="{:id}-context" class="cake-context cake-debug" ';
         $this->_templates['js']['context'] .= 'style="display: none;">{:context}</pre>';
 
         $this->_templates['js']['code'] = '<pre id="{:id}-code" class="cake-code-dump" ';
@@ -167,7 +167,7 @@ class Debugger
         $e .= '[<b>{:path}</b>, line <b>{:line}]</b></pre>';
         $this->_templates['html']['error'] = $e;
 
-        $this->_templates['html']['context'] = '<pre class="cake-context"><b>Context</b> ';
+        $this->_templates['html']['context'] = '<pre class="cake-context cake-debug"><b>Context</b> ';
         $this->_templates['html']['context'] .= '<p>{:context}</p></pre>';
     }
 
