@@ -59,7 +59,7 @@ class DateTimeWidget extends BasicWidget
      * @var string[]
      */
     protected $formatMap = [
-        'datetime-local' => 'Y-m-d\TH:i:s.v',
+        'datetime-local' => 'Y-m-d\TH:i:s',
         'date' => 'Y-m-d',
         'time' => 'H:i:s',
         'month' => 'Y-m',
@@ -192,7 +192,12 @@ class DateTimeWidget extends BasicWidget
             $dateTime = $dateTime->setTimezone($timezone);
         }
 
-        return $dateTime->format($this->formatMap[$options['type']]);
+        $format = $this->formatMap[$options['type']];
+        if ($options['type'] === 'datetime-local' && $options['step'] < 1) {
+            $format = 'Y-m-d\TH:i:s.v';
+        }
+
+        return $dateTime->format($format);
     }
 
     /**
