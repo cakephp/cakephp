@@ -127,6 +127,11 @@ function createCollapsibles(nodes) {
       node.dataset.hidden = true;
     }
 
+    // Don't show toggles for empty arrays/objects
+    if (node.childNodes.length == 0) {
+      return;
+    }
+
     var collapser = doc.createElement('a');
     collapser.classList.add('cake-dbg-collapse');
     collapser.dataset.open = !node.dataset.hidden;
@@ -152,7 +157,6 @@ function createCollapsibles(nodes) {
 function attachRefEvents(nodes) {
   nodes.forEach(function (container) {
     var refLinks = container.querySelectorAll('.cake-dbg-ref');
-    console.log(refLinks);
     refLinks.forEach(function (ref) {
       ref.addEventListener('click', function (event) {
         event.preventDefault();
