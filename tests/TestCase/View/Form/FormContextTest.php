@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\View\Form;
 
 use Cake\Form\Form;
-use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 use Cake\View\Form\FormContext;
@@ -28,13 +27,6 @@ use Cake\View\Form\FormContext;
 class FormContextTest extends TestCase
 {
     /**
-     * The request object.
-     *
-     * @var \Cake\Http\ServerRequest
-     */
-    protected $request;
-
-    /**
      * setup method.
      *
      * @return void
@@ -42,7 +34,6 @@ class FormContextTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->request = new ServerRequest();
     }
 
     /**
@@ -58,7 +49,7 @@ class FormContextTest extends TestCase
         $form = new Form();
         $form->setValidator(Form::DEFAULT_VALIDATOR, $validator);
 
-        $context = new FormContext($this->request, [
+        $context = new FormContext([
             'entity' => $form,
         ]);
 
@@ -73,7 +64,7 @@ class FormContextTest extends TestCase
      */
     public function testPrimaryKey()
     {
-        $context = new FormContext($this->request, ['entity' => new Form()]);
+        $context = new FormContext(['entity' => new Form()]);
         $this->assertEquals([], $context->getPrimaryKey());
     }
 
@@ -84,7 +75,7 @@ class FormContextTest extends TestCase
      */
     public function testIsPrimaryKey()
     {
-        $context = new FormContext($this->request, ['entity' => new Form()]);
+        $context = new FormContext(['entity' => new Form()]);
         $this->assertFalse($context->isPrimaryKey('id'));
     }
 
@@ -95,56 +86,31 @@ class FormContextTest extends TestCase
      */
     public function testIsCreate()
     {
-        $context = new FormContext($this->request, ['entity' => new Form()]);
+        $context = new FormContext(['entity' => new Form()]);
         $this->assertTrue($context->isCreate());
-    }
-
-    /**
-     * Test reading values from the request & defaults.
-     */
-    public function testValPresent()
-    {
-        $this->request = $this->request->withParsedBody([
-            'Articles' => [
-                'title' => 'New title',
-                'body' => 'My copy',
-            ],
-        ]);
-        $context = new FormContext($this->request, ['entity' => new Form()]);
-        $this->assertSame('New title', $context->val('Articles.title'));
-        $this->assertSame('My copy', $context->val('Articles.body'));
-        $this->assertNull($context->val('Articles.nope'));
     }
 
     /**
      * Test reading values from form data.
      */
-    public function testValPresentInForm()
+    public function testValPresent()
     {
         $form = new Form();
         $form->setData(['title' => 'set title']);
 
-        $context = new FormContext($this->request, ['entity' => $form]);
+        $context = new FormContext(['entity' => $form]);
 
         $this->assertSame('set title', $context->val('title'));
-        $this->assertNull($context->val('Articles.body'));
-
-        $this->request = $this->request->withParsedBody([
-            'title' => 'New title',
-        ]);
-        $context = new FormContext($this->request, ['entity' => $form]);
-
-        $this->assertSame('New title', $context->val('title'));
     }
 
     /**
-     * Test getting values when the request and defaults are missing.
+     * Test getting values when data and defaults are missing.
      *
      * @return void
      */
     public function testValMissing()
     {
-        $context = new FormContext($this->request, ['entity' => new Form()]);
+        $context = new FormContext(['entity' => new Form()]);
         $this->assertNull($context->val('Comments.field'));
     }
 
@@ -157,7 +123,7 @@ class FormContextTest extends TestCase
     {
         $form = new Form();
         $form->getSchema()->addField('name', ['default' => 'schema default']);
-        $context = new FormContext($this->request, ['entity' => $form]);
+        $context = new FormContext(['entity' => $form]);
 
         $result = $context->val('title');
         $this->assertNull($result);
@@ -187,7 +153,7 @@ class FormContextTest extends TestCase
             ->requirePresence('name')
             ->add('email', 'format', ['rule' => 'email']);
 
-        $context = new FormContext($this->request, [
+        $context = new FormContext([
             'entity' => $form,
         ]);
         $this->assertTrue($context->isRequired('name'));
@@ -208,7 +174,7 @@ class FormContextTest extends TestCase
             ->addField('email', 'string')
             ->addField('user_id', 'integer');
 
-        $context = new FormContext($this->request, [
+        $context = new FormContext([
             'entity' => $form,
         ]);
         $this->assertNull($context->type('undefined'));
@@ -225,7 +191,7 @@ class FormContextTest extends TestCase
     public function testFieldNames()
     {
         $form = new Form();
-        $context = new FormContext($this->request, [
+        $context = new FormContext([
             'entity' => $form,
         ]);
         $expected = [];
@@ -235,7 +201,7 @@ class FormContextTest extends TestCase
         $form->getSchema()
             ->addField('email', 'string')
             ->addField('password', 'string');
-        $context = new FormContext($this->request, [
+        $context = new FormContext([
             'entity' => $form,
         ]);
 
@@ -262,7 +228,7 @@ class FormContextTest extends TestCase
                 'length' => 5,
                 'precision' => 2,
             ]);
-        $context = new FormContext($this->request, [
+        $context = new FormContext([
             'entity' => $form,
         ]);
         $this->assertEquals([], $context->attributes('id'));
@@ -295,7 +261,7 @@ class FormContextTest extends TestCase
             ],
         ]);
 
-        $context = new FormContext($this->request, ['entity' => $form]);
+        $context = new FormContext(['entity' => $form]);
         $this->assertEquals([], $context->error('empty'));
         $this->assertEquals(['format' => 'The provided value is invalid'], $context->error('email'));
         $this->assertEquals(['length' => 'The provided value is invalid'], $context->error('name'));
@@ -307,7 +273,7 @@ class FormContextTest extends TestCase
         $validator->requirePresence('key', true, 'should be an array, not a string');
         $form->setValidator('default', $validator);
         $form->validate([]);
-        $context = new FormContext($this->request, ['entity' => $form]);
+        $context = new FormContext(['entity' => $form]);
         $this->assertEquals(
             ['_required' => 'should be an array, not a string'],
             $context->error('key'),
@@ -340,7 +306,7 @@ class FormContextTest extends TestCase
             ],
         ]);
 
-        $context = new FormContext($this->request, ['entity' => $form]);
+        $context = new FormContext(['entity' => $form]);
         $this->assertTrue($context->hasError('email'));
         $this->assertTrue($context->hasError('name'));
         $this->assertFalse($context->hasError('nope'));

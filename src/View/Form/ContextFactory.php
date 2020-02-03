@@ -19,7 +19,6 @@ namespace Cake\View\Form;
 use Cake\Collection\Collection;
 use Cake\Datasource\EntityInterface;
 use Cake\Form\Form;
-use Cake\Http\ServerRequest;
 use RuntimeException;
 
 /**
@@ -59,44 +58,44 @@ class ContextFactory
         $providers = [
             [
                 'type' => 'orm',
-                'callable' => function ($request, $data) {
+                'callable' => function ($data) {
                     if ($data['entity'] instanceof EntityInterface) {
-                        return new EntityContext($request, $data);
+                        return new EntityContext($data);
                     }
                     if (isset($data['table'])) {
-                        return new EntityContext($request, $data);
+                        return new EntityContext($data);
                     }
                     if (is_iterable($data['entity'])) {
                         $pass = (new Collection($data['entity']))->first() !== null;
                         if ($pass) {
-                            return new EntityContext($request, $data);
+                            return new EntityContext($data);
                         } else {
-                            return new NullContext($request, $data);
+                            return new NullContext($data);
                         }
                     }
                 },
             ],
             [
                 'type' => 'form',
-                'callable' => function ($request, $data) {
+                'callable' => function ($data) {
                     if ($data['entity'] instanceof Form) {
-                        return new FormContext($request, $data);
+                        return new FormContext($data);
                     }
                 },
             ],
             [
                 'type' => 'array',
-                'callable' => function ($request, $data) {
+                'callable' => function ($data) {
                     if (is_array($data['entity']) && isset($data['entity']['schema'])) {
-                        return new ArrayContext($request, $data['entity']);
+                        return new ArrayContext($data['entity']);
                     }
                 },
             ],
             [
                 'type' => 'null',
-                'callable' => function ($request, $data) {
+                'callable' => function ($data) {
                     if ($data['entity'] === null) {
-                        return new NullContext($request, $data);
+                        return new NullContext($data);
                     }
                 },
             ],
@@ -133,18 +132,17 @@ class ContextFactory
      *
      * If no type can be matched a NullContext will be returned.
      *
-     * @param \Cake\Http\ServerRequest $request Request instance.
      * @param array $data The data to get a context provider for.
      * @return \Cake\View\Form\ContextInterface Context provider.
      * @throws \RuntimeException When a context instace cannot be generated for given entity.
      */
-    public function get(ServerRequest $request, array $data = []): ContextInterface
+    public function get(array $data = []): ContextInterface
     {
         $data += ['entity' => null];
 
         foreach ($this->providers as $provider) {
             $check = $provider['callable'];
-            $context = $check($request, $data);
+            $context = $check($data);
             if ($context) {
                 break;
             }

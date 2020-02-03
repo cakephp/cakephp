@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\View\Widget;
 
 use Cake\Collection\Collection;
-use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Cake\View\Form\NullContext;
 use Cake\View\StringTemplate;
@@ -42,7 +41,7 @@ class SelectBoxWidgetTest extends TestCase
             'option' => '<option value="{{value}}"{{attrs}}>{{text}}</option>',
             'optgroup' => '<optgroup label="{{label}}"{{attrs}}>{{content}}</optgroup>',
         ];
-        $this->context = new NullContext(new ServerRequest(), []);
+        $this->context = new NullContext([]);
         $this->templates = new StringTemplate($templates);
     }
 

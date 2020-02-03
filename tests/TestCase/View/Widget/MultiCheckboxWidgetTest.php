@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\View\Widget;
 
-use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Cake\View\Form\NullContext;
 use Cake\View\StringTemplate;
@@ -47,7 +46,7 @@ class MultiCheckboxWidgetTest extends TestCase
             'selectedClass' => 'selected',
         ];
         $this->templates = new StringTemplate($templates);
-        $this->context = new NullContext(new ServerRequest(), []);
+        $this->context = new NullContext([]);
     }
 
     /**

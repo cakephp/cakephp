@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\View\Form;
 
-use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Cake\View\Form\ContextFactory;
 
@@ -34,6 +33,6 @@ class ContextFactoryTest extends TestCase
         );
 
         $factory = new ContextFactory();
-        $factory->get(new ServerRequest(), ['entity' => false]);
+        $factory->get(['entity' => false]);
     }
 }
