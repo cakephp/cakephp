@@ -88,12 +88,12 @@ class Debugger
             'code' => '',
             'context' => '',
             'links' => [],
-            'escapeContext' => false,
+            'escapeContext' => true,
         ],
         'html' => [
             'trace' => '<pre class="cake-error trace"><b>Trace</b> <p>{:trace}</p></pre>',
             'context' => '<pre class="cake-error context"><b>Context</b> <p>{:context}</p></pre>',
-            'escapeContext' => false,
+            'escapeContext' => true,
         ],
         'txt' => [
             'error' => "{:error}: {:code} :: {:description} on line {:line} of {:path}\n{:info}",
@@ -846,7 +846,6 @@ class Debugger
         }
 
         if (!empty($tpl['escapeContext'])) {
-            $context = h($context);
             $data['description'] = h($data['description']);
         }
 
