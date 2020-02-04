@@ -2396,7 +2396,7 @@ class FormHelper extends Helper
         $data += ['entity' => null];
 
         return $this->_context = $this->contextFactory()
-            ->get($data);
+            ->get($this->_View->getRequest(), $data);
     }
 
     /**

@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\View\Form;
 
 use Cake\TestSuite\TestCase;
 use Cake\View\Form\ContextFactory;
+use Cake\Http\ServerRequest;
 
 /**
  * ContextFactory test case.
@@ -33,6 +34,6 @@ class ContextFactoryTest extends TestCase
         );
 
         $factory = new ContextFactory();
-        $factory->get(['entity' => false]);
+        $factory->get(new ServerRequest(), ['entity' => false]);
     }
 }

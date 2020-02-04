@@ -19,6 +19,7 @@ namespace Cake\View\Form;
 use Cake\Collection\Collection;
 use Cake\Datasource\EntityInterface;
 use Cake\Form\Form;
+use Cake\Http\ServerRequest;
 use RuntimeException;
 
 /**
@@ -58,7 +59,7 @@ class ContextFactory
         $providers = [
             [
                 'type' => 'orm',
-                'callable' => function ($data) {
+                'callable' => function ($request, $data) {
                     if ($data['entity'] instanceof EntityInterface) {
                         return new EntityContext($data);
                     }
@@ -77,7 +78,7 @@ class ContextFactory
             ],
             [
                 'type' => 'form',
-                'callable' => function ($data) {
+                'callable' => function ($request, $data) {
                     if ($data['entity'] instanceof Form) {
                         return new FormContext($data);
                     }
@@ -85,7 +86,7 @@ class ContextFactory
             ],
             [
                 'type' => 'array',
-                'callable' => function ($data) {
+                'callable' => function ($request, $data) {
                     if (is_array($data['entity']) && isset($data['entity']['schema'])) {
                         return new ArrayContext($data['entity']);
                     }
@@ -93,7 +94,7 @@ class ContextFactory
             ],
             [
                 'type' => 'null',
-                'callable' => function ($data) {
+                'callable' => function ($request, $data) {
                     if ($data['entity'] === null) {
                         return new NullContext($data);
                     }
@@ -132,17 +133,18 @@ class ContextFactory
      *
      * If no type can be matched a NullContext will be returned.
      *
+     * @param \Cake\Http\ServerRequest $request Request instance.
      * @param array $data The data to get a context provider for.
      * @return \Cake\View\Form\ContextInterface Context provider.
      * @throws \RuntimeException When a context instace cannot be generated for given entity.
      */
-    public function get(array $data = []): ContextInterface
+    public function get(ServerRequest $request, array $data = []): ContextInterface
     {
         $data += ['entity' => null];
 
         foreach ($this->providers as $provider) {
             $check = $provider['callable'];
-            $context = $check($data);
+            $context = $check($request, $data);
             if ($context) {
                 break;
             }
