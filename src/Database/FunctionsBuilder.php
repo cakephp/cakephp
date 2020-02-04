@@ -203,8 +203,8 @@ class FunctionsBuilder
     /**
      * Add the time unit to the date expression
      *
-     * @param string $expression Expression to obtain the date part from.
-     * @param string $value Value to be added. Use negative to subtract.
+     * @param string|\Cake\Database\ExpressionInterface $expression Expression to obtain the date part from.
+     * @param string|int $value Value to be added. Use negative to subtract.
      * @param string $unit Unit of the value e.g. hour or day.
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\FunctionExpression
