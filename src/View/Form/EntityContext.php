@@ -19,6 +19,7 @@ namespace Cake\View\Form;
 use ArrayAccess;
 use Cake\Collection\Collection;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\InvalidPropertyInterface;
 use Cake\ORM\Entity;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Table;
@@ -266,9 +267,11 @@ class EntityContext implements ContextInterface
         if ($entity instanceof EntityInterface) {
             $part = end($parts);
 
-            $val = $entity->getInvalidField($part);
-            if ($val !== null) {
-                return $val;
+            if ($entity instanceof InvalidPropertyInterface) {
+                $val = $entity->getInvalidField($part);
+                if ($val !== null) {
+                    return $val;
+                }
             }
 
             $val = $entity->get($part);
