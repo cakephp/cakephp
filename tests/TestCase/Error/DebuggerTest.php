@@ -705,14 +705,7 @@ EXPECTED;
         $value = '<div>this-is-a-test</div>';
         Debugger::printVar($value, ['file' => __FILE__, 'line' => __LINE__], true);
         $result = ob_get_clean();
-        $expectedHtml = <<<EXPECTED
-<div class="cake-debug-output cake-debug" style="direction:ltr">
-<span><strong>%s</strong> (line <strong>%d</strong>)</span>
-<div class="cake-dbg"><span class="cake-dbg-string">&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;</span></div>
-</div>
-EXPECTED;
-        $expected = sprintf($expectedHtml, Debugger::trimPath(__FILE__), __LINE__ - 8);
-        $this->assertEquals($expected, $result);
+        $this->assertStringContainsString('&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;', $result);
 
         ob_start();
         Debugger::printVar('<div>this-is-a-test</div>', ['file' => __FILE__, 'line' => __LINE__], true);
