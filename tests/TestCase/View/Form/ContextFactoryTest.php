@@ -16,9 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\View\Form;
 
+use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Cake\View\Form\ContextFactory;
-use Cake\Http\ServerRequest;
 
 /**
  * ContextFactory test case.
