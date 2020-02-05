@@ -313,7 +313,8 @@ class FormHelperTest extends TestCase
     {
         $context = 'My data';
         $stub = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
-        $this->Form->addContextProvider('test', function ($data) use ($context, $stub) {
+        $this->Form->addContextProvider('test', function ($request, $data) use ($context, $stub) {
+            $this->assertInstanceOf('Cake\Http\ServerRequest', $request);
             $this->assertEquals($context, $data['entity']);
 
             return $stub;
@@ -332,7 +333,7 @@ class FormHelperTest extends TestCase
     {
         $entity = new Article();
         $stub = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
-        $this->Form->addContextProvider('orm', function ($data) use ($stub) {
+        $this->Form->addContextProvider('orm', function ($request, $data) use ($stub) {
             return $stub;
         });
         $this->Form->create($entity);
@@ -349,7 +350,7 @@ class FormHelperTest extends TestCase
     {
         $entity = new Article();
         $stub = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
-        $this->Form->addContextProvider('newshiny', function ($data) use ($stub) {
+        $this->Form->addContextProvider('newshiny', function ($request, $data) use ($stub) {
             if ($data['entity'] instanceof Entity) {
                 return $stub;
             }
@@ -369,7 +370,7 @@ class FormHelperTest extends TestCase
         $this->expectException(\TypeError::class);
         $this->expectExceptionMessage('Return value of Cake\View\Form\ContextFactory::get() must implement interface Cake\View\Form\ContextInterface, instance of stdClass returned');
         $context = 'My data';
-        $this->Form->addContextProvider('test', function ($data) use ($context) {
+        $this->Form->addContextProvider('test', function ($request, $data) use ($context) {
             return new \stdClass();
         });
         $this->Form->create($context);
