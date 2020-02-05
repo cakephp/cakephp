@@ -56,6 +56,9 @@ use Cake\Error\Debugger;
         margin-left: 10px;
         user-select: none;
     }
+    .header-title code {
+        margin: 0 10px;
+    }
     .header-type {
         display: block;
         font-size: 16px;
