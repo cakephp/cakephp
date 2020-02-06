@@ -1393,11 +1393,30 @@ class EntityTest extends TestCase
     }
 
     /**
-     * Tests accessible() method as a getter and setter
+     * Tests getAccessible() method
      *
      * @return void
      */
-    public function testAccessible()
+    public function testGetAccessible()
+    {
+        $entity = new Entity();
+        $entity->setAccess('*', false);
+        $entity->setAccess('bar', true);
+
+        $accessible = $entity->getAccessible();
+        $expected = [
+            '*' => false,
+            'bar' => true,
+        ];
+        $this->assertSame($expected, $accessible);
+    }
+
+    /**
+     * Tests isAccessible() and setAccess() methods
+     *
+     * @return void
+     */
+    public function testIsAccessible()
     {
         $entity = new Entity();
         $entity->setAccess('*', false);
