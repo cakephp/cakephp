@@ -24,6 +24,7 @@ use JsonSerializable;
  * comply with.
  *
  * @property mixed $id Alias for commonly used primary key.
+ * @method bool[] getAccessible()
  */
 interface EntityInterface extends ArrayAccess, JsonSerializable
 {
