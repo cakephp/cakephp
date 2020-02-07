@@ -96,8 +96,10 @@ use RuntimeException;
  * - `buildValidator(EventInterface $event, Validator $validator, string $name)`
  *   Allows listeners to modify validation rules for the provided named validator.
  *
- * - `buildRules(EventInterface $event, RulesChecker $rules)`
- *   Allows listeners to modify the rules checker by adding more rules.
+ * - `buildRules(RulesChecker $rules)`
+ *   Allows table classes to modify the rules checker by adding more rules. The
+ *   `Model.buildRules` event will also include an `$event` parameter before the 
+ *   `$rules` parameter.
  *
  * - `beforeRules(EventInterface $event, EntityInterface $entity, ArrayObject $options, string $operation)`
  *   Fired before an entity is validated using the rules checker. By stopping this event,
