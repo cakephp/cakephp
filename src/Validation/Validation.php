@@ -783,6 +783,14 @@ class Validation
         $decimalPoint = $formatter->getSymbol(NumberFormatter::DECIMAL_SEPARATOR_SYMBOL);
         $groupingSep = $formatter->getSymbol(NumberFormatter::GROUPING_SEPARATOR_SYMBOL);
 
+        // There are two types of non-breaking spaces - we inject a space to account for human input
+        if($groupingSep == "\xc2\xa0" || $groupingSep == "\xe2\x80\xaf") {
+            $check = str_replace([' ', $groupingSep, $decimalPoint], ['', '', '.'], $check);
+        }
+        else {
+            $check = str_replace([$groupingSep, $decimalPoint], ['', '.'], $check);
+        }
+
         $check = str_replace([$groupingSep, $decimalPoint], ['', '.'], $check);
 
         return static::_check($check, $regex);
