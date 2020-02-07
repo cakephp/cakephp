@@ -319,8 +319,8 @@ class SecurityComponent extends Component
         }
         unset($check['_Token']);
 
-        $locked = explode('|', $locked);
-        $unlocked = explode('|', $unlocked);
+        $locked = $locked ? explode('|', $locked) : [];
+        $unlocked = $unlocked ? explode('|', $unlocked) : [];
 
         $fields = Hash::flatten($check);
         $fieldList = array_keys($fields);
@@ -349,6 +349,7 @@ class SecurityComponent extends Component
         foreach ($fieldList as $i => $key) {
             $isLocked = in_array($key, $locked, true);
 
+            /** @psalm-suppress RedundantCondition */
             if (!empty($unlockedFields)) {
                 foreach ($unlockedFields as $off) {
                     $off = explode('.', $off);
