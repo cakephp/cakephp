@@ -210,7 +210,7 @@ abstract class BaseApplication implements
      * - Create the controller that will handle this request.
      * - Invoke the controller.
      *
-     * @param \Cake\Http\ServerRequest $request The request
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function handle(
