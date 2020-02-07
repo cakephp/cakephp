@@ -42,7 +42,6 @@ class DependentDeleteHelper
             return true;
         }
         $table = $association->getTarget();
-        /** @psalm-suppress InvalidArgument */
         $foreignKey = array_map([$association, 'aliasField'], (array)$association->getForeignKey());
         $bindingKey = (array)$association->getBindingKey();
         $conditions = array_combine($foreignKey, $entity->extract($bindingKey));

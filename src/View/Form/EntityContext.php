@@ -137,7 +137,6 @@ class EntityContext implements ContextInterface
         if (empty($table)) {
             if (is_iterable($entity)) {
                 foreach ($entity as $e) {
-                    /** @psalm-suppress LoopInvalidation */
                     $entity = $e;
                     break;
                 }
@@ -227,7 +226,6 @@ class EntityContext implements ContextInterface
         $entity = $this->_context['entity'];
         if (is_iterable($entity)) {
             foreach ($entity as $e) {
-                /** @psalm-suppress LoopInvalidation */
                 $entity = $e;
                 break;
             }

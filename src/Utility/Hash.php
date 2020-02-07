@@ -61,7 +61,6 @@ class Hash
         if (is_string($path) || is_numeric($path)) {
             $parts = explode('.', (string)$path);
         } else {
-            /** @psalm-suppress TypeDoesNotContainType */
             if (!is_array($path)) {
                 throw new InvalidArgumentException(sprintf(
                     'Invalid Parameter %s, should be dot separated path or array.',

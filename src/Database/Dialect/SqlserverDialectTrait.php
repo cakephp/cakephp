@@ -89,7 +89,6 @@ trait SqlserverDialectTrait
     {
         $this->connect();
 
-        /** @psalm-suppress UndefinedPropertyFetch */
         return $this->_connection->getAttribute(PDO::ATTR_SERVER_VERSION);
     }
 

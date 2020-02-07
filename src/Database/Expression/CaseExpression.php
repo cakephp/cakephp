@@ -175,7 +175,6 @@ class CaseExpression implements ExpressionInterface
         }
 
         if ($value !== null && !$value instanceof ExpressionInterface) {
-            /** @psalm-suppress UndefinedPropertyFetch */
             $value = $this->_castToExpression($value, $type);
         }
 

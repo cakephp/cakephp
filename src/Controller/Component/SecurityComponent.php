@@ -349,7 +349,6 @@ class SecurityComponent extends Component
         foreach ($fieldList as $i => $key) {
             $isLocked = in_array($key, $locked, true);
 
-            /** @psalm-suppress RedundantCondition */
             if (!empty($unlockedFields)) {
                 foreach ($unlockedFields as $off) {
                     $off = explode('.', $off);
