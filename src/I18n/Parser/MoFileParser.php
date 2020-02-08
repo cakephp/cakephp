@@ -19,7 +19,7 @@ namespace Cake\I18n\Parser;
 use RuntimeException;
 
 /**
- * Parses file in PO format
+ * Parses file in MO format
  *
  * @copyright Copyright (c) 2010, Union of RAD http://union-of-rad.org (http://lithify.me/)
  * @copyright Copyright (c) 2014, Fabien Potencier https://github.com/symfony/Translation/blob/master/LICENSE
