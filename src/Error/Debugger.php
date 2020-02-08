@@ -115,10 +115,12 @@ class Debugger
      * @var array
      */
     protected $editors = [
-        'sublime' => 'subl://open?url=file://{file}&line={line}',
-        'phpstorm' => 'phpstorm://open?file={file}&line={line}',
-        'macvim' => 'mvim://open/?url=file://{file}&line={line}',
+        'atom' => 'atom://core/open/file?filename={file}&line={line}',
         'emacs' => 'emacs://open?url=file://{file}&line={line}',
+        'macvim' => 'mvim://open/?url=file://{file}&line={line}',
+        'phpstorm' => 'phpstorm://open?file={file}&line={line}',
+        'sublime' => 'subl://open?url=file://{file}&line={line}',
+        'textmate' => 'txmt://open?url=file://{file}&line={line}',
         'vscode' => 'vscode://file/{file}:{line}',
     ];
 
