@@ -92,7 +92,7 @@ use RuntimeException;
  *   `$primary` parameter indicates whether or not this is the root query, or an
  *   associated query.
  *
- * - `Model.buildValidator` Allows listeners to modify validation rules 
+ * - `Model.buildValidator` Allows listeners to modify validation rules
  *   for the provided named validator.
  *
  * - `Model.buildRules` Allows listeners to modify the rules checker by adding more rules.
