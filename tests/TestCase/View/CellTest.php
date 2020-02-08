@@ -211,7 +211,10 @@ class CellTest extends TestCase
 
         $this->assertNotNull($e);
         $message = $e->getMessage();
-        $this->assertStringContainsString("Cell template file 'foo_bar.php' could not be found.", $message);
+        $this->assertStringContainsString(
+            str_replace(DS, '/', "Cell template file `cell/Articles/foo_bar.php` could not be found."),
+            $message
+        );
         $this->assertStringContainsString('The following paths', $message);
         $this->assertStringContainsString(ROOT . DS . 'templates', $message);
         $this->assertInstanceOf(MissingTemplateException::class, $e->getPrevious());
