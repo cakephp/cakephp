@@ -105,7 +105,6 @@ class Translator extends BaseTranslator
                 return $message['_context'][''] === '' ? $key : $message['_context'][''];
             }
 
-            /** @psalm-suppress PossiblyUndefinedArrayOffset */
             return current($message['_context']);
         }
         if (!isset($message['_context'][$context])) {

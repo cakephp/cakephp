@@ -355,7 +355,6 @@ class Router
                 if (is_array($filter)) {
                     $ref = new ReflectionMethod($filter[0], $filter[1]);
                 } else {
-                    /** @psalm-suppress InvalidArgument */
                     $ref = new ReflectionFunction($filter);
                 }
                 $message = sprintf(

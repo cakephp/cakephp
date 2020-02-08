@@ -319,8 +319,8 @@ class SecurityComponent extends Component
         }
         unset($check['_Token']);
 
-        $locked = explode('|', $locked);
-        $unlocked = explode('|', $unlocked);
+        $locked = $locked ? explode('|', $locked) : [];
+        $unlocked = $unlocked ? explode('|', $unlocked) : [];
 
         $fields = Hash::flatten($check);
         $fieldList = array_keys($fields);

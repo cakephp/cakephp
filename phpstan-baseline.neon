@@ -341,6 +341,11 @@ parameters:
 			path: src/Filesystem/Filesystem.php
 
 		-
+			message: "#^Parameter \\#1 \\$request of static method Cake\\\\Routing\\\\Router\\:\\:setRequest\\(\\) expects Cake\\\\Http\\\\ServerRequest, Psr\\\\Http\\\\Message\\\\ServerRequestInterface given\\.$#"
+			count: 1
+			path: src/Http/BaseApplication.php
+
+		-
 			message: "#^Constructor of class Cake\\\\Http\\\\Client\\\\Auth\\\\Digest has an unused parameter \\$options\\.$#"
 			count: 1
 			path: src/Http/Client/Auth/Digest.php

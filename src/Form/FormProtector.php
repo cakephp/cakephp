@@ -296,8 +296,8 @@ class FormProtector
         }
         unset($formData['_Token']);
 
-        $locked = explode('|', $locked);
-        $unlocked = explode('|', $unlocked);
+        $locked = $locked ? explode('|', $locked) : [];
+        $unlocked = $unlocked ? explode('|', $unlocked) : [];
 
         $fields = Hash::flatten($formData);
         $fieldList = array_keys($fields);
