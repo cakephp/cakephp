@@ -115,7 +115,7 @@ class Debugger
      * @var array
      */
     protected $editors = [
-        'sublime'  => 'subl://open?url=file://{file}&line={line}',
+        'sublime' => 'subl://open?url=file://{file}&line={line}',
         'phpstorm' => 'phpstorm://open?file={file}&line={line}',
         'macvim' => 'mvim://open/?url=file://{file}&line={line}',
         'emacs' => 'emacs://open?url=file://{file}&line={line}',
@@ -311,6 +311,7 @@ class Debugger
         if (is_string($template)) {
             return str_replace(['{file}', '{line}'], [$file, $line], $template);
         }
+
         return $template($file, $line);
     }
 
