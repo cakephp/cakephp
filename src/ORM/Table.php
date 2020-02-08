@@ -83,7 +83,7 @@ use RuntimeException;
  *
  * ### Events
  *
- * Table objects emit several events during as life-cycle hooks during find, delete and save
+ * Table objects emit several events during find, delete and save
  * operations. All events use the CakePHP event package:
  *
  * - `Model.beforeFind` Fired before each find operation. By stopping the event and
@@ -122,7 +122,7 @@ use RuntimeException;
  * ### Callbacks
  *
  * You can subscribe to the events listed above in your table classes by implementing the
- * lifecycle methods below:
+ * life-cycle methods below:
  *
  * - `beforeFind(EventInterface $event, Query $query, ArrayObject $options, boolean $primary)`
  * - `buildValidator(EventInterface $event, Validator $validator, string $name)`
