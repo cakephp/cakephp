@@ -21,6 +21,7 @@ use Cake\Core\Configure;
 use Cake\Error\Debugger;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
+use RuntimeException;
 use stdClass;
 use TestApp\Error\TestDebugger;
 use TestApp\Error\Thing\DebuggableThing;
@@ -776,5 +777,68 @@ EXPECTED;
             "Some <code>code</code> to &lt;script&gt;alert(&quot;test&quot;)&lt;/script&gt;<br />\nmore",
             $output
         );
+    }
+
+    /**
+     * test adding invalid editor
+     *
+     * @return void
+     */
+    public function testAddEditorInvalid()
+    {
+        $this->expectException(RuntimeException::class);
+        Debugger::addEditor('nope', ['invalid']);
+    }
+
+    /**
+     * test choosing an unknown editor
+     *
+     * @return void
+     */
+    public function testSetEditorInvalid()
+    {
+        $this->expectException(RuntimeException::class);
+        Debugger::setEditor('nope');
+    }
+
+    /**
+     * test choosing a default editor
+     *
+     * @return void
+     */
+    public function testSetEditorPredefined()
+    {
+        Debugger::setEditor('phpstorm');
+        Debugger::setEditor('macvim');
+        Debugger::setEditor('sublime');
+        Debugger::setEditor('emacs');
+        // No exceptions raised.
+        $this->assertTrue(true);
+    }
+
+    /**
+     * test using a valid editor.
+     *
+     * @return void
+     */
+    public function testEditorUrlValid()
+    {
+        Debugger::addEditor('open', 'open://{file}:{line}');
+        Debugger::setEditor('open');
+        $this->assertSame('open://test.php:123', Debugger::editorUrl('test.php', 123));
+    }
+
+    /**
+     * test using a valid editor.
+     *
+     * @return void
+     */
+    public function testEditorUrlClosure()
+    {
+        Debugger::addEditor('open', function (string $file, int $line) {
+            return "${file}/${line}";
+        });
+        Debugger::setEditor('open');
+        $this->assertSame('test.php/123', Debugger::editorUrl('test.php', 123));
     }
 }
