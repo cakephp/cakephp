@@ -54,6 +54,10 @@ jobs:
     - name: composer install
       run: composer install
 
+    - name: Configure PHPUnit matcher
+      if: matrix.php-version == '7.4' && matrix.db-type == 'mysql'
+      uses: mheap/phpunit-matcher-action@master
+
     - name: Run PHPUnit
       env:
         REDIS_PORT: ${{ job.services.redis.ports['6379'] }}
@@ -66,6 +70,8 @@ jobs:
 
         if [[ ${{ matrix.php-version }} == '7.2' ]]; then
           vendor/bin/phpunit
+        elif [[ ${{ matrix.php-version }} == '7.4' && ${{ matrix.db-type }} == 'mysql' ]]; then
+          vendor/bin/phpunit --teamcity --verbose
         else
           vendor/bin/phpunit --verbose
         fi
@@ -112,7 +118,7 @@ jobs:
       run: composer stan-setup
 
     - name: Run psalm
-      run: vendor/bin/psalm.phar --show-info=false
+      run: vendor/bin/psalm.phar --show-info=false --output-format=github
 
     - name: Run phpstan
       run: vendor/bin/phpstan.phar analyse --no-progress src/
