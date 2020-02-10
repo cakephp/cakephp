@@ -119,6 +119,8 @@ class Mysql extends DboSource {
 	public $columns = array(
 		'primary_key' => array('name' => 'NOT NULL AUTO_INCREMENT'),
 		'string' => array('name' => 'varchar', 'limit' => '255'),
+		'longtext' => array('name' => 'longtext'),
+		'mediumtext' => array('name' => 'mediumtext'),
 		'text' => array('name' => 'text'),
 		'enum' => array('name' => 'enum'),
 		'biginteger' => array('name' => 'bigint', 'limit' => '20'),
@@ -804,6 +806,12 @@ class Mysql extends DboSource {
 		}
 		if (strpos($col, 'char') !== false || $col === 'tinytext') {
 			return 'string';
+		}
+		if (strpos($col, 'longtext') !== false) {
+			return 'longtext';
+		}
+		if (strpos($col, 'mediumtext') !== false) {
+			return 'mediumtext';
 		}
 		if (strpos($col, 'text') !== false) {
 			return 'text';
