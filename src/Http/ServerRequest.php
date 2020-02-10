@@ -253,6 +253,10 @@ class ServerRequest implements ServerRequestInterface
             ]);
         }
 
+        if (empty($config['environment']['REQUEST_METHOD'])) {
+            $config['environment']['REQUEST_METHOD'] = 'GET';
+        }
+
         $this->_environment = $config['environment'];
         $this->cookies = $config['cookies'];
 
@@ -289,49 +293,11 @@ class ServerRequest implements ServerRequestInterface
         }
         $this->stream = $stream;
 
-        $this->data = $this->_processPost($config['post']);
+        $this->data = $config['post'];
         $this->uploadedFiles = $config['files'];
         $this->query = $this->_processGet($config['query'], $querystr);
         $this->params = $config['params'];
         $this->session = $config['session'];
-    }
-
-    /**
-     * Sets the REQUEST_METHOD environment variable based on the simulated _method
-     * HTTP override value. The 'ORIGINAL_REQUEST_METHOD' is also preserved, if you
-     * want the read the non-simulated HTTP method the client used.
-     *
-     * @param mixed $data Array of post data.
-     * @return mixed
-     */
-    protected function _processPost($data)
-    {
-        $method = $this->getEnv('REQUEST_METHOD');
-        $override = false;
-
-        if (
-            in_array($method, ['PUT', 'DELETE', 'PATCH'], true) &&
-            strpos((string)$this->contentType(), 'application/x-www-form-urlencoded') === 0
-        ) {
-            $data = $this->input();
-            parse_str($data, $data);
-        }
-        if ($this->hasHeader('X-Http-Method-Override')) {
-            $data['_method'] = $this->getHeaderLine('X-Http-Method-Override');
-            $override = true;
-        }
-        $this->_environment['ORIGINAL_REQUEST_METHOD'] = $method;
-        if (isset($data['_method'])) {
-            $this->_environment['REQUEST_METHOD'] = $data['_method'];
-            unset($data['_method']);
-            $override = true;
-        }
-
-        if ($override && !in_array($this->_environment['REQUEST_METHOD'], ['PUT', 'POST', 'DELETE', 'PATCH'], true)) {
-            $data = [];
-        }
-
-        return $data;
     }
 
     /**
