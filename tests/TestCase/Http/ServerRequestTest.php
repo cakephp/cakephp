@@ -272,62 +272,6 @@ class ServerRequestTest extends TestCase
     }
 
     /**
-     * Test parsing PUT data into the object.
-     *
-     * @return void
-     */
-    public function testPutParsing()
-    {
-        $data = [
-            'Article' => ['title'],
-        ];
-        $request = new ServerRequest([
-            'input' => 'Article[]=title',
-            'environment' => [
-                'REQUEST_METHOD' => 'PUT',
-                'CONTENT_TYPE' => 'application/x-www-form-urlencoded; charset=UTF-8',
-            ],
-        ]);
-        $this->assertEquals($data, $request->getData());
-
-        $data = ['one' => 1, 'two' => 'three'];
-        $request = new ServerRequest([
-            'input' => 'one=1&two=three',
-            'environment' => [
-                'REQUEST_METHOD' => 'PUT',
-                'CONTENT_TYPE' => 'application/x-www-form-urlencoded; charset=UTF-8',
-            ],
-        ]);
-        $this->assertEquals($data, $request->getData());
-
-        $request = new ServerRequest([
-            'input' => 'Article[title]=Testing&action=update',
-            'environment' => [
-                'REQUEST_METHOD' => 'DELETE',
-                'CONTENT_TYPE' => 'application/x-www-form-urlencoded; charset=UTF-8',
-            ],
-        ]);
-        $expected = [
-            'Article' => ['title' => 'Testing'],
-            'action' => 'update',
-        ];
-        $this->assertEquals($expected, $request->getData());
-
-        $data = [
-            'Article' => ['title'],
-            'Tag' => ['Tag' => [1, 2]],
-        ];
-        $request = new ServerRequest([
-            'input' => 'Article[]=title&Tag[Tag][]=1&Tag[Tag][]=2',
-            'environment' => [
-                'REQUEST_METHOD' => 'PATCH',
-                'CONTENT_TYPE' => 'application/x-www-form-urlencoded; charset=UTF-8',
-            ],
-        ]);
-        $this->assertEquals($data, $request->getData());
-    }
-
-    /**
      * Test parsing json PUT data into the object.
      *
      * @return void
@@ -459,32 +403,6 @@ class ServerRequestTest extends TestCase
         $this->expectExceptionMessage('Invalid file at \'user.avatar\'');
         $request = new ServerRequest();
         $request->withUploadedFiles(['user' => ['avatar' => 'not a file']]);
-    }
-
-    /**
-     * Test method overrides coming in from POST data.
-     *
-     * @return void
-     */
-    public function testMethodOverrides()
-    {
-        $post = ['_method' => 'POST'];
-        $request = new ServerRequest(compact('post'));
-        $this->assertSame('POST', $request->getEnv('REQUEST_METHOD'));
-
-        $post = ['_method' => 'DELETE'];
-        $request = new ServerRequest(compact('post'));
-        $this->assertSame('DELETE', $request->getEnv('REQUEST_METHOD'));
-
-        $request = new ServerRequest(['environment' => ['HTTP_X_HTTP_METHOD_OVERRIDE' => 'PUT']]);
-        $this->assertSame('PUT', $request->getEnv('REQUEST_METHOD'));
-
-        $request = new ServerRequest([
-            'environment' => ['REQUEST_METHOD' => 'POST'],
-            'post' => ['_method' => 'PUT'],
-        ]);
-        $this->assertSame('PUT', $request->getEnv('REQUEST_METHOD'));
-        $this->assertSame('POST', $request->getEnv('ORIGINAL_REQUEST_METHOD'));
     }
 
     /**
@@ -2197,29 +2115,6 @@ class ServerRequestTest extends TestCase
     }
 
     /**
-     * Test getServerParams
-     *
-     * @return void
-     */
-    public function testGetServerParams()
-    {
-        $vars = [
-            'REQUEST_METHOD' => 'PUT',
-            'HTTPS' => 'on',
-        ];
-
-        $request = new ServerRequest([
-            'environment' => $vars,
-        ]);
-        $expected = $vars + [
-            'CONTENT_TYPE' => null,
-            'HTTP_CONTENT_TYPE' => null,
-            'ORIGINAL_REQUEST_METHOD' => 'PUT',
-        ];
-        $this->assertSame($expected, $request->getServerParams());
-    }
-
-    /**
      * Test using param()
      *
      * @return void
@@ -2790,32 +2685,6 @@ XML;
         $_SERVER['CONTENT_TYPE'] = 'application/xml';
         $request = ServerRequestFactory::fromGlobals();
         $this->assertSame('application/xml', $request->contentType(), 'prefer non http header.');
-    }
-
-    /**
-     * Tests that overriding the method to GET will clean all request
-     * data, to better simulate a GET request.
-     *
-     * @return void
-     */
-    public function testMethodOverrideEmptyData()
-    {
-        $post = ['_method' => 'GET', 'foo' => 'bar'];
-        $request = new ServerRequest([
-            'post' => $post,
-            'environment' => ['REQUEST_METHOD' => 'POST'],
-        ]);
-        $this->assertEmpty($request->getData());
-
-        $post = ['_method' => 'GET', 'foo' => 'bar'];
-        $request = new ServerRequest([
-            'post' => ['foo' => 'bar'],
-            'environment' => [
-                'REQUEST_METHOD' => 'POST',
-                'HTTP_X_HTTP_METHOD_OVERRIDE' => 'GET',
-            ],
-        ]);
-        $this->assertEmpty($request->getData());
     }
 
     /**

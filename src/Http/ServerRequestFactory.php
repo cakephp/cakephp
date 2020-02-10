@@ -61,10 +61,10 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
         ?array $files = null
     ): ServerRequest {
         $server = normalizeServer($server ?: $_SERVER);
+        if (!isset($server['REQUEST_METHOD'])) {
+            $server['REQUEST_METHOD'] = 'GET';
+        }
         $uri = static::createUri($server);
-        $data = static::processFiles($files ?: $_FILES, $parsedBody ?: $_POST);
-        $files = $data['files'];
-        $parsedBody = $data['parsedBody'];
 
         /** @psalm-suppress NoInterfaceProperties */
         $sessionConfig = (array)Configure::read('Session') + [
@@ -77,29 +77,81 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
         $request = new ServerRequest([
             'environment' => $server,
             'uri' => $uri,
-            'files' => $files,
             'cookies' => $cookies ?: $_COOKIE,
             'query' => $query ?: $_GET,
-            'post' => $parsedBody,
             'webroot' => $uri->webroot,
             'base' => $uri->base,
             'session' => $session,
         ]);
 
+        $request = static::marshalBodyAndRequestMethod($parsedBody ?? $_POST, $request);
+        $request = static::marshalFiles($files ?? $_FILES, $request);
+
         return $request;
+    }
+
+    /**
+     * Sets the REQUEST_METHOD environment variable based on the simulated _method
+     * HTTP override value. The 'ORIGINAL_REQUEST_METHOD' is also preserved, if you
+     * want the read the non-simulated HTTP method the client used.
+     *
+     * Request body of content type "application/x-www-form-urlencoded" is parsed
+     * into array for PUT/PATCH/DELETE requests.
+     *
+     * @param array $parsedBody Parsed body.
+     * @param \Cake\Http\ServerRequest $request Request instance.
+     * @return \Cake\Http\ServerRequest
+     */
+    protected static function marshalBodyAndRequestMethod(array $parsedBody, ServerRequest $request): ServerRequest
+    {
+        $method = $request->getMethod();
+        $override = false;
+
+        if (
+            in_array($method, ['PUT', 'DELETE', 'PATCH'], true) &&
+            strpos((string)$request->contentType(), 'application/x-www-form-urlencoded') === 0
+        ) {
+            $data = (string)$request->getBody();
+            parse_str($data, $parsedBody);
+        }
+        if ($request->hasHeader('X-Http-Method-Override')) {
+            $parsedBody['_method'] = $request->getHeaderLine('X-Http-Method-Override');
+            $override = true;
+        }
+
+        $request = $request->withEnv('ORIGINAL_REQUEST_METHOD', $method);
+        if (isset($parsedBody['_method'])) {
+            $request = $request->withEnv('REQUEST_METHOD', $parsedBody['_method']);
+            unset($parsedBody['_method']);
+            $override = true;
+        }
+
+        if (
+            $override &&
+            !in_array($request->getMethod(), ['PUT', 'POST', 'DELETE', 'PATCH'], true)
+        ) {
+            $parsedBody = [];
+        }
+
+        return $request->withParsedBody($parsedBody);
     }
 
     /**
      * Process uploaded files and move things onto the parsed body.
      *
      * @param array $files Files array for normalization and merging in parsed body.
-     * @param array $parsedBody Parsed body to merge files onto.
-     * @return array
-     * @psalm-return array{files: array, parsedBody: array}
+     * @param \Cake\Http\ServerRequest $request Request instance.
+     * @return \Cake\Http\ServerRequest
      */
-    protected static function processFiles(array $files, array $parsedBody): array
+    protected static function marshalFiles(array $files, ServerRequest $request): ServerRequest
     {
         $files = normalizeUploadedFiles($files);
+        $request = $request->withUploadedFiles($files);
+
+        $parsedBody = $request->getParsedBody();
+        if (!is_array($parsedBody)) {
+            return $request;
+        }
 
         if (Configure::read('App.uploadedFilesAsObjects', true)) {
             $parsedBody = Hash::merge($parsedBody, $files);
@@ -122,7 +174,7 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
             }
         }
 
-        return ['files' => $files, 'parsedBody' => $parsedBody];
+        return $request->withParsedBody($parsedBody);
     }
 
     /**

@@ -294,6 +294,129 @@ class ServerRequestFactoryTest extends TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testFormUrlEncodedBodyParsing()
+    {
+        $data = [
+            'Article' => ['title'],
+        ];
+        // 'input' => 'Article[]=title',
+        $request = ServerRequestFactory::fromGlobals(
+            [
+                'REQUEST_METHOD' => 'PUT',
+                'CONTENT_TYPE' => 'application/x-www-form-urlencoded; charset=UTF-8',
+            ]
+        );
+        $this->assertEquals($data, $request->getData());
+
+        $data = ['one' => 1, 'two' => 'three'];
+        // 'input' => 'one=1&two=three',
+        $request = ServerRequestFactory::fromGlobals([
+            'REQUEST_METHOD' => 'PUT',
+            'CONTENT_TYPE' => 'application/x-www-form-urlencoded; charset=UTF-8',
+        ]);
+        $this->assertEquals($data, $request->getData());
+
+        // 'input' => 'Article[title]=Testing&action=update',
+        $request = ServerRequestFactory::fromGlobals([
+            'REQUEST_METHOD' => 'DELETE',
+            'CONTENT_TYPE' => 'application/x-www-form-urlencoded; charset=UTF-8',
+        ]);
+        $expected = [
+            'Article' => ['title' => 'Testing'],
+            'action' => 'update',
+        ];
+        $this->assertEquals($expected, $request->getData());
+
+        $data = [
+            'Article' => ['title'],
+            'Tag' => ['Tag' => [1, 2]],
+        ];
+        // 'input' => 'Article[]=title&Tag[Tag][]=1&Tag[Tag][]=2',
+        $request = ServerRequestFactory::fromGlobals([
+            'REQUEST_METHOD' => 'PATCH',
+            'CONTENT_TYPE' => 'application/x-www-form-urlencoded; charset=UTF-8',
+        ]);
+        $this->assertEquals($data, $request->getData());
+    }
+
+    /**
+     * Test method overrides coming in from POST data.
+     *
+     * @return void
+     */
+    public function testMethodOverrides()
+    {
+        $post = ['_method' => 'POST'];
+        $request = ServerRequestFactory::fromGlobals([], [], $post);
+        $this->assertSame('POST', $request->getEnv('REQUEST_METHOD'));
+
+        $post = ['_method' => 'DELETE'];
+        $request = ServerRequestFactory::fromGlobals([], [], $post);
+        $this->assertSame('DELETE', $request->getEnv('REQUEST_METHOD'));
+
+        $request = ServerRequestFactory::fromGlobals(['HTTP_X_HTTP_METHOD_OVERRIDE' => 'PUT']);
+        $this->assertSame('PUT', $request->getEnv('REQUEST_METHOD'));
+
+        $request = ServerRequestFactory::fromGlobals(
+            ['REQUEST_METHOD' => 'POST'],
+            [],
+            ['_method' => 'PUT']
+        );
+        $this->assertSame('PUT', $request->getEnv('REQUEST_METHOD'));
+        $this->assertSame('POST', $request->getEnv('ORIGINAL_REQUEST_METHOD'));
+    }
+
+    /**
+     * Test getServerParams
+     *
+     * @return void
+     */
+    public function testGetServerParams()
+    {
+        $vars = [
+            'REQUEST_METHOD' => 'PUT',
+            'HTTPS' => 'on',
+        ];
+
+        $request = ServerRequestFactory::fromGlobals($vars);
+        $expected = $vars + [
+            'CONTENT_TYPE' => null,
+            'HTTP_CONTENT_TYPE' => null,
+            'ORIGINAL_REQUEST_METHOD' => 'PUT',
+        ];
+        $this->assertSame($expected, $request->getServerParams());
+    }
+
+    /**
+     * Tests that overriding the method to GET will clean all request
+     * data, to better simulate a GET request.
+     *
+     * @return void
+     */
+    public function testMethodOverrideEmptyParsedBody()
+    {
+        $body = ['_method' => 'GET', 'foo' => 'bar'];
+        $request = ServerRequestFactory::fromGlobals(
+            ['REQUEST_METHOD' => 'POST'],
+            [],
+            $body
+        );
+        $this->assertEmpty($request->getParsedBody());
+
+        $request = ServerRequestFactory::fromGlobals(
+            [
+                'REQUEST_METHOD' => 'POST',
+                'HTTP_X_HTTP_METHOD_OVERRIDE' => 'GET',
+            ],
+            [],
+            ['foo' => 'bar']
+        );
+        $this->assertEmpty($request->getParsedBody());
+    }
+
+    /**
      * Tests the default file upload merging behavior.
      *
      * @return void
