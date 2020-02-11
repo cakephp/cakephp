@@ -278,8 +278,8 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      *   Unused if $name is an associative array, otherwise serves as the values to $name's keys.
      * @return $this
      */
-	public function set($name, $value = null) 
-	{
+    public function set($name, $value = null)
+    {
         $write = $name;
         if (!is_array($name)) {
             $write = [$name => $value];
@@ -289,8 +289,8 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
             $this->_data = Hash::insert($this->_data, $key, $val);
         }
 
-		return $this;
-	}
+        return $this;
+    }
 
     /**
      * Set form data.
