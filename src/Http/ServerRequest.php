@@ -258,7 +258,7 @@ class ServerRequest implements ServerRequestInterface
 
         if (isset($config['uri'])) {
             if (!$config['uri'] instanceof UriInterface) {
-                throw new Exception('The `uri` key must be an instanceof Psr\Http\Message\UriInterface.');
+                throw new Exception('The `uri` key must be an instance of ' . UriInterface::class);
             }
             $uri = $config['uri'];
         } else {
