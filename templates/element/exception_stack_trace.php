@@ -22,7 +22,7 @@ foreach ($trace as $i => $stack):
     $line = null;
     if (isset($stack['file'], $stack['line']) && is_numeric($stack['line'])):
         $line = $stack['line'];
-        $excerpt = Debugger::excerpt($stack['file'], $stack['line'], 4);
+        $excerpt = Debugger::excerpt($stack['file'], $line, 4);
     endif;
 
     if (isset($stack['file'])):
