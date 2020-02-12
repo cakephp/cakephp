@@ -108,6 +108,7 @@ ConnectionManager::setConfig('test_custom_i18n_datasource', ['url' => getenv('DB
 Configure::write('Session', [
     'defaults' => 'php',
 ]);
+Configure::write('Debugger.exportFormatter', TextFormatter::class);
 
 Log::setConfig([
     // 'queries' => [
@@ -131,7 +132,6 @@ Log::setConfig([
 
 Chronos::setTestNow(Chronos::now());
 Security::setSalt('a-long-but-not-random-value');
-Debugger::configInstance('exportFormatter', TextFormatter::class);
 
 ini_set('intl.default_locale', 'en_US');
 ini_set('session.gc_divisor', '1');
