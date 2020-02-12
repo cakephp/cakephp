@@ -163,6 +163,9 @@ use Cake\Error\Debugger;
         display: flex;
         align-items: center;
     }
+    .stack-frame-file a {
+        color: #212121;
+    }
 
     .stack-frame-args {
         flex: 0 0 150px;
