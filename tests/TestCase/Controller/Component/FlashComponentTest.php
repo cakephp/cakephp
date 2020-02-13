@@ -328,7 +328,8 @@ class FlashComponentTest extends TestCase
     /**
      * @return void
      */
-    public function testAjax() {
+    public function testAjax()
+    {
         $_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
         $this->Controller->getRequest()->getSession()->write('Foo', 'bar');
 

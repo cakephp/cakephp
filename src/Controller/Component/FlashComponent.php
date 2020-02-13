@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\Http\Exception\InternalErrorException;
 use Cake\Http\Session;
 use Cake\Utility\Inflector;
@@ -47,27 +47,30 @@ class FlashComponent extends Component
         'duplicate' => true,
     ];
 
-	/**
-	 * Called after the Controller::beforeRender(), after the view class is loaded, and before the
-	 * Controller::render()
-	 *
-	 * @param \Cake\Event\Event $event
-	 * @return \Cake\Http\Response|null
-	 */
-	public function beforeRender(Event $event) {
-		/** @var \Cake\Controller\Controller $controller */
-		$controller = $event->getSubject();
+    /**
+     * Called after the Controller::beforeRender(), after the view class is loaded, and before the
+     * Controller::render()
+     *
+     * @param EventInterface $event Event.
+     * @return \Cake\Http\Response|null
+     */
+    public function beforeRender(EventInterface $event)
+    {
+        /** @var \Cake\Controller\Controller $controller */
+        $controller = $event->getSubject();
 
         if (!$controller->getRequest()->is('ajax')) {
-			return null;
-		}
+            return null;
+        }
 
-        if (!in_array('yes', array_map( // case insensitive
-			'strtolower',
-			$controller->getRequest()->getHeader('X-Get-Flash')
-		), true)) {
-			return null;
-		}
+        if (
+            !in_array('yes', array_map( // case insensitive
+                'strtolower',
+                $controller->getRequest()->getHeader('X-Get-Flash')
+            ), true)
+        ) {
+            return null;
+        }
 
         $session = $controller->getRequest()->getSession();
 
@@ -81,28 +84,28 @@ class FlashComponent extends Component
         }
         $session->delete('Flash');
 
-		$array = [];
-		foreach ($flash as $key => $stack) {
+        $array = [];
+        foreach ($flash as $key => $stack) {
             if (!is_array($stack)) {
                 throw new UnexpectedValueException(sprintf(
                     'Value for flash setting key "%s" must be an array.',
                     $key
                 ));
             }
-			foreach ($stack as $message) {
-				$array[$key][] = [
-					'message' => $message['message'] ?? null,
-					'type' => $message['type'] ?? null,
-					'params' => $message['params'] ?? null,
-				];
-			}
-		}
+            foreach ($stack as $message) {
+                $array[$key][] = [
+                    'message' => $message['message'] ?? null,
+                    'type' => $message['type'] ?? null,
+                    'params' => $message['params'] ?? null,
+                ];
+            }
+        }
 
-		// The header can be processed by the client side JavaScript to display flash messages
-		$this->getController()->setResponse($controller->getResponse()->withHeader('X-Flash', json_encode($array)));
+        // The header can be processed by the client side JavaScript to display flash messages
+        $this->getController()->setResponse($controller->getResponse()->withHeader('X-Flash', json_encode($array)));
 
-		return null;
-	}
+        return null;
+    }
 
     /**
      * Used to set a session variable that can be used to output messages in the view.
