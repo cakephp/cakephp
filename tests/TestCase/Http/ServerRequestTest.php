@@ -33,13 +33,6 @@ use Laminas\Diactoros\Uri;
 class ServerRequestTest extends TestCase
 {
     /**
-     * SERVER variable backup.
-     *
-     * @var array
-     */
-    protected $server = [];
-
-    /**
      * Setup callback
      *
      * @return void
@@ -47,16 +40,8 @@ class ServerRequestTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->server = $_SERVER;
 
         Configure::write('App.baseUrl', false);
-    }
-
-    public function tearDown(): void
-    {
-        parent::tearDown();
-
-        $_SERVER = $this->server;
     }
 
     /**
@@ -128,20 +113,6 @@ class ServerRequestTest extends TestCase
     }
 
     /**
-     * Test that the autoparse = false constructor works.
-     *
-     * @return void
-     */
-    public function testNoAutoParseConstruction()
-    {
-        $_GET = [
-            'one' => 'param',
-        ];
-        $request = new ServerRequest();
-        $this->assertNull($request->getQuery('one'));
-    }
-
-    /**
      * Test construction
      *
      * @return void
@@ -156,7 +127,8 @@ class ServerRequestTest extends TestCase
             'url' => 'some/path',
         ];
         $request = new ServerRequest($data);
-        $this->assertEquals($request->getQueryParams(), $data['query']);
+        $this->assertSame('param', $request->getQuery('one'));
+        $this->assertEquals($data['query'], $request->getQueryParams());
         $this->assertSame('/some/path', $request->getRequestTarget());
     }
 
@@ -167,9 +139,10 @@ class ServerRequestTest extends TestCase
      */
     public function testConstructStringUrlIgnoreServer()
     {
-        $_SERVER['REQUEST_URI'] = '/some/other/path';
-
-        $request = new ServerRequest(['url' => '/articles/view/1']);
+        $request = new ServerRequest([
+            'url' => '/articles/view/1',
+            'environment' => ['REQUEST_URI' => '/some/other/path'],
+        ]);
         $this->assertSame('/articles/view/1', $request->getUri()->getPath());
 
         $request = new ServerRequest(['url' => '/']);
@@ -183,7 +156,6 @@ class ServerRequestTest extends TestCase
      */
     public function testQueryStringParsingFromInputUrl()
     {
-        $_GET = [];
         $request = new ServerRequest(['url' => 'some/path?one=something&two=else']);
         $expected = ['one' => 'something', 'two' => 'else'];
         $this->assertEquals($expected, $request->getQueryParams());
@@ -192,26 +164,24 @@ class ServerRequestTest extends TestCase
     }
 
     /**
-     * Test that named arguments + querystrings are handled correctly.
+     * Test that querystrings are handled correctly.
      *
      * @return void
      */
     public function testQueryStringAndNamedParams()
     {
-        $_SERVER['REQUEST_URI'] = '/tasks/index?ts=123456';
-        $request = ServerRequestFactory::fromGlobals();
+        $config = ['environment' => ['REQUEST_URI' => '/tasks/index?ts=123456']];
+        $request = new ServerRequest($config);
         $this->assertSame('/tasks/index', $request->getRequestTarget());
 
-        $_SERVER['REQUEST_URI'] = '/tasks/index/?ts=123456';
-        $request = ServerRequestFactory::fromGlobals();
-        $this->assertSame('/tasks/index/', $request->getRequestTarget());
-
-        $_SERVER['REQUEST_URI'] = '/some/path?url=http://cakephp.org';
-        $request = ServerRequestFactory::fromGlobals();
+        $config = ['environment' => ['REQUEST_URI' => '/some/path?url=http://cakephp.org']];
+        $request = new ServerRequest($config);
         $this->assertSame('/some/path', $request->getRequestTarget());
 
-        $_SERVER['REQUEST_URI'] = Configure::read('App.fullBaseUrl') . '/other/path?url=http://cakephp.org';
-        $request = ServerRequestFactory::fromGlobals();
+        $config = ['environment' => [
+            'REQUEST_URI' => Configure::read('App.fullBaseUrl') . '/other/path?url=http://cakephp.org',
+        ]];
+        $request = new ServerRequest($config);
         $this->assertSame('/other/path', $request->getRequestTarget());
     }
 
@@ -220,12 +190,14 @@ class ServerRequestTest extends TestCase
      */
     public function testUrlInPath()
     {
-        $_SERVER['REQUEST_URI'] = '/jump/http://cakephp.org';
-        $request = ServerRequestFactory::fromGlobals();
+        $config = ['environment' => ['REQUEST_URI' => '/jump/http://cakephp.org']];
+        $request = new ServerRequest($config);
         $this->assertSame('/jump/http://cakephp.org', $request->getRequestTarget());
 
-        $_SERVER['REQUEST_URI'] = Configure::read('App.fullBaseUrl') . '/jump/http://cakephp.org';
-        $request = ServerRequestFactory::fromGlobals();
+        $config = ['environment' => [
+            'REQUEST_URI' => Configure::read('App.fullBaseUrl') . '/jump/http://cakephp.org',
+        ]];
+        $request = new ServerRequest($config);
         $this->assertSame('/jump/http://cakephp.org', $request->getRequestTarget());
     }
 
@@ -1260,62 +1232,66 @@ class ServerRequestTest extends TestCase
     {
         Configure::write('App.baseUrl', false);
 
-        $_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches';
-        $_SERVER['PHP_SELF'] = '/urlencode me/webroot/index.php';
-        $_SERVER['PATH_INFO'] = '/posts/view/1';
-
-        $request = ServerRequestFactory::fromGlobals();
+        $request = ServerRequestFactory::fromGlobals([
+            'DOCUMENT_ROOT' => '/cake/repo/branches',
+            'PHP_SELF' => '/urlencode me/webroot/index.php',
+            'PATH_INFO' => '/posts/view/1',
+        ]);
         $this->assertSame('/urlencode%20me', $request->getAttribute('base'));
         $this->assertSame('/urlencode%20me/', $request->getAttribute('webroot'));
         $this->assertSame('/posts/view/1', $request->getRequestTarget());
 
-        $_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches';
-        $_SERVER['PHP_SELF'] = '/1.2.x.x/webroot/index.php';
-        $_SERVER['PATH_INFO'] = '/posts/view/1';
-
-        $request = ServerRequestFactory::fromGlobals();
+        $request = ServerRequestFactory::fromGlobals([
+            'DOCUMENT_ROOT' => '/cake/repo/branches',
+            'PHP_SELF' => '/1.2.x.x/webroot/index.php',
+            'PATH_INFO' => '/posts/view/1',
+        ]);
         $this->assertSame('/1.2.x.x', $request->getAttribute('base'));
         $this->assertSame('/1.2.x.x/', $request->getAttribute('webroot'));
         $this->assertSame('/posts/view/1', $request->getRequestTarget());
 
-        $_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches/1.2.x.x/webroot';
-        $_SERVER['PHP_SELF'] = '/index.php';
-        $_SERVER['PATH_INFO'] = '/posts/add';
-        $request = ServerRequestFactory::fromGlobals();
+        $request = ServerRequestFactory::fromGlobals([
+            'DOCUMENT_ROOT' => '/cake/repo/branches/1.2.x.x/webroot',
+            'PHP_SELF' => '/index.php',
+            'PATH_INFO' => '/posts/add',
+        ]);
 
         $this->assertSame('', $request->getAttribute('base'));
         $this->assertSame('/', $request->getAttribute('webroot'));
         $this->assertSame('/posts/add', $request->getRequestTarget());
 
-        $_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches/1.2.x.x/test/';
-        $_SERVER['PHP_SELF'] = '/webroot/index.php';
-        $request = ServerRequestFactory::fromGlobals();
+        $request = ServerRequestFactory::fromGlobals([
+            'DOCUMENT_ROOT' => '/cake/repo/branches/1.2.x.x/test/',
+            'PHP_SELF' => '/webroot/index.php',
+        ]);
 
         $this->assertSame('', $request->getAttribute('base'));
         $this->assertSame('/', $request->getAttribute('webroot'));
 
-        $_SERVER['DOCUMENT_ROOT'] = '/some/apps/where';
-        $_SERVER['PHP_SELF'] = '/webroot/index.php';
-        $request = ServerRequestFactory::fromGlobals();
+        $request = ServerRequestFactory::fromGlobals([
+            'DOCUMENT_ROOT' => '/some/apps/where',
+            'PHP_SELF' => '/webroot/index.php',
+        ]);
 
         $this->assertSame('', $request->getAttribute('base'));
         $this->assertSame('/', $request->getAttribute('webroot'));
 
         Configure::write('App.dir', 'auth');
 
-        $_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches';
-        $_SERVER['PHP_SELF'] = '/demos/webroot/index.php';
-
-        $request = ServerRequestFactory::fromGlobals();
+        $request = ServerRequestFactory::fromGlobals([
+            'DOCUMENT_ROOT' => '/cake/repo/branches',
+            'PHP_SELF' => '/demos/webroot/index.php',
+        ]);
 
         $this->assertSame('/demos', $request->getAttribute('base'));
         $this->assertSame('/demos/', $request->getAttribute('webroot'));
 
         Configure::write('App.dir', 'code');
 
-        $_SERVER['DOCUMENT_ROOT'] = '/Library/WebServer/Documents';
-        $_SERVER['PHP_SELF'] = '/clients/PewterReport/webroot/index.php';
-        $request = ServerRequestFactory::fromGlobals();
+        $request = ServerRequestFactory::fromGlobals([
+            'DOCUMENT_ROOT' => '/Library/WebServer/Documents',
+            'PHP_SELF' => '/clients/PewterReport/webroot/index.php',
+        ]);
 
         $this->assertSame('/clients/PewterReport', $request->getAttribute('base'));
         $this->assertSame('/clients/PewterReport/', $request->getAttribute('webroot'));
@@ -1328,12 +1304,12 @@ class ServerRequestTest extends TestCase
      */
     public function testBaseUrlwithModRewriteAlias()
     {
-        $_SERVER['DOCUMENT_ROOT'] = '/home/aplusnur/public_html';
-        $_SERVER['PHP_SELF'] = '/control/index.php';
-
         Configure::write('App.base', '/control');
 
-        $request = ServerRequestFactory::fromGlobals();
+        $request = ServerRequestFactory::fromGlobals([
+            'DOCUMENT_ROOT' => '/home/aplusnur/public_html',
+            'PHP_SELF' => '/control/index.php',
+        ]);
 
         $this->assertSame('/control', $request->getAttribute('base'));
         $this->assertSame('/control/', $request->getAttribute('webroot'));
@@ -1342,9 +1318,10 @@ class ServerRequestTest extends TestCase
         Configure::write('App.dir', 'affiliate');
         Configure::write('App.webroot', 'newaffiliate');
 
-        $_SERVER['DOCUMENT_ROOT'] = '/var/www/abtravaff/html';
-        $_SERVER['PHP_SELF'] = '/newaffiliate/index.php';
-        $request = ServerRequestFactory::fromGlobals();
+        $request = ServerRequestFactory::fromGlobals([
+            'DOCUMENT_ROOT' => '/var/www/abtravaff/html',
+            'PHP_SELF' => '/newaffiliate/index.php',
+        ]);
 
         $this->assertSame('', $request->getAttribute('base'));
         $this->assertSame('/', $request->getAttribute('webroot'));
@@ -1365,46 +1342,50 @@ class ServerRequestTest extends TestCase
      */
     public function testBaseUrlWithModRewriteAndIndexPhp()
     {
-        $_SERVER['REQUEST_URI'] = '/cakephp/webroot/index.php';
-        $_SERVER['PHP_SELF'] = '/cakephp/webroot/index.php';
-        unset($_SERVER['PATH_INFO']);
-        $request = ServerRequestFactory::fromGlobals();
+        $request = ServerRequestFactory::fromGlobals([
+            'DOCUMENT_ROOT' => '/cakephp/webroot/index.php',
+            'PHP_SELF' => '/cakephp/webroot/index.php',
+        ]);
 
         $this->assertSame('/cakephp', $request->getAttribute('base'));
         $this->assertSame('/cakephp/', $request->getAttribute('webroot'));
         $this->assertSame('/', $request->getRequestTarget());
 
-        $_SERVER['REQUEST_URI'] = '/cakephp/webroot/index.php/';
-        $_SERVER['PHP_SELF'] = '/cakephp/webroot/index.php/';
-        $_SERVER['PATH_INFO'] = '/';
-        $request = ServerRequestFactory::fromGlobals();
+        $request = ServerRequestFactory::fromGlobals([
+            'REQUEST_URI' => '/cakephp/webroot/index.php/',
+            'PHP_SELF' => '/cakephp/webroot/index.php/',
+            'PATH_INFO' => '/',
+        ]);
 
         $this->assertSame('/cakephp', $request->getAttribute('base'));
         $this->assertSame('/cakephp/', $request->getAttribute('webroot'));
         $this->assertSame('/', $request->getRequestTarget());
 
-        $_SERVER['REQUEST_URI'] = '/cakephp/webroot/index.php/apples';
-        $_SERVER['PHP_SELF'] = '/cakephp/webroot/index.php/apples';
-        $_SERVER['PATH_INFO'] = '/apples';
-        $request = ServerRequestFactory::fromGlobals();
+        $request = ServerRequestFactory::fromGlobals([
+            'REQUEST_URI' => '/cakephp/webroot/index.php/apples',
+            'PHP_SELF' => '/cakephp/webroot/index.php/apples',
+            'PATH_INFO' => '/apples',
+        ]);
 
         $this->assertSame('/cakephp', $request->getAttribute('base'));
         $this->assertSame('/cakephp/', $request->getAttribute('webroot'));
         $this->assertSame('/apples', $request->getRequestTarget());
 
-        $_SERVER['REQUEST_URI'] = '/cakephp/webroot/index.php/melons/share/';
-        $_SERVER['PHP_SELF'] = '/cakephp/webroot/index.php/melons/share/';
-        $_SERVER['PATH_INFO'] = '/melons/share/';
-        $request = ServerRequestFactory::fromGlobals();
+        $request = ServerRequestFactory::fromGlobals([
+            'REQUEST_URI' => '/cakephp/webroot/index.php/melons/share/',
+            'PHP_SELF' => '/cakephp/webroot/index.php/melons/share/',
+            'PATH_INFO' => '/melons/share/',
+        ]);
 
         $this->assertSame('/cakephp', $request->getAttribute('base'));
         $this->assertSame('/cakephp/', $request->getAttribute('webroot'));
         $this->assertSame('/melons/share/', $request->getRequestTarget());
 
-        $_SERVER['REQUEST_URI'] = '/cakephp/webroot/index.php/bananas/eat/tasty_banana';
-        $_SERVER['PHP_SELF'] = '/cakephp/webroot/index.php/bananas/eat/tasty_banana';
-        $_SERVER['PATH_INFO'] = '/bananas/eat/tasty_banana';
-        $request = ServerRequestFactory::fromGlobals();
+        $request = ServerRequestFactory::fromGlobals([
+            'REQUEST_URI' => '/cakephp/webroot/index.php/bananas/eat/tasty_banana',
+            'PHP_SELF' => '/cakephp/webroot/index.php/bananas/eat/tasty_banana',
+            'PATH_INFO' => '/bananas/eat/tasty_banana',
+        ]);
 
         $this->assertSame('/cakephp', $request->getAttribute('base'));
         $this->assertSame('/cakephp/', $request->getAttribute('webroot'));
@@ -1419,10 +1400,11 @@ class ServerRequestTest extends TestCase
      */
     public function testBaseUrlWithModRewriteAndExtraSlashes()
     {
-        $_SERVER['REQUEST_URI'] = '/cakephp/webroot///index.php/bananas/eat';
-        $_SERVER['PHP_SELF'] = '/cakephp/webroot///index.php/bananas/eat';
-        $_SERVER['PATH_INFO'] = '/bananas/eat';
-        $request = ServerRequestFactory::fromGlobals();
+        $request = ServerRequestFactory::fromGlobals([
+            'REQUEST_URI' => '/cakephp/webroot///index.php/bananas/eat',
+            'PHP_SELF' => '/cakephp/webroot///index.php/bananas/eat',
+            'PATH_INFO' => '/bananas/eat',
+        ]);
 
         $this->assertSame('/cakephp', $request->getAttribute('base'));
         $this->assertSame('/cakephp/', $request->getAttribute('webroot'));
@@ -1436,11 +1418,6 @@ class ServerRequestTest extends TestCase
      */
     public function testBaseUrlWithNoModRewrite()
     {
-        $_SERVER['DOCUMENT_ROOT'] = '/Users/markstory/Sites';
-        $_SERVER['SCRIPT_FILENAME'] = '/Users/markstory/Sites/cake/index.php';
-        $_SERVER['PHP_SELF'] = '/cake/index.php/posts/index';
-        $_SERVER['REQUEST_URI'] = '/cake/index.php/posts/index';
-
         Configure::write('App', [
             'dir' => APP_DIR,
             'webroot' => 'webroot',
@@ -1448,7 +1425,12 @@ class ServerRequestTest extends TestCase
             'baseUrl' => '/cake/index.php',
         ]);
 
-        $request = ServerRequestFactory::fromGlobals();
+        $request = ServerRequestFactory::fromGlobals([
+            'DOCUMENT_ROOT' => '/Users/markstory/Sites',
+            'SCRIPT_FILENAME' => '/Users/markstory/Sites/cake/index.php',
+            'PHP_SELF' => '/cake/index.php/posts/index',
+            'REQUEST_URI' => '/cake/index.php/posts/index',
+        ]);
         $this->assertSame('/cake/index.php', $request->getAttribute('base'));
         $this->assertSame('/cake/webroot/', $request->getAttribute('webroot'));
         $this->assertSame('/posts/index', $request->getRequestTarget());
@@ -1496,9 +1478,10 @@ class ServerRequestTest extends TestCase
         $this->assertSame('/CakeBB/webroot/', $request->getAttribute('webroot'));
 
         Configure::write('App.baseUrl', '/dbhauser/index.php');
-        $_SERVER['DOCUMENT_ROOT'] = '/kunden/homepages/4/d181710652/htdocs/joomla';
-        $_SERVER['SCRIPT_FILENAME'] = '/kunden/homepages/4/d181710652/htdocs/joomla/dbhauser/index.php';
-        $request = ServerRequestFactory::fromGlobals();
+        $request = ServerRequestFactory::fromGlobals([
+            'DOCUMENT_ROOT' => '/kunden/homepages/4/d181710652/htdocs/joomla',
+            'SCRIPT_FILENAME' => '/kunden/homepages/4/d181710652/htdocs/joomla/dbhauser/index.php',
+        ]);
 
         $this->assertSame('/dbhauser/index.php', $request->getAttribute('base'));
         $this->assertSame('/dbhauser/webroot/', $request->getAttribute('webroot'));
@@ -1512,10 +1495,11 @@ class ServerRequestTest extends TestCase
     public function testBaseUrlNoRewriteTopLevelIndex()
     {
         Configure::write('App.baseUrl', '/index.php');
-        $_SERVER['DOCUMENT_ROOT'] = '/Users/markstory/Sites/cake_dev';
-        $_SERVER['SCRIPT_FILENAME'] = '/Users/markstory/Sites/cake_dev/index.php';
 
-        $request = ServerRequestFactory::fromGlobals();
+        $request = ServerRequestFactory::fromGlobals([
+            'DOCUMENT_ROOT' => '/Users/markstory/Sites/cake_dev',
+            'SCRIPT_FILENAME' => '/Users/markstory/Sites/cake_dev/index.php',
+        ]);
         $this->assertSame('/index.php', $request->getAttribute('base'));
         $this->assertSame('/webroot/', $request->getAttribute('webroot'));
     }
@@ -1528,18 +1512,20 @@ class ServerRequestTest extends TestCase
     public function testBaseUrlWithAppAndWebrootInDirname()
     {
         Configure::write('App.baseUrl', '/approval/index.php');
-        $_SERVER['DOCUMENT_ROOT'] = '/Users/markstory/Sites/';
-        $_SERVER['SCRIPT_FILENAME'] = '/Users/markstory/Sites/approval/index.php';
 
-        $request = ServerRequestFactory::fromGlobals();
+        $request = ServerRequestFactory::fromGlobals([
+            'DOCUMENT_ROOT' => '/Users/markstory/Sites/',
+            'SCRIPT_FILENAME' => '/Users/markstory/Sites/approval/index.php',
+        ]);
         $this->assertSame('/approval/index.php', $request->getAttribute('base'));
         $this->assertSame('/approval/webroot/', $request->getAttribute('webroot'));
 
         Configure::write('App.baseUrl', '/webrootable/index.php');
-        $_SERVER['DOCUMENT_ROOT'] = '/Users/markstory/Sites/';
-        $_SERVER['SCRIPT_FILENAME'] = '/Users/markstory/Sites/webrootable/index.php';
 
-        $request = ServerRequestFactory::fromGlobals();
+        $request = ServerRequestFactory::fromGlobals([
+            'DOCUMENT_ROOT' => '/Users/markstory/Sites/',
+            'SCRIPT_FILENAME' => '/Users/markstory/Sites/webrootable/index.php',
+        ]);
         $this->assertSame('/webrootable/index.php', $request->getAttribute('base'));
         $this->assertSame('/webrootable/webroot/', $request->getAttribute('webroot'));
     }
@@ -1552,10 +1538,11 @@ class ServerRequestTest extends TestCase
     public function testBaseUrlNoRewriteWebrootIndex()
     {
         Configure::write('App.baseUrl', '/index.php');
-        $_SERVER['DOCUMENT_ROOT'] = '/Users/markstory/Sites/cake_dev/webroot';
-        $_SERVER['SCRIPT_FILENAME'] = '/Users/markstory/Sites/cake_dev/webroot/index.php';
 
-        $request = ServerRequestFactory::fromGlobals();
+        $request = ServerRequestFactory::fromGlobals([
+            'DOCUMENT_ROOT' => '/Users/markstory/Sites/cake_dev/webroot',
+            'SCRIPT_FILENAME' => '/Users/markstory/Sites/cake_dev/webroot/index.php',
+        ]);
         $this->assertSame('/index.php', $request->getAttribute('base'));
         $this->assertSame('/', $request->getAttribute('webroot'));
     }
@@ -1568,17 +1555,17 @@ class ServerRequestTest extends TestCase
      */
     public function testGetParamsWithDot()
     {
-        $_GET = [];
-        $_SERVER['PHP_SELF'] = '/webroot/index.php';
-        $_SERVER['REQUEST_URI'] = '/posts/index/add.add';
-        $request = ServerRequestFactory::fromGlobals();
+        $request = ServerRequestFactory::fromGlobals([
+            'PHP_SELF' => '/webroot/index.php',
+            'REQUEST_URI' => '/posts/index/add.add',
+        ]);
         $this->assertSame('', $request->getAttribute('base'));
         $this->assertEquals([], $request->getQueryParams());
 
-        $_GET = [];
-        $_SERVER['PHP_SELF'] = '/cake_dev/webroot/index.php';
-        $_SERVER['REQUEST_URI'] = '/cake_dev/posts/index/add.add';
-        $request = ServerRequestFactory::fromGlobals();
+        $request = ServerRequestFactory::fromGlobals([
+            'PHP_SELF' => '/cake_dev/webroot/index.php',
+            'REQUEST_URI' => '/cake_dev/posts/index/add.add',
+        ]);
         $this->assertSame('/cake_dev', $request->getAttribute('base'));
         $this->assertEquals([], $request->getQueryParams());
     }
@@ -1590,17 +1577,20 @@ class ServerRequestTest extends TestCase
      */
     public function testGetParamWithUrlencodedElement()
     {
-        $_GET = [];
-        $_SERVER['PHP_SELF'] = '/webroot/index.php';
-        $_SERVER['REQUEST_URI'] = '/posts/add/%E2%88%82%E2%88%82';
-        $request = ServerRequestFactory::fromGlobals();
+        $config = [
+            'environment' => [
+                'PHP_SELF' => '/webroot/index.php',
+                'REQUEST_URI' => '/posts/add/%E2%88%82%E2%88%82',
+            ],
+        ];
+        $request = new ServerRequest($config);
         $this->assertSame('', $request->getAttribute('base'));
         $this->assertEquals([], $request->getQueryParams());
 
-        $_GET = [];
-        $_SERVER['PHP_SELF'] = '/cake_dev/webroot/index.php';
-        $_SERVER['REQUEST_URI'] = '/cake_dev/posts/add/%E2%88%82%E2%88%82';
-        $request = ServerRequestFactory::fromGlobals();
+        $request = ServerRequestFactory::fromGlobals([
+            'PHP_SELF' => '/cake_dev/webroot/index.php',
+            'REQUEST_URI' => '/cake_dev/posts/add/%E2%88%82%E2%88%82',
+        ]);
         $this->assertSame('/cake_dev', $request->getAttribute('base'));
         $this->assertEquals([], $request->getQueryParams());
     }
@@ -2008,16 +1998,20 @@ class ServerRequestTest extends TestCase
      *
      * @dataProvider environmentGenerator
      * @param $name
-     * @param $env
+     * @param $data
      * @param $expected
      * @return void
      */
-    public function testEnvironmentDetection($name, $env, $expected)
+    public function testEnvironmentDetection($name, $data, $expected)
     {
-        $_GET = [];
-        $this->_loadEnvironment($env);
+        if (isset($data['App'])) {
+            Configure::write('App', $data['App']);
+        }
 
-        $request = ServerRequestFactory::fromGlobals();
+        $request = ServerRequestFactory::fromGlobals(
+            $data['SERVER'] ?? null,
+            $data['GET'] ?? null
+        );
         $uri = $request->getUri();
 
         $this->assertSame('/' . $expected['url'], $uri->getPath(), 'Uri->getPath() is incorrect');
@@ -2669,12 +2663,14 @@ XML;
      */
     public function testContentType()
     {
-        $_SERVER['HTTP_CONTENT_TYPE'] = 'application/json';
-        $request = ServerRequestFactory::fromGlobals();
+        $request = new ServerRequest([
+            'environment' => ['HTTP_CONTENT_TYPE' => 'application/json'],
+        ]);
         $this->assertSame('application/json', $request->contentType());
 
-        $_SERVER['CONTENT_TYPE'] = 'application/xml';
-        $request = ServerRequestFactory::fromGlobals();
+        $request = new ServerRequest([
+            'environment' => ['HTTP_CONTENT_TYPE' => 'application/xml'],
+        ]);
         $this->assertSame('application/xml', $request->contentType(), 'prefer non http header.');
     }
 
@@ -2960,7 +2956,9 @@ XML;
      */
     public function testGetEnv()
     {
-        $request = new ServerRequest();
+        $request = new ServerRequest([
+            'environment' => ['TEST' => 'ing'],
+        ]);
 
         //Test default null
         $this->assertNull($request->getEnv('Foo'));
@@ -2969,7 +2967,6 @@ XML;
         $this->assertSame('Bar', $request->getEnv('Foo', 'Bar'));
 
         //Test env() fallback
-        $_SERVER['TEST'] = 'ing';
         $this->assertSame('ing', $request->getEnv('test'));
     }
 
@@ -2987,36 +2984,5 @@ XML;
             ['webroot'],
             ['session'],
         ];
-    }
-
-    /**
-     * loadEnvironment method
-     *
-     * @param array $env
-     * @return void
-     */
-    protected function _loadEnvironment($env)
-    {
-        if (isset($env['App'])) {
-            Configure::write('App', $env['App']);
-        }
-
-        if (isset($env['GET'])) {
-            foreach ($env['GET'] as $key => $val) {
-                $_GET[$key] = $val;
-            }
-        }
-
-        if (isset($env['POST'])) {
-            foreach ($env['POST'] as $key => $val) {
-                $_POST[$key] = $val;
-            }
-        }
-
-        if (isset($env['SERVER'])) {
-            foreach ($env['SERVER'] as $key => $val) {
-                $_SERVER[$key] = $val;
-            }
-        }
     }
 }
