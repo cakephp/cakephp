@@ -236,6 +236,7 @@ class TranslateBehaviorTest extends TestCase
                 ],
             ])
             ->enableHydration(false)
+            ->orderAsc('Articles.id')
             ->toArray();
 
         $expected = [
