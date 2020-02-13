@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Controller\Component;
 use Cake\Controller\Component\FlashComponent;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
+use Cake\Event\Event;
 use Cake\Http\ServerRequest;
 use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
@@ -72,6 +73,7 @@ class FlashComponentTest extends TestCase
                 'key' => 'flash',
                 'element' => 'flash/default',
                 'params' => [],
+                'type' => 'default',
             ],
         ];
         $result = $this->Session->read('Flash.flash');
@@ -83,6 +85,7 @@ class FlashComponentTest extends TestCase
             'key' => 'flash',
             'element' => 'flash/test',
             'params' => ['foo' => 'bar'],
+            'type' => 'default',
         ];
         $result = $this->Session->read('Flash.flash');
         $this->assertEquals($expected, $result);
@@ -93,6 +96,7 @@ class FlashComponentTest extends TestCase
             'key' => 'flash',
             'element' => 'MyPlugin.flash/alert',
             'params' => [],
+            'type' => 'default',
         ];
         $result = $this->Session->read('Flash.flash');
         $this->assertEquals($expected, $result);
@@ -104,6 +108,7 @@ class FlashComponentTest extends TestCase
                 'key' => 'foobar',
                 'element' => 'flash/default',
                 'params' => [],
+                'type' => 'default',
             ],
         ];
         $result = $this->Session->read('Flash.foobar');
@@ -132,6 +137,7 @@ class FlashComponentTest extends TestCase
                 'key' => 'flash',
                 'element' => 'flash/default',
                 'params' => ['foo' => 'bar', 'escape' => false],
+                'type' => 'default',
             ],
         ];
         $result = $this->Session->read('Flash.flash');
@@ -144,6 +150,7 @@ class FlashComponentTest extends TestCase
                 'key' => 'escaped',
                 'element' => 'flash/default',
                 'params' => ['foo' => 'bar', 'escape' => true],
+                'type' => 'default',
             ],
         ];
         $result = $this->Session->read('Flash.escaped');
@@ -167,6 +174,7 @@ class FlashComponentTest extends TestCase
                 'key' => 'flash',
                 'element' => 'flash/default',
                 'params' => [],
+                'type' => 'default',
             ],
         ];
         $result = $this->Session->read('Flash.flash');
@@ -179,6 +187,7 @@ class FlashComponentTest extends TestCase
                 'key' => 'flash',
                 'element' => 'flash/default',
                 'params' => [],
+                'type' => 'default',
             ],
         ];
         $result = $this->Session->read('Flash.flash');
@@ -202,6 +211,7 @@ class FlashComponentTest extends TestCase
                 'key' => 'flash',
                 'element' => 'flash/default',
                 'params' => ['code' => 404],
+                'type' => 'default',
             ],
         ];
         $result = $this->Session->read('Flash.flash');
@@ -225,6 +235,7 @@ class FlashComponentTest extends TestCase
                 'key' => 'flash',
                 'element' => 'flash/test',
                 'params' => [],
+                'type' => 'default',
             ],
         ];
         $result = $this->Session->read('Flash.flash');
@@ -248,6 +259,7 @@ class FlashComponentTest extends TestCase
                 'key' => 'flash',
                 'element' => 'flash/success',
                 'params' => [],
+                'type' => 'success',
             ],
         ];
         $result = $this->Session->read('Flash.flash');
@@ -260,6 +272,7 @@ class FlashComponentTest extends TestCase
             'key' => 'flash',
             'element' => 'flash/error',
             'params' => [],
+            'type' => 'error',
         ];
         $result = $this->Session->read('Flash.flash');
         $this->assertEquals($expected, $result, 'Element is ignored in magic call.');
@@ -271,6 +284,7 @@ class FlashComponentTest extends TestCase
             'key' => 'flash',
             'element' => 'MyPlugin.flash/success',
             'params' => [],
+            'type' => 'default',
         ];
         $result = $this->Session->read('Flash.flash');
         $this->assertEquals($expected, $result);
@@ -292,6 +306,7 @@ class FlashComponentTest extends TestCase
                 'key' => 'flash',
                 'element' => 'flash/success',
                 'params' => [],
+                'type' => 'success',
             ],
         ];
         $result = $this->Session->read('Flash.flash');
@@ -303,9 +318,41 @@ class FlashComponentTest extends TestCase
                 'key' => 'flash',
                 'element' => 'flash/success',
                 'params' => [],
+                'type' => 'success',
             ],
         ];
         $result = $this->Session->read('Flash.flash');
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @return void
+     */
+    public function testAjax() {
+        $_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+        $this->Controller->getRequest()->getSession()->write('Foo', 'bar');
+
+        $this->Flash->success('yes');
+        $event = new Event('Controller.startup', $this->Controller);
+        $this->Flash->beforeRender($event);
+
+        $result = $this->Controller->getResponse()->getHeaders();
+        $expected = [
+            'Content-Type' => ['text/html; charset=UTF-8'],
+        ];
+        $this->assertSame($expected, $result);
+
+        $this->Controller->setRequest($this->Controller->getRequest()->withHeader('X-Get-Flash', 'YeS'));
+
+        $this->Flash->error('no');
+        $event = new Event('Controller.startup', $this->Controller);
+        $this->Flash->beforeRender($event);
+
+        $result = $this->Controller->getResponse()->getHeaders();
+        $expected = [
+            'Content-Type' => ['text/html; charset=UTF-8'],
+            'X-Flash' => ['{"flash":[{"message":"yes","type":"success","params":[]},{"message":"no","type":"error","params":[]}]}'],
+        ];
+        $this->assertSame($expected, $result);
     }
 }

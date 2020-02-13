@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
+use Cake\Event\Event;
 use Cake\Http\Exception\InternalErrorException;
 use Cake\Http\Session;
 use Cake\Utility\Inflector;
@@ -40,6 +41,7 @@ class FlashComponent extends Component
     protected $_defaultConfig = [
         'key' => 'flash',
         'element' => 'default',
+        'type' => 'default',
         'params' => [],
         'clear' => false,
         'duplicate' => true,
@@ -162,6 +164,7 @@ class FlashComponent extends Component
         $messages[] = [
             'message' => $message,
             'key' => $options['key'],
+            'type' => $options['type'],
             'element' => $options['element'],
             'params' => $options['params'],
         ];
@@ -199,7 +202,7 @@ class FlashComponent extends Component
             throw new InternalErrorException('Flash message missing.');
         }
 
-        $options = ['element' => $element];
+        $options = ['element' => $element, 'type' => $name];
 
         if (!empty($args[1])) {
             if (!empty($args[1]['plugin'])) {
