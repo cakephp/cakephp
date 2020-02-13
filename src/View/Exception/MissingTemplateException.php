@@ -60,11 +60,11 @@ class MissingTemplateException extends Exception
      */
     public function formatMessage(): string
     {
-        $message = "{$this->type} file '{$this->file}' could not be found.";
+        $message = "{$this->type} file `{$this->file}` could not be found.";
         if ($this->paths) {
             $message .= "\n\nThe following paths were searched:\n\n";
             foreach ($this->paths as $path) {
-                $message .= "- {$path}\n";
+                $message .= "- `{$path}{$this->file}`\n";
             }
         }
 

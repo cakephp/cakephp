@@ -203,7 +203,7 @@ abstract class Cell implements EventDispatcherInterface
                 $attributes = $e->getAttributes();
                 throw new MissingCellTemplateException(
                     $name,
-                    basename($attributes['file']),
+                    $attributes['file'],
                     $attributes['paths'],
                     null,
                     $e
