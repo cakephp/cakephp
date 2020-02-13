@@ -91,6 +91,11 @@ parameters:
 			path: src/Collection/Iterator/ZipIterator.php
 
 		-
+			message: "#^Method Cake\\\\Collection\\\\Iterator\\\\ZipIterator\\:\\:toArray\\(\\) should return array but returns array\\<array, array\\|false\\>\\.$#"
+			count: 1
+			path: src/Collection/Iterator/ZipIterator.php
+
+		-
 			message: "#^Strict comparison using \\=\\=\\= between class\\-string\\<ArrayObject\\> and 'ArrayIterator' will always evaluate to false\\.$#"
 			count: 1
 			path: src/Collection/Iterator/ZipIterator.php
