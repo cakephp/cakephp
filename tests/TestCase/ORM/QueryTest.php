@@ -3417,7 +3417,8 @@ class QueryTest extends TestCase
      *
      * @return void
      */
-    public function testLeftJoinWithAndContainOnOptionalAssociation() {
+    public function testLeftJoinWithAndContainOnOptionalAssociation()
+    {
         $table = $this->getTableLocator()->get('Articles', ['table' => 'articles']);
         $table->belongsTo('Authors');
         $newArticle = $table->newEntity([
@@ -3452,8 +3453,8 @@ class QueryTest extends TestCase
                 'published' => 'Y',
                 'author' => [
                     'id' => 3,
-                    'name' => 'larry'
-                ]
+                    'name' => 'larry',
+                ],
             ],
             [
                 'id' => 3,
@@ -3463,8 +3464,8 @@ class QueryTest extends TestCase
                 'published' => 'Y',
                 'author' => [
                     'id' => 1,
-                    'name' => 'mariano'
-                ]
+                    'name' => 'mariano',
+                ],
             ],
             [
                 'id' => 4,
@@ -3472,8 +3473,8 @@ class QueryTest extends TestCase
                 'title' => 'Fourth Article',
                 'body' => 'Fourth Article Body',
                 'published' => 'N',
-                'author' => null
-            ]
+                'author' => null,
+            ],
         ];
         $this->assertEquals($expected, $results->toList());
         $table->deleteAll([]);
@@ -3496,8 +3497,8 @@ class QueryTest extends TestCase
                 'title' => 'Fourth Article',
                 'body' => 'Fourth Article Body',
                 'published' => 'N',
-                'author' => null
-            ]
+                'author' => null,
+            ],
         ];
         $this->assertEquals($expected, $results->toList());
         $this->expectException(\InvalidArgumentException::class);
