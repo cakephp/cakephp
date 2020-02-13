@@ -629,5 +629,9 @@ TEXT;
 TEXT;
         $result = $this->Text->autoParagraph($text);
         $this->assertTextEquals($expected, $result);
+
+        $expected = '';
+        $result = $this->Text->autoParagraph(null);
+        $this->assertTextEquals($expected, $result);
     }
 }
