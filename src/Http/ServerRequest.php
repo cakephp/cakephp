@@ -18,6 +18,7 @@ namespace Cake\Http;
 
 use BadMethodCallException;
 use Cake\Core\Configure;
+use Cake\Core\Exception\Exception;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Exception\MethodNotAllowedException;
 use Cake\Utility\Hash;
@@ -243,10 +244,6 @@ class ServerRequest implements ServerRequestInterface
      */
     protected function _setConfig(array $config): void
     {
-        if (strlen($config['url']) > 1 && $config['url'][0] === '/') {
-            $config['url'] = substr($config['url'], 1);
-        }
-
         if (empty($config['session'])) {
             $config['session'] = new Session([
                 'cookiePath' => $config['base'],
@@ -257,28 +254,21 @@ class ServerRequest implements ServerRequestInterface
             $config['environment']['REQUEST_METHOD'] = 'GET';
         }
 
-        $this->_environment = $config['environment'];
         $this->cookies = $config['cookies'];
 
-        if (isset($config['uri']) && $config['uri'] instanceof UriInterface) {
+        if (isset($config['uri'])) {
+            if (!$config['uri'] instanceof UriInterface) {
+                throw new Exception('The `uri` key must be an instance of ' . UriInterface::class);
+            }
             $uri = $config['uri'];
         } else {
+            if ($config['url'] !== '') {
+                $config = $this->processUrlOption($config);
+            }
             $uri = ServerRequestFactory::createUri($config['environment']);
         }
 
-        // Extract a query string from config[url] if present.
-        // This is required for backwards compatibility and keeping
-        // UriInterface implementations happy.
-        $querystr = '';
-        if (strpos($config['url'], '?') !== false) {
-            [$config['url'], $querystr] = explode('?', $config['url']);
-        }
-        if (strlen($config['url'])) {
-            $uri = $uri->withPath('/' . $config['url']);
-        }
-        if (strlen($querystr)) {
-            $uri = $uri->withQuery($querystr);
-        }
+        $this->_environment = $config['environment'];
 
         $this->uri = $uri;
         $this->base = $config['base'];
@@ -295,28 +285,35 @@ class ServerRequest implements ServerRequestInterface
 
         $this->data = $config['post'];
         $this->uploadedFiles = $config['files'];
-        $this->query = $this->_processGet($config['query'], $querystr);
+        $this->query = $config['query'];
         $this->params = $config['params'];
         $this->session = $config['session'];
     }
 
     /**
-     * Process the GET parameters and move things into the object.
+     * Set environment vars based on `url` option to facilitate UriInterface instance generation.
      *
-     * @param array $query The array to which the parsed keys/values are being added.
-     * @param string $queryString A query string from the URL if provided
-     * @return array An array containing the parsed query string as keys/values.
+     * `query` option is also updated based on URL's querystring.
+     *
+     * @param array $config Config array.
+     * @return array Update config.
      */
-    protected function _processGet(array $query, string $queryString = ''): array
+    protected function processUrlOption(array $config): array
     {
-        $unsetUrl = str_replace(['.', ' '], '_', urldecode($this->uri->getPath()));
-        unset($query[$unsetUrl], $query[$this->base . $unsetUrl]);
-        if (strlen($queryString)) {
-            parse_str($queryString, $queryArgs);
-            $query += $queryArgs;
+        if ($config['url'][0] !== '/') {
+            $config['url'] = '/' . $config['url'];
         }
 
-        return $query;
+        if (strpos($config['url'], '?') !== false) {
+            [$config['url'], $config['environment']['QUERY_STRING']] = explode('?', $config['url']);
+
+            parse_str($config['environment']['QUERY_STRING'], $queryArgs);
+            $config['query'] += $queryArgs;
+        }
+
+        $config['environment']['REQUEST_URI'] = $config['url'];
+
+        return $config;
     }
 
     /**
