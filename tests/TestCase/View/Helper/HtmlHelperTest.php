@@ -1888,8 +1888,12 @@ class HtmlHelperTest extends TestCase
      */
     public function testPara()
     {
-        $result = $this->Html->para('class-name', '');
+        $result = $this->Html->para('class-name', null);
         $expected = ['p' => ['class' => 'class-name']];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Html->para('class-name', '');
+        $expected = ['p' => ['class' => 'class-name'], '/p'];
         $this->assertHtml($expected, $result);
 
         $result = $this->Html->para('class-name', 'text');
@@ -1902,6 +1906,14 @@ class HtmlHelperTest extends TestCase
 
         $result = $this->Html->para('class-name', 'text"', ['escape' => false]);
         $expected = ['p' => ['class' => 'class-name'], 'text"', '/p'];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Html->para(null, null);
+        $expected = ['p' => []];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Html->para(null, 'text');
+        $expected = ['p' => [], 'text', '/p'];
         $this->assertHtml($expected, $result);
     }
 
