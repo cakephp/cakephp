@@ -73,7 +73,7 @@ class FlashComponent extends Component
             return null;
         }
 
-        $flash = $session->read("Flash.$key");
+        $flash = $session->read("Flash");
         if (!is_array($flash)) {
             throw new UnexpectedValueException('Value for Flash setting must be an array');
         }
@@ -81,11 +81,17 @@ class FlashComponent extends Component
 
 		$array = [];
 		foreach ($flash as $key => $stack) {
+            if (!is_array($stack)) {
+                throw new UnexpectedValueException(sprintf(
+                    'Value for flash setting key "%s" must be an array.',
+                    $key
+                ));
+            }
 			foreach ($stack as $message) {
 				$array[$key][] = [
-					'message' => $message['message'],
-					'type' => $message['type'],
-					'params' => $message['params'],
+					'message' => $message['message'] ?? null,
+					'type' => $message['type'] ?? null,
+					'params' => $message['params'] ?? null,
 				];
 			}
 		}
