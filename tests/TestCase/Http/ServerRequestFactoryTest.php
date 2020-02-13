@@ -122,17 +122,6 @@ class ServerRequestFactoryTest extends TestCase
     }
 
     /**
-     * Test fromGlobals input
-     *
-     * @return void
-     */
-    public function testFromGlobalsInput()
-    {
-        $res = ServerRequestFactory::fromGlobals();
-        $this->assertSame('', $res->input());
-    }
-
-    /**
      * Test fromGlobals includes the session
      *
      * @preserveGlobalState disabled
