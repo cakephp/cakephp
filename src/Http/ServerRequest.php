@@ -285,7 +285,7 @@ class ServerRequest implements ServerRequestInterface
 
         $this->data = $config['post'];
         $this->uploadedFiles = $config['files'];
-        $this->query = $this->_processGet($config['query']);
+        $this->query = $config['query'];
         $this->params = $config['params'];
         $this->session = $config['session'];
     }
@@ -314,20 +314,6 @@ class ServerRequest implements ServerRequestInterface
         $config['environment']['REQUEST_URI'] = $config['url'];
 
         return $config;
-    }
-
-    /**
-     * Process the GET parameters and move things into the object.
-     *
-     * @param array $query The array to which the parsed keys/values are being added.
-     * @return array An array containing the parsed query string as keys/values.
-     */
-    protected function _processGet(array $query): array
-    {
-        $unsetUrl = str_replace(['.', ' '], '_', urldecode($this->uri->getPath()));
-        unset($query[$unsetUrl], $query[$this->base . $unsetUrl]);
-
-        return $query;
     }
 
     /**

@@ -1569,7 +1569,6 @@ class ServerRequestTest extends TestCase
     public function testGetParamsWithDot()
     {
         $_GET = [];
-        $_GET['/posts/index/add_add'] = '';
         $_SERVER['PHP_SELF'] = '/webroot/index.php';
         $_SERVER['REQUEST_URI'] = '/posts/index/add.add';
         $request = ServerRequestFactory::fromGlobals();
@@ -1577,7 +1576,6 @@ class ServerRequestTest extends TestCase
         $this->assertEquals([], $request->getQueryParams());
 
         $_GET = [];
-        $_GET['/cake_dev/posts/index/add_add'] = '';
         $_SERVER['PHP_SELF'] = '/cake_dev/webroot/index.php';
         $_SERVER['REQUEST_URI'] = '/cake_dev/posts/index/add.add';
         $request = ServerRequestFactory::fromGlobals();
@@ -1593,7 +1591,6 @@ class ServerRequestTest extends TestCase
     public function testGetParamWithUrlencodedElement()
     {
         $_GET = [];
-        $_GET['/posts/add/∂∂'] = '';
         $_SERVER['PHP_SELF'] = '/webroot/index.php';
         $_SERVER['REQUEST_URI'] = '/posts/add/%E2%88%82%E2%88%82';
         $request = ServerRequestFactory::fromGlobals();
@@ -1601,7 +1598,6 @@ class ServerRequestTest extends TestCase
         $this->assertEquals([], $request->getQueryParams());
 
         $_GET = [];
-        $_GET['/cake_dev/posts/add/∂∂'] = '';
         $_SERVER['PHP_SELF'] = '/cake_dev/webroot/index.php';
         $_SERVER['REQUEST_URI'] = '/cake_dev/posts/add/%E2%88%82%E2%88%82';
         $request = ServerRequestFactory::fromGlobals();
@@ -1708,7 +1704,6 @@ class ServerRequestTest extends TestCase
                         'dir' => 'TestApp',
                         'webroot' => 'webroot',
                     ],
-                    'GET' => ['/posts/add' => ''],
                     'SERVER' => [
                         'SCRIPT_NAME' => '/site/index.php',
                         'PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot',
@@ -1962,13 +1957,11 @@ class ServerRequestTest extends TestCase
                         'dir' => 'TestApp',
                         'webroot' => 'webroot',
                     ],
-                    'GET' => ['/posts/add' => ''],
                     'SERVER' => [
                         'SERVER_NAME' => 'localhost',
                         'DOCUMENT_ROOT' => '/Library/WebServer/Documents/site/webroot',
                         'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/webroot/index.php',
                         'SCRIPT_NAME' => '/index.php',
-                        'QUERY_STRING' => '/posts/add&',
                         'PHP_SELF' => '/index.php',
                         'PATH_INFO' => null,
                         'REQUEST_URI' => '/posts/add',
@@ -1990,13 +1983,11 @@ class ServerRequestTest extends TestCase
                         'dir' => 'app',
                         'webroot' => 'webroot',
                     ],
-                    'GET' => ['/site/posts/add' => ''],
                     'SERVER' => [
                         'SERVER_NAME' => 'localhost',
                         'DOCUMENT_ROOT' => '/Library/WebServer/Documents',
                         'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/App/webroot/index.php',
                         'SCRIPT_NAME' => '/site/app/webroot/index.php',
-                        'QUERY_STRING' => '/site/posts/add&',
                         'PHP_SELF' => '/site/webroot/index.php',
                         'PATH_INFO' => null,
                         'REQUEST_URI' => '/site/posts/add',
