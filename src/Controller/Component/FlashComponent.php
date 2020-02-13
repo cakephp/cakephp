@@ -45,6 +45,57 @@ class FlashComponent extends Component
         'duplicate' => true,
     ];
 
+	/**
+	 * Called after the Controller::beforeRender(), after the view class is loaded, and before the
+	 * Controller::render()
+	 *
+	 * @param \Cake\Event\Event $event
+	 * @return \Cake\Http\Response|null
+	 */
+	public function beforeRender(Event $event) {
+		/** @var \Cake\Controller\Controller $controller */
+		$controller = $event->getSubject();
+
+        if (!$controller->getRequest()->is('ajax')) {
+			return null;
+		}
+
+        if (!in_array('yes', array_map( // case insensitive
+			'strtolower',
+			$controller->getRequest()->getHeader('X-Get-Flash')
+		), true)) {
+			return null;
+		}
+
+        $session = $controller->getRequest()->getSession();
+
+        if (!$session->check("Flash")) {
+            return null;
+        }
+
+        $flash = $session->read("Flash.$key");
+        if (!is_array($flash)) {
+            throw new UnexpectedValueException('Value for Flash setting must be an array');
+        }
+        $session->delete('Flash');
+
+		$array = [];
+		foreach ($flash as $key => $stack) {
+			foreach ($stack as $message) {
+				$array[$key][] = [
+					'message' => $message['message'],
+					'type' => $message['type'],
+					'params' => $message['params'],
+				];
+			}
+		}
+
+		// The header can be processed by the client side JavaScript to display flash messages
+		$this->getController()->setResponse($controller->getResponse()->withHeader('X-Flash', json_encode($array)));
+
+		return null;
+	}
+
     /**
      * Used to set a session variable that can be used to output messages in the view.
      * If you make consecutive calls to this method, the messages will stack (if they are
