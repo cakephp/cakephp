@@ -219,11 +219,24 @@ class CounterCacheBehavior extends Behavior
         array $settings
     ): void {
         $foreignKeys = (array)$assoc->getForeignKey();
-        $primaryKeys = (array)$assoc->getBindingKey();
         $countConditions = $entity->extract($foreignKeys);
-        $updateConditions = array_combine($primaryKeys, $countConditions);
-        $countOriginalConditions = $entity->extractOriginalChanged($foreignKeys);
+        $allNulls = true;
+        foreach ($countConditions as $field => $value) {
+            if ($value === null) {
+                $countConditions[$field . ' IS'] = $value;
+                unset($countConditions[$field]);
+            } else {
+                $allNulls = false;
+            }
+        }
+        if ($allNulls) {
+            return;
+        }
 
+        $primaryKeys = (array)$assoc->getBindingKey();
+        $updateConditions = array_combine($primaryKeys, $countConditions);
+
+        $countOriginalConditions = $entity->extractOriginalChanged($foreignKeys);
         if ($countOriginalConditions !== []) {
             $updateOriginalConditions = array_combine($primaryKeys, $countOriginalConditions);
         }

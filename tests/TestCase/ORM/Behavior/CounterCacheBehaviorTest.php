@@ -176,6 +176,27 @@ class CounterCacheBehaviorTest extends TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testSaveWithNullForeignKey()
+    {
+        $this->comment->belongsTo('Users');
+
+        $this->comment->addBehavior('CounterCache', [
+            'Users' => [
+                'comment_count',
+            ],
+        ]);
+
+        $entity = new Entity([
+            'title' => 'Orphan comment',
+            'user_id' => null,
+        ]);
+        $this->comment->saveOrFail($entity);
+        $this->assertTrue(true);
+    }
+
+    /**
      * Testing simple counter caching when deleting a record
      *
      * @return void
