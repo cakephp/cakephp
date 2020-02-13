@@ -18,7 +18,6 @@ use Cake\Chronos\Chronos;
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
 use Cake\Error\Debug\TextFormatter;
-use Cake\Error\Debugger;
 use Cake\Log\Log;
 use Cake\Utility\Security;
 

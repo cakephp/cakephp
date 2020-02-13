@@ -18,8 +18,8 @@ namespace Cake\Test\TestCase\Error;
 
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
-use Cake\Error\Debugger;
 use Cake\Error\Debug\TextFormatter;
+use Cake\Error\Debugger;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use RuntimeException;
