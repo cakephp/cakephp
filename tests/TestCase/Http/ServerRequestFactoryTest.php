@@ -30,71 +30,16 @@ use Psr\Http\Message\UploadedFileInterface;
 class ServerRequestFactoryTest extends TestCase
 {
     /**
-     * @var array|null
-     */
-    protected $server;
-
-    /**
-     * @var array|null
-     */
-    protected $post;
-
-    /**
-     * @var array|null
-     */
-    protected $files;
-
-    /**
-     * @var array|null
-     */
-    protected $cookies;
-
-    /**
-     * @var array|null
-     */
-    protected $get;
-
-    /**
-     * setup
-     *
-     * @return void
-     */
-    public function setUp(): void
-    {
-        parent::setUp();
-        $this->server = $_SERVER;
-        $this->post = $_POST;
-        $this->files = $_FILES;
-        $this->cookies = $_COOKIE;
-        $this->get = $_GET;
-    }
-
-    /**
-     * teardown
-     *
-     * @return void
-     */
-    public function tearDown(): void
-    {
-        parent::tearDown();
-        $_SERVER = $this->server;
-        $_POST = $this->post;
-        $_FILES = $this->files;
-        $_COOKIE = $this->cookies;
-        $_GET = $this->get;
-    }
-
-    /**
      * Test fromGlobals reads super globals
      *
      * @return void
      */
     public function testFromGlobalsSuperGlobals()
     {
-        $_POST = [
+        $post = [
             'title' => 'custom',
         ];
-        $_FILES = [
+        $files = [
             'image' => [
                 'tmp_name' => __FILE__,
                 'error' => 0,
@@ -103,22 +48,22 @@ class ServerRequestFactoryTest extends TestCase
                 'size' => 2112,
             ],
         ];
-        $_COOKIE = ['key' => 'value'];
-        $_GET = ['query' => 'string'];
-        $res = ServerRequestFactory::fromGlobals();
-        $this->assertSame($_COOKIE['key'], $res->getCookie('key'));
-        $this->assertSame($_GET['query'], $res->getQuery('query'));
+        $cookies = ['key' => 'value'];
+        $query = ['query' => 'string'];
+        $res = ServerRequestFactory::fromGlobals([], $query, $post, $cookies, $files);
+        $this->assertSame($cookies['key'], $res->getCookie('key'));
+        $this->assertSame($query['query'], $res->getQuery('query'));
         $this->assertArrayHasKey('title', $res->getData());
         $this->assertArrayHasKey('image', $res->getData());
         $this->assertCount(1, $res->getUploadedFiles());
 
-        /** @var \Laminas\Diactoros\UploadedFile $expected */
+        /** @var \Psr\Http\Message\UploadedFileInterface $expected */
         $expected = $res->getData('image');
         $this->assertInstanceOf(UploadedFileInterface::class, $expected);
-        $this->assertSame($_FILES['image']['size'], $expected->getSize());
-        $this->assertSame($_FILES['image']['error'], $expected->getError());
-        $this->assertSame($_FILES['image']['name'], $expected->getClientFilename());
-        $this->assertSame($_FILES['image']['type'], $expected->getClientMediaType());
+        $this->assertSame($files['image']['size'], $expected->getSize());
+        $this->assertSame($files['image']['error'], $expected->getError());
+        $this->assertSame($files['image']['name'], $expected->getClientFilename());
+        $this->assertSame($files['image']['type'], $expected->getClientMediaType());
     }
 
     /**
