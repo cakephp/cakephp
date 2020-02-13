@@ -830,13 +830,15 @@ class EagerLoader
         $keys = [];
         foreach (($statement->fetchAll('assoc') ?: []) as $result) {
             foreach ($collectKeys as $nestKey => $parts) {
-                // Missed joins will have null in the results.
-                if ($parts[2] === true && !isset($result[$parts[1][0]])) {
-                    continue;
-                }
                 if ($parts[2] === true) {
-                    $value = $result[$parts[1][0]];
-                    $keys[$nestKey][$parts[0]][$value] = $value;
+                    // Missed joins will have null in the results.
+                    // Assign empty array to avoid not found association when optional.
+                    if (empty($keys[$nestKey][$parts[0]]) && !isset($result[$parts[1][0]])) {
+                        $keys[$nestKey][$parts[0]] = [];
+                    } else {
+                        $value = $result[$parts[1][0]];
+                        $keys[$nestKey][$parts[0]][$value] = $value;
+                    }
                     continue;
                 }
 
