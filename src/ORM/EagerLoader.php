@@ -832,6 +832,9 @@ class EagerLoader
             foreach ($collectKeys as $nestKey => $parts) {
                 if ($parts[2] === true) {
                     // Missed joins will have null in the results.
+                    if (!array_key_exists($parts[1][0], $result)) {
+                        continue;
+                    }
                     // Assign empty array to avoid not found association when optional.
                     if (empty($keys[$nestKey][$parts[0]]) && !isset($result[$parts[1][0]])) {
                         $keys[$nestKey][$parts[0]] = [];
@@ -850,7 +853,6 @@ class EagerLoader
                 $keys[$nestKey][$parts[0]][implode(';', $collected)] = $collected;
             }
         }
-
         $statement->rewind();
 
         return $keys;
