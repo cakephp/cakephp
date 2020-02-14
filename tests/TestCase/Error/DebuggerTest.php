@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Error;
 
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
+use Cake\Error\Debug\TextFormatter;
 use Cake\Error\Debugger;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
@@ -51,6 +52,7 @@ class DebuggerTest extends TestCase
         Configure::write('debug', true);
         Log::drop('stderr');
         Log::drop('stdout');
+        Debugger::configInstance('exportFormatter', TextFormatter::class);
     }
 
     /**
@@ -73,13 +75,12 @@ class DebuggerTest extends TestCase
      */
     public function testDocRef()
     {
-        $this->skipIf(
-            defined('HHVM_VERSION'),
-            'HHVM does not output doc references'
-        );
         ini_set('docref_root', '');
         $this->assertEquals(ini_get('docref_root'), '');
-        new Debugger();
+        // Force a new instance.
+        Debugger::getInstance(TestDebugger::class);
+        Debugger::getInstance(Debugger::class);
+
         $this->assertEquals(ini_get('docref_root'), 'https://secure.php.net/');
     }
 
@@ -655,6 +656,22 @@ eos;
     }
 
     /**
+     * Test configure based output mask configuration
+     *
+     * @return void
+     */
+    public function testConfigureOutputMask()
+    {
+        Configure::write('Debugger.outputMask', ['wow' => 'xxx']);
+        Debugger::getInstance(TestDebugger::class);
+        Debugger::getInstance(Debugger::class);
+
+        $result = Debugger::exportVar(['wow' => 'pass1234']);
+        $this->assertStringContainsString('xxx', $result);
+        $this->assertStringNotContainsString('pass1234', $result);
+    }
+
+    /**
      * Tests the masking of an array key.
      *
      * @return void
@@ -814,6 +831,21 @@ EXPECTED;
         Debugger::setEditor('emacs');
         // No exceptions raised.
         $this->assertTrue(true);
+    }
+
+    /**
+     * Test configure based editor setup
+     *
+     * @return void
+     */
+    public function testConfigureEditor()
+    {
+        Configure::write('Debugger.editor', 'emacs');
+        Debugger::getInstance(TestDebugger::class);
+        Debugger::getInstance(Debugger::class);
+
+        $result = Debugger::editorUrl('file.php', 123);
+        $this->assertStringContainsString('emacs://', $result);
     }
 
     /**

@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Error;
 
+use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Error\Debug\ArrayItemNode;
 use Cake\Error\Debug\ArrayNode;
@@ -138,13 +139,15 @@ class Debugger
     public function __construct()
     {
         $docRef = ini_get('docref_root');
-
         if (empty($docRef) && function_exists('ini_set')) {
             ini_set('docref_root', 'https://secure.php.net/');
         }
         if (!defined('E_RECOVERABLE_ERROR')) {
             define('E_RECOVERABLE_ERROR', 4096);
         }
+
+        $config = array_intersect_key((array)Configure::read('Debugger'), $this->_defaultConfig);
+        $this->setConfig($config);
 
         $e = '<pre class="cake-error">';
         $e .= '<a href="javascript:void(0);" onclick="document.getElementById(\'{:id}-trace\')';
