@@ -52,7 +52,7 @@ class FlashComponent extends Component
      * Called after the Controller::beforeRender(), after the view class is loaded, and before the
      * Controller::render()
      *
-     * @param EventInterface $event Event.
+     * @param \Cake\Event\EventInterface $event Event.
      * @return \Cake\Http\Response|null
      */
     public function beforeRender(EventInterface $event)
