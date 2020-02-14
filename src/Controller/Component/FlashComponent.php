@@ -22,7 +22,7 @@ use Cake\Http\Exception\InternalErrorException;
 use Cake\Http\Session;
 use Cake\Utility\Inflector;
 use Exception;
-use http\Exception\UnexpectedValueException;
+use UnexpectedValueException;
 
 /**
  * The CakePHP FlashComponent provides a way for you to write a flash variable
