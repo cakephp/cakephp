@@ -3477,22 +3477,16 @@ class QueryTest extends TestCase
             ],
         ];
         $this->assertEquals($expected, $results->toList());
-        $table->deleteAll([]);
-        $newArticle = $table->newEntity([
-            'title' => 'Fourth Article',
-            'body' => 'Fourth Article Body',
-            'published' => 'N',
-        ]);
-        $table->save($newArticle);
         $results = $table
             ->find()
             ->disableHydration()
             ->contain('Authors')
             ->leftJoinWith('Authors')
+            ->where(['Articles.author_id is' => null])
             ->all();
         $expected = [
             [
-                'id' => 5,
+                'id' => 4,
                 'author_id' => null,
                 'title' => 'Fourth Article',
                 'body' => 'Fourth Article Body',
