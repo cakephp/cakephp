@@ -836,8 +836,10 @@ class EagerLoader
                         continue;
                     }
                     // Assign empty array to avoid not found association when optional.
-                    if (empty($keys[$nestKey][$parts[0]]) && !isset($result[$parts[1][0]])) {
-                        $keys[$nestKey][$parts[0]] = [];
+                    if (!isset($result[$parts[1][0]])) {
+                        if (!isset($keys[$nestKey][$parts[0]])) {
+                            $keys[$nestKey][$parts[0]] = [];
+                        }
                     } else {
                         $value = $result[$parts[1][0]];
                         $keys[$nestKey][$parts[0]][$value] = $value;
