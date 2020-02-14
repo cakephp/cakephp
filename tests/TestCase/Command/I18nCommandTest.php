@@ -16,13 +16,16 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Command;
 
-use Cake\TestSuite\ConsoleIntegrationTestCase;
+use Cake\TestSuite\ConsoleIntegrationTestTrait;
+use Cake\TestSuite\TestCase;
 
 /**
  * I18nCommand test.
  */
-class I18nCommandTest extends ConsoleIntegrationTestCase
+class I18nCommandTest extends TestCase
 {
+    use ConsoleIntegrationTestTrait;
+
     /**
      * setup method
      *
