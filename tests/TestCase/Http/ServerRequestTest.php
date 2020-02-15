@@ -247,6 +247,7 @@ class ServerRequestTest extends TestCase
      * Test parsing json PUT data into the object.
      *
      * @return void
+     * @group deprecated
      */
     public function testPutParsingJSON()
     {
@@ -259,8 +260,11 @@ class ServerRequestTest extends TestCase
             ],
         ]);
         $this->assertEquals([], $request->getData());
-        $result = $request->input('json_decode', true);
-        $this->assertEquals(['title'], $result['Article']);
+
+        $this->deprecated(function () use ($request) {
+            $result = $request->input('json_decode', true);
+            $this->assertEquals(['title'], $result['Article']);
+        });
     }
 
     /**
@@ -2353,14 +2357,18 @@ class ServerRequestTest extends TestCase
         $request = new ServerRequest([
             'input' => 'I came from stdin',
         ]);
-        $result = $request->input();
-        $this->assertSame('I came from stdin', $result);
+
+        $this->deprecated(function () use ($request) {
+            $result = $request->input();
+            $this->assertSame('I came from stdin', $result);
+        });
     }
 
     /**
      * Test input() decoding.
      *
      * @return void
+     * @group deprecated
      */
     public function testInputDecode()
     {
@@ -2368,14 +2376,17 @@ class ServerRequestTest extends TestCase
             'input' => '{"name":"value"}',
         ]);
 
-        $result = $request->input('json_decode');
-        $this->assertEquals(['name' => 'value'], (array)$result);
+        $this->deprecated(function () use ($request) {
+            $result = $request->input('json_decode');
+            $this->assertEquals(['name' => 'value'], (array)$result);
+        });
     }
 
     /**
      * Test input() decoding with additional arguments.
      *
      * @return void
+     * @group deprecated
      */
     public function testInputDecodeExtraParams()
     {
@@ -2390,12 +2401,14 @@ XML;
             'input' => $xml,
         ]);
 
-        $result = $request->input('Cake\Utility\Xml::build', ['return' => 'domdocument']);
-        $this->assertInstanceOf('DOMDocument', $result);
-        $this->assertEquals(
-            'Test',
-            $result->getElementsByTagName('title')->item(0)->childNodes->item(0)->wholeText
-        );
+        $this->deprecated(function () use ($request) {
+            $result = $request->input('Cake\Utility\Xml::build', ['return' => 'domdocument']);
+            $this->assertInstanceOf('DOMDocument', $result);
+            $this->assertEquals(
+                'Test',
+                $result->getElementsByTagName('title')->item(0)->childNodes->item(0)->wholeText
+            );
+        });
     }
 
     /**
