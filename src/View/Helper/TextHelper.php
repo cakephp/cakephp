@@ -295,12 +295,13 @@ class TextHelper extends Helper
      *  <br /> added for single line return
      *  <p> added for double line return
      *
-     * @param string $text Text
+     * @param string|null $text Text
      * @return string The text with proper <p> and <br /> tags
      * @link https://book.cakephp.org/4/en/views/helpers/text.html#converting-text-into-paragraphs
      */
-    public function autoParagraph(string $text): string
+    public function autoParagraph(?string $text): string
     {
+        $text = $text ?? '';
         if (trim($text) !== '') {
             $text = preg_replace('|<br[^>]*>\s*<br[^>]*>|i', "\n\n", $text . "\n");
             $text = preg_replace("/\n\n+/", "\n\n", str_replace(["\r\n", "\r"], "\n", $text));
