@@ -17,15 +17,18 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Command;
 
 use Cake\Core\Configure;
-use Cake\Filesystem\Folder;
-use Cake\TestSuite\ConsoleIntegrationTestCase;
+use Cake\Filesystem\Filesystem;
+use Cake\TestSuite\ConsoleIntegrationTestTrait;
+use Cake\TestSuite\TestCase;
 
 /**
  * I18nExtractCommandTest
  *
  */
-class I18nExtractCommandTest extends ConsoleIntegrationTestCase
+class I18nExtractCommandTest extends TestCase
 {
+    use ConsoleIntegrationTestTrait;
+
     /**
      * setUp method
      *
@@ -38,7 +41,9 @@ class I18nExtractCommandTest extends ConsoleIntegrationTestCase
         $this->setAppNamespace();
 
         $this->path = TMP . 'tests/extract_task_test';
-        new Folder($this->path . DS . 'locale', true);
+        $fs = new Filesystem();
+        $fs->deleteDir($this->path);
+        $fs->mkdir($this->path . DS . 'locale');
     }
 
     /**
@@ -50,8 +55,8 @@ class I18nExtractCommandTest extends ConsoleIntegrationTestCase
     {
         parent::tearDown();
 
-        $Folder = new Folder($this->path);
-        $Folder->delete();
+        $fs = new Filesystem();
+        $fs->deleteDir($this->path);
         $this->clearPlugins();
     }
 

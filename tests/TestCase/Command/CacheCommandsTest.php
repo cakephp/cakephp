@@ -18,13 +18,16 @@ namespace Cake\Test\TestCase\Command;
 
 use Cake\Cache\Cache;
 use Cake\Console\Shell;
-use Cake\TestSuite\ConsoleIntegrationTestCase;
+use Cake\TestSuite\ConsoleIntegrationTestTrait;
+use Cake\TestSuite\TestCase;
 
 /**
  * Cache Commands tests.
  */
-class CacheCommandsTest extends ConsoleIntegrationTestCase
+class CacheCommandsTest extends TestCase
 {
+    use ConsoleIntegrationTestTrait;
+
     /**
      * setup method
      *

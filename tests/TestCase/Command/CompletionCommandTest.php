@@ -19,13 +19,16 @@ namespace Cake\Test\TestCase\Command;
 use Cake\Command\Command;
 use Cake\Core\Configure;
 use Cake\Routing\Router;
-use Cake\TestSuite\ConsoleIntegrationTestCase;
+use Cake\TestSuite\ConsoleIntegrationTestTrait;
+use Cake\TestSuite\TestCase;
 
 /**
  * CompletionCommandTest
  */
-class CompletionCommandTest extends ConsoleIntegrationTestCase
+class CompletionCommandTest extends TestCase
 {
+    use ConsoleIntegrationTestTrait;
+
     /**
      * setUp method
      *

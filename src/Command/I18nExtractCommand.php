@@ -148,7 +148,7 @@ class I18nExtractCommand extends Command
                 "Current paths: %s\nWhat is the path you would like to extract?\n[Q]uit [D]one",
                 implode(', ', $currentPaths)
             );
-            $response = $io->ask($message, $defaultPaths[$defaultPathIndex]);
+            $response = $io->ask($message, $defaultPaths[$defaultPathIndex] ?? 'D');
             if (strtoupper($response) === 'Q') {
                 $io->err('Extract Aborted');
                 $this->abort();
