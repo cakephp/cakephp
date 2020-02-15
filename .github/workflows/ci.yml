@@ -78,6 +78,50 @@ jobs:
           vendor/bin/phpunit --verbose
         fi
 
+  testsuite-windows:
+    runs-on: windows-2019
+    name: PHP 7 && MSSQL
+
+    services:
+      redis:
+        image: redis
+        ports:
+          - 6379/tcp
+      mssql:
+        image: microsoft/mssql-server-windows-express
+        ports:
+          - 1433:1433
+        env:
+          - sa_password: Password12!
+          - ACCEPT_EULA: Y
+
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        fetch-depth: 1
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v1
+      with:
+        php-version: '7.2'
+        extensions: mbstring, intl, apcu, pdo_sqlsrv
+        ini-values: apc.enable_cli = 1
+        coverage: none
+
+    - name: Setup SQLServer
+      run: |
+        sqlcmd -S localhost,1433 -U sa -P Password12! -Q "create database cakephp;"
+
+    - name: composer install
+      run: composer install
+
+    - name: Run PHPUnit
+      env:
+        REDIS_PORT: ${{ job.services.redis.ports['6379'] }}
+        DB_DSN: 'sqlserver://sa:Password12!@localhost/cakephp?MultipleActiveResultSets=false'
+      run: |
+          vendor/bin/phpunit
+
   coding-standard:
     name: Coding Standard
     runs-on: ubuntu-18.04
