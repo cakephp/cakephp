@@ -18,7 +18,7 @@ namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\ConsoleIo;
 use Cake\Console\Exception\StopException;
-use Cake\Filesystem\Folder;
+use Cake\Filesystem\Filesystem;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 
@@ -78,8 +78,8 @@ class ConsoleIoTest extends TestCase
     {
         parent::tearDown();
         if (is_dir(TMP . 'shell_test')) {
-            $folder = new Folder(TMP . 'shell_test');
-            $folder->delete();
+            $fs = new Filesystem();
+            $fs->deleteDir(TMP . 'shell_test');
         }
     }
 
