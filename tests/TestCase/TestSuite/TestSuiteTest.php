@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\TestSuite;
 
-use Cake\Filesystem\Folder;
+use Cake\Filesystem\Filesystem;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -74,11 +74,13 @@ class TestSuiteTest extends TestCase
     {
         $this->skipIf(!is_writable(TMP), 'Cant addTestDirectoryRecursiveWithHidden unless the tmp folder is writable.');
 
-        $Folder = new Folder(TMP . 'MyTestFolder', true, 0777);
-        mkdir($Folder->path . DS . '.svn', 0777, true);
-        touch($Folder->path . DS . '.svn/InHiddenFolderTest.php');
-        touch($Folder->path . DS . 'NotHiddenTest.php');
-        touch($Folder->path . DS . '.HiddenTest.php');
+        $path = TMP . 'MyTestFolder';
+        $fs = new Filesystem();
+        $fs->mkdir($path);
+        mkdir($path . DS . '.svn', 0777, true);
+        touch($path . DS . '.svn/InHiddenFolderTest.php');
+        touch($path . DS . 'NotHiddenTest.php');
+        touch($path . DS . '.HiddenTest.php');
 
         $suite = $this->getMockBuilder('Cake\TestSuite\TestSuite')
             ->setMethods(['addTestFile'])
@@ -87,9 +89,9 @@ class TestSuiteTest extends TestCase
             ->expects($this->exactly(1))
             ->method('addTestFile');
 
-        $suite->addTestDirectoryRecursive($Folder->pwd());
+        $suite->addTestDirectoryRecursive($path);
 
-        $Folder->delete();
+        $fs->deleteDir($path);
     }
 
     /**
@@ -101,10 +103,12 @@ class TestSuiteTest extends TestCase
     {
         $this->skipIf(!is_writable(TMP), 'Cant addTestDirectoryRecursiveWithNonPhp unless the tmp folder is writable.');
 
-        $Folder = new Folder(TMP . 'MyTestFolder', true, 0777);
-        touch($Folder->path . DS . 'BackupTest.php~');
-        touch($Folder->path . DS . 'SomeNotesTest.txt');
-        touch($Folder->path . DS . 'NotHiddenTest.php');
+        $path = TMP . 'MyTestFolder';
+        $fs = new Filesystem();
+        $fs->mkdir($path);
+        touch($path . DS . 'BackupTest.php~');
+        touch($path . DS . 'SomeNotesTest.txt');
+        touch($path . DS . 'NotHiddenTest.php');
 
         $suite = $this->getMockBuilder('Cake\TestSuite\TestSuite')
             ->setMethods(['addTestFile'])
@@ -113,8 +117,8 @@ class TestSuiteTest extends TestCase
             ->expects($this->exactly(1))
             ->method('addTestFile');
 
-        $suite->addTestDirectoryRecursive($Folder->pwd());
+        $suite->addTestDirectoryRecursive($path);
 
-        $Folder->delete();
+        $fs->deleteDir($path);
     }
 }

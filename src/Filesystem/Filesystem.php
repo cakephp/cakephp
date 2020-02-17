@@ -143,8 +143,8 @@ class Filesystem
             $success = @file_put_contents($filename, $content, LOCK_EX);
         }
 
-        if (!$success) {
-            throw new Exception(sprintf('Failed dumping content to file "%s"', $dir));
+        if ($success === false) {
+            throw new Exception(sprintf('Failed dumping content to file `%s`', $dir));
         }
 
         if (!$exists) {
