@@ -2033,11 +2033,14 @@ class ValidationTest extends TestCase
         $this->skipIf(DS === '\\', 'The locale is not supported in Windows and affects other tests.');
         $this->skipIf(Locale::setDefault('da_DK') === false, "The Danish locale isn't available.");
 
-        $this->assertTrue(Validation::decimal(1.54), '1.54 should be considered a valid float');
-        $this->assertTrue(Validation::decimal('1.54'), '"1.54" should be considered a valid float');
+        $this->assertTrue(Validation::decimal(1.54), '1.54 should be considered a valid decimal');
+        $this->assertTrue(Validation::decimal('1.54'), '"1.54" should be considered a valid decimal');
 
-        $this->assertTrue(Validation::decimal(12345.67), '12345.67 should be considered a valid float');
-        $this->assertTrue(Validation::decimal('12,345.67'), '"12,345.67" should be considered a valid float');
+        $this->assertTrue(Validation::decimal(12345.67), '12345.67 should be considered a valid decimal');
+        $this->assertTrue(Validation::decimal('12,345.67'), '"12,345.67" should be considered a valid decimal');
+
+        $this->skipIf(Locale::setDefault('pl_PL') === false, "The Polish locale isn't available.");
+        $this->assertTrue(Validation::decimal('1 200,99'), 'should be considered a valid decimal');
     }
 
     /**
