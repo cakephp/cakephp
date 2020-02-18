@@ -291,7 +291,7 @@ class RouteBuilder
      * Admin prefix:
      *
      * ```
-     * Router::prefix('admin', function ($routes) {
+     * Router::prefix('Admin', function ($routes) {
      *   $routes->resources('Articles');
      * });
      * ```
@@ -821,8 +821,8 @@ class RouteBuilder
      * for $params argument:
      *
      * ```
-     * $route->prefix('api', function($route) {
-     *     $route->prefix('v10', ['path' => '/v1.0'], function($route) {
+     * $route->prefix('Api', function($route) {
+     *     $route->prefix('V10', ['path' => '/v1.0'], function($route) {
      *         // Translates to `Controller\Api\V10\` namespace
      *     });
      * });
