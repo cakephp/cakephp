@@ -302,7 +302,7 @@ class Hash
      *
      * @param array $data The data to insert into.
      * @param string $path The path to insert at.
-     * @param array|null $values The values to insert.
+     * @param mixed $values The values to insert.
      * @return array The data with $values inserted.
      * @link https://book.cakephp.org/3/en/core-libraries/hash.html#Cake\Utility\Hash::insert
      */
