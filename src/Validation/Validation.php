@@ -1193,14 +1193,12 @@ class Validation
             throw new RuntimeException('Cannot validate mimetype for a missing file');
         }
 
-        $finfo = finfo_open(FILEINFO_MIME);
-        $finfo = finfo_file($finfo, $file);
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mime = finfo_file($finfo, $file);
 
-        if (!$finfo) {
+        if (!$mime) {
             throw new RuntimeException('Can not determine the mimetype.');
         }
-
-        [$mime] = explode(';', $finfo);
 
         if (is_string($mimeTypes)) {
             return self::_check($mime, $mimeTypes);
