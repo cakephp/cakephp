@@ -831,14 +831,14 @@ class Router
      * relevant prefix information.
      *
      * The path parameter is used to generate the routing parameter name.
-     * For example a path of `admin` would result in `'prefix' => 'admin'` being
+     * For example a path of `admin` would result in `'prefix' => 'Admin'` being
      * applied to all connected routes.
      *
      * The prefix name will be inflected to the dasherized version to create
      * the routing path. If you want a custom path name, use the `path` option.
      *
      * You can re-open a prefix as many times as necessary, as well as nest prefixes.
-     * Nested prefixes will result in prefix values like `admin/api` which translates
+     * Nested prefixes will result in prefix values like `Admin/Api` which translates
      * to the `Controller\Admin\Api\` namespace.
      *
      * @param string $name The prefix name to use.
