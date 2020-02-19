@@ -959,7 +959,7 @@ class RouterTest extends TestCase
     public function testUrlGenerationWithExtensionInCurrentRequest()
     {
         Router::extensions('rss');
-        Router::scope('/', function ($r) {
+        Router::scope('/', function (RouteBuilder $r) {
             $r->fallbacks('InflectedRoute');
         });
         $request = new ServerRequest([
