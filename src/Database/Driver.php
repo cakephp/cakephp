@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database;
 
+use Cake\Core\App;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Schema\BaseSchema;
 use Cake\Database\Schema\TableSchema;
@@ -95,12 +96,23 @@ abstract class Driver implements DriverInterface
      */
     protected function _connect(string $dsn, array $config): bool
     {
-        $connection = new PDO(
-            $dsn,
-            $config['username'] ?: null,
-            $config['password'] ?: null,
-            $config['flags']
-        );
+        try {
+            $connection = new PDO(
+                $dsn,
+                $config['username'] ?: null,
+                $config['password'] ?: null,
+                $config['flags']
+            );
+        } catch (PDOException $e) {
+            throw new MissingConnectionException(
+                [
+                    'driver' => App::shortName(static::class, 'Database/Driver'),
+                    'reason' => $e->getMessage(),
+                ],
+                null,
+                $e
+            );
+        }
         $this->setConnection($connection);
 
         return true;
@@ -128,7 +140,10 @@ abstract class Driver implements DriverInterface
     public function getConnection()
     {
         if ($this->_connection === null) {
-            throw new MissingConnectionException(['reason' => 'Unknown']);
+            throw new MissingConnectionException([
+                'driver' => App::shortName(static::class, 'Database/Driver'),
+                'reason' => 'Unknown',
+            ]);
         }
 
         return $this->_connection;

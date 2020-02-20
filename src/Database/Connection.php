@@ -230,15 +230,24 @@ class Connection implements ConnectionInterface
     /**
      * Connects to the configured database.
      *
-     * @throws \Cake\Database\Exception\MissingConnectionException if credentials are invalid.
+     * @throws \Cake\Database\Exception\MissingConnectionException If database connection could not be established.
      * @return bool true, if the connection was already established or the attempt was successful.
      */
     public function connect(): bool
     {
         try {
             return $this->_driver->connect();
+        } catch (MissingConnectionException $e) {
+            throw $e;
         } catch (Throwable $e) {
-            throw new MissingConnectionException(['reason' => $e->getMessage()], null, $e);
+            throw new MissingConnectionException(
+                [
+                    'driver' => App::shortName(get_class($this->_driver), 'Database/Driver'),
+                    'reason' => $e->getMessage(),
+                ],
+                null,
+                $e
+            );
         }
     }
 
