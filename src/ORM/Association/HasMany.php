@@ -232,8 +232,6 @@ class HasMany extends Association
 
             if (!empty($options['atomic'])) {
                 $original[$k]->setErrors($entity->getErrors());
-                $entity->set($this->getProperty(), $original);
-
                 return false;
             }
         }
