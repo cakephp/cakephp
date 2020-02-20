@@ -22,7 +22,7 @@ parameters:
 
 		-
 			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 2
+			count: 1
 			path: src/Cache/CacheEngine.php
 
 		-
@@ -141,11 +141,6 @@ parameters:
 			path: src/Command/I18nExtractCommand.php
 
 		-
-			message: "#^Else branch is unreachable because ternary operator condition is always true\\.$#"
-			count: 1
-			path: src/Console/CommandCollection.php
-
-		-
 			message: "#^Strict comparison using \\=\\=\\= between int and null will always evaluate to false\\.$#"
 			count: 1
 			path: src/Console/CommandRunner.php
@@ -169,11 +164,6 @@ parameters:
 			message: "#^Call to an undefined method Cake\\\\Auth\\\\Storage\\\\StorageInterface\\:\\:setConfig\\(\\)\\.$#"
 			count: 1
 			path: src/Controller/Component/AuthComponent.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: src/Controller/Component/RequestHandlerComponent.php
 
 		-
 			message: "#^Property Cake\\\\Controller\\\\Controller\\:\\:\\$response \\(Cake\\\\Http\\\\Response\\) does not accept Psr\\\\Http\\\\Message\\\\ResponseInterface\\.$#"
@@ -291,23 +281,13 @@ parameters:
 			path: src/Database/Log/LoggingStatement.php
 
 		-
-			message: "#^Result of && is always false\\.$#"
-			count: 1
-			path: src/Database/Query.php
-
-		-
 			message: "#^Access to undefined constant PDO\\:\\:SQLSRV_ENCODING_BINARY\\.$#"
 			count: 1
 			path: src/Database/Statement/SqlserverStatement.php
 
 		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: src/ORM/Entity.php
-
-		-
 			message: "#^Result of && is always false\\.$#"
-			count: 2
+			count: 1
 			path: src/Datasource/QueryCacher.php
 
 		-
@@ -329,11 +309,6 @@ parameters:
 			message: "#^Method Cake\\\\Event\\\\EventManager\\:\\:instance\\(\\) should return static\\(Cake\\\\Event\\\\EventManager\\) but returns Cake\\\\Event\\\\EventManager\\.$#"
 			count: 1
 			path: src/Event/EventManager.php
-
-		-
-			message: "#^Call to function is_int\\(\\) with string\\|false will always evaluate to false\\.$#"
-			count: 1
-			path: src/Filesystem/File.php
 
 		-
 			message: "#^Parameter \\#1 \\$it of class RegexIterator constructor expects Iterator, Traversable given\\.$#"
@@ -596,11 +571,6 @@ parameters:
 			path: src/ORM/Rule/IsUnique.php
 
 		-
-			message: "#^Result of && is always false\\.$#"
-			count: 1
-			path: src/ORM/Rule/LinkConstraint.php
-
-		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: src/ORM/Table.php
@@ -619,11 +589,6 @@ parameters:
 			message: "#^Parameter \\#1 \\$request of static method Cake\\\\Routing\\\\Router\\:\\:parseRequest\\(\\) expects Cake\\\\Http\\\\ServerRequest, Psr\\\\Http\\\\Message\\\\ServerRequestInterface given\\.$#"
 			count: 1
 			path: src/Routing/Middleware/RoutingMiddleware.php
-
-		-
-			message: "#^Result of && is always false\\.$#"
-			count: 1
-			path: src/Routing/Route/EntityRoute.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
@@ -726,11 +691,6 @@ parameters:
 			path: src/TestSuite/TestCase.php
 
 		-
-			message: "#^Result of \\|\\| is always true\\.$#"
-			count: 2
-			path: src/Utility/Hash.php
-
-		-
 			message: "#^Return type \\(array\\<string, array\\|string\\>\\) of method Cake\\\\View\\\\Exception\\\\MissingCellTemplateException\\:\\:getAttributes\\(\\) should be compatible with return type \\(array\\<string, array\\|string\\>\\) of method Cake\\\\View\\\\Exception\\\\MissingTemplateException\\:\\:getAttributes\\(\\)$#"
 			count: 1
 			path: src/View/Exception/MissingCellTemplateException.php
@@ -759,11 +719,6 @@ parameters:
 			message: "#^Parameter \\#3 \\$options of method Cake\\\\View\\\\View\\:\\:_elementCache\\(\\) expects array\\('cache' \\=\\> array\\('key' \\=\\> string, 'config' \\=\\> string\\)\\|string, \\?'callbacks' \\=\\> mixed, \\?'plugin' \\=\\> mixed\\), array given\\.$#"
 			count: 1
 			path: src/View/View.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: src/View/Widget/SelectBoxWidget.php
 
 		-
 			message: "#^Class Psy\\\\Shell not found\\.$#"
