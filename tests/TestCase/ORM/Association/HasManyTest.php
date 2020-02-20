@@ -964,7 +964,8 @@ class HasManyTest extends TestCase
      *
      * @return void
      */
-    public function testSaveAssociatedWithFailedRuleOnAssociated() {
+    public function testSaveAssociatedWithFailedRuleOnAssociated()
+    {
         $articles = $this->getTableLocator()->get('Articles');
         $articles->hasMany('Comments');
         $comments = $this->getTableLocator()->get('Comments');
@@ -980,7 +981,7 @@ class HasManyTest extends TestCase
                     'comment' => 'That is true!',
                 ],
                 [
-                    'user_id' => 999,// This rule will fail because the user doesn't exist
+                    'user_id' => 999, // This rule will fail because the user doesn't exist
                     'comment' => 'Of course',
                 ],
             ],
