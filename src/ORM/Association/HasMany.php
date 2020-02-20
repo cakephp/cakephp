@@ -21,6 +21,7 @@ use Cake\Collection\Collection;
 use Cake\Database\Expression\FieldInterface;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\InvalidPropertyInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Association\Loader\SelectLoader;
 use Cake\ORM\Query;
@@ -197,9 +198,10 @@ class HasMany extends Association
      * target entity, and the parent entity.
      * @param \Cake\Datasource\EntityInterface $parentEntity The source entity containing the target
      * entities to be saved.
-     * @param array $entities list of entities to persist in target table and to
-     * link to the parent entity
+     * @param \Cake\Datasource\EntityInterface[]|\Cake\Datasource\InvalidPropertyInterface[] $entities list of entities
+     * to persist in target table and to link to the parent entity
      * @param array $options list of options accepted by `Table::save()`.
+     *
      * @return bool `true` on success, `false` otherwise.
      */
     protected function _saveTarget(
@@ -231,8 +233,12 @@ class HasMany extends Association
             }
 
             if (!empty($options['atomic'])) {
-                $original[$k]->setErrors($entity->getErrors());
-                $entity->set($this->getProperty(), $original);
+                if ($original[$k] instanceof EntityInterface && $entity instanceof EntityInterface) {
+                    $original[$k]->setErrors($entity->getErrors());
+                }
+                if ($original[$k] instanceof InvalidPropertyInterface && $entity instanceof InvalidPropertyInterface) {
+                    $original[$k]->setInvalid($entity->getInvalid());
+                }
 
                 return false;
             }
