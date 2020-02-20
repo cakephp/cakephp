@@ -182,7 +182,7 @@ class ShellDispatcher
         } catch (StopException $e) {
             $code = $e->getCode();
 
-            return $code === null ? $code : (int)$code;
+            return (int)$code;
         }
         if ($result === null || $result === true) {
             /** @psalm-suppress DeprecatedClass */
