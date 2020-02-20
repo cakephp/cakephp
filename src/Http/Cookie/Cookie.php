@@ -109,7 +109,6 @@ class Cookie implements CookieInterface
      * Samesite
      *
      * @var string|null
-     * @psalm-var CookieInterface::SAMESITE_LAX|CookieInterface::SAMESITE_STRICT|CookieInterface::SAMESITE_NONE|null
      */
     protected $sameSite = null;
 

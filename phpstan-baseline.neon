@@ -151,11 +151,6 @@ parameters:
 			path: src/Console/ConsoleOptionParser.php
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between int and null will always evaluate to false\\.$#"
-			count: 1
-			path: src/Console/ShellDispatcher.php
-
-		-
 			message: "#^Call to an undefined method Cake\\\\Auth\\\\Storage\\\\StorageInterface\\:\\:getConfig\\(\\)\\.$#"
 			count: 1
 			path: src/Controller/Component/AuthComponent.php
@@ -311,16 +306,6 @@ parameters:
 			path: src/Event/EventManager.php
 
 		-
-			message: "#^Parameter \\#1 \\$it of class RegexIterator constructor expects Iterator, Traversable given\\.$#"
-			count: 1
-			path: src/Filesystem/Filesystem.php
-
-		-
-			message: "#^Parameter \\#1 \\$it of class CallbackFilterIterator constructor expects Iterator, Traversable given\\.$#"
-			count: 1
-			path: src/Filesystem/Filesystem.php
-
-		-
 			message: "#^Parameter \\#1 \\$request of static method Cake\\\\Routing\\\\Router\\:\\:setRequest\\(\\) expects Cake\\\\Http\\\\ServerRequest, Psr\\\\Http\\\\Message\\\\ServerRequestInterface given\\.$#"
 			count: 1
 			path: src/Http/BaseApplication.php
@@ -329,11 +314,6 @@ parameters:
 			message: "#^Constructor of class Cake\\\\Http\\\\Client\\\\Auth\\\\Digest has an unused parameter \\$options\\.$#"
 			count: 1
 			path: src/Http/Client/Auth/Digest.php
-
-		-
-			message: "#^Property Cake\\\\Http\\\\Cookie\\\\Cookie\\:\\:\\$sameSite \\(Cake\\\\Http\\\\Cookie\\\\CookieInterface\\) does not accept string\\.$#"
-			count: 1
-			path: src/Http/Cookie/Cookie.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
@@ -347,26 +327,6 @@ parameters:
 
 		-
 			message: "#^Method Cake\\\\Http\\\\Cookie\\\\Cookie\\:\\:createFromHeaderString\\(\\) should return static\\(Cake\\\\Http\\\\Cookie\\\\Cookie\\) but returns Cake\\\\Http\\\\Cookie\\\\Cookie\\.$#"
-			count: 1
-			path: src/Http/Cookie/Cookie.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: src/Http/Cookie/Cookie.php
-
-		-
-			message: "#^Parameter \\#2 \\.\\.\\.\\$args of function sprintf expects bool\\|float\\|int\\|string\\|null, Cake\\\\Http\\\\Cookie\\\\CookieInterface given\\.$#"
-			count: 1
-			path: src/Http/Cookie/Cookie.php
-
-		-
-			message: "#^Method Cake\\\\Http\\\\Cookie\\\\Cookie\\:\\:getSameSite\\(\\) should return string\\|null but returns Cake\\\\Http\\\\Cookie\\\\CookieInterface\\.$#"
-			count: 1
-			path: src/Http/Cookie/Cookie.php
-
-		-
-			message: "#^Property Cake\\\\Http\\\\Cookie\\\\Cookie\\:\\:\\$sameSite \\(Cake\\\\Http\\\\Cookie\\\\CookieInterface\\) does not accept string\\|null\\.$#"
 			count: 1
 			path: src/Http/Cookie/Cookie.php
 
@@ -484,16 +444,6 @@ parameters:
 			message: "#^Access to undefined constant NumberFormatter\\:\\:CURRENCY_ACCOUNTING\\.$#"
 			count: 1
 			path: src/I18n/Number.php
-
-		-
-			message: "#^PHPDoc tag @var has invalid value \\(\\\\Psr\\\\SimpleCache\\\\CacheInterface&\\\\Cake\\\\Cache\\\\CacheEngineInterface\\|null\\)\\: Unexpected token \"\\|\", expected TOKEN_OTHER at offset 175$#"
-			count: 1
-			path: src/I18n/TranslatorRegistry.php
-
-		-
-			message: "#^Property Cake\\\\I18n\\\\TranslatorRegistry\\:\\:\\$_cacher has no typehint specified\\.$#"
-			count: 1
-			path: src/I18n/TranslatorRegistry.php
 
 		-
 			message: "#^Method Cake\\\\Mailer\\\\Email\\:\\:deliver\\(\\) should return static\\(Cake\\\\Mailer\\\\Email\\) but returns Cake\\\\Mailer\\\\Email\\.$#"
