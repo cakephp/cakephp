@@ -198,7 +198,7 @@ class HasMany extends Association
      * target entity, and the parent entity.
      * @param \Cake\Datasource\EntityInterface $parentEntity The source entity containing the target
      * entities to be saved.
-     * @param \Cake\Datasource\EntityInterface[]|\Cake\Datasource\InvalidPropertyInterface[] $entities list of entities
+     * @param array $entities list of entities
      * to persist in target table and to link to the parent entity
      * @param array $options list of options accepted by `Table::save()`.
      *
@@ -233,10 +233,8 @@ class HasMany extends Association
             }
 
             if (!empty($options['atomic'])) {
-                if ($original[$k] instanceof EntityInterface && $entity instanceof EntityInterface) {
-                    $original[$k]->setErrors($entity->getErrors());
-                }
-                if ($original[$k] instanceof InvalidPropertyInterface && $entity instanceof InvalidPropertyInterface) {
+                $original[$k]->setErrors($entity->getErrors());
+                if ($entity instanceof InvalidPropertyInterface) {
                     $original[$k]->setInvalid($entity->getInvalid());
                 }
 
