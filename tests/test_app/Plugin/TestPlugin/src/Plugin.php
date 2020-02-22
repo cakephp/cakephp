@@ -29,12 +29,12 @@ class Plugin extends BasePlugin
         return $events;
     }
 
-    public function middleware(MiddlewareQueue $middleware): MiddlewareQueue
+    public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
     {
-        $middleware->add(function ($req, $res, $next) {
+        $middlewareQueue->add(function ($req, $res, $next) {
             return $next($req, $res);
         });
 
-        return $middleware;
+        return $middlewareQueue;
     }
 }

@@ -277,8 +277,8 @@ class BasePlugin implements PluginInterface
     /**
      * @inheritDoc
      */
-    public function middleware(MiddlewareQueue $middleware): MiddlewareQueue
+    public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
     {
-        return $middleware;
+        return $middlewareQueue;
     }
 }
