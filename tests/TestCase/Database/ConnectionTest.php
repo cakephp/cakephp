@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Database;
 
 use Cake\Cache\Engine\NullEngine;
 use Cake\Collection\Collection;
+use Cake\Core\App;
 use Cake\Database\Connection;
 use Cake\Database\Driver;
 use Cake\Database\Driver\Mysql;
@@ -210,7 +211,13 @@ class ConnectionTest extends TestCase
         }
 
         $this->assertNotNull($e);
-        $this->assertStringStartsWith('Connection to database could not be established:', $e->getMessage());
+        $this->assertStringStartsWith(
+            sprintf(
+                'Connection to %s could not be established:',
+                App::shortName(get_class($connection->getDriver()), 'Database/Driver')
+            ),
+            $e->getMessage()
+        );
         $this->assertInstanceOf('PDOException', $e->getPrevious());
     }
 

@@ -228,9 +228,10 @@ interface CookieInterface
     public function getSameSite(): ?string;
 
     /**
-     * Create a cookie with an updated SameSite option
+     * Create a cookie with an updated SameSite option.
      *
-     * @param string|null $sameSite Value for to set for Samesite option
+     * @param string|null $sameSite Value for to set for Samesite option.
+     *   One of CookieInterface::SAMESITE_* constants.
      * @return static
      */
     public function withSameSite(?string $sameSite);

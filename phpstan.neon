@@ -5,6 +5,7 @@ parameters:
     level: 6
     checkMissingIterableValueType: false
     checkGenericClassInNonGenericObjectType: false
+    treatPhpDocTypesAsCertain: false
     autoload_files:
         - tests/bootstrap.php
     earlyTerminatingMethodCalls:
