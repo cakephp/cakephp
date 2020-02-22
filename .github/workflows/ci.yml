@@ -78,6 +78,38 @@ jobs:
           vendor/bin/phpunit --verbose
         fi
 
+  testsuite-windows:
+    runs-on: windows-2019
+    name: Windows - PHP 7.4 & mssql
+
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        fetch-depth: 1
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v1
+      with:
+        php-version: '7.4'
+        extensions: mbstring, intl, apcu, pdo_sqlsrv, openssl, curl
+        ini-values: apc.enable_cli = 1, extension = php_fileinfo.dll
+        coverage: none
+
+    - name: Setup SQLServer
+      run: |
+        # MSSQLLocalDB is the default SQL LocalDB instance
+        SqlLocalDB start MSSQLLocalDB
+        sqlcmd -S "(localdb)\MSSQLLocalDB" -Q "create database cakephp;"
+
+    - name: composer install
+      run: composer install
+
+    - name: Run PHPUnit
+      env:
+        DB_DSN: 'sqlserver://@(localdb)\MSSQLLocalDB/cakephp'
+      run: |
+          vendor/bin/phpunit --verbose
+
   coding-standard:
     name: Coding Standard
     runs-on: ubuntu-18.04
