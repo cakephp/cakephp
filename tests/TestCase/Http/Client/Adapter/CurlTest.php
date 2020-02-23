@@ -53,7 +53,6 @@ class CurlTest extends TestCase
         $response = $responses[0];
         $this->assertInstanceOf(Response::class, $response);
         $this->assertNotEmpty($response->getHeaders());
-        $this->assertNotEmpty($response->getBody()->getContents());
     }
 
     /**
@@ -69,7 +68,7 @@ class CurlTest extends TestCase
         try {
             $responses = $this->curl->send($request, []);
         } catch (\Cake\Core\Exception\Exception $e) {
-            $this->markTestSkipped('Could not connect to book.cakephp.org, skipping');
+            $this->markTestSkipped('Could not connect to api.cakephp.org, skipping');
         }
         $this->assertCount(1, $responses);
 
