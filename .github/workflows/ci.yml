@@ -80,7 +80,7 @@ jobs:
 
   testsuite-windows:
     runs-on: windows-2019
-    name: Windows - PHP 7.4 & mssql
+    name: Windows - PHP 7.4 & SQL Server
 
     steps:
     - uses: actions/checkout@v1
@@ -91,7 +91,7 @@ jobs:
       uses: shivammathur/setup-php@v1
       with:
         php-version: '7.4'
-        extensions: mbstring, intl, apcu, pdo_sqlsrv, openssl, curl
+        extensions: mbstring, intl, apcu, pdo_sqlsrv
         ini-values: apc.enable_cli = 1, extension = php_fileinfo.dll
         coverage: none
 
