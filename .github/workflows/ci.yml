@@ -99,6 +99,7 @@ jobs:
       run: |
         # MSSQLLocalDB is the default SQL LocalDB instance
         SqlLocalDB start MSSQLLocalDB
+        SqlLocalDB info MSSQLLocalDB
         sqlcmd -S "(localdb)\MSSQLLocalDB" -Q "create database cakephp;"
 
     - name: composer install
