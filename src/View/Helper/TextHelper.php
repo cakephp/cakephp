@@ -414,7 +414,7 @@ class TextHelper extends Helper
      *   or an array of options.
      * @return string
      * @see \Cake\Utility\Text::setTransliterator()
-     * @see \Cake\Utility\setTransliteratorId()
+     * @see \Cake\Utility\Text::setTransliteratorId()
      */
     public function slug(string $string, $options = []): string
     {
