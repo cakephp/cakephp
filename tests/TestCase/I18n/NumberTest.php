@@ -214,10 +214,6 @@ class NumberTest extends TestCase
         $expected = 'US$100,100,100.00';
         $this->assertEquals($expected, $result);
 
-        $result = $this->Number->currency($value, 'INR', ['locale' => 'en_IN']);
-        $expected = '₹ 10,01,00,100.00';
-        $this->assertEquals($expected, $result);
-
         $options = ['locale' => 'en_IN', 'pattern' => "Rs'.' #,##,###"];
         $result = $this->Number->currency($value, 'INR', $options);
         $expected = 'Rs. 10,01,00,100';
@@ -627,15 +623,15 @@ class NumberTest extends TestCase
      */
     public function testConfig()
     {
-        $result = $this->Number->currency(15000, 'INR', ['locale' => 'en_IN']);
-        $this->assertSame('₹ 15,000.00', $result);
+        $result = $this->Number->currency(150000, 'USD', ['locale' => 'en_US']);
+        $this->assertSame('$150,000.00', $result);
 
-        Number::config('en_IN', \NumberFormatter::CURRENCY, [
+        Number::config('en_US', \NumberFormatter::CURRENCY, [
             'pattern' => '¤ #,##,##0',
         ]);
 
-        $result = $this->Number->currency(15000, 'INR', ['locale' => 'en_IN']);
-        $this->assertSame('₹ 15,000', $result);
+        $result = $this->Number->currency(150000, 'USD', ['locale' => 'en_US']);
+        $this->assertSame('$ 1,50,000', $result);
     }
 
     /**
