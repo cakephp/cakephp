@@ -465,7 +465,7 @@ class SmtpTransport extends AbstractTransport
                 $response .= $bytes;
             }
             if (substr($response, -2) !== "\r\n") {
-                throw new SocketException('SMTP timeout.');
+                throw new SocketException($response ?: 'SMTP timeout.');
             }
             $responseLines = explode("\r\n", rtrim($response, "\r\n"));
             $response = end($responseLines);
