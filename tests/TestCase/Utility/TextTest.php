@@ -1752,7 +1752,10 @@ HTML;
         $this->assertSame($expected, $result);
     }
 
-    public function slugInputProvider()
+    /**
+     * @return array
+     */
+    public function slugInputProvider(): array
     {
         return [
             [
