@@ -32,6 +32,11 @@ jobs:
           POSTGRES_PASSWORD: postgres
 
     steps:
+    - name: Setup MySQL
+      if: matrix.db-type == 'mysql'
+      run: |
+        sudo service mysql start
+
     - uses: actions/checkout@v1
       with:
         fetch-depth: 1
