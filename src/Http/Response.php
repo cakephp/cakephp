@@ -483,7 +483,7 @@ class Response implements ResponseInterface
      * Will echo out the content in the response body.
      *
      * @return void
-     * @deprecated 3.4.0 Will be removed in 4.0.0
+     * @deprecated 3.4.0 Will be removed in 4.0.0. Use Cake\Http\ResponseEmitter if required
      */
     public function send()
     {
