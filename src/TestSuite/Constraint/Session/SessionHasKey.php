@@ -33,7 +33,6 @@ class SessionHasKey extends Constraint
     /**
      * Constructor
      *
-     * @param array|null $session Session
      * @param string $path Session Path
      */
     public function __construct(string $path)
