@@ -10,22 +10,20 @@ declare(strict_types=1);
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @since         3.7.0
+ * @since         4.1.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\TestSuite\Constraint\Session;
 
-use Cake\Http\Session;
 use Cake\Utility\Hash;
-use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Constraint\Constraint;
 
 /**
- * SessionEquals
+ * SessionHasKey
  *
  * @internal
  */
-class SessionEquals extends Constraint
+class SessionHasKey extends Constraint
 {
     /**
      * @var string
@@ -35,6 +33,7 @@ class SessionEquals extends Constraint
     /**
      * Constructor
      *
+     * @param array|null $session Session
      * @param string $path Session Path
      */
     public function __construct(string $path)
@@ -53,7 +52,7 @@ class SessionEquals extends Constraint
         // Server::run calls Session::close at the end of the request.
         // Which means, that we cannot use Session object here to access the session data.
         // Call to Session::read will start new session (and will erase the data).
-        return Hash::get($_SESSION, $this->path) === $other;
+        return Hash::check($_SESSION, $this->path) === true;
     }
 
     /**
@@ -63,6 +62,6 @@ class SessionEquals extends Constraint
      */
     public function toString(): string
     {
-        return sprintf('is in session path \'%s\'', $this->path);
+        return "is a path present in the session";
     }
 }
