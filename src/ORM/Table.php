@@ -2733,6 +2733,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * );
      * ```
      *
+     * ```
+     * $article = $this->Articles->patchEntity($article, $this->request->getData(), [
+     *   'associated' => [
+     *     'Tags' => ['accessibleFields' => ['*' => true]]
+     *   ]
+     * ]);
+     * ```
+     *
      * By default, the data is validated before being passed to the entity. In
      * the case of invalid fields, those will not be assigned to the entity.
      * The `validate` option can be used to disable validation on the passed data:
