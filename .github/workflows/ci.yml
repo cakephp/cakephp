@@ -32,11 +32,17 @@ jobs:
           POSTGRES_PASSWORD: postgres
 
     steps:
-    - name: Setup mysql 8
-      if: matrix.db-type == 'mysql' && matrix.php-version == '7.2'
+    - name: Setup MySQL
+      if: matrix.db-type == 'mysql'
       run: |
-        sudo service mysql stop
-        docker run --rm --name=mysqld -e MYSQL_ROOT_PASSWORD=root --tmpfs /var/lib/mysql:rw --network=host -d mysql --default-authentication-plugin=mysql_native_password --disable-log-bin --innodb-flush-method=O_DIRECT_NO_FSYNC
+        if [[ ${{ matrix.php-version }} == '7.2' ]]; then
+          sudo service mysql stop
+          # MySQL 8
+          docker run --rm --name=mysqld -e MYSQL_ROOT_PASSWORD=root --tmpfs /var/lib/mysql:rw --network=host -d mysql --default-authentication-plugin=mysql_native_password --disable-log-bin --innodb-flush-method=O_DIRECT_NO_FSYNC
+        else
+          # MySQL 5.7
+          sudo service mysql start
+        fi
 
     - uses: actions/checkout@v1
       with:
