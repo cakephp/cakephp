@@ -464,7 +464,9 @@ class SmtpTransport extends AbstractTransport
                 }
                 $response .= $bytes;
             }
+            // Catch empty or malformed responses.
             if (substr($response, -2) !== "\r\n") {
+                // Use response message or assume operation timed out.
                 throw new SocketException($response ?: 'SMTP timeout.');
             }
             $responseLines = explode("\r\n", rtrim($response, "\r\n"));
