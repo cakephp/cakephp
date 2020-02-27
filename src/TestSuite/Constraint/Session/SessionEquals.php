@@ -15,9 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite\Constraint\Session;
 
-use Cake\Http\Session;
 use Cake\Utility\Hash;
-use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Constraint\Constraint;
 
 /**
