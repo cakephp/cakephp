@@ -45,7 +45,12 @@ class ServerTest extends TestCase
     /**
      * @var array
      */
-    private $server;
+    protected $server;
+
+    /**
+     * @var \Cake\Http\MiddlewareQueue
+     */
+    protected $middlewareQueue;
 
     /**
      * Setup
@@ -297,18 +302,18 @@ class ServerTest extends TestCase
         $server = new Server($app);
         $this->called = false;
 
-        $server->getEventManager()->on('Server.buildMiddleware', function (EventInterface $event, MiddlewareQueue $middleware) {
-            $middleware->add(function ($req, $res, $next) {
+        $server->getEventManager()->on('Server.buildMiddleware', function (EventInterface $event, MiddlewareQueue $middlewareQueue) {
+            $middlewareQueue->add(function ($req, $res, $next) {
                 $this->called = true;
 
                 return $next($req, $res);
             });
-            $this->middleware = $middleware;
+            $this->middlewareQueue = $middlewareQueue;
         });
         $server->run();
         $this->assertTrue($this->called, 'Middleware added in the event was not triggered.');
-        $this->middleware->seek(3);
-        $this->assertInstanceOf('Closure', $this->middleware->current()->getCallable(), '2nd last middleware is a closure');
+        $this->middlewareQueue->seek(3);
+        $this->assertInstanceOf('Closure', $this->middlewareQueue->current()->getCallable(), '2nd last middleware is a closure');
     }
 
     /**

@@ -24,7 +24,7 @@ $response = $http->get('http://example.com/search', ['q' => 'widget']);
 
 // Simple get with querystring & additional headers
 $response = $http->get('http://example.com/search', ['q' => 'widget'], [
-  'headers' => ['X-Requested-With' => 'XMLHttpRequest']
+  'headers' => ['X-Requested-With' => 'XMLHttpRequest'],
 ]);
 ```
 
@@ -37,7 +37,7 @@ emit responses. To get started first implement the
 `Cake\Http\HttpApplicationInterface`  A minimal example would could look like:
 
 ```php
-namespace App
+namespace App;
 
 use Cake\Core\HttpApplicationInterface;
 use Cake\Http\MiddlewareQueue;
@@ -58,13 +58,13 @@ class Application implements HttpApplicationInterface
     /**
      * Define the HTTP middleware layers for an application.
      *
-     * @param \Cake\Http\MiddlewareQueue $middleware The middleware queue to set in your App Class
+     * @param \Cake\Http\MiddlewareQueue $middlewareQueue The middleware queue to set in your App Class
      * @return \Cake\Http\MiddlewareQueue
      */
-    public function middleware(MiddlewareQueue $middleware): MiddlewareQueue
+    public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
     {
         // Add middleware for your application.
-        return $middleware;
+        return $middlewareQueue;
     }
 }
 ```

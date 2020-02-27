@@ -12,12 +12,12 @@ use Psr\Http\Message\ServerRequestInterface;
 class MiddlewareApplication extends BaseApplication
 {
     /**
-     * @param \Cake\Http\MiddlewareQueue $middleware The middleware stack to set in your App Class
+     * @param \Cake\Http\MiddlewareQueue $middlewareQueue The middleware stack to set in your App Class
      * @return \Cake\Http\MiddlewareQueue
      */
-    public function middleware(MiddlewareQueue $middleware): MiddlewareQueue
+    public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
     {
-        $middleware
+        $middlewareQueue
             ->add(function ($req, $res, $next) {
                 $res = $next($req, $res);
 
@@ -38,7 +38,7 @@ class MiddlewareApplication extends BaseApplication
                 return $res->withHeader('X-Second', 'second');
             });
 
-        return $middleware;
+        return $middlewareQueue;
     }
 
     /**

@@ -32,9 +32,9 @@ class EventApplication extends BaseApplication
         return $eventManager;
     }
 
-    public function middleware(MiddlewareQueue $middleware): MiddlewareQueue
+    public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
     {
-        return $middleware;
+        return $middlewareQueue;
     }
 
     public function console(CommandCollection $commands): CommandCollection

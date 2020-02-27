@@ -88,10 +88,10 @@ interface PluginInterface
     /**
      * Add middleware for the plugin.
      *
-     * @param \Cake\Http\MiddlewareQueue $middleware The middleware queue to update.
+     * @param \Cake\Http\MiddlewareQueue $middlewareQueue The middleware queue to update.
      * @return \Cake\Http\MiddlewareQueue
      */
-    public function middleware(MiddlewareQueue $middleware): MiddlewareQueue;
+    public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue;
 
     /**
      * Add routes for the plugin.

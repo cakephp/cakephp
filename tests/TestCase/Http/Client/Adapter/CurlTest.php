@@ -66,7 +66,6 @@ class CurlTest extends TestCase
         $response = $responses[0];
         $this->assertInstanceOf(Response::class, $response);
         $this->assertNotEmpty($response->getHeaders());
-        $this->assertNotEmpty($response->getBody()->getContents());
     }
 
     /**
@@ -81,8 +80,8 @@ class CurlTest extends TestCase
         ]);
         try {
             $responses = $this->curl->send($request, []);
-        } catch (\Cake\Http\Client\Exception\NetworkException $e) {
-            $this->markTestSkipped('Could not connect to book.cakephp.org, skipping');
+        } catch (NetworkException $e) {
+            $this->markTestSkipped('Could not connect to api.cakephp.org, skipping');
         }
         $this->assertCount(1, $responses);
 
@@ -367,8 +366,7 @@ class CurlTest extends TestCase
     public function testNetworkException()
     {
         $this->expectException(NetworkException::class);
-        $this->expectExceptionMessage('cURL Error (6) Could not resolve');
-        $this->expectExceptionMessage('dummy');
+        $this->expectExceptionMessageMatches('/(Could not resolve|Resolving timed out)/');
 
         $request = new Request('http://dummy/?sleep');
         $options = [
