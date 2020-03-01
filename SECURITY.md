@@ -6,9 +6,10 @@ We support fixing security issues on the following releases:
 
 | Version | Supported          |
 | ------- | ------------------ |
+| 4.0.x   | :white_check_mark: |
+| 3.8.x   | :white_check_mark: |
 | 3.7.x   | :white_check_mark: |
-| 3.6.x   | :white_check_mark: |
-| <= 3.5  | :x:                |
+| <= 3.6  | :x:                |
 | 2.10.x  | :white_check_mark: |
 | <= 2.9  | :x:                |
 
