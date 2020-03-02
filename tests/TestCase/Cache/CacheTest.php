@@ -69,6 +69,28 @@ class CacheTest extends TestCase
     }
 
     /**
+     * Tests creating Cache with 0 probability
+     *
+     * @return void
+     */
+    public function testCacheEngineZeroProbability()
+    {
+        Cache::setConfig('tests', [
+            'engine' => 'File',
+            'path' => CACHE,
+            'prefix' => 'test_',
+            'probability' => 0,
+        ]);
+
+        $engine = Cache::engine('tests');
+        $this->assertNotNull($engine);
+        $probability = $engine->getConfig('probability');
+        $this->assertSame(0, $probability);
+
+        Cache::drop('tests');
+    }
+
+    /**
      * tests Cache::engine() fallback
      *
      * @return void
