@@ -2282,13 +2282,17 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
         };
 
+        /** @var \Cake\Datasource\EntityInterface|null $failed */
+        $failed = null;
         try {
-            $failed = $this->getConnection()
-                ->transactional(function () use ($entities, $options, &$isNew) {
+            $this->getConnection()
+                ->transactional(function () use ($entities, $options, &$isNew, &$failed) {
                     foreach ($entities as $key => $entity) {
                         $isNew[$key] = $entity->isNew();
                         if ($this->save($entity, $options) === false) {
-                            return $entity;
+                            $failed = $entity;
+
+                            return false;
                         }
                     }
                 });
