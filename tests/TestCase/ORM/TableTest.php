@@ -2836,7 +2836,7 @@ class TableTest extends TestCase
         $result = $table->saveMany($entities);
 
         $this->assertFalse($result);
-        $this->assertEquals($expectedCount, $table->find()->count());
+        $this->assertSame($expectedCount, $table->find()->count());
         foreach ($entities as $entity) {
             $this->assertTrue($entity->isNew());
         }
