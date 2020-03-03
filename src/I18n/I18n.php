@@ -94,16 +94,16 @@ class I18n
      * ### Example:
      *
      * ```
-     *  I18n::setTranslator('default', function () {
-     *      $package = new \Aura\Intl\Package();
-     *      $package->setMessages([
-     *          'Cake' => 'Gâteau'
-     *      ]);
-     *      return $package;
-     *  }, 'fr_FR');
+     * I18n::setTranslator('default', function () {
+     *     $package = new \Aura\Intl\Package();
+     *     $package->setMessages([
+     *         'Cake' => 'Gâteau'
+     *     ]);
+     *     return $package;
+     * }, 'fr_FR');
      *
-     *  $translator = I18n::getTranslator('default', 'fr_FR');
-     *  echo $translator->translate('Cake');
+     * $translator = I18n::getTranslator('default', 'fr_FR');
+     * echo $translator->translate('Cake');
      * ```
      *
      * You can also use the `Cake\I18n\MessagesFileLoader` class to load a specific
