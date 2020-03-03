@@ -22,7 +22,6 @@ use Cake\TestSuite\ConsoleIntegrationTestCase;
 
 /**
  * I18nExtractCommandTest
- *
  */
 class I18nExtractCommandTest extends ConsoleIntegrationTestCase
 {

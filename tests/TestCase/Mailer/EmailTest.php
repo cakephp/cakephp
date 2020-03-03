@@ -333,7 +333,6 @@ class EmailTest extends TestCase
      * Tests not found transport class name exception
      *
      * @return void
-     *
      */
     public function testClassNameException()
     {
@@ -347,7 +346,6 @@ class EmailTest extends TestCase
      * Tests that it is possible to unset the email pattern and make use of filter_var() instead.
      *
      * @return void
-     *
      */
     public function testUnsetEmailPattern()
     {
@@ -367,7 +365,6 @@ class EmailTest extends TestCase
      * Tests that passing an empty string throws an InvalidArgumentException.
      *
      * @return void
-     *
      */
     public function testEmptyTo()
     {
@@ -879,7 +876,6 @@ class EmailTest extends TestCase
 
     /**
      * Test that using unknown transports fails.
-     *
      */
     public function testTransportInvalid()
     {
@@ -890,7 +886,6 @@ class EmailTest extends TestCase
 
     /**
      * Test that using classes with no send method fails.
-     *
      */
     public function testTransportInstanceInvalid()
     {
@@ -900,7 +895,6 @@ class EmailTest extends TestCase
 
     /**
      * Test that using unknown transports fails.
-     *
      */
     public function testTransportTypeInvalid()
     {
@@ -978,7 +972,6 @@ class EmailTest extends TestCase
 
     /**
      * Test that using an invalid profile fails.
-     *
      */
     public function testProfileInvalid()
     {

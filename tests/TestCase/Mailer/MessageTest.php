@@ -586,7 +586,6 @@ HTML;
      * Tests that it is possible to unset the email pattern and make use of filter_var() instead.
      *
      * @return void
-     *
      */
     public function testUnsetEmailPattern()
     {
@@ -606,7 +605,6 @@ HTML;
      * Tests that passing an empty string throws an InvalidArgumentException.
      *
      * @return void
-     *
      */
     public function testEmptyTo()
     {

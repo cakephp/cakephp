@@ -205,7 +205,6 @@ class StringTemplateTest extends TestCase
 
     /**
      * Test that loading non-existing templates causes errors.
-     *
      */
     public function testLoadErrorNoFile()
     {

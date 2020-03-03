@@ -48,7 +48,6 @@ class MailerAwareTraitTest extends TestCase
 
     /**
      * Test exception thrown by getMailer.
-     *
      */
     public function testGetMailerThrowsException()
     {

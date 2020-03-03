@@ -3431,7 +3431,6 @@ class QueryTest extends TestCase
 
     /**
      * Test that an exception is raised when mixing query + array types.
-     *
      */
     public function testInsertFailureMixingTypesArrayFirst()
     {
@@ -3446,7 +3445,6 @@ class QueryTest extends TestCase
 
     /**
      * Test that an exception is raised when mixing query + array types.
-     *
      */
     public function testInsertFailureMixingTypesQueryFirst()
     {

@@ -38,7 +38,6 @@ use SplFileInfo;
  * returns a status code integer. Keep in mind that these consants might
  * include status codes that are now allowed which will throw an
  * `\InvalidArgumentException`.
- *
  */
 class Response implements ResponseInterface
 {
