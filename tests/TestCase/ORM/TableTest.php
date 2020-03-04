@@ -2827,6 +2827,7 @@ class TableTest extends TestCase
     public function testSaveManyFailed()
     {
         $table = $this->getTableLocator()->get('authors');
+        $expectedCount = $table->find()->count();
         $entities = [
             new Entity(['name' => 'mark']),
             new Entity(['name' => 'jose']),
@@ -2835,6 +2836,7 @@ class TableTest extends TestCase
         $result = $table->saveMany($entities);
 
         $this->assertFalse($result);
+        $this->assertSame($expectedCount, $table->find()->count());
         foreach ($entities as $entity) {
             $this->assertTrue($entity->isNew());
         }
