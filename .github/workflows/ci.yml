@@ -49,12 +49,26 @@ jobs:
         fetch-depth: 1
 
     - name: Setup PHP
-      uses: shivammathur/setup-php@v1
+      uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php-version }}
         extensions: mbstring, intl, apcu, pdo_${{ matrix.db-type }}
         ini-values: apc.enable_cli = 1
         coverage: pcov
+
+    - name: Get composer cache directory
+      id: composer-cache
+      run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+    - name: Get date part for cache key
+      id: key-date
+      run: echo "::set-output name=date::$(date +'%Y-%m')"
+
+    - name: Cache composer dependencies
+      uses: actions/cache@v1
+      with:
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ steps.key-date.outputs.date }}-${{ hashFiles('composer.json') }}
 
     - name: Install packages
       run: |
@@ -95,16 +109,39 @@ jobs:
     runs-on: windows-2019
     name: Windows - PHP 7.4 & SQL Server
 
+    env:
+      EXTENSIONS: mbstring, intl, apcu, pdo_sqlsrv
+      PHP_VERSION: '7.4'
+
     steps:
     - uses: actions/checkout@v1
       with:
         fetch-depth: 1
 
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v1
+    - name: Get date part for cache key
+      id: key-date
+      run: echo "::set-output name=date::$(date +'%Y-%m')"
+
+    - name: Setup PHP extensions cache
+      id: php-ext-cache
+      uses: shivammathur/cache-extensions@v1
       with:
-        php-version: '7.4'
-        extensions: mbstring, intl, apcu, pdo_sqlsrv
+        php-version: ${{ env.PHP_VERSION }}
+        extensions: ${{ env.EXTENSIONS }}
+        key: ${{ steps.key-date.outputs.date }}
+
+    - name: Cache PHP extensions
+      uses: actions/cache@v1
+      with:
+        path: ${{ steps.php-ext-cache.outputs.dir }}
+        key: ${{ steps.php-ext-cache.outputs.dir }}
+        restore-keys: ${{ steps.php-ext-cache.outputs.key }}
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ env.PHP_VERSION }}
+        extensions: ${{ env.EXTENSIONS }}
         ini-values: apc.enable_cli = 1, extension = php_fileinfo.dll
         coverage: none
 
@@ -114,6 +151,16 @@ jobs:
         SqlLocalDB start MSSQLLocalDB
         SqlLocalDB info MSSQLLocalDB
         sqlcmd -S "(localdb)\MSSQLLocalDB" -Q "create database cakephp;"
+
+    - name: Get composer cache directory
+      id: composer-cache
+      run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+    - name: Cache composer dependencies
+      uses: actions/cache@v1
+      with:
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ steps.key-date.outputs.date }}-${{ hashFiles('composer.json') }}
 
     - name: composer install
       run: composer install
@@ -134,11 +181,25 @@ jobs:
         fetch-depth: 1
 
     - name: Setup PHP
-      uses: shivammathur/setup-php@v1
+      uses: shivammathur/setup-php@v2
       with:
         php-version: '7.2'
         extensions: mbstring, intl, apcu
         coverage: none
+
+    - name: Get composer cache directory
+      id: composer-cache
+      run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+    - name: Get date part for cache key
+      id: key-date
+      run: echo "::set-output name=date::$(date +'%Y-%m')"
+
+    - name: Cache composer dependencies
+      uses: actions/cache@v1
+      with:
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ steps.key-date.outputs.date }}-${{ hashFiles('composer.json') }}
 
     - name: composer install
       run: composer install
@@ -156,11 +217,25 @@ jobs:
         fetch-depth: 1
 
     - name: Setup PHP
-      uses: shivammathur/setup-php@v1
+      uses: shivammathur/setup-php@v2
       with:
         php-version: '7.2'
         extensions: mbstring, intl, apcu
         coverage: none
+
+    - name: Get composer cache directory
+      id: composer-cache
+      run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+    - name: Get date part for cache key
+      id: key-date
+      run: echo "::set-output name=date::$(date +'%Y-%m')"
+
+    - name: Cache composer dependencies
+      uses: actions/cache@v1
+      with:
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ steps.key-date.outputs.date }}-${{ hashFiles('composer.json') }}
 
     - name: composer install
       run: composer stan-setup

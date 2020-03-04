@@ -466,11 +466,6 @@ parameters:
 			path: src/Mailer/Renderer.php
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between int and true will always evaluate to false\\.$#"
-			count: 1
-			path: src/Network/Socket.php
-
-		-
 			message: "#^Parameter \\#2 \\$callback of function array_filter expects callable\\(mixed, mixed\\)\\: bool, 'strlen' given\\.$#"
 			count: 1
 			path: src/ORM/Association/BelongsToMany.php

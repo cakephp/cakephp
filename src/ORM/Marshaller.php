@@ -160,6 +160,14 @@ class Marshaller
      * ]);
      * ```
      *
+     * ```
+     * $result = $marshaller->one($data, [
+     *   'associated' => [
+     *     'Tags' => ['accessibleFields' => ['*' => true]]
+     *   ]
+     * ]);
+     * ```
+     *
      * @param array $data The data to hydrate.
      * @param array $options List of options
      * @return \Cake\Datasource\EntityInterface
