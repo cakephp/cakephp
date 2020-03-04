@@ -174,7 +174,7 @@ class UrlHelper extends Helper
         if (!array_key_exists('plugin', $options) || $options['plugin'] !== false) {
             list($plugin, $path) = $this->_View->pluginSplit($path, false);
         }
-        if (!empty($options['pathPrefix']) && $path[0] !== '/') {
+        if (!empty($options['pathPrefix']) && (substr((string)$path, 0, 1) !== '/')) {
             $path = $options['pathPrefix'] . $path;
         }
         if (

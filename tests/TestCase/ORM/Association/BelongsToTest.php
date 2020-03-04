@@ -445,4 +445,27 @@ class BelongsToTest extends TestCase
         $this->assertSame('mariano', $result->author->name);
         $this->assertSame(['author'], array_keys($result->toArray()), 'No other properties included.');
     }
+
+    /**
+     * Test that formatResults in a joined association finder doesn't dirty
+     * the root entity.
+     *
+     * @return void
+     */
+    public function testAttachToFormatResultsNoDirtyResults()
+    {
+        $this->setAppNamespace('TestApp');
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->belongsTo('Authors')
+            ->setFinder('formatted');
+
+        $query = $articles->find()
+            ->where(['Articles.id' => 1])
+            ->contain('Authors');
+        $result = $query->firstOrFail();
+
+        $this->assertNotEmpty($result->author);
+        $this->assertNotEmpty($result->author->formatted);
+        $this->assertFalse($result->isDirty(), 'Record should be clean as it was pulled from the db.');
+    }
 }

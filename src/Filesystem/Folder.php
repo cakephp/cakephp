@@ -166,7 +166,7 @@ class Folder
      * Change directory to $path.
      *
      * @param string $path Path to the directory to change to
-     * @return string|bool The new path. Returns false on failure
+     * @return string|false The new path. Returns false on failure
      */
     public function cd($path)
     {

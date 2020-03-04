@@ -1280,6 +1280,19 @@ class BelongsToManyTest extends TestCase
 
         $this->assertNotEmpty($result->tags[0]->id);
         $this->assertEmpty($result->tags[0]->name);
+
+        $result = $table
+            ->find()
+            ->contain([
+                'Tags' => [
+                    'fields' => [
+                        'Tags.name',
+                    ],
+                ],
+            ])
+            ->first();
+        $this->assertNotEmpty($result->tags[0]->name);
+        $this->assertEmpty($result->tags[0]->id);
     }
 
     /**

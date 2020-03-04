@@ -14,6 +14,8 @@
  */
 namespace Cake\TestSuite;
 
+loadPHPUnitAliases();
+
 use PHPUnit\Framework\MockObject\MockBuilder as BaseMockBuilder;
 
 /**

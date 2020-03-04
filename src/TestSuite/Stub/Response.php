@@ -30,7 +30,7 @@ class Response extends Base
         if ($this->hasHeader('Location') && $this->_status === 200) {
             $this->statusCode(302);
         }
-        $this->_setContentType();
+        $this->_setContentType($this->getType());
 
         return $this;
     }

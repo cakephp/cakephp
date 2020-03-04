@@ -23,6 +23,7 @@ use Cake\I18n\Time;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
+use TestApp\Auth\CallCounterPasswordHasher;
 
 /**
  * Test case for FormAuthentication
@@ -480,5 +481,51 @@ class FormAuthenticateTest extends TestCase
         $result = $this->auth->authenticate($request, $this->response);
         $this->assertNotEmpty($result);
         $this->assertTrue($this->auth->needsPasswordRehash());
+    }
+
+    /**
+     * Tests that password hasher function is called exactly once in all cases.
+     *
+     * @param string $username
+     * @param string|null $password
+     * @return void
+     * @dataProvider userList
+     */
+    public function testAuthenticateSingleHash($username, $password)
+    {
+        $this->auth = new FormAuthenticate($this->Collection, [
+            'userModel' => 'Users',
+            'passwordHasher' => CallCounterPasswordHasher::class,
+        ]);
+        $this->getTableLocator()->get('Users')->updateAll(
+            ['password' => $password],
+            ['username' => $username]
+        );
+
+        $request = new ServerRequest([
+            'url' => 'posts/index',
+            'post' => [
+                'username' => $username,
+                'password' => 'anything',
+            ],
+        ]);
+        $result = $this->auth->authenticate($request, new Response());
+        $this->assertFalse($result);
+
+        /** @var \TestApp\Auth\CallCounterPasswordHasher $passwordHasher */
+        $passwordHasher = $this->auth->passwordHasher();
+
+        $this->assertInstanceOf(CallCounterPasswordHasher::class, $passwordHasher);
+        $this->assertSame(1, $passwordHasher->callCount);
+    }
+
+    public function userList()
+    {
+        return [
+            ['notexist', ''],
+            ['mariano', null],
+            ['mariano', ''],
+            ['mariano', 'somehash'],
+        ];
     }
 }

@@ -202,7 +202,7 @@ class CommandTask extends Shell
      * Get Shell instance for the given command
      *
      * @param string $commandName The command you want.
-     * @return \Cake\Console\Shell|bool Shell instance if the command can be found, false otherwise.
+     * @return \Cake\Console\Shell|false Shell instance if the command can be found, false otherwise.
      */
     public function getShell($commandName)
     {

@@ -915,7 +915,7 @@ class Email implements JsonSerializable, Serializable
      * EmailPattern setter/getter
      *
      * @deprecated 3.4.0 Use setEmailPattern()/getEmailPattern() instead.
-     * @param string|bool|null $regex The pattern to use for email address validation,
+     * @param string|false|null $regex The pattern to use for email address validation,
      *   null to unset the pattern and make use of filter_var() instead, false or
      *   nothing to return the current value
      * @return string|$this

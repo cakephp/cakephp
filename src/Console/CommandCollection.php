@@ -62,7 +62,7 @@ class CommandCollection implements IteratorAggregate, Countable
         if (!is_subclass_of($command, Shell::class) && !is_subclass_of($command, Command::class)) {
             $class = is_string($command) ? $command : get_class($command);
             throw new InvalidArgumentException(
-                "Cannot use '$class' for command '$name' it is not a subclass of Cake\Console\Shell or Cake\Console\Command."
+                "Cannot use '$class' for command '$name'. It is not a subclass of Cake\Console\Shell or Cake\Console\Command."
             );
         }
         if (!preg_match('/^[^\s]+(?:(?: [^\s]+){1,2})?$/ui', $name)) {

@@ -2002,7 +2002,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * associate values to those placeholders so that they can be passed correctly
      * to the statement object.
      *
-     * @param \Cake\Database\ValueBinder|bool $binder The binder or false to disable binding.
+     * @param \Cake\Database\ValueBinder|false $binder The binder or false to disable binding.
      * @return $this
      */
     public function setValueBinder($binder)

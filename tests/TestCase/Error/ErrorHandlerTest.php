@@ -150,6 +150,38 @@ class ErrorHandlerTest extends TestCase
         $this->assertRegExp('/<pre class="cake-error">/', $result);
         $this->assertRegExp('/<b>Notice<\/b>/', $result);
         $this->assertRegExp('/variable:\s+wrong/', $result);
+        $this->assertContains(
+            'ErrorHandlerTest.php, line ' . (__LINE__ - 7),
+            $result,
+            'Should contain file and line reference'
+        );
+    }
+
+    /**
+     * test error handling with the _trace_offset context variable
+     *
+     * @return void
+     */
+    public function testHandleErrorTraceOffset()
+    {
+        $this->_restoreError = true;
+
+        set_error_handler(function ($code, $message, $file, $line, $context = null) {
+            $errorHandler = new ErrorHandler();
+            $context['_trace_frame_offset'] = 3;
+            $errorHandler->handleError($code, $message, $file, $line, $context);
+        });
+
+        ob_start();
+        $wrong = $wrong + 1;
+        $result = ob_get_clean();
+
+        $this->assertNotContains(
+            'ErrorHandlerTest.php, line ' . (__LINE__ - 4),
+            $result,
+            'Should not contain file and line reference'
+        );
+        $this->assertNotContains('_trace_frame_offset', $result);
     }
 
     /**

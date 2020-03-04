@@ -426,7 +426,7 @@ class SmtpTransport extends AbstractTransport
      * Protected method for sending data to SMTP connection
      *
      * @param string|null $data Data to be sent to SMTP server
-     * @param string|bool $checkCode Code to check for in server response, false to skip
+     * @param string|false $checkCode Code to check for in server response, false to skip
      * @return string|null The matched code, or null if nothing matched
      * @throws \Cake\Network\Exception\SocketException
      */

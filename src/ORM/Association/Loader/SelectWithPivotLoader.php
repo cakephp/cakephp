@@ -128,6 +128,14 @@ class SelectWithPivotLoader extends SelectLoader
     }
 
     /**
+     * @inheritDoc
+     */
+    protected function _assertFieldsPresent($fetchQuery, $key)
+    {
+        // _buildQuery() manually adds in required fields from junction table
+    }
+
+    /**
      * Generates a string used as a table field that contains the values upon
      * which the filter should be applied
      *
