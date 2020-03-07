@@ -376,7 +376,7 @@ class FormProtector
      * @param string $url Form URL.
      * @param string $sessionId Session Id.
      * @return array The token data.
-     * @psalm-return array{fields: string, unlocked: string}
+     * @psalm-return array{fields: string, unlocked: string, debug: string}
      */
     public function buildTokenData(string $url = '', string $sessionId = ''): array
     {
