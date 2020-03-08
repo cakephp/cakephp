@@ -2310,6 +2310,41 @@ class HashTest extends TestCase
     }
 
     /**
+     * test combine() with null key path.
+     *
+     * @return void
+     */
+    public function testCombineWithNullKeyPath()
+    {
+        $result = Hash::combine([], null, '{n}.User.Data');
+        $this->assertEmpty($result);
+
+        $a = static::userData();
+
+        $result = Hash::combine($a, null);
+        $expected = [0 => null, 1 => null, 2 => null];
+        $this->assertEquals($expected, $result);
+
+        $result = Hash::combine($a, null, '{n}.User.non-existant');
+        $expected = [0 => null, 1 => null, 2 => null];
+        $this->assertEquals($expected, $result);
+
+        $result = Hash::combine($a, null, '{n}.User.Data');
+        $expected = [
+            0 => ['user' => 'mariano.iglesias', 'name' => 'Mariano Iglesias'],
+            1 => ['user' => 'phpnut', 'name' => 'Larry E. Masters'],
+            2 => ['user' => 'gwoo', 'name' => 'The Gwoo']];
+        $this->assertEquals($expected, $result);
+
+        $result = Hash::combine($a, null, '{n}.User.Data.name');
+        $expected = [
+            0 => 'Mariano Iglesias',
+            1 => 'Larry E. Masters',
+            2 => 'The Gwoo'];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * test combine() giving errors on key/value length mismatches.
      *
      * @return void
@@ -2360,6 +2395,18 @@ class HashTest extends TestCase
         ];
         $this->assertSame($expected, $result);
 
+        $result = Hash::combine($a, null, '{n}.User.Data', '{n}.User.group_id');
+        $expected = [
+            1 => [
+                0 => ['user' => 'mariano.iglesias', 'name' => 'Mariano Iglesias'],
+                1 => ['user' => 'gwoo', 'name' => 'The Gwoo']
+            ],
+            2 => [
+                0 => ['user' => 'phpnut', 'name' => 'Larry E. Masters']
+            ]
+        ];
+        $this->assertEquals($expected, $result);
+
         $result = Hash::combine($a, '{n}.User.id', '{n}.User.Data.name', '{n}.User.group_id');
         $expected = [
             1 => [
@@ -2371,6 +2418,18 @@ class HashTest extends TestCase
             ],
         ];
         $this->assertSame($expected, $result);
+
+        $result = Hash::combine($a, null, '{n}.User.Data.name', '{n}.User.group_id');
+        $expected = [
+            1 => [
+                0 => 'Mariano Iglesias',
+                1 => 'The Gwoo'
+            ],
+            2 => [
+                0 => 'Larry E. Masters'
+            ]
+        ];
+        $this->assertEquals($expected, $result);
 
         $result = Hash::combine($a, '{n}.User.id', '{n}.User.Data', '{n}.User.group_id');
         $expected = [
@@ -2384,6 +2443,18 @@ class HashTest extends TestCase
         ];
         $this->assertSame($expected, $result);
 
+        $result = Hash::combine($a, null, '{n}.User.Data', '{n}.User.group_id');
+        $expected = [
+            1 => [
+                0 => ['user' => 'mariano.iglesias', 'name' => 'Mariano Iglesias'],
+                1 => ['user' => 'gwoo', 'name' => 'The Gwoo']
+            ],
+            2 => [
+                0 => ['user' => 'phpnut', 'name' => 'Larry E. Masters']
+            ]
+        ];
+        $this->assertEquals($expected, $result);
+
         $result = Hash::combine($a, '{n}.User.id', '{n}.User.Data.name', '{n}.User.group_id');
         $expected = [
             1 => [
@@ -2393,6 +2464,18 @@ class HashTest extends TestCase
             2 => [
                 14 => 'Larry E. Masters',
             ],
+        ];
+        $this->assertSame($expected, $result);
+
+        $result = Hash::combine($a, null, '{n}.User.Data.name', '{n}.User.group_id');
+        $expected = [
+            1 => [
+                0 => 'Mariano Iglesias',
+                1 => 'The Gwoo'
+            ],
+            2 => [
+                0 => 'Larry E. Masters'
+            ]
         ];
         $this->assertSame($expected, $result);
     }
@@ -2422,6 +2505,23 @@ class HashTest extends TestCase
             ],
         ];
         $this->assertSame($expected, $result);
+
+        $result = Hash::combine(
+            $a,
+            null,
+            ['%1$s: %2$s', '{n}.User.Data.user', '{n}.User.Data.name'],
+            '{n}.User.group_id'
+        );
+        $expected = [
+            1 => [
+                0 => 'mariano.iglesias: Mariano Iglesias',
+                1 => 'gwoo: The Gwoo'
+            ],
+            2 => [
+                0 => 'phpnut: Larry E. Masters'
+            ]
+        ];
+        $this->assertEquals($expected, $result);
 
         $result = Hash::combine(
             $a,
