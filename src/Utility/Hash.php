@@ -452,12 +452,12 @@ class Hash
      * following the path specified in `$groupPath`.
      *
      * @param array $data Array from where to extract keys and values
-     * @param string $keyPath A dot-separated string.
+     * @param string|null $keyPath A dot-separated string. If null it will create a numbered array.
      * @param string|null $valuePath A dot-separated string.
      * @param string|null $groupPath A dot-separated string.
      * @return array Combined array
      * @link https://book.cakephp.org/3/en/core-libraries/hash.html#Cake\Utility\Hash::combine
-     * @throws \RuntimeException When keys and values count is unequal.
+     * @throws \RuntimeException When keys is an array, and keys and values count is unequal.
      */
     public static function combine(array $data, $keyPath, $valuePath = null, $groupPath = null)
     {
@@ -468,10 +468,12 @@ class Hash
         if (is_array($keyPath)) {
             $format = array_shift($keyPath);
             $keys = static::format($data, $keyPath, $format);
+        } elseif ($keyPath === null) {
+            $keys = $keyPath;
         } else {
             $keys = static::extract($data, $keyPath);
         }
-        if (empty($keys)) {
+        if ($keyPath !== null && empty($keys)) {
             return [];
         }
 
@@ -483,10 +485,10 @@ class Hash
             $vals = static::extract($data, $valuePath);
         }
         if (empty($vals)) {
-            $vals = array_fill(0, count($keys), null);
+            $vals = array_fill(0, $keys === null ? count($data) : count($keys), null);
         }
 
-        if (count($keys) !== count($vals)) {
+        if (is_array($keys) && count($keys) !== count($vals)) {
             throw new RuntimeException(
                 'Hash::combine() needs an equal number of keys + values.'
             );
@@ -495,7 +497,7 @@ class Hash
         if ($groupPath !== null) {
             $group = static::extract($data, $groupPath);
             if (!empty($group)) {
-                $c = count($keys);
+                $c = is_array($keys) ? count($keys) : count($vals);
                 $out = [];
                 for ($i = 0; $i < $c; $i++) {
                     if (!isset($group[$i])) {
@@ -504,7 +506,11 @@ class Hash
                     if (!isset($out[$group[$i]])) {
                         $out[$group[$i]] = [];
                     }
-                    $out[$group[$i]][$keys[$i]] = $vals[$i];
+                    if ($keys === null) {
+                        $out[$group[$i]][] = $vals[$i];
+                    } else {
+                        $out[$group[$i]][$keys[$i]] = $vals[$i];
+                    }
                 }
 
                 return $out;
@@ -514,7 +520,7 @@ class Hash
             return [];
         }
 
-        return array_combine($keys, $vals);
+        return array_combine($keys === null ? range(0, count($vals) - 1) : $keys, $vals);
     }
 
     /**
