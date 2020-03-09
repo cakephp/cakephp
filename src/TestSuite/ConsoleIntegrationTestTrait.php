@@ -108,7 +108,7 @@ trait ConsoleIntegrationTestTrait
         if ($this->_in === null) {
             $this->_in = new ConsoleInput($input);
         } elseif ($input) {
-            throw new RuntimeException('You can use $input only if $_in property is null and will be reset.');
+            throw new RuntimeException('You can use `$input` only if `$_in` property is null and will be reset.');
         }
 
         $args = $this->commandStringToArgs("cake $command");
