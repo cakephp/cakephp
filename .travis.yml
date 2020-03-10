@@ -10,7 +10,6 @@ services:
 
 cache:
   directories:
-    - vendor
     - $HOME/.composer/cache
 
 php:
