@@ -28,77 +28,13 @@ use InvalidArgumentException;
 class FunctionsBuilder
 {
     /**
-     * Returns a new instance of a FunctionExpression. This is used for generating
-     * arbitrary function calls in the final SQL string.
-     *
-     * @param string $name the name of the SQL function to constructed
-     * @param array $params list of params to be passed to the function
-     * @param array $types list of types for each function param
-     * @param string $return The return type of the function expression
-     * @return \Cake\Database\Expression\FunctionExpression
-     */
-    protected function _build(
-        string $name,
-        array $params = [],
-        array $types = [],
-        string $return = 'string'
-    ): FunctionExpression {
-        return new FunctionExpression($name, $params, $types, $return);
-    }
-
-    /**
-     * Helper function to build a function expression that only takes one literal
-     * argument.
-     *
-     * @param string $name name of the function to build
-     * @param string|\Cake\Database\ExpressionInterface $expression the function argument
-     * @param array $types list of types to bind to the arguments
-     * @param string $return The return type for the function
-     * @return \Cake\Database\Expression\FunctionExpression
-     */
-    protected function _literalArgumentFunction(
-        string $name,
-        $expression,
-        $types = [],
-        $return = 'string'
-    ): FunctionExpression {
-        if (!is_string($expression)) {
-            $expression = [$expression];
-        } else {
-            $expression = [$expression => 'literal'];
-        }
-
-        return $this->_build($name, $expression, $types, $return);
-    }
-
-    /**
-     * Helper to build an aggregate function with a single literal argument.
-     *
-     * @param string $name name of the function to build
-     * @param mixed $expression the function argument
-     * @param array $types list of types to bind to the arguments
-     * @param string $return The return type for the function
-     * @return \Cake\Database\Expression\AggregateExpression
-     */
-    protected function singleLiteralAggregate(string $name, $expression, array $types, string $return)
-    {
-        if (!is_string($expression)) {
-            $expression = [$expression];
-        } else {
-            $expression = [$expression => 'literal'];
-        }
-
-        return $this->aggregate($name, $expression, $types, $return);
-    }
-
-    /**
      * Returns a FunctionExpression representing a call to SQL RAND function.
      *
      * @return \Cake\Database\Expression\FunctionExpression
      */
     public function rand(): FunctionExpression
     {
-        return $this->_build('RAND', [], [], 'float');
+        return new FunctionExpression('RAND', [], [], 'float');
     }
 
     /**
@@ -115,7 +51,7 @@ class FunctionsBuilder
             $returnType = 'integer';
         }
 
-        return $this->singleLiteralAggregate('SUM', $expression, $types, $returnType);
+        return $this->aggregate('SUM', $this->toLiteralParam($expression), $types, $returnType);
     }
 
     /**
@@ -127,7 +63,7 @@ class FunctionsBuilder
      */
     public function avg($expression, $types = []): AggregateExpression
     {
-        return $this->singleLiteralAggregate('AVG', $expression, $types, 'float');
+        return $this->aggregate('AVG', $this->toLiteralParam($expression), $types, 'float');
     }
 
     /**
@@ -139,7 +75,7 @@ class FunctionsBuilder
      */
     public function max($expression, $types = []): AggregateExpression
     {
-        return $this->singleLiteralAggregate('MAX', $expression, $types, current($types) ?: 'string');
+        return $this->aggregate('MAX', $this->toLiteralParam($expression), $types, current($types) ?? 'float');
     }
 
     /**
@@ -151,7 +87,7 @@ class FunctionsBuilder
      */
     public function min($expression, $types = []): AggregateExpression
     {
-        return $this->singleLiteralAggregate('MIN', $expression, $types, current($types) ?: 'string');
+        return $this->aggregate('MIN', $this->toLiteralParam($expression), $types, current($types) ?? 'float');
     }
 
     /**
@@ -163,7 +99,7 @@ class FunctionsBuilder
      */
     public function count($expression, $types = []): AggregateExpression
     {
-        return $this->singleLiteralAggregate('COUNT', $expression, $types, 'integer');
+        return $this->aggregate('COUNT', $this->toLiteralParam($expression), $types, 'integer');
     }
 
     /**
@@ -175,7 +111,7 @@ class FunctionsBuilder
      */
     public function concat(array $args, array $types = []): FunctionExpression
     {
-        return $this->_build('CONCAT', $args, $types, 'string');
+        return new FunctionExpression('CONCAT', $args, $types, 'string');
     }
 
     /**
@@ -187,7 +123,7 @@ class FunctionsBuilder
      */
     public function coalesce(array $args, array $types = []): FunctionExpression
     {
-        return $this->_build('COALESCE', $args, $types, current($types) ?: 'string');
+        return new FunctionExpression('COALESCE', $args, $types, current($types) ?: 'string');
     }
 
     /**
@@ -200,7 +136,7 @@ class FunctionsBuilder
      */
     public function dateDiff(array $args, array $types = []): FunctionExpression
     {
-        return $this->_build('DATEDIFF', $args, $types, 'integer');
+        return new FunctionExpression('DATEDIFF', $args, $types, 'integer');
     }
 
     /**
@@ -226,7 +162,7 @@ class FunctionsBuilder
      */
     public function extract(string $part, $expression, array $types = []): FunctionExpression
     {
-        $expression = $this->_literalArgumentFunction('EXTRACT', $expression, $types, 'integer');
+        $expression = new FunctionExpression('EXTRACT', $this->toLiteralParam($expression), $types, 'integer');
         $expression->setConjunction(' FROM')->add([$part => 'literal'], [], true);
 
         return $expression;
@@ -247,7 +183,7 @@ class FunctionsBuilder
             $value = 0;
         }
         $interval = $value . ' ' . $unit;
-        $expression = $this->_literalArgumentFunction('DATE_ADD', $expression, $types, 'datetime');
+        $expression = new FunctionExpression('DATE_ADD', $this->toLiteralParam($expression), $types, 'datetime');
         $expression->setConjunction(', INTERVAL')->add([$interval => 'literal']);
 
         return $expression;
@@ -263,7 +199,7 @@ class FunctionsBuilder
      */
     public function dayOfWeek($expression, $types = []): FunctionExpression
     {
-        return $this->_literalArgumentFunction('DAYOFWEEK', $expression, $types, 'integer');
+        return new FunctionExpression('DAYOFWEEK', $this->toLiteralParam($expression), $types, 'integer');
     }
 
     /**
@@ -290,13 +226,13 @@ class FunctionsBuilder
     public function now(string $type = 'datetime'): FunctionExpression
     {
         if ($type === 'datetime') {
-            return $this->_build('NOW')->setReturnType('datetime');
+            return new FunctionExpression('NOW', [], [], 'datetime');
         }
         if ($type === 'date') {
-            return $this->_build('CURRENT_DATE')->setReturnType('date');
+            return new FunctionExpression('CURRENT_DATE', [], [], 'date');
         }
         if ($type === 'time') {
-            return $this->_build('CURRENT_TIME')->setReturnType('time');
+            return new FunctionExpression('CURRENT_TIME', [], [], 'time');
         }
 
         throw new InvalidArgumentException('Invalid argument for FunctionsBuilder::now(): ' . $type);
@@ -330,6 +266,21 @@ class FunctionsBuilder
      */
     public function __call(string $name, array $args): FunctionExpression
     {
-        return $this->_build($name, ...$args);
+        return new FunctionExpression($name, ...$args);
+    }
+
+    /**
+     * Creates function parameter array from expression or string literal.
+     *
+     * @param \Cake\Database\ExpressionInterface|string $expression function argument
+     * @return (\Cake\Database\ExpressionInterface|string)[]
+     */
+    protected function toLiteralParam($expression)
+    {
+        if (is_string($expression)) {
+            return [$expression => 'literal'];
+        }
+
+        return [$expression];
     }
 }
