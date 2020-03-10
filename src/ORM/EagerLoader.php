@@ -254,6 +254,7 @@ class EagerLoader
         $containments = [];
         $pointer =& $containments;
         $opts = ['matching' => true] + $options;
+        /** @psalm-suppress InvalidArrayOffset */
         unset($opts['negateMatch']);
 
         foreach ($assocs as $name) {
