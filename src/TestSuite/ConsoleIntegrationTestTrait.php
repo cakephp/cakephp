@@ -29,6 +29,7 @@ use Cake\TestSuite\Constraint\Console\ExitCode;
 use Cake\TestSuite\Stub\ConsoleInput;
 use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\Stub\MissingConsoleInputException;
+use RuntimeException;
 
 /**
  * A test case class intended to make integration tests of cake console commands
@@ -90,15 +91,25 @@ trait ConsoleIntegrationTestTrait
      *
      * @param string $command Command to run
      * @param array $input Input values to pass to an interactive shell
+     * @throws \Cake\TestSuite\Stub\MissingConsoleInputException
+     * @throws \RuntimeException
      * @return void
      */
     public function exec(string $command, array $input = []): void
     {
         $runner = $this->makeRunner();
 
-        $this->_out = new ConsoleOutput();
-        $this->_err = new ConsoleOutput();
-        $this->_in = new ConsoleInput($input);
+        if ($this->_out === null) {
+            $this->_out = new ConsoleOutput();
+        }
+        if ($this->_err === null) {
+            $this->_err = new ConsoleOutput();
+        }
+        if ($this->_in === null) {
+            $this->_in = new ConsoleInput($input);
+        } elseif ($input) {
+            throw new RuntimeException('You can use `$input` only if `$_in` property is null and will be reset.');
+        }
 
         $args = $this->commandStringToArgs("cake $command");
         $io = new ConsoleIo($this->_out, $this->_err, $this->_in);
