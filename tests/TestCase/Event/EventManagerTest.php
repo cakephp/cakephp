@@ -15,10 +15,94 @@
 namespace Cake\Test\TestCase\Event;
 
 use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\Event\EventList;
 use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManager;
 use Cake\TestSuite\TestCase;
+
+/**
+ * TestEvent
+ */
+class TestEvent implements EventInterface
+{
+    /**
+     * @var string
+     */
+    protected $name;
+
+    /**
+     * @param string $name
+     */
+    public function __construct($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getSubject()
+    {
+        // TODO: Implement getSubject() method.
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function stopPropagation()
+    {
+        // TODO: Implement stopPropagation() method.
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isStopped()
+    {
+        // TODO: Implement isStopped() method.
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getResult()
+    {
+        // TODO: Implement getResult() method.
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setResult($value = null)
+    {
+        // TODO: Implement setResult() method.
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getData($key = null)
+    {
+        // TODO: Implement getData() method.
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setData($key, $value = null)
+    {
+        // TODO: Implement setData() method.
+    }
+}
 
 /**
  * Mock class used to test event dispatching
@@ -94,6 +178,19 @@ class CustomTestEventListenerInterface extends EventTestListener implements Even
  */
 class EventManagerTest extends TestCase
 {
+
+    /**
+     * @return void
+     */
+    public function testCustomEventImplementation()
+    {
+        $event = new TestEvent('fake.event');
+        $listener = new CustomTestEventListenerInterface();
+
+        $manager = new EventManager();
+        $manager->on($listener);
+        $manager->dispatch($event);
+    }
 
     /**
      * Tests the attach() method for a single event key in multiple queues
