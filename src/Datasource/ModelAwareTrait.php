@@ -73,8 +73,8 @@ trait ModelAwareTrait
     }
 
     /**
-     * @param string|null $modelClass
-     * @param string|null $modelType
+     * @param string|null $modelClass Name of model class to load. Defaults to $this->modelClass.
+     * @param string|null $modelType The type of repository to load. Defaults to the modelType() value.
      * @throws \UnexpectedValueException If $modelClass argument is not provided
      *   and ModelAwareTrait::$modelClass property value is empty.
      * @return string
@@ -130,14 +130,13 @@ trait ModelAwareTrait
             $modelType = $this->getModelType();
         }
 
+        if ($modelClass === null) {
+            $modelClass = $this->modelClass;
+        }
         $alias = $this->getModelAlias($modelClass, $modelType);
 
         if (isset($this->{$alias})) {
             return $this->{$alias};
-        }
-
-        if ($modelClass === null) {
-            $modelClass = $this->modelClass;
         }
 
         $options = [];
