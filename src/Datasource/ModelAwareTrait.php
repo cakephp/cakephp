@@ -129,10 +129,13 @@ trait ModelAwareTrait
         if ($modelType === null) {
             $modelType = $this->getModelType();
         }
-
         if ($modelClass === null) {
             $modelClass = $this->modelClass;
         }
+        if (empty($modelClass)) {
+            throw new UnexpectedValueException('Default modelClass is empty');
+        }
+
         $alias = $this->getModelAlias($modelClass, $modelType);
 
         if (isset($this->{$alias})) {
