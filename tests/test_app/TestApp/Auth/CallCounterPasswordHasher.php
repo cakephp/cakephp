@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-
 namespace TestApp\Auth;
 
 use Cake\Auth\AbstractPasswordHasher;
