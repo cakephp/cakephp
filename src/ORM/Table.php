@@ -1463,7 +1463,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *      incorrect number of elements.
      * @psalm-suppress InvalidReturnType
      */
-    public function get($primaryKey, $options = []): EntityInterface
+    public function get($primaryKey, array $options = []): EntityInterface
     {
         $key = (array)$this->getPrimaryKey();
         $alias = $this->getAlias();
