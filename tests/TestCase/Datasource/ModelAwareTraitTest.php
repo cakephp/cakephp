@@ -37,7 +37,20 @@ class ModelAwareTraitTest extends TestCase
         $this->assertNull($stub->getModelClass());
 
         $stub->setProps('StubArticles');
-        $this->assertEquals('StubArticles', $stub->getModelClass());
+        $this->assertSame('StubArticles', $stub->getModelClass());
+        $this->assertSame('StubArticles', $stub->getModelAlias());
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetModelAlias()
+    {
+        $stub = new Stub();
+        $stub->setProps('Foo.Bar');
+
+        $this->assertSame('Foo.Bar', $stub->getModelClass());
+        $this->assertSame('Bar', $stub->getModelAlias());
     }
 
     /**

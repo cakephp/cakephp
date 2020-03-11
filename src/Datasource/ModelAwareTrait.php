@@ -73,6 +73,41 @@ trait ModelAwareTrait
     }
 
     /**
+     * @param string|null $modelClass
+     * @param string|null $modelType
+     * @throws \UnexpectedValueException If $modelClass argument is not provided
+     *   and ModelAwareTrait::$modelClass property value is empty.
+     * @return string
+     */
+    public function getModelAlias(?string $modelClass = null, ?string $modelType = null): string
+    {
+        if ($modelClass === null) {
+            $modelClass = $this->modelClass;
+        }
+
+        if (empty($modelClass)) {
+            throw new UnexpectedValueException('Default modelClass is empty');
+        }
+
+        if ($modelType === null) {
+            $modelType = $this->getModelType();
+        }
+
+        if (strpos($modelClass, '\\') === false) {
+            [, $alias] = pluginSplit($modelClass, true);
+        } else {
+            /** @psalm-suppress PossiblyFalseOperand */
+            $alias = substr(
+                $modelClass,
+                strrpos($modelClass, '\\') + 1,
+                -strlen($modelType)
+            );
+        }
+
+        return $alias;
+    }
+
+    /**
      * Loads and constructs repository objects required by this object
      *
      * Typically used to load ORM Table objects as required. Can
@@ -91,32 +126,24 @@ trait ModelAwareTrait
      */
     public function loadModel(?string $modelClass = null, ?string $modelType = null): RepositoryInterface
     {
-        if ($modelClass === null) {
-            $modelClass = $this->modelClass;
-        }
-        if (empty($modelClass)) {
-            throw new UnexpectedValueException('Default modelClass is empty');
-        }
         if ($modelType === null) {
             $modelType = $this->getModelType();
         }
 
-        $options = [];
-        if (strpos($modelClass, '\\') === false) {
-            [, $alias] = pluginSplit($modelClass, true);
-        } else {
-            $options['className'] = $modelClass;
-            /** @psalm-suppress PossiblyFalseOperand */
-            $alias = substr(
-                $modelClass,
-                strrpos($modelClass, '\\') + 1,
-                -strlen($modelType)
-            );
-            $modelClass = $alias;
-        }
+        $alias = $this->getModelAlias($modelClass, $modelType);
 
         if (isset($this->{$alias})) {
             return $this->{$alias};
+        }
+
+        if ($modelClass === null) {
+            $modelClass = $this->modelClass;
+        }
+
+        $options = [];
+        if (strpos($modelClass, '\\') !== false) {
+            $options['className'] = $modelClass;
+            $modelClass = $alias;
         }
 
         if (isset($this->_modelFactories[$modelType])) {
