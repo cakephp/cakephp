@@ -489,7 +489,7 @@ class ConsoleIo
         $this->_out->write('<question>' . $prompt . "</question>$optionsText\n$defaultText> ", 0);
         $result = $this->_in->read();
 
-        $result = trim($result);
+        $result = $result === null ? '' : trim($result);
         if ($default !== null && $result === '') {
             return $default;
         }
