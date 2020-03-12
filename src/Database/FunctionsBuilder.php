@@ -252,19 +252,16 @@ class FunctionsBuilder
      * Returns an AggregateExpression representing call to SQL LAG().
      *
      * @param \Cake\Database\ExpressionInterface|string $expression The value evaluated at offset
-     * @param int|null $offset The row offset
+     * @param int $offset The row offset
      * @param mixed $default The default value if offset doesn't exist
      * @param string $type The type to bind to expression and default
      * @return \Cake\Database\Expression\AggregateExpression
      */
-    public function lag($expression, ?int $offset = null, $default = null, $type = null): AggregateExpression
+    public function lag($expression, int $offset, $default = null, $type = null): AggregateExpression
     {
-        $params = $this->toLiteralParam($expression);
-        if ($offset !== null) {
-            $params += [$offset => 'literal'];
-            if ($default !== null) {
-                $params[] = $default;
-            }
+        $params = $this->toLiteralParam($expression) + [$offset => 'literal'];
+        if ($default !== null) {
+            $params[] = $default;
         }
 
         $types = [];
@@ -279,19 +276,16 @@ class FunctionsBuilder
      * Returns an AggregateExpression representing call to SQL LEAD().
      *
      * @param \Cake\Database\ExpressionInterface|string $expression The value evaluated at offset
-     * @param int|null $offset The row offset
+     * @param int $offset The row offset
      * @param mixed $default The default value if offset doesn't exist
      * @param string $type The type to bind to expression and default
      * @return \Cake\Database\Expression\AggregateExpression
      */
-    public function lead($expression, ?int $offset = null, $default = null, $type = null): AggregateExpression
+    public function lead($expression, int $offset, $default = null, $type = null): AggregateExpression
     {
-        $params = $this->toLiteralParam($expression);
-        if ($offset !== null) {
-            $params += [$offset => 'literal'];
-            if ($default !== null) {
-                $params[] = $default;
-            }
+        $params = $this->toLiteralParam($expression) + [$offset => 'literal'];
+        if ($default !== null) {
+            $params[] = $default;
         }
 
         $types = [];

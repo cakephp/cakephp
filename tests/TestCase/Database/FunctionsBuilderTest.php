@@ -278,9 +278,9 @@ class FunctionsBuilderTest extends TestCase
      */
     public function testLag()
     {
-        $function = $this->functions->lag('field');
+        $function = $this->functions->lag('field', 1);
         $this->assertInstanceOf(AggregateExpression::class, $function);
-        $this->assertSame('LAG(field) OVER ()', $function->sql(new ValueBinder()));
+        $this->assertSame('LAG(field, 1) OVER ()', $function->sql(new ValueBinder()));
         $this->assertSame('float', $function->getReturnType());
 
         $function = $this->functions->lag('field', 1, 10, 'integer');
@@ -296,9 +296,9 @@ class FunctionsBuilderTest extends TestCase
      */
     public function testLead()
     {
-        $function = $this->functions->lead('field');
+        $function = $this->functions->lead('field', 1);
         $this->assertInstanceOf(AggregateExpression::class, $function);
-        $this->assertSame('LEAD(field) OVER ()', $function->sql(new ValueBinder()));
+        $this->assertSame('LEAD(field, 1) OVER ()', $function->sql(new ValueBinder()));
         $this->assertSame('float', $function->getReturnType());
 
         $function = $this->functions->lead('field', 1, 10, 'integer');
