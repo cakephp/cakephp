@@ -34,6 +34,7 @@ class ConsoleLog extends BaseLog
         'levels' => null,
         'scopes' => [],
         'outputAs' => null,
+        'date_format' => 'Y-m-d H:i:s',
     ];
 
     /**
@@ -52,6 +53,7 @@ class ConsoleLog extends BaseLog
      * - `scopes` string or array, scopes the engine is interested in
      * - `stream` the path to save logs on.
      * - `outputAs` integer or ConsoleOutput::[RAW|PLAIN|COLOR]
+     * - `date_format` php date() format.
      *
      * @param array $config Options for the FileLog, see above.
      * @throws \InvalidArgumentException
@@ -86,7 +88,7 @@ class ConsoleLog extends BaseLog
     public function log($level, $message, array $context = [])
     {
         $message = $this->_format($message, $context);
-        $output = date('Y-m-d H:i:s') . ' ' . ucfirst($level) . ': ' . $message;
+        $output = $this->_date() . ' ' . ucfirst($level) . ': ' . $message;
 
         $this->_output->write(sprintf('<%s>%s</%s>', $level, $output, $level));
     }

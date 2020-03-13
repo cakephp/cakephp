@@ -198,4 +198,23 @@ class FileLogTest extends TestCase
             unlink($file);
         }
     }
+
+    /**
+     * test log date_format
+     *
+     * @return void
+     */
+    public function testDateFormat()
+    {
+        $this->_deleteLogs(LOGS);
+
+        // original 'Y-m-d H:i:s' format test was testLogFileWriting() method
+
+        // 'c': ISO 8601 date (added in PHP 5)
+        $log = new FileLog(['path' => LOGS, 'date_format' => 'c']);
+        $log->log('warning', 'Test warning');
+
+        $result = file_get_contents(LOGS . 'error.log');
+        $this->assertRegExp('/^2[0-9]{3}-[0-9]+-[0-9]+T[0-9]+:[0-9]+:[0-9]+\+\d{2}:\d{2} Warning: Test warning/', $result);
+    }
 }

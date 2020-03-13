@@ -159,4 +159,14 @@ abstract class BaseLog extends AbstractLogger
 
         return str_replace(array_keys($replacements), $replacements, $message);
     }
+
+    /**
+     * Get the date.
+     *
+     * @return string
+     */
+    protected function _date()
+    {
+        return date($this->_config['date_format']);
+    }
 }
