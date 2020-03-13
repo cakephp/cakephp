@@ -58,9 +58,9 @@ trait ModelAwareTrait
     protected $_modelType = 'Table';
 
     /**
-     * Set the modelClass and modelKey properties based on conventions.
+     * Set the modelClass property based on conventions.
      *
-     * If the properties are already set they will not be overwritten
+     * If the property is already set it will not be overwritten
      *
      * @param string $name Class name.
      * @return void
@@ -83,7 +83,7 @@ trait ModelAwareTrait
      *
      * @param string|null $modelClass Name of model class to load. Defaults to $this->modelClass.
      *  The name can be an alias like `'Post'` or FQCN like `App\Model\Table\PostsTable::class`.
-     * @param string|null $modelType The type of repository to load. Defaults to the modelType() value.
+     * @param string|null $modelType The type of repository to load. Defaults to the getModelType() value.
      * @return \Cake\Datasource\RepositoryInterface The model instance created.
      * @throws \Cake\Datasource\Exception\MissingModelException If the model class cannot be found.
      * @throws \UnexpectedValueException If $modelClass argument is not provided
