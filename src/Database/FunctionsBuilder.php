@@ -239,6 +239,64 @@ class FunctionsBuilder
     }
 
     /**
+     * Returns an AggregateExpression representing call to SQL ROW_NUMBER().
+     *
+     * @return \Cake\Database\Expression\AggregateExpression
+     */
+    public function rowNumber(): AggregateExpression
+    {
+        return (new AggregateExpression('ROW_NUMBER', [], [], 'integer'))->over();
+    }
+
+    /**
+     * Returns an AggregateExpression representing call to SQL LAG().
+     *
+     * @param \Cake\Database\ExpressionInterface|string $expression The value evaluated at offset
+     * @param int $offset The row offset
+     * @param mixed $default The default value if offset doesn't exist
+     * @param string $type The output type of the lag expression. Defaults to float.
+     * @return \Cake\Database\Expression\AggregateExpression
+     */
+    public function lag($expression, int $offset, $default = null, $type = null): AggregateExpression
+    {
+        $params = $this->toLiteralParam($expression) + [$offset => 'literal'];
+        if ($default !== null) {
+            $params[] = $default;
+        }
+
+        $types = [];
+        if ($type !== null) {
+            $types = [$type, 'integer', $type];
+        }
+
+        return (new AggregateExpression('LAG', $params, $types, $type ?? 'float'))->over();
+    }
+
+    /**
+     * Returns an AggregateExpression representing call to SQL LEAD().
+     *
+     * @param \Cake\Database\ExpressionInterface|string $expression The value evaluated at offset
+     * @param int $offset The row offset
+     * @param mixed $default The default value if offset doesn't exist
+     * @param string $type The output type of the lead expression. Defaults to float.
+     * @return \Cake\Database\Expression\AggregateExpression
+     */
+    public function lead($expression, int $offset, $default = null, $type = null): AggregateExpression
+    {
+        $params = $this->toLiteralParam($expression) + [$offset => 'literal'];
+        if ($default !== null) {
+            $params[] = $default;
+        }
+
+        $types = [];
+        if ($type !== null) {
+            $types = [$type, 'integer', $type];
+        }
+
+        return (new AggregateExpression('LEAD', $params, $types, $type ?? 'float'))->over();
+    }
+
+    /**
      * Helper method to create arbitrary SQL aggregate function calls.
      *
      * @param string $name The SQL aggregate function name
