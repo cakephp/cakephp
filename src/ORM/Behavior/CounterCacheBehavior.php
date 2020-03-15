@@ -220,17 +220,12 @@ class CounterCacheBehavior extends Behavior
     ): void {
         $foreignKeys = (array)$assoc->getForeignKey();
         $countConditions = $entity->extract($foreignKeys);
-        $allNulls = true;
+
         foreach ($countConditions as $field => $value) {
             if ($value === null) {
                 $countConditions[$field . ' IS'] = $value;
                 unset($countConditions[$field]);
-            } else {
-                $allNulls = false;
             }
-        }
-        if ($allNulls) {
-            return;
         }
 
         $primaryKeys = (array)$assoc->getBindingKey();
@@ -254,16 +249,18 @@ class CounterCacheBehavior extends Behavior
                 continue;
             }
 
-            if ($config instanceof Closure) {
-                $count = $config($event, $entity, $this->_table, false);
-            } else {
-                $count = $this->_getCount($config, $countConditions);
-            }
-            if ($count !== false) {
-                $assoc->getTarget()->updateAll([$field => $count], $updateConditions);
+            if ($this->_shouldUpdateCount($updateConditions)) {
+                if ($config instanceof Closure) {
+                    $count = $config($event, $entity, $this->_table, false);
+                } else {
+                    $count = $this->_getCount($config, $countConditions);
+                }
+                if ($count !== false) {
+                    $assoc->getTarget()->updateAll([$field => $count], $updateConditions);
+                }
             }
 
-            if (isset($updateOriginalConditions)) {
+            if (isset($updateOriginalConditions) && $this->_shouldUpdateCount($updateOriginalConditions)) {
                 if ($config instanceof Closure) {
                     $count = $config($event, $entity, $this->_table, true);
                 } else {
@@ -274,6 +271,20 @@ class CounterCacheBehavior extends Behavior
                 }
             }
         }
+    }
+
+    /**
+     * Checks if the count should be updated given a set of conditions.
+     *
+     * @param array $conditions Conditions to update count.
+     *
+     * @return bool True if the count update should happen, false otherwise.
+     */
+    protected function _shouldUpdateCount(array $conditions)
+    {
+        return !empty(array_filter($conditions, function ($value) {
+            return $value !== null;
+        }));
     }
 
     /**
