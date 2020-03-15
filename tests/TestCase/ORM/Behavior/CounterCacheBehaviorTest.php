@@ -285,6 +285,22 @@ class CounterCacheBehaviorTest extends TestCase
         $this->assertEquals(2, $user2->get('post_count'));
         $this->assertSame(0, $category1->get('post_count'));
         $this->assertEquals(3, $category2->get('post_count'));
+
+        $entity = $this->post->patchEntity($post, ['user_id' => null, 'category_id' => null]);
+        $this->post->save($entity);
+
+        $user2 = $this->_getUser(2);
+        $category2 = $this->_getCategory(2);
+        $this->assertEquals(1, $user2->get('post_count'));
+        $this->assertEquals(2, $category2->get('post_count'));
+
+        $entity = $this->post->patchEntity($post, ['user_id' => 2, 'category_id' => 2]);
+        $this->post->save($entity);
+
+        $user2 = $this->_getUser(2);
+        $category2 = $this->_getCategory(2);
+        $this->assertEquals(2, $user2->get('post_count'));
+        $this->assertEquals(3, $category2->get('post_count'));
     }
 
     /**
