@@ -280,8 +280,9 @@ class CounterCacheBehavior extends Behavior
      *
      * @return bool True if the count update should happen, false otherwise.
      */
-    protected function _shouldUpdateCount(array $conditions) {
-        return !empty(array_filter($conditions, function($value) {
+    protected function _shouldUpdateCount(array $conditions)
+    {
+        return !empty(array_filter($conditions, function ($value) {
             return $value !== null;
         }));
     }
