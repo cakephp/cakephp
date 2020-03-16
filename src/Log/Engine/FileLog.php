@@ -119,7 +119,7 @@ class FileLog extends BaseLog
     public function log($level, $message, array $context = []): void
     {
         $message = $this->_format($message, $context);
-        $output = $this->_date() . ' ' . ucfirst($level) . ': ' . $message . "\n";
+        $output = $this->_getFormattedDate() . ' ' . ucfirst($level) . ': ' . $message . "\n";
         $filename = $this->_getFilename($level);
         if ($this->_size) {
             $this->_rotateFile($filename);

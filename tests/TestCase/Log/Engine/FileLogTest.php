@@ -200,7 +200,7 @@ class FileLogTest extends TestCase
     }
 
     /**
-     * test log dateFormat option
+     * test dateFormat option
      *
      * @return void
      */

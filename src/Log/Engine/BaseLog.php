@@ -161,11 +161,13 @@ abstract class BaseLog extends AbstractLogger
     }
 
     /**
-     * Get the date.
+     * Returns date formatted according to given `dateFormat` option format.
+     *
+     * This function affects `FileLog` or` ConsoleLog` datetime information format.
      *
      * @return string
      */
-    protected function _date()
+    protected function _getFormattedDate()
     {
         return date($this->_config['dateFormat']);
     }
