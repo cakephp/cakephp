@@ -200,7 +200,7 @@ class FileLogTest extends TestCase
     }
 
     /**
-     * test log date_format
+     * test log dateFormat option
      *
      * @return void
      */
@@ -211,7 +211,7 @@ class FileLogTest extends TestCase
         // original 'Y-m-d H:i:s' format test was testLogFileWriting() method
 
         // 'c': ISO 8601 date (added in PHP 5)
-        $log = new FileLog(['path' => LOGS, 'date_format' => 'c']);
+        $log = new FileLog(['path' => LOGS, 'dateFormat' => 'c']);
         $log->log('warning', 'Test warning');
 
         $result = file_get_contents(LOGS . 'error.log');

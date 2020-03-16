@@ -40,7 +40,7 @@ class FileLog extends BaseLog
      *   If value is 0, old versions are removed rather then rotated.
      * - `mask` A mask is applied when log files are created. Left empty no chmod
      *   is made.
-     * - `date_format` php date() format.
+     * - `dateFormat` php date() format.
      *
      * @var array
      */
@@ -53,7 +53,7 @@ class FileLog extends BaseLog
         'rotate' => 10,
         'size' => 10485760, // 10MB
         'mask' => null,
-        'date_format' => 'Y-m-d H:i:s',
+        'dateFormat' => 'Y-m-d H:i:s',
     ];
 
     /**

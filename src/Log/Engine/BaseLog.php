@@ -167,6 +167,6 @@ abstract class BaseLog extends AbstractLogger
      */
     protected function _date()
     {
-        return date($this->_config['date_format']);
+        return date($this->_config['dateFormat']);
     }
 }
