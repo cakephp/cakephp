@@ -529,9 +529,10 @@ class TreeBehavior extends Behavior
                 'spacer' => '_',
             ];
 
-            return $results
-                ->listNested()
-                ->printer($options['valuePath'], $options['keyPath'], $options['spacer']);
+            /** @var \Cake\Collection\Iterator\TreeIterator $nested */
+            $nested = $results->listNested();
+
+            return $nested->printer($options['valuePath'], $options['keyPath'], $options['spacer']);
         });
     }
 
