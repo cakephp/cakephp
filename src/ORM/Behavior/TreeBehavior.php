@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\ORM\Behavior;
 
+use Cake\Collection\CollectionInterface;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\RecordNotFoundException;
@@ -521,17 +522,17 @@ class TreeBehavior extends Behavior
      */
     public function formatTreeList(Query $query, array $options = []): Query
     {
-        return $query->formatResults(function ($results) use ($options) {
-            /** @var \Cake\Collection\CollectionTrait $results */
+        return $query->formatResults(function (CollectionInterface $results) use ($options) {
             $options += [
                 'keyPath' => $this->_getPrimaryKey(),
                 'valuePath' => $this->_table->getDisplayField(),
                 'spacer' => '_',
             ];
 
-            return $results
-                ->listNested()
-                ->printer($options['valuePath'], $options['keyPath'], $options['spacer']);
+            /** @var \Cake\Collection\Iterator\TreeIterator $nested */
+            $nested = $results->listNested();
+
+            return $nested->printer($options['valuePath'], $options['keyPath'], $options['spacer']);
         });
     }
 
