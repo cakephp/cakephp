@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="3.8.5@e6ec5fa22a7b9e61670a24d07b3119aff80dcd89">
+<files psalm-version="3.9.5@0cfe565d0afbcd31eadcc281b9017b5692911661">
   <file src="src/Command/CompletionCommand.php">
     <DeprecatedClass occurrences="1">
       <code>\Cake\Console\Shell</code>
     </DeprecatedClass>
   </file>
   <file src="src/Console/CommandCollection.php">
-    <DeprecatedClass occurrences="1">
+    <DeprecatedClass occurrences="5">
+      <code>(\Cake\Console\Shell|\Cake\Console\CommandInterface|class-string)[]</code>
       <code>string|\Cake\Console\Shell|\Cake\Console\CommandInterface</code>
+      <code>Shell::class</code>
+      <code>class-string|\Cake\Console\Shell|\Cake\Console\CommandInterface</code>
+      <code>\Traversable&lt;string, \Cake\Console\Shell|\Cake\Console\CommandInterface|class-string&gt;</code>
     </DeprecatedClass>
   </file>
   <file src="src/Console/CommandFactoryInterface.php">

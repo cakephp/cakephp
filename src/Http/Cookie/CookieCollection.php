@@ -25,6 +25,7 @@ use IteratorAggregate;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Traversable;
 
 /**
  * Cookie Collection
@@ -209,9 +210,10 @@ class CookieCollection implements IteratorAggregate, Countable
     /**
      * Gets the iterator
      *
-     * @return \ArrayIterator
+     * @return \Cake\Http\Cookie\CookieInterface[]
+     * @psalm-return \Traversable<string, \Cake\Http\Cookie\CookieInterface>
      */
-    public function getIterator(): ArrayIterator
+    public function getIterator(): Traversable
     {
         return new ArrayIterator($this->cookies);
     }
