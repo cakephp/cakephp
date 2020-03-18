@@ -869,11 +869,14 @@ abstract class TestCase extends BaseTestCase
      * Set the app namespace
      *
      * @param string $appNamespace The app namespace, defaults to "TestApp".
-     * @return void
+     * @return string|null The previous app namespace or null if not set.
      */
-    public static function setAppNamespace(string $appNamespace = 'TestApp'): void
+    public static function setAppNamespace(string $appNamespace = 'TestApp'): ?string
     {
+        $previous = Configure::read('App.namespace');
         Configure::write('App.namespace', $appNamespace);
+
+        return $previous;
     }
 
     /**
