@@ -1527,7 +1527,7 @@ class ValidatorTest extends TestCase
                     'when' => true,
                 ],
                 'subject',
-            ], 'Not empty');
+            ], 'Not empty', false);
         });
 
         $this->assertFalse($validator->field('title')->isEmptyAllowed());
