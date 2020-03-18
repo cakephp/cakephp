@@ -871,7 +871,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @see \Cake\Validation\Validator::allowEmptyString()
      * @since 3.8.0
      */
-    public function notEmptyString(string $field, ?string $message = null, $when = false)
+    public function notEmptyString(string $field, ?string $message = null, $when = true)
     {
         $when = $this->invertWhenClause($when);
 
@@ -1236,7 +1236,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             };
         }
 
-        return $when;
+        return !$when;
     }
 
     /**
