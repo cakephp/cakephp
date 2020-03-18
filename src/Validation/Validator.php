@@ -864,7 +864,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field The name of the field.
      * @param string|null $message The message to show if the field is empty.
      * @param bool|string|callable $when Indicates when the field is not allowed
-     *   to be empty. Valid values are false (never), 'create', 'update'. If a
+     *   to be empty. Valid values are true, false, 'create', 'update'. If a
      *   callable is passed then the field will be required to be not empty when
      *   the callback returns true.
      * @return $this
@@ -906,13 +906,13 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field The name of the field.
      * @param string|null $message The message to show if the field is empty.
      * @param bool|string|callable $when Indicates when the field is not allowed
-     *   to be empty. Valid values are false (never), 'create', 'update'. If a
+     *   to be empty. Valid values are true, false, 'create', 'update'. If a
      *   callable is passed then the field will be required to be not empty when
      *   the callback returns true.
      * @return $this
      * @see \Cake\Validation\Validator::allowEmptyArray()
      */
-    public function notEmptyArray(string $field, ?string $message = null, $when = false)
+    public function notEmptyArray(string $field, ?string $message = null, $when = true)
     {
         $when = $this->invertWhenClause($when);
 
@@ -948,14 +948,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field The name of the field.
      * @param string|null $message The message to show if the field is empty.
      * @param bool|string|callable $when Indicates when the field is not allowed
-     *   to be empty. Valid values are false (never), 'create', 'update'. If a
+     *   to be empty. Valid values are true, false, 'create', 'update'. If a
      *   callable is passed then the field will be required to be not empty when
      *   the callback returns true.
      * @return $this
      * @since 3.8.0
      * @see \Cake\Validation\Validator::allowEmptyFile()
      */
-    public function notEmptyFile(string $field, ?string $message = null, $when = false)
+    public function notEmptyFile(string $field, ?string $message = null, $when = true)
     {
         $when = $this->invertWhenClause($when);
 
@@ -987,13 +987,13 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field The name of the field.
      * @param string|null $message The message to show if the field is empty.
      * @param bool|string|callable $when Indicates when the field is not allowed
-     *   to be empty. Valid values are false (never), 'create', 'update'. If a
+     *   to be empty. Valid values are true, false, 'create', 'update'. If a
      *   callable is passed then the field will be required to be not empty when
      *   the callback returns true.
      * @return $this
      * @see \Cake\Validation\Validator::allowEmptyDate() for examples
      */
-    public function notEmptyDate(string $field, ?string $message = null, $when = false)
+    public function notEmptyDate(string $field, ?string $message = null, $when = true)
     {
         $when = $this->invertWhenClause($when);
 
@@ -1031,14 +1031,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field The name of the field.
      * @param string|null $message The message to show if the field is empty.
      * @param bool|string|callable $when Indicates when the field is not allowed
-     *   to be empty. Valid values are false (never), 'create', 'update'. If a
+     *   to be empty. Valid values are true, false, 'create', 'update'. If a
      *   callable is passed then the field will be required to be not empty when
      *   the callback returns true.
      * @return $this
      * @since 3.8.0
      * @see \Cake\Validation\Validator::allowEmptyTime()
      */
-    public function notEmptyTime(string $field, ?string $message = null, $when = false)
+    public function notEmptyTime(string $field, ?string $message = null, $when = true)
     {
         $when = $this->invertWhenClause($when);
 
@@ -1076,14 +1076,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field The name of the field.
      * @param string|null $message The message to show if the field is empty.
      * @param bool|string|callable $when Indicates when the field is not allowed
-     *   to be empty. Valid values are false (never), 'create', 'update'. If a
+     *   to be empty. Valid values are true, false, 'create', 'update'. If a
      *   callable is passed then the field will be required to be not empty when
      *   the callback returns true.
      * @return $this
      * @since 3.8.0
      * @see \Cake\Validation\Validator::allowEmptyDateTime()
      */
-    public function notEmptyDateTime(string $field, ?string $message = null, $when = false)
+    public function notEmptyDateTime(string $field, ?string $message = null, $when = true)
     {
         $when = $this->invertWhenClause($when);
 
@@ -1183,7 +1183,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *   the callback returns false.
      * @return $this
      */
-    public function notEmpty($field, ?string $message = null, $when = false)
+    public function notEmpty($field, ?string $message = null, $when = true)
     {
         deprecationWarning(
             'notEmpty() is deprecated. '
