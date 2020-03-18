@@ -1514,7 +1514,7 @@ class ValidatorTest extends TestCase
         $this->deprecated(function () use ($validator) {
             $validator->notEmpty([
                 'title' => [
-                    'when' => false,
+                    'when' => true,
                 ],
                 'content' => [
                     'when' => Validator::WHEN_UPDATE,
@@ -1524,10 +1524,10 @@ class ValidatorTest extends TestCase
                 ],
                 'show_at' => [
                     'message' => 'Show date cannot be empty',
-                    'when' => false,
+                    'when' => true,
                 ],
                 'subject',
-            ], 'Not empty', true);
+            ], 'Not empty');
         });
 
         $this->assertFalse($validator->field('title')->isEmptyAllowed());
