@@ -1220,7 +1220,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Invert a when clause for creating notEmpty rules
      *
      * @param bool|string|callable $when Indicates when the field is not allowed
-     *   to be empty. Valid values are true (always), 'create', 'update'. If a
+     *   to be empty. Valid values are true, false, 'create', 'update'. If a
      *   callable is passed then the field will allowed to be empty only when
      *   the callback returns false.
      * @return bool|string|callable
