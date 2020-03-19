@@ -303,7 +303,7 @@ class Time extends MutableDateTime implements I18nDateTimeInterface
         if ($filter === null) {
             $filter = DateTimeZone::ALL;
         }
-        $identifiers = DateTimeZone::listIdentifiers($filter, (string)$country);
+        $identifiers = DateTimeZone::listIdentifiers($filter, (string)$country) ?: [];
 
         if ($regex) {
             foreach ($identifiers as $key => $tz) {

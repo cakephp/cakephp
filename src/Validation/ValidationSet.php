@@ -20,6 +20,7 @@ use ArrayAccess;
 use ArrayIterator;
 use Countable;
 use IteratorAggregate;
+use Traversable;
 
 /**
  * ValidationSet object. Holds all validation rules for a field and exposes
@@ -214,9 +215,10 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Returns an iterator for each of the rules to be applied
      *
-     * @return \ArrayIterator
+     * @return \Cake\Validation\ValidationRule[]
+     * @psalm-return \Traversable<string, \Cake\Validation\ValidationRule>
      */
-    public function getIterator(): ArrayIterator
+    public function getIterator(): Traversable
     {
         return new ArrayIterator($this->_rules);
     }

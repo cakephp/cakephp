@@ -20,6 +20,7 @@ use ArrayIterator;
 use Countable;
 use InvalidArgumentException;
 use IteratorAggregate;
+use Traversable;
 
 /**
  * Collection for Commands.
@@ -34,6 +35,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * Command list
      *
      * @var array
+     * @psalm-var (\Cake\Console\Shell|\Cake\Console\CommandInterface|class-string)[]
      */
     protected $commands = [];
 
@@ -60,7 +62,6 @@ class CommandCollection implements IteratorAggregate, Countable
      */
     public function add(string $name, $command)
     {
-        /** @psalm-suppress DeprecatedClass */
         if (!is_subclass_of($command, Shell::class) && !is_subclass_of($command, CommandInterface::class)) {
             $class = is_string($command) ? $command : get_class($command);
             throw new InvalidArgumentException(sprintf(
@@ -125,8 +126,9 @@ class CommandCollection implements IteratorAggregate, Countable
      * Get the target for a command.
      *
      * @param string $name The named shell.
-     * @return string|\Cake\Console\CommandInterface Either the command class or an instance.
+     * @return string|\Cake\Console\Shell|\Cake\Console\CommandInterface Either the command class or an instance.
      * @throws \InvalidArgumentException when unknown commands are fetched.
+     * @psalm-return class-string|\Cake\Console\Shell|\Cake\Console\CommandInterface
      */
     public function get(string $name)
     {
@@ -140,9 +142,10 @@ class CommandCollection implements IteratorAggregate, Countable
     /**
      * Implementation of IteratorAggregate.
      *
-     * @return \ArrayIterator
+     * @return \Traversable
+     * @psalm-return \Traversable<string, \Cake\Console\Shell|\Cake\Console\CommandInterface|class-string>
      */
-    public function getIterator(): ArrayIterator
+    public function getIterator(): Traversable
     {
         return new ArrayIterator($this->commands);
     }
