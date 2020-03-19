@@ -753,7 +753,7 @@ class BelongsToMany extends Association
         $belongsTo = $junction->getAssociation($target->getAlias());
         $foreignKey = (array)$this->getForeignKey();
         $assocForeignKey = (array)$belongsTo->getForeignKey();
-        $targetPrimaryKey = (array)$target->getPrimaryKey();
+        $targetBindingKey = (array)$belongsTo->getBindingKey();
         $bindingKey = (array)$this->getBindingKey();
         $jointProperty = $this->_junctionProperty;
         $junctionRegistryAlias = $junction->getRegistryAlias();
@@ -764,7 +764,7 @@ class BelongsToMany extends Association
                 $joint = new $entityClass([], ['markNew' => true, 'source' => $junctionRegistryAlias]);
             }
             $sourceKeys = array_combine($foreignKey, $sourceEntity->extract($bindingKey));
-            $targetKeys = array_combine($assocForeignKey, $e->extract($targetPrimaryKey));
+            $targetKeys = array_combine($assocForeignKey, $e->extract($targetBindingKey));
 
             $changedKeys = (
                 $sourceKeys !== $joint->extract($foreignKey) ||

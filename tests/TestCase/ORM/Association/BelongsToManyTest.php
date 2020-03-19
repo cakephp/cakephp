@@ -183,6 +183,9 @@ class BelongsToManyTest extends TestCase
         $this->assertSame($assoc->getStrategy(), $this->tag->getAssociation('Articles')->getStrategy());
         $this->assertSame($assoc->getStrategy(), $this->tag->getAssociation('ArticlesTags')->getStrategy());
         $this->assertSame($assoc->getStrategy(), $this->article->getAssociation('ArticlesTags')->getStrategy());
+
+        $this->assertSame($this->article->getPrimaryKey(), $junction->getAssociation('Articles')->getBindingKey());
+        $this->assertSame($this->tag->getPrimaryKey(), $junction->getAssociation('Tags')->getBindingKey());
     }
 
     /**
