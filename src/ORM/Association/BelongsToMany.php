@@ -253,6 +253,7 @@ class BelongsToMany extends Association
      *
      * @param string|\Cake\ORM\Table|null $table Name or instance for the join table
      * @return \Cake\ORM\Table
+     * @throws \InvalidArgumentException If the expected associations are incompatible with existing associations.
      */
     public function junction($table = null): Table
     {
@@ -374,6 +375,7 @@ class BelongsToMany extends Association
      * @param \Cake\ORM\Table $source The source table.
      * @param \Cake\ORM\Table $target The target table.
      * @return void
+     * @throws \InvalidArgumentException If the expected associations are incompatible with existing associations.
      */
     protected function _generateJunctionAssociations(Table $junction, Table $source, Table $target): void
     {
@@ -385,7 +387,19 @@ class BelongsToMany extends Association
                 'foreignKey' => $this->getTargetForeignKey(),
                 'targetTable' => $target,
             ]);
+        } else {
+            $belongsTo = $junction->getAssociation($tAlias);
+            if (
+                $this->getTargetForeignKey() !== $belongsTo->getForeignKey() ||
+                $target !== $belongsTo->getTarget()
+            ) {
+                throw new InvalidArgumentException(
+                    "The existing `{$tAlias}` association on `{$junction->getAlias()} " .
+                    "is incompatible with the `{$this->getName()}` association on `{$source->getAlias()}`"
+                );
+            }
         }
+
         if (!$junction->hasAssociation($sAlias)) {
             $junction->belongsTo($sAlias, [
                 'foreignKey' => $this->getForeignKey(),

@@ -29,6 +29,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 
 /**
  * Tests BelongsToMany class
@@ -216,11 +217,13 @@ class BelongsToManyTest extends TestCase
     public function testJunctionCustomKeys()
     {
         $this->article->belongsToMany('Tags', [
+            'targetTable' => $this->tag,
             'joinTable' => 'articles_tags',
             'foreignKey' => 'article',
             'targetForeignKey' => 'tag',
         ]);
         $this->tag->belongsToMany('Articles', [
+            'targetTable' => $this->article,
             'joinTable' => 'articles_tags',
             'foreignKey' => 'tag',
             'targetForeignKey' => 'article',
@@ -249,6 +252,30 @@ class BelongsToManyTest extends TestCase
         $junction = $assoc->junction();
         $this->assertSame('TagsArticles', $junction->getAlias());
         $this->assertSame('tags_articles', $junction->getTable());
+    }
+
+    /**
+     * Test multiple associations with differerent keys fails
+     *
+     * @return void
+     */
+    public function testMultipleAssociationsSameJunction()
+    {
+        $assoc = new BelongsToMany('This', [
+            'sourceTable' => $this->article,
+            'targetTable' => $this->tag,
+            'targetForeignKey' => 'this_id',
+        ]);
+        $assoc->junction();
+
+        $assoc = new BelongsToMany('That', [
+            'sourceTable' => $this->article,
+            'targetTable' => $this->tag,
+            'targetForeignKey' => 'that_id',
+        ]);
+
+        $this->expectException(InvalidArgumentException::class);
+        $assoc->junction();
     }
 
     /**
