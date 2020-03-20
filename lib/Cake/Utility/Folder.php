@@ -520,7 +520,7 @@ class Folder {
 		foreach ($iterator as $itemPath => $fsIterator) {
 			if ($skipHidden) {
 				$subPathName = $fsIterator->getSubPathname();
-				if ($subPathName{0} === '.' || strpos($subPathName, DS . '.') !== false) {
+				if ($subPathName[0] === '.' || strpos($subPathName, DS . '.') !== false) {
 					continue;
 				}
 			}

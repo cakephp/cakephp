@@ -589,7 +589,7 @@ class HttpSocket extends CakeSocket {
 			if (is_array($port)) {
 				$port = $port[0];
 			}
-			if ($url{0} === '/') {
+			if ($url[0] === '/') {
 				$url = $this->config['request']['uri']['host'] . ':' . $port . $url;
 			}
 			if (!preg_match('/^.+:\/\/|\*|^\//', $url)) {
