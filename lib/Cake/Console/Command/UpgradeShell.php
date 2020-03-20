@@ -237,7 +237,7 @@ class UpgradeShell extends AppShell {
 		foreach ($helpers as $helper) {
 			$helper = preg_replace('/Helper$/', '', $helper);
 			$oldHelper = $helper;
-			$oldHelper{0} = strtolower($oldHelper{0});
+			$oldHelper[0] = strtolower($oldHelper[0]);
 			$patterns[] = array(
 				"\${$oldHelper} to \$this->{$helper}",
 				"/\\\${$oldHelper}->/",
