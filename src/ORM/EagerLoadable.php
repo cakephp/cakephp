@@ -158,8 +158,19 @@ class EagerLoadable
      * Returns the Association class instance to use for loading the records.
      *
      * @return \Cake\ORM\EagerLoadable[]
+     * @deprecated 4.1.0 Use `getAssociations()` instead.
      */
     public function associations(): array
+    {
+        return $this->_associations;
+    }
+
+    /**
+     * Returns the Association class instance to use for loading the records.
+     *
+     * @return \Cake\ORM\EagerLoadable[]
+     */
+    public function getAssociations(): array
     {
         return $this->_associations;
     }

@@ -949,7 +949,7 @@ class TableTest extends TestCase
         $result = $table->addAssociations($params);
         $this->assertSame($table, $result);
 
-        $associations = $table->associations();
+        $associations = $table->getAssociations();
 
         $belongsTo = $associations->get('users');
         $this->assertInstanceOf('Cake\ORM\Association\BelongsTo', $belongsTo);
@@ -3057,9 +3057,9 @@ class TableTest extends TestCase
     public function testDeleteDependentAliased()
     {
         $Authors = $this->getTableLocator()->get('authors');
-        $Authors->associations()->removeAll();
+        $Authors->getAssociations()->removeAll();
         $Articles = $this->getTableLocator()->get('articles');
-        $Articles->associations()->removeAll();
+        $Articles->getAssociations()->removeAll();
 
         $Authors->hasMany('AliasedArticles', [
             'className' => 'Articles',

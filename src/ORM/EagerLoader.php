@@ -594,13 +594,13 @@ class EagerLoader
         $result = [];
         foreach ($matching as $table => $loadable) {
             $result[$table] = $loadable;
-            $result += $this->_resolveJoins($loadable->associations(), []);
+            $result += $this->_resolveJoins($loadable->getAssociations(), []);
         }
         foreach ($associations as $table => $loadable) {
             $inMatching = isset($matching[$table]);
             if (!$inMatching && $loadable->canBeJoined()) {
                 $result[$table] = $loadable;
-                $result += $this->_resolveJoins($loadable->associations(), []);
+                $result += $this->_resolveJoins($loadable->getAssociations(), []);
                 continue;
             }
 
@@ -643,7 +643,7 @@ class EagerLoader
         }
 
         foreach ($external as $meta) {
-            $contain = $meta->associations();
+            $contain = $meta->getAssociations();
             $instance = $meta->instance();
             $config = $meta->getConfig();
             $alias = $instance->getSource()->getAlias();
@@ -729,7 +729,7 @@ class EagerLoader
         foreach ($level as $assoc => $meta) {
             $canBeJoined = $meta->canBeJoined();
             $instance = $meta->instance();
-            $associations = $meta->associations();
+            $associations = $meta->getAssociations();
             $forMatching = $meta->forMatching();
             $map[] = [
                 'alias' => $assoc,

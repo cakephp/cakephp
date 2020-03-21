@@ -189,7 +189,7 @@ class TableLocatorTest extends TestCase
         $this->assertSame($result, $result2);
         $this->assertSame('my_articles', $result->getTable());
 
-        $this->assertSame($this->_locator, $result->associations()->getTableLocator());
+        $this->assertSame($this->_locator, $result->getAssociations()->getTableLocator());
     }
 
     /**

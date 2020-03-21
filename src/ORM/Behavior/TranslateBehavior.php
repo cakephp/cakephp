@@ -109,7 +109,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         $config += [
             'defaultLocale' => I18n::getDefaultLocale(),
             'referenceName' => $this->referenceName($table),
-            'tableLocator' => $table->associations()->getTableLocator(),
+            'tableLocator' => $table->getAssociations()->getTableLocator(),
         ];
 
         parent::__construct($table, $config);

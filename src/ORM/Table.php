@@ -951,8 +951,19 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Get the associations collection for this table.
      *
      * @return \Cake\ORM\AssociationCollection The collection of association objects.
+     * @deprecated 4.1.0 Use `getAssociations()` instead.
      */
     public function associations(): AssociationCollection
+    {
+        return $this->_associations;
+    }
+
+    /**
+     * Get the associations collection for this table.
+     *
+     * @return \Cake\ORM\AssociationCollection The collection of association objects.
+     */
+    public function getAssociations(): AssociationCollection
     {
         return $this->_associations;
     }

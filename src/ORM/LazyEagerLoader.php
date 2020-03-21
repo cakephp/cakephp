@@ -122,7 +122,7 @@ class LazyEagerLoader
     protected function _getPropertyMap(Table $source, array $associations): array
     {
         $map = [];
-        $container = $source->associations();
+        $container = $source->getAssociations();
         foreach ($associations as $assoc) {
             /** @psalm-suppress PossiblyNullReference */
             $map[$assoc] = $container->get($assoc)->getProperty();

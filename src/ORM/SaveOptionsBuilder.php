@@ -124,7 +124,7 @@ class SaveOptionsBuilder extends ArrayObject
      */
     protected function _checkAssociation(Table $table, string $association): void
     {
-        if (!$table->associations()->has($association)) {
+        if (!$table->getAssociations()->has($association)) {
             throw new RuntimeException(sprintf(
                 'Table `%s` is not associated with `%s`',
                 get_class($table),

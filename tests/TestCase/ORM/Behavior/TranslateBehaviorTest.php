@@ -88,7 +88,7 @@ class TranslateBehaviorTest extends TestCase
             'fields' => ['title', 'body'],
         ]);
 
-        $items = $table->associations();
+        $items = $table->getAssociations();
         $i18n = $items->getByProperty('_i18n');
 
         $this->assertEquals(CustomI18nTable::class, $i18n->getName());
@@ -111,7 +111,7 @@ class TranslateBehaviorTest extends TestCase
             'fields' => ['title', 'body'],
         ]);
 
-        $items = $table->associations();
+        $items = $table->getAssociations();
         $i18n = $items->getByProperty('_i18n');
 
         $this->assertSame('select', $i18n->getStrategy());
@@ -1267,7 +1267,7 @@ class TranslateBehaviorTest extends TestCase
             ['fields' => ['comment']]
         );
 
-        $items = $table->OtherComments->associations();
+        $items = $table->OtherComments->getAssociations();
         $association = $items->getByProperty('comment_translation');
         $this->assertNotEmpty($association, 'Translation association not found');
 
@@ -1297,7 +1297,7 @@ class TranslateBehaviorTest extends TestCase
             ['fields' => ['body'], 'referenceName' => 'Posts']
         );
 
-        $items = $table->associations();
+        $items = $table->getAssociations();
         $association = $items->getByProperty('body_translation');
         $this->assertNotEmpty($association, 'Translation association not found');
 
@@ -1906,7 +1906,7 @@ class TranslateBehaviorTest extends TestCase
         $behaviorLocator = $table->behaviors()->get('Translate')->getTableLocator();
 
         $this->assertSame($locator, $behaviorLocator);
-        $this->assertSame($table->associations()->getTableLocator(), $behaviorLocator);
+        $this->assertSame($table->getAssociations()->getTableLocator(), $behaviorLocator);
         $this->assertNotSame($this->getTableLocator(), $behaviorLocator);
     }
 
@@ -1929,7 +1929,7 @@ class TranslateBehaviorTest extends TestCase
         $behaviorLocator = $table->behaviors()->get('Translate')->getTableLocator();
 
         $this->assertSame($locator, $behaviorLocator);
-        $this->assertNotSame($table->associations()->getTableLocator(), $behaviorLocator);
+        $this->assertNotSame($table->getAssociations()->getTableLocator(), $behaviorLocator);
         $this->assertNotSame($this->getTableLocator(), $behaviorLocator);
     }
 

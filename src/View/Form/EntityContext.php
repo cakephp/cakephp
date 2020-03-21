@@ -668,7 +668,7 @@ class EntityContext implements ContextInterface
                     continue;
                 }
             } else {
-                $associationCollection = $table->associations();
+                $associationCollection = $table->getAssociations();
                 $assoc = $associationCollection->getByProperty($part);
             }
 

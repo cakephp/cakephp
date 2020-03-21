@@ -1417,7 +1417,7 @@ class HasManyTest extends TestCase
     public function testHasManyNonDependentNonCascadingUnlinkUpdateUsesAssociationConditions()
     {
         $Authors = $this->getTableLocator()->get('Authors');
-        $Authors->associations()->removeAll();
+        $Authors->getAssociations()->removeAll();
         $Articles = $Authors->hasMany('Articles', [
             'dependent' => false,
             'cascadeCallbacks' => false,

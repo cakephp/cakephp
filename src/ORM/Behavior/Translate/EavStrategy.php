@@ -336,7 +336,7 @@ class EavStrategy implements TranslateStrategyInterface
         }
         $associationName = $table->getAlias() . '_' . $field . '_translation';
 
-        if ($table->associations()->has($associationName)) {
+        if ($table->getAssociations()->has($associationName)) {
             return $associationName . '.content';
         }
 
