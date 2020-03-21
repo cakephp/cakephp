@@ -1427,4 +1427,77 @@ class BelongsToManyTest extends TestCase
         // The inner join on special_tags excludes the results.
         $this->assertEquals(0, $query->count());
     }
+
+    /**
+     * Test custom binding key for target table association
+     *
+     * @return void
+     */
+    public function testCustomTargetBindingKeyContain()
+    {
+        $this->getTableLocator()->get('ArticlesTags')
+            ->belongsTo('SpecialTags', [
+                'bindingKey' => 'tag_id',
+                'foreignKey' => 'tag_id',
+            ]);
+
+        $table = $this->getTableLocator()->get('Articles');
+        $table->belongsToMany('SpecialTags', [
+            'through' => 'ArticlesTags',
+            'targetForeignKey' => 'tag_id',
+        ]);
+
+        $results = $table->find()
+            ->contain('SpecialTags', function ($query) {
+                return $query->order(['SpecialTags.tag_id']);
+            })
+            ->where(['id' => 2])
+            ->toArray();
+
+        $this->assertCount(1, $results);
+        $this->assertCount(2, $results[0]->special_tags);
+
+        $this->assertSame(2, $results[0]->special_tags[0]->id);
+        $this->assertSame(1, $results[0]->special_tags[0]->tag_id);
+
+        $this->assertSame(1, $results[0]->special_tags[1]->id);
+        $this->assertSame(3, $results[0]->special_tags[1]->tag_id);
+    }
+
+    /**
+     * Test custom binding key for target table association
+     *
+     * @return void
+     */
+    public function testCustomTargetBindingKeyLink()
+    {
+        $this->getTableLocator()->get('ArticlesTags')
+            ->belongsTo('SpecialTags', [
+                'bindingKey' => 'tag_id',
+                'foreignKey' => 'tag_id',
+            ]);
+
+        $table = $this->getTableLocator()->get('Articles');
+        $table->belongsToMany('SpecialTags', [
+            'through' => 'ArticlesTags',
+            'targetForeignKey' => 'tag_id',
+        ]);
+
+        $specialTag = $table->SpecialTags->newEntity([
+            'article_id' => 2,
+            'tag_id' => 2,
+        ]);
+        $table->SpecialTags->save($specialTag);
+
+        $article = $table->get(2);
+        $this->assertTrue($table->SpecialTags->link($article, [$specialTag]));
+
+        $results = $table->find()
+            ->contain('SpecialTags')
+            ->where(['id' => 2])
+            ->toArray();
+
+        $this->assertCount(1, $results);
+        $this->assertCount(3, $results[0]->special_tags);
+    }
 }
