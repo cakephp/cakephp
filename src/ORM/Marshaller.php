@@ -232,6 +232,7 @@ class Marshaller
         }
 
         $entity->setErrors($errors);
+        $this->_table->dispatchEvent('Model.afterMarshal', compact('entity'));
 
         return $entity;
     }
@@ -612,6 +613,7 @@ class Marshaller
                 $entity->setDirty($field, $properties[$field]->isDirty());
             }
         }
+        $this->_table->dispatchEvent('Model.afterMarshal', compact('entity'));
 
         return $entity;
     }
