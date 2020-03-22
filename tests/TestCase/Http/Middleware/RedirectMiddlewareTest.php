@@ -52,7 +52,7 @@ class RedirectMiddlewareTest extends TestCase
         $headers = $response->getHeaders();
         $expected = [
             'location' => [
-                '/foo/bar?baz=1'
+                '/foo/bar?baz=1',
             ],
         ];
 
