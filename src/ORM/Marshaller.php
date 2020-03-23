@@ -600,6 +600,7 @@ class Marshaller
                     $entity->setDirty($field, $value->isDirty());
                 }
             }
+            $this->_table->dispatchEvent('Model.afterMarshal', compact('entity'));
 
             return $entity;
         }
