@@ -181,8 +181,8 @@ class PostgresTest extends TestCase
      */
     public function testHavingReplacesAlias()
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->setMethods(['_connect', 'getConnection', '_version'])
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
+            ->setMethods(['connect', 'getConnection', 'version'])
             ->setConstructorArgs([[]])
             ->getMock();
 
@@ -203,8 +203,42 @@ class PostgresTest extends TestCase
             ->group(['posts.author_id'])
             ->having([$query->newExpr()->gte('post_count', 2, 'integer')]);
 
-        $expected = 'SELECT posts.author_id, (COUNT(posts.id)) AS [post_count] ' .
+        $expected = 'SELECT posts.author_id, (COUNT(posts.id)) AS "post_count" ' .
             'GROUP BY posts.author_id HAVING COUNT(posts.id) >= :c0';
+        $this->assertEquals($expected, $query->sql());
+    }
+
+    /**
+     * Test that having queries replaces nothing if no alias is used.
+     *
+     * @return void
+     */
+    public function testHavingWhenNoAliasIsUsed()
+    {
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
+            ->setMethods(['connect', 'getConnection', 'version'])
+            ->setConstructorArgs([[]])
+            ->getMock();
+
+        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect', 'getDriver', 'setDriver'])
+            ->setConstructorArgs([['log' => false]])
+            ->getMock();
+        $connection->expects($this->any())
+            ->method('getDriver')
+            ->will($this->returnValue($driver));
+
+        $query = new Query($connection);
+        $query
+            ->select([
+                'posts.author_id',
+                'post_count' => $query->func()->count('posts.id'),
+            ])
+            ->group(['posts.author_id'])
+            ->having([$query->newExpr()->gte('posts.author_id', 2, 'integer')]);
+
+        $expected = 'SELECT posts.author_id, (COUNT(posts.id)) AS "post_count" ' .
+            'GROUP BY posts.author_id HAVING posts.author_id >= :c0';
         $this->assertEquals($expected, $query->sql());
     }
 }
