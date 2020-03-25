@@ -75,7 +75,7 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      *
-     * @return \Cake\Collection\CollectionInterface
+     * @return \Cake\Collection\Iterator\FilterIterator
      */
     public function filter(?callable $c = null): CollectionInterface
     {
@@ -91,7 +91,7 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      *
-     * @return \Cake\Collection\CollectionInterface
+     * @return \Cake\Collection\Iterator\FilterIterator
      */
     public function reject(callable $c): CollectionInterface
     {
@@ -145,7 +145,7 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      *
-     * @return \Cake\Collection\CollectionInterface
+     * @return \Cake\Collection\Iterator\ReplaceIterator
      */
     public function map(callable $c): CollectionInterface
     {
@@ -176,7 +176,9 @@ trait CollectionTrait
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * @return \Cake\Collection\Iterator\ExtractIterator|\Cake\Collection\CollectionInterface
      */
     public function extract($matcher): CollectionInterface
     {
@@ -258,7 +260,9 @@ trait CollectionTrait
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * @return \Cake\Collection\Iterator\SortIterator
      */
     public function sortBy($callback, int $dir = \SORT_DESC, int $type = \SORT_NUMERIC): CollectionInterface
     {
@@ -367,7 +371,9 @@ trait CollectionTrait
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * @return \Cake\Collection\Iterator\FilterIterator
      */
     public function match(array $conditions): CollectionInterface
     {
@@ -656,7 +662,7 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      *
-     * @return \Cake\Collection\CollectionInterface
+     * @return \Cake\Collection\Iterator\InsertIterator
      */
     public function insert(string $path, $values): CollectionInterface
     {
@@ -726,7 +732,7 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      *
-     * @return \Cake\Collection\CollectionInterface
+     * @return \Cake\Collection\Iterator\BufferedIterator
      */
     public function buffered(): CollectionInterface
     {
@@ -736,7 +742,7 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      *
-     * @return \Cake\Collection\CollectionInterface
+     * @return \Cake\Collection\Iterator\TreeIterator
      */
     public function listNested($dir = 'desc', $nestingKey = 'children'): CollectionInterface
     {
@@ -807,7 +813,9 @@ trait CollectionTrait
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * @return \Cake\Collection\Iterator\ZipIterator
      */
     public function zip(iterable $items): CollectionInterface
     {
@@ -815,7 +823,9 @@ trait CollectionTrait
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * @return \Cake\Collection\Iterator\ZipIterator
      */
     public function zipWith(iterable $items, $callable): CollectionInterface
     {
@@ -830,7 +840,9 @@ trait CollectionTrait
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * @return \Cake\Collection\Iterator\ReplaceIterator
      */
     public function chunk(int $chunkSize): CollectionInterface
     {
@@ -849,7 +861,9 @@ trait CollectionTrait
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * @return \Cake\Collection\Iterator\ReplaceIterator
      */
     public function chunkWithKeys(int $chunkSize, bool $preserveKeys = true): CollectionInterface
     {

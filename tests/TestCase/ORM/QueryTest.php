@@ -17,6 +17,9 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Collection\Collection;
+use Cake\Collection\Iterator\FilterIterator;
+use Cake\Collection\Iterator\ReplaceIterator;
+use Cake\Collection\Iterator\SortIterator;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
@@ -1813,17 +1816,17 @@ class QueryTest extends TestCase
         $collection = new Collection([]);
 
         return [
-            ['filter', $identity, $collection],
-            ['reject', $identity, $collection],
+            ['filter', $identity, new FilterIterator($collection, $identity)],
+            ['reject', $identity, new FilterIterator($collection, $identity)],
             ['every', $identity, false],
             ['some', $identity, false],
             ['contains', $identity, true],
-            ['map', $identity, $collection],
+            ['map', $identity, new ReplaceIterator($collection, $identity)],
             ['reduce', $identity, $collection],
             ['extract', $identity, $collection],
             ['max', $identity, 9],
             ['min', $identity, 1],
-            ['sortBy', $identity, $collection],
+            ['sortBy', $identity, new SortIterator($collection, $identity)],
             ['groupBy', $identity, $collection],
             ['countBy', $identity, $collection],
             ['shuffle', $identity, $collection],
