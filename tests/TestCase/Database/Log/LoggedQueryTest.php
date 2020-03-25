@@ -17,8 +17,8 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Log;
 
 use Cake\Database\Log\LoggedQuery;
-use Cake\Utility\Text;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Text;
 
 /**
  * Tests LoggedQuery class
