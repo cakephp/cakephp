@@ -46,6 +46,10 @@ class Response implements ResponseInterface
 {
     use MessageTrait;
 
+    const STATUS_CODE_MIN = 100;
+
+    const STATUS_CODE_MAX = 599;
+
     /**
      * Allowed HTTP status codes and their default description.
      *
@@ -992,7 +996,7 @@ class Response implements ResponseInterface
      */
     protected function _setStatus($code, $reasonPhrase = '')
     {
-        if (!isset($this->_statusCodes[$code])) {
+        if ($code < static::STATUS_CODE_MIN || $code > static::STATUS_CODE_MAX) {
             throw new InvalidArgumentException(sprintf(
                 'Invalid status code: %s. Use a valid HTTP status code in range 1xx - 5xx.',
                 $code
@@ -1000,7 +1004,7 @@ class Response implements ResponseInterface
         }
 
         $this->_status = $code;
-        if (empty($reasonPhrase)) {
+        if ($reasonPhrase === '' && isset($this->_statusCodes[$code])) {
             $reasonPhrase = $this->_statusCodes[$code];
         }
         $this->_reasonPhrase = $reasonPhrase;
