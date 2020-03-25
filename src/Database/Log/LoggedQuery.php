@@ -78,6 +78,11 @@ class LoggedQuery implements JsonSerializable
             }
 
             if (is_string($p)) {
+                // Likely binary data.
+                if (!ctype_print($p)) {
+                    $p = bin2hex($p);
+                }
+
                 $replacements = [
                     '$' => '\\$',
                     '\\' => '\\\\\\\\',
