@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Log;
 
 use Cake\Database\Log\LoggedQuery;
+use Cake\Utility\Text;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -108,6 +109,22 @@ class LoggedQueryTest extends TestCase
         $query->params = ['p1' => '$2y$10$dUAIj', 'p2' => '$0.23', 'p3' => 'a\\0b\\1c\\d', 'p4' => "a'b"];
 
         $expected = "duration=0 rows=0 SELECT a FROM b where a = '\$2y\$10\$dUAIj' AND b = '\$0.23' AND c = 'a\\\\0b\\\\1c\\\\d' AND d = 'a''b'";
+        $this->assertEquals($expected, (string)$query);
+    }
+
+    /**
+     * Tests that query placeholders are replaced when logged
+     *
+     * @return void
+     */
+    public function testBinaryInterpolation()
+    {
+        $query = new LoggedQuery();
+        $query->query = 'SELECT a FROM b where a = :p1';
+        $uuid = str_replace('-', '', Text::uuid());
+        $query->params = ['p1' => hex2bin($uuid)];
+
+        $expected = "duration=0 rows=0 SELECT a FROM b where a = '{$uuid}'";
         $this->assertEquals($expected, (string)$query);
     }
 
