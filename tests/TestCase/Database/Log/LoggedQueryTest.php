@@ -128,6 +128,24 @@ class LoggedQueryTest extends TestCase
         $this->assertEquals($expected, (string)$query);
     }
 
+    /**
+     * Tests that unknown possible binary data is not replaced to hex.
+     *
+     * @return void
+     */
+    public function testBinaryInterpolationIgnored()
+    {
+        $query = new LoggedQuery();
+        $query->query = 'SELECT a FROM b where a = :p1';
+        $query->params = ['p1' => "a\tz"];
+
+        $expected = "duration=0 rows=0 SELECT a FROM b where a = 'a\tz'";
+        $this->assertEquals($expected, (string)$query);
+    }
+
+    /**
+     * @return void
+     */
     public function testJsonSerialize()
     {
         $query = new LoggedQuery();

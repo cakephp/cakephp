@@ -78,8 +78,8 @@ class LoggedQuery implements JsonSerializable
             }
 
             if (is_string($p)) {
-                // Likely binary data.
-                if (!ctype_print($p)) {
+                // Likely binary UUID.
+                if (strlen($p) === 16 && !ctype_print($p)) {
                     $p = bin2hex($p);
                 }
 
