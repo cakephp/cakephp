@@ -19,6 +19,7 @@ use Cake\Event\EventList;
 use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManager;
 use Cake\TestSuite\TestCase;
+use TestApp\Event\TestEvent;
 
 /**
  * Mock class used to test event dispatching
@@ -94,6 +95,20 @@ class CustomTestEventListenerInterface extends EventTestListener implements Even
  */
 class EventManagerTest extends TestCase
 {
+
+    /**
+     * @return void
+     */
+    public function testCustomEventImplementation()
+    {
+        $event = new TestEvent('fake.event');
+        $listener = new CustomTestEventListenerInterface();
+
+        $manager = new EventManager();
+        $manager->on($listener);
+        $manager->dispatch($event);
+        $this->assertCount(1, $manager->listeners('fake.event'));
+    }
 
     /**
      * Tests the attach() method for a single event key in multiple queues
