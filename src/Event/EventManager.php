@@ -342,10 +342,10 @@ class EventManager implements EventManagerInterface
      * Calls a listener.
      *
      * @param callable $listener The listener to trigger.
-     * @param \Cake\Event\Event $event Event instance.
+     * @param \Cake\Event\EventInterface $event Event instance.
      * @return mixed The result of the $listener function.
      */
-    protected function _callListener(callable $listener, Event $event)
+    protected function _callListener(callable $listener, EventInterface $event)
     {
         $data = $event->getData();
 
