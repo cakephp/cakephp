@@ -1333,7 +1333,7 @@ class ServerRequest implements ServerRequestInterface
      * ### PSR-7 Alternative
      *
      * ```
-     * $value = Hash::get($request->getQueryParams(), 'Post.id', null);
+     * $value = Hash::get($request->getQueryParams(), 'Post.id');
      * ```
      *
      * @param string|null $name The name or dotted path to the query param or null to read all.
@@ -1368,6 +1368,15 @@ class ServerRequest implements ServerRequestInterface
      * ```
      *
      * When reading values you will get `null` for keys/values that do not exist.
+     *
+     * Developers are encouraged to use getParsedBody() if they need the whole data array,
+     * as it is PSR-7 compliant, and this method is not. Using Hash::get() you can also get single params.
+     *
+     * ### PSR-7 Alternative
+     *
+     * ```
+     * $value = Hash::get($request->getParsedBody(), 'Post.id');
+     * ```
      *
      * @param string|null $name Dot separated name of the value to read. Or null to read all data.
      * @param mixed $default The default data.
