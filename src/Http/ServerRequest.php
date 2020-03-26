@@ -1327,8 +1327,8 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Read a specific query value or dotted path.
      *
-     * Developers are encouraged to use getQueryParams() when possible as it is PSR-7 compliant, and this method
-     * is not.
+     * Developers are encouraged to use getQueryParams() if they need the whole query array,
+     * as it is PSR-7 compliant, and this method is not. Using Hash::get() you can also get single params.
      *
      * ### PSR-7 Alternative
      *
