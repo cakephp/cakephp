@@ -33,7 +33,6 @@ use Cake\Core\Exception\Exception;
  */
 class RedirectException extends Exception
 {
-
     /**
      * Headers to include in the response.
      *
