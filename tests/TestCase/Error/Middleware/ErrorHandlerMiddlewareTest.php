@@ -20,6 +20,7 @@ use Cake\Error\ErrorHandler;
 use Cake\Error\ExceptionRendererInterface;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
 use Cake\Http\Exception\MissingControllerException;
+use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequestFactory;
 use Cake\Log\Log;
@@ -27,6 +28,7 @@ use Cake\TestSuite\TestCase;
 use Error;
 use InvalidArgumentException;
 use LogicException;
+use Psr\Http\Message\ResponseInterface;
 use TestApp\Http\TestRequestHandler;
 
 /**
@@ -141,6 +143,55 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $this->assertInstanceOf('Cake\Http\Response', $result);
         $this->assertEquals(404, $result->getStatusCode());
         $this->assertStringContainsString('was not found', '' . $result->getBody());
+    }
+
+    /**
+     * Test creating a redirect response
+     *
+     * @return void
+     */
+    public function testHandleRedirectException()
+    {
+        $request = ServerRequestFactory::fromGlobals();
+        $middleware = new ErrorHandlerMiddleware();
+        $handler = new TestRequestHandler(function () {
+            throw new RedirectException('http://example.org/login');
+        });
+        $result = $middleware->process($request, $handler);
+        $this->assertInstanceOf(ResponseInterface::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertEmpty('' . $result->getBody());
+        $expected = [
+            'location' => ['http://example.org/login'],
+        ];
+        $this->assertSame($expected, $result->getHeaders());
+    }
+
+    /**
+     * Test creating a redirect response
+     *
+     * @return void
+     */
+    public function testHandleRedirectExceptionHeaders()
+    {
+        $request = ServerRequestFactory::fromGlobals();
+        $middleware = new ErrorHandlerMiddleware();
+        $handler = new TestRequestHandler(function () {
+            $err = new RedirectException('http://example.org/login', 301, ['Constructor' => 'yes']);
+            $err->addHeaders(['Constructor' => 'no', 'Method' => 'yes']);
+            throw $err;
+        });
+
+        $result = $middleware->process($request, $handler);
+        $this->assertInstanceOf(ResponseInterface::class, $result);
+        $this->assertEquals(301, $result->getStatusCode());
+        $this->assertEmpty('' . $result->getBody());
+        $expected = [
+            'location' => ['http://example.org/login'],
+            'Constructor' => ['yes', 'no'],
+            'Method' => ['yes'],
+        ];
+        $this->assertEquals($expected, $result->getHeaders());
     }
 
     /**
