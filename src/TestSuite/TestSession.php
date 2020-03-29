@@ -50,6 +50,10 @@ class TestSession
             return false;
         }
 
+        if ($name === null) {
+            return (bool)$this->session;
+        }
+
         return Hash::get($this->session, $name) !== null;
     }
 
