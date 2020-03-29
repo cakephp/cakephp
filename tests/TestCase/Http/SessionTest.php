@@ -100,6 +100,7 @@ class SessionTest extends TestCase
     {
         $session = new Session();
         $session->write('SessionTestCase', 'value');
+        $this->assertTrue($session->check());
         $this->assertTrue($session->check('SessionTestCase'));
         $this->assertFalse($session->check('NotExistingSessionTestCase'));
         $this->assertFalse($session->check('Crazy.foo'));
