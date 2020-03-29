@@ -1300,7 +1300,7 @@ trait IntegrationTestTrait
     /**
      * @return \Cake\TestSuite\TestSession
      */
-    protected function getTestSession(): TestSession
+    protected function getSession(): TestSession
     {
         return new TestSession($_SESSION);
     }
