@@ -595,6 +595,8 @@ class PaginatorHelper extends Helper
             $url['?'] += $options;
         }
 
+        $url['?'] = Hash::filter($url['?']);
+
         return $url;
     }
 
