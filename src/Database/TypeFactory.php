@@ -115,6 +115,7 @@ class TypeFactory
      * @param string $type Name of type to map.
      * @param string $className The classname to register.
      * @return void
+     * @psalm-param class-string<\Cake\Database\TypeInterface> $className
      */
     public static function map(string $type, string $className): void
     {
