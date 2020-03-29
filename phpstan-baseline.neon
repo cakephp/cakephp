@@ -21,11 +21,6 @@ parameters:
 			path: src/Auth/Storage/SessionStorage.php
 
 		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: src/Cache/CacheEngine.php
-
-		-
 			message: "#^Access to undefined constant Memcached\\:\\:OPT_CLIENT_MODE\\.$#"
 			count: 1
 			path: src/Cache/Engine/MemcachedEngine.php
@@ -263,11 +258,6 @@ parameters:
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 7
-			path: src/Database/Expression/QueryExpression.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
 			path: src/Database/Expression/QueryExpression.php
 
 		-
