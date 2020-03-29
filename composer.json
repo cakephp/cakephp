@@ -29,6 +29,7 @@
     },
     "require": {
         "php": ">=7.2.0",
+        "ext-json": "*",
         "ext-intl": "*",
         "ext-mbstring": "*",
         "aura/intl": "^3.0.0",

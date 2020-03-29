@@ -77,6 +77,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
      *
      * @param \Cake\Error\ErrorHandler|array $errorHandler The error handler instance
      *  or config array.
+     * @throws \InvalidArgumentException
      */
     public function __construct($errorHandler = [])
     {
