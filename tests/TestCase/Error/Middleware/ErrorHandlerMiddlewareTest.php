@@ -160,7 +160,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $result = $middleware->process($request, $handler);
         $this->assertInstanceOf(ResponseInterface::class, $result);
         $this->assertEquals(302, $result->getStatusCode());
-        $this->assertEmpty('' . $result->getBody());
+        $this->assertEmpty((string)$result->getBody());
         $expected = [
             'location' => ['http://example.org/login'],
         ];
