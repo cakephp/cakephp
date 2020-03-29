@@ -48,6 +48,7 @@ class MiddlewareDispatcher
      * The application class name
      *
      * @var string
+     * @psalm-var class-string
      */
     protected $_class;
 

@@ -213,6 +213,7 @@ abstract class TestCase extends BaseTestCase
     public function loadRoutes(?array $appArgs = null): void
     {
         $appArgs = $appArgs ?? [rtrim(CONFIG, DIRECTORY_SEPARATOR)];
+        /** @psalm-var class-string */
         $className = Configure::read('App.namespace') . '\\Application';
         try {
             $reflect = new ReflectionClass($className);
@@ -834,6 +835,7 @@ abstract class TestCase extends BaseTestCase
      * @param array $options The config data for the mock's constructor.
      * @return string
      * @throws \Cake\ORM\Exception\MissingTableClassException
+     * @psalm-return class-string<\Cake\ORM\Table>
      */
     protected function _getTableClassName(string $alias, array $options): string
     {

@@ -626,11 +626,6 @@ parameters:
 			path: src/TestSuite/IntegrationTestCase.php
 
 		-
-			message: "#^Unable to resolve the template type RealInstanceType in call to method PHPUnit\\\\Framework\\\\TestCase\\:\\:getMockBuilder\\(\\)$#"
-			count: 1
-			path: src/TestSuite/TestCase.php
-
-		-
 			message: "#^Return type \\(array\\<string, array\\|string\\>\\) of method Cake\\\\View\\\\Exception\\\\MissingCellTemplateException\\:\\:getAttributes\\(\\) should be compatible with return type \\(array\\<string, array\\|string\\>\\) of method Cake\\\\View\\\\Exception\\\\MissingTemplateException\\:\\:getAttributes\\(\\)$#"
 			count: 1
 			path: src/View/Exception/MissingCellTemplateException.php
