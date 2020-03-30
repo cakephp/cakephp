@@ -1695,6 +1695,33 @@ class CollectionTest extends TestCase
     }
 
     /**
+     * Tests the listNested spacer output.
+     *
+     * @return void
+     */
+    public function testListNestedSpacer()
+    {
+        $items = [
+            ['id' => 1, 'parent_id' => null, 'name' => 'Birds'],
+            ['id' => 2, 'parent_id' => 1, 'name' => 'Land Birds'],
+            ['id' => 3, 'parent_id' => 1, 'name' => 'Eagle'],
+            ['id' => 4, 'parent_id' => 1, 'name' => 'Seagull'],
+            ['id' => 5, 'parent_id' => 6, 'name' => 'Clown Fish'],
+            ['id' => 6, 'parent_id' => null, 'name' => 'Fish'],
+        ];
+        $collection = (new Collection($items))->nest('id', 'parent_id')->listNested();
+        $expected = [
+            'Birds',
+            '---Land Birds',
+            '---Eagle',
+            '---Seagull',
+            'Fish',
+            '---Clown Fish',
+        ];
+        $this->assertSame($expected, $collection->printer('name', 'id', '---')->toList());
+    }
+
+    /**
      * Tests using listNested with a different nesting key
      *
      * @return void
