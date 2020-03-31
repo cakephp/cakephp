@@ -245,7 +245,7 @@ class DateTimeType extends BaseType
     /**
      * @inheritDoc
      */
-    public function manyToPHP(array $values, array $fields, DriverInterface $driver)
+    public function manyToPHP(array $values, array $fields, DriverInterface $driver): array
     {
         foreach ($fields as $field) {
             if (!isset($values[$field])) {
