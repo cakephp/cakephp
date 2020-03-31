@@ -26,7 +26,7 @@ class SqliteStatement extends StatementDecorator
     use BufferResultsTrait;
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      *
      */
     public function execute(?array $params = null): bool

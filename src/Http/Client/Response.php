@@ -241,7 +241,7 @@ class Response extends Message implements ResponseInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @return int The status code.
      */
@@ -251,7 +251,7 @@ class Response extends Message implements ResponseInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @param int $code The status code to set.
      * @param string $reasonPhrase The status reason phrase.
@@ -267,7 +267,7 @@ class Response extends Message implements ResponseInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @return string The current reason phrase.
      */

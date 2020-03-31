@@ -71,9 +71,7 @@ class BoolType extends BaseType implements BatchCastingInterface
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @return array
+     * @inheritDoc
      */
     public function manyToPHP(array $values, array $fields, DriverInterface $driver): array
     {

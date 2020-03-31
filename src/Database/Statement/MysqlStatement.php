@@ -28,7 +28,7 @@ class MysqlStatement extends PDOStatement
     use BufferResultsTrait;
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      *
      */
     public function execute(?array $params = null): bool

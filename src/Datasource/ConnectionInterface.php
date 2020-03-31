@@ -80,6 +80,14 @@ interface ConnectionInterface extends LoggerAwareInterface
      *
      * The callback will receive the connection instance as its first argument.
      *
+     * ### Example:
+     *
+     * ```
+     * $connection->transactional(function ($connection) {
+     *   $connection->newQuery()->delete('users')->execute();
+     * });
+     * ```
+     *
      * @param callable $transaction The callback to execute within a transaction.
      * @return mixed The return value of the callback.
      * @throws \Exception Will re-throw any exception raised in $callback after
@@ -91,6 +99,14 @@ interface ConnectionInterface extends LoggerAwareInterface
      * Run an operation with constraints disabled.
      *
      * Constraints should be re-enabled after the callback succeeds/fails.
+     *
+     * ### Example:
+     *
+     * ```
+     * $connection->disableConstraints(function ($connection) {
+     *   $connection->newQuery()->delete('users')->execute();
+     * });
+     * ```
      *
      * @param callable $operation The callback to execute within a transaction.
      * @return mixed The return value of the callback.

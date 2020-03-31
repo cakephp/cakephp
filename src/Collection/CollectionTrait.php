@@ -73,9 +73,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @return \Cake\Collection\CollectionInterface
+     * @inheritDoc
      */
     public function filter(?callable $c = null): CollectionInterface
     {
@@ -89,9 +87,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @return \Cake\Collection\CollectionInterface
+     * @inheritDoc
      */
     public function reject(callable $c): CollectionInterface
     {
@@ -143,9 +139,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @return \Cake\Collection\CollectionInterface
+     * @inheritDoc
      */
     public function map(callable $c): CollectionInterface
     {
@@ -654,9 +648,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @return \Cake\Collection\CollectionInterface
+     * @inheritDoc
      */
     public function insert(string $path, $values): CollectionInterface
     {
@@ -692,9 +684,7 @@ trait CollectionTrait
     }
 
     /**
-     * Return array which should be serialized to JSON.
-     *
-     * @return array
+     * @inheritDoc
      */
     public function jsonSerialize(): array
     {
@@ -724,9 +714,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @return \Cake\Collection\CollectionInterface
+     * @inheritDoc
      */
     public function buffered(): CollectionInterface
     {
@@ -734,9 +722,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @return \Cake\Collection\CollectionInterface
+     * @inheritDoc
      */
     public function listNested($dir = 'desc', $nestingKey = 'children'): CollectionInterface
     {
@@ -764,9 +750,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @return \Cake\Collection\Iterator\StoppableIterator
+     * @inheritDoc
      */
     public function stopWhen($condition): CollectionInterface
     {
@@ -910,6 +894,9 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      *
+     * @param callable|null $operation A callable that allows you to customize the product result.
+     * @param callable|null $filter A filtering callback that must return true for a result to be part
+     *   of the final results.
      * @return \Cake\Collection\CollectionInterface
      * @throws \LogicException
      */
@@ -992,9 +979,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @return int
+     * @inheritDoc
      */
     public function count(): int
     {
@@ -1008,9 +993,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @return int
+     * @inheritDoc
      */
     public function countKeys(): int
     {

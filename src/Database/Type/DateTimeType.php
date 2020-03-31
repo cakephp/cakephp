@@ -187,6 +187,8 @@ class DateTimeType extends BaseType
     /**
      * {@inheritDoc}
      *
+     * @param mixed $value Value to be converted to PHP equivalent
+     * @param \Cake\Database\DriverInterface $driver Object from which database preferences and configuration will be extracted
      * @return \DateTimeInterface|null
      */
     public function toPHP($value, DriverInterface $driver)
@@ -241,9 +243,7 @@ class DateTimeType extends BaseType
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @return array
+     * @inheritDoc
      */
     public function manyToPHP(array $values, array $fields, DriverInterface $driver)
     {
