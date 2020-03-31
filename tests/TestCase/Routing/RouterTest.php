@@ -1113,7 +1113,7 @@ class RouterTest extends TestCase
     public function testUrlGenerationWithUrlFilterFailureClosure()
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessageRegExp(
+        $this->expectExceptionMessageMatches(
             '/URL filter defined in .*RouterTest\.php on line \d+ could not be applied\.' .
             ' The filter failed with: nope/'
         );
@@ -1142,7 +1142,7 @@ class RouterTest extends TestCase
     public function testUrlGenerationWithUrlFilterFailureMethod()
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessageRegExp(
+        $this->expectExceptionMessageMatches(
             '/URL filter defined in .*RouterTest\.php on line \d+ could not be applied\.' .
             ' The filter failed with: /'
         );
