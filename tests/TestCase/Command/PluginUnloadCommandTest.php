@@ -93,10 +93,10 @@ class PluginUnloadCommandTest extends TestCase
     public function testUnloadFirstPlugin()
     {
         $plugin1 = "\$this->addPlugin('TestPlugin');";
-        $plugin2 = "\$this->addPlugin('TestPluginTwo');";
+        $plugin2 = "\$this->addPlugin('Vendor/TestPluginTwo');";
         $this->addPluginToApp($plugin1);
         $this->addPluginToApp($plugin2);
-        $this->exec('plugin unload TestPluginTwo');
+        $this->exec('plugin unload Vendor/TestPluginTwo');
 
         $this->assertExitCode(Command::CODE_SUCCESS);
         $contents = file_get_contents($this->app);

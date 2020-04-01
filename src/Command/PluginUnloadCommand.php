@@ -70,7 +70,16 @@ class PluginUnloadCommand extends Command
      */
     protected function modifyApplication(string $app, string $plugin): bool
     {
-        $finder = "/\s*\\\$this\-\>addPlugin\(\s*['\"]{$plugin}['\"](\s*,[\s\\n]*\[(\\n.*|.*){0,5}\][\\n\s]*)?\);/m";
+        $plugin = preg_quote($plugin, '/');
+        $finder = "/
+            # whitespace and addPlugin call
+            \s*\\\$this\-\>addPlugin\(
+            # plugin name in quotes of any kind
+            \s*['\"]{$plugin}['\"]
+            # method arguments assuming a literal array with multiline args
+            (\s*,[\s\\n]*\[(\\n.*|.*){0,5}\][\\n\s]*)?
+            # closing paren of method
+            \);/mx";
 
         $content = file_get_contents($app);
         $newContent = preg_replace($finder, '', $content);
