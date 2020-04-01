@@ -18,9 +18,11 @@ namespace Cake\Test\TestCase\Error;
 
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
+use Cake\Error\Debug\TextFormatter;
 use Cake\Error\Debugger;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
+use RuntimeException;
 use stdClass;
 use TestApp\Error\TestDebugger;
 use TestApp\Error\Thing\DebuggableThing;
@@ -50,6 +52,7 @@ class DebuggerTest extends TestCase
         Configure::write('debug', true);
         Log::drop('stderr');
         Log::drop('stdout');
+        Debugger::configInstance('exportFormatter', TextFormatter::class);
     }
 
     /**
@@ -72,13 +75,12 @@ class DebuggerTest extends TestCase
      */
     public function testDocRef()
     {
-        $this->skipIf(
-            defined('HHVM_VERSION'),
-            'HHVM does not output doc references'
-        );
         ini_set('docref_root', '');
         $this->assertEquals(ini_get('docref_root'), '');
-        new Debugger();
+        // Force a new instance.
+        Debugger::getInstance(TestDebugger::class);
+        Debugger::getInstance(Debugger::class);
+
         $this->assertEquals(ini_get('docref_root'), 'https://secure.php.net/');
     }
 
@@ -654,6 +656,22 @@ eos;
     }
 
     /**
+     * Test configure based output mask configuration
+     *
+     * @return void
+     */
+    public function testConfigureOutputMask()
+    {
+        Configure::write('Debugger.outputMask', ['wow' => 'xxx']);
+        Debugger::getInstance(TestDebugger::class);
+        Debugger::getInstance(Debugger::class);
+
+        $result = Debugger::exportVar(['wow' => 'pass1234']);
+        $this->assertStringContainsString('xxx', $result);
+        $this->assertStringNotContainsString('pass1234', $result);
+    }
+
+    /**
      * Tests the masking of an array key.
      *
      * @return void
@@ -705,14 +723,7 @@ EXPECTED;
         $value = '<div>this-is-a-test</div>';
         Debugger::printVar($value, ['file' => __FILE__, 'line' => __LINE__], true);
         $result = ob_get_clean();
-        $expectedHtml = <<<EXPECTED
-<div class="cake-debug-output cake-debug" style="direction:ltr">
-<span><strong>%s</strong> (line <strong>%d</strong>)</span>
-<div class="cake-dbg"><span class="cake-dbg-string">&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;</span></div>
-</div>
-EXPECTED;
-        $expected = sprintf($expectedHtml, Debugger::trimPath(__FILE__), __LINE__ - 8);
-        $this->assertEquals($expected, $result);
+        $this->assertStringContainsString('&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;', $result);
 
         ob_start();
         Debugger::printVar('<div>this-is-a-test</div>', ['file' => __FILE__, 'line' => __LINE__], true);
@@ -783,5 +794,83 @@ EXPECTED;
             "Some <code>code</code> to &lt;script&gt;alert(&quot;test&quot;)&lt;/script&gt;<br />\nmore",
             $output
         );
+    }
+
+    /**
+     * test adding invalid editor
+     *
+     * @return void
+     */
+    public function testAddEditorInvalid()
+    {
+        $this->expectException(RuntimeException::class);
+        Debugger::addEditor('nope', ['invalid']);
+    }
+
+    /**
+     * test choosing an unknown editor
+     *
+     * @return void
+     */
+    public function testSetEditorInvalid()
+    {
+        $this->expectException(RuntimeException::class);
+        Debugger::setEditor('nope');
+    }
+
+    /**
+     * test choosing a default editor
+     *
+     * @return void
+     */
+    public function testSetEditorPredefined()
+    {
+        Debugger::setEditor('phpstorm');
+        Debugger::setEditor('macvim');
+        Debugger::setEditor('sublime');
+        Debugger::setEditor('emacs');
+        // No exceptions raised.
+        $this->assertTrue(true);
+    }
+
+    /**
+     * Test configure based editor setup
+     *
+     * @return void
+     */
+    public function testConfigureEditor()
+    {
+        Configure::write('Debugger.editor', 'emacs');
+        Debugger::getInstance(TestDebugger::class);
+        Debugger::getInstance(Debugger::class);
+
+        $result = Debugger::editorUrl('file.php', 123);
+        $this->assertStringContainsString('emacs://', $result);
+    }
+
+    /**
+     * test using a valid editor.
+     *
+     * @return void
+     */
+    public function testEditorUrlValid()
+    {
+        Debugger::addEditor('open', 'open://{file}:{line}');
+        Debugger::setEditor('open');
+        $this->assertSame('open://test.php:123', Debugger::editorUrl('test.php', 123));
+    }
+
+    /**
+     * test using a valid editor.
+     *
+     * @return void
+     */
+    public function testEditorUrlClosure()
+    {
+        Debugger::addEditor('open', function (string $file, int $line) {
+            return "${file}/${line}";
+        });
+        Debugger::setEditor('open');
+        $this->assertSame('test.php/123', Debugger::editorUrl('test.php', 123));
     }
 }

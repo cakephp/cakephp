@@ -19,12 +19,12 @@ namespace Cake\Filesystem;
 use Cake\Core\Exception\Exception;
 use CallbackFilterIterator;
 use FilesystemIterator;
+use Iterator;
 use RecursiveCallbackFilterIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RegexIterator;
 use SplFileInfo;
-use Traversable;
 
 /**
  * @since 4.0.0
@@ -46,9 +46,9 @@ class Filesystem
      * @param mixed $filter If string will be used as regex for filtering using
      *   `RegexIterator`, if callable will be as callback for `CallbackFilterIterator`.
      * @param int|null $flags Flags for FilesystemIterator::__construct();
-     * @return \Traversable
+     * @return \Iterator
      */
-    public function find(string $path, $filter = null, ?int $flags = null): Traversable
+    public function find(string $path, $filter = null, ?int $flags = null): Iterator
     {
         $flags = $flags ?? FilesystemIterator::KEY_AS_PATHNAME
             | FilesystemIterator::CURRENT_AS_FILEINFO
@@ -70,9 +70,9 @@ class Filesystem
      *   `RegexIterator`, if callable will be as callback for `CallbackFilterIterator`.
      *   Hidden directories (starting with dot e.g. .git) are always skipped.
      * @param int|null $flags Flags for FilesystemIterator::__construct();
-     * @return \Traversable
+     * @return \Iterator
      */
-    public function findRecursive(string $path, $filter = null, ?int $flags = null): Traversable
+    public function findRecursive(string $path, $filter = null, ?int $flags = null): Iterator
     {
         $flags = $flags ?? FilesystemIterator::KEY_AS_PATHNAME
             | FilesystemIterator::CURRENT_AS_FILEINFO
@@ -105,11 +105,11 @@ class Filesystem
     /**
      * Wrap iterator in additional filtering iterator.
      *
-     * @param \Traversable $iterator Iterator
+     * @param \Iterator $iterator Iterator
      * @param mixed $filter Regex string or callback.
-     * @return \Traversable
+     * @return \Iterator
      */
-    protected function filterIterator(Traversable $iterator, $filter): Traversable
+    protected function filterIterator(Iterator $iterator, $filter): Iterator
     {
         if (is_string($filter)) {
             return new RegexIterator($iterator, $filter);
@@ -143,8 +143,8 @@ class Filesystem
             $success = @file_put_contents($filename, $content, LOCK_EX);
         }
 
-        if (!$success) {
-            throw new Exception(sprintf('Failed dumping content to file "%s"', $dir));
+        if ($success === false) {
+            throw new Exception(sprintf('Failed dumping content to file `%s`', $dir));
         }
 
         if (!$exists) {

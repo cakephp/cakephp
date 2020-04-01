@@ -681,6 +681,43 @@ class SmtpTransportTest extends TestCase
     }
 
     /**
+     * testSendDefaults method
+     *
+     * @return void
+     */
+    public function testSendMessageTooBigOnWindows()
+    {
+        /** @var \Cake\Mailer\Message $message */
+        $message = $this->getMockBuilder(Message::class)
+            ->setMethods(['getBody'])
+            ->getMock();
+        $message->setFrom('noreply@cakephp.org', 'CakePHP Test');
+        $message->setTo('cake@cakephp.org', 'CakePHP');
+        $message->expects($this->once())->method('getBody')->will($this->returnValue(['First Line']));
+
+        $this->socket->expects($this->at(0))->method('connect')->will($this->returnValue(true));
+
+        $this->socket->expects($this->at(1))->method('read')->will($this->returnValue("220 Welcome message\r\n"));
+        $this->socket->expects($this->at(2))->method('write')->with("EHLO localhost\r\n");
+        $this->socket->expects($this->at(3))->method('read')->will($this->returnValue("250 OK\r\n"));
+
+        $this->socket->expects($this->at(4))->method('write')->with("MAIL FROM:<noreply@cakephp.org>\r\n");
+        $this->socket->expects($this->at(5))->method('read')->will($this->returnValue("250 OK\r\n"));
+        $this->socket->expects($this->at(6))->method('write')->with("RCPT TO:<cake@cakephp.org>\r\n");
+        $this->socket->expects($this->at(7))->method('read')->will($this->returnValue("250 OK\r\n"));
+
+        $this->socket->expects($this->at(8))->method('write')->with("DATA\r\n");
+        $this->socket->expects($this->at(9))->method('read')->will($this->returnValue("354 OK\r\n"));
+        $this->socket->expects($this->at(10))->method('write')->with($this->stringContains('First Line'));
+        $this->socket->expects($this->at(11))->method('read')->will($this->returnValue("Message size too large"));
+
+        $this->expectException(SocketException::class);
+        $this->expectExceptionMessage('Message size too large');
+
+        $this->SmtpTransport->send($message);
+    }
+
+    /**
      * Ensure that unserialized transports have no connection.
      *
      * @return void

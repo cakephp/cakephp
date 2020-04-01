@@ -50,6 +50,7 @@ use Cake\TestSuite\Constraint\Response\StatusOk;
 use Cake\TestSuite\Constraint\Response\StatusSuccess;
 use Cake\TestSuite\Constraint\Session\FlashParamEquals;
 use Cake\TestSuite\Constraint\Session\SessionEquals;
+use Cake\TestSuite\Constraint\Session\SessionHasKey;
 use Cake\TestSuite\Constraint\View\LayoutFileEquals;
 use Cake\TestSuite\Constraint\View\TemplateFileEquals;
 use Cake\TestSuite\Stub\TestExceptionRenderer;
@@ -1099,7 +1100,33 @@ trait IntegrationTestTrait
     public function assertSession($expected, string $path, string $message = ''): void
     {
         $verboseMessage = $this->extractVerboseMessage($message);
-        $this->assertThat($expected, new SessionEquals($this->_requestSession, $path), $verboseMessage);
+        $this->assertThat($expected, new SessionEquals($path), $verboseMessage);
+    }
+
+    /**
+     * Asserts session key exists.
+     *
+     * @param string $path The session data path. Uses Hash::get() compatible notation.
+     * @param string $message The failure message that will be appended to the generated message.
+     * @return void
+     */
+    public function assertSessionHasKey(string $path, string $message = ''): void
+    {
+        $verboseMessage = $this->extractVerboseMessage($message);
+        $this->assertThat($path, new SessionHasKey($path), $verboseMessage);
+    }
+
+    /**
+     * Asserts a session key does not exist.
+     *
+     * @param string $path The session data path. Uses Hash::get() compatible notation.
+     * @param string $message The failure message that will be appended to the generated message.
+     * @return void
+     */
+    public function assertSessionNotHasKey(string $path, string $message = ''): void
+    {
+        $verboseMessage = $this->extractVerboseMessage($message);
+        $this->assertThat($path, $this->logicalNot(new SessionHasKey($path)), $verboseMessage);
     }
 
     /**

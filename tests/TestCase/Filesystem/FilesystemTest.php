@@ -69,6 +69,10 @@ class FilesystemTest extends TestCase
 
         $this->fs->dumpFile($path, 'bar');
         $this->assertEquals(file_get_contents($path), 'bar');
+
+        $path = $this->vfsPath . DS . 'empty.txt';
+        $this->fs->dumpFile($path, '');
+        $this->assertSame(file_get_contents($path), '');
     }
 
     /**

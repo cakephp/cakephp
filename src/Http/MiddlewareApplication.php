@@ -40,12 +40,12 @@ abstract class MiddlewareApplication implements HttpApplicationInterface
     /**
      * @inheritDoc
      */
-    abstract public function middleware(MiddlewareQueue $middleware): MiddlewareQueue;
+    abstract public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue;
 
     /**
      * Generate a 404 response as no middleware handled the request.
      *
-     * @param \Cake\Http\ServerRequest $request The request
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function handle(

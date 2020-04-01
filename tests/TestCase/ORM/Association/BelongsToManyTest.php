@@ -29,6 +29,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 
 /**
  * Tests BelongsToMany class
@@ -183,6 +184,9 @@ class BelongsToManyTest extends TestCase
         $this->assertSame($assoc->getStrategy(), $this->tag->getAssociation('Articles')->getStrategy());
         $this->assertSame($assoc->getStrategy(), $this->tag->getAssociation('ArticlesTags')->getStrategy());
         $this->assertSame($assoc->getStrategy(), $this->article->getAssociation('ArticlesTags')->getStrategy());
+
+        $this->assertSame($this->article->getPrimaryKey(), $junction->getAssociation('Articles')->getBindingKey());
+        $this->assertSame($this->tag->getPrimaryKey(), $junction->getAssociation('Tags')->getBindingKey());
     }
 
     /**
@@ -216,11 +220,13 @@ class BelongsToManyTest extends TestCase
     public function testJunctionCustomKeys()
     {
         $this->article->belongsToMany('Tags', [
+            'targetTable' => $this->tag,
             'joinTable' => 'articles_tags',
             'foreignKey' => 'article',
             'targetForeignKey' => 'tag',
         ]);
         $this->tag->belongsToMany('Articles', [
+            'targetTable' => $this->article,
             'joinTable' => 'articles_tags',
             'foreignKey' => 'tag',
             'targetForeignKey' => 'article',
@@ -249,6 +255,30 @@ class BelongsToManyTest extends TestCase
         $junction = $assoc->junction();
         $this->assertSame('TagsArticles', $junction->getAlias());
         $this->assertSame('tags_articles', $junction->getTable());
+    }
+
+    /**
+     * Test multiple associations with differerent keys fails
+     *
+     * @return void
+     */
+    public function testMultipleAssociationsSameJunction()
+    {
+        $assoc = new BelongsToMany('This', [
+            'sourceTable' => $this->article,
+            'targetTable' => $this->tag,
+            'targetForeignKey' => 'this_id',
+        ]);
+        $assoc->junction();
+
+        $assoc = new BelongsToMany('That', [
+            'sourceTable' => $this->article,
+            'targetTable' => $this->tag,
+            'targetForeignKey' => 'that_id',
+        ]);
+
+        $this->expectException(InvalidArgumentException::class);
+        $assoc->junction();
     }
 
     /**
@@ -1418,5 +1448,78 @@ class BelongsToManyTest extends TestCase
         });
         // The inner join on special_tags excludes the results.
         $this->assertSame(0, $query->count());
+    }
+
+    /**
+     * Test custom binding key for target table association
+     *
+     * @return void
+     */
+    public function testCustomTargetBindingKeyContain()
+    {
+        $this->getTableLocator()->get('ArticlesTags')
+            ->belongsTo('SpecialTags', [
+                'bindingKey' => 'tag_id',
+                'foreignKey' => 'tag_id',
+            ]);
+
+        $table = $this->getTableLocator()->get('Articles');
+        $table->belongsToMany('SpecialTags', [
+            'through' => 'ArticlesTags',
+            'targetForeignKey' => 'tag_id',
+        ]);
+
+        $results = $table->find()
+            ->contain('SpecialTags', function ($query) {
+                return $query->order(['SpecialTags.tag_id']);
+            })
+            ->where(['id' => 2])
+            ->toArray();
+
+        $this->assertCount(1, $results);
+        $this->assertCount(2, $results[0]->special_tags);
+
+        $this->assertSame(2, $results[0]->special_tags[0]->id);
+        $this->assertSame(1, $results[0]->special_tags[0]->tag_id);
+
+        $this->assertSame(1, $results[0]->special_tags[1]->id);
+        $this->assertSame(3, $results[0]->special_tags[1]->tag_id);
+    }
+
+    /**
+     * Test custom binding key for target table association
+     *
+     * @return void
+     */
+    public function testCustomTargetBindingKeyLink()
+    {
+        $this->getTableLocator()->get('ArticlesTags')
+            ->belongsTo('SpecialTags', [
+                'bindingKey' => 'tag_id',
+                'foreignKey' => 'tag_id',
+            ]);
+
+        $table = $this->getTableLocator()->get('Articles');
+        $table->belongsToMany('SpecialTags', [
+            'through' => 'ArticlesTags',
+            'targetForeignKey' => 'tag_id',
+        ]);
+
+        $specialTag = $table->SpecialTags->newEntity([
+            'article_id' => 2,
+            'tag_id' => 2,
+        ]);
+        $table->SpecialTags->save($specialTag);
+
+        $article = $table->get(2);
+        $this->assertTrue($table->SpecialTags->link($article, [$specialTag]));
+
+        $results = $table->find()
+            ->contain('SpecialTags')
+            ->where(['id' => 2])
+            ->toArray();
+
+        $this->assertCount(1, $results);
+        $this->assertCount(3, $results[0]->special_tags);
     }
 }

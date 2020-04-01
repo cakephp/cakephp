@@ -751,7 +751,12 @@ class Validation
         $decimalPoint = $formatter->getSymbol(NumberFormatter::DECIMAL_SEPARATOR_SYMBOL);
         $groupingSep = $formatter->getSymbol(NumberFormatter::GROUPING_SEPARATOR_SYMBOL);
 
-        $check = str_replace([$groupingSep, $decimalPoint], ['', '.'], (string)$check);
+        // There are two types of non-breaking spaces - we inject a space to account for human input
+        if ($groupingSep == "\xc2\xa0" || $groupingSep == "\xe2\x80\xaf") {
+            $check = str_replace([' ', $groupingSep, $decimalPoint], ['', '', '.'], (string)$check);
+        } else {
+            $check = str_replace([$groupingSep, $decimalPoint], ['', '.'], (string)$check);
+        }
 
         return static::_check($check, $regex);
     }
@@ -1193,14 +1198,12 @@ class Validation
             throw new RuntimeException('Cannot validate mimetype for a missing file');
         }
 
-        $finfo = finfo_open(FILEINFO_MIME);
-        $finfo = finfo_file($finfo, $file);
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mime = finfo_file($finfo, $file);
 
-        if (!$finfo) {
+        if (!$mime) {
             throw new RuntimeException('Can not determine the mimetype.');
         }
-
-        [$mime] = explode(';', $finfo);
 
         if (is_string($mimeTypes)) {
             return self::_check($mime, $mimeTypes);

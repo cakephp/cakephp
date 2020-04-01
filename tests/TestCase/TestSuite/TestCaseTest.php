@@ -459,7 +459,7 @@ class TestCaseTest extends TestCase
     {
         static::setAppNamespace();
 
-        $I18n = $this->getMockForModel('I18n', ['save']);
+        $I18n = $this->getMockForModel('CustomI18n', ['save']);
         $this->assertSame('custom_i18n_table', $I18n->getTable());
 
         $Tags = $this->getMockForModel('Tags', ['save']);

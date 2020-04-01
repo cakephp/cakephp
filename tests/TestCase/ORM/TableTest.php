@@ -2827,6 +2827,7 @@ class TableTest extends TestCase
     public function testSaveManyFailed()
     {
         $table = $this->getTableLocator()->get('authors');
+        $expectedCount = $table->find()->count();
         $entities = [
             new Entity(['name' => 'mark']),
             new Entity(['name' => 'jose']),
@@ -2835,6 +2836,7 @@ class TableTest extends TestCase
         $result = $table->saveMany($entities);
 
         $this->assertFalse($result);
+        $this->assertSame($expectedCount, $table->find()->count());
         foreach ($entities as $entity) {
             $this->assertTrue($entity->isNew());
         }
@@ -4329,10 +4331,10 @@ class TableTest extends TestCase
      */
     public function testLinkBelongsToMany()
     {
-        $table = $this->getTableLocator()->get('articles');
-        $table->belongsToMany('tags');
-        $tagsTable = $this->getTableLocator()->get('tags');
-        $source = ['source' => 'tags'];
+        $table = $this->getTableLocator()->get('Articles');
+        $table->belongsToMany('Tags');
+        $tagsTable = $this->getTableLocator()->get('Tags');
+        $source = ['source' => 'Tags'];
         $options = ['markNew' => false];
 
         $article = new Entity([
@@ -4350,14 +4352,14 @@ class TableTest extends TestCase
         $tags[] = $newTag;
 
         $tagsTable->save($newTag);
-        $table->getAssociation('tags')->link($article, $tags);
+        $table->getAssociation('Tags')->link($article, $tags);
 
         $this->assertEquals($article->tags, $tags);
         foreach ($tags as $tag) {
             $this->assertFalse($tag->isNew());
         }
 
-        $article = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
+        $article = $table->find('all')->where(['id' => 1])->contain(['Tags'])->first();
         $this->assertEquals($article->tags[2]->id, $tags[0]->id);
         $this->assertEquals($article->tags[3], $tags[1]);
     }
@@ -4861,16 +4863,16 @@ class TableTest extends TestCase
      */
     public function testUnlinkBelongsToMany()
     {
-        $table = $this->getTableLocator()->get('articles');
-        $table->belongsToMany('tags');
-        $tagsTable = $this->getTableLocator()->get('tags');
+        $table = $this->getTableLocator()->get('Articles');
+        $table->belongsToMany('Tags');
+        $tagsTable = $this->getTableLocator()->get('Tags');
         $options = ['markNew' => false];
 
         $article = $table->find('all')
             ->where(['id' => 1])
             ->contain(['tags'])->first();
 
-        $table->getAssociation('tags')->unlink($article, [$article->tags[0]]);
+        $table->getAssociation('Tags')->unlink($article, [$article->tags[0]]);
         $this->assertCount(1, $article->tags);
         $this->assertEquals(2, $article->tags[0]->get('id'));
         $this->assertFalse($article->isDirty('tags'));
@@ -4883,17 +4885,17 @@ class TableTest extends TestCase
      */
     public function testUnlinkBelongsToManyMultiple()
     {
-        $table = $this->getTableLocator()->get('articles');
-        $table->belongsToMany('tags');
-        $tagsTable = $this->getTableLocator()->get('tags');
+        $table = $this->getTableLocator()->get('Articles');
+        $table->belongsToMany('Tags');
+        $tagsTable = $this->getTableLocator()->get('Tags');
         $options = ['markNew' => false];
 
         $article = new Entity(['id' => 1], $options);
         $tags[] = new \TestApp\Model\Entity\Tag(['id' => 1], $options);
         $tags[] = new \TestApp\Model\Entity\Tag(['id' => 2], $options);
 
-        $table->getAssociation('tags')->unlink($article, $tags);
-        $left = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
+        $table->getAssociation('Tags')->unlink($article, $tags);
+        $left = $table->find('all')->where(['id' => 1])->contain(['Tags'])->first();
         $this->assertEmpty($left->tags);
     }
 
@@ -4905,9 +4907,9 @@ class TableTest extends TestCase
      */
     public function testUnlinkBelongsToManyPassingJoint()
     {
-        $table = $this->getTableLocator()->get('articles');
-        $table->belongsToMany('tags');
-        $tagsTable = $this->getTableLocator()->get('tags');
+        $table = $this->getTableLocator()->get('Articles');
+        $table->belongsToMany('Tags');
+        $tagsTable = $this->getTableLocator()->get('Tags');
         $options = ['markNew' => false];
 
         $article = new Entity(['id' => 1], $options);
@@ -4919,8 +4921,8 @@ class TableTest extends TestCase
             'tag_id' => 2,
         ], $options);
 
-        $table->getAssociation('tags')->unlink($article, $tags);
-        $left = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
+        $table->getAssociation('Tags')->unlink($article, $tags);
+        $left = $table->find('all')->where(['id' => 1])->contain(['Tags'])->first();
         $this->assertEmpty($left->tags);
     }
 

@@ -3413,6 +3413,99 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test leftJoinWith and contain on optional association
+     *
+     * @return void
+     */
+    public function testLeftJoinWithAndContainOnOptionalAssociation()
+    {
+        $table = $this->getTableLocator()->get('Articles', ['table' => 'articles']);
+        $table->belongsTo('Authors');
+        $newArticle = $table->newEntity([
+            'title' => 'Fourth Article',
+            'body' => 'Fourth Article Body',
+            'published' => 'N',
+        ]);
+        $table->save($newArticle);
+        $results = $table
+            ->find()
+            ->disableHydration()
+            ->contain('Authors')
+            ->leftJoinWith('Authors')
+            ->all();
+        $expected = [
+            [
+                'id' => 1,
+                'author_id' => 1,
+                'title' => 'First Article',
+                'body' => 'First Article Body',
+                'published' => 'Y',
+                'author' => [
+                    'id' => 1,
+                    'name' => 'mariano',
+                ],
+            ],
+            [
+                'id' => 2,
+                'author_id' => 3,
+                'title' => 'Second Article',
+                'body' => 'Second Article Body',
+                'published' => 'Y',
+                'author' => [
+                    'id' => 3,
+                    'name' => 'larry',
+                ],
+            ],
+            [
+                'id' => 3,
+                'author_id' => 1,
+                'title' => 'Third Article',
+                'body' => 'Third Article Body',
+                'published' => 'Y',
+                'author' => [
+                    'id' => 1,
+                    'name' => 'mariano',
+                ],
+            ],
+            [
+                'id' => 4,
+                'author_id' => null,
+                'title' => 'Fourth Article',
+                'body' => 'Fourth Article Body',
+                'published' => 'N',
+                'author' => null,
+            ],
+        ];
+        $this->assertEquals($expected, $results->toList());
+        $results = $table
+            ->find()
+            ->disableHydration()
+            ->contain('Authors')
+            ->leftJoinWith('Authors')
+            ->where(['Articles.author_id is' => null])
+            ->all();
+        $expected = [
+            [
+                'id' => 4,
+                'author_id' => null,
+                'title' => 'Fourth Article',
+                'body' => 'Fourth Article Body',
+                'published' => 'N',
+                'author' => null,
+            ],
+        ];
+        $this->assertEquals($expected, $results->toList());
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The Tags association is not defined on Articles');
+        $table
+            ->find()
+            ->disableHydration()
+            ->contain('Tags')
+            ->leftJoinWith('Tags')
+            ->all();
+    }
+
+    /**
      * Tests innerJoinWith()
      *
      * @return void
@@ -3736,5 +3829,37 @@ class QueryTest extends TestCase
             $table
                 ->find()
                 ->selectAllExcept([], ['body']);
+    }
+
+    /**
+     * Tests that using Having on an aggregated field returns the correct result
+     * model in the query
+     *
+     * @return void
+     */
+    public function testHavingOnAnAggregatedField()
+    {
+        $post = $this->getTableLocator()->get('posts');
+
+        $query = new Query($this->connection, $post);
+
+        $results = $query
+            ->select([
+                'posts.author_id',
+                'post_count' => $query->func()->count('posts.id'),
+            ])
+            ->group(['posts.author_id'])
+            ->having([$query->newExpr()->gte('post_count', 2, 'integer')])
+            ->enableHydration(false)
+            ->toArray();
+
+        $expected = [
+            [
+                'author_id' => 1,
+                'post_count' => 2,
+            ],
+        ];
+
+        $this->assertEquals($expected, $results);
     }
 }

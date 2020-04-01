@@ -118,7 +118,6 @@ class PoFileParser
                     case 1:
                         /**
                          * @psalm-suppress PossiblyUndefinedArrayOffset
-                         * @psalm-suppress InvalidArrayOffset
                          * @psalm-suppress PossiblyInvalidOperand
                          * @psalm-suppress PossiblyNullOperand
                          */

@@ -86,7 +86,6 @@ trait ValidatorAwareTrait
      *
      * @param string|null $name The name of the validation set to return.
      * @return \Cake\Validation\Validator
-     * @psalm-suppress InvalidNullableReturnType
      */
     public function getValidator(?string $name = null): Validator
     {

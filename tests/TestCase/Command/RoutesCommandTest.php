@@ -18,13 +18,16 @@ namespace Cake\Test\TestCase\Command;
 
 use Cake\Command\Command;
 use Cake\Routing\Router;
-use Cake\TestSuite\ConsoleIntegrationTestCase;
+use Cake\TestSuite\ConsoleIntegrationTestTrait;
+use Cake\TestSuite\TestCase;
 
 /**
  * RoutesCommandTest
  */
-class RoutesCommandTest extends ConsoleIntegrationTestCase
+class RoutesCommandTest extends TestCase
 {
+    use ConsoleIntegrationTestTrait;
+
     /**
      * setUp method
      *

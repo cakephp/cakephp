@@ -136,7 +136,6 @@ class IniConfig implements ConfigEngineInterface
             }
             unset($values[$key]);
             if (strpos((string)$key, '.') !== false) {
-                /** @psalm-suppress LoopInvalidation */
                 $values = Hash::insert($values, $key, $value);
             } else {
                 $values[$key] = $value;

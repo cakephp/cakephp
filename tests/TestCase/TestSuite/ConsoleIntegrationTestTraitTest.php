@@ -16,12 +16,15 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Console\Shell;
-use Cake\TestSuite\ConsoleIntegrationTestCase;
+use Cake\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\Stub\MissingConsoleInputException;
+use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\AssertionFailedError;
 
-class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
+class ConsoleIntegrationTestTraitTest extends TestCase
 {
+    use ConsoleIntegrationTestTrait;
+
     /**
      * setUp
      *
@@ -229,7 +232,7 @@ class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
     public function testAssertionFailureMessages($assertion, $message, $command, ...$rest)
     {
         $this->expectException(AssertionFailedError::class);
-        $this->expectExceptionMessage($message);
+        $this->expectExceptionMessageMatches('#' . preg_quote($message, '#') . '.?#');
 
         $this->useCommandRunner();
         $this->exec($command);
@@ -245,15 +248,15 @@ class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
     public function assertionFailureMessagesProvider()
     {
         return [
-            'assertExitCode' => ['assertExitCode', 'Failed asserting that 1 matches exit code 0.', 'routes', Shell::CODE_ERROR],
-            'assertOutputEmpty' => ['assertOutputEmpty', 'Failed asserting that output is empty.', 'routes'],
-            'assertOutputContains' => ['assertOutputContains', 'Failed asserting that \'missing\' is in output.', 'routes', 'missing'],
-            'assertOutputNotContains' => ['assertOutputNotContains', 'Failed asserting that \'controller\' is not in output.', 'routes', 'controller'],
-            'assertOutputRegExp' => ['assertOutputRegExp', 'Failed asserting that `/missing/` PCRE pattern found in output.', 'routes', '/missing/'],
-            'assertOutputContainsRow' => ['assertOutputContainsRow', 'Failed asserting that `Array (...)` row was in output.', 'routes', ['test', 'missing']],
-            'assertErrorContains' => ['assertErrorContains', 'Failed asserting that \'test\' is in error output.', 'routes', 'test'],
-            'assertErrorRegExp' => ['assertErrorRegExp', 'Failed asserting that `/test/` PCRE pattern found in error output.', 'routes', '/test/'],
-            'assertErrorEmpty' => ['assertErrorEmpty', 'Failed asserting that error output is empty.', 'integration args_and_options'],
+            'assertExitCode' => ['assertExitCode', 'Failed asserting that 1 matches exit code 0', 'routes', Shell::CODE_ERROR],
+            'assertOutputEmpty' => ['assertOutputEmpty', 'Failed asserting that output is empty', 'routes'],
+            'assertOutputContains' => ['assertOutputContains', 'Failed asserting that \'missing\' is in output', 'routes', 'missing'],
+            'assertOutputNotContains' => ['assertOutputNotContains', 'Failed asserting that \'controller\' is not in output', 'routes', 'controller'],
+            'assertOutputRegExp' => ['assertOutputRegExp', 'Failed asserting that `/missing/` PCRE pattern found in output', 'routes', '/missing/'],
+            'assertOutputContainsRow' => ['assertOutputContainsRow', 'Failed asserting that `Array (...)` row was in output', 'routes', ['test', 'missing']],
+            'assertErrorContains' => ['assertErrorContains', 'Failed asserting that \'test\' is in error output', 'routes', 'test'],
+            'assertErrorRegExp' => ['assertErrorRegExp', 'Failed asserting that `/test/` PCRE pattern found in error output', 'routes', '/test/'],
+            'assertErrorEmpty' => ['assertErrorEmpty', 'Failed asserting that error output is empty', 'integration args_and_options'],
         ];
     }
 }

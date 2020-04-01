@@ -296,8 +296,8 @@ class FormProtector
         }
         unset($formData['_Token']);
 
-        $locked = explode('|', $locked);
-        $unlocked = explode('|', $unlocked);
+        $locked = $locked ? explode('|', $locked) : [];
+        $unlocked = $unlocked ? explode('|', $unlocked) : [];
 
         $fields = Hash::flatten($formData);
         $fieldList = array_keys($fields);
@@ -376,7 +376,7 @@ class FormProtector
      * @param string $url Form URL.
      * @param string $sessionId Session Id.
      * @return array The token data.
-     * @psalm-return array{fields: string, unlocked: string}
+     * @psalm-return array{fields: string, unlocked: string, debug: string}
      */
     public function buildTokenData(string $url = '', string $sessionId = ''): array
     {

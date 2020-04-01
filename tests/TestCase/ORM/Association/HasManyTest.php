@@ -45,6 +45,7 @@ class HasManyTest extends TestCase
         'core.Comments',
         'core.Articles',
         'core.Authors',
+        'core.Users',
         'core.ArticlesTags',
         'core.Tags',
     ];
@@ -955,6 +956,48 @@ class HasManyTest extends TestCase
             'contain' => ['Comments'],
         ]);
         $this->assertEmpty($entity->get('comments'));
+    }
+
+    /**
+     * Test that the associated entities are not saved when there's any rule
+     * that fail on them and the errors are correctly set on the original entity.
+     *
+     * @return void
+     */
+    public function testSaveAssociatedWithFailedRuleOnAssociated()
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->hasMany('Comments');
+        $comments = $this->getTableLocator()->get('Comments');
+        $comments->belongsTo('Users');
+        $rules = $comments->rulesChecker();
+        $rules->add($rules->existsIn('user_id', 'Users'));
+        $article = $articles->newEntity([
+            'title' => 'Bakeries are sky rocketing',
+            'body' => 'All because of cake',
+            'comments' => [
+                [
+                    'user_id' => 1,
+                    'comment' => 'That is true!',
+                ],
+                [
+                    'user_id' => 999, // This rule will fail because the user doesn't exist
+                    'comment' => 'Of course',
+                ],
+            ],
+        ], ['associated' => ['Comments']]);
+        $this->assertFalse($article->hasErrors());
+        $this->assertFalse($articles->save($article, ['associated' => ['Comments']]));
+        $this->assertTrue($article->hasErrors());
+        $this->assertFalse($article->comments[0]->hasErrors());
+        $this->assertTrue($article->comments[1]->hasErrors());
+        $this->assertNotEmpty($article->comments[1]->getErrors());
+        $expected = [
+            'user_id' => [
+                '_existsIn' => __('This value does not exist'),
+            ],
+        ];
+        $this->assertEquals($expected, $article->comments[1]->getErrors());
     }
 
     /**

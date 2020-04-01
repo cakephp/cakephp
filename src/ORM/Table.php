@@ -81,51 +81,59 @@ use RuntimeException;
  * You can use Table::updateAll() and Table::deleteAll() to do bulk updates/deletes.
  * You should be aware that events will *not* be fired for bulk updates/deletes.
  *
- * ### Callbacks/events
+ * ### Events
  *
- * Table objects provide a few callbacks/events you can hook into to augment/replace
- * find operations. Each event uses the standard event subsystem in CakePHP
+ * Table objects emit several events during as life-cycle hooks during find, delete and save
+ * operations. All events use the CakePHP event package:
+ *
+ * - `Model.beforeFind` Fired before each find operation. By stopping the event and
+ *   supplying a return value you can bypass the find operation entirely. Any
+ *   changes done to the $query instance will be retained for the rest of the find. The
+ *   `$primary` parameter indicates whether or not this is the root query, or an
+ *   associated query.
+ *
+ * - `Model.buildValidator` Allows listeners to modify validation rules
+ *   for the provided named validator.
+ *
+ * - `Model.buildRules` Allows listeners to modify the rules checker by adding more rules.
+ *
+ * - `Model.beforeRules` Fired before an entity is validated using the rules checker.
+ *   By stopping this event, you can return the final value of the rules checking operation.
+ *
+ * - `Model.afterRules` Fired after the rules have been checked on the entity. By
+ *   stopping this event, you can return the final value of the rules checking operation.
+ *
+ * - `Model.beforeSave` Fired before each entity is saved. Stopping this event will
+ *   abort the save operation. When the event is stopped the result of the event will be returned.
+ *
+ * - `Model.afterSave` Fired after an entity is saved.
+ *
+ * - `Model.afterSaveCommit` Fired after the transaction in which the save operation is
+ *   wrapped has been committed. It’s also triggered for non atomic saves where database
+ *   operations are implicitly committed. The event is triggered only for the primary
+ *   table on which save() is directly called. The event is not triggered if a
+ *   transaction is started before calling save.
+ *
+ * - `Model.beforeDelete` Fired before an entity is deleted. By stopping this
+ *   event you will abort the delete operation.
+ *
+ * - `Model.afterDelete` Fired after an entity has been deleted.
+ *
+ * ### Callbacks
+ *
+ * You can subscribe to the events listed above in your table classes by implementing the
+ * lifecycle methods below:
  *
  * - `beforeFind(EventInterface $event, Query $query, ArrayObject $options, boolean $primary)`
- *   Fired before each find operation. By stopping the event and supplying a
- *   return value you can bypass the find operation entirely. Any changes done
- *   to the $query instance will be retained for the rest of the find. The
- *   $primary parameter indicates whether or not this is the root query,
- *   or an associated query.
- *
  * - `buildValidator(EventInterface $event, Validator $validator, string $name)`
- *   Allows listeners to modify validation rules for the provided named validator.
- *
- * - `buildRules(EventInterface $event, RulesChecker $rules)`
- *   Allows listeners to modify the rules checker by adding more rules.
- *
+ * - `buildRules(RulesChecker $rules)`
  * - `beforeRules(EventInterface $event, EntityInterface $entity, ArrayObject $options, string $operation)`
- *   Fired before an entity is validated using the rules checker. By stopping this event,
- *   you can return the final value of the rules checking operation.
- *
  * - `afterRules(EventInterface $event, EntityInterface $entity, ArrayObject $options, bool $result, string $operation)`
- *   Fired after the rules have been checked on the entity. By stopping this event,
- *   you can return the final value of the rules checking operation.
- *
  * - `beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options)`
- *   Fired before each entity is saved. Stopping this event will abort the save
- *   operation. When the event is stopped the result of the event will be returned.
- *
  * - `afterSave(EventInterface $event, EntityInterface $entity, ArrayObject $options)`
- *   Fired after an entity is saved.
- *
  * - `afterSaveCommit(EventInterface $event, EntityInterface $entity, ArrayObject $options)`
- *   Fired after the transaction in which the save operation is wrapped has been committed.
- *   It’s also triggered for non atomic saves where database operations are implicitly committed.
- *   The event is triggered only for the primary table on which save() is directly called.
- *   The event is not triggered if a transaction is started before calling save.
- *
  * - `beforeDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options)`
- *   Fired before an entity is deleted. By stopping this event you will abort
- *   the delete operation.
- *
  * - `afterDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options)`
- *   Fired after an entity has been deleted.
  *
  * @see \Cake\Event\EventManager for reference on the events system.
  */
@@ -687,7 +695,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Returns the class used to hydrate rows for this table.
      *
      * @return string
-     * @psalm-suppress MoreSpecificReturnType
      * @psalm-return class-string<\Cake\Datasource\EntityInterface>
      */
     public function getEntityClass(): string
@@ -1456,7 +1463,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *      incorrect number of elements.
      * @psalm-suppress InvalidReturnType
      */
-    public function get($primaryKey, $options = []): EntityInterface
+    public function get($primaryKey, array $options = []): EntityInterface
     {
         $key = (array)$this->getPrimaryKey();
         $alias = $this->getAlias();
@@ -2171,13 +2178,17 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
         };
 
+        /** @var \Cake\Datasource\EntityInterface|null $failed */
+        $failed = null;
         try {
-            $failed = $this->getConnection()
-                ->transactional(function () use ($entities, $options, &$isNew) {
+            $this->getConnection()
+                ->transactional(function () use ($entities, $options, &$isNew, &$failed) {
                     foreach ($entities as $key => $entity) {
                         $isNew[$key] = $entity->isNew();
                         if ($this->save($entity, $options) === false) {
-                            return $entity;
+                            $failed = $entity;
+
+                            return false;
                         }
                     }
                 });
@@ -2724,6 +2735,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *  'associated' => ['Tags', 'Comments.Users' => ['fields' => 'username']]
      *  ]
      * );
+     * ```
+     *
+     * ```
+     * $article = $this->Articles->patchEntity($article, $this->request->getData(), [
+     *   'associated' => [
+     *     'Tags' => ['accessibleFields' => ['*' => true]]
+     *   ]
+     * ]);
      * ```
      *
      * By default, the data is validated before being passed to the entity. In

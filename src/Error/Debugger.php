@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Error;
 
+use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Error\Debug\ArrayItemNode;
 use Cake\Error\Debug\ArrayNode;
@@ -34,6 +35,7 @@ use Cake\Log\Log;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
 use Cake\Utility\Text;
+use Closure;
 use Exception;
 use InvalidArgumentException;
 use ReflectionObject;
@@ -61,6 +63,7 @@ class Debugger
     protected $_defaultConfig = [
         'outputMask' => [],
         'exportFormatter' => null,
+        'editor' => 'phpstorm',
     ];
 
     /**
@@ -108,6 +111,21 @@ class Debugger
     ];
 
     /**
+     * A map of editors to their link templates.
+     *
+     * @var array
+     */
+    protected $editors = [
+        'atom' => 'atom://core/open/file?filename={file}&line={line}',
+        'emacs' => 'emacs://open?url=file://{file}&line={line}',
+        'macvim' => 'mvim://open/?url=file://{file}&line={line}',
+        'phpstorm' => 'phpstorm://open?file={file}&line={line}',
+        'sublime' => 'subl://open?url=file://{file}&line={line}',
+        'textmate' => 'txmt://open?url=file://{file}&line={line}',
+        'vscode' => 'vscode://file/{file}:{line}',
+    ];
+
+    /**
      * Holds current output data when outputFormat is false.
      *
      * @var array
@@ -121,13 +139,15 @@ class Debugger
     public function __construct()
     {
         $docRef = ini_get('docref_root');
-
         if (empty($docRef) && function_exists('ini_set')) {
             ini_set('docref_root', 'https://secure.php.net/');
         }
         if (!defined('E_RECOVERABLE_ERROR')) {
             define('E_RECOVERABLE_ERROR', 4096);
         }
+
+        $config = array_intersect_key((array)Configure::read('Debugger'), $this->_defaultConfig);
+        $this->setConfig($config);
 
         $e = '<pre class="cake-error">';
         $e .= '<a href="javascript:void(0);" onclick="document.getElementById(\'{:id}-trace\')';
@@ -157,7 +177,7 @@ class Debugger
 
         $this->_templates['js']['links'] = $links;
 
-        $this->_templates['js']['context'] = '<pre id="{:id}-context" class="cake-context" ';
+        $this->_templates['js']['context'] = '<pre id="{:id}-context" class="cake-context cake-debug" ';
         $this->_templates['js']['context'] .= 'style="display: none;">{:context}</pre>';
 
         $this->_templates['js']['code'] = '<pre id="{:id}-code" class="cake-code-dump" ';
@@ -167,7 +187,7 @@ class Debugger
         $e .= '[<b>{:path}</b>, line <b>{:line}]</b></pre>';
         $this->_templates['html']['error'] = $e;
 
-        $this->_templates['html']['context'] = '<pre class="cake-context"><b>Context</b> ';
+        $this->_templates['html']['context'] = '<pre class="cake-context cake-debug"><b>Context</b> ';
         $this->_templates['html']['context'] .= '<p>{:context}</p></pre>';
     }
 
@@ -238,6 +258,66 @@ class Debugger
     public static function setOutputMask(array $value, bool $merge = true): void
     {
         static::configInstance('outputMask', $value, $merge);
+    }
+
+    /**
+     * Add an editor link format
+     *
+     * Template strings can use the `{file}` and `{line}` placeholders.
+     * Closures templates must return a string, and accept two parameters:
+     * The file and line.
+     *
+     * @param string $name The name of the editor.
+     * @param string|\Closure $template The string template or closure
+     * @return void
+     */
+    public static function addEditor(string $name, $template): void
+    {
+        $instance = static::getInstance();
+        if (!is_string($template) && !($template instanceof Closure)) {
+            $type = getTypeName($template);
+            throw new RuntimeException("Invalid editor type of `{$type}`. Expected string or Closure.");
+        }
+        $instance->editors[$name] = $template;
+    }
+
+    /**
+     * Choose the editor link style you want to use.
+     *
+     * @param string $name The editor name.
+     * @return void
+     */
+    public static function setEditor(string $name): void
+    {
+        $instance = static::getInstance();
+        if (!isset($instance->editors[$name])) {
+            $known = implode(', ', array_keys($instance->editors));
+            throw new RuntimeException("Unknown editor `{$name}`. Known editors are {$known}");
+        }
+        $instance->setConfig('editor', $name);
+    }
+
+    /**
+     * Get a formatted URL for the active editor.
+     *
+     * @param string $file The file to create a link for.
+     * @param int $line The line number to create a link for.
+     * @return string The formatted URL.
+     */
+    public static function editorUrl(string $file, int $line): string
+    {
+        $instance = static::getInstance();
+        $editor = $instance->getConfig('editor');
+        if (!isset($instance->editors[$editor])) {
+            throw new RuntimeException("Cannot format editor URL `{$editor}` is not a known editor.");
+        }
+
+        $template = $instance->editors[$editor];
+        if (is_string($template)) {
+            return str_replace(['{file}', '{line}'], [$file, $line], $template);
+        }
+
+        return $template($file, $line);
     }
 
     /**
@@ -846,7 +926,6 @@ class Debugger
         }
 
         if (!empty($tpl['escapeContext'])) {
-            $context = h($context);
             $data['description'] = h($data['description']);
         }
 

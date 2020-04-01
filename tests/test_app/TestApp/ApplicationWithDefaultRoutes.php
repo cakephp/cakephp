@@ -43,14 +43,14 @@ class ApplicationWithDefaultRoutes extends BaseApplication
     }
 
     /**
-     * @param \Cake\Http\MiddlewareQueue $middlewareQueue
+     * @param \Cake\Http\MiddlewareQueue $middlewareQueueQueue
      *
      * @return \Cake\Http\MiddlewareQueue
      */
-    public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+    public function middleware(MiddlewareQueue $middlewareQueueQueue): MiddlewareQueue
     {
-        $middlewareQueue->add(new RoutingMiddleware($this));
+        $middlewareQueueQueue->add(new RoutingMiddleware($this));
 
-        return $middlewareQueue;
+        return $middlewareQueueQueue;
     }
 }

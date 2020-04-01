@@ -21,7 +21,6 @@ use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Exception\MethodNotAllowedException;
 use Cake\Http\ServerRequest;
-use Cake\Http\ServerRequestFactory;
 use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
 use Laminas\Diactoros\UploadedFile;
@@ -32,33 +31,6 @@ use Laminas\Diactoros\Uri;
  */
 class ServerRequestTest extends TestCase
 {
-    /**
-     * SERVER variable backup.
-     *
-     * @var array
-     */
-    protected $server = [];
-
-    /**
-     * Setup callback
-     *
-     * @return void
-     */
-    public function setUp(): void
-    {
-        parent::setUp();
-        $this->server = $_SERVER;
-
-        Configure::write('App.baseUrl', false);
-    }
-
-    public function tearDown(): void
-    {
-        parent::tearDown();
-
-        $_SERVER = $this->server;
-    }
-
     /**
      * Test custom detector with extra arguments.
      *
@@ -128,20 +100,6 @@ class ServerRequestTest extends TestCase
     }
 
     /**
-     * Test that the autoparse = false constructor works.
-     *
-     * @return void
-     */
-    public function testNoAutoParseConstruction()
-    {
-        $_GET = [
-            'one' => 'param',
-        ];
-        $request = new ServerRequest();
-        $this->assertNull($request->getQuery('one'));
-    }
-
-    /**
      * Test construction
      *
      * @return void
@@ -156,7 +114,8 @@ class ServerRequestTest extends TestCase
             'url' => 'some/path',
         ];
         $request = new ServerRequest($data);
-        $this->assertEquals($request->getQueryParams(), $data['query']);
+        $this->assertSame('param', $request->getQuery('one'));
+        $this->assertEquals($data['query'], $request->getQueryParams());
         $this->assertSame('/some/path', $request->getRequestTarget());
     }
 
@@ -167,9 +126,10 @@ class ServerRequestTest extends TestCase
      */
     public function testConstructStringUrlIgnoreServer()
     {
-        $_SERVER['REQUEST_URI'] = '/some/other/path';
-
-        $request = new ServerRequest(['url' => '/articles/view/1']);
+        $request = new ServerRequest([
+            'url' => '/articles/view/1',
+            'environment' => ['REQUEST_URI' => '/some/other/path'],
+        ]);
         $this->assertSame('/articles/view/1', $request->getUri()->getPath());
 
         $request = new ServerRequest(['url' => '/']);
@@ -183,7 +143,6 @@ class ServerRequestTest extends TestCase
      */
     public function testQueryStringParsingFromInputUrl()
     {
-        $_GET = [];
         $request = new ServerRequest(['url' => 'some/path?one=something&two=else']);
         $expected = ['one' => 'something', 'two' => 'else'];
         $this->assertEquals($expected, $request->getQueryParams());
@@ -192,26 +151,24 @@ class ServerRequestTest extends TestCase
     }
 
     /**
-     * Test that named arguments + querystrings are handled correctly.
+     * Test that querystrings are handled correctly.
      *
      * @return void
      */
     public function testQueryStringAndNamedParams()
     {
-        $_SERVER['REQUEST_URI'] = '/tasks/index?ts=123456';
-        $request = ServerRequestFactory::fromGlobals();
+        $config = ['environment' => ['REQUEST_URI' => '/tasks/index?ts=123456']];
+        $request = new ServerRequest($config);
         $this->assertSame('/tasks/index', $request->getRequestTarget());
 
-        $_SERVER['REQUEST_URI'] = '/tasks/index/?ts=123456';
-        $request = ServerRequestFactory::fromGlobals();
-        $this->assertSame('/tasks/index/', $request->getRequestTarget());
-
-        $_SERVER['REQUEST_URI'] = '/some/path?url=http://cakephp.org';
-        $request = ServerRequestFactory::fromGlobals();
+        $config = ['environment' => ['REQUEST_URI' => '/some/path?url=http://cakephp.org']];
+        $request = new ServerRequest($config);
         $this->assertSame('/some/path', $request->getRequestTarget());
 
-        $_SERVER['REQUEST_URI'] = Configure::read('App.fullBaseUrl') . '/other/path?url=http://cakephp.org';
-        $request = ServerRequestFactory::fromGlobals();
+        $config = ['environment' => [
+            'REQUEST_URI' => Configure::read('App.fullBaseUrl') . '/other/path?url=http://cakephp.org',
+        ]];
+        $request = new ServerRequest($config);
         $this->assertSame('/other/path', $request->getRequestTarget());
     }
 
@@ -220,12 +177,14 @@ class ServerRequestTest extends TestCase
      */
     public function testUrlInPath()
     {
-        $_SERVER['REQUEST_URI'] = '/jump/http://cakephp.org';
-        $request = ServerRequestFactory::fromGlobals();
+        $config = ['environment' => ['REQUEST_URI' => '/jump/http://cakephp.org']];
+        $request = new ServerRequest($config);
         $this->assertSame('/jump/http://cakephp.org', $request->getRequestTarget());
 
-        $_SERVER['REQUEST_URI'] = Configure::read('App.fullBaseUrl') . '/jump/http://cakephp.org';
-        $request = ServerRequestFactory::fromGlobals();
+        $config = ['environment' => [
+            'REQUEST_URI' => Configure::read('App.fullBaseUrl') . '/jump/http://cakephp.org',
+        ]];
+        $request = new ServerRequest($config);
         $this->assertSame('/jump/http://cakephp.org', $request->getRequestTarget());
     }
 
@@ -272,65 +231,10 @@ class ServerRequestTest extends TestCase
     }
 
     /**
-     * Test parsing PUT data into the object.
-     *
-     * @return void
-     */
-    public function testPutParsing()
-    {
-        $data = [
-            'Article' => ['title'],
-        ];
-        $request = new ServerRequest([
-            'input' => 'Article[]=title',
-            'environment' => [
-                'REQUEST_METHOD' => 'PUT',
-                'CONTENT_TYPE' => 'application/x-www-form-urlencoded; charset=UTF-8',
-            ],
-        ]);
-        $this->assertEquals($data, $request->getData());
-
-        $data = ['one' => 1, 'two' => 'three'];
-        $request = new ServerRequest([
-            'input' => 'one=1&two=three',
-            'environment' => [
-                'REQUEST_METHOD' => 'PUT',
-                'CONTENT_TYPE' => 'application/x-www-form-urlencoded; charset=UTF-8',
-            ],
-        ]);
-        $this->assertEquals($data, $request->getData());
-
-        $request = new ServerRequest([
-            'input' => 'Article[title]=Testing&action=update',
-            'environment' => [
-                'REQUEST_METHOD' => 'DELETE',
-                'CONTENT_TYPE' => 'application/x-www-form-urlencoded; charset=UTF-8',
-            ],
-        ]);
-        $expected = [
-            'Article' => ['title' => 'Testing'],
-            'action' => 'update',
-        ];
-        $this->assertEquals($expected, $request->getData());
-
-        $data = [
-            'Article' => ['title'],
-            'Tag' => ['Tag' => [1, 2]],
-        ];
-        $request = new ServerRequest([
-            'input' => 'Article[]=title&Tag[Tag][]=1&Tag[Tag][]=2',
-            'environment' => [
-                'REQUEST_METHOD' => 'PATCH',
-                'CONTENT_TYPE' => 'application/x-www-form-urlencoded; charset=UTF-8',
-            ],
-        ]);
-        $this->assertEquals($data, $request->getData());
-    }
-
-    /**
      * Test parsing json PUT data into the object.
      *
      * @return void
+     * @group deprecated
      */
     public function testPutParsingJSON()
     {
@@ -343,8 +247,11 @@ class ServerRequestTest extends TestCase
             ],
         ]);
         $this->assertEquals([], $request->getData());
-        $result = $request->input('json_decode', true);
-        $this->assertEquals(['title'], $result['Article']);
+
+        $this->deprecated(function () use ($request) {
+            $result = $request->input('json_decode', true);
+            $this->assertEquals(['title'], $result['Article']);
+        });
     }
 
     /**
@@ -459,32 +366,6 @@ class ServerRequestTest extends TestCase
         $this->expectExceptionMessage('Invalid file at \'user.avatar\'');
         $request = new ServerRequest();
         $request->withUploadedFiles(['user' => ['avatar' => 'not a file']]);
-    }
-
-    /**
-     * Test method overrides coming in from POST data.
-     *
-     * @return void
-     */
-    public function testMethodOverrides()
-    {
-        $post = ['_method' => 'POST'];
-        $request = new ServerRequest(compact('post'));
-        $this->assertSame('POST', $request->getEnv('REQUEST_METHOD'));
-
-        $post = ['_method' => 'DELETE'];
-        $request = new ServerRequest(compact('post'));
-        $this->assertSame('DELETE', $request->getEnv('REQUEST_METHOD'));
-
-        $request = new ServerRequest(['environment' => ['HTTP_X_HTTP_METHOD_OVERRIDE' => 'PUT']]);
-        $this->assertSame('PUT', $request->getEnv('REQUEST_METHOD'));
-
-        $request = new ServerRequest([
-            'environment' => ['REQUEST_METHOD' => 'POST'],
-            'post' => ['_method' => 'PUT'],
-        ]);
-        $this->assertSame('PUT', $request->getEnv('REQUEST_METHOD'));
-        $this->assertSame('POST', $request->getEnv('ORIGINAL_REQUEST_METHOD'));
     }
 
     /**
@@ -1334,793 +1215,6 @@ class ServerRequestTest extends TestCase
     }
 
     /**
-     * Test baseUrl and webroot with ModRewrite
-     *
-     * @return void
-     */
-    public function testBaseUrlAndWebrootWithModRewrite()
-    {
-        Configure::write('App.baseUrl', false);
-
-        $_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches';
-        $_SERVER['PHP_SELF'] = '/urlencode me/webroot/index.php';
-        $_SERVER['PATH_INFO'] = '/posts/view/1';
-
-        $request = ServerRequestFactory::fromGlobals();
-        $this->assertSame('/urlencode%20me', $request->getAttribute('base'));
-        $this->assertSame('/urlencode%20me/', $request->getAttribute('webroot'));
-        $this->assertSame('/posts/view/1', $request->getRequestTarget());
-
-        $_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches';
-        $_SERVER['PHP_SELF'] = '/1.2.x.x/webroot/index.php';
-        $_SERVER['PATH_INFO'] = '/posts/view/1';
-
-        $request = ServerRequestFactory::fromGlobals();
-        $this->assertSame('/1.2.x.x', $request->getAttribute('base'));
-        $this->assertSame('/1.2.x.x/', $request->getAttribute('webroot'));
-        $this->assertSame('/posts/view/1', $request->getRequestTarget());
-
-        $_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches/1.2.x.x/webroot';
-        $_SERVER['PHP_SELF'] = '/index.php';
-        $_SERVER['PATH_INFO'] = '/posts/add';
-        $request = ServerRequestFactory::fromGlobals();
-
-        $this->assertSame('', $request->getAttribute('base'));
-        $this->assertSame('/', $request->getAttribute('webroot'));
-        $this->assertSame('/posts/add', $request->getRequestTarget());
-
-        $_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches/1.2.x.x/test/';
-        $_SERVER['PHP_SELF'] = '/webroot/index.php';
-        $request = ServerRequestFactory::fromGlobals();
-
-        $this->assertSame('', $request->getAttribute('base'));
-        $this->assertSame('/', $request->getAttribute('webroot'));
-
-        $_SERVER['DOCUMENT_ROOT'] = '/some/apps/where';
-        $_SERVER['PHP_SELF'] = '/webroot/index.php';
-        $request = ServerRequestFactory::fromGlobals();
-
-        $this->assertSame('', $request->getAttribute('base'));
-        $this->assertSame('/', $request->getAttribute('webroot'));
-
-        Configure::write('App.dir', 'auth');
-
-        $_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches';
-        $_SERVER['PHP_SELF'] = '/demos/webroot/index.php';
-
-        $request = ServerRequestFactory::fromGlobals();
-
-        $this->assertSame('/demos', $request->getAttribute('base'));
-        $this->assertSame('/demos/', $request->getAttribute('webroot'));
-
-        Configure::write('App.dir', 'code');
-
-        $_SERVER['DOCUMENT_ROOT'] = '/Library/WebServer/Documents';
-        $_SERVER['PHP_SELF'] = '/clients/PewterReport/webroot/index.php';
-        $request = ServerRequestFactory::fromGlobals();
-
-        $this->assertSame('/clients/PewterReport', $request->getAttribute('base'));
-        $this->assertSame('/clients/PewterReport/', $request->getAttribute('webroot'));
-    }
-
-    /**
-     * Test baseUrl with ModRewrite alias
-     *
-     * @return void
-     */
-    public function testBaseUrlwithModRewriteAlias()
-    {
-        $_SERVER['DOCUMENT_ROOT'] = '/home/aplusnur/public_html';
-        $_SERVER['PHP_SELF'] = '/control/index.php';
-
-        Configure::write('App.base', '/control');
-
-        $request = ServerRequestFactory::fromGlobals();
-
-        $this->assertSame('/control', $request->getAttribute('base'));
-        $this->assertSame('/control/', $request->getAttribute('webroot'));
-
-        Configure::write('App.base', false);
-        Configure::write('App.dir', 'affiliate');
-        Configure::write('App.webroot', 'newaffiliate');
-
-        $_SERVER['DOCUMENT_ROOT'] = '/var/www/abtravaff/html';
-        $_SERVER['PHP_SELF'] = '/newaffiliate/index.php';
-        $request = ServerRequestFactory::fromGlobals();
-
-        $this->assertSame('', $request->getAttribute('base'));
-        $this->assertSame('/', $request->getAttribute('webroot'));
-    }
-
-    /**
-     * Test base, webroot, URL and here parsing when there is URL rewriting but
-     * CakePHP gets called with index.php in URL nonetheless.
-     *
-     * Tests uri with
-     *
-     * - index.php/
-     * - index.php/
-     * - index.php/apples/
-     * - index.php/bananas/eat/tasty_banana
-     *
-     * @return void
-     */
-    public function testBaseUrlWithModRewriteAndIndexPhp()
-    {
-        $_SERVER['REQUEST_URI'] = '/cakephp/webroot/index.php';
-        $_SERVER['PHP_SELF'] = '/cakephp/webroot/index.php';
-        unset($_SERVER['PATH_INFO']);
-        $request = ServerRequestFactory::fromGlobals();
-
-        $this->assertSame('/cakephp', $request->getAttribute('base'));
-        $this->assertSame('/cakephp/', $request->getAttribute('webroot'));
-        $this->assertSame('/', $request->getRequestTarget());
-
-        $_SERVER['REQUEST_URI'] = '/cakephp/webroot/index.php/';
-        $_SERVER['PHP_SELF'] = '/cakephp/webroot/index.php/';
-        $_SERVER['PATH_INFO'] = '/';
-        $request = ServerRequestFactory::fromGlobals();
-
-        $this->assertSame('/cakephp', $request->getAttribute('base'));
-        $this->assertSame('/cakephp/', $request->getAttribute('webroot'));
-        $this->assertSame('/', $request->getRequestTarget());
-
-        $_SERVER['REQUEST_URI'] = '/cakephp/webroot/index.php/apples';
-        $_SERVER['PHP_SELF'] = '/cakephp/webroot/index.php/apples';
-        $_SERVER['PATH_INFO'] = '/apples';
-        $request = ServerRequestFactory::fromGlobals();
-
-        $this->assertSame('/cakephp', $request->getAttribute('base'));
-        $this->assertSame('/cakephp/', $request->getAttribute('webroot'));
-        $this->assertSame('/apples', $request->getRequestTarget());
-
-        $_SERVER['REQUEST_URI'] = '/cakephp/webroot/index.php/melons/share/';
-        $_SERVER['PHP_SELF'] = '/cakephp/webroot/index.php/melons/share/';
-        $_SERVER['PATH_INFO'] = '/melons/share/';
-        $request = ServerRequestFactory::fromGlobals();
-
-        $this->assertSame('/cakephp', $request->getAttribute('base'));
-        $this->assertSame('/cakephp/', $request->getAttribute('webroot'));
-        $this->assertSame('/melons/share/', $request->getRequestTarget());
-
-        $_SERVER['REQUEST_URI'] = '/cakephp/webroot/index.php/bananas/eat/tasty_banana';
-        $_SERVER['PHP_SELF'] = '/cakephp/webroot/index.php/bananas/eat/tasty_banana';
-        $_SERVER['PATH_INFO'] = '/bananas/eat/tasty_banana';
-        $request = ServerRequestFactory::fromGlobals();
-
-        $this->assertSame('/cakephp', $request->getAttribute('base'));
-        $this->assertSame('/cakephp/', $request->getAttribute('webroot'));
-        $this->assertSame('/bananas/eat/tasty_banana', $request->getRequestTarget());
-    }
-
-    /**
-     * Test that even if mod_rewrite is on, and the url contains index.php
-     * and there are numerous //s that the base/webroot is calculated correctly.
-     *
-     * @return void
-     */
-    public function testBaseUrlWithModRewriteAndExtraSlashes()
-    {
-        $_SERVER['REQUEST_URI'] = '/cakephp/webroot///index.php/bananas/eat';
-        $_SERVER['PHP_SELF'] = '/cakephp/webroot///index.php/bananas/eat';
-        $_SERVER['PATH_INFO'] = '/bananas/eat';
-        $request = ServerRequestFactory::fromGlobals();
-
-        $this->assertSame('/cakephp', $request->getAttribute('base'));
-        $this->assertSame('/cakephp/', $request->getAttribute('webroot'));
-        $this->assertSame('/bananas/eat', $request->getRequestTarget());
-    }
-
-    /**
-     * Test base, webroot, and URL parsing when there is no URL rewriting
-     *
-     * @return void
-     */
-    public function testBaseUrlWithNoModRewrite()
-    {
-        $_SERVER['DOCUMENT_ROOT'] = '/Users/markstory/Sites';
-        $_SERVER['SCRIPT_FILENAME'] = '/Users/markstory/Sites/cake/index.php';
-        $_SERVER['PHP_SELF'] = '/cake/index.php/posts/index';
-        $_SERVER['REQUEST_URI'] = '/cake/index.php/posts/index';
-
-        Configure::write('App', [
-            'dir' => APP_DIR,
-            'webroot' => 'webroot',
-            'base' => false,
-            'baseUrl' => '/cake/index.php',
-        ]);
-
-        $request = ServerRequestFactory::fromGlobals();
-        $this->assertSame('/cake/index.php', $request->getAttribute('base'));
-        $this->assertSame('/cake/webroot/', $request->getAttribute('webroot'));
-        $this->assertSame('/posts/index', $request->getRequestTarget());
-    }
-
-    /**
-     * Test baseUrl and webroot with baseUrl
-     *
-     * @return void
-     */
-    public function testBaseUrlAndWebrootWithBaseUrl()
-    {
-        Configure::write('App.dir', 'App');
-        Configure::write('App.baseUrl', '/App/webroot/index.php');
-
-        $request = ServerRequestFactory::fromGlobals();
-        $this->assertSame('/App/webroot/index.php', $request->getAttribute('base'));
-        $this->assertSame('/App/webroot/', $request->getAttribute('webroot'));
-
-        Configure::write('App.baseUrl', '/App/webroot/test.php');
-        $request = ServerRequestFactory::fromGlobals();
-        $this->assertSame('/App/webroot/test.php', $request->getAttribute('base'));
-        $this->assertSame('/App/webroot/', $request->getAttribute('webroot'));
-
-        Configure::write('App.baseUrl', '/App/index.php');
-        $request = ServerRequestFactory::fromGlobals();
-        $this->assertSame('/App/index.php', $request->getAttribute('base'));
-        $this->assertSame('/App/webroot/', $request->getAttribute('webroot'));
-
-        Configure::write('App.baseUrl', '/CakeBB/App/webroot/index.php');
-        $request = ServerRequestFactory::fromGlobals();
-        $this->assertSame('/CakeBB/App/webroot/index.php', $request->getAttribute('base'));
-        $this->assertSame('/CakeBB/App/webroot/', $request->getAttribute('webroot'));
-
-        Configure::write('App.baseUrl', '/CakeBB/App/index.php');
-        $request = ServerRequestFactory::fromGlobals();
-
-        $this->assertSame('/CakeBB/App/index.php', $request->getAttribute('base'));
-        $this->assertSame('/CakeBB/App/webroot/', $request->getAttribute('webroot'));
-
-        Configure::write('App.baseUrl', '/CakeBB/index.php');
-        $request = ServerRequestFactory::fromGlobals();
-
-        $this->assertSame('/CakeBB/index.php', $request->getAttribute('base'));
-        $this->assertSame('/CakeBB/webroot/', $request->getAttribute('webroot'));
-
-        Configure::write('App.baseUrl', '/dbhauser/index.php');
-        $_SERVER['DOCUMENT_ROOT'] = '/kunden/homepages/4/d181710652/htdocs/joomla';
-        $_SERVER['SCRIPT_FILENAME'] = '/kunden/homepages/4/d181710652/htdocs/joomla/dbhauser/index.php';
-        $request = ServerRequestFactory::fromGlobals();
-
-        $this->assertSame('/dbhauser/index.php', $request->getAttribute('base'));
-        $this->assertSame('/dbhauser/webroot/', $request->getAttribute('webroot'));
-    }
-
-    /**
-     * Test baseUrl with no rewrite and using the top level index.php.
-     *
-     * @return void
-     */
-    public function testBaseUrlNoRewriteTopLevelIndex()
-    {
-        Configure::write('App.baseUrl', '/index.php');
-        $_SERVER['DOCUMENT_ROOT'] = '/Users/markstory/Sites/cake_dev';
-        $_SERVER['SCRIPT_FILENAME'] = '/Users/markstory/Sites/cake_dev/index.php';
-
-        $request = ServerRequestFactory::fromGlobals();
-        $this->assertSame('/index.php', $request->getAttribute('base'));
-        $this->assertSame('/webroot/', $request->getAttribute('webroot'));
-    }
-
-    /**
-     * Check that a sub-directory containing app|webroot doesn't get mishandled when re-writing is off.
-     *
-     * @return void
-     */
-    public function testBaseUrlWithAppAndWebrootInDirname()
-    {
-        Configure::write('App.baseUrl', '/approval/index.php');
-        $_SERVER['DOCUMENT_ROOT'] = '/Users/markstory/Sites/';
-        $_SERVER['SCRIPT_FILENAME'] = '/Users/markstory/Sites/approval/index.php';
-
-        $request = ServerRequestFactory::fromGlobals();
-        $this->assertSame('/approval/index.php', $request->getAttribute('base'));
-        $this->assertSame('/approval/webroot/', $request->getAttribute('webroot'));
-
-        Configure::write('App.baseUrl', '/webrootable/index.php');
-        $_SERVER['DOCUMENT_ROOT'] = '/Users/markstory/Sites/';
-        $_SERVER['SCRIPT_FILENAME'] = '/Users/markstory/Sites/webrootable/index.php';
-
-        $request = ServerRequestFactory::fromGlobals();
-        $this->assertSame('/webrootable/index.php', $request->getAttribute('base'));
-        $this->assertSame('/webrootable/webroot/', $request->getAttribute('webroot'));
-    }
-
-    /**
-     * Test baseUrl with no rewrite, and using the app/webroot/index.php file as is normal with virtual hosts.
-     *
-     * @return void
-     */
-    public function testBaseUrlNoRewriteWebrootIndex()
-    {
-        Configure::write('App.baseUrl', '/index.php');
-        $_SERVER['DOCUMENT_ROOT'] = '/Users/markstory/Sites/cake_dev/webroot';
-        $_SERVER['SCRIPT_FILENAME'] = '/Users/markstory/Sites/cake_dev/webroot/index.php';
-
-        $request = ServerRequestFactory::fromGlobals();
-        $this->assertSame('/index.php', $request->getAttribute('base'));
-        $this->assertSame('/', $request->getAttribute('webroot'));
-    }
-
-    /**
-     * Test that a request with a . in the main GET parameter is filtered out.
-     * PHP changes GET parameter keys containing dots to _.
-     *
-     * @return void
-     */
-    public function testGetParamsWithDot()
-    {
-        $_GET = [];
-        $_GET['/posts/index/add_add'] = '';
-        $_SERVER['PHP_SELF'] = '/webroot/index.php';
-        $_SERVER['REQUEST_URI'] = '/posts/index/add.add';
-        $request = ServerRequestFactory::fromGlobals();
-        $this->assertSame('', $request->getAttribute('base'));
-        $this->assertEquals([], $request->getQueryParams());
-
-        $_GET = [];
-        $_GET['/cake_dev/posts/index/add_add'] = '';
-        $_SERVER['PHP_SELF'] = '/cake_dev/webroot/index.php';
-        $_SERVER['REQUEST_URI'] = '/cake_dev/posts/index/add.add';
-        $request = ServerRequestFactory::fromGlobals();
-        $this->assertSame('/cake_dev', $request->getAttribute('base'));
-        $this->assertEquals([], $request->getQueryParams());
-    }
-
-    /**
-     * Test that a request with urlencoded bits in the main GET parameter are filtered out.
-     *
-     * @return void
-     */
-    public function testGetParamWithUrlencodedElement()
-    {
-        $_GET = [];
-        $_GET['/posts/add/∂∂'] = '';
-        $_SERVER['PHP_SELF'] = '/webroot/index.php';
-        $_SERVER['REQUEST_URI'] = '/posts/add/%E2%88%82%E2%88%82';
-        $request = ServerRequestFactory::fromGlobals();
-        $this->assertSame('', $request->getAttribute('base'));
-        $this->assertEquals([], $request->getQueryParams());
-
-        $_GET = [];
-        $_GET['/cake_dev/posts/add/∂∂'] = '';
-        $_SERVER['PHP_SELF'] = '/cake_dev/webroot/index.php';
-        $_SERVER['REQUEST_URI'] = '/cake_dev/posts/add/%E2%88%82%E2%88%82';
-        $request = ServerRequestFactory::fromGlobals();
-        $this->assertSame('/cake_dev', $request->getAttribute('base'));
-        $this->assertEquals([], $request->getQueryParams());
-    }
-
-    /**
-     * Generator for environment configurations
-     *
-     * @return array Environment array
-     */
-    public static function environmentGenerator()
-    {
-        return [
-            [
-                'IIS - No rewrite base path',
-                [
-                    'App' => [
-                        'base' => false,
-                        'baseUrl' => '/index.php',
-                        'dir' => 'TestApp',
-                        'webroot' => 'webroot',
-                    ],
-                    'SERVER' => [
-                        'SCRIPT_NAME' => '/index.php',
-                        'PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot',
-                        'QUERY_STRING' => '',
-                        'REQUEST_URI' => '/index.php',
-                        'URL' => '/index.php',
-                        'SCRIPT_FILENAME' => 'C:\\Inetpub\\wwwroot\\index.php',
-                        'ORIG_PATH_INFO' => '/index.php',
-                        'PATH_INFO' => '',
-                        'ORIG_PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot\\index.php',
-                        'DOCUMENT_ROOT' => 'C:\\Inetpub\\wwwroot',
-                        'PHP_SELF' => '/index.php',
-                    ],
-                ],
-                [
-                    'base' => '/index.php',
-                    'webroot' => '/webroot/',
-                    'url' => '',
-                ],
-            ],
-            [
-                'IIS - No rewrite with path, no PHP_SELF',
-                [
-                    'App' => [
-                        'base' => false,
-                        'baseUrl' => '/index.php?',
-                        'dir' => 'TestApp',
-                        'webroot' => 'webroot',
-                    ],
-                    'SERVER' => [
-                        'QUERY_STRING' => '/posts/add',
-                        'REQUEST_URI' => '/index.php?/posts/add',
-                        'PHP_SELF' => '',
-                        'URL' => '/index.php?/posts/add',
-                        'DOCUMENT_ROOT' => 'C:\\Inetpub\\wwwroot',
-                        'argv' => ['/posts/add'],
-                        'argc' => 1,
-                    ],
-                ],
-                [
-                    'url' => 'posts/add',
-                    'base' => '/index.php?',
-                    'webroot' => '/webroot/',
-                ],
-            ],
-            [
-                'IIS - No rewrite sub dir 2',
-                [
-                    'App' => [
-                        'base' => false,
-                        'baseUrl' => '/site/index.php',
-                        'dir' => 'TestApp',
-                        'webroot' => 'webroot',
-                    ],
-                    'SERVER' => [
-                        'SCRIPT_NAME' => '/site/index.php',
-                        'PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot',
-                        'QUERY_STRING' => '',
-                        'REQUEST_URI' => '/site/index.php',
-                        'URL' => '/site/index.php',
-                        'SCRIPT_FILENAME' => 'C:\\Inetpub\\wwwroot\\site\\index.php',
-                        'DOCUMENT_ROOT' => 'C:\\Inetpub\\wwwroot',
-                        'PHP_SELF' => '/site/index.php',
-                        'argv' => [],
-                        'argc' => 0,
-                    ],
-                ],
-                [
-                    'url' => '',
-                    'base' => '/site/index.php',
-                    'webroot' => '/site/webroot/',
-                ],
-            ],
-            [
-                'IIS - No rewrite sub dir 2 with path',
-                [
-                    'App' => [
-                        'base' => false,
-                        'baseUrl' => '/site/index.php',
-                        'dir' => 'TestApp',
-                        'webroot' => 'webroot',
-                    ],
-                    'GET' => ['/posts/add' => ''],
-                    'SERVER' => [
-                        'SCRIPT_NAME' => '/site/index.php',
-                        'PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot',
-                        'QUERY_STRING' => '/posts/add',
-                        'REQUEST_URI' => '/site/index.php/posts/add',
-                        'URL' => '/site/index.php/posts/add',
-                        'ORIG_PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot\\site\\index.php',
-                        'DOCUMENT_ROOT' => 'C:\\Inetpub\\wwwroot',
-                        'PHP_SELF' => '/site/index.php/posts/add',
-                        'argv' => ['/posts/add'],
-                        'argc' => 1,
-                    ],
-                ],
-                [
-                    'url' => 'posts/add',
-                    'base' => '/site/index.php',
-                    'webroot' => '/site/webroot/',
-                ],
-            ],
-            [
-                'Apache - No rewrite, document root set to webroot, requesting path',
-                [
-                    'App' => [
-                        'base' => false,
-                        'baseUrl' => '/index.php',
-                        'dir' => 'TestApp',
-                        'webroot' => 'webroot',
-                    ],
-                    'SERVER' => [
-                        'DOCUMENT_ROOT' => '/Library/WebServer/Documents/site/App/webroot',
-                        'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/App/webroot/index.php',
-                        'QUERY_STRING' => '',
-                        'REQUEST_URI' => '/index.php/posts/index',
-                        'SCRIPT_NAME' => '/index.php',
-                        'PATH_INFO' => '/posts/index',
-                        'PHP_SELF' => '/index.php/posts/index',
-                    ],
-                ],
-                [
-                    'url' => 'posts/index',
-                    'base' => '/index.php',
-                    'webroot' => '/',
-                ],
-            ],
-            [
-                'Apache - No rewrite, document root set to webroot, requesting root',
-                [
-                    'App' => [
-                        'base' => false,
-                        'baseUrl' => '/index.php',
-                        'dir' => 'TestApp',
-                        'webroot' => 'webroot',
-                    ],
-                    'SERVER' => [
-                        'DOCUMENT_ROOT' => '/Library/WebServer/Documents/site/App/webroot',
-                        'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/App/webroot/index.php',
-                        'QUERY_STRING' => '',
-                        'REQUEST_URI' => '/index.php',
-                        'SCRIPT_NAME' => '/index.php',
-                        'PATH_INFO' => '',
-                        'PHP_SELF' => '/index.php',
-                    ],
-                ],
-                [
-                    'url' => '',
-                    'base' => '/index.php',
-                    'webroot' => '/',
-                ],
-            ],
-            [
-                'Apache - No rewrite, document root set above top level cake dir, requesting path',
-                [
-                    'App' => [
-                        'base' => false,
-                        'baseUrl' => '/site/index.php',
-                        'dir' => 'TestApp',
-                        'webroot' => 'webroot',
-                    ],
-                    'SERVER' => [
-                        'SERVER_NAME' => 'localhost',
-                        'DOCUMENT_ROOT' => '/Library/WebServer/Documents',
-                        'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/index.php',
-                        'REQUEST_URI' => '/site/index.php/posts/index',
-                        'SCRIPT_NAME' => '/site/index.php',
-                        'PATH_INFO' => '/posts/index',
-                        'PHP_SELF' => '/site/index.php/posts/index',
-                    ],
-                ],
-                [
-                    'url' => 'posts/index',
-                    'base' => '/site/index.php',
-                    'webroot' => '/site/webroot/',
-                ],
-            ],
-            [
-                'Apache - No rewrite, document root set above top level cake dir, request root, no PATH_INFO',
-                [
-                    'App' => [
-                        'base' => false,
-                        'baseUrl' => '/site/index.php',
-                        'dir' => 'TestApp',
-                        'webroot' => 'webroot',
-                    ],
-                    'SERVER' => [
-                        'SERVER_NAME' => 'localhost',
-                        'DOCUMENT_ROOT' => '/Library/WebServer/Documents',
-                        'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/index.php',
-                        'REQUEST_URI' => '/site/index.php/',
-                        'SCRIPT_NAME' => '/site/index.php',
-                        'PHP_SELF' => '/site/index.php/',
-                    ],
-                ],
-                [
-                    'url' => '',
-                    'base' => '/site/index.php',
-                    'webroot' => '/site/webroot/',
-                ],
-            ],
-            [
-                'Apache - No rewrite, document root set above top level cake dir, request path, with GET',
-                [
-                    'App' => [
-                        'base' => false,
-                        'baseUrl' => '/site/index.php',
-                        'dir' => 'TestApp',
-                        'webroot' => 'webroot',
-                    ],
-                    'GET' => ['a' => 'b', 'c' => 'd'],
-                    'SERVER' => [
-                        'SERVER_NAME' => 'localhost',
-                        'DOCUMENT_ROOT' => '/Library/WebServer/Documents',
-                        'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/index.php',
-                        'REQUEST_URI' => '/site/index.php/posts/index?a=b&c=d',
-                        'SCRIPT_NAME' => '/site/index.php',
-                        'PATH_INFO' => '/posts/index',
-                        'PHP_SELF' => '/site/index.php/posts/index',
-                        'QUERY_STRING' => 'a=b&c=d',
-                    ],
-                ],
-                [
-                    'urlParams' => ['a' => 'b', 'c' => 'd'],
-                    'url' => 'posts/index',
-                    'base' => '/site/index.php',
-                    'webroot' => '/site/webroot/',
-                ],
-            ],
-            [
-                'Apache - w/rewrite, document root set above top level cake dir, request root, no PATH_INFO',
-                [
-                    'App' => [
-                        'base' => false,
-                        'baseUrl' => false,
-                        'dir' => 'TestApp',
-                        'webroot' => 'webroot',
-                    ],
-                    'SERVER' => [
-                        'SERVER_NAME' => 'localhost',
-                        'DOCUMENT_ROOT' => '/Library/WebServer/Documents',
-                        'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/index.php',
-                        'REQUEST_URI' => '/site/',
-                        'SCRIPT_NAME' => '/site/webroot/index.php',
-                        'PHP_SELF' => '/site/webroot/index.php',
-                    ],
-                ],
-                [
-                    'url' => '',
-                    'base' => '/site',
-                    'webroot' => '/site/',
-                ],
-            ],
-            [
-                'Apache - w/rewrite, document root above top level cake dir, request root, no PATH_INFO/REQUEST_URI',
-                [
-                    'App' => [
-                        'base' => false,
-                        'baseUrl' => false,
-                        'dir' => 'TestApp',
-                        'webroot' => 'webroot',
-                    ],
-                    'SERVER' => [
-                        'SERVER_NAME' => 'localhost',
-                        'DOCUMENT_ROOT' => '/Library/WebServer/Documents',
-                        'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/index.php',
-                        'SCRIPT_NAME' => '/site/webroot/index.php',
-                        'PHP_SELF' => '/site/webroot/index.php',
-                        'PATH_INFO' => null,
-                        'REQUEST_URI' => null,
-                    ],
-                ],
-                [
-                    'url' => '',
-                    'base' => '/site',
-                    'webroot' => '/site/',
-                ],
-            ],
-            [
-                'Apache - w/rewrite, document root set to webroot, request root, no PATH_INFO/REQUEST_URI',
-                [
-                    'App' => [
-                        'base' => false,
-                        'baseUrl' => false,
-                        'dir' => 'TestApp',
-                        'webroot' => 'webroot',
-                    ],
-                    'SERVER' => [
-                        'SERVER_NAME' => 'localhost',
-                        'DOCUMENT_ROOT' => '/Library/WebServer/Documents/site/webroot',
-                        'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/webroot/index.php',
-                        'SCRIPT_NAME' => '/index.php',
-                        'PHP_SELF' => '/index.php',
-                        'PATH_INFO' => null,
-                        'REQUEST_URI' => null,
-                    ],
-                ],
-                [
-                    'url' => '',
-                    'base' => '',
-                    'webroot' => '/',
-                ],
-            ],
-            [
-                'Apache - w/rewrite, document root set above top level cake dir, request root, absolute REQUEST_URI',
-                [
-                    'App' => [
-                        'base' => false,
-                        'baseUrl' => false,
-                        'dir' => 'TestApp',
-                        'webroot' => 'webroot',
-                    ],
-                    'SERVER' => [
-                        'SERVER_NAME' => 'localhost',
-                        'DOCUMENT_ROOT' => '/Library/WebServer/Documents',
-                        'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/index.php',
-                        'REQUEST_URI' => '/site/posts/index',
-                        'SCRIPT_NAME' => '/site/webroot/index.php',
-                        'PHP_SELF' => '/site/webroot/index.php',
-                    ],
-                ],
-                [
-                    'url' => 'posts/index',
-                    'base' => '/site',
-                    'webroot' => '/site/',
-                ],
-            ],
-            [
-                'Nginx - w/rewrite, document root set to webroot, request root, no PATH_INFO',
-                [
-                    'App' => [
-                        'base' => false,
-                        'baseUrl' => false,
-                        'dir' => 'TestApp',
-                        'webroot' => 'webroot',
-                    ],
-                    'GET' => ['/posts/add' => ''],
-                    'SERVER' => [
-                        'SERVER_NAME' => 'localhost',
-                        'DOCUMENT_ROOT' => '/Library/WebServer/Documents/site/webroot',
-                        'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/webroot/index.php',
-                        'SCRIPT_NAME' => '/index.php',
-                        'QUERY_STRING' => '/posts/add&',
-                        'PHP_SELF' => '/index.php',
-                        'PATH_INFO' => null,
-                        'REQUEST_URI' => '/posts/add',
-                    ],
-                ],
-                [
-                    'url' => 'posts/add',
-                    'base' => '',
-                    'webroot' => '/',
-                    'urlParams' => [],
-                ],
-            ],
-            [
-                'Nginx - w/rewrite, document root set above top level cake dir, request root, no PATH_INFO, base parameter set',
-                [
-                    'App' => [
-                        'base' => false,
-                        'baseUrl' => false,
-                        'dir' => 'app',
-                        'webroot' => 'webroot',
-                    ],
-                    'GET' => ['/site/posts/add' => ''],
-                    'SERVER' => [
-                        'SERVER_NAME' => 'localhost',
-                        'DOCUMENT_ROOT' => '/Library/WebServer/Documents',
-                        'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/App/webroot/index.php',
-                        'SCRIPT_NAME' => '/site/app/webroot/index.php',
-                        'QUERY_STRING' => '/site/posts/add&',
-                        'PHP_SELF' => '/site/webroot/index.php',
-                        'PATH_INFO' => null,
-                        'REQUEST_URI' => '/site/posts/add',
-                    ],
-                ],
-                [
-                    'url' => 'posts/add',
-                    'base' => '/site',
-                    'webroot' => '/site/',
-                    'urlParams' => [],
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * Test environment detection
-     *
-     * @dataProvider environmentGenerator
-     * @param $name
-     * @param $env
-     * @param $expected
-     * @return void
-     */
-    public function testEnvironmentDetection($name, $env, $expected)
-    {
-        $_GET = [];
-        $this->_loadEnvironment($env);
-
-        $request = ServerRequestFactory::fromGlobals();
-        $uri = $request->getUri();
-
-        $this->assertSame('/' . $expected['url'], $uri->getPath(), 'Uri->getPath() is incorrect');
-        $this->assertEquals($expected['base'], $request->getAttribute('base'), 'base is incorrect');
-        $this->assertEquals($expected['webroot'], $request->getAttribute('webroot'), 'webroot is incorrect');
-
-        if (isset($expected['urlParams'])) {
-            $this->assertEquals($expected['urlParams'], $request->getQueryParams(), 'GET param mismatch');
-        }
-    }
-
-    /**
      * Test the getQuery() method
      *
      * @return void
@@ -2194,29 +1288,6 @@ class ServerRequestTest extends TestCase
         $new = $request->withQueryParams(['new' => 'data']);
         $this->assertSame($get, $request->getQueryParams());
         $this->assertSame(['new' => 'data'], $new->getQueryParams());
-    }
-
-    /**
-     * Test getServerParams
-     *
-     * @return void
-     */
-    public function testGetServerParams()
-    {
-        $vars = [
-            'REQUEST_METHOD' => 'PUT',
-            'HTTPS' => 'on',
-        ];
-
-        $request = new ServerRequest([
-            'environment' => $vars,
-        ]);
-        $expected = $vars + [
-            'CONTENT_TYPE' => null,
-            'HTTP_CONTENT_TYPE' => null,
-            'ORIGINAL_REQUEST_METHOD' => 'PUT',
-        ];
-        $this->assertSame($expected, $request->getServerParams());
     }
 
     /**
@@ -2343,7 +1414,7 @@ class ServerRequestTest extends TestCase
     }
 
     /**
-     * Data provider for testing reading values with ServerRequestFactory::param()
+     * Data provider for testing reading values with ServerRequest::getParam()
      *
      * @return array
      */
@@ -2473,14 +1544,18 @@ class ServerRequestTest extends TestCase
         $request = new ServerRequest([
             'input' => 'I came from stdin',
         ]);
-        $result = $request->input();
-        $this->assertSame('I came from stdin', $result);
+
+        $this->deprecated(function () use ($request) {
+            $result = $request->input();
+            $this->assertSame('I came from stdin', $result);
+        });
     }
 
     /**
      * Test input() decoding.
      *
      * @return void
+     * @group deprecated
      */
     public function testInputDecode()
     {
@@ -2488,14 +1563,17 @@ class ServerRequestTest extends TestCase
             'input' => '{"name":"value"}',
         ]);
 
-        $result = $request->input('json_decode');
-        $this->assertEquals(['name' => 'value'], (array)$result);
+        $this->deprecated(function () use ($request) {
+            $result = $request->input('json_decode');
+            $this->assertEquals(['name' => 'value'], (array)$result);
+        });
     }
 
     /**
      * Test input() decoding with additional arguments.
      *
      * @return void
+     * @group deprecated
      */
     public function testInputDecodeExtraParams()
     {
@@ -2510,12 +1588,14 @@ XML;
             'input' => $xml,
         ]);
 
-        $result = $request->input('Cake\Utility\Xml::build', ['return' => 'domdocument']);
-        $this->assertInstanceOf('DOMDocument', $result);
-        $this->assertEquals(
-            'Test',
-            $result->getElementsByTagName('title')->item(0)->childNodes->item(0)->wholeText
-        );
+        $this->deprecated(function () use ($request) {
+            $result = $request->input('Cake\Utility\Xml::build', ['return' => 'domdocument']);
+            $this->assertInstanceOf('DOMDocument', $result);
+            $this->assertEquals(
+                'Test',
+                $result->getElementsByTagName('title')->item(0)->childNodes->item(0)->wholeText
+            );
+        });
     }
 
     /**
@@ -2772,7 +1852,7 @@ XML;
         $request = new ServerRequest(['session' => $session]);
         $this->assertSame($session, $request->getSession());
 
-        $request = ServerRequestFactory::fromGlobals();
+        $request = new ServerRequest();
         $this->assertEquals($session, $request->getSession());
     }
 
@@ -2783,39 +1863,15 @@ XML;
      */
     public function testContentType()
     {
-        $_SERVER['HTTP_CONTENT_TYPE'] = 'application/json';
-        $request = ServerRequestFactory::fromGlobals();
+        $request = new ServerRequest([
+            'environment' => ['HTTP_CONTENT_TYPE' => 'application/json'],
+        ]);
         $this->assertSame('application/json', $request->contentType());
 
-        $_SERVER['CONTENT_TYPE'] = 'application/xml';
-        $request = ServerRequestFactory::fromGlobals();
+        $request = new ServerRequest([
+            'environment' => ['HTTP_CONTENT_TYPE' => 'application/xml'],
+        ]);
         $this->assertSame('application/xml', $request->contentType(), 'prefer non http header.');
-    }
-
-    /**
-     * Tests that overriding the method to GET will clean all request
-     * data, to better simulate a GET request.
-     *
-     * @return void
-     */
-    public function testMethodOverrideEmptyData()
-    {
-        $post = ['_method' => 'GET', 'foo' => 'bar'];
-        $request = new ServerRequest([
-            'post' => $post,
-            'environment' => ['REQUEST_METHOD' => 'POST'],
-        ]);
-        $this->assertEmpty($request->getData());
-
-        $post = ['_method' => 'GET', 'foo' => 'bar'];
-        $request = new ServerRequest([
-            'post' => ['foo' => 'bar'],
-            'environment' => [
-                'REQUEST_METHOD' => 'POST',
-                'HTTP_X_HTTP_METHOD_OVERRIDE' => 'GET',
-            ],
-        ]);
-        $this->assertEmpty($request->getData());
     }
 
     /**
@@ -3100,7 +2156,9 @@ XML;
      */
     public function testGetEnv()
     {
-        $request = new ServerRequest();
+        $request = new ServerRequest([
+            'environment' => ['TEST' => 'ing'],
+        ]);
 
         //Test default null
         $this->assertNull($request->getEnv('Foo'));
@@ -3109,7 +2167,6 @@ XML;
         $this->assertSame('Bar', $request->getEnv('Foo', 'Bar'));
 
         //Test env() fallback
-        $_SERVER['TEST'] = 'ing';
         $this->assertSame('ing', $request->getEnv('test'));
     }
 
@@ -3127,36 +2184,5 @@ XML;
             ['webroot'],
             ['session'],
         ];
-    }
-
-    /**
-     * loadEnvironment method
-     *
-     * @param array $env
-     * @return void
-     */
-    protected function _loadEnvironment($env)
-    {
-        if (isset($env['App'])) {
-            Configure::write('App', $env['App']);
-        }
-
-        if (isset($env['GET'])) {
-            foreach ($env['GET'] as $key => $val) {
-                $_GET[$key] = $val;
-            }
-        }
-
-        if (isset($env['POST'])) {
-            foreach ($env['POST'] as $key => $val) {
-                $_POST[$key] = $val;
-            }
-        }
-
-        if (isset($env['SERVER'])) {
-            foreach ($env['SERVER'] as $key => $val) {
-                $_SERVER[$key] = $val;
-            }
-        }
     }
 }

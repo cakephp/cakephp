@@ -463,7 +463,7 @@ class RouteBuilderTest extends TestCase
     public function testPrefix()
     {
         $routes = new RouteBuilder($this->collection, '/path', ['key' => 'value']);
-        $res = $routes->prefix('admin', ['param' => 'value'], function ($r) {
+        $res = $routes->prefix('admin', ['param' => 'value'], function (RouteBuilder $r) {
             $this->assertInstanceOf(RouteBuilder::class, $r);
             $this->assertCount(0, $this->collection->routes());
             $this->assertSame('/path/admin', $r->path());
@@ -480,7 +480,7 @@ class RouteBuilderTest extends TestCase
     public function testPrefixWithNoParams()
     {
         $routes = new RouteBuilder($this->collection, '/path', ['key' => 'value']);
-        $res = $routes->prefix('admin', function ($r) {
+        $res = $routes->prefix('admin', function (RouteBuilder $r) {
             $this->assertInstanceOf(RouteBuilder::class, $r);
             $this->assertCount(0, $this->collection->routes());
             $this->assertSame('/path/admin', $r->path());
@@ -497,7 +497,7 @@ class RouteBuilderTest extends TestCase
     public function testNestedPrefix()
     {
         $routes = new RouteBuilder($this->collection, '/admin', ['prefix' => 'admin']);
-        $res = $routes->prefix('api', ['_namePrefix' => 'api:'], function ($r) {
+        $res = $routes->prefix('api', ['_namePrefix' => 'api:'], function (RouteBuilder $r) {
             $this->assertSame('/admin/api', $r->path());
             $this->assertEquals(['prefix' => 'admin/Api'], $r->params());
             $this->assertSame('api:', $r->namePrefix());
@@ -512,14 +512,14 @@ class RouteBuilderTest extends TestCase
      */
     public function testPathWithDotInPrefix()
     {
-        $routes = new RouteBuilder($this->collection, '/admin', ['prefix' => 'admin']);
-        $res = $routes->prefix('api', function ($r) {
-            $r->prefix('v10', ['path' => '/v1.0'], function ($r2) {
+        $routes = new RouteBuilder($this->collection, '/admin', ['prefix' => 'Admin']);
+        $res = $routes->prefix('Api', function (RouteBuilder $r) {
+            $r->prefix('v10', ['path' => '/v1.0'], function (RouteBuilder $r2) {
                 $this->assertSame('/admin/api/v1.0', $r2->path());
-                $this->assertEquals(['prefix' => 'admin/Api/V10'], $r2->params());
-                $r2->prefix('b1', ['path' => '/beta.1'], function ($r3) {
+                $this->assertEquals(['prefix' => 'Admin/Api/V10'], $r2->params());
+                $r2->prefix('b1', ['path' => '/beta.1'], function (RouteBuilder $r3) {
                     $this->assertSame('/admin/api/v1.0/beta.1', $r3->path());
-                    $this->assertEquals(['prefix' => 'admin/Api/V10/B1'], $r3->params());
+                    $this->assertEquals(['prefix' => 'Admin/Api/V10/B1'], $r3->params());
                 });
             });
         });
@@ -534,7 +534,7 @@ class RouteBuilderTest extends TestCase
     public function testNestedPlugin()
     {
         $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
-        $res = $routes->plugin('Contacts', function ($r) {
+        $res = $routes->plugin('Contacts', function (RouteBuilder $r) {
             $this->assertSame('/b/contacts', $r->path());
             $this->assertEquals(['plugin' => 'Contacts', 'key' => 'value'], $r->params());
 
@@ -556,7 +556,7 @@ class RouteBuilderTest extends TestCase
     public function testNestedPluginPathOption()
     {
         $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
-        $routes->plugin('Contacts', ['path' => '/people'], function ($r) {
+        $routes->plugin('Contacts', ['path' => '/people'], function (RouteBuilder $r) {
             $this->assertSame('/b/people', $r->path());
             $this->assertEquals(['plugin' => 'Contacts', 'key' => 'value'], $r->params());
         });

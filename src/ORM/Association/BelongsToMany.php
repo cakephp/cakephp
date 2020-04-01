@@ -253,6 +253,7 @@ class BelongsToMany extends Association
      *
      * @param string|\Cake\ORM\Table|null $table Name or instance for the join table
      * @return \Cake\ORM\Table
+     * @throws \InvalidArgumentException If the expected associations are incompatible with existing associations.
      */
     public function junction($table = null): Table
     {
@@ -312,10 +313,17 @@ class BelongsToMany extends Association
     {
         $junctionAlias = $junction->getAlias();
         $sAlias = $source->getAlias();
+        $tAlias = $target->getAlias();
+
+        $targetBindingKey = null;
+        if ($junction->hasAssociation($tAlias)) {
+            $targetBindingKey = $junction->getAssociation($tAlias)->getBindingKey();
+        }
 
         if (!$target->hasAssociation($junctionAlias)) {
             $target->hasMany($junctionAlias, [
                 'targetTable' => $junction,
+                'bindingKey' => $targetBindingKey,
                 'foreignKey' => $this->getTargetForeignKey(),
                 'strategy' => $this->_strategy,
             ]);
@@ -350,9 +358,17 @@ class BelongsToMany extends Association
     protected function _generateSourceAssociations(Table $junction, Table $source): void
     {
         $junctionAlias = $junction->getAlias();
+        $sAlias = $source->getAlias();
+
+        $sourceBindingKey = null;
+        if ($junction->hasAssociation($sAlias)) {
+            $sourceBindingKey = $junction->getAssociation($sAlias)->getBindingKey();
+        }
+
         if (!$source->hasAssociation($junctionAlias)) {
             $source->hasMany($junctionAlias, [
                 'targetTable' => $junction,
+                'bindingKey' => $sourceBindingKey,
                 'foreignKey' => $this->getForeignKey(),
                 'strategy' => $this->_strategy,
             ]);
@@ -374,6 +390,7 @@ class BelongsToMany extends Association
      * @param \Cake\ORM\Table $source The source table.
      * @param \Cake\ORM\Table $target The target table.
      * @return void
+     * @throws \InvalidArgumentException If the expected associations are incompatible with existing associations.
      */
     protected function _generateJunctionAssociations(Table $junction, Table $source, Table $target): void
     {
@@ -385,7 +402,19 @@ class BelongsToMany extends Association
                 'foreignKey' => $this->getTargetForeignKey(),
                 'targetTable' => $target,
             ]);
+        } else {
+            $belongsTo = $junction->getAssociation($tAlias);
+            if (
+                $this->getTargetForeignKey() !== $belongsTo->getForeignKey() ||
+                $target !== $belongsTo->getTarget()
+            ) {
+                throw new InvalidArgumentException(
+                    "The existing `{$tAlias}` association on `{$junction->getAlias()} " .
+                    "is incompatible with the `{$this->getName()}` association on `{$source->getAlias()}`"
+                );
+            }
         }
+
         if (!$junction->hasAssociation($sAlias)) {
             $junction->belongsTo($sAlias, [
                 'foreignKey' => $this->getForeignKey(),
@@ -753,7 +782,7 @@ class BelongsToMany extends Association
         $belongsTo = $junction->getAssociation($target->getAlias());
         $foreignKey = (array)$this->getForeignKey();
         $assocForeignKey = (array)$belongsTo->getForeignKey();
-        $targetPrimaryKey = (array)$target->getPrimaryKey();
+        $targetBindingKey = (array)$belongsTo->getBindingKey();
         $bindingKey = (array)$this->getBindingKey();
         $jointProperty = $this->_junctionProperty;
         $junctionRegistryAlias = $junction->getRegistryAlias();
@@ -764,7 +793,7 @@ class BelongsToMany extends Association
                 $joint = new $entityClass([], ['markNew' => true, 'source' => $junctionRegistryAlias]);
             }
             $sourceKeys = array_combine($foreignKey, $sourceEntity->extract($bindingKey));
-            $targetKeys = array_combine($assocForeignKey, $e->extract($targetPrimaryKey));
+            $targetKeys = array_combine($assocForeignKey, $e->extract($targetBindingKey));
 
             $changedKeys = (
                 $sourceKeys !== $joint->extract($foreignKey) ||

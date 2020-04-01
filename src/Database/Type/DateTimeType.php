@@ -157,6 +157,7 @@ class DateTimeType extends BaseType
      *
      * @param string|\DateTimeZone|null $timezone Database timezone.
      * @return $this
+     * @deprecated 4.1.0 Use `setDatabaseTimezone()` instead.
      */
     public function setTimezone($timezone)
     {

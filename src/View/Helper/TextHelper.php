@@ -295,12 +295,13 @@ class TextHelper extends Helper
      *  <br /> added for single line return
      *  <p> added for double line return
      *
-     * @param string $text Text
+     * @param string|null $text Text
      * @return string The text with proper <p> and <br /> tags
      * @link https://book.cakephp.org/4/en/views/helpers/text.html#converting-text-into-paragraphs
      */
-    public function autoParagraph(string $text): string
+    public function autoParagraph(?string $text): string
     {
+        $text = $text ?? '';
         if (trim($text) !== '') {
             $text = preg_replace('|<br[^>]*>\s*<br[^>]*>|i', "\n\n", $text . "\n");
             $text = preg_replace("/\n\n+/", "\n\n", str_replace(["\r\n", "\r"], "\n", $text));
@@ -392,6 +393,32 @@ class TextHelper extends Helper
     public function toList(array $list, ?string $and = null, string $separator = ', '): string
     {
         return $this->_engine->toList($list, $and, $separator);
+    }
+
+    /**
+     * Returns a string with all spaces converted to dashes (by default),
+     * characters transliterated to ASCII characters, and non word characters removed.
+     *
+     * ### Options:
+     *
+     * - `replacement`: Replacement string. Default '-'.
+     * - `transliteratorId`: A valid transliterator id string.
+     *   If `null` (default) the transliterator (identifier) set via
+     *   `Text::setTransliteratorId()` or `Text::setTransliterator()` will be used.
+     *   If `false` no transliteration will be done, only non words will be removed.
+     * - `preserve`: Specific non-word character to preserve. Default `null`.
+     *   For e.g. this option can be set to '.' to generate clean file names.
+     *
+     * @param string $string the string you want to slug
+     * @param array|string $options If string it will be use as replacement character
+     *   or an array of options.
+     * @return string
+     * @see \Cake\Utility\Text::setTransliterator()
+     * @see \Cake\Utility\Text::setTransliteratorId()
+     */
+    public function slug(string $string, $options = []): string
+    {
+        return $this->_engine->slug($string, $options);
     }
 
     /**

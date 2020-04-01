@@ -105,7 +105,7 @@ class DateTimeWidgetTest extends TestCase
             'input' => [
                 'type' => 'datetime-local',
                 'name' => '',
-                'value' => '2014-01-20T12:30:45.000',
+                'value' => '2014-01-20T12:30:45',
                 'step' => '1',
             ],
         ];
@@ -127,7 +127,7 @@ class DateTimeWidgetTest extends TestCase
             'input' => [
                 'type' => 'datetime-local',
                 'name' => '',
-                'value' => '2019-02-03T15:30:00.000',
+                'value' => '2019-02-03T15:30:00',
                 'step' => '1',
             ],
         ];

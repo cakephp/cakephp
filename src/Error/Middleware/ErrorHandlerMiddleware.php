@@ -131,9 +131,10 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
     public function handleException(Throwable $exception, ServerRequestInterface $request): ResponseInterface
     {
         $errorHandler = $this->getErrorHandler();
+        $renderer = $errorHandler->getRenderer($exception, $request);
 
         try {
-            $response = $errorHandler->getRenderer($exception, $request)->render();
+            $response = $renderer->render();
             $errorHandler->logException($exception, $request);
         } catch (Throwable $internalException) {
             $errorHandler->logException($internalException, $request);

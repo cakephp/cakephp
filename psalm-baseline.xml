@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="3.7.2@d9cae720c1af31db9ba27c2bc1fcf9b0dd092fb0">
+<files psalm-version="3.8.5@e6ec5fa22a7b9e61670a24d07b3119aff80dcd89">
   <file src="src/Command/CompletionCommand.php">
     <DeprecatedClass occurrences="1">
       <code>\Cake\Console\Shell</code>

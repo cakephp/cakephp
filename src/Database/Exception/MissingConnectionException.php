@@ -26,5 +26,5 @@ class MissingConnectionException extends Exception
     /**
      * @inheritDoc
      */
-    protected $_messageTemplate = 'Connection to database could not be established: %s';
+    protected $_messageTemplate = 'Connection to %s could not be established: %s';
 }

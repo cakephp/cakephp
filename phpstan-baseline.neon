@@ -22,7 +22,7 @@ parameters:
 
 		-
 			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 2
+			count: 1
 			path: src/Cache/CacheEngine.php
 
 		-
@@ -91,6 +91,11 @@ parameters:
 			path: src/Collection/Iterator/ZipIterator.php
 
 		-
+			message: "#^Method Cake\\\\Collection\\\\Iterator\\\\ZipIterator\\:\\:toArray\\(\\) should return array but returns array\\<array, array\\|false\\>\\.$#"
+			count: 1
+			path: src/Collection/Iterator/ZipIterator.php
+
+		-
 			message: "#^Strict comparison using \\=\\=\\= between class\\-string\\<ArrayObject\\> and 'ArrayIterator' will always evaluate to false\\.$#"
 			count: 1
 			path: src/Collection/Iterator/ZipIterator.php
@@ -136,11 +141,6 @@ parameters:
 			path: src/Command/I18nExtractCommand.php
 
 		-
-			message: "#^Else branch is unreachable because ternary operator condition is always true\\.$#"
-			count: 1
-			path: src/Console/CommandCollection.php
-
-		-
 			message: "#^Strict comparison using \\=\\=\\= between int and null will always evaluate to false\\.$#"
 			count: 1
 			path: src/Console/CommandRunner.php
@@ -151,11 +151,6 @@ parameters:
 			path: src/Console/ConsoleOptionParser.php
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between int and null will always evaluate to false\\.$#"
-			count: 1
-			path: src/Console/ShellDispatcher.php
-
-		-
 			message: "#^Call to an undefined method Cake\\\\Auth\\\\Storage\\\\StorageInterface\\:\\:getConfig\\(\\)\\.$#"
 			count: 1
 			path: src/Controller/Component/AuthComponent.php
@@ -164,11 +159,6 @@ parameters:
 			message: "#^Call to an undefined method Cake\\\\Auth\\\\Storage\\\\StorageInterface\\:\\:setConfig\\(\\)\\.$#"
 			count: 1
 			path: src/Controller/Component/AuthComponent.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: src/Controller/Component/RequestHandlerComponent.php
 
 		-
 			message: "#^Property Cake\\\\Controller\\\\Controller\\:\\:\\$response \\(Cake\\\\Http\\\\Response\\) does not accept Psr\\\\Http\\\\Message\\\\ResponseInterface\\.$#"
@@ -286,23 +276,13 @@ parameters:
 			path: src/Database/Log/LoggingStatement.php
 
 		-
-			message: "#^Result of && is always false\\.$#"
-			count: 1
-			path: src/Database/Query.php
-
-		-
 			message: "#^Access to undefined constant PDO\\:\\:SQLSRV_ENCODING_BINARY\\.$#"
 			count: 1
 			path: src/Database/Statement/SqlserverStatement.php
 
 		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: src/ORM/Entity.php
-
-		-
 			message: "#^Result of && is always false\\.$#"
-			count: 2
+			count: 1
 			path: src/Datasource/QueryCacher.php
 
 		-
@@ -326,29 +306,14 @@ parameters:
 			path: src/Event/EventManager.php
 
 		-
-			message: "#^Call to function is_int\\(\\) with string\\|false will always evaluate to false\\.$#"
+			message: "#^Parameter \\#1 \\$request of static method Cake\\\\Routing\\\\Router\\:\\:setRequest\\(\\) expects Cake\\\\Http\\\\ServerRequest, Psr\\\\Http\\\\Message\\\\ServerRequestInterface given\\.$#"
 			count: 1
-			path: src/Filesystem/File.php
-
-		-
-			message: "#^Parameter \\#1 \\$it of class RegexIterator constructor expects Iterator, Traversable given\\.$#"
-			count: 1
-			path: src/Filesystem/Filesystem.php
-
-		-
-			message: "#^Parameter \\#1 \\$it of class CallbackFilterIterator constructor expects Iterator, Traversable given\\.$#"
-			count: 1
-			path: src/Filesystem/Filesystem.php
+			path: src/Http/BaseApplication.php
 
 		-
 			message: "#^Constructor of class Cake\\\\Http\\\\Client\\\\Auth\\\\Digest has an unused parameter \\$options\\.$#"
 			count: 1
 			path: src/Http/Client/Auth/Digest.php
-
-		-
-			message: "#^Property Cake\\\\Http\\\\Cookie\\\\Cookie\\:\\:\\$sameSite \\(Cake\\\\Http\\\\Cookie\\\\CookieInterface\\) does not accept string\\.$#"
-			count: 1
-			path: src/Http/Cookie/Cookie.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
@@ -362,26 +327,6 @@ parameters:
 
 		-
 			message: "#^Method Cake\\\\Http\\\\Cookie\\\\Cookie\\:\\:createFromHeaderString\\(\\) should return static\\(Cake\\\\Http\\\\Cookie\\\\Cookie\\) but returns Cake\\\\Http\\\\Cookie\\\\Cookie\\.$#"
-			count: 1
-			path: src/Http/Cookie/Cookie.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: src/Http/Cookie/Cookie.php
-
-		-
-			message: "#^Parameter \\#2 \\.\\.\\.\\$args of function sprintf expects bool\\|float\\|int\\|string\\|null, Cake\\\\Http\\\\Cookie\\\\CookieInterface given\\.$#"
-			count: 1
-			path: src/Http/Cookie/Cookie.php
-
-		-
-			message: "#^Method Cake\\\\Http\\\\Cookie\\\\Cookie\\:\\:getSameSite\\(\\) should return string\\|null but returns Cake\\\\Http\\\\Cookie\\\\CookieInterface\\.$#"
-			count: 1
-			path: src/Http/Cookie/Cookie.php
-
-		-
-			message: "#^Property Cake\\\\Http\\\\Cookie\\\\Cookie\\:\\:\\$sameSite \\(Cake\\\\Http\\\\Cookie\\\\CookieInterface\\) does not accept string\\|null\\.$#"
 			count: 1
 			path: src/Http/Cookie/Cookie.php
 
@@ -501,16 +446,6 @@ parameters:
 			path: src/I18n/Number.php
 
 		-
-			message: "#^PHPDoc tag @var has invalid value \\(\\\\Psr\\\\SimpleCache\\\\CacheInterface&\\\\Cake\\\\Cache\\\\CacheEngineInterface\\|null\\)\\: Unexpected token \"\\|\", expected TOKEN_OTHER at offset 175$#"
-			count: 1
-			path: src/I18n/TranslatorRegistry.php
-
-		-
-			message: "#^Property Cake\\\\I18n\\\\TranslatorRegistry\\:\\:\\$_cacher has no typehint specified\\.$#"
-			count: 1
-			path: src/I18n/TranslatorRegistry.php
-
-		-
 			message: "#^Method Cake\\\\Mailer\\\\Email\\:\\:deliver\\(\\) should return static\\(Cake\\\\Mailer\\\\Email\\) but returns Cake\\\\Mailer\\\\Email\\.$#"
 			count: 1
 			path: src/Mailer/Email.php
@@ -531,19 +466,9 @@ parameters:
 			path: src/Mailer/Renderer.php
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between int and true will always evaluate to false\\.$#"
-			count: 1
-			path: src/Network/Socket.php
-
-		-
 			message: "#^Parameter \\#2 \\$callback of function array_filter expects callable\\(mixed, mixed\\)\\: bool, 'strlen' given\\.$#"
 			count: 1
 			path: src/ORM/Association/BelongsToMany.php
-
-		-
-			message: "#^Call to an undefined method Cake\\\\Collection\\\\CollectionInterface\\:\\:printer\\(\\)\\.$#"
-			count: 1
-			path: src/ORM/Behavior/TreeBehavior.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
@@ -586,11 +511,6 @@ parameters:
 			path: src/ORM/Rule/IsUnique.php
 
 		-
-			message: "#^Result of && is always false\\.$#"
-			count: 1
-			path: src/ORM/Rule/LinkConstraint.php
-
-		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: src/ORM/Table.php
@@ -609,11 +529,6 @@ parameters:
 			message: "#^Parameter \\#1 \\$request of static method Cake\\\\Routing\\\\Router\\:\\:parseRequest\\(\\) expects Cake\\\\Http\\\\ServerRequest, Psr\\\\Http\\\\Message\\\\ServerRequestInterface given\\.$#"
 			count: 1
 			path: src/Routing/Middleware/RoutingMiddleware.php
-
-		-
-			message: "#^Result of && is always false\\.$#"
-			count: 1
-			path: src/Routing/Route/EntityRoute.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
@@ -716,11 +631,6 @@ parameters:
 			path: src/TestSuite/TestCase.php
 
 		-
-			message: "#^Result of \\|\\| is always true\\.$#"
-			count: 2
-			path: src/Utility/Hash.php
-
-		-
 			message: "#^Return type \\(array\\<string, array\\|string\\>\\) of method Cake\\\\View\\\\Exception\\\\MissingCellTemplateException\\:\\:getAttributes\\(\\) should be compatible with return type \\(array\\<string, array\\|string\\>\\) of method Cake\\\\View\\\\Exception\\\\MissingTemplateException\\:\\:getAttributes\\(\\)$#"
 			count: 1
 			path: src/View/Exception/MissingCellTemplateException.php
@@ -736,11 +646,6 @@ parameters:
 			path: src/View/Form/NullContext.php
 
 		-
-			message: "#^Offset 'debug' does not exist on array\\('fields' \\=\\> string, 'unlocked' \\=\\> string\\)\\.$#"
-			count: 1
-			path: src/View/Helper/FormHelper.php
-
-		-
 			message: "#^Call to an undefined method DateTimeInterface\\:\\:setTimezone\\(\\)\\.$#"
 			count: 1
 			path: src/View/Helper/TimeHelper.php
@@ -751,12 +656,6 @@ parameters:
 			path: src/View/View.php
 
 		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: src/View/Widget/SelectBoxWidget.php
-
-		-
 			message: "#^Class Psy\\\\Shell not found\\.$#"
 			count: 1
 			path: src/basics.php
-

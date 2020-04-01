@@ -19,8 +19,10 @@ use Cake\Error\Debugger;
 foreach ($trace as $i => $stack):
     $excerpt = $params = [];
 
+    $line = null;
     if (isset($stack['file'], $stack['line']) && is_numeric($stack['line'])):
-        $excerpt = Debugger::excerpt($stack['file'], $stack['line'], 4);
+        $line = $stack['line'];
+        $excerpt = Debugger::excerpt($stack['file'], $line, 4);
     endif;
 
     if (isset($stack['file'])):
@@ -41,7 +43,13 @@ foreach ($trace as $i => $stack):
 ?>
     <div id="stack-frame-<?= $i ?>" style="display:<?= $i === 0 ? 'block' : 'none'; ?>;" class="stack-details">
         <div class="stack-frame-header">
-            <span class="stack-frame-file"><?= h($file) ?></span>
+            <span class="stack-frame-file">
+                <?php if ($line !== null): ?>
+                    <?= $this->Html->link(Debugger::trimPath($file), Debugger::editorUrl($file, $line)); ?>
+                <?php else: ?>
+                    <?= h(Debugger::trimPath($file)); ?>
+                <?php endif; ?>
+            </span>
             <a href="#" class="toggle-link stack-frame-args" data-target="stack-args-<?= $i ?>">Toggle Arguments</a>
         </div>
 
@@ -55,8 +63,11 @@ foreach ($trace as $i => $stack):
         <?php endforeach; ?>
         </table>
 
-        <div id="stack-args-<?= $i ?>" style="display: none;">
-            <pre><?= h(implode("\n", $params)) ?></pre>
+        <div id="stack-args-<?= $i ?>" class="cake-debug" style="display: none;">
+            <h4>Arguments</h4>
+            <?php foreach ($params as $param): ?>
+                <div class="cake-debug"><?= $param ?></div>
+            <?php endforeach; ?>
         </div>
     </div>
 <?php endforeach; ?>

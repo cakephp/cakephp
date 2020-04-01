@@ -55,20 +55,26 @@ class ConsoleInput
     /**
      * Read a value from the stream
      *
-     * @return string The value of the stream
+     * @return string|null The value of the stream. Null on EOF.
      */
-    public function read(): string
+    public function read(): ?string
     {
         if ($this->_canReadline) {
+            /** @var string|false $line */
             $line = readline('');
-            if (strlen($line) > 0) {
+
+            if ($line !== false && strlen($line) > 0) {
                 readline_add_history($line);
             }
-
-            return $line;
+        } else {
+            $line = fgets($this->_input);
         }
 
-        return (string)fgets($this->_input);
+        if ($line === false) {
+            return null;
+        }
+
+        return $line;
     }
 
     /**

@@ -18,7 +18,6 @@ namespace Cake\Test\TestCase\Validation;
 
 use Cake\Collection\Collection;
 use Cake\Core\Configure;
-use Cake\Filesystem\File;
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validation;
@@ -2034,11 +2033,14 @@ class ValidationTest extends TestCase
         $this->skipIf(DS === '\\', 'The locale is not supported in Windows and affects other tests.');
         $this->skipIf(Locale::setDefault('da_DK') === false, "The Danish locale isn't available.");
 
-        $this->assertTrue(Validation::decimal(1.54), '1.54 should be considered a valid float');
-        $this->assertTrue(Validation::decimal('1.54'), '"1.54" should be considered a valid float');
+        $this->assertTrue(Validation::decimal(1.54), '1.54 should be considered a valid decimal');
+        $this->assertTrue(Validation::decimal('1.54'), '"1.54" should be considered a valid decimal');
 
-        $this->assertTrue(Validation::decimal(12345.67), '12345.67 should be considered a valid float');
-        $this->assertTrue(Validation::decimal('12,345.67'), '"12,345.67" should be considered a valid float');
+        $this->assertTrue(Validation::decimal(12345.67), '12345.67 should be considered a valid decimal');
+        $this->assertTrue(Validation::decimal('12,345.67'), '"12,345.67" should be considered a valid decimal');
+
+        $this->skipIf(Locale::setDefault('pl_PL') === false, "The Polish locale isn't available.");
+        $this->assertTrue(Validation::decimal('1 200,99'), 'should be considered a valid decimal');
     }
 
     /**
@@ -2684,9 +2686,6 @@ class ValidationTest extends TestCase
     public function testMimeType()
     {
         $image = TEST_APP . 'webroot/img/cake.power.gif';
-        $File = new File($image, false);
-
-        $this->skipIf(!$File->mime(), 'Cannot determine mimeType');
 
         $this->assertTrue(Validation::mimeType($image, ['image/gif']));
         $this->assertTrue(Validation::mimeType(['tmp_name' => $image], ['image/gif']));
@@ -2706,9 +2705,6 @@ class ValidationTest extends TestCase
     public function testMimeTypeCaseInsensitive()
     {
         $algol68 = CORE_TESTS . 'Fixture/sample.a68';
-        $File = new File($algol68, false);
-
-        $this->skipIf($File->mime() != 'text/x-Algol68', 'Cannot determine text/x-Algol68 mimeType');
 
         $this->assertTrue(Validation::mimeType($algol68, ['text/x-Algol68']));
         $this->assertTrue(Validation::mimeType($algol68, ['text/x-algol68']));
@@ -2743,8 +2739,6 @@ class ValidationTest extends TestCase
     {
         $this->expectException(\RuntimeException::class);
         $image = CORE_TESTS . 'invalid-file.png';
-        $File = new File($image, false);
-        $this->skipIf($File->mime(), 'mimeType can be determined, no Exception will be thrown');
         Validation::mimeType($image, ['image/gif']);
     }
 

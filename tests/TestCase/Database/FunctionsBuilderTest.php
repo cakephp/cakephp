@@ -259,4 +259,51 @@ class FunctionsBuilderTest extends TestCase
         $this->assertSame('RAND()', $function->sql(new ValueBinder()));
         $this->assertSame('float', $function->getReturnType());
     }
+
+    /**
+     * Tests generating a ROW_NUMBER() window function
+     */
+    public function testRowNumber()
+    {
+        $function = $this->functions->rowNumber();
+        $this->assertInstanceOf(AggregateExpression::class, $function);
+        $this->assertSame('ROW_NUMBER() OVER ()', $function->sql(new ValueBinder()));
+        $this->assertSame('integer', $function->getReturnType());
+    }
+
+    /**
+     * Tests generating a LAG() window function
+     *
+     * @return void
+     */
+    public function testLag()
+    {
+        $function = $this->functions->lag('field', 1);
+        $this->assertInstanceOf(AggregateExpression::class, $function);
+        $this->assertSame('LAG(field, 1) OVER ()', $function->sql(new ValueBinder()));
+        $this->assertSame('float', $function->getReturnType());
+
+        $function = $this->functions->lag('field', 1, 10, 'integer');
+        $this->assertInstanceOf(AggregateExpression::class, $function);
+        $this->assertSame('LAG(field, 1, :param0) OVER ()', $function->sql(new ValueBinder()));
+        $this->assertSame('integer', $function->getReturnType());
+    }
+
+    /**
+     * Tests generating a LAG() window function
+     *
+     * @return void
+     */
+    public function testLead()
+    {
+        $function = $this->functions->lead('field', 1);
+        $this->assertInstanceOf(AggregateExpression::class, $function);
+        $this->assertSame('LEAD(field, 1) OVER ()', $function->sql(new ValueBinder()));
+        $this->assertSame('float', $function->getReturnType());
+
+        $function = $this->functions->lead('field', 1, 10, 'integer');
+        $this->assertInstanceOf(AggregateExpression::class, $function);
+        $this->assertSame('LEAD(field, 1, :param0) OVER ()', $function->sql(new ValueBinder()));
+        $this->assertSame('integer', $function->getReturnType());
+    }
 }

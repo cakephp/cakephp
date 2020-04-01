@@ -18,6 +18,7 @@ namespace TestApp;
 
 use Cake\Console\CommandCollection;
 use Cake\Core\Configure;
+use Cake\Error\Middleware\ErrorHandlerMiddleware;
 use Cake\Http\BaseApplication;
 use Cake\Http\MiddlewareQueue;
 use Cake\Routing\Middleware\RoutingMiddleware;
@@ -54,21 +55,22 @@ class Application extends BaseApplication
     }
 
     /**
-     * @param \Cake\Http\MiddlewareQueue $middleware
+     * @param \Cake\Http\MiddlewareQueue $middlewareQueue
      *
      * @return \Cake\Http\MiddlewareQueue
      */
-    public function middleware(MiddlewareQueue $middleware): MiddlewareQueue
+    public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
     {
-        $middleware->add(function ($req, $res, $next) {
+        $middlewareQueue->add(function ($req, $res, $next) {
             /** @var \Cake\Http\ServerRequest $res */
             $res = $next($req, $res);
 
             return $res->withHeader('X-Middleware', 'true');
         });
-        $middleware->add(new RoutingMiddleware($this));
+        $middlewareQueue->add(new ErrorHandlerMiddleware(Configure::read('Error', [])));
+        $middlewareQueue->add(new RoutingMiddleware($this));
 
-        return $middleware;
+        return $middlewareQueue;
     }
 
     /**

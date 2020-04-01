@@ -18,6 +18,7 @@ namespace Cake\Http;
 
 use BadMethodCallException;
 use Cake\Core\Configure;
+use Cake\Core\Exception\Exception;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Exception\MethodNotAllowedException;
 use Cake\Utility\Hash;
@@ -243,38 +244,31 @@ class ServerRequest implements ServerRequestInterface
      */
     protected function _setConfig(array $config): void
     {
-        if (strlen($config['url']) > 1 && $config['url'][0] === '/') {
-            $config['url'] = substr($config['url'], 1);
-        }
-
         if (empty($config['session'])) {
             $config['session'] = new Session([
                 'cookiePath' => $config['base'],
             ]);
         }
 
-        $this->_environment = $config['environment'];
+        if (empty($config['environment']['REQUEST_METHOD'])) {
+            $config['environment']['REQUEST_METHOD'] = 'GET';
+        }
+
         $this->cookies = $config['cookies'];
 
-        if (isset($config['uri']) && $config['uri'] instanceof UriInterface) {
+        if (isset($config['uri'])) {
+            if (!$config['uri'] instanceof UriInterface) {
+                throw new Exception('The `uri` key must be an instance of ' . UriInterface::class);
+            }
             $uri = $config['uri'];
         } else {
+            if ($config['url'] !== '') {
+                $config = $this->processUrlOption($config);
+            }
             $uri = ServerRequestFactory::createUri($config['environment']);
         }
 
-        // Extract a query string from config[url] if present.
-        // This is required for backwards compatibility and keeping
-        // UriInterface implementations happy.
-        $querystr = '';
-        if (strpos($config['url'], '?') !== false) {
-            [$config['url'], $querystr] = explode('?', $config['url']);
-        }
-        if (strlen($config['url'])) {
-            $uri = $uri->withPath('/' . $config['url']);
-        }
-        if (strlen($querystr)) {
-            $uri = $uri->withQuery($querystr);
-        }
+        $this->_environment = $config['environment'];
 
         $this->uri = $uri;
         $this->base = $config['base'];
@@ -289,68 +283,37 @@ class ServerRequest implements ServerRequestInterface
         }
         $this->stream = $stream;
 
-        $this->data = $this->_processPost($config['post']);
+        $this->data = $config['post'];
         $this->uploadedFiles = $config['files'];
-        $this->query = $this->_processGet($config['query'], $querystr);
+        $this->query = $config['query'];
         $this->params = $config['params'];
         $this->session = $config['session'];
     }
 
     /**
-     * Sets the REQUEST_METHOD environment variable based on the simulated _method
-     * HTTP override value. The 'ORIGINAL_REQUEST_METHOD' is also preserved, if you
-     * want the read the non-simulated HTTP method the client used.
+     * Set environment vars based on `url` option to facilitate UriInterface instance generation.
      *
-     * @param mixed $data Array of post data.
-     * @return mixed
-     */
-    protected function _processPost($data)
-    {
-        $method = $this->getEnv('REQUEST_METHOD');
-        $override = false;
-
-        if (
-            in_array($method, ['PUT', 'DELETE', 'PATCH'], true) &&
-            strpos((string)$this->contentType(), 'application/x-www-form-urlencoded') === 0
-        ) {
-            $data = $this->input();
-            parse_str($data, $data);
-        }
-        if ($this->hasHeader('X-Http-Method-Override')) {
-            $data['_method'] = $this->getHeaderLine('X-Http-Method-Override');
-            $override = true;
-        }
-        $this->_environment['ORIGINAL_REQUEST_METHOD'] = $method;
-        if (isset($data['_method'])) {
-            $this->_environment['REQUEST_METHOD'] = $data['_method'];
-            unset($data['_method']);
-            $override = true;
-        }
-
-        if ($override && !in_array($this->_environment['REQUEST_METHOD'], ['PUT', 'POST', 'DELETE', 'PATCH'], true)) {
-            $data = [];
-        }
-
-        return $data;
-    }
-
-    /**
-     * Process the GET parameters and move things into the object.
+     * `query` option is also updated based on URL's querystring.
      *
-     * @param array $query The array to which the parsed keys/values are being added.
-     * @param string $queryString A query string from the URL if provided
-     * @return array An array containing the parsed query string as keys/values.
+     * @param array $config Config array.
+     * @return array Update config.
      */
-    protected function _processGet(array $query, string $queryString = ''): array
+    protected function processUrlOption(array $config): array
     {
-        $unsetUrl = str_replace(['.', ' '], '_', urldecode($this->uri->getPath()));
-        unset($query[$unsetUrl], $query[$this->base . $unsetUrl]);
-        if (strlen($queryString)) {
-            parse_str($queryString, $queryArgs);
-            $query += $queryArgs;
+        if ($config['url'][0] !== '/') {
+            $config['url'] = '/' . $config['url'];
         }
 
-        return $query;
+        if (strpos($config['url'], '?') !== false) {
+            [$config['url'], $config['environment']['QUERY_STRING']] = explode('?', $config['url']);
+
+            parse_str($config['environment']['QUERY_STRING'], $queryArgs);
+            $config['query'] += $queryArgs;
+        }
+
+        $config['environment']['REQUEST_URI'] = $config['url'];
+
+        return $config;
     }
 
     /**
@@ -1287,6 +1250,9 @@ class ServerRequest implements ServerRequestInterface
      *
      * Any additional parameters are applied to the callback in the order they are given.
      *
+     * @deprecated 4.1.0 Use `(string)$request->getBody()` to get the raw PHP input
+     *  as string; use `BodyParserMiddleware` to parse the request body so that it's
+     *  available as array/object through `$request->getParsedBody()`.
      * @param callable|null $callback A decoding callback that will convert the string data to another
      *     representation. Leave empty to access the raw input data. You can also
      *     supply additional parameters for the decoding callback using var args, see above.
@@ -1295,6 +1261,11 @@ class ServerRequest implements ServerRequestInterface
      */
     public function input(?callable $callback = null, ...$args)
     {
+        deprecationWarning(
+            'Use `(string)$request->getBody()` to get the raw PHP input as string; '
+            . 'use `BodyParserMiddleware` to parse the request body so that it\'s available as array/object '
+            . 'through $request->getParsedBody()'
+        );
         $this->stream->rewind();
         $input = $this->stream->getContents();
         if ($callback) {

@@ -18,13 +18,14 @@ namespace Cake\Test\TestCase\ORM\Behavior;
 
 use Cake\Collection\Collection;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\QueryInterface;
 use Cake\I18n\I18n;
 use Cake\ORM\Entity;
 use Cake\ORM\Locator\TableLocator;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 use TestApp\Model\Entity\TranslateArticle;
-use TestApp\Model\Table\I18nTable;
+use TestApp\Model\Table\CustomI18nTable;
 
 /**
  * Translate behavior test case
@@ -83,15 +84,15 @@ class TranslateBehaviorTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
 
         $table->addBehavior('Translate', [
-            'translationTable' => I18nTable::class,
+            'translationTable' => CustomI18nTable::class,
             'fields' => ['title', 'body'],
         ]);
 
         $items = $table->associations();
         $i18n = $items->getByProperty('_i18n');
 
-        $this->assertEquals(I18nTable::class, $i18n->getName());
-        $this->assertInstanceOf(I18nTable::class, $i18n->getTarget());
+        $this->assertEquals(CustomI18nTable::class, $i18n->getName());
+        $this->assertInstanceOf(CustomI18nTable::class, $i18n->getTarget());
         $this->assertSame('test_custom_i18n_datasource', $i18n->getTarget()->getConnection()->configName());
         $this->assertSame('custom_i18n_table', $i18n->getTarget()->getTable());
     }
@@ -231,6 +232,7 @@ class TranslateBehaviorTest extends TestCase
                 ],
             ])
             ->enableHydration(false)
+            ->orderAsc('Articles.id')
             ->toArray();
 
         $expected = [
@@ -706,8 +708,10 @@ class TranslateBehaviorTest extends TestCase
      */
     public function testFindSingleLocaleBelongsto()
     {
+        /** @var \Cake\ORM\Table|\Cake\ORM\Behavior\TranslateBehavior $table */
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        /** @var \Cake\ORM\Table|\Cake\ORM\Behavior\TranslateBehavior $authors */
         $authors = $table->belongsTo('Authors')->getTarget();
         $authors->addBehavior('Translate', ['fields' => ['name']]);
 
@@ -717,7 +721,7 @@ class TranslateBehaviorTest extends TestCase
         $results = $table->find()
             ->select(['title', 'body'])
             ->order(['title' => 'asc'])
-            ->contain(['Authors' => function ($q) {
+            ->contain(['Authors' => function (QueryInterface $q) {
                 return $q->select(['id', 'name']);
             }]);
 
@@ -741,7 +745,7 @@ class TranslateBehaviorTest extends TestCase
                 '_locale' => 'eng',
             ],
         ];
-        $results = array_map(function ($r) {
+        $results = array_map(function (EntityInterface $r) {
             return $r->toArray();
         }, $results->toArray());
         $this->assertEquals($expected, $results);
@@ -754,8 +758,10 @@ class TranslateBehaviorTest extends TestCase
      */
     public function testFindSingleLocaleBelongstoLoadInto()
     {
+        /** @var \Cake\ORM\Table|\Cake\ORM\Behavior\TranslateBehavior $table */
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        /** @var \Cake\ORM\Table|\Cake\ORM\Behavior\TranslateBehavior $authors */
         $authors = $table->belongsTo('Authors')->getTarget();
         $authors->addBehavior('Translate', ['fields' => ['name']]);
 
@@ -782,6 +788,7 @@ class TranslateBehaviorTest extends TestCase
     public function testFindSingleLocaleBelongsToMany()
     {
         $table = $this->getTableLocator()->get('Articles');
+        /** @var \Cake\ORM\Table|\Cake\ORM\Behavior\TranslateBehavior $specialTags */
         $specialTags = $this->getTableLocator()->get('SpecialTags');
         $specialTags->addBehavior('Translate', ['fields' => ['extra_info']]);
 
@@ -804,6 +811,7 @@ class TranslateBehaviorTest extends TestCase
     public function testGetAssociationNotDirtyBelongsTo()
     {
         $table = $this->getTableLocator()->get('Articles');
+        /** @var \Cake\ORM\Table|\Cake\ORM\Behavior\TranslateBehavior $authors */
         $authors = $table->belongsTo('Authors')->getTarget();
         $authors->addBehavior('Translate', ['fields' => ['name']]);
 

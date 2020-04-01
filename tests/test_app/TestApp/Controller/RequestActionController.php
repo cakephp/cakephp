@@ -165,7 +165,7 @@ class RequestActionController extends AppController
      */
     public function input_test()
     {
-        $text = $this->request->input('json_decode')->hello;
+        $text = json_decode((string)$this->request->getBody())->hello;
 
         return $this->response->withStringBody($text);
     }

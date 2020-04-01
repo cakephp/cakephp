@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Command;
 
 use Cake\Command\Command;
-use Cake\Filesystem\File;
 use Cake\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
@@ -47,9 +46,7 @@ class PluginLoadCommandTest extends TestCase
         parent::setUp();
 
         $this->app = APP . DS . 'Application.php';
-
-        $app = new File($this->app, false);
-        $this->originalAppContent = $app->read();
+        $this->originalAppContent = file_get_contents($this->app);
 
         $this->useCommandRunner();
         $this->setAppNamespace();
@@ -64,8 +61,7 @@ class PluginLoadCommandTest extends TestCase
     {
         parent::tearDown();
 
-        $app = new File($this->app, false);
-        $app->write($this->originalAppContent);
+        file_put_contents($this->app, $this->originalAppContent);
     }
 
     /**

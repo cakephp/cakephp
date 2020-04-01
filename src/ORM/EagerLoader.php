@@ -254,6 +254,7 @@ class EagerLoader
         $containments = [];
         $pointer =& $containments;
         $opts = ['matching' => true] + $options;
+        /** @psalm-suppress InvalidArrayOffset */
         unset($opts['negateMatch']);
 
         foreach ($assocs as $name) {
@@ -830,13 +831,20 @@ class EagerLoader
         $keys = [];
         foreach (($statement->fetchAll('assoc') ?: []) as $result) {
             foreach ($collectKeys as $nestKey => $parts) {
-                // Missed joins will have null in the results.
-                if ($parts[2] === true && !isset($result[$parts[1][0]])) {
-                    continue;
-                }
                 if ($parts[2] === true) {
-                    $value = $result[$parts[1][0]];
-                    $keys[$nestKey][$parts[0]][$value] = $value;
+                    // Missed joins will have null in the results.
+                    if (!array_key_exists($parts[1][0], $result)) {
+                        continue;
+                    }
+                    // Assign empty array to avoid not found association when optional.
+                    if (!isset($result[$parts[1][0]])) {
+                        if (!isset($keys[$nestKey][$parts[0]])) {
+                            $keys[$nestKey][$parts[0]] = [];
+                        }
+                    } else {
+                        $value = $result[$parts[1][0]];
+                        $keys[$nestKey][$parts[0]][$value] = $value;
+                    }
                     continue;
                 }
 
@@ -848,7 +856,6 @@ class EagerLoader
                 $keys[$nestKey][$parts[0]][implode(';', $collected)] = $collected;
             }
         }
-
         $statement->rewind();
 
         return $keys;

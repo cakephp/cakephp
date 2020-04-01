@@ -656,7 +656,8 @@ class View implements EventDispatcherInterface
 
         if (empty($options['ignoreMissing'])) {
             [$plugin] = $this->pluginSplit($name, $pluginCheck);
-            throw new MissingElementException($name, $this->_paths($plugin));
+            $paths = iterator_to_array($this->getElementPaths($plugin));
+            throw new MissingElementException($name . $this->_ext, $paths);
         }
 
         return '';
@@ -1416,33 +1417,38 @@ class View implements EventDispatcherInterface
             }
             $name = $this->layout;
         }
+        [$plugin, $name] = $this->pluginSplit($name);
+        $name .= $this->_ext;
 
+        foreach ($this->getLayoutPaths($plugin) as $path) {
+            if (file_exists($path . $name)) {
+                return $this->_checkFilePath($path . $name, $path);
+            }
+        }
+
+        $paths = iterator_to_array($this->getLayoutPaths($plugin));
+        throw new MissingLayoutException($name, $paths);
+    }
+
+    /**
+     * Get an iterator for layout paths.
+     *
+     * @param string|null $plugin The plugin to fetch paths for.
+     * @return \Generator
+     */
+    protected function getLayoutPaths(?string $plugin)
+    {
         $subDir = '';
         if ($this->layoutPath) {
             $subDir = $this->layoutPath . DIRECTORY_SEPARATOR;
         }
-        [$plugin, $name] = $this->pluginSplit($name);
-
         $layoutPaths = $this->_getSubPaths(static::TYPE_LAYOUT . DIRECTORY_SEPARATOR . $subDir);
-        $name .= $this->_ext;
 
         foreach ($this->_paths($plugin) as $path) {
             foreach ($layoutPaths as $layoutPath) {
-                $currentPath = $path . $layoutPath;
-                if (file_exists($currentPath . $name)) {
-                    return $this->_checkFilePath($currentPath . $name, $currentPath);
-                }
+                yield $path . $layoutPath;
             }
         }
-
-        // Generate the searched paths so we can give a more helpful error.
-        $paths = [];
-        foreach ($this->_paths($plugin) as $path) {
-            foreach ($layoutPaths as $layoutPath) {
-                $paths[] = $path . $layoutPath;
-            }
-        }
-        throw new MissingLayoutException($name, $paths);
     }
 
     /**
@@ -1456,18 +1462,30 @@ class View implements EventDispatcherInterface
     {
         [$plugin, $name] = $this->pluginSplit($name, $pluginCheck);
 
-        $paths = $this->_paths($plugin);
-        $elementPaths = $this->_getSubPaths(static::TYPE_ELEMENT);
-
-        foreach ($paths as $path) {
-            foreach ($elementPaths as $elementPath) {
-                if (file_exists($path . $elementPath . DIRECTORY_SEPARATOR . $name . $this->_ext)) {
-                    return $path . $elementPath . DIRECTORY_SEPARATOR . $name . $this->_ext;
-                }
+        $name .= $this->_ext;
+        foreach ($this->getElementPaths($plugin) as $path) {
+            if (file_exists($path . $name)) {
+                return $path . $name;
             }
         }
 
         return false;
+    }
+
+    /**
+     * Get an iterator for element paths.
+     *
+     * @param string|null $plugin The plugin to fetch paths for.
+     * @return \Generator
+     */
+    protected function getElementPaths(?string $plugin)
+    {
+        $elementPaths = $this->_getSubPaths(static::TYPE_ELEMENT);
+        foreach ($this->_paths($plugin) as $path) {
+            foreach ($elementPaths as $subdir) {
+                yield $path . $subdir . DIRECTORY_SEPARATOR;
+            }
+        }
     }
 
     /**
