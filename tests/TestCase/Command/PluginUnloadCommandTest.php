@@ -76,10 +76,6 @@ class PluginUnloadCommandTest extends TestCase
         $plugin2 = "\$this->addPlugin('TestPluginTwo', ['bootstrap' => false, 'routes' => false]);";
         $this->addPluginToApp($plugin1);
         $this->addPluginToApp($plugin2);
-
-        $contents = file_get_contents($this->app);
-        $this->assertStringContainsString($plugin1, $contents);
-
         $this->exec('plugin unload TestPlugin');
 
         $this->assertExitCode(Command::CODE_SUCCESS);
@@ -87,6 +83,26 @@ class PluginUnloadCommandTest extends TestCase
 
         $this->assertStringNotContainsString($plugin1, $contents);
         $this->assertStringContainsString($plugin2, $contents);
+    }
+
+    /**
+     * test removing the first plugin leaves the second behind.
+     *
+     * @return void
+     */
+    public function testUnloadFirstPlugin()
+    {
+        $plugin1 = "\$this->addPlugin('TestPlugin');";
+        $plugin2 = "\$this->addPlugin('TestPluginTwo');";
+        $this->addPluginToApp($plugin1);
+        $this->addPluginToApp($plugin2);
+        $this->exec('plugin unload TestPluginTwo');
+
+        $this->assertExitCode(Command::CODE_SUCCESS);
+        $contents = file_get_contents($this->app);
+
+        $this->assertStringNotContainsString($plugin2, $contents);
+        $this->assertStringContainsString($plugin1, $contents);
     }
 
     /**
@@ -176,7 +192,7 @@ class PluginUnloadCommandTest extends TestCase
     protected function addPluginToApp($insert)
     {
         $contents = file_get_contents($this->app);
-        $contents = preg_replace('/(function bootstrap\(\)(?:\s*)\:(?:\s*)void(?:\s+)\{)/m', '$1' . $insert, $contents);
+        $contents = preg_replace('/(function bootstrap\(\)(?:\s*)\:(?:\s*)void(?:\s+)\{)/m', "\$1\n        " . $insert, $contents);
         file_put_contents($this->app, $contents);
     }
 }
