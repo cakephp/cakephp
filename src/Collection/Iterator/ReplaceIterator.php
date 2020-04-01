@@ -73,12 +73,7 @@ class ReplaceIterator extends Collection
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * We perform here some strictness analysis so that the
-     * iterator logic is bypassed entirely.
-     *
-     * @return \Traversable
+     * @inheritDoc
      */
     public function unwrap(): Traversable
     {

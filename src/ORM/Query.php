@@ -872,6 +872,8 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * Returns the COUNT(*) for the query. If the query has not been
      * modified, and the count has already been performed the cached
      * value is returned
+     *
+     * @return int
      */
     public function count(): int
     {
@@ -1033,6 +1035,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     /**
      * {@inheritDoc}
      *
+     * @return \Cake\Datasource\ResultSetInterface
      * @throws \RuntimeException if this method is called on a non-select Query.
      */
     public function all(): ResultSetInterface
@@ -1181,9 +1184,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @see \Cake\ORM\Table::find()
+     * @inheritDoc
      */
     public function find(string $finder, array $options = [])
     {

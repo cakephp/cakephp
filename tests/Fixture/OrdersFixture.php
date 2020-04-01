@@ -22,7 +22,7 @@ use Cake\TestSuite\Fixture\TestFixture;
 class OrdersFixture extends TestFixture
 {
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public $table = 'orders';
 

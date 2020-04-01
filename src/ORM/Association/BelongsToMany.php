@@ -511,9 +511,7 @@ class BelongsToMany extends Association
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @return \Closure
+     * @inheritDoc
      */
     public function eagerLoader(array $options): Closure
     {
