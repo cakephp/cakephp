@@ -861,7 +861,7 @@ class Marshaller
         return $records;
     }
 
-     /**
+    /**
      * dispatch Model.afterMarshal event.
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity that was marshaled.
