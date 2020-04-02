@@ -1107,6 +1107,9 @@ class Validation
      */
     public static function inList($check, array $list, bool $caseInsensitive = false): bool
     {
+        if (!is_scalar($check)) {
+            return false;
+        }
         if ($caseInsensitive) {
             $list = array_map('mb_strtolower', $list);
             $check = mb_strtolower($check);

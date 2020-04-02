@@ -2399,6 +2399,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::inList('2x', [1, 2, 3]));
         $this->assertFalse(Validation::inList(2, ['1', '2x', '3']));
         $this->assertFalse(Validation::inList('One', ['one', 'two']));
+        $this->assertFalse(Validation::inList(['one'], ['one', 'two']));
 
         // No hexadecimal for numbers.
         $this->assertFalse(Validation::inList('0x7B', ['ABC', '123']));
