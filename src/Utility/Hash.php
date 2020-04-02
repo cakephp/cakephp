@@ -361,7 +361,7 @@ class Hash
      */
     protected static function _simpleOp(string $op, array $data, array $path, $values = null): array
     {
-        $_list =& $data;
+        $_list = &$data;
 
         $count = count($path);
         $last = $count - 1;
@@ -375,7 +375,7 @@ class Hash
                 if (!isset($_list[$key])) {
                     $_list[$key] = [];
                 }
-                $_list =& $_list[$key];
+                $_list = &$_list[$key];
                 if (!is_array($_list)) {
                     $_list = [];
                 }
@@ -390,7 +390,7 @@ class Hash
                 if (!isset($_list[$key])) {
                     return $data;
                 }
-                $_list =& $_list[$key];
+                $_list = &$_list[$key];
             }
         }
 
@@ -1239,9 +1239,9 @@ class Hash
                 $idMap[$id] = array_merge($result, [$options['children'] => []]);
             }
             if (!$parentId || !in_array($parentId, $ids)) {
-                $return[] =& $idMap[$id];
+                $return[] = &$idMap[$id];
             } else {
-                $idMap[$parentId][$options['children']][] =& $idMap[$id];
+                $idMap[$parentId][$options['children']][] = &$idMap[$id];
             }
         }
 

@@ -597,7 +597,7 @@ class QueryExpression implements ExpressionInterface, Countable
     {
         $parts = [];
         foreach ($this->_conditions as $k => $c) {
-            $key =& $k;
+            $key = &$k;
             $part = $callable($c, $key);
             if ($part !== null) {
                 $parts[$key] = $part;
