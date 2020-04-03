@@ -599,7 +599,7 @@ class QueryExpression implements ExpressionInterface, Countable
     {
         $parts = [];
         foreach ($this->_conditions as $k => $c) {
-            $key =& $k;
+            $key = &$k;
             $part = $callable($c, $key);
             if ($part !== null) {
                 $parts[$key] = $part;
@@ -790,7 +790,7 @@ class QueryExpression implements ExpressionInterface, Countable
     /**
      * Returns the type name for the passed field if it was stored in the typeMap
      *
-     * @param string|\Cake\Database\Expression\IdentifierExpression $field The field name to get a type for.
+     * @param string|\Cake\Database\ExpressionInterface $field The field name to get a type for.
      * @return string|null The computed type or null, if the type is unknown.
      */
     protected function _calculateType($field): ?string

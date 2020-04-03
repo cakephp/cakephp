@@ -480,7 +480,7 @@ class AssociationTest extends TestCase
     public function testPropertyNameClash()
     {
         $this->expectException(\PHPUnit\Framework\Error\Warning::class);
-        $this->expectExceptionMessageRegExp('/^Association property name "foo" clashes with field of same name of table "test"/');
+        $this->expectExceptionMessageMatches('/^Association property name "foo" clashes with field of same name of table "test"/');
         $this->source->setSchema(['foo' => ['type' => 'string']]);
         $this->assertSame('foo', $this->association->getProperty());
     }

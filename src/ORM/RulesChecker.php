@@ -83,7 +83,7 @@ class RulesChecker extends BaseRulesChecker
      *
      * @param string|string[] $field The field or list of fields to check for existence by
      * primary key lookup in the other table.
-     * @param object|string $table The table name where the fields existence will be checked.
+     * @param \Cake\ORM\Table|\Cake\ORM\Association|string $table The table name where the fields existence will be checked.
      * @param string|array|null $message The error message to show in case the rule does not pass. Can
      *   also be an array of options. When an array, the 'message' key can be used to provide a message.
      * @return \Cake\Datasource\RuleInvoker

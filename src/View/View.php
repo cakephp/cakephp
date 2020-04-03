@@ -273,6 +273,7 @@ class View implements EventDispatcherInterface
      * ViewBlock class.
      *
      * @var string
+     * @psalm-var class-string<\Cake\View\ViewBlock>
      */
     protected $_viewBlockClass = ViewBlock::class;
 

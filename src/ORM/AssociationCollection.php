@@ -22,6 +22,7 @@ use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Locator\LocatorInterface;
 use InvalidArgumentException;
 use IteratorAggregate;
+use Traversable;
 
 /**
  * A container/collection for association classes.
@@ -378,9 +379,10 @@ class AssociationCollection implements IteratorAggregate
     /**
      * Allow looping through the associations
      *
-     * @return \ArrayIterator
+     * @return \Cake\ORM\Association[]
+     * @psalm-return \Traversable<string, \Cake\ORM\Association>
      */
-    public function getIterator(): ArrayIterator
+    public function getIterator(): Traversable
     {
         return new ArrayIterator($this->_items);
     }

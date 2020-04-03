@@ -63,7 +63,7 @@ class IntegerType extends BaseType implements BatchCastingInterface
     }
 
     /**
-     * Convert integer values to PHP integers
+     * {@inheritDoc}
      *
      * @param mixed $value The value to convert.
      * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
@@ -79,9 +79,7 @@ class IntegerType extends BaseType implements BatchCastingInterface
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @return array
+     * @inheritDoc
      */
     public function manyToPHP(array $values, array $fields, DriverInterface $driver): array
     {

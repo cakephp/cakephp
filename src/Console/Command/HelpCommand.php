@@ -58,7 +58,9 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
         $commands = $this->commands->getIterator();
-        $commands->ksort();
+        if ($commands instanceof ArrayIterator) {
+            $commands->ksort();
+        }
 
         if ($args->getOption('xml')) {
             $this->asXml($io, $commands);
@@ -75,10 +77,10 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
      * Output text.
      *
      * @param \Cake\Console\ConsoleIo $io The console io
-     * @param \ArrayIterator $commands The command collection to output.
+     * @param iterable $commands The command collection to output.
      * @return void
      */
-    protected function asText(ConsoleIo $io, ArrayIterator $commands): void
+    protected function asText(ConsoleIo $io, iterable $commands): void
     {
         $invert = [];
         foreach ($commands as $name => $class) {
@@ -182,10 +184,10 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
      * Output as XML
      *
      * @param \Cake\Console\ConsoleIo $io The console io
-     * @param \ArrayIterator $commands The command collection to output
+     * @param iterable $commands The command collection to output
      * @return void
      */
-    protected function asXml(ConsoleIo $io, ArrayIterator $commands): void
+    protected function asXml(ConsoleIo $io, iterable $commands): void
     {
         $shells = new SimpleXMLElement('<shells></shells>');
         foreach ($commands as $name => $class) {

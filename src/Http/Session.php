@@ -419,6 +419,10 @@ class Session
             return false;
         }
 
+        if ($name === null) {
+            return (bool)$_SESSION;
+        }
+
         return Hash::get($_SESSION, $name) !== null;
     }
 

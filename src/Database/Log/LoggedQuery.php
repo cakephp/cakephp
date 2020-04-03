@@ -78,6 +78,12 @@ class LoggedQuery implements JsonSerializable
             }
 
             if (is_string($p)) {
+                // Likely binary data like a blob or binary uuid.
+                // pattern matches ascii control chars.
+                if (preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '', $p) !== $p) {
+                    $p = bin2hex($p);
+                }
+
                 $replacements = [
                     '$' => '\\$',
                     '\\' => '\\\\\\\\',

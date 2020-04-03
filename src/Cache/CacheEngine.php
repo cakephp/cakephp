@@ -178,8 +178,6 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
                 $this->setConfig('duration', $restore);
             }
         }
-
-        return false;
     }
 
     /**

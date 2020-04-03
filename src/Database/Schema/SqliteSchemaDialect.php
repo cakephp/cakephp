@@ -242,6 +242,10 @@ class SqliteSchemaDialect extends SchemaDialect
      * stable, and the names for constraints will not match those used to create
      * the table. This is a limitation in Sqlite's metadata features.
      *
+     * @param \Cake\Database\Schema\TableSchema $schema The table object to append
+     *    an index or constraint to.
+     * @param array $row The row data from `describeIndexSql`.
+     * @return void
      */
     public function convertIndexDescription(TableSchema $schema, array $row): void
     {
@@ -309,6 +313,9 @@ class SqliteSchemaDialect extends SchemaDialect
     /**
      * {@inheritDoc}
      *
+     * @param \Cake\Database\Schema\TableSchema $schema The table instance the column is in.
+     * @param string $name The name of the column.
+     * @return string SQL fragment.
      * @throws \Cake\Database\Exception when the column type is unknown
      */
     public function columnSql(TableSchema $schema, string $name): string
@@ -445,6 +452,9 @@ class SqliteSchemaDialect extends SchemaDialect
      * Note integer primary keys will return ''. This is intentional as Sqlite requires
      * that integer primary keys be defined in the column definition.
      *
+     * @param \Cake\Database\Schema\TableSchema $schema The table instance the column is in.
+     * @param string $name The name of the column.
+     * @return string SQL fragment.
      */
     public function constraintSql(TableSchema $schema, string $name): string
     {
@@ -496,6 +506,9 @@ class SqliteSchemaDialect extends SchemaDialect
      *
      * SQLite can not properly handle adding a constraint to an existing table.
      * This method is no-op
+     *
+     * @param \Cake\Database\Schema\TableSchema $schema The table instance the foreign key constraints are.
+     * @return array SQL fragment.
      */
     public function addConstraintSql(TableSchema $schema): array
     {
@@ -507,6 +520,9 @@ class SqliteSchemaDialect extends SchemaDialect
      *
      * SQLite can not properly handle dropping a constraint to an existing table.
      * This method is no-op
+     *
+     * @param \Cake\Database\Schema\TableSchema $schema The table instance the foreign key constraints are.
+     * @return array SQL fragment.
      */
     public function dropConstraintSql(TableSchema $schema): array
     {

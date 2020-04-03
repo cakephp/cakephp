@@ -7,8 +7,8 @@
     <a href="LICENSE" target="_blank">
         <img alt="Software License" src="https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square">
     </a>
-    <a href="https://travis-ci.org/cakephp/cakephp" target="_blank">
-        <img alt="Build Status" src="https://img.shields.io/travis/cakephp/cakephp/master.svg?style=flat-square">
+    <a href="https://travis-ci.com/cakephp/cakephp" target="_blank">
+        <img alt="Build Status" src="https://img.shields.io/travis/com/cakephp/cakephp/master.svg?style=flat-square">
     </a>
     <a href="https://coveralls.io/r/cakephp/cakephp?branch=master" target="_blank">
         <img alt="Coverage Status" src="https://img.shields.io/coveralls/cakephp/cakephp/master.svg?style=flat-square">

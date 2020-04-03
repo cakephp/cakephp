@@ -21,11 +21,6 @@ parameters:
 			path: src/Auth/Storage/SessionStorage.php
 
 		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: src/Cache/CacheEngine.php
-
-		-
 			message: "#^Access to undefined constant Memcached\\:\\:OPT_CLIENT_MODE\\.$#"
 			count: 1
 			path: src/Cache/Engine/MemcachedEngine.php
@@ -263,11 +258,6 @@ parameters:
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 7
-			path: src/Database/Expression/QueryExpression.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
 			path: src/Database/Expression/QueryExpression.php
 
 		-
@@ -511,11 +501,6 @@ parameters:
 			path: src/ORM/Rule/IsUnique.php
 
 		-
-			message: "#^Negated boolean expression is always true\\.$#"
-			count: 1
-			path: src/ORM/Table.php
-
-		-
 			message: "#^Variable \\$entities in PHPDoc tag @var does not match any variable in the foreach loop\\: \\$key, \\$entity$#"
 			count: 1
 			path: src/ORM/Table.php
@@ -624,11 +609,6 @@ parameters:
 			message: "#^Parameter \\#1 \\$response of class Cake\\\\TestSuite\\\\Constraint\\\\Response\\\\CookieEncryptedEquals constructor expects Cake\\\\Http\\\\Response\\|null, Psr\\\\Http\\\\Message\\\\ResponseInterface given\\.$#"
 			count: 1
 			path: src/TestSuite/IntegrationTestCase.php
-
-		-
-			message: "#^Unable to resolve the template type RealInstanceType in call to method PHPUnit\\\\Framework\\\\TestCase\\:\\:getMockBuilder\\(\\)$#"
-			count: 1
-			path: src/TestSuite/TestCase.php
 
 		-
 			message: "#^Return type \\(array\\<string, array\\|string\\>\\) of method Cake\\\\View\\\\Exception\\\\MissingCellTemplateException\\:\\:getAttributes\\(\\) should be compatible with return type \\(array\\<string, array\\|string\\>\\) of method Cake\\\\View\\\\Exception\\\\MissingTemplateException\\:\\:getAttributes\\(\\)$#"

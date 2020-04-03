@@ -125,9 +125,9 @@ class MapReduce implements IteratorAggregate
      * Returns an iterator with the end result of running the Map and Reduce
      * phases on the original data
      *
-     * @return \ArrayIterator
+     * @return \Traversable
      */
-    public function getIterator(): ArrayIterator
+    public function getIterator(): Traversable
     {
         if (!$this->_executed) {
             $this->_execute();
