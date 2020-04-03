@@ -614,7 +614,7 @@ trait CollectionTrait
             $row[$nestingKey] = [];
             $id = $idPath($row, $key);
             $parentId = $parentPath($row, $key);
-            $parents[$id] =& $row;
+            $parents[$id] = &$row;
             $mapReduce->emitIntermediate($id, $parentId);
         };
 
@@ -635,7 +635,7 @@ trait CollectionTrait
 
             $children = [];
             foreach ($values as $id) {
-                $children[] =& $parents[$id];
+                $children[] = &$parents[$id];
             }
             $parents[$key][$nestingKey] = $children;
         };
