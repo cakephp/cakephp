@@ -1296,4 +1296,12 @@ trait IntegrationTestTrait
             PHP_EOL .
             $exception->getTraceAsString();
     }
+
+    /**
+     * @return \Cake\TestSuite\TestSession
+     */
+    protected function getSession(): TestSession
+    {
+        return new TestSession($_SESSION);
+    }
 }
