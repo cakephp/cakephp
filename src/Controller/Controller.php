@@ -246,7 +246,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * If called with the first parameter, it will be set as the controller $this->_components property
      *
      * @param \Cake\Controller\ComponentRegistry|null $components Component registry.
-     *
      * @return \Cake\Controller\ComponentRegistry
      */
     public function components(?ComponentRegistry $components = null): ComponentRegistry

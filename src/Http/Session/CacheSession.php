@@ -42,7 +42,6 @@ class CacheSession implements SessionHandlerInterface
      * @param array $config The configuration to use for this engine
      * It requires the key 'config' which is the name of the Cache config to use for
      * storing the session
-     *
      * @throws \InvalidArgumentException if the 'config' key is not provided
      */
     public function __construct(array $config = [])

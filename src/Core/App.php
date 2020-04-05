@@ -226,7 +226,6 @@ class App
      *
      * @param string $type Package type.
      * @param string|null $plugin Plugin name.
-     *
      * @return string[]
      */
     public static function classPath(string $type, ?string $plugin = null): array

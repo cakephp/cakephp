@@ -38,6 +38,7 @@ class XmlTest extends TestCase
 
     /**
      * fixtures property
+     *
      * @var array
      */
     protected $fixtures = [

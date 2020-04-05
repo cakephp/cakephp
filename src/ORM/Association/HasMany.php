@@ -2,7 +2,6 @@
 declare(strict_types=1);
 
 /**
- *
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
@@ -201,7 +200,6 @@ class HasMany extends Association
      * @param array $entities list of entities
      * to persist in target table and to link to the parent entity
      * @param array $options list of options accepted by `Table::save()`.
-     *
      * @return bool `true` on success, `false` otherwise.
      */
     protected function _saveTarget(

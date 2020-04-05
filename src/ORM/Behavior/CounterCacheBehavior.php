@@ -277,7 +277,6 @@ class CounterCacheBehavior extends Behavior
      * Checks if the count should be updated given a set of conditions.
      *
      * @param array $conditions Conditions to update count.
-     *
      * @return bool True if the count update should happen, false otherwise.
      */
     protected function _shouldUpdateCount(array $conditions)

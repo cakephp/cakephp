@@ -18,7 +18,6 @@ class TestBaseLog extends BaseLog
      * @param mixed $level
      * @param string $message
      * @param array $context
-     *
      * @return string
      */
     public function log($level, $message, array $context = [])

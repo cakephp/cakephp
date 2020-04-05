@@ -877,7 +877,6 @@ class FormHelper extends Helper
      *    be enabled
      * - `legend` Set to false to disable the legend for the generated control set. Or supply a string
      *    to customize the legend text.
-     *
      * @return string Completed form controls.
      * @link https://book.cakephp.org/4/en/views/helpers/form.html#generating-entire-forms
      */
@@ -915,7 +914,6 @@ class FormHelper extends Helper
      *    If you pass an empty array, the fieldset will be enabled.
      * - `legend` Set to false to disable the legend for the generated input set.
      *    Or supply a string to customize the legend text.
-     *
      * @return string Completed form inputs.
      * @link https://book.cakephp.org/4/en/views/helpers/form.html#generating-entire-forms
      */
@@ -946,7 +944,6 @@ class FormHelper extends Helper
      *    be enabled
      * - `legend` Set to false to disable the legend for the generated input set. Or supply a string
      *    to customize the legend text.
-     *
      * @return string Completed form inputs.
      */
     public function fieldset(string $fields = '', array $options = []): string

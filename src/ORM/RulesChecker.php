@@ -127,7 +127,6 @@ class RulesChecker extends BaseRulesChecker
      *  possible errors. When absent, the name is inferred from `$association`.
      * @param string|null $message The error message to show in case the rule does not pass.
      * @return \Cake\Datasource\RuleInvoker
-     *
      * @since 4.0.0
      */
     public function isLinkedTo($association, ?string $field = null, ?string $message = null): RuleInvoker
@@ -158,7 +157,6 @@ class RulesChecker extends BaseRulesChecker
      *  possible errors. When absent, the name is inferred from `$association`.
      * @param string|null $message The error message to show in case the rule does not pass.
      * @return \Cake\Datasource\RuleInvoker
-     *
      * @since 4.0.0
      */
     public function isNotLinkedTo($association, ?string $field = null, ?string $message = null): RuleInvoker
@@ -182,11 +180,8 @@ class RulesChecker extends BaseRulesChecker
      * @param string $linkStatus The ink status required for the check to pass.
      * @param string $ruleName The alias/name of the rule.
      * @return \Cake\Datasource\RuleInvoker
-     *
      * @throws \InvalidArgumentException In case the `$association` argument is of an invalid type.
-     *
      * @since 4.0.0
-     *
      * @see \Cake\ORM\RulesChecker::isLinkedTo()
      * @see \Cake\ORM\RulesChecker::isNotLinkedTo()
      * @see \Cake\ORM\Rule\LinkConstraint::STATUS_LINKED

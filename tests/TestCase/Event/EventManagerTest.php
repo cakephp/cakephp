@@ -539,6 +539,7 @@ class EventManagerTest extends TestCase
     /**
      * Tests events dispatched by a local manager can be handled by
      * handler registered in the global event manager
+     *
      * @triggers my_event $manager
      */
     public function testDispatchLocalHandledByGlobal()

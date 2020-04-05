@@ -23,6 +23,7 @@ class SecurityException extends BadRequestException
 {
     /**
      * Security Exception type
+     *
      * @var string
      */
     protected $_type = 'secure';

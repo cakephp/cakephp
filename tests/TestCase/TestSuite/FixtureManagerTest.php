@@ -263,7 +263,6 @@ class FixtureManagerTest extends TestCase
 
     /**
      * Test that unknown types are handled gracefully.
-     *
      */
     public function testFixturizeInvalidType()
     {

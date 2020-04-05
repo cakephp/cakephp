@@ -249,7 +249,6 @@ class EntityContext implements ContextInterface
      *     data or entity.
      *   - `schemaDefault`: Boolean indicating whether default value from table
      *     schema should be used if it's not explicitly provided.
-     *
      * @return mixed The value of the field or null on a miss.
      */
     public function val(string $field, array $options = [])

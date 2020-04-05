@@ -21,7 +21,6 @@ use Cake\Database\TypeFactory;
 /**
  * Offers a method to convert values to ExpressionInterface objects
  * if the type they should be converted to implements ExpressionTypeInterface
- *
  */
 trait ExpressionTypeCasterTrait
 {

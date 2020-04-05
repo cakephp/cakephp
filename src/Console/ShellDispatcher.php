@@ -172,7 +172,6 @@ class ShellDispatcher
      * Built-in extra parameter is :
      *
      * - `requested` : if used, will prevent the Shell welcome message to be displayed
-     *
      * @return int The cli command exit code. 0 is success.
      */
     public function dispatch(array $extra = []): int
@@ -204,7 +203,6 @@ class ShellDispatcher
      * Built-in extra parameter is :
      *
      * - `requested` : if used, will prevent the Shell welcome message to be displayed
-     *
      * @return bool|int|null
      * @throws \Cake\Console\Exception\MissingShellMethodException
      */

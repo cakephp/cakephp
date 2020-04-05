@@ -632,7 +632,6 @@ class View implements EventDispatcherInterface
      * - `ignoreMissing` - Used to allow missing elements. Set to true to not throw exceptions.
      * - `plugin` - setting to false will force to use the application's element from plugin templates, when the
      *   plugin has element with same name. Defaults to true
-     *
      * @return string Rendered Element
      * @throws \Cake\View\Exception\MissingElementException When an element is missing and `ignoreMissing`
      *   is false.
@@ -1005,7 +1004,6 @@ class View implements EventDispatcherInterface
      * Check if a block exists
      *
      * @param string $name Name of the block
-     *
      * @return bool
      */
     public function exists(string $name): bool

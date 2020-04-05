@@ -70,7 +70,6 @@ class ConnectionManagerTest extends TestCase
 
     /**
      * Test invalid classes cause exceptions
-     *
      */
     public function testConfigInvalidOptions()
     {
