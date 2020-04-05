@@ -9,11 +9,11 @@
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- * @link          https://cakephp.org CakePHP(tm) Project
- * @package       Cake.Network
- * @since         CakePHP(tm) v 1.2.0
- * @license       https://opensource.org/licenses/mit-license.php MIT License
+ * @copyright	  Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link		  https://cakephp.org CakePHP(tm) Project
+ * @package		  Cake.Network
+ * @since		  CakePHP(tm) v 1.2.0
+ * @license		  https://opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('Validation', 'Utility');
@@ -23,7 +23,7 @@ App::uses('Validation', 'Utility');
  *
  * Core base class for network communication.
  *
- * @package       Cake.Network
+ * @package		  Cake.Network
  */
 class CakeSocket {
 
@@ -139,7 +139,9 @@ class CakeSocket {
 			'tlsv1_1_client' => 'STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT',
 			'tlsv1_2_client' => 'STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT',
 			'tlsv1_1_server' => 'STREAM_CRYPTO_METHOD_TLSv1_1_SERVER',
-			'tlsv1_2_server' => 'STREAM_CRYPTO_METHOD_TLSv1_2_SERVER'
+			'tlsv1_2_server' => 'STREAM_CRYPTO_METHOD_TLSv1_2_SERVER',
+			'tlsv1_3_server' => 'STREAM_CRYPTO_METHOD_TLSv1_3_SERVER',
+			'tlsv1_3_client' => 'STREAM_CRYPTO_METHOD_TLSv1_3_CLIENT'
 		);
 		foreach ($conditionalCrypto as $key => $const) {
 			if (defined($const)) {
@@ -153,6 +155,18 @@ class CakeSocket {
 		}
 		if (isset($this->_encryptMethods['tlsv1_2_server'])) {
 			$this->_encryptMethods['tls_server'] = STREAM_CRYPTO_METHOD_TLS_SERVER | STREAM_CRYPTO_METHOD_TLSv1_1_SERVER | STREAM_CRYPTO_METHOD_TLSv1_2_SERVER;
+		}
+		if (isset($this->_encryptMethods['tlsv1_3_client'])) {
+			$this->_encryptMethods['tls_client'] = STREAM_CRYPTO_METHOD_TLS_CLIENT |
+				STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT |
+				STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT |
+				STREAM_CRYPTO_METHOD_TLSv1_3_CLIENT;
+		}
+		if (isset($this->_encryptMethods['tlsv1_3_server'])) {
+			$this->_encryptMethods['tls_server'] = STREAM_CRYPTO_METHOD_TLS_SERVER |
+				STREAM_CRYPTO_METHOD_TLSv1_1_SERVER |
+				STREAM_CRYPTO_METHOD_TLSv1_2_SERVER |
+				STREAM_CRYPTO_METHOD_TLSv1_3_SERVER;
 		}
 		// @codingStandardsIgnoreEnd
 	}
