@@ -1622,7 +1622,6 @@ class RouterTest extends TestCase
 
     /**
      * Test exceptions when parsing fails.
-     *
      */
     public function testParseError()
     {

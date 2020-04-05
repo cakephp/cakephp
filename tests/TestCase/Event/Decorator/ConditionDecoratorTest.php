@@ -95,7 +95,6 @@ class ConditionDecoratorTest extends TestCase
 
     /**
      * testCallableRuntimeException
-     *
      */
     public function testCallableRuntimeException()
     {

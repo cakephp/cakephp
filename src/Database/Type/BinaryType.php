@@ -83,7 +83,6 @@ class BinaryType extends BaseType
      * that make sense for the rest of the ORM/Database layers.
      *
      * @param mixed $value The value to convert.
-     *
      * @return mixed Converted value.
      */
     public function marshal($value)

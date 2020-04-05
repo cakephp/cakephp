@@ -185,7 +185,6 @@ trait IntegrationTestTrait
     protected $_flashMessages;
 
     /**
-     *
      * @var string|null
      */
     protected $_cookieEncryptionKey;

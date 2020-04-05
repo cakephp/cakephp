@@ -37,7 +37,6 @@ interface EventDispatcherInterface
      * it can be read by listeners.
      * @param object|null $subject The object that this event applies to
      * ($this by default).
-     *
      * @return \Cake\Event\EventInterface
      */
     public function dispatchEvent(string $name, ?array $data = null, ?object $subject = null): EventInterface;

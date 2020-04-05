@@ -1633,7 +1633,6 @@ class Validation
      * body matches against checksum via Mod97-10 algorithm
      *
      * @param mixed $check The value to check
-     *
      * @return bool Success
      */
     public static function iban($check): bool

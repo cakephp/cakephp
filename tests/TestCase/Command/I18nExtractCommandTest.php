@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * I18nExtractCommandTest
- *
  */
 class I18nExtractCommandTest extends TestCase
 {

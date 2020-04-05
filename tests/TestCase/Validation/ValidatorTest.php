@@ -875,7 +875,6 @@ class ValidatorTest extends TestCase
 
     /**
      * Test allowEmptyString with callback
-     *
      */
     public function testAllowEmptyStringCallbackWhen()
     {

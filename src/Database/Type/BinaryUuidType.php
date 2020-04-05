@@ -99,7 +99,6 @@ class BinaryUuidType extends BaseType
      * that make sense for the rest of the ORM/Database layers.
      *
      * @param mixed $value The value to convert.
-     *
      * @return mixed Converted value.
      */
     public function marshal($value)
@@ -110,9 +109,7 @@ class BinaryUuidType extends BaseType
     /**
      * Converts a binary uuid to a string representation
      *
-     *
      * @param mixed $binary The value to convert.
-     *
      * @return string Converted value.
      */
     protected function convertBinaryUuidToString($binary): string
@@ -131,9 +128,7 @@ class BinaryUuidType extends BaseType
     /**
      * Converts a string uuid to a binary representation
      *
-     *
      * @param string $string The value to convert.
-     *
      * @return string Converted value.
      */
     protected function convertStringToBinaryUuid($string): string

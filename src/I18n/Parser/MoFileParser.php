@@ -54,7 +54,6 @@ class MoFileParser
      * was created on. Both 32bit and 64bit systems are supported.
      *
      * @param string $file The file to be parsed.
-     *
      * @return array List of messages extracted from the file
      * @throws \RuntimeException If stream content has an invalid format.
      */

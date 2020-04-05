@@ -38,7 +38,6 @@ class TestCaseTest extends TestCase
 {
     /**
      * tests trying to assertEventFired without configuring an event list
-     *
      */
     public function testEventFiredMisconfiguredEventList()
     {
@@ -49,7 +48,6 @@ class TestCaseTest extends TestCase
 
     /**
      * tests trying to assertEventFired without configuring an event list
-     *
      */
     public function testEventFiredWithMisconfiguredEventList()
     {

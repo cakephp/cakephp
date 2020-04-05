@@ -875,7 +875,6 @@ class FormHelperTest extends TestCase
 
     /**
      * Test base form URL when url param is passed with multiple parameters (&)
-     *
      */
     public function testCreateQueryStringRequest()
     {

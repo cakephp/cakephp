@@ -38,7 +38,6 @@ use SplFileInfo;
  * returns a status code integer. Keep in mind that these consants might
  * include status codes that are now allowed which will throw an
  * `\InvalidArgumentException`.
- *
  */
 class Response implements ResponseInterface
 {
@@ -431,7 +430,6 @@ class Response implements ResponseInterface
      *  - status: the HTTP status code to respond with
      *  - type: a complete mime-type string or an extension mapped in this class
      *  - charset: the charset for the response body
-     *
      * @throws \InvalidArgumentException
      */
     public function __construct(array $options = [])

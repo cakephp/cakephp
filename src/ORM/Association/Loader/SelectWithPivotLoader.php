@@ -56,7 +56,6 @@ class SelectWithPivotLoader extends SelectLoader
 
     /**
      * @inheritDoc
-     *
      */
     public function __construct(array $options)
     {

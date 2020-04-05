@@ -236,8 +236,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * been added to the query by the first. If you need to change the list after the first call,
      * pass overwrite boolean true which will reset the select clause removing all previous additions.
      *
-     *
-     *
      * @param \Cake\ORM\Table|\Cake\ORM\Association $table The table to use to get an array of columns
      * @param string[] $excludedFields The un-aliased column names you do not want selected from $table
      * @param bool $overwrite Whether to reset/remove previous selected fields

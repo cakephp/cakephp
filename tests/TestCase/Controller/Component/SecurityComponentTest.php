@@ -84,7 +84,6 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
-     *
      * Resets environment state.
      *
      * @return void

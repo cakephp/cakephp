@@ -618,6 +618,7 @@ TEXT;
 
     /**
      * Test truncate() method with both exact and html.
+     *
      * @return void
      */
     public function testTruncateExactHtml()

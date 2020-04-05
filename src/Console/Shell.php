@@ -462,7 +462,6 @@ class Shell
      * Built-in extra parameter is :
      *
      * - `requested` : if used, will prevent the Shell welcome message to be displayed
-     *
      * @return int|bool|null
      * @link https://book.cakephp.org/4/en/console-and-shells.html#the-cakephp-console
      */

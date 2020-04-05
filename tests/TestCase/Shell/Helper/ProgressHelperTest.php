@@ -71,7 +71,6 @@ class ProgressHelperTest extends TestCase
 
     /**
      * Test that a callback is required.
-     *
      */
     public function testOutputFailure()
     {

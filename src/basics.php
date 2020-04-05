@@ -98,6 +98,7 @@ if (!function_exists('breakpoint')) {
      * Command to return the eval-able code to startup PsySH in interactive debugger
      * Works the same way as eval(\Psy\sh());
      * psy/psysh must be loaded in your project
+     *
      * @link http://psysh.org/
      * ```
      * eval(breakpoint());

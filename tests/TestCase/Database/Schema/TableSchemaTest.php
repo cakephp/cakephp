@@ -315,6 +315,7 @@ class TableSchemaTest extends TestCase
     /**
      * Test adding an constraint.
      * >
+     *
      * @return void
      */
     public function testAddConstraint()
@@ -334,6 +335,7 @@ class TableSchemaTest extends TestCase
     /**
      * Test adding an constraint with an overlapping unique index
      * >
+     *
      * @return void
      */
     public function testAddConstraintOverwriteUniqueIndex()

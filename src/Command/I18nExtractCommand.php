@@ -123,6 +123,7 @@ class I18nExtractCommand extends Command
 
     /**
      * Count number of marker errors found
+     *
      * @var int
      */
     protected $_countMarkerError = 0;
