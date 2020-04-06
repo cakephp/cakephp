@@ -2409,6 +2409,8 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::inList('one', ['One', 'Two'], true));
         $this->assertTrue(Validation::inList('Two', ['one', 'two'], true));
         $this->assertFalse(Validation::inList('three', ['one', 'two'], true));
+        $this->assertFalse(Validation::inList(null, ['one', 'two'], true));
+        $this->assertFalse(Validation::inList(false, ['one', 'two'], true));
     }
 
     /**

@@ -1112,7 +1112,7 @@ class Validation
         }
         if ($caseInsensitive) {
             $list = array_map('mb_strtolower', $list);
-            $check = mb_strtolower($check);
+            $check = mb_strtolower((string)$check);
         } else {
             $list = array_map('strval', $list);
         }
