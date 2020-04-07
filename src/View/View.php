@@ -1022,28 +1022,25 @@ class View implements EventDispatcherInterface
      */
     public function extend(string $name)
     {
-        if ($name[0] === '/' || $this->_currentType === static::TYPE_TEMPLATE) {
-            $parent = $this->_getTemplateFileName($name);
-        } else {
-            switch ($this->_currentType) {
-                case static::TYPE_ELEMENT:
-                    $parent = $this->_getElementFileName($name);
-                    if (!$parent) {
-                        [$plugin, $name] = $this->pluginSplit($name);
-                        $paths = $this->_paths($plugin);
-                        $defaultPath = $paths[0] . static::TYPE_ELEMENT . DIRECTORY_SEPARATOR;
-                        throw new LogicException(sprintf(
-                            'You cannot extend an element which does not exist (%s).',
-                            $defaultPath . $name . $this->_ext
-                        ));
-                    }
-                    break;
-                case static::TYPE_LAYOUT:
-                    $parent = $this->_getLayoutFileName($name);
-                    break;
-                default:
-                    $parent = $this->_getTemplateFileName($name);
-            }
+        $type = $name[0] === '/' ? static::TYPE_TEMPLATE : $this->_currentType;
+        switch ($type) {
+            case static::TYPE_ELEMENT:
+                $parent = $this->_getElementFileName($name);
+                if (!$parent) {
+                    [$plugin, $name] = $this->pluginSplit($name);
+                    $paths = $this->_paths($plugin);
+                    $defaultPath = $paths[0] . static::TYPE_ELEMENT . DIRECTORY_SEPARATOR;
+                    throw new LogicException(sprintf(
+                        'You cannot extend an element which does not exist (%s).',
+                        $defaultPath . $name . $this->_ext
+                    ));
+                }
+                break;
+            case static::TYPE_LAYOUT:
+                $parent = $this->_getLayoutFileName($name);
+                break;
+            default:
+                $parent = $this->_getTemplateFileName($name);
         }
 
         if ($parent === $this->_current) {
