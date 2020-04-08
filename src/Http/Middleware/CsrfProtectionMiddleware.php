@@ -189,6 +189,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
     public function createToken(): string
     {
         $value = Security::randomString(static::TOKEN_VALUE_LENGTH);
+
         return $value . hash_hmac('sha1', $value, Security::getSalt());
     }
 

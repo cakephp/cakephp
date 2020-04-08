@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Http\Middleware;
 
-use \Cake\Http\Exception\InvalidCsrfTokenException;
+use Cake\Http\Exception\InvalidCsrfTokenException;
 use Cake\Http\Middleware\CsrfProtectionMiddleware;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;

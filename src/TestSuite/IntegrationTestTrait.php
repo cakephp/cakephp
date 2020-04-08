@@ -57,7 +57,6 @@ use Cake\TestSuite\Stub\TestExceptionRenderer;
 use Cake\Utility\CookieCryptTrait;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
-use Cake\Utility\Text;
 use Exception;
 use Laminas\Diactoros\Uri;
 use LogicException;
