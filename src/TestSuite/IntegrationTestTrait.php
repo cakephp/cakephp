@@ -21,6 +21,7 @@ use Cake\Database\Exception as DatabaseException;
 use Cake\Error\ExceptionRenderer;
 use Cake\Event\EventInterface;
 use Cake\Form\FormProtector;
+use Cake\Http\Middleware\CsrfProtectionMiddleware;
 use Cake\Http\Session;
 use Cake\Routing\Router;
 use Cake\TestSuite\Constraint\Response\BodyContains;
@@ -671,8 +672,9 @@ trait IntegrationTestTrait
         }
 
         if ($this->_csrfToken === true) {
+            $middleware = new CsrfProtectionMiddleware();
             if (!isset($this->_cookie['csrfToken'])) {
-                $this->_cookie['csrfToken'] = Text::uuid();
+                $this->_cookie['csrfToken'] = $middleware->createToken();
             }
             if (!isset($data['_csrfToken'])) {
                 $data['_csrfToken'] = $this->_cookie['csrfToken'];

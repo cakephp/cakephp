@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Http\Middleware;
 
+use \Cake\Http\Exception\InvalidCsrfTokenException;
 use Cake\Http\Middleware\CsrfProtectionMiddleware;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
@@ -167,18 +168,19 @@ class CsrfProtectionMiddlewareTest extends TestCase
      */
     public function testValidTokenInHeader($method)
     {
+        $middleware = new CsrfProtectionMiddleware();
+        $token = $middleware->createToken();
         $request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => $method,
-                'HTTP_X_CSRF_TOKEN' => 'testing123',
+                'HTTP_X_CSRF_TOKEN' => $token,
             ],
             'post' => ['a' => 'b'],
-            'cookies' => ['csrfToken' => 'testing123'],
+            'cookies' => ['csrfToken' => $token],
         ]);
         $response = new Response();
 
         // No exception means the test is valid
-        $middleware = new CsrfProtectionMiddleware();
         $response = $middleware->process($request, $this->_getRequestHandler());
         $this->assertInstanceOf(Response::class, $response);
     }
@@ -191,7 +193,6 @@ class CsrfProtectionMiddlewareTest extends TestCase
      */
     public function testInvalidTokenInHeader($method)
     {
-        $this->expectException(\Cake\Http\Exception\InvalidCsrfTokenException::class);
         $request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => $method,
@@ -202,6 +203,8 @@ class CsrfProtectionMiddlewareTest extends TestCase
         ]);
 
         $middleware = new CsrfProtectionMiddleware();
+
+        $this->expectException(InvalidCsrfTokenException::class);
         $middleware->process($request, $this->_getRequestHandler());
     }
 
@@ -213,12 +216,15 @@ class CsrfProtectionMiddlewareTest extends TestCase
      */
     public function testValidTokenRequestData($method)
     {
+        $middleware = new CsrfProtectionMiddleware();
+        $token = $middleware->createToken();
+
         $request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => $method,
             ],
-            'post' => ['_csrfToken' => 'testing123'],
-            'cookies' => ['csrfToken' => 'testing123'],
+            'post' => ['_csrfToken' => $token],
+            'cookies' => ['csrfToken' => $token],
         ]);
 
         $handler = new TestRequestHandler(function ($request) {
@@ -228,7 +234,6 @@ class CsrfProtectionMiddlewareTest extends TestCase
         });
 
         // No exception means everything is OK
-        $middleware = new CsrfProtectionMiddleware();
         $middleware->process($request, $handler);
     }
 
@@ -240,7 +245,6 @@ class CsrfProtectionMiddlewareTest extends TestCase
      */
     public function testInvalidTokenRequestData($method)
     {
-        $this->expectException(\Cake\Http\Exception\InvalidCsrfTokenException::class);
         $request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => $method,
@@ -250,6 +254,29 @@ class CsrfProtectionMiddlewareTest extends TestCase
         ]);
 
         $middleware = new CsrfProtectionMiddleware();
+
+        $this->expectException(InvalidCsrfTokenException::class);
+        $middleware->process($request, $this->_getRequestHandler());
+    }
+
+    /**
+     * Test that tokens cannot be simple matches and must pass our hmac.
+     *
+     * @return void
+     */
+    public function testInvalidTokenIncorrectOrigin()
+    {
+        $request = new ServerRequest([
+            'environment' => [
+                'REQUEST_METHOD' => 'POST',
+            ],
+            'post' => ['_csrfToken' => 'this is a match'],
+            'cookies' => ['csrfToken' => 'this is a match'],
+        ]);
+
+        $middleware = new CsrfProtectionMiddleware();
+
+        $this->expectException(InvalidCsrfTokenException::class);
         $middleware->process($request, $this->_getRequestHandler());
     }
 
@@ -260,7 +287,6 @@ class CsrfProtectionMiddlewareTest extends TestCase
      */
     public function testInvalidTokenRequestDataMissing()
     {
-        $this->expectException(\Cake\Http\Exception\InvalidCsrfTokenException::class);
         $request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => 'POST',
@@ -270,6 +296,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
         ]);
 
         $middleware = new CsrfProtectionMiddleware();
+        $this->expectException(InvalidCsrfTokenException::class);
         $middleware->process($request, $this->_getRequestHandler());
     }
 
@@ -281,7 +308,6 @@ class CsrfProtectionMiddlewareTest extends TestCase
      */
     public function testInvalidTokenMissingCookie($method)
     {
-        $this->expectException(\Cake\Http\Exception\InvalidCsrfTokenException::class);
         $request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => $method,
@@ -291,6 +317,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
         ]);
 
         $middleware = new CsrfProtectionMiddleware();
+        $this->expectException(InvalidCsrfTokenException::class);
         $middleware->process($request, $this->_getRequestHandler());
     }
 
@@ -333,18 +360,19 @@ class CsrfProtectionMiddlewareTest extends TestCase
      */
     public function testConfigurationValidate()
     {
-        $request = new ServerRequest([
-            'environment' => ['REQUEST_METHOD' => 'POST'],
-            'cookies' => ['csrfToken' => 'nope', 'token' => 'yes'],
-            'post' => ['_csrfToken' => 'no match', 'token' => 'yes'],
-        ]);
-        $response = new Response();
-
         $middleware = new CsrfProtectionMiddleware([
             'cookieName' => 'token',
             'field' => 'token',
             'expiry' => 90,
         ]);
+        $token = $middleware->createToken();
+        $request = new ServerRequest([
+            'environment' => ['REQUEST_METHOD' => 'POST'],
+            'cookies' => ['csrfToken' => 'nope', 'token' => $token],
+            'post' => ['_csrfToken' => 'no match', 'token' => $token],
+        ]);
+        $response = new Response();
+
         $response = $middleware->process($request, $this->_getRequestHandler());
         $this->assertInstanceOf(Response::class, $response);
     }
