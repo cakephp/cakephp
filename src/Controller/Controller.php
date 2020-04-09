@@ -78,9 +78,9 @@ use UnexpectedValueException;
  *   Called after each action is complete and after the view is rendered.
  *
  * @property \Cake\Controller\Component\FlashComponent $Flash
+ * @property \Cake\Controller\Component\FormProtectionComponent $FormProtection
  * @property \Cake\Controller\Component\PaginatorComponent $Paginator
  * @property \Cake\Controller\Component\RequestHandlerComponent $RequestHandler
- * @property \Cake\Controller\Component\FormProtectionComponent $FormProtection
  * @link https://book.cakephp.org/4/en/controllers.html
  */
 class Controller implements EventListenerInterface, EventDispatcherInterface
