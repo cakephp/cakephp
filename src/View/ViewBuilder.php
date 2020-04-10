@@ -302,6 +302,18 @@ class ViewBuilder implements JsonSerializable, Serializable
     }
 
     /**
+     * Set a helper to use.
+     *
+     * @param string $helper Helper to use.
+     * @param bool $merge Whether or not to merge existing data with the new data.
+     * @return $this
+     */
+    public function setHelper(string $helper, bool $merge = true)
+    {
+        return $this->setHelpers([$helper], $merge);
+    }
+
+    /**
      * Sets the helpers to use.
      *
      * @param array $helpers Helpers to use.
