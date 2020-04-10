@@ -99,7 +99,6 @@ class MailerTest extends TestCase
 
     /**
      * Test that using unknown transports fails.
-     *
      */
     public function testTransportInvalid()
     {
@@ -110,7 +109,6 @@ class MailerTest extends TestCase
 
     /**
      * Test that using classes with no send method fails.
-     *
      */
     public function testTransportInstanceInvalid()
     {
@@ -120,7 +118,6 @@ class MailerTest extends TestCase
 
     /**
      * Test that using unknown transports fails.
-     *
      */
     public function testTransportTypeInvalid()
     {
@@ -303,7 +300,6 @@ class MailerTest extends TestCase
 
     /**
      * Test that using an invalid profile fails.
-     *
      */
     public function testProfileInvalid()
     {

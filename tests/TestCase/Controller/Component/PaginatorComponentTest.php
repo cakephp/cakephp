@@ -1386,7 +1386,6 @@ class PaginatorComponentTest extends TestCase
      * Helper method for mocking queries.
      *
      * @param RepositoryInterface|null $table
-     *
      * @return \Cake\ORM\Query|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function _getMockFindQuery(?RepositoryInterface $table = null)

@@ -525,6 +525,7 @@ class ConnectionTest extends TestCase
 
     /**
      * Tests delete from table with conditions
+     *
      * @return void
      */
     public function testDeleteWithConditions()

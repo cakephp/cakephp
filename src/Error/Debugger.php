@@ -134,7 +134,6 @@ class Debugger
 
     /**
      * Constructor.
-     *
      */
     public function __construct()
     {

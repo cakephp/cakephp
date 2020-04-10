@@ -18,7 +18,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Class SectionsTranslationsFixture
- *
  */
 class SectionsTranslationsFixture extends TestFixture
 {

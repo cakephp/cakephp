@@ -84,7 +84,6 @@ class Socket
     /**
      * Contains all the encryption methods available
      *
-     *
      * @var array
      */
     protected $_encryptMethods = [

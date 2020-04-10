@@ -2435,7 +2435,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Returns true if the finder exists for the table
      *
      * @param string $type name of finder to check
-     *
      * @return bool
      */
     public function hasFinder(string $type): bool

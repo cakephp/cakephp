@@ -76,7 +76,6 @@ class BreadcrumbsHelper extends Helper
      * - *innerAttrs*: An array that allows you to define attributes for the inner element of the crumb (by default, to
      *   the link)
      * - *templateVars*: Specific template vars in case you override the templates provided.
-     *
      * @return $this
      */
     public function add($title, $url = null, array $options = [])
@@ -113,7 +112,6 @@ class BreadcrumbsHelper extends Helper
      * - *innerAttrs*: An array that allows you to define attributes for the inner element of the crumb (by default, to
      *   the link)
      * - *templateVars*: Specific template vars in case you override the templates provided.
-     *
      * @return $this
      */
     public function prepend($title, $url = null, array $options = [])
@@ -151,7 +149,6 @@ class BreadcrumbsHelper extends Helper
      * - *innerAttrs*: An array that allows you to define attributes for the inner element of the crumb (by default, to
      *   the link)
      * - *templateVars*: Specific template vars in case you override the templates provided.
-     *
      * @return $this
      * @throws \LogicException In case the index is out of bound
      */
@@ -182,7 +179,6 @@ class BreadcrumbsHelper extends Helper
      * - *innerAttrs*: An array that allows you to define attributes for the inner element of the crumb (by default, to
      *   the link)
      * - *templateVars*: Specific template vars in case you override the templates provided.
-     *
      * @return $this
      * @throws \LogicException In case the matching crumb can not be found
      */
@@ -213,7 +209,6 @@ class BreadcrumbsHelper extends Helper
      * - *innerAttrs*: An array that allows you to define attributes for the inner element of the crumb (by default, to
      *   the link)
      * - *templateVars*: Specific template vars in case you override the templates provided.
-     *
      * @return $this
      * @throws \LogicException In case the matching crumb can not be found.
      */

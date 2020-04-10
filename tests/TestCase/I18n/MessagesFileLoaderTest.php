@@ -73,6 +73,7 @@ class MessagesFileLoaderTest extends TestCase
 
     /**
      * Test reading MO files
+     *
      * @return void
      */
     public function testLoadingMoFiles()

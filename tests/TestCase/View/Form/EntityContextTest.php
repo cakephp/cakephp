@@ -164,7 +164,6 @@ class EntityContextTest extends TestCase
 
     /**
      * Test an invalid table scope throws an error.
-     *
      */
     public function testInvalidTable()
     {
@@ -178,7 +177,6 @@ class EntityContextTest extends TestCase
 
     /**
      * Tests that passing a plain entity will give an error as it cannot be matched
-     *
      */
     public function testDefaultEntityError()
     {

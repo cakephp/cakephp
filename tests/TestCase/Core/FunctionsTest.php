@@ -92,7 +92,6 @@ class FunctionsTest extends TestCase
 
     /**
      * Test error messages coming out when deprecated level is on, not setting the stack frame manually
-     *
      */
     public function testDeprecationWarningEnabledDefaultFrame()
     {
@@ -118,7 +117,6 @@ class FunctionsTest extends TestCase
 
     /**
      * Test error messages coming out when warning level is on.
-     *
      */
     public function testTriggerWarningEnabled()
     {

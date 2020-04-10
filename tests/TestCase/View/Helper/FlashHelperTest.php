@@ -143,7 +143,6 @@ class FlashHelperTest extends TestCase
 
     /**
      * testFlashThrowsException
-     *
      */
     public function testFlashThrowsException()
     {

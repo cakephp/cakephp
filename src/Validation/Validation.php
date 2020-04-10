@@ -1107,9 +1107,12 @@ class Validation
      */
     public static function inList($check, array $list, bool $caseInsensitive = false): bool
     {
+        if (!is_scalar($check)) {
+            return false;
+        }
         if ($caseInsensitive) {
             $list = array_map('mb_strtolower', $list);
-            $check = mb_strtolower($check);
+            $check = mb_strtolower((string)$check);
         } else {
             $list = array_map('strval', $list);
         }
@@ -1631,7 +1634,6 @@ class Validation
      * body matches against checksum via Mod97-10 algorithm
      *
      * @param mixed $check The value to check
-     *
      * @return bool Success
      */
     public static function iban($check): bool

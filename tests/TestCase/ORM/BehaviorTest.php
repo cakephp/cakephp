@@ -262,7 +262,6 @@ class BehaviorTest extends TestCase
     /**
      * testVerifyImplementedFindersInvalid
      *
-     *
      * @return void
      */
     public function testVerifyImplementedFindersInvalid()
@@ -300,7 +299,6 @@ class BehaviorTest extends TestCase
 
     /**
      * testVerifyImplementedMethodsInvalid
-     *
      *
      * @return void
      */

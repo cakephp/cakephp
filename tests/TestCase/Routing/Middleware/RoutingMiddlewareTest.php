@@ -216,7 +216,6 @@ class RoutingMiddlewareTest extends TestCase
 
     /**
      * Test missing routes not being caught.
-     *
      */
     public function testMissingRouteNotCaught()
     {

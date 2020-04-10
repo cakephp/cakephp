@@ -1712,7 +1712,6 @@ class ValidationTest extends TestCase
      * Tests that it is possible to pass an ISO8601 value
      *
      * @return void
-     *
      * @see Validation tests values credits: https://www.myintervals.com/blog/2009/05/20/iso-8601-date-validation-that-doesnt-suck/
      */
     public function testDateTimeISO8601()
@@ -2399,6 +2398,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::inList('2x', [1, 2, 3]));
         $this->assertFalse(Validation::inList(2, ['1', '2x', '3']));
         $this->assertFalse(Validation::inList('One', ['one', 'two']));
+        $this->assertFalse(Validation::inList(['one'], ['one', 'two']));
 
         // No hexadecimal for numbers.
         $this->assertFalse(Validation::inList('0x7B', ['ABC', '123']));
@@ -2408,6 +2408,8 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::inList('one', ['One', 'Two'], true));
         $this->assertTrue(Validation::inList('Two', ['one', 'two'], true));
         $this->assertFalse(Validation::inList('three', ['one', 'two'], true));
+        $this->assertFalse(Validation::inList(null, ['one', 'two'], true));
+        $this->assertFalse(Validation::inList(false, ['one', 'two'], true));
     }
 
     /**

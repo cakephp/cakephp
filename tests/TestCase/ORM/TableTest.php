@@ -1000,7 +1000,6 @@ class TableTest extends TestCase
 
     /**
      * Test that exceptions from the Query bubble up.
-     *
      */
     public function testUpdateAllFailure()
     {
@@ -1065,7 +1064,6 @@ class TableTest extends TestCase
 
     /**
      * Test that exceptions from the Query bubble up.
-     *
      */
     public function testDeleteAllFailure()
     {
@@ -1817,7 +1815,6 @@ class TableTest extends TestCase
 
     /**
      * Ensure exceptions are raised on missing behaviors.
-     *
      */
     public function testAddBehaviorMissing()
     {

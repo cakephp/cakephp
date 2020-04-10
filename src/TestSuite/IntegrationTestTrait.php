@@ -21,6 +21,7 @@ use Cake\Database\Exception as DatabaseException;
 use Cake\Error\ExceptionRenderer;
 use Cake\Event\EventInterface;
 use Cake\Form\FormProtector;
+use Cake\Http\Middleware\CsrfProtectionMiddleware;
 use Cake\Http\Session;
 use Cake\Routing\Router;
 use Cake\TestSuite\Constraint\Response\BodyContains;
@@ -57,7 +58,6 @@ use Cake\TestSuite\Stub\TestExceptionRenderer;
 use Cake\Utility\CookieCryptTrait;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
-use Cake\Utility\Text;
 use Exception;
 use Laminas\Diactoros\Uri;
 use LogicException;
@@ -186,7 +186,6 @@ trait IntegrationTestTrait
     protected $_flashMessages;
 
     /**
-     *
      * @var string|null
      */
     protected $_cookieEncryptionKey;
@@ -673,8 +672,9 @@ trait IntegrationTestTrait
         }
 
         if ($this->_csrfToken === true) {
+            $middleware = new CsrfProtectionMiddleware();
             if (!isset($this->_cookie['csrfToken'])) {
-                $this->_cookie['csrfToken'] = Text::uuid();
+                $this->_cookie['csrfToken'] = $middleware->createToken();
             }
             if (!isset($data['_csrfToken'])) {
                 $data['_csrfToken'] = $this->_cookie['csrfToken'];
