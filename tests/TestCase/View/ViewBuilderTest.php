@@ -402,6 +402,9 @@ class ViewBuilderTest extends TestCase
         $this->assertEmpty($result);
     }
 
+    /**
+     * @return void
+     */
     public function testOptionSetGet()
     {
         $builder = new ViewBuilder();
@@ -416,8 +419,6 @@ class ViewBuilderTest extends TestCase
     }
 
     /**
-     * testDisableAutoLayout
-     *
      * @return void
      */
     public function testDisableAutoLayout()
@@ -427,5 +428,24 @@ class ViewBuilderTest extends TestCase
 
         $builder->disableAutoLayout();
         $this->assertFalse($builder->isAutoLayoutEnabled());
+    }
+
+    /**
+     * @return void
+     */
+    public function testAddHelperChained()
+    {
+        $builder = new ViewBuilder();
+        $builder->addHelper('Form')
+            ->addHelper('Time')
+            ->addHelper('Text');
+
+        $helpers = $builder->getHelpers();
+        $expected = [
+            'Form',
+            'Time',
+            'Text',
+        ];
+        $this->assertSame($expected, $helpers);
     }
 }
