@@ -108,6 +108,19 @@ class RoutesCommandTest extends TestCase
         $this->assertErrorEmpty();
     }
 
+
+    /**
+     * Ensure routes check with no input
+     *
+     * @return void
+     */
+    public function testCheckNoInput()
+    {
+        $this->exec('routes check');
+        $this->assertExitCode(Command::CODE_ERROR);
+        $this->assertErrorContains('`url` argument is required');
+    }
+
     /**
      * Test checking an existing route.
      *
