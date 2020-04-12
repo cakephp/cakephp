@@ -108,7 +108,6 @@ class RoutesCommandTest extends TestCase
         $this->assertErrorEmpty();
     }
 
-
     /**
      * Ensure routes check with no input
      *
