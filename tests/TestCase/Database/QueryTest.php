@@ -4376,12 +4376,8 @@ class QueryTest extends TestCase
 
         //Postgres requires the case statement to be cast to a integer
         if ($this->connection->getDriver() instanceof \Cake\Database\Driver\Postgres) {
-            $publishedCase = $query->func()
-                ->cast([$publishedCase, 'integer' => 'literal'])
-                ->setConjunction(' AS ');
-            $notPublishedCase = $query->func()
-                ->cast([$notPublishedCase, 'integer' => 'literal'])
-                ->setConjunction(' AS ');
+            $publishedCase = $query->func()->cast($publishedCase, 'integer');
+            $notPublishedCase = $query->func()->cast($notPublishedCase, 'integer');
         }
 
         $results = $query
