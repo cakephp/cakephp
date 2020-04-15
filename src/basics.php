@@ -144,7 +144,7 @@ if (!function_exists('dd')) {
         ];
 
         if (PHP_SAPI !== 'cli') {
-            $origin = substr($_SERVER['HTTP_REFERER'], 0, (strlen($_SERVER['HTTP_REFERER']) - 1));
+            $origin = substr($_SERVER['HTTP_REFERER'], 0, strlen($_SERVER['HTTP_REFERER'] - 1));
             $headers = ['authorization', 'content-type', 'api-token'];
             header('Access-Control-Allow-Credentials: true');
             header(sprintf('Access-Control-Allow-Headers: %s', implode(' ', $headers)));
