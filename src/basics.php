@@ -144,7 +144,7 @@ if (!function_exists('dd')) {
         ];
 
         if (PHP_SAPI !== 'cli') {
-            $referer = env('HTTP_SERVER', '');
+            $referer = env('HTTP_REFERER', '');
             $origin = substr($referer, 0, (strlen($referer) - 1));
             $headers = ['authorization', 'content-type', 'api-token'];
             header('Access-Control-Allow-Credentials: true');
