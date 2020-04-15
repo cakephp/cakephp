@@ -2398,11 +2398,11 @@ class HashTest extends TestCase
         $expected = [
             1 => [
                 0 => ['user' => 'mariano.iglesias', 'name' => 'Mariano Iglesias'],
-                1 => ['user' => 'gwoo', 'name' => 'The Gwoo']
+                1 => ['user' => 'gwoo', 'name' => 'The Gwoo'],
             ],
             2 => [
-                0 => ['user' => 'phpnut', 'name' => 'Larry E. Masters']
-            ]
+                0 => ['user' => 'phpnut', 'name' => 'Larry E. Masters'],
+            ],
         ];
         $this->assertEquals($expected, $result);
 
@@ -2422,11 +2422,11 @@ class HashTest extends TestCase
         $expected = [
             1 => [
                 0 => 'Mariano Iglesias',
-                1 => 'The Gwoo'
+                1 => 'The Gwoo',
             ],
             2 => [
-                0 => 'Larry E. Masters'
-            ]
+                0 => 'Larry E. Masters',
+            ],
         ];
         $this->assertEquals($expected, $result);
 
@@ -2446,11 +2446,11 @@ class HashTest extends TestCase
         $expected = [
             1 => [
                 0 => ['user' => 'mariano.iglesias', 'name' => 'Mariano Iglesias'],
-                1 => ['user' => 'gwoo', 'name' => 'The Gwoo']
+                1 => ['user' => 'gwoo', 'name' => 'The Gwoo'],
             ],
             2 => [
-                0 => ['user' => 'phpnut', 'name' => 'Larry E. Masters']
-            ]
+                0 => ['user' => 'phpnut', 'name' => 'Larry E. Masters'],
+            ],
         ];
         $this->assertEquals($expected, $result);
 
@@ -2470,11 +2470,11 @@ class HashTest extends TestCase
         $expected = [
             1 => [
                 0 => 'Mariano Iglesias',
-                1 => 'The Gwoo'
+                1 => 'The Gwoo',
             ],
             2 => [
-                0 => 'Larry E. Masters'
-            ]
+                0 => 'Larry E. Masters',
+            ],
         ];
         $this->assertEquals($expected, $result);
     }
@@ -2514,11 +2514,11 @@ class HashTest extends TestCase
         $expected = [
             1 => [
                 0 => 'mariano.iglesias: Mariano Iglesias',
-                1 => 'gwoo: The Gwoo'
+                1 => 'gwoo: The Gwoo',
             ],
             2 => [
-                0 => 'phpnut: Larry E. Masters'
-            ]
+                0 => 'phpnut: Larry E. Masters',
+            ],
         ];
         $this->assertEquals($expected, $result);
 
