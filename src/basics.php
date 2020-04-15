@@ -144,11 +144,11 @@ if (!function_exists('dd')) {
         ];
 
         if (PHP_SAPI !== 'cli') {
-            $origin = substr(env('HTTP_REFERER'), 0, (strlen($_SERVER['HTTP_REFERER']) - 1));
+            $origin = substr($_SERVER['HTTP_REFERER'], 0, (strlen($_SERVER['HTTP_REFERER']) - 1));
             $headers = ['authorization', 'content-type', 'api-token'];
             header('Access-Control-Allow-Credentials: true');
-            header('Access-Control-Allow-Headers: '.implode($headers, ' '));
-            header('Access-Control-Allow-Origin:'.str_replace('\/', '', $origin));
+            header(sprintf('Access-Control-Allow-Headers: %s', implode($headers, ' ')));
+            header(sprintf('Access-Control-Allow-Origin: %s', $origin));
         }
 
         Debugger::printVar($var, $location, $showHtml);
