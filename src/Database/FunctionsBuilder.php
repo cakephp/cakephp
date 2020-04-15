@@ -165,7 +165,7 @@ class FunctionsBuilder
      * @param string $type The target data type
      * @return \Cake\Database\Expression\FunctionExpression
      */
-    public function cast($field, string $type)
+    public function cast($field, $type)
     {
         $expression = $this->_literalArgumentFunction('CAST', $field);
         $expression->setConjunction(' AS')->add([$type => 'literal']);
