@@ -170,6 +170,21 @@ class FunctionsBuilder
     }
 
     /**
+     * Returns a FunctionExpression representing a call to SQL CAST function.
+     *
+     * @param string|\Cake\Database\ExpressionInterface $field Field or expression to cast.
+     * @param string $type The target data type
+     * @return \Cake\Database\Expression\FunctionExpression
+     */
+    public function cast($field, string $type): FunctionExpression
+    {
+        $expression = $this->_literalArgumentFunction('CAST', $field);
+        $expression->setConjunction(' AS')->add([$type => 'literal']);
+
+        return $expression;
+    }
+
+    /**
      * Returns a FunctionExpression representing the difference in days between
      * two dates.
      *
