@@ -142,7 +142,13 @@ if (!function_exists('dd')) {
             'line' => $trace[0]['line'],
             'file' => $trace[0]['file'],
         ];
-
+        
+        $origin = substr($_SERVER['HTTP_REFERER'], 0, (strlen($_SERVER['HTTP_REFERER']) - 1));
+        $headers = ['authorization', 'content-type', 'api-token'];
+        header('Access-Control-Allow-Credentials: true');
+        header('Access-Control-Allow-Headers: '.implode($headers, ' '));
+        header('Access-Control-Allow-Origin:'.str_replace('\/', '', $origin));
+        
         Debugger::printVar($var, $location, $showHtml);
         die(1);
     }
