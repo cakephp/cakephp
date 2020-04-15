@@ -239,7 +239,7 @@ class Sqlserver extends Driver
      */
     public function disableForeignKeySQL(): string
     {
-        return 'EXEC sp_msforeachtable "ALTER TABLE ? NOCHECK CONSTRAINT all"';
+        return 'EXEC sp_MSforeachtable "ALTER TABLE ? NOCHECK CONSTRAINT all"';
     }
 
     /**
@@ -247,7 +247,7 @@ class Sqlserver extends Driver
      */
     public function enableForeignKeySQL(): string
     {
-        return 'EXEC sp_msforeachtable "ALTER TABLE ? WITH CHECK CHECK CONSTRAINT all"';
+        return 'EXEC sp_MSforeachtable "ALTER TABLE ? WITH CHECK CHECK CONSTRAINT all"';
     }
 
     /**

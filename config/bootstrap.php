@@ -15,7 +15,10 @@
 
 use Cake\Routing\Router;
 
-define('TIME_START', microtime(true));
+/**
+ * @var float
+ */
+define('TIME_START', (float)microtime(true));
 
 require CAKE . 'basics.php';
 
