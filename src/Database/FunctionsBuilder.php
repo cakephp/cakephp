@@ -133,8 +133,15 @@ class FunctionsBuilder
      * @param string $type The target data type
      * @return \Cake\Database\Expression\FunctionExpression
      */
-    public function cast($field, string $type): FunctionExpression
+    public function cast($field, string $type = ''): FunctionExpression
     {
+        if (is_array($field)) {
+            deprecationWarning(
+                'Build cast function by FunctionsBuilder::cast(array $args) is deprecated.'
+                . ' Use FunctionsBuilder::cast($field, string $type) instead.'
+            );
+            return new FunctionExpression('CAST', $field);
+        }
         $expression = new FunctionExpression('CAST', $this->toLiteralParam($field));
         $expression->setConjunction(' AS')->add([$type => 'literal']);
 
