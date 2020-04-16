@@ -20,6 +20,8 @@ use Cake\Routing\RouteBuilder;
 
 /**
  * Plugin Interface
+ *
+ * @method string getLocalePath()
  */
 interface PluginInterface
 {

@@ -65,7 +65,7 @@ class Plugin
      * Returns the filesystem path for plugin's folder containing config files.
      *
      * @param string $name name of the plugin in CamelCase format.
-     * @return string Path to the plugin folder container config files.
+     * @return string Path to the plugin folder containing config files.
      * @throws \Cake\Core\Exception\MissingPluginException If plugin has not been loaded.
      */
     public static function configPath(string $name): string
@@ -79,7 +79,7 @@ class Plugin
      * Returns the filesystem path for plugin's folder containing template files.
      *
      * @param string $name name of the plugin in CamelCase format.
-     * @return string Path to the plugin folder container config files.
+     * @return string Path to the plugin folder containing template files.
      * @throws \Cake\Core\Exception\MissingPluginException If plugin has not been loaded.
      */
     public static function templatePath(string $name): string
@@ -87,6 +87,20 @@ class Plugin
         $plugin = static::getCollection()->get($name);
 
         return $plugin->getTemplatePath();
+    }
+
+    /**
+     * Returns the filesystem path for plugin's folder containing locale files.
+     *
+     * @param string $name name of the plugin in CamelCase format.
+     * @return string Path to the plugin folder containing locale files.
+     * @throws \Cake\Core\Exception\MissingPluginException If plugin has not been loaded.
+     */
+    public static function localePath(string $name): string
+    {
+        $plugin = static::getCollection()->get($name);
+
+        return $plugin->getLocalePath();
     }
 
     /**

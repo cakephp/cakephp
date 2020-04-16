@@ -198,6 +198,10 @@ class App
             /** @psalm-suppress PossiblyNullArgument */
             return [Plugin::templatePath($plugin)];
         }
+        if ($type === 'locales') {
+            /** @psalm-suppress PossiblyNullArgument */
+            return [Plugin::localePath($plugin)];
+        }
 
         deprecationWarning(
             'App::path() is deprecated for class path.'

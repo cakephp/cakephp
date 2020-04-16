@@ -86,6 +86,13 @@ class BasePlugin implements PluginInterface
     protected $templatePath;
 
     /**
+     * The templates path for this plugin.
+     *
+     * @var string
+     */
+    protected $localePath;
+
+    /**
      * The name of this plugin
      *
      * @var string
@@ -194,6 +201,19 @@ class BasePlugin implements PluginInterface
         $path = $this->getPath();
 
         return $this->templatePath = $path . 'templates' . DIRECTORY_SEPARATOR;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getLocalePath(): string
+    {
+        if ($this->localePath) {
+            return $this->localePath;
+        }
+        $path = $this->getPath();
+
+        return $this->templatePath = $path . 'resources' . DIRECTORY_SEPARATOR . 'locales' . DIRECTORY_SEPARATOR;
     }
 
     /**
