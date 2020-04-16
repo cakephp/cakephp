@@ -1664,7 +1664,7 @@ class Message implements JsonSerializable, Serializable
                 $tmpLine .= $char;
                 $tmpLineLength++;
                 if ($tmpLineLength === $wrapLength) {
-                    $nextChar = $line[$i + 1];
+                    $nextChar = $line[$i + 1] ?? '';
                     if ($nextChar === ' ' || $nextChar === '<') {
                         $formatted[] = trim($tmpLine);
                         $tmpLine = '';
