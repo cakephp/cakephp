@@ -86,6 +86,9 @@ class EmailTraitTest extends TestCase
         $this->assertMailContains('text');
         $this->assertMailContains('html');
 
+        $this->assertMailContainsAttachment('custom_name.php');
+        $this->assertMailContainsAttachment('custom_name.php', ['file' => CAKE . 'basics.php']);
+
         $this->assertMailSentWith('Hello world', 'subject');
         $this->assertMailSentWith('cc@example.com', 'cc');
         $this->assertMailSentWith('bcc@example.com', 'bcc');
@@ -210,6 +213,7 @@ class EmailTraitTest extends TestCase
             'assertMailSentWith' => ['assertMailSentWith', 'Failed asserting that \'Missing\' is in an email `subject`.', ['Missing', 'subject']],
             'assertMailSentWithAt' => ['assertMailSentWithAt', 'Failed asserting that \'Missing\' is in email #1 `subject`.', [1, 'Missing', 'subject']],
             'assertMailContains' => ['assertMailContains', 'Failed asserting that \'Missing\' is in an email.', ['Missing']],
+            'assertMailContainsAttachment' => ['assertMailContainsAttachment', 'Failed asserting that \'no_existing_file.php\' is an attachment of an email.', ['no_existing_file.php']],
             'assertMailContainsHtml' => ['assertMailContainsHtml', 'Failed asserting that \'Missing\' is in the html message of an email.', ['Missing']],
             'assertMailContainsText' => ['assertMailContainsText', 'Failed asserting that \'Missing\' is in the text message of an email.', ['Missing']],
             'assertMailContainsAt' => ['assertMailContainsAt', 'Failed asserting that \'Missing\' is in email #1.', [1, 'Missing']],
@@ -231,6 +235,7 @@ class EmailTraitTest extends TestCase
             ->setCc('cc@example.com')
             ->setBcc(['bcc@example.com' => 'Baz Qux'])
             ->setSubject('Hello world')
+            ->setAttachments(['custom_name.php' => CAKE . 'basics.php'])
             ->setEmailFormat(Email::MESSAGE_TEXT)
             ->send('text');
 
