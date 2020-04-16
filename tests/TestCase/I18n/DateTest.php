@@ -173,7 +173,9 @@ class DateTest extends TestCase
     {
         $date = new $class('2015-11-06 11:32:45');
 
-        $class::setJsonEncodeFormat(static function ($d) { return $d->format(DATE_ATOM); });
+        $class::setJsonEncodeFormat(static function ($d) {
+            return $d->format(DATE_ATOM);
+        });
         $this->assertEquals('"2015-11-06T00:00:00+00:00"', json_encode($date));
 
         $class::setJsonEncodeFormat("yyyy-MM-dd'T'HH':'mm':'ssZZZZZ");
