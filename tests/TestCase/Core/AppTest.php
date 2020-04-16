@@ -242,10 +242,17 @@ class AppTest extends TestCase
      */
     public function testPathWithPlugins()
     {
-        $this->deprecated(function () {
-            $basepath = TEST_APP . 'Plugin' . DS;
-            $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
+        $basepath = TEST_APP . 'Plugin' . DS;
+        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
 
+        $result = App::path('locales', 'TestPlugin');
+        $this->assertPathEquals($basepath . 'TestPlugin' . DS . 'resources' . DS . 'locales' . DS, $result[0]);
+
+        $result = App::path('locales', 'Company/TestPluginThree');
+        $expected = $basepath . 'Company' . DS . 'TestPluginThree' . DS . 'resources' . DS . 'locales' . DS;
+        $this->assertPathEquals($expected, $result[0]);
+
+        $this->deprecated(function () use ($basepath) {
             $result = App::path('Controller', 'TestPlugin');
             $this->assertPathEquals($basepath . 'TestPlugin' . DS . 'src' . DS . 'Controller' . DS, $result[0]);
 
