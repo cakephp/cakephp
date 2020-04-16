@@ -487,7 +487,7 @@ class Email implements JsonSerializable, Serializable
      * @param string|array|null $message String with message or array with variables to be used in render
      * @param string|array $config String to use Email delivery profile from app.php or array with configs
      * @param bool $send Send the email or just return the instance pre-configured
-     * @return static Instance of Cake\Mailer\Email
+     * @return \Cake\Mailer\Email Instance of Cake\Mailer\Email
      * @throws \InvalidArgumentException
      */
     public static function deliver(
@@ -497,13 +497,11 @@ class Email implements JsonSerializable, Serializable
         $config = 'default',
         bool $send = true
     ) {
-        $class = static::class;
-
         if (is_array($config) && !isset($config['transport'])) {
             $config['transport'] = 'default';
         }
-        /** @var \Cake\Mailer\Email $instance */
-        $instance = new $class($config);
+
+        $instance = new static($config);
         if ($to !== null) {
             $instance->getMessage()->setTo($to);
         }

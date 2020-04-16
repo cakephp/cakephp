@@ -50,6 +50,7 @@ if (!function_exists('debug')) {
         $location = [];
         if ($showFrom) {
             $trace = Debugger::trace(['start' => 1, 'depth' => 2, 'format' => 'array']);
+            /** @psalm-suppress PossiblyInvalidArrayOffset */
             $location = [
                 'line' => $trace[0]['line'],
                 'file' => $trace[0]['file'],
@@ -138,6 +139,7 @@ if (!function_exists('dd')) {
         }
 
         $trace = Debugger::trace(['start' => 1, 'depth' => 2, 'format' => 'array']);
+        /** @psalm-suppress PossiblyInvalidArrayOffset */
         $location = [
             'line' => $trace[0]['line'],
             'file' => $trace[0]['file'],

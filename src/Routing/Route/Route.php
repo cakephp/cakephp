@@ -454,6 +454,7 @@ class Route
         }
 
         if (isset($route['_args_'])) {
+            /** @psalm-suppress PossiblyInvalidArgument */
             $pass = $this->_parseArgs($route['_args_'], $route);
             $route['pass'] = array_merge($route['pass'], $pass);
             unset($route['_args_']);
@@ -477,6 +478,7 @@ class Route
         if (isset($this->options['pass'])) {
             $j = count($this->options['pass']);
             while ($j--) {
+                /** @psalm-suppress PossiblyInvalidArgument */
                 if (isset($route[$this->options['pass'][$j]])) {
                     array_unshift($route['pass'], $route[$this->options['pass'][$j]]);
                 }

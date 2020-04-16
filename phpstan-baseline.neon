@@ -291,11 +291,6 @@ parameters:
 			path: src/Event/EventManager.php
 
 		-
-			message: "#^Method Cake\\\\Event\\\\EventManager\\:\\:instance\\(\\) should return static\\(Cake\\\\Event\\\\EventManager\\) but returns Cake\\\\Event\\\\EventManager\\.$#"
-			count: 1
-			path: src/Event/EventManager.php
-
-		-
 			message: "#^Parameter \\#1 \\$request of static method Cake\\\\Routing\\\\Router\\:\\:setRequest\\(\\) expects Cake\\\\Http\\\\ServerRequest, Psr\\\\Http\\\\Message\\\\ServerRequestInterface given\\.$#"
 			count: 1
 			path: src/Http/BaseApplication.php
@@ -436,7 +431,7 @@ parameters:
 			path: src/I18n/Number.php
 
 		-
-			message: "#^Method Cake\\\\Mailer\\\\Email\\:\\:deliver\\(\\) should return static\\(Cake\\\\Mailer\\\\Email\\) but returns Cake\\\\Mailer\\\\Email\\.$#"
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/Mailer/Email.php
 

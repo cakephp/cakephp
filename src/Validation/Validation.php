@@ -1231,9 +1231,14 @@ class Validation
     protected static function getFilename($check)
     {
         if ($check instanceof UploadedFileInterface) {
+            // Uploaded files throw exceptions on upload errors.
             try {
-                // Uploaded files throw exceptions on upload errors.
-                return $check->getStream()->getMetadata('uri');
+                $uri = $check->getStream()->getMetadata('uri');
+                if (is_string($uri)) {
+                    return $uri;
+                }
+
+                return false;
             } catch (RuntimeException $e) {
                 return false;
             }

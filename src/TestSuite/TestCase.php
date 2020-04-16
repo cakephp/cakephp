@@ -841,6 +841,7 @@ abstract class TestCase extends BaseTestCase
     {
         if (empty($options['className'])) {
             $class = Inflector::camelize($alias);
+            /** @psalm-var class-string<\Cake\ORM\Table>|null */
             $className = App::className($class, 'Model/Table', 'Table');
             if (!$className) {
                 throw new MissingTableClassException([$alias]);

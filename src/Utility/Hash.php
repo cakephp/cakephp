@@ -515,7 +515,6 @@ class Hash
                         $group[$i] = 0;
                     }
                     if (!isset($out[$group[$i]])) {
-                        /** @psalm-suppress PossiblyNullArrayOffset */
                         $out[$group[$i]] = [];
                     }
                     $out[$group[$i]][$keys[$i]] = $vals[$i];
