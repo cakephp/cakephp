@@ -8,9 +8,9 @@ cache:
 
 branches:
   only:
-    - master
+    - 3.x
     - 3.next
-    - 4.x
+
 environment:
   matrix:
     - db: '2012'

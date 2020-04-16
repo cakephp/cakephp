@@ -2868,6 +2868,12 @@ class EmailTest extends TestCase
         $expected = $str1 . str_repeat('x', Email::LINE_LENGTH_MUST - $length + 1) . sprintf("\r\n%s\r\n\r\n", trim($str2));
         $this->assertEquals($expected, $result['message']);
         $this->assertLineLengths($result['message']);
+
+        $line = 'some text <b>with html</b>';
+        $trailing = str_repeat('X', Email::LINE_LENGTH_MUST - strlen($line));
+        $result = $this->Email->send($line . $trailing);
+        $expected = 'some text <b>with' . "\r\nhtml</b>" . $trailing . "\r\n\r\n";
+        $this->assertEquals($expected, $result['message']);
     }
 
     /**

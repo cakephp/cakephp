@@ -528,7 +528,7 @@ trait EntityTrait
     /**
      * Sets the virtual properties on this entity.
      *
-     * @param array $properties An array of properties to treat as virtual.
+     * @param string[] $properties An array of properties to treat as virtual.
      * @param bool $merge Merge the new properties with the existing. By default false.
      * @return $this
      */
