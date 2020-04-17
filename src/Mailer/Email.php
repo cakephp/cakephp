@@ -2458,7 +2458,7 @@ class Email implements JsonSerializable, Serializable
                 $tmpLine .= $char;
                 $tmpLineLength++;
                 if ($tmpLineLength === $wrapLength) {
-                    $nextChar = $line[$i + 1];
+                    $nextChar = isset($line[$i + 1]) ? $line[$i + 1] : '';
                     if ($nextChar === ' ' || $nextChar === '<') {
                         $formatted[] = trim($tmpLine);
                         $tmpLine = '';

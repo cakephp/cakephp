@@ -24,9 +24,10 @@ use JsonSerializable;
  * In 4.x the following methods will officially be added to the interface:
  *
  * @method $this setHidden(array $properties, $merge = false)
- * @method array getHidden()
+ * @method string[] getHidden()
  * @method $this setVirtual(array $properties, $merge = false)
- * @method array getVirtual()
+ * @method string[] getVirtual()
+ * @method string[] getDirty()
  * @method $this setDirty($property, $isDirty = true)
  * @method bool isDirty($property = null)
  * @method bool hasErrors($includeNested = true)
