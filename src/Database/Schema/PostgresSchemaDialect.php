@@ -20,6 +20,7 @@ use Cake\Database\Exception;
 
 /**
  * Schema management/reflection features for Postgres.
+ *
  * @internal
  */
 class PostgresSchemaDialect extends SchemaDialect

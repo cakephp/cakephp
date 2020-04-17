@@ -20,6 +20,7 @@ use Cake\Database\Exception;
 
 /**
  * Schema management/reflection features for Sqlite
+ *
  * @internal
  */
 class SqliteSchemaDialect extends SchemaDialect
