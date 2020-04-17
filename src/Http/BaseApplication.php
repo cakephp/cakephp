@@ -144,40 +144,6 @@ abstract class BaseApplication implements
     }
 
     /**
-     * Add a plugin, when in CLI
-     *
-     * @param string|\Cake\Core\PluginInterface $name The plugin name or plugin object.
-     * @param array $config The configuration data for the plugin if using a string for $name
-     * @return $this
-     */
-    public function addCliPlugin($name, array $config = [])
-    {
-        if (PHP_SAPI === 'cli') {
-            $this->addPlugin($name, $config);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Add an optional plugin, when in CLI
-     *
-     * If it isn't available, ignore it.
-     *
-     * @param string|\Cake\Core\PluginInterface $name The plugin name or plugin object.
-     * @param array $config The configuration data for the plugin if using a string for $name
-     * @return $this
-     */
-    public function addOptionalCliPlugin($name, array $config = [])
-    {
-        if (PHP_SAPI === 'cli') {
-            $this->addOptionalCliPlugin($name, $config);
-        }
-
-        return $this;
-    }
-
-    /**
      * Get the plugin collection in use.
      *
      * @return \Cake\Core\PluginCollection
