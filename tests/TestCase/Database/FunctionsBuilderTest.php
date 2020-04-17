@@ -147,6 +147,22 @@ class FunctionsBuilderTest extends TestCase
     }
 
     /**
+     * Tests generating a CAST() function
+     *
+     * @return void
+     */
+    public function testCast()
+    {
+        $function = $this->functions->cast('field', 'varchar');
+        $this->assertSame('CAST(field AS varchar)', $function->sql(new ValueBinder()));
+        $this->assertSame('string', $function->getReturnType());
+
+        $function = $this->functions->cast($this->functions->now(), 'varchar');
+        $this->assertSame('CAST(NOW() AS varchar)', $function->sql(new ValueBinder()));
+        $this->assertSame('string', $function->getReturnType());
+    }
+
+    /**
      * Tests generating a NOW(), CURRENT_TIME() and CURRENT_DATE() function
      *
      * @return void
