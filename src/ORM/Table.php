@@ -2526,9 +2526,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         } elseif ($hasOr !== false) {
             $fields = explode('_or_', $fields);
             $conditions = [
-            'OR' => $makeConditions($fields, $args),
+                'OR' => $makeConditions($fields, $args),
             ];
-        } elseif ($hasAnd !== false) {
+        } else {
             $fields = explode('_and_', $fields);
             $conditions = $makeConditions($fields, $args);
         }
