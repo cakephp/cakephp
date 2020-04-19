@@ -309,14 +309,14 @@ class HtmlHelper extends Helper
      *   over value of `escape`)
      * - `confirm` JavaScript confirmation message.
      *
-     * @param string|array $title The content to be wrapped by `<a>` tags.
-     *   Can be an array if $url is null. If $url is null, $title will be used as both the URL and title.
+     * @param string $title The content to be wrapped by `<a>` tags.
      * @param string $path Cake-relative route path.
      * @param array $options Array of options and HTML attributes.
      * @return string An `<a />` element.
+     * @see \Cake\Routing\Router::pathUrl()
      * @link https://book.cakephp.org/3/en/views/helpers/html.html#creating-links
      */
-    public function linkFromPath($title, string $path, array $options = []): string
+    public function linkFromPath(string $title, string $path, array $options = []): string
     {
         return $this->link($title, ['_path' => $path], $options);
     }

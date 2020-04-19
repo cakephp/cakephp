@@ -69,10 +69,11 @@ class UrlHelper extends Helper
      * @param string $path Cake-relative route path.
      * @param array $options Array of options.
      * @return string Full translated URL with base path.
+     * @see \Cake\Routing\Router::pathUrl()
      */
     public function buildFromPath(string $path, array $options = []): string
     {
-        return $this->build($path, $options);
+        return $this->build(['_path' => $path], $options);
     }
 
     /**
