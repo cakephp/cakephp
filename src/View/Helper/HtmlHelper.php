@@ -300,6 +300,28 @@ class HtmlHelper extends Helper
     }
 
     /**
+     * Creates an HTML link from route path string.
+     *
+     * ### Options
+     *
+     * - `escape` Set to false to disable escaping of title and attributes.
+     * - `escapeTitle` Set to false to disable escaping of title. Takes precedence
+     *   over value of `escape`)
+     * - `confirm` JavaScript confirmation message.
+     *
+     * @param string|array $title The content to be wrapped by `<a>` tags.
+     *   Can be an array if $url is null. If $url is null, $title will be used as both the URL and title.
+     * @param string $path Cake-relative route path.
+     * @param array $options Array of options and HTML attributes.
+     * @return string An `<a />` element.
+     * @link https://book.cakephp.org/3/en/views/helpers/html.html#creating-links
+     */
+    public function linkFromPath($title, string $path, array $options = []): string
+    {
+        return $this->link($title, ['_path' => $path], $options);
+    }
+
+    /**
      * Creates a link element for CSS stylesheets.
      *
      * ### Usage

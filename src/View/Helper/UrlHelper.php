@@ -58,6 +58,24 @@ class UrlHelper extends Helper
     }
 
     /**
+     * Returns a URL from a route path string.
+     *
+     * ### Options:
+     *
+     * - `escape`: If false, the URL will be returned unescaped, do only use if it is manually
+     *    escaped afterwards before being displayed.
+     * - `fullBase`: If true, the full base URL will be prepended to the result
+     *
+     * @param string $path Cake-relative route path.
+     * @param array $options Array of options.
+     * @return string Full translated URL with base path.
+     */
+    public function buildFromPath(string $path, array $options = []): string
+    {
+        return $this->build($path, $options);
+    }
+
+    /**
      * Generates URL for given image file.
      *
      * Depending on options passed provides full URL with domain name. Also calls
