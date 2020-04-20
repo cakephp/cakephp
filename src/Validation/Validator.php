@@ -478,6 +478,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 $rule += ['rule' => $name];
             }
             if (!is_string($name)) {
+                /** @psalm-suppress PossiblyUndefinedMethod */
                 $name = $rule['rule'];
                 if (is_array($name)) {
                     $name = array_shift($name);

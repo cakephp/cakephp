@@ -292,6 +292,7 @@ REGEXP;
 
             $parsed['className'] = $parsed['scheme'];
             if (isset($classMap[$parsed['scheme']])) {
+                /** @psalm-suppress PossiblyNullArrayOffset */
                 $parsed['className'] = $classMap[$parsed['scheme']];
             }
         }

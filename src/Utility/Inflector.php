@@ -278,7 +278,6 @@ class Inflector
             static::$_cache['pluralize'][$word] = $regs[1] . substr($regs[2], 0, 1) .
                 substr(static::$_irregular[strtolower($regs[2])], 1);
 
-            /** @psalm-suppress NullableReturnStatement */
             return static::$_cache['pluralize'][$word];
         }
 
@@ -296,7 +295,6 @@ class Inflector
             if (preg_match($rule, $word)) {
                 static::$_cache['pluralize'][$word] = preg_replace($rule, $replacement, $word);
 
-                /** @psalm-suppress NullableReturnStatement */
                 return static::$_cache['pluralize'][$word];
             }
         }
@@ -326,7 +324,6 @@ class Inflector
             $suffix = $suffix ? substr($suffix, 1) : '';
             static::$_cache['singularize'][$word] = $regs[1] . substr($regs[2], 0, 1) . $suffix;
 
-            /** @psalm-suppress NullableReturnStatement */
             return static::$_cache['singularize'][$word];
         }
 
@@ -344,7 +341,6 @@ class Inflector
             if (preg_match($rule, $word)) {
                 static::$_cache['singularize'][$word] = preg_replace($rule, $replacement, $word);
 
-                /** @psalm-suppress NullableReturnStatement */
                 return static::$_cache['singularize'][$word];
             }
         }

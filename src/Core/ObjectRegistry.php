@@ -103,6 +103,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
             }
         }
 
+        /** @psalm-var TObject $instance */
         $instance = $this->_create($className, $name, $config);
         $this->_loaded[$name] = $instance;
 

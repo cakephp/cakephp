@@ -1182,13 +1182,19 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * @param string $finder The finder method to use.
+     * @param array $options The options for the finder.
+     * @return static Returns a modified query.
+     * @psalm-suppress MoreSpecificReturnType
      */
     public function find(string $finder, array $options = [])
     {
         /** @var \Cake\ORM\Table $table */
         $table = $this->getRepository();
 
+        /** @psalm-suppress LessSpecificReturnStatement */
         return $table->callFinder($finder, $this, $options);
     }
 

@@ -43,7 +43,7 @@ class ConnectionManager
     /**
      * A map of connection aliases.
      *
-     * @var array
+     * @var string[]
      */
     protected static $_aliasMap = [];
 
