@@ -130,7 +130,19 @@ interface I18nDateTimeInterface extends ChronosInterface, JsonSerializable
     /**
      * Sets the default format used when converting this object to json
      *
-     * @param string|array|int $format Format.
+     * The format should be either the formatting constants from IntlDateFormatter as
+     * described in (https://secure.php.net/manual/en/class.intldateformatter.php) or a pattern
+     * as specified in (http://www.icu-project.org/apiref/icu4c/classSimpleDateFormat.html#details)
+     *
+     * It is possible to provide an array of 2 constants. In this case, the first position
+     * will be used for formatting the date part of the object and the second position
+     * will be used to format the time part.
+     *
+     * Alternatively, the format can provide a callback. In this case, the callback
+     * can receive this datetime object and return a formatted string.
+     *
+     * @see \Cake\I18n\Time::i18nFormat()
+     * @param string|array|int|\Closure $format Format.
      * @return void
      */
     public static function setJsonEncodeFormat($format): void;
