@@ -77,11 +77,11 @@ class EventManager implements EventManagerInterface
      * If called with the first parameter, it will be set as the globally available instance
      *
      * @param \Cake\Event\EventManager|null $manager Event manager instance.
-     * @return static The global event manager
+     * @return \Cake\Event\EventManager The global event manager
      */
-    public static function instance(?EventManagerInterface $manager = null)
+    public static function instance(?EventManager $manager = null)
     {
-        if ($manager instanceof EventManagerInterface) {
+        if ($manager instanceof EventManager) {
             static::$_generalManager = $manager;
         }
         if (empty(static::$_generalManager)) {
@@ -113,7 +113,6 @@ class EventManager implements EventManagerInterface
             return $this;
         }
 
-        /** @psalm-suppress PossiblyInvalidArrayAccess */
         $priority = $options['priority'] ?? static::$defaultPriority;
         $this->_listeners[$eventKey][$priority][] = [
             'callable' => $callable,

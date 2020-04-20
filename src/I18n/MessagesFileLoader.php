@@ -173,7 +173,7 @@ class MessagesFileLoader
         // If space is not added after slash, the character after it remains lowercased
         $pluginName = Inflector::camelize(str_replace('/', '/ ', $this->_name));
         if (Plugin::isLoaded($pluginName)) {
-            $basePath = Plugin::path($pluginName) . 'resources' . DIRECTORY_SEPARATOR . 'locales' . DIRECTORY_SEPARATOR;
+            $basePath = App::path('locales', $pluginName)[0];
             foreach ($folders as $folder) {
                 $searchPaths[] = $basePath . $folder . DIRECTORY_SEPARATOR;
             }
