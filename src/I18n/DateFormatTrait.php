@@ -281,7 +281,7 @@ trait DateFormatTrait
      * can receive this datetime object and return a formatted string.
      *
      * @see \Cake\I18n\Time::i18nFormat()
-     * @param string|array|int|Closure $format Format.
+     * @param string|array|int|\Closure $format Format.
      * @return void
      */
     public static function setJsonEncodeFormat($format): void
