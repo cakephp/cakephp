@@ -135,6 +135,9 @@ class CommandScanner
                 continue;
             }
 
+            if (is_subclass_of($class, Command::class)) {
+                $name = $class::defaultName();
+            }
             $shells[] = [
                 'file' => $path . $file,
                 'fullName' => $prefix . $name,
