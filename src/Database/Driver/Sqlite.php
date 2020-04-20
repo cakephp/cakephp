@@ -72,7 +72,7 @@ class Sqlite extends Driver
     /**
      * Whether or not the connected server supports window functions.
      *
-     * @var bool
+     * @var bool|null
      */
     protected $_supportsWindowFunctions;
 

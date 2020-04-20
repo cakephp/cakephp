@@ -71,14 +71,14 @@ class Mysql extends Driver
     /**
      * Whether or not the server supports native JSON
      *
-     * @var bool
+     * @var bool|null
      */
     protected $_supportsNativeJson;
 
     /**
      * Whether or not the connected server supports window functions.
      *
-     * @var bool
+     * @var bool|null
      */
     protected $_supportsWindowFunctions;
 
