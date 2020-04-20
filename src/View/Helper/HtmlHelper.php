@@ -311,14 +311,16 @@ class HtmlHelper extends Helper
      *
      * @param string $title The content to be wrapped by `<a>` tags.
      * @param string $path Cake-relative route path.
+     * @param array $params An array specifying any additional parameters.
+     *   Can be also any special parameters supported by `Router::url()`.
      * @param array $options Array of options and HTML attributes.
      * @return string An `<a />` element.
      * @see \Cake\Routing\Router::pathUrl()
      * @link https://book.cakephp.org/3/en/views/helpers/html.html#creating-links
      */
-    public function linkFromPath(string $title, string $path, array $options = []): string
+    public function linkFromPath(string $title, string $path, array $params = [], array $options = []): string
     {
-        return $this->link($title, ['_path' => $path], $options);
+        return $this->link($title, ['_path' => $path] + $params, $options);
     }
 
     /**

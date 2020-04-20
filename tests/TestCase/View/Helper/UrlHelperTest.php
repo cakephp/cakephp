@@ -168,8 +168,12 @@ class UrlHelperTest extends TestCase
      */
     public function testBuildFromPath(): void
     {
+        $result = $this->Helper->buildFromPath('Articles::index');
         $expected = '/articles';
-        $result = Router::pathUrl('Articles::index');
+        $this->assertSame($result, $expected);
+
+        $result = $this->Helper->buildFromPath('Articles::view', [3]);
+        $expected = '/articles/view/3';
         $this->assertSame($result, $expected);
     }
 
