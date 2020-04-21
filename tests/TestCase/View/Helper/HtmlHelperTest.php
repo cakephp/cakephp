@@ -341,12 +341,12 @@ class HtmlHelperTest extends TestCase
      */
     public function testLinkFromPath(): void
     {
-        $result = $this->Html->linkFromPath('Home', 'Articles::index');
-        $expected = '<a href="/articles">Home</a>';
+        $result = $this->Html->linkFromPath('Index', 'Articles::index');
+        $expected = '<a href="/articles">Index</a>';
         $this->assertSame($result, $expected);
 
-        $result = $this->Html->linkFromPath('Home', 'Articles::view', [3]);
-        $expected = '<a href="/articles/view/3">Home</a>';
+        $result = $this->Html->linkFromPath('View', 'Articles::view', [3]);
+        $expected = '<a href="/articles/view/3">View</a>';
         $this->assertSame($result, $expected);
     }
 
