@@ -81,7 +81,7 @@ class CakeEventManager {
 /**
  * Adds a new listener to an event. Listeners
  *
- * @param callback|CakeEventListener $callable PHP valid callback type or instance of CakeEventListener to be called
+ * @param callable|CakeEventListener $callable PHP valid callback type or instance of CakeEventListener to be called
  * when the event named with $eventKey is triggered. If a CakeEventListener instance is passed, then the `implementedEvents`
  * method will be called on the object to register the declared events individually as methods to be managed by this class.
  * It is possible to define multiple event handlers per event name.
@@ -146,7 +146,7 @@ class CakeEventManager {
  *
  * @param array $function the array taken from a handler definition for an event
  * @param CakeEventListener $object The handler object
- * @return callback
+ * @return callable
  */
 	protected function _extractCallable($function, $object) {
 		$method = $function['callable'];
@@ -161,7 +161,7 @@ class CakeEventManager {
 /**
  * Removes a listener from the active listeners.
  *
- * @param callback|CakeEventListener $callable any valid PHP callback type or an instance of CakeEventListener
+ * @param callable|CakeEventListener $callable any valid PHP callback type or an instance of CakeEventListener
  * @param string $eventKey The event unique identifier name with which the callback has been associated
  * @return void
  */
