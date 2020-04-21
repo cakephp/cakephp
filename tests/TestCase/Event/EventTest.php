@@ -24,6 +24,7 @@ use ArrayObject;
 use Cake\Core\Exception\Exception;
 use Cake\Event\Event;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 
 /**
  * Tests the Cake\Event\Event class functionality
@@ -100,10 +101,21 @@ class EventTest extends TestCase
     {
         $data = new ArrayObject(['some' => 'data']);
         $event = new Event('fake.event', $this, $data);
-        $this->assertEquals(['some' => 'data'], $event->getData());
+        $this->assertEquals($data, $event->getData());
 
         $this->assertSame('data', $event->getData('some'));
         $this->assertNull($event->getData('undef'));
+    }
+
+    /**
+     * Tests using non-array event data throws exception.
+     *
+     * @return void
+     */
+    public function testInvalidEventData()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $event = new Event('fake.event', $this, new \stdClass());
     }
 
     /**

@@ -16,7 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Event;
 
+use ArrayAccess;
 use Cake\Core\Exception\Exception;
+use InvalidArgumentException;
 
 /**
  * Class Event
@@ -43,7 +45,7 @@ class Event implements EventInterface
     /**
      * Custom data for the method that receives the event
      *
-     * @var array
+     * @var array|\ArrayAccess
      */
     protected $_data;
 
@@ -76,15 +78,20 @@ class Event implements EventInterface
      * @param string $name Name of the event
      * @param object|null $subject the object that this event applies to
      *   (usually the object that is generating the event).
-     * @param array|\ArrayAccess|null $data any value you wish to be transported
+     * @param array|\ArrayAccess $data any value you wish to be transported
      *   with this event to it can be read by listeners.
      * @psalm-param TSubject|null $subject
+     * @throws \InvalidArgumentException When $data is not an array or does not implement \ArrayAccess.
      */
-    public function __construct(string $name, $subject = null, $data = null)
+    public function __construct(string $name, $subject = null, $data = [])
     {
+        if (!is_array($data) && !($data instanceof ArrayAccess)) {
+            throw new InvalidArgumentException('Event data must be an array or implement ArrayAccess.');
+        }
+
         $this->_name = $name;
         $this->_subject = $subject;
-        $this->_data = (array)$data;
+        $this->_data = $data;
     }
 
     /**
@@ -163,7 +170,7 @@ class Event implements EventInterface
      * Access the event data/payload.
      *
      * @param string|null $key The data payload element to return, or null to return all data.
-     * @return array|mixed|null The data payload if $key is null, or the data value for the given $key.
+     * @return mixed|null The data payload if $key is null, or the data value for the given $key.
      *   If the $key does not exist a null value is returned.
      */
     public function getData(?string $key = null)
@@ -172,22 +179,26 @@ class Event implements EventInterface
             return $this->_data[$key] ?? null;
         }
 
-        return (array)$this->_data;
+        return $this->_data;
     }
 
     /**
      * Assigns a value to the data/payload of this event.
      *
-     * @param array|string $key An array will replace all payload data, and a key will set just that array item.
+     * @param array|\ArrayAccess|string $key An array will replace all payload data, and a key will set just that array item.
      * @param mixed $value The value to set.
      * @return $this
+     * @throws \InvalidArgumentException When $key is not a string, array or does not implement \ArrayAccess.
      */
     public function setData($key, $value = null)
     {
-        if (is_array($key)) {
-            $this->_data = $key;
-        } else {
+        if (is_string($key)) {
             $this->_data[$key] = $value;
+        } else {
+            if (!is_array($key) && !($key instanceof ArrayAccess)) {
+                throw new InvalidArgumentException('Event data must be an array or implement ArrayAccess.');
+            }
+            $this->_data = $key;
         }
 
         return $this;
