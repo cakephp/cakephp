@@ -452,8 +452,8 @@ class Hash
      * following the path specified in `$groupPath`.
      *
      * @param array $data Array from where to extract keys and values
-     * @param string|null $keyPath A dot-separated string. If null it will create a numbered array.
-     * @param string|null $valuePath A dot-separated string.
+     * @param array|string|null $keyPath A dot-separated string. If null it will create a numbered array.
+     * @param array|string|null $valuePath A dot-separated string.
      * @param string|null $groupPath A dot-separated string.
      * @return array Combined array
      * @link https://book.cakephp.org/3/en/core-libraries/hash.html#Cake\Utility\Hash::combine
