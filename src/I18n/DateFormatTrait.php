@@ -19,6 +19,7 @@ namespace Cake\I18n;
 use Cake\Chronos\Date as ChronosDate;
 use Cake\Chronos\DifferenceFormatterInterface;
 use Cake\Chronos\MutableDate;
+use Closure;
 use DateTime;
 use DateTimeZone;
 use IntlDateFormatter;
@@ -266,19 +267,7 @@ trait DateFormatTrait
     }
 
     /**
-     * Sets the default format used when converting this object to json
-     *
-     * The format should be either the formatting constants from IntlDateFormatter as
-     * described in (https://secure.php.net/manual/en/class.intldateformatter.php) or a pattern
-     * as specified in (http://www.icu-project.org/apiref/icu4c/classSimpleDateFormat.html#details)
-     *
-     * It is possible to provide an array of 2 constants. In this case, the first position
-     * will be used for formatting the date part of the object and the second position
-     * will be used to format the time part.
-     *
-     * @see \Cake\I18n\Time::i18nFormat()
-     * @param string|array|int $format Format.
-     * @return void
+     * @inheritDoc
      */
     public static function setJsonEncodeFormat($format): void
     {
@@ -430,6 +419,10 @@ trait DateFormatTrait
      */
     public function jsonSerialize()
     {
+        if (static::$_jsonEncodeFormat instanceof Closure) {
+            return call_user_func(static::$_jsonEncodeFormat, $this);
+        }
+
         return $this->i18nFormat(static::$_jsonEncodeFormat);
     }
 
