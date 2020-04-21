@@ -71,9 +71,16 @@ class Mysql extends Driver
     /**
      * Whether or not the server supports native JSON
      *
-     * @var bool
+     * @var bool|null
      */
     protected $_supportsNativeJson;
+
+    /**
+     * Whether or not the connected server supports window functions.
+     *
+     * @var bool|null
+     */
+    protected $_supportsWindowFunctions;
 
     /**
      * String used to start a database identifier quoting to make it safe
@@ -224,20 +231,45 @@ class Mysql extends Driver
     }
 
     /**
+     * Returns connected server version.
+     *
+     * @return string
+     */
+    public function getVersion(): string
+    {
+        if ($this->_version === null) {
+            $this->connect();
+            $this->_version = (string)$this->_connection->getAttribute(PDO::ATTR_SERVER_VERSION);
+        }
+
+        return $this->_version;
+    }
+
+    /**
      * Returns true if the server supports native JSON columns
      *
      * @return bool
      */
     public function supportsNativeJson(): bool
     {
-        if ($this->_supportsNativeJson !== null) {
-            return $this->_supportsNativeJson;
+        if ($this->_supportsNativeJson === null) {
+            $this->_supportsNativeJson = version_compare($this->getVersion(), '5.7.0', '>=');
         }
 
-        if ($this->_version === null) {
-            $this->_version = (string)$this->_connection->getAttribute(PDO::ATTR_SERVER_VERSION);
+        return $this->_supportsNativeJson;
+    }
+
+    /**
+     * Returns true if the connected server supports window functions.
+     *
+     * @return bool
+     */
+    public function supportsWindowFunctions(): bool
+    {
+        if ($this->_supportsWindowFunctions === null) {
+            $this->_supportsWindowFunctions = version_compare($this->getVersion(), '8.0.0', '>=');
         }
 
-        return $this->_supportsNativeJson = version_compare($this->_version, '5.7.0', '>=');
+        return $this->_supportsWindowFunctions;
     }
 }

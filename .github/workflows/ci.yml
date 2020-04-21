@@ -89,7 +89,6 @@ jobs:
     - name: Run PHPUnit
       env:
         REDIS_PORT: ${{ job.services.redis.ports['6379'] }}
-        ENABLE_WINDOW_TESTS: ${{ matrix.db-type == 'pgsql' || (matrix.db-type == 'mysql' && matrix.php-version == '7.2') }}
       run: |
         if [ ${{ matrix.db-type }} == 'mysql' ]; then mysql -h 127.0.0.1 -u root -proot -e 'CREATE DATABASE cakephp;'; fi
 

@@ -63,6 +63,20 @@ class Sqlite extends Driver
     protected $_schemaDialect;
 
     /**
+     * The connected server version.
+     *
+     * @var string
+     */
+    protected $_version;
+
+    /**
+     * Whether or not the connected server supports window functions.
+     *
+     * @var bool|null
+     */
+    protected $_supportsWindowFunctions;
+
+    /**
      * String used to start a database identifier quoting to make it safe
      *
      * @var string
@@ -292,5 +306,34 @@ class Sqlite extends Driver
                     ->add([') + (1' => 'literal']); // Sqlite starts on index 0 but Sunday should be 1
                 break;
         }
+    }
+
+    /**
+     * Returns connected server version.
+     *
+     * @return string
+     */
+    public function getVersion(): string
+    {
+        if ($this->_version === null) {
+            $this->connect();
+            $this->_version = (string)$this->_connection->getAttribute(PDO::ATTR_SERVER_VERSION);
+        }
+
+        return $this->_version;
+    }
+
+    /**
+     * Returns true if the connected server supports window functions.
+     *
+     * @return bool
+     */
+    public function supportsWindowFunctions(): bool
+    {
+        if ($this->_supportsWindowFunctions === null) {
+            $this->_supportsWindowFunctions = version_compare($this->getVersion(), '3.25.0', '>=');
+        }
+
+        return $this->_supportsWindowFunctions;
     }
 }
