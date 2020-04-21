@@ -96,6 +96,8 @@ class EmailTraitTest extends TestCase
         $this->assertMailSentWith('cc@example.com', 'cc');
         $this->assertMailSentWith('bcc@example.com', 'bcc');
         $this->assertMailSentWith('cc2@example.com', 'cc');
+        $this->assertMailSentWith('replyto@example.com', 'replyTo');
+        $this->assertMailSentWith('sender@example.com', 'sender');
     }
 
     /**
@@ -122,6 +124,7 @@ class EmailTraitTest extends TestCase
         $this->assertMailContainsAt(1, 'html');
 
         $this->assertMailSentWithAt(0, 'Hello world', 'subject');
+        $this->assertMailSentWithAt(0, 'replyto@example.com', 'replyTo');
     }
 
     /**
@@ -230,8 +233,10 @@ class EmailTraitTest extends TestCase
     private function sendEmails()
     {
         (new Mailer())
+            ->setSender(['sender@example.com' => 'Sender'])
             ->setTo(['to@example.com' => 'Foo Bar'])
             ->addTo('alsoto@example.com')
+            ->setReplyTo(['replyto@example.com' => 'Reply to me'])
             ->setCc('cc@example.com')
             ->setBcc(['bcc@example.com' => 'Baz Qux'])
             ->setSubject('Hello world')
