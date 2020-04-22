@@ -17,9 +17,6 @@ declare(strict_types=1);
 
 use Cake\Core\Configure;
 use Cake\Error\Debugger;
-use Cake\ORM\Table;
-use Cake\ORM\TableRegistry;
-use Psy\Shell as PsyShell;
 
 define('SECOND', 1);
 define('MINUTE', 60);
@@ -63,7 +60,6 @@ if (!function_exists('debug')) {
 
         return $var;
     }
-
 }
 
 if (!function_exists('stackTrace')) {
@@ -92,50 +88,6 @@ if (!function_exists('stackTrace')) {
         /** @var string $trace */
         $trace = Debugger::trace($options);
         echo $trace;
-    }
-
-}
-
-if (!function_exists('breakpoint')) {
-    /**
-     * Command to return the eval-able code to startup PsySH in interactive debugger
-     * Works the same way as eval(\Psy\sh());
-     * psy/psysh must be loaded in your project
-     *
-     * @link http://psysh.org/
-     * ```
-     * eval(breakpoint());
-     * ```
-     * @return string|null
-     */
-    function breakpoint(): ?string
-    {
-        if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') && class_exists(PsyShell::class)) {
-            return 'extract(\Psy\Shell::debug(get_defined_vars(), isset($this) ? $this : null));';
-        }
-        trigger_error(
-            'psy/psysh must be installed and you must be in a CLI environment to use the breakpoint function',
-            E_USER_WARNING
-        );
-
-        return null;
-    }
-}
-
-if (!function_exists('table') && (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg')) {
-    /**
-     * REPL convenience function to load a table
-     *
-     * Do **NOT** use this function in your app or plugin code,
-     * it is meant only for use in the CakePHP interactive console (REPL).
-     *
-     * @param string $alias The alias name you want to get.
-     * @param array $options The options you want to build the table with.
-     * @return \Cake\ORM\Table
-     */
-    function table(string $alias, array $options = []): Table
-    {
-        return TableRegistry::getTableLocator()->get($alias, $options);
     }
 }
 
