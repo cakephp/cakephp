@@ -126,6 +126,9 @@ if (!function_exists('table') && (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg')) 
     /**
      * REPL convenience function to load a table
      *
+     * Do **NOT** use this function in your app or plugin code,
+     * it is meant only for use in the CakePHP interactive console (REPL).
+     *
      * @param string $alias The alias name you want to get.
      * @param array $options The options you want to build the table with.
      * @return \Cake\ORM\Table
