@@ -22,6 +22,7 @@ use Cake\Collection\Collection;
 use Cake\Error\Debugger;
 use Cake\Event\EventManager;
 use Cake\Http\Response;
+use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 
 require_once CAKE . 'basics.php';
@@ -425,6 +426,17 @@ EXPECTED;
         [$r, $expected] = [stackTrace($opts), \Cake\Error\Debugger::trace($opts)];
         $result = ob_get_clean();
         $this->assertSame($expected, $result);
+    }
+
+    /**
+     * Tests the table() function returns a table object
+     *
+     * @return void
+     */
+    public function testTable()
+    {
+        $table = \table('Table');
+        $this->assertInstanceOf(Table::class, $table);
     }
 
     /**

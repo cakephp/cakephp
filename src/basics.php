@@ -17,6 +17,8 @@ declare(strict_types=1);
 
 use Cake\Core\Configure;
 use Cake\Error\Debugger;
+use Cake\ORM\Table;
+use Cake\ORM\TableRegistry;
 use Psy\Shell as PsyShell;
 
 define('SECOND', 1);
@@ -117,6 +119,20 @@ if (!function_exists('breakpoint')) {
         );
 
         return null;
+    }
+}
+
+if (!function_exists('table') && (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg')) {
+    /**
+     * REPL convenience function to load a table
+     *
+     * @param string $alias The alias name you want to get.
+     * @param array $options The options you want to build the table with.
+     * @return \Cake\ORM\Table
+     */
+    function table(string $alias, array $options = []): Table
+    {
+        return TableRegistry::getTableLocator()->get($alias, $options);
     }
 }
 
