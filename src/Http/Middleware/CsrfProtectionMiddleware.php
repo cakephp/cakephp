@@ -241,13 +241,17 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
         $body = $request->getParsedBody();
         if (is_array($body) || $body instanceof ArrayAccess) {
             $post = Hash::get($body, $this->_config['field']);
-            if ($this->_compareToken($post, $cookie)) {
+            if (Security::constantEquals($post, $cookie)) {
+                return;
+            } else if ($this->_compareToken($post, $cookie)) {
                 return;
             }
         }
 
         $header = $request->getHeaderLine('X-CSRF-Token');
-        if ($this->_compareToken($header, $cookie)) {
+        if (Security::constantEquals($header, $cookie)) {
+            return;
+        } else if ($this->_compareToken($header, $cookie)) {
             return;
         }
 
