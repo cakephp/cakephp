@@ -323,7 +323,7 @@ class EntityContext implements ContextInterface
      * primary key column is guessed out of the provided $path array
      *
      * @param mixed $values The list from which to extract primary keys from
-     * @param array $path Each one of the parts in a path for a field name
+     * @param string[] $path Each one of the parts in a path for a field name
      * @return array|null
      */
     protected function _extractMultiple($values, array $path): ?array
