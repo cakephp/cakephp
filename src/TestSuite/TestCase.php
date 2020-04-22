@@ -771,8 +771,16 @@ abstract class TestCase extends BaseTestCase
     /**
      * @inheritDoc
      */
-    protected function getMockForTrait($traitName, array $arguments = [], $mockClassName = '', $callOriginalConstructor = true, $callOriginalClone = true, $callAutoload = true, $mockedMethods = [], $cloneArguments = false)
-    {
+    protected function getMockForTrait(
+        $traitName,
+        array $arguments = [],
+        $mockClassName = '',
+        $callOriginalConstructor = true,
+        $callOriginalClone = true,
+        $callAutoload = true,
+        $mockedMethods = [],
+        $cloneArguments = false
+    ) {
         MockBuilder::setSupressedErrorHandler();
 
         try {
