@@ -2270,6 +2270,39 @@ class RouterTest extends TestCase
     }
 
     /**
+     * Tests that convenience wrapper urlArray() works as the internal
+     * Router::parseRoutePath() does.
+     *
+     * @return void
+     */
+    public function testUrlArray(): void
+    {
+        $expected = [
+            'controller' => 'Bookmarks',
+            'action' => 'view',
+        ];
+        $this->assertSame($expected, urlArray('Bookmarks::view'));
+
+        $expected = [
+            'prefix' => 'admin',
+            'controller' => 'Bookmarks',
+            'action' => 'view',
+        ];
+        $this->assertSame($expected, urlArray('Admin/Bookmarks::view'));
+
+        $expected = [
+            'plugin' => 'Vendor/Cms',
+            'prefix' => 'management/admin',
+            'controller' => 'Articles',
+            'action' => 'view',
+            3,
+            '?' => ['query' => 'string'],
+        ];
+        $params = [3, '?' => ['query' => 'string']];
+        $this->assertSame($expected, urlArray('Vendor/Cms.Management/Admin/Articles::view', $params));
+    }
+
+    /**
      * Test url() works with patterns on :action
      *
      * @return void
