@@ -2207,14 +2207,14 @@ class RouterTest extends TestCase
         $this->assertSame($expected, Router::parseRoutePath('Bookmarks::view'));
 
         $expected = [
-            'prefix' => 'admin',
+            'prefix' => 'Admin',
             'controller' => 'Bookmarks',
             'action' => 'view',
         ];
         $this->assertSame($expected, Router::parseRoutePath('Admin/Bookmarks::view'));
 
         $expected = [
-            'prefix' => 'long_prefix/back_end',
+            'prefix' => 'LongPrefix/BackEnd',
             'controller' => 'Bookmarks',
             'action' => 'view',
         ];
@@ -2229,7 +2229,7 @@ class RouterTest extends TestCase
 
         $expected = [
             'plugin' => 'Vendor/Cms',
-            'prefix' => 'management/admin',
+            'prefix' => 'Management/Admin',
             'controller' => 'Articles',
             'action' => 'view',
         ];
@@ -3089,7 +3089,7 @@ class RouterTest extends TestCase
         $result = Router::parseRequest($this->makeRequest('/admin/articles/view', 'GET'));
         $expected = [
             'pass' => [],
-            'prefix' => 'admin',
+            'prefix' => 'Admin',
             'controller' => 'Articles',
             'action' => 'view',
             'plugin' => null,
