@@ -238,7 +238,7 @@ class RouteBuilderTest extends TestCase
         $expected = [
             'pass' => [],
             'plugin' => null,
-            'prefix' => 'admin',
+            'prefix' => 'Admin',
             'controller' => 'Bookmarks',
             'action' => 'index',
             '_matchedRoute' => '/admin/bookmarks',
@@ -285,7 +285,7 @@ class RouteBuilderTest extends TestCase
         $expected = [
             'pass' => [],
             'plugin' => 'Vendor/Blog',
-            'prefix' => 'management/admin',
+            'prefix' => 'Management/Admin',
             'controller' => 'Articles',
             'action' => 'view',
             '_matchedRoute' => '/admin/blog/articles/view',
