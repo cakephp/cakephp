@@ -12,11 +12,13 @@
  * @since         3.3.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace Cake\Http;
 
 use Cake\Core\App;
 use Cake\Core\BasePlugin;
 use Cake\Core\ConsoleApplicationInterface;
+use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\HttpApplicationInterface;
 use Cake\Core\Plugin;
 use Cake\Core\PluginApplicationInterface;
@@ -104,6 +106,26 @@ abstract class BaseApplication implements
             ));
         }
         $this->plugins->add($plugin);
+
+        return $this;
+    }
+
+    /**
+     * Add an optional plugin
+     *
+     * If it isn't available, ignore it.
+     *
+     * @param string|\Cake\Core\PluginInterface $name The plugin name or plugin object.
+     * @param array $config The configuration data for the plugin if using a string for $name
+     * @return $this
+     */
+    public function addOptionalPlugin($name, array $config = [])
+    {
+        try {
+            $this->addPlugin($name, $config);
+        } catch (MissingPluginException $e) {
+            // Do not halt if the plugin is missing
+        }
 
         return $this;
     }
