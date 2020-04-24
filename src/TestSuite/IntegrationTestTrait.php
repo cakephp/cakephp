@@ -17,7 +17,6 @@ namespace Cake\TestSuite;
 
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
-use Cake\Database\Exception as DatabaseException;
 use Cake\Error\ExceptionRenderer;
 use Cake\Event\EventInterface;
 use Cake\Form\FormProtector;
@@ -60,7 +59,6 @@ use Cake\Utility\Text;
 use Exception;
 use Laminas\Diactoros\Uri;
 use LogicException;
-use PHPUnit\Framework\Error\Error as PhpUnitError;
 use Throwable;
 
 /**
@@ -501,9 +499,9 @@ trait IntegrationTestTrait
             }
             $this->_response = $response;
             $this->_exception = null;
-        } catch (PhpUnitError $e) {
+        } catch (\PHPUnit\Framework\Error\Error $e) {
             $this->_exception = $e;
-        } catch (DatabaseException $e) {
+        } catch (\Cake\Database\Exception $e) {
             $this->_exception = $e;
         } catch (LogicException $e) {
             $this->_exception = $e;
@@ -559,7 +557,7 @@ trait IntegrationTestTrait
      *
      * This method will attempt to use the configured exception renderer.
      * If that class does not exist, the built-in renderer will be used.
-     * @param \Throwable|\LogicException|DatabaseException|PhpUnitError|null $exception Exception to handle.
+     * @param \Throwable|\LogicException|\Cake\Database\Exception|\PHPUnit\Framework\Error\Error|null $exception Exception to handle.
      * @return void
      */
     protected function _handleError($exception): void
