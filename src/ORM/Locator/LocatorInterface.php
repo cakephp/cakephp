@@ -39,7 +39,7 @@ interface LocatorInterface
      *
      * @param string $alias The alias name you want to get.
      * @param array $options The options you want to build the table with.
-     * @return \Cake\ORM\Table
+     * @return \Cake\Datasource\RepositoryInterface
      */
     public function get($alias, array $options = []);
 
