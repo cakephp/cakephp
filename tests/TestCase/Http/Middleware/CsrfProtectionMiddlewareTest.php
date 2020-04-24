@@ -262,6 +262,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
     /**
      * Test that tokens cannot be simple matches and must pass our hmac.
      *
+     * @deprecated 4.1.0 In 4.1.0 this scenario should start raising an exception.
      * @return void
      */
     public function testInvalidTokenIncorrectOrigin()
@@ -276,8 +277,8 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
         $middleware = new CsrfProtectionMiddleware();
 
-        $this->expectException(InvalidCsrfTokenException::class);
-        $middleware->process($request, $this->_getRequestHandler());
+        $response = $middleware->process($request, $this->_getRequestHandler());
+        $this->assertEmpty($response->getCookie('csrfToken'));
     }
 
     /**

@@ -241,22 +241,25 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
         $body = $request->getParsedBody();
         if (is_array($body) || $body instanceof ArrayAccess) {
             $post = Hash::get($body, $this->_config['field']);
-            // Allow non-hardened tokens until 4.1.0
-            if (Security::constantEquals($post, $cookie)) {
-                return;
-            }
-            // Validates hardened tokens generated since 4.0.6
-            // The above check will circumvent this until 4.1.0
-            if ($this->_compareToken($post, $cookie)) {
+            if (
+                // Allow non-hardened tokens until 4.1.0
+                Security::constantEquals($post, $cookie) ||
+                $this->_compareToken($post, $cookie)
+            ) {
                 return;
             }
         }
 
-        $header = $request->getHeaderLine('X-CSRF-Token');
-        if (Security::constantEquals($header, $cookie)) {
-            return;
-        } else if ($this->_compareToken($header, $cookie)) {
-            return;
+        if ($request->hasHeader('X-CSRF-Token')) {
+            $header = $request->getHeaderLine('X-CSRF-Token');
+            if (
+                // Allow arbitrary tokens until 4.1.0
+                Security::constantEquals($header, $cookie) || 
+                // Validate hmac tokens added in 4.0.6
+                $this->_compareToken($header, $cookie)
+            ) {
+                return;
+            }
         }
 
         throw new InvalidCsrfTokenException(__d('cake', 'Missing CSRF token body'));
