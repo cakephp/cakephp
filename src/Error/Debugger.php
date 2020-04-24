@@ -633,10 +633,21 @@ class Debugger
             foreach ($filters as $filter => $visibility) {
                 $reflectionProperties = $ref->getProperties($filter);
                 foreach ($reflectionProperties as $reflectionProperty) {
+                    $value = null;
                     $reflectionProperty->setAccessible(true);
-                    $property = $reflectionProperty->getValue($var);
 
-                    $value = static::_export($property, $depth - 1, $indent);
+                    if (
+                        method_exists($reflectionProperty, 'isInitialized') &&
+                        !$reflectionProperty->isInitialized($var)
+                    ) {
+                        $value = '[uninitialized]';
+                    }
+
+                    if ($value === null) {
+                        $property = $reflectionProperty->getValue($var);
+                        $value = static::_export($property, $depth - 1, $indent);
+                    }
+
                     $key = $reflectionProperty->name;
                     $props[] = sprintf(
                         '[%s] %s => %s',
