@@ -107,7 +107,7 @@ trait IntegrationTestTrait
     /**
      * The exception being thrown if the case.
      *
-     * @var \Throwable|null
+     * @var Throwable|null
      */
     protected $_exception;
 
@@ -567,7 +567,7 @@ trait IntegrationTestTrait
      * This method will attempt to use the configured exception renderer.
      * If that class does not exist, the built-in renderer will be used.
      *
-     * @param \Throwable|\LogicException|\LogicException|DatabaseException|PhpUnitError $exception Exception to handle.
+     * @param Throwable|LogicException|DatabaseException|PhpUnitError $exception Exception to handle.
      * @return void
      */
     protected function _handleError($exception): void
