@@ -101,6 +101,48 @@ class CsrfProtectionMiddlewareTest extends TestCase
     }
 
     /**
+     * Test invalid cookie is replaced with valid cookie
+     *
+     * @return void
+     */
+    public function testInvalidCookieTokenRegenerated()
+    {
+        $request = new ServerRequest([
+            'environment' => ['REQUEST_METHOD' => 'GET'],
+            'cookies' => ['csrfToken' => 'invalidToken'],
+        ]);
+
+        $updatedRequest = null;
+        $handler = new TestRequestHandler(function ($request) use (&$updatedRequest) {
+            $updatedRequest = $request;
+
+            return new Response();
+        });
+
+        $middleware = new CsrfProtectionMiddleware();
+        $response = $middleware->process($request, $handler);
+
+        $cookie = $response->getCookie('csrfToken');
+        $this->assertNotEmpty($cookie, 'Should set a new token.');
+
+        $freshToken = $cookie['value'];
+        $this->assertRegExp('/^[a-f0-9]+$/', $freshToken, 'Should look like a hash.');
+        $this->assertEquals($freshToken, $updatedRequest->getAttribute('csrfToken'), 'Should have new token as attrubute');
+
+        // Now try to use fresh token in form submit
+        $request = new ServerRequest([
+            'environment' => [
+                'REQUEST_METHOD' => 'POST',
+            ],
+            'post' => ['_csrfToken' => $freshToken],
+            'cookies' => ['csrfToken' => $freshToken],
+        ]);
+
+        $middleware = new CsrfProtectionMiddleware();
+        $middleware->process($request, $this->_getRequestHandler());
+    }
+
+    /**
      * Test that the CSRF tokens are not required for idempotent operations
      *
      * @dataProvider safeHttpMethodProvider
