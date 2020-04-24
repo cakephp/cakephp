@@ -558,7 +558,7 @@ trait IntegrationTestTrait
      *
      * This method will attempt to use the configured exception renderer.
      * If that class does not exist, the built-in renderer will be used.
-     * 
+     *
      * @param \Throwable|\LogicException|\Cake\Database\Exception|\PHPUnit\Framework\Error\Error $exception Exception to handle.
      * @return void
      */
