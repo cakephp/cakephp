@@ -241,9 +241,13 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
         $body = $request->getParsedBody();
         if (is_array($body) || $body instanceof ArrayAccess) {
             $post = Hash::get($body, $this->_config['field']);
+            // Allow non-hardened tokens until 4.1.0
             if (Security::constantEquals($post, $cookie)) {
                 return;
-            } else if ($this->_compareToken($post, $cookie)) {
+            }
+            // Validates hardened tokens generated since 4.0.6
+            // The above check will circumvent this until 4.1.0
+            if ($this->_compareToken($post, $cookie)) {
                 return;
             }
         }
