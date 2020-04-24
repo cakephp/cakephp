@@ -377,7 +377,6 @@ trait IntegrationTestTrait
      * response.
      *
      * @param string|array $url The URL to request.
-     *
      * @return void
      */
     public function get($url): void
@@ -394,7 +393,6 @@ trait IntegrationTestTrait
      *
      * @param string|array $url The URL to request.
      * @param string|array $data The data for the request.
-     *
      * @return void
      */
     public function post($url, $data = []): void
@@ -411,7 +409,6 @@ trait IntegrationTestTrait
      *
      * @param string|array $url The URL to request.
      * @param string|array $data The data for the request.
-     *
      * @return void
      */
     public function patch($url, $data = []): void
@@ -428,7 +425,6 @@ trait IntegrationTestTrait
      *
      * @param string|array $url The URL to request.
      * @param string|array $data The data for the request.
-     *
      * @return void
      */
     public function put($url, $data = []): void
@@ -444,7 +440,6 @@ trait IntegrationTestTrait
      * response.
      *
      * @param string|array $url The URL to request.
-     *
      * @return void
      */
     public function delete($url): void
@@ -460,7 +455,6 @@ trait IntegrationTestTrait
      * response.
      *
      * @param string|array $url The URL to request.
-     *
      * @return void
      */
     public function head($url): void
@@ -476,7 +470,6 @@ trait IntegrationTestTrait
      * response.
      *
      * @param string|array $url The URL to request.
-     *
      * @return void
      */
     public function options($url): void
@@ -492,7 +485,6 @@ trait IntegrationTestTrait
      * @param string|array $url The URL
      * @param string $method The HTTP method
      * @param string|array $data The request data.
-     *
      * @return void
      */
     protected function _sendRequest($url, $method, $data = []): void
@@ -508,6 +500,7 @@ trait IntegrationTestTrait
                 $this->_requestSession->write('Flash', $this->_flashMessages);
             }
             $this->_response = $response;
+            $this->_exception = null;
         } catch (PhpUnitError $e) {
             $this->_exception = $e;
         } catch (DatabaseException $e) {
@@ -566,8 +559,7 @@ trait IntegrationTestTrait
      *
      * This method will attempt to use the configured exception renderer.
      * If that class does not exist, the built-in renderer will be used.
-     *
-     * @param \Throwable|\LogicException|DatabaseException|PhpUnitError $exception Exception to handle.
+     * @param \Throwable|\LogicException|DatabaseException|PhpUnitError|null $exception Exception to handle.
      * @return void
      */
     protected function _handleError($exception): void
