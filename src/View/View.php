@@ -116,6 +116,13 @@ class View implements EventDispatcherInterface
     protected $helpers = [];
 
     /**
+     * The name of the subfolders cotaining all files for this View.
+     *
+     * @var string
+     */
+    protected $prefixPath;
+
+    /**
      * The name of the subfolder containing templates for this View.
      *
      * @var string
@@ -216,7 +223,7 @@ class View implements EventDispatcherInterface
      */
     protected $_passedVars = [
         'viewVars', 'autoLayout', 'helpers', 'template', 'layout', 'name', 'theme',
-        'layoutPath', 'templatePath', 'plugin',
+        'layoutPath', 'templatePath', 'prefixPath', 'plugin',
     ];
 
     /**
@@ -412,6 +419,29 @@ class View implements EventDispatcherInterface
     public function setResponse(Response $response)
     {
         $this->response = $response;
+
+        return $this;
+    }
+
+    /**
+     * Gets prefix path for files.
+     *
+     * @return string
+     */
+    public function getPrefixPath(): string
+    {
+        return $this->prefixPath;
+    }
+
+    /**
+     * Sets prefix path for files.
+     *
+     * @param string $path Prefix path for files
+     * @return $this
+     */
+    public function setPrefixPath(string $path)
+    {
+        $this->prefixPath = $path;
 
         return $this;
     }
@@ -1531,7 +1561,17 @@ class View implements EventDispatcherInterface
                 return $this->_pathsForPlugin[$plugin];
             }
         }
+
         $templatePaths = App::path(static::NAME_TEMPLATE);
+
+        $prefixPath = '';
+        if (!empty($this->prefixPath)) {
+            $prefixPath = $this->prefixPath . DIRECTORY_SEPARATOR;
+            $templatePaths = array_map(function (string $path) use ($prefixPath) {
+                return $path . $prefixPath;
+            }, $templatePaths);
+        }
+
         $pluginPaths = $themePaths = [];
         if (!empty($plugin)) {
             for ($i = 0, $count = count($templatePaths); $i < $count; $i++) {
@@ -1541,11 +1581,11 @@ class View implements EventDispatcherInterface
                     . $plugin
                     . DIRECTORY_SEPARATOR;
             }
-            $pluginPaths[] = Plugin::templatePath($plugin);
+            $pluginPaths[] = Plugin::templatePath($plugin) . $prefixPath;
         }
 
         if (!empty($this->theme)) {
-            $themePaths[] = Plugin::templatePath(Inflector::camelize($this->theme));
+            $themePaths[] = Plugin::templatePath(Inflector::camelize($this->theme)) . $prefixPath;
 
             if ($plugin) {
                 for ($i = 0, $count = count($themePaths); $i < $count; $i++) {

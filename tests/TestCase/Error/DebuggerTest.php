@@ -326,6 +326,7 @@ object(Cake\View\View) {
 		(int) 0 => 'Html',
 		(int) 1 => 'Form'
 	]
+	[protected] prefixPath => null
 	[protected] templatePath => null
 	[protected] template => null
 	[protected] layout => 'default'
@@ -348,7 +349,8 @@ object(Cake\View\View) {
 		(int) 6 => 'theme',
 		(int) 7 => 'layoutPath',
 		(int) 8 => 'templatePath',
-		(int) 9 => 'plugin'
+		(int) 9 => 'prefixPath',
+		(int) 10 => 'plugin'
 	]
 	[protected] _defaultConfig => []
 	[protected] _paths => []

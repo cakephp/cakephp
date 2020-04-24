@@ -851,6 +851,44 @@ class ViewTest extends TestCase
     }
 
     /**
+     * Test templates with prefix path
+     *
+     * @return void
+     */
+    public function testPrefixPathTemplates()
+    {
+        $view = new TestView();
+        $view->setPrefixPath('bake');
+
+        $result = $view->element('route');
+        $this->assertSame("this is a path prefix element\n", $result);
+
+        $expected = TEST_APP . 'templates' . DS . 'bake' . DS . 'policy.php';
+        $result = $view->getTemplateFileName('policy');
+        $this->assertPathEquals($expected, $result);
+    }
+
+    /**
+     * Test themes with prefix path
+     *
+     * @return void
+     */
+    public function testPrefixPathThemes()
+    {
+        $view = new TestView();
+        $view->setPrefixPath('bake');
+        $view->setTheme('TestTheme');
+
+        $expected = Plugin::path('TestTheme') . 'templates' . DS . 'bake' . DS . 'layout' . DS . 'default.php';
+        $result = $view->getLayoutFileName();
+        $this->assertPathEquals($expected, $result);
+
+        $expected = Plugin::path('TestTheme') . 'templates' . DS . 'bake' . DS . 'policy.php';
+        $result = $view->getTemplateFileName('policy');
+        $this->assertPathEquals($expected, $result);
+    }
+
+    /**
      * Test element events
      *
      * @return void
