@@ -984,7 +984,7 @@ class Router
             $defaults['plugin'] = $matches['plugin'];
         }
         if ($matches['prefix'] !== '') {
-            $defaults['prefix'] = Inflector::underscore($matches['prefix']);
+            $defaults['prefix'] = $matches['prefix'];
         }
         $defaults['controller'] = $matches['controller'];
         $defaults['action'] = $matches['action'];
