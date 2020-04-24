@@ -498,7 +498,6 @@ trait IntegrationTestTrait
                 $this->_requestSession->write('Flash', $this->_flashMessages);
             }
             $this->_response = $response;
-            $this->_exception = null;
         } catch (\PHPUnit\Framework\Error\Error $e) {
             $this->_exception = $e;
         } catch (\Cake\Database\Exception $e) {
@@ -510,7 +509,9 @@ trait IntegrationTestTrait
         }
 
         // Simulate the global exception handler being invoked.
-        $this->_handleError($this->_exception);
+        if ($this->_exception instanceof Throwable) {
+            $this->_handleError($this->_exception);
+        }
     }
 
     /**
@@ -557,7 +558,7 @@ trait IntegrationTestTrait
      *
      * This method will attempt to use the configured exception renderer.
      * If that class does not exist, the built-in renderer will be used.
-     * @param \Throwable|\LogicException|\Cake\Database\Exception|\PHPUnit\Framework\Error\Error|null $exception Exception to handle.
+     * @param \Throwable|\LogicException|\Cake\Database\Exception|\PHPUnit\Framework\Error\Error $exception Exception to handle.
      * @return void
      */
     protected function _handleError($exception): void
