@@ -101,6 +101,38 @@ class CsrfProtectionMiddlewareTest extends TestCase
     }
 
     /**
+     * Test that valid cookie is reused and no new cookie is sent.
+     *
+     * @return void
+     */
+    public function testValidCookieReused()
+    {
+        $middleware = new CsrfProtectionMiddleware();
+        $token = $middleware->createToken();
+
+        $request = new ServerRequest([
+            'environment' => [
+                'REQUEST_METHOD' => 'GET',
+            ],
+            'cookies' => ['csrfToken' => $token],
+        ]);
+
+        $updatedRequest = null;
+        $handler = new TestRequestHandler(function ($request) use (&$updatedRequest) {
+            $updatedRequest = $request;
+
+            return new Response();
+        });
+
+        $response = $middleware->process($request, $handler);
+
+        $cookie = $response->getCookie('csrfToken');
+        $this->assertNull($cookie, 'Should not send cookie with new token.');
+
+        $this->assertEquals($token, $updatedRequest->getAttribute('csrfToken'), 'Should use same token from cookie');
+    }
+
+    /**
      * Test invalid cookie is replaced with valid cookie
      *
      * @return void
@@ -127,7 +159,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
         $freshToken = $cookie['value'];
         $this->assertRegExp('/^[a-f0-9]+$/', $freshToken, 'Should look like a hash.');
-        $this->assertEquals($freshToken, $updatedRequest->getAttribute('csrfToken'), 'Should have new token as attrubute');
+        $this->assertEquals($freshToken, $updatedRequest->getAttribute('csrfToken'), 'Should have new token as attribute');
 
         // Now try to use fresh token in form submit
         $request = new ServerRequest([
