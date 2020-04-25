@@ -18,6 +18,7 @@ namespace Cake\Http\Middleware;
 
 use ArrayAccess;
 use Cake\Http\Cookie\Cookie;
+use Cake\Http\Cookie\CookieInterface;
 use Cake\Http\Exception\InvalidCsrfTokenException;
 use Cake\Http\Response;
 use Cake\Utility\Hash;
@@ -279,9 +280,9 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      *
      * @param string $value Cookie value
      * @param \Psr\Http\Message\ServerRequestInterface $request The request object.
-     * @return \Cake\Http\Cookie\Cookie
+     * @return \Cake\Http\Cookie\CookieInterface
      */
-    protected function _createCookie(string $value, ServerRequestInterface $request): Cookie
+    protected function _createCookie(string $value, ServerRequestInterface $request): CookieInterface
     {
         $cookie = Cookie::create(
             $this->_config['cookieName'],
