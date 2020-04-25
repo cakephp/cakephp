@@ -215,8 +215,8 @@ class CsrfProtectionMiddlewareTest extends TestCase
             $this->assertArrayHasKey('Set-Cookie', $responseHeaders);
 
             $cookie = Cookie::createFromHeaderString($responseHeaders['Set-Cookie']);
-            $this->assertSame('csrfToken', $cookie->getName(), 'Should delete cookie with invalid CSRF token');
-            $this->assertTrue($cookie->isExpired(), 'Should delete cookie with invalid CSRF token');
+            $this->assertSame('csrfToken', $cookie->getName(), 'Should automatically delete cookie with invalid CSRF token');
+            $this->assertTrue($cookie->isExpired(), 'Should automatically delete cookie with invalid CSRF token');
         }
     }
 
@@ -276,8 +276,8 @@ class CsrfProtectionMiddlewareTest extends TestCase
             $this->assertArrayHasKey('Set-Cookie', $responseHeaders);
 
             $cookie = Cookie::createFromHeaderString($responseHeaders['Set-Cookie']);
-            $this->assertSame('csrfToken', $cookie->getName(), 'Should delete cookie with invalid CSRF token');
-            $this->assertTrue($cookie->isExpired(), 'Should delete cookie with invalid CSRF token');
+            $this->assertSame('csrfToken', $cookie->getName(), 'Should automatically delete cookie with invalid CSRF token');
+            $this->assertTrue($cookie->isExpired(), 'Should automatically delete cookie with invalid CSRF token');
         }
     }
 
