@@ -757,15 +757,23 @@ class Debugger
                 $reflectionProperties = $ref->getProperties($filter);
                 foreach ($reflectionProperties as $reflectionProperty) {
                     $reflectionProperty->setAccessible(true);
-                    $value = $reflectionProperty->getValue($var);
 
+                    if (
+                        method_exists($reflectionProperty, 'isInitialized') &&
+                        !$reflectionProperty->isInitialized($var)
+                    ) {
+                        $value = new SpecialNode('[uninitialized]');
+                    } else {
+                        $value = static::export($reflectionProperty->getValue($var), $context->withAddedDepth());
+                    }
                     $node->addProperty(
                         new PropertyNode(
                             $reflectionProperty->getName(),
                             $visibility,
-                            static::export($value, $context->withAddedDepth())
+                            $value
                         )
                     );
+
                 }
             }
         }
