@@ -604,8 +604,3 @@ parameters:
 			message: "#^Call to an undefined method DateTimeInterface\\:\\:setTimezone\\(\\)\\.$#"
 			count: 1
 			path: src/View/Helper/TimeHelper.php
-
-		-
-			message: "#^Parameter \\#3 \\$options of method Cake\\\\View\\\\View\\:\\:_elementCache\\(\\) expects array\\('cache' \\=\\> array\\('key' \\=\\> string, 'config' \\=\\> string\\)\\|string, \\?'callbacks' \\=\\> mixed, \\?'plugin' \\=\\> mixed\\), array given\\.$#"
-			count: 1
-			path: src/View/View.php
