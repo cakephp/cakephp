@@ -21,9 +21,9 @@ namespace Cake\Http;
 
 use Cake\Core\Configure;
 use Cake\Log\Log;
+use Laminas\Diactoros\RelativeStream;
+use Laminas\Diactoros\Response\EmitterInterface;
 use Psr\Http\Message\ResponseInterface;
-use Zend\Diactoros\RelativeStream;
-use Zend\Diactoros\Response\EmitterInterface;
 
 /**
  * Emits a Response to the PHP Server API.

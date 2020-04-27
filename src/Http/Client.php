@@ -24,7 +24,7 @@ use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Cookie\CookieInterface;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
-use Zend\Diactoros\Uri;
+use Laminas\Diactoros\Uri;
 
 /**
  * The end user interface for doing HTTP requests.

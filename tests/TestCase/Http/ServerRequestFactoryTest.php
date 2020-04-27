@@ -18,7 +18,7 @@ use Cake\Core\Configure;
 use Cake\Http\ServerRequestFactory;
 use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
-use Zend\Diactoros\UploadedFile;
+use Laminas\Diactoros\UploadedFile;
 
 /**
  * Test case for the server factory.

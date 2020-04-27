@@ -33,9 +33,9 @@
         "ext-mbstring": "*",
         "cakephp/chronos": "^1.0.1",
         "aura/intl": "^3.0.0",
+        "laminas/laminas-diactoros": "^1.4.0",
         "psr/log": "^1.0.0",
         "psr/simple-cache": "^1.0.0",
-        "zendframework/zend-diactoros": "^1.4.0",
         "paragonie/random_compat": "^1.4|^2.0|9.99.99"
     },
     "suggest": {
