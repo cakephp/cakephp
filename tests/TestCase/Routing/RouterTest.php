@@ -2280,19 +2280,22 @@ class RouterTest extends TestCase
         $expected = [
             'controller' => 'Bookmarks',
             'action' => 'view',
+            'plugin' => false,
+            'prefix' => false,
         ];
         $this->assertSame($expected, urlArray('Bookmarks::view'));
 
         $expected = [
-            'prefix' => 'admin',
+            'prefix' => 'Admin',
             'controller' => 'Bookmarks',
             'action' => 'view',
+            'plugin' => false,
         ];
         $this->assertSame($expected, urlArray('Admin/Bookmarks::view'));
 
         $expected = [
             'plugin' => 'Vendor/Cms',
-            'prefix' => 'management/admin',
+            'prefix' => 'Management/Admin',
             'controller' => 'Articles',
             'action' => 'view',
             3,

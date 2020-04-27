@@ -29,8 +29,12 @@ if (!function_exists('urlArray')) {
      */
     function urlArray(string $path, array $params = []): array
     {
-        $array = Router::parseRoutePath($path);
+        $url = Router::parseRoutePath($path);
+        $url += [
+            'plugin' => false,
+            'prefix' => false,
+        ];
 
-        return $array + $params;
+        return $url + $params;
     }
 }
