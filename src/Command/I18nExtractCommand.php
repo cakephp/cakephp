@@ -672,18 +672,19 @@ class I18nExtractCommand extends Command
      * Build the translation template header
      *
      * @param string $domain Domain
-     *
      * @return string Translation template header
      */
     protected function _writeHeader(string $domain): string
     {
+        $projectIdVersion = $domain === 'cake' ? 'CakePHP ' . Configure::version() : 'PROJECT VERSION';
+
         $output = "# LANGUAGE translation of CakePHP Application\n";
         $output .= "# Copyright YEAR NAME <EMAIL@ADDRESS>\n";
         $output .= "#\n";
         $output .= "#, fuzzy\n";
         $output .= "msgid \"\"\n";
         $output .= "msgstr \"\"\n";
-        $output .= "\"Project-Id-Version: " . ($domain === 'cake' ? 'CakePHP ' . Configure::version() : 'PROJECT VERSION') . "\\n\"\n";
+        $output .= "\"Project-Id-Version: " . $projectIdVersion . "\\n\"\n";
         $output .= '"POT-Creation-Date: ' . date('Y-m-d H:iO') . "\\n\"\n";
         $output .= "\"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\\n\"\n";
         $output .= "\"Last-Translator: NAME <EMAIL@ADDRESS>\\n\"\n";
