@@ -773,7 +773,6 @@ class Debugger
                             $value
                         )
                     );
-
                 }
             }
         }
