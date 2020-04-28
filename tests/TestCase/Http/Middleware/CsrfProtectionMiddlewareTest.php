@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Http\Middleware;
 
+use Cake\Http\Cookie\Cookie;
 use Cake\Http\Exception\InvalidCsrfTokenException;
 use Cake\Http\Middleware\CsrfProtectionMiddleware;
 use Cake\Http\Response;
@@ -204,8 +205,19 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
         $middleware = new CsrfProtectionMiddleware();
 
-        $this->expectException(InvalidCsrfTokenException::class);
-        $middleware->process($request, $this->_getRequestHandler());
+        try {
+            $middleware->process($request, $this->_getRequestHandler());
+
+            $this->fail();
+        } catch (InvalidCsrfTokenException $exception) {
+            $responseHeaders = $exception->responseHeader();
+
+            $this->assertArrayHasKey('Set-Cookie', $responseHeaders);
+
+            $cookie = Cookie::createFromHeaderString($responseHeaders['Set-Cookie']);
+            $this->assertSame('csrfToken', $cookie->getName(), 'Should automatically delete cookie with invalid CSRF token');
+            $this->assertTrue($cookie->isExpired(), 'Should automatically delete cookie with invalid CSRF token');
+        }
     }
 
     /**
@@ -255,8 +267,18 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
         $middleware = new CsrfProtectionMiddleware();
 
-        $this->expectException(InvalidCsrfTokenException::class);
-        $middleware->process($request, $this->_getRequestHandler());
+        try {
+            $middleware->process($request, $this->_getRequestHandler());
+
+            $this->fail();
+        } catch (InvalidCsrfTokenException $exception) {
+            $responseHeaders = $exception->responseHeader();
+            $this->assertArrayHasKey('Set-Cookie', $responseHeaders);
+
+            $cookie = Cookie::createFromHeaderString($responseHeaders['Set-Cookie']);
+            $this->assertSame('csrfToken', $cookie->getName(), 'Should automatically delete cookie with invalid CSRF token');
+            $this->assertTrue($cookie->isExpired(), 'Should automatically delete cookie with invalid CSRF token');
+        }
     }
 
     /**
@@ -317,8 +339,15 @@ class CsrfProtectionMiddlewareTest extends TestCase
         ]);
 
         $middleware = new CsrfProtectionMiddleware();
-        $this->expectException(InvalidCsrfTokenException::class);
-        $middleware->process($request, $this->_getRequestHandler());
+
+        try {
+            $middleware->process($request, $this->_getRequestHandler());
+
+            $this->fail();
+        } catch (InvalidCsrfTokenException $exception) {
+            $responseHeaders = $exception->responseHeader();
+            $this->assertEmpty($responseHeaders, 'Should not send any header');
+        }
     }
 
     /**
