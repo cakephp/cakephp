@@ -21,6 +21,7 @@ namespace Cake\Datasource;
  * The basis for every query object
  *
  * @method $this andWhere($conditions, array $types = [])
+ * @method \Cake\Datasource\EntityInterface|array firstOrFail()
  */
 interface QueryInterface
 {
@@ -145,7 +146,7 @@ interface QueryInterface
      * $singleUser = $query->select(['id', 'username'])->first();
      * ```
      *
-     * @return mixed the first result from the ResultSet
+     * @return \Cake\Datasource\EntityInterface|array|null the first result from the ResultSet
      */
     public function first();
 
