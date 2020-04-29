@@ -359,7 +359,7 @@ abstract class BaseErrorHandler
 
                 $interface = ErrorLoggerInterface::class;
                 $type = getTypeName($logger);
-                throw new RuntimeException("Cannot create logger. {$type} does not implement {$interface}");
+                throw new RuntimeException("Cannot create logger. `{$type}` does not implement `{$interface}`.");
             }
             $this->logger = $logger;
         }
