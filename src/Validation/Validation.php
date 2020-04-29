@@ -541,6 +541,9 @@ class Validation
         if (is_object($check)) {
             return false;
         }
+        if (is_array($dateFormat) && count($dateFormat) === 1) {
+            $dateFormat = reset($dateFormat);
+        }
         if ($dateFormat === static::DATETIME_ISO8601 && !static::iso8601($check)) {
             return false;
         }
