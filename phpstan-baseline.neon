@@ -351,19 +351,9 @@ parameters:
 			path: src/I18n/Date.php
 
 		-
-			message: "#^Call to function is_subclass_of\\(\\) with class\\-string\\<static\\(Cake\\\\I18n\\\\Date\\)\\> and 'Cake\\\\\\\\Chronos\\\\\\\\Date' will always evaluate to false\\.$#"
-			count: 1
-			path: src/I18n/Date.php
-
-		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/I18n/Date.php
-
-		-
-			message: "#^Result of \\|\\| is always true\\.$#"
-			count: 1
-			path: src/I18n/FrozenDate.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
@@ -376,11 +366,6 @@ parameters:
 			path: src/I18n/FrozenDate.php
 
 		-
-			message: "#^Call to function is_subclass_of\\(\\) with class\\-string\\<static\\(Cake\\\\I18n\\\\FrozenTime\\)\\> and 'Cake\\\\\\\\Chronos\\\\\\\\Date' will always evaluate to false\\.$#"
-			count: 1
-			path: src/I18n/FrozenTime.php
-
-		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/I18n/FrozenTime.php
@@ -389,11 +374,6 @@ parameters:
 			message: "#^Call to an undefined method Cake\\\\Chronos\\\\DifferenceFormatterInterface\\:\\:timeAgoInWords\\(\\)\\.$#"
 			count: 1
 			path: src/I18n/FrozenTime.php
-
-		-
-			message: "#^Call to function is_subclass_of\\(\\) with class\\-string\\<static\\(Cake\\\\I18n\\\\Time\\)\\> and 'Cake\\\\\\\\Chronos\\\\\\\\Date' will always evaluate to false\\.$#"
-			count: 1
-			path: src/I18n/Time.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
@@ -604,3 +584,4 @@ parameters:
 			message: "#^Call to an undefined method DateTimeInterface\\:\\:setTimezone\\(\\)\\.$#"
 			count: 1
 			path: src/View/Helper/TimeHelper.php
+
