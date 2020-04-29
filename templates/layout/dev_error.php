@@ -256,7 +256,7 @@ use Cake\Error\Debugger;
 <body>
     <header>
         <?php
-        $title = explode("\n", $this->fetch('title'));
+        $title = explode("\n", trim($this->fetch('title')));
         $errorTitle = array_shift($title);
         $errorDescription = implode("\n", $title);
         ?>
