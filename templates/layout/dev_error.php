@@ -59,6 +59,12 @@ use Cake\Error\Debugger;
     .header-title code {
         margin: 0 10px;
     }
+    .header-description {
+        display: block;
+        font-size: 18px;
+        line-height: 1.2;
+        margin-bottom: 16px;
+    }
     .header-type {
         display: block;
         font-size: 16px;
@@ -249,10 +255,18 @@ use Cake\Error\Debugger;
 </head>
 <body>
     <header>
+        <?php
+        $title = explode("\n", trim($this->fetch('title')));
+        $errorTitle = array_shift($title);
+        $errorDescription = implode("\n", $title);
+        ?>
         <h1 class="header-title">
-            <?= Debugger::formatHtmlMessage($this->fetch('title')) ?>
+            <span><?= Debugger::formatHtmlMessage($errorTitle) ?></span>
             <a>&#128203</a>
         </h1>
+        <?php if (strlen($errorDescription)) : ?>
+            <span class="header-description"><?= Debugger::formatHtmlMessage($errorDescription) ?></span>
+        <?php endif ?>
         <span class="header-type"><?= get_class($error) ?></span>
     </header>
     <div class="error-content">
