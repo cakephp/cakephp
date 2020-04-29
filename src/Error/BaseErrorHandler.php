@@ -18,9 +18,9 @@ namespace Cake\Error;
 
 use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Log\Log;
 use Cake\Routing\Router;
 use Psr\Http\Message\ServerRequestInterface;
+use RuntimeException;
 use Throwable;
 
 /**
@@ -322,9 +322,8 @@ abstract class BaseErrorHandler
             }
             $message .= "\nTrace:\n" . $trace . "\n";
         }
-        $message .= "\n\n";
 
-        return Log::write($level, $message);
+        return $this->getLogger()->logMessage($level, $message);
     }
 
     /**
@@ -351,10 +350,20 @@ abstract class BaseErrorHandler
     public function getLogger()
     {
         if ($this->logger === null) {
-            /** @var \Cake\Error\ErrorLogger $logger */
+            /** @var \Cake\Error\ErrorLoggerInterface $logger */
             $logger = new $this->_config['errorLogger']($this->_config);
+
+            if (!$logger instanceof ErrorLoggerInterface) {
+                // Set the logger so that the next error can be logged.
+                $this->logger = new ErrorLogger($this->_config);
+
+                $interface = ErrorLoggerInterface::class;
+                $type = getTypeName($logger);
+                throw new RuntimeException("Cannot create logger. {$type} does not implement {$interface}");
+            }
             $this->logger = $logger;
         }
+
 
         return $this->logger;
     }

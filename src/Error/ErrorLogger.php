@@ -26,7 +26,7 @@ use Throwable;
 /**
  * Log errors and unhandled exceptions to `Cake\Log\Log`
  */
-class ErrorLogger
+class ErrorLogger implements ErrorLoggerInterface
 {
     use InstanceConfigTrait;
 
@@ -55,11 +55,15 @@ class ErrorLogger
     }
 
     /**
-     * Generate the error log message.
-     *
-     * @param \Throwable $exception The exception to log a message for.
-     * @param \Psr\Http\Message\ServerRequestInterface|null $request The current request if available.
-     * @return bool
+     * @inheritdoc
+     */
+    public function logMessage(int $level, string $message): bool
+    {
+        return Log::write($level, $message);
+    }
+
+    /**
+     * @inheritdoc
      */
     public function log(Throwable $exception, ?ServerRequestInterface $request = null): bool
     {
