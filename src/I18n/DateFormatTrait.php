@@ -16,9 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\I18n;
 
-use Cake\Chronos\Date as ChronosDate;
 use Cake\Chronos\DifferenceFormatterInterface;
-use Cake\Chronos\MutableDate;
 use DateTime;
 use DateTimeZone;
 use IntlDateFormatter;
@@ -47,13 +45,6 @@ trait DateFormatTrait
      * @var \IntlDateFormatter[]
      */
     protected static $_formatters = [];
-
-    /**
-     * Caches whether or not this class is a subclass of a Date or MutableDate
-     *
-     * @var bool
-     */
-    protected static $_isDateInstance;
 
     /**
      * Gets the default locale.
@@ -330,12 +321,6 @@ trait DateFormatTrait
                     'If $format is an IntlDateFormatter constant, must be an array.'
                 );
             }
-        }
-
-        if (static::$_isDateInstance === null) {
-            static::$_isDateInstance =
-                is_subclass_of(static::class, ChronosDate::class) ||
-                is_subclass_of(static::class, MutableDate::class);
         }
 
         $formatter = datefmt_create(
