@@ -264,7 +264,7 @@ use Cake\Error\Debugger;
             <span><?= Debugger::formatHtmlMessage($errorTitle) ?></span>
             <a>&#128203</a>
         </h1>
-        <?php if (strlen($errorDescription)): ?>
+        <?php if (strlen($errorDescription)) : ?>
             <span class="header-description"><?= Debugger::formatHtmlMessage($errorDescription) ?></span>
         <?php endif ?>
         <span class="header-type"><?= get_class($error) ?></span>
