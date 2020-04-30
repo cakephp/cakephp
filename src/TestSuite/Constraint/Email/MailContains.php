@@ -55,7 +55,7 @@ class MailContains extends MailConstraintBase
     /**
      * @return string
      */
-    private function getTypeMethod(): string
+    protected function getTypeMethod(): string
     {
         return 'getBody' . ($this->type ? ucfirst($this->type) : 'String');
     }
