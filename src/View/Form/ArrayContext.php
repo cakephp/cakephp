@@ -173,7 +173,6 @@ class ArrayContext implements ContextInterface
      *     context record.
      *   - `schemaDefault`: Boolean indicating whether default value from
      *     context's schema should be used if it's not explicitly provided.
-     *
      * @return mixed
      */
     public function val(string $field, array $options = [])
