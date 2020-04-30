@@ -62,7 +62,7 @@ class MailContains extends MailConstraintBase
 
     /**
      * Returns the type-dependent strings of all messages
-     * 
+     *
      * @return string
      */
     protected function getAssertedMessages(): string
