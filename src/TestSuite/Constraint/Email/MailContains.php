@@ -73,9 +73,9 @@ class MailContains extends MailConstraintBase
             $method = $this->getTypeMethod();
             $messageMembers[] = $message->$method();
         }
-        $result = join(LF, $messageMembers);
+        $result = join(PHP_EOL, $messageMembers);
 
-        return LF . 'was: ' . substr($result, 0, 1000);
+        return PHP_EOL . 'was: ' . substr($result, 0, 1000);
     }
 
     /**
