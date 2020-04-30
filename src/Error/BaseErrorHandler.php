@@ -345,7 +345,7 @@ abstract class BaseErrorHandler
     /**
      * Get exception logger.
      *
-     * @return \Cake\Error\ErrorLogger
+     * @return \Cake\Error\ErrorLoggerInterface
      */
     public function getLogger()
     {
@@ -363,7 +363,6 @@ abstract class BaseErrorHandler
             }
             $this->logger = $logger;
         }
-
 
         return $this->logger;
     }

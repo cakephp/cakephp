@@ -55,15 +55,15 @@ class ErrorLogger implements ErrorLoggerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function logMessage(int $level, string $message): bool
+    public function logMessage($level, string $message): bool
     {
         return Log::write($level, $message);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function log(Throwable $exception, ?ServerRequestInterface $request = null): bool
     {

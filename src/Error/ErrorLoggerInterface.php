@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Error;
 
 use Psr\Http\Message\ServerRequestInterface;
-use \Throwable;
+use Throwable;
 
 /**
  * Interface for error logging handlers.
@@ -42,9 +42,9 @@ interface ErrorLoggerInterface
     /**
      * Log a an error message to the error logger.
      *
-     * @param int $level The logging level
+     * @param string|int $level The logging level
      * @param string $message The message to be logged.
      * @return bool
      */
-    public function logMessage(int $level, string $message): bool;
+    public function logMessage($level, string $message): bool;
 }
