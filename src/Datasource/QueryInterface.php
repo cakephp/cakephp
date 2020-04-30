@@ -34,7 +34,7 @@ interface QueryInterface
      * If `true` is passed in the second argument, any previous selections will
      * be overwritten with the list passed in the first argument.
      *
-     * @param array|\Cake\Database\ExpressionInterface|string|callable|\Cake\ORM\Table|\Cake\ORM\Association $fields Fields.
+     * @param array|string|callable|\Cake\Database\ExpressionInterface|\Cake\ORM\Table|\Cake\ORM\Association $fields Fields.
      * @param bool $overwrite whether to reset fields with passed list or not
      * @return $this
      */
