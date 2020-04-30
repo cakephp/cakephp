@@ -75,7 +75,7 @@ class MailContains extends MailConstraintBase
         }
         $result = join(PHP_EOL, $messageMembers);
 
-        return PHP_EOL . 'was: ' . substr($result, 0, 1000);
+        return PHP_EOL . 'was: ' . mb_substr($result, 0, 1000);
     }
 
     /**
