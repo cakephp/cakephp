@@ -61,7 +61,8 @@ class MailContains extends MailConstraintBase
     }
 
     /**
-     * returns the type-dependent strings of all messages
+     * Returns the type-dependent strings of all messages
+     * 
      * @return string
      */
     protected function getAssertedMessages(): string
@@ -73,6 +74,7 @@ class MailContains extends MailConstraintBase
             $messageMembers[] = $message->$method();
         }
         $result = join(LF, $messageMembers);
+
         return LF . 'was: ' . substr($result, 0, 1000);
     }
 
