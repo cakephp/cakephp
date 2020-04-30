@@ -917,6 +917,25 @@ class TimeTest extends TestCase
     }
 
     /**
+     * Tests disabling leniency when parsing locale format.
+     *
+     * @dataProvider classNameProvider
+     * @return void
+     */
+    public function testLenientParseDate($class)
+    {
+        $class::setDefaultLocale('pt_BR');
+
+        $class::disableLentientParsing();
+        $time = $class::parseDate('04/21/2013');
+        $this->assertSame(null, $time);
+
+        $class::enableLentientParsing();
+        $time = $class::parseDate('04/21/2013');
+        $this->assertSame('2014-09-04', $time->format('Y-m-d'));
+    }
+
+    /**
      * Tests that timeAgoInWords when using a russian locale does not break things
      *
      * @dataProvider classNameProvider

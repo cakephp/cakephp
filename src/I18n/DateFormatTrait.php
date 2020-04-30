@@ -43,6 +43,15 @@ trait DateFormatTrait
     protected static $defaultLocale;
 
     /**
+     * Whether lenient parsing is enabled for IntlDateFormatter.
+     *
+     * Defaults to true which is the default for IntlDateFormatter.
+     *
+     * @var bool
+     */
+    protected static $lentientParsing = true;
+
+    /**
      * In-memory cache of date formatters
      *
      * @var \IntlDateFormatter[]
@@ -69,12 +78,44 @@ trait DateFormatTrait
     /**
      * Sets the default locale.
      *
-     * @param string|null $locale The default locale string to be used or null.
+     * Set to null to use IntlDateFormatter default.
+     *
+     * @param string|null $locale The default locale string to be used.
      * @return void
      */
     public static function setDefaultLocale(?string $locale = null): void
     {
         static::$defaultLocale = $locale;
+    }
+
+    /**
+     * Gets whether locale format parsing is set to lenient.
+     *
+     * @return bool
+     */
+    public static function lentientParsingEnabled(): bool
+    {
+        return static::$lentientParsing;
+    }
+
+    /**
+     * Enables lentient parsing for locale formats.
+     *
+     * @return void
+     */
+    public static function enableLentientParsing(): void
+    {
+        static::$lentientParsing = true;
+    }
+
+    /**
+     * Enables lentient parsing for locale formats.
+     *
+     * @return void
+     */
+    public static function disableLentientParsing(): void
+    {
+        static::$lentientParsing = false;
     }
 
     /**
@@ -335,6 +376,8 @@ trait DateFormatTrait
             null,
             $pattern ?? ''
         );
+        $formatter->setLenient(static::$lentientParsing);
+
         $time = $formatter->parse($time);
         if ($time !== false) {
             $dateTime = new DateTime('@' . $time);
