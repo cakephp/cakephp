@@ -551,7 +551,6 @@ class Router
      * ### Usage
      *
      * @see Router::url()
-     *
      * @param string|array|null $url An array specifying any of the following:
      *   'controller', 'action', 'plugin' additionally, you can provide routed
      *   elements or query string parameters. If string it can be name any valid url
@@ -985,7 +984,7 @@ class Router
             $defaults['plugin'] = $matches['plugin'];
         }
         if ($matches['prefix'] !== '') {
-            $defaults['prefix'] = Inflector::underscore($matches['prefix']);
+            $defaults['prefix'] = $matches['prefix'];
         }
         $defaults['controller'] = $matches['controller'];
         $defaults['action'] = $matches['action'];

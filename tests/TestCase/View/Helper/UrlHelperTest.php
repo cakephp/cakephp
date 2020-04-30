@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\View\Helper;
 
 use Cake\Core\Configure;
 use Cake\Http\ServerRequest;
+use Cake\Routing\Route\DashedRoute;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
@@ -58,7 +59,7 @@ class UrlHelperTest extends TestCase
         static::setAppNamespace();
         $this->loadPlugins(['TestTheme']);
         Router::scope('/', function (RouteBuilder $routes) {
-            $routes->fallbacks();
+            $routes->fallbacks(DashedRoute::class);
         });
     }
 
@@ -160,6 +161,20 @@ class UrlHelperTest extends TestCase
             ],
         ], ['escape' => false]);
         $this->assertSame('/posts/view?k=v&1=2&param=%257Baround%2520here%257D%255Bthings%255D%255Bare%255D%2524%2524', $result);
+    }
+
+    /**
+     * @return void
+     */
+    public function testBuildFromPath(): void
+    {
+        $result = $this->Helper->buildFromPath('Articles::index');
+        $expected = '/articles';
+        $this->assertSame($result, $expected);
+
+        $result = $this->Helper->buildFromPath('Articles::view', [3]);
+        $expected = '/articles/view/3';
+        $this->assertSame($result, $expected);
     }
 
     /**

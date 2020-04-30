@@ -26,10 +26,15 @@ use PDO;
 class SqlserverStatement extends PDOStatement
 {
     /**
+     * {@inheritDoc}
+     *
      * The SQL Server PDO driver requires that binary parameters be bound with the SQLSRV_ENCODING_BINARY attribute.
      * This overrides the PDOStatement::bindValue method in order to bind binary columns using the required attribute.
      *
-     * {@inheritDoc}
+     * @param string|int $column name or param position to be bound
+     * @param mixed $value The value to bind to variable in query
+     * @param string|int|null $type PDO type or name of configured Type class
+     * @return void
      */
     public function bindValue($column, $value, $type = 'string'): void
     {

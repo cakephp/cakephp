@@ -107,6 +107,17 @@ class MessageTest extends TestCase
             '',
         ];
         $this->assertSame($expected, $result);
+
+        /** @see https://github.com/cakephp/cakephp/issues/14459 */
+        $line = 'some text <b>with html</b>';
+        $trailing = str_repeat('X', Message::LINE_LENGTH_MUST - strlen($line));
+        $result = $renderer->doWrap($line . $trailing, Message::LINE_LENGTH_MUST);
+        $expected = [
+            'some text <b>with',
+            'html</b>' . $trailing,
+            '',
+        ];
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -586,7 +597,6 @@ HTML;
      * Tests that it is possible to unset the email pattern and make use of filter_var() instead.
      *
      * @return void
-     *
      */
     public function testUnsetEmailPattern()
     {
@@ -606,7 +616,6 @@ HTML;
      * Tests that passing an empty string throws an InvalidArgumentException.
      *
      * @return void
-     *
      */
     public function testEmptyTo()
     {

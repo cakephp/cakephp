@@ -22,6 +22,7 @@ use Cake\Event\EventListenerInterface;
 use Countable;
 use IteratorAggregate;
 use RuntimeException;
+use Traversable;
 
 /**
  * Acts as a registry/factory for objects.
@@ -102,6 +103,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
             }
         }
 
+        /** @psalm-var TObject $instance */
         $instance = $this->_create($className, $name, $config);
         $this->_loaded[$name] = $instance;
 
@@ -375,10 +377,10 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
     /**
      * Returns an array iterator.
      *
-     * @return \ArrayIterator
-     * @psalm-return \ArrayIterator<string, TObject>
+     * @return \Traversable
+     * @psalm-return \Traversable<string, TObject>
      */
-    public function getIterator(): ArrayIterator
+    public function getIterator(): Traversable
     {
         return new ArrayIterator($this->_loaded);
     }

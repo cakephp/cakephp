@@ -43,6 +43,7 @@ class RulesProvider
      *
      * @param string|object $class the default class to proxy
      * @throws \ReflectionException
+     * @psalm-param class-string|object $class
      */
     public function __construct($class = Validation::class)
     {

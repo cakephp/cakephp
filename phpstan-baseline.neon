@@ -21,11 +21,6 @@ parameters:
 			path: src/Auth/Storage/SessionStorage.php
 
 		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: src/Cache/CacheEngine.php
-
-		-
 			message: "#^Access to undefined constant Memcached\\:\\:OPT_CLIENT_MODE\\.$#"
 			count: 1
 			path: src/Cache/Engine/MemcachedEngine.php
@@ -266,11 +261,6 @@ parameters:
 			path: src/Database/Expression/QueryExpression.php
 
 		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: src/Database/Expression/QueryExpression.php
-
-		-
 			message: "#^Access to an undefined property Exception\\:\\:\\$queryString\\.$#"
 			count: 1
 			path: src/Database/Log/LoggingStatement.php
@@ -297,11 +287,6 @@ parameters:
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
-			count: 1
-			path: src/Event/EventManager.php
-
-		-
-			message: "#^Method Cake\\\\Event\\\\EventManager\\:\\:instance\\(\\) should return static\\(Cake\\\\Event\\\\EventManager\\) but returns Cake\\\\Event\\\\EventManager\\.$#"
 			count: 1
 			path: src/Event/EventManager.php
 
@@ -376,22 +361,12 @@ parameters:
 			path: src/I18n/Date.php
 
 		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: src/I18n/Date.php
-
-		-
 			message: "#^Result of \\|\\| is always true\\.$#"
 			count: 1
 			path: src/I18n/FrozenDate.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
-			count: 1
-			path: src/I18n/FrozenDate.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
 			count: 1
 			path: src/I18n/FrozenDate.php
 
@@ -411,11 +386,6 @@ parameters:
 			path: src/I18n/FrozenTime.php
 
 		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: src/I18n/FrozenTime.php
-
-		-
 			message: "#^Call to an undefined method Cake\\\\Chronos\\\\DifferenceFormatterInterface\\:\\:timeAgoInWords\\(\\)\\.$#"
 			count: 1
 			path: src/I18n/FrozenTime.php
@@ -431,11 +401,6 @@ parameters:
 			path: src/I18n/Time.php
 
 		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: src/I18n/Time.php
-
-		-
 			message: "#^Call to an undefined method Cake\\\\Chronos\\\\DifferenceFormatterInterface\\:\\:timeAgoInWords\\(\\)\\.$#"
 			count: 1
 			path: src/I18n/Time.php
@@ -446,7 +411,7 @@ parameters:
 			path: src/I18n/Number.php
 
 		-
-			message: "#^Method Cake\\\\Mailer\\\\Email\\:\\:deliver\\(\\) should return static\\(Cake\\\\Mailer\\\\Email\\) but returns Cake\\\\Mailer\\\\Email\\.$#"
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/Mailer/Email.php
 
@@ -509,11 +474,6 @@ parameters:
 			message: "#^Parameter \\#2 \\$callback of function array_filter expects callable\\(mixed, mixed\\)\\: bool, 'strlen' given\\.$#"
 			count: 1
 			path: src/ORM/Rule/IsUnique.php
-
-		-
-			message: "#^Negated boolean expression is always true\\.$#"
-			count: 1
-			path: src/ORM/Table.php
 
 		-
 			message: "#^Variable \\$entities in PHPDoc tag @var does not match any variable in the foreach loop\\: \\$key, \\$entity$#"
@@ -626,11 +586,6 @@ parameters:
 			path: src/TestSuite/IntegrationTestCase.php
 
 		-
-			message: "#^Unable to resolve the template type RealInstanceType in call to method PHPUnit\\\\Framework\\\\TestCase\\:\\:getMockBuilder\\(\\)$#"
-			count: 1
-			path: src/TestSuite/TestCase.php
-
-		-
 			message: "#^Return type \\(array\\<string, array\\|string\\>\\) of method Cake\\\\View\\\\Exception\\\\MissingCellTemplateException\\:\\:getAttributes\\(\\) should be compatible with return type \\(array\\<string, array\\|string\\>\\) of method Cake\\\\View\\\\Exception\\\\MissingTemplateException\\:\\:getAttributes\\(\\)$#"
 			count: 1
 			path: src/View/Exception/MissingCellTemplateException.php
@@ -649,13 +604,3 @@ parameters:
 			message: "#^Call to an undefined method DateTimeInterface\\:\\:setTimezone\\(\\)\\.$#"
 			count: 1
 			path: src/View/Helper/TimeHelper.php
-
-		-
-			message: "#^Parameter \\#3 \\$options of method Cake\\\\View\\\\View\\:\\:_elementCache\\(\\) expects array\\('cache' \\=\\> array\\('key' \\=\\> string, 'config' \\=\\> string\\)\\|string, \\?'callbacks' \\=\\> mixed, \\?'plugin' \\=\\> mixed\\), array given\\.$#"
-			count: 1
-			path: src/View/View.php
-
-		-
-			message: "#^Class Psy\\\\Shell not found\\.$#"
-			count: 1
-			path: src/basics.php

@@ -236,8 +236,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * been added to the query by the first. If you need to change the list after the first call,
      * pass overwrite boolean true which will reset the select clause removing all previous additions.
      *
-     *
-     *
      * @param \Cake\ORM\Table|\Cake\ORM\Association $table The table to use to get an array of columns
      * @param string[] $excludedFields The un-aliased column names you do not want selected from $table
      * @param bool $overwrite Whether to reset/remove previous selected fields
@@ -872,6 +870,8 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * Returns the COUNT(*) for the query. If the query has not been
      * modified, and the count has already been performed the cached
      * value is returned
+     *
+     * @return int
      */
     public function count(): int
     {
@@ -1033,6 +1033,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     /**
      * {@inheritDoc}
      *
+     * @return \Cake\Datasource\ResultSetInterface
      * @throws \RuntimeException if this method is called on a non-select Query.
      */
     public function all(): ResultSetInterface
@@ -1183,13 +1184,17 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     /**
      * {@inheritDoc}
      *
-     * @see \Cake\ORM\Table::find()
+     * @param string $finder The finder method to use.
+     * @param array $options The options for the finder.
+     * @return static Returns a modified query.
+     * @psalm-suppress MoreSpecificReturnType
      */
     public function find(string $finder, array $options = [])
     {
         /** @var \Cake\ORM\Table $table */
         $table = $this->getRepository();
 
+        /** @psalm-suppress LessSpecificReturnStatement */
         return $table->callFinder($finder, $this, $options);
     }
 

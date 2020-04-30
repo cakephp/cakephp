@@ -2204,6 +2204,7 @@ class Query implements ExpressionInterface, IteratorAggregate
             if (is_array($part)) {
                 foreach ($part as $i => $piece) {
                     if ($piece instanceof ExpressionInterface) {
+                        /** @psalm-suppress PossiblyUndefinedMethod */
                         $this->_parts[$name][$i] = clone $piece;
                     }
                 }

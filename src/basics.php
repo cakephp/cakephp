@@ -50,6 +50,7 @@ if (!function_exists('debug')) {
         $location = [];
         if ($showFrom) {
             $trace = Debugger::trace(['start' => 1, 'depth' => 2, 'format' => 'array']);
+            /** @psalm-suppress PossiblyInvalidArrayOffset */
             $location = [
                 'line' => $trace[0]['line'],
                 'file' => $trace[0]['file'],
@@ -98,6 +99,7 @@ if (!function_exists('breakpoint')) {
      * Command to return the eval-able code to startup PsySH in interactive debugger
      * Works the same way as eval(\Psy\sh());
      * psy/psysh must be loaded in your project
+     *
      * @link http://psysh.org/
      * ```
      * eval(breakpoint());
@@ -137,6 +139,7 @@ if (!function_exists('dd')) {
         }
 
         $trace = Debugger::trace(['start' => 1, 'depth' => 2, 'format' => 'array']);
+        /** @psalm-suppress PossiblyInvalidArrayOffset */
         $location = [
             'line' => $trace[0]['line'],
             'file' => $trace[0]['file'],

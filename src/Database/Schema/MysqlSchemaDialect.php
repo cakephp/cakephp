@@ -20,6 +20,7 @@ use Cake\Database\Exception;
 
 /**
  * Schema generation/reflection features for MySQL
+ *
  * @internal
  */
 class MysqlSchemaDialect extends SchemaDialect

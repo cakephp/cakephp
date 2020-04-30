@@ -42,8 +42,15 @@ class WindowQueryTests extends TestCase
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
 
-        $enable = env('ENABLE_WINDOW_TESTS');
-        $this->skipTests = !$enable || $enable === 'false';
+        $driver = $this->connection->getDriver();
+        if (
+            $driver instanceof \Cake\Database\Driver\Mysql ||
+            $driver instanceof \Cake\Database\Driver\Sqlite
+        ) {
+            $this->skipTests = !$this->connection->getDriver()->supportsWindowFunctions();
+        } else {
+            $this->skipTests = false;
+        }
     }
 
     public function tearDown(): void

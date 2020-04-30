@@ -109,12 +109,12 @@ class InsertIterator extends Collection
             return $row;
         }
 
-        $pointer =& $row;
+        $pointer = &$row;
         foreach ($this->_path as $step) {
             if (!isset($pointer[$step])) {
                 return $row;
             }
-            $pointer =& $pointer[$step];
+            $pointer = &$pointer[$step];
         }
 
         $pointer[$this->_target] = $this->_values->current();

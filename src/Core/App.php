@@ -199,6 +199,11 @@ class App
             return [Plugin::templatePath($plugin)];
         }
 
+        if ($type === 'locales') {
+            /** @psalm-suppress PossiblyNullArgument */
+            return [Plugin::path($plugin) . 'resources' . DIRECTORY_SEPARATOR . 'locales' . DIRECTORY_SEPARATOR];
+        }
+
         deprecationWarning(
             'App::path() is deprecated for class path.'
             . ' Use \Cake\Core\App::classPath() or \Cake\Core\Plugin::classPath() instead.'
@@ -226,7 +231,6 @@ class App
      *
      * @param string $type Package type.
      * @param string|null $plugin Plugin name.
-     *
      * @return string[]
      */
     public static function classPath(string $type, ?string $plugin = null): array

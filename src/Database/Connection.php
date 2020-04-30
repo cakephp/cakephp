@@ -682,15 +682,7 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * ### Example:
-     *
-     * ```
-     * $connection->transactional(function ($connection) {
-     *   $connection->newQuery()->delete('users')->execute();
-     * });
-     * ```
+     * @inheritDoc
      */
     public function transactional(callable $callback)
     {
@@ -730,15 +722,7 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * ### Example:
-     *
-     * ```
-     * $connection->disableConstraints(function ($connection) {
-     *   $connection->newQuery()->delete('users')->execute();
-     * });
-     * ```
+     * @inheritDoc
      */
     public function disableConstraints(callable $callback)
     {

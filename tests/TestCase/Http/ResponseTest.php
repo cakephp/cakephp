@@ -1464,7 +1464,7 @@ class ResponseTest extends TestCase
     }
 
     /**
-     * Test with protocol.
+     * Test with status code.
      *
      * @return void
      */
@@ -1473,12 +1473,18 @@ class ResponseTest extends TestCase
         $response = new Response();
         $statusCode = $response->getStatusCode();
         $this->assertEquals(200, $statusCode);
+
         $response2 = $response->withStatus(404);
         $statusCode = $response2->getStatusCode();
         $this->assertEquals(404, $statusCode);
+
         $statusCode = $response->getStatusCode();
         $this->assertEquals(200, $statusCode);
         $this->assertNotEquals($response, $response2);
+
+        $response3 = $response->withStatus(111);
+        $this->assertEquals(111, $response3->getStatusCode());
+        $this->assertSame('', $response3->getReasonPhrase());
     }
 
     /**

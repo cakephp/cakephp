@@ -38,11 +38,14 @@ use SplFileInfo;
  * returns a status code integer. Keep in mind that these consants might
  * include status codes that are now allowed which will throw an
  * `\InvalidArgumentException`.
- *
  */
 class Response implements ResponseInterface
 {
     use MessageTrait;
+
+    public const STATUS_CODE_MIN = 100;
+
+    public const STATUS_CODE_MAX = 599;
 
     /**
      * Allowed HTTP status codes and their default description.
@@ -427,7 +430,6 @@ class Response implements ResponseInterface
      *  - status: the HTTP status code to respond with
      *  - type: a complete mime-type string or an extension mapped in this class
      *  - charset: the charset for the response body
-     *
      * @throws \InvalidArgumentException
      */
     public function __construct(array $options = [])
@@ -619,7 +621,7 @@ class Response implements ResponseInterface
      */
     protected function _setStatus(int $code, string $reasonPhrase = ''): void
     {
-        if (!isset($this->_statusCodes[$code])) {
+        if ($code < static::STATUS_CODE_MIN || $code > static::STATUS_CODE_MAX) {
             throw new InvalidArgumentException(sprintf(
                 'Invalid status code: %s. Use a valid HTTP status code in range 1xx - 5xx.',
                 $code
@@ -627,7 +629,7 @@ class Response implements ResponseInterface
         }
 
         $this->_status = $code;
-        if (empty($reasonPhrase)) {
+        if ($reasonPhrase === '' && isset($this->_statusCodes[$code])) {
             $reasonPhrase = $this->_statusCodes[$code];
         }
         $this->_reasonPhrase = $reasonPhrase;

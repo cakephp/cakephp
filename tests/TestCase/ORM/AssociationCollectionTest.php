@@ -427,7 +427,6 @@ class AssociationCollectionTest extends TestCase
 
     /**
      * Test exceptional case.
-     *
      */
     public function testErrorOnUnknownAlias()
     {

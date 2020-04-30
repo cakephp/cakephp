@@ -257,7 +257,7 @@ trait InstanceConfigTrait
             return;
         }
 
-        $update =& $this->_config;
+        $update = &$this->_config;
         $stack = explode('.', $key);
 
         foreach ($stack as $k) {
@@ -269,7 +269,7 @@ trait InstanceConfigTrait
                 $update[$k] = [];
             }
 
-            $update =& $update[$k];
+            $update = &$update[$k];
         }
 
         $update = $value;
@@ -290,7 +290,7 @@ trait InstanceConfigTrait
             return;
         }
 
-        $update =& $this->_config;
+        $update = &$this->_config;
         $stack = explode('.', $key);
         $length = count($stack);
 
@@ -308,7 +308,7 @@ trait InstanceConfigTrait
                 break;
             }
 
-            $update =& $update[$k];
+            $update = &$update[$k];
         }
     }
 }

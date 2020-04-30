@@ -77,12 +77,10 @@ use UnexpectedValueException;
  * - `afterFilter(EventInterface $event)`
  *   Called after each action is complete and after the view is rendered.
  *
- * @property \Cake\Controller\Component\AuthComponent $Auth
  * @property \Cake\Controller\Component\FlashComponent $Flash
+ * @property \Cake\Controller\Component\FormProtectionComponent $FormProtection
  * @property \Cake\Controller\Component\PaginatorComponent $Paginator
  * @property \Cake\Controller\Component\RequestHandlerComponent $RequestHandler
- * @property \Cake\Controller\Component\SecurityComponent $Security
- * @method bool isAuthorized($user)
  * @link https://book.cakephp.org/4/en/controllers.html
  */
 class Controller implements EventListenerInterface, EventDispatcherInterface
@@ -246,7 +244,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * If called with the first parameter, it will be set as the controller $this->_components property
      *
      * @param \Cake\Controller\ComponentRegistry|null $components Component registry.
-     *
      * @return \Cake\Controller\ComponentRegistry
      */
     public function components(?ComponentRegistry $components = null): ComponentRegistry

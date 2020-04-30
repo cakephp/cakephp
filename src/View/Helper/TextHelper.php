@@ -82,12 +82,14 @@ class TextHelper extends Helper
         parent::__construct($view, $config);
 
         $config = $this->_config;
+
+        /** @psalm-var class-string<\Cake\Utility\Text>|null $engineClass */
         $engineClass = App::className($config['engine'], 'Utility');
-        if ($engineClass) {
-            $this->_engine = new $engineClass($config);
-        } else {
+        if ($engineClass === null) {
             throw new Exception(sprintf('Class for %s could not be found', $config['engine']));
         }
+
+        $this->_engine = new $engineClass($config);
     }
 
     /**

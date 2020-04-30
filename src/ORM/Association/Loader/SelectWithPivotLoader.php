@@ -55,8 +55,7 @@ class SelectWithPivotLoader extends SelectLoader
     protected $junctionConditions;
 
     /**
-     * {@inheritDoc}
-     *
+     * @inheritDoc
      */
     public function __construct(array $options)
     {

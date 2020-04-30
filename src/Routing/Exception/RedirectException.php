@@ -27,6 +27,11 @@ use Cake\Core\Exception\Exception;
  * ```
  * throw new RedirectException('http://example.com/some/path', 301);
  * ```
+ *
+ * If you need a more general purpose redirect exception use
+ * Cake\Http\Exception\RedirectException instead of this class.
+ *
+ * @deprecated 4.1.0 Use Cake\Http\Exception\RedirectException instead.
  */
 class RedirectException extends Exception
 {

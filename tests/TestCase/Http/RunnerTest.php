@@ -101,7 +101,6 @@ class RunnerTest extends TestCase
 
     /**
      * Test that exceptions bubble up.
-     *
      */
     public function testRunExceptionInMiddleware()
     {

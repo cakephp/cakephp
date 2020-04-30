@@ -59,7 +59,7 @@ class FrozenTime extends Chronos implements I18nDateTimeInterface
      * will be used for formatting the date part of the object and the second position
      * will be used to format the time part.
      *
-     * @var string|array|int
+     * @var string|array|int|\Closure
      * @see \Cake\I18n\Time::i18nFormat()
      */
     protected static $_jsonEncodeFormat = "yyyy-MM-dd'T'HH':'mm':'ssxxx";
@@ -223,7 +223,7 @@ class FrozenTime extends Chronos implements I18nDateTimeInterface
         if ($filter === null) {
             $filter = DateTimeZone::ALL;
         }
-        $identifiers = DateTimeZone::listIdentifiers($filter, (string)$country);
+        $identifiers = DateTimeZone::listIdentifiers($filter, (string)$country) ?: [];
 
         if ($regex) {
             foreach ($identifiers as $key => $tz) {

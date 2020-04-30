@@ -159,7 +159,6 @@ trait ModelAwareTrait
      * Set the model type to be used by this class
      *
      * @param string $modelType The model type
-     *
      * @return $this
      */
     public function setModelType(string $modelType)

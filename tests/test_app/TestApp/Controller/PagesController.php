@@ -27,7 +27,6 @@ use Cake\View\Exception\MissingTemplateException;
 
 /**
  * Static content controller
- *
  */
 class PagesController extends AppController
 {

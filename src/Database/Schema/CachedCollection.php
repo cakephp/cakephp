@@ -59,7 +59,7 @@ class CachedCollection implements CollectionInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function listTables(): array
     {
@@ -67,7 +67,7 @@ class CachedCollection implements CollectionInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function describe(string $name, array $options = []): TableSchemaInterface
     {

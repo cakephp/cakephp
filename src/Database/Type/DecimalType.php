@@ -77,7 +77,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
     }
 
     /**
-     * Convert numeric values to strings representing decimal.
+     * {@inheritDoc}
      *
      * @param mixed $value The value to convert.
      * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
@@ -93,9 +93,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @return array
+     * @inheritDoc
      */
     public function manyToPHP(array $values, array $fields, DriverInterface $driver): array
     {

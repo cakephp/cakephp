@@ -1107,9 +1107,12 @@ class Validation
      */
     public static function inList($check, array $list, bool $caseInsensitive = false): bool
     {
+        if (!is_scalar($check)) {
+            return false;
+        }
         if ($caseInsensitive) {
             $list = array_map('mb_strtolower', $list);
-            $check = mb_strtolower($check);
+            $check = mb_strtolower((string)$check);
         } else {
             $list = array_map('strval', $list);
         }
@@ -1226,9 +1229,14 @@ class Validation
     protected static function getFilename($check)
     {
         if ($check instanceof UploadedFileInterface) {
+            // Uploaded files throw exceptions on upload errors.
             try {
-                // Uploaded files throw exceptions on upload errors.
-                return $check->getStream()->getMetadata('uri');
+                $uri = $check->getStream()->getMetadata('uri');
+                if (is_string($uri)) {
+                    return $uri;
+                }
+
+                return false;
             } catch (RuntimeException $e) {
                 return false;
             }
@@ -1631,7 +1639,6 @@ class Validation
      * body matches against checksum via Mod97-10 algorithm
      *
      * @param mixed $check The value to check
-     *
      * @return bool Success
      */
     public static function iban($check): bool

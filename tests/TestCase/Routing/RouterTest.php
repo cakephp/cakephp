@@ -1113,7 +1113,7 @@ class RouterTest extends TestCase
     public function testUrlGenerationWithUrlFilterFailureClosure()
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessageRegExp(
+        $this->expectExceptionMessageMatches(
             '/URL filter defined in .*RouterTest\.php on line \d+ could not be applied\.' .
             ' The filter failed with: nope/'
         );
@@ -1142,7 +1142,7 @@ class RouterTest extends TestCase
     public function testUrlGenerationWithUrlFilterFailureMethod()
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessageRegExp(
+        $this->expectExceptionMessageMatches(
             '/URL filter defined in .*RouterTest\.php on line \d+ could not be applied\.' .
             ' The filter failed with: /'
         );
@@ -1622,7 +1622,6 @@ class RouterTest extends TestCase
 
     /**
      * Test exceptions when parsing fails.
-     *
      */
     public function testParseError()
     {
@@ -2208,14 +2207,14 @@ class RouterTest extends TestCase
         $this->assertSame($expected, Router::parseRoutePath('Bookmarks::view'));
 
         $expected = [
-            'prefix' => 'admin',
+            'prefix' => 'Admin',
             'controller' => 'Bookmarks',
             'action' => 'view',
         ];
         $this->assertSame($expected, Router::parseRoutePath('Admin/Bookmarks::view'));
 
         $expected = [
-            'prefix' => 'long_prefix/back_end',
+            'prefix' => 'LongPrefix/BackEnd',
             'controller' => 'Bookmarks',
             'action' => 'view',
         ];
@@ -2230,7 +2229,7 @@ class RouterTest extends TestCase
 
         $expected = [
             'plugin' => 'Vendor/Cms',
-            'prefix' => 'management/admin',
+            'prefix' => 'Management/Admin',
             'controller' => 'Articles',
             'action' => 'view',
         ];
@@ -2268,6 +2267,42 @@ class RouterTest extends TestCase
         $this->expectExceptionMessage('Could not parse a string route path');
 
         Router::parseRoutePath($value);
+    }
+
+    /**
+     * Tests that convenience wrapper urlArray() works as the internal
+     * Router::parseRoutePath() does.
+     *
+     * @return void
+     */
+    public function testUrlArray(): void
+    {
+        $expected = [
+            'controller' => 'Bookmarks',
+            'action' => 'view',
+            'plugin' => false,
+            'prefix' => false,
+        ];
+        $this->assertSame($expected, urlArray('Bookmarks::view'));
+
+        $expected = [
+            'prefix' => 'Admin',
+            'controller' => 'Bookmarks',
+            'action' => 'view',
+            'plugin' => false,
+        ];
+        $this->assertSame($expected, urlArray('Admin/Bookmarks::view'));
+
+        $expected = [
+            'plugin' => 'Vendor/Cms',
+            'prefix' => 'Management/Admin',
+            'controller' => 'Articles',
+            'action' => 'view',
+            3,
+            '?' => ['query' => 'string'],
+        ];
+        $params = [3, '?' => ['query' => 'string']];
+        $this->assertSame($expected, urlArray('Vendor/Cms.Management/Admin/Articles::view', $params));
     }
 
     /**
@@ -3090,7 +3125,7 @@ class RouterTest extends TestCase
         $result = Router::parseRequest($this->makeRequest('/admin/articles/view', 'GET'));
         $expected = [
             'pass' => [],
-            'prefix' => 'admin',
+            'prefix' => 'Admin',
             'controller' => 'Articles',
             'action' => 'view',
             'plugin' => null,

@@ -735,8 +735,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function setEntityClass(string $name)
     {
+        /** @psalm-var class-string<\Cake\Datasource\EntityInterface>|null */
         $class = App::className($name, 'Model/Entity');
-        if (!$class) {
+        if ($class === null) {
             throw new MissingEntityException([$name]);
         }
 
@@ -1459,8 +1460,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * $article = $articles->get(1, ['contain' => ['Users', 'Comments']]);
      * ```
      *
+     * @param mixed $primaryKey primary key value to find
+     * @param array $options options accepted by `Table::find()`
+     * @return \Cake\Datasource\EntityInterface
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException if the record with such id
+     * could not be found
      * @throws \Cake\Datasource\Exception\InvalidPrimaryKeyException When $primaryKey has an
      *      incorrect number of elements.
+     * @see \Cake\Datasource\RepositoryInterface::find()
      * @psalm-suppress InvalidReturnType
      */
     public function get($primaryKey, array $options = []): EntityInterface
@@ -1535,7 +1542,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     protected function _transactionCommitted(bool $atomic, bool $primary): bool
     {
-        return !$this->getConnection()->inTransaction() && ($atomic || ($primary && !$atomic));
+        return !$this->getConnection()->inTransaction() && ($atomic || $primary);
     }
 
     /**
@@ -1791,8 +1798,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * $articles->save($entity, ['associated' => false]);
      * ```
      *
-     * @param \Cake\Datasource\EntityInterface $entity
-     * @param array|\ArrayAccess|\Cake\ORM\SaveOptionsBuilder $options
+     * @param \Cake\Datasource\EntityInterface $entity the entity to be saved
+     * @param array|\ArrayAccess|\Cake\ORM\SaveOptionsBuilder $options The options to use when saving.
      * @return \Cake\Datasource\EntityInterface|false
      * @throws \Cake\ORM\Exception\RolledbackTransactionException If the transaction is aborted in the afterSave event.
      */
@@ -2161,8 +2168,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * @param \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface $entities Entities to save.
      * @param array|\ArrayAccess|\Cake\ORM\SaveOptionsBuilder $options Options used when calling Table::save() for each entity.
-     * @return \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface Entities list.
      * @throws \Cake\ORM\Exception\PersistenceFailedException If an entity couldn't be saved.
+     * @throws \Exception If an entity couldn't be saved.
+     * @return \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface Entities list.
      */
     protected function _saveMany(iterable $entities, $options = []): iterable
     {
@@ -2233,6 +2241,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * for the duration of the callbacks, this allows listeners to modify
      * the options used in the delete operation.
      *
+     * @param \Cake\Datasource\EntityInterface $entity The entity to remove.
+     * @param array|\ArrayAccess $options The options for the delete.
+     * @return bool success
      */
     public function delete(EntityInterface $entity, $options = []): bool
     {
@@ -2267,7 +2278,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array|\ArrayAccess $options Options used when calling Table::save() for each entity.
      * @return \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface|false Entities list
      *   on success, false on failure.
-     * @throws \Exception
      * @see \Cake\ORM\Table::delete() for options and events related to this method.
      */
     public function deleteMany(iterable $entities, $options = [])
@@ -2291,7 +2301,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface $entities Entities to delete.
      * @param array|\ArrayAccess $options Options used when calling Table::save() for each entity.
      * @return \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface Entities list.
-     * @throws \Exception
      * @throws \Cake\ORM\Exception\PersistenceFailedException
      * @see \Cake\ORM\Table::delete() for options and events related to this method.
      */
@@ -2426,7 +2435,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Returns true if the finder exists for the table
      *
      * @param string $type name of finder to check
-     *
      * @return bool
      */
     public function hasFinder(string $type): bool
@@ -2518,9 +2526,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         } elseif ($hasOr !== false) {
             $fields = explode('_or_', $fields);
             $conditions = [
-            'OR' => $makeConditions($fields, $args),
+                'OR' => $makeConditions($fields, $args),
             ];
-        } elseif ($hasAnd !== false) {
+        } else {
             $fields = explode('_and_', $fields);
             $conditions = $makeConditions($fields, $args);
         }
@@ -2670,6 +2678,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * You can use the `Model.beforeMarshal` event to modify request data
      * before it is converted into entities.
+     *
+     * @param array $data The data to build an entity with.
+     * @param array $options A list of options for the object hydration.
+     * @return \Cake\Datasource\EntityInterface
      */
     public function newEntity(array $data, array $options = []): EntityInterface
     {
@@ -2708,6 +2720,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * You can use the `Model.beforeMarshal` event to modify request data
      * before it is converted into entities.
+     *
+     * @param array $data The data to build an entity with.
+     * @param array $options A list of options for the objects hydration.
+     * @return \Cake\Datasource\EntityInterface[] An array of hydrated records.
      */
     public function newEntities(array $data, array $options = []): array
     {
@@ -2762,6 +2778,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * presently has an identical value, the setter will not be called, and the
      * property will not be marked as dirty. This is an optimization to prevent unnecessary field
      * updates when persisting entities.
+     *
+     * @param \Cake\Datasource\EntityInterface $entity the entity that will get the
+     * data merged in
+     * @param array $data key value list of fields to be merged into the entity
+     * @param array $options A list of options for the object hydration.
+     * @return \Cake\Datasource\EntityInterface
      */
     public function patchEntity(EntityInterface $entity, array $data, array $options = []): EntityInterface
     {
@@ -2797,6 +2819,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * You can use the `Model.beforeMarshal` event to modify request data
      * before it is converted into entities.
+     *
+     * @param \Cake\Datasource\EntityInterface[]|\Traversable $entities the entities that will get the
+     * data merged in
+     * @param array $data list of arrays to be merged into the entities
+     * @param array $options A list of options for the objects hydration.
+     * @return \Cake\Datasource\EntityInterface[]
      */
     public function patchEntities(iterable $entities, array $data, array $options = []): array
     {
@@ -2884,6 +2912,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * The conventional method map is:
      *
      * - Model.beforeMarshal => beforeMarshal
+     * - Model.afterMarshal => afterMarshal
      * - Model.buildValidator => buildValidator
      * - Model.beforeFind => beforeFind
      * - Model.beforeSave => beforeSave
@@ -2901,6 +2930,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $eventMap = [
             'Model.beforeMarshal' => 'beforeMarshal',
+            'Model.afterMarshal' => 'afterMarshal',
             'Model.buildValidator' => 'buildValidator',
             'Model.beforeFind' => 'beforeFind',
             'Model.beforeSave' => 'beforeSave',

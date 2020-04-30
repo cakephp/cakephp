@@ -18,7 +18,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Class CommentsTranslationsFixture
- *
  */
 class CommentsTranslationsFixture extends TestFixture
 {

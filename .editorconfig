@@ -14,7 +14,6 @@ trim_trailing_whitespace = true
 end_of_line = crlf
 
 [*.yml]
-indent_style = space
 indent_size = 2
 
 [Makefile]

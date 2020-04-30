@@ -67,7 +67,8 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     /**
      * Default strategy class name.
      *
-     * @var class-string<\Cake\ORM\Behavior\Translate\TranslateStrategyInterface>
+     * @var string
+     * @psalm-var class-string<\Cake\ORM\Behavior\Translate\TranslateStrategyInterface>
      */
     protected static $defaultStrategyClass = EavStrategy::class;
 
@@ -132,6 +133,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * @param string $class Class name.
      * @return void
      * @since 4.0.0
+     * @psalm-var class-string<\Cake\ORM\Behavior\Translate\TranslateStrategyInterface>
      */
     public static function setDefaultStrategyClass(string $class)
     {
@@ -143,6 +145,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      *
      * @return string
      * @since 4.0.0
+     * @psalm-return class-string<\Cake\ORM\Behavior\Translate\TranslateStrategyInterface>
      */
     public static function getDefaultStrategyClass(): string
     {
@@ -211,11 +214,16 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     }
 
     /**
+     * {@inheritDoc}
+     *
      * Add in `_translations` marshalling handlers. You can disable marshalling
      * of translations by setting `'translations' => false` in the options
      * provided to `Table::newEntity()` or `Table::patchEntity()`.
      *
-     * {@inheritDoc}
+     * @param \Cake\ORM\Marshaller $marshaller The marhshaller of the table the behavior is attached to.
+     * @param array $map The property map being built.
+     * @param array $options The options array used in the marshalling call.
+     * @return array A map of `[property => callable]` of additional properties to marshal.
      */
     public function buildMarshalMap(Marshaller $marshaller, array $map, array $options): array
     {

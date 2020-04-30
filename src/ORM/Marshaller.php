@@ -232,6 +232,7 @@ class Marshaller
         }
 
         $entity->setErrors($errors);
+        $this->dispatchAfterMarshal($entity, $data, $options);
 
         return $entity;
     }
@@ -599,6 +600,7 @@ class Marshaller
                     $entity->setDirty($field, $value->isDirty());
                 }
             }
+            $this->dispatchAfterMarshal($entity, $data, $options);
 
             return $entity;
         }
@@ -612,6 +614,7 @@ class Marshaller
                 $entity->setDirty($field, $properties[$field]->isDirty());
             }
         }
+        $this->dispatchAfterMarshal($entity, $data, $options);
 
         return $entity;
     }
@@ -856,5 +859,20 @@ class Marshaller
         }
 
         return $records;
+    }
+
+    /**
+     * dispatch Model.afterMarshal event.
+     *
+     * @param \Cake\Datasource\EntityInterface $entity The entity that was marshaled.
+     * @param array $data readOnly $data to use.
+     * @param array $options List of options that are readOnly.
+     * @return void
+     */
+    protected function dispatchAfterMarshal(EntityInterface $entity, array $data, array $options = []): void
+    {
+        $data = new ArrayObject($data);
+        $options = new ArrayObject($options);
+        $this->_table->dispatchEvent('Model.afterMarshal', compact('entity', 'data', 'options'));
     }
 }

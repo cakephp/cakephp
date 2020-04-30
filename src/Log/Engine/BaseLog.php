@@ -37,6 +37,7 @@ abstract class BaseLog extends AbstractLogger
     protected $_defaultConfig = [
         'levels' => [],
         'scopes' => [],
+        'dateFormat' => 'Y-m-d H:i:s',
     ];
 
     /**
@@ -158,5 +159,17 @@ abstract class BaseLog extends AbstractLogger
         }
 
         return str_replace(array_keys($replacements), $replacements, $message);
+    }
+
+    /**
+     * Returns date formatted according to given `dateFormat` option format.
+     *
+     * This function affects `FileLog` or` ConsoleLog` datetime information format.
+     *
+     * @return string
+     */
+    protected function _getFormattedDate(): string
+    {
+        return date($this->_config['dateFormat']);
     }
 }

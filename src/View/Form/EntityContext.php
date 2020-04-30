@@ -242,7 +242,6 @@ class EntityContext implements ContextInterface
      *     entity.
      *   - `schemaDefault`: Boolean indicating whether default value from table
      *     schema should be used if it's not explicitly provided.
-     *
      * @return mixed The value of the field or null on a miss.
      */
     public function val(string $field, array $options = [])
@@ -321,7 +320,7 @@ class EntityContext implements ContextInterface
      * primary key column is guessed out of the provided $path array
      *
      * @param mixed $values The list from which to extract primary keys from
-     * @param array $path Each one of the parts in a path for a field name
+     * @param string[] $path Each one of the parts in a path for a field name
      * @return array|null
      */
     protected function _extractMultiple($values, array $path): ?array
@@ -345,7 +344,7 @@ class EntityContext implements ContextInterface
      *
      * @param array|null $path Each one of the parts in a path for a field name
      *  or null to get the entity passed in constructor context.
-     * @return \Cake\Datasource\EntityInterface|iterable|false
+     * @return \Cake\Datasource\EntityInterface|iterable|null
      * @throws \RuntimeException When properties cannot be read.
      */
     public function entity(?array $path = null)
@@ -356,7 +355,7 @@ class EntityContext implements ContextInterface
 
         $oneElement = count($path) === 1;
         if ($oneElement && $this->_isCollection) {
-            return false;
+            return null;
         }
         $entity = $this->_context['entity'];
         if ($oneElement) {

@@ -252,14 +252,14 @@ class EagerLoader
         $assocs = explode('.', $assoc);
         $last = array_pop($assocs);
         $containments = [];
-        $pointer =& $containments;
+        $pointer = &$containments;
         $opts = ['matching' => true] + $options;
         /** @psalm-suppress InvalidArrayOffset */
         unset($opts['negateMatch']);
 
         foreach ($assocs as $name) {
             $pointer[$name] = $opts;
-            $pointer =& $pointer[$name];
+            $pointer = &$pointer[$name];
         }
 
         $pointer[$last] = ['queryBuilder' => $builder, 'matching' => true] + $options;
@@ -337,7 +337,7 @@ class EagerLoader
         $result = $original;
 
         foreach ((array)$associations as $table => $options) {
-            $pointer =& $result;
+            $pointer = &$result;
             if (is_int($table)) {
                 $table = $options;
                 $options = [];
@@ -359,7 +359,7 @@ class EagerLoader
                 $table = array_pop($path);
                 foreach ($path as $t) {
                     $pointer += [$t => []];
-                    $pointer =& $pointer[$t];
+                    $pointer = &$pointer[$t];
                 }
             }
 

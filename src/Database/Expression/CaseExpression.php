@@ -84,7 +84,6 @@ class CaseExpression implements ExpressionInterface
      *   or an array of ExpressionInterface instances.
      * @param array|\Cake\Database\ExpressionInterface $values associative array of values of each condition
      * @param array $types associative array of types to be associated with the values
-     *
      * @return $this
      */
     public function add($conditions = [], $values = [], $types = [])
@@ -111,7 +110,6 @@ class CaseExpression implements ExpressionInterface
      * @param array $conditions Array of ExpressionInterface instances.
      * @param array $values associative array of values of each condition
      * @param array $types associative array of types to be associated with the values
-     *
      * @return void
      */
     protected function _addExpressions(array $conditions, array $values, array $types): void
@@ -190,7 +188,6 @@ class CaseExpression implements ExpressionInterface
      *
      * @param array|string|\Cake\Database\ExpressionInterface $part The part to compile
      * @param \Cake\Database\ValueBinder $generator Sql generator
-     *
      * @return string
      */
     protected function _compile($part, ValueBinder $generator): string
@@ -210,7 +207,6 @@ class CaseExpression implements ExpressionInterface
      * Converts the Node into a SQL string fragment.
      *
      * @param \Cake\Database\ValueBinder $generator Placeholder generator object
-     *
      * @return string
      */
     public function sql(ValueBinder $generator): string

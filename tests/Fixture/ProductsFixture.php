@@ -22,7 +22,7 @@ use Cake\TestSuite\Fixture\TestFixture;
 class ProductsFixture extends TestFixture
 {
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public $table = 'products';
 

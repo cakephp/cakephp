@@ -393,7 +393,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function buildMarshalMap(Marshaller $marshaller, array $map, array $options): array
     {

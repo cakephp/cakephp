@@ -167,7 +167,6 @@ class Oauth
      * @param \Cake\Http\Client\Request $request The request object.
      * @param array $credentials Authentication credentials.
      * @return string
-     *
      * @throws \RuntimeException
      */
     protected function _rsaSha1(Request $request, array $credentials): string

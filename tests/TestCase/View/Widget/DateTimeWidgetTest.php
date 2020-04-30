@@ -28,7 +28,6 @@ class DateTimeWidgetTest extends TestCase
 {
     /**
      * @setUp
-     *
      * @return void
      */
     public function setUp(): void

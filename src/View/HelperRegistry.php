@@ -96,7 +96,6 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
             return $this->_loaded[$name];
         }
         if (isset($this->{$name})) {
-            /** @psalm-suppress InvalidReturnStatement */
             return $this->_loaded[$name];
         }
 

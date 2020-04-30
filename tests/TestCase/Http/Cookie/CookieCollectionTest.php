@@ -419,6 +419,7 @@ class CookieCollectionTest extends TestCase
 
     /**
      * Testing the cookie size limit warning
+     *
      * @return void
      */
     public function testCookieSizeWarning()

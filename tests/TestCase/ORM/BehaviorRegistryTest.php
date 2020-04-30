@@ -291,7 +291,6 @@ class BehaviorRegistryTest extends TestCase
 
     /**
      * Test errors on unknown methods.
-     *
      */
     public function testCallError()
     {
@@ -330,7 +329,6 @@ class BehaviorRegistryTest extends TestCase
 
     /**
      * Test errors on unknown methods.
-     *
      */
     public function testCallFinderError()
     {
@@ -342,7 +340,6 @@ class BehaviorRegistryTest extends TestCase
 
     /**
      * Test errors on unloaded behavior methods.
-     *
      */
     public function testUnloadBehaviorThenCall()
     {
@@ -356,7 +353,6 @@ class BehaviorRegistryTest extends TestCase
 
     /**
      * Test errors on unloaded behavior finders.
-     *
      */
     public function testUnloadBehaviorThenCallFinder()
     {

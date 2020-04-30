@@ -18,6 +18,7 @@ namespace Cake\Database\Schema;
 
 /**
  * Schema management/reflection features for SQLServer.
+ *
  * @internal
  */
 class SqlserverSchemaDialect extends SchemaDialect

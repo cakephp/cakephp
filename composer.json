@@ -29,6 +29,7 @@
     },
     "require": {
         "php": ">=7.2.0",
+        "ext-json": "*",
         "ext-intl": "*",
         "ext-mbstring": "*",
         "aura/intl": "^3.0.0",
@@ -62,6 +63,7 @@
             "src/Core/functions.php",
             "src/Collection/functions.php",
             "src/I18n/functions.php",
+            "src/Routing/functions.php",
             "src/Utility/bootstrap.php"
         ]
     },
@@ -110,7 +112,7 @@
             "@phpstan",
             "@psalm"
         ],
-        "stan-setup": "cp composer.json composer.backup && composer require --dev phpstan/phpstan:^0.12.7 psalm/phar:~3.8.0 && mv composer.backup composer.json"
+        "stan-setup": "cp composer.json composer.backup && composer require --dev phpstan/phpstan:^0.12.7 psalm/phar:~3.11.2 && mv composer.backup composer.json"
     },
     "config": {
         "sort-packages": true,

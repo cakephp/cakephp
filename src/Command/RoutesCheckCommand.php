@@ -90,6 +90,7 @@ class RoutesCheckCommand extends Command
         )
         ->addArgument('url', [
             'help' => 'The URL to check.',
+            'required' => true,
         ]);
 
         return $parser;

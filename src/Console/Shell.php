@@ -462,7 +462,6 @@ class Shell
      * Built-in extra parameter is :
      *
      * - `requested` : if used, will prevent the Shell welcome message to be displayed
-     *
      * @return int|bool|null
      * @link https://book.cakephp.org/4/en/console-and-shells.html#the-cakephp-console
      */
@@ -599,8 +598,8 @@ class Shell
         if (empty($this->{$name}) && in_array($name, $this->taskNames, true)) {
             $properties = $this->_taskMap[$name];
             $this->{$name} = $this->Tasks->load($properties['class'], $properties['config']);
-            $this->{$name}->args =& $this->args;
-            $this->{$name}->params =& $this->params;
+            $this->{$name}->args = &$this->args;
+            $this->{$name}->params = &$this->params;
             $this->{$name}->initialize();
             $this->{$name}->loadTasks();
         }
