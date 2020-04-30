@@ -44,7 +44,8 @@ interface ErrorLoggerInterface
      *
      * @param string|int $level The logging level
      * @param string $message The message to be logged.
+     * @param array $context Context.
      * @return bool
      */
-    public function logMessage($level, string $message): bool;
+    public function logMessage($level, string $message, array $context = []): bool;
 }

@@ -54,7 +54,7 @@ abstract class BaseErrorHandler
     /**
      * Exception logger instance.
      *
-     * @var \Cake\Error\ErrorLogger|null
+     * @var \Cake\Error\ErrorLoggerInterface|null
      */
     protected $logger;
 
@@ -309,21 +309,17 @@ abstract class BaseErrorHandler
             $data['file'],
             $data['line']
         );
+        $context = [];
         if (!empty($this->_config['trace'])) {
             /** @var string $trace */
-            $trace = Debugger::trace([
+            $context['trace'] = Debugger::trace([
                 'start' => 1,
                 'format' => 'log',
             ]);
-
-            $request = Router::getRequest();
-            if ($request) {
-                $message .= $this->getLogger()->getRequestContext($request);
-            }
-            $message .= "\nTrace:\n" . $trace . "\n";
+            $context['request'] = Router::getRequest();
         }
 
-        return $this->getLogger()->logMessage($level, $message);
+        return $this->getLogger()->logMessage($level, $message, $context);
     }
 
     /**

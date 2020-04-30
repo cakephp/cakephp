@@ -57,8 +57,15 @@ class ErrorLogger implements ErrorLoggerInterface
     /**
      * @inheritDoc
      */
-    public function logMessage($level, string $message): bool
+    public function logMessage($level, string $message, array $context = []): bool
     {
+        if (!empty($context['request'])) {
+            $message .= $this->getRequestContext($context['request']);
+        }
+        if (!empty($context['trace'])) {
+            $message .= "\nTrace:\n" . $context['trace'] . "\n";
+        }
+
         return Log::write($level, $message);
     }
 
