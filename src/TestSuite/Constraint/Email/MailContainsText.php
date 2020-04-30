@@ -41,6 +41,6 @@ class MailContainsText extends MailContains
             return sprintf('is in the text message of email #%d', $this->at);
         }
 
-        return 'is in the text message of an email';
+        return 'is in the text message of an email' . $this->getAssertedMessages();
     }
 }

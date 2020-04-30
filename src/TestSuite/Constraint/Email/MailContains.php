@@ -40,7 +40,7 @@ class MailContains extends MailConstraintBase
     {
         $messages = $this->getMessages();
         foreach ($messages as $message) {
-            $method = 'getBody' . ($this->type ? ucfirst($this->type) : 'String');
+            $method = $this->getTypeMethod();
             $message = $message->$method();
 
             $other = preg_quote($other, '/');
@@ -50,6 +50,30 @@ class MailContains extends MailConstraintBase
         }
 
         return false;
+    }
+
+    /**
+     * @return string
+     */
+    private function getTypeMethod(): string
+    {
+        return 'getBody' . ($this->type ? ucfirst($this->type) : 'String');
+    }
+
+    /**
+     * returns the type-dependent strings of all messages
+     * @return string
+     */
+    protected function getAssertedMessages(): string
+    {
+        $messageMembers = [];
+        $messages = $this->getMessages();
+        foreach ($messages as $message) {
+            $method = $this->getTypeMethod();
+            $messageMembers[] = $message->$method();
+        }
+        $result = join(LF, $messageMembers);
+        return LF . 'was: ' . substr($result, 0, 1000);
     }
 
     /**
