@@ -38,7 +38,7 @@ class IntervalExpression implements ExpressionInterface
     /**
      * SQL unit values for DateInterval array conversion.
      *
-     * @var array
+     * @var string[]
      */
     protected const KEYS_TRANSFORM = ['YEAR', 'MONTH', 'DAY', 'HOUR', 'MINUTE', 'SECOND', 'MICROSECOND'];
 
@@ -225,7 +225,7 @@ class IntervalExpression implements ExpressionInterface
     public function setInterval(DateInterval $interval): self
     {
         $isValid = ($interval->y + $interval->m + $interval->d +
-            $interval->h + $interval->i + $interval->s + $interval->f) != 0;
+            $interval->h + $interval->i + $interval->s + $interval->f) !== 0;
         if ($isValid == false) {
             throw new Exception(
                 'Interval needs to be greater than zero. Note that relative intervals are not supported.'
