@@ -563,11 +563,11 @@ class Sqlserver extends Driver
         foreach ($interval as $iUnit => $iValue) {
             if (!$fncExp) {
                 $fncExp = (new FunctionExpression('date_add', []))
-                    ->add([$iUnit, ($sign . '1') * $iValue . 'S'])
+                    ->add([$iUnit . 'S', ($sign . '1') * $iValue])
                     ->add([$fOrV], $typeAry);
             } else {
                 $fncExp = (new FunctionExpression('date_add', []))
-                    ->add([$iUnit, ($sign . '1') * $iValue . 'S', $fncExp]);
+                    ->add([$iUnit . 'S', ($sign . '1') * $iValue, $fncExp]);
             }
         }
         $intervalExp->setOverrideExpression($fncExp);
