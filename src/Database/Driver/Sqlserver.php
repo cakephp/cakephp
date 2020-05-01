@@ -546,7 +546,7 @@ class Sqlserver extends Driver
      * Receives a IntervalExpression and changes it so that it conforms to this
      * SQL dialect.
      *
-     * @param IntervalExpression $expression The interval expression to convert
+     * @param \Cake\Database\Expression\IntervalExpression $intervalExp The interval expression to convert
      *   to TSQL.
      * @return void
      */
