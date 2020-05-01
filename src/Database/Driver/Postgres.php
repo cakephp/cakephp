@@ -18,6 +18,7 @@ namespace Cake\Database\Driver;
 
 use Cake\Database\Driver;
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Expression\IntervalExpression;
 use Cake\Database\PostgresCompiler;
 use Cake\Database\Query;
 use Cake\Database\QueryCompiler;
@@ -220,6 +221,7 @@ class Postgres extends Driver
 
         return [
             $namespace . '\FunctionExpression' => '_transformFunctionExpression',
+            IntervalExpression::class => 'transformIntervalExpression',
         ];
     }
 
@@ -296,5 +298,23 @@ class Postgres extends Driver
     public function newCompiler(): QueryCompiler
     {
         return new PostgresCompiler();
+    }
+
+    /**
+     * Receives a IntervalExpression and changes it so that it conforms to this
+     * SQL dialect.
+     *
+     * @param IntervalExpression $expression The interval expression to convert
+     *   to postgres SQL.
+     * @return void
+     */
+    protected function transformIntervalExpression(IntervalExpression $intervalExp): void
+    {
+        $intervalExp->combineIntervalSqlOptions([
+            'glue' => ' ',
+            'sql-prefix' => 'INTERVAL',
+            'prefix' => '\'',
+            'suffix' => '\'',
+        ]);
     }
 }

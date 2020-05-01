@@ -18,6 +18,7 @@ namespace Cake\Database\Driver;
 
 use Cake\Database\Driver;
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Expression\IntervalExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\UnaryExpression;
 use Cake\Database\ExpressionInterface;
@@ -448,6 +449,7 @@ class Sqlserver extends Driver
         return [
             $namespace . '\FunctionExpression' => '_transformFunctionExpression',
             $namespace . '\TupleComparison' => '_transformTupleComparison',
+            IntervalExpression::class => 'transformIntervalExpression',
         ];
     }
 
@@ -538,5 +540,36 @@ class Sqlserver extends Driver
 
                 break;
         }
+    }
+
+    /**
+     * Receives a IntervalExpression and changes it so that it conforms to this
+     * SQL dialect.
+     *
+     * @param IntervalExpression $expression The interval expression to convert
+     *   to TSQL.
+     * @return void
+     */
+    protected function transformIntervalExpression(IntervalExpression $intervalExp): void
+    {
+        $fOrV = $intervalExp->getFieldOrValue();
+        $typeAry = [];
+        if ($fOrV instanceof \DateTimeInterface) {
+            $typeAry[] = 'datetimefractional';
+        }
+        $sign = $intervalExp->getIntervalSign();
+        $fncExp = null;
+        $interval = IntervalExpression::transformForDatabase($intervalExp->getInterval());
+        foreach ($interval as $iUnit => $iValue) {
+            if (!$fncExp) {
+                $fncExp = (new FunctionExpression('date_add', []))
+                    ->add([$iUnit, ($sign . '1') * $iValue . 'S'])
+                    ->add([$fOrV], $typeAry);
+            } else {
+                $fncExp = (new FunctionExpression('date_add', []))
+                    ->add([$iUnit, ($sign . '1') * $iValue . 'S', $fncExp]);
+            }
+        }
+        $intervalExp->setOverrideExpression($fncExp);
     }
 }

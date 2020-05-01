@@ -18,6 +18,7 @@ namespace Cake\Database\Driver;
 
 use Cake\Database\Driver;
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Expression\IntervalExpression;
 use Cake\Database\Query;
 use Cake\Database\QueryCompiler;
 use Cake\Database\Schema\SchemaDialect;
@@ -236,6 +237,7 @@ class Sqlite extends Driver
         return [
             $namespace . '\FunctionExpression' => '_transformFunctionExpression',
             $namespace . '\TupleComparison' => '_transformTupleComparison',
+            IntervalExpression::class => 'transformIntervalExpression',
         ];
     }
 
@@ -335,5 +337,31 @@ class Sqlite extends Driver
         }
 
         return $this->_supportsWindowFunctions;
+    }
+
+    /**
+     * Receives a IntervalExpression and changes it so that it conforms to this
+     * SQL dialect.
+     *
+     * @param IntervalExpression $expression The interval expression to convert
+     *   to Sqlite SQL.
+     * @return void
+     */
+    protected function transformIntervalExpression(IntervalExpression $intervalExp): void
+    {
+        $fOrV = $intervalExp->getFieldOrValue();
+        $typeAry = [];
+        if ($fOrV instanceof \DateTimeInterface) {
+            $typeAry[] = 'datetimefractional';
+        }
+        $sign = $intervalExp->getIntervalSign();
+        $fncExp = (new FunctionExpression('strftime', ['\'%Y-%m-%d %H:%M:%f\'' => 'literal']))
+            ->add([$fOrV], $typeAry);
+        $interval = IntervalExpression::transformForDatabase($intervalExp->getInterval());
+        foreach ($interval as $iUnit => $iValue) {
+            $intervalStr = (($sign . '1') * $iValue) . ' ' . $iUnit;
+            $fncExp->add([$intervalStr]);
+        }
+        $intervalExp->setOverrideExpression($fncExp);
     }
 }
