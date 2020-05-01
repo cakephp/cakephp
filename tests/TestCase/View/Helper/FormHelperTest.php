@@ -8295,7 +8295,7 @@ class FormHelperTest extends TestCase
             ->withData('id', '1')
             ->withQueryParams(['id' => '2']));
 
-        $expected = ['context'];
+        $expected = ['data', 'context'];
         $result = $this->Form->getValueSources();
         $this->assertEquals($expected, $result);
 
@@ -8305,9 +8305,8 @@ class FormHelperTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $this->Form->setValueSources(['context']);
-        $expected = '1';
         $result = $this->Form->getSourceValue('id');
-        $this->assertEquals($expected, $result);
+        $this->assertNull($result);
 
         $this->Form->setValueSources('query');
         $expected = ['query'];
@@ -8365,7 +8364,7 @@ class FormHelperTest extends TestCase
         $this->Form->create($article);
         $result = $this->Form->control('id');
         $expected = [
-            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '5b']],
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '3']],
         ];
         $this->assertHtml($expected, $result);
 
@@ -8482,11 +8481,11 @@ class FormHelperTest extends TestCase
         $this->Form->create($article, ['valueSources' => ['context', 'data']]);
         $result = $this->Form->control('id');
         $expected = [
-            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '4']],
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '3']],
         ];
         $this->assertHtml($expected, $result);
         $result = $this->Form->getSourceValue('id');
-        $this->assertSame('4', $result);
+        $this->assertSame(3, $result);
     }
 
     /**
@@ -8534,7 +8533,7 @@ class FormHelperTest extends TestCase
      */
     public function testFormValueSourcesResetViaEnd()
     {
-        $expected = ['context'];
+        $expected = ['data', 'context'];
         $result = $this->Form->getValueSources();
         $this->assertEquals($expected, $result);
 
@@ -8550,7 +8549,7 @@ class FormHelperTest extends TestCase
 
         $this->Form->end();
         $result = $this->Form->getValueSources();
-        $this->assertEquals(['context'], $result);
+        $this->assertEquals(['data', 'context'], $result);
     }
 
     /**
@@ -8958,7 +8957,6 @@ class FormHelperTest extends TestCase
         $validator = new Validator();
         $validator->maxLength('title', 10);
         $article = new EntityContext(
-            new ServerRequest(),
             [
                 'entity' => new Entity($this->article),
                 'table' => new Table([
@@ -8994,7 +8992,6 @@ class FormHelperTest extends TestCase
         $validator = new Validator();
         $validator->maxLength('title', 55);
         $article = new EntityContext(
-            new ServerRequest(),
             [
                 'entity' => new Entity($this->article),
                 'table' => new Table([
@@ -9031,7 +9028,6 @@ class FormHelperTest extends TestCase
         $validator = new Validator();
         $validator->maxLength('title', 55);
         $article = new EntityContext(
-            new ServerRequest(),
             [
                 'entity' => new Entity($this->article),
                 'table' => new Table([
@@ -9077,7 +9073,6 @@ class FormHelperTest extends TestCase
         $validator = new Validator();
         $validator->maxLength('title', 10);
         $article = new EntityContext(
-            new ServerRequest(),
             [
                 'entity' => new Entity($this->article),
                 'table' => new Table([

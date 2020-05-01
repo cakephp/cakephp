@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\View\Widget;
 
-use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Cake\View\Form\NullContext;
 use Cake\View\StringTemplate;
@@ -38,7 +37,7 @@ class DateTimeWidgetTest extends TestCase
             'input' => '<input type="{{type}}" name="{{name}}"{{attrs}}>',
         ];
         $this->templates = new StringTemplate($templates);
-        $this->context = new NullContext(new ServerRequest(), []);
+        $this->context = new NullContext([]);
         $this->DateTime = new DateTimeWidget($this->templates);
     }
 

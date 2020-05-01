@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\View\Form;
 
-use Cake\Http\ServerRequest;
 use Cake\Utility\Hash;
 
 /**
@@ -27,8 +26,9 @@ use Cake\Utility\Hash;
  *
  * Important keys:
  *
+ * - `data` Holds the current values supplied for the fields.
  * - `defaults` The default values for fields. These values
- *   will be used when there is no request data set. Data should be nested following
+ *   will be used when there is no data set. Data should be nested following
  *   the dot separated paths you access your fields with.
  * - `required` A nested array of fields, relationships and boolean
  *   flags to indicate a field is required. The value can also be a string to be used
@@ -45,7 +45,11 @@ use Cake\Utility\Hash;
  *  ### Example
  *
  *  ```
- *  $data = [
+ *  $article = [
+ *    'data' => [
+ *      'id' => '1',
+ *      'title' => 'First post!',
+ *    ],
  *    'schema' => [
  *      'id' => ['type' => 'integer'],
  *      'title' => ['type' => 'string', 'length' => 255],
@@ -54,8 +58,7 @@ use Cake\Utility\Hash;
  *      ]
  *    ],
  *    'defaults' => [
- *      'id' => 1,
- *      'title' => 'First post!',
+ *      'title' => 'Default title',
  *    ],
  *    'required' => [
  *      'id' => true, // will use default required message
@@ -68,13 +71,6 @@ use Cake\Utility\Hash;
 class ArrayContext implements ContextInterface
 {
     /**
-     * The request object.
-     *
-     * @var \Cake\Http\ServerRequest
-     */
-    protected $_request;
-
-    /**
      * Context data for this object.
      *
      * @var array
@@ -84,13 +80,12 @@ class ArrayContext implements ContextInterface
     /**
      * Constructor.
      *
-     * @param \Cake\Http\ServerRequest $request The request object.
      * @param array $context Context info.
      */
-    public function __construct(ServerRequest $request, array $context)
+    public function __construct(array $context)
     {
-        $this->_request = $request;
         $context += [
+            'data' => [],
             'schema' => [],
             'required' => [],
             'defaults' => [],
@@ -168,17 +163,16 @@ class ArrayContext implements ContextInterface
     /**
      * Get the current value for a given field.
      *
-     * This method will coalesce the current request data and the 'defaults'
-     * array.
+     * This method will coalesce the current data and the 'defaults' array.
      *
      * @param string $field A dot separated path to the field a value
      *   is needed for.
      * @param array $options Options:
      *
-     *   - `default`: Default value to return if no value found in request
-     *     data or context record.
+     *   - `default`: Default value to return if no value found in data or
+     *     context record.
      *   - `schemaDefault`: Boolean indicating whether default value from
-     *      context's schema should be used if it's not explicitly provided.
+     *     context's schema should be used if it's not explicitly provided.
      * @return mixed
      */
     public function val(string $field, array $options = [])
@@ -188,10 +182,10 @@ class ArrayContext implements ContextInterface
             'schemaDefault' => true,
         ];
 
-        $val = $this->_request->getData($field);
-        if ($val !== null) {
-            return $val;
+        if (Hash::check($this->_context['data'], $field)) {
+            return Hash::get($this->_context['data'], $field);
         }
+
         if ($options['default'] !== null || !$options['schemaDefault']) {
             return $options['default'];
         }

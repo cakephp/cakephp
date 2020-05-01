@@ -223,7 +223,7 @@ class FormHelper extends Helper
      *
      * @var string[]
      */
-    protected $_valueSources = ['context'];
+    protected $_valueSources = ['data', 'context'];
 
     /**
      * Grouped input types.
@@ -559,7 +559,7 @@ class FormHelper extends Helper
         $this->templater()->pop();
         $this->requestType = null;
         $this->_context = null;
-        $this->_valueSources = ['context'];
+        $this->_valueSources = ['data', 'context'];
         $this->_idPrefix = $this->getConfig('idPrefix');
         $this->formProtector = null;
 

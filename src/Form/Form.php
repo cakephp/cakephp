@@ -265,6 +265,8 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      */
     public function execute(array $data): bool
     {
+        $this->_data = $data;
+
         if (!$this->validate($data)) {
             return false;
         }
