@@ -226,11 +226,11 @@ class DateTest extends TestCase
     {
         $class::setDefaultLocale('pt_BR');
 
-        $class::disableLentientParsing();
+        $class::disableLenientParsing();
         $date = $class::parseDate('04/21/2013');
         $this->assertSame(null, $date);
 
-        $class::enableLentientParsing();
+        $class::enableLenientParsing();
         $date = $class::parseDate('04/21/2013');
         $this->assertSame('2014-09-04', $date->format('Y-m-d'));
     }

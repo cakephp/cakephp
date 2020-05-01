@@ -926,11 +926,11 @@ class TimeTest extends TestCase
     {
         $class::setDefaultLocale('pt_BR');
 
-        $class::disableLentientParsing();
+        $class::disableLenientParsing();
         $time = $class::parseDate('04/21/2013');
         $this->assertSame(null, $time);
 
-        $class::enableLentientParsing();
+        $class::enableLenientParsing();
         $time = $class::parseDate('04/21/2013');
         $this->assertSame('2014-09-04', $time->format('Y-m-d'));
     }

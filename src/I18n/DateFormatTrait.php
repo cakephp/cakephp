@@ -49,7 +49,7 @@ trait DateFormatTrait
      *
      * @var bool
      */
-    protected static $lentientParsing = true;
+    protected static $lenientParsing = true;
 
     /**
      * In-memory cache of date formatters
@@ -93,29 +93,29 @@ trait DateFormatTrait
      *
      * @return bool
      */
-    public static function lentientParsingEnabled(): bool
+    public static function lenientParsingEnabled(): bool
     {
-        return static::$lentientParsing;
+        return static::$lenientParsing;
     }
 
     /**
-     * Enables lentient parsing for locale formats.
+     * Enables lenient parsing for locale formats.
      *
      * @return void
      */
-    public static function enableLentientParsing(): void
+    public static function enableLenientParsing(): void
     {
-        static::$lentientParsing = true;
+        static::$lenientParsing = true;
     }
 
     /**
-     * Enables lentient parsing for locale formats.
+     * Enables lenient parsing for locale formats.
      *
      * @return void
      */
-    public static function disableLentientParsing(): void
+    public static function disableLenientParsing(): void
     {
-        static::$lentientParsing = false;
+        static::$lenientParsing = false;
     }
 
     /**
@@ -376,7 +376,7 @@ trait DateFormatTrait
             null,
             $pattern ?? ''
         );
-        $formatter->setLenient(static::$lentientParsing);
+        $formatter->setLenient(static::$lenientParsing);
 
         $time = $formatter->parse($time);
         if ($time !== false) {
