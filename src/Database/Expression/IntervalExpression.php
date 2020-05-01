@@ -289,12 +289,11 @@ class IntervalExpression implements ExpressionInterface
         foreach ($interval as $iUnit => $iValue) {
             $intervalAry[] = sprintf(
                 $options['format'],
-                $options['prefix'],
                 ("${sign}1" * $iValue) . ' ' . $iUnit,
-                $options['suffix']
             );
         }
-        return $options['sql-prefix'] . implode($options['glue'], $intervalAry);
+        return $options['sql-prefix'] .
+            $options['prefix'] . implode($options['glue'], $intervalAry) . $options['suffix'];
     }
 
     /**
@@ -307,7 +306,7 @@ class IntervalExpression implements ExpressionInterface
         $this->setOverrideExpression(null);
         $this->combineIntervalSqlOptions([
              'glue'          => ' + ',
-             'format'        => '%s%s%s',
+             'format'        => '%s',
              'prefix'        => 'INTERVAL ',
              'suffix'        => '',
              'sql-prefix'    => '',
