@@ -24,7 +24,7 @@ use DateInterval;
 use DateTimeInterface;
 
 /**
- * An expression object to conta    in a value and unit for an interval.
+ * An expression object to generate the SQL for an interval expression.
  */
 class IntervalExpression implements ExpressionInterface
 {
