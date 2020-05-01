@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Error;
 use Cake\Core\Configure;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Error\ErrorHandler;
+use Cake\Error\ErrorLoggerInterface;
 use Cake\Http\Exception\ForbiddenException;
 use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\Exception\NotFoundException;
@@ -233,7 +234,7 @@ class ErrorHandlerTest extends TestCase
         $messages = $this->logger->read();
         $this->assertRegExp('/^(notice|debug)/', $messages[0]);
         $this->assertStringContainsString(
-            'Notice (8): Undefined variable: out in [' . __FILE__ . ', line ' . (__LINE__ - 5) . ']' . "\n\n",
+            'Notice (8): Undefined variable: out in [' . __FILE__ . ', line ' . (__LINE__ - 5) . ']',
             $messages[0]
         );
     }
@@ -508,5 +509,33 @@ class ErrorHandlerTest extends TestCase
         $this->assertEquals($expected, $new, 'memory limit did not get increased.');
 
         ini_set('memory_limit', $initial);
+    }
+
+    /**
+     * Test getting a logger
+     *
+     * @return void
+     */
+    public function testGetLogger()
+    {
+        $errorHandler = new TestErrorHandler(['key' => 'value', 'log' => true]);
+        $logger = $errorHandler->getLogger();
+
+        $this->assertInstanceOf(ErrorLoggerInterface::class, $logger);
+        $this->assertEquals('value', $logger->getConfig('key'), 'config should be forwarded.');
+        $this->assertSame($logger, $errorHandler->getLogger());
+    }
+
+    /**
+     * Test getting a logger
+     *
+     * @return void
+     */
+    public function testGetLoggerInvalid()
+    {
+        $errorHandler = new TestErrorHandler(['errorLogger' => \stdClass::class]);
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Cannot create logger');
+        $errorHandler->getLogger();
     }
 }
