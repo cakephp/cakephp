@@ -562,11 +562,11 @@ class Sqlserver extends Driver
         $interval = IntervalExpression::transformForDatabase($intervalExp->getInterval());
         foreach ($interval as $iUnit => $iValue) {
             if (!$fncExp) {
-                $fncExp = (new FunctionExpression('date_add', []))
+                $fncExp = (new FunctionExpression('DATEADD', []))
                     ->add([$iUnit . 'S', ($sign . '1') * $iValue])
                     ->add([$fOrV], $typeAry);
             } else {
-                $fncExp = (new FunctionExpression('date_add', []))
+                $fncExp = (new FunctionExpression('DATEADD', []))
                     ->add([$iUnit . 'S', ($sign . '1') * $iValue, $fncExp]);
             }
         }
