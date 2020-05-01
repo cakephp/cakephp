@@ -28,7 +28,6 @@ use DateTimeInterface;
  */
 class IntervalExpression implements ExpressionInterface
 {
-
     /**
      * Key mappings for DateInterval array conversion.
      *
@@ -46,14 +45,14 @@ class IntervalExpression implements ExpressionInterface
     /**
      * The interval object used to construct the interval SQL statement.
      *
-     * @var DateInterval
+     * @var \DateInterval
      */
     protected $interval;
 
     /**
      * Overriding ExpressionInterface object for server-specific SQL.
      *
-     * @var ExpressionInterface|null
+     * @var \Cake\Database\ExpressionInterface|null
      */
     protected $overrideExpression;
 
@@ -61,7 +60,7 @@ class IntervalExpression implements ExpressionInterface
      * The DateTimeInterface or ExpressionInterface object used as the starting
      * point for the interval.
      *
-     * @var DateTimeInterface|ExpressionInterface
+     * @var \DateTimeInterface|\Cake\Database\ExpressionInterface
      */
     protected $fieldOrValue;
 
@@ -79,7 +78,7 @@ class IntervalExpression implements ExpressionInterface
      * the interval SQL.
      *
      * @param mixed $fieldOrValue The value or identifier to be modified.
-     * @param DateInterval $interval The interval value as a DateInterval object.
+     * @param \DateInterval $interval The interval value as a DateInterval object.
      */
     public function __construct($fieldOrValue, DateInterval $interval)
     {
@@ -110,6 +109,7 @@ class IntervalExpression implements ExpressionInterface
             $sql .= ' + ' . $this->generateIntervalSql();
         }
         $this->reset();
+
         return $sql;
     }
 
@@ -124,6 +124,7 @@ class IntervalExpression implements ExpressionInterface
         if ($this->getFieldOrValue() instanceof ExpressionInterface) {
             $this->getFieldOrValue()->traverse($callable);
         }
+
         return $this;
     }
 
@@ -137,11 +138,14 @@ class IntervalExpression implements ExpressionInterface
     public function combineIntervalSqlOptions(array $options): self
     {
         $this->intervalSqlOptions = array_merge($this->getIntervalSqlOptions(), $options);
+
         return $this;
     }
 
     /**
      * Method that returns the interval options array.
+     *
+     * @return array
      */
     public function getIntervalSqlOptions(): array
     {
@@ -153,17 +157,20 @@ class IntervalExpression implements ExpressionInterface
      * the use of en expression (usually a function) instead of an interval
      * statement.
      *
-     * @param ExpressionInterface|null $exp An ExpressionInterface object or null value.
+     * @param \Cake\Database\ExpressionInterface|null $exp An ExpressionInterface object or null value.
      * @return self
      */
     public function setOverrideExpression(?ExpressionInterface $exp): self
     {
         $this->overrideExpression = $exp;
+
         return $this;
     }
 
     /**
      * Method that returns the overriding expression.
+     *
+     * @return \Cake\Database\ExpressionInterface|null
      */
     public function getOverrideExpression(): ?ExpressionInterface
     {
@@ -174,7 +181,7 @@ class IntervalExpression implements ExpressionInterface
      * Method that accepts a date or expression object that serves as the
      * value the interval will be applied to.
      *
-     * @param DateTimeInterface|ExpressionInterface $fov A DateTimeInterface or ExpressionInterface object.
+     * @param \DateTimeInterface|\Cake\Database\ExpressionInterface $fov A DateTimeInterface or ExpressionInterface object.
      * @return self
      */
     public function setFieldOrValue($fov): self
@@ -185,11 +192,14 @@ class IntervalExpression implements ExpressionInterface
             );
         }
         $this->fieldOrValue = $fov;
+
         return $this;
     }
 
     /**
      * Method that returns the field or value object.
+     *
+     * @return \DateTimeInterface|\Cake\Database\ExpressionInterface
      */
     public function getFieldOrValue()
     {
@@ -208,8 +218,8 @@ class IntervalExpression implements ExpressionInterface
      * the interval object and not all database servers support relative/special
      * intervals.
      *
-     * @param DateInterval $interval An interval object.
-     * @throws Exception When interval value is not valid.
+     * @param \DateInterval $interval An interval object.
+     * @throws \Exception When interval value is not valid.
      * @return self
      */
     public function setInterval(DateInterval $interval): self
@@ -222,11 +232,14 @@ class IntervalExpression implements ExpressionInterface
             );
         }
         $this->interval = $interval;
+
         return $this;
     }
 
     /**
      * Method that returns the interval object.
+     *
+     * @return \DateInterval
      */
     public function getInterval(): DateInterval
     {
@@ -246,7 +259,7 @@ class IntervalExpression implements ExpressionInterface
      * the SQL transform values. For instance, the 'y' key becomes 'YEAR', 'm'
      * becomes 'MONTH', 'h' becomes 'HOUR', etc.
      *
-     * @param DateInterval $di An interval object.
+     * @param \DateInterval $di An interval object.
      * @return array Converted & transformed interval object.
      */
     public static function transformForDatabase(DateInterval $di): array
