@@ -286,11 +286,6 @@ class IntervalExpression implements ExpressionInterface
         $sign = $this->getIntervalSign();
         $intervalAry = [];
         $options = $this->getIntervalSqlOptions();
-        if (1 == 0) {
-            $options['glue'] = ' ';
-            $options['sql-prefix'] = 'INTERVAL';
-            $options['prefix'] = $options['suffix'] = '\'';
-        }
         foreach ($interval as $iUnit => $iValue) {
             $intervalAry[] = sprintf(
                 $options['format'],
