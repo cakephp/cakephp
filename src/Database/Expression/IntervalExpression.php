@@ -248,6 +248,8 @@ class IntervalExpression implements ExpressionInterface
 
     /**
      * Method that returns the sign (+ or -) of the interval object.
+     *
+     * @return string Either + or - depending on the state of the interval object's invert property.
      */
     public function getIntervalSign(): string
     {
@@ -267,11 +269,12 @@ class IntervalExpression implements ExpressionInterface
         $intervalAry = array_filter(
             array_combine(
                 static::KEYS_TRANSFORM,
-                array_intersect_key((array) $di, static::KEYS_REQUIRED)
+                array_intersect_key((array)$di, static::KEYS_REQUIRED)
             )
         );
         $intervalAry['SECOND'] = $intervalAry['SECOND'] + $intervalAry['MICROSECOND'];
         unset($intervalAry['MICROSECOND']);
+
         return $intervalAry;
     }
 
@@ -292,6 +295,7 @@ class IntervalExpression implements ExpressionInterface
                 ("${sign}1" * $iValue) . ' ' . $iUnit,
             );
         }
+
         return $options['sql-prefix'] .
             $options['prefix'] . implode($options['glue'], $intervalAry) . $options['suffix'];
     }
@@ -311,6 +315,7 @@ class IntervalExpression implements ExpressionInterface
              'suffix'        => '',
              'sql-prefix'    => '',
         ]);
+
         return $this;
     }
 }

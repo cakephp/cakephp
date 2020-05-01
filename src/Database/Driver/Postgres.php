@@ -304,7 +304,7 @@ class Postgres extends Driver
      * Receives a IntervalExpression and changes it so that it conforms to this
      * SQL dialect.
      *
-     * @param IntervalExpression $intervalExp The interval expression to convert
+     * @param \Cake\Database\Expression\IntervalExpression $intervalExp The interval expression to convert
      *   to postgres SQL.
      * @return void
      */
