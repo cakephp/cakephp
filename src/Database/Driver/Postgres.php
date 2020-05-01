@@ -78,6 +78,11 @@ class Postgres extends Driver
     protected $_endQuote = '"';
 
     /**
+     * @inheritDoc
+     */
+    protected $supportsCommonTableExpressions = true;
+
+    /**
      * Establishes a connection to the database server
      *
      * @return bool true on success

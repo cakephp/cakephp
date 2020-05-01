@@ -39,6 +39,7 @@ class PostgresCompiler extends QueryCompiler
      * @inheritDoc
      */
     protected $_templates = [
+        'with' => '%s ',
         'delete' => 'DELETE',
         'where' => ' WHERE %s',
         'group' => ' GROUP BY %s ',

@@ -16,11 +16,13 @@ declare(strict_types=1);
  */
 namespace Cake\Database;
 
+use Cake\Database\Expression\CommonTableExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\OrderClauseExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\ValuesExpression;
+use Cake\Database\Expression\WithExpression;
 use Cake\Database\Expression\WindowExpression;
 use Cake\Database\Statement\CallbackStatement;
 use Closure;
@@ -78,6 +80,7 @@ class Query implements ExpressionInterface, IteratorAggregate
         'set' => [],
         'insert' => [],
         'values' => [],
+        'with' => null,
         'select' => [],
         'distinct' => false,
         'modifier' => [],
@@ -100,7 +103,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @var string[]
      */
     protected $_selectParts = [
-        'select', 'from', 'join', 'where', 'group', 'having', 'order', 'limit',
+        'with', 'select', 'from', 'join', 'where', 'group', 'having', 'order', 'limit',
         'offset', 'union', 'epilog',
     ];
 
@@ -109,21 +112,21 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @var string[]
      */
-    protected $_updateParts = ['update', 'set', 'where', 'epilog'];
+    protected $_updateParts = ['with', 'update', 'set', 'where', 'epilog'];
 
     /**
      * The list of query clauses to traverse for generating a DELETE statement
      *
      * @var string[]
      */
-    protected $_deleteParts = ['delete', 'modifier', 'from', 'where', 'epilog'];
+    protected $_deleteParts = ['with', 'delete', 'modifier', 'from', 'where', 'epilog'];
 
     /**
      * The list of query clauses to traverse for generating an INSERT statement
      *
      * @var string[]
      */
-    protected $_insertParts = ['insert', 'values', 'epilog'];
+    protected $_insertParts = ['with', 'insert', 'values', 'epilog'];
 
     /**
      * Indicates whether internal state of this query was changed, this is used to
@@ -367,6 +370,58 @@ class Query implements ExpressionInterface, IteratorAggregate
         foreach ($parts as $name) {
             $visitor($this->_parts[$name], $name);
         }
+
+        return $this;
+    }
+
+    /**
+     * Creates a common table expression (CTE).
+     *
+     * @param string $name The CTE name.
+     * @param \Cake\Database\ExpressionInterface|\Closure|string $query The CTE query definition.
+     * @return \Cake\Database\Expression\CommonTableExpression
+     */
+    public function commonTableExpression(string $name, $query): CommonTableExpression
+    {
+        if ($query instanceof Closure) {
+            $query = $query($this->newExpr(), $this);
+        }
+
+        return new CommonTableExpression($name, $query);
+    }
+
+    /**
+     * Adds a common table expression (CTE).
+     *
+     * @param \Cake\Database\Expression\CommonTableExpression|\Closure|null $expression The CTE to add.
+     * @param bool $overwrite Whether to reset the list of CTE's.
+     * @return $this
+     */
+    public function with($expression, $overwrite = false)
+    {
+        if ($overwrite) {
+            $this->_parts['with'] = null;
+        }
+
+        if ($expression === null) {
+            if (!$overwrite) {
+                throw new \InvalidArgumentException(
+                    'Resetting the WITH clause only works when overwriting is enabled.'
+                );
+            }
+
+            return $this;
+        }
+
+        if (!$this->_parts['with']) {
+            $this->_parts['with'] = new WithExpression();
+        }
+
+        if ($expression instanceof Closure) {
+            $expression = $expression($this->newExpr(), $this);
+        }
+
+        $this->_parts['with']->addExpression($expression);
 
         return $this;
     }

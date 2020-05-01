@@ -37,6 +37,7 @@ class SqlserverCompiler extends QueryCompiler
      * @inheritDoc
      */
     protected $_templates = [
+        'with' => '%s ',
         'delete' => 'DELETE',
         'where' => ' WHERE %s',
         'group' => ' GROUP BY %s ',
@@ -49,8 +50,8 @@ class SqlserverCompiler extends QueryCompiler
      * @inheritDoc
      */
     protected $_selectParts = [
-        'select', 'from', 'join', 'where', 'group', 'having', 'window', 'order', 'offset',
-        'limit', 'union', 'epilog',
+        'with', 'select', 'from', 'join', 'where', 'group', 'having', 'window', 'order',
+        'offset', 'limit', 'union', 'epilog',
     ];
 
     /**

@@ -19,6 +19,7 @@ namespace Cake\Database\Driver;
 use Cake\Database\Driver;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\TupleComparison;
+use Cake\Database\Expression\WithExpression;
 use Cake\Database\Query;
 use Cake\Database\QueryCompiler;
 use Cake\Database\Schema\SchemaDialect;
@@ -235,6 +236,7 @@ class Sqlite extends Driver
         return [
             FunctionExpression::class => '_transformFunctionExpression',
             TupleComparison::class => '_transformTupleComparison',
+            WithExpression::class => '_transformWithExpression',
         ];
     }
 
@@ -308,6 +310,20 @@ class Sqlite extends Driver
     }
 
     /**
+     * Receives a WithExpression and changes it so that it conforms to this
+     * SQL dialect.
+     *
+     * @param \Cake\Database\Expression\WithExpression $expression The expression to transform.
+     * @return void
+     */
+    protected function _transformWithExpression(WithExpression $expression): void
+    {
+        foreach ($expression->getExpressions() as $expression) {
+            $expression->setModifiers([]);
+        }
+    }
+
+    /**
      * Returns connected server version.
      *
      * @return string
@@ -320,6 +336,20 @@ class Sqlite extends Driver
         }
 
         return $this->_version;
+    }
+
+    /**
+     * Returns true if the server supports common table expressions.
+     *
+     * @return bool
+     */
+    public function supportsCommonTableExpressions(): bool
+    {
+        if ($this->supportsCommonTableExpressions === null) {
+            $this->supportsCommonTableExpressions = version_compare($this->getVersion(), '3.8.3', '>=');
+        }
+
+        return $this->supportsCommonTableExpressions;
     }
 
     /**

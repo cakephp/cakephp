@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Collection\Collection;
+use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
@@ -1743,7 +1744,7 @@ class QueryTest extends TestCase
      */
     public function testUpdateWithTableExpression()
     {
-        $this->skipIf(!$this->connection->getDriver() instanceof \Cake\Database\Driver\Mysql);
+        $this->skipIf(!$this->connection->getDriver() instanceof Mysql);
         $table = $this->getTableLocator()->get('articles');
 
         $query = $table->query();
@@ -3885,5 +3886,74 @@ class QueryTest extends TestCase
         ];
 
         $this->assertEquals($expected, $results);
+    }
+
+    public function testWith(): void
+    {
+        $this->skipIf(
+            !$this->connection->getDriver()->supportsCommonTableExpressions(),
+            'The current driver does not support common table expressions.'
+        );
+        $this->skipIf(
+            (
+                $this->connection->getDriver() instanceof Mysql ||
+                $this->connection->getDriver() instanceof Sqlite
+            ) &&
+            !$this->connection->getDriver()->supportsWindowFunctions(),
+            'The current driver does not support window functions.'
+        );
+
+        $this->loadFixtures('Articles');
+
+        $table = $this->getTableLocator()->get('Articles');
+
+        $cteQuery = $table
+            ->find()
+            ->select(function (Query $query) use ($table) {
+                $columns = $table->getSchema()->columns();
+
+                return array_combine($columns, $columns) + [
+                        'row_num' => $query
+                            ->func()
+                            ->rowNumber()
+                            ->over()
+                            ->partition('author_id')
+                            ->order(['id' => 'ASC']),
+                    ];
+            });
+
+        $query = $table
+            ->find()
+            ->with(function (QueryExpression $exp, Query $query) use ($cteQuery) {
+                return $query
+                    ->commonTableExpression('cte', $cteQuery);
+            })
+            ->select(['row_num'])
+            ->enableAutoFields()
+            ->from([$table->getAlias() => 'cte'])
+            ->where(['row_num' => 1], ['row_num' => 'integer'])
+            ->order(['id' => 'ASC'])
+            ->disableHydration();
+
+        $expected = [
+            [
+                'id' => 1,
+                'author_id' => 1,
+                'title' => 'First Article',
+                'body' => 'First Article Body',
+                'published' => 'Y',
+                'row_num' => '1',
+            ],
+            [
+                'id' => 2,
+                'author_id' => 3,
+                'title' => 'Second Article',
+                'body' => 'Second Article Body',
+                'published' => 'Y',
+                'row_num' => '1',
+            ],
+        ];
+
+        $this->assertEquals($expected, $query->toArray());
     }
 }

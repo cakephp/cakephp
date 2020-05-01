@@ -68,6 +68,13 @@ abstract class Driver implements DriverInterface
     protected $_autoQuoting = false;
 
     /**
+     * Whether or not the server supports common table expressions.
+     *
+     * @var bool|null
+     */
+    protected $supportsCommonTableExpressions = null;
+
+    /**
      * Constructor
      *
      * @param array $config The configuration for the driver.
@@ -254,6 +261,16 @@ abstract class Driver implements DriverInterface
     public function supportsSavePoints(): bool
     {
         return true;
+    }
+
+    /**
+     * Returns true if the server supports common table expressions.
+     *
+     * @return bool
+     */
+    public function supportsCommonTableExpressions(): bool
+    {
+        return $this->supportsCommonTableExpressions === true;
     }
 
     /**

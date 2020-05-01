@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Database\Driver;
 
 use Cake\Database\Driver;
+use Cake\Database\Expression\WithExpression;
 use Cake\Database\Query;
 use Cake\Database\Schema\MysqlSchemaDialect;
 use Cake\Database\Schema\SchemaDialect;
@@ -231,6 +232,32 @@ class Mysql extends Driver
     }
 
     /**
+     * @inheritDoc
+     */
+    protected function _expressionTranslators(): array
+    {
+        $namespace = 'Cake\Database\Expression';
+
+        return [
+            $namespace . '\WithExpression' => '_transformWithExpression',
+        ];
+    }
+
+    /**
+     * Receives a WithExpression and changes it so that it conforms to this
+     * SQL dialect.
+     *
+     * @param \Cake\Database\Expression\WithExpression $expression The expression to transform.
+     * @return void
+     */
+    protected function _transformWithExpression(WithExpression $expression): void
+    {
+        foreach ($expression->getExpressions() as $expression) {
+            $expression->setModifiers([]);
+        }
+    }
+
+    /**
      * Returns connected server version.
      *
      * @return string
@@ -243,6 +270,28 @@ class Mysql extends Driver
         }
 
         return $this->_version;
+    }
+
+    /**
+     * Returns true if the server supports common table expressions.
+     *
+     * @return bool
+     */
+    public function supportsCommonTableExpressions(): bool
+    {
+        if ($this->supportsCommonTableExpressions === null) {
+            $version = $this->getVersion();
+            if (strpos($version, 'MariaDB') !== false) {
+                preg_match('/(\d+\.\d+.\d+)-MariaDB/i', $version, $matches);
+                $version = $matches[1];
+
+                $this->supportsCommonTableExpressions = version_compare($version, '10.2.2', '>=');
+            } else {
+                $this->supportsCommonTableExpressions = version_compare($version, '8.0.0', '>=');
+            }
+        }
+
+        return $this->supportsCommonTableExpressions;
     }
 
     /**
