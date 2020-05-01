@@ -1751,7 +1751,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * $expression = $query->newExpr('Table.column = Table2.column'); // Return a raw SQL expression
      * ```
      *
-     * @param mixed $rawExpression A string, array or anything you want wrapped in an expression object
+     * @param string|array|\Cake\Database\ExpressionInterface|null $rawExpression A string, array or anything you want wrapped in an expression object
      * @return \Cake\Database\Expression\QueryExpression
      */
     public function newExpr($rawExpression = null): QueryExpression
