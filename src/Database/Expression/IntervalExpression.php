@@ -254,9 +254,10 @@ class IntervalExpression implements ExpressionInterface
      * becomes 'MONTH', 'h' becomes 'HOUR', etc.
      *
      * @param \DateInterval $di An interval object.
+     * @param bool $combineMicro Determines if the microseconds are combined into seconds.
      * @return array Converted & transformed interval object.
      */
-    public static function transformForDatabase(DateInterval $di): array
+    public static function transformForDatabase(DateInterval $di, bool $combineMicro = true): array
     {
         $intervalAry = array_filter(
             array_combine(
@@ -264,8 +265,13 @@ class IntervalExpression implements ExpressionInterface
                 array_intersect_key((array)$di, static::KEYS_REQUIRED)
             )
         );
-        $intervalAry['SECOND'] = $intervalAry['SECOND'] + $intervalAry['MICROSECOND'];
-        unset($intervalAry['MICROSECOND']);
+        if ($combineMicro) {
+            $intervalAry['SECOND'] = $intervalAry['SECOND'] + $intervalAry['MICROSECOND'];
+            unset($intervalAry['MICROSECOND']);
+        } else {
+            $intervalAry['MICROSECOND'] *= 1000000;
+        }
+
 
         return $intervalAry;
     }
