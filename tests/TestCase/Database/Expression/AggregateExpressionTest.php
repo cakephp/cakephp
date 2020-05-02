@@ -37,6 +37,12 @@ class AggregateExpressionTest extends FunctionExpressionTest
     {
         $f = (new AggregateExpression('MyFunction'))->over();
         $this->assertSame('MyFunction() OVER ()', $f->sql(new ValueBinder()));
+
+        $f = (new AggregateExpression('MyFunction'))->over('name');
+        $this->assertEqualsSql(
+            'MyFunction() OVER name',
+            $f->sql(new ValueBinder())
+        );
     }
 
     /**

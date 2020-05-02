@@ -21,6 +21,7 @@ use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\OrderClauseExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\ValuesExpression;
+use Cake\Database\Expression\WindowExpression;
 use Cake\Database\Statement\CallbackStatement;
 use Closure;
 use InvalidArgumentException;
@@ -85,6 +86,7 @@ class Query implements ExpressionInterface, IteratorAggregate
         'where' => null,
         'group' => [],
         'having' => null,
+        'window' => [],
         'order' => null,
         'limit' => null,
         'offset' => null,
@@ -1324,6 +1326,35 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function andHaving($conditions, $types = [])
     {
         $this->_conjugate('having', $conditions, 'AND', $types);
+
+        return $this;
+    }
+
+    /**
+     * Adds a named window expression.
+     *
+     * You are responsible for adding windows in the order your database requires.
+     *
+     * @param string $name Window name
+     * @param \Cake\Database\Expression\WindowExpression|\Closure $window Window expression
+     * @param bool $overwrite Clear all previous query window expressions
+     * @return $this
+     */
+    public function window(string $name, $window, bool $overwrite = false)
+    {
+        if ($overwrite) {
+            $this->_parts['window'] = [];
+        }
+
+        if ($window instanceof Closure) {
+            $window = $window(new WindowExpression(), $this);
+            if (!($window instanceof WindowExpression)) {
+                throw new RuntimeException('You must return a `WindowExpression` from closure passed to `window()`.');
+            }
+        }
+
+        $this->_parts['window'][] = ['name' => $name, 'window' => $window];
+        $this->_dirty();
 
         return $this;
     }
