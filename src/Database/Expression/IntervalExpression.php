@@ -19,6 +19,7 @@ namespace Cake\Database\Expression;
 use Cake\Database\Exception;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\ValueBinder;
+use Cake\Utility\Hash;
 use Closure;
 use DateInterval;
 use DateTimeInterface;
@@ -97,16 +98,7 @@ class IntervalExpression implements ExpressionInterface
             $sql = $exp->sql($generator);
             $this->setOverrideExpression(null);
         } else {
-            $fOrV = $this->getFieldOrValue();
-            if ($fOrV instanceof ExpressionInterface) {
-                $sql .= $fOrV->sql($generator);
-            } else {
-                $fOrV = $fOrV->format('Y-m-d H:i:s.u');
-                $ph = $generator->placeholder('interval');
-                $generator->bind($ph, $fOrV, 'datetimefractional');
-                $sql .= $ph;
-            }
-            $sql .= ' + ' . $this->generateIntervalSql();
+            $sql .= $this->generateIntervalSql($generator);
         }
         $this->reset();
 
@@ -281,23 +273,33 @@ class IntervalExpression implements ExpressionInterface
     /**
      * Method that returns the formatted SQL for interval statements.
      *
+     * @param \Cake\Database\ValueBinder $generator
      * @return string
      */
-    private function generateIntervalSql(): string
+    private function generateIntervalSql(ValueBinder $generator): string
     {
+        $preSql = '';
         $interval = self::transformForDatabase($this->getInterval());
         $sign = $this->getIntervalSign();
         $intervalAry = [];
         $options = $this->getIntervalSqlOptions();
+        $fOrV = $this->getFieldOrValue();
+        if ($fOrV instanceof ExpressionInterface) {
+            $preSql .= $fOrV->sql($generator);
+        } else {
+            $fOrV = $fOrV->format('Y-m-d H:i:s.u');
+            $ph = $generator->placeholder('interval');
+            $generator->bind($ph, $fOrV, 'datetimefractional');
+            $preSql .= Hash::get($options, 'wrap.date.prefix') . $ph . Hash::get($options, 'wrap.date.suffix');
+        }
+        debug($fOrV);
         foreach ($interval as $iUnit => $iValue) {
-            $intervalAry[] = sprintf(
-                $options['format'],
-                ("${sign}1" * $iValue) . ' ' . $iUnit
-            );
+            $intervalAry[] = Hash::get($options, 'wrap.inner.prefix') . ("${sign}1" * $iValue) . ' ' .
+                $iUnit . Hash::get($options, 'wrap.inner.suffix');
         }
 
-        return $options['sql-prefix'] .
-            $options['prefix'] . implode($options['glue'], $intervalAry) . $options['suffix'];
+        return $preSql . Hash::get($options, 'wrap.prefix') . implode($options['glue'], $intervalAry) .
+            Hash::get($options, 'wrap.suffix');
     }
 
     /**
@@ -310,10 +312,12 @@ class IntervalExpression implements ExpressionInterface
         $this->setOverrideExpression(null);
         $this->combineIntervalSqlOptions([
              'glue' => ' + ',
-             'format' => '%s',
-             'prefix' => 'INTERVAL ',
-             'suffix' => '',
-             'sql-prefix' => '',
+             'wrap' => [
+                 'prefix' => ' + ',
+                 'suffix' => '',
+                 'inner' => ['prefix' => 'INTERVAL ', 'suffix' => ''],
+                 'date' => ['prefix' => '', 'suffix' => '']
+             ]
         ]);
 
         return $this;
