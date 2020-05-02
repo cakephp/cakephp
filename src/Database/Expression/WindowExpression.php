@@ -27,6 +27,11 @@ use InvalidArgumentException;
 class WindowExpression implements ExpressionInterface, WindowInterface
 {
     /**
+     * @var string|null
+     */
+    protected $name;
+
+    /**
      * @var \Cake\Database\ExpressionInterface[]
      */
     protected $partitions = [];
@@ -45,6 +50,36 @@ class WindowExpression implements ExpressionInterface, WindowInterface
      * @var string|null
      */
     protected $exclusion;
+
+    /**
+     * @param string|null $name Window name
+     */
+    public function __construct(?string $name = null)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * Return named window used in this expresion if set.
+     *
+     * @return string|null
+     */
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    /**
+     * Return whether window expression is empty.
+     *
+     * An expression is empty if it has no partition, order or frame clauses.
+     *
+     * @return bool
+     */
+    public function isEmpty(): bool
+    {
+        return !$this->partitions && !$this->frame && !$this->order;
+    }
 
     /**
      * @inheritDoc
@@ -192,6 +227,10 @@ class WindowExpression implements ExpressionInterface, WindowInterface
      */
     public function sql(ValueBinder $generator): string
     {
+        if ($this->isEmpty()) {
+            return '';
+        }
+
         $partitionSql = '';
         if ($this->partitions) {
             $expressions = [];
@@ -202,7 +241,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
             $partitionSql = 'PARTITION BY ' . implode(', ', $expressions);
         }
 
-        $orderSql = $this->order ? $orderSql = $this->order->sql($generator) : '';
+        $orderSql = $this->order ? $this->order->sql($generator) : '';
 
         $frameSql = '';
         if ($this->frame) {
@@ -234,8 +273,11 @@ class WindowExpression implements ExpressionInterface, WindowInterface
             }
         }
 
+        $name = $this->name ? $this->name . ' ' : '';
+
         return sprintf(
-            'OVER (%s%s%s%s%s)',
+            '%s%s%s%s%s%s',
+            $name,
             $partitionSql,
             $partitionSql && $orderSql ? ' ' : '',
             $orderSql,

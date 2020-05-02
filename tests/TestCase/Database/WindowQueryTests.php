@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database;
 
+use Cake\Database\Expression\WindowExpression;
 use Cake\Database\Query;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
