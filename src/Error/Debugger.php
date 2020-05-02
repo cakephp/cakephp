@@ -637,20 +637,18 @@ class Debugger
     {
         $type = static::getType($var);
         switch ($type) {
+            case 'float':
+            case 'string':
+            case 'resource':
+            case 'resource (closed)':
+            case 'null':
+                return new ScalarNode($type, $var);
             case 'boolean':
                 return new ScalarNode('bool', $var);
             case 'integer':
                 return new ScalarNode('int', $var);
-            case 'float':
-            case 'string':
-                return new ScalarNode($type, $var);
             case 'array':
                 return static::exportArray($var, $context->withAddedDepth());
-            case 'resource':
-            case 'resource (closed)':
-                return new ScalarNode($type, $var);
-            case 'null':
-                return new ScalarNode('null', null);
             case 'unknown':
                 return new SpecialNode('(unknown)');
             default:
