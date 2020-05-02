@@ -50,6 +50,18 @@ class CommonTableExpression implements ExpressionInterface
     protected $recursive = false;
 
     /**
+     * Constructor.
+     *
+     * @param string $name The CTE name.
+     * @param \Cake\Database\ExpressionInterface|string $query The CTE query definition.
+     */
+    public function __construct(string $name, $query)
+    {
+        $this->setName($name);
+        $this->setQuery($query);
+    }
+
+    /**
      * Returns the CTE name.
      *
      * @return string
@@ -203,18 +215,6 @@ class CommonTableExpression implements ExpressionInterface
         $this->recursive = $recursive;
 
         return $this;
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param string $name The CTE name.
-     * @param \Cake\Database\ExpressionInterface|string $query The CTE query definition.
-     */
-    public function __construct(string $name, $query)
-    {
-        $this->setName($name);
-        $this->setQuery($query);
     }
 
     /**
