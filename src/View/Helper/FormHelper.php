@@ -1537,8 +1537,8 @@ class FormHelper extends Helper
 
     /**
      * Missing method handler - implements various simple input types. Is used to create inputs
-     * of various types. e.g. `$this->Form->text();` will create `<input type="text" />` while
-     * `$this->Form->range();` will create `<input type="range" />`
+     * of various types. e.g. `$this->Form->text();` will create `<input type="text"/>` while
+     * `$this->Form->range();` will create `<input type="range"/>`
      *
      * ### Usage
      *
@@ -1548,7 +1548,7 @@ class FormHelper extends Helper
      *
      * Will make an input like:
      *
-     * `<input type="search" id="UserQuery" name="User[query]" value="test" />`
+     * `<input type="search" id="UserQuery" name="User[query]" value="test"/>`
      *
      * The first argument to an input type should always be the fieldname, in `Model.field` format.
      * The second argument should always be an array of attributes for the input.

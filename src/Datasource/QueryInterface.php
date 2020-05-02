@@ -34,7 +34,7 @@ interface QueryInterface
      * If `true` is passed in the second argument, any previous selections will
      * be overwritten with the list passed in the first argument.
      *
-     * @param mixed $fields Fields to be added to the list.
+     * @param array|string|callable|\Cake\Database\ExpressionInterface|\Cake\ORM\Table|\Cake\ORM\Association $fields Fields.
      * @param bool $overwrite whether to reset fields with passed list or not
      * @return $this
      */
@@ -170,7 +170,7 @@ interface QueryInterface
      * $query->limit($query->newExpr()->add(['1 + 1'])); // LIMIT (1 + 1)
      * ```
      *
-     * @param int|mixed $num number of records to be returned
+     * @param int|\Cake\Database\ExpressionInterface|null $num number of records to be returned
      * @return $this
      */
     public function limit($num);
@@ -190,7 +190,7 @@ interface QueryInterface
      *  $query->offset($query->newExpr()->add(['1 + 1'])); // OFFSET (1 + 1)
      * ```
      *
-     * @param mixed $num number of records to be skipped
+     * @param int|\Cake\Database\ExpressionInterface|null $num number of records to be skipped
      * @return $this
      */
     public function offset($num);
@@ -238,7 +238,7 @@ interface QueryInterface
      * If you need to set complex expressions as order conditions, you
      * should use `orderAsc()` or `orderDesc()`.
      *
-     * @param array|string $fields fields to be added to the list
+     * @param array|\Cake\Database\ExpressionInterface|\Closure|string $fields fields to be added to the list
      * @param bool $overwrite whether to reset order with field list or not
      * @return $this
      */

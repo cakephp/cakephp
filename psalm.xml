@@ -9,34 +9,34 @@
     autoloader="tests/bootstrap.php"
 >
     <projectFiles>
-        <directory name="src" />
+        <directory name="src"/>
         <ignoreFiles>
-            <directory name="src/Filesystem" />
-            <directory name="src/Auth" />
-            <directory name="vendor" />
-            <file name="src/Controller/Component/AuthComponent.php" />
+            <directory name="src/Filesystem"/>
+            <directory name="src/Auth"/>
+            <directory name="vendor"/>
+            <file name="src/Controller/Component/AuthComponent.php"/>
         </ignoreFiles>
     </projectFiles>
 
     <issueHandlers>
-        <RedundantConditionGivenDocblockType errorLevel="suppress" />
-        <TypeCoercion errorLevel="suppress" />
-        <DocblockTypeContradiction errorLevel="suppress" />
-        <MissingClosureParamType errorLevel="suppress" />
-        <MissingClosureReturnType errorLevel="suppress" />
+        <RedundantConditionGivenDocblockType errorLevel="suppress"/>
+        <TypeCoercion errorLevel="suppress"/>
+        <DocblockTypeContradiction errorLevel="suppress"/>
+        <MissingClosureParamType errorLevel="suppress"/>
+        <MissingClosureReturnType errorLevel="suppress"/>
         <UndefinedClass>
             <errorLevel type="suppress">
-                <referencedClass name="Memcached" />
-                <referencedClass name="Redis" />
+                <referencedClass name="Memcached"/>
+                <referencedClass name="Redis"/>
             </errorLevel>
         </UndefinedClass>
         <UndefinedDocblockClass>
             <errorLevel type="suppress">
-                <referencedClass name="Memcached" />
-                <referencedClass name="Redis" />
+                <referencedClass name="Memcached"/>
+                <referencedClass name="Redis"/>
             </errorLevel>
         </UndefinedDocblockClass>
-        <PropertyNotSetInConstructor errorLevel="suppress" />
-        <UnresolvableInclude errorLevel="suppress" />
+        <PropertyNotSetInConstructor errorLevel="suppress"/>
+        <UnresolvableInclude errorLevel="suppress"/>
     </issueHandlers>
 </psalm>
