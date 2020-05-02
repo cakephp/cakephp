@@ -15,8 +15,12 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Expression;
 
+use Cake\Database\Connection;
+use Cake\Database\Driver\Mysql;
+use Cake\Database\Driver\Postgres;
 use Cake\Database\Expression\IntervalExpression;
 use Cake\Database\Query;
+use Cake\Database\Schema\TableSchema;
 use Cake\Database\Type;
 use Cake\Datasource\ConnectionManager;
 use Cake\I18n\FrozenTime;
@@ -37,10 +41,28 @@ class IntervalExpressionTest extends TestCase
      */
     protected $connection;
 
+    /**
+     * @var array
+     */
+    protected $data;
+
     public function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
+        $this->data['tz'] = $utc = new \DateTimeZone('UTC');
+        $this->data['query'] = new Query($this->connection);
+        $this->data['interval'] = \DateInterval::createFromDateString('+1 year + 2 seconds + 111 milliseconds');
+        $this->data['date'] = '2021-04-17 02:03:04.321000';
+    }
+
+    /**
+     * @return void
+     */
+    public function tearDown(): void
+    {
+        unset($this->connection, $this->data);
+        parent::tearDown();
     }
 
     /**
@@ -50,17 +72,48 @@ class IntervalExpressionTest extends TestCase
      */
     public function testInterval()
     {
-        $utc = new \DateTimeZone('UTC');
-        $query = new Query($this->connection);
-        $interval = \DateInterval::createFromDateString('+1 year + 2 seconds + 111 milliseconds');
-        $iExp = new IntervalExpression(new FrozenTime('2020-04-17 02:03:02.21', $utc), $interval);
-        $query->select([ $iExp ]);
-        $stm = $query->execute();
+        // Query using direct date value
+        $iExp = new IntervalExpression(
+            new FrozenTime($this->data['date'], $this->data['tz']),
+            $this->data['interval']
+        );
+        $this->data['query']->select([ $iExp ]);
+        $stm = $this->data['query']->execute();
         $result = $stm->fetchColumn(0);
         $resultDt = Type::build('datetimefractional')->toPHP($result, $this->connection->getDriver());
         $this->assertContainsEquals(
             $resultDt,
-            [new FrozenTime('2021-04-17 02:03:04.321000', $utc)]
+            [new FrozenTime('2022-04-17 02:03:06.432000', $this->data['tz'])]
+        );
+    }
+
+    /**
+     * Tests interval values using an expression.
+     *
+     * @return void
+     */
+    public function testIntervalWithExpression()
+    {
+        // Create temporary table and populate with date
+        $tmpSchema = new TableSchema('interval_test');
+        $tmpSchema->addColumn('interval_date', ['type' => 'datetimefractional', 'precision' => 6])
+            ->setTemporary(true);
+        foreach ($tmpSchema->createSql($this->connection) as $query) {
+            $this->connection->query($query);
+        }
+        $this->connection->execute('INSERT INTO interval_test VALUES (\'' . $this->data['date'] . '\')');
+        // Query using subquery
+        $iExp = new IntervalExpression(
+            (new Query($this->connection))->select(['interval_date'])->from('interval_test')->limit(1),
+            $this->data['interval']
+        );
+        $this->data['query']->select([ $iExp ]);
+        $stm = $this->data['query']->execute();
+        $result = $stm->fetchColumn(0);
+        $resultDt = Type::build('datetimefractional')->toPHP($result, $this->connection->getDriver());
+        $this->assertContainsEquals(
+            $resultDt,
+            [new FrozenTime('2022-04-17 02:03:06.432000', $this->data['tz'])]
         );
     }
 }
