@@ -3891,7 +3891,7 @@ class QueryTest extends TestCase
     public function testWith(): void
     {
         $this->skipIf(
-            !$this->connection->getDriver()->supportsCommonTableExpressions(),
+            !$this->connection->getDriver()->supportsCTEs(),
             'The current driver does not support common table expressions.'
         );
         $this->skipIf(
@@ -3926,7 +3926,7 @@ class QueryTest extends TestCase
             ->find()
             ->with(function (QueryExpression $exp, Query $query) use ($cteQuery) {
                 return $query
-                    ->commonTableExpression('cte', $cteQuery);
+                    ->cte('cte', $cteQuery);
             })
             ->select(['row_num'])
             ->enableAutoFields()

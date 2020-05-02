@@ -277,21 +277,21 @@ class Mysql extends Driver
      *
      * @return bool
      */
-    public function supportsCommonTableExpressions(): bool
+    public function supportsCTEs(): bool
     {
-        if ($this->supportsCommonTableExpressions === null) {
+        if ($this->supportsCTEs === null) {
             $version = $this->getVersion();
             if (strpos($version, 'MariaDB') !== false) {
                 preg_match('/(\d+\.\d+.\d+)-MariaDB/i', $version, $matches);
                 $version = $matches[1];
 
-                $this->supportsCommonTableExpressions = version_compare($version, '10.2.2', '>=');
+                $this->supportsCTEs = version_compare($version, '10.2.2', '>=');
             } else {
-                $this->supportsCommonTableExpressions = version_compare($version, '8.0.0', '>=');
+                $this->supportsCTEs = version_compare($version, '8.0.0', '>=');
             }
         }
 
-        return $this->supportsCommonTableExpressions;
+        return $this->supportsCTEs;
     }
 
     /**

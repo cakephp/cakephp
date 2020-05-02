@@ -381,7 +381,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param \Cake\Database\ExpressionInterface|\Closure|string $query The CTE query definition.
      * @return \Cake\Database\Expression\CommonTableExpression
      */
-    public function commonTableExpression(string $name, $query): CommonTableExpression
+    public function cte(string $name, $query): CommonTableExpression
     {
         if ($query instanceof Closure) {
             $query = $query($this->newExpr(), $this);

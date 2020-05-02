@@ -72,7 +72,7 @@ abstract class Driver implements DriverInterface
      *
      * @var bool|null
      */
-    protected $supportsCommonTableExpressions = null;
+    protected $supportsCTEs = null;
 
     /**
      * Constructor
@@ -268,9 +268,9 @@ abstract class Driver implements DriverInterface
      *
      * @return bool
      */
-    public function supportsCommonTableExpressions(): bool
+    public function supportsCTEs(): bool
     {
-        return $this->supportsCommonTableExpressions === true;
+        return $this->supportsCTEs === true;
     }
 
     /**

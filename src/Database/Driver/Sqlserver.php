@@ -95,7 +95,7 @@ class Sqlserver extends Driver
     /**
      * @inheritDoc
      */
-    protected $supportsCommonTableExpressions = true;
+    protected $supportsCTEs = true;
 
     /**
      * Establishes a connection to the database server.

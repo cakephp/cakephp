@@ -343,13 +343,13 @@ class Sqlite extends Driver
      *
      * @return bool
      */
-    public function supportsCommonTableExpressions(): bool
+    public function supportsCTEs(): bool
     {
-        if ($this->supportsCommonTableExpressions === null) {
-            $this->supportsCommonTableExpressions = version_compare($this->getVersion(), '3.8.3', '>=');
+        if ($this->supportsCTEs === null) {
+            $this->supportsCTEs = version_compare($this->getVersion(), '3.8.3', '>=');
         }
 
-        return $this->supportsCommonTableExpressions;
+        return $this->supportsCTEs;
     }
 
     /**

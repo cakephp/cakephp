@@ -44,7 +44,7 @@ class CommonTableExpressionIntegrationTest extends TestCase
         $this->connection = ConnectionManager::get('test');
 
         $this->skipIf(
-            !$this->connection->getDriver()->supportsCommonTableExpressions(),
+            !$this->connection->getDriver()->supportsCTEs(),
             'The current driver does not support common table expressions.'
         );
 
@@ -70,7 +70,7 @@ class CommonTableExpressionIntegrationTest extends TestCase
 
     public function testCommonTableExpression()
     {
-        $expression = $this->connection->newQuery()->commonTableExpression('cte', 'SELECT 1');
+        $expression = $this->connection->newQuery()->cte('cte', 'SELECT 1');
 
         $this->assertInstanceOf(CommonTableExpression::class, $expression);
         $this->assertEquals('SELECT 1', $expression->getQuery());
@@ -80,7 +80,7 @@ class CommonTableExpressionIntegrationTest extends TestCase
     {
         $expression = $this->connection
             ->newQuery()
-            ->commonTableExpression('cte', function (QueryExpression $exp, Query $query) {
+            ->cte('cte', function (QueryExpression $exp, Query $query) {
                 return 'SELECT 1';
             });
 
@@ -128,7 +128,7 @@ class CommonTableExpressionIntegrationTest extends TestCase
             ->newQuery()
             ->with(function (QueryExpression $exp, Query $query) use ($cteQuery) {
                 return $query
-                    ->commonTableExpression('cte', $cteQuery);
+                    ->cte('cte', $cteQuery);
             })
             ->select('col')
             ->from('cte');
@@ -169,7 +169,7 @@ class CommonTableExpressionIntegrationTest extends TestCase
             ->newQuery()
             ->with(function (QueryExpression $exp, Query $query) use ($cteQuery) {
                 return $query
-                    ->commonTableExpression('cte', $cteQuery)
+                    ->cte('cte', $cteQuery)
                     ->setFields(['col'])
                     ->setRecursive(true);
             })
@@ -212,7 +212,7 @@ class CommonTableExpressionIntegrationTest extends TestCase
             ->newQuery()
             ->with(function (QueryExpression $exp, Query $query) use ($cteQuery) {
                 return $query
-                    ->commonTableExpression('cte', $cteQuery);
+                    ->cte('cte', $cteQuery);
             })
             ->select('*')
             ->from('cte');
@@ -246,7 +246,7 @@ class CommonTableExpressionIntegrationTest extends TestCase
             ->newQuery()
             ->with(function (QueryExpression $exp, Query $query) use ($cteQuery) {
                 return $query
-                    ->commonTableExpression('cte', $cteQuery)
+                    ->cte('cte', $cteQuery)
                     ->setFields(['col1', 'col2']);
             })
             ->select(['col1', 'col2'])
@@ -281,7 +281,7 @@ class CommonTableExpressionIntegrationTest extends TestCase
             ->newQuery()
             ->with(function (QueryExpression $exp, Query $query) use ($cteQuery) {
                 return $query
-                    ->commonTableExpression('cte', $cteQuery)
+                    ->cte('cte', $cteQuery)
                     ->setFields([
                         $cteQuery->identifier('col1'),
                         $cteQuery->identifier('col2'),
@@ -318,7 +318,7 @@ class CommonTableExpressionIntegrationTest extends TestCase
         $query
             ->with(function (QueryExpression $exp, Query $query) {
                 return $query
-                    ->commonTableExpression('cte1', 'SELECT 1 AS col');
+                    ->cte('cte1', 'SELECT 1 AS col');
             })
             ->select('col')
             ->from('cte');
@@ -357,7 +357,7 @@ class CommonTableExpressionIntegrationTest extends TestCase
         $query
             ->with(function (QueryExpression $exp, Query $query) {
                 return $query
-                    ->commonTableExpression('cte1', 'SELECT 1 AS col');
+                    ->cte('cte1', 'SELECT 1 AS col');
             })
             ->select('col')
             ->from('cte');
@@ -370,7 +370,7 @@ class CommonTableExpressionIntegrationTest extends TestCase
 
         $query->with(function (QueryExpression $exp, Query $query) {
             return $query
-                ->commonTableExpression('cte2', 'SELECT 2 AS col');
+                ->cte('cte2', 'SELECT 2 AS col');
         });
 
         $this->assertQuotedQuery(
@@ -382,7 +382,7 @@ class CommonTableExpressionIntegrationTest extends TestCase
         $query->with(
             function (QueryExpression $exp, Query $query) {
                 return $query
-                    ->commonTableExpression('cte1', 'SELECT 3 AS col');
+                    ->cte('cte1', 'SELECT 3 AS col');
             },
             true
         );
@@ -447,7 +447,7 @@ class CommonTableExpressionIntegrationTest extends TestCase
             ->newQuery()
             ->with(function (QueryExpression $exp, Query $query) {
                 return $query
-                    ->commonTableExpression('cte', "SELECT 'Fourth Article', 'Fourth Article Body'")
+                    ->cte('cte', "SELECT 'Fourth Article', 'Fourth Article Body'")
                     ->setFields(['title', 'body']);
             })
             ->insert(['title', 'body'])
@@ -515,7 +515,7 @@ class CommonTableExpressionIntegrationTest extends TestCase
                     ->newQuery()
                     ->with(function (QueryExpression $exp, Query $query) {
                         return $query
-                            ->commonTableExpression('cte', "SELECT 'Fourth Article', 'Fourth Article Body'")
+                            ->cte('cte', "SELECT 'Fourth Article', 'Fourth Article Body'")
                             ->setFields(['title', 'body']);
                     })
                     ->select('*')
@@ -563,7 +563,7 @@ class CommonTableExpressionIntegrationTest extends TestCase
         $query = $this->connection
             ->newQuery()
             ->with(function (QueryExpression $exp, Query $query) {
-                return $query->commonTableExpression(
+                return $query->cte(
                     'cte',
                     $query
                         ->getConnection()
@@ -636,7 +636,7 @@ class CommonTableExpressionIntegrationTest extends TestCase
         $query = $this->connection
             ->newQuery()
             ->with(function (QueryExpression $exp, Query $query) {
-                return $query->commonTableExpression(
+                return $query->cte(
                     'cte',
                     $query
                         ->getConnection()
@@ -700,7 +700,7 @@ class CommonTableExpressionIntegrationTest extends TestCase
         $query = $this->connection
             ->newQuery()
             ->with(function (QueryExpression $exp, Query $query) {
-                return $query->commonTableExpression(
+                return $query->cte(
                     'cte',
                     $query
                         ->getConnection()
@@ -773,7 +773,7 @@ class CommonTableExpressionIntegrationTest extends TestCase
         $query = $this->connection
             ->newQuery()
             ->with(function (QueryExpression $exp, Query $query) {
-                return $query->commonTableExpression(
+                return $query->cte(
                     'cte',
                     $query
                         ->getConnection()
@@ -837,7 +837,7 @@ class CommonTableExpressionIntegrationTest extends TestCase
             ->newQuery()
             ->with(function (QueryExpression $exp, Query $query) use ($cteQuery) {
                 return $query
-                    ->commonTableExpression('cte', $cteQuery)
+                    ->cte('cte', $cteQuery)
                     ->setModifiers(['MATERIALIZED'])
                     ->setRecursive(true);
             })
