@@ -284,4 +284,19 @@ class WindowExpression implements ExpressionInterface, WindowInterface
 
         return $sql;
     }
+
+    /**
+     * Clone this object and its subtree of expressions.
+     *
+     * @return void
+     */
+    public function __clone()
+    {
+        foreach ($this->partitions as $i => $partition) {
+            $this->partitions[$i] = clone $partition;
+        }
+        if ($this->order !== null) {
+            $this->order = clone $this->order;
+        }
+    }
 }

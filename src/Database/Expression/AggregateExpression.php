@@ -207,4 +207,17 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
 
         return $count;
     }
+
+    /**
+     * Clone this object and its subtree of expressions.
+     *
+     * @return void
+     */
+    public function __clone()
+    {
+        parent::__clone();
+        if ($this->window !== null) {
+            $this->window = clone $this->window;
+        }
+    }
 }
