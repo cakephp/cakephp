@@ -57,7 +57,7 @@ class CommonTableExpression implements ExpressionInterface
      */
     public function __construct(string $name, $query)
     {
-        $this->setName($name);
+        $this->name = $name;
         $this->setQuery($query);
     }
 
@@ -69,19 +69,6 @@ class CommonTableExpression implements ExpressionInterface
     public function getName(): string
     {
         return $this->name;
-    }
-
-    /**
-     * Sets the CTE name.
-     *
-     * @param string $name The CTE name.
-     * @return $this
-     */
-    public function setName(string $name)
-    {
-        $this->name = $name;
-
-        return $this;
     }
 
     /**

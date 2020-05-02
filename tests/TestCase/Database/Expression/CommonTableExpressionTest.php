@@ -14,7 +14,7 @@ use InvalidArgumentException;
 
 class CommonTableExpressionTest extends TestCase
 {
-    public function testGetSetName(): void
+    public function testGetName(): void
     {
         $expression = new CommonTableExpression('cte', 'SELECT 1');
         $this->assertEquals('cte', $expression->getName());
