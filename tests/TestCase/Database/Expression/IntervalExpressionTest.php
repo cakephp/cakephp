@@ -15,9 +15,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Expression;
 
-use Cake\Database\Connection;
-use Cake\Database\Driver\Mysql;
-use Cake\Database\Driver\Postgres;
 use Cake\Database\Expression\IntervalExpression;
 use Cake\Database\Query;
 use Cake\Database\Schema\TableSchema;

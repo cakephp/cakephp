@@ -314,8 +314,8 @@ class Postgres extends Driver
                 'prefix' => " + INTERVAL ",
                 'suffix' => "'",
                 'inner' => ['prefix' => '', 'suffix' => ''],
-                'date' => ['prefix' => '', 'suffix' => '::timestamp']
-            ]
+                'date' => ['prefix' => '', 'suffix' => '::timestamp'],
+            ],
         ]);
     }
 }

@@ -174,7 +174,6 @@ class IntervalExpression implements ExpressionInterface
      * value the interval will be applied to.
      *
      * @param \DateTimeInterface|\Cake\Database\ExpressionInterface $subject A DateTimeInterface or ExpressionInterface object.
-     *
      * @return self
      */
     public function setSubject($subject): self
@@ -273,14 +272,13 @@ class IntervalExpression implements ExpressionInterface
             $intervalAry['MICROSECOND'] *= 1000000;
         }
 
-
         return $intervalAry;
     }
 
     /**
      * Method that returns the formatted SQL for interval statements.
      *
-     * @param \Cake\Database\ValueBinder $generator
+     * @param \Cake\Database\ValueBinder $generator ValueBinder for date
      * @return string
      */
     private function generateIntervalSql(ValueBinder $generator): string
@@ -322,8 +320,8 @@ class IntervalExpression implements ExpressionInterface
                  'prefix' => ' + ',
                  'suffix' => '',
                  'inner' => ['prefix' => 'INTERVAL ', 'suffix' => ''],
-                 'date' => ['prefix' => '', 'suffix' => '']
-             ]
+                 'date' => ['prefix' => '', 'suffix' => ''],
+             ],
         ]);
 
         return $this;
