@@ -298,7 +298,6 @@ class IntervalExpression implements ExpressionInterface
             $generator->bind($ph, $fOrV, 'datetimefractional');
             $preSql .= Hash::get($options, 'wrap.date.prefix') . $ph . Hash::get($options, 'wrap.date.suffix');
         }
-        debug($fOrV);
         foreach ($interval as $iUnit => $iValue) {
             $intervalAry[] = Hash::get($options, 'wrap.inner.prefix') . ("${sign}1" * $iValue) . ' ' .
                 $iUnit . Hash::get($options, 'wrap.inner.suffix');
