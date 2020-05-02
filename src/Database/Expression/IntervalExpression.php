@@ -291,7 +291,7 @@ class IntervalExpression implements ExpressionInterface
         $options = $this->getIntervalSqlOptions();
         $fOrV = $this->getFieldOrValue();
         if ($fOrV instanceof ExpressionInterface) {
-            $preSql .= $fOrV->sql($generator);
+            $preSql .= '(' . $fOrV->sql($generator) . ')';
         } else {
             $fOrV = $fOrV->format('Y-m-d H:i:s.u');
             $ph = $generator->placeholder('interval');
