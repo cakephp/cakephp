@@ -140,4 +140,16 @@ class AggregateExpressionTest extends FunctionExpressionTest
             $f->sql(new ValueBinder())
         );
     }
+
+    /**
+     * Tests cloning aggregate expressions
+     *
+     * @return void
+     */
+    public function testCloning()
+    {
+        $a1 = (new AggregateExpression('MyFunction'))->partition('test');
+        $a2 = (clone $a1)->partition('new');
+        $this->assertNotSame($a1->sql(new ValueBinder()), $a2->sql(new ValueBinder()));
+    }
 }
