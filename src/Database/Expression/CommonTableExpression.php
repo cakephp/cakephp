@@ -5,7 +5,6 @@ namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
 use Cake\Database\ValueBinder;
-use Cake\Error\Debugger;
 use Closure;
 use InvalidArgumentException;
 
@@ -98,7 +97,7 @@ class CommonTableExpression implements ExpressionInterface
                 throw new InvalidArgumentException(sprintf(
                     'The `$fields` argument must contain only instances of `%s`, or strings, `%s` given at index `%d`.',
                     ExpressionInterface::class,
-                    Debugger::getType($field),
+                    getTypeName($field),
                     $index
                 ));
             }
@@ -136,7 +135,7 @@ class CommonTableExpression implements ExpressionInterface
                     'The `$modifiers` argument must contain only instances of `%s`, or strings, ' .
                         '`%s` given at index `%d`.',
                     ExpressionInterface::class,
-                    Debugger::getType($modifier),
+                    getTypeName($modifier),
                     $index
                 ));
             }
@@ -172,7 +171,7 @@ class CommonTableExpression implements ExpressionInterface
             throw new InvalidArgumentException(sprintf(
                 'The `$query` argument must be either an instance of `%s`, or a string, `%s` given.',
                 ExpressionInterface::class,
-                Debugger::getType($query)
+                getTypeName($query)
             ));
         }
 

@@ -5,7 +5,6 @@ namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
 use Cake\Database\ValueBinder;
-use Cake\Error\Debugger;
 use Closure;
 use InvalidArgumentException;
 use RuntimeException;
@@ -92,7 +91,7 @@ class WithExpression implements ExpressionInterface
                 throw new InvalidArgumentException(sprintf(
                     'The `$expressions` argument must contain only instances of `%s`, `%s` given at index `%d`.',
                     CommonTableExpression::class,
-                    Debugger::getType($expression),
+                    getTypeName($expression),
                     $index
                 ));
             }
