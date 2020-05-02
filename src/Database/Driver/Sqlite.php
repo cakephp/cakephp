@@ -19,6 +19,7 @@ namespace Cake\Database\Driver;
 use Cake\Database\Driver;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\IntervalExpression;
+use Cake\Database\Expression\TupleComparison;
 use Cake\Database\Query;
 use Cake\Database\QueryCompiler;
 use Cake\Database\Schema\SchemaDialect;
@@ -232,11 +233,9 @@ class Sqlite extends Driver
      */
     protected function _expressionTranslators(): array
     {
-        $namespace = 'Cake\Database\Expression';
-
         return [
-            $namespace . '\FunctionExpression' => '_transformFunctionExpression',
-            $namespace . '\TupleComparison' => '_transformTupleComparison',
+            FunctionExpression::class => '_transformFunctionExpression',
+            TupleComparison::class => '_transformTupleComparison',
             IntervalExpression::class => 'transformIntervalExpression',
         ];
     }

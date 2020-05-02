@@ -217,10 +217,8 @@ class Postgres extends Driver
      */
     protected function _expressionTranslators(): array
     {
-        $namespace = 'Cake\Database\Expression';
-
         return [
-            $namespace . '\FunctionExpression' => '_transformFunctionExpression',
+            FunctionExpression::class => '_transformFunctionExpression',
             IntervalExpression::class => 'transformIntervalExpression',
         ];
     }

@@ -366,4 +366,24 @@ class WindowExpressionTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $w = (new WindowExpression())->range(0, -2);
     }
+
+    /**
+     * Tests cloning window expressions
+     *
+     * @return void
+     */
+    public function testCloning()
+    {
+        $w1 = (new WindowExpression())->partition('test');
+        $w2 = (clone $w1)->partition('new');
+        $this->assertNotSame($w1->sql(new ValueBinder()), $w2->sql(new ValueBinder()));
+
+        $w1 = (new WindowExpression())->order('test');
+        $w2 = (clone $w1)->order('new');
+        $this->assertNotSame($w1->sql(new ValueBinder()), $w2->sql(new ValueBinder()));
+
+        $w1 = (new WindowExpression())->rows(0, null);
+        $w2 = (clone $w1)->rows(0, 0);
+        $this->assertNotSame($w1->sql(new ValueBinder()), $w2->sql(new ValueBinder()));
+    }
 }

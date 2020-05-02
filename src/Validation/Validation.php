@@ -526,7 +526,7 @@ class Validation
      *
      * @param mixed $check Value to check
      * @param string|array $dateFormat Format of the date part. See Validation::date() for more information.
-     *   Or `Validation::DATETIME_ISO8601` to valid an ISO8601 datetime value.
+     *   Or `Validation::DATETIME_ISO8601` to validate an ISO8601 datetime value.
      * @param string|null $regex Regex for the date part. If a custom regular expression is used
      *   this is the only validation that will occur.
      * @return bool True if the value is valid, false otherwise
@@ -540,6 +540,9 @@ class Validation
         }
         if (is_object($check)) {
             return false;
+        }
+        if (is_array($dateFormat) && count($dateFormat) === 1) {
+            $dateFormat = reset($dateFormat);
         }
         if ($dateFormat === static::DATETIME_ISO8601 && !static::iso8601($check)) {
             return false;

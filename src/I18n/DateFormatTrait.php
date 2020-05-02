@@ -16,9 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\I18n;
 
-use Cake\Chronos\Date as ChronosDate;
 use Cake\Chronos\DifferenceFormatterInterface;
-use Cake\Chronos\MutableDate;
 use Closure;
 use DateTime;
 use DateTimeZone;
@@ -43,18 +41,20 @@ trait DateFormatTrait
     protected static $defaultLocale;
 
     /**
+     * Whether lenient parsing is enabled for IntlDateFormatter.
+     *
+     * Defaults to true which is the default for IntlDateFormatter.
+     *
+     * @var bool
+     */
+    protected static $lenientParsing = true;
+
+    /**
      * In-memory cache of date formatters
      *
      * @var \IntlDateFormatter[]
      */
     protected static $_formatters = [];
-
-    /**
-     * Caches whether or not this class is a subclass of a Date or MutableDate
-     *
-     * @var bool
-     */
-    protected static $_isDateInstance;
 
     /**
      * Gets the default locale.
@@ -69,12 +69,44 @@ trait DateFormatTrait
     /**
      * Sets the default locale.
      *
-     * @param string|null $locale The default locale string to be used or null.
+     * Set to null to use IntlDateFormatter default.
+     *
+     * @param string|null $locale The default locale string to be used.
      * @return void
      */
     public static function setDefaultLocale(?string $locale = null): void
     {
         static::$defaultLocale = $locale;
+    }
+
+    /**
+     * Gets whether locale format parsing is set to lenient.
+     *
+     * @return bool
+     */
+    public static function lenientParsingEnabled(): bool
+    {
+        return static::$lenientParsing;
+    }
+
+    /**
+     * Enables lenient parsing for locale formats.
+     *
+     * @return void
+     */
+    public static function enableLenientParsing(): void
+    {
+        static::$lenientParsing = true;
+    }
+
+    /**
+     * Enables lenient parsing for locale formats.
+     *
+     * @return void
+     */
+    public static function disableLenientParsing(): void
+    {
+        static::$lenientParsing = false;
     }
 
     /**
@@ -321,12 +353,6 @@ trait DateFormatTrait
             }
         }
 
-        if (static::$_isDateInstance === null) {
-            static::$_isDateInstance =
-                is_subclass_of(static::class, ChronosDate::class) ||
-                is_subclass_of(static::class, MutableDate::class);
-        }
-
         $formatter = datefmt_create(
             (string)static::$defaultLocale,
             $dateFormat ?? 0,
@@ -335,6 +361,8 @@ trait DateFormatTrait
             null,
             $pattern ?? ''
         );
+        $formatter->setLenient(static::$lenientParsing);
+
         $time = $formatter->parse($time);
         if ($time !== false) {
             $dateTime = new DateTime('@' . $time);
