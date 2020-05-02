@@ -226,7 +226,7 @@ class IntervalExpression implements ExpressionInterface
     {
         $isValid = ($interval->y + $interval->m + $interval->d +
             $interval->h + $interval->i + $interval->s + $interval->f) !== 0;
-        if ($isValid == false) {
+        if (!$isValid) {
             throw new Exception(
                 'Interval needs to be greater than zero. Note that relative intervals are not supported.'
             );
@@ -292,7 +292,7 @@ class IntervalExpression implements ExpressionInterface
         foreach ($interval as $iUnit => $iValue) {
             $intervalAry[] = sprintf(
                 $options['format'],
-                ("${sign}1" * $iValue) . ' ' . $iUnit,
+                ("${sign}1" * $iValue) . ' ' . $iUnit
             );
         }
 
@@ -309,11 +309,11 @@ class IntervalExpression implements ExpressionInterface
     {
         $this->setOverrideExpression(null);
         $this->combineIntervalSqlOptions([
-             'glue'          => ' + ',
-             'format'        => '%s',
-             'prefix'        => 'INTERVAL ',
-             'suffix'        => '',
-             'sql-prefix'    => '',
+             'glue' => ' + ',
+             'format' => '%s',
+             'prefix' => 'INTERVAL ',
+             'suffix' => '',
+             'sql-prefix' => '',
         ]);
 
         return $this;
