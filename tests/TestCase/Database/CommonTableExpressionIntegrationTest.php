@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\Driver\Mysql;
-use Cake\Database\Driver\Postgres;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Expression\CommonTableExpression;
 use Cake\Database\Expression\QueryExpression;
@@ -845,11 +844,9 @@ class CommonTableExpressionIntegrationTest extends TestCase
             ->from('cte');
 
         if ($this->connection->getDriver() instanceof Sqlserver) {
-            $pattern = 'WITH cte AS \(SELECT 1 AS <col>\) SELECT <col> FROM <cte>';
-        } elseif ($this->connection->getDriver() instanceof Postgres) {
-            $pattern = 'WITH RECURSIVE cte AS MATERIALIZED \(SELECT 1 AS <col>\) SELECT <col> FROM <cte>';
+            $pattern = 'WITH cte AS MATERIALIZED \(SELECT 1 AS <col>\) SELECT <col> FROM <cte>';
         } else {
-            $pattern = 'WITH RECURSIVE cte AS \(SELECT 1 AS <col>\) SELECT <col> FROM <cte>';
+            $pattern = 'WITH RECURSIVE cte AS MATERIALIZED \(SELECT 1 AS <col>\) SELECT <col> FROM <cte>';
         }
 
         $this->assertQuotedQuery(

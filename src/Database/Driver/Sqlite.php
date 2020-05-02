@@ -19,7 +19,6 @@ namespace Cake\Database\Driver;
 use Cake\Database\Driver;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\TupleComparison;
-use Cake\Database\Expression\WithExpression;
 use Cake\Database\Query;
 use Cake\Database\QueryCompiler;
 use Cake\Database\Schema\SchemaDialect;
@@ -236,7 +235,6 @@ class Sqlite extends Driver
         return [
             FunctionExpression::class => '_transformFunctionExpression',
             TupleComparison::class => '_transformTupleComparison',
-            WithExpression::class => '_transformWithExpression',
         ];
     }
 
@@ -306,20 +304,6 @@ class Sqlite extends Driver
                     ->add(["'%w', " => 'literal'], [], true)
                     ->add([') + (1' => 'literal']); // Sqlite starts on index 0 but Sunday should be 1
                 break;
-        }
-    }
-
-    /**
-     * Receives a WithExpression and changes it so that it conforms to this
-     * SQL dialect.
-     *
-     * @param \Cake\Database\Expression\WithExpression $expression The expression to transform.
-     * @return void
-     */
-    protected function _transformWithExpression(WithExpression $expression): void
-    {
-        foreach ($expression->getExpressions() as $expression) {
-            $expression->setModifiers([]);
         }
     }
 

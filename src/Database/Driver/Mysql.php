@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Database\Driver;
 
 use Cake\Database\Driver;
-use Cake\Database\Expression\WithExpression;
 use Cake\Database\Query;
 use Cake\Database\Schema\MysqlSchemaDialect;
 use Cake\Database\Schema\SchemaDialect;
@@ -229,32 +228,6 @@ class Mysql extends Driver
     public function supportsDynamicConstraints(): bool
     {
         return true;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function _expressionTranslators(): array
-    {
-        $namespace = 'Cake\Database\Expression';
-
-        return [
-            $namespace . '\WithExpression' => '_transformWithExpression',
-        ];
-    }
-
-    /**
-     * Receives a WithExpression and changes it so that it conforms to this
-     * SQL dialect.
-     *
-     * @param \Cake\Database\Expression\WithExpression $expression The expression to transform.
-     * @return void
-     */
-    protected function _transformWithExpression(WithExpression $expression): void
-    {
-        foreach ($expression->getExpressions() as $expression) {
-            $expression->setModifiers([]);
-        }
     }
 
     /**

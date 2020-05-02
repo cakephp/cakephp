@@ -556,9 +556,5 @@ class Sqlserver extends Driver
     protected function _transformWithExpression(WithExpression $expression): void
     {
         $expression->disableKeywords();
-
-        foreach ($expression->getExpressions() as $expression) {
-            $expression->setModifiers([]);
-        }
     }
 }
