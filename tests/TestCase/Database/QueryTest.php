@@ -373,6 +373,7 @@ class QueryTest extends TestCase
             ->select(['title', 'name' => 'c.comment'])
             ->from('articles')
             ->leftJoin(['c' => 'comments'], ['created >' => $time], $types)
+            ->order(['created' => 'asc'])
             ->execute();
         $this->assertEquals(
             ['title' => 'First Article', 'name' => 'Second Comment for First Article'],
