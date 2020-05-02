@@ -58,7 +58,32 @@ class WindowQueryTests extends TestCase
         parent::tearDown();
     }
 
-    public function testPartitions()
+    /**
+     * Tests window sql generation.
+     *
+     * @return void
+     */
+    public function testWindowSql()
+    {
+        $query = new Query($this->connection);
+        $sql = $query
+            ->select('*')
+            ->window('name', new WindowExpression())
+            ->sql();
+        $this->assertEqualsSql('SELECT * WINDOW name AS ()', $sql);
+
+        $sql = $query
+            ->window('name2', new WindowExpression('name'))
+            ->sql();
+        $this->assertEqualsSql('SELECT * WINDOW name AS (), name2 AS (name)', $sql);
+    }
+
+    /**
+     * Tests window function queries.
+     *
+     * @return
+     */
+    public function testWindowFunctionQueries()
     {
         $this->skipIf($this->skipTests);
         $this->loadFixtures('Comments');
@@ -90,5 +115,50 @@ class WindowQueryTests extends TestCase
         $this->assertEquals(1, $result[0]['num_rows']);
         $this->assertEquals(4, $result[3]['num_rows']);
         $this->assertEquals(1, $result[4]['num_rows']);
+    }
+
+    /**
+     * Tests adding named windows to the query.
+     *
+     * @return void
+     */
+    public function testNamedWindowQueries()
+    {
+        $this->skipIf($this->skipTests);
+
+        $this->loadFixtures('Comments');
+
+        $query = new Query($this->connection);
+        $result = $query
+            ->select(['num_rows' => $query->func()->count('*')->over('window1')])
+            ->from('comments')
+            ->window('window1', (new WindowExpression())->partition('article_id'))
+            ->order(['article_id'])
+            ->execute()
+            ->fetchAll('assoc');
+        $this->assertEquals(4, $result[0]['num_rows']);
+    }
+
+    public function testWindowChainingQueries()
+    {
+        $skip = $this->skipTests;
+        $driver = $this->connection->getDriver();
+        if ($driver instanceof \Cake\Database\Driver\Sqlite) {
+            $skip = version_compare($driver->getVersion(), '3.28.0', '<');
+        }
+        $this->skipIf($skip);
+
+        $this->loadFixtures('Comments');
+
+        $query = new Query($this->connection);
+        $result = $query
+            ->select(['num_rows' => $query->func()->count('*')->over('window2')])
+            ->from('comments')
+            ->window('window1', (new WindowExpression())->partition('article_id'))
+            ->window('window2', new WindowExpression('window1'))
+            ->order(['article_id'])
+            ->execute()
+            ->fetchAll('assoc');
+        $this->assertEquals(4, $result[0]['num_rows']);
     }
 }
