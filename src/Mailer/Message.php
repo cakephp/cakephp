@@ -1134,7 +1134,7 @@ class Message implements JsonSerializable, Serializable
      * ```
      *
      * The `contentId` key allows you to specify an inline attachment. In your email text, you
-     * can use `<img src="cid:abc123" />` to display the image inline.
+     * can use `<img src="cid:abc123"/>` to display the image inline.
      *
      * The `contentDisposition` key allows you to disable the `Content-Disposition` header, this can improve
      * attachment compatibility with outlook email clients.
