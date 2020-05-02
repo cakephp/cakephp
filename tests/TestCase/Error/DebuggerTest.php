@@ -410,7 +410,7 @@ TEXT;
         $file = fopen('php://output', 'w');
         fclose($file);
         $result = Debugger::exportVar($file);
-        $this->assertTextEquals('(unknown)', $result);
+        $this->assertStringContainsString('(resource (closed)) Resource id #', $result);
     }
 
     public function testExportVarTypedProperty()
