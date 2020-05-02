@@ -425,6 +425,7 @@ class ConsoleOptionParser
                 'boolean' => false,
                 'multiple' => false,
                 'choices' => [],
+                'required' => false,
             ];
             $options += $defaults;
             $option = new ConsoleInputOption(
@@ -434,7 +435,8 @@ class ConsoleOptionParser
                 $options['boolean'],
                 $options['default'],
                 $options['choices'],
-                $options['multiple']
+                $options['multiple'],
+                $options['required'],
             );
         }
         $this->_options[$name] = $option;
@@ -705,7 +707,7 @@ class ConsoleOptionParser
         foreach ($this->_args as $i => $arg) {
             if ($arg->isRequired() && !isset($args[$i]) && empty($params['help'])) {
                 throw new ConsoleException(
-                    sprintf('Missing required arguments. The `%s` argument is required.', $arg->name())
+                    sprintf('Missing required argument. The `%s` argument is required.', $arg->name())
                 );
             }
         }
@@ -719,6 +721,11 @@ class ConsoleOptionParser
             }
             if ($isBoolean && !isset($params[$name])) {
                 $params[$name] = false;
+            }
+            if ($option->isRequired() && !isset($params[$name])) {
+                throw new ConsoleException(
+                    sprintf('Missing required option. The `%s` option is required and has no default value.', $name)
+                );
             }
         }
 

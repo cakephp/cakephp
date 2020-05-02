@@ -77,6 +77,13 @@ class ConsoleInputOption
     protected $_choices;
 
     /**
+     * Is the option required.
+     *
+     * @var bool
+     */
+    protected $required;
+
+    /**
      * Make a new Input Option
      *
      * @param string $name The long name of the option, or an array with all the properties.
@@ -86,6 +93,7 @@ class ConsoleInputOption
      * @param string|bool|null $default The default value for this option.
      * @param string[] $choices Valid choices for this option.
      * @param bool $multiple Whether this option can accept multiple value definition.
+     * @param bool $required Whether this option is required or not.
      * @throws \Cake\Console\Exception\ConsoleException
      */
     public function __construct(
@@ -95,7 +103,8 @@ class ConsoleInputOption
         bool $isBoolean = false,
         $default = null,
         array $choices = [],
-        bool $multiple = false
+        bool $multiple = false,
+        bool $required = false
     ) {
         $this->_name = $name;
         $this->_short = $short;
@@ -103,6 +112,7 @@ class ConsoleInputOption
         $this->_boolean = $isBoolean;
         $this->_choices = $choices;
         $this->_multiple = $multiple;
+        $this->required = $required;
 
         if ($isBoolean) {
             $this->_default = (bool)$default;
@@ -159,8 +169,12 @@ class ConsoleInputOption
         if (strlen($name) < $width) {
             $name = str_pad($name, $width, ' ');
         }
+        $required = '';
+        if ($this->isRequired()) {
+            $required = ' <comment>(required)</comment>';
+        }
 
-        return sprintf('%s%s%s', $name, $this->_help, $default);
+        return sprintf('%s%s%s%s', $name, $this->_help, $default, $required);
     }
 
     /**
@@ -178,8 +192,12 @@ class ConsoleInputOption
         if ($this->_choices) {
             $default = ' ' . implode('|', $this->_choices);
         }
+        $template = '[%s%s]';
+        if ($this->isRequired()) {
+            $template = '%s%s';
+        }
 
-        return sprintf('[%s%s]', $name, $default);
+        return sprintf($template, $name, $default);
     }
 
     /**
@@ -190,6 +208,16 @@ class ConsoleInputOption
     public function defaultValue()
     {
         return $this->_default;
+    }
+
+    /**
+     * Check if this option is required
+     *
+     * @return bool
+     */
+    public function isRequired(): bool
+    {
+        return (bool)$this->required;
     }
 
     /**
@@ -261,6 +289,7 @@ class ConsoleInputOption
         $option->addAttribute('short', $short);
         $option->addAttribute('help', $this->_help);
         $option->addAttribute('boolean', (string)(int)$this->_boolean);
+        $option->addAttribute('required', (string)(int)$this->required);
         $option->addChild('default', (string)$default);
         $choices = $option->addChild('choices');
         foreach ($this->_choices as $valid) {

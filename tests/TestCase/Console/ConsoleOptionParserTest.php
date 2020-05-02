@@ -20,8 +20,10 @@ use Cake\Console\ConsoleInputArgument;
 use Cake\Console\ConsoleInputOption;
 use Cake\Console\ConsoleInputSubcommand;
 use Cake\Console\ConsoleOptionParser;
+use Cake\Console\Exception\ConsoleException;
 use Cake\Console\Exception\MissingOptionException;
 use Cake\TestSuite\TestCase;
+use LogicException;
 
 /**
  * ConsoleOptionParserTest
@@ -220,7 +222,7 @@ class ConsoleOptionParserTest extends TestCase
      */
     public function testAddOptionShortOneLetter()
     {
-        $this->expectException(\Cake\Console\Exception\ConsoleException::class);
+        $this->expectException(ConsoleException::class);
         $parser = new ConsoleOptionParser('test', false);
         $parser->addOption('test', ['short' => 'te']);
     }
@@ -271,7 +273,7 @@ class ConsoleOptionParserTest extends TestCase
      *
      * @return void
      */
-    public function testMultipleOptions()
+    public function testAddOptionMultipleOptions()
     {
         $parser = new ConsoleOptionParser('test', false);
         $parser->addOption('test')
@@ -309,7 +311,7 @@ class ConsoleOptionParserTest extends TestCase
      *
      * @return void
      */
-    public function testAddMultipleOptionsWithMultiple()
+    public function testAddOptionMultipleOptionsWithMultiple()
     {
         $parser = new ConsoleOptionParser('test', false);
         $parser
@@ -328,6 +330,38 @@ class ConsoleOptionParserTest extends TestCase
             'help' => false,
         ];
         $this->assertEquals($expected, $result[0], 'options with multiple values did not parse');
+    }
+
+    /**
+     * test adding a required option.
+     *
+     * @return void
+     */
+    public function testAddOptionRequired()
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser
+            ->addOption('test', [
+                'default' => 'default value',
+                'required' => true,
+            ])
+            ->addOption('no-default', [
+                'required' => true,
+            ]);
+        $result = $parser->parse(['--test', '--no-default', 'value']);
+        $this->assertSame(
+            ['test' => 'default value', 'no-default' => 'value', 'help' => false],
+            $result[0],
+        );
+
+        $result = $parser->parse(['--no-default', 'value']);
+        $this->assertSame(
+            ['no-default' => 'value', 'help' => false, 'test' => 'default value'],
+            $result[0],
+        );
+
+        $this->expectException(ConsoleException::class);
+        $parser->parse(['--test']);
     }
 
     /**
@@ -415,7 +449,7 @@ class ConsoleOptionParserTest extends TestCase
      */
     public function testOptionWithChoices()
     {
-        $this->expectException(\Cake\Console\Exception\ConsoleException::class);
+        $this->expectException(ConsoleException::class);
         $parser = new ConsoleOptionParser('test', false);
         $parser->addOption('name', ['choices' => ['mark', 'jose']]);
 
@@ -514,7 +548,7 @@ class ConsoleOptionParserTest extends TestCase
      */
     public function testParseArgumentTooMany()
     {
-        $this->expectException(\Cake\Console\Exception\ConsoleException::class);
+        $this->expectException(ConsoleException::class);
         $parser = new ConsoleOptionParser('test', false);
         $parser->addArgument('name', ['help' => 'An argument'])
             ->addArgument('other');
@@ -547,7 +581,7 @@ class ConsoleOptionParserTest extends TestCase
      */
     public function testPositionalArgNotEnough()
     {
-        $this->expectException(\Cake\Console\Exception\ConsoleException::class);
+        $this->expectException(ConsoleException::class);
         $parser = new ConsoleOptionParser('test', false);
         $parser->addArgument('name', ['required' => true])
             ->addArgument('other', ['required' => true]);
@@ -562,7 +596,7 @@ class ConsoleOptionParserTest extends TestCase
      */
     public function testPositionalArgRequiredAfterOptional()
     {
-        $this->expectException(\LogicException::class);
+        $this->expectException(LogicException::class);
         $parser = new ConsoleOptionParser('test');
         $parser->addArgument('name', ['required' => false])
             ->addArgument('other', ['required' => true]);
@@ -575,7 +609,7 @@ class ConsoleOptionParserTest extends TestCase
      */
     public function testPositionalArgWithChoices()
     {
-        $this->expectException(\Cake\Console\Exception\ConsoleException::class);
+        $this->expectException(ConsoleException::class);
         $parser = new ConsoleOptionParser('test', false);
         $parser->addArgument('name', ['choices' => ['mark', 'jose']])
             ->addArgument('alias', ['choices' => ['cowboy', 'samurai']])
@@ -902,18 +936,20 @@ TEXT;
         $parser = new ConsoleOptionParser('sample', false);
         $parser->setDescription('A command!')
             ->setRootName('tool')
-            ->addOption('test', ['help' => 'A test option.']);
+            ->addOption('test', ['help' => 'A test option.'])
+            ->addOption('reqd', ['help' => 'A required option.', 'required' => true]);
 
         $result = $parser->help();
         $expected = <<<TEXT
 A command!
 
 <info>Usage:</info>
-tool sample [-h] [--test]
+tool sample [-h] --reqd [--test]
 
 <info>Options:</info>
 
 --help, -h  Display this help.
+--reqd      A required option. <comment>(required)</comment>
 --test      A test option.
 
 TEXT;
