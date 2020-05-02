@@ -21,6 +21,7 @@ use Cake\Database\Schema\TableSchema;
 use Cake\Database\Type;
 use Cake\Datasource\ConnectionManager;
 use Cake\I18n\FrozenTime;
+use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -36,38 +37,86 @@ class IntervalExpressionTest extends TestCase
     /**
      * @var \Cake\Datasource\ConnectionInterface
      */
-    protected static $connection;
+    protected $connection;
 
     /**
      * @var array
      */
     protected static $data = [];
 
-    public static function setUpBeforeClass(): void
+    public function setUp(): void
     {
-        parent::setUpBeforeClass();
-        self::$connection = ConnectionManager::get('test');
+        parent::setUp();
+        if (!ConnectionManager::getConfig('mysql')) {
+            ConnectionManager::setConfig(
+                'mysql',
+                [
+                    'className' => ConnectionManager::class,
+                    'driver' => \Cake\Database\Driver\Mysql::class,
+                    'persistent' => false,
+                    'host' => 'localhost',
+                    'port' => '3308',
+                    'username' => 'native',
+                    'password' => 'root',
+                    'database' => 'iikiti_iikiti',
+                    'timezone' => 'UTC',
+                    'flags' => [],
+                    'cacheMetadata' => true,
+                    'log' => false,
+                    'quoteIdentifiers' => false,
+                    'url' => env('DATABASE_URL', null),
+                ]
+            );
+        }
+        if (!ConnectionManager::getConfig('pg')) {
+            ConnectionManager::setConfig(
+                'pg',
+                [
+                    'className' => ConnectionManager::class,
+                    'driver' => \Cake\Database\Driver\Postgres::class,
+                    'persistent' => false,
+                    'host' => 'localhost',
+                    'port' => '5432',
+                    'username' => 'postgres',
+                    'password' => 'root',
+                    'database' => 'iikiti_iikiti',
+                    'timezone' => 'UTC',
+                    'flags' => [],
+                    'cacheMetadata' => true,
+                    'log' => false,
+                    'quoteIdentifiers' => false,
+                    'url' => env('DATABASE_URL', null),
+                ]
+            );
+        }
+        $this->connection = ConnectionManager::get('mysql');
+        debug($this->connection);
         self::$data['tz'] = $utc = new \DateTimeZone('UTC');
         self::$data['interval'] = \DateInterval::createFromDateString('+1 year + 2 seconds + 111 milliseconds');
         self::$data['date'] = '2021-04-17 02:03:04.321000';
-        self::$data['tmpTable'] = (new TableSchema('interval_test'))
+        self::$data['tmpTableSchema'] = (new TableSchema('interval_test'))
             ->addColumn('interval_date', ['type' => 'datetimefractional', 'precision' => 6])
             ->setTemporary(true);
-        foreach (self::$data['tmpTable']->createSql(self::$connection) as $query) {
-            self::$connection->query($query);
+        /* @var $table Table */
+        self::$data['tmpTable'] = $table = $this->getTableLocator()
+            ->get(self::$data['tmpTableSchema']->name(), []);
+
+        debug($table->find('all'));
+        foreach (self::$data['tmpTable']->createSql($this->connection) as $query) {
+            $this->connection->query($query);
         }
     }
 
     /**
      * @return void
      */
-    public static function tearDownAfterClass(): void
+    public function tearDown(): void
     {
-        foreach (self::$data['tmpTable']->dropSql(self::$connection) as $query) {
-            self::$connection->query($query);
+        foreach (self::$data['tmpTable']->dropSql($this->connection) as $query) {
+            $this->connection->query($query);
         }
-        self::$connection = self::$data = null;
-        parent::tearDownAfterClass();
+        $this->connection = self::$data = null;
+        parent::tearDown();
     }
 
     /**
@@ -82,11 +131,11 @@ class IntervalExpressionTest extends TestCase
             new FrozenTime(self::$data['date'], self::$data['tz']),
             self::$data['interval']
         );
-        $query = new Query(self::$connection);
+        $query = new Query($this->connection);
         $query->select([ $iExp ]);
         $stm = $query->execute();
         $result = $stm->fetchColumn(0);
-        $resultDt = Type::build('datetimefractional')->toPHP($result, self::$connection->getDriver());
+        $resultDt = Type::build('datetimefractional')->toPHP($result, $this->connection->getDriver());
         $this->assertContainsEquals(
             $resultDt,
             [new FrozenTime('2022-04-17 02:03:06.432000', self::$data['tz'])]
@@ -101,17 +150,17 @@ class IntervalExpressionTest extends TestCase
     public function testIntervalWithExpression()
     {
         // Create temporary table and populate with date
-        $query = new Query(self::$connection);
-        self::$connection->execute('INSERT INTO interval_test VALUES (\'' . self::$data['date'] . '\')');
+        $query = new Query($this->connection);
+        $this->connection->execute('INSERT INTO interval_test VALUES (\'' . self::$data['date'] . '\')');
         // Query using subquery
         $iExp = new IntervalExpression(
-            (new Query(self::$connection))->select(['interval_date'])->from('interval_test')->limit(1),
+            (new Query($this->connection))->select(['interval_date'])->from('interval_test')->limit(1),
             self::$data['interval']
         );
         $query->select([ $iExp ]);
         $stm = $query->execute();
         $result = $stm->fetchColumn(0);
-        $resultDt = Type::build('datetimefractional')->toPHP($result, self::$connection->getDriver());
+        $resultDt = Type::build('datetimefractional')->toPHP($result, $this->connection->getDriver());
         $this->assertContainsEquals(
             $resultDt,
             [new FrozenTime('2022-04-17 02:03:06.432000', self::$data['tz'])]

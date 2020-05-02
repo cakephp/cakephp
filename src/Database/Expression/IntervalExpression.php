@@ -80,6 +80,7 @@ class IntervalExpression implements ExpressionInterface
      *
      * @param mixed $fieldOrValue The value or identifier to be modified.
      * @param \DateInterval $interval The interval value as a DateInterval object.
+     * @throws \Exception When interval object is invalid.
      */
     public function __construct($fieldOrValue, DateInterval $interval)
     {
@@ -108,7 +109,7 @@ class IntervalExpression implements ExpressionInterface
     /**
      * @inheritDoc
      */
-    public function traverse(Closure $callable): self
+    public function traverse(Closure $callable)
     {
         if ($this->getOverrideExpression() instanceof ExpressionInterface) {
             $this->getOverrideExpression()->traverse($callable);
@@ -125,9 +126,9 @@ class IntervalExpression implements ExpressionInterface
      * parameter.
      *
      * @param array $options An array of options.
-     * @return self
+     * @return $this
      */
-    public function combineIntervalSqlOptions(array $options): self
+    public function combineIntervalSqlOptions(array $options)
     {
         $this->intervalSqlOptions = array_merge($this->getIntervalSqlOptions(), $options);
 
@@ -150,9 +151,9 @@ class IntervalExpression implements ExpressionInterface
      * statement.
      *
      * @param \Cake\Database\ExpressionInterface|null $exp An ExpressionInterface object or null value.
-     * @return self
+     * @return $this
      */
-    public function setOverrideExpression(?ExpressionInterface $exp): self
+    public function setOverrideExpression(?ExpressionInterface $exp)
     {
         $this->overrideExpression = $exp;
 
@@ -174,9 +175,9 @@ class IntervalExpression implements ExpressionInterface
      * value the interval will be applied to.
      *
      * @param \DateTimeInterface|\Cake\Database\ExpressionInterface $subject A DateTimeInterface or ExpressionInterface object.
-     * @return self
+     * @return $this
      */
-    public function setSubject($subject): self
+    public function setSubject($subject)
     {
         if (!($subject instanceof DateTimeInterface) && !($subject instanceof ExpressionInterface)) {
             throw new Exception(
@@ -212,9 +213,9 @@ class IntervalExpression implements ExpressionInterface
      *
      * @param \DateInterval $interval An interval object.
      * @throws \Exception When interval value is not valid.
-     * @return self
+     * @return $this
      */
-    public function setInterval(DateInterval $interval): self
+    public function setInterval(DateInterval $interval)
     {
         $isValid = ($interval->y + $interval->m + $interval->d +
             $interval->h + $interval->i + $interval->s + $interval->f) !== 0;
@@ -309,9 +310,9 @@ class IntervalExpression implements ExpressionInterface
     /**
      * Method that resets properties to their defaults.
      *
-     * @return self
+     * @return $this
      */
-    public function reset(): self
+    public function reset()
     {
         $this->setOverrideExpression(null);
         $this->combineIntervalSqlOptions([
