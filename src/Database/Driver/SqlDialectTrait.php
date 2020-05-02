@@ -127,6 +127,7 @@ trait SqlDialectTrait
      * objects to conform with the specific SQL dialect. Keys are class names
      * and values a method in this class.
      *
+     * @psalm-return array<class-string, string>
      * @return string[]
      */
     protected function _expressionTranslators(): array
