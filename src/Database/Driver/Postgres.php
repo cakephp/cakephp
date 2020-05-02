@@ -313,7 +313,7 @@ class Postgres extends Driver
         $intervalExp->combineIntervalSqlOptions([
             'glue' => ' ',
             'wrap' => [
-                'prefix' => ' + INTERVAL \'',
+                'prefix' => " + INTERVAL ",
                 'suffix' => "'",
                 'inner' => ['prefix' => '', 'suffix' => ''],
                 'date' => ['prefix' => '', 'suffix' => '::timestamp']
