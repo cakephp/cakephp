@@ -635,21 +635,20 @@ class Debugger
      */
     protected static function export($var, DebugContext $context): NodeInterface
     {
-        switch (static::getType($var)) {
+        $type = static::getType($var);
+        switch ($type) {
+            case 'float':
+            case 'string':
+            case 'resource':
+            case 'resource (closed)':
+            case 'null':
+                return new ScalarNode($type, $var);
             case 'boolean':
                 return new ScalarNode('bool', $var);
             case 'integer':
                 return new ScalarNode('int', $var);
-            case 'float':
-                return new ScalarNode('float', $var);
-            case 'string':
-                return new ScalarNode('string', $var);
             case 'array':
                 return static::exportArray($var, $context->withAddedDepth());
-            case 'resource':
-                return new ScalarNode('resource', gettype($var));
-            case 'null':
-                return new ScalarNode('null', null);
             case 'unknown':
                 return new SpecialNode('(unknown)');
             default:
@@ -964,32 +963,21 @@ class Debugger
      */
     public static function getType($var): string
     {
-        if (is_object($var)) {
-            return get_class($var);
-        }
-        if ($var === null) {
+        $type = getTypeName($var);
+
+        if ($type === 'NULL') {
             return 'null';
         }
-        if (is_string($var)) {
-            return 'string';
-        }
-        if (is_array($var)) {
-            return 'array';
-        }
-        if (is_int($var)) {
-            return 'integer';
-        }
-        if (is_bool($var)) {
-            return 'boolean';
-        }
-        if (is_float($var)) {
+
+        if ($type === 'double') {
             return 'float';
         }
-        if (is_resource($var)) {
-            return 'resource';
+
+        if ($type === 'unknown type') {
+            return 'unknown';
         }
 
-        return 'unknown';
+        return $type;
     }
 
     /**
