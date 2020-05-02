@@ -559,15 +559,15 @@ class Sqlserver extends Driver
         }
         $sign = $intervalExp->getIntervalSign();
         $fncExp = null;
-        $interval = IntervalExpression::transformForDatabase($intervalExp->getInterval());
+        $interval = IntervalExpression::transformForDatabase($intervalExp->getInterval(), false);
         foreach ($interval as $iUnit => $iValue) {
             if (!$fncExp) {
                 $fncExp = (new FunctionExpression('DATEADD', []))
-                    ->add([$iUnit . 'S', ($sign . '1') * $iValue])
+                    ->add([$iUnit, ($sign . '1') * $iValue])
                     ->add([$fOrV], $typeAry);
             } else {
                 $fncExp = (new FunctionExpression('DATEADD', []))
-                    ->add([$iUnit . 'S', ($sign . '1') * $iValue, $fncExp]);
+                    ->add([$iUnit, ($sign . '1') * $iValue, $fncExp]);
             }
         }
         $intervalExp->setOverrideExpression($fncExp);
