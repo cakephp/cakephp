@@ -63,7 +63,7 @@ class IntervalExpression implements ExpressionInterface
      *
      * @var \DateTimeInterface|\Cake\Database\ExpressionInterface
      */
-    protected $fieldOrValue;
+    protected $subject;
 
     /**
      * Array of options used to construct SQL for servers that specify
@@ -83,7 +83,7 @@ class IntervalExpression implements ExpressionInterface
      */
     public function __construct($fieldOrValue, DateInterval $interval)
     {
-        $this->setFieldOrValue($fieldOrValue);
+        $this->setSubject($fieldOrValue);
         $this->setInterval($interval)->reset();
     }
 
@@ -113,8 +113,8 @@ class IntervalExpression implements ExpressionInterface
         if ($this->getOverrideExpression() instanceof ExpressionInterface) {
             $this->getOverrideExpression()->traverse($callable);
         }
-        if ($this->getFieldOrValue() instanceof ExpressionInterface) {
-            $this->getFieldOrValue()->traverse($callable);
+        if ($this->getSubject() instanceof ExpressionInterface) {
+            $this->getSubject()->traverse($callable);
         }
 
         return $this;
@@ -146,7 +146,7 @@ class IntervalExpression implements ExpressionInterface
 
     /**
      * Method that sets an overriding expression for servers that require
-     * the use of en expression (usually a function) instead of an interval
+     * the use of an expression (usually a function) instead of an interval
      * statement.
      *
      * @param \Cake\Database\ExpressionInterface|null $exp An ExpressionInterface object or null value.
@@ -173,17 +173,18 @@ class IntervalExpression implements ExpressionInterface
      * Method that accepts a date or expression object that serves as the
      * value the interval will be applied to.
      *
-     * @param \DateTimeInterface|\Cake\Database\ExpressionInterface $fov A DateTimeInterface or ExpressionInterface object.
+     * @param \DateTimeInterface|\Cake\Database\ExpressionInterface $subject A DateTimeInterface or ExpressionInterface object.
+     *
      * @return self
      */
-    public function setFieldOrValue($fov): self
+    public function setSubject($subject): self
     {
-        if (!($fov instanceof DateTimeInterface) && !($fov instanceof ExpressionInterface)) {
+        if (!($subject instanceof DateTimeInterface) && !($subject instanceof ExpressionInterface)) {
             throw new Exception(
                 'Value must be ' . DateTimeInterface::class . ' or ' . ExpressionInterface::class
             );
         }
-        $this->fieldOrValue = $fov;
+        $this->subject = $subject;
 
         return $this;
     }
@@ -193,9 +194,9 @@ class IntervalExpression implements ExpressionInterface
      *
      * @return \DateTimeInterface|\Cake\Database\ExpressionInterface
      */
-    public function getFieldOrValue()
+    public function getSubject()
     {
-        return $this->fieldOrValue;
+        return $this->subject;
     }
 
     /**
@@ -289,13 +290,13 @@ class IntervalExpression implements ExpressionInterface
         $sign = $this->getIntervalSign();
         $intervalAry = [];
         $options = $this->getIntervalSqlOptions();
-        $fOrV = $this->getFieldOrValue();
-        if ($fOrV instanceof ExpressionInterface) {
-            $preSql .= '(' . $fOrV->sql($generator) . ')';
+        $subject = $this->getSubject();
+        if ($subject instanceof ExpressionInterface) {
+            $preSql .= '(' . $subject->sql($generator) . ')';
         } else {
-            $fOrV = $fOrV->format('Y-m-d H:i:s.u');
+            $subject = $subject->format('Y-m-d H:i:s.u');
             $ph = $generator->placeholder('interval');
-            $generator->bind($ph, $fOrV, 'datetimefractional');
+            $generator->bind($ph, $subject, 'datetimefractional');
             $preSql .= Hash::get($options, 'wrap.date.prefix') . $ph . Hash::get($options, 'wrap.date.suffix');
         }
         foreach ($interval as $iUnit => $iValue) {

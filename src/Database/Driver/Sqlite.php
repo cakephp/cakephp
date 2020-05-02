@@ -349,19 +349,19 @@ class Sqlite extends Driver
      */
     protected function transformIntervalExpression(IntervalExpression $intervalExp): void
     {
-        $fOrV = $intervalExp->getFieldOrValue();
-        $typeAry = [];
-        if ($fOrV instanceof \DateTimeInterface) {
-            $typeAry[] = 'datetimefractional';
+        $fieldValue = $intervalExp->getSubject();
+        $types = [];
+        if ($fieldValue instanceof \DateTimeInterface) {
+            $types[] = 'datetimefractional';
         }
         $sign = $intervalExp->getIntervalSign();
-        $fncExp = (new FunctionExpression('strftime', ['\'%Y-%m-%d %H:%M:%f\'' => 'literal']))
-            ->add([$fOrV], $typeAry);
+        $function = (new FunctionExpression('strftime', ["'%Y-%m-%d %H:%M:%f'" => 'literal']))
+            ->add([$fieldValue], $types);
         $interval = IntervalExpression::transformForDatabase($intervalExp->getInterval());
         foreach ($interval as $iUnit => $iValue) {
             $intervalStr = (($sign . '1') * $iValue) . ' ' . $iUnit;
-            $fncExp->add([$intervalStr]);
+            $function->add([$intervalStr]);
         }
-        $intervalExp->setOverrideExpression($fncExp);
+        $intervalExp->setOverrideExpression($function);
     }
 }

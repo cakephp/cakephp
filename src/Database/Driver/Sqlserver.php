@@ -552,24 +552,24 @@ class Sqlserver extends Driver
      */
     protected function transformIntervalExpression(IntervalExpression $intervalExp): void
     {
-        $fOrV = $intervalExp->getFieldOrValue();
-        $typeAry = [];
-        if ($fOrV instanceof \DateTimeInterface) {
-            $typeAry[] = 'datetimefractional';
+        $fieldValue = $intervalExp->getSubject();
+        $types = [];
+        if ($fieldValue instanceof \DateTimeInterface) {
+            $types[] = 'datetimefractional';
         }
         $sign = $intervalExp->getIntervalSign();
-        $fncExp = null;
+        $function = null;
         $interval = IntervalExpression::transformForDatabase($intervalExp->getInterval(), false);
         foreach ($interval as $iUnit => $iValue) {
-            if (!$fncExp) {
-                $fncExp = (new FunctionExpression('DATEADD', []))
+            if (!$function) {
+                $function = (new FunctionExpression('DATEADD', []))
                     ->add([$iUnit, ($sign . '1') * $iValue])
-                    ->add([$fOrV], $typeAry);
+                    ->add([$fieldValue], $types);
             } else {
-                $fncExp = (new FunctionExpression('DATEADD', []))
-                    ->add([$iUnit, ($sign . '1') * $iValue, $fncExp]);
+                $function = (new FunctionExpression('DATEADD', []))
+                    ->add([$iUnit, ($sign . '1') * $iValue, $function]);
             }
         }
-        $intervalExp->setOverrideExpression($fncExp);
+        $intervalExp->setOverrideExpression($function);
     }
 }

@@ -314,7 +314,7 @@ class Postgres extends Driver
             'glue' => ' ',
             'wrap' => [
                 'prefix' => ' + INTERVAL \'',
-                'suffix' => '\'',
+                'suffix' => "'",
                 'inner' => ['prefix' => '', 'suffix' => ''],
                 'date' => ['prefix' => '', 'suffix' => '::timestamp']
             ]
