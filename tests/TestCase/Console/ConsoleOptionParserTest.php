@@ -351,13 +351,13 @@ class ConsoleOptionParserTest extends TestCase
         $result = $parser->parse(['--test', '--no-default', 'value']);
         $this->assertSame(
             ['test' => 'default value', 'no-default' => 'value', 'help' => false],
-            $result[0],
+            $result[0]
         );
 
         $result = $parser->parse(['--no-default', 'value']);
         $this->assertSame(
             ['no-default' => 'value', 'help' => false, 'test' => 'default value'],
-            $result[0],
+            $result[0]
         );
 
         $this->expectException(ConsoleException::class);
