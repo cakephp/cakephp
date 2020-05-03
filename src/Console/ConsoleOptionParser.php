@@ -436,7 +436,7 @@ class ConsoleOptionParser
                 $options['default'],
                 $options['choices'],
                 $options['multiple'],
-                $options['required'],
+                $options['required']
             );
         }
         $this->_options[$name] = $option;
