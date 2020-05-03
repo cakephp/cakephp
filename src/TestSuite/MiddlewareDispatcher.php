@@ -26,8 +26,6 @@ use Cake\Routing\RoutingApplicationInterface;
 use Laminas\Diactoros\Stream;
 use LogicException;
 use Psr\Http\Message\ResponseInterface;
-use ReflectionClass;
-use ReflectionException;
 
 /**
  * Dispatches a request capturing the response for integration
@@ -89,14 +87,11 @@ class MiddlewareDispatcher
         $this->_class = $class;
         $this->_constructorArgs = $constructorArgs ?: [CONFIG];
 
-        try {
-            $reflect = new ReflectionClass($this->_class);
-            /** @var \Cake\Core\HttpApplicationInterface $app */
-            $app = $reflect->newInstanceArgs($this->_constructorArgs);
-            $this->app = $app;
-        } catch (ReflectionException $e) {
-            throw new LogicException("Cannot load `{$this->_class}` for use in integration testing.", 0, $e);
+        if (!class_exists($this->_class)) {
+            throw new LogicException("Cannot load `{$this->_class}` for use in integration testing.", 0);
         }
+
+        $this->app = new $this->_class(...$this->_constructorArgs);
     }
 
     /**
