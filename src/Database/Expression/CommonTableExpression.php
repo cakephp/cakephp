@@ -37,7 +37,7 @@ class CommonTableExpression implements ExpressionInterface
     /**
      * The CTE query definition.
      *
-     * @var \Cake\Database\ExpressionInterface|string
+     * @var \Cake\Database\ExpressionInterface
      */
     protected $query;
 
@@ -52,12 +52,12 @@ class CommonTableExpression implements ExpressionInterface
      * Constructor.
      *
      * @param string $name The CTE name.
-     * @param \Cake\Database\ExpressionInterface|string $query The CTE query definition.
+     * @param \Cake\Database\ExpressionInterface $query The CTE query definition.
      */
-    public function __construct(string $name, $query)
+    public function __construct(string $name, ExpressionInterface $query)
     {
         $this->name = $name;
-        $this->setQuery($query);
+        $this->query = $query;
     }
 
     /**
@@ -149,7 +149,7 @@ class CommonTableExpression implements ExpressionInterface
     /**
      * Returns the CTE query definition.
      *
-     * @return \Cake\Database\ExpressionInterface|string
+     * @return \Cake\Database\ExpressionInterface
      */
     public function getQuery()
     {
@@ -159,22 +159,11 @@ class CommonTableExpression implements ExpressionInterface
     /**
      * Sets the CTE query definition.
      *
-     * @param \Cake\Database\ExpressionInterface|string $query The CTE query definition.
+     * @param \Cake\Database\ExpressionInterface $query The CTE query definition.
      * @return $this
      */
-    public function setQuery($query)
+    public function setQuery(ExpressionInterface $query)
     {
-        if (
-            !($query instanceof ExpressionInterface) &&
-            !is_string($query)
-        ) {
-            throw new InvalidArgumentException(sprintf(
-                'The `$query` argument must be either an instance of `%s`, or a string, `%s` given.',
-                ExpressionInterface::class,
-                getTypeName($query)
-            ));
-        }
-
         $this->query = $query;
 
         return $this;
@@ -234,12 +223,7 @@ class CommonTableExpression implements ExpressionInterface
             $modifiers = ' ' . implode(' ', $modifiers);
         }
 
-        $query = $this->query;
-        if ($query instanceof ExpressionInterface) {
-            $query = $query->sql($generator);
-        }
-
-        return sprintf('%s%s AS%s (%s)', $this->name, $fields, $modifiers, $query);
+        return sprintf('%s%s AS%s (%s)', $this->name, $fields, $modifiers, $this->query->sql($generator));
     }
 
     /**
@@ -264,9 +248,7 @@ class CommonTableExpression implements ExpressionInterface
      */
     public function __clone()
     {
-        if ($this->query instanceof ExpressionInterface) {
-            $this->query = clone $this->query;
-        }
+        $this->query = clone $this->query;
 
         foreach ($this->fields as $key => $field) {
             if ($this->fields[$key] instanceof ExpressionInterface) {

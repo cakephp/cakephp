@@ -378,7 +378,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * Creates a common table expression (CTE).
      *
      * @param string $name The CTE name.
-     * @param \Cake\Database\ExpressionInterface|\Closure|string $query The CTE query definition.
+     * @param \Cake\Database\ExpressionInterface|\Closure $query The CTE query definition.
      * @return \Cake\Database\Expression\CommonTableExpression
      */
     public function cte(string $name, $query): CommonTableExpression

@@ -14,15 +14,32 @@ use InvalidArgumentException;
 
 class CommonTableExpressionTest extends TestCase
 {
+    /**
+     * @var \Cake\Database\Connection
+     */
+    protected $connection;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->connection = ConnectionManager::get('test');
+    }
+
+    public function tearDown(): void
+    {
+        parent::tearDown();
+        unset($this->connection);
+    }
+
     public function testGetName(): void
     {
-        $expression = new CommonTableExpression('cte', 'SELECT 1');
+        $expression = new CommonTableExpression('cte', $this->connection->newQuery()->select(1));
         $this->assertEquals('cte', $expression->getName());
     }
 
     public function testGetSetFields(): void
     {
-        $expression = new CommonTableExpression('cte', 'SELECT 1');
+        $expression = new CommonTableExpression('cte', $this->connection->newQuery()->select(1));
         $this->assertEmpty($expression->getFields());
 
         $expression->setFields(['col1', 'col2']);
@@ -40,13 +57,13 @@ class CommonTableExpressionTest extends TestCase
             'or strings, `integer` given at index `1`.'
         );
 
-        $expression = new CommonTableExpression('cte', 'SELECT 1');
+        $expression = new CommonTableExpression('cte', $this->connection->newQuery()->select(1));
         $expression->setFields(['col1', 123]);
     }
 
     public function testGetSetModifiers(): void
     {
-        $expression = new CommonTableExpression('cte', 'SELECT 1');
+        $expression = new CommonTableExpression('cte', $this->connection->newQuery()->select(1));
         $this->assertEmpty($expression->getModifiers());
 
         $expression->setModifiers(['FOO', 'BAR']);
@@ -61,7 +78,7 @@ class CommonTableExpressionTest extends TestCase
             'or strings, `integer` given at index `1`.'
         );
 
-        $expression = new CommonTableExpression('cte', 'SELECT 1');
+        $expression = new CommonTableExpression('cte', $this->connection->newQuery()->select(1));
         $expression->setModifiers(['FOO', 123]);
     }
 
@@ -69,74 +86,47 @@ class CommonTableExpressionTest extends TestCase
     {
         $connection = ConnectionManager::get('test');
 
-        $expression = new CommonTableExpression('cte', 'SELECT 1');
-        $this->assertEquals('SELECT 1', $expression->getQuery());
-
-        $expression->setQuery('SELECT 1, 2');
-        $this->assertEquals('SELECT 1, 2', $expression->getQuery());
+        $query = $this->connection->newQuery()->select(1);
+        $expression = new CommonTableExpression('cte', $query);
+        $this->assertSame($query, $expression->getQuery());
 
         $query = $connection->newQuery()->select([1, 2]);
         $expression->setQuery($query);
         $this->assertSame($query, $expression->getQuery());
     }
 
-    public function testSetQueryWithInvalidType(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(
-            'The `$query` argument must be either an instance of `Cake\Database\ExpressionInterface`, ' .
-            'or a string, `integer` given.'
-        );
-
-        $expression = new CommonTableExpression('cte', 'SELECT 1');
-        $expression->setQuery(123);
-    }
-
     public function testGetSetRecursive(): void
     {
-        $expression = new CommonTableExpression('cte', 'SELECT 1');
+        $expression = new CommonTableExpression('cte', $this->connection->newQuery()->select(1));
         $this->assertFalse($expression->isRecursive());
 
         $expression->setRecursive(true);
         $this->assertTrue($expression->isRecursive());
     }
 
-    public function testConstructWithInvalidQueryType()
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(
-            'The `$query` argument must be either an instance of `Cake\Database\ExpressionInterface`, ' .
-            'or a string, `integer` given.'
-        );
-
-        new CommonTableExpression('cte', 123);
-    }
-
     public function testSqlWithQueryAsExpression(): void
     {
-        $connection = ConnectionManager::get('test');
-
-        $expression = new CommonTableExpression('cte', $connection->newQuery()->select(['col']));
+        $expression = new CommonTableExpression('cte', $this->connection->newQuery()->select(1));
 
         $this->assertEqualsSql(
-            'cte AS (SELECT col)',
+            'cte AS (SELECT 1)',
             $expression->sql(new ValueBinder())
         );
     }
 
-    public function testSqlWithQueryAsString(): void
+    public function testSqlWithQueryAsCustomExpression(): void
     {
-        $expression = new CommonTableExpression('cte', 'SELECT col');
+        $expression = new CommonTableExpression('cte', new QueryExpression('SELECT 1'));
 
-        $this->assertEquals(
-            'cte AS (SELECT col)',
+        $this->assertEqualsSql(
+            'cte AS (SELECT 1)',
             $expression->sql(new ValueBinder())
         );
     }
 
     public function testSqlWithFieldsAsStrings(): void
     {
-        $expression = (new CommonTableExpression('cte', 'SELECT 1, 2'))
+        $expression = (new CommonTableExpression('cte', $this->connection->newQuery()->select([1, 2])))
             ->setFields(['col1', 'col2']);
 
         $this->assertEquals(
@@ -147,7 +137,7 @@ class CommonTableExpressionTest extends TestCase
 
     public function testSqlWithFieldsAsExpressions(): void
     {
-        $expression = (new CommonTableExpression('cte', 'SELECT 1, 2'))
+        $expression = (new CommonTableExpression('cte', $this->connection->newQuery()->select([1, 2])))
             ->setFields([
                 new IdentifierExpression('col1'),
                 new IdentifierExpression('col2'),
@@ -161,22 +151,22 @@ class CommonTableExpressionTest extends TestCase
 
     public function testSqlWithModifiersAsStrings(): void
     {
-        $expression = (new CommonTableExpression('cte', 'SELECT col'))
+        $expression = (new CommonTableExpression('cte', $this->connection->newQuery()->select(1)))
             ->setModifiers(['NOT MATERIALIZED']);
 
         $this->assertEquals(
-            'cte AS NOT MATERIALIZED (SELECT col)',
+            'cte AS NOT MATERIALIZED (SELECT 1)',
             $expression->sql(new ValueBinder())
         );
     }
 
     public function testSqlWithModifiersAsExpressions(): void
     {
-        $expression = (new CommonTableExpression('cte', 'SELECT col'))
+        $expression = (new CommonTableExpression('cte', $this->connection->newQuery()->select(1)))
             ->setModifiers([new QueryExpression('NOT MATERIALIZED')]);
 
         $this->assertEquals(
-            'cte AS NOT MATERIALIZED (SELECT col)',
+            'cte AS NOT MATERIALIZED (SELECT 1)',
             $expression->sql(new ValueBinder())
         );
     }

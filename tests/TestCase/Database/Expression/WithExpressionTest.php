@@ -5,14 +5,33 @@ namespace Cake\Test\TestCase\Database\Expression;
 
 use Cake\Database\Expression\CommonTableExpression;
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\WithExpression;
 use Cake\Database\ValueBinder;
+use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use RuntimeException;
 
 class WithExpressionTest extends TestCase
 {
+    /**
+     * @var \Cake\Database\Connection
+     */
+    protected $connection;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->connection = ConnectionManager::get('test');
+    }
+
+    public function tearDown(): void
+    {
+        parent::tearDown();
+        unset($this->connection);
+    }
+
     public function testGetSetKeywords(): void
     {
         $expression = new WithExpression();
@@ -33,8 +52,8 @@ class WithExpressionTest extends TestCase
         $this->assertEmpty($expression->getExpressions());
 
         $expressions = [
-            new CommonTableExpression('cte1', 'SELECT col'),
-            new CommonTableExpression('cte2', 'SELECT col'),
+            new CommonTableExpression('cte1', $this->connection->newQuery()->select('col')),
+            new CommonTableExpression('cte2', $this->connection->newQuery()->select('col')),
         ];
         $expression->setExpressions($expressions);
 
@@ -53,7 +72,7 @@ class WithExpressionTest extends TestCase
         $this->assertEmpty($expression->getExpressions());
 
         $expressions = [
-            new CommonTableExpression('cte1', 'SELECT col'),
+            new CommonTableExpression('cte1', $this->connection->newQuery()->select('col')),
             123,
         ];
         $expression->setExpressions($expressions);
@@ -64,12 +83,12 @@ class WithExpressionTest extends TestCase
     public function testConstructWithExpressions(): void
     {
         $expression = new WithExpression([
-            new CommonTableExpression('cte1', 'SELECT col'),
-            new CommonTableExpression('cte2', 'SELECT col'),
+            new CommonTableExpression('cte1', $this->connection->newQuery()->select(1)),
+            new CommonTableExpression('cte2', $this->connection->newQuery()->select(1)),
         ]);
 
         $this->assertEquals(
-            'WITH cte1 AS (SELECT col), cte2 AS (SELECT col)',
+            'WITH cte1 AS (SELECT 1), cte2 AS (SELECT 1)',
             $expression->sql(new ValueBinder())
         );
     }
@@ -80,8 +99,8 @@ class WithExpressionTest extends TestCase
         $this->expectExceptionMessage('A common table expression with the name `cte` already exists.');
 
         new WithExpression([
-            new CommonTableExpression('cte', 'SELECT col'),
-            new CommonTableExpression('cte', 'SELECT col'),
+            new CommonTableExpression('cte', $this->connection->newQuery()->select('col')),
+            new CommonTableExpression('cte', $this->connection->newQuery()->select('col')),
         ]);
     }
 
@@ -94,7 +113,7 @@ class WithExpressionTest extends TestCase
         );
 
         new WithExpression([
-            new CommonTableExpression('cte1', 'SELECT col'),
+            new CommonTableExpression('cte1', $this->connection->newQuery()->select('col')),
             123,
         ]);
     }
@@ -103,13 +122,13 @@ class WithExpressionTest extends TestCase
     {
         $expression = new WithExpression();
         $expression->addExpression(
-            new CommonTableExpression('cte1', 'SELECT col')
+            new CommonTableExpression('cte1', $this->connection->newQuery()->select('col'))
         );
 
         $this->assertFalse($expression->hasRecursiveExpressions());
 
         $expression->addExpression(
-            (new CommonTableExpression('cte2', 'SELECT col'))
+            (new CommonTableExpression('cte2', $this->connection->newQuery()->select('col')))
                 ->setFields(['field'])
                 ->setRecursive(true)
         );
@@ -125,10 +144,10 @@ class WithExpressionTest extends TestCase
         $expression = new WithExpression();
         $expression
             ->addExpression(
-                new CommonTableExpression('cte', 'SELECT col')
+                new CommonTableExpression('cte', $this->connection->newQuery()->select('col'))
             )
             ->addExpression(
-                new CommonTableExpression('cte', 'SELECT col')
+                new CommonTableExpression('cte', $this->connection->newQuery()->select('col'))
             );
     }
 
@@ -146,14 +165,14 @@ class WithExpressionTest extends TestCase
         $expression = new WithExpression();
         $expression
             ->addExpression(
-                new CommonTableExpression('cte1', 'SELECT col')
+                new CommonTableExpression('cte1', $this->connection->newQuery()->select(1))
             )
             ->addExpression(
-                new CommonTableExpression('cte2', 'SELECT col')
+                new CommonTableExpression('cte2', $this->connection->newQuery()->select(1))
             );
 
         $this->assertEquals(
-            'WITH cte1 AS (SELECT col), cte2 AS (SELECT col)',
+            'WITH cte1 AS (SELECT 1), cte2 AS (SELECT 1)',
             $expression->sql(new ValueBinder())
         );
     }
@@ -163,18 +182,18 @@ class WithExpressionTest extends TestCase
         $expression = new WithExpression();
         $expression
             ->addExpression(
-                (new CommonTableExpression('cte1', 'SELECT col'))
+                (new CommonTableExpression('cte1', $this->connection->newQuery()->select(1)))
                     ->setFields(['field'])
                     ->setRecursive(true)
             )
             ->addExpression(
-                (new CommonTableExpression('cte2', 'SELECT col'))
+                (new CommonTableExpression('cte2', $this->connection->newQuery()->select(1)))
                     ->setFields(['field'])
                     ->setRecursive(true)
             );
 
         $this->assertEquals(
-            'WITH RECURSIVE cte1(field) AS (SELECT col), cte2(field) AS (SELECT col)',
+            'WITH RECURSIVE cte1(field) AS (SELECT 1), cte2(field) AS (SELECT 1)',
             $expression->sql(new ValueBinder())
         );
     }
@@ -184,16 +203,16 @@ class WithExpressionTest extends TestCase
         $expression = new WithExpression();
         $expression
             ->addExpression(
-                (new CommonTableExpression('cte1', 'SELECT col'))
+                (new CommonTableExpression('cte1', $this->connection->newQuery()->select(1)))
                     ->setFields(['field'])
                     ->setRecursive(true)
             )
             ->addExpression(
-                new CommonTableExpression('cte2', 'SELECT col')
+                new CommonTableExpression('cte2', $this->connection->newQuery()->select(1))
             );
 
         $this->assertEquals(
-            'WITH RECURSIVE cte1(field) AS (SELECT col), cte2 AS (SELECT col)',
+            'WITH RECURSIVE cte1(field) AS (SELECT 1), cte2 AS (SELECT 1)',
             $expression->sql(new ValueBinder())
         );
     }
@@ -203,9 +222,12 @@ class WithExpressionTest extends TestCase
         $cte1Identifier = new IdentifierExpression('col');
         $cte2Identifier = new IdentifierExpression('col');
 
-        $cte1 = (new CommonTableExpression('cte1', 'SELECT col'))
+        $cte1Query = new QueryExpression('col');
+        $cte1 = (new CommonTableExpression('cte1', $cte1Query))
             ->setFields([$cte1Identifier]);
-        $cte2 = (new CommonTableExpression('cte2', 'SELECT col'))
+
+        $cte2Query = new QueryExpression('col');
+        $cte2 = (new CommonTableExpression('cte2', $cte2Query))
             ->setFields([$cte2Identifier]);
 
         $expression = new WithExpression([$cte1, $cte2]);
@@ -215,13 +237,13 @@ class WithExpressionTest extends TestCase
             $expressions[] = $expression;
         });
 
-        $this->assertSame([$cte1, $cte1Identifier, $cte2, $cte2Identifier], $expressions);
+        $this->assertSame([$cte1, $cte1Identifier, $cte1Query, $cte2, $cte2Identifier, $cte2Query], $expressions);
     }
 
     public function testClone(): void
     {
-        $cte1 = (new CommonTableExpression('cte1', 'SELECT 1'));
-        $cte2 = (new CommonTableExpression('cte2', 'SELECT 1'))->setRecursive(true);
+        $cte1 = (new CommonTableExpression('cte1', $this->connection->newQuery()->select(1)));
+        $cte2 = (new CommonTableExpression('cte2', $this->connection->newQuery()->select(1)))->setRecursive(true);
         $expression = new WithExpression([$cte1, $cte2]);
 
         $clone = clone $expression;
