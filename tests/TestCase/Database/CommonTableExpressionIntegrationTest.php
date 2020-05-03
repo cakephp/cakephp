@@ -7,7 +7,6 @@ use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Expression\CommonTableExpression;
 use Cake\Database\Expression\QueryExpression;
-use Cake\Database\Expression\WithExpression;
 use Cake\Database\Query;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
@@ -149,6 +148,36 @@ class CommonTableExpressionIntegrationTest extends TestCase
         $result = $stmt->fetchAll('assoc');
         $stmt->closeCursor();
         $this->assertEquals($expected, $result);
+    }
+
+    public function testWithCteInvalidType(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'The common table expression must be an instance of `Cake\Database\Expression\CommonTableExpression`, ' .
+            '`integer` given.'
+        );
+
+        $this->connection->newQuery()->with(123);
+    }
+
+    public function testWithCteNamesMustBeUnique(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'A common table expression with the name `cte` already exists.'
+        );
+
+        $this->connection
+            ->newQuery()
+            ->with(function (QueryExpression $exp, Query $query) {
+                return $query
+                    ->cte('cte', $query->newExpr('SELECT 1'));
+            })
+            ->with(function (QueryExpression $exp, Query $query) {
+                return $query
+                    ->cte('cte', $query->newExpr('SELECT 1'));
+            });
     }
 
     public function testWithRecursiveCte(): void
@@ -313,7 +342,7 @@ class CommonTableExpressionIntegrationTest extends TestCase
     {
         $query = $this->connection->newQuery();
 
-        $this->assertNull($query->clause('with'));
+        $this->assertEmpty($query->clause('with'));
 
         $query
             ->with(function (QueryExpression $exp, Query $query) {
@@ -323,7 +352,7 @@ class CommonTableExpressionIntegrationTest extends TestCase
             ->select('col')
             ->from('cte');
 
-        $this->assertInstanceOf(WithExpression::class, $query->clause('with'));
+        $this->assertCount(1, $query->clause('with'));
         $this->assertQuotedQuery(
             'WITH cte1 AS \(SELECT 1 AS <col>\) SELECT <col> FROM <cte>',
             $query->sql(),
@@ -332,7 +361,7 @@ class CommonTableExpressionIntegrationTest extends TestCase
 
         $query->with(null, true);
 
-        $this->assertNull($query->clause('with'));
+        $this->assertEmpty($query->clause('with'));
         $this->assertQuotedQuery(
             'SELECT <col> FROM <cte>',
             $query->sql(),
@@ -352,7 +381,7 @@ class CommonTableExpressionIntegrationTest extends TestCase
     {
         $query = $this->connection->newQuery();
 
-        $this->assertNull($query->clause('with'));
+        $this->assertEmpty($query->clause('with'));
 
         $query
             ->with(function (QueryExpression $exp, Query $query) {
@@ -874,8 +903,7 @@ class CommonTableExpressionIntegrationTest extends TestCase
         });
 
         $this->assertArrayHasKey('with', $parts);
-        $this->assertInstanceOf(WithExpression::class, $parts['with']);
-        $this->assertSame([$cte1, $cte2], $parts['with']->getExpressions());
+        $this->assertSame(['cte1' => $cte1, 'cte2' => $cte2], $parts['with']);
     }
 
     public function testClone(): void
@@ -895,23 +923,20 @@ class CommonTableExpressionIntegrationTest extends TestCase
 
         $clone = clone $query;
 
-        /** @var \Cake\Database\Expression\WithExpression $with */
         $with = $clone->clause('with');
 
-        $this->assertInstanceOf(WithExpression::class, $with);
+        $this->assertCount(2, $with);
 
-        $this->assertCount(2, $with->getExpressions());
+        $this->assertInstanceOf(CommonTableExpression::class, $with['cte1']);
+        $this->assertNotSame($cte1, $with['cte1']);
+        $this->assertEquals($cte1->getName(), $with['cte1']->getName());
+        $this->assertNotSame($cte1Query, $with['cte1']->getQuery());
+        $this->assertEquals('SELECT 1', $with['cte1']->getQuery()->sql(new ValueBinder()));
 
-        $this->assertInstanceOf(CommonTableExpression::class, $with->getExpressions()[0]);
-        $this->assertNotSame($cte1, $with->getExpressions()[0]);
-        $this->assertEquals($cte1->getName(), $with->getExpressions()[0]->getName());
-        $this->assertNotSame($cte1Query, $with->getExpressions()[0]->getQuery());
-        $this->assertEquals('SELECT 1', $with->getExpressions()[0]->getQuery()->sql(new ValueBinder()));
-
-        $this->assertInstanceOf(CommonTableExpression::class, $with->getExpressions()[1]);
-        $this->assertNotSame($cte2, $with->getExpressions()[1]);
-        $this->assertEquals($cte2->getName(), $with->getExpressions()[1]->getName());
-        $this->assertNotSame($cte2Query, $with->getExpressions()[1]->getQuery());
-        $this->assertEquals('SELECT 1', $with->getExpressions()[1]->getQuery()->sql(new ValueBinder()));
+        $this->assertInstanceOf(CommonTableExpression::class, $with['cte2']);
+        $this->assertNotSame($cte2, $with['cte2']);
+        $this->assertEquals($cte2->getName(), $with['cte2']->getName());
+        $this->assertNotSame($cte2Query, $with['cte2']->getQuery());
+        $this->assertEquals('SELECT 1', $with['cte2']->getQuery()->sql(new ValueBinder()));
     }
 }

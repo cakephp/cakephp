@@ -22,7 +22,6 @@ use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\OrderClauseExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\ValuesExpression;
-use Cake\Database\Expression\WithExpression;
 use Cake\Database\Expression\WindowExpression;
 use Cake\Database\Statement\CallbackStatement;
 use Closure;
@@ -80,7 +79,7 @@ class Query implements ExpressionInterface, IteratorAggregate
         'set' => [],
         'insert' => [],
         'values' => [],
-        'with' => null,
+        'with' => [],
         'select' => [],
         'distinct' => false,
         'modifier' => [],
@@ -400,7 +399,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function with($expression, $overwrite = false)
     {
         if ($overwrite) {
-            $this->_parts['with'] = null;
+            $this->_parts['with'] = [];
         }
 
         if ($expression === null) {
@@ -413,15 +412,27 @@ class Query implements ExpressionInterface, IteratorAggregate
             return $this;
         }
 
-        if (!$this->_parts['with']) {
-            $this->_parts['with'] = new WithExpression();
-        }
-
         if ($expression instanceof Closure) {
             $expression = $expression($this->newExpr(), $this);
         }
 
-        $this->_parts['with']->addExpression($expression);
+        if (!($expression instanceof CommonTableExpression)) {
+            throw new InvalidArgumentException(sprintf(
+                'The common table expression must be an instance of `%s`, `%s` given.',
+                CommonTableExpression::class,
+                getTypeName($expression)
+            ));
+        }
+
+        $name = $expression->getName();
+        if (isset($this->_parts['with'][$name])) {
+            throw new InvalidArgumentException(sprintf(
+                'A common table expression with the name `%s` already exists.',
+                $name
+            ));
+        }
+
+        $this->_parts['with'][$name] = $expression;
 
         return $this;
     }

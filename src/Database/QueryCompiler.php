@@ -35,7 +35,6 @@ class QueryCompiler
      * @var array
      */
     protected $_templates = [
-        'with' => '%s ',
         'delete' => 'DELETE',
         'where' => ' WHERE %s',
         'group' => ' GROUP BY %s ',
@@ -156,6 +155,36 @@ class QueryCompiler
 
             $sql .= $this->{'_build' . $partName . 'Part'}($part, $query, $generator);
         };
+    }
+
+    /**
+     * Helper function used to build the string representation of a `WITH` clause,
+     * it constructs the CTE definitions list and generates the `RECURSIVE`
+     * keyword when required.
+     *
+     * @param \Cake\Database\Expression\CommonTableExpression[] $parts List of CTEs to be transformed to string
+     * @param \Cake\Database\Query $query The query that is being compiled
+     * @param \Cake\Database\ValueBinder $generator The placeholder generator to be used in expressions
+     * @return string
+     */
+    protected function _buildWithPart(array $parts, Query $query, ValueBinder $generator): string
+    {
+        $hasRecursiveExpressions = false;
+
+        $expressions = [];
+        foreach ($parts as $expression) {
+            if ($expression->isRecursive()) {
+                $hasRecursiveExpressions = true;
+            }
+            $expressions[] = $expression->sql($generator);
+        }
+
+        $keywords = '';
+        if ($hasRecursiveExpressions) {
+            $keywords = 'RECURSIVE ';
+        }
+
+        return sprintf('WITH %s%s ', $keywords, implode(', ', $expressions));
     }
 
     /**

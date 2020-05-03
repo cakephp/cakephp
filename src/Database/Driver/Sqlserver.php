@@ -21,7 +21,6 @@ use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Database\Expression\UnaryExpression;
-use Cake\Database\Expression\WithExpression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
 use Cake\Database\QueryCompiler;
@@ -453,7 +452,6 @@ class Sqlserver extends Driver
         return [
             FunctionExpression::class => '_transformFunctionExpression',
             TupleComparison::class => '_transformTupleComparison',
-            WithExpression::class => '_transformWithExpression',
         ];
     }
 
@@ -544,17 +542,5 @@ class Sqlserver extends Driver
 
                 break;
         }
-    }
-
-    /**
-     * Receives a WithExpression and changes it so that it conforms to this
-     * SQL dialect.
-     *
-     * @param \Cake\Database\Expression\WithExpression $expression The expression to transform.
-     * @return void
-     */
-    protected function _transformWithExpression(WithExpression $expression): void
-    {
-        $expression->disableKeywords();
     }
 }
