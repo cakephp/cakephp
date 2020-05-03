@@ -40,9 +40,9 @@ class ConsoleFormatter implements FormatterInterface
         // cyan
         'class' => '0;36',
         // grey
-        'punct' => '0;8',
-        // black
-        'property' => '0;30',
+        'punct' => '0;90',
+        // default foreground
+        'property' => '0;39',
         // magenta
         'visibility' => '0;35',
         // red
