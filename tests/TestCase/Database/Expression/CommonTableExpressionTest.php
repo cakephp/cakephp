@@ -268,4 +268,16 @@ class CommonTableExpressionTest extends TestCase
         $this->assertNotSame($query, $clone->getQuery());
         $this->assertEquals('SELECT 1', $clone->getQuery()->sql(new ValueBinder()));
     }
+
+    public function testCloneEmpty(): void
+    {
+        $expression = new CommonTableExpression();
+        $clone = clone $expression;
+
+        $this->assertNotSame($expression, $clone);
+        $this->assertEquals($expression->getName(), $clone->getName());
+        $this->assertEquals($expression->getFields(), $clone->getFields());
+        $this->assertEquals($expression->getModifiers(), $clone->getModifiers());
+        $this->assertEquals($expression->getQuery(), $clone->getQuery());
+    }
 }

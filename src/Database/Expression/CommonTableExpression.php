@@ -274,7 +274,9 @@ class CommonTableExpression implements ExpressionInterface
      */
     public function __clone()
     {
-        $this->query = clone $this->query;
+        if ($this->query instanceof ExpressionInterface) {
+            $this->query = clone $this->query;
+        }
 
         foreach ($this->fields as $key => $field) {
             if ($this->fields[$key] instanceof ExpressionInterface) {
