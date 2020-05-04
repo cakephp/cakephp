@@ -59,7 +59,9 @@ class DateTimeType extends BaseType
      * @var array
      */
     protected $_marshalFormats = [
+        'Y-m-d H:i',
         'Y-m-d H:i:s',
+        'Y-m-d\TH:i',
         'Y-m-d\TH:i:s',
         'Y-m-d\TH:i:sP',
     ];
