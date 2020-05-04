@@ -146,6 +146,7 @@ class Router
      * parameters to the route collection.
      *
      * @var callable[]
+     * @psalm-var array<int, (\Closure|callable-string)>
      */
     protected static $_urlFilters = [];
 
@@ -331,6 +332,7 @@ class Router
      *
      * @param callable $function The function to add
      * @return void
+     * @psalm-param \Closure|callable-string $function
      */
     public static function addUrlFilter(callable $function): void
     {

@@ -276,6 +276,16 @@ parameters:
 			path: src/Datasource/QueryCacher.php
 
 		-
+			message: "#^Parameter \\#1 \\$rules of method Cake\\\\ORM\\\\Table\\:\\:buildRules\\(\\) expects Cake\\\\ORM\\\\RulesChecker, Cake\\\\Datasource\\\\RulesChecker given\\.$#"
+			count: 1
+			path: src/ORM/Table.php
+
+		-
+			message: "#^Variable \\$entities in PHPDoc tag @var does not match any variable in the foreach loop\\: \\$key, \\$entity$#"
+			count: 1
+			path: src/ORM/Table.php
+
+		-
 			message: "#^Cannot unset offset 'args' on array\\('path' \\=\\> string, 'reference' \\=\\> mixed\\)\\.$#"
 			count: 1
 			path: src/Error/Debugger.php
@@ -441,13 +451,8 @@ parameters:
 			path: src/ORM/Rule/IsUnique.php
 
 		-
-			message: "#^Variable \\$entities in PHPDoc tag @var does not match any variable in the foreach loop\\: \\$key, \\$entity$#"
-			count: 1
-			path: src/ORM/Table.php
-
-		-
 			message: "#^Parameter \\#1 \\$request of static method Cake\\\\Routing\\\\Router\\:\\:setRequest\\(\\) expects Cake\\\\Http\\\\ServerRequest, Psr\\\\Http\\\\Message\\\\ServerRequestInterface given\\.$#"
-			count: 2
+			count: 1
 			path: src/Routing/Middleware/RoutingMiddleware.php
 
 		-

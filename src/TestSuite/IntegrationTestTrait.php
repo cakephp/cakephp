@@ -80,6 +80,7 @@ trait IntegrationTestTrait
      * The customized application class name.
      *
      * @var string|null
+     * @psalm-var class-string<\Cake\Core\HttpApplicationInterface>|null
      */
     protected $_appClass;
 
@@ -227,6 +228,7 @@ trait IntegrationTestTrait
      * @param string $class The application class name.
      * @param array|null $constructorArgs The constructor arguments for your application class.
      * @return void
+     * @psalm-param class-string<\Cake\Core\HttpApplicationInterface> $class
      */
     public function configApplication(string $class, ?array $constructorArgs): void
     {

@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="3.9.5@0cfe565d0afbcd31eadcc281b9017b5692911661">
+<files psalm-version="3.11.2@d470903722cfcbc1cd04744c5491d3e6d13ec3d9">
+  <file src="src/Collection/CollectionTrait.php">
+    <ArgumentTypeCoercion occurrences="4">
+      <code>$iterator</code>
+      <code>$iterator</code>
+      <code>$this-&gt;unwrap()</code>
+      <code>$this-&gt;newCollection($items)-&gt;unwrap()</code>
+    </ArgumentTypeCoercion>
+  </file>
+  <file src="src/Collection/Iterator/ZipIterator.php">
+    <ArgumentTypeCoercion occurrences="1">
+      <code>$set</code>
+    </ArgumentTypeCoercion>
+  </file>
   <file src="src/Command/CompletionCommand.php">
     <DeprecatedClass occurrences="1">
       <code>\Cake\Console\Shell</code>
@@ -44,15 +57,79 @@
       <code>\Cake\Console\Shell</code>
     </DeprecatedClass>
   </file>
+  <file src="src/Controller/Controller.php">
+    <PropertyTypeCoercion occurrences="1">
+      <code>$result</code>
+    </PropertyTypeCoercion>
+  </file>
+  <file src="src/Controller/ControllerFactory.php">
+    <ArgumentTypeCoercion occurrences="3">
+      <code>$request</code>
+      <code>$request</code>
+      <code>$request</code>
+    </ArgumentTypeCoercion>
+  </file>
   <file src="src/Datasource/ModelAwareTrait.php">
     <DeprecatedClass occurrences="1">
       <code>$this</code>
     </DeprecatedClass>
   </file>
+  <file src="src/Datasource/RulesAwareTrait.php">
+    <ArgumentTypeCoercion occurrences="1">
+      <code>new $class(['repository' =&gt; $this])</code>
+    </ArgumentTypeCoercion>
+  </file>
+  <file src="src/Http/BaseApplication.php">
+    <ArgumentTypeCoercion occurrences="1">
+      <code>$request</code>
+    </ArgumentTypeCoercion>
+  </file>
+  <file src="src/Http/Cookie/Cookie.php">
+    <ArgumentTypeCoercion occurrences="1">
+      <code>$options['expires']</code>
+    </ArgumentTypeCoercion>
+  </file>
+  <file src="src/Http/ServerRequest.php">
+    <ArgumentTypeCoercion occurrences="1">
+      <code>$this-&gt;data</code>
+    </ArgumentTypeCoercion>
+  </file>
+  <file src="src/I18n/Date.php">
+    <ArgumentTypeCoercion occurrences="1">
+      <code>$time</code>
+    </ArgumentTypeCoercion>
+  </file>
+  <file src="src/I18n/FrozenDate.php">
+    <ArgumentTypeCoercion occurrences="1">
+      <code>$time</code>
+    </ArgumentTypeCoercion>
+  </file>
   <file src="src/ORM/Locator/LocatorAwareTrait.php">
     <DeprecatedClass occurrences="1">
       <code>$this</code>
     </DeprecatedClass>
+  </file>
+  <file src="src/ORM/Marshaller.php">
+    <ArgumentTypeCoercion occurrences="2">
+      <code>$assoc</code>
+      <code>$assoc</code>
+    </ArgumentTypeCoercion>
+  </file>
+  <file src="src/ORM/Query.php">
+    <ArgumentTypeCoercion occurrences="6">
+      <code>$this-&gt;_repository</code>
+      <code>$this-&gt;getRepository()</code>
+      <code>$this-&gt;getRepository()</code>
+      <code>$this-&gt;getRepository()</code>
+      <code>$this-&gt;getRepository()</code>
+      <code>$this-&gt;getRepository()</code>
+    </ArgumentTypeCoercion>
+  </file>
+  <file src="src/Routing/Middleware/RoutingMiddleware.php">
+    <ArgumentTypeCoercion occurrences="2">
+      <code>$request</code>
+      <code>$request</code>
+    </ArgumentTypeCoercion>
   </file>
   <file src="src/Shell/Task/CommandTask.php">
     <DeprecatedClass occurrences="1">
@@ -85,6 +162,21 @@
       <code>FixtureInjector</code>
     </DeprecatedInterface>
   </file>
+  <file src="src/TestSuite/Fixture/TestFixture.php">
+    <ArgumentTypeCoercion occurrences="5">
+      <code>$db</code>
+      <code>$db</code>
+      <code>$db</code>
+      <code>$db</code>
+      <code>$db</code>
+    </ArgumentTypeCoercion>
+  </file>
+  <file src="src/TestSuite/IntegrationTestTrait.php">
+    <ArgumentTypeCoercion occurrences="2">
+      <code>$this-&gt;_response</code>
+      <code>$this-&gt;_response</code>
+    </ArgumentTypeCoercion>
+  </file>
   <file src="src/TestSuite/LegacyShellDispatcher.php">
     <DeprecatedClass occurrences="5">
       <code>ShellDispatcher</code>
@@ -107,5 +199,10 @@
     <DeprecatedMethod occurrences="1">
       <code>defaultCurrency</code>
     </DeprecatedMethod>
+  </file>
+  <file src="src/View/View.php">
+    <ArgumentTypeCoercion occurrences="1">
+      <code>$options</code>
+    </ArgumentTypeCoercion>
   </file>
 </files>
