@@ -48,6 +48,7 @@ trait ConsoleIntegrationTestTrait
      * The customized application class name.
      *
      * @var string|null
+     * @psalm-var class-string<\Cake\Core\ConsoleApplicationInterface>|null
      */
     protected $_appClass;
 
@@ -162,6 +163,7 @@ trait ConsoleIntegrationTestTrait
      * @param string $class The application class name.
      * @param array|null $constructorArgs The constructor arguments for your application class.
      * @return void
+     * @psalm-param class-string<\Cake\Core\ConsoleApplicationInterface> $class
      */
     public function configApplication(string $class, ?array $constructorArgs): void
     {
@@ -305,7 +307,12 @@ trait ConsoleIntegrationTestTrait
     protected function makeRunner()
     {
         if ($this->_useCommandRunner) {
-            $appClass = $this->_appClass ?: Configure::read('App.namespace') . '\Application';
+            if ($this->_appClass) {
+                $appClass = $this->_appClass;
+            } else {
+                /** @psalm-var class-string<\Cake\Core\ConsoleApplicationInterface> */
+                $appClass = Configure::read('App.namespace') . '\Application';
+            }
             $appArgs = $this->_appArgs ?: [CONFIG];
 
             return new CommandRunner(new $appClass(...$appArgs));
