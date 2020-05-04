@@ -374,27 +374,61 @@ class Query implements ExpressionInterface, IteratorAggregate
     }
 
     /**
-     * Creates a common table expression (CTE).
+     * Adds a new common table expression (CTE) to the query.
      *
-     * @param string $name The CTE name.
-     * @param \Cake\Database\ExpressionInterface|\Closure $query The CTE query definition.
-     * @return \Cake\Database\Expression\CommonTableExpression
-     */
-    public function cte(string $name, $query): CommonTableExpression
-    {
-        if ($query instanceof Closure) {
-            $query = $query($this->newExpr(), $this);
-        }
-
-        return new CommonTableExpression($name, $query);
-    }
-
-    /**
-     * Adds a common table expression (CTE).
+     * ### Examples:
+     *
+     * Common table expressions can either be passed as preconstructed expression
+     * objects:
+     *
+     * ```
+     * $cte = new \Cake\Database\Expression\CommonTableExpression(
+     *     'cte',
+     *     $connection
+     *         ->newQuery()
+     *         ->select('*')
+     *         ->from('articles')
+     * );
+     *
+     * $query->with($cte);
+     * ```
+     *
+     * or returned from a closure, which will receive a new common table expression
+     * object as the first argument, and a reference to the current query object as
+     * the second argument:
+     *
+     * ```
+     * $query->with(function (
+     *     \Cake\Database\Expression\CommonTableExpression $cte,
+     *     \Cake\Database\Query $query
+     *  ) {
+     *     $cteQuery = $query->getConnection()
+     *         ->newQuery()
+     *         ->select('*')
+     *         ->from('articles');
+     *
+     *     return $cte
+     *         ->setName('cte')
+     *         ->setQuery($cteQuery);
+     * });
+     * ```
+     *
+     * The list of expressions can be reset by overwriting and passing `null` for the
+     * expression:
+     *
+     * ```
+     * $query->with(null, true);
+     * ```
      *
      * @param \Cake\Database\Expression\CommonTableExpression|\Closure|null $expression The CTE to add.
-     * @param bool $overwrite Whether to reset the list of CTE's.
+     * @param bool $overwrite Whether to reset the list of CTEs.
      * @return $this
+     * @throws \InvalidArgumentException When passing `null` for the `$expression` argument but not enabling
+     *  `$overwrite`.
+     * @throws \InvalidArgumentException When an invalid type is passed or returned for the `$expression` argument.
+     * @throws \InvalidArgumentException When the given CTE object has no name set.
+     * @throws \InvalidArgumentException When the given CTE object has no query set.
+     * @throws \InvalidArgumentException When a CTE object with the same name is already attached to this query.
      */
     public function with($expression, $overwrite = false)
     {
@@ -413,7 +447,7 @@ class Query implements ExpressionInterface, IteratorAggregate
         }
 
         if ($expression instanceof Closure) {
-            $expression = $expression($this->newExpr(), $this);
+            $expression = $expression(new CommonTableExpression(), $this);
         }
 
         if (!($expression instanceof CommonTableExpression)) {
@@ -425,14 +459,25 @@ class Query implements ExpressionInterface, IteratorAggregate
         }
 
         $name = $expression->getName();
-        if (isset($this->_parts['with'][$name])) {
-            throw new InvalidArgumentException(sprintf(
-                'A common table expression with the name `%s` already exists.',
-                $name
-            ));
+        if (empty($name)) {
+            throw new InvalidArgumentException('The common table expression must have a name.');
         }
 
-        $this->_parts['with'][$name] = $expression;
+        if (empty($expression->getQuery())) {
+            throw new InvalidArgumentException('The common table expression must have a query.');
+        }
+
+        foreach ($this->_parts['with'] as $existing) {
+            /** @var \Cake\Database\Expression\CommonTableExpression $existing */
+            if ($existing->getName() === $name) {
+                throw new InvalidArgumentException(sprintf(
+                    'A common table expression with the name `%s` is already attached to this query.',
+                    $name
+                ));
+            }
+        }
+
+        $this->_parts['with'][] = $expression;
 
         return $this;
     }

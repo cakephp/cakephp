@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Cake\Test\TestCase\Database\Expression;
 
+use Cake\Database\Exception as DatabaseException;
 use Cake\Database\Expression\CommonTableExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
@@ -31,10 +32,23 @@ class CommonTableExpressionTest extends TestCase
         unset($this->connection);
     }
 
-    public function testGetName(): void
+    public function testConstructWithNoArguments()
+    {
+        $expression = new CommonTableExpression();
+
+        $this->assertNull($expression->getName());
+        $this->assertEmpty($expression->getFields());
+        $this->assertEmpty($expression->getModifiers());
+        $this->assertNull($expression->getQuery());
+    }
+
+    public function testGetSetName(): void
     {
         $expression = new CommonTableExpression('cte', $this->connection->newQuery()->select(1));
         $this->assertEquals('cte', $expression->getName());
+
+        $expression->setName('other');
+        $this->assertEquals('other', $expression->getName());
     }
 
     public function testGetSetFields(): void
@@ -102,6 +116,24 @@ class CommonTableExpressionTest extends TestCase
 
         $expression->setRecursive(true);
         $this->assertTrue($expression->isRecursive());
+    }
+
+    public function testSqlWithNoName()
+    {
+        $this->expectException(DatabaseException::class);
+        $this->expectExceptionMessage('Cannot generate SQL for common table expressions that have no name.');
+
+        $expression = new CommonTableExpression();
+        $expression->sql(new ValueBinder());
+    }
+
+    public function testSqlWithNoQuery()
+    {
+        $this->expectException(DatabaseException::class);
+        $this->expectExceptionMessage('Cannot generate SQL for common table expressions that have no query.');
+
+        $expression = new CommonTableExpression('cte');
+        $expression->sql(new ValueBinder());
     }
 
     public function testSqlWithQueryAsExpression(): void

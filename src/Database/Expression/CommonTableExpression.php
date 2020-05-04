@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Cake\Database\Expression;
 
+use Cake\Database\Exception as DatabaseException;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\ValueBinder;
 use Closure;
@@ -16,7 +17,7 @@ class CommonTableExpression implements ExpressionInterface
     /**
      * The CTE name.
      *
-     * @var string
+     * @var string|null
      */
     protected $name;
 
@@ -37,7 +38,7 @@ class CommonTableExpression implements ExpressionInterface
     /**
      * The CTE query definition.
      *
-     * @var \Cake\Database\ExpressionInterface
+     * @var \Cake\Database\ExpressionInterface|null
      */
     protected $query;
 
@@ -54,7 +55,7 @@ class CommonTableExpression implements ExpressionInterface
      * @param string $name The CTE name.
      * @param \Cake\Database\ExpressionInterface $query The CTE query definition.
      */
-    public function __construct(string $name, ExpressionInterface $query)
+    public function __construct(?string $name = null, ?ExpressionInterface $query = null)
     {
         $this->name = $name;
         $this->query = $query;
@@ -63,11 +64,24 @@ class CommonTableExpression implements ExpressionInterface
     /**
      * Returns the CTE name.
      *
-     * @return string
+     * @return string|null
      */
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
+    }
+
+    /**
+     * Sets the CTE name.
+     *
+     * @param string $name The CTE name.
+     * @return $this
+     */
+    public function setName(string $name)
+    {
+        $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -149,9 +163,9 @@ class CommonTableExpression implements ExpressionInterface
     /**
      * Returns the CTE query definition.
      *
-     * @return \Cake\Database\ExpressionInterface
+     * @return \Cake\Database\ExpressionInterface|null
      */
-    public function getQuery()
+    public function getQuery(): ?ExpressionInterface
     {
         return $this->query;
     }
@@ -197,6 +211,18 @@ class CommonTableExpression implements ExpressionInterface
      */
     public function sql(ValueBinder $generator): string
     {
+        if (empty($this->name)) {
+            throw new DatabaseException(
+                'Cannot generate SQL for common table expressions that have no name.'
+            );
+        }
+
+        if (empty($this->query)) {
+            throw new DatabaseException(
+                'Cannot generate SQL for common table expressions that have no query.'
+            );
+        }
+
         $fields = '';
         if (!empty($this->fields)) {
             $fields = [];

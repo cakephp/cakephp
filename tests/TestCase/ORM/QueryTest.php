@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\ORM;
 use Cake\Collection\Collection;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Sqlite;
+use Cake\Database\Expression\CommonTableExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
@@ -3924,9 +3925,10 @@ class QueryTest extends TestCase
 
         $query = $table
             ->find()
-            ->with(function (QueryExpression $exp, Query $query) use ($cteQuery) {
-                return $query
-                    ->cte('cte', $cteQuery);
+            ->with(function (CommonTableExpression $cte) use ($cteQuery) {
+                return $cte
+                    ->setName('cte')
+                    ->setQuery($cteQuery);
             })
             ->select(['row_num'])
             ->enableAutoFields()
