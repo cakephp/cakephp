@@ -341,11 +341,11 @@ xml;
 <description />
 <subcommands />
 <options>
-	<option name="--help" short="-h" help="Display this help." boolean="1">
+	<option name="--help" short="-h" help="Display this help." boolean="1" required="0">
 		<default>false</default>
 		<choices></choices>
 	</option>
-	<option name="--test" short="" help="A test option." boolean="0">
+	<option name="--test" short="" help="A test option." boolean="0" required="0">
 		<default></default>
 		<choices>
 			<choice>one</choice>
@@ -392,11 +392,11 @@ xml;
 <description>Description text</description>
 <subcommands />
 <options>
-	<option name="--help" short="-h" help="Display this help." boolean="1">
+	<option name="--help" short="-h" help="Display this help." boolean="1" required="0">
 		<default>false</default>
 		<choices></choices>
 	</option>
-	<option name="--test" short="" help="A test option." boolean="0">
+	<option name="--test" short="" help="A test option." boolean="0" required="0">
 		<default></default>
 		<choices></choices>
 	</option>
@@ -434,11 +434,11 @@ xml;
 	<command name="method" help="This is another command" />
 </subcommands>
 <options>
-	<option name="--help" short="-h" help="Display this help." boolean="1">
+	<option name="--help" short="-h" help="Display this help." boolean="1" required="0">
 		<default>false</default>
 		<choices></choices>
 	</option>
-	<option name="--test" short="" help="A test option." boolean="0">
+	<option name="--test" short="" help="A test option." boolean="0" required="0">
 		<default></default>
 		<choices></choices>
 	</option>
@@ -472,15 +472,15 @@ xml;
 <description/>
 <subcommands/>
 <options>
-	<option name="--connection" short="-c" help="The connection to use." boolean="0">
+	<option name="--connection" short="-c" help="The connection to use." boolean="0" required="0">
 		<default>default</default>
 		<choices></choices>
 	</option>
-	<option name="--help" short="-h" help="Display this help." boolean="1">
+	<option name="--help" short="-h" help="Display this help." boolean="1" required="0">
 		<default>false</default>
 		<choices></choices>
 	</option>
-	<option name="--test" short="" help="A test option." boolean="0">
+	<option name="--test" short="" help="A test option." boolean="0" required="0">
 		<default></default>
 		<choices></choices>
 	</option>
@@ -513,11 +513,11 @@ xml;
 	<description/>
 	<subcommands/>
 	<options>
-		<option name="--help" short="-h" help="Display this help." boolean="1">
+		<option name="--help" short="-h" help="Display this help." boolean="1" required="0">
 			<default>false</default>
 			<choices></choices>
 		</option>
-		<option name="--test" short="" help="A test option." boolean="0">
+		<option name="--test" short="" help="A test option." boolean="0" required="0">
 			<default></default>
 			<choices></choices>
 		</option>

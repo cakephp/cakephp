@@ -148,7 +148,7 @@ class ConsoleInputArgument
      */
     public function isRequired(): bool
     {
-        return (bool)$this->_required;
+        return $this->_required;
     }
 
     /**
