@@ -1582,7 +1582,7 @@ class View implements EventDispatcherInterface
      * @param array $data Data
      * @param array $options Element options
      * @return array Element Cache configuration.
-     * @psalm-param array{cache:(string|array{key:string, config:string}), callbacks:mixed, plugin:mixed} $options
+     * @psalm-param array{cache:(string|array{key:string, config:string}|null), callbacks:mixed, plugin:mixed} $options
      * @psalm-return array{key:string, config:string}
      */
     protected function _elementCache(string $name, array $data, array $options): array
@@ -1614,11 +1614,7 @@ class View implements EventDispatcherInterface
             'key' => implode('_', $keys),
         ];
         if (is_array($cache)) {
-            $defaults = [
-                'config' => $this->elementCache,
-                'key' => $config['key'],
-            ];
-            $config = $cache + $defaults;
+            $config = $cache + $config;
         }
         $config['key'] = 'element_' . $config['key'];
 

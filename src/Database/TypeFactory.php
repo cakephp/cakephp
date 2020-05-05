@@ -128,6 +128,7 @@ class TypeFactory
      *
      * @param string[] $map List of types to be mapped.
      * @return void
+     * @psalm-param array<string, class-string<\Cake\Database\TypeInterface>> $map
      */
     public static function setMap(array $map): void
     {

@@ -191,6 +191,7 @@ class Connection implements ConnectionInterface
     public function setDriver($driver, $config = [])
     {
         if (is_string($driver)) {
+            /** @psalm-var class-string<\Cake\Database\DriverInterface>|null $className */
             $className = App::className($driver, 'Database/Driver');
             if ($className === null) {
                 throw new MissingDriverException(['driver' => $driver]);

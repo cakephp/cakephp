@@ -406,6 +406,8 @@ class DateTimeType extends BaseType
      * @param string $class The classname to use.
      * @param string $fallback The classname to use when the preferred class does not exist.
      * @return void
+     * @psalm-param class-string<\DateTime>|class-string<\DateTimeImmutable> $class
+     * @psalm-param class-string<\DateTime>|class-string<\DateTimeImmutable> $fallback
      */
     protected function _setClassName(string $class, string $fallback): void
     {
