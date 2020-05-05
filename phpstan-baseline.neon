@@ -21,6 +21,16 @@ parameters:
 			path: src/Auth/Storage/SessionStorage.php
 
 		-
+			message: "#^Return type \\(\\$this\\(Cake\\\\Auth\\\\Storage\\\\SessionStorage\\)\\) of method Cake\\\\Auth\\\\Storage\\\\SessionStorage\\:\\:setConfig\\(\\) should be compatible with return type \\(\\$this\\(Cake\\\\Core\\\\InstanceConfigTrait\\)\\) of method Cake\\\\Core\\\\InstanceConfigTrait\\:\\:setConfig\\(\\)$#"
+			count: 1
+			path: src/Auth/Storage/SessionStorage.php
+
+		-
+			message: "#^Return type \\(\\$this\\(Cake\\\\Auth\\\\Storage\\\\SessionStorage\\)\\) of method Cake\\\\Auth\\\\Storage\\\\SessionStorage\\:\\:configShallow\\(\\) should be compatible with return type \\(\\$this\\(Cake\\\\Core\\\\InstanceConfigTrait\\)\\) of method Cake\\\\Core\\\\InstanceConfigTrait\\:\\:configShallow\\(\\)$#"
+			count: 1
+			path: src/Auth/Storage/SessionStorage.php
+
+		-
 			message: "#^Access to undefined constant Memcached\\:\\:OPT_CLIENT_MODE\\.$#"
 			count: 1
 			path: src/Cache/Engine/MemcachedEngine.php
@@ -146,16 +156,6 @@ parameters:
 			path: src/Console/ConsoleOptionParser.php
 
 		-
-			message: "#^Call to an undefined method Cake\\\\Auth\\\\Storage\\\\StorageInterface\\:\\:getConfig\\(\\)\\.$#"
-			count: 1
-			path: src/Controller/Component/AuthComponent.php
-
-		-
-			message: "#^Call to an undefined method Cake\\\\Auth\\\\Storage\\\\StorageInterface\\:\\:setConfig\\(\\)\\.$#"
-			count: 1
-			path: src/Controller/Component/AuthComponent.php
-
-		-
 			message: "#^Property Cake\\\\Controller\\\\Controller\\:\\:\\$response \\(Cake\\\\Http\\\\Response\\) does not accept Psr\\\\Http\\\\Message\\\\ResponseInterface\\.$#"
 			count: 1
 			path: src/Controller/Controller.php
@@ -269,6 +269,16 @@ parameters:
 			message: "#^Result of && is always false\\.$#"
 			count: 1
 			path: src/Datasource/QueryCacher.php
+
+		-
+			message: "#^Parameter \\#1 \\$rules of method Cake\\\\ORM\\\\Table\\:\\:buildRules\\(\\) expects Cake\\\\ORM\\\\RulesChecker, Cake\\\\Datasource\\\\RulesChecker given\\.$#"
+			count: 1
+			path: src/ORM/Table.php
+
+		-
+			message: "#^Variable \\$entities in PHPDoc tag @var does not match any variable in the foreach loop\\: \\$key, \\$entity$#"
+			count: 1
+			path: src/ORM/Table.php
 
 		-
 			message: "#^Cannot unset offset 'args' on array\\('path' \\=\\> string, 'reference' \\=\\> mixed\\)\\.$#"
@@ -391,21 +401,6 @@ parameters:
 			path: src/Mailer/Email.php
 
 		-
-			message: "#^Method Cake\\\\Mailer\\\\Renderer\\:\\:render\\(\\) should return array\\(\\)\\|array\\('html' \\=\\> string, 'text' \\=\\> string\\) but returns array\\<string, string\\>\\.$#"
-			count: 2
-			path: src/Mailer/Renderer.php
-
-		-
-			message: "#^Access to an undefined property Cake\\\\Mailer\\\\Renderer\\:\\:\\$request\\.$#"
-			count: 1
-			path: src/Mailer/Renderer.php
-
-		-
-			message: "#^Access to an undefined property Cake\\\\Mailer\\\\Renderer\\:\\:\\$response\\.$#"
-			count: 1
-			path: src/Mailer/Renderer.php
-
-		-
 			message: "#^Parameter \\#2 \\$callback of function array_filter expects callable\\(mixed, mixed\\)\\: bool, 'strlen' given\\.$#"
 			count: 1
 			path: src/ORM/Association/BelongsToMany.php
@@ -451,13 +446,8 @@ parameters:
 			path: src/ORM/Rule/IsUnique.php
 
 		-
-			message: "#^Variable \\$entities in PHPDoc tag @var does not match any variable in the foreach loop\\: \\$key, \\$entity$#"
-			count: 1
-			path: src/ORM/Table.php
-
-		-
 			message: "#^Parameter \\#1 \\$request of static method Cake\\\\Routing\\\\Router\\:\\:setRequest\\(\\) expects Cake\\\\Http\\\\ServerRequest, Psr\\\\Http\\\\Message\\\\ServerRequestInterface given\\.$#"
-			count: 2
+			count: 1
 			path: src/Routing/Middleware/RoutingMiddleware.php
 
 		-
@@ -561,11 +551,6 @@ parameters:
 			path: src/TestSuite/IntegrationTestCase.php
 
 		-
-			message: "#^Return type \\(array\\<string, array\\|string\\>\\) of method Cake\\\\View\\\\Exception\\\\MissingCellTemplateException\\:\\:getAttributes\\(\\) should be compatible with return type \\(array\\<string, array\\|string\\>\\) of method Cake\\\\View\\\\Exception\\\\MissingTemplateException\\:\\:getAttributes\\(\\)$#"
-			count: 1
-			path: src/View/Exception/MissingCellTemplateException.php
-
-		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/View/Form/ContextFactory.php
@@ -579,4 +564,14 @@ parameters:
 			message: "#^Call to an undefined method DateTimeInterface\\:\\:setTimezone\\(\\)\\.$#"
 			count: 1
 			path: src/View/Helper/TimeHelper.php
+
+		-
+			message: "#^Access to an undefined property Cake\\\\Mailer\\\\Renderer\\:\\:\\$request\\.$#"
+			count: 1
+			path: src/Mailer/Renderer.php
+
+		-
+			message: "#^Access to an undefined property Cake\\\\Mailer\\\\Renderer\\:\\:\\$response\\.$#"
+			count: 1
+			path: src/Mailer/Renderer.php
 

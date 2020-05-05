@@ -26,8 +26,6 @@ use Cake\Routing\RoutingApplicationInterface;
 use Laminas\Diactoros\Stream;
 use LogicException;
 use Psr\Http\Message\ResponseInterface;
-use ReflectionClass;
-use ReflectionException;
 
 /**
  * Dispatches a request capturing the response for integration
@@ -48,7 +46,7 @@ class MiddlewareDispatcher
      * The application class name
      *
      * @var string
-     * @psalm-var class-string
+     * @psalm-var class-string<\Cake\Core\HttpApplicationInterface>
      */
     protected $_class;
 
@@ -62,7 +60,7 @@ class MiddlewareDispatcher
     /**
      * The application that is being dispatched.
      *
-     * @var \Cake\Core\HttpApplicationInterface|\Cake\Core\ConsoleApplicationInterface
+     * @var \Cake\Core\HttpApplicationInterface
      */
     protected $app;
 
@@ -74,7 +72,7 @@ class MiddlewareDispatcher
      * @param array|null $constructorArgs The constructor arguments for your application class.
      *   Defaults to `['./config']`
      * @throws \LogicException If it cannot load class for use in integration testing.
-     * @psalm-param \Cake\Core\HttpApplicationInterface::class|\Cake\Core\ConsoleApplicationInterface::class|null $class
+     * @psalm-param class-string<\Cake\Core\HttpApplicationInterface>|null $class
      */
     public function __construct(
         TestCase $test,
@@ -82,17 +80,18 @@ class MiddlewareDispatcher
         ?array $constructorArgs = null
     ) {
         $this->_test = $test;
-        $this->_class = $class ?: Configure::read('App.namespace') . '\Application';
+        if ($class === null) {
+            /** @psalm-var class-string<\Cake\Core\HttpApplicationInterface> */
+            $class = Configure::read('App.namespace') . '\Application';
+        }
+        $this->_class = $class;
         $this->_constructorArgs = $constructorArgs ?: [CONFIG];
 
-        try {
-            $reflect = new ReflectionClass($this->_class);
-            /** @var \Cake\Core\HttpApplicationInterface $app */
-            $app = $reflect->newInstanceArgs($this->_constructorArgs);
-            $this->app = $app;
-        } catch (ReflectionException $e) {
-            throw new LogicException("Cannot load `{$this->_class}` for use in integration testing.", 0, $e);
+        if (!class_exists($this->_class)) {
+            throw new LogicException("Cannot load `{$this->_class}` for use in integration testing.", 0);
         }
+
+        $this->app = new $this->_class(...$this->_constructorArgs);
     }
 
     /**
@@ -186,17 +185,6 @@ class MiddlewareDispatcher
      */
     public function execute(array $requestSpec): ResponseInterface
     {
-        try {
-            $reflect = new ReflectionClass($this->_class);
-            /** @var \Cake\Core\HttpApplicationInterface $app */
-            $app = $reflect->newInstanceArgs($this->_constructorArgs);
-        } catch (ReflectionException $e) {
-            throw new LogicException(sprintf(
-                'Cannot load "%s" for use in integration testing.',
-                $this->_class
-            ));
-        }
-
         // Spy on the controller using the initialize hook instead
         // of the dispatcher hooks as those will be going away one day.
         EventManager::instance()->on(
@@ -204,7 +192,7 @@ class MiddlewareDispatcher
             [$this->_test, 'controllerSpy']
         );
 
-        $server = new Server($app);
+        $server = new Server($this->app);
 
         return $server->run($this->_createRequest($requestSpec));
     }
