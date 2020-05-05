@@ -24,8 +24,6 @@ use Cake\Database\Query;
 use Cake\Database\QueryCompiler;
 use Cake\Database\Schema\PostgresSchemaDialect;
 use Cake\Database\Schema\SchemaDialect;
-use Cake\Database\ValueBinder;
-use Cake\Utility\Hash;
 use PDO;
 
 /**
@@ -313,32 +311,10 @@ class Postgres extends Driver
         $intervalExp->combineIntervalSqlOptions([
             'wrap' => ['date' => ['suffix' => '::timestamp']],
             'format' => [
-                'YEAR_MONTH' => function (array $options, array $interval): array {
-                    return [
-                        sprintf(
-                            "%s'%s'%s",
-                            Hash::get($options, 'wrap.inner.prefix'),
-                            $interval['YEAR'] . ' year ' . $interval['MONTH'] . ' month',
-                            Hash::get($options, 'wrap.inner.suffix')
-                        ),
-                    ];
-                },
-                'DAY_HOUR_MINUTE_SECOND' => function (array $options, array $interval): array {
-                    return [
-                        sprintf(
-                            "%s'%s'%s",
-                            Hash::get($options, 'wrap.inner.prefix'),
-                            sprintf(
-                                '%02d %02d:%02d:%09.6f',
-                                $interval['DAY'],
-                                $interval['HOUR'],
-                                $interval['MINUTE'],
-                                $interval['SECOND']
-                            ),
-                            Hash::get($options, 'wrap.inner.suffix')
-                        ),
-                    ];
-                },
+                'inner' => [
+                    'YEAR_MONTH' => "'%d year %d month'",
+                    'DAY_MICROSECOND' => "'%02d %02d:%02d:%09.6f'",
+                ],
             ],
         ]);
     }

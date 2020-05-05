@@ -69,11 +69,11 @@ class DateTimeIntervalExpression extends IntervalExpression implements Expressio
                 $ph = $generator->placeholder('intervalParam');
                 $generator->bind($ph, $subject, 'datetimefractional');
                 $sql .= Hash::get($options, 'wrap.date.prefix') . $ph .
-                    Hash::get($options, 'wrap.date.suffix');
+                    Hash::get($options, 'wrap.date.suffix') . $options['glue'];
             }
         }
 
-        return $sql . $options['glue'] . parent::sql($generator);
+        return $sql . parent::sql($generator);
     }
 
     /**

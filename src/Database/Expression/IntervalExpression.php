@@ -88,21 +88,11 @@ class IntervalExpression implements ExpressionInterface
         } else {
             $intervalAry = [];
             if ($interval['YEAR'] || $interval['MONTH']) {
-                $formatFnc = Hash::get($options, 'format.YEAR_MONTH');
-                $intervalAry = array_merge(
-                    $intervalAry,
-                    $formatFnc instanceof \Closure ?
-                        $formatFnc($options, $interval) : self::formatYearMonth($options, $interval)
-                );
+                $intervalAry = array_merge($intervalAry, static::format('YEAR_MONTH', $options, $interval));
             }
             unset($interval['YEAR'], $interval['MONTH']);
             if (!empty($interval)) {
-                $formatFnc = Hash::get($options, 'format.DAY_HOUR_MINUTE_SECOND');
-                $intervalAry = array_merge(
-                    $intervalAry,
-                    $formatFnc instanceof \Closure ?
-                        $formatFnc($options, $interval) : self::formatDayHourMinuteSecond($options, $interval)
-                );
+                $intervalAry = array_merge($intervalAry, static::format('DAY_MICROSECOND', $options, $interval));
             }
             $sql = Hash::get($options, 'wrap.prefix') . implode($options['glue'], $intervalAry) .
                 Hash::get($options, 'wrap.suffix');
@@ -147,7 +137,7 @@ class IntervalExpression implements ExpressionInterface
      *
      * @return array
      */
-    public function getIntervalSqlOptions(): array
+    protected function getIntervalSqlOptions(): array
     {
         return $this->intervalSqlOptions;
     }
@@ -168,7 +158,7 @@ class IntervalExpression implements ExpressionInterface
      * @throws \Exception When interval value is not valid.
      * @return $this
      */
-    public function setInterval(DateInterval $interval)
+    protected function setInterval(DateInterval $interval)
     {
         $isValid = ($interval->y + $interval->m + $interval->d +
             $interval->h + $interval->i + $interval->s + $interval->f) !== 0;
@@ -187,7 +177,7 @@ class IntervalExpression implements ExpressionInterface
      *
      * @return \DateInterval
      */
-    public function getInterval(): DateInterval
+    protected function getInterval(): DateInterval
     {
         return $this->interval;
     }
@@ -231,8 +221,12 @@ class IntervalExpression implements ExpressionInterface
              'multiple' => false,
              'overrideCallback' => null,
              'format' => [
-                 'YEAR_MONTH' => null,
-                 'DAY_HOUR_MINUTE_SECOND' => null,
+                 'default' => "%s%s%s",
+                 'inner' => [
+                     'default' => "%d %s",
+                     'YEAR_MONTH' => "'%d-%d' %s",
+                     'DAY_MICROSECOND' => "'%02d %02d:%02d:%09.6f' %s",
+                 ],
              ],
              'wrap' => [
                  'prefix' => '',
@@ -255,38 +249,47 @@ class IntervalExpression implements ExpressionInterface
     /**
      * TODO: DOCUMENTATION
      */
-    private static function formatYearMonth(array $options, array $interval): array
+    private static function format(string $key, array $options, array $interval): array
     {
-        return [
-            sprintf(
-                "%s'%s' %s%s",
-                Hash::get($options, 'wrap.inner.prefix'),
-                $interval['YEAR'] . '-' . $interval['MONTH'],
-                'YEAR_MONTH',
-                Hash::get($options, 'wrap.inner.suffix')
-            ),
-        ];
-    }
-
-    /**
-     * TODO: DOCUMENTATION
-     */
-    private static function formatDayHourMinuteSecond(array $options, array $interval): array
-    {
-        return [
-            sprintf(
-                "%s'%s' %s%s",
-                Hash::get($options, 'wrap.inner.prefix'),
+        if ($key == 'YEAR_MONTH') {
+            return [
                 sprintf(
-                    '%02d %02d:%02d:%09.6f',
-                    $interval['DAY'],
-                    $interval['HOUR'],
-                    $interval['MINUTE'],
-                    $interval['SECOND']
+                    Hash::get($options, 'format.default'),
+                    Hash::get($options, 'wrap.inner.prefix'),
+                    sprintf(
+                        Hash::get($options, 'format.inner.YEAR_MONTH'),
+                        $interval['YEAR'],
+                        $interval['MONTH'],
+                        $key
+                    ),
+                    Hash::get($options, 'wrap.inner.suffix')
                 ),
-                'DAY_MICROSECOND',
-                Hash::get($options, 'wrap.inner.suffix')
-            ),
-        ];
+            ];
+        } elseif ($key == 'DAY_MICROSECOND') {
+            return [
+                sprintf(
+                    Hash::get($options, 'format.default'),
+                    Hash::get($options, 'wrap.inner.prefix'),
+                    sprintf(
+                        Hash::get($options, 'format.inner.DAY_MICROSECOND'),
+                        $interval['DAY'],
+                        $interval['HOUR'],
+                        $interval['MINUTE'],
+                        $interval['SECOND'],
+                        $key
+                    ),
+                    Hash::get($options, 'wrap.inner.suffix')
+                ),
+            ];
+        } elseif (isset($interval[$key])) {
+            return [
+                sprintf(
+                    Hash::get($options, 'format.default'),
+                    Hash::get($options, 'wrap.inner.prefix'),
+                    sprintf(Hash::get($options, 'format.inner.default'), $interval[$key], $key),
+                    Hash::get($options, 'wrap.inner.suffix')
+                ),
+            ];
+        }
     }
 }
