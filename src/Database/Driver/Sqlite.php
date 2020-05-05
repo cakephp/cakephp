@@ -28,6 +28,7 @@ use Cake\Database\SqliteCompiler;
 use Cake\Database\Statement\PDOStatement;
 use Cake\Database\Statement\SqliteStatement;
 use Cake\Database\StatementInterface;
+use Cake\Database\ValueBinder;
 use InvalidArgumentException;
 use PDO;
 
@@ -348,19 +349,23 @@ class Sqlite extends Driver
      */
     protected function transformIntervalExpression(IntervalExpression $intervalExp): void
     {
-        $fieldValue = $intervalExp->getSubject();
-        $types = [];
-        if ($fieldValue instanceof \DateTimeInterface) {
-            $types[] = 'datetimefractional';
-        }
-        $sign = $intervalExp->getIntervalSign();
-        $function = (new FunctionExpression('strftime', ["'%Y-%m-%d %H:%M:%f'" => 'literal']))
-            ->add([$fieldValue], $types);
-        $interval = IntervalExpression::transformForDatabase($intervalExp->getInterval());
-        foreach ($interval as $iUnit => $iValue) {
-            $intervalStr = (($sign . '1') * $iValue) . ' ' . $iUnit;
-            $function->add([$intervalStr]);
-        }
-        $intervalExp->setOverrideExpression($function);
+        $intervalExp->combineIntervalSqlOptions([
+            'overrideCallback' =>
+                function (IntervalExpression $intervalExp, array $interval, ValueBinder $generator) {
+                    $intervalAry = array_filter($interval);
+                    $subject = $intervalExp->getSubject();
+                    $types = [];
+                    if ($subject instanceof \DateTimeInterface) {
+                        $types[] = 'datetimefractional';
+                    }
+                    $function = (new FunctionExpression('strftime', ["'%Y-%m-%d %H:%M:%f'" => 'literal']))
+                        ->add([$subject], $types);
+                    foreach ($intervalAry as $unit => $value) {
+                        $function->add([$value . ' ' . $unit]);
+                    }
+
+                    return $function;
+                },
+        ]);
     }
 }
