@@ -551,24 +551,30 @@ class Sqlserver extends Driver
      */
     protected function transformIntervalExpression(IntervalExpression $intervalExp): void
     {
-        $fieldValue = $intervalExp->getSubject();
-        $types = [];
-        if ($fieldValue instanceof \DateTimeInterface) {
-            $types[] = 'datetimefractional';
-        }
-        $sign = $intervalExp->getIntervalSign();
-        $function = null;
-        $interval = IntervalExpression::transformForDatabase($intervalExp->getInterval(), false);
-        foreach ($interval as $iUnit => $iValue) {
-            if (!$function) {
-                $function = (new FunctionExpression('DATEADD', []))
-                    ->add([$iUnit, ($sign . '1') * $iValue])
-                    ->add([$fieldValue], $types);
-            } else {
-                $function = (new FunctionExpression('DATEADD', []))
-                    ->add([$iUnit, ($sign . '1') * $iValue, $function]);
-            }
-        }
-        $intervalExp->setOverrideExpression($function);
+        $intervalExp->combineIntervalSqlOptions([
+            'overrideCallback' =>
+                function (IntervalExpression $intervalExp, array $interval, ValueBinder $generator) {
+                    $fieldValue = $intervalExp->getSubject();
+                    $types = [];
+                    if ($fieldValue instanceof \DateTimeInterface) {
+                        $types[] = 'datetimefractional';
+                    }
+                    $function = null;
+                    $interval = array_filter($interval);
+                    foreach ($interval as $iUnit => $iValue) {
+                        $iUnit = strtolower($iUnit);
+                        if (!$function) {
+                            $function = (new FunctionExpression('DATEADD', []))
+                                ->add([$iUnit => 'literal', $iValue => 'literal'])
+                                ->add([$fieldValue], $types);
+                        } else {
+                            $function = (new FunctionExpression('DATEADD', []))
+                                ->add([$iUnit => 'literal', $iValue => 'literal', $function]);
+                        }
+                    }
+
+                    return $function;
+                },
+        ]);
     }
 }
