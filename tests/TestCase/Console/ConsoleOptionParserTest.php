@@ -333,11 +333,11 @@ class ConsoleOptionParserTest extends TestCase
     }
 
     /**
-     * test adding a required option.
+     * test adding a required option with a default.
      *
      * @return void
      */
-    public function testAddOptionRequired()
+    public function testAddOptionRequiredDefaultValue()
     {
         $parser = new ConsoleOptionParser('test', false);
         $parser
@@ -359,6 +359,24 @@ class ConsoleOptionParserTest extends TestCase
             ['no-default' => 'value', 'help' => false, 'test' => 'default value'],
             $result[0]
         );
+    }
+
+    /**
+     * test adding a required option that is missing.
+     *
+     * @return void
+     */
+    public function testAddOptionRequiredMissing()
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser
+            ->addOption('test', [
+                'default' => 'default value',
+                'required' => true,
+            ])
+            ->addOption('no-default', [
+                'required' => true,
+            ]);
 
         $this->expectException(ConsoleException::class);
         $parser->parse(['--test']);
