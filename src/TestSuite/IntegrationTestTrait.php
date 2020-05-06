@@ -408,7 +408,6 @@ trait IntegrationTestTrait
      *
      * @param string|array $url The URL to request.
      * @return void
-     * @throws \PHPUnit\Exception
      */
     public function get($url)
     {
@@ -425,7 +424,6 @@ trait IntegrationTestTrait
      * @param string|array $url The URL to request.
      * @param string|array|null $data The data for the request.
      * @return void
-     * @throws \PHPUnit\Exception
      */
     public function post($url, $data = [])
     {
@@ -442,7 +440,6 @@ trait IntegrationTestTrait
      * @param string|array $url The URL to request.
      * @param string|array|null $data The data for the request.
      * @return void
-     * @throws \PHPUnit\Exception
      */
     public function patch($url, $data = [])
     {
@@ -459,7 +456,6 @@ trait IntegrationTestTrait
      * @param string|array $url The URL to request.
      * @param string|array|null $data The data for the request.
      * @return void
-     * @throws \PHPUnit\Exception
      */
     public function put($url, $data = [])
     {
@@ -475,7 +471,6 @@ trait IntegrationTestTrait
      *
      * @param string|array $url The URL to request.
      * @return void
-     * @throws \PHPUnit\Exception
      */
     public function delete($url)
     {
@@ -491,7 +486,6 @@ trait IntegrationTestTrait
      *
      * @param string|array $url The URL to request.
      * @return void
-     * @throws \PHPUnit\Exception
      */
     public function head($url)
     {
@@ -507,7 +501,6 @@ trait IntegrationTestTrait
      *
      * @param string|array $url The URL to request.
      * @return void
-     * @throws \PHPUnit\Exception
      */
     public function options($url)
     {
@@ -538,11 +531,7 @@ trait IntegrationTestTrait
                 $this->_requestSession->write('Flash', $this->_flashMessages);
             }
             $this->_response = $response;
-        } catch (PhpUnitException $e) {
-            throw $e;
-        } catch (DatabaseException $e) {
-            throw $e;
-        } catch (LogicException $e) {
+        } catch (PhpUnitException | DatabaseException | LogicException $e) {
             throw $e;
         } catch (Exception $e) {
             $this->_exception = $e;
