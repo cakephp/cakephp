@@ -17,6 +17,8 @@ declare(strict_types=1);
 namespace Cake\Database\Driver;
 
 use Cake\Database\Driver;
+use Cake\Database\Exception;
+use Cake\Database\Expression\DateTimeIntervalExpression;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\IntervalExpression;
 use Cake\Database\Expression\TupleComparison;
@@ -351,7 +353,10 @@ class Sqlite extends Driver
     {
         $intervalExp->combineIntervalSqlOptions([
             'overrideCallback' =>
-                function (IntervalExpression $intervalExp, array $interval, ValueBinder $generator) {
+                function (DateTimeIntervalExpression $intervalExp, array $interval) {
+                    if (!($intervalExp instanceof DateTimeIntervalExpression)) {
+                        throw new Exception('SQLite does not support date intervals within window frames.');
+                    }
                     $intervalAry = array_filter($interval);
                     $subject = $intervalExp->getSubject();
                     $types = [];
