@@ -59,8 +59,7 @@ use Cake\Utility\Hash;
 use Cake\Utility\Security;
 use Exception;
 use Laminas\Diactoros\Uri;
-use LogicException;
-use PHPUnit\Framework\Error\Error as PhpUnitError;
+use PHPUnit\Exception as PHPUnitException;
 use Throwable;
 
 /**
@@ -487,7 +486,7 @@ trait IntegrationTestTrait
      * @param string $method The HTTP method
      * @param string|array $data The request data.
      * @return void
-     * @throws \PHPUnit\Framework\Error\Error|\Throwable
+     * @throws \PHPUnit\Exception|\Throwable
      */
     protected function _sendRequest($url, $method, $data = []): void
     {
@@ -502,7 +501,7 @@ trait IntegrationTestTrait
                 $this->_requestSession->write('Flash', $this->_flashMessages);
             }
             $this->_response = $response;
-        } catch (PhpUnitError | DatabaseException | LogicException $e) {
+        } catch (PHPUnitException | DatabaseException $e) {
             throw $e;
         } catch (Throwable $e) {
             $this->_exception = $e;
