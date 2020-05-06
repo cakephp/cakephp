@@ -62,9 +62,8 @@ class IntervalExpression implements ExpressionInterface
      * object as well as an interval object to use as the values to construct
      * the interval SQL.
      *
-     * @param mixed $fieldOrValue The value or identifier to be modified.
      * @param \DateInterval $interval The interval value as a DateInterval object.
-     * @throws \Exception When interval object is invalid.
+     * @throws \Exception Thrown when interval object is invalid.
      */
     public function __construct(DateInterval $interval)
     {
@@ -78,7 +77,7 @@ class IntervalExpression implements ExpressionInterface
     {
         $interval = self::transformForDatabase($this->getInterval());
         $options = $this->getIntervalSqlOptions();
-        if ($options['overrideCallback'] instanceof \Closure) {
+        if ($options['overrideCallback'] instanceof Closure) {
             $options['overrideCallback'] = $options['overrideCallback']($this, $interval, $generator);
         }
         if ($options['overrideCallback'] instanceof ExpressionInterface) {
@@ -107,10 +106,6 @@ class IntervalExpression implements ExpressionInterface
      */
     public function traverse(Closure $callable)
     {
-        if ($this->getSubject() instanceof ExpressionInterface) {
-            $this->getSubject()->traverse($callable);
-        }
-
         return $this;
     }
 
@@ -119,6 +114,7 @@ class IntervalExpression implements ExpressionInterface
      * parameter.
      *
      * @param array $options An array of options.
+     * @param bool $replace Boolean value to indicate if the entire options array should be replaced.
      * @return $this
      */
     public function combineIntervalSqlOptions(array $options, $replace = false)
@@ -205,7 +201,7 @@ class IntervalExpression implements ExpressionInterface
         }
 
         return array_map(function ($number) use ($di) {
-            return static::setNumericSign($di->invert, $number);
+            return static::setNumericSign($di->invert == true, $number);
         }, $intervalAry);
     }
 
@@ -239,15 +235,25 @@ class IntervalExpression implements ExpressionInterface
     }
 
     /**
-     * TODO: DOCUMENTATION
+     * Method to ensure the proper numeric positive/negative is used.
+     *
+     * @param bool $negative Boolean value indicating if $number is supposed to be negative.
+     * @param int|float $number The number that may need to be flipped between positive and negative.
+     * @return int|float
      */
-    private static function setNumericSign($sign, $number)
+    private static function setNumericSign(bool $negative, $number)
     {
-        return $sign === '-' && $number >= 0 ? (-1 * $number) : $number;
+        return $negative && $number >= 0 ? (-1 * $number) : $number;
     }
 
     /**
-     * TODO: DOCUMENTATION
+     * Method to format the return value based on a key utilizing the
+     * formatting properties within the sql options array.
+     *
+     * @param string $key The key to identify what field is being formatted.
+     * @param array $options The options sql options array.
+     * @param array $interval The processed interval values array.
+     * @return string[]
      */
     private static function format(string $key, array $options, array $interval): array
     {
@@ -291,5 +297,7 @@ class IntervalExpression implements ExpressionInterface
                 ),
             ];
         }
+
+        return [];
     }
 }
