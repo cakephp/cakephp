@@ -3186,7 +3186,7 @@ class MarshallerTest extends TestCase
         $marshall = new Marshaller($this->articles);
 
         // Assert event options are correct
-        $this->articles->users->getEventManager()->on(
+        $this->articles->Users->getEventManager()->on(
             'Model.beforeMarshal',
             function ($e, $data, $options) {
                 $this->assertArrayHasKey('validate', $options);
@@ -3200,28 +3200,28 @@ class MarshallerTest extends TestCase
             }
         );
 
-        $this->articles->users->getEventManager()->on(
+        $this->articles->Users->getEventManager()->on(
             'Model.beforeMarshal',
             function ($e, $data, $options) {
                 $data['secret'] = 'h45h3d';
             }
         );
 
-        $this->articles->comments->getEventManager()->on(
+        $this->articles->Comments->getEventManager()->on(
             'Model.beforeMarshal',
             function ($e, $data) {
                 $data['comment'] .= ' (modified)';
             }
         );
 
-        $this->articles->tags->getEventManager()->on(
+        $this->articles->Tags->getEventManager()->on(
             'Model.beforeMarshal',
             function ($e, $data) {
                 $data['tag'] .= ' (modified)';
             }
         );
 
-        $this->articles->tags->junction()->getEventManager()->on(
+        $this->articles->Tags->junction()->getEventManager()->on(
             'Model.beforeMarshal',
             function ($e, $data) {
                 $data['modified_by'] = 1;

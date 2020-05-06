@@ -132,7 +132,7 @@ class LinkConstraintTest extends TestCase
     public function testNonExistentAssociation(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The NonExistent association is not defined on Articles.');
+        $this->expectExceptionMessage('The `NonExistent` association is not defined on `Articles`.');
 
         $Articles = $this->getTableLocator()->get('Articles');
 

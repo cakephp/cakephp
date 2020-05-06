@@ -46,6 +46,7 @@ use InvalidArgumentException;
 use RuntimeException;
 use TestApp\Model\Entity\ProtectedEntity;
 use TestApp\Model\Entity\VirtualUser;
+use TestApp\Model\Table\ArticlesTable;
 use TestApp\Model\Table\UsersTable;
 
 /**
@@ -623,6 +624,19 @@ class TableTest extends TestCase
         );
     }
 
+    public function testGetAssociationWithIncorrectCasing()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            "The `authors` association is not defined on `Articles`.\n"
+            . "Valid associations are: Authors, Tags, ArticlesTags"
+        );
+
+        $articles = $this->getTableLocator()->get('Articles', ['className' => ArticlesTable::class]);
+
+        $articles->getAssociation('authors');
+    }
+
     /**
      * Tests that the getAssociation() method throws an exception on non-existent ones.
      *
@@ -631,6 +645,7 @@ class TableTest extends TestCase
     public function testGetAssociationNonExistent()
     {
         $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The `FooBar` association is not defined on `Sections`.');
 
         $this->getTableLocator()->get('Sections')->getAssociation('FooBar');
     }
@@ -1593,7 +1608,7 @@ class TableTest extends TestCase
         $table = new \TestApp\Model\Table\ArticlesTable([
             'connection' => $this->connection,
         ]);
-        $result = $table->find('all')->contain(['Authors' => ['Articles']])->first();
+        $result = $table->find('all')->contain(['Authors' => ['articles']])->first();
         $this->assertCount(2, $result->author->articles);
         foreach ($result->author->articles as $article) {
             $this->assertInstanceOf('TestApp\Model\Entity\Article', $article);
@@ -1657,7 +1672,7 @@ class TableTest extends TestCase
         $table = new \TestApp\Model\Table\ArticlesTable([
             'connection' => $this->connection,
         ]);
-        $results = $table->find('all')->contain(['tags', 'authors'])->toArray();
+        $results = $table->find('all')->contain(['Tags', 'Authors'])->toArray();
         $this->assertCount(3, $results);
         foreach ($results as $article) {
             $this->assertFalse($article->isNew());
@@ -3040,7 +3055,7 @@ class TableTest extends TestCase
         $entity = $query->first();
         $table->delete($entity);
 
-        $junction = $table->getAssociation('tags')->junction();
+        $junction = $table->getAssociation('tag')->junction();
         $query = $junction->find('all')->where(['article_id' => 1]);
         $this->assertNull($query->all()->first(), 'Should not find any rows.');
     }
@@ -3869,7 +3884,7 @@ class TableTest extends TestCase
     public function testSaveBelongsToManyJoinData()
     {
         $articles = $this->getTableLocator()->get('Articles');
-        $article = $articles->get(1, ['contain' => ['tags']]);
+        $article = $articles->get(1, ['contain' => ['Tags']]);
         $data = [
             'tags' => [
                 ['id' => 1, '_joinData' => ['highlighted' => 1]],
@@ -4657,7 +4672,7 @@ class TableTest extends TestCase
             ->getMock();
         $hasManyArticles->method('getTarget')->willReturn($articles);
 
-        $associations->add('articles', $hasManyArticles);
+        $associations->add('Articles', $hasManyArticles);
 
         $authors = new Table([
             'connection' => $this->connection,
@@ -4867,7 +4882,7 @@ class TableTest extends TestCase
 
         $article = $table->find('all')
             ->where(['id' => 1])
-            ->contain(['tags'])->first();
+            ->contain(['Tags'])->first();
 
         $table->getAssociation('Tags')->unlink($article, [$article->tags[0]]);
         $this->assertCount(1, $article->tags);
@@ -5074,8 +5089,8 @@ class TableTest extends TestCase
             'checkRules' => true,
             'checkExisting' => true,
             'associated' => [
-                'articles' => [],
-                'tags' => [],
+                'Articles' => [],
+                'Tags' => [],
             ],
         ];
         $this->assertEquals($expected, $actualOptions);
@@ -5242,9 +5257,9 @@ class TableTest extends TestCase
             'checkExisting' => true,
             '_sourceTable' => $authors,
             'associated' => [
-                'authors' => [],
-                'tags' => [],
-                'articlestags' => [],
+                'Authors' => [],
+                'Tags' => [],
+                'ArticlesTags' => [],
             ],
         ];
         $this->assertEquals($expected, $actualOptions);
@@ -5333,9 +5348,9 @@ class TableTest extends TestCase
             'checkExisting' => true,
             '_sourceTable' => $authors,
             'associated' => [
-                'authors' => [],
-                'tags' => [],
-                'articlestags' => [],
+                'Authors' => [],
+                'Tags' => [],
+                'ArticlesTags' => [],
             ],
         ];
         $this->assertEquals($expected, $actualSaveOptions);
@@ -5760,7 +5775,7 @@ class TableTest extends TestCase
             'table' => 'articles',
             'alias' => 'articles',
             'entityClass' => 'TestApp\Model\Entity\Article',
-            'associations' => ['authors', 'tags', 'articlestags'],
+            'associations' => ['Authors', 'Tags', 'ArticlesTags'],
             'behaviors' => ['Timestamp'],
             'defaultConnection' => 'default',
             'connectionName' => 'test',
