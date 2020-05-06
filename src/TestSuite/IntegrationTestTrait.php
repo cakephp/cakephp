@@ -379,7 +379,6 @@ trait IntegrationTestTrait
      *
      * @param string|array $url The URL to request.
      * @return void
-     * @throws \PHPUnit\Framework\Error\Error|\Throwable
      */
     public function get($url): void
     {
@@ -396,7 +395,6 @@ trait IntegrationTestTrait
      * @param string|array $url The URL to request.
      * @param string|array $data The data for the request.
      * @return void
-     * @throws \PHPUnit\Framework\Error\Error|\Throwable
      */
     public function post($url, $data = []): void
     {
@@ -413,7 +411,6 @@ trait IntegrationTestTrait
      * @param string|array $url The URL to request.
      * @param string|array $data The data for the request.
      * @return void
-     * @throws \PHPUnit\Framework\Error\Error|\Throwable
      */
     public function patch($url, $data = []): void
     {
@@ -430,7 +427,6 @@ trait IntegrationTestTrait
      * @param string|array $url The URL to request.
      * @param string|array $data The data for the request.
      * @return void
-     * @throws \PHPUnit\Framework\Error\Error|\Throwable
      */
     public function put($url, $data = []): void
     {
@@ -446,7 +442,6 @@ trait IntegrationTestTrait
      *
      * @param string|array $url The URL to request.
      * @return void
-     * @throws \PHPUnit\Framework\Error\Error|\Throwable
      */
     public function delete($url): void
     {
@@ -462,7 +457,6 @@ trait IntegrationTestTrait
      *
      * @param string|array $url The URL to request.
      * @return void
-     * @throws \PHPUnit\Framework\Error\Error|\Throwable
      */
     public function head($url): void
     {
@@ -478,7 +472,6 @@ trait IntegrationTestTrait
      *
      * @param string|array $url The URL to request.
      * @return void
-     * @throws \PHPUnit\Framework\Error\Error|\Throwable
      */
     public function options($url): void
     {
@@ -509,11 +502,7 @@ trait IntegrationTestTrait
                 $this->_requestSession->write('Flash', $this->_flashMessages);
             }
             $this->_response = $response;
-        } catch (PhpUnitError $e) {
-            throw $e;
-        } catch (DatabaseException $e) {
-            throw $e;
-        } catch (LogicException $e) {
+        } catch (PhpUnitError | DatabaseException | LogicException $e) {
             throw $e;
         } catch (Throwable $e) {
             $this->_exception = $e;
