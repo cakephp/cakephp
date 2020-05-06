@@ -56,7 +56,7 @@ use Cake\View\Helper\SecureFieldTokenTrait;
 use Exception;
 use Laminas\Diactoros\Uri;
 use LogicException;
-use PHPUnit\Exception as PhpunitException;
+use PHPUnit\Exception as PhpUnitException;
 
 /**
  * A trait intended to make integration tests of your controllers easier.
