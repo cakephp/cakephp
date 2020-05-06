@@ -77,13 +77,14 @@ class IntervalExpression implements ExpressionInterface
     {
         $interval = self::transformForDatabase($this->getInterval());
         $options = $this->getIntervalSqlOptions();
-        if ($options['overrideCallback'] instanceof Closure) {
-            $options['overrideCallback'] = $options['overrideCallback']($this, $interval, $generator);
+        $override = Hash::get($options, 'overrideCallback');
+        if ($override instanceof Closure) {
+            $override = $override($this, $interval, $generator);
         }
-        if ($options['overrideCallback'] instanceof ExpressionInterface) {
-            $sql = $options['overrideCallback']->sql($generator);
-        } elseif (is_string($options['overrideCallback']) && !empty($options['overrideCallback'])) {
-            $sql = $options['overrideCallback'];
+        if ($override instanceof ExpressionInterface) {
+            $sql = $override->sql($generator);
+        } elseif (is_string($override) && !empty($override)) {
+            $sql = $override;
         } else {
             $intervalAry = [];
             if ($interval['YEAR'] || $interval['MONTH']) {
