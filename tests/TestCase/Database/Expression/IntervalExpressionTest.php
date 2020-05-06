@@ -84,11 +84,10 @@ class IntervalExpressionTest extends TestCase
             new FrozenTime(self::$data['date'], self::$data['tz']),
             self::$data['dtInterval']
         );
-        $query = new Query($this->connection);
-        $query->select([ $iExp ]);
-        $stm = $query->execute();
-        $result = $stm->fetchColumn(0);
-        $resultDt = Type::build('datetimefractional')->toPHP($result, $this->connection->getDriver());
+        $resultDt = Type::build('datetimefractional')->toPHP(
+            (new Query($this->connection))->select([ $iExp ])->execute()->fetchColumn(0),
+            $this->connection->getDriver()
+        );
         $this->assertGreaterThanOrEqual(
             new FrozenTime('2023-05-27 02:05:06.429', self::$data['tz']),
             $resultDt
