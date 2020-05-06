@@ -158,7 +158,7 @@ class IntervalExpression implements ExpressionInterface
     protected function setInterval(DateInterval $interval)
     {
         $isValid = ($interval->y + $interval->m + $interval->d +
-            $interval->h + $interval->i + $interval->s + $interval->f) !== 0;
+            $interval->h + $interval->i + $interval->s + $interval->f) !== 0.0;
         if (!$isValid) {
             throw new Exception(
                 'Interval needs to be greater than zero. Note that relative intervals are not supported.'
