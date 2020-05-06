@@ -60,7 +60,8 @@ class DateTimeIntervalExpression extends IntervalExpression implements Expressio
     {
         $sql = '';
         $options = $this->getIntervalSqlOptions();
-        if (!($options['overrideCallback'] instanceof Closure)) {
+        $override = Hash::get($options, 'overrideCallback');
+        if (!($override instanceof Closure)) {
             $subject = $this->getSubject();
             if ($subject instanceof ExpressionInterface) {
                 $sql .= '(' . $subject->sql($generator) . ')';
