@@ -352,7 +352,7 @@ class Sqlite extends Driver
     {
         $intervalExp->combineIntervalSqlOptions([
             'overrideCallback' =>
-                function (DateTimeIntervalExpression $intervalExp, array $interval) {
+                function (IntervalExpression $intervalExp, array $interval) {
                     if (!($intervalExp instanceof DateTimeIntervalExpression)) {
                         throw new Exception('SQLite does not support date intervals within window frames.');
                     }
