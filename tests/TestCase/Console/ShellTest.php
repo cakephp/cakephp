@@ -1252,7 +1252,7 @@ TEXT;
 
         $io->expects($this->once())
             ->method('error')
-            ->with('Error: Missing required arguments. The `filename` argument is required.');
+            ->with('Error: Missing required argument. The `filename` argument is required.');
         $result = $shell->runCommand([]);
         $this->assertFalse($result, 'Shell should fail');
     }

@@ -17,6 +17,8 @@ declare(strict_types=1);
 namespace Cake\Database\Driver;
 
 use Cake\Database\Driver;
+use Cake\Database\Exception;
+use Cake\Database\Expression\DateTimeIntervalExpression;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\IntervalExpression;
 use Cake\Database\Expression\OrderByExpression;
@@ -551,24 +553,33 @@ class Sqlserver extends Driver
      */
     protected function transformIntervalExpression(IntervalExpression $intervalExp): void
     {
-        $fieldValue = $intervalExp->getSubject();
-        $types = [];
-        if ($fieldValue instanceof \DateTimeInterface) {
-            $types[] = 'datetimefractional';
-        }
-        $sign = $intervalExp->getIntervalSign();
-        $function = null;
-        $interval = IntervalExpression::transformForDatabase($intervalExp->getInterval(), false);
-        foreach ($interval as $iUnit => $iValue) {
-            if (!$function) {
-                $function = (new FunctionExpression('DATEADD', []))
-                    ->add([$iUnit, ($sign . '1') * $iValue])
-                    ->add([$fieldValue], $types);
-            } else {
-                $function = (new FunctionExpression('DATEADD', []))
-                    ->add([$iUnit, ($sign . '1') * $iValue, $function]);
-            }
-        }
-        $intervalExp->setOverrideExpression($function);
+        $intervalExp->combineIntervalSqlOptions([
+            'overrideCallback' =>
+                function (IntervalExpression $intervalExp, array $interval) {
+                    if (!($intervalExp instanceof DateTimeIntervalExpression)) {
+                        throw new Exception('SQL Server does not support date intervals within window frames.');
+                    }
+                    $fieldValue = $intervalExp->getSubject();
+                    $types = [];
+                    if ($fieldValue instanceof \DateTimeInterface) {
+                        $types[] = 'datetimefractional';
+                    }
+                    $function = null;
+                    $interval = array_filter($interval);
+                    foreach ($interval as $iUnit => $iValue) {
+                        $iUnit = strtolower($iUnit);
+                        if (!$function) {
+                            $function = (new FunctionExpression('DATEADD', []))
+                                ->add([$iUnit => 'literal', $iValue => 'literal'])
+                                ->add([$fieldValue], $types);
+                        } else {
+                            $function = (new FunctionExpression('DATEADD', []))
+                                ->add([$iUnit => 'literal', $iValue => 'literal', $function]);
+                        }
+                    }
+
+                    return $function;
+                },
+        ]);
     }
 }

@@ -22,7 +22,6 @@ use Cake\Database\ValueBinder;
 use Cake\Utility\Hash;
 use Closure;
 use DateInterval;
-use DateTimeInterface;
 
 /**
  * An expression object to generate the SQL for an interval expression.
@@ -34,14 +33,14 @@ class IntervalExpression implements ExpressionInterface
      *
      * @var array
      */
-    protected const KEYS_REQUIRED = ['y' => 1, 'm' => 1, 'd' => 1, 'h' => 1, 'i' => 1, 's' => 1, 'f' => 1];
+    private const KEYS_REQUIRED = ['y' => 1, 'm' => 1, 'd' => 1, 'h' => 1, 'i' => 1, 's' => 1, 'f' => 1];
 
     /**
      * SQL unit values for DateInterval array conversion.
      *
      * @var string[]
      */
-    protected const KEYS_TRANSFORM = ['YEAR', 'MONTH', 'DAY', 'HOUR', 'MINUTE', 'SECOND', 'MICROSECOND'];
+    private const KEYS_TRANSFORM = ['YEAR', 'MONTH', 'DAY', 'HOUR', 'MINUTE', 'SECOND', 'MICROSECOND'];
 
     /**
      * The interval object used to construct the interval SQL statement.
@@ -49,21 +48,6 @@ class IntervalExpression implements ExpressionInterface
      * @var \DateInterval
      */
     protected $interval;
-
-    /**
-     * Overriding ExpressionInterface object for server-specific SQL.
-     *
-     * @var \Cake\Database\ExpressionInterface|null
-     */
-    protected $overrideExpression;
-
-    /**
-     * The DateTimeInterface or ExpressionInterface object used as the starting
-     * point for the interval.
-     *
-     * @var \DateTimeInterface|\Cake\Database\ExpressionInterface
-     */
-    protected $subject;
 
     /**
      * Array of options used to construct SQL for servers that specify
@@ -78,12 +62,11 @@ class IntervalExpression implements ExpressionInterface
      * object as well as an interval object to use as the values to construct
      * the interval SQL.
      *
-     * @param mixed $fieldOrValue The value or identifier to be modified.
      * @param \DateInterval $interval The interval value as a DateInterval object.
+     * @throws \Exception Thrown when interval object is invalid.
      */
-    public function __construct($fieldOrValue, DateInterval $interval)
+    public function __construct(DateInterval $interval)
     {
-        $this->setSubject($fieldOrValue);
         $this->setInterval($interval)->reset();
     }
 
@@ -92,13 +75,27 @@ class IntervalExpression implements ExpressionInterface
      */
     public function sql(ValueBinder $generator): string
     {
-        $exp = $this->getOverrideExpression();
-        $sql = '';
-        if ($exp) {
-            $sql = $exp->sql($generator);
-            $this->setOverrideExpression(null);
+        $interval = self::transformForDatabase($this->getInterval());
+        $options = $this->getIntervalSqlOptions();
+        $override = Hash::get($options, 'overrideCallback');
+        if ($override instanceof Closure) {
+            $override = $override($this, $interval, $generator);
+        }
+        if ($override instanceof ExpressionInterface) {
+            $sql = $override->sql($generator);
+        } elseif (is_string($override) && !empty($override)) {
+            $sql = $override;
         } else {
-            $sql .= $this->generateIntervalSql($generator);
+            $intervalAry = [];
+            if ($interval['YEAR'] || $interval['MONTH']) {
+                $intervalAry = array_merge($intervalAry, static::format('YEAR_MONTH', $options, $interval));
+            }
+            unset($interval['YEAR'], $interval['MONTH']);
+            if (!empty($interval)) {
+                $intervalAry = array_merge($intervalAry, static::format('DAY_MICROSECOND', $options, $interval));
+            }
+            $sql = Hash::get($options, 'wrap.prefix') . implode($options['glue'], $intervalAry) .
+                Hash::get($options, 'wrap.suffix');
         }
         $this->reset();
 
@@ -108,15 +105,8 @@ class IntervalExpression implements ExpressionInterface
     /**
      * @inheritDoc
      */
-    public function traverse(Closure $callable): self
+    public function traverse(Closure $callable)
     {
-        if ($this->getOverrideExpression() instanceof ExpressionInterface) {
-            $this->getOverrideExpression()->traverse($callable);
-        }
-        if ($this->getSubject() instanceof ExpressionInterface) {
-            $this->getSubject()->traverse($callable);
-        }
-
         return $this;
     }
 
@@ -125,11 +115,16 @@ class IntervalExpression implements ExpressionInterface
      * parameter.
      *
      * @param array $options An array of options.
-     * @return self
+     * @param bool $replace Boolean value to indicate if the entire options array should be replaced.
+     * @return $this
      */
-    public function combineIntervalSqlOptions(array $options): self
+    public function combineIntervalSqlOptions(array $options, $replace = false)
     {
-        $this->intervalSqlOptions = array_merge($this->getIntervalSqlOptions(), $options);
+        if ($replace) {
+            $this->intervalSqlOptions = $options;
+        } else {
+            $this->intervalSqlOptions = array_replace_recursive($this->getIntervalSqlOptions(), $options);
+        }
 
         return $this;
     }
@@ -139,63 +134,9 @@ class IntervalExpression implements ExpressionInterface
      *
      * @return array
      */
-    public function getIntervalSqlOptions(): array
+    protected function getIntervalSqlOptions(): array
     {
         return $this->intervalSqlOptions;
-    }
-
-    /**
-     * Method that sets an overriding expression for servers that require
-     * the use of an expression (usually a function) instead of an interval
-     * statement.
-     *
-     * @param \Cake\Database\ExpressionInterface|null $exp An ExpressionInterface object or null value.
-     * @return self
-     */
-    public function setOverrideExpression(?ExpressionInterface $exp): self
-    {
-        $this->overrideExpression = $exp;
-
-        return $this;
-    }
-
-    /**
-     * Method that returns the overriding expression.
-     *
-     * @return \Cake\Database\ExpressionInterface|null
-     */
-    public function getOverrideExpression(): ?ExpressionInterface
-    {
-        return $this->overrideExpression;
-    }
-
-    /**
-     * Method that accepts a date or expression object that serves as the
-     * value the interval will be applied to.
-     *
-     * @param \DateTimeInterface|\Cake\Database\ExpressionInterface $subject A DateTimeInterface or ExpressionInterface object.
-     * @return self
-     */
-    public function setSubject($subject): self
-    {
-        if (!($subject instanceof DateTimeInterface) && !($subject instanceof ExpressionInterface)) {
-            throw new Exception(
-                'Value must be ' . DateTimeInterface::class . ' or ' . ExpressionInterface::class
-            );
-        }
-        $this->subject = $subject;
-
-        return $this;
-    }
-
-    /**
-     * Method that returns the field or value object.
-     *
-     * @return \DateTimeInterface|\Cake\Database\ExpressionInterface
-     */
-    public function getSubject()
-    {
-        return $this->subject;
     }
 
     /**
@@ -212,9 +153,9 @@ class IntervalExpression implements ExpressionInterface
      *
      * @param \DateInterval $interval An interval object.
      * @throws \Exception When interval value is not valid.
-     * @return self
+     * @return $this
      */
-    public function setInterval(DateInterval $interval): self
+    protected function setInterval(DateInterval $interval)
     {
         $isValid = ($interval->y + $interval->m + $interval->d +
             $interval->h + $interval->i + $interval->s + $interval->f) !== 0;
@@ -233,19 +174,9 @@ class IntervalExpression implements ExpressionInterface
      *
      * @return \DateInterval
      */
-    public function getInterval(): DateInterval
+    protected function getInterval(): DateInterval
     {
         return $this->interval;
-    }
-
-    /**
-     * Method that returns the sign (+ or -) of the interval object.
-     *
-     * @return string Either + or - depending on the state of the interval object's invert property.
-     */
-    public function getIntervalSign(): string
-    {
-        return $this->getInterval()->invert ? '-' : '+';
     }
 
     /**
@@ -257,13 +188,11 @@ class IntervalExpression implements ExpressionInterface
      * @param bool $combineMicro Determines if the microseconds are combined into seconds.
      * @return array Converted & transformed interval object.
      */
-    public static function transformForDatabase(DateInterval $di, bool $combineMicro = true): array
+    private static function transformForDatabase(DateInterval $di, bool $combineMicro = true): array
     {
-        $intervalAry = array_filter(
-            array_combine(
-                static::KEYS_TRANSFORM,
-                array_intersect_key((array)$di, static::KEYS_REQUIRED)
-            )
+        $intervalAry = array_combine(
+            self::KEYS_TRANSFORM,
+            array_intersect_key((array)$di, self::KEYS_REQUIRED)
         );
         if ($combineMicro) {
             $intervalAry['SECOND'] = $intervalAry['SECOND'] + $intervalAry['MICROSECOND'];
@@ -272,58 +201,104 @@ class IntervalExpression implements ExpressionInterface
             $intervalAry['MICROSECOND'] *= 1000000;
         }
 
-        return $intervalAry;
-    }
-
-    /**
-     * Method that returns the formatted SQL for interval statements.
-     *
-     * @param \Cake\Database\ValueBinder $generator ValueBinder for date
-     * @return string
-     */
-    private function generateIntervalSql(ValueBinder $generator): string
-    {
-        $preSql = '';
-        $interval = self::transformForDatabase($this->getInterval());
-        $sign = $this->getIntervalSign();
-        $intervalAry = [];
-        $options = $this->getIntervalSqlOptions();
-        $subject = $this->getSubject();
-        if ($subject instanceof ExpressionInterface) {
-            $preSql .= '(' . $subject->sql($generator) . ')';
-        } else {
-            $subject = $subject->format('Y-m-d H:i:s.u');
-            $ph = $generator->placeholder('interval');
-            $generator->bind($ph, $subject, 'datetimefractional');
-            $preSql .= Hash::get($options, 'wrap.date.prefix') . $ph . Hash::get($options, 'wrap.date.suffix');
-        }
-        foreach ($interval as $iUnit => $iValue) {
-            $intervalAry[] = Hash::get($options, 'wrap.inner.prefix') . ("${sign}1" * $iValue) . ' ' .
-                $iUnit . Hash::get($options, 'wrap.inner.suffix');
-        }
-
-        return $preSql . Hash::get($options, 'wrap.prefix') . implode($options['glue'], $intervalAry) .
-            Hash::get($options, 'wrap.suffix');
+        return array_map(function ($number) use ($di) {
+            return static::setNumericSign($di->invert == true, $number);
+        }, $intervalAry);
     }
 
     /**
      * Method that resets properties to their defaults.
      *
-     * @return self
+     * @return $this
      */
-    public function reset(): self
+    protected function reset()
     {
-        $this->setOverrideExpression(null);
         $this->combineIntervalSqlOptions([
              'glue' => ' + ',
+             'multiple' => false,
+             'overrideCallback' => null,
+             'format' => [
+                 'default' => "%s%s%s",
+                 'inner' => [
+                     'default' => "%d %s",
+                     'YEAR_MONTH' => "'%d-%d' %s",
+                     'DAY_MICROSECOND' => "'%02d %02d:%02d:%09.6f' %s",
+                 ],
+             ],
              'wrap' => [
-                 'prefix' => ' + ',
+                 'prefix' => '',
                  'suffix' => '',
                  'inner' => ['prefix' => 'INTERVAL ', 'suffix' => ''],
-                 'date' => ['prefix' => '', 'suffix' => ''],
              ],
-        ]);
+        ], true);
 
         return $this;
+    }
+
+    /**
+     * Method to ensure the proper numeric positive/negative is used.
+     *
+     * @param bool $negative Boolean value indicating if $number is supposed to be negative.
+     * @param int|float $number The number that may need to be flipped between positive and negative.
+     * @return int|float
+     */
+    private static function setNumericSign(bool $negative, $number)
+    {
+        return $negative && $number >= 0 ? (-1 * $number) : $number;
+    }
+
+    /**
+     * Method to format the return value based on a key utilizing the
+     * formatting properties within the sql options array.
+     *
+     * @param string $key The key to identify what field is being formatted.
+     * @param array $options The options sql options array.
+     * @param array $interval The processed interval values array.
+     * @return string[]
+     */
+    private static function format(string $key, array $options, array $interval): array
+    {
+        if ($key == 'YEAR_MONTH') {
+            return [
+                sprintf(
+                    Hash::get($options, 'format.default'),
+                    Hash::get($options, 'wrap.inner.prefix'),
+                    sprintf(
+                        Hash::get($options, 'format.inner.YEAR_MONTH'),
+                        $interval['YEAR'],
+                        $interval['MONTH'],
+                        $key
+                    ),
+                    Hash::get($options, 'wrap.inner.suffix')
+                ),
+            ];
+        } elseif ($key == 'DAY_MICROSECOND') {
+            return [
+                sprintf(
+                    Hash::get($options, 'format.default'),
+                    Hash::get($options, 'wrap.inner.prefix'),
+                    sprintf(
+                        Hash::get($options, 'format.inner.DAY_MICROSECOND'),
+                        $interval['DAY'],
+                        $interval['HOUR'],
+                        $interval['MINUTE'],
+                        $interval['SECOND'],
+                        $key
+                    ),
+                    Hash::get($options, 'wrap.inner.suffix')
+                ),
+            ];
+        } elseif (isset($interval[$key])) {
+            return [
+                sprintf(
+                    Hash::get($options, 'format.default'),
+                    Hash::get($options, 'wrap.inner.prefix'),
+                    sprintf(Hash::get($options, 'format.inner.default'), $interval[$key], $key),
+                    Hash::get($options, 'wrap.inner.suffix')
+                ),
+            ];
+        }
+
+        return [];
     }
 }

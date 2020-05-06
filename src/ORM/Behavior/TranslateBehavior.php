@@ -133,7 +133,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * @param string $class Class name.
      * @return void
      * @since 4.0.0
-     * @psalm-var class-string<\Cake\ORM\Behavior\Translate\TranslateStrategyInterface>
+     * @psalm-param class-string<\Cake\ORM\Behavior\Translate\TranslateStrategyInterface> $class
      */
     public static function setDefaultStrategyClass(string $class)
     {

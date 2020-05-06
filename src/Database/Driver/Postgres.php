@@ -309,12 +309,12 @@ class Postgres extends Driver
     protected function transformIntervalExpression(IntervalExpression $intervalExp): void
     {
         $intervalExp->combineIntervalSqlOptions([
-            'glue' => ' ',
-            'wrap' => [
-                'prefix' => " + INTERVAL ",
-                'suffix' => "'",
-                'inner' => ['prefix' => '', 'suffix' => ''],
-                'date' => ['prefix' => '', 'suffix' => '::timestamp'],
+            'wrap' => ['date' => ['suffix' => '::timestamp']],
+            'format' => [
+                'inner' => [
+                    'YEAR_MONTH' => "'%d year %d month'",
+                    'DAY_MICROSECOND' => "'%02d %02d:%02d:%09.6f'",
+                ],
             ],
         ]);
     }
