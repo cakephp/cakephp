@@ -751,6 +751,16 @@ abstract class Association
             }
         }
 
+        if (
+            !empty($options['matching']) &&
+            $this->_strategy === static::STRATEGY_JOIN &&
+            $dummy->getContain()
+        ) {
+            throw new RuntimeException(
+                "`{$this->getName()}` association cannot contain() associations when using JOIN strategy."
+            );
+        }
+
         $dummy->where($options['conditions']);
         $this->_dispatchBeforeFind($dummy);
 
