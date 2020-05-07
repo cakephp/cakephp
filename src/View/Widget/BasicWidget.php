@@ -79,13 +79,13 @@ class BasicWidget implements WidgetInterface
 
         $data['value'] = $data['val'];
         unset($data['val']);
+        if ($data['value'] === false) {
+            $data['value'] = '0';
+        }
 
         $fieldName = $data['fieldName'] ?? null;
         if ($fieldName) {
-            if (
-                $data['type'] === 'number'
-                && !isset($data['step'])
-            ) {
+            if ($data['type'] === 'number' && !isset($data['step'])) {
                 $data = $this->setStep($data, $context, $fieldName);
             }
 
