@@ -2181,10 +2181,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     }
 
     /**
-     * Do a deep clone on this object.
-     *
-     * Will clone all of the expression objects used in
-     * each of the clauses, as well as the valueBinder.
+     * Handles clearing iterator and cloning all expressions and value binders.
      *
      * @return void
      */

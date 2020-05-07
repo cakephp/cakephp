@@ -311,4 +311,16 @@ class EagerLoadable
             ],
         ];
     }
+
+    /**
+     * Handles cloning eager loadables.
+     *
+     * @return void
+     */
+    public function __clone()
+    {
+        foreach ($this->_associations as $i => $association) {
+            $this->_associations[$i] = clone $association;
+        }
+    }
 }

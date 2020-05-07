@@ -835,7 +835,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     public function cleanCopy()
     {
         $clone = clone $this;
-        $clone->setEagerLoader(clone $this->getEagerLoader());
         $clone->triggerBeforeFind();
         $clone->disableAutoFields();
         $clone->limit(null);
@@ -850,11 +849,9 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
-     * Object clone hook.
+     * {@inheritDoc}
      *
-     * Destroys the clones inner iterator and clones the value binder, and eagerloader instances.
-     *
-     * @return void
+     * Handles cloning eager loaders.
      */
     public function __clone()
     {
