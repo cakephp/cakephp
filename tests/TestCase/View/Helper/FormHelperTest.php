@@ -6545,7 +6545,7 @@ class FormHelperTest extends TestCase
      *
      * @return void
      */
-    public function testHiddenField()
+    public function testHidden()
     {
         $this->article['errors'] = [
             'field' => true,
@@ -6560,6 +6560,33 @@ class FormHelperTest extends TestCase
         $result = $this->Form->hidden('field', ['value' => 'my value']);
         $expected = [
             'input' => ['type' => 'hidden', 'class' => 'form-error', 'name' => 'field', 'value' => 'my value'],
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * Test hidden() with various boolean values.
+     *
+     * @return void
+     */
+    public function testHiddenBooleanValues()
+    {
+        $this->Form->create($this->article);
+        $result = $this->Form->hidden('field', ['value' => null]);
+        $expected = [
+            'input' => ['type' => 'hidden', 'name' => 'field'],
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->hidden('field', ['value' => true]);
+        $expected = [
+            'input' => ['type' => 'hidden', 'name' => 'field', 'value' => '1'],
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->hidden('field', ['value' => false]);
+        $expected = [
+            'input' => ['type' => 'hidden', 'name' => 'field', 'value' => '0'],
         ];
         $this->assertHtml($expected, $result);
     }
