@@ -391,6 +391,7 @@ class RequestHandlerComponentTest extends TestCase
         $view = $this->Controller->createView();
         $this->assertInstanceOf(AjaxView::class, $view);
         $this->assertSame('ajax', $view->getLayout());
+        $this->assertSame((new Response(['type' => 'ajax']))->getType(), $view->getResponse()->getType());
 
         $this->_init();
         $this->Controller->setRequest($this->Controller->getRequest()->withParam('_ext', 'js'));

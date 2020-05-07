@@ -16,10 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\View;
 
-use Cake\Event\EventManager;
-use Cake\Http\Response;
-use Cake\Http\ServerRequest;
-
 /**
  * A view class that is used for AJAX responses.
  * Currently only switches the default layout and sets the response type - which just maps to
@@ -33,23 +29,11 @@ class AjaxView extends View
     protected $layout = 'ajax';
 
     /**
-     * Constructor
-     *
-     * @param \Cake\Http\ServerRequest|null $request The request object.
-     * @param \Cake\Http\Response|null $response The response object.
-     * @param \Cake\Event\EventManager|null $eventManager Event manager object.
-     * @param array $viewOptions View options.
+     * @inheritDoc
      */
-    public function __construct(
-        ?ServerRequest $request = null,
-        ?Response $response = null,
-        ?EventManager $eventManager = null,
-        array $viewOptions = []
-    ) {
-        if ($response) {
-            $response = $response->withType('ajax');
-        }
-
-        parent::__construct($request, $response, $eventManager, $viewOptions);
+    public function initialize(): void
+    {
+        parent::initialize();
+        $this->setResponse($this->getResponse()->withType('ajax'));
     }
 }
