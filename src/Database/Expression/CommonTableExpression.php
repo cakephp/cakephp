@@ -222,7 +222,8 @@ class CommonTableExpression implements ExpressionInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @throws \Cake\Database\Exception When not name has been set.
      * @throws \Cake\Database\Exception When not query has been set.
      */
