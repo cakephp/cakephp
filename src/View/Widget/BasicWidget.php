@@ -80,6 +80,7 @@ class BasicWidget implements WidgetInterface
         $data['value'] = $data['val'];
         unset($data['val']);
         if ($data['value'] === false) {
+            // explicitly convert to 0 to avoid empty string which is marshaled as null
             $data['value'] = '0';
         }
 
