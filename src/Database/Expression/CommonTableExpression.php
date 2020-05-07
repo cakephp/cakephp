@@ -99,6 +99,7 @@ class CommonTableExpression implements ExpressionInterface
      *
      * @param \Cake\Database\ExpressionInterface[]|string[] $fields The field names to use for the CTE.
      * @return $this
+     * @throws \InvalidArgumentException When one or more fields are of an invalid type.
      */
     public function setFields(array $fields)
     {
@@ -137,6 +138,7 @@ class CommonTableExpression implements ExpressionInterface
      *
      * @param \Cake\Database\ExpressionInterface[]|string[] $modifiers The modifiers to use for the CTE.
      * @return $this
+     * @throws \InvalidArgumentException When one or more modifiers are of an invalid type.
      */
     public function setModifiers(array $modifiers)
     {
@@ -208,6 +210,8 @@ class CommonTableExpression implements ExpressionInterface
 
     /**
      * @inheritDoc
+     * @throws \Cake\Database\Exception When not name has been set.
+     * @throws \Cake\Database\Exception When not query has been set.
      */
     public function sql(ValueBinder $generator): string
     {
