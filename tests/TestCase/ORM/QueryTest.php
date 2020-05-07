@@ -3496,7 +3496,7 @@ class QueryTest extends TestCase
         ];
         $this->assertEquals($expected, $results->toList());
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The Tags association is not defined on Articles');
+        $this->expectExceptionMessage('The `Tags` association is not defined on `Articles`.');
         $table
             ->find()
             ->disableHydration()
