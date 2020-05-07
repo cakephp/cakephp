@@ -70,12 +70,18 @@ class ConnectionTest extends TestCase
     protected $connection;
 
     /**
+     * @var use Cake\Database\Log\QueryLogger
+     */
+    protected $defaultLogger;
+
+    /**
      * @return void
      */
     public function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
+        $this->defaultLogger = $this->connection->getLogger();
 
         $this->logState = $this->connection->isQueryLoggingEnabled();
         $this->connection->disableQueryLogging();
@@ -89,6 +95,7 @@ class ConnectionTest extends TestCase
     public function tearDown(): void
     {
         $this->connection->disableSavePoints();
+        $this->connection->setLogger($this->defaultLogger);
         $this->connection->enableQueryLogging($this->logState);
 
         Log::reset();
@@ -985,7 +992,7 @@ class ConnectionTest extends TestCase
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(1, $messages);
-        $this->assertSame('debug duration=0 rows=0 SELECT 1', $messages[0]);
+        $this->assertSame('debug connection=test duration=0 rows=0 SELECT 1', $messages[0]);
     }
 
     /**
@@ -1013,8 +1020,8 @@ class ConnectionTest extends TestCase
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(2, $messages);
-        $this->assertSame('debug duration=0 rows=0 BEGIN', $messages[0]);
-        $this->assertSame('debug duration=0 rows=0 ROLLBACK', $messages[1]);
+        $this->assertSame('debug connection= duration=0 rows=0 BEGIN', $messages[0]);
+        $this->assertSame('debug connection= duration=0 rows=0 ROLLBACK', $messages[1]);
     }
 
     /**
@@ -1037,8 +1044,8 @@ class ConnectionTest extends TestCase
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(2, $messages);
-        $this->assertSame('debug duration=0 rows=0 BEGIN', $messages[0]);
-        $this->assertSame('debug duration=0 rows=0 COMMIT', $messages[1]);
+        $this->assertSame('debug connection= duration=0 rows=0 BEGIN', $messages[0]);
+        $this->assertSame('debug connection= duration=0 rows=0 COMMIT', $messages[1]);
     }
 
     /**

@@ -46,7 +46,7 @@ class QueryLogger extends BaseLog
     {
         Log::write(
             'debug',
-            (string)$context['query'],
+            'connection=' . $this->getConfig('connection', '') . ' ' . (string)$context['query'],
             ['scope' => $this->scopes() ?: ['queriesLog']]
         );
     }
