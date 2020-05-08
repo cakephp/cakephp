@@ -905,7 +905,7 @@ class Connection implements ConnectionInterface
             );
         }
 
-        return $this->_logger = new QueryLogger();
+        return $this->_logger = new QueryLogger(['connection' => $this->configName()]);
     }
 
     /**

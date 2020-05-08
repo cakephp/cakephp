@@ -65,4 +65,24 @@ class QueryLoggerTest extends TestCase
         $this->assertCount(1, Log::engine('queryLoggerTest')->read());
         $this->assertCount(0, Log::engine('queryLoggerTest2')->read());
     }
+
+    /**
+     * Tests that the connection name is logged with the query.
+     *
+     * @return void
+     */
+    public function testLogConnection()
+    {
+        $logger = new QueryLogger(['connection' => 'test']);
+        $query = new LoggedQuery();
+        $query->query = 'SELECT a';
+
+        Log::setConfig('queryLoggerTest', [
+            'className' => 'Array',
+            'scopes' => ['queriesLog'],
+        ]);
+        $logger->log(LogLevel::DEBUG, '', compact('query'));
+
+        $this->assertStringContainsString('connection=test duration=', current(Log::engine('queryLoggerTest')->read()));
+    }
 }

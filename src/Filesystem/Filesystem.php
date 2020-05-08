@@ -27,7 +27,11 @@ use RegexIterator;
 use SplFileInfo;
 
 /**
- * @since 4.0.0
+ * This provides convenience wrappers around common filesystem queries.
+ *
+ * This is an internal helper class that should not be used in application code
+ * as it provides no guarantee for compatibility.
+ *
  * @internal
  */
 class Filesystem

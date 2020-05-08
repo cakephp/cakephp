@@ -32,6 +32,7 @@ use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
 use Cake\TestSuite\TestCase;
 use ReflectionProperty;
+use RuntimeException;
 
 /**
  * Tests Query class
@@ -46,6 +47,7 @@ class QueryTest extends TestCase
     protected $fixtures = [
         'core.Articles',
         'core.ArticlesTags',
+        'core.ArticlesTranslations',
         'core.Authors',
         'core.Comments',
         'core.Datatypes',
@@ -3496,7 +3498,7 @@ class QueryTest extends TestCase
         ];
         $this->assertEquals($expected, $results->toList());
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The Tags association is not defined on Articles');
+        $this->expectExceptionMessage('The `Tags` association is not defined on `Articles`.');
         $table
             ->find()
             ->disableHydration()
@@ -3574,6 +3576,28 @@ class QueryTest extends TestCase
             ->matching('articles')
             ->toArray();
         $this->assertEquals($expected, $results);
+    }
+
+    /**
+     * Tests contain() in query returned by innerJoinWith throws exception.
+     *
+     * @return void
+     */
+    public function testInnerJoinWithContain()
+    {
+        $comments = $this->getTableLocator()->get('Comments');
+        $articles = $comments->belongsTo('Articles');
+        $articles->hasOne('ArticlesTranslations');
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('`Articles` association cannot contain() associations when using JOIN strategy');
+        $comments->find()
+            ->innerJoinWith('Articles', function (Query $q) {
+                return $q
+                    ->contain('ArticlesTranslations')
+                    ->where(['ArticlesTranslations.title' => 'Titel #1']);
+            })
+            ->sql();
     }
 
     /**

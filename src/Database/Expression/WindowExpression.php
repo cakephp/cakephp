@@ -27,6 +27,11 @@ use InvalidArgumentException;
 class WindowExpression implements ExpressionInterface, WindowInterface
 {
     /**
+     * @var string|null
+     */
+    protected $name;
+
+    /**
      * @var \Cake\Database\ExpressionInterface[]
      */
     protected $partitions = [];
@@ -45,6 +50,49 @@ class WindowExpression implements ExpressionInterface, WindowInterface
      * @var string|null
      */
     protected $exclusion;
+
+    /**
+     * @param string|null $name Window name
+     */
+    public function __construct(?string $name = null)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * Return whether window expression is empty.
+     *
+     * An expression is empty if it has no partition, order or frame clauses.
+     *
+     * @return bool
+     */
+    public function isEmpty(): bool
+    {
+        return !$this->partitions && !$this->frame && !$this->order;
+    }
+
+    /**
+     * Return named window used in this expresion if set.
+     *
+     * @return string|null
+     */
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    /**
+     * Sets the window name.
+     *
+     * @param string $name Window name
+     * @return $this
+     */
+    public function setName(string $name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
 
     /**
      * @inheritDoc
@@ -192,19 +240,28 @@ class WindowExpression implements ExpressionInterface, WindowInterface
      */
     public function sql(ValueBinder $generator): string
     {
-        $partitionSql = '';
+        if ($this->isEmpty()) {
+            return '';
+        }
+
+        $clauses = [];
+        if ($this->name) {
+            $clauses[] = $this->name;
+        }
+
         if ($this->partitions) {
             $expressions = [];
             foreach ($this->partitions as $partition) {
                 $expressions[] = $partition->sql($generator);
             }
 
-            $partitionSql = 'PARTITION BY ' . implode(', ', $expressions);
+            $clauses[] = 'PARTITION BY ' . implode(', ', $expressions);
         }
 
-        $orderSql = $this->order ? $orderSql = $this->order->sql($generator) : '';
+        if ($this->order) {
+            $clauses[] = $this->order->sql($generator);
+        }
 
-        $frameSql = '';
         if ($this->frame) {
             $offset = $this->buildOffsetSql(
                 $generator,
@@ -232,16 +289,11 @@ class WindowExpression implements ExpressionInterface, WindowInterface
             if ($this->exclusion !== null) {
                 $frameSql .= ' EXCLUDE ' . $this->exclusion;
             }
+
+            $clauses[] = $frameSql;
         }
 
-        return sprintf(
-            'OVER (%s%s%s%s%s)',
-            $partitionSql,
-            $partitionSql && $orderSql ? ' ' : '',
-            $orderSql,
-            ($partitionSql || $orderSql) && $frameSql ? ' ' : '',
-            $frameSql
-        );
+        return implode(' ', $clauses);
     }
 
     /**

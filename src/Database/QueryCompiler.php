@@ -51,7 +51,7 @@ class QueryCompiler
      * @var array
      */
     protected $_selectParts = [
-        'select', 'from', 'join', 'where', 'group', 'having', 'order', 'limit',
+        'select', 'from', 'join', 'where', 'group', 'having', 'window', 'order', 'limit',
         'offset', 'union', 'epilog',
     ];
 
@@ -268,6 +268,29 @@ class QueryCompiler
         }
 
         return $joins;
+    }
+
+    /**
+     * Helper function to build the string representation of a window clause.
+     *
+     * @param array $parts List of windows to be transformed to string
+     * @param \Cake\Database\Query $query The query that is being compiled
+     * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
+     * @return string
+     */
+    protected function _buildWindowPart(array $parts, Query $query, ValueBinder $generator): string
+    {
+        $windows = [];
+        foreach ($parts as $window) {
+            $expr = $window['window'];
+            if ($expr->isEmpty() && $expr->getName()) {
+                $windows[] = $window['name'] . ' AS (' . $expr->getName() . ')';
+            } else {
+                $windows[] = $window['name'] . ' AS (' . $expr->sql($generator) . ')';
+            }
+        }
+
+        return ' WINDOW ' . implode(', ', $windows);
     }
 
     /**

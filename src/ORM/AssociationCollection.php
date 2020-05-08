@@ -71,7 +71,7 @@ class AssociationCollection implements IteratorAggregate
     {
         [, $alias] = pluginSplit($alias);
 
-        return $this->_items[strtolower($alias)] = $association;
+        return $this->_items[$alias] = $association;
     }
 
     /**
@@ -110,7 +110,6 @@ class AssociationCollection implements IteratorAggregate
      */
     public function get(string $alias): ?Association
     {
-        $alias = strtolower($alias);
         if (isset($this->_items[$alias])) {
             return $this->_items[$alias];
         }
@@ -143,7 +142,7 @@ class AssociationCollection implements IteratorAggregate
      */
     public function has(string $alias): bool
     {
-        return isset($this->_items[strtolower($alias)]);
+        return isset($this->_items[$alias]);
     }
 
     /**
@@ -187,7 +186,7 @@ class AssociationCollection implements IteratorAggregate
      */
     public function remove(string $alias): void
     {
-        unset($this->_items[strtolower($alias)]);
+        unset($this->_items[$alias]);
     }
 
     /**

@@ -15,9 +15,12 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database;
 
+use Cake\Database\Expression\QueryExpression;
+use Cake\Database\Expression\WindowExpression;
 use Cake\Database\Query;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use RuntimeException;
 
 /**
  * Tests WindowExpression class
@@ -58,6 +61,42 @@ class WindowQueryTests extends TestCase
         parent::tearDown();
     }
 
+    /**
+     * Tests window sql generation.
+     *
+     * @return void
+     */
+    public function testWindowSql()
+    {
+        $query = new Query($this->connection);
+        $sql = $query
+            ->select('*')
+            ->window('name', new WindowExpression())
+            ->sql();
+        $this->assertEqualsSql('SELECT * WINDOW name AS ()', $sql);
+
+        $sql = $query
+            ->window('name2', new WindowExpression('name'))
+            ->sql();
+        $this->assertEqualsSql('SELECT * WINDOW name AS (), name2 AS (name)', $sql);
+
+        $sql = $query
+            ->window('name', function ($window, $query) {
+                return $window->setName('name3');
+            }, true)
+            ->sql();
+        $this->assertEqualsSql('SELECT * WINDOW name AS (name3)', $sql);
+    }
+
+    public function testMissingWindow()
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('You must return a `WindowExpression`');
+        (new Query($this->connection))->window('name', function () {
+            return new QueryExpression();
+        });
+    }
+
     public function testPartitions()
     {
         $this->skipIf($this->skipTests);
@@ -90,5 +129,57 @@ class WindowQueryTests extends TestCase
         $this->assertEquals(1, $result[0]['num_rows']);
         $this->assertEquals(4, $result[3]['num_rows']);
         $this->assertEquals(1, $result[4]['num_rows']);
+    }
+
+    /**
+     * Tests adding named windows to the query.
+     *
+     * @return void
+     */
+    public function testNamedWindow()
+    {
+        $skip = $this->skipTests;
+        if (!$skip) {
+            $skip = $this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlserver;
+        }
+        $this->skipIf($skip);
+
+        $this->loadFixtures('Comments');
+
+        $query = new Query($this->connection);
+        $result = $query
+            ->select(['num_rows' => $query->func()->count('*')->over('window1')])
+            ->from('comments')
+            ->window('window1', (new WindowExpression())->partition('article_id'))
+            ->order(['article_id'])
+            ->execute()
+            ->fetchAll('assoc');
+        $this->assertEquals(4, $result[0]['num_rows']);
+    }
+
+    public function testWindowChaining()
+    {
+        $skip = $this->skipTests;
+        if (!$skip) {
+            $driver = $this->connection->getDriver();
+            $skip = $driver instanceof \Cake\Database\Driver\Sqlserver;
+            if ($driver instanceof \Cake\Database\Driver\Sqlite) {
+                $skip = version_compare($driver->getVersion(), '3.28.0', '<');
+            }
+        }
+        $this->skipIf($skip);
+
+        $this->loadFixtures('Comments');
+
+        $query = new Query($this->connection);
+        $result = $query
+            ->select(['num_rows' => $query->func()->count('*')->over('window2')])
+            ->from('comments')
+            ->window('window1', (new WindowExpression())->partition('article_id'))
+            ->window('window2', new WindowExpression('window1'))
+            ->order(['article_id'])
+            ->execute()
+            ->fetchAll('assoc');
+        $this->assertEquals(4, $result[0]['num_rows']);
     }
 }

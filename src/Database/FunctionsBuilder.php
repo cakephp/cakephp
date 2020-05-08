@@ -127,10 +127,13 @@ class FunctionsBuilder
     }
 
     /**
-     * Returns a FunctionExpression representing a call to SQL CAST function.
+     * Returns a FunctionExpression representing a SQL CAST.
+     *
+     * The `$type` parameter is a SQL type. The return type for the returned expression
+     * is the default type name. Use `setReturnType()` to update it.
      *
      * @param string|\Cake\Database\ExpressionInterface $field Field or expression to cast.
-     * @param string $type The target data type
+     * @param string $type The SQL data type
      * @return \Cake\Database\Expression\FunctionExpression
      */
     public function cast($field, string $type = ''): FunctionExpression
@@ -142,6 +145,10 @@ class FunctionsBuilder
             );
 
             return new FunctionExpression('CAST', $field);
+        }
+
+        if (empty($type)) {
+            throw new InvalidArgumentException('The `$type` in a cast cannot be empty.');
         }
 
         $expression = new FunctionExpression('CAST', $this->toLiteralParam($field));
