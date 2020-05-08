@@ -325,8 +325,9 @@ class PluginCollection implements Iterator, Countable
      * Filter the plugins to those with the named hook enabled.
      *
      * @param string $hook The hook to filter plugins by
-     * @return \Generator A generator containing matching plugins.
+     * @return \Generator&\Cake\Core\PluginInterface[] A generator containing matching plugins.
      * @throws \InvalidArgumentException on invalid hooks
+     * @psalm-return \Generator<\Cake\Core\PluginInterface>
      */
     public function with(string $hook): Generator
     {
