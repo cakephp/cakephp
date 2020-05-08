@@ -862,9 +862,7 @@ class EagerLoader
     }
 
     /**
-     * Clone hook implementation
-     *
-     * Clone the _matching eager loader as well.
+     * Handles cloning eager loaders and eager loadables.
      *
      * @return void
      */
