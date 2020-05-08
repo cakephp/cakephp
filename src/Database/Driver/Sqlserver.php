@@ -554,15 +554,19 @@ class Sqlserver extends Driver
     protected function transformIntervalExpression(IntervalExpression $intervalExp): void
     {
         $intervalExp->combineIntervalSqlOptions([
+            'combineMicro' => false,
             'overrideCallback' =>
                 function (IntervalExpression $intervalExp, array $interval) {
                     if (!($intervalExp instanceof DateTimeIntervalExpression)) {
                         throw new Exception('SQL Server does not support date intervals within window frames.');
                     }
                     $fieldValue = $intervalExp->getSubject();
-                    $types = [];
                     if ($fieldValue instanceof \DateTimeInterface) {
-                        $types[] = 'datetimefractional';
+                        $fieldValue = (new FunctionExpression(
+                            'CAST',
+                            [$fieldValue, 'datetime2' => 'literal'],
+                            ['datetimefractional']
+                        ))->setConjunction(' AS');
                     }
                     $function = null;
                     $interval = array_filter($interval);
@@ -571,7 +575,7 @@ class Sqlserver extends Driver
                         if (!$function) {
                             $function = (new FunctionExpression('DATEADD', []))
                                 ->add([$iUnit => 'literal', $iValue => 'literal'])
-                                ->add([$fieldValue], $types);
+                                ->add([$fieldValue]);
                         } else {
                             $function = (new FunctionExpression('DATEADD', []))
                                 ->add([$iUnit => 'literal', $iValue => 'literal', $function]);
