@@ -62,6 +62,7 @@ class MailContains extends MailConstraintBase
 
     /**
      * Returns the type-dependent strings of all messages
+     * respects $this->at
      *
      * @return string
      */
@@ -72,6 +73,9 @@ class MailContains extends MailConstraintBase
         foreach ($messages as $message) {
             $method = $this->getTypeMethod();
             $messageMembers[] = $message->$method();
+        }
+        if ($this->at && isset($messageMembers[$this->at - 1])) {
+            $messageMembers = [$messageMembers[$this->at - 1]];
         }
         $result = join(PHP_EOL, $messageMembers);
 
@@ -86,9 +90,9 @@ class MailContains extends MailConstraintBase
     public function toString(): string
     {
         if ($this->at) {
-            return sprintf('is in email #%d', $this->at);
+            return sprintf('is in email #%d', $this->at) . $this->getAssertedMessages();
         }
 
-        return 'is in an email';
+        return 'is in an email' . $this->getAssertedMessages();
     }
 }

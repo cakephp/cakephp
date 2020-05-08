@@ -49,7 +49,7 @@ class SqlserverCompiler extends QueryCompiler
      * @inheritDoc
      */
     protected $_selectParts = [
-        'select', 'from', 'join', 'where', 'group', 'having', 'order', 'offset',
+        'select', 'from', 'join', 'where', 'group', 'having', 'window', 'order', 'offset',
         'limit', 'union', 'epilog',
     ];
 
