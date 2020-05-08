@@ -75,8 +75,8 @@ class IntervalExpression implements ExpressionInterface
      */
     public function sql(ValueBinder $generator): string
     {
-        $interval = self::transformForDatabase($this->getInterval());
         $options = $this->getIntervalSqlOptions();
+        $interval = self::transformForDatabase($this->getInterval(), Hash::get($options, 'combineMicro', true));
         $override = Hash::get($options, 'overrideCallback');
         if ($override instanceof Closure) {
             $override = $override($this, $interval, $generator);
@@ -217,6 +217,7 @@ class IntervalExpression implements ExpressionInterface
              'glue' => ' + ',
              'multiple' => false,
              'overrideCallback' => null,
+             'combineMicro' => true,
              'format' => [
                  'default' => "%s%s%s",
                  'inner' => [
