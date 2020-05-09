@@ -2490,12 +2490,12 @@ class FormHelper extends Helper
     /**
      * Extracts valid value sources.
      *
-     * @param string|string[] $sources A string or a list of strings identifying a source.
+     * @param string[] $sources A a list of strings identifying a source.
      * @return string[]
      */
-    protected function _extractValidValueSources($sources): array
+    protected function _extractValidValueSources(array $sources): array
     {
-        return array_values(array_intersect((array)$sources, $this->_supportedValueSources));
+        return array_values(array_intersect($sources, $this->_supportedValueSources));
     }
 
     /**
@@ -2509,7 +2509,7 @@ class FormHelper extends Helper
      */
     public function setValueSources($sources)
     {
-        $this->_valueSources = $this->_extractValidValueSources($sources);
+        $this->_valueSources = $this->_extractValidValueSources((array) $sources);
 
         return $this;
     }
