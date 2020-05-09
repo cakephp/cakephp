@@ -223,7 +223,7 @@ class FormHelper extends Helper
      *
      * @var string[]
      */
-    protected $_supportedValueSources = ['context', 'data', 'query'];
+    protected $supportedValueSources = ['context', 'data', 'query'];
 
     /**
      * The default sources.
