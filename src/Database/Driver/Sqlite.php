@@ -323,6 +323,20 @@ class Sqlite extends Driver
     }
 
     /**
+     * Returns true if the server supports common table expressions.
+     *
+     * @return bool
+     */
+    public function supportsCTEs(): bool
+    {
+        if ($this->supportsCTEs === null) {
+            $this->supportsCTEs = version_compare($this->getVersion(), '3.8.3', '>=');
+        }
+
+        return $this->supportsCTEs;
+    }
+
+    /**
      * Returns true if the connected server supports window functions.
      *
      * @return bool

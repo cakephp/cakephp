@@ -246,6 +246,28 @@ class Mysql extends Driver
     }
 
     /**
+     * Returns true if the server supports common table expressions.
+     *
+     * @return bool
+     */
+    public function supportsCTEs(): bool
+    {
+        if ($this->supportsCTEs === null) {
+            $version = $this->getVersion();
+            if (strpos($version, 'MariaDB') !== false) {
+                preg_match('/(\d+\.\d+.\d+)-MariaDB/i', $version, $matches);
+                $version = $matches[1];
+
+                $this->supportsCTEs = version_compare($version, '10.2.2', '>=');
+            } else {
+                $this->supportsCTEs = version_compare($version, '8.0.0', '>=');
+            }
+        }
+
+        return $this->supportsCTEs;
+    }
+
+    /**
      * Returns true if the server supports native JSON columns
      *
      * @return bool

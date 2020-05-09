@@ -49,9 +49,29 @@ class SqlserverCompiler extends QueryCompiler
      * @inheritDoc
      */
     protected $_selectParts = [
-        'select', 'from', 'join', 'where', 'group', 'having', 'window', 'order', 'offset',
-        'limit', 'union', 'epilog',
+        'with', 'select', 'from', 'join', 'where', 'group', 'having', 'window', 'order',
+        'offset', 'limit', 'union', 'epilog',
     ];
+
+    /**
+     * Helper function used to build the string representation of a `WITH` clause,
+     * it constructs the CTE definitions list without generating the `RECURSIVE`
+     * keyword that is neither required nor valid.
+     *
+     * @param \Cake\Database\Expression\CommonTableExpression[] $parts List of CTEs to be transformed to string
+     * @param \Cake\Database\Query $query The query that is being compiled
+     * @param \Cake\Database\ValueBinder $generator The placeholder generator to be used in expressions
+     * @return string
+     */
+    protected function _buildWithPart(array $parts, Query $query, ValueBinder $generator): string
+    {
+        $expressions = [];
+        foreach ($parts as $expression) {
+            $expressions[] = $expression->sql($generator);
+        }
+
+        return sprintf('WITH %s ', implode(', ', $expressions));
+    }
 
     /**
      * Generates the INSERT part of a SQL query
