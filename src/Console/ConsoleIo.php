@@ -129,8 +129,7 @@ class ConsoleIo
     }
 
     /**
-     * @param bool $value
-     *
+     * @param bool $value Value
      * @return void
      */
     public function setInteractive(bool $value): void
