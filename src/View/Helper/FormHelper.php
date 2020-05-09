@@ -2493,7 +2493,7 @@ class FormHelper extends Helper
      * @param string[] $sources A list of strings identifying a source.
      * @return string[]
      */
-    protected function _extractValidValueSources(array $sources): array
+    protected function extractValidValueSources(array $sources): array
     {
         return array_values(array_intersect($sources, $this->_supportedValueSources));
     }
