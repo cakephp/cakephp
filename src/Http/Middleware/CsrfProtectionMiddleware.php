@@ -247,11 +247,11 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
         $cookie = Hash::get($request->getCookieParams(), $this->_config['cookieName']);
 
         if (!$cookie) {
-            throw new InvalidCsrfTokenException(__d('cake', 'Missing CSRF token cookie'));
+            throw new InvalidCsrfTokenException(__d('cake', 'Missing CSRF cookie.'));
         }
 
         if (!$this->_verifyToken($cookie)) {
-            $exception = new InvalidCsrfTokenException(__d('cake', 'Missing CSRF token cookie'));
+            $exception = new InvalidCsrfTokenException(__d('cake', 'Missing or invalid CSRF cookie.'));
 
             $expiredCookie = $this->_createCookie('', $request)->withExpired();
             $exception->responseHeader('Set-Cookie', $expiredCookie->toHeaderValue());
@@ -272,7 +272,10 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
             return;
         }
 
-        throw new InvalidCsrfTokenException(__d('cake', 'Missing CSRF token body'));
+        throw new InvalidCsrfTokenException(__d(
+            'cake',
+            'Missing or invalid CSRF token. A CSRF token could not be matched in either the request body or request headers.'
+        ));
     }
 
     /**
