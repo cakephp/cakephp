@@ -2501,7 +2501,7 @@ class FormHelper extends Helper
     /**
      * Sets the value sources.
      *
-     * Valid values are in $this->_supportedValueSources.
+     * Valid values are set in `$supportedValueSources`.
      * You need to supply one valid context or multiple, as a list of strings. Order sets priority.
      *
      * @param string|string[] $sources A string or a list of strings identifying a source.
