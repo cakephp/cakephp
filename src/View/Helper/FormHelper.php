@@ -219,7 +219,14 @@ class FormHelper extends Helper
     protected $_lastAction = '';
 
     /**
-     * The sources to be used when retrieving prefilled input values.
+     * The supported sources that can be used to populate input values.
+     *
+     * @var string[]
+     */
+    protected $_supportedValueSources = ['context', 'data', 'query'];
+
+    /**
+     * The default sources.
      *
      * @var string[]
      */
@@ -2481,9 +2488,20 @@ class FormHelper extends Helper
     }
 
     /**
+     * Extracts valid value sources.
+     *
+     * @param string|string[] $sources A string or a list of strings identifying a source.
+     * @return array
+     */
+    protected function _extractValidValueSources($sources): array
+    {
+        return array_values(array_intersect((array)$sources, $this->_supportedValueSources));
+    }
+
+    /**
      * Sets the value sources.
      *
-     * Valid values are `'context'`, `'data'` and `'query'`.
+     * Valid values are in $this->_supportedValueSources.
      * You need to supply one valid context or multiple, as a list of strings. Order sets priority.
      *
      * @param string|string[] $sources A string or a list of strings identifying a source.
@@ -2491,7 +2509,7 @@ class FormHelper extends Helper
      */
     public function setValueSources($sources)
     {
-        $this->_valueSources = array_values(array_intersect((array)$sources, ['context', 'data', 'query']));
+        $this->_valueSources = $this->_extractValidValueSources($sources);
 
         return $this;
     }
