@@ -2495,7 +2495,7 @@ class FormHelper extends Helper
      */
     protected function extractValidValueSources(array $sources): array
     {
-        return array_values(array_intersect($sources, $this->_supportedValueSources));
+        return array_values(array_intersect($sources, $this->supportedValueSources));
     }
 
     /**
