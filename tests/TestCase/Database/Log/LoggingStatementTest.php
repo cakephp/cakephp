@@ -58,12 +58,12 @@ class LoggingStatementTest extends TestCase
         $driver = $this->getMockBuilder(DriverInterface::class)->getMock();
         $st = new LoggingStatement($inner, $driver);
         $st->queryString = 'SELECT bar FROM foo';
-        $st->setLogger(new QueryLogger());
+        $st->setLogger(new QueryLogger(['connection' => 'test']));
         $st->execute();
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(1, $messages);
-        $this->assertRegExp('/^debug connection= duration=\d+ rows=3 SELECT bar FROM foo$/', $messages[0]);
+        $this->assertRegExp('/^debug connection=test duration=\d+ rows=3 SELECT bar FROM foo$/', $messages[0]);
     }
 
     /**
@@ -80,12 +80,12 @@ class LoggingStatementTest extends TestCase
         $driver = $this->getMockBuilder(DriverInterface::class)->getMock();
         $st = new LoggingStatement($inner, $driver);
         $st->queryString = 'SELECT bar FROM foo WHERE x=:a AND y=:b';
-        $st->setLogger(new QueryLogger());
+        $st->setLogger(new QueryLogger(['connection' => 'test']));
         $st->execute(['a' => 1, 'b' => 2]);
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(1, $messages);
-        $this->assertRegExp('/^debug connection= duration=\d+ rows=4 SELECT bar FROM foo WHERE x=1 AND y=2$/', $messages[0]);
+        $this->assertRegExp('/^debug connection=test duration=\d+ rows=4 SELECT bar FROM foo WHERE x=1 AND y=2$/', $messages[0]);
     }
 
     /**
@@ -106,7 +106,7 @@ class LoggingStatementTest extends TestCase
         $driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
         $st = new LoggingStatement($inner, $driver);
         $st->queryString = 'SELECT bar FROM foo WHERE a=:a AND b=:b';
-        $st->setLogger(new QueryLogger());
+        $st->setLogger(new QueryLogger(['connection' => 'test']));
         $st->bindValue('a', 1);
         $st->bindValue('b', $date, 'date');
         $st->execute();
@@ -116,8 +116,8 @@ class LoggingStatementTest extends TestCase
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(2, $messages);
-        $this->assertRegExp("/^debug connection= duration=\d+ rows=4 SELECT bar FROM foo WHERE a='1' AND b='2013-01-01'$/", $messages[0]);
-        $this->assertRegExp("/^debug connection= duration=\d+ rows=4 SELECT bar FROM foo WHERE a='1' AND b='2014-01-01'$/", $messages[1]);
+        $this->assertRegExp("/^debug connection=test duration=\d+ rows=4 SELECT bar FROM foo WHERE a='1' AND b='2013-01-01'$/", $messages[0]);
+        $this->assertRegExp("/^debug connection=test duration=\d+ rows=4 SELECT bar FROM foo WHERE a='1' AND b='2014-01-01'$/", $messages[1]);
     }
 
     /**
@@ -136,7 +136,7 @@ class LoggingStatementTest extends TestCase
         $driver = $this->getMockBuilder(DriverInterface::class)->getMock();
         $st = new LoggingStatement($inner, $driver);
         $st->queryString = 'SELECT bar FROM foo';
-        $st->setLogger(new QueryLogger());
+        $st->setLogger(new QueryLogger(['connection' => 'test']));
         try {
             $st->execute();
         } catch (LogicException $e) {
@@ -146,7 +146,7 @@ class LoggingStatementTest extends TestCase
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(1, $messages);
-        $this->assertRegExp("/^debug connection= duration=\d+ rows=0 SELECT bar FROM foo$/", $messages[0]);
+        $this->assertRegExp("/^debug connection=test duration=\d+ rows=0 SELECT bar FROM foo$/", $messages[0]);
     }
 
     /**
@@ -156,7 +156,7 @@ class LoggingStatementTest extends TestCase
      */
     public function testSetAndGetLogger()
     {
-        $logger = new QueryLogger();
+        $logger = new QueryLogger(['connection' => 'test']);
         $st = new LoggingStatement(
             $this->getMockBuilder(StatementInterface::class)->getMock(),
             $this->getMockBuilder(DriverInterface::class)->getMock()
