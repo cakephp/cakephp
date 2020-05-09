@@ -95,6 +95,11 @@ class Sqlserver extends Driver
     protected $_endQuote = ']';
 
     /**
+     * @inheritDoc
+     */
+    protected $supportsCTEs = true;
+
+    /**
      * Establishes a connection to the database server.
      *
      * Please note that the PDO::ATTR_PERSISTENT attribute is not supported by

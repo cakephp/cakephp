@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database;
 
+use Cake\Database\Expression\CommonTableExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\OrderClauseExpression;
@@ -78,6 +79,7 @@ class Query implements ExpressionInterface, IteratorAggregate
         'set' => [],
         'insert' => [],
         'values' => [],
+        'with' => [],
         'select' => [],
         'distinct' => false,
         'modifier' => [],
@@ -100,7 +102,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @var string[]
      */
     protected $_selectParts = [
-        'select', 'from', 'join', 'where', 'group', 'having', 'order', 'limit',
+        'with', 'select', 'from', 'join', 'where', 'group', 'having', 'order', 'limit',
         'offset', 'union', 'epilog',
     ];
 
@@ -109,21 +111,21 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @var string[]
      */
-    protected $_updateParts = ['update', 'set', 'where', 'epilog'];
+    protected $_updateParts = ['with', 'update', 'set', 'where', 'epilog'];
 
     /**
      * The list of query clauses to traverse for generating a DELETE statement
      *
      * @var string[]
      */
-    protected $_deleteParts = ['delete', 'modifier', 'from', 'where', 'epilog'];
+    protected $_deleteParts = ['with', 'delete', 'modifier', 'from', 'where', 'epilog'];
 
     /**
      * The list of query clauses to traverse for generating an INSERT statement
      *
      * @var string[]
      */
-    protected $_insertParts = ['insert', 'values', 'epilog'];
+    protected $_insertParts = ['with', 'insert', 'values', 'epilog'];
 
     /**
      * Indicates whether internal state of this query was changed, this is used to
@@ -367,6 +369,115 @@ class Query implements ExpressionInterface, IteratorAggregate
         foreach ($parts as $name) {
             $visitor($this->_parts[$name], $name);
         }
+
+        return $this;
+    }
+
+    /**
+     * Adds a new common table expression (CTE) to the query.
+     *
+     * ### Examples:
+     *
+     * Common table expressions can either be passed as preconstructed expression
+     * objects:
+     *
+     * ```
+     * $cte = new \Cake\Database\Expression\CommonTableExpression(
+     *     'cte',
+     *     $connection
+     *         ->newQuery()
+     *         ->select('*')
+     *         ->from('articles')
+     * );
+     *
+     * $query->with($cte);
+     * ```
+     *
+     * or returned from a closure, which will receive a new common table expression
+     * object as the first argument, and a reference to the current query object as
+     * the second argument:
+     *
+     * ```
+     * $query->with(function (
+     *     \Cake\Database\Expression\CommonTableExpression $cte,
+     *     \Cake\Database\Query $query
+     *  ) {
+     *     $cteQuery = $query->getConnection()
+     *         ->newQuery()
+     *         ->select('*')
+     *         ->from('articles');
+     *
+     *     return $cte
+     *         ->setName('cte')
+     *         ->setQuery($cteQuery);
+     * });
+     * ```
+     *
+     * The list of expressions can be reset by overwriting and passing `null` for the
+     * expression:
+     *
+     * ```
+     * $query->with(null, true);
+     * ```
+     *
+     * @param \Cake\Database\Expression\CommonTableExpression|\Closure|null $expression The CTE to add.
+     * @param bool $overwrite Whether to reset the list of CTEs.
+     * @return $this
+     * @throws \InvalidArgumentException When passing `null` for the `$expression` argument but not enabling
+     *  `$overwrite`.
+     * @throws \InvalidArgumentException When an invalid type is passed or returned for the `$expression` argument.
+     * @throws \InvalidArgumentException When the given CTE object has no name set.
+     * @throws \InvalidArgumentException When the given CTE object has no query set.
+     * @throws \InvalidArgumentException When a CTE object with the same name is already attached to this query.
+     */
+    public function with($expression, $overwrite = false)
+    {
+        if ($overwrite) {
+            $this->_parts['with'] = [];
+        }
+
+        if ($expression === null) {
+            if (!$overwrite) {
+                throw new \InvalidArgumentException(
+                    'Resetting the WITH clause only works when overwriting is enabled.'
+                );
+            }
+
+            return $this;
+        }
+
+        if ($expression instanceof Closure) {
+            $expression = $expression(new CommonTableExpression(), $this);
+        }
+
+        if (!($expression instanceof CommonTableExpression)) {
+            throw new InvalidArgumentException(sprintf(
+                'The common table expression must be an instance of `%s`, `%s` given.',
+                CommonTableExpression::class,
+                getTypeName($expression)
+            ));
+        }
+
+        $name = $expression->getName();
+        if (empty($name)) {
+            throw new InvalidArgumentException('The common table expression must have a name.');
+        }
+
+        if (empty($expression->getQuery())) {
+            throw new InvalidArgumentException('The common table expression must have a query.');
+        }
+
+        foreach ($this->_parts['with'] as $existing) {
+            /** @var \Cake\Database\Expression\CommonTableExpression $existing */
+            if ($existing->getName() === $name) {
+                throw new InvalidArgumentException(sprintf(
+                    'A common table expression with the name `%s` is already attached to this query.',
+                    $name
+                ));
+            }
+        }
+
+        $this->_parts['with'][] = $expression;
 
         return $this;
     }
@@ -2212,10 +2323,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     }
 
     /**
-     * Do a deep clone on this object.
-     *
-     * Will clone all of the expression objects used in
-     * each of the clauses, as well as the valueBinder.
+     * Handles clearing iterator and cloning all expressions and value binders.
      *
      * @return void
      */

@@ -51,8 +51,8 @@ class QueryCompiler
      * @var array
      */
     protected $_selectParts = [
-        'select', 'from', 'join', 'where', 'group', 'having', 'window', 'order', 'limit',
-        'offset', 'union', 'epilog',
+        'with', 'select', 'from', 'join', 'where', 'group', 'having', 'window', 'order',
+        'limit', 'offset', 'union', 'epilog',
     ];
 
     /**
@@ -60,21 +60,21 @@ class QueryCompiler
      *
      * @var array
      */
-    protected $_updateParts = ['update', 'set', 'where', 'epilog'];
+    protected $_updateParts = ['with', 'update', 'set', 'where', 'epilog'];
 
     /**
      * The list of query clauses to traverse for generating a DELETE statement
      *
      * @var array
      */
-    protected $_deleteParts = ['delete', 'modifier', 'from', 'where', 'epilog'];
+    protected $_deleteParts = ['with', 'delete', 'modifier', 'from', 'where', 'epilog'];
 
     /**
      * The list of query clauses to traverse for generating an INSERT statement
      *
      * @var array
      */
-    protected $_insertParts = ['insert', 'values', 'epilog'];
+    protected $_insertParts = ['with', 'insert', 'values', 'epilog'];
 
     /**
      * Indicate whether or not this query dialect supports ordered unions.
@@ -155,6 +155,36 @@ class QueryCompiler
 
             $sql .= $this->{'_build' . $partName . 'Part'}($part, $query, $generator);
         };
+    }
+
+    /**
+     * Helper function used to build the string representation of a `WITH` clause,
+     * it constructs the CTE definitions list and generates the `RECURSIVE`
+     * keyword when required.
+     *
+     * @param \Cake\Database\Expression\CommonTableExpression[] $parts List of CTEs to be transformed to string
+     * @param \Cake\Database\Query $query The query that is being compiled
+     * @param \Cake\Database\ValueBinder $generator The placeholder generator to be used in expressions
+     * @return string
+     */
+    protected function _buildWithPart(array $parts, Query $query, ValueBinder $generator): string
+    {
+        $hasRecursiveExpressions = false;
+
+        $expressions = [];
+        foreach ($parts as $expression) {
+            if ($expression->isRecursive()) {
+                $hasRecursiveExpressions = true;
+            }
+            $expressions[] = $expression->sql($generator);
+        }
+
+        $keywords = '';
+        if ($hasRecursiveExpressions) {
+            $keywords = 'RECURSIVE ';
+        }
+
+        return sprintf('WITH %s%s ', $keywords, implode(', ', $expressions));
     }
 
     /**
