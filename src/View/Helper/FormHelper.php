@@ -2509,7 +2509,7 @@ class FormHelper extends Helper
      */
     public function setValueSources($sources)
     {
-        $this->_valueSources = $this->_extractValidValueSources((array) $sources);
+        $this->_valueSources = $this->_extractValidValueSources((array)$sources);
 
         return $this;
     }
