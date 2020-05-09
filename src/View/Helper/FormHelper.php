@@ -2491,7 +2491,7 @@ class FormHelper extends Helper
      * Extracts valid value sources.
      *
      * @param string|string[] $sources A string or a list of strings identifying a source.
-     * @return array
+     * @return string[]
      */
     protected function _extractValidValueSources($sources): array
     {
