@@ -32,6 +32,27 @@ use SplFileObject;
 class ConsoleIo
 {
     /**
+     * Output constant making verbose shells.
+     *
+     * @var int
+     */
+    public const VERBOSE = 2;
+
+    /**
+     * Output constant for making normal shells.
+     *
+     * @var int
+     */
+    public const NORMAL = 1;
+
+    /**
+     * Output constants for making quiet shells.
+     *
+     * @var int
+     */
+    public const QUIET = 0;
+
+    /**
      * The output stream
      *
      * @var \Cake\Console\ConsoleOutput
@@ -60,27 +81,6 @@ class ConsoleIo
     protected $_helpers;
 
     /**
-     * Output constant making verbose shells.
-     *
-     * @var int
-     */
-    public const VERBOSE = 2;
-
-    /**
-     * Output constant for making normal shells.
-     *
-     * @var int
-     */
-    public const NORMAL = 1;
-
-    /**
-     * Output constants for making quiet shells.
-     *
-     * @var int
-     */
-    public const QUIET = 0;
-
-    /**
      * The current output level.
      *
      * @var int
@@ -103,6 +103,11 @@ class ConsoleIo
     protected $forceOverwrite = false;
 
     /**
+     * @var bool
+     */
+    protected $interactive = true;
+
+    /**
      * Constructor
      *
      * @param \Cake\Console\ConsoleOutput|null $out A ConsoleOutput object for stdout.
@@ -121,6 +126,15 @@ class ConsoleIo
         $this->_in = $in ?: new ConsoleInput('php://stdin');
         $this->_helpers = $helpers ?: new HelperRegistry();
         $this->_helpers->setIo($this);
+    }
+
+    /**
+     * @param bool $value Value
+     * @return void
+     */
+    public function setInteractive(bool $value): void
+    {
+        $this->interactive = $value;
     }
 
     /**
@@ -477,6 +491,10 @@ class ConsoleIo
      */
     protected function _getInput(string $prompt, ?string $options, ?string $default): string
     {
+        if (!$this->interactive) {
+            return (string)$default;
+        }
+
         $optionsText = '';
         if (isset($options)) {
             $optionsText = " $options ";

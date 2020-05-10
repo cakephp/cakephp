@@ -172,6 +172,10 @@ abstract class BaseCommand implements CommandInterface
             return static::CODE_SUCCESS;
         }
 
+        if ($args->getOption('quiet')) {
+            $io->setInteractive(false);
+        }
+
         return $this->execute($args, $io);
     }
 
