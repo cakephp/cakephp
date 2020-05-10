@@ -368,7 +368,6 @@ class CommandTest extends TestCase
         $command->executeCommand(new \stdClass(), [], $this->getMockIo(new ConsoleOutput()));
     }
 
-
     /**
      * Test that noninteractive commands use defaults where applicable.
      *
