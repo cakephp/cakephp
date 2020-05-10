@@ -23,7 +23,6 @@ use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Router;
 use Cake\Routing\RoutingApplicationInterface;
-use Laminas\Diactoros\Stream;
 use LogicException;
 use Psr\Http\Message\ResponseInterface;
 
@@ -162,16 +161,10 @@ class MiddlewareDispatcher
             $spec['query'],
             $spec['post'],
             $spec['cookies'],
-            $spec['files']
+            $spec['files'],
+            $spec['input'] ?? null
         );
         $request = $request->withAttribute('session', $spec['session']);
-
-        if (isset($spec['input'])) {
-            $stream = new Stream('php://memory', 'rw');
-            $stream->write($spec['input']);
-            $stream->rewind();
-            $request = $request->withBody($stream);
-        }
 
         return $request;
     }

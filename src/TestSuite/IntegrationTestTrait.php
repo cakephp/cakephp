@@ -592,19 +592,6 @@ trait IntegrationTestTrait
         }
 
         parse_str($query, $queryData);
-        $props = [
-            'url' => $url,
-            'session' => $session,
-            'query' => $queryData,
-            'files' => [],
-        ];
-        if (is_string($data)) {
-            $props['input'] = $data;
-        } else {
-            $data = $this->_addTokens($tokenUrl, $data);
-            $props['post'] = $this->_castToString($data);
-        }
-        $props['cookies'] = $this->_cookie;
 
         $env = [
             'REQUEST_METHOD' => $method,
@@ -627,7 +614,28 @@ trait IntegrationTestTrait
             }
             unset($this->_request['headers']);
         }
-        $props['environment'] = $env;
+        $props = [
+            'url' => $url,
+            'session' => $session,
+            'query' => $queryData,
+            'files' => [],
+            'environment' => $env,
+        ];
+
+        if (is_string($data)) {
+            $props['input'] = $data;
+        } elseif (
+            is_array($data) &&
+            isset($props['environment']['CONTENT_TYPE']) &&
+            $props['environment']['CONTENT_TYPE'] === 'application/x-www-form-urlencoded'
+        ) {
+            $props['input'] = http_build_query($data);
+        } else {
+            $data = $this->_addTokens($tokenUrl, $data);
+            $props['post'] = $this->_castToString($data);
+        }
+
+        $props['cookies'] = $this->_cookie;
         $props = Hash::merge($props, $this->_request);
 
         return $props;
