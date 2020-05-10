@@ -17,12 +17,14 @@ namespace Cake\Test\TestCase\Database\Expression;
 
 use Cake\Database\Expression\DateTimeIntervalExpression;
 use Cake\Database\Expression\IntervalExpression;
+use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
 use Cake\Database\Type;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
 use Cake\I18n\FrozenTime;
 use Cake\TestSuite\TestCase;
+use DateTimeInterface;
 
 /**
  * Tests IntervalExpression class
@@ -111,9 +113,24 @@ class IntervalExpressionTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Interval needs to be greater than zero. Relative intervals are not supported.');
-        new DateTimeIntervalExpression(
-            new FrozenTime(self::$data['date'], self::$data['tz']),
+        new IntervalExpression(
             self::$data['dtIntervalInvalid']
+        );
+    }
+
+    /**
+     * Test an invalid interval.
+     *
+     * @return void
+     * @throws \Exception
+     */
+    public function testInvalidSubject()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Subject must be ' . DateTimeInterface::class . ' or ' . ExpressionInterface::class);
+        new DateTimeIntervalExpression(
+            'This is not a valid subject.',
+            self::$data['dtInterval']
         );
     }
 }

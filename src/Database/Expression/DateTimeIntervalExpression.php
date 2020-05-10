@@ -16,13 +16,13 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Expression;
 
-use Cake\Database\Exception;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\ValueBinder;
 use Cake\Utility\Hash;
 use Closure;
 use DateInterval;
 use DateTimeInterface;
+use InvalidArgumentException;
 
 /**
  * An expression object to generate the SQL for an interval expression involving
@@ -100,8 +100,8 @@ class DateTimeIntervalExpression extends IntervalExpression implements Expressio
     public function setSubject($subject)
     {
         if (!($subject instanceof DateTimeInterface) && !($subject instanceof ExpressionInterface)) {
-            throw new Exception(
-                'Value must be ' . DateTimeInterface::class . ' or ' . ExpressionInterface::class
+            throw new InvalidArgumentException(
+                'Subject must be ' . DateTimeInterface::class . ' or ' . ExpressionInterface::class
             );
         }
         $this->subject = $subject;
