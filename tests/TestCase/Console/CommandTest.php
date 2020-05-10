@@ -28,6 +28,7 @@ use InvalidArgumentException;
 use TestApp\Command\AbortCommand;
 use TestApp\Command\AutoLoadModelCommand;
 use TestApp\Command\DemoCommand;
+use TestApp\Command\NonInteractiveCommand;
 
 /**
  * Test case for Console\Command
@@ -130,6 +131,7 @@ class CommandTest extends TestCase
      */
     public function testRunCallsInitialize()
     {
+        /** @var \Cake\Console\Command|\PHPUnit\Framework\MockObject\MockObject $command */
         $command = $this->getMockBuilder(Command::class)
             ->setMethods(['initialize'])
             ->getMock();
@@ -222,6 +224,7 @@ class CommandTest extends TestCase
      */
     public function testRunOptionParserFailure()
     {
+        /** @var \Cake\Console\Command|\PHPUnit\Framework\MockObject\MockObject $command */
         $command = $this->getMockBuilder(Command::class)
             ->setMethods(['getOptionParser'])
             ->getMock();
@@ -365,6 +368,23 @@ class CommandTest extends TestCase
         $command->executeCommand(new \stdClass(), [], $this->getMockIo(new ConsoleOutput()));
     }
 
+    /**
+     * Test that noninteractive commands use defaults where applicable.
+     *
+     * @return void
+     */
+    public function testExecuteCommandNonInteractive()
+    {
+        $output = new ConsoleOutput();
+        $command = new Command();
+        $command->executeCommand(NonInteractiveCommand::class, ['--quiet'], $this->getMockIo($output));
+        $this->assertEquals(['Result: Default!'], $output->messages());
+    }
+
+    /**
+     * @param \Cake\Console\ConsoleOutput $output
+     * @return \Cake\Console\ConsoleIo|\PHPUnit\Framework\MockObject\MockObject
+     */
     protected function getMockIo($output)
     {
         $io = $this->getMockBuilder(ConsoleIo::class)
