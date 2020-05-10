@@ -35,6 +35,7 @@ class QueryLogger extends BaseLog
     public function __construct(array $config = [])
     {
         $this->_defaultConfig['scopes'] = ['queriesLog'];
+        $this->_defaultConfig['connection'] = '';
 
         parent::__construct($config);
     }
