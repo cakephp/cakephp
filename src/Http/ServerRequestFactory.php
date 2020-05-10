@@ -49,6 +49,7 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
      * @param array $body $_POST superglobal
      * @param array $cookies $_COOKIE superglobal
      * @param array $files $_FILES superglobal
+     * @param string $input php://input Used to stub request streams in testing.
      * @return \Cake\Http\ServerRequest
      * @throws \InvalidArgumentException for invalid file values
      */
@@ -57,7 +58,8 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
         ?array $query = null,
         ?array $body = null,
         ?array $cookies = null,
-        ?array $files = null
+        ?array $files = null,
+        ?string $input = null
     ): ServerRequest {
         $server = normalizeServer($server ?: $_SERVER);
         $uri = static::createUri($server);
@@ -79,6 +81,7 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
             'base' => $uri->base,
             'session' => $session,
             'mergeFilesAsObjects' => Configure::read('App.uploadedFilesAsObjects', true),
+            'input' => $input,
         ]);
 
         return $request;

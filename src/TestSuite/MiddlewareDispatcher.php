@@ -162,16 +162,10 @@ class MiddlewareDispatcher
             $spec['query'],
             $spec['post'],
             $spec['cookies'],
-            $spec['files']
+            $spec['files'],
+            $spec['input'] ?? null
         );
         $request = $request->withAttribute('session', $spec['session']);
-
-        if (isset($spec['input'])) {
-            $stream = new Stream('php://memory', 'rw');
-            $stream->write($spec['input']);
-            $stream->rewind();
-            $request = $request->withBody($stream);
-        }
 
         return $request;
     }
