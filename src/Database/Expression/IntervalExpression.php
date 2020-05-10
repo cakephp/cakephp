@@ -16,12 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Expression;
 
+use Cake\Database\DateInterval;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\ValueBinder;
 use Cake\Utility\Hash;
 use Closure;
-use DateInterval;
-use InvalidArgumentException;
 
 /**
  * An expression object to generate the SQL for an interval expression.
@@ -29,23 +28,9 @@ use InvalidArgumentException;
 class IntervalExpression implements ExpressionInterface
 {
     /**
-     * Key mappings for DateInterval array conversion.
-     *
-     * @var array
-     */
-    private const KEYS_REQUIRED = ['y' => 1, 'm' => 1, 'd' => 1, 'h' => 1, 'i' => 1, 's' => 1, 'f' => 1];
-
-    /**
-     * SQL unit values for DateInterval array conversion.
-     *
-     * @var string[]
-     */
-    private const KEYS_TRANSFORM = ['YEAR', 'MONTH', 'DAY', 'HOUR', 'MINUTE', 'SECOND', 'MICROSECOND'];
-
-    /**
      * The interval object used to construct the interval SQL statement.
      *
-     * @var \DateInterval
+     * @var \Cake\Database\DateInterval
      */
     protected $interval;
 
@@ -65,7 +50,7 @@ class IntervalExpression implements ExpressionInterface
      * @param \DateInterval $interval The interval value as a DateInterval object.
      * @throws \Exception Thrown when interval object is invalid.
      */
-    public function __construct(DateInterval $interval)
+    public function __construct(\DateInterval $interval)
     {
         $this->setInterval($interval)->reset();
     }
@@ -76,7 +61,7 @@ class IntervalExpression implements ExpressionInterface
     public function sql(ValueBinder $generator): string
     {
         $options = $this->getIntervalSqlOptions();
-        $interval = self::transformForDatabase($this->getInterval(), Hash::get($options, 'combineMicro', true));
+        $interval = $this->getInterval()->getParsed(Hash::get($options, 'combineMicro', true));
         $override = Hash::get($options, 'overrideCallback');
         if ($override instanceof Closure) {
             $override = $override($this, $interval, $generator);
@@ -85,12 +70,20 @@ class IntervalExpression implements ExpressionInterface
             $sql = $override->sql($generator);
         } else {
             $intervalAry = [];
-            if ($interval['YEAR'] || $interval['MONTH']) {
+            if (
+                $interval['YEAR'] && $interval['MONTH'] && static::haveSameSign($interval['YEAR'], $interval['MONTH'])
+            ) {
                 $intervalAry = array_merge($intervalAry, static::format('YEAR_MONTH', $options, $interval));
+                unset($interval['YEAR'], $interval['MONTH']);
             }
-            unset($interval['YEAR'], $interval['MONTH']);
-            if (!empty($interval)) {
+            if (!empty($interval) && static::haveSameSign(...array_values($interval))) {
                 $intervalAry = array_merge($intervalAry, static::format('DAY_MICROSECOND', $options, $interval));
+                $interval = [];
+            }
+            if (!empty($interval)) {
+                foreach (array_filter($interval) as $key => $value) {
+                    $intervalAry = array_merge($intervalAry, static::format($key, $options, $interval));
+                }
             }
             $sql = Hash::get($options, 'wrap.prefix') . implode($options['glue'], $intervalAry) .
                 Hash::get($options, 'wrap.suffix');
@@ -98,6 +91,18 @@ class IntervalExpression implements ExpressionInterface
         $this->reset();
 
         return $sql;
+    }
+
+    /**
+     * Returns true if both parameters are positive or both are negative.
+     *
+     * @param float $a Numeric value to compare.
+     * @param float $b Numeric value to compare.
+     * @return bool
+     */
+    protected static function haveSameSign(float $a, float $b): bool
+    {
+        return ($a >= 0.0 && $b >= 0.0) || ($a < 0.0 && $b < 0.0);
     }
 
     /**
@@ -153,18 +158,13 @@ class IntervalExpression implements ExpressionInterface
      * @throws \Exception When interval value is not valid.
      * @return $this
      */
-    protected function setInterval(DateInterval $interval)
+    protected function setInterval(\DateInterval $interval)
     {
-        $intervalAry = (array)$interval;
-        $isValid = ($intervalAry['y'] + $intervalAry['m'] + $intervalAry['d'] +
-            $intervalAry['h'] + $intervalAry['i'] + $intervalAry['s'] + $intervalAry['f']) !== 0.0 &&
-            !($intervalAry['have_weekday_relative'] || $intervalAry['have_special_relative']);
-        if (!$isValid) {
-            throw new InvalidArgumentException(
-                'Interval needs to be greater than zero. Relative intervals are not supported.'
-            );
+        if (!($interval instanceof DateInterval)) {
+            $this->interval = DateInterval::convertFromDateInterval($interval);
+        } else {
+            $this->interval = $interval;
         }
-        $this->interval = $interval;
 
         return $this;
     }
@@ -172,38 +172,11 @@ class IntervalExpression implements ExpressionInterface
     /**
      * Method that returns the interval object.
      *
-     * @return \DateInterval
+     * @return \Cake\Database\DateInterval
      */
     protected function getInterval(): DateInterval
     {
         return $this->interval;
-    }
-
-    /**
-     * Method accepts an interval object and converts to an array and applies
-     * the SQL transform values. For instance, the 'y' key becomes 'YEAR', 'm'
-     * becomes 'MONTH', 'h' becomes 'HOUR', etc.
-     *
-     * @param \DateInterval $di An interval object.
-     * @param bool $combineMicro Determines if the microseconds are combined into seconds.
-     * @return array Converted & transformed interval object.
-     */
-    private static function transformForDatabase(DateInterval $di, bool $combineMicro = true): array
-    {
-        $intervalAry = array_combine(
-            self::KEYS_TRANSFORM,
-            array_intersect_key((array)$di, self::KEYS_REQUIRED)
-        );
-        if ($combineMicro) {
-            $intervalAry['SECOND'] = $intervalAry['SECOND'] + $intervalAry['MICROSECOND'];
-            unset($intervalAry['MICROSECOND']);
-        } else {
-            $intervalAry['MICROSECOND'] *= 1000000;
-        }
-
-        return array_map(function ($number) use ($di) {
-            return static::setNumericSign($di->invert == true, $number);
-        }, $intervalAry);
     }
 
     /**
@@ -237,18 +210,6 @@ class IntervalExpression implements ExpressionInterface
     }
 
     /**
-     * Method to ensure the proper numeric positive/negative is used.
-     *
-     * @param bool $negative Boolean value indicating if $number is supposed to be negative.
-     * @param int|float $number The number that may need to be flipped between positive and negative.
-     * @return int|float
-     */
-    private static function setNumericSign(bool $negative, $number)
-    {
-        return $negative && $number >= 0 ? (-1 * $number) : $number;
-    }
-
-    /**
      * Method to format the return value based on a key utilizing the
      * formatting properties within the sql options array.
      *
@@ -266,8 +227,8 @@ class IntervalExpression implements ExpressionInterface
                     Hash::get($options, 'wrap.inner.prefix'),
                     sprintf(
                         Hash::get($options, 'format.inner.YEAR_MONTH'),
-                        $interval['YEAR'],
-                        $interval['MONTH'],
+                        ($interval['YEAR'] < 0 ? '-' : '') . abs($interval['YEAR']),
+                        abs($interval['MONTH']),
                         $key
                     ),
                     Hash::get($options, 'wrap.inner.suffix')
@@ -280,12 +241,21 @@ class IntervalExpression implements ExpressionInterface
                     Hash::get($options, 'wrap.inner.prefix'),
                     sprintf(
                         Hash::get($options, 'format.inner.DAY_MICROSECOND'),
-                        $interval['DAY'],
-                        $interval['HOUR'],
-                        $interval['MINUTE'],
-                        $interval['SECOND'],
+                        ($interval['DAY'] < 0 ? '-' : '') . abs($interval['DAY']),
+                        abs($interval['HOUR']),
+                        abs($interval['MINUTE']),
+                        abs($interval['SECOND']),
                         $key
                     ),
+                    Hash::get($options, 'wrap.inner.suffix')
+                ),
+            ];
+        } elseif (isset($interval[$key])) {
+            return [
+                sprintf(
+                    Hash::get($options, 'format.default'),
+                    Hash::get($options, 'wrap.inner.prefix'),
+                    sprintf(Hash::get($options, 'format.inner.default'), $interval[$key], $key),
                     Hash::get($options, 'wrap.inner.suffix')
                 ),
             ];

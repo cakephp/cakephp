@@ -24,7 +24,11 @@ use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
 use Cake\I18n\FrozenTime;
 use Cake\TestSuite\TestCase;
+use DateInterval as CakeDateInterval;
 use DateTimeInterface;
+use DateTimeZone;
+use InvalidArgumentException;
+use UnexpectedValueException;
 
 /**
  * Tests IntervalExpression class
@@ -50,12 +54,15 @@ class IntervalExpressionTest extends TestCase
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
-        self::$data['tz'] = $utc = new \DateTimeZone('UTC');
-        self::$data['interval'] = \DateInterval::createFromDateString('1 day + 2 minute + 2 seconds + 111 milliseconds');
-        self::$data['dtInterval'] = \DateInterval::createFromDateString(
-            '2 year + 1 month + 10 day +2 minute + 2 seconds + 110 milliseconds'
+        self::$data['tz'] = $utc = new DateTimeZone('UTC');
+        self::$data['interval'] = CakeDateInterval::createFromDateString('1 day + 2 minute + 2 seconds + 111 milliseconds');
+        self::$data['intervalNegative'] = CakeDateInterval::createFromDateString(
+            '2 year + 1 month + 10 day + 2 minute + 2 seconds + 110 milliseconds ago + 10 seconds'
         );
-        self::$data['dtIntervalInvalid'] = \DateInterval::createFromDateString(
+        self::$data['dtInterval'] = CakeDateInterval::createFromDateString(
+            '2 year + 1 month + 10 day + 2 minute + 2 seconds + 110 milliseconds'
+        );
+        self::$data['dtIntervalInvalid'] = CakeDateInterval::createFromDateString(
             'third monday of february'
         );
         self::$data['date'] = '2021-04-17 02:03:04.32';
@@ -73,6 +80,22 @@ class IntervalExpressionTest extends TestCase
         $result = $iExp->sql(new ValueBinder());
         $this->assertSame(
             "INTERVAL '01 00:02:02.111000' DAY_MICROSECOND",
+            $result
+        );
+    }
+
+    /**
+     * Tests negative interval values.
+     *
+     * @return void
+     * @throws \Exception
+     */
+    public function testNegativeInterval()
+    {
+        $iExp = new IntervalExpression(self::$data['intervalNegative']);
+        $result = $iExp->sql(new ValueBinder());
+        $this->assertSame(
+            "INTERVAL '-2-1' YEAR_MONTH + INTERVAL -10 DAY + INTERVAL -2 MINUTE + INTERVAL 8 SECOND",
             $result
         );
     }
@@ -111,8 +134,8 @@ class IntervalExpressionTest extends TestCase
      */
     public function testInvalidDateTimeInterval()
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Interval needs to be greater than zero. Relative intervals are not supported.');
+        $this->expectException(UnexpectedValueException::class);
+        $this->expectExceptionMessage('Cloned interval object cannot be a special or relative format.');
         new IntervalExpression(
             self::$data['dtIntervalInvalid']
         );
@@ -126,7 +149,7 @@ class IntervalExpressionTest extends TestCase
      */
     public function testInvalidSubject()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Subject must be ' . DateTimeInterface::class . ' or ' . ExpressionInterface::class);
         new DateTimeIntervalExpression(
             'This is not a valid subject.',
