@@ -274,7 +274,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
 
         throw new InvalidCsrfTokenException(__d(
             'cake',
-            'Missing or invalid CSRF token. A CSRF token could not be matched in either the request body or request headers.'
+            'CSRF token from either the request body or request headers did not match or is missing.'
         ));
     }
 
