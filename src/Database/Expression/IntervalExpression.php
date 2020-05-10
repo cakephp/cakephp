@@ -83,8 +83,6 @@ class IntervalExpression implements ExpressionInterface
         }
         if ($override instanceof ExpressionInterface) {
             $sql = $override->sql($generator);
-        } elseif (is_string($override) && !empty($override)) {
-            $sql = $override;
         } else {
             $intervalAry = [];
             if ($interval['YEAR'] || $interval['MONTH']) {
@@ -286,15 +284,6 @@ class IntervalExpression implements ExpressionInterface
                         $interval['SECOND'],
                         $key
                     ),
-                    Hash::get($options, 'wrap.inner.suffix')
-                ),
-            ];
-        } elseif (isset($interval[$key])) {
-            return [
-                sprintf(
-                    Hash::get($options, 'format.default'),
-                    Hash::get($options, 'wrap.inner.prefix'),
-                    sprintf(Hash::get($options, 'format.inner.default'), $interval[$key], $key),
                     Hash::get($options, 'wrap.inner.suffix')
                 ),
             ];
