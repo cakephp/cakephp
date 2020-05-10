@@ -16,11 +16,10 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Expression;
 
-use Cake\Database\Exception as DatabaseException;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\ValueBinder;
 use Closure;
-use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * An expression that represents a common table expression definition.
@@ -37,16 +36,9 @@ class CommonTableExpression implements ExpressionInterface
     /**
      * The field names to use for the CTE.
      *
-     * @var \Cake\Database\ExpressionInterface[]|string[]
+     * @var \Cake\Database\Expression\IdentifierExpression[]
      */
     protected $fields = [];
-
-    /**
-     * The modifiers to use for the CTE.
-     *
-     * @var \Cake\Database\ExpressionInterface[]|string[]
-     */
-    protected $modifiers = [];
 
     /**
      * The CTE query definition.
@@ -56,41 +48,36 @@ class CommonTableExpression implements ExpressionInterface
     protected $query;
 
     /**
-     * Whether the CTE operates recursively.
+     * Whether the CTE is materialized or not materialized.
      *
-     * @var bool
+     * @var string|null
      */
-    protected $recursive = false;
+    protected $materialized = null;
 
     /**
      * Constructor.
      *
      * @param string $name The CTE name.
-     * @param \Cake\Database\ExpressionInterface $query The CTE query definition.
+     * @param \Closure|\Cake\Database\ExpressionInterface $query CTE query
      */
-    public function __construct(?string $name = null, ?ExpressionInterface $query = null)
+    public function __construct(?string $name = null, $query = null)
     {
         $this->name = $name;
-        $this->query = $query;
+        if ($query) {
+            $this->query($query);
+        }
     }
 
     /**
-     * Returns the CTE name.
+     * Sets the name of this CTE.
      *
-     * @return string|null
-     */
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    /**
-     * Sets the CTE name.
+     * This is the named you used to reference the expression
+     * in select, insert, etc queries.
      *
      * @param string $name The CTE name.
      * @return $this
      */
-    public function setName(string $name)
+    public function name(string $name)
     {
         $this->name = $name;
 
@@ -98,176 +85,91 @@ class CommonTableExpression implements ExpressionInterface
     }
 
     /**
-     * Returns the field names to use for the CTE.
+     * Sets the query for this CTE.
      *
-     * @return \Cake\Database\ExpressionInterface[]|string[]
-     */
-    public function getFields(): array
-    {
-        return $this->fields;
-    }
-
-    /**
-     * Sets the field names to use for the CTE.
-     *
-     * @param \Cake\Database\ExpressionInterface[]|string[] $fields The field names to use for the CTE.
+     * @param \Closure|\Cake\Database\ExpressionInterface $query CTE query
      * @return $this
-     * @throws \InvalidArgumentException When one or more fields are of an invalid type.
      */
-    public function setFields(array $fields)
+    public function query($query)
     {
-        foreach ($fields as $index => $field) {
-            if (is_string($field)) {
-                $fields[$index] = $field = new IdentifierExpression($field);
-            }
-
-            if (!($field instanceof ExpressionInterface)) {
-                throw new InvalidArgumentException(sprintf(
-                    'The `$fields` argument must contain only instances of `%s`, or strings, `%s` given at index `%d`.',
-                    ExpressionInterface::class,
-                    getTypeName($field),
-                    $index
-                ));
+        if ($query instanceof Closure) {
+            $query = $query();
+            if (!($query instanceof ExpressionInterface)) {
+                throw new RuntimeException(
+                    'You must return an `ExpressionInterface` from closure passed to `query()`.'
+                );
             }
         }
-
-        $this->fields = $fields;
-
-        return $this;
-    }
-
-    /**
-     * Returns the modifiers to use for the CTE.
-     *
-     * @return \Cake\Database\ExpressionInterface[]|string[]
-     */
-    public function getModifiers(): array
-    {
-        return $this->modifiers;
-    }
-
-    /**
-     * Sets the modifiers to use for the CTE.
-     *
-     * @param \Cake\Database\ExpressionInterface[]|string[] $modifiers The modifiers to use for the CTE.
-     * @return $this
-     * @throws \InvalidArgumentException When one or more modifiers are of an invalid type.
-     */
-    public function setModifiers(array $modifiers)
-    {
-        foreach ($modifiers as $index => $modifier) {
-            if (
-                !($modifier instanceof ExpressionInterface) &&
-                !is_string($modifier)
-            ) {
-                throw new InvalidArgumentException(sprintf(
-                    'The `$modifiers` argument must contain only instances of `%s`, or strings, ' .
-                        '`%s` given at index `%d`.',
-                    ExpressionInterface::class,
-                    getTypeName($modifier),
-                    $index
-                ));
-            }
-        }
-
-        $this->modifiers = $modifiers;
-
-        return $this;
-    }
-
-    /**
-     * Returns the CTE query definition.
-     *
-     * @return \Cake\Database\ExpressionInterface|null
-     */
-    public function getQuery(): ?ExpressionInterface
-    {
-        return $this->query;
-    }
-
-    /**
-     * Sets the CTE query definition.
-     *
-     * @param \Cake\Database\ExpressionInterface $query The CTE query definition.
-     * @return $this
-     */
-    public function setQuery(ExpressionInterface $query)
-    {
         $this->query = $query;
 
         return $this;
     }
 
     /**
-     * Returns whether the CTE operates recursively.
+     * Adds one or more fields (arguments) to the CTE.
      *
-     * @return bool
-     */
-    public function isRecursive(): bool
-    {
-        return $this->recursive;
-    }
-
-    /**
-     * Sets whether the CTE operates recursively.
-     *
-     * @param bool $recursive Indicates whether the CTE query operates recursively.
+     * @param string|string[]|\Cake\Database\Expression\IdentifierExpression|\Cake\Database\Expression\IdentifierExpression[] $fields Field names
      * @return $this
      */
-    public function setRecursive(bool $recursive)
+    public function field($fields)
     {
-        $this->recursive = $recursive;
+        $fields = (array)$fields;
+        foreach ($fields as &$field) {
+            if (!($field instanceof IdentifierExpression)) {
+                $field = new IdentifierExpression($field);
+            }
+        }
+        $this->fields = array_merge($this->fields, $fields);
 
         return $this;
     }
 
     /**
-     * {@inheritDoc}
+     * Sets this CTE as materialized.
      *
-     * @throws \Cake\Database\Exception When not name has been set.
-     * @throws \Cake\Database\Exception When not query has been set.
+     * @return $this
+     */
+    public function materialized()
+    {
+        $this->materialized = 'MATERIALIZED';
+
+        return $this;
+    }
+
+    /**
+     * Sets this CTE as not materialized.
+     *
+     * @return $this
+     */
+    public function notMaterialized()
+    {
+        $this->materialized = 'NOT MATERIALIZED';
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
      */
     public function sql(ValueBinder $generator): string
     {
-        if (empty($this->name)) {
-            throw new DatabaseException(
-                'Cannot generate SQL for common table expressions that have no name.'
-            );
-        }
-
-        if (empty($this->query)) {
-            throw new DatabaseException(
-                'Cannot generate SQL for common table expressions that have no query.'
-            );
-        }
-
         $fields = '';
-        if (!empty($this->fields)) {
-            $fields = [];
-            foreach ($this->fields as $field) {
-                if ($field instanceof ExpressionInterface) {
-                    $field = $field->sql($generator);
-                }
-                $fields[] = $field;
-            }
-
-            $fields = sprintf('(%s)', implode(', ', $fields));
+        if ($this->fields) {
+            $expressions = array_map(function (IdentifierExpression $e) use ($generator) {
+                return $e->sql($generator);
+            }, $this->fields);
+            $fields = sprintf('(%s)', implode(', ', $expressions));
         }
 
-        $modifiers = '';
-        if (!empty($this->modifiers)) {
-            $modifiers = [];
-            foreach ($this->modifiers as $modifier) {
-                if ($modifier instanceof ExpressionInterface) {
-                    $modifier = $modifier->sql($generator);
-                }
-                $modifiers[] = $modifier;
-            }
+        $suffix = $this->materialized ? $this->materialized . ' ' : '';
 
-            $modifiers = ' ' . implode(' ', $modifiers);
-        }
-
-        return sprintf('%s%s AS%s (%s)', $this->name, $fields, $modifiers, $this->query->sql($generator));
+        return sprintf(
+            '%s%s AS %s(%s)',
+            (string)$this->name,
+            $fields,
+            $suffix,
+            $this->query ? $this->query->sql($generator) : ''
+        );
     }
 
     /**
@@ -275,11 +177,14 @@ class CommonTableExpression implements ExpressionInterface
      */
     public function traverse(Closure $visitor)
     {
-        foreach (array_merge($this->fields, $this->modifiers, [$this->query]) as $part) {
-            if ($part instanceof ExpressionInterface) {
-                $visitor($part);
-                $part->traverse($visitor);
-            }
+        foreach ($this->fields as $field) {
+            $visitor($field);
+            $field->traverse($visitor);
+        }
+
+        if ($this->query) {
+            $visitor($this->query);
+            $this->query->traverse($visitor);
         }
 
         return $this;
@@ -292,20 +197,12 @@ class CommonTableExpression implements ExpressionInterface
      */
     public function __clone()
     {
-        if ($this->query instanceof ExpressionInterface) {
+        if ($this->query) {
             $this->query = clone $this->query;
         }
 
         foreach ($this->fields as $key => $field) {
-            if ($this->fields[$key] instanceof ExpressionInterface) {
-                $this->fields[$key] = clone $this->fields[$key];
-            }
-        }
-
-        foreach ($this->modifiers as $key => $modifier) {
-            if ($this->modifiers[$key] instanceof ExpressionInterface) {
-                $this->modifiers[$key] = clone $this->modifiers[$key];
-            }
+            $this->fields[$key] = clone $field;
         }
     }
 }
