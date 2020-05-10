@@ -60,25 +60,16 @@ class WindowExpression implements ExpressionInterface, WindowInterface
     }
 
     /**
-     * Return whether window expression is empty.
+     * Return whether is only a named window expression.
      *
-     * An expression is empty if it has no partition, order or frame clauses.
+     * These window expressions only specify a named window and do not
+     * specify their own partitions, frame or order.
      *
      * @return bool
      */
-    public function isEmpty(): bool
+    public function isNamedOnly(): bool
     {
-        return !$this->partitions && !$this->frame && !$this->order;
-    }
-
-    /**
-     * Return named window used in this expresion if set.
-     *
-     * @return string|null
-     */
-    public function getName(): ?string
-    {
-        return $this->name;
+        return $this->name && (!$this->partitions && !$this->frame && !$this->order);
     }
 
     /**
@@ -87,7 +78,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
      * @param string $name Window name
      * @return $this
      */
-    public function setName(string $name)
+    public function name(string $name)
     {
         $this->name = $name;
 
@@ -240,10 +231,6 @@ class WindowExpression implements ExpressionInterface, WindowInterface
      */
     public function sql(ValueBinder $generator): string
     {
-        if ($this->isEmpty()) {
-            return '';
-        }
-
         $clauses = [];
         if ($this->name) {
             $clauses[] = $this->name;

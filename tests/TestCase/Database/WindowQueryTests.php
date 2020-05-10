@@ -82,7 +82,7 @@ class WindowQueryTests extends TestCase
 
         $sql = $query
             ->window('name', function ($window, $query) {
-                return $window->setName('name3');
+                return $window->name('name3');
             }, true)
             ->sql();
         $this->assertEqualsSql('SELECT * WINDOW name AS (name3)', $sql);
