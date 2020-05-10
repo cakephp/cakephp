@@ -370,7 +370,7 @@ class FormHelperTest extends TestCase
         $this->expectException(\TypeError::class);
         $this->expectExceptionMessage('Return value of Cake\View\Form\ContextFactory::get() must implement interface Cake\View\Form\ContextInterface, instance of stdClass returned');
         $context = 'My data';
-        $this->Form->addContextProvider('test', function ($request, $data) use ($context) {
+        $this->Form->addContextProvider('test', function ($request, $data) {
             return new \stdClass();
         });
         $this->Form->create($context);

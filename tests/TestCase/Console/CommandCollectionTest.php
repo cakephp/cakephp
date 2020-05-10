@@ -116,14 +116,11 @@ class CommandCollectionTest extends TestCase
     public function testAddInstance()
     {
         $collection = new CommandCollection();
-        $io = $this->getMockBuilder('Cake\Console\ConsoleIo')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $shell = new RoutesCommand($io);
-        $collection->add('routes', $shell);
+        $command = new RoutesCommand();
+        $collection->add('routes', $command);
 
         $this->assertTrue($collection->has('routes'));
-        $this->assertSame($shell, $collection->get('routes'));
+        $this->assertSame($command, $collection->get('routes'));
     }
 
     /**
