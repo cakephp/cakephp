@@ -16,12 +16,12 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Expression;
 
-use Cake\Database\Exception;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\ValueBinder;
 use Cake\Utility\Hash;
 use Closure;
 use DateInterval;
+use InvalidArgumentException;
 
 /**
  * An expression object to generate the SQL for an interval expression.
@@ -155,11 +155,13 @@ class IntervalExpression implements ExpressionInterface
      */
     protected function setInterval(DateInterval $interval)
     {
-        $isValid = ($interval->y + $interval->m + $interval->d +
-            $interval->h + $interval->i + $interval->s + $interval->f) !== 0.0;
+        $intervalAry = (array)$interval;
+        $isValid = ($intervalAry['y'] + $intervalAry['m'] + $intervalAry['d'] +
+            $intervalAry['h'] + $intervalAry['i'] + $intervalAry['s'] + $intervalAry['f']) !== 0.0 &&
+            !($intervalAry['have_weekday_relative'] || $intervalAry['have_special_relative']);
         if (!$isValid) {
-            throw new Exception(
-                'Interval needs to be greater than zero. Note that relative intervals are not supported.'
+            throw new InvalidArgumentException(
+                'Interval needs to be greater than zero. Relative intervals are not supported.'
             );
         }
         $this->interval = $interval;

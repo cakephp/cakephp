@@ -53,6 +53,9 @@ class IntervalExpressionTest extends TestCase
         self::$data['dtInterval'] = \DateInterval::createFromDateString(
             '2 year + 1 month + 10 day +2 minute + 2 seconds + 110 milliseconds'
         );
+        self::$data['dtIntervalInvalid'] = \DateInterval::createFromDateString(
+            'third monday of february'
+        );
         self::$data['date'] = '2021-04-17 02:03:04.32';
     }
 
@@ -95,6 +98,22 @@ class IntervalExpressionTest extends TestCase
         $this->assertLessThanOrEqual(
             new FrozenTime('2023-05-27 02:05:06.43', self::$data['tz']),
             $resultDt
+        );
+    }
+
+    /**
+     * Test an invalid interval.
+     *
+     * @return void
+     * @throws \Exception
+     */
+    public function testInvalidDateTimeInterval()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Interval needs to be greater than zero. Relative intervals are not supported.');
+        new DateTimeIntervalExpression(
+            new FrozenTime(self::$data['date'], self::$data['tz']),
+            self::$data['dtIntervalInvalid']
         );
     }
 }
