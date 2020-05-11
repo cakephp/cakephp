@@ -49,7 +49,7 @@ interface WindowInterface
     /**
      * Adds one or more partition expressions to the window.
      *
-     * @param (\Cake\Database\ExpressionInterface|string)[]|\Cake\Database\ExpressionInterface|string $partitions Partition expressions
+     * @param \Closure|(\Cake\Database\ExpressionInterface|string)[]|\Cake\Database\ExpressionInterface|string $partitions Partition expressions
      * @return $this
      */
     public function partition($partitions);
@@ -57,7 +57,7 @@ interface WindowInterface
     /**
      * Adds one or more order clauses to the window.
      *
-     * @param (\Cake\Database\ExpressionInterface|string)[]|\Cake\Database\ExpressionInterface|string $fields Order expressions
+     * @param \Closure|(\Cake\Database\ExpressionInterface|string)[]|\Cake\Database\ExpressionInterface|string $fields Order expressions
      * @return $this
      */
     public function order($fields);

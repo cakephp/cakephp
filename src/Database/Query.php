@@ -1460,7 +1460,7 @@ class Query implements ExpressionInterface, IteratorAggregate
         if ($window instanceof Closure) {
             $window = $window(new WindowExpression(), $this);
             if (!($window instanceof WindowExpression)) {
-                throw new RuntimeException('You must return a `WindowExpression` from closure passed to `window()`.');
+                throw new RuntimeException('You must return a `WindowExpression` from a Closure passed to `window()`.');
             }
         }
 
