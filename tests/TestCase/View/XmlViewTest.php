@@ -22,6 +22,7 @@ use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
+use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Xml;
 
@@ -30,6 +31,8 @@ use Cake\Utility\Xml;
  */
 class XmlViewTest extends TestCase
 {
+    protected $fixtures = ['core.Authors'];
+
     public function setUp(): void
     {
         parent::setUp();
@@ -328,5 +331,29 @@ class XmlViewTest extends TestCase
         $this->assertSame($expected, $output);
         $this->assertSame('application/xml', $View->getResponse()->getType());
         $this->assertInstanceOf('Cake\View\HelperRegistry', $View->helpers());
+    }
+
+    public function testSerializingResultSet()
+    {
+        $Request = new ServerRequest();
+        $Response = new Response();
+        $Controller = new Controller($Request, $Response);
+
+        $data = TableRegistry::getTableLocator()->get('Authors')
+            ->find('all')
+            ->where(['id' => 1]);
+        $Controller->set(['authors' => $data]);
+        $Controller->viewBuilder()
+            ->setClassName('Xml')
+            ->setOption('serialize', true);
+        $View = $Controller->createView();
+        $output = $View->render();
+
+        $this->assertSame(
+            '<?xml version="1.0" encoding="UTF-8"?>' . "\n"
+            . '<response><authors><id>1</id><name>mariano</name></authors></response>' . "\n",
+            $output
+        );
+        $this->assertSame('application/xml', $View->getResponse()->getType());
     }
 }
