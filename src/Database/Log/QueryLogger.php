@@ -35,6 +35,7 @@ class QueryLogger extends BaseLog
     public function __construct(array $config = [])
     {
         $this->_defaultConfig['scopes'] = ['queriesLog'];
+        $this->_defaultConfig['connection'] = '';
 
         parent::__construct($config);
     }
@@ -44,10 +45,13 @@ class QueryLogger extends BaseLog
      */
     public function log($level, $message, array $context = [])
     {
-        Log::write(
-            'debug',
-            'connection=' . $this->getConfig('connection', '') . ' ' . (string)$context['query'],
-            ['scope' => $this->scopes() ?: ['queriesLog']]
-        );
+        $context['scope'] = $this->scopes() ?: ['queriesLog'];
+        $context['connection'] = $this->getConfig('connection');
+
+        if ($context['query'] instanceof LoggedQuery) {
+            $context = $context['query']->getContext() + $context;
+            $message = 'connection={connection} duration={took} rows={numRows} ' . $message;
+        }
+        Log::write('debug', $message, $context);
     }
 }
