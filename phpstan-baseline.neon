@@ -396,6 +396,11 @@ parameters:
 			path: src/I18n/Number.php
 
 		-
+			message: "#^Offset 1 does not exist on array\\(\\)\\|array\\(0 \\=\\> 'context'\\|'ids'\\|'translated', \\?1 \\=\\> 'plural'\\|'singular'\\|int\\)\\.$#"
+			count: 1
+			path: src/I18n/Parser/PoFileParser.php
+
+		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/Mailer/Email.php

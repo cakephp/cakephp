@@ -312,12 +312,7 @@ class QueryCompiler
     {
         $windows = [];
         foreach ($parts as $window) {
-            $expr = $window['window'];
-            if ($expr->isEmpty() && $expr->getName()) {
-                $windows[] = $window['name'] . ' AS (' . $expr->getName() . ')';
-            } else {
-                $windows[] = $window['name'] . ' AS (' . $expr->sql($generator) . ')';
-            }
+            $windows[] = $window['name'] . ' AS (' . $window['window']->sql($generator) . ')';
         }
 
         return ' WINDOW ' . implode(', ', $windows);

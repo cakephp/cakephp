@@ -35,12 +35,9 @@ class WindowExpressionTest extends TestCase
     public function testEmptyWindow()
     {
         $w = new WindowExpression();
-        $this->assertTrue($w->isEmpty());
-        $this->assertSame(null, $w->getName());
         $this->assertSame('', $w->sql(new ValueBinder()));
 
         $w->partition('')->order([]);
-        $this->assertTrue($w->isEmpty());
         $this->assertSame('', $w->sql(new ValueBinder()));
     }
 
@@ -292,7 +289,6 @@ class WindowExpressionTest extends TestCase
     public function testExclusion()
     {
         $w = (new WindowExpression())->excludeCurrent();
-        $this->assertSame(true, $w->isEmpty());
         $this->assertEqualsSql(
             '',
             $w->sql(new ValueBinder())
@@ -378,22 +374,24 @@ class WindowExpressionTest extends TestCase
      */
     public function testNamedWindow()
     {
-        $w = new WindowExpression('name');
-        $this->assertTrue($w->isEmpty());
-        $this->assertSame('name', $w->getName());
+        $w = new WindowExpression();
+        $this->assertFalse($w->isNamedOnly());
+
+        $w->name('name');
+        $this->assertTrue($w->isNamedOnly());
         $this->assertEqualsSql(
-            '',
+            'name',
             $w->sql(new ValueBinder())
         );
 
-        $w->setName('new_name');
+        $w->name('new_name');
         $this->assertEqualsSql(
-            '',
+            'new_name',
             $w->sql(new ValueBinder())
         );
 
         $w->order('test');
-        $this->assertFalse($w->isEmpty());
+        $this->assertFalse($w->isNamedOnly());
         $this->assertEqualsSql(
             'new_name ORDER BY test',
             $w->sql(new ValueBinder())
