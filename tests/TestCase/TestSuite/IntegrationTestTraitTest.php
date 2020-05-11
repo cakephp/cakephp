@@ -468,6 +468,24 @@ class IntegrationTestTraitTest extends TestCase
     }
 
     /**
+     * Test that the PSR7 requests receive put data
+     *
+     * @return void
+     */
+    public function testPutDataFormUrlEncoded()
+    {
+        $this->configRequest([
+            'headers' => [
+                'Content-Type' => 'application/x-www-form-urlencoded',
+            ],
+        ]);
+        $this->put('/request_action/post_pass', ['title' => 'value']);
+        $this->assertResponseOk();
+        $data = json_decode('' . $this->_response->getBody());
+        $this->assertSame('value', $data->title);
+    }
+
+    /**
      * Test that the uploaded files are passed correctly to the request
      *
      * @return void

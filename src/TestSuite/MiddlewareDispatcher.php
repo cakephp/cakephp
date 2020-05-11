@@ -23,7 +23,6 @@ use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Router;
 use Cake\Routing\RoutingApplicationInterface;
-use Laminas\Diactoros\Stream;
 use LogicException;
 use Psr\Http\Message\ResponseInterface;
 
@@ -149,6 +148,7 @@ class MiddlewareDispatcher
     {
         if (isset($spec['input'])) {
             $spec['post'] = [];
+            $spec['environment']['CAKEPHP_INPUT'] = $spec['input'];
         }
         $environment = array_merge(
             array_merge($_SERVER, ['REQUEST_URI' => $spec['url']]),
@@ -165,13 +165,6 @@ class MiddlewareDispatcher
             $spec['files']
         );
         $request = $request->withAttribute('session', $spec['session']);
-
-        if (isset($spec['input'])) {
-            $stream = new Stream('php://memory', 'rw');
-            $stream->write($spec['input']);
-            $stream->rewind();
-            $request = $request->withBody($stream);
-        }
 
         return $request;
     }
