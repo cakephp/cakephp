@@ -35,6 +35,11 @@
                 <referencedClass name="Redis"/>
             </errorLevel>
         </UndefinedDocblockClass>
+        <UndefinedConstant>
+            <errorLevel type="suppress">
+                <file name="src/Cache/Engine/ApcuEngine.php" />
+            </errorLevel>
+        </UndefinedConstant>
         <PropertyNotSetInConstructor errorLevel="suppress"/>
         <UnresolvableInclude errorLevel="suppress"/>
     </issueHandlers>
