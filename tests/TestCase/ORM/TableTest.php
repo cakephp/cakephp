@@ -54,6 +54,9 @@ use TestApp\Model\Table\UsersTable;
  */
 class TableTest extends TestCase
 {
+    /**
+     * @var string[]
+     */
     protected $fixtures = [
         'core.Articles',
         'core.Tags',
@@ -81,6 +84,16 @@ class TableTest extends TestCase
      * @var \Cake\Datasource\ConnectionInterface
      */
     protected $connection;
+
+    /**
+     * @var \Cake\Database\TypeMap
+     */
+    protected $usersTypeMap;
+
+    /**
+     * @var \Cake\Database\TypeMap
+     */
+    protected $articlesTypeMap;
 
     /**
      * @return void
@@ -2246,7 +2259,7 @@ class TableTest extends TestCase
         $table->getEventManager()->on('Model.afterSave', $listener);
 
         $calledAfterCommit = false;
-        $listenerAfterCommit = function ($e, $entity, $options) use ($data, &$calledAfterCommit) {
+        $listenerAfterCommit = function ($e, $entity, $options) use (&$calledAfterCommit) {
             $calledAfterCommit = true;
         };
         $table->getEventManager()->on('Model.afterSaveCommit', $listenerAfterCommit);
@@ -2343,13 +2356,13 @@ class TableTest extends TestCase
             ->will($this->returnValue(0));
 
         $called = false;
-        $listener = function ($e, $entity, $options) use ($data, &$called) {
+        $listener = function ($e, $entity, $options) use (&$called) {
             $called = true;
         };
         $table->getEventManager()->on('Model.afterSave', $listener);
 
         $calledAfterCommit = false;
-        $listenerAfterCommit = function ($e, $entity, $options) use ($data, &$calledAfterCommit) {
+        $listenerAfterCommit = function ($e, $entity, $options) use (&$calledAfterCommit) {
             $calledAfterCommit = true;
         };
         $table->getEventManager()->on('Model.afterSaveCommit', $listenerAfterCommit);
@@ -3183,7 +3196,7 @@ class TableTest extends TestCase
         $table->getEventManager()->on('Model.afterDelete', $listener);
 
         $calledAfterCommit = false;
-        $listenerAfterCommit = function ($e, $entity, $options) use ($data, &$calledAfterCommit) {
+        $listenerAfterCommit = function ($e, $entity, $options) use (&$calledAfterCommit) {
             $calledAfterCommit = true;
         };
         $table->getEventManager()->on('Model.afterDeleteCommit', $listenerAfterCommit);

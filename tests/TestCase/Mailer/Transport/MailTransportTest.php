@@ -28,6 +28,11 @@ use Cake\TestSuite\TestCase;
 class MailTransportTest extends TestCase
 {
     /**
+     * @var \Cake\Mailer\Transport\MailTransport|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $MailTransport;
+
+    /**
      * Setup
      *
      * @return void

@@ -416,13 +416,15 @@ EXPECTED;
     public function testStackTrace()
     {
         ob_start();
-        [$r, $expected] = [stackTrace(), \Cake\Error\Debugger::trace()];
+        // phpcs:ignore
+        stackTrace(); $expected = Debugger::trace();
         $result = ob_get_clean();
         $this->assertSame($expected, $result);
 
         $opts = ['args' => true];
         ob_start();
-        [$r, $expected] = [stackTrace($opts), \Cake\Error\Debugger::trace($opts)];
+        // phpcs:ignore
+        stackTrace($opts); $expected = Debugger::trace($opts);
         $result = ob_get_clean();
         $this->assertSame($expected, $result);
     }

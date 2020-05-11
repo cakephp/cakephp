@@ -2708,8 +2708,8 @@ class CollectionTest extends TestCase
     /**
      * Yields all the elements as passed
      *
-     * @param array $itmes the elements to be yielded
-     * @return void
+     * @param array $items the elements to be yielded
+     * @return \Generator<array>
      */
     protected function yieldItems(array $items)
     {

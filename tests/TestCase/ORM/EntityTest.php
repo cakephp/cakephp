@@ -163,7 +163,7 @@ class EntityTest extends TestCase
      */
     public function testSetOneParamWithSetter()
     {
-        $entity = $this->getMockBuilder('Cake\ORM\Entity')
+        $entity = $this->getMockBuilder(Entity::class)
             ->setMethods(['_setName'])
             ->getMock();
         $entity->expects($this->once())->method('_setName')
@@ -184,7 +184,7 @@ class EntityTest extends TestCase
      */
     public function testMultipleWithSetter()
     {
-        $entity = $this->getMockBuilder('Cake\ORM\Entity')
+        $entity = $this->getMockBuilder(Entity::class)
             ->setMethods(['_setName', '_setStuff'])
             ->getMock();
         $entity->setAccess('*', true);
@@ -214,7 +214,7 @@ class EntityTest extends TestCase
      */
     public function testBypassSetters()
     {
-        $entity = $this->getMockBuilder('Cake\ORM\Entity')
+        $entity = $this->getMockBuilder(Entity::class)
             ->setMethods(['_setName', '_setStuff'])
             ->getMock();
         $entity->setAccess('*', true);
@@ -239,7 +239,7 @@ class EntityTest extends TestCase
      */
     public function testConstructor()
     {
-        $entity = $this->getMockBuilder('Cake\ORM\Entity')
+        $entity = $this->getMockBuilder(Entity::class)
             ->setMethods(['set'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -263,7 +263,7 @@ class EntityTest extends TestCase
      */
     public function testConstructorWithGuard()
     {
-        $entity = $this->getMockBuilder('Cake\ORM\Entity')
+        $entity = $this->getMockBuilder(Entity::class)
             ->setMethods(['set'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -292,7 +292,7 @@ class EntityTest extends TestCase
      */
     public function testGetCustomGetters()
     {
-        $entity = $this->getMockBuilder('Cake\ORM\Entity')
+        $entity = $this->getMockBuilder(Entity::class)
             ->setMethods(['_getName'])
             ->getMock();
         $entity->expects($this->any())
@@ -313,7 +313,7 @@ class EntityTest extends TestCase
      */
     public function testGetCustomGettersAfterSet()
     {
-        $entity = $this->getMockBuilder('Cake\ORM\Entity')
+        $entity = $this->getMockBuilder(Entity::class)
             ->setMethods(['_getName'])
             ->getMock();
         $entity->expects($this->any())
@@ -338,7 +338,7 @@ class EntityTest extends TestCase
     public function testGetCacheClearedByUnset()
     {
         /** @var \Cake\ORM\Entity|\PHPUnit\Framework\MockObject\MockObject $entity */
-        $entity = $this->getMockBuilder('Cake\ORM\Entity')
+        $entity = $this->getMockBuilder(Entity::class)
             ->setMethods(['_getName'])
             ->getMock();
         $entity->expects($this->any())->method('_getName')
@@ -359,7 +359,7 @@ class EntityTest extends TestCase
      */
     public function testGetCamelCasedProperties()
     {
-        $entity = $this->getMockBuilder('Cake\ORM\Entity')
+        $entity = $this->getMockBuilder(Entity::class)
             ->setMethods(['_getListIdName'])
             ->getMock();
         $entity->expects($this->any())->method('_getListIdName')
@@ -392,7 +392,7 @@ class EntityTest extends TestCase
      */
     public function testMagicSetWithSetter()
     {
-        $entity = $this->getMockBuilder('Cake\ORM\Entity')
+        $entity = $this->getMockBuilder(Entity::class)
             ->setMethods(['_setName'])
             ->getMock();
         $entity->expects($this->once())->method('_setName')
@@ -413,7 +413,7 @@ class EntityTest extends TestCase
      */
     public function testMagicSetWithSetterTitleCase()
     {
-        $entity = $this->getMockBuilder('Cake\ORM\Entity')
+        $entity = $this->getMockBuilder(Entity::class)
             ->setMethods(['_setName'])
             ->getMock();
         $entity->expects($this->once())
@@ -435,7 +435,7 @@ class EntityTest extends TestCase
      */
     public function testMagicGetWithGetter()
     {
-        $entity = $this->getMockBuilder('Cake\ORM\Entity')
+        $entity = $this->getMockBuilder(Entity::class)
             ->setMethods(['_getName'])
             ->getMock();
         $entity->expects($this->once())->method('_getName')
@@ -456,7 +456,7 @@ class EntityTest extends TestCase
      */
     public function testMagicGetWithGetterTitleCase()
     {
-        $entity = $this->getMockBuilder('Cake\ORM\Entity')
+        $entity = $this->getMockBuilder(Entity::class)
             ->setMethods(['_getName'])
             ->getMock();
         $entity->expects($this->once())
@@ -502,7 +502,7 @@ class EntityTest extends TestCase
         $this->assertFalse($entity->has(['id', 'foo']));
         $this->assertFalse($entity->has(['id', 'nope']));
 
-        $entity = $this->getMockBuilder('Cake\ORM\Entity')
+        $entity = $this->getMockBuilder(Entity::class)
             ->setMethods(['_getThings'])
             ->getMock();
         $entity->expects($this->once())->method('_getThings')
@@ -573,7 +573,7 @@ class EntityTest extends TestCase
      */
     public function testMagicUnset()
     {
-        $entity = $this->getMockBuilder('Cake\ORM\Entity')
+        $entity = $this->getMockBuilder(Entity::class)
             ->setMethods(['unset'])
             ->getMock();
         $entity->expects($this->at(0))
@@ -617,7 +617,7 @@ class EntityTest extends TestCase
      */
     public function testGetArrayAccess()
     {
-        $entity = $this->getMockBuilder('Cake\ORM\Entity')
+        $entity = $this->getMockBuilder(Entity::class)
             ->setMethods(['get'])
             ->getMock();
         $entity->expects($this->at(0))
@@ -641,7 +641,7 @@ class EntityTest extends TestCase
      */
     public function testSetArrayAccess()
     {
-        $entity = $this->getMockBuilder('Cake\ORM\Entity')
+        $entity = $this->getMockBuilder(Entity::class)
             ->setMethods(['set'])
             ->getMock();
         $entity->setAccess('*', true);
@@ -667,7 +667,8 @@ class EntityTest extends TestCase
      */
     public function testUnsetArrayAccess()
     {
-        $entity = $this->getMockBuilder('Cake\ORM\Entity')
+        /** @var \Cake\ORM\Entity|\PHPUnit\Framework\MockObject\MockObject $entity */
+        $entity = $this->getMockBuilder(Entity::class)
             ->setMethods(['unset'])
             ->getMock();
         $entity->expects($this->at(0))
@@ -685,10 +686,12 @@ class EntityTest extends TestCase
      */
     public function testMethodCache()
     {
-        $entity = $this->getMockBuilder('Cake\ORM\Entity')
+        /** @var \Cake\ORM\Entity|\PHPUnit\Framework\MockObject\MockObject $entity */
+        $entity = $this->getMockBuilder(Entity::class)
             ->setMethods(['_setFoo', '_getBar'])
             ->getMock();
-        $entity2 = $this->getMockBuilder('Cake\ORM\Entity')
+        /** @var \Cake\ORM\Entity|\PHPUnit\Framework\MockObject\MockObject $entity2 */
+        $entity2 = $this->getMockBuilder(Entity::class)
             ->setMethods(['_setBar'])
             ->getMock();
         $entity->expects($this->once())->method('_setFoo');
@@ -707,7 +710,8 @@ class EntityTest extends TestCase
      */
     public function testSetGetLongPropertyNames()
     {
-        $entity = $this->getMockBUilder('Cake\ORM\Entity')
+        /** @var \Cake\ORM\Entity|\PHPUnit\Framework\MockObject\MockObject $entity */
+        $entity = $this->getMockBuilder(Entity::class)
             ->setMethods(['_getVeryLongProperty', '_setVeryLongProperty'])
             ->getMock();
         $entity->expects($this->once())->method('_getVeryLongProperty');
@@ -833,7 +837,7 @@ class EntityTest extends TestCase
 
         $entity->setErrors(['title' => ['badness']]);
         $entity->setDirty('title', true);
-        $this->assertEmpty($entity->getErrors('title'), 'Making a field dirty clears errors.');
+        $this->assertEmpty($entity->getErrors(), 'Making a field dirty clears errors.');
     }
 
     /**
@@ -952,14 +956,14 @@ class EntityTest extends TestCase
      */
     public function testConstructorWithClean()
     {
-        $entity = $this->getMockBuilder('Cake\ORM\Entity')
+        $entity = $this->getMockBuilder(Entity::class)
             ->setMethods(['clean'])
             ->disableOriginalConstructor()
             ->getMock();
         $entity->expects($this->never())->method('clean');
         $entity->__construct(['a' => 'b', 'c' => 'd']);
 
-        $entity = $this->getMockBuilder('Cake\ORM\Entity')
+        $entity = $this->getMockBuilder(Entity::class)
             ->setMethods(['clean'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -974,14 +978,14 @@ class EntityTest extends TestCase
      */
     public function testConstructorWithMarkNew()
     {
-        $entity = $this->getMockBuilder('Cake\ORM\Entity')
+        $entity = $this->getMockBuilder(Entity::class)
             ->setMethods(['setNew', 'clean'])
             ->disableOriginalConstructor()
             ->getMock();
         $entity->expects($this->never())->method('clean');
         $entity->__construct(['a' => 'b', 'c' => 'd']);
 
-        $entity = $this->getMockBuilder('Cake\ORM\Entity')
+        $entity = $this->getMockBuilder(Entity::class)
             ->setMethods(['setNew'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -1063,7 +1067,8 @@ class EntityTest extends TestCase
      */
     public function testToArrayWithAccessor()
     {
-        $entity = $this->getMockBuilder('Cake\ORM\Entity')
+        /** @var \Cake\ORM\Entity|\PHPUnit\Framework\MockObject\MockObject $entity */
+        $entity = $this->getMockBuilder(Entity::class)
             ->setMethods(['_getName'])
             ->getMock();
         $entity->setAccess('*', true);
@@ -1140,7 +1145,8 @@ class EntityTest extends TestCase
      */
     public function testToArrayVirtualProperties()
     {
-        $entity = $this->getMockBuilder('Cake\ORM\Entity')
+        /** @var \Cake\ORM\Entity|\PHPUnit\Framework\MockObject\MockObject $entity */
+        $entity = $this->getMockBuilder(Entity::class)
             ->setMethods(['_getName'])
             ->getMock();
         $entity->setAccess('*', true);

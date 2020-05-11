@@ -28,6 +28,11 @@ use PDO;
 class SqlserverTest extends TestCase
 {
     /**
+     * @var bool
+     */
+    protected $missingExtension;
+
+    /**
      * Set up
      *
      * @return void

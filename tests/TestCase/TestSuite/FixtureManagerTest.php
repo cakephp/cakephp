@@ -31,6 +31,11 @@ use PDOException;
 class FixtureManagerTest extends TestCase
 {
     /**
+     * @var \Cake\TestSuite\Fixture\FixtureManager
+     */
+    protected $manager;
+
+    /**
      * Setup method
      *
      * @return void

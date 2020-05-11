@@ -27,6 +27,11 @@ use TestPlugin\Shell\Helper\ExampleHelper;
 class HelperRegistryTest extends TestCase
 {
     /**
+     * @var \Cake\Console\HelperRegistry
+     */
+    protected $helpers;
+
+    /**
      * setUp
      *
      * @return void

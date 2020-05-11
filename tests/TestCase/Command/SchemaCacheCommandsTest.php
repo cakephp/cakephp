@@ -18,6 +18,8 @@ namespace Cake\Test\TestCase\Command;
 
 use Cake\Cache\Cache;
 use Cake\Cache\Engine\NullEngine;
+use Cake\Console\ConsoleIo;
+use Cake\Database\SchemaCache;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
@@ -25,7 +27,7 @@ use Cake\TestSuite\TestCase;
 /**
  * SchemacacheCommands test.
  */
-class SchemacacheCommandsTest extends TestCase
+class SchemaCacheCommandsTest extends TestCase
 {
     use ConsoleIntegrationTestTrait;
 
@@ -36,7 +38,15 @@ class SchemacacheCommandsTest extends TestCase
      */
     protected $fixtures = ['core.Articles', 'core.Tags'];
 
+    /**
+     * @var \Cake\Datasource\ConnectionInterface
+     */
     protected $connection;
+
+    /**
+     * @var \Cake\Cache\Engine\NullEngine|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $cache;
 
     /**
      * setup method

@@ -1183,7 +1183,7 @@ class ServerRequestTest extends TestCase
         $request = new ServerRequest(['environment' => [
             'url' => '/',
             'HTTP_ACCEPT' => 'application/json;level=1, text/plain, */*',
-        ]], false);
+        ]]);
 
         $result = $request->parseAccept();
         $expected = [
@@ -1204,7 +1204,7 @@ class ServerRequestTest extends TestCase
         $request = new ServerRequest(['environment' => [
             'url' => '/',
             'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;image/png,image/jpeg,image/*;q=0.9,*/*;q=0.8',
-        ]], false);
+        ]]);
         $result = $request->parseAccept();
         $expected = [
             '1.0' => ['text/html', 'application/xhtml+xml', 'application/xml', 'image/jpeg'],

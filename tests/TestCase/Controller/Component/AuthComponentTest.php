@@ -40,6 +40,11 @@ use TestApp\Controller\Component\TestAuthComponent;
 class AuthComponentTest extends TestCase
 {
     /**
+     * @var \TestApp\Controller\AuthTestController
+     */
+    protected $Controller;
+
+    /**
      * AuthComponent property
      *
      * @var \TestApp\Controller\Component\TestAuthComponent
