@@ -45,7 +45,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
         }
         if ($name) {
             // Set name manually in case this was chained from FunctionsBuilder wrapper
-            $this->window->setName($name);
+            $this->window->name($name);
         }
 
         return $this;
@@ -178,8 +178,8 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     {
         $sql = parent::sql($generator);
         if ($this->window !== null) {
-            if ($this->window->isEmpty() && $this->window->getName()) {
-                $sql .= ' OVER ' . $this->window->getName();
+            if ($this->window->isNamedOnly()) {
+                $sql .= ' OVER ' . $this->window->sql($generator);
             } else {
                 $sql .= ' OVER (' . $this->window->sql($generator) . ')';
             }
