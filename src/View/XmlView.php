@@ -139,7 +139,10 @@ class XmlView extends SerializedView
             }
         } else {
             $data = $this->viewVars[$serialize] ?? [];
-            if ($data && Hash::numeric(array_keys($data))) {
+            if (
+                $data &&
+                (!is_array($data) || Hash::numeric(array_keys($data)))
+            ) {
                 $data = [$rootNode => [$serialize => $data]];
             }
         }
