@@ -300,18 +300,18 @@ class ServerTest extends TestCase
     {
         $app = new MiddlewareApplication($this->config);
         $server = new Server($app);
-        $this->called = false;
+        $called = false;
 
-        $server->getEventManager()->on('Server.buildMiddleware', function (EventInterface $event, MiddlewareQueue $middlewareQueue) {
-            $middlewareQueue->add(function ($req, $res, $next) {
-                $this->called = true;
+        $server->getEventManager()->on('Server.buildMiddleware', function (EventInterface $event, MiddlewareQueue $middlewareQueue) use (&$called) {
+            $middlewareQueue->add(function ($req, $res, $next) use (&$called) {
+                $called = true;
 
                 return $next($req, $res);
             });
             $this->middlewareQueue = $middlewareQueue;
         });
         $server->run();
-        $this->assertTrue($this->called, 'Middleware added in the event was not triggered.');
+        $this->assertTrue($called, 'Middleware added in the event was not triggered.');
         $this->middlewareQueue->seek(3);
         $this->assertInstanceOf('Closure', $this->middlewareQueue->current()->getCallable(), '2nd last middleware is a closure');
     }

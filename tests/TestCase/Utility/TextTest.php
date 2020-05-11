@@ -24,6 +24,16 @@ use Cake\Utility\Text;
  */
 class TextTest extends TestCase
 {
+    /**
+     * @var \Cake\Utility\Text
+     */
+    protected $Text;
+
+    /**
+     * @var string
+     */
+    protected $encoding;
+
     public function setUp(): void
     {
         parent::setUp();

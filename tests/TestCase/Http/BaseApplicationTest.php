@@ -35,6 +35,11 @@ use TestPlugin\Plugin as TestPlugin;
 class BaseApplicationTest extends TestCase
 {
     /**
+     * @var string
+     */
+    protected $path;
+
+    /**
      * Setup
      *
      * @return void

@@ -108,6 +108,19 @@ class LoggedQuery implements JsonSerializable
     }
 
     /**
+     * Get the logging context data for a query.
+     *
+     * @return array
+     */
+    public function getContext(): array
+    {
+        return [
+            'numRows' => $this->numRows,
+            'took' => $this->took,
+        ];
+    }
+
+    /**
      * Returns data that will be serialized as JSON
      *
      * @return array
@@ -144,6 +157,6 @@ class LoggedQuery implements JsonSerializable
             $sql = $this->interpolate();
         }
 
-        return "duration={$this->took} rows={$this->numRows} {$sql}";
+        return $sql;
     }
 }

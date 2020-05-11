@@ -25,6 +25,11 @@ use Cake\TestSuite\TestCase;
 class ServerCommandTest extends TestCase
 {
     /**
+     * @var \Cake\Command\ServerCommand
+     */
+    protected $command;
+
+    /**
      * setup method
      *
      * @return void
@@ -32,8 +37,7 @@ class ServerCommandTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
-        $this->command = new ServerCommand($this->io);
+        $this->command = new ServerCommand();
     }
 
     /**

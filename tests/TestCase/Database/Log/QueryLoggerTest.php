@@ -47,7 +47,7 @@ class QueryLoggerTest extends TestCase
      */
     public function testLogFunction()
     {
-        $logger = new QueryLogger();
+        $logger = new QueryLogger(['connection' => '']);
         $query = new LoggedQuery();
         $query->query = 'SELECT a FROM b where a = ? AND b = ? AND c = ?';
         $query->params = ['string', '3', null];

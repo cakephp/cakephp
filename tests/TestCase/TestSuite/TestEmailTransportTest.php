@@ -17,8 +17,8 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Mailer\Email;
+use Cake\Mailer\Transport\DebugTransport;
 use Cake\Mailer\TransportFactory;
-use Cake\Network\Email\DebugTransport;
 use Cake\TestSuite\TestCase;
 use Cake\TestSuite\TestEmailTransport;
 

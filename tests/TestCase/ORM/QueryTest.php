@@ -58,6 +58,16 @@ class QueryTest extends TestCase
     ];
 
     /**
+     * @var \Cake\Database\Connection
+     */
+    protected $connection;
+
+    /**
+     * @var \Cake\ORM\Table
+     */
+    protected $table;
+
+    /**
      * setUp method
      *
      * @return void
@@ -89,7 +99,7 @@ class QueryTest extends TestCase
             ],
         ];
 
-        $this->table = $table = $this->getTableLocator()->get('foo', ['schema' => $schema]);
+        $this->table = $this->getTableLocator()->get('foo', ['schema' => $schema]);
         $clients = $this->getTableLocator()->get('clients', ['schema' => $schema1]);
         $orders = $this->getTableLocator()->get('orders', ['schema' => $schema2]);
         $companies = $this->getTableLocator()->get('companies', ['schema' => $schema, 'table' => 'organizations']);
@@ -98,7 +108,7 @@ class QueryTest extends TestCase
         $stuffTypes = $this->getTableLocator()->get('stuffTypes', ['schema' => $schema]);
         $categories = $this->getTableLocator()->get('categories', ['schema' => $schema]);
 
-        $table->belongsTo('clients');
+        $this->table->belongsTo('clients');
         $clients->hasOne('orders');
         $clients->belongsTo('companies');
         $orders->belongsTo('orderTypes');
