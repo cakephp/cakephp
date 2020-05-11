@@ -27,6 +27,11 @@ class I18nCommandTest extends TestCase
     use ConsoleIntegrationTestTrait;
 
     /**
+     * @var string
+     */
+    protected $localeDir;
+
+    /**
      * setup method
      *
      * @return void

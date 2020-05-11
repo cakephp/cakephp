@@ -27,7 +27,7 @@ class AssertHtmlTest extends TestCase
     /**
      * Test whitespace after HTML tags
      *
-     * @return
+     * @return void
      */
     public function testAssertHtmlWhitespaceAfter()
     {

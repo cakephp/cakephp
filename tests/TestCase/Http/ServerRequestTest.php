@@ -1072,7 +1072,7 @@ class ServerRequestTest extends TestCase
             'HTTP_CONTENT_MD5' => 'abc123',
             'HTTP_DOUBLE' => ['a', 'b'],
         ]]);
-        $new = $request->withoutHeader('Content-Length', 999);
+        $new = $request->withoutHeader('Content-Length');
         $this->assertNotSame($new, $request);
 
         $this->assertEquals(1337, $request->getHeaderLine('Content-length'), 'old request is unchanged');

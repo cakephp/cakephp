@@ -30,6 +30,16 @@ use Exception;
 class FlashComponentTest extends TestCase
 {
     /**
+     * @var \Cake\Controller\Component\FlashComponent
+     */
+    protected $Flash;
+
+    /**
+     * @var \Cake\Http\Session
+     */
+    protected $Session;
+
+    /**
      * setUp method
      *
      * @return void

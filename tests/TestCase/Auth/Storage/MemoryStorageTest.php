@@ -30,6 +30,11 @@ class MemoryStorageTest extends TestCase
     protected $storage;
 
     /**
+     * @var array
+     */
+    protected $user;
+
+    /**
      * Setup
      *
      * @return void

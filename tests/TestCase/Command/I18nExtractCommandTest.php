@@ -29,6 +29,11 @@ class I18nExtractCommandTest extends TestCase
     use ConsoleIntegrationTestTrait;
 
     /**
+     * @var string
+     */
+    protected $path;
+
+    /**
      * setUp method
      *
      * @return void

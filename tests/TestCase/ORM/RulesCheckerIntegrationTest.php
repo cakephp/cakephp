@@ -548,7 +548,7 @@ class RulesCheckerIntegrationTest extends TestCase
     /**
      * ExistsIn uses the schema to verify that nullable fields are ok.
      *
-     * @return
+     * @return void
      */
     public function testExistsInNullValue()
     {
@@ -593,7 +593,7 @@ class RulesCheckerIntegrationTest extends TestCase
     /**
      * Tests exists in uses the bindingKey of the association
      *
-     * @return
+     * @return void
      */
     public function testExistsInWithBindingKey()
     {
@@ -984,7 +984,7 @@ class RulesCheckerIntegrationTest extends TestCase
     /**
      * Tests new allowNullableNulls flag with author id set to null
      *
-     * @return
+     * @return void
      */
     public function testExistsInAllowNullableNullsDefaultValue()
     {
@@ -1005,7 +1005,7 @@ class RulesCheckerIntegrationTest extends TestCase
     /**
      * Tests new allowNullableNulls flag with author id set to null
      *
-     * @return
+     * @return void
      */
     public function testExistsInAllowNullableNullsCustomMessage()
     {
@@ -1030,7 +1030,7 @@ class RulesCheckerIntegrationTest extends TestCase
     /**
      * Tests new allowNullableNulls flag with author id set to 1
      *
-     * @return
+     * @return void
      */
     public function testExistsInAllowNullableNullsOnAllKeysSet()
     {
@@ -1051,7 +1051,7 @@ class RulesCheckerIntegrationTest extends TestCase
     /**
      * Tests new allowNullableNulls flag with author id set to 1
      *
-     * @return
+     * @return void
      */
     public function testExistsInAllowNullableNullsOffAllKeysSet()
     {
@@ -1072,7 +1072,7 @@ class RulesCheckerIntegrationTest extends TestCase
     /**
      * Tests new allowNullableNulls flag with author id set to 1
      *
-     * @return
+     * @return void
      */
     public function testExistsInAllowNullableNullsOnAllKeysCustomMessage()
     {
@@ -1095,7 +1095,7 @@ class RulesCheckerIntegrationTest extends TestCase
     /**
      * Tests new allowNullableNulls flag with author id set to 99999999 (does not exist)
      *
-     * @return
+     * @return void
      */
     public function testExistsInAllowNullableNullsOnInvalidKey()
     {
@@ -1120,7 +1120,7 @@ class RulesCheckerIntegrationTest extends TestCase
      * Tests new allowNullableNulls flag with author id set to 99999999 (does not exist)
      * and site_id set to 99999999 (does not exist)
      *
-     * @return
+     * @return void
      */
     public function testExistsInAllowNullableNullsOnInvalidKeys()
     {
@@ -1145,7 +1145,7 @@ class RulesCheckerIntegrationTest extends TestCase
      * Tests new allowNullableNulls flag with author id set to 1 (does exist)
      * and site_id set to 99999999 (does not exist)
      *
-     * @return
+     * @return void
      */
     public function testExistsInAllowNullableNullsOnInvalidKeySecond()
     {
@@ -1169,7 +1169,7 @@ class RulesCheckerIntegrationTest extends TestCase
     /**
      * Tests new allowNullableNulls with saveMany
      *
-     * @return
+     * @return void
      */
     public function testExistsInAllowNullableNullsSaveMany()
     {

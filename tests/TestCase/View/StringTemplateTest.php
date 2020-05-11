@@ -82,7 +82,7 @@ class StringTemplateTest extends TestCase
             'link' => '<a href="{{url}}">{{text}}</a>',
         ];
         $this->template->add($templates);
-        $this->assertNull($this->template->remove('link'), 'No return');
+        $this->template->remove('link');
         $this->assertNull($this->template->get('link'), 'Template should be gone.');
     }
 
@@ -186,7 +186,7 @@ class StringTemplateTest extends TestCase
         $this->template->remove('attribute');
         $this->template->remove('compactAttribute');
         $this->assertEquals([], $this->template->get());
-        $this->assertNull($this->template->load('test_templates'));
+        $this->template->load('test_templates');
         $this->assertSame('<a href="{{url}}">{{text}}</a>', $this->template->get('link'));
     }
 
@@ -198,7 +198,7 @@ class StringTemplateTest extends TestCase
     public function testLoadPlugin()
     {
         $this->loadPlugins(['TestPlugin']);
-        $this->assertNull($this->template->load('TestPlugin.test_templates'));
+        $this->template->load('TestPlugin.test_templates');
         $this->assertSame('<em>{{text}}</em>', $this->template->get('italic'));
         $this->clearPlugins();
     }
@@ -303,16 +303,16 @@ class StringTemplateTest extends TestCase
     public function testPushPopTemplates()
     {
         $this->template->add(['name' => '{{name}} is my name']);
-        $this->assertNull($this->template->push());
+        $this->template->push();
 
         $this->template->add(['name' => 'my name']);
         $this->assertSame('my name', $this->template->get('name'));
 
-        $this->assertNull($this->template->pop());
+        $this->template->pop();
         $this->assertSame('{{name}} is my name', $this->template->get('name'));
 
-        $this->assertNull($this->template->pop());
-        $this->assertNull($this->template->pop());
+        $this->template->pop();
+        $this->template->pop();
     }
 
     /**

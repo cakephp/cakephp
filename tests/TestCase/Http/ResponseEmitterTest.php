@@ -315,7 +315,7 @@ class ResponseEmitterTest extends TestCase
         $response->getBody()->write('It worked');
 
         ob_start();
-        $this->emitter->emit($response, 2);
+        $this->emitter->emit($response);
         $out = ob_get_clean();
 
         $this->assertSame('It worked', $out);
