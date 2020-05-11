@@ -148,6 +148,7 @@ class MiddlewareDispatcher
     {
         if (isset($spec['input'])) {
             $spec['post'] = [];
+            $spec['environment']['CAKEPHP_INPUT'] = $spec['input'];
         }
         $environment = array_merge(
             array_merge($_SERVER, ['REQUEST_URI' => $spec['url']]),
@@ -161,8 +162,7 @@ class MiddlewareDispatcher
             $spec['query'],
             $spec['post'],
             $spec['cookies'],
-            $spec['files'],
-            $spec['input'] ?? null
+            $spec['files']
         );
         $request = $request->withAttribute('session', $spec['session']);
 
