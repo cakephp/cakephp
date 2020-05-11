@@ -117,7 +117,7 @@ class CommonTableExpressionQueryTests extends TestCase
         );
 
         $query
-            ->with(new CommonTableExpression('cte2', $this->connection->newQuery()), false, true)
+            ->with(new CommonTableExpression('cte2', $this->connection->newQuery()), true)
             ->from('cte2', true);
         $this->assertEqualsSql(
             'WITH cte2 AS () SELECT col FROM cte2',
@@ -133,7 +133,7 @@ class CommonTableExpressionQueryTests extends TestCase
     public function testWithRecursiveCte()
     {
         $query = $this->connection->newQuery()
-            ->withRecursive(function (CommonTableExpression $cte, Query $query) {
+            ->with(function (CommonTableExpression $cte, Query $query) {
                 $anchorQuery = $query->getConnection()
                     ->newQuery()
                     ->select(1);
@@ -151,7 +151,8 @@ class CommonTableExpressionQueryTests extends TestCase
                 return $cte
                     ->name('cte')
                     ->field(['col'])
-                    ->query($cteQuery);
+                    ->query($cteQuery)
+                    ->recursive();
             })
             ->select('col')
             ->from('cte');

@@ -172,8 +172,8 @@ class QueryCompiler
         $recursive = false;
         $expressions = [];
         foreach ($parts as $cte) {
-            $recursive = $recursive || $cte['recursive'];
-            $expressions[] = $cte['cte']->sql($generator);
+            $recursive = $recursive || $cte->isRecursive();
+            $expressions[] = $cte->sql($generator);
         }
 
         $recursive = $recursive ? 'RECURSIVE ' : '';

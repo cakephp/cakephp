@@ -55,6 +55,13 @@ class CommonTableExpression implements ExpressionInterface
     protected $materialized = null;
 
     /**
+     * Whether the CTE is recursive.
+     *
+     * @var bool
+     */
+    protected $recursive = false;
+
+    /**
      * Constructor.
      *
      * @param string $name The CTE name.
@@ -96,7 +103,7 @@ class CommonTableExpression implements ExpressionInterface
             $query = $query();
             if (!($query instanceof ExpressionInterface)) {
                 throw new RuntimeException(
-                    'You must return an `ExpressionInterface` from closure passed to `query()`.'
+                    'You must return an `ExpressionInterface` from a Closure passed to `query()`.'
                 );
             }
         }
@@ -144,6 +151,28 @@ class CommonTableExpression implements ExpressionInterface
     public function notMaterialized()
     {
         $this->materialized = 'NOT MATERIALIZED';
+
+        return $this;
+    }
+
+    /**
+     * Gets whether this CTE is recursive.
+     *
+     * @return bool
+     */
+    public function isRecursive(): bool
+    {
+        return $this->recursive;
+    }
+
+    /**
+     * Sets this CTE as recursive.
+     *
+     * @return $this
+     */
+    public function recursive()
+    {
+        $this->recursive = true;
 
         return $this;
     }

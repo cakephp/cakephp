@@ -414,11 +414,10 @@ class Query implements ExpressionInterface, IteratorAggregate
      * ```
      *
      * @param \Closure|\Cake\Database\Expression\CommonTableExpression $cte The CTE to add.
-     * @param bool $recursive Whether the CTE is recursive.
      * @param bool $overwrite Whether to reset the list of CTEs.
      * @return $this
      */
-    public function with($cte, bool $recursive = false, bool $overwrite = false)
+    public function with($cte, bool $overwrite = false)
     {
         if ($overwrite) {
             $this->_parts['with'] = [];
@@ -428,27 +427,15 @@ class Query implements ExpressionInterface, IteratorAggregate
             $cte = $cte(new CommonTableExpression(), $this);
             if (!($cte instanceof CommonTableExpression)) {
                 throw new RuntimeException(
-                    'You must return a `CommonTableExpression` from closure passed to `with()`.'
+                    'You must return a `CommonTableExpression` from a Closure passed to `with()`.'
                 );
             }
         }
 
-        $this->_parts['with'][] = ['cte' => $cte, 'recursive' => $recursive];
+        $this->_parts['with'][] = $cte;
         $this->_dirty();
 
         return $this;
-    }
-
-    /**
-     * Adds a new recursive common table expression (CTE) to the query.
-     *
-     * @param \Closure|\Cake\Database\Expression\CommonTableExpression $cte The CTE to add.
-     * @param bool $overwrite Whether to reset the list of CTEs.
-     * @return $this
-     */
-    public function withRecursive($cte, bool $overwrite = false)
-    {
-        return $this->with($cte, true, $overwrite);
     }
 
     /**

@@ -86,6 +86,18 @@ class CommonTableExpressionTest extends TestCase
     }
 
     /**
+     * Tests setting CTE as recursive.
+     *
+     * @return void
+     */
+    public function testRecursive()
+    {
+        $cte = (new CommonTableExpression('test', $this->connection->newQuery()))
+            ->recursive();
+        $this->assertTrue($cte->isRecursive());
+    }
+
+    /**
      * Tests setting query using closures.
      *
      * @return void

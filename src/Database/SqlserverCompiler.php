@@ -67,7 +67,7 @@ class SqlserverCompiler extends QueryCompiler
     {
         $expressions = [];
         foreach ($parts as $cte) {
-            $expressions[] = $cte['cte']->sql($generator);
+            $expressions[] = $cte->sql($generator);
         }
 
         return sprintf('WITH %s ', implode(', ', $expressions));
