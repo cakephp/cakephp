@@ -79,7 +79,7 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
             'webroot' => $uri->webroot,
             'base' => $uri->base,
             'session' => $session,
-            'input' => $server['CAKE_PHP_INPUT'] ?? null,
+            'input' => $server['CAKEPHP_INPUT'] ?? null,
         ]);
 
         $request = static::marshalBodyAndRequestMethod($parsedBody ?? $_POST, $request);

@@ -947,7 +947,7 @@ class ServerRequestFactoryTest extends TestCase
         $request = ServerRequestFactory::fromGlobals([
             'REQUEST_METHOD' => 'PUT',
             'CONTENT_TYPE' => 'application/x-www-form-urlencoded; charset=UTF-8',
-            'CAKE_PHP_INPUT' => 'Article[]=title',
+            'CAKEPHP_INPUT' => 'Article[]=title',
         ]);
         $this->assertEquals($data, $request->getData());
 
@@ -955,14 +955,14 @@ class ServerRequestFactoryTest extends TestCase
         $request = ServerRequestFactory::fromGlobals([
             'REQUEST_METHOD' => 'PUT',
             'CONTENT_TYPE' => 'application/x-www-form-urlencoded; charset=UTF-8',
-            'CAKE_PHP_INPUT' => 'one=1&two=three',
+            'CAKEPHP_INPUT' => 'one=1&two=three',
         ]);
         $this->assertEquals($data, $request->getData());
 
         $request = ServerRequestFactory::fromGlobals([
             'REQUEST_METHOD' => 'DELETE',
             'CONTENT_TYPE' => 'application/x-www-form-urlencoded; charset=UTF-8',
-            'CAKE_PHP_INPUT' => 'Article[title]=Testing&action=update',
+            'CAKEPHP_INPUT' => 'Article[title]=Testing&action=update',
         ]);
         $expected = [
             'Article' => ['title' => 'Testing'],
@@ -977,7 +977,7 @@ class ServerRequestFactoryTest extends TestCase
         $request = ServerRequestFactory::fromGlobals([
             'REQUEST_METHOD' => 'PATCH',
             'CONTENT_TYPE' => 'application/x-www-form-urlencoded; charset=UTF-8',
-            'CAKE_PHP_INPUT' => 'Article[]=title&Tag[Tag][]=1&Tag[Tag][]=2',
+            'CAKEPHP_INPUT' => 'Article[]=title&Tag[Tag][]=1&Tag[Tag][]=2',
         ]);
         $this->assertEquals($data, $request->getData());
     }

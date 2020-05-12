@@ -20,6 +20,7 @@ use Cake\Database\ExpressionInterface;
 use Cake\Database\ValueBinder;
 use Closure;
 use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * This represents a SQL window expression used by aggregate and window functions.
@@ -94,6 +95,15 @@ class WindowExpression implements ExpressionInterface, WindowInterface
             return $this;
         }
 
+        if ($partitions instanceof Closure) {
+            $partitions = $partitions();
+            if (!($partitions instanceof ExpressionInterface)) {
+                throw new RuntimeException(
+                    'You must return an `ExpressionInterface` from a Closure passed to `partition()`.'
+                );
+            }
+        }
+
         if (!is_array($partitions)) {
             $partitions = [$partitions];
         }
@@ -116,6 +126,18 @@ class WindowExpression implements ExpressionInterface, WindowInterface
     public function order($fields)
     {
         if (!$fields) {
+            return $this;
+        }
+
+        if ($fields instanceof Closure) {
+            $fields = $fields();
+            if (!($fields instanceof OrderByExpression)) {
+                throw new RuntimeException(
+                    'You must return an `OrderByExpression` from a Closure passed to `order()`.'
+                );
+            }
+            $this->order = $fields;
+
             return $this;
         }
 
