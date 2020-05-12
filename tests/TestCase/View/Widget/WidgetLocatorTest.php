@@ -81,6 +81,7 @@ class WidgetLocatorTest extends TestCase
             ['test' => [TestUsingViewWidget::class, '_view']]
         );
 
+        /** @var \TestApp\View\Widget\TestUsingViewWidget $widget */
         $widget = $inputs->get('test');
         $this->assertInstanceOf(View::class, $widget->getView());
     }
@@ -125,18 +126,16 @@ class WidgetLocatorTest extends TestCase
     public function testAdd()
     {
         $inputs = new WidgetLocator($this->templates, $this->view);
-        $result = $inputs->add([
+        $inputs->add([
             'text' => ['Cake\View\Widget\BasicWidget'],
         ]);
-        $this->assertNull($result);
         $result = $inputs->get('text');
         $this->assertInstanceOf('Cake\View\Widget\WidgetInterface', $result);
 
         $inputs = new WidgetLocator($this->templates, $this->view);
-        $result = $inputs->add([
+        $inputs->add([
             'hidden' => 'Cake\View\Widget\BasicWidget',
         ]);
-        $this->assertNull($result);
         $result = $inputs->get('hidden');
         $this->assertInstanceOf('Cake\View\Widget\WidgetInterface', $result);
     }

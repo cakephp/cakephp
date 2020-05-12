@@ -31,6 +31,11 @@ trait PaginatorTestTrait
     protected $Paginator;
 
     /**
+     * @var \Cake\Datasource\RepositoryInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $Post;
+
+    /**
      * setup
      *
      * @return void

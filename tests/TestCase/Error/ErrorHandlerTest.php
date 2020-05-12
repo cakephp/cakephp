@@ -504,7 +504,7 @@ class ErrorHandlerTest extends TestCase
         ini_set('memory_limit', $start);
 
         $errorHandler = new TestErrorHandler();
-        $this->assertNull($errorHandler->increaseMemoryLimit($adjust));
+        $errorHandler->increaseMemoryLimit($adjust);
         $new = ini_get('memory_limit');
         $this->assertEquals($expected, $new, 'memory limit did not get increased.');
 

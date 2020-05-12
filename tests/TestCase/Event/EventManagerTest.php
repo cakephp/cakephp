@@ -332,6 +332,7 @@ class EventManagerTest extends TestCase
     public function testOnSubscriber()
     {
         $manager = new EventManager();
+        /** @var \TestApp\TestCase\Event\CustomTestEventListenerInterface|\PHPUnit\Framework\MockObject\MockObject $listener */
         $listener = $this->getMockBuilder(CustomTestEventListenerInterface::class)
             ->setMethods(['secondListenerFunction'])
             ->getMock();

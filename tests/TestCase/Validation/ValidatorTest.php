@@ -1468,7 +1468,7 @@ class ValidatorTest extends TestCase
     /**
      * Test notEmptyDateTime with update mode
      *
-     * @return voi
+     * @return void
      */
     public function testNotEmptyDateTimeUpdate()
     {

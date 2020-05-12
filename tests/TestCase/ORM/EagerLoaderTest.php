@@ -576,7 +576,7 @@ class EagerLoaderTest extends TestCase
         $loader->contain($contains);
         $loader->setMatching('clients.addresses');
 
-        $this->assertNull($loader->clearContain());
+        $loader->clearContain();
         $result = $loader->normalized($this->table);
         $this->assertEquals([], $result);
         $this->assertArrayHasKey('clients', $loader->getMatching());

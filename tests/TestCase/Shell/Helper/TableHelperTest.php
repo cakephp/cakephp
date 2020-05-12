@@ -27,7 +27,7 @@ use Cake\TestSuite\TestCase;
 class TableHelperTest extends TestCase
 {
     /**
-     * @var \Cake\Console\ConsoleOutput
+     * @var \Cake\TestSuite\Stub\ConsoleOutput
      */
     protected $stub;
 

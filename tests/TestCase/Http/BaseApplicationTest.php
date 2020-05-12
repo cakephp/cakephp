@@ -169,7 +169,7 @@ class BaseApplicationTest extends TestCase
         $app->addPlugin(TestPlugin::class);
 
         $this->assertFalse(Configure::check('PluginTest.test_plugin.bootstrap'));
-        $this->assertNull($app->pluginBootstrap());
+        $app->pluginBootstrap();
         $this->assertTrue(Configure::check('PluginTest.test_plugin.bootstrap'));
     }
 
