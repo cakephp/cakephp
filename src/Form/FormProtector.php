@@ -155,7 +155,7 @@ class FormProtector
 
     /**
      * Parses the field name to create a dot separated name value for use in
-     * field hash. If filename is of form Model[field] or Model.field an array of
+     * field hash. If fieldname is of form Model[field] or Model.field an array of
      * fieldname parts like ['Model', 'field'] is returned.
      *
      * @param string $name The form inputs name attribute.
