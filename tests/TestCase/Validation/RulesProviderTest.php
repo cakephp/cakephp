@@ -49,6 +49,7 @@ class RulesProviderTest extends TestCase
     {
         $object = new CustomProvider();
 
+        /** @var \TestApp\Validation\CustomProvider|\Cake\Validation\RulesProvider $provider */
         $provider = new RulesProvider($object);
         $this->assertFalse($provider->validate('string', 'context'));
     }

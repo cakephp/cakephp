@@ -79,7 +79,7 @@ class AssociationCollectionTest extends TestCase
 
         $this->assertSame($belongsTo, $this->associations->get('Users'));
 
-        $this->assertNull($this->associations->remove('Users'));
+        $this->associations->remove('Users');
 
         $this->assertFalse($this->associations->has('Users'));
         $this->assertNull($this->associations->get('Users'));
@@ -269,7 +269,7 @@ class AssociationCollectionTest extends TestCase
             ->method('cascadeDelete')
             ->with($entity, $options);
 
-        $this->assertNull($this->associations->cascadeDelete($entity, $options));
+        $this->associations->cascadeDelete($entity, $options);
     }
 
     /**

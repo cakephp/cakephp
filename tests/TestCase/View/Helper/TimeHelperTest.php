@@ -358,9 +358,9 @@ class TimeHelperTest extends TestCase
         $this->assertTrue($result);
         $result = $this->Time->isThisMonth($time = mktime(0, 0, 0, (int)date('m'), mt_rand(1, 28), (int)date('Y')));
         $this->assertTrue($result);
-        $result = $this->Time->isThisMonth(mktime(0, 0, 0, (int)date('m'), mt_rand(1, 28), date('Y') - mt_rand(1, 12)));
+        $result = $this->Time->isThisMonth(mktime(0, 0, 0, (int)date('m'), mt_rand(1, 28), (int)date('Y') - mt_rand(1, 12)));
         $this->assertFalse($result);
-        $result = $this->Time->isThisMonth(mktime(0, 0, 0, (int)date('m'), mt_rand(1, 28), date('Y') + mt_rand(1, 12)));
+        $result = $this->Time->isThisMonth(mktime(0, 0, 0, (int)date('m'), mt_rand(1, 28), (int)date('Y') + mt_rand(1, 12)));
         $this->assertFalse($result);
     }
 

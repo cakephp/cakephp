@@ -910,9 +910,9 @@ class ServerRequestFactoryTest extends TestCase
      * Test environment detection
      *
      * @dataProvider environmentGenerator
-     * @param $name
-     * @param $data
-     * @param $expected
+     * @param string $name
+     * @param array $data
+     * @param array $expected
      * @return void
      */
     public function testEnvironmentDetection($name, $data, $expected)

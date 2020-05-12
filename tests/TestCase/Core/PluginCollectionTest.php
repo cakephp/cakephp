@@ -166,7 +166,7 @@ class PluginCollectionTest extends TestCase
      * This situation can happen when a plugin like bake
      * needs to discover things inside other plugins.
      *
-     * @return
+     * @return void
      */
     public function testWithInnerIteration()
     {

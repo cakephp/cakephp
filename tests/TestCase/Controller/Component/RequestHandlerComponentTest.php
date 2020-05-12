@@ -797,7 +797,7 @@ class RequestHandlerComponentTest extends TestCase
 
         $event = new Event('Controller.beforeRender', $this->Controller);
         $requestHandler = new RequestHandlerComponent($this->Controller->components());
-        $this->assertNull($requestHandler->beforeRender($event));
+        $requestHandler->beforeRender($event);
         $this->assertTrue($event->isStopped());
         $this->assertEquals(304, $this->Controller->getResponse()->getStatusCode());
         $this->assertSame('', (string)$this->Controller->getResponse()->getBody());
@@ -822,7 +822,7 @@ class RequestHandlerComponentTest extends TestCase
         $event = new Event('Controller.beforeRender', $this->Controller);
 
         $requestHandler = new RequestHandlerComponent($this->Controller->components());
-        $this->assertNull($requestHandler->beforeRender($event));
+        $requestHandler->beforeRender($event);
         $this->assertTrue($event->isStopped());
         $this->assertEquals(304, $this->Controller->getResponse()->getStatusCode());
         $this->assertSame('', (string)$this->Controller->getResponse()->getBody());
@@ -850,7 +850,7 @@ class RequestHandlerComponentTest extends TestCase
 
         $event = new Event('Controller.beforeRender', $this->Controller);
         $requestHandler = new RequestHandlerComponent($this->Controller->components());
-        $this->assertNull($requestHandler->beforeRender($event));
+        $requestHandler->beforeRender($event);
         $this->assertTrue($event->isStopped());
 
         $this->assertEquals(304, $this->Controller->getResponse()->getStatusCode());
@@ -871,7 +871,7 @@ class RequestHandlerComponentTest extends TestCase
 
         $event = new Event('Controller.beforeRender', $this->Controller);
         $requestHandler = new RequestHandlerComponent($this->Controller->components());
-        $this->assertNull($requestHandler->beforeRender($event));
+        $requestHandler->beforeRender($event);
         $this->assertSame(200, $response->getStatusCode());
     }
 

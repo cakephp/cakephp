@@ -110,7 +110,7 @@ class BasePluginTest extends TestCase
         $plugin = new TestPlugin();
 
         $this->assertFalse(Configure::check('PluginTest.test_plugin.bootstrap'));
-        $this->assertNull($plugin->bootstrap($app));
+        $plugin->bootstrap($app);
         $this->assertTrue(Configure::check('PluginTest.test_plugin.bootstrap'));
     }
 
@@ -121,7 +121,8 @@ class BasePluginTest extends TestCase
     {
         $app = $this->createMock(PluginApplicationInterface::class);
         $plugin = new BasePlugin();
-        $this->assertNull($plugin->bootstrap($app));
+        $plugin->bootstrap($app);
+        $this->assertTrue(true);
     }
 
     /**
@@ -129,10 +130,10 @@ class BasePluginTest extends TestCase
      */
     public function testRoutesSkipMissingFile()
     {
-        $app = $this->createMock(PluginApplicationInterface::class);
         $plugin = new BasePlugin();
         $routeBuilder = new RouteBuilder(new RouteCollection(), '/');
-        $this->assertNull($plugin->routes($routeBuilder));
+        $plugin->routes($routeBuilder);
+        $this->assertTrue(true);
     }
 
     public function testConstructorArguments()

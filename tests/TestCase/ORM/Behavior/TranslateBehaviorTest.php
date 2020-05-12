@@ -1240,6 +1240,7 @@ class TranslateBehaviorTest extends TestCase
     public function testTranslationWithUnionQuery()
     {
         $table = $this->getTableLocator()->get('Comments');
+        /** @var \Cake\ORM\Table|\Cake\ORM\Behavior\TranslateBehavior $table */
         $table->addBehavior('Translate', ['fields' => ['comment']]);
         $table->setLocale('spa');
         $query = $table->find()->where(['Comments.id' => 6]);
@@ -1322,6 +1323,7 @@ class TranslateBehaviorTest extends TestCase
     public function testFilterUntranslated()
     {
         $table = $this->getTableLocator()->get('Articles');
+        /** @var \Cake\ORM\Table|\Cake\ORM\Behavior\TranslateBehavior $table */
         $table->addBehavior('Translate', [
             'fields' => ['title', 'body'],
             'onlyTranslated' => true,
@@ -1345,6 +1347,7 @@ class TranslateBehaviorTest extends TestCase
     public function testFilterUntranslatedWithFinder()
     {
         $table = $this->getTableLocator()->get('Comments');
+        /** @var \Cake\ORM\Table|\Cake\ORM\Behavior\TranslateBehavior $table */
         $table->addBehavior('Translate', [
             'fields' => ['comment'],
             'onlyTranslated' => true,
@@ -1374,6 +1377,7 @@ class TranslateBehaviorTest extends TestCase
     public function testEmptyTranslations()
     {
         $table = $this->getTableLocator()->get('Articles');
+        /** @var \Cake\ORM\Table|\Cake\ORM\Behavior\TranslateBehavior $table */
         $table->addBehavior('Translate', [
             'fields' => ['title', 'body', 'description'],
             'allowEmptyTranslations' => false,
