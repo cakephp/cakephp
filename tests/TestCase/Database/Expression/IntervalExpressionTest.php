@@ -24,7 +24,7 @@ use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
 use Cake\I18n\FrozenTime;
 use Cake\TestSuite\TestCase;
-use DateInterval as CakeDateInterval;
+use DateInterval;
 use DateTimeInterface;
 use DateTimeZone;
 use InvalidArgumentException;
@@ -36,36 +36,36 @@ use UnexpectedValueException;
 class IntervalExpressionTest extends TestCase
 {
     /**
-     * @var \Cake\Database\Driver|\PHPUnit\Framework\MockObject\MockObject
+     * @var \Cake\Database\Driver
      */
     protected $driver;
 
     /**
-     * @var \Cake\Datasource\ConnectionInterface
+     * @var \Cake\Database\Connection
      */
     protected $connection;
 
     /**
      * @var array
      */
-    protected static $data = [];
+    protected $data = [];
 
     public function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
-        self::$data['tz'] = $utc = new DateTimeZone('UTC');
-        self::$data['interval'] = CakeDateInterval::createFromDateString('1 day + 2 minute + 2 seconds + 111 milliseconds');
-        self::$data['intervalNegative'] = CakeDateInterval::createFromDateString(
+        $this->data['tz'] = $utc = new DateTimeZone('UTC');
+        $this->data['interval'] = DateInterval::createFromDateString('1 day + 2 minute + 2 seconds + 111 milliseconds');
+        $this->data['intervalNegative'] = DateInterval::createFromDateString(
             '2 year + 1 month + 10 day + 2 minute + 2 seconds + 110 milliseconds ago + 10 seconds'
         );
-        self::$data['dtInterval'] = CakeDateInterval::createFromDateString(
+        $this->data['dtInterval'] = DateInterval::createFromDateString(
             '2 year + 1 month + 10 day + 2 minute + 2 seconds + 110 milliseconds'
         );
-        self::$data['dtIntervalInvalid'] = CakeDateInterval::createFromDateString(
+        $this->data['dtIntervalInvalid'] = DateInterval::createFromDateString(
             'third monday of february'
         );
-        self::$data['date'] = '2021-04-17 02:03:04.32';
+        $this->data['date'] = '2021-04-17 02:03:04.32';
     }
 
     /**
@@ -76,7 +76,7 @@ class IntervalExpressionTest extends TestCase
      */
     public function testInterval()
     {
-        $iExp = new IntervalExpression(self::$data['interval']);
+        $iExp = new IntervalExpression($this->data['interval']);
         $result = $iExp->sql(new ValueBinder());
         $this->assertSame(
             "INTERVAL '01 00:02:02.111000' DAY_MICROSECOND",
@@ -92,7 +92,7 @@ class IntervalExpressionTest extends TestCase
      */
     public function testNegativeInterval()
     {
-        $iExp = new IntervalExpression(self::$data['intervalNegative']);
+        $iExp = new IntervalExpression($this->data['intervalNegative']);
         $result = $iExp->sql(new ValueBinder());
         $this->assertSame(
             "INTERVAL '-2-1' YEAR_MONTH + INTERVAL -10 DAY + INTERVAL -2 MINUTE + INTERVAL 8 SECOND",
@@ -109,19 +109,19 @@ class IntervalExpressionTest extends TestCase
     public function testDateTimeInterval()
     {
         $iExp = new DateTimeIntervalExpression(
-            new FrozenTime(self::$data['date'], self::$data['tz']),
-            self::$data['dtInterval']
+            new FrozenTime($this->data['date'], $this->data['tz']),
+            $this->data['dtInterval']
         );
         $resultDt = Type::build('datetimefractional')->toPHP(
             (new Query($this->connection))->select([ $iExp ])->execute()->fetchColumn(0),
             $this->connection->getDriver()
         );
         $this->assertGreaterThanOrEqual(
-            new FrozenTime('2023-05-27 02:05:06.429', self::$data['tz']),
+            new FrozenTime('2023-05-27 02:05:06.429', $this->data['tz']),
             $resultDt
         );
         $this->assertLessThanOrEqual(
-            new FrozenTime('2023-05-27 02:05:06.43', self::$data['tz']),
+            new FrozenTime('2023-05-27 02:05:06.43', $this->data['tz']),
             $resultDt
         );
     }
@@ -137,7 +137,7 @@ class IntervalExpressionTest extends TestCase
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage('Cloned interval object cannot be a special or relative format.');
         new IntervalExpression(
-            self::$data['dtIntervalInvalid']
+            $this->data['dtIntervalInvalid']
         );
     }
 
@@ -153,7 +153,7 @@ class IntervalExpressionTest extends TestCase
         $this->expectExceptionMessage('Subject must be ' . DateTimeInterface::class . ' or ' . ExpressionInterface::class);
         new DateTimeIntervalExpression(
             'This is not a valid subject.',
-            self::$data['dtInterval']
+            $this->data['dtInterval']
         );
     }
 }

@@ -19,7 +19,8 @@ namespace Cake\Database;
 use UnexpectedValueException;
 
 /**
- * TODO: Add documentation
+ * DateInterval extension that provides object and array conversion to convert
+ * properties to keys database software understands.
  */
 class DateInterval extends \DateInterval
 {
@@ -61,13 +62,13 @@ class DateInterval extends \DateInterval
      * Constructor that takes an interval spec and an optional clone object. If the clone object is provided,
      * the properties from the clone object are applied to the new object.
      *
-     * @param string $interval_spec A string containing an interval specification.
-     * @param \DateInterval $clone Copy values from another DateInterval object.
+     * @param string        $intervalSpec A string containing an interval specification.
+     * @param \DateInterval $clone        Copy values from another DateInterval object.
      * @throws \Exception
      */
-    public function __construct($interval_spec, ?\DateInterval $clone = null)
+    public function __construct($intervalSpec, ?\DateInterval $clone = null)
     {
-        parent::__construct($interval_spec);
+        parent::__construct($intervalSpec);
         if ($clone !== null) {
             if (static::isSpecial($clone)) {
                 throw new UnexpectedValueException('Cloned interval object cannot be a special or relative format.');
