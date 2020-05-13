@@ -8312,7 +8312,7 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * Test the basic setters and getters for value sources
+     * Test the basic setters and getters and field override for value sources
      *
      * @return void
      */
@@ -8344,15 +8344,31 @@ class FormHelperTest extends TestCase
         $result = $this->Form->getSourceValue('id');
         $this->assertEquals($expected, $result);
 
+        $expected = '1';
+        $result = $this->Form->getSourceValue('id', ['valueSources' => ['data']]);
+        $this->assertEquals($expected, $result);
+
         $this->Form->setValueSources(['data']);
         $expected = '1';
         $result = $this->Form->getSourceValue('id');
+        $this->assertEquals($expected, $result);
+
+        $expected = '2';
+        $result = $this->Form->getSourceValue('id', ['valueSources' => ['query']]);
         $this->assertEquals($expected, $result);
 
         $this->Form->setValueSources(['query', 'data']);
         $expected = '2';
         $result = $this->Form->getSourceValue('id');
         $this->assertEquals($expected, $result);
+
+        $expected = '1';
+        $result = $this->Form->getSourceValue('id', ['valueSources' => ['data', 'query']]);
+        $this->assertEquals($expected, $result);
+
+        $result = $this->Form->getSourceValue('id', ['valueSources' => ['context']]);
+        $this->assertNull($result);
+
     }
 
     /**
@@ -8551,6 +8567,68 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
         $result = $this->Form->getSourceValue('id');
         $this->assertSame('10', $result);
+    }
+
+    /**
+     * Test the different form input renderings based on values sources field override
+     *
+     * @return void
+     */
+    public function testFormValueSourcesFieldOverride()
+    {
+        $this->loadFixtures('Articles');
+        $articles = $this->getTableLocator()->get('Articles');
+        $article = new Article();
+        $articles->patchEntity($article, ['id' => '3']);
+
+        $this->View->setRequest(
+            $this->View->getRequest()->withData('id', '10')->withQueryParams(['id' => '11'])
+        );
+        $this->Form->setValueSources(['context']);
+        $this->Form->create($article);
+        $result = $this->Form->control('id');
+        $expected = [
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '3']],
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->control('id', ['valueSources' => ['data']]);
+        $expected = [
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '10']],
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->control('id', ['valueSources' => ['query']]);
+        $expected = [
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '11']],
+        ];
+        $this->assertHtml($expected, $result);
+
+        $this->Form->create($article, ['valueSources' => ['data', 'context']]);
+        $result = $this->Form->control('id');
+        $expected = [
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '10']],
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->control('id', ['valueSources' => ['context']]);
+        $expected = [
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '3']],
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->control('id', ['valueSources' => ['query']]);
+        $expected = [
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '11']],
+        ];
+        $this->assertHtml($expected, $result);
+
+        $this->View->setRequest($this->View->getRequest()->withQueryParams([]));
+        $result = $this->Form->control('id', ['valueSources' => ['query', 'context']]);
+        $expected = [
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '3']],
+        ];
+        $this->assertHtml($expected, $result);
     }
 
     /**
