@@ -8368,7 +8368,6 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->getSourceValue('id', ['valueSources' => ['context']]);
         $this->assertNull($result);
-
     }
 
     /**
