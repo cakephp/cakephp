@@ -2287,7 +2287,9 @@ class FormHelper extends Helper
             $valOptions = [
                 'default' => $options['default'] ?? null,
                 'schemaDefault' => $options['schemaDefault'] ?? true,
+                'valueSources' => $options['valueSources'] ?? null,
             ];
+            unset($options['valueSources']);
             $options['val'] = $this->getSourceValue($field, $valOptions);
         }
         if (!isset($options['val']) && isset($options['default'])) {
@@ -2527,7 +2529,15 @@ class FormHelper extends Helper
             'data' => 'getData',
             'query' => 'getQuery',
         ];
-        foreach ($this->getValueSources() as $valuesSource) {
+
+        $valueSources = $this->getValueSources();
+
+        if (isset($options['valueSources'])) {
+            $valueSources = $this->extractValidValueSources((array)$options['valueSources']);
+            unset($options['valueSources']);
+        }
+
+        foreach ($valueSources as $valuesSource) {
             if ($valuesSource === 'context') {
                 $val = $this->_getContext()->val($fieldname, $options);
                 if ($val !== null) {
