@@ -2522,6 +2522,7 @@ class FormHelper extends Helper
      * @see FormHelper::$supportedValueSources for valid values.
      * @param string|string[] $sources A string or a list of strings identifying a source.
      * @return $this
+     * @throws \InvalidArgumentException If sources list contains invalid value.
      */
     public function setValueSources($sources)
     {
