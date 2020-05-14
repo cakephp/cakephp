@@ -221,6 +221,10 @@ class FormHelper extends Helper
     /**
      * The supported sources that can be used to populate input values.
      *
+     * `context` - Corresponds to `ContextInterface` instances.
+     * `data` - Corresponds to request data (POST/PUT).
+     * `query` - Corresponds to request's query string.
+     *
      * @var string[]
      */
     protected $supportedValueSources = ['context', 'data', 'query'];
@@ -228,6 +232,7 @@ class FormHelper extends Helper
     /**
      * The default sources.
      *
+     * @see FormHelper::$supportedValueSources for valid values.
      * @var string[]
      */
     protected $_valueSources = ['data', 'context'];
@@ -2501,9 +2506,10 @@ class FormHelper extends Helper
     /**
      * Sets the value sources.
      *
-     * Valid values are set in `$supportedValueSources`.
-     * You need to supply one valid context or multiple, as a list of strings. Order sets priority.
+     * You need to supply one or more valid source, as a list of strings.
+     * Order sets priority.
      *
+     * @see FormHelper::$supportedValueSources for valid values.
      * @param string|string[] $sources A string or a list of strings identifying a source.
      * @return $this
      */
