@@ -28,6 +28,7 @@ use Cake\View\Helper;
 use Cake\View\StringTemplateTrait;
 use Cake\View\View;
 use Cake\View\Widget\WidgetLocator;
+use InvalidArgumentException;
 use RuntimeException;
 
 /**
@@ -2493,14 +2494,23 @@ class FormHelper extends Helper
     }
 
     /**
-     * Extracts valid value sources.
+     * Validate value sources.
      *
      * @param string[] $sources A list of strings identifying a source.
-     * @return string[]
+     * @return void
+     * @throws \InvalidArgumentException If sources list contains invalid value.
      */
-    protected function extractValidValueSources(array $sources): array
+    protected function validateValueSources(array $sources): void
     {
-        return array_values(array_intersect($sources, $this->supportedValueSources));
+        $diff = array_diff($sources, $this->supportedValueSources);
+
+        if ($diff) {
+            throw new InvalidArgumentException(sprintf(
+                'Invalid value source(s): %s. Valid values are: %s',
+                implode(', ', $diff),
+                implode(', ', $this->supportedValueSources)
+            ));
+        }
     }
 
     /**
@@ -2515,7 +2525,10 @@ class FormHelper extends Helper
      */
     public function setValueSources($sources)
     {
-        $this->_valueSources = $this->extractValidValueSources((array)$sources);
+        $sources = (array)$sources;
+
+        $this->validateValueSources($sources);
+        $this->_valueSources = $sources;
 
         return $this;
     }
