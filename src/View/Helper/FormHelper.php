@@ -2516,7 +2516,7 @@ class FormHelper extends Helper
     /**
      * Sets the value sources.
      *
-     * You need to supply one or more valid source, as a list of strings.
+     * You need to supply one or more valid sources, as a list of strings.
      * Order sets priority.
      *
      * @see FormHelper::$supportedValueSources for valid values.
