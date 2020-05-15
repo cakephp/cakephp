@@ -8326,11 +8326,6 @@ class FormHelperTest extends TestCase
         $result = $this->Form->getValueSources();
         $this->assertEquals($expected, $result);
 
-        $expected = ['query', 'data', 'context'];
-        $this->Form->setValueSources(['query', 'data', 'invalid', 'context', 'foo']);
-        $result = $this->Form->getValueSources();
-        $this->assertEquals($expected, $result);
-
         $this->Form->setValueSources(['context']);
         $result = $this->Form->getSourceValue('id');
         $this->assertNull($result);
@@ -8353,6 +8348,14 @@ class FormHelperTest extends TestCase
         $expected = '2';
         $result = $this->Form->getSourceValue('id');
         $this->assertEquals($expected, $result);
+    }
+
+    public function testValueSourcesValidation()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid value source(s): invalid, foo. Valid values are: context, data, query');
+
+        $this->Form->setValueSources(['query', 'data', 'invalid', 'context', 'foo']);
     }
 
     /**
