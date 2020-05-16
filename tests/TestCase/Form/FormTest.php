@@ -196,6 +196,49 @@ class FormTest extends TestCase
     }
 
     /**
+     * Test set() with one param.
+     *
+     * @return void
+     */
+    public function testSetOneParam()
+    {
+        $form = new Form();
+        $data = ['test' => 'val', 'foo' => 'bar'];
+        $form->set($data);
+        $this->assertEquals($data, $form->getData());
+
+        $update = ['test' => 'updated'];
+        $form->set($update);
+        $this->assertSame('updated', $form->getData()['test']);
+    }
+
+    /**
+     * test set() with 2 params
+     *
+     * @return void
+     */
+    public function testSetTwoParam()
+    {
+        $form = new Form();
+        $form->set('testing', 'value');
+        $this->assertEquals(['testing' => 'value'], $form->getData());
+    }
+
+    /**
+     * test chainable set()
+     *
+     * @return void
+     */
+    public function testSetChained()
+    {
+        $form = new Form();
+        $result = $form->set('testing', 'value')
+            ->set('foo', 'bar');
+        $this->assertSame($form, $result);
+        $this->assertEquals(['testing' => 'value', 'foo' => 'bar'], $form->getData());
+    }
+
+    /**
      * Test setting and getting form data.
      *
      * @return void

@@ -273,9 +273,9 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
     /**
      * Saves a variable or an associative array of variables for use inside form data.
      *
-     * @param string|array $name A string or an array of data.
-     * @param mixed $value Value in case $name is a string (which then works as the key).
-     *   Unused if $name is an associative array, otherwise serves as the values to $name's keys.
+     * @param string|array $name The key to write, can be a dot notation value.
+     * Alternatively can be an array containing key(s) and value(s).
+     * @param mixed $value Value to set for var
      * @return $this
      */
     public function set($name, $value = null)
