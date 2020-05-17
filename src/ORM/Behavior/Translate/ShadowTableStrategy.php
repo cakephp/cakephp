@@ -26,6 +26,7 @@ use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Marshaller;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
+use Cake\Utility\Hash;
 
 /**
  * This class provides a way to translate dynamic data by keeping translations
@@ -119,7 +120,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      */
     public function beforeFind(EventInterface $event, Query $query, ArrayObject $options)
     {
-        $locale = $this->getLocale();
+        $locale = Hash::get($options, 'locale', $this->getLocale());
 
         if ($locale === $this->getConfig('defaultLocale')) {
             return;
