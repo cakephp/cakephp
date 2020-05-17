@@ -112,8 +112,13 @@ class FunctionsBuilderTest extends TestCase
      *
      * @return void
      */
-    public function testMAX()
+    public function testMax()
     {
+        $function = $this->functions->max('total');
+        $this->assertInstanceOf(AggregateExpression::class, $function);
+        $this->assertSame('MAX(total)', $function->sql(new ValueBinder()));
+        $this->assertSame('float', $function->getReturnType());
+
         $function = $this->functions->max('created', ['datetime']);
         $this->assertInstanceOf(AggregateExpression::class, $function);
         $this->assertSame('MAX(created)', $function->sql(new ValueBinder()));

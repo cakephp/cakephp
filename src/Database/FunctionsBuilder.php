@@ -75,7 +75,7 @@ class FunctionsBuilder
      */
     public function max($expression, $types = []): AggregateExpression
     {
-        return $this->aggregate('MAX', $this->toLiteralParam($expression), $types, current($types) ?? 'float');
+        return $this->aggregate('MAX', $this->toLiteralParam($expression), $types, current($types) ?: 'float');
     }
 
     /**
@@ -87,7 +87,7 @@ class FunctionsBuilder
      */
     public function min($expression, $types = []): AggregateExpression
     {
-        return $this->aggregate('MIN', $this->toLiteralParam($expression), $types, current($types) ?? 'float');
+        return $this->aggregate('MIN', $this->toLiteralParam($expression), $types, current($types) ?: 'float');
     }
 
     /**
