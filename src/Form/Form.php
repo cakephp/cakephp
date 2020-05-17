@@ -305,6 +305,28 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
     }
 
     /**
+     * Saves a variable or an associative array of variables for use inside form data.
+     *
+     * @param string|array $name The key to write, can be a dot notation value.
+     * Alternatively can be an array containing key(s) and value(s).
+     * @param mixed $value Value to set for var
+     * @return $this
+     */
+    public function set($name, $value = null)
+    {
+        $write = $name;
+        if (!is_array($name)) {
+            $write = [$name => $value];
+        }
+
+        foreach ($write as $key => $val) {
+            $this->_data = Hash::insert($this->_data, $key, $val);
+        }
+
+        return $this;
+    }
+
+    /**
      * Set form data.
      *
      * @param array $data Data array.
