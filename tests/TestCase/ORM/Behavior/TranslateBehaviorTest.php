@@ -136,12 +136,19 @@ class TranslateBehaviorTest extends TestCase
         ];
         $this->assertSame($expected, $results);
 
+        $entity = $table->newEntity(['author_id' => 2, 'title' => 'Title 4', 'body' => 'Body 4']);
+        $table->save($entity);
+
         $results = $table->find('all', ['locale' => 'cze'])
-            ->combine('title', 'body', 'id')->toArray();
+            ->select(['id', 'title', 'body'])
+            ->disableHydration()
+            ->orderAsc('Articles.id')
+            ->toArray();
         $expected = [
-            1 => ['Titulek #1' => 'Obsah #1'],
-            2 => ['Titulek #2' => 'Obsah #2'],
-            3 => ['Titulek #3' => 'Obsah #3'],
+            ['id' => 1, 'title' => 'Titulek #1', 'body' => 'Obsah #1', '_locale' => 'cze'],
+            ['id' => 2, 'title' => 'Titulek #2', 'body' => 'Obsah #2', '_locale' => 'cze'],
+            ['id' => 3, 'title' => 'Titulek #3', 'body' => 'Obsah #3', '_locale' => 'cze'],
+            ['id' => 4, 'title' => null, 'body' => null, '_locale' => 'cze'],
         ];
         $this->assertSame($expected, $results);
     }
