@@ -28,6 +28,7 @@ use Cake\View\Helper;
 use Cake\View\StringTemplateTrait;
 use Cake\View\View;
 use Cake\View\Widget\WidgetLocator;
+use InvalidArgumentException;
 use RuntimeException;
 
 /**
@@ -221,6 +222,10 @@ class FormHelper extends Helper
     /**
      * The supported sources that can be used to populate input values.
      *
+     * `context` - Corresponds to `ContextInterface` instances.
+     * `data` - Corresponds to request data (POST/PUT).
+     * `query` - Corresponds to request's query string.
+     *
      * @var string[]
      */
     protected $supportedValueSources = ['context', 'data', 'query'];
@@ -228,6 +233,7 @@ class FormHelper extends Helper
     /**
      * The default sources.
      *
+     * @see FormHelper::$supportedValueSources for valid values.
      * @var string[]
      */
     protected $_valueSources = ['data', 'context'];
@@ -2488,28 +2494,42 @@ class FormHelper extends Helper
     }
 
     /**
-     * Extracts valid value sources.
+     * Validate value sources.
      *
      * @param string[] $sources A list of strings identifying a source.
-     * @return string[]
+     * @return void
+     * @throws \InvalidArgumentException If sources list contains invalid value.
      */
-    protected function extractValidValueSources(array $sources): array
+    protected function validateValueSources(array $sources): void
     {
-        return array_values(array_intersect($sources, $this->supportedValueSources));
+        $diff = array_diff($sources, $this->supportedValueSources);
+
+        if ($diff) {
+            throw new InvalidArgumentException(sprintf(
+                'Invalid value source(s): %s. Valid values are: %s',
+                implode(', ', $diff),
+                implode(', ', $this->supportedValueSources)
+            ));
+        }
     }
 
     /**
      * Sets the value sources.
      *
-     * Valid values are set in `$supportedValueSources`.
-     * You need to supply one valid context or multiple, as a list of strings. Order sets priority.
+     * You need to supply one or more valid sources, as a list of strings.
+     * Order sets priority.
      *
+     * @see FormHelper::$supportedValueSources for valid values.
      * @param string|string[] $sources A string or a list of strings identifying a source.
      * @return $this
+     * @throws \InvalidArgumentException If sources list contains invalid value.
      */
     public function setValueSources($sources)
     {
-        $this->_valueSources = $this->extractValidValueSources((array)$sources);
+        $sources = (array)$sources;
+
+        $this->validateValueSources($sources);
+        $this->_valueSources = $sources;
 
         return $this;
     }

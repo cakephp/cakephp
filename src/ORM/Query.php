@@ -849,6 +849,19 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
+     * Clears the internal result cache and the internal count value from the current
+     * query object.
+     *
+     * @return $this
+     */
+    public function clearResult()
+    {
+        $this->_dirty();
+
+        return $this;
+    }
+
+    /**
      * {@inheritDoc}
      *
      * Handles cloning eager loaders.
