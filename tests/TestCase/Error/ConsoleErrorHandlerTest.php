@@ -42,6 +42,7 @@ class ConsoleErrorHandlerTest extends TestCase
             ->setMethods(['_stop'])
             ->setConstructorArgs([['stderr' => $this->stderr]])
             ->getMock();
+        Log::drop('stdout');
         Log::drop('stderr');
     }
 
