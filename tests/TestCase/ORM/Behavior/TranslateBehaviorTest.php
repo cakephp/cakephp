@@ -126,12 +126,22 @@ class TranslateBehaviorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+
         $table->setLocale('eng');
         $results = $table->find()->combine('title', 'body', 'id')->toArray();
         $expected = [
             1 => ['Title #1' => 'Content #1'],
             2 => ['Title #2' => 'Content #2'],
             3 => ['Title #3' => 'Content #3'],
+        ];
+        $this->assertSame($expected, $results);
+
+        $results = $table->find('all', ['locale' => 'cze'])
+            ->combine('title', 'body', 'id')->toArray();
+        $expected = [
+            1 => ['Titulek #1' => 'Obsah #1'],
+            2 => ['Titulek #2' => 'Obsah #2'],
+            3 => ['Titulek #3' => 'Obsah #3'],
         ];
         $this->assertSame($expected, $results);
     }
