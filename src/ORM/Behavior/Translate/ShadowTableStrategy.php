@@ -439,7 +439,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     {
         $allowEmpty = $this->_config['allowEmptyTranslations'];
 
-        return $results->map(function ($row) use ($allowEmpty) {
+        return $results->map(function ($row) use ($allowEmpty, $locale) {
             /** @var \Cake\Datasource\EntityInterface|array|null $row */
             if ($row === null) {
                 return $row;
@@ -448,7 +448,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
             $hydrated = !is_array($row);
 
             if (empty($row['translation'])) {
-                $row['_locale'] = $this->getLocale();
+                $row['_locale'] = $locale;
                 unset($row['translation']);
 
                 if ($hydrated) {
