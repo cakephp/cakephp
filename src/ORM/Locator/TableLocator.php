@@ -145,13 +145,13 @@ class TableLocator implements LocatorInterface
      *   `App\Model\Table\UsersTable` being used. If this class does not exist,
      *   then the default `Cake\ORM\Table` class will be used. By setting the `className`
      *   option you can define the specific class to use. The className option supports
-     *   plugin short class references {@link Cake\Core\App::shortName()}.
+     *   plugin short class references {@link \Cake\Core\App::shortName()}.
      * - `table` Define the table name to use. If undefined, this option will default to the underscored
      *   version of the alias name.
      * - `connection` Inject the specific connection object to use. If this option and `connectionName` are undefined,
      *   The table class' `defaultConnectionName()` method will be invoked to fetch the connection name.
      * - `connectionName` Define the connection name to use. The named connection will be fetched from
-     *   Cake\Datasource\ConnectionManager.
+     *   {@link \Cake\Datasource\ConnectionManager}.
      *
      * *Note* If your `$alias` uses plugin syntax only the name part will be used as
      * key in the registry. This means that if two plugins, or a plugin and app provide

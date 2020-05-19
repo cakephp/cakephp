@@ -427,7 +427,7 @@ class Cookie implements CookieInterface
      * This will collapse any complex data in the cookie with json_encode()
      *
      * @return mixed
-     * @deprecated 4.0.0 Use getScalarValue() instead.
+     * @deprecated 4.0.0 Use {@link getScalarValue()} instead.
      */
     public function getStringValue()
     {

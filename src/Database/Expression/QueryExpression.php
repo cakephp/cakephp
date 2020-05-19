@@ -452,7 +452,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param array $types associative array of fields pointing to the type of the
      * values that are being passed. Used for correctly binding values to statements.
      * @return \Cake\Database\Expression\QueryExpression
-     * @deprecated 4.0.0 Use and() instead.
+     * @deprecated 4.0.0 Use {@link and()} instead.
      */
     public function and_($conditions, $types = [])
     {
@@ -467,7 +467,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param array $types associative array of fields pointing to the type of the
      * values that are being passed. Used for correctly binding values to statements.
      * @return \Cake\Database\Expression\QueryExpression
-     * @deprecated 4.0.0 Use or() instead.
+     * @deprecated 4.0.0 Use {@link or()} instead.
      */
     public function or_($conditions, $types = [])
     {

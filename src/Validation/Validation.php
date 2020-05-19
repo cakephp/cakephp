@@ -400,7 +400,7 @@ class Validation
      * @param mixed $check Value to check
      * @param int $count Number of non-alphanumerics to check for
      * @return bool Success
-     * @deprecated 4.0 Use notAlphaNumeric() instead. Will be removed in 5.0
+     * @deprecated 4.0.0 Use {@link notAlphaNumeric()} instead. Will be removed in 5.0
      */
     public static function containsNonAlphaNumeric($check, int $count = 1): bool
     {
