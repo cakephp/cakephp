@@ -264,8 +264,8 @@ class Number
      * Getter/setter for default currency. This behavior is *deprecated* and will be
      * removed in future versions of CakePHP.
      *
-     * @deprecated 3.9 Use getDefaultCurrency() and setDefaultCurrency()
-     * @param string|false|null $currency Default currency string to be used by currency()
+     * @deprecated 3.9.0 Use {@link getDefaultCurrency()} and {@link setDefaultCurrency()} instead.
+     * @param string|false|null $currency Default currency string to be used by {@link currency()}
      * if $currency argument is not provided. If boolean false is passed, it will clear the
      * currently stored value
      * @return string|null Currency
@@ -310,7 +310,7 @@ class Number
     /**
      * Setter for default currency
      *
-     * @param string|null $currency Default currency string to be used by currency()
+     * @param string|null $currency Default currency string to be used by {@link currency()}
      * if $currency argument is not provided. If null is passed, it will clear the
      * currently stored value
      * @return void

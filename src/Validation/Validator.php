@@ -722,8 +722,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Because this and `notEmpty()` modify the same internal state, the last
      * method called will take precedence.
      *
-     * @deprecated 3.7.0 Use allowEmptyString(), allowEmptyArray(), allowEmptyFile(),
-     *   allowEmptyDate(), allowEmptyTime() allowEmptyDateTime() or allowEmptyFor() instead.
+     * @deprecated 3.7.0 Use {@link allowEmptyString()}, {@link allowEmptyArray()}, {@link allowEmptyFile()},
+     *   {@link allowEmptyDate()}, {@link allowEmptyTime()}, {@link allowEmptyDateTime()} or {@link allowEmptyFor()} instead.
      * @param string|array $field the name of the field or a list of fields
      * @param bool|string|callable $when Indicates when the field is allowed to be empty
      * Valid values are true (always), 'create', 'update'. If a callable is passed then
@@ -1178,8 +1178,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Because this and `allowEmpty()` modify the same internal state, the last
      * method called will take precedence.
      *
-     * @deprecated 3.7.0 Use notEmptyString(), notEmptyArray(), notEmptyFile(),
-     *   notEmptyDate(), notEmptyTime() or notEmptyDateTime() instead.
+     * @deprecated 3.7.0 Use {@link notEmptyString()}, {@link notEmptyArray()}, {@link notEmptyFile()},
+     *   {@link notEmptyDate()}, {@link notEmptyTime()} or {@link notEmptyDateTime()} instead.
      * @param string|array $field the name of the field or list of fields
      * @param string|null $message The message to show if the field is not
      * @param bool|string|callable $when Indicates when the field is not allowed
@@ -1683,7 +1683,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::containsNonAlphaNumeric()
      * @return $this
-     * @deprecated 4.0 Use notAlphaNumeric() instead. Will be removed in 5.0
+     * @deprecated 4.0.0 Use {@link notAlphaNumeric()} instead. Will be removed in 5.0
      */
     public function containsNonAlphaNumeric(string $field, int $limit = 1, ?string $message = null, $when = null)
     {
@@ -2579,7 +2579,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param mixed $data Value to check against.
      * @return bool
-     * @deprecated 3.7.0 Use isEmpty() instead
+     * @deprecated 3.7.0 Use {@link isEmpty()} instead
      */
     protected function _fieldIsEmpty($data): bool
     {

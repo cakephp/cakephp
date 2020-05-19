@@ -450,7 +450,7 @@ trait EntityTrait
     /**
      * Removes a field or list of fields from this entity
      *
-     * @deprecated 4.0.0 Use unset() instead. Will be removed in 5.0.
+     * @deprecated 4.0.0 Use {@link unset()} instead. Will be removed in 5.0.
      * @param string|string[] $field The field to unset.
      * @return $this
      */
