@@ -176,7 +176,7 @@ class EntityContext implements ContextInterface
      * Gets the primary key columns from the root entity's schema.
      *
      * @return string[]
-     * @deprecated 4.0.0 Renamed to getPrimaryKey()
+     * @deprecated 4.0.0 Renamed to {@link getPrimaryKey()}.
      */
     public function primaryKey(): array
     {

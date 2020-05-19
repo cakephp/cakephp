@@ -191,7 +191,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param array $data The data to be checked for errors
      * @param bool $newRecord whether the data to be validated is new or to be updated.
      * @return array[] Array of failed fields
-     * @deprecated 3.9.0 Renamed to validate()
+     * @deprecated 3.9.0 Renamed to {@link validate()}.
      */
     public function errors(array $data, bool $newRecord = true): array
     {

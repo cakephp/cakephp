@@ -525,7 +525,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      *
      * @return array Column name(s) for the primary key. An
      *   empty list will be returned when the table has no primary key.
-     * @deprecated 4.0.0 Renamed to getPrimaryKey()
+     * @deprecated 4.0.0 Renamed to {@link getPrimaryKey()}.
      */
     public function primaryKey(): array
     {
