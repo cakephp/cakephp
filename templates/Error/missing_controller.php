@@ -34,10 +34,12 @@ if (!empty($prefix)) {
 if (!empty($plugin)) {
     $namespace = str_replace('/', '\\', $plugin);
 }
+
+$filePath = 'Controller' . DIRECTORY_SEPARATOR . $prefixPath . h($class) . 'Controller.php';
 if (empty($plugin)) {
-    $path = APP_DIR . DIRECTORY_SEPARATOR . 'Controller' . DIRECTORY_SEPARATOR . $prefixPath . h($class) . 'Controller.php';
+    $path = APP_DIR . DIRECTORY_SEPARATOR . $filePath;
 } else {
-    $path = Plugin::classPath($plugin) . 'Controller' . DIRECTORY_SEPARATOR . $prefixPath . h($class) . 'Controller.php';
+    $path = Plugin::classPath($plugin) . $filePath;
 }
 
 $this->layout = 'dev_error';
