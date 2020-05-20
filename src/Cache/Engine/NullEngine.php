@@ -44,7 +44,7 @@ class NullEngine extends CacheEngine
     /**
      * @inheritDoc
      */
-    public function setMultiple($data, $ttl = null): bool
+    public function setMultiple($values, $ttl = null): bool
     {
         return true;
     }

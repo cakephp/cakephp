@@ -162,21 +162,21 @@ class Comparison implements ExpressionInterface, FieldInterface
     /**
      * @inheritDoc
      */
-    public function traverse(Closure $callable)
+    public function traverse(Closure $visitor)
     {
         if ($this->_field instanceof ExpressionInterface) {
-            $callable($this->_field);
-            $this->_field->traverse($callable);
+            $visitor($this->_field);
+            $this->_field->traverse($visitor);
         }
 
         if ($this->_value instanceof ExpressionInterface) {
-            $callable($this->_value);
-            $this->_value->traverse($callable);
+            $visitor($this->_value);
+            $this->_value->traverse($visitor);
         }
 
         foreach ($this->_valueExpressions as $v) {
-            $callable($v);
-            $v->traverse($callable);
+            $visitor($v);
+            $v->traverse($visitor);
         }
 
         return $this;

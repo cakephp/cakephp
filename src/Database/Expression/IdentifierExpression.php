@@ -80,13 +80,9 @@ class IdentifierExpression implements ExpressionInterface
     }
 
     /**
-     * This method is a no-op, this is a leaf type of expression,
-     * hence there is nothing to traverse
-     *
-     * @param \Closure $callable The callable to traverse with.
-     * @return $this
+     * @inheritDoc
      */
-    public function traverse(Closure $callable)
+    public function traverse(Closure $visitor)
     {
         return $this;
     }
