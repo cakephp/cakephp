@@ -35,51 +35,71 @@ class Validation
 {
     /**
      * Default locale
+     *
+     * @var string
      */
     public const DEFAULT_LOCALE = 'en_US';
 
     /**
      * Same as operator.
+     *
+     * @var string
      */
     public const COMPARE_SAME = '===';
 
     /**
      * Not same as comparison operator.
+     *
+     * @var string
      */
     public const COMPARE_NOT_SAME = '!==';
 
     /**
      * Equal to comparison operator.
+     *
+     * @var string
      */
     public const COMPARE_EQUAL = '==';
 
     /**
      * Not equal to comparison operator.
+     *
+     * @var string
      */
     public const COMPARE_NOT_EQUAL = '!=';
 
     /**
      * Greater than comparison operator.
+     *
+     * @var string
      */
     public const COMPARE_GREATER = '>';
 
     /**
      * Greater than or equal to comparison operator.
+     *
+     * @var string
      */
     public const COMPARE_GREATER_OR_EQUAL = '>=';
 
     /**
      * Less than comparison operator.
+     *
+     * @var string
      */
     public const COMPARE_LESS = '<';
 
     /**
      * Less than or equal to comparison operator.
+     *
+     * @var string
      */
     public const COMPARE_LESS_OR_EQUAL = '<=';
 
     /**
      * Datetime ISO8601 format
+     *
+     * @var string
      */
     public const DATETIME_ISO8601 = 'iso8601';
 
