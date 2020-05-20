@@ -367,6 +367,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
             'expiry' => '+1 hour',
             'secure' => true,
             'httpOnly' => true,
+            'sameSite' => 'Lax'
         ]);
         $response = $middleware->process($request, $this->_getRequestHandler());
 
@@ -378,6 +379,8 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $this->assertSame('/dir/', $cookie['path'], 'session path.');
         $this->assertTrue($cookie['secure'], 'cookie security flag missing');
         $this->assertTrue($cookie['httponly'], 'cookie httpOnly flag missing');
+        $this->assertStringContainsString('Lax', $cookie['samesite'],
+            'Should be either `Lax`, `Strict`, `None` or null');
     }
 
     /**

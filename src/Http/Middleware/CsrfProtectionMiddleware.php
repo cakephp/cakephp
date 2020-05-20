@@ -54,6 +54,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      *    Defaults to browser session.
      *  - `secure` Whether or not the cookie will be set with the Secure flag. Defaults to false.
      *  - `httpOnly` Whether or not the cookie will be set with the HttpOnly flag. Defaults to false.
+     *  - `samesite`: Can be one of `Lax`, `Strict`, `None` or `null`. Defaults to `null`.
      *  - `field` The form field to check. Changing this will also require configuring
      *    FormHelper.
      *
@@ -64,6 +65,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
         'expiry' => 0,
         'secure' => false,
         'httpOnly' => false,
+        'sameSite' => null,
         'field' => '_csrfToken',
     ];
 
@@ -295,6 +297,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
                 'path' => $request->getAttribute('webroot'),
                 'secure' => $this->_config['secure'],
                 'httponly' => $this->_config['httpOnly'],
+                'samesite' => $this->_config['sameSite'],
             ]
         );
 
