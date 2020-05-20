@@ -491,6 +491,22 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
+     * Assert that a string starts with SQL with db-specific characters like quotes removed.
+     *
+     * @param string $needle The string to compare
+     * @param string $haystack The SQL to filter
+     * @param string $message The message to display on failure
+     * @return void
+     */
+    public function assertStartsWithSql(
+        string $needle,
+        string $haystack,
+        string $message = ''
+    ): void {
+        $this->assertStringStartsWith($needle, preg_replace('/[`"\[\]]/', '', $haystack), $message);
+    }
+
+    /**
      * Asserts HTML tags.
      *
      * Takes an array $expected and generates a regex from it to match the provided $string.

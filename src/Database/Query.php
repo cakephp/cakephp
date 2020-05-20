@@ -408,76 +408,32 @@ class Query implements ExpressionInterface, IteratorAggregate
      *         ->from('articles');
      *
      *     return $cte
-     *         ->setName('cte')
-     *         ->setQuery($cteQuery);
+     *         ->name('cte')
+     *         ->query($cteQuery);
      * });
      * ```
      *
-     * The list of expressions can be reset by overwriting and passing `null` for the
-     * expression:
-     *
-     * ```
-     * $query->with(null, true);
-     * ```
-     *
-     * @param \Cake\Database\Expression\CommonTableExpression|\Closure|null $expression The CTE to add.
+     * @param \Closure|\Cake\Database\Expression\CommonTableExpression $cte The CTE to add.
      * @param bool $overwrite Whether to reset the list of CTEs.
      * @return $this
-     * @throws \InvalidArgumentException When passing `null` for the `$expression` argument but not enabling
-     *  `$overwrite`.
-     * @throws \InvalidArgumentException When an invalid type is passed or returned for the `$expression` argument.
-     * @throws \InvalidArgumentException When the given CTE object has no name set.
-     * @throws \InvalidArgumentException When the given CTE object has no query set.
-     * @throws \InvalidArgumentException When a CTE object with the same name is already attached to this query.
      */
-    public function with($expression, $overwrite = false)
+    public function with($cte, bool $overwrite = false)
     {
         if ($overwrite) {
             $this->_parts['with'] = [];
         }
 
-        if ($expression === null) {
-            if (!$overwrite) {
-                throw new \InvalidArgumentException(
-                    'Resetting the WITH clause only works when overwriting is enabled.'
+        if ($cte instanceof Closure) {
+            $cte = $cte(new CommonTableExpression(), $this);
+            if (!($cte instanceof CommonTableExpression)) {
+                throw new RuntimeException(
+                    'You must return a `CommonTableExpression` from a Closure passed to `with()`.'
                 );
             }
-
-            return $this;
         }
 
-        if ($expression instanceof Closure) {
-            $expression = $expression(new CommonTableExpression(), $this);
-        }
-
-        if (!($expression instanceof CommonTableExpression)) {
-            throw new InvalidArgumentException(sprintf(
-                'The common table expression must be an instance of `%s`, `%s` given.',
-                CommonTableExpression::class,
-                getTypeName($expression)
-            ));
-        }
-
-        $name = $expression->getName();
-        if (empty($name)) {
-            throw new InvalidArgumentException('The common table expression must have a name.');
-        }
-
-        if (empty($expression->getQuery())) {
-            throw new InvalidArgumentException('The common table expression must have a query.');
-        }
-
-        foreach ($this->_parts['with'] as $existing) {
-            /** @var \Cake\Database\Expression\CommonTableExpression $existing */
-            if ($existing->getName() === $name) {
-                throw new InvalidArgumentException(sprintf(
-                    'A common table expression with the name `%s` is already attached to this query.',
-                    $name
-                ));
-            }
-        }
-
-        $this->_parts['with'][] = $expression;
+        $this->_parts['with'][] = $cte;
+        $this->_dirty();
 
         return $this;
     }

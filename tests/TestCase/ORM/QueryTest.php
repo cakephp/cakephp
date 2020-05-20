@@ -3927,6 +3927,11 @@ class QueryTest extends TestCase
         $this->assertEquals($expected, $results);
     }
 
+    /**
+     * Tests ORM query using with CTE.
+     *
+     * @return void
+     */
     public function testWith(): void
     {
         $this->skipIf(
@@ -3965,8 +3970,8 @@ class QueryTest extends TestCase
             ->find()
             ->with(function (CommonTableExpression $cte) use ($cteQuery) {
                 return $cte
-                    ->setName('cte')
-                    ->setQuery($cteQuery);
+                    ->name('cte')
+                    ->query($cteQuery);
             })
             ->select(['row_num'])
             ->enableAutoFields()
