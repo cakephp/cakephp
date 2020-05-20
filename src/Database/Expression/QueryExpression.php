@@ -563,15 +563,15 @@ class QueryExpression implements ExpressionInterface, Countable
      *
      * Callback function receives as only argument an instance of ExpressionInterface
      *
-     * @param \Closure $callable The callable to apply to all sub-expressions.
+     * @param \Closure $visitor The callable to apply to all sub-expressions.
      * @return $this
      */
-    public function traverse(Closure $callable)
+    public function traverse(Closure $visitor)
     {
         foreach ($this->_conditions as $c) {
             if ($c instanceof ExpressionInterface) {
-                $callable($c);
-                $c->traverse($callable);
+                $visitor($c);
+                $c->traverse($visitor);
             }
         }
 
@@ -590,15 +590,15 @@ class QueryExpression implements ExpressionInterface, Countable
      * passed by reference, this will enable you to change the key under which the
      * modified part is stored.
      *
-     * @param callable $callable The callable to apply to each part.
+     * @param callable $visitor The callable to apply to each part.
      * @return $this
      */
-    public function iterateParts(callable $callable)
+    public function iterateParts(callable $visitor)
     {
         $parts = [];
         foreach ($this->_conditions as $k => $c) {
             $key = &$k;
-            $part = $callable($c, $key);
+            $part = $visitor($c, $key);
             if ($part !== null) {
                 $parts[$key] = $part;
             }

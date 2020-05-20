@@ -34,9 +34,7 @@ use Laminas\Diactoros\CallbackStream as BaseCallbackStream;
 class CallbackStream extends BaseCallbackStream
 {
     /**
-     * {@inheritDoc}
-     *
-     * @return string
+     * @inheritDoc
      */
     public function getContents(): string
     {
