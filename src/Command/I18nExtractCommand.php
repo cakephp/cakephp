@@ -342,7 +342,7 @@ class I18nExtractCommand extends Command
         $io->out();
         if ($this->_countMarkerError) {
             $io->err("{$this->_countMarkerError} marker error(s) detected.");
-            $io->err(" => Use the --marker-error option to display errors.");
+            $io->err(' => Use the --marker-error option to display errors.');
         }
 
         $io->out('Done.');
@@ -684,7 +684,7 @@ class I18nExtractCommand extends Command
         $output .= "#, fuzzy\n";
         $output .= "msgid \"\"\n";
         $output .= "msgstr \"\"\n";
-        $output .= "\"Project-Id-Version: " . $projectIdVersion . "\\n\"\n";
+        $output .= '"Project-Id-Version: ' . $projectIdVersion . "\\n\"\n";
         $output .= '"POT-Creation-Date: ' . date('Y-m-d H:iO') . "\\n\"\n";
         $output .= "\"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\\n\"\n";
         $output .= "\"Last-Translator: NAME <EMAIL@ADDRESS>\\n\"\n";

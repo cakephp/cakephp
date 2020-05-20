@@ -215,12 +215,12 @@ class ServerTest extends TestCase
         $this->assertSame(
             200,
             $res->getStatusCode(),
-            "Application was expected to be executed"
+            'Application was expected to be executed'
         );
         $this->assertSame(
             'source header',
             $res->getHeaderLine('X-testing'),
-            "Application was expected to be executed"
+            'Application was expected to be executed'
         );
     }
 
@@ -239,12 +239,12 @@ class ServerTest extends TestCase
         $this->assertSame(
             200,
             $res->getStatusCode(),
-            "Application was expected to be executed"
+            'Application was expected to be executed'
         );
         $this->assertSame(
             'source header',
             $res->getHeaderLine('X-testing'),
-            "Application was expected to be executed"
+            'Application was expected to be executed'
         );
     }
 

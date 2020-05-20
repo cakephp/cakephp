@@ -164,7 +164,7 @@ class CommandRunnerTest extends TestCase
             "\n" .
             "Other valid choices:\n" .
             "\n" .
-            "- help",
+            '- help',
             $messages
         );
     }

@@ -110,7 +110,7 @@ class ExceptionsTest extends TestCase
         $previous = new Exception();
 
         $error = new MissingTemplateException('view.ctp', ['path/a/', 'path/b/'], 100, $previous);
-        $this->assertStringContainsString("Template file `view.ctp` could not be found", $error->getMessage());
+        $this->assertStringContainsString('Template file `view.ctp` could not be found', $error->getMessage());
         $this->assertStringContainsString('- `path/a/view.ctp`', $error->getMessage());
         $this->assertSame($previous, $error->getPrevious());
         $this->assertSame(100, $error->getCode());
@@ -119,19 +119,19 @@ class ExceptionsTest extends TestCase
         $this->assertArrayHasKey('paths', $attributes);
 
         $error = new MissingLayoutException('default.ctp', ['path/a/', 'path/b/'], 100, $previous);
-        $this->assertStringContainsString("Layout file `default.ctp` could not be found", $error->getMessage());
+        $this->assertStringContainsString('Layout file `default.ctp` could not be found', $error->getMessage());
         $this->assertStringContainsString('- `path/a/default.ctp`', $error->getMessage());
         $this->assertSame($previous, $error->getPrevious());
         $this->assertSame(100, $error->getCode());
 
         $error = new MissingElementException('view.ctp', ['path/a/', 'path/b/'], 100, $previous);
-        $this->assertStringContainsString("Element file `view.ctp` could not be found", $error->getMessage());
+        $this->assertStringContainsString('Element file `view.ctp` could not be found', $error->getMessage());
         $this->assertStringContainsString('- `path/a/view.ctp`', $error->getMessage());
         $this->assertSame($previous, $error->getPrevious());
         $this->assertSame(100, $error->getCode());
 
         $error = new MissingCellTemplateException('Articles', 'view.ctp', ['path/a/', 'path/b/'], 100, $previous);
-        $this->assertStringContainsString("Cell template file `view.ctp` could not be found", $error->getMessage());
+        $this->assertStringContainsString('Cell template file `view.ctp` could not be found', $error->getMessage());
         $this->assertStringContainsString('- `path/a/view.ctp`', $error->getMessage());
         $this->assertSame($previous, $error->getPrevious());
         $this->assertSame(100, $error->getCode());

@@ -199,7 +199,7 @@ class PoFileParserTest extends TestCase
         $this->assertSame('En resolved', __('Resolved'));
         $this->assertSame('En resolved - context', __x('Pay status', 'Resolved'));
         $this->assertSame("I've", __x('origin', $key, [1]));
-        $this->assertSame("We are", __x('origin', $key, [3]));
+        $this->assertSame('We are', __x('origin', $key, [3]));
     }
 
     /**

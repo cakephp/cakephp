@@ -108,8 +108,8 @@ class ControllerFactory implements ControllerFactoryInterface
             if ($firstChar !== strtoupper($firstChar)) {
                 deprecationWarning(
                     "The `{$prefix}` prefix did not start with an upper case character. " .
-                    "Routing prefixes should be defined as CamelCase values. " .
-                    "Prefix inflection will be removed in 5.0"
+                    'Routing prefixes should be defined as CamelCase values. ' .
+                    'Prefix inflection will be removed in 5.0'
                 );
 
                 if (strpos($prefix, '/') === false) {

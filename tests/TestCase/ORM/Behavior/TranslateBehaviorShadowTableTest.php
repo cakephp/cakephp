@@ -592,7 +592,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
 
         $result = $query->firstOrFail();
 
-        $this->assertNotNull($result->author, "There should be an author for article 1.");
+        $this->assertNotNull($result->author, 'There should be an author for article 1.');
         $expected = [
             'id' => 1,
             'name' => 'mariano',
@@ -635,7 +635,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
 
         $result = $query->firstOrFail();
 
-        $this->assertCount(2, $result->tags, "There should be two translated tags.");
+        $this->assertCount(2, $result->tags, 'There should be two translated tags.');
 
         $expected = [
             'id' => 1,
@@ -773,7 +773,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
         $article = $table->get(1);
         $article->translation('xyz')->title = 'XYZ title';
 
-        $this->assertNotFalse($table->save($article), "The save should succeed");
+        $this->assertNotFalse($table->save($article), 'The save should succeed');
     }
 
     /**

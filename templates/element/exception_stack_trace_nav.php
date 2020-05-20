@@ -11,6 +11,8 @@
  * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
+ *
+ * @var array $trace
  */
 use Cake\Error\Debugger;
 ?>

@@ -709,7 +709,7 @@ class SmtpTransportTest extends TestCase
         $this->socket->expects($this->at(8))->method('write')->with("DATA\r\n");
         $this->socket->expects($this->at(9))->method('read')->will($this->returnValue("354 OK\r\n"));
         $this->socket->expects($this->at(10))->method('write')->with($this->stringContains('First Line'));
-        $this->socket->expects($this->at(11))->method('read')->will($this->returnValue("Message size too large"));
+        $this->socket->expects($this->at(11))->method('read')->will($this->returnValue('Message size too large'));
 
         $this->expectException(SocketException::class);
         $this->expectExceptionMessage('Message size too large');

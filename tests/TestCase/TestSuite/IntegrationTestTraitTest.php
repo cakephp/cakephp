@@ -302,7 +302,7 @@ class IntegrationTestTraitTest extends TestCase
 
         $this->configApplication(Configure::read('App.namespace') . '\ApplicationWithExceptionsInMiddleware', null);
 
-        $this->_request['headers'] = [ "Accept" => "application/json" ];
+        $this->_request['headers'] = [ 'Accept' => 'application/json' ];
         $this->get('/json_response/api_get_data');
         $this->assertResponseCode(403);
         $this->assertHeader('Content-Type', 'application/json');
