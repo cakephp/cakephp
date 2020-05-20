@@ -162,29 +162,23 @@ class QueryCompiler
      * it constructs the CTE definitions list and generates the `RECURSIVE`
      * keyword when required.
      *
-     * @param \Cake\Database\Expression\CommonTableExpression[] $parts List of CTEs to be transformed to string
+     * @param array $parts List of CTEs to be transformed to string
      * @param \Cake\Database\Query $query The query that is being compiled
      * @param \Cake\Database\ValueBinder $generator The placeholder generator to be used in expressions
      * @return string
      */
     protected function _buildWithPart(array $parts, Query $query, ValueBinder $generator): string
     {
-        $hasRecursiveExpressions = false;
-
+        $recursive = false;
         $expressions = [];
-        foreach ($parts as $expression) {
-            if ($expression->isRecursive()) {
-                $hasRecursiveExpressions = true;
-            }
-            $expressions[] = $expression->sql($generator);
+        foreach ($parts as $cte) {
+            $recursive = $recursive || $cte->isRecursive();
+            $expressions[] = $cte->sql($generator);
         }
 
-        $keywords = '';
-        if ($hasRecursiveExpressions) {
-            $keywords = 'RECURSIVE ';
-        }
+        $recursive = $recursive ? 'RECURSIVE ' : '';
 
-        return sprintf('WITH %s%s ', $keywords, implode(', ', $expressions));
+        return sprintf('WITH %s%s ', $recursive, implode(', ', $expressions));
     }
 
     /**
