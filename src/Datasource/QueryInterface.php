@@ -27,17 +27,17 @@ interface QueryInterface
     /**
      * @var string
      */
-    const JOIN_TYPE_INNER = 'INNER';
+    public const JOIN_TYPE_INNER = 'INNER';
 
     /**
      * @var string
      */
-    const JOIN_TYPE_LEFT = 'LEFT';
+    public const JOIN_TYPE_LEFT = 'LEFT';
 
     /**
      * @var string
      */
-    const JOIN_TYPE_RIGHT = 'RIGHT';
+    public const JOIN_TYPE_RIGHT = 'RIGHT';
 
     /**
      * Returns a key => value array representing a single aliased field

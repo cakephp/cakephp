@@ -92,7 +92,7 @@ class RssHelper extends Helper
     public $version = '2.0';
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function __construct(View $View, array $config = [])
     {
