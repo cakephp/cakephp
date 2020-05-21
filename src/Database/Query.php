@@ -394,7 +394,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * ```
      *
      * or returned from a closure, which will receive a new common table expression
-     * object as the first argument, and a reference to the current query object as
+     * object as the first argument, and a new blank query object as
      * the second argument:
      *
      * ```
@@ -402,8 +402,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *     \Cake\Database\Expression\CommonTableExpression $cte,
      *     \Cake\Database\Query $query
      *  ) {
-     *     $cteQuery = $query->getConnection()
-     *         ->newQuery()
+     *     $cteQuery = $query
      *         ->select('*')
      *         ->from('articles');
      *
@@ -424,7 +423,8 @@ class Query implements ExpressionInterface, IteratorAggregate
         }
 
         if ($cte instanceof Closure) {
-            $cte = $cte(new CommonTableExpression(), $this);
+            $query = $this->getConnection()->newQuery();
+            $cte = $cte(new CommonTableExpression(), $query);
             if (!($cte instanceof CommonTableExpression)) {
                 throw new RuntimeException(
                     'You must return a `CommonTableExpression` from a Closure passed to `with()`.'
