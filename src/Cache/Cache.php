@@ -202,7 +202,7 @@ class Cache
      *
      * @param string $config The name of the configured cache backend.
      * @return \Psr\SimpleCache\CacheInterface&\Cake\Cache\CacheEngineInterface
-     * @deprecated 3.7.0 Use Cache::pool() instead. This method will be removed in 5.0.
+     * @deprecated 3.7.0 Use {@link pool()} instead. This method will be removed in 5.0.
      */
     public static function engine(string $config)
     {

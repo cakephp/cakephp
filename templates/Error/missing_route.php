@@ -13,8 +13,8 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
-use Cake\Routing\Router;
 use Cake\Error\Debugger;
+use Cake\Routing\Router;
 
 $this->layout = 'dev_error';
 

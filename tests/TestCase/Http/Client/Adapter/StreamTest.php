@@ -223,9 +223,9 @@ class StreamTest extends TestCase
 
         $this->stream->send($request, []);
         $result = $this->stream->contextOptions();
-        $this->assertStringContainsString("Content-Type: multipart/form-data", $result['header']);
+        $this->assertStringContainsString('Content-Type: multipart/form-data', $result['header']);
         $this->assertStringContainsString("Connection: close\r\n", $result['header']);
-        $this->assertStringContainsString("User-Agent: CakePHP", $result['header']);
+        $this->assertStringContainsString('User-Agent: CakePHP', $result['header']);
         $this->assertStringContainsString('name="upload"', $result['content']);
         $this->assertStringContainsString('filename="VERSION.txt"', $result['content']);
     }

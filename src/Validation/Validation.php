@@ -35,51 +35,71 @@ class Validation
 {
     /**
      * Default locale
+     *
+     * @var string
      */
     public const DEFAULT_LOCALE = 'en_US';
 
     /**
      * Same as operator.
+     *
+     * @var string
      */
     public const COMPARE_SAME = '===';
 
     /**
      * Not same as comparison operator.
+     *
+     * @var string
      */
     public const COMPARE_NOT_SAME = '!==';
 
     /**
      * Equal to comparison operator.
+     *
+     * @var string
      */
     public const COMPARE_EQUAL = '==';
 
     /**
      * Not equal to comparison operator.
+     *
+     * @var string
      */
     public const COMPARE_NOT_EQUAL = '!=';
 
     /**
      * Greater than comparison operator.
+     *
+     * @var string
      */
     public const COMPARE_GREATER = '>';
 
     /**
      * Greater than or equal to comparison operator.
+     *
+     * @var string
      */
     public const COMPARE_GREATER_OR_EQUAL = '>=';
 
     /**
      * Less than comparison operator.
+     *
+     * @var string
      */
     public const COMPARE_LESS = '<';
 
     /**
      * Less than or equal to comparison operator.
+     *
+     * @var string
      */
     public const COMPARE_LESS_OR_EQUAL = '<=';
 
     /**
      * Datetime ISO8601 format
+     *
+     * @var string
      */
     public const DATETIME_ISO8601 = 'iso8601';
 
@@ -400,7 +420,7 @@ class Validation
      * @param mixed $check Value to check
      * @param int $count Number of non-alphanumerics to check for
      * @return bool Success
-     * @deprecated 4.0 Use notAlphaNumeric() instead. Will be removed in 5.0
+     * @deprecated 4.0.0 Use {@link notAlphaNumeric()} instead. Will be removed in 5.0
      */
     public static function containsNonAlphaNumeric($check, int $count = 1): bool
     {
@@ -629,7 +649,9 @@ class Validation
      * @param string|int|null $format any format accepted by IntlDateFormatter
      * @return bool Success
      * @throws \InvalidArgumentException when unsupported $type given
-     * @see \Cake\I18n\Time::parseDate(), \Cake\I18n\Time::parseTime(), \Cake\I18n\Time::parseDateTime()
+     * @see \Cake\I18n\Time::parseDate()
+     * @see \Cake\I18n\Time::parseTime()
+     * @see \Cake\I18n\Time::parseDateTime()
      */
     public static function localizedTime($check, string $type = 'datetime', $format = null): bool
     {

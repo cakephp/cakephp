@@ -25,7 +25,7 @@ namespace Cake\TestSuite;
  * more of your code easily and avoid some of the maintenance pitfalls
  * that mock objects create.
  *
- * @deprecated 3.7.0 Will be removed in 5.0.0. Use Cake\TestSuite\IntegrationTestTrait instead.
+ * @deprecated 3.7.0 Will be removed in 5.0.0. Use {@link \Cake\TestSuite\IntegrationTestTrait} instead.
  */
 abstract class IntegrationTestCase extends TestCase
 {

@@ -13,16 +13,16 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 use Cake\Core\Configure;
-use Cake\Utility\Inflector;
 use Cake\Core\Plugin;
+use Cake\Utility\Inflector;
 
 $namespace = Configure::read('App.namespace');
 if (!empty($plugin)) {
     $namespace = str_replace('/', '\\', $plugin);
 }
 $prefixNs = '';
-$prefix = isset($prefix) ? $prefix : '';
-if (!empty($prefix)) {
+$prefix = $prefix ?? '';
+if ($prefix) {
     $prefix = array_map('Cake\Utility\Inflector::camelize', explode('/', $prefix));
     $prefixNs = '\\' . implode('\\', $prefix);
     $prefix = implode(DIRECTORY_SEPARATOR, $prefix) . DIRECTORY_SEPARATOR;
@@ -43,7 +43,7 @@ if (isset($mailer)) {
 }
 
 if (empty($plugin)) {
-    $path = APP_DIR . DIRECTORY_SEPARATOR . $type . DIRECTORY_SEPARATOR . $prefix . h($class) . '.php' ;
+    $path = APP_DIR . DIRECTORY_SEPARATOR . $type . DIRECTORY_SEPARATOR . $prefix . h($class) . '.php';
 } else {
     $path = Plugin::classPath($plugin) . $type . DIRECTORY_SEPARATOR . $prefix . h($class) . '.php';
 }
@@ -61,7 +61,7 @@ $this->start('file');
 ?>
 <p class="error">
     <strong>Error</strong>
-    <?= sprintf('Create <em>%s::%s()</em> in file: %s.', h($class),  h($action), $path); ?>
+    <?= sprintf('Create <em>%s::%s()</em> in file: %s.', h($class), h($action), $path); ?>
 </p>
 
 <?php

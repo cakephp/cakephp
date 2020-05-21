@@ -114,11 +114,11 @@ class BinaryUuidType extends BaseType
      */
     protected function convertBinaryUuidToString($binary): string
     {
-        $string = unpack("H*", $binary);
+        $string = unpack('H*', $binary);
 
         $string = preg_replace(
-            "/([0-9a-f]{8})([0-9a-f]{4})([0-9a-f]{4})([0-9a-f]{4})([0-9a-f]{12})/",
-            "$1-$2-$3-$4-$5",
+            '/([0-9a-f]{8})([0-9a-f]{4})([0-9a-f]{4})([0-9a-f]{4})([0-9a-f]{12})/',
+            '$1-$2-$3-$4-$5',
             $string
         );
 
@@ -135,6 +135,6 @@ class BinaryUuidType extends BaseType
     {
         $string = str_replace('-', '', $string);
 
-        return pack("H*", $string);
+        return pack('H*', $string);
     }
 }

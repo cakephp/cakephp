@@ -417,10 +417,10 @@ class TableTest extends TestCase
             $nameLength = $maxAlias - 2;
             $this->expectException(RuntimeException::class);
             $this->expectExceptionMessage(
-                "ORM queries generate field aliases using the table name/alias and column name. " .
+                'ORM queries generate field aliases using the table name/alias and column name. ' .
                 "The table alias `very_long_alias_name` and column `this_is_invalid_because_it_is_very_very_very_long` create an alias longer than ({$nameLength}). " .
-                "You must change the table schema in the database and shorten either the table or column " .
-                "identifier so they fit within the database alias limits."
+                'You must change the table schema in the database and shorten either the table or column ' .
+                'identifier so they fit within the database alias limits.'
             );
         }
         $this->assertNotNull($table->setSchema($schema));

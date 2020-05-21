@@ -153,21 +153,21 @@ class TupleComparison extends Comparison
      *
      * Callback function receives as its only argument an instance of an ExpressionInterface
      *
-     * @param \Closure $callable The callable to apply to sub-expressions
+     * @param \Closure $visitor The callable to apply to sub-expressions
      * @return $this
      */
-    public function traverse(Closure $callable)
+    public function traverse(Closure $visitor)
     {
         /** @var string[] $fields */
         $fields = $this->getField();
         foreach ($fields as $field) {
-            $this->_traverseValue($field, $callable);
+            $this->_traverseValue($field, $visitor);
         }
 
         $value = $this->getValue();
         if ($value instanceof ExpressionInterface) {
-            $callable($value);
-            $value->traverse($callable);
+            $visitor($value);
+            $value->traverse($visitor);
 
             return $this;
         }
@@ -175,10 +175,10 @@ class TupleComparison extends Comparison
         foreach ($value as $val) {
             if ($this->isMulti()) {
                 foreach ($val as $v) {
-                    $this->_traverseValue($v, $callable);
+                    $this->_traverseValue($v, $visitor);
                 }
             } else {
-                $this->_traverseValue($val, $callable);
+                $this->_traverseValue($val, $visitor);
             }
         }
 

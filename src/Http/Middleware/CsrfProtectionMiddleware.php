@@ -184,7 +184,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      * Create a new token to be used for CSRF protection
      *
      * @return string
-     * @deprecated 4.0.6 Use CsrfProtectionMiddleware::createToken() instead.
+     * @deprecated 4.0.6 Use {@link createToken()} instead.
      */
     protected function _createToken(): string
     {

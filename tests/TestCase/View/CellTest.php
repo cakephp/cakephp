@@ -213,7 +213,7 @@ class CellTest extends TestCase
         $this->assertNotNull($e);
         $message = $e->getMessage();
         $this->assertStringContainsString(
-            str_replace('/', DS, "Cell template file `cell/Articles/foo_bar.php` could not be found."),
+            str_replace('/', DS, 'Cell template file `cell/Articles/foo_bar.php` could not be found.'),
             $message
         );
         $this->assertStringContainsString('The following paths', $message);

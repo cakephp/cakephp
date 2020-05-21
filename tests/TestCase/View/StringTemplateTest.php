@@ -270,7 +270,7 @@ class StringTemplateTest extends TestCase
             $result
         );
 
-        $evilKey = "><script>alert(1)</script>";
+        $evilKey = '><script>alert(1)</script>';
         $attrs = [$evilKey => 'some value'];
 
         $result = $this->template->formatAttributes($attrs);

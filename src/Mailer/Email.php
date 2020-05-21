@@ -38,8 +38,8 @@ use SimpleXMLElement;
  * Once made configuration profiles can be used to re-use across various email messages your
  * application sends.
  *
- * @deprecated 4.0.0 This class will be removed in CakePHP 5.0, use Cake\Mailer\Mailer instead.
  * @mixin \Cake\Mailer\Mailer
+ * @deprecated 4.0.0 This class will be removed in CakePHP 5.0, use {@link \Cake\Mailer\Mailer} instead.
  */
 class Email implements JsonSerializable, Serializable
 {

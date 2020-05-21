@@ -1894,7 +1894,7 @@ class HtmlHelperTest extends TestCase
         $expected = ['div' => ['class' => 'class-name'], '&lt;text&gt;', '/div'];
         $this->assertHtml($expected, $result);
 
-        $evilKey = "><script>alert(1)</script>";
+        $evilKey = '><script>alert(1)</script>';
         $options = [$evilKey => 'some value'];
         $result = $this->Html->div('class-name', '', $options);
         $expected = '<div &gt;&lt;script&gt;alert(1)&lt;/script&gt;="some value" class="class-name"></div>';
