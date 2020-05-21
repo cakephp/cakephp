@@ -39,6 +39,8 @@ class FormProtectionComponent extends Component
 {
     /**
      * Default message used for exceptions thrown.
+     *
+     * @var string
      */
     public const DEFAULT_EXCEPTION_MESSAGE = 'Form tampering protection token validation failed.';
 
