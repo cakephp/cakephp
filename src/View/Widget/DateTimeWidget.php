@@ -91,6 +91,8 @@ class DateTimeWidget extends BasicWidget
      * - `escape` Set to false to disable escaping on all attributes.
      * - `type` A valid HTML date/time input type. Defaults to "datetime-local".
      * - `timezone` The timezone the input value should be converted to.
+     * - `step` The "step" attribute. Defaults to `1` for "time" and "datetime-local" type inputs.
+     *   You can set it to `null` or `false` to prevent explicit step attribute being added in HTML.
      *
      * All other keys will be converted into HTML attributes.
      *
@@ -109,7 +111,7 @@ class DateTimeWidget extends BasicWidget
             ));
         }
 
-        if (!isset($data['step'])) {
+        if (!array_key_exists('step', $data)) {
             $data['step'] = $this->defaultStep[$data['type']];
 
             if (isset($data['fieldName'])) {
@@ -193,7 +195,11 @@ class DateTimeWidget extends BasicWidget
         }
 
         $format = $this->formatMap[$options['type']];
-        if ($options['type'] === 'datetime-local' && $options['step'] < 1) {
+        if (
+            $options['type'] === 'datetime-local'
+            && is_numeric($options['step'])
+            && $options['step'] < 1
+        ) {
             $format = 'Y-m-d\TH:i:s.v';
         }
 
