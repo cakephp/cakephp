@@ -91,6 +91,9 @@ class DateTimeWidget extends BasicWidget
      * - `escape` Set to false to disable escaping on all attributes.
      * - `type` A valid HTML date/time input type. Defaults to "datetime-local".
      * - `timezone` The timezone the input value should be converted to.
+     * - `step` The stepping interval to use for this input (seconds). Default is based upon given type.
+     * - `format` The format of the time/date input. Default is based upon given type.
+     * - `second` Set to false to disable seconds and remove default step when using "datetime-local" or "time" type.
      *
      * All other keys will be converted into HTML attributes.
      *
@@ -111,6 +114,10 @@ class DateTimeWidget extends BasicWidget
 
         if (!isset($data['step'])) {
             $data['step'] = $this->defaultStep[$data['type']];
+
+            if (isset($data['second']) && $data['second'] === false && in_array($data['type'], ['datetime-local', 'time'], true)) {
+                $data['step'] = null;
+            }
 
             if (isset($data['fieldName'])) {
                 $data = $this->setStep($data, $context, $data['fieldName']);
@@ -192,8 +199,21 @@ class DateTimeWidget extends BasicWidget
             $dateTime = $dateTime->setTimezone($timezone);
         }
 
-        $format = $this->formatMap[$options['type']];
-        if ($options['type'] === 'datetime-local' && $options['step'] < 1) {
+        if (!isset($options['format'])) {
+            $format = $this->formatMap[$options['type']];
+
+            if (isset($options['second']) && $options['second'] === false) {
+                if ($options['type'] === 'datetime-local') {
+                    $format = 'Y-m-d\TH:i';
+                } elseif ($options['type'] === 'time') {
+                    $format = 'H:i';
+                }
+            }
+        } else {
+            $format = $options['format'];
+        }
+
+        if ($options['type'] === 'datetime-local' && isset($options['step']) && $options['step'] < 1) {
             $format = 'Y-m-d\TH:i:s.v';
         }
 
