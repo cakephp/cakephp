@@ -91,6 +91,8 @@ class Folder
 
     /**
      * Functions array to be called depending on the sort type chosen.
+     *
+     * @var string[]
      */
     protected $_fsorts = [
         self::SORT_NAME => 'getPathname',

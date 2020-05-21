@@ -17,5 +17,8 @@ namespace Cake\Console\Exception;
  */
 class MissingTaskException extends ConsoleException
 {
+    /**
+     * @inheritDoc
+     */
     protected $_messageTemplate = 'Task class %s could not be found.';
 }

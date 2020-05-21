@@ -43,6 +43,8 @@ class AuthComponent extends Component
     /**
      * The query string key used for remembering the referrered page when getting
      * redirected to login.
+     *
+     * @var string
      */
     const QUERY_STRING_REDIRECT = 'redirect';
 

@@ -33,6 +33,8 @@ class RoutingMiddleware
 {
     /**
      * Key used to store the route collection in the cache engine
+     *
+     * @var string
      */
     const ROUTE_COLLECTION_CACHE_KEY = 'routeCollection';
 

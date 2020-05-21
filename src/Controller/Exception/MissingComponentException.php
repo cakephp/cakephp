@@ -19,5 +19,8 @@ use Cake\Core\Exception\Exception;
  */
 class MissingComponentException extends Exception
 {
+    /**
+     * @inheritDoc
+     */
     protected $_messageTemplate = 'Component class %s could not be found.';
 }

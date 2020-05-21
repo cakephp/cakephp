@@ -21,6 +21,9 @@ namespace Cake\TestSuite\Constraint\Email;
  */
 class MailSentWith extends MailConstraintBase
 {
+    /**
+     * @var string
+     */
     protected $method;
 
     /**
