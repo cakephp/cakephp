@@ -71,7 +71,7 @@ class XmlTest extends TestCase
     public function testExceptionChainingForInvalidInput()
     {
         try {
-            $value = "invalid-xml-input<<";
+            $value = 'invalid-xml-input<<';
             Xml::build($value);
             $this->fail('This line should not be executed because of exception above.');
         } catch (XmlException $exception) {

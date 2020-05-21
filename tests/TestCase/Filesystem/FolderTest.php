@@ -1497,14 +1497,14 @@ class FolderTest extends TestCase
     public function testIsRegisteredStreamWrapper()
     {
         foreach (stream_get_wrappers() as $wrapper) {
-            $this->assertTrue(Folder::isRegisteredStreamWrapper($wrapper . "://path/to/file"));
-            $this->assertFalse(Folder::isRegisteredStreamWrapper("bad." . $wrapper . "://path/to/file"));
+            $this->assertTrue(Folder::isRegisteredStreamWrapper($wrapper . '://path/to/file'));
+            $this->assertFalse(Folder::isRegisteredStreamWrapper('bad.' . $wrapper . '://path/to/file'));
         }
 
         $wrapper = 'unit.test1-';
-        $this->assertFalse(Folder::isRegisteredStreamWrapper($wrapper . "://path/to/file"));
+        $this->assertFalse(Folder::isRegisteredStreamWrapper($wrapper . '://path/to/file'));
         stream_wrapper_register($wrapper, self::class);
-        $this->assertTrue(Folder::isRegisteredStreamWrapper($wrapper . "://path/to/file"));
+        $this->assertTrue(Folder::isRegisteredStreamWrapper($wrapper . '://path/to/file'));
         stream_wrapper_unregister($wrapper);
     }
 }

@@ -564,7 +564,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         $maxLength = null;
-        if (method_exists($this->getConnection()->getDriver(), "getMaxAliasLength")) {
+        if (method_exists($this->getConnection()->getDriver(), 'getMaxAliasLength')) {
             $maxLength = $this->getConnection()->getDriver()->getMaxAliasLength();
         }
         if ($maxLength === null) {
@@ -576,10 +576,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             if (strlen($table . '__' . $name) > $maxLength) {
                 $nameLength = $maxLength - 2;
                 throw new RuntimeException(
-                    "ORM queries generate field aliases using the table name/alias and column name. " .
+                    'ORM queries generate field aliases using the table name/alias and column name. ' .
                     "The table alias `{$table}` and column `{$name}` create an alias longer than ({$nameLength}). " .
-                    "You must change the table schema in the database and shorten either the table or column " .
-                    "identifier so they fit within the database alias limits."
+                    'You must change the table schema in the database and shorten either the table or column ' .
+                    'identifier so they fit within the database alias limits.'
                 );
             }
         }

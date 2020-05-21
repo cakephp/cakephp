@@ -577,7 +577,7 @@ class ViewTest extends TestCase
     public function testMissingTemplate()
     {
         $this->expectException(\Cake\View\Exception\MissingTemplateException::class);
-        $this->expectExceptionMessage("Template file `does_not_exist.php` could not be found");
+        $this->expectExceptionMessage('Template file `does_not_exist.php` could not be found');
         $this->expectExceptionMessage('The following paths were searched');
         $this->expectExceptionMessage('- `' . ROOT . DS . 'templates' . DS . 'does_not_exist.php`');
         $viewOptions = ['plugin' => null,
@@ -599,7 +599,7 @@ class ViewTest extends TestCase
     public function testMissingLayout()
     {
         $this->expectException(\Cake\View\Exception\MissingLayoutException::class);
-        $this->expectExceptionMessage("Layout file `whatever.php` could not be found");
+        $this->expectExceptionMessage('Layout file `whatever.php` could not be found');
         $this->expectExceptionMessage('The following paths were searched');
         $this->expectExceptionMessage('- `' . ROOT . DS . 'templates' . DS . 'layout' . DS . 'whatever.php`');
         $viewOptions = ['plugin' => null,
@@ -700,7 +700,7 @@ class ViewTest extends TestCase
     public function testElementMissing()
     {
         $this->expectException(\Cake\View\Exception\MissingElementException::class);
-        $this->expectExceptionMessage("Element file `non_existent_element.php` could not be found");
+        $this->expectExceptionMessage('Element file `non_existent_element.php` could not be found');
 
         $this->View->element('non_existent_element');
     }
@@ -713,7 +713,7 @@ class ViewTest extends TestCase
     public function testElementMissingPluginElement()
     {
         $this->expectException(\Cake\View\Exception\MissingElementException::class);
-        $this->expectExceptionMessage("Element file `TestPlugin.nope.php` could not be found");
+        $this->expectExceptionMessage('Element file `TestPlugin.nope.php` could not be found');
 
         $this->View->element('TestPlugin.nope');
     }

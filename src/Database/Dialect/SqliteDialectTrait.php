@@ -114,7 +114,7 @@ trait SqliteDialectTrait
             case 'RAND':
                 $expression
                     ->setName('ABS')
-                    ->add(["RANDOM() % 1" => 'literal'], [], true);
+                    ->add(['RANDOM() % 1' => 'literal'], [], true);
                 break;
             case 'CURRENT_DATE':
                 $expression->setName('DATE')->add(["'now'" => 'literal']);

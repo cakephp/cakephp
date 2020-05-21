@@ -79,11 +79,11 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
             'help' => 'The sub-command related to command to get information on.',
             'required' => false,
         ])->setEpilog([
-            "The various modes allow you to get help information on commands and their arguments.",
-            "The available modes are:",
-            "",
+            'The various modes allow you to get help information on commands and their arguments.',
+            'The available modes are:',
+            '',
             $modeHelp,
-            "",
+            '',
             'This command is not intended to be called manually, and should be invoked from a ' .
                 'terminal completion script.',
         ]);

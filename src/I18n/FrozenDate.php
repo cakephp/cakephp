@@ -61,7 +61,7 @@ class FrozenDate extends ChronosDate implements I18nDateTimeInterface
      * @var string|array|int
      * @see \Cake\I18n\Time::i18nFormat()
      */
-    protected static $_jsonEncodeFormat = "yyyy-MM-dd";
+    protected static $_jsonEncodeFormat = 'yyyy-MM-dd';
 
     /**
      * The format to use when formatting a time using `Cake\I18n\Date::timeAgoInWords()`

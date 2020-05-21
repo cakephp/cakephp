@@ -1056,7 +1056,7 @@ class RouteTest extends TestCase
             'controller' => 'Articles',
             'action' => 'foo',
         ]);
-        $this->assertEquals("/anything", $result);
+        $this->assertEquals('/anything', $result);
     }
 
     /**
