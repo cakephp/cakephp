@@ -1116,7 +1116,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @param \Cake\Database\ValueBinder|null $generator Placeholder generator object
      * @return string
      */
-    public function sql(?ValueBinder $generator = null)
+    public function sql(ValueBinder $generator = null)
     {
         $this->triggerBeforeFind();
 
