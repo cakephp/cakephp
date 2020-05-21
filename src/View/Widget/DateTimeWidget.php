@@ -93,6 +93,11 @@ class DateTimeWidget extends BasicWidget
      * - `timezone` The timezone the input value should be converted to.
      * - `step` The "step" attribute. Defaults to `1` for "time" and "datetime-local" type inputs.
      *   You can set it to `null` or `false` to prevent explicit step attribute being added in HTML.
+     * - `format` A `date()` function compatible datetime format string.
+     *   By default the widget will use suitable format based on input type and
+     *   database type for the context. If explicit format is provided then no
+     *   default value will be set for `step` attribute and it too has to be
+     *   explicitly set if required.
      *
      * All other keys will be converted into HTML attributes.
      *
@@ -111,16 +116,10 @@ class DateTimeWidget extends BasicWidget
             ));
         }
 
-        if (!array_key_exists('step', $data)) {
-            $data['step'] = $this->defaultStep[$data['type']];
-
-            if (isset($data['fieldName'])) {
-                $data = $this->setStep($data, $context, $data['fieldName']);
-            }
-        }
+        $data = $this->setStep($data, $context, $data['fieldName'] ?? '');
 
         $data['value'] = $this->formatDateTime($data['val'], $data);
-        unset($data['val'], $data['timezone']);
+        unset($data['val'], $data['timezone'], $data['format']);
 
         return $this->_templates->format('input', [
             'name' => $data['name'],
@@ -143,6 +142,20 @@ class DateTimeWidget extends BasicWidget
      */
     protected function setStep(array $data, ContextInterface $context, string $fieldName): array
     {
+        if (array_key_exists('step', $data)) {
+            return $data;
+        }
+
+        if (isset($data['format'])) {
+            $data['step'] = null;
+        } else {
+            $data['step'] = $this->defaultStep[$data['type']];
+        }
+
+        if (empty($data['fieldName'])) {
+            return $data;
+        }
+
         $dbType = $context->type($fieldName);
         $fractionalTypes = [
             TableSchema::TYPE_DATETIME_FRACTIONAL,
@@ -194,13 +207,18 @@ class DateTimeWidget extends BasicWidget
             $dateTime = $dateTime->setTimezone($timezone);
         }
 
-        $format = $this->formatMap[$options['type']];
-        if (
-            $options['type'] === 'datetime-local'
-            && is_numeric($options['step'])
-            && $options['step'] < 1
-        ) {
-            $format = 'Y-m-d\TH:i:s.v';
+        if (isset($options['format'])) {
+            $format = $options['format'];
+        } else {
+            $format = $this->formatMap[$options['type']];
+
+            if (
+                $options['type'] === 'datetime-local'
+                && is_numeric($options['step'])
+                && $options['step'] < 1
+            ) {
+                $format = 'Y-m-d\TH:i:s.v';
+            }
         }
 
         return $dateTime->format($format);
