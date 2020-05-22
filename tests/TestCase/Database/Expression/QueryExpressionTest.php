@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Database\Expression;
 
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ValueBinder;
+use Cake\I18n\FrozenTime;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -202,5 +203,54 @@ class QueryExpressionTest extends TestCase
 
         $expr = new QueryExpression(['OR' => []]);
         $this->assertCount(0, $expr);
+    }
+
+    /**
+     * Test using a date object.
+     *
+     * @return void
+     */
+    public function testDateObject()
+    {
+        $qe = new QueryExpression([new FrozenTime('2020-01-01')], ['date']);
+        $this->assertSame(':qe0', $qe->sql(new ValueBinder()));
+        // Test multiple
+        $qe = new QueryExpression([new FrozenTime('2020-01-01'), new FrozenTime('2020-02-02')], ['date']);
+        $this->assertSame('(:qe0 AND :qe1)', $qe->sql(new ValueBinder()));
+    }
+
+    /**
+     * Test binding scalar value without column name
+     *
+     * @return void
+     */
+    public function testBoundScalar()
+    {
+        $qe = new QueryExpression(['test' => 'bind_param']);
+        $this->assertSame(':qe0', $qe->sql(new ValueBinder()));
+    }
+
+    /**
+     * Test using a date object.
+     *
+     * @return void
+     */
+    public function testWrappers()
+    {
+        $qe = new QueryExpression([new FrozenTime('2020-01-01'), 'test' => 'bind_param'], ['date', 'string']);
+        $qe->setWrappers('', '');
+        $this->assertSame(':qe0 AND :qe1', $qe->sql(new ValueBinder()));
+    }
+
+    /**
+     * Test using comma separated values.
+     *
+     * @return void
+     */
+    public function testCommaConjunction()
+    {
+        $qe = new QueryExpression([new FrozenTime('2020-01-01'), 'test' => 'bind_param'], ['date', 'string']);
+        $qe->setConjunction(',', false);
+        $this->assertSame('(:qe0, :qe1)', $qe->sql(new ValueBinder()));
     }
 }

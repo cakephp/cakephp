@@ -40,7 +40,6 @@ class FunctionsBuilderTest extends TestCase
      */
     public function setUp(): void
     {
-        parent::setUp();
         $this->functions = new FunctionsBuilder();
     }
 

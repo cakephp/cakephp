@@ -34,6 +34,21 @@ class QueryExpression implements ExpressionInterface, Countable
     use TypeMapTrait;
 
     /**
+     * Boolean values indicating if the conjunction should be prefixed and/or
+     * suffixed with a space character.
+     *
+     * @var bool[]
+     */
+    protected $_conjunctionWrapped = [true, true];
+
+    /**
+     * Strings to be used as prefix and suffix wrappers of the SQL output.
+     *
+     * @var string[]
+     */
+    protected $_wrappers = ['(', ')'];
+
+    /**
      * String to be used for joining each of the internal expressions
      * this object internally stores for example "AND", "OR", etc.
      *
@@ -77,13 +92,51 @@ class QueryExpression implements ExpressionInterface, Countable
      * Changes the conjunction for the conditions at this level of the expression tree.
      *
      * @param string $conjunction Value to be used for joining conditions
+     * @param bool $prefixSpace Boolean value indicating the conjunction should be preceeded by a space.
+     * @param bool $suffixSpace Boolean value indiciating the conjunction should be followed by a space.
      * @return $this
      */
-    public function setConjunction(string $conjunction)
+    public function setConjunction(string $conjunction, bool $prefixSpace = true, bool $suffixSpace = true)
     {
         $this->_conjunction = strtoupper($conjunction);
+        $this->_conjunctionWrapped = [$prefixSpace, $suffixSpace];
 
         return $this;
+    }
+
+    /**
+     * Gets the currently configured conjunction wrapper array indicating if the conjunction should
+     * be preceeded by and/or followed by a space character.
+     *
+     * @return bool[]
+     */
+    public function getConjunctionWrapped(): array
+    {
+        return $this->_conjunctionWrapped;
+    }
+
+    /**
+     * Changes the prefix and suffix wrappers prepended and appended to the SQL.
+     *
+     * @param string $prefix Prefix wrapper (commonly an opening brace character)
+     * @param string $suffix Suffix wrapper (commonly an closing brace character)
+     * @return $this
+     */
+    public function setWrappers(string $prefix = '(', string $suffix = ')')
+    {
+        $this->_wrappers = [ $prefix, $suffix ];
+
+        return $this;
+    }
+
+    /**
+     * Gets the currently configured prefix/suffix wrapper strings.
+     *
+     * @return string[]
+     */
+    public function getWrappers(): array
+    {
+        return $this->_wrappers;
     }
 
     /**
@@ -541,7 +594,9 @@ class QueryExpression implements ExpressionInterface, Countable
             return '';
         }
         $conjunction = $this->_conjunction;
-        $template = $len === 1 ? '%s' : '(%s)';
+        [$conjPrefix, $conjSuffix] = $this->getConjunctionWrapped();
+        [$prefix, $suffix] = $this->getWrappers();
+        $template = $len === 1 ? '%s' : $prefix . '%s' . $suffix;
         $parts = [];
         foreach ($this->_conditions as $part) {
             if ($part instanceof Query) {
@@ -554,7 +609,7 @@ class QueryExpression implements ExpressionInterface, Countable
             }
         }
 
-        return sprintf($template, implode(" $conjunction ", $parts));
+        return sprintf($template, implode(($conjPrefix ? ' ' : '') . $conjunction . ($conjSuffix ? ' ' : ''), $parts));
     }
 
     /**

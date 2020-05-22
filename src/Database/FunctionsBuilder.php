@@ -18,6 +18,8 @@ namespace Cake\Database;
 
 use Cake\Database\Expression\AggregateExpression;
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Expression\OrderByExpression;
+use Cake\Database\Expression\SelectExpression;
 use InvalidArgumentException;
 
 /**
@@ -342,6 +344,53 @@ class FunctionsBuilder
     public function aggregate(string $name, array $params = [], array $types = [], string $return = 'float')
     {
         return new AggregateExpression($name, $params, $types, $return);
+    }
+
+    /**
+     * Helper method to create concatenated string function for aggregate results.
+     *
+     * @param array $expression The expression to group along with an optional array of types in the format:
+     *     [ExpressionInterface|string $expression, ...] OR [[ExpressionInterface|string $expression, ...], [$types]]
+     * @param array $order Optional array of fields and directions indicating how the result should be ordered.
+     *     Can include optional types. Use the format:
+     *     ['field => 'ASC', ...] OR [['field => 'ASC', ...], [$types]]
+     * @param string $separator The character(s) to be used to separate each entry in the returned string.
+     * @param bool $distinct Boolean value indicating if the distinct clause should be prepended to the expressions.
+     * @param string $type The output type of the function.
+     * @return \Cake\Database\Expression\FunctionExpression
+     */
+    public function groupConcat(
+        array $expression,
+        array $order = [],
+        string $separator = '',
+        bool $distinct = false,
+        $type = null
+    ) {
+        $arguments = [];
+        $expression = [
+            isset($expression[0]) && is_array($expression[0]) ? $expression[0] : $expression,
+            isset($expression[1]) && is_array($expression[1]) ? $expression[1] : [],
+        ];
+        $selectExp = (new SelectExpression($expression[0], $expression[1]));
+        $arguments[] = $selectExp;
+        if ($distinct) {
+            $selectExp->addModifier('DISTINCT');
+        }
+        if (!empty($order)) {
+            $order = [
+                is_array(current($order)) ? current($order) : $order,
+                isset($order[1]) && is_array($order[1]) ? $order[1] : [],
+            ];
+            $arguments[] = new OrderByExpression($order[0], $order[1]);
+        }
+        $arguments[] = (new SelectExpression([$separator]))->addModifier('SEPARATOR');
+
+        return (new AggregateExpression(
+            'GROUP_CONCAT',
+            $arguments,
+            $expression[1],
+            !is_string($type) ? 'string' : $type
+        ))->setConjunction('');
     }
 
     /**

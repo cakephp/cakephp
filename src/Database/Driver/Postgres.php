@@ -18,6 +18,9 @@ namespace Cake\Database\Driver;
 
 use Cake\Database\Driver;
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Expression\OrderByExpression;
+use Cake\Database\Expression\SelectExpression;
+use Cake\Database\ExpressionInterface;
 use Cake\Database\PostgresCompiler;
 use Cake\Database\Query;
 use Cake\Database\QueryCompiler;
@@ -287,6 +290,45 @@ class Postgres extends Driver
                     ->setConjunction(' ')
                     ->add(['DOW FROM' => 'literal'], [], true)
                     ->add([') + (1' => 'literal']); // Postgres starts on index 0 but Sunday should be 1
+                break;
+            case 'GROUP_CONCAT':
+                $parts = ['separator' => '', 'order' => null];
+                /** @var \Cake\Database\Expression\AggregateExpression $expression */
+                $expression->iterateParts(function ($p, $key) use (&$parts) {
+                    if ($key === 0 && $p instanceof SelectExpression) {
+                        $p->setConjunction('||')
+                            ->removeModifier('DISTINCT')->iterateParts(function ($p) {
+                                if (is_string($p)) {
+                                    return $p . '::text';
+                                } elseif ($p instanceof ExpressionInterface) {
+                                    return (new SelectExpression([$p, '::text' => 'literal']))
+                                        ->setConjunction('', false, false);
+                                }
+
+                                return $p;
+                            });
+                    } elseif ($p instanceof OrderByExpression) {
+                        $parts['order'] = $p;
+
+                        return null;
+                    } elseif ($p instanceof SelectExpression) {
+                        $p->removeModifier('SEPARATOR');
+                        $parts['separator'] = $p;
+
+                        return null;
+                    }
+
+                    return $p;
+                })->setName('STRING_AGG')->setConjunction(',');
+                $parts = array_filter(
+                    array_values($parts),
+                    function ($v) {
+                        return !is_null($v);
+                    }
+                );
+                if (!empty($parts)) {
+                    $expression->add([(new SelectExpression($parts))->setConjunction('')]);
+                }
                 break;
         }
     }
