@@ -245,7 +245,7 @@ class HtmlHelper extends AppHelper {
  * - `block` Choose a custom block to append the meta tag to. Using this option
  *   will override the inline option.
  *
- * @param string $type The title of the external resource
+ * @param string|array $type The title of the external resource
  * @param string|array $url The address of the external resource or string for content attribute
  * @param array $options Other attributes for the generated tag. If the type attribute is html,
  *    rss, atom, or icon, the mime-type is returned.
