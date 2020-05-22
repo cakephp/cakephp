@@ -1,0 +1,30 @@
+name: 'Lock inactive closed issues'
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+
+jobs:
+  lock:
+    name: "Lock"
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Lock"
+        uses: dessant/lock-threads@v2
+        with:
+          github-token: ${{ github.token }}
+          issue-lock-inactive-days: '31'
+          issue-exclude-created-before: '2020-05-01T00:00:00Z'
+          issue-exclude-labels: ''
+          issue-lock-labels: ''
+          issue-lock-comment: ''
+          issue-lock-reason: 'resolved'
+          pr-lock-inactive-days: '31'
+          pr-exclude-created-before: '2020-05-01T00:00:00Z'
+          pr-exclude-labels: ''
+          pr-lock-labels: ''
+          pr-lock-comment: ''
+          pr-lock-reason: 'resolved'
+          process-only: ''
