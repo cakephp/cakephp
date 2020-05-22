@@ -81,25 +81,6 @@ abstract class TestCase extends BaseTestCase
     protected $_configure = [];
 
     /**
-     * @param string $name Name
-     * @param array $data Data
-     * @param string $dataName Data name
-     */
-    public function __construct($name = null, array $data = [], $dataName = '')
-    {
-        $this->initialize();
-
-        parent::__construct($name, $data, $dataName);
-    }
-
-    /**
-     * @return void
-     */
-    public function initialize(): void
-    {
-    }
-
-    /**
      * Overrides SimpleTestCase::skipIf to provide a boolean return value
      *
      * @param bool $shouldSkip Whether or not the test should be skipped.
