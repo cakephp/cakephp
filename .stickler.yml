@@ -6,7 +6,7 @@ linters:
     fixer: true
 
 branches:
-    ignore: ['3.x', '2.x', '2.next']
+    ignore: ['3.x', '3.next', '2.x', '2.next']
 
 fixers:
   enable: true
