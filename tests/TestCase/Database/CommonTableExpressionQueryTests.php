@@ -134,9 +134,7 @@ class CommonTableExpressionQueryTests extends TestCase
     {
         $query = $this->connection->newQuery()
             ->with(function (CommonTableExpression $cte, Query $query) {
-                $anchorQuery = $query->getConnection()
-                    ->newQuery()
-                    ->select(1);
+                $anchorQuery = $query->select(1);
 
                 $recursiveQuery = $query->getConnection()
                     ->newQuery()
@@ -338,8 +336,7 @@ class CommonTableExpressionQueryTests extends TestCase
 
         $query = $this->connection->newQuery()
             ->with(function (CommonTableExpression $cte, Query $query) {
-                $cteQuery = $query->getConnection()
-                    ->newQuery()
+                $cteQuery = $query
                     ->select('articles.id')
                     ->from('articles')
                     ->where(['articles.id !=' => 1]);
@@ -400,15 +397,13 @@ class CommonTableExpressionQueryTests extends TestCase
 
         $query = $this->connection->newQuery()
             ->with(function (CommonTableExpression $cte, Query $query) {
-                $cteQuery = $query->getConnection()
-                    ->newQuery()
-                    ->select('articles.id')
+                $query->select('articles.id')
                     ->from('articles')
                     ->where(['articles.id !=' => 1]);
 
                 return $cte
                     ->name('cte')
-                    ->query($cteQuery);
+                    ->query($query);
             })
             ->delete()
             ->from(['a' => 'articles'])
