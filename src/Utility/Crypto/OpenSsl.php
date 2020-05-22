@@ -29,6 +29,9 @@ use LogicException;
  */
 class OpenSsl
 {
+    /**
+     * @var string
+     */
     const METHOD_AES_256_CBC = 'aes-256-cbc';
 
     /**

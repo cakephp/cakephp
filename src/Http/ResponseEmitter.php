@@ -41,6 +41,9 @@ class ResponseEmitter implements EmitterInterface
 {
     /**
      * {@inheritDoc}
+     *
+     * @param \Psr\Http\Message\ResponseInterface $response Response
+     * @param int $maxBufferLength Max buffer length
      */
     public function emit(ResponseInterface $response, $maxBufferLength = 8192)
     {

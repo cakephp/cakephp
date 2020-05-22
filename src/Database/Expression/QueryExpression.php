@@ -572,15 +572,15 @@ class QueryExpression implements ExpressionInterface, Countable
      *
      * Callback function receives as only argument an instance of ExpressionInterface
      *
-     * @param callable $callable The callable to apply to all sub-expressions.
+     * @param callable $visitor The callable to apply to all sub-expressions.
      * @return void
      */
-    public function traverse(callable $callable)
+    public function traverse(callable $visitor)
     {
         foreach ($this->_conditions as $c) {
             if ($c instanceof ExpressionInterface) {
-                $callable($c);
-                $c->traverse($callable);
+                $visitor($c);
+                $c->traverse($visitor);
             }
         }
     }

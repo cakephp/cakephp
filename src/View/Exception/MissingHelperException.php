@@ -19,5 +19,8 @@ use Cake\Core\Exception\Exception;
  */
 class MissingHelperException extends Exception
 {
+    /**
+     * @inheritDoc
+     */
     protected $_messageTemplate = 'Helper class %s could not be found.';
 }
