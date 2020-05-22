@@ -206,51 +206,26 @@ class QueryExpressionTest extends TestCase
     }
 
     /**
-     * Test using a date object.
-     *
-     * @return void
-     */
-    public function testDateObject()
-    {
-        $qe = new QueryExpression([new FrozenTime('2020-01-01')], ['date']);
-        $this->assertSame(':qe0', $qe->sql(new ValueBinder()));
-        // Test multiple
-        $qe = new QueryExpression([new FrozenTime('2020-01-01'), new FrozenTime('2020-02-02')], ['date']);
-        $this->assertSame('(:qe0 AND :qe1)', $qe->sql(new ValueBinder()));
-    }
-
-    /**
-     * Test binding scalar value without column name
-     *
-     * @return void
-     */
-    public function testBoundScalar()
-    {
-        $qe = new QueryExpression(['test' => 'bind_param']);
-        $this->assertSame(':qe0', $qe->sql(new ValueBinder()));
-    }
-
-    /**
-     * Test using a date object.
-     *
-     * @return void
-     */
-    public function testWrappers()
-    {
-        $qe = new QueryExpression([new FrozenTime('2020-01-01'), 'test' => 'bind_param'], ['date', 'string']);
-        $qe->setWrappers('', '');
-        $this->assertSame(':qe0 AND :qe1', $qe->sql(new ValueBinder()));
-    }
-
-    /**
      * Test using comma separated values.
      *
      * @return void
      */
     public function testCommaConjunction()
     {
-        $qe = new QueryExpression([new FrozenTime('2020-01-01'), 'test' => 'bind_param'], ['date', 'string']);
+        $qe = new QueryExpression(['test1', 'test2']);
         $qe->setConjunction(',', false);
-        $this->assertSame('(:qe0, :qe1)', $qe->sql(new ValueBinder()));
+        $this->assertSame('(test1, test2)', $qe->sql(new ValueBinder()));
+    }
+
+    /**
+     * Test using unwrapped comma separated (no spacers).
+     *
+     * @return void
+     */
+    public function testUnwrapped()
+    {
+        $qe = new QueryExpression(['test1', 'test2']);
+        $qe->setWrappers('', '')->setConjunction(',', false, false);
+        $this->assertSame('test1,test2', $qe->sql(new ValueBinder()));
     }
 }

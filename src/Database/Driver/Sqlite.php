@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Database\Driver;
 
 use Cake\Database\Driver;
+use Cake\Database\Expression\AggregateExpression;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\SelectExpression;
@@ -307,22 +308,27 @@ class Sqlite extends Driver
                     ->add([') + (1' => 'literal']); // Sqlite starts on index 0 but Sunday should be 1
                 break;
             case 'GROUP_CONCAT':
-                /** @var \Cake\Database\Expression\AggregateExpression $expression */
-                $expression->iterateParts(function ($p, $key) use ($expression) {
-                    if ($key === 0 && $p instanceof SelectExpression) {
-                        $p->setConjunction('||')->removeModifier('DISTINCT');
-                    } elseif ($p instanceof OrderByExpression) {
-                        $expression->order(function () use ($p) {
+                if ($expression instanceof AggregateExpression) {
+                    $expression->iterateParts(
+                        function ($p, $key) use ($expression) {
+                            if ($key === 0 && $p instanceof SelectExpression) {
+                                $p->setConjunction('||')->removeModifier('DISTINCT');
+                            } elseif ($p instanceof OrderByExpression) {
+                                $expression->order(
+                                    function () use ($p) {
+                                        return $p;
+                                    }
+                                );
+
+                                return null;
+                            } elseif ($p instanceof SelectExpression) {
+                                $p->removeModifier('SEPARATOR');
+                            }
+
                             return $p;
-                        });
-
-                        return null;
-                    } elseif ($p instanceof SelectExpression) {
-                        $p->removeModifier('SEPARATOR');
-                    }
-
-                    return $p;
-                })->setConjunction(',');
+                        }
+                    )->setConjunction(',');
+                }
                 break;
         }
     }

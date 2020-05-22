@@ -27,14 +27,14 @@ use Cake\Database\ValueBinder;
 class SelectExpression extends QueryExpression
 {
     /**
-     * @var string[] Storage of set modifiers such as DISTINCT that prepend to the expression.
+     * @var bool[] Storage of set modifiers such as DISTINCT that prepend to the expression.
      */
     protected $modifiers = [];
 
     /**
      * @inheritDoc
      */
-    public function __construct($conditions = [], $types = [], $conjunction = ',')
+    public function __construct(array $conditions = [], array $types = [], string $conjunction = ',')
     {
         parent::__construct($conditions, $types, $conjunction);
         $this->setConjunction($conjunction, false)->setWrappers('', '');
@@ -90,7 +90,7 @@ class SelectExpression extends QueryExpression
         } else {
             foreach ($conditions as $key => $condition) {
                 if (is_array($condition)) {
-                    $this->_conditions[] = new static($this->_conditions, $this->getTypeMap()->type($key));
+                    $this->_conditions[] = new static($condition, [$this->getTypeMap()->type($key)]);
                 } else {
                     if (!is_numeric($key) && ($condition == 'literal' || $condition == 'identifier')) {
                         $this->_conditions[] = new IdentifierExpression($key);

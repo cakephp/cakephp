@@ -60,6 +60,12 @@ class GroupConcatTest extends TestCase
         $this->loadFixtures('Articles', 'Tags', 'ArticlesTags');
     }
 
+    public function tearDown(): void
+    {
+        parent::tearDown();
+        unset($this->connection);
+    }
+
     /**
      * Tests generating a GROUP_CONCAT() function.
      *

@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Database\Driver;
 
 use Cake\Database\Driver;
+use Cake\Database\Expression\AggregateExpression;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\SelectExpression;
@@ -543,37 +544,44 @@ class Sqlserver extends Driver
 
                 break;
             case 'GROUP_CONCAT':
-                $parts = ['separator' => ''];
-                /** @var \Cake\Database\Expression\AggregateExpression $expression */
-                $expression->iterateParts(function ($p, $key) use (&$parts, $expression) {
-                    if ($key === 0 && $p instanceof SelectExpression) {
-                        $p->setConjunction('||')
-                            ->removeModifier('DISTINCT')->iterateParts(function ($p) {
-                                if (is_string($p)) {
-                                    return $p;
-                                } elseif ($p instanceof ExpressionInterface) {
-                                    return (new SelectExpression([$p]))
-                                        ->setConjunction('', false, false);
-                                }
+                if ($expression instanceof AggregateExpression) {
+                    $parts = ['separator' => ''];
+                    $expression->iterateParts(
+                        function ($p, $key) use (&$parts, $expression) {
+                            if ($key === 0 && $p instanceof SelectExpression) {
+                                $p->setConjunction('||')
+                                    ->removeModifier('DISTINCT')->iterateParts(
+                                        function ($p) {
+                                            if (is_string($p)) {
+                                                return $p;
+                                            } elseif ($p instanceof ExpressionInterface) {
+                                                return (new SelectExpression([$p]))
+                                                    ->setConjunction('', false, false);
+                                            }
 
-                                return $p;
-                            });
-                    } elseif ($p instanceof OrderByExpression) {
-                        $expression->order(function () use ($p) {
+                                            return $p;
+                                        }
+                                    );
+                            } elseif ($p instanceof OrderByExpression) {
+                                $expression->order(
+                                    function () use ($p) {
+                                        return $p;
+                                    }
+                                )->setClause('WITHIN GROUP');
+
+                                return null;
+                            } elseif ($p instanceof SelectExpression) {
+                                $p->removeModifier('SEPARATOR');
+                                $parts['separator'] = $p;
+
+                                return null;
+                            }
+
                             return $p;
-                        })->setClause('WITHIN GROUP');
-
-                        return null;
-                    } elseif ($p instanceof SelectExpression) {
-                        $p->removeModifier('SEPARATOR');
-                        $parts['separator'] = $p;
-
-                        return null;
-                    }
-
-                    return $p;
-                })->setName('STRING_AGG')->setConjunction(',')
-                    ->add([(new SelectExpression(array_values($parts)))->setConjunction('')]);
+                        }
+                    )->setName('STRING_AGG')->setConjunction(',')
+                        ->add([(new SelectExpression(array_values($parts)))->setConjunction('')]);
+                }
                 break;
         }
     }
