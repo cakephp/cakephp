@@ -146,7 +146,7 @@ class CommandRunner implements EventDispatcherInterface
         $this->loadRoutes();
 
         if (empty($argv)) {
-            throw new RuntimeException("Cannot run any commands. No arguments received.");
+            throw new RuntimeException('Cannot run any commands. No arguments received.');
         }
         // Remove the root executable segment
         array_shift($argv);

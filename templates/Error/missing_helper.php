@@ -12,8 +12,8 @@
  * @since         0.10.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-use Cake\Core\Plugin;
 use Cake\Core\Configure;
+use Cake\Core\Plugin;
 
 $namespace = Configure::read('App.namespace');
 if (!empty($plugin)) {

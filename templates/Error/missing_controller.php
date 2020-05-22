@@ -12,8 +12,8 @@
  * @since         0.10.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-use Cake\Core\Plugin;
 use Cake\Core\Configure;
+use Cake\Core\Plugin;
 use Cake\Utility\Inflector;
 
 $pluginDot = empty($plugin) ? null : $plugin . '.';
@@ -34,10 +34,12 @@ if (!empty($prefix)) {
 if (!empty($plugin)) {
     $namespace = str_replace('/', '\\', $plugin);
 }
+
+$filePath = 'Controller' . DIRECTORY_SEPARATOR . $prefixPath . h($class) . 'Controller.php';
 if (empty($plugin)) {
-    $path = APP_DIR . DIRECTORY_SEPARATOR . 'Controller' . DIRECTORY_SEPARATOR . $prefixPath . h($class) . 'Controller.php' ;
+    $path = APP_DIR . DIRECTORY_SEPARATOR . $filePath;
 } else {
-    $path = Plugin::classPath($plugin) . 'Controller' . DIRECTORY_SEPARATOR . $prefixPath . h($class) . 'Controller.php';
+    $path = Plugin::classPath($plugin) . $filePath;
 }
 
 $this->layout = 'dev_error';

@@ -435,7 +435,7 @@ class ConsoleOptionParserTest extends TestCase
                 "\n" .
                 "Other valid choices:\n" .
                 "\n" .
-                "- help",
+                '- help',
                 $e->getFullMessage()
             );
         }
@@ -456,7 +456,7 @@ class ConsoleOptionParserTest extends TestCase
         try {
             $parser->parse(['-f']);
         } catch (MissingOptionException $e) {
-            $this->assertStringContainsString("Unknown short option `f`.", $e->getFullMessage());
+            $this->assertStringContainsString('Unknown short option `f`.', $e->getFullMessage());
         }
     }
 
@@ -1009,7 +1009,7 @@ TEXT;
                 "\n" .
                 "Other valid choices:\n" .
                 "\n" .
-                "- method",
+                '- method',
                 $result
             );
         }

@@ -241,7 +241,7 @@ class CookieCollection implements IteratorAggregate, Countable
         $cookies = array_merge($cookies, $extraCookies);
         $cookiePairs = [];
         foreach ($cookies as $key => $value) {
-            $cookie = sprintf("%s=%s", rawurlencode($key), rawurlencode($value));
+            $cookie = sprintf('%s=%s', rawurlencode($key), rawurlencode($value));
             $size = strlen($cookie);
             if ($size > 4096) {
                 triggerWarning(sprintf(

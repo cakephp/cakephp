@@ -375,7 +375,7 @@ class File
             return $name;
         }
         $ext = preg_quote($ext);
-        $new = preg_replace("/({$ext})$/u", "", $name);
+        $new = preg_replace("/({$ext})$/u", '', $name);
 
         // basename of '/etc/.d' is '.d' not ''
         return $new === '' ? $name : $new;

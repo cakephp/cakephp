@@ -25,6 +25,6 @@ class ThrowsExceptionMiddleware
 {
     public function __invoke($req, $res, $next)
     {
-        throw new ForbiddenException("Sample Message");
+        throw new ForbiddenException('Sample Message');
     }
 }

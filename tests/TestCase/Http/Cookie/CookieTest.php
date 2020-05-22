@@ -37,8 +37,8 @@ class CookieTest extends TestCase
             ["no\rnewline"],
             ["no\nnewline"],
             ["no\ttab"],
-            ["no,comma"],
-            ["no;semi"],
+            ['no,comma'],
+            ['no;semi'],
         ];
     }
 

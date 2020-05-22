@@ -34,7 +34,7 @@ use RuntimeException;
  *
  * Use to convert datetime instances to strings & back.
  */
-class DateTimeType extends BaseType
+class DateTimeType extends BaseType implements BatchCastingInterface
 {
     /**
      * Whether or not we want to override the time of the converted Time objects

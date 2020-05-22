@@ -226,7 +226,7 @@ class CompletionCommandTest extends TestCase
         $this->exec('completion subcommands schema_cache');
         $this->assertExitCode(Command::CODE_SUCCESS);
 
-        $expected = "build clear";
+        $expected = 'build clear';
         $this->assertOutputContains($expected);
     }
 
@@ -287,7 +287,7 @@ class CompletionCommandTest extends TestCase
         $this->exec('completion subcommands welcome');
         $this->assertExitCode(Command::CODE_SUCCESS);
 
-        $expected = "say_hello";
+        $expected = 'say_hello';
         $this->assertOutputContains($expected);
     }
 
@@ -301,7 +301,7 @@ class CompletionCommandTest extends TestCase
         $this->exec('completion subcommands test_plugin_two.welcome');
         $this->assertExitCode(Command::CODE_SUCCESS);
 
-        $expected = "say_hello";
+        $expected = 'say_hello';
         $this->assertOutputContains($expected);
     }
 
@@ -315,7 +315,7 @@ class CompletionCommandTest extends TestCase
         $this->exec('completion subcommands test_plugin_two.example');
         $this->assertExitCode(Command::CODE_SUCCESS);
 
-        $expected = "say_hello";
+        $expected = 'say_hello';
         $this->assertOutputContains($expected);
     }
 
@@ -351,7 +351,7 @@ class CompletionCommandTest extends TestCase
         $this->exec('completion subcommands test_plugin.sample');
         $this->assertExitCode(Command::CODE_SUCCESS);
 
-        $expected = "example";
+        $expected = 'example';
         $this->assertOutputContains($expected);
     }
 
@@ -391,7 +391,7 @@ class CompletionCommandTest extends TestCase
         $this->exec('completion subcommands schema_cache');
         $this->assertExitCode(Command::CODE_SUCCESS);
 
-        $expected = "build clear";
+        $expected = 'build clear';
         $this->assertOutputContains($expected);
     }
 
