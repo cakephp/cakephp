@@ -79,7 +79,13 @@ class FormContext implements ContextInterface
     }
 
     /**
-     * {@inheritDoc}
+     * Get the value for a given path.
+     *
+     * Traverses the request and form data and finds the value for $path.
+     *
+     * @param string $field The dot separated path to the value.
+     * @param array $options options
+     * @return mixed The value of the field or null on a miss.
      */
     public function val($field, $options = [])
     {

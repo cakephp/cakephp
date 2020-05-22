@@ -92,12 +92,12 @@ class RssHelper extends Helper
     public $version = '2.0';
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
-    public function __construct(View $view, array $settings = [])
+    public function __construct(View $View, array $config = [])
     {
         deprecationWarning('RssHelper is deprecated and will be removed in 4.0.0');
-        parent::__construct($view, $settings);
+        parent::__construct($View, $config);
     }
 
     /**

@@ -374,11 +374,11 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     }
 
     /**
+     * {@inheritDoc}
+     *
      * Add in `_translations` marshalling handlers. You can disable marshalling
      * of translations by setting `'translations' => false` in the options
      * provided to `Table::newEntity()` or `Table::patchEntity()`.
-     *
-     * {@inheritDoc}
      */
     public function buildMarshalMap($marshaller, $map, $options)
     {

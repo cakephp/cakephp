@@ -2940,9 +2940,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * {@inheritDoc}
      */
-    protected function validationMethodExists($method)
+    protected function validationMethodExists($name)
     {
-        return method_exists($this, $method) || $this->behaviors()->hasMethod($method);
+        return method_exists($this, $name) || $this->behaviors()->hasMethod($name);
     }
 
     /**

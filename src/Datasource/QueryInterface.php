@@ -24,8 +24,19 @@ namespace Cake\Datasource;
  */
 interface QueryInterface
 {
+    /**
+     * @var string
+     */
     const JOIN_TYPE_INNER = 'INNER';
+
+    /**
+     * @var string
+     */
     const JOIN_TYPE_LEFT = 'LEFT';
+
+    /**
+     * @var string
+     */
     const JOIN_TYPE_RIGHT = 'RIGHT';
 
     /**

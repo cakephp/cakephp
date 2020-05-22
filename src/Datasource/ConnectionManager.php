@@ -43,7 +43,7 @@ class ConnectionManager
     /**
      * An array mapping url schemes to fully qualified driver class names
      *
-     * @return string[]
+     * @var string[]
      */
     protected static $_dsnClassMap = [
         'mysql' => 'Cake\Database\Driver\Mysql',

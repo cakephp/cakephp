@@ -1111,15 +1111,18 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
-     * {@inheritDoc}
+     * Converts the Node into a SQL string fragment.
+     *
+     * @param \Cake\Database\ValueBinder|null $generator Placeholder generator object
+     * @return string
      */
-    public function sql(ValueBinder $binder = null)
+    public function sql(ValueBinder $generator = null)
     {
         $this->triggerBeforeFind();
 
         $this->_transformQuery();
 
-        return parent::sql($binder);
+        return parent::sql($generator);
     }
 
     /**
