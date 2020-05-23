@@ -906,6 +906,9 @@ abstract class TestCase extends BaseTestCase
      * - app.MyRecords
      * - plugin.MyPluginName.MyModelName
      *
+     * Use this method inside your test cases' {@link getFixtures()} method
+     * to build up the fixture list.
+     *
      * @param string $fixture Fixture
      * @return $this
      */
