@@ -36,11 +36,15 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
 {
     /**
      * By using 'create' you can make fields required when records are first created.
+     *
+     * @var string
      */
     public const WHEN_CREATE = 'create';
 
     /**
      * By using 'update', you can make fields required when they are updated.
+     *
+     * @var string
      */
     public const WHEN_UPDATE = 'update';
 

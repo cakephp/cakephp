@@ -23,6 +23,9 @@ namespace Cake\Database\Schema;
  */
 class SqlserverSchemaDialect extends SchemaDialect
 {
+    /**
+     * @var string
+     */
     public const DEFAULT_SCHEMA_NAME = 'dbo';
 
     /**

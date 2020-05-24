@@ -43,8 +43,14 @@ class Response implements ResponseInterface
 {
     use MessageTrait;
 
+    /**
+     * @var int
+     */
     public const STATUS_CODE_MIN = 100;
 
+    /**
+     * @var int
+     */
     public const STATUS_CODE_MAX = 599;
 
     /**
