@@ -2413,10 +2413,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return (bool)$event->getResult();
         }
 
-        $this->_associations->cascadeDelete(
+        $success = $this->_associations->cascadeDelete(
             $entity,
             ['_primary' => false] + $options->getArrayCopy()
         );
+        if (!$success) {
+            return $success;
+        }
 
         $query = $this->query();
         $conditions = (array)$entity->extract($primaryKey);

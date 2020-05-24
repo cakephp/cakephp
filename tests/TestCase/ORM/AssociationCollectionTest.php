@@ -263,13 +263,16 @@ class AssociationCollectionTest extends TestCase
 
         $mockOne->expects($this->once())
             ->method('cascadeDelete')
-            ->with($entity, $options);
+            ->with($entity, $options)
+            ->willReturn(true);
 
         $mockTwo->expects($this->once())
             ->method('cascadeDelete')
-            ->with($entity, $options);
+            ->with($entity, $options)
+            ->willReturn(true);
 
-        $this->associations->cascadeDelete($entity, $options);
+        $result = $this->associations->cascadeDelete($entity, $options);
+        $this->assertTrue($result);
     }
 
     /**
