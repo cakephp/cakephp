@@ -125,7 +125,13 @@ trait ModelAwareTrait
         if (!isset($factory)) {
             $factory = FactoryLocator::get($modelType);
         }
-        $this->{$alias} = $factory($modelClass, $options);
+
+        if ($factory instanceof LocatorInterface) {
+            $this->{$alias} = $factory->get($modelClass, $options);
+        } else {
+            $this->{$alias} = $factory($modelClass, $options);
+        }
+
         if (!$this->{$alias}) {
             throw new MissingModelException([$modelClass, $modelType]);
         }

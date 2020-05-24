@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Datasource;
 
 use Cake\Datasource\FactoryLocator;
+use Cake\Datasource\LocatorInterface;
 use Cake\Datasource\RepositoryInterface;
 use Cake\TestSuite\TestCase;
 use TestApp\Stub\Stub;
@@ -32,7 +33,8 @@ class FactoryLocatorTest extends TestCase
      */
     public function testGet()
     {
-        $this->assertIsCallable(FactoryLocator::get('Table'));
+        $factory = FactoryLocator::get('Table');
+        $this->assertTrue(is_callable($factory) || $factory instanceof LocatorInterface);
     }
 
     /**
