@@ -274,7 +274,7 @@ class TableLocator implements LocatorInterface
     /**
      * @inheritDoc
      */
-    public function set(string $alias, Table $object): Table
+    public function set(string $alias, $object): Table
     {
         return $this->_instances[$alias] = $object;
     }

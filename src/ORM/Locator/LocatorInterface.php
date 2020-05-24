@@ -21,30 +21,8 @@ use Cake\ORM\Table;
 /**
  * Registries for Table objects should implement this interface.
  */
-interface LocatorInterface
+interface LocatorInterface extends \Cake\Datasource\LocatorInterface
 {
-    /**
-     * Returns configuration for an alias or the full configuration array for
-     * all aliases.
-     *
-     * @param string|null $alias Alias to get config for, null for complete config.
-     * @return array The config data.
-     */
-    public function getConfig(?string $alias = null): array;
-
-    /**
-     * Stores a list of options to be used when instantiating an object
-     * with a matching alias.
-     *
-     * @param string|array $alias Name of the alias or array to completely
-     *   overwrite current config.
-     * @param array|null $options list of options for the alias
-     * @return $this
-     * @throws \RuntimeException When you attempt to configure an existing
-     *   table instance.
-     */
-    public function setConfig($alias, $options = null);
-
     /**
      * Get a table instance from the registry.
      *
@@ -55,34 +33,11 @@ interface LocatorInterface
     public function get(string $alias, array $options = []): Table;
 
     /**
-     * Check to see if an instance exists in the registry.
-     *
-     * @param string $alias The alias to check for.
-     * @return bool
-     */
-    public function exists(string $alias): bool;
-
-    /**
      * Set an instance.
      *
      * @param string $alias The alias to set.
      * @param \Cake\ORM\Table $object The table to set.
      * @return \Cake\ORM\Table
      */
-    public function set(string $alias, Table $object): Table;
-
-    /**
-     * Clears the registry of configuration and instances.
-     *
-     * @return void
-     */
-    public function clear(): void;
-
-    /**
-     * Removes an instance from the registry.
-     *
-     * @param string $alias The alias to remove.
-     * @return void
-     */
-    public function remove(string $alias): void;
+    public function set(string $alias, $object): Table;
 }
