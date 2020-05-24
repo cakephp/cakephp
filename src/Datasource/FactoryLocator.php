@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Datasource;
 
-use Cake\ORM\TableRegistry;
+use Cake\ORM\Locator\TableLocator;
 use InvalidArgumentException;
 
 /**
@@ -64,7 +64,7 @@ class FactoryLocator
     public static function get(string $type)
     {
         if (!isset(static::$_modelFactories['Table'])) {
-            static::$_modelFactories['Table'] = [TableRegistry::getTableLocator(), 'get'];
+            static::$_modelFactories['Table'] = new TableLocator();
         }
 
         if (!isset(static::$_modelFactories[$type])) {
