@@ -51,9 +51,11 @@ trait LocatorAwareTrait
     public function getTableLocator(): LocatorInterface
     {
         if ($this->_tableLocator === null) {
+            /** @var \Cake\ORM\Locator\LocatorInterface $this->_tableLocator */
             $this->_tableLocator = FactoryLocator::get('Table');
         }
 
+        /** @var \Cake\ORM\Locator\LocatorInterface */
         return $this->_tableLocator;
     }
 }

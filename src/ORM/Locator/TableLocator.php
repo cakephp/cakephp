@@ -18,6 +18,7 @@ namespace Cake\ORM\Locator;
 
 use Cake\Core\App;
 use Cake\Datasource\ConnectionManager;
+use Cake\Datasource\RepositoryInterface;
 use Cake\ORM\AssociationCollection;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
@@ -274,9 +275,9 @@ class TableLocator implements LocatorInterface
     /**
      * @inheritDoc
      */
-    public function set(string $alias, $object): Table
+    public function set(string $alias, RepositoryInterface $repository): Table
     {
-        return $this->_instances[$alias] = $object;
+        return $this->_instances[$alias] = $repository;
     }
 
     /**

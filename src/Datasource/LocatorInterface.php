@@ -56,10 +56,10 @@ interface LocatorInterface
      * Set a repository instance.
      *
      * @param string $alias The alias to set.
-     * @param \Cake\Datasource\RepositoryInterface $object The repository to set.
+     * @param \Cake\Datasource\RepositoryInterface $repository The repository to set.
      * @return \Cake\Datasource\RepositoryInterface
      */
-    public function set(string $alias, $object);
+    public function set(string $alias, RepositoryInterface $repository);
 
     /**
      * Check to see if an instance exists in the registry.

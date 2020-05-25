@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\ORM\Locator;
 
+use Cake\Datasource\RepositoryInterface;
 use Cake\ORM\Table;
 
 /**
@@ -33,11 +34,12 @@ interface LocatorInterface extends \Cake\Datasource\LocatorInterface
     public function get(string $alias, array $options = []): Table;
 
     /**
-     * Set an instance.
+     * Set a table instance.
      *
      * @param string $alias The alias to set.
-     * @param \Cake\ORM\Table $object The table to set.
+     * @param \Cake\ORM\Table $repository The table to set.
      * @return \Cake\ORM\Table
+     * @psalm-suppress MoreSpecificImplementedParamType
      */
-    public function set(string $alias, $object): Table;
+    public function set(string $alias, RepositoryInterface $repository): Table;
 }

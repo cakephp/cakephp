@@ -65,6 +65,7 @@ class TableRegistry
      */
     public static function getTableLocator(): LocatorInterface
     {
+        /** @var \Cake\ORM\Locator\LocatorInterface */
         return FactoryLocator::get('Table');
     }
 
