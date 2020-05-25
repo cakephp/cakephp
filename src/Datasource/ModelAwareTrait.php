@@ -91,15 +91,11 @@ trait ModelAwareTrait
      */
     public function loadModel(?string $modelClass = null, ?string $modelType = null): RepositoryInterface
     {
-        if ($modelClass === null) {
-            $modelClass = $this->modelClass;
-        }
+        $modelClass = $modelClass ?? $this->modelClass;
         if (empty($modelClass)) {
             throw new UnexpectedValueException('Default modelClass is empty');
         }
-        if ($modelType === null) {
-            $modelType = $this->getModelType();
-        }
+        $modelType = $modelType ?? $this->getModelType();
 
         $options = [];
         if (strpos($modelClass, '\\') === false) {
@@ -119,13 +115,7 @@ trait ModelAwareTrait
             return $this->{$alias};
         }
 
-        if (isset($this->_modelFactories[$modelType])) {
-            $factory = $this->_modelFactories[$modelType];
-        }
-        if (!isset($factory)) {
-            $factory = FactoryLocator::get($modelType);
-        }
-
+        $factory = $this->_modelFactories[$modelType] ?? FactoryLocator::get($modelType);
         if ($factory instanceof LocatorInterface) {
             $this->{$alias} = $factory->get($modelClass, $options);
         } else {
