@@ -157,8 +157,8 @@ class ConsoleFormatter implements FormatterInterface
     protected function exportArray(ArrayNode $var, int $indent): string
     {
         $out = $this->style('punct', '[');
-        $break = "\n" . str_repeat("  ", $indent);
-        $end = "\n" . str_repeat("  ", $indent - 1);
+        $break = "\n" . str_repeat('  ', $indent);
+        $end = "\n" . str_repeat('  ', $indent - 1);
         $vars = [];
 
         $arrow = $this->style('punct', ' => ');
@@ -202,8 +202,8 @@ class ConsoleFormatter implements FormatterInterface
             $this->style('number', (string)$var->getId()) .
             $this->style('punct', ' {');
 
-        $break = "\n" . str_repeat("  ", $indent);
-        $end = "\n" . str_repeat("  ", $indent - 1) . $this->style('punct', '}');
+        $break = "\n" . str_repeat('  ', $indent);
+        $end = "\n" . str_repeat('  ', $indent - 1) . $this->style('punct', '}');
 
         $arrow = $this->style('punct', ' => ');
         foreach ($var->getChildren() as $property) {

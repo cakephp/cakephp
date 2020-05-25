@@ -642,7 +642,7 @@ class TableTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             "The `authors` association is not defined on `Articles`.\n"
-            . "Valid associations are: Authors, Tags, ArticlesTags"
+            . 'Valid associations are: Authors, Tags, ArticlesTags'
         );
 
         $articles = $this->getTableLocator()->get('Articles', ['className' => ArticlesTable::class]);
