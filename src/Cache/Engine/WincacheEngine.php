@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
+use RuntimeException;
 
 /**
  * Wincache storage engine for cache
@@ -44,7 +45,7 @@ class WincacheEngine extends CacheEngine
     public function init(array $config = []): bool
     {
         if (!extension_loaded('wincache')) {
-            return false;
+            throw new RuntimeException('The `wincache` extension must be enabled to use WincacheEngine.');
         }
 
         parent::init($config);
