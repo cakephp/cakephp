@@ -46,7 +46,7 @@ trait ModelAwareTrait
     /**
      * A list of overridden model factory functions.
      *
-     * @var array
+     * @var (callable|\Cake\Datasource\LocatorInterface)[]
      */
     protected $_modelFactories = [];
 
@@ -143,10 +143,10 @@ trait ModelAwareTrait
      * Override a existing callable to generate repositories of a given type.
      *
      * @param string $type The name of the repository type the factory function is for.
-     * @param callable $factory The factory function used to create instances.
+     * @param callable|\Cake\Datasource\LocatorInterface $factory The factory function used to create instances.
      * @return void
      */
-    public function modelFactory(string $type, callable $factory): void
+    public function modelFactory(string $type, $factory): void
     {
         $this->_modelFactories[$type] = $factory;
     }
