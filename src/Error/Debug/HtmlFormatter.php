@@ -245,7 +245,7 @@ class HtmlFormatter implements FormatterInterface
             '</span>';
 
         if (count($props)) {
-            return $out . implode("", $props) . $end;
+            return $out . implode('', $props) . $end;
         }
 
         return $out . $end;
