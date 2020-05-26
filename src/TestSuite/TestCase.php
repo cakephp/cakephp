@@ -46,7 +46,7 @@ abstract class TestCase extends BaseTestCase
     /**
      * Fixtures used by this test case.
      *
-     * @var array|string|null
+     * @var string[]|string|null
      */
     public $fixtures;
 
@@ -911,6 +911,37 @@ abstract class TestCase extends BaseTestCase
     public static function setAppNamespace($appNamespace = 'TestApp')
     {
         Configure::write('App.namespace', $appNamespace);
+    }
+
+    /**
+     * Adds a fixture to this test case.
+     *
+     * Examples:
+     * - core.Tags
+     * - app.MyRecords
+     * - plugin.MyPluginName.MyModelName
+     *
+     * Use this method inside your test cases' {@link getFixtures()} method
+     * to build up the fixture list.
+     *
+     * @param string $fixture Fixture
+     * @return $this
+     */
+    protected function addFixture($fixture)
+    {
+        if (!isset($this->fixtures)) {
+            $this->fixtures = [];
+        } elseif (is_string($this->fixtures)) {
+            deprecationWarning(
+                'Setting fixtures as string is deprecated and will be removed in 4.0.' .
+                ' Set TestCase::$fixtures as array instead.'
+            );
+            $this->fixtures = array_map('trim', explode(',', $this->fixtures));
+        }
+
+        $this->fixtures[] = $fixture;
+
+        return $this;
     }
 
     /**
