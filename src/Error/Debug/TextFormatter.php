@@ -104,8 +104,8 @@ TEXT;
     protected function exportArray(ArrayNode $var, int $indent): string
     {
         $out = '[';
-        $break = "\n" . str_repeat("  ", $indent);
-        $end = "\n" . str_repeat("  ", $indent - 1);
+        $break = "\n" . str_repeat('  ', $indent);
+        $end = "\n" . str_repeat('  ', $indent - 1);
         $vars = [];
 
         foreach ($var->getChildren() as $item) {
@@ -137,8 +137,8 @@ TEXT;
         }
 
         $out .= "object({$var->getValue()}) id:{$var->getId()} {";
-        $break = "\n" . str_repeat("  ", $indent);
-        $end = "\n" . str_repeat("  ", $indent - 1) . '}';
+        $break = "\n" . str_repeat('  ', $indent);
+        $end = "\n" . str_repeat('  ', $indent - 1) . '}';
 
         foreach ($var->getChildren() as $property) {
             $visibility = $property->getVisibility();

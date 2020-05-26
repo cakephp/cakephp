@@ -26,6 +26,9 @@ namespace Cake\Utility\Crypto;
  */
 class OpenSsl
 {
+    /**
+     * @var string
+     */
     protected const METHOD_AES_256_CBC = 'aes-256-cbc';
 
     /**

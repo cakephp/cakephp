@@ -206,7 +206,7 @@ abstract class TestCase extends BaseTestCase
      * `Cake\TestSuite\IntegrationTestCaseTrait` to better simulate all routes
      * and plugins being loaded.
      *
-     * @param array|null $appArgs Constuctor parameters for the application class.
+     * @param array|null $appArgs Constructor parameters for the application class.
      * @return void
      * @since 4.0.1
      */
@@ -896,6 +896,27 @@ abstract class TestCase extends BaseTestCase
         Configure::write('App.namespace', $appNamespace);
 
         return $previous;
+    }
+
+    /**
+     * Adds a fixture to this test case.
+     *
+     * Examples:
+     * - core.Tags
+     * - app.MyRecords
+     * - plugin.MyPluginName.MyModelName
+     *
+     * Use this method inside your test cases' {@link getFixtures()} method
+     * to build up the fixture list.
+     *
+     * @param string $fixture Fixture
+     * @return $this
+     */
+    protected function addFixture(string $fixture)
+    {
+        $this->fixtures[] = $fixture;
+
+        return $this;
     }
 
     /**

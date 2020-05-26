@@ -27,8 +27,14 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
 {
     use InstanceConfigTrait;
 
+    /**
+     * @var string
+     */
     protected const CHECK_KEY = 'key';
 
+    /**
+     * @var string
+     */
     protected const CHECK_VALUE = 'value';
 
     /**
