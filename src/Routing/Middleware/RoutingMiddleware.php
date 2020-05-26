@@ -39,6 +39,8 @@ class RoutingMiddleware implements MiddlewareInterface
 {
     /**
      * Key used to store the route collection in the cache engine
+     *
+     * @var string
      */
     public const ROUTE_COLLECTION_CACHE_KEY = 'routeCollection';
 

@@ -29,16 +29,22 @@ class Number
 {
     /**
      * Default locale
+     *
+     * @var string
      */
     public const DEFAULT_LOCALE = 'en_US';
 
     /**
      * Format type to format as currency
+     *
+     * @var string
      */
     public const FORMAT_CURRENCY = 'currency';
 
     /**
      * Format type to format as currency, accounting style (negative numbers in parentheses)
+     *
+     * @var string
      */
     public const FORMAT_CURRENCY_ACCOUNTING = 'currency_accounting';
 
@@ -46,6 +52,8 @@ class Number
      * ICU Constant for accounting format; not yet widely supported by INTL library.
      * This will be able to go away once CakePHP minimum PHP requirement is 7.4.1 or higher.
      * See UNUM_CURRENCY_ACCOUNTING in https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/unum_8h.html
+     *
+     * @var int
      */
     public const CURRENCY_ACCOUNTING = 12;
 
