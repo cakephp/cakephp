@@ -22,7 +22,7 @@ use Cake\ORM\Table;
 /**
  * Registries for Table objects should implement this interface.
  */
-interface LocatorInterface extends \Cake\Datasource\LocatorInterface
+interface LocatorInterface extends \Cake\Datasource\Locator\LocatorInterface
 {
     /**
      * Get a table instance from the registry.

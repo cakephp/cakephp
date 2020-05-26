@@ -16,7 +16,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Datasource;
 
 use Cake\Datasource\FactoryLocator;
-use Cake\Datasource\LocatorInterface;
+use Cake\Datasource\Locator\LocatorInterface;
 use Cake\Datasource\RepositoryInterface;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
@@ -147,7 +147,7 @@ class ModelAwareTraitTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            '`$factory` must be an instance of Cake\Datasource\LocatorInterface or a callable.'
+            '`$factory` must be an instance of Cake\Datasource\Locator\LocatorInterface or a callable.'
             . ' Got type `string` instead.'
         );
 
