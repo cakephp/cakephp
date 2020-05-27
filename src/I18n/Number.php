@@ -168,7 +168,7 @@ class Number
         $formatter = static::formatter($options);
         $options += ['before' => '', 'after' => ''];
 
-        return $options['before'] . $formatter->format($value) . $options['after'];
+        return $options['before'] . $formatter->format((float)$value) . $options['after'];
     }
 
     /**

@@ -881,14 +881,14 @@ class Message implements JsonSerializable, Serializable
         ];
         foreach ($relation as $var => $header) {
             if ($include[$var]) {
-                $headers[$header] = current($this->formatAddress($this->{$var}));
+                $headers[$header] = (string)current($this->formatAddress($this->{$var}));
             }
         }
         if ($include['sender']) {
             if (key($this->sender) === key($this->from)) {
                 $headers['Sender'] = '';
             } else {
-                $headers['Sender'] = current($this->formatAddress($this->sender));
+                $headers['Sender'] = (string)current($this->formatAddress($this->sender));
             }
         }
 
@@ -911,7 +911,7 @@ class Message implements JsonSerializable, Serializable
         }
 
         if ($this->priority) {
-            $headers['X-Priority'] = $this->priority;
+            $headers['X-Priority'] = (string)$this->priority;
         }
 
         if ($include['subject']) {
