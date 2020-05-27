@@ -25,6 +25,28 @@ use Cake\ORM\Table;
 interface LocatorInterface extends \Cake\Datasource\Locator\LocatorInterface
 {
     /**
+     * Returns configuration for an alias or the full configuration array for
+     * all aliases.
+     *
+     * @param string|null $alias Alias to get config for, null for complete config.
+     * @return array The config data.
+     */
+    public function getConfig(?string $alias = null): array;
+
+    /**
+     * Stores a list of options to be used when instantiating an object
+     * with a matching alias.
+     *
+     * @param string|array $alias Name of the alias or array to completely
+     *   overwrite current config.
+     * @param array|null $options list of options for the alias
+     * @return $this
+     * @throws \RuntimeException When you attempt to configure an existing
+     *   table instance.
+     */
+    public function setConfig($alias, $options = null);
+
+    /**
      * Get a table instance from the registry.
      *
      * @param string $alias The alias name you want to get.

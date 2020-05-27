@@ -24,33 +24,13 @@ use Cake\Datasource\RepositoryInterface;
 interface LocatorInterface
 {
     /**
-     * Returns configuration for an alias or the full configuration array for
-     * all aliases.
-     *
-     * @param string|null $alias Alias to get config for, null for complete config.
-     * @return array The config data.
-     */
-    public function getConfig(?string $alias = null): array;
-
-    /**
-     * Stores a list of options to be used when instantiating an object
-     * with a matching alias.
-     *
-     * @param string|array $alias Name of the alias or array to completely
-     *   overwrite current config.
-     * @param array|null $options list of options for the alias
-     * @return $this
-     * @throws \RuntimeException When you attempt to configure an existing
-     *   table instance.
-     */
-    public function setConfig($alias, $options = null);
-
-    /**
      * Get a repository instance from the registry.
      *
      * @param string $alias The alias name you want to get.
      * @param array $options The options you want to build the table with.
      * @return \Cake\Datasource\RepositoryInterface
+     * @throws \RuntimeException When trying to get alias for which instance
+     *   has already been created with different options.
      */
     public function get(string $alias, array $options = []);
 

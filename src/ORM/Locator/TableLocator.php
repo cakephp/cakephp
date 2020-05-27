@@ -38,11 +38,18 @@ class TableLocator extends AbstractLocator implements LocatorInterface
     protected $locations = [];
 
     /**
+     * Configuration for aliases.
+     *
+     * @var array
+     */
+    protected $_config = [];
+
+    /**
      * Instances that belong to the registry.
      *
      * @var \Cake\ORM\Table[]
      */
-    protected $_instances = [];
+    protected $instances = [];
 
     /**
      * Contains a list of Table objects that were created out of the
@@ -69,6 +76,41 @@ class TableLocator extends AbstractLocator implements LocatorInterface
         foreach ($locations as $location) {
             $this->addLocation($location);
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setConfig($alias, $options = null)
+    {
+        if (!is_string($alias)) {
+            $this->_config = $alias;
+
+            return $this;
+        }
+
+        if (isset($this->instances[$alias])) {
+            throw new RuntimeException(sprintf(
+                'You cannot configure "%s", it has already been constructed.',
+                $alias
+            ));
+        }
+
+        $this->_config[$alias] = $options;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getConfig(?string $alias = null): array
+    {
+        if ($alias === null) {
+            return $this->_config;
+        }
+
+        return $this->_config[$alias] ?? [];
     }
 
     /**
@@ -109,18 +151,15 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      */
     public function get(string $alias, array $options = []): Table
     {
-        if (isset($this->_instances[$alias])) {
-            if (!empty($options) && $this->_options[$alias] !== $options) {
-                throw new RuntimeException(sprintf(
-                    'You cannot configure "%s", it already exists in the registry.',
-                    $alias
-                ));
-            }
+        /** @var \Cake\ORM\Table */
+        return parent::get($alias, $options);
+    }
 
-            return $this->_instances[$alias];
-        }
-
-        $this->_options[$alias] = $options;
+    /**
+     * @inheritDoc
+     */
+    protected function createInstance(string $alias, array $options)
+    {
         [, $classAlias] = pluginSplit($alias);
         $options = ['alias' => $classAlias] + $options;
 
@@ -158,13 +197,13 @@ class TableLocator extends AbstractLocator implements LocatorInterface
         }
 
         $options['registryAlias'] = $alias;
-        $this->_instances[$alias] = $this->_create($options);
+        $instance = $this->_create($options);
 
         if ($options['className'] === Table::class) {
-            $this->_fallbacked[$alias] = $this->_instances[$alias];
+            $this->_fallbacked[$alias] = $instance;
         }
 
-        return $this->_instances[$alias];
+        return $instance;
     }
 
     /**
@@ -202,7 +241,6 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      */
     protected function _create(array $options): Table
     {
-        // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.InvalidFormat
         /** @var \Cake\ORM\Table */
         return new $options['className']($options);
     }
@@ -218,7 +256,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      */
     public function set(string $alias, RepositoryInterface $repository): Table
     {
-        return $this->_instances[$alias] = $repository;
+        return $this->instances[$alias] = $repository;
     }
 
     /**
@@ -229,6 +267,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
         parent::clear();
 
         $this->_fallbacked = [];
+        $this->_config = [];
     }
 
     /**
