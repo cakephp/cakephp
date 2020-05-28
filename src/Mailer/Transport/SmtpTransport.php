@@ -271,26 +271,42 @@ class SmtpTransport extends AbstractTransport
      */
     protected function _auth(): void
     {
-        if (isset($this->_config['username'], $this->_config['password'])) {
-            $replyCode = (string)$this->_smtpSend('AUTH LOGIN', '334|500|502|504');
-            if ($replyCode === '334') {
-                try {
-                    $this->_smtpSend(base64_encode($this->_config['username']), '334');
-                } catch (SocketException $e) {
-                    throw new SocketException('SMTP server did not accept the username.', null, $e);
-                }
-                try {
-                    $this->_smtpSend(base64_encode($this->_config['password']), '235');
-                } catch (SocketException $e) {
-                    throw new SocketException('SMTP server did not accept the password.', null, $e);
-                }
-            } elseif ($replyCode === '504') {
-                throw new SocketException('SMTP authentication method not allowed, check if SMTP server requires TLS.');
-            } else {
-                throw new SocketException(
-                    'AUTH command not recognized or not implemented, SMTP server may not require authentication.'
-                );
+        if (!isset($this->_config['username'], $this->_config['password'])) {
+            return;
+        }
+
+        $username = $this->_config['username'];
+        $password = $this->_config['password'];
+
+        $replyCode = $this->_smtpSend(
+            sprintf(
+                'AUTH PLAIN %s',
+                base64_encode($username . chr(0) . $username . chr(0) . $password)
+            ),
+            '235|504|535'
+        );
+        if ($replyCode === '235') {
+            return;
+        }
+
+        $replyCode = $this->_smtpSend('AUTH LOGIN', '334|500|502|504');
+        if ($replyCode === '334') {
+            try {
+                $this->_smtpSend(base64_encode($username), '334');
+            } catch (SocketException $e) {
+                throw new SocketException('SMTP server did not accept the username.', null, $e);
             }
+            try {
+                $this->_smtpSend(base64_encode($password), '235');
+            } catch (SocketException $e) {
+                throw new SocketException('SMTP server did not accept the password.', null, $e);
+            }
+        } elseif ($replyCode === '504') {
+            throw new SocketException('SMTP authentication method not allowed, check if SMTP server requires TLS.');
+        } else {
+            throw new SocketException(
+                'AUTH command not recognized or not implemented, SMTP server may not require authentication.'
+            );
         }
     }
 
