@@ -278,17 +278,41 @@ class SmtpTransport extends AbstractTransport
         $username = $this->_config['username'];
         $password = $this->_config['password'];
 
-        $replyCode = $this->_smtpSend(
-            sprintf(
-                'AUTH PLAIN %s',
-                base64_encode($username . chr(0) . $username . chr(0) . $password)
-            ),
-            '235|504|535'
-        );
+        $replyCode = $this->_authPlain($username, $password);
         if ($replyCode === '235') {
             return;
         }
 
+        $this->_authLogin($username, $password);
+    }
+
+    /**
+     * Authenticate using AUTH PLAIN mechanism.
+     *
+     * @param string $username Username.
+     * @param string $password Password.
+     * @return string|null Response code for the command.
+     */
+    protected function _authPlain(string $username, string $password): ?string
+    {
+        return $this->_smtpSend(
+            sprintf(
+                'AUTH PLAIN %s',
+                base64_encode(chr(0) . $username . chr(0) . $password)
+            ),
+            '235|504|534|535'
+        );
+    }
+
+    /**
+     * Authenticate using AUTH LOGIN mechanism.
+     *
+     * @param string $username Username.
+     * @param string $password Password.
+     * @return void
+     */
+    protected function _authLogin(string $username, string $password): void
+    {
         $replyCode = $this->_smtpSend('AUTH LOGIN', '334|500|502|504');
         if ($replyCode === '334') {
             try {

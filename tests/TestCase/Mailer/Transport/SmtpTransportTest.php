@@ -66,7 +66,7 @@ class SmtpTransportTest extends TestCase
         $this->SmtpTransport->setSocket($this->socket);
         $this->SmtpTransport->setConfig(['client' => 'localhost']);
 
-        $this->credentialsEncoded = base64_encode('mark' . chr(0) . 'mark' . chr(0) . 'story');
+        $this->credentialsEncoded = base64_encode(chr(0) . 'mark' . chr(0) . 'story');
     }
 
     /**
