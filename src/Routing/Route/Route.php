@@ -439,11 +439,11 @@ class Route
         // Assign defaults, set passed args to pass
         foreach ($this->defaults as $key => $value) {
             if (isset($route[$key])) {
-				// preg_match returns an empty string if an optional key was not fournd
-				// We treat this as if the key was not found
-				if ($route[$key] !== '') {				
-	                continue;
-				}
+                // preg_match returns an empty string if an optional key was not fournd
+                // We treat this as if the key was not found
+                if ($route[$key] !== '') {
+                    continue;
+                }
             }
             if (is_int($key)) {
                 $route['pass'][] = $value;
@@ -652,12 +652,12 @@ class Route
             return null;
         }
         unset($url['_method'], $url['[method]'], $defaults['_method']);
-		
-		// The key names
-		$keyNames = array_flip($this->keys);
-		
-		// All defaults which are not a key
-		$defaultsNotKey = array_diff_key($defaults, $keyNames);
+
+        // The key names
+        $keyNames = array_flip($this->keys);
+
+        // All defaults which are not a key
+        $defaultsNotKey = array_diff_key($defaults, $keyNames);
 
         // Missing defaults, which are not a key, is a fail
         if (array_diff_key($defaultsNotKey, $url) !== []) {
@@ -712,11 +712,11 @@ class Route
         // check patterns for routed params, if they are not the default value
         if (!empty($this->options)) {
             foreach ($this->options as $key => $pattern) {
-				if (!array_key_exists($key, $defaults) || $defaults[$key] !== $url[$key]) {
-					if (isset($url[$key]) && !preg_match('#^' . $pattern . '$#u', (string)$url[$key])) {
-						return null;
-					}
-				}
+                if (!array_key_exists($key, $defaults) || $defaults[$key] !== $url[$key]) {
+                    if (isset($url[$key]) && !preg_match('#^' . $pattern . '$#u', (string)$url[$key])) {
+                        return null;
+                    }
+                }
             }
         }
         $url += $hostOptions;

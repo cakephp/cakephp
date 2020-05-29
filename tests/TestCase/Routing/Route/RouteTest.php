@@ -534,7 +534,7 @@ class RouteTest extends TestCase
         $expected = [
             'controller' => 'pages',
             'action' => 'view',
-			'extra' => null,
+            'extra' => null,
         ];
         $this->assertEquals($expected, $route->defaults);
 
@@ -1247,98 +1247,99 @@ class RouteTest extends TestCase
         ];
         $this->assertEquals($expected, $result);
     }
-	
-	
-	/**
-	 * Test parse with optional parameters at the beginning of the route
-	 * 
-	 * @return void
-	 */
-	public function testParseWithOptonalStartParameter() {
-		// {start} may be omitted
-		$route = new Route('/{start}/{controller}', 
-				['start' => null],
-				['start' => 'prefix|other']
-		);
-		
-		// Test route against path with {pref}
-		$result = $route->parse('/prefix/posts', 'GET');
-		$expected = [
-			'start' => 'prefix',
-			'controller'=> 'posts',
-            'pass' => [],
-            '_matchedRoute' => '/{start}/{controller}'
-		];
-		$this->assertSame($expected, $result);
-		
-		// Test route against path without {pref}
-		$result = $route->parse('/posts', 'GET');
-		$expected = [
-			'start' => null,
-			'controller'=> 'posts',
-            'pass' => [],
-            '_matchedRoute' => '/{start}/{controller}'
-		];
-		
-		$this->assertSame($expected, $result);
-		
-		// Test route against path with additional segment
-		// This should not match
-		$result = $route->parse('/posts/view', 'GET');
-		$this->assertNull($result);
-	}
-	
 
-	/**
-	 * Test parse with optional parameters at the end of the route
-	 * 
-	 * @return void
-	 */
-	public function testParseWithOptonalEndParameter() {
-		// {end} may be omitted
-		$route = new Route('/{controller}/{end}', 
-				['end' => null],
-				['end' => 'postfix|other']
-		);
-		
-		// Test route against path with {end}
-		$result = $route->parse('/posts/postfix', 'GET');
-		$expected = [
-			'controller'=> 'posts',
-			'end' => 'postfix',
+    /**
+     * Test parse with optional parameters at the beginning of the route
+     *
+     * @return void
+     */
+    public function testParseWithOptonalStartParameter()
+    {
+        // {start} may be omitted
+        $route = new Route(
+            '/{start}/{controller}',
+            ['start' => null],
+            ['start' => 'prefix|other'],
+        );
+
+        // Test route against path with {pref}
+        $result = $route->parse('/prefix/posts', 'GET');
+        $expected = [
+            'start' => 'prefix',
+            'controller' => 'posts',
             'pass' => [],
-            '_matchedRoute' => '/{controller}/{end}'
-		];
-		$this->assertSame($expected, $result);
-		
-		// Test route against path without {end}
-		$result = $route->parse('/posts', 'GET');
-		$expected = [
-			'controller'=> 'posts',
+            '_matchedRoute' => '/{start}/{controller}',
+        ];
+        $this->assertSame($expected, $result);
+
+        // Test route against path without {pref}
+        $result = $route->parse('/posts', 'GET');
+        $expected = [
+            'start' => null,
+            'controller' => 'posts',
             'pass' => [],
-			'end' => null,
-            '_matchedRoute' => '/{controller}/{end}'
-		];
-		
-		$this->assertSame($expected, $result);
-		
-		// Test route against path without {pref}
-		$result = $route->parse('/posts/', 'GET');
-		$expected = [
-			'controller'=> 'posts',
+            '_matchedRoute' => '/{start}/{controller}',
+        ];
+
+        $this->assertSame($expected, $result);
+
+        // Test route against path with additional segment
+        // This should not match
+        $result = $route->parse('/posts/view', 'GET');
+        $this->assertNull($result);
+    }
+
+    /**
+     * Test parse with optional parameters at the end of the route
+     *
+     * @return void
+     */
+    public function testParseWithOptonalEndParameter()
+    {
+        // {end} may be omitted
+        $route = new Route(
+            '/{controller}/{end}',
+            ['end' => null],
+            ['end' => 'postfix|other'],
+        );
+
+        // Test route against path with {end}
+        $result = $route->parse('/posts/postfix', 'GET');
+        $expected = [
+            'controller' => 'posts',
+            'end' => 'postfix',
             'pass' => [],
-			'end' => null,
-            '_matchedRoute' => '/{controller}/{end}'
-		];
-		
-		$this->assertSame($expected, $result);
-		
-		// Test route against path with additional segment
-		// This should not match
-		$result = $route->parse('/posts/view', 'GET');
-		$this->assertNull($result);
-	}
-	
+            '_matchedRoute' => '/{controller}/{end}',
+        ];
+        $this->assertSame($expected, $result);
+
+        // Test route against path without {end}
+        $result = $route->parse('/posts', 'GET');
+        $expected = [
+            'controller' => 'posts',
+            'pass' => [],
+            'end' => null,
+            '_matchedRoute' => '/{controller}/{end}',
+        ];
+
+        $this->assertSame($expected, $result);
+
+        // Test route against path without {pref}
+        $result = $route->parse('/posts/', 'GET');
+        $expected = [
+            'controller' => 'posts',
+            'pass' => [],
+            'end' => null,
+            '_matchedRoute' => '/{controller}/{end}',
+        ];
+
+        $this->assertSame($expected, $result);
+
+        // Test route against path with additional segment
+        // This should not match
+        $result = $route->parse('/posts/view', 'GET');
+        $this->assertNull($result);
+    }
 
     /**
      * Test that middleware is returned from parse()
@@ -1549,9 +1550,9 @@ class RouteTest extends TestCase
 
         $route = new Route('/path/{optional}/fixed');
         $this->assertSame('/path/fixed', $route->match(['optional' => null]));
-	}
-	
-	/**
+    }
+
+    /**
      * Test matching fails on required keys (controller/action)
      *
      * @return void
