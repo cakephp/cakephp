@@ -1259,7 +1259,7 @@ class RouteTest extends TestCase
         $route = new Route(
             '/{start}/{controller}',
             ['start' => null],
-            ['start' => 'prefix|other'],
+            ['start' => 'prefix|other']
         );
 
         // Test route against path with {pref}
@@ -1300,7 +1300,7 @@ class RouteTest extends TestCase
         $route = new Route(
             '/{controller}/{end}',
             ['end' => null],
-            ['end' => 'postfix|other'],
+            ['end' => 'postfix|other']
         );
 
         // Test route against path with {end}
