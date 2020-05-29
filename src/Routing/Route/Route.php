@@ -339,11 +339,6 @@ class Route
         $this->_compiledRoute = '#^' . $parsed . '[/]*$#' . $mode;
         $this->keys = $names;
 
-        // Remove defaults that are also keys. They can cause match failures
-        foreach ($this->keys as $key) {
-            unset($this->defaults[$key]);
-        }
-
         $keys = $this->keys;
         sort($keys);
         $this->keys = array_reverse($keys);
@@ -444,7 +439,11 @@ class Route
         // Assign defaults, set passed args to pass
         foreach ($this->defaults as $key => $value) {
             if (isset($route[$key])) {
-                continue;
+				// preg_match returns an empty string if an optional key was not fournd
+				// We treat this as if the key was not found
+				if ($route[$key] !== '') {				
+	                continue;
+				}
             }
             if (is_int($key)) {
                 $route['pass'][] = $value;
@@ -653,14 +652,20 @@ class Route
             return null;
         }
         unset($url['_method'], $url['[method]'], $defaults['_method']);
+		
+		// The key names
+		$keyNames = array_flip($this->keys);
+		
+		// All defaults which are not a key
+		$defaultsNotKey = array_diff_key($defaults, $keyNames);
 
-        // Missing defaults is a fail.
-        if (array_diff_key($defaults, $url) !== []) {
+        // Missing defaults, which are not a key, is a fail
+        if (array_diff_key($defaultsNotKey, $url) !== []) {
             return null;
         }
 
-        // Defaults with different values are a fail.
-        if (array_intersect_key($url, $defaults) != $defaults) {
+        // Defaults, which are not a key, with different values are a fail
+        if (array_intersect_key($url, $defaultsNotKey) != $defaultsNotKey) {
             return null;
         }
 
@@ -676,7 +681,6 @@ class Route
         }
 
         // check that all the key names are in the url
-        $keyNames = array_flip($this->keys);
         if (array_intersect_key($keyNames, $url) !== $keyNames) {
             return null;
         }
@@ -705,12 +709,14 @@ class Route
             return null;
         }
 
-        // check patterns for routed params
+        // check patterns for routed params, if they are not the default value
         if (!empty($this->options)) {
             foreach ($this->options as $key => $pattern) {
-                if (isset($url[$key]) && !preg_match('#^' . $pattern . '$#u', (string)$url[$key])) {
-                    return null;
-                }
+				if (!array_key_exists($key, $defaults) || $defaults[$key] !== $url[$key]) {
+					if (isset($url[$key]) && !preg_match('#^' . $pattern . '$#u', (string)$url[$key])) {
+						return null;
+					}
+				}
             }
         }
         $url += $hostOptions;
