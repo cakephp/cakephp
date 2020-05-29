@@ -410,7 +410,7 @@ HTML;
         $this->assertSame($expected, $this->message->getSender());
 
         $headers = $this->message->getHeaders(['from' => true, 'sender' => true]);
-        $this->assertFalse($headers['From']);
+        $this->assertSame('', $headers['From']);
         $this->assertSame('Name <cake@cakephp.org>', $headers['Sender']);
 
         $this->message->setFrom('cake@cakephp.org', 'CakePHP');

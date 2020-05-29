@@ -146,7 +146,7 @@ class EmailTest extends TestCase
         $this->assertSame($expected, $this->Email->getSender());
 
         $headers = $this->Email->getHeaders(['from' => true, 'sender' => true]);
-        $this->assertFalse($headers['From']);
+        $this->assertSame('', $headers['From']);
         $this->assertSame('Name <cake@cakephp.org>', $headers['Sender']);
 
         $this->Email->setFrom('cake@cakephp.org', 'CakePHP');
