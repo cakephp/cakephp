@@ -279,7 +279,7 @@ class SmtpTransport extends AbstractTransport
      * @param string $password Password.
      * @return string|null Response code for the command.
      */
-    protected function _authPlain(string $username, string $password): ?string
+    protected function _authPlain($username, $password)
     {
         return $this->_smtpSend(
             sprintf(
@@ -297,7 +297,7 @@ class SmtpTransport extends AbstractTransport
      * @param string $password Password.
      * @return void
      */
-    protected function _authLogin(string $username, string $password): void
+    protected function _authLogin($username, $password)
     {
         $replyCode = $this->_smtpSend('AUTH LOGIN', '334|500|502|504');
         if ($replyCode === '334') {
