@@ -465,9 +465,13 @@ class ServerRequest implements ServerRequestInterface
     public function is($type, ...$args): bool
     {
         if (is_array($type)) {
-            $result = array_map([$this, 'is'], $type);
+            foreach ($type as $_type) {
+                if ($this->is($_type)) {
+                    return true;
+                }
+            }
 
-            return count(array_filter($result)) > 0;
+            return false;
         }
 
         $type = strtolower($type);
