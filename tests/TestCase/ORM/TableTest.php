@@ -3025,9 +3025,38 @@ class TableTest extends TestCase
             'cascadeCallbacks' => true,
         ]);
 
+        $articles = $table->getAssociation('articles')->getTarget();
+        $articles->getEventManager()->on('Model.buildRules', function ($event, $rules) {
+            $rules->addDelete(function ($entity) {
+                if ($entity->author_id === 3) {
+                    return false;
+                } else {
+                    return true;
+                }
+            });
+        });
+
         $entity = $table->get(1);
         $result = $table->delete($entity);
         $this->assertTrue($result);
+
+        $query = $articles->find('all', [
+            'conditions' => [
+                'author_id' => $entity->id,
+            ],
+        ]);
+        $this->assertNull($query->all()->first(), 'Should not find any rows.');
+
+        $entity = $table->get(3);
+        $result = $table->delete($entity);
+        $this->assertFalse($result);
+
+        $query = $articles->find('all', [
+            'conditions' => [
+                'author_id' => $entity->id,
+            ],
+        ]);
+        $this->assertFalse($query->all()->isEmpty(), 'Should find any rows.');
     }
 
     /**
@@ -3130,6 +3159,37 @@ class TableTest extends TestCase
 
         $member = $members->get(1);
         $this->assertEquals(1, $member->section_count);
+    }
+
+    /**
+     * Test that primary record is not deleted if junction record deletion fails
+     * when cascadeCallbacks is enabled.
+     *
+     * @return void
+     */
+    public function testDeleteBelongsToManyDependentFailure()
+    {
+        $sections = $this->getTableLocator()->get('Sections');
+        $sectionsMembers = $this->getTableLocator()->get('SectionsMembers');
+        $sectionsMembers->getEventManager()->on('Model.buildRules', function ($event, $rules) {
+            $rules->addDelete(function () {
+                return false;
+            });
+        });
+
+        $sections->belongsToMany('Members', [
+            'joinTable' => 'sections_members',
+            'dependent' => true,
+            'cascadeCallbacks' => true,
+        ]);
+
+        $section = $sections->get(1, ['contain' => 'Members']);
+        $this->assertSame(1, count($section->members));
+
+        $this->assertFalse($sections->delete($section));
+
+        $section = $sections->get(1, ['contain' => 'Members']);
+        $this->assertSame(1, count($section->members));
     }
 
     /**
