@@ -3056,7 +3056,7 @@ class TableTest extends TestCase
                 'author_id' => $entity->id,
             ],
         ]);
-        $this->assertFalse($query->all()->isEmpty(), 'Should find any rows.');
+        $this->assertFalse($query->all()->isEmpty(), 'Should find some rows.');
     }
 
     /**
