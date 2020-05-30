@@ -460,7 +460,7 @@ class Session
      */
     public function readOrFail(string $name)
     {
-        if ($this->check($name) === false) {
+        if (!$this->check($name)) {
             throw new RuntimeException(sprintf('Expected session key "%s" not found.', $name));
         }
 
