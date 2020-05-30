@@ -313,7 +313,7 @@ class Debugger
 
         $template = $instance->editors[$editor];
         if (is_string($template)) {
-            return str_replace(['{file}', '{line}'], [$file, $line], $template);
+            return str_replace(['{file}', '{line}'], [$file, (string)$line], $template);
         }
 
         return $template($file, $line);
