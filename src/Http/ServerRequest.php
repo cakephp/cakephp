@@ -457,7 +457,7 @@ class ServerRequest implements ServerRequestInterface
      * defined with Cake\Http\ServerRequest::addDetector(). Any detector can be called
      * as `is($type)` or `is$Type()`.
      *
-     * @param string|array $type The type of request you want to check. If an array
+     * @param string|string[] $type The type of request you want to check. If an array
      *   this method will return true if the request matches any type.
      * @param array ...$args List of arguments
      * @return bool Whether or not the request is the type you are checking.
