@@ -355,7 +355,7 @@ class HasOneTest extends TestCase
     }
 
     /**
-     * Test cascading delete with has many.
+     * Test cascading delete with has one.
      *
      * @return void
      */
@@ -383,5 +383,34 @@ class HasOneTest extends TestCase
         $this->assertTrue($association->cascadeDelete($user));
         $query = $this->profile->query()->where(['user_id' => 3]);
         $this->assertSame(0, $query->count(), 'Matching record was deleted.');
+    }
+
+    /**
+     * Test cascading delete with a rule preventing deletion
+     *
+     * @return void
+     */
+    public function testCascadeDeleteCallbacksRuleFailure()
+    {
+        $config = [
+            'dependent' => true,
+            'sourceTable' => $this->user,
+            'targetTable' => $this->profile,
+            'cascadeCallbacks' => true,
+        ];
+        $association = new HasOne('Profiles', $config);
+        $profiles = $association->getTarget();
+        $profiles->getEventManager()->on('Model.buildRules', function ($event, $rules) {
+            $rules->addDelete(function () {
+                return false;
+            });
+        });
+
+        $user = new Entity(['id' => 1]);
+        $this->assertFalse($association->cascadeDelete($user));
+        $matching = $profiles->find()
+            ->where(['Profiles.user_id' => $user->id])
+            ->all();
+        $this->assertGreaterThan(0, count($matching));
     }
 }

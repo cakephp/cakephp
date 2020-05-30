@@ -439,6 +439,37 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
+     * Test cascading delete with a rule preventing deletion
+     *
+     * @return void
+     */
+    public function testCascadeDeleteCallbacksRuleFailure()
+    {
+        $articleTag = $this->getTableLocator()->get('ArticlesTags');
+        $config = [
+            'sourceTable' => $this->article,
+            'targetTable' => $this->tag,
+            'cascadeCallbacks' => true,
+        ];
+        $association = new BelongsToMany('Tag', $config);
+        $association->junction($articleTag);
+        $this->article->getAssociation($articleTag->getAlias());
+
+        $articleTag->getEventManager()->on('Model.buildRules', function ($event, $rules) {
+            $rules->addDelete(function () {
+                return false;
+            });
+        });
+        $entity = new Entity(['id' => 1, 'name' => 'PHP']);
+        $this->assertFalse($association->cascadeDelete($entity));
+
+        $matching = $articleTag->find()
+            ->where(['ArticlesTags.tag_id' => $entity->id])
+            ->all();
+        $this->assertGreaterThan(0, count($matching));
+    }
+
+    /**
      * Test linking entities having a non persisted source entity
      *
      * @return void
