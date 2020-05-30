@@ -430,10 +430,11 @@ class Session
      * Returns given session variable, or all of them, if no parameters given.
      *
      * @param string|null $name The name of the session variable (or a path as sent to Hash.extract)
+     * @param mixed $default The return value when the path does not exist
      * @return string|array|null The value of the session variable, null if session not available,
      *   session not started, or provided name not found in the session.
      */
-    public function read(?string $name = null)
+    public function read(?string $name = null, $default = null)
     {
         if ($this->_hasSession() && !$this->started()) {
             $this->start();
@@ -447,7 +448,23 @@ class Session
             return $_SESSION ?: [];
         }
 
-        return Hash::get($_SESSION, $name);
+        return Hash::get($_SESSION, $name, $default);
+    }
+
+    /**
+     * Returns given session variable, or throws Exception if not found.
+     *
+     * @param string $name The name of the session variable (or a path as sent to Hash.extract)
+     * @throws \RuntimeException
+     * @return array|string|null
+     */
+    public function readOrFail(string $name)
+    {
+        if ($this->check($name) === false) {
+            throw new RuntimeException(sprintf('Expected session key "%s" not found.', $name));
+        }
+
+        return $this->read($name);
     }
 
     /**
