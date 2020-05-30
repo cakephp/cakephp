@@ -561,6 +561,36 @@ class HasManyTest extends TestCase
     }
 
     /**
+     * Test cascading delete with a rule preventing deletion
+     *
+     * @return void
+     */
+    public function testCascadeDeleteCallbacksRuleFailure()
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $config = [
+            'dependent' => true,
+            'sourceTable' => $this->author,
+            'targetTable' => $articles,
+            'cascadeCallbacks' => true,
+        ];
+        $association = new HasMany('Articles', $config);
+        $articles = $association->getTarget();
+        $articles->getEventManager()->on('Model.buildRules', function ($event, $rules) {
+            $rules->addDelete(function () {
+                return false; 
+            });
+        });
+
+        $author = new Entity(['id' => 1, 'name' => 'mark']);
+        $this->assertFalse($association->cascadeDelete($author));
+        $matching = $articles->find()
+            ->where(['Articles.author_id' => $author->id])
+            ->all();
+        $this->assertGreaterThan(0, count($matching));
+    }
+
+    /**
      * Test that saveAssociated() ignores non entity values.
      *
      * @return void
