@@ -1986,6 +1986,31 @@ class QueryTest extends TestCase
             ['id' => 3],
         ];
         $this->assertEquals($expected, $result);
+
+        $query = new Query($this->connection);
+        $query->select(['id'])
+            ->from('articles')
+            ->orderAsc(function (QueryExpression $exp, Query $query) {
+                return $exp->addCase(
+                    [$query->newExpr()->add(['author_id' => 1])],
+                    [1, $query->identifier('id')],
+                    ['integer', null]
+                );
+            })
+            ->orderAsc('id');
+        $sql = $query->sql();
+        $result = $query->execute()->fetchAll('assoc');
+        $expected = [
+            ['id' => 1],
+            ['id' => 3],
+            ['id' => 2],
+        ];
+        $this->assertEquals($expected, $result);
+        $this->assertQuotedQuery(
+            'SELECT <id> FROM <articles> ORDER BY CASE WHEN <author_id> = :c0 THEN :param1 ELSE <id> END ASC, <id> ASC',
+            $sql,
+            !$this->autoQuote
+        );
     }
 
     /**
@@ -2026,6 +2051,31 @@ class QueryTest extends TestCase
             ['id' => 1],
         ];
         $this->assertEquals($expected, $result);
+
+        $query = new Query($this->connection);
+        $query->select(['id'])
+            ->from('articles')
+            ->orderDesc(function (QueryExpression $exp, Query $query) {
+                return $exp->addCase(
+                    [$query->newExpr()->add(['author_id' => 1])],
+                    [1, $query->identifier('id')],
+                    ['integer', null]
+                );
+            })
+            ->orderDesc('id');
+        $sql = $query->sql();
+        $result = $query->execute()->fetchAll('assoc');
+        $expected = [
+            ['id' => 2],
+            ['id' => 3],
+            ['id' => 1],
+        ];
+        $this->assertEquals($expected, $result);
+        $this->assertQuotedQuery(
+            'SELECT <id> FROM <articles> ORDER BY CASE WHEN <author_id> = :c0 THEN :param1 ELSE <id> END DESC, <id> DESC',
+            $sql,
+            !$this->autoQuote
+        );
     }
 
     /**
