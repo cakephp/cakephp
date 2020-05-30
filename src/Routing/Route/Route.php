@@ -438,12 +438,10 @@ class Route
 
         // Assign defaults, set passed args to pass
         foreach ($this->defaults as $key => $value) {
-            if (isset($route[$key])) {
-                // preg_match returns an empty string if an optional key was not fournd
-                // We treat this as if the key was not found
-                if ($route[$key] !== '') {
-                    continue;
-                }
+            // preg_match returns an empty string if an optional key was not found
+            // We treat this as if the key was not found
+            if (isset($route[$key]) && $route[$key] !== '') {
+                continue;
             }
             if (is_int($key)) {
                 $route['pass'][] = $value;
@@ -712,10 +710,11 @@ class Route
         // check patterns for routed params, if they are not the default value
         if (!empty($this->options)) {
             foreach ($this->options as $key => $pattern) {
-                if (!array_key_exists($key, $defaults) || $defaults[$key] !== $url[$key]) {
-                    if (isset($url[$key]) && !preg_match('#^' . $pattern . '$#u', (string)$url[$key])) {
+                if (
+                    (!array_key_exists($key, $defaults) || $defaults[$key] !== $url[$key]) &&
+                    isset($url[$key]) && !preg_match('#^' . $pattern . '$#u', (string)$url[$key])
+                ) {
                         return null;
-                    }
                 }
             }
         }
