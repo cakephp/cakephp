@@ -438,7 +438,6 @@ class BelongsToManyTest extends TestCase
         $this->assertSame(2, $counter);
     }
 
-
     /**
      * Test cascading delete with a rule preventing deletion
      *
@@ -458,7 +457,7 @@ class BelongsToManyTest extends TestCase
 
         $articleTag->getEventManager()->on('Model.buildRules', function ($event, $rules) {
             $rules->addDelete(function () {
-                return false; 
+                return false;
             });
         });
         $entity = new Entity(['id' => 1, 'name' => 'PHP']);

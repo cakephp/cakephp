@@ -578,7 +578,7 @@ class HasManyTest extends TestCase
         $articles = $association->getTarget();
         $articles->getEventManager()->on('Model.buildRules', function ($event, $rules) {
             $rules->addDelete(function () {
-                return false; 
+                return false;
             });
         });
 
