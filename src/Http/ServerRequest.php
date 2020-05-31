@@ -800,7 +800,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * defined with Cake\Http\ServerRequest::addDetector(). Any detector can be called
      * as `is($type)` or `is$Type()`.
      *
-     * @param string|array $type The type of request you want to check. If an array
+     * @param string|string[] $type The type of request you want to check. If an array
      *   this method will return true if the request matches any type.
      * @param array ...$args List of arguments
      * @return bool Whether or not the request is the type you are checking.
@@ -808,9 +808,13 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     public function is($type, ...$args)
     {
         if (is_array($type)) {
-            $result = array_map([$this, 'is'], $type);
+            foreach ($type as $_type) {
+                if ($this->is($_type)) {
+                    return true;
+                }
+            }
 
-            return count(array_filter($result)) > 0;
+            return false;
         }
 
         $type = strtolower($type);
@@ -967,9 +971,13 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function isAll(array $types)
     {
-        $result = array_filter(array_map([$this, 'is'], $types));
+        foreach ($types as $type) {
+            if (!$this->is($type)) {
+                return false;
+            }
+        }
 
-        return count($result) === count($types);
+        return true;
     }
 
     /**
