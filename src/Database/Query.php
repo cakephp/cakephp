@@ -1202,7 +1202,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * Order fields are not suitable for use with user supplied data as they are
      * not sanitized by the query builder.
      *
-     * @param string|\Cake\Database\Expression\QueryExpression $field The field to order on.
+     * @param string|\Cake\Database\Expression\QueryExpression|callable $field The field to order on.
      * @param bool $overwrite Whether or not to reset the order clauses.
      * @return $this
      */
@@ -1218,6 +1218,11 @@ class Query implements ExpressionInterface, IteratorAggregate
         if (!$this->_parts['order']) {
             $this->_parts['order'] = new OrderByExpression();
         }
+
+        if ($this->_parts['order']->isCallable($field)) {
+            $field = $field($this->newExpr(), $this);
+        }
+
         $this->_parts['order']->add(new OrderClauseExpression($field, 'ASC'));
 
         return $this;
@@ -1232,7 +1237,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * Order fields are not suitable for use with user supplied data as they are
      * not sanitized by the query builder.
      *
-     * @param string|\Cake\Database\Expression\QueryExpression $field The field to order on.
+     * @param string|\Cake\Database\Expression\QueryExpression|callable $field The field to order on.
      * @param bool $overwrite Whether or not to reset the order clauses.
      * @return $this
      */
@@ -1248,6 +1253,11 @@ class Query implements ExpressionInterface, IteratorAggregate
         if (!$this->_parts['order']) {
             $this->_parts['order'] = new OrderByExpression();
         }
+
+        if ($this->_parts['order']->isCallable($field)) {
+            $field = $field($this->newExpr(), $this);
+        }
+
         $this->_parts['order']->add(new OrderClauseExpression($field, 'DESC'));
 
         return $this;
