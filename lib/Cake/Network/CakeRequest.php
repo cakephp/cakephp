@@ -508,14 +508,18 @@ class CakeRequest implements ArrayAccess {
  * defined with CakeRequest::addDetector(). Any detector can be called
  * as `is($type)` or `is$Type()`.
  *
- * @param string|array $type The type of request you want to check. If an array
+ * @param string|string[] $type The type of request you want to check. If an array
  *   this method will return true if the request matches any type.
  * @return bool Whether or not the request is the type you are checking.
  */
 	public function is($type) {
 		if (is_array($type)) {
-			$result = array_map(array($this, 'is'), $type);
-			return count(array_filter($result)) > 0;
+			foreach ($type as $_type) {
+				if ($this->is($_type)) {
+					return true;
+				}
+			}
+			return false;
 		}
 		$type = strtolower($type);
 		if (!isset($this->_detectors[$type])) {
@@ -643,8 +647,12 @@ class CakeRequest implements ArrayAccess {
  * @see CakeRequest::is()
  */
 	public function isAll(array $types) {
-		$result = array_filter(array_map(array($this, 'is'), $types));
-		return count($result) === count($types);
+		foreach ($types as $type) {
+			if (!$this->is($type)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 /**
