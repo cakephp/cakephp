@@ -2811,7 +2811,16 @@ class TableTest extends TestCase
             new Entity(['name' => 'dakota']),
         ];
 
-        $table = $this->getTableLocator()->get('authors');
+        $timesCalled = 0;
+        $listener = function ($e, $entity, $options) use (&$timesCalled) {
+            $timesCalled++;
+        };
+        $table = $this->getTableLocator()
+            ->get('authors');
+
+        $table->getEventManager()
+            ->on('Model.afterSaveCommit', $listener);
+
         $result = $table->saveMany($entities);
 
         $this->assertSame($entities, $result);
@@ -2819,6 +2828,7 @@ class TableTest extends TestCase
         foreach ($entities as $entity) {
             $this->assertFalse($entity->isNew());
         }
+        $this->assertSame(2, $timesCalled);
     }
 
     /**
