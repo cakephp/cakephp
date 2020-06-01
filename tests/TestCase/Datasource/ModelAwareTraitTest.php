@@ -16,8 +16,10 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Datasource;
 
 use Cake\Datasource\FactoryLocator;
+use Cake\Datasource\Locator\LocatorInterface;
 use Cake\Datasource\RepositoryInterface;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use TestApp\Model\Table\PaginatorPostsTable;
 use TestApp\Stub\Stub;
 
@@ -127,6 +129,30 @@ class ModelAwareTraitTest extends TestCase
         $this->assertInstanceOf(RepositoryInterface::class, $result);
         $this->assertInstanceOf(RepositoryInterface::class, $stub->Magic);
         $this->assertSame('Magic', $stub->Magic->name);
+
+        $locator = $this->getMockBuilder(LocatorInterface::class)->getMock();
+        $mock2 = $this->getMockBuilder(RepositoryInterface::class)->getMock();
+        $mock2->alias = 'Foo';
+        $locator->expects($this->any())
+            ->method('get')
+            ->willReturn($mock2);
+
+        $stub->modelFactory('MyType', $locator);
+        $result = $stub->loadModel('Foo', 'MyType');
+        $this->assertInstanceOf(RepositoryInterface::class, $result);
+        $this->assertSame('Foo', $stub->Foo->alias);
+    }
+
+    public function testModelFactoryException()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            '`$factory` must be an instance of Cake\Datasource\Locator\LocatorInterface or a callable.'
+            . ' Got type `string` instead.'
+        );
+
+        $stub = new Stub();
+        $stub->modelFactory('MyType', 'fail');
     }
 
     /**

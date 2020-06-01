@@ -134,7 +134,7 @@ class FlashComponent extends Component
      * @return void
      * @throws \Cake\Http\Exception\InternalErrorException If missing the flash message.
      */
-    public function __call(string $name, array $args): void
+    public function __call(string $name, array $args)
     {
         $element = Inflector::underscore($name);
 

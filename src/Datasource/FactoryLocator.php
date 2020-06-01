@@ -16,7 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Datasource;
 
-use Cake\ORM\TableRegistry;
+use Cake\Datasource\Locator\LocatorInterface;
+use Cake\ORM\Locator\TableLocator;
 use InvalidArgumentException;
 
 /**
@@ -27,7 +28,7 @@ class FactoryLocator
     /**
      * A list of model factory functions.
      *
-     * @var callable[]
+     * @var (callable|\Cake\Datasource\Locator\LocatorInterface)[]
      */
     protected static $_modelFactories = [];
 
@@ -35,11 +36,19 @@ class FactoryLocator
      * Register a callable to generate repositories of a given type.
      *
      * @param string $type The name of the repository type the factory function is for.
-     * @param callable $factory The factory function used to create instances.
+     * @param callable|\Cake\Datasource\Locator\LocatorInterface $factory The factory function used to create instances.
      * @return void
      */
-    public static function add(string $type, callable $factory): void
+    public static function add(string $type, $factory): void
     {
+        if (!$factory instanceof LocatorInterface && !is_callable($factory)) {
+            throw new InvalidArgumentException(sprintf(
+                '`$factory` must be an instance of Cake\Datasource\Locator\LocatorInterface or a callable.'
+                . ' Got type `%s` instead.',
+                getTypeName($factory)
+            ));
+        }
+
         static::$_modelFactories[$type] = $factory;
     }
 
@@ -59,12 +68,12 @@ class FactoryLocator
      *
      * @param string $type The repository type to get the factory for.
      * @throws \InvalidArgumentException If the specified repository type has no factory.
-     * @return callable The factory for the repository type.
+     * @return callable|\Cake\Datasource\Locator\LocatorInterface The factory for the repository type.
      */
-    public static function get(string $type): callable
+    public static function get(string $type)
     {
         if (!isset(static::$_modelFactories['Table'])) {
-            static::$_modelFactories['Table'] = [TableRegistry::getTableLocator(), 'get'];
+            static::$_modelFactories['Table'] = new TableLocator();
         }
 
         if (!isset(static::$_modelFactories[$type])) {

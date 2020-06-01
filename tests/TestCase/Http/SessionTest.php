@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Http;
 use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use RuntimeException;
 use TestApp\Http\Session\TestAppLibSession;
 use TestApp\Http\Session\TestWebSession;
 
@@ -145,6 +146,48 @@ class SessionTest extends TestCase
     {
         $session = new Session();
         $this->assertNull($session->read(''));
+    }
+
+    /**
+     * Tests read() with defaulting.
+     *
+     * @return void
+     */
+    public function testReadDefault()
+    {
+        $session = new Session();
+        $this->assertSame('bar', $session->read('foo', 'bar'));
+    }
+
+    /**
+     * Tests readOrFail()
+     *
+     * @return void
+     */
+    public function testReadOrFail()
+    {
+        $session = new Session();
+        $session->write('testing', '1,2,3');
+        $result = $session->readOrFail('testing');
+        $this->assertSame('1,2,3', $result);
+
+        $session->write('testing', ['1' => 'one', '2' => 'two', '3' => 'three']);
+        $result = $session->readOrFail('testing.1');
+        $this->assertSame('one', $result);
+    }
+
+    /**
+     * Tests readOrFail() with nonexistent value
+     *
+     * @return void
+     */
+    public function testReadOrFailException()
+    {
+        $session = new Session();
+
+        $this->expectException(RuntimeException::class);
+
+        $session->readOrFail('testing');
     }
 
     /**

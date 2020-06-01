@@ -294,7 +294,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
 
         $fNum = str_replace(
             ['year', 'month', 'week', 'day', 'hour', 'minute', 'second'],
-            [1, 2, 3, 4, 5, 6, 7],
+            ['1', '2', '3', '4', '5', '6', '7'],
             $fWord
         );
 

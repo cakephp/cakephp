@@ -34,7 +34,7 @@ class EncryptedCookieMiddlewareTest extends TestCase
 
     protected $middleware;
 
-    protected function _getCookieEncryptionKey()
+    protected function _getCookieEncryptionKey(): string
     {
         return 'super secret key that no one can guess';
     }

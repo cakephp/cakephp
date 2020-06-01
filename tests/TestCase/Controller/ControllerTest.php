@@ -22,7 +22,6 @@ use Cake\Event\Event;
 use Cake\Event\EventInterface;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\ORM\Table;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Laminas\Diactoros\Uri;
@@ -709,11 +708,8 @@ class ControllerTest extends TestCase
         $closure = $controller->getAction();
         $args = (new ReflectionFunction($closure))->getParameters();
 
-        $this->assertNull($args[0]->getClass());
-        $this->assertSame('passed', $args[0]->getName());
-
-        $this->assertSame(Table::class, $args[1]->getClass()->getName());
-        $this->assertSame('table', $args[1]->getName());
+        $this->assertSame('Parameter #0 [ <required> $passed ]', (string)$args[0]);
+        $this->assertSame('Parameter #1 [ <required> Cake\ORM\Table $table ]', (string)$args[1]);
     }
 
     /**
