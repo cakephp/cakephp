@@ -130,10 +130,15 @@ class ErrorHandlerTest extends TestCase
         $result = ob_get_clean();
 
         $this->assertRegExp('/<pre class="cake-error">/', $result);
-        $this->assertRegExp('/<b>Notice<\/b>/', $result);
-        $this->assertRegExp('/variable:\s+wrong/', $result);
+        if (version_compare(PHP_VERSION, '8.0.0-dev', '<')) {
+            $this->assertRegExp('/<b>Notice<\/b>/', $result);
+            $this->assertRegExp('/variable:\s+wrong/', $result);
+        } else {
+            $this->assertRegExp('/<b>Warning<\/b>/', $result);
+            $this->assertRegExp('/variable \$wrong/', $result);
+        }
         $this->assertStringContainsString(
-            'ErrorHandlerTest.php, line ' . (__LINE__ - 7),
+            'ErrorHandlerTest.php, line ' . (__LINE__ - 12),
             $result,
             'Should contain file and line reference'
         );
@@ -205,6 +210,8 @@ class ErrorHandlerTest extends TestCase
      */
     public function testErrorSuppressed()
     {
+        $this->skipIf(version_compare(PHP_VERSION, '8.0.0-dev', '>='));
+
         $errorHandler = new ErrorHandler();
         $errorHandler->register();
         $this->_restoreError = true;
@@ -232,11 +239,19 @@ class ErrorHandlerTest extends TestCase
         $out = $out + 1;
 
         $messages = $this->logger->read();
-        $this->assertRegExp('/^(notice|debug)/', $messages[0]);
-        $this->assertStringContainsString(
-            'Notice (8): Undefined variable: out in [' . __FILE__ . ', line ' . (__LINE__ - 5) . ']',
-            $messages[0]
-        );
+        $this->assertRegExp('/^(notice|debug|warning)/', $messages[0]);
+
+        if (version_compare(PHP_VERSION, '8.0.0-dev', '<')) {
+            $this->assertStringContainsString(
+                'Notice (8): Undefined variable: out in [' . __FILE__ . ', line ' . (__LINE__ - 7) . ']' . "\n\n",
+                $messages[0]
+            );
+        } else {
+            $this->assertStringContainsString(
+                'Warning (2): Undefined variable $out in [' . __FILE__ . ', line ' . (__LINE__ - 12) . ']' . "\n\n",
+                $messages[0]
+            );
+        }
     }
 
     /**
@@ -254,11 +269,18 @@ class ErrorHandlerTest extends TestCase
         $out = $out + 1;
 
         $messages = $this->logger->read();
-        $this->assertRegExp('/^(notice|debug)/', $messages[0]);
-        $this->assertStringContainsString(
-            'Notice (8): Undefined variable: out in [' . __FILE__ . ', line ' . (__LINE__ - 5) . ']',
-            $messages[0]
-        );
+        $this->assertRegExp('/^(notice|debug|warning)/', $messages[0]);
+        if (version_compare(PHP_VERSION, '8.0.0-dev', '<')) {
+            $this->assertStringContainsString(
+                'Notice (8): Undefined variable: out in [' . __FILE__ . ', line ' . (__LINE__ - 6) . ']',
+                $messages[0]
+            );
+        } else {
+            $this->assertStringContainsString(
+                'Warning (2): Undefined variable $out in [' . __FILE__ . ', line ' . (__LINE__ - 11) . ']',
+                $messages[0]
+            );
+        }
         $this->assertStringContainsString('Trace:', $messages[0]);
         $this->assertStringContainsString(__NAMESPACE__ . '\ErrorHandlerTest::testHandleErrorLoggingTrace()', $messages[0]);
         $this->assertStringContainsString('Request URL:', $messages[0]);

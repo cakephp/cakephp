@@ -3643,7 +3643,7 @@ class QueryTest extends TestCase
             ->select(['d' => $query->func()->dateDiff(['2012-01-05', '2012-01-02'])])
             ->execute()
             ->fetchAll('assoc');
-        $this->assertEquals(3, abs($result[0]['d']));
+        $this->assertEquals(3, abs((int)$result[0]['d']));
 
         $query = new Query($this->connection);
         $result = $query
