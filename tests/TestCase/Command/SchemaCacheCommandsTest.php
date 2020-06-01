@@ -25,7 +25,7 @@ use Cake\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
 /**
- * SchemacacheCommands test.
+ * SchemaCacheCommands test.
  */
 class SchemaCacheCommandsTest extends TestCase
 {

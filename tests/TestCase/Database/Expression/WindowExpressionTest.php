@@ -17,12 +17,12 @@ namespace Cake\Test\TestCase\Database\Expression;
 
 use Cake\Database\Expression\AggregateExpression;
 use Cake\Database\Expression\IdentifierExpression;
-use Cake\Database\Expression\OrderByExpression;
+use Cake\Database\Expression\OrderClauseExpression;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\WindowExpression;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
-use RuntimeException;
 
 /**
  * Tests WindowExpression class
@@ -68,26 +68,13 @@ class WindowExpressionTest extends TestCase
             $w->sql(new ValueBinder())
         );
 
-        $w = (new WindowExpression())->partition(function () {
-            return new AggregateExpression('MyAggregate', ['param']);
+        $w = (new WindowExpression())->partition(function (QueryExpression $expr) {
+            return $expr->add(new AggregateExpression('MyAggregate', ['param']));
         });
         $this->assertEqualsSql(
             'PARTITION BY MyAggregate(:param0)',
             $w->sql(new ValueBinder())
         );
-    }
-
-    /**
-     * Tests exception is thrown from invalid partition.
-     *
-     * @return void
-     */
-    public function testInvalidPartition()
-    {
-        $this->expectException(RuntimeException::class);
-        (new WindowExpression())->partition(function () {
-            return 'string';
-        });
     }
 
     /**
@@ -115,26 +102,17 @@ class WindowExpressionTest extends TestCase
             $w->sql(new ValueBinder())
         );
 
-        $w = (new WindowExpression())->order(function () {
-            return new OrderByExpression(['test']);
-        });
+        $w = (new WindowExpression())
+            ->order(function () {
+                return 'test';
+            })
+            ->order(function (QueryExpression $expr) {
+                return [$expr->add('test2'), new OrderClauseExpression(new IdentifierExpression('test3'), 'DESC')];
+            });
         $this->assertEqualsSql(
-            'ORDER BY test',
+            'ORDER BY test, test2, test3 DESC',
             $w->sql(new ValueBinder())
         );
-    }
-
-    /**
-     * Tests exception is thrown from invalid order.
-     *
-     * @return void
-     */
-    public function testInvalidOrder()
-    {
-        $this->expectException(RuntimeException::class);
-        (new WindowExpression())->order(function () {
-            return 'string';
-        });
     }
 
     /**

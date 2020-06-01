@@ -162,7 +162,7 @@ class Configure
      */
     public static function readOrFail(string $var)
     {
-        if (static::check($var) === false) {
+        if (!static::check($var)) {
             throw new RuntimeException(sprintf('Expected configuration key "%s" not found.', $var));
         }
 
@@ -202,7 +202,7 @@ class Configure
      */
     public static function consumeOrFail(string $var)
     {
-        if (static::check($var) === false) {
+        if (!static::check($var)) {
             throw new RuntimeException(sprintf('Expected configuration key "%s" not found.', $var));
         }
 

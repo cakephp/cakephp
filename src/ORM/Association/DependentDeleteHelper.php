@@ -49,7 +49,10 @@ class DependentDeleteHelper
 
         if ($association->getCascadeCallbacks()) {
             foreach ($association->find()->where($conditions)->all()->toList() as $related) {
-                $table->delete($related, $options);
+                $success = $table->delete($related, $options);
+                if (!$success) {
+                    return false;
+                }
             }
 
             return true;
