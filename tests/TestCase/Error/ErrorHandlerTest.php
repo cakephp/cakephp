@@ -243,12 +243,12 @@ class ErrorHandlerTest extends TestCase
 
         if (version_compare(PHP_VERSION, '8.0.0-dev', '<')) {
             $this->assertStringContainsString(
-                'Notice (8): Undefined variable: out in [' . __FILE__ . ', line ' . (__LINE__ - 7) . ']' . "\n\n",
+                'Notice (8): Undefined variable: out in [' . __FILE__ . ', line ' . (__LINE__ - 7) . ']',
                 $messages[0]
             );
         } else {
             $this->assertStringContainsString(
-                'Warning (2): Undefined variable $out in [' . __FILE__ . ', line ' . (__LINE__ - 12) . ']' . "\n\n",
+                'Warning (2): Undefined variable $out in [' . __FILE__ . ', line ' . (__LINE__ - 12) . ']',
                 $messages[0]
             );
         }
