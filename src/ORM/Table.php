@@ -2225,13 +2225,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
             throw new PersistenceFailedException($failed, ['saveMany']);
         }
-        
+
         if ($this->_transactionCommitted($options['atomic'], $options['_primary'])) {
             foreach ($entities as $entity) {
                 $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
             }
         }
-        
+
         return $entities;
     }
 
