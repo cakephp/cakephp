@@ -424,7 +424,7 @@ class Message implements JsonSerializable, Serializable
     }
 
     /**
-     * Return Path
+     * Sets return path.
      *
      * @param string|array $email String with email,
      *   Array with email as key, name as value or email as value (without name)
@@ -471,7 +471,7 @@ class Message implements JsonSerializable, Serializable
     }
 
     /**
-     * Add To
+     * Add "To" address.
      *
      * @param string|array $email Null to get, String with email,
      *   Array with email as key, name as value or email as value (without name)
@@ -507,7 +507,7 @@ class Message implements JsonSerializable, Serializable
     }
 
     /**
-     * Add Cc
+     * Add "cc" address.
      *
      * @param string|array $email Null to get, String with email,
      *   Array with email as key, name as value or email as value (without name)
@@ -543,7 +543,7 @@ class Message implements JsonSerializable, Serializable
     }
 
     /**
-     * Add Bcc
+     * Add "bcc" address.
      *
      * @param string|array $email Null to get, String with email,
      *   Array with email as key, name as value or email as value (without name)

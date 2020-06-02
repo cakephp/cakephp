@@ -35,11 +35,11 @@ use RuntimeException;
  *
  * Automatic generation of HTML FORMs from given data.
  *
- * @method string text(string $fieldName, array $options = [])
- * @method string number(string $fieldName, array $options = [])
- * @method string email(string $fieldName, array $options = [])
- * @method string password(string $fieldName, array $options = [])
- * @method string search(string $fieldName, array $options = [])
+ * @method string text(string $fieldName, array $options = []) Creates input of type text.
+ * @method string number(string $fieldName, array $options = []) Creates input of type number.
+ * @method string email(string $fieldName, array $options = []) Creates input of type email.
+ * @method string password(string $fieldName, array $options = []) Creates input of type password.
+ * @method string search(string $fieldName, array $options = []) Creates input of type search.
  * @property \Cake\View\Helper\HtmlHelper $Html
  * @property \Cake\View\Helper\UrlHelper $Url
  * @link https://book.cakephp.org/4/en/views/helpers/form.html
