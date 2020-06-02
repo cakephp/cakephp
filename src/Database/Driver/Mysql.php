@@ -253,15 +253,7 @@ class Mysql extends Driver
     public function supportsCTEs(): bool
     {
         if ($this->supportsCTEs === null) {
-            $version = $this->getVersion();
-            if (strpos($version, 'MariaDB') !== false) {
-                preg_match('/(\d+\.\d+.\d+)-MariaDB/i', $version, $matches);
-                $version = $matches[1];
-
-                $this->supportsCTEs = version_compare($version, '10.2.2', '>=');
-            } else {
-                $this->supportsCTEs = version_compare($version, '8.0.0', '>=');
-            }
+            $this->supportsCTEs = version_compare($this->getVersion(), '8.0.0', '>=');
         }
 
         return $this->supportsCTEs;
