@@ -274,9 +274,17 @@ class Inflector
             static::$_cache['irregular']['pluralize'] = '(?:' . implode('|', array_keys(static::$_irregular)) . ')';
         }
 
-        if (preg_match('/(.*?(?:\\b|_))(' . static::$_cache['irregular']['pluralize'] . ')$/i', $word, $regs)) {
-            static::$_cache['pluralize'][$word] = $regs[1] . substr($regs[2], 0, 1) .
+        $inflection = static::_detectInflection($word);
+        $normalizedWord = $word;
+        if ($inflection) {
+            $normalizedWord = Inflector::underscore($word);
+        }
+
+        if (preg_match('/(.*?(?:\\b|_))(' . static::$_cache['irregular']['pluralize'] . ')$/i', $normalizedWord, $regs)) {
+            $result = $regs[1] . substr($regs[2], 0, 1) .
                 substr(static::$_irregular[strtolower($regs[2])], 1);
+
+            static::$_cache['pluralize'][$word] = $inflection ? Inflector::$inflection($result) : $result;
 
             return static::$_cache['pluralize'][$word];
         }
@@ -319,10 +327,18 @@ class Inflector
             static::$_cache['irregular']['singular'] = '(?:' . implode('|', static::$_irregular) . ')';
         }
 
-        if (preg_match('/(.*?(?:\\b|_))(' . static::$_cache['irregular']['singular'] . ')$/i', $word, $regs)) {
+        $inflection = static::_detectInflection($word);
+        $normalizedWord = $word;
+        if ($inflection) {
+            $normalizedWord = Inflector::underscore($word);
+        }
+
+        if (preg_match('/(.*?(?:\\b|_))(' . static::$_cache['irregular']['singular'] . ')$/i', $normalizedWord, $regs)) {
             $suffix = array_search(strtolower($regs[2]), static::$_irregular, true);
             $suffix = $suffix ? substr($suffix, 1) : '';
-            static::$_cache['singularize'][$word] = $regs[1] . substr($regs[2], 0, 1) . $suffix;
+            $result = $regs[1] . substr($regs[2], 0, 1) . $suffix;
+
+            static::$_cache['singularize'][$word] = $inflection ? Inflector::$inflection($result) : $result;
 
             return static::$_cache['singularize'][$word];
         }
@@ -503,5 +519,26 @@ class Inflector
         }
 
         return $result;
+    }
+
+    /**
+     * @param string $word
+     * @return string|null
+     */
+    protected static function _detectInflection(string $word): ?string
+    {
+        $inflection = null;
+        if (strpos($word, ' ') !== false) {
+            return $inflection;
+        }
+
+        if (preg_match('#[A-Z]#', $word)) {
+            $inflection = 'camelize';
+        }
+        if ($inflection && preg_match('#^[a-z]#', $word)) {
+            $inflection = 'variable';
+        }
+
+        return $inflection;
     }
 }

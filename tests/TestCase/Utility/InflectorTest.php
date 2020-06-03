@@ -503,6 +503,7 @@ class InflectorTest extends TestCase
         $this->assertSame('test_criteria', Inflector::pluralize('test_criterion'));
         $this->assertSame('Criteria', Inflector::pluralize('Criterion'));
         $this->assertSame('TestCriteria', Inflector::pluralize('TestCriterion'));
+        $this->assertSame('Test Criteria', Inflector::pluralize('Test Criterion'));
     }
 
     /**
@@ -530,6 +531,7 @@ class InflectorTest extends TestCase
         $this->assertSame('test_criterion', Inflector::singularize('test_criteria'));
         $this->assertSame('Criterion', Inflector::singularize('Criteria'));
         $this->assertSame('TestCriterion', Inflector::singularize('TestCriteria'));
+        $this->assertSame('Test Criterion', Inflector::singularize('Test Criteria'));
     }
 
     /**
