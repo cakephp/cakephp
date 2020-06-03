@@ -522,7 +522,7 @@ class Inflector
     }
 
     /**
-     * @param string $word
+     * @param string $word Word
      * @return string|null
      */
     protected static function _detectInflection(string $word): ?string
