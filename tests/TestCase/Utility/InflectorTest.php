@@ -525,6 +525,11 @@ class InflectorTest extends TestCase
         $this->assertSame('inflecta', Inflector::singularize('inflectors'));
         $this->assertSame('contributa', Inflector::singularize('contributors'));
         $this->assertSame('singulars', Inflector::singularize('singulars'));
+
+        $this->assertSame('criterion', Inflector::singularize('criteria'));
+        $this->assertSame('test_criterion', Inflector::singularize('test_criteria'));
+        $this->assertSame('Criterion', Inflector::singularize('Criteria'));
+        $this->assertSame('TestCriterion', Inflector::singularize('TestCriteria'));
     }
 
     /**
