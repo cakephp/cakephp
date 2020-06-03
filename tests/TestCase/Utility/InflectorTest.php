@@ -498,6 +498,11 @@ class InflectorTest extends TestCase
         $this->assertSame('alertables', Inflector::pluralize('alert'));
         $this->assertSame('amazable', Inflector::pluralize('amaze'));
         $this->assertSame('phonezes', Inflector::pluralize('phone'));
+
+        $this->assertSame('criteria', Inflector::pluralize('criterion'));
+        $this->assertSame('test_criteria', Inflector::pluralize('test_criterion'));
+        $this->assertSame('Criteria', Inflector::pluralize('Criterion'));
+        $this->assertSame('TestCriteria', Inflector::pluralize('TestCriterion'));
     }
 
     /**
