@@ -416,7 +416,7 @@ class Inflector
      *
      * @param string $type Inflection type
      * @param string $key Original value
-     * @param string|bool $value Inflected value
+     * @param string|false $value Inflected value
      * @return string|false Inflected value on cache hit or false on cache miss.
      */
     protected static function _cache($type, $key, $value = false)
