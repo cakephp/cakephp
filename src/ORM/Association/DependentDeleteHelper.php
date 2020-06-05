@@ -58,6 +58,8 @@ class DependentDeleteHelper
             return true;
         }
 
-        return (bool)$association->deleteAll($conditions);
+        $association->deleteAll($conditions);
+
+        return true;
     }
 }
