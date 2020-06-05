@@ -271,29 +271,28 @@ class Inflector
         }
 
         if (!isset(static::$_cache['irregular']['pluralize'])) {
-            static::$_cache['irregular']['pluralize'] = '(?:' . implode('|', array_keys(static::$_irregular)) . ')';
+            $words = array_keys(static::$_irregular);
+            static::$_cache['irregular']['pluralize'] = '/(.*?(?:\\b|_))(' . implode('|', $words) . ')$/i';
+
+            $upperWords = array_map('ucfirst', $words);
+            static::$_cache['irregular']['upperPluralize'] = '/(.*?(?:\\b|[a-z]))(' . implode('|', $upperWords) . ')$/';
         }
 
-        $inflection = static::_detectInflection($word);
-        $normalizedWord = $word;
-        if ($inflection) {
-            $normalizedWord = Inflector::underscore($word);
-        }
-
-        if (preg_match('/(.*?(?:\\b|_))(' . static::$_cache['irregular']['pluralize'] . ')$/i', $normalizedWord, $regs)) {
-            $result = $regs[1] . substr($regs[2], 0, 1) .
+        if (
+            preg_match(static::$_cache['irregular']['pluralize'], $word, $regs) ||
+            preg_match(static::$_cache['irregular']['upperPluralize'], $word, $regs)
+        ) {
+            static::$_cache['pluralize'][$word] = $regs[1] . substr($regs[2], 0, 1) .
                 substr(static::$_irregular[strtolower($regs[2])], 1);
-
-            static::$_cache['pluralize'][$word] = $inflection ? Inflector::$inflection($result) : $result;
 
             return static::$_cache['pluralize'][$word];
         }
 
         if (!isset(static::$_cache['uninflected'])) {
-            static::$_cache['uninflected'] = '(?:' . implode('|', static::$_uninflected) . ')';
+            static::$_cache['uninflected'] = '/^(' . implode('|', static::$_uninflected) . ')$/i';
         }
 
-        if (preg_match('/^(' . static::$_cache['uninflected'] . ')$/i', $word, $regs)) {
+        if (preg_match(static::$_cache['uninflected'], $word, $regs)) {
             static::$_cache['pluralize'][$word] = $word;
 
             return $word;
@@ -324,30 +323,29 @@ class Inflector
         }
 
         if (!isset(static::$_cache['irregular']['singular'])) {
-            static::$_cache['irregular']['singular'] = '(?:' . implode('|', static::$_irregular) . ')';
+            $wordList = array_values(static::$_irregular);
+            static::$_cache['irregular']['singular'] = '/(.*?(?:\\b|_))(' . implode('|', $wordList) . ')$/i';
+
+            $upperWordList = array_map('ucfirst', $wordList);
+            static::$_cache['irregular']['singularUpper'] = '/(.*?(?:\\b|[a-z]))(' . implode('|', $upperWordList) . ')$/';
         }
 
-        $inflection = static::_detectInflection($word);
-        $normalizedWord = $word;
-        if ($inflection) {
-            $normalizedWord = Inflector::underscore($word);
-        }
-
-        if (preg_match('/(.*?(?:\\b|_))(' . static::$_cache['irregular']['singular'] . ')$/i', $normalizedWord, $regs)) {
+        if (
+            preg_match(static::$_cache['irregular']['singular'], $word, $regs) ||
+            preg_match(static::$_cache['irregular']['singularUpper'], $word, $regs)
+        ) {
             $suffix = array_search(strtolower($regs[2]), static::$_irregular, true);
             $suffix = $suffix ? substr($suffix, 1) : '';
-            $result = $regs[1] . substr($regs[2], 0, 1) . $suffix;
-
-            static::$_cache['singularize'][$word] = $inflection ? Inflector::$inflection($result) : $result;
+            static::$_cache['singularize'][$word] = $regs[1] . substr($regs[2], 0, 1) . $suffix;
 
             return static::$_cache['singularize'][$word];
         }
 
         if (!isset(static::$_cache['uninflected'])) {
-            static::$_cache['uninflected'] = '(?:' . implode('|', static::$_uninflected) . ')';
+            static::$_cache['uninflected'] = '/^(' . implode('|', static::$_uninflected) . ')$/i';
         }
 
-        if (preg_match('/^(' . static::$_cache['uninflected'] . ')$/i', $word, $regs)) {
+        if (preg_match(static::$_cache['uninflected'], $word, $regs)) {
             static::$_cache['pluralize'][$word] = $word;
 
             return $word;
