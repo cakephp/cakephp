@@ -327,7 +327,9 @@ class Inflector
             static::$_cache['irregular']['singular'] = '/(.*?(?:\\b|_))(' . implode('|', $wordList) . ')$/i';
 
             $upperWordList = array_map('ucfirst', $wordList);
-            static::$_cache['irregular']['singularUpper'] = '/(.*?(?:\\b|[a-z]))(' . implode('|', $upperWordList) . ')$/';
+            static::$_cache['irregular']['singularUpper'] = '/(.*?(?:\\b|[a-z]))(' .
+                implode('|', $upperWordList) .
+                ')$/';
         }
 
         if (
