@@ -22,7 +22,6 @@ use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Xml;
 
@@ -339,7 +338,7 @@ class XmlViewTest extends TestCase
         $Response = new Response();
         $Controller = new Controller($Request, $Response);
 
-        $data = TableRegistry::getTableLocator()->get('Authors')
+        $data = $this->getTableLocator()->get('Authors')
             ->find('all')
             ->where(['id' => 1]);
         $Controller->set(['authors' => $data]);
