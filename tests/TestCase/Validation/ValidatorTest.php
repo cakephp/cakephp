@@ -2392,6 +2392,42 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Tests the notalphanumeric proxy method
+     *
+     * @return void
+     */
+    public function testNotAlphanumeric()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'notAlphaNumeric');
+        $this->assertEmpty($validator->validate(['username' => '$']));
+    }
+
+    /**
+     * Tests the asciialphanumeric proxy method
+     *
+     * @return void
+     */
+    public function testAsciiAlphanumeric()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'asciiAlphaNumeric');
+        $this->assertNotEmpty($validator->validate(['username' => '$']));
+    }
+
+    /**
+     * Tests the notalphanumeric proxy method
+     *
+     * @return void
+     */
+    public function testNotAsciiAlphanumeric()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'notAsciiAlphaNumeric');
+        $this->assertEmpty($validator->validate(['username' => '$']));
+    }
+
+    /**
      * Tests the lengthBetween proxy method
      *
      * @return void
