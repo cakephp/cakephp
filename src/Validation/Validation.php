@@ -181,7 +181,7 @@ class Validation
      * @param mixed $check Value to check
      * @return bool Success
      */
-    public static function notAlphaNumeric($check): bool
+    public static function notAlphaNumeric($check)
     {
         return !static::alphaNumeric($check);
     }
@@ -192,7 +192,7 @@ class Validation
      * @param mixed $check Value to check
      * @return bool Success
      */
-    public static function asciiAlphaNumeric($check): bool
+    public static function asciiAlphaNumeric($check)
     {
         if ((empty($check) && $check !== '0') || !is_scalar($check)) {
             return false;
@@ -207,7 +207,7 @@ class Validation
      * @param mixed $check Value to check
      * @return bool Success
      */
-    public static function notAsciiAlphaNumeric($check): bool
+    public static function notAsciiAlphaNumeric($check)
     {
         return !static::asciiAlphaNumeric($check);
     }
