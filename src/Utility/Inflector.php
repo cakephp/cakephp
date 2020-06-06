@@ -520,25 +520,4 @@ class Inflector
 
         return $result;
     }
-
-    /**
-     * @param string $word Word
-     * @return string|null
-     */
-    protected static function _detectInflection(string $word): ?string
-    {
-        $inflection = null;
-        if (strpos($word, ' ') !== false) {
-            return $inflection;
-        }
-
-        if (preg_match('#[A-Z]#', $word)) {
-            $inflection = 'camelize';
-        }
-        if ($inflection && preg_match('#^[a-z]#', $word)) {
-            $inflection = 'variable';
-        }
-
-        return $inflection;
-    }
 }
