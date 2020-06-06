@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
  */
 class CurlTest extends TestCase
 {
-
     public function setUp()
     {
         parent::setUp();

@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
  */
 class OauthTest extends TestCase
 {
-
     private $privateKeyString = '-----BEGIN RSA PRIVATE KEY-----
 MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBALRiMLAh9iimur8V
 A7qVvdqxevEuUkW4K+2KdMXmnQbG9Aa7k7eBjK1S+0LYmVjPKlJGNXHDGuy5Fw/d

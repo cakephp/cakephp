@@ -25,7 +25,6 @@ use JsonSerializable;
  */
 class StringObject
 {
-
     /**
      * String representation of the object
      *
@@ -42,7 +41,6 @@ class StringObject
  */
 class JsonObject implements JsonSerializable
 {
-
     /**
      * String representation of the object
      *
@@ -59,7 +57,6 @@ class JsonObject implements JsonSerializable
  */
 class FileLogTest extends TestCase
 {
-
     /**
      * testLogFileWriting method
      *

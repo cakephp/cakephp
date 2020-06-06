@@ -707,7 +707,6 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     /**
      * Magic set method allows backward compatibility for former public properties
      *
-     *
      * @param string $name The property being accessed.
      * @param mixed $value The property value.
      * @return mixed Either the value of the parameter or null.

@@ -85,7 +85,6 @@ class BinaryTypeTest extends TestCase
 
     /**
      * Test exceptions on invalid data.
-     *
      */
     public function testToPHPFailure()
     {

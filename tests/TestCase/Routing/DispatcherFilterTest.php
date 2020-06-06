@@ -25,7 +25,6 @@ use Cake\TestSuite\TestCase;
  */
 class DispatcherFilterTest extends TestCase
 {
-
     /**
      * Test that the constructor takes config.
      *

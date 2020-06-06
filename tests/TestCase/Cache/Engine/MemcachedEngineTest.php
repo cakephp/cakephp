@@ -24,7 +24,6 @@ use Memcached;
  */
 class MemcachedEngineTest extends TestCase
 {
-
     /**
      * setUp method
      *

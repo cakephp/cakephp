@@ -46,7 +46,6 @@ class_alias(__NAMESPACE__ . '\TestBananaTask', 'Cake\Shell\Task\TestBananaTask')
  */
 class ShellTest extends TestCase
 {
-
     /**
      * Fixtures used in this test case
      *

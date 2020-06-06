@@ -24,7 +24,6 @@ use TestApp\Model\Entity\NonExtending;
  */
 class EntityTest extends TestCase
 {
-
     /**
      * Tests setting a single property in an entity without custom setters
      *

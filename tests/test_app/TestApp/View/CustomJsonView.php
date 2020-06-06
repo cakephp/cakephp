@@ -20,5 +20,4 @@ use Cake\View\JsonView;
  */
 class CustomJsonView extends JsonView
 {
-
 }

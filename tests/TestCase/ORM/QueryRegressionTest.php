@@ -28,7 +28,6 @@ use Cake\TestSuite\TestCase;
  */
 class QueryRegressionTest extends TestCase
 {
-
     /**
      * Fixture to be used
      *
@@ -260,6 +259,7 @@ class QueryRegressionTest extends TestCase
      * Test for https://github.com/cakephp/cakephp/issues/3626
      *
      * Checks that join data is actually created and not tried to be updated every time
+     *
      * @return void
      */
     public function testCreateJointData()

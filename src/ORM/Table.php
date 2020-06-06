@@ -425,6 +425,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
     /**
      * {@inheritDoc}
+     *
      * @deprecated 3.4.0 Use setAlias()/getAlias() instead.
      */
     public function alias($alias = null)
@@ -2336,7 +2337,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * The options argument will be converted into an \ArrayObject instance
      * for the duration of the callbacks, this allows listeners to modify
      * the options used in the delete operation.
-     *
      */
     public function delete(EntityInterface $entity, $options = [])
     {
@@ -2530,7 +2530,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Returns true if the finder exists for the table
      *
      * @param string $type name of finder to check
-     *
      * @return bool
      */
     public function hasFinder($type)

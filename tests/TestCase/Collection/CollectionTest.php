@@ -90,7 +90,6 @@ class CountableIterator extends \IteratorIterator implements \Countable
  */
 class CollectionTest extends TestCase
 {
-
     /**
      * Tests that it is possible to convert an array into a collection
      *

@@ -21,7 +21,6 @@ use Cake\TestSuite\Fixture\TestFixture;
  */
 class DateKeysFixture extends TestFixture
 {
-
     /**
      * fields property
      *

@@ -27,7 +27,6 @@ use Cake\TestSuite\TestCase;
  */
 class CsrfComponentTest extends TestCase
 {
-
     /**
      * setup
      *

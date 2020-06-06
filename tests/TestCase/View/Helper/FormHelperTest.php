@@ -41,7 +41,6 @@ class Article extends Entity
  */
 class ContactsTable extends Table
 {
-
     /**
      * Default schema
      *
@@ -77,7 +76,6 @@ class ContactsTable extends Table
  */
 class ValidateUsersTable extends Table
 {
-
     /**
      * schema method
      *
@@ -117,7 +115,6 @@ class ValidateUsersTable extends Table
  */
 class FormHelperTest extends TestCase
 {
-
     /**
      * Fixtures to be used
      *
@@ -466,10 +463,8 @@ class FormHelperTest extends TestCase
      * Test default context selection in create()
      *
      * @dataProvider contextSelectionProvider
-     *
      * @param mixed $data
      * @param string $class
-     *
      * @return void
      */
     public function testCreateContextSelectionBuiltIn($data, $class)
@@ -967,7 +962,6 @@ class FormHelperTest extends TestCase
 
     /**
      * Test base form URL when url param is passed with multiple parameters (&)
-     *
      */
     public function testCreateQueryStringRequest()
     {

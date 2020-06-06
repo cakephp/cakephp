@@ -25,7 +25,6 @@ use Cake\View\View;
 
 class TestHelper extends Helper
 {
-
     /**
      * Settings for this helper.
      *
@@ -49,7 +48,6 @@ class TestHelper extends Helper
  */
 class HelperTest extends TestCase
 {
-
     /**
      * @var \Cake\View\View
      */

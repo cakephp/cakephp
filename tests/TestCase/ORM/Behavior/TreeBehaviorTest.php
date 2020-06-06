@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
  */
 class TreeBehaviorTest extends TestCase
 {
-
     /**
      * fixtures
      *

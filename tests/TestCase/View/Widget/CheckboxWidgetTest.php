@@ -23,7 +23,6 @@ use Cake\View\Widget\CheckboxWidget;
  */
 class CheckboxWidgetTest extends TestCase
 {
-
     /**
      * setup method.
      *

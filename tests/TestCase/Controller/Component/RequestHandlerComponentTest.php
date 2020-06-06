@@ -35,7 +35,6 @@ use Zend\Diactoros\Stream;
  */
 class RequestHandlerComponentTest extends TestCase
 {
-
     /**
      * @var RequestHandlerTestController
      */

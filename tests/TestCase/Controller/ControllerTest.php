@@ -33,7 +33,6 @@ use TestPlugin\Controller\TestPluginController;
  */
 class ControllerTestAppController extends Controller
 {
-
     /**
      * helpers property
      *
@@ -61,7 +60,6 @@ class ControllerTestAppController extends Controller
  */
 class TestController extends ControllerTestAppController
 {
-
     /**
      * Theme property
      *
@@ -159,7 +157,6 @@ class TestController extends ControllerTestAppController
  */
 class TestComponent extends Component
 {
-
     /**
      * beforeRedirect method
      *
@@ -226,7 +223,6 @@ class AnotherTestController extends ControllerTestAppController
  */
 class ControllerTest extends TestCase
 {
-
     /**
      * fixtures property
      *

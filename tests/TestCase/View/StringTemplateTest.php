@@ -20,7 +20,6 @@ use Cake\View\StringTemplate;
 
 class StringTemplateTest extends TestCase
 {
-
     /**
      * setUp
      *
@@ -200,7 +199,6 @@ class StringTemplateTest extends TestCase
 
     /**
      * Test that loading non-existing templates causes errors.
-     *
      */
     public function testLoadErrorNoFile()
     {

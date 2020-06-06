@@ -23,7 +23,6 @@ use PDO;
  */
 class PostgresTest extends TestCase
 {
-
     /**
      * Test connecting to Postgres with default configuration
      *

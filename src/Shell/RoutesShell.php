@@ -86,6 +86,7 @@ class RoutesShell extends Shell
      * Generate a URL based on a set of parameters
      *
      * Takes variadic arguments of key/value pairs.
+     *
      * @return bool Success
      */
     public function generate()

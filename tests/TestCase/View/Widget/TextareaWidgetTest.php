@@ -23,7 +23,6 @@ use Cake\View\Widget\TextareaWidget;
  */
 class TextareaWidgetTest extends TestCase
 {
-
     /**
      * setup
      *

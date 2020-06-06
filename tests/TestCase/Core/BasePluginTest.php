@@ -30,7 +30,6 @@ use TestPlugin\Plugin as TestPlugin;
  */
 class BasePluginTest extends TestCase
 {
-
     /**
      * tearDown method
      *

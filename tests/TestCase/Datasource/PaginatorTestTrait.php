@@ -23,7 +23,6 @@ use Cake\ORM\Entity;
 
 trait PaginatorTestTrait
 {
-
     /**
      * @var \Cake\Datasource\Paginator
      */

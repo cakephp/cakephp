@@ -22,7 +22,6 @@ use Cake\TestSuite\Fixture\TestFixture;
  */
 class TagsFixture extends TestFixture
 {
-
     /**
      * fields property
      *

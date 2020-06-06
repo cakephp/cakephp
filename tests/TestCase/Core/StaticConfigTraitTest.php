@@ -84,7 +84,6 @@ class TestLogStaticConfig
  */
 class StaticConfigTraitTest extends TestCase
 {
-
     /**
      * setup method
      *

@@ -29,7 +29,6 @@ use Cake\TestSuite\TestCase;
  */
 class RoutingFilterTest extends TestCase
 {
-
     /**
      * test setting parameters in beforeDispatch method
      *

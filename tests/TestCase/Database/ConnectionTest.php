@@ -36,7 +36,6 @@ use ReflectionProperty;
  */
 class ConnectionTest extends TestCase
 {
-
     public $fixtures = ['core.Things'];
 
     /**
@@ -492,6 +491,7 @@ class ConnectionTest extends TestCase
 
     /**
      * Tests delete from table with conditions
+     *
      * @return void
      */
     public function testDeleteWithConditions()

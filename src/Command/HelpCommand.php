@@ -134,7 +134,6 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
 
     /**
      * @param string[] $names Names
-     *
      * @return string|null
      */
     protected function findPrefixedName(array $names)

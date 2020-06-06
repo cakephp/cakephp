@@ -21,7 +21,6 @@ use Cake\Http\Response;
  */
 class SomePagesController extends Controller
 {
-
     /**
      * display method
      *

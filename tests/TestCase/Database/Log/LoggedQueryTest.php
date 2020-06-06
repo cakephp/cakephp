@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
  */
 class LoggedQueryTest extends TestCase
 {
-
     /**
      * Tests that LoggedQuery can be converted to string
      *

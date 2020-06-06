@@ -1112,7 +1112,6 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * Calling this method at the same time that you are iterating this collections, for example in
      * a foreach, will result in undefined behavior. Avoid doing this.
      *
-     *
      * @return int
      */
     public function count();

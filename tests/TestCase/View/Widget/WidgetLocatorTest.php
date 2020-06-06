@@ -25,7 +25,6 @@ use Cake\View\Widget\WidgetLocator;
  */
 class WidgetLocatorTestCase extends TestCase
 {
-
     /**
      * setup method
      *

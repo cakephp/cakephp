@@ -29,7 +29,6 @@ class DebuggerTestCaseDebugger extends Debugger
 
 class DebuggableThing
 {
-
     public function __debugInfo()
     {
         return ['foo' => 'bar', 'inner' => new self()];
@@ -49,7 +48,6 @@ class SecurityThing
  */
 class DebuggerTest extends TestCase
 {
-
     protected $_restoreError = false;
 
     /**

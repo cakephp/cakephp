@@ -24,7 +24,6 @@ use Cake\Utility\Text;
  */
 class TableUuidTest extends TestCase
 {
-
     /**
      * Fixtures
      *

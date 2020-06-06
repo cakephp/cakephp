@@ -126,7 +126,6 @@ class CommandCollectionTest extends TestCase
 
     /**
      * Instances that are not shells should fail.
-     *
      */
     public function testAddInvalidInstance()
     {
@@ -172,7 +171,6 @@ class CommandCollectionTest extends TestCase
 
     /**
      * Class names that are not shells should fail
-     *
      */
     public function testInvalidShellClassName()
     {

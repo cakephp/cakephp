@@ -158,7 +158,6 @@ trait ModelAwareTrait
      * Set the model type to be used by this class
      *
      * @param string $modelType The model type
-     *
      * @return $this
      */
     public function setModelType($modelType)
@@ -173,7 +172,6 @@ trait ModelAwareTrait
      *
      * @deprecated 3.5.0 Use getModelType()/setModelType() instead.
      * @param string|null $modelType The model type or null to retrieve the current
-     *
      * @return string|$this
      */
     public function modelType($modelType = null)

@@ -23,7 +23,6 @@ use Cake\Utility\Security;
  */
 class WeakPasswordHasherTest extends TestCase
 {
-
     /**
      * setUp method
      *

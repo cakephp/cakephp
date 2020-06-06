@@ -25,7 +25,6 @@ use Cake\TestSuite\TestCase;
  */
 class ConsoleOptionParserTest extends TestCase
 {
-
     /**
      * test setting the console description
      *

@@ -68,7 +68,6 @@ trait EmailTrait
     }
 
     /**
-     *
      * Asserts that no emails were sent
      *
      * @param string $message Message

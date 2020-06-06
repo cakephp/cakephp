@@ -218,7 +218,6 @@ class SqliteSchema extends BaseSchema
      * additional queries are done here. Sqlite constraint names are not
      * stable, and the names for constraints will not match those used to create
      * the table. This is a limitation in Sqlite's metadata features.
-     *
      */
     public function convertIndexDescription(TableSchema $schema, $row)
     {
@@ -396,7 +395,6 @@ class SqliteSchema extends BaseSchema
      *
      * Note integer primary keys will return ''. This is intentional as Sqlite requires
      * that integer primary keys be defined in the column definition.
-     *
      */
     public function constraintSql(TableSchema $schema, $name)
     {

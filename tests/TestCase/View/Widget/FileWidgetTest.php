@@ -23,7 +23,6 @@ use Cake\View\Widget\FileWidget;
  */
 class FileWidgetTest extends TestCase
 {
-
     /**
      * setup
      *

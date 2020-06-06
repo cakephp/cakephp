@@ -25,7 +25,6 @@ use Cake\View\View;
  */
 class TextHelperTestObject extends TextHelper
 {
-
     public function attach(StringMock $string)
     {
         $this->_engine = $string;
@@ -49,7 +48,6 @@ class StringMock
  */
 class TextHelperTest extends TestCase
 {
-
     /**
      * @var \Cake\View\Helper\TextHelper
      */

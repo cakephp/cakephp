@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
  */
 class MapReduceTest extends TestCase
 {
-
     /**
      * Tests the creation of an inversed index of words to documents using
      * MapReduce

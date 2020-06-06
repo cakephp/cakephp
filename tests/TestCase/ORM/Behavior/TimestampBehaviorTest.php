@@ -28,7 +28,6 @@ use PHPUnit\Framework\Error\Deprecated;
  */
 class TimestampBehaviorTest extends TestCase
 {
-
     /**
      * autoFixtures
      *

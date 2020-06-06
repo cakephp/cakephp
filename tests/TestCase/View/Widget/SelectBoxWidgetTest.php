@@ -24,7 +24,6 @@ use Cake\View\Widget\SelectBoxWidget;
  */
 class SelectBoxWidgetTest extends TestCase
 {
-
     /**
      * setup method.
      *

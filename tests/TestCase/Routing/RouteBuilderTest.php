@@ -29,7 +29,6 @@ use RuntimeException;
  */
 class RouteBuilderTest extends TestCase
 {
-
     /**
      * Setup method
      *

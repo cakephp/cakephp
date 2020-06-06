@@ -23,7 +23,6 @@ use Cake\TestSuite\ConsoleIntegrationTestCase;
  */
 class CacheShellTest extends ConsoleIntegrationTestCase
 {
-
     /**
      * setup method
      *

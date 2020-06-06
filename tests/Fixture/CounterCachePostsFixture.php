@@ -21,7 +21,6 @@ use Cake\TestSuite\Fixture\TestFixture;
  */
 class CounterCachePostsFixture extends TestFixture
 {
-
     public $fields = [
         'id' => ['type' => 'integer'],
         'title' => ['type' => 'string', 'length' => 255],

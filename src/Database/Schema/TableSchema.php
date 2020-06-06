@@ -487,6 +487,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
 
     /**
      * {@inheritDoc}
+     *
      * @throws \Cake\Database\Exception
      */
     public function addIndex($name, $attrs)
@@ -572,6 +573,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
 
     /**
      * {@inheritDoc}
+     *
      * @throws \Cake\Database\Exception
      */
     public function addConstraint($name, $attrs)

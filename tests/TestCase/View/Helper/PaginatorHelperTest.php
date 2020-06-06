@@ -27,7 +27,6 @@ use Cake\View\View;
  */
 class PaginatorHelperTest extends TestCase
 {
-
     /**
      * @var string
      */

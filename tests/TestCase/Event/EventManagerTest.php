@@ -26,7 +26,6 @@ use TestApp\Event\TestEvent;
  */
 class EventTestListener
 {
-
     public $callList = [];
 
     /**
@@ -66,7 +65,6 @@ class EventTestListener
  */
 class CustomTestEventListenerInterface extends EventTestListener implements EventListenerInterface
 {
-
     public function implementedEvents()
     {
         return [
@@ -95,7 +93,6 @@ class CustomTestEventListenerInterface extends EventTestListener implements Even
  */
 class EventManagerTest extends TestCase
 {
-
     /**
      * @return void
      */
@@ -746,6 +743,7 @@ class EventManagerTest extends TestCase
     /**
      * Tests events dispatched by a local manager can be handled by
      * handler registered in the global event manager
+     *
      * @triggers my_event $manager
      */
     public function testDispatchLocalHandledByGlobal()

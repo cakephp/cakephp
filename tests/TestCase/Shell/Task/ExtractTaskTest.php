@@ -28,7 +28,6 @@ use PHPUnit\Framework\MockObject\MockObject;
  */
 class ExtractTaskTest extends TestCase
 {
-
     /**
      * setUp method
      *
@@ -388,6 +387,7 @@ class ExtractTaskTest extends TestCase
 
     /**
      * A useful function to mock/replace err or out function that allows to use expectOutput
+     *
      * @param string $val
      * @param int $nbLines
      */

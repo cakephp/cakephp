@@ -22,7 +22,6 @@ use Cake\TestSuite\Fixture\TestFixture;
  */
 class SessionsFixture extends TestFixture
 {
-
     /**
      * fields property
      *

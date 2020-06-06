@@ -22,7 +22,6 @@ use Cake\Controller\Controller;
  */
 class CommentsController extends Controller
 {
-
     /**
      * components
      *

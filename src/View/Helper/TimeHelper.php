@@ -162,7 +162,6 @@ class TimeHelper extends Helper
      * @param int|string|\DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
      * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
      * @return bool True if datetime string was yesterday
-     *
      */
     public function wasYesterday($dateString, $timezone = null)
     {

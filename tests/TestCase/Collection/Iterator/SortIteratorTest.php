@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
  */
 class SortIteratorTest extends TestCase
 {
-
     /**
      * Tests sorting numbers with an identity callbacks
      *

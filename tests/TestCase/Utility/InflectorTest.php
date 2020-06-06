@@ -22,7 +22,6 @@ use Cake\Utility\Inflector;
  */
 class InflectorTest extends TestCase
 {
-
     /**
      * A list of chars to test transliteration.
      *

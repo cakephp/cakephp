@@ -29,7 +29,6 @@ class Translator extends BaseTranslator
     /**
      * Translates the message formatting any placeholders
      *
-     *
      * @param string $key The message key.
      * @param array $tokensValues Token values to interpolate into the
      *   message.

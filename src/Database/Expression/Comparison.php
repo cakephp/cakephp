@@ -164,7 +164,6 @@ class Comparison implements ExpressionInterface, FieldInterface
 
     /**
      * {@inheritDoc}
-     *
      */
     public function traverse(callable $visitor)
     {

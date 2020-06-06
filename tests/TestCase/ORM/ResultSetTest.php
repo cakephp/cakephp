@@ -28,7 +28,6 @@ use TestApp\Model\Entity\Article;
  */
 class ResultSetTest extends TestCase
 {
-
     public $fixtures = ['core.Articles', 'core.Authors', 'core.Comments'];
 
     /**

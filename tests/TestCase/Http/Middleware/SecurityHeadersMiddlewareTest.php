@@ -24,7 +24,6 @@ use Laminas\Diactoros\Response;
  */
 class SecurityHeadersMiddlewareTest extends TestCase
 {
-
     /**
      * Test adding the security headers
      *

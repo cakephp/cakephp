@@ -22,7 +22,6 @@ use Cake\Utility\Crypto\Mcrypt;
  */
 class McryptTest extends TestCase
 {
-
     /**
      * Setup function.
      *

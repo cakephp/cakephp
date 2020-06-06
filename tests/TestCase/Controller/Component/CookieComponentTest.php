@@ -27,7 +27,6 @@ use Cake\Utility\Security;
  */
 class CookieComponentTest extends TestCase
 {
-
     /**
      * @var \Cake\Controller\Component\CookieComponent
      */

@@ -28,7 +28,6 @@ use InvalidArgumentException;
  */
 class EagerLoaderTest extends TestCase
 {
-
     /**
      * setUp method
      *

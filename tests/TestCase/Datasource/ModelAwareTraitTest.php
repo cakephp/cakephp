@@ -36,7 +36,6 @@ class Stub
  */
 class ModelAwareTraitTest extends TestCase
 {
-
     /**
      * Test set modelClass
      *

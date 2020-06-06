@@ -24,7 +24,6 @@ use PDO;
  */
 class SqlserverTest extends TestCase
 {
-
     /**
      * Set up
      *

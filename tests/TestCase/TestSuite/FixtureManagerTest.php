@@ -29,7 +29,6 @@ use PDOException;
  */
 class FixtureManagerTest extends TestCase
 {
-
     /**
      * Setup method
      *
@@ -283,7 +282,6 @@ class FixtureManagerTest extends TestCase
 
     /**
      * Test that unknown types are handled gracefully.
-     *
      */
     public function testFixturizeInvalidType()
     {

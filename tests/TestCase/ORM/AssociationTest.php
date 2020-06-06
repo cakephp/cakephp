@@ -24,7 +24,6 @@ use Cake\TestSuite\TestCase;
  */
 class TestTable extends Table
 {
-
     public function initialize(array $config = [])
     {
         $this->setSchema(['id' => ['type' => 'integer']]);
@@ -41,7 +40,6 @@ class TestTable extends Table
  */
 class AssociationTest extends TestCase
 {
-
     /**
      * @var \Cake\ORM\Association|\PHPUnit_Framework_MockObject_MockObject
      */

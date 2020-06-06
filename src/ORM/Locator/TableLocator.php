@@ -350,7 +350,6 @@ class TableLocator implements LocatorInterface
      *
      * @param string $location Location to add.
      * @return $this
-     *
      * @since 3.8.0
      */
     public function addLocation($location)

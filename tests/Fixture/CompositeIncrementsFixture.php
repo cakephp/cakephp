@@ -18,7 +18,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 
 class CompositeIncrementsFixture extends TestFixture
 {
-
     /**
      * fields property
      *

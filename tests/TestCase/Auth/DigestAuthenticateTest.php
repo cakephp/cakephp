@@ -40,7 +40,6 @@ class ProtectedUser extends Entity
  */
 class DigestAuthenticateTest extends TestCase
 {
-
     /**
      * Fixtures
      *

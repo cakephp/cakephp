@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
  */
 class MessagesFileLoaderTest extends TestCase
 {
-
     /**
      * Set Up
      *
@@ -67,6 +66,7 @@ class MessagesFileLoaderTest extends TestCase
 
     /**
      * Test reading MO files
+     *
      * @return void
      */
     public function testLoadingMoFiles()

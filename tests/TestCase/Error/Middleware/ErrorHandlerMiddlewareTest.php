@@ -81,7 +81,6 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
     /**
      * Test an invalid rendering class.
-     *
      */
     public function testInvalidRenderer()
     {

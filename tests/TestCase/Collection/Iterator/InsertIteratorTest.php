@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
  */
 class InsertIteratorTest extends TestCase
 {
-
     /**
      * Test insert simple path
      *

@@ -1097,7 +1097,6 @@ class View implements EventDispatcherInterface
      * Check if a block exists
      *
      * @param string $name Name of the block
-     *
      * @return bool
      */
     public function exists($name)

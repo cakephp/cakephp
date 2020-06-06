@@ -22,7 +22,6 @@ use Psr\Http\Message\UploadedFileInterface;
  */
 class RequestActionController extends AppController
 {
-
     /**
      * The default model to use.
      *

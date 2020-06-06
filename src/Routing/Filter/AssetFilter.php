@@ -43,7 +43,6 @@ class AssetFilter extends DispatcherFilter
     protected $_cacheTime = '+1 day';
 
     /**
-     *
      * Constructor.
      *
      * @param array $config Array of config.

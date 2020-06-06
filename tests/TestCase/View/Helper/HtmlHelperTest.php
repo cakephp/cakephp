@@ -27,7 +27,6 @@ use Cake\View\Helper\HtmlHelper;
  */
 class HtmlHelperTest extends TestCase
 {
-
     /**
      * Regexp for CDATA start block
      *

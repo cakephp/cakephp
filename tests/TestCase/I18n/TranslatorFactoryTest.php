@@ -26,7 +26,6 @@ class TranslatorFactoryTest extends TestCase
 {
     /**
      * Test that errors are emitted when stale cache files are found.
-     *
      */
     public function testNewInstanceErrorOnFallback()
     {

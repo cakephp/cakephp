@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
  */
 class JsonConfigTest extends TestCase
 {
-
     /**
      * Test data to serialize and unserialize.
      *

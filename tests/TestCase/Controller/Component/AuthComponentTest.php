@@ -35,7 +35,6 @@ use TestApp\Controller\Component\TestAuthComponent;
  */
 class AuthComponentTest extends TestCase
 {
-
     /**
      * AuthComponent property
      *

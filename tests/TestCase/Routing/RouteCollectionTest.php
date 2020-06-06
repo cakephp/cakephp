@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
 
 class RouteCollectionTest extends TestCase
 {
-
     /**
      * Setup method
      *
@@ -37,7 +36,6 @@ class RouteCollectionTest extends TestCase
 
     /**
      * Test parse() throws an error on unknown routes.
-     *
      */
     public function testParseMissingRoute()
     {
@@ -53,7 +51,6 @@ class RouteCollectionTest extends TestCase
 
     /**
      * Test parse() throws an error on known routes called with unknown methods.
-     *
      */
     public function testParseMissingRouteMethod()
     {
@@ -244,7 +241,6 @@ class RouteCollectionTest extends TestCase
 
     /**
      * Test parseRequest() throws an error on unknown routes.
-     *
      */
     public function testParseRequestMissingRoute()
     {
@@ -442,7 +438,6 @@ class RouteCollectionTest extends TestCase
 
     /**
      * Test match() throws an error on unknown routes.
-     *
      */
     public function testMatchError()
     {
@@ -510,7 +505,6 @@ class RouteCollectionTest extends TestCase
 
     /**
      * Test match() throws an error on named routes that fail to match
-     *
      */
     public function testMatchNamedError()
     {
@@ -639,7 +633,6 @@ class RouteCollectionTest extends TestCase
 
     /**
      * Test the add() with some _name.
-     *
      *
      * @return void
      */

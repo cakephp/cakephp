@@ -39,7 +39,6 @@ class TestStringTemplate
  */
 class StringTemplateTraitTest extends TestCase
 {
-
     /**
      * @var TestStringTemplate
      */

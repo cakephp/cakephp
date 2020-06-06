@@ -151,7 +151,6 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
 
     /**
      * Constructor
-     *
      */
     public function __construct()
     {

@@ -33,7 +33,6 @@ use TestApp\View\AppView;
  */
 class ViewPostsController extends Controller
 {
-
     /**
      * name property
      *
@@ -72,7 +71,6 @@ class ViewPostsController extends Controller
  */
 class ThemePostsController extends Controller
 {
-
     /**
      * index method
      *
@@ -92,7 +90,6 @@ class ThemePostsController extends Controller
  */
 class TestView extends AppView
 {
-
     public function initialize()
     {
         $this->loadHelper('Html', ['mykey' => 'myval']);
@@ -149,7 +146,6 @@ class TestView extends AppView
  */
 class TestBeforeAfterHelper extends Helper
 {
-
     /**
      * property property
      *
@@ -187,7 +183,6 @@ class TestBeforeAfterHelper extends Helper
  */
 class TestObjectWithToString
 {
-
     /**
      * Return string value.
      *
@@ -215,7 +210,6 @@ class TestObjectWithoutToString
  */
 class TestViewEventListenerInterface implements EventListenerInterface
 {
-
     /**
      * type of view before rendering has occurred
      *
@@ -271,7 +265,6 @@ class TestViewEventListenerInterface implements EventListenerInterface
  */
 class ViewTest extends TestCase
 {
-
     /**
      * Fixtures used in this test.
      *

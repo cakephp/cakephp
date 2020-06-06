@@ -21,7 +21,6 @@ use Cake\TestSuite\TestCase;
  */
 class CookieTest extends TestCase
 {
-
     /**
      * Generate invalid cookie names.
      *

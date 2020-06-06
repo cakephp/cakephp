@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
  */
 class WincacheEngineTest extends TestCase
 {
-
     /**
      * setUp method
      *

@@ -27,7 +27,6 @@ use Exception;
  */
 class FlashComponentTest extends TestCase
 {
-
     /**
      * setUp method
      *

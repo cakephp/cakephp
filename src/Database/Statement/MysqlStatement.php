@@ -27,7 +27,6 @@ class MysqlStatement extends PDOStatement
 
     /**
      * {@inheritDoc}
-     *
      */
     public function execute($params = null)
     {
