@@ -60,6 +60,7 @@ class LoggingStatementTest extends TestCase
         $st->queryString = 'SELECT bar FROM foo';
         $st->setLogger(new QueryLogger(['connection' => 'test']));
         $st->execute();
+        $st->fetchAll();
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(1, $messages);
@@ -82,6 +83,7 @@ class LoggingStatementTest extends TestCase
         $st->queryString = 'SELECT bar FROM foo WHERE x=:a AND y=:b';
         $st->setLogger(new QueryLogger(['connection' => 'test']));
         $st->execute(['a' => 1, 'b' => 2]);
+        $st->fetchAll();
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(1, $messages);
@@ -110,9 +112,11 @@ class LoggingStatementTest extends TestCase
         $st->bindValue('a', 1);
         $st->bindValue('b', $date, 'date');
         $st->execute();
+        $st->fetchAll();
 
         $st->bindValue('b', new \DateTime('2014-01-01'), 'date');
         $st->execute();
+        $st->fetchAll();
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(2, $messages);
