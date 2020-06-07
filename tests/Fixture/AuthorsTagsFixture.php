@@ -20,7 +20,6 @@ use Cake\TestSuite\Fixture\TestFixture;
  */
 class AuthorsTagsFixture extends TestFixture
 {
-
     /**
      * fields property
      *

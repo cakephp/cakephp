@@ -23,7 +23,6 @@ use PDO;
  */
 class SqliteTest extends TestCase
 {
-
     /**
      * Test connecting to Sqlite with default configuration
      *

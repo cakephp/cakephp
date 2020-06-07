@@ -21,7 +21,6 @@ use Cake\TestSuite\Fixture\TestFixture;
  */
 class CommentsFixture extends TestFixture
 {
-
     /**
      * fields property
      *

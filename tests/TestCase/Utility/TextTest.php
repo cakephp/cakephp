@@ -22,7 +22,6 @@ use Cake\Utility\Text;
  */
 class TextTest extends TestCase
 {
-
     public function setUp()
     {
         parent::setUp();
@@ -617,6 +616,7 @@ TEXT;
 
     /**
      * Test truncate() method with both exact and html.
+     *
      * @return void
      */
     public function testTruncateExactHtml()

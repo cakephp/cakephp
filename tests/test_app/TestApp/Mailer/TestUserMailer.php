@@ -19,7 +19,6 @@ namespace TestApp\Mailer;
  */
 class TestUserMailer extends TestMailer
 {
-
     public function invite($email)
     {
         $this->_email

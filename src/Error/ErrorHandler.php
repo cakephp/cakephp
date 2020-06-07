@@ -164,7 +164,6 @@ class ErrorHandler extends BaseErrorHandler
      * The PHP5 part will be removed with 4.0.
      *
      * @param \Throwable|\Exception $exception Exception.
-     *
      * @return void
      */
     protected function _logInternalError($exception)

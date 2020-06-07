@@ -21,7 +21,6 @@ use Cake\ORM\Table;
  */
 class PaginatorPostsTable extends Table
 {
-
     /**
      * initialize method
      *

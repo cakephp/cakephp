@@ -28,7 +28,6 @@ use Cake\Utility\Xml;
  */
 class XmlViewTest extends TestCase
 {
-
     public function setUp()
     {
         parent::setUp();

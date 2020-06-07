@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
  */
 class TableRegistryTest extends TestCase
 {
-
     /**
      * Original TableLocator.
      *

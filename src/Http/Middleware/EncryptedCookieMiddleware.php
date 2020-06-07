@@ -40,6 +40,7 @@ class EncryptedCookieMiddleware
 
     /**
      * The list of cookies to encrypt/decrypt
+     *
      * @var array
      */
     protected $cookieNames;

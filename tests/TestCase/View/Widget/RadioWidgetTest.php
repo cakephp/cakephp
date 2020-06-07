@@ -25,7 +25,6 @@ use Cake\View\Widget\RadioWidget;
  */
 class RadioWidgetTest extends TestCase
 {
-
     /**
      * setup method.
      *

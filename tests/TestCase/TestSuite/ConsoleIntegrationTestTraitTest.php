@@ -22,7 +22,6 @@ use PHPUnit\Framework\AssertionFailedError;
 
 class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
 {
-
     /**
      * setUp
      *

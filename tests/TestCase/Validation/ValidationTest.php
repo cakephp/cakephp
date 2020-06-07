@@ -31,7 +31,6 @@ require_once __DIR__ . '/stubs.php';
  */
 class ValidationTest extends TestCase
 {
-
     /**
      * @var string
      */
@@ -1626,7 +1625,6 @@ class ValidationTest extends TestCase
      * Tests that it is possible to pass an ISO8601 value
      *
      * @return void
-     *
      * @see Validation tests values credits: https://www.myintervals.com/blog/2009/05/20/iso-8601-date-validation-that-doesnt-suck/
      */
     public function testDateTimeISO8601()

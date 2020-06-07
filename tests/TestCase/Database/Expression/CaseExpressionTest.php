@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
  */
 class CaseExpressionTest extends TestCase
 {
-
     /**
      * Test that the sql output works correctly
      *

@@ -26,7 +26,6 @@ use Locale;
  */
 class I18nTest extends TestCase
 {
-
     /**
      * Used to restore the internal locale after tests
      *

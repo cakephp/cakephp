@@ -27,7 +27,6 @@ require_once CAKE . 'basics.php';
  */
 class BasicsTest extends TestCase
 {
-
     /**
      * test the array_diff_key compatibility function.
      *

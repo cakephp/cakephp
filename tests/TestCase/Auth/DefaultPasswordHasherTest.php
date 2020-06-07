@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
  */
 class DefaultPasswordHasherTest extends TestCase
 {
-
     /**
      * Tests that a password not produced by DefaultPasswordHasher needs
      * to be rehashed

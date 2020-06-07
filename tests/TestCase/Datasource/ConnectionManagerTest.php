@@ -58,7 +58,6 @@ class FakeConnection
  */
 class ConnectionManagerTest extends TestCase
 {
-
     /**
      * tearDown method
      *
@@ -107,7 +106,6 @@ class ConnectionManagerTest extends TestCase
 
     /**
      * Test invalid classes cause exceptions
-     *
      */
     public function testConfigInvalidOptions()
     {

@@ -35,7 +35,6 @@ class Base
 
 class Child extends Base
 {
-
     public $hasBoolean = ['test'];
 
     public $listProperty = ['Two', 'Three'];
@@ -57,7 +56,6 @@ class Child extends Base
 
 class Grandchild extends Child
 {
-
     public $listProperty = ['Four', 'Five'];
 
     public $assocProperty = [
@@ -80,7 +78,6 @@ class Grandchild extends Child
  */
 class MergeVariablesTraitTest extends TestCase
 {
-
     /**
      * Test merging vars as a list.
      *

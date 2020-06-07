@@ -66,7 +66,6 @@ class PoFileParser
      * Items with an empty id are ignored.
      *
      * @param string $resource The file name to parse
-     *
      * @return array
      */
     public function parse($resource)

@@ -21,7 +21,6 @@ use Cake\TestSuite\TestCase;
  */
 class FormDataTest extends TestCase
 {
-
     /**
      * Test getting the boundary.
      *

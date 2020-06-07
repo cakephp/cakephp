@@ -26,7 +26,6 @@ use InvalidArgumentException;
  */
 class ClientTest extends TestCase
 {
-
     /**
      * Test storing config options and modifying them.
      *

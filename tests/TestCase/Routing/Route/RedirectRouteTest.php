@@ -24,7 +24,6 @@ use Cake\TestSuite\TestCase;
  */
 class RedirectRouteTest extends TestCase
 {
-
     /**
      * setUp method
      *

@@ -26,7 +26,6 @@ use Cake\TestSuite\TestCase;
  */
 class BelongsToTest extends TestCase
 {
-
     /**
      * Fixtures to use.
      *

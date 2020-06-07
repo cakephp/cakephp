@@ -50,7 +50,6 @@ use TestApp\Controller\Admin\ErrorController;
  */
 class BlueberryComponent extends Component
 {
-
     /**
      * testName property
      *
@@ -75,7 +74,6 @@ class BlueberryComponent extends Component
  */
 class TestErrorController extends Controller
 {
-
     /**
      * uses property
      *
@@ -153,7 +151,6 @@ class MissingWidgetThing extends \Exception
  */
 class ExceptionRendererTest extends TestCase
 {
-
     /**
      * @var bool
      */

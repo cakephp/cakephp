@@ -33,7 +33,6 @@ use ParseError;
  */
 class TestErrorHandler extends ErrorHandler
 {
-
     /**
      * Access the response used.
      *
@@ -67,12 +66,10 @@ class TestErrorHandler extends ErrorHandler
  */
 class ErrorHandlerTest extends TestCase
 {
-
     protected $_restoreError = false;
 
     /**
      * error level property
-     *
      */
     private static $errorLevel;
 

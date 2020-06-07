@@ -57,6 +57,7 @@ class CspMiddleware
      * Apply the middleware.
      *
      * This will inject the CSP header into the response.
+     *
      * @param ServerRequestInterface $requestInterface The Request.
      * @param ResponseInterface $responseInterface The Response.
      * @param callable $next Callback to invoke the next middleware.

@@ -31,7 +31,6 @@ use Cake\TestSuite\TestCase;
  */
 class QueryTest extends TestCase
 {
-
     /**
      * Fixture to be used
      *

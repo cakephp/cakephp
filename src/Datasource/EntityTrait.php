@@ -61,7 +61,6 @@ trait EntityTrait
      * Holds the name of the class for the instance object
      *
      * @var string
-     *
      * @deprecated 3.2 This field is no longer being used
      */
     protected $_className;

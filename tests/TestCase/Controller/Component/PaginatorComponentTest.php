@@ -32,7 +32,6 @@ use stdClass;
  */
 class PaginatorTestController extends Controller
 {
-
     /**
      * components property
      *
@@ -50,7 +49,6 @@ class CustomPaginator extends Paginator
 
 class PaginatorComponentTest extends TestCase
 {
-
     /**
      * fixtures property
      *
@@ -1374,7 +1372,6 @@ class PaginatorComponentTest extends TestCase
      * Helper method for mocking queries.
      *
      * @param string|null $table
-     *
      * @return \Cake\ORM\Query|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function _getMockFindQuery($table = null)

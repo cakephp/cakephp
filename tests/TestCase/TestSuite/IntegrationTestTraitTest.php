@@ -36,7 +36,6 @@ use PHPUnit\Framework\AssertionFailedError;
  */
 class IntegrationTestTraitTest extends IntegrationTestCase
 {
-
     /**
      * Setup method
      *

@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
  */
 class TreeIteratorTest extends TestCase
 {
-
     /**
      * Tests the printer function with defaults
      *

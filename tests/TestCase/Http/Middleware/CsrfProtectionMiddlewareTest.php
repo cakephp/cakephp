@@ -28,7 +28,6 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class CsrfProtectionMiddlewareTest extends TestCase
 {
-
     /**
      * Data provider for HTTP method tests.
      *

@@ -26,7 +26,6 @@ use Locale;
  */
 class LocaleSelectorMiddlewareTest extends TestCase
 {
-
     /**
      * setup
      *

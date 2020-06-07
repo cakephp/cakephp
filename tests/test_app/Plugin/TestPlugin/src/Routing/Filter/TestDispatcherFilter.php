@@ -22,7 +22,6 @@ use Cake\Routing\DispatcherFilter;
  */
 class TestDispatcherFilter extends DispatcherFilter
 {
-
     public function beforeDispatch(Event $event)
     {
         $event->data('request')->params['altered'] = true;

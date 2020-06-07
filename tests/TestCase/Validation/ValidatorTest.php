@@ -26,7 +26,6 @@ use Laminas\Diactoros\UploadedFile;
  */
 class ValidatorTest extends TestCase
 {
-
     /**
      * tests getRequiredMessage
      *
@@ -834,7 +833,6 @@ class ValidatorTest extends TestCase
 
     /**
      * Test allowEmptyString with callback
-     *
      */
     public function testAllowEmptyStringCallbackWhen()
     {

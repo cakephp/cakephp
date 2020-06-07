@@ -18,11 +18,9 @@ use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Class OrderedUuiditemFixture
- *
  */
 class OrderedUuidItemsFixture extends TestFixture
 {
-
     /**
      * fields property
      *

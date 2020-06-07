@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
  */
 class SocketTest extends TestCase
 {
-
     /**
      * setUp method
      *

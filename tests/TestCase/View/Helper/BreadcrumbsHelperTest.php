@@ -20,7 +20,6 @@ use Cake\View\View;
 
 class BreadcrumbsHelperTest extends TestCase
 {
-
     /**
      * Instance of the BreadcrumbsHelper
      *
@@ -269,7 +268,6 @@ class BreadcrumbsHelperTest extends TestCase
 
     /**
      * Test adding crumbs to a specific index
-     *
      */
     public function testInsertAtIndexOutOfBounds()
     {

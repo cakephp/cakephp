@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
  */
 class LoggingStatementTest extends TestCase
 {
-
     /**
      * Tests that queries are logged when executed without params
      *

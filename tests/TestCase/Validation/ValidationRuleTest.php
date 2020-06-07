@@ -22,7 +22,6 @@ use Cake\Validation\ValidationRule;
  */
 class ValidationRuleTest extends TestCase
 {
-
     /**
      * Auxiliary method to test custom validators
      *

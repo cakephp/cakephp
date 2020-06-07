@@ -22,7 +22,6 @@ use Zend\Diactoros\Uri;
  */
 class RequestTest extends TestCase
 {
-
     /**
      * test string ata, header and constructor
      *
@@ -47,7 +46,6 @@ class RequestTest extends TestCase
      * @param array $headers The HTTP headers to set.
      * @param array|string|null $data The request body to use.
      * @param string $method The HTTP method to use.
-     *
      * @dataProvider additionProvider
      */
     public function testMethods(array $headers, $data, $method)

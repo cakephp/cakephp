@@ -18,7 +18,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 
 class PolymorphicTaggedFixture extends TestFixture
 {
-
     /**
      * table property
      *

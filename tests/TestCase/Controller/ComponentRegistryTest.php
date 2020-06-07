@@ -32,7 +32,6 @@ class CookieAliasComponent extends CookieComponent
 
 class ComponentRegistryTest extends TestCase
 {
-
     /**
      * setUp
      *

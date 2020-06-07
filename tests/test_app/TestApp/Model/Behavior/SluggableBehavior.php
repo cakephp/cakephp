@@ -25,7 +25,6 @@ use Cake\Utility\Text;
 
 class SluggableBehavior extends Behavior
 {
-
     public function beforeFind(Event $event, Query $query, $options = [])
     {
         $query->where(['slug' => 'test']);

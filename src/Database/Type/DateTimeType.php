@@ -419,7 +419,6 @@ class DateTimeType extends Type implements TypeInterface, BatchCastingInterface
      *
      * @param mixed $value value to be converted to PDO statement
      * @param \Cake\Database\Driver $driver object from which database preferences and configuration will be extracted
-     *
      * @return mixed
      */
     public function toStatement($value, Driver $driver)

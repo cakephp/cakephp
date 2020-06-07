@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
  */
 class SchemaTest extends TestCase
 {
-
     /**
      * Test adding multiple fields.
      *

@@ -26,7 +26,6 @@ use Exception;
  */
 class ArticlesFixture extends TestFixture
 {
-
     /**
      * Table property
      *
@@ -65,7 +64,6 @@ class ArticlesFixture extends TestFixture
  */
 class StringsTestsFixture extends TestFixture
 {
-
     /**
      * Table property
      *
@@ -102,7 +100,6 @@ class StringsTestsFixture extends TestFixture
  */
 class ImportsFixture extends TestFixture
 {
-
     /**
      * Import property
      *
@@ -126,7 +123,6 @@ class ImportsFixture extends TestFixture
  */
 class LettersFixture extends TestFixture
 {
-
     /**
      * records property
      *
@@ -144,7 +140,6 @@ class LettersFixture extends TestFixture
  */
 class TestFixtureTest extends TestCase
 {
-
     /**
      * Fixtures for this test.
      *

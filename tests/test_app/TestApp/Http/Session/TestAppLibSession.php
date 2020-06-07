@@ -8,7 +8,6 @@ use SessionHandlerInterface;
  */
 class TestAppLibSession implements SessionHandlerInterface
 {
-
     public $options = [];
 
     public function __construct($options = [])

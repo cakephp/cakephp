@@ -25,7 +25,6 @@ use Cake\Console\Shell;
 
 class IntegrationShell extends Shell
 {
-
     /**
      * Option parser
      *

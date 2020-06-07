@@ -46,7 +46,6 @@ use InvalidArgumentException;
  */
 class UsersTable extends Table
 {
-
 }
 
 class ProtectedEntity extends Entity
@@ -63,7 +62,6 @@ class ProtectedEntity extends Entity
  */
 class TableTest extends TestCase
 {
-
     public $fixtures = [
         'core.Articles',
         'core.Tags',
@@ -1028,7 +1026,6 @@ class TableTest extends TestCase
 
     /**
      * Test that exceptions from the Query bubble up.
-     *
      */
     public function testUpdateAllFailure()
     {
@@ -1093,7 +1090,6 @@ class TableTest extends TestCase
 
     /**
      * Test that exceptions from the Query bubble up.
-     *
      */
     public function testDeleteAllFailure()
     {
@@ -1861,7 +1857,6 @@ class TableTest extends TestCase
 
     /**
      * Ensure exceptions are raised on missing behaviors.
-     *
      */
     public function testAddBehaviorMissing()
     {

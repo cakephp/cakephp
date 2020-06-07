@@ -22,7 +22,6 @@ use Cake\Routing\DispatcherFilter;
  */
 class Test2DispatcherFilter extends DispatcherFilter
 {
-
     public function beforeDispatch(Event $event)
     {
         $event->data('response')->statusCode(500);

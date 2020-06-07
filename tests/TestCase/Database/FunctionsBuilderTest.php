@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
  */
 class FunctionsBuilderTest extends TestCase
 {
-
     /**
      * Setups a mock for FunctionsBuilder
      *

@@ -27,7 +27,6 @@ use PDO;
  */
 class MysqlSchemaTest extends TestCase
 {
-
     /**
      * Helper method for skipping tests that need a real connection.
      *

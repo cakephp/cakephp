@@ -636,9 +636,7 @@ class Validation
      * ISO8601 recognize datetime like 2019 as a valid date. To validate and check date integrity, use @see \Cake\Validation\Validation::datetime()
      *
      * @param string|\DateTimeInterface $check Value to check
-     *
      * @return bool True if the value is valid, false otherwise
-     *
      * @see Regex credits: https://www.myintervals.com/blog/2009/05/20/iso-8601-date-validation-that-doesnt-suck/
      */
     public static function iso8601($check)
@@ -1677,7 +1675,6 @@ class Validation
      * body matches against checksum via Mod97-10 algorithm
      *
      * @param string $check The value to check
-     *
      * @return bool Success
      */
     public static function iban($check)

@@ -25,7 +25,6 @@ use Cake\TestSuite\TestCase;
  */
 class ConfigureTest extends TestCase
 {
-
     /**
      * setUp method
      *

@@ -44,7 +44,6 @@ class CachedCollection extends Collection
 
     /**
      * {@inheritDoc}
-     *
      */
     public function describe($name, array $options = [])
     {

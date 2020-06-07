@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
  */
 class PhpConfigTest extends TestCase
 {
-
     /**
      * Test data to serialize and unserialize.
      *

@@ -24,7 +24,6 @@ use Cake\TestSuite\TestCase;
  */
 class DigestTest extends TestCase
 {
-
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Cake\Http\Client
      */

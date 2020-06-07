@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
  */
 class ServerShellTest extends TestCase
 {
-
     /**
      * setup method
      *

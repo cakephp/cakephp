@@ -24,7 +24,6 @@ use Cake\TestSuite\ConsoleIntegrationTestCase;
  */
 class CommandListShellTest extends ConsoleIntegrationTestCase
 {
-
     /**
      * setUp method
      *

@@ -21,7 +21,6 @@ use Cake\Mailer\Mailer;
  */
 class TestMailer extends Mailer
 {
-
     public function getEmailForAssertion()
     {
         return $this->_email;

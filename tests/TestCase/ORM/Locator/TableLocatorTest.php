@@ -29,7 +29,6 @@ use TestPlugin\Infrastructure\Table\AddressesTable as PluginAddressesTable;
  */
 class MyUsersTable extends Table
 {
-
     /**
      * Overrides default table name
      *
@@ -43,7 +42,6 @@ class MyUsersTable extends Table
  */
 class TableLocatorTest extends TestCase
 {
-
     /**
      * TableLocator instance.
      *

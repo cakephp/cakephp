@@ -31,7 +31,6 @@ use TestApp\Database\Type\BarType;
  */
 class QueryTest extends TestCase
 {
-
     public $fixtures = [
         'core.Articles',
         'core.Authors',
@@ -868,6 +867,7 @@ class QueryTest extends TestCase
 
     /**
      * Tests exception message for impossible condition when using an expression
+     *
      * @return void
      */
     public function testSelectWhereArrayTypeEmptyWithExpression()
@@ -3069,7 +3069,6 @@ class QueryTest extends TestCase
      * warning about possible incompatibilities with aliases being removed
      * from the conditions.
      *
-     *
      * @return void
      */
     public function testDeleteRemovingAliasesCanBreakJoins()
@@ -3169,7 +3168,6 @@ class QueryTest extends TestCase
     /**
      * Test update with type checking
      * by passing an array as table arg
-     *
      *
      * @return void
      */
@@ -3653,7 +3651,6 @@ class QueryTest extends TestCase
 
     /**
      * Test that an exception is raised when mixing query + array types.
-     *
      */
     public function testInsertFailureMixingTypesArrayFirst()
     {
@@ -3668,7 +3665,6 @@ class QueryTest extends TestCase
 
     /**
      * Test that an exception is raised when mixing query + array types.
-     *
      */
     public function testInsertFailureMixingTypesQueryFirst()
     {
@@ -4950,6 +4946,7 @@ class QueryTest extends TestCase
 
     /**
      * Test that calling fetchAssoc return an associated array.
+     *
      * @return void
      * @throws \Exception
      */
@@ -4979,6 +4976,7 @@ class QueryTest extends TestCase
 
     /**
      * Test that calling fetchAssoc return an empty associated array.
+     *
      * @return void
      * @throws \Exception
      */
@@ -4998,6 +4996,7 @@ class QueryTest extends TestCase
 
     /**
      * Test that calling fetch with with FETCH_TYPE_OBJ return stdClass object.
+     *
      * @return void
      * @throws \Exception
      */
@@ -5020,6 +5019,7 @@ class QueryTest extends TestCase
 
     /**
      * Test that fetchColumn() will return the correct value at $position.
+     *
      * @throws \Exception
      * @return void
      */
@@ -5058,6 +5058,7 @@ class QueryTest extends TestCase
 
     /**
      * Test that fetchColumn() will return false if $position is not set.
+     *
      * @throws \Exception
      * @return void
      */

@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
  */
 class ConsoleLogTest extends TestCase
 {
-
     /**
      * Test writing to ConsoleOutput
      */

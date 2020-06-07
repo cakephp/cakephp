@@ -31,7 +31,6 @@ class ApplicationWithPluginRoutes extends BaseApplication
 
     /**
      * @param \Cake\Http\MiddlewareQueue $middleware
-     *
      * @return \Cake\Http\MiddlewareQueue
      */
     public function middleware($middleware)

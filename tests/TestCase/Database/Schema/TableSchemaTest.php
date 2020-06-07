@@ -24,7 +24,6 @@ use Cake\TestSuite\TestCase;
  */
 class FooType extends Type
 {
-
     public function getBaseType()
     {
         return 'integer';
@@ -36,7 +35,6 @@ class FooType extends Type
  */
 class TableTest extends TestCase
 {
-
     public $fixtures = [
         'core.Articles',
         'core.Tags',
@@ -321,6 +319,7 @@ class TableTest extends TestCase
     /**
      * Test adding an constraint.
      * >
+     *
      * @return void
      */
     public function testAddConstraint()
@@ -340,6 +339,7 @@ class TableTest extends TestCase
     /**
      * Test adding an constraint with an overlapping unique index
      * >
+     *
      * @return void
      */
     public function testAddConstraintOverwriteUniqueIndex()

@@ -18,7 +18,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 
 class SiteTagsFixture extends TestFixture
 {
-
     /**
      * fields property
      *

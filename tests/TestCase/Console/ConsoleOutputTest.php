@@ -24,7 +24,6 @@ use Cake\TestSuite\TestCase;
  */
 class ConsoleOutputTest extends TestCase
 {
-
     /**
      * setup
      *
@@ -283,7 +282,6 @@ class ConsoleOutputTest extends TestCase
 
     /**
      * test set wrong type.
-     *
      */
     public function testSetOutputWrongType()
     {

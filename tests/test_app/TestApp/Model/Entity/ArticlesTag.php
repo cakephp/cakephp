@@ -9,5 +9,4 @@ use Cake\ORM\Entity;
  */
 class ArticlesTag extends Entity
 {
-
 }

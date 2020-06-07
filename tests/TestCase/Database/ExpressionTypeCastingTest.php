@@ -26,7 +26,6 @@ use Cake\TestSuite\TestCase;
 
 class TestType extends StringType implements ExpressionTypeInterface
 {
-
     public function toExpression($value)
     {
         return new FunctionExpression('CONCAT', [$value, ' - foo']);
@@ -36,11 +35,9 @@ class TestType extends StringType implements ExpressionTypeInterface
 /**
  * Tests for Expression objects casting values to other expressions
  * using the type classes
- *
  */
 class ExpressionTypeCastingTest extends TestCase
 {
-
     /**
      * Setups a mock for FunctionsBuilder
      *

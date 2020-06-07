@@ -25,7 +25,6 @@ use Cake\TestSuite\TestCase;
  */
 class FolderTest extends TestCase
 {
-
     /**
      * setUp clearstatcache() to flush file descriptors.
      *

@@ -30,7 +30,6 @@ use TestApp\Auth\CallCounterPasswordHasher;
  */
 class FormAuthenticateTest extends TestCase
 {
-
     /**
      * Fixtures
      *

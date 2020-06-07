@@ -39,7 +39,6 @@ class UuidValue
  */
 class OrderedUuidType extends Type implements ExpressionTypeInterface
 {
-
     public function toPHP($value, Driver $d)
     {
         return new UuidValue($value);
@@ -68,11 +67,9 @@ class OrderedUuidType extends Type implements ExpressionTypeInterface
 /**
  * Tests for Expression objects casting values to other expressions
  * using the type classes
- *
  */
 class ExpressionTypeCastingIntegrationTest extends TestCase
 {
-
     public $fixtures = ['core.OrderedUuidItems'];
 
     public function setUp()

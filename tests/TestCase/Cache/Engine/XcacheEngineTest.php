@@ -24,7 +24,6 @@ use Cake\TestSuite\TestCase;
  */
 class XcacheEngineTest extends TestCase
 {
-
     /**
      * setUp method
      *

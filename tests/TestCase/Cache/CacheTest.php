@@ -30,7 +30,6 @@ use Psr\SimpleCache\CacheInterface as SimpleCacheInterface;
  */
 class CacheTest extends TestCase
 {
-
     /**
      * setUp method
      *

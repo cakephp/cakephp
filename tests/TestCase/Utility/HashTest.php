@@ -25,7 +25,6 @@ use Cake\Utility\Hash;
  */
 class HashTest extends TestCase
 {
-
     /**
      * Data provider
      *

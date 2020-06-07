@@ -36,7 +36,6 @@ class Article extends Entity
  */
 class TranslateBehaviorTest extends TestCase
 {
-
     /**
      * fixtures
      *

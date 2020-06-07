@@ -28,7 +28,6 @@ use Cake\Validation\Validator;
  */
 class OpenEntity extends Entity
 {
-
     protected $_accessible = [
         '*' => true,
     ];
@@ -39,7 +38,6 @@ class OpenEntity extends Entity
  */
 class Tag extends Entity
 {
-
     protected $_accessible = [
         'tag' => true,
     ];
@@ -50,7 +48,6 @@ class Tag extends Entity
  */
 class ProtectedArticle extends Entity
 {
-
     protected $_accessible = [
         'title' => true,
         'body' => true,
@@ -97,7 +94,6 @@ class GreedyCommentsTable extends Table
  */
 class MarshallerTest extends TestCase
 {
-
     public $fixtures = [
         'core.Articles',
         'core.ArticlesTags',

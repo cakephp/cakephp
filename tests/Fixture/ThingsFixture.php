@@ -18,7 +18,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 
 class ThingsFixture extends TestFixture
 {
-
     /**
      * fields property
      *

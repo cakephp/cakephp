@@ -3,7 +3,6 @@ namespace TestPlugin\Datasource;
 
 class TestSource
 {
-
     /**
      * Config
      *
