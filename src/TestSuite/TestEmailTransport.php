@@ -23,7 +23,7 @@ use Cake\Mailer\Transport\DebugTransport;
  *
  * Set this as the email transport to capture emails for later assertions
  *
- * @see Cake\TestSuite\EmailTrait
+ * @see \Cake\TestSuite\EmailTrait
  */
 class TestEmailTransport extends DebugTransport
 {

@@ -48,6 +48,11 @@ class DigestAuthenticateTest extends TestCase
     public $fixtures = ['core.AuthUsers', 'core.Users'];
 
     /**
+     * @var \Cake\Auth\DigestAuthenticate
+     */
+    protected $auth;
+
+    /**
      * setup
      *
      * @return void
