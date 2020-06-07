@@ -238,7 +238,7 @@ class FormProtector
             return null;
         }
         if (!is_string($formData['_Token']['fields'])) {
-            $this->debugMessage = '`_Token.fields` was invalid.';
+            $this->debugMessage = '`_Token.fields` is invalid.';
 
             return null;
         }

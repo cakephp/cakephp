@@ -261,7 +261,7 @@ class SecurityComponent extends Component
             throw new AuthSecurityException(sprintf($message, '_Token.fields'));
         }
         if (!is_string($check['_Token']['fields'])) {
-            throw new AuthSecurityException("'_Token.fields' was invalid.");
+            throw new AuthSecurityException("'_Token.fields' is invalid.");
         }
         if (!isset($check['_Token']['unlocked'])) {
             throw new AuthSecurityException(sprintf($message, '_Token.unlocked'));

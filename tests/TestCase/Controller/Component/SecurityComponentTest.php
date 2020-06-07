@@ -948,7 +948,7 @@ class SecurityComponentTest extends TestCase
             ],
         ]));
         Configure::write('debug', false);
-        $result = $this->validatePost('SecurityException', "'_Token.fields' was invalid.");
+        $result = $this->validatePost('SecurityException', "'_Token.fields' is invalid.");
         $this->assertFalse($result);
     }
 

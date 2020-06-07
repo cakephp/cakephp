@@ -151,7 +151,7 @@ class FormProtectorTest extends TestCase
                 'fields' => [],
             ],
         ];
-        $this->validate($data, '`_Token.fields` was invalid.');
+        $this->validate($data, '`_Token.fields` is invalid.');
     }
 
     /**
