@@ -3067,6 +3067,11 @@ class TableTest extends TestCase
             ],
         ]);
         $this->assertFalse($query->all()->isEmpty(), 'Should find some rows.');
+
+        $table->associations()->get('articles')->setCascadeCallbacks(false);
+        $entity = $table->get(2);
+        $result = $table->delete($entity);
+        $this->assertTrue($result);
     }
 
     /**
