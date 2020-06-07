@@ -18,6 +18,7 @@ namespace Cake\Database;
 
 use Cake\Database\Expression\AggregateExpression;
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Expression\GroupedExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\SelectExpression;
 use InvalidArgumentException;
@@ -385,7 +386,7 @@ class FunctionsBuilder
         }
         $arguments[] = (new SelectExpression([$separator]))->addModifier('SEPARATOR');
 
-        return (new AggregateExpression(
+        return (new GroupedExpression(
             'GROUP_CONCAT',
             $arguments,
             $expression[1],

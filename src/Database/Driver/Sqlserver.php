@@ -17,8 +17,8 @@ declare(strict_types=1);
 namespace Cake\Database\Driver;
 
 use Cake\Database\Driver;
-use Cake\Database\Expression\AggregateExpression;
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Expression\GroupedExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\SelectExpression;
 use Cake\Database\Expression\TupleComparison;
@@ -544,7 +544,7 @@ class Sqlserver extends Driver
 
                 break;
             case 'GROUP_CONCAT':
-                if ($expression instanceof AggregateExpression) {
+                if ($expression instanceof GroupedExpression) {
                     $parts = ['separator' => ''];
                     $expression->iterateParts(
                         function ($p, $key) use (&$parts, $expression) {
@@ -567,7 +567,7 @@ class Sqlserver extends Driver
                                     function () use ($p) {
                                         return $p;
                                     }
-                                )->setClause('WITHIN GROUP');
+                                )->getOrderContainer()->setName('WITHIN GROUP ');
 
                                 return null;
                             } elseif ($p instanceof SelectExpression) {

@@ -17,8 +17,9 @@ declare(strict_types=1);
 namespace Cake\Database\Driver;
 
 use Cake\Database\Driver;
-use Cake\Database\Expression\AggregateExpression;
+use Cake\Database\Exception;
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Expression\GroupedExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\SelectExpression;
 use Cake\Database\Expression\TupleComparison;
@@ -308,19 +309,16 @@ class Sqlite extends Driver
                     ->add([') + (1' => 'literal']); // Sqlite starts on index 0 but Sunday should be 1
                 break;
             case 'GROUP_CONCAT':
-                if ($expression instanceof AggregateExpression) {
+                if ($expression instanceof GroupedExpression) {
                     $expression->iterateParts(
-                        function ($p, $key) use ($expression) {
+                        function ($p, $key) {
                             if ($key === 0 && $p instanceof SelectExpression) {
                                 $p->setConjunction('||')->removeModifier('DISTINCT');
                             } elseif ($p instanceof OrderByExpression) {
-                                $expression->order(
-                                    function () use ($p) {
-                                        return $p;
-                                    }
+                                throw new Exception(
+                                    'SQLite does not support ordering aggregate function results via a clause. ' .
+                                    'The recommended method is a subquery.'
                                 );
-
-                                return null;
                             } elseif ($p instanceof SelectExpression) {
                                 $p->removeModifier('SEPARATOR');
                             }

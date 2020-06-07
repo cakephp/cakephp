@@ -15,7 +15,9 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\FunctionsBuilder;
 
-use Cake\Database\Expression\AggregateExpression;
+use Cake\Database\Driver\Sqlite;
+use Cake\Database\Exception;
+use Cake\Database\Expression\GroupedExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\FunctionsBuilder;
 use Cake\Database\ValueBinder;
@@ -57,7 +59,6 @@ class GroupConcatTest extends TestCase
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
         $this->functions = new FunctionsBuilder();
-        $this->loadFixtures('Articles', 'Tags', 'ArticlesTags');
     }
 
     public function tearDown(): void
@@ -74,7 +75,7 @@ class GroupConcatTest extends TestCase
     public function testGroupConcatSyntax()
     {
         $function = $this->functions->groupConcat([new IdentifierExpression('field')]);
-        $this->assertInstanceOf(AggregateExpression::class, $function);
+        $this->assertInstanceOf(GroupedExpression::class, $function);
         $this->assertSame('GROUP_CONCAT(field SEPARATOR :se0)', $function->sql(new ValueBinder()));
 
         $function = $this->functions->groupConcat(
@@ -83,7 +84,7 @@ class GroupConcatTest extends TestCase
             ', ',
             true
         );
-        $this->assertInstanceOf(AggregateExpression::class, $function);
+        $this->assertInstanceOf(GroupedExpression::class, $function);
         $this->assertSame(
             'GROUP_CONCAT(DISTINCT field1, field2 ORDER BY sort1 DESC, sort2 ASC SEPARATOR :se0)',
             $function->sql(new ValueBinder())
@@ -94,7 +95,7 @@ class GroupConcatTest extends TestCase
             ['sort1'],
             ':'
         );
-        $this->assertInstanceOf(AggregateExpression::class, $function);
+        $this->assertInstanceOf(GroupedExpression::class, $function);
         $this->assertSame(
             'GROUP_CONCAT(:se0, :se1 ORDER BY sort1 SEPARATOR :se2)',
             $function->sql(new ValueBinder())
@@ -133,6 +134,13 @@ class GroupConcatTest extends TestCase
      */
     public function testGroupConcatFull()
     {
+        if ($this->connection->getDriver() instanceof Sqlite) {
+            $this->expectException(Exception::class);
+            $this->expectExceptionMessage(
+                'SQLite does not support ordering aggregate function results via a clause. ' .
+                'The recommended method is a subquery.'
+            );
+        }
         $articles = $this->getTableLocator()->get('Articles')->setConnection($this->connection);
         $articles->belongsToMany(
             'Tags',

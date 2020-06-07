@@ -90,7 +90,7 @@ class SelectExpression extends QueryExpression
         } else {
             foreach ($conditions as $key => $condition) {
                 if (is_array($condition)) {
-                    $this->_conditions[] = new static($condition, [$this->getTypeMap()->type($key)]);
+                    $this->_conditions[] = new self($condition, [$this->getTypeMap()->type($key)]);
                 } else {
                     if (!is_numeric($key) && ($condition == 'literal' || $condition == 'identifier')) {
                         $this->_conditions[] = new IdentifierExpression($key);
