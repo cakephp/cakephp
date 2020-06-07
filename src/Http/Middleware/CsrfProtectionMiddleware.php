@@ -117,7 +117,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
         $cookies = $request->getCookieParams();
         $cookieData = Hash::get($cookies, $this->_config['cookieName']);
 
-        if ($cookieData !== null && strlen($cookieData) > 0) {
+        if (is_string($cookieData) && strlen($cookieData) > 0) {
             $request = $request->withAttribute('csrfToken', $cookieData);
         }
 
@@ -246,8 +246,8 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
     {
         $cookie = Hash::get($request->getCookieParams(), $this->_config['cookieName']);
 
-        if (!$cookie) {
-            throw new InvalidCsrfTokenException(__d('cake', 'Missing CSRF cookie.'));
+        if (!$cookie || !is_string($cookie)) {
+            throw new InvalidCsrfTokenException(__d('cake', 'Missing or incorrect CSRF cookie type.'));
         }
 
         if (!$this->_verifyToken($cookie)) {
