@@ -105,7 +105,7 @@ class CsrfProtectionMiddleware
         $cookies = $request->getCookieParams();
         $cookieData = Hash::get($cookies, $this->_config['cookieName']);
 
-        if (strlen($cookieData) > 0) {
+        if (is_string($cookieData) && strlen($cookieData) > 0) {
             $params = $request->getAttribute('params');
             $params['_csrfToken'] = $cookieData;
             $request = $request->withAttribute('params', $params);
