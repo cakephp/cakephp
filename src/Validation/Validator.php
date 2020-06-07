@@ -1299,6 +1299,63 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
+     * Add a non-alphanumeric rule to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::notAlphaNumeric()
+     * @return $this
+     */
+    public function notAlphaNumeric($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+
+        return $this->add($field, 'notAlphaNumeric', $extra + [
+            'rule' => 'notAlphaNumeric',
+        ]);
+    }
+
+    /**
+     * Add an ascii-alphanumeric rule to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::asciiAlphaNumeric()
+     * @return $this
+     */
+    public function asciiAlphaNumeric($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+
+        return $this->add($field, 'asciiAlphaNumeric', $extra + [
+            'rule' => 'asciiAlphaNumeric',
+        ]);
+    }
+
+    /**
+     * Add a non-ascii alphanumeric rule to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::notAlphaNumeric()
+     * @return $this
+     */
+    public function notAsciiAlphaNumeric($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+
+        return $this->add($field, 'notAsciiAlphaNumeric', $extra + [
+            'rule' => 'notAsciiAlphaNumeric',
+        ]);
+    }
+
+    /**
      * Add an rule that ensures a string length is within a range.
      *
      * @param string $field The field you want to apply the rule to.
@@ -1641,6 +1698,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::containsNonAlphaNumeric()
      * @return $this
+     * @deprecated 3.9.0 Use notAlphaNumeric() instead. Will be removed in 5.0
      */
     public function containsNonAlphaNumeric($field, $limit = 1, $message = null, $when = null)
     {
