@@ -246,7 +246,7 @@ class Plugin
      * Returns the filesystem path for plugin's folder containing class folders.
      *
      * @param string $name name of the plugin in CamelCase format.
-     * @return string Path to the plugin folder container class folders.
+     * @return string Path to the plugin folder containing class files.
      * @throws \Cake\Core\Exception\MissingPluginException If plugin has not been loaded.
      */
     public static function classPath($name)
@@ -260,7 +260,7 @@ class Plugin
      * Returns the filesystem path for plugin's folder containing config files.
      *
      * @param string $name name of the plugin in CamelCase format.
-     * @return string Path to the plugin folder container config files.
+     * @return string Path to the plugin folder containing config files.
      * @throws \Cake\Core\Exception\MissingPluginException If plugin has not been loaded.
      */
     public static function configPath($name)

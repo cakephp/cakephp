@@ -12,6 +12,7 @@
  * @since         3.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 use Cake\I18n\I18n;
 
 if (!function_exists('__')) {

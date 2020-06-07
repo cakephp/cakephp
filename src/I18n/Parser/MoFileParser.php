@@ -17,7 +17,7 @@ namespace Cake\I18n\Parser;
 use RuntimeException;
 
 /**
- * Parses file in PO format
+ * Parses file in MO format
  *
  * @copyright Copyright (c) 2010, Union of RAD http://union-of-rad.org (http://lithify.me/)
  * @copyright Copyright (c) 2014, Fabien Potencier https://github.com/symfony/Translation/blob/master/LICENSE
@@ -67,9 +67,9 @@ class MoFileParser
         $magic = unpack('V1', fread($stream, 4));
         $magic = hexdec(substr(dechex(current($magic)), -8));
 
-        if ($magic == self::MO_LITTLE_ENDIAN_MAGIC) {
+        if ($magic === self::MO_LITTLE_ENDIAN_MAGIC) {
             $isBigEndian = false;
-        } elseif ($magic == self::MO_BIG_ENDIAN_MAGIC) {
+        } elseif ($magic === self::MO_BIG_ENDIAN_MAGIC) {
             $isBigEndian = true;
         } else {
             throw new RuntimeException('Invalid format for MO translations file');
@@ -155,6 +155,6 @@ class MoFileParser
         $result = unpack($isBigEndian ? 'N1' : 'V1', fread($stream, 4));
         $result = current($result);
 
-        return (int)substr($result, -8);
+        return (int)substr((string)$result, -8);
     }
 }

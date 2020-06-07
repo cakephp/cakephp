@@ -498,6 +498,8 @@ class HtmlHelper extends Helper
             $options['block'] = __FUNCTION__;
         }
         $this->_View->append($options['block'], $out);
+
+        return null;
     }
 
     /**
@@ -579,6 +581,8 @@ class HtmlHelper extends Helper
             $options['block'] = __FUNCTION__;
         }
         $this->_View->append($options['block'], $out);
+
+        return null;
     }
 
     /**
@@ -617,6 +621,8 @@ class HtmlHelper extends Helper
             $options['block'] = 'script';
         }
         $this->_View->append($options['block'], $out);
+
+        return null;
     }
 
     /**

@@ -81,9 +81,9 @@ class CommandTask extends Shell
      * Scan the provided paths for shells, and append them into $shellList
      *
      * @param string $type The type of object.
-     * @param array $shells The shell name.
+     * @param string[] $shells The shell names.
      * @param array $shellList List of shells.
-     * @param array $skip List of command names to skip.
+     * @param string[] $skip List of command names to skip.
      * @return array The updated $shellList
      */
     protected function _appendShells($type, $shells, $shellList, $skip)

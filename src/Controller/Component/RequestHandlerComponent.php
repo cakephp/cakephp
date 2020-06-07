@@ -57,7 +57,7 @@ class RequestHandlerComponent extends Component
     public $ext;
 
     /**
-     * The template to use when rendering the given content type.
+     * The template type to use when rendering the given content type.
      *
      * @var string|null
      */

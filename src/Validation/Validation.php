@@ -142,7 +142,7 @@ class Validation
      *
      * Returns true if string contains something other than whitespace
      *
-     * @param string $check Value to check
+     * @param mixed $check Value to check
      * @return bool Success
      */
     public static function notBlank($check)
@@ -165,7 +165,7 @@ class Validation
      */
     public static function alphaNumeric($check)
     {
-        if (empty($check) && $check !== '0') {
+        if ((empty($check) && $check !== '0') || !is_scalar($check)) {
             return false;
         }
 
@@ -217,19 +217,19 @@ class Validation
      * Spaces are included in the character count.
      * Returns true if string matches value min, max, or between min and max,
      *
-     * @param string $check Value to check for length
+     * @param mixed $check Value to check for length
      * @param int $min Minimum value in range (inclusive)
      * @param int $max Maximum value in range (inclusive)
      * @return bool Success
      */
     public static function lengthBetween($check, $min, $max)
     {
-        if (!is_string($check)) {
+        if (!is_scalar($check)) {
             return false;
         }
-        $length = mb_strlen($check);
+        $length = mb_strlen((string)$check);
 
-        return ($length >= $min && $length <= $max);
+        return $length >= $min && $length <= $max;
     }
 
     /**
@@ -276,9 +276,9 @@ class Validation
      * Validation of credit card numbers.
      * Returns true if $check is in the proper credit card format.
      *
-     * @param string $check credit card number to validate
-     * @param string|array $type 'all' may be passed as a string, defaults to fast which checks format of most major credit cards
-     *    if an array is used only the values of the array are checked.
+     * @param mixed $check credit card number to validate
+     * @param string|string[] $type 'all' may be passed as a string, defaults to fast which checks format of
+     *     most major credit cards if an array is used only the values of the array are checked.
      *    Example: ['amex', 'bankcard', 'maestro']
      * @param bool $deep set to true this will check the Luhn algorithm of the credit card.
      * @param string|null $regex A custom regex can also be passed, this will be used instead of the defined regex values
@@ -287,11 +287,11 @@ class Validation
      */
     public static function creditCard($check, $type = 'fast', $deep = false, $regex = null)
     {
-        if (!is_scalar($check)) {
+        if (!(is_string($check) || is_int($check))) {
             return false;
         }
 
-        $check = str_replace(['-', ' '], '', $check);
+        $check = str_replace(['-', ' '], '', (string)$check);
         if (mb_strlen($check) < 13) {
             return false;
         }
@@ -348,7 +348,7 @@ class Validation
     /**
      * Used to check the count of a given value of type array or Countable.
      *
-     * @param array|\Countable $check The value to check the count on.
+     * @param mixed $check The value to check the count on.
      * @param string $operator Can be either a word or operand
      *    is greater >, is less <, greater or equal >=
      *    less or equal <=, is less <, equal to ==, not equal !=
@@ -367,11 +367,11 @@ class Validation
     /**
      * Used to compare 2 numeric values.
      *
-     * @param string $check1 The left value to compare.
+     * @param string|int $check1 The left value to compare.
      * @param string $operator Can be either a word or operand
      *    is greater >, is less <, greater or equal >=
      *    less or equal <=, is less <, equal to ==, not equal !=
-     * @param int $check2 The right value to compare.
+     * @param string|int $check2 The right value to compare.
      * @return bool Success
      */
     public static function comparison($check1, $operator, $check2)
@@ -560,7 +560,7 @@ class Validation
      * - `ym` 2006/12 or 06/12 separators can be a space, period, dash, forward slash
      * - `y` 2006 just the year without any separators
      *
-     * @param string|\DateTimeInterface $check a valid date string/object
+     * @param mixed $check a valid date string/object
      * @param string|array $format Use a string or an array of the keys above.
      *    Arrays should be passed as ['dmy', 'mdy', etc]
      * @param string|null $regex If a custom regular expression is used this is the only validation that will occur.
@@ -633,10 +633,11 @@ class Validation
      *
      * All values matching the "date" core validation rule, and the "time" one will be valid
      *
-     * @param string|\DateTimeInterface $check Value to check
+     * @param mixed $check Value to check
      * @param string|array $dateFormat Format of the date part. See Validation::date() for more information.
-     *      Or `Validation::DATETIME_ISO8601` to valid an ISO8601 datetime value
-     * @param string|null $regex Regex for the date part. If a custom regular expression is used this is the only validation that will occur.
+     *   Or `Validation::DATETIME_ISO8601` to validate an ISO8601 datetime value.
+     * @param string|null $regex Regex for the date part. If a custom regular expression is used
+     *   this is the only validation that will occur.
      * @return bool True if the value is valid, false otherwise
      * @see \Cake\Validation\Validation::date()
      * @see \Cake\Validation\Validation::time()
@@ -648,6 +649,9 @@ class Validation
         }
         if (is_object($check)) {
             return false;
+        }
+        if (is_array($dateFormat) && count($dateFormat) === 1) {
+            $dateFormat = reset($dateFormat);
         }
         if ($dateFormat === static::DATETIME_ISO8601 && !static::iso8601($check)) {
             return false;
@@ -677,7 +681,7 @@ class Validation
      * Validates an iso8601 datetime format
      * ISO8601 recognize datetime like 2019 as a valid date. To validate and check date integrity, use @see \Cake\Validation\Validation::datetime()
      *
-     * @param string|\DateTimeInterface $check Value to check
+     * @param mixed $check Value to check
      * @return bool True if the value is valid, false otherwise
      * @see Regex credits: https://www.myintervals.com/blog/2009/05/20/iso-8601-date-validation-that-doesnt-suck/
      */
@@ -812,13 +816,17 @@ class Validation
      * - true => Any number of decimal places greater than 0, or a float|double. The '.' is required.
      * - 1..N => Exactly that many number of decimal places. The '.' is required.
      *
-     * @param float $check The value the test for decimal.
-     * @param int|bool|null $places Decimal places.
+     * @param mixed $check The value the test for decimal.
+     * @param int|true|null $places Decimal places.
      * @param string|null $regex If a custom regular expression is used, this is the only validation that will occur.
      * @return bool Success
      */
     public static function decimal($check, $places = null, $regex = null)
     {
+        if (!is_scalar($check)) {
+            return false;
+        }
+
         if ($regex === null) {
             $lnum = '[0-9]+';
             $dnum = "[0-9]*[\.]{$lnum}";
@@ -836,6 +844,8 @@ class Validation
                 $places = '[0-9]{' . $places . '}';
                 $dnum = "(?:[0-9]*[\.]{$places}|{$lnum}[\.]{$places})";
                 $regex = "/^{$sign}{$dnum}{$exp}$/";
+            } else {
+                return false;
             }
         }
 
@@ -863,7 +873,7 @@ class Validation
      * Only uses getmxrr() checking for deep validation, or
      * any PHP version on a non-windows distribution
      *
-     * @param string $check Value to check
+     * @param mixed $check Value to check
      * @param bool $deep Perform a deeper validation (if true), by also checking availability of host
      * @param string|null $regex Regex to use (if none it will use built in regex)
      * @return bool Success
@@ -912,7 +922,7 @@ class Validation
      * Checks that value has a valid file extension.
      *
      * @param string|array|\Psr\Http\Message\UploadedFileInterface $check Value to check
-     * @param array $extensions file extensions to allow. By default extensions are 'gif', 'jpeg', 'png', 'jpg'
+     * @param string[] $extensions file extensions to allow. By default extensions are 'gif', 'jpeg', 'png', 'jpg'
      * @return bool Success
      */
     public static function extension($check, $extensions = ['gif', 'jpeg', 'png', 'jpg'])
@@ -938,12 +948,16 @@ class Validation
     /**
      * Validation of an IP address.
      *
-     * @param string $check The string to test.
+     * @param mixed $check The string to test.
      * @param string $type The IP Protocol version to validate against
      * @return bool Success
      */
     public static function ip($check, $type = 'both')
     {
+        if (!is_string($check)) {
+            return false;
+        }
+
         $type = strtolower($type);
         $flags = 0;
         if ($type === 'ipv4') {
@@ -959,7 +973,7 @@ class Validation
     /**
      * Checks whether the length of a string (in characters) is greater or equal to a minimal length.
      *
-     * @param string $check The string to test
+     * @param mixed $check The string to test
      * @param int $min The minimal string length
      * @return bool Success
      */
@@ -969,13 +983,13 @@ class Validation
             return false;
         }
 
-        return mb_strlen($check) >= $min;
+        return mb_strlen((string)$check) >= $min;
     }
 
     /**
      * Checks whether the length of a string (in characters) is smaller or equal to a maximal length.
      *
-     * @param string $check The string to test
+     * @param mixed $check The string to test
      * @param int $max The maximal string length
      * @return bool Success
      */
@@ -985,13 +999,13 @@ class Validation
             return false;
         }
 
-        return mb_strlen($check) <= $max;
+        return mb_strlen((string)$check) <= $max;
     }
 
     /**
      * Checks whether the length of a string (in bytes) is greater or equal to a minimal length.
      *
-     * @param string $check The string to test
+     * @param mixed $check The string to test
      * @param int $min The minimal string length (in bytes)
      * @return bool Success
      */
@@ -1001,13 +1015,13 @@ class Validation
             return false;
         }
 
-        return strlen($check) >= $min;
+        return strlen((string)$check) >= $min;
     }
 
     /**
      * Checks whether the length of a string (in bytes) is smaller or equal to a maximal length.
      *
-     * @param string $check The string to test
+     * @param mixed $check The string to test
      * @param int $max The maximal string length
      * @return bool Success
      */
@@ -1017,13 +1031,13 @@ class Validation
             return false;
         }
 
-        return strlen($check) <= $max;
+        return strlen((string)$check) <= $max;
     }
 
     /**
      * Checks that a value is a monetary amount.
      *
-     * @param string $check Value to check
+     * @param mixed $check Value to check
      * @param string $symbolPosition Where symbol is located (left/right)
      * @return bool Success
      */
@@ -1048,7 +1062,7 @@ class Validation
      * - max => maximum number of non-zero choices that can be made
      * - min => minimum number of non-zero choices that can be made
      *
-     * @param array $check Value to check
+     * @param mixed $check Value to check
      * @param array $options Options for the check.
      * @param bool $caseInsensitive Set to true for case insensitive comparison.
      * @return bool Success
@@ -1091,7 +1105,7 @@ class Validation
     /**
      * Checks if a value is numeric.
      *
-     * @param string $check Value to check
+     * @param mixed $check Value to check
      * @return bool Success
      */
     public static function numeric($check)
@@ -1102,7 +1116,7 @@ class Validation
     /**
      * Checks if a value is a natural number.
      *
-     * @param string $check Value to check
+     * @param mixed $check Value to check
      * @param bool $allowZero Set true to allow zero, defaults to false
      * @return bool Success
      * @see https://en.wikipedia.org/wiki/Natural_number
@@ -1138,7 +1152,7 @@ class Validation
             return ($check >= $lower && $check <= $upper);
         }
 
-        return is_finite($check);
+        return is_finite((float)$check);
     }
 
     /**
@@ -1154,13 +1168,17 @@ class Validation
      * - an optional query string (get parameters)
      * - an optional fragment (anchor tag) as defined in RFC 3986
      *
-     * @param string $check Value to check
+     * @param mixed $check Value to check
      * @param bool $strict Require URL to be prefixed by a valid scheme (one of http(s)/ftp(s)/file/news/gopher)
      * @return bool Success
      * @link https://tools.ietf.org/html/rfc3986
      */
     public static function url($check, $strict = false)
     {
+        if (!is_string($check)) {
+            return false;
+        }
+
         static::_populateIp();
 
         $emoji = '\x{1F190}-\x{1F9EF}';
@@ -1181,16 +1199,19 @@ class Validation
     /**
      * Checks if a value is in a given list. Comparison is case sensitive by default.
      *
-     * @param string $check Value to check.
+     * @param mixed $check Value to check.
      * @param string[] $list List to check against.
      * @param bool $caseInsensitive Set to true for case insensitive comparison.
      * @return bool Success.
      */
     public static function inList($check, array $list, $caseInsensitive = false)
     {
+        if (!is_scalar($check)) {
+            return false;
+        }
         if ($caseInsensitive) {
             $list = array_map('mb_strtolower', $list);
-            $check = mb_strtolower($check);
+            $check = mb_strtolower((string)$check);
         } else {
             $list = array_map('strval', $list);
         }
@@ -1221,7 +1242,7 @@ class Validation
     /**
      * Checks that a value is a valid UUID - https://tools.ietf.org/html/rfc4122
      *
-     * @param string $check Value to check
+     * @param mixed $check Value to check
      * @return bool Success
      */
     public static function uuid($check)
@@ -1234,19 +1255,19 @@ class Validation
     /**
      * Runs a regular expression match.
      *
-     * @param string $check Value to check against the $regex expression
+     * @param mixed $check Value to check against the $regex expression
      * @param string $regex Regular expression
      * @return bool Success of match
      */
     protected static function _check($check, $regex)
     {
-        return is_string($regex) && is_scalar($check) && preg_match($regex, $check);
+        return is_scalar($check) && preg_match($regex, (string)$check);
     }
 
     /**
      * Luhn algorithm
      *
-     * @param string|array $check Value to check.
+     * @param mixed $check Value to check.
      * @return bool Success
      * @see https://en.wikipedia.org/wiki/Luhn_algorithm
      */
@@ -1256,10 +1277,11 @@ class Validation
             return false;
         }
         $sum = 0;
+        $check = (string)$check;
         $length = strlen($check);
 
         for ($position = 1 - ($length % 2); $position < $length; $position += 2) {
-            $sum += $check[$position];
+            $sum += (int)$check[$position];
         }
 
         for ($position = ($length % 2); $position < $length; $position += 2) {
@@ -1413,7 +1435,7 @@ class Validation
      * - `optional` - Whether or not this file is optional. Defaults to false.
      *   If true a missing file will pass the validator regardless of other constraints.
      *
-     * @param array|\Psr\Http\Message\UploadedFileInterface $file The uploaded file data from PHP.
+     * @param mixed $file The uploaded file data from PHP.
      * @param array $options An array of options for the validation.
      * @return bool
      */
@@ -1436,7 +1458,7 @@ class Validation
         if (is_array($file)) {
             $keys = ['error', 'name', 'size', 'tmp_name', 'type'];
             ksort($file);
-            if (array_keys($file) != $keys) {
+            if (array_keys($file) !== $keys) {
                 return false;
             }
             $error = (int)$file['error'];
@@ -1465,7 +1487,7 @@ class Validation
     /**
      * Validates the size of an uploaded image.
      *
-     * @param array|\Psr\Http\Message\UploadedFileInterface $file The uploaded file data from PHP.
+     * @param mixed $file The uploaded file data from PHP.
      * @param array $options Options to validate width and height.
      * @return bool
      * @throws \InvalidArgumentException
@@ -1550,12 +1572,16 @@ class Validation
      * - `format` - By default `both`, can be `long` and `lat` as well to validate
      *   only a part of the coordinate.
      *
-     * @param string $value Geographic location as string
+     * @param mixed $value Geographic location as string
      * @param array $options Options for the validation logic.
      * @return bool
      */
     public static function geoCoordinate($value, array $options = [])
     {
+        if (!is_scalar($value)) {
+            return false;
+        }
+
         $options += [
             'format' => 'both',
             'type' => 'latLong',
@@ -1574,13 +1600,13 @@ class Validation
             $pattern = '/^' . self::$_pattern['latitude'] . '$/';
         }
 
-        return (bool)preg_match($pattern, $value);
+        return (bool)preg_match($pattern, (string)$value);
     }
 
     /**
      * Convenience method for latitude validation.
      *
-     * @param string $value Latitude as string
+     * @param mixed $value Latitude as string
      * @param array $options Options for the validation logic.
      * @return bool
      * @link https://en.wikipedia.org/wiki/Latitude
@@ -1596,7 +1622,7 @@ class Validation
     /**
      * Convenience method for longitude validation.
      *
-     * @param string $value Latitude as string
+     * @param mixed $value Latitude as string
      * @param array $options Options for the validation logic.
      * @return bool
      * @link https://en.wikipedia.org/wiki/Longitude
@@ -1614,7 +1640,7 @@ class Validation
      *
      * This method will reject all non-string values.
      *
-     * @param string $value The value to check
+     * @param mixed $value The value to check
      * @return bool
      */
     public static function ascii($value)
@@ -1637,7 +1663,7 @@ class Validation
      *   MySQL's older utf8 encoding type does not allow characters above
      *   the basic multilingual plane. Defaults to false.
      *
-     * @param string $value The value to check
+     * @param mixed $value The value to check
      * @param array $options An array of options. See above for the supported options.
      * @return bool
      */
@@ -1660,16 +1686,17 @@ class Validation
      * This method will accept strings that contain only integer data
      * as well.
      *
-     * @param string $value The value to check
+     * @param mixed $value The value to check
      * @return bool
      */
     public static function isInteger($value)
     {
-        if (!is_numeric($value) || is_float($value)) {
-            return false;
-        }
         if (is_int($value)) {
             return true;
+        }
+
+        if (!is_string($value) || !is_numeric($value)) {
+            return false;
         }
 
         return (bool)preg_match('/^-?[0-9]+$/', $value);
@@ -1678,7 +1705,7 @@ class Validation
     /**
      * Check that the input value is an array.
      *
-     * @param array $value The value to check
+     * @param mixed $value The value to check
      * @return bool
      */
     public static function isArray($value)
@@ -1703,7 +1730,7 @@ class Validation
     /**
      * Check that the input value is a 6 digits hex color.
      *
-     * @param string|array $check The value to check
+     * @param mixed $check The value to check
      * @return bool Success
      */
     public static function hexColor($check)
@@ -1716,12 +1743,15 @@ class Validation
      * Requirements are uppercase, no whitespaces, max length 34, country code and checksum exist at right spots,
      * body matches against checksum via Mod97-10 algorithm
      *
-     * @param string $check The value to check
+     * @param mixed $check The value to check
      * @return bool Success
      */
     public static function iban($check)
     {
-        if (!preg_match('/^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$/', $check)) {
+        if (
+            !is_string($check) ||
+            !preg_match('/^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$/', $check)
+        ) {
             return false;
         }
 
@@ -1742,7 +1772,7 @@ class Validation
             $checksum %= 97;
         }
 
-        return ((98 - $checksum) === $checkInt);
+        return $checkInt === 98 - $checksum;
     }
 
     /**

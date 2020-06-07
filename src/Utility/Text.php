@@ -24,7 +24,7 @@ class Text
     /**
      * Default transliterator.
      *
-     * @var \Transliterator Transliterator instance.
+     * @var \Transliterator|null Transliterator instance.
      */
     protected static $_defaultTransliterator;
 
@@ -935,7 +935,7 @@ class Text
             return implode($separator, array_slice($list, null, -1)) . ' ' . $and . ' ' . array_pop($list);
         }
 
-        return array_pop($list);
+        return (string)array_pop($list);
     }
 
     /**
@@ -985,7 +985,7 @@ class Text
                 $values[] = $value;
 
                 if (count($values) === $find) {
-                    if ($find == 3) {
+                    if ($find === 3) {
                         $map[] = (($values[0] % 16) * 4096) + (($values[1] % 64) * 64) + ($values[2] % 64);
                     } else {
                         $map[] = (($values[0] % 32) * 64) + ($values[1] % 64);
@@ -1051,7 +1051,7 @@ class Text
         if ($i !== false) {
             $size = (float)substr($size, 0, $l);
 
-            return $size * pow(1024, $i + 1);
+            return (int)($size * pow(1024, $i + 1));
         }
 
         if (substr($size, -1) === 'B' && ctype_digit(substr($size, 0, -1))) {
@@ -1108,7 +1108,12 @@ class Text
      */
     public static function setTransliteratorId($transliteratorId)
     {
-        static::setTransliterator(transliterator_create($transliteratorId));
+        $transliterator = transliterator_create($transliteratorId);
+        if ($transliterator === null) {
+            throw new Exception('Unable to create transliterator for id: ' . $transliteratorId);
+        }
+
+        static::setTransliterator($transliterator);
         static::$_defaultTransliteratorId = $transliteratorId;
     }
 
@@ -1129,7 +1134,12 @@ class Text
             $transliterator = static::$_defaultTransliterator ?: static::$_defaultTransliteratorId;
         }
 
-        return transliterator_transliterate($transliterator, $string);
+        $return = transliterator_transliterate($transliterator, $string);
+        if ($return === false) {
+            throw new Exception(sprintf('Unable to transliterate string: %s', $string));
+        }
+
+        return $return;
     }
 
     /**
@@ -1147,7 +1157,7 @@ class Text
      *   For e.g. this option can be set to '.' to generate clean file names.
      *
      * @param string $string the string you want to slug
-     * @param array $options If string it will be use as replacement character
+     * @param array|string $options If string it will be use as replacement character
      *   or an array of options.
      * @return string
      * @see setTransliterator()
@@ -1172,7 +1182,7 @@ class Text
         if ($options['preserve']) {
             $regex .= preg_quote($options['preserve'], '/');
         }
-        $quotedReplacement = preg_quote($options['replacement'], '/');
+        $quotedReplacement = preg_quote((string)$options['replacement'], '/');
         $map = [
             '/[' . $regex . ']/mu' => $options['replacement'],
             sprintf('/^[%s]+|[%s]+$/', $quotedReplacement, $quotedReplacement) => '',

@@ -19,6 +19,8 @@ use ReflectionClass;
 /**
  * A Proxy class used to remove any extra arguments when the user intended to call
  * a method in another class that is not aware of validation providers signature
+ *
+ * @method bool extension(mixed $check, array $extensions, array $context = [])
  */
 class RulesProvider
 {
@@ -58,7 +60,7 @@ class RulesProvider
      *
      * @param string $method the validation method to call
      * @param array $arguments the list of arguments to pass to the method
-     * @return bool whether or not the validation rule passed
+     * @return bool Whether or not the validation rule passed
      */
     public function __call($method, $arguments)
     {

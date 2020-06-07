@@ -91,7 +91,7 @@ class BreadcrumbsHelper extends Helper
     /**
      * Prepend a crumb to the start of the queue.
      *
-     * @param string $title If provided as a string, it represents the title of the crumb.
+     * @param string|array $title If provided as a string, it represents the title of the crumb.
      * Alternatively, if you want to add multiple crumbs at once, you can provide an array, with each values being a
      * single crumb. Arrays are expected to be of this form:
      * - *title* The title of the crumb
