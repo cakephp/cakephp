@@ -329,7 +329,6 @@ class CommandRunner implements EventDispatcherInterface
      * @param \Cake\Console\ConsoleIo $io ConsoleIo object for errors.
      * @param string|null $name The name from the CLI args.
      * @return string The resolved name.
-     * @throws \Cake\Console\Exception\MissingOptionException
      */
     protected function resolveName($commands, $io, $name)
     {

@@ -14,6 +14,7 @@
  */
 namespace Cake\Utility;
 
+use Cake\Core\Exception\Exception;
 use InvalidArgumentException;
 
 /**
