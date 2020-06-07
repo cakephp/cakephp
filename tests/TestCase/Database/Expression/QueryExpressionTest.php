@@ -18,7 +18,6 @@ namespace Cake\Test\TestCase\Database\Expression;
 
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ValueBinder;
-use Cake\I18n\FrozenTime;
 use Cake\TestSuite\TestCase;
 
 /**
