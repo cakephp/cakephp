@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\FunctionsBuilder;
 
 use Cake\Database\Driver\Sqlite;
+use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Exception;
 use Cake\Database\Expression\GroupedExpression;
 use Cake\Database\Expression\IdentifierExpression;
@@ -109,6 +110,7 @@ class GroupConcatTest extends TestCase
      */
     public function testGroupConcat()
     {
+        $this->expectPotentialTsqlException();
         $articles = $this->getTableLocator()->get('Articles')->setConnection($this->connection);
         $articles->belongsToMany('Tags', ['through' => 'ArticlesTags']);
         $articleQuery = $articles->find('all');
@@ -134,13 +136,7 @@ class GroupConcatTest extends TestCase
      */
     public function testGroupConcatFull()
     {
-        if ($this->connection->getDriver() instanceof Sqlite) {
-            $this->expectException(Exception::class);
-            $this->expectExceptionMessage(
-                'SQLite does not support ordering aggregate function results via a clause. ' .
-                'The recommended method is a subquery.'
-            );
-        }
+        $this->expectSQLiteException()->expectPotentialTsqlException();
         $articles = $this->getTableLocator()->get('Articles')->setConnection($this->connection);
         $articles->belongsToMany(
             'Tags',
@@ -167,5 +163,40 @@ class GroupConcatTest extends TestCase
             [['article_id' => 1, 'tag_ids' => 'tag2:tag1'], ['article_id' => 2, 'tag_ids' => 'tag3:tag1']],
             $articleQuery->execute()->fetchAll('assoc')
         );
+    }
+
+    /**
+     * Expect the aggregate function not supported if the database is SQLite.
+     *
+     * @return $this
+     */
+    private function expectSQLiteException()
+    {
+        if ($this->connection->getDriver() instanceof Sqlite) {
+            $this->expectException(Exception::class);
+            $this->expectExceptionMessage(
+                'SQLite does not support ordering aggregate function results via a clause. ' .
+                'The recommended method is a subquery.'
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * If the server is MS SQL (tsql) and the is an older version,
+     * expect a STRING_AGG exception.
+     *
+     * @return $this
+     */
+    private function expectPotentialTsqlException()
+    {
+        $driver = $this->connection->getDriver();
+        if ($driver instanceof Sqlserver && !$driver->supportsAdvAggregateExpressions()) {
+            $this->expectException(Exception::class);
+            $this->expectExceptionMessage('STRING_AGG requires SQL Server version 14 (2017) or later.');
+        }
+
+        return $this;
     }
 }

@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Database\Driver;
 
 use Cake\Database\Driver;
+use Cake\Database\Exception;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\GroupedExpression;
 use Cake\Database\Expression\OrderByExpression;
@@ -264,6 +265,16 @@ class Sqlserver extends Driver
     public function supportsDynamicConstraints(): bool
     {
         return true;
+    }
+
+    /**
+     * Checks if the server supports more advanced aggregate functions
+     * and expressions including STRING_AGG that were added in version 14
+     * (2017).
+     */
+    public function supportsAdvAggregateExpressions(): bool
+    {
+        return version_compare($this->version(), '14.0', '>=');
     }
 
     /**
@@ -544,6 +555,9 @@ class Sqlserver extends Driver
 
                 break;
             case 'GROUP_CONCAT':
+                if (!$this->supportsAdvAggregateExpressions()) {
+                    throw new Exception('STRING_AGG requires SQL Server version 14 (2017) or later.');
+                }
                 if ($expression instanceof GroupedExpression) {
                     $parts = ['separator' => ''];
                     $expression->iterateParts(
