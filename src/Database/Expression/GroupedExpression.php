@@ -52,11 +52,9 @@ class GroupedExpression extends FunctionExpression
      */
     protected function resetOrderContainer()
     {
-        $this->orderContainer = (
-            new FunctionExpression(
-                $this->orderContainer instanceof FunctionExpression ? $this->orderContainer->getName() : 'OVER '
-            )
-        )->setConjunction(' ', false, false);
+        $conjunction = $this->orderContainer instanceof FunctionExpression ? $this->orderContainer->getName() : 'OVER ';
+        $this->orderContainer = (new FunctionExpression($conjunction))
+            ->setConjunction(' ', false, false);
 
         return $this;
     }
