@@ -24,7 +24,6 @@ use Cake\I18n\Date;
 use Cake\I18n\FrozenTime;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
-use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
@@ -5109,7 +5108,7 @@ class FormHelperTest extends TestCase
     public function testSelectEmptyWithRequiredFalse()
     {
         $this->loadFixtures();
-        $Articles = TableRegistry::getTableLocator()->get('Articles');
+        $Articles = $this->getTableLocator()->get('Articles');
         $validator = $Articles->getValidator('default');
         $validator->allowEmptyString('user_id');
         $Articles->setValidator('default', $validator);
