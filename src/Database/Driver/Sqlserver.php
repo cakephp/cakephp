@@ -271,6 +271,8 @@ class Sqlserver extends Driver
      * Checks if the server supports more advanced aggregate functions
      * and expressions including STRING_AGG that were added in version 14
      * (2017).
+     *
+     * @return bool Returns true if version is 14.0 or greater, otherwise false.
      */
     public function supportsAdvAggregateExpressions(): bool
     {
