@@ -37,7 +37,7 @@ class Postgres extends Driver
     use SqlDialectTrait;
 
     /**
-     * @var int|null Maximum alias length or null if no limit
+     * @inheritDoc
      */
     protected const MAX_ALIAS_LENGTH = 63;
 
