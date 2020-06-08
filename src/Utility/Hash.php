@@ -541,7 +541,7 @@ class Hash
      * @param string[] $paths An array containing one or more Hash::extract()-style key paths
      * @param string $format Format string into which values will be inserted, see sprintf()
      * @return string[]|null An array of strings extracted from `$path` and formatted with `$format`
-     * @link https://book.cakephp.org/4/en/core-libraries/hash.html#Cake\Utility\Hash::format
+     * @link https://book.cakephp.org/3/en/core-libraries/hash.html#Cake\Utility\Hash::format
      * @see sprintf()
      * @see \Cake\Utility\Hash::extract()
      */
