@@ -53,7 +53,7 @@ class GroupedExpression extends FunctionExpression
      */
     protected function resetOrderContainer($initialize = false)
     {
-        $this->orderContainer = (new FunctionExpression($initialize ? 'OVER ' : $this->orderContainer->getName()))
+        $this->orderContainer = (new FunctionExpression($initialize ? 'OVER ' : $this->getOrderContainer()->getName()))
             ->setConjunction(' ', false, false);
 
         return $this;
@@ -105,8 +105,8 @@ class GroupedExpression extends FunctionExpression
      */
     public function sql(ValueBinder $generator): string
     {
-        $this->resetOrderContainer()->orderContainer->add([$this->order]);
-        $order = $this->order ? $this->orderContainer->sql($generator) : '';
+        $this->resetOrderContainer()->getOrderContainer()->add([$this->order]);
+        $order = $this->order ? $this->getOrderContainer()->sql($generator) : '';
 
         return rtrim(parent::sql($generator) . ' ' . $order);
     }
