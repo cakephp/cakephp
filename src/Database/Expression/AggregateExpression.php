@@ -33,11 +33,6 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     protected $window;
 
     /**
-     * @var string
-     */
-    protected $clause = 'OVER';
-
-    /**
      * Adds an empty `OVER()` window expression or a named window epression.
      *
      * @param string|null $name Window name
@@ -184,9 +179,9 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
         $sql = parent::sql($generator);
         if ($this->window !== null) {
             if ($this->window->isNamedOnly()) {
-                $sql .= " {$this->clause} " . $this->window->sql($generator);
+                $sql .= ' OVER ' . $this->window->sql($generator);
             } else {
-                $sql .= " {$this->clause} (" . $this->window->sql($generator) . ')';
+                $sql .= ' OVER (' . $this->window->sql($generator) . ')';
             }
         }
 
@@ -217,29 +212,6 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
         }
 
         return $count;
-    }
-
-    /**
-     * Returns the clause used in generating the expression.
-     *
-     * @return string
-     */
-    public function getClause(): string
-    {
-        return $this->clause;
-    }
-
-    /**
-     * Sets the clause to be used in generating the expression.
-     *
-     * @param string $clause The clause to use in the expression.
-     * @return $this
-     */
-    public function setClause(string $clause)
-    {
-        $this->clause = strtoupper($clause);
-
-        return $this;
     }
 
     /**
