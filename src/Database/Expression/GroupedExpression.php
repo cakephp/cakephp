@@ -40,8 +40,7 @@ class GroupedExpression extends FunctionExpression
      */
     public function __construct(string $name, array $params = [], array $types = [], string $returnType = 'string')
     {
-        $this->orderContainer = (new FunctionExpression('OVER '));
-        $this->resetOrderContainer();
+        $this->resetOrderContainer(true);
         parent::__construct($name, $params, $types, $returnType);
     }
 
@@ -49,11 +48,12 @@ class GroupedExpression extends FunctionExpression
      * Overwrites or initializes the orderContainer property with a
      * FunctionExpression object.
      *
+     * @param bool $initialize If true, will not use an existing value.
      * @return $this
      */
-    protected function resetOrderContainer()
+    protected function resetOrderContainer($initialize = false)
     {
-        $this->orderContainer = (new FunctionExpression($this->orderContainer->getName()))
+        $this->orderContainer = (new FunctionExpression($initialize ? 'OVER ' : $this->orderContainer->getName()))
             ->setConjunction(' ', false, false);
 
         return $this;
