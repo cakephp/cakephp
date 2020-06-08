@@ -101,7 +101,7 @@ trait DateFormatTrait
      *
      * @return bool
      */
-    public static function lenientParsingEnabled(): bool
+    public static function lenientParsingEnabled()
     {
         return static::$lenientParsing;
     }
@@ -111,7 +111,7 @@ trait DateFormatTrait
      *
      * @return void
      */
-    public static function enableLenientParsing(): void
+    public static function enableLenientParsing()
     {
         static::$lenientParsing = true;
     }
@@ -121,7 +121,7 @@ trait DateFormatTrait
      *
      * @return void
      */
-    public static function disableLenientParsing(): void
+    public static function disableLenientParsing()
     {
         static::$lenientParsing = false;
     }
