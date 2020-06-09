@@ -45,7 +45,7 @@ class Sqlserver extends Driver
     use TupleComparisonTranslatorTrait;
 
     /**
-     * @var int|null Maximum alias length or null if no limit
+     * @inheritDoc
      */
     protected const MAX_ALIAS_LENGTH = 128;
 

@@ -38,7 +38,7 @@ use RuntimeException;
  * Is the equivalent of Cake\Controller\Controller on the command line.
  *
  * @deprecated 3.6.0 ShellDispatcher and Shell will be removed in 5.0
- * @method int|bool|null|void main(...$args)
+ * @method int|bool|null|void main(...$args) Main entry method for the shell.
  */
 class Shell
 {

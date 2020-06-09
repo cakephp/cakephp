@@ -133,8 +133,8 @@ jobs:
       uses: actions/cache@v1
       with:
         path: ${{ steps.php-ext-cache.outputs.dir }}
-        key: ${{ steps.php-ext-cache.outputs.dir }}
-        restore-keys: ${{ steps.php-ext-cache.outputs.key }}
+        key: ${{ runner.os }}-php-ext-${{ steps.php-ext-cache.outputs.key }}
+        restore-keys: ${{ runner.os }}-php-ext-${{ steps.php-ext-cache.outputs.key }}
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
@@ -221,6 +221,7 @@ jobs:
         php-version: '7.2'
         extensions: mbstring, intl, apcu
         coverage: none
+        tools: cs2pr
 
     - name: Get composer cache directory
       id: composer-cache
@@ -243,4 +244,4 @@ jobs:
       run: vendor/bin/psalm.phar --show-info=false --output-format=github
 
     - name: Run phpstan
-      run: vendor/bin/phpstan.phar analyse --no-progress src/
+      run: vendor/bin/phpstan.phar analyse src/ --error-format=checkstyle | cs2pr
