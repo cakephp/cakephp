@@ -6,7 +6,7 @@ parameters:
     checkMissingIterableValueType: false
     checkGenericClassInNonGenericObjectType: false
     treatPhpDocTypesAsCertain: false
-    autoload_files:
+    bootstrapFiles:
         - tests/bootstrap.php
     earlyTerminatingMethodCalls:
         Cake\Console\Shell:
