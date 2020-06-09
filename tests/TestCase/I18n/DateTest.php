@@ -215,6 +215,25 @@ class DateTest extends TestCase
     }
 
     /**
+     * Tests disabling leniency when parsing locale format.
+     *
+     * @dataProvider classNameProvider
+     * @return void
+     */
+    public function testLenientParseDate($class)
+    {
+        $class::setDefaultLocale('pt_BR');
+
+        $class::disableLenientParsing();
+        $date = $class::parseDate('04/21/2013');
+        $this->assertSame(null, $date);
+
+        $class::enableLenientParsing();
+        $date = $class::parseDate('04/21/2013');
+        $this->assertSame('2014-09-04', $date->format('Y-m-d'));
+    }
+
+    /**
      * provider for timeAgoInWords() tests
      *
      * @return array
