@@ -116,5 +116,10 @@
     "config": {
         "sort-packages": true,
         "process-timeout": 900
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-4.next": "4.1.x-dev"
+        }
     }
 }
