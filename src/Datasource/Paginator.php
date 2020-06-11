@@ -36,7 +36,7 @@ class Paginator implements PaginatorInterface
      * - `maxLimit` - The maximum limit users can choose to view. Defaults to 100
      * - `limit` - The initial number of items per page. Defaults to 20.
      * - `page` - The starting page, defaults to 1.
-     * - `whitelist` - A list of parameters users are allowed to set using request
+     * - `allowedParameters` - A list of parameters users are allowed to set using request
      *   parameters. Modifying this list will allow users to have more influence
      *   over pagination, be careful with what you permit.
      *
@@ -46,7 +46,7 @@ class Paginator implements PaginatorInterface
         'page' => 1,
         'limit' => 20,
         'maxLimit' => 100,
-        'whitelist' => ['limit', 'sort', 'page', 'direction'],
+        'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
     ];
 
     /**
@@ -99,19 +99,19 @@ class Paginator implements PaginatorInterface
      * By default CakePHP will automatically allow sorting on any column on the
      * repository object being paginated. Often times you will want to allow
      * sorting on either associated columns or calculated fields. In these cases
-     * you will need to define a whitelist of all the columns you wish to allow
-     * sorting on. You can define the whitelist in the `$settings` parameter:
+     * you will need to define an allowed list of all the columns you wish to allow
+     * sorting on. You can define the allowed sort fields in the `$settings` parameter:
      *
      * ```
      * $settings = [
      *   'Articles' => [
      *     'finder' => 'custom',
-     *     'sortWhitelist' => ['title', 'author_id', 'comment_count'],
+     *     'allowedSort' => ['title', 'author_id', 'comment_count'],
      *   ]
      * ];
      * ```
      *
-     * Passing an empty array as whitelist disallows sorting altogether.
+     * Passing an empty array as allowedSort disallows sorting altogether.
      *
      * ### Paginating with custom finders
      *
@@ -407,6 +407,47 @@ class Paginator implements PaginatorInterface
     }
 
     /**
+     * Shim method for reading the deprecated whitelist or allowedParameters options
+     *
+     * @return string[]
+     */
+    protected function getAllowedParameters(): array
+    {
+        $allowed = $this->getConfig('allowedParameters');
+        if (!$allowed) {
+            $allowed = [];
+        }
+        $whitelist = $this->getConfig('whitelist');
+        if ($whitelist) {
+            deprecationWarning('The `whitelist` option is deprecated. Use the `allowedParameters` option instead.');
+
+            return array_merge($allowed, $whitelist);
+        }
+
+        return $allowed;
+    }
+
+    /**
+     * Shim method for reading the deprecated sortWhitelist or allowedSort options.
+     *
+     * @param array $config The configuration data to coalesce and emit warnings on.
+     * @return string[]|null
+     */
+    protected function getAllowedSort(array $config): ?array
+    {
+        $allowed = $config['allowedSort'] ?? null;
+        if ($allowed !== null) {
+            return $allowed;
+        }
+        $deprecated = $config['sortWhitelist'] ?? null;
+        if ($deprecated !== null) {
+            deprecationWarning('The `sortWhitelist` option is deprecated. Use `allowedSort` instead.');
+        }
+
+        return $deprecated;
+    }
+
+    /**
      * Merges the various options that Paginator uses.
      * Pulls settings together from the following places:
      *
@@ -415,7 +456,7 @@ class Paginator implements PaginatorInterface
      * - Request parameters
      *
      * The result of this method is the aggregate of all the option sets
-     * combined together. You can change config value `whitelist` to modify
+     * combined together. You can change config value `allowedParameters` to modify
      * which options/values can be set using request parameters.
      *
      * @param array $params Request params.
@@ -428,7 +469,9 @@ class Paginator implements PaginatorInterface
             $scope = $settings['scope'];
             $params = !empty($params[$scope]) ? (array)$params[$scope] : [];
         }
-        $params = array_intersect_key($params, array_flip($this->getConfig('whitelist')));
+
+        $allowed = $this->getAllowedParameters();
+        $params = array_intersect_key($params, array_flip($allowed));
 
         return array_merge($settings, $params);
     }
@@ -449,6 +492,8 @@ class Paginator implements PaginatorInterface
         }
 
         $defaults = $this->getConfig();
+        $defaults['whitelist'] = $defaults['allowedParameters'] = $this->getAllowedParameters();
+
         $maxLimit = $settings['maxLimit'] ?? $defaults['maxLimit'];
         $limit = $settings['limit'] ?? $defaults['limit'];
 
@@ -469,14 +514,14 @@ class Paginator implements PaginatorInterface
      * also be sanitized. Lastly sort + direction keys will be converted into
      * the model friendly order key.
      *
-     * You can use the whitelist parameter to control which columns/fields are
+     * You can use the allowedParameters option to control which columns/fields are
      * available for sorting via URL parameters. This helps prevent users from ordering large
      * result sets on un-indexed values.
      *
      * If you need to sort on associated columns or synthetic properties you
-     * will need to use a whitelist.
+     * will need to use the `allowedSort` option.
      *
-     * Any columns listed in the sort whitelist will be implicitly trusted.
+     * Any columns listed in the allowed sort fields will be implicitly trusted.
      * You can use this to sort on synthetic columns, or columns added in custom
      * find operations that may not exist in the schema.
      *
@@ -517,11 +562,14 @@ class Paginator implements PaginatorInterface
             return $options;
         }
 
-        $inWhitelist = false;
-        if (isset($options['sortWhitelist'])) {
+        $sortAllowed = false;
+        $allowed = $this->getAllowedSort($options);
+        if ($allowed !== null) {
+            $options['allowedSort'] = $options['sortWhitelist'] = $allowed;
+
             $field = key($options['order']);
-            $inWhitelist = in_array($field, $options['sortWhitelist'], true);
-            if (!$inWhitelist) {
+            $sortAllowed = in_array($field, $allowed, true);
+            if (!$sortAllowed) {
                 $options['order'] = [];
                 $options['sort'] = null;
 
@@ -537,7 +585,7 @@ class Paginator implements PaginatorInterface
             $options['sort'] = key($options['order']);
         }
 
-        $options['order'] = $this->_prefix($object, $options['order'], $inWhitelist);
+        $options['order'] = $this->_prefix($object, $options['order'], $sortAllowed);
 
         return $options;
     }
@@ -576,10 +624,10 @@ class Paginator implements PaginatorInterface
      *
      * @param \Cake\Datasource\RepositoryInterface $object Repository object.
      * @param array $order Order array.
-     * @param bool $whitelisted Whether or not the field was whitelisted.
+     * @param bool $allowed Whether or not the field was allowed.
      * @return array Final order array.
      */
-    protected function _prefix(RepositoryInterface $object, array $order, bool $whitelisted = false): array
+    protected function _prefix(RepositoryInterface $object, array $order, bool $allowed = false): array
     {
         $tableAlias = $object->getAlias();
         $tableOrder = [];
@@ -596,7 +644,7 @@ class Paginator implements PaginatorInterface
             }
             $correctAlias = ($tableAlias === $alias);
 
-            if ($correctAlias && $whitelisted) {
+            if ($correctAlias && $allowed) {
                 // Disambiguate fields in schema. As id is quite common.
                 if ($object->hasField($field)) {
                     $field = $alias . '.' . $field;
@@ -604,7 +652,7 @@ class Paginator implements PaginatorInterface
                 $tableOrder[$field] = $value;
             } elseif ($correctAlias && $object->hasField($field)) {
                 $tableOrder[$tableAlias . '.' . $field] = $value;
-            } elseif (!$correctAlias && $whitelisted) {
+            } elseif (!$correctAlias && $allowed) {
                 $tableOrder[$alias . '.' . $field] = $value;
             }
         }

@@ -46,7 +46,7 @@ class PaginatorComponent extends Component
      * - `maxLimit` - The maximum limit users can choose to view. Defaults to 100
      * - `limit` - The initial number of items per page. Defaults to 20.
      * - `page` - The starting page, defaults to 1.
-     * - `whitelist` - A list of parameters users are allowed to set using request
+     * - `allowedParameters` - A list of parameters users are allowed to set using request
      *   parameters. Modifying this list will allow users to have more influence
      *   over pagination, be careful with what you permit.
      *
@@ -56,7 +56,7 @@ class PaginatorComponent extends Component
         'page' => 1,
         'limit' => 20,
         'maxLimit' => 100,
-        'whitelist' => ['limit', 'sort', 'page', 'direction'],
+        'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
     ];
 
     /**
@@ -133,19 +133,19 @@ class PaginatorComponent extends Component
      *
      * By default CakePHP will automatically allow sorting on any column on the table object being
      * paginated. Often times you will want to allow sorting on either associated columns or calculated
-     * fields. In these cases you will need to define a whitelist of all the columns you wish to allow
-     * sorting on. You can define the whitelist in the `$settings` parameter:
+     * fields. In these cases you will need to define an allowed list of fields you wish to allow
+     * sorting on. You can define the allowed fields in the `$settings` parameter:
      *
      * ```
      * $settings = [
      *   'Articles' => [
      *     'finder' => 'custom',
-     *     'sortWhitelist' => ['title', 'author_id', 'comment_count'],
+     *     'allowedSort' => ['title', 'author_id', 'comment_count'],
      *   ]
      * ];
      * ```
      *
-     * Passing an empty array as whitelist disallows sorting altogether.
+     * Passing an empty array as allowed list disallows sorting altogether.
      *
      * ### Paginating with custom finders
      *
@@ -222,7 +222,7 @@ class PaginatorComponent extends Component
      * - Request parameters
      *
      * The result of this method is the aggregate of all the option sets combined together. You can change
-     * config value `whitelist` to modify which options/values can be set using request parameters.
+     * config value `allowedParameters` to modify which options/values can be set using request parameters.
      *
      * @param string $alias Model alias being paginated, if the general settings has a key with this value
      *   that key's settings will be used for pagination instead of the general ones.
