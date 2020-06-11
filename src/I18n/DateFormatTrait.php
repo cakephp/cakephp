@@ -61,7 +61,7 @@ trait DateFormatTrait
      * will be used for formatting the date part of the object and the second position
      * will be used to format the time part.
      *
-     * @var string|array|int|callable
+     * @var string|array|int|\Closure
      * @see \Cake\I18n\Time::i18nFormat()
      */
     protected static $_jsonEncodeFormat = "yyyy-MM-dd'T'HH':'mm':'ssxxx";
@@ -329,7 +329,7 @@ trait DateFormatTrait
      * can receive this datetime object and return a formatted string.
      *
      * @see \Cake\I18n\Time::i18nFormat()
-     * @param string|array|int|callable $format Format.
+     * @param string|array|int|\Closure $format Format.
      * @return void
      */
     public static function setJsonEncodeFormat($format)
