@@ -317,7 +317,7 @@ trait PaginatorTestTrait
             'limit' => 10,
             'maxLimit' => 50,
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
-            'whitelist' => ['limit', 'sort', 'page', 'direction']
+            'whitelist' => ['limit', 'sort', 'page', 'direction'],
         ];
         $this->assertEquals($expected, $result);
     }
