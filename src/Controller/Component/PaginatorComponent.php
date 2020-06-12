@@ -140,7 +140,7 @@ class PaginatorComponent extends Component
      * $settings = [
      *   'Articles' => [
      *     'finder' => 'custom',
-     *     'allowedSort' => ['title', 'author_id', 'comment_count'],
+     *     'sortableFields' => ['title', 'author_id', 'comment_count'],
      *   ]
      * ];
      * ```

@@ -697,14 +697,14 @@ trait PaginatorTestTrait
                 'sort' => 'id',
                 'scope' => null,
                 'sortWhitelist' => ['id'],
-                'allowedSort' => ['id'],
+                'sortableFields' => ['id'],
             ]);
 
         $options = [
             'order' => [
                 'id' => 'asc',
             ],
-            'allowedSort' => ['id'],
+            'sortableFields' => ['id'],
         ];
         $this->Paginator->paginate($table, [], $options);
         $pagingParams = $this->Paginator->getPagingParams();
@@ -784,7 +784,7 @@ trait PaginatorTestTrait
                 'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
                 'scope' => null,
                 'sortWhitelist' => ['id'],
-                'allowedSort' => ['id'],
+                'sortableFields' => ['id'],
                 'sort' => 'id',
             ]);
 
@@ -794,7 +794,7 @@ trait PaginatorTestTrait
             'direction' => 'herp',
         ];
         $options = [
-            'allowedSort' => ['id'],
+            'sortableFields' => ['id'],
         ];
         $this->Paginator->paginate($table, $params, $options);
         $pagingParams = $this->Paginator->getPagingParams();
@@ -849,7 +849,7 @@ trait PaginatorTestTrait
     }
 
     /**
-     * test that fields not in allowedSort won't be part of order conditions.
+     * test that fields not in sortableFields won't be part of order conditions.
      *
      * @return void
      */
@@ -860,7 +860,7 @@ trait PaginatorTestTrait
         $options = [
             'sort' => 'body',
             'direction' => 'asc',
-            'allowedSort' => ['title', 'id'],
+            'sortableFields' => ['title', 'id'],
         ];
         $result = $this->Paginator->validateSort($model, $options);
 
@@ -887,7 +887,7 @@ trait PaginatorTestTrait
     }
 
     /**
-     * test that fields in the allowedSort are not validated
+     * test that fields in the sortableFields are not validated
      *
      * @return void
      */
@@ -911,7 +911,7 @@ trait PaginatorTestTrait
     }
 
     /**
-     * test that allowedSort as empty array does not allow any sorting
+     * test that sortableFields as empty array does not allow any sorting
      *
      * @return void
      */
@@ -926,7 +926,7 @@ trait PaginatorTestTrait
             ],
             'sort' => 'body',
             'direction' => 'asc',
-            'allowedSort' => [],
+            'sortableFields' => [],
         ];
         $result = $this->Paginator->validateSort($model, $options);
 
@@ -934,7 +934,7 @@ trait PaginatorTestTrait
     }
 
     /**
-     * test that fields in the allowedSort are not validated
+     * test that fields in the sortableFields are not validated
      *
      * @return void
      */
@@ -950,7 +950,7 @@ trait PaginatorTestTrait
         $options = [
             'sort' => 'score',
             'direction' => 'asc',
-            'allowedSort' => ['score'],
+            'sortableFields' => ['score'],
         ];
         $result = $this->Paginator->validateSort($model, $options);
 
@@ -963,7 +963,7 @@ trait PaginatorTestTrait
     }
 
     /**
-     * test that multiple fields in the allowedSort are not validated and properly aliased.
+     * test that multiple fields in the sortableFields are not validated and properly aliased.
      *
      * @return void
      */
@@ -976,7 +976,7 @@ trait PaginatorTestTrait
                 'body' => 'asc',
                 'foo.bar' => 'asc',
             ],
-            'allowedSort' => ['body', 'foo.bar'],
+            'sortableFields' => ['body', 'foo.bar'],
         ];
         $result = $this->Paginator->validateSort($model, $options);
 
@@ -1138,7 +1138,7 @@ trait PaginatorTestTrait
 
         $options = [
             'direction' => 'asc',
-            'allowedSort' => ['title', 'id'],
+            'sortableFields' => ['title', 'id'],
         ];
         $result = $this->Paginator->validateSort($model, $options);
         $this->assertEquals([], $result['order']);

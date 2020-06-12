@@ -106,12 +106,12 @@ class Paginator implements PaginatorInterface
      * $settings = [
      *   'Articles' => [
      *     'finder' => 'custom',
-     *     'allowedSort' => ['title', 'author_id', 'comment_count'],
+     *     'sortableFields' => ['title', 'author_id', 'comment_count'],
      *   ]
      * ];
      * ```
      *
-     * Passing an empty array as allowedSort disallows sorting altogether.
+     * Passing an empty array as sortableFields disallows sorting altogether.
      *
      * ### Paginating with custom finders
      *
@@ -428,20 +428,20 @@ class Paginator implements PaginatorInterface
     }
 
     /**
-     * Shim method for reading the deprecated sortWhitelist or allowedSort options.
+     * Shim method for reading the deprecated sortWhitelist or sortableFields options.
      *
      * @param array $config The configuration data to coalesce and emit warnings on.
      * @return string[]|null
      */
     protected function getAllowedSort(array $config): ?array
     {
-        $allowed = $config['allowedSort'] ?? null;
+        $allowed = $config['sortableFields'] ?? null;
         if ($allowed !== null) {
             return $allowed;
         }
         $deprecated = $config['sortWhitelist'] ?? null;
         if ($deprecated !== null) {
-            deprecationWarning('The `sortWhitelist` option is deprecated. Use `allowedSort` instead.');
+            deprecationWarning('The `sortWhitelist` option is deprecated. Use `sortableFields` instead.');
         }
 
         return $deprecated;
@@ -519,7 +519,7 @@ class Paginator implements PaginatorInterface
      * result sets on un-indexed values.
      *
      * If you need to sort on associated columns or synthetic properties you
-     * will need to use the `allowedSort` option.
+     * will need to use the `sortableFields` option.
      *
      * Any columns listed in the allowed sort fields will be implicitly trusted.
      * You can use this to sort on synthetic columns, or columns added in custom
@@ -565,7 +565,7 @@ class Paginator implements PaginatorInterface
         $sortAllowed = false;
         $allowed = $this->getAllowedSort($options);
         if ($allowed !== null) {
-            $options['allowedSort'] = $options['sortWhitelist'] = $allowed;
+            $options['sortableFields'] = $options['sortWhitelist'] = $allowed;
 
             $field = key($options['order']);
             $sortAllowed = in_array($field, $allowed, true);
