@@ -19,6 +19,13 @@ use Cake\Core\Configure;
 use Cake\Error\Debugger;
 use Psy\Shell as PsyShell;
 
+function test_null(?mixed $param): void
+{
+    var_dump($param);
+}
+
+test_null(null);
+
 define('SECOND', 1);
 define('MINUTE', 60);
 define('HOUR', 3600);
