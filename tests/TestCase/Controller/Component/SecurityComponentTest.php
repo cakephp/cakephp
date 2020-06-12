@@ -564,14 +564,14 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
-     * testValidatePostFormHacking method
+     * testValidatePostFormTampering method
      *
      * Test that validatePost fails if any of its required fields are missing.
      *
      * @return void
      * @triggers Controller.startup $this->Controller
      */
-    public function testValidatePostFormHacking()
+    public function testValidatePostFormTampering()
     {
         $event = new Event('Controller.startup', $this->Controller);
         $this->Security->startup($event);
@@ -1133,6 +1133,30 @@ class SecurityComponentTest extends TestCase
         ]);
 
         $result = $this->validatePost('SecurityException', 'Missing field \'Model.password\' in POST data, Unexpected unlocked field \'Model.password\' in POST data');
+        $this->assertFalse($result);
+    }
+
+    /**
+     * Test that invalid types cause failures.
+     *
+     * @return void
+     */
+    public function testValidatePostFailArrayData()
+    {
+        $event = new Event('Controller.startup', $this->Controller);
+        $this->Security->startup($event);
+        $this->Controller->request = $this->Controller->request->withParsedBody([
+            'Model' => [
+                'username' => 'mark',
+                'password' => 'sekret',
+            ],
+            '_Token' => [
+                'fields' => [],
+                'unlocked' => '',
+            ],
+        ]);
+        Configure::write('debug', false);
+        $result = $this->validatePost('SecurityException', "'_Token.fields' was invalid.");
         $this->assertFalse($result);
     }
 
