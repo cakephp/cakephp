@@ -436,6 +436,40 @@ class CsrfProtectionMiddlewareTest extends TestCase
      */
     public function testSkippingTokenCheckUsingWhitelistCallback()
     {
+        $this->deprecated(function () {
+            $request = new ServerRequest([
+                'post' => [
+                    '_csrfToken' => 'foo',
+                ],
+                'environment' => [
+                    'REQUEST_METHOD' => 'POST',
+                ],
+            ]);
+            $response = new Response();
+
+            $middleware = new CsrfProtectionMiddleware();
+            $middleware->whitelistCallback(function (ServerRequestInterface $request) {
+                $this->assertSame('POST', $request->getServerParams()['REQUEST_METHOD']);
+
+                return true;
+            });
+
+            $handler = new TestRequestHandler(function ($request) {
+                $this->assertEmpty($request->getParsedBody());
+
+                return new Response();
+            });
+
+            $response = $middleware->process($request, $handler);
+            $this->assertInstanceOf(Response::class, $response);
+        });
+    }
+
+    /**
+     * @return void
+     */
+    public function testSkippingTokenCheckUsingSkipCheckCallback()
+    {
         $request = new ServerRequest([
             'post' => [
                 '_csrfToken' => 'foo',
@@ -447,7 +481,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $response = new Response();
 
         $middleware = new CsrfProtectionMiddleware();
-        $middleware->whitelistCallback(function (ServerRequestInterface $request) {
+        $middleware->skipCheckCallback(function (ServerRequestInterface $request) {
             $this->assertSame('POST', $request->getServerParams()['REQUEST_METHOD']);
 
             return true;

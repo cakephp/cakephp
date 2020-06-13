@@ -433,7 +433,7 @@ class Paginator implements PaginatorInterface
      * @param array $config The configuration data to coalesce and emit warnings on.
      * @return string[]|null
      */
-    protected function getAllowedSort(array $config): ?array
+    protected function getSortableFields(array $config): ?array
     {
         $allowed = $config['sortableFields'] ?? null;
         if ($allowed !== null) {
@@ -563,7 +563,7 @@ class Paginator implements PaginatorInterface
         }
 
         $sortAllowed = false;
-        $allowed = $this->getAllowedSort($options);
+        $allowed = $this->getSortableFields($options);
         if ($allowed !== null) {
             $options['sortableFields'] = $options['sortWhitelist'] = $allowed;
 

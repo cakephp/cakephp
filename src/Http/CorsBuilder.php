@@ -174,7 +174,7 @@ class CorsBuilder
     }
 
     /**
-     * Whitelist headers that can be sent in CORS requests.
+     * Allowed headers that can be sent in CORS requests.
      *
      * @param string[] $headers The list of headers to accept in CORS requests.
      * @return $this
