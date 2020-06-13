@@ -876,7 +876,7 @@ class TreeBehavior extends Behavior
             ->orderDesc($rightField)
             ->first();
 
-        if (empty($edge->{$field})) {
+        if ($edge === null || empty($edge[$field])) {
             return 0;
         }
 
@@ -986,7 +986,7 @@ class TreeBehavior extends Behavior
      * Returns the depth level of a node in the tree.
      *
      * @param int|string|\Cake\Datasource\EntityInterface $entity The entity or primary key get the level of.
-     * @return int|bool Integer of the level or false if the node does not exist.
+     * @return int|false Integer of the level or false if the node does not exist.
      */
     public function getLevel($entity)
     {

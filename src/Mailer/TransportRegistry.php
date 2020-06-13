@@ -58,7 +58,7 @@ class TransportRegistry extends ObjectRegistry
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
      * @param string $class The classname that is missing.
-     * @param string $plugin The plugin the cache is missing in.
+     * @param string|null $plugin The plugin the cache is missing in.
      * @return void
      * @throws \BadMethodCallException
      */
@@ -103,10 +103,12 @@ class TransportRegistry extends ObjectRegistry
      * Remove a single adapter from the registry.
      *
      * @param string $name The adapter name.
-     * @return void
+     * @return $this
      */
     public function unload($name)
     {
         unset($this->_loaded[$name]);
+
+        return $this;
     }
 }

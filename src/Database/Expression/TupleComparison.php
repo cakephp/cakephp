@@ -24,6 +24,13 @@ use Cake\Database\ValueBinder;
 class TupleComparison extends Comparison
 {
     /**
+     * The type to be used for casting the value to a database representation
+     *
+     * @var array
+     */
+    protected $_type;
+
+    /**
      * Constructor
      *
      * @param string|array|\Cake\Database\ExpressionInterface $fields the fields to use to form a tuple

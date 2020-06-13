@@ -35,7 +35,7 @@ interface WidgetInterface
      * this widget. Fields are in the form of Model[field][suffix]
      *
      * @param array $data The data to render.
-     * @return array Array of fields to secure.
+     * @return string[] Array of fields to secure.
      */
     public function secureFields(array $data);
 }

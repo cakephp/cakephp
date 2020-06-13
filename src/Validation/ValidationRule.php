@@ -104,7 +104,7 @@ class ValidationRule
      *   new record
      * - data: The full data that was passed to the validation process
      * - field: The name of the field that is being processed
-     * @return bool|string
+     * @return bool|string|array
      * @throws \InvalidArgumentException when the supplied rule is not a valid
      * callable for the configured scope
      */
@@ -192,7 +192,7 @@ class ValidationRule
                 $this->_pass = array_slice($value, 1);
                 $value = array_shift($value);
             }
-            if (in_array($key, ['rule', 'on', 'message', 'last', 'provider', 'pass'])) {
+            if (in_array($key, ['rule', 'on', 'message', 'last', 'provider', 'pass'], true)) {
                 $this->{"_$key"} = $value;
             }
         }
