@@ -61,12 +61,14 @@ class DigestAuthenticateTest extends TestCase
     {
         parent::setUp();
 
+        $salt = 'foo.bar';
+        Security::setSalt($salt);
         $this->Collection = $this->getMockBuilder(ComponentRegistry::class)->getMock();
         $this->auth = new DigestAuthenticate($this->Collection, [
             'realm' => 'localhost',
             'nonce' => 123,
             'opaque' => '123abc',
-            'secret' => Security::getSalt(),
+            'secret' => $salt,
             'passwordHasher' => 'ShouldNeverTryToUsePasswordHasher',
         ]);
 
@@ -511,7 +513,7 @@ DIGEST;
      */
     protected function generateNonce($secret = null, $expires = 300, $time = null)
     {
-        $secret = $secret ?: Configure::read('Security.salt');
+        $secret = $secret ?: Security::getSalt();
         $time = $time ?: microtime(true);
         $expiryTime = $time + $expires;
         $signatureValue = hash_hmac('sha256', $expiryTime . ':' . $secret, $secret);
