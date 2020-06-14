@@ -105,7 +105,7 @@
         "cs-fix": "phpcbf --colors --parallel=16 -p src/ tests/",
         "test": "phpunit",
         "test-coverage": "phpunit --coverage-clover=clover.xml",
-        "phpstan": "phpstan.phar analyse src/",
+        "phpstan": "phpstan.phar analyse",
         "psalm": "psalm.phar --show-info=false",
         "stan": [
             "@phpstan",

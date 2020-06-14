@@ -21,11 +21,6 @@ parameters:
 			path: src/Auth/Storage/SessionStorage.php
 
 		-
-			message: "#^Access to undefined constant Memcached\\:\\:SERIALIZER_MSGPACK\\.$#"
-			count: 1
-			path: src/Cache/Engine/MemcachedEngine.php
-
-		-
 			message: "#^Access to undefined constant Memcached\\:\\:OPT_CLIENT_MODE\\.$#"
 			count: 1
 			path: src/Cache/Engine/MemcachedEngine.php

@@ -8,6 +8,8 @@ parameters:
     treatPhpDocTypesAsCertain: false
     bootstrapFiles:
         - tests/bootstrap.php
+    paths:
+        - src
     earlyTerminatingMethodCalls:
         Cake\Console\Shell:
             - abort
