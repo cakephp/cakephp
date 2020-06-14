@@ -108,7 +108,6 @@ class WindowExpression implements ExpressionInterface, WindowInterface
             }
         }
 
-        /** @psalm-suppress InvalidPropertyAssignmentValue */
         $this->partitions = array_merge($this->partitions, $partitions);
 
         return $this;
