@@ -20,8 +20,8 @@ use Psr\Log\LogLevel;
 
 /**
  * Class BaseLogImpl
- * Implementation of abstract class {@see Cake\Log\Engine\BaseLog},
- * required by test case {@see Cake\Test\TestCase\Log\Engine\BaseLogTest}.
+ * Implementation of abstract class {@see \Cake\Log\Engine\BaseLog},
+ * required by test case {@see \Cake\Test\TestCase\Log\Engine\BaseLogTest}.
  */
 class BaseLogImpl extends BaseLog
 {

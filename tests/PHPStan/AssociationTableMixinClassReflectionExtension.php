@@ -6,14 +6,14 @@ namespace Cake\PHPStan;
 use Cake\ORM\Association;
 use Cake\ORM\Table;
 use PHPStan\Broker\Broker;
-use PHPStan\Reflection\BrokerAwareClassReflectionExtension;
+use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
 use PHPStan\Reflection\PropertiesClassReflectionExtension;
 use PHPStan\Reflection\PropertyReflection;
 
-class AssociationTableMixinClassReflectionExtension implements PropertiesClassReflectionExtension, MethodsClassReflectionExtension, BrokerAwareClassReflectionExtension
+class AssociationTableMixinClassReflectionExtension implements PropertiesClassReflectionExtension, MethodsClassReflectionExtension, BrokerAwareExtension
 {
     /**
      * @var \PHPStan\Broker\Broker

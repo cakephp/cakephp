@@ -12,7 +12,7 @@
  * @since         3.6.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestSuite\Console;
+namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\Arguments;
 use Cake\TestSuite\TestCase;

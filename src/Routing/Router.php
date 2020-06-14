@@ -58,7 +58,7 @@ class Router
      * Contains the base string that will be applied to all generated URLs
      * For example `https://example.com`
      *
-     * @var string
+     * @var string|null
      */
     protected static $_fullBaseUrl;
 

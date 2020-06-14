@@ -47,7 +47,7 @@ class CallbackStatement extends StatementDecorator
      *
      * The result will be processed by the callback when it is not `false`.
      *
-     * @param string $type Either 'num' or 'assoc' to indicate the result format you would like.
+     * @param string|int $type Either 'num' or 'assoc' to indicate the result format you would like.
      * @return array|false
      */
     public function fetch($type = parent::FETCH_TYPE_NUM)
@@ -63,7 +63,7 @@ class CallbackStatement extends StatementDecorator
      *
      * Each row in the result will be processed by the callback when it is not `false.
      *
-     * @param string $type Either 'num' or 'assoc' to indicate the result format you would like.
+     * @param string|int $type Either 'num' or 'assoc' to indicate the result format you would like.
      * @return array
      */
     public function fetchAll($type = parent::FETCH_TYPE_NUM)

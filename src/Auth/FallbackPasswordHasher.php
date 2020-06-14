@@ -61,7 +61,7 @@ class FallbackPasswordHasher extends AbstractPasswordHasher
      * Uses the first password hasher in the list to generate the hash
      *
      * @param string $password Plain text password to hash.
-     * @return string|false Password hash
+     * @return string|false Password hash or false
      */
     public function hash($password)
     {

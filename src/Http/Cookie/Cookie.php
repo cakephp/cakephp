@@ -42,8 +42,8 @@ use InvalidArgumentException;
  *
  * @link https://tools.ietf.org/html/rfc6265
  * @link https://en.wikipedia.org/wiki/HTTP_cookie
- * @see Cake\Http\Cookie\CookieCollection for working with collections of cookies.
- * @see Cake\Http\Response::getCookieCollection() for working with response cookies.
+ * @see \Cake\Http\Cookie\CookieCollection for working with collections of cookies.
+ * @see \Cake\Http\Response::getCookieCollection() for working with response cookies.
  */
 class Cookie implements CookieInterface
 {

@@ -240,7 +240,7 @@ class PaginatorComponent extends Component
      * Set paginator instance.
      *
      * @param \Cake\Datasource\Paginator $paginator Paginator instance.
-     * @return self
+     * @return $this
      */
     public function setPaginator(Paginator $paginator)
     {

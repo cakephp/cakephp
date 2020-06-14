@@ -14,6 +14,8 @@
  */
 namespace Cake\I18n;
 
+use Cake\Core\Exception\Exception;
+
 /**
  * Utility class used to determine the plural number to be used for a variable
  * base on the locale
@@ -150,50 +152,52 @@ class PluralRules
             case 0:
                 return 0;
             case 1:
-                return $n == 1 ? 0 : 1;
+                return $n === 1 ? 0 : 1;
             case 2:
                 return $n > 1 ? 1 : 0;
             case 3:
-                return $n % 10 == 1 && $n % 100 != 11 ? 0 :
+                return $n % 10 === 1 && $n % 100 !== 11 ? 0 :
                     (($n % 10 >= 2 && $n % 10 <= 4) && ($n % 100 < 10 || $n % 100 >= 20) ? 1 : 2);
             case 4:
-                return $n == 1 ? 0 :
+                return $n === 1 ? 0 :
                     ($n >= 2 && $n <= 4 ? 1 : 2);
             case 5:
-                return $n == 1 ? 0 :
-                    ($n == 2 ? 1 : ($n < 7 ? 2 : ($n < 11 ? 3 : 4)));
+                return $n === 1 ? 0 :
+                    ($n === 2 ? 1 : ($n < 7 ? 2 : ($n < 11 ? 3 : 4)));
             case 6:
-                return $n % 10 == 1 && $n % 100 != 11 ? 0 :
+                return $n % 10 === 1 && $n % 100 !== 11 ? 0 :
                     ($n % 10 >= 2 && ($n % 100 < 10 || $n % 100 >= 20) ? 1 : 2);
             case 7:
-                return $n % 100 == 1 ? 1 :
-                    ($n % 100 == 2 ? 2 : ($n % 100 == 3 || $n % 100 == 4 ? 3 : 0));
+                return $n % 100 === 1 ? 1 :
+                    ($n % 100 === 2 ? 2 : ($n % 100 === 3 || $n % 100 === 4 ? 3 : 0));
             case 8:
-                return $n % 10 == 1 ? 0 : ($n % 10 == 2 ? 1 : 2);
+                return $n % 10 === 1 ? 0 : ($n % 10 === 2 ? 1 : 2);
             case 9:
-                return $n == 1 ? 0 :
-                    ($n == 0 || ($n % 100 > 0 && $n % 100 <= 10) ? 1 :
+                return $n === 1 ? 0 :
+                    ($n === 0 || ($n % 100 > 0 && $n % 100 <= 10) ? 1 :
                     ($n % 100 > 10 && $n % 100 < 20 ? 2 : 3));
             case 10:
-                return $n % 10 == 1 && $n % 100 != 11 ? 0 : ($n != 0 ? 1 : 2);
+                return $n % 10 === 1 && $n % 100 !== 11 ? 0 : ($n !== 0 ? 1 : 2);
             case 11:
-                return $n == 1 ? 0 :
+                return $n === 1 ? 0 :
                     ($n % 10 >= 2 && $n % 10 <= 4 && ($n % 100 < 10 || $n % 100 >= 20) ? 1 : 2);
             case 12:
-                return $n == 1 ? 0 :
-                    ($n == 0 || $n % 100 > 0 && $n % 100 < 20 ? 1 : 2);
+                return $n === 1 ? 0 :
+                    ($n === 0 || $n % 100 > 0 && $n % 100 < 20 ? 1 : 2);
             case 13:
-                return $n == 0 ? 0 :
-                    ($n == 1 ? 1 :
-                    ($n == 2 ? 2 :
+                return $n === 0 ? 0 :
+                    ($n === 1 ? 1 :
+                    ($n === 2 ? 2 :
                     ($n % 100 >= 3 && $n % 100 <= 10 ? 3 :
                     ($n % 100 >= 11 ? 4 : 5))));
             case 14:
-                return $n == 1 ? 0 :
-                    ($n == 2 ? 1 :
-                    ($n != 8 && $n != 11 ? 2 : 3));
+                return $n === 1 ? 0 :
+                    ($n === 2 ? 1 :
+                    ($n !== 8 && $n !== 11 ? 2 : 3));
             case 15:
-                return ($n % 10 != 1 || $n % 100 == 11) ? 1 : 0;
+                return $n % 10 !== 1 || $n % 100 === 11 ? 1 : 0;
         }
+
+        throw new Exception('Unable to find plural rule number.');
     }
 }

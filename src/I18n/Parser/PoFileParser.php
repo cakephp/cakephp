@@ -163,7 +163,7 @@ class PoFileParser
 
             // Make sure every index is filled.
             end($plurals);
-            $count = key($plurals);
+            $count = (int)key($plurals);
 
             // Fill missing spots with an empty string.
             $empties = array_fill(0, $count + 1, '');

@@ -35,7 +35,7 @@ class Security
     /**
      * The HMAC salt to use for encryption and decryption routines
      *
-     * @var string
+     * @var string|null
      */
     protected static $_salt;
 
@@ -353,6 +353,12 @@ class Security
      */
     public static function getSalt()
     {
+        if (static::$_salt === null) {
+            throw new RuntimeException(
+                'Salt not set. Use Security::setSalt() to set one, ideally in `config/bootstrap.php`.'
+            );
+        }
+
         return static::$_salt;
     }
 

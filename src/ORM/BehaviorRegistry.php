@@ -27,6 +27,8 @@ use LogicException;
  * and constructing behavior objects.
  *
  * This class also provides method for checking and dispatching behavior methods.
+ *
+ * @extends \Cake\Core\ObjectRegistry<\Cake\ORM\Behavior>
  */
 class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterface
 {

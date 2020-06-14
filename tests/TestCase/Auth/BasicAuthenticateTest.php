@@ -35,6 +35,11 @@ class BasicAuthenticateTest extends TestCase
     public $fixtures = ['core.AuthUsers', 'core.Users'];
 
     /**
+     * @var \Cake\Auth\BasicAuthenticate
+     */
+    protected $auth;
+
+    /**
      * setup
      *
      * @return void

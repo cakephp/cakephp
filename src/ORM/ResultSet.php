@@ -123,7 +123,7 @@ class ResultSet implements ResultSetInterface
     /**
      * Tracks value of $_autoFields property of $query passed to constructor.
      *
-     * @var bool
+     * @var bool|null
      */
     protected $_autoFields;
 

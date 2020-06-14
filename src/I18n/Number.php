@@ -75,7 +75,7 @@ class Number
      *
      * - `locale`: The locale name to use for formatting the number, e.g. fr_FR
      *
-     * @param float $value A floating point number.
+     * @param float|string $value A floating point number.
      * @param int $precision The precision of the returned number.
      * @param array $options Additional options
      * @return string Formatted float.
@@ -91,12 +91,14 @@ class Number
     /**
      * Returns a formatted-for-humans file size.
      *
-     * @param int $size Size in bytes
+     * @param int|string $size Size in bytes
      * @return string Human readable size
      * @link https://book.cakephp.org/3/en/core-libraries/number.html#interacting-with-human-readable-values
      */
     public static function toReadableSize($size)
     {
+        $size = (int)$size;
+
         switch (true) {
             case $size < 1024:
                 return __dn('cake', '{0,number,integer} Byte', '{0,number,integer} Bytes', $size, $size);
@@ -119,7 +121,7 @@ class Number
      * - `multiply`: Multiply the input value by 100 for decimal percentages.
      * - `locale`: The locale name to use for formatting the number, e.g. fr_FR
      *
-     * @param float $value A floating point number
+     * @param float|string $value A floating point number
      * @param int $precision The precision of the returned number
      * @param array $options Options
      * @return string Percentage string
@@ -147,7 +149,7 @@ class Number
      * - `before` - The string to place before whole numbers, e.g. '['
      * - `after` - The string to place after decimal numbers, e.g. ']'
      *
-     * @param float $value A floating point number.
+     * @param float|string $value A floating point number.
      * @param array $options An array with options.
      * @return string Formatted number
      */
@@ -156,7 +158,7 @@ class Number
         $formatter = static::formatter($options);
         $options += ['before' => '', 'after' => ''];
 
-        return $options['before'] . $formatter->format($value) . $options['after'];
+        return $options['before'] . $formatter->format((float)$value) . $options['after'];
     }
 
     /**
@@ -190,14 +192,14 @@ class Number
      * - `before` - The string to place before whole numbers, e.g. '['
      * - `after` - The string to place after decimal numbers, e.g. ']'
      *
-     * @param float $value A floating point number
+     * @param float|string $value A floating point number
      * @param array $options Options list.
      * @return string formatted delta
      */
     public static function formatDelta($value, array $options = [])
     {
         $options += ['places' => 0];
-        $value = number_format($value, $options['places'], '.', '');
+        $value = number_format((float)$value, $options['places'], '.', '');
         $sign = $value > 0 ? '+' : '';
         $options['before'] = isset($options['before']) ? $options['before'] . $sign : $sign;
 
@@ -222,7 +224,7 @@ class Number
      * - `useIntlCode` - Whether or not to replace the currency symbol with the international
      *   currency code.
      *
-     * @param float $value Value to format.
+     * @param float|string $value Value to format.
      * @param string|null $currency International currency name such as 'USD', 'EUR', 'JPY', 'CAD'
      * @param array $options Options list.
      * @return string Number formatted as a currency.

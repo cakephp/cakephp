@@ -38,6 +38,11 @@ class FormAuthenticateTest extends TestCase
     public $fixtures = ['core.AuthUsers', 'core.Users'];
 
     /**
+     * @var \Cake\Auth\FormAuthenticate
+     */
+    protected $auth;
+
+    /**
      * setup
      *
      * @return void
@@ -277,7 +282,7 @@ class FormAuthenticateTest extends TestCase
         $PluginModel = $this->getTableLocator()->get('TestPlugin.AuthUsers');
         $user['id'] = 1;
         $user['username'] = 'gwoo';
-        $user['password'] = password_hash(Security::getSalt() . 'cake', PASSWORD_BCRYPT);
+        $user['password'] = password_hash('cake', PASSWORD_BCRYPT);
         $PluginModel->save(new Entity($user));
 
         $this->auth->setConfig('userModel', 'TestPlugin.AuthUsers');

@@ -56,11 +56,15 @@ class TableHelper extends Helper
     /**
      * Get the width of a cell exclusive of style tags.
      *
-     * @param string $text The text to calculate a width for.
+     * @param string|null $text The text to calculate a width for.
      * @return int The width of the textual content in visible characters.
      */
     protected function _cellWidth($text)
     {
+        if ($text === null) {
+            return 0;
+        }
+
         if (strpos($text, '<') === false && strpos($text, '>') === false) {
             return mb_strwidth($text);
         }

@@ -133,12 +133,12 @@ class ProgressHelper extends Helper
         $barLen = ($this->_width - $numberLen) * ($this->_progress / $this->_total);
         $bar = '';
         if ($barLen > 1) {
-            $bar = str_repeat('=', $barLen - 1) . '>';
+            $bar = str_repeat('=', (int)$barLen - 1) . '>';
         }
 
         $pad = ceil($this->_width - $numberLen - $barLen);
         if ($pad > 0) {
-            $bar .= str_repeat(' ', $pad);
+            $bar .= str_repeat(' ', (int)$pad);
         }
         $percent = ($complete * 100) . '%';
         $bar .= str_pad($percent, $numberLen, ' ', STR_PAD_LEFT);

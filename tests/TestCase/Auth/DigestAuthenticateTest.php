@@ -48,6 +48,11 @@ class DigestAuthenticateTest extends TestCase
     public $fixtures = ['core.AuthUsers', 'core.Users'];
 
     /**
+     * @var \Cake\Auth\DigestAuthenticate
+     */
+    protected $auth;
+
+    /**
      * setup
      *
      * @return void
@@ -506,7 +511,7 @@ DIGEST;
      */
     protected function generateNonce($secret = null, $expires = 300, $time = null)
     {
-        $secret = $secret ?: Configure::read('Security.salt');
+        $secret = $secret ?: Security::getSalt();
         $time = $time ?: microtime(true);
         $expiryTime = $time + $expires;
         $signatureValue = hash_hmac('sha256', $expiryTime . ':' . $secret, $secret);
