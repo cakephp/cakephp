@@ -168,11 +168,11 @@ class Time extends MutableDateTime implements JsonSerializable
      * Returns the quarter
      *
      * @param bool $range Range.
-     * @return int|array 1, 2, 3, or 4 quarter of year, or array if $range true
+     * @return string[]|int 1, 2, 3, or 4 quarter of year, or array if $range true
      */
     public function toQuarter($range = false)
     {
-        $quarter = (int)ceil($this->format('m') / 3);
+        $quarter = (int)ceil((int)$this->format('m') / 3);
         if ($range === false) {
             return $quarter;
         }

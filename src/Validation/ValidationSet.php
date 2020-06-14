@@ -130,6 +130,8 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
         if (!empty($this->_rules[$name])) {
             return $this->_rules[$name];
         }
+
+        return null;
     }
 
     /**

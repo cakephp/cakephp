@@ -630,4 +630,36 @@ TEXT;
         $result = $this->Text->autoParagraph($text);
         $this->assertTextEquals($expected, $result);
     }
+
+    /**
+     * testSlug method
+     *
+     * @param string $string String
+     * @param array $options Options
+     * @param String $expected Expected string
+     * @return void
+     * @dataProvider slugInputProvider
+     */
+    public function testSlug($string, $options, $expected)
+    {
+        $result = $this->Text->slug($string, $options);
+        $this->assertSame($expected, $result);
+    }
+
+    /**
+     * @return array
+     */
+    public function slugInputProvider()
+    {
+        return [
+            [
+                'Foo Bar: Not just for breakfast any-more', [],
+                'Foo-Bar-Not-just-for-breakfast-any-more',
+            ],
+            [
+                'Foo Bar: Not just for breakfast any-more', ['replacement' => false],
+                'FooBarNotjustforbreakfastanymore',
+            ],
+        ];
+    }
 }
