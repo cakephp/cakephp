@@ -656,7 +656,6 @@ class EntityContext implements ContextInterface
         foreach ($normalized as $part) {
             if ($part === '_joinData') {
                 if ($assoc !== null) {
-                    /** @psalm-suppress UndefinedMagicMethod */
                     $table = $assoc->junction();
                     $assoc = null;
                     continue;

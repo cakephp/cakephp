@@ -133,7 +133,7 @@ class PluralRules
      * to the countable provided in $n.
      *
      * @param string $locale The locale to get the rule calculated for.
-     * @param int|float $n The number to apply the rules to.
+     * @param int $n The number to apply the rules to.
      * @return int The plural rule number that should be used.
      * @link http://localization-guide.readthedocs.org/en/latest/l10n/pluralforms.html
      * @link https://developer.mozilla.org/en-US/docs/Mozilla/Localization/Localization_and_Plurals#List_of_Plural_Rules

@@ -580,7 +580,8 @@ class ViewTest extends TestCase
         $this->expectExceptionMessage('Template file `does_not_exist.php` could not be found');
         $this->expectExceptionMessage('The following paths were searched');
         $this->expectExceptionMessage('- `' . ROOT . DS . 'templates' . DS . 'does_not_exist.php`');
-        $viewOptions = ['plugin' => null,
+        $viewOptions = [
+            'plugin' => null,
             'name' => 'Pages',
             'viewPath' => 'Pages',
         ];
@@ -602,7 +603,8 @@ class ViewTest extends TestCase
         $this->expectExceptionMessage('Layout file `whatever.php` could not be found');
         $this->expectExceptionMessage('The following paths were searched');
         $this->expectExceptionMessage('- `' . ROOT . DS . 'templates' . DS . 'layout' . DS . 'whatever.php`');
-        $viewOptions = ['plugin' => null,
+        $viewOptions = [
+            'plugin' => null,
             'name' => 'Pages',
             'viewPath' => 'Pages',
             'layout' => 'whatever',

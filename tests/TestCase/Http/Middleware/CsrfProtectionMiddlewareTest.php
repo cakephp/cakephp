@@ -251,6 +251,25 @@ class CsrfProtectionMiddlewareTest extends TestCase
     }
 
     /**
+     * Test that request non string cookies are ignored.
+     *
+     * @return void
+     */
+    public function testInvalidTokenNonStringCookies()
+    {
+        $this->expectException(\Cake\Http\Exception\InvalidCsrfTokenException::class);
+        $request = new ServerRequest([
+            'environment' => [
+                'REQUEST_METHOD' => 'POST',
+            ],
+            'post' => ['_csrfToken' => ['nope']],
+            'cookies' => ['csrfToken' => ['nope']],
+        ]);
+        $middleware = new CsrfProtectionMiddleware();
+        $middleware->process($request, $this->_getRequestHandler());
+    }
+
+    /**
      * Test that request data works with the various http methods.
      *
      * @dataProvider httpMethodProvider
