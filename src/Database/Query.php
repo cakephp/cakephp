@@ -1380,7 +1380,6 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @param int|\Cake\Database\ExpressionInterface|null $num number of records to be returned
      * @return $this
-     * @psalm-suppress MoreSpecificImplementedParamType
      */
     public function limit($num)
     {
@@ -1410,7 +1409,6 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @param int|\Cake\Database\ExpressionInterface|null $num number of records to be skipped
      * @return $this
-     * @psalm-suppress MoreSpecificImplementedParamType
      */
     public function offset($num)
     {
