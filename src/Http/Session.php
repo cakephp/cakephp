@@ -333,7 +333,7 @@ class Session
      */
     public function start(): bool
     {
-        if ($this->_started) {
+        if ($this->started()) {
             return true;
         }
 
@@ -374,7 +374,7 @@ class Session
      */
     public function close(): bool
     {
-        if (!$this->_started) {
+        if (!$this->started()) {
             return true;
         }
 
