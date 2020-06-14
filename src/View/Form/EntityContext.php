@@ -713,9 +713,9 @@ class EntityContext implements ContextInterface
         }
 
         $column = (array)$table->getSchema()->getColumn(array_pop($parts));
-        $whitelist = ['length' => null, 'precision' => null];
+        $allowed = ['length' => null, 'precision' => null];
 
-        return array_intersect_key($column, $whitelist);
+        return array_intersect_key($column, $allowed);
     }
 
     /**

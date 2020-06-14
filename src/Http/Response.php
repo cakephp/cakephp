@@ -496,7 +496,7 @@ class Response implements ResponseInterface
 
             return;
         }
-        $whitelist = [
+        $allowed = [
             'application/javascript', 'application/xml', 'application/rss+xml',
         ];
 
@@ -505,7 +505,7 @@ class Response implements ResponseInterface
             $this->_charset &&
             (
                 strpos($type, 'text/') === 0 ||
-                in_array($type, $whitelist, true)
+                in_array($type, $allowed, true)
             )
         ) {
             $charset = true;
@@ -1373,7 +1373,7 @@ class Response implements ResponseInterface
      * cors($request, '*');
      * ```
      *
-     * ### Whitelist of URIs
+     * ### Allowed list of URIs
      * ```
      * cors($request, ['http://www.cakephp.org', '*.google.com', 'https://myproject.github.io']);
      * ```

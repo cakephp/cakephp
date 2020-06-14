@@ -985,7 +985,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * Please note that when using the array notation or the expression objects, all
      * *values* will be correctly quoted and transformed to the correspondent database
      * data type automatically for you, thus securing your application from SQL injections.
-     * The keys however, are not treated as unsafe input, and should be sanitized/whitelisted.
+     * The keys however, are not treated as unsafe input, and should be validated/sanitized.
      *
      * If you use string conditions make sure that your values are correctly quoted.
      * The safest thing you can do is to never use string conditions.
@@ -1222,7 +1222,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * `ORDER BY (id %2 = 0), title ASC`
      *
      * Order fields/directions are not sanitized by the query builder.
-     * You should use a whitelist of fields/directions when passing
+     * You should use an allowed list of fields/directions when passing
      * in user-supplied data to `order()`.
      *
      * If you need to set complex expressions as order conditions, you
