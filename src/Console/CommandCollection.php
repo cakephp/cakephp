@@ -25,7 +25,7 @@ use Traversable;
 /**
  * Collection for Commands.
  *
- * Used by Applications to whitelist their console commands.
+ * Used by Applications to specify their console commands.
  * CakePHP will use the mapped commands to construct and dispatch
  * shell commands.
  */

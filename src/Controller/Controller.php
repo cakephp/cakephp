@@ -637,7 +637,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @param string $action The new action to be 'redirected' to.
      *   Any other parameters passed to this method will be passed as parameters to the new action.
-     * @param array ...$args Arguments passed to the action
+     * @param mixed ...$args Arguments passed to the action
      * @return mixed Returns the return value of the called action
      */
     public function setAction(string $action, ...$args)

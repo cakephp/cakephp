@@ -136,6 +136,25 @@ class FormProtectorTest extends TestCase
     }
 
     /**
+     * testValidate array fields method
+     *
+     * Test that validate fails if empty form is submitted.
+     *
+     * @return void
+     */
+    public function testValidateInvalidFields(): void
+    {
+        $data = [
+            '_Token' => [
+                'debug' => '',
+                'unlocked' => '',
+                'fields' => [],
+            ],
+        ];
+        $this->validate($data, '`_Token.fields` is invalid.');
+    }
+
+    /**
      * testValidateObjectDeserialize
      *
      * Test that objects can't be passed into the serialized string. This was a vector for RFI and LFI

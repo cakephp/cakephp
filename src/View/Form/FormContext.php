@@ -203,9 +203,9 @@ class FormContext implements ContextInterface
     public function attributes(string $field): array
     {
         $column = (array)$this->_form->getSchema()->field($field);
-        $whiteList = ['length' => null, 'precision' => null];
+        $allowed = ['length' => null, 'precision' => null];
 
-        return array_intersect_key($column, $whiteList);
+        return array_intersect_key($column, $allowed);
     }
 
     /**

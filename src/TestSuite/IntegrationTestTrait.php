@@ -541,7 +541,6 @@ trait IntegrationTestTrait
                 $this->_viewName = $viewFile;
             }
             if ($this->_retainFlashMessages) {
-                /** @psalm-suppress PossiblyInvalidPropertyAssignmentValue */
                 $this->_flashMessages = $controller->getRequest()->getSession()->read('Flash');
             }
         });

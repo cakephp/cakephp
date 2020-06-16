@@ -459,7 +459,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param string|string[] $type The type of request you want to check. If an array
      *   this method will return true if the request matches any type.
-     * @param array ...$args List of arguments
+     * @param string ...$args List of arguments
      * @return bool Whether or not the request is the type you are checking.
      */
     public function is($type, ...$args): bool
@@ -1273,7 +1273,7 @@ class ServerRequest implements ServerRequestInterface
      * @param callable|null $callback A decoding callback that will convert the string data to another
      *     representation. Leave empty to access the raw input data. You can also
      *     supply additional parameters for the decoding callback using var args, see above.
-     * @param array ...$args The additional arguments
+     * @param mixed ...$args The additional arguments
      * @return mixed The decoded/processed request data.
      */
     public function input(?callable $callback = null, ...$args)

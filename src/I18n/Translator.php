@@ -78,7 +78,7 @@ class Translator extends BaseTranslator
         // Resolve plural form.
         if (is_array($message)) {
             $count = $tokensValues['_count'] ?? 0;
-            $form = PluralRules::calculate($this->locale, $count);
+            $form = PluralRules::calculate($this->locale, (int)$count);
             $message = $message[$form] ?? (string)end($message);
         }
 

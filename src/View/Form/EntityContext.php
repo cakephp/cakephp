@@ -656,7 +656,6 @@ class EntityContext implements ContextInterface
         foreach ($normalized as $part) {
             if ($part === '_joinData') {
                 if ($assoc !== null) {
-                    /** @psalm-suppress UndefinedMagicMethod */
                     $table = $assoc->junction();
                     $assoc = null;
                     continue;
@@ -713,9 +712,9 @@ class EntityContext implements ContextInterface
         }
 
         $column = (array)$table->getSchema()->getColumn(array_pop($parts));
-        $whitelist = ['length' => null, 'precision' => null];
+        $allowed = ['length' => null, 'precision' => null];
 
-        return array_intersect_key($column, $whitelist);
+        return array_intersect_key($column, $allowed);
     }
 
     /**
