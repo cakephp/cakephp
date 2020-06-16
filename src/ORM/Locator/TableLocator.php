@@ -252,7 +252,6 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      * @param \Cake\ORM\Table $repository The Table to set.
      * @return \Cake\ORM\Table
      * @psalm-suppress MoreSpecificImplementedParamType
-     * @psalm-suppress MoreSpecificReturnType
      */
     public function set(string $alias, RepositoryInterface $repository): Table
     {

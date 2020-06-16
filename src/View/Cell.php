@@ -90,7 +90,7 @@ abstract class Cell implements EventDispatcherInterface
 
     /**
      * List of valid options (constructor's fourth arguments)
-     * Override this property in subclasses to whitelist
+     * Override this property in subclasses to allow
      * which options you want set as properties in your Cell.
      *
      * @var array

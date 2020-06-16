@@ -78,7 +78,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      *
      * @var callable|null
      */
-    protected $whitelistCallback;
+    protected $skipCheckCallback;
 
     /**
      * @var int
@@ -115,8 +115,8 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
 
         if (
             $hasData
-            && $this->whitelistCallback !== null
-            && call_user_func($this->whitelistCallback, $request) === true
+            && $this->skipCheckCallback !== null
+            && call_user_func($this->skipCheckCallback, $request) === true
         ) {
             $request = $this->_unsetTokenField($request);
 
@@ -126,7 +126,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
         $cookies = $request->getCookieParams();
         $cookieData = Hash::get($cookies, $this->_config['cookieName']);
 
-        if ($cookieData !== null && strlen($cookieData) > 0) {
+        if (is_string($cookieData) && strlen($cookieData) > 0) {
             $request = $request->withAttribute('csrfToken', $cookieData);
         }
 
@@ -153,12 +153,30 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      * The callback will receive request instance as argument and must return
      * `true` if you want to skip token check for the current request.
      *
+     * @deprecated 4.1.0 Use skipCheckCallback instead.
      * @param callable $callback A callable.
      * @return $this
      */
     public function whitelistCallback(callable $callback)
     {
-        $this->whitelistCallback = $callback;
+        deprecationWarning('`whitelistCallback()` is deprecated. Use `skipCheckCallback()` instead.');
+        $this->skipCheckCallback = $callback;
+
+        return $this;
+    }
+
+    /**
+     * Set callback for allowing to skip token check for particular request.
+     *
+     * The callback will receive request instance as argument and must return
+     * `true` if you want to skip token check for the current request.
+     *
+     * @param callable $callback A callable.
+     * @return $this
+     */
+    public function skipCheckCallback(callable $callback)
+    {
+        $this->skipCheckCallback = $callback;
 
         return $this;
     }
@@ -255,8 +273,8 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
     {
         $cookie = Hash::get($request->getCookieParams(), $this->_config['cookieName']);
 
-        if (!$cookie) {
-            throw new InvalidCsrfTokenException(__d('cake', 'Missing CSRF cookie.'));
+        if (!$cookie || !is_string($cookie)) {
+            throw new InvalidCsrfTokenException(__d('cake', 'Missing or incorrect CSRF cookie type.'));
         }
 
         if (!$this->_verifyToken($cookie)) {
