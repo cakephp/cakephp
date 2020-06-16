@@ -161,6 +161,7 @@ class EntityTest extends TestCase
      */
     public function testSetOneParamWithSetter()
     {
+        /** @var \Cake\ORM\Entity|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->getMockBuilder('\Cake\ORM\Entity')
             ->setMethods(['_setName'])
             ->getMock();
@@ -182,6 +183,7 @@ class EntityTest extends TestCase
      */
     public function testMultipleWithSetter()
     {
+        /** @var \Cake\ORM\Entity|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->getMockBuilder('\Cake\ORM\Entity')
             ->setMethods(['_setName', '_setStuff'])
             ->getMock();
@@ -212,6 +214,7 @@ class EntityTest extends TestCase
      */
     public function testBypassSetters()
     {
+        /** @var \Cake\ORM\Entity|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->getMockBuilder('\Cake\ORM\Entity')
             ->setMethods(['_setName', '_setStuff'])
             ->getMock();
@@ -290,6 +293,7 @@ class EntityTest extends TestCase
      */
     public function testGetCustomGetters()
     {
+        /** @var \Cake\ORM\Entity|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->getMockBuilder('\Cake\ORM\Entity')
             ->setMethods(['_getName'])
             ->getMock();
@@ -311,6 +315,7 @@ class EntityTest extends TestCase
      */
     public function testGetCustomGettersAfterSet()
     {
+        /** @var \Cake\ORM\Entity|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->getMockBuilder('\Cake\ORM\Entity')
             ->setMethods(['_getName'])
             ->getMock();
@@ -335,6 +340,7 @@ class EntityTest extends TestCase
      */
     public function testGetCacheClearedByUnset()
     {
+        /** @var \Cake\ORM\Entity|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->getMockBuilder('\Cake\ORM\Entity')
             ->setMethods(['_getName'])
             ->getMock();
@@ -356,6 +362,7 @@ class EntityTest extends TestCase
      */
     public function testGetCamelCasedProperties()
     {
+        /** @var \Cake\ORM\Entity|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->getMockBuilder('\Cake\ORM\Entity')
             ->setMethods(['_getListIdName'])
             ->getMock();
@@ -1123,6 +1130,7 @@ class EntityTest extends TestCase
      */
     public function testToArrayVirtualProperties()
     {
+        /** @var \Cake\ORM\Entity|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->getMockBuilder('\Cake\ORM\Entity')
             ->setMethods(['_getName'])
             ->getMock();
@@ -1143,6 +1151,21 @@ class EntityTest extends TestCase
         $expected = ['email' => 'mark@example.com'];
         $this->assertEquals($expected, $entity->toArray());
         $this->assertEquals(['name'], $entity->getHidden());
+    }
+
+    /**
+     * Tests the getVisible() method
+     *
+     * @return void
+     */
+    public function testGetVisible()
+    {
+        $entity = new Entity();
+        $entity->foo = 'foo';
+        $entity->bar = 'bar';
+
+        $expected = $entity->getVisible();
+        $this->assertSame(['foo', 'bar'], $expected);
     }
 
     /**
@@ -1167,6 +1190,25 @@ class EntityTest extends TestCase
         $entity->setVirtual(['name'], true);
         $result = $entity->getVirtual();
         $this->assertSame(['virtual', 'name'], $result);
+    }
+
+    /**
+     * Tests getAccessible() method
+     *
+     * @return void
+     */
+    public function testGetAccessible()
+    {
+        $entity = new Entity();
+        $entity->setAccess('*', false);
+        $entity->setAccess('bar', true);
+
+        $accessible = $entity->getAccessible();
+        $expected = [
+            '*' => false,
+            'bar' => true,
+        ];
+        $this->assertSame($expected, $accessible);
     }
 
     /**

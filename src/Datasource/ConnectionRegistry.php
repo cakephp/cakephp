@@ -48,7 +48,7 @@ class ConnectionRegistry extends ObjectRegistry
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
      * @param string $class The classname that is missing.
-     * @param string $plugin The plugin the datasource is missing in.
+     * @param string|null $plugin The plugin the datasource is missing in.
      * @return void
      * @throws \Cake\Datasource\Exception\MissingDatasourceException
      */
@@ -92,10 +92,12 @@ class ConnectionRegistry extends ObjectRegistry
      * Remove a single adapter from the registry.
      *
      * @param string $name The adapter name.
-     * @return void
+     * @return $this
      */
     public function unload($name)
     {
         unset($this->_loaded[$name]);
+
+        return $this;
     }
 }
