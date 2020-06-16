@@ -69,7 +69,7 @@ trait EntityTrait
      * Holds a list of the properties that were modified or added after this object
      * was originally created.
      *
-     * @var array
+     * @var bool[]
      */
     protected $_dirty = [];
 
@@ -359,7 +359,7 @@ trait EntityTrait
      * When checking multiple properties. All properties must not be null
      * in order for true to be returned.
      *
-     * @param string|array $property The property or properties to check.
+     * @param string|string[] $property The property or properties to check.
      * @return bool
      */
     public function has($property)
@@ -728,7 +728,7 @@ trait EntityTrait
      * Returns an array with the requested properties
      * stored in this entity, indexed by property name
      *
-     * @param array $properties list of properties to be returned
+     * @param string[] $properties list of properties to be returned
      * @param bool $onlyDirty Return the requested property only if it is dirty
      * @return array
      */
@@ -751,7 +751,7 @@ trait EntityTrait
      * Properties that are unchanged from their original value will be included in the
      * return of this method.
      *
-     * @param array $properties List of properties to be returned
+     * @param string[] $properties List of properties to be returned
      * @return array
      */
     public function extractOriginal(array $properties)
@@ -771,7 +771,7 @@ trait EntityTrait
      * This method will only return properties that have been modified since
      * the entity was built. Unchanged properties will be omitted.
      *
-     * @param array $properties List of properties to be returned
+     * @param string[] $properties List of properties to be returned
      * @return array
      */
     public function extractOriginalChanged(array $properties)
@@ -1374,7 +1374,7 @@ trait EntityTrait
      * $entity->setAccess('*', false); // Mark all properties as protected
      * ```
      *
-     * @param string|array $property single or list of properties to change its accessibility
+     * @param string|string[] $property single or list of properties to change its accessibility
      * @param bool $set true marks the property as accessible, false will
      * mark it as protected.
      * @return $this
@@ -1395,6 +1395,17 @@ trait EntityTrait
         }
 
         return $this;
+    }
+
+    /**
+     * Returns the raw accessible configuration for this entity.
+     * The `*` wildcard refers to all fields.
+     *
+     * @return bool[]
+     */
+    public function getAccessible()
+    {
+        return $this->_accessible;
     }
 
     /**

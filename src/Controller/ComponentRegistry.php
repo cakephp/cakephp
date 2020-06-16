@@ -94,7 +94,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      * and Cake\Core\ObjectRegistry::unload()
      *
      * @param string $class The classname that is missing.
-     * @param string $plugin The plugin the component is missing in.
+     * @param string|null $plugin The plugin the component is missing in.
      * @return void
      * @throws \Cake\Controller\Exception\MissingComponentException
      */
