@@ -609,8 +609,8 @@ class FormHelper extends AppHelper {
 		ksort($locked, SORT_STRING);
 		$fields += $locked;
 
-		$locked = implode(array_keys($locked), '|');
-		$unlocked = implode($unlockedFields, '|');
+		$locked = implode('|', array_keys($locked));
+		$unlocked = implode('|', $unlockedFields);
 		$hashParts = array(
 			$this->_lastAction,
 			serialize($fields),
