@@ -149,7 +149,7 @@ class CompletionShell extends AppShell {
  */
 	protected function _output($options = array()) {
 		if ($options) {
-			return $this->out(implode($options, ' '));
+			return $this->out(implode(' ', $options));
 		}
 	}
 }
