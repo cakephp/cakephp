@@ -2046,6 +2046,22 @@ XML;
     }
 
     /**
+     * Test that replacing the session can be done via withAttribute()
+     *
+     * @return void
+     */
+    public function testWithAttributeSession()
+    {
+        $request = new ServerRequest([]);
+        $request->getSession()->write('attrKey', 'session-value');
+
+        $update = $request->withAttribute('session', Session::create());
+        $this->assertSame('session-value', $request->getAttribute('session')->read('attrKey'));
+        $this->assertNotSame($request->getAttribute('session'), $update->getAttribute('session'));
+        $this->assertNotSame($request->getSession()->read('attrKey'), $update->getSession()->read('attrKey'));
+    }
+
+    /**
      * Test getting all attributes.
      *
      * @return void
