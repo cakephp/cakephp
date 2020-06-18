@@ -399,6 +399,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
      */
     protected function _options(array $options, string $class): array
     {
+        /** @psalm-suppress InvalidPropertyFetch */
         $options += [
             'from' => $class::now(),
             'timezone' => null,
