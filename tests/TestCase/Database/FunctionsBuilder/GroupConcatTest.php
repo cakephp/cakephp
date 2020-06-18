@@ -192,7 +192,7 @@ class GroupConcatTest extends TestCase
     private function expectPotentialTsqlException()
     {
         $driver = $this->connection->getDriver();
-        if ($driver instanceof Sqlserver && !$driver->supportsAdvAggregateExpressions()) {
+        if ($driver instanceof Sqlserver && !$driver->supportsStringAggregation()) {
             $this->expectException(Exception::class);
             $this->expectExceptionMessage('STRING_AGG requires SQL Server version 14 (2017) or later.');
         }

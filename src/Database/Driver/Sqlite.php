@@ -314,13 +314,21 @@ class Sqlite extends Driver
                         function ($p, $key) {
                             if ($key === 0 && $p instanceof SelectExpression) {
                                 $p->setConjunction('||')->removeModifier('DISTINCT');
-                            } elseif ($p instanceof OrderByExpression) {
+
+                                return $p;
+                            }
+
+                            if ($p instanceof OrderByExpression) {
                                 throw new Exception(
                                     'SQLite does not support ordering aggregate function results via a clause. ' .
                                     'The recommended method is a subquery.'
                                 );
-                            } elseif ($p instanceof SelectExpression) {
+                            }
+
+                            if ($p instanceof SelectExpression) {
                                 $p->removeModifier('SEPARATOR');
+
+                                return $p;
                             }
 
                             return $p;

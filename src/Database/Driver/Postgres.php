@@ -311,11 +311,17 @@ class Postgres extends Driver
                                             return $p;
                                         }
                                     );
-                            } elseif ($p instanceof OrderByExpression) {
+
+                                return $p;
+                            }
+
+                            if ($p instanceof OrderByExpression) {
                                 $parts['order'] = $p;
 
                                 return null;
-                            } elseif ($p instanceof SelectExpression) {
+                            }
+
+                            if ($p instanceof SelectExpression) {
                                 $p->removeModifier('SEPARATOR');
                                 $parts['separator'] = $p;
 

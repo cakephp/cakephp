@@ -274,7 +274,7 @@ class Sqlserver extends Driver
      *
      * @return bool Returns true if version is 14.0 or greater, otherwise false.
      */
-    public function supportsAdvAggregateExpressions(): bool
+    public function supportsStringAggregation(): bool
     {
         return version_compare($this->version(), '14.0', '>=');
     }
@@ -556,7 +556,7 @@ class Sqlserver extends Driver
 
                 break;
             case 'GROUP_CONCAT':
-                if (!$this->supportsAdvAggregateExpressions()) {
+                if (!$this->supportsStringAggregation()) {
                     throw new Exception('STRING_AGG requires SQL Server version 14 (2017) or later.');
                 }
                 if ($expression instanceof GroupedExpression) {
@@ -577,7 +577,11 @@ class Sqlserver extends Driver
                                             return $p;
                                         }
                                     );
-                            } elseif ($p instanceof OrderByExpression) {
+
+                                return $p;
+                            }
+
+                            if ($p instanceof OrderByExpression) {
                                 $expression->order(
                                     function () use ($p) {
                                         return $p;
@@ -585,7 +589,9 @@ class Sqlserver extends Driver
                                 )->getOrderContainer()->setName('WITHIN GROUP ');
 
                                 return null;
-                            } elseif ($p instanceof SelectExpression) {
+                            }
+
+                            if ($p instanceof SelectExpression) {
                                 $p->removeModifier('SEPARATOR');
                                 $parts['separator'] = $p;
 
