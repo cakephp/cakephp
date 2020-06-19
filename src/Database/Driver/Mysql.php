@@ -62,13 +62,6 @@ class Mysql extends Driver
     protected $_schemaDialect;
 
     /**
-     * The server version
-     *
-     * @var string
-     */
-    protected $_version;
-
-    /**
      * Whether or not the server supports native JSON
      *
      * @var bool|null
@@ -231,21 +224,6 @@ class Mysql extends Driver
     }
 
     /**
-     * Returns connected server version.
-     *
-     * @return string
-     */
-    public function getVersion(): string
-    {
-        if ($this->_version === null) {
-            $this->connect();
-            $this->_version = (string)$this->_connection->getAttribute(PDO::ATTR_SERVER_VERSION);
-        }
-
-        return $this->_version;
-    }
-
-    /**
      * Returns true if the server supports common table expressions.
      *
      * @return bool
@@ -253,7 +231,7 @@ class Mysql extends Driver
     public function supportsCTEs(): bool
     {
         if ($this->supportsCTEs === null) {
-            $this->supportsCTEs = version_compare($this->getVersion(), '8.0.0', '>=');
+            $this->supportsCTEs = version_compare($this->version(), '8.0.0', '>=');
         }
 
         return $this->supportsCTEs;
@@ -267,7 +245,7 @@ class Mysql extends Driver
     public function supportsNativeJson(): bool
     {
         if ($this->_supportsNativeJson === null) {
-            $this->_supportsNativeJson = version_compare($this->getVersion(), '5.7.0', '>=');
+            $this->_supportsNativeJson = version_compare($this->version(), '5.7.0', '>=');
         }
 
         return $this->_supportsNativeJson;
@@ -281,7 +259,7 @@ class Mysql extends Driver
     public function supportsWindowFunctions(): bool
     {
         if ($this->_supportsWindowFunctions === null) {
-            $this->_supportsWindowFunctions = version_compare($this->getVersion(), '8.0.0', '>=');
+            $this->_supportsWindowFunctions = version_compare($this->version(), '8.0.0', '>=');
         }
 
         return $this->_supportsWindowFunctions;

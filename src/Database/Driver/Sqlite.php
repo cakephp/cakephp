@@ -64,13 +64,6 @@ class Sqlite extends Driver
     protected $_schemaDialect;
 
     /**
-     * The connected server version.
-     *
-     * @var string
-     */
-    protected $_version;
-
-    /**
      * Whether or not the connected server supports window functions.
      *
      * @var bool|null
@@ -308,21 +301,6 @@ class Sqlite extends Driver
     }
 
     /**
-     * Returns connected server version.
-     *
-     * @return string
-     */
-    public function getVersion(): string
-    {
-        if ($this->_version === null) {
-            $this->connect();
-            $this->_version = (string)$this->_connection->getAttribute(PDO::ATTR_SERVER_VERSION);
-        }
-
-        return $this->_version;
-    }
-
-    /**
      * Returns true if the server supports common table expressions.
      *
      * @return bool
@@ -330,7 +308,7 @@ class Sqlite extends Driver
     public function supportsCTEs(): bool
     {
         if ($this->supportsCTEs === null) {
-            $this->supportsCTEs = version_compare($this->getVersion(), '3.8.3', '>=');
+            $this->supportsCTEs = version_compare($this->version(), '3.8.3', '>=');
         }
 
         return $this->supportsCTEs;
@@ -344,7 +322,7 @@ class Sqlite extends Driver
     public function supportsWindowFunctions(): bool
     {
         if ($this->_supportsWindowFunctions === null) {
-            $this->_supportsWindowFunctions = version_compare($this->getVersion(), '3.25.0', '>=');
+            $this->_supportsWindowFunctions = version_compare($this->version(), '3.25.0', '>=');
         }
 
         return $this->_supportsWindowFunctions;
