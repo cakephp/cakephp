@@ -192,9 +192,9 @@ class IntervalExpression implements ExpressionInterface
              'overrideCallback' => null,
              'combineMicro' => true,
              'format' => [
-                 'default' => "%s%s%s",
+                 'default' => '%s%s%s',
                  'inner' => [
-                     'default' => "%d %s",
+                     'default' => '%d %s',
                      'YEAR_MONTH' => "'%d-%d' %s",
                      'DAY_MICROSECOND' => "'%02d %02d:%02d:%09.6f' %s",
                  ],
