@@ -90,6 +90,34 @@ class Mysql extends Driver
     protected $_endQuote = '`';
 
     /**
+     * Server type.
+     *
+     * If the underlying server is MariaDB, it's value will get set to `'mariadb'`
+     * after `version()` method is called.
+     *
+     * @var string
+     */
+    protected $serverType = 'mysql';
+
+    /**
+     * Mappping of feature to db server version for feature availability checks.
+     *
+     * @var array
+     */
+    protected $featuresToVersionMap = [
+        'mysql' => [
+            'json' => '5.7.0',
+            'cte' => '8.0.0',
+            'window' => '8.0.0',
+        ],
+        'mariadb' => [
+            'json' => '10.2.7',
+            'cte' => '10.2.1',
+            'window' => '10.2.0',
+        ],
+    ];
+
+    /**
      * Establishes a connection to the database server
      *
      * @return bool true on success
@@ -224,6 +252,27 @@ class Mysql extends Driver
     }
 
     /**
+     * Returns connected server version.
+     *
+     * @return string
+     */
+    public function version(): string
+    {
+        if ($this->_version === null) {
+            $this->connect();
+            $this->_version = (string)$this->_connection->getAttribute(PDO::ATTR_SERVER_VERSION);
+
+            if (strpos($this->_version, 'MariaDB') !== false) {
+                $this->serverType = 'mariadb';
+                $parts = explode(':', $this->_version);
+                $this->_version = array_pop($parts);
+            }
+        }
+
+        return $this->_version;
+    }
+
+    /**
      * Returns true if the server supports common table expressions.
      *
      * @return bool
@@ -231,7 +280,11 @@ class Mysql extends Driver
     public function supportsCTEs(): bool
     {
         if ($this->supportsCTEs === null) {
-            $this->supportsCTEs = version_compare($this->version(), '8.0.0', '>=');
+            $this->supportsCTEs = version_compare(
+                $this->version(),
+                $this->featuresToVersionMap[$this->serverType]['cte'],
+                '>='
+            );
         }
 
         return $this->supportsCTEs;
@@ -245,7 +298,11 @@ class Mysql extends Driver
     public function supportsNativeJson(): bool
     {
         if ($this->_supportsNativeJson === null) {
-            $this->_supportsNativeJson = version_compare($this->version(), '5.7.0', '>=');
+            $this->_supportsNativeJson = version_compare(
+                $this->version(),
+                $this->featuresToVersionMap[$this->serverType]['json'],
+                '>='
+            );
         }
 
         return $this->_supportsNativeJson;
@@ -259,7 +316,11 @@ class Mysql extends Driver
     public function supportsWindowFunctions(): bool
     {
         if ($this->_supportsWindowFunctions === null) {
-            $this->_supportsWindowFunctions = version_compare($this->version(), '8.0.0', '>=');
+            $this->_supportsWindowFunctions = version_compare(
+                $this->version(),
+                $this->featuresToVersionMap[$this->serverType]['window'],
+                '>='
+            );
         }
 
         return $this->_supportsWindowFunctions;
