@@ -75,6 +75,13 @@ abstract class Driver implements DriverInterface
     protected $supportsCTEs = null;
 
     /**
+     * The server version
+     *
+     * @var string|null
+     */
+    protected $_version;
+
+    /**
      * Constructor
      *
      * @param array $config The configuration for the driver.
@@ -137,6 +144,22 @@ abstract class Driver implements DriverInterface
     {
         /** @psalm-suppress PossiblyNullPropertyAssignmentValue */
         $this->_connection = null;
+        $this->_version = null;
+    }
+
+    /**
+     * Returns connected server version.
+     *
+     * @return string
+     */
+    public function version(): string
+    {
+        if ($this->_version === null) {
+            $this->connect();
+            $this->_version = (string)$this->_connection->getAttribute(PDO::ATTR_SERVER_VERSION);
+        }
+
+        return $this->_version;
     }
 
     /**

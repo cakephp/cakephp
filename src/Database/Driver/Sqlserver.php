@@ -290,18 +290,6 @@ class Sqlserver extends Driver
     }
 
     /**
-     * Get the version of SQLserver we are connected to.
-     *
-     * @return string
-     */
-    protected function version(): string
-    {
-        $this->connect();
-
-        return $this->_connection->getAttribute(PDO::ATTR_SERVER_VERSION);
-    }
-
-    /**
      * @inheritDoc
      */
     protected function _selectQueryTranslator(Query $query): Query
