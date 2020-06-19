@@ -53,7 +53,7 @@ class SchemaShell extends AppShell {
 		$this->out('Cake Schema Shell');
 		$this->hr();
 
-		Configure::write('Cache.disable', 1);
+		Configure::write('Cache.disable', true);
 
 		$name = $path = $connection = $plugin = null;
 		if (!empty($this->params['name'])) {
