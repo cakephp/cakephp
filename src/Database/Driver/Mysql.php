@@ -290,8 +290,8 @@ class Mysql extends Driver
 
             if (strpos($this->_version, 'MariaDB') !== false) {
                 $this->serverType = static::SERVER_TYPE_MARIADB;
-                $parts = explode(':', $this->_version);
-                $this->_version = array_pop($parts);
+                preg_match('/^(?:5\.5\.5-)?(\d+\.\d+\.\d+.*-MariaDB[^:]*)/', $this->_version, $matches);
+                $this->_version = $matches[1];
             }
         }
 
