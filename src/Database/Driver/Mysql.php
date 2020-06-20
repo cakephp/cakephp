@@ -37,6 +37,20 @@ class Mysql extends Driver
     protected const MAX_ALIAS_LENGTH = 256;
 
     /**
+     * Server type MySQL
+     *
+     * @var string
+     */
+    protected const SERVER_TYPE_MYSQL = 'mysql';
+
+    /**
+     * Server type MariaDB
+     *
+     * @var string
+     */
+    protected const SERVER_TYPE_MARIADB = 'mariadb';
+
+    /**
      * Base configuration settings for MySQL driver
      *
      * @var array
@@ -97,7 +111,7 @@ class Mysql extends Driver
      *
      * @var string
      */
-    protected $serverType = 'mysql';
+    protected $serverType = self::SERVER_TYPE_MYSQL;
 
     /**
      * Mappping of feature to db server version for feature availability checks.
@@ -252,6 +266,18 @@ class Mysql extends Driver
     }
 
     /**
+     * Returns true if the connected server is MariaDB.
+     *
+     * @return bool
+     */
+    public function isMariadb(): bool
+    {
+        $this->version();
+
+        return $this->serverType === static::SERVER_TYPE_MARIADB;
+    }
+
+    /**
      * Returns connected server version.
      *
      * @return string
@@ -263,7 +289,7 @@ class Mysql extends Driver
             $this->_version = (string)$this->_connection->getAttribute(PDO::ATTR_SERVER_VERSION);
 
             if (strpos($this->_version, 'MariaDB') !== false) {
-                $this->serverType = 'mariadb';
+                $this->serverType = static::SERVER_TYPE_MARIADB;
                 $parts = explode(':', $this->_version);
                 $this->_version = array_pop($parts);
             }

@@ -325,6 +325,11 @@ class CommonTableExpressionQueryTests extends TestCase
      */
     public function testWithInUpdateQuery()
     {
+        $this->skipIf(
+            $this->connection->getDriver() instanceof Mysql && $this->connection->getDriver()->isMariadb(),
+            'MariaDB does not support CTEs in UPDATE query.'
+        );
+
         $this->loadFixtures('Articles');
 
         // test initial state
@@ -386,6 +391,11 @@ class CommonTableExpressionQueryTests extends TestCase
      */
     public function testWithInDeleteQuery()
     {
+        $this->skipIf(
+            $this->connection->getDriver() instanceof Mysql && $this->connection->getDriver()->isMariadb(),
+            'MariaDB does not support CTEs in DELETE query.'
+        );
+
         $this->loadFixtures('Articles');
 
         // test initial state

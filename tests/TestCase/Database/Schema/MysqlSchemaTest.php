@@ -406,6 +406,12 @@ SQL;
                 'comment' => null,
             ],
         ];
+
+        if (ConnectionManager::get('test')->getDriver()->isMariadb()) {
+            $expected['created_with_precision']['default'] = 'current_timestamp(3)';
+            $expected['created_with_precision']['comment'] = '';
+        }
+
         $this->assertEquals(['id'], $result->getPrimaryKey());
         foreach ($expected as $field => $definition) {
             $this->assertEquals(
@@ -453,9 +459,14 @@ SQL;
                 'delete' => 'restrict',
             ],
         ];
+
         $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
         $this->assertEquals($expected['length_idx'], $result->getConstraint('length_idx'));
-        $this->assertEquals($expected['schema_articles_ibfk_1'], $result->getConstraint('schema_articles_ibfk_1'));
+        if (ConnectionManager::get('test')->getDriver()->isMariadb()) {
+            $this->assertEquals($expected['schema_articles_ibfk_1'], $result->getConstraint('author_idx'));
+        } else {
+            $this->assertEquals($expected['schema_articles_ibfk_1'], $result->getConstraint('schema_articles_ibfk_1'));
+        }
 
         $this->assertCount(1, $result->indexes());
         $expected = [
@@ -1351,6 +1362,7 @@ SQL;
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
         $this->skipIf(!$connection->getDriver()->supportsNativeJson(), 'Does not support native json');
+        $this->skipIf($connection->getDriver()->isMariadb(), 'MariaDb internally uses TEXT for JSON columns');
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_json');
