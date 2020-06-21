@@ -477,33 +477,52 @@ abstract class TestCase extends BaseTestCase
     /**
      * Assert that a string matches SQL with db-specific characters like quotes removed.
      *
-     * @param string $needle The string to compare
-     * @param string $haystack The SQL to filter
+     * @param string $expected The expected sql
+     * @param string $actual The sql to compare
      * @param string $message The message to display on failure
      * @return void
      */
     public function assertEqualsSql(
-        string $needle,
-        string $haystack,
+        string $expected,
+        string $actual,
         string $message = ''
     ): void {
-        $this->assertEquals($needle, preg_replace('/[`"\[\]]/', '', $haystack), $message);
+        $this->assertEquals($expected, preg_replace('/[`"\[\]]/', '', $actual), $message);
     }
 
     /**
      * Assert that a string starts with SQL with db-specific characters like quotes removed.
      *
-     * @param string $needle The string to compare
-     * @param string $haystack The SQL to filter
+     * @param string $expected The expected sql
+     * @param string $actual The sql to compare
      * @param string $message The message to display on failure
      * @return void
      */
     public function assertStartsWithSql(
-        string $needle,
-        string $haystack,
+        string $expected,
+        string $actual,
         string $message = ''
     ): void {
-        $this->assertStringStartsWith($needle, preg_replace('/[`"\[\]]/', '', $haystack), $message);
+        $this->assertStringStartsWith($expected, preg_replace('/[`"\[\]]/', '', $actual), $message);
+    }
+
+    /**
+     * Assertion for comparing a regex pattern against a query having its identifiers
+     * quoted. It accepts queries quoted with the characters `<` and `>`. If the third
+     * parameter is set to true, it will alter the pattern to both accept quoted and
+     * unquoted queries
+     *
+     * @param string $pattern The expected sql pattern
+     * @param string $actual The sql to compare
+     * @param bool $optional Whether quote characters (marked with <>) are optional
+     * @return void
+     */
+    public function assertRegExpSql(string $pattern, string $actual, bool $optional = false): void
+    {
+        $optional = $optional ? '?' : '';
+        $pattern = str_replace('<', '[`"\[]' . $optional, $pattern);
+        $pattern = str_replace('>', '[`"\]]' . $optional, $pattern);
+        $this->assertRegExp('#' . $pattern . '#', $actual);
     }
 
     /**

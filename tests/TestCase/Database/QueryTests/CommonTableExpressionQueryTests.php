@@ -54,6 +54,7 @@ class CommonTableExpressionQueryTests extends TestCase
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
+        $this->autoQuote = $this->connection->getDriver()->isAutoQuotingEnabled();
 
         $this->skipIf(
             !$this->connection->getDriver()->supportsCTEs(),
@@ -81,9 +82,10 @@ class CommonTableExpressionQueryTests extends TestCase
             ->select('col')
             ->from('cte');
 
-        $this->assertEqualsSql(
-            'WITH cte AS (SELECT 1 AS col) SELECT col FROM cte',
-            $query->sql(new ValueBinder())
+        $this->assertRegExpSql(
+            'WITH <cte> AS \(SELECT 1 AS <col>\) SELECT <col> FROM <cte>',
+            $query->sql(new ValueBinder()),
+            !$this->autoQuote
         );
 
         $expected = [
