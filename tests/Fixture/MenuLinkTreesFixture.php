@@ -23,7 +23,6 @@ use Cake\TestSuite\Fixture\TestFixture;
  */
 class MenuLinkTreesFixture extends TestFixture
 {
-
     /**
      * fields property
      *

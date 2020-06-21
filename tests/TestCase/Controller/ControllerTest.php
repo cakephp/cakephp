@@ -23,6 +23,7 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
+use Laminas\Diactoros\Uri;
 use PHPUnit\Framework\Error\Notice;
 use TestApp\Controller\Admin\PostsController;
 use TestPlugin\Controller\TestPluginController;
@@ -32,7 +33,6 @@ use TestPlugin\Controller\TestPluginController;
  */
 class ControllerTestAppController extends Controller
 {
-
     /**
      * helpers property
      *
@@ -60,7 +60,6 @@ class ControllerTestAppController extends Controller
  */
 class TestController extends ControllerTestAppController
 {
-
     /**
      * Theme property
      *
@@ -158,7 +157,6 @@ class TestController extends ControllerTestAppController
  */
 class TestComponent extends Component
 {
-
     /**
      * beforeRedirect method
      *
@@ -225,7 +223,6 @@ class AnotherTestController extends ControllerTestAppController
  */
 class ControllerTest extends TestCase
 {
-
     /**
      * fixtures property
      *
@@ -491,6 +488,19 @@ class ControllerTest extends TestCase
 
         $result = $Controller->render('index');
         $this->assertInstanceOf('Cake\Http\Response', $result);
+    }
+
+    public function testControllerRedirect()
+    {
+        $Controller = new Controller();
+        $uri = new Uri('/foo/bar');
+        $response = $Controller->redirect($uri);
+        $this->assertEquals('http://localhost/foo/bar', $response->getHeaderLine('Location'));
+
+        $Controller = new Controller();
+        $uri = new Uri('http://cakephp.org/foo/bar');
+        $response = $Controller->redirect($uri);
+        $this->assertEquals('http://cakephp.org/foo/bar', $response->getHeaderLine('Location'));
     }
 
     /**

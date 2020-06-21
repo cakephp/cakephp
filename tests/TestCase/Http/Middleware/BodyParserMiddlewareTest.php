@@ -25,7 +25,6 @@ use Cake\TestSuite\TestCase;
  */
 class BodyParserMiddlewareTest extends TestCase
 {
-
     /**
      * Data provider for HTTP method tests.
      *

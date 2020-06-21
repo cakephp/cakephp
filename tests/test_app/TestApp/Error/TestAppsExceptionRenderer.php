@@ -11,7 +11,6 @@ use TestApp\Controller\TestAppsErrorController;
 
 class TestAppsExceptionRenderer extends ExceptionRenderer
 {
-
     /**
      * {@inheritDoc}
      */

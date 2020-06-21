@@ -79,6 +79,9 @@ class UuidTypeTest extends TestCase
 
         $result = $this->type->toDatabase('', $this->driver);
         $this->assertNull($result);
+
+        $result = $this->type->toDatabase(false, $this->driver);
+        $this->assertNull($result);
     }
 
     /**

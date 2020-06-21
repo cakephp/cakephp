@@ -28,7 +28,6 @@ use TestApp\Model\Entity\Article;
  */
 class ResultSetTest extends TestCase
 {
-
     public $fixtures = ['core.Articles', 'core.Authors', 'core.Comments'];
 
     /**
@@ -140,7 +139,7 @@ class ResultSetTest extends TestCase
         // Use a loop to test Iterator implementation
         foreach ($results as $i => $row) {
             $expected = new Entity($this->fixtureData[$i]);
-            $expected->isNew(false);
+            $expected->setNew(false);
             $expected->setSource($this->table->getAlias());
             $expected->clean();
             $this->assertEquals($expected, $row, "Row $i does not match");

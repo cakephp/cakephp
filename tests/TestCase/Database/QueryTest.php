@@ -31,7 +31,6 @@ use TestApp\Database\Type\BarType;
  */
 class QueryTest extends TestCase
 {
-
     public $fixtures = [
         'core.Articles',
         'core.Authors',
@@ -868,6 +867,7 @@ class QueryTest extends TestCase
 
     /**
      * Tests exception message for impossible condition when using an expression
+     *
      * @return void
      */
     public function testSelectWhereArrayTypeEmptyWithExpression()
@@ -2110,6 +2110,31 @@ class QueryTest extends TestCase
             ['id' => 3],
         ];
         $this->assertEquals($expected, $result);
+
+        $query = new Query($this->connection);
+        $query->select(['id'])
+            ->from('articles')
+            ->orderAsc(function (QueryExpression $exp, Query $query) {
+                return $exp->addCase(
+                    [$query->newExpr()->add(['author_id' => 1])],
+                    [1, $query->identifier('id')],
+                    ['integer', null]
+                );
+            })
+            ->orderAsc('id');
+        $sql = $query->sql();
+        $result = $query->execute()->fetchAll('assoc');
+        $expected = [
+            ['id' => 1],
+            ['id' => 3],
+            ['id' => 2],
+        ];
+        $this->assertEquals($expected, $result);
+        $this->assertQuotedQuery(
+            'SELECT <id> FROM <articles> ORDER BY CASE WHEN <author_id> = :c0 THEN :param1 ELSE <id> END ASC, <id> ASC',
+            $sql,
+            !$this->autoQuote
+        );
     }
 
     /**
@@ -2150,6 +2175,31 @@ class QueryTest extends TestCase
             ['id' => 1],
         ];
         $this->assertEquals($expected, $result);
+
+        $query = new Query($this->connection);
+        $query->select(['id'])
+            ->from('articles')
+            ->orderDesc(function (QueryExpression $exp, Query $query) {
+                return $exp->addCase(
+                    [$query->newExpr()->add(['author_id' => 1])],
+                    [1, $query->identifier('id')],
+                    ['integer', null]
+                );
+            })
+            ->orderDesc('id');
+        $sql = $query->sql();
+        $result = $query->execute()->fetchAll('assoc');
+        $expected = [
+            ['id' => 2],
+            ['id' => 3],
+            ['id' => 1],
+        ];
+        $this->assertEquals($expected, $result);
+        $this->assertQuotedQuery(
+            'SELECT <id> FROM <articles> ORDER BY CASE WHEN <author_id> = :c0 THEN :param1 ELSE <id> END DESC, <id> DESC',
+            $sql,
+            !$this->autoQuote
+        );
     }
 
     /**
@@ -3019,7 +3069,6 @@ class QueryTest extends TestCase
      * warning about possible incompatibilities with aliases being removed
      * from the conditions.
      *
-     *
      * @return void
      */
     public function testDeleteRemovingAliasesCanBreakJoins()
@@ -3119,7 +3168,6 @@ class QueryTest extends TestCase
     /**
      * Test update with type checking
      * by passing an array as table arg
-     *
      *
      * @return void
      */
@@ -3603,7 +3651,6 @@ class QueryTest extends TestCase
 
     /**
      * Test that an exception is raised when mixing query + array types.
-     *
      */
     public function testInsertFailureMixingTypesArrayFirst()
     {
@@ -3618,7 +3665,6 @@ class QueryTest extends TestCase
 
     /**
      * Test that an exception is raised when mixing query + array types.
-     *
      */
     public function testInsertFailureMixingTypesQueryFirst()
     {
@@ -4376,12 +4422,8 @@ class QueryTest extends TestCase
 
         //Postgres requires the case statement to be cast to a integer
         if ($this->connection->getDriver() instanceof \Cake\Database\Driver\Postgres) {
-            $publishedCase = $query->func()
-                ->cast([$publishedCase, 'integer' => 'literal'])
-                ->setConjunction(' AS ');
-            $notPublishedCase = $query->func()
-                ->cast([$notPublishedCase, 'integer' => 'literal'])
-                ->setConjunction(' AS ');
+            $publishedCase = $query->func()->cast($publishedCase, 'integer');
+            $notPublishedCase = $query->func()->cast($notPublishedCase, 'integer');
         }
 
         $results = $query
@@ -4904,6 +4946,7 @@ class QueryTest extends TestCase
 
     /**
      * Test that calling fetchAssoc return an associated array.
+     *
      * @return void
      * @throws \Exception
      */
@@ -4933,6 +4976,7 @@ class QueryTest extends TestCase
 
     /**
      * Test that calling fetchAssoc return an empty associated array.
+     *
      * @return void
      * @throws \Exception
      */
@@ -4952,6 +4996,7 @@ class QueryTest extends TestCase
 
     /**
      * Test that calling fetch with with FETCH_TYPE_OBJ return stdClass object.
+     *
      * @return void
      * @throws \Exception
      */
@@ -4974,6 +5019,7 @@ class QueryTest extends TestCase
 
     /**
      * Test that fetchColumn() will return the correct value at $position.
+     *
      * @throws \Exception
      * @return void
      */
@@ -5012,6 +5058,7 @@ class QueryTest extends TestCase
 
     /**
      * Test that fetchColumn() will return false if $position is not set.
+     *
      * @throws \Exception
      * @return void
      */

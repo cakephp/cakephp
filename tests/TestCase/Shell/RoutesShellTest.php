@@ -23,7 +23,6 @@ use Cake\TestSuite\ConsoleIntegrationTestCase;
  */
 class RoutesShellTest extends ConsoleIntegrationTestCase
 {
-
     /**
      * setUp method
      *

@@ -185,9 +185,12 @@ class HtmlHelper extends Helper
      * @param string $type Doctype to use.
      * @return string|null Doctype string
      * @link https://book.cakephp.org/3/en/views/helpers/html.html#creating-doctype-tags
+     * @deprecated 3.9.0 This method will be removed in 4.0.0.
      */
     public function docType($type = 'html5')
     {
+        deprecationWarning('HtmlHelper::docType() is deprecated and will be removed in 4.0.0');
+
         if (isset($this->_docTypes[$type])) {
             return $this->_docTypes[$type];
         }
@@ -277,7 +280,11 @@ class HtmlHelper extends Helper
         $out = null;
 
         if (isset($options['link'])) {
-            $options['link'] = $this->Url->assetUrl($options['link']);
+            if (is_array($options['link'])) {
+                $options['link'] = $this->Url->build($options['link']);
+            } else {
+                $options['link'] = $this->Url->assetUrl($options['link']);
+            }
             if (isset($options['rel']) && $options['rel'] === 'icon') {
                 $out = $this->formatTemplate('metalink', [
                     'url' => $options['link'],
@@ -491,6 +498,8 @@ class HtmlHelper extends Helper
             $options['block'] = __FUNCTION__;
         }
         $this->_View->append($options['block'], $out);
+
+        return null;
     }
 
     /**
@@ -572,6 +581,8 @@ class HtmlHelper extends Helper
             $options['block'] = __FUNCTION__;
         }
         $this->_View->append($options['block'], $out);
+
+        return null;
     }
 
     /**
@@ -610,6 +621,8 @@ class HtmlHelper extends Helper
             $options['block'] = 'script';
         }
         $this->_View->append($options['block'], $out);
+
+        return null;
     }
 
     /**
@@ -850,14 +863,18 @@ class HtmlHelper extends Helper
      * - `fullBase` If true the src attribute will get a full address for the image file.
      * - `plugin` False value will prevent parsing path as a plugin
      *
-     * @param string|array $path Path to the image file, relative to the app/webroot/img/ directory.
+     * @param string|array $path Path to the image file, relative to the webroot/img/ directory.
      * @param array $options Array of HTML attributes. See above for special options.
      * @return string completed img tag
      * @link https://book.cakephp.org/3/en/views/helpers/html.html#linking-to-images
      */
     public function image($path, array $options = [])
     {
-        $path = $this->Url->image($path, $options);
+        if (is_string($path)) {
+            $path = $this->Url->image($path, $options);
+        } else {
+            $path = $this->Url->build($path, $options);
+        }
         $options = array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
 
         if (!isset($options['alt'])) {
@@ -890,7 +907,7 @@ class HtmlHelper extends Helper
     /**
      * Returns a row of formatted and named TABLE headers.
      *
-     * @param array $names Array of tablenames. Each tablename also can be a key that points to an array with a set
+     * @param array $names Array of tablenames. Each tablename can be string, or array with name and an array with a set
      *     of attributes to its specific tag
      * @param array|null $trOptions HTML options for TR elements.
      * @param array|null $thOptions HTML options for TH elements.
@@ -902,16 +919,20 @@ class HtmlHelper extends Helper
         $out = [];
         foreach ($names as $arg) {
             if (!is_array($arg)) {
-                $out[] = $this->formatTemplate('tableheader', [
-                    'attrs' => $this->templater()->formatAttributes($thOptions),
-                    'content' => $arg,
-                ]);
+                $content = $arg;
+                $attrs = $thOptions;
+            } elseif (isset($arg[0], $arg[1])) {
+                $content = $arg[0];
+                $attrs = $arg[1];
             } else {
-                $out[] = $this->formatTemplate('tableheader', [
-                    'attrs' => $this->templater()->formatAttributes(current($arg)),
-                    'content' => key($arg),
-                ]);
+                $content = key($arg);
+                $attrs = current($arg);
             }
+
+            $out[] = $this->formatTemplate('tableheader', [
+                'attrs' => $this->templater()->formatAttributes($attrs),
+                'content' => $content,
+            ]);
         }
 
         return $this->tableRow(implode(' ', $out), (array)$trOptions);

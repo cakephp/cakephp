@@ -19,6 +19,7 @@ use Cake\I18n\FrozenTime;
 use Cake\I18n\I18n;
 use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
+use DateTimeInterface;
 
 /**
  * TimeTest class
@@ -269,6 +270,7 @@ class TimeTest extends TestCase
      */
     public function testTimeAgoInWordsAccuracy($class)
     {
+        /** @var \Cake\I18n\Time|\Cake\I18n\FrozenTime $time */
         $time = new $class('+8 years +4 months +2 weeks +3 days');
         $result = $time->timeAgoInWords([
             'accuracy' => ['year' => 'year'],
@@ -357,6 +359,7 @@ class TimeTest extends TestCase
      */
     public function testTimeAgoInWordsNegativeValues($class)
     {
+        /** @var \Cake\I18n\Time|\Cake\I18n\FrozenTime $time */
         $time = new $class('-2 months -2 days');
         $result = $time->timeAgoInWords(['end' => '3 month']);
         $this->assertEquals('2 months, 2 days ago', $result);
@@ -420,6 +423,7 @@ class TimeTest extends TestCase
      */
     public function testNice($class)
     {
+        /** @var \Cake\I18n\Time|\Cake\I18n\FrozenTime $time */
         $time = new $class('2014-04-20 20:00', 'UTC');
         $this->assertTimeFormat('Apr 20, 2014, 8:00 PM', $time->nice());
 
@@ -521,6 +525,7 @@ class TimeTest extends TestCase
      */
     public function testI18nFormatWithOffsetTimezone($class)
     {
+        /** @var \Cake\I18n\Time|\Cake\I18n\FrozenTime $time */
         $time = new $class('2014-01-01T00:00:00+00');
         $result = $time->i18nFormat(\IntlDateFormatter::FULL);
         $expected = 'Wednesday January 1 2014 12:00:00 AM GMT';
@@ -670,6 +675,7 @@ class TimeTest extends TestCase
      */
     public function testDiffForHumans($class)
     {
+        /** @var \Cake\I18n\Time|\Cake\I18n\FrozenTime $time */
         $time = new $class('2014-04-20 10:10:10');
 
         $other = new $class('2014-04-27 10:10:10');
@@ -712,6 +718,7 @@ class TimeTest extends TestCase
     public function testDiffForHumansAbsolute($class)
     {
         Time::setTestNow(new $class('2015-12-12 10:10:10'));
+        /** @var \Cake\I18n\Time|\Cake\I18n\FrozenTime $time */
         $time = new $class('2014-04-20 10:10:10');
         $this->assertEquals('1 year', $time->diffForHumans(null, ['absolute' => true]));
 
@@ -731,6 +738,7 @@ class TimeTest extends TestCase
     public function testDiffForHumansNow($class)
     {
         Time::setTestNow(new $class('2015-12-12 10:10:10'));
+        /** @var \Cake\I18n\Time|\Cake\I18n\FrozenTime $time */
         $time = new $class('2014-04-20 10:10:10');
         $this->assertEquals('1 year ago', $time->diffForHumans());
 
@@ -780,6 +788,25 @@ class TimeTest extends TestCase
     }
 
     /**
+     * Tests change json encoding format
+     *
+     * @dataProvider classNameProvider
+     * @return void
+     */
+    public function testSetJsonEncodeFormat($class)
+    {
+        $time = new $class('2014-04-20 10:10:10');
+
+        $class::setJsonEncodeFormat(static function (DateTimeInterface $t) {
+            return $t->format(DATE_ATOM);
+        });
+        $this->assertEquals('"2014-04-20T10:10:10+00:00"', json_encode($time));
+
+        $class::setJsonEncodeFormat("yyyy-MM-dd'T'HH':'mm':'ssZZZZZ");
+        $this->assertEquals('"2014-04-20T10:10:10Z"', json_encode($time));
+    }
+
+    /**
      * Tests debugInfo
      *
      * @dataProvider classNameProvider
@@ -787,11 +814,12 @@ class TimeTest extends TestCase
      */
     public function testDebugInfo($class)
     {
+        /** @var \Cake\I18n\Time|\Cake\I18n\FrozenTime $time */
         $time = new $class('2014-04-20 10:10:10');
         $expected = [
             'time' => '2014-04-20 10:10:10.000000+00:00',
             'timezone' => 'UTC',
-            'fixedNowTime' => $class::getTestNow()->format('Y-m-d H:i:s.uP'),
+            'fixedNowTime' => $class::getTestNow()->format('Y-m-d\TH:i:s.uP'),
         ];
         $this->assertEquals($expected, $time->__debugInfo());
     }
@@ -804,6 +832,7 @@ class TimeTest extends TestCase
      */
     public function testParseDateTime($class)
     {
+        /** @var \Cake\I18n\Time|\Cake\I18n\FrozenTime $time */
         $time = $class::parseDateTime('01/01/1970 00:00am');
         $this->assertNotNull($time);
         $this->assertEquals('1970-01-01 00:00', $time->format('Y-m-d H:i'));
@@ -829,6 +858,7 @@ class TimeTest extends TestCase
      */
     public function testParseDate($class)
     {
+        /** @var \Cake\I18n\Time|\Cake\I18n\FrozenTime $time */
         $time = $class::parseDate('10/13/2013 12:54am');
         $this->assertNotNull($time);
         $this->assertEquals('2013-10-13 00:00', $time->format('Y-m-d H:i'));
@@ -858,6 +888,7 @@ class TimeTest extends TestCase
      */
     public function testParseTime($class)
     {
+        /** @var \Cake\I18n\Time|\Cake\I18n\FrozenTime $time */
         $time = $class::parseTime('12:54am');
         $this->assertNotNull($time);
         $this->assertEquals('00:54:00', $time->format('H:i:s'));
@@ -872,6 +903,25 @@ class TimeTest extends TestCase
     }
 
     /**
+     * Tests disabling leniency when parsing locale format.
+     *
+     * @dataProvider classNameProvider
+     * @return void
+     */
+    public function testLenientParseDate($class)
+    {
+        $class::setDefaultLocale('pt_BR');
+
+        $class::disableLenientParsing();
+        $time = $class::parseDate('04/21/2013');
+        $this->assertSame(null, $time);
+
+        $class::enableLenientParsing();
+        $time = $class::parseDate('04/21/2013');
+        $this->assertSame('2014-09-04', $time->format('Y-m-d'));
+    }
+
+    /**
      * Tests that timeAgoInWords when using a russian locale does not break things
      *
      * @dataProvider classNameProvider
@@ -880,6 +930,7 @@ class TimeTest extends TestCase
     public function testRussianTimeAgoInWords($class)
     {
         I18n::setLocale('ru_RU');
+        /** @var \Cake\I18n\Time|\Cake\I18n\FrozenTime $time */
         $time = new $class('5 days ago');
         $result = $time->timeAgoInWords();
         $this->assertEquals('5 days ago', $result);
@@ -920,6 +971,7 @@ class TimeTest extends TestCase
      */
     public function testDefaultLocaleEffectsFormatting($class)
     {
+        /** @var \Cake\I18n\Time|\Cake\I18n\FrozenTime $result */
         $result = $class::parseDate('12/03/2015');
         $this->assertRegExp('/Dec 3, 2015[ ,]+12:00 AM/', $result->nice());
 

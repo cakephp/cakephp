@@ -21,7 +21,6 @@ use Cake\Routing\Router;
  */
 class AuthTestController extends Controller
 {
-
     /**
      * components property
      *

@@ -27,13 +27,17 @@ use Cake\TestSuite\TestCase;
  */
 class BasicAuthenticateTest extends TestCase
 {
-
     /**
      * Fixtures
      *
      * @var array
      */
     public $fixtures = ['core.AuthUsers', 'core.Users'];
+
+    /**
+     * @var \Cake\Auth\BasicAuthenticate
+     */
+    protected $auth;
 
     /**
      * setup

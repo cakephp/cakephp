@@ -15,6 +15,7 @@
 namespace Cake\Database;
 
 use Cake\Database\Query;
+use Cake\Database\Schema\TableSchema;
 use Cake\Database\Statement\PDOStatement;
 use InvalidArgumentException;
 use PDO;
@@ -425,6 +426,23 @@ abstract class Driver implements DriverInterface
     public function newCompiler()
     {
         return new QueryCompiler();
+    }
+
+    /**
+     * Constructs new TableSchema.
+     *
+     * @param string $table The table name.
+     * @param array $columns The list of columns for the schema.
+     * @return \Cake\Database\Schema\TableSchemaInterface
+     */
+    public function newTableSchema($table, array $columns = [])
+    {
+        $className = TableSchema::class;
+        if (isset($this->_config['tableSchema'])) {
+            $className = $this->_config['tableSchema'];
+        }
+
+        return new $className($table, $columns);
     }
 
     /**

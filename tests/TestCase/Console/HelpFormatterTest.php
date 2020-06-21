@@ -25,7 +25,6 @@ use Cake\TestSuite\TestCase;
  */
 class HelpFormatterTest extends TestCase
 {
-
     /**
      * test that the console max width is respected when generating help.
      *

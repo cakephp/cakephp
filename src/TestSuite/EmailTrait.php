@@ -15,6 +15,7 @@
 namespace Cake\TestSuite;
 
 use Cake\TestSuite\Constraint\Email\MailContains;
+use Cake\TestSuite\Constraint\Email\MailContainsAttachment;
 use Cake\TestSuite\Constraint\Email\MailContainsHtml;
 use Cake\TestSuite\Constraint\Email\MailContainsText;
 use Cake\TestSuite\Constraint\Email\MailCount;
@@ -61,19 +62,18 @@ trait EmailTrait
      * @param string $message Message
      * @return void
      */
-    public function assertMailCount($count, $message = null)
+    public function assertMailCount($count, $message = '')
     {
         $this->assertThat($count, new MailCount(), $message);
     }
 
     /**
-     *
      * Asserts that no emails were sent
      *
      * @param string $message Message
      * @return void
      */
-    public function assertNoMailSent($message = null)
+    public function assertNoMailSent($message = '')
     {
         $this->assertThat(null, new NoMailSent(), $message);
     }
@@ -86,7 +86,7 @@ trait EmailTrait
      * @param string $message Message
      * @return void
      */
-    public function assertMailSentToAt($at, $address, $message = null)
+    public function assertMailSentToAt($at, $address, $message = '')
     {
         $this->assertThat($address, new MailSentTo($at), $message);
     }
@@ -99,7 +99,7 @@ trait EmailTrait
      * @param string $message Message
      * @return void
      */
-    public function assertMailSentFromAt($at, $address, $message = null)
+    public function assertMailSentFromAt($at, $address, $message = '')
     {
         $this->assertThat($address, new MailSentFrom($at), $message);
     }
@@ -112,7 +112,7 @@ trait EmailTrait
      * @param string $message Message
      * @return void
      */
-    public function assertMailContainsAt($at, $contents, $message = null)
+    public function assertMailContainsAt($at, $contents, $message = '')
     {
         $this->assertThat($contents, new MailContains($at), $message);
     }
@@ -125,7 +125,7 @@ trait EmailTrait
      * @param string $message Message
      * @return void
      */
-    public function assertMailContainsHtmlAt($at, $contents, $message = null)
+    public function assertMailContainsHtmlAt($at, $contents, $message = '')
     {
         $this->assertThat($contents, new MailContainsHtml($at), $message);
     }
@@ -138,7 +138,7 @@ trait EmailTrait
      * @param string $message Message
      * @return void
      */
-    public function assertMailContainsTextAt($at, $contents, $message = null)
+    public function assertMailContainsTextAt($at, $contents, $message = '')
     {
         $this->assertThat($contents, new MailContainsText($at), $message);
     }
@@ -152,7 +152,7 @@ trait EmailTrait
      * @param string $message Message
      * @return void
      */
-    public function assertMailSentWithAt($at, $expected, $parameter, $message = null)
+    public function assertMailSentWithAt($at, $expected, $parameter, $message = '')
     {
         $this->assertThat($expected, new MailSentWith($at, $parameter), $message);
     }
@@ -164,7 +164,7 @@ trait EmailTrait
      * @param string $message Message
      * @return void
      */
-    public function assertMailSentTo($address, $message = null)
+    public function assertMailSentTo($address, $message = '')
     {
         $this->assertThat($address, new MailSentTo(), $message);
     }
@@ -176,7 +176,7 @@ trait EmailTrait
      * @param string $message Message
      * @return void
      */
-    public function assertMailSentFrom($address, $message = null)
+    public function assertMailSentFrom($address, $message = '')
     {
         $this->assertThat($address, new MailSentFrom(), $message);
     }
@@ -188,9 +188,22 @@ trait EmailTrait
      * @param string $message Message
      * @return void
      */
-    public function assertMailContains($contents, $message = null)
+    public function assertMailContains($contents, $message = '')
     {
         $this->assertThat($contents, new MailContains(), $message);
+    }
+
+    /**
+     * Asserts an email contains expected attachment
+     *
+     * @param string $filename Filename
+     * @param array $file Additional file properties
+     * @param string $message Message
+     * @return void
+     */
+    public function assertMailContainsAttachment($filename, array $file = [], $message = '')
+    {
+        $this->assertThat([$filename, $file], new MailContainsAttachment(), $message);
     }
 
     /**
@@ -200,7 +213,7 @@ trait EmailTrait
      * @param string $message Message
      * @return void
      */
-    public function assertMailContainsHtml($contents, $message = null)
+    public function assertMailContainsHtml($contents, $message = '')
     {
         $this->assertThat($contents, new MailContainsHtml(), $message);
     }
@@ -212,7 +225,7 @@ trait EmailTrait
      * @param string $message Message to display if assertion fails.
      * @return void
      */
-    public function assertMailContainsText($expectedText, $message = null)
+    public function assertMailContainsText($expectedText, $message = '')
     {
         $this->assertThat($expectedText, new MailContainsText(), $message);
     }
@@ -225,7 +238,7 @@ trait EmailTrait
      * @param string $message Message
      * @return void
      */
-    public function assertMailSentWith($expected, $parameter, $message = null)
+    public function assertMailSentWith($expected, $parameter, $message = '')
     {
         $this->assertThat($expected, new MailSentWith(null, $parameter), $message);
     }

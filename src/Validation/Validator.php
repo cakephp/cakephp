@@ -19,6 +19,7 @@ use ArrayIterator;
 use Countable;
 use InvalidArgumentException;
 use IteratorAggregate;
+use Psr\Http\Message\UploadedFileInterface;
 
 /**
  * Validator object encapsulates all methods related to data validations for a model
@@ -61,6 +62,9 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * When an array is given, if it has at least the `name`, `type`, `tmp_name` and `error` keys,
      * and the value of `error` is equal to `UPLOAD_ERR_NO_FILE`, the value will be recognized as
      * empty.
+     *
+     * When an instance of \Psr\Http\Message\UploadedFileInterface is given the
+     * return value of it's getError() method must be equal to `UPLOAD_ERR_NO_FILE`.
      *
      * @var int
      */
@@ -147,7 +151,6 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
 
     /**
      * Constructor
-     *
      */
     public function __construct()
     {
@@ -156,14 +159,26 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * Returns an array of fields that have failed validation. On the current model. This method will
-     * actually run validation rules over data, not just return the messages.
+     * Validates and returns an array of failed fields and their error messages.
      *
      * @param array $data The data to be checked for errors
      * @param bool $newRecord whether the data to be validated is new or to be updated.
-     * @return array Array of invalid fields
+     * @return array Array of failed fields
+     * @deprecated 3.9.0 Renamed to validate()
      */
     public function errors(array $data, $newRecord = true)
+    {
+        return $this->validate($data, $newRecord);
+    }
+
+    /**
+     * Validates and returns an array of failed fields and their error messages.
+     *
+     * @param array $data The data to be checked for errors
+     * @param bool $newRecord whether the data to be validated is new or to be updated.
+     * @return array Array of failed fields
+     */
+    public function validate(array $data, $newRecord = true)
     {
         $errors = [];
 
@@ -496,7 +511,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             foreach ($this->providers() as $provider) {
                 $validator->setProvider($provider, $this->getProvider($provider));
             }
-            $errors = $validator->errors($value, $context['newRecord']);
+            $errors = $validator->validate($value, $context['newRecord']);
 
             $message = $message ? [static::NESTED => $message] : [];
 
@@ -543,7 +558,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 if (!is_array($row)) {
                     return false;
                 }
-                $check = $validator->errors($row, $context['newRecord']);
+                $check = $validator->validate($row, $context['newRecord']);
                 if (!empty($check)) {
                     $errors[$i] = $check;
                 }
@@ -1284,6 +1299,63 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
+     * Add a non-alphanumeric rule to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::notAlphaNumeric()
+     * @return $this
+     */
+    public function notAlphaNumeric($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+
+        return $this->add($field, 'notAlphaNumeric', $extra + [
+            'rule' => 'notAlphaNumeric',
+        ]);
+    }
+
+    /**
+     * Add an ascii-alphanumeric rule to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::asciiAlphaNumeric()
+     * @return $this
+     */
+    public function asciiAlphaNumeric($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+
+        return $this->add($field, 'asciiAlphaNumeric', $extra + [
+            'rule' => 'asciiAlphaNumeric',
+        ]);
+    }
+
+    /**
+     * Add a non-ascii alphanumeric rule to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::notAlphaNumeric()
+     * @return $this
+     */
+    public function notAsciiAlphaNumeric($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+
+        return $this->add($field, 'notAsciiAlphaNumeric', $extra + [
+            'rule' => 'notAsciiAlphaNumeric',
+        ]);
+    }
+
+    /**
      * Add an rule that ensures a string length is within a range.
      *
      * @param string $field The field you want to apply the rule to.
@@ -1626,6 +1698,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::containsNonAlphaNumeric()
      * @return $this
+     * @deprecated 3.9.0 Use notAlphaNumeric() instead. Will be removed in 5.0
      */
     public function containsNonAlphaNumeric($field, $limit = 1, $message = null, $when = null)
     {
@@ -2584,6 +2657,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                     return true;
                 }
             }
+        }
+
+        if (
+            ($flags & self::EMPTY_FILE)
+            && $data instanceof UploadedFileInterface
+            && $data->getError() === UPLOAD_ERR_NO_FILE
+        ) {
+            return true;
         }
 
         return false;

@@ -22,7 +22,6 @@ use Cake\Controller\Component;
  */
 class SomethingWithCookieComponent extends Component
 {
-
     /**
      * components property
      *

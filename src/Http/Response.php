@@ -27,10 +27,10 @@ use DateTime;
 use DateTimeInterface;
 use DateTimeZone;
 use InvalidArgumentException;
+use Laminas\Diactoros\MessageTrait;
+use Laminas\Diactoros\Stream;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
-use Zend\Diactoros\MessageTrait;
-use Zend\Diactoros\Stream;
 
 /**
  * Responses contain the response text, status and headers of a HTTP response.
@@ -40,7 +40,6 @@ use Zend\Diactoros\Stream;
  * returns a status code integer. Keep in mind that these consants might
  * include status codes that are now allowed which will throw an
  * `\InvalidArgumentException`.
- *
  */
 class Response implements ResponseInterface
 {
@@ -1065,7 +1064,6 @@ class Response implements ResponseInterface
      *        ]); // throws an exception due to invalid codes
      *
      *        For more on HTTP status codes see: http://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html#sec6.1
-     *
      * @return mixed Associative array of the HTTP codes as keys, and the message
      *    strings as values, or null of the given $code does not exist.
      * @throws \InvalidArgumentException If an attempt is made to add an invalid status code

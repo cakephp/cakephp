@@ -24,7 +24,6 @@ use Cake\TestSuite\TestCase;
  */
 class FallbackPasswordHasherTest extends TestCase
 {
-
     /**
      * Tests that only the first hasher is user for hashing a password
      *

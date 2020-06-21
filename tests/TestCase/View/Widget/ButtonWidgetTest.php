@@ -23,7 +23,6 @@ use Cake\View\Widget\ButtonWidget;
  */
 class ButtonWidgetTest extends TestCase
 {
-
     public function setUp()
     {
         parent::setUp();

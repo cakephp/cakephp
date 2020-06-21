@@ -17,10 +17,10 @@ namespace Cake\Http\Client;
 // with the deprecated class in this namespace.
 use Cake\Http\Cookie\CookieCollection as CookiesCollection;
 use Cake\Http\Cookie\CookieInterface;
+use Laminas\Diactoros\MessageTrait;
+use Laminas\Diactoros\Stream;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
-use Zend\Diactoros\MessageTrait;
-use Zend\Diactoros\Stream;
 
 /**
  * Implements methods for HTTP responses.
@@ -244,6 +244,16 @@ class Response extends Message implements ResponseInterface
         ];
 
         return in_array($this->code, $codes);
+    }
+
+    /**
+     * Check if the response status code was in the 2xx range
+     *
+     * @return bool
+     */
+    public function isSuccess()
+    {
+        return $this->code >= 200 && $this->code <= 299;
     }
 
     /**

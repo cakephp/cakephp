@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
  */
 class CakeStreamWrapper implements \ArrayAccess
 {
-
     private $_stream;
 
     private $_query = [];
@@ -101,7 +100,6 @@ class CakeStreamWrapper implements \ArrayAccess
  */
 class StreamTest extends TestCase
 {
-
     public function setUp()
     {
         parent::setUp();

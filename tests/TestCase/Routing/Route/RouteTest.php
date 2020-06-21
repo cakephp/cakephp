@@ -40,7 +40,6 @@ class RouteProtected extends Route
  */
 class RouteTest extends TestCase
 {
-
     /**
      * setUp method
      *

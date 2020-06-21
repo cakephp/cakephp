@@ -23,12 +23,12 @@ use Cake\Http\MiddlewareQueue;
 use Cake\Http\Server;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequestFactory;
 use RuntimeException;
 use TestApp\Http\BadResponseApplication;
 use TestApp\Http\InvalidMiddlewareApplication;
 use TestApp\Http\MiddlewareApplication;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequestFactory;
 
 require_once __DIR__ . '/server_mocks.php';
 
@@ -221,7 +221,7 @@ class ServerTest extends TestCase
             ->withHeader('X-First', 'first')
             ->withHeader('X-Second', 'second');
 
-        $emitter = $this->getMockBuilder('Zend\Diactoros\Response\EmitterInterface')->getMock();
+        $emitter = $this->getMockBuilder('Laminas\Diactoros\Response\EmitterInterface')->getMock();
         $emitter->expects($this->once())
             ->method('emit')
             ->with($final);

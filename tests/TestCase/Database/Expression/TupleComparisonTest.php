@@ -24,7 +24,6 @@ use Cake\TestSuite\TestCase;
  */
 class TupleComparisonTest extends TestCase
 {
-
     /**
      * Tests generating a function with no arguments
      *

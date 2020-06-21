@@ -20,8 +20,8 @@ use Psr\Log\LogLevel;
 
 /**
  * Class BaseLogImpl
- * Implementation of abstract class {@see Cake\Log\Engine\BaseLog},
- * required by test case {@see Cake\Test\TestCase\Log\Engine\BaseLogTest}.
+ * Implementation of abstract class {@see \Cake\Log\Engine\BaseLog},
+ * required by test case {@see \Cake\Test\TestCase\Log\Engine\BaseLogTest}.
  */
 class BaseLogImpl extends BaseLog
 {
@@ -31,7 +31,6 @@ class BaseLogImpl extends BaseLog
      * @param mixed $level
      * @param mixed $message
      * @param array $context
-     *
      * @return mixed
      */
     public function log($level, $message, array $context = [])
@@ -42,7 +41,6 @@ class BaseLogImpl extends BaseLog
 
 class BaseLogTest extends TestCase
 {
-
     private $testData = ['ä', 'ö', 'ü'];
 
     private $logger;

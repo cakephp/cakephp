@@ -167,7 +167,8 @@ class Socket
         if ($port > 0) {
             $remoteSocketTarget .= ':' . $port;
         }
-        $this->connection = stream_socket_client(
+
+        $this->connection = $this->_getStreamSocketClient(
             $remoteSocketTarget,
             $errNum,
             $errStr,
@@ -193,6 +194,29 @@ class Socket
         }
 
         return $this->connected;
+    }
+
+    /**
+     * Create a stream socket client. Mock utility.
+     *
+     * @param string $remoteSocketTarget remote socket
+     * @param int $errNum error number
+     * @param string $errStr error string
+     * @param int $timeout timeout
+     * @param int $connectAs flags
+     * @param resource $context context
+     * @return bool|resource
+     */
+    protected function _getStreamSocketClient($remoteSocketTarget, &$errNum, &$errStr, $timeout, $connectAs, $context)
+    {
+        return stream_socket_client(
+            $remoteSocketTarget,
+            $errNum,
+            $errStr,
+            $timeout,
+            $connectAs,
+            $context
+        );
     }
 
     /**

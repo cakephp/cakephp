@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
  */
 class AssociationProxyTest extends TestCase
 {
-
     /**
      * Fixtures to be loaded
      *

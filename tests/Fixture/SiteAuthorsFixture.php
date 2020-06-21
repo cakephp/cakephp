@@ -18,7 +18,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 
 class SiteAuthorsFixture extends TestFixture
 {
-
     /**
      * fields property
      *

@@ -26,7 +26,6 @@ use PHPUnit\Framework\Error\Deprecated;
  */
 class ValidationSetTest extends TestCase
 {
-
     /**
      * testGetRule method
      *

@@ -25,7 +25,6 @@ use Cake\View\Widget\NestingLabelWidget;
  */
 class MultiCheckboxWidgetTest extends TestCase
 {
-
     /**
      * setup method.
      *
@@ -41,6 +40,7 @@ class MultiCheckboxWidgetTest extends TestCase
             'checkboxWrapper' => '<div class="checkbox">{{input}}{{label}}</div>',
             'multicheckboxWrapper' => '<fieldset{{attrs}}>{{content}}</fieldset>',
             'multicheckboxTitle' => '<legend>{{text}}</legend>',
+            'selectedClass' => 'selected',
         ];
         $this->templates = new StringTemplate($templates);
         $this->context = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
@@ -712,6 +712,49 @@ class MultiCheckboxWidgetTest extends TestCase
             '/label',
             '/div',
         ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * testRenderSelectedClass method
+     *
+     * Test that the custom selected class is passed to label
+     * Issue: https://github.com/cakephp/cakephp/issues/11249
+     *
+     * @return void
+     */
+    public function testRenderSelectedClass()
+    {
+        $this->templates->add(['selectedClass' => 'active']);
+
+        $label = new LabelWidget($this->templates);
+        $input = new MultiCheckboxWidget($this->templates, $label);
+        $data = [
+            'name' => 'field',
+            'options' => ['value1', 'value2'],
+            'id' => 'alternative-id',
+            'idPrefix' => 'willBeIgnored',
+        ];
+        $result = $input->render($data, $this->context);
+
+        $data = [
+            'name' => 'field',
+            'options' => [1 => 'value1', 2 => 'value2'],
+            'val' => 1,
+            'label' => ['title' => 'my label'],
+        ];
+        $result = $input->render($data, $this->context);
+
+        $expected = [
+            [
+                'div' => ['class' => 'checkbox'],
+                'input' => ['type' => 'checkbox', 'name' => 'field[]', 'value' => '1', 'checked' => 'checked', 'id' => 'field-1'],
+                'label' => ['title' => 'my label', 'for' => 'field-1', 'class' => 'active'],
+            ],
+            'value1',
+            '/label',
+        ];
+
         $this->assertHtml($expected, $result);
     }
 }

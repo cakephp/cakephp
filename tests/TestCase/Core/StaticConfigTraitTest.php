@@ -15,6 +15,7 @@ namespace Cake\Test\TestCase\Core;
 
 use Cake\Core\StaticConfigTrait;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 
 /**
  * TestCacheStaticConfig
@@ -83,7 +84,6 @@ class TestLogStaticConfig
  */
 class StaticConfigTraitTest extends TestCase
 {
-
     /**
      * setup method
      *
@@ -127,6 +127,31 @@ class StaticConfigTraitTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $className = get_class($this->subject);
         $className::parseDsn(['url' => 'http://:80']);
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetConfigOrFail()
+    {
+        $className = get_class($this->subject);
+        $className::setConfig('foo', 'bar');
+
+        $result = $className::getConfigOrFail('foo');
+        $this->assertSame('bar', $result);
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetConfigOrFailException()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Expected configuration `foo` not found.');
+
+        $className = get_class($this->subject);
+        $result = $className::getConfigOrFail('foo');
+        $this->assertSame('bar', $result);
     }
 
     /**

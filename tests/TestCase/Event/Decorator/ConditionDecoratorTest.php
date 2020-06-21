@@ -24,7 +24,6 @@ use Cake\TestSuite\TestCase;
  */
 class ConditionDecoratorTest extends TestCase
 {
-
     /**
      * testCanTriggerIf
      *
@@ -93,7 +92,6 @@ class ConditionDecoratorTest extends TestCase
 
     /**
      * testCallableRuntimeException
-     *
      */
     public function testCallableRuntimeException()
     {

@@ -24,7 +24,6 @@ use SplFileInfo;
  */
 class FileTest extends TestCase
 {
-
     /**
      * File property
      *

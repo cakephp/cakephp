@@ -130,7 +130,6 @@ class ErrorHandlerMiddleware
 
     /**
      * @param \Psr\Http\Message\ResponseInterface $response The response
-     *
      * @return \Psr\Http\Message\ResponseInterface A response
      */
     protected function handleInternalError($response)

@@ -16,7 +16,7 @@ namespace Cake\Http;
 
 use Cake\Core\Configure;
 use Cake\Utility\Hash;
-use Zend\Diactoros\ServerRequestFactory as BaseFactory;
+use Laminas\Diactoros\ServerRequestFactory as BaseFactory;
 
 /**
  * Factory for making ServerRequest instances.
@@ -54,6 +54,7 @@ abstract class ServerRequestFactory extends BaseFactory
             'webroot' => $uri->webroot,
             'base' => $uri->base,
             'session' => $session,
+            'mergeFilesAsObjects' => Configure::read('App.uploadedFilesAsObjects', false),
         ]);
 
         return $request;

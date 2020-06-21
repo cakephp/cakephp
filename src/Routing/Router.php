@@ -58,7 +58,7 @@ class Router
      * Contains the base string that will be applied to all generated URLs
      * For example `https://example.com`
      *
-     * @var string
+     * @var string|null
      */
     protected static $_fullBaseUrl;
 
@@ -646,10 +646,10 @@ class Router
      * - `_name` - Name of route. If you have setup named routes you can use this key
      *   to specify it.
      *
-     * @param string|array|null $url An array specifying any of the following:
+     * @param string|array|\Psr\Http\Message\UriInterface|null $url An array specifying any of the following:
      *   'controller', 'action', 'plugin' additionally, you can provide routed
      *   elements or query string parameters. If string it can be name any valid url
-     *   string.
+     *   string or it can be an UriInterface instance.
      * @param bool $full If true, the full base URL will be prepended to the result.
      *   Default is false.
      * @return string Full translated URL with base path.
@@ -734,6 +734,8 @@ class Router
 
             $output = static::$_collection->match($url, $context);
         } else {
+            $url = (string)$url;
+
             $plainString = (
                 strpos($url, 'javascript:') === 0 ||
                 strpos($url, 'mailto:') === 0 ||
@@ -769,7 +771,6 @@ class Router
      * ### Usage
      *
      * @see Router::url()
-     *
      * @param string|array|null $url An array specifying any of the following:
      *   'controller', 'action', 'plugin' additionally, you can provide routed
      *   elements or query string parameters. If string it can be name any valid url

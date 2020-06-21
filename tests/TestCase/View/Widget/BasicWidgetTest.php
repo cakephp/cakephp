@@ -23,7 +23,6 @@ use Cake\View\Widget\BasicWidget;
  */
 class BasicWidgetTest extends TestCase
 {
-
     public function setUp()
     {
         parent::setUp();

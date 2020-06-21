@@ -164,6 +164,25 @@ class DateTest extends TestCase
     }
 
     /**
+     * Tests change json encoding format
+     *
+     * @dataProvider classNameProvider
+     * @return void
+     */
+    public function testSetJsonEncodeFormat($class)
+    {
+        $date = new $class('2015-11-06 11:32:45');
+
+        $class::setJsonEncodeFormat(static function ($d) {
+            return $d->format(DATE_ATOM);
+        });
+        $this->assertEquals('"2015-11-06T00:00:00+00:00"', json_encode($date));
+
+        $class::setJsonEncodeFormat("yyyy-MM-dd'T'HH':'mm':'ssZZZZZ");
+        $this->assertEquals('"2015-11-06T00:00:00Z"', json_encode($date));
+    }
+
+    /**
      * test parseDate()
      *
      * @dataProvider classNameProvider
@@ -193,6 +212,25 @@ class DateTest extends TestCase
         $class::setDefaultLocale('fr-FR');
         $date = $class::parseDate('13 10, 2015 12:54:12');
         $this->assertEquals('2015-10-13 00:00:00', $date->format('Y-m-d H:i:s'));
+    }
+
+    /**
+     * Tests disabling leniency when parsing locale format.
+     *
+     * @dataProvider classNameProvider
+     * @return void
+     */
+    public function testLenientParseDate($class)
+    {
+        $class::setDefaultLocale('pt_BR');
+
+        $class::disableLenientParsing();
+        $date = $class::parseDate('04/21/2013');
+        $this->assertSame(null, $date);
+
+        $class::enableLenientParsing();
+        $date = $class::parseDate('04/21/2013');
+        $this->assertSame('2014-09-04', $date->format('Y-m-d'));
     }
 
     /**

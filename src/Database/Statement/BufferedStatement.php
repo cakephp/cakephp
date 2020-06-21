@@ -192,7 +192,7 @@ class BufferedStatement implements Iterator, StatementInterface
     /**
      * {@inheritDoc}
      *
-     * @param string $type The type to fetch.
+     * @param int|string $type The type to fetch.
      * @return array|false
      */
     public function fetch($type = self::FETCH_TYPE_NUM)

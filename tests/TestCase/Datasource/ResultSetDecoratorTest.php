@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
  */
 class ResultSetDecoratorTest extends TestCase
 {
-
     /**
      * Tests the decorator can wrap a simple iterator
      *

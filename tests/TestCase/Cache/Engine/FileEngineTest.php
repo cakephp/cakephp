@@ -24,7 +24,6 @@ use Cake\TestSuite\TestCase;
  */
 class FileEngineTest extends TestCase
 {
-
     /**
      * setUp method
      *

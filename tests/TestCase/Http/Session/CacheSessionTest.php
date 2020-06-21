@@ -25,7 +25,6 @@ use Cake\TestSuite\TestCase;
  */
 class CacheSessionTest extends TestCase
 {
-
     protected static $_sessionBackup;
 
     /**

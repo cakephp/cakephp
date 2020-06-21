@@ -21,6 +21,7 @@ use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Exception\NestedTransactionRollbackException;
 use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
+use Cake\Database\Schema\CachedCollection;
 use Cake\Database\StatementInterface;
 use Cake\Database\Statement\BufferedStatement;
 use Cake\Datasource\ConnectionManager;
@@ -35,7 +36,6 @@ use ReflectionProperty;
  */
 class ConnectionTest extends TestCase
 {
-
     public $fixtures = ['core.Things'];
 
     /**
@@ -491,6 +491,7 @@ class ConnectionTest extends TestCase
 
     /**
      * Tests delete from table with conditions
+     *
      * @return void
      */
     public function testDeleteWithConditions()
@@ -1165,6 +1166,43 @@ class ConnectionTest extends TestCase
             $connection->schemaCollection($schema);
             $this->assertSame($schema, $connection->schemaCollection());
         });
+    }
+
+    /**
+     * Test CachedCollection creation with default and custom cache key prefix.
+     *
+     * @return void
+     */
+    public function testGetCachedCollection()
+    {
+        $driver = $this->getMockFormDriver();
+        $connection = $this->getMockBuilder(Connection::class)
+            ->setMethods(['connect'])
+            ->setConstructorArgs([[
+                'driver' => $driver,
+                'name' => 'default',
+                'cacheMetadata' => true,
+            ]])
+            ->getMock();
+
+        $schema = $connection->getSchemaCollection();
+        $this->assertInstanceOf(CachedCollection::class, $schema);
+        $this->assertSame('default_key', $schema->cacheKey('key'));
+
+        $driver = $this->getMockFormDriver();
+        $connection = $this->getMockBuilder(Connection::class)
+            ->setMethods(['connect'])
+            ->setConstructorArgs([[
+                'driver' => $driver,
+                'name' => 'default',
+                'cacheMetadata' => true,
+                'cacheKeyPrefix' => 'foo',
+            ]])
+            ->getMock();
+
+        $schema = $connection->getSchemaCollection();
+        $this->assertInstanceOf(CachedCollection::class, $schema);
+        $this->assertSame('foo_key', $schema->cacheKey('key'));
     }
 
     /**

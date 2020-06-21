@@ -26,7 +26,6 @@ use Cake\Utility\Xml;
  */
 class XmlTest extends TestCase
 {
-
     /**
      * autoFixtures property
      *
@@ -36,6 +35,7 @@ class XmlTest extends TestCase
 
     /**
      * fixtures property
+     *
      * @var array
      */
     public $fixtures = [

@@ -962,7 +962,6 @@ class AuthComponent extends Component
      * Getter for authenticate objects. Will return a particular authenticate object.
      *
      * @param string $alias Alias for the authenticate object
-     *
      * @return \Cake\Auth\BaseAuthenticate|null
      */
     public function getAuthenticate($alias)

@@ -66,7 +66,6 @@ class PoFileParser
      * Items with an empty id are ignored.
      *
      * @param string $resource The file name to parse
-     *
      * @return array
      */
     public function parse($resource)
@@ -164,7 +163,7 @@ class PoFileParser
 
             // Make sure every index is filled.
             end($plurals);
-            $count = key($plurals);
+            $count = (int)key($plurals);
 
             // Fill missing spots with an empty string.
             $empties = array_fill(0, $count + 1, '');

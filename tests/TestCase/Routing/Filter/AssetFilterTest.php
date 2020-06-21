@@ -24,7 +24,6 @@ use Cake\TestSuite\TestCase;
  */
 class AssetFilterTest extends TestCase
 {
-
     /**
      * setUp method
      *

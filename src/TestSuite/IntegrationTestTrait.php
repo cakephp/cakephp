@@ -54,9 +54,9 @@ use Cake\Utility\Security;
 use Cake\Utility\Text;
 use Cake\View\Helper\SecureFieldTokenTrait;
 use Exception;
+use Laminas\Diactoros\Uri;
 use LogicException;
 use PHPUnit\Exception as PhpunitException;
-use Zend\Diactoros\Uri;
 
 /**
  * A trait intended to make integration tests of your controllers easier.
@@ -189,7 +189,6 @@ trait IntegrationTestTrait
     protected $_flashMessages;
 
     /**
-     *
      * @var string|null
      */
     protected $_cookieEncryptionKey;

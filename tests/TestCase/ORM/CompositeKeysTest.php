@@ -29,7 +29,6 @@ use PDO;
  */
 class OpenArticleEntity extends Entity
 {
-
     protected $_accessible = [
         '*' => true,
     ];
@@ -40,7 +39,6 @@ class OpenArticleEntity extends Entity
  */
 class CompositeKeyTest extends TestCase
 {
-
     /**
      * Fixture to be used
      *

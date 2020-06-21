@@ -113,12 +113,14 @@ class ExtractTask extends Shell
 
     /**
      * Displays marker error(s) if true
+     *
      * @var bool
      */
     protected $_markerError;
 
     /**
      * Count number of marker errors found
+     *
      * @var bool
      */
     protected $_countMarkerError = 0;

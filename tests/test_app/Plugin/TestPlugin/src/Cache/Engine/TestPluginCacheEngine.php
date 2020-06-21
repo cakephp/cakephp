@@ -24,7 +24,6 @@ use Cake\Cache\CacheEngine;
 
 class TestPluginCacheEngine extends CacheEngine
 {
-
     public function write($key, $value)
     {
     }

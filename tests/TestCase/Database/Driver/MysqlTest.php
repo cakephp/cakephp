@@ -23,7 +23,6 @@ use PDO;
  */
 class MysqlTest extends TestCase
 {
-
     /**
      * setup
      *

@@ -35,7 +35,7 @@ class Security
     /**
      * The HMAC salt to use for encryption and decryption routines
      *
-     * @var string
+     * @var string|null
      */
     protected static $_salt;
 
@@ -284,7 +284,7 @@ class Security
      * @param string $cipher The ciphertext to decrypt.
      * @param string $key The 256 bit/32 byte key to use as a cipher key.
      * @param string|null $hmacSalt The salt to use for the HMAC process. Leave null to use Security.salt.
-     * @return string|bool Decrypted data. Any trailing null bytes will be removed.
+     * @return string|false Decrypted data. Any trailing null bytes will be removed.
      * @throws \InvalidArgumentException On invalid data or key.
      */
     public static function decrypt($cipher, $key, $hmacSalt = null)
@@ -353,6 +353,12 @@ class Security
      */
     public static function getSalt()
     {
+        if (static::$_salt === null) {
+            throw new RuntimeException(
+                'Salt not set. Use Security::setSalt() to set one, ideally in `config/bootstrap.php`.'
+            );
+        }
+
         return static::$_salt;
     }
 

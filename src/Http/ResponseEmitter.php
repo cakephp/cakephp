@@ -13,7 +13,6 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  *
  * Parts of this file are derived from Zend-Diactoros
- *
  * @copyright Copyright (c) 2015-2016 Zend Technologies USA Inc. (https://www.zend.com/)
  * @license   https://github.com/zendframework/zend-diactoros/blob/master/LICENSE.md New BSD License
  */
@@ -21,9 +20,9 @@ namespace Cake\Http;
 
 use Cake\Core\Configure;
 use Cake\Log\Log;
+use Laminas\Diactoros\RelativeStream;
+use Laminas\Diactoros\Response\EmitterInterface;
 use Psr\Http\Message\ResponseInterface;
-use Zend\Diactoros\RelativeStream;
-use Zend\Diactoros\Response\EmitterInterface;
 
 /**
  * Emits a Response to the PHP Server API.
@@ -244,7 +243,7 @@ class ResponseEmitter implements EmitterInterface
                 $key = strtolower($key);
                 $data[$key] = $value;
             }
-            if (!empty($data['expires'])) {
+            if (is_string($data['expires'])) {
                 $data['expires'] = strtotime($data['expires']);
             }
             setcookie(

@@ -28,7 +28,6 @@ class TestEntity extends Entity
  */
 class TranslateTraitTest extends TestCase
 {
-
     /**
      * Tests that missing translation entries are created automatically
      *

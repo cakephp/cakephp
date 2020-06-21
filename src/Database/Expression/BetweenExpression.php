@@ -99,7 +99,6 @@ class BetweenExpression implements ExpressionInterface, FieldInterface
 
     /**
      * {@inheritDoc}
-     *
      */
     public function traverse(callable $visitor)
     {

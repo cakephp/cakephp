@@ -28,7 +28,6 @@ use Cake\View\View;
  */
 class FlashHelperTest extends TestCase
 {
-
     /**
      * setUp method
      *
@@ -138,7 +137,6 @@ class FlashHelperTest extends TestCase
 
     /**
      * testFlashThrowsException
-     *
      */
     public function testFlashThrowsException()
     {

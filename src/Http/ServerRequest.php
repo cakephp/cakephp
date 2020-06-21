@@ -22,13 +22,13 @@ use Cake\Http\Exception\MethodNotAllowedException;
 use Cake\Http\Session;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
+use Laminas\Diactoros\PhpInputStream;
+use Laminas\Diactoros\Stream;
+use Laminas\Diactoros\UploadedFile;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
-use Zend\Diactoros\PhpInputStream;
-use Zend\Diactoros\Stream;
-use Zend\Diactoros\UploadedFile;
 
 /**
  * A class that helps wrap Request information and particulars about a single request.
@@ -243,6 +243,13 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     ];
 
     /**
+     * Whether to merge file uploads as objects (`true`) or arrays (`false`).
+     *
+     * @var bool
+     */
+    private $mergeFilesAsObjects = false;
+
+    /**
      * Wrapper method to create a new request from PHP superglobals.
      *
      * Uses the $_GET, $_POST, $_FILES, $_COOKIE, $_SERVER, $_ENV and php://input data to construct
@@ -280,6 +287,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * - `input` The data that would come from php://input this is useful for simulating
      *   requests with put, patch or delete data.
      * - `session` An instance of a Session object
+     * - `mergeFilesAsObjects` Whether to merge file uploads as objects (`true`) or arrays (`false`).
      *
      * @param string|array $config An array of request data to create a request with.
      *   The string version of this argument is *deprecated* and will be removed in 4.0.0
@@ -301,6 +309,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
             'base' => '',
             'webroot' => '',
             'input' => null,
+            'mergeFilesAsObjects' => false,
         ];
 
         $this->_setConfig($config);
@@ -362,6 +371,8 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
             $stream = new PhpInputStream();
         }
         $this->stream = $stream;
+
+        $this->mergeFilesAsObjects = $config['mergeFilesAsObjects'];
 
         $config['post'] = $this->_processPost($config['post']);
         $this->data = $this->_processFiles($config['post'], $config['files']);
@@ -436,7 +447,10 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     protected function _processFiles($post, $files)
     {
-        if (!is_array($files)) {
+        if (
+            empty($files) ||
+            !is_array($files)
+        ) {
             return $post;
         }
         $fileData = [];
@@ -457,6 +471,10 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
             ));
         }
         $this->uploadedFiles = $fileData;
+
+        if ($this->mergeFilesAsObjects) {
+            return Hash::merge($post, $fileData);
+        }
 
         // Make a flat map that can be inserted into $post for BC.
         $fileMap = Hash::flatten($fileData);
@@ -689,7 +707,6 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     /**
      * Magic set method allows backward compatibility for former public properties
      *
-     *
      * @param string $name The property being accessed.
      * @param mixed $value The property value.
      * @return mixed Either the value of the parameter or null.
@@ -782,7 +799,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * defined with Cake\Http\ServerRequest::addDetector(). Any detector can be called
      * as `is($type)` or `is$Type()`.
      *
-     * @param string|array $type The type of request you want to check. If an array
+     * @param string|string[] $type The type of request you want to check. If an array
      *   this method will return true if the request matches any type.
      * @param array ...$args List of arguments
      * @return bool Whether or not the request is the type you are checking.
@@ -790,9 +807,13 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     public function is($type, ...$args)
     {
         if (is_array($type)) {
-            $result = array_map([$this, 'is'], $type);
+            foreach ($type as $_type) {
+                if ($this->is($_type)) {
+                    return true;
+                }
+            }
 
-            return count(array_filter($result)) > 0;
+            return false;
         }
 
         $type = strtolower($type);
@@ -949,9 +970,13 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function isAll(array $types)
     {
-        $result = array_filter(array_map([$this, 'is'], $types));
+        foreach ($types as $type) {
+            if (!$this->is($type)) {
+                return false;
+            }
+        }
 
-        return count($result) === count($types);
+        return true;
     }
 
     /**

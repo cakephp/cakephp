@@ -30,7 +30,6 @@ use Cake\Test\Fixture\FixturizedTestCase;
  */
 class SecondaryPostsTable extends Table
 {
-
     /**
      * @return string
      */
@@ -45,10 +44,8 @@ class SecondaryPostsTable extends Table
  */
 class TestCaseTest extends TestCase
 {
-
     /**
      * tests trying to assertEventFired without configuring an event list
-     *
      */
     public function testEventFiredMisconfiguredEventList()
     {
@@ -59,7 +56,6 @@ class TestCaseTest extends TestCase
 
     /**
      * tests trying to assertEventFired without configuring an event list
-     *
      */
     public function testEventFiredWithMisconfiguredEventList()
     {

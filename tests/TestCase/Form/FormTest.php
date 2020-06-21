@@ -26,7 +26,6 @@ use TestApp\Form\ValidateForm;
  */
 class FormTest extends TestCase
 {
-
     /**
      * Test schema()
      *

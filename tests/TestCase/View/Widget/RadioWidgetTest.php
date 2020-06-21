@@ -25,7 +25,6 @@ use Cake\View\Widget\RadioWidget;
  */
 class RadioWidgetTest extends TestCase
 {
-
     /**
      * setup method.
      *
@@ -38,6 +37,7 @@ class RadioWidgetTest extends TestCase
             'radio' => '<input type="radio" name="{{name}}" value="{{value}}"{{attrs}}>',
             'nestingLabel' => '<label{{attrs}}>{{input}}{{text}}</label>',
             'radioWrapper' => '{{label}}',
+            'selectedClass' => 'selected',
         ];
         $this->templates = new StringTemplate($templates);
         $this->context = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
@@ -876,6 +876,39 @@ class RadioWidgetTest extends TestCase
             'value2',
             '/label',
         ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * testRenderSelectedClass method
+     *
+     * Test that the custom selected class is passed to label
+     * Issue: https://github.com/cakephp/cakephp/issues/11249
+     *
+     * @return void
+     */
+    public function testRenderSelectedClass()
+    {
+        $this->templates->add(['selectedClass' => 'active']);
+
+        $label = new NestingLabelWidget($this->templates);
+        $input = new RadioWidget($this->templates, $label);
+        $data = [
+            'name' => 'field',
+            'options' => ['value1' => 'title1'],
+            'val' => 'value1',
+            'label' => ['title' => 'my label'],
+        ];
+        $result = $input->render($data, $this->context);
+
+        $expected = [
+            ['label' => [
+                'title' => 'my label',
+                'class' => 'active',
+                'for' => 'field-value1',
+            ]],
+        ];
+
         $this->assertHtml($expected, $result);
     }
 }

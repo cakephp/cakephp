@@ -21,7 +21,6 @@ use Cake\TestSuite\Fixture\TestFixture;
  */
 class GroupsMembersFixture extends TestFixture
 {
-
     /**
      * fields property
      *

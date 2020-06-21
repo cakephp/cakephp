@@ -30,7 +30,6 @@ use TestApp\Controller\Component\SomethingWithCookieComponent;
  */
 class ComponentTest extends TestCase
 {
-
     /**
      * setUp method
      *

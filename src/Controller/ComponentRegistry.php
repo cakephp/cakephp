@@ -64,12 +64,14 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      * Set the controller associated with the collection.
      *
      * @param \Cake\Controller\Controller $controller Controller instance.
-     * @return void
+     * @return $this
      */
     public function setController(Controller $controller)
     {
         $this->_Controller = $controller;
         $this->setEventManager($controller->getEventManager());
+
+        return $this;
     }
 
     /**
@@ -92,7 +94,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      * and Cake\Core\ObjectRegistry::unload()
      *
      * @param string $class The classname that is missing.
-     * @param string $plugin The plugin the component is missing in.
+     * @param string|null $plugin The plugin the component is missing in.
      * @return void
      * @throws \Cake\Controller\Exception\MissingComponentException
      */

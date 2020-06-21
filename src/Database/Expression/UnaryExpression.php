@@ -93,7 +93,6 @@ class UnaryExpression implements ExpressionInterface
 
     /**
      * {@inheritDoc}
-     *
      */
     public function traverse(callable $visitor)
     {

@@ -27,7 +27,6 @@ use Cake\TestSuite\TestCase;
  */
 class PostTable extends Table
 {
-
     public function findPublished(Query $query, array $options)
     {
         return $query->where(['published' => true]);
@@ -39,7 +38,6 @@ class PostTable extends Table
  */
 class CounterCacheBehaviorTest extends TestCase
 {
-
     /**
      * Fixture
      *

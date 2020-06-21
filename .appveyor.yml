@@ -10,7 +10,7 @@ branches:
   only:
     - 3.x
     - 3.next
-    
+
 environment:
   matrix:
     - db: '2012'

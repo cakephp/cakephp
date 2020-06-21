@@ -21,7 +21,6 @@ use Cake\TestSuite\TestCase;
  */
 class BindingKeyTest extends TestCase
 {
-
     /**
      * Fixture to be used
      *

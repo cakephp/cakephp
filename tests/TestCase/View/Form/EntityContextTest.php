@@ -30,7 +30,6 @@ use TestApp\Model\Entity\Tag;
  */
 class Article extends Entity
 {
-
     /**
      * Testing stub method.
      *
@@ -47,7 +46,6 @@ class Article extends Entity
  */
 class EntityContextTest extends TestCase
 {
-
     /**
      * Fixtures to use.
      *
@@ -151,10 +149,10 @@ class EntityContextTest extends TestCase
         ]);
         $this->assertTrue($context->isCreate());
 
-        $row->isNew(false);
+        $row->setNew(false);
         $this->assertFalse($context->isCreate());
 
-        $row->isNew(true);
+        $row->setNew(true);
         $this->assertTrue($context->isCreate());
     }
 
@@ -174,7 +172,6 @@ class EntityContextTest extends TestCase
 
     /**
      * Test an invalid table scope throws an error.
-     *
      */
     public function testInvalidTable()
     {
@@ -188,7 +185,6 @@ class EntityContextTest extends TestCase
 
     /**
      * Tests that passing a plain entity will give an error as it cannot be matched
-     *
      */
     public function testDefaultEntityError()
     {

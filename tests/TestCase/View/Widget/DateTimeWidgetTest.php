@@ -24,10 +24,8 @@ use Cake\View\Widget\SelectBoxWidget;
  */
 class DateTimeWidgetTest extends TestCase
 {
-
     /**
      * @setUp
-     *
      * @return void
      */
     public function setUp()

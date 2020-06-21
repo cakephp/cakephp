@@ -31,7 +31,6 @@ use Cake\TestSuite\TestCase;
  */
 class QueryTest extends TestCase
 {
-
     /**
      * Fixture to be used
      *
@@ -856,6 +855,34 @@ class QueryTest extends TestCase
         $results = new ResultSet($query, $stmt);
         $query->setResult($results);
         $this->assertSame($results, $query->all());
+    }
+
+    /**
+     * Test clearResult()
+     *
+     * @return void
+     */
+    public function testClearResult()
+    {
+        $article = $this->getTableLocator()->get('articles');
+        $query = new Query($this->connection, $article);
+
+        $firstCount = $query->count();
+        $firstResults = $query->toList();
+
+        $this->assertEquals(3, $firstCount);
+        $this->assertCount(3, $firstResults);
+
+        $article->delete(reset($firstResults));
+        $return = $query->clearResult();
+
+        $this->assertSame($return, $query);
+
+        $secondCount = $query->count();
+        $secondResults = $query->toList();
+
+        $this->assertEquals(2, $secondCount);
+        $this->assertCount(2, $secondResults);
     }
 
     /**

@@ -63,7 +63,7 @@ class TaskRegistry extends ObjectRegistry
      * and Cake\Core\ObjectRegistry::unload()
      *
      * @param string $class The classname that is missing.
-     * @param string $plugin The plugin the task is missing in.
+     * @param string|null $plugin The plugin the task is missing in.
      * @return void
      * @throws \Cake\Console\Exception\MissingTaskException
      */

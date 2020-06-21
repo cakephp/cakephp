@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
  */
 class PasswordHasherFactoryTest extends TestCase
 {
-
     /**
      * test passwordhasher instance building
      *

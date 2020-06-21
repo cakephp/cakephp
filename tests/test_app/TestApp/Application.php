@@ -31,7 +31,6 @@ class Application extends BaseApplication
 
     /**
      * @param \Cake\Console\CommandCollection $commands
-     *
      * @return \Cake\Console\CommandCollection
      */
     public function console($commands)
@@ -43,7 +42,6 @@ class Application extends BaseApplication
 
     /**
      * @param \Cake\Http\MiddlewareQueue $middleware
-     *
      * @return \Cake\Http\MiddlewareQueue
      */
     public function middleware($middleware)

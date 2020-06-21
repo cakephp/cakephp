@@ -147,7 +147,7 @@ abstract class CacheEngine
      *
      * @param string $key Identifier for the data
      * @param int $offset How much to add
-     * @return bool|int New incremented value, false otherwise
+     * @return int|false New incremented value, false otherwise
      */
     abstract public function increment($key, $offset = 1);
 
@@ -156,7 +156,7 @@ abstract class CacheEngine
      *
      * @param string $key Identifier for the data
      * @param int $offset How much to subtract
-     * @return bool|int New incremented value, false otherwise
+     * @return int|false New incremented value, false otherwise
      */
     abstract public function decrement($key, $offset = 1);
 

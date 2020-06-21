@@ -25,7 +25,6 @@ use Cake\View\View;
  */
 class TextHelperTestObject extends TextHelper
 {
-
     public function attach(StringMock $string)
     {
         $this->_engine = $string;
@@ -49,7 +48,6 @@ class StringMock
  */
 class TextHelperTest extends TestCase
 {
-
     /**
      * @var \Cake\View\Helper\TextHelper
      */
@@ -631,5 +629,37 @@ TEXT;
 TEXT;
         $result = $this->Text->autoParagraph($text);
         $this->assertTextEquals($expected, $result);
+    }
+
+    /**
+     * testSlug method
+     *
+     * @param string $string String
+     * @param array $options Options
+     * @param String $expected Expected string
+     * @return void
+     * @dataProvider slugInputProvider
+     */
+    public function testSlug($string, $options, $expected)
+    {
+        $result = $this->Text->slug($string, $options);
+        $this->assertSame($expected, $result);
+    }
+
+    /**
+     * @return array
+     */
+    public function slugInputProvider()
+    {
+        return [
+            [
+                'Foo Bar: Not just for breakfast any-more', [],
+                'Foo-Bar-Not-just-for-breakfast-any-more',
+            ],
+            [
+                'Foo Bar: Not just for breakfast any-more', ['replacement' => false],
+                'FooBarNotjustforbreakfastanymore',
+            ],
+        ];
     }
 }

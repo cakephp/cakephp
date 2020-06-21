@@ -26,7 +26,6 @@ use RuntimeException;
  */
 class TestCacheSession extends CacheSession
 {
-
     protected function _writeSession()
     {
         return true;
@@ -38,7 +37,6 @@ class TestCacheSession extends CacheSession
  */
 class TestDatabaseSession extends DatabaseSession
 {
-
     protected function _writeSession()
     {
         return true;
@@ -50,7 +48,6 @@ class TestDatabaseSession extends DatabaseSession
  */
 class TestWebSession extends Session
 {
-
     protected function _hasSession()
     {
         $isCLI = $this->_isCLI;
@@ -69,7 +66,6 @@ class TestWebSession extends Session
  */
 class SessionTest extends TestCase
 {
-
     protected static $_gcDivisor;
 
     /**

@@ -207,7 +207,7 @@ trait ValidatorAwareTrait
      */
     public function setValidator($name, Validator $validator)
     {
-        $validator->setProvider(self::VALIDATOR_PROVIDER_NAME, $this);
+        $validator->setProvider(static::VALIDATOR_PROVIDER_NAME, $this);
         $this->_validators[$name] = $validator;
 
         return $this;

@@ -25,7 +25,6 @@ use Cake\View\View;
  */
 class HtmlAliasHelper extends Helper
 {
-
     public function afterRender($viewFile)
     {
     }
@@ -36,7 +35,6 @@ class HtmlAliasHelper extends Helper
  */
 class HelperRegistryTest extends TestCase
 {
-
     /**
      * @var \Cake\View\HelperRegistry
      */

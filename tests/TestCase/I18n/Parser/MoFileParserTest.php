@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
  */
 class MoFileParserTest extends TestCase
 {
-
     /**
      * Tests parsing a file with plurals and message context
      *

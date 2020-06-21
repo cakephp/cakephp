@@ -23,7 +23,6 @@ use Cake\View\Widget\LabelWidget;
  */
 class LabelWidgetTest extends TestCase
 {
-
     /**
      * setup method.
      *

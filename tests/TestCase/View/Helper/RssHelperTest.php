@@ -29,7 +29,6 @@ use Cake\View\View;
  */
 class RssHelperTest extends TestCase
 {
-
     /**
      * @var \Cake\View\Helper\RssHelper
      */

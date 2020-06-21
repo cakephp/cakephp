@@ -26,7 +26,6 @@ use Cake\Error\ExceptionRenderer;
  */
 class TestPluginExceptionRenderer extends ExceptionRenderer
 {
-
     /**
      * Renders the response for the exception.
      *

@@ -25,7 +25,6 @@ class SqliteStatement extends StatementDecorator
 
     /**
      * {@inheritDoc}
-     *
      */
     public function execute($params = null)
     {

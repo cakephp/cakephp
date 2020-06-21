@@ -35,11 +35,11 @@ use Traversable;
  *
  * Automatic generation of HTML FORMs from given data.
  *
- * @method string text($fieldName, array $options = [])
- * @method string number($fieldName, array $options = [])
- * @method string email($fieldName, array $options = [])
- * @method string password($fieldName, array $options = [])
- * @method string search($fieldName, array $options = [])
+ * @method string text(string $fieldName, array $options = [])
+ * @method string number(string $fieldName, array $options = [])
+ * @method string email(string $fieldName, array $options = [])
+ * @method string password(string $fieldName, array $options = [])
+ * @method string search(string $fieldName, array $options = [])
  * @property \Cake\View\Helper\HtmlHelper $Html
  * @property \Cake\View\Helper\UrlHelper $Url
  * @link https://book.cakephp.org/3/en/views/helpers/form.html
@@ -161,8 +161,10 @@ class FormHelper extends Helper
             'textarea' => '<textarea name="{{name}}"{{attrs}}>{{value}}</textarea>',
             // Container for submit buttons.
             'submitContainer' => '<div class="submit">{{content}}</div>',
-            //Confirm javascript template for postLink()
+            // Confirm javascript template for postLink()
             'confirmJs' => '{{confirm}}',
+            // selected class
+            'selectedClass' => 'selected',
         ],
         // set HTML5 validation message to custom required/empty messages
         'autoSetCustomValidity' => false,
@@ -395,7 +397,7 @@ class FormHelper extends Helper
      *
      * @param mixed $context The context for which the form is being defined.
      *   Can be a ContextInterface instance, ORM entity, ORM resultset, or an
-     *   array of meta data. You can use false or null to make a context-less form.
+     *   array of meta data. You can use null to make a context-less form.
      * @param array $options An array of html attributes and options.
      * @return string An formatted opening FORM tag.
      * @link https://book.cakephp.org/3/en/views/helpers/form.html#Cake\View\Helper\FormHelper::create
@@ -403,6 +405,10 @@ class FormHelper extends Helper
     public function create($context = null, array $options = [])
     {
         $append = '';
+
+        if (is_bool($context) || is_string($context)) {
+            deprecationWarning('Using `string` or `bool` for $context is deprecated, use `null` to make a context-less form.');
+        }
 
         if ($context instanceof ContextInterface) {
             $this->context($context);
@@ -566,7 +572,7 @@ class FormHelper extends Helper
     /**
      * Correctly store the last created form action URL.
      *
-     * @param string|array $url The URL of the last form.
+     * @param string|array|null $url The URL of the last form.
      * @return void
      */
     protected function _lastAction($url)
@@ -1881,7 +1887,7 @@ class FormHelper extends Helper
             $formOptions = $options['form'] + $formOptions;
             unset($options['form']);
         }
-        $out = $this->create(false, $formOptions);
+        $out = $this->create(null, $formOptions);
         if (isset($options['data']) && is_array($options['data'])) {
             foreach (Hash::flatten($options['data']) as $key => $value) {
                 $out .= $this->hidden($key, ['value' => $value]);

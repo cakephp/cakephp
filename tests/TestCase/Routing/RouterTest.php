@@ -30,7 +30,6 @@ use RuntimeException;
  */
 class RouterTest extends TestCase
 {
-
     /**
      * setUp method
      *
@@ -1845,7 +1844,6 @@ class RouterTest extends TestCase
 
     /**
      * Test exceptions when parsing fails.
-     *
      */
     public function testParseError()
     {

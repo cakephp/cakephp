@@ -1,6 +1,5 @@
 <?php
 /**
- *
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
@@ -24,7 +23,6 @@ use Cake\TestSuite\TestCase;
  */
 class IdentifierExpressionTest extends TestCase
 {
-
     /**
      * Tests getting and setting the field
      *

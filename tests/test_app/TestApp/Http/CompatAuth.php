@@ -23,7 +23,6 @@ use Cake\Http\Client\Request;
  */
 class CompatAuth
 {
-
     /**
      * Add Authorization header to the request via in-place mutation methods.
      *

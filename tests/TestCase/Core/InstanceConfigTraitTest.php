@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Core;
 use Cake\Core\InstanceConfigTrait;
 use Cake\TestSuite\TestCase;
 use Exception;
+use InvalidArgumentException;
 
 /**
  * TestInstanceConfig
@@ -82,6 +83,10 @@ class ReadOnlyTestInstanceConfig
  */
 class InstanceConfigTraitTest extends TestCase
 {
+    /**
+     * @var TestInstanceConfig
+     */
+    protected $config;
 
     /**
      * setUp method
@@ -292,6 +297,30 @@ class InstanceConfigTraitTest extends TestCase
             $this->object->getConfig(),
             'updates should be merged with existing config'
         );
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetConfigOrFail()
+    {
+        $this->object->setConfig(['foo' => 'bar']);
+        $this->assertSame(
+            'bar',
+            $this->object->getConfigOrFail('foo'),
+            'should return the same value just set'
+        );
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetConfigOrFailException()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Expected configuration `foo` not found.');
+
+        $this->object->getConfigOrFail('foo');
     }
 
     /**

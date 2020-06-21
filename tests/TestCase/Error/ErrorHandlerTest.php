@@ -33,7 +33,6 @@ use ParseError;
  */
 class TestErrorHandler extends ErrorHandler
 {
-
     /**
      * Access the response used.
      *
@@ -67,12 +66,10 @@ class TestErrorHandler extends ErrorHandler
  */
 class ErrorHandlerTest extends TestCase
 {
-
     protected $_restoreError = false;
 
     /**
      * error level property
-     *
      */
     private static $errorLevel;
 
@@ -508,7 +505,7 @@ class ErrorHandlerTest extends TestCase
      */
     public function testHandlePHP7Error()
     {
-        $this->skipIf(!class_exists('Error'), 'Requires PHP7');
+        $this->skipIf(version_compare(PHP_VERSION, '7.0.0', '<'), 'Requires PHP7');
         $error = new PHP7ErrorException(new ParseError('Unexpected variable foo'));
         $errorHandler = new TestErrorHandler();
 

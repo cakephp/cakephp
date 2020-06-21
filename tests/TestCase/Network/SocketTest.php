@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
  */
 class SocketTest extends TestCase
 {
-
     /**
      * setUp method
      *
@@ -485,5 +484,29 @@ class SocketTest extends TestCase
         $this->assertArrayNotHasKey('ssl_allow_self_signed', $socket->getConfig());
         $this->assertArrayNotHasKey('ssl_verify_host', $socket->getConfig());
         $this->assertArrayNotHasKey('ssl_verify_depth', $socket->getConfig());
+    }
+
+    /**
+     * test connect to a unix file socket
+     *
+     * @return void
+     */
+    public function testConnectToUnixFileSocket()
+    {
+        $socketName = 'unix:///tmp/test.socket';
+        $socket = $this->getMockBuilder(Socket::class)
+            ->setMethods(['_getStreamSocketClient'])
+            ->getMock();
+        $socket->expects($this->once())
+            ->method('_getStreamSocketClient')
+            ->with('unix:///tmp/test.socket', null, null, 1)
+            ->willReturn(false);
+        $socket->setConfig([
+            'host' => $socketName,
+            'port' => null,
+            'timeout' => 1,
+            'persistent' => true,
+        ]);
+        $socket->connect();
     }
 }

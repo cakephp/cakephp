@@ -416,7 +416,7 @@ class Inflector
      *
      * @param string $type Inflection type
      * @param string $key Original value
-     * @param string|bool $value Inflected value
+     * @param string|false $value Inflected value
      * @return string|false Inflected value on cache hit or false on cache miss.
      */
     protected static function _cache($type, $key, $value = false)
@@ -507,10 +507,17 @@ class Inflector
         }
 
         if (!isset(static::$_cache['irregular']['pluralize'])) {
-            static::$_cache['irregular']['pluralize'] = '(?:' . implode('|', array_keys(static::$_irregular)) . ')';
+            $words = array_keys(static::$_irregular);
+            static::$_cache['irregular']['pluralize'] = '/(.*?(?:\\b|_))(' . implode('|', $words) . ')$/i';
+
+            $upperWords = array_map('ucfirst', $words);
+            static::$_cache['irregular']['upperPluralize'] = '/(.*?(?:\\b|[a-z]))(' . implode('|', $upperWords) . ')$/';
         }
 
-        if (preg_match('/(.*?(?:\\b|_))(' . static::$_cache['irregular']['pluralize'] . ')$/i', $word, $regs)) {
+        if (
+            preg_match(static::$_cache['irregular']['pluralize'], $word, $regs) ||
+            preg_match(static::$_cache['irregular']['upperPluralize'], $word, $regs)
+        ) {
             static::$_cache['pluralize'][$word] = $regs[1] . substr($regs[2], 0, 1) .
                 substr(static::$_irregular[strtolower($regs[2])], 1);
 
@@ -518,10 +525,10 @@ class Inflector
         }
 
         if (!isset(static::$_cache['uninflected'])) {
-            static::$_cache['uninflected'] = '(?:' . implode('|', static::$_uninflected) . ')';
+            static::$_cache['uninflected'] = '/^(' . implode('|', static::$_uninflected) . ')$/i';
         }
 
-        if (preg_match('/^(' . static::$_cache['uninflected'] . ')$/i', $word, $regs)) {
+        if (preg_match(static::$_cache['uninflected'], $word, $regs)) {
             static::$_cache['pluralize'][$word] = $word;
 
             return $word;
@@ -550,10 +557,19 @@ class Inflector
         }
 
         if (!isset(static::$_cache['irregular']['singular'])) {
-            static::$_cache['irregular']['singular'] = '(?:' . implode('|', static::$_irregular) . ')';
+            $wordList = array_values(static::$_irregular);
+            static::$_cache['irregular']['singular'] = '/(.*?(?:\\b|_))(' . implode('|', $wordList) . ')$/i';
+
+            $upperWordList = array_map('ucfirst', $wordList);
+            static::$_cache['irregular']['singularUpper'] = '/(.*?(?:\\b|[a-z]))(' .
+                implode('|', $upperWordList) .
+                ')$/';
         }
 
-        if (preg_match('/(.*?(?:\\b|_))(' . static::$_cache['irregular']['singular'] . ')$/i', $word, $regs)) {
+        if (
+            preg_match(static::$_cache['irregular']['singular'], $word, $regs) ||
+            preg_match(static::$_cache['irregular']['singularUpper'], $word, $regs)
+        ) {
             static::$_cache['singularize'][$word] = $regs[1] . substr($regs[2], 0, 1) .
                 substr(array_search(strtolower($regs[2]), static::$_irregular, true), 1);
 
@@ -561,10 +577,10 @@ class Inflector
         }
 
         if (!isset(static::$_cache['uninflected'])) {
-            static::$_cache['uninflected'] = '(?:' . implode('|', static::$_uninflected) . ')';
+            static::$_cache['uninflected'] = '/^(' . implode('|', static::$_uninflected) . ')$/i';
         }
 
-        if (preg_match('/^(' . static::$_cache['uninflected'] . ')$/i', $word, $regs)) {
+        if (preg_match(static::$_cache['uninflected'], $word, $regs)) {
             static::$_cache['pluralize'][$word] = $word;
 
             return $word;

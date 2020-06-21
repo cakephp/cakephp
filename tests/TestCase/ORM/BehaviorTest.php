@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
  */
 class TestBehavior extends Behavior
 {
-
     /**
      * Test for event bindings.
      */
@@ -71,7 +70,6 @@ class TestBehavior extends Behavior
  */
 class Test2Behavior extends Behavior
 {
-
     protected $_defaultConfig = [
         'implementedFinders' => [
             'foo' => 'findFoo',
@@ -108,7 +106,6 @@ class Test2Behavior extends Behavior
  */
 class Test3Behavior extends Behavior
 {
-
     /**
      * Test for event bindings.
      */
@@ -182,7 +179,6 @@ class Test3Behavior extends Behavior
  */
 class BehaviorTest extends TestCase
 {
-
     /**
      * Test the side effects of the constructor.
      *
@@ -417,7 +413,6 @@ class BehaviorTest extends TestCase
     /**
      * testVerifyImplementedFindersInvalid
      *
-     *
      * @return void
      */
     public function testVerifyImplementedFindersInvalid()
@@ -455,7 +450,6 @@ class BehaviorTest extends TestCase
 
     /**
      * testVerifyImplementedMethodsInvalid
-     *
      *
      * @return void
      */

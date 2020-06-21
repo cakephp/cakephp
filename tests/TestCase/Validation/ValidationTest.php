@@ -20,9 +20,9 @@ use Cake\Filesystem\File;
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validation;
+use Laminas\Diactoros\UploadedFile;
 use Locale;
 use stdClass;
-use Zend\Diactoros\UploadedFile;
 
 require_once __DIR__ . '/stubs.php';
 
@@ -31,11 +31,10 @@ require_once __DIR__ . '/stubs.php';
  */
 class ValidationTest extends TestCase
 {
-
     /**
      * @var string
      */
-    public $locale;
+    protected $locale;
 
     /**
      * @var string
@@ -145,6 +144,96 @@ class ValidationTest extends TestCase
     }
 
     /**
+     * testNotAlphaNumeric method
+     *
+     * @return void
+     */
+    public function testNotAlphaNumeric()
+    {
+        $this->assertFalse(Validation::notAlphaNumeric('frferrf'));
+        $this->assertFalse(Validation::notAlphaNumeric('12234'));
+        $this->assertFalse(Validation::notAlphaNumeric('1w2e2r3t4y'));
+        $this->assertFalse(Validation::notAlphaNumeric('0'));
+        $this->assertFalse(Validation::notAlphaNumeric('abçďĕʑʘπй'));
+        $this->assertFalse(Validation::notAlphaNumeric('ˇˆๆゞ'));
+        $this->assertFalse(Validation::notAlphaNumeric('אกあアꀀ豈'));
+        $this->assertFalse(Validation::notAlphaNumeric('ǅᾈᾨ'));
+        $this->assertFalse(Validation::notAlphaNumeric('ÆΔΩЖÇ'));
+
+        $this->assertTrue(Validation::notAlphaNumeric('12 234'));
+        $this->assertTrue(Validation::notAlphaNumeric('dfd 234'));
+        $this->assertTrue(Validation::notAlphaNumeric("0\n"));
+        $this->assertTrue(Validation::notAlphaNumeric("\n"));
+        $this->assertTrue(Validation::notAlphaNumeric("\t"));
+        $this->assertTrue(Validation::notAlphaNumeric("\r"));
+        $this->assertTrue(Validation::notAlphaNumeric(' '));
+        $this->assertTrue(Validation::notAlphaNumeric(''));
+    }
+
+    /**
+     * testAsciiAlphaNumeric method
+     *
+     * @return void
+     */
+    public function testAsciiAlphaNumeric()
+    {
+        $this->assertTrue(Validation::asciiAlphaNumeric('frferrf'));
+        $this->assertTrue(Validation::asciiAlphaNumeric('12234'));
+        $this->assertTrue(Validation::asciiAlphaNumeric('1w2e2r3t4y'));
+        $this->assertTrue(Validation::asciiAlphaNumeric('0'));
+
+        $this->assertFalse(Validation::asciiAlphaNumeric('1 two'));
+        $this->assertFalse(Validation::asciiAlphaNumeric('abçďĕʑʘπй'));
+        $this->assertFalse(Validation::asciiAlphaNumeric('ˇˆๆゞ'));
+        $this->assertFalse(Validation::asciiAlphaNumeric('אกあアꀀ豈'));
+        $this->assertFalse(Validation::asciiAlphaNumeric('ǅᾈᾨ'));
+        $this->assertFalse(Validation::asciiAlphaNumeric('ÆΔΩЖÇ'));
+        $this->assertFalse(Validation::asciiAlphaNumeric('12 234'));
+        $this->assertFalse(Validation::asciiAlphaNumeric('dfd 234'));
+        $this->assertFalse(Validation::asciiAlphaNumeric("\n"));
+        $this->assertFalse(Validation::asciiAlphaNumeric("\t"));
+        $this->assertFalse(Validation::asciiAlphaNumeric("\r"));
+        $this->assertFalse(Validation::asciiAlphaNumeric(' '));
+        $this->assertFalse(Validation::asciiAlphaNumeric(''));
+    }
+
+    /**
+     * testAlphaNumericPassedAsArray method
+     *
+     * @return void
+     */
+    public function testAsciiAlphaNumericPassedAsArray()
+    {
+        $this->assertFalse(Validation::asciiAlphaNumeric(['foo']));
+    }
+
+    /**
+     * testNotAlphaNumeric method
+     *
+     * @return void
+     */
+    public function testNotAsciiAlphaNumeric()
+    {
+        $this->assertFalse(Validation::notAsciiAlphaNumeric('frferrf'));
+        $this->assertFalse(Validation::notAsciiAlphaNumeric('12234'));
+        $this->assertFalse(Validation::notAsciiAlphaNumeric('1w2e2r3t4y'));
+        $this->assertFalse(Validation::notAsciiAlphaNumeric('0'));
+
+        $this->assertTrue(Validation::notAsciiAlphaNumeric('abçďĕʑʘπй'));
+        $this->assertTrue(Validation::notAsciiAlphaNumeric('ˇˆๆゞ'));
+        $this->assertTrue(Validation::notAsciiAlphaNumeric('אกあアꀀ豈'));
+        $this->assertTrue(Validation::notAsciiAlphaNumeric('ǅᾈᾨ'));
+        $this->assertTrue(Validation::notAsciiAlphaNumeric('ÆΔΩЖÇ'));
+        $this->assertTrue(Validation::notAsciiAlphaNumeric('12 234'));
+        $this->assertTrue(Validation::notAsciiAlphaNumeric('dfd 234'));
+        $this->assertTrue(Validation::notAsciiAlphaNumeric("\n"));
+        $this->assertTrue(Validation::notAsciiAlphaNumeric("\t"));
+        $this->assertTrue(Validation::notAsciiAlphaNumeric("\r"));
+        $this->assertTrue(Validation::notAsciiAlphaNumeric(' '));
+        $this->assertTrue(Validation::notAsciiAlphaNumeric(''));
+    }
+
+    /**
      * testLengthBetween method
      *
      * @return void
@@ -157,7 +246,7 @@ class ValidationTest extends TestCase
 
         $this->assertFalse(Validation::lengthBetween('abcdefg', 1, 6));
         $this->assertFalse(Validation::lengthBetween('ÆΔΩЖÇ', 1, 3));
-        $this->assertFalse(Validation::lengthBetween(1, 1, 3));
+        $this->assertTrue(Validation::lengthBetween(1, 1, 3));
     }
 
     /**
@@ -587,6 +676,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::creditCard('4916845885268360', ['visa']));
         $this->assertTrue(Validation::creditCard('4394514669078434', ['visa']));
         $this->assertTrue(Validation::creditCard('4485611378115042', ['visa']));
+        $this->assertTrue(Validation::creditCard('4485-6113-7811-5042', ['visa']));
         // Visa Electron
         $this->assertTrue(Validation::creditCard('4175003346287100', ['electron']));
         $this->assertTrue(Validation::creditCard('4913042516577228', ['electron']));
@@ -1626,7 +1716,6 @@ class ValidationTest extends TestCase
      * Tests that it is possible to pass an ISO8601 value
      *
      * @return void
-     *
      * @see Validation tests values credits: https://www.myintervals.com/blog/2009/05/20/iso-8601-date-validation-that-doesnt-suck/
      */
     public function testDateTimeISO8601()
@@ -1664,13 +1753,13 @@ class ValidationTest extends TestCase
      */
     public function testLocalizedTime()
     {
-        $locale = I18N::getLocale();
+        $locale = I18n::getLocale();
 
         $this->assertFalse(Validation::localizedTime('', 'date'));
         $this->assertFalse(Validation::localizedTime('invalid', 'date'));
 
         // English (US)
-        I18N::setLocale('en_US');
+        I18n::setLocale('en_US');
         $this->assertTrue(Validation::localizedTime('12/31/2006', 'date'));
         $this->assertTrue(Validation::localizedTime('6.40pm', 'time'));
         $this->assertTrue(Validation::localizedTime('12/31/2006 6.40pm', 'datetime'));
@@ -1680,7 +1769,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::localizedTime('18:40', 'time')); // non-US format
 
         // German
-        I18N::setLocale('de_DE');
+        I18n::setLocale('de_DE');
         $this->assertTrue(Validation::localizedTime('31.12.2006', 'date'));
         $this->assertTrue(Validation::localizedTime('31. Dezember 2006', 'date'));
         $this->assertTrue(Validation::localizedTime('18:40', 'time'));
@@ -1688,12 +1777,12 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::localizedTime('December 31, 2006', 'date')); // non-German format
 
         // Russian
-        I18N::setLocale('ru_RU');
+        I18n::setLocale('ru_RU');
         $this->assertTrue(Validation::localizedTime('31 декабря 2006', 'date'));
 
         $this->assertFalse(Validation::localizedTime('December 31, 2006', 'date')); // non-Russian format
 
-        I18N::setLocale($locale);
+        I18n::setLocale($locale);
     }
 
     /**
@@ -2313,6 +2402,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::inList('2x', [1, 2, 3]));
         $this->assertFalse(Validation::inList(2, ['1', '2x', '3']));
         $this->assertFalse(Validation::inList('One', ['one', 'two']));
+        $this->assertFalse(Validation::inList(['one'], ['one', 'two']));
 
         // No hexadecimal for numbers.
         $this->assertFalse(Validation::inList('0x7B', ['ABC', '123']));
@@ -2322,6 +2412,8 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::inList('one', ['One', 'Two'], true));
         $this->assertTrue(Validation::inList('Two', ['one', 'two'], true));
         $this->assertFalse(Validation::inList('three', ['one', 'two'], true));
+        $this->assertFalse(Validation::inList(null, ['one', 'two'], true));
+        $this->assertFalse(Validation::inList(false, ['one', 'two'], true));
     }
 
     /**
@@ -2885,6 +2977,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::compareFields(false, 'other', Validation::COMPARE_SAME, $context));
         $this->assertTrue(Validation::compareFields(false, 'other', Validation::COMPARE_EQUAL, $context));
         $this->assertTrue(Validation::compareFields(null, 'other', Validation::COMPARE_SAME, $context));
+        $this->assertFalse(Validation::compareFields(false, 'other', Validation::COMPARE_SAME, $context));
     }
 
     /**
@@ -2919,54 +3012,56 @@ class ValidationTest extends TestCase
      */
     public function testContainNonAlphaNumeric()
     {
-        $this->assertFalse(Validation::containsNonAlphaNumeric('abcdefghijklmnopqrstuvwxyz'));
-        $this->assertFalse(Validation::containsNonAlphaNumeric('ABCDEFGHIJKLMNOPQRSTUVWXYZ'));
-        $this->assertFalse(Validation::containsNonAlphaNumeric('0123456789'));
-        $this->assertFalse(Validation::containsNonAlphaNumeric('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'));
+        $this->deprecated(function () {
+            $this->assertFalse(Validation::containsNonAlphaNumeric('abcdefghijklmnopqrstuvwxyz'));
+            $this->assertFalse(Validation::containsNonAlphaNumeric('ABCDEFGHIJKLMNOPQRSTUVWXYZ'));
+            $this->assertFalse(Validation::containsNonAlphaNumeric('0123456789'));
+            $this->assertFalse(Validation::containsNonAlphaNumeric('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'));
 
-        $this->assertTrue(Validation::containsNonAlphaNumeric('#'));
-        $this->assertTrue(Validation::containsNonAlphaNumeric("0\n"));
-        $this->assertTrue(Validation::containsNonAlphaNumeric("\n"));
-        $this->assertTrue(Validation::containsNonAlphaNumeric("\t"));
-        $this->assertTrue(Validation::containsNonAlphaNumeric("\r"));
-        $this->assertTrue(Validation::containsNonAlphaNumeric(' '));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('#'));
+            $this->assertTrue(Validation::containsNonAlphaNumeric("0\n"));
+            $this->assertTrue(Validation::containsNonAlphaNumeric("\n"));
+            $this->assertTrue(Validation::containsNonAlphaNumeric("\t"));
+            $this->assertTrue(Validation::containsNonAlphaNumeric("\r"));
+            $this->assertTrue(Validation::containsNonAlphaNumeric(' '));
 
-        $this->assertTrue(Validation::containsNonAlphaNumeric('#abcdef'));
-        $this->assertTrue(Validation::containsNonAlphaNumeric('abc#def'));
-        $this->assertTrue(Validation::containsNonAlphaNumeric('abcdef#'));
-        $this->assertTrue(Validation::containsNonAlphaNumeric('abc def'));
-        $this->assertTrue(Validation::containsNonAlphaNumeric("abcdef\n"));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('#abcdef'));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('abc#def'));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('abcdef#'));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('abc def'));
+            $this->assertTrue(Validation::containsNonAlphaNumeric("abcdef\n"));
 
-        $this->assertTrue(Validation::containsNonAlphaNumeric('##abcdef', 2));
-        $this->assertTrue(Validation::containsNonAlphaNumeric('abcdef##', 2));
-        $this->assertTrue(Validation::containsNonAlphaNumeric('#abcdef#', 2));
-        $this->assertTrue(Validation::containsNonAlphaNumeric('#abc#def', 2));
-        $this->assertTrue(Validation::containsNonAlphaNumeric('abc#def#', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('##abcdef', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('abcdef##', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('#abcdef#', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('#abc#def', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('abc#def#', 2));
 
-        $this->assertTrue(Validation::containsNonAlphaNumeric('#♥abcdef', 2));
-        $this->assertTrue(Validation::containsNonAlphaNumeric('abcdef#♥', 2));
-        $this->assertTrue(Validation::containsNonAlphaNumeric('#abcdef♥', 2));
-        $this->assertTrue(Validation::containsNonAlphaNumeric('#abc♥def', 2));
-        $this->assertTrue(Validation::containsNonAlphaNumeric('abc#def♥', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('#♥abcdef', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('abcdef#♥', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('#abcdef♥', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('#abc♥def', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('abc#def♥', 2));
 
-        $this->assertTrue(Validation::containsNonAlphaNumeric('#♥abcdef', 2));
-        $this->assertTrue(Validation::containsNonAlphaNumeric('abcdef#♥', 2));
-        $this->assertTrue(Validation::containsNonAlphaNumeric('#abcdef♥', 2));
-        $this->assertTrue(Validation::containsNonAlphaNumeric('#abc♥def', 2));
-        $this->assertTrue(Validation::containsNonAlphaNumeric('abc#def♥', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('#♥abcdef', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('abcdef#♥', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('#abcdef♥', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('#abc♥def', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('abc#def♥', 2));
 
-        $this->assertTrue(Validation::containsNonAlphaNumeric('###abcdef', 2));
-        $this->assertTrue(Validation::containsNonAlphaNumeric('abc###def', 2));
-        $this->assertTrue(Validation::containsNonAlphaNumeric('abcdef###', 2));
-        $this->assertTrue(Validation::containsNonAlphaNumeric('#abc#def#', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('###abcdef', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('abc###def', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('abcdef###', 2));
+            $this->assertTrue(Validation::containsNonAlphaNumeric('#abc#def#', 2));
 
-        $this->assertFalse(Validation::containsNonAlphaNumeric('##abcdef', 3));
-        $this->assertFalse(Validation::containsNonAlphaNumeric('abcdef##', 3));
-        $this->assertFalse(Validation::containsNonAlphaNumeric('abc##def', 3));
-        $this->assertFalse(Validation::containsNonAlphaNumeric('ab#cd#ef', 3));
+            $this->assertFalse(Validation::containsNonAlphaNumeric('##abcdef', 3));
+            $this->assertFalse(Validation::containsNonAlphaNumeric('abcdef##', 3));
+            $this->assertFalse(Validation::containsNonAlphaNumeric('abc##def', 3));
+            $this->assertFalse(Validation::containsNonAlphaNumeric('ab#cd#ef', 3));
 
-        // Non alpha numeric should not pass as array
-        $this->assertFalse(Validation::containsNonAlphaNumeric(['abc#']));
+            // Non alpha numeric should not pass as array
+            $this->assertFalse(Validation::containsNonAlphaNumeric(['abc#']));
+        });
     }
 
     /**
@@ -2982,6 +3077,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::geoCoordinate('-245.274398, -133.775136'));
         $this->assertTrue(Validation::geoCoordinate('51.165691', ['format' => 'lat']));
         $this->assertTrue(Validation::geoCoordinate('10.451526', ['format' => 'long']));
+        $this->assertFalse(Validation::geoCoordinate([]));
     }
 
     /**
@@ -3064,7 +3160,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::isInteger('2.5'));
         $this->assertFalse(Validation::isInteger(2.5));
         $this->assertFalse(Validation::isInteger([]));
-        $this->assertFalse(Validation::isInteger(new \StdClass()));
+        $this->assertFalse(Validation::isInteger(new \stdClass()));
         $this->assertFalse(Validation::isInteger('2 bears'));
         $this->assertFalse(Validation::isInteger(true));
         $this->assertFalse(Validation::isInteger(false));
@@ -3083,7 +3179,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::ascii([]));
         $this->assertFalse(Validation::ascii(1001));
         $this->assertFalse(Validation::ascii(3.14));
-        $this->assertFalse(Validation::ascii(new \StdClass()));
+        $this->assertFalse(Validation::ascii(new \stdClass()));
 
         // Latin-1 supplement
         $this->assertFalse(Validation::ascii('some' . "\xc2\x82" . 'value'));
@@ -3106,7 +3202,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::utf8([]));
         $this->assertFalse(Validation::utf8(1001));
         $this->assertFalse(Validation::utf8(3.14));
-        $this->assertFalse(Validation::utf8(new \StdClass()));
+        $this->assertFalse(Validation::utf8(new \stdClass()));
         $this->assertTrue(Validation::utf8('1 big blue bus.'));
         $this->assertTrue(Validation::utf8(',.<>[]{;/?\)()'));
 
@@ -3134,7 +3230,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::utf8([], ['extended' => true]));
         $this->assertFalse(Validation::utf8(1001, ['extended' => true]));
         $this->assertFalse(Validation::utf8(3.14, ['extended' => true]));
-        $this->assertFalse(Validation::utf8(new \StdClass(), ['extended' => true]));
+        $this->assertFalse(Validation::utf8(new \stdClass(), ['extended' => true]));
         $this->assertTrue(Validation::utf8('1 big blue bus.', ['extended' => true]));
         $this->assertTrue(Validation::utf8(',.<>[]{;/?\)()', ['extended' => true]));
 

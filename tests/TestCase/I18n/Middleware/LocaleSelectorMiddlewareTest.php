@@ -17,16 +17,15 @@ namespace Cake\Test\TestCase\I18n\Middleware;
 use Cake\I18n\I18n;
 use Cake\I18n\Middleware\LocaleSelectorMiddleware;
 use Cake\TestSuite\TestCase;
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequestFactory;
 use Locale;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequestFactory;
 
 /**
  * Test for LocaleSelectorMiddleware
  */
 class LocaleSelectorMiddlewareTest extends TestCase
 {
-
     /**
      * setup
      *

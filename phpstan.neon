@@ -26,8 +26,8 @@ parameters:
         - '#PHPDoc tag @throws with type PHPUnit\\Exception is not subtype of Throwable#'
         - '#Call to an undefined method DOMNode::setAttribute\(\)#'
         - '#Binary operation "\+" between array|false and array results in an error#'
-        - '#Result of method Cake\\Auth\\BaseAuthenticate::unauthenticated\(\) \(void\) is used#'
         - '#Call to an undefined method DateTimeInterface::setTimezone\(\)#'
+        - '#Access to undefined constant NumberFormatter::CURRENCY_ACCOUNTING#'
         - '#Class APCuIterator referenced with incorrect case: APCUIterator#'
     earlyTerminatingMethodCalls:
         Cake\Console\Shell:

@@ -45,7 +45,6 @@ class ApcuEngineTest extends TestCase
 
     /**
      * Reset apc.user_request_time to original value
-     *
      */
     public static function teardownAfterClass()
     {

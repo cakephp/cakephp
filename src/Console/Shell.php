@@ -826,7 +826,7 @@ class Shell
 
     /**
      * Displays a formatted error message
-     * and exits the application with status code 1
+     * and exits the application with an error code.
      *
      * @param string $message The error message
      * @param int $exitCode The exit code for the shell task.

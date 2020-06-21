@@ -26,7 +26,6 @@ use Cake\TestSuite\TestCase;
  */
 class SchemaCacheTest extends TestCase
 {
-
     /**
      * Fixtures.
      *

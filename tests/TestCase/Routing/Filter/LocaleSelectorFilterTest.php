@@ -26,7 +26,6 @@ use Locale;
  */
 class LocaleSelectorFilterTest extends TestCase
 {
-
     /**
      * setup
      *

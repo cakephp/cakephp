@@ -30,7 +30,6 @@ use TestApp\View\CustomJsonView;
  */
 class CellTest extends TestCase
 {
-
     /**
      * @var \Cake\View\View
      */

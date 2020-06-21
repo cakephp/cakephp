@@ -24,7 +24,6 @@ use Cake\TestSuite\TestCase;
  */
 class RulesCheckerIntegrationTest extends TestCase
 {
-
     /**
      * Fixtures to be loaded
      *

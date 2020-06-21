@@ -23,7 +23,6 @@ use Cake\Mailer\Email;
  * @method void assertSame($expected, $result, $message)
  * @method void assertTextContains($needle, $haystack, $message)
  * @method \PHPUnit_Framework_MockObject_MockBuilder getMockBuilder($className)
- *
  * @deprecated 3.7.0 Use Cake\TestSuite\EmailTrait instead
  */
 trait EmailAssertTrait

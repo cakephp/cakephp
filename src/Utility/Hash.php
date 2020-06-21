@@ -37,7 +37,7 @@ class Hash
      *
      * @param array|\ArrayAccess $data Array of data or object implementing
      *   \ArrayAccess interface to operate on.
-     * @param string|array $path The path being searched for. Either a dot
+     * @param string|int|string[]|null $path The path being searched for. Either a dot
      *   separated string, or an array of path segments.
      * @param mixed $default The return value when the path does not exist
      * @throws \InvalidArgumentException
@@ -57,7 +57,7 @@ class Hash
         }
 
         if (is_string($path) || is_numeric($path)) {
-            $parts = explode('.', $path);
+            $parts = explode('.', (string)$path);
         } else {
             if (!is_array($path)) {
                 throw new InvalidArgumentException(sprintf(
@@ -105,7 +105,7 @@ class Hash
      *  - `>`, `<`, `>=`, `<=` Value comparison.
      *  - `=/.../` Regular expression pattern match.
      *
-     * Given a set of User array data, from a `$User->find('all')` call:
+     * Given a set of User array data, from a `$usersTable->find('all')` call:
      *
      * - `1.User.name` Get the name of the user at index 1.
      * - `{n}.User.name` Get the name of every user in the set of users.
@@ -348,7 +348,7 @@ class Hash
      *
      * @param string $op The operation to do.
      * @param array $data The data to operate on.
-     * @param array $path The path to work on.
+     * @param string[] $path The path to work on.
      * @param mixed $values The values to insert when doing inserts.
      * @return array data.
      */
@@ -386,6 +386,8 @@ class Hash
                 $_list =& $_list[$key];
             }
         }
+
+        return $data;
     }
 
     /**
@@ -452,12 +454,12 @@ class Hash
      * following the path specified in `$groupPath`.
      *
      * @param array $data Array from where to extract keys and values
-     * @param string $keyPath A dot-separated string.
-     * @param string|null $valuePath A dot-separated string.
+     * @param array|string|null $keyPath A dot-separated string. If null it will create a numbered array.
+     * @param array|string|null $valuePath A dot-separated string.
      * @param string|null $groupPath A dot-separated string.
      * @return array Combined array
      * @link https://book.cakephp.org/3/en/core-libraries/hash.html#Cake\Utility\Hash::combine
-     * @throws \RuntimeException When keys and values count is unequal.
+     * @throws \RuntimeException When keys is an array, and keys and values count is unequal.
      */
     public static function combine(array $data, $keyPath, $valuePath = null, $groupPath = null)
     {
@@ -468,10 +470,12 @@ class Hash
         if (is_array($keyPath)) {
             $format = array_shift($keyPath);
             $keys = static::format($data, $keyPath, $format);
+        } elseif ($keyPath === null) {
+            $keys = $keyPath;
         } else {
             $keys = static::extract($data, $keyPath);
         }
-        if (empty($keys)) {
+        if ($keyPath !== null && empty($keys)) {
             return [];
         }
 
@@ -483,10 +487,10 @@ class Hash
             $vals = static::extract($data, $valuePath);
         }
         if (empty($vals)) {
-            $vals = array_fill(0, count($keys), null);
+            $vals = array_fill(0, $keys === null ? count($data) : count($keys), null);
         }
 
-        if (count($keys) !== count($vals)) {
+        if (is_array($keys) && count($keys) !== count($vals)) {
             throw new RuntimeException(
                 'Hash::combine() needs an equal number of keys + values.'
             );
@@ -495,7 +499,7 @@ class Hash
         if ($groupPath !== null) {
             $group = static::extract($data, $groupPath);
             if (!empty($group)) {
-                $c = count($keys);
+                $c = is_array($keys) ? count($keys) : count($vals);
                 $out = [];
                 for ($i = 0; $i < $c; $i++) {
                     if (!isset($group[$i])) {
@@ -504,7 +508,11 @@ class Hash
                     if (!isset($out[$group[$i]])) {
                         $out[$group[$i]] = [];
                     }
-                    $out[$group[$i]][$keys[$i]] = $vals[$i];
+                    if ($keys === null) {
+                        $out[$group[$i]][] = $vals[$i];
+                    } else {
+                        $out[$group[$i]][$keys[$i]] = $vals[$i];
+                    }
                 }
 
                 return $out;
@@ -514,7 +522,7 @@ class Hash
             return [];
         }
 
-        return array_combine($keys, $vals);
+        return array_combine($keys === null ? range(0, count($vals) - 1) : $keys, $vals);
     }
 
     /**
@@ -530,9 +538,9 @@ class Hash
      * The `$format` string can use any format options that `vsprintf()` and `sprintf()` do.
      *
      * @param array $data Source array from which to extract the data
-     * @param array $paths An array containing one or more Hash::extract()-style key paths
+     * @param string[] $paths An array containing one or more Hash::extract()-style key paths
      * @param string $format Format string into which values will be inserted, see sprintf()
-     * @return array|null An array of strings extracted from `$path` and formatted with `$format`
+     * @return string[]|null An array of strings extracted from `$path` and formatted with `$format`
      * @link https://book.cakephp.org/3/en/core-libraries/hash.html#Cake\Utility\Hash::format
      * @see sprintf()
      * @see \Cake\Utility\Hash::extract()
@@ -718,7 +726,7 @@ class Hash
     {
         $result = [];
         foreach ($data as $flat => $value) {
-            $keys = explode($separator, $flat);
+            $keys = explode($separator, (string)$flat);
             $keys = array_reverse($keys);
             $child = [
                 $keys[0] => $value,

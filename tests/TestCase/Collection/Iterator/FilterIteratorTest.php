@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
  */
 class FilterIteratorTest extends TestCase
 {
-
     /**
      * Tests that the iterator works correctly
      *

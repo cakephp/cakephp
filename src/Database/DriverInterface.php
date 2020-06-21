@@ -20,6 +20,7 @@ use Cake\Database\Query;
  * Interface for database driver.
  *
  * @method $this disableAutoQuoting()
+ * @method \Cake\Database\Schema\TableSchemaInterface newTableSchema()
  */
 interface DriverInterface
 {

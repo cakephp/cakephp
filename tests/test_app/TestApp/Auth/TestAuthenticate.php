@@ -23,7 +23,6 @@ use Cake\Http\ServerRequest;
  */
 class TestAuthenticate extends BaseAuthenticate
 {
-
     public $callStack = [];
 
     public $authenticationProvider;

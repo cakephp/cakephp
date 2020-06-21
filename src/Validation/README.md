@@ -26,7 +26,7 @@ $validator
     ->requirePresence('comment')
     ->notEmpty('comment', 'You need to give a comment.');
 
-$errors = $validator->errors($_POST);
+$errors = $validator->validate($_POST);
 if (!empty($errors)) {
     // display errors.
 }

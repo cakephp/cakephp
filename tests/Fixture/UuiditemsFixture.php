@@ -21,7 +21,6 @@ use Cake\TestSuite\Fixture\TestFixture;
  */
 class UuiditemsFixture extends TestFixture
 {
-
     /**
      * fields property
      *

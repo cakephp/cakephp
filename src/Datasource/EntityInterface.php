@@ -42,8 +42,9 @@ use JsonSerializable;
  * @method array extractOriginal(array $properties)
  * @method array extractOriginalChanged(array $properties)
  * @method array getVisible()
- *
+ * @method $this setNew($new)
  * @property mixed $id Alias for commonly used primary key.
+ * @method bool[] getAccessible()
  */
 interface EntityInterface extends ArrayAccess, JsonSerializable
 {

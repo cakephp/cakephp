@@ -220,7 +220,7 @@ class BelongsToMany extends Association
     /**
      * Gets the name of the field representing the foreign key to the source table.
      *
-     * @return string
+     * @return string|string[]
      */
     public function getForeignKey()
     {
@@ -353,10 +353,17 @@ class BelongsToMany extends Association
     {
         $junctionAlias = $junction->getAlias();
         $sAlias = $source->getAlias();
+        $tAlias = $target->getAlias();
+
+        $targetBindingKey = null;
+        if ($junction->hasAssociation($tAlias)) {
+            $targetBindingKey = $junction->getAssociation($tAlias)->getBindingKey();
+        }
 
         if (!$target->hasAssociation($junctionAlias)) {
             $target->hasMany($junctionAlias, [
                 'targetTable' => $junction,
+                'bindingKey' => $targetBindingKey,
                 'foreignKey' => $this->getTargetForeignKey(),
                 'strategy' => $this->_strategy,
             ]);
@@ -391,9 +398,17 @@ class BelongsToMany extends Association
     protected function _generateSourceAssociations($junction, $source)
     {
         $junctionAlias = $junction->getAlias();
+        $sAlias = $source->getAlias();
+
+        $sourceBindingKey = null;
+        if ($junction->hasAssociation($sAlias)) {
+            $sourceBindingKey = $junction->getAssociation($sAlias)->getBindingKey();
+        }
+
         if (!$source->hasAssociation($junctionAlias)) {
             $source->hasMany($junctionAlias, [
                 'targetTable' => $junction,
+                'bindingKey' => $sourceBindingKey,
                 'foreignKey' => $this->getForeignKey(),
                 'strategy' => $this->_strategy,
             ]);
@@ -822,7 +837,7 @@ class BelongsToMany extends Association
         $belongsTo = $junction->getAssociation($target->getAlias());
         $foreignKey = (array)$this->getForeignKey();
         $assocForeignKey = (array)$belongsTo->getForeignKey();
-        $targetPrimaryKey = (array)$target->getPrimaryKey();
+        $targetBindingKey = (array)$belongsTo->getBindingKey();
         $bindingKey = (array)$this->getBindingKey();
         $jointProperty = $this->_junctionProperty;
         $junctionRegistryAlias = $junction->getRegistryAlias();
@@ -833,7 +848,7 @@ class BelongsToMany extends Association
                 $joint = new $entityClass([], ['markNew' => true, 'source' => $junctionRegistryAlias]);
             }
             $sourceKeys = array_combine($foreignKey, $sourceEntity->extract($bindingKey));
-            $targetKeys = array_combine($assocForeignKey, $e->extract($targetPrimaryKey));
+            $targetKeys = array_combine($assocForeignKey, $e->extract($targetBindingKey));
 
             $changedKeys = (
                 $sourceKeys !== $joint->extract($foreignKey) ||
@@ -844,7 +859,7 @@ class BelongsToMany extends Association
             // as new, we let save() sort out whether or not we have a new link
             // or if we are updating an existing link.
             if ($changedKeys) {
-                $joint->isNew(true);
+                $joint->setNew(true);
                 $joint->unsetProperty($junction->getPrimaryKey())
                     ->set(array_merge($sourceKeys, $targetKeys), ['guard' => false]);
             }

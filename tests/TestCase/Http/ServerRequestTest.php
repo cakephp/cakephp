@@ -22,8 +22,8 @@ use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
 use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
-use Zend\Diactoros\UploadedFile;
-use Zend\Diactoros\Uri;
+use Laminas\Diactoros\UploadedFile;
+use Laminas\Diactoros\Uri;
 
 /**
  * ServerRequest Test
@@ -587,6 +587,205 @@ class ServerRequestTest extends TestCase
         );
         $request = new ServerRequest(['files' => ['avatar' => $file]]);
         $this->assertSame(['avatar' => $file], $request->getUploadedFiles());
+    }
+
+    /**
+     * Test passing an invalid data type for the files list.
+     *
+     * @return void
+     */
+    public function testFilesWithInvalidDataType()
+    {
+        $request = new ServerRequest([
+            'files' => 'invalid',
+        ]);
+
+        $this->assertEmpty($request->getData());
+        $this->assertEmpty($request->getUploadedFiles());
+    }
+
+    /**
+     * Test passing an empty files list.
+     *
+     * @return void
+     */
+    public function testFilesWithEmptyList()
+    {
+        $request = new ServerRequest([
+            'files' => [],
+        ]);
+
+        $this->assertEmpty($request->getData());
+        $this->assertEmpty($request->getUploadedFiles());
+    }
+
+    /**
+     * Test passing invalid files list structure.
+     *
+     * @return void
+     */
+    public function testFilesWithInvalidStructure()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid value in FILES "{"invalid":["data"]}"');
+
+        new ServerRequest([
+            'files' => [
+                [
+                    'invalid' => [
+                        'data',
+                    ],
+                ],
+            ],
+        ]);
+    }
+
+    /**
+     * Tests that file uploads are merged into the post data as objects instead of as arrays.
+     *
+     * @return void
+     */
+    public function testFilesAsObjectsInRequestData()
+    {
+        $files = [
+            'flat' => [
+                'name' => 'flat.txt',
+                'type' => 'text/plain',
+                'tmp_name' => __FILE__,
+                'error' => 0,
+                'size' => 1,
+            ],
+            'nested' => [
+                'name' => ['file' => 'nested.txt'],
+                'type' => ['file' => 'text/plain'],
+                'tmp_name' => ['file' => __FILE__],
+                'error' => ['file' => 0],
+                'size' => ['file' => 12],
+            ],
+            0 => [
+                'name' => 'numeric.txt',
+                'type' => 'text/plain',
+                'tmp_name' => __FILE__,
+                'error' => 0,
+                'size' => 123,
+            ],
+            1 => [
+                'name' => ['file' => 'numeric-nested.txt'],
+                'type' => ['file' => 'text/plain'],
+                'tmp_name' => ['file' => __FILE__],
+                'error' => ['file' => 0],
+                'size' => ['file' => 1234],
+            ],
+            'deep' => [
+                'name' => [
+                    0 => ['file' => 'deep-1.txt'],
+                    1 => ['file' => 'deep-2.txt'],
+                ],
+                'type' => [
+                    0 => ['file' => 'text/plain'],
+                    1 => ['file' => 'text/plain'],
+                ],
+                'tmp_name' => [
+                    0 => ['file' => __FILE__],
+                    1 => ['file' => __FILE__],
+                ],
+                'error' => [
+                    0 => ['file' => 0],
+                    1 => ['file' => 0],
+                ],
+                'size' => [
+                    0 => ['file' => 12345],
+                    1 => ['file' => 123456],
+                ],
+            ],
+        ];
+
+        $post = [
+            'flat' => ['existing'],
+            'nested' => [
+                'name' => 'nested',
+                'file' => ['existing'],
+            ],
+            'deep' => [
+                0 => [
+                    'name' => 'deep 1',
+                    'file' => ['existing'],
+                ],
+                1 => [
+                    'name' => 'deep 2',
+                ],
+            ],
+            1 => [
+                'name' => 'numeric nested',
+            ],
+        ];
+
+        $expected = [
+            'flat' => new UploadedFile(
+                __FILE__,
+                1,
+                0,
+                'flat.txt',
+                'text/plain'
+            ),
+            'nested' => [
+                'name' => 'nested',
+                'file' => new UploadedFile(
+                    __FILE__,
+                    12,
+                    0,
+                    'nested.txt',
+                    'text/plain'
+                ),
+            ],
+            'deep' => [
+                0 => [
+                    'name' => 'deep 1',
+                    'file' => new UploadedFile(
+                        __FILE__,
+                        12345,
+                        0,
+                        'deep-1.txt',
+                        'text/plain'
+                    ),
+                ],
+                1 => [
+                    'name' => 'deep 2',
+                    'file' => new UploadedFile(
+                        __FILE__,
+                        123456,
+                        0,
+                        'deep-2.txt',
+                        'text/plain'
+                    ),
+                ],
+            ],
+            0 => new UploadedFile(
+                __FILE__,
+                123,
+                0,
+                'numeric.txt',
+                'text/plain'
+            ),
+            1 => [
+                'name' => 'numeric nested',
+                'file' => new UploadedFile(
+                    __FILE__,
+                    1234,
+                    0,
+                    'numeric-nested.txt',
+                    'text/plain'
+                ),
+            ],
+        ];
+
+        $request = new ServerRequest([
+            'files' => $files,
+            'post' => $post,
+            'mergeFilesAsObjects' => true,
+        ]);
+
+        $this->assertEquals($expected, $request->getData());
     }
 
     /**

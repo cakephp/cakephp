@@ -918,7 +918,7 @@ class View implements EventDispatcherInterface
 
         $title = $this->Blocks->get('title');
         if ($title === '') {
-            $title = Inflector::humanize($this->templatePath);
+            $title = Inflector::humanize(str_replace(DIRECTORY_SEPARATOR, '/', $this->templatePath));
             $this->Blocks->set('title', $title);
         }
 
@@ -1097,7 +1097,6 @@ class View implements EventDispatcherInterface
      * Check if a block exists
      *
      * @param string $name Name of the block
-     *
      * @return bool
      */
     public function exists($name)

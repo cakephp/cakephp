@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
  */
 class FunctionsBuilderTest extends TestCase
 {
-
     /**
      * Setups a mock for FunctionsBuilder
      *
@@ -144,6 +143,22 @@ class FunctionsBuilderTest extends TestCase
         $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
         $this->assertEquals('COALESCE(NULL, :param0, :param1)', $function->sql(new ValueBinder()));
         $this->assertEquals('date', $function->getReturnType());
+    }
+
+    /**
+     * Tests generating a CAST() function
+     *
+     * @return void
+     */
+    public function testCast()
+    {
+        $function = $this->functions->cast('field', 'varchar');
+        $this->assertSame('CAST(field AS varchar)', $function->sql(new ValueBinder()));
+        $this->assertSame('string', $function->getReturnType());
+
+        $function = $this->functions->cast($this->functions->now(), 'varchar');
+        $this->assertSame('CAST(NOW() AS varchar)', $function->sql(new ValueBinder()));
+        $this->assertSame('string', $function->getReturnType());
     }
 
     /**

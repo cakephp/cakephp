@@ -61,7 +61,6 @@ trait EntityTrait
      * Holds the name of the class for the instance object
      *
      * @var string
-     *
      * @deprecated 3.2 This field is no longer being used
      */
     protected $_className;
@@ -70,7 +69,7 @@ trait EntityTrait
      * Holds a list of the properties that were modified or added after this object
      * was originally created.
      *
-     * @var array
+     * @var bool[]
      */
     protected $_dirty = [];
 
@@ -360,7 +359,7 @@ trait EntityTrait
      * When checking multiple properties. All properties must not be null
      * in order for true to be returned.
      *
-     * @param string|array $property The property or properties to check.
+     * @param string|string[] $property The property or properties to check.
      * @return bool
      */
     public function has($property)
@@ -729,7 +728,7 @@ trait EntityTrait
      * Returns an array with the requested properties
      * stored in this entity, indexed by property name
      *
-     * @param array $properties list of properties to be returned
+     * @param string[] $properties list of properties to be returned
      * @param bool $onlyDirty Return the requested property only if it is dirty
      * @return array
      */
@@ -752,7 +751,7 @@ trait EntityTrait
      * Properties that are unchanged from their original value will be included in the
      * return of this method.
      *
-     * @param array $properties List of properties to be returned
+     * @param string[] $properties List of properties to be returned
      * @return array
      */
     public function extractOriginal(array $properties)
@@ -772,7 +771,7 @@ trait EntityTrait
      * This method will only return properties that have been modified since
      * the entity was built. Unchanged properties will be omitted.
      *
-     * @param array $properties List of properties to be returned
+     * @param string[] $properties List of properties to be returned
      * @return array
      */
     public function extractOriginalChanged(array $properties)
@@ -885,32 +884,41 @@ trait EntityTrait
     }
 
     /**
-     * Returns whether or not this entity has already been persisted.
-     * This method can return null in the case there is no prior information on
-     * the status of this entity.
+     * Set the status of this entity.
      *
-     * If called with a boolean it will set the known status of this instance,
-     * true means that the instance is not yet persisted in the database, false
-     * that it already is.
+     * Using `true` means that the entity has not been persisted in the database,
+     * `false` that it already is.
      *
-     * @param bool|null $new true if it is known this instance was not yet persisted
-     * @return bool Whether or not the entity has been persisted.
+     * @param bool $new Indicate whether or not this entity has been persisted.
+     * @return $this
      */
-    public function isNew($new = null)
+    public function setNew($new)
     {
-        if ($new === null) {
-            return $this->_new;
-        }
-
-        $new = (bool)$new;
-
         if ($new) {
             foreach ($this->_properties as $k => $p) {
                 $this->_dirty[$k] = true;
             }
         }
 
-        return $this->_new = $new;
+        $this->_new = $new;
+
+        return $this;
+    }
+
+    /**
+     * Returns whether or not this entity has already been persisted.
+     *
+     * @param bool|null $new true if it is known this instance was not yet persisted.
+     * This will be deprecated in 4.0, use `setNew()` instead.
+     * @return bool Whether or not the entity has been persisted.
+     */
+    public function isNew($new = null)
+    {
+        if ($new !== null) {
+            $this->setNew($new);
+        }
+
+        return $this->_new;
     }
 
     /**
@@ -1366,7 +1374,7 @@ trait EntityTrait
      * $entity->setAccess('*', false); // Mark all properties as protected
      * ```
      *
-     * @param string|array $property single or list of properties to change its accessibility
+     * @param string|string[] $property single or list of properties to change its accessibility
      * @param bool $set true marks the property as accessible, false will
      * mark it as protected.
      * @return $this
@@ -1387,6 +1395,17 @@ trait EntityTrait
         }
 
         return $this;
+    }
+
+    /**
+     * Returns the raw accessible configuration for this entity.
+     * The `*` wildcard refers to all fields.
+     *
+     * @return bool[]
+     */
+    public function getAccessible()
+    {
+        return $this->_accessible;
     }
 
     /**

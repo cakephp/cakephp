@@ -26,7 +26,6 @@ use DateTime;
  */
 class CookieCollectionTest extends TestCase
 {
-
     /**
      * Test constructor
      *

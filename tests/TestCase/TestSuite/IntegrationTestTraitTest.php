@@ -28,15 +28,14 @@ use Cake\Routing\Route\InflectedRoute;
 use Cake\TestSuite\IntegrationTestCase;
 use Cake\Test\Fixture\AssertIntegrationTestCase;
 use Cake\Utility\Security;
+use Laminas\Diactoros\UploadedFile;
 use PHPUnit\Framework\AssertionFailedError;
-use Zend\Diactoros\UploadedFile;
 
 /**
  * Self test of the IntegrationTestCase
  */
 class IntegrationTestTraitTest extends IntegrationTestCase
 {
-
     /**
      * Setup method
      *

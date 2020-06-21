@@ -24,7 +24,6 @@ use Cake\TestSuite\TestCase;
  */
 class ShellDispatcherTest extends TestCase
 {
-
     /**
      * setUp method
      *

@@ -14,9 +14,9 @@
 namespace Cake\Http\Client;
 
 use Cake\Core\Exception\Exception;
+use Laminas\Diactoros\RequestTrait;
+use Laminas\Diactoros\Stream;
 use Psr\Http\Message\RequestInterface;
-use Zend\Diactoros\RequestTrait;
-use Zend\Diactoros\Stream;
 
 /**
  * Implements methods for HTTP requests.

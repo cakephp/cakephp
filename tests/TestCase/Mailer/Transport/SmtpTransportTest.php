@@ -25,7 +25,6 @@ use Cake\TestSuite\TestCase;
  */
 class SmtpTestTransport extends SmtpTransport
 {
-
     /**
      * Helper to change the socket
      *
@@ -66,7 +65,6 @@ class SmtpTestTransport extends SmtpTransport
  */
 class SmtpTransportTest extends TestCase
 {
-
     /**
      * @var array
      */

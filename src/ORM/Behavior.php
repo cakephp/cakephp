@@ -260,6 +260,7 @@ class Behavior implements EventListenerInterface
     {
         $eventMap = [
             'Model.beforeMarshal' => 'beforeMarshal',
+            'Model.afterMarshal' => 'afterMarshal',
             'Model.beforeFind' => 'beforeFind',
             'Model.beforeSave' => 'beforeSave',
             'Model.afterSave' => 'afterSave',
@@ -305,8 +306,8 @@ class Behavior implements EventListenerInterface
      *  ]
      * ```
      *
-     * With the above example, a call to `$Table->find('this')` will call `$Behavior->findThis()`
-     * and a call to `$Table->find('alias')` will call `$Behavior->findMethodName()`
+     * With the above example, a call to `$table->find('this')` will call `$behavior->findThis()`
+     * and a call to `$table->find('alias')` will call `$behavior->findMethodName()`
      *
      * It is recommended, though not required, to define implementedFinders in the config property
      * of child classes such that it is not necessary to use reflections to derive the available

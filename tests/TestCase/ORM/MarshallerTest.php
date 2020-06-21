@@ -28,7 +28,6 @@ use Cake\Validation\Validator;
  */
 class OpenEntity extends Entity
 {
-
     protected $_accessible = [
         '*' => true,
     ];
@@ -39,7 +38,6 @@ class OpenEntity extends Entity
  */
 class Tag extends Entity
 {
-
     protected $_accessible = [
         'tag' => true,
     ];
@@ -50,7 +48,6 @@ class Tag extends Entity
  */
 class ProtectedArticle extends Entity
 {
-
     protected $_accessible = [
         'title' => true,
         'body' => true,
@@ -97,7 +94,6 @@ class GreedyCommentsTable extends Table
  */
 class MarshallerTest extends TestCase
 {
-
     public $fixtures = [
         'core.Articles',
         'core.ArticlesTags',
@@ -1325,7 +1321,7 @@ class MarshallerTest extends TestCase
             'body' => 'My Content',
         ]);
         $entity->setAccess('*', true);
-        $entity->isNew(false);
+        $entity->setNew(false);
         $entity->clean();
         $result = $marshall->merge($entity, $data, []);
 
@@ -1354,7 +1350,7 @@ class MarshallerTest extends TestCase
             'body' => 'My Content',
         ]);
         $entity->setAccess('*', false);
-        $entity->isNew(false);
+        $entity->setNew(false);
         $entity->clean();
         $result = $marshall->merge($entity, $data, ['accessibleFields' => ['body' => true]]);
 
@@ -1412,7 +1408,7 @@ class MarshallerTest extends TestCase
             'body' => null,
         ]);
         $entity->setAccess('*', true);
-        $entity->isNew(false);
+        $entity->setNew(false);
         $entity->clean();
         $result = $marshall->merge($entity, $data, []);
 
@@ -1438,7 +1434,7 @@ class MarshallerTest extends TestCase
         ]);
         $entity->setAccess('*', false);
         $entity->setAccess('author_id', true);
-        $entity->isNew(false);
+        $entity->setNew(false);
         $entity->clean();
 
         $result = $marshall->merge($entity, $data, []);
@@ -2707,7 +2703,7 @@ class MarshallerTest extends TestCase
             'author_id' => 2,
         ]);
         $entity->setAccess('*', false);
-        $entity->isNew(false);
+        $entity->setNew(false);
         $entity->clean();
         $result = $marshall->merge($entity, $data, ['fields' => ['title', 'body']]);
 
@@ -3140,7 +3136,7 @@ class MarshallerTest extends TestCase
         $this->assertEmpty($entity->getInvalid());
 
         $entity->setAccess('*', true);
-        $entity->isNew(false);
+        $entity->setNew(false);
         $entity->clean();
 
         $this->articles->getValidator()
@@ -3182,7 +3178,7 @@ class MarshallerTest extends TestCase
             'author_id' => 1,
         ]);
         $entity->setAccess('*', true);
-        $entity->isNew(true);
+        $entity->setNew(true);
         $entity->clean();
 
         $this->articles->getValidator()
@@ -3196,7 +3192,7 @@ class MarshallerTest extends TestCase
         $this->assertEmpty($result->getError('thing'));
 
         $entity->clean();
-        $entity->isNew(false);
+        $entity->setNew(false);
         $result = $marshall->merge($entity, $data, []);
         $this->assertNotEmpty($result->getError('author_id'));
         $this->assertNotEmpty($result->getError('thing'));
@@ -3360,6 +3356,105 @@ class MarshallerTest extends TestCase
         $this->assertEquals('cakephp (modified)', $entity->tags[1]->tag);
         $this->assertEquals(1, $entity->tags[0]->_joinData->modified_by);
         $this->assertEquals(1, $entity->tags[1]->_joinData->modified_by);
+    }
+
+    /**
+     * Test Model.afterMarshal event.
+     *
+     * @return void
+     */
+    public function testAfterMarshalEvent()
+    {
+        $data = [
+            'title' => 'original title',
+            'body' => 'original content',
+            'user' => [
+                'name' => 'Robert',
+                'username' => 'rob',
+            ],
+        ];
+
+        $marshall = new Marshaller($this->articles);
+
+        $this->articles->getEventManager()->on(
+            'Model.afterMarshal',
+            function ($e, $entity, $data, $options) {
+                $this->assertInstanceOf('Cake\ORM\Entity', $entity);
+                $this->assertArrayHasKey('validate', $options);
+                $this->assertFalse($options['isMerge']);
+
+                $data['title'] = 'Modified title';
+                $data['user']['username'] = 'robert';
+                $options['associated'] = ['Users'];
+
+                $entity->body = 'Modified body';
+            }
+        );
+
+        $entity = $marshall->one($data);
+
+        $this->assertSame('original title', $entity->title, '$data is immutable');
+        $this->assertSame('Modified body', $entity->body);
+        // both $options and $data are unchangeable
+        $this->assertTrue(is_array($entity->user), '$options[\'associated\'] is ignored');
+        $this->assertSame('Robert', $entity->user['name']);
+        $this->assertSame('rob', $entity->user['username']);
+    }
+
+    /**
+     * Test Model.afterMarshal event on patchEntity.
+     * when $options['fields'] is set and is empty
+     *
+     * @return void
+     */
+    public function testAfterMarshalEventOnPatchEntity()
+    {
+        $data = [
+            'title' => 'original title',
+            'body' => 'original content',
+            'user' => [
+                'name' => 'Robert',
+                'username' => 'rob',
+            ],
+        ];
+
+        $marshall = new Marshaller($this->articles);
+
+        $this->articles->getEventManager()->on(
+            'Model.afterMarshal',
+            function ($e, $entity, $data, $options) {
+                $this->assertInstanceOf('Cake\ORM\Entity', $entity);
+                $this->assertArrayHasKey('validate', $options);
+                $this->assertTrue($options['isMerge']);
+
+                $data['title'] = 'Modified title';
+                $data['user']['username'] = 'robert';
+                $options['associated'] = ['Users'];
+
+                $entity->body = 'options[fields] is empty';
+                if (isset($options['fields'])) {
+                    $entity->body = 'options[fields] is set';
+                }
+            }
+        );
+
+        //test when $options['fields'] is empty
+        $entity = $this->articles->newEntity();
+        $result = $marshall->merge($entity, $data, []);
+
+        $this->assertSame('original title', $entity->title, '$data is immutable');
+        $this->assertSame('options[fields] is empty', $entity->body);
+        // both $options and $data are unchangeable
+        $this->assertTrue(is_array($entity->user), '$options[\'associated\'] is ignored');
+        $this->assertSame('Robert', $entity->user['name']);
+        $this->assertSame('rob', $entity->user['username']);
+
+        //test when $options['fields'] is set
+        $entity = $this->articles->newEntity();
+        $result = $marshall->merge($entity, $data, ['fields' => ['title', 'body']]);
+
+        $this->assertSame('original title', $entity->title, '$data is immutable');
+        $this->assertSame('options[fields] is set', $entity->body);
     }
 
     /**

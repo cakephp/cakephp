@@ -37,6 +37,7 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\SaveOptionsBuilder;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Hash;
 use Cake\Validation\Validator;
 use InvalidArgumentException;
 
@@ -45,7 +46,6 @@ use InvalidArgumentException;
  */
 class UsersTable extends Table
 {
-
 }
 
 class ProtectedEntity extends Entity
@@ -62,7 +62,6 @@ class ProtectedEntity extends Entity
  */
 class TableTest extends TestCase
 {
-
     public $fixtures = [
         'core.Articles',
         'core.Tags',
@@ -246,7 +245,6 @@ class TableTest extends TestCase
     {
         $this->deprecated(function () {
             $table = new Table(['table' => 'users']);
-            $this->assertNull($table->connection());
             $table->connection($this->connection);
             $this->assertSame($this->connection, $table->connection());
         });
@@ -260,7 +258,6 @@ class TableTest extends TestCase
     public function testSetConnection()
     {
         $table = new Table(['table' => 'users']);
-        $this->assertNull($table->getConnection());
         $this->assertSame($table, $table->setConnection($this->connection));
         $this->assertSame($this->connection, $table->getConnection());
     }
@@ -1029,7 +1026,6 @@ class TableTest extends TestCase
 
     /**
      * Test that exceptions from the Query bubble up.
-     *
      */
     public function testUpdateAllFailure()
     {
@@ -1094,7 +1090,6 @@ class TableTest extends TestCase
 
     /**
      * Test that exceptions from the Query bubble up.
-     *
      */
     public function testDeleteAllFailure()
     {
@@ -1862,7 +1857,6 @@ class TableTest extends TestCase
 
     /**
      * Ensure exceptions are raised on missing behaviors.
-     *
      */
     public function testAddBehaviorMissing()
     {
@@ -2814,6 +2808,7 @@ class TableTest extends TestCase
     public function testSaveManyFailed()
     {
         $table = $this->getTableLocator()->get('authors');
+        $expectedCount = $table->find()->count();
         $entities = [
             new Entity(['name' => 'mark']),
             new Entity(['name' => 'jose']),
@@ -2822,6 +2817,7 @@ class TableTest extends TestCase
         $result = $table->saveMany($entities);
 
         $this->assertFalse($result);
+        $this->assertSame($expectedCount, $table->find()->count());
         foreach ($entities as $entity) {
             $this->assertTrue($entity->isNew());
         }
@@ -2856,6 +2852,70 @@ class TableTest extends TestCase
                 $this->assertTrue($entity->isNew());
             }
         }
+    }
+
+    /**
+     * Test saveManyOrFail() with entities array
+     *
+     * @return void
+     */
+    public function testSaveManyOrFailArray()
+    {
+        $entities = [
+            new Entity(['name' => 'admad']),
+            new Entity(['name' => 'dakota']),
+        ];
+
+        $table = $this->getTableLocator()->get('authors');
+        $result = $table->saveManyOrFail($entities);
+
+        $this->assertSame($entities, $result);
+        $this->assertTrue(isset($result[0]->id));
+        foreach ($entities as $entity) {
+            $this->assertFalse($entity->isNew());
+        }
+    }
+
+    /**
+     * Test saveManyOrFail() with ResultSet instance
+     *
+     * @return void
+     */
+    public function testSaveManyOrFailResultSet()
+    {
+        $table = $this->getTableLocator()->get('authors');
+
+        $entities = $table->find()
+            ->order(['id' => 'ASC'])
+            ->all();
+        $entities->first()->name = 'admad';
+
+        $result = $table->saveManyOrFail($entities);
+        $this->assertSame($entities, $result);
+
+        $first = $table->find()
+            ->order(['id' => 'ASC'])
+            ->first();
+        $this->assertSame('admad', $first->name);
+    }
+
+    /**
+     * Test saveManyOrFail() with failed save
+     *
+     * @return void
+     */
+    public function testSaveManyOrFailFailed()
+    {
+        $table = $this->getTableLocator()->get('authors');
+        $entities = [
+            new Entity(['name' => 'mark']),
+            new Entity(['name' => 'jose']),
+        ];
+        $entities[1]->setErrors(['name' => ['message']]);
+
+        $this->expectException(PersistenceFailedException::class);
+
+        $table->saveManyOrFail($entities);
     }
 
     /**
@@ -3075,7 +3135,7 @@ class TableTest extends TestCase
             ));
 
         $table = $this->getTableLocator()->get('users', ['eventManager' => $mock]);
-        $entity->isNew(false);
+        $entity->setNew(false);
         $table->delete($entity, ['checkRules' => false]);
     }
 
@@ -3159,7 +3219,7 @@ class TableTest extends TestCase
             }));
 
         $table = $this->getTableLocator()->get('users', ['eventManager' => $mock]);
-        $entity->isNew(false);
+        $entity->setNew(false);
         $result = $table->delete($entity, ['checkRules' => false]);
         $this->assertNull($result);
     }
@@ -3183,7 +3243,7 @@ class TableTest extends TestCase
             }));
 
         $table = $this->getTableLocator()->get('users', ['eventManager' => $mock]);
-        $entity->isNew(false);
+        $entity->setNew(false);
         $result = $table->delete($entity, ['checkRules' => false]);
         $this->assertEquals('got stopped', $result);
     }
@@ -3204,7 +3264,7 @@ class TableTest extends TestCase
         $table->expects($this->never())
             ->method('query');
 
-        $entity->isNew(true);
+        $entity->setNew(true);
         $result = $table->delete($entity);
         $this->assertFalse($result);
     }
@@ -4040,10 +4100,10 @@ class TableTest extends TestCase
                 ],
             ]),
         ]);
-        $entity->isNew(true);
-        $entity->author->isNew(true);
-        $entity->author->supervisor->isNew(true);
-        $entity->author->tags[0]->isNew(true);
+        $entity->setNew(true);
+        $entity->author->setNew(true);
+        $entity->author->supervisor->setNew(true);
+        $entity->author->tags[0]->setNew(true);
 
         $articles->expects($this->once())
             ->method('_insert')
@@ -5976,28 +6036,28 @@ class TableTest extends TestCase
         $validator->setProvider('table', $table);
 
         $data = ['username' => ['larry', 'notthere']];
-        $this->assertNotEmpty($validator->errors($data));
+        $this->assertNotEmpty($validator->validate($data));
 
         $data = ['username' => 'larry'];
-        $this->assertNotEmpty($validator->errors($data));
+        $this->assertNotEmpty($validator->validate($data));
 
         $data = ['username' => 'jose'];
-        $this->assertEmpty($validator->errors($data));
+        $this->assertEmpty($validator->validate($data));
 
         $data = ['username' => 'larry', 'id' => 3];
-        $this->assertEmpty($validator->errors($data, false));
+        $this->assertEmpty($validator->validate($data, false));
 
         $data = ['username' => 'larry', 'id' => 3];
-        $this->assertNotEmpty($validator->errors($data));
+        $this->assertNotEmpty($validator->validate($data));
 
         $data = ['username' => 'larry'];
-        $this->assertNotEmpty($validator->errors($data, false));
+        $this->assertNotEmpty($validator->validate($data, false));
 
         $validator->add('username', 'unique', [
             'rule' => 'validateUnique', 'provider' => 'table',
         ]);
         $data = ['username' => 'larry'];
-        $this->assertNotEmpty($validator->errors($data, false));
+        $this->assertNotEmpty($validator->validate($data, false));
     }
 
     /**
@@ -6015,13 +6075,13 @@ class TableTest extends TestCase
         ]);
         $validator->setProvider('table', $table);
         $data = ['username' => 'larry', 'id' => 3];
-        $this->assertNotEmpty($validator->errors($data));
+        $this->assertNotEmpty($validator->validate($data));
 
         $data = ['username' => 'larry', 'id' => 1];
-        $this->assertEmpty($validator->errors($data));
+        $this->assertEmpty($validator->validate($data));
 
         $data = ['username' => 'jose'];
-        $this->assertEmpty($validator->errors($data));
+        $this->assertEmpty($validator->validate($data));
     }
 
     /**
@@ -6057,7 +6117,7 @@ class TableTest extends TestCase
 
         $data = ['site_id' => 1, 'author_id' => null, 'title' => 'Null dupe'];
         $expected = ['site_id' => ['unique' => 'Must be unique.']];
-        $this->assertEquals($expected, $validator->errors($data));
+        $this->assertEquals($expected, $validator->validate($data));
     }
 
     /**
@@ -6216,7 +6276,7 @@ class TableTest extends TestCase
 
         $cloned = clone $article;
         $cloned->unsetProperty('id');
-        $cloned->isNew(true);
+        $cloned->setNew(true);
         $this->assertSame($cloned, $table->save($cloned));
         $this->assertEquals(
             $article->extract(['title', 'author_id']),
@@ -6574,6 +6634,42 @@ class TableTest extends TestCase
         } catch (\Cake\ORM\Exception\PersistenceFailedException $e) {
             $this->assertSame($entity, $e->getEntity());
         }
+    }
+
+    /**
+     * Test simple delete.
+     *
+     * @return void
+     */
+    public function testDeleteMany()
+    {
+        $table = $this->getTableLocator()->get('users');
+        $entities = $table->find()->limit(2)->all()->toArray();
+        $this->assertCount(2, $entities);
+
+        $result = $table->deleteMany($entities);
+        $this->assertSame($entities, $result);
+
+        $count = $table->find()->where(['id IN' => Hash::extract($entities, '{n}.id')])->count();
+        $this->assertSame(0, $count, 'Find should not return > 0.');
+    }
+
+    /**
+     * Test simple delete.
+     *
+     * @return void
+     */
+    public function testDeleteManyOrFail()
+    {
+        $table = $this->getTableLocator()->get('users');
+        $entities = $table->find()->limit(2)->all()->toArray();
+        $this->assertCount(2, $entities);
+
+        $result = $table->deleteManyOrFail($entities);
+        $this->assertSame($entities, $result);
+
+        $count = $table->find()->where(['id IN' => Hash::extract($entities, '{n}.id')])->count();
+        $this->assertSame(0, $count, 'Find should not return > 0.');
     }
 
     /**

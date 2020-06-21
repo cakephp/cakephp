@@ -21,7 +21,6 @@ use Cake\TestSuite\Fixture\TestFixture;
  */
 class ProfilesFixture extends TestFixture
 {
-
     /**
      * fields property
      *

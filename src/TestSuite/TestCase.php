@@ -44,6 +44,13 @@ abstract class TestCase extends BaseTestCase
     public $fixtureManager;
 
     /**
+     * Fixtures used by this test case.
+     *
+     * @var string[]|string|null
+     */
+    public $fixtures;
+
+    /**
      * By default, all fixtures attached to this class will be truncated and reloaded after each test.
      * Set this to false to handle manually
      *
@@ -67,13 +74,6 @@ abstract class TestCase extends BaseTestCase
      * @var array
      */
     protected $_configure = [];
-
-    /**
-     * Path settings to restore at the end of the test.
-     *
-     * @var array
-     */
-    protected $_pathRestore = [];
 
     /**
      * Overrides SimpleTestCase::skipIf to provide a boolean return value
@@ -160,6 +160,9 @@ abstract class TestCase extends BaseTestCase
             Configure::write($this->_configure);
         }
         $this->getTableLocator()->clear();
+        $this->_configure = [];
+        $this->_tableLocator = null;
+        $this->fixtureManager = null;
     }
 
     /**
@@ -908,5 +911,58 @@ abstract class TestCase extends BaseTestCase
     public static function setAppNamespace($appNamespace = 'TestApp')
     {
         Configure::write('App.namespace', $appNamespace);
+    }
+
+    /**
+     * Adds a fixture to this test case.
+     *
+     * Examples:
+     * - core.Tags
+     * - app.MyRecords
+     * - plugin.MyPluginName.MyModelName
+     *
+     * Use this method inside your test cases' {@link getFixtures()} method
+     * to build up the fixture list.
+     *
+     * @param string $fixture Fixture
+     * @return $this
+     */
+    protected function addFixture($fixture)
+    {
+        if (!isset($this->fixtures)) {
+            $this->fixtures = [];
+        } elseif (is_string($this->fixtures)) {
+            deprecationWarning(
+                'Setting fixtures as string is deprecated and will be removed in 4.0.' .
+                ' Set TestCase::$fixtures as array instead.'
+            );
+            $this->fixtures = array_map('trim', explode(',', $this->fixtures));
+        }
+
+        $this->fixtures[] = $fixture;
+
+        return $this;
+    }
+
+    /**
+     * Gets fixtures.
+     *
+     * @return array
+     */
+    public function getFixtures()
+    {
+        if (!isset($this->fixtures)) {
+            return [];
+        }
+        if (is_string($this->fixtures)) {
+            deprecationWarning(
+                'Setting fixtures as string is deprecated and will be removed in 4.0.' .
+                ' Set TestCase::$fixtures as array instead.'
+            );
+
+            return array_map('trim', explode(',', $this->fixtures));
+        }
+
+        return $this->fixtures;
     }
 }

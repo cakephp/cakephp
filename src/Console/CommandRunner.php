@@ -123,7 +123,7 @@ class CommandRunner implements EventDispatcherInterface
      * - Run the requested command.
      *
      * @param array $argv The arguments from the CLI environment.
-     * @param \Cake\Console\ConsoleIo $io The ConsoleIo instance. Used primarily for testing.
+     * @param \Cake\Console\ConsoleIo|null $io The ConsoleIo instance. Used primarily for testing.
      * @return int The exit code of the command.
      * @throws \RuntimeException
      */
@@ -327,9 +327,8 @@ class CommandRunner implements EventDispatcherInterface
      *
      * @param \Cake\Console\CommandCollection $commands The command collection to check.
      * @param \Cake\Console\ConsoleIo $io ConsoleIo object for errors.
-     * @param string $name The name
-     * @return string The resolved class name
-     * @throws \RuntimeException
+     * @param string|null $name The name from the CLI args.
+     * @return string The resolved name.
      */
     protected function resolveName($commands, $io, $name)
     {
@@ -359,7 +358,7 @@ class CommandRunner implements EventDispatcherInterface
      * @param \Cake\Console\Command $command The command to run.
      * @param array $argv The CLI arguments to invoke.
      * @param \Cake\Console\ConsoleIo $io The console io
-     * @return int Exit code
+     * @return int|null Exit code
      */
     protected function runCommand(Command $command, array $argv, ConsoleIo $io)
     {
@@ -375,7 +374,7 @@ class CommandRunner implements EventDispatcherInterface
      *
      * @param \Cake\Console\Shell $shell The shell to run.
      * @param array $argv The CLI arguments to invoke.
-     * @return int Exit code
+     * @return int|bool|null Exit code
      */
     protected function runShell(Shell $shell, array $argv)
     {
@@ -384,7 +383,9 @@ class CommandRunner implements EventDispatcherInterface
 
             return $shell->runCommand($argv, true);
         } catch (StopException $e) {
-            return $e->getCode();
+            $code = $e->getCode();
+
+            return $code === null ? $code : (int)$code;
         }
     }
 

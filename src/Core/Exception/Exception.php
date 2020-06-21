@@ -16,6 +16,8 @@ use RuntimeException;
 
 /**
  * Base class that all CakePHP Exceptions extend.
+ *
+ * @method int getCode()
  */
 class Exception extends RuntimeException
 {
@@ -91,7 +93,7 @@ class Exception extends RuntimeException
      *  - an associative array of "header name" => "header value"
      *  - an array of string headers is also accepted (deprecated)
      * @param string|null $value The header value.
-     * @return array
+     * @return array|null
      */
     public function responseHeader($header = null, $value = null)
     {

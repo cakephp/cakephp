@@ -31,7 +31,6 @@ use Cake\Utility\Security;
  */
 class TestSecurityComponent extends SecurityComponent
 {
-
     /**
      * validatePost method
      *
@@ -60,7 +59,6 @@ class TestSecurityComponent extends SecurityComponent
  */
 class SecurityTestController extends Controller
 {
-
     /**
      * components property
      *
@@ -176,7 +174,6 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
-     *
      * Resets environment state.
      *
      * @return void

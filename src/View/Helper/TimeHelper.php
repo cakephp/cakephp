@@ -162,7 +162,6 @@ class TimeHelper extends Helper
      * @param int|string|\DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
      * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
      * @return bool True if datetime string was yesterday
-     *
      */
     public function wasYesterday($dateString, $timezone = null)
     {
@@ -186,7 +185,7 @@ class TimeHelper extends Helper
      *
      * @param int|string|\DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
      * @param bool $range if true returns a range in Y-m-d format
-     * @return int|array 1, 2, 3, or 4 quarter of year or array if $range true
+     * @return string[]|int 1, 2, 3, or 4 quarter of year or array if $range true
      * @see \Cake\I18n\Time::toQuarter()
      */
     public function toQuarter($dateString, $range = false)
@@ -344,11 +343,13 @@ class TimeHelper extends Helper
      *
      * This method is an alias for TimeHelper::i18nFormat().
      *
-     * @param int|string|\DateTime $date UNIX timestamp, strtotime() valid string or DateTime object (or a date format string)
-     * @param int|string|null $format date format string (or a UNIX timestamp, strtotime() valid string or DateTime object)
-     * @param bool|string $invalid Default value to display on invalid dates
+     * @param int|string|\DateTime $date UNIX timestamp, strtotime() valid string
+     *   or DateTime object (or a date format string).
+     * @param int|string|null $format date format string (or a UNIX timestamp,
+     *   strtotime() valid string or DateTime object).
+     * @param string|false $invalid Default value to display on invalid dates
      * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
-     * @return string Formatted and translated date string
+     * @return string|int|false Formatted and translated date string
      * @see \Cake\I18n\Time::i18nFormat()
      */
     public function format($date, $format = null, $invalid = false, $timezone = null)
@@ -360,11 +361,11 @@ class TimeHelper extends Helper
      * Returns a formatted date string, given either a Datetime instance,
      * UNIX timestamp or a valid strtotime() date string.
      *
-     * @param int|string|\DateTime $date UNIX timestamp, strtotime() valid string or DateTime object
-     * @param string|null $format Intl compatible format string.
-     * @param bool|string $invalid Default value to display on invalid dates
+     * @param int|string|\DateTimeInterface|null $date UNIX timestamp, strtotime() valid string or DateTime object
+     * @param string|int|null $format Intl compatible format string.
+     * @param string|false $invalid Default value to display on invalid dates
      * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
-     * @return string|false Formatted and translated date string or value for `$invalid` on failure.
+     * @return string|int|false Formatted and translated date string or value for `$invalid` on failure.
      * @throws \Exception When the date cannot be parsed
      * @see \Cake\I18n\Time::i18nFormat()
      */

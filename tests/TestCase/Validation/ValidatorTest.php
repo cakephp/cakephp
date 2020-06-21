@@ -19,13 +19,13 @@ use Cake\Validation\Validation;
 use Cake\Validation\ValidationRule;
 use Cake\Validation\ValidationSet;
 use Cake\Validation\Validator;
+use Laminas\Diactoros\UploadedFile;
 
 /**
  * Tests Validator class
  */
 class ValidatorTest extends TestCase
 {
-
     /**
      * tests getRequiredMessage
      *
@@ -136,7 +136,7 @@ class ValidatorTest extends TestCase
         }]);
         $validator->addNested('user', $inner);
 
-        $result = $validator->errors(['user' => ['username' => 'example']]);
+        $result = $validator->validate(['user' => ['username' => 'example']]);
         $this->assertNotEmpty($result, 'Validation should fail');
     }
 
@@ -158,16 +158,16 @@ class ValidatorTest extends TestCase
         $rule = $validator->field('user')->rule(Validator::NESTED);
         $this->assertSame('create', $rule->get('on'));
 
-        $errors = $validator->errors(['user' => 'string']);
+        $errors = $validator->validate(['user' => 'string']);
         $this->assertArrayHasKey('user', $errors);
         $this->assertArrayHasKey(Validator::NESTED, $errors['user']);
         $this->assertSame('errors found', $errors['user'][Validator::NESTED]);
 
-        $errors = $validator->errors(['user' => ['key' => 'value']]);
+        $errors = $validator->validate(['user' => ['key' => 'value']]);
         $this->assertArrayHasKey('user', $errors);
         $this->assertArrayHasKey(Validator::NESTED, $errors['user']);
 
-        $this->assertEmpty($validator->errors(['user' => ['key' => 'value']], false));
+        $this->assertEmpty($validator->validate(['user' => ['key' => 'value']], false));
     }
 
     /**
@@ -203,7 +203,7 @@ class ValidatorTest extends TestCase
         }]);
         $validator->addNestedMany('comments', $inner);
 
-        $result = $validator->errors(['comments' => [['comment' => 'example']]]);
+        $result = $validator->validate(['comments' => [['comment' => 'example']]]);
         $this->assertNotEmpty($result, 'Validation should fail');
     }
 
@@ -225,21 +225,21 @@ class ValidatorTest extends TestCase
         $rule = $validator->field('comments')->rule(Validator::NESTED);
         $this->assertSame('create', $rule->get('on'));
 
-        $errors = $validator->errors(['comments' => 'string']);
+        $errors = $validator->validate(['comments' => 'string']);
         $this->assertArrayHasKey('comments', $errors);
         $this->assertArrayHasKey(Validator::NESTED, $errors['comments']);
         $this->assertSame('errors found', $errors['comments'][Validator::NESTED]);
 
-        $errors = $validator->errors(['comments' => ['string']]);
+        $errors = $validator->validate(['comments' => ['string']]);
         $this->assertArrayHasKey('comments', $errors);
         $this->assertArrayHasKey(Validator::NESTED, $errors['comments']);
         $this->assertSame('errors found', $errors['comments'][Validator::NESTED]);
 
-        $errors = $validator->errors(['comments' => [['body' => null]]]);
+        $errors = $validator->validate(['comments' => [['body' => null]]]);
         $this->assertArrayHasKey('comments', $errors);
         $this->assertArrayHasKey(Validator::NESTED, $errors['comments']);
 
-        $this->assertEmpty($validator->errors(['comments' => [['body' => null]]], false));
+        $this->assertEmpty($validator->validate(['comments' => [['body' => null]]], false));
     }
 
     /**
@@ -410,14 +410,14 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $validator->requirePresence('title');
-        $errors = $validator->errors(['foo' => 'something']);
+        $errors = $validator->validate(['foo' => 'something']);
         $expected = ['title' => ['_required' => 'This field is required']];
         $this->assertEquals($expected, $errors);
 
-        $this->assertEmpty($validator->errors(['title' => 'bar']));
+        $this->assertEmpty($validator->validate(['title' => 'bar']));
 
         $validator->requirePresence('title', false);
-        $this->assertEmpty($validator->errors(['foo' => 'bar']));
+        $this->assertEmpty($validator->validate(['foo' => 'bar']));
     }
 
     /**
@@ -437,13 +437,13 @@ class ValidatorTest extends TestCase
         ];
 
         $expected = [];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
 
         $this->assertEquals($expected, $result);
     }
 
     /**
-     * Test that errors() can work with nested data.
+     * Test that validate() can work with nested data.
      *
      * @return void
      */
@@ -467,7 +467,7 @@ class ValidatorTest extends TestCase
                 ['comment' => 'is wrong'],
             ],
         ];
-        $errors = $validator->errors($data);
+        $errors = $validator->validate($data);
         $expected = [
             'user' => [
                 'username' => ['letter' => 'The provided value is invalid'],
@@ -495,7 +495,7 @@ class ValidatorTest extends TestCase
         $data = [
             'user' => 'a string',
         ];
-        $errors = $validator->errors($data);
+        $errors = $validator->validate($data);
         $expected = [
             'user' => ['_nested' => 'The provided value is invalid'],
         ];
@@ -518,7 +518,7 @@ class ValidatorTest extends TestCase
         $data = [
             'comments' => 'a string',
         ];
-        $errors = $validator->errors($data);
+        $errors = $validator->validate($data);
         $expected = [
             'comments' => ['_nested' => 'The provided value is invalid'],
         ];
@@ -545,7 +545,7 @@ class ValidatorTest extends TestCase
                 ['comment' => 'more invalid'],
             ],
         ];
-        $errors = $validator->errors($data);
+        $errors = $validator->validate($data);
         $expected = [
             'comments' => [
                 '_nested' => 'The provided value is invalid',
@@ -563,7 +563,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $validator->requirePresence('title', true, 'Custom message');
-        $errors = $validator->errors(['foo' => 'something']);
+        $errors = $validator->validate(['foo' => 'something']);
         $expected = ['title' => ['_required' => 'Custom message']];
         $this->assertEquals($expected, $errors);
     }
@@ -577,7 +577,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $validator->requirePresence(['title', 'content'], true, 'Custom message');
-        $errors = $validator->errors(['foo' => 'something']);
+        $errors = $validator->validate(['foo' => 'something']);
         $expected = [
             'title' => ['_required' => 'Custom message'],
             'content' => ['_required' => 'Custom message'],
@@ -590,7 +590,7 @@ class ValidatorTest extends TestCase
             ],
             'content',
         ], true, 'Custom message');
-        $errors = $validator->errors(['foo' => 'something']);
+        $errors = $validator->validate(['foo' => 'something']);
         $expected = [
             'title' => ['_required' => 'Test message'],
             'content' => ['_required' => 'Custom message'],
@@ -634,7 +634,7 @@ class ValidatorTest extends TestCase
                 'day' => '',
             ],
         ];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertEmpty($result, 'No errors on empty date');
 
         $data = [
@@ -648,7 +648,7 @@ class ValidatorTest extends TestCase
                 'meridian' => '',
             ],
         ];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertEmpty($result, 'No errors on empty datetime');
 
         $data = [
@@ -658,7 +658,7 @@ class ValidatorTest extends TestCase
                 'meridian' => '',
             ],
         ];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertEmpty($result, 'No errors on empty time');
     }
 
@@ -681,8 +681,18 @@ class ValidatorTest extends TestCase
                 'error' => UPLOAD_ERR_NO_FILE,
             ],
         ];
-        $result = $validator->errors($data);
-        $this->assertEmpty($result, 'No errors on empty date');
+        $result = $validator->validate($data);
+        $this->assertEmpty($result, 'No errors on empty file');
+
+        $data = [
+            'picture' => new UploadedFile(
+                '',
+                0,
+                UPLOAD_ERR_NO_FILE
+            ),
+        ];
+        $result = $validator->validate($data);
+        $this->assertEmpty($result, 'No errors on empty file');
 
         $data = [
             'picture' => [
@@ -692,7 +702,7 @@ class ValidatorTest extends TestCase
                 'error' => UPLOAD_ERR_OK,
             ],
         ];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertNotEmpty($result, 'Invalid file should be caught still.');
     }
 
@@ -725,7 +735,7 @@ class ValidatorTest extends TestCase
         $this->assertTrue($validator->field('updated_at')->isEmptyAllowed());
         $this->assertEquals('update', $validator->field('show_at')->isEmptyAllowed());
 
-        $errors = $validator->errors([
+        $errors = $validator->validate([
             'title' => '',
             'subject' => null,
             'posted_at' => null,
@@ -770,17 +780,17 @@ class ValidatorTest extends TestCase
         $data = [
             'title' => '',
         ];
-        $this->assertEmpty($validator->errors($data));
+        $this->assertEmpty($validator->validate($data));
 
         $data = [
             'title' => null,
         ];
-        $this->assertEmpty($validator->errors($data));
+        $this->assertEmpty($validator->validate($data));
 
         $data = [
             'title' => [],
         ];
-        $this->assertNotEmpty($validator->errors($data));
+        $this->assertNotEmpty($validator->validate($data));
 
         $validator = new Validator();
         $validator->allowEmptyString('title', 'message', 'update');
@@ -793,8 +803,8 @@ class ValidatorTest extends TestCase
         $expected = [
             'title' => ['_empty' => 'message'],
         ];
-        $this->assertSame($expected, $validator->errors($data, true));
-        $this->assertEmpty($validator->errors($data, false));
+        $this->assertSame($expected, $validator->validate($data, true));
+        $this->assertEmpty($validator->validate($data, false));
     }
 
     /**
@@ -817,13 +827,12 @@ class ValidatorTest extends TestCase
         $expected = [
             'title' => ['_empty' => 'message'],
         ];
-        $this->assertSame($expected, $validator->errors($data, true));
-        $this->assertEmpty($validator->errors($data, false));
+        $this->assertSame($expected, $validator->validate($data, true));
+        $this->assertEmpty($validator->validate($data, false));
     }
 
     /**
      * Test allowEmptyString with callback
-     *
      */
     public function testAllowEmptyStringCallbackWhen()
     {
@@ -870,8 +879,8 @@ class ValidatorTest extends TestCase
         $expected = [
             'title' => ['_empty' => 'This field cannot be left empty'],
         ];
-        $this->assertSame($expected, $validator->errors($data, true));
-        $this->assertEmpty($validator->errors($data, false));
+        $this->assertSame($expected, $validator->validate($data, true));
+        $this->assertEmpty($validator->validate($data, false));
     }
 
     /**
@@ -888,20 +897,20 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->isEmptyAllowed('title', false));
 
         $data = ['title' => '0'];
-        $this->assertEmpty($validator->errors($data));
+        $this->assertEmpty($validator->validate($data));
 
         $data = ['title' => 0];
-        $this->assertEmpty($validator->errors($data), 'empty ok on create');
-        $this->assertEmpty($validator->errors($data, false), 'empty ok on update');
+        $this->assertEmpty($validator->validate($data), 'empty ok on create');
+        $this->assertEmpty($validator->validate($data, false), 'empty ok on update');
 
         $data = ['title' => []];
-        $this->assertEmpty($validator->errors($data), 'empty array is no good');
+        $this->assertEmpty($validator->validate($data), 'empty array is no good');
 
         $expected = [
             'title' => ['_empty' => 'not empty'],
         ];
         $data = ['title' => ''];
-        $this->assertSame($expected, $validator->errors($data, true));
+        $this->assertSame($expected, $validator->validate($data, true));
     }
 
     /**
@@ -920,13 +929,13 @@ class ValidatorTest extends TestCase
             'title' => ['_empty' => 'message'],
         ];
         $data = ['title' => null];
-        $this->assertSame($expected, $validator->errors($data, true));
+        $this->assertSame($expected, $validator->validate($data, true));
 
         $data = ['title' => ''];
-        $this->assertSame($expected, $validator->errors($data, true));
+        $this->assertSame($expected, $validator->validate($data, true));
 
         $data = ['title' => ''];
-        $this->assertEmpty($validator->errors($data, false), 'empty allowed on update');
+        $this->assertEmpty($validator->validate($data, false), 'empty allowed on update');
     }
 
     /**
@@ -949,13 +958,13 @@ class ValidatorTest extends TestCase
             'title' => ['_empty' => 'message'],
         ];
         $data = ['title' => ''];
-        $this->assertSame($error, $validator->errors($data));
+        $this->assertSame($error, $validator->validate($data));
 
         $data = ['title' => '', 'emptyOk' => false];
-        $this->assertEmpty($validator->errors($data));
+        $this->assertEmpty($validator->validate($data));
 
         $data = ['title' => '', 'emptyOk' => true];
-        $this->assertSame($error, $validator->errors($data));
+        $this->assertSame($error, $validator->validate($data));
     }
 
     /**
@@ -974,19 +983,19 @@ class ValidatorTest extends TestCase
         $data = [
             'items' => '',
         ];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertEmpty($result);
 
         $data = [
             'items' => null,
         ];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertEmpty($result);
 
         $data = [
             'items' => [],
         ];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertEmpty($result);
 
         $data = [
@@ -997,7 +1006,7 @@ class ValidatorTest extends TestCase
                 'hasAtMost' => 'The provided value is invalid',
             ],
         ];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertSame($expected, $result);
     }
 
@@ -1019,8 +1028,8 @@ class ValidatorTest extends TestCase
         $expected = [
             'items' => ['_empty' => 'message'],
         ];
-        $this->assertSame($expected, $validator->errors($data, true));
-        $this->assertEmpty($validator->errors($data, false));
+        $this->assertSame($expected, $validator->validate($data, true));
+        $this->assertEmpty($validator->validate($data, false));
     }
 
     /**
@@ -1043,8 +1052,8 @@ class ValidatorTest extends TestCase
         $expected = [
             'items' => ['_empty' => 'message'],
         ];
-        $this->assertSame($expected, $validator->errors($data, true));
-        $this->assertEmpty($validator->errors($data, false));
+        $this->assertSame($expected, $validator->validate($data, true));
+        $this->assertEmpty($validator->validate($data, false));
     }
 
     /**
@@ -1063,21 +1072,21 @@ class ValidatorTest extends TestCase
             'items' => ['_empty' => 'not empty'],
         ];
         $data = ['items' => ''];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertSame($error, $result);
 
         $data = ['items' => null];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertSame($error, $result);
 
         $data = ['items' => []];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertSame($error, $result);
 
         $data = [
             'items' => [1],
         ];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertEmpty($result);
     }
 
@@ -1102,13 +1111,13 @@ class ValidatorTest extends TestCase
                 'error' => UPLOAD_ERR_NO_FILE,
             ],
         ];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertEmpty($result);
 
         $data = [
             'photo' => null,
         ];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertEmpty($result);
 
         $data = [
@@ -1124,7 +1133,7 @@ class ValidatorTest extends TestCase
                 'uploadedFile' => 'The provided value is invalid',
             ],
         ];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertSame($expected, $result);
 
         $data = [
@@ -1135,11 +1144,11 @@ class ValidatorTest extends TestCase
                 'uploadedFile' => 'The provided value is invalid',
             ],
         ];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertSame($expected, $result);
 
         $data = ['photo' => []];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertSame($expected, $result);
 
         $validator = new Validator();
@@ -1153,8 +1162,8 @@ class ValidatorTest extends TestCase
         $expected = [
             'photo' => ['_empty' => 'message'],
         ];
-        $this->assertSame($expected, $validator->errors($data, true));
-        $this->assertEmpty($validator->errors($data, false));
+        $this->assertSame($expected, $validator->validate($data, true));
+        $this->assertEmpty($validator->validate($data, false));
     }
 
     /**
@@ -1177,8 +1186,8 @@ class ValidatorTest extends TestCase
         $expected = [
             'photo' => ['_empty' => 'message'],
         ];
-        $this->assertSame($expected, $validator->errors($data, true));
-        $this->assertEmpty($validator->errors($data, false));
+        $this->assertSame($expected, $validator->validate($data, true));
+        $this->assertEmpty($validator->validate($data, false));
     }
 
     /**
@@ -1203,19 +1212,19 @@ class ValidatorTest extends TestCase
             ],
         ];
         $error = ['photo' => ['_empty' => 'required field']];
-        $this->assertSame($error, $validator->errors($data));
+        $this->assertSame($error, $validator->validate($data));
 
         $data = ['photo' => null];
-        $this->assertSame($error, $validator->errors($data));
+        $this->assertSame($error, $validator->validate($data));
 
         // Empty string and empty array don't trigger errors
         // as rejecting them here would mean accepting them in
         // allowEmptyFile() which is not desirable.
         $data = ['photo' => ''];
-        $this->assertEmpty($validator->errors($data));
+        $this->assertEmpty($validator->validate($data));
 
         $data = ['photo' => []];
-        $this->assertEmpty($validator->errors($data));
+        $this->assertEmpty($validator->validate($data));
 
         $data = [
             'photo' => [
@@ -1225,7 +1234,7 @@ class ValidatorTest extends TestCase
                 'error' => UPLOAD_ERR_FORM_SIZE,
             ],
         ];
-        $this->assertEmpty($validator->errors($data));
+        $this->assertEmpty($validator->validate($data));
     }
 
     /**
@@ -1244,8 +1253,8 @@ class ValidatorTest extends TestCase
         $expected = [
             'photo' => ['_empty' => 'message'],
         ];
-        $this->assertEmpty($validator->errors($data, true));
-        $this->assertSame($expected, $validator->errors($data, false));
+        $this->assertEmpty($validator->validate($data, true));
+        $this->assertSame($expected, $validator->validate($data, false));
     }
 
     /**
@@ -1268,23 +1277,23 @@ class ValidatorTest extends TestCase
                 'day' => '',
             ],
         ];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertEmpty($result);
 
         $data = [
             'date' => '',
         ];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertEmpty($result);
 
         $data = [
             'date' => null,
         ];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertEmpty($result);
 
         $data = ['date' => []];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertEmpty($result);
     }
 
@@ -1306,8 +1315,8 @@ class ValidatorTest extends TestCase
         $expected = [
             'date' => ['_empty' => 'be valid'],
         ];
-        $this->assertSame($expected, $validator->errors($data, true));
-        $this->assertEmpty($validator->errors($data, false));
+        $this->assertSame($expected, $validator->validate($data, true));
+        $this->assertEmpty($validator->validate($data, false));
     }
 
     /**
@@ -1330,8 +1339,8 @@ class ValidatorTest extends TestCase
         $expected = [
             'date' => ['_empty' => 'be valid'],
         ];
-        $this->assertSame($expected, $validator->errors($data, true));
-        $this->assertEmpty($validator->errors($data, false));
+        $this->assertSame($expected, $validator->validate($data, true));
+        $this->assertEmpty($validator->validate($data, false));
     }
 
     /**
@@ -1355,19 +1364,19 @@ class ValidatorTest extends TestCase
                 'day' => '',
             ],
         ];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertSame($error, $result);
 
         $data = ['date' => ''];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertSame($error, $result);
 
         $data = ['date' => null];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertSame($error, $result);
 
         $data = ['date' => []];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertSame($error, $result);
 
         $data = [
@@ -1377,7 +1386,7 @@ class ValidatorTest extends TestCase
                 'day' => 17,
             ],
         ];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertEmpty($result);
     }
 
@@ -1395,8 +1404,8 @@ class ValidatorTest extends TestCase
 
         $data = ['date' => null];
         $expected = ['date' => ['_empty' => 'message']];
-        $this->assertSame($expected, $validator->errors($data, false));
-        $this->assertEmpty($validator->errors($data, true));
+        $this->assertSame($expected, $validator->validate($data, false));
+        $this->assertEmpty($validator->validate($data, true));
     }
 
     /**
@@ -1419,23 +1428,23 @@ class ValidatorTest extends TestCase
                 'second' => '',
             ],
         ];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertEmpty($result);
 
         $data = [
             'time' => '',
         ];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertEmpty($result);
 
         $data = [
             'time' => null,
         ];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertEmpty($result);
 
         $data = ['time' => []];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertEmpty($result);
     }
 
@@ -1457,8 +1466,8 @@ class ValidatorTest extends TestCase
         $expected = [
             'time' => ['_empty' => 'valid time'],
         ];
-        $this->assertSame($expected, $validator->errors($data, true));
-        $this->assertEmpty($validator->errors($data, false));
+        $this->assertSame($expected, $validator->validate($data, true));
+        $this->assertEmpty($validator->validate($data, false));
     }
 
     /**
@@ -1481,8 +1490,8 @@ class ValidatorTest extends TestCase
         $expected = [
             'time' => ['_empty' => 'valid time'],
         ];
-        $this->assertSame($expected, $validator->errors($data, true));
-        $this->assertEmpty($validator->errors($data, false));
+        $this->assertSame($expected, $validator->validate($data, true));
+        $this->assertEmpty($validator->validate($data, false));
     }
 
     /**
@@ -1506,23 +1515,23 @@ class ValidatorTest extends TestCase
                 'second' => '',
             ],
         ];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertSame($error, $result);
 
         $data = ['time' => ''];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertSame($error, $result);
 
         $data = ['time' => null];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertSame($error, $result);
 
         $data = ['time' => []];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertSame($error, $result);
 
         $data = ['time' => ['hour' => 12, 'minute' => 12, 'second' => 12]];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertEmpty($result);
     }
 
@@ -1540,8 +1549,8 @@ class ValidatorTest extends TestCase
 
         $data = ['time' => null];
         $expected = ['time' => ['_empty' => 'message']];
-        $this->assertEmpty($validator->errors($data, true));
-        $this->assertSame($expected, $validator->errors($data, false));
+        $this->assertEmpty($validator->validate($data, true));
+        $this->assertSame($expected, $validator->validate($data, false));
     }
 
     /**
@@ -1567,23 +1576,23 @@ class ValidatorTest extends TestCase
                 'second' => '',
             ],
         ];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertEmpty($result);
 
         $data = [
             'published' => '',
         ];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertEmpty($result);
 
         $data = [
             'published' => null,
         ];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertEmpty($result);
 
         $data = ['published' => []];
-        $this->assertEmpty($validator->errors($data));
+        $this->assertEmpty($validator->validate($data));
     }
 
     /**
@@ -1604,8 +1613,8 @@ class ValidatorTest extends TestCase
         $expected = [
             'published' => ['_empty' => 'datetime required'],
         ];
-        $this->assertSame($expected, $validator->errors($data, true));
-        $this->assertEmpty($validator->errors($data, false));
+        $this->assertSame($expected, $validator->validate($data, true));
+        $this->assertEmpty($validator->validate($data, false));
     }
 
     /**
@@ -1628,8 +1637,8 @@ class ValidatorTest extends TestCase
         $expected = [
             'published' => ['_empty' => 'datetime required'],
         ];
-        $this->assertSame($expected, $validator->errors($data, true));
-        $this->assertEmpty($validator->errors($data, false));
+        $this->assertSame($expected, $validator->validate($data, true));
+        $this->assertEmpty($validator->validate($data, false));
     }
 
     /**
@@ -1656,19 +1665,19 @@ class ValidatorTest extends TestCase
                 'second' => '',
             ],
         ];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertSame($error, $result);
 
         $data = ['published' => ''];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertSame($error, $result);
 
         $data = ['published' => null];
-        $result = $validator->errors($data);
+        $result = $validator->validate($data);
         $this->assertSame($error, $result);
 
         $data = ['published' => []];
-        $this->assertSame($error, $validator->errors($data));
+        $this->assertSame($error, $validator->validate($data));
 
         $data = [
             'published' => [
@@ -1680,7 +1689,7 @@ class ValidatorTest extends TestCase
                 'second' => '33',
             ],
         ];
-        $this->assertEmpty($validator->errors($data));
+        $this->assertEmpty($validator->validate($data));
     }
 
     /**
@@ -1697,8 +1706,8 @@ class ValidatorTest extends TestCase
 
         $data = ['published' => null];
         $expected = ['published' => ['_empty' => 'message']];
-        $this->assertSame($expected, $validator->errors($data, false));
-        $this->assertEmpty($validator->errors($data, true));
+        $this->assertSame($expected, $validator->validate($data, false));
+        $this->assertEmpty($validator->validate($data, true));
     }
 
     /**
@@ -1752,7 +1761,7 @@ class ValidatorTest extends TestCase
         $this->assertTrue($validator->isEmptyAllowed('posted_at', false));
         $this->assertTrue($validator->field('subject')->isEmptyAllowed());
 
-        $errors = $validator->errors([
+        $errors = $validator->validate([
             'title' => '',
             'content' => '',
             'posted_at' => null,
@@ -1907,25 +1916,25 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $validator->notEmpty('title');
-        $errors = $validator->errors(['title' => '']);
+        $errors = $validator->validate(['title' => '']);
         $expected = ['title' => ['_empty' => 'This field cannot be left empty']];
         $this->assertEquals($expected, $errors);
 
-        $errors = $validator->errors(['title' => []]);
+        $errors = $validator->validate(['title' => []]);
         $expected = ['title' => ['_empty' => 'This field cannot be left empty']];
         $this->assertEquals($expected, $errors);
 
-        $errors = $validator->errors(['title' => null]);
+        $errors = $validator->validate(['title' => null]);
         $expected = ['title' => ['_empty' => 'This field cannot be left empty']];
         $this->assertEquals($expected, $errors);
 
-        $errors = $validator->errors(['title' => 0]);
+        $errors = $validator->validate(['title' => 0]);
         $this->assertEmpty($errors);
 
-        $errors = $validator->errors(['title' => '0']);
+        $errors = $validator->validate(['title' => '0']);
         $this->assertEmpty($errors);
 
-        $errors = $validator->errors(['title' => false]);
+        $errors = $validator->validate(['title' => false]);
         $this->assertEmpty($errors);
     }
 
@@ -1938,7 +1947,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $validator->allowEmpty('title', false, 'Custom message');
-        $errors = $validator->errors(['title' => null]);
+        $errors = $validator->validate(['title' => null]);
         $expected = ['title' => ['_empty' => 'Custom message']];
         $this->assertEquals($expected, $errors);
     }
@@ -1952,7 +1961,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $validator->notEmpty('title', 'Custom message');
-        $errors = $validator->errors(['title' => '']);
+        $errors = $validator->validate(['title' => '']);
         $expected = ['title' => ['_empty' => 'Custom message']];
         $this->assertEquals($expected, $errors);
     }
@@ -1966,25 +1975,25 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $validator->allowEmpty('title');
-        $errors = $validator->errors(['title' => '']);
+        $errors = $validator->validate(['title' => '']);
         $this->assertEmpty($errors);
 
-        $errors = $validator->errors(['title' => []]);
+        $errors = $validator->validate(['title' => []]);
         $this->assertEmpty($errors);
 
-        $errors = $validator->errors(['title' => null]);
+        $errors = $validator->validate(['title' => null]);
         $this->assertEmpty($errors);
 
-        $errors = $validator->errors(['title' => 0]);
+        $errors = $validator->validate(['title' => 0]);
         $this->assertEmpty($errors);
 
-        $errors = $validator->errors(['title' => 0.0]);
+        $errors = $validator->validate(['title' => 0.0]);
         $this->assertEmpty($errors);
 
-        $errors = $validator->errors(['title' => '0']);
+        $errors = $validator->validate(['title' => '0']);
         $this->assertEmpty($errors);
 
-        $errors = $validator->errors(['title' => false]);
+        $errors = $validator->validate(['title' => false]);
         $this->assertEmpty($errors);
     }
 
@@ -2009,7 +2018,7 @@ class ValidatorTest extends TestCase
     }
 
     /**
-     * Tests errors() method when using validators from the default provider, this proves
+     * Tests validate() method when using validators from the default provider, this proves
      * that it returns a default validation message and the custom one set in the rule
      *
      * @return void
@@ -2021,7 +2030,7 @@ class ValidatorTest extends TestCase
             ->add('email', 'alpha', ['rule' => 'alphanumeric'])
             ->add('email', 'notBlank', ['rule' => 'notBlank'])
             ->add('email', 'email', ['rule' => 'email', 'message' => 'Y u no write email?']);
-        $errors = $validator->errors(['email' => 'not an email!']);
+        $errors = $validator->validate(['email' => 'not an email!']);
         $expected = [
             'email' => [
                 'alpha' => 'The provided value is invalid',
@@ -2069,7 +2078,7 @@ class ValidatorTest extends TestCase
             }));
 
         $validator->setProvider('thing', $thing);
-        $errors = $validator->errors(['email' => '!', 'title' => 'bar']);
+        $errors = $validator->validate(['email' => '!', 'title' => 'bar']);
         $expected = [
             'email' => ['alpha' => 'The provided value is invalid'],
             'title' => ['cool' => "That ain't cool, yo"],
@@ -2116,7 +2125,7 @@ class ValidatorTest extends TestCase
                 return "That ain't cool, yo";
             }));
         $validator->setProvider('thing', $thing);
-        $errors = $validator->errors(['email' => '!', 'title' => 'bar']);
+        $errors = $validator->validate(['email' => '!', 'title' => 'bar']);
         $expected = [
             'title' => ['cool' => "That ain't cool, yo"],
         ];
@@ -2139,7 +2148,7 @@ class ValidatorTest extends TestCase
             },
         ]);
         $expected = ['name' => ['myRule' => 'You fail']];
-        $this->assertEquals($expected, $validator->errors(['name' => 'foo']));
+        $this->assertEquals($expected, $validator->validate(['name' => 'foo']));
     }
 
     /**
@@ -2153,7 +2162,7 @@ class ValidatorTest extends TestCase
         $validator
             ->add('email', 'alpha', ['rule' => 'alphanumeric', 'last' => true])
             ->add('email', 'email', ['rule' => 'email', 'message' => 'Y u no write email?']);
-        $errors = $validator->errors(['email' => 'not an email!']);
+        $errors = $validator->validate(['email' => 'not an email!']);
         $expected = [
             'email' => [
                 'alpha' => 'The provided value is invalid',
@@ -2280,7 +2289,7 @@ class ValidatorTest extends TestCase
             'password' => 'test',
             'password_compare' => 'not the same',
         ];
-        $this->assertNotEmpty($validator->errors($data), 'Validation should fail.');
+        $this->assertNotEmpty($validator->validate($data), 'Validation should fail.');
     }
 
     /**
@@ -2336,8 +2345,8 @@ class ValidatorTest extends TestCase
         $inner = new Validator();
         $inner->add('username', 'email', ['rule' => 'email', 'on' => 'create']);
         $validator->addNested('user', $inner);
-        $this->assertNotEmpty($validator->errors(['user' => ['username' => 'example']], true));
-        $this->assertEmpty($validator->errors(['user' => ['username' => 'a']], false));
+        $this->assertNotEmpty($validator->validate(['user' => ['username' => 'example']], true));
+        $this->assertEmpty($validator->validate(['user' => ['username' => 'a']], false));
     }
 
     /**
@@ -2352,8 +2361,8 @@ class ValidatorTest extends TestCase
         $inner = new Validator();
         $inner->add('username', 'email', ['rule' => 'email', 'on' => 'create']);
         $validator->addNestedMany('user', $inner);
-        $this->assertNotEmpty($validator->errors(['user' => [['username' => 'example']]], true));
-        $this->assertEmpty($validator->errors(['user' => [['username' => 'a']]], false));
+        $this->assertNotEmpty($validator->validate(['user' => [['username' => 'example']]], true));
+        $this->assertEmpty($validator->validate(['user' => [['username' => 'a']]], false));
     }
 
     /**
@@ -2365,7 +2374,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'notBlank');
-        $this->assertNotEmpty($validator->errors(['username' => '  ']));
+        $this->assertNotEmpty($validator->validate(['username' => '  ']));
     }
 
     /**
@@ -2377,7 +2386,43 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'alphaNumeric');
-        $this->assertNotEmpty($validator->errors(['username' => '$']));
+        $this->assertNotEmpty($validator->validate(['username' => '$']));
+    }
+
+    /**
+     * Tests the notalphanumeric proxy method
+     *
+     * @return void
+     */
+    public function testNotAlphanumeric()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'notAlphaNumeric');
+        $this->assertEmpty($validator->validate(['username' => '$']));
+    }
+
+    /**
+     * Tests the asciialphanumeric proxy method
+     *
+     * @return void
+     */
+    public function testAsciiAlphanumeric()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'asciiAlphaNumeric');
+        $this->assertNotEmpty($validator->validate(['username' => '$']));
+    }
+
+    /**
+     * Tests the notalphanumeric proxy method
+     *
+     * @return void
+     */
+    public function testNotAsciiAlphanumeric()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'notAsciiAlphaNumeric');
+        $this->assertEmpty($validator->validate(['username' => '$']));
     }
 
     /**
@@ -2389,7 +2434,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'lengthBetween', [5, 7], [5, 7]);
-        $this->assertNotEmpty($validator->errors(['username' => 'foo']));
+        $this->assertNotEmpty($validator->validate(['username' => 'foo']));
     }
 
     /**
@@ -2413,7 +2458,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'creditCard', 'all', ['all', true], 'creditCard');
-        $this->assertNotEmpty($validator->errors(['username' => 'foo']));
+        $this->assertNotEmpty($validator->validate(['username' => 'foo']));
     }
 
     /**
@@ -2425,7 +2470,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'greaterThan', 5, [Validation::COMPARE_GREATER, 5], 'comparison');
-        $this->assertNotEmpty($validator->errors(['username' => 2]));
+        $this->assertNotEmpty($validator->validate(['username' => 2]));
     }
 
     /**
@@ -2437,7 +2482,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'greaterThanOrEqual', 5, [Validation::COMPARE_GREATER_OR_EQUAL, 5], 'comparison');
-        $this->assertNotEmpty($validator->errors(['username' => 2]));
+        $this->assertNotEmpty($validator->validate(['username' => 2]));
     }
 
     /**
@@ -2449,7 +2494,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'lessThan', 5, [Validation::COMPARE_LESS, 5], 'comparison');
-        $this->assertNotEmpty($validator->errors(['username' => 5]));
+        $this->assertNotEmpty($validator->validate(['username' => 5]));
     }
 
     /**
@@ -2461,7 +2506,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'lessThanOrEqual', 5, [Validation::COMPARE_LESS_OR_EQUAL, 5], 'comparison');
-        $this->assertNotEmpty($validator->errors(['username' => 6]));
+        $this->assertNotEmpty($validator->validate(['username' => 6]));
     }
 
     /**
@@ -2473,8 +2518,8 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'equals', 5, [Validation::COMPARE_EQUAL, 5], 'comparison');
-        $this->assertEmpty($validator->errors(['username' => 5]));
-        $this->assertNotEmpty($validator->errors(['username' => 6]));
+        $this->assertEmpty($validator->validate(['username' => 5]));
+        $this->assertNotEmpty($validator->validate(['username' => 6]));
     }
 
     /**
@@ -2486,7 +2531,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'notEquals', 5, [Validation::COMPARE_NOT_EQUAL, 5], 'comparison');
-        $this->assertNotEmpty($validator->errors(['username' => 5]));
+        $this->assertNotEmpty($validator->validate(['username' => 5]));
     }
 
     /**
@@ -2498,8 +2543,8 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'sameAs', 'other', ['other', Validation::COMPARE_SAME], 'compareFields');
-        $this->assertNotEmpty($validator->errors(['username' => 'foo']));
-        $this->assertNotEmpty($validator->errors(['username' => 1, 'other' => '1']));
+        $this->assertNotEmpty($validator->validate(['username' => 'foo']));
+        $this->assertNotEmpty($validator->validate(['username' => 1, 'other' => '1']));
     }
 
     /**
@@ -2511,7 +2556,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'notSameAs', 'other', ['other', Validation::COMPARE_NOT_SAME], 'compareFields');
-        $this->assertNotEmpty($validator->errors(['username' => 'foo', 'other' => 'foo']));
+        $this->assertNotEmpty($validator->validate(['username' => 'foo', 'other' => 'foo']));
     }
 
     /**
@@ -2523,8 +2568,8 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'equalToField', 'other', ['other', Validation::COMPARE_EQUAL], 'compareFields');
-        $this->assertNotEmpty($validator->errors(['username' => 'foo']));
-        $this->assertNotEmpty($validator->errors(['username' => 'foo', 'other' => 'bar']));
+        $this->assertNotEmpty($validator->validate(['username' => 'foo']));
+        $this->assertNotEmpty($validator->validate(['username' => 'foo', 'other' => 'bar']));
     }
 
     /**
@@ -2536,7 +2581,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'notEqualToField', 'other', ['other', Validation::COMPARE_NOT_EQUAL], 'compareFields');
-        $this->assertNotEmpty($validator->errors(['username' => 'foo', 'other' => 'foo']));
+        $this->assertNotEmpty($validator->validate(['username' => 'foo', 'other' => 'foo']));
     }
 
     /**
@@ -2548,8 +2593,8 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'greaterThanField', 'other', ['other', Validation::COMPARE_GREATER], 'compareFields');
-        $this->assertNotEmpty($validator->errors(['username' => 1, 'other' => 1]));
-        $this->assertNotEmpty($validator->errors(['username' => 1, 'other' => 2]));
+        $this->assertNotEmpty($validator->validate(['username' => 1, 'other' => 1]));
+        $this->assertNotEmpty($validator->validate(['username' => 1, 'other' => 2]));
     }
 
     /**
@@ -2561,7 +2606,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'greaterThanOrEqualToField', 'other', ['other', Validation::COMPARE_GREATER_OR_EQUAL], 'compareFields');
-        $this->assertNotEmpty($validator->errors(['username' => 1, 'other' => 2]));
+        $this->assertNotEmpty($validator->validate(['username' => 1, 'other' => 2]));
     }
 
     /**
@@ -2573,8 +2618,8 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'lessThanField', 'other', ['other', Validation::COMPARE_LESS], 'compareFields');
-        $this->assertNotEmpty($validator->errors(['username' => 1, 'other' => 1]));
-        $this->assertNotEmpty($validator->errors(['username' => 2, 'other' => 1]));
+        $this->assertNotEmpty($validator->validate(['username' => 1, 'other' => 1]));
+        $this->assertNotEmpty($validator->validate(['username' => 2, 'other' => 1]));
     }
 
     /**
@@ -2586,7 +2631,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'lessThanOrEqualToField', 'other', ['other', Validation::COMPARE_LESS_OR_EQUAL], 'compareFields');
-        $this->assertNotEmpty($validator->errors(['username' => 2, 'other' => 1]));
+        $this->assertNotEmpty($validator->validate(['username' => 2, 'other' => 1]));
     }
 
     /**
@@ -2598,7 +2643,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'containsNonAlphaNumeric', 2, [2]);
-        $this->assertNotEmpty($validator->errors(['username' => '$']));
+        $this->assertNotEmpty($validator->validate(['username' => '$']));
     }
 
     /**
@@ -2610,7 +2655,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'date', ['ymd'], [['ymd']]);
-        $this->assertNotEmpty($validator->errors(['username' => 'not a date']));
+        $this->assertNotEmpty($validator->validate(['username' => 'not a date']));
     }
 
     /**
@@ -2622,7 +2667,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'dateTime', ['ymd'], [['ymd']], 'datetime');
-        $this->assertNotEmpty($validator->errors(['username' => 'not a date']));
+        $this->assertNotEmpty($validator->validate(['username' => 'not a date']));
     }
 
     /**
@@ -2634,7 +2679,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'time');
-        $this->assertNotEmpty($validator->errors(['username' => 'not a time']));
+        $this->assertNotEmpty($validator->validate(['username' => 'not a time']));
     }
 
     /**
@@ -2646,7 +2691,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'localizedTime', 'date', ['date']);
-        $this->assertNotEmpty($validator->errors(['username' => 'not a date']));
+        $this->assertNotEmpty($validator->validate(['username' => 'not a date']));
     }
 
     /**
@@ -2658,7 +2703,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'boolean');
-        $this->assertNotEmpty($validator->errors(['username' => 'not a boolean']));
+        $this->assertNotEmpty($validator->validate(['username' => 'not a boolean']));
     }
 
     /**
@@ -2670,7 +2715,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'decimal', 2, [2]);
-        $this->assertNotEmpty($validator->errors(['username' => 10.1]));
+        $this->assertNotEmpty($validator->validate(['username' => 10.1]));
     }
 
     /**
@@ -2682,13 +2727,13 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'ip');
-        $this->assertNotEmpty($validator->errors(['username' => 'not ip']));
+        $this->assertNotEmpty($validator->validate(['username' => 'not ip']));
 
         $this->assertProxyMethod($validator, 'ipv4', null, ['ipv4'], 'ip');
-        $this->assertNotEmpty($validator->errors(['username' => 'not ip']));
+        $this->assertNotEmpty($validator->validate(['username' => 'not ip']));
 
         $this->assertProxyMethod($validator, 'ipv6', null, ['ipv6'], 'ip');
-        $this->assertNotEmpty($validator->errors(['username' => 'not ip']));
+        $this->assertNotEmpty($validator->validate(['username' => 'not ip']));
     }
 
     /**
@@ -2700,7 +2745,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'minLength', 2, [2]);
-        $this->assertNotEmpty($validator->errors(['username' => 'a']));
+        $this->assertNotEmpty($validator->validate(['username' => 'a']));
     }
 
     /**
@@ -2712,7 +2757,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'minLengthBytes', 11, [11]);
-        $this->assertNotEmpty($validator->errors(['username' => 'ÆΔΩЖÇ']));
+        $this->assertNotEmpty($validator->validate(['username' => 'ÆΔΩЖÇ']));
     }
 
     /**
@@ -2724,7 +2769,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'maxLength', 2, [2]);
-        $this->assertNotEmpty($validator->errors(['username' => 'aaa']));
+        $this->assertNotEmpty($validator->validate(['username' => 'aaa']));
     }
 
     /**
@@ -2736,7 +2781,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'maxLengthBytes', 9, [9]);
-        $this->assertNotEmpty($validator->errors(['username' => 'ÆΔΩЖÇ']));
+        $this->assertNotEmpty($validator->validate(['username' => 'ÆΔΩЖÇ']));
     }
 
     /**
@@ -2748,8 +2793,8 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'numeric');
-        $this->assertEmpty($validator->errors(['username' => '22']));
-        $this->assertNotEmpty($validator->errors(['username' => 'a']));
+        $this->assertEmpty($validator->validate(['username' => '22']));
+        $this->assertNotEmpty($validator->validate(['username' => 'a']));
     }
 
     /**
@@ -2761,7 +2806,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'naturalNumber', null, [false]);
-        $this->assertNotEmpty($validator->errors(['username' => 0]));
+        $this->assertNotEmpty($validator->validate(['username' => 0]));
     }
 
     /**
@@ -2773,7 +2818,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'nonNegativeInteger', null, [true], 'naturalNumber');
-        $this->assertNotEmpty($validator->errors(['username' => -1]));
+        $this->assertNotEmpty($validator->validate(['username' => -1]));
     }
 
     /**
@@ -2785,7 +2830,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'range', [1, 4], [1, 4]);
-        $this->assertNotEmpty($validator->errors(['username' => 5]));
+        $this->assertNotEmpty($validator->validate(['username' => 5]));
     }
 
     /**
@@ -2809,7 +2854,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'url', null, [false]);
-        $this->assertNotEmpty($validator->errors(['username' => 'not url']));
+        $this->assertNotEmpty($validator->validate(['username' => 'not url']));
     }
 
     /**
@@ -2821,7 +2866,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'urlWithProtocol', null, [true], 'url');
-        $this->assertNotEmpty($validator->errors(['username' => 'google.com']));
+        $this->assertNotEmpty($validator->validate(['username' => 'google.com']));
     }
 
     /**
@@ -2833,7 +2878,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'inList', ['a', 'b'], [['a', 'b']]);
-        $this->assertNotEmpty($validator->errors(['username' => 'c']));
+        $this->assertNotEmpty($validator->validate(['username' => 'c']));
     }
 
     /**
@@ -2845,7 +2890,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'uuid');
-        $this->assertNotEmpty($validator->errors(['username' => 'not uuid']));
+        $this->assertNotEmpty($validator->validate(['username' => 'not uuid']));
     }
 
     /**
@@ -2857,7 +2902,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'uploadedFile', ['foo' => 'bar'], [['foo' => 'bar']]);
-        $this->assertNotEmpty($validator->errors(['username' => []]));
+        $this->assertNotEmpty($validator->validate(['username' => []]));
     }
 
     /**
@@ -2869,13 +2914,13 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'latLong', null, [], 'geoCoordinate');
-        $this->assertNotEmpty($validator->errors(['username' => 2000]));
+        $this->assertNotEmpty($validator->validate(['username' => 2000]));
 
         $this->assertProxyMethod($validator, 'latitude');
-        $this->assertNotEmpty($validator->errors(['username' => 2000]));
+        $this->assertNotEmpty($validator->validate(['username' => 2000]));
 
         $this->assertProxyMethod($validator, 'longitude');
-        $this->assertNotEmpty($validator->errors(['username' => 2000]));
+        $this->assertNotEmpty($validator->validate(['username' => 2000]));
     }
 
     /**
@@ -2887,7 +2932,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'ascii');
-        $this->assertNotEmpty($validator->errors(['username' => 'ü']));
+        $this->assertNotEmpty($validator->validate(['username' => 'ü']));
     }
 
     /**
@@ -2902,8 +2947,8 @@ class ValidatorTest extends TestCase
         $validator = new Validator();
 
         $this->assertProxyMethod($validator, 'utf8', null, [['extended' => false]]);
-        $this->assertEmpty($validator->errors(['username' => 'ü']));
-        $this->assertNotEmpty($validator->errors(['username' => $extended]));
+        $this->assertEmpty($validator->validate(['username' => 'ü']));
+        $this->assertNotEmpty($validator->validate(['username' => $extended]));
     }
 
     /**
@@ -2918,8 +2963,8 @@ class ValidatorTest extends TestCase
         $validator = new Validator();
 
         $this->assertProxyMethod($validator, 'utf8Extended', null, [['extended' => true]], 'utf8');
-        $this->assertEmpty($validator->errors(['username' => 'ü']));
-        $this->assertEmpty($validator->errors(['username' => $extended]));
+        $this->assertEmpty($validator->validate(['username' => 'ü']));
+        $this->assertEmpty($validator->validate(['username' => $extended]));
     }
 
     /**
@@ -2931,8 +2976,8 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $validator->email('username');
-        $this->assertEmpty($validator->errors(['username' => 'test@example.com']));
-        $this->assertNotEmpty($validator->errors(['username' => 'not an email']));
+        $this->assertEmpty($validator->validate(['username' => 'test@example.com']));
+        $this->assertNotEmpty($validator->validate(['username' => 'not an email']));
     }
 
     /**
@@ -2944,7 +2989,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'integer', null, [], 'isInteger');
-        $this->assertNotEmpty($validator->errors(['username' => 'not integer']));
+        $this->assertNotEmpty($validator->validate(['username' => 'not integer']));
     }
 
     /**
@@ -2956,8 +3001,8 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $validator->isArray('username');
-        $this->assertEmpty($validator->errors(['username' => [1, 2, 3]]));
-        $this->assertNotEmpty($validator->errors(['username' => 'is not an array']));
+        $this->assertEmpty($validator->validate(['username' => [1, 2, 3]]));
+        $this->assertNotEmpty($validator->validate(['username' => 'is not an array']));
     }
 
     /**
@@ -2969,8 +3014,8 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $validator->scalar('username');
-        $this->assertEmpty($validator->errors(['username' => 'scalar']));
-        $this->assertNotEmpty($validator->errors(['username' => ['array']]));
+        $this->assertEmpty($validator->validate(['username' => 'scalar']));
+        $this->assertNotEmpty($validator->validate(['username' => ['array']]));
     }
 
     /**
@@ -2982,8 +3027,8 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'hexColor');
-        $this->assertEmpty($validator->errors(['username' => '#FFFFFF']));
-        $this->assertNotEmpty($validator->errors(['username' => 'FFFFFF']));
+        $this->assertEmpty($validator->validate(['username' => '#FFFFFF']));
+        $this->assertNotEmpty($validator->validate(['username' => 'FFFFFF']));
     }
 
     /**
@@ -3010,7 +3055,7 @@ class ValidatorTest extends TestCase
             'multiple'
         );
 
-        $this->assertNotEmpty($validator->errors(['username' => '']));
+        $this->assertNotEmpty($validator->validate(['username' => '']));
     }
 
     /**
@@ -3022,17 +3067,17 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $validator->hasAtLeast('things', 3);
-        $this->assertEmpty($validator->errors(['things' => [1, 2, 3]]));
-        $this->assertEmpty($validator->errors(['things' => [1, 2, 3, 4]]));
-        $this->assertNotEmpty($validator->errors(['things' => [1, 2]]));
-        $this->assertNotEmpty($validator->errors(['things' => []]));
-        $this->assertNotEmpty($validator->errors(['things' => 'string']));
+        $this->assertEmpty($validator->validate(['things' => [1, 2, 3]]));
+        $this->assertEmpty($validator->validate(['things' => [1, 2, 3, 4]]));
+        $this->assertNotEmpty($validator->validate(['things' => [1, 2]]));
+        $this->assertNotEmpty($validator->validate(['things' => []]));
+        $this->assertNotEmpty($validator->validate(['things' => 'string']));
 
-        $this->assertEmpty($validator->errors(['things' => ['_ids' => [1, 2, 3]]]));
-        $this->assertEmpty($validator->errors(['things' => ['_ids' => [1, 2, 3, 4]]]));
-        $this->assertNotEmpty($validator->errors(['things' => ['_ids' => [1, 2]]]));
-        $this->assertNotEmpty($validator->errors(['things' => ['_ids' => []]]));
-        $this->assertNotEmpty($validator->errors(['things' => ['_ids' => 'string']]));
+        $this->assertEmpty($validator->validate(['things' => ['_ids' => [1, 2, 3]]]));
+        $this->assertEmpty($validator->validate(['things' => ['_ids' => [1, 2, 3, 4]]]));
+        $this->assertNotEmpty($validator->validate(['things' => ['_ids' => [1, 2]]]));
+        $this->assertNotEmpty($validator->validate(['things' => ['_ids' => []]]));
+        $this->assertNotEmpty($validator->validate(['things' => ['_ids' => 'string']]));
     }
 
     /**
@@ -3044,13 +3089,13 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $validator->hasAtMost('things', 3);
-        $this->assertEmpty($validator->errors(['things' => [1, 2, 3]]));
-        $this->assertEmpty($validator->errors(['things' => [1]]));
-        $this->assertNotEmpty($validator->errors(['things' => [1, 2, 3, 4]]));
+        $this->assertEmpty($validator->validate(['things' => [1, 2, 3]]));
+        $this->assertEmpty($validator->validate(['things' => [1]]));
+        $this->assertNotEmpty($validator->validate(['things' => [1, 2, 3, 4]]));
 
-        $this->assertEmpty($validator->errors(['things' => ['_ids' => [1, 2, 3]]]));
-        $this->assertEmpty($validator->errors(['things' => ['_ids' => [1, 2]]]));
-        $this->assertNotEmpty($validator->errors(['things' => ['_ids' => [1, 2, 3, 4]]]));
+        $this->assertEmpty($validator->validate(['things' => ['_ids' => [1, 2, 3]]]));
+        $this->assertEmpty($validator->validate(['things' => ['_ids' => [1, 2]]]));
+        $this->assertNotEmpty($validator->validate(['things' => ['_ids' => [1, 2, 3, 4]]]));
     }
 
     /**
@@ -3062,8 +3107,8 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'regex', '/(?<!\\S)\\d++(?!\\S)/', ['/(?<!\\S)\\d++(?!\\S)/'], 'custom');
-        $this->assertEmpty($validator->errors(['username' => '123']));
-        $this->assertNotEmpty($validator->errors(['username' => 'Foo']));
+        $this->assertEmpty($validator->validate(['username' => '123']));
+        $this->assertNotEmpty($validator->validate(['username' => 'Foo']));
     }
 
     /**

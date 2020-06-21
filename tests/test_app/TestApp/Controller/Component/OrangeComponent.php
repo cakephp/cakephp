@@ -24,7 +24,6 @@ use Cake\Event\Event;
  */
 class OrangeComponent extends Component
 {
-
     /**
      * components property
      *

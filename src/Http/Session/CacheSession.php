@@ -40,7 +40,6 @@ class CacheSession implements SessionHandlerInterface
      * @param array $config The configuration to use for this engine
      * It requires the key 'config' which is the name of the Cache config to use for
      * storing the session
-     *
      * @throws \InvalidArgumentException if the 'config' key is not provided
      */
     public function __construct(array $config = [])
@@ -76,7 +75,7 @@ class CacheSession implements SessionHandlerInterface
     /**
      * Method used to read from a cache session.
      *
-     * @param string|int $id ID that uniquely identifies session in cache.
+     * @param string $id ID that uniquely identifies session in cache.
      * @return string Session data or empty string if it does not exist.
      */
     public function read($id)
@@ -93,8 +92,8 @@ class CacheSession implements SessionHandlerInterface
     /**
      * Helper function called on write for cache sessions.
      *
-     * @param string|int $id ID that uniquely identifies session in cache.
-     * @param mixed $data The data to be saved.
+     * @param string $id ID that uniquely identifies session in cache.
+     * @param string $data The data to be saved.
      * @return bool True for successful write, false otherwise.
      */
     public function write($id, $data)
@@ -109,7 +108,7 @@ class CacheSession implements SessionHandlerInterface
     /**
      * Method called on the destruction of a cache session.
      *
-     * @param string|int $id ID that uniquely identifies session in cache.
+     * @param string $id ID that uniquely identifies session in cache.
      * @return bool Always true.
      */
     public function destroy($id)

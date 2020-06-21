@@ -22,7 +22,6 @@ use Cake\Utility\Inflector;
  */
 class InflectorTest extends TestCase
 {
-
     /**
      * A list of chars to test transliteration.
      *
@@ -630,6 +629,12 @@ class InflectorTest extends TestCase
         $this->assertEquals('alertables', Inflector::pluralize('alert'));
         $this->assertEquals('amazable', Inflector::pluralize('amaze'));
         $this->assertEquals('phonezes', Inflector::pluralize('phone'));
+
+        $this->assertSame('criteria', Inflector::pluralize('criterion'));
+        $this->assertSame('test_criteria', Inflector::pluralize('test_criterion'));
+        $this->assertSame('Criteria', Inflector::pluralize('Criterion'));
+        $this->assertSame('TestCriteria', Inflector::pluralize('TestCriterion'));
+        $this->assertSame('Test Criteria', Inflector::pluralize('Test Criterion'));
     }
 
     /**
@@ -652,6 +657,12 @@ class InflectorTest extends TestCase
         $this->assertEquals('inflecta', Inflector::singularize('inflectors'));
         $this->assertEquals('contributa', Inflector::singularize('contributors'));
         $this->assertEquals('singulars', Inflector::singularize('singulars'));
+
+        $this->assertSame('criterion', Inflector::singularize('criteria'));
+        $this->assertSame('test_criterion', Inflector::singularize('test_criteria'));
+        $this->assertSame('Criterion', Inflector::singularize('Criteria'));
+        $this->assertSame('TestCriterion', Inflector::singularize('TestCriteria'));
+        $this->assertSame('Test Criterion', Inflector::singularize('Test Criteria'));
     }
 
     /**

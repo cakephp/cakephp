@@ -257,6 +257,70 @@ XML;
     }
 
     /**
+     * Test isSuccess()
+     *
+     * @return void
+     */
+    public function testIsSuccess()
+    {
+        $headers = [
+            'HTTP/1.1 200 OK',
+            'Content-Type: text/html',
+        ];
+        $response = new Response($headers, 'ok');
+        $this->assertTrue($response->isSuccess());
+
+        $headers = [
+            'HTTP/1.1 201 Created',
+            'Content-Type: text/html',
+        ];
+        $response = new Response($headers, 'ok');
+        $this->assertTrue($response->isSuccess());
+
+        $headers = [
+            'HTTP/1.1 202 Accepted',
+            'Content-Type: text/html',
+        ];
+        $response = new Response($headers, 'ok');
+        $this->assertTrue($response->isSuccess());
+
+        $headers = [
+            'HTTP/1.1 203 Non-Authoritative Information',
+            'Content-Type: text/html',
+        ];
+        $response = new Response($headers, 'ok');
+        $this->assertTrue($response->isSuccess());
+
+        $headers = [
+            'HTTP/1.1 204 No Content',
+            'Content-Type: text/html',
+        ];
+        $response = new Response($headers);
+        $this->assertTrue($response->isSuccess());
+
+        $headers = [
+            'HTTP/1.1 301 Moved Permanently',
+            'Content-Type: text/html',
+        ];
+        $response = new Response($headers, '');
+        $this->assertFalse($response->isSuccess());
+
+        $headers = [
+            'HTTP/1.1 404 Not Found',
+            'Content-Type: text/html',
+        ];
+        $response = new Response($headers, '');
+        $this->assertFalse($response->isSuccess());
+
+        $headers = [
+            'HTTP/1.1 500 Internal Server Error',
+            'Content-Type: text/html',
+        ];
+        $response = new Response($headers, '');
+        $this->assertFalse($response->isSuccess());
+    }
+
+    /**
      * Test isRedirect()
      *
      * @return void
