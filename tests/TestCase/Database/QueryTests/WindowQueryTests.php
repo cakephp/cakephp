@@ -38,12 +38,21 @@ class WindowQueryTests extends TestCase
      */
     protected $connection = null;
 
+    /**
+     * @var bool
+     */
+    protected $autoQuote;
+
+    /**
+     * @var bool
+     */
     protected $skipTests = false;
 
     public function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
+        $this->autoQuote = $this->connection->getDriver()->isAutoQuotingEnabled();
 
         $driver = $this->connection->getDriver();
         if (
@@ -73,12 +82,12 @@ class WindowQueryTests extends TestCase
             ->select('*')
             ->window('name', new WindowExpression())
             ->sql();
-        $this->assertEqualsSql('SELECT * WINDOW name AS ()', $sql);
+        $this->assertRegExpSql('SELECT \* WINDOW <name> AS \(\)', $sql, !$this->autoQuote);
 
         $sql = $query
             ->window('name2', new WindowExpression('name'))
             ->sql();
-        $this->assertEqualsSql('SELECT * WINDOW name AS (), name2 AS (name)', $sql);
+        $this->assertRegExpSql('SELECT \* WINDOW <name> AS \(\), <name2> AS \(<name>\)', $sql, !$this->autoQuote);
 
         $sql = $query
             ->window('name', function ($window, $query) {

@@ -27,7 +27,7 @@ use InvalidArgumentException;
 class WindowExpression implements ExpressionInterface, WindowInterface
 {
     /**
-     * @var string|null
+     * @var \Cake\Database\Expression\IdentifierExpression
      */
     protected $name;
 
@@ -52,11 +52,11 @@ class WindowExpression implements ExpressionInterface, WindowInterface
     protected $exclusion;
 
     /**
-     * @param string|null $name Window name
+     * @param string $name Window name
      */
-    public function __construct(?string $name = null)
+    public function __construct(string $name = '')
     {
-        $this->name = $name;
+        $this->name = new IdentifierExpression($name);
     }
 
     /**
@@ -69,7 +69,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
      */
     public function isNamedOnly(): bool
     {
-        return $this->name && (!$this->partitions && !$this->frame && !$this->order);
+        return $this->name->getIdentifier() && (!$this->partitions && !$this->frame && !$this->order);
     }
 
     /**
@@ -80,7 +80,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
      */
     public function name(string $name)
     {
-        $this->name = $name;
+        $this->name = new IdentifierExpression($name);
 
         return $this;
     }
@@ -239,8 +239,8 @@ class WindowExpression implements ExpressionInterface, WindowInterface
     public function sql(ValueBinder $generator): string
     {
         $clauses = [];
-        if ($this->name) {
-            $clauses[] = $this->name;
+        if ($this->name->getIdentifier()) {
+            $clauses[] = $this->name->sql($generator);
         }
 
         if ($this->partitions) {
@@ -295,6 +295,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
      */
     public function traverse(Closure $visitor)
     {
+        $visitor($this->name);
         foreach ($this->partitions as $partition) {
             $visitor($partition);
             $partition->traverse($visitor);
@@ -338,6 +339,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
      */
     public function __clone()
     {
+        $this->name = clone $this->name;
         foreach ($this->partitions as $i => $partition) {
             $this->partitions[$i] = clone $partition;
         }
