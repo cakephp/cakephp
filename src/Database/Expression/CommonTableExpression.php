@@ -29,7 +29,7 @@ class CommonTableExpression implements ExpressionInterface
     /**
      * The CTE name.
      *
-     * @var string|null
+     * @var \Cake\Database\Expression\IdentifierExpression
      */
     protected $name;
 
@@ -67,9 +67,9 @@ class CommonTableExpression implements ExpressionInterface
      * @param string $name The CTE name.
      * @param \Closure|\Cake\Database\ExpressionInterface $query CTE query
      */
-    public function __construct(?string $name = null, $query = null)
+    public function __construct(string $name = '', $query = null)
     {
-        $this->name = $name;
+        $this->name = new IdentifierExpression($name);
         if ($query) {
             $this->query($query);
         }
@@ -86,7 +86,7 @@ class CommonTableExpression implements ExpressionInterface
      */
     public function name(string $name)
     {
-        $this->name = $name;
+        $this->name = new IdentifierExpression($name);
 
         return $this;
     }
@@ -194,7 +194,7 @@ class CommonTableExpression implements ExpressionInterface
 
         return sprintf(
             '%s%s AS %s(%s)',
-            (string)$this->name,
+            $this->name->sql($generator),
             $fields,
             $suffix,
             $this->query ? $this->query->sql($generator) : ''
@@ -206,6 +206,7 @@ class CommonTableExpression implements ExpressionInterface
      */
     public function traverse(Closure $visitor)
     {
+        $visitor($this->name);
         foreach ($this->fields as $field) {
             $visitor($field);
             $field->traverse($visitor);

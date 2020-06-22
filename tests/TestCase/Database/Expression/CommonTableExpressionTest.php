@@ -123,16 +123,16 @@ class CommonTableExpressionTest extends TestCase
     public function testTraverse()
     {
         $query = $this->connection->newQuery()->select('1');
-        $field = new IdentifierExpression('field');
-        $cte = (new CommonTableExpression('test', $query))->field($field);
+        $cte = (new CommonTableExpression('test', $query))->field('field');
 
         $expressions = [];
         $cte->traverse(function ($expression) use (&$expressions) {
             $expressions[] = $expression;
         });
 
-        $this->assertEquals($field, $expressions[0]);
-        $this->assertEquals($query, $expressions[1]);
+        $this->assertEquals(new IdentifierExpression('test'), $expressions[0]);
+        $this->assertEquals(new IdentifierExpression('field'), $expressions[1]);
+        $this->assertEquals($query, $expressions[2]);
     }
 
     /**
