@@ -106,7 +106,7 @@ class Mysql extends Driver
     /**
      * Server type.
      *
-     * If the underlying server is MariaDB, it's value will get set to `'mariadb'`
+     * If the underlying server is MariaDB, its value will get set to `'mariadb'`
      * after `version()` method is called.
      *
      * @var string
@@ -114,7 +114,7 @@ class Mysql extends Driver
     protected $serverType = self::SERVER_TYPE_MYSQL;
 
     /**
-     * Mappping of feature to db server version for feature availability checks.
+     * Mapping of feature to db server version for feature availability checks.
      *
      * @var array
      */
