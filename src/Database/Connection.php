@@ -303,13 +303,11 @@ class Connection implements ConnectionInterface
     public function execute(string $query, array $params = [], array $types = []): StatementInterface
     {
         return $this->getDisconnectRetry()->run(function () use ($query, $params, $types) {
+            $statement = $this->prepare($query);
             if (!empty($params)) {
-                $statement = $this->prepare($query);
                 $statement->bind($params, $types);
-                $statement->execute();
-            } else {
-                $statement = $this->query($query);
             }
+            $statement->execute();
 
             return $statement;
         });
