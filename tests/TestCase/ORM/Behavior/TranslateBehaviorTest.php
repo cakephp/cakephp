@@ -894,7 +894,7 @@ class TranslateBehaviorTest extends TestCase
         $this->assertSame('New translated article', $article->get('title'));
         $this->assertSame('Content #1', $article->get('body'));
 
-        $table->setLocale(false);
+        $table->setLocale(null);
         $article = $table->find()->first();
         $this->assertEquals(1, $article->get('id'));
         $this->assertSame('First Article', $article->get('title'));

@@ -335,7 +335,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      */
     public function __call($method, $args)
     {
-        return call_user_func_array([$this->strategy, $method], $args);
+        return $this->strategy->{$method}(...$args);
     }
 
     /**

@@ -257,7 +257,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
      */
     protected function _customMethod(string $method, Throwable $exception): Response
     {
-        $result = call_user_func([$this, $method], $exception);
+        $result = $this->{$method}($exception);
         $this->_shutdown();
         if (is_string($result)) {
             $result = $this->controller->getResponse()->withStringBody($result);
