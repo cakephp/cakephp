@@ -37,6 +37,20 @@ class Mysql extends Driver
     protected const MAX_ALIAS_LENGTH = 256;
 
     /**
+     * Server type MySQL
+     *
+     * @var string
+     */
+    protected const SERVER_TYPE_MYSQL = 'mysql';
+
+    /**
+     * Server type MariaDB
+     *
+     * @var string
+     */
+    protected const SERVER_TYPE_MARIADB = 'mariadb';
+
+    /**
      * Base configuration settings for MySQL driver
      *
      * @var array
@@ -88,6 +102,34 @@ class Mysql extends Driver
      * @var string
      */
     protected $_endQuote = '`';
+
+    /**
+     * Server type.
+     *
+     * If the underlying server is MariaDB, its value will get set to `'mariadb'`
+     * after `version()` method is called.
+     *
+     * @var string
+     */
+    protected $serverType = self::SERVER_TYPE_MYSQL;
+
+    /**
+     * Mapping of feature to db server version for feature availability checks.
+     *
+     * @var array
+     */
+    protected $featuresToVersionMap = [
+        'mysql' => [
+            'json' => '5.7.0',
+            'cte' => '8.0.0',
+            'window' => '8.0.0',
+        ],
+        'mariadb' => [
+            'json' => '10.2.7',
+            'cte' => '10.2.1',
+            'window' => '10.2.0',
+        ],
+    ];
 
     /**
      * Establishes a connection to the database server
@@ -224,6 +266,39 @@ class Mysql extends Driver
     }
 
     /**
+     * Returns true if the connected server is MariaDB.
+     *
+     * @return bool
+     */
+    public function isMariadb(): bool
+    {
+        $this->version();
+
+        return $this->serverType === static::SERVER_TYPE_MARIADB;
+    }
+
+    /**
+     * Returns connected server version.
+     *
+     * @return string
+     */
+    public function version(): string
+    {
+        if ($this->_version === null) {
+            $this->connect();
+            $this->_version = (string)$this->_connection->getAttribute(PDO::ATTR_SERVER_VERSION);
+
+            if (strpos($this->_version, 'MariaDB') !== false) {
+                $this->serverType = static::SERVER_TYPE_MARIADB;
+                preg_match('/^(?:5\.5\.5-)?(\d+\.\d+\.\d+.*-MariaDB[^:]*)/', $this->_version, $matches);
+                $this->_version = $matches[1];
+            }
+        }
+
+        return $this->_version;
+    }
+
+    /**
      * Returns true if the server supports common table expressions.
      *
      * @return bool
@@ -231,7 +306,11 @@ class Mysql extends Driver
     public function supportsCTEs(): bool
     {
         if ($this->supportsCTEs === null) {
-            $this->supportsCTEs = version_compare($this->version(), '8.0.0', '>=');
+            $this->supportsCTEs = version_compare(
+                $this->version(),
+                $this->featuresToVersionMap[$this->serverType]['cte'],
+                '>='
+            );
         }
 
         return $this->supportsCTEs;
@@ -245,7 +324,11 @@ class Mysql extends Driver
     public function supportsNativeJson(): bool
     {
         if ($this->_supportsNativeJson === null) {
-            $this->_supportsNativeJson = version_compare($this->version(), '5.7.0', '>=');
+            $this->_supportsNativeJson = version_compare(
+                $this->version(),
+                $this->featuresToVersionMap[$this->serverType]['json'],
+                '>='
+            );
         }
 
         return $this->_supportsNativeJson;
@@ -259,7 +342,11 @@ class Mysql extends Driver
     public function supportsWindowFunctions(): bool
     {
         if ($this->_supportsWindowFunctions === null) {
-            $this->_supportsWindowFunctions = version_compare($this->version(), '8.0.0', '>=');
+            $this->_supportsWindowFunctions = version_compare(
+                $this->version(),
+                $this->featuresToVersionMap[$this->serverType]['window'],
+                '>='
+            );
         }
 
         return $this->_supportsWindowFunctions;
