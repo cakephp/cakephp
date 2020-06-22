@@ -101,7 +101,7 @@ class TextHelper extends Helper
      */
     public function __call(string $method, array $params)
     {
-        return call_user_func_array([$this->_engine, $method], $params);
+        return $this->_engine->{$method}(...$params);
     }
 
     /**

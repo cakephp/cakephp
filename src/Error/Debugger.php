@@ -947,7 +947,7 @@ class Debugger
         $links = implode(' ', $links);
 
         if (isset($tpl['callback']) && is_callable($tpl['callback'])) {
-            call_user_func($tpl['callback'], $data, compact('links', 'info'));
+            $tpl['callback']($data, compact('links', 'info'));
 
             return;
         }

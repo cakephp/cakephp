@@ -326,6 +326,6 @@ class PaginatorComponent extends Component
      */
     public function __call(string $method, array $args)
     {
-        return call_user_func_array([$this->_paginator, $method], $args);
+        return $this->_paginator->{$method}(...$args);
     }
 }

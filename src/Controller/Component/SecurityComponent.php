@@ -510,11 +510,13 @@ class SecurityComponent extends Component
      */
     protected function _callback(Controller $controller, string $method, array $params = [])
     {
-        if (!is_callable([$controller, $method])) {
+        $callable = [$controller, $method];
+
+        if (!is_callable($callable)) {
             throw new BadRequestException('The request has been black-holed');
         }
 
-        return call_user_func_array([&$controller, $method], $params);
+        return $callable(...$params);
     }
 
     /**

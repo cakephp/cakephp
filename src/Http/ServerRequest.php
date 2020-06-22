@@ -559,7 +559,7 @@ class ServerRequest implements ServerRequestInterface
             $header = $this->getEnv('http_' . $header);
             if ($header !== null) {
                 if (!is_string($value) && !is_bool($value) && is_callable($value)) {
-                    return call_user_func($value, $header);
+                    return $value($header);
                 }
 
                 return $header === $value;
@@ -1288,7 +1288,7 @@ class ServerRequest implements ServerRequestInterface
         if ($callback) {
             array_unshift($args, $input);
 
-            return call_user_func_array($callback, $args);
+            return $callback(...$args);
         }
 
         return $input;

@@ -953,7 +953,7 @@ class Hash
     {
         $values = (array)static::extract($data, $path);
 
-        return call_user_func($function, $values);
+        return $function($values);
     }
 
     /**
