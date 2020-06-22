@@ -143,6 +143,9 @@ class CommonTableExpressionTest extends TestCase
         $cte = new CommonTableExpression('test', function () {
             return $this->connection->newQuery()->select('1');
         });
+        $cte2 = (clone $cte)->name('test2');
+        $this->assertNotSame($cte->sql(new ValueBinder()), $cte2->sql(new ValueBinder()));
+
         $cte2 = (clone $cte)->field('col1');
         $this->assertNotSame($cte->sql(new ValueBinder()), $cte2->sql(new ValueBinder()));
     }

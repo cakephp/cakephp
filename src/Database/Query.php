@@ -1428,7 +1428,7 @@ class Query implements ExpressionInterface, IteratorAggregate
             }
         }
 
-        $this->_parts['window'][] = ['name' => $name, 'window' => $window];
+        $this->_parts['window'][] = ['name' => new IdentifierExpression($name), 'window' => $window];
         $this->_dirty();
 
         return $this;

@@ -227,6 +227,7 @@ class CommonTableExpression implements ExpressionInterface
      */
     public function __clone()
     {
+        $this->name = clone $this->name;
         if ($this->query) {
             $this->query = clone $this->query;
         }

@@ -427,6 +427,10 @@ class WindowExpressionTest extends TestCase
      */
     public function testCloning()
     {
+        $w1 = (new WindowExpression())->name('test');
+        $w2 = (clone $w1)->name('test2');
+        $this->assertNotSame($w1->sql(new ValueBinder()), $w2->sql(new ValueBinder()));
+
         $w1 = (new WindowExpression())->partition('test');
         $w2 = (clone $w1)->partition('new');
         $this->assertNotSame($w1->sql(new ValueBinder()), $w2->sql(new ValueBinder()));
