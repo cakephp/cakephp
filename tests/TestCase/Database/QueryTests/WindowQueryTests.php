@@ -173,7 +173,7 @@ class WindowQueryTests extends TestCase
             $driver = $this->connection->getDriver();
             $skip = $driver instanceof \Cake\Database\Driver\Sqlserver;
             if ($driver instanceof \Cake\Database\Driver\Sqlite) {
-                $skip = version_compare($driver->getVersion(), '3.28.0', '<');
+                $skip = version_compare($driver->version(), '3.28.0', '<');
             }
         }
         $this->skipIf($skip);
