@@ -396,10 +396,10 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
      * @param array $options The options provided by the user.
      * @param string $class The class name to use for defaults.
      * @return array Options with defaults applied.
+     * @psalm-param class-string<\Cake\I18n\FrozenDate>|class-string<\Cake\I18n\FrozenTime> $class
      */
     protected function _options(array $options, string $class): array
     {
-        /** @psalm-suppress InvalidPropertyFetch */
         $options += [
             'from' => $class::now(),
             'timezone' => null,
