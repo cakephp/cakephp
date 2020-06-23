@@ -354,7 +354,7 @@ class ViewBuilder implements JsonSerializable, Serializable
 
     /**
      * Sets the name of the view file to render. The name specified is the
-     * filename in /templates/<SubFolder> without the .php extension.
+     * filename in `templates/<SubFolder>/` without the .php extension.
      *
      * @param string|null $name View file name to set, or null to remove the template name.
      * @return $this
@@ -368,7 +368,7 @@ class ViewBuilder implements JsonSerializable, Serializable
 
     /**
      * Gets the name of the view file to render. The name specified is the
-     * filename in /templates/<SubFolder> without the .php extension.
+     * filename in `templates/<SubFolder>/` without the .php extension.
      *
      * @return string|null
      */
@@ -379,7 +379,7 @@ class ViewBuilder implements JsonSerializable, Serializable
 
     /**
      * Sets the name of the layout file to render the view inside of.
-     * The name specified is the filename of the layout in /templates/Layout
+     * The name specified is the filename of the layout in `templates/layout/`
      * without the .php extension.
      *
      * @param string|null $name Layout file name to set.
