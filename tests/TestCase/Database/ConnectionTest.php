@@ -27,6 +27,7 @@ use Cake\Database\Statement\BufferedStatement;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
+use Error;
 use Exception;
 use ReflectionMethod;
 use ReflectionProperty;
@@ -1116,6 +1117,32 @@ class ConnectionTest extends TestCase
         $connection->transactional(function ($conn) use ($connection) {
             $this->assertSame($connection, $conn);
             throw new \InvalidArgumentException();
+        });
+    }
+
+    /**
+     * Tests that the transactional method will rollback the transaction
+     * and throw the same error if the callback raises one
+     *
+     * @return void
+     * @throws \Error
+     */
+    public function testTransactionalWithPHP7Error()
+    {
+        $this->skipIf(version_compare(PHP_VERSION, '7.0.0', '<'), 'Error class only exists since PHP 7.');
+
+        $this->expectException(\Error::class);
+        $driver = $this->getMockFormDriver();
+        $connection = $this->getMockBuilder(Connection::class)
+            ->setMethods(['connect', 'commit', 'begin', 'rollback'])
+            ->setConstructorArgs([['driver' => $driver]])
+            ->getMock();
+        $connection->expects($this->at(0))->method('begin');
+        $connection->expects($this->at(1))->method('rollback');
+        $connection->expects($this->never())->method('commit');
+        $connection->transactional(function ($conn) use ($connection) {
+            $this->assertSame($connection, $conn);
+            throw new \Error();
         });
     }
 

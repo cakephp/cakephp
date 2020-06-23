@@ -29,6 +29,7 @@ use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Log\Log;
 use Exception;
+use Throwable;
 
 /**
  * Represents a connection with a database server.
@@ -743,6 +744,9 @@ class Connection implements ConnectionInterface
 
         try {
             $result = $transaction($this);
+        } catch (Throwable $e) {
+            $this->rollback(false);
+            throw $e;
         } catch (Exception $e) {
             $this->rollback(false);
             throw $e;
