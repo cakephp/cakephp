@@ -78,12 +78,12 @@ interface WindowInterface
      * If you need to use 'FOLLOWING' with frame start or
      * 'PRECEDING' with frame end, use `frame()` instead.
      *
-     * @param int|null $start Frame start
-     * @param int|null $end Frame end
+     * @param int|string|\Cake\Database\ExpressionInterface|null $start Frame start
+     * @param int|string|\Cake\Database\ExpressionInterface|null $end Frame end
      *  If not passed in, only frame start SQL will be generated.
      * @return $this
      */
-    public function range(?int $start, ?int $end = 0);
+    public function range($start, $end = 0);
 
     /**
      * Adds a simple rows frame to the window.
@@ -122,9 +122,9 @@ interface WindowInterface
      *  - `null` - 'UNBOUNDED'
      *
      * @param string $type Frame type
-     * @param int|null $startOffset Frame start offset
+     * @param int|string|\Cake\Database\ExpressionInterface|null $startOffset Frame start offset
      * @param string $startDirection Frame start direction
-     * @param int|null $endOffset Frame end offset
+     * @param int|string|\Cake\Database\ExpressionInterface|null $endOffset Frame end offset
      * @param string $endDirection Frame end direction
      * @return $this
      * @throws \InvalidArgumentException WHen offsets are negative.
@@ -134,9 +134,9 @@ interface WindowInterface
      */
     public function frame(
         string $type,
-        ?int $startOffset,
+        $startOffset,
         string $startDirection,
-        ?int $endOffset = null,
+        $endOffset = null,
         string $endDirection = self::FOLLOWING
     );
 

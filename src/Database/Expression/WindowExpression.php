@@ -19,7 +19,6 @@ namespace Cake\Database\Expression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\ValueBinder;
 use Closure;
-use InvalidArgumentException;
 
 /**
  * This represents a SQL window expression used by aggregate and window functions.
@@ -138,7 +137,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
     /**
      * @inheritDoc
      */
-    public function range(?int $start, ?int $end = 0)
+    public function range($start, $end = 0)
     {
         if (func_num_args() === 1) {
             return $this->frame(self::RANGE, $start, self::PRECEDING);
@@ -176,15 +175,11 @@ class WindowExpression implements ExpressionInterface, WindowInterface
      */
     public function frame(
         string $type,
-        ?int $startOffset,
+        $startOffset,
         string $startDirection,
-        ?int $endOffset = null,
+        $endOffset = null,
         string $endDirection = self::FOLLOWING
     ) {
-        if ($startOffset < 0 || $endOffset < 0) {
-            throw new InvalidArgumentException('Frame offsets must be non-negative.');
-        }
-
         $this->frame = [
             'type' => $type,
             'start' => [
@@ -306,6 +301,19 @@ class WindowExpression implements ExpressionInterface, WindowInterface
             $this->order->traverse($visitor);
         }
 
+        if ($this->frame !== null) {
+            $offset = $this->frame['start']['offset'];
+            if ($offset instanceof ExpressionInterface) {
+                $visitor($offset);
+                $offset->traverse($visitor);
+            }
+            $offset = $this->frame['end']['offset'] ?? null;
+            if ($offset instanceof ExpressionInterface) {
+                $visitor($offset);
+                $offset->traverse($visitor);
+            }
+        }
+
         return $this;
     }
 
@@ -313,14 +321,18 @@ class WindowExpression implements ExpressionInterface, WindowInterface
      * Builds frame offset sql.
      *
      * @param \Cake\Database\ValueBinder $generator Value binder
-     * @param int|null $offset Frame offset
+     * @param int|string|\Cake\Database\ExpressionInterface|null $offset Frame offset
      * @param string $direction Frame offset direction
      * @return string
      */
-    protected function buildOffsetSql(ValueBinder $generator, ?int $offset, string $direction): string
+    protected function buildOffsetSql(ValueBinder $generator, $offset, string $direction): string
     {
         if ($offset === 0) {
             return 'CURRENT ROW';
+        }
+
+        if ($offset instanceof ExpressionInterface) {
+            $offset = $offset->sql($generator);
         }
 
         $sql = sprintf(
