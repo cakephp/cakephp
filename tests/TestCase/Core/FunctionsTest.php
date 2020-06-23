@@ -110,6 +110,8 @@ class FunctionsTest extends TestCase
      */
     public function testDeprecationWarningLevelDisabled()
     {
+        $this->expectNotToPerformAssertions();
+
         $this->withErrorReporting(E_ALL ^ E_USER_DEPRECATED, function () {
             deprecationWarning('This is going away');
         });
