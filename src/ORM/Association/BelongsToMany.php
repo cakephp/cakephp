@@ -1195,6 +1195,10 @@ class BelongsToMany extends Association
                 $jointEntities = $this->_collectJointEntities($sourceEntity, $targetEntities);
                 $inserts = $this->_diffLinks($existing, $jointEntities, $targetEntities, $options);
 
+                if ($inserts === false) {
+                    return false;
+                }
+
                 if ($inserts && !$this->_saveTarget($sourceEntity, $inserts, $options)) {
                     return false;
                 }
@@ -1228,14 +1232,14 @@ class BelongsToMany extends Association
      * @param array $targetEntities entities in target table that are related to
      * the `$jointEntities`
      * @param array $options list of options accepted by `Table::delete()`
-     * @return array
+     * @return array|false Array of entities not deleted or false in case of deletion failure for atomic saves.
      */
     protected function _diffLinks(
         Query $existing,
         array $jointEntities,
         array $targetEntities,
         array $options = []
-    ): array {
+    ) {
         $junction = $this->junction();
         $target = $this->getTarget();
         $belongsTo = $junction->getAssociation($target->getAlias());
@@ -1281,9 +1285,9 @@ class BelongsToMany extends Association
             }
         }
 
-        if ($deletes) {
-            foreach ($deletes as $entity) {
-                $junction->delete($entity, $options);
+        foreach ($deletes as $entity) {
+            if (!$junction->delete($entity, $options) && !empty($options['atomic'])) {
+                return false;
             }
         }
 
