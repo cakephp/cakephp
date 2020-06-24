@@ -76,7 +76,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     /**
      * @inheritDoc
      */
-    public function range(?int $start, ?int $end = 0)
+    public function range($start, $end = 0)
     {
         $this->over();
         if (func_num_args() === 1) {
@@ -123,9 +123,9 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
      */
     public function frame(
         string $type,
-        ?int $startOffset,
+        $startOffset,
         string $startDirection,
-        ?int $endOffset = null,
+        $endOffset = null,
         string $endDirection = self::FOLLOWING
     ) {
         $this->over();

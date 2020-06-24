@@ -17,12 +17,12 @@ namespace Cake\Test\TestCase\Database\Expression;
 
 use Cake\Database\Expression\AggregateExpression;
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\OrderClauseExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\WindowExpression;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
-use InvalidArgumentException;
 
 /**
  * Tests WindowExpression class
@@ -161,6 +161,18 @@ class WindowExpressionTest extends TestCase
         $w = (new WindowExpression())->range(1, 2);
         $this->assertEqualsSql(
             'RANGE BETWEEN 1 PRECEDING AND 2 FOLLOWING',
+            $w->sql(new ValueBinder())
+        );
+
+        $w = (new WindowExpression())->range("'1 day'", "'10 days'");
+        $this->assertRegExpSql(
+            "RANGE BETWEEN '1 day' PRECEDING AND '10 days' FOLLOWING",
+            $w->sql(new ValueBinder())
+        );
+
+        $w = (new WindowExpression())->range(new QueryExpression("'1 day'"), new QueryExpression("'10 days'"));
+        $this->assertRegExpSql(
+            "RANGE BETWEEN '1 day' PRECEDING AND '10 days' FOLLOWING",
             $w->sql(new ValueBinder())
         );
 
@@ -368,28 +380,6 @@ class WindowExpressionTest extends TestCase
     }
 
     /**
-     * Tests windows with invalid offsets
-     *
-     * @return void
-     */
-    public function testInvalidStart()
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $w = (new WindowExpression())->range(-2, 1);
-    }
-
-    /**
-     * Tests windows with invalid offsets
-     *
-     * @return void
-     */
-    public function testInvalidEnd()
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $w = (new WindowExpression())->range(0, -2);
-    }
-
-    /**
      * Tests named windows
      *
      * @return void
@@ -418,6 +408,39 @@ class WindowExpressionTest extends TestCase
             'new_name ORDER BY test',
             $w->sql(new ValueBinder())
         );
+    }
+
+    /**
+     * Tests traversing window expressions.
+     *
+     * @return void
+     */
+    public function testTraverse()
+    {
+        $w = (new WindowExpression('test1'))
+            ->partition('test2')
+            ->order('test3')
+            ->range(new QueryExpression("'1 day'"));
+
+        $expressions = [];
+        $w->traverse(function ($expression) use (&$expressions) {
+            $expressions[] = $expression;
+        });
+
+        $this->assertEquals(new IdentifierExpression('test1'), $expressions[0]);
+        $this->assertEquals(new IdentifierExpression('test2'), $expressions[1]);
+        $this->assertEquals((new OrderByExpression())->add('test3'), $expressions[2]);
+        $this->assertEquals(new QueryExpression("'1 day'"), $expressions[3]);
+
+        $w->range(new QueryExpression("'1 day'"), new QueryExpression("'10 days'"));
+
+        $expressions = [];
+        $w->traverse(function ($expression) use (&$expressions) {
+            $expressions[] = $expression;
+        });
+
+        $this->assertEquals(new QueryExpression("'1 day'"), $expressions[3]);
+        $this->assertEquals(new QueryExpression("'10 days'"), $expressions[4]);
     }
 
     /**
