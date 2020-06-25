@@ -79,11 +79,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     public function range($start, $end = 0)
     {
         $this->over();
-        if (func_num_args() === 1) {
-            $this->window->frame(self::RANGE, $start, self::PRECEDING);
-        } else {
-            $this->window->frame(self::RANGE, $start, self::PRECEDING, $end, self::FOLLOWING);
-        }
+        $this->window->range($start, $end);
 
         return $this;
     }
@@ -94,11 +90,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     public function rows(?int $start, ?int $end = 0)
     {
         $this->over();
-        if (func_num_args() === 1) {
-            $this->window->frame(self::ROWS, $start, self::PRECEDING);
-        } else {
-            $this->window->frame(self::ROWS, $start, self::PRECEDING, $end, self::FOLLOWING);
-        }
+        $this->window->rows($start, $end);
 
         return $this;
     }
@@ -109,11 +101,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     public function groups(?int $start, ?int $end = 0)
     {
         $this->over();
-        if (func_num_args() === 1) {
-            $this->window->frame(self::GROUPS, $start, self::PRECEDING);
-        } else {
-            $this->window->frame(self::GROUPS, $start, self::PRECEDING, $end, self::FOLLOWING);
-        }
+        $this->window->groups($start, $end);
 
         return $this;
     }
@@ -125,15 +113,11 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
         string $type,
         $startOffset,
         string $startDirection,
-        $endOffset = null,
-        string $endDirection = self::FOLLOWING
+        $endOffset,
+        string $endDirection
     ) {
         $this->over();
-        if (func_num_args() === 3) {
-            $this->window->frame($type, $startOffset, $startDirection);
-        } else {
-            $this->window->frame($type, $startOffset, $startDirection, $endOffset, $endDirection);
-        }
+        $this->window->frame($type, $startOffset, $startDirection, $endOffset, $endDirection);
 
         return $this;
     }

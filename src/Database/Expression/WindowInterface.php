@@ -136,8 +136,8 @@ interface WindowInterface
         string $type,
         $startOffset,
         string $startDirection,
-        $endOffset = null,
-        string $endDirection = self::FOLLOWING
+        $endOffset,
+        string $endDirection
     );
 
     /**

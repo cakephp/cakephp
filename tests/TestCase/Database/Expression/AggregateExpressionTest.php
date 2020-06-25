@@ -66,7 +66,7 @@ class AggregateExpressionTest extends FunctionExpressionTest
 
         $f = (new AggregateExpression('MyFunction'))->range(null);
         $this->assertEqualsSql(
-            'MyFunction() OVER (RANGE UNBOUNDED PRECEDING)',
+            'MyFunction() OVER (RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)',
             $f->sql(new ValueBinder())
         );
 
@@ -78,7 +78,7 @@ class AggregateExpressionTest extends FunctionExpressionTest
 
         $f = (new AggregateExpression('MyFunction'))->rows(null);
         $this->assertEqualsSql(
-            'MyFunction() OVER (ROWS UNBOUNDED PRECEDING)',
+            'MyFunction() OVER (ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)',
             $f->sql(new ValueBinder())
         );
 
@@ -90,23 +90,13 @@ class AggregateExpressionTest extends FunctionExpressionTest
 
         $f = (new AggregateExpression('MyFunction'))->groups(null);
         $this->assertEqualsSql(
-            'MyFunction() OVER (GROUPS UNBOUNDED PRECEDING)',
+            'MyFunction() OVER (GROUPS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)',
             $f->sql(new ValueBinder())
         );
 
         $f = (new AggregateExpression('MyFunction'))->groups(null, null);
         $this->assertEqualsSql(
             'MyFunction() OVER (GROUPS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)',
-            $f->sql(new ValueBinder())
-        );
-
-        $f = (new AggregateExpression('MyFunction'))->frame(
-            AggregateExpression::RANGE,
-            2,
-            AggregateExpression::PRECEDING
-        );
-        $this->assertEqualsSql(
-            'MyFunction() OVER (RANGE 2 PRECEDING)',
             $f->sql(new ValueBinder())
         );
 
@@ -130,19 +120,19 @@ class AggregateExpressionTest extends FunctionExpressionTest
 
         $f = (new AggregateExpression('MyFunction'))->range(null)->excludeCurrent();
         $this->assertEqualsSql(
-            'MyFunction() OVER (RANGE UNBOUNDED PRECEDING EXCLUDE CURRENT ROW)',
+            'MyFunction() OVER (RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW EXCLUDE CURRENT ROW)',
             $f->sql(new ValueBinder())
         );
 
         $f = (new AggregateExpression('MyFunction'))->range(null)->excludeGroup();
         $this->assertEqualsSql(
-            'MyFunction() OVER (RANGE UNBOUNDED PRECEDING EXCLUDE GROUP)',
+            'MyFunction() OVER (RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW EXCLUDE GROUP)',
             $f->sql(new ValueBinder())
         );
 
         $f = (new AggregateExpression('MyFunction'))->range(null)->excludeTies();
         $this->assertEqualsSql(
-            'MyFunction() OVER (RANGE UNBOUNDED PRECEDING EXCLUDE TIES)',
+            'MyFunction() OVER (RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW EXCLUDE TIES)',
             $f->sql(new ValueBinder())
         );
     }

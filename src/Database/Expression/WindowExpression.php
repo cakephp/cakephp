@@ -139,10 +139,6 @@ class WindowExpression implements ExpressionInterface, WindowInterface
      */
     public function range($start, $end = 0)
     {
-        if (func_num_args() === 1) {
-            return $this->frame(self::RANGE, $start, self::PRECEDING);
-        }
-
         return $this->frame(self::RANGE, $start, self::PRECEDING, $end, self::FOLLOWING);
     }
 
@@ -151,10 +147,6 @@ class WindowExpression implements ExpressionInterface, WindowInterface
      */
     public function rows(?int $start, ?int $end = 0)
     {
-        if (func_num_args() === 1) {
-            return $this->frame(self::ROWS, $start, self::PRECEDING);
-        }
-
         return $this->frame(self::ROWS, $start, self::PRECEDING, $end, self::FOLLOWING);
     }
 
@@ -163,10 +155,6 @@ class WindowExpression implements ExpressionInterface, WindowInterface
      */
     public function groups(?int $start, ?int $end = 0)
     {
-        if (func_num_args() === 1) {
-            return $this->frame(self::GROUPS, $start, self::PRECEDING);
-        }
-
         return $this->frame(self::GROUPS, $start, self::PRECEDING, $end, self::FOLLOWING);
     }
 
@@ -177,8 +165,8 @@ class WindowExpression implements ExpressionInterface, WindowInterface
         string $type,
         $startOffset,
         string $startDirection,
-        $endOffset = null,
-        string $endDirection = self::FOLLOWING
+        $endOffset,
+        string $endDirection
     ) {
         $this->frame = [
             'type' => $type,
@@ -186,14 +174,11 @@ class WindowExpression implements ExpressionInterface, WindowInterface
                 'offset' => $startOffset,
                 'direction' => $startDirection,
             ],
-        ];
-
-        if (func_num_args() > 3) {
-            $this->frame['end'] = [
+            'end' => [
                 'offset' => $endOffset,
                 'direction' => $endDirection,
-            ];
-        }
+            ],
+        ];
 
         return $this;
     }
@@ -252,28 +237,18 @@ class WindowExpression implements ExpressionInterface, WindowInterface
         }
 
         if ($this->frame) {
-            $offset = $this->buildOffsetSql(
+            $start = $this->buildOffsetSql(
                 $generator,
                 $this->frame['start']['offset'],
                 $this->frame['start']['direction']
             );
-
-            $frameSql = sprintf(
-                '%s %s%s',
-                $this->frame['type'],
-                isset($this->frame['end']) ? 'BETWEEN ' : '',
-                $offset
+            $end = $this->buildOffsetSql(
+                $generator,
+                $this->frame['end']['offset'],
+                $this->frame['end']['direction']
             );
 
-            if (isset($this->frame['end'])) {
-                $offset = $this->buildOffsetSql(
-                    $generator,
-                    $this->frame['end']['offset'],
-                    $this->frame['end']['direction']
-                );
-
-                $frameSql .= ' AND ' . $offset;
-            }
+            $frameSql = sprintf('%s BETWEEN %s AND %s', $this->frame['type'], $start, $end);
 
             if ($this->exclusion !== null) {
                 $frameSql .= ' EXCLUDE ' . $this->exclusion;
