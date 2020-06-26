@@ -16,6 +16,9 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Expression;
 
 use Cake\Database\Expression\AggregateExpression;
+use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\QueryExpression;
+use Cake\Database\Expression\WindowExpression;
 use Cake\Database\ValueBinder;
 
 /**
@@ -41,6 +44,34 @@ class AggregateExpressionTest extends FunctionExpressionTest
         $f = (new AggregateExpression('MyFunction'))->over('name');
         $this->assertEqualsSql(
             'MyFunction() OVER name',
+            $f->sql(new ValueBinder())
+        );
+    }
+
+    /**
+     * Tests filter() clauses.
+     *
+     * @return void
+     */
+    public function testFilter()
+    {
+        $f = (new AggregateExpression('MyFunction'))->filter(['this' => new IdentifierExpression('that')]);
+        $this->assertEqualsSql(
+            'MyFunction() FILTER (WHERE this = (that))',
+            $f->sql(new ValueBinder())
+        );
+
+        $f->filter(function (QueryExpression $q) {
+            return $q->add(['this2' => new IdentifierExpression('that2')]);
+        });
+        $this->assertEqualsSql(
+            'MyFunction() FILTER (WHERE (this = (that) AND this2 = (that2)))',
+            $f->sql(new ValueBinder())
+        );
+
+        $f->over();
+        $this->assertEqualsSql(
+            'MyFunction() FILTER (WHERE (this = (that) AND this2 = (that2))) OVER ()',
             $f->sql(new ValueBinder())
         );
     }
@@ -135,6 +166,26 @@ class AggregateExpressionTest extends FunctionExpressionTest
             'MyFunction() OVER (RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW EXCLUDE TIES)',
             $f->sql(new ValueBinder())
         );
+    }
+
+    /**
+     * Tests traversing aggregate expressions.
+     *
+     * @return void
+     */
+    public function testTraverse()
+    {
+        $w = (new AggregateExpression('MyFunction'))
+            ->filter(['this' => true])
+            ->over();
+
+        $expressions = [];
+        $w->traverse(function ($expression) use (&$expressions) {
+            $expressions[] = $expression;
+        });
+
+        $this->assertEquals(new QueryExpression(['this' => true]), $expressions[0]);
+        $this->assertEquals(new WindowExpression(), $expressions[2]);
     }
 
     /**
