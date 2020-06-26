@@ -853,12 +853,19 @@ abstract class TestCase extends BaseTestCase
         [, $baseClass] = pluginSplit($alias);
         $options += ['alias' => $baseClass, 'connection' => $connection];
         $options += $locator->getConfig($alias);
+        $existingMethods = array_intersect(get_class_methods($className), $methods);
+        $nonExistingMethods = array_diff($methods, $existingMethods);
+
+        $builder = $this->getMockBuilder($className)
+            ->onlyMethods($existingMethods)
+            ->setConstructorArgs([$options]);
+
+        if ($nonExistingMethods) {
+            $builder->addMethods($nonExistingMethods);
+        }
 
         /** @var \Cake\ORM\Table $mock */
-        $mock = $this->getMockBuilder($className)
-            ->onlyMethods($methods)
-            ->setConstructorArgs([$options])
-            ->getMock();
+        $mock = $builder->getMock();
 
         if (empty($options['entityClass']) && $mock->getEntityClass() === Entity::class) {
             $parts = explode('\\', $className);
