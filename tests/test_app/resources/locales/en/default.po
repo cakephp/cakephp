@@ -74,3 +74,9 @@ msgstr[1] "%d is 2-4\n"
 
 msgid "this is a \"quoted string\""
 msgstr "this is a \"quoted string\" (translated)"
+""
+
+msgid "new line: \n"
+"no new line: \\n"
+msgstr "new line: \n"
+"no new line: \\n (translated)"
