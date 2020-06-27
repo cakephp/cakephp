@@ -29,9 +29,6 @@ matrix:
     - php: 7.2
       env: PREFER_LOWEST=1
 
-  allow_failures:
-    - php: 'nightly'
-
 before_install:
   - echo cakephp version && tail -1 VERSION.txt
 
