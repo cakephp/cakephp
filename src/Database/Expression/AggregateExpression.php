@@ -28,9 +28,38 @@ use Closure;
 class AggregateExpression extends FunctionExpression implements WindowInterface
 {
     /**
+     * @var \Cake\Database\Expression\QueryExpression
+     */
+    protected $filter;
+
+    /**
      * @var \Cake\Database\Expression\WindowExpression
      */
     protected $window;
+
+    /**
+     * Adds conditions to the FILTER clause. The conditions are the same format as
+     * `Query::where()`.
+     *
+     * @param string|array|\Cake\Database\ExpressionInterface|\Closure $conditions The conditions to filter on.
+     * @param array $types associative array of type names used to bind values to query
+     * @return $this
+     * @see \Cake\Database\Query::where()
+     */
+    public function filter($conditions, array $types = [])
+    {
+        if ($this->filter === null) {
+            $this->filter = new QueryExpression();
+        }
+
+        if ($conditions instanceof Closure) {
+            $conditions = $conditions(new QueryExpression());
+        }
+
+        $this->filter->add($conditions, $types);
+
+        return $this;
+    }
 
     /**
      * Adds an empty `OVER()` window expression or a named window epression.
@@ -161,6 +190,9 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     public function sql(ValueBinder $generator): string
     {
         $sql = parent::sql($generator);
+        if ($this->filter !== null) {
+            $sql .= ' FILTER (WHERE ' . $this->filter->sql($generator) . ')';
+        }
         if ($this->window !== null) {
             if ($this->window->isNamedOnly()) {
                 $sql .= ' OVER ' . $this->window->sql($generator);
@@ -178,7 +210,12 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     public function traverse(Closure $visitor)
     {
         parent::traverse($visitor);
+        if ($this->filter !== null) {
+            $visitor($this->filter);
+            $this->filter->traverse($visitor);
+        }
         if ($this->window !== null) {
+            $visitor($this->window);
             $this->window->traverse($visitor);
         }
 
@@ -206,6 +243,9 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     public function __clone()
     {
         parent::__clone();
+        if ($this->filter !== null) {
+            $this->filter = clone $this->filter;
+        }
         if ($this->window !== null) {
             $this->window = clone $this->window;
         }
