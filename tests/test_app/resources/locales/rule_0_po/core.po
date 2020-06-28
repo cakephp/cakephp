@@ -19,3 +19,8 @@ msgid "%d = 1 (from core)"
 msgid_plural "%d = 0 or > 1 (from core)"
 msgstr[0] "%d ends with any # (from core translated)"
 
+msgid "new line: \n"
+"no new line: \\n"
+msgstr "new line: \n"
+"no new line: \\n (translated)"
+

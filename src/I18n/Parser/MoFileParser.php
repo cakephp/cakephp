@@ -121,11 +121,11 @@ class MoFileParser
 
             if ($pluralId !== null || strpos($translated, "\000") !== false) {
                 $translated = explode("\000", $translated);
-                $plurals = $pluralId !== null ? array_map('stripcslashes', $translated) : null;
+                $plurals = $pluralId !== null ? $translated : null;
                 $translated = $translated[0];
             }
 
-            $singular = stripcslashes($translated);
+            $singular = $translated;
             if ($context !== null) {
                 $messages[$singularId]['_context'][$context] = $singular;
                 if ($pluralId !== null) {
