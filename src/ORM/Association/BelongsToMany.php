@@ -283,8 +283,16 @@ class BelongsToMany extends Association
         if (is_string($table)) {
             $table = $tableLocator->get($table);
         }
+
         $source = $this->getSource();
         $target = $this->getTarget();
+        if ($source->getAlias() === $target->getAlias()) {
+            throw new InvalidArgumentException(sprintf(
+                'The `%s` association on `%s` cannot target the same table.',
+                $this->getName(),
+                $source->getAlias()
+            ));
+        }
 
         $this->_generateSourceAssociations($table, $source);
         $this->_generateTargetAssociations($table, $source, $target);
@@ -409,7 +417,7 @@ class BelongsToMany extends Association
                 $target !== $belongsTo->getTarget()
             ) {
                 throw new InvalidArgumentException(
-                    "The existing `{$tAlias}` association on `{$junction->getAlias()} " .
+                    "The existing `{$tAlias}` association on `{$junction->getAlias()}` " .
                     "is incompatible with the `{$this->getName()}` association on `{$source->getAlias()}`"
                 );
             }
