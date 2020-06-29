@@ -282,6 +282,23 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
+     * Tests same source and target table failure.
+     *
+     * @return void
+     */
+    public function testSameSourceTargetJunction()
+    {
+        $assoc = new BelongsToMany('This', [
+            'sourceTable' => $this->article,
+            'targetTable' => $this->article,
+        ]);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The `This` association on `Articles` cannot target the same table.');
+        $assoc->junction();
+    }
+
+    /**
      * Tests saveStrategy
      *
      * @return void

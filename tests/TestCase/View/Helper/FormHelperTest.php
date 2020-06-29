@@ -5376,6 +5376,8 @@ class FormHelperTest extends TestCase
      */
     public function testErrorsForBelongsToManySelect()
     {
+        $this->loadFixtures();
+
         $spacecraft = [
             1 => 'Orion',
             2 => 'Helios',
