@@ -359,6 +359,13 @@ class TestCaseTest extends TestCase
 
         $Tags = $this->getMockForModel('Tags', ['save']);
         $this->assertSame('TestApp\Model\Entity\Tag', $Tags->getEntityClass());
+
+        $SluggedPosts = $this->getMockForModel('SluggedPosts', ['save', 'slugify']);
+        $SluggedPosts->expects($this->at(0))
+            ->method('slugify')
+            ->with('some value')
+            ->will($this->returnValue('mocked'));
+        $this->assertSame('mocked', $SluggedPosts->slugify('some value'));
     }
 
     /**
