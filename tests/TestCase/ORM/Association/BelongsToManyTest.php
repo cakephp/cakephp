@@ -294,6 +294,7 @@ class BelongsToManyTest extends TestCase
         ]);
 
         $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The `This` association on `Articles` cannot target the same table.');
         $assoc->junction();
     }
 
