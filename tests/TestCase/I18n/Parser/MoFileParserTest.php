@@ -66,7 +66,7 @@ class MoFileParserTest extends TestCase
         $parser = new MoFileParser();
         $file = APP . 'Locale' . DS . 'rule_0_mo' . DS . 'core.mo';
         $messages = $parser->parse($file);
-        $this->assertCount(3, $messages);
+        $this->assertCount(4, $messages);
         $expected = [
             'Plural Rule 1 (from core)' => [
                 '_context' => [
@@ -83,6 +83,11 @@ class MoFileParserTest extends TestCase
                     '' => [
                         '%d ends with any # (from core translated)',
                     ],
+                ],
+            ],
+            "new line: \nno new line: \\n" => [
+                '_context' => [
+                    '' => "new line: \nno new line: \\n (translated)",
                 ],
             ],
         ];
