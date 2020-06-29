@@ -66,8 +66,8 @@ before_install:
   - if [[ ${TRAVIS_PHP_VERSION:0:1} == "5" ]] ; then echo "yes" | pecl install apcu-4.0.11 || true; fi
   - |
       if [[ ${TRAVIS_PHP_VERSION:0:1} == "5" && $DB = 'mysql' ]]; then
-        wget http://xcache.lighttpd.net/pub/Releases/3.2.0/xcache-3.2.0.tar.gz
-        tar xf xcache-3.2.0.tar.gz
+        wget https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/xcache/3.2.0-1build1/xcache_3.2.0.orig.tar.gz
+        tar xf xcache_3.2.0.orig.tar.gz
         pushd xcache-3.2.0
         phpize; ./configure
         make
