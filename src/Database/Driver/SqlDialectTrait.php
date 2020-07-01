@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Driver;
 
-use Cake\Database\Expression\Comparison;
+use Cake\Database\Expression\ComparisonExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\IdentifierQuoter;
 use Cake\Database\Query;
@@ -232,7 +232,7 @@ trait SqlDialectTrait
         $conditions = $query->clause('where');
         if ($conditions) {
             $conditions->traverse(function ($expression) {
-                if ($expression instanceof Comparison) {
+                if ($expression instanceof ComparisonExpression) {
                     $field = $expression->getField();
                     if (
                         is_string($field) &&

@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\Database\Expression\Comparison;
+use Cake\Database\Expression\ComparisonExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
@@ -830,8 +830,8 @@ class QueryRegressionTest extends TestCase
         $query = $table->find();
         $query->where([
             'OR' => [
-                new Comparison('id', 1, 'integer', '>'),
-                new Comparison('id', 3, 'integer', '<'),
+                new ComparisonExpression('id', 1, 'integer', '>'),
+                new ComparisonExpression('id', 3, 'integer', '<'),
             ],
         ]);
 
