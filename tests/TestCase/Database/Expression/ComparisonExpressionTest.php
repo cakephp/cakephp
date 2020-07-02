@@ -16,14 +16,14 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Expression;
 
-use Cake\Database\Expression\Comparison;
+use Cake\Database\Expression\ComparisonExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\TestSuite\TestCase;
 
 /**
  * Tests Comparison class
  */
-class ComparisonTest extends TestCase
+class ComparisonExpressionTest extends TestCase
 {
     /**
      * Tests that cloning Comparion instance clones it's value and field expressions.
@@ -32,7 +32,7 @@ class ComparisonTest extends TestCase
      */
     public function testClone()
     {
-        $exp = new Comparison(new QueryExpression('field1'), 1, 'integer', '<');
+        $exp = new ComparisonExpression(new QueryExpression('field1'), 1, 'integer', '<');
         $exp2 = clone $exp;
 
         $this->assertNotSame($exp->getField(), $exp2->getField());
