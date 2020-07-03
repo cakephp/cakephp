@@ -1304,11 +1304,11 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * Returns a new Query that has automatic field aliasing disabled.
      *
      * @param \Cake\ORM\Table $table The table this query is starting on
-     * @return self
+     * @return static
      */
-    public function subquery(Table $table): self
+    public function subquery(Table $table)
     {
-        $query = new self($this->getConnection(), $table);
+        $query = new static($this->getConnection(), $table);
         $query->aliasingEnabled = false;
 
         return $query;
