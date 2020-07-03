@@ -789,7 +789,8 @@ interface CollectionInterface extends Iterator, JsonSerializable
     public function toList(): array;
 
     /**
-     * Convert a result set into JSON.
+     * Returns the data that can be converted to JSON. This returns the same data
+     * as `toArray()` which contains only unique keys.
      *
      * Part of JsonSerializable interface.
      *
@@ -1145,7 +1146,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
     public function count(): int;
 
     /**
-     * Returns the number of unique keys in this iterator. This is, the number of
+     * Returns the number of unique keys in this iterator. This is the same as the number of
      * elements the collection will contain after calling `toArray()`
      *
      * This method comes with a number of caveats. Please refer to `CollectionInterface::count()`
