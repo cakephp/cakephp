@@ -4001,4 +4001,39 @@ class QueryTest extends TestCase
 
         $this->assertEquals($expected, $query->toArray());
     }
+
+    /**
+     * Tests subquery() copies connection by default.
+     *
+     * @return void
+     */
+    public function testSubqueryConnection()
+    {
+        $subquery = (new Query($this->connection, $this->table))->subquery($this->table);
+        $this->assertEquals($this->connection, $subquery->getConnection());
+    }
+
+    /**
+     * Tests subquery() disables aliasing.
+     *
+     * @return void
+     */
+    public function testSubqueryAliasing()
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $subquery = (new Query($this->connection, $this->table))->subquery($articles);
+
+        $subquery->select('Articles.field1');
+        $this->assertRegExpSql(
+            'SELECT <Articles>.<field1> FROM <articles> <Articles>',
+            $subquery->sql(),
+            !$this->connection->getDriver()->isAutoQuotingEnabled()
+        );
+
+        $subquery->select($articles, true);
+        $this->assertEqualsSql('SELECT id, author_id, title, body, published FROM articles Articles', $subquery->sql());
+
+        $subquery->selectAllExcept($articles, ['author_id'], true);
+        $this->assertEqualsSql('SELECT id, title, body, published FROM articles Articles', $subquery->sql());
+    }
 }
