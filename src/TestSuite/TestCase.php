@@ -491,22 +491,6 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * Assert that a string starts with SQL with db-specific characters like quotes removed.
-     *
-     * @param string $expected The expected sql
-     * @param string $actual The sql to compare
-     * @param string $message The message to display on failure
-     * @return void
-     */
-    public function assertStartsWithSql(
-        string $expected,
-        string $actual,
-        string $message = ''
-    ): void {
-        $this->assertStringStartsWith($expected, preg_replace('/[`"\[\]]/', '', $actual), $message);
-    }
-
-    /**
      * Assertion for comparing a regex pattern against a query having its identifiers
      * quoted. It accepts queries quoted with the characters `<` and `>`. If the third
      * parameter is set to true, it will alter the pattern to both accept quoted and
