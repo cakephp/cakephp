@@ -124,7 +124,7 @@ class View implements EventDispatcherInterface
 
     /**
      * The name of the template file to render. The name specified
-     * is the filename in /templates/<SubFolder> without the .php extension.
+     * is the filename in `templates/<SubFolder>/` without the .php extension.
      *
      * @var string
      */
@@ -132,7 +132,7 @@ class View implements EventDispatcherInterface
 
     /**
      * The name of the layout file to render the template inside of. The name specified
-     * is the filename of the layout in /templates/Layout without the .php
+     * is the filename of the layout in `templates/layout/` without the .php
      * extension.
      *
      * @var string
@@ -526,7 +526,7 @@ class View implements EventDispatcherInterface
 
     /**
      * Get the name of the template file to render. The name specified is the
-     * filename in /templates/<SubFolder> without the .php extension.
+     * filename in `templates/<SubFolder>/` without the .php extension.
      *
      * @return string
      */
@@ -537,7 +537,7 @@ class View implements EventDispatcherInterface
 
     /**
      * Set the name of the template file to render. The name specified is the
-     * filename in /templates/<SubFolder> without the .php extension.
+     * filename in `templates/<SubFolder>/` without the .php extension.
      *
      * @param string $name Template file name to set.
      * @return $this
@@ -551,7 +551,7 @@ class View implements EventDispatcherInterface
 
     /**
      * Get the name of the layout file to render the template inside of.
-     * The name specified is the filename of the layout in /templates/Layout
+     * The name specified is the filename of the layout in `templates/layout/`
      * without the .php extension.
      *
      * @return string
@@ -563,7 +563,7 @@ class View implements EventDispatcherInterface
 
     /**
      * Set the name of the layout file to render the template inside of.
-     * The name specified is the filename of the layout in /templates/Layout
+     * The name specified is the filename of the layout in `templates/layout/`
      * without the .php extension.
      *
      * @param string $name Layout file name to set.
@@ -615,7 +615,7 @@ class View implements EventDispatcherInterface
      * This realizes the concept of Elements, (or "partial layouts") and the $params array is used to send
      * data to be used in the element. Elements can be cached improving performance by using the `cache` option.
      *
-     * @param string $name Name of template file in the /templates/Element/ folder,
+     * @param string $name Name of template file in the `templates/element/` folder,
      *   or `MyPlugin.template` to use the template element from MyPlugin. If the element
      *   is not found in the plugin, the normal view path cascade will be searched.
      * @param array $data Array of data to be made available to the rendered view (i.e. the Element)
@@ -699,7 +699,7 @@ class View implements EventDispatcherInterface
     /**
      * Checks if an element exists
      *
-     * @param string $name Name of template file in the /templates/Element/ folder,
+     * @param string $name Name of template file in the `templates/element/` folder,
      *   or `MyPlugin.template` to check the template element from MyPlugin. If the element
      *   is not found in the plugin, the normal view path cascade will be searched.
      * @return bool Success
@@ -722,8 +722,8 @@ class View implements EventDispatcherInterface
      *
      * If View::$autoLayout is set to `false`, the template will be returned bare.
      *
-     * Template and layout names can point to plugin templates/layouts. Using the `Plugin.template` syntax
-     * a plugin template/layout can be used instead of the app ones. If the chosen plugin is not found
+     * Template and layout names can point to plugin templates or layouts. Using the `Plugin.template` syntax
+     * a plugin template/layout/ can be used instead of the app ones. If the chosen plugin is not found
      * the template will be located along the regular view path cascade.
      *
      * @param string|null $template Name of template file to use

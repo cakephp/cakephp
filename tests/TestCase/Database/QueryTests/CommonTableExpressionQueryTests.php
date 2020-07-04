@@ -235,10 +235,11 @@ class CommonTableExpressionQueryTests extends TestCase
                     ->from('cte')
             );
 
-        $this->assertStartsWithSql(
-            "WITH cte(title, body) AS (SELECT 'Fourth Article', 'Fourth Article Body') " .
-                'INSERT INTO articles (title, body)',
-            $query->sql(new ValueBinder())
+        $this->assertRegExpSql(
+            "WITH <cte>\(<title>, <body>\) AS \(SELECT 'Fourth Article', 'Fourth Article Body'\) " .
+                'INSERT INTO <articles> \(<title>, <body>\)',
+            $query->sql(new ValueBinder()),
+            !$this->autoQuote
         );
 
         // run insert
@@ -291,10 +292,11 @@ class CommonTableExpressionQueryTests extends TestCase
                     ->from('cte')
             );
 
-        $this->assertStartsWithSql(
-            'INSERT INTO articles (title, body) ' .
-                "WITH cte(title, body) AS (SELECT 'Fourth Article', 'Fourth Article Body') SELECT * FROM cte",
-            $query->sql(new ValueBinder())
+        $this->assertRegExpSql(
+            'INSERT INTO <articles> \(<title>, <body>\) ' .
+                "WITH <cte>\(<title>, <body>\) AS \(SELECT 'Fourth Article', 'Fourth Article Body'\) SELECT \* FROM <cte>",
+            $query->sql(new ValueBinder()),
+            !$this->autoQuote
         );
 
         // run insert
