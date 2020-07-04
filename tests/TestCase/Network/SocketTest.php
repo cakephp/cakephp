@@ -103,7 +103,7 @@ class SocketTest extends TestCase
     public function testAddresses()
     {
         $this->Socket = new Socket();
-        $this->assertSame(['127.0.0.1'], $this->Socket->addresses());
+        $this->assertContainsEquals('127.0.0.1', $this->Socket->addresses());
 
         $this->Socket = new Socket(['host' => '8.8.8.8']);
         $this->assertSame(['8.8.8.8'], $this->Socket->addresses());
