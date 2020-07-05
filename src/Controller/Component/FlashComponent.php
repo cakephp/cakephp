@@ -20,7 +20,7 @@ use Cake\Controller\Component;
 use Cake\Http\Exception\InternalErrorException;
 use Cake\Http\Session;
 use Cake\Utility\Inflector;
-use Exception;
+use Throwable;
 
 /**
  * The CakePHP FlashComponent provides a way for you to write a flash variable
@@ -60,8 +60,8 @@ class FlashComponent extends Component
      * - `clear` A bool stating if the current stack should be cleared to start a new one
      * - `escape` Set to false to allow templates to print out HTML content
      *
-     * @param string|\Exception $message Message to be flashed. If an instance
-     *   of \Exception the exception message will be used and code will be set
+     * @param string|\Throwable $message Message to be flashed. If an instance
+     *   of \Throwable the throwable message will be used and code will be set
      *   in params.
      * @param array $options An array of options
      * @return void
@@ -70,7 +70,7 @@ class FlashComponent extends Component
     {
         $options += (array)$this->getConfig();
 
-        if ($message instanceof Exception) {
+        if ($message instanceof Throwable) {
             if (!isset($options['params']['code'])) {
                 $options['params']['code'] = $message->getCode();
             }
