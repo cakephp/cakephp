@@ -991,8 +991,8 @@ class CollectionTest extends TestCase
         $result = $collection->toArray();
         $this->assertCount(2, $result);
         $this->assertEquals([0, 1], array_keys($result));
-        $this->assertContainsEquals(1, $result);
-        $this->assertContainsEquals(2, $result);
+        $this->assertContains(1, $result);
+        $this->assertContains(2, $result);
     }
 
     /**
