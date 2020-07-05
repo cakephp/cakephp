@@ -981,6 +981,21 @@ class CollectionTest extends TestCase
     }
 
     /**
+     * Tests shuffle with duplicate keys.
+     *
+     * @return void
+     */
+    public function testShuffleDuplicateKeys()
+    {
+        $collection = (new Collection(['a' => 1]))->append(['a' => 2])->shuffle();
+        $result = $collection->toArray();
+        $this->assertCount(2, $result);
+        $this->assertEquals([0, 1], array_keys($result));
+        $this->assertContainsEquals(1, $result);
+        $this->assertContainsEquals(2, $result);
+    }
+
+    /**
      * Tests sample
      *
      * @dataProvider simpleProvider
