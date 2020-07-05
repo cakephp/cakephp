@@ -391,6 +391,7 @@ class RequestHandlerComponentTest extends TestCase
         $view = $this->Controller->createView();
         $this->assertInstanceOf(AjaxView::class, $view);
         $this->assertSame('ajax', $view->getLayout());
+        $this->assertSame((new Response(['type' => 'ajax']))->getType(), $view->getResponse()->getType());
 
         $this->_init();
         $this->Controller->setRequest($this->Controller->getRequest()->withParam('_ext', 'js'));
@@ -796,7 +797,7 @@ class RequestHandlerComponentTest extends TestCase
 
         $event = new Event('Controller.beforeRender', $this->Controller);
         $requestHandler = new RequestHandlerComponent($this->Controller->components());
-        $this->assertNull($requestHandler->beforeRender($event));
+        $requestHandler->beforeRender($event);
         $this->assertTrue($event->isStopped());
         $this->assertEquals(304, $this->Controller->getResponse()->getStatusCode());
         $this->assertSame('', (string)$this->Controller->getResponse()->getBody());
@@ -821,7 +822,7 @@ class RequestHandlerComponentTest extends TestCase
         $event = new Event('Controller.beforeRender', $this->Controller);
 
         $requestHandler = new RequestHandlerComponent($this->Controller->components());
-        $this->assertNull($requestHandler->beforeRender($event));
+        $requestHandler->beforeRender($event);
         $this->assertTrue($event->isStopped());
         $this->assertEquals(304, $this->Controller->getResponse()->getStatusCode());
         $this->assertSame('', (string)$this->Controller->getResponse()->getBody());
@@ -849,7 +850,7 @@ class RequestHandlerComponentTest extends TestCase
 
         $event = new Event('Controller.beforeRender', $this->Controller);
         $requestHandler = new RequestHandlerComponent($this->Controller->components());
-        $this->assertNull($requestHandler->beforeRender($event));
+        $requestHandler->beforeRender($event);
         $this->assertTrue($event->isStopped());
 
         $this->assertEquals(304, $this->Controller->getResponse()->getStatusCode());
@@ -870,7 +871,7 @@ class RequestHandlerComponentTest extends TestCase
 
         $event = new Event('Controller.beforeRender', $this->Controller);
         $requestHandler = new RequestHandlerComponent($this->Controller->components());
-        $this->assertNull($requestHandler->beforeRender($event));
+        $requestHandler->beforeRender($event);
         $this->assertSame(200, $response->getStatusCode());
     }
 

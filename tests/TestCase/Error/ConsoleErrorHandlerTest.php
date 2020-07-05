@@ -30,6 +30,16 @@ use Cake\TestSuite\TestCase;
 class ConsoleErrorHandlerTest extends TestCase
 {
     /**
+     * @var \Cake\Error\ConsoleErrorHandler|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $Error;
+
+    /**
+     * @var \Cake\TestSuite\Stub\ConsoleOutput
+     */
+    protected $stderr;
+
+    /**
      * setup, create mocks
      *
      * @return void

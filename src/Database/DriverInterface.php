@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database;
 
-use Cake\Database\Schema\BaseSchema;
+use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\Schema\TableSchema;
 use Closure;
 
@@ -182,9 +182,9 @@ interface DriverInterface
      * If all the tables that use this Driver specify their
      * own schemas, then this may return null.
      *
-     * @return \Cake\Database\Schema\BaseSchema
+     * @return \Cake\Database\Schema\SchemaDialect
      */
-    public function schemaDialect(): BaseSchema;
+    public function schemaDialect(): SchemaDialect;
 
     /**
      * Quotes a database identifier (a column name, table name, etc..) to

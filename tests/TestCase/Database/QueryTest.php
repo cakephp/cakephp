@@ -295,12 +295,12 @@ class QueryTest extends TestCase
         $result->closeCursor();
 
         $query = new Query($this->connection);
-        $time = new \DateTime('2007-03-18 10:50:00');
+        $time = new \DateTime('2007-03-18 10:45:23');
         $types = ['created' => 'datetime'];
         $result = $query
             ->select(['title', 'comment' => 'c.comment'])
             ->from('articles')
-            ->join(['table' => 'comments', 'alias' => 'c', 'conditions' => ['created <=' => $time]], $types)
+            ->join(['table' => 'comments', 'alias' => 'c', 'conditions' => ['created' => $time]], $types)
             ->execute();
         $this->assertEquals(['title' => 'First Article', 'comment' => 'First Comment for First Article'], $result->fetch('assoc'));
         $result->closeCursor();
@@ -373,6 +373,7 @@ class QueryTest extends TestCase
             ->select(['title', 'name' => 'c.comment'])
             ->from('articles')
             ->leftJoin(['c' => 'comments'], ['created >' => $time], $types)
+            ->order(['created' => 'asc'])
             ->execute();
         $this->assertEquals(
             ['title' => 'First Article', 'name' => 'Second Comment for First Article'],
@@ -468,7 +469,7 @@ class QueryTest extends TestCase
             ->from('authors')
             ->innerJoin('comments', function ($exp, $q) use ($query, $types) {
                 $this->assertSame($q, $query);
-                $exp->add(['created >' => new \DateTime('2007-03-18 10:45:23')], $types);
+                $exp->add(['created' => new \DateTime('2007-03-18 10:47:23')], $types);
 
                 return $exp;
             })
@@ -1985,6 +1986,31 @@ class QueryTest extends TestCase
             ['id' => 3],
         ];
         $this->assertEquals($expected, $result);
+
+        $query = new Query($this->connection);
+        $query->select(['id'])
+            ->from('articles')
+            ->orderAsc(function (QueryExpression $exp, Query $query) {
+                return $exp->addCase(
+                    [$query->newExpr()->add(['author_id' => 1])],
+                    [1, $query->identifier('id')],
+                    ['integer', null]
+                );
+            })
+            ->orderAsc('id');
+        $sql = $query->sql();
+        $result = $query->execute()->fetchAll('assoc');
+        $expected = [
+            ['id' => 1],
+            ['id' => 3],
+            ['id' => 2],
+        ];
+        $this->assertEquals($expected, $result);
+        $this->assertQuotedQuery(
+            'SELECT <id> FROM <articles> ORDER BY CASE WHEN <author_id> = :c0 THEN :param1 ELSE <id> END ASC, <id> ASC',
+            $sql,
+            !$this->autoQuote
+        );
     }
 
     /**
@@ -2025,6 +2051,31 @@ class QueryTest extends TestCase
             ['id' => 1],
         ];
         $this->assertEquals($expected, $result);
+
+        $query = new Query($this->connection);
+        $query->select(['id'])
+            ->from('articles')
+            ->orderDesc(function (QueryExpression $exp, Query $query) {
+                return $exp->addCase(
+                    [$query->newExpr()->add(['author_id' => 1])],
+                    [1, $query->identifier('id')],
+                    ['integer', null]
+                );
+            })
+            ->orderDesc('id');
+        $sql = $query->sql();
+        $result = $query->execute()->fetchAll('assoc');
+        $expected = [
+            ['id' => 2],
+            ['id' => 3],
+            ['id' => 1],
+        ];
+        $this->assertEquals($expected, $result);
+        $this->assertQuotedQuery(
+            'SELECT <id> FROM <articles> ORDER BY CASE WHEN <author_id> = :c0 THEN :param1 ELSE <id> END DESC, <id> DESC',
+            $sql,
+            !$this->autoQuote
+        );
     }
 
     /**
@@ -4240,12 +4291,8 @@ class QueryTest extends TestCase
 
         // Postgres requires the case statement to be cast to a integer
         if ($this->connection->getDriver() instanceof \Cake\Database\Driver\Postgres) {
-            $publishedCase = $query->func()
-                ->cast([$publishedCase, 'integer' => 'literal'])
-                ->setConjunction(' AS ');
-            $notPublishedCase = $query->func()
-                ->cast([$notPublishedCase, 'integer' => 'literal'])
-                ->setConjunction(' AS ');
+            $publishedCase = $query->func()->cast($publishedCase, 'integer');
+            $notPublishedCase = $query->func()->cast($notPublishedCase, 'integer');
         }
 
         $results = $query

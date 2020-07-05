@@ -53,7 +53,10 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      *  - `expiry` A strotime compatible value of how long the CSRF token should last.
      *    Defaults to browser session.
      *  - `secure` Whether or not the cookie will be set with the Secure flag. Defaults to false.
-     *  - `httpOnly` Whether or not the cookie will be set with the HttpOnly flag. Defaults to false.
+     *  - `httponly` Whether or not the cookie will be set with the HttpOnly flag. Defaults to false.
+     *  - 'samesite' "SameSite" attribute for cookies. Defaults to `null`.
+     *    Valid values: `CookieInterface::SAMESITE_LAX`, `CookieInterface::SAMESITE_STRICT`,
+     *    `CookieInterface::SAMESITE_NONE` or `null`.
      *  - `field` The form field to check. Changing this will also require configuring
      *    FormHelper.
      *
@@ -63,7 +66,8 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
         'cookieName' => 'csrfToken',
         'expiry' => 0,
         'secure' => false,
-        'httpOnly' => false,
+        'httponly' => false,
+        'samesite' => null,
         'field' => '_csrfToken',
     ];
 
@@ -74,7 +78,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      *
      * @var callable|null
      */
-    protected $whitelistCallback;
+    protected $skipCheckCallback;
 
     /**
      * @var int
@@ -88,6 +92,11 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      */
     public function __construct(array $config = [])
     {
+        if (array_key_exists('httpOnly', $config)) {
+            $config['httponly'] = $config['httpOnly'];
+            deprecationWarning('Option `httpOnly` is deprecated. Use lowercased `httponly` instead.');
+        }
+
         $this->_config = $config + $this->_config;
     }
 
@@ -106,8 +115,8 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
 
         if (
             $hasData
-            && $this->whitelistCallback !== null
-            && call_user_func($this->whitelistCallback, $request) === true
+            && $this->skipCheckCallback !== null
+            && call_user_func($this->skipCheckCallback, $request) === true
         ) {
             $request = $this->_unsetTokenField($request);
 
@@ -144,12 +153,30 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      * The callback will receive request instance as argument and must return
      * `true` if you want to skip token check for the current request.
      *
+     * @deprecated 4.1.0 Use skipCheckCallback instead.
      * @param callable $callback A callable.
      * @return $this
      */
     public function whitelistCallback(callable $callback)
     {
-        $this->whitelistCallback = $callback;
+        deprecationWarning('`whitelistCallback()` is deprecated. Use `skipCheckCallback()` instead.');
+        $this->skipCheckCallback = $callback;
+
+        return $this;
+    }
+
+    /**
+     * Set callback for allowing to skip token check for particular request.
+     *
+     * The callback will receive request instance as argument and must return
+     * `true` if you want to skip token check for the current request.
+     *
+     * @param callable $callback A callable.
+     * @return $this
+     */
+    public function skipCheckCallback(callable $callback)
+    {
+        $this->skipCheckCallback = $callback;
 
         return $this;
     }
@@ -294,7 +321,8 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
                 'expires' => $this->_config['expiry'] ?: null,
                 'path' => $request->getAttribute('webroot'),
                 'secure' => $this->_config['secure'],
-                'httponly' => $this->_config['httpOnly'],
+                'httponly' => $this->_config['httponly'],
+                'samesite' => $this->_config['samesite'],
             ]
         );
 

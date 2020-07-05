@@ -74,17 +74,14 @@ class AssociationCollectionTest extends TestCase
 
         $belongsTo = new BelongsTo('');
         $this->assertSame($belongsTo, $this->associations->add('Users', $belongsTo));
-        $this->assertTrue($this->associations->has('users'));
+        $this->assertFalse($this->associations->has('users'));
         $this->assertTrue($this->associations->has('Users'));
 
-        $this->assertSame($belongsTo, $this->associations->get('users'));
         $this->assertSame($belongsTo, $this->associations->get('Users'));
 
-        $this->assertNull($this->associations->remove('Users'));
+        $this->associations->remove('Users');
 
-        $this->assertFalse($this->associations->has('users'));
         $this->assertFalse($this->associations->has('Users'));
-        $this->assertNull($this->associations->get('users'));
         $this->assertNull($this->associations->get('Users'));
     }
 
@@ -195,10 +192,10 @@ class AssociationCollectionTest extends TestCase
         $belongsTo = new BelongsTo('');
         $this->associations->add('Users', $belongsTo);
         $this->associations->add('Categories', $belongsTo);
-        $this->assertEquals(['users', 'categories'], $this->associations->keys());
+        $this->assertEquals(['Users', 'Categories'], $this->associations->keys());
 
         $this->associations->remove('Categories');
-        $this->assertEquals(['users'], $this->associations->keys());
+        $this->assertEquals(['Users'], $this->associations->keys());
     }
 
     /**
@@ -266,13 +263,16 @@ class AssociationCollectionTest extends TestCase
 
         $mockOne->expects($this->once())
             ->method('cascadeDelete')
-            ->with($entity, $options);
+            ->with($entity, $options)
+            ->willReturn(true);
 
         $mockTwo->expects($this->once())
             ->method('cascadeDelete')
-            ->with($entity, $options);
+            ->with($entity, $options)
+            ->willReturn(true);
 
-        $this->assertNull($this->associations->cascadeDelete($entity, $options));
+        $result = $this->associations->cascadeDelete($entity, $options);
+        $this->assertTrue($result);
     }
 
     /**
@@ -481,7 +481,7 @@ class AssociationCollectionTest extends TestCase
         $belongsToMany = new BelongsToMany('');
         $this->associations->add('Cart', $belongsToMany);
 
-        $expected = ['users' => $belongsTo, 'cart' => $belongsToMany];
+        $expected = ['Users' => $belongsTo, 'Cart' => $belongsToMany];
         $result = iterator_to_array($this->associations, true);
         $this->assertSame($expected, $result);
     }

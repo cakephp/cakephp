@@ -18,6 +18,8 @@ namespace Cake\ORM\Locator;
 
 use Cake\Core\App;
 use Cake\Datasource\ConnectionManager;
+use Cake\Datasource\Locator\AbstractLocator;
+use Cake\Datasource\RepositoryInterface;
 use Cake\ORM\AssociationCollection;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
@@ -26,7 +28,7 @@ use RuntimeException;
 /**
  * Provides a default registry/factory for Table objects.
  */
-class TableLocator implements LocatorInterface
+class TableLocator extends AbstractLocator implements LocatorInterface
 {
     /**
      * Contains a list of locations where table classes should be looked for.
@@ -47,7 +49,7 @@ class TableLocator implements LocatorInterface
      *
      * @var \Cake\ORM\Table[]
      */
-    protected $_instances = [];
+    protected $instances = [];
 
     /**
      * Contains a list of Table objects that were created out of the
@@ -56,13 +58,6 @@ class TableLocator implements LocatorInterface
      * @var \Cake\ORM\Table[]
      */
     protected $_fallbacked = [];
-
-    /**
-     * Contains a list of options that were passed to get() method.
-     *
-     * @var array
-     */
-    protected $_options = [];
 
     /**
      * Constructor.
@@ -84,13 +79,7 @@ class TableLocator implements LocatorInterface
     }
 
     /**
-     * Stores a list of options to be used when instantiating an object
-     * with a matching alias.
-     *
-     * @param string|array $alias Name of the alias or array to completely overwrite current config.
-     * @param array|null $options list of options for the alias
-     * @return $this
-     * @throws \RuntimeException When you attempt to configure an existing table instance.
+     * @inheritDoc
      */
     public function setConfig($alias, $options = null)
     {
@@ -100,7 +89,7 @@ class TableLocator implements LocatorInterface
             return $this;
         }
 
-        if (isset($this->_instances[$alias])) {
+        if (isset($this->instances[$alias])) {
             throw new RuntimeException(sprintf(
                 'You cannot configure "%s", it has already been constructed.',
                 $alias
@@ -113,10 +102,7 @@ class TableLocator implements LocatorInterface
     }
 
     /**
-     * Returns configuration for an alias or the full configuration array for all aliases.
-     *
-     * @param string|null $alias Alias to get config for, null for complete config.
-     * @return array The config data.
+     * @inheritDoc
      */
     public function getConfig(?string $alias = null): array
     {
@@ -165,18 +151,15 @@ class TableLocator implements LocatorInterface
      */
     public function get(string $alias, array $options = []): Table
     {
-        if (isset($this->_instances[$alias])) {
-            if (!empty($options) && $this->_options[$alias] !== $options) {
-                throw new RuntimeException(sprintf(
-                    'You cannot configure "%s", it already exists in the registry.',
-                    $alias
-                ));
-            }
+        /** @var \Cake\ORM\Table */
+        return parent::get($alias, $options);
+    }
 
-            return $this->_instances[$alias];
-        }
-
-        $this->_options[$alias] = $options;
+    /**
+     * @inheritDoc
+     */
+    protected function createInstance(string $alias, array $options)
+    {
         [, $classAlias] = pluginSplit($alias);
         $options = ['alias' => $classAlias] + $options;
 
@@ -214,13 +197,13 @@ class TableLocator implements LocatorInterface
         }
 
         $options['registryAlias'] = $alias;
-        $this->_instances[$alias] = $this->_create($options);
+        $instance = $this->_create($options);
 
         if ($options['className'] === Table::class) {
-            $this->_fallbacked[$alias] = $this->_instances[$alias];
+            $this->_fallbacked[$alias] = $instance;
         }
 
-        return $this->_instances[$alias];
+        return $instance;
     }
 
     /**
@@ -258,25 +241,21 @@ class TableLocator implements LocatorInterface
      */
     protected function _create(array $options): Table
     {
-        // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.InvalidFormat
         /** @var \Cake\ORM\Table */
         return new $options['className']($options);
     }
 
     /**
-     * @inheritDoc
+     * Set a Table instance.
+     *
+     * @param string $alias The alias to set.
+     * @param \Cake\ORM\Table $repository The Table to set.
+     * @return \Cake\ORM\Table
+     * @psalm-suppress MoreSpecificImplementedParamType
      */
-    public function exists(string $alias): bool
+    public function set(string $alias, RepositoryInterface $repository): Table
     {
-        return isset($this->_instances[$alias]);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function set(string $alias, Table $object): Table
-    {
-        return $this->_instances[$alias] = $object;
+        return $this->instances[$alias] = $repository;
     }
 
     /**
@@ -284,10 +263,10 @@ class TableLocator implements LocatorInterface
      */
     public function clear(): void
     {
-        $this->_instances = [];
-        $this->_config = [];
+        parent::clear();
+
         $this->_fallbacked = [];
-        $this->_options = [];
+        $this->_config = [];
     }
 
     /**
@@ -308,11 +287,9 @@ class TableLocator implements LocatorInterface
      */
     public function remove(string $alias): void
     {
-        unset(
-            $this->_instances[$alias],
-            $this->_config[$alias],
-            $this->_fallbacked[$alias]
-        );
+        parent::remove($alias);
+
+        unset($this->_fallbacked[$alias]);
     }
 
     /**

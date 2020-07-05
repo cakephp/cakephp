@@ -18,7 +18,7 @@ namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Database\Driver\Postgres;
 use Cake\Database\Schema\Collection as SchemaCollection;
-use Cake\Database\Schema\PostgresSchema;
+use Cake\Database\Schema\PostgresSchemaDialect;
 use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
@@ -269,7 +269,7 @@ SQL;
         ];
 
         $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')->getMock();
-        $dialect = new PostgresSchema($driver);
+        $dialect = new PostgresSchemaDialect($driver);
 
         $table = new TableSchema('table');
         $dialect->convertColumnDescription($table, $field);
@@ -969,7 +969,7 @@ SQL;
     public function testColumnSql($name, $data, $expected)
     {
         $driver = $this->_getMockedDriver();
-        $schema = new PostgresSchema($driver);
+        $schema = new PostgresSchemaDialect($driver);
 
         $table = (new TableSchema('schema_articles'))->addColumn($name, $data);
         $this->assertEquals($expected, $schema->columnSql($table, $name));
@@ -983,7 +983,7 @@ SQL;
     public function testColumnSqlPrimaryKey()
     {
         $driver = $this->_getMockedDriver();
-        $schema = new PostgresSchema($driver);
+        $schema = new PostgresSchemaDialect($driver);
 
         $table = new TableSchema('schema_articles');
         $table->addColumn('id', [
@@ -1058,7 +1058,7 @@ SQL;
     public function testConstraintSql($name, $data, $expected)
     {
         $driver = $this->_getMockedDriver();
-        $schema = new PostgresSchema($driver);
+        $schema = new PostgresSchemaDialect($driver);
 
         $table = (new TableSchema('schema_articles'))->addColumn('title', [
             'type' => 'string',

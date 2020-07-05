@@ -32,10 +32,13 @@ class PluginAssetsCommandsTest extends TestCase
 {
     use ConsoleIntegrationTestTrait;
 
+    /**
+     * @var string
+     */
     protected $wwwRoot;
 
     /**
-     * @var Cake\Filessytem\Filesystem;
+     * @var \Cake\Filesystem\Filesystem
      */
     protected $fs;
 
@@ -52,10 +55,6 @@ class PluginAssetsCommandsTest extends TestCase
             DS === '\\',
             'Skip AssetsTask tests on windows to prevent side effects for UrlHelper tests on AppVeyor.'
         );
-
-        $this->io = $this->getMockBuilder('Cake\Console\ConsoleIo')
-            ->disableOriginalConstructor()
-            ->getMock();
 
         $this->wwwRoot = TMP . 'assets_task_webroot' . DS;
         Configure::write('App.wwwRoot', $this->wwwRoot);
@@ -122,7 +121,7 @@ class PluginAssetsCommandsTest extends TestCase
         $this->exec('plugin assets symlink');
         $path = $this->wwwRoot . 'company' . DS . 'test_plugin_three';
         if (DS === '\\') {
-            $this->assertDirectoryExits($path);
+            $this->assertDirectoryExists($path);
         } else {
             $this->assertTrue(is_link($path));
         }

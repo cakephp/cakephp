@@ -17,7 +17,7 @@ namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\Expression\BetweenExpression;
 use Cake\Database\Expression\CaseExpression;
-use Cake\Database\Expression\Comparison;
+use Cake\Database\Expression\ComparisonExpression;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\ValuesExpression;
 use Cake\Database\TypeFactory;
@@ -51,7 +51,7 @@ class ExpressionTypeCastingTest extends TestCase
      */
     public function testComparisonSimple()
     {
-        $comparison = new Comparison('field', 'the thing', 'test', '=');
+        $comparison = new ComparisonExpression('field', 'the thing', 'test', '=');
         $binder = new ValueBinder();
         $sql = $comparison->sql($binder);
         $this->assertSame('field = (CONCAT(:param0, :param1))', $sql);
@@ -72,7 +72,7 @@ class ExpressionTypeCastingTest extends TestCase
      */
     public function testComparisonMultiple()
     {
-        $comparison = new Comparison('field', ['2', '3'], 'test[]', 'IN');
+        $comparison = new ComparisonExpression('field', ['2', '3'], 'test[]', 'IN');
         $binder = new ValueBinder();
         $sql = $comparison->sql($binder);
         $this->assertSame('field IN (CONCAT(:param0, :param1),CONCAT(:param2, :param3))', $sql);
@@ -117,7 +117,7 @@ class ExpressionTypeCastingTest extends TestCase
     public function testCaseExpression()
     {
         $case = new CaseExpression(
-            [new Comparison('foo', '1', 'string', '=')],
+            [new ComparisonExpression('foo', '1', 'string', '=')],
             ['value1', 'value2'],
             ['test', 'test']
         );

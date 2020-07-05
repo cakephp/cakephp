@@ -16,32 +16,21 @@ declare(strict_types=1);
  */
 namespace Cake\View\Form;
 
-use Cake\Http\ServerRequest;
-
 /**
  * Provides a context provider that does nothing.
  *
  * This context provider simply fulfils the interface requirements
- * that FormHelper has and allows access to the request data.
+ * that FormHelper has.
  */
 class NullContext implements ContextInterface
 {
     /**
-     * The request object.
-     *
-     * @var \Cake\Http\ServerRequest
-     */
-    protected $_request;
-
-    /**
      * Constructor.
      *
-     * @param \Cake\Http\ServerRequest $request The request object.
      * @param array $context Context info.
      */
-    public function __construct(ServerRequest $request, array $context)
+    public function __construct(array $context)
     {
-        $this->_request = $request;
     }
 
     /**
@@ -52,6 +41,8 @@ class NullContext implements ContextInterface
      */
     public function primaryKey(): array
     {
+        deprecationWarning('`NullContext::primaryKey()` is deprecated. Use `NullContext::getPrimaryKey()`.');
+
         return [];
     }
 
@@ -84,7 +75,7 @@ class NullContext implements ContextInterface
      */
     public function val(string $field, array $options = [])
     {
-        return $this->_request->getData($field);
+        return null;
     }
 
     /**

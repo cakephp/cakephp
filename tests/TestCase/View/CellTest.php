@@ -187,6 +187,7 @@ class CellTest extends TestCase
      */
     public function testCellManualRender()
     {
+        /** @var \TestApp\View\Cell\ArticlesCell $cell */
         $cell = $this->View->cell('Articles::doEcho', ['msg1' => 'dummy', 'msg2' => ' message']);
         $this->assertStringContainsString('dummy message', $cell->render());
 

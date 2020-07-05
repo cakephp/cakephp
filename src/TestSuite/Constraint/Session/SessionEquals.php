@@ -15,9 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite\Constraint\Session;
 
-use Cake\Http\Session;
 use Cake\Utility\Hash;
-use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Constraint\Constraint;
 
 /**
@@ -28,33 +26,17 @@ use PHPUnit\Framework\Constraint\Constraint;
 class SessionEquals extends Constraint
 {
     /**
-     * @var \Cake\Http\Session
-     */
-    protected $session;
-
-    /**
      * @var string
      */
     protected $path;
 
     /**
-     * @var mixed
-     */
-    protected $value;
-
-    /**
      * Constructor
      *
-     * @param \Cake\Http\Session|null $session Session
      * @param string $path Session Path
      */
-    public function __construct(?Session $session, string $path)
+    public function __construct(string $path)
     {
-        if (!$session) {
-            throw new AssertionFailedError('There is no stored session data. Perhaps you need to run a request?');
-        }
-
-        $this->session = $session;
         $this->path = $path;
     }
 

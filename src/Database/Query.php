@@ -16,11 +16,13 @@ declare(strict_types=1);
  */
 namespace Cake\Database;
 
+use Cake\Database\Expression\CommonTableExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\OrderClauseExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\ValuesExpression;
+use Cake\Database\Expression\WindowExpression;
 use Cake\Database\Statement\CallbackStatement;
 use Closure;
 use InvalidArgumentException;
@@ -77,6 +79,7 @@ class Query implements ExpressionInterface, IteratorAggregate
         'set' => [],
         'insert' => [],
         'values' => [],
+        'with' => [],
         'select' => [],
         'distinct' => false,
         'modifier' => [],
@@ -85,6 +88,7 @@ class Query implements ExpressionInterface, IteratorAggregate
         'where' => null,
         'group' => [],
         'having' => null,
+        'window' => [],
         'order' => null,
         'limit' => null,
         'offset' => null,
@@ -98,7 +102,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @var string[]
      */
     protected $_selectParts = [
-        'select', 'from', 'join', 'where', 'group', 'having', 'order', 'limit',
+        'with', 'select', 'from', 'join', 'where', 'group', 'having', 'order', 'limit',
         'offset', 'union', 'epilog',
     ];
 
@@ -107,21 +111,21 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @var string[]
      */
-    protected $_updateParts = ['update', 'set', 'where', 'epilog'];
+    protected $_updateParts = ['with', 'update', 'set', 'where', 'epilog'];
 
     /**
      * The list of query clauses to traverse for generating a DELETE statement
      *
      * @var string[]
      */
-    protected $_deleteParts = ['delete', 'modifier', 'from', 'where', 'epilog'];
+    protected $_deleteParts = ['with', 'delete', 'modifier', 'from', 'where', 'epilog'];
 
     /**
      * The list of query clauses to traverse for generating an INSERT statement
      *
      * @var string[]
      */
-    protected $_insertParts = ['insert', 'values', 'epilog'];
+    protected $_insertParts = ['with', 'insert', 'values', 'epilog'];
 
     /**
      * Indicates whether internal state of this query was changed, this is used to
@@ -365,6 +369,71 @@ class Query implements ExpressionInterface, IteratorAggregate
         foreach ($parts as $name) {
             $visitor($this->_parts[$name], $name);
         }
+
+        return $this;
+    }
+
+    /**
+     * Adds a new common table expression (CTE) to the query.
+     *
+     * ### Examples:
+     *
+     * Common table expressions can either be passed as preconstructed expression
+     * objects:
+     *
+     * ```
+     * $cte = new \Cake\Database\Expression\CommonTableExpression(
+     *     'cte',
+     *     $connection
+     *         ->newQuery()
+     *         ->select('*')
+     *         ->from('articles')
+     * );
+     *
+     * $query->with($cte);
+     * ```
+     *
+     * or returned from a closure, which will receive a new common table expression
+     * object as the first argument, and a new blank query object as
+     * the second argument:
+     *
+     * ```
+     * $query->with(function (
+     *     \Cake\Database\Expression\CommonTableExpression $cte,
+     *     \Cake\Database\Query $query
+     *  ) {
+     *     $cteQuery = $query
+     *         ->select('*')
+     *         ->from('articles');
+     *
+     *     return $cte
+     *         ->name('cte')
+     *         ->query($cteQuery);
+     * });
+     * ```
+     *
+     * @param \Closure|\Cake\Database\Expression\CommonTableExpression $cte The CTE to add.
+     * @param bool $overwrite Whether to reset the list of CTEs.
+     * @return $this
+     */
+    public function with($cte, bool $overwrite = false)
+    {
+        if ($overwrite) {
+            $this->_parts['with'] = [];
+        }
+
+        if ($cte instanceof Closure) {
+            $query = $this->getConnection()->newQuery();
+            $cte = $cte(new CommonTableExpression(), $query);
+            if (!($cte instanceof CommonTableExpression)) {
+                throw new RuntimeException(
+                    'You must return a `CommonTableExpression` from a Closure passed to `with()`.'
+                );
+            }
+        }
+
+        $this->_parts['with'][] = $cte;
+        $this->_dirty();
 
         return $this;
     }
@@ -916,7 +985,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * Please note that when using the array notation or the expression objects, all
      * *values* will be correctly quoted and transformed to the correspondent database
      * data type automatically for you, thus securing your application from SQL injections.
-     * The keys however, are not treated as unsafe input, and should be sanitized/whitelisted.
+     * The keys however, are not treated as unsafe input, and should be validated/sanitized.
      *
      * If you use string conditions make sure that your values are correctly quoted.
      * The safest thing you can do is to never use string conditions.
@@ -1153,7 +1222,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * `ORDER BY (id %2 = 0), title ASC`
      *
      * Order fields/directions are not sanitized by the query builder.
-     * You should use a whitelist of fields/directions when passing
+     * You should use an allowed list of fields/directions when passing
      * in user-supplied data to `order()`.
      *
      * If you need to set complex expressions as order conditions, you
@@ -1190,7 +1259,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * Order fields are not suitable for use with user supplied data as they are
      * not sanitized by the query builder.
      *
-     * @param string|\Cake\Database\Expression\QueryExpression $field The field to order on.
+     * @param string|\Cake\Database\Expression\QueryExpression|\Closure $field The field to order on.
      * @param bool $overwrite Whether or not to reset the order clauses.
      * @return $this
      */
@@ -1201,6 +1270,10 @@ class Query implements ExpressionInterface, IteratorAggregate
         }
         if (!$field) {
             return $this;
+        }
+
+        if ($field instanceof Closure) {
+            $field = $field($this->newExpr(), $this);
         }
 
         if (!$this->_parts['order']) {
@@ -1220,7 +1293,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * Order fields are not suitable for use with user supplied data as they are
      * not sanitized by the query builder.
      *
-     * @param string|\Cake\Database\Expression\QueryExpression $field The field to order on.
+     * @param string|\Cake\Database\Expression\QueryExpression|\Closure $field The field to order on.
      * @param bool $overwrite Whether or not to reset the order clauses.
      * @return $this
      */
@@ -1231,6 +1304,10 @@ class Query implements ExpressionInterface, IteratorAggregate
         }
         if (!$field) {
             return $this;
+        }
+
+        if ($field instanceof Closure) {
+            $field = $field($this->newExpr(), $this);
         }
 
         if (!$this->_parts['order']) {
@@ -1324,6 +1401,35 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function andHaving($conditions, $types = [])
     {
         $this->_conjugate('having', $conditions, 'AND', $types);
+
+        return $this;
+    }
+
+    /**
+     * Adds a named window expression.
+     *
+     * You are responsible for adding windows in the order your database requires.
+     *
+     * @param string $name Window name
+     * @param \Cake\Database\Expression\WindowExpression|\Closure $window Window expression
+     * @param bool $overwrite Clear all previous query window expressions
+     * @return $this
+     */
+    public function window(string $name, $window, bool $overwrite = false)
+    {
+        if ($overwrite) {
+            $this->_parts['window'] = [];
+        }
+
+        if ($window instanceof Closure) {
+            $window = $window(new WindowExpression(), $this);
+            if (!($window instanceof WindowExpression)) {
+                throw new RuntimeException('You must return a `WindowExpression` from a Closure passed to `window()`.');
+            }
+        }
+
+        $this->_parts['window'][] = ['name' => new IdentifierExpression($name), 'window' => $window];
+        $this->_dirty();
 
         return $this;
     }
@@ -2179,10 +2285,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     }
 
     /**
-     * Do a deep clone on this object.
-     *
-     * Will clone all of the expression objects used in
-     * each of the clauses, as well as the valueBinder.
+     * Handles clearing iterator and cloning all expressions and value binders.
      *
      * @return void
      */

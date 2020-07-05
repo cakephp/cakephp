@@ -587,7 +587,7 @@ class Cache
         if ($existing !== null) {
             return $existing;
         }
-        $results = call_user_func($callable);
+        $results = $callable();
         self::write($key, $results, $config);
 
         return $results;

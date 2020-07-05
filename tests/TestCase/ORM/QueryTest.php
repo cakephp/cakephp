@@ -17,7 +17,9 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Collection\Collection;
+use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Sqlite;
+use Cake\Database\Expression\CommonTableExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
@@ -56,6 +58,16 @@ class QueryTest extends TestCase
     ];
 
     /**
+     * @var \Cake\Database\Connection
+     */
+    protected $connection;
+
+    /**
+     * @var \Cake\ORM\Table
+     */
+    protected $table;
+
+    /**
      * setUp method
      *
      * @return void
@@ -87,7 +99,7 @@ class QueryTest extends TestCase
             ],
         ];
 
-        $this->table = $table = $this->getTableLocator()->get('foo', ['schema' => $schema]);
+        $this->table = $this->getTableLocator()->get('foo', ['schema' => $schema]);
         $clients = $this->getTableLocator()->get('clients', ['schema' => $schema1]);
         $orders = $this->getTableLocator()->get('orders', ['schema' => $schema2]);
         $companies = $this->getTableLocator()->get('companies', ['schema' => $schema, 'table' => 'organizations']);
@@ -96,7 +108,7 @@ class QueryTest extends TestCase
         $stuffTypes = $this->getTableLocator()->get('stuffTypes', ['schema' => $schema]);
         $categories = $this->getTableLocator()->get('categories', ['schema' => $schema]);
 
-        $table->belongsTo('clients');
+        $this->table->belongsTo('clients');
         $clients->hasOne('orders');
         $clients->belongsTo('companies');
         $orders->belongsTo('orderTypes');
@@ -866,6 +878,34 @@ class QueryTest extends TestCase
         $results = new ResultSet($query, $stmt);
         $query->setResult($results);
         $this->assertSame($results, $query->all());
+    }
+
+    /**
+     * Test clearResult()
+     *
+     * @return void
+     */
+    public function testClearResult()
+    {
+        $article = $this->getTableLocator()->get('articles');
+        $query = new Query($this->connection, $article);
+
+        $firstCount = $query->count();
+        $firstResults = $query->toList();
+
+        $this->assertEquals(3, $firstCount);
+        $this->assertCount(3, $firstResults);
+
+        $article->delete(reset($firstResults));
+        $return = $query->clearResult();
+
+        $this->assertSame($return, $query);
+
+        $secondCount = $query->count();
+        $secondResults = $query->toList();
+
+        $this->assertEquals(2, $secondCount);
+        $this->assertCount(2, $secondResults);
     }
 
     /**
@@ -1743,7 +1783,7 @@ class QueryTest extends TestCase
      */
     public function testUpdateWithTableExpression()
     {
-        $this->skipIf(!$this->connection->getDriver() instanceof \Cake\Database\Driver\Mysql);
+        $this->skipIf(!$this->connection->getDriver() instanceof Mysql);
         $table = $this->getTableLocator()->get('articles');
 
         $query = $table->query();
@@ -2379,7 +2419,7 @@ class QueryTest extends TestCase
         };
         $query = $table->find()
             ->contain(['Articles' => $builder, 'Articles.Authors' => $builder])
-            ->order(['Articles.id' => 'ASC']);
+            ->order(['ArticlesTags.article_id' => 'ASC']);
 
         $query->formatResults(function ($results) {
             return $results->map(function ($row) {
@@ -3498,7 +3538,7 @@ class QueryTest extends TestCase
         ];
         $this->assertEquals($expected, $results->toList());
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The Tags association is not defined on Articles');
+        $this->expectExceptionMessage('The `Tags` association is not defined on `Articles`.');
         $table
             ->find()
             ->disableHydration()
@@ -3853,5 +3893,112 @@ class QueryTest extends TestCase
             $table
                 ->find()
                 ->selectAllExcept([], ['body']);
+    }
+
+    /**
+     * Tests that using Having on an aggregated field returns the correct result
+     * model in the query
+     *
+     * @return void
+     */
+    public function testHavingOnAnAggregatedField()
+    {
+        $post = $this->getTableLocator()->get('posts');
+
+        $query = new Query($this->connection, $post);
+
+        $results = $query
+            ->select([
+                'posts.author_id',
+                'post_count' => $query->func()->count('posts.id'),
+            ])
+            ->group(['posts.author_id'])
+            ->having([$query->newExpr()->gte('post_count', 2, 'integer')])
+            ->enableHydration(false)
+            ->toArray();
+
+        $expected = [
+            [
+                'author_id' => 1,
+                'post_count' => 2,
+            ],
+        ];
+
+        $this->assertEquals($expected, $results);
+    }
+
+    /**
+     * Tests ORM query using with CTE.
+     *
+     * @return void
+     */
+    public function testWith(): void
+    {
+        $this->skipIf(
+            !$this->connection->getDriver()->supportsCTEs(),
+            'The current driver does not support common table expressions.'
+        );
+        $this->skipIf(
+            (
+                $this->connection->getDriver() instanceof Mysql ||
+                $this->connection->getDriver() instanceof Sqlite
+            ) &&
+            !$this->connection->getDriver()->supportsWindowFunctions(),
+            'The current driver does not support window functions.'
+        );
+
+        $this->loadFixtures('Articles');
+
+        $table = $this->getTableLocator()->get('Articles');
+
+        $cteQuery = $table
+            ->find()
+            ->select(function (Query $query) use ($table) {
+                $columns = $table->getSchema()->columns();
+
+                return array_combine($columns, $columns) + [
+                        'row_num' => $query
+                            ->func()
+                            ->rowNumber()
+                            ->over()
+                            ->partition('author_id')
+                            ->order(['id' => 'ASC']),
+                    ];
+            });
+
+        $query = $table
+            ->find()
+            ->with(function (CommonTableExpression $cte) use ($cteQuery) {
+                return $cte
+                    ->name('cte')
+                    ->query($cteQuery);
+            })
+            ->select(['row_num'])
+            ->enableAutoFields()
+            ->from([$table->getAlias() => 'cte'])
+            ->where(['row_num' => 1], ['row_num' => 'integer'])
+            ->order(['id' => 'ASC'])
+            ->disableHydration();
+
+        $expected = [
+            [
+                'id' => 1,
+                'author_id' => 1,
+                'title' => 'First Article',
+                'body' => 'First Article Body',
+                'published' => 'Y',
+                'row_num' => '1',
+            ],
+            [
+                'id' => 2,
+                'author_id' => 3,
+                'title' => 'Second Article',
+                'body' => 'Second Article Body',
+                'published' => 'Y',
+                'row_num' => '1',
+            ],
+        ];
+
+        $this->assertEquals($expected, $query->toArray());
     }
 }

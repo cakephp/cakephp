@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Http\Middleware;
 
 use Cake\Http\Cookie\Cookie;
+use Cake\Http\Cookie\CookieInterface;
 use Cake\Http\Exception\InvalidCsrfTokenException;
 use Cake\Http\Middleware\CsrfProtectionMiddleware;
 use Cake\Http\Response;
@@ -385,7 +386,8 @@ class CsrfProtectionMiddlewareTest extends TestCase
             'cookieName' => 'token',
             'expiry' => '+1 hour',
             'secure' => true,
-            'httpOnly' => true,
+            'httponly' => true,
+            'samesite' => CookieInterface::SAMESITE_STRICT,
         ]);
         $response = $middleware->process($request, $this->_getRequestHandler());
 
@@ -396,7 +398,30 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $this->assertWithinRange(strtotime('+1 hour'), $cookie['expires'], 1, 'session duration.');
         $this->assertSame('/dir/', $cookie['path'], 'session path.');
         $this->assertTrue($cookie['secure'], 'cookie security flag missing');
-        $this->assertTrue($cookie['httponly'], 'cookie httpOnly flag missing');
+        $this->assertTrue($cookie['httponly'], 'cookie httponly flag missing');
+        $this->assertSame(CookieInterface::SAMESITE_STRICT, $cookie['samesite'], 'samesite attribute missing');
+    }
+
+    public function testUsingDeprecatedConfigKey()
+    {
+        $this->deprecated(function () {
+            $request = new ServerRequest([
+                'environment' => ['REQUEST_METHOD' => 'GET'],
+                'webroot' => '/dir/',
+            ]);
+
+            $middleware = new CsrfProtectionMiddleware([
+                'cookieName' => 'token',
+                'expiry' => '+1 hour',
+                'secure' => true,
+                'httpOnly' => true,
+                'samesite' => CookieInterface::SAMESITE_STRICT,
+            ]);
+            $response = $middleware->process($request, $this->_getRequestHandler());
+
+            $cookie = $response->getCookie('token');
+            $this->assertTrue($cookie['httponly'], 'cookie httponly flag missing');
+        });
     }
 
     /**
@@ -430,6 +455,40 @@ class CsrfProtectionMiddlewareTest extends TestCase
      */
     public function testSkippingTokenCheckUsingWhitelistCallback()
     {
+        $this->deprecated(function () {
+            $request = new ServerRequest([
+                'post' => [
+                    '_csrfToken' => 'foo',
+                ],
+                'environment' => [
+                    'REQUEST_METHOD' => 'POST',
+                ],
+            ]);
+            $response = new Response();
+
+            $middleware = new CsrfProtectionMiddleware();
+            $middleware->whitelistCallback(function (ServerRequestInterface $request) {
+                $this->assertSame('POST', $request->getServerParams()['REQUEST_METHOD']);
+
+                return true;
+            });
+
+            $handler = new TestRequestHandler(function ($request) {
+                $this->assertEmpty($request->getParsedBody());
+
+                return new Response();
+            });
+
+            $response = $middleware->process($request, $handler);
+            $this->assertInstanceOf(Response::class, $response);
+        });
+    }
+
+    /**
+     * @return void
+     */
+    public function testSkippingTokenCheckUsingSkipCheckCallback()
+    {
         $request = new ServerRequest([
             'post' => [
                 '_csrfToken' => 'foo',
@@ -441,7 +500,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $response = new Response();
 
         $middleware = new CsrfProtectionMiddleware();
-        $middleware->whitelistCallback(function (ServerRequestInterface $request) {
+        $middleware->skipCheckCallback(function (ServerRequestInterface $request) {
             $this->assertSame('POST', $request->getServerParams()['REQUEST_METHOD']);
 
             return true;

@@ -217,6 +217,7 @@ class Stream implements AdapterInterface
             'ssl_allow_self_signed',
             'ssl_cafile',
             'ssl_local_cert',
+            'ssl_local_pk',
             'ssl_passphrase',
         ];
         if (empty($options['ssl_cafile'])) {

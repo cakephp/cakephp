@@ -32,7 +32,7 @@ use TestApp\Controller\SecurityTestController;
 /**
  * SecurityComponentTest class
  *
- * @property \TestApp\Controller\Component\TestSecurityComponent Security
+ * @property \TestApp\Controller\Component\TestSecurityComponent $Security
  */
 class SecurityComponentTest extends TestCase
 {

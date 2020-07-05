@@ -31,6 +31,7 @@ class FormTest extends TestCase
     /**
      * Test schema()
      *
+     * @group deprecated
      * @return void
      */
     public function testSchema()
@@ -47,6 +48,27 @@ class FormTest extends TestCase
 
         $form = new AppForm();
         $this->assertInstanceOf(FormSchema::class, $form->schema());
+    }
+
+    /**
+     * Test setSchema() and getSchema()
+     *
+     * @return void
+     */
+    public function testSetGetSchema()
+    {
+        $form = new Form();
+        $schema = $form->getSchema();
+
+        $this->assertInstanceOf('Cake\Form\Schema', $schema);
+        $this->assertSame($schema, $form->getSchema(), 'Same instance each time');
+
+        $schema = new Schema();
+        $this->assertSame($form, $form->setSchema($schema));
+        $this->assertSame($schema, $form->getSchema());
+
+        $form = new AppForm();
+        $this->assertInstanceOf(FormSchema::class, $form->getSchema());
     }
 
     /**
@@ -188,6 +210,49 @@ class FormTest extends TestCase
         ];
 
         $this->assertTrue($form->execute($data));
+    }
+
+    /**
+     * Test set() with one param.
+     *
+     * @return void
+     */
+    public function testSetOneParam()
+    {
+        $form = new Form();
+        $data = ['test' => 'val', 'foo' => 'bar'];
+        $form->set($data);
+        $this->assertEquals($data, $form->getData());
+
+        $update = ['test' => 'updated'];
+        $form->set($update);
+        $this->assertSame('updated', $form->getData()['test']);
+    }
+
+    /**
+     * test set() with 2 params
+     *
+     * @return void
+     */
+    public function testSetTwoParam()
+    {
+        $form = new Form();
+        $form->set('testing', 'value');
+        $this->assertEquals(['testing' => 'value'], $form->getData());
+    }
+
+    /**
+     * test chainable set()
+     *
+     * @return void
+     */
+    public function testSetChained()
+    {
+        $form = new Form();
+        $result = $form->set('testing', 'value')
+            ->set('foo', 'bar');
+        $this->assertSame($form, $result);
+        $this->assertEquals(['testing' => 'value', 'foo' => 'bar'], $form->getData());
     }
 
     /**

@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Driver;
 
+use Cake\Database\Driver\Mysql;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PDO;
@@ -174,5 +175,43 @@ class MysqlTest extends TestCase
 
         $this->assertFalse($driver->commitTransaction());
         $this->assertTrue($driver->isConnected());
+    }
+
+    /**
+     * @dataProvider versionStringProvider
+     * @param string $dbVersion
+     * @param string $expectedVersion
+     * @return void
+     */
+    public function testVersion($dbVersion, $expectedVersion)
+    {
+        /** @var \PHPUnit\Framework\MockObject\MockObject&\Cake\Database\Connection $connection */
+        $connection = $this->getMockBuilder(Connection::class)
+            ->setMethods(['getAttribute'])
+            ->getMock();
+        $connection->expects($this->once())
+            ->method('getAttribute')
+            ->with(PDO::ATTR_SERVER_VERSION)
+            ->will($this->returnValue($dbVersion));
+
+        /** @var \PHPUnit\Framework\MockObject\MockObject&\Cake\Database\Driver\Mysql $driver */
+        $driver = $this->getMockBuilder(Mysql::class)
+            ->setMethods(['connect'])
+            ->getMock();
+
+        $driver->setConnection($connection);
+
+        $result = $driver->version();
+        $this->assertSame($expectedVersion, $result);
+    }
+
+    public function versionStringProvider()
+    {
+        return [
+            ['10.2.23-MariaDB', '10.2.23-MariaDB'],
+            ['5.5.5-10.2.23-MariaDB', '10.2.23-MariaDB'],
+            ['5.5.5-10.4.13-MariaDB-1:10.4.13+maria~focal', '10.4.13-MariaDB-1'],
+            ['8.0.0', '8.0.0'],
+        ];
     }
 }

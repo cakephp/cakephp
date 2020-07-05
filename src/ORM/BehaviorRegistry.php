@@ -249,7 +249,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
         if ($this->hasMethod($method) && $this->has($this->_methodMap[$method][0])) {
             [$behavior, $callMethod] = $this->_methodMap[$method];
 
-            return call_user_func_array([$this->_loaded[$behavior], $callMethod], $args);
+            return $this->_loaded[$behavior]->{$callMethod}(...$args);
         }
 
         throw new BadMethodCallException(
@@ -271,8 +271,9 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
 
         if ($this->hasFinder($type) && $this->has($this->_finderMap[$type][0])) {
             [$behavior, $callMethod] = $this->_finderMap[$type];
+            $callable = [$this->_loaded[$behavior], $callMethod];
 
-            return call_user_func_array([$this->_loaded[$behavior], $callMethod], $args);
+            return $callable(...$args);
         }
 
         throw new BadMethodCallException(

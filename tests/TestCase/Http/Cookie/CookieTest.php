@@ -355,7 +355,7 @@ class CookieTest extends TestCase
     public function testWithoutAddedValue()
     {
         $cookie = new Cookie('cakephp', '{"type":"mvc", "user": {"name":"mark"}}');
-        $new = $cookie->withoutAddedValue('type', 'mvc')
+        $new = $cookie->withoutAddedValue('type')
             ->withoutAddedValue('user.name');
         $this->assertNotSame($new, $cookie, 'Should clone');
 

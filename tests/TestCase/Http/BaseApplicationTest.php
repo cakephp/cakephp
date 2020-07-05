@@ -29,9 +29,16 @@ use TestPlugin\Plugin as TestPlugin;
 
 /**
  * Base application test.
+ *
+ * @coversDefaultClass \Cake\Http\BaseApplication
  */
 class BaseApplicationTest extends TestCase
 {
+    /**
+     * @var string
+     */
+    protected $path;
+
     /**
      * Setup
      *
@@ -162,7 +169,7 @@ class BaseApplicationTest extends TestCase
         $app->addPlugin(TestPlugin::class);
 
         $this->assertFalse(Configure::check('PluginTest.test_plugin.bootstrap'));
-        $this->assertNull($app->pluginBootstrap());
+        $app->pluginBootstrap();
         $this->assertTrue(Configure::check('PluginTest.test_plugin.bootstrap'));
     }
 
@@ -192,5 +199,36 @@ class BaseApplicationTest extends TestCase
             Configure::check('PluginTest.test_plugin_two.bootstrap'),
             'Nested plugin should have bootstrap run'
         );
+    }
+
+    /**
+     * Tests that loading a non existing plugin through addOptionalPlugin() does not throw an exception
+     *
+     * @return void
+     * @covers ::addOptionalPlugin
+     */
+    public function testAddOptionalPluginLoadingNonExistingPlugin()
+    {
+        $app = $this->getMockForAbstractClass(BaseApplication::class, [$this->path]);
+        $pluginCountBefore = count($app->getPlugins());
+        $nonExistingPlugin = 'NonExistingPlugin';
+        $app->addOptionalPlugin($nonExistingPlugin);
+        $pluginCountAfter = count($app->getPlugins());
+        $this->assertSame($pluginCountBefore, $pluginCountAfter);
+    }
+
+    /**
+     * Tests that loading an existing plugin through addOptionalPlugin() works
+     *
+     * @return void
+     * @covers ::addOptionalPlugin
+     */
+    public function testAddOptionalPluginLoadingNonExistingPluginValid()
+    {
+        $app = $this->getMockForAbstractClass(BaseApplication::class, [$this->path]);
+        $app->addOptionalPlugin(TestPlugin::class);
+
+        $this->assertCount(1, $app->getPlugins());
+        $this->assertTrue($app->getPlugins()->has('TestPlugin'));
     }
 }

@@ -33,6 +33,11 @@ class CurlTest extends TestCase
     protected $curl;
 
     /**
+     * @var string
+     */
+    protected $caFile;
+
+    /**
      * @return void
      */
     public function setUp(): void

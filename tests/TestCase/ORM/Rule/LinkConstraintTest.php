@@ -132,7 +132,7 @@ class LinkConstraintTest extends TestCase
     public function testNonExistentAssociation(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The NonExistent association is not defined on Articles.');
+        $this->expectExceptionMessage('The `NonExistent` association is not defined on `Articles`.');
 
         $Articles = $this->getTableLocator()->get('Articles');
 
@@ -1089,17 +1089,14 @@ class LinkConstraintTest extends TestCase
             ]),
         ]);
         $article->setDirty('tags', true);
-        $this->assertNotFalse(
-            $Articles->save($article, ['atomic' => false]),
-            'This should fail, but currently does not because junction delete errors are not being evaluated.'
-        );
+        $this->assertFalse($Articles->save($article));
         $this->assertEmpty(
             $article->getErrors(),
             'This should not be empty, but currently is because junction delete errors are not being returned.'
         );
 
         $this->markTestIncomplete(
-            'This test is incomplete because currently junction delete errors are neither evaluated, nor being returned.'
+            'This test is incomplete because currently junction delete errors are not returned.'
         );
     }
 }

@@ -20,10 +20,12 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Filesystem\Filesystem;
 use Cake\Http\ServerRequest;
+use Cake\Routing\Route\DashedRoute;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\HtmlHelper;
+use Cake\View\View;
 
 /**
  * HtmlHelperTest class
@@ -73,7 +75,7 @@ class HtmlHelperTest extends TestCase
         Router::reload();
         Router::setRequest($request);
 
-        $this->View = $this->getMockBuilder('Cake\View\View')
+        $this->View = $this->getMockBuilder(View::class)
             ->setMethods(['append'])
             ->setConstructorArgs([$request])
             ->getMock();
@@ -84,7 +86,7 @@ class HtmlHelperTest extends TestCase
         Configure::write('Asset.timestamp', false);
 
         Router::scope('/', function (RouteBuilder $routes) {
-            $routes->fallbacks();
+            $routes->fallbacks(DashedRoute::class);
         });
     }
 
@@ -332,6 +334,20 @@ class HtmlHelperTest extends TestCase
         $result = $this->Html->link('Home', '/', ['fullBase' => false]);
         $expected = ['a' => ['href' => '/'], 'Home', '/a'];
         $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * @return void
+     */
+    public function testLinkFromPath(): void
+    {
+        $result = $this->Html->linkFromPath('Index', 'Articles::index');
+        $expected = '<a href="/articles">Index</a>';
+        $this->assertSame($result, $expected);
+
+        $result = $this->Html->linkFromPath('View', 'Articles::view', [3]);
+        $expected = '<a href="/articles/view/3">View</a>';
+        $this->assertSame($result, $expected);
     }
 
     /**
@@ -1216,11 +1232,10 @@ class HtmlHelperTest extends TestCase
      */
     public function testScriptStartAndScriptEnd()
     {
-        $result = $this->Html->scriptStart();
-        $this->assertNull($result);
+        $this->Html->scriptStart();
         echo 'this is some javascript';
-
         $result = $this->Html->scriptEnd();
+
         $expected = [
             '<script',
             'this is some javascript',
@@ -1228,11 +1243,10 @@ class HtmlHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Html->scriptStart();
-        $this->assertNull($result);
+        $this->Html->scriptStart();
         echo 'this is some javascript';
-
         $result = $this->Html->scriptEnd();
+
         $expected = [
             '<script',
             'this is some javascript',

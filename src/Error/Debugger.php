@@ -16,21 +16,38 @@ declare(strict_types=1);
  */
 namespace Cake\Error;
 
+use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
+use Cake\Error\Debug\ArrayItemNode;
+use Cake\Error\Debug\ArrayNode;
+use Cake\Error\Debug\ClassNode;
+use Cake\Error\Debug\ConsoleFormatter;
+use Cake\Error\Debug\DebugContext;
+use Cake\Error\Debug\FormatterInterface;
+use Cake\Error\Debug\HtmlFormatter;
+use Cake\Error\Debug\NodeInterface;
+use Cake\Error\Debug\PropertyNode;
+use Cake\Error\Debug\ReferenceNode;
+use Cake\Error\Debug\ScalarNode;
+use Cake\Error\Debug\SpecialNode;
+use Cake\Error\Debug\TextFormatter;
 use Cake\Log\Log;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
 use Cake\Utility\Text;
+use Closure;
 use Exception;
 use InvalidArgumentException;
 use ReflectionObject;
 use ReflectionProperty;
+use RuntimeException;
 use Throwable;
 
 /**
  * Provide custom logging and error handling.
  *
- * Debugger overrides PHP's default error handling to provide stack traces and enhanced logging
+ * Debugger extends PHP's default error handling and gives
+ * simpler to use more powerful interfaces.
  *
  * @link https://book.cakephp.org/4/en/development/debugging.html#namespace-Cake\Error
  */
@@ -45,6 +62,8 @@ class Debugger
      */
     protected $_defaultConfig = [
         'outputMask' => [],
+        'exportFormatter' => null,
+        'editor' => 'phpstorm',
     ];
 
     /**
@@ -92,6 +111,21 @@ class Debugger
     ];
 
     /**
+     * A map of editors to their link templates.
+     *
+     * @var array
+     */
+    protected $editors = [
+        'atom' => 'atom://core/open/file?filename={file}&line={line}',
+        'emacs' => 'emacs://open?url=file://{file}&line={line}',
+        'macvim' => 'mvim://open/?url=file://{file}&line={line}',
+        'phpstorm' => 'phpstorm://open?file={file}&line={line}',
+        'sublime' => 'subl://open?url=file://{file}&line={line}',
+        'textmate' => 'txmt://open?url=file://{file}&line={line}',
+        'vscode' => 'vscode://file/{file}:{line}',
+    ];
+
+    /**
      * Holds current output data when outputFormat is false.
      *
      * @var array
@@ -104,13 +138,15 @@ class Debugger
     public function __construct()
     {
         $docRef = ini_get('docref_root');
-
         if (empty($docRef) && function_exists('ini_set')) {
             ini_set('docref_root', 'https://secure.php.net/');
         }
         if (!defined('E_RECOVERABLE_ERROR')) {
             define('E_RECOVERABLE_ERROR', 4096);
         }
+
+        $config = array_intersect_key((array)Configure::read('Debugger'), $this->_defaultConfig);
+        $this->setConfig($config);
 
         $e = '<pre class="cake-error">';
         $e .= '<a href="javascript:void(0);" onclick="document.getElementById(\'{:id}-trace\')';
@@ -140,7 +176,7 @@ class Debugger
 
         $this->_templates['js']['links'] = $links;
 
-        $this->_templates['js']['context'] = '<pre id="{:id}-context" class="cake-context" ';
+        $this->_templates['js']['context'] = '<pre id="{:id}-context" class="cake-context cake-debug" ';
         $this->_templates['js']['context'] .= 'style="display: none;">{:context}</pre>';
 
         $this->_templates['js']['code'] = '<pre id="{:id}-code" class="cake-code-dump" ';
@@ -150,7 +186,7 @@ class Debugger
         $e .= '[<b>{:path}</b>, line <b>{:line}]</b></pre>';
         $this->_templates['html']['error'] = $e;
 
-        $this->_templates['html']['context'] = '<pre class="cake-context"><b>Context</b> ';
+        $this->_templates['html']['context'] = '<pre class="cake-context cake-debug"><b>Context</b> ';
         $this->_templates['html']['context'] .= '<p>{:context}</p></pre>';
     }
 
@@ -224,17 +260,77 @@ class Debugger
     }
 
     /**
+     * Add an editor link format
+     *
+     * Template strings can use the `{file}` and `{line}` placeholders.
+     * Closures templates must return a string, and accept two parameters:
+     * The file and line.
+     *
+     * @param string $name The name of the editor.
+     * @param string|\Closure $template The string template or closure
+     * @return void
+     */
+    public static function addEditor(string $name, $template): void
+    {
+        $instance = static::getInstance();
+        if (!is_string($template) && !($template instanceof Closure)) {
+            $type = getTypeName($template);
+            throw new RuntimeException("Invalid editor type of `{$type}`. Expected string or Closure.");
+        }
+        $instance->editors[$name] = $template;
+    }
+
+    /**
+     * Choose the editor link style you want to use.
+     *
+     * @param string $name The editor name.
+     * @return void
+     */
+    public static function setEditor(string $name): void
+    {
+        $instance = static::getInstance();
+        if (!isset($instance->editors[$name])) {
+            $known = implode(', ', array_keys($instance->editors));
+            throw new RuntimeException("Unknown editor `{$name}`. Known editors are {$known}");
+        }
+        $instance->setConfig('editor', $name);
+    }
+
+    /**
+     * Get a formatted URL for the active editor.
+     *
+     * @param string $file The file to create a link for.
+     * @param int $line The line number to create a link for.
+     * @return string The formatted URL.
+     */
+    public static function editorUrl(string $file, int $line): string
+    {
+        $instance = static::getInstance();
+        $editor = $instance->getConfig('editor');
+        if (!isset($instance->editors[$editor])) {
+            throw new RuntimeException("Cannot format editor URL `{$editor}` is not a known editor.");
+        }
+
+        $template = $instance->editors[$editor];
+        if (is_string($template)) {
+            return str_replace(['{file}', '{line}'], [$file, (string)$line], $template);
+        }
+
+        return $template($file, $line);
+    }
+
+    /**
      * Recursively formats and outputs the contents of the supplied variable.
      *
      * @param mixed $var The variable to dump.
-     * @param int $depth The depth to output to. Defaults to 3.
+     * @param int $maxDepth The depth to output to. Defaults to 3.
      * @return void
      * @see \Cake\Error\Debugger::exportVar()
      * @link https://book.cakephp.org/4/en/development/debugging.html#outputting-values
      */
-    public static function dump($var, int $depth = 3): void
+    public static function dump($var, int $maxDepth = 3): void
     {
-        pr(static::exportVar($var, $depth));
+        pr(static::exportVar($var, $maxDepth));
     }
 
     /**
@@ -243,16 +339,16 @@ class Debugger
      *
      * @param mixed $var Variable or content to log.
      * @param int|string $level Type of log to use. Defaults to 'debug'.
-     * @param int $depth The depth to output to. Defaults to 3.
+     * @param int $maxDepth The depth to output to. Defaults to 3.
      * @return void
      */
-    public static function log($var, $level = 'debug', int $depth = 3): void
+    public static function log($var, $level = 'debug', int $maxDepth = 3): void
     {
         /** @var string $source */
         $source = static::trace(['start' => 1]);
         $source .= "\n";
 
-        Log::write($level, "\n" . $source . static::exportVar($var, $depth));
+        Log::write($level, "\n" . $source . static::exportVar($var, $maxDepth));
     }
 
     /**
@@ -472,6 +568,36 @@ class Debugger
     }
 
     /**
+     * Get the configured export formatter or infer one based on the environment.
+     *
+     * @return \Cake\Error\Debug\FormatterInterface
+     * @unstable This method is not stable and may change in the future.
+     * @since 4.1.0
+     */
+    public function getExportFormatter(): FormatterInterface
+    {
+        $instance = static::getInstance();
+        $class = $instance->getConfig('exportFormatter');
+        if (!$class) {
+            if (ConsoleFormatter::environmentMatches()) {
+                $class = ConsoleFormatter::class;
+            } elseif (HtmlFormatter::environmentMatches()) {
+                $class = HtmlFormatter::class;
+            } else {
+                $class = TextFormatter::class;
+            }
+        }
+        $instance = new $class();
+        if (!$instance instanceof FormatterInterface) {
+            throw new RuntimeException(
+                "The `{$class}` formatter does not implement " . FormatterInterface::class
+            );
+        }
+
+        return $instance;
+    }
+
+    /**
      * Converts a variable to a string for debug output.
      *
      * *Note:* The following keys will have their contents
@@ -489,47 +615,44 @@ class Debugger
      * shown in an error message if CakePHP is deployed in development mode.
      *
      * @param mixed $var Variable to convert.
-     * @param int $depth The depth to output to. Defaults to 3.
+     * @param int $maxDepth The depth to output to. Defaults to 3.
      * @return string Variable as a formatted string
      */
-    public static function exportVar($var, int $depth = 3): string
+    public static function exportVar($var, int $maxDepth = 3): string
     {
-        return static::_export($var, $depth, 0);
+        $context = new DebugContext($maxDepth);
+        $node = static::export($var, $context);
+
+        return static::getInstance()->getExportFormatter()->dump($node);
     }
 
     /**
      * Protected export function used to keep track of indentation and recursion.
      *
      * @param mixed $var The variable to dump.
-     * @param int $depth The remaining depth.
-     * @param int $indent The current indentation level.
-     * @return string The dumped variable.
+     * @param \Cake\Error\Debug\DebugContext $context Dump context
+     * @return \Cake\Error\Debug\NodeInterface The dumped variable.
      */
-    protected static function _export($var, int $depth, int $indent): string
+    protected static function export($var, DebugContext $context): NodeInterface
     {
-        switch (static::getType($var)) {
-            case 'boolean':
-                return $var ? 'true' : 'false';
-            case 'integer':
-                return '(int) ' . $var;
+        $type = static::getType($var);
+        switch ($type) {
             case 'float':
-                return '(float) ' . $var;
             case 'string':
-                if (trim($var) === '' && ctype_space($var) === false) {
-                    return "''";
-                }
-
-                return "'" . $var . "'";
-            case 'array':
-                return static::_array($var, $depth - 1, $indent + 1);
             case 'resource':
-                return strtolower(gettype($var));
+            case 'resource (closed)':
             case 'null':
-                return 'null';
+                return new ScalarNode($type, $var);
+            case 'boolean':
+                return new ScalarNode('bool', $var);
+            case 'integer':
+                return new ScalarNode('int', $var);
+            case 'array':
+                return static::exportArray($var, $context->withAddedDepth());
             case 'unknown':
-                return 'unknown';
+                return new SpecialNode('(unknown)');
             default:
-                return static::_object($var, $depth - 1, $indent + 1);
+                return static::exportObject($var, $context->withAddedDepth());
         }
     }
 
@@ -547,81 +670,80 @@ class Debugger
      * - schema
      *
      * @param array $var The array to export.
-     * @param int $depth The current depth, used for recursion tracking.
-     * @param int $indent The current indentation level.
-     * @return string Exported array.
+     * @param \Cake\Error\Debug\DebugContext $context The current dump context.
+     * @return \Cake\Error\Debug\ArrayNode Exported array.
      */
-    protected static function _array(array $var, int $depth, int $indent): string
+    protected static function exportArray(array $var, DebugContext $context): ArrayNode
     {
-        $out = '[';
-        $break = $end = '';
-        if (!empty($var)) {
-            $break = "\n" . str_repeat("\t", $indent);
-            $end = "\n" . str_repeat("\t", $indent - 1);
-        }
-        $vars = [];
+        $items = [];
 
-        if ($depth >= 0) {
+        $remaining = $context->remainingDepth();
+        if ($remaining >= 0) {
             $outputMask = (array)static::outputMask();
             foreach ($var as $key => $val) {
-                // Sniff for globals as !== explodes in < 5.4
-                if ($key === 'GLOBALS' && is_array($val) && isset($val['GLOBALS'])) {
-                    $val = '[recursion]';
-                } elseif (array_key_exists($key, $outputMask)) {
-                    $val = (string)$outputMask[$key];
+                if (array_key_exists($key, $outputMask)) {
+                    $node = new ScalarNode('string', $outputMask[$key]);
                 } elseif ($val !== $var) {
-                    $val = static::_export($val, $depth, $indent);
+                    // Dump all the items without increasing depth.
+                    $node = static::export($val, $context);
+                } else {
+                    // Likely recursion, so we increase depth.
+                    $node = static::export($val, $context->withAddedDepth());
                 }
-                $vars[] = $break . static::exportVar($key) .
-                    ' => ' .
-                    $val;
+                $items[] = new ArrayItemNode(static::export($key, $context), $node);
             }
         } else {
-            $vars[] = $break . '[maximum depth reached]';
+            $items[] = new ArrayItemNode(
+                new ScalarNode('string', ''),
+                new SpecialNode('[maximum depth reached]')
+            );
         }
 
-        return $out . implode(',', $vars) . $end . ']';
+        return new ArrayNode($items);
     }
 
     /**
-     * Handles object to string conversion.
+     * Handles object to node conversion.
      *
      * @param object $var Object to convert.
-     * @param int $depth The current depth, used for tracking recursion.
-     * @param int $indent The current indentation level.
-     * @return string
+     * @param \Cake\Error\Debug\DebugContext $context The dump context.
+     * @return \Cake\Error\Debug\NodeInterface
      * @see \Cake\Error\Debugger::exportVar()
      */
-    protected static function _object(object $var, int $depth, int $indent): string
+    protected static function exportObject(object $var, DebugContext $context): NodeInterface
     {
-        $out = '';
-        $props = [];
+        $isRef = $context->hasReference($var);
+        $refNum = $context->getReferenceId($var);
 
         $className = get_class($var);
-        $out .= 'object(' . $className . ') {';
-        $break = "\n" . str_repeat("\t", $indent);
-        $end = "\n" . str_repeat("\t", $indent - 1);
-
-        if ($depth > 0 && method_exists($var, '__debugInfo')) {
-            try {
-                return $out . "\n" .
-                    substr(static::_array($var->__debugInfo(), $depth - 1, $indent), 1, -1) .
-                    $end . '}';
-            } catch (Exception $e) {
-                $message = $e->getMessage();
-
-                return $out . "\n(unable to export object: $message)\n }";
-            }
+        if ($isRef) {
+            return new ReferenceNode($className, $refNum);
         }
+        $node = new ClassNode($className, $refNum);
 
-        if ($depth > 0) {
+        $remaining = $context->remainingDepth();
+        if ($remaining > 0) {
+            if (method_exists($var, '__debugInfo')) {
+                try {
+                    foreach ($var->__debugInfo() as $key => $val) {
+                        $node->addProperty(new PropertyNode("'{$key}'", null, static::export($val, $context)));
+                    }
+                } catch (Exception $e) {
+                    $message = $e->getMessage();
+
+                    return new SpecialNode("(unable to export object: $message)");
+                }
+            }
+
             $outputMask = (array)static::outputMask();
             $objectVars = get_object_vars($var);
             foreach ($objectVars as $key => $value) {
-                $value = array_key_exists($key, $outputMask)
-                    ? $outputMask[$key]
-                    : static::_export($value, $depth - 1, $indent);
-                $props[] = "$key => " . $value;
+                if (array_key_exists($key, $outputMask)) {
+                    $value = $outputMask[$key];
+                }
+                $node->addProperty(
+                    new PropertyNode($key, 'public', static::export($value, $context->withAddedDepth()))
+                );
             }
 
             $ref = new ReflectionObject($var);
@@ -633,36 +755,28 @@ class Debugger
             foreach ($filters as $filter => $visibility) {
                 $reflectionProperties = $ref->getProperties($filter);
                 foreach ($reflectionProperties as $reflectionProperty) {
-                    $value = null;
                     $reflectionProperty->setAccessible(true);
 
                     if (
                         method_exists($reflectionProperty, 'isInitialized') &&
                         !$reflectionProperty->isInitialized($var)
                     ) {
-                        $value = '[uninitialized]';
+                        $value = new SpecialNode('[uninitialized]');
+                    } else {
+                        $value = static::export($reflectionProperty->getValue($var), $context->withAddedDepth());
                     }
-
-                    if ($value === null) {
-                        $property = $reflectionProperty->getValue($var);
-                        $value = static::_export($property, $depth - 1, $indent);
-                    }
-
-                    $key = $reflectionProperty->name;
-                    $props[] = sprintf(
-                        '[%s] %s => %s',
-                        $visibility,
-                        $key,
-                        array_key_exists($key, $outputMask) ? $outputMask[$key] : $value
+                    $node->addProperty(
+                        new PropertyNode(
+                            $reflectionProperty->getName(),
+                            $visibility,
+                            $value
+                        )
                     );
                 }
             }
-
-            $out .= $break . implode($break, $props) . $end;
         }
-        $out .= '}';
 
-        return $out;
+        return $node;
     }
 
     /**
@@ -817,7 +931,6 @@ class Debugger
         }
 
         if (!empty($tpl['escapeContext'])) {
-            $context = h($context);
             $data['description'] = h($data['description']);
         }
 
@@ -834,7 +947,7 @@ class Debugger
         $links = implode(' ', $links);
 
         if (isset($tpl['callback']) && is_callable($tpl['callback'])) {
-            call_user_func($tpl['callback'], $data, compact('links', 'info'));
+            $tpl['callback']($data, compact('links', 'info'));
 
             return;
         }
@@ -850,32 +963,21 @@ class Debugger
      */
     public static function getType($var): string
     {
-        if (is_object($var)) {
-            return get_class($var);
-        }
-        if ($var === null) {
+        $type = getTypeName($var);
+
+        if ($type === 'NULL') {
             return 'null';
         }
-        if (is_string($var)) {
-            return 'string';
-        }
-        if (is_array($var)) {
-            return 'array';
-        }
-        if (is_int($var)) {
-            return 'integer';
-        }
-        if (is_bool($var)) {
-            return 'boolean';
-        }
-        if (is_float($var)) {
+
+        if ($type === 'double') {
             return 'float';
         }
-        if (is_resource($var)) {
-            return 'resource';
+
+        if ($type === 'unknown type') {
+            return 'unknown';
         }
 
-        return 'unknown';
+        return $type;
     }
 
     /**
@@ -885,59 +987,31 @@ class Debugger
      * @param array $location If contains keys "file" and "line" their values will
      *    be used to show location info.
      * @param bool|null $showHtml If set to true, the method prints the debug
-     *    data in a browser-friendly way.
+     *    data encoded as HTML. If false, plain text formatting will be used.
+     *    If null, the format will be chosen based on the configured exportFormatter, or
+     *    environment conditions.
      * @return void
      */
     public static function printVar($var, array $location = [], ?bool $showHtml = null): void
     {
         $location += ['file' => null, 'line' => null];
-        $file = $location['file'];
-        $line = $location['line'];
-        $lineInfo = '';
-        if ($file) {
-            $search = [];
-            if (defined('ROOT')) {
-                $search = [ROOT];
-            }
-            if (defined('CAKE_CORE_INCLUDE_PATH')) {
-                array_unshift($search, CAKE_CORE_INCLUDE_PATH);
-            }
-            $file = str_replace($search, '', $file);
+        if ($location['file']) {
+            $location['file'] = static::trimPath((string)$location['file']);
         }
-        $html = <<<HTML
-<div class="cake-debug-output" style="direction:ltr">
-%s
-<pre class="cake-debug">
-%s
-</pre>
-</div>
-HTML;
-        $text = <<<TEXT
-%s
-########## DEBUG ##########
-%s
-###########################
 
-TEXT;
-        $template = $html;
-        if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') || $showHtml === false) {
-            $template = $text;
-            if ($file && $line) {
-                $lineInfo = sprintf('%s (line %s)', $file, $line);
-            }
+        $debugger = static::getInstance();
+        $restore = null;
+        if ($showHtml !== null) {
+            $restore = $debugger->getConfig('exportFormatter');
+            $debugger->setConfig('exportFormatter', $showHtml ? HtmlFormatter::class : TextFormatter::class);
         }
-        if ($showHtml === null && $template !== $text) {
-            $showHtml = true;
+        $contents = static::exportVar($var, 25);
+        $formatter = $debugger->getExportFormatter();
+
+        if ($restore) {
+            $debugger->setConfig('exportFormatter', $restore);
         }
-        $var = Debugger::exportVar($var, 25);
-        if ($showHtml) {
-            $template = $html;
-            $var = h($var);
-            if ($file && $line) {
-                $lineInfo = sprintf('<span><strong>%s</strong> (line <strong>%s</strong>)</span>', $file, $line);
-            }
-        }
-        printf($template, $lineInfo, $var);
+        echo $formatter->formatWrapper($contents, $location);
     }
 
     /**

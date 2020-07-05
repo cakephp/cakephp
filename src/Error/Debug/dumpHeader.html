@@ -1,0 +1,201 @@
+<style type="text/css">
+.cake-debug {
+  --color-bg: #ECECE9;
+  --color-highlight-bg: #fcf8e3;
+
+  --color-orange: #c44f24;
+  --color-green: #0b6125;
+  --color-violet: #a71d5d;
+  --color-blue: #4070a0;
+  --color-grey: #5f5f5f;
+
+  --color-dark-grey: #222;
+  --color-cyan: #234aa0;
+  --color-red: #d33c44;
+
+  --indent: 20px;
+
+  font-family: monospace;
+  background: var(--color-bg);
+  padding: 5px;
+  line-height: 16px;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+.cake-debug:last-child {
+  margin-bottom: 0;
+}
+.cake-debug > span {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--color-dark-grey);
+}
+
+.cake-dbg-object {
+  display: inline;
+}
+.cake-dbg-object[data-highlighted=true],
+.cake-dbg-object[data-highlighted=true] samp {
+  background: var(--color-highlight-bg);
+}
+
+/*
+Array item container and each items are blocks so
+nesting works.
+*/
+.cake-dbg-object-props,
+.cake-dbg-array-items {
+  display: block;
+}
+.cake-dbg-prop,
+.cake-dbg-array-item {
+  display: block;
+  padding-left: var(--indent);
+  min-height: 18px;
+}
+
+/** Collapser buttons **/
+[data-hidden=true] {
+  display: none;
+}
+.cake-dbg-collapse:before {
+  content: "\25b8";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  font-size: 13px;
+  line-height: 10px;
+  background: hsla(0, 0%, 50%, 0.2);
+  padding: 4px 2px 4px 6px;
+  border-radius: 3px;
+  color: var(--color-blue);
+}
+.cake-dbg-collapse[data-open=true]:before {
+  content: "\25be";
+  padding: 4px 3px 4px 5px;
+}
+
+/* Textual elements */
+.cake-dbg-class {
+  color: var(--color-cyan);
+}
+.cake-dbg-property {
+  color: var(--color-dark-grey);
+}
+.cake-dbg-visibility {
+  color: var(--color-violet);
+}
+.cake-dbg-punct {
+  color: var(--color-grey);
+}
+.cake-dbg-string {
+  color: var(--color-green);
+}
+.cake-dbg-number {
+  font-weight: bold;
+  color: var(--color-blue);
+}
+.cake-dbg-const {
+  color: var(--color-yellow);
+  font-weight: bold;
+}
+.cake-dbg-ref {
+  color: var(--color-red);
+}
+.cake-dbg-special {
+  color: var(--color-red);
+  font-style: italic;
+}
+</style>
+<script type="text/javascript">
+(function (win, doc) {
+
+function initialize() {
+  createCollapsibles(doc.querySelectorAll('.cake-dbg-array-items'));
+  createCollapsibles(doc.querySelectorAll('.cake-dbg-object-props'));
+  attachRefEvents(doc.querySelectorAll('.cake-dbg'));
+}
+
+/**
+ * Create collapse toggles and attach events
+ */
+function createCollapsibles(nodes) {
+  nodes.forEach(function (node) {
+    // Hide the childnode container if it is not
+    // a direct parent of the container.
+    if (!node.parentNode.parentNode.classList.contains('cake-dbg')) {
+      node.dataset.hidden = true;
+    }
+
+    // Don't show toggles for empty arrays/objects
+    if (node.childNodes.length == 0) {
+      return;
+    }
+
+    var collapser = doc.createElement('a');
+    collapser.classList.add('cake-dbg-collapse');
+    collapser.dataset.open = !node.dataset.hidden;
+    collapser.setAttribute('href', '#')
+    collapser.setAttribute('title', 'Toggle items');
+
+    // Add open/close behavior
+    collapser.addEventListener('click', function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      node.dataset.hidden = node.dataset.hidden === 'true' ? 'false' : 'true';
+      collapser.dataset.open = collapser.dataset.open === 'true' ? 'false' : 'true';
+    });
+
+    node.parentNode.insertBefore(collapser, node);
+  });
+}
+
+/**
+ * When ref links are clicked open the path to that
+ * element and highlight the reference
+ */
+function attachRefEvents(nodes) {
+  nodes.forEach(function (container) {
+    var refLinks = container.querySelectorAll('.cake-dbg-ref');
+    refLinks.forEach(function (ref) {
+      ref.addEventListener('click', function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        var target = document.getElementById(ref.getAttribute('href').substr(1));
+        openPath(container, target);
+      });
+    });
+  });
+}
+
+function openPath(container, target) {
+  // Open the target element
+  var expander = target.querySelector('.cake-dbg-collapse');
+  if (expander.dataset.open === 'false') {
+    expander.click();
+  }
+  container.querySelectorAll('.cake-dbg-object').forEach(function (el) {
+    el.dataset.highlighted = 'false';
+  })
+  target.dataset.highlighted = 'true';
+
+  var current = target;
+  // Traverse up the tree opening all closed containers.
+  while (true) {
+    var parent = current.parentNode;
+    if (parent == container) {
+      break;
+    }
+    if (parent.classList.contains('cake-dbg-object') || parent.classList.contains('cake-dbg-array')) {
+      expander = parent.querySelector('.cake-dbg-collapse');
+      if (expander.dataset.open === 'false') {
+        expander.click();
+      }
+    }
+    current = parent;
+  }
+}
+
+doc.addEventListener('DOMContentLoaded', initialize);
+}(window, document))
+</script>

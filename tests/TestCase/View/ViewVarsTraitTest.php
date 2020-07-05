@@ -24,7 +24,7 @@ use Cake\TestSuite\TestCase;
 class ViewVarsTraitTest extends TestCase
 {
     /**
-     * @var \Cake\Controller\Controller;
+     * @var \Cake\Controller\Controller
      */
     protected $subject;
 

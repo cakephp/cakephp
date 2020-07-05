@@ -18,7 +18,7 @@ namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Schema\Collection as SchemaCollection;
-use Cake\Database\Schema\MysqlSchema;
+use Cake\Database\Schema\MysqlSchemaDialect;
 use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
@@ -85,36 +85,36 @@ class MysqlSchemaTest extends TestCase
                 ['type' => 'boolean', 'length' => null],
             ],
             [
-                'TINYINT(2)',
-                ['type' => 'tinyinteger', 'length' => 2, 'unsigned' => false],
+                'TINYINT(1) UNSIGNED',
+                ['type' => 'boolean', 'length' => null],
             ],
             [
                 'TINYINT(3)',
-                ['type' => 'tinyinteger', 'length' => 3, 'unsigned' => false],
+                ['type' => 'tinyinteger', 'length' => null, 'unsigned' => false],
             ],
             [
                 'TINYINT(3) UNSIGNED',
-                ['type' => 'tinyinteger', 'length' => 3, 'unsigned' => true],
+                ['type' => 'tinyinteger', 'length' => null, 'unsigned' => true],
             ],
             [
                 'SMALLINT(4)',
-                ['type' => 'smallinteger', 'length' => 4, 'unsigned' => false],
+                ['type' => 'smallinteger', 'length' => null, 'unsigned' => false],
             ],
             [
                 'SMALLINT(4) UNSIGNED',
-                ['type' => 'smallinteger', 'length' => 4, 'unsigned' => true],
+                ['type' => 'smallinteger', 'length' => null, 'unsigned' => true],
             ],
             [
                 'INTEGER(11)',
-                ['type' => 'integer', 'length' => 11, 'unsigned' => false],
+                ['type' => 'integer', 'length' => null, 'unsigned' => false],
             ],
             [
                 'MEDIUMINT(11)',
-                ['type' => 'integer', 'length' => 11, 'unsigned' => false],
+                ['type' => 'integer', 'length' => null, 'unsigned' => false],
             ],
             [
                 'INTEGER(11) UNSIGNED',
-                ['type' => 'integer', 'length' => 11, 'unsigned' => true],
+                ['type' => 'integer', 'length' => null, 'unsigned' => true],
             ],
             [
                 'BIGINT',
@@ -241,7 +241,7 @@ class MysqlSchemaTest extends TestCase
             'comment' => 'Comment section',
         ];
         $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')->getMock();
-        $dialect = new MysqlSchema($driver);
+        $dialect = new MysqlSchemaDialect($driver);
 
         $table = new TableSchema('table');
         $dialect->convertColumnDescription($table, $field);
@@ -267,7 +267,7 @@ class MysqlSchemaTest extends TestCase
 
         $table = <<<SQL
             CREATE TABLE schema_authors (
-                id INT(11) PRIMARY KEY AUTO_INCREMENT,
+                id INT PRIMARY KEY AUTO_INCREMENT,
                 name VARCHAR(50),
                 bio TEXT,
                 created DATETIME
@@ -280,7 +280,7 @@ SQL;
                 id BIGINT PRIMARY KEY AUTO_INCREMENT,
                 title VARCHAR(20) COMMENT 'A title',
                 body TEXT,
-                author_id INT(11) NOT NULL,
+                author_id INT NOT NULL,
                 published BOOLEAN DEFAULT 0,
                 allow_comments TINYINT(1) DEFAULT 0,
                 created DATETIME,
@@ -295,7 +295,7 @@ SQL;
         if ($connection->getDriver()->supportsNativeJson()) {
             $table = <<<SQL
                 CREATE TABLE schema_json (
-                    id INT(11) PRIMARY KEY AUTO_INCREMENT,
+                    id INT PRIMARY KEY AUTO_INCREMENT,
                     data JSON NOT NULL
                 )
 SQL;
@@ -304,7 +304,7 @@ SQL;
     }
 
     /**
-     * Integration test for SchemaCollection & MysqlDialect.
+     * Integration test for SchemaCollection & MysqlSchemaDialect.
      *
      * @return void
      */
@@ -340,7 +340,7 @@ SQL;
                 'null' => false,
                 'unsigned' => false,
                 'default' => null,
-                'length' => 20,
+                'length' => null,
                 'precision' => null,
                 'comment' => null,
                 'autoIncrement' => true,
@@ -368,7 +368,7 @@ SQL;
                 'null' => false,
                 'unsigned' => false,
                 'default' => null,
-                'length' => 11,
+                'length' => null,
                 'precision' => null,
                 'comment' => null,
                 'autoIncrement' => null,
@@ -406,6 +406,12 @@ SQL;
                 'comment' => null,
             ],
         ];
+
+        if (ConnectionManager::get('test')->getDriver()->isMariadb()) {
+            $expected['created_with_precision']['default'] = 'current_timestamp(3)';
+            $expected['created_with_precision']['comment'] = '';
+        }
+
         $this->assertEquals(['id'], $result->getPrimaryKey());
         foreach ($expected as $field => $definition) {
             $this->assertEquals(
@@ -453,9 +459,14 @@ SQL;
                 'delete' => 'restrict',
             ],
         ];
+
         $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
         $this->assertEquals($expected['length_idx'], $result->getConstraint('length_idx'));
-        $this->assertEquals($expected['schema_articles_ibfk_1'], $result->getConstraint('schema_articles_ibfk_1'));
+        if (ConnectionManager::get('test')->getDriver()->isMariadb()) {
+            $this->assertEquals($expected['schema_articles_ibfk_1'], $result->getConstraint('author_idx'));
+        } else {
+            $this->assertEquals($expected['schema_articles_ibfk_1'], $result->getConstraint('schema_articles_ibfk_1'));
+        }
 
         $this->assertCount(1, $result->indexes());
         $expected = [
@@ -490,7 +501,7 @@ SQL;
         $sql = <<<SQL
 CREATE TABLE `odd_primary_key` (
 `id` BIGINT UNSIGNED NOT NULL,
-`other_field` INTEGER(11) NOT NULL AUTO_INCREMENT,
+`other_field` INTEGER NOT NULL AUTO_INCREMENT,
 PRIMARY KEY (`id`),
 UNIQUE KEY `other_field` (`other_field`)
 )
@@ -510,7 +521,7 @@ SQL;
 
         $output = $table->createSql($connection);
         $this->assertStringContainsString('`id` BIGINT UNSIGNED NOT NULL,', $output[0]);
-        $this->assertStringContainsString('`other_field` INTEGER(11) NOT NULL AUTO_INCREMENT,', $output[0]);
+        $this->assertStringContainsString('`other_field` INTEGER NOT NULL AUTO_INCREMENT,', $output[0]);
     }
 
     /**
@@ -637,57 +648,57 @@ SQL;
             // Integers
             [
                 'post_id',
-                ['type' => 'tinyinteger', 'length' => 2],
-                '`post_id` TINYINT(2)',
+                ['type' => 'tinyinteger'],
+                '`post_id` TINYINT',
             ],
             [
                 'post_id',
-                ['type' => 'tinyinteger', 'length' => 2, 'unsigned' => true],
-                '`post_id` TINYINT(2) UNSIGNED',
+                ['type' => 'tinyinteger', 'unsigned' => true],
+                '`post_id` TINYINT UNSIGNED',
             ],
             [
                 'post_id',
-                ['type' => 'smallinteger', 'length' => 4],
-                '`post_id` SMALLINT(4)',
+                ['type' => 'smallinteger'],
+                '`post_id` SMALLINT',
             ],
             [
                 'post_id',
-                ['type' => 'smallinteger', 'length' => 4, 'unsigned' => true],
-                '`post_id` SMALLINT(4) UNSIGNED',
+                ['type' => 'smallinteger', 'unsigned' => true],
+                '`post_id` SMALLINT UNSIGNED',
             ],
             [
                 'post_id',
-                ['type' => 'integer', 'length' => 11],
-                '`post_id` INTEGER(11)',
+                ['type' => 'integer'],
+                '`post_id` INTEGER',
             ],
             [
                 'post_id',
-                ['type' => 'integer', 'length' => 11, 'unsigned' => true],
-                '`post_id` INTEGER(11) UNSIGNED',
+                ['type' => 'integer', 'unsigned' => true],
+                '`post_id` INTEGER UNSIGNED',
             ],
             [
                 'post_id',
-                ['type' => 'biginteger', 'length' => 20],
+                ['type' => 'biginteger'],
                 '`post_id` BIGINT',
             ],
             [
                 'post_id',
-                ['type' => 'biginteger', 'length' => 20, 'unsigned' => true],
+                ['type' => 'biginteger', 'unsigned' => true],
                 '`post_id` BIGINT UNSIGNED',
             ],
             [
                 'post_id',
-                ['type' => 'integer', 'length' => 20, 'autoIncrement' => true],
-                '`post_id` INTEGER(20) AUTO_INCREMENT',
+                ['type' => 'integer', 'autoIncrement' => true],
+                '`post_id` INTEGER AUTO_INCREMENT',
             ],
             [
                 'post_id',
-                ['type' => 'integer', 'length' => 20, 'null' => false, 'autoIncrement' => false],
-                '`post_id` INTEGER(20) NOT NULL',
+                ['type' => 'integer', 'null' => false, 'autoIncrement' => false],
+                '`post_id` INTEGER NOT NULL',
             ],
             [
                 'post_id',
-                ['type' => 'biginteger', 'length' => 20, 'autoIncrement' => true],
+                ['type' => 'biginteger', 'autoIncrement' => true],
                 '`post_id` BIGINT AUTO_INCREMENT',
             ],
             // Decimal
@@ -818,7 +829,7 @@ SQL;
     public function testColumnSql($name, $data, $expected)
     {
         $driver = $this->_getMockedDriver();
-        $schema = new MysqlSchema($driver);
+        $schema = new MysqlSchemaDialect($driver);
 
         $table = (new TableSchema('articles'))->addColumn($name, $data);
         $this->assertEquals($expected, $schema->columnSql($table, $name));
@@ -892,7 +903,7 @@ SQL;
     public function testConstraintSql($name, $data, $expected)
     {
         $driver = $this->_getMockedDriver();
-        $schema = new MysqlSchema($driver);
+        $schema = new MysqlSchemaDialect($driver);
 
         $table = (new TableSchema('articles'))->addColumn('title', [
             'type' => 'string',
@@ -933,7 +944,7 @@ SQL;
     public function testIndexSql($name, $data, $expected)
     {
         $driver = $this->_getMockedDriver();
-        $schema = new MysqlSchema($driver);
+        $schema = new MysqlSchemaDialect($driver);
 
         $table = (new TableSchema('articles'))->addColumn('title', [
             'type' => 'string',
@@ -1055,7 +1066,7 @@ SQL;
     public function testColumnSqlPrimaryKey()
     {
         $driver = $this->_getMockedDriver();
-        $schema = new MysqlSchema($driver);
+        $schema = new MysqlSchemaDialect($driver);
 
         $table = new TableSchema('articles');
         $table->addColumn('id', [
@@ -1338,7 +1349,7 @@ SQL;
         $driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
         $driver->expects($this->once())
             ->method('connect');
-        $schema = new MysqlSchema($driver);
+        $schema = new MysqlSchemaDialect($driver);
     }
 
     /**
@@ -1351,6 +1362,7 @@ SQL;
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
         $this->skipIf(!$connection->getDriver()->supportsNativeJson(), 'Does not support native json');
+        $this->skipIf($connection->getDriver()->isMariadb(), 'MariaDb internally uses TEXT for JSON columns');
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_json');
@@ -1373,7 +1385,7 @@ SQL;
     /**
      * Get a schema instance with a mocked driver/pdo instances
      *
-     * @return MysqlSchema
+     * @return \Cake\Database\Schema\MysqlSchemaDialect
      */
     protected function _getMockedDriver()
     {

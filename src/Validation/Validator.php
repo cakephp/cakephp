@@ -2099,7 +2099,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * Add a validation rule to ensure the field value is within a whitelist.
+     * Add a validation rule to ensure the field value is within an allowed list.
      *
      * @param string $field The field you want to apply the rule to.
      * @param array $list The list of valid options.

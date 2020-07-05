@@ -437,12 +437,6 @@ class FixtureManager
                     $fixture->dropConstraints($db);
                 }
             }
-
-            foreach ($fixtures as $fixture) {
-                if ($this->isFixtureSetup($configName, $fixture)) {
-                    $fixture->truncate($db);
-                }
-            }
         };
         $this->_runOperation($fixtures, $truncate);
     }

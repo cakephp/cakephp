@@ -159,6 +159,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      *
      * @param string|\DateTimeZone|null $timezone Database timezone.
      * @return $this
+     * @deprecated 4.1.0 Use {@link setDatabaseTimezone()} instead.
      */
     public function setTimezone($timezone)
     {

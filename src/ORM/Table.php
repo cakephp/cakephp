@@ -894,7 +894,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $association = $this->findAssociation($name);
         if (!$association) {
-            throw new InvalidArgumentException("The {$name} association is not defined on {$this->getAlias()}.");
+            $assocations = $this->associations()->keys();
+
+            $message = "The `{$name}` association is not defined on `{$this->getAlias()}`.";
+            if ($assocations) {
+                $message .= "\nValid associations are: " . implode(', ', $assocations);
+            }
+            throw new InvalidArgumentException($message);
         }
 
         return $association;
@@ -2174,6 +2180,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     protected function _saveMany(iterable $entities, $options = []): iterable
     {
+        $options = new ArrayObject(
+            (array)$options + [
+                'atomic' => true,
+                'checkRules' => true,
+                '_primary' => true,
+            ]
+        );
+
         /** @var bool[] $isNew */
         $isNew = [];
         $cleanup = function ($entities) use (&$isNew): void {
@@ -2210,6 +2224,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $cleanup($entities);
 
             throw new PersistenceFailedException($failed, ['saveMany']);
+        }
+
+        if ($this->_transactionCommitted($options['atomic'], $options['_primary'])) {
+            foreach ($entities as $entity) {
+                $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
+            }
         }
 
         return $entities;
@@ -2407,10 +2427,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return (bool)$event->getResult();
         }
 
-        $this->_associations->cascadeDelete(
+        $success = $this->_associations->cascadeDelete(
             $entity,
             ['_primary' => false] + $options->getArrayCopy()
         );
+        if (!$success) {
+            return $success;
+        }
 
         $query = $this->query();
         $conditions = (array)$entity->extract($primaryKey);
@@ -2912,6 +2935,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * The conventional method map is:
      *
      * - Model.beforeMarshal => beforeMarshal
+     * - Model.afterMarshal => afterMarshal
      * - Model.buildValidator => buildValidator
      * - Model.beforeFind => beforeFind
      * - Model.beforeSave => beforeSave
@@ -2929,6 +2953,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $eventMap = [
             'Model.beforeMarshal' => 'beforeMarshal',
+            'Model.afterMarshal' => 'afterMarshal',
             'Model.buildValidator' => 'buildValidator',
             'Model.beforeFind' => 'beforeFind',
             'Model.beforeSave' => 'beforeSave',

@@ -18,7 +18,7 @@ namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Schema\Collection as SchemaCollection;
-use Cake\Database\Schema\SqliteSchema;
+use Cake\Database\Schema\SqliteSchemaDialect;
 use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
@@ -173,7 +173,7 @@ class SqliteSchemaTest extends TestCase
         ];
 
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlite')->getMock();
-        $dialect = new SqliteSchema($driver);
+        $dialect = new SqliteSchemaDialect($driver);
 
         $table = new TableSchema('table');
         $dialect->convertColumnDescription($table, $field);
@@ -193,7 +193,7 @@ class SqliteSchemaTest extends TestCase
     public function testConvertCompositePrimaryKey()
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlite')->getMock();
-        $dialect = new SqliteSchema($driver);
+        $dialect = new SqliteSchemaDialect($driver);
 
         $field1 = [
             'pk' => true,
@@ -685,7 +685,7 @@ SQL;
     public function testColumnSql($name, $data, $expected)
     {
         $driver = $this->_getMockedDriver();
-        $schema = new SqliteSchema($driver);
+        $schema = new SqliteSchemaDialect($driver);
 
         $table = (new TableSchema('articles'))->addColumn($name, $data);
         $this->assertEquals($expected, $schema->columnSql($table, $name));
@@ -699,7 +699,7 @@ SQL;
     public function testColumnSqlPrimaryKey()
     {
         $driver = $this->_getMockedDriver();
-        $schema = new SqliteSchema($driver);
+        $schema = new SqliteSchemaDialect($driver);
 
         $table = new TableSchema('articles');
         $table->addColumn('id', [
@@ -727,7 +727,7 @@ SQL;
     public function testColumnSqlPrimaryKeyBigInt()
     {
         $driver = $this->_getMockedDriver();
-        $schema = new SqliteSchema($driver);
+        $schema = new SqliteSchemaDialect($driver);
 
         $table = new TableSchema('articles');
         $table->addColumn('id', [
@@ -804,7 +804,7 @@ SQL;
     public function testConstraintSql($name, $data, $expected)
     {
         $driver = $this->_getMockedDriver();
-        $schema = new SqliteSchema($driver);
+        $schema = new SqliteSchemaDialect($driver);
 
         $table = (new TableSchema('articles'))->addColumn('title', [
             'type' => 'string',
@@ -840,7 +840,7 @@ SQL;
     public function testIndexSql($name, $data, $expected)
     {
         $driver = $this->_getMockedDriver();
-        $schema = new SqliteSchema($driver);
+        $schema = new SqliteSchemaDialect($driver);
 
         $table = (new TableSchema('articles'))->addColumn('title', [
             'type' => 'string',

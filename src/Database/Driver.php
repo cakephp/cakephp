@@ -18,7 +18,7 @@ namespace Cake\Database;
 
 use Cake\Core\App;
 use Cake\Database\Exception\MissingConnectionException;
-use Cake\Database\Schema\BaseSchema;
+use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\Statement\PDOStatement;
 use Closure;
@@ -66,6 +66,20 @@ abstract class Driver implements DriverInterface
      * @var bool
      */
     protected $_autoQuoting = false;
+
+    /**
+     * Whether or not the server supports common table expressions.
+     *
+     * @var bool|null
+     */
+    protected $supportsCTEs = null;
+
+    /**
+     * The server version
+     *
+     * @var string|null
+     */
+    protected $_version;
 
     /**
      * Constructor
@@ -130,6 +144,22 @@ abstract class Driver implements DriverInterface
     {
         /** @psalm-suppress PossiblyNullPropertyAssignmentValue */
         $this->_connection = null;
+        $this->_version = null;
+    }
+
+    /**
+     * Returns connected server version.
+     *
+     * @return string
+     */
+    public function version(): string
+    {
+        if ($this->_version === null) {
+            $this->connect();
+            $this->_version = (string)$this->_connection->getAttribute(PDO::ATTR_SERVER_VERSION);
+        }
+
+        return $this->_version;
     }
 
     /**
@@ -257,6 +287,16 @@ abstract class Driver implements DriverInterface
     }
 
     /**
+     * Returns true if the server supports common table expressions.
+     *
+     * @return bool
+     */
+    public function supportsCTEs(): bool
+    {
+        return $this->supportsCTEs === true;
+    }
+
+    /**
      * {@inheritDoc}
      *
      * @param mixed $value The value to quote.
@@ -290,7 +330,7 @@ abstract class Driver implements DriverInterface
     /**
      * @inheritDoc
      */
-    abstract public function schemaDialect(): BaseSchema;
+    abstract public function schemaDialect(): SchemaDialect;
 
     /**
      * @inheritDoc

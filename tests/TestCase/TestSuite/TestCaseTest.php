@@ -359,6 +359,13 @@ class TestCaseTest extends TestCase
 
         $Tags = $this->getMockForModel('Tags', ['save']);
         $this->assertSame('TestApp\Model\Entity\Tag', $Tags->getEntityClass());
+
+        $SluggedPosts = $this->getMockForModel('SluggedPosts', ['save', 'slugify']);
+        $SluggedPosts->expects($this->at(0))
+            ->method('slugify')
+            ->with('some value')
+            ->will($this->returnValue('mocked'));
+        $this->assertSame('mocked', $SluggedPosts->slugify('some value'));
     }
 
     /**
@@ -457,7 +464,7 @@ class TestCaseTest extends TestCase
     {
         static::setAppNamespace();
 
-        $I18n = $this->getMockForModel('I18n', ['save']);
+        $I18n = $this->getMockForModel('CustomI18n', ['save']);
         $this->assertSame('custom_i18n_table', $I18n->getTable());
 
         $Tags = $this->getMockForModel('Tags', ['save']);

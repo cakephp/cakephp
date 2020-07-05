@@ -25,6 +25,11 @@ use Cake\TestSuite\TestCase;
 class TaskRegistryTest extends TestCase
 {
     /**
+     * @var \Cake\Console\TaskRegistry
+     */
+    protected $Tasks;
+
+    /**
      * setUp
      *
      * @return void
@@ -82,14 +87,11 @@ class TaskRegistryTest extends TestCase
      */
     public function testLoadPluginTask()
     {
-        $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
-            ->disableOriginalConstructor()
-            ->getMock();
         $shell = $this->getMockBuilder('Cake\Console\Shell')
             ->disableOriginalConstructor()
             ->getMock();
         $this->loadPlugins(['TestPlugin']);
-        $this->Tasks = new TaskRegistry($shell, $dispatcher);
+        $this->Tasks = new TaskRegistry($shell);
 
         $result = $this->Tasks->load('TestPlugin.OtherTask');
         $this->assertInstanceOf('TestPlugin\Shell\Task\OtherTaskTask', $result, 'Task class is wrong.');

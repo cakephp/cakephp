@@ -43,7 +43,7 @@ use Traversable;
  * @method \Cake\ORM\Table getRepository() Returns the default table object that will be used by this query,
  *   that is, the table that will appear in the from clause.
  * @method \Cake\Collection\CollectionInterface each(callable $c) Passes each of the query results to the callable
- * @method \Cake\Collection\CollectionInterface sortBy($callback, int $dir, int $type) Sorts the query with the callback
+ * @method \Cake\Collection\CollectionInterface sortBy($callback, int $dir) Sorts the query with the callback
  * @method \Cake\Collection\CollectionInterface filter(callable $c = null) Keeps the results using passing the callable test
  * @method \Cake\Collection\CollectionInterface reject(callable $c) Removes the results passing the callable test
  * @method bool every(callable $c) Returns true if all the results pass the callable test
@@ -51,8 +51,8 @@ use Traversable;
  * @method \Cake\Collection\CollectionInterface map(callable $c) Modifies each of the results using the callable
  * @method mixed reduce(callable $c, $zero = null) Folds all the results into a single value using the callable.
  * @method \Cake\Collection\CollectionInterface extract($field) Extracts a single column from each row
- * @method mixed max($field, int $type) Returns the maximum value for a single column in all the results.
- * @method mixed min($field, int $type) Returns the minimum value for a single column in all the results.
+ * @method mixed max($field) Returns the maximum value for a single column in all the results.
+ * @method mixed min($field) Returns the minimum value for a single column in all the results.
  * @method \Cake\Collection\CollectionInterface groupBy(string|callable $field) In-memory group all results by the value of a column.
  * @method \Cake\Collection\CollectionInterface indexBy(string|callable $callback) Returns the results indexed by the value of a column.
  * @method \Cake\Collection\CollectionInterface countBy(string|callable $field) Returns the number of unique values for a column
@@ -837,7 +837,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     public function cleanCopy()
     {
         $clone = clone $this;
-        $clone->setEagerLoader(clone $this->getEagerLoader());
         $clone->triggerBeforeFind();
         $clone->disableAutoFields();
         $clone->limit(null);
@@ -852,11 +851,22 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
-     * Object clone hook.
+     * Clears the internal result cache and the internal count value from the current
+     * query object.
      *
-     * Destroys the clones inner iterator and clones the value binder, and eagerloader instances.
+     * @return $this
+     */
+    public function clearResult()
+    {
+        $this->_dirty();
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
      *
-     * @return void
+     * Handles cloning eager loaders.
      */
     public function __clone()
     {

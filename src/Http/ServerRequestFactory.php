@@ -24,6 +24,7 @@ use Psr\Http\Message\UriInterface;
 use function Laminas\Diactoros\marshalHeadersFromSapi;
 use function Laminas\Diactoros\marshalUriFromSapi;
 use function Laminas\Diactoros\normalizeServer;
+use function Laminas\Diactoros\normalizeUploadedFiles;
 
 /**
  * Factory for making ServerRequest instances.
@@ -46,7 +47,7 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
      * @see fromServer()
      * @param array $server $_SERVER superglobal
      * @param array $query $_GET superglobal
-     * @param array $body $_POST superglobal
+     * @param array $parsedBody $_POST superglobal
      * @param array $cookies $_COOKIE superglobal
      * @param array $files $_FILES superglobal
      * @return \Cake\Http\ServerRequest
@@ -55,34 +56,123 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
     public static function fromGlobals(
         ?array $server = null,
         ?array $query = null,
-        ?array $body = null,
+        ?array $parsedBody = null,
         ?array $cookies = null,
         ?array $files = null
     ): ServerRequest {
         $server = normalizeServer($server ?: $_SERVER);
         $uri = static::createUri($server);
+
         /** @psalm-suppress NoInterfaceProperties */
         $sessionConfig = (array)Configure::read('Session') + [
             'defaults' => 'php',
             'cookiePath' => $uri->webroot,
         ];
         $session = Session::create($sessionConfig);
+
         /** @psalm-suppress NoInterfaceProperties */
         $request = new ServerRequest([
             'environment' => $server,
             'uri' => $uri,
-            'files' => $files ?: $_FILES,
             'cookies' => $cookies ?: $_COOKIE,
             'query' => $query ?: $_GET,
-            'post' => $body ?: $_POST,
             'webroot' => $uri->webroot,
             'base' => $uri->base,
             'session' => $session,
-            'mergeFilesAsObjects' => Configure::read('App.uploadedFilesAsObjects', true),
             'input' => $server['CAKEPHP_INPUT'] ?? null,
         ]);
 
+        $request = static::marshalBodyAndRequestMethod($parsedBody ?? $_POST, $request);
+        $request = static::marshalFiles($files ?? $_FILES, $request);
+
         return $request;
+    }
+
+    /**
+     * Sets the REQUEST_METHOD environment variable based on the simulated _method
+     * HTTP override value. The 'ORIGINAL_REQUEST_METHOD' is also preserved, if you
+     * want the read the non-simulated HTTP method the client used.
+     *
+     * Request body of content type "application/x-www-form-urlencoded" is parsed
+     * into array for PUT/PATCH/DELETE requests.
+     *
+     * @param array $parsedBody Parsed body.
+     * @param \Cake\Http\ServerRequest $request Request instance.
+     * @return \Cake\Http\ServerRequest
+     */
+    protected static function marshalBodyAndRequestMethod(array $parsedBody, ServerRequest $request): ServerRequest
+    {
+        $method = $request->getMethod();
+        $override = false;
+
+        if (
+            in_array($method, ['PUT', 'DELETE', 'PATCH'], true) &&
+            strpos((string)$request->contentType(), 'application/x-www-form-urlencoded') === 0
+        ) {
+            $data = (string)$request->getBody();
+            parse_str($data, $parsedBody);
+        }
+        if ($request->hasHeader('X-Http-Method-Override')) {
+            $parsedBody['_method'] = $request->getHeaderLine('X-Http-Method-Override');
+            $override = true;
+        }
+
+        $request = $request->withEnv('ORIGINAL_REQUEST_METHOD', $method);
+        if (isset($parsedBody['_method'])) {
+            $request = $request->withEnv('REQUEST_METHOD', $parsedBody['_method']);
+            unset($parsedBody['_method']);
+            $override = true;
+        }
+
+        if (
+            $override &&
+            !in_array($request->getMethod(), ['PUT', 'POST', 'DELETE', 'PATCH'], true)
+        ) {
+            $parsedBody = [];
+        }
+
+        return $request->withParsedBody($parsedBody);
+    }
+
+    /**
+     * Process uploaded files and move things onto the parsed body.
+     *
+     * @param array $files Files array for normalization and merging in parsed body.
+     * @param \Cake\Http\ServerRequest $request Request instance.
+     * @return \Cake\Http\ServerRequest
+     */
+    protected static function marshalFiles(array $files, ServerRequest $request): ServerRequest
+    {
+        $files = normalizeUploadedFiles($files);
+        $request = $request->withUploadedFiles($files);
+
+        $parsedBody = $request->getParsedBody();
+        if (!is_array($parsedBody)) {
+            return $request;
+        }
+
+        if (Configure::read('App.uploadedFilesAsObjects', true)) {
+            $parsedBody = Hash::merge($parsedBody, $files);
+        } else {
+            // Make a flat map that can be inserted into body for BC.
+            $fileMap = Hash::flatten($files);
+            foreach ($fileMap as $key => $file) {
+                $error = $file->getError();
+                $tmpName = '';
+                if ($error === UPLOAD_ERR_OK) {
+                    $tmpName = $file->getStream()->getMetadata('uri');
+                }
+                $parsedBody = Hash::insert($parsedBody, (string)$key, [
+                    'tmp_name' => $tmpName,
+                    'error' => $error,
+                    'name' => $file->getClientFilename(),
+                    'type' => $file->getClientMediaType(),
+                    'size' => $file->getSize(),
+                ]);
+            }
+        }
+
+        return $request->withParsedBody($parsedBody);
     }
 
     /**

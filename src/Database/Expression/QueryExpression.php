@@ -151,7 +151,7 @@ class QueryExpression implements ExpressionInterface, Countable
             $type = $this->_calculateType($field);
         }
 
-        return $this->add(new Comparison($field, $value, $type, '='));
+        return $this->add(new ComparisonExpression($field, $value, $type, '='));
     }
 
     /**
@@ -170,7 +170,7 @@ class QueryExpression implements ExpressionInterface, Countable
             $type = $this->_calculateType($field);
         }
 
-        return $this->add(new Comparison($field, $value, $type, '!='));
+        return $this->add(new ComparisonExpression($field, $value, $type, '!='));
     }
 
     /**
@@ -187,7 +187,7 @@ class QueryExpression implements ExpressionInterface, Countable
             $type = $this->_calculateType($field);
         }
 
-        return $this->add(new Comparison($field, $value, $type, '>'));
+        return $this->add(new ComparisonExpression($field, $value, $type, '>'));
     }
 
     /**
@@ -204,7 +204,7 @@ class QueryExpression implements ExpressionInterface, Countable
             $type = $this->_calculateType($field);
         }
 
-        return $this->add(new Comparison($field, $value, $type, '<'));
+        return $this->add(new ComparisonExpression($field, $value, $type, '<'));
     }
 
     /**
@@ -221,7 +221,7 @@ class QueryExpression implements ExpressionInterface, Countable
             $type = $this->_calculateType($field);
         }
 
-        return $this->add(new Comparison($field, $value, $type, '>='));
+        return $this->add(new ComparisonExpression($field, $value, $type, '>='));
     }
 
     /**
@@ -238,7 +238,7 @@ class QueryExpression implements ExpressionInterface, Countable
             $type = $this->_calculateType($field);
         }
 
-        return $this->add(new Comparison($field, $value, $type, '<='));
+        return $this->add(new ComparisonExpression($field, $value, $type, '<='));
     }
 
     /**
@@ -287,7 +287,7 @@ class QueryExpression implements ExpressionInterface, Countable
             $type = $this->_calculateType($field);
         }
 
-        return $this->add(new Comparison($field, $value, $type, 'LIKE'));
+        return $this->add(new ComparisonExpression($field, $value, $type, 'LIKE'));
     }
 
     /**
@@ -304,7 +304,7 @@ class QueryExpression implements ExpressionInterface, Countable
             $type = $this->_calculateType($field);
         }
 
-        return $this->add(new Comparison($field, $value, $type, 'NOT LIKE'));
+        return $this->add(new ComparisonExpression($field, $value, $type, 'NOT LIKE'));
     }
 
     /**
@@ -325,7 +325,7 @@ class QueryExpression implements ExpressionInterface, Countable
         $type .= '[]';
         $values = $values instanceof ExpressionInterface ? $values : (array)$values;
 
-        return $this->add(new Comparison($field, $values, $type, 'IN'));
+        return $this->add(new ComparisonExpression($field, $values, $type, 'IN'));
     }
 
     /**
@@ -363,7 +363,7 @@ class QueryExpression implements ExpressionInterface, Countable
         $type .= '[]';
         $values = $values instanceof ExpressionInterface ? $values : (array)$values;
 
-        return $this->add(new Comparison($field, $values, $type, 'NOT IN'));
+        return $this->add(new ComparisonExpression($field, $values, $type, 'NOT IN'));
     }
 
     /**
@@ -456,6 +456,7 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function and_($conditions, $types = [])
     {
+        deprecationWarning('QueryExpression::and_() is deprecated use and() instead.');
         return $this->and($conditions, $types);
     }
 
@@ -471,6 +472,7 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function or_($conditions, $types = [])
     {
+        deprecationWarning('QueryExpression::or_() is deprecated use or() instead.');
         return $this->or($conditions, $types);
     }
 // phpcs:enable
@@ -782,7 +784,7 @@ class QueryExpression implements ExpressionInterface, Countable
             throw new InvalidArgumentException('Expression is missing operator (IS, IS NOT) with `null` value.');
         }
 
-        return new Comparison($expression, $value, $type, $operator);
+        return new ComparisonExpression($expression, $value, $type, $operator);
     }
 
     /**

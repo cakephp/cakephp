@@ -110,8 +110,10 @@ class FunctionsTest extends TestCase
      */
     public function testDeprecationWarningLevelDisabled()
     {
+        $this->expectNotToPerformAssertions();
+
         $this->withErrorReporting(E_ALL ^ E_USER_DEPRECATED, function () {
-            $this->assertNull(deprecationWarning('This is going away'));
+            deprecationWarning('This is going away');
         });
     }
 
@@ -125,6 +127,7 @@ class FunctionsTest extends TestCase
 
         $this->withErrorReporting(E_ALL, function () {
             triggerWarning('This is going away');
+            $this->assertTrue(true);
         });
     }
 
@@ -136,7 +139,8 @@ class FunctionsTest extends TestCase
     public function testTriggerWarningLevelDisabled()
     {
         $this->withErrorReporting(E_ALL ^ E_USER_WARNING, function () {
-            $this->assertNull(triggerWarning('This is going away'));
+            triggerWarning('This is going away');
+            $this->assertTrue(true);
         });
     }
 

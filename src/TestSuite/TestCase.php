@@ -206,7 +206,7 @@ abstract class TestCase extends BaseTestCase
      * `Cake\TestSuite\IntegrationTestCaseTrait` to better simulate all routes
      * and plugins being loaded.
      *
-     * @param array|null $appArgs Constuctor parameters for the application class.
+     * @param array|null $appArgs Constructor parameters for the application class.
      * @return void
      * @since 4.0.1
      */
@@ -472,6 +472,41 @@ abstract class TestCase extends BaseTestCase
         } else {
             $this->assertStringNotContainsString($needle, $haystack, $message);
         }
+    }
+
+    /**
+     * Assert that a string matches SQL with db-specific characters like quotes removed.
+     *
+     * @param string $expected The expected sql
+     * @param string $actual The sql to compare
+     * @param string $message The message to display on failure
+     * @return void
+     */
+    public function assertEqualsSql(
+        string $expected,
+        string $actual,
+        string $message = ''
+    ): void {
+        $this->assertEquals($expected, preg_replace('/[`"\[\]]/', '', $actual), $message);
+    }
+
+    /**
+     * Assertion for comparing a regex pattern against a query having its identifiers
+     * quoted. It accepts queries quoted with the characters `<` and `>`. If the third
+     * parameter is set to true, it will alter the pattern to both accept quoted and
+     * unquoted queries
+     *
+     * @param string $pattern The expected sql pattern
+     * @param string $actual The sql to compare
+     * @param bool $optional Whether quote characters (marked with <>) are optional
+     * @return void
+     */
+    public function assertRegExpSql(string $pattern, string $actual, bool $optional = false): void
+    {
+        $optional = $optional ? '?' : '';
+        $pattern = str_replace('<', '[`"\[]' . $optional, $pattern);
+        $pattern = str_replace('>', '[`"\]]' . $optional, $pattern);
+        $this->assertRegExp('#' . $pattern . '#', $actual);
     }
 
     /**
@@ -802,12 +837,19 @@ abstract class TestCase extends BaseTestCase
         [, $baseClass] = pluginSplit($alias);
         $options += ['alias' => $baseClass, 'connection' => $connection];
         $options += $locator->getConfig($alias);
+        $existingMethods = array_intersect(get_class_methods($className), $methods);
+        $nonExistingMethods = array_diff($methods, $existingMethods);
+
+        $builder = $this->getMockBuilder($className)
+            ->onlyMethods($existingMethods)
+            ->setConstructorArgs([$options]);
+
+        if ($nonExistingMethods) {
+            $builder->addMethods($nonExistingMethods);
+        }
 
         /** @var \Cake\ORM\Table $mock */
-        $mock = $this->getMockBuilder($className)
-            ->onlyMethods($methods)
-            ->setConstructorArgs([$options])
-            ->getMock();
+        $mock = $builder->getMock();
 
         if (empty($options['entityClass']) && $mock->getEntityClass() === Entity::class) {
             $parts = explode('\\', $className);
@@ -856,11 +898,35 @@ abstract class TestCase extends BaseTestCase
      * Set the app namespace
      *
      * @param string $appNamespace The app namespace, defaults to "TestApp".
-     * @return void
+     * @return string|null The previous app namespace or null if not set.
      */
-    public static function setAppNamespace(string $appNamespace = 'TestApp'): void
+    public static function setAppNamespace(string $appNamespace = 'TestApp'): ?string
     {
+        $previous = Configure::read('App.namespace');
         Configure::write('App.namespace', $appNamespace);
+
+        return $previous;
+    }
+
+    /**
+     * Adds a fixture to this test case.
+     *
+     * Examples:
+     * - core.Tags
+     * - app.MyRecords
+     * - plugin.MyPluginName.MyModelName
+     *
+     * Use this method inside your test cases' {@link getFixtures()} method
+     * to build up the fixture list.
+     *
+     * @param string $fixture Fixture
+     * @return $this
+     */
+    protected function addFixture(string $fixture)
+    {
+        $this->fixtures[] = $fixture;
+
+        return $this;
     }
 
     /**

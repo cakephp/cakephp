@@ -18,9 +18,9 @@ namespace Cake\Error;
 
 use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Log\Log;
 use Cake\Routing\Router;
 use Psr\Http\Message\ServerRequestInterface;
+use RuntimeException;
 use Throwable;
 
 /**
@@ -54,7 +54,7 @@ abstract class BaseErrorHandler
     /**
      * Exception logger instance.
      *
-     * @var \Cake\Error\ErrorLogger|null
+     * @var \Cake\Error\ErrorLoggerInterface|null
      */
     protected $logger;
 
@@ -309,22 +309,17 @@ abstract class BaseErrorHandler
             $data['file'],
             $data['line']
         );
+        $context = [];
         if (!empty($this->_config['trace'])) {
             /** @var string $trace */
-            $trace = Debugger::trace([
+            $context['trace'] = Debugger::trace([
                 'start' => 1,
                 'format' => 'log',
             ]);
-
-            $request = Router::getRequest();
-            if ($request) {
-                $message .= $this->getLogger()->getRequestContext($request);
-            }
-            $message .= "\nTrace:\n" . $trace . "\n";
+            $context['request'] = Router::getRequest();
         }
-        $message .= "\n\n";
 
-        return Log::write($level, $message);
+        return $this->getLogger()->logMessage($level, $message, $context);
     }
 
     /**
@@ -346,13 +341,22 @@ abstract class BaseErrorHandler
     /**
      * Get exception logger.
      *
-     * @return \Cake\Error\ErrorLogger
+     * @return \Cake\Error\ErrorLoggerInterface
      */
     public function getLogger()
     {
         if ($this->logger === null) {
-            /** @var \Cake\Error\ErrorLogger $logger */
+            /** @var \Cake\Error\ErrorLoggerInterface $logger */
             $logger = new $this->_config['errorLogger']($this->_config);
+
+            if (!$logger instanceof ErrorLoggerInterface) {
+                // Set the logger so that the next error can be logged.
+                $this->logger = new ErrorLogger($this->_config);
+
+                $interface = ErrorLoggerInterface::class;
+                $type = getTypeName($logger);
+                throw new RuntimeException("Cannot create logger. `{$type}` does not implement `{$interface}`.");
+            }
             $this->logger = $logger;
         }
 

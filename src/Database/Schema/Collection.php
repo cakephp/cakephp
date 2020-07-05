@@ -38,7 +38,7 @@ class Collection implements CollectionInterface
     /**
      * Schema dialect instance.
      *
-     * @var \Cake\Database\Schema\BaseSchema
+     * @var \Cake\Database\Schema\SchemaDialect
      */
     protected $_dialect;
 
@@ -118,14 +118,14 @@ class Collection implements CollectionInterface
      * @param \Cake\Database\Schema\TableSchema $schema The table schema instance.
      * @return void
      * @throws \Cake\Database\Exception on query failure.
-     * @uses \Cake\Database\Schema\BaseSchema::describeColumnSql
-     * @uses \Cake\Database\Schema\BaseSchema::describeIndexSql
-     * @uses \Cake\Database\Schema\BaseSchema::describeForeignKeySql
-     * @uses \Cake\Database\Schema\BaseSchema::describeOptionsSql
-     * @uses \Cake\Database\Schema\BaseSchema::convertColumnDescription
-     * @uses \Cake\Database\Schema\BaseSchema::convertIndexDescription
-     * @uses \Cake\Database\Schema\BaseSchema::convertForeignKeyDescription
-     * @uses \Cake\Database\Schema\BaseSchema::convertOptionsDescription
+     * @uses \Cake\Database\Schema\SchemaDialect::describeColumnSql
+     * @uses \Cake\Database\Schema\SchemaDialect::describeIndexSql
+     * @uses \Cake\Database\Schema\SchemaDialect::describeForeignKeySql
+     * @uses \Cake\Database\Schema\SchemaDialect::describeOptionsSql
+     * @uses \Cake\Database\Schema\SchemaDialect::convertColumnDescription
+     * @uses \Cake\Database\Schema\SchemaDialect::convertIndexDescription
+     * @uses \Cake\Database\Schema\SchemaDialect::convertForeignKeyDescription
+     * @uses \Cake\Database\Schema\SchemaDialect::convertOptionsDescription
      */
     protected function _reflect(string $stage, string $name, array $config, TableSchema $schema): void
     {

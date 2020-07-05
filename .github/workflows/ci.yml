@@ -17,6 +17,9 @@ jobs:
       matrix:
         php-version: ['7.2', '7.4']
         db-type: [sqlite, mysql, pgsql]
+        include:
+          - php-version: '7.2'
+            db-type: 'mariadb'
     name: PHP ${{ matrix.php-version }} & ${{ matrix.db-type }}
 
     services:
@@ -35,7 +38,24 @@ jobs:
     - name: Setup MySQL
       if: matrix.db-type == 'mysql'
       run: |
-        sudo service mysql start
+        if [[ ${{ matrix.php-version }} == '7.2' ]]; then
+          sudo service mysql stop
+          # MySQL 8
+          docker run --rm --name=mysqld -e MYSQL_ROOT_PASSWORD=root --tmpfs /var/lib/mysql:rw --network=host -d mysql --default-authentication-plugin=mysql_native_password --disable-log-bin --innodb-flush-method=O_DIRECT_NO_FSYNC
+        else
+          # MySQL 5.7
+          sudo service mysql start
+        fi
+
+    - name: Shutdown MySQL
+      if: matrix.db-type == 'mariadb'
+      run: sudo service mysql stop
+
+    - uses: getong/mariadb-action@v1.1
+      if: matrix.db-type == 'mariadb'
+      with:
+        mysql database: 'cakephp'
+        mysql root password: 'root'
 
     - uses: actions/checkout@v1
       with:
@@ -86,7 +106,7 @@ jobs:
         if [ ${{ matrix.db-type }} == 'mysql' ]; then mysql -h 127.0.0.1 -u root -proot -e 'CREATE DATABASE cakephp;'; fi
 
         if [[ ${{ matrix.db-type }} == 'sqlite' ]]; then export DB_DSN='sqlite:///:memory:'; fi
-        if [[ ${{ matrix.db-type }} == 'mysql' ]]; then export DB_DSN='mysql://root:root@127.0.0.1/cakephp?init[]=SET sql_mode = "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"'; fi
+        if [[ ${{ matrix.db-type }} == 'mysql' || ${{ matrix.db-type }} == 'mariadb' ]]; then export DB_DSN='mysql://root:root@127.0.0.1/cakephp?init[]=SET sql_mode = "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"'; fi
         if [[ ${{ matrix.db-type }} == 'pgsql' ]]; then export DB_DSN='postgres://postgres:postgres@127.0.0.1/postgres'; fi
 
         if [[ ${{ matrix.php-version }} == '7.2' ]]; then

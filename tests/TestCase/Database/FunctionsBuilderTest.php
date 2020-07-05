@@ -15,11 +15,13 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database;
 
+use Cake\Database\Expression\AggregateExpression;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\FunctionsBuilder;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 
 /**
  * Tests FunctionsBuilder class
@@ -59,6 +61,22 @@ class FunctionsBuilderTest extends TestCase
     }
 
     /**
+     * Tests generating a generic aggregate call
+     *
+     * @return void
+     */
+    public function testArbitraryAggregate()
+    {
+        $function = $this->functions->aggregate('MyFunc', ['b' => 'literal']);
+        $this->assertInstanceOf(AggregateExpression::class, $function);
+        $this->assertSame('MyFunc', $function->getName());
+        $this->assertSame('MyFunc(b)', $function->sql(new ValueBinder()));
+
+        $function = $this->functions->aggregate('MyFunc', ['b'], ['string'], 'integer');
+        $this->assertSame('integer', $function->getReturnType());
+    }
+
+    /**
      * Tests generating a SUM() function
      *
      * @return void
@@ -66,12 +84,12 @@ class FunctionsBuilderTest extends TestCase
     public function testSum()
     {
         $function = $this->functions->sum('total');
-        $this->assertInstanceOf(FunctionExpression::class, $function);
+        $this->assertInstanceOf(AggregateExpression::class, $function);
         $this->assertSame('SUM(total)', $function->sql(new ValueBinder()));
         $this->assertSame('float', $function->getReturnType());
 
         $function = $this->functions->sum('total', ['integer']);
-        $this->assertInstanceOf(FunctionExpression::class, $function);
+        $this->assertInstanceOf(AggregateExpression::class, $function);
         $this->assertSame('SUM(total)', $function->sql(new ValueBinder()));
         $this->assertSame('integer', $function->getReturnType());
     }
@@ -84,7 +102,7 @@ class FunctionsBuilderTest extends TestCase
     public function testAvg()
     {
         $function = $this->functions->avg('salary');
-        $this->assertInstanceOf(FunctionExpression::class, $function);
+        $this->assertInstanceOf(AggregateExpression::class, $function);
         $this->assertSame('AVG(salary)', $function->sql(new ValueBinder()));
         $this->assertSame('float', $function->getReturnType());
     }
@@ -94,10 +112,15 @@ class FunctionsBuilderTest extends TestCase
      *
      * @return void
      */
-    public function testMAX()
+    public function testMax()
     {
+        $function = $this->functions->max('total');
+        $this->assertInstanceOf(AggregateExpression::class, $function);
+        $this->assertSame('MAX(total)', $function->sql(new ValueBinder()));
+        $this->assertSame('float', $function->getReturnType());
+
         $function = $this->functions->max('created', ['datetime']);
-        $this->assertInstanceOf(FunctionExpression::class, $function);
+        $this->assertInstanceOf(AggregateExpression::class, $function);
         $this->assertSame('MAX(created)', $function->sql(new ValueBinder()));
         $this->assertSame('datetime', $function->getReturnType());
     }
@@ -110,7 +133,7 @@ class FunctionsBuilderTest extends TestCase
     public function testMin()
     {
         $function = $this->functions->min('created', ['date']);
-        $this->assertInstanceOf(FunctionExpression::class, $function);
+        $this->assertInstanceOf(AggregateExpression::class, $function);
         $this->assertSame('MIN(created)', $function->sql(new ValueBinder()));
         $this->assertSame('date', $function->getReturnType());
     }
@@ -123,7 +146,7 @@ class FunctionsBuilderTest extends TestCase
     public function testCount()
     {
         $function = $this->functions->count('*');
-        $this->assertInstanceOf(FunctionExpression::class, $function);
+        $this->assertInstanceOf(AggregateExpression::class, $function);
         $this->assertSame('COUNT(*)', $function->sql(new ValueBinder()));
         $this->assertSame('integer', $function->getReturnType());
     }
@@ -152,6 +175,35 @@ class FunctionsBuilderTest extends TestCase
         $this->assertInstanceOf(FunctionExpression::class, $function);
         $this->assertSame('COALESCE(NULL, :param0, :param1)', $function->sql(new ValueBinder()));
         $this->assertSame('date', $function->getReturnType());
+    }
+
+    /**
+     * Tests generating a CAST() function
+     *
+     * @return void
+     */
+    public function testCast()
+    {
+        $function = $this->functions->cast('field', 'varchar');
+        $this->assertInstanceOf(FunctionExpression::class, $function);
+        $this->assertSame('CAST(field AS varchar)', $function->sql(new ValueBinder()));
+        $this->assertSame('string', $function->getReturnType());
+
+        $function = $this->functions->cast($this->functions->now(), 'varchar');
+        $this->assertInstanceOf(FunctionExpression::class, $function);
+        $this->assertSame('CAST(NOW() AS varchar)', $function->sql(new ValueBinder()));
+        $this->assertSame('string', $function->getReturnType());
+    }
+
+    /**
+     * Tests missing type in new CAST() wrapper throws exception.
+     *
+     * @return void
+     */
+    public function testInvalidCast()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->functions->cast('field');
     }
 
     /**
@@ -241,5 +293,52 @@ class FunctionsBuilderTest extends TestCase
         $this->assertInstanceOf(FunctionExpression::class, $function);
         $this->assertSame('RAND()', $function->sql(new ValueBinder()));
         $this->assertSame('float', $function->getReturnType());
+    }
+
+    /**
+     * Tests generating a ROW_NUMBER() window function
+     */
+    public function testRowNumber()
+    {
+        $function = $this->functions->rowNumber();
+        $this->assertInstanceOf(AggregateExpression::class, $function);
+        $this->assertSame('ROW_NUMBER() OVER ()', $function->sql(new ValueBinder()));
+        $this->assertSame('integer', $function->getReturnType());
+    }
+
+    /**
+     * Tests generating a LAG() window function
+     *
+     * @return void
+     */
+    public function testLag()
+    {
+        $function = $this->functions->lag('field', 1);
+        $this->assertInstanceOf(AggregateExpression::class, $function);
+        $this->assertSame('LAG(field, 1) OVER ()', $function->sql(new ValueBinder()));
+        $this->assertSame('float', $function->getReturnType());
+
+        $function = $this->functions->lag('field', 1, 10, 'integer');
+        $this->assertInstanceOf(AggregateExpression::class, $function);
+        $this->assertSame('LAG(field, 1, :param0) OVER ()', $function->sql(new ValueBinder()));
+        $this->assertSame('integer', $function->getReturnType());
+    }
+
+    /**
+     * Tests generating a LAG() window function
+     *
+     * @return void
+     */
+    public function testLead()
+    {
+        $function = $this->functions->lead('field', 1);
+        $this->assertInstanceOf(AggregateExpression::class, $function);
+        $this->assertSame('LEAD(field, 1) OVER ()', $function->sql(new ValueBinder()));
+        $this->assertSame('float', $function->getReturnType());
+
+        $function = $this->functions->lead('field', 1, 10, 'integer');
+        $this->assertInstanceOf(AggregateExpression::class, $function);
+        $this->assertSame('LEAD(field, 1, :param0) OVER ()', $function->sql(new ValueBinder()));
+        $this->assertSame('integer', $function->getReturnType());
     }
 }

@@ -3186,7 +3186,7 @@ class MarshallerTest extends TestCase
         $marshall = new Marshaller($this->articles);
 
         // Assert event options are correct
-        $this->articles->users->getEventManager()->on(
+        $this->articles->Users->getEventManager()->on(
             'Model.beforeMarshal',
             function ($e, $data, $options) {
                 $this->assertArrayHasKey('validate', $options);
@@ -3200,28 +3200,28 @@ class MarshallerTest extends TestCase
             }
         );
 
-        $this->articles->users->getEventManager()->on(
+        $this->articles->Users->getEventManager()->on(
             'Model.beforeMarshal',
             function ($e, $data, $options) {
                 $data['secret'] = 'h45h3d';
             }
         );
 
-        $this->articles->comments->getEventManager()->on(
+        $this->articles->Comments->getEventManager()->on(
             'Model.beforeMarshal',
             function ($e, $data) {
                 $data['comment'] .= ' (modified)';
             }
         );
 
-        $this->articles->tags->getEventManager()->on(
+        $this->articles->Tags->getEventManager()->on(
             'Model.beforeMarshal',
             function ($e, $data) {
                 $data['tag'] .= ' (modified)';
             }
         );
 
-        $this->articles->tags->junction()->getEventManager()->on(
+        $this->articles->Tags->junction()->getEventManager()->on(
             'Model.beforeMarshal',
             function ($e, $data) {
                 $data['modified_by'] = 1;
@@ -3239,6 +3239,105 @@ class MarshallerTest extends TestCase
         $this->assertSame('cakephp (modified)', $entity->tags[1]->tag);
         $this->assertEquals(1, $entity->tags[0]->_joinData->modified_by);
         $this->assertEquals(1, $entity->tags[1]->_joinData->modified_by);
+    }
+
+    /**
+     * Test Model.afterMarshal event.
+     *
+     * @return void
+     */
+    public function testAfterMarshalEvent()
+    {
+        $data = [
+            'title' => 'original title',
+            'body' => 'original content',
+            'user' => [
+                'name' => 'Robert',
+                'username' => 'rob',
+            ],
+        ];
+
+        $marshall = new Marshaller($this->articles);
+
+        $this->articles->getEventManager()->on(
+            'Model.afterMarshal',
+            function ($e, $entity, $data, $options) {
+                $this->assertInstanceOf('Cake\ORM\Entity', $entity);
+                $this->assertArrayHasKey('validate', $options);
+                $this->assertFalse($options['isMerge']);
+
+                $data['title'] = 'Modified title';
+                $data['user']['username'] = 'robert';
+                $options['associated'] = ['Users'];
+
+                $entity->body = 'Modified body';
+            }
+        );
+
+        $entity = $marshall->one($data);
+
+        $this->assertSame('original title', $entity->title, '$data is immutable');
+        $this->assertSame('Modified body', $entity->body);
+        // both $options and $data are unchangeable
+        $this->assertIsArray($entity->user, '$options[\'associated\'] is ignored');
+        $this->assertSame('Robert', $entity->user['name']);
+        $this->assertSame('rob', $entity->user['username']);
+    }
+
+    /**
+     * Test Model.afterMarshal event on patchEntity.
+     * when $options['fields'] is set and is empty
+     *
+     * @return void
+     */
+    public function testAfterMarshalEventOnPatchEntity()
+    {
+        $data = [
+            'title' => 'original title',
+            'body' => 'original content',
+            'user' => [
+                'name' => 'Robert',
+                'username' => 'rob',
+            ],
+        ];
+
+        $marshall = new Marshaller($this->articles);
+
+        $this->articles->getEventManager()->on(
+            'Model.afterMarshal',
+            function ($e, $entity, $data, $options) {
+                $this->assertInstanceOf('Cake\ORM\Entity', $entity);
+                $this->assertArrayHasKey('validate', $options);
+                $this->assertTrue($options['isMerge']);
+
+                $data['title'] = 'Modified title';
+                $data['user']['username'] = 'robert';
+                $options['associated'] = ['Users'];
+
+                $entity->body = 'options[fields] is empty';
+                if (isset($options['fields'])) {
+                    $entity->body = 'options[fields] is set';
+                }
+            }
+        );
+
+        //test when $options['fields'] is empty
+        $entity = $this->articles->newEmptyEntity();
+        $result = $marshall->merge($entity, $data, []);
+
+        $this->assertSame('original title', $entity->title, '$data is immutable');
+        $this->assertSame('options[fields] is empty', $entity->body);
+        // both $options and $data are unchangeable
+        $this->assertIsArray($entity->user, '$options[\'associated\'] is ignored');
+        $this->assertSame('Robert', $entity->user['name']);
+        $this->assertSame('rob', $entity->user['username']);
+
+        //test when $options['fields'] is set
+        $entity = $this->articles->newEmptyEntity();
+        $result = $marshall->merge($entity, $data, ['fields' => ['title', 'body']]);
+
+        $this->assertSame('original title', $entity->title, '$data is immutable');
+        $this->assertSame('options[fields] is set', $entity->body);
     }
 
     /**

@@ -143,7 +143,7 @@ class Marshaller
      * - validate: Set to false to disable validation. Can also be a string of the validator ruleset to be applied.
      *   Defaults to true/default.
      * - associated: Associations listed here will be marshalled as well. Defaults to null.
-     * - fields: A whitelist of fields to be assigned to the entity. If not present,
+     * - fields: An allowed list of fields to be assigned to the entity. If not present,
      *   the accessible fields list in the entity will be used. Defaults to null.
      * - accessibleFields: A list of fields to allow or deny in entity accessible fields. Defaults to null
      * - forceNew: When enabled, belongsToMany associations will have 'new' entities created
@@ -232,6 +232,7 @@ class Marshaller
         }
 
         $entity->setErrors($errors);
+        $this->dispatchAfterMarshal($entity, $data, $options);
 
         return $entity;
     }
@@ -340,7 +341,7 @@ class Marshaller
      * - validate: Set to false to disable validation. Can also be a string of the validator ruleset to be applied.
      *   Defaults to true/default.
      * - associated: Associations listed here will be marshalled as well. Defaults to null.
-     * - fields: A whitelist of fields to be assigned to the entity. If not present,
+     * - fields: An allowed list of fields to be assigned to the entity. If not present,
      *   the accessible fields list in the entity will be used. Defaults to null.
      * - accessibleFields: A list of fields to allow or deny in entity accessible fields. Defaults to null
      * - forceNew: When enabled, belongsToMany associations will have 'new' entities created
@@ -511,7 +512,7 @@ class Marshaller
      * - associated: Associations listed here will be marshalled as well.
      * - validate: Whether or not to validate data before hydrating the entities. Can
      *   also be set to a string to use a specific validator. Defaults to true/default.
-     * - fields: A whitelist of fields to be assigned to the entity. If not present
+     * - fields: An allowed list of fields to be assigned to the entity. If not present
      *   the accessible fields list in the entity will be used.
      * - accessibleFields: A list of fields to allow or deny in entity accessible fields.
      *
@@ -599,6 +600,7 @@ class Marshaller
                     $entity->setDirty($field, $value->isDirty());
                 }
             }
+            $this->dispatchAfterMarshal($entity, $data, $options);
 
             return $entity;
         }
@@ -612,6 +614,7 @@ class Marshaller
                 $entity->setDirty($field, $properties[$field]->isDirty());
             }
         }
+        $this->dispatchAfterMarshal($entity, $data, $options);
 
         return $entity;
     }
@@ -636,7 +639,7 @@ class Marshaller
      * - validate: Whether or not to validate data before hydrating the entities. Can
      *   also be set to a string to use a specific validator. Defaults to true/default.
      * - associated: Associations listed here will be marshalled as well.
-     * - fields: A whitelist of fields to be assigned to the entity. If not present,
+     * - fields: An allowed list of fields to be assigned to the entity. If not present,
      *   the accessible fields list in the entity will be used.
      * - accessibleFields: A list of fields to allow or deny in entity accessible fields.
      *
@@ -856,5 +859,20 @@ class Marshaller
         }
 
         return $records;
+    }
+
+    /**
+     * dispatch Model.afterMarshal event.
+     *
+     * @param \Cake\Datasource\EntityInterface $entity The entity that was marshaled.
+     * @param array $data readOnly $data to use.
+     * @param array $options List of options that are readOnly.
+     * @return void
+     */
+    protected function dispatchAfterMarshal(EntityInterface $entity, array $data, array $options = []): void
+    {
+        $data = new ArrayObject($data);
+        $options = new ArrayObject($options);
+        $this->_table->dispatchEvent('Model.afterMarshal', compact('entity', 'data', 'options'));
     }
 }

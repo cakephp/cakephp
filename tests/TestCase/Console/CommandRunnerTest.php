@@ -39,6 +39,11 @@ use TestApp\Shell\SampleShell;
 class CommandRunnerTest extends TestCase
 {
     /**
+     * @var string
+     */
+    protected $config;
+
+    /**
      * Tracking property for event triggering
      *
      * @var bool

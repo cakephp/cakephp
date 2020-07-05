@@ -18,6 +18,7 @@ namespace Cake\Http;
 
 use BadMethodCallException;
 use Cake\Core\Configure;
+use Cake\Core\Exception\Exception;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Exception\MethodNotAllowedException;
 use Cake\Utility\Hash;
@@ -195,13 +196,6 @@ class ServerRequest implements ServerRequestInterface
     protected $requestTarget;
 
     /**
-     * Whether to merge file uploads as objects (`true`) or arrays (`false`).
-     *
-     * @var bool
-     */
-    protected $mergeFilesAsObjects = true;
-
-    /**
      * Create a new request object.
      *
      * You can supply the data as either an array or as a string. If you use
@@ -210,7 +204,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * - `post` POST data or non query string data
      * - `query` Additional data from the query string.
-     * - `files` Uploaded file data formatted like $_FILES.
+     * - `files` Uploaded files in a normalized structure, with each leaf an instance of UploadedFileInterface.
      * - `cookies` Cookies for this request.
      * - `environment` $_SERVER and $_ENV data.
      * - `url` The URL without the base path for the request.
@@ -220,7 +214,6 @@ class ServerRequest implements ServerRequestInterface
      * - `input` The data that would come from php://input this is useful for simulating
      *   requests with put, patch or delete data.
      * - `session` An instance of a Session object
-     * - `mergeFilesAsObjects` Whether to merge file uploads as objects (`true`) or arrays (`false`).
      *
      * @param array $config An array of request data to create a request with.
      */
@@ -238,7 +231,6 @@ class ServerRequest implements ServerRequestInterface
             'base' => '',
             'webroot' => '',
             'input' => null,
-            'mergeFilesAsObjects' => true,
         ];
 
         $this->_setConfig($config);
@@ -252,38 +244,31 @@ class ServerRequest implements ServerRequestInterface
      */
     protected function _setConfig(array $config): void
     {
-        if (strlen($config['url']) > 1 && $config['url'][0] === '/') {
-            $config['url'] = substr($config['url'], 1);
-        }
-
         if (empty($config['session'])) {
             $config['session'] = new Session([
                 'cookiePath' => $config['base'],
             ]);
         }
 
-        $this->_environment = $config['environment'];
+        if (empty($config['environment']['REQUEST_METHOD'])) {
+            $config['environment']['REQUEST_METHOD'] = 'GET';
+        }
+
         $this->cookies = $config['cookies'];
 
-        if (isset($config['uri']) && $config['uri'] instanceof UriInterface) {
+        if (isset($config['uri'])) {
+            if (!$config['uri'] instanceof UriInterface) {
+                throw new Exception('The `uri` key must be an instance of ' . UriInterface::class);
+            }
             $uri = $config['uri'];
         } else {
+            if ($config['url'] !== '') {
+                $config = $this->processUrlOption($config);
+            }
             $uri = ServerRequestFactory::createUri($config['environment']);
         }
 
-        // Extract a query string from config[url] if present.
-        // This is required for backwards compatibility and keeping
-        // UriInterface implementations happy.
-        $querystr = '';
-        if (strpos($config['url'], '?') !== false) {
-            [$config['url'], $querystr] = explode('?', $config['url']);
-        }
-        if (strlen($config['url'])) {
-            $uri = $uri->withPath('/' . $config['url']);
-        }
-        if (strlen($querystr)) {
-            $uri = $uri->withQuery($querystr);
-        }
+        $this->_environment = $config['environment'];
 
         $this->uri = $uri;
         $this->base = $config['base'];
@@ -298,176 +283,37 @@ class ServerRequest implements ServerRequestInterface
         }
         $this->stream = $stream;
 
-        $this->mergeFilesAsObjects = $config['mergeFilesAsObjects'];
-
-        $config['post'] = $this->_processPost($config['post']);
-        $this->data = $this->_processFiles($config['post'], $config['files']);
-        $this->query = $this->_processGet($config['query'], $querystr);
+        $this->data = $config['post'];
+        $this->uploadedFiles = $config['files'];
+        $this->query = $config['query'];
         $this->params = $config['params'];
         $this->session = $config['session'];
     }
 
     /**
-     * Sets the REQUEST_METHOD environment variable based on the simulated _method
-     * HTTP override value. The 'ORIGINAL_REQUEST_METHOD' is also preserved, if you
-     * want the read the non-simulated HTTP method the client used.
+     * Set environment vars based on `url` option to facilitate UriInterface instance generation.
      *
-     * @param mixed $data Array of post data.
-     * @return mixed
+     * `query` option is also updated based on URL's querystring.
+     *
+     * @param array $config Config array.
+     * @return array Update config.
      */
-    protected function _processPost($data)
+    protected function processUrlOption(array $config): array
     {
-        $method = $this->getEnv('REQUEST_METHOD');
-        $override = false;
-
-        if (
-            in_array($method, ['PUT', 'DELETE', 'PATCH'], true) &&
-            strpos((string)$this->contentType(), 'application/x-www-form-urlencoded') === 0
-        ) {
-            $data = $this->input();
-            parse_str($data, $data);
-        }
-        if ($this->hasHeader('X-Http-Method-Override')) {
-            $data['_method'] = $this->getHeaderLine('X-Http-Method-Override');
-            $override = true;
-        }
-        $this->_environment['ORIGINAL_REQUEST_METHOD'] = $method;
-        if (isset($data['_method'])) {
-            $this->_environment['REQUEST_METHOD'] = $data['_method'];
-            unset($data['_method']);
-            $override = true;
+        if ($config['url'][0] !== '/') {
+            $config['url'] = '/' . $config['url'];
         }
 
-        if ($override && !in_array($this->_environment['REQUEST_METHOD'], ['PUT', 'POST', 'DELETE', 'PATCH'], true)) {
-            $data = [];
+        if (strpos($config['url'], '?') !== false) {
+            [$config['url'], $config['environment']['QUERY_STRING']] = explode('?', $config['url']);
+
+            parse_str($config['environment']['QUERY_STRING'], $queryArgs);
+            $config['query'] += $queryArgs;
         }
 
-        return $data;
-    }
+        $config['environment']['REQUEST_URI'] = $config['url'];
 
-    /**
-     * Process the GET parameters and move things into the object.
-     *
-     * @param array $query The array to which the parsed keys/values are being added.
-     * @param string $queryString A query string from the URL if provided
-     * @return array An array containing the parsed query string as keys/values.
-     */
-    protected function _processGet(array $query, string $queryString = ''): array
-    {
-        $unsetUrl = str_replace(['.', ' '], '_', urldecode($this->uri->getPath()));
-        unset($query[$unsetUrl], $query[$this->base . $unsetUrl]);
-        if (strlen($queryString)) {
-            parse_str($queryString, $queryArgs);
-            $query += $queryArgs;
-        }
-
-        return $query;
-    }
-
-    /**
-     * Process uploaded files and move things onto the post data.
-     *
-     * @param mixed $post Post data to merge files onto.
-     * @param mixed $files Uploaded files to merge in.
-     * @return array merged post + file data.
-     */
-    protected function _processFiles($post, $files)
-    {
-        if (!is_array($post) || !is_array($files) || empty($files)) {
-            return $post;
-        }
-
-        $fileData = [];
-        foreach ($files as $key => $value) {
-            if ($value instanceof UploadedFileInterface) {
-                $fileData[$key] = $value;
-                continue;
-            }
-
-            if (is_array($value) && isset($value['tmp_name'])) {
-                $fileData[$key] = $this->_createUploadedFile($value);
-                continue;
-            }
-
-            throw new InvalidArgumentException(sprintf(
-                'Invalid value in FILES "%s"',
-                json_encode($value)
-            ));
-        }
-        $this->uploadedFiles = $fileData;
-
-        if ($this->mergeFilesAsObjects) {
-            return Hash::merge($post, $fileData);
-        }
-
-        // Make a flat map that can be inserted into $post for BC.
-        $fileMap = Hash::flatten($fileData);
-        foreach ($fileMap as $key => $file) {
-            $error = $file->getError();
-            $tmpName = '';
-            if ($error === UPLOAD_ERR_OK) {
-                $tmpName = $file->getStream()->getMetadata('uri');
-            }
-            $post = Hash::insert($post, (string)$key, [
-                'tmp_name' => $tmpName,
-                'error' => $error,
-                'name' => $file->getClientFilename(),
-                'type' => $file->getClientMediaType(),
-                'size' => $file->getSize(),
-            ]);
-        }
-
-        return $post;
-    }
-
-    /**
-     * Create an UploadedFile instance from a $_FILES array.
-     *
-     * If the value represents an array of values, this method will
-     * recursively process the data.
-     *
-     * @param array $value $_FILES struct
-     * @return array|\Psr\Http\Message\UploadedFileInterface
-     */
-    protected function _createUploadedFile(array $value)
-    {
-        if (is_array($value['tmp_name'])) {
-            return $this->_normalizeNestedFiles($value);
-        }
-
-        return new UploadedFile(
-            $value['tmp_name'],
-            $value['size'],
-            $value['error'],
-            $value['name'],
-            $value['type']
-        );
-    }
-
-    /**
-     * Normalize an array of file specifications.
-     *
-     * Loops through all nested files and returns a normalized array of
-     * UploadedFileInterface instances.
-     *
-     * @param array $files The file data to normalize & convert.
-     * @return array An array of UploadedFileInterface objects.
-     */
-    protected function _normalizeNestedFiles(array $files = []): array
-    {
-        $normalizedFiles = [];
-        foreach (array_keys($files['tmp_name']) as $key) {
-            $spec = [
-                'tmp_name' => $files['tmp_name'][$key],
-                'size' => $files['size'][$key],
-                'error' => $files['error'][$key],
-                'name' => $files['name'][$key],
-                'type' => $files['type'][$key],
-            ];
-            $normalizedFiles[$key] = $this->_createUploadedFile($spec);
-        }
-
-        return $normalizedFiles;
+        return $config;
     }
 
     /**
@@ -713,7 +559,7 @@ class ServerRequest implements ServerRequestInterface
             $header = $this->getEnv('http_' . $header);
             if ($header !== null) {
                 if (!is_string($value) && !is_bool($value) && is_callable($value)) {
-                    return call_user_func($value, $header);
+                    return $value($header);
                 }
 
                 return $header === $value;
@@ -1421,6 +1267,9 @@ class ServerRequest implements ServerRequestInterface
      *
      * Any additional parameters are applied to the callback in the order they are given.
      *
+     * @deprecated 4.1.0 Use `(string)$request->getBody()` to get the raw PHP input
+     *  as string; use `BodyParserMiddleware` to parse the request body so that it's
+     *  available as array/object through `$request->getParsedBody()`.
      * @param callable|null $callback A decoding callback that will convert the string data to another
      *     representation. Leave empty to access the raw input data. You can also
      *     supply additional parameters for the decoding callback using var args, see above.
@@ -1429,12 +1278,17 @@ class ServerRequest implements ServerRequestInterface
      */
     public function input(?callable $callback = null, ...$args)
     {
+        deprecationWarning(
+            'Use `(string)$request->getBody()` to get the raw PHP input as string; '
+            . 'use `BodyParserMiddleware` to parse the request body so that it\'s available as array/object '
+            . 'through $request->getParsedBody()'
+        );
         $this->stream->rewind();
         $input = $this->stream->getContents();
         if ($callback) {
             array_unshift($args, $input);
 
-            return call_user_func_array($callback, $args);
+            return $callback(...$args);
         }
 
         return $input;

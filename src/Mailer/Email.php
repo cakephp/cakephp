@@ -38,6 +38,7 @@ use SimpleXMLElement;
  * Once made configuration profiles can be used to re-use across various email messages your
  * application sends.
  *
+ * @mixin \Cake\Mailer\Mailer
  * @deprecated 4.0.0 This class will be removed in CakePHP 5.0, use {@link \Cake\Mailer\Mailer} instead.
  */
 class Email implements JsonSerializable, Serializable
@@ -607,7 +608,7 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
-     * Proxy all static method calls (for methods provided by StaticConfigTrat) to Mailer.
+     * Proxy all static method calls (for methods provided by StaticConfigTrait) to Mailer.
      *
      * @param string $name Method name.
      * @param array $arguments Method argument.
@@ -615,6 +616,6 @@ class Email implements JsonSerializable, Serializable
      */
     public static function __callStatic($name, $arguments)
     {
-        return call_user_func_array([Mailer::class, $name], $arguments);
+        return [Mailer::class, $name](...$arguments);
     }
 }

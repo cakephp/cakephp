@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\ORM\Locator;
 
-use Cake\ORM\TableRegistry;
+use Cake\Datasource\FactoryLocator;
 
 /**
  * Contains method for setting and accessing LocatorInterface instance
@@ -51,9 +51,11 @@ trait LocatorAwareTrait
     public function getTableLocator(): LocatorInterface
     {
         if ($this->_tableLocator === null) {
-            $this->_tableLocator = TableRegistry::getTableLocator();
+            /** @var \Cake\ORM\Locator\LocatorInterface $this->_tableLocator */
+            $this->_tableLocator = FactoryLocator::get('Table');
         }
 
+        /** @var \Cake\ORM\Locator\LocatorInterface */
         return $this->_tableLocator;
     }
 }

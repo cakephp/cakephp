@@ -461,7 +461,7 @@ class Hash
      * following the path specified in `$groupPath`.
      *
      * @param array $data Array from where to extract keys and values
-     * @param string|string[] $keyPath A dot-separated string.
+     * @param string|string[]|null $keyPath A dot-separated string.
      * @param string|string[]|null $valuePath A dot-separated string.
      * @param string|null $groupPath A dot-separated string.
      * @return array Combined array
@@ -478,11 +478,13 @@ class Hash
             $format = array_shift($keyPath);
             /** @var array $keys */
             $keys = static::format($data, $keyPath, $format);
+        } elseif ($keyPath === null) {
+            $keys = $keyPath;
         } else {
             /** @var array $keys */
             $keys = static::extract($data, $keyPath);
         }
-        if (empty($keys)) {
+        if ($keyPath !== null && empty($keys)) {
             return [];
         }
 
@@ -496,10 +498,10 @@ class Hash
             $vals = static::extract($data, $valuePath);
         }
         if (empty($vals)) {
-            $vals = array_fill(0, count($keys), null);
+            $vals = array_fill(0, $keys === null ? count($data) : count($keys), null);
         }
 
-        if (count($keys) !== count($vals)) {
+        if (is_array($keys) && count($keys) !== count($vals)) {
             throw new RuntimeException(
                 'Hash::combine() needs an equal number of keys + values.'
             );
@@ -508,7 +510,7 @@ class Hash
         if ($groupPath !== null) {
             $group = static::extract($data, $groupPath);
             if (!empty($group)) {
-                $c = count($keys);
+                $c = is_array($keys) ? count($keys) : count($vals);
                 $out = [];
                 for ($i = 0; $i < $c; $i++) {
                     if (!isset($group[$i])) {
@@ -517,7 +519,11 @@ class Hash
                     if (!isset($out[$group[$i]])) {
                         $out[$group[$i]] = [];
                     }
-                    $out[$group[$i]][$keys[$i]] = $vals[$i];
+                    if ($keys === null) {
+                        $out[$group[$i]][] = $vals[$i];
+                    } else {
+                        $out[$group[$i]][$keys[$i]] = $vals[$i];
+                    }
                 }
 
                 return $out;
@@ -527,7 +533,7 @@ class Hash
             return [];
         }
 
-        return array_combine($keys, $vals);
+        return array_combine($keys ?? range(0, count($vals) - 1), $vals);
     }
 
     /**
@@ -947,7 +953,7 @@ class Hash
     {
         $values = (array)static::extract($data, $path);
 
-        return call_user_func($function, $values);
+        return $function($values);
     }
 
     /**

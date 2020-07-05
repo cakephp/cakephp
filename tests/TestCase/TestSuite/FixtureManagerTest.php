@@ -31,6 +31,11 @@ use PDOException;
 class FixtureManagerTest extends TestCase
 {
     /**
+     * @var \Cake\TestSuite\Fixture\FixtureManager
+     */
+    protected $manager;
+
+    /**
      * Setup method
      *
      * @return void
@@ -423,6 +428,7 @@ class FixtureManagerTest extends TestCase
             ->method('getFixtures')
             ->willReturn(array_keys($fixtures));
 
+        /** @var \Cake\TestSuite\Fixture\FixtureManager|\PHPUnit\Framework\MockObject\MockObject $manager */
         $manager = $this->getMockBuilder(FixtureManager::class)
             ->setMethods(['_fixtureConnections'])
             ->getMock();

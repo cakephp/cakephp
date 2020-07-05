@@ -196,11 +196,6 @@ parameters:
 			path: src/Database/Driver/Mysql.php
 
 		-
-			message: "#^Instanceof between mixed and int\\|string results in an error\\.$#"
-			count: 1
-			path: src/Database/Driver/Mysql.php
-
-		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: src/Database/Driver/Postgres.php

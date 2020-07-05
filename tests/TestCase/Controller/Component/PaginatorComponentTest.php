@@ -181,6 +181,7 @@ class PaginatorComponentTest extends TestCase
                 'order' => ['PaginatorPosts.id' => 'ASC'],
                 'page' => 1,
                 'whitelist' => ['limit', 'sort', 'page', 'direction'],
+                'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
                 'scope' => null,
                 'sort' => 'PaginatorPosts.id',
             ]);
@@ -319,6 +320,7 @@ class PaginatorComponentTest extends TestCase
                 'page' => 1,
                 'order' => ['PaginatorPosts.id' => 'DESC'],
                 'whitelist' => ['limit', 'sort', 'page', 'direction'],
+                'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
                 'scope' => null,
                 'sort' => 'PaginatorPosts.id',
             ]);
@@ -352,6 +354,7 @@ class PaginatorComponentTest extends TestCase
                 'page' => 1,
                 'order' => ['PaginatorPosts.id' => 'DESC'],
                 'whitelist' => ['limit', 'sort', 'page', 'direction'],
+                'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
                 'scope' => null,
                 'sort' => 'PaginatorPosts.id',
             ]);
@@ -378,13 +381,21 @@ class PaginatorComponentTest extends TestCase
                 'limit' => 10,
                 'maxLimit' => 50,
             ],
-            'whitelist' => ['limit', 'sort', 'page', 'direction'],
+            'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
         ];
         $result = $this->Paginator->mergeOptions('Silly', $settings);
+        $this->assertSame($settings['allowedParameters'], $result['whitelist']);
+        unset($result['whitelist']);
         $this->assertEquals($settings, $result);
 
         $result = $this->Paginator->mergeOptions('Posts', $settings);
-        $expected = ['page' => 1, 'limit' => 10, 'maxLimit' => 50, 'whitelist' => ['limit', 'sort', 'page', 'direction']];
+        $expected = [
+            'page' => 1,
+            'limit' => 10,
+            'maxLimit' => 50,
+            'whitelist' => ['limit', 'sort', 'page', 'direction'],
+            'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
+        ];
         $this->assertEquals($expected, $result);
     }
 
@@ -417,6 +428,7 @@ class PaginatorComponentTest extends TestCase
             'maxLimit' => 100,
             'finder' => 'myCustomFind',
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
+            'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
         ];
         $this->assertEquals($expected, $result);
 
@@ -434,6 +446,7 @@ class PaginatorComponentTest extends TestCase
             'maxLimit' => 100,
             'finder' => 'myCustomFind',
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
+            'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'scope' => 'non-existent',
         ];
         $this->assertEquals($expected, $result);
@@ -452,6 +465,7 @@ class PaginatorComponentTest extends TestCase
             'maxLimit' => 100,
             'finder' => 'myCustomFind',
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
+            'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'scope' => 'scope',
         ];
         $this->assertEquals($expected, $result);
@@ -481,6 +495,7 @@ class PaginatorComponentTest extends TestCase
             'maxLimit' => 100,
             'finder' => 'myCustomFind',
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
+            'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
         ];
         $this->assertEquals($expected, $result);
     }
@@ -502,16 +517,22 @@ class PaginatorComponentTest extends TestCase
             'maxLimit' => 100,
         ];
         $result = $this->Paginator->mergeOptions('Post', $settings);
-        $expected = ['page' => 99, 'limit' => 75, 'maxLimit' => 100, 'whitelist' => ['limit', 'sort', 'page', 'direction']];
+        $expected = [
+            'page' => 99,
+            'limit' => 75,
+            'maxLimit' => 100,
+            'whitelist' => ['limit', 'sort', 'page', 'direction'],
+            'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
+        ];
         $this->assertEquals($expected, $result);
     }
 
     /**
-     * test that the default whitelist doesn't let people screw with things they should not be allowed to.
+     * test that the default allowed parameters doesn't let people screw with things they should not be allowed to.
      *
      * @return void
      */
-    public function testMergeOptionsDefaultWhiteList(): void
+    public function testMergeOptionsDefaultAllowedParameters(): void
     {
         $this->controller->setRequest($this->controller->getRequest()->withQueryParams([
             'page' => 10,
@@ -527,7 +548,13 @@ class PaginatorComponentTest extends TestCase
             'maxLimit' => 100,
         ];
         $result = $this->Paginator->mergeOptions('Post', $settings);
-        $expected = ['page' => 10, 'limit' => 10, 'maxLimit' => 100, 'whitelist' => ['limit', 'sort', 'page', 'direction']];
+        $expected = [
+            'page' => 10,
+            'limit' => 10,
+            'maxLimit' => 100,
+            'whitelist' => ['limit', 'sort', 'page', 'direction'],
+            'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
+        ];
         $this->assertEquals($expected, $result);
     }
 
@@ -551,12 +578,19 @@ class PaginatorComponentTest extends TestCase
             'limit' => 20,
             'maxLimit' => 100,
         ];
-        $this->Paginator->setConfig('whitelist', ['fields']);
-        $result = $this->Paginator->mergeOptions('Post', $settings);
-        $expected = [
-            'page' => 10, 'limit' => 10, 'maxLimit' => 100, 'fields' => ['bad.stuff'], 'whitelist' => ['limit', 'sort', 'page', 'direction', 'fields'],
-        ];
-        $this->assertEquals($expected, $result);
+        $this->deprecated(function () use ($settings) {
+            $this->Paginator->setConfig('whitelist', ['fields']);
+            $result = $this->Paginator->mergeOptions('Post', $settings);
+            $expected = [
+                'page' => 10,
+                'limit' => 10,
+                'maxLimit' => 100,
+                'fields' => ['bad.stuff'],
+                'whitelist' => ['limit', 'sort', 'page', 'direction', 'fields'],
+                'allowedParameters' => ['limit', 'sort', 'page', 'direction', 'fields'],
+            ];
+            $this->assertEquals($expected, $result);
+        });
     }
 
     /**
@@ -577,6 +611,7 @@ class PaginatorComponentTest extends TestCase
             'maxLimit' => 100,
             'paramType' => 'named',
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
+            'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
         ];
         $this->assertEquals($expected, $result);
 
@@ -591,6 +626,7 @@ class PaginatorComponentTest extends TestCase
             'maxLimit' => 10,
             'paramType' => 'named',
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
+            'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
         ];
         $this->assertEquals($expected, $result);
     }
@@ -619,6 +655,7 @@ class PaginatorComponentTest extends TestCase
                 'Users.username' => 'asc',
             ],
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
+            'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
         ];
         $this->assertEquals($expected, $result);
 
@@ -639,6 +676,7 @@ class PaginatorComponentTest extends TestCase
                 'Users.username' => 'asc',
             ],
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
+            'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
         ];
         $this->assertEquals($expected, $result);
     }
@@ -663,6 +701,7 @@ class PaginatorComponentTest extends TestCase
                 'page' => 1,
                 'order' => ['PaginatorPosts.id' => 'asc'],
                 'whitelist' => ['limit', 'sort', 'page', 'direction'],
+                'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
                 'scope' => null,
                 'sort' => 'id',
             ]);
@@ -810,11 +849,11 @@ class PaginatorComponentTest extends TestCase
     }
 
     /**
-     * test that fields not in whitelist won't be part of order conditions.
+     * test that fields not in sortableFields won't be part of order conditions.
      *
      * @return void
      */
-    public function testValidateSortWhitelistFailure(): void
+    public function testValidateAllowedSortFailure(): void
     {
         $model = $this->getMockRepository();
         $model->expects($this->any())
@@ -825,7 +864,7 @@ class PaginatorComponentTest extends TestCase
         $options = [
             'sort' => 'body',
             'direction' => 'asc',
-            'sortWhitelist' => ['title', 'id'],
+            'sortableFields' => ['title', 'id'],
         ];
         $result = $this->Paginator->validateSort($model, $options);
 
@@ -833,11 +872,11 @@ class PaginatorComponentTest extends TestCase
     }
 
     /**
-     * test that fields in the whitelist are not validated
+     * test that fields in the sortableFields are not validated
      *
      * @return void
      */
-    public function testValidateSortWhitelistTrusted(): void
+    public function testValidateAllowedSortTrusted(): void
     {
         $model = $this->getMockRepository();
         $model->expects($this->any())
@@ -850,7 +889,7 @@ class PaginatorComponentTest extends TestCase
         $options = [
             'sort' => 'body',
             'direction' => 'asc',
-            'sortWhitelist' => ['body'],
+            'sortableFields' => ['body'],
         ];
         $result = $this->Paginator->validateSort($model, $options);
 
@@ -863,11 +902,11 @@ class PaginatorComponentTest extends TestCase
     }
 
     /**
-     * test that whitelist as empty array does not allow any sorting
+     * test that sortableFields as empty array does not allow any sorting
      *
      * @return void
      */
-    public function testValidateSortWhitelistEmpty(): void
+    public function testValidateAllowedSortEmpty(): void
     {
         $model = $this->getMockRepository();
         $model->expects($this->any())
@@ -883,7 +922,7 @@ class PaginatorComponentTest extends TestCase
             ],
             'sort' => 'body',
             'direction' => 'asc',
-            'sortWhitelist' => [],
+            'sortableFields' => [],
         ];
         $result = $this->Paginator->validateSort($model, $options);
 
@@ -891,11 +930,11 @@ class PaginatorComponentTest extends TestCase
     }
 
     /**
-     * test that fields in the whitelist are not validated
+     * test that fields in the sortableFields are not validated
      *
      * @return void
      */
-    public function testValidateSortWhitelistNotInSchema(): void
+    public function testValidateSortNotInSchema(): void
     {
         $model = $this->getMockRepository();
         $model->expects($this->any())
@@ -907,7 +946,7 @@ class PaginatorComponentTest extends TestCase
         $options = [
             'sort' => 'score',
             'direction' => 'asc',
-            'sortWhitelist' => ['score'],
+            'sortableFields' => ['score'],
         ];
         $result = $this->Paginator->validateSort($model, $options);
 
@@ -920,11 +959,11 @@ class PaginatorComponentTest extends TestCase
     }
 
     /**
-     * test that multiple fields in the whitelist are not validated and properly aliased.
+     * test that multiple fields in the sortableFields are not validated and properly aliased.
      *
      * @return void
      */
-    public function testValidateSortWhitelistMultiple(): void
+    public function testValidateSortAllowMultiple(): void
     {
         $model = $this->getMockRepository();
         $model->expects($this->any())
@@ -939,7 +978,7 @@ class PaginatorComponentTest extends TestCase
                 'body' => 'asc',
                 'foo.bar' => 'asc',
             ],
-            'sortWhitelist' => ['body', 'foo.bar'],
+            'sortableFields' => ['body', 'foo.bar'],
         ];
         $result = $this->Paginator->validateSort($model, $options);
 
@@ -1017,7 +1056,7 @@ class PaginatorComponentTest extends TestCase
 
         $options = [
             'direction' => 'asc',
-            'sortWhitelist' => ['title', 'id'],
+            'sortableFields' => ['title', 'id'],
         ];
         $result = $this->Paginator->validateSort($model, $options);
         $this->assertEquals([], $result['order']);
@@ -1251,6 +1290,7 @@ class PaginatorComponentTest extends TestCase
                 'page' => 1,
                 'order' => [],
                 'whitelist' => ['limit', 'sort', 'page', 'direction'],
+                'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
                 'scope' => null,
                 'sort' => null,
             ]);
@@ -1288,6 +1328,7 @@ class PaginatorComponentTest extends TestCase
                 'order' => ['PaginatorPosts.id' => 'ASC'],
                 'page' => 1,
                 'whitelist' => ['limit', 'sort', 'page', 'direction'],
+                'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
                 'scope' => null,
                 'sort' => 'PaginatorPosts.id',
             ]);
@@ -1351,6 +1392,7 @@ class PaginatorComponentTest extends TestCase
                 'order' => ['PaginatorPosts.id' => 'ASC'],
                 'page' => 1,
                 'whitelist' => ['limit', 'sort', 'page', 'direction'],
+                'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
                 'scope' => null,
                 'sort' => 'PaginatorPosts.id',
             ]);

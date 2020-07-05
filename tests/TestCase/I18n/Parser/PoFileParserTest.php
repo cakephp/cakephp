@@ -236,16 +236,7 @@ class PoFileParserTest extends TestCase
      */
     public function testPlurals()
     {
-        $parser = new PoFileParser();
-        $file = $this->path . 'de' . DS . 'wa.po';
-        $messages = $parser->parse($file);
-
-        I18n::getTranslator('default', 'de_DE', function () use ($messages) {
-            $package = new Package('default');
-            $package->setMessages($messages);
-
-            return $package;
-        });
+        I18n::getTranslator('default', 'de_DE');
 
         // Check translated messages
         I18n::setLocale('de_DE');

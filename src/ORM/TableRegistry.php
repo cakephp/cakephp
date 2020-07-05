@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\ORM;
 
+use Cake\Datasource\FactoryLocator;
 use Cake\ORM\Locator\LocatorInterface;
 
 /**
@@ -54,24 +55,12 @@ use Cake\ORM\Locator\LocatorInterface;
  * // Prior to 3.6.0
  * $table = TableRegistry::get('Users', $config);
  * ```
+ *
+ * @deprecated 4.1.0 Use {@see \Cake\ORM\Locator\LocatorAwareTrait::getTableLocator()}
+ *   or \Cake\Datasource\FactoryLocator::get('Table') to get the table locator instance instead.
  */
 class TableRegistry
 {
-    /**
-     * LocatorInterface implementation instance.
-     *
-     * @var \Cake\ORM\Locator\LocatorInterface
-     */
-    protected static $_locator;
-
-    /**
-     * Default LocatorInterface implementation class.
-     *
-     * @var string
-     * @psalm-var class-string<\Cake\ORM\Locator\TableLocator>
-     */
-    protected static $_defaultLocatorClass = Locator\TableLocator::class;
-
     /**
      * Returns a singleton instance of LocatorInterface implementation.
      *
@@ -79,11 +68,8 @@ class TableRegistry
      */
     public static function getTableLocator(): LocatorInterface
     {
-        if (static::$_locator === null) {
-            static::$_locator = new static::$_defaultLocatorClass();
-        }
-
-        return static::$_locator;
+        /** @var \Cake\ORM\Locator\LocatorInterface */
+        return FactoryLocator::get('Table');
     }
 
     /**
@@ -94,7 +80,7 @@ class TableRegistry
      */
     public static function setTableLocator(LocatorInterface $tableLocator): void
     {
-        static::$_locator = $tableLocator;
+        FactoryLocator::add('Table', $tableLocator);
     }
 
     /**

@@ -18,9 +18,12 @@ namespace Cake\Test\TestCase\Error;
 
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
+use Cake\Error\Debug\TextFormatter;
 use Cake\Error\Debugger;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
+use RuntimeException;
+use stdClass;
 use TestApp\Error\TestDebugger;
 use TestApp\Error\Thing\DebuggableThing;
 use TestApp\Error\Thing\SecurityThing;
@@ -33,7 +36,10 @@ use TestApp\Error\Thing\SecurityThing;
  */
 class DebuggerTest extends TestCase
 {
-    protected $_restoreError = false;
+    /**
+     * @var bool
+     */
+    protected $restoreError = false;
 
     /**
      * setUp method
@@ -46,6 +52,7 @@ class DebuggerTest extends TestCase
         Configure::write('debug', true);
         Log::drop('stderr');
         Log::drop('stdout');
+        Debugger::configInstance('exportFormatter', TextFormatter::class);
     }
 
     /**
@@ -56,7 +63,7 @@ class DebuggerTest extends TestCase
     public function tearDown(): void
     {
         parent::tearDown();
-        if ($this->_restoreError) {
+        if ($this->restoreError) {
             restore_error_handler();
         }
     }
@@ -68,13 +75,12 @@ class DebuggerTest extends TestCase
      */
     public function testDocRef()
     {
-        $this->skipIf(
-            defined('HHVM_VERSION'),
-            'HHVM does not output doc references'
-        );
         ini_set('docref_root', '');
         $this->assertEquals(ini_get('docref_root'), '');
-        new Debugger();
+        // Force a new instance.
+        Debugger::getInstance(TestDebugger::class);
+        Debugger::getInstance(Debugger::class);
+
         $this->assertEquals(ini_get('docref_root'), 'https://secure.php.net/');
     }
 
@@ -312,59 +318,58 @@ class DebuggerTest extends TestCase
 
         $result = Debugger::exportVar($View);
         $expected = <<<TEXT
-object(Cake\View\View) {
-	Html => object(Cake\View\Helper\HtmlHelper) {}
-	Form => object(Cake\View\Helper\FormHelper) {}
-	int => (int) 2
-	float => (float) 1.333
-	string => '  '
-	[protected] _helpers => object(Cake\View\HelperRegistry) {}
-	[protected] Blocks => object(Cake\View\ViewBlock) {}
-	[protected] plugin => null
-	[protected] name => ''
-	[protected] helpers => [
-		(int) 0 => 'Html',
-		(int) 1 => 'Form'
-	]
-	[protected] templatePath => null
-	[protected] template => null
-	[protected] layout => 'default'
-	[protected] layoutPath => ''
-	[protected] autoLayout => true
-	[protected] viewVars => []
-	[protected] _ext => '.php'
-	[protected] subDir => ''
-	[protected] theme => null
-	[protected] request => object(Cake\Http\ServerRequest) {}
-	[protected] response => object(Cake\Http\Response) {}
-	[protected] elementCache => 'default'
-	[protected] _passedVars => [
-		(int) 0 => 'viewVars',
-		(int) 1 => 'autoLayout',
-		(int) 2 => 'helpers',
-		(int) 3 => 'template',
-		(int) 4 => 'layout',
-		(int) 5 => 'name',
-		(int) 6 => 'theme',
-		(int) 7 => 'layoutPath',
-		(int) 8 => 'templatePath',
-		(int) 9 => 'plugin'
-	]
-	[protected] _defaultConfig => []
-	[protected] _paths => []
-	[protected] _pathsForPlugin => []
-	[protected] _parents => []
-	[protected] _current => null
-	[protected] _currentType => ''
-	[protected] _stack => []
-	[protected] _viewBlockClass => 'Cake\View\ViewBlock'
-	[protected] _eventManager => object(Cake\Event\EventManager) {}
-	[protected] _eventClass => 'Cake\Event\Event'
-	[protected] _config => []
-	[protected] _configInitialized => true
+object(Cake\View\View) id:0 {
+  Html => object(Cake\View\Helper\HtmlHelper) id:1 {}
+  Form => object(Cake\View\Helper\FormHelper) id:2 {}
+  int => (int) 2
+  float => (float) 1.333
+  string => '  '
+  [protected] _helpers => object(Cake\View\HelperRegistry) id:3 {}
+  [protected] Blocks => object(Cake\View\ViewBlock) id:4 {}
+  [protected] plugin => null
+  [protected] name => ''
+  [protected] helpers => [
+    (int) 0 => 'Html',
+    (int) 1 => 'Form'
+  ]
+  [protected] templatePath => null
+  [protected] template => null
+  [protected] layout => 'default'
+  [protected] layoutPath => ''
+  [protected] autoLayout => true
+  [protected] viewVars => []
+  [protected] _ext => '.php'
+  [protected] subDir => ''
+  [protected] theme => null
+  [protected] request => object(Cake\Http\ServerRequest) id:5 {}
+  [protected] response => object(Cake\Http\Response) id:6 {}
+  [protected] elementCache => 'default'
+  [protected] _passedVars => [
+    (int) 0 => 'viewVars',
+    (int) 1 => 'autoLayout',
+    (int) 2 => 'helpers',
+    (int) 3 => 'template',
+    (int) 4 => 'layout',
+    (int) 5 => 'name',
+    (int) 6 => 'theme',
+    (int) 7 => 'layoutPath',
+    (int) 8 => 'templatePath',
+    (int) 9 => 'plugin'
+  ]
+  [protected] _defaultConfig => []
+  [protected] _paths => []
+  [protected] _pathsForPlugin => []
+  [protected] _parents => []
+  [protected] _current => null
+  [protected] _currentType => ''
+  [protected] _stack => []
+  [protected] _viewBlockClass => 'Cake\View\ViewBlock'
+  [protected] _eventManager => object(Cake\Event\EventManager) id:7 {}
+  [protected] _eventClass => 'Cake\Event\Event'
+  [protected] _config => []
+  [protected] _configInitialized => true
 }
 TEXT;
-
         $this->assertTextEquals($expected, $result);
 
         $data = [
@@ -374,8 +379,8 @@ TEXT;
         $result = Debugger::exportVar($data);
         $expected = <<<TEXT
 [
-	(int) 1 => 'Index one',
-	(int) 5 => 'Index five'
+  (int) 1 => 'Index one',
+  (int) 5 => 'Index five'
 ]
 TEXT;
         $this->assertTextEquals($expected, $result);
@@ -388,9 +393,9 @@ TEXT;
         $result = Debugger::exportVar($data, 1);
         $expected = <<<TEXT
 [
-	'key' => [
-		[maximum depth reached]
-	]
+  'key' => [
+    '' => [maximum depth reached]
+  ]
 ]
 TEXT;
         $this->assertTextEquals($expected, $result);
@@ -405,7 +410,7 @@ TEXT;
         $file = fopen('php://output', 'w');
         fclose($file);
         $result = Debugger::exportVar($file);
-        $this->assertTextEquals('unknown', $result);
+        $this->assertStringContainsString('(resource (closed)) Resource id #', $result);
     }
 
     public function testExportVarTypedProperty()
@@ -436,12 +441,40 @@ TEXT;
         $result = Debugger::exportVar($data);
         $expected = <<<TEXT
 [
-	'nothing' => '',
-	'null' => null,
-	'false' => false,
-	'szero' => '0',
-	'zero' => (int) 0
+  'nothing' => '',
+  'null' => null,
+  'false' => false,
+  'szero' => '0',
+  'zero' => (int) 0
 ]
+TEXT;
+        $this->assertTextEquals($expected, $result);
+    }
+
+    /**
+     * test exportVar with cyclic objects.
+     *
+     * @return void
+     */
+    public function testExportVarCyclicRef()
+    {
+        $parent = new stdClass();
+        $parent->name = 'cake';
+        $middle = new stdClass();
+        $parent->child = $middle;
+
+        $middle->name = 'php';
+        $middle->child = $parent;
+
+        $result = Debugger::exportVar($parent, 6);
+        $expected = <<<TEXT
+object(stdClass) id:0 {
+  name => 'cake'
+  child => object(stdClass) id:1 {
+    name => 'php'
+    child => object(stdClass) id:0 {}
+  }
+}
 TEXT;
         $this->assertTextEquals($expected, $result);
     }
@@ -520,18 +553,18 @@ TEXT;
         $close = "\n\n";
         $expected = <<<TEXT
 {$open}[
-	'People' => [
-		(int) 0 => [
-			'name' => 'joeseph',
-			'coat' => 'technicolor',
-			'hair_color' => 'brown'
-		],
-		(int) 1 => [
-			'name' => 'Shaft',
-			'coat' => 'black',
-			'hair' => 'black'
-		]
-	]
+  'People' => [
+    (int) 0 => [
+      'name' => 'joeseph',
+      'coat' => 'technicolor',
+      'hair_color' => 'brown'
+    ],
+    (int) 1 => [
+      'name' => 'Shaft',
+      'coat' => 'black',
+      'hair' => 'black'
+    ]
+  ]
 ]{$close}
 TEXT;
         $this->assertTextEquals($expected, $result);
@@ -542,9 +575,9 @@ TEXT;
 
         $expected = <<<TEXT
 {$open}[
-	'People' => [
-		[maximum depth reached]
-	]
+  'People' => [
+    '' => [maximum depth reached]
+  ]
 ]{$close}
 TEXT;
         $this->assertTextEquals($expected, $result);
@@ -558,6 +591,8 @@ TEXT;
     public function testGetInstance()
     {
         $result = Debugger::getInstance();
+        $exporter = $result->getConfig('exportFormatter');
+
         $this->assertInstanceOf(Debugger::class, $result);
 
         $result = Debugger::getInstance(TestDebugger::class);
@@ -568,17 +603,18 @@ TEXT;
 
         $result = Debugger::getInstance(Debugger::class);
         $this->assertInstanceOf(Debugger::class, $result);
+        $result->setConfig('exportFormatter', $exporter);
     }
 
     /**
-     * Test that exportVar() doesn't loop through recursive structures.
+     * Test that exportVar() will stop traversing recursive arrays like GLOBALS.
      *
      * @return void
      */
     public function testExportVarRecursion()
     {
         $output = Debugger::exportVar($GLOBALS);
-        $this->assertStringContainsString("'GLOBALS' => [recursion]", $output);
+        $this->assertRegExp("/'GLOBALS' => \[\s+'' \=\> \[maximum depth reached\]/", $output);
     }
 
     /**
@@ -607,11 +643,9 @@ TEXT;
         $object = new DebuggableThing();
         $result = Debugger::exportVar($object, 2);
         $expected = <<<eos
-object(TestApp\Error\Thing\DebuggableThing) {
-
-	'foo' => 'bar',
-	'inner' => object(TestApp\Error\Thing\DebuggableThing) {}
-
+object(TestApp\Error\Thing\DebuggableThing) id:0 {
+  'foo' => 'bar'
+  'inner' => object(TestApp\Error\Thing\DebuggableThing) id:1 {}
 }
 eos;
         $this->assertEquals($expected, $result);
@@ -633,6 +667,22 @@ eos;
     }
 
     /**
+     * Test configure based output mask configuration
+     *
+     * @return void
+     */
+    public function testConfigureOutputMask()
+    {
+        Configure::write('Debugger.outputMask', ['wow' => 'xxx']);
+        Debugger::getInstance(TestDebugger::class);
+        Debugger::getInstance(Debugger::class);
+
+        $result = Debugger::exportVar(['wow' => 'pass1234']);
+        $this->assertStringContainsString('xxx', $result);
+        $this->assertStringNotContainsString('pass1234', $result);
+    }
+
+    /**
      * Tests the masking of an array key.
      *
      * @return void
@@ -641,7 +691,7 @@ eos;
     {
         Debugger::setOutputMask(['password' => '[**********]']);
         $result = Debugger::exportVar(['password' => 'pass1234']);
-        $expected = "['password'=>[**********]]";
+        $expected = "['password'=>'[**********]']";
         $this->assertEquals($expected, preg_replace('/\s+/', '', $result));
     }
 
@@ -655,7 +705,7 @@ eos;
         Debugger::setOutputMask(['password' => '[**********]']);
         $object = new SecurityThing();
         $result = Debugger::exportVar($object);
-        $expected = 'object(TestApp\\Error\\Thing\\SecurityThing){password=>[**********]}';
+        $expected = "object(TestApp\\Error\\Thing\\SecurityThing)id:0{password=>'[**********]'}";
         $this->assertEquals($expected, preg_replace('/\s+/', '', $result));
     }
 
@@ -676,7 +726,7 @@ eos;
 ###########################
 
 EXPECTED;
-        $expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 9);
+        $expected = sprintf($expectedText, Debugger::trimPath(__FILE__), __LINE__ - 9);
 
         $this->assertEquals($expected, $result);
 
@@ -684,124 +734,48 @@ EXPECTED;
         $value = '<div>this-is-a-test</div>';
         Debugger::printVar($value, ['file' => __FILE__, 'line' => __LINE__], true);
         $result = ob_get_clean();
-        $expectedHtml = <<<EXPECTED
-<div class="cake-debug-output" style="direction:ltr">
-<span><strong>%s</strong> (line <strong>%d</strong>)</span>
-<pre class="cake-debug">
-&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
-</pre>
-</div>
-EXPECTED;
-        $expected = sprintf($expectedHtml, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 10);
-        $this->assertEquals($expected, $result);
+        $this->assertStringContainsString('&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;', $result);
 
         ob_start();
         Debugger::printVar('<div>this-is-a-test</div>', ['file' => __FILE__, 'line' => __LINE__], true);
         $result = ob_get_clean();
         $expected = <<<EXPECTED
-<div class="cake-debug-output" style="direction:ltr">
+<div class="cake-debug-output cake-debug" style="direction:ltr">
 <span><strong>%s</strong> (line <strong>%d</strong>)</span>
-<pre class="cake-debug">
-&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
-</pre>
+<div class="cake-dbg"><span class="cake-dbg-string">&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;</span></div>
 </div>
 EXPECTED;
-        $expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 10);
+        $expected = sprintf($expected, Debugger::trimPath(__FILE__), __LINE__ - 8);
         $this->assertEquals($expected, $result);
 
         ob_start();
         Debugger::printVar('<div>this-is-a-test</div>', [], true);
         $result = ob_get_clean();
         $expected = <<<EXPECTED
-<div class="cake-debug-output" style="direction:ltr">
+<div class="cake-debug-output cake-debug" style="direction:ltr">
 
-<pre class="cake-debug">
-&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
-</pre>
+<div class="cake-dbg"><span class="cake-dbg-string">&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;</span></div>
 </div>
 EXPECTED;
-        $expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 10);
+        $expected = sprintf($expected, Debugger::trimPath(__FILE__), __LINE__ - 8);
         $this->assertEquals($expected, $result);
 
         ob_start();
-        Debugger::printVar('<div>this-is-a-test</div>', ['file' => __FILE__, 'line' => __LINE__]);
+        Debugger::printVar('<div>this-is-a-test</div>', ['file' => __FILE__, 'line' => __LINE__], false);
         $result = ob_get_clean();
-        $expectedHtml = <<<EXPECTED
-<div class="cake-debug-output" style="direction:ltr">
-<span><strong>%s</strong> (line <strong>%d</strong>)</span>
-<pre class="cake-debug">
-&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
-</pre>
-</div>
-EXPECTED;
-        $expectedText = <<<EXPECTED
+        $expected = <<<EXPECTED
 %s (line %d)
 ########## DEBUG ##########
 '<div>this-is-a-test</div>'
 ###########################
 
 EXPECTED;
-        if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
-            $expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 18);
-        } else {
-            $expected = sprintf($expectedHtml, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 19);
-        }
+        $expected = sprintf($expected, Debugger::trimPath(__FILE__), __LINE__ - 9);
         $this->assertEquals($expected, $result);
 
         ob_start();
         Debugger::printVar('<div>this-is-a-test</div>');
         $result = ob_get_clean();
-        $expectedHtml = <<<EXPECTED
-<div class="cake-debug-output" style="direction:ltr">
-
-<pre class="cake-debug">
-&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
-</pre>
-</div>
-EXPECTED;
-        $expectedText = <<<EXPECTED
-
-########## DEBUG ##########
-'<div>this-is-a-test</div>'
-###########################
-
-EXPECTED;
-        if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
-            $expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 18);
-        } else {
-            $expected = sprintf($expectedHtml, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 19);
-        }
-        $this->assertEquals($expected, $result);
-
-        ob_start();
-        Debugger::printVar('<div>this-is-a-test</div>', ['file' => __FILE__, 'line' => __LINE__], false);
-        $result = ob_get_clean();
-        $expected = <<<EXPECTED
-%s (line %d)
-########## DEBUG ##########
-'<div>this-is-a-test</div>'
-###########################
-
-EXPECTED;
-        $expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 9);
-        $this->assertEquals($expected, $result);
-
-        ob_start();
-        Debugger::printVar('<div>this-is-a-test</div>', ['file' => __FILE__, 'line' => __LINE__], false);
-        $result = ob_get_clean();
-        $expected = <<<EXPECTED
-%s (line %d)
-########## DEBUG ##########
-'<div>this-is-a-test</div>'
-###########################
-
-EXPECTED;
-        $expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 9);
-        $this->assertEquals($expected, $result);
-
-        ob_start();
-        Debugger::printVar('<div>this-is-a-test</div>', [], false);
-        $result = ob_get_clean();
         $expected = <<<EXPECTED
 
 ########## DEBUG ##########
@@ -809,20 +783,7 @@ EXPECTED;
 ###########################
 
 EXPECTED;
-        $expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 9);
-        $this->assertEquals($expected, $result);
-
-        ob_start();
-        Debugger::printVar(false, [], false);
-        $result = ob_get_clean();
-        $expected = <<<EXPECTED
-
-########## DEBUG ##########
-false
-###########################
-
-EXPECTED;
-        $expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 9);
+        $expected = sprintf($expected, Debugger::trimPath(__FILE__), __LINE__ - 8);
         $this->assertEquals($expected, $result);
     }
 
@@ -844,5 +805,83 @@ EXPECTED;
             "Some <code>code</code> to &lt;script&gt;alert(&quot;test&quot;)&lt;/script&gt;<br />\nmore",
             $output
         );
+    }
+
+    /**
+     * test adding invalid editor
+     *
+     * @return void
+     */
+    public function testAddEditorInvalid()
+    {
+        $this->expectException(RuntimeException::class);
+        Debugger::addEditor('nope', ['invalid']);
+    }
+
+    /**
+     * test choosing an unknown editor
+     *
+     * @return void
+     */
+    public function testSetEditorInvalid()
+    {
+        $this->expectException(RuntimeException::class);
+        Debugger::setEditor('nope');
+    }
+
+    /**
+     * test choosing a default editor
+     *
+     * @return void
+     */
+    public function testSetEditorPredefined()
+    {
+        Debugger::setEditor('phpstorm');
+        Debugger::setEditor('macvim');
+        Debugger::setEditor('sublime');
+        Debugger::setEditor('emacs');
+        // No exceptions raised.
+        $this->assertTrue(true);
+    }
+
+    /**
+     * Test configure based editor setup
+     *
+     * @return void
+     */
+    public function testConfigureEditor()
+    {
+        Configure::write('Debugger.editor', 'emacs');
+        Debugger::getInstance(TestDebugger::class);
+        Debugger::getInstance(Debugger::class);
+
+        $result = Debugger::editorUrl('file.php', 123);
+        $this->assertStringContainsString('emacs://', $result);
+    }
+
+    /**
+     * test using a valid editor.
+     *
+     * @return void
+     */
+    public function testEditorUrlValid()
+    {
+        Debugger::addEditor('open', 'open://{file}:{line}');
+        Debugger::setEditor('open');
+        $this->assertSame('open://test.php:123', Debugger::editorUrl('test.php', 123));
+    }
+
+    /**
+     * test using a valid editor.
+     *
+     * @return void
+     */
+    public function testEditorUrlClosure()
+    {
+        Debugger::addEditor('open', function (string $file, int $line) {
+            return "${file}/${line}";
+        });
+        Debugger::setEditor('open');
+        $this->assertSame('test.php/123', Debugger::editorUrl('test.php', 123));
     }
 }

@@ -137,25 +137,56 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
     }
 
     /**
+     * Set the schema for this form.
+     *
+     * @since 4.1.0
+     * @param \Cake\Form\Schema $schema The schema to set
+     * @return $this
+     */
+    public function setSchema(Schema $schema)
+    {
+        $this->_schema = $schema;
+
+        return $this;
+    }
+
+    /**
+     * Get the schema for this form.
+     *
+     * This method will call `_buildSchema()` when the schema
+     * is first built. This hook method lets you configure the
+     * schema or load a pre-defined one.
+     *
+     * @since 4.1.0
+     * @return \Cake\Form\Schema the schema instance.
+     */
+    public function getSchema(): Schema
+    {
+        if ($this->_schema === null) {
+            $this->_schema = $this->_buildSchema(new $this->_schemaClass());
+        }
+
+        return $this->_schema;
+    }
+
+    /**
      * Get/Set the schema for this form.
      *
      * This method will call `_buildSchema()` when the schema
      * is first built. This hook method lets you configure the
      * schema or load a pre-defined one.
      *
+     * @deprecated 4.1.0 Use {@link setSchema()}/{@link getSchema()} instead.
      * @param \Cake\Form\Schema|null $schema The schema to set, or null.
      * @return \Cake\Form\Schema the schema instance.
      */
     public function schema(?Schema $schema = null): Schema
     {
-        if ($schema === null && empty($this->_schema)) {
-            $schema = $this->_buildSchema(new $this->_schemaClass());
-        }
-        if ($schema) {
-            $this->_schema = $schema;
+        if ($schema !== null) {
+            $this->setSchema($schema);
         }
 
-        return $this->_schema;
+        return $this->getSchema();
     }
 
     /**
@@ -235,6 +266,8 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      */
     public function execute(array $data): bool
     {
+        $this->_data = $data;
+
         if (!$this->validate($data)) {
             return false;
         }
@@ -272,6 +305,29 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
     }
 
     /**
+     * Saves a variable or an associative array of variables for use inside form data.
+     *
+     * @param string|array $name The key to write, can be a dot notation value.
+     * Alternatively can be an array containing key(s) and value(s).
+     * @param mixed $value Value to set for var
+     * @return $this
+     */
+    public function set($name, $value = null)
+    {
+        $write = $name;
+        if (!is_array($name)) {
+            $write = [$name => $value];
+        }
+
+        /** @psalm-suppress PossiblyInvalidIterator */
+        foreach ($write as $key => $val) {
+            $this->_data = Hash::insert($this->_data, $key, $val);
+        }
+
+        return $this;
+    }
+
+    /**
      * Set form data.
      *
      * @param array $data Data array.
@@ -292,7 +348,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
     public function __debugInfo(): array
     {
         $special = [
-            '_schema' => $this->schema()->__debugInfo(),
+            '_schema' => $this->getSchema()->__debugInfo(),
             '_errors' => $this->getErrors(),
             '_validator' => $this->getValidator()->__debugInfo(),
         ];

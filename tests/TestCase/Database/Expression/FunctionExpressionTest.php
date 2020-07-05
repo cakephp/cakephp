@@ -27,13 +27,18 @@ use Cake\TestSuite\TestCase;
 class FunctionExpressionTest extends TestCase
 {
     /**
+     * @var string The expression class to test with
+     */
+    protected $expressionClass = FunctionExpression::class;
+
+    /**
      * Tests generating a function with no arguments
      *
      * @return void
      */
     public function testArityZero()
     {
-        $f = new FunctionExpression('MyFunction');
+        $f = new $this->expressionClass('MyFunction');
         $this->assertSame('MyFunction()', $f->sql(new ValueBinder()));
     }
 
@@ -45,7 +50,7 @@ class FunctionExpressionTest extends TestCase
      */
     public function testArityMultiplePlainValues()
     {
-        $f = new FunctionExpression('MyFunction', ['foo', 'bar']);
+        $f = new $this->expressionClass('MyFunction', ['foo', 'bar']);
         $binder = new ValueBinder();
         $this->assertSame('MyFunction(:param0, :param1)', $f->sql($binder));
 
@@ -53,7 +58,7 @@ class FunctionExpressionTest extends TestCase
         $this->assertSame('bar', $binder->bindings()[':param1']['value']);
 
         $binder = new ValueBinder();
-        $f = new FunctionExpression('MyFunction', ['bar']);
+        $f = new $this->expressionClass('MyFunction', ['bar']);
         $this->assertSame('MyFunction(:param0)', $f->sql($binder));
         $this->assertSame('bar', $binder->bindings()[':param0']['value']);
     }
@@ -66,7 +71,7 @@ class FunctionExpressionTest extends TestCase
     public function testLiteralParams()
     {
         $binder = new ValueBinder();
-        $f = new FunctionExpression('MyFunction', ['foo' => 'literal', 'bar']);
+        $f = new $this->expressionClass('MyFunction', ['foo' => 'literal', 'bar']);
         $this->assertSame('MyFunction(foo, :param0)', $f->sql($binder));
     }
 
@@ -79,8 +84,8 @@ class FunctionExpressionTest extends TestCase
     public function testFunctionNesting()
     {
         $binder = new ValueBinder();
-        $f = new FunctionExpression('MyFunction', ['foo', 'bar']);
-        $g = new FunctionExpression('Wrapper', ['bar' => 'literal', $f]);
+        $f = new $this->expressionClass('MyFunction', ['foo', 'bar']);
+        $g = new $this->expressionClass('Wrapper', ['bar' => 'literal', $f]);
         $this->assertSame('Wrapper(bar, MyFunction(:param0, :param1))', $g->sql($binder));
     }
 
@@ -94,7 +99,7 @@ class FunctionExpressionTest extends TestCase
     {
         $binder = new ValueBinder();
         $q = new QueryExpression('a');
-        $f = new FunctionExpression('MyFunction', [$q]);
+        $f = new $this->expressionClass('MyFunction', [$q]);
         $this->assertSame('MyFunction(a)', $f->sql($binder));
     }
 
@@ -110,7 +115,7 @@ class FunctionExpressionTest extends TestCase
             ->select(['column']);
 
         $binder = new ValueBinder();
-        $function = new FunctionExpression('MyFunction', [$query]);
+        $function = new $this->expressionClass('MyFunction', [$query]);
         $this->assertEquals(
             'MyFunction((SELECT column))',
             preg_replace('/[`"\[\]]/', '', $function->sql($binder))
@@ -130,7 +135,7 @@ class FunctionExpressionTest extends TestCase
             ->select(['column']);
 
         $binder = new ValueBinder();
-        $function = new FunctionExpression('MyFunction', [$query]);
+        $function = new $this->expressionClass('MyFunction', [$query]);
         $this->assertEquals(
             'MyFunction((SELECT Articles.column AS Articles__column FROM articles Articles))',
             preg_replace('/[`"\[\]]/', '', $function->sql($binder))
@@ -145,10 +150,10 @@ class FunctionExpressionTest extends TestCase
     public function testNumericLiteral()
     {
         $binder = new ValueBinder();
-        $f = new FunctionExpression('MyFunction', ['a_field' => 'literal', '32' => 'literal']);
+        $f = new $this->expressionClass('MyFunction', ['a_field' => 'literal', '32' => 'literal']);
         $this->assertSame('MyFunction(a_field, 32)', $f->sql($binder));
 
-        $f = new FunctionExpression('MyFunction', ['a_field' => 'literal', 32 => 'literal']);
+        $f = new $this->expressionClass('MyFunction', ['a_field' => 'literal', 32 => 'literal']);
         $this->assertSame('MyFunction(a_field, 32)', $f->sql($binder));
     }
 
@@ -159,9 +164,9 @@ class FunctionExpressionTest extends TestCase
      */
     public function testGetSetReturnType()
     {
-        $f = new FunctionExpression('MyFunction');
+        $f = new $this->expressionClass('MyFunction');
         $f = $f->setReturnType('foo');
-        $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $f);
+        $this->assertInstanceOf($this->expressionClass, $f);
         $this->assertSame('foo', $f->getReturnType());
     }
 }

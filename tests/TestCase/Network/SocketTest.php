@@ -403,8 +403,9 @@ class SocketTest extends TestCase
     public function testEnableCrypto()
     {
         $this->_connectSocketToSslTls();
-        $this->assertNull($this->Socket->enableCrypto('tls', 'client'));
-        $this->Socket->disconnect();
+        $this->Socket->enableCrypto('tls', 'client');
+        $result = $this->Socket->disconnect();
+        $this->assertTrue($result);
     }
 
     /**

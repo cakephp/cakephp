@@ -26,6 +26,11 @@ use Cake\TestSuite\TestCase;
 class ConsoleInputTest extends TestCase
 {
     /**
+     * @var \Cake\Console\ConsoleInput
+     */
+    protected $in;
+
+    /**
      * setUp method
      *
      * @return void

@@ -20,6 +20,7 @@ namespace Cake\Cache\Engine;
 use Cake\Cache\CacheEngine;
 use Redis;
 use RedisException;
+use RuntimeException;
 
 /**
  * Redis storage engine for cache.
@@ -76,7 +77,7 @@ class RedisEngine extends CacheEngine
     public function init(array $config = []): bool
     {
         if (!extension_loaded('redis')) {
-            return false;
+            throw new RuntimeException('The `redis` extension must be enabled to use RedisEngine.');
         }
 
         if (!empty($config['host'])) {

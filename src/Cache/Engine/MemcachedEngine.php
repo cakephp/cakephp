@@ -19,6 +19,7 @@ namespace Cake\Cache\Engine;
 use Cake\Cache\CacheEngine;
 use InvalidArgumentException;
 use Memcached;
+use RuntimeException;
 
 /**
  * Memcached storage engine for cache. Memcached has some limitations in the amount of
@@ -103,7 +104,7 @@ class MemcachedEngine extends CacheEngine
     public function init(array $config = []): bool
     {
         if (!extension_loaded('memcached')) {
-            return false;
+            throw new RuntimeException('The `memcached` extension must be enabled to use MemcachedEngine.');
         }
 
         $this->_serializers = [

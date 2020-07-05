@@ -40,7 +40,7 @@ class MailContains extends MailConstraintBase
     {
         $messages = $this->getMessages();
         foreach ($messages as $message) {
-            $method = 'getBody' . ($this->type ? ucfirst($this->type) : 'String');
+            $method = $this->getTypeMethod();
             $message = $message->$method();
 
             $other = preg_quote($other, '/');
@@ -53,6 +53,36 @@ class MailContains extends MailConstraintBase
     }
 
     /**
+     * @return string
+     */
+    protected function getTypeMethod(): string
+    {
+        return 'getBody' . ($this->type ? ucfirst($this->type) : 'String');
+    }
+
+    /**
+     * Returns the type-dependent strings of all messages
+     * respects $this->at
+     *
+     * @return string
+     */
+    protected function getAssertedMessages(): string
+    {
+        $messageMembers = [];
+        $messages = $this->getMessages();
+        foreach ($messages as $message) {
+            $method = $this->getTypeMethod();
+            $messageMembers[] = $message->$method();
+        }
+        if ($this->at && isset($messageMembers[$this->at - 1])) {
+            $messageMembers = [$messageMembers[$this->at - 1]];
+        }
+        $result = join(PHP_EOL, $messageMembers);
+
+        return PHP_EOL . 'was: ' . mb_substr($result, 0, 1000);
+    }
+
+    /**
      * Assertion message string
      *
      * @return string
@@ -60,9 +90,9 @@ class MailContains extends MailConstraintBase
     public function toString(): string
     {
         if ($this->at) {
-            return sprintf('is in email #%d', $this->at);
+            return sprintf('is in email #%d', $this->at) . $this->getAssertedMessages();
         }
 
-        return 'is in an email';
+        return 'is in an email' . $this->getAssertedMessages();
     }
 }

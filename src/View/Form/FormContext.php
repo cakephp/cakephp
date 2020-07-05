@@ -16,24 +16,16 @@ declare(strict_types=1);
  */
 namespace Cake\View\Form;
 
-use Cake\Http\ServerRequest;
 use Cake\Utility\Hash;
 
 /**
  * Provides a context provider for Cake\Form\Form instances.
  *
  * This context provider simply fulfils the interface requirements
- * that FormHelper has and allows access to the request data.
+ * that FormHelper has and allows access to the form data.
  */
 class FormContext implements ContextInterface
 {
-    /**
-     * The request object.
-     *
-     * @var \Cake\Http\ServerRequest
-     */
-    protected $_request;
-
     /**
      * The form object.
      *
@@ -44,12 +36,10 @@ class FormContext implements ContextInterface
     /**
      * Constructor.
      *
-     * @param \Cake\Http\ServerRequest $request The request object.
      * @param array $context Context info.
      */
-    public function __construct(ServerRequest $request, array $context)
+    public function __construct(array $context)
     {
-        $this->_request = $request;
         $context += [
             'entity' => null,
         ];
@@ -64,6 +54,8 @@ class FormContext implements ContextInterface
      */
     public function primaryKey(): array
     {
+        deprecationWarning('`FormContext::primaryKey()` is deprecated. Use `FormContext::getPrimaryKey()`.');
+
         return [];
     }
 
@@ -101,11 +93,6 @@ class FormContext implements ContextInterface
             'schemaDefault' => true,
         ];
 
-        $val = $this->_request->getData($field);
-        if ($val !== null) {
-            return $val;
-        }
-
         $val = $this->_form->getData($field);
         if ($val !== null) {
             return $val;
@@ -126,7 +113,7 @@ class FormContext implements ContextInterface
      */
     protected function _schemaDefault(string $field)
     {
-        $field = $this->_form->schema()->field($field);
+        $field = $this->_form->getSchema()->field($field);
         if ($field) {
             return $field['default'];
         }
@@ -199,7 +186,7 @@ class FormContext implements ContextInterface
      */
     public function fieldNames(): array
     {
-        return $this->_form->schema()->fields();
+        return $this->_form->getSchema()->fields();
     }
 
     /**
@@ -207,7 +194,7 @@ class FormContext implements ContextInterface
      */
     public function type(string $field): ?string
     {
-        return $this->_form->schema()->fieldType($field);
+        return $this->_form->getSchema()->fieldType($field);
     }
 
     /**
@@ -215,10 +202,10 @@ class FormContext implements ContextInterface
      */
     public function attributes(string $field): array
     {
-        $column = (array)$this->_form->schema()->field($field);
-        $whiteList = ['length' => null, 'precision' => null];
+        $column = (array)$this->_form->getSchema()->field($field);
+        $allowed = ['length' => null, 'precision' => null];
 
-        return array_intersect_key($column, $whiteList);
+        return array_intersect_key($column, $allowed);
     }
 
     /**

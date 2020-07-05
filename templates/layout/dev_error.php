@@ -148,10 +148,11 @@ use Cake\Error\Debugger;
     .stack-frame {
         background: #e5e5e5;
         padding: 10px;
-        margin-bottom: 5px;
+        margin-bottom: 10px;
     }
     .stack-frame:last-child {
         border-bottom: none;
+        margin-bottom: 0;
     }
     .stack-frame a {
         display: block;
@@ -167,6 +168,9 @@ use Cake\Error\Debugger;
     .stack-frame-header {
         display: flex;
         align-items: center;
+    }
+    .stack-frame-file a {
+        color: #212121;
     }
 
     .stack-frame-args {
@@ -220,7 +224,7 @@ use Cake\Error\Debugger;
 
     .code-excerpt {
         width: 100%;
-        margin: 10px 0;
+        margin: 10px 0 0 0;
         background: #fefefe;
     }
     .code-highlight {
@@ -240,6 +244,9 @@ use Cake\Error\Debugger;
     }
     .excerpt-number:after {
         content: attr(data-number);
+    }
+    .cake-debug {
+        margin-top: 10px;
     }
 
     table {

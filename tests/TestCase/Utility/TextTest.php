@@ -24,6 +24,16 @@ use Cake\Utility\Text;
  */
 class TextTest extends TestCase
 {
+    /**
+     * @var \Cake\Utility\Text
+     */
+    protected $Text;
+
+    /**
+     * @var string
+     */
+    protected $encoding;
+
     public function setUp(): void
     {
         parent::setUp();
@@ -1753,7 +1763,10 @@ HTML;
         $this->assertSame($expected, $result);
     }
 
-    public function slugInputProvider()
+    /**
+     * @return array
+     */
+    public function slugInputProvider(): array
     {
         return [
             [

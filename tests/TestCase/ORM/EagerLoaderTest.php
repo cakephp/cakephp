@@ -527,11 +527,11 @@ class EagerLoaderTest extends TestCase
     public function testNormalizedMatchingPath()
     {
         $loader = new EagerLoader();
-        $loader->setMatching('Clients');
+        $loader->setMatching('clients');
         $assocs = $loader->attachableAssociations($this->table);
 
-        $this->assertEquals('Clients', $assocs['Clients']->aliasPath());
-        $this->assertEquals('_matchingData.Clients', $assocs['Clients']->propertyPath());
+        $this->assertEquals('clients', $assocs['clients']->aliasPath());
+        $this->assertEquals('_matchingData.clients', $assocs['clients']->propertyPath());
     }
 
     /**
@@ -542,15 +542,15 @@ class EagerLoaderTest extends TestCase
     public function testNormalizedDeepMatchingPath()
     {
         $loader = new EagerLoader();
-        $loader->setMatching('Clients.Orders');
+        $loader->setMatching('clients.orders');
         $assocs = $loader->attachableAssociations($this->table);
 
-        $this->assertEquals('Clients', $assocs['Clients']->aliasPath());
-        $this->assertEquals('_matchingData.Clients', $assocs['Clients']->propertyPath());
+        $this->assertEquals('clients', $assocs['clients']->aliasPath());
+        $this->assertEquals('_matchingData.clients', $assocs['clients']->propertyPath());
 
-        $assocs = $assocs['Clients']->associations();
-        $this->assertEquals('Clients.Orders', $assocs['Orders']->aliasPath());
-        $this->assertEquals('_matchingData.Orders', $assocs['Orders']->propertyPath());
+        $assocs = $assocs['clients']->associations();
+        $this->assertEquals('clients.orders', $assocs['orders']->aliasPath());
+        $this->assertEquals('_matchingData.orders', $assocs['orders']->propertyPath());
     }
 
     /**
@@ -576,7 +576,7 @@ class EagerLoaderTest extends TestCase
         $loader->contain($contains);
         $loader->setMatching('clients.addresses');
 
-        $this->assertNull($loader->clearContain());
+        $loader->clearContain();
         $result = $loader->normalized($this->table);
         $this->assertEquals([], $result);
         $this->assertArrayHasKey('clients', $loader->getMatching());

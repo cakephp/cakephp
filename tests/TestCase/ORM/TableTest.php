@@ -46,6 +46,7 @@ use InvalidArgumentException;
 use RuntimeException;
 use TestApp\Model\Entity\ProtectedEntity;
 use TestApp\Model\Entity\VirtualUser;
+use TestApp\Model\Table\ArticlesTable;
 use TestApp\Model\Table\UsersTable;
 
 /**
@@ -53,6 +54,9 @@ use TestApp\Model\Table\UsersTable;
  */
 class TableTest extends TestCase
 {
+    /**
+     * @var string[]
+     */
     protected $fixtures = [
         'core.Articles',
         'core.Tags',
@@ -60,8 +64,8 @@ class TableTest extends TestCase
         'core.Authors',
         'core.Categories',
         'core.Comments',
-        'core.Groups',
-        'core.GroupsMembers',
+        'core.Sections',
+        'core.SectionsMembers',
         'core.Members',
         'core.PolymorphicTagged',
         'core.SiteArticles',
@@ -80,6 +84,16 @@ class TableTest extends TestCase
      * @var \Cake\Datasource\ConnectionInterface
      */
     protected $connection;
+
+    /**
+     * @var \Cake\Database\TypeMap
+     */
+    protected $usersTypeMap;
+
+    /**
+     * @var \Cake\Database\TypeMap
+     */
+    protected $articlesTypeMap;
 
     /**
      * @return void
@@ -606,21 +620,34 @@ class TableTest extends TestCase
      */
     public function testAssociationDotSyntax()
     {
-        $groups = $this->getTableLocator()->get('Groups');
+        $sections = $this->getTableLocator()->get('Sections');
         $members = $this->getTableLocator()->get('Members');
-        $groupsMembers = $this->getTableLocator()->get('GroupsMembers');
+        $sectionsMembers = $this->getTableLocator()->get('SectionsMembers');
 
-        $groups->belongsToMany('Members');
-        $groups->hasMany('GroupsMembers');
-        $groupsMembers->belongsTo('Members');
-        $members->belongsToMany('Groups');
+        $sections->belongsToMany('Members');
+        $sections->hasMany('SectionsMembers');
+        $sectionsMembers->belongsTo('Members');
+        $members->belongsToMany('Sections');
 
-        $association = $groups->getAssociation('GroupsMembers.Members.Groups');
+        $association = $sections->getAssociation('SectionsMembers.Members.Sections');
         $this->assertInstanceOf(BelongsToMany::class, $association);
         $this->assertSame(
-            $groups->getAssociation('GroupsMembers')->getAssociation('Members')->getAssociation('Groups'),
+            $sections->getAssociation('SectionsMembers')->getAssociation('Members')->getAssociation('Sections'),
             $association
         );
+    }
+
+    public function testGetAssociationWithIncorrectCasing()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            "The `authors` association is not defined on `Articles`.\n"
+            . 'Valid associations are: Authors, Tags, ArticlesTags'
+        );
+
+        $articles = $this->getTableLocator()->get('Articles', ['className' => ArticlesTable::class]);
+
+        $articles->getAssociation('authors');
     }
 
     /**
@@ -631,8 +658,9 @@ class TableTest extends TestCase
     public function testGetAssociationNonExistent()
     {
         $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The `FooBar` association is not defined on `Sections`.');
 
-        $this->getTableLocator()->get('Groups')->getAssociation('FooBar');
+        $this->getTableLocator()->get('Sections')->getAssociation('FooBar');
     }
 
     /**
@@ -1593,7 +1621,7 @@ class TableTest extends TestCase
         $table = new \TestApp\Model\Table\ArticlesTable([
             'connection' => $this->connection,
         ]);
-        $result = $table->find('all')->contain(['Authors' => ['Articles']])->first();
+        $result = $table->find('all')->contain(['Authors' => ['articles']])->first();
         $this->assertCount(2, $result->author->articles);
         foreach ($result->author->articles as $article) {
             $this->assertInstanceOf('TestApp\Model\Entity\Article', $article);
@@ -1657,7 +1685,7 @@ class TableTest extends TestCase
         $table = new \TestApp\Model\Table\ArticlesTable([
             'connection' => $this->connection,
         ]);
-        $results = $table->find('all')->contain(['tags', 'authors'])->toArray();
+        $results = $table->find('all')->contain(['Tags', 'Authors'])->toArray();
         $this->assertCount(3, $results);
         foreach ($results as $article) {
             $this->assertFalse($article->isNew());
@@ -2231,7 +2259,7 @@ class TableTest extends TestCase
         $table->getEventManager()->on('Model.afterSave', $listener);
 
         $calledAfterCommit = false;
-        $listenerAfterCommit = function ($e, $entity, $options) use ($data, &$calledAfterCommit) {
+        $listenerAfterCommit = function ($e, $entity, $options) use (&$calledAfterCommit) {
             $calledAfterCommit = true;
         };
         $table->getEventManager()->on('Model.afterSaveCommit', $listenerAfterCommit);
@@ -2328,13 +2356,13 @@ class TableTest extends TestCase
             ->will($this->returnValue(0));
 
         $called = false;
-        $listener = function ($e, $entity, $options) use ($data, &$called) {
+        $listener = function ($e, $entity, $options) use (&$called) {
             $called = true;
         };
         $table->getEventManager()->on('Model.afterSave', $listener);
 
         $calledAfterCommit = false;
-        $listenerAfterCommit = function ($e, $entity, $options) use ($data, &$calledAfterCommit) {
+        $listenerAfterCommit = function ($e, $entity, $options) use (&$calledAfterCommit) {
             $calledAfterCommit = true;
         };
         $table->getEventManager()->on('Model.afterSaveCommit', $listenerAfterCommit);
@@ -2783,7 +2811,16 @@ class TableTest extends TestCase
             new Entity(['name' => 'dakota']),
         ];
 
-        $table = $this->getTableLocator()->get('authors');
+        $timesCalled = 0;
+        $listener = function ($e, $entity, $options) use (&$timesCalled) {
+            $timesCalled++;
+        };
+        $table = $this->getTableLocator()
+            ->get('authors');
+
+        $table->getEventManager()
+            ->on('Model.afterSaveCommit', $listener);
+
         $result = $table->saveMany($entities);
 
         $this->assertSame($entities, $result);
@@ -2791,6 +2828,7 @@ class TableTest extends TestCase
         foreach ($entities as $entity) {
             $this->assertFalse($entity->isNew());
         }
+        $this->assertSame(2, $timesCalled);
     }
 
     /**
@@ -2997,7 +3035,41 @@ class TableTest extends TestCase
             'cascadeCallbacks' => true,
         ]);
 
+        $articles = $table->getAssociation('articles')->getTarget();
+        $articles->getEventManager()->on('Model.buildRules', function ($event, $rules) {
+            $rules->addDelete(function ($entity) {
+                if ($entity->author_id === 3) {
+                    return false;
+                } else {
+                    return true;
+                }
+            });
+        });
+
         $entity = $table->get(1);
+        $result = $table->delete($entity);
+        $this->assertTrue($result);
+
+        $query = $articles->find('all', [
+            'conditions' => [
+                'author_id' => $entity->id,
+            ],
+        ]);
+        $this->assertNull($query->all()->first(), 'Should not find any rows.');
+
+        $entity = $table->get(3);
+        $result = $table->delete($entity);
+        $this->assertFalse($result);
+
+        $query = $articles->find('all', [
+            'conditions' => [
+                'author_id' => $entity->id,
+            ],
+        ]);
+        $this->assertFalse($query->all()->isEmpty(), 'Should find some rows.');
+
+        $table->associations()->get('articles')->setCascadeCallbacks(false);
+        $entity = $table->get(2);
         $result = $table->delete($entity);
         $this->assertTrue($result);
     }
@@ -3040,7 +3112,7 @@ class TableTest extends TestCase
         $entity = $query->first();
         $table->delete($entity);
 
-        $junction = $table->getAssociation('tags')->junction();
+        $junction = $table->getAssociation('tag')->junction();
         $query = $junction->find('all')->where(['article_id' => 1]);
         $this->assertNull($query->all()->first(), 'Should not find any rows.');
     }
@@ -3078,28 +3150,61 @@ class TableTest extends TestCase
      */
     public function testDeleteAssociationsCascadingCallbacksOrder()
     {
-        $groups = $this->getTableLocator()->get('Groups');
+        $sections = $this->getTableLocator()->get('Sections');
         $members = $this->getTableLocator()->get('Members');
-        $groupsMembers = $this->getTableLocator()->get('GroupsMembers');
+        $sectionsMembers = $this->getTableLocator()->get('SectionsMembers');
 
-        $groups->belongsToMany('Members');
-        $groups->hasMany('GroupsMembers', [
+        $sections->belongsToMany('Members', [
+            'joinTable' => 'sections_members',
+        ]);
+        $sections->hasMany('SectionsMembers', [
             'dependent' => true,
             'cascadeCallbacks' => true,
         ]);
-        $groupsMembers->belongsTo('Members');
-        $groupsMembers->addBehavior('CounterCache', [
-            'Members' => ['group_count'],
+        $sectionsMembers->belongsTo('Members');
+        $sectionsMembers->addBehavior('CounterCache', [
+            'Members' => ['section_count'],
         ]);
 
         $member = $members->get(1);
-        $this->assertEquals(2, $member->group_count);
+        $this->assertEquals(2, $member->section_count);
 
-        $group = $groups->get(1);
-        $groups->delete($group);
+        $section = $sections->get(1);
+        $sections->delete($section);
 
         $member = $members->get(1);
-        $this->assertEquals(1, $member->group_count);
+        $this->assertEquals(1, $member->section_count);
+    }
+
+    /**
+     * Test that primary record is not deleted if junction record deletion fails
+     * when cascadeCallbacks is enabled.
+     *
+     * @return void
+     */
+    public function testDeleteBelongsToManyDependentFailure()
+    {
+        $sections = $this->getTableLocator()->get('Sections');
+        $sectionsMembers = $this->getTableLocator()->get('SectionsMembers');
+        $sectionsMembers->getEventManager()->on('Model.buildRules', function ($event, $rules) {
+            $rules->addDelete(function () {
+                return false;
+            });
+        });
+
+        $sections->belongsToMany('Members', [
+            'joinTable' => 'sections_members',
+            'dependent' => true,
+            'cascadeCallbacks' => true,
+        ]);
+
+        $section = $sections->get(1, ['contain' => 'Members']);
+        $this->assertSame(1, count($section->members));
+
+        $this->assertFalse($sections->delete($section));
+
+        $section = $sections->get(1, ['contain' => 'Members']);
+        $this->assertSame(1, count($section->members));
     }
 
     /**
@@ -3166,7 +3271,7 @@ class TableTest extends TestCase
         $table->getEventManager()->on('Model.afterDelete', $listener);
 
         $calledAfterCommit = false;
-        $listenerAfterCommit = function ($e, $entity, $options) use ($data, &$calledAfterCommit) {
+        $listenerAfterCommit = function ($e, $entity, $options) use (&$calledAfterCommit) {
             $calledAfterCommit = true;
         };
         $table->getEventManager()->on('Model.afterDeleteCommit', $listenerAfterCommit);
@@ -3867,7 +3972,7 @@ class TableTest extends TestCase
     public function testSaveBelongsToManyJoinData()
     {
         $articles = $this->getTableLocator()->get('Articles');
-        $article = $articles->get(1, ['contain' => ['tags']]);
+        $article = $articles->get(1, ['contain' => ['Tags']]);
         $data = [
             'tags' => [
                 ['id' => 1, '_joinData' => ['highlighted' => 1]],
@@ -4326,10 +4431,10 @@ class TableTest extends TestCase
      */
     public function testLinkBelongsToMany()
     {
-        $table = $this->getTableLocator()->get('articles');
-        $table->belongsToMany('tags');
-        $tagsTable = $this->getTableLocator()->get('tags');
-        $source = ['source' => 'tags'];
+        $table = $this->getTableLocator()->get('Articles');
+        $table->belongsToMany('Tags');
+        $tagsTable = $this->getTableLocator()->get('Tags');
+        $source = ['source' => 'Tags'];
         $options = ['markNew' => false];
 
         $article = new Entity([
@@ -4347,14 +4452,14 @@ class TableTest extends TestCase
         $tags[] = $newTag;
 
         $tagsTable->save($newTag);
-        $table->getAssociation('tags')->link($article, $tags);
+        $table->getAssociation('Tags')->link($article, $tags);
 
         $this->assertEquals($article->tags, $tags);
         foreach ($tags as $tag) {
             $this->assertFalse($tag->isNew());
         }
 
-        $article = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
+        $article = $table->find('all')->where(['id' => 1])->contain(['Tags'])->first();
         $this->assertEquals($article->tags[2]->id, $tags[0]->id);
         $this->assertEquals($article->tags[3], $tags[1]);
     }
@@ -4655,7 +4760,7 @@ class TableTest extends TestCase
             ->getMock();
         $hasManyArticles->method('getTarget')->willReturn($articles);
 
-        $associations->add('articles', $hasManyArticles);
+        $associations->add('Articles', $hasManyArticles);
 
         $authors = new Table([
             'connection' => $this->connection,
@@ -4858,16 +4963,16 @@ class TableTest extends TestCase
      */
     public function testUnlinkBelongsToMany()
     {
-        $table = $this->getTableLocator()->get('articles');
-        $table->belongsToMany('tags');
-        $tagsTable = $this->getTableLocator()->get('tags');
+        $table = $this->getTableLocator()->get('Articles');
+        $table->belongsToMany('Tags');
+        $tagsTable = $this->getTableLocator()->get('Tags');
         $options = ['markNew' => false];
 
         $article = $table->find('all')
             ->where(['id' => 1])
-            ->contain(['tags'])->first();
+            ->contain(['Tags'])->first();
 
-        $table->getAssociation('tags')->unlink($article, [$article->tags[0]]);
+        $table->getAssociation('Tags')->unlink($article, [$article->tags[0]]);
         $this->assertCount(1, $article->tags);
         $this->assertEquals(2, $article->tags[0]->get('id'));
         $this->assertFalse($article->isDirty('tags'));
@@ -4880,17 +4985,17 @@ class TableTest extends TestCase
      */
     public function testUnlinkBelongsToManyMultiple()
     {
-        $table = $this->getTableLocator()->get('articles');
-        $table->belongsToMany('tags');
-        $tagsTable = $this->getTableLocator()->get('tags');
+        $table = $this->getTableLocator()->get('Articles');
+        $table->belongsToMany('Tags');
+        $tagsTable = $this->getTableLocator()->get('Tags');
         $options = ['markNew' => false];
 
         $article = new Entity(['id' => 1], $options);
         $tags[] = new \TestApp\Model\Entity\Tag(['id' => 1], $options);
         $tags[] = new \TestApp\Model\Entity\Tag(['id' => 2], $options);
 
-        $table->getAssociation('tags')->unlink($article, $tags);
-        $left = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
+        $table->getAssociation('Tags')->unlink($article, $tags);
+        $left = $table->find('all')->where(['id' => 1])->contain(['Tags'])->first();
         $this->assertEmpty($left->tags);
     }
 
@@ -4902,9 +5007,9 @@ class TableTest extends TestCase
      */
     public function testUnlinkBelongsToManyPassingJoint()
     {
-        $table = $this->getTableLocator()->get('articles');
-        $table->belongsToMany('tags');
-        $tagsTable = $this->getTableLocator()->get('tags');
+        $table = $this->getTableLocator()->get('Articles');
+        $table->belongsToMany('Tags');
+        $tagsTable = $this->getTableLocator()->get('Tags');
         $options = ['markNew' => false];
 
         $article = new Entity(['id' => 1], $options);
@@ -4916,8 +5021,8 @@ class TableTest extends TestCase
             'tag_id' => 2,
         ], $options);
 
-        $table->getAssociation('tags')->unlink($article, $tags);
-        $left = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
+        $table->getAssociation('Tags')->unlink($article, $tags);
+        $left = $table->find('all')->where(['id' => 1])->contain(['Tags'])->first();
         $this->assertEmpty($left->tags);
     }
 
@@ -5072,8 +5177,8 @@ class TableTest extends TestCase
             'checkRules' => true,
             'checkExisting' => true,
             'associated' => [
-                'articles' => [],
-                'tags' => [],
+                'Articles' => [],
+                'Tags' => [],
             ],
         ];
         $this->assertEquals($expected, $actualOptions);
@@ -5240,9 +5345,9 @@ class TableTest extends TestCase
             'checkExisting' => true,
             '_sourceTable' => $authors,
             'associated' => [
-                'authors' => [],
-                'tags' => [],
-                'articlestags' => [],
+                'Authors' => [],
+                'Tags' => [],
+                'ArticlesTags' => [],
             ],
         ];
         $this->assertEquals($expected, $actualOptions);
@@ -5331,9 +5436,9 @@ class TableTest extends TestCase
             'checkExisting' => true,
             '_sourceTable' => $authors,
             'associated' => [
-                'authors' => [],
-                'tags' => [],
-                'articlestags' => [],
+                'Authors' => [],
+                'Tags' => [],
+                'ArticlesTags' => [],
             ],
         ];
         $this->assertEquals($expected, $actualSaveOptions);
@@ -5758,7 +5863,7 @@ class TableTest extends TestCase
             'table' => 'articles',
             'alias' => 'articles',
             'entityClass' => 'TestApp\Model\Entity\Article',
-            'associations' => ['authors', 'tags', 'articlestags'],
+            'associations' => ['Authors', 'Tags', 'ArticlesTags'],
             'behaviors' => ['Timestamp'],
             'defaultConnection' => 'default',
             'connectionName' => 'test',

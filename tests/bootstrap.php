@@ -17,6 +17,7 @@ use Cake\Cache\Cache;
 use Cake\Chronos\Chronos;
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
+use Cake\Error\Debug\TextFormatter;
 use Cake\Log\Log;
 use Cake\Utility\Security;
 
@@ -106,6 +107,7 @@ ConnectionManager::setConfig('test_custom_i18n_datasource', ['url' => getenv('DB
 Configure::write('Session', [
     'defaults' => 'php',
 ]);
+Configure::write('Debugger.exportFormatter', TextFormatter::class);
 
 Log::setConfig([
     // 'queries' => [

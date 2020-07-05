@@ -25,7 +25,7 @@ use Cake\ORM\Locator\TableLocator;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 use TestApp\Model\Entity\TranslateArticle;
-use TestApp\Model\Table\I18nTable;
+use TestApp\Model\Table\CustomI18nTable;
 
 /**
  * Translate behavior test case
@@ -41,7 +41,7 @@ class TranslateBehaviorTest extends TestCase
         'core.Articles',
         'core.ArticlesTags',
         'core.Authors',
-        'core.Groups',
+        'core.Sections',
         'core.SpecialTags',
         'core.Tags',
         'core.Comments',
@@ -84,15 +84,15 @@ class TranslateBehaviorTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
 
         $table->addBehavior('Translate', [
-            'translationTable' => I18nTable::class,
+            'translationTable' => CustomI18nTable::class,
             'fields' => ['title', 'body'],
         ]);
 
         $items = $table->associations();
         $i18n = $items->getByProperty('_i18n');
 
-        $this->assertEquals(I18nTable::class, $i18n->getName());
-        $this->assertInstanceOf(I18nTable::class, $i18n->getTarget());
+        $this->assertEquals(CustomI18nTable::class, $i18n->getName());
+        $this->assertInstanceOf(CustomI18nTable::class, $i18n->getTarget());
         $this->assertSame('test_custom_i18n_datasource', $i18n->getTarget()->getConnection()->configName());
         $this->assertSame('custom_i18n_table', $i18n->getTarget()->getTable());
     }
@@ -126,12 +126,29 @@ class TranslateBehaviorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+
         $table->setLocale('eng');
         $results = $table->find()->combine('title', 'body', 'id')->toArray();
         $expected = [
             1 => ['Title #1' => 'Content #1'],
             2 => ['Title #2' => 'Content #2'],
             3 => ['Title #3' => 'Content #3'],
+        ];
+        $this->assertSame($expected, $results);
+
+        $entity = $table->newEntity(['author_id' => 2, 'title' => 'Title 4', 'body' => 'Body 4']);
+        $table->save($entity);
+
+        $results = $table->find('all', ['locale' => 'cze'])
+            ->select(['id', 'title', 'body'])
+            ->disableHydration()
+            ->orderAsc('Articles.id')
+            ->toArray();
+        $expected = [
+            ['id' => 1, 'title' => 'Titulek #1', 'body' => 'Obsah #1', '_locale' => 'cze'],
+            ['id' => 2, 'title' => 'Titulek #2', 'body' => 'Obsah #2', '_locale' => 'cze'],
+            ['id' => 3, 'title' => 'Titulek #3', 'body' => 'Obsah #3', '_locale' => 'cze'],
+            ['id' => 4, 'title' => null, 'body' => null, '_locale' => 'cze'],
         ];
         $this->assertSame($expected, $results);
     }
@@ -877,7 +894,7 @@ class TranslateBehaviorTest extends TestCase
         $this->assertSame('New translated article', $article->get('title'));
         $this->assertSame('Content #1', $article->get('body'));
 
-        $table->setLocale(false);
+        $table->setLocale(null);
         $article = $table->find()->first();
         $this->assertEquals(1, $article->get('id'));
         $this->assertSame('First Article', $article->get('title'));
@@ -1240,6 +1257,7 @@ class TranslateBehaviorTest extends TestCase
     public function testTranslationWithUnionQuery()
     {
         $table = $this->getTableLocator()->get('Comments');
+        /** @var \Cake\ORM\Table|\Cake\ORM\Behavior\TranslateBehavior $table */
         $table->addBehavior('Translate', ['fields' => ['comment']]);
         $table->setLocale('spa');
         $query = $table->find()->where(['Comments.id' => 6]);
@@ -1322,6 +1340,7 @@ class TranslateBehaviorTest extends TestCase
     public function testFilterUntranslated()
     {
         $table = $this->getTableLocator()->get('Articles');
+        /** @var \Cake\ORM\Table|\Cake\ORM\Behavior\TranslateBehavior $table */
         $table->addBehavior('Translate', [
             'fields' => ['title', 'body'],
             'onlyTranslated' => true,
@@ -1345,6 +1364,7 @@ class TranslateBehaviorTest extends TestCase
     public function testFilterUntranslatedWithFinder()
     {
         $table = $this->getTableLocator()->get('Comments');
+        /** @var \Cake\ORM\Table|\Cake\ORM\Behavior\TranslateBehavior $table */
         $table->addBehavior('Translate', [
             'fields' => ['comment'],
             'onlyTranslated' => true,
@@ -1374,6 +1394,7 @@ class TranslateBehaviorTest extends TestCase
     public function testEmptyTranslations()
     {
         $table = $this->getTableLocator()->get('Articles');
+        /** @var \Cake\ORM\Table|\Cake\ORM\Behavior\TranslateBehavior $table */
         $table->addBehavior('Translate', [
             'fields' => ['title', 'body', 'description'],
             'allowEmptyTranslations' => false,
@@ -1458,7 +1479,7 @@ class TranslateBehaviorTest extends TestCase
      */
     public function testSaveNewRecordWithOnlyTranslationsNotDefaultLocale()
     {
-        $table = $this->getTableLocator()->get('Groups');
+        $table = $this->getTableLocator()->get('Sections');
         $table->addBehavior('Translate', [
             'fields' => ['title'],
             'validator' => (new \Cake\Validation\Validator())->add('title', 'notBlank', ['rule' => 'notBlank']),

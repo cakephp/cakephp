@@ -34,7 +34,7 @@ class LoggedQueryTest extends TestCase
     {
         $logged = new LoggedQuery();
         $logged->query = 'SELECT foo FROM bar';
-        $this->assertSame('duration=0 rows=0 SELECT foo FROM bar', (string)$logged);
+        $this->assertSame('SELECT foo FROM bar', (string)$logged);
     }
 
     /**
@@ -48,7 +48,7 @@ class LoggedQueryTest extends TestCase
         $query->query = 'SELECT a FROM b where a = :p1 AND b = :p2 AND c = :p3 AND d = :p4 AND e = :p5 AND f = :p6';
         $query->params = ['p1' => 'string', 'p3' => null, 'p2' => 3, 'p4' => true, 'p5' => false, 'p6' => 0];
 
-        $expected = "duration=0 rows=0 SELECT a FROM b where a = 'string' AND b = 3 AND c = NULL AND d = 1 AND e = 0 AND f = 0";
+        $expected = "SELECT a FROM b where a = 'string' AND b = 3 AND c = NULL AND d = 1 AND e = 0 AND f = 0";
         $this->assertEquals($expected, (string)$query);
     }
 
@@ -63,7 +63,7 @@ class LoggedQueryTest extends TestCase
         $query->query = 'SELECT a FROM b where a = ? AND b = ? AND c = ? AND d = ? AND e = ? AND f = ?';
         $query->params = ['string', '3', null, true, false, 0];
 
-        $expected = "duration=0 rows=0 SELECT a FROM b where a = 'string' AND b = '3' AND c = NULL AND d = 1 AND e = 0 AND f = 0";
+        $expected = "SELECT a FROM b where a = 'string' AND b = '3' AND c = NULL AND d = 1 AND e = 0 AND f = 0";
         $this->assertEquals($expected, (string)$query);
     }
 
@@ -78,7 +78,7 @@ class LoggedQueryTest extends TestCase
         $query->query = 'SELECT a FROM b where a = :p1 AND b = :p1 AND c = :p2 AND d = :p2';
         $query->params = ['p1' => 'string', 'p2' => 3];
 
-        $expected = "duration=0 rows=0 SELECT a FROM b where a = 'string' AND b = 'string' AND c = 3 AND d = 3";
+        $expected = "SELECT a FROM b where a = 'string' AND b = 'string' AND c = 3 AND d = 3";
         $this->assertEquals($expected, (string)$query);
     }
 
@@ -93,7 +93,7 @@ class LoggedQueryTest extends TestCase
         $query->query = 'SELECT a FROM b where a = :p1 AND b = :p11 AND c = :p20 AND d = :p2';
         $query->params = ['p11' => 'test', 'p1' => 'string', 'p2' => 3, 'p20' => 5];
 
-        $expected = "duration=0 rows=0 SELECT a FROM b where a = 'string' AND b = 'test' AND c = 5 AND d = 3";
+        $expected = "SELECT a FROM b where a = 'string' AND b = 'test' AND c = 5 AND d = 3";
         $this->assertEquals($expected, (string)$query);
     }
 
@@ -108,7 +108,7 @@ class LoggedQueryTest extends TestCase
         $query->query = 'SELECT a FROM b where a = :p1 AND b = :p2 AND c = :p3 AND d = :p4';
         $query->params = ['p1' => '$2y$10$dUAIj', 'p2' => '$0.23', 'p3' => 'a\\0b\\1c\\d', 'p4' => "a'b"];
 
-        $expected = "duration=0 rows=0 SELECT a FROM b where a = '\$2y\$10\$dUAIj' AND b = '\$0.23' AND c = 'a\\\\0b\\\\1c\\\\d' AND d = 'a''b'";
+        $expected = "SELECT a FROM b where a = '\$2y\$10\$dUAIj' AND b = '\$0.23' AND c = 'a\\\\0b\\\\1c\\\\d' AND d = 'a''b'";
         $this->assertEquals($expected, (string)$query);
     }
 
@@ -124,7 +124,7 @@ class LoggedQueryTest extends TestCase
         $uuid = str_replace('-', '', Text::uuid());
         $query->params = ['p1' => hex2bin($uuid)];
 
-        $expected = "duration=0 rows=0 SELECT a FROM b where a = '{$uuid}'";
+        $expected = "SELECT a FROM b where a = '{$uuid}'";
         $this->assertEquals($expected, (string)$query);
     }
 
@@ -139,8 +139,22 @@ class LoggedQueryTest extends TestCase
         $query->query = 'SELECT a FROM b where a = :p1';
         $query->params = ['p1' => "a\tz"];
 
-        $expected = "duration=0 rows=0 SELECT a FROM b where a = 'a\tz'";
+        $expected = "SELECT a FROM b where a = 'a\tz'";
         $this->assertEquals($expected, (string)$query);
+    }
+
+    public function testGetContext()
+    {
+        $query = new LoggedQuery();
+        $query->query = 'SELECT a FROM b where a = :p1';
+        $query->numRows = 10;
+        $query->took = 15;
+
+        $expected = [
+            'numRows' => 10,
+            'took' => 15,
+        ];
+        $this->assertSame($expected, $query->getContext());
     }
 
     /**

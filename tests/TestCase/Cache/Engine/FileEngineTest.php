@@ -209,7 +209,7 @@ class FileEngineTest extends TestCase
         $this->assertFalse($engine->has('test'));
 
         $this->assertTrue($engine->set('test', 1));
-        $this->assertTrue($engine->has('test', 1));
+        $this->assertTrue($engine->has('test'));
     }
 
     /**

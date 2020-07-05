@@ -13,15 +13,25 @@ use Cake\Log\Engine\BaseLog;
 class TestBaseLog extends BaseLog
 {
     /**
+     * @var string
+     */
+    protected $message = '';
+
+    /**
      * Logs with an arbitrary level.
      *
      * @param mixed $level
      * @param string $message
      * @param array $context
-     * @return string
+     * @return void
      */
     public function log($level, $message, array $context = [])
     {
-        return $this->_format($message, $context);
+        $this->message = $this->_format($message, $context);
+    }
+
+    public function getMessage(): string
+    {
+        return $this->message;
     }
 }

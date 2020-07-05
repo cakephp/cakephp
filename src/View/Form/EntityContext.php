@@ -19,7 +19,7 @@ namespace Cake\View\Form;
 use ArrayAccess;
 use Cake\Collection\Collection;
 use Cake\Datasource\EntityInterface;
-use Cake\Http\ServerRequest;
+use Cake\Datasource\InvalidPropertyInterface;
 use Cake\ORM\Entity;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Table;
@@ -51,13 +51,6 @@ use Traversable;
 class EntityContext implements ContextInterface
 {
     use LocatorAwareTrait;
-
-    /**
-     * The request object.
-     *
-     * @var \Cake\Http\ServerRequest
-     */
-    protected $_request;
 
     /**
      * Context data for this object.
@@ -98,12 +91,10 @@ class EntityContext implements ContextInterface
     /**
      * Constructor.
      *
-     * @param \Cake\Http\ServerRequest $request The request object.
      * @param array $context Context info.
      */
-    public function __construct(ServerRequest $request, array $context)
+    public function __construct(array $context)
     {
-        $this->_request = $request;
         $context += [
             'entity' => null,
             'table' => null,
@@ -180,6 +171,8 @@ class EntityContext implements ContextInterface
      */
     public function primaryKey(): array
     {
+        deprecationWarning('`EntityContext::primaryKey()` is deprecated. Use `EntityContext::getPrimaryKey()`.');
+
         return (array)$this->_tables[$this->_rootName]->getPrimaryKey();
     }
 
@@ -245,8 +238,8 @@ class EntityContext implements ContextInterface
      * @param string $field The dot separated path to the value.
      * @param array $options Options:
      *
-     *   - `default`: Default value to return if no value found in request
-     *     data or entity.
+     *   - `default`: Default value to return if no value found in data or
+     *     entity.
      *   - `schemaDefault`: Boolean indicating whether default value from table
      *     schema should be used if it's not explicitly provided.
      * @return mixed The value of the field or null on a miss.
@@ -258,10 +251,6 @@ class EntityContext implements ContextInterface
             'schemaDefault' => true,
         ];
 
-        $val = $this->_request->getData($field);
-        if ($val !== null) {
-            return $val;
-        }
         if (empty($this->_context['entity'])) {
             return $options['default'];
         }
@@ -274,6 +263,14 @@ class EntityContext implements ContextInterface
 
         if ($entity instanceof EntityInterface) {
             $part = end($parts);
+
+            if ($entity instanceof InvalidPropertyInterface) {
+                $val = $entity->getInvalidField($part);
+                if ($val !== null) {
+                    return $val;
+                }
+            }
+
             $val = $entity->get($part);
             if ($val !== null) {
                 return $val;
@@ -715,9 +712,9 @@ class EntityContext implements ContextInterface
         }
 
         $column = (array)$table->getSchema()->getColumn(array_pop($parts));
-        $whitelist = ['length' => null, 'precision' => null];
+        $allowed = ['length' => null, 'precision' => null];
 
-        return array_intersect_key($column, $whitelist);
+        return array_intersect_key($column, $allowed);
     }
 
     /**

@@ -28,7 +28,7 @@ class QueryExpressionTest extends TestCase
     /**
      * Test setConjunction()/getConjunction() works.
      *
-     * @return
+     * @return void
      */
     public function testConjunction()
     {

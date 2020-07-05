@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Error;
 use Cake\Core\Configure;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Error\ErrorHandler;
+use Cake\Error\ErrorLoggerInterface;
 use Cake\Http\Exception\ForbiddenException;
 use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\Exception\NotFoundException;
@@ -242,12 +243,12 @@ class ErrorHandlerTest extends TestCase
 
         if (version_compare(PHP_VERSION, '8.0.0-dev', '<')) {
             $this->assertStringContainsString(
-                'Notice (8): Undefined variable: out in [' . __FILE__ . ', line ' . (__LINE__ - 7) . ']' . "\n\n",
+                'Notice (8): Undefined variable: out in [' . __FILE__ . ', line ' . (__LINE__ - 7) . ']',
                 $messages[0]
             );
         } else {
             $this->assertStringContainsString(
-                'Warning (2): Undefined variable $out in [' . __FILE__ . ', line ' . (__LINE__ - 12) . ']' . "\n\n",
+                'Warning (2): Undefined variable $out in [' . __FILE__ . ', line ' . (__LINE__ - 12) . ']',
                 $messages[0]
             );
         }
@@ -525,10 +526,38 @@ class ErrorHandlerTest extends TestCase
         ini_set('memory_limit', $start);
 
         $errorHandler = new TestErrorHandler();
-        $this->assertNull($errorHandler->increaseMemoryLimit($adjust));
+        $errorHandler->increaseMemoryLimit($adjust);
         $new = ini_get('memory_limit');
         $this->assertEquals($expected, $new, 'memory limit did not get increased.');
 
         ini_set('memory_limit', $initial);
+    }
+
+    /**
+     * Test getting a logger
+     *
+     * @return void
+     */
+    public function testGetLogger()
+    {
+        $errorHandler = new TestErrorHandler(['key' => 'value', 'log' => true]);
+        $logger = $errorHandler->getLogger();
+
+        $this->assertInstanceOf(ErrorLoggerInterface::class, $logger);
+        $this->assertEquals('value', $logger->getConfig('key'), 'config should be forwarded.');
+        $this->assertSame($logger, $errorHandler->getLogger());
+    }
+
+    /**
+     * Test getting a logger
+     *
+     * @return void
+     */
+    public function testGetLoggerInvalid()
+    {
+        $errorHandler = new TestErrorHandler(['errorLogger' => \stdClass::class]);
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Cannot create logger');
+        $errorHandler->getLogger();
     }
 }

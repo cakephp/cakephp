@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\View\Widget;
 
-use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Cake\View\Form\NullContext;
 use Cake\View\StringTemplate;
@@ -38,7 +37,7 @@ class DateTimeWidgetTest extends TestCase
             'input' => '<input type="{{type}}" name="{{name}}"{{attrs}}>',
         ];
         $this->templates = new StringTemplate($templates);
-        $this->context = new NullContext(new ServerRequest(), []);
+        $this->context = new NullContext([]);
         $this->DateTime = new DateTimeWidget($this->templates);
     }
 
@@ -129,6 +128,96 @@ class DateTimeWidgetTest extends TestCase
                 'name' => '',
                 'value' => '2019-02-03T15:30:00',
                 'step' => '1',
+            ],
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    public function testUnsettingStep()
+    {
+        $result = $this->DateTime->render([
+            'val' => '2019-02-03 10:11:12',
+            'step' => null,
+        ], $this->context);
+        $expected = [
+            'input' => [
+                'type' => 'datetime-local',
+                'name' => '',
+                'value' => '2019-02-03T10:11:12',
+            ],
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->DateTime->render([
+            'val' => '2019-02-03 10:11:12',
+            'step' => false,
+        ], $this->context);
+        $expected = [
+            'input' => [
+                'type' => 'datetime-local',
+                'name' => '',
+                'value' => '2019-02-03T10:11:12',
+            ],
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    public function testDatetimeFormat()
+    {
+        $result = $this->DateTime->render([
+            'val' => '2019-02-03 10:11:12',
+            'format' => 'Y-m-d\TH:i',
+        ], $this->context);
+        $expected = [
+            'input' => [
+                'type' => 'datetime-local',
+                'name' => '',
+                'value' => '2019-02-03T10:11',
+            ],
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->DateTime->render([
+            'val' => '2019-02-03 10:11:12',
+            'format' => 'Y-m-d\TH:i',
+            'step' => 120,
+        ], $this->context);
+        $expected = [
+            'input' => [
+                'type' => 'datetime-local',
+                'name' => '',
+                'step' => '120',
+                'value' => '2019-02-03T10:11',
+            ],
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->DateTime->render([
+            'type' => 'time',
+            'val' => '10:11:12',
+            'format' => 'H:i',
+        ], $this->context);
+        $expected = [
+            'input' => [
+                'type' => 'time',
+                'name' => '',
+                'value' => '10:11',
+            ],
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->DateTime->render([
+            'type' => 'time',
+            'val' => '10:11:12',
+            'format' => 'H:i',
+            'step' => 120,
+        ], $this->context);
+        $expected = [
+            'input' => [
+                'type' => 'time',
+                'name' => '',
+                'step' => '120',
+                'value' => '10:11',
             ],
         ];
         $this->assertHtml($expected, $result);

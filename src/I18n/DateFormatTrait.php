@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\I18n;
 
 use Cake\Chronos\DifferenceFormatterInterface;
+use Closure;
 use DateTime;
 use DateTimeZone;
 use IntlDateFormatter;
@@ -40,6 +41,15 @@ trait DateFormatTrait
     protected static $defaultLocale;
 
     /**
+     * Whether lenient parsing is enabled for IntlDateFormatter.
+     *
+     * Defaults to true which is the default for IntlDateFormatter.
+     *
+     * @var bool
+     */
+    protected static $lenientParsing = true;
+
+    /**
      * In-memory cache of date formatters
      *
      * @var \IntlDateFormatter[]
@@ -59,12 +69,44 @@ trait DateFormatTrait
     /**
      * Sets the default locale.
      *
-     * @param string|null $locale The default locale string to be used or null.
+     * Set to null to use IntlDateFormatter default.
+     *
+     * @param string|null $locale The default locale string to be used.
      * @return void
      */
     public static function setDefaultLocale(?string $locale = null): void
     {
         static::$defaultLocale = $locale;
+    }
+
+    /**
+     * Gets whether locale format parsing is set to lenient.
+     *
+     * @return bool
+     */
+    public static function lenientParsingEnabled(): bool
+    {
+        return static::$lenientParsing;
+    }
+
+    /**
+     * Enables lenient parsing for locale formats.
+     *
+     * @return void
+     */
+    public static function enableLenientParsing(): void
+    {
+        static::$lenientParsing = true;
+    }
+
+    /**
+     * Enables lenient parsing for locale formats.
+     *
+     * @return void
+     */
+    public static function disableLenientParsing(): void
+    {
+        static::$lenientParsing = false;
     }
 
     /**
@@ -257,19 +299,7 @@ trait DateFormatTrait
     }
 
     /**
-     * Sets the default format used when converting this object to json
-     *
-     * The format should be either the formatting constants from IntlDateFormatter as
-     * described in (https://secure.php.net/manual/en/class.intldateformatter.php) or a pattern
-     * as specified in (http://www.icu-project.org/apiref/icu4c/classSimpleDateFormat.html#details)
-     *
-     * It is possible to provide an array of 2 constants. In this case, the first position
-     * will be used for formatting the date part of the object and the second position
-     * will be used to format the time part.
-     *
-     * @see \Cake\I18n\Time::i18nFormat()
-     * @param string|array|int $format Format.
-     * @return void
+     * @inheritDoc
      */
     public static function setJsonEncodeFormat($format): void
     {
@@ -331,6 +361,8 @@ trait DateFormatTrait
             null,
             $pattern ?? ''
         );
+        $formatter->setLenient(static::$lenientParsing);
+
         $time = $formatter->parse($time);
         if ($time !== false) {
             $dateTime = new DateTime('@' . $time);
@@ -415,6 +447,10 @@ trait DateFormatTrait
      */
     public function jsonSerialize()
     {
+        if (static::$_jsonEncodeFormat instanceof Closure) {
+            return call_user_func(static::$_jsonEncodeFormat, $this);
+        }
+
         return $this->i18nFormat(static::$_jsonEncodeFormat);
     }
 

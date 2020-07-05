@@ -101,7 +101,7 @@ class TextHelper extends Helper
      */
     public function __call(string $method, array $params)
     {
-        return call_user_func_array([$this->_engine, $method], $params);
+        return $this->_engine->{$method}(...$params);
     }
 
     /**
@@ -395,6 +395,32 @@ class TextHelper extends Helper
     public function toList(array $list, ?string $and = null, string $separator = ', '): string
     {
         return $this->_engine->toList($list, $and, $separator);
+    }
+
+    /**
+     * Returns a string with all spaces converted to dashes (by default),
+     * characters transliterated to ASCII characters, and non word characters removed.
+     *
+     * ### Options:
+     *
+     * - `replacement`: Replacement string. Default '-'.
+     * - `transliteratorId`: A valid transliterator id string.
+     *   If `null` (default) the transliterator (identifier) set via
+     *   `Text::setTransliteratorId()` or `Text::setTransliterator()` will be used.
+     *   If `false` no transliteration will be done, only non words will be removed.
+     * - `preserve`: Specific non-word character to preserve. Default `null`.
+     *   For e.g. this option can be set to '.' to generate clean file names.
+     *
+     * @param string $string the string you want to slug
+     * @param array|string $options If string it will be use as replacement character
+     *   or an array of options.
+     * @return string
+     * @see \Cake\Utility\Text::setTransliterator()
+     * @see \Cake\Utility\Text::setTransliteratorId()
+     */
+    public function slug(string $string, $options = []): string
+    {
+        return $this->_engine->slug($string, $options);
     }
 
     /**

@@ -182,6 +182,7 @@ class BasicAuthenticateTest extends TestCase
     {
         $request = new ServerRequest(['url' => 'posts/index']);
 
+        $e = null;
         try {
             $this->auth->unauthenticated($request, new Response());
         } catch (UnauthorizedException $e) {

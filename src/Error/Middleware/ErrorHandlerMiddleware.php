@@ -20,8 +20,10 @@ use Cake\Core\App;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Error\ErrorHandler;
 use Cake\Error\ExceptionRenderer;
+use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use InvalidArgumentException;
+use Laminas\Diactoros\Response\RedirectResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -117,6 +119,8 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
     {
         try {
             return $handler->handle($request);
+        } catch (RedirectException $exception) {
+            return $this->handleRedirect($exception);
         } catch (Throwable $exception) {
             return $this->handleException($exception, $request);
         }
@@ -143,6 +147,21 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
         }
 
         return $response;
+    }
+
+    /**
+     * Convert a redirect exception into a response.
+     *
+     * @param \Cake\Http\Exception\RedirectException $exception The exception to handle
+     * @return \Psr\Http\Message\ResponseInterface Response created from the redirect.
+     */
+    public function handleRedirect(RedirectException $exception): ResponseInterface
+    {
+        return new RedirectResponse(
+            $exception->getMessage(),
+            $exception->getCode(),
+            $exception->getHeaders()
+        );
     }
 
     /**

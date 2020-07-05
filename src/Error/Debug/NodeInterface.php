@@ -11,30 +11,29 @@ declare(strict_types=1);
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         3.7.5
+ * @since         4.1.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Database\Expression;
-
-use Cake\Database\Expression\Comparison;
-use Cake\Database\Expression\QueryExpression;
-use Cake\TestSuite\TestCase;
+namespace Cake\Error\Debug;
 
 /**
- * Tests Comparison class
+ * Interface for Debugs
+ *
+ * Provides methods to look at contained value and iterate child nodes in the tree.
  */
-class ComparisonTest extends TestCase
+interface NodeInterface
 {
     /**
-     * Tests that cloning Comparion instance clones it's value and field expressions.
+     * Get the child nodes of this node.
      *
-     * @return void
+     * @return \Cake\Error\Debug\NodeInterface[]
      */
-    public function testClone()
-    {
-        $exp = new Comparison(new QueryExpression('field1'), 1, 'integer', '<');
-        $exp2 = clone $exp;
+    public function getChildren(): array;
 
-        $this->assertNotSame($exp->getField(), $exp2->getField());
-    }
+    /**
+     * Get the contained value.
+     *
+     * @return mixed
+     */
+    public function getValue();
 }

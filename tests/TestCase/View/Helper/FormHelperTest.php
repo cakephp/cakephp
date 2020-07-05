@@ -24,7 +24,6 @@ use Cake\I18n\Date;
 use Cake\I18n\FrozenTime;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
-use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
@@ -5109,7 +5108,7 @@ class FormHelperTest extends TestCase
     public function testSelectEmptyWithRequiredFalse()
     {
         $this->loadFixtures();
-        $Articles = TableRegistry::getTableLocator()->get('Articles');
+        $Articles = $this->getTableLocator()->get('Articles');
         $validator = $Articles->getValidator('default');
         $validator->allowEmptyString('user_id');
         $Articles->setValidator('default', $validator);
@@ -5377,6 +5376,8 @@ class FormHelperTest extends TestCase
      */
     public function testErrorsForBelongsToManySelect()
     {
+        $this->loadFixtures();
+
         $spacecraft = [
             1 => 'Orion',
             2 => 'Helios',
@@ -8306,19 +8307,13 @@ class FormHelperTest extends TestCase
             ->withData('id', '1')
             ->withQueryParams(['id' => '2']));
 
-        $expected = ['context'];
-        $result = $this->Form->getValueSources();
-        $this->assertEquals($expected, $result);
-
-        $expected = ['query', 'data', 'context'];
-        $this->Form->setValueSources(['query', 'data', 'invalid', 'context', 'foo']);
+        $expected = ['data', 'context'];
         $result = $this->Form->getValueSources();
         $this->assertEquals($expected, $result);
 
         $this->Form->setValueSources(['context']);
-        $expected = '1';
         $result = $this->Form->getSourceValue('id');
-        $this->assertEquals($expected, $result);
+        $this->assertNull($result);
 
         $this->Form->setValueSources('query');
         $expected = ['query'];
@@ -8338,6 +8333,14 @@ class FormHelperTest extends TestCase
         $expected = '2';
         $result = $this->Form->getSourceValue('id');
         $this->assertEquals($expected, $result);
+    }
+
+    public function testValueSourcesValidation()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid value source(s): invalid, foo. Valid values are: context, data, query');
+
+        $this->Form->setValueSources(['query', 'data', 'invalid', 'context', 'foo']);
     }
 
     /**
@@ -8376,7 +8379,7 @@ class FormHelperTest extends TestCase
         $this->Form->create($article);
         $result = $this->Form->control('id');
         $expected = [
-            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '5b']],
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '3']],
         ];
         $this->assertHtml($expected, $result);
 
@@ -8493,11 +8496,11 @@ class FormHelperTest extends TestCase
         $this->Form->create($article, ['valueSources' => ['context', 'data']]);
         $result = $this->Form->control('id');
         $expected = [
-            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '4']],
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '3']],
         ];
         $this->assertHtml($expected, $result);
         $result = $this->Form->getSourceValue('id');
-        $this->assertSame('4', $result);
+        $this->assertSame(3, $result);
     }
 
     /**
@@ -8545,7 +8548,7 @@ class FormHelperTest extends TestCase
      */
     public function testFormValueSourcesResetViaEnd()
     {
-        $expected = ['context'];
+        $expected = ['data', 'context'];
         $result = $this->Form->getValueSources();
         $this->assertEquals($expected, $result);
 
@@ -8561,7 +8564,7 @@ class FormHelperTest extends TestCase
 
         $this->Form->end();
         $result = $this->Form->getValueSources();
-        $this->assertEquals(['context'], $result);
+        $this->assertEquals(['data', 'context'], $result);
     }
 
     /**
@@ -8969,7 +8972,6 @@ class FormHelperTest extends TestCase
         $validator = new Validator();
         $validator->maxLength('title', 10);
         $article = new EntityContext(
-            new ServerRequest(),
             [
                 'entity' => new Entity($this->article),
                 'table' => new Table([
@@ -9005,7 +9007,6 @@ class FormHelperTest extends TestCase
         $validator = new Validator();
         $validator->maxLength('title', 55);
         $article = new EntityContext(
-            new ServerRequest(),
             [
                 'entity' => new Entity($this->article),
                 'table' => new Table([
@@ -9042,7 +9043,6 @@ class FormHelperTest extends TestCase
         $validator = new Validator();
         $validator->maxLength('title', 55);
         $article = new EntityContext(
-            new ServerRequest(),
             [
                 'entity' => new Entity($this->article),
                 'table' => new Table([
@@ -9088,7 +9088,6 @@ class FormHelperTest extends TestCase
         $validator = new Validator();
         $validator->maxLength('title', 10);
         $article = new EntityContext(
-            new ServerRequest(),
             [
                 'entity' => new Entity($this->article),
                 'table' => new Table([

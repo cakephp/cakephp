@@ -107,7 +107,7 @@ trait EntityTrait
      * not defined in the map will take its value. For example, `'\*' => true`
      * means that any field not defined in the map will be accessible by default
      *
-     * @var array
+     * @var bool[]
      */
     protected $_accessible = ['*' => true];
 
@@ -1161,6 +1161,17 @@ trait EntityTrait
         }
 
         return $this;
+    }
+
+    /**
+     * Returns the raw accessible configuration for this entity.
+     * The `*` wildcard refers to all fields.
+     *
+     * @return bool[]
+     */
+    public function getAccessible(): array
+    {
+        return $this->_accessible;
     }
 
     /**

@@ -772,6 +772,25 @@ class TimeTest extends TestCase
     }
 
     /**
+     * Tests change json encoding format
+     *
+     * @dataProvider classNameProvider
+     * @return void
+     */
+    public function testSetJsonEncodeFormat($class)
+    {
+        $time = new $class('2014-04-20 10:10:10');
+
+        $class::setJsonEncodeFormat(static function ($t) {
+            return $t->format(DATE_ATOM);
+        });
+        $this->assertEquals('"2014-04-20T10:10:10+00:00"', json_encode($time));
+
+        $class::setJsonEncodeFormat("yyyy-MM-dd'T'HH':'mm':'ssZZZZZ");
+        $this->assertEquals('"2014-04-20T10:10:10Z"', json_encode($time));
+    }
+
+    /**
      * Tests debugInfo
      *
      * @dataProvider classNameProvider
@@ -895,6 +914,25 @@ class TimeTest extends TestCase
 
         $time = $class::parseTime('31c2:54');
         $this->assertNull($time);
+    }
+
+    /**
+     * Tests disabling leniency when parsing locale format.
+     *
+     * @dataProvider classNameProvider
+     * @return void
+     */
+    public function testLenientParseDate($class)
+    {
+        $class::setDefaultLocale('pt_BR');
+
+        $class::disableLenientParsing();
+        $time = $class::parseDate('04/21/2013');
+        $this->assertSame(null, $time);
+
+        $class::enableLenientParsing();
+        $time = $class::parseDate('04/21/2013');
+        $this->assertSame('2014-09-04', $time->format('Y-m-d'));
     }
 
     /**
