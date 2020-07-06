@@ -331,7 +331,7 @@ trait CollectionTrait
      */
     public function shuffle()
     {
-        $elements = $this->toArray();
+        $elements = $this->toList();
         shuffle($elements);
 
         return $this->newCollection($elements);
