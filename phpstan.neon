@@ -9,7 +9,7 @@ parameters:
     bootstrapFiles:
         - tests/bootstrap.php
     paths:
-        - src
+        - src/
     earlyTerminatingMethodCalls:
         Cake\Console\Shell:
             - abort
