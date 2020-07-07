@@ -23,6 +23,7 @@ use Cake\Error\Debugger;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use RuntimeException;
+use SplFixedArray;
 use stdClass;
 use TestApp\Error\TestDebugger;
 use TestApp\Error\Thing\DebuggableThing;
@@ -474,6 +475,27 @@ object(stdClass) id:0 {
     name => 'php'
     child => object(stdClass) id:0 {}
   }
+}
+TEXT;
+        $this->assertTextEquals($expected, $result);
+    }
+
+    /**
+     * test exportVar with array objects
+     *
+     * @return void
+     */
+    public function testExportVarSplFixedArray()
+    {
+        $subject = new SplFixedArray(2);
+        $subject[0] = 'red';
+        $subject[1] = 'blue';
+
+        $result = Debugger::exportVar($subject, 6);
+        $expected = <<<TEXT
+object(SplFixedArray) id:0 {
+  0 => 'red'
+  1 => 'blue'
 }
 TEXT;
         $this->assertTextEquals($expected, $result);

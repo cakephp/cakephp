@@ -742,7 +742,7 @@ class Debugger
                     $value = $outputMask[$key];
                 }
                 $node->addProperty(
-                    new PropertyNode($key, 'public', static::export($value, $context->withAddedDepth()))
+                    new PropertyNode((string)$key, 'public', static::export($value, $context->withAddedDepth()))
                 );
             }
 
