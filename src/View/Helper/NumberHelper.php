@@ -222,6 +222,7 @@ class NumberHelper extends Helper
      * if $currency argument is not provided. If boolean false is passed, it will clear the
      * currently stored value. Null reads the current default.
      * @return string|null Currency
+     * @deprecated 4.1.0 Use setDefaultCurrency()/getDefaultCurrency() instead.
      */
     public function defaultCurrency($currency): ?string
     {
