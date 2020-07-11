@@ -815,7 +815,7 @@ class HtmlHelperTest extends TestCase
      */
     public function testPluginCssTimestamping()
     {
-        $this->loadPlugins(['TestPlugin']);
+        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
 
         Configure::write('debug', true);
         Configure::write('Asset.timestamp', true);
@@ -826,6 +826,10 @@ class HtmlHelperTest extends TestCase
 
         $result = $this->Html->css('TestPlugin.test_plugin_asset', ['once' => false]);
         $expected['link']['href'] = 'preg:/.*test_plugin\/css\/test_plugin_asset\.css\?[0-9]+/';
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Html->css('Company/TestPluginThree.company', ['once' => false]);
+        $expected['link']['href'] = 'preg:/.*company\/test_plugin_three\/css\/company\.css\?[0-9]+/';
         $this->assertHtml($expected, $result);
 
         Configure::write('debug', false);
@@ -852,7 +856,7 @@ class HtmlHelperTest extends TestCase
         $expected['link']['href'] = 'preg:/\/testing\/longer\/test_plugin\/css\/test_plugin_asset\.css\?[0-9]+/';
         $this->assertHtml($expected, $result);
 
-        $this->removePlugins(['TestPlugin']);
+        $this->removePlugins(['TestPlugin', 'Company/TestPluginThree']);
     }
 
     /**

@@ -254,6 +254,10 @@ class Asset
             }
             $segments = explode('/', ltrim($filepath, '/'));
             $plugin = Inflector::camelize($segments[0]);
+            if (!Plugin::isLoaded($plugin) && count($segments) > 1) {
+                $plugin = implode('/', [$plugin, Inflector::camelize($segments[1])]);
+                unset($segments[1]);
+            }
             if (Plugin::isLoaded($plugin)) {
                 unset($segments[0]);
                 $pluginPath = Plugin::path($plugin)

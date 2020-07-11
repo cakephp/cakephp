@@ -245,10 +245,13 @@ class AssetTest extends TestCase
     public function testAssetTimestampPluginsAndThemes()
     {
         Configure::write('Asset.timestamp', 'force');
-        $this->loadPlugins(['TestPlugin']);
+        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
 
         $result = Asset::assetTimestamp('/test_plugin/css/test_plugin_asset.css');
         $this->assertRegExp('#/test_plugin/css/test_plugin_asset.css\?[0-9]+$#', $result, 'Missing timestamp plugin');
+
+        $result = Asset::assetTimestamp('/company/test_plugin_three/css/company.css');
+        $this->assertRegExp('#/company/test_plugin_three/css/company.css\?[0-9]+$#', $result, 'Missing timestamp plugin');
 
         $result = Asset::assetTimestamp('/test_plugin/css/i_dont_exist.css');
         $this->assertRegExp('#/test_plugin/css/i_dont_exist.css$#', $result, 'No error on missing file');
