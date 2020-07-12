@@ -35,9 +35,7 @@ Add a matching route to <?= 'config' . DIRECTORY_SEPARATOR . 'routes.php' ?></p>
 
 <?php if (!empty($attributes['context'])): ?>
 <p>The passed context was:</p>
-<pre>
-<?= h(Debugger::exportVar($attributes['context'])); ?>
-</pre>
+<?= Debugger::exportVar($attributes['context']); ?>
 <?php endif; ?>
 
 <h3>Connected Routes</h3>
@@ -49,8 +47,8 @@ foreach (Router::routes() as $route):
     printf(
         '<td width="25%%">%s</td><td>%s</td><td width="20%%">%s</td>',
         h($route->template),
-        h(Debugger::exportVar($route->defaults)),
-        h(Debugger::exportVar($route->options))
+        Debugger::exportVar($route->defaults),
+        Debugger::exportVar($route->options)
     );
     echo '</tr>';
 endforeach;

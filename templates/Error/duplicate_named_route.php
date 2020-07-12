@@ -34,13 +34,6 @@ The same <code>_name</code> option cannot be used twice,
 even if the names occur in different routing scopes.
 Remove duplicate route names in your route configuration.</p>
 
-<?php if (!empty($attributes['context'])) : ?>
-<p>The passed context was:</p>
-<pre>
-<?= Debugger::exportVar($attributes['context']); ?>
-</pre>
-<?php endif; ?>
-
 <?php if (isset($attributes['duplicate'])): ?>
     <h3>Duplicate Route</h3>
     <table cellspacing="0" cellpadding="0">
@@ -51,8 +44,8 @@ Remove duplicate route names in your route configuration.</p>
     printf(
         '<td width="25%%">%s</td><td>%s</td><td width="20%%">%s</td>',
         h($other->template),
-        h(Debugger::exportVar($other->defaults)),
-        h(Debugger::exportVar($other->options))
+        Debugger::exportVar($other->defaults),
+        Debugger::exportVar($other->options)
     );
     echo '</tr>';
     ?>
