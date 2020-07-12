@@ -41,13 +41,13 @@ Add a matching route to <?= 'config' . DIRECTORY_SEPARATOR . 'routes.php' ?></p>
 <?php endif; ?>
 
 <h3>Connected Routes</h3>
-<table cellspacing="0" cellpadding="0">
+<table cellspacing="0" cellpadding="0" width="100%">
 <tr><th>Template</th><th>Defaults</th><th>Options</th></tr>
 <?php foreach (Router::routes() as $route): ?>
     <tr>
-        <td width="25%"><?= h($route->template) ?></td>
+        <td><?= h($route->template) ?></td>
         <td><div class="cake-debug" data-open-all="true"><?= Debugger::exportVar($route->defaults) ?></div></td>
-        <td width="20%"><div class="cake-debug" data-open-all="true"><?= Debugger::exportVar($route->options) ?></div></td>
+        <td><div class="cake-debug" data-open-all="true"><?= Debugger::exportVar($route->options) ?></div></td>
     </tr>
 <?php endforeach; ?>
 </table>

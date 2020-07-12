@@ -36,13 +36,13 @@ Remove duplicate route names in your route configuration.</p>
 
 <?php if (isset($attributes['duplicate'])): ?>
     <h3>Duplicate Route</h3>
-    <table cellspacing="0" cellpadding="0">
+    <table cellspacing="0" cellpadding="0" width="100%">
     <tr><th>Template</th><th>Defaults</th><th>Options</th></tr>
     <?php $other = $attributes['duplicate']; ?>
     <tr>
-        <td width="25%"><?= h($other->template) ?></td>
+        <td><?= h($other->template) ?></td>
         <td><div class="cake-debug" data-open-all="true"><?= Debugger::exportVar($other->defaults) ?></div></td>
-        <td width="20%"><div class="cake-debug" data-open-all="true"><?= Debugger::exportVar($other->options) ?></div></td>
+        <td><div class="cake-debug" data-open-all="true"><?= Debugger::exportVar($other->options) ?></div></td>
     </tr>
     </table>
 <?php endif; ?>
