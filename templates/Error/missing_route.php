@@ -36,7 +36,7 @@ Add a matching route to <?= 'config' . DIRECTORY_SEPARATOR . 'routes.php' ?></p>
 <?php if (!empty($attributes['context'])): ?>
 <p>The passed context was:</p>
 <div class="cake-debug">
-<?= Debugger::exportVar($attributes['context']); ?>
+    <?= Debugger::exportVar($attributes['context']); ?>
 </div>
 <?php endif; ?>
 
