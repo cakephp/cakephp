@@ -114,6 +114,18 @@ function initialize() {
   createCollapsibles(doc.querySelectorAll('.cake-dbg-array-items'));
   createCollapsibles(doc.querySelectorAll('.cake-dbg-object-props'));
   attachRefEvents(doc.querySelectorAll('.cake-dbg'));
+  openBlocks(doc.querySelectorAll('.cake-debug[data-open-all="true"]'));
+}
+
+/**
+ * Open all the collapsed sections in a block.
+ */
+function openBlocks(blocks) {
+  blocks.forEach(function (block) {
+    block.querySelectorAll('.cake-dbg-collapse[data-open="false"]').forEach(function (el) {
+      el.click();
+    });
+  });
 }
 
 /**

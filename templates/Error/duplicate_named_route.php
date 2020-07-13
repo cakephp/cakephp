@@ -34,28 +34,16 @@ The same <code>_name</code> option cannot be used twice,
 even if the names occur in different routing scopes.
 Remove duplicate route names in your route configuration.</p>
 
-<?php if (!empty($attributes['context'])) : ?>
-<p>The passed context was:</p>
-<pre>
-<?= Debugger::exportVar($attributes['context']); ?>
-</pre>
-<?php endif; ?>
-
 <?php if (isset($attributes['duplicate'])): ?>
     <h3>Duplicate Route</h3>
-    <table cellspacing="0" cellpadding="0">
+    <table cellspacing="0" cellpadding="0" width="100%">
     <tr><th>Template</th><th>Defaults</th><th>Options</th></tr>
-    <?php
-    $other = $attributes['duplicate'];
-    echo '<tr>';
-    printf(
-        '<td width="25%%">%s</td><td>%s</td><td width="20%%">%s</td>',
-        h($other->template),
-        h(Debugger::exportVar($other->defaults)),
-        h(Debugger::exportVar($other->options))
-    );
-    echo '</tr>';
-    ?>
+    <?php $other = $attributes['duplicate']; ?>
+    <tr>
+        <td><?= h($other->template) ?></td>
+        <td><div class="cake-debug" data-open-all="true"><?= Debugger::exportVar($other->defaults) ?></div></td>
+        <td><div class="cake-debug" data-open-all="true"><?= Debugger::exportVar($other->options) ?></div></td>
+    </tr>
     </table>
 <?php endif; ?>
 <?php $this->end() ?>
