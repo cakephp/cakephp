@@ -252,6 +252,7 @@ class Asset
             if (file_exists($webrootPath)) {
                 return $path . '?' . filemtime($webrootPath);
             }
+            // Check for plugins and org prefixed plugins.
             $segments = explode('/', ltrim($filepath, '/'));
             $plugin = Inflector::camelize($segments[0]);
             if (!Plugin::isLoaded($plugin) && count($segments) > 1) {
