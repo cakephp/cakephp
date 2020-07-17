@@ -4036,4 +4036,19 @@ class QueryTest extends TestCase
         $subquery->selectAllExcept($articles, ['author_id'], true);
         $this->assertEqualsSql('SELECT id, title, body, published FROM articles Articles', $subquery->sql());
     }
+
+    public function testSubquerySelect()
+    {
+        $subquery = Query::subquery($this->getTableLocator()->get('Authors'))
+            ->select(['Authors.id'])
+            ->where(['Authors.name' => 'mariano']);
+
+        $query = $this->getTableLocator()->get('Articles')->find()
+            ->where(['Articles.author_id IN' => $subquery])
+            ->order(['Articles.id' => 'ASC']);
+
+        $results = $query->all()->toList();
+        $this->assertCount(2, $results);
+        $this->assertEquals([1, 3], array_column($results, 'id'));
+    }
 }
