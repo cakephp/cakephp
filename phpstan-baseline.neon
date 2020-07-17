@@ -559,4 +559,7 @@ parameters:
 			message: "#^Access to an undefined property Cake\\\\Mailer\\\\Renderer\\:\\:\\$response\\.$#"
 			count: 1
 			path: src/Mailer/Renderer.php
-
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: src/ORM\Query.php

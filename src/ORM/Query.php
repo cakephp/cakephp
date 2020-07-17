@@ -131,6 +131,13 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     protected $_hydrate = true;
 
     /**
+     * Whether aliases are generated for fields.
+     *
+     * @var bool
+     */
+    protected $aliasingEnabled = true;
+
+    /**
      * A callable function that can be used to calculate the total amount of
      * records this query will match when not using `limit`
      *
@@ -225,7 +232,11 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         }
 
         if ($fields instanceof Table) {
-            $fields = $this->aliasFields($fields->getSchema()->columns(), $fields->getAlias());
+            if ($this->aliasingEnabled) {
+                $fields = $this->aliasFields($fields->getSchema()->columns(), $fields->getAlias());
+            } else {
+                $fields = $fields->getSchema()->columns();
+            }
         }
 
         return parent::select($fields, $overwrite);
@@ -255,9 +266,11 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         }
 
         $fields = array_diff($table->getSchema()->columns(), $excludedFields);
-        $aliasedFields = $this->aliasFields($fields);
+        if ($this->aliasingEnabled) {
+            $fields = $this->aliasFields($fields);
+        }
 
-        return $this->select($aliasedFields, $overwrite);
+        return $this->select($fields, $overwrite);
     }
 
     /**
@@ -1163,8 +1176,10 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             $select = $this->clause('select');
         }
 
-        $aliased = $this->aliasFields($select, $repository->getAlias());
-        $this->select($aliased, true);
+        if ($this->aliasingEnabled) {
+            $select = $this->aliasFields($select, $repository->getAlias());
+        }
+        $this->select($select, true);
     }
 
     /**
@@ -1283,6 +1298,20 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         $this->into($table);
 
         return parent::insert($columns, $types);
+    }
+
+    /**
+     * Returns a new Query that has automatic field aliasing disabled.
+     *
+     * @param \Cake\ORM\Table $table The table this query is starting on
+     * @return static
+     */
+    public static function subquery(Table $table)
+    {
+        $query = new static($table->getConnection(), $table);
+        $query->aliasingEnabled = false;
+
+        return $query;
     }
 
     /**

@@ -4001,4 +4001,54 @@ class QueryTest extends TestCase
 
         $this->assertEquals($expected, $query->toArray());
     }
+
+    /**
+     * Tests subquery() copies connection by default.
+     *
+     * @return void
+     */
+    public function testSubqueryConnection()
+    {
+        $subquery = Query::subquery($this->table);
+        $this->assertEquals($this->table->getConnection(), $subquery->getConnection());
+    }
+
+    /**
+     * Tests subquery() disables aliasing.
+     *
+     * @return void
+     */
+    public function testSubqueryAliasing()
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $subquery = Query::subquery($articles);
+
+        $subquery->select('Articles.field1');
+        $this->assertRegExpSql(
+            'SELECT <Articles>.<field1> FROM <articles> <Articles>',
+            $subquery->sql(),
+            !$this->connection->getDriver()->isAutoQuotingEnabled()
+        );
+
+        $subquery->select($articles, true);
+        $this->assertEqualsSql('SELECT id, author_id, title, body, published FROM articles Articles', $subquery->sql());
+
+        $subquery->selectAllExcept($articles, ['author_id'], true);
+        $this->assertEqualsSql('SELECT id, title, body, published FROM articles Articles', $subquery->sql());
+    }
+
+    public function testSubquerySelect()
+    {
+        $subquery = Query::subquery($this->getTableLocator()->get('Authors'))
+            ->select(['Authors.id'])
+            ->where(['Authors.name' => 'mariano']);
+
+        $query = $this->getTableLocator()->get('Articles')->find()
+            ->where(['Articles.author_id IN' => $subquery])
+            ->order(['Articles.id' => 'ASC']);
+
+        $results = $query->all()->toList();
+        $this->assertCount(2, $results);
+        $this->assertEquals([1, 3], array_column($results, 'id'));
+    }
 }
