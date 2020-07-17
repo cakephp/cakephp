@@ -837,12 +837,20 @@ abstract class TestCase extends BaseTestCase
         [, $baseClass] = pluginSplit($alias);
         $options += ['alias' => $baseClass, 'connection' => $connection];
         $options += $locator->getConfig($alias);
-        $existingMethods = array_intersect(get_class_methods($className), $methods);
+        $reflection = new ReflectionClass($className);
+        $classMethods = array_map(function ($method) {
+            return $method->name;
+        }, $reflection->getMethods());
+
+        $existingMethods = array_intersect($classMethods, $methods);
         $nonExistingMethods = array_diff($methods, $existingMethods);
 
         $builder = $this->getMockBuilder($className)
-            ->onlyMethods($existingMethods)
             ->setConstructorArgs([$options]);
+
+        if ($existingMethods || !$nonExistingMethods) {
+            $builder->onlyMethods($existingMethods);
+        }
 
         if ($nonExistingMethods) {
             $builder->addMethods($nonExistingMethods);

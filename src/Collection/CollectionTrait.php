@@ -330,7 +330,7 @@ trait CollectionTrait
      */
     public function shuffle(): CollectionInterface
     {
-        $elements = $this->toArray();
+        $elements = $this->toList();
         shuffle($elements);
 
         return $this->newCollection($elements);

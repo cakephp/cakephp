@@ -1033,6 +1033,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::date('31.11.2006', ['dmy']));
         $this->assertFalse(Validation::date('31/11/2006', ['dmy']));
         $this->assertFalse(Validation::date('31 11 2006', ['dmy']));
+        $this->assertFalse(Validation::date('30-0,-2006', ['dmy']));
     }
 
     /**
@@ -1072,6 +1073,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::date('31.11.06', ['dmy']));
         $this->assertFalse(Validation::date('31/11/06', ['dmy']));
         $this->assertFalse(Validation::date('31 11 06', ['dmy']));
+        $this->assertFalse(Validation::date('30-0,-06', ['dmy']));
     }
 
     /**
@@ -1191,6 +1193,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::date('11.31.2006', ['mdy']));
         $this->assertFalse(Validation::date('11/31/2006', ['mdy']));
         $this->assertFalse(Validation::date('11 31 2006', ['mdy']));
+        $this->assertFalse(Validation::date('0,-30-2006', ['mdy']));
     }
 
     /**
@@ -1230,6 +1233,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::date('11.31.06', ['mdy']));
         $this->assertFalse(Validation::date('11/31/06', ['mdy']));
         $this->assertFalse(Validation::date('11 31 06', ['mdy']));
+        $this->assertFalse(Validation::date('0,-30-06', ['mdy']));
     }
 
     /**
@@ -1346,6 +1350,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::date('2006.11.31', ['ymd']));
         $this->assertFalse(Validation::date('2006/11/31', ['ymd']));
         $this->assertFalse(Validation::date('2006 11 31', ['ymd']));
+        $this->assertFalse(Validation::date('2006-0,-30', ['ymd']));
     }
 
     /**
@@ -1386,6 +1391,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::date('06.11.31', ['ymd']));
         $this->assertFalse(Validation::date('06/11/31', ['ymd']));
         $this->assertFalse(Validation::date('06 11 31', ['ymd']));
+        $this->assertFalse(Validation::date('06-0,-30', ['ymd']));
     }
 
     /**

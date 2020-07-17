@@ -14,7 +14,6 @@ cache:
 
 php:
   - 7.4
-  - 'nightly'
 
 env:
   matrix:
@@ -23,11 +22,16 @@ env:
     - DB=sqlite DB_DSN='sqlite:///:memory:'
 
 matrix:
-  fast_finish: true
-
   include:
     - php: 7.2
       env: PREFER_LOWEST=1
+    - php: nightly
+      env: DB=sqlite DB_DSN='sqlite:///:memory:'
+
+  allow_failures:
+    - php: nightly
+
+  fast_finish: true
 
 before_install:
   - echo cakephp version && tail -1 VERSION.txt
