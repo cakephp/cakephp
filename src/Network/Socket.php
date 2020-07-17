@@ -167,7 +167,7 @@ class Socket
             $remoteSocketTarget,
             $errNum,
             $errStr,
-            $this->_config['timeout'],
+            (int)$this->_config['timeout'],
             $connectAs,
             $context
         );
@@ -186,7 +186,7 @@ class Socket
         $this->connected = is_resource($this->connection);
         if ($this->connected) {
             /** @psalm-suppress PossiblyNullArgument */
-            stream_set_timeout($this->connection, $this->_config['timeout']);
+            stream_set_timeout($this->connection, (int)$this->_config['timeout']);
         }
 
         return $this->connected;

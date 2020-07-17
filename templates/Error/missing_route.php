@@ -35,25 +35,20 @@ Add a matching route to <?= 'config' . DIRECTORY_SEPARATOR . 'routes.php' ?></p>
 
 <?php if (!empty($attributes['context'])): ?>
 <p>The passed context was:</p>
-<pre>
-<?= h(Debugger::exportVar($attributes['context'])); ?>
-</pre>
+<div class="cake-debug">
+    <?= Debugger::exportVar($attributes['context']); ?>
+</div>
 <?php endif; ?>
 
 <h3>Connected Routes</h3>
-<table cellspacing="0" cellpadding="0">
+<table cellspacing="0" cellpadding="0" width="100%">
 <tr><th>Template</th><th>Defaults</th><th>Options</th></tr>
-<?php
-foreach (Router::routes() as $route):
-    echo '<tr>';
-    printf(
-        '<td width="25%%">%s</td><td>%s</td><td width="20%%">%s</td>',
-        h($route->template),
-        h(Debugger::exportVar($route->defaults)),
-        h(Debugger::exportVar($route->options))
-    );
-    echo '</tr>';
-endforeach;
-?>
+<?php foreach (Router::routes() as $route): ?>
+    <tr>
+        <td><?= h($route->template) ?></td>
+        <td><div class="cake-debug" data-open-all="true"><?= Debugger::exportVar($route->defaults) ?></div></td>
+        <td><div class="cake-debug" data-open-all="true"><?= Debugger::exportVar($route->options) ?></div></td>
+    </tr>
+<?php endforeach; ?>
 </table>
 <?php $this->end() ?>
