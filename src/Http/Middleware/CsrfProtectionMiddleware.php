@@ -27,6 +27,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use RuntimeException;
 
 /**
  * Provides CSRF protection & validation.
@@ -121,6 +122,14 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
             $request = $this->_unsetTokenField($request);
 
             return $handler->handle($request);
+        }
+        if ($request->getAttribute('csrfToken')) {
+            throw new RuntimeException(
+                'A CSRF token is already set in the request.' .
+                "\n" .
+                'Ensure you do not have the CSRF middleware applied more than once. ' .
+                'Check both your `Application::middleware()` method and `config/routes.php`.'
+            );
         }
 
         $cookies = $request->getCookieParams();
