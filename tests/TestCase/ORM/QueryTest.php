@@ -4009,8 +4009,8 @@ class QueryTest extends TestCase
      */
     public function testSubqueryConnection()
     {
-        $subquery = (new Query($this->connection, $this->table))->subquery($this->table);
-        $this->assertEquals($this->connection, $subquery->getConnection());
+        $subquery = Query::subquery($this->table);
+        $this->assertEquals($this->table->getConnection(), $subquery->getConnection());
     }
 
     /**
@@ -4021,7 +4021,7 @@ class QueryTest extends TestCase
     public function testSubqueryAliasing()
     {
         $articles = $this->getTableLocator()->get('Articles');
-        $subquery = (new Query($this->connection, $this->table))->subquery($articles);
+        $subquery = Query::subquery($articles);
 
         $subquery->select('Articles.field1');
         $this->assertRegExpSql(

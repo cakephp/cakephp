@@ -1306,9 +1306,9 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @param \Cake\ORM\Table $table The table this query is starting on
      * @return static
      */
-    public function subquery(Table $table)
+    public static function subquery(Table $table)
     {
-        $query = new static($this->getConnection(), $table);
+        $query = new static($table->getConnection(), $table);
         $query->aliasingEnabled = false;
 
         return $query;
