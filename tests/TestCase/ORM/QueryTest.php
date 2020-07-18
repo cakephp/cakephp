@@ -4037,7 +4037,12 @@ class QueryTest extends TestCase
         $this->assertEqualsSql('SELECT id, title, body, published FROM articles Articles', $subquery->sql());
     }
 
-    public function testSubquerySelect()
+    /**
+     * Tests subquery() in where clause.
+     *
+     * @return void
+     */
+    public function testSubqueryWhereClause()
     {
         $subquery = Query::subquery($this->getTableLocator()->get('Authors'))
             ->select(['Authors.id'])
@@ -4050,5 +4055,27 @@ class QueryTest extends TestCase
         $results = $query->all()->toList();
         $this->assertCount(2, $results);
         $this->assertEquals([1, 3], array_column($results, 'id'));
+    }
+
+    /**
+     * Tests subquery() in join clause.
+     *
+     * @return void
+     */
+    public function testSubqueryJoinClause()
+    {
+        $subquery = Query::subquery($this->getTableLocator()->get('Articles'))
+            ->select(['author_id']);
+
+        $query = $this->getTableLocator()->get('Authors')->find();
+        $query
+            ->select(['Authors.id', 'total_articles' => $query->func()->count('Articles.author_id')])
+            ->leftJoin(['Articles' => $subquery], ['Articles.author_id = Authors.id'])
+            ->group(['Authors.id'])
+            ->order(['Authors.id' => 'ASC']);
+
+        $results = $query->all()->toList();
+        $this->assertEquals(1, $results[0]->id);
+        $this->assertEquals(2, $results[0]->total_articles);
     }
 }
