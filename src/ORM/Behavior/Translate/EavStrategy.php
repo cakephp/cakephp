@@ -380,6 +380,7 @@ class EavStrategy implements TranslateStrategyInterface
 
             $row['_locale'] = $locale;
             if ($hydrated) {
+                /** @psalm-suppress PossiblyInvalidMethodCall */
                 $row->clean();
             }
 

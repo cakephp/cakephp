@@ -67,6 +67,7 @@ abstract class StatusCodeBase extends ResponseBase
      */
     protected function failureDescription($other): string
     {
+        /** @psalm-suppress InternalMethod */
         return $this->toString();
     }
 }
