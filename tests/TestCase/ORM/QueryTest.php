@@ -4069,8 +4069,8 @@ class QueryTest extends TestCase
 
         $query = $this->getTableLocator()->get('Authors')->find();
         $query
-            ->select(['Authors.id', 'total_articles' => $query->func()->count('Articles.author_id')])
-            ->leftJoin(['Articles' => $subquery], ['Articles.author_id = Authors.id'])
+            ->select(['Authors.id', 'total_articles' => $query->func()->count('articles.author_id')])
+            ->leftJoin(['articles' => $subquery], ['articles.author_id = Authors.id'])
             ->group(['Authors.id'])
             ->order(['Authors.id' => 'ASC']);
 
