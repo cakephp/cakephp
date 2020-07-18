@@ -39,15 +39,13 @@ before_install:
   - if [[ $DB == 'mysql' ]]; then mysql -u root -e 'CREATE DATABASE cakephp_test;'; fi
   - if [[ $DB == 'pgsql' ]]; then psql -c 'CREATE DATABASE cakephp_test;' -U postgres; fi
 
-  - |
-      if [[ $TRAVIS_PHP_VERSION == '7.4' ]]; then
-        pecl channel-update pecl.php.net
-        pecl install pcov
-      fi
+  - pecl channel-update pecl.php.net
+  - if [[ $TRAVIS_PHP_VERSION == '7.4' ]]; then pecl install pcov; fi
 
   - |
       if [[ $TRAVIS_PHP_VERSION != 'nightly' ]]; then
         phpenv config-rm xdebug.ini
+        pecl install memcached
         echo 'extension = memcached.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
         echo 'extension = redis.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
         echo 'extension = apcu.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
