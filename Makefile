@@ -145,9 +145,7 @@ publish: guard-VERSION dist/cakephp-$(DASH_VERSION).zip
 	@echo "Creating draft release for $(VERSION). prerelease=$(PRERELEASE)"
 	curl $(AUTH) -XPOST $(API_HOST)/repos/$(OWNER)/cakephp/releases -d '{"tag_name": "$(VERSION)", "name": "CakePHP $(VERSION) released", "draft": true, "prerelease": $(PRERELEASE)}' > release.json
 	# Extract id out of response json.
-	php -r '$$f = file_get_contents("./release.json"); \
-		$$d = json_decode($$f, true); \
-		file_put_contents("./id.txt", $$d["id"]);'
+	php -r '$$f = file_get_contents("./release.json"); $$d = json_decode($$f, true); file_put_contents("./id.txt", $$d["id"]);'
 	@echo "Uploading zip file to github."
 	curl $(AUTH) -XPOST \
 		$(UPLOAD_HOST)/repos/$(OWNER)/cakephp/releases/`cat ./id.txt`/assets?name=cakephp-$(DASH_VERSION).zip \
