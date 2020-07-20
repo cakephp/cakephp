@@ -512,7 +512,10 @@ class Client implements ClientInterface
         if ($options['port'] && (int)$options['port'] !== $defaultPorts[$options['scheme']]) {
             $out .= ':' . $options['port'];
         }
-        $out .= '/' . ltrim($url, '/');
+        if ($options['host'] !== null) {
+            $out .= '/';
+        }
+        $out .= ltrim($url, '/');
 
         return $out;
     }

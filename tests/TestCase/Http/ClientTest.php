@@ -175,6 +175,15 @@ class ClientTest extends TestCase
                 ],
                 'protocol relative url',
             ],
+            [
+                'http://example.com/test.html',
+                'example.com/test.html',
+                [],
+                [
+                    'scheme' => 'http',
+                ],
+                'url without any prefix',
+            ],
         ];
     }
 
