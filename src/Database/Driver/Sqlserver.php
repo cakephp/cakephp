@@ -187,12 +187,13 @@ class Sqlserver extends Driver
      * Prepares a sql statement to be executed
      *
      * @param string|\Cake\Database\Query $query The query to prepare.
+     * @param array $options The driver options to set on the statement.
      * @return \Cake\Database\StatementInterface
      */
-    public function prepare($query): StatementInterface
+    public function prepare($query, array $options = []): StatementInterface
     {
         $this->connect();
-        $options = [PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL];
+        $options += [PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL];
         $isObject = $query instanceof Query;
         /** @psalm-suppress PossiblyInvalidMethodCall */
         if ($isObject && $query->isBufferedResultsEnabled() === false) {
