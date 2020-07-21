@@ -659,7 +659,6 @@ trait IntegrationTestTrait
 
             $formProtector = new FormProtector(['unlockedFields' => $this->_unlockedFields]);
             foreach ($keys as $field) {
-                /** @psalm-suppress PossiblyNullArgument */
                 $formProtector->addField($field);
             }
             $tokenData = $formProtector->buildTokenData($url, 'cli');

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="3.11.2@d470903722cfcbc1cd04744c5491d3e6d13ec3d9">
+<files psalm-version="3.12.2@7c7ebd068f8acaba211d4a2c707c4ba90874fa26">
   <file src="src/Collection/CollectionTrait.php">
     <ArgumentTypeCoercion occurrences="4">
       <code>$iterator</code>
@@ -116,13 +116,8 @@
     </ArgumentTypeCoercion>
   </file>
   <file src="src/ORM/Query.php">
-    <ArgumentTypeCoercion occurrences="6">
+    <ArgumentTypeCoercion occurrences="1">
       <code>$this-&gt;_repository</code>
-      <code>$this-&gt;getRepository()</code>
-      <code>$this-&gt;getRepository()</code>
-      <code>$this-&gt;getRepository()</code>
-      <code>$this-&gt;getRepository()</code>
-      <code>$this-&gt;getRepository()</code>
     </ArgumentTypeCoercion>
   </file>
   <file src="src/Routing/Middleware/RoutingMiddleware.php">
@@ -150,11 +145,6 @@
   <file src="src/TestSuite/Constraint/Session/FlashParamEquals.php">
     <InternalClass occurrences="1">
       <code>new AssertionFailedError($message)</code>
-    </InternalClass>
-  </file>
-  <file src="src/TestSuite/Constraint/Session/SessionEquals.php">
-    <InternalClass occurrences="1">
-      <code>new AssertionFailedError('There is no stored session data. Perhaps you need to run a request?')</code>
     </InternalClass>
   </file>
   <file src="src/TestSuite/Fixture/FixtureInjector.php">
