@@ -136,7 +136,8 @@ class ServerTest extends TestCase
 
         /** @var \TestApp\Http\MiddlewareApplication|\PHPUnit\Framework\MockObject\MockObject $app */
         $app = $this->getMockBuilder(MiddlewareApplication::class)
-            ->setMethods(['pluginBootstrap', 'pluginEvents', 'pluginMiddleware'])
+            ->onlyMethods(['pluginBootstrap', 'pluginMiddleware'])
+            ->addMethods(['pluginEvents'])
             ->setConstructorArgs([$this->config])
             ->getMock();
         $app->expects($this->at(0))

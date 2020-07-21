@@ -1828,7 +1828,7 @@ class ValidatorTest extends TestCase
             ->add('title', 'cool', ['rule' => 'isCool', 'provider' => 'thing']);
 
         $thing = $this->getMockBuilder('\stdClass')
-            ->setMethods(['isCool'])
+            ->addMethods(['isCool'])
             ->getMock();
         $thing->expects($this->once())->method('isCool')
             ->will($this->returnCallback(function ($data, $context) use ($thing) {
@@ -1874,7 +1874,7 @@ class ValidatorTest extends TestCase
             'provider' => 'thing',
         ]);
         $thing = $this->getMockBuilder('\stdClass')
-            ->setMethods(['isCool'])
+            ->addMethods(['isCool'])
             ->getMock();
         $thing->expects($this->once())->method('isCool')
             ->will($this->returnCallback(function ($data, $a, $b, $context) use ($thing) {

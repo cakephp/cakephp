@@ -117,7 +117,7 @@ class RequestHandlerComponentTest extends TestCase
         ];
         /** @var \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject $controller */
         $controller = $this->getMockBuilder(Controller::class)
-            ->setMethods(['redirect'])
+            ->onlyMethods(['redirect'])
             ->getMock();
         $collection = new ComponentRegistry($controller);
         $requestHandler = new RequestHandlerComponent($collection, $config);

@@ -2751,7 +2751,7 @@ class RouterTest extends TestCase
         $url = 'http://example.com/posts/view/1';
 
         $route = $this->getMockBuilder('Cake\Routing\Route\Route')
-            ->setMethods(['match'])
+            ->onlyMethods(['match'])
             ->setConstructorArgs(['/:controller/:action/*'])
             ->getMock();
         $route->expects($this->any())

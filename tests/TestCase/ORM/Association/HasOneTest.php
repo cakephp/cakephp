@@ -158,7 +158,7 @@ class HasOneTest extends TestCase
         $association = new HasOne('Profiles', $config);
 
         $query = $this->getMockBuilder('Cake\ORM\Query')
-            ->setMethods(['join', 'select'])
+            ->onlyMethods(['join', 'select'])
             ->disableOriginalConstructor()
             ->getMock();
         $field1 = new IdentifierExpression('Profiles.user_id');
@@ -188,7 +188,7 @@ class HasOneTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Cannot match provided foreignKey for "Profiles", got "(user_id)" but expected foreign key for "(id, site_id)"');
         $query = $this->getMockBuilder('Cake\ORM\Query')
-            ->setMethods(['join', 'select'])
+            ->onlyMethods(['join', 'select'])
             ->disableOriginalConstructor()
             ->getMock();
         $config = [
@@ -209,7 +209,7 @@ class HasOneTest extends TestCase
     public function testSaveAssociatedOnlyEntities()
     {
         $mock = $this->getMockBuilder('Cake\ORM\Table')
-            ->setMethods(['saveAssociated'])
+            ->addMethods(['saveAssociated'])
             ->disableOriginalConstructor()
             ->getMock();
         $config = [

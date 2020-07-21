@@ -35,7 +35,7 @@ class TestSuiteTest extends TestCase
         $count = count(glob($testFolder . DS . '*Test.php'));
 
         $suite = $this->getMockBuilder('Cake\TestSuite\TestSuite')
-            ->setMethods(['addTestFile'])
+            ->onlyMethods(['addTestFile'])
             ->getMock();
         $suite
             ->expects($this->exactly($count))
@@ -56,7 +56,7 @@ class TestSuiteTest extends TestCase
         $count += count(glob($testFolder . DS . 'Engine/*Test.php'));
 
         $suite = $this->getMockBuilder('Cake\TestSuite\TestSuite')
-            ->setMethods(['addTestFile'])
+            ->onlyMethods(['addTestFile'])
             ->getMock();
         $suite
             ->expects($this->exactly($count))
@@ -83,7 +83,7 @@ class TestSuiteTest extends TestCase
         touch($path . DS . '.HiddenTest.php');
 
         $suite = $this->getMockBuilder('Cake\TestSuite\TestSuite')
-            ->setMethods(['addTestFile'])
+            ->onlyMethods(['addTestFile'])
             ->getMock();
         $suite
             ->expects($this->exactly(1))
@@ -111,7 +111,7 @@ class TestSuiteTest extends TestCase
         touch($path . DS . 'NotHiddenTest.php');
 
         $suite = $this->getMockBuilder('Cake\TestSuite\TestSuite')
-            ->setMethods(['addTestFile'])
+            ->onlyMethods(['addTestFile'])
             ->getMock();
         $suite
             ->expects($this->exactly(1))

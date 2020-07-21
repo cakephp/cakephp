@@ -1386,7 +1386,7 @@ SQL;
     {
         $driver = new Postgres();
         $mock = $this->getMockBuilder(PDO::class)
-            ->setMethods(['quote'])
+            ->onlyMethods(['quote'])
             ->disableOriginalConstructor()
             ->getMock();
         $mock->expects($this->any())

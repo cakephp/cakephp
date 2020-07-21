@@ -176,7 +176,7 @@ class ConnectionTest extends TestCase
         $this->expectException(\Cake\Database\Exception\MissingExtensionException::class);
         $this->expectExceptionMessage('Database driver DriverMock cannot be used due to a missing PHP extension or unmet dependency');
         $mock = $this->getMockBuilder(Mysql::class)
-            ->setMethods(['enabled'])
+            ->onlyMethods(['enabled'])
             ->setMockClassName('DriverMock')
             ->getMock();
         $connection = new Connection(['driver' => $mock]);
@@ -818,7 +818,7 @@ class ConnectionTest extends TestCase
     public function testQuoteIdentifier()
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlite')
-            ->setMethods(['enabled'])
+            ->onlyMethods(['enabled'])
             ->getMock();
         $driver->expects($this->once())
             ->method('enabled')
@@ -1033,7 +1033,7 @@ class ConnectionTest extends TestCase
 
         $connection = $this
             ->getMockBuilder(Connection::class)
-            ->setMethods(['connect'])
+            ->onlyMethods(['connect'])
             ->disableOriginalConstructor()
             ->getMock();
         $connection->enableQueryLogging(true);
@@ -1060,7 +1060,7 @@ class ConnectionTest extends TestCase
     {
         $driver = $this->getMockFormDriver();
         $connection = $this->getMockBuilder(Connection::class)
-            ->setMethods(['connect'])
+            ->onlyMethods(['connect'])
             ->setConstructorArgs([['driver' => $driver]])
             ->getMock();
 
@@ -1097,7 +1097,7 @@ class ConnectionTest extends TestCase
     {
         $driver = $this->getMockFormDriver();
         $connection = $this->getMockBuilder(Connection::class)
-            ->setMethods(['connect', 'commit', 'begin'])
+            ->onlyMethods(['connect', 'commit', 'begin'])
             ->setConstructorArgs([['driver' => $driver]])
             ->getMock();
         $connection->expects($this->at(0))->method('begin');
@@ -1120,7 +1120,7 @@ class ConnectionTest extends TestCase
     {
         $driver = $this->getMockFormDriver();
         $connection = $this->getMockBuilder(Connection::class)
-            ->setMethods(['connect', 'commit', 'begin', 'rollback'])
+            ->onlyMethods(['connect', 'commit', 'begin', 'rollback'])
             ->setConstructorArgs([['driver' => $driver]])
             ->getMock();
         $connection->expects($this->at(0))->method('begin');
@@ -1146,7 +1146,7 @@ class ConnectionTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $driver = $this->getMockFormDriver();
         $connection = $this->getMockBuilder(Connection::class)
-            ->setMethods(['connect', 'commit', 'begin', 'rollback'])
+            ->onlyMethods(['connect', 'commit', 'begin', 'rollback'])
             ->setConstructorArgs([['driver' => $driver]])
             ->getMock();
         $connection->expects($this->at(0))->method('begin');
@@ -1167,7 +1167,7 @@ class ConnectionTest extends TestCase
     {
         $driver = $this->getMockFormDriver();
         $connection = $this->getMockBuilder(Connection::class)
-            ->setMethods(['connect'])
+            ->onlyMethods(['connect'])
             ->setConstructorArgs([['driver' => $driver]])
             ->getMock();
 
@@ -1190,7 +1190,7 @@ class ConnectionTest extends TestCase
     {
         $driver = $this->getMockFormDriver();
         $connection = $this->getMockBuilder(Connection::class)
-            ->setMethods(['connect'])
+            ->onlyMethods(['connect'])
             ->setConstructorArgs([[
                 'driver' => $driver,
                 'name' => 'default',
@@ -1204,7 +1204,7 @@ class ConnectionTest extends TestCase
 
         $driver = $this->getMockFormDriver();
         $connection = $this->getMockBuilder(Connection::class)
-            ->setMethods(['connect'])
+            ->onlyMethods(['connect'])
             ->setConstructorArgs([[
                 'driver' => $driver,
                 'name' => 'default',

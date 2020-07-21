@@ -37,7 +37,7 @@ class ShellDispatcherTest extends TestCase
         $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
         static::setAppNamespace();
         $this->dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
-            ->setMethods(['_stop'])
+            ->addMethods(['_stop'])
             ->getMock();
     }
 
@@ -161,7 +161,7 @@ class ShellDispatcherTest extends TestCase
     {
         $io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
         $shell = $this->getMockBuilder('Cake\Console\Shell')
-            ->setMethods(['main'])
+            ->addMethods(['main'])
             ->setConstructorArgs([$io])
             ->getMock();
         $shell->expects($this->once())
@@ -171,7 +171,7 @@ class ShellDispatcherTest extends TestCase
             }));
 
         $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
-            ->setMethods(['findShell'])
+            ->onlyMethods(['findShell'])
             ->getMock();
         $dispatcher->expects($this->any())
             ->method('findShell')
@@ -191,7 +191,7 @@ class ShellDispatcherTest extends TestCase
     public function testDispatchShellWithMain()
     {
         $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
-            ->setMethods(['findShell'])
+            ->onlyMethods(['findShell'])
             ->getMock();
         $Shell = $this->getMockBuilder('Cake\Console\Shell')
             ->disableOriginalConstructor()
@@ -227,7 +227,7 @@ class ShellDispatcherTest extends TestCase
     public function testDispatchShellWithIntegerSuccessCode()
     {
         $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
-            ->setMethods(['findShell'])
+            ->onlyMethods(['findShell'])
             ->getMock();
         $Shell = $this->getMockBuilder('Cake\Console\Shell')
             ->disableOriginalConstructor()
@@ -258,7 +258,7 @@ class ShellDispatcherTest extends TestCase
         $customErrorCode = 3;
 
         $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
-            ->setMethods(['findShell'])
+            ->onlyMethods(['findShell'])
             ->getMock();
         $Shell = $this->getMockBuilder('Cake\Console\Shell')
             ->disableOriginalConstructor()
@@ -287,7 +287,7 @@ class ShellDispatcherTest extends TestCase
     public function testDispatchShellWithoutMain()
     {
         $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
-            ->setMethods(['findShell'])
+            ->onlyMethods(['findShell'])
             ->getMock();
         $Shell = $this->getMockBuilder('Cake\Console\Shell')
             ->disableOriginalConstructor()
@@ -316,7 +316,7 @@ class ShellDispatcherTest extends TestCase
     public function testDispatchShortPluginAlias()
     {
         $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
-            ->setMethods(['_shellExists', '_createShell'])
+            ->onlyMethods(['_shellExists', '_createShell'])
             ->getMock();
         $Shell = $this->getMockBuilder('Cake\Console\Shell')
             ->disableOriginalConstructor()
@@ -345,7 +345,7 @@ class ShellDispatcherTest extends TestCase
     public function testDispatchShortPluginAliasCamelized()
     {
         $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
-            ->setMethods(['_shellExists', '_createShell'])
+            ->onlyMethods(['_shellExists', '_createShell'])
             ->getMock();
         $Shell = $this->getMockBuilder('Cake\Console\Shell')
             ->disableOriginalConstructor()
@@ -374,7 +374,7 @@ class ShellDispatcherTest extends TestCase
     public function testDispatchShortPluginAliasConflict()
     {
         $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
-            ->setMethods(['_shellExists', '_createShell'])
+            ->onlyMethods(['_shellExists', '_createShell'])
             ->getMock();
         $Shell = $this->getMockBuilder('Cake\Console\Shell')
             ->disableOriginalConstructor()
@@ -432,7 +432,7 @@ class ShellDispatcherTest extends TestCase
     {
         $this->expectException(Warning::class);
         $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
-            ->setMethods(['_stop'])
+            ->addMethods(['_stop'])
             ->getMock();
         $dispatcher->args = ['--help'];
         $dispatcher->dispatch();
@@ -447,7 +447,7 @@ class ShellDispatcherTest extends TestCase
     {
         $this->expectException(Warning::class);
         $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
-            ->setMethods(['_stop'])
+            ->addMethods(['_stop'])
             ->getMock();
         $dispatcher->args = ['--version'];
         $dispatcher->dispatch();

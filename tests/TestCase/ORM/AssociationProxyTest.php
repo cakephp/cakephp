@@ -181,7 +181,7 @@ class AssociationProxyTest extends TestCase
     {
         $articles = $this->getTableLocator()->get('articles');
         $mock = $this->getMockBuilder('Cake\ORM\Table')
-            ->setMethods(['crazy'])
+            ->addMethods(['crazy'])
             ->getMock();
         $articles->belongsTo('authors', [
             'targetTable' => $mock,

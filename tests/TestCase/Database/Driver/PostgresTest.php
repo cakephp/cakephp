@@ -33,7 +33,7 @@ class PostgresTest extends TestCase
     public function testConnectionConfigDefault()
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
-            ->setMethods(['_connect', 'getConnection'])
+            ->onlyMethods(['_connect', 'getConnection'])
             ->getMock();
         $dsn = 'pgsql:host=localhost;port=5432;dbname=cake';
         $expected = [
@@ -57,7 +57,7 @@ class PostgresTest extends TestCase
         ];
 
         $connection = $this->getMockBuilder('stdClass')
-            ->setMethods(['exec', 'quote'])
+            ->addMethods(['exec', 'quote'])
             ->getMock();
         $connection->expects($this->any())
             ->method('quote')
@@ -100,7 +100,7 @@ class PostgresTest extends TestCase
             'init' => ['Execute this', 'this too'],
         ];
         $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
-            ->setMethods(['_connect', 'getConnection', 'setConnection'])
+            ->onlyMethods(['_connect', 'getConnection', 'setConnection'])
             ->setConstructorArgs([$config])
             ->getMock();
         $dsn = 'pgsql:host=foo;port=3440;dbname=bar';
@@ -113,7 +113,7 @@ class PostgresTest extends TestCase
         ];
 
         $connection = $this->getMockBuilder('stdClass')
-            ->setMethods(['exec', 'quote'])
+            ->addMethods(['exec', 'quote'])
             ->getMock();
         $connection->expects($this->any())
             ->method('quote')
@@ -148,12 +148,12 @@ class PostgresTest extends TestCase
     public function testInsertReturning()
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
-            ->setMethods(['_connect', 'getConnection'])
+            ->onlyMethods(['_connect', 'getConnection'])
             ->setConstructorArgs([[]])
             ->getMock();
         $connection = $this
             ->getMockBuilder('Cake\Database\Connection')
-            ->setMethods(['connect'])
+            ->onlyMethods(['connect'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -182,12 +182,12 @@ class PostgresTest extends TestCase
     public function testHavingReplacesAlias()
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
-            ->setMethods(['connect', 'getConnection', 'version'])
+            ->onlyMethods(['connect', 'getConnection', 'version'])
             ->setConstructorArgs([[]])
             ->getMock();
 
         $connection = $this->getMockBuilder('\Cake\Database\Connection')
-            ->setMethods(['connect', 'getDriver', 'setDriver'])
+            ->onlyMethods(['connect', 'getDriver', 'setDriver'])
             ->setConstructorArgs([['log' => false]])
             ->getMock();
         $connection->expects($this->any())
@@ -216,12 +216,12 @@ class PostgresTest extends TestCase
     public function testHavingWhenNoAliasIsUsed()
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
-            ->setMethods(['connect', 'getConnection', 'version'])
+            ->onlyMethods(['connect', 'getConnection', 'version'])
             ->setConstructorArgs([[]])
             ->getMock();
 
         $connection = $this->getMockBuilder('\Cake\Database\Connection')
-            ->setMethods(['connect', 'getDriver', 'setDriver'])
+            ->onlyMethods(['connect', 'getDriver', 'setDriver'])
             ->setConstructorArgs([['log' => false]])
             ->getMock();
         $connection->expects($this->any())

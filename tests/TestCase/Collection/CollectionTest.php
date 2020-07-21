@@ -219,7 +219,7 @@ class CollectionTest extends TestCase
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
         $callable = $this->getMockBuilder(stdClass::class)
-            ->setMethods(['__invoke'])
+            ->addMethods(['__invoke'])
             ->getMock();
         $callable->expects($this->at(0))
             ->method('__invoke')
@@ -267,7 +267,7 @@ class CollectionTest extends TestCase
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
         $callable = $this->getMockBuilder(stdClass::class)
-            ->setMethods(['__invoke'])
+            ->addMethods(['__invoke'])
             ->getMock();
 
         $callable->expects($this->once())
@@ -315,7 +315,7 @@ class CollectionTest extends TestCase
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
         $callable = $this->getMockBuilder(stdClass::class)
-            ->setMethods(['__invoke'])
+            ->addMethods(['__invoke'])
             ->getMock();
 
         $callable->expects($this->at(0))
@@ -343,7 +343,7 @@ class CollectionTest extends TestCase
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
         $callable = $this->getMockBuilder(stdClass::class)
-            ->setMethods(['__invoke'])
+            ->addMethods(['__invoke'])
             ->getMock();
 
         $callable->expects($this->at(0))
@@ -360,7 +360,7 @@ class CollectionTest extends TestCase
         $items = [];
         $collection = new Collection($items);
         $callable = $this->getMockBuilder(stdClass::class)
-            ->setMethods(['__invoke'])
+            ->addMethods(['__invoke'])
             ->getMock();
 
         $callable->expects($this->never())
@@ -384,7 +384,7 @@ class CollectionTest extends TestCase
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
         $callable = $this->getMockBuilder(stdClass::class)
-            ->setMethods(['__invoke'])
+            ->addMethods(['__invoke'])
             ->getMock();
 
         $callable->expects($this->at(0))
@@ -409,7 +409,7 @@ class CollectionTest extends TestCase
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
         $callable = $this->getMockBuilder(stdClass::class)
-            ->setMethods(['__invoke'])
+            ->addMethods(['__invoke'])
             ->getMock();
 
         $callable->expects($this->at(0))
@@ -488,7 +488,7 @@ class CollectionTest extends TestCase
     {
         $collection = new Collection($items);
         $callable = $this->getMockBuilder(stdClass::class)
-            ->setMethods(['__invoke'])
+            ->addMethods(['__invoke'])
             ->getMock();
 
         $callable->expects($this->at(0))
@@ -520,7 +520,7 @@ class CollectionTest extends TestCase
     {
         $collection = new Collection($items);
         $callable = $this->getMockBuilder(stdClass::class)
-            ->setMethods(['__invoke'])
+            ->addMethods(['__invoke'])
             ->getMock();
 
         $callable->expects($this->at(0))
@@ -1244,7 +1244,7 @@ class CollectionTest extends TestCase
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
         $callable = $this->getMockBuilder(stdClass::class)
-            ->setMethods(['__invoke'])
+            ->addMethods(['__invoke'])
             ->getMock();
 
         $callable->expects($this->at(0))
@@ -2781,7 +2781,7 @@ class CollectionTest extends TestCase
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = (new Collection($items))->lazy();
         $callable = $this->getMockBuilder(stdClass::class)
-            ->setMethods(['__invoke'])
+            ->addMethods(['__invoke'])
             ->getMock();
 
         $callable->expects($this->never())->method('__invoke');

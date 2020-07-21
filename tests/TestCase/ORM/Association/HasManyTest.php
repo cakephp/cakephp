@@ -71,7 +71,7 @@ class HasManyTest extends TestCase
         ]);
         $connection = ConnectionManager::get('test');
         $this->article = $this->getMockBuilder('Cake\ORM\Table')
-            ->setMethods(['find', 'deleteAll', 'delete'])
+            ->onlyMethods(['find', 'deleteAll', 'delete'])
             ->setConstructorArgs([['alias' => 'Articles', 'table' => 'articles', 'connection' => $connection]])
             ->getMock();
         $this->article->setSchema([
@@ -410,7 +410,7 @@ class HasManyTest extends TestCase
         $association = new HasMany('Articles', $config);
         $keys = [[1, 10], [2, 20], [3, 30], [4, 40]];
         $query = $this->getMockBuilder('Cake\ORM\Query')
-            ->setMethods(['all', 'andWhere', 'getRepository'])
+            ->onlyMethods(['all', 'andWhere', 'getRepository'])
             ->setConstructorArgs([ConnectionManager::get('test'), $this->article])
             ->getMock();
         $query->method('getRepository')
@@ -598,7 +598,7 @@ class HasManyTest extends TestCase
     public function testSaveAssociatedOnlyEntities()
     {
         $mock = $this->getMockBuilder('Cake\ORM\Table')
-            ->setMethods(['saveAssociated'])
+            ->addMethods(['saveAssociated'])
             ->disableOriginalConstructor()
             ->getMock();
         $config = [

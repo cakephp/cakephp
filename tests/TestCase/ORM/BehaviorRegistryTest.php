@@ -275,7 +275,7 @@ class BehaviorRegistryTest extends TestCase
     {
         $this->Behaviors->load('Sluggable');
         $mockedBehavior = $this->getMockBuilder('Cake\ORM\Behavior')
-            ->setMethods(['slugify'])
+            ->addMethods(['slugify'])
             ->disableOriginalConstructor()
             ->getMock();
         $this->Behaviors->set('Sluggable', $mockedBehavior);
@@ -312,7 +312,7 @@ class BehaviorRegistryTest extends TestCase
     {
         $this->Behaviors->load('Sluggable');
         $mockedBehavior = $this->getMockBuilder('Cake\ORM\Behavior')
-            ->setMethods(['findNoSlug'])
+            ->addMethods(['findNoSlug'])
             ->disableOriginalConstructor()
             ->getMock();
         $this->Behaviors->set('Sluggable', $mockedBehavior);

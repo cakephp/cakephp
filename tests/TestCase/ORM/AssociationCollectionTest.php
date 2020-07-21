@@ -153,7 +153,7 @@ class AssociationCollectionTest extends TestCase
     public function testGetByProperty()
     {
         $table = $this->getMockBuilder('Cake\ORM\Table')
-            ->setMethods(['table'])
+            ->addMethods(['table'])
             ->getMock();
         $table->setSchema([]);
         $belongsTo = new BelongsTo('Users', [
@@ -283,17 +283,17 @@ class AssociationCollectionTest extends TestCase
     public function testSaveParents()
     {
         $table = $this->getMockBuilder('Cake\ORM\Table')
-            ->setMethods(['table'])
+            ->addMethods(['table'])
             ->getMock();
         $table->setSchema([]);
         $mockOne = $this->getMockBuilder('Cake\ORM\Association\BelongsTo')
-            ->setMethods(['saveAssociated'])
+            ->onlyMethods(['saveAssociated'])
             ->setConstructorArgs(['Parent', [
                 'sourceTable' => $table,
             ]])
             ->getMock();
         $mockTwo = $this->getMockBuilder('Cake\ORM\Association\HasMany')
-            ->setMethods(['saveAssociated'])
+            ->onlyMethods(['saveAssociated'])
             ->setConstructorArgs(['Child', [
                 'sourceTable' => $table,
             ]])
@@ -333,17 +333,17 @@ class AssociationCollectionTest extends TestCase
     public function testSaveParentsFiltered()
     {
         $table = $this->getMockBuilder('Cake\ORM\Table')
-            ->setMethods(['table'])
+            ->addMethods(['table'])
             ->getMock();
         $table->setSchema([]);
         $mockOne = $this->getMockBuilder('Cake\ORM\Association\BelongsTo')
-            ->setMethods(['saveAssociated'])
+            ->onlyMethods(['saveAssociated'])
             ->setConstructorArgs(['Parents', [
                 'sourceTable' => $table,
             ]])
             ->getMock();
         $mockTwo = $this->getMockBuilder('Cake\ORM\Association\BelongsTo')
-            ->setMethods(['saveAssociated'])
+            ->onlyMethods(['saveAssociated'])
             ->setConstructorArgs(['Categories', [
                 'sourceTable' => $table,
             ]])
@@ -383,17 +383,17 @@ class AssociationCollectionTest extends TestCase
     public function testSaveChildrenFiltered()
     {
         $table = $this->getMockBuilder('Cake\ORM\Table')
-            ->setMethods(['table'])
+            ->addMethods(['table'])
             ->getMock();
         $table->setSchema([]);
         $mockOne = $this->getMockBuilder('Cake\ORM\Association\HasMany')
-            ->setMethods(['saveAssociated'])
+            ->onlyMethods(['saveAssociated'])
             ->setConstructorArgs(['Comments', [
                 'sourceTable' => $table,
             ]])
             ->getMock();
         $mockTwo = $this->getMockBuilder('Cake\ORM\Association\HasOne')
-            ->setMethods(['saveAssociated'])
+            ->onlyMethods(['saveAssociated'])
             ->setConstructorArgs(['Profiles', [
                 'sourceTable' => $table,
             ]])
@@ -433,7 +433,7 @@ class AssociationCollectionTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot save Profiles, it is not associated to Users');
         $table = $this->getMockBuilder('Cake\ORM\Table')
-            ->setMethods(['save'])
+            ->onlyMethods(['save'])
             ->setConstructorArgs([['alias' => 'Users']])
             ->getMock();
 

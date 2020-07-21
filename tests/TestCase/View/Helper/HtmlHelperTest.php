@@ -76,7 +76,7 @@ class HtmlHelperTest extends TestCase
         Router::setRequest($request);
 
         $this->View = $this->getMockBuilder(View::class)
-            ->setMethods(['append'])
+            ->onlyMethods(['append'])
             ->setConstructorArgs([$request])
             ->getMock();
         $this->Html = new HtmlHelper($this->View);

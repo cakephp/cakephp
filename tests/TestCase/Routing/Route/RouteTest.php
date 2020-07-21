@@ -1096,7 +1096,7 @@ class RouteTest extends TestCase
     {
         /** @var \Cake\Routing\Route\Route|\PHPUnit\Framework\MockObject\MockObject $route */
         $route = $this->getMockBuilder('Cake\Routing\Route\Route')
-            ->setMethods(['parse'])
+            ->onlyMethods(['parse'])
             ->setConstructorArgs(['/forward', ['controller' => 'Articles', 'action' => 'index']])
             ->getMock();
 

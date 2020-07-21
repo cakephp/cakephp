@@ -162,7 +162,7 @@ class FormAuthenticateTest extends TestCase
         ]);
 
         $this->auth = $this->getMockBuilder(FormAuthenticate::class)
-            ->setMethods(['_checkFields'])
+            ->onlyMethods(['_checkFields'])
             ->setConstructorArgs([
                 $this->collection,
                 ['userModel' => 'Users'],
