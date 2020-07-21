@@ -71,11 +71,11 @@ class EntityTest extends TestCase
         $this->assertEquals(1, $entity->getOriginal('id'));
 
         $entity->set(['foo', 'bar']);
-        $this->assertEquals('foo', $entity->{0});
-        $this->assertEquals('bar', $entity->{1});
+        $this->assertEquals('foo', $entity->get('0'));
+        $this->assertEquals('bar', $entity->get('1'));
 
         $entity->set(['sample']);
-        $this->assertEquals('sample', $entity->{0});
+        $this->assertEquals('sample', $entity->get('0'));
     }
 
     /**
