@@ -235,6 +235,7 @@ trait EntityTrait
         $options += ['setter' => true, 'guard' => $guard];
 
         foreach ($field as $name => $value) {
+            $name = (string) $name;
             if ($options['guard'] === true && !$this->isAccessible($name)) {
                 continue;
             }
