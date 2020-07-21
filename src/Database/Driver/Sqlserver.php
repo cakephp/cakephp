@@ -193,7 +193,9 @@ class Sqlserver extends Driver
     public function prepare($query, array $options = []): StatementInterface
     {
         $this->connect();
-        $options = [PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL] + $options;
+        if (!isset($options[PDO::ATTR_CURSOR]) {
+            $options = [PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL] + $options;
+        }
         $isObject = $query instanceof Query;
         /** @psalm-suppress PossiblyInvalidMethodCall */
         if ($isObject && $query->isBufferedResultsEnabled() === false) {
