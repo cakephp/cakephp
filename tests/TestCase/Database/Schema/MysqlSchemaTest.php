@@ -1391,7 +1391,8 @@ SQL;
     {
         $driver = new Mysql();
         $mock = $this->getMockBuilder(PDO::class)
-            ->setMethods(['quote', 'quoteIdentifier', 'getAttribute'])
+            ->onlyMethods(['quote', 'getAttribute'])
+            ->addMethods(['quoteIdentifier'])
             ->disableOriginalConstructor()
             ->getMock();
         $mock->expects($this->any())

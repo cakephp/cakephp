@@ -186,7 +186,7 @@ class RoutingMiddlewareTest extends TestCase
 
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/app/articles']);
         $app = $this->getMockBuilder(Application::class)
-            ->setMethods(['pluginRoutes'])
+            ->onlyMethods(['pluginRoutes'])
             ->setConstructorArgs([CONFIG])
             ->getMock();
         $app->expects($this->once())

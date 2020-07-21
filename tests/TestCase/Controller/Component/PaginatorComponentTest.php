@@ -1408,7 +1408,7 @@ class PaginatorComponentTest extends TestCase
     protected function _getMockPosts(array $methods = [])
     {
         return $this->getMockBuilder('TestApp\Model\Table\PaginatorPostsTable')
-            ->setMethods($methods)
+            ->onlyMethods($methods)
             ->setConstructorArgs([[
                 'connection' => ConnectionManager::get('test'),
                 'alias' => 'PaginatorPosts',
@@ -1434,7 +1434,8 @@ class PaginatorComponentTest extends TestCase
     {
         /** @var \Cake\ORM\Query|\PHPUnit\Framework\MockObject\MockObject $query */
         $query = $this->getMockBuilder('Cake\ORM\Query')
-            ->setMethods(['total', 'all', 'count', 'applyOptions'])
+            ->onlyMethods(['all', 'count', 'applyOptions'])
+            ->addMethods(['total'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -1466,7 +1467,7 @@ class PaginatorComponentTest extends TestCase
     protected function getMockRepository()
     {
         $model = $this->getMockBuilder(RepositoryInterface::class)
-            ->setMethods([
+            ->onlyMethods([
                 'getAlias', 'setAlias', 'setRegistryAlias', 'getRegistryAlias', 'hasField',
                 'find', 'get', 'query', 'updateAll', 'deleteAll', 'newEmptyEntity',
                 'exists', 'save', 'delete', 'newEntity', 'newEntities', 'patchEntity', 'patchEntities',

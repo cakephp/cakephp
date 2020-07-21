@@ -40,7 +40,7 @@ class ConsoleOutputTest extends TestCase
     {
         parent::setUp();
         $this->output = $this->getMockBuilder(ConsoleOutput::class)
-            ->setMethods(['_write'])
+            ->onlyMethods(['_write'])
             ->getMock();
         $this->output->setOutputAs(ConsoleOutput::COLOR);
     }

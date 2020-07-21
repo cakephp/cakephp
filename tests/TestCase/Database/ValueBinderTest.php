@@ -146,7 +146,7 @@ class ValueBinderTest extends TestCase
         $valueBinder = new ValueBinder();
         $statementMock = $this->getMockBuilder('Cake\Database\Statement\StatementDecorator')
             ->disableOriginalConstructor()
-            ->setMethods(['bindValue'])
+            ->onlyMethods(['bindValue'])
             ->getMock();
 
         $statementMock->expects($this->at(0))->method('bindValue')->with('c0', 'value0', 'string');

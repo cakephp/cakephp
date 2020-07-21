@@ -38,7 +38,7 @@ class StreamTest extends TestCase
     {
         parent::setUp();
         $this->stream = $this->getMockBuilder(Stream::class)
-            ->setMethods(['_send'])
+            ->onlyMethods(['_send'])
             ->getMock();
         stream_wrapper_unregister('http');
         stream_wrapper_register('http', CakeStreamWrapper::class);

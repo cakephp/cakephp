@@ -178,7 +178,7 @@ class TestFixtureTest extends TestCase
         $this->assertSame(['id', 'letter'], $fixture->getTableSchema()->columns());
 
         $db = $this->getMockBuilder('Cake\Database\Connection')
-            ->setMethods(['prepare', 'execute'])
+            ->onlyMethods(['prepare', 'execute'])
             ->disableOriginalConstructor()
             ->getMock();
         $db->expects($this->never())

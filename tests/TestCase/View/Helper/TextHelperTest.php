@@ -78,7 +78,7 @@ class TextHelperTest extends TestCase
             'stripLinks', 'toList',
         ];
         $String = $this->getMockBuilder(TextMock::class)
-            ->setMethods($methods)
+            ->addMethods($methods)
             ->getMock();
         $Text = new TextHelperTestObject($this->View, ['engine' => TextMock::class]);
         $Text->attach($String);
@@ -91,7 +91,7 @@ class TextHelperTest extends TestCase
             'excerpt',
         ];
         $String = $this->getMockBuilder(TextMock::class)
-            ->setMethods($methods)
+            ->addMethods($methods)
             ->getMock();
         $Text = new TextHelperTestObject($this->View, ['engine' => TextMock::class]);
         $Text->attach($String);
@@ -104,7 +104,7 @@ class TextHelperTest extends TestCase
             'highlight',
         ];
         $String = $this->getMockBuilder(TextMock::class)
-            ->setMethods($methods)
+            ->addMethods($methods)
             ->getMock();
         $Text = new TextHelperTestObject($this->View, ['engine' => TextMock::class]);
         $Text->attach($String);
@@ -117,7 +117,7 @@ class TextHelperTest extends TestCase
             'tail', 'truncate',
         ];
         $String = $this->getMockBuilder(TextMock::class)
-            ->setMethods($methods)
+            ->addMethods($methods)
             ->getMock();
         $Text = new TextHelperTestObject($this->View, ['engine' => TextMock::class]);
         $Text->attach($String);

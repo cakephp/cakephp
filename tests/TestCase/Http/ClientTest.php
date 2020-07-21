@@ -208,7 +208,7 @@ class ClientTest extends TestCase
         ];
 
         $mock = $this->getMockBuilder(Stream::class)
-            ->setMethods(['send'])
+            ->onlyMethods(['send'])
             ->getMock();
         $mock->expects($this->once())
             ->method('send')
@@ -243,7 +243,7 @@ class ClientTest extends TestCase
         $response = new Response();
 
         $mock = $this->getMockBuilder(Stream::class)
-            ->setMethods(['send'])
+            ->onlyMethods(['send'])
             ->getMock();
         $mock->expects($this->once())
             ->method('send')
@@ -277,7 +277,7 @@ class ClientTest extends TestCase
         $response = new Response();
 
         $mock = $this->getMockBuilder(Stream::class)
-            ->setMethods(['send'])
+            ->onlyMethods(['send'])
             ->getMock();
         $mock->expects($this->once())
             ->method('send')
@@ -313,7 +313,7 @@ class ClientTest extends TestCase
         $response = new Response();
 
         $mock = $this->getMockBuilder(Stream::class)
-            ->setMethods(['send'])
+            ->onlyMethods(['send'])
             ->getMock();
         $mock->expects($this->once())
             ->method('send')
@@ -350,7 +350,7 @@ class ClientTest extends TestCase
         $response = new Response();
 
         $mock = $this->getMockBuilder(Stream::class)
-            ->setMethods(['send'])
+            ->onlyMethods(['send'])
             ->getMock();
         $mock->expects($this->once())
             ->method('send')
@@ -382,7 +382,7 @@ class ClientTest extends TestCase
     {
         $this->expectException(\Cake\Core\Exception\Exception::class);
         $mock = $this->getMockBuilder(Stream::class)
-            ->setMethods(['send'])
+            ->onlyMethods(['send'])
             ->getMock();
         $mock->expects($this->never())
             ->method('send');
@@ -406,7 +406,7 @@ class ClientTest extends TestCase
         $response = new Response();
 
         $mock = $this->getMockBuilder(Stream::class)
-            ->setMethods(['send'])
+            ->onlyMethods(['send'])
             ->getMock();
         $headers = [
             'Authorization' => 'Basic ' . base64_encode('mark:secret'),
@@ -464,7 +464,7 @@ class ClientTest extends TestCase
         $response = new Response();
 
         $mock = $this->getMockBuilder(Stream::class)
-            ->setMethods(['send'])
+            ->onlyMethods(['send'])
             ->getMock();
         $mock->expects($this->once())
             ->method('send')
@@ -516,7 +516,7 @@ class ClientTest extends TestCase
         ];
 
         $mock = $this->getMockBuilder(Stream::class)
-            ->setMethods(['send'])
+            ->onlyMethods(['send'])
             ->getMock();
         $mock->expects($this->once())
             ->method('send')
@@ -547,7 +547,7 @@ class ClientTest extends TestCase
         $data = 'some=value&more=data';
 
         $mock = $this->getMockBuilder(Stream::class)
-            ->setMethods(['send'])
+            ->onlyMethods(['send'])
             ->getMock();
         $mock->expects($this->any())
             ->method('send')
@@ -577,7 +577,7 @@ class ClientTest extends TestCase
     {
         $this->expectException(\Cake\Core\Exception\Exception::class);
         $mock = $this->getMockBuilder(Stream::class)
-            ->setMethods(['send'])
+            ->onlyMethods(['send'])
             ->getMock();
         $mock->expects($this->never())
             ->method('send');
@@ -597,7 +597,7 @@ class ClientTest extends TestCase
     public function testCookieStorage()
     {
         $adapter = $this->getMockBuilder(Stream::class)
-            ->setMethods(['send'])
+            ->onlyMethods(['send'])
             ->getMock();
 
         $headers = [
@@ -699,7 +699,7 @@ class ClientTest extends TestCase
         $response = new Response();
 
         $mock = $this->getMockBuilder(Stream::class)
-            ->setMethods(['send'])
+            ->onlyMethods(['send'])
             ->getMock();
         $mock->expects($this->once())
             ->method('send')
@@ -732,7 +732,7 @@ class ClientTest extends TestCase
         $url = 'http://cakephp.org';
 
         $adapter = $this->getMockBuilder(Client\Adapter\Stream::class)
-            ->setMethods(['send'])
+            ->onlyMethods(['send'])
             ->getMock();
 
         $redirect = new Response([
@@ -824,7 +824,7 @@ class ClientTest extends TestCase
         ];
 
         $mock = $this->getMockBuilder(Stream::class)
-            ->setMethods(['send'])
+            ->onlyMethods(['send'])
             ->getMock();
         $mock->expects($this->once())
             ->method('send')
@@ -859,7 +859,7 @@ class ClientTest extends TestCase
     public function testRedirectDifferentSubDomains()
     {
         $adapter = $this->getMockBuilder(Client\Adapter\Stream::class)
-            ->setMethods(['send'])
+            ->onlyMethods(['send'])
             ->getMock();
 
         $url = 'http://auth.example.org';

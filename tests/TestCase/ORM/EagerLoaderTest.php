@@ -149,7 +149,7 @@ class EagerLoaderTest extends TestCase
         ];
 
         $query = $this->getMockBuilder('Cake\ORM\Query')
-            ->setMethods(['join'])
+            ->onlyMethods(['join'])
             ->setConstructorArgs([$this->connection, $this->table])
             ->getMock();
 
@@ -488,7 +488,7 @@ class EagerLoaderTest extends TestCase
         ];
 
         $query = $this->getMockBuilder('Cake\ORM\Query')
-            ->setMethods(['join'])
+            ->onlyMethods(['join'])
             ->setConstructorArgs([$this->connection, $this->table])
             ->getMock();
 
