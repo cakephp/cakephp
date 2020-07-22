@@ -1759,6 +1759,8 @@ class ValidationTest extends TestCase
 
         $this->assertFalse(Validation::localizedTime('', 'date'));
         $this->assertFalse(Validation::localizedTime('invalid', 'date'));
+        $this->assertFalse(Validation::localizedTime(1, 'date'));
+        $this->assertFalse(Validation::localizedTime(['an array'], 'date'));
 
         // English (US)
         I18n::setLocale('en_US');

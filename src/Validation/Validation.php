@@ -658,7 +658,7 @@ class Validation
         if ($check instanceof DateTimeInterface) {
             return true;
         }
-        if (is_object($check)) {
+        if (!is_string($check)) {
             return false;
         }
         static $methods = [
