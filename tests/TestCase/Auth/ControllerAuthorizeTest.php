@@ -43,7 +43,7 @@ class ControllerAuthorizeTest extends TestCase
     {
         parent::setUp();
         $this->controller = $this->getMockBuilder(Controller::class)
-            ->setMethods(['isAuthorized'])
+            ->addMethods(['isAuthorized'])
             ->disableOriginalConstructor()
             ->getMock();
         $this->components = new ComponentRegistry($this->controller);

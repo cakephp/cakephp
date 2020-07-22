@@ -26,6 +26,7 @@ use Cake\TestSuite\TestCase;
 use Laminas\Diactoros\Response as DiactorosResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Psr\Http\Message\ServerRequestInterface;
+use RuntimeException;
 use TestApp\Http\TestRequestHandler;
 
 /**
@@ -141,6 +142,26 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $middleware = new CsrfProtectionMiddleware();
         $response = $middleware->process($request, $handler);
         $this->assertStringContainsString('csrfToken=', $response->getHeaderLine('Set-Cookie'));
+    }
+
+    /**
+     * Test that double applying CSRF causes a failure.
+     *
+     * @return void
+     */
+    public function testDoubleApplicationFailure()
+    {
+        $request = new ServerRequest([
+            'environment' => ['REQUEST_METHOD' => 'GET'],
+        ]);
+        $request = $request->withAttribute('csrfToken', 'not-good');
+        $handler = new TestRequestHandler(function () {
+            return new RedirectResponse('/');
+        });
+
+        $middleware = new CsrfProtectionMiddleware();
+        $this->expectException(RuntimeException::class);
+        $middleware->process($request, $handler);
     }
 
     /**

@@ -133,7 +133,7 @@ class CommandTest extends TestCase
     {
         /** @var \Cake\Console\Command|\PHPUnit\Framework\MockObject\MockObject $command */
         $command = $this->getMockBuilder(Command::class)
-            ->setMethods(['initialize'])
+            ->onlyMethods(['initialize'])
             ->getMock();
         $command->setName('cake example');
         $command->expects($this->once())->method('initialize');
@@ -226,7 +226,7 @@ class CommandTest extends TestCase
     {
         /** @var \Cake\Console\Command|\PHPUnit\Framework\MockObject\MockObject $command */
         $command = $this->getMockBuilder(Command::class)
-            ->setMethods(['getOptionParser'])
+            ->onlyMethods(['getOptionParser'])
             ->getMock();
         $parser = new ConsoleOptionParser('cake example');
         $parser->addArgument('name', ['required' => true]);
@@ -389,7 +389,7 @@ class CommandTest extends TestCase
     {
         $io = $this->getMockBuilder(ConsoleIo::class)
             ->setConstructorArgs([$output, $output, null, null])
-            ->setMethods(['in'])
+            ->addMethods(['in'])
             ->getMock();
 
         return $io;

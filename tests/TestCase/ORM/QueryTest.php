@@ -1885,7 +1885,7 @@ class QueryTest extends TestCase
     {
         /** @var \Cake\ORM\Query $query */
         $query = $this->getMockBuilder('Cake\ORM\Query')
-            ->setMethods(['all'])
+            ->onlyMethods(['all'])
             ->setConstructorArgs([$this->connection, $this->table])
             ->getMock();
 
@@ -1914,7 +1914,7 @@ class QueryTest extends TestCase
     public function testCollectionProxy($method, $arg, $return)
     {
         $query = $this->getMockBuilder('Cake\ORM\Query')
-            ->setMethods(['all'])
+            ->onlyMethods(['all'])
             ->setConstructorArgs([$this->connection, $this->table])
             ->getMock();
         $query->select();
@@ -1967,7 +1967,7 @@ class QueryTest extends TestCase
     public function testCacheReadIntegration()
     {
         $query = $this->getMockBuilder('Cake\ORM\Query')
-            ->setMethods(['execute'])
+            ->onlyMethods(['execute'])
             ->setConstructorArgs([$this->connection, $this->table])
             ->getMock();
         $resultSet = $this->getMockBuilder('Cake\ORM\ResultSet')
@@ -2302,7 +2302,7 @@ class QueryTest extends TestCase
     {
         $query = $this->getMockBuilder('Cake\ORM\Query')
             ->disableOriginalConstructor()
-            ->setMethods(['_performCount'])
+            ->onlyMethods(['_performCount'])
             ->getMock();
 
         $query->expects($this->once())
@@ -2326,7 +2326,7 @@ class QueryTest extends TestCase
     {
         $query = $this->getMockBuilder('Cake\ORM\Query')
             ->disableOriginalConstructor()
-            ->setMethods(['_performCount'])
+            ->onlyMethods(['_performCount'])
             ->getMock();
 
         $query->expects($this->at(0))

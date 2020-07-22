@@ -626,6 +626,7 @@ trait CollectionTrait
             }
             if (empty($key) || !isset($parents[$key])) {
                 foreach ($values as $id) {
+                    /** @psalm-suppress PossiblyInvalidArgument */
                     $parents[$id] = $isObject ? $parents[$id] : new ArrayIterator($parents[$id], 1);
                     $mapReduce->emit($parents[$id]);
                 }

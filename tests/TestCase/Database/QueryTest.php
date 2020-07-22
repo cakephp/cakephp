@@ -4233,7 +4233,7 @@ class QueryTest extends TestCase
         $this->loadFixtures('Authors');
 
         $statementMock = $this->getMockBuilder(StatementInterface::class)
-            ->setMethods(['rowCount', 'closeCursor'])
+            ->onlyMethods(['rowCount', 'closeCursor'])
             ->getMockForAbstractClass();
 
         $statementMock->expects($this->once())
@@ -4245,7 +4245,7 @@ class QueryTest extends TestCase
 
         /** @var \Cake\ORM\Query|\PHPUnit\Framework\MockObject\MockObject $queryMock */
         $queryMock = $this->getMockBuilder(Query::class)
-            ->setMethods(['execute'])
+            ->onlyMethods(['execute'])
             ->setConstructorArgs([$this->connection])
             ->getMock();
 

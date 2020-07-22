@@ -47,7 +47,7 @@ class ResponseEmitterTest extends TestCase
         $GLOBALS['mockedHeaders'] = [];
 
         $this->emitter = $this->getMockBuilder(ResponseEmitter::class)
-            ->setMethods(['setCookie'])
+            ->onlyMethods(['setCookie'])
             ->getMock();
 
         $this->emitter->expects($this->any())

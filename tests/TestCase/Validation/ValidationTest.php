@@ -969,6 +969,8 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::custom('12345', '/(?<!\\S)\\d++(?!\\S)/'));
         $this->assertFalse(Validation::custom('Text', '/(?<!\\S)\\d++(?!\\S)/'));
         $this->assertFalse(Validation::custom('123.45', '/(?<!\\S)\\d++(?!\\S)/'));
+        $this->assertFalse(Validation::custom(1, '/.*/'));
+        $this->assertFalse(Validation::custom(['input is not string'], '/.*/'));
         $this->assertFalse(Validation::custom('missing regex'));
     }
 
@@ -1759,6 +1761,8 @@ class ValidationTest extends TestCase
 
         $this->assertFalse(Validation::localizedTime('', 'date'));
         $this->assertFalse(Validation::localizedTime('invalid', 'date'));
+        $this->assertFalse(Validation::localizedTime(1, 'date'));
+        $this->assertFalse(Validation::localizedTime(['an array'], 'date'));
 
         // English (US)
         I18n::setLocale('en_US');

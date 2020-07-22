@@ -659,7 +659,6 @@ trait IntegrationTestTrait
 
             $formProtector = new FormProtector(['unlockedFields' => $this->_unlockedFields]);
             foreach ($keys as $field) {
-                /** @psalm-suppress PossiblyNullArgument */
                 $formProtector->addField($field);
             }
             $tokenData = $formProtector->buildTokenData($url, 'cli');
@@ -692,6 +691,7 @@ trait IntegrationTestTrait
     {
         foreach ($data as $key => $value) {
             if (is_scalar($value)) {
+                /** @psalm-suppress RedundantCondition */
                 $data[$key] = $value === false ? '0' : (string)$value;
 
                 continue;

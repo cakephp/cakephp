@@ -72,6 +72,7 @@ class Marshaller
 
         // Is a concrete column?
         foreach (array_keys($data) as $prop) {
+            $prop = (string)$prop;
             $columnType = $schema->getColumnType($prop);
             if ($columnType) {
                 $map[$prop] = function ($value, $entity) use ($columnType) {

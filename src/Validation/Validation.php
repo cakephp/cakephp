@@ -436,12 +436,16 @@ class Validation
     /**
      * Used when a custom regular expression is needed.
      *
-     * @param string $check The value to check.
+     * @param mixed $check The value to check.
      * @param string|null $regex If $check is passed as a string, $regex must also be set to valid regular expression
      * @return bool Success
      */
-    public static function custom(string $check, ?string $regex = null): bool
+    public static function custom($check, ?string $regex = null): bool
     {
+        if (!is_string($check)) {
+            return false;
+        }
+
         if ($regex === null) {
             static::$errors[] = 'You must define a regular expression for Validation::custom()';
 
@@ -658,7 +662,7 @@ class Validation
         if ($check instanceof DateTimeInterface) {
             return true;
         }
-        if (is_object($check)) {
+        if (!is_string($check)) {
             return false;
         }
         static $methods = [

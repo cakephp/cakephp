@@ -194,7 +194,7 @@ class LinkConstraintTest extends TestCase
         $ruleMock = $this
             ->getMockBuilder(LinkConstraint::class)
             ->setConstructorArgs(['Comments', LinkConstraint::STATUS_NOT_LINKED])
-            ->setMethods(['_aliasFields'])
+            ->onlyMethods(['_aliasFields'])
             ->getMock();
         $ruleMock
             ->expects($this->once())

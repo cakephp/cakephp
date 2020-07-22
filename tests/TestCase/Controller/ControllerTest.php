@@ -427,7 +427,7 @@ class ControllerTest extends TestCase
         $this->assertSame('/posts/index', $result);
 
         $request = $this->getMockBuilder('Cake\Http\ServerRequest')
-            ->setMethods(['referer'])
+            ->onlyMethods(['referer'])
             ->getMock();
 
         $request = new ServerRequest([
@@ -886,7 +886,7 @@ class ControllerTest extends TestCase
         $request = new ServerRequest(['url' => '/']);
         $response = new Response();
         $componentRegistry = $this->getMockBuilder('Cake\Controller\ComponentRegistry')
-            ->setMethods(['offsetGet'])
+            ->addMethods(['offsetGet'])
             ->getMock();
 
         $controller = new TestController($request, $response, null, null, $componentRegistry);

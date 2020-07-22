@@ -103,7 +103,7 @@ class DriverTest extends TestCase
     {
         $connection = $this->getMockBuilder(PDO::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getAttribute'])
+            ->onlyMethods(['getAttribute'])
             ->getMock();
 
         $connection
@@ -143,7 +143,7 @@ class DriverTest extends TestCase
 
         $connection = $this->getMockBuilder(PDO::class)
             ->disableOriginalConstructor()
-            ->setMethods(['quote'])
+            ->onlyMethods(['quote'])
             ->getMock();
 
         $connection
@@ -165,7 +165,7 @@ class DriverTest extends TestCase
     {
         $connection = $this->getMockBuilder(Mysql::class)
             ->disableOriginalConstructor()
-            ->setMethods(['lastInsertId'])
+            ->onlyMethods(['lastInsertId'])
             ->getMock();
 
         $connection
@@ -188,7 +188,7 @@ class DriverTest extends TestCase
 
         $connection = $this->getMockBuilder(PDO::class)
             ->disableOriginalConstructor()
-            ->setMethods(['query'])
+            ->onlyMethods(['query'])
             ->getMock();
 
         $connection
@@ -224,7 +224,7 @@ class DriverTest extends TestCase
     public function testCompileQuery()
     {
         $compiler = $this->getMockBuilder(QueryCompiler::class)
-            ->setMethods(['compile'])
+            ->onlyMethods(['compile'])
             ->getMock();
 
         $compiler
@@ -233,7 +233,7 @@ class DriverTest extends TestCase
             ->willReturn('1');
 
         $driver = $this->getMockBuilder(Driver::class)
-            ->setMethods(['newCompiler', 'queryTranslator'])
+            ->onlyMethods(['newCompiler', 'queryTranslator'])
             ->getMockForAbstractClass();
 
         $driver

@@ -100,7 +100,7 @@ class SqlserverTest extends TestCase
     public function testDnsString($constructorArgs, $dnsString)
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->setMethods(['_connect', 'getConnection'])
+            ->onlyMethods(['_connect', 'getConnection'])
             ->setConstructorArgs([$constructorArgs])
             ->getMock();
 
@@ -137,7 +137,7 @@ class SqlserverTest extends TestCase
             'settings' => ['config1' => 'value1', 'config2' => 'value2'],
         ];
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->setMethods(['_connect', 'setConnection', 'getConnection'])
+            ->onlyMethods(['_connect', 'setConnection', 'getConnection'])
             ->setConstructorArgs([$config])
             ->getMock();
         $dsn = 'sqlsrv:Server=foo;Database=bar;MultipleActiveResultSets=false';
@@ -157,7 +157,7 @@ class SqlserverTest extends TestCase
         $expected['port'] = null;
 
         $connection = $this->getMockBuilder('stdClass')
-            ->setMethods(['exec', 'quote'])
+            ->addMethods(['exec', 'quote'])
             ->getMock();
         $connection->expects($this->any())
             ->method('quote')
@@ -199,7 +199,7 @@ class SqlserverTest extends TestCase
             'encoding' => 'a-language',
         ];
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->setMethods(['_connect', 'connection'])
+            ->onlyMethods(['_connect'])
             ->setConstructorArgs([$config])
             ->getMock();
         $dsn = 'sqlsrv:Server=foo;Database=bar;MultipleActiveResultSets=false';
@@ -246,7 +246,7 @@ class SqlserverTest extends TestCase
             'database' => 'bar',
         ];
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->setMethods(['_connect', 'connection'])
+            ->onlyMethods(['_connect', 'getConnection'])
             ->setConstructorArgs([$config])
             ->getMock();
         $driver->connect();
@@ -260,14 +260,14 @@ class SqlserverTest extends TestCase
     public function testSelectLimitVersion12()
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->setMethods(['_connect', 'getConnection', 'version'])
+            ->onlyMethods(['_connect', 'getConnection', 'version'])
             ->setConstructorArgs([[]])
             ->getMock();
         $driver->method('version')
             ->will($this->returnValue('12'));
 
         $connection = $this->getMockBuilder('Cake\Database\Connection')
-            ->setMethods(['connect', 'getDriver', 'setDriver'])
+            ->onlyMethods(['connect', 'getDriver', 'setDriver'])
             ->setConstructorArgs([['log' => false]])
             ->getMock();
         $connection->method('getDriver')
@@ -309,7 +309,7 @@ class SqlserverTest extends TestCase
     public function testSelectLimitOldServer()
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->setMethods(['_connect', 'getConnection', 'version'])
+            ->onlyMethods(['_connect', 'getConnection', 'version'])
             ->setConstructorArgs([[]])
             ->getMock();
         $driver->expects($this->any())
@@ -317,7 +317,7 @@ class SqlserverTest extends TestCase
             ->will($this->returnValue('8'));
 
         $connection = $this->getMockBuilder('Cake\Database\Connection')
-            ->setMethods(['connect', 'getDriver', 'setDriver'])
+            ->onlyMethods(['connect', 'getDriver', 'setDriver'])
             ->setConstructorArgs([['log' => false]])
             ->getMock();
         $connection->expects($this->any())
@@ -375,11 +375,11 @@ class SqlserverTest extends TestCase
     public function testInsertUsesOutput()
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->setMethods(['_connect', 'getConnection'])
+            ->onlyMethods(['_connect', 'getConnection'])
             ->setConstructorArgs([[]])
             ->getMock();
         $connection = $this->getMockBuilder('Cake\Database\Connection')
-            ->setMethods(['connect', 'getDriver', 'setDriver'])
+            ->onlyMethods(['connect', 'getDriver', 'setDriver'])
             ->setConstructorArgs([['log' => false]])
             ->getMock();
         $connection->expects($this->any())
@@ -401,7 +401,7 @@ class SqlserverTest extends TestCase
     public function testHavingReplacesAlias()
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->setMethods(['connect', 'getConnection', 'version'])
+            ->onlyMethods(['connect', 'getConnection', 'version'])
             ->setConstructorArgs([[]])
             ->getMock();
         $driver->expects($this->any())
@@ -409,7 +409,7 @@ class SqlserverTest extends TestCase
             ->will($this->returnValue('8'));
 
         $connection = $this->getMockBuilder('\Cake\Database\Connection')
-            ->setMethods(['connect', 'getDriver', 'setDriver'])
+            ->onlyMethods(['connect', 'getDriver', 'setDriver'])
             ->setConstructorArgs([['log' => false]])
             ->getMock();
         $connection->expects($this->any())
@@ -438,7 +438,7 @@ class SqlserverTest extends TestCase
     public function testHavingWhenNoAliasIsUsed()
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->setMethods(['connect', 'getConnection', 'version'])
+            ->onlyMethods(['connect', 'getConnection', 'version'])
             ->setConstructorArgs([[]])
             ->getMock();
         $driver->expects($this->any())
@@ -446,7 +446,7 @@ class SqlserverTest extends TestCase
             ->will($this->returnValue('8'));
 
         $connection = $this->getMockBuilder('\Cake\Database\Connection')
-            ->setMethods(['connect', 'getDriver', 'setDriver'])
+            ->onlyMethods(['connect', 'getDriver', 'setDriver'])
             ->setConstructorArgs([['log' => false]])
             ->getMock();
         $connection->expects($this->any())

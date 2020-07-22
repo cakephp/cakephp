@@ -140,14 +140,14 @@ class PluginAssetsCommandsTest extends TestCase
         $output = new ConsoleOutput();
         $io = $this->getMockBuilder(ConsoleIo::class)
             ->setConstructorArgs([$output, $output, null, null])
-            ->setMethods(['in'])
+            ->addMethods(['in'])
             ->getMock();
         $parser = new ConsoleOptionParser('cake example');
         $parser->addArgument('name', ['optional' => true]);
         $parser->addOption('overwrite', ['default' => false, 'boolean' => true]);
 
         $command = $this->getMockBuilder('Cake\Command\PluginAssetsSymlinkCommand')
-            ->setMethods(['getOptionParser', '_createSymlink', '_copyDirectory'])
+            ->onlyMethods(['getOptionParser', '_createSymlink', '_copyDirectory'])
             ->getMock();
         $command->method('getOptionParser')->will($this->returnValue($parser));
 

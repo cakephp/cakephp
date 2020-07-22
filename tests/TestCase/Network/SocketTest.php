@@ -528,7 +528,7 @@ class SocketTest extends TestCase
     {
         $socketName = 'unix:///tmp/test.socket';
         $socket = $this->getMockBuilder(Socket::class)
-            ->setMethods(['_getStreamSocketClient'])
+            ->onlyMethods(['_getStreamSocketClient'])
             ->getMock();
         $socket->expects($this->once())
             ->method('_getStreamSocketClient')
