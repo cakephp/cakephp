@@ -69,6 +69,13 @@ class EntityTest extends TestCase
         $this->assertSame(3, $entity->thing);
         $this->assertSame('bar', $entity->getOriginal('foo'));
         $this->assertEquals(1, $entity->getOriginal('id'));
+
+        $entity->set(['foo', 'bar']);
+        $this->assertSame('foo', $entity->get('0'));
+        $this->assertSame('bar', $entity->get('1'));
+
+        $entity->set(['sample']);
+        $this->assertSame('sample', $entity->get('0'));
     }
 
     /**
