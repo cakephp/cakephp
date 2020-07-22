@@ -25,8 +25,6 @@ use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Laminas\Diactoros\Uri;
-use PHPUnit\Framework\Error\Notice;
-use PHPUnit\Framework\Error\Warning;
 use ReflectionFunction;
 use TestApp\Controller\Admin\PostsController;
 use TestApp\Controller\TestController;
@@ -110,8 +108,8 @@ class ControllerTest extends TestCase
         $controller->Bar = true;
         $this->assertTrue($controller->Bar);
 
-        $this->expectException(Notice::class);
-        $this->expectExceptionMessage(sprintf(
+        $this->expectNotice();
+        $this->expectNoticeMessage(sprintf(
             'Undefined property: Controller::$Foo in %s on line %s',
             __FILE__,
             __LINE__ + 2
@@ -853,7 +851,7 @@ class ControllerTest extends TestCase
      */
     public function testComponentsPropertyError(): void
     {
-        $this->expectException(Warning::class);
+        $this->expectWarning();
         $request = new ServerRequest(['url' => '/']);
         $response = new Response();
 
@@ -868,7 +866,7 @@ class ControllerTest extends TestCase
      */
     public function testHelpersPropertyError(): void
     {
-        $this->expectException(Warning::class);
+        $this->expectWarning();
         $request = new ServerRequest(['url' => '/']);
         $response = new Response();
 
