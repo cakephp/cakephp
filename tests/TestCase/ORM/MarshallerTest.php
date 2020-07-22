@@ -147,8 +147,8 @@ class MarshallerTest extends TestCase
         ];
         $marshall = new Marshaller($this->articles);
         $result = $marshall->one($data, []);
-        $this->assertEquals($data[0], $result->get('0'));
-        $this->assertEquals($data[1], $result->get('1'));
+        $this->assertSame($data[0], $result->get('0'));
+        $this->assertSame($data[1], $result->get('1'));
     }
 
     /**
