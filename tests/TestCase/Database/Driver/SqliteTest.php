@@ -33,7 +33,7 @@ class SqliteTest extends TestCase
     public function testConnectionConfigDefault()
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlite')
-            ->setMethods(['_connect'])
+            ->onlyMethods(['_connect'])
             ->getMock();
         $dsn = 'sqlite::memory:';
         $expected = [
@@ -74,7 +74,7 @@ class SqliteTest extends TestCase
             'mask' => 0666,
         ];
         $driver = $this->getMockBuilder('Cake\Database\driver\Sqlite')
-            ->setMethods(['_connect', 'getConnection'])
+            ->onlyMethods(['_connect', 'getConnection'])
             ->setConstructorArgs([$config])
             ->getMock();
         $dsn = 'sqlite:bar.db';
@@ -88,7 +88,7 @@ class SqliteTest extends TestCase
         ];
 
         $connection = $this->getMockBuilder('StdClass')
-            ->setMethods(['exec'])
+            ->addMethods(['exec'])
             ->getMock();
         $connection->expects($this->at(0))->method('exec')->with('Execute this');
         $connection->expects($this->at(1))->method('exec')->with('this too');
@@ -131,7 +131,8 @@ class SqliteTest extends TestCase
     {
         $driver = new Sqlite();
         $mock = $this->getMockBuilder(PDO::class)
-            ->setMethods(['quote', 'quoteIdentifier'])
+            ->onlyMethods(['quote'])
+            ->addMethods(['quoteIdentifier'])
             ->disableOriginalConstructor()
             ->getMock();
         $mock->expects($this->any())

@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Driver;
 
+use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
@@ -46,7 +47,7 @@ class MysqlTest extends TestCase
     public function testConnectionConfigDefault()
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
-            ->setMethods(['_connect', 'getConnection'])
+            ->onlyMethods(['_connect', 'getConnection'])
             ->getMock();
         $dsn = 'mysql:host=localhost;port=3306;dbname=cake;charset=utf8mb4';
         $expected = [
@@ -68,7 +69,7 @@ class MysqlTest extends TestCase
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
         $connection = $this->getMockBuilder('StdClass')
-            ->setMethods(['exec'])
+            ->addMethods(['exec'])
             ->getMock();
 
         $driver->expects($this->once())->method('_connect')
@@ -103,7 +104,7 @@ class MysqlTest extends TestCase
             ],
         ];
         $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
-            ->setMethods(['_connect', 'getConnection'])
+            ->onlyMethods(['_connect', 'getConnection'])
             ->setConstructorArgs([$config])
             ->getMock();
         $dsn = 'mysql:host=foo;port=3440;dbname=bar';
@@ -117,7 +118,7 @@ class MysqlTest extends TestCase
         ];
 
         $connection = $this->getMockBuilder('StdClass')
-            ->setMethods(['exec'])
+            ->addMethods(['exec'])
             ->getMock();
         $connection->expects($this->at(0))->method('exec')->with('Execute this');
         $connection->expects($this->at(1))->method('exec')->with('this too');
@@ -187,7 +188,8 @@ class MysqlTest extends TestCase
     {
         /** @var \PHPUnit\Framework\MockObject\MockObject&\Cake\Database\Connection $connection */
         $connection = $this->getMockBuilder(Connection::class)
-            ->setMethods(['getAttribute'])
+            ->disableOriginalConstructor()
+            ->addMethods(['getAttribute'])
             ->getMock();
         $connection->expects($this->once())
             ->method('getAttribute')
@@ -196,7 +198,7 @@ class MysqlTest extends TestCase
 
         /** @var \PHPUnit\Framework\MockObject\MockObject&\Cake\Database\Driver\Mysql $driver */
         $driver = $this->getMockBuilder(Mysql::class)
-            ->setMethods(['connect'])
+            ->onlyMethods(['connect'])
             ->getMock();
 
         $driver->setConnection($connection);

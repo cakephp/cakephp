@@ -49,7 +49,7 @@ class ConsoleErrorHandlerTest extends TestCase
         parent::setUp();
         $this->stderr = new ConsoleOutput();
         $this->Error = $this->getMockBuilder('Cake\Error\ConsoleErrorHandler')
-            ->setMethods(['_stop'])
+            ->onlyMethods(['_stop'])
             ->setConstructorArgs([['stderr' => $this->stderr]])
             ->getMock();
         Log::drop('stdout');

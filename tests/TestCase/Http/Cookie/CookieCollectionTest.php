@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 use DateTime;
 use InvalidArgumentException;
-use PHPUnit\Framework\Error\Warning;
 
 /**
  * Cookie collection test.
@@ -424,8 +423,8 @@ class CookieCollectionTest extends TestCase
      */
     public function testCookieSizeWarning()
     {
-        $this->expectException(Warning::class);
-        $this->expectExceptionMessage('The cookie `default` exceeds the recommended maximum cookie length of 4096 bytes.');
+        $this->expectWarning();
+        $this->expectWarningMessage('The cookie `default` exceeds the recommended maximum cookie length of 4096 bytes.');
 
         $string = Security::insecureRandomBytes(9000);
         $collection = new CookieCollection();

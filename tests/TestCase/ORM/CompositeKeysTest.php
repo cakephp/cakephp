@@ -587,7 +587,7 @@ class CompositeKeysTest extends TestCase
     {
         $table = $this->getTableLocator()->get('SiteAuthors');
         $query = $this->getMockBuilder('Cake\ORM\Query')
-            ->setMethods(['_addDefaultFields', 'execute'])
+            ->onlyMethods(['_addDefaultFields', 'execute'])
             ->setConstructorArgs([$table->getConnection(), $table])
             ->getMock();
 

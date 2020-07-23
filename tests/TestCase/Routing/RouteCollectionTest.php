@@ -693,7 +693,7 @@ class RouteCollectionTest extends TestCase
         $this->assertSame($result, $this->collection);
 
         $mock = $this->getMockBuilder('\stdClass')
-            ->setMethods(['__invoke'])
+            ->addMethods(['__invoke'])
             ->getMock();
         $result = $this->collection->registerMiddleware('callable', $mock);
         $this->assertSame($result, $this->collection);
@@ -715,7 +715,7 @@ class RouteCollectionTest extends TestCase
         });
 
         $mock = $this->getMockBuilder('\stdClass')
-            ->setMethods(['__invoke'])
+            ->addMethods(['__invoke'])
             ->getMock();
         $result = $this->collection->registerMiddleware('callable', $mock);
         $this->collection->registerMiddleware('callable', $mock);

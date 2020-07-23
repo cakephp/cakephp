@@ -22,7 +22,6 @@ use Cake\Cache\Engine\FileEngine;
 use Cake\Cache\Engine\NullEngine;
 use Cake\Cache\InvalidArgumentException;
 use Cake\TestSuite\TestCase;
-use PHPUnit\Framework\Error\Error;
 use Psr\SimpleCache\CacheInterface as SimpleCacheInterface;
 
 /**
@@ -113,7 +112,7 @@ class CacheTest extends TestCase
             'fallback' => false,
         ]);
 
-        $this->expectException(Error::class);
+        $this->expectError();
 
         Cache::pool('tests');
     }
@@ -266,8 +265,8 @@ class CacheTest extends TestCase
             'className' => '\stdClass',
         ]);
 
-        $this->expectException(Error::class);
-        $this->expectExceptionMessage('Cache engines must use Cake\Cache\CacheEngine');
+        $this->expectError();
+        $this->expectErrorMessage('Cache engines must use Cake\Cache\CacheEngine');
 
         Cache::pool('tests');
     }
@@ -285,8 +284,8 @@ class CacheTest extends TestCase
             'engine' => $mock,
         ]);
 
-        $this->expectException(Error::class);
-        $this->expectExceptionMessage('is not properly configured');
+        $this->expectError();
+        $this->expectErrorMessage('is not properly configured');
 
         Cache::pool('tests');
     }
@@ -746,7 +745,7 @@ class CacheTest extends TestCase
             'prefix' => '',
         ]);
 
-        $this->expectException(\PHPUnit\Framework\Error\Error::class);
+        $this->expectError();
 
         Cache::write('fail', 'value', 'test_trigger');
     }

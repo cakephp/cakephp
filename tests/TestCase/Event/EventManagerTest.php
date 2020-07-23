@@ -334,7 +334,7 @@ class EventManagerTest extends TestCase
         $manager = new EventManager();
         /** @var \TestApp\TestCase\Event\CustomTestEventListenerInterface|\PHPUnit\Framework\MockObject\MockObject $listener */
         $listener = $this->getMockBuilder(CustomTestEventListenerInterface::class)
-            ->setMethods(['secondListenerFunction'])
+            ->onlyMethods(['secondListenerFunction'])
             ->getMock();
         $manager->on($listener);
 
@@ -361,7 +361,7 @@ class EventManagerTest extends TestCase
     {
         $manager = new EventManager();
         $listener = $this->getMockBuilder(CustomTestEventListenerInterface::class)
-            ->setMethods(['listenerFunction', 'thirdListenerFunction'])
+            ->onlyMethods(['listenerFunction', 'thirdListenerFunction'])
             ->getMock();
         $manager->on($listener);
         $event = new Event('multiple.handlers');
@@ -383,7 +383,7 @@ class EventManagerTest extends TestCase
     {
         $manager = new EventManager();
         $listener = $this->getMockBuilder(CustomTestEventListenerInterface::class)
-            ->setMethods(['secondListenerFunction'])
+            ->onlyMethods(['secondListenerFunction'])
             ->getMock();
         $manager->on($listener);
         $expected = [
@@ -422,7 +422,7 @@ class EventManagerTest extends TestCase
     public function testDispatchWithGlobal()
     {
         $generalManager = $this->getMockBuilder('Cake\Event\EventManager')
-            ->setMethods(['prioritisedListeners'])
+            ->onlyMethods(['prioritisedListeners'])
             ->getMock();
         $manager = new EventManager();
         $event = new Event('fake.event');

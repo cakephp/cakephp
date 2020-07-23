@@ -128,7 +128,7 @@ class AuthComponentTest extends TestCase
     public function testIdentify(): void
     {
         $AuthLoginFormAuthenticate = $this->getMockBuilder(FormAuthenticate::class)
-            ->setMethods(['authenticate'])
+            ->onlyMethods(['authenticate'])
             ->disableOriginalConstructor()
             ->getMock();
         $this->Auth->authenticate = [
@@ -169,7 +169,7 @@ class AuthComponentTest extends TestCase
     public function testIdentifyArrayAccess(): void
     {
         $AuthLoginFormAuthenticate = $this->getMockBuilder(FormAuthenticate::class)
-            ->setMethods(['authenticate'])
+            ->onlyMethods(['authenticate'])
             ->disableOriginalConstructor()
             ->getMock();
         $this->Auth->authenticate = [
@@ -251,15 +251,15 @@ class AuthComponentTest extends TestCase
     public function testIsAuthorizedDelegation(): void
     {
         $AuthMockOneAuthorize = $this->getMockBuilder(BaseAuthorize::class)
-            ->setMethods(['authorize'])
+            ->onlyMethods(['authorize'])
             ->disableOriginalConstructor()
             ->getMock();
         $AuthMockTwoAuthorize = $this->getMockBuilder(BaseAuthorize::class)
-            ->setMethods(['authorize'])
+            ->onlyMethods(['authorize'])
             ->disableOriginalConstructor()
             ->getMock();
         $AuthMockThreeAuthorize = $this->getMockBuilder(BaseAuthorize::class)
-            ->setMethods(['authorize'])
+            ->onlyMethods(['authorize'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -293,7 +293,7 @@ class AuthComponentTest extends TestCase
     public function testIsAuthorizedWithArrayObject(): void
     {
         $AuthMockOneAuthorize = $this->getMockBuilder(BaseAuthorize::class)
-            ->setMethods(['authorize'])
+            ->onlyMethods(['authorize'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -319,7 +319,7 @@ class AuthComponentTest extends TestCase
     public function testIsAuthorizedUsingUserInSession(): void
     {
         $AuthMockFourAuthorize = $this->getMockBuilder(BaseAuthorize::class)
-            ->setMethods(['authorize'])
+            ->onlyMethods(['authorize'])
             ->disableOriginalConstructor()
             ->getMock();
         $this->Auth->setConfig('authorize', ['AuthMockFour']);
@@ -823,7 +823,7 @@ class AuthComponentTest extends TestCase
         $this->Auth->getController()->getRequest()->getSession()->write('Auth.User.id', '1');
         $this->Auth->setConfig('authenticate', ['Form']);
         $this->getMockBuilder(BaseAuthorize::class)
-            ->setMethods(['authorize'])
+            ->onlyMethods(['authorize'])
             ->disableOriginalConstructor()
             ->setMockClassName('NoLoginRedirectMockAuthorize')
             ->getMock();
@@ -900,7 +900,8 @@ class AuthComponentTest extends TestCase
 
         $response = new Response();
         $Controller = $this->getMockBuilder('Cake\Controller\Controller')
-            ->setMethods(['on', 'redirect'])
+            ->onlyMethods(['redirect'])
+            ->addMethods(['on'])
             ->setConstructorArgs([$request, $response])
             ->getMock();
         $event = new Event('Controller.startup', $Controller);
@@ -923,7 +924,7 @@ class AuthComponentTest extends TestCase
     {
         $url = '/party/on';
         $this->Auth->Flash = $this->getMockBuilder('Cake\Controller\Component\FlashComponent')
-            ->setMethods(['set'])
+            ->onlyMethods(['set'])
             ->setConstructorArgs([$this->Controller->components()])
             ->getMock();
         $request = new ServerRequest([
@@ -939,7 +940,8 @@ class AuthComponentTest extends TestCase
 
         $response = new Response();
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
-            ->setMethods(['on', 'redirect'])
+            ->onlyMethods(['redirect'])
+            ->addMethods(['on'])
             ->setConstructorArgs([$request, $response])
             ->getMock();
 
@@ -964,7 +966,7 @@ class AuthComponentTest extends TestCase
     {
         $url = '/party/on';
         $this->Auth->Flash = $this->getMockBuilder('Cake\Controller\Component\FlashComponent')
-            ->setMethods(['set'])
+            ->onlyMethods(['set'])
             ->setConstructorArgs([$this->Controller->components()])
             ->getMock();
         $request = new ServerRequest([
@@ -980,7 +982,8 @@ class AuthComponentTest extends TestCase
 
         $response = new Response();
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
-            ->setMethods(['on', 'redirect'])
+            ->onlyMethods(['redirect'])
+            ->addMethods(['on'])
             ->setConstructorArgs([$request, $response])
             ->getMock();
 
@@ -1003,7 +1006,7 @@ class AuthComponentTest extends TestCase
     {
         $url = '/party/on';
         $session = $this->getMockBuilder(Session::class)
-            ->setMethods(['flash'])
+            ->addMethods(['flash'])
             ->getMock();
         $request = new ServerRequest([
             'session' => $session,
@@ -1018,7 +1021,8 @@ class AuthComponentTest extends TestCase
 
         $response = new Response();
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
-            ->setMethods(['on', 'redirect'])
+            ->onlyMethods(['redirect'])
+            ->addMethods(['on'])
             ->setConstructorArgs([$request, $response])
             ->getMock();
 
@@ -1053,7 +1057,8 @@ class AuthComponentTest extends TestCase
             ->withRequestTarget('/party/on');
         $response = new Response();
         $Controller = $this->getMockBuilder('Cake\Controller\Controller')
-            ->setMethods(['on', 'redirect'])
+            ->onlyMethods(['redirect'])
+            ->addMethods(['on'])
             ->setConstructorArgs([$request, $response])
             ->getMock();
 
@@ -1071,7 +1076,7 @@ class AuthComponentTest extends TestCase
     {
         $event = new Event('Controller.startup', $this->Controller);
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
-            ->setMethods(['redirect'])
+            ->onlyMethods(['redirect'])
             ->getMock();
         $controller->methods = ['login'];
 
@@ -1375,7 +1380,7 @@ class AuthComponentTest extends TestCase
     public function testSetUser(): void
     {
         $storage = $this->getMockBuilder('Cake\Auth\Storage\SessionStorage')
-            ->setMethods(['write'])
+            ->onlyMethods(['write'])
             ->setConstructorArgs([$this->Controller->getRequest(), $this->Controller->getResponse()])
             ->getMock();
         $this->Auth->storage($storage);

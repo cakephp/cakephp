@@ -60,7 +60,7 @@ class SchemaCacheCommandsTest extends TestCase
         $this->useCommandRunner();
 
         $this->cache = $this->getMockBuilder(NullEngine::class)
-            ->setMethods(['set', 'get', 'delete'])
+            ->onlyMethods(['set', 'get', 'delete'])
             ->getMock();
         Cache::setConfig('orm_cache', $this->cache);
 
@@ -87,7 +87,7 @@ class SchemaCacheCommandsTest extends TestCase
         $io = $this->getMockBuilder(ConsoleIo::class)->getMock();
         $shell = $this->getMockBuilder(SchemaCacheShell::class)
             ->setConstructorArgs([$io])
-            ->setMethods(['_getSchemaCache'])
+            ->onlyMethods(['_getSchemaCache'])
             ->getMock();
 
         $schemaCache = new SchemaCache($this->connection);

@@ -690,7 +690,7 @@ class ExceptionRendererTest extends TestCase
 
         /** @var \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject $controller */
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
-            ->setMethods(['render'])
+            ->onlyMethods(['render'])
             ->getMock();
         $controller->viewBuilder()->setHelpers(['Fail', 'Boom']);
         $controller->setRequest(new ServerRequest());
@@ -720,7 +720,7 @@ class ExceptionRendererTest extends TestCase
 
         /** @var \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject $controller */
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
-            ->setMethods(['beforeRender'])
+            ->onlyMethods(['beforeRender'])
             ->getMock();
         $controller->request = new ServerRequest();
         $controller->expects($this->any())
@@ -807,7 +807,7 @@ class ExceptionRendererTest extends TestCase
 
         /** @var \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject $controller */
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
-            ->setMethods(['render'])
+            ->onlyMethods(['render'])
             ->getMock();
         $controller->setPlugin('TestPlugin');
         $controller->request = new ServerRequest();
@@ -839,7 +839,7 @@ class ExceptionRendererTest extends TestCase
 
         /** @var \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject $controller */
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
-            ->setMethods(['render'])
+            ->onlyMethods(['render'])
             ->getMock();
         $controller->setPlugin('TestPlugin');
         $controller->request = new ServerRequest();

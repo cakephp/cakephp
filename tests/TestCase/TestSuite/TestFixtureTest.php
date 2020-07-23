@@ -178,7 +178,7 @@ class TestFixtureTest extends TestCase
         $this->assertSame(['id', 'letter'], $fixture->getTableSchema()->columns());
 
         $db = $this->getMockBuilder('Cake\Database\Connection')
-            ->setMethods(['prepare', 'execute'])
+            ->onlyMethods(['prepare', 'execute'])
             ->disableOriginalConstructor()
             ->getMock();
         $db->expects($this->never())
@@ -230,7 +230,7 @@ class TestFixtureTest extends TestCase
      */
     public function testCreateError()
     {
-        $this->expectException(\PHPUnit\Framework\Error\Error::class);
+        $this->expectError();
         $fixture = new ArticlesFixture();
         $db = $this->getMockBuilder('Cake\Database\Connection')
             ->disableOriginalConstructor()

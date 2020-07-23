@@ -79,7 +79,7 @@ class FormTest extends TestCase
     public function testGetValidator()
     {
         $form = $this->getMockBuilder(Form::class)
-            ->setMethods(['buildValidator'])
+            ->addMethods(['buildValidator'])
             ->getMock();
 
         $form->expects($this->once())
@@ -182,7 +182,7 @@ class FormTest extends TestCase
     public function testExecuteInvalid()
     {
         $form = $this->getMockBuilder('Cake\Form\Form')
-            ->setMethods(['_execute'])
+            ->onlyMethods(['_execute'])
             ->getMock();
         $form->getValidator()
             ->add('email', 'format', ['rule' => 'email']);

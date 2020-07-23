@@ -297,7 +297,7 @@ class FixtureManagerTest extends TestCase
 
         // This connection should _not_ be used.
         $other = $this->getMockBuilder('Cake\Database\Connection')
-            ->setMethods(['execute'])
+            ->onlyMethods(['execute'])
             ->setConstructorArgs([['driver' => $connection->getDriver()]])
             ->getMock();
         $other->expects($this->never())
@@ -307,7 +307,7 @@ class FixtureManagerTest extends TestCase
         // This connection should be used instead of
         // the 'other' connection as the alias should not be ignored.
         $testOther = $this->getMockBuilder('Cake\Database\Connection')
-            ->setMethods(['execute'])
+            ->onlyMethods(['execute'])
             ->setConstructorArgs([[
                 'database' => $connection->config()['database'],
                 'driver' => $connection->getDriver(),
@@ -342,7 +342,7 @@ class FixtureManagerTest extends TestCase
     public function testLoadSingle()
     {
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')
-            ->setMethods(['getFixtures'])
+            ->onlyMethods(['getFixtures'])
             ->getMock();
         $test->autoFixtures = false;
         $test->expects($this->any())
@@ -381,7 +381,7 @@ class FixtureManagerTest extends TestCase
             ->willReturn(['core.Products']);
 
         $manager = $this->getMockBuilder(FixtureManager::class)
-            ->setMethods(['_runOperation'])
+            ->onlyMethods(['_runOperation'])
             ->getMock();
         $manager->expects($this->any())
             ->method('_runOperation')
@@ -411,7 +411,7 @@ class FixtureManagerTest extends TestCase
     public function testExceptionOnLoadFixture($method, $expectedMessage)
     {
         $fixture = $this->getMockBuilder('Cake\Test\Fixture\ProductsFixture')
-            ->setMethods([$method])
+            ->onlyMethods([$method])
             ->getMock();
         $fixture->expects($this->once())
             ->method($method)
@@ -430,7 +430,7 @@ class FixtureManagerTest extends TestCase
 
         /** @var \Cake\TestSuite\Fixture\FixtureManager|\PHPUnit\Framework\MockObject\MockObject $manager */
         $manager = $this->getMockBuilder(FixtureManager::class)
-            ->setMethods(['_fixtureConnections'])
+            ->onlyMethods(['_fixtureConnections'])
             ->getMock();
         $manager->expects($this->any())
             ->method('_fixtureConnections')

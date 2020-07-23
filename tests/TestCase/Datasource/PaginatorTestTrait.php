@@ -1384,7 +1384,7 @@ trait PaginatorTestTrait
     protected function _getMockPosts($methods = [])
     {
         return $this->getMockBuilder('TestApp\Model\Table\PaginatorPostsTable')
-            ->setMethods($methods)
+            ->onlyMethods($methods)
             ->setConstructorArgs([[
                 'connection' => ConnectionManager::get('test'),
                 'alias' => 'PaginatorPosts',
@@ -1410,7 +1410,8 @@ trait PaginatorTestTrait
     {
         /** @var \Cake\ORM\Query|\PHPUnit\Framework\MockObject\MockObject $query */
         $query = $this->getMockBuilder('Cake\ORM\Query')
-            ->setMethods(['total', 'all', 'count', 'applyOptions'])
+            ->onlyMethods(['all', 'count', 'applyOptions'])
+            ->addMethods(['total'])
             ->disableOriginalConstructor()
             ->getMock();
 

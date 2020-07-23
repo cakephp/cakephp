@@ -249,6 +249,11 @@ class TextTest extends TestCase
             'user.created' => Time::parse('2016-01-01'),
         ]);
         $this->assertSame($expected, $result);
+
+        $string = 'Sum is :sum (:ob).';
+        $expected = 'Sum is 26083 (foo).';
+        $result = Text::insert($string, ['sum' => 26083, 'ob' => 'foo']); // crc32('ob') = 26083
+        $this->assertSame($expected, $result);
     }
 
     /**

@@ -55,7 +55,7 @@ class DigestTest extends TestCase
     protected function getClientMock()
     {
         return $this->getMockBuilder(Client::class)
-            ->setMethods(['send'])
+            ->onlyMethods(['send'])
             ->getMock();
     }
 

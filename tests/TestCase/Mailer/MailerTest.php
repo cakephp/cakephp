@@ -433,7 +433,8 @@ class MailerTest extends TestCase
     public function testSend()
     {
         $mailer = $this->getMockBuilder(Mailer::class)
-            ->setMethods(['test', 'deliver'])
+            ->onlyMethods(['deliver'])
+            ->addMethods(['test'])
             ->getMock();
         $mailer->expects($this->once())
             ->method('test')
@@ -1195,7 +1196,8 @@ class MailerTest extends TestCase
     public function testSendWithUnsetTemplateDefaultsToActionName()
     {
         $mailer = $this->getMockBuilder(Mailer::class)
-            ->setMethods(['test', 'deliver', 'restore'])
+            ->onlyMethods(['deliver', 'restore'])
+            ->addMethods(['test'])
             ->getMock();
         $mailer->expects($this->once())
             ->method('test')
@@ -1293,7 +1295,8 @@ class MailerTest extends TestCase
     public function testSendFailsEmailIsReset()
     {
         $mailer = $this->getMockBuilder(Mailer::class)
-            ->setMethods(['welcome', 'restore', 'deliver'])
+            ->onlyMethods(['restore', 'deliver'])
+            ->addMethods(['welcome'])
             ->getMock();
 
         $mailer->expects($this->once())
@@ -1374,7 +1377,8 @@ class MailerTest extends TestCase
     public function testDefaultProfileRestoration()
     {
         $mailer = $this->getMockBuilder(Mailer::class)
-            ->setMethods(['test', 'deliver'])
+            ->onlyMethods(['deliver'])
+            ->addMethods(['test'])
             ->setConstructorArgs([['template' => 'cakephp']])
             ->getMock();
         $mailer->expects($this->once())

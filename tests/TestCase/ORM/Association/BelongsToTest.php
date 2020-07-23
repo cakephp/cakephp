@@ -298,7 +298,7 @@ class BelongsToTest extends TestCase
     public function testSaveAssociatedOnlyEntities()
     {
         $mock = $this->getMockBuilder('Cake\ORM\Table')
-            ->setMethods(['saveAssociated'])
+            ->addMethods(['saveAssociated'])
             ->disableOriginalConstructor()
             ->getMock();
         $config = [

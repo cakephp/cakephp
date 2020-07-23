@@ -133,6 +133,25 @@ class MarshallerTest extends TestCase
     }
 
     /**
+     * Test that marshalling an entity with numeric key in data array
+     *
+     * @return void
+     */
+    public function testOneWithNumericField()
+    {
+        $data = [
+            'sample',
+            'username' => 'test',
+            'password' => 'secret',
+            1,
+        ];
+        $marshall = new Marshaller($this->articles);
+        $result = $marshall->one($data, []);
+        $this->assertSame($data[0], $result->get('0'));
+        $this->assertSame($data[1], $result->get('1'));
+    }
+
+    /**
      * Test that marshalling an entity with '' for pk values results
      * in no pk value being set.
      *

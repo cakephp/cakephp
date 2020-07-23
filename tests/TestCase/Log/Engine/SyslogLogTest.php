@@ -33,13 +33,13 @@ class SyslogLogTest extends TestCase
     {
         /** @var \Cake\Log\Engine\SyslogLog|\PHPUnit\Framework\MockObject\MockObject $log */
         $log = $this->getMockBuilder(SyslogLog::class)
-            ->setMethods(['_open', '_write'])
+            ->onlyMethods(['_open', '_write'])
             ->getMock();
         $log->expects($this->once())->method('_open')->with('', LOG_ODELAY, LOG_USER);
         $log->log('debug', 'message');
 
         $log = $this->getMockBuilder(SyslogLog::class)
-            ->setMethods(['_open', '_write'])
+            ->onlyMethods(['_open', '_write'])
             ->getMock();
         $log->setConfig([
             'prefix' => 'thing',
@@ -62,7 +62,7 @@ class SyslogLogTest extends TestCase
     {
         /** @var \Cake\Log\Engine\SyslogLog|\PHPUnit\Framework\MockObject\MockObject $log */
         $log = $this->getMockBuilder(SyslogLog::class)
-            ->setMethods(['_open', '_write'])
+            ->onlyMethods(['_open', '_write'])
             ->getMock();
         $log->expects($this->once())->method('_write')->with($expected, $type . ': Foo');
         $log->log($type, 'Foo');
@@ -77,7 +77,7 @@ class SyslogLogTest extends TestCase
     {
         /** @var \Cake\Log\Engine\SyslogLog|\PHPUnit\Framework\MockObject\MockObject $log */
         $log = $this->getMockBuilder(SyslogLog::class)
-            ->setMethods(['_open', '_write'])
+            ->onlyMethods(['_open', '_write'])
             ->getMock();
         $log->expects($this->at(1))->method('_write')->with(LOG_DEBUG, 'debug: Foo');
         $log->expects($this->at(2))->method('_write')->with(LOG_DEBUG, 'debug: Bar');

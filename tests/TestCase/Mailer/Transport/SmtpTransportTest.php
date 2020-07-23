@@ -59,7 +59,7 @@ class SmtpTransportTest extends TestCase
     {
         parent::setUp();
         $this->socket = $this->getMockBuilder('Cake\Network\Socket')
-            ->setMethods(['read', 'write', 'connect', 'disconnect', 'enableCrypto'])
+            ->onlyMethods(['read', 'write', 'connect', 'disconnect', 'enableCrypto'])
             ->getMock();
 
         $this->SmtpTransport = new SmtpTestTransport();
@@ -645,7 +645,7 @@ class SmtpTransportTest extends TestCase
 
         /** @var \Cake\Mailer\Message $message */
         $message = $this->getMockBuilder(Message::class)
-            ->setMethods(['getBody'])
+            ->onlyMethods(['getBody'])
             ->getMock();
         $message->setFrom('noreply@cakephp.org', 'CakePHP Test');
         $message->setTo('cake@cakephp.org', 'CakePHP');
@@ -701,7 +701,7 @@ class SmtpTransportTest extends TestCase
     {
         /** @var \Cake\Mailer\Message $message */
         $message = $this->getMockBuilder(Message::class)
-            ->setMethods(['getBody'])
+            ->onlyMethods(['getBody'])
             ->getMock();
         $message->setFrom('noreply@cakephp.org', 'CakePHP Test');
         $message->setTo('cake@cakephp.org', 'CakePHP');
@@ -738,7 +738,7 @@ class SmtpTransportTest extends TestCase
     {
         /** @var \Cake\Mailer\Message $message */
         $message = $this->getMockBuilder(Message::class)
-            ->setMethods(['getBody'])
+            ->onlyMethods(['getBody'])
             ->getMock();
         $message->setFrom('noreply@cakephp.org', 'CakePHP Test');
         $message->setTo('cake@cakephp.org', 'CakePHP');

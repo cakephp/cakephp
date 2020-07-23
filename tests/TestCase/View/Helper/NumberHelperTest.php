@@ -94,7 +94,7 @@ class NumberHelperTest extends TestCase
     public function testNumberHelperProxyMethodCalls($method)
     {
         $number = $this->getMockBuilder(NumberMock::class)
-            ->setMethods([$method])
+            ->addMethods([$method])
             ->getMock();
         $helper = new NumberHelperTestObject($this->View, ['engine' => NumberMock::class]);
         $helper->attach($number);

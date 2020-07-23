@@ -1029,7 +1029,7 @@ SQL;
             ->will($this->returnValue($driver));
 
         $statement = $this->getMockBuilder('\PDOStatement')
-            ->setMethods(['execute', 'rowCount', 'closeCursor', 'fetchAll'])
+            ->onlyMethods(['execute', 'rowCount', 'closeCursor', 'fetchAll'])
             ->getMock();
         $driver->getConnection()->expects($this->once())
             ->method('prepare')
@@ -1062,7 +1062,7 @@ SQL;
             ->will($this->returnValue($driver));
 
         $statement = $this->getMockBuilder('\PDOStatement')
-            ->setMethods(['execute', 'rowCount', 'closeCursor', 'fetchAll'])
+            ->onlyMethods(['execute', 'rowCount', 'closeCursor', 'fetchAll'])
             ->getMock();
         $driver->getConnection()
             ->expects($this->once())
@@ -1089,7 +1089,7 @@ SQL;
     {
         $driver = new Sqlite();
         $mock = $this->getMockBuilder(PDO::class)
-            ->setMethods(['quote', 'prepare'])
+            ->onlyMethods(['quote', 'prepare'])
             ->disableOriginalConstructor()
             ->getMock();
         $mock->expects($this->any())
