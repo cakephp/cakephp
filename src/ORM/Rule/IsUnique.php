@@ -31,13 +31,6 @@ class IsUnique
     protected $_fields;
 
     /**
-     * The options to use.
-     *
-     * @var array
-     */
-    protected $_options;
-
-    /**
      * Constructor.
      *
      * @param string[] $fields The list of fields to check uniqueness for
