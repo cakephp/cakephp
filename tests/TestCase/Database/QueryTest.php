@@ -393,13 +393,13 @@ class QueryTest extends TestCase
         $query = new Query($this->connection);
         $time = new \DateTime('2007-03-18 10:45:23');
         $types = ['created' => 'datetime'];
-        $result = $query
+        $statement = $query
             ->select(['title', 'name' => 'c.comment'])
             ->from('articles')
             ->innerJoin(['c' => 'comments'], ['created <' => $time], $types)
             ->execute();
-        $this->assertCount(0, $result->fetchAll());
-        $result->closeCursor();
+        $this->assertCount(0, $statement->fetchAll());
+        $statement->closeCursor();
     }
 
     /**
@@ -1685,17 +1685,17 @@ class QueryTest extends TestCase
         $query->select(['id'])
             ->from('articles')
             ->whereInList('id', [2, 3])
-            ->execute();
+            ->order(['id']);
+
         $sql = $query->sql();
-
-        $result = $query->execute();
-        $this->assertEquals(['id' => '2'], $result->fetch('assoc'));
-
         $this->assertQuotedQuery(
             'SELECT <id> FROM <articles> WHERE <id> in \\(:c0,:c1\\)',
             $sql,
             !$this->autoQuote
         );
+
+        $result = $query->execute()->fetchAll('assoc');
+        $this->assertEquals(['id' => '2'], $result[0]);
     }
 
     /**
@@ -1734,18 +1734,16 @@ class QueryTest extends TestCase
         $query = new Query($this->connection);
         $query->select(['id'])
             ->from('articles')
-            ->whereNotInList('id', [1, 3])
-            ->execute();
-        $sql = $query->sql();
-
-        $result = $query->execute();
-        $this->assertEquals(['id' => '2'], $result->fetch('assoc'));
+            ->whereNotInList('id', [1, 3]);
 
         $this->assertQuotedQuery(
             'SELECT <id> FROM <articles> WHERE <id> not in \\(:c0,:c1\\)',
-            $sql,
+            $query->sql(),
             !$this->autoQuote
         );
+
+        $result = $query->execute()->fetchAll('assoc');
+        $this->assertEquals(['id' => '2'], $result[0]);
     }
 
     /**
@@ -1760,17 +1758,16 @@ class QueryTest extends TestCase
         $query->select(['id'])
             ->from('articles')
             ->whereNotInList('id', [], ['allowEmpty' => true])
-            ->execute();
-        $sql = $query->sql();
-
-        $result = $query->execute();
-        $this->assertEquals(['id' => '1'], $result->fetch('assoc'));
+            ->order(['id']);
 
         $this->assertQuotedQuery(
             'SELECT <id> FROM <articles> WHERE \(<id>\) IS NOT NULL',
-            $sql,
+            $query->sql(),
             !$this->autoQuote
         );
+
+        $result = $query->execute()->fetchAll('assoc');
+        $this->assertEquals(['id' => '1'], $result[0]);
     }
 
     /**
@@ -4807,7 +4804,7 @@ class QueryTest extends TestCase
             'is_active' => 'boolean',
         ];
         $typeMap = new TypeMap($fields);
-        $results = $query
+        $statement = $query
             ->select([
                 'id',
                 'user_id',
@@ -4816,9 +4813,10 @@ class QueryTest extends TestCase
             ->from('profiles')
             ->setSelectTypeMap($typeMap)
             ->limit(1)
-            ->execute()
-            ->fetchAssoc();
-        $this->assertSame(['id' => 1, 'user_id' => 1, 'is_active' => false], $results);
+            ->execute();
+
+        $this->assertSame(['id' => 1, 'user_id' => 1, 'is_active' => false], $statement->fetchAssoc());
+        $statement->closeCursor();
     }
 
     /**
@@ -4895,14 +4893,17 @@ class QueryTest extends TestCase
         $statement = $query->execute();
         $results = $statement->fetchColumn(0);
         $this->assertSame(2, $results);
+        $statement->closeCursor();
 
         $statement = $query->execute();
         $results = $statement->fetchColumn(1);
         $this->assertSame(2, $results);
+        $statement->closeCursor();
 
         $statement = $query->execute();
         $results = $statement->fetchColumn(2);
         $this->assertSame(false, $results);
+        $statement->closeCursor();
     }
 
     /**
@@ -4934,5 +4935,6 @@ class QueryTest extends TestCase
         $statement = $query->execute();
         $results = $statement->fetchColumn(3);
         $this->assertFalse($results);
+        $statement->closeCursor();
     }
 }
