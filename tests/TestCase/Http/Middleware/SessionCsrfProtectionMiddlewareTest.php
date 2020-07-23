@@ -16,15 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Http\Middleware;
 
-use Cake\Http\Cookie\Cookie;
-use Cake\Http\Cookie\CookieInterface;
 use Cake\Http\Exception\InvalidCsrfTokenException;
 use Cake\Http\Middleware\SessionCsrfProtectionMiddleware;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
-use Laminas\Diactoros\Response as DiactorosResponse;
-use Laminas\Diactoros\Response\RedirectResponse;
 use Psr\Http\Message\ServerRequestInterface;
 use TestApp\Http\TestRequestHandler;
 
