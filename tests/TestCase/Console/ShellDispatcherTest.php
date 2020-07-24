@@ -19,7 +19,6 @@ namespace Cake\Test\TestCase\Console;
 use Cake\Console\Shell;
 use Cake\Console\ShellDispatcher;
 use Cake\TestSuite\TestCase;
-use PHPUnit\Framework\Error\Warning;
 
 /**
  * ShellDispatcherTest
@@ -430,7 +429,7 @@ class ShellDispatcherTest extends TestCase
      */
     public function testHelpOption()
     {
-        $this->expectException(Warning::class);
+        $this->expectWarning();
         $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
             ->addMethods(['_stop'])
             ->getMock();
@@ -445,7 +444,7 @@ class ShellDispatcherTest extends TestCase
      */
     public function testVersionOption()
     {
-        $this->expectException(Warning::class);
+        $this->expectWarning();
         $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
             ->addMethods(['_stop'])
             ->getMock();

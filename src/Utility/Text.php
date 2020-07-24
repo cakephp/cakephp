@@ -198,19 +198,8 @@ class Text
             'before' => ':', 'after' => '', 'escape' => '\\', 'format' => null, 'clean' => false,
         ];
         $options += $defaults;
-        $format = $options['format'];
-        $data = $data;
         if (empty($data)) {
             return $options['clean'] ? static::cleanInsert($str, $options) : $str;
-        }
-
-        if (!isset($format)) {
-            $format = sprintf(
-                '/(?<!%s)%s%%s%s/',
-                preg_quote($options['escape'], '/'),
-                str_replace('%', '%%', preg_quote($options['before'], '/')),
-                str_replace('%', '%%', preg_quote($options['after'], '/'))
-            );
         }
 
         if (strpos($str, '?') !== false && is_numeric(key($data))) {
@@ -224,15 +213,25 @@ class Text
             return $options['clean'] ? static::cleanInsert($str, $options) : $str;
         }
 
+        $format = $options['format'];
+        if ($format === null) {
+            $format = sprintf(
+                '/(?<!%s)%s%%s%s/',
+                preg_quote($options['escape'], '/'),
+                str_replace('%', '%%', preg_quote($options['before'], '/')),
+                str_replace('%', '%%', preg_quote($options['after'], '/'))
+            );
+        }
+
         $dataKeys = array_keys($data);
-        $hashKeys = array_map('crc32', $dataKeys);
-        /** @var array<string, string|int> $tempData */
+        $hashKeys = array_map('md5', $dataKeys);
+        /** @var array<string, string> $tempData */
         $tempData = array_combine($dataKeys, $hashKeys);
         krsort($tempData);
 
         foreach ($tempData as $key => $hashVal) {
             $key = sprintf($format, preg_quote($key, '/'));
-            $str = preg_replace($key, (string)$hashVal, $str);
+            $str = preg_replace($key, $hashVal, $str);
         }
         /** @var array<string, mixed> $dataReplacements */
         $dataReplacements = array_combine($hashKeys, array_values($data));

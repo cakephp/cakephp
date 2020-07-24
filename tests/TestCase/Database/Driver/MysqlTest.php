@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Driver;
 
+use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
@@ -68,7 +69,7 @@ class MysqlTest extends TestCase
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
         $connection = $this->getMockBuilder('StdClass')
-            ->onlyMethods(['exec'])
+            ->addMethods(['exec'])
             ->getMock();
 
         $driver->expects($this->once())->method('_connect')
@@ -117,7 +118,7 @@ class MysqlTest extends TestCase
         ];
 
         $connection = $this->getMockBuilder('StdClass')
-            ->onlyMethods(['exec'])
+            ->addMethods(['exec'])
             ->getMock();
         $connection->expects($this->at(0))->method('exec')->with('Execute this');
         $connection->expects($this->at(1))->method('exec')->with('this too');
@@ -187,7 +188,8 @@ class MysqlTest extends TestCase
     {
         /** @var \PHPUnit\Framework\MockObject\MockObject&\Cake\Database\Connection $connection */
         $connection = $this->getMockBuilder(Connection::class)
-            ->onlyMethods(['getAttribute'])
+            ->disableOriginalConstructor()
+            ->addMethods(['getAttribute'])
             ->getMock();
         $connection->expects($this->once())
             ->method('getAttribute')

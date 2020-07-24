@@ -25,11 +25,11 @@ use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Laminas\Diactoros\Uri;
-use PHPUnit\Framework\Error\Notice;
-use PHPUnit\Framework\Error\Warning;
 use ReflectionFunction;
 use TestApp\Controller\Admin\PostsController;
+use TestApp\Controller\ArticlesController;
 use TestApp\Controller\TestController;
+use TestApp\Model\Table\ArticlesTable;
 use TestPlugin\Controller\TestPluginController;
 
 /**
@@ -110,8 +110,8 @@ class ControllerTest extends TestCase
         $controller->Bar = true;
         $this->assertTrue($controller->Bar);
 
-        $this->expectException(Notice::class);
-        $this->expectExceptionMessage(sprintf(
+        $this->expectNotice();
+        $this->expectNoticeMessage(sprintf(
             'Undefined property: Controller::$Foo in %s on line %s',
             __FILE__,
             __LINE__ + 2
@@ -140,6 +140,20 @@ class ControllerTest extends TestCase
             'TestApp\Model\Table\ArticlesTable',
             $Controller->Articles
         );
+    }
+
+    /**
+     * @link https://github.com/cakephp/cakephp/issues/14804
+     * @return void
+     */
+    public function testAutoLoadModelUsingFqcn(): void
+    {
+        Configure::write('App.namespace', 'TestApp');
+        $Controller = new ArticlesController(new ServerRequest(), new Response());
+
+        $this->assertInstanceOf(ArticlesTable::class, $Controller->Articles);
+
+        Configure::write('App.namespace', 'App');
     }
 
     /**
@@ -853,7 +867,7 @@ class ControllerTest extends TestCase
      */
     public function testComponentsPropertyError(): void
     {
-        $this->expectException(Warning::class);
+        $this->expectWarning();
         $request = new ServerRequest(['url' => '/']);
         $response = new Response();
 
@@ -868,7 +882,7 @@ class ControllerTest extends TestCase
      */
     public function testHelpersPropertyError(): void
     {
-        $this->expectException(Warning::class);
+        $this->expectWarning();
         $request = new ServerRequest(['url' => '/']);
         $response = new Response();
 

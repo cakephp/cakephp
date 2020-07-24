@@ -70,6 +70,11 @@ class FormHelperTest extends TestCase
     protected $url;
 
     /**
+     * @var \Cake\View\Helper\FormHelper
+     */
+    protected $Form;
+
+    /**
      * setUp method
      *
      * @return void
@@ -2094,7 +2099,7 @@ class FormHelperTest extends TestCase
 
         $this->assertHtml($expected, $result);
 
-        $result = $this->Form->hidden('hidden', ['value' => '0']);
+        $result = $this->Form->hidden('hidden', ['value' => false]);
         $expected = ['input' => [
             'type' => 'hidden',
             'name' => 'hidden',
@@ -2164,6 +2169,19 @@ class FormHelperTest extends TestCase
             '/div',
         ];
         $this->assertHtml($expected, $result);
+
+        $data = [
+            'ratio' => '',
+            'population' => '',
+            'published' => '',
+            'other' => '',
+            'stuff' => '',
+            'hidden' => '0',
+            'something' => '',
+            '_Token' => $this->Form->getFormProtector()->buildTokenData(),
+        ];
+
+        $this->assertTrue($this->Form->getFormProtector()->validate($data, '', ''));
     }
 
     /**

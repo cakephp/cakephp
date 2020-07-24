@@ -18,8 +18,6 @@ namespace Cake\Test\TestCase\Core;
 
 use Cake\Http\Response;
 use Cake\TestSuite\TestCase;
-use PHPUnit\Framework\Error\Deprecated;
-use PHPUnit\Framework\Error\Warning;
 
 /**
  * Test cases for functions in Core\functions.php
@@ -82,8 +80,8 @@ class FunctionsTest extends TestCase
      */
     public function testDeprecationWarningEnabled()
     {
-        $this->expectException(Deprecated::class);
-        $this->expectExceptionMessageMatches('/This is going away - (.*?)[\/\\\]FunctionsTest.php, line\: \d+/');
+        $this->expectDeprecation();
+        $this->expectDeprecationMessageMatches('/This is going away - (.*?)[\/\\\]FunctionsTest.php, line\: \d+/');
 
         $this->withErrorReporting(E_ALL, function () {
             deprecationWarning('This is going away', 2);
@@ -95,8 +93,8 @@ class FunctionsTest extends TestCase
      */
     public function testDeprecationWarningEnabledDefaultFrame()
     {
-        $this->expectException(Deprecated::class);
-        $this->expectExceptionMessageMatches('/This is going away - (.*?)[\/\\\]TestCase.php, line\: \d+/');
+        $this->expectDeprecation();
+        $this->expectDeprecationMessageMatches('/This is going away - (.*?)[\/\\\]TestCase.php, line\: \d+/');
 
         $this->withErrorReporting(E_ALL, function () {
             deprecationWarning('This is going away');
@@ -122,8 +120,8 @@ class FunctionsTest extends TestCase
      */
     public function testTriggerWarningEnabled()
     {
-        $this->expectException(Warning::class);
-        $this->expectExceptionMessageMatches('/This is going away - (.*?)[\/\\\]TestCase.php, line\: \d+/');
+        $this->expectWarning();
+        $this->expectWarningMessageMatches('/This is going away - (.*?)[\/\\\]TestCase.php, line\: \d+/');
 
         $this->withErrorReporting(E_ALL, function () {
             triggerWarning('This is going away');

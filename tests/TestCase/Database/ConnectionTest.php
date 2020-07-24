@@ -428,10 +428,11 @@ class ConnectionTest extends TestCase
      */
     public function testStatementFetchObject()
     {
-        $result = $this->connection->execute('SELECT title, body  FROM things');
-        $row = $result->fetch(\PDO::FETCH_OBJ);
+        $statement = $this->connection->execute('SELECT title, body  FROM things');
+        $row = $statement->fetch(\PDO::FETCH_OBJ);
         $this->assertSame('a title', $row->title);
         $this->assertSame('a body', $row->body);
+        $statement->closeCursor();
     }
 
     /**
