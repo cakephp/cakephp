@@ -230,7 +230,7 @@ class TestFixtureTest extends TestCase
      */
     public function testCreateError()
     {
-        $this->expectException(\PHPUnit\Framework\Error\Error::class);
+        $this->expectError();
         $fixture = new ArticlesFixture();
         $db = $this->getMockBuilder('Cake\Database\Connection')
             ->disableOriginalConstructor()

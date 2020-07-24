@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Controller;
 
 use Cake\Controller\Exception\MissingActionException;
+use Cake\Core\App;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
@@ -292,9 +293,14 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     public function __get(string $name)
     {
         if (!empty($this->modelClass)) {
-            [$plugin, $class] = pluginSplit($this->modelClass, true);
+            if (strpos($this->modelClass, '\\') === false) {
+                [, $class] = pluginSplit($this->modelClass, true);
+            } else {
+                $class = App::shortName($this->modelClass, 'Model/Table', 'Table');
+            }
+
             if ($class === $name) {
-                return $this->loadModel((string)$plugin . $class);
+                return $this->loadModel();
             }
         }
 

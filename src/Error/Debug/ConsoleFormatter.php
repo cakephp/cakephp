@@ -185,7 +185,6 @@ class ConsoleFormatter implements FormatterInterface
      */
     protected function exportObject($var, int $indent): string
     {
-        $out = '';
         $props = [];
 
         if ($var instanceof ReferenceNode) {

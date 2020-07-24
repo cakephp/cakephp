@@ -1632,7 +1632,7 @@ class FormHelper extends Helper
             $this->formProtector->addField(
                 $options['name'],
                 true,
-                (string)$options['val']
+                $options['val'] === false ? '0' : (string)$options['val']
             );
         }
 
