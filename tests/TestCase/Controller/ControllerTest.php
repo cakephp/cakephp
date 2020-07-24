@@ -27,7 +27,9 @@ use Cake\TestSuite\TestCase;
 use Laminas\Diactoros\Uri;
 use ReflectionFunction;
 use TestApp\Controller\Admin\PostsController;
+use TestApp\Controller\ArticlesController;
 use TestApp\Controller\TestController;
+use TestApp\Model\Table\ArticlesTable;
 use TestPlugin\Controller\TestPluginController;
 
 /**
@@ -138,6 +140,20 @@ class ControllerTest extends TestCase
             'TestApp\Model\Table\ArticlesTable',
             $Controller->Articles
         );
+    }
+
+    /**
+     * @link https://github.com/cakephp/cakephp/issues/14804
+     * @return void
+     */
+    public function testAutoLoadModelUsingFqcn(): void
+    {
+        Configure::write('App.namespace', 'TestApp');
+        $Controller = new ArticlesController(new ServerRequest(), new Response());
+
+        $this->assertInstanceOf(ArticlesTable::class, $Controller->Articles);
+
+        Configure::write('App.namespace', 'App');
     }
 
     /**
