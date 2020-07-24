@@ -192,6 +192,29 @@ class TableTest extends TestCase
     }
 
     /**
+     * Tests query creation wrappers.
+     *
+     * @return void
+     */
+    public function testTableQuery()
+    {
+        $table = new Table(['table' => 'users']);
+
+        $query = $table->query();
+        $this->assertEquals('users', $query->getRepository()->getTable());
+
+        $query = $table->subquery();
+        $this->assertEquals('users', $query->getRepository()->getTable());
+
+        $sql = $query->select(['username'])->sql();
+        $this->assertRegExpSql(
+            'SELECT <username> FROM <users> <users>',
+            $sql,
+            !$this->connection->getDriver()->isAutoQuotingEnabled()
+        );
+    }
+
+    /**
      * Tests the table method
      *
      * @return void

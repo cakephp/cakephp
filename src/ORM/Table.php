@@ -1680,6 +1680,17 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
+     * Creates a new Query::subquery() instance for a table.
+     *
+     * @return \Cake\ORM\Query
+     * @see \Cake\ORM\Query::subquery()
+     */
+    public function subquery(): Query
+    {
+        return Query::subquery($this);
+    }
+
+    /**
      * @inheritDoc
      */
     public function updateAll($fields, $conditions): int
