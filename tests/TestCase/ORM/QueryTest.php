@@ -1815,12 +1815,7 @@ class QueryTest extends TestCase
         $result->closeCursor();
 
         $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
-        //PDO_SQLSRV returns -1 for successful inserts when using INSERT ... OUTPUT
-        if (!$this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlserver) {
-            $this->assertEquals(2, $result->rowCount());
-        } else {
-            $this->assertEquals(-1, $result->rowCount());
-        }
+        $this->assertEquals(2, $result->rowCount());
     }
 
     /**
