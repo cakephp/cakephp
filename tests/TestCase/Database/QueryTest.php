@@ -1709,18 +1709,17 @@ class QueryTest extends TestCase
         $query = new Query($this->connection);
         $query->select(['id'])
             ->from('articles')
-            ->whereInList('id', [], ['allowEmpty' => true])
-            ->execute();
-        $sql = $query->sql();
-
-        $result = $query->execute();
-        $this->assertFalse($result->fetch('assoc'));
+            ->whereInList('id', [], ['allowEmpty' => true]);
 
         $this->assertQuotedQuery(
             'SELECT <id> FROM <articles> WHERE 1=0',
-            $sql,
+            $query->sql(),
             !$this->autoQuote
         );
+
+        $statement = $query->execute();
+        $this->assertFalse($statement->fetch('assoc'));
+        $statement->closeCursor();
     }
 
     /**
@@ -2371,7 +2370,8 @@ class QueryTest extends TestCase
         $query->select('id')->from('comments')
             ->limit(1)
             ->offset(1)
-            ->execute();
+            ->execute()
+            ->closeCursor();
 
         $reflect = new ReflectionProperty($query, '_dirty');
         $reflect->setAccessible(true);
