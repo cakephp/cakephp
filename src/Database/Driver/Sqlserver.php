@@ -193,7 +193,7 @@ class Sqlserver extends Driver
     {
         $this->connect();
         $options = [
-            PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL,
+            PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY,
             PDO::SQLSRV_ATTR_CURSOR_SCROLL_TYPE => PDO::SQLSRV_CURSOR_BUFFERED,
         ];
         $isObject = $query instanceof Query;
