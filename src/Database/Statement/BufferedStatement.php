@@ -19,6 +19,7 @@ namespace Cake\Database\Statement;
 use Cake\Database\DriverInterface;
 use Cake\Database\StatementInterface;
 use Cake\Database\TypeConverterTrait;
+use Cake\Error\Debugger;
 use Iterator;
 
 /**
@@ -78,7 +79,7 @@ class BufferedStatement implements Iterator, StatementInterface
      *
      * @var bool
      */
-    protected static $hasOpenCursor = false;
+    protected static $hasOpenCursor = null;
 
     /**
      * Constructor
@@ -119,7 +120,7 @@ class BufferedStatement implements Iterator, StatementInterface
      */
     public function closeCursor(): void
     {
-        static::$hasOpenCursor = false;
+        static::$hasOpenCursor = null;
         $this->statement->closeCursor();
     }
 
@@ -152,11 +153,13 @@ class BufferedStatement implements Iterator, StatementInterface
      */
     public function execute(?array $params = null): bool
     {
-        if (static::$hasOpenCursor) {
+        if (static::$hasOpenCursor !== null) {
             triggerWarning('Executing buffered statement without calling `closeCursor()` on previous statement.');
+            echo "\n\n" . static::$hasOpenCursor . "\n";
         }
         $this->_reset();
         $this->_hasExecuted = true;
+        static::$hasOpenCursor = Debugger::trace();
 
         return $this->statement->execute($params);
     }

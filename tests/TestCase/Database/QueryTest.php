@@ -20,6 +20,7 @@ use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
+use Cake\Database\Statement\BufferedStatement;
 use Cake\Database\Statement\StatementDecorator;
 use Cake\Database\StatementInterface;
 use Cake\Database\TypeFactory;
@@ -1709,18 +1710,15 @@ class QueryTest extends TestCase
         $query = new Query($this->connection);
         $query->select(['id'])
             ->from('articles')
-            ->whereInList('id', [], ['allowEmpty' => true])
-            ->execute();
-        $sql = $query->sql();
-
-        $result = $query->execute();
-        $this->assertFalse($result->fetch('assoc'));
+            ->whereInList('id', [], ['allowEmpty' => true]);
 
         $this->assertQuotedQuery(
             'SELECT <id> FROM <articles> WHERE 1=0',
-            $sql,
+            $query->sql(),
             !$this->autoQuote
         );
+
+        $this->assertFalse($query->execute()->fetch('assoc'));
     }
 
     /**
@@ -2371,7 +2369,8 @@ class QueryTest extends TestCase
         $query->select('id')->from('comments')
             ->limit(1)
             ->offset(1)
-            ->execute();
+            ->execute()
+            ->closeCursor();
 
         $reflect = new ReflectionProperty($query, '_dirty');
         $reflect->setAccessible(true);
@@ -2840,6 +2839,7 @@ class QueryTest extends TestCase
         $this->assertQuotedQuery('DELETE FROM <authors>', $result, !$this->autoQuote);
 
         $result = $query->execute();
+        print_r(gettype($result));
         $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
         $this->assertCount(self::AUTHOR_COUNT, $result);
         $result->closeCursor();
@@ -4380,6 +4380,29 @@ class QueryTest extends TestCase
         $list = $result->fetchAll('assoc');
         $this->assertCount(3, $list);
         $result->closeCursor();
+    }
+
+    /**
+     * Tests that warning is triggered when cursor is left open.
+     *
+     * @return void
+     */
+    public function testOpenCursorsWarning()
+    {
+        $this->loadFixtures('Articles');
+
+        $statement = (new Query($this->connection))
+            ->select(['id'])
+            ->from('articles')
+            ->execute();
+        $this->assertInstanceOf(BufferedStatement::class, $statement->getInnerStatement());
+
+        $this->expectWarning();
+        (new Query($this->connection))
+            ->select(['id'])
+            ->from('articles')
+            ->execute()
+            ->fetchAll();
     }
 
     /**
