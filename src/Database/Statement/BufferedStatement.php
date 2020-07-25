@@ -74,6 +74,13 @@ class BufferedStatement implements Iterator, StatementInterface
     protected $index = 0;
 
     /**
+     * Whether the cursor from previously created statement was left open.
+     *
+     * @var bool
+     */
+    protected static $hasOpenCursor = false;
+
+    /**
      * Constructor
      *
      * @param \Cake\Database\StatementInterface $statement Statement implementation such as PDOStatement
@@ -112,6 +119,7 @@ class BufferedStatement implements Iterator, StatementInterface
      */
     public function closeCursor(): void
     {
+        static::$hasOpenCursor = false;
         $this->statement->closeCursor();
     }
 
@@ -144,6 +152,9 @@ class BufferedStatement implements Iterator, StatementInterface
      */
     public function execute(?array $params = null): bool
     {
+        if (static::$hasOpenCursor) {
+            triggerWarning('Executing buffered statement without calling `closeCursor()` on previous statement.');
+        }
         $this->_reset();
         $this->_hasExecuted = true;
 
@@ -215,7 +226,7 @@ class BufferedStatement implements Iterator, StatementInterface
         $record = $this->statement->fetch($type);
         if ($record === false) {
             $this->_allFetched = true;
-            $this->statement->closeCursor();
+            $this->closeCursor();
 
             return false;
         }
@@ -247,7 +258,7 @@ class BufferedStatement implements Iterator, StatementInterface
             $this->buffer = array_merge($this->buffer, $results);
         }
         $this->_allFetched = true;
-        $this->statement->closeCursor();
+        $this->closeCursor();
 
         return $this->buffer;
     }
