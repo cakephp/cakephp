@@ -38,6 +38,7 @@
         <UndefinedConstant>
             <errorLevel type="suppress">
                 <file name="src/Cache/Engine/ApcuEngine.php" />
+                <file name="src/Database/Driver/Sqlserver.php" />
             </errorLevel>
         </UndefinedConstant>
         <PropertyNotSetInConstructor errorLevel="suppress"/>
