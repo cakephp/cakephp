@@ -1,6 +1,5 @@
 # The following env variables need to be set:
 # - VERSION
-# - GITHUB_USER
 # - GITHUB_TOKEN (optional if you have two factor authentication in github)
 
 # Use the version number to figure out if the release
@@ -17,8 +16,6 @@ REMOTE=origin
 
 ifdef GITHUB_TOKEN
 	AUTH=-H 'Authorization: token $(GITHUB_TOKEN)'
-else
-	AUTH=-u $(GITHUB_USER) -p$(GITHUB_PASS)
 endif
 
 DASH_VERSION=$(shell echo $(VERSION) | sed -e s/\\./-/g)
@@ -38,7 +35,7 @@ help:
 	@echo "================"
 	@echo ""
 	@echo "release VERSION=x.y.z"
-	@echo "  Create a new release of CakePHP. Requires the VERSION and GITHUB_USER, or GITHUB_TOKEN parameter."
+	@echo "  Create a new release of CakePHP. Requires the VERSION and GITHUB_TOKEN parameter."
 	@echo "  Packages up a new app skeleton tarball and uploads it to github."
 	@echo ""
 	@echo "package"
@@ -144,7 +141,7 @@ package: clean dist/cakephp-$(DASH_VERSION).zip
 # Tasks to publish zipballs to Github.
 .PHONY: publish release
 
-publish: guard-VERSION guard-GITHUB_USER dist/cakephp-$(DASH_VERSION).zip
+publish: guard-VERSION dist/cakephp-$(DASH_VERSION).zip
 	@echo "Creating draft release for $(VERSION). prerelease=$(PRERELEASE)"
 	curl $(AUTH) -XPOST $(API_HOST)/repos/$(OWNER)/cakephp/releases -d '{"tag_name": "$(VERSION)", "name": "CakePHP $(VERSION) released", "draft": true,  "prerelease": $(PRERELEASE) }' > release.json
 	# Extract id out of response json.
@@ -173,7 +170,7 @@ component-%:
 	git push -f $* $*:$(CURRENT_BRANCH)
 	git checkout $(CURRENT_BRANCH) > /dev/null
 
-tag-component-%: component-% guard-VERSION guard-GITHUB_USER
+tag-component-%: component-% guard-VERSION
 	@echo "Creating tag for the $* component"
 	git checkout $*
 	curl $(AUTH) -XPOST $(API_HOST)/repos/$(OWNER)/$*/git/refs -d '{"ref": "refs\/tags\/$(VERSION)", "sha": "$(shell git rev-parse $*)"}'
@@ -189,4 +186,4 @@ clean-component-%:
 	- git push -f $* :$(CURRENT_BRANCH)
 
 # Top level alias for doing a release.
-release: guard-VERSION guard-GITHUB_USER tag-release components-tag package publish
+release: guard-VERSION tag-release components-tag package publish
