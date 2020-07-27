@@ -146,16 +146,9 @@ package: clean dist/cakephp-$(DASH_VERSION).zip
 
 publish: guard-VERSION guard-GITHUB_USER dist/cakephp-$(DASH_VERSION).zip
 	@echo "Creating draft release for $(VERSION). prerelease=$(PRERELEASE)"
-	curl $(AUTH) -XPOST $(API_HOST)/repos/$(OWNER)/cakephp/releases -d '{ \
-		"tag_name": "$(VERSION)", \
-		"name": "CakePHP $(VERSION) released", \
-		"draft": true, \
-		"prerelease": $(PRERELEASE) \
-	}' > release.json
+	curl $(AUTH) -XPOST $(API_HOST)/repos/$(OWNER)/cakephp/releases -d '{"tag_name": "$(VERSION)", "name": "CakePHP $(VERSION) released", "draft": true,  "prerelease": $(PRERELEASE) }' > release.json
 	# Extract id out of response json.
-	php -r '$$f = file_get_contents("./release.json"); \
-		$$d = json_decode($$f, true); \
-		file_put_contents("./id.txt", $$d["id"]);'
+	php -r '$$f = file_get_contents("./release.json"); $$d = json_decode($$f, true); file_put_contents("./id.txt", $$d["id"]);'
 	@echo "Uploading zip file to github."
 	curl $(AUTH) -XPOST \
 		$(UPLOAD_HOST)/repos/$(OWNER)/cakephp/releases/`cat ./id.txt`/assets?name=cakephp-$(DASH_VERSION).zip \
@@ -183,10 +176,7 @@ component-%:
 tag-component-%: component-% guard-VERSION guard-GITHUB_USER
 	@echo "Creating tag for the $* component"
 	git checkout $*
-	curl $(AUTH) -XPOST $(API_HOST)/repos/$(OWNER)/$*/git/refs -d '{ \
-		"ref": "refs\/tags\/$(VERSION)", \
-		"sha": "$(shell git rev-parse $*)" \
-	}'
+	curl $(AUTH) -XPOST $(API_HOST)/repos/$(OWNER)/$*/git/refs -d '{"ref": "refs\/tags\/$(VERSION)", "sha": "$(shell git rev-parse $*)"}'
 	git checkout $(CURRENT_BRANCH) > /dev/null
 	git branch -D $*
 	git remote rm $*
