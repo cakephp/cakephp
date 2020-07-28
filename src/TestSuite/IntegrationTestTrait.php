@@ -682,11 +682,9 @@ trait IntegrationTestTrait
             // both types of CSRF tokens. We generate the token with the cookie
             // middleware as cookie tokens will be accepted by session csrf, but not
             // the inverse.
-            if ($token) {
-                $this->_session['csrfToken'] = $token;
-                $this->_cookie['csrfToken'] = $token;
-            }
-            if ($token && !isset($data['_csrfToken'])) {
+            $this->_session['csrfToken'] = $token;
+            $this->_cookie['csrfToken'] = $token;
+            if (!isset($data['_csrfToken'])) {
                 $data['_csrfToken'] = $token;
             }
         }
