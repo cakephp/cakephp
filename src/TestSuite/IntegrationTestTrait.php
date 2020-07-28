@@ -674,7 +674,7 @@ trait IntegrationTestTrait
                 $token = $middleware->createToken();
             } elseif (isset($this->_cookie['csrfToken'])) {
                 $token = $this->_cookie['csrfToken'];
-            } elseif (isset($this->_session['csrfToken'])) {
+            } else {
                 $token = $this->_session['csrfToken'];
             }
 
