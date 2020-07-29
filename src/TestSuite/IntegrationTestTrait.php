@@ -583,7 +583,6 @@ trait IntegrationTestTrait
             'defaults' => 'php',
         ];
         $session = Session::create($sessionConfig);
-        $session->write($this->_session);
         [$url, $query, $hostInfo] = $this->_url($url);
         $tokenUrl = $url;
 
@@ -636,6 +635,7 @@ trait IntegrationTestTrait
         }
 
         $props['cookies'] = $this->_cookie;
+        $session->write($this->_session);
         $props = Hash::merge($props, $this->_request);
 
         return $props;
@@ -669,11 +669,23 @@ trait IntegrationTestTrait
 
         if ($this->_csrfToken === true) {
             $middleware = new CsrfProtectionMiddleware();
-            if (!isset($this->_cookie['csrfToken'])) {
-                $this->_cookie['csrfToken'] = $middleware->createToken();
+            $token = null;
+            if (!isset($this->_cookie['csrfToken']) && !isset($this->_session['csrfToken'])) {
+                $token = $middleware->createToken();
+            } elseif (isset($this->_cookie['csrfToken'])) {
+                $token = $this->_cookie['csrfToken'];
+            } else {
+                $token = $this->_session['csrfToken'];
             }
+
+            // Add the token to both the session and cookie to cover
+            // both types of CSRF tokens. We generate the token with the cookie
+            // middleware as cookie tokens will be accepted by session csrf, but not
+            // the inverse.
+            $this->_session['csrfToken'] = $token;
+            $this->_cookie['csrfToken'] = $token;
             if (!isset($data['_csrfToken'])) {
-                $data['_csrfToken'] = $this->_cookie['csrfToken'];
+                $data['_csrfToken'] = $token;
             }
         }
 
