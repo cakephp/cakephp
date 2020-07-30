@@ -336,6 +336,36 @@ class CurlTest extends TestCase
      *
      * @return void
      */
+    public function testBuildOptionsHead()
+    {
+        $options = [];
+        $request = new Request(
+            'http://localhost/things',
+            'HEAD',
+            ['Cookie' => 'testing=value']
+        );
+        $result = $this->curl->buildOptions($request, $options);
+        $expected = [
+            CURLOPT_URL => 'http://localhost/things',
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HEADER => true,
+            CURLOPT_HTTPHEADER => [
+                'Cookie: testing=value',
+                'Connection: close',
+                'User-Agent: CakePHP',
+            ],
+            CURLOPT_NOBODY => true,
+            CURLOPT_CAINFO => $this->caFile,
+        ];
+        $this->assertSame($expected, $result);
+    }
+
+    /**
+     * Test converting client options into curl ones.
+     *
+     * @return void
+     */
     public function testBuildOptionsCurlOptions()
     {
         $options = [
