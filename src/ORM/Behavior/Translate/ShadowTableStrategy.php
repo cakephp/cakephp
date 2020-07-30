@@ -452,6 +452,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                 unset($row['translation']);
 
                 if ($hydrated) {
+                    /** @psalm-suppress PossiblyInvalidMethodCall */
                     $row->clean();
                 }
 
