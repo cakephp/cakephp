@@ -347,8 +347,9 @@ trait DateFormatTrait
             $pattern = $format;
         }
 
+        $locale = static::$defaultLocale ?? I18n::getLocale();
         $formatter = datefmt_create(
-            static::$defaultLocale,
+            $locale,
             $dateFormat,
             $timeFormat,
             $tz,
