@@ -467,7 +467,7 @@ class TimeTest extends TestCase
         $expected = 'Thursday, Dey 24, 1388 at 1:59:28 PM GMT';
         $this->assertTimeFormat($expected, $result);
 
-        $result = $time->i18nFormat(\IntlDateFormatter::SHORT, null, 'fa-IR@calendar=persian');
+        $result = $time->i18nFormat([\IntlDateFormatter::SHORT, \IntlDateFormatter::FULL], null, 'fa-IR@calendar=persian');
         $expected = '۱۳۸۸/۱۰/۲۴،‏ ۱۳:۵۹:۲۸ GMT';
         $this->assertTimeFormat($expected, $result);
 
@@ -851,19 +851,6 @@ class TimeTest extends TestCase
 
         $time = $class::parseDateTime('13 foo 10 2013 12:54');
         $this->assertNull($time);
-    }
-
-    /**
-     * Test passing incorrect formatter options to parseDateTime
-     *
-     * @dataProvider classNameProvider
-     * @return void
-     */
-    public function testParseDateTimeInvalidFormat($class)
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('If $format is an IntlDateFormatter constant, must be an array.');
-        $time = $class::parseDateTime('10/13/2013 12:54am', IntlDateFormatter::SHORT);
     }
 
     /**

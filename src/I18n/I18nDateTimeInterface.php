@@ -122,7 +122,7 @@ interface I18nDateTimeInterface extends ChronosInterface, JsonSerializable
     /**
      * Sets the default format used when type converting instances of this type to string
      *
-     * @param string|array|int $format Format.
+     * @param string|int|int[] $format Format.
      * @return void
      */
     public static function setToStringFormat($format): void;
