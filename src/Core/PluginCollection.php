@@ -122,8 +122,6 @@ class PluginCollection implements Iterator, Countable
      */
     public function findPath(string $name): string
     {
-        $this->loadConfig();
-
         $path = Configure::read('plugins.' . $name);
         if ($path) {
             return $path;
