@@ -563,7 +563,7 @@ class TimeHelperTest extends TestCase
         $this->Time->setConfig('outputTimezone', 'America/Vancouver');
 
         $time = strtotime('Thu Jan 14 8:59:28 2010 UTC');
-        $result = $this->Time->i18nFormat($time, \IntlDateFormatter::SHORT);
+        $result = $this->Time->i18nFormat($time, [\IntlDateFormatter::SHORT, \IntlDateFormatter::FULL]);
         $expected = '1/14/10, 12:59:28 AM';
         $this->assertStringStartsWith($expected, $result);
     }

@@ -40,10 +40,10 @@ class Date extends MutableDate implements I18nDateTimeInterface
      * will be used for formatting the date part of the object and the second position
      * will be used to format the time part.
      *
-     * @var string|array|int
+     * @var string|int|int[]
      * @see \Cake\I18n\DateFormatTrait::i18nFormat()
      */
-    protected static $_toStringFormat = [IntlDateFormatter::SHORT, -1];
+    protected static $_toStringFormat = [IntlDateFormatter::SHORT, IntlDateFormatter::NONE];
 
     /**
      * The format to use when converting this object to JSON.
@@ -56,7 +56,7 @@ class Date extends MutableDate implements I18nDateTimeInterface
      * will be used for formatting the date part of the object and the second position
      * will be used to format the time part.
      *
-     * @var string|array|int|\Closure
+     * @var string|int|int[]|\Closure
      * @see \Cake\I18n\Time::i18nFormat()
      */
     protected static $_jsonEncodeFormat = 'yyyy-MM-dd';
@@ -65,10 +65,10 @@ class Date extends MutableDate implements I18nDateTimeInterface
      * The format to use when formatting a time using `Cake\I18n\Date::timeAgoInWords()`
      * and the difference is more than `Cake\I18n\Date::$wordEnd`
      *
-     * @var string|array|int
+     * @var string|int|int[]
      * @see \Cake\I18n\DateFormatTrait::parseDate()
      */
-    public static $wordFormat = [IntlDateFormatter::SHORT, -1];
+    public static $wordFormat = [IntlDateFormatter::SHORT, IntlDateFormatter::NONE];
 
     /**
      * The format to use when formatting a time using `Cake\I18n\Date::nice()`
@@ -81,10 +81,10 @@ class Date extends MutableDate implements I18nDateTimeInterface
      * will be used for formatting the date part of the object and the second position
      * will be used to format the time part.
      *
-     * @var string|array|int
+     * @var string|int|int[]
      * @see \Cake\I18n\DateFormatTrait::nice()
      */
-    public static $niceFormat = [IntlDateFormatter::MEDIUM, -1];
+    public static $niceFormat = [IntlDateFormatter::MEDIUM, IntlDateFormatter::NONE];
 
     /**
      * The format to use when formatting a time using `Date::timeAgoInWords()`
