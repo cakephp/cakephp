@@ -539,7 +539,7 @@ trait QueryTrait
         }
 
         foreach ($this->_formatters as $formatter) {
-            $result = $formatter($result);
+            $result = $formatter($result, $this);
         }
 
         if (!empty($this->_formatters) && !($result instanceof $decorator)) {

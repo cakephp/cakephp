@@ -1014,7 +1014,7 @@ abstract class Association
             }
             $extracted = new Collection($extracted);
             foreach ($formatters as $callable) {
-                $extracted = new ResultSetDecorator($callable($extracted));
+                $extracted = new ResultSetDecorator($callable($extracted, $query));
             }
 
             /** @var \Cake\Collection\CollectionInterface $results */

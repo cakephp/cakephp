@@ -2222,6 +2222,64 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Tests that results formatters do receive the query object.
+     *
+     * @return void
+     */
+    public function testResultFormatterReceivesTheQueryObject()
+    {
+        $resultFormatterQuery = null;
+
+        $query = $this->getTableLocator()->get('authors')
+            ->find()
+            ->formatResults(function ($results, $query) use (&$resultFormatterQuery) {
+                $resultFormatterQuery = $query;
+
+                return $results;
+            });
+        $query->firstOrFail();
+
+        $this->assertSame($query, $resultFormatterQuery);
+    }
+
+    /**
+     * Tests that results formatters for queries of joined associations
+     * do receive the source query, not the association target query.
+     *
+     * @return void
+     */
+    public function testResultFormatterReceivesTheSourceQueryForJoinedAssociations()
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $authors = $articles->belongsTo('Authors');
+
+        $resultFormatterTargetQuery = null;
+        $resultFormatterSourceQuery = null;
+
+        $authors->getEventManager()->on(
+            'Model.beforeFind',
+            function ($event, Query $targetQuery) use (&$resultFormatterTargetQuery, &$resultFormatterSourceQuery) {
+                $resultFormatterTargetQuery = $targetQuery;
+
+                $targetQuery->formatResults(function ($results, $query) use (&$resultFormatterSourceQuery) {
+                    $resultFormatterSourceQuery = $query;
+
+                    return $results;
+                });
+            }
+        );
+
+        $sourceQuery = $articles
+            ->find()
+            ->contain('Authors');
+
+        $sourceQuery->firstOrFail();
+
+        $this->assertNotSame($sourceQuery, $resultFormatterTargetQuery);
+        $this->assertSame($sourceQuery, $resultFormatterSourceQuery);
+    }
+
+    /**
      * Test fetching results from a qurey with a custom formatter
      *
      * @return void
