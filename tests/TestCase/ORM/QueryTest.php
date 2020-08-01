@@ -2230,7 +2230,7 @@ class QueryTest extends TestCase
     {
         $resultFormatterQuery = null;
 
-        $query = $this->getTableLocator()->get('authors')
+        $query = $this->getTableLocator()->get('Authors')
             ->find()
             ->formatResults(function ($results, $query) use (&$resultFormatterQuery) {
                 $resultFormatterQuery = $query;
