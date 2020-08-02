@@ -2509,7 +2509,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * Provides the dynamic findBy and findByAll methods.
+     * Provides the dynamic findBy and findAllBy methods.
      *
      * @param string $method The method name that was fired.
      * @param array $args List of arguments passed to the function.

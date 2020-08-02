@@ -687,6 +687,7 @@ class ConsoleOptionParser
             array_shift($argv);
         }
         if (isset($this->_subcommands[$command]) && $this->_subcommands[$command]->parser()) {
+            /** @psalm-suppress PossiblyNullReference */
             return $this->_subcommands[$command]->parser()->parse($argv);
         }
         $params = $args = [];

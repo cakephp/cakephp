@@ -36,6 +36,7 @@ class CommandCollection implements IteratorAggregate, Countable
      *
      * @var array
      * @psalm-var (\Cake\Console\Shell|\Cake\Console\CommandInterface|class-string)[]
+     * @psalm-suppress DeprecatedClass
      */
     protected $commands = [];
 

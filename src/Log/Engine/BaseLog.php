@@ -18,6 +18,7 @@ namespace Cake\Log\Engine;
 
 use ArrayObject;
 use Cake\Core\InstanceConfigTrait;
+use DateTimeImmutable;
 use JsonSerializable;
 use Psr\Log\AbstractLogger;
 use Serializable;
@@ -171,6 +172,6 @@ abstract class BaseLog extends AbstractLogger
      */
     protected function _getFormattedDate(): string
     {
-        return date($this->_config['dateFormat']);
+        return (new DateTimeImmutable())->format($this->_config['dateFormat']);
     }
 }

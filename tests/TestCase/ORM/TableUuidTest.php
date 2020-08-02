@@ -31,8 +31,8 @@ class TableUuidTest extends TestCase
      * @var array
      */
     protected $fixtures = [
-        'core.BinaryUuiditems',
-        'core.Uuiditems',
+        'core.BinaryUuidItems',
+        'core.UuidItems',
     ];
 
     /**
@@ -53,7 +53,7 @@ class TableUuidTest extends TestCase
      */
     public function uuidTableProvider()
     {
-        return [['uuiditems'], ['binary_uuiditems']];
+        return [['uuid_items'], ['binary_uuid_items']];
     }
 
     /**
