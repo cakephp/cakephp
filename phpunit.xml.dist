@@ -48,16 +48,16 @@
         <ini name="error_reporting" value="32767"/>
 
         <!-- SQLite
-        <env name="DB_DSN" value="sqlite:///:memory:"/>
+        <env name="DB_URL" value="sqlite:///:memory:"/>
         -->
         <!-- Postgres
-        <env name="DB_DSN" value="postgres://localhost/cake_test?timezone=UTC"/>
+        <env name="DB_URL" value="postgres://localhost/cake_test?timezone=UTC"/>
         -->
         <!-- Mysql
-        <env name="DB_DSN" value="mysql://localhost/cake_test?timezone=UTC"/>
+        <env name="DB_URL" value="mysql://localhost/cake_test?timezone=UTC"/>
         -->
         <!-- SQL Server
-        <env name="DB_DSN" value="sqlserver://localhost/cake_test?timezone=UTC"/>
+        <env name="DB_URL" value="sqlserver://localhost/cake_test?timezone=UTC"/>
         -->
     </php>
 </phpunit>

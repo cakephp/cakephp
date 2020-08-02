@@ -97,12 +97,12 @@ Cache::setConfig([
 ]);
 
 // Ensure default test connection is defined
-if (!getenv('DB_DSN')) {
-    putenv('DB_DSN=sqlite:///:memory:');
+if (!getenv('DB_URL')) {
+    putenv('DB_URL=sqlite:///:memory:');
 }
 
-ConnectionManager::setConfig('test', ['url' => getenv('DB_DSN')]);
-ConnectionManager::setConfig('test_custom_i18n_datasource', ['url' => getenv('DB_DSN')]);
+ConnectionManager::setConfig('test', ['url' => getenv('DB_URL')]);
+ConnectionManager::setConfig('test_custom_i18n_datasource', ['url' => getenv('DB_URL')]);
 
 Configure::write('Session', [
     'defaults' => 'php',

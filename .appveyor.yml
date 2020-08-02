@@ -18,7 +18,7 @@ services:
 
 environment:
   global:
-    db_dsn: 'sqlserver://sa:Password12!@.\SQL2012SP1/cakephp?MultipleActiveResultSets=false'
+    DB_URL: 'sqlserver://sa:Password12!@.\SQL2012SP1/cakephp?MultipleActiveResultSets=false'
 
 init:
   - SET PATH=C:\Program Files\OpenSSL;C:\php;%PATH%
