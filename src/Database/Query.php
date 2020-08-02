@@ -2207,7 +2207,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * Enables result casting.
      *
      * When enabled, the fields in the results returned by this Query will be
-     * casted to their corresponding PHP data type.
+     * cast to their corresponding PHP data type.
      *
      * @return $this
      */
