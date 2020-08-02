@@ -171,7 +171,7 @@ class Response implements ResponseInterface
         'js' => 'application/javascript',
         'jsonapi' => 'application/vnd.api+json',
         'latex' => 'application/x-latex',
-        'ld+json' => 'application/ld+json',
+        'jsonld' => 'application/ld+json',
         'lha' => 'application/octet-stream',
         'lsp' => 'application/x-lisp',
         'lzh' => 'application/octet-stream',
