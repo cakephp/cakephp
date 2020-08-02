@@ -4708,6 +4708,21 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test obtaining the current results casting mode.
+     *
+     * @return void
+     */
+    public function testObtainingResultsCastingMode()
+    {
+        $query = new Query($this->connection);
+
+        $this->assertTrue($query->isResultsCastingEnabled());
+
+        $query->disableResultsCasting();
+        $this->assertFalse($query->isResultsCastingEnabled());
+    }
+
+    /**
      * Test that type conversion is only applied once.
      *
      * @return void
