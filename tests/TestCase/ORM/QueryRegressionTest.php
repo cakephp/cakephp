@@ -1686,7 +1686,7 @@ class QueryRegressionTest extends TestCase
     {
         $this->loadFixtures('Comments');
         $table = $this->getTableLocator()->get('Comments');
-        $table->updateAll(['updated' => Time::tomorrow()], ['id' => 6]);
+        $table->updateAll(['updated' => Time::now()->addDays(2)], ['id' => 6]);
         $query = $table->find();
         $result = $query->where(['updated >' => $query->func()->now('datetime')])->first();
         $this->assertSame(6, $result->id);
