@@ -41,7 +41,7 @@ class Time extends MutableDateTime implements I18nDateTimeInterface
      * will be used for formatting the date part of the object and the second position
      * will be used to format the time part.
      *
-     * @var string|array|int
+     * @var string|int|int[]
      * @see \Cake\I18n\Time::i18nFormat()
      */
     protected static $_toStringFormat = [IntlDateFormatter::SHORT, IntlDateFormatter::SHORT];
@@ -57,7 +57,7 @@ class Time extends MutableDateTime implements I18nDateTimeInterface
      * will be used for formatting the date part of the object and the second position
      * will be used to format the time part.
      *
-     * @var string|array|int|\Closure
+     * @var string|int|int[]|\Closure
      * @see \Cake\I18n\Time::i18nFormat()
      */
     protected static $_jsonEncodeFormat = "yyyy-MM-dd'T'HH':'mm':'ssxxx";
@@ -73,7 +73,7 @@ class Time extends MutableDateTime implements I18nDateTimeInterface
      * will be used for formatting the date part of the object and the second position
      * will be used to format the time part.
      *
-     * @var string|array|int
+     * @var string|int|int[]
      * @see \Cake\I18n\Time::nice()
      */
     public static $niceFormat = [IntlDateFormatter::MEDIUM, IntlDateFormatter::SHORT];
@@ -82,10 +82,10 @@ class Time extends MutableDateTime implements I18nDateTimeInterface
      * The format to use when formatting a time using `Cake\I18n\Time::timeAgoInWords()`
      * and the difference is more than `Cake\I18n\Time::$wordEnd`
      *
-     * @var string|array|int
+     * @var string|int|int[]
      * @see \Cake\I18n\Time::timeAgoInWords()
      */
-    public static $wordFormat = [IntlDateFormatter::SHORT, -1];
+    public static $wordFormat = [IntlDateFormatter::SHORT, IntlDateFormatter::NONE];
 
     /**
      * The format to use when formatting a time using `Time::timeAgoInWords()`

@@ -21,7 +21,6 @@ use Closure;
 use DateTime;
 use DateTimeZone;
 use IntlDateFormatter;
-use InvalidArgumentException;
 use RuntimeException;
 
 /**
@@ -36,7 +35,7 @@ trait DateFormatTrait
      *
      * Use static::setDefaultLocale() and static::getDefaultLocale() instead.
      *
-     * @var string
+     * @var string|null
      */
     protected static $defaultLocale;
 
@@ -171,7 +170,7 @@ trait DateFormatTrait
      * You can control the default locale used through `Time::setDefaultLocale()`.
      * If empty, the default will be taken from the `intl.default_locale` ini config.
      *
-     * @param string|int|array|null $format Format string.
+     * @param string|int|int[]|null $format Format string.
      * @param string|\DateTimeZone|null $timezone Timezone string or DateTimeZone object
      * in which the date will be displayed. The timezone stored for this object will not
      * be changed.
@@ -203,18 +202,18 @@ trait DateFormatTrait
      * Implements what IntlDateFormatter::formatObject() is in PHP 5.5+
      *
      * @param \DateTime|\DateTimeImmutable $date Date.
-     * @param string|int|array $format Format.
+     * @param string|int|int[] $format Format.
      * @param string|null $locale The locale name in which the date should be displayed.
      * @return string
      */
     protected function _formatObject($date, $format, ?string $locale): string
     {
-        $pattern = $timeFormat = null;
+        $pattern = '';
 
         if (is_array($format)) {
             [$dateFormat, $timeFormat] = $format;
-        } elseif (is_numeric($format)) {
-            $dateFormat = $format;
+        } elseif (is_int($format)) {
+            $dateFormat = $timeFormat = $format;
         } else {
             $dateFormat = $timeFormat = IntlDateFormatter::FULL;
             $pattern = $format;
@@ -242,11 +241,11 @@ trait DateFormatTrait
             }
             $formatter = datefmt_create(
                 $locale,
-                (int)$dateFormat,
-                (int)$timeFormat,
+                $dateFormat,
+                $timeFormat,
                 $timezone,
                 $calendar,
-                (string)$pattern
+                $pattern
             );
             if ($formatter === false) {
                 throw new RuntimeException(
@@ -290,7 +289,7 @@ trait DateFormatTrait
      * will be used for formatting the date part of the object and the second position
      * will be used to format the time part.
      *
-     * @param string|array|int $format Format.
+     * @param string|int|int[] $format Format.
      * @return void
      */
     public static function setToStringFormat($format): void
@@ -325,41 +324,36 @@ trait DateFormatTrait
      * ```
      *  $time = Time::parseDateTime('10/13/2013 12:54am');
      *  $time = Time::parseDateTime('13 Oct, 2013 13:54', 'dd MMM, y H:mm');
-     *  $time = Time::parseDateTime('10/10/2015', [IntlDateFormatter::SHORT, -1]);
+     *  $time = Time::parseDateTime('10/10/2015', [IntlDateFormatter::SHORT, IntlDateFormatter::NONE]);
      * ```
      *
      * @param string $time The time string to parse.
-     * @param string|int[]|null $format Any format accepted by IntlDateFormatter.
+     * @param string|int|int[]|null $format Any format accepted by IntlDateFormatter.
      * @param \DateTimeZone|string|null $tz The timezone for the instance
      * @return static|null
-     * @throws \InvalidArgumentException If $format is a single int instead of array of constants
      */
     public static function parseDateTime(string $time, $format = null, $tz = null)
     {
-        $dateFormat = $format ?: static::$_toStringFormat;
-        $timeFormat = $pattern = null;
+        $format = $format ?? static::$_toStringFormat;
+        $pattern = '';
 
-        if (is_array($dateFormat)) {
-            [$newDateFormat, $timeFormat] = $dateFormat;
-            $dateFormat = $newDateFormat;
+        if (is_array($format)) {
+            [$dateFormat, $timeFormat] = $format;
+        } elseif (is_int($format)) {
+            $dateFormat = $timeFormat = $format;
         } else {
-            $pattern = $dateFormat;
-            $dateFormat = null;
-
-            if (is_int($pattern)) {
-                throw new InvalidArgumentException(
-                    'If $format is an IntlDateFormatter constant, must be an array.'
-                );
-            }
+            $dateFormat = $timeFormat = IntlDateFormatter::FULL;
+            $pattern = $format;
         }
 
+        $locale = static::$defaultLocale ?? I18n::getLocale();
         $formatter = datefmt_create(
-            (string)static::$defaultLocale,
-            $dateFormat ?? 0,
-            $timeFormat ?? 0,
+            $locale,
+            $dateFormat,
+            $timeFormat,
             $tz,
             null,
-            $pattern ?? ''
+            $pattern
         );
         $formatter->setLenient(static::$lenientParsing);
 
@@ -403,7 +397,7 @@ trait DateFormatTrait
     public static function parseDate(string $date, $format = null)
     {
         if (is_int($format)) {
-            $format = [$format, -1];
+            $format = [$format, IntlDateFormatter::NONE];
         }
         $format = $format ?: static::$wordFormat;
 
@@ -433,9 +427,9 @@ trait DateFormatTrait
     public static function parseTime(string $time, $format = null)
     {
         if (is_int($format)) {
-            $format = [-1, $format];
+            $format = [IntlDateFormatter::NONE, $format];
         }
-        $format = $format ?: [-1, IntlDateFormatter::SHORT];
+        $format = $format ?: [IntlDateFormatter::NONE, IntlDateFormatter::SHORT];
 
         return static::parseDateTime($time, $format);
     }
