@@ -23,7 +23,6 @@ namespace Cake\TestSuite\Constraint\Email;
  */
 class MailSubjectContains extends MailConstraintBase
 {
-
     /**
      * Checks constraint
      *
