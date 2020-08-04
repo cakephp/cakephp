@@ -43,7 +43,8 @@ class MailSubjectContains extends MailConstraintBase
             $subject = $message->getOriginalSubject();
 
             $other = preg_quote($other, '/');
-            if (preg_match("/$other/", $subject) > 0) {
+            preg_match('/$other/', $subject, $matches);
+            if ($matches) {
                 return true;
             }
         }
