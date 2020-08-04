@@ -33,10 +33,10 @@ class MailContains extends MailConstraintBase
     /**
      * Checks constraint
      *
-     * @param string $other Constraint check
+     * @param mixed $other Constraint check
      * @return bool
      */
-    public function matches(string $other): bool
+    public function matches($other): bool
     {
         $messages = $this->getMessages();
         foreach ($messages as $message) {
