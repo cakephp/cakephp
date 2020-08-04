@@ -691,7 +691,6 @@ trait IntegrationTestTrait
     {
         foreach ($data as $key => $value) {
             if (is_scalar($value)) {
-                /** @psalm-suppress RedundantCondition */
                 $data[$key] = $value === false ? '0' : (string)$value;
 
                 continue;
