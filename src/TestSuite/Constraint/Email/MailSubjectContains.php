@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite\Constraint\Email;
 
+use InvalidArgumentException;
+
 /**
  * MailSubjectContains
  *
@@ -31,6 +33,11 @@ class MailSubjectContains extends MailConstraintBase
      */
     public function matches($other): bool
     {
+        if (!is_string($other)) {
+            throw new InvalidArgumentException(
+                'Invalid data type, must be a string.'
+            );
+        }
         $messages = $this->getMessages();
         foreach ($messages as $message) {
             $subject = $message->getOriginalSubject();
