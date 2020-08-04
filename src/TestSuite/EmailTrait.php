@@ -150,7 +150,7 @@ trait EmailTrait
      *
      * @param int $at Email index
      * @param string $expected Contents
-     * @param string $parameter Email getter parameter (e.g. "cc", "subject")
+     * @param string $parameter Email getter parameter (e.g. "cc", "bcc")
      * @param string $message Message
      * @return void
      */
