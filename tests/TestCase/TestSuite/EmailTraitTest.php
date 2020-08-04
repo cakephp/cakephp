@@ -222,6 +222,8 @@ class EmailTraitTest extends TestCase
             'assertMailContainsAt' => ['assertMailContainsAt', 'Failed asserting that \'Missing\' is in email #1' . PHP_EOL . 'was: .', [1, 'Missing']],
             'assertMailContainsHtmlAt' => ['assertMailContainsHtmlAt', 'Failed asserting that \'Missing\' is in the html message of email #1' . PHP_EOL . 'was: .', [1, 'Missing']],
             'assertMailContainsTextAt' => ['assertMailContainsTextAt', 'Failed asserting that \'Missing\' is in the text message of email #1' . PHP_EOL . 'was: .', [1, 'Missing']],
+            'assertMailSubjectContains' => ['assertMailSubjectContains', 'Failed asserting that \'Missing\' is in an email subject' . PHP_EOL . 'was: .', ['Missing']],
+            'assertMailSubjectContainsAt' => ['assertMailSubjectContainsAt', 'Failed asserting that \'Missing\' is in an email subject #1' . PHP_EOL . 'was: .', [1, 'Missing']],
         ];
     }
 
