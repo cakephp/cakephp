@@ -270,5 +270,4 @@ trait EmailTrait
     {
         $this->assertThat($contents, new MailSubjectContains($at), $message);
     }
-
 }
