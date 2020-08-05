@@ -17,7 +17,9 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Database\Exception;
+use Cake\Database\Log\QueryLogger;
 use Cake\Datasource\ConnectionManager;
+use Cake\Log\Log;
 use Cake\ORM\Entity;
 use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
@@ -466,5 +468,37 @@ class ResultSetTest extends TestCase
         $max = $query->max('counter');
 
         $this->assertTrue($max > $min);
+    }
+
+    /**
+     * @see https://github.com/cakephp/cakephp/issues/14676
+     * @return void
+     */
+    public function testQueryLoggingForSelectsWithZeroRows()
+    {
+        Log::setConfig('queries', ['className' => 'Array']);
+
+        $defaultLogger = $this->connection->getLogger();
+        $queryLogging = $this->connection->isQueryLoggingEnabled();
+
+        $logger = new QueryLogger();
+        $this->connection->setLogger($logger)->enableQueryLogging(true);
+
+        $messages = Log::engine('queries')->read();
+        $this->assertCount(0, $messages);
+
+        $results = $this->table->find('all')
+            ->enableBufferedResults()
+            ->where(['id' => 0])
+            ->all();
+
+        $this->assertCount(0, $results);
+
+        $messages = Log::engine('queries')->read();
+        $message = array_pop($messages);
+        $this->assertStringContainsString('SELECT', $message);
+
+        $this->connection->setLogger($defaultLogger)->enableQueryLogging($queryLogging);
+        Log::reset();
     }
 }

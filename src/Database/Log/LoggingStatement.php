@@ -81,8 +81,7 @@ class LoggingStatement extends StatementDecorator
         }
 
         if (preg_match('/^(?!SELECT)/i', $this->queryString)) {
-            $this->loggedQuery->numRows = $this->rowCount();
-            $this->_log();
+            $this->rowCount();
         }
 
         return $result;
@@ -96,8 +95,7 @@ class LoggingStatement extends StatementDecorator
         $record = parent::fetch($type);
 
         if ($this->loggedQuery) {
-            $this->loggedQuery->numRows = $this->rowCount();
-            $this->_log();
+            $this->rowCount();
         }
 
         return $record;
@@ -111,11 +109,25 @@ class LoggingStatement extends StatementDecorator
         $results = parent::fetchAll($type);
 
         if ($this->loggedQuery) {
-            $this->loggedQuery->numRows = $this->rowCount();
-            $this->_log();
+            $this->rowCount();
         }
 
         return $results;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function rowCount(): int
+    {
+        $result = parent::rowCount();
+
+        if ($this->loggedQuery) {
+            $this->loggedQuery->numRows = $result;
+            $this->_log();
+        }
+
+        return $result;
     }
 
     /**
