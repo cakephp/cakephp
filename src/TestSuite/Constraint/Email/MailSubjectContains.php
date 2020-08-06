@@ -41,10 +41,7 @@ class MailSubjectContains extends MailConstraintBase
         $messages = $this->getMessages();
         foreach ($messages as $message) {
             $subject = $message->getOriginalSubject();
-
-            $other = preg_quote($other, '/');
-            preg_match('/$other/', $subject, $matches);
-            if ($matches) {
+            if (strpos($subject, $other) !== false) {
                 return true;
             }
         }
