@@ -89,6 +89,8 @@ class EmailTraitTest extends TestCase
         $this->assertMailContains('text');
         $this->assertMailContains('html');
 
+        $this->assertMailSubjectContains('world');
+
         $this->assertMailContainsAttachment('custom_name.php');
         $this->assertMailContainsAttachment('custom_name.php', ['file' => CAKE . 'basics.php']);
 
@@ -122,6 +124,8 @@ class EmailTraitTest extends TestCase
 
         $this->assertMailContainsAt(0, 'text');
         $this->assertMailContainsAt(1, 'html');
+
+        $this->assertMailSubjectContainsAt(0, 'world');
 
         $this->assertMailSentWithAt(0, 'Hello world', 'subject');
         $this->assertMailSentWithAt(0, 'replyto@example.com', 'replyTo');
