@@ -112,7 +112,7 @@
             "@phpstan",
             "@psalm"
         ],
-        "stan-setup": "cp composer.json composer.backup && composer require --dev phpstan/phpstan:0.12.32 psalm/phar:~3.13.1 && mv composer.backup composer.json"
+        "stan-setup": "cp composer.json composer.backup && composer require --dev phpstan/phpstan:0.12.36 psalm/phar:~3.13.1 && mv composer.backup composer.json"
     },
     "config": {
         "sort-packages": true,

@@ -249,7 +249,7 @@ jobs:
       run: composer stan-setup
 
     - name: Run psalm
-      run: vendor/bin/psalm.phar --show-info=false --output-format=github
+      run: vendor/bin/psalm.phar --output-format=github
 
     - name: Run phpstan
-      run: vendor/bin/phpstan.phar analyse src/ --error-format=checkstyle | cs2pr
+      run: vendor/bin/phpstan.phar analyse --error-format=checkstyle | cs2pr
