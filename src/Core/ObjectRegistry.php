@@ -62,9 +62,9 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * an object by setting the 'className' key, i.e.,
      *
      * ```
-     * public $components = [
+     * protected $components = [
      *   'Email' => [
-     *     'className' => '\App\Controller\Component\AliasedEmailComponent'
+     *     'className' => 'App\Controller\Component\AliasedEmailComponent'
      *   ];
      * ];
      * ```
