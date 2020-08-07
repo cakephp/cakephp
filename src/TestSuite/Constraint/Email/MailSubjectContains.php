@@ -11,25 +11,20 @@ declare(strict_types=1);
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         3.7.0
+ * @since         4.2.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\TestSuite\Constraint\Email;
 
+use InvalidArgumentException;
+
 /**
- * MailContains
+ * MailSubjectContains
  *
  * @internal
  */
-class MailContains extends MailConstraintBase
+class MailSubjectContains extends MailConstraintBase
 {
-    /**
-     * Mail type to check contents of
-     *
-     * @var string|null
-     */
-    protected $type;
-
     /**
      * Checks constraint
      *
@@ -38,13 +33,15 @@ class MailContains extends MailConstraintBase
      */
     public function matches($other): bool
     {
+        if (!is_string($other)) {
+            throw new InvalidArgumentException(
+                'Invalid data type, must be a string.'
+            );
+        }
         $messages = $this->getMessages();
         foreach ($messages as $message) {
-            $method = $this->getTypeMethod();
-            $message = $message->$method();
-
-            $other = preg_quote($other, '/');
-            if (preg_match("/$other/", $message) > 0) {
+            $subject = $message->getOriginalSubject();
+            if (strpos($subject, $other) !== false) {
                 return true;
             }
         }
@@ -53,15 +50,7 @@ class MailContains extends MailConstraintBase
     }
 
     /**
-     * @return string
-     */
-    protected function getTypeMethod(): string
-    {
-        return 'getBody' . ($this->type ? ucfirst($this->type) : 'String');
-    }
-
-    /**
-     * Returns the type-dependent strings of all messages
+     * Returns the subjects of all messages
      * respects $this->at
      *
      * @return string
@@ -71,8 +60,7 @@ class MailContains extends MailConstraintBase
         $messageMembers = [];
         $messages = $this->getMessages();
         foreach ($messages as $message) {
-            $method = $this->getTypeMethod();
-            $messageMembers[] = $message->$method();
+            $messageMembers[] = $message->getSubject();
         }
         if ($this->at && isset($messageMembers[$this->at - 1])) {
             $messageMembers = [$messageMembers[$this->at - 1]];
@@ -90,9 +78,9 @@ class MailContains extends MailConstraintBase
     public function toString(): string
     {
         if ($this->at) {
-            return sprintf('is in email #%d', $this->at) . $this->getAssertedMessages();
+            return sprintf('is in an email subject #%d', $this->at) . $this->getAssertedMessages();
         }
 
-        return 'is in an email' . $this->getAssertedMessages();
+        return 'is in an email subject' . $this->getAssertedMessages();
     }
 }
