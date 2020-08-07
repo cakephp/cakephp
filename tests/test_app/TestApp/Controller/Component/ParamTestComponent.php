@@ -29,5 +29,5 @@ class ParamTestComponent extends Component
      *
      * @var array
      */
-    public $components = ['Banana' => ['config' => 'value']];
+    protected $components = ['Banana' => ['config' => 'value']];
 }

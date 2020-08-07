@@ -12,5 +12,5 @@ class PaginatorTestController extends Controller
      *
      * @var array
      */
-    public $components = ['Paginator'];
+    protected $components = ['Paginator'];
 }

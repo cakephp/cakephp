@@ -29,5 +29,5 @@ class MutuallyReferencingOneComponent extends Component
      *
      * @var array
      */
-    public $components = ['MutuallyReferencingTwo'];
+    protected $components = ['MutuallyReferencingTwo'];
 }

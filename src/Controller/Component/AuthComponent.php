@@ -176,7 +176,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
      *
      * @var array
      */
-    public $components = ['RequestHandler', 'Flash'];
+    protected $components = ['RequestHandler', 'Flash'];
 
     /**
      * Objects that will be used for authentication checks.

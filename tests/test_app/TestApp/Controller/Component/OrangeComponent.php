@@ -30,7 +30,7 @@ class OrangeComponent extends Component
      *
      * @var array
      */
-    public $components = ['Banana'];
+    protected $components = ['Banana'];
 
     /**
      * controller property
