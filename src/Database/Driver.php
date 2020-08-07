@@ -38,6 +38,21 @@ abstract class Driver implements DriverInterface
     protected const MAX_ALIAS_LENGTH = null;
 
     /**
+     * Shared driver-level config keys.
+     *
+     * @var string[]
+     */
+    protected $_internalConfigKeys = [
+        'name',
+        'className',
+        'scheme',
+        'driver',
+        'fragment',
+        'quoteIdentifiers',
+        'tableSchema',
+    ];
+
+    /**
      * Instance of PDO.
      *
      * @var \PDO
@@ -110,6 +125,13 @@ abstract class Driver implements DriverInterface
      */
     protected function _connect(string $dsn, array $config): bool
     {
+        $driverKeys = array_merge(array_keys($this->_baseConfig), $this->_internalConfigKeys);
+        foreach ($config as $name => $attribute) {
+            if (!in_array($name, $driverKeys, true)) {
+                $dsn .= ";{$name}={$attribute}";
+            }
+        }
+
         try {
             $connection = new PDO(
                 $dsn,
