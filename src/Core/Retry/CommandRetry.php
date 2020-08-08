@@ -34,22 +34,25 @@ class CommandRetry
     protected $strategy;
 
     /**
-     * The number of retries to perform in case of failure.
-     *
      * @var int
      */
-    protected $retries;
+    protected $maxRetries;
+
+    /**
+     * @var int
+     */
+    protected $numRetries;
 
     /**
      * Creates the CommandRetry object with the given strategy and retry count
      *
      * @param \Cake\Core\Retry\RetryStrategyInterface $strategy The strategy to follow should the action fail
-     * @param int $retries The number of times the action has been already called
+     * @param int $maxRetries The maximum number of retry attempts allowed
      */
-    public function __construct(RetryStrategyInterface $strategy, int $retries = 1)
+    public function __construct(RetryStrategyInterface $strategy, int $maxRetries = 1)
     {
         $this->strategy = $strategy;
-        $this->retries = $retries;
+        $this->maxRetries = $maxRetries;
     }
 
     /**
@@ -61,23 +64,31 @@ class CommandRetry
      */
     public function run(callable $action)
     {
-        $retryCount = 0;
-        $lastException = null;
-
-        do {
+        $this->numRetries = 0;
+        while (true) {
             try {
                 return $action();
             } catch (Exception $e) {
-                $lastException = $e;
-                if (!$this->strategy->shouldRetry($e, $retryCount)) {
-                    throw $e;
+                if (
+                    $this->numRetries < $this->maxRetries &&
+                    $this->strategy->shouldRetry($e, $this->numRetries)
+                ) {
+                    $this->numRetries++;
+                    continue;
                 }
-            }
-        } while ($this->retries > $retryCount++);
 
-        /** @psalm-suppress RedundantCondition */
-        if ($lastException !== null) {
-            throw $lastException;
+                throw $e;
+            }
         }
+    }
+
+    /**
+     * Returns the last number of retry attemps.
+     *
+     * @return int
+     */
+    public function getRetries(): int
+    {
+        return $this->numRetries;
     }
 }

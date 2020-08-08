@@ -17,7 +17,9 @@ declare(strict_types=1);
 namespace Cake\Database;
 
 use Cake\Core\App;
+use Cake\Core\Retry\CommandRetry;
 use Cake\Database\Exception\MissingConnectionException;
+use Cake\Database\Retry\ErrorCodeWaitStrategy;
 use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\Statement\PDOStatement;
@@ -36,6 +38,11 @@ abstract class Driver implements DriverInterface
      * @var int|null Maximum alias length or null if no limit
      */
     protected const MAX_ALIAS_LENGTH = null;
+
+    /**
+     * @var int[] DB-specific error codes that allow connect retry
+     */
+    protected const RETRY_ERROR_CODES = [];
 
     /**
      * Instance of PDO.
@@ -82,6 +89,13 @@ abstract class Driver implements DriverInterface
     protected $_version;
 
     /**
+     * The last number of connection retry attempts.
+     *
+     * @var int
+     */
+    protected $connectRetries = 0;
+
+    /**
      * Constructor
      *
      * @param array $config The configuration for the driver.
@@ -110,13 +124,18 @@ abstract class Driver implements DriverInterface
      */
     protected function _connect(string $dsn, array $config): bool
     {
-        try {
-            $connection = new PDO(
+        $action = function () use ($dsn, $config) {
+            $this->setConnection(new PDO(
                 $dsn,
                 $config['username'] ?: null,
                 $config['password'] ?: null,
                 $config['flags']
-            );
+            ));
+        };
+
+        $retry = new CommandRetry(new ErrorCodeWaitStrategy(static::RETRY_ERROR_CODES, 5), 4);
+        try {
+            $retry->run($action);
         } catch (PDOException $e) {
             throw new MissingConnectionException(
                 [
@@ -126,8 +145,9 @@ abstract class Driver implements DriverInterface
                 null,
                 $e
             );
+        } finally {
+            $this->connectRetries = $retry->getRetries();
         }
-        $this->setConnection($connection);
 
         return true;
     }
@@ -484,6 +504,16 @@ abstract class Driver implements DriverInterface
     public function getMaxAliasLength(): ?int
     {
         return static::MAX_ALIAS_LENGTH;
+    }
+
+    /**
+     * Returns the number of connection retry attempts made.
+     *
+     * @return int
+     */
+    public function getConnectRetries(): int
+    {
+        return $this->connectRetries;
     }
 
     /**

@@ -11,25 +11,31 @@ declare(strict_types=1);
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         3.6.0
+ * @since         4.2.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Core\Retry;
+namespace TestApp\Database\Retry;
 
+use Cake\Core\Retry\RetryStrategyInterface;
 use Exception;
 
-/**
- * Used to instruct a CommandRetry object on whether or not a retry
- * for an action should be performed
- */
-interface RetryStrategyInterface
+class TestRetryStrategy implements RetryStrategyInterface
 {
     /**
-     * Returns true if the action can be retried, false otherwise.
-     *
-     * @param \Exception $exception The exception that caused the action to fail
-     * @param int $retryCount The number of times action has been retried
-     * @return bool Whether or not it is OK to retry the action
+     * @var bool
      */
-    public function shouldRetry(Exception $exception, int $retryCount): bool;
+    protected $allowRetry;
+
+    public function __construct(bool $allowRetry)
+    {
+        $this->allowRetry = $allowRetry;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function shouldRetry(Exception $exception, int $retryCount): bool
+    {
+        return $this->allowRetry;
+    }
 }
