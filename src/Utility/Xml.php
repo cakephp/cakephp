@@ -185,14 +185,18 @@ class Xml
         ];
         $options += $defaults;
 
-        $internalErrors = libxml_use_internal_errors(true);
-        if (!$options['loadEntities']) {
-            $previousDisabledEntityLoader = libxml_disable_entity_loader(true);
-        }
         $flags = 0;
         if (!empty($options['parseHuge'])) {
             $flags |= LIBXML_PARSEHUGE;
         }
+
+        $internalErrors = libxml_use_internal_errors(true);
+        if (LIBXML_VERSION < 20900 && !$options['loadEntities']) {
+            $previousDisabledEntityLoader = libxml_disable_entity_loader(true);
+        } elseif ($options['loadEntities']) {
+            $flags |= LIBXML_NOENT;
+        }
+
         try {
             $xml = new DOMDocument();
             $xml->loadHTML($input, $flags);
