@@ -187,7 +187,7 @@ class Xml
 
         $internalErrors = libxml_use_internal_errors(true);
         if (!$options['loadEntities']) {
-            libxml_disable_entity_loader(true);
+            $previousDisabledEntityLoader = libxml_disable_entity_loader(true);
         }
         $flags = 0;
         if (!empty($options['parseHuge'])) {
@@ -205,8 +205,8 @@ class Xml
         } catch (Exception $e) {
             throw new XmlException('Xml cannot be read. ' . $e->getMessage(), null, $e);
         } finally {
-            if (!$options['loadEntities']) {
-                libxml_disable_entity_loader(false);
+            if (isset($previousDisabledEntityLoader)) {
+                libxml_disable_entity_loader($previousDisabledEntityLoader);
             }
             libxml_use_internal_errors($internalErrors);
         }
