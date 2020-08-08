@@ -1021,6 +1021,12 @@ class ConnectionTest extends TestCase
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(1, $messages);
+
+        $st = $this->connection->execute('SELECT * FROM things WHERE id = 0');
+        $this->assertSame(0, $st->rowCount());
+
+        $messages = Log::engine('queries')->read();
+        $this->assertCount(2, $messages, 'Select queries without any matching rows should also be logged.');
     }
 
     /**
