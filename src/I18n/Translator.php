@@ -14,14 +14,10 @@ declare(strict_types=1);
  */
 namespace Cake\I18n;
 
-use Aura\Intl\Translator as BaseTranslator;
-
 /**
- * Provides missing message behavior for CakePHP internal message formats.
- *
- * @internal
+ * Translator to translate the message.
  */
-class Translator extends BaseTranslator
+class Translator implements TranslatorInterface
 {
     /**
      * @var string
@@ -29,12 +25,80 @@ class Translator extends BaseTranslator
     public const PLURAL_PREFIX = 'p:';
 
     /**
-     * Translates the message formatting any placeholders
+     * A fallback translator.
+     *
+     * @var \Cake\I18n\TranslatorInterface|null
+     */
+    protected $fallback;
+
+    /**
+     * The formatter to use when translating messages.
+     *
+     * @var \Cake\I18n\FormatterInterface
+     */
+    protected $formatter;
+
+    /**
+     * The locale being used for translations.
+     *
+     * @var string
+     */
+    protected $locale;
+
+    /**
+     * The Package containing keys and translations.
+     *
+     * @var \Cake\I18n\Package
+     */
+    protected $package;
+
+    /**
+     * Constructor
+     *
+     * @param string $locale The locale being used.
+     * @param \Cake\I18n\Package $package The Package containing keys and translations.
+     * @param \Cake\I18n\FormatterInterface $formatter A message formatter.
+     * @param \Cake\I18n\Translator $fallback A fallback translator.
+     */
+    public function __construct(
+        string $locale,
+        Package $package,
+        FormatterInterface $formatter,
+        ?TranslatorInterface $fallback = null
+    ) {
+        $this->locale = $locale;
+        $this->package = $package;
+        $this->formatter = $formatter;
+        $this->fallback = $fallback;
+    }
+
+    /**
+     * Gets the message translation by its key.
      *
      * @param string $key The message key.
-     * @param array $tokensValues Token values to interpolate into the
-     *   message.
-     * @return string The translated message with tokens replaced.
+     * @return mixed The message translation string, or false if not found.
+     */
+    protected function getMessage($key)
+    {
+        $message = $this->package->getMessage($key);
+        if ($message) {
+            return $message;
+        }
+
+        if ($this->fallback && $this->fallback instanceof self) {
+            $message = $this->fallback->getMessage($key);
+            if ($message) {
+                $this->package->addMessage($key, $message);
+
+                return $message;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @inheritDoc
      */
     public function translate($key, array $tokensValues = []): string
     {
@@ -117,5 +181,15 @@ class Translator extends BaseTranslator
         }
 
         return $message['_context'][$context];
+    }
+
+    /**
+     * An object of type Package
+     *
+     * @return \Cake\I18n\Package
+     */
+    public function getPackage()
+    {
+        return $this->package;
     }
 }

@@ -16,8 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\I18n\Formatter;
 
-use Aura\Intl\Exception\CannotFormat;
-use Aura\Intl\FormatterInterface;
+use Cake\I18n\Exception\CannotFormat;
+use Cake\I18n\FormatterInterface;
 use MessageFormatter;
 
 /**
@@ -31,16 +31,15 @@ class IcuFormatter implements FormatterInterface
      *
      * @param string $locale The locale in which the message is presented.
      * @param string $message The message to be translated
-     * @param array $vars The list of values to interpolate in the message
+     * @param array $tokenValues The list of values to interpolate in the message
      * @return string The formatted message
-     * @throws \Aura\Intl\Exception\CannotFormat
-     * @throws \Aura\Intl\Exception\CannotInstantiateFormatter
+     * @throws \Cake\I18n\Exception\CannotFormat
      */
-    public function format($locale, $message, array $vars): string
+    public function format($locale, $message, array $tokenValues): string
     {
-        unset($vars['_singular'], $vars['_count']);
+        unset($tokenValues['_singular'], $tokenValues['_count']);
 
-        return $this->_formatMessage($locale, $message, $vars);
+        return $this->_formatMessage($locale, $message, $tokenValues);
     }
 
     /**
@@ -48,27 +47,25 @@ class IcuFormatter implements FormatterInterface
      *
      * @param string $locale The locale in which the message is presented.
      * @param string $message The message to be translated
-     * @param array $vars The list of values to interpolate in the message
+     * @param array $tokenValues The list of values to interpolate in the message
      * @return string The formatted message
-     * @throws \Aura\Intl\Exception\CannotInstantiateFormatter if any error occurred
-     * while parsing the message
-     * @throws \Aura\Intl\Exception\CannotFormat If any error related to the passed
+     * @throws \Cake\I18n\Exception\CannotFormat If any error related to the passed
      * variables is found
      */
-    protected function _formatMessage(string $locale, string $message, array $vars): string
+    protected function _formatMessage(string $locale, string $message, array $tokenValues): string
     {
         if ($message === '') {
             return $message;
         }
         // Using procedural style as it showed twice as fast as
         // its counterpart in PHP 5.5
-        $result = MessageFormatter::formatMessage($locale, $message, $vars);
+        $result = MessageFormatter::formatMessage($locale, $message, $tokenValues);
 
         if ($result === false) {
             // The user might be interested in what went wrong, so replay the
             // previous action using the object oriented style to figure out
             $formatter = new MessageFormatter($locale, $message);
-            $formatter->format($vars);
+            $formatter->format($tokenValues);
             throw new CannotFormat($formatter->getErrorMessage(), $formatter->getErrorCode());
         }
 

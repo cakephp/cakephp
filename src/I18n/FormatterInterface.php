@@ -10,19 +10,17 @@ declare(strict_types=1);
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @copyright     Copyright (c) 2017-2020, Aura for PHP
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         3.0.0
+ * @since         4.2.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\I18n\Formatter;
-
-use Cake\I18n\FormatterInterface;
+namespace Cake\I18n;
 
 /**
- * A formatter that will interpolate variables using sprintf and
- * select the correct plural form when required
+ * Formatter Interface
  */
-class SprintfFormatter implements FormatterInterface
+interface FormatterInterface
 {
     /**
      * Returns a string with all passed variables interpolated into the original
@@ -33,10 +31,5 @@ class SprintfFormatter implements FormatterInterface
      * @param array $tokenValues The list of values to interpolate in the message
      * @return string The formatted message
      */
-    public function format($locale, $message, array $tokenValues): string
-    {
-        unset($tokenValues['_singular']);
-
-        return vsprintf($message, $tokenValues);
-    }
+    public function format($locale, $message, array $tokenValues): string;
 }

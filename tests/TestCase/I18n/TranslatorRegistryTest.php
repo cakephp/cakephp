@@ -17,11 +17,10 @@ declare(strict_types=1);
 
 namespace Cake\Test\TestCase\I18n;
 
-use Aura\Intl\BasicFormatter;
-use Aura\Intl\FormatterLocator;
-use Aura\Intl\Package;
-use Aura\Intl\PackageLocator;
-use Aura\Intl\TranslatorLocator;
+use Cake\I18n\Formatter\SprintfFormatter;
+use Cake\I18n\FormatterLocator;
+use Cake\I18n\Package;
+use Cake\I18n\PackageLocator;
 use Cake\I18n\Translator;
 use Cake\I18n\TranslatorFactory;
 use Cake\I18n\TranslatorRegistry;
@@ -35,10 +34,9 @@ class TranslatorRegistryTest extends TestCase
     public function testGetNullPackageInitializationFromCache()
     {
         $translatorFactory = $this->getMockBuilder(TranslatorFactory::class)->getMock();
-        $translatorLocator = $this->getMockBuilder(TranslatorLocator::class)->disableOriginalConstructor()->getMock();
         $packageLocator = $this->getMockBuilder(PackageLocator::class)->getMock();
         $package = $this->getMockBuilder(Package::class)->getMock();
-        $formatter = $this->getMockBuilder(BasicFormatter::class)->getMock();
+        $formatter = $this->getMockBuilder(SprintfFormatter::class)->getMock();
         $formatterLocator = $this->getMockBuilder(FormatterLocator::class)->getMock();
         $cacheEngineNullPackage = $this->getMockForAbstractClass('Cake\Cache\CacheEngine', [], '', true, true, true, ['read']);
         $translatorNullPackage = $this->getMockBuilder(Translator::class)->disableOriginalConstructor()->getMock();
@@ -53,10 +51,6 @@ class TranslatorRegistryTest extends TestCase
             ->willReturn($translatorNonNullPackage);
 
         $formatterLocator
-            ->method('get')
-            ->willReturn($formatter);
-
-        $translatorLocator
             ->method('get')
             ->willReturn($formatter);
 

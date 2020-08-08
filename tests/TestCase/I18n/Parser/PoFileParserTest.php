@@ -16,10 +16,10 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\I18n\Parser;
 
-use Aura\Intl\Package;
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\I18n\I18n;
+use Cake\I18n\Package;
 use Cake\I18n\Parser\PoFileParser;
 use Cake\TestSuite\TestCase;
 
@@ -47,6 +47,7 @@ class PoFileParserTest extends TestCase
         parent::setUp();
         $this->locale = I18n::getLocale();
         $this->path = Configure::read('App.paths.locales.0');
+        Cache::clear('_cake_core_');
     }
 
     /**

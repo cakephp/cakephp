@@ -16,8 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\I18n;
 
-use Aura\Intl\Package;
-use Aura\Intl\Translator as AuraTranslator;
+use Cake\I18n\FormatterInterface;
+use Cake\I18n\Package;
+use Cake\I18n\Translator;
 use Cake\I18n\TranslatorFactory;
 use Cake\TestSuite\TestCase;
 
@@ -33,9 +34,9 @@ class TranslatorFactoryTest extends TestCase
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Translator fallback class');
-        $formatter = $this->getMockBuilder('Aura\Intl\FormatterInterface')->getMock();
+        $formatter = $this->getMockBuilder(FormatterInterface::class)->getMock();
         $package = $this->getMockBuilder(Package::class)->getMock();
-        $fallback = new AuraTranslator('en_CA', $package, $formatter, null);
+        $fallback = $this->getMockBuilder(Translator::class)->disableOriginalConstructor()->getMock();
         $factory = new TranslatorFactory();
         $factory->newInstance('en_CA', $package, $formatter, $fallback);
     }

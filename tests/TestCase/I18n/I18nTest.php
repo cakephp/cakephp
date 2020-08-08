@@ -16,9 +16,10 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\I18n;
 
-use Aura\Intl\Package;
 use Cake\Cache\Cache;
 use Cake\I18n\I18n;
+use Cake\I18n\Package;
+use Cake\I18n\TranslatorInterface;
 use Cake\TestSuite\TestCase;
 use Locale;
 
@@ -82,7 +83,7 @@ class I18nTest extends TestCase
     public function testGetDefaultTranslator()
     {
         $translator = I18n::getTranslator();
-        $this->assertInstanceOf('Aura\Intl\TranslatorInterface', $translator);
+        $this->assertInstanceOf(TranslatorInterface::class, $translator);
         $this->assertSame('%d is 1 (po translated)', $translator->translate('%d = 1'));
         $this->assertSame($translator, I18n::getTranslator(), 'backwards compat works');
     }

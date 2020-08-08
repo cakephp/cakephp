@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\I18n;
 
-use Aura\Intl\Package;
 use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\Utility\Inflector;
@@ -102,7 +101,7 @@ class MessagesFileLoader
      * Loads the translation file and parses it. Returns an instance of a translations
      * package containing the messages loaded from the file.
      *
-     * @return \Aura\Intl\Package|false
+     * @return \Cake\I18n\Package|false
      * @throws \RuntimeException if no file parser class could be found for the specified
      * file extension.
      */

@@ -16,19 +16,51 @@ declare(strict_types=1);
  */
 namespace Cake\I18n;
 
-use Aura\Intl\Exception;
-use Aura\Intl\FormatterLocator;
-use Aura\Intl\PackageLocator;
-use Aura\Intl\TranslatorInterface;
-use Aura\Intl\TranslatorLocator;
+use Cake\I18n\Exception\Exception;
 use Closure;
 
 /**
  * Constructs and stores instances of translators that can be
  * retrieved by name and locale.
  */
-class TranslatorRegistry extends TranslatorLocator
+class TranslatorRegistry
 {
+    /**
+     * A registry to retain translator objects.
+     *
+     * @var array
+     * @psalm-var array<string, array<string, \Cake\I18n\TranslatorInterface>>
+     */
+    protected $registry = [];
+
+    /**
+     * The current locale code.
+     *
+     * @var string
+     */
+    protected $locale;
+
+    /**
+     * A translator factory.
+     *
+     * @var \Cake\I18n\TranslatorFactory
+     */
+    protected $factory;
+
+    /**
+     * A package locator.
+     *
+     * @var \Cake\I18n\PackageLocator
+     */
+    protected $packages;
+
+    /**
+     * A formatter locator.
+     *
+     * @var \Cake\I18n\FormatterLocator
+     */
+    protected $formatters;
+
     /**
      * A list of loader functions indexed by domain name. Loaders are
      * callables that are invoked as a default for building translation
@@ -72,8 +104,8 @@ class TranslatorRegistry extends TranslatorLocator
     /**
      * Constructor.
      *
-     * @param \Aura\Intl\PackageLocator $packages The package locator.
-     * @param \Aura\Intl\FormatterLocator $formatters The formatter locator.
+     * @param \Cake\I18n\PackageLocator $packages The package locator.
+     * @param \Cake\I18n\FormatterLocator $formatters The formatter locator.
      * @param \Cake\I18n\TranslatorFactory $factory A translator factory to
      *   create translator objects for the locale and package.
      * @param string $locale The default locale code to use.
@@ -84,7 +116,10 @@ class TranslatorRegistry extends TranslatorLocator
         TranslatorFactory $factory,
         string $locale
     ) {
-        parent::__construct($packages, $formatters, $factory, $locale);
+        $this->packages = $packages;
+        $this->factory = $factory;
+        $this->formatters = $formatters;
+        $this->setLocale($locale);
 
         $this->registerLoader($this->_fallbackLoader, function ($name, $locale) {
             $chain = new ChainMessagesLoader([
@@ -92,8 +127,6 @@ class TranslatorRegistry extends TranslatorLocator
                 new MessagesFileLoader($name, $locale, 'po'),
             ]);
 
-            // \Aura\Intl\Package by default uses formatter configured with key "basic".
-            // and we want to make sure the cake domain always uses the default formatter
             $formatter = $name === 'cake' ? 'default' : $this->_defaultFormatter;
             $chain = function () use ($formatter, $chain) {
                 $package = $chain();
@@ -104,6 +137,57 @@ class TranslatorRegistry extends TranslatorLocator
 
             return $chain;
         });
+    }
+
+    /**
+     * Sets the default locale code.
+     *
+     * @param string $locale The new locale code.
+     * @return void
+     */
+    public function setLocale($locale)
+    {
+        $this->locale = $locale;
+    }
+
+    /**
+     * Returns the default locale code.
+     *
+     * @return string
+     */
+    public function getLocale()
+    {
+        return $this->locale;
+    }
+
+    /**
+     * The TranslatorFactory object
+     *
+     * @return \Cake\I18n\TranslatorFactory
+     */
+    public function getFactory()
+    {
+        return $this->factory;
+    }
+
+    /**
+     * An object of type PackageLocator
+     *
+     * @return \Cake\I18n\PackageLocator
+     */
+    public function getPackages()
+    {
+        return $this->packages;
+    }
+
+    /**
+     * An object of type FormatterLocator
+     *
+     * @return \Cake\I18n\FormatterLocator
+     */
+    public function getFormatters()
+    {
+        return $this->formatters;
     }
 
     /**
@@ -124,10 +208,9 @@ class TranslatorRegistry extends TranslatorLocator
      * @param string|null $name The translator package to retrieve.
      * @param string|null $locale The locale to use; if empty, uses the default
      * locale.
-     * @return \Aura\Intl\TranslatorInterface|null A translator object.
-     * @throws \Aura\Intl\Exception If no translator with that name could be found
+     * @return \Cake\I18n\TranslatorInterface|null A translator object.
+     * @throws \Cake\I18n\Exception\Exception If no translator with that name could be found
      * for the given locale.
-     * @psalm-suppress ImplementedReturnTypeMismatch
      */
     public function get($name, $locale = null)
     {
@@ -165,12 +248,12 @@ class TranslatorRegistry extends TranslatorLocator
      * @param string $name The translator package to retrieve.
      * @param string $locale The locale to use; if empty, uses the default
      * locale.
-     * @return \Aura\Intl\TranslatorInterface A translator object.
+     * @return \Cake\I18n\TranslatorInterface A translator object.
      */
     protected function _getTranslator(string $name, string $locale): TranslatorInterface
     {
         try {
-            return parent::get($name, $locale);
+            return $this->registry[$name][$locale] = $this->createInstance($name, $locale);
         } catch (Exception $e) {
         }
 
@@ -179,6 +262,27 @@ class TranslatorRegistry extends TranslatorLocator
         }
 
         return $this->_getFromLoader($name, $locale);
+    }
+
+    /**
+     * Create translator instance.
+     *
+     * @param string $name The translator package to retrieve.
+     * @param string $locale The locale to use; if empty, uses the default locale.
+     * @return \Cake\I18n\TranslatorInterface A translator object.
+     */
+    protected function createInstance(string $name, string $locale): TranslatorInterface
+    {
+        $package = $this->packages->get($name, $locale);
+
+        $translator = $this->factory->newInstance(
+            $locale,
+            $package,
+            $this->formatters->get($package->getFormatter()),
+            $this->get($package->getFallback(), $locale)
+        );
+
+        return $translator;
     }
 
     /**
@@ -232,7 +336,7 @@ class TranslatorRegistry extends TranslatorLocator
      *
      * @param string $name The translation package name.
      * @param string $locale The locale to create the translator for.
-     * @return \Aura\Intl\TranslatorInterface|\Closure
+     * @return \Cake\I18n\TranslatorInterface|\Closure
      */
     protected function _fallbackLoader(string $name, string $locale)
     {
@@ -257,7 +361,7 @@ class TranslatorRegistry extends TranslatorLocator
      *
      * @param string $name The name of the translator package
      * @param string $locale The locale that should be built the package for
-     * @return \Aura\Intl\TranslatorInterface A translator object.
+     * @return \Cake\I18n\TranslatorInterface A translator object.
      */
     protected function _getFromLoader(string $name, string $locale): TranslatorInterface
     {
@@ -274,7 +378,7 @@ class TranslatorRegistry extends TranslatorLocator
 
         $this->packages->set($name, $locale, $loader);
 
-        return parent::get($name, $locale);
+        return $this->registry[$name][$locale] = $this->createInstance($name, $locale);
     }
 
     /**
@@ -291,7 +395,7 @@ class TranslatorRegistry extends TranslatorLocator
             return $loader;
         }
         $loader = function () use ($loader, $fallbackDomain) {
-            /** @var \Aura\Intl\Package $package */
+            /** @var \Cake\I18n\Package $package */
             $package = $loader();
             if (!$package->getFallback()) {
                 $package->setFallback($fallbackDomain);

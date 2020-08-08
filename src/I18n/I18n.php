@@ -16,9 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\I18n;
 
-use Aura\Intl\FormatterLocator;
-use Aura\Intl\PackageLocator;
-use Aura\Intl\TranslatorInterface;
 use Cake\Cache\Cache;
 use Cake\Core\Exception\Exception;
 use Cake\I18n\Formatter\IcuFormatter;
@@ -95,7 +92,7 @@ class I18n
      *
      * ```
      *  I18n::setTranslator('default', function () {
-     *      $package = new \Aura\Intl\Package();
+     *      $package = new \Cake\I18n\Package();
      *      $package->setMessages([
      *          'Cake' => 'Gâteau'
      *      ]);
@@ -141,8 +138,8 @@ class I18n
      *
      * @param string $name The domain of the translation messages.
      * @param string|null $locale The locale for the translator.
-     * @return \Aura\Intl\TranslatorInterface The configured translator.
-     * @throws \Aura\Intl\Exception
+     * @return \Cake\I18n\TranslatorInterface The configured translator.
+     * @throws \Cake\I18n\Exception\Exception
      */
     public static function getTranslator(string $name = 'default', ?string $locale = null): TranslatorInterface
     {
@@ -180,7 +177,7 @@ class I18n
      *
      * Loader objects will receive two arguments: The domain name that needs to be
      * built, and the locale that is requested. These objects can assemble the messages
-     * from any source, but must return an `Aura\Intl\Package` object.
+     * from any source, but must return an `Cake\I18n\Package` object.
      *
      * ### Example:
      *
@@ -196,7 +193,7 @@ class I18n
      * You can also assemble the package object yourself:
      *
      * ```
-     *  use Aura\Intl\Package;
+     *  use Cake\I18n\Package;
      *  I18n::config('my_domain', function ($name, $locale) {
      *      $package = new Package('default');
      *      $messages = (...); // Fetch messages for locale from external service.
