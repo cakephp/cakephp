@@ -10,7 +10,7 @@ declare(strict_types=1);
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- * @copyright     Copyright (c) 2017-2020, Aura for PHP
+ * @copyright     Copyright (c) 2017 Aura for PHP
  * @link          https://cakephp.org CakePHP(tm) Project
  * @since         4.2.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
