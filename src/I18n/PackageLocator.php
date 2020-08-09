@@ -95,4 +95,16 @@ class PackageLocator
 
         return $this->registry[$name][$locale];
     }
+
+    /**
+     * Check if a Package object for given name and locale exists in registry.
+     *
+     * @param string $name The package name.
+     * @param string $locale The locale for the package.
+     * @return bool
+     */
+    public function has(string $name, string $locale): bool
+    {
+        return isset($this->registry[$name][$locale]);
+    }
 }

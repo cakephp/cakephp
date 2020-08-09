@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\I18n;
 
-use Cake\I18n\Exception\I18nException;
 use Closure;
 
 /**
@@ -227,9 +226,8 @@ class TranslatorRegistry
      */
     protected function _getTranslator(string $name, string $locale): Translator
     {
-        try {
+        if ($this->packages->has($name, $locale)) {
             return $this->registry[$name][$locale] = $this->createInstance($name, $locale);
-        } catch (I18nException $e) {
         }
 
         if (!isset($this->_loaders[$name])) {
