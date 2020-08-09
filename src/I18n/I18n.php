@@ -71,7 +71,6 @@ class I18n
                     return new IcuFormatter();
                 },
             ]),
-            new TranslatorFactory(),
             static::getLocale()
         );
 

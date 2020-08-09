@@ -22,7 +22,6 @@ use Cake\I18n\FormatterLocator;
 use Cake\I18n\Package;
 use Cake\I18n\PackageLocator;
 use Cake\I18n\Translator;
-use Cake\I18n\TranslatorFactory;
 use Cake\I18n\TranslatorRegistry;
 use Cake\TestSuite\TestCase;
 
@@ -33,7 +32,6 @@ class TranslatorRegistryTest extends TestCase
      */
     public function testGetNullPackageInitializationFromCache()
     {
-        $translatorFactory = $this->getMockBuilder(TranslatorFactory::class)->getMock();
         $packageLocator = $this->getMockBuilder(PackageLocator::class)->getMock();
         $package = $this->getMockBuilder(Package::class)->getMock();
         $formatter = $this->getMockBuilder(SprintfFormatter::class)->getMock();
@@ -45,10 +43,6 @@ class TranslatorRegistryTest extends TestCase
         $translatorNonNullPackage
             ->method('getPackage')
             ->willReturn($package);
-
-        $translatorFactory
-            ->method('newInstance')
-            ->willReturn($translatorNonNullPackage);
 
         $formatterLocator
             ->method('get')
@@ -65,7 +59,7 @@ class TranslatorRegistryTest extends TestCase
             ->method('read')
             ->willReturn($translatorNullPackage);
 
-        $registry = new TranslatorRegistry($packageLocator, $formatterLocator, $translatorFactory, 'en_CA');
+        $registry = new TranslatorRegistry($packageLocator, $formatterLocator, 'en_CA');
         $registry->setCacher($cacheEngineNullPackage);
 
         $this->assertNotNull($registry->get('default')->getPackage());

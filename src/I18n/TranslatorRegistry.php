@@ -41,13 +41,6 @@ class TranslatorRegistry
     protected $locale;
 
     /**
-     * A translator factory.
-     *
-     * @var \Cake\I18n\TranslatorFactory
-     */
-    protected $factory;
-
-    /**
      * A package locator.
      *
      * @var \Cake\I18n\PackageLocator
@@ -106,18 +99,14 @@ class TranslatorRegistry
      *
      * @param \Cake\I18n\PackageLocator $packages The package locator.
      * @param \Cake\I18n\FormatterLocator $formatters The formatter locator.
-     * @param \Cake\I18n\TranslatorFactory $factory A translator factory to
-     *   create translator objects for the locale and package.
      * @param string $locale The default locale code to use.
      */
     public function __construct(
         PackageLocator $packages,
         FormatterLocator $formatters,
-        TranslatorFactory $factory,
         string $locale
     ) {
         $this->packages = $packages;
-        $this->factory = $factory;
         $this->formatters = $formatters;
         $this->setLocale($locale);
 
@@ -274,15 +263,10 @@ class TranslatorRegistry
     protected function createInstance(string $name, string $locale): Translator
     {
         $package = $this->packages->get($name, $locale);
+        $fallback = $this->get($package->getFallback(), $locale);
+        $formatter = $this->formatters->get($package->getFormatter());
 
-        $translator = $this->factory->newInstance(
-            $locale,
-            $package,
-            $this->formatters->get($package->getFormatter()),
-            $this->get($package->getFallback(), $locale)
-        );
-
-        return $translator;
+        return new Translator($locale, $package, $formatter, $fallback);
     }
 
     /**
