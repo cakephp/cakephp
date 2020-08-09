@@ -21,6 +21,8 @@ use Cake\I18n\Exception\FormatterNotMappedException;
 
 /**
  * A ServiceLocator implementation for loading and retaining formatter objects.
+ *
+ * @internal
  */
 class FormatterLocator
 {
