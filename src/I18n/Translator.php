@@ -102,7 +102,12 @@ class Translator
     }
 
     /**
-     * @inheritDoc
+     * Translates the message formatting any placeholders
+     *
+     * @param string $key The message key.
+     * @param array $tokensValues Token values to interpolate into the
+     *   message.
+     * @return string The translated message with tokens replaced.
      */
     public function translate($key, array $tokensValues = []): string
     {

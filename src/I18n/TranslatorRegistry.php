@@ -150,16 +150,6 @@ class TranslatorRegistry
     }
 
     /**
-     * The TranslatorFactory object
-     *
-     * @return \Cake\I18n\TranslatorFactory
-     */
-    public function getFactory()
-    {
-        return $this->factory;
-    }
-
-    /**
      * An object of type PackageLocator
      *
      * @return \Cake\I18n\PackageLocator
