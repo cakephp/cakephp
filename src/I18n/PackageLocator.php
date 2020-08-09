@@ -20,9 +20,11 @@ namespace Cake\I18n;
 use Cake\I18n\Exception\I18nException;
 
 /**
- * A ServiceLocator implementation for loading and retaining translator objects.
+ * A ServiceLocator implementation for loading and retaining package objects.
+ *
+ * @internal
  */
-class PackageLocator implements PackageLocatorInterface
+class PackageLocator
 {
     /**
      * A registry of packages.
