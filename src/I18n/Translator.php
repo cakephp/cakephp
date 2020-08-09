@@ -7,17 +7,21 @@ declare(strict_types=1);
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
- * Redistributions of files must retain the above copyright notice
+ * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
+ * @since         3.3.12
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\I18n;
 
 /**
  * Translator to translate the message.
+ *
+ * @internal
  */
-class Translator implements TranslatorInterface
+class Translator
 {
     /**
      * @var string
@@ -27,7 +31,7 @@ class Translator implements TranslatorInterface
     /**
      * A fallback translator.
      *
-     * @var \Cake\I18n\TranslatorInterface|null
+     * @var \Cake\I18n\Translator|null
      */
     protected $fallback;
 
@@ -64,7 +68,7 @@ class Translator implements TranslatorInterface
         string $locale,
         Package $package,
         FormatterInterface $formatter,
-        ?TranslatorInterface $fallback = null
+        ?Translator $fallback = null
     ) {
         $this->locale = $locale;
         $this->package = $package;
@@ -85,7 +89,7 @@ class Translator implements TranslatorInterface
             return $message;
         }
 
-        if ($this->fallback && $this->fallback instanceof self) {
+        if ($this->fallback) {
             $message = $this->fallback->getMessage($key);
             if ($message) {
                 $this->package->addMessage($key, $message);

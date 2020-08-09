@@ -37,7 +37,7 @@ class TranslatorFactory
      * @param string $locale The locale code for the translator.
      * @param \Cake\I18n\Package $package The Package containing keys and translations.
      * @param \Cake\I18n\FormatterInterface $formatter The formatter to use for interpolating token values.
-     * @param \Cake\I18n\TranslatorInterface $fallback A fallback translator to use, if any.
+     * @param \Cake\I18n\Translator $fallback A fallback translator to use, if any.
      * @throws \Cake\Core\Exception\Exception If fallback class does not match Cake\I18n\Translator
      * @return \Cake\I18n\Translator
      */
@@ -45,7 +45,7 @@ class TranslatorFactory
         $locale,
         Package $package,
         FormatterInterface $formatter,
-        ?TranslatorInterface $fallback = null
+        ?Translator $fallback = null
     ) {
         $class = $this->class;
         if ($fallback !== null && get_class($fallback) !== $class) {

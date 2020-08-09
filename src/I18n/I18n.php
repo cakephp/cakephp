@@ -138,10 +138,10 @@ class I18n
      *
      * @param string $name The domain of the translation messages.
      * @param string|null $locale The locale for the translator.
-     * @return \Cake\I18n\TranslatorInterface The configured translator.
+     * @return \Cake\I18n\Translator The configured translator.
      * @throws \Cake\I18n\Exception\I18nException
      */
-    public static function getTranslator(string $name = 'default', ?string $locale = null): TranslatorInterface
+    public static function getTranslator(string $name = 'default', ?string $locale = null): Translator
     {
         $translators = static::translators();
 

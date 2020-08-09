@@ -19,7 +19,7 @@ namespace Cake\Test\TestCase\I18n;
 use Cake\Cache\Cache;
 use Cake\I18n\I18n;
 use Cake\I18n\Package;
-use Cake\I18n\TranslatorInterface;
+use Cake\I18n\Translator;
 use Cake\TestSuite\TestCase;
 use Locale;
 
@@ -83,7 +83,7 @@ class I18nTest extends TestCase
     public function testGetDefaultTranslator()
     {
         $translator = I18n::getTranslator();
-        $this->assertInstanceOf(TranslatorInterface::class, $translator);
+        $this->assertInstanceOf(Translator::class, $translator);
         $this->assertSame('%d is 1 (po translated)', $translator->translate('%d = 1'));
         $this->assertSame($translator, I18n::getTranslator(), 'backwards compat works');
     }

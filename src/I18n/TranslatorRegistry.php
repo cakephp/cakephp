@@ -29,7 +29,7 @@ class TranslatorRegistry
      * A registry to retain translator objects.
      *
      * @var array
-     * @psalm-var array<string, array<string, \Cake\I18n\TranslatorInterface>>
+     * @psalm-var array<string, array<string, \Cake\I18n\Translator>>
      */
     protected $registry = [];
 
@@ -208,7 +208,7 @@ class TranslatorRegistry
      * @param string|null $name The translator package to retrieve.
      * @param string|null $locale The locale to use; if empty, uses the default
      * locale.
-     * @return \Cake\I18n\TranslatorInterface|null A translator object.
+     * @return \Cake\I18n\Translator|null A translator object.
      * @throws \Cake\I18n\Exception\I18nException If no translator with that name could be found
      * for the given locale.
      */
@@ -248,9 +248,9 @@ class TranslatorRegistry
      * @param string $name The translator package to retrieve.
      * @param string $locale The locale to use; if empty, uses the default
      * locale.
-     * @return \Cake\I18n\TranslatorInterface A translator object.
+     * @return \Cake\I18n\Translator A translator object.
      */
-    protected function _getTranslator(string $name, string $locale): TranslatorInterface
+    protected function _getTranslator(string $name, string $locale): Translator
     {
         try {
             return $this->registry[$name][$locale] = $this->createInstance($name, $locale);
@@ -269,9 +269,9 @@ class TranslatorRegistry
      *
      * @param string $name The translator package to retrieve.
      * @param string $locale The locale to use; if empty, uses the default locale.
-     * @return \Cake\I18n\TranslatorInterface A translator object.
+     * @return \Cake\I18n\Translator A translator object.
      */
-    protected function createInstance(string $name, string $locale): TranslatorInterface
+    protected function createInstance(string $name, string $locale): Translator
     {
         $package = $this->packages->get($name, $locale);
 
@@ -336,7 +336,7 @@ class TranslatorRegistry
      *
      * @param string $name The translation package name.
      * @param string $locale The locale to create the translator for.
-     * @return \Cake\I18n\TranslatorInterface|\Closure
+     * @return \Cake\I18n\Translator|\Closure
      */
     protected function _fallbackLoader(string $name, string $locale)
     {
@@ -361,9 +361,9 @@ class TranslatorRegistry
      *
      * @param string $name The name of the translator package
      * @param string $locale The locale that should be built the package for
-     * @return \Cake\I18n\TranslatorInterface A translator object.
+     * @return \Cake\I18n\Translator A translator object.
      */
-    protected function _getFromLoader(string $name, string $locale): TranslatorInterface
+    protected function _getFromLoader(string $name, string $locale): Translator
     {
         $loader = $this->_loaders[$name]($name, $locale);
         $package = $loader;
