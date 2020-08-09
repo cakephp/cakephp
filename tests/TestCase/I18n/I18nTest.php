@@ -20,6 +20,7 @@ use Cake\Cache\Cache;
 use Cake\I18n\I18n;
 use Cake\I18n\Package;
 use Cake\I18n\Translator;
+use Cake\I18n\TranslatorRegistry;
 use Cake\TestSuite\TestCase;
 use Locale;
 
@@ -749,7 +750,7 @@ class I18nTest extends TestCase
      */
     public function testFallbackLoaderFactory()
     {
-        I18n::config('_fallback', function ($name) {
+        I18n::config(TranslatorRegistry::FALLBACK_LOADER, function ($name) {
             $package = new Package('default');
 
             if ($name === 'custom') {

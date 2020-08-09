@@ -16,14 +16,17 @@ declare(strict_types=1);
  */
 namespace Cake\I18n;
 
-use Closure;
-
 /**
  * Constructs and stores instances of translators that can be
  * retrieved by name and locale.
  */
 class TranslatorRegistry
 {
+    /**
+     * Fallback loader name.
+     */
+    public const FALLBACK_LOADER = '_fallback';
+
     /**
      * A registry to retain translator objects.
      *
@@ -64,13 +67,6 @@ class TranslatorRegistry
     protected $_loaders = [];
 
     /**
-     * Fallback loader name
-     *
-     * @var string
-     */
-    protected $_fallbackLoader = '_fallback';
-
-    /**
      * The name of the default formatter to use for newly created
      * translators from the fallback loader
      *
@@ -109,7 +105,7 @@ class TranslatorRegistry
         $this->formatters = $formatters;
         $this->setLocale($locale);
 
-        $this->registerLoader($this->_fallbackLoader, function ($name, $locale) {
+        $this->registerLoader(static::FALLBACK_LOADER, function ($name, $locale) {
             $chain = new ChainMessagesLoader([
                 new MessagesFileLoader($name, $locale, 'mo'),
                 new MessagesFileLoader($name, $locale, 'po'),
@@ -231,7 +227,7 @@ class TranslatorRegistry
         }
 
         if (!isset($this->_loaders[$name])) {
-            $this->registerLoader($name, $this->_partialLoader());
+            $this->registerLoader($name, $this->_loaders[static::FALLBACK_LOADER]);
         }
 
         return $this->_getFromLoader($name, $locale);
@@ -299,31 +295,6 @@ class TranslatorRegistry
     public function useFallback(bool $enable = true): void
     {
         $this->_useFallback = $enable;
-    }
-
-    /**
-     * Returns a new translator instance for the given name and locale
-     * based of conventions.
-     *
-     * @param string $name The translation package name.
-     * @param string $locale The locale to create the translator for.
-     * @return \Cake\I18n\Translator|\Closure
-     */
-    protected function _fallbackLoader(string $name, string $locale)
-    {
-        return $this->_loaders[$this->_fallbackLoader]($name, $locale);
-    }
-
-    /**
-     * Returns a function that can be used as a loader for the registerLoaderMethod
-     *
-     * @return \Closure
-     */
-    protected function _partialLoader(): Closure
-    {
-        return function ($name, $locale) {
-            return $this->_fallbackLoader($name, $locale);
-        };
     }
 
     /**
