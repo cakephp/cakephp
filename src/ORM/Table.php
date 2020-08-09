@@ -416,7 +416,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if ($this->_alias === null) {
             $alias = namespaceSplit(static::class);
             $alias = substr(end($alias), 0, -5) ?: $this->_table;
-            $this->_alias = $alias;
+            $this->_alias = (string)$alias;
         }
 
         return $this->_alias;
