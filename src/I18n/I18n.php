@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\I18n;
 
 use Cake\Cache\Cache;
-use Cake\Core\Exception\Exception;
+use Cake\I18n\Exception\I18nException;
 use Cake\I18n\Formatter\IcuFormatter;
 use Cake\I18n\Formatter\SprintfFormatter;
 use Locale;
@@ -139,7 +139,7 @@ class I18n
      * @param string $name The domain of the translation messages.
      * @param string|null $locale The locale for the translator.
      * @return \Cake\I18n\TranslatorInterface The configured translator.
-     * @throws \Cake\I18n\Exception\Exception
+     * @throws \Cake\I18n\Exception\I18nException
      */
     public static function getTranslator(string $name = 'default', ?string $locale = null): TranslatorInterface
     {
@@ -152,7 +152,7 @@ class I18n
 
         $translator = $translators->get($name);
         if ($translator === null) {
-            throw new Exception(sprintf(
+            throw new I18nException(sprintf(
                 'Translator for domain "%s" could not be found.',
                 $name
             ));

@@ -17,7 +17,7 @@ declare(strict_types=1);
  */
 namespace Cake\I18n;
 
-use Cake\I18n\Exception\Exception;
+use Cake\I18n\Exception\I18nException;
 
 /**
  * A ServiceLocator implementation for loading and retaining translator objects.
@@ -85,7 +85,7 @@ class PackageLocator implements PackageLocatorInterface
     public function get($name, $locale)
     {
         if (! isset($this->registry[$name][$locale])) {
-            throw new Exception("Package '$name' with locale '$locale' is not registered.");
+            throw new I18nException("Package '$name' with locale '$locale' is not registered.");
         }
 
         if (! $this->converted[$name][$locale]) {

@@ -17,9 +17,11 @@ declare(strict_types=1);
  */
 namespace Cake\I18n\Exception;
 
+use Cake\Core\Exception\Exception;
+
 /**
- * A formatter name is not mapped in the locator.
+ * I18n exception.
  */
-class FormatterNotMapped extends Exception
+class I18nException extends Exception
 {
 }

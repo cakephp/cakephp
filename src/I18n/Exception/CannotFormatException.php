@@ -17,11 +17,9 @@ declare(strict_types=1);
  */
 namespace Cake\I18n\Exception;
 
-use Cake\Core\Exception\Exception as CoreException;
-
 /**
  * Could not format a message.
  */
-class Exception extends CoreException
+class CannotFormatException extends I18nException
 {
 }

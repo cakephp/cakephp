@@ -18,8 +18,8 @@ declare(strict_types=1);
 namespace Cake\I18n\Exception;
 
 /**
- * Could not format a message.
+ * A formatter name is not mapped in the locator.
  */
-class CannotFormat extends Exception
+class FormatterNotMappedException extends I18nException
 {
 }

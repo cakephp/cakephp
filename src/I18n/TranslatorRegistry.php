@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\I18n;
 
-use Cake\I18n\Exception\Exception;
+use Cake\I18n\Exception\I18nException;
 use Closure;
 
 /**
@@ -209,7 +209,7 @@ class TranslatorRegistry
      * @param string|null $locale The locale to use; if empty, uses the default
      * locale.
      * @return \Cake\I18n\TranslatorInterface|null A translator object.
-     * @throws \Cake\I18n\Exception\Exception If no translator with that name could be found
+     * @throws \Cake\I18n\Exception\I18nException If no translator with that name could be found
      * for the given locale.
      */
     public function get($name, $locale = null)
@@ -254,7 +254,7 @@ class TranslatorRegistry
     {
         try {
             return $this->registry[$name][$locale] = $this->createInstance($name, $locale);
-        } catch (Exception $e) {
+        } catch (I18nException $e) {
         }
 
         if (!isset($this->_loaders[$name])) {
