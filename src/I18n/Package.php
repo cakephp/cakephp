@@ -67,7 +67,7 @@ class Package
      * @param array $messages The messages for this package.
      * @return void
      */
-    public function setMessages(array $messages)
+    public function setMessages(array $messages): void
     {
         $this->messages = $messages;
     }
@@ -76,11 +76,10 @@ class Package
      * Adds one message for this package.
      *
      * @param string $key the key of the message
-     *
      * @param string $message the actual message
      * @return void
      */
-    public function addMessage($key, $message)
+    public function addMessage(string $key, string $message): void
     {
         $this->messages[$key] = $message;
     }
@@ -91,7 +90,7 @@ class Package
      * @param array $messages The messages to add in this package.
      * @return void
      */
-    public function addMessages($messages)
+    public function addMessages(array $messages): void
     {
         $this->messages = array_merge($this->messages, $messages);
     }
@@ -101,7 +100,7 @@ class Package
      *
      * @return array
      */
-    public function getMessages()
+    public function getMessages(): array
     {
         return $this->messages;
     }
@@ -112,7 +111,7 @@ class Package
      * @param string $key the key of the message to return
      * @return mixed The message translation string, or false if not found.
      */
-    public function getMessage($key)
+    public function getMessage(string $key)
     {
         if (isset($this->messages[$key])) {
             return $this->messages[$key];
@@ -127,7 +126,7 @@ class Package
      * @param string $formatter The formatter name for this package.
      * @return void
      */
-    public function setFormatter($formatter)
+    public function setFormatter(string $formatter): void
     {
         $this->formatter = $formatter;
     }
@@ -137,7 +136,7 @@ class Package
      *
      * @return string
      */
-    public function getFormatter()
+    public function getFormatter(): string
     {
         return $this->formatter;
     }
@@ -145,10 +144,10 @@ class Package
     /**
      * Sets the fallback package name.
      *
-     * @param string $fallback The fallback package name.
+     * @param string|null $fallback The fallback package name.
      * @return void
      */
-    public function setFallback($fallback)
+    public function setFallback(?string $fallback): void
     {
         $this->fallback = $fallback;
     }
@@ -158,7 +157,7 @@ class Package
      *
      * @return string|null
      */
-    public function getFallback()
+    public function getFallback(): ?string
     {
         return $this->fallback;
     }

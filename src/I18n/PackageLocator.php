@@ -64,13 +64,11 @@ class PackageLocator
      * Sets a Package object.
      *
      * @param string $name The package name.
-     *
      * @param string $locale The locale for the package.
-     *
      * @param callable $spec A callable that returns a package.
      * @return void
      */
-    public function set($name, $locale, callable $spec)
+    public function set(string $name, string $locale, callable $spec): void
     {
         $this->registry[$name][$locale] = $spec;
         $this->converted[$name][$locale] = false;
@@ -80,17 +78,16 @@ class PackageLocator
      * Gets a Package object.
      *
      * @param string $name The package name.
-     *
      * @param string $locale The locale for the package.
      * @return \Cake\I18n\Package
      */
-    public function get($name, $locale)
+    public function get(string $name, string $locale): Package
     {
-        if (! isset($this->registry[$name][$locale])) {
+        if (!isset($this->registry[$name][$locale])) {
             throw new I18nException("Package '$name' with locale '$locale' is not registered.");
         }
 
-        if (! $this->converted[$name][$locale]) {
+        if (!$this->converted[$name][$locale]) {
             $func = $this->registry[$name][$locale];
             $this->registry[$name][$locale] = $func();
             $this->converted[$name][$locale] = true;

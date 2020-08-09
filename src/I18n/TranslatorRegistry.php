@@ -134,7 +134,7 @@ class TranslatorRegistry
      * @param string $locale The new locale code.
      * @return void
      */
-    public function setLocale($locale)
+    public function setLocale(string $locale): void
     {
         $this->locale = $locale;
     }
@@ -144,7 +144,7 @@ class TranslatorRegistry
      *
      * @return string
      */
-    public function getLocale()
+    public function getLocale(): string
     {
         return $this->locale;
     }
@@ -154,7 +154,7 @@ class TranslatorRegistry
      *
      * @return \Cake\I18n\PackageLocator
      */
-    public function getPackages()
+    public function getPackages(): PackageLocator
     {
         return $this->packages;
     }
@@ -164,7 +164,7 @@ class TranslatorRegistry
      *
      * @return \Cake\I18n\FormatterLocator
      */
-    public function getFormatters()
+    public function getFormatters(): FormatterLocator
     {
         return $this->formatters;
     }
@@ -184,19 +184,15 @@ class TranslatorRegistry
     /**
      * Gets a translator from the registry by package for a locale.
      *
-     * @param string|null $name The translator package to retrieve.
+     * @param string $name The translator package to retrieve.
      * @param string|null $locale The locale to use; if empty, uses the default
      * locale.
      * @return \Cake\I18n\Translator|null A translator object.
      * @throws \Cake\I18n\Exception\I18nException If no translator with that name could be found
      * for the given locale.
      */
-    public function get($name, $locale = null)
+    public function get(string $name, ?string $locale = null): ?Translator
     {
-        if (!$name) {
-            return null;
-        }
-
         if ($locale === null) {
             $locale = $this->getLocale();
         }
@@ -253,7 +249,10 @@ class TranslatorRegistry
     protected function createInstance(string $name, string $locale): Translator
     {
         $package = $this->packages->get($name, $locale);
-        $fallback = $this->get($package->getFallback(), $locale);
+        $fallback = $package->getFallback();
+        if ($fallback !== null) {
+            $fallback = $this->get($fallback, $locale);
+        }
         $formatter = $this->formatters->get($package->getFormatter());
 
         return new Translator($locale, $package, $formatter, $fallback);

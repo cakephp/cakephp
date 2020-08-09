@@ -58,11 +58,10 @@ class FormatterLocator
      * Sets a formatter into the registry by name.
      *
      * @param string $name The formatter name.
-     *
      * @param callable $spec A callable that returns a formatter object.
      * @return void
      */
-    public function set($name, $spec)
+    public function set(string $name, callable $spec): void
     {
         $this->registry[$name] = $spec;
         $this->converted[$name] = false;
@@ -75,13 +74,13 @@ class FormatterLocator
      * @return \Cake\I18n\FormatterInterface A formatter object.
      * @throws \Cake\I18n\Exception\FormatterNotMappedException
      */
-    public function get($name)
+    public function get(string $name): FormatterInterface
     {
-        if (! isset($this->registry[$name])) {
+        if (!isset($this->registry[$name])) {
             throw new FormatterNotMappedException($name);
         }
 
-        if (! $this->converted[$name]) {
+        if (!$this->converted[$name]) {
             $func = $this->registry[$name];
             $this->registry[$name] = $func();
             $this->converted[$name] = true;

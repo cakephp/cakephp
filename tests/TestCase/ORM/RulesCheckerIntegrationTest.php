@@ -1820,7 +1820,7 @@ class RulesCheckerIntegrationTest extends TestCase
         ];
         $this->assertEquals($expected, $comment->getErrors());
 
-        $translator->getPackage()->addMessage($messageId, null);
+        $translator->getPackage()->addMessage($messageId, '');
     }
 
     /**
@@ -1860,7 +1860,7 @@ class RulesCheckerIntegrationTest extends TestCase
         ];
         $this->assertEquals($expected, $comment->getErrors());
 
-        $translator->getPackage()->addMessage($messageId, null);
+        $translator->getPackage()->addMessage($messageId, '');
     }
 
     /**
@@ -1913,7 +1913,7 @@ class RulesCheckerIntegrationTest extends TestCase
         ];
         $this->assertEquals($expected, $comment->getErrors());
 
-        $translator->getPackage()->addMessage($messageId, null);
+        $translator->getPackage()->addMessage($messageId, '');
     }
 
     /**
@@ -1961,7 +1961,7 @@ class RulesCheckerIntegrationTest extends TestCase
         ];
         $this->assertEquals($expected, $comment->getErrors());
 
-        $translator->getPackage()->addMessage($messageId, null);
+        $translator->getPackage()->addMessage($messageId, '');
     }
 
     /**
