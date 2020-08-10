@@ -32,7 +32,6 @@
         "ext-json": "*",
         "ext-intl": "*",
         "ext-mbstring": "*",
-        "aura/intl": "^3.0.0",
         "cakephp/chronos": "^2.0",
         "composer/ca-bundle": "^1.2",
         "laminas/laminas-diactoros": "^2.2.2",
