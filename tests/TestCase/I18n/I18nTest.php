@@ -704,7 +704,7 @@ class I18nTest extends TestCase
      */
     public function testLoaderFactory()
     {
-        I18n::config('custom', function ($name, $locale) {
+        I18n::config('custom', function (string $name, string $locale) {
             $this->assertSame('custom', $name);
             $package = new Package('default');
 
@@ -750,7 +750,7 @@ class I18nTest extends TestCase
      */
     public function testFallbackLoaderFactory()
     {
-        I18n::config(TranslatorRegistry::FALLBACK_LOADER, function ($name) {
+        I18n::config(TranslatorRegistry::FALLBACK_LOADER, function (string $name, string $locale) {
             $package = new Package('default');
 
             if ($name === 'custom') {

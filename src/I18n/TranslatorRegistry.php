@@ -106,20 +106,16 @@ class TranslatorRegistry
         $this->setLocale($locale);
 
         $this->registerLoader(static::FALLBACK_LOADER, function ($name, $locale) {
-            $chain = new ChainMessagesLoader([
+            $loader = new ChainMessagesLoader([
                 new MessagesFileLoader($name, $locale, 'mo'),
                 new MessagesFileLoader($name, $locale, 'po'),
             ]);
 
             $formatter = $name === 'cake' ? 'default' : $this->_defaultFormatter;
-            $chain = function () use ($formatter, $chain) {
-                $package = $chain();
-                $package->setFormatter($formatter);
+            $package = $loader();
+            $package->setFormatter($formatter);
 
-                return $package;
-            };
-
-            return $chain;
+            return $package;
         });
     }
 
@@ -223,14 +219,19 @@ class TranslatorRegistry
     protected function _getTranslator(string $name, string $locale): Translator
     {
         if ($this->packages->has($name, $locale)) {
-            return $this->registry[$name][$locale] = $this->createInstance($name, $locale);
+            return $this->createInstance($name, $locale);
         }
 
-        if (!isset($this->_loaders[$name])) {
-            $this->registerLoader($name, $this->_loaders[static::FALLBACK_LOADER]);
+        if (isset($this->_loaders[$name])) {
+            $package = $this->_loaders[$name]($name, $locale);
+        } else {
+            $package = $this->_loaders[static::FALLBACK_LOADER]($name, $locale);
         }
 
-        return $this->_getFromLoader($name, $locale);
+        $package = $this->setFallbackPackage($name, $package);
+        $this->packages->set($name, $locale, $package);
+
+        return $this->createInstance($name, $locale);
     }
 
     /**
@@ -298,29 +299,26 @@ class TranslatorRegistry
     }
 
     /**
-     * Registers a new package by passing the register loaded function for the
-     * package name.
+     * Set fallback domain for package.
      *
-     * @param string $name The name of the translator package
-     * @param string $locale The locale that should be built the package for
-     * @return \Cake\I18n\Translator A translator object.
+     * @param string $name The name of the package.
+     * @param \Cake\I18n\Package $package Package instance
+     * @return \Cake\I18n\Package
      */
-    protected function _getFromLoader(string $name, string $locale): Translator
+    public function setFallbackPackage(string $name, Package $package): Package
     {
-        $loader = $this->_loaders[$name]($name, $locale);
-        $package = $loader;
-
-        if (!is_callable($loader)) {
-            $loader = function () use ($package) {
-                return $package;
-            };
+        if ($package->getFallback()) {
+            return $package;
         }
 
-        $loader = $this->setLoaderFallback($name, $loader);
+        $fallbackDomain = null;
+        if ($this->_useFallback && $name !== 'default') {
+            $fallbackDomain = 'default';
+        }
 
-        $this->packages->set($name, $locale, $loader);
+        $package->setFallback($fallbackDomain);
 
-        return $this->registry[$name][$locale] = $this->createInstance($name, $locale);
+        return $package;
     }
 
     /**
