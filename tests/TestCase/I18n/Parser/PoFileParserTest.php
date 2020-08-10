@@ -47,7 +47,6 @@ class PoFileParserTest extends TestCase
         parent::setUp();
         $this->locale = I18n::getLocale();
         $this->path = Configure::read('App.paths.locales.0');
-        Cache::clear('_cake_core_');
     }
 
     /**
