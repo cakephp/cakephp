@@ -17,7 +17,7 @@ declare(strict_types=1);
  */
 namespace Cake\I18n;
 
-use Cake\I18n\Exception\FormatterNotMappedException;
+use Cake\I18n\Exception\I18nException;
 
 /**
  * A ServiceLocator implementation for loading and retaining formatter objects.
@@ -72,12 +72,12 @@ class FormatterLocator
      *
      * @param string $name The formatter to retrieve.
      * @return \Cake\I18n\FormatterInterface A formatter object.
-     * @throws \Cake\I18n\Exception\FormatterNotMappedException
+     * @throws \Cake\I18n\Exception\I18nException
      */
     public function get(string $name): FormatterInterface
     {
         if (!isset($this->registry[$name])) {
-            throw new FormatterNotMappedException($name);
+            throw new I18nException("Formatter named `{$name}` has not been registered");
         }
 
         if (!$this->converted[$name]) {

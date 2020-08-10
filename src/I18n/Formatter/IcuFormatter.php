@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\I18n\Formatter;
 
-use Cake\I18n\Exception\CannotFormatException;
+use Cake\I18n\Exception\I18nException;
 use Cake\I18n\FormatterInterface;
 use MessageFormatter;
 
@@ -33,7 +33,7 @@ class IcuFormatter implements FormatterInterface
      * @param string $message The message to be translated
      * @param array $tokenValues The list of values to interpolate in the message
      * @return string The formatted message
-     * @throws \Cake\I18n\Exception\CannotFormatException
+     * @throws \Cake\I18n\Exception\I18nException
      */
     public function format($locale, $message, array $tokenValues): string
     {
@@ -49,7 +49,7 @@ class IcuFormatter implements FormatterInterface
      * @param string $message The message to be translated
      * @param array $tokenValues The list of values to interpolate in the message
      * @return string The formatted message
-     * @throws \Cake\I18n\Exception\CannotFormatException If any error related to the passed
+     * @throws \Cake\I18n\Exception\I18nException If any error related to the passed
      * variables is found
      */
     protected function _formatMessage(string $locale, string $message, array $tokenValues): string
@@ -66,7 +66,7 @@ class IcuFormatter implements FormatterInterface
             // previous action using the object oriented style to figure out
             $formatter = new MessageFormatter($locale, $message);
             $formatter->format($tokenValues);
-            throw new CannotFormatException($formatter->getErrorMessage(), $formatter->getErrorCode());
+            throw new I18nException($formatter->getErrorMessage(), $formatter->getErrorCode());
         }
 
         return $result;
