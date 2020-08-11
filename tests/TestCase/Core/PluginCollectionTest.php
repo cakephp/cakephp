@@ -222,8 +222,8 @@ return [
 PHP;
         file_put_contents($configPath, $file);
 
-        Configure::delete('plugins');
         $plugins = new PluginCollection();
+        Configure::delete('plugins');
         $path = $plugins->findPath('TestPlugin');
         unlink($configPath);
 
