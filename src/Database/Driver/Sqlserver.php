@@ -192,17 +192,27 @@ class Sqlserver extends Driver
     public function prepare($query): StatementInterface
     {
         $this->connect();
+
+        $sql = $query;
         $options = [PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL];
-        $isObject = $query instanceof Query;
-        /** @psalm-suppress PossiblyInvalidMethodCall */
-        if ($isObject && $query->isBufferedResultsEnabled() === false) {
-            $options = [];
+        if ($query instanceof Query) {
+            $sql = $query->sql();
+            if (count($query->getValueBinder()->bindings()) > 2100) {
+                throw new InvalidArgumentException(
+                    'More than the Sql Server maximum of 2100 parameters added to prepared statement. ' .
+                    'This is probably due to a very large WHERE IN () clause which generates a parameter ' .
+                    'for each value in the array. ' .
+                    'If using an Association, try changing the `strategy` from select to subquery.'
+                );
+            }
+
+            if (!$query->isBufferedResultsEnabled()) {
+                $options = [];
+            }
         }
-        /**
-         * @psalm-suppress PossiblyInvalidMethodCall
-         * @psalm-suppress PossiblyInvalidArgument
-         */
-        $statement = $this->_connection->prepare($isObject ? $query->sql() : $query, $options);
+
+        /** @psalm-suppress PossiblyInvalidArgument */
+        $statement = $this->_connection->prepare($sql, $options);
 
         return new SqlserverStatement($statement, $this);
     }
