@@ -35,9 +35,9 @@ class FormatterLocator
 
     /**
      * Tracks whether or not a registry entry has been converted from a
-     * callable to a formatter object.
+     * FQCN to a formatter object.
      *
-     * @var array
+     * @var bool[]
      */
     protected $converted = [];
 
@@ -45,7 +45,7 @@ class FormatterLocator
      * Constructor.
      *
      * @param array $registry An array of key-value pairs where the key is the
-     * formatter name the value is a callable that returns a formatter object.
+     * formatter name the value is a FQCN for the formatter.
      */
     public function __construct(array $registry = [])
     {
@@ -58,12 +58,12 @@ class FormatterLocator
      * Sets a formatter into the registry by name.
      *
      * @param string $name The formatter name.
-     * @param callable $spec A callable that returns a formatter object.
+     * @param string $className A FQCN for a formatter.
      * @return void
      */
-    public function set(string $name, callable $spec): void
+    public function set(string $name, string $className): void
     {
-        $this->registry[$name] = $spec;
+        $this->registry[$name] = $className;
         $this->converted[$name] = false;
     }
 
@@ -81,8 +81,7 @@ class FormatterLocator
         }
 
         if (!$this->converted[$name]) {
-            $func = $this->registry[$name];
-            $this->registry[$name] = $func();
+            $this->registry[$name] = new $this->registry[$name]();
             $this->converted[$name] = true;
         }
 

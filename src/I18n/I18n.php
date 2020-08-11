@@ -64,12 +64,8 @@ class I18n
         static::$_collection = new TranslatorRegistry(
             new PackageLocator(),
             new FormatterLocator([
-                'sprintf' => function () {
-                    return new SprintfFormatter();
-                },
-                'default' => function () {
-                    return new IcuFormatter();
-                },
+                'default' => IcuFormatter::class,
+                'sprintf' => SprintfFormatter::class,
             ]),
             static::getLocale()
         );
