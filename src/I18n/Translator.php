@@ -193,7 +193,7 @@ class Translator
     }
 
     /**
-     * An object of type Package
+     * Returns the translator package
      *
      * @return \Cake\I18n\Package
      */

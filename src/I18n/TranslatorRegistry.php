@@ -141,7 +141,7 @@ class TranslatorRegistry
     }
 
     /**
-     * An object of type PackageLocator
+     * Returns the translator packages
      *
      * @return \Cake\I18n\PackageLocator
      */

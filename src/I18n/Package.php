@@ -25,7 +25,7 @@ class Package
     /**
      * Message keys and translations in this package.
      *
-     * @var array
+     * @var string[]
      */
     protected $messages = [];
 
@@ -64,7 +64,7 @@ class Package
     /**
      * Sets the messages for this package.
      *
-     * @param array $messages The messages for this package.
+     * @param string[] $messages The messages for this package.
      * @return void
      */
     public function setMessages(array $messages): void
@@ -87,7 +87,7 @@ class Package
     /**
      * Adds new messages for this package.
      *
-     * @param array $messages The messages to add in this package.
+     * @param string[] $messages The messages to add in this package.
      * @return void
      */
     public function addMessages(array $messages): void
@@ -98,7 +98,7 @@ class Package
     /**
      * Gets the messages for this package.
      *
-     * @return array
+     * @return string[]
      */
     public function getMessages(): array
     {
@@ -109,7 +109,7 @@ class Package
      * Gets the message of the given key for this package.
      *
      * @param string $key the key of the message to return
-     * @return mixed The message translation string, or false if not found.
+     * @return string|false The message translation string, or false if not found.
      */
     public function getMessage(string $key)
     {
