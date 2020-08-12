@@ -75,20 +75,6 @@ class PackageLocator
     }
 
     /**
-     * Sets a Package object.
-     *
-     * @param string $name The package name.
-     * @param string $locale The locale for the package.
-     * @param \Cake\I18n\Package $package A Package instance.
-     * @return void
-     */
-    public function setPackage(string $name, string $locale, Package $package): void
-    {
-        $this->registry[$name][$locale] = $package;
-        $this->converted[$name][$locale] = true;
-    }
-
-    /**
      * Gets a Package object.
      *
      * @param string $name The package name.
