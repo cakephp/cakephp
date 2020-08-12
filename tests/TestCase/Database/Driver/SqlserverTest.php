@@ -469,7 +469,7 @@ class SqlserverTest extends TestCase
 
     public function testPDOException()
     {
-        $this->skipIf(!Connection::get('test')->getDriver() instanceof Cake\Database\Driver\Sqlserver);
+        $this->skipIf(!ConnectionManager::get('test')->getDriver() instanceof Cake\Database\Driver\Sqlserver);
 
         $driver = new \Cake\Database\Driver\Sqlserver(['username' => 'test', 'host' => 'localhost']);
         $driver->connect();
