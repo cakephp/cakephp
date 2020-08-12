@@ -118,6 +118,8 @@ abstract class Driver implements DriverInterface
                 $config['flags']
             );
         } catch (PDOException $e) {
+            var_dump($e->getCode());
+            var_dump($e->errorInfo);
             throw new MissingConnectionException(
                 [
                     'driver' => App::shortName(static::class, 'Database/Driver'),

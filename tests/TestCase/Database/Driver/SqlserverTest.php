@@ -466,4 +466,12 @@ class SqlserverTest extends TestCase
             'GROUP BY posts.author_id HAVING posts.author_id >= :c0';
         $this->assertEquals($expected, $query->sql());
     }
+
+    public function testPDOException()
+    {
+        $this->skipIf(!Connection::get('test')->getDriver() instanceof Cake\Database\Driver\Sqlserver);
+
+        $driver = new \Cake\Database\Driver\Sqlserver(['username' => 'test', 'host' => 'localhost']);
+        $driver->connect();
+    }
 }
