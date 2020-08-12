@@ -117,6 +117,8 @@ function initialize() {
   attachRefEvents(doc.querySelectorAll('.cake-dbg'));
   openBlocks(doc.querySelectorAll('.cake-debug[data-open-all="true"]'));
 }
+// Add a name on window so DebugKit can add controls to dump blocks
+win.__cakeDebugBlockInit = initialize;
 
 /**
  * Open all the collapsed sections in a block.

@@ -122,6 +122,11 @@ class PluginCollection implements Iterator, Countable
      */
     public function findPath(string $name): string
     {
+        // Ensure plugin config is loaded each time. This is necessary primarily
+        // for testing because the Configure::clear() call in TestCase::tearDown()
+        // wipes out all configuration including plugin paths config.
+        $this->loadConfig();
+
         $path = Configure::read('plugins.' . $name);
         if ($path) {
             return $path;
