@@ -2711,10 +2711,10 @@ class PaginatorHelperTest extends TestCase
         $result = $this->Paginator->first('first', ['model' => 'Article']);
         $this->assertSame('', $result);
 
-        $result = $this->Paginator->first('first', ['model' => 'Client']);
+        $result = $this->Paginator->first('first', ['model' => 'Client', 'url' => ['?' => ['foo' => 'bar']]]);
         $expected = [
             'li' => ['class' => 'first'],
-            'a' => ['href' => '/'],
+            'a' => ['href' => '/?foo=bar'],
             'first',
             '/a',
             '/li',
