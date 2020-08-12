@@ -16,10 +16,10 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\I18n\Parser;
 
-use Aura\Intl\Package;
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\I18n\I18n;
+use Cake\I18n\Package;
 use Cake\I18n\Parser\PoFileParser;
 use Cake\TestSuite\TestCase;
 

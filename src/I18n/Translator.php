@@ -7,26 +7,99 @@ declare(strict_types=1);
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
- * Redistributions of files must retain the above copyright notice
+ * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
+ * @since         3.3.12
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\I18n;
 
-use Aura\Intl\Translator as BaseTranslator;
-
 /**
- * Provides missing message behavior for CakePHP internal message formats.
+ * Translator to translate the message.
  *
  * @internal
  */
-class Translator extends BaseTranslator
+class Translator
 {
     /**
      * @var string
      */
     public const PLURAL_PREFIX = 'p:';
+
+    /**
+     * A fallback translator.
+     *
+     * @var \Cake\I18n\Translator|null
+     */
+    protected $fallback;
+
+    /**
+     * The formatter to use when translating messages.
+     *
+     * @var \Cake\I18n\FormatterInterface
+     */
+    protected $formatter;
+
+    /**
+     * The locale being used for translations.
+     *
+     * @var string
+     */
+    protected $locale;
+
+    /**
+     * The Package containing keys and translations.
+     *
+     * @var \Cake\I18n\Package
+     */
+    protected $package;
+
+    /**
+     * Constructor
+     *
+     * @param string $locale The locale being used.
+     * @param \Cake\I18n\Package $package The Package containing keys and translations.
+     * @param \Cake\I18n\FormatterInterface $formatter A message formatter.
+     * @param \Cake\I18n\Translator $fallback A fallback translator.
+     */
+    public function __construct(
+        string $locale,
+        Package $package,
+        FormatterInterface $formatter,
+        ?Translator $fallback = null
+    ) {
+        $this->locale = $locale;
+        $this->package = $package;
+        $this->formatter = $formatter;
+        $this->fallback = $fallback;
+    }
+
+    /**
+     * Gets the message translation by its key.
+     *
+     * @param string $key The message key.
+     * @return mixed The message translation string, or false if not found.
+     */
+    protected function getMessage(string $key)
+    {
+        $message = $this->package->getMessage($key);
+        if ($message) {
+            return $message;
+        }
+
+        if ($this->fallback) {
+            $message = $this->fallback->getMessage($key);
+            if ($message) {
+                $this->package->addMessage($key, $message);
+
+                return $message;
+            }
+        }
+
+        return false;
+    }
 
     /**
      * Translates the message formatting any placeholders
@@ -36,7 +109,7 @@ class Translator extends BaseTranslator
      *   message.
      * @return string The translated message with tokens replaced.
      */
-    public function translate($key, array $tokensValues = []): string
+    public function translate(string $key, array $tokensValues = []): string
     {
         if (isset($tokensValues['_count'])) {
             $message = $this->getMessage(static::PLURAL_PREFIX . $key);
@@ -117,5 +190,15 @@ class Translator extends BaseTranslator
         }
 
         return $message['_context'][$context];
+    }
+
+    /**
+     * Returns the translator package
+     *
+     * @return \Cake\I18n\Package
+     */
+    public function getPackage(): Package
+    {
+        return $this->package;
     }
 }

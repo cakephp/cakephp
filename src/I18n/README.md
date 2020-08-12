@@ -50,7 +50,7 @@ Hi Charles, your balance on the Jan 13, 2014, 11:12 AM is $ 1,354.37
 
 ```php
 use Cake\I18n\I18n;
-use Aura\Intl\Package;
+use Cake\I18n\Package;
 
 I18n::translator('animals', 'fr_FR', function () {
     $package = new Package(

@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\I18n;
 
-use Aura\Intl\Package;
 use RuntimeException;
 
 /**
@@ -47,7 +46,7 @@ class ChainMessagesLoader
      * Executes this object returning the translations package as configured in
      * the chain.
      *
-     * @return \Aura\Intl\Package
+     * @return \Cake\I18n\Package
      * @throws \RuntimeException if any of the loaders in the chain is not a valid callable
      */
     public function __invoke(): Package
