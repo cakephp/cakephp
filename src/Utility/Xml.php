@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Utility;
 
 use Cake\Utility\Exception\XmlException;
+use Closure;
 use DOMDocument;
 use DOMNode;
 use DOMText;
@@ -141,32 +142,21 @@ class Xml
      */
     protected static function _loadXml(string $input, array $options)
     {
-        $internalErrors = libxml_use_internal_errors(true);
-        if (!$options['loadEntities']) {
-            libxml_disable_entity_loader(true);
-        }
-        $flags = 0;
-        if (!empty($options['parseHuge'])) {
-            $flags |= LIBXML_PARSEHUGE;
-        }
-        try {
-            if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
-                $flags |= LIBXML_NOCDATA;
-                $xml = new SimpleXMLElement($input, $flags);
-            } else {
-                $xml = new DOMDocument();
-                $xml->loadXML($input, $flags);
-            }
+        return static::load(
+            $input,
+            $options,
+            function ($input, $options, $flags) {
+                if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
+                    $flags |= LIBXML_NOCDATA;
+                    $xml = new SimpleXMLElement($input, $flags);
+                } else {
+                    $xml = new DOMDocument();
+                    $xml->loadXML($input, $flags);
+                }
 
-            return $xml;
-        } catch (Exception $e) {
-            throw new XmlException('Xml cannot be read. ' . $e->getMessage(), null, $e);
-        } finally {
-            if (!$options['loadEntities']) {
-                libxml_disable_entity_loader(false);
+                return $xml;
             }
-            libxml_use_internal_errors($internalErrors);
-        }
+        );
     }
 
     /**
@@ -185,6 +175,33 @@ class Xml
         ];
         $options += $defaults;
 
+        return static::load(
+            $input,
+            $options,
+            function ($input, $options, $flags) {
+                $xml = new DOMDocument();
+                $xml->loadHTML($input, $flags);
+
+                if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
+                    $xml = simplexml_import_dom($xml);
+                }
+
+                return $xml;
+            }
+        );
+    }
+
+    /**
+     * Parse the input data and create either a SimpleXmlElement object or a DOMDocument.
+     *
+     * @param string $input The input to load.
+     * @param array $options The options to use. See Xml::build()
+     * @param \Closure $callable Closure that should return SimpleXMLElement or DOMDocument instance.
+     * @return \SimpleXMLElement|\DOMDocument
+     * @throws \Cake\Utility\Exception\XmlException
+     */
+    protected static function load(string $input, array $options, Closure $callable)
+    {
         $flags = 0;
         if (!empty($options['parseHuge'])) {
             $flags |= LIBXML_PARSEHUGE;
@@ -198,14 +215,7 @@ class Xml
         }
 
         try {
-            $xml = new DOMDocument();
-            $xml->loadHTML($input, $flags);
-
-            if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
-                $xml = simplexml_import_dom($xml);
-            }
-
-            return $xml;
+            return $callable($input, $options, $flags);
         } catch (Exception $e) {
             throw new XmlException('Xml cannot be read. ' . $e->getMessage(), null, $e);
         } finally {
