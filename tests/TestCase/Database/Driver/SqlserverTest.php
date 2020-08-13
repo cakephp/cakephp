@@ -17,9 +17,12 @@ declare(strict_types=1);
 
 namespace Cake\Test\TestCase\Database\Driver;
 
+use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Query;
+use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use PDO;
 
 /**
@@ -465,5 +468,21 @@ class SqlserverTest extends TestCase
         $expected = 'SELECT posts.author_id, (COUNT(posts.id)) AS post_count ' .
             'GROUP BY posts.author_id HAVING posts.author_id >= :c0';
         $this->assertEquals($expected, $query->sql());
+    }
+
+    public function testExceedingMaxParameters()
+    {
+        $connection = ConnectionManager::get('test');
+        $this->skipIf(!$connection->getDriver() instanceof Sqlserver);
+
+        $query = $connection->newQuery()
+            ->from('articles')
+            ->whereInList('id', range(0, 2100));
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'More than the Sql Server maximum of 2100 parameters added to prepared statement'
+        );
+        $connection->getDriver()->prepare($query);
     }
 }
