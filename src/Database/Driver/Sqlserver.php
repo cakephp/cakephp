@@ -199,7 +199,7 @@ class Sqlserver extends Driver
             $sql = $query->sql();
             if (count($query->getValueBinder()->bindings()) > 2100) {
                 throw new InvalidArgumentException(
-                    'More than the Sql Server maximum of 2100 parameters added to prepared statement. ' .
+                    'Exceeded maximum number of parameters (2100) for prepared statements in Sql Server. ' .
                     'This is probably due to a very large WHERE IN () clause which generates a parameter ' .
                     'for each value in the array. ' .
                     'If using an Association, try changing the `strategy` from select to subquery.'
