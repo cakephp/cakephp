@@ -481,7 +481,7 @@ class SqlserverTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            'More than the Sql Server maximum of 2100 parameters added to prepared statement'
+            'Exceeded maximum number of parameters (2100) for prepared statements in Sql Server'
         );
         $connection->getDriver()->prepare($query);
     }
