@@ -617,6 +617,16 @@ class RequestHandlerComponentTest extends TestCase
         $response = $this->Controller->getResponse();
         $this->assertStringContainsString('myfile.xml', $response->getHeaderLine('Content-Disposition'));
         $this->assertStringContainsString('application/xml', $response->getType());
+
+        $result = $this->RequestHandler->respondAs('xml', ['inline' => true]);
+        $this->assertTrue($result);
+        $response = $this->Controller->getResponse();
+        $this->assertSame('inline', $response->getHeaderLine('Content-Disposition'));
+
+        $result = $this->RequestHandler->respondAs('xml', ['inline' => 'myfile.xml']);
+        $this->assertTrue($result);
+        $response = $this->Controller->getResponse();
+        $this->assertSame('inline; filename="myfile.xml"', $response->getHeaderLine('Content-Disposition'));
     }
 
     /**

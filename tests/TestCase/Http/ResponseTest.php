@@ -374,6 +374,21 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Tests the withInline method
+     *
+     * @return void
+     */
+    public function testWithInline()
+    {
+        $response = new Response();
+        $new = $response->withInline();
+        $this->assertSame('inline', $new->getHeaderLine('Content-Disposition'));
+
+        $new = $response->withInline('myfile.mp3');
+        $this->assertSame('inline; filename="myfile.mp3"', $new->getHeaderLine('Content-Disposition'));
+    }
+
+    /**
      * Tests the mapType method
      *
      * @return void

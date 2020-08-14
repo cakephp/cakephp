@@ -456,8 +456,12 @@ class RequestHandlerComponent extends Component
      */
     public function respondAs($type, array $options = []): bool
     {
-        $defaults = ['index' => null, 'charset' => null, 'attachment' => false];
-        $options += $defaults;
+        $options += [
+            'index' => null,
+            'charset' => null,
+            'attachment' => false,
+            'inline' => false,
+        ];
 
         $cType = $type;
         $controller = $this->getController();
@@ -489,6 +493,9 @@ class RequestHandlerComponent extends Component
         }
         if (!empty($options['attachment'])) {
             $response = $response->withDownload($options['attachment']);
+        } elseif (!empty($options['inline'])) {
+            $filename = is_string($options['inline']) ? $options['inline'] : null;
+            $response = $response->withInline($filename);
         }
         $controller->setResponse($response);
 

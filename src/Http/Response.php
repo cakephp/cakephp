@@ -1142,6 +1142,22 @@ class Response implements ResponseInterface
     }
 
     /**
+     * Create a new instnace with Content-Disposition header set.
+     *
+     * @param string|null $filename The name of the file the browser can download as after viewing file inline
+     * @return static
+     */
+    public function withInline(?string $filename = null)
+    {
+        $disposition = 'inline';
+        if ($filename) {
+            $disposition .= '; filename="' . $filename . '"';
+        }
+
+        return $this->withHeader('Content-Disposition', $disposition);
+    }
+
+    /**
      * Create a new response with the Content-Length header set.
      *
      * @param int|string $bytes Number of bytes
