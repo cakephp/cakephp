@@ -657,7 +657,7 @@ class ShellTest extends TestCase
         chmod($path, 0444);
 
         $this->Shell->createFile($file, 'testing');
-        $this->assertFileNotExists($file);
+        $this->assertFileDoesNotExist($file);
 
         chmod($path, 0744);
         rmdir($path);

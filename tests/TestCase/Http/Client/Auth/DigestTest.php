@@ -112,7 +112,7 @@ class DigestTest extends TestCase
 
         $this->assertStringContainsString('qop="auth"', $result);
         $this->assertStringContainsString('nc=00000001', $result);
-        $this->assertRegexp('/cnonce="[a-z0-9]+"/', $result);
+        $this->assertMatchesRegularExpression('/cnonce="[a-z0-9]+"/', $result);
     }
 
     /**

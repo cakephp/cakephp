@@ -70,7 +70,7 @@ class TableUuidTest extends TestCase
         ]);
         $table = $this->getTableLocator()->get($tableName);
         $this->assertSame($entity, $table->save($entity));
-        $this->assertRegExp('/^[a-f0-9-]{36}$/', $entity->id, 'Should be 36 characters');
+        $this->assertMatchesRegularExpression('/^[a-f0-9-]{36}$/', $entity->id, 'Should be 36 characters');
 
         $row = $table->find('all')->where(['id' => $entity->id])->first();
         $row->id = strtolower($row->id);

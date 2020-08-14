@@ -255,7 +255,7 @@ class SecurityTest extends TestCase
         $value = Security::randomBytes(64);
         $this->assertSame(64, strlen($value));
 
-        $this->assertRegExp('/[^0-9a-f]/', $value, 'should return a binary string');
+        $this->assertMatchesRegularExpression('/[^0-9a-f]/', $value, 'should return a binary string');
     }
 
     /**
@@ -271,7 +271,7 @@ class SecurityTest extends TestCase
         $value = Security::randomString();
         $this->assertSame(64, strlen($value));
 
-        $this->assertRegExp('/^[0-9a-f]+$/', $value, 'should return a ASCII string');
+        $this->assertMatchesRegularExpression('/^[0-9a-f]+$/', $value, 'should return a ASCII string');
     }
 
     /**
@@ -287,7 +287,7 @@ class SecurityTest extends TestCase
         $value = Security::insecureRandomBytes(64);
         $this->assertSame(64, strlen($value));
 
-        $this->assertRegExp('/[^0-9a-f]/', $value, 'should return a binary string');
+        $this->assertMatchesRegularExpression('/[^0-9a-f]/', $value, 'should return a binary string');
     }
 
     /**

@@ -1163,7 +1163,7 @@ class FolderTest extends TestCase
 
         $this->assertFileExists($folderThree . DS . 'file1.php');
         $this->assertFileExists($folderThree . DS . 'file2.php');
-        $this->assertFileNotExists($folderThree . DS . 'folderA' . DS . 'fileA.php');
+        $this->assertFileDoesNotExist($folderThree . DS . 'folderA' . DS . 'fileA.php');
         $this->assertFileExists($folderThree . DS . 'folderB' . DS . 'fileB.php');
     }
 
@@ -1196,8 +1196,8 @@ class FolderTest extends TestCase
         $Folder->copy($folderThree, ['recursive' => false]);
 
         $this->assertFileExists($folderThree . DS . 'file1.php');
-        $this->assertDirectoryNotExists($folderThree . DS . 'folderA');
-        $this->assertFileNotExists($folderThree . DS . 'folderA' . DS . 'fileA.php');
+        $this->assertDirectoryDoesNotExist($folderThree . DS . 'folderA');
+        $this->assertFileDoesNotExist($folderThree . DS . 'folderA' . DS . 'fileA.php');
     }
 
     /**
@@ -1286,10 +1286,10 @@ class FolderTest extends TestCase
         $this->assertFileExists($folderTwo . '/file1.php');
         $this->assertDirectoryExists($folderTwo . '/folderB');
         $this->assertFileExists($folderTwo . '/folderB/fileB.php');
-        $this->assertFileNotExists($fileOne);
+        $this->assertFileDoesNotExist($fileOne);
         $this->assertFileExists($folderTwo . '/folderA');
-        $this->assertFileNotExists($folderOneA);
-        $this->assertFileNotExists($fileOneA);
+        $this->assertFileDoesNotExist($folderOneA);
+        $this->assertFileDoesNotExist($fileOneA);
 
         $Folder = new Folder($folderTwo);
         $Folder->delete();
@@ -1305,9 +1305,9 @@ class FolderTest extends TestCase
         $this->assertFileExists($folderTwo . '/file1.php');
         $this->assertDirectoryExists($folderTwo . '/folderA');
         $this->assertFileExists($folderTwo . '/folderA/fileA.php');
-        $this->assertFileNotExists($fileOne);
-        $this->assertFileNotExists($folderOneA);
-        $this->assertFileNotExists($fileOneA);
+        $this->assertFileDoesNotExist($fileOne);
+        $this->assertFileDoesNotExist($folderOneA);
+        $this->assertFileDoesNotExist($fileOneA);
 
         $Folder = new Folder($folderTwo);
         $Folder->delete();
@@ -1327,9 +1327,9 @@ class FolderTest extends TestCase
         $this->assertTrue($result);
         $this->assertFileExists($folderTwo . '/file1.php');
         $this->assertStringEqualsFile($folderTwoB . '/fileB.php', '');
-        $this->assertFileNotExists($fileOne);
-        $this->assertFileNotExists($folderOneA);
-        $this->assertFileNotExists($fileOneA);
+        $this->assertFileDoesNotExist($fileOne);
+        $this->assertFileDoesNotExist($folderOneA);
+        $this->assertFileDoesNotExist($fileOneA);
 
         $Folder = new Folder($path);
         $Folder->delete();
@@ -1369,9 +1369,9 @@ class FolderTest extends TestCase
         $this->assertFileExists($folderTwo . '/file1.php');
         $this->assertDirectoryExists($folderTwo . '/folderB');
         $this->assertFileExists($folderTwoB . '/fileB.php');
-        $this->assertFileNotExists($fileOne);
-        $this->assertFileNotExists($folderOneA);
-        $this->assertFileNotExists($fileOneA);
+        $this->assertFileDoesNotExist($fileOne);
+        $this->assertFileDoesNotExist($folderOneA);
+        $this->assertFileDoesNotExist($fileOneA);
 
         $Folder = new Folder($folderTwo);
         $Folder->delete();
@@ -1388,9 +1388,9 @@ class FolderTest extends TestCase
         $this->assertFileExists($folderTwo . '/file1.php');
         $this->assertDirectoryExists($folderTwo . '/folderA');
         $this->assertFileExists($folderTwo . '/folderA/fileA.php');
-        $this->assertFileNotExists($fileOne);
-        $this->assertFileNotExists($folderOneA);
-        $this->assertFileNotExists($fileOneA);
+        $this->assertFileDoesNotExist($fileOne);
+        $this->assertFileDoesNotExist($folderOneA);
+        $this->assertFileDoesNotExist($fileOneA);
 
         $Folder = new Folder($folderTwo);
         $Folder->delete();
@@ -1408,9 +1408,9 @@ class FolderTest extends TestCase
         $this->assertTrue($result);
         $this->assertFileExists($folderTwo . '/file1.php');
         $this->assertStringEqualsFile($folderTwoB . '/fileB.php', 'untouched');
-        $this->assertFileNotExists($fileOne);
-        $this->assertFileNotExists($folderOneA);
-        $this->assertFileNotExists($fileOneA);
+        $this->assertFileDoesNotExist($fileOne);
+        $this->assertFileDoesNotExist($folderOneA);
+        $this->assertFileDoesNotExist($fileOneA);
 
         $Folder = new Folder($path);
         $Folder->delete();
@@ -1438,8 +1438,8 @@ class FolderTest extends TestCase
         $result = $Folder->move($folderTwo, ['recursive' => false]);
         $this->assertTrue($result);
         $this->assertFileExists($folderTwo . '/file1.php');
-        $this->assertDirectoryNotExists($folderTwo . '/folderA');
-        $this->assertFileNotExists($folderTwo . '/folderA/fileA.php');
+        $this->assertDirectoryDoesNotExist($folderTwo . '/folderA');
+        $this->assertFileDoesNotExist($folderTwo . '/folderA/fileA.php');
     }
 
     /**

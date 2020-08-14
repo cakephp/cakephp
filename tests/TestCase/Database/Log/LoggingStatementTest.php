@@ -64,7 +64,7 @@ class LoggingStatementTest extends TestCase
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(1, $messages);
-        $this->assertRegExp('/^debug connection=test duration=\d+ rows=3 SELECT bar FROM foo$/', $messages[0]);
+        $this->assertMatchesRegularExpression('/^debug connection=test duration=\d+ rows=3 SELECT bar FROM foo$/', $messages[0]);
     }
 
     /**
@@ -87,7 +87,7 @@ class LoggingStatementTest extends TestCase
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(1, $messages);
-        $this->assertRegExp('/^debug connection=test duration=\d+ rows=4 SELECT bar FROM foo WHERE x=1 AND y=2$/', $messages[0]);
+        $this->assertMatchesRegularExpression('/^debug connection=test duration=\d+ rows=4 SELECT bar FROM foo WHERE x=1 AND y=2$/', $messages[0]);
     }
 
     /**
@@ -120,8 +120,8 @@ class LoggingStatementTest extends TestCase
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(2, $messages);
-        $this->assertRegExp("/^debug connection=test duration=\d+ rows=4 SELECT bar FROM foo WHERE a='1' AND b='2013-01-01'$/", $messages[0]);
-        $this->assertRegExp("/^debug connection=test duration=\d+ rows=4 SELECT bar FROM foo WHERE a='1' AND b='2014-01-01'$/", $messages[1]);
+        $this->assertMatchesRegularExpression("/^debug connection=test duration=\d+ rows=4 SELECT bar FROM foo WHERE a='1' AND b='2013-01-01'$/", $messages[0]);
+        $this->assertMatchesRegularExpression("/^debug connection=test duration=\d+ rows=4 SELECT bar FROM foo WHERE a='1' AND b='2014-01-01'$/", $messages[1]);
     }
 
     /**
@@ -150,7 +150,7 @@ class LoggingStatementTest extends TestCase
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(1, $messages);
-        $this->assertRegExp("/^debug connection=test duration=\d+ rows=0 SELECT bar FROM foo$/", $messages[0]);
+        $this->assertMatchesRegularExpression("/^debug connection=test duration=\d+ rows=0 SELECT bar FROM foo$/", $messages[0]);
     }
 
     /**

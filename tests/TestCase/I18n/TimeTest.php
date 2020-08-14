@@ -335,7 +335,7 @@ class TimeTest extends TestCase
 
         $time = new $class('+2 weeks +2 days');
         $result = $time->timeAgoInWords(['format' => 'yyyy-MM-dd']);
-        $this->assertRegExp('/^2 weeks, [1|2] day(s)?$/', $result);
+        $this->assertMatchesRegularExpression('/^2 weeks, [1|2] day(s)?$/', $result);
 
         $time = new $class('+2 months +2 days');
         $result = $time->timeAgoInWords(['end' => '1 month', 'format' => 'yyyy-MM-dd']);
@@ -972,12 +972,12 @@ class TimeTest extends TestCase
     public function testDefaultLocaleEffectsFormatting($class)
     {
         $result = $class::parseDate('12/03/2015');
-        $this->assertRegExp('/Dec 3, 2015[ ,]+12:00 AM/', $result->nice());
+        $this->assertMatchesRegularExpression('/Dec 3, 2015[ ,]+12:00 AM/', $result->nice());
 
         $class::setDefaultLocale('fr-FR');
 
         $result = $class::parseDate('12/03/2015');
-        $this->assertRegexp('/12 mars 2015 (?:à )?00:00/', $result->nice());
+        $this->assertMatchesRegularExpression('/12 mars 2015 (?:à )?00:00/', $result->nice());
 
         $expected = 'Y-m-d';
         $result = $class::parseDate('12/03/2015');
