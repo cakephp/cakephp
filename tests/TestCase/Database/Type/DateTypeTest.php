@@ -50,6 +50,18 @@ class DateTypeTest extends TestCase
     }
 
     /**
+     * Teardown
+     *
+     * @return void
+     */
+    public function tearDown(): void
+    {
+        parent::tearDown();
+        $this->type->useImmutable();
+        $this->type->useLocaleParser(false)->setLocaleFormat(null);
+    }
+
+    /**
      * Test toPHP
      *
      * @return void
@@ -193,11 +205,11 @@ class DateTypeTest extends TestCase
     public function testMarshal($value, $expected)
     {
         $result = $this->type->marshal($value);
-        if (is_object($expected)) {
-            $this->assertEquals($expected, $result);
-        } else {
-            $this->assertSame($expected, $result);
-        }
+        $this->assertEquals($expected, $result);
+
+        $this->type->useMutable();
+        $result = $this->type->marshal($value);
+        $this->assertEquals($expected, $result);
     }
 
     /**
@@ -208,13 +220,15 @@ class DateTypeTest extends TestCase
     public function testMarshalWithLocaleParsing()
     {
         $this->type->useLocaleParser();
+        $this->assertNull($this->type->marshal('11/derp/2013'));
 
         $expected = new Date('13-10-2013');
         $result = $this->type->marshal('10/13/2013');
         $this->assertEquals($expected->format('Y-m-d'), $result->format('Y-m-d'));
-        $this->assertNull($this->type->marshal('11/derp/2013'));
 
-        $this->type->useLocaleParser(false);
+        $this->type->useMutable();
+        $result = $this->type->marshal('10/13/2013');
+        $this->assertEquals($expected->format('Y-m-d'), $result->format('Y-m-d'));
     }
 
     /**
@@ -225,12 +239,15 @@ class DateTypeTest extends TestCase
     public function testMarshalWithLocaleParsingWithFormat()
     {
         $this->type->useLocaleParser()->setLocaleFormat('dd MMM, y');
+        $this->assertNull($this->type->marshal('11/derp/2013'));
 
         $expected = new Date('13-10-2013');
         $result = $this->type->marshal('13 Oct, 2013');
         $this->assertEquals($expected->format('Y-m-d'), $result->format('Y-m-d'));
 
-        $this->type->useLocaleParser(false)->setLocaleFormat(null);
+        $this->type->useMutable();
+        $result = $this->type->marshal('13 Oct, 2013');
+        $this->assertEquals($expected->format('Y-m-d'), $result->format('Y-m-d'));
     }
 
     /**

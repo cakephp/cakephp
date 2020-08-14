@@ -449,9 +449,9 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      * @param string $value The value to parse and convert to an object.
      * @return \Cake\I18n\I18nDateTimeInterface|null
      */
-    protected function _parseLocaleValue(string $value)
+    protected function _parseLocaleValue(string $value): ?I18nDateTimeInterface
     {
-        /** @var \Cake\I18n\I18nDateTimeInterface $class */
+        /** @psalm-var class-string<\Cake\I18n\I18nDateTimeInterface> $class */
         $class = $this->_className;
 
         return $class::parseDateTime($value, $this->_localeMarshalFormat);
@@ -464,9 +464,9 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      * @param string $value The value to parse and convert to an object.
      * @return \DateTimeInterface|null
      */
-    protected function _parseValue(string $value)
+    protected function _parseValue(string $value): ?DateTimeInterface
     {
-        /** @var \DateTime|\DateTimeImmutable $class */
+        /** @psalm-var class-string<\DateTime>|class-string<\DateTimeImmutable> $class */
         $class = $this->_className;
 
         foreach ($this->_marshalFormats as $format) {

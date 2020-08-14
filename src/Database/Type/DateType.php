@@ -18,6 +18,7 @@ namespace Cake\Database\Type;
 
 use Cake\I18n\Date;
 use Cake\I18n\FrozenDate;
+use Cake\I18n\I18nDateTimeInterface;
 use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -80,7 +81,9 @@ class DateType extends DateTimeType
     public function marshal($value): ?DateTimeInterface
     {
         $date = parent::marshal($value);
-        if ($date instanceof DateTime) {
+        if ($date && !$date instanceof I18nDateTimeInterface) {
+            // Clear time manually when I18n types aren't available and raw DateTime used
+            /** @psalm-var \DateTime|\DateTimeImmutable $date */
             $date->setTime(0, 0, 0);
         }
 
@@ -90,9 +93,9 @@ class DateType extends DateTimeType
     /**
      * @inheritDoc
      */
-    protected function _parseLocaleValue(string $value)
+    protected function _parseLocaleValue(string $value): ?I18nDateTimeInterface
     {
-        /** @var \Cake\I18n\I18nDateTimeInterface $class */
+        /** @psalm-var class-string<\Cake\I18n\I18nDateTimeInterface> $class */
         $class = $this->_className;
 
         return $class::parseDate($value, $this->_localeMarshalFormat);

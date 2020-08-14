@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Type;
 
+use Cake\I18n\I18nDateTimeInterface;
+
 /**
  * Time type converter.
  *
@@ -38,9 +40,9 @@ class TimeType extends DateTimeType
     /**
      * @inheritDoc
      */
-    protected function _parseLocaleValue(string $value)
+    protected function _parseLocaleValue(string $value): ?I18nDateTimeInterface
     {
-        /** @var \Cake\I18n\I18nDateTimeInterface $class */
+        /** @psalm-var class-string<\Cake\I18n\I18nDateTimeInterface> $class */
         $class = $this->_className;
 
         /** @psalm-suppress PossiblyInvalidArgument */
