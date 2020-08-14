@@ -1142,7 +1142,7 @@ class Response implements ResponseInterface
     }
 
     /**
-     * Create a new instnace with Content-Disposition header set.
+     * Create a new instance with Content-Disposition header set.
      *
      * @param string|null $filename The name of the file the browser can download as after viewing file inline
      * @return static
