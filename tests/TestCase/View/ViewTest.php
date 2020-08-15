@@ -1881,7 +1881,6 @@ TEXT;
             $this->View->render('extend_self');
             $this->fail('No exception');
         } catch (\LogicException $e) {
-            ob_end_clean();
             $this->assertContains('cannot have views extend themselves', $e->getMessage());
         }
     }
@@ -1898,7 +1897,6 @@ TEXT;
             $this->View->render('extend_loop');
             $this->fail('No exception');
         } catch (\LogicException $e) {
-            ob_end_clean();
             $this->assertContains('cannot have views extend in a loop', $e->getMessage());
         }
     }
@@ -1954,8 +1952,6 @@ TEXT;
             $this->View->render('extend_missing_element');
             $this->fail('No exception');
         } catch (\LogicException $e) {
-            ob_end_clean();
-            ob_end_clean();
             $this->assertContains('element', $e->getMessage());
         }
     }
@@ -1993,6 +1989,67 @@ this is the test prefix elementThe view
 
 TEXT;
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Tests that the buffers that are opened when evaluating a template
+     * are being closed in case an exception happens.
+     *
+     * @return void
+     */
+    public function testBuffersOpenedDuringTemplateEvaluationAreBeingClosed()
+    {
+        $bufferLevel = ob_get_level();
+
+        $e = null;
+        try {
+            $this->View->element('exception_with_open_buffers');
+        } catch (\Exception $e) {
+        }
+
+        $this->assertNotNull($e);
+        $this->assertEquals('Exception with open buffers', $e->getMessage());
+        $this->assertEquals($bufferLevel, ob_get_level());
+    }
+
+    /**
+     * Tests that the buffers that are opened during block caching are
+     * being closed in case an exception happens.
+     *
+     * @return void
+     */
+    public function testBuffersOpenedDuringBlockCachingAreBeingClosed()
+    {
+        Cache::drop('test_view');
+        Cache::setConfig('test_view', [
+            'engine' => 'File',
+            'duration' => '+1 day',
+            'path' => CACHE . 'views/',
+            'prefix' => '',
+        ]);
+        Cache::clear(false, 'test_view');
+
+        $bufferLevel = ob_get_level();
+
+        $e = null;
+        try {
+            $this->View->cache(function () {
+                ob_start();
+
+                throw new \Exception('Exception with open buffers');
+            }, [
+                'key' => __FUNCTION__,
+                'config' => 'test_view',
+            ]);
+        } catch (\Exception $e) {
+        }
+
+        Cache::clear(false, 'test_view');
+        Cache::drop('test_view');
+
+        $this->assertNotNull($e);
+        $this->assertEquals('Exception with open buffers', $e->getMessage());
+        $this->assertEquals($bufferLevel, ob_get_level());
     }
 
     /**
