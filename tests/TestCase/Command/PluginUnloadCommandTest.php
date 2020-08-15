@@ -177,7 +177,7 @@ class PluginUnloadCommandTest extends TestCase
         $result = file_get_contents($this->app);
 
         $this->assertStringNotContainsString("addPlugin('TestPlugin'", $result);
-        $this->assertNotRegexp("/this\-\>addPlugin\([\'\"]TestPlugin'[\'\"][^\)]*\)\;/mi", $result);
+        $this->assertDoesNotMatchRegularExpression("/this\-\>addPlugin\([\'\"]TestPlugin'[\'\"][^\)]*\)\;/mi", $result);
     }
 
     /**

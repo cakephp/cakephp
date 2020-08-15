@@ -971,7 +971,7 @@ class FormHelperTest extends TestCase
             'name' => 'password', 'type' => 'password',
         ]];
         $this->assertHtml($expected, $result);
-        $this->assertNotRegExp('/<input[^<>]+[^id|name|type|value]=[^<>]*\/>$/', $result);
+        $this->assertDoesNotMatchRegularExpression('/<input[^<>]+[^id|name|type|value]=[^<>]*\/>$/', $result);
 
         $result = $this->Form->text('user_form');
         $expected = ['input' => [
@@ -6672,7 +6672,7 @@ class FormHelperTest extends TestCase
             'onClick' => "$('#postAddForm').ajaxSubmit({target: '#postTextUpload', url: '/posts/text'});return false;'",
             'escape' => false,
         ]);
-        $this->assertNotRegExp('/\&039/', $result);
+        $this->assertDoesNotMatchRegularExpression('/\&039/', $result);
     }
 
     /**

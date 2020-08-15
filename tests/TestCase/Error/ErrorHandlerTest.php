@@ -129,13 +129,13 @@ class ErrorHandlerTest extends TestCase
         $wrong = $wrong + 1;
         $result = ob_get_clean();
 
-        $this->assertRegExp('/<pre class="cake-error">/', $result);
+        $this->assertMatchesRegularExpression('/<pre class="cake-error">/', $result);
         if (version_compare(PHP_VERSION, '8.0.0-dev', '<')) {
-            $this->assertRegExp('/<b>Notice<\/b>/', $result);
-            $this->assertRegExp('/variable:\s+wrong/', $result);
+            $this->assertMatchesRegularExpression('/<b>Notice<\/b>/', $result);
+            $this->assertMatchesRegularExpression('/variable:\s+wrong/', $result);
         } else {
-            $this->assertRegExp('/<b>Warning<\/b>/', $result);
-            $this->assertRegExp('/variable \$wrong/', $result);
+            $this->assertMatchesRegularExpression('/<b>Warning<\/b>/', $result);
+            $this->assertMatchesRegularExpression('/variable \$wrong/', $result);
         }
         $this->assertStringContainsString(
             'ErrorHandlerTest.php, line ' . (__LINE__ - 12),
@@ -239,7 +239,7 @@ class ErrorHandlerTest extends TestCase
         $out = $out + 1;
 
         $messages = $this->logger->read();
-        $this->assertRegExp('/^(notice|debug|warning)/', $messages[0]);
+        $this->assertMatchesRegularExpression('/^(notice|debug|warning)/', $messages[0]);
 
         if (version_compare(PHP_VERSION, '8.0.0-dev', '<')) {
             $this->assertStringContainsString(
@@ -269,7 +269,7 @@ class ErrorHandlerTest extends TestCase
         $out = $out + 1;
 
         $messages = $this->logger->read();
-        $this->assertRegExp('/^(notice|debug|warning)/', $messages[0]);
+        $this->assertMatchesRegularExpression('/^(notice|debug|warning)/', $messages[0]);
         if (version_compare(PHP_VERSION, '8.0.0-dev', '<')) {
             $this->assertStringContainsString(
                 'Notice (8): Undefined variable: out in [' . __FILE__ . ', line ' . (__LINE__ - 6) . ']',
@@ -318,7 +318,7 @@ class ErrorHandlerTest extends TestCase
         $this->assertStringContainsString('Kaboom!', (string)$errorHandler->response->getBody(), 'message missing.');
 
         $messages = $this->logger->read();
-        $this->assertRegExp('/^error/', $messages[0]);
+        $this->assertMatchesRegularExpression('/^error/', $messages[0]);
         $this->assertStringContainsString('[Cake\Http\Exception\NotFoundException] Kaboom!', $messages[0]);
         $this->assertStringContainsString(
             str_replace('/', DS, 'vendor/phpunit/phpunit/src/Framework/TestCase.php'),
@@ -332,7 +332,7 @@ class ErrorHandlerTest extends TestCase
         $errorHandler->handleException($error);
 
         $messages = $this->logger->read();
-        $this->assertRegExp('/^error/', $messages[1]);
+        $this->assertMatchesRegularExpression('/^error/', $messages[1]);
         $this->assertStringContainsString('[Cake\Http\Exception\NotFoundException] Kaboom!', $messages[1]);
         $this->assertStringNotContainsString(
             str_replace('/', DS, 'vendor/phpunit/phpunit/src/Framework/TestCase.php'),
@@ -359,7 +359,7 @@ class ErrorHandlerTest extends TestCase
         $errorHandler->handleException($error);
 
         $messages = $this->logger->read();
-        $this->assertRegExp('/^error/', $messages[0]);
+        $this->assertMatchesRegularExpression('/^error/', $messages[0]);
         $this->assertStringContainsString(
             '[Cake\Http\Exception\MissingControllerException] Controller class Derp could not be found.',
             $messages[0]
@@ -425,7 +425,7 @@ class ErrorHandlerTest extends TestCase
 
         $messages = $this->logger->read();
         $this->assertCount(1, $messages);
-        $this->assertRegExp('/^error/', $messages[0]);
+        $this->assertMatchesRegularExpression('/^error/', $messages[0]);
         $this->assertStringContainsString(
             '[Cake\Http\Exception\ForbiddenException] Fooled you!',
             $messages[0]

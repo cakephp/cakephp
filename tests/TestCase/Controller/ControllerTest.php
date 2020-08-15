@@ -241,14 +241,14 @@ class ControllerTest extends TestCase
         $Controller->viewBuilder()->setTemplatePath('Posts');
 
         $result = $Controller->render('index');
-        $this->assertRegExp('/posts index/', (string)$result);
+        $this->assertMatchesRegularExpression('/posts index/', (string)$result);
 
         $Controller->viewBuilder()->setTemplate('index');
         $result = $Controller->render();
-        $this->assertRegExp('/posts index/', (string)$result);
+        $this->assertMatchesRegularExpression('/posts index/', (string)$result);
 
         $result = $Controller->render('/element/test_element');
-        $this->assertRegExp('/this is the test element/', (string)$result);
+        $this->assertMatchesRegularExpression('/this is the test element/', (string)$result);
     }
 
     /**
@@ -1012,7 +1012,7 @@ class ControllerTest extends TestCase
         });
 
         $result = $Controller->render('/Element/test_element', 'default');
-        $this->assertRegExp('/posts index/', (string)$result);
+        $this->assertMatchesRegularExpression('/posts index/', (string)$result);
     }
 
     /**

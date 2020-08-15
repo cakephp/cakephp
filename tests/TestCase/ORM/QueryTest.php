@@ -3243,7 +3243,7 @@ class QueryTest extends TestCase
             ])
             ->first();
         $this->assertNotEmpty($out, 'Should get a record');
-        $this->assertRegExp('/^0?\.1234567890123456789$/', $out->fraction);
+        $this->assertMatchesRegularExpression('/^0?\.1234567890123456789$/', $out->fraction);
 
         $small = 0.1234567890123456789;
         $entity = $table->newEntity(['fraction' => $small]);
@@ -3256,7 +3256,7 @@ class QueryTest extends TestCase
             ->first();
         $this->assertNotEmpty($out, 'Should get a record');
         // There will be loss of precision if too large/small value is set as float instead of string.
-        $this->assertRegExp('/^0?\.123456789012350+$/', $out->fraction);
+        $this->assertMatchesRegularExpression('/^0?\.123456789012350+$/', $out->fraction);
     }
 
     /**

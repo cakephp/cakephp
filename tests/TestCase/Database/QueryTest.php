@@ -4800,7 +4800,7 @@ class QueryTest extends TestCase
         }
         $pattern = str_replace('<', '[`"\[]' . $optional, $pattern);
         $pattern = str_replace('>', '[`"\]]' . $optional, $pattern);
-        $this->assertRegExp('#' . $pattern . '#', $query);
+        $this->assertMatchesRegularExpression('#' . $pattern . '#', $query);
     }
 
     /**

@@ -232,17 +232,17 @@ class NumberTest extends TestCase
         // The following tests use regexp because whitespace used
         // is inconsistent between *nix & windows.
         $expected = '/^EUR\W+100\W+100\W+100,00$/';
-        $this->assertRegExp($expected, $result);
+        $this->assertMatchesRegularExpression($expected, $result);
 
         $options = ['locale' => 'fr_FR', 'pattern' => '#,###.00 ¤¤'];
         $result = $this->Number->currency($value, 'EUR', $options);
         $expected = '/^100\W+100\W+100,00\W+EUR$/';
-        $this->assertRegExp($expected, $result);
+        $this->assertMatchesRegularExpression($expected, $result);
 
         $options = ['locale' => 'fr_FR', 'pattern' => '#,###.00;(¤#,###.00)'];
         $result = $this->Number->currency(-1235.03, 'EUR', $options);
         $expected = '/^\(€1\W+235,03\)$/';
-        $this->assertRegExp($expected, $result);
+        $this->assertMatchesRegularExpression($expected, $result);
 
         $result = $this->Number->currency(0.5, 'USD', ['locale' => 'en_US', 'fractionSymbol' => 'c']);
         $expected = '50c';

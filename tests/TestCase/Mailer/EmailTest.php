@@ -2023,7 +2023,7 @@ class EmailTest extends TestCase
         $this->assertNotEmpty($result);
 
         $result = $this->Email->getBoundary();
-        $this->assertRegExp('/^[0-9a-f]{32}$/', $result);
+        $this->assertMatchesRegularExpression('/^[0-9a-f]{32}$/', $result);
     }
 
     /**

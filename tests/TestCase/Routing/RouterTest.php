@@ -66,9 +66,9 @@ class RouterTest extends TestCase
         Router::scope('/', function (RouteBuilder $routes) {
             $routes->fallbacks();
         });
-        $this->assertRegExp('/^http(s)?:\/\//', Router::url('/', true));
-        $this->assertRegExp('/^http(s)?:\/\//', Router::url(null, true));
-        $this->assertRegExp('/^http(s)?:\/\//', Router::url(['controller' => 'test', '_full' => true]));
+        $this->assertMatchesRegularExpression('/^http(s)?:\/\//', Router::url('/', true));
+        $this->assertMatchesRegularExpression('/^http(s)?:\/\//', Router::url(null, true));
+        $this->assertMatchesRegularExpression('/^http(s)?:\/\//', Router::url(['controller' => 'test', '_full' => true]));
     }
 
     /**
@@ -2651,7 +2651,7 @@ class RouterTest extends TestCase
             'url' => ['url' => 'eng/posts/view/1'],
         ];
         $result = Router::reverse($params, true);
-        $this->assertRegExp('/^http(s)?:\/\//', $result);
+        $this->assertMatchesRegularExpression('/^http(s)?:\/\//', $result);
     }
 
     /**

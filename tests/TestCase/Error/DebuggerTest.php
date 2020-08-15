@@ -95,7 +95,7 @@ class DebuggerTest extends TestCase
         $result = Debugger::excerpt(__FILE__, __LINE__ - 1, 2);
         $this->assertIsArray($result);
         $this->assertCount(5, $result);
-        $this->assertRegExp('/function(.+)testExcerpt/', $result[1]);
+        $this->assertMatchesRegularExpression('/function(.+)testExcerpt/', $result[1]);
 
         $result = Debugger::excerpt(__FILE__, 2, 2);
         $this->assertIsArray($result);
@@ -103,13 +103,13 @@ class DebuggerTest extends TestCase
 
         $this->skipIf(defined('HHVM_VERSION'), 'HHVM does not highlight php code');
         $pattern = '/<code>.*?<span style\="color\: \#\d+">.*?&lt;\?php/';
-        $this->assertRegExp($pattern, $result[0]);
+        $this->assertMatchesRegularExpression($pattern, $result[0]);
 
         $result = Debugger::excerpt(__FILE__, 11, 2);
         $this->assertCount(5, $result);
 
         $pattern = '/<span style\="color\: \#\d{6}">.*?<\/span>/';
-        $this->assertRegExp($pattern, $result[0]);
+        $this->assertMatchesRegularExpression($pattern, $result[0]);
 
         $return = Debugger::excerpt('[internal]', 2, 2);
         $this->assertEmpty($return);
@@ -207,7 +207,7 @@ class DebuggerTest extends TestCase
         $debugger->outputError($data);
         $result = ob_get_clean();
 
-        $this->assertRegExp('#^\<span class\="code\-highlight"\>.*outputError.*\</span\>$#m', $result);
+        $this->assertMatchesRegularExpression('#^\<span class\="code\-highlight"\>.*outputError.*\</span\>$#m', $result);
     }
 
     /**
@@ -224,7 +224,7 @@ class DebuggerTest extends TestCase
         Debugger::setOutputFormat('js');
 
         $result = Debugger::trace();
-        $this->assertRegExp('/' . preg_quote('txmt://open?url=file://', '/') . '(\/|[A-Z]:\\\\)' . '/', $result);
+        $this->assertMatchesRegularExpression('/' . preg_quote('txmt://open?url=file://', '/') . '(\/|[A-Z]:\\\\)' . '/', $result);
 
         Debugger::addFormat('xml', [
             'error' => '<error><code>{:code}</code><file>{:file}</file><line>{:line}</line>' .
@@ -636,7 +636,7 @@ TEXT;
     public function testExportVarRecursion()
     {
         $output = Debugger::exportVar($GLOBALS);
-        $this->assertRegExp("/'GLOBALS' => \[\s+'' \=\> \[maximum depth reached\]/", $output);
+        $this->assertMatchesRegularExpression("/'GLOBALS' => \[\s+'' \=\> \[maximum depth reached\]/", $output);
     }
 
     /**
@@ -647,12 +647,12 @@ TEXT;
     public function testTraceExclude()
     {
         $result = Debugger::trace();
-        $this->assertRegExp('/^Cake\\\Test\\\TestCase\\\Error\\\DebuggerTest::testTraceExclude/', $result);
+        $this->assertMatchesRegularExpression('/^Cake\\\Test\\\TestCase\\\Error\\\DebuggerTest::testTraceExclude/', $result);
 
         $result = Debugger::trace([
             'exclude' => ['Cake\Test\TestCase\Error\DebuggerTest::testTraceExclude'],
         ]);
-        $this->assertNotRegExp('/^Cake\\\Test\\\TestCase\\\Error\\\DebuggerTest::testTraceExclude/', $result);
+        $this->assertDoesNotMatchRegularExpression('/^Cake\\\Test\\\TestCase\\\Error\\\DebuggerTest::testTraceExclude/', $result);
     }
 
     /**

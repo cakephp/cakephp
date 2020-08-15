@@ -199,7 +199,7 @@ class ExceptionRendererTest extends TestCase
 
         $result = $ExceptionRenderer->render();
 
-        $this->assertRegExp(
+        $this->assertMatchesRegularExpression(
             '/Not Found/',
             (string)$result->getBody(),
             'Method declared in error handler not converted to error400. %s'
@@ -349,7 +349,7 @@ class ExceptionRendererTest extends TestCase
 
         $this->assertEquals(404, $response->getStatusCode());
         $this->assertStringContainsString('<h2>Custom message</h2>', $result);
-        $this->assertRegExp("/<strong>'.*?\/posts\/view\/1000'<\/strong>/", $result);
+        $this->assertMatchesRegularExpression("/<strong>'.*?\/posts\/view\/1000'<\/strong>/", $result);
     }
 
     /**
@@ -654,7 +654,7 @@ class ExceptionRendererTest extends TestCase
         $this->assertEquals($code, $response->getStatusCode());
         $body = (string)$response->getBody();
         foreach ($patterns as $pattern) {
-            $this->assertRegExp($pattern, $body);
+            $this->assertMatchesRegularExpression($pattern, $body);
         }
     }
 

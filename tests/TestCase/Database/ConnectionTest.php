@@ -259,7 +259,7 @@ class ConnectionTest extends TestCase
         $result = $this->connection->prepare($query);
         $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
         $sql = '#SELECT [`"\[]?1 \+ 1[`"\]]?#';
-        $this->assertRegExp($sql, $result->queryString);
+        $this->assertMatchesRegularExpression($sql, $result->queryString);
     }
 
     /**

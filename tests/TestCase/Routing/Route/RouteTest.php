@@ -81,27 +81,27 @@ class RouteTest extends TestCase
         $route = new Route('/:controller/:action', ['controller' => 'posts']);
         $result = $route->compile();
 
-        $this->assertRegExp($result, '/posts/edit');
-        $this->assertRegExp($result, '/posts/super_delete');
-        $this->assertNotRegExp($result, '/posts');
-        $this->assertNotRegExp($result, '/posts/super_delete/1');
+        $this->assertMatchesRegularExpression($result, '/posts/edit');
+        $this->assertMatchesRegularExpression($result, '/posts/super_delete');
+        $this->assertDoesNotMatchRegularExpression($result, '/posts');
+        $this->assertDoesNotMatchRegularExpression($result, '/posts/super_delete/1');
         $this->assertSame($result, $route->compile());
 
         $route = new Route('/posts/foo:id', ['controller' => 'posts', 'action' => 'view']);
         $result = $route->compile();
 
-        $this->assertRegExp($result, '/posts/foo:1');
-        $this->assertRegExp($result, '/posts/foo:param');
-        $this->assertNotRegExp($result, '/posts');
-        $this->assertNotRegExp($result, '/posts/');
+        $this->assertMatchesRegularExpression($result, '/posts/foo:1');
+        $this->assertMatchesRegularExpression($result, '/posts/foo:param');
+        $this->assertDoesNotMatchRegularExpression($result, '/posts');
+        $this->assertDoesNotMatchRegularExpression($result, '/posts/');
 
         $this->assertEquals(['id'], $route->keys);
 
         $route = new Route('/:plugin/:controller/:action/*', ['plugin' => 'test_plugin', 'action' => 'index']);
         $result = $route->compile();
-        $this->assertRegExp($result, '/test_plugin/posts/index');
-        $this->assertRegExp($result, '/test_plugin/posts/edit/5');
-        $this->assertRegExp($result, '/test_plugin/posts/edit/5/name:value/nick:name');
+        $this->assertMatchesRegularExpression($result, '/test_plugin/posts/index');
+        $this->assertMatchesRegularExpression($result, '/test_plugin/posts/edit/5');
+        $this->assertMatchesRegularExpression($result, '/test_plugin/posts/edit/5/name:value/nick:name');
     }
 
     /**
@@ -117,7 +117,7 @@ class RouteTest extends TestCase
             ['id' => '\d+', 'x' => '\d+', 'y' => '\d+', 'pass' => ['id', 'x', 'y']]
         );
         $pattern = $route->compile();
-        $this->assertRegExp($pattern, '/fighters/123/move/8/42');
+        $this->assertMatchesRegularExpression($pattern, '/fighters/123/move/8/42');
 
         $result = $route->match([
             'controller' => 'Fighters',
@@ -141,7 +141,7 @@ class RouteTest extends TestCase
             ['controller' => 'Fighters', 'action' => 'move'],
             ['id' => '\d+', 'x' => '\d+', 'y' => '\d+', 'pass' => ['id', 'x', 'y']]
         );
-        $this->assertRegExp($route->compile(), '/fighters/123/move/8/42');
+        $this->assertMatchesRegularExpression($route->compile(), '/fighters/123/move/8/42');
 
         $result = $route->match([
             'controller' => 'Fighters',
@@ -156,7 +156,7 @@ class RouteTest extends TestCase
             '/images/{id}/{x}x{y}',
             ['controller' => 'Images', 'action' => 'view']
         );
-        $this->assertRegExp($route->compile(), '/images/123/640x480');
+        $this->assertMatchesRegularExpression($route->compile(), '/images/123/640x480');
 
         $result = $route->match([
             'controller' => 'Images',
@@ -180,16 +180,16 @@ class RouteTest extends TestCase
             ['controller' => 'Fighters', 'action' => 'move']
         );
         $pattern = $route->compile();
-        $this->assertNotRegExp($route->compile(), '/fighters/123', 'Placeholders must start with letter');
+        $this->assertDoesNotMatchRegularExpression($route->compile(), '/fighters/123', 'Placeholders must start with letter');
 
         $route = new Route('/fighters/{Id}', ['controller' => 'Fighters', 'action' => 'move']);
-        $this->assertRegExp($route->compile(), '/fighters/123');
+        $this->assertMatchesRegularExpression($route->compile(), '/fighters/123');
 
         $route = new Route('/fighters/{i_d}', ['controller' => 'Fighters', 'action' => 'move']);
-        $this->assertRegExp($route->compile(), '/fighters/123');
+        $this->assertMatchesRegularExpression($route->compile(), '/fighters/123');
 
         $route = new Route('/fighters/{id99}', ['controller' => 'Fighters', 'action' => 'move']);
-        $this->assertRegExp($route->compile(), '/fighters/123');
+        $this->assertMatchesRegularExpression($route->compile(), '/fighters/123');
     }
 
     /**
@@ -203,13 +203,13 @@ class RouteTest extends TestCase
             '/fighters/{ id }',
             ['controller' => 'Fighters', 'action' => 'move']
         );
-        $this->assertNotRegExp($route->compile(), '/fighters/123', 'no spaces in placeholder');
+        $this->assertDoesNotMatchRegularExpression($route->compile(), '/fighters/123', 'no spaces in placeholder');
 
         $route = new Route(
             '/fighters/{i d}',
             ['controller' => 'Fighters', 'action' => 'move']
         );
-        $this->assertNotRegExp($route->compile(), '/fighters/123', 'no spaces in placeholder');
+        $this->assertDoesNotMatchRegularExpression($route->compile(), '/fighters/123', 'no spaces in placeholder');
     }
 
     /**
@@ -224,7 +224,7 @@ class RouteTest extends TestCase
             ['controller' => 'Images', 'action' => 'open']
         );
         $pattern = $route->compile();
-        $this->assertRegExp($pattern, '/images/{open/9', 'Need both {} to enable brace mode');
+        $this->assertMatchesRegularExpression($pattern, '/images/{open/9', 'Need both {} to enable brace mode');
         $result = $route->match([
             'controller' => 'Images',
             'action' => 'open',
@@ -238,7 +238,7 @@ class RouteTest extends TestCase
             ['id' => '\d+', 'x' => '\d+', 'pass' => ['id', 'x']]
         );
         $pattern = $route->compile();
-        $this->assertRegExp($pattern, '/fighters/123/move/8/:y');
+        $this->assertMatchesRegularExpression($pattern, '/fighters/123/move/8/:y');
 
         $result = $route->match([
             'controller' => 'Fighters',
@@ -393,11 +393,11 @@ class RouteTest extends TestCase
     {
         $route = new Route('/invoices/add/:idd/:id', ['controller' => 'invoices', 'action' => 'add']);
         $result = $route->compile();
-        $this->assertRegExp($result, '/invoices/add/1/3');
+        $this->assertMatchesRegularExpression($result, '/invoices/add/1/3');
 
         $route = new Route('/invoices/add/:id/:idd', ['controller' => 'invoices', 'action' => 'add']);
         $result = $route->compile();
-        $this->assertRegExp($result, '/invoices/add/1/3');
+        $this->assertMatchesRegularExpression($result, '/invoices/add/1/3');
     }
 
     /**
@@ -413,10 +413,10 @@ class RouteTest extends TestCase
             ['id' => Router::ID]
         );
         $result = $route->compile();
-        $this->assertRegExp($result, '/posts/edit/1');
-        $this->assertRegExp($result, '/posts/view/518098');
-        $this->assertNotRegExp($result, '/posts/edit/name-of-post');
-        $this->assertNotRegExp($result, '/posts/edit/4/other:param');
+        $this->assertMatchesRegularExpression($result, '/posts/edit/1');
+        $this->assertMatchesRegularExpression($result, '/posts/view/518098');
+        $this->assertDoesNotMatchRegularExpression($result, '/posts/edit/name-of-post');
+        $this->assertDoesNotMatchRegularExpression($result, '/posts/edit/4/other:param');
         $this->assertEquals(['id', 'controller', 'action'], $route->keys);
 
         $route = new Route(
@@ -425,20 +425,20 @@ class RouteTest extends TestCase
             ['id' => Router::ID, 'lang' => '[a-z]{3}']
         );
         $result = $route->compile();
-        $this->assertRegExp($result, '/eng/posts/edit/1');
-        $this->assertRegExp($result, '/cze/articles/view/1');
-        $this->assertNotRegExp($result, '/language/articles/view/2');
-        $this->assertNotRegExp($result, '/eng/articles/view/name-of-article');
+        $this->assertMatchesRegularExpression($result, '/eng/posts/edit/1');
+        $this->assertMatchesRegularExpression($result, '/cze/articles/view/1');
+        $this->assertDoesNotMatchRegularExpression($result, '/language/articles/view/2');
+        $this->assertDoesNotMatchRegularExpression($result, '/eng/articles/view/name-of-article');
         $this->assertEquals(['lang', 'id', 'controller', 'action'], $route->keys);
 
         foreach ([':', '@', ';', '$', '-'] as $delim) {
             $route = new Route('/posts/:id' . $delim . ':title');
             $result = $route->compile();
 
-            $this->assertRegExp($result, '/posts/1' . $delim . 'name-of-article');
-            $this->assertRegExp($result, '/posts/13244' . $delim . 'name-of_Article[]');
-            $this->assertNotRegExp($result, '/posts/11!nameofarticle');
-            $this->assertNotRegExp($result, '/posts/11');
+            $this->assertMatchesRegularExpression($result, '/posts/1' . $delim . 'name-of-article');
+            $this->assertMatchesRegularExpression($result, '/posts/13244' . $delim . 'name-of_Article[]');
+            $this->assertDoesNotMatchRegularExpression($result, '/posts/11!nameofarticle');
+            $this->assertDoesNotMatchRegularExpression($result, '/posts/11');
 
             $this->assertEquals(['title', 'id'], $route->keys);
         }
@@ -449,11 +449,11 @@ class RouteTest extends TestCase
             ['id' => Router::ID, 'year' => Router::YEAR, 'title' => '[a-z-_]+']
         );
         $result = $route->compile();
-        $this->assertRegExp($result, '/posts/1:name-of-article/2009/');
-        $this->assertRegExp($result, '/posts/13244:name-of-article/1999');
-        $this->assertNotRegExp($result, '/posts/hey_now:nameofarticle');
-        $this->assertNotRegExp($result, '/posts/:nameofarticle/2009');
-        $this->assertNotRegExp($result, '/posts/:nameofarticle/01');
+        $this->assertMatchesRegularExpression($result, '/posts/1:name-of-article/2009/');
+        $this->assertMatchesRegularExpression($result, '/posts/13244:name-of-article/1999');
+        $this->assertDoesNotMatchRegularExpression($result, '/posts/hey_now:nameofarticle');
+        $this->assertDoesNotMatchRegularExpression($result, '/posts/:nameofarticle/2009');
+        $this->assertDoesNotMatchRegularExpression($result, '/posts/:nameofarticle/01');
         $this->assertEquals(['year', 'title', 'id'], $route->keys);
 
         $route = new Route(
@@ -462,11 +462,11 @@ class RouteTest extends TestCase
             ['pass' => ['id', 'url_title'], 'id' => Router::ID]
         );
         $result = $route->compile();
-        $this->assertRegExp($result, '/posts/some_title_for_article-(uuid:12534)/');
-        $this->assertRegExp($result, '/posts/some_title_for_article-(uuid:12534)');
-        $this->assertNotRegExp($result, '/posts/');
-        $this->assertNotRegExp($result, '/posts/nameofarticle');
-        $this->assertNotRegExp($result, '/posts/nameofarticle-12347');
+        $this->assertMatchesRegularExpression($result, '/posts/some_title_for_article-(uuid:12534)/');
+        $this->assertMatchesRegularExpression($result, '/posts/some_title_for_article-(uuid:12534)');
+        $this->assertDoesNotMatchRegularExpression($result, '/posts/');
+        $this->assertDoesNotMatchRegularExpression($result, '/posts/nameofarticle');
+        $this->assertDoesNotMatchRegularExpression($result, '/posts/nameofarticle-12347');
         $this->assertEquals(['url_title', 'id'], $route->keys);
     }
 
@@ -483,7 +483,7 @@ class RouteTest extends TestCase
             ['pass' => ['slug'], 'multibytePattern' => false, 'slug' => '[A-zА-я\-\ ]+']
         );
         $result = $route->compile();
-        $this->assertNotRegExp($result, '/test/bla-blan-тест');
+        $this->assertDoesNotMatchRegularExpression($result, '/test/bla-blan-тест');
 
         $route = new Route(
             '/test/:slug',
@@ -491,7 +491,7 @@ class RouteTest extends TestCase
             ['pass' => ['slug'], 'multibytePattern' => true, 'slug' => '[A-zА-я\-\ ]+']
         );
         $result = $route->compile();
-        $this->assertRegExp($result, '/test/bla-blan-тест');
+        $this->assertMatchesRegularExpression($result, '/test/bla-blan-тест');
     }
 
     /**
@@ -508,7 +508,7 @@ class RouteTest extends TestCase
             ['year' => Router::YEAR, 'month' => Router::MONTH, 'day' => Router::DAY]
         );
         $result = $route->compile();
-        $this->assertRegExp($result, '/posts/08/01/2007/title-of-post');
+        $this->assertMatchesRegularExpression($result, '/posts/08/01/2007/title-of-post');
         $result = $route->parse('/posts/08/01/2007/title-of-post', 'GET');
 
         $this->assertCount(7, $result);
@@ -527,8 +527,8 @@ class RouteTest extends TestCase
         );
         $result = $route->compile();
 
-        $this->assertRegExp($result, '/some_extra/page/this_is_the_slug');
-        $this->assertRegExp($result, '/page/this_is_the_slug');
+        $this->assertMatchesRegularExpression($result, '/some_extra/page/this_is_the_slug');
+        $this->assertMatchesRegularExpression($result, '/page/this_is_the_slug');
         $this->assertEquals(['slug', 'extra'], $route->keys);
         $this->assertEquals(['extra' => '[a-z1-9_]*', 'slug' => '[a-z1-9_]+', 'action' => 'view', '_ext' => []], $route->options);
         $expected = [
@@ -548,11 +548,11 @@ class RouteTest extends TestCase
         $this->assertNull($route->parse('/chaw_test/wiki', 'GET'));
 
         $result = $route->compile();
-        $this->assertNotRegExp($result, '/some_project/source');
-        $this->assertRegExp($result, '/source/view');
-        $this->assertRegExp($result, '/source/view/other/params');
-        $this->assertNotRegExp($result, '/chaw_test/wiki');
-        $this->assertNotRegExp($result, '/source/weird_action');
+        $this->assertDoesNotMatchRegularExpression($result, '/some_project/source');
+        $this->assertMatchesRegularExpression($result, '/source/view');
+        $this->assertMatchesRegularExpression($result, '/source/view/other/params');
+        $this->assertDoesNotMatchRegularExpression($result, '/chaw_test/wiki');
+        $this->assertDoesNotMatchRegularExpression($result, '/source/weird_action');
     }
 
     /**

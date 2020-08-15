@@ -168,7 +168,7 @@ class PluginAssetsCommandsTest extends TestCase
         $this->loadPlugins(['TestPluginTwo']);
 
         $this->exec('plugin assets symlink');
-        $this->assertFileNotExists($this->wwwRoot . 'test_plugin_two');
+        $this->assertFileDoesNotExist($this->wwwRoot . 'test_plugin_two');
     }
 
     /**
@@ -188,7 +188,7 @@ class PluginAssetsCommandsTest extends TestCase
         unlink($path);
 
         $path = $this->wwwRoot . 'company' . DS . 'test_plugin_three';
-        $this->assertDirectoryNotExists($path);
+        $this->assertDirectoryDoesNotExist($path);
         $this->assertFalse(is_link($path));
     }
 
@@ -291,8 +291,8 @@ class PluginAssetsCommandsTest extends TestCase
 
         $this->exec('plugin assets remove');
 
-        $this->assertDirectoryNotExists($this->wwwRoot . 'test_plugin');
-        $this->assertDirectoryNotExists($this->wwwRoot . 'company' . DS . 'test_plugin_three');
+        $this->assertDirectoryDoesNotExist($this->wwwRoot . 'test_plugin');
+        $this->assertDirectoryDoesNotExist($this->wwwRoot . 'company' . DS . 'test_plugin_three');
         $this->assertDirectoryExists($this->wwwRoot . 'company', 'Ensure namespace folder isn\'t removed');
 
         rmdir($this->wwwRoot . 'company');
