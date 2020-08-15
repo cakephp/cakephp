@@ -11,41 +11,36 @@ declare(strict_types=1);
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         3.0.0
+ * @since         4.2.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Database\Type;
+namespace TestApp\Database\Driver;
 
-use Cake\I18n\I18nDateTimeInterface;
+use Cake\Database\Driver\Sqlserver;
+use Cake\Datasource\ConnectionManager;
 
-/**
- * Time type converter.
- *
- * Use to convert time instances to strings & back.
- */
-class TimeType extends DateTimeType
+class RetryDriver extends Sqlserver
 {
     /**
      * @inheritDoc
      */
-    protected $_format = 'H:i:s';
+    protected const RETRY_ERROR_CODES = [18456];
 
     /**
      * @inheritDoc
      */
-    protected $_marshalFormats = [
-        'H:i:s',
-    ];
-
-    /**
-     * @inheritDoc
-     */
-    protected function _parseLocaleValue(string $value): ?I18nDateTimeInterface
+    public function connect(): bool
     {
-        /** @psalm-var class-string<\Cake\I18n\I18nDateTimeInterface> $class */
-        $class = $this->_className;
+        $testConfig = ConnectionManager::get('test')->config() + $this->_baseConfig;
+        $dsn = "sqlsrv:Server={$testConfig['host']};Database={$testConfig['database']}";
 
-        /** @psalm-suppress PossiblyInvalidArgument */
-        return $class::parseTime($value, $this->_localeMarshalFormat);
+        $this->_connect($dsn, ['username' => 'invalid', 'password' => '', 'flags' => []]);
+
+        return true;
+    }
+
+    public function enabled(): bool
+    {
+        return true;
     }
 }
