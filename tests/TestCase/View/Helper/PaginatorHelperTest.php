@@ -2582,6 +2582,46 @@ class PaginatorHelperTest extends TestCase
     }
 
     /**
+     * test first() and last with url options
+     *
+     * @return void
+     */
+    public function testFirstAndLastUrlOptions()
+    {
+        $this->View->setRequest($this->View->getRequest()
+            ->withParam('paging.Article', [
+                'page' => 3,
+                'pageCount' => 5,
+                'direction' => 'DESC',
+                'sort' => 'Article.title',
+            ]));
+
+        $result = $this->Paginator->first('first', ['url' => ['?' => ['key' => 'value']]]);
+        $expected = [
+            'li' => ['class' => 'first'],
+            ['a' => [
+                'href' => '/index?key=value&amp;sort=Article.title&amp;direction=DESC',
+            ]],
+            'first',
+            '/a',
+            '/li',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Paginator->last('last', ['url' => ['?' => ['key' => 'value']]]);
+        $expected = [
+            'li' => ['class' => 'last'],
+            ['a' => [
+                'href' => '/index?key=value&amp;page=5&amp;sort=Article.title&amp;direction=DESC',
+            ]],
+            'last',
+            '/a',
+            '/li',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * test first() on the fence-post
      *
      * @return void

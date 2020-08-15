@@ -1075,8 +1075,9 @@ class PaginatorHelper extends Helper
             }
         } elseif ($params['page'] > 1 && is_string($first)) {
             $first = $options['escape'] ? h($first) : $first;
+            $url = array_merge($options['url'], ['page' => 1]);
             $out .= $this->templater()->format('first', [
-                'url' => $this->generateUrl(['page' => 1], $options['model']),
+                'url' => $this->generateUrl($url, $options['model']),
                 'text' => $first,
             ]);
         }
@@ -1136,8 +1137,9 @@ class PaginatorHelper extends Helper
             }
         } elseif ($params['page'] < $params['pageCount'] && is_string($last)) {
             $last = $options['escape'] ? h($last) : $last;
+            $url = array_merge($options['url'], ['page' => $params['pageCount']]);
             $out .= $this->templater()->format('last', [
-                'url' => $this->generateUrl(['page' => $params['pageCount']], $options['model']),
+                'url' => $this->generateUrl($url, $options['model']),
                 'text' => $last,
             ]);
         }
