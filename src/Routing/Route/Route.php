@@ -131,6 +131,12 @@ class Route
         $this->setExtensions((array)$this->options['_ext']);
         $this->setMiddleware((array)$this->options['_middleware']);
         unset($this->options['_middleware']);
+
+        if (isset($this->defaults['_method'])){
+            $this->defaults['_method'] = is_array($this->defaults['_method'])
+                ? array_map('strtoupper', $this->defaults['_method'])
+                : strtoupper($this->defaults['_method']);
+        }
     }
 
     /**
@@ -740,9 +746,10 @@ class Route
         if (empty($url['_method'])) {
             $url['_method'] = 'GET';
         }
+        $defaults = (array)$this->defaults['_method'];
         $methods = array_map('strtoupper', (array)$url['_method']);
         foreach ($methods as $value) {
-            if (in_array($value, (array)$this->defaults['_method'], true)) {
+            if (in_array($value, $defaults, true)) {
                 return true;
             }
         }

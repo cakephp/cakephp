@@ -1289,6 +1289,7 @@ class RouteTest extends TestCase
 
     /**
      * Test that http header conditions can cause route failures.
+     * And that http method names are normalized.
      *
      * @return void
      */
@@ -1297,7 +1298,7 @@ class RouteTest extends TestCase
         $route = new Route('/sample', [
             'controller' => 'posts',
             'action' => 'index',
-            '_method' => ['PUT', 'POST'],
+            '_method' => ['put', 'post'],
         ]);
         $this->assertNull($route->parse('/sample', 'GET'));
 
