@@ -132,7 +132,7 @@ class Route
         $this->setMiddleware((array)$this->options['_middleware']);
         unset($this->options['_middleware']);
 
-        if (isset($this->defaults['_method'])){
+        if (isset($this->defaults['_method'])) {
             $this->defaults['_method'] = is_array($this->defaults['_method'])
                 ? array_map('strtoupper', $this->defaults['_method'])
                 : strtoupper($this->defaults['_method']);
