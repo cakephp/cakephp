@@ -380,7 +380,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * If the name must be quoted, enable automatic identifier quoting.
      *
      * @param string $name Table name.
-     *
      * @return $this
      */
     public function setTableName(string $name)
