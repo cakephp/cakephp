@@ -364,7 +364,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param string $name Table name.
      * @return $this
-     * @deprecated 4.2.0 Use setName() instead.
+     * @deprecated 4.2.0 Use setTableName() instead.
      */
     public function setTable(string $name)
     {
@@ -393,10 +393,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Returns the database table name.
      *
-     * This can include the database schema name if set using `setTable()`.
+     * This can include the database schema name if set using `setTableName()`.
      *
      * @return string
-     * @deprecated 4.2.0 Use getName() instead.
+     * @deprecated 4.2.0 Use getTableName() instead.
      */
     public function getTable(): string
     {
@@ -406,7 +406,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Returns the database table name.
      *
-     * This can include the database schema name if set using `setTable()`.
+     * This can include the database schema name if set using `setTableName()`.
      *
      * @return string
      */
