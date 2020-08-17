@@ -732,7 +732,7 @@ class RouteBuilderTest extends TestCase
             'map' => [
                 'conditions' => ['action' => 'conditions', 'method' => 'DeLeTe'],
             ],
-            'only' => ['conditions']
+            'only' => ['conditions'],
         ]);
 
         $all = $this->collection->routes();
