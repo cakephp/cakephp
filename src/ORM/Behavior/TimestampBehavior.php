@@ -211,7 +211,7 @@ class TimestampBehavior extends Behavior
 
         $ts = $this->timestamp(null, $refreshTimestamp);
 
-        $columnType = $this->getTable()->getSchema()->getColumnType($field);
+        $columnType = $this->table()->getSchema()->getColumnType($field);
         if (!$columnType) {
             return;
         }
