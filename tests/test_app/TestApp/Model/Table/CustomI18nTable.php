@@ -22,7 +22,7 @@ class CustomI18nTable extends Table
 {
     public function initialize(array $config): void
     {
-        $this->setTable('custom_i18n_table');
+        $this->setTableName('custom_i18n_table');
     }
 
     public static function defaultConnectionName(): string

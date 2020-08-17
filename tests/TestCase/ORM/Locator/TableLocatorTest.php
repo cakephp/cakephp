@@ -183,11 +183,11 @@ class TableLocatorTest extends TestCase
             'table' => 'my_articles',
         ]);
         $this->assertInstanceOf(Table::class, $result);
-        $this->assertSame('my_articles', $result->getTable());
+        $this->assertSame('my_articles', $result->getTableName());
 
         $result2 = $this->_locator->get('Articles');
         $this->assertSame($result, $result2);
-        $this->assertSame('my_articles', $result->getTable());
+        $this->assertSame('my_articles', $result->getTableName());
 
         $this->assertSame($this->_locator, $result->associations()->getTableLocator());
     }
@@ -201,32 +201,32 @@ class TableLocatorTest extends TestCase
     {
         $result = $this->_locator->get('Droids');
         $this->assertInstanceOf(Table::class, $result);
-        $this->assertSame('droids', $result->getTable());
+        $this->assertSame('droids', $result->getTableName());
         $this->assertSame('Droids', $result->getAlias());
 
         $result = $this->_locator->get('R2D2', ['className' => 'Droids']);
         $this->assertInstanceOf(Table::class, $result);
-        $this->assertSame('droids', $result->getTable(), 'The table should be derived from the className');
+        $this->assertSame('droids', $result->getTableName(), 'The table should be derived from the className');
         $this->assertSame('R2D2', $result->getAlias());
 
         $result = $this->_locator->get('C3P0', ['className' => 'Droids', 'table' => 'rebels']);
         $this->assertInstanceOf(Table::class, $result);
-        $this->assertSame('rebels', $result->getTable(), 'The table should be taken from options');
+        $this->assertSame('rebels', $result->getTableName(), 'The table should be taken from options');
         $this->assertSame('C3P0', $result->getAlias());
 
         $result = $this->_locator->get('Funky.Chipmunks');
         $this->assertInstanceOf(Table::class, $result);
-        $this->assertSame('chipmunks', $result->getTable(), 'The table should be derived from the alias');
+        $this->assertSame('chipmunks', $result->getTableName(), 'The table should be derived from the alias');
         $this->assertSame('Chipmunks', $result->getAlias());
 
         $result = $this->_locator->get('Awesome', ['className' => 'Funky.Monkies']);
         $this->assertInstanceOf(Table::class, $result);
-        $this->assertSame('monkies', $result->getTable(), 'The table should be derived from the classname');
+        $this->assertSame('monkies', $result->getTableName(), 'The table should be derived from the classname');
         $this->assertSame('Awesome', $result->getAlias());
 
         $result = $this->_locator->get('Stuff', ['className' => Table::class]);
         $this->assertInstanceOf(Table::class, $result);
-        $this->assertSame('stuff', $result->getTable(), 'The table should be derived from the alias');
+        $this->assertSame('stuff', $result->getTableName(), 'The table should be derived from the alias');
         $this->assertSame('Stuff', $result->getAlias());
     }
 
@@ -241,7 +241,7 @@ class TableLocatorTest extends TestCase
             'table' => 'my_articles',
         ]);
         $result = $this->_locator->get('Articles');
-        $this->assertSame('my_articles', $result->getTable(), 'Should use getConfig() data.');
+        $this->assertSame('my_articles', $result->getTableName(), 'Should use getConfig() data.');
     }
 
     /**
@@ -255,7 +255,7 @@ class TableLocatorTest extends TestCase
         $result = $this->_locator->get('Articles', [
             'connectionName' => 'testing',
         ]);
-        $this->assertSame('articles', $result->getTable());
+        $this->assertSame('articles', $result->getTableName());
         $this->assertSame('test', $result->getConnection()->configName());
     }
 
@@ -436,7 +436,7 @@ class TableLocatorTest extends TestCase
 
         $table = $this->_locator->get('users', ['table' => 'users']);
         $this->assertInstanceOf(Table::class, $table);
-        $this->assertSame('users', $table->getTable());
+        $this->assertSame('users', $table->getTableName());
         $this->assertSame('users', $table->getAlias());
         $this->assertSame($connection, $table->getConnection());
         $this->assertEquals(array_keys($schema), $table->getSchema()->columns());
@@ -448,7 +448,7 @@ class TableLocatorTest extends TestCase
         $this->_locator->setConfig('users', $options);
         $table = $this->_locator->get('users', ['className' => MyUsersTable::class]);
         $this->assertInstanceOf(MyUsersTable::class, $table);
-        $this->assertSame('users', $table->getTable());
+        $this->assertSame('users', $table->getTableName());
         $this->assertSame('users', $table->getAlias());
         $this->assertSame($connection, $table->getConnection());
         $this->assertEquals(array_keys($schema), $table->getSchema()->columns());

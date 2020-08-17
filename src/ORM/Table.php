@@ -362,12 +362,30 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * This can include the database schema name in the form 'schema.table'.
      * If the name must be quoted, enable automatic identifier quoting.
      *
-     * @param string $table Table name.
+     * @param string $name Table name.
+     * @return $this
+     * @deprecated 4.2.0 Use setName() instead.
+     */
+    public function setTable(string $name)
+    {
+        $this->setTableName($name);
+
+        return $this;
+    }
+
+    /**
+     * Sets the database table name.
+     *
+     * This can include the database schema name in the form 'schema.table'.
+     * If the name must be quoted, enable automatic identifier quoting.
+     *
+     * @param string $name Table name.
+     *
      * @return $this
      */
-    public function setTable(string $table)
+    public function setTableName(string $name)
     {
-        $this->_table = $table;
+        $this->_table = $name;
 
         return $this;
     }
@@ -378,8 +396,21 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * This can include the database schema name if set using `setTable()`.
      *
      * @return string
+     * @deprecated 4.2.0 Use getName() instead.
      */
     public function getTable(): string
+    {
+        return $this->getTableName();
+    }
+
+    /**
+     * Returns the database table name.
+     *
+     * This can include the database schema name if set using `setTable()`.
+     *
+     * @return string
+     */
+    public function getTableName(): string
     {
         if ($this->_table === null) {
             $table = namespaceSplit(static::class);
@@ -506,7 +537,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $this->_schema = $this->_initializeSchema(
                 $this->getConnection()
                     ->getSchemaCollection()
-                    ->describe($this->getTable())
+                    ->describe($this->getTableName())
             );
             if (Configure::read('debug')) {
                 $this->checkAliasLengths();
@@ -535,7 +566,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 unset($schema['_constraints']);
             }
 
-            $schema = $this->getConnection()->getDriver()->newTableSchema($this->getTable(), $schema);
+            $schema = $this->getConnection()->getDriver()->newTableSchema($this->getTableName(), $schema);
 
             foreach ($constraints as $name => $value) {
                 $schema->addConstraint($name, $value);
@@ -1492,7 +1523,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
             throw new InvalidPrimaryKeyException(sprintf(
                 'Record not found in table "%s" with primary key [%s]',
-                $this->getTable(),
+                $this->getTableName(),
                 implode(', ', $primaryKey)
             ));
         }
@@ -1510,7 +1541,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 $cacheKey = sprintf(
                     'get:%s.%s%s',
                     $this->getConnection()->configName(),
-                    $this->getTable(),
+                    $this->getTableName(),
                     json_encode($primaryKey)
                 );
             }
@@ -2012,7 +2043,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if (empty($primary)) {
             $msg = sprintf(
                 'Cannot insert row in "%s" table, it has no primary key.',
-                $this->getTable()
+                $this->getTableName()
             );
             throw new RuntimeException($msg);
         }
@@ -2059,7 +2090,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $driver = $this->getConnection()->getDriver();
             foreach ($primary as $key => $v) {
                 if (!isset($data[$key])) {
-                    $id = $statement->lastInsertId($this->getTable(), $key);
+                    $id = $statement->lastInsertId($this->getTableName(), $key);
                     /** @var string $type */
                     $type = $schema->getColumnType($key);
                     $entity->set($key, TypeFactory::build($type)->toPHP($id, $driver));
@@ -2117,7 +2148,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         if (count($primaryColumns) === 0) {
             $entityClass = get_class($entity);
-            $table = $this->getTable();
+            $table = $this->getTableName();
             $message = "Cannot update `$entityClass`. The `$table` has no primary key.";
             throw new InvalidArgumentException($message);
         }
@@ -3064,7 +3095,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         return [
             'registryAlias' => $this->getRegistryAlias(),
-            'table' => $this->getTable(),
+            'table' => $this->getTableName(),
             'alias' => $this->getAlias(),
             'entityClass' => $this->getEntityClass(),
             'associations' => $this->_associations->keys(),

@@ -225,7 +225,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
             if (!empty($import['table'])) {
                 throw new CakeException('You cannot define both table and model.');
             }
-            $import['table'] = $this->getTableLocator()->get($import['model'])->getTable();
+            $import['table'] = $this->getTableLocator()->get($import['model'])->getTableName();
         }
 
         if (empty($import['table'])) {

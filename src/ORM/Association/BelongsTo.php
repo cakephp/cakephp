@@ -160,7 +160,7 @@ class BelongsTo extends Association
         if (count($foreignKey) !== count($bindingKey)) {
             if (empty($bindingKey)) {
                 $msg = 'The "%s" table does not define a primary key. Please set one.';
-                throw new RuntimeException(sprintf($msg, $this->getTarget()->getTable()));
+                throw new RuntimeException(sprintf($msg, $this->getTarget()->getTableName()));
             }
 
             $msg = 'Cannot match provided foreignKey for "%s", got "(%s)" but expected foreign key for "(%s)"';

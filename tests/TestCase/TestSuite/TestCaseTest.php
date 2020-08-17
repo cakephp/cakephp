@@ -346,7 +346,7 @@ class TestCaseTest extends TestCase
         $entity = new Entity([]);
 
         $this->assertInstanceOf('TestApp\Model\Table\PostsTable', $Posts);
-        $this->assertSame('posts', $Posts->getTable());
+        $this->assertSame('posts', $Posts->getTableName());
 
         $Posts = $this->getMockForModel('Posts', ['save']);
         $Posts->expects($this->at(0))
@@ -472,10 +472,10 @@ class TestCaseTest extends TestCase
         static::setAppNamespace();
 
         $I18n = $this->getMockForModel('CustomI18n', ['save']);
-        $this->assertSame('custom_i18n_table', $I18n->getTable());
+        $this->assertSame('custom_i18n_table', $I18n->getTableName());
 
         $Tags = $this->getMockForModel('Tags', ['save']);
-        $this->assertSame('tags', $Tags->getTable());
+        $this->assertSame('tags', $Tags->getTableName());
     }
 
     /**

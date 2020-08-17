@@ -594,7 +594,7 @@ abstract class Association
                 $msg = 'Association property name "%s" clashes with field of same name of table "%s".' .
                     ' You should explicitly specify the "propertyName" option.';
                 trigger_error(
-                    sprintf($msg, $this->_propertyName, $this->_sourceTable->getTable()),
+                    sprintf($msg, $this->_propertyName, $this->_sourceTable->getTableName()),
                     E_USER_WARNING
                 );
             }
@@ -717,7 +717,7 @@ abstract class Association
     {
         $target = $this->getTarget();
         $joinType = empty($options['joinType']) ? $this->getJoinType() : $options['joinType'];
-        $table = $target->getTable();
+        $table = $target->getTableName();
 
         $options += [
             'includeFields' => true,
@@ -1092,9 +1092,9 @@ abstract class Association
 
         if (count($foreignKey) !== count($bindingKey)) {
             if (empty($bindingKey)) {
-                $table = $this->getTarget()->getTable();
+                $table = $this->getTarget()->getTableName();
                 if ($this->isOwningSide($this->getSource())) {
-                    $table = $this->getSource()->getTable();
+                    $table = $this->getSource()->getTableName();
                 }
                 $msg = 'The "%s" table does not define a primary key, and cannot have join conditions generated.';
                 throw new RuntimeException(sprintf($msg, $table));

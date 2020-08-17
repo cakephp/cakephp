@@ -119,7 +119,7 @@ class HasManyTest extends TestCase
      */
     public function testForeignKeyIgnoreDatabaseName()
     {
-        $this->author->setTable('schema.authors');
+        $this->author->setTableName('schema.authors');
         $assoc = new HasMany('Articles', [
             'sourceTable' => $this->author,
         ]);

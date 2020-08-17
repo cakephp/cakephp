@@ -85,7 +85,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
     public function testDefaultAliases()
     {
         $table = $this->getTableLocator()->get('Articles');
-        $table->getTable();
+        $table->getTableName();
         $table->addBehavior('Translate');
 
         $config = $table->behaviors()->get('Translate')->getStrategy()->getConfig();
@@ -114,7 +114,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
     {
         $table = $this->getTableLocator()->get('SomeRandomPlugin.Articles');
 
-        $table->getTable();
+        $table->getTableName();
         $table->addBehavior('Translate');
 
         $config = $table->behaviors()->get('Translate')->getStrategy()->getConfig();
@@ -154,7 +154,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
     public function testAutoReferenceName()
     {
         $table = $this->getTableLocator()->get('Articles');
-        $table->getTable();
+        $table->getTableName();
         $table->addBehavior('Translate');
 
         $config = $table->behaviors()->get('Translate')->getStrategy()->getConfig();
@@ -185,7 +185,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
     public function testChangingReferenceName()
     {
         $table = $this->getTableLocator()->get('Articles');
-        $table->getTable();
+        $table->getTableName();
         $table->addBehavior(
             'Translate',
             ['referenceName' => 'Posts']
@@ -245,7 +245,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
         $this->assertTrue($exists, 'The table registry should have an object in this key now');
 
         $translationTable = $this->getTableLocator()->get('ArticlesTranslations');
-        $this->assertSame('articles_translations', $translationTable->getTable());
+        $this->assertSame('articles_translations', $translationTable->getTableName());
         $this->assertSame('ArticlesTranslations', $translationTable->getAlias());
     }
 

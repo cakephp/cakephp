@@ -19,7 +19,7 @@ class GreedyCommentsTable extends Table
      */
     public function initialize(array $config): void
     {
-        $this->setTable('comments');
+        $this->setTableName('comments');
         $this->setAlias('Comments');
     }
 

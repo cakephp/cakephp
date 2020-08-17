@@ -201,10 +201,10 @@ class TableTest extends TestCase
         $table = new Table(['table' => 'users']);
 
         $query = $table->query();
-        $this->assertEquals('users', $query->getRepository()->getTable());
+        $this->assertEquals('users', $query->getRepository()->getTableName());
 
         $query = $table->subquery();
-        $this->assertEquals('users', $query->getRepository()->getTable());
+        $this->assertEquals('users', $query->getRepository()->getTableName());
 
         $sql = $query->select(['username'])->sql();
         $this->assertRegExpSql(
@@ -218,6 +218,38 @@ class TableTest extends TestCase
      * Tests the table method
      *
      * @return void
+     */
+    public function testNameMethod()
+    {
+        $table = new Table(['table' => 'users']);
+        $this->assertSame('users', $table->getTableName());
+
+        $table = new UsersTable();
+        $this->assertSame('users', $table->getTableName());
+
+        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
+        $table = $this->getMockBuilder(Table::class)
+            ->onlyMethods(['find'])
+            ->setMockClassName('SpecialThingsTable')
+            ->getMock();
+        $this->assertSame('special_things', $table->getTableName());
+
+        $table = new Table(['alias' => 'LoveBoats']);
+        $this->assertSame('love_boats', $table->getTableName());
+
+        $table->setTableName('other');
+        $this->assertSame('other', $table->getTableName());
+
+        $table->addBehavior('Timestamp');
+        $table->setTableName('database.other');
+        $this->assertSame('database.other', $table->getTableName());
+    }
+
+    /**
+     * Tests the table method
+     *
+     * @return void
+     * @deprecated 4.2.0
      */
     public function testTableMethod()
     {
@@ -240,6 +272,7 @@ class TableTest extends TestCase
         $table->setTable('other');
         $this->assertSame('other', $table->getTable());
 
+        $table->addBehavior('Timestamp');
         $table->setTable('database.other');
         $this->assertSame('database.other', $table->getTable());
     }
@@ -788,8 +821,8 @@ class TableTest extends TestCase
         $Categories->hasMany('Children', ['foreignKey' => 'parent_id'] + $options);
         $Categories->belongsTo('Parent', $options);
 
-        $this->assertSame('categories', $Categories->Children->getTarget()->getTable());
-        $this->assertSame('categories', $Categories->Parent->getTarget()->getTable());
+        $this->assertSame('categories', $Categories->Children->getTarget()->getTableName());
+        $this->assertSame('categories', $Categories->Parent->getTarget()->getTableName());
 
         $this->assertSame('Children', $Categories->Children->getAlias());
         $this->assertSame('Children', $Categories->Children->getTarget()->getAlias());
@@ -970,7 +1003,7 @@ class TableTest extends TestCase
         $this->assertEquals(['b' => 'c'], $belongsToMany->getConditions());
         $this->assertEquals(['foo' => 'asc'], $belongsToMany->getSort());
         $this->assertSame($table, $belongsToMany->getSource());
-        $this->assertSame('things_tags', $belongsToMany->junction()->getTable());
+        $this->assertSame('things_tags', $belongsToMany->junction()->getTableName());
     }
 
     /**
@@ -1020,7 +1053,7 @@ class TableTest extends TestCase
         $belongsToMany = $associations->get('tags');
         $this->assertInstanceOf(BelongsToMany::class, $belongsToMany);
         $this->assertSame('tags', $belongsToMany->getName());
-        $this->assertSame('things_tags', $belongsToMany->junction()->getTable());
+        $this->assertSame('things_tags', $belongsToMany->junction()->getTableName());
         $this->assertSame(['Tags.starred' => true], $belongsToMany->getConditions());
     }
 
@@ -4354,7 +4387,7 @@ class TableTest extends TestCase
         } catch (\BadMethodCallException $e) {
             $this->fail('Method chaining should be ok');
         }
-        $this->assertSame('articles', $articles->getTable());
+        $this->assertSame('articles', $articles->getTableName());
     }
 
     /**
@@ -4383,7 +4416,7 @@ class TableTest extends TestCase
         } catch (\BadMethodCallException $e) {
             $this->fail('Method chaining should be ok');
         }
-        $this->assertSame('authors', $authors->getTable());
+        $this->assertSame('authors', $authors->getTableName());
     }
 
     /**
@@ -4414,7 +4447,7 @@ class TableTest extends TestCase
         } catch (\BadMethodCallException $e) {
             $this->fail('Method chaining should be ok');
         }
-        $this->assertSame('authors', $authors->getTable());
+        $this->assertSame('authors', $authors->getTableName());
     }
 
     /**
@@ -4445,7 +4478,7 @@ class TableTest extends TestCase
         } catch (\BadMethodCallException $e) {
             $this->fail('Method chaining should be ok');
         }
-        $this->assertSame('authors', $authors->getTable());
+        $this->assertSame('authors', $authors->getTableName());
     }
 
     /**

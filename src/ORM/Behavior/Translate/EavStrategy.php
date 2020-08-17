@@ -113,7 +113,7 @@ class EavStrategy implements TranslateStrategyInterface
                 $fieldTable = $tableLocator->get($name, [
                     'className' => $table,
                     'alias' => $name,
-                    'table' => $this->translationTable->getTable(),
+                    'table' => $this->translationTable->getTableName(),
                 ]);
             } else {
                 $fieldTable = $tableLocator->get($name);

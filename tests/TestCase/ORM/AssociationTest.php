@@ -428,7 +428,7 @@ class AssociationTest extends TestCase
         $plugin = $this->getTableLocator()->get('TestPlugin.ThisAssociationName');
         $this->assertSame($table, $plugin, 'Should be an instance of TestPlugin.Comments');
         $this->assertSame('TestPlugin.ThisAssociationName', $table->getRegistryAlias());
-        $this->assertSame('comments', $table->getTable());
+        $this->assertSame('comments', $table->getTableName());
         $this->assertSame('ThisAssociationName', $table->getAlias());
         $this->clearPlugins();
     }

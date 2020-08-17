@@ -592,7 +592,7 @@ class HasMany extends Association
     public function getForeignKey()
     {
         if ($this->_foreignKey === null) {
-            $this->_foreignKey = $this->_modelKey($this->getSource()->getTable());
+            $this->_foreignKey = $this->_modelKey($this->getSource()->getTableName());
         }
 
         return $this->_foreignKey;

@@ -354,7 +354,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         $name = namespaceSplit(get_class($table));
         $name = substr(end($name), 0, -5);
         if (empty($name)) {
-            $name = $table->getTable() ?: $table->getAlias();
+            $name = $table->getTableName() ?: $table->getAlias();
             $name = Inflector::camelize($name);
         }
 

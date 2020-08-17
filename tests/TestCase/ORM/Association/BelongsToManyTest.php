@@ -160,7 +160,7 @@ class BelongsToManyTest extends TestCase
         $junction = $assoc->junction();
         $this->assertInstanceOf(Table::class, $junction);
         $this->assertSame('ArticlesTags', $junction->getAlias());
-        $this->assertSame('articles_tags', $junction->getTable());
+        $this->assertSame('articles_tags', $junction->getTableName());
         $this->assertSame($this->article, $junction->getAssociation('Articles')->getTarget());
         $this->assertSame($this->tag, $junction->getAssociation('Tags')->getTarget());
 
@@ -254,7 +254,7 @@ class BelongsToManyTest extends TestCase
         ]);
         $junction = $assoc->junction();
         $this->assertSame('TagsArticles', $junction->getAlias());
-        $this->assertSame('tags_articles', $junction->getTable());
+        $this->assertSame('tags_articles', $junction->getTableName());
     }
 
     /**

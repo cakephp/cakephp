@@ -1395,7 +1395,7 @@ class TreeBehaviorTest extends TestCase
     {
         $table = $this->table;
         $other = $this->getTableLocator()->get('FriendlyTrees', [
-            'table' => $table->getTable(),
+            'table' => $table->getTableName(),
         ]);
         $table->hasOne('FriendlyTrees', [
             'foreignKey' => 'id',

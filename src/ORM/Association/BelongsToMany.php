@@ -205,7 +205,7 @@ class BelongsToMany extends Association
     public function getForeignKey()
     {
         if ($this->_foreignKey === null) {
-            $this->_foreignKey = $this->_modelKey($this->getSource()->getTable());
+            $this->_foreignKey = $this->_modelKey($this->getSource()->getTableName());
         }
 
         return $this->_foreignKey;
@@ -1104,7 +1104,7 @@ class BelongsToMany extends Association
         $joins = $query->clause('join');
         $matching = [
             $name => [
-                'table' => $this->junction()->getTable(),
+                'table' => $this->junction()->getTableName(),
                 'conditions' => $conditions,
                 'type' => Query::JOIN_TYPE_INNER,
             ],
@@ -1428,8 +1428,8 @@ class BelongsToMany extends Association
         if ($name === null) {
             if (empty($this->_junctionTableName)) {
                 $tablesNames = array_map('Cake\Utility\Inflector::underscore', [
-                    $this->getSource()->getTable(),
-                    $this->getTarget()->getTable(),
+                    $this->getSource()->getTableName(),
+                    $this->getTarget()->getTableName(),
                 ]);
                 sort($tablesNames);
                 $this->_junctionTableName = implode('_', $tablesNames);

@@ -40,6 +40,21 @@ class BelongsToTest extends TestCase
     protected $fixtures = ['core.Articles', 'core.Authors', 'core.Comments'];
 
     /**
+     * @var \Cake\ORM\Table
+     */
+    protected $company;
+
+    /**
+     * @var \Cake\ORM\Table
+     */
+    protected $client;
+
+    /**
+     * @var \Cake\Database\TypeMap
+     */
+    protected $companiesTypeMap;
+
+    /**
      * Set up
      *
      * @return void
@@ -99,8 +114,8 @@ class BelongsToTest extends TestCase
      */
     public function testForeignKeyIgnoreDatabaseName()
     {
-        $this->company->setTable('schema.companies');
-        $this->client->setTable('schema.clients');
+        $this->company->setTableName('schema.companies');
+        $this->client->setTableName('schema.clients');
         $assoc = new BelongsTo('Companies', [
             'sourceTable' => $this->client,
             'targetTable' => $this->company,

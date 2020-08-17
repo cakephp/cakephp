@@ -1149,7 +1149,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         $repository = $this->getRepository();
 
         if (empty($this->_parts['from'])) {
-            $this->from([$repository->getAlias() => $repository->getTable()]);
+            $this->from([$repository->getAlias() => $repository->getTableName()]);
         }
         $this->_addDefaultFields();
         $this->getEagerLoader()->attachAssociations($this, $repository, !$this->_hasFields);
@@ -1252,7 +1252,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         if (!$table) {
             /** @var \Cake\ORM\Table $repository */
             $repository = $this->getRepository();
-            $table = $repository->getTable();
+            $table = $repository->getTableName();
         }
 
         return parent::update($table);
@@ -1271,7 +1271,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     {
         /** @var \Cake\ORM\Table $repository */
         $repository = $this->getRepository();
-        $this->from([$repository->getAlias() => $repository->getTable()]);
+        $this->from([$repository->getAlias() => $repository->getTableName()]);
 
         // We do not pass $table to parent class here
         return parent::delete();
@@ -1294,7 +1294,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     {
         /** @var \Cake\ORM\Table $repository */
         $repository = $this->getRepository();
-        $table = $repository->getTable();
+        $table = $repository->getTableName();
         $this->into($table);
 
         return parent::insert($columns, $types);

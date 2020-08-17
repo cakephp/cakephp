@@ -30,7 +30,7 @@ class PaginatorPostsTable extends Table
      */
     public function initialize(array $config): void
     {
-        $this->setTable('posts');
+        $this->setTableName('posts');
         $this->belongsTo('PaginatorAuthor', [
             'foreignKey' => 'author_id',
         ]);

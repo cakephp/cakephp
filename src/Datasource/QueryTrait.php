@@ -457,7 +457,7 @@ trait QueryTrait
             $table = $this->getRepository();
             throw new RecordNotFoundException(sprintf(
                 'Record not found in table "%s"',
-                $table->getTable()
+                $table->getTableName()
             ));
         }
 
