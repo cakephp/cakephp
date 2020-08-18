@@ -510,7 +510,7 @@ class Response implements ResponseInterface
             $this->_file = null;
             $this->_fileRange = [];
         } else {
-            $this->_sendContent($this->body());
+            $this->_sendContent($this->getStringBody());
         }
 
         if (function_exists('fastcgi_finish_request')) {
@@ -624,7 +624,7 @@ class Response implements ResponseInterface
         );
 
         if (in_array($this->_status, [304, 204])) {
-            $this->body('');
+            $this->withStringBody('');
         }
     }
 

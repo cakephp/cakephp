@@ -58,7 +58,7 @@ class Xml
      *
      * $http = new Client();
      * $response = $http->get('http://example.com/example.xml');
-     * $xml = Xml::build($response->body());
+     * $xml = Xml::build($response->getStringBody());
      * ```
      *
      * Building from an array:
