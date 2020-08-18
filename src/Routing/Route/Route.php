@@ -187,9 +187,9 @@ class Route
     {
         $methods = is_array($methods)
             ? array_map('strtoupper', $methods)
-            : [strtoupper($methods)];
+            : strtoupper($methods);
 
-        $diff = array_diff($methods, static::VALID_METHODS);
+        $diff = array_diff((array)$methods, static::VALID_METHODS);
         if ($diff !== []) {
             throw new InvalidArgumentException(
                 sprintf('Invalid HTTP method received. `%s` is invalid.', implode(', ', $diff))
