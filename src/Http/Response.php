@@ -624,7 +624,7 @@ class Response implements ResponseInterface
         );
 
         if (in_array($this->_status, [304, 204])) {
-            $this->withStringBody('');
+            $this = $this->withStringBody('');
         }
     }
 
