@@ -65,7 +65,7 @@ class Dispatcher
         $actionDispatcher = new ActionDispatcher(null, $this->getEventManager(), $this->_filters);
         $response = $actionDispatcher->dispatch($request, $response);
         if ($request->getParam('return', null) !== null) {
-            return $response->getStringBody();
+            return $response->getBody();
         }
 
         return $response->send();
