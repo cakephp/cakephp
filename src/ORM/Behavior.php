@@ -184,8 +184,19 @@ class Behavior implements EventListenerInterface
      * Get the table instance this behavior is bound to.
      *
      * @return \Cake\ORM\Table The bound table instance.
+     * @deprecated 4.2.0 Use table() instead.
      */
     public function getTable(): Table
+    {
+        return $this->table();
+    }
+
+    /**
+     * Get the table instance this behavior is bound to.
+     *
+     * @return \Cake\ORM\Table The bound table instance.
+     */
+    public function table(): Table
     {
         return $this->_table;
     }

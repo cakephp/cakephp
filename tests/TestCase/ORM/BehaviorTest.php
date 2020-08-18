@@ -51,7 +51,7 @@ class BehaviorTest extends TestCase
         $table = $this->getMockBuilder(Table::class)->getMock();
 
         $behavior = new TestBehavior($table);
-        $this->assertSame($table, $behavior->getTable());
+        $this->assertSame($table, $behavior->table());
     }
 
     public function testReflectionCache()
