@@ -131,6 +131,10 @@ class Route
         $this->setExtensions((array)$this->options['_ext']);
         $this->setMiddleware((array)$this->options['_middleware']);
         unset($this->options['_middleware']);
+
+        if (isset($this->defaults['_method'])) {
+            $this->defaults['_method'] = $this->normalizeAndValidateMethods($this->defaults['_method']);
+        }
     }
 
     /**
@@ -168,16 +172,31 @@ class Route
      */
     public function setMethods(array $methods)
     {
-        $methods = array_map('strtoupper', $methods);
-        $diff = array_diff($methods, static::VALID_METHODS);
-        if ($diff !== []) {
-            throw new InvalidArgumentException(
-                sprintf('Invalid HTTP method received. %s is invalid.', implode(', ', $diff))
-            );
-        }
-        $this->defaults['_method'] = $methods;
+        $this->defaults['_method'] = $this->normalizeAndValidateMethods($methods);
 
         return $this;
+    }
+
+    /**
+     * Normalize method names to upper case and validate that they are valid HTTP methods.
+     *
+     * @param string|array $methods Methods.
+     * @return string|array
+     */
+    protected function normalizeAndValidateMethods($methods)
+    {
+        $methods = is_array($methods)
+            ? array_map('strtoupper', $methods)
+            : strtoupper($methods);
+
+        $diff = array_diff((array)$methods, static::VALID_METHODS);
+        if ($diff !== []) {
+            throw new InvalidArgumentException(
+                sprintf('Invalid HTTP method received. `%s` is invalid.', implode(', ', $diff))
+            );
+        }
+
+        return $methods;
     }
 
     /**
@@ -420,6 +439,9 @@ class Route
      */
     public function parse(string $url, string $method): ?array
     {
+        if ($method !== '') {
+            $method = $this->normalizeAndValidateMethods($method);
+        }
         $compiledRoute = $this->compile();
         [$url, $ext] = $this->_parseExtension($url);
 
@@ -740,7 +762,8 @@ class Route
         if (empty($url['_method'])) {
             $url['_method'] = 'GET';
         }
-        $methods = array_map('strtoupper', (array)$url['_method']);
+        $defaults = (array)$this->defaults['_method'];
+        $methods = (array)$this->normalizeAndValidateMethods($url['_method']);
         foreach ($methods as $value) {
             if (in_array($value, (array)$this->defaults['_method'], true)) {
                 return true;
