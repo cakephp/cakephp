@@ -226,6 +226,8 @@ class NumberHelper extends Helper
      */
     public function defaultCurrency($currency): ?string
     {
+        deprecationWarning('NumberHelper::defaultCurreny() is deprecated. Use setDefaultCurreny() and getDefaultCurrent() instead.');
+
         return $this->_engine->defaultCurrency($currency);
     }
 

@@ -433,6 +433,7 @@ class Validation
      */
     public static function containsNonAlphaNumeric($check, int $count = 1): bool
     {
+        deprecationWarning('Validation::containsNonAlphaNumeric() is deprecated. Use notAlphaNumeric() instead.');
         if (!is_string($check)) {
             return false;
         }

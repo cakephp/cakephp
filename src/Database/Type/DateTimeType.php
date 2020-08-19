@@ -163,6 +163,8 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      */
     public function setTimezone($timezone)
     {
+        deprecationWarning('DateTimeType::setTimezone() is deprecated. use setDatabaseTimezone() instead.');
+
         return $this->setDatabaseTimezone($timezone);
     }
 

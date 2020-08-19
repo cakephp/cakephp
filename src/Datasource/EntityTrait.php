@@ -457,6 +457,8 @@ trait EntityTrait
      */
     public function unsetProperty($field)
     {
+        deprecationWarning('EntityTrait::unsetProperty() is deprecated. Use unset() instead.');
+
         return $this->unset($field);
     }
 

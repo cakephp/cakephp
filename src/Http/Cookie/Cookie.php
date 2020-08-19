@@ -431,6 +431,8 @@ class Cookie implements CookieInterface
      */
     public function getStringValue()
     {
+        deprecationWarning('Cookie::getStringValue() is deprecated. Use getStringValue() instead.');
+
         return $this->getScalarValue();
     }
 

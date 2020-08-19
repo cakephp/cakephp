@@ -215,6 +215,8 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      */
     protected function _createToken(): string
     {
+        deprecationWarning('_createToken() is deprecated. Use createToken() instead.');
+
         return $this->createToken();
     }
 

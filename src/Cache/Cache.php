@@ -206,6 +206,8 @@ class Cache
      */
     public static function engine(string $config)
     {
+        deprecationWarning('Cache::engine() is deprecated. Use Cache::pool() instead.');
+
         return static::pool($config);
     }
 
