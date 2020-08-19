@@ -54,6 +54,13 @@ class RouteTest extends TestCase
         $this->assertFalse($route->compiled());
     }
 
+    public function testConstructionWithInvalidMethod()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid HTTP method received. `NOPE` is invalid');
+        $route = new Route('/books/reviews', ['controller' => 'Reviews', 'action' => 'index', '_method' => 'nope']);
+    }
+
     /**
      * Test set middleware in the constructor
      *
@@ -1284,11 +1291,12 @@ class RouteTest extends TestCase
             '_method' => 'POST',
             '_matchedRoute' => '/sample',
         ];
-        $this->assertEquals($expected, $route->parse('/sample', 'POST'));
+        $this->assertEquals($expected, $route->parse('/sample', 'post'));
     }
 
     /**
      * Test that http header conditions can cause route failures.
+     * And that http method names are normalized.
      *
      * @return void
      */
@@ -1297,7 +1305,7 @@ class RouteTest extends TestCase
         $route = new Route('/sample', [
             'controller' => 'posts',
             'action' => 'index',
-            '_method' => ['PUT', 'POST'],
+            '_method' => ['put', 'post'],
         ]);
         $this->assertNull($route->parse('/sample', 'GET'));
 
@@ -1766,7 +1774,7 @@ class RouteTest extends TestCase
     public function testSetMethodsInvalid()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid HTTP method received. NOPE is invalid');
+        $this->expectExceptionMessage('Invalid HTTP method received. `NOPE` is invalid');
         $route = new Route('/books/reviews', ['controller' => 'Reviews', 'action' => 'index']);
         $route->setMethods(['nope']);
     }
