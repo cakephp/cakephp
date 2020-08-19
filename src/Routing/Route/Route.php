@@ -118,10 +118,13 @@ class Route
      * - `_host` - Define the host name pattern if you want this route to only match
      *   specific host names. You can use `.*` and to create wildcard subdomains/hosts
      *   e.g. `*.example.com` matches all subdomains on `example.com`.
+     * - `_method` - Defines the HTTP method(s) the route applies to. It can be
+     *   a string or array of valid HTTP method name.
      *
      * @param string $template Template string with parameter placeholders
      * @param array $defaults Defaults for the route.
      * @param array $options Array of additional options for the Route
+     * @throws \InvalidArgumentException When `$options['_method']` are not in `VALID_METHODS` list.
      */
     public function __construct(string $template, array $defaults = [], array $options = [])
     {
@@ -168,7 +171,7 @@ class Route
      *
      * @param string[] $methods The HTTP methods to accept.
      * @return $this
-     * @throws \InvalidArgumentException
+     * @throws \InvalidArgumentException When methods are not in `VALID_METHODS` list.
      */
     public function setMethods(array $methods)
     {
@@ -180,8 +183,9 @@ class Route
     /**
      * Normalize method names to upper case and validate that they are valid HTTP methods.
      *
-     * @param string|array $methods Methods.
-     * @return string|array
+     * @param string|string[] $methods Methods.
+     * @return string|string[]
+     * @throws \InvalidArgumentException When methods are not in `VALID_METHODS` list.
      */
     protected function normalizeAndValidateMethods($methods)
     {
@@ -436,6 +440,7 @@ class Route
      * @param string $url The URL to attempt to parse.
      * @param string $method The HTTP method of the request being parsed.
      * @return array|null An array of request parameters, or null on failure.
+     * @throws \InvalidArgumentException When method is not an empty string or in `VALID_METHODS` list.
      */
     public function parse(string $url, string $method): ?array
     {
