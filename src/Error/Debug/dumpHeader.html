@@ -239,7 +239,7 @@ function attachCopyButton(nodes) {
       event.stopPropagation();
 
       // Chop off last 4 to exclude copy button text.
-      navigator.clipboard.writeText(container.innerText.substring(0, container.innerText.length - 4));
+      navigator.clipboard.writeText(container.textContent.substring(0, container.textContent.length - 4));
     });
 
     container.appendChild(copy);
