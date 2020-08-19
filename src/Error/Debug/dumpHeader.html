@@ -2,6 +2,7 @@
 .cake-debug {
   --color-bg: #ECECE9;
   --color-highlight-bg: #fcf8e3;
+  --color-control-bg: hsla(0, 0%, 50%, 0.2);
 
   --color-orange: #c44f24;
   --color-green: #0b6125;
@@ -21,6 +22,7 @@
   line-height: 16px;
   font-size: 14px;
   margin-bottom: 10px;
+  position: relative;
 }
 .cake-debug:last-child {
   margin-bottom: 0;
@@ -58,21 +60,32 @@ nesting works.
 [data-hidden=true] {
   display: none;
 }
-.cake-dbg-collapse:before {
-  content: "\25b8";
+
+.cake-dbg-collapse {
   display: inline-block;
-  width: 10px;
-  height: 10px;
-  font-size: 13px;
+  width: 12px;
+  height: 12px;
+  font-size: 12px;
   line-height: 10px;
-  background: hsla(0, 0%, 50%, 0.2);
-  padding: 4px 2px 4px 6px;
+  background: var(--color-control-bg);
   border-radius: 3px;
   color: var(--color-blue);
+
+  /* Image is an rawurlencoded SVG */
+  background-image: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2212%22%20width%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpolygon%20points%3D%223%2C1%203%2C11%208%2C6%22 style%3D%22fill%3A%234070a0%3B%22%2F%3E%3C%2Fsvg%3E")
 }
-.cake-dbg-collapse[data-open=true]:before {
-  content: "\25be";
-  padding: 4px 3px 4px 5px;
+.cake-dbg-collapse[data-open=true] {
+  transform: rotate(90deg);
+}
+/* Copy button */
+.cake-dbg-copy {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  padding: 6px;
+  background: var(--color-control-bg);
+  color: var(--color-blue);
+  border-radius: 0 0 0 3px;
 }
 
 /* Textual elements */
@@ -116,6 +129,7 @@ function initialize() {
   createCollapsibles(doc.querySelectorAll('.cake-dbg-object-props'));
   attachRefEvents(doc.querySelectorAll('.cake-dbg'));
   openBlocks(doc.querySelectorAll('.cake-debug[data-open-all="true"]'));
+  attachCopyButton(doc.querySelectorAll('.cake-dbg'));
 }
 // Add a name on window so DebugKit can add controls to dump blocks
 win.__cakeDebugBlockInit = initialize;
@@ -209,6 +223,27 @@ function openPath(container, target) {
     }
     current = parent;
   }
+}
+
+function attachCopyButton(nodes) {
+  nodes.forEach(function (container) {
+    var copy = doc.createElement('a');
+    copy.classList.add('cake-dbg-copy');
+    copy.setAttribute('href', '#')
+    copy.setAttribute('title', 'Copy contents of debug output');
+    copy.appendChild(doc.createTextNode('Copy'));
+
+    // Add copy behavior
+    copy.addEventListener('click', function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      // Chop off last 4 to exclude copy button text.
+      navigator.clipboard.writeText(container.innerText.substring(0, container.innerText.length - 4));
+    });
+
+    container.appendChild(copy);
+  });
 }
 
 doc.addEventListener('DOMContentLoaded', initialize);
