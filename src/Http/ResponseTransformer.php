@@ -251,7 +251,7 @@ class ResponseTransformer
     protected static function getStream($response)
     {
         $stream = 'php://memory';
-        $body = $response->getBody();
+        $body = $response->body();
         if (is_string($body) && strlen($body)) {
             $stream = new Stream('php://memory', 'wb');
             $stream->write($body);
