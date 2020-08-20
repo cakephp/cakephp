@@ -301,6 +301,7 @@ class Mailer implements EventListenerInterface
     public function set($key, $value = null)
     {
         deprecationWarning('Mailer::set() is deprecated. Use setViewVars() instead.');
+
         return $this->setViewVars($key, $value);
     }
 
