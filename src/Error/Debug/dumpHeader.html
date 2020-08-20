@@ -63,16 +63,17 @@ nesting works.
 
 .cake-dbg-collapse {
   display: inline-block;
-  width: 12px;
-  height: 12px;
-  font-size: 12px;
-  line-height: 10px;
-  background: var(--color-control-bg);
+  width: 14px;
+  height: 14px;
+  vertical-align: middle;
   border-radius: 3px;
   color: var(--color-blue);
 
+  background: var(--color-control-bg);
   /* Image is an rawurlencoded SVG */
-  background-image: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2212%22%20width%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpolygon%20points%3D%223%2C1%203%2C11%208%2C6%22 style%3D%22fill%3A%234070a0%3B%22%2F%3E%3C%2Fsvg%3E")
+  background-image: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2212%22%20width%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpolygon%20points%3D%223%2C1%203%2C11%208%2C6%22 style%3D%22fill%3A%234070a0%3B%22%2F%3E%3C%2Fsvg%3E");
+  background-position: 2px 1px;
+  background-repeat: no-repeat;
 }
 .cake-dbg-collapse[data-open=true] {
   transform: rotate(90deg);
