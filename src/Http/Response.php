@@ -624,8 +624,7 @@ class Response implements ResponseInterface
         );
 
         if (in_array($this->_status, [304, 204])) {
-            $this->_createStream();
-            $this->stream->write('');
+            $this->body('');
         }
     }
 
