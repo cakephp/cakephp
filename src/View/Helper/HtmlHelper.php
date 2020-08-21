@@ -790,6 +790,10 @@ class HtmlHelper extends Helper
                 }
             }
 
+            if(!is_string($cell) && is_numeric($cell)) {
+                $cell = (string) $cell;
+            }
+
             $cellsOut[] = $this->tableCell($cell, $cellOptions);
         }
 
