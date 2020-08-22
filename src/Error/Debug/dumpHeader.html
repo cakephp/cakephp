@@ -230,7 +230,7 @@ function attachCopyButton(nodes) {
   nodes.forEach(function (container) {
     var copy = doc.createElement('a');
     copy.classList.add('cake-dbg-copy');
-    copy.setAttribute('href', '#')
+    copy.setAttribute('href', '#');
     copy.setAttribute('title', 'Copy contents of debug output');
     copy.appendChild(doc.createTextNode('Copy'));
 
@@ -238,9 +238,14 @@ function attachCopyButton(nodes) {
     copy.addEventListener('click', function (event) {
       event.preventDefault();
       event.stopPropagation();
+      var lineNo = '';
+      if (container.parentNode && container.parentNode.classList.contains('cake-debug')) {
+        var line = container.parentNode.querySelector('span');
+        lineNo = line.textContent + "\n";
+      }
 
       // Chop off last 4 to exclude copy button text.
-      navigator.clipboard.writeText(container.textContent.substring(0, container.textContent.length - 4));
+      navigator.clipboard.writeText(lineNo + container.textContent.substring(0, container.textContent.length - 4));
     });
 
     container.appendChild(copy);
