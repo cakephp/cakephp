@@ -31,11 +31,6 @@ matrix:
     - php: nightly
       env: DB=sqlite DB_URL='sqlite:///:memory:'
 
-  allow_failures:
-    - php: nightly
-
-  fast_finish: true
-
 before_install:
   - echo cakephp version && tail -1 VERSION.txt
 
