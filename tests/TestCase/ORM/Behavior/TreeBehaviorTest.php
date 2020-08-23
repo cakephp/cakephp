@@ -154,19 +154,19 @@ class TreeBehaviorTest extends TestCase
         // direct children for the root node
         $table = $this->table;
         $countDirect = $this->table->childCount($table->get(1), true);
-        $this->assertEquals(2, $countDirect);
+        $this->assertSame(2, $countDirect);
 
         // counts all the children of root
         $count = $this->table->childCount($table->get(1), false);
-        $this->assertEquals(9, $count);
+        $this->assertSame(9, $count);
 
         // counts direct children
         $count = $this->table->childCount($table->get(2), false);
-        $this->assertEquals(3, $count);
+        $this->assertSame(3, $count);
 
         // count children for a middle-node
         $count = $this->table->childCount($table->get(6), false);
-        $this->assertEquals(4, $count);
+        $this->assertSame(4, $count);
 
         // count leaf children
         $count = $this->table->childCount($table->get(10), false);
@@ -176,7 +176,7 @@ class TreeBehaviorTest extends TestCase
         $table = $this->getTableLocator()->get('MenuLinkTrees');
         $table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
         $count = $table->childCount($table->get(3), false);
-        $this->assertEquals(2, $count);
+        $this->assertSame(2, $count);
     }
 
     /**
@@ -191,7 +191,7 @@ class TreeBehaviorTest extends TestCase
         $node->unset('lft');
         $node->unset('rght');
         $count = $this->table->childCount($node, false);
-        $this->assertEquals(4, $count);
+        $this->assertSame(4, $count);
     }
 
     /**
@@ -208,7 +208,7 @@ class TreeBehaviorTest extends TestCase
             },
         ]);
         $count = $table->childCount($table->get(1), false);
-        $this->assertEquals(4, $count);
+        $this->assertSame(4, $count);
     }
 
     /**
@@ -788,8 +788,8 @@ class TreeBehaviorTest extends TestCase
             ['markNew' => true]
         );
         $this->assertSame($entity, $table->save($entity));
-        $this->assertEquals(23, $entity->lft);
-        $this->assertEquals(24, $entity->rght);
+        $this->assertSame(23, $entity->lft);
+        $this->assertSame(24, $entity->rght);
 
         $expected = [
             ' 1:20 -  1:electronics',
@@ -821,8 +821,8 @@ class TreeBehaviorTest extends TestCase
             ['markNew' => true]
         );
         $this->assertSame($entity, $table->save($entity));
-        $this->assertEquals(20, $entity->lft);
-        $this->assertEquals(21, $entity->rght);
+        $this->assertSame(20, $entity->lft);
+        $this->assertSame(21, $entity->rght);
 
         $expected = [
             ' 1:22 -  1:electronics',
@@ -854,8 +854,8 @@ class TreeBehaviorTest extends TestCase
             ['markNew' => true]
         );
         $this->assertSame($entity, $table->save($entity));
-        $this->assertEquals(9, $entity->lft);
-        $this->assertEquals(10, $entity->rght);
+        $this->assertSame(9, $entity->lft);
+        $this->assertSame(10, $entity->rght);
 
         $expected = [
             ' 1:22 -  1:electronics',
@@ -890,8 +890,8 @@ class TreeBehaviorTest extends TestCase
 
         $entity = new Entity(['name' => 'carpentry', 'parent_id' => null], ['markNew' => true]);
         $this->assertSame($entity, $table->save($entity));
-        $this->assertEquals(25, $entity->lft);
-        $this->assertEquals(26, $entity->rght);
+        $this->assertSame(25, $entity->lft);
+        $this->assertSame(26, $entity->rght);
 
         $expected = [
             ' 1:20 -  1:electronics',
@@ -951,8 +951,8 @@ class TreeBehaviorTest extends TestCase
         $entity = $table->get(2);
         $entity->parent_id = 6;
         $this->assertSame($entity, $table->save($entity));
-        $this->assertEquals(11, $entity->lft);
-        $this->assertEquals(18, $entity->rght);
+        $this->assertSame(11, $entity->lft);
+        $this->assertSame(18, $entity->rght);
 
         $expected = [
             ' 1:20 -  1:electronics',
@@ -981,8 +981,8 @@ class TreeBehaviorTest extends TestCase
         $entity = $table->get(6);
         $entity->parent_id = 2;
         $this->assertSame($entity, $table->save($entity));
-        $this->assertEquals(9, $entity->lft);
-        $this->assertEquals(18, $entity->rght);
+        $this->assertSame(9, $entity->lft);
+        $this->assertSame(18, $entity->rght);
 
         $expected = [
             ' 1:20 -  1:electronics',
@@ -1011,8 +1011,8 @@ class TreeBehaviorTest extends TestCase
         $entity = $table->get(10);
         $entity->parent_id = 2;
         $this->assertSame($entity, $table->save($entity));
-        $this->assertEquals(9, $entity->lft);
-        $this->assertEquals(10, $entity->rght);
+        $this->assertSame(9, $entity->lft);
+        $this->assertSame(10, $entity->rght);
 
         $expected = [
             ' 1:20 -  1:electronics',
@@ -1041,8 +1041,8 @@ class TreeBehaviorTest extends TestCase
         $entity = $table->get(5);
         $entity->parent_id = 6;
         $this->assertSame($entity, $table->save($entity));
-        $this->assertEquals(17, $entity->lft);
-        $this->assertEquals(18, $entity->rght);
+        $this->assertSame(17, $entity->lft);
+        $this->assertSame(18, $entity->rght);
 
         $result = $table->find()->order('lft')->enableHydration(false);
 
@@ -1075,8 +1075,8 @@ class TreeBehaviorTest extends TestCase
         $entity->unset('rght');
         $entity->parent_id = 2;
         $this->assertSame($entity, $table->save($entity));
-        $this->assertEquals(9, $entity->lft);
-        $this->assertEquals(18, $entity->rght);
+        $this->assertSame(9, $entity->lft);
+        $this->assertSame(18, $entity->rght);
 
         $expected = [
             ' 1:20 -  1:electronics',
@@ -1105,8 +1105,8 @@ class TreeBehaviorTest extends TestCase
         $entity = $table->get(2);
         $entity->parent_id = null;
         $this->assertSame($entity, $table->save($entity));
-        $this->assertEquals(15, $entity->lft);
-        $this->assertEquals(22, $entity->rght);
+        $this->assertSame(15, $entity->lft);
+        $this->assertSame(22, $entity->rght);
 
         $expected = [
             ' 1:12 -  1:electronics',
@@ -1137,8 +1137,8 @@ class TreeBehaviorTest extends TestCase
         $entity->unset('rght');
         $entity->parent_id = null;
         $this->assertSame($entity, $table->save($entity));
-        $this->assertEquals(15, $entity->lft);
-        $this->assertEquals(22, $entity->rght);
+        $this->assertSame(15, $entity->lft);
+        $this->assertSame(22, $entity->rght);
 
         $expected = [
             ' 1:12 -  1:electronics',
@@ -1302,8 +1302,8 @@ class TreeBehaviorTest extends TestCase
         $table = $this->table;
         $entity = $table->get(10);
         $this->assertSame($entity, $table->removeFromTree($entity));
-        $this->assertEquals(21, $entity->lft);
-        $this->assertEquals(22, $entity->rght);
+        $this->assertSame(21, $entity->lft);
+        $this->assertSame(22, $entity->rght);
         $this->assertNull($entity->parent_id);
         $result = $table->find()->order('lft')->enableHydration(false);
         $expected = [
@@ -1334,8 +1334,8 @@ class TreeBehaviorTest extends TestCase
         $entity = $table->get(6);
         $this->assertSame($entity, $table->removeFromTree($entity));
         $result = $table->find('threaded')->order('lft')->enableHydration(false)->toArray();
-        $this->assertEquals(21, $entity->lft);
-        $this->assertEquals(22, $entity->rght);
+        $this->assertSame(21, $entity->lft);
+        $this->assertSame(22, $entity->rght);
         $this->assertNull($entity->parent_id);
         $result = $table->find()->order('lft')->enableHydration(false);
         $expected = [
@@ -1365,8 +1365,8 @@ class TreeBehaviorTest extends TestCase
         $entity = $table->get(1);
         $this->assertSame($entity, $table->removeFromTree($entity));
         $result = $table->find('threaded')->order('lft')->enableHydration(false)->toArray();
-        $this->assertEquals(21, $entity->lft);
-        $this->assertEquals(22, $entity->rght);
+        $this->assertSame(21, $entity->lft);
+        $this->assertSame(22, $entity->rght);
         $this->assertNull($entity->parent_id);
 
         $expected = [
@@ -1416,13 +1416,13 @@ class TreeBehaviorTest extends TestCase
     {
         $entity = $this->table->get(8);
         $result = $this->table->getLevel($entity);
-        $this->assertEquals(3, $result);
+        $this->assertSame(3, $result);
 
         $result = $this->table->getLevel($entity->id);
-        $this->assertEquals(3, $result);
+        $this->assertSame(3, $result);
 
         $result = $this->table->getLevel(5);
-        $this->assertEquals(2, $result);
+        $this->assertSame(2, $result);
 
         $result = $this->table->getLevel(99999);
         $this->assertFalse($result);
@@ -1445,12 +1445,12 @@ class TreeBehaviorTest extends TestCase
         $entity = new Entity(['parent_id' => 1, 'name' => 'Depth 1']);
         $this->table->save($entity);
         $entity = $this->table->get(13);
-        $this->assertEquals(1, $entity->depth);
+        $this->assertSame(1, $entity->depth);
 
         $entity = new Entity(['parent_id' => 8, 'name' => 'Depth 4']);
         $this->table->save($entity);
         $entity = $this->table->get(14);
-        $this->assertEquals(4, $entity->depth);
+        $this->assertSame(4, $entity->depth);
     }
 
     /**
@@ -1464,14 +1464,14 @@ class TreeBehaviorTest extends TestCase
 
         // Leaf node
         $entity = $this->table->get(4);
-        $this->assertEquals(2, $entity->depth);
+        $this->assertSame(2, $entity->depth);
         $this->table->save($entity);
         $entity = $this->table->get(4);
-        $this->assertEquals(2, $entity->depth);
+        $this->assertSame(2, $entity->depth);
 
         // Non leaf node so depth of descendants will also change
         $entity = $this->table->get(6);
-        $this->assertEquals(1, $entity->depth);
+        $this->assertSame(1, $entity->depth);
 
         $entity->parent_id = null;
         $this->table->save($entity);
@@ -1479,15 +1479,15 @@ class TreeBehaviorTest extends TestCase
         $this->assertSame(0, $entity->depth);
 
         $entity = $this->table->get(7);
-        $this->assertEquals(1, $entity->depth);
+        $this->assertSame(1, $entity->depth);
 
         $entity = $this->table->get(8);
-        $this->assertEquals(2, $entity->depth);
+        $this->assertSame(2, $entity->depth);
 
         $entity->parent_id = 6;
         $this->table->save($entity);
         $entity = $this->table->get(8);
-        $this->assertEquals(1, $entity->depth);
+        $this->assertSame(1, $entity->depth);
     }
 
     /**

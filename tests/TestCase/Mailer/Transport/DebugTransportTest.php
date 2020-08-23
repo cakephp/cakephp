@@ -74,7 +74,7 @@ class DebugTransportTest extends TestCase
 
         $result = $this->DebugTransport->send($message);
 
-        $this->assertEquals($headers, $result['headers']);
-        $this->assertEquals($data, $result['message']);
+        $this->assertSame($headers, $result['headers']);
+        $this->assertSame($data, $result['message']);
     }
 }

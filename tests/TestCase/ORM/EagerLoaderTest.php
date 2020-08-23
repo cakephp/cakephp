@@ -509,11 +509,11 @@ class EagerLoaderTest extends TestCase
         $this->assertSame('client.order.stuff', $assocs['stuff']->propertyPath());
 
         $assocs = $assocs['stuff']->associations();
-        $this->assertEquals(
+        $this->assertSame(
             'clients.orders.stuff.stuffTypes',
             $assocs['stuffTypes']->aliasPath()
         );
-        $this->assertEquals(
+        $this->assertSame(
             'client.order.stuff.stuff_type',
             $assocs['stuffTypes']->propertyPath()
         );
@@ -530,8 +530,8 @@ class EagerLoaderTest extends TestCase
         $loader->setMatching('clients');
         $assocs = $loader->attachableAssociations($this->table);
 
-        $this->assertEquals('clients', $assocs['clients']->aliasPath());
-        $this->assertEquals('_matchingData.clients', $assocs['clients']->propertyPath());
+        $this->assertSame('clients', $assocs['clients']->aliasPath());
+        $this->assertSame('_matchingData.clients', $assocs['clients']->propertyPath());
     }
 
     /**
@@ -545,12 +545,12 @@ class EagerLoaderTest extends TestCase
         $loader->setMatching('clients.orders');
         $assocs = $loader->attachableAssociations($this->table);
 
-        $this->assertEquals('clients', $assocs['clients']->aliasPath());
-        $this->assertEquals('_matchingData.clients', $assocs['clients']->propertyPath());
+        $this->assertSame('clients', $assocs['clients']->aliasPath());
+        $this->assertSame('_matchingData.clients', $assocs['clients']->propertyPath());
 
         $assocs = $assocs['clients']->associations();
-        $this->assertEquals('clients.orders', $assocs['orders']->aliasPath());
-        $this->assertEquals('_matchingData.orders', $assocs['orders']->propertyPath());
+        $this->assertSame('clients.orders', $assocs['orders']->aliasPath());
+        $this->assertSame('_matchingData.orders', $assocs['orders']->propertyPath());
     }
 
     /**

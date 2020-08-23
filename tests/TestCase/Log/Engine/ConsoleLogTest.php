@@ -75,7 +75,7 @@ class ConsoleLogTest extends TestCase
             'stream' => $output,
             'outputAs' => ConsoleOutput::RAW,
         ]);
-        $this->assertEquals(ConsoleOutput::RAW, $log->getConfig('outputAs'));
+        $this->assertSame(ConsoleOutput::RAW, $log->getConfig('outputAs'));
     }
 
     /**

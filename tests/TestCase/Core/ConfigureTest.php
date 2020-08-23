@@ -77,7 +77,7 @@ class ConfigureTest extends TestCase
         $expected = 'ok';
         Configure::write('This.Key.Exists', $expected);
         $result = Configure::readOrFail('This.Key.Exists');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -103,7 +103,7 @@ class ConfigureTest extends TestCase
         Configure::write('level1.level2.level3_1', $expected);
         Configure::write('level1.level2.level3_2', 'something_else');
         $result = Configure::read('level1.level2.level3_1');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Configure::read('level1.level2.level3_2');
         $this->assertSame('something_else', $result);
@@ -121,7 +121,7 @@ class ConfigureTest extends TestCase
 
         $default = 'default';
         $result = Configure::read('something_I_just_made_up_now', $default);
-        $this->assertEquals($default, $result);
+        $this->assertSame($default, $result);
 
         $default = ['default'];
         $result = Configure::read('something_I_just_made_up_now', $default);
@@ -180,7 +180,7 @@ class ConfigureTest extends TestCase
 
         Configure::write('debug', true);
         $result = ini_get('display_errors');
-        $this->assertEquals('1', $result);
+        $this->assertSame('1', $result);
     }
 
     /**
@@ -395,13 +395,13 @@ class ConfigureTest extends TestCase
         $this->assertTrue($result);
         $expected = '/test_app/Plugin/TestPlugin/Config/load.php';
         $config = Configure::read('plugin_load');
-        $this->assertEquals($expected, $config);
+        $this->assertSame($expected, $config);
 
         $result = Configure::load('TestPlugin.more.load', 'test');
         $this->assertTrue($result);
         $expected = '/test_app/Plugin/TestPlugin/Config/more.load.php';
         $config = Configure::read('plugin_more_load');
-        $this->assertEquals($expected, $config);
+        $this->assertSame($expected, $config);
         $this->clearPlugins();
     }
 
@@ -621,7 +621,7 @@ class ConfigureTest extends TestCase
         $expected = 'ok';
         Configure::write('This.Key.Exists', $expected);
         $result = Configure::consumeOrFail('This.Key.Exists');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**

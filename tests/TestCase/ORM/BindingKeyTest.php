@@ -107,7 +107,7 @@ class BindingKeyTest extends TestCase
             ->where(['username' => 'jose'])
             ->first();
 
-        $this->assertEquals(3, $result->site_author->id);
+        $this->assertSame(3, $result->site_author->id);
     }
 
     /**

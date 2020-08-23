@@ -84,19 +84,19 @@ class TimeTest extends TestCase
         $time = '2015-01-22 10:33:44.123456';
         $frozen = new FrozenTime($time, 'America/Chicago');
         $subject = new $class($frozen);
-        $this->assertEquals($time, $subject->format('Y-m-d H:i:s.u'), 'frozen time construction');
+        $this->assertSame($time, $subject->format('Y-m-d H:i:s.u'), 'frozen time construction');
 
         $mut = new Time($time, 'America/Chicago');
         $subject = new $class($mut);
-        $this->assertEquals($time, $subject->format('Y-m-d H:i:s.u'), 'mutable time construction');
+        $this->assertSame($time, $subject->format('Y-m-d H:i:s.u'), 'mutable time construction');
 
         $mut = new Chronos($time, 'America/Chicago');
         $subject = new $class($mut);
-        $this->assertEquals($time, $subject->format('Y-m-d H:i:s.u'), 'mutable time construction');
+        $this->assertSame($time, $subject->format('Y-m-d H:i:s.u'), 'mutable time construction');
 
         $mut = new \DateTime($time, new \DateTimeZone('America/Chicago'));
         $subject = new $class($mut);
-        $this->assertEquals($time, $subject->format('Y-m-d H:i:s.u'), 'mutable time construction');
+        $this->assertSame($time, $subject->format('Y-m-d H:i:s.u'), 'mutable time construction');
     }
 
     /**
@@ -242,7 +242,7 @@ class TimeTest extends TestCase
             'end' => '+10 years',
         ]);
         $expected = 'at least 8 years ago';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $time = new $class('+4 months +2 weeks +3 days');
         $result = $time->timeAgoInWords([
@@ -251,7 +251,7 @@ class TimeTest extends TestCase
             'end' => '+2 months',
         ]);
         $expected = 'exactly on ' . date('n/j/y', strtotime('+4 months +2 weeks +3 days'));
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -268,7 +268,7 @@ class TimeTest extends TestCase
             'end' => '+10 years',
         ]);
         $expected = '8 years';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $time = new $class('+8 years +4 months +2 weeks +3 days');
         $result = $time->timeAgoInWords([
@@ -276,7 +276,7 @@ class TimeTest extends TestCase
             'end' => '+10 years',
         ]);
         $expected = '8 years, 4 months';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $time = new $class('+8 years +4 months +2 weeks +3 days');
         $result = $time->timeAgoInWords([
@@ -284,7 +284,7 @@ class TimeTest extends TestCase
             'end' => '+10 years',
         ]);
         $expected = '8 years, 4 months, 2 weeks';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $time = new $class('+8 years +4 months +2 weeks +3 days');
         $result = $time->timeAgoInWords([
@@ -292,7 +292,7 @@ class TimeTest extends TestCase
             'end' => '+10 years',
         ]);
         $expected = '8 years, 4 months, 2 weeks, 3 days';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $time = new $class('+1 years +5 weeks');
         $result = $time->timeAgoInWords([
@@ -300,21 +300,21 @@ class TimeTest extends TestCase
             'end' => '+10 years',
         ]);
         $expected = '1 year';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $time = new $class('+58 minutes');
         $result = $time->timeAgoInWords([
             'accuracy' => 'hour',
         ]);
         $expected = 'in about an hour';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $time = new $class('+23 hours');
         $result = $time->timeAgoInWords([
             'accuracy' => 'day',
         ]);
         $expected = 'in about a day';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $time = new $class('+20 days');
         $result = $time->timeAgoInWords(['accuracy' => 'month']);
@@ -373,7 +373,7 @@ class TimeTest extends TestCase
         $time = new $class('-3 years -12 months');
         $result = $time->timeAgoInWords();
         $expected = 'on ' . $time->format('n/j/y');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $time = new $class('-1 month -1 week -6 days');
         $result = $time->timeAgoInWords(
@@ -386,7 +386,7 @@ class TimeTest extends TestCase
             ['accuracy' => ['year' => 'year']]
         );
         $expected = 'on ' . $time->format('n/j/y');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $time = new $class('-13 months -5 days');
         $result = $time->timeAgoInWords(['end' => '2 years']);
@@ -784,10 +784,10 @@ class TimeTest extends TestCase
         $class::setJsonEncodeFormat(static function ($t) {
             return $t->format(DATE_ATOM);
         });
-        $this->assertEquals('"2014-04-20T10:10:10+00:00"', json_encode($time));
+        $this->assertSame('"2014-04-20T10:10:10+00:00"', json_encode($time));
 
         $class::setJsonEncodeFormat("yyyy-MM-dd'T'HH':'mm':'ssZZZZZ");
-        $this->assertEquals('"2014-04-20T10:10:10Z"', json_encode($time));
+        $this->assertSame('"2014-04-20T10:10:10Z"', json_encode($time));
     }
 
     /**

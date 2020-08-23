@@ -205,7 +205,7 @@ class PostgresTest extends TestCase
 
         $expected = 'SELECT posts.author_id, (COUNT(posts.id)) AS "post_count" ' .
             'GROUP BY posts.author_id HAVING COUNT(posts.id) >= :c0';
-        $this->assertEquals($expected, $query->sql());
+        $this->assertSame($expected, $query->sql());
     }
 
     /**
@@ -239,6 +239,6 @@ class PostgresTest extends TestCase
 
         $expected = 'SELECT posts.author_id, (COUNT(posts.id)) AS "post_count" ' .
             'GROUP BY posts.author_id HAVING posts.author_id >= :c0';
-        $this->assertEquals($expected, $query->sql());
+        $this->assertSame($expected, $query->sql());
     }
 }

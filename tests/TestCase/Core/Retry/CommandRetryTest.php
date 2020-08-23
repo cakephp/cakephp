@@ -43,7 +43,7 @@ class CommandRetryTest extends TestCase
 
         $strategy = new \TestApp\Database\Retry\TestRetryStrategy(true);
         $retry = new CommandRetry($strategy, 2);
-        $this->assertEquals(2, $retry->run($action));
+        $this->assertSame(2, $retry->run($action));
     }
 
     /**

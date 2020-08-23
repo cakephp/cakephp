@@ -112,8 +112,7 @@ class ApcuEngineTest extends TestCase
         $this->_configCache(['duration' => 1]);
 
         $result = Cache::read('test', 'apcu');
-        $expecting = '';
-        $this->assertEquals($expecting, $result);
+        $this->assertNull($result);
 
         $data = 'this is a test of the emergency broadcasting system';
         $result = Cache::write('test', $data, 'apcu');
@@ -121,7 +120,7 @@ class ApcuEngineTest extends TestCase
 
         $result = Cache::read('test', 'apcu');
         $expecting = $data;
-        $this->assertEquals($expecting, $result);
+        $this->assertSame($expecting, $result);
 
         Cache::delete('test', 'apcu');
     }
@@ -229,16 +228,16 @@ class ApcuEngineTest extends TestCase
         $this->assertTrue($result);
 
         $result = Cache::decrement('test_decrement', 1, 'apcu');
-        $this->assertEquals(4, $result);
+        $this->assertSame(4, $result);
 
         $result = Cache::read('test_decrement', 'apcu');
-        $this->assertEquals(4, $result);
+        $this->assertSame(4, $result);
 
         $result = Cache::decrement('test_decrement', 2, 'apcu');
-        $this->assertEquals(2, $result);
+        $this->assertSame(2, $result);
 
         $result = Cache::read('test_decrement', 'apcu');
-        $this->assertEquals(2, $result);
+        $this->assertSame(2, $result);
     }
 
     /**
@@ -252,16 +251,16 @@ class ApcuEngineTest extends TestCase
         $this->assertTrue($result);
 
         $result = Cache::increment('test_increment', 1, 'apcu');
-        $this->assertEquals(6, $result);
+        $this->assertSame(6, $result);
 
         $result = Cache::read('test_increment', 'apcu');
-        $this->assertEquals(6, $result);
+        $this->assertSame(6, $result);
 
         $result = Cache::increment('test_increment', 2, 'apcu');
-        $this->assertEquals(8, $result);
+        $this->assertSame(8, $result);
 
         $result = Cache::read('test_increment', 'apcu');
-        $this->assertEquals(8, $result);
+        $this->assertSame(8, $result);
     }
 
     /**
@@ -370,7 +369,7 @@ class ApcuEngineTest extends TestCase
 
         $expected = 'test data';
         $result = Cache::read('test_add_key', 'apcu');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Cache::add('test_add_key', 'test data 2', 'apcu');
         $this->assertFalse($result);

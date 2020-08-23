@@ -1075,8 +1075,8 @@ SQL;
         $result = $table->createSql($connection);
 
         $this->assertCount(2, $result);
-        $this->assertEquals(str_replace("\r\n", "\n", $expected), str_replace("\r\n", "\n", $result[0]));
-        $this->assertEquals(
+        $this->assertSame(str_replace("\r\n", "\n", $expected), str_replace("\r\n", "\n", $result[0]));
+        $this->assertSame(
             'CREATE INDEX [title_idx] ON [schema_articles] ([title])',
             $result[1]
         );
@@ -1125,7 +1125,7 @@ SQL;
         $result = $table->truncateSql($connection);
         $this->assertCount(2, $result);
         $this->assertSame('DELETE FROM [schema_articles]', $result[0]);
-        $this->assertEquals("DBCC CHECKIDENT('schema_articles', RESEED, 0)", $result[1]);
+        $this->assertSame("DBCC CHECKIDENT('schema_articles', RESEED, 0)", $result[1]);
     }
 
     /**

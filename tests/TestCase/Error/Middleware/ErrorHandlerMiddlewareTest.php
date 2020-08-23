@@ -141,7 +141,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         });
         $result = $middleware->process($request, $handler);
         $this->assertInstanceOf('Cake\Http\Response', $result);
-        $this->assertEquals(404, $result->getStatusCode());
+        $this->assertSame(404, $result->getStatusCode());
         $this->assertStringContainsString('was not found', '' . $result->getBody());
     }
 
@@ -159,7 +159,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         });
         $result = $middleware->process($request, $handler);
         $this->assertInstanceOf(ResponseInterface::class, $result);
-        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertSame(302, $result->getStatusCode());
         $this->assertEmpty((string)$result->getBody());
         $expected = [
             'location' => ['http://example.org/login'],
@@ -184,7 +184,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
         $result = $middleware->process($request, $handler);
         $this->assertInstanceOf(ResponseInterface::class, $result);
-        $this->assertEquals(301, $result->getStatusCode());
+        $this->assertSame(301, $result->getStatusCode());
         $this->assertEmpty('' . $result->getBody());
         $expected = [
             'location' => ['http://example.org/login'],
@@ -210,7 +210,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         });
         $result = $middleware->process($request, $handler);
         $this->assertInstanceOf('Cake\Http\Response', $result);
-        $this->assertEquals(404, $result->getStatusCode());
+        $this->assertSame(404, $result->getStatusCode());
         $this->assertStringContainsString('"message": "whoops"', (string)$result->getBody());
         $this->assertStringContainsString('application/json', $result->getHeaderLine('Content-type'));
     }
@@ -246,7 +246,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
             throw new \Cake\Http\Exception\NotFoundException('Kaboom!');
         });
         $result = $middleware->process($request, $handler);
-        $this->assertEquals(404, $result->getStatusCode());
+        $this->assertSame(404, $result->getStatusCode());
         $this->assertStringContainsString('was not found', '' . $result->getBody());
 
         $logs = $this->logger->read();
@@ -279,7 +279,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
             throw new \Cake\Http\Exception\NotFoundException('Kaboom!', null, $previous);
         });
         $result = $middleware->process($request, $handler);
-        $this->assertEquals(404, $result->getStatusCode());
+        $this->assertSame(404, $result->getStatusCode());
         $this->assertStringContainsString('was not found', '' . $result->getBody());
 
         $logs = $this->logger->read();
@@ -314,7 +314,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
             throw new \Cake\Http\Exception\NotFoundException('Kaboom!');
         });
         $result = $middleware->process($request, $handler);
-        $this->assertEquals(404, $result->getStatusCode());
+        $this->assertSame(404, $result->getStatusCode());
         $this->assertStringContainsString('was not found', '' . $result->getBody());
 
         $this->assertCount(0, $this->logger->read());
@@ -333,7 +333,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
             throw new MissingControllerException(['class' => 'Articles']);
         });
         $result = $middleware->process($request, $handler);
-        $this->assertEquals(404, $result->getStatusCode());
+        $this->assertSame(404, $result->getStatusCode());
 
         $logs = $this->logger->read();
         $this->assertStringContainsString(
@@ -371,7 +371,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
             throw new \Cake\Http\Exception\ServiceUnavailableException('whoops');
         });
         $response = $middleware->process($request, $handler);
-        $this->assertEquals(500, $response->getStatusCode());
+        $this->assertSame(500, $response->getStatusCode());
         $this->assertSame('An Internal Server Error Occurred', '' . $response->getBody());
     }
 }

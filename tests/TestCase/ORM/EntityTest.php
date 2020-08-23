@@ -45,7 +45,7 @@ class EntityTest extends TestCase
 
         $entity->set('id', 1);
         $this->assertSame(1, $entity->id);
-        $this->assertEquals(1, $entity->getOriginal('id'));
+        $this->assertSame(1, $entity->getOriginal('id'));
         $this->assertSame('bar', $entity->getOriginal('foo'));
     }
 
@@ -68,7 +68,7 @@ class EntityTest extends TestCase
         $this->assertSame(2, $entity->id);
         $this->assertSame(3, $entity->thing);
         $this->assertSame('bar', $entity->getOriginal('foo'));
-        $this->assertEquals(1, $entity->getOriginal('id'));
+        $this->assertSame(1, $entity->getOriginal('id'));
 
         $entity->set(['foo', 'bar']);
         $this->assertSame('foo', $entity->get('0'));
@@ -1516,12 +1516,12 @@ class EntityTest extends TestCase
         $entity->setAccess('foo', true);
         $entity->set('bar', 3, $options);
         $entity->set('foo', 4, $options);
-        $this->assertEquals(2, $entity->get('bar'));
-        $this->assertEquals(4, $entity->get('foo'));
+        $this->assertSame(2, $entity->get('bar'));
+        $this->assertSame(4, $entity->get('foo'));
 
         $entity->setAccess('bar', true);
         $entity->set('bar', 3, $options);
-        $this->assertEquals(3, $entity->get('bar'));
+        $this->assertSame(3, $entity->get('bar'));
     }
 
     /**
@@ -1536,13 +1536,13 @@ class EntityTest extends TestCase
         $entity->setAccess('*', false);
         $entity->setAccess('foo', true);
         $entity->set(['bar' => 3, 'foo' => 4], $options);
-        $this->assertEquals(2, $entity->get('bar'));
-        $this->assertEquals(4, $entity->get('foo'));
+        $this->assertSame(2, $entity->get('bar'));
+        $this->assertSame(4, $entity->get('foo'));
 
         $entity->setAccess('bar', true);
         $entity->set(['bar' => 3, 'foo' => 5], $options);
-        $this->assertEquals(3, $entity->get('bar'));
-        $this->assertEquals(5, $entity->get('foo'));
+        $this->assertSame(3, $entity->get('bar'));
+        $this->assertSame(5, $entity->get('foo'));
     }
 
     /**

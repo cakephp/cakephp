@@ -130,7 +130,7 @@ class SessionStorageTest extends TestCase
             ->will($this->returnValue($url));
 
         $result = $this->storage->redirectUrl();
-        $this->assertEquals($url, $result);
+        $this->assertSame($url, $result);
 
         $this->session->expects($this->once())
             ->method('delete')

@@ -280,7 +280,7 @@ class DriverTest extends TestCase
         $tableName = 'articles';
         $actual = $this->driver->newTableSchema($tableName);
         $this->assertInstanceOf(TableSchema::class, $actual);
-        $this->assertEquals($tableName, $actual->name());
+        $this->assertSame($tableName, $actual->name());
     }
 
     /**

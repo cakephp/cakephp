@@ -71,6 +71,6 @@ class AggregatesQueryTests extends TestCase
             ->from('comments')
             ->execute()
             ->fetchAll('assoc');
-        $this->assertEquals(2, $result[0]['num_rows']);
+        $this->assertSame(2, $result[0]['num_rows']);
     }
 }

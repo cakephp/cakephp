@@ -122,7 +122,7 @@ class AssociationTest extends TestCase
     {
         $alias = $this->association->getTarget()->getAlias();
         $this->association->setName($alias);
-        $this->assertEquals($alias, $this->association->getName());
+        $this->assertSame($alias, $this->association->getName());
     }
 
     /**
@@ -148,9 +148,9 @@ class AssociationTest extends TestCase
      */
     public function testSetClassNameBeforeTarget()
     {
-        $this->assertEquals(TestTable::class, $this->association->getClassName());
+        $this->assertSame(TestTable::class, $this->association->getClassName());
         $this->assertSame($this->association, $this->association->setClassName(AuthorsTable::class));
-        $this->assertEquals(AuthorsTable::class, $this->association->getClassName());
+        $this->assertSame(AuthorsTable::class, $this->association->getClassName());
     }
 
     /**
@@ -188,7 +188,7 @@ class AssociationTest extends TestCase
     {
         $className = get_class($this->association->getTarget());
         $this->association->setClassName($className);
-        $this->assertEquals($className, $this->association->getClassName());
+        $this->assertSame($className, $this->association->getClassName());
     }
 
     /**

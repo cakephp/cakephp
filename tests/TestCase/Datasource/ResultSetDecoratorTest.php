@@ -83,8 +83,8 @@ class ResultSetDecoratorTest extends TestCase
         $data = new \ArrayIterator([1, 2, 3]);
         $decorator = new ResultSetDecorator($data);
 
-        $this->assertEquals(1, $decorator->first());
-        $this->assertEquals(1, $decorator->first());
+        $this->assertSame(1, $decorator->first());
+        $this->assertSame(1, $decorator->first());
     }
 
     /**
@@ -97,7 +97,7 @@ class ResultSetDecoratorTest extends TestCase
         $data = new \ArrayIterator([1, 2, 3]);
         $decorator = new ResultSetDecorator($data);
 
-        $this->assertEquals(3, $decorator->count());
+        $this->assertSame(3, $decorator->count());
         $this->assertCount(3, $decorator);
     }
 }

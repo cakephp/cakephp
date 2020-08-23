@@ -123,7 +123,7 @@ class HelperTest extends TestCase
         $resultB = $Helper->Html;
 
         $resultA->testprop = 1;
-        $this->assertEquals($resultA->testprop, $resultB->testprop);
+        $this->assertSame($resultA->testprop, $resultB->testprop);
     }
 
     /**

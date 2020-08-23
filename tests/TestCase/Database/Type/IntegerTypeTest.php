@@ -217,6 +217,6 @@ class IntegerTypeTest extends TestCase
      */
     public function testToStatement()
     {
-        $this->assertEquals(PDO::PARAM_INT, $this->type->toStatement('', $this->driver));
+        $this->assertSame(PDO::PARAM_INT, $this->type->toStatement('', $this->driver));
     }
 }

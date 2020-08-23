@@ -349,9 +349,9 @@ class ConsoleIoTest extends TestCase
         if (DS === '\\') {
             $newLine = "\r\n";
         }
-        $this->assertEquals($this->io->nl(), $newLine);
-        $this->assertEquals($this->io->nl(2), $newLine . $newLine);
-        $this->assertEquals($this->io->nl(1), $newLine);
+        $this->assertSame($this->io->nl(), $newLine);
+        $this->assertSame($this->io->nl(2), $newLine . $newLine);
+        $this->assertSame($this->io->nl(1), $newLine);
     }
 
     /**

@@ -165,7 +165,7 @@ class ValidationSetTest extends TestCase
             $this->assertInstanceOf('Cake\Validation\ValidationRule', $rule);
             $i++;
         }
-        $this->assertEquals(3, $i);
+        $this->assertSame(3, $i);
     }
 
     /**

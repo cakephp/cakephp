@@ -218,7 +218,7 @@ class BreadcrumbsHelperTest extends TestCase
         $this->breadcrumbs->add('Products', '/products');
 
         $crumbs = $this->breadcrumbs->getCrumbs();
-        $this->assertEquals(count($crumbs), 2);
+        $this->assertSame(count($crumbs), 2);
 
         $this->breadcrumbs->reset();
         $actual = $this->breadcrumbs->getCrumbs();

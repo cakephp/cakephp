@@ -306,13 +306,13 @@ class BelongsToManyTest extends TestCase
     public function testSetSaveStrategy()
     {
         $assoc = new BelongsToMany('Test');
-        $this->assertEquals(BelongsToMany::SAVE_REPLACE, $assoc->getSaveStrategy());
+        $this->assertSame(BelongsToMany::SAVE_REPLACE, $assoc->getSaveStrategy());
 
         $assoc->setSaveStrategy(BelongsToMany::SAVE_APPEND);
-        $this->assertEquals(BelongsToMany::SAVE_APPEND, $assoc->getSaveStrategy());
+        $this->assertSame(BelongsToMany::SAVE_APPEND, $assoc->getSaveStrategy());
 
         $assoc->setSaveStrategy(BelongsToMany::SAVE_REPLACE);
-        $this->assertEquals(BelongsToMany::SAVE_REPLACE, $assoc->getSaveStrategy());
+        $this->assertSame(BelongsToMany::SAVE_REPLACE, $assoc->getSaveStrategy());
     }
 
     /**
@@ -323,7 +323,7 @@ class BelongsToManyTest extends TestCase
     public function testSaveStrategyInOptions()
     {
         $assoc = new BelongsToMany('Test', ['saveStrategy' => BelongsToMany::SAVE_APPEND]);
-        $this->assertEquals(BelongsToMany::SAVE_APPEND, $assoc->getSaveStrategy());
+        $this->assertSame(BelongsToMany::SAVE_APPEND, $assoc->getSaveStrategy());
     }
 
     /**
@@ -447,7 +447,7 @@ class BelongsToManyTest extends TestCase
             $counter++;
         });
 
-        $this->assertEquals(2, $articleTag->find()->where(['article_id' => 1])->count());
+        $this->assertSame(2, $articleTag->find()->where(['article_id' => 1])->count());
         $entity = new Entity(['id' => 1, 'name' => 'PHP']);
         $association->cascadeDelete($entity);
 
@@ -1406,7 +1406,7 @@ class BelongsToManyTest extends TestCase
         $query = $table->Tags->find();
         $result = $query->toArray();
         $this->assertCount(1, $result);
-        $this->assertEquals(1, $result[0]->id);
+        $this->assertSame(1, $result[0]->id);
     }
 
     /**
@@ -1430,7 +1430,7 @@ class BelongsToManyTest extends TestCase
         $query = $table->Tags->find();
         $result = $query->toArray();
         $this->assertCount(1, $result);
-        $this->assertEquals(1, $result[0]->id);
+        $this->assertSame(1, $result[0]->id);
     }
 
     /**

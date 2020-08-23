@@ -49,7 +49,7 @@ class LoggedQueryTest extends TestCase
         $query->params = ['p1' => 'string', 'p3' => null, 'p2' => 3, 'p4' => true, 'p5' => false, 'p6' => 0];
 
         $expected = "SELECT a FROM b where a = 'string' AND b = 3 AND c = NULL AND d = 1 AND e = 0 AND f = 0";
-        $this->assertEquals($expected, (string)$query);
+        $this->assertSame($expected, (string)$query);
     }
 
     /**
@@ -64,7 +64,7 @@ class LoggedQueryTest extends TestCase
         $query->params = ['string', '3', null, true, false, 0];
 
         $expected = "SELECT a FROM b where a = 'string' AND b = '3' AND c = NULL AND d = 1 AND e = 0 AND f = 0";
-        $this->assertEquals($expected, (string)$query);
+        $this->assertSame($expected, (string)$query);
     }
 
     /**
@@ -79,7 +79,7 @@ class LoggedQueryTest extends TestCase
         $query->params = ['p1' => 'string', 'p2' => 3];
 
         $expected = "SELECT a FROM b where a = 'string' AND b = 'string' AND c = 3 AND d = 3";
-        $this->assertEquals($expected, (string)$query);
+        $this->assertSame($expected, (string)$query);
     }
 
     /**
@@ -94,7 +94,7 @@ class LoggedQueryTest extends TestCase
         $query->params = ['p11' => 'test', 'p1' => 'string', 'p2' => 3, 'p20' => 5];
 
         $expected = "SELECT a FROM b where a = 'string' AND b = 'test' AND c = 5 AND d = 3";
-        $this->assertEquals($expected, (string)$query);
+        $this->assertSame($expected, (string)$query);
     }
 
     /**
@@ -109,7 +109,7 @@ class LoggedQueryTest extends TestCase
         $query->params = ['p1' => '$2y$10$dUAIj', 'p2' => '$0.23', 'p3' => 'a\\0b\\1c\\d', 'p4' => "a'b"];
 
         $expected = "SELECT a FROM b where a = '\$2y\$10\$dUAIj' AND b = '\$0.23' AND c = 'a\\\\0b\\\\1c\\\\d' AND d = 'a''b'";
-        $this->assertEquals($expected, (string)$query);
+        $this->assertSame($expected, (string)$query);
     }
 
     /**
@@ -125,7 +125,7 @@ class LoggedQueryTest extends TestCase
         $query->params = ['p1' => hex2bin($uuid)];
 
         $expected = "SELECT a FROM b where a = '{$uuid}'";
-        $this->assertEquals($expected, (string)$query);
+        $this->assertSame($expected, (string)$query);
     }
 
     /**
@@ -140,7 +140,7 @@ class LoggedQueryTest extends TestCase
         $query->params = ['p1' => "a\tz"];
 
         $expected = "SELECT a FROM b where a = 'a\tz'";
-        $this->assertEquals($expected, (string)$query);
+        $this->assertSame($expected, (string)$query);
     }
 
     public function testGetContext()

@@ -48,7 +48,7 @@ class StringTemplateTest extends TestCase
             'link' => '<a href="{{url}}">{{text}}</a>',
         ];
         $template = new StringTemplate($templates);
-        $this->assertEquals($templates['link'], $template->get('link'));
+        $this->assertSame($templates['link'], $template->get('link'));
     }
 
     /**
@@ -68,7 +68,7 @@ class StringTemplateTest extends TestCase
             'The same instance should be returned'
         );
 
-        $this->assertEquals($templates['link'], $this->template->get('link'));
+        $this->assertSame($templates['link'], $this->template->get('link'));
     }
 
     /**
@@ -222,14 +222,14 @@ class StringTemplateTest extends TestCase
     {
         $attrs = ['disabled' => true, 'selected' => 1, 'checked' => '1', 'multiple' => 'multiple'];
         $result = $this->template->formatAttributes($attrs);
-        $this->assertEquals(
+        $this->assertSame(
             ' disabled="disabled" selected="selected" checked="checked" multiple="multiple"',
             $result
         );
 
         $attrs = ['disabled' => false, 'selected' => 0, 'checked' => '0', 'multiple' => null];
         $result = $this->template->formatAttributes($attrs);
-        $this->assertEquals(
+        $this->assertSame(
             '',
             $result
         );
@@ -244,28 +244,28 @@ class StringTemplateTest extends TestCase
     {
         $attrs = ['name' => 'bruce', 'data-hero' => '<batman>', 'spellcheck' => 'true'];
         $result = $this->template->formatAttributes($attrs);
-        $this->assertEquals(
+        $this->assertSame(
             ' name="bruce" data-hero="&lt;batman&gt;" spellcheck="true"',
             $result
         );
 
         $attrs = ['escape' => false, 'name' => 'bruce', 'data-hero' => '<batman>'];
         $result = $this->template->formatAttributes($attrs);
-        $this->assertEquals(
+        $this->assertSame(
             ' name="bruce" data-hero="<batman>"',
             $result
         );
 
         $attrs = ['name' => 'bruce', 'data-hero' => '<batman>'];
         $result = $this->template->formatAttributes($attrs, ['name']);
-        $this->assertEquals(
+        $this->assertSame(
             ' data-hero="&lt;batman&gt;"',
             $result
         );
 
         $attrs = ['name' => 'bruce', 'data-hero' => '<batman>', 'templateVars' => ['foo' => 'bar']];
         $result = $this->template->formatAttributes($attrs, ['name']);
-        $this->assertEquals(
+        $this->assertSame(
             ' data-hero="&lt;batman&gt;"',
             $result
         );
@@ -274,7 +274,7 @@ class StringTemplateTest extends TestCase
         $attrs = [$evilKey => 'some value'];
 
         $result = $this->template->formatAttributes($attrs);
-        $this->assertEquals(
+        $this->assertSame(
             ' &gt;&lt;script&gt;alert(1)&lt;/script&gt;="some value"',
             $result
         );
@@ -289,7 +289,7 @@ class StringTemplateTest extends TestCase
     {
         $attrs = ['name' => ['bruce', 'wayne']];
         $result = $this->template->formatAttributes($attrs);
-        $this->assertEquals(
+        $this->assertSame(
             ' name="bruce wayne"',
             $result
         );

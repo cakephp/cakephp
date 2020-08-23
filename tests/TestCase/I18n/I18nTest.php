@@ -69,8 +69,8 @@ class I18nTest extends TestCase
     {
         $newLocale = 'de_DE';
         I18n::setLocale($newLocale);
-        $this->assertEquals($newLocale, I18n::getLocale());
-        $this->assertEquals($this->locale, I18n::getDefaultLocale());
+        $this->assertSame($newLocale, I18n::getLocale());
+        $this->assertSame($this->locale, I18n::getDefaultLocale());
     }
 
     /**
@@ -183,13 +183,13 @@ class I18nTest extends TestCase
         ]);
 
         $translator = I18n::getTranslator('test_plugin');
-        $this->assertEquals(
+        $this->assertSame(
             'Plural Rule 1 (from plugin)',
             $translator->translate('Plural Rule 1')
         );
 
         $translator = I18n::getTranslator('company/test_plugin_three');
-        $this->assertEquals(
+        $this->assertSame(
             'String 1 (from plugin three)',
             $translator->translate('String 1')
         );
@@ -205,7 +205,7 @@ class I18nTest extends TestCase
     {
         $this->loadPlugins(['TestTheme']);
         $translator = I18n::getTranslator('test_theme');
-        $this->assertEquals(
+        $this->assertSame(
             'translated',
             $translator->translate('A Message')
         );
@@ -437,20 +437,20 @@ class I18nTest extends TestCase
         $this->assertSame('The letters A and B', __x('character', 'letters', 'A', 'B'));
         $this->assertSame('The letter A', __x('character', 'letter', 'A'));
 
-        $this->assertEquals(
+        $this->assertSame(
             'She wrote a letter to Thomas and Sara',
             __x('communication', 'letters', ['Thomas', 'Sara'])
         );
-        $this->assertEquals(
+        $this->assertSame(
             'She wrote a letter to Thomas',
             __x('communication', 'letter', ['Thomas'])
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             'She wrote a letter to Thomas and Sara',
             __x('communication', 'letters', 'Thomas', 'Sara')
         );
-        $this->assertEquals(
+        $this->assertSame(
             'She wrote a letter to Thomas',
             __x('communication', 'letter', 'Thomas')
         );
@@ -539,20 +539,20 @@ class I18nTest extends TestCase
         $this->assertSame('The letters A and B', __xn('character', 'letter', 'letters', 2, ['A', 'B']));
         $this->assertSame('The letter A', __xn('character', 'letter', 'letters', 1, ['A']));
 
-        $this->assertEquals(
+        $this->assertSame(
             'She wrote a letter to Thomas and Sara',
             __xn('communication', 'letter', 'letters', 2, ['Thomas', 'Sara'])
         );
-        $this->assertEquals(
+        $this->assertSame(
             'She wrote a letter to Thomas',
             __xn('communication', 'letter', 'letters', 1, ['Thomas'])
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             'She wrote a letter to Thomas and Sara',
             __xn('communication', 'letter', 'letters', 2, 'Thomas', 'Sara')
         );
-        $this->assertEquals(
+        $this->assertSame(
             'She wrote a letter to Thomas',
             __xn('communication', 'letter', 'letters', 1, 'Thomas')
         );
@@ -594,20 +594,20 @@ class I18nTest extends TestCase
         $this->assertSame('The letters A and B', __dx('custom', 'character', 'letters', ['A', 'B']));
         $this->assertSame('The letter A', __dx('custom', 'character', 'letter', ['A']));
 
-        $this->assertEquals(
+        $this->assertSame(
             'She wrote a letter to Thomas and Sara',
             __dx('custom', 'communication', 'letters', ['Thomas', 'Sara'])
         );
-        $this->assertEquals(
+        $this->assertSame(
             'She wrote a letter to Thomas',
             __dx('custom', 'communication', 'letter', ['Thomas'])
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             'She wrote a letter to Thomas and Sara',
             __dx('custom', 'communication', 'letters', 'Thomas', 'Sara')
         );
-        $this->assertEquals(
+        $this->assertSame(
             'She wrote a letter to Thomas',
             __dx('custom', 'communication', 'letter', 'Thomas')
         );
@@ -645,29 +645,29 @@ class I18nTest extends TestCase
 
             return $package;
         }, 'en_US');
-        $this->assertEquals(
+        $this->assertSame(
             'The letters A and B',
             __dxn('custom', 'character', 'letter', 'letters', 2, ['A', 'B'])
         );
-        $this->assertEquals(
+        $this->assertSame(
             'The letter A',
             __dxn('custom', 'character', 'letter', 'letters', 1, ['A'])
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             'She wrote a letter to Thomas and Sara',
             __dxn('custom', 'communication', 'letter', 'letters', 2, ['Thomas', 'Sara'])
         );
-        $this->assertEquals(
+        $this->assertSame(
             'She wrote a letter to Thomas',
             __dxn('custom', 'communication', 'letter', 'letters', 1, ['Thomas'])
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             'She wrote a letter to Thomas and Sara',
             __dxn('custom', 'communication', 'letter', 'letters', 2, 'Thomas', 'Sara')
         );
-        $this->assertEquals(
+        $this->assertSame(
             'She wrote a letter to Thomas',
             __dxn('custom', 'communication', 'letter', 'letters', 1, 'Thomas')
         );

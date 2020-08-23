@@ -93,7 +93,7 @@ class UuidTypeTest extends TestCase
      */
     public function testToStatement()
     {
-        $this->assertEquals(PDO::PARAM_STR, $this->type->toStatement('', $this->driver));
+        $this->assertSame(PDO::PARAM_STR, $this->type->toStatement('', $this->driver));
     }
 
     /**

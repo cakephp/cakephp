@@ -370,7 +370,7 @@ class TimestampBehaviorTest extends TestCase
         $this->Behavior->timestamp($ts);
         $return = $this->Behavior->timestamp();
 
-        $this->assertEquals(
+        $this->assertSame(
             $ts->format('c'),
             $return->format('c'),
             'Should return the same value as initially set'
@@ -477,8 +477,8 @@ class TimestampBehaviorTest extends TestCase
         $row = $table->find('all')->where(['id' => $entity->id])->first();
 
         $now = Time::now();
-        $this->assertEquals($now->toDateTimeString(), $row->created->toDateTimeString());
-        $this->assertEquals($now->toDateTimeString(), $row->updated->toDateTimeString());
+        $this->assertSame($now->toDateTimeString(), $row->created->toDateTimeString());
+        $this->assertSame($now->toDateTimeString(), $row->updated->toDateTimeString());
     }
 
     /**

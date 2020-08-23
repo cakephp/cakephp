@@ -116,7 +116,7 @@ class FunctionExpressionTest extends TestCase
 
         $binder = new ValueBinder();
         $function = new $this->expressionClass('MyFunction', [$query]);
-        $this->assertEquals(
+        $this->assertSame(
             'MyFunction((SELECT column))',
             preg_replace('/[`"\[\]]/', '', $function->sql($binder))
         );
@@ -136,7 +136,7 @@ class FunctionExpressionTest extends TestCase
 
         $binder = new ValueBinder();
         $function = new $this->expressionClass('MyFunction', [$query]);
-        $this->assertEquals(
+        $this->assertSame(
             'MyFunction((SELECT Articles.column AS Articles__column FROM articles Articles))',
             preg_replace('/[`"\[\]]/', '', $function->sql($binder))
         );
