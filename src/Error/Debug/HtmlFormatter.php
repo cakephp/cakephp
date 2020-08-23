@@ -105,7 +105,7 @@ class HtmlFormatter implements FormatterInterface
      */
     public function dump(NodeInterface $node): string
     {
-        $html = $this->export($node);
+        $html = $this->export($node, 0);
         $head = '';
         if (!static::$outputHeader) {
             static::$outputHeader = true;
@@ -119,9 +119,10 @@ class HtmlFormatter implements FormatterInterface
      * Convert a tree of NodeInterface objects into HTML
      *
      * @param \Cake\Error\Debug\NodeInterface $var The node tree to dump.
+     * @param int $indent The current indentation level.
      * @return string
      */
-    protected function export(NodeInterface $var): string
+    protected function export(NodeInterface $var, int $indent): string
     {
         if ($var instanceof ScalarNode) {
             switch ($var->getType()) {
@@ -140,10 +141,10 @@ class HtmlFormatter implements FormatterInterface
             }
         }
         if ($var instanceof ArrayNode) {
-            return $this->exportArray($var);
+            return $this->exportArray($var, $indent + 1);
         }
         if ($var instanceof ClassNode || $var instanceof ReferenceNode) {
-            return $this->exportObject($var);
+            return $this->exportObject($var, $indent + 1);
         }
         if ($var instanceof SpecialNode) {
             return $this->style('special', (string)$var->getValue());
@@ -155,25 +156,29 @@ class HtmlFormatter implements FormatterInterface
      * Export an array type object
      *
      * @param \Cake\Error\Debug\ArrayNode $var The array to export.
+     * @param int $indent The current indentation level.
      * @return string Exported array.
      */
-    protected function exportArray(ArrayNode $var): string
+    protected function exportArray(ArrayNode $var, int $indent): string
     {
         $open = '<span class="cake-dbg-array">' .
             $this->style('punct', '[') .
             '<samp class="cake-dbg-array-items">';
         $vars = [];
+        $break = "\n" . str_repeat('  ', $indent);
+        $endBreak = "\n" . str_repeat('  ', $indent - 1);
 
         $arrow = $this->style('punct', ' => ');
         foreach ($var->getChildren() as $item) {
             $val = $item->getValue();
-            $vars[] = '<span class="cake-dbg-array-item">' .
-                $this->export($item->getKey()) . $arrow . $this->export($val) .
+            $vars[] = $break . '<span class="cake-dbg-array-item">' .
+                $this->export($item->getKey(), $indent) . $arrow . $this->export($val, $indent) .
                 $this->style('punct', ',') .
                 '</span>';
         }
 
         $close = '</samp>' .
+            $endBreak .
             $this->style('punct', ']') .
             '</span>';
 
@@ -184,16 +189,19 @@ class HtmlFormatter implements FormatterInterface
      * Handles object to string conversion.
      *
      * @param \Cake\Error\Debug\ClassNode|\Cake\Error\Debug\ReferenceNode $var Object to convert.
+     * @param int $indent The current indentation level.
      * @return string
      * @see \Cake\Error\Debugger::exportVar()
      */
-    protected function exportObject($var): string
+    protected function exportObject($var, int $indent): string
     {
         $objectId = "cake-db-object-{$this->id}-{$var->getId()}";
         $out = sprintf(
             '<span class="cake-dbg-object" id="%s">',
             $objectId
         );
+        $break = "\n" . str_repeat('  ', $indent);
+        $endBreak = "\n" . str_repeat('  ', $indent - 1);
 
         if ($var instanceof ReferenceNode) {
             $link = sprintf(
@@ -224,23 +232,26 @@ class HtmlFormatter implements FormatterInterface
             $visibility = $property->getVisibility();
             $name = $property->getName();
             if ($visibility && $visibility !== 'public') {
-                $props[] = '<span class="cake-dbg-prop">' .
+                $props[] = $break .
+                    '<span class="cake-dbg-prop">' .
                     $this->style('visibility', $visibility) .
                     ' ' .
                     $this->style('property', $name) .
                     $arrow .
-                    $this->export($property->getValue()) .
+                    $this->export($property->getValue(), $indent) .
                 '</span>';
             } else {
-                $props[] = '<span class="cake-dbg-prop">' .
+                $props[] = $break .
+                    '<span class="cake-dbg-prop">' .
                     $this->style('property', $name) .
                     $arrow .
-                    $this->export($property->getValue()) .
+                    $this->export($property->getValue(), $indent) .
                     '</span>';
             }
         }
 
         $end = '</samp>' .
+            $endBreak .
             $this->style('punct', '}') .
             '</span>';
 

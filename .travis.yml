@@ -75,7 +75,7 @@ script:
 after_success:
   - |
       if [[ $TRAVIS_PHP_VERSION == '7.4' ]]; then
-        wget https://github.com/php-coveralls/php-coveralls/releases/download/v2.1.0/php-coveralls.phar
+        wget https://github.com/php-coveralls/php-coveralls/releases/download/v2.2.0/php-coveralls.phar
         chmod +x php-coveralls.phar
         ./php-coveralls.phar
       fi

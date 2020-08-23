@@ -721,6 +721,31 @@ class RouteBuilderTest extends TestCase
     }
 
     /**
+     * Test connecting resources with restricted mappings.
+     *
+     * @return void
+     */
+    public function testResourcesWithMapOnly()
+    {
+        $routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'api']);
+        $routes->resources('Articles', [
+            'map' => [
+                'conditions' => ['action' => 'conditions', 'method' => 'DeLeTe'],
+            ],
+            'only' => ['conditions'],
+        ]);
+
+        $all = $this->collection->routes();
+        $this->assertCount(1, $all);
+        $this->assertSame('DELETE', $all[0]->defaults['_method'], 'method should be normalized.');
+        $this->assertSame('Articles', $all[0]->defaults['controller']);
+        $this->assertSame('conditions', $all[0]->defaults['action']);
+
+        $result = $this->collection->parse('/api/articles/conditions', 'DELETE');
+        $this->assertNotNull($result);
+    }
+
+    /**
      * Test connecting resources.
      *
      * @return void
