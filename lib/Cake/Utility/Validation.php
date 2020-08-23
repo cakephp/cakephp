@@ -392,7 +392,7 @@ class Validation {
  * @return bool Success
  */
 	public static function time($check) {
-		return static::_check($check, '%^((0?[1-9]|1[012])(:[0-5]\d){0,2} ?([AP]M|[ap]m))$|^([01]\d|2[0-3])(:[0-5]\d){0,2}$%');
+		return static::_check($check, '%^((0?[1-9]|1[012])(:[0-5]\d){0,2} ?([AP]M|[ap]m))$|^([01]\d|2[0-3]):[0-5]\d$%');
 	}
 
 /**
