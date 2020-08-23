@@ -292,6 +292,16 @@ if (!function_exists('deprecationWarning')) {
             $frame = $trace[$stackFrame];
             $frame += ['file' => '[internal]', 'line' => '??'];
 
+            $patterns = (array)Configure::read('Error.disableDeprecations');
+            $relative = substr($frame['file'], strlen(ROOT) + 1);
+            debug($relative);
+            foreach ($patterns as $pattern) {
+                $pattern = str_replace('/', DIRECTORY_SEPARATOR, $pattern);
+                if (fnmatch($pattern, $relative)) {
+                    return;
+                }
+            }
+
             $message = sprintf(
                 '%s - %s, line: %s' . "\n" .
                 ' You can disable deprecation warnings by setting `Error.errorLevel` to' .
