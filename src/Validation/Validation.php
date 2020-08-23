@@ -617,7 +617,7 @@ class Validation
 
     /**
      * Time validation, determines if the string passed is a valid time.
-     * Validates time as 24hr (HH:MM[:SS][.FFFFFF]) or am/pm ([H]H:MM[a|p]m)
+     * Validates time as 24hr (HH[:MM][:SS][.FFFFFF]) or am/pm ([H]H:MM[a|p]m)
      *
      * Seconds and fractional seconds (microseconds) are allowed but optional
      * in 24hr format.
