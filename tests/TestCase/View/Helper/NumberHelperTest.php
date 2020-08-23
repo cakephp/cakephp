@@ -80,7 +80,6 @@ class NumberHelperTest extends TestCase
             ['currency'],
             ['format'],
             ['formatDelta'],
-            ['defaultCurrency'],
             ['ordinal'],
         ];
     }

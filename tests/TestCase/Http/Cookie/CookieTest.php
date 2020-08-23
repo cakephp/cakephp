@@ -128,14 +128,16 @@ class CookieTest extends TestCase
      */
     public function testGetStringValue()
     {
-        $cookie = new Cookie('cakephp', 'thing');
-        $this->assertSame('thing', $cookie->getStringValue());
+        $this->deprecated(function () {
+            $cookie = new Cookie('cakephp', 'thing');
+            $this->assertSame('thing', $cookie->getStringValue());
 
-        $value = ['user_id' => 1, 'token' => 'abc123'];
-        $cookie = new Cookie('cakephp', $value);
+            $value = ['user_id' => 1, 'token' => 'abc123'];
+            $cookie = new Cookie('cakephp', $value);
 
-        $this->assertSame($value, $cookie->getValue());
-        $this->assertSame(json_encode($value), $cookie->getStringValue());
+            $this->assertSame($value, $cookie->getValue());
+            $this->assertSame(json_encode($value), $cookie->getStringValue());
+        });
     }
 
     /**

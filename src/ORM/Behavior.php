@@ -188,6 +188,8 @@ class Behavior implements EventListenerInterface
      */
     public function getTable(): Table
     {
+        deprecationWarning('Behavior::getTable() is deprecated. Use table() instead.');
+
         return $this->table();
     }
 
