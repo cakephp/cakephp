@@ -56,7 +56,7 @@ class FilesystemTest extends TestCase
     {
         $path = $this->vfsPath . DS . 'tests' . DS . 'first' . DS . 'second' . DS . 'third';
         $this->fs->mkdir($path);
-        $this->assertTrue(is_dir($path));
+        $this->assertDirectoryExists($path);
     }
 
     /**

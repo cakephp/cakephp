@@ -401,7 +401,7 @@ class FormAuthenticateTest extends TestCase
 
         $passwordHasher = $this->auth->passwordHasher();
         $result = $passwordHasher->getConfig();
-        $this->assertEquals(PASSWORD_BCRYPT, $result['hashType']);
+        $this->assertSame(PASSWORD_BCRYPT, $result['hashType']);
 
         $hash = password_hash('mypass', PASSWORD_BCRYPT);
         $User = $this->getTableLocator()->get('Users');

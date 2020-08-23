@@ -117,7 +117,7 @@ class DashedRouteTest extends TestCase
             1,
         ]);
         $expected = '/admin/subscriptions/edit-admin-e/1';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $route = new DashedRoute('/:controller/:action-:id');
         $result = $route->match([
@@ -207,7 +207,7 @@ class DashedRouteTest extends TestCase
             'action' => 'actionName',
         ]);
         $expectedUrl = '/plugin/controller-name/action-name';
-        $this->assertEquals($expectedUrl, $url);
+        $this->assertSame($expectedUrl, $url);
         $result = $route->parse($expectedUrl, 'GET');
         $this->assertSame('ControllerName', $result['controller']);
         $this->assertSame('actionName', $result['action']);

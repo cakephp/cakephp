@@ -861,11 +861,11 @@ class CacheTest extends TestCase
 
         $expected = 'This is some data 0';
         $result = Cache::remember('test_key', $cacher, 'tests');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $counter = 1;
         $result = Cache::remember('test_key', $cacher, 'tests');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -883,7 +883,7 @@ class CacheTest extends TestCase
 
         $expected = 'test data';
         $result = Cache::read('test_add_key', 'tests');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Cache::add('test_add_key', 'test data 2', 'tests');
         $this->assertFalse($result);

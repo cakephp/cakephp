@@ -41,11 +41,11 @@ class ResponseTest extends TestCase
         $this->assertSame('1.0', $response->getProtocolVersion());
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('OK', $response->getReasonPhrase());
-        $this->assertEquals(
+        $this->assertSame(
             'text/html;charset="UTF-8"',
             $response->getHeaderLine('content-type')
         );
-        $this->assertEquals(
+        $this->assertSame(
             'Tue, 25 Dec 2012 04:43:47 GMT',
             $response->getHeaderLine('Date')
         );
@@ -68,16 +68,16 @@ class ResponseTest extends TestCase
 
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('1.0', $response->getProtocolVersion());
-        $this->assertEquals(
+        $this->assertSame(
             'text/html;charset="UTF-8"',
             $response->getHeaderLine('content-type')
         );
-        $this->assertEquals(
+        $this->assertSame(
             'Tue, 25 Dec 2012 04:43:47 GMT',
             $response->getHeaderLine('Date')
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             'text/html;charset="UTF-8"',
             $response->getHeaderLine('Content-Type')
         );
@@ -115,7 +115,7 @@ class ResponseTest extends TestCase
         ];
         $encoded = json_encode($data);
         $response = new Response([], $encoded);
-        $this->assertEquals($data['property'], $response->getJson()['property']);
+        $this->assertSame($data['property'], $response->getJson()['property']);
 
         $data = '';
         $response = new Response([], $data);
@@ -356,7 +356,7 @@ XML;
         $this->assertSame('soon', $result['value']);
         $this->assertTrue($result['httponly']);
         $this->assertTrue($result['secure']);
-        $this->assertEquals(
+        $this->assertSame(
             strtotime('Wed, 09-Jun-2021 10:18:14 GMT'),
             $result['expires']
         );

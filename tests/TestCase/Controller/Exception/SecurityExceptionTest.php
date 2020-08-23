@@ -47,7 +47,7 @@ class SecurityExceptionTest extends TestCase
      */
     public function testGetType(): void
     {
-        $this->assertEquals(
+        $this->assertSame(
             'secure',
             $this->securityException->getType(),
             '::getType should always return the type of `secure`.'
@@ -63,7 +63,7 @@ class SecurityExceptionTest extends TestCase
     {
         $sampleMessage = 'foo';
         $this->securityException->setMessage($sampleMessage);
-        $this->assertEquals(
+        $this->assertSame(
             $sampleMessage,
             $this->securityException->getMessage(),
             '::getMessage should always return the message set.'
@@ -79,7 +79,7 @@ class SecurityExceptionTest extends TestCase
     {
         $sampleReason = 'canary';
         $this->securityException->setReason($sampleReason);
-        $this->assertEquals(
+        $this->assertSame(
             $sampleReason,
             $this->securityException->getReason(),
             '::getReason should always return the reason set.'

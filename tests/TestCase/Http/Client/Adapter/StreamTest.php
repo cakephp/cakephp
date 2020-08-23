@@ -88,7 +88,7 @@ class StreamTest extends TestCase
         $responses = $stream->send($request, []);
         $this->assertInstanceOf(Response::class, $responses[0]);
 
-        $this->assertEquals(20000, strlen($responses[0]->getStringBody()));
+        $this->assertSame(20000, strlen($responses[0]->getStringBody()));
     }
 
     /**
@@ -145,7 +145,7 @@ class StreamTest extends TestCase
             'Cookie: a=b; c=do%20it',
             'Connection: close',
         ];
-        $this->assertEquals(implode("\r\n", $expected), $result['header']);
+        $this->assertSame(implode("\r\n", $expected), $result['header']);
         $this->assertSame(0, $result['max_redirects']);
         $this->assertTrue($result['ignore_errors']);
     }
@@ -175,7 +175,7 @@ class StreamTest extends TestCase
             'Connection: close',
             'User-Agent: CakePHP',
         ];
-        $this->assertEquals(implode("\r\n", $expected), $result['header']);
+        $this->assertSame(implode("\r\n", $expected), $result['header']);
         $this->assertEquals($content, $result['content']);
     }
 
@@ -344,11 +344,11 @@ class StreamTest extends TestCase
         $this->assertSame('close', $responses[0]->getHeaderLine('Connection'));
         $this->assertSame('', (string)$responses[0]->getBody());
         $this->assertSame('', (string)$responses[1]->getBody());
-        $this->assertEquals($content, (string)$responses[2]->getBody());
+        $this->assertSame($content, (string)$responses[2]->getBody());
 
-        $this->assertEquals(302, $responses[0]->getStatusCode());
-        $this->assertEquals(302, $responses[1]->getStatusCode());
-        $this->assertEquals(200, $responses[2]->getStatusCode());
+        $this->assertSame(302, $responses[0]->getStatusCode());
+        $this->assertSame(302, $responses[1]->getStatusCode());
+        $this->assertSame(200, $responses[2]->getStatusCode());
 
         $this->assertSame('value', $responses[0]->getCookie('first'));
         $this->assertNull($responses[0]->getCookie('second'));

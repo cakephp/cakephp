@@ -285,9 +285,9 @@ class PluginAssetsCommandsTest extends TestCase
 
         $this->exec('plugin assets copy');
 
-        $this->assertTrue(is_dir($this->wwwRoot . 'test_plugin'));
+        $this->assertDirectoryExists($this->wwwRoot . 'test_plugin');
 
-        $this->assertTrue(is_dir($this->wwwRoot . 'company' . DS . 'test_plugin_three'));
+        $this->assertDirectoryExists($this->wwwRoot . 'company' . DS . 'test_plugin_three');
 
         $this->exec('plugin assets remove');
 

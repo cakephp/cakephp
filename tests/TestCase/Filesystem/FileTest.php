@@ -73,7 +73,7 @@ class FileTest extends TestCase
 
         $result = $this->File->name;
         $expecting = basename($file);
-        $this->assertEquals($expecting, $result);
+        $this->assertSame($expecting, $result);
 
         $result = $this->File->info();
         $expecting = [
@@ -98,7 +98,7 @@ class FileTest extends TestCase
 
         $result = $this->File->name();
         $expecting = 'LICENSE';
-        $this->assertEquals($expecting, $result);
+        $this->assertSame($expecting, $result);
 
         $result = $this->File->md5();
         $expecting = md5_file($file);
@@ -156,7 +156,7 @@ class FileTest extends TestCase
             // Check the name after running __construct()
             $result = $File->name;
             $expecting = basename($path);
-            $this->assertEquals($expecting, $result);
+            $this->assertSame($expecting, $result);
         }
 
         // Check name()
@@ -168,10 +168,10 @@ class FileTest extends TestCase
             $File->info(); // to set and unset 'extension' in bellow
             unset($File->info['extension']);
 
-            $this->assertEquals(basename($path), $File->name());
+            $this->assertSame(basename($path), (string)$File->name());
         } else {
             $File->info['extension'] = $suffix;
-            $this->assertEquals(basename($path, '.' . $suffix), $File->name());
+            $this->assertSame(basename($path, '.' . $suffix), $File->name());
         }
     }
 
@@ -223,7 +223,7 @@ class FileTest extends TestCase
         $expecting = decoct(0664 & ~umask());
         $File = new File($file, true);
         $result = $File->perms();
-        $this->assertEquals($expecting, $result);
+        $this->assertSame($expecting, $result);
         $File->delete();
 
         umask(0022);
@@ -231,7 +231,7 @@ class FileTest extends TestCase
         $expecting = decoct(0644 & ~umask());
         $File = new File($file, true);
         $result = $File->perms();
-        $this->assertEquals($expecting, $result);
+        $this->assertSame($expecting, $result);
         $File->delete();
 
         umask(0422);
@@ -239,7 +239,7 @@ class FileTest extends TestCase
         $expecting = decoct(0244 & ~umask());
         $File = new File($file, true);
         $result = $File->perms();
-        $this->assertEquals($expecting, $result);
+        $this->assertSame($expecting, $result);
         $File->delete();
 
         umask(0444);
@@ -247,7 +247,7 @@ class FileTest extends TestCase
         $expecting = decoct(0222 & ~umask());
         $File = new File($file, true);
         $result = $File->perms();
-        $this->assertEquals($expecting, $result);
+        $this->assertSame($expecting, $result);
         $File->delete();
 
         umask($old);
@@ -271,18 +271,18 @@ class FileTest extends TestCase
         $this->File->lock = true;
         $result = $this->File->read();
         $expecting = file_get_contents(__FILE__);
-        $this->assertEquals(trim($expecting), $result);
+        $this->assertSame(trim($expecting), $result);
         $this->File->lock = null;
 
         $data = $expecting;
         $expecting = substr($data, 0, 3);
         $result = $this->File->read(3);
-        $this->assertEquals($expecting, $result);
+        $this->assertSame($expecting, $result);
         $this->assertIsResource($this->File->handle);
 
         $expecting = substr($data, 3, 3);
         $result = $this->File->read(3);
-        $this->assertEquals($expecting, $result);
+        $this->assertSame($expecting, $result);
     }
 
     /**
@@ -311,7 +311,7 @@ class FileTest extends TestCase
         $expected = substr($data, 5, 3);
         $result = $this->File->read(3);
         $this->assertTrue($success);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $this->File->offset();
         $expected = 5 + 3;
@@ -358,7 +358,7 @@ class FileTest extends TestCase
         $this->File->handle = fopen(__FILE__, 'r');
         $this->assertIsResource($this->File->handle);
         $this->assertTrue($this->File->close());
-        $this->assertFalse(is_resource($this->File->handle));
+        $this->assertIsResource($this->File->handle);
     }
 
     /**

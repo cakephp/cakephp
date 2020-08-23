@@ -98,8 +98,7 @@ class FileEngineTest extends TestCase
         $this->_configCache(['duration' => 1]);
 
         $result = Cache::read('test', 'file_test');
-        $expecting = '';
-        $this->assertEquals($expecting, $result);
+        $this->assertNull($result);
     }
 
     /**
@@ -110,8 +109,7 @@ class FileEngineTest extends TestCase
     public function testReadAndWrite()
     {
         $result = Cache::read('test', 'file_test');
-        $expecting = '';
-        $this->assertEquals($expecting, $result);
+        $this->assertNull($result);
 
         $data = 'this is a test of the emergency broadcasting system';
         $result = Cache::write('test', $data, 'file_test');
@@ -119,7 +117,7 @@ class FileEngineTest extends TestCase
 
         $result = Cache::read('test', 'file_test');
         $expecting = $data;
-        $this->assertEquals($expecting, $result);
+        $this->assertSame($expecting, $result);
 
         Cache::delete('test', 'file_test');
     }
@@ -297,11 +295,11 @@ class FileEngineTest extends TestCase
         $FileOne->set('prefix_one_key_one', $dataOne);
         $FileTwo->set('prefix_two_key_two', $dataTwo);
 
-        $this->assertEquals($expected, $FileOne->get('prefix_one_key_one'));
-        $this->assertEquals($expected, $FileTwo->get('prefix_two_key_two'));
+        $this->assertSame($expected, $FileOne->get('prefix_one_key_one'));
+        $this->assertSame($expected, $FileTwo->get('prefix_two_key_two'));
 
         $FileOne->clear();
-        $this->assertEquals($expected, $FileTwo->get('prefix_two_key_two'), 'secondary config was cleared by accident.');
+        $this->assertSame($expected, $FileTwo->get('prefix_two_key_two'), 'secondary config was cleared by accident.');
         $FileTwo->clear();
     }
 
@@ -521,7 +519,7 @@ class FileEngineTest extends TestCase
         $write = Cache::write('masking_test', $data, 'mask_test');
         $result = substr(sprintf('%o', fileperms(TMP . 'tests/cake_masking_test')), -4);
         $expected = '0664';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
         Cache::delete('masking_test', 'mask_test');
         Cache::drop('mask_test');
 
@@ -529,7 +527,7 @@ class FileEngineTest extends TestCase
         Cache::write('masking_test', $data, 'mask_test');
         $result = substr(sprintf('%o', fileperms(TMP . 'tests/cake_masking_test')), -4);
         $expected = '0666';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
         Cache::delete('masking_test', 'mask_test');
         Cache::drop('mask_test');
 
@@ -537,7 +535,7 @@ class FileEngineTest extends TestCase
         Cache::write('masking_test', $data, 'mask_test');
         $result = substr(sprintf('%o', fileperms(TMP . 'tests/cake_masking_test')), -4);
         $expected = '0644';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
         Cache::delete('masking_test', 'mask_test');
         Cache::drop('mask_test');
 
@@ -545,7 +543,7 @@ class FileEngineTest extends TestCase
         Cache::write('masking_test', $data, 'mask_test');
         $result = substr(sprintf('%o', fileperms(TMP . 'tests/cake_masking_test')), -4);
         $expected = '0640';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
         Cache::delete('masking_test', 'mask_test');
         Cache::drop('mask_test');
     }
@@ -695,7 +693,7 @@ class FileEngineTest extends TestCase
 
         $expected = 'test data';
         $result = Cache::read('test_add_key', 'file_test');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Cache::add('test_add_key', 'test data 2', 'file_test');
         $this->assertFalse($result);

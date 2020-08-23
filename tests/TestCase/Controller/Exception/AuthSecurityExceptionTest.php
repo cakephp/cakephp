@@ -42,7 +42,7 @@ class AuthSecurityExceptionTest extends TestCase
      */
     public function testGetType(): void
     {
-        $this->assertEquals(
+        $this->assertSame(
             'auth',
             $this->authSecurityException->getType(),
             '::getType should always return the type of `auth`.'

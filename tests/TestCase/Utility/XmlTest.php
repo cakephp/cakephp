@@ -105,7 +105,7 @@ class XmlTest extends TestCase
         $xml = CORE_TESTS . 'Fixture/sample.xml';
         $obj = Xml::build($xml, ['readFile' => true]);
         $this->assertSame('tags', $obj->getName());
-        $this->assertSame(2, count($obj));
+        $this->assertCount(2, $obj);
 
         $this->assertEquals(
             Xml::build($xml, ['readFile' => true]),
@@ -340,7 +340,7 @@ close to 5 million globally.
         $obj = Xml::fromArray($xml, ['format' => 'attributes']);
         $this->assertInstanceOf(\SimpleXMLElement::class, $obj);
         $this->assertSame('tags', $obj->getName());
-        $this->assertSame(2, count($obj));
+        $this->assertCount(2, $obj);
         $xmlText = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <tags>
@@ -353,7 +353,7 @@ XML;
         $obj = Xml::fromArray($xml);
         $this->assertInstanceOf(\SimpleXMLElement::class, $obj);
         $this->assertSame('tags', $obj->getName());
-        $this->assertSame(2, count($obj));
+        $this->assertCount(2, $obj);
         $xmlText = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <tags>
@@ -388,7 +388,7 @@ XML;
             ],
         ];
         $obj = Xml::fromArray($xml, ['format' => 'tags']);
-        $this->assertSame(6, count($obj));
+        $this->assertCount(6, $obj);
         $this->assertSame((string)$obj->bool, '1');
         $this->assertSame((string)$obj->int, '1');
         $this->assertSame((string)$obj->float, '10.2');

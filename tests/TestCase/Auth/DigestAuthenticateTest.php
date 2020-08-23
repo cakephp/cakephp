@@ -87,7 +87,7 @@ class DigestAuthenticateTest extends TestCase
         ]);
         $this->assertSame('AuthUser', $object->getConfig('userModel'));
         $this->assertEquals(['username' => 'user', 'password' => 'pass'], $object->getConfig('fields'));
-        $this->assertEquals(123456, $object->getConfig('nonce'));
+        $this->assertSame(123456, $object->getConfig('nonce'));
         $this->assertEquals(env('SERVER_NAME'), $object->getConfig('realm'));
     }
 
@@ -464,7 +464,7 @@ DIGEST;
     {
         $result = DigestAuthenticate::password('mark', 'password', 'localhost');
         $expected = md5('mark:localhost:password');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**

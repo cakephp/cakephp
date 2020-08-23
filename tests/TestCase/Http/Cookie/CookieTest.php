@@ -88,7 +88,7 @@ class CookieTest extends TestCase
         $result = $cookie->toHeaderValue();
 
         $expected = 'cakephp=cakephp-rocks; expires=Wed, 01-Dec-2027 12:00:00 GMT; path=/; domain=cakephp.org; samesite=Strict; secure; httponly';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**

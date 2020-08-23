@@ -66,7 +66,7 @@ class AssetMiddlewareTest extends TestCase
 
         $body = $res->getBody()->getContents();
         $this->assertSame('', $body);
-        $this->assertEquals(304, $res->getStatusCode());
+        $this->assertSame(304, $res->getStatusCode());
         $this->assertNotEmpty($res->getHeaderLine('Last-Modified'));
     }
 
@@ -152,23 +152,23 @@ class AssetMiddlewareTest extends TestCase
         $middleware = new AssetMiddleware(['cacheTime' => '+4 hours']);
         $res = $middleware->process($request, $handler);
 
-        $this->assertEquals(
+        $this->assertSame(
             'application/javascript',
             $res->getHeaderLine('Content-Type')
         );
-        $this->assertEquals(
+        $this->assertSame(
             gmdate('D, j M Y G:i:s ', $time) . 'GMT',
             $res->getHeaderLine('Date')
         );
-        $this->assertEquals(
+        $this->assertSame(
             'public,max-age=' . ($expires - $time),
             $res->getHeaderLine('Cache-Control')
         );
-        $this->assertEquals(
+        $this->assertSame(
             gmdate('D, j M Y G:i:s ', $modified) . 'GMT',
             $res->getHeaderLine('Last-Modified')
         );
-        $this->assertEquals(
+        $this->assertSame(
             gmdate('D, j M Y G:i:s ', $expires) . 'GMT',
             $res->getHeaderLine('Expires')
         );

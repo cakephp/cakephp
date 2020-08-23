@@ -313,7 +313,7 @@ class CommandCollectionTest extends TestCase
             'Duplicate shell was given a full alias'
         );
         $this->assertSame('TestPlugin\Shell\ExampleShell', $result['example']);
-        $this->assertEquals($result['example'], $result['test_plugin.example']);
+        $this->assertSame($result['example'], $result['test_plugin.example']);
         $this->assertSame('TestPlugin\Shell\SampleShell', $result['test_plugin.sample']);
 
         $result = $collection->discoverPlugin('Company/TestPluginThree');

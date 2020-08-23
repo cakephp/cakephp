@@ -219,7 +219,7 @@ class SessionTest extends TestCase
             'three' => ['something'],
             'null' => null,
         ]);
-        $this->assertEquals(1, $session->read('one'));
+        $this->assertSame(1, $session->read('one'));
         $this->assertEquals(['something'], $session->read('three'));
         $this->assertNull($session->read('null'));
     }
@@ -567,7 +567,7 @@ class SessionTest extends TestCase
 
         new Session($config);
         $this->assertSame('0', ini_get('session.cookie_lifetime'));
-        $this->assertEquals(400 * 60, ini_get('session.gc_maxlifetime'));
+        $this->assertSame(400 * 60, (int)ini_get('session.gc_maxlifetime'));
     }
 
     /**

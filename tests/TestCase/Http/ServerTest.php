@@ -112,12 +112,12 @@ class ServerTest extends TestCase
         $app = new MiddlewareApplication($this->config);
         $server = new Server($app);
         $res = $server->run($request);
-        $this->assertEquals(
+        $this->assertSame(
             'source header',
             $res->getHeaderLine('X-testing'),
             'Input response is carried through out middleware'
         );
-        $this->assertEquals(
+        $this->assertSame(
             'request header',
             $res->getHeaderLine('X-pass'),
             'Request is used in middleware'
@@ -151,12 +151,12 @@ class ServerTest extends TestCase
 
         $server = new Server($app);
         $res = $server->run($request);
-        $this->assertEquals(
+        $this->assertSame(
             'source header',
             $res->getHeaderLine('X-testing'),
             'Input response is carried through out middleware'
         );
-        $this->assertEquals(
+        $this->assertSame(
             'request header',
             $res->getHeaderLine('X-pass'),
             'Request is used in middleware'
@@ -176,7 +176,7 @@ class ServerTest extends TestCase
         $server = new Server($app);
 
         $res = $server->run();
-        $this->assertEquals(
+        $this->assertSame(
             'globalvalue',
             $res->getHeaderLine('X-pass'),
             'Default request is made from server'

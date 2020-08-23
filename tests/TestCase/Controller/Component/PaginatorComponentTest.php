@@ -212,7 +212,7 @@ class PaginatorComponentTest extends TestCase
             ->count();
         $result = $this->Paginator->paginate($table, $settings)->count();
 
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -789,7 +789,7 @@ class PaginatorComponentTest extends TestCase
         }
 
         $params = $this->controller->getRequest()->getAttribute('paging');
-        $this->assertEquals(
+        $this->assertSame(
             1,
             $params['PaginatorPosts']['page'],
             'Page number should not be 0'
@@ -821,7 +821,7 @@ class PaginatorComponentTest extends TestCase
         }
 
         $params = $this->controller->getRequest()->getAttribute('paging');
-        $this->assertEquals(
+        $this->assertSame(
             3,
             $params['PaginatorPosts']['pageCount'],
             'Page count number should not be 0'
@@ -1037,7 +1037,7 @@ class PaginatorComponentTest extends TestCase
         $result = $this->Paginator->validateSort($model, $options);
         $expected = 'model.author_id DESC';
 
-        $this->assertEquals($expected, $result['order']);
+        $this->assertSame($expected, $result['order']);
     }
 
     /**
@@ -1155,16 +1155,16 @@ class PaginatorComponentTest extends TestCase
         ]));
         $this->Paginator->paginate($table, $settings);
         $params = $this->controller->getRequest()->getAttribute('paging');
-        $this->assertEquals(100, $params['PaginatorPosts']['limit']);
-        $this->assertEquals(100, $params['PaginatorPosts']['perPage']);
+        $this->assertSame(100, $params['PaginatorPosts']['limit']);
+        $this->assertSame(100, $params['PaginatorPosts']['perPage']);
 
         $this->controller->setRequest($this->controller->getRequest()->withQueryParams([
             'limit' => '10',
         ]));
         $this->Paginator->paginate($table, $settings);
         $params = $this->controller->getRequest()->getAttribute('paging');
-        $this->assertEquals(10, $params['PaginatorPosts']['limit']);
-        $this->assertEquals(10, $params['PaginatorPosts']['perPage']);
+        $this->assertSame(10, $params['PaginatorPosts']['limit']);
+        $this->assertSame(10, $params['PaginatorPosts']['perPage']);
     }
 
     /**
@@ -1194,8 +1194,8 @@ class PaginatorComponentTest extends TestCase
         $this->assertEquals(['First Post', 'Second Post', 'Third Post', 'Fourth Post'], $titleExtractor($result));
 
         $result = $this->controller->getRequest()->getAttribute('paging');
-        $this->assertEquals(4, $result['PaginatorPosts']['current']);
-        $this->assertEquals(4, $result['PaginatorPosts']['count']);
+        $this->assertSame(4, $result['PaginatorPosts']['current']);
+        $this->assertSame(4, $result['PaginatorPosts']['count']);
 
         $settings = ['finder' => 'published'];
         $result = $this->Paginator->paginate($table, $settings);
@@ -1203,8 +1203,8 @@ class PaginatorComponentTest extends TestCase
         $this->assertEquals(['First Post', 'Second Post', 'Third Post'], $titleExtractor($result));
 
         $result = $this->controller->getRequest()->getAttribute('paging');
-        $this->assertEquals(3, $result['PaginatorPosts']['current']);
-        $this->assertEquals(3, $result['PaginatorPosts']['count']);
+        $this->assertSame(3, $result['PaginatorPosts']['current']);
+        $this->assertSame(3, $result['PaginatorPosts']['count']);
 
         $settings = ['finder' => 'published', 'limit' => 2, 'page' => 2];
         $result = $this->Paginator->paginate($table, $settings);
@@ -1212,9 +1212,9 @@ class PaginatorComponentTest extends TestCase
         $this->assertEquals(['Third Post'], $titleExtractor($result));
 
         $result = $this->controller->getRequest()->getAttribute('paging');
-        $this->assertEquals(1, $result['PaginatorPosts']['current']);
-        $this->assertEquals(3, $result['PaginatorPosts']['count']);
-        $this->assertEquals(2, $result['PaginatorPosts']['pageCount']);
+        $this->assertSame(1, $result['PaginatorPosts']['current']);
+        $this->assertSame(3, $result['PaginatorPosts']['count']);
+        $this->assertSame(2, $result['PaginatorPosts']['pageCount']);
 
         $settings = ['finder' => 'published', 'limit' => 2];
         $result = $this->Paginator->paginate($table, $settings);
@@ -1222,12 +1222,12 @@ class PaginatorComponentTest extends TestCase
         $this->assertEquals(['First Post', 'Second Post'], $titleExtractor($result));
 
         $result = $this->controller->getRequest()->getAttribute('paging');
-        $this->assertEquals(2, $result['PaginatorPosts']['current']);
-        $this->assertEquals(3, $result['PaginatorPosts']['count']);
-        $this->assertEquals(2, $result['PaginatorPosts']['pageCount']);
+        $this->assertSame(2, $result['PaginatorPosts']['current']);
+        $this->assertSame(3, $result['PaginatorPosts']['count']);
+        $this->assertSame(2, $result['PaginatorPosts']['pageCount']);
         $this->assertTrue($result['PaginatorPosts']['nextPage']);
         $this->assertFalse($result['PaginatorPosts']['prevPage']);
-        $this->assertEquals(2, $result['PaginatorPosts']['perPage']);
+        $this->assertSame(2, $result['PaginatorPosts']['perPage']);
         $this->assertNull($result['PaginatorPosts']['limit']);
     }
 
@@ -1258,9 +1258,9 @@ class PaginatorComponentTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $result = $this->controller->getRequest()->getAttribute('paging');
-        $this->assertEquals(2, $result['PaginatorPosts']['current']);
-        $this->assertEquals(3, $result['PaginatorPosts']['count']);
-        $this->assertEquals(2, $result['PaginatorPosts']['pageCount']);
+        $this->assertSame(2, $result['PaginatorPosts']['current']);
+        $this->assertSame(3, $result['PaginatorPosts']['count']);
+        $this->assertSame(2, $result['PaginatorPosts']['pageCount']);
         $this->assertTrue($result['PaginatorPosts']['nextPage']);
         $this->assertFalse($result['PaginatorPosts']['prevPage']);
     }

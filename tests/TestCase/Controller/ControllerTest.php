@@ -321,12 +321,12 @@ class ControllerTest extends TestCase
         $Controller = new Controller();
         $uri = new Uri('/foo/bar');
         $response = $Controller->redirect($uri);
-        $this->assertEquals('http://localhost/foo/bar', $response->getHeaderLine('Location'));
+        $this->assertSame('http://localhost/foo/bar', $response->getHeaderLine('Location'));
 
         $Controller = new Controller();
         $uri = new Uri('http://cakephp.org/foo/bar');
         $response = $Controller->redirect($uri);
-        $this->assertEquals('http://cakephp.org/foo/bar', $response->getHeaderLine('Location'));
+        $this->assertSame('http://cakephp.org/foo/bar', $response->getHeaderLine('Location'));
     }
 
     /**
@@ -381,7 +381,7 @@ class ControllerTest extends TestCase
 
         $response = $Controller->redirect('http://cakephp.org', 301);
         $this->assertSame('https://book.cakephp.org', $response->getHeaderLine('Location'));
-        $this->assertEquals(301, $response->getStatusCode());
+        $this->assertSame(301, $response->getStatusCode());
     }
 
     /**
@@ -402,7 +402,7 @@ class ControllerTest extends TestCase
         $response = $Controller->redirect('http://cakephp.org', 301);
 
         $this->assertSame('http://cakephp.org', $response->getHeaderLine('Location'));
-        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertSame(302, $response->getStatusCode());
     }
 
     public function testRedirectBeforeRedirectListenerReturnResponse(): void
@@ -997,11 +997,11 @@ class ControllerTest extends TestCase
     {
         $Controller = new Controller(new ServerRequest(), new Response());
         $Controller->getEventManager()->on('Controller.beforeRender', function ($event) {
-            $this->assertEquals(
+            $this->assertSame(
                 '/Element/test_element',
                 $event->getSubject()->viewBuilder()->getTemplate()
             );
-            $this->assertEquals(
+            $this->assertSame(
                 'default',
                 $event->getSubject()->viewBuilder()->getLayout()
             );

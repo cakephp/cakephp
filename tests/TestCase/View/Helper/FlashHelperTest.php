@@ -127,7 +127,7 @@ class FlashHelperTest extends TestCase
 
         $expected = '<div id="classy-message">Recorded</div>';
         $result = $this->Flash->render('classy');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $this->Flash->render('notification');
         $expected = [
@@ -184,7 +184,7 @@ class FlashHelperTest extends TestCase
 
         $result = $this->Flash->render('flash', ['element' => 'TestPlugin.flash/plugin_element']);
         $expected = 'this is the plugin element';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**

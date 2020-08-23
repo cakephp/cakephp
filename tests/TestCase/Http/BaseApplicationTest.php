@@ -89,15 +89,15 @@ class BaseApplicationTest extends TestCase
         $plugin = $app->getPlugins()->get('PluginJs');
         $this->assertInstanceOf(BasePlugin::class, $plugin);
 
-        $this->assertEquals(
+        $this->assertSame(
             TEST_APP . 'Plugin' . DS . 'PluginJs' . DS,
             $plugin->getPath()
         );
-        $this->assertEquals(
+        $this->assertSame(
             TEST_APP . 'Plugin' . DS . 'PluginJs' . DS . 'config' . DS,
             $plugin->getConfigPath()
         );
-        $this->assertEquals(
+        $this->assertSame(
             TEST_APP . 'Plugin' . DS . 'PluginJs' . DS . 'src' . DS,
             $plugin->getClassPath()
         );
