@@ -204,7 +204,7 @@ class PluginCollectionTest extends TestCase
         $plugins = new PluginCollection();
         $path = $plugins->findPath('TestPlugin');
 
-        $this->assertEquals(TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS, $path);
+        $this->assertSame(TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS, $path);
     }
 
     public function testFindPathLoadsConfigureData()

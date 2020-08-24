@@ -295,13 +295,13 @@ class ResultSetTest extends TestCase
             ->contain(['Articles'])
             ->enableHydration(false)
             ->first();
-        $this->assertEquals(1, $comment['id']);
+        $this->assertSame(1, $comment['id']);
         $this->assertNotEmpty($comment['comment']);
         $this->assertNull($comment['article']);
 
         $comment = $comments->get(1, ['contain' => ['Articles']]);
         $this->assertNull($comment->article);
-        $this->assertEquals(1, $comment->id);
+        $this->assertSame(1, $comment->id);
         $this->assertNotEmpty($comment->comment);
     }
 
@@ -353,7 +353,7 @@ class ResultSetTest extends TestCase
 
         $article = $this->table->get(1, ['contain' => ['Comments']]);
         $this->assertNull($article->comment);
-        $this->assertEquals(1, $article->id);
+        $this->assertSame(1, $article->id);
         $this->assertNotEmpty($article->title);
 
         $article = $this->table->find()->where(['articles.id' => 1])
@@ -361,7 +361,7 @@ class ResultSetTest extends TestCase
             ->enableHydration(false)
             ->first();
         $this->assertNull($article['comment']);
-        $this->assertEquals(1, $article['id']);
+        $this->assertSame(1, $article['id']);
         $this->assertNotEmpty($article['title']);
     }
 

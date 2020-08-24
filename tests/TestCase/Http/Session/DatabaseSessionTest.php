@@ -127,7 +127,7 @@ class DatabaseSessionTest extends TestCase
 
         $result = $this->storage->read('foo');
         $expected = 'Some value';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $this->storage->read('made up value');
         $this->assertSame('', $result);
@@ -176,6 +176,6 @@ class DatabaseSessionTest extends TestCase
         $entity->value = 'something';
         $result = $this->storage->write('key', serialize($entity));
         $data = $this->getTableLocator()->get('Sessions')->get('key')->data;
-        $this->assertEquals(serialize($entity), stream_get_contents($data));
+        $this->assertSame(serialize($entity), stream_get_contents($data));
     }
 }

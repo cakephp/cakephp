@@ -44,7 +44,7 @@ class ConsoleOptionParserTest extends TestCase
         $this->assertSame('A test', $parser->getDescription(), 'getting value is wrong.');
 
         $result = $parser->setDescription(['A test', 'something']);
-        $this->assertEquals("A test\nsomething", $parser->getDescription(), 'getting value is wrong.');
+        $this->assertSame("A test\nsomething", $parser->getDescription(), 'getting value is wrong.');
     }
 
     /**
@@ -61,7 +61,7 @@ class ConsoleOptionParserTest extends TestCase
         $this->assertSame('A test', $parser->getEpilog(), 'getting value is wrong.');
 
         $result = $parser->setEpilog(['A test', 'something']);
-        $this->assertEquals("A test\nsomething", $parser->getEpilog(), 'getting value is wrong.');
+        $this->assertSame("A test\nsomething", $parser->getEpilog(), 'getting value is wrong.');
     }
 
     /**
@@ -1040,8 +1040,8 @@ TEXT;
         ];
         $parser = ConsoleOptionParser::buildFromArray($spec);
 
-        $this->assertEquals($spec['description'], $parser->getDescription());
-        $this->assertEquals($spec['epilog'], $parser->getEpilog());
+        $this->assertSame($spec['description'], $parser->getDescription());
+        $this->assertSame($spec['epilog'], $parser->getEpilog());
 
         $options = $parser->options();
         $this->assertArrayHasKey('name', $options);
@@ -1137,8 +1137,8 @@ TEXT;
         $parser = ConsoleOptionParser::buildFromArray($spec);
         $result = $parser->toArray();
 
-        $this->assertEquals($spec['description'], $result['description']);
-        $this->assertEquals($spec['epilog'], $result['epilog']);
+        $this->assertSame($spec['description'], $result['description']);
+        $this->assertSame($spec['epilog'], $result['epilog']);
 
         $options = $result['options'];
         $this->assertArrayHasKey('name', $options);

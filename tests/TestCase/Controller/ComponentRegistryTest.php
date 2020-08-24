@@ -285,7 +285,7 @@ class ComponentRegistryTest extends TestCase
         $this->Components->load('Auth');
         $this->assertInstanceOf(Countable::class, $this->Components);
         $count = count($this->Components);
-        $this->assertEquals(1, $count);
+        $this->assertSame(1, $count);
     }
 
     /**

@@ -172,8 +172,8 @@ class BoolTypeTest extends TestCase
      */
     public function testToStatement()
     {
-        $this->assertEquals(PDO::PARAM_NULL, $this->type->toStatement(null, $this->driver));
-        $this->assertEquals(PDO::PARAM_BOOL, $this->type->toStatement(true, $this->driver));
-        $this->assertEquals(PDO::PARAM_BOOL, $this->type->toStatement(false, $this->driver));
+        $this->assertSame(PDO::PARAM_NULL, $this->type->toStatement(null, $this->driver));
+        $this->assertSame(PDO::PARAM_BOOL, $this->type->toStatement(true, $this->driver));
+        $this->assertSame(PDO::PARAM_BOOL, $this->type->toStatement(false, $this->driver));
     }
 }

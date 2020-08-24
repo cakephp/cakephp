@@ -135,7 +135,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
         $this->assertTrue($exists, 'The behavior should have populated this key with a table object');
 
         $translationTable = $this->getTableLocator()->get('SomeRandomPlugin.ArticlesTranslations');
-        $this->assertEquals(
+        $this->assertSame(
             'SomeRandomPlugin.ArticlesTranslations',
             $translationTable->getRegistryAlias(),
             'It should be a different object to the one in the no-plugin prefix'
@@ -932,7 +932,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
         $table->addBehavior('Translate', ['fields' => ['title'], 'allowEmptyTranslations' => false]);
 
         $article = $table->find()->first();
-        $this->assertEquals(1, $article->get('id'));
+        $this->assertSame(1, $article->get('id'));
 
         $article = $table->patchEntity($article, [
             '_translations' => [
@@ -962,7 +962,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
         $table->addBehavior('Translate', ['fields' => ['title', 'body'], 'allowEmptyTranslations' => false]);
 
         $article = $table->find()->first();
-        $this->assertEquals(1, $article->get('id'));
+        $this->assertSame(1, $article->get('id'));
 
         $article = $table->patchEntity($article, [
             '_translations' => [
@@ -995,7 +995,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
         $table->addBehavior('Translate', ['fields' => ['title', 'body'], 'allowEmptyTranslations' => false]);
 
         $article = $table->find()->first();
-        $this->assertEquals(1, $article->get('id'));
+        $this->assertSame(1, $article->get('id'));
 
         $article = $table->patchEntity($article, [
             '_translations' => [

@@ -40,7 +40,7 @@ class StatementDecoratorTest extends TestCase
         $driver->expects($this->once())->method('lastInsertId')
             ->with('users')
             ->will($this->returnValue(2));
-        $this->assertEquals(2, $statement->lastInsertId('users'));
+        $this->assertSame(2, $statement->lastInsertId('users'));
     }
 
     /**
@@ -61,7 +61,7 @@ class StatementDecoratorTest extends TestCase
             ->with('assoc')
             ->will($this->returnValue(['id' => 2]));
         $driver->expects($this->never())->method('lastInsertId');
-        $this->assertEquals(2, $statement->lastInsertId('users', 'id'));
+        $this->assertSame(2, $statement->lastInsertId('users', 'id'));
     }
 
     /**

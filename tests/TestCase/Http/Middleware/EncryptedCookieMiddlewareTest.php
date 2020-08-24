@@ -136,7 +136,7 @@ class EncryptedCookieMiddlewareTest extends TestCase
 
         $cookies = CookieCollection::createFromHeader($response->getHeader('Set-Cookie'));
         $this->assertTrue($cookies->has('ninja'));
-        $this->assertEquals(
+        $this->assertSame(
             'shuriken',
             $this->_decrypt($cookies->get('ninja')->getValue(), 'aes')
         );
@@ -157,7 +157,7 @@ class EncryptedCookieMiddlewareTest extends TestCase
         });
         $response = $this->middleware->process($request, $handler);
         $this->assertNotSame('shuriken', $response->getCookie('ninja'));
-        $this->assertEquals(
+        $this->assertSame(
             'shuriken',
             $this->_decrypt($response->getCookie('ninja')['value'], 'aes')
         );

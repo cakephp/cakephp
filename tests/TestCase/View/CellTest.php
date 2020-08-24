@@ -84,7 +84,7 @@ class CellTest extends TestCase
 
         $cell = $this->View->cell('Cello');
         $this->assertInstanceOf('TestApp\View\Cell\CelloCell', $cell);
-        $this->assertEquals("Cellos\n", $cell->render());
+        $this->assertSame("Cellos\n", $cell->render());
     }
 
     /**
@@ -111,7 +111,7 @@ class CellTest extends TestCase
     {
         $capture = function ($errno, $msg) {
             restore_error_handler();
-            $this->assertEquals(E_USER_WARNING, $errno);
+            $this->assertSame(E_USER_WARNING, $errno);
             $this->assertStringContainsString('Could not render cell - Cell template file', $msg);
         };
         set_error_handler($capture);
@@ -164,7 +164,7 @@ class CellTest extends TestCase
 
         $this->assertStringContainsString('Articles subdir custom_template_path template', "{$appCell}");
         $this->assertSame('custom_template_path', $appCell->viewBuilder()->getTemplate());
-        $this->assertEquals(Cell::TEMPLATE_FOLDER . '/Articles/Subdir', $appCell->viewBuilder()->getTemplatePath());
+        $this->assertSame(Cell::TEMPLATE_FOLDER . '/Articles/Subdir', $appCell->viewBuilder()->getTemplatePath());
     }
 
     /**
@@ -346,7 +346,7 @@ class CellTest extends TestCase
     public function testCellOptions()
     {
         $cell = $this->View->cell('Articles', [], ['limit' => 10, 'nope' => 'nope']);
-        $this->assertEquals(10, $cell->limit);
+        $this->assertSame(10, $cell->limit);
         $this->assertObjectNotHasAttribute('nope', $cell, 'Not a valid option');
     }
 
@@ -412,10 +412,10 @@ class CellTest extends TestCase
         $cell = $this->View->cell('Articles', [], ['cache' => true]);
         $result = $cell->render();
         $expected = "dummy\n";
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Cache::read('cell_test_app_view_cell_articles_cell_display_default', 'default');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
         Cache::drop('default');
     }
 
@@ -431,7 +431,7 @@ class CellTest extends TestCase
 
         $cell = $this->View->cell('Articles', [], ['cache' => true]);
         $result = $cell->render();
-        $this->assertEquals('from cache', $result);
+        $this->assertSame('from cache', $result);
         Cache::drop('default');
     }
 
@@ -449,7 +449,7 @@ class CellTest extends TestCase
             'cache' => ['key' => 'my_key', 'config' => 'cell'],
         ]);
         $result = $cell->render();
-        $this->assertEquals('from cache', $result);
+        $this->assertSame('from cache', $result);
         Cache::drop('cell');
     }
 
@@ -483,10 +483,10 @@ class CellTest extends TestCase
         Cache::setConfig('default', ['className' => 'Array']);
         $cell = $this->View->cell('Articles::customTemplateViewBuilder', [], ['cache' => ['key' => 'celltest']]);
         $result = $cell->render();
-        $this->assertEquals(1, $cell->counter);
+        $this->assertSame(1, $cell->counter);
         $cell->render();
 
-        $this->assertEquals(1, $cell->counter);
+        $this->assertSame(1, $cell->counter);
         $this->assertStringContainsString('This is the alternate template', $result);
         Cache::drop('default');
     }

@@ -167,21 +167,21 @@ class FileLogTest extends TestCase
         $log->log('warning', 'Test warning one');
         $result = substr(sprintf('%o', fileperms($path . 'error.log')), -4);
         $expected = '0666';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
         unlink($path . 'error.log');
 
         $log = new FileLog(['path' => $path, 'mask' => 0644]);
         $log->log('warning', 'Test warning two');
         $result = substr(sprintf('%o', fileperms($path . 'error.log')), -4);
         $expected = '0644';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
         unlink($path . 'error.log');
 
         $log = new FileLog(['path' => $path, 'mask' => 0640]);
         $log->log('warning', 'Test warning three');
         $result = substr(sprintf('%o', fileperms($path . 'error.log')), -4);
         $expected = '0640';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
         unlink($path . 'error.log');
     }
 

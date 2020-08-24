@@ -2962,7 +2962,7 @@ class ValidatorTest extends TestCase
         $this->assertNotEmpty($rule, "Rule was not found for $method");
         $this->assertNull($rule->get('message'), 'Message is present when it should not be');
         $this->assertNull($rule->get('on'), 'On clause is present when it should not be');
-        $this->assertEquals($name, $rule->get('rule'), 'Rule name does not match');
+        $this->assertSame($name, $rule->get('rule'), 'Rule name does not match');
         $this->assertEquals($pass, $rule->get('pass'), 'Passed options are different');
         $this->assertSame('default', $rule->get('provider'), 'Provider does not match');
 

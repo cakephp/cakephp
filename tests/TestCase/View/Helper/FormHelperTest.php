@@ -319,7 +319,7 @@ class FormHelperTest extends TestCase
         $stub = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
         $this->Form->addContextProvider('test', function ($request, $data) use ($context, $stub) {
             $this->assertInstanceOf('Cake\Http\ServerRequest', $request);
-            $this->assertEquals($context, $data['entity']);
+            $this->assertSame($context, $data['entity']);
 
             return $stub;
         });
@@ -2419,7 +2419,7 @@ class FormHelperTest extends TestCase
         $this->Form->text('Article.title');
 
         $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
-        $this->assertEquals(1, $result['Article.id'], 'Hidden input should be secured.');
+        $this->assertSame('1', $result['Article.id'], 'Hidden input should be secured.');
         $this->assertContains('Article.title', $result, 'Field should be secured.');
 
         $this->Form->unlockField('Article.title');
@@ -2452,7 +2452,7 @@ class FormHelperTest extends TestCase
         $this->Form->create();
         $this->Form->hidden('Contact.id', ['value' => 1]);
         $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
-        $this->assertEquals(1, $result['Contact.id'], 'Hidden input should be secured.');
+        $this->assertSame('1', $result['Contact.id'], 'Hidden input should be secured.');
     }
 
     /**
@@ -7099,7 +7099,7 @@ class FormHelperTest extends TestCase
         $this->assertStringContainsString($hash, $result, 'Should contain the correct hash.');
         $reflect = new ReflectionProperty($this->Form, '_lastAction');
         $reflect->setAccessible(true);
-        $this->assertEquals('/articles/add', $reflect->getValue($this->Form), 'lastAction was should be restored.');
+        $this->assertSame('/articles/add', $reflect->getValue($this->Form), 'lastAction was should be restored.');
     }
 
     /**
@@ -8340,17 +8340,17 @@ class FormHelperTest extends TestCase
 
         $expected = '2';
         $result = $this->Form->getSourceValue('id');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $this->Form->setValueSources(['data']);
         $expected = '1';
         $result = $this->Form->getSourceValue('id');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $this->Form->setValueSources(['query', 'data']);
         $expected = '2';
         $result = $this->Form->getSourceValue('id');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     public function testValueSourcesValidation()

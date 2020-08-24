@@ -137,7 +137,7 @@ class UrlHelperTest extends TestCase
         Router::setRequest($request);
 
         $this->assertSame('/magazine/subscribe', $this->Helper->build());
-        $this->assertEquals(
+        $this->assertSame(
             '/magazine/articles/add',
             $this->Helper->build(['controller' => 'articles', 'action' => 'add'])
         );
@@ -187,7 +187,7 @@ class UrlHelperTest extends TestCase
         Configure::write('Foo.bar', 'test');
         Configure::write('Asset.timestamp', false);
         $result = $this->Helper->assetTimestamp(Configure::read('App.cssBaseUrl') . 'cake.generic.css');
-        $this->assertEquals(Configure::read('App.cssBaseUrl') . 'cake.generic.css', $result);
+        $this->assertSame(Configure::read('App.cssBaseUrl') . 'cake.generic.css', $result);
 
         Configure::write('Asset.timestamp', true);
         Configure::write('debug', false);
@@ -196,7 +196,7 @@ class UrlHelperTest extends TestCase
         $this->assertSame('/%3Cb%3E/cake.generic.css', $result);
 
         $result = $this->Helper->assetTimestamp(Configure::read('App.cssBaseUrl') . 'cake.generic.css');
-        $this->assertEquals(Configure::read('App.cssBaseUrl') . 'cake.generic.css', $result);
+        $this->assertSame(Configure::read('App.cssBaseUrl') . 'cake.generic.css', $result);
 
         Configure::write('Asset.timestamp', true);
         Configure::write('debug', true);
@@ -209,7 +209,7 @@ class UrlHelperTest extends TestCase
         $this->assertRegExp('/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/', $result);
 
         $result = $this->Helper->assetTimestamp(Configure::read('App.cssBaseUrl') . 'cake.generic.css?someparam');
-        $this->assertEquals(Configure::read('App.cssBaseUrl') . 'cake.generic.css?someparam', $result);
+        $this->assertSame(Configure::read('App.cssBaseUrl') . 'cake.generic.css?someparam', $result);
 
         $request = $this->View->getRequest()->withAttribute('webroot', '/some/dir/');
         $this->View->setRequest($request);
@@ -227,13 +227,13 @@ class UrlHelperTest extends TestCase
     {
         $this->Helper->webroot = '';
         $result = $this->Helper->assetUrl('js/post.js', ['fullBase' => true]);
-        $this->assertEquals(Router::fullBaseUrl() . '/js/post.js', $result);
+        $this->assertSame(Router::fullBaseUrl() . '/js/post.js', $result);
 
         $result = $this->Helper->assetUrl('foo.jpg', ['pathPrefix' => 'img/']);
         $this->assertSame('img/foo.jpg', $result);
 
         $result = $this->Helper->assetUrl('foo.jpg', ['fullBase' => true]);
-        $this->assertEquals(Router::fullBaseUrl() . '/foo.jpg', $result);
+        $this->assertSame(Router::fullBaseUrl() . '/foo.jpg', $result);
 
         $result = $this->Helper->assetUrl('style', ['ext' => '.css']);
         $this->assertSame('style.css', $result);
@@ -290,7 +290,7 @@ class UrlHelperTest extends TestCase
 
         $result = $this->Helper->assetUrl('img/cake.icon.png', ['fullBase' => true]);
         $expected = Configure::read('App.fullBaseUrl') . '/cake_dev/app/webroot/img/cake.icon.png';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -320,7 +320,7 @@ class UrlHelperTest extends TestCase
     public function testAssetUrlFullBase()
     {
         $result = $this->Helper->assetUrl('img/foo.jpg', ['fullBase' => true]);
-        $this->assertEquals(Router::fullBaseUrl() . '/img/foo.jpg', $result);
+        $this->assertSame(Router::fullBaseUrl() . '/img/foo.jpg', $result);
 
         $result = $this->Helper->assetUrl('img/foo.jpg', ['fullBase' => 'https://xyz/']);
         $this->assertSame('https://xyz/img/foo.jpg', $result);
@@ -352,7 +352,7 @@ class UrlHelperTest extends TestCase
         $timestamp = false;
 
         $result = $this->Helper->assetTimestamp(Configure::read('App.cssBaseUrl') . 'cake.generic.css', $timestamp);
-        $this->assertEquals(Configure::read('App.cssBaseUrl') . 'cake.generic.css', $result);
+        $this->assertSame(Configure::read('App.cssBaseUrl') . 'cake.generic.css', $result);
     }
 
     /**
@@ -390,7 +390,7 @@ class UrlHelperTest extends TestCase
             'post.js',
             ['fullBase' => true]
         );
-        $this->assertEquals(Router::fullBaseUrl() . '/js/post.js', $result);
+        $this->assertSame(Router::fullBaseUrl() . '/js/post.js', $result);
     }
 
     /**
@@ -418,7 +418,7 @@ class UrlHelperTest extends TestCase
         $timestamp = false;
 
         $result = $this->Helper->script('script.js', ['timestamp' => $timestamp]);
-        $this->assertEquals(Configure::read('App.jsBaseUrl') . 'script.js', $result);
+        $this->assertSame(Configure::read('App.jsBaseUrl') . 'script.js', $result);
     }
 
     /**
@@ -432,7 +432,7 @@ class UrlHelperTest extends TestCase
         $this->assertSame('img/foo.jpg', $result);
 
         $result = $this->Helper->image('foo.jpg', ['fullBase' => true]);
-        $this->assertEquals(Router::fullBaseUrl() . '/img/foo.jpg', $result);
+        $this->assertSame(Router::fullBaseUrl() . '/img/foo.jpg', $result);
 
         $result = $this->Helper->image('dir/sub dir/my image.jpg');
         $this->assertSame('img/dir/sub%20dir/my%20image.jpg', $result);
@@ -529,36 +529,36 @@ class UrlHelperTest extends TestCase
         Router::setRequest($request);
         $result = $this->Helper->webroot('/img/cake.power.gif');
         $expected = '/img/cake.power.gif';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $this->Helper->getView()->setTheme('TestTheme');
 
         $result = $this->Helper->webroot('/img/cake.power.gif');
         $expected = '/test_theme/img/cake.power.gif';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $this->Helper->webroot('/img/test.jpg');
         $expected = '/test_theme/img/test.jpg';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $webRoot = Configure::read('App.wwwRoot');
         Configure::write('App.wwwRoot', TEST_APP . 'TestApp/webroot/');
 
         $result = $this->Helper->webroot('/img/cake.power.gif');
         $expected = '/test_theme/img/cake.power.gif';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $this->Helper->webroot('/img/test.jpg');
         $expected = '/test_theme/img/test.jpg';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $this->Helper->webroot('/img/cake.icon.gif');
         $expected = '/img/cake.icon.gif';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $this->Helper->webroot('/img/cake.icon.gif?some=param');
         $expected = '/img/cake.icon.gif?some=param';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         Configure::write('App.wwwRoot', $webRoot);
     }

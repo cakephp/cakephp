@@ -110,7 +110,7 @@ class DateTypeTest extends TestCase
     {
         $value = '2001-01-04';
         $result = $this->type->toDatabase($value, $this->driver);
-        $this->assertEquals($value, $result);
+        $this->assertSame($value, $result);
 
         $date = new Time('2013-08-12');
         $result = $this->type->toDatabase($date, $this->driver);
@@ -224,11 +224,11 @@ class DateTypeTest extends TestCase
 
         $expected = new Date('13-10-2013');
         $result = $this->type->marshal('10/13/2013');
-        $this->assertEquals($expected->format('Y-m-d'), $result->format('Y-m-d'));
+        $this->assertSame($expected->format('Y-m-d'), $result->format('Y-m-d'));
 
         $this->type->useMutable();
         $result = $this->type->marshal('10/13/2013');
-        $this->assertEquals($expected->format('Y-m-d'), $result->format('Y-m-d'));
+        $this->assertSame($expected->format('Y-m-d'), $result->format('Y-m-d'));
     }
 
     /**
@@ -243,11 +243,11 @@ class DateTypeTest extends TestCase
 
         $expected = new Date('13-10-2013');
         $result = $this->type->marshal('13 Oct, 2013');
-        $this->assertEquals($expected->format('Y-m-d'), $result->format('Y-m-d'));
+        $this->assertSame($expected->format('Y-m-d'), $result->format('Y-m-d'));
 
         $this->type->useMutable();
         $result = $this->type->marshal('13 Oct, 2013');
-        $this->assertEquals($expected->format('Y-m-d'), $result->format('Y-m-d'));
+        $this->assertSame($expected->format('Y-m-d'), $result->format('Y-m-d'));
     }
 
     /**

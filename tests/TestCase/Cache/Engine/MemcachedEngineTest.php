@@ -155,7 +155,7 @@ class MemcachedEngineTest extends TestCase
                 Memcached::OPT_BINARY_PROTOCOL => true,
             ],
         ]);
-        $this->assertEquals(1, $memcached->getOption(Memcached::OPT_BINARY_PROTOCOL));
+        $this->assertSame(1, $memcached->getOption(Memcached::OPT_BINARY_PROTOCOL));
     }
 
     /**
@@ -193,7 +193,7 @@ class MemcachedEngineTest extends TestCase
         ];
 
         $Memcached->init($config);
-        $this->assertEquals(Memcached::SERIALIZER_PHP, $Memcached->getOption(Memcached::OPT_SERIALIZER));
+        $this->assertSame(Memcached::SERIALIZER_PHP, $Memcached->getOption(Memcached::OPT_SERIALIZER));
     }
 
     /**
@@ -217,7 +217,7 @@ class MemcachedEngineTest extends TestCase
         ];
 
         $Memcached->init($config);
-        $this->assertEquals(Memcached::SERIALIZER_JSON, $Memcached->getOption(Memcached::OPT_SERIALIZER));
+        $this->assertSame(Memcached::SERIALIZER_JSON, $Memcached->getOption(Memcached::OPT_SERIALIZER));
     }
 
     /**
@@ -241,7 +241,7 @@ class MemcachedEngineTest extends TestCase
         ];
 
         $Memcached->init($config);
-        $this->assertEquals(Memcached::SERIALIZER_IGBINARY, $Memcached->getOption(Memcached::OPT_SERIALIZER));
+        $this->assertSame(Memcached::SERIALIZER_IGBINARY, $Memcached->getOption(Memcached::OPT_SERIALIZER));
     }
 
     /**
@@ -265,7 +265,7 @@ class MemcachedEngineTest extends TestCase
         ];
 
         $Memcached->init($config);
-        $this->assertEquals(Memcached::SERIALIZER_MSGPACK, $Memcached->getOption(Memcached::OPT_SERIALIZER));
+        $this->assertSame(Memcached::SERIALIZER_MSGPACK, $Memcached->getOption(Memcached::OPT_SERIALIZER));
     }
 
     /**
@@ -472,8 +472,7 @@ class MemcachedEngineTest extends TestCase
         $this->_configCache(['duration' => 1]);
 
         $result = Cache::read('test', 'memcached');
-        $expecting = '';
-        $this->assertEquals($expecting, $result);
+        $this->assertNull($result);
 
         $data = 'this is a test of the emergency broadcasting system';
         $result = Cache::write('test', $data, 'memcached');
@@ -481,7 +480,7 @@ class MemcachedEngineTest extends TestCase
 
         $result = Cache::read('test', 'memcached');
         $expecting = $data;
-        $this->assertEquals($expecting, $result);
+        $this->assertSame($expecting, $result);
 
         Cache::delete('test', 'memcached');
     }
@@ -597,7 +596,7 @@ class MemcachedEngineTest extends TestCase
         sleep(2);
         $result = Cache::read('long_expiry_test', 'memcached');
         $expecting = $data;
-        $this->assertEquals($expecting, $result);
+        $this->assertSame($expecting, $result);
     }
 
     /**
@@ -679,16 +678,16 @@ class MemcachedEngineTest extends TestCase
         $this->assertTrue($result);
 
         $result = Cache::decrement('test_decrement', 1, 'memcached');
-        $this->assertEquals(4, $result);
+        $this->assertSame(4, $result);
 
         $result = Cache::read('test_decrement', 'memcached');
-        $this->assertEquals(4, $result);
+        $this->assertSame(4, $result);
 
         $result = Cache::decrement('test_decrement', 2, 'memcached');
-        $this->assertEquals(2, $result);
+        $this->assertSame(2, $result);
 
         $result = Cache::read('test_decrement', 'memcached');
-        $this->assertEquals(2, $result);
+        $this->assertSame(2, $result);
 
         Cache::delete('test_decrement', 'memcached');
     }
@@ -711,16 +710,16 @@ class MemcachedEngineTest extends TestCase
         $this->assertTrue($result);
 
         $result = Cache::decrement('test_decrement', 1, 'compressed_memcached');
-        $this->assertEquals(4, $result);
+        $this->assertSame(4, $result);
 
         $result = Cache::read('test_decrement', 'compressed_memcached');
-        $this->assertEquals(4, $result);
+        $this->assertSame(4, $result);
 
         $result = Cache::decrement('test_decrement', 2, 'compressed_memcached');
-        $this->assertEquals(2, $result);
+        $this->assertSame(2, $result);
 
         $result = Cache::read('test_decrement', 'compressed_memcached');
-        $this->assertEquals(2, $result);
+        $this->assertSame(2, $result);
 
         Cache::delete('test_decrement', 'compressed_memcached');
     }
@@ -736,16 +735,16 @@ class MemcachedEngineTest extends TestCase
         $this->assertTrue($result);
 
         $result = Cache::increment('test_increment', 1, 'memcached');
-        $this->assertEquals(6, $result);
+        $this->assertSame(6, $result);
 
         $result = Cache::read('test_increment', 'memcached');
-        $this->assertEquals(6, $result);
+        $this->assertSame(6, $result);
 
         $result = Cache::increment('test_increment', 2, 'memcached');
-        $this->assertEquals(8, $result);
+        $this->assertSame(8, $result);
 
         $result = Cache::read('test_increment', 'memcached');
-        $this->assertEquals(8, $result);
+        $this->assertSame(8, $result);
 
         Cache::delete('test_increment', 'memcached');
     }
@@ -788,16 +787,16 @@ class MemcachedEngineTest extends TestCase
         $this->assertTrue($result);
 
         $result = Cache::increment('test_increment', 1, 'compressed_memcached');
-        $this->assertEquals(6, $result);
+        $this->assertSame(6, $result);
 
         $result = Cache::read('test_increment', 'compressed_memcached');
-        $this->assertEquals(6, $result);
+        $this->assertSame(6, $result);
 
         $result = Cache::increment('test_increment', 2, 'compressed_memcached');
-        $this->assertEquals(8, $result);
+        $this->assertSame(8, $result);
 
         $result = Cache::read('test_increment', 'compressed_memcached');
-        $this->assertEquals(8, $result);
+        $this->assertSame(8, $result);
 
         Cache::delete('test_increment', 'compressed_memcached');
     }
@@ -970,7 +969,7 @@ class MemcachedEngineTest extends TestCase
 
         $expected = 'test data';
         $result = Cache::read('test_add_key', 'memcached');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Cache::add('test_add_key', 'test data 2', 'memcached');
         $this->assertFalse($result);

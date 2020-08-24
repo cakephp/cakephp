@@ -180,17 +180,17 @@ class FloatTypeTest extends TestCase
         I18n::setLocale('de_DE');
         $expected = 1234.53;
         $result = $this->type->marshal('1.234,53');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         I18n::setLocale('en_US');
-        $expected = 1234;
+        $expected = 1234.0;
         $result = $this->type->marshal('1,234');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         I18n::setLocale('pt_BR');
         $expected = 5987123.231;
         $result = $this->type->marshal('5.987.123,231');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $this->type->useLocaleParser(false);
     }
@@ -214,6 +214,6 @@ class FloatTypeTest extends TestCase
      */
     public function testToStatement()
     {
-        $this->assertEquals(PDO::PARAM_STR, $this->type->toStatement('', $this->driver));
+        $this->assertSame(PDO::PARAM_STR, $this->type->toStatement('', $this->driver));
     }
 }

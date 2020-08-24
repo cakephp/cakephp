@@ -118,7 +118,7 @@ class TableUuidTest extends TestCase
 
         $table = $this->getTableLocator()->get($tableName);
         $this->assertSame($entity, $table->save($entity));
-        $this->assertEquals($id, $entity->id, 'Should be 36 characters');
+        $this->assertSame($id, $entity->id, 'Should be 36 characters');
 
         $row = $table->find('all')->where(['id' => $entity->id])->first();
         $row->id = strtolower($row->id);

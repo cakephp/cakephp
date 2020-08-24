@@ -713,7 +713,7 @@ SQL;
                 'columns' => ['id'],
             ]);
         $result = $schema->columnSql($table, 'id');
-        $this->assertEquals($result, '"id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT');
+        $this->assertSame($result, '"id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT');
 
         $result = $schema->constraintSql($table, 'primary');
         $this->assertSame('', $result, 'Integer primary keys are special in sqlite.');
@@ -739,7 +739,7 @@ SQL;
                 'columns' => ['id'],
             ]);
         $result = $schema->columnSql($table, 'id');
-        $this->assertEquals($result, '"id" BIGINT NOT NULL');
+        $this->assertSame($result, '"id" BIGINT NOT NULL');
 
         $result = $schema->constraintSql($table, 'primary');
         $this->assertSame('CONSTRAINT "primary" PRIMARY KEY ("id")', $result, 'Bigint primary keys are not special.');
@@ -898,7 +898,7 @@ SQL;
         $result = $table->createSql($connection);
         $this->assertCount(2, $result);
         $this->assertTextEquals($expected, $result[0]);
-        $this->assertEquals(
+        $this->assertSame(
             'CREATE INDEX "title_idx" ON "articles" ("title")',
             $result[1]
         );

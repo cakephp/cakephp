@@ -198,7 +198,7 @@ class MailerTest extends TestCase
         $this->assertEquals($configs['from'], $result);
 
         $result = $this->mailer->getSubject();
-        $this->assertEquals($configs['subject'], $result);
+        $this->assertSame($configs['subject'], $result);
 
         $result = $this->mailer->getTransport();
         $this->assertInstanceOf(DebugTransport::class, $result);
@@ -228,7 +228,7 @@ class MailerTest extends TestCase
         $template = $this->mailer->viewBuilder()->getTemplate();
         $layout = $this->mailer->viewBuilder()->getLayout();
         $this->assertNull($template);
-        $this->assertEquals($configs['layout'], $layout);
+        $this->assertSame($configs['layout'], $layout);
     }
 
     /**
@@ -255,7 +255,7 @@ class MailerTest extends TestCase
         $this->assertEquals($configs['from'], $result);
 
         $result = $this->mailer->getSubject();
-        $this->assertEquals($configs['subject'], $result);
+        $this->assertSame($configs['subject'], $result);
 
         $result = $this->mailer->getTransport();
         $this->assertInstanceOf('Cake\Mailer\Transport\DebugTransport', $result);
@@ -334,10 +334,10 @@ class MailerTest extends TestCase
         $this->assertEquals($config['from'], $result);
 
         $result = $this->mailer->getSubject();
-        $this->assertEquals($config['subject'], $result);
+        $this->assertSame($config['subject'], $result);
 
         $result = $this->mailer->viewBuilder()->getTheme();
-        $this->assertEquals($config['theme'], $result);
+        $this->assertSame($config['theme'], $result);
 
         $result = $this->mailer->getTransport();
         $this->assertInstanceOf(DebugTransport::class, $result);
@@ -490,7 +490,7 @@ class MailerTest extends TestCase
         $this->assertEquals($expected, array_keys($result));
         $expected = "Here is my body, with multi lines.\r\nThis is the second line.\r\n\r\nAnd the last.\r\n\r\n";
 
-        $this->assertEquals($expected, $result['message']);
+        $this->assertSame($expected, $result['message']);
         $this->assertStringContainsString('Date: ', $result['headers']);
         $this->assertStringContainsString('Message-ID: ', $result['headers']);
         $this->assertStringContainsString('To: ', $result['headers']);
@@ -1207,7 +1207,7 @@ class MailerTest extends TestCase
             ->will($this->returnValue([]));
 
         $mailer->send('test', ['foo', 'bar']);
-        $this->assertEquals('test', $mailer->viewBuilder()->getTemplate());
+        $this->assertSame('test', $mailer->viewBuilder()->getTemplate());
     }
 
     /**
@@ -1266,7 +1266,7 @@ class MailerTest extends TestCase
 
         $result = $this->mailer->deliver($message);
         $expected = "{$message}\r\n\r\n";
-        $this->assertEquals($expected, $result['message']);
+        $this->assertSame($expected, $result['message']);
     }
 
     /**
@@ -1414,7 +1414,7 @@ class MailerTest extends TestCase
         $this->assertEquals($expected, array_keys($result));
         $expected = "Here is my body, with multi lines.\r\nThis is the second line.\r\n\r\nAnd the last.\r\n\r\n";
 
-        $this->assertEquals($expected, $result['message']);
+        $this->assertSame($expected, $result['message']);
         $this->assertStringContainsString('Date: ', $result['headers']);
         $this->assertStringContainsString('Message-ID: ', $result['headers']);
         $this->assertStringContainsString('To: ', $result['headers']);

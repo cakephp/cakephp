@@ -544,7 +544,7 @@ class ErrorHandlerTest extends TestCase
         $logger = $errorHandler->getLogger();
 
         $this->assertInstanceOf(ErrorLoggerInterface::class, $logger);
-        $this->assertEquals('value', $logger->getConfig('key'), 'config should be forwarded.');
+        $this->assertSame('value', $logger->getConfig('key'), 'config should be forwarded.');
         $this->assertSame($logger, $errorHandler->getLogger());
     }
 

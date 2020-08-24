@@ -69,7 +69,7 @@ class RoutingMiddlewareTest extends TestCase
         $middleware = new RoutingMiddleware($this->app());
         $response = $middleware->process($request, $handler);
 
-        $this->assertEquals(301, $response->getStatusCode());
+        $this->assertSame(301, $response->getStatusCode());
         $this->assertSame('http://localhost/subdir/pages', $response->getHeaderLine('Location'));
     }
 
@@ -90,7 +90,7 @@ class RoutingMiddlewareTest extends TestCase
         $middleware = new RoutingMiddleware($this->app());
         $response = $middleware->process($request, $handler);
 
-        $this->assertEquals(301, $response->getStatusCode());
+        $this->assertSame(301, $response->getStatusCode());
         $this->assertSame('http://localhost/pages', $response->getHeaderLine('Location'));
     }
 

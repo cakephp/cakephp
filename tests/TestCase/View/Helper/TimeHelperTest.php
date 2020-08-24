@@ -207,7 +207,7 @@ class TimeHelperTest extends TestCase
     public function testToAtom()
     {
         $dateTime = new \DateTime();
-        $this->assertEquals($dateTime->format($dateTime::ATOM), $this->Time->toAtom($dateTime->getTimestamp()));
+        $this->assertSame($dateTime->format($dateTime::ATOM), $this->Time->toAtom($dateTime->getTimestamp()));
     }
 
     /**
@@ -221,7 +221,7 @@ class TimeHelperTest extends TestCase
         $dateTime = new Time();
         $vancouver = clone $dateTime;
         $vancouver->timezone('America/Vancouver');
-        $this->assertEquals($vancouver->format(Time::ATOM), $this->Time->toAtom($vancouver));
+        $this->assertSame($vancouver->format(Time::ATOM), $this->Time->toAtom($vancouver));
     }
 
     /**
@@ -233,14 +233,14 @@ class TimeHelperTest extends TestCase
     {
         $date = '2012-08-12 12:12:45';
         $time = strtotime($date);
-        $this->assertEquals(date('r', $time), $this->Time->toRss($time));
+        $this->assertSame(date('r', $time), $this->Time->toRss($time));
 
         $timezones = ['Europe/London', 'Europe/Brussels', 'UTC', 'America/Denver', 'America/Caracas', 'Asia/Kathmandu'];
         foreach ($timezones as $timezone) {
             $yourTimezone = new \DateTimeZone($timezone);
             $yourTime = new \DateTime($date, $yourTimezone);
             $time = $yourTime->format('U');
-            $this->assertEquals($yourTime->format('r'), $this->Time->toRss($time, $timezone), "Failed on $timezone");
+            $this->assertSame($yourTime->format('r'), $this->Time->toRss($time, $timezone), "Failed on $timezone");
         }
     }
 
@@ -256,7 +256,7 @@ class TimeHelperTest extends TestCase
         $vancouver = clone $dateTime;
         $vancouver->timezone('America/Vancouver');
 
-        $this->assertEquals($vancouver->format('r'), $this->Time->toRss($vancouver));
+        $this->assertSame($vancouver->format('r'), $this->Time->toRss($vancouver));
     }
 
     /**
@@ -266,7 +266,7 @@ class TimeHelperTest extends TestCase
      */
     public function testGmt()
     {
-        $this->assertEquals(1397980800, $this->Time->gmt('2014-04-20 08:00:00'));
+        $this->assertSame('1397980800', $this->Time->gmt('2014-04-20 08:00:00'));
     }
 
     /**
@@ -523,7 +523,7 @@ class TimeHelperTest extends TestCase
 
         $result = $this->Time->format('invalid date', null, 'Date invalid');
         $expected = 'Date invalid';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         I18n::setLocale('fr_FR');
         Time::setDefaultLocale('fr_FR');
@@ -609,7 +609,7 @@ class TimeHelperTest extends TestCase
      */
     public function assertTimeFormat($expected, $result)
     {
-        $this->assertEquals(
+        $this->assertSame(
             str_replace([',', '(', ')', ' at', ' à'], '', $expected),
             str_replace([',', '(', ')', ' at', ' à'], '', $result)
         );
@@ -627,6 +627,6 @@ class TimeHelperTest extends TestCase
 
         $fallback = 'Date invalid or not set';
         $result = $this->Time->format(null, \IntlDateFormatter::FULL, $fallback);
-        $this->assertEquals($fallback, $result);
+        $this->assertSame($fallback, $result);
     }
 }

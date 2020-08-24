@@ -91,7 +91,7 @@ class AssociationProxyTest extends TestCase
         $articles->hasMany('comments', ['conditions' => ['published' => 'Y']]);
         $articles->comments->updateAll(['comment' => 'changed'], ['article_id' => 1]);
         $changed = $comments->find()->where(['comment' => 'changed'])->count();
-        $this->assertEquals(3, $changed);
+        $this->assertSame(3, $changed);
     }
 
     /**
@@ -131,7 +131,7 @@ class AssociationProxyTest extends TestCase
         $articles->hasMany('comments', ['conditions' => ['published' => 'Y']]);
         $articles->comments->deleteAll(['article_id' => 1]);
         $remaining = $comments->find()->where(['article_id' => 1])->count();
-        $this->assertEquals(1, $remaining);
+        $this->assertSame(1, $remaining);
     }
 
     /**

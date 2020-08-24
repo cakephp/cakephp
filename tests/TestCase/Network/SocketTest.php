@@ -511,7 +511,7 @@ class SocketTest extends TestCase
 
         $this->assertTrue($result['ssl']['verify_peer']);
         $this->assertFalse($result['ssl']['allow_self_signed']);
-        $this->assertEquals(5, $result['ssl']['verify_depth']);
+        $this->assertSame(5, $result['ssl']['verify_depth']);
         $this->assertSame('smtp.gmail.com', $result['ssl']['CN_match']);
         $this->assertArrayNotHasKey('ssl_verify_peer', $socket->getConfig());
         $this->assertArrayNotHasKey('ssl_allow_self_signed', $socket->getConfig());

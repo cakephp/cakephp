@@ -332,7 +332,7 @@ class SqlserverTest extends TestCase
             ->from('articles')
             ->limit(10);
         $expected = 'SELECT TOP 10 id, title FROM articles';
-        $this->assertEquals($expected, $query->sql());
+        $this->assertSame($expected, $query->sql());
 
         $query = new Query($connection);
         $query->select(['id', 'title'])
@@ -345,7 +345,7 @@ class SqlserverTest extends TestCase
         $expected = 'SELECT * FROM (SELECT id, title, (ROW_NUMBER() OVER (ORDER BY (SELECT NULL))) AS ' . $identifier . ' ' .
             'FROM articles) _cake_paging_ ' .
             'WHERE _cake_paging_._cake_page_rownum_ > 10';
-        $this->assertEquals($expected, $query->sql());
+        $this->assertSame($expected, $query->sql());
 
         $query = new Query($connection);
         $query->select(['id', 'title'])
@@ -355,7 +355,7 @@ class SqlserverTest extends TestCase
         $expected = 'SELECT * FROM (SELECT id, title, (ROW_NUMBER() OVER (ORDER BY id)) AS ' . $identifier . ' ' .
             'FROM articles) _cake_paging_ ' .
             'WHERE _cake_paging_._cake_page_rownum_ > 10';
-        $this->assertEquals($expected, $query->sql());
+        $this->assertSame($expected, $query->sql());
 
         $query = new Query($connection);
         $query->select(['id', 'title'])
@@ -367,7 +367,7 @@ class SqlserverTest extends TestCase
         $expected = 'SELECT * FROM (SELECT id, title, (ROW_NUMBER() OVER (ORDER BY id)) AS ' . $identifier . ' ' .
             'FROM articles WHERE title = :c0) _cake_paging_ ' .
             'WHERE (_cake_paging_._cake_page_rownum_ > 50 AND _cake_paging_._cake_page_rownum_ <= 60)';
-        $this->assertEquals($expected, $query->sql());
+        $this->assertSame($expected, $query->sql());
     }
 
     /**
@@ -393,7 +393,7 @@ class SqlserverTest extends TestCase
             ->into('articles')
             ->values(['title' => 'A new article']);
         $expected = 'INSERT INTO articles (title) OUTPUT INSERTED.* VALUES (:c0)';
-        $this->assertEquals($expected, $query->sql());
+        $this->assertSame($expected, $query->sql());
     }
 
     /**
@@ -430,7 +430,7 @@ class SqlserverTest extends TestCase
 
         $expected = 'SELECT posts.author_id, (COUNT(posts.id)) AS post_count ' .
             'GROUP BY posts.author_id HAVING COUNT(posts.id) >= :c0';
-        $this->assertEquals($expected, $query->sql());
+        $this->assertSame($expected, $query->sql());
     }
 
     /**
@@ -467,7 +467,7 @@ class SqlserverTest extends TestCase
 
         $expected = 'SELECT posts.author_id, (COUNT(posts.id)) AS post_count ' .
             'GROUP BY posts.author_id HAVING posts.author_id >= :c0';
-        $this->assertEquals($expected, $query->sql());
+        $this->assertSame($expected, $query->sql());
     }
 
     public function testExceedingMaxParameters()

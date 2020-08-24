@@ -343,10 +343,10 @@ class HasOneTest extends TestCase
         $association->cascadeDelete($entity);
 
         $query = $this->profile->query()->where(['user_id' => 1]);
-        $this->assertEquals(1, $query->count(), 'Left non-matching row behind');
+        $this->assertSame(1, $query->count(), 'Left non-matching row behind');
 
         $query = $this->profile->query()->where(['user_id' => 3]);
-        $this->assertEquals(1, $query->count(), 'other records left behind');
+        $this->assertSame(1, $query->count(), 'other records left behind');
 
         $user = new Entity(['id' => 3]);
         $this->assertTrue($association->cascadeDelete($user));
@@ -374,10 +374,10 @@ class HasOneTest extends TestCase
         $this->assertTrue($association->cascadeDelete($user));
 
         $query = $this->profile->query()->where(['user_id' => 1]);
-        $this->assertEquals(1, $query->count(), 'Left non-matching row behind');
+        $this->assertSame(1, $query->count(), 'Left non-matching row behind');
 
         $query = $this->profile->query()->where(['user_id' => 3]);
-        $this->assertEquals(1, $query->count(), 'other records left behind');
+        $this->assertSame(1, $query->count(), 'other records left behind');
 
         $user = new Entity(['id' => 3]);
         $this->assertTrue($association->cascadeDelete($user));

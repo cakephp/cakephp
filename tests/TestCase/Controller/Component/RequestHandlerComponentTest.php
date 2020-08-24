@@ -422,7 +422,7 @@ class RequestHandlerComponentTest extends TestCase
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
         $this->RequestHandler->beforeRender(new Event('Controller.beforeRender', $this->Controller));
 
-        $this->assertEquals($extension, $this->RequestHandler->ext);
+        $this->assertSame($extension, $this->RequestHandler->ext);
         $this->assertSame('text/html', $this->Controller->getResponse()->getType());
 
         $view = $this->Controller->createView();
@@ -583,7 +583,7 @@ class RequestHandlerComponentTest extends TestCase
         $this->Controller->setRequest($this->request->withHeader('Accept', 'application/xml;q=1.0'));
 
         $this->RequestHandler->renderAs($this->Controller, 'xml', ['attachment' => 'myfile.xml']);
-        $this->assertEquals(XmlView::class, $this->Controller->viewBuilder()->getClassName());
+        $this->assertSame(XmlView::class, $this->Controller->viewBuilder()->getClassName());
         $this->assertSame('application/xml', $this->Controller->getResponse()->getType());
         $this->assertSame('UTF-8', $this->Controller->getResponse()->getCharset());
         $this->assertStringContainsString('myfile.xml', $this->Controller->getResponse()->getHeaderLine('Content-Disposition'));
@@ -799,7 +799,7 @@ class RequestHandlerComponentTest extends TestCase
         $requestHandler = new RequestHandlerComponent($this->Controller->components());
         $requestHandler->beforeRender($event);
         $this->assertTrue($event->isStopped());
-        $this->assertEquals(304, $this->Controller->getResponse()->getStatusCode());
+        $this->assertSame(304, $this->Controller->getResponse()->getStatusCode());
         $this->assertSame('', (string)$this->Controller->getResponse()->getBody());
         $this->assertFalse($this->Controller->getResponse()->hasHeader('Content-Type'), 'header should not be removed.');
     }
@@ -824,7 +824,7 @@ class RequestHandlerComponentTest extends TestCase
         $requestHandler = new RequestHandlerComponent($this->Controller->components());
         $requestHandler->beforeRender($event);
         $this->assertTrue($event->isStopped());
-        $this->assertEquals(304, $this->Controller->getResponse()->getStatusCode());
+        $this->assertSame(304, $this->Controller->getResponse()->getStatusCode());
         $this->assertSame('', (string)$this->Controller->getResponse()->getBody());
         $this->assertFalse($this->Controller->getResponse()->hasHeader('Content-Type'));
     }
@@ -853,7 +853,7 @@ class RequestHandlerComponentTest extends TestCase
         $requestHandler->beforeRender($event);
         $this->assertTrue($event->isStopped());
 
-        $this->assertEquals(304, $this->Controller->getResponse()->getStatusCode());
+        $this->assertSame(304, $this->Controller->getResponse()->getStatusCode());
         $this->assertSame('', (string)$this->Controller->getResponse()->getBody());
         $this->assertFalse($this->Controller->getResponse()->hasHeader('Content-type'));
     }

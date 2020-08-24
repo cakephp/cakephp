@@ -168,11 +168,11 @@ class ViewTest extends TestCase
 
         $expected = Plugin::path('TestPlugin') . 'templates' . DS . 'Tests' . DS . 'index.php';
         $result = $View->getTemplateFileName('index');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $expected = Plugin::path('TestPlugin') . 'templates' . DS . 'layout' . DS . 'default.php';
         $result = $View->getLayoutFileName();
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -658,14 +658,14 @@ class ViewTest extends TestCase
         $this->assertSame('this is the test element', $result);
 
         $result = $this->View->element('TestPlugin.plugin_element');
-        $this->assertEquals("Element in the TestPlugin\n", $result);
+        $this->assertSame("Element in the TestPlugin\n", $result);
 
         $this->View->setRequest($this->View->getRequest()->withParam('plugin', 'TestPlugin'));
         $result = $this->View->element('plugin_element');
-        $this->assertEquals("Element in the TestPlugin\n", $result);
+        $this->assertSame("Element in the TestPlugin\n", $result);
 
         $result = $this->View->element('plugin_element', [], ['plugin' => false]);
-        $this->assertEquals("Plugin element overridden in app\n", $result);
+        $this->assertSame("Plugin element overridden in app\n", $result);
     }
 
     /**
@@ -736,7 +736,7 @@ class ViewTest extends TestCase
         $events->on('View.afterRender', $callback);
 
         $this->View->element('test_element', [], ['callbacks' => true]);
-        $this->assertEquals(2, $count);
+        $this->assertSame(2, $count);
     }
 
     /**
@@ -791,16 +791,16 @@ class ViewTest extends TestCase
 
         $result = $View->element('test_element', [], ['cache' => true]);
         $expected = 'this is the test element';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Cache::read('element__test_element', 'test_view');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $View->element('test_element', ['param' => 'one', 'foo' => 'two'], ['cache' => true]);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Cache::read('element__test_element_param_foo', 'test_view');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $View->element('test_element', [
             'param' => 'one',
@@ -809,7 +809,7 @@ class ViewTest extends TestCase
             'cache' => ['key' => 'custom_key'],
         ]);
         $result = Cache::read('element_custom_key', 'test_view');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $View->setElementCache('default');
         $View->element('test_element', [
@@ -819,7 +819,7 @@ class ViewTest extends TestCase
             'cache' => ['config' => 'test_view'],
         ]);
         $result = Cache::read('element__test_element_param_foo', 'test_view');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         Cache::clear('test_view');
         Cache::drop('test_view');
@@ -846,10 +846,10 @@ class ViewTest extends TestCase
 
         $result = $View->element('subfolder/test_element', [], ['cache' => true]);
         $expected = 'this is the test element in subfolder';
-        $this->assertEquals($expected, trim($result));
+        $this->assertSame($expected, trim($result));
 
         $result = Cache::read('element__subfolder_test_element', 'test_view');
-        $this->assertEquals($expected, trim($result));
+        $this->assertSame($expected, trim($result));
     }
 
     /**
@@ -867,15 +867,15 @@ class ViewTest extends TestCase
         $View->getEventManager()->on($listener);
 
         $View->render('index');
-        $this->assertEquals(View::TYPE_TEMPLATE, $listener->beforeRenderViewType);
-        $this->assertEquals(View::TYPE_TEMPLATE, $listener->afterRenderViewType);
+        $this->assertSame(View::TYPE_TEMPLATE, $listener->beforeRenderViewType);
+        $this->assertSame(View::TYPE_TEMPLATE, $listener->afterRenderViewType);
 
-        $this->assertEquals($View->getCurrentType(), View::TYPE_TEMPLATE);
+        $this->assertSame($View->getCurrentType(), View::TYPE_TEMPLATE);
         $View->element('test_element', [], ['callbacks' => true]);
-        $this->assertEquals($View->getCurrentType(), View::TYPE_TEMPLATE);
+        $this->assertSame($View->getCurrentType(), View::TYPE_TEMPLATE);
 
-        $this->assertEquals(View::TYPE_ELEMENT, $listener->beforeRenderViewType);
-        $this->assertEquals(View::TYPE_ELEMENT, $listener->afterRenderViewType);
+        $this->assertSame(View::TYPE_ELEMENT, $listener->beforeRenderViewType);
+        $this->assertSame(View::TYPE_ELEMENT, $listener->afterRenderViewType);
     }
 
     /**
@@ -1496,7 +1496,7 @@ class ViewTest extends TestCase
         $this->assertSame($this->View, $result);
 
         $result = $this->View->fetch('test');
-        $this->assertEquals($value . 'Block', $result);
+        $this->assertSame($value . 'Block', $result);
     }
 
     /**
@@ -1621,7 +1621,7 @@ This is the first parent.
 This is the first template.
 Sidebar Content.
 TEXT;
-        $this->assertEquals($expected, $content);
+        $this->assertSame($expected, $content);
     }
 
     /**
@@ -1669,7 +1669,7 @@ Parent Element.
 Element content.
 
 TEXT;
-        $this->assertEquals($expected, $content);
+        $this->assertSame($expected, $content);
     }
 
     /**
@@ -1688,7 +1688,7 @@ Parent Element.
 Prefix Element content.
 
 TEXT;
-        $this->assertEquals($expected, $content);
+        $this->assertSame($expected, $content);
     }
 
     /**
@@ -1719,7 +1719,7 @@ Parent View.
 this is the test elementThe view
 
 TEXT;
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -1737,7 +1737,7 @@ Parent View.
 this is the test prefix elementThe view
 
 TEXT;
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -1757,8 +1757,8 @@ TEXT;
         }
 
         $this->assertNotNull($e);
-        $this->assertEquals('Exception with open buffers', $e->getMessage());
-        $this->assertEquals($bufferLevel, ob_get_level());
+        $this->assertSame('Exception with open buffers', $e->getMessage());
+        $this->assertSame($bufferLevel, ob_get_level());
     }
 
     /**
@@ -1797,8 +1797,8 @@ TEXT;
         Cache::drop('test_view');
 
         $this->assertNotNull($e);
-        $this->assertEquals('Exception with open buffers', $e->getMessage());
-        $this->assertEquals($bufferLevel, ob_get_level());
+        $this->assertSame('Exception with open buffers', $e->getMessage());
+        $this->assertSame($bufferLevel, ob_get_level());
     }
 
     /**
@@ -1834,12 +1834,12 @@ TEXT;
     {
         $default = 'Default';
         $result = $this->View->fetch('title', $default);
-        $this->assertEquals($default, $result);
+        $this->assertSame($default, $result);
 
         $expected = 'My Title';
         $this->View->assign('title', $expected);
         $result = $this->View->fetch('title', $default);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -1851,12 +1851,12 @@ TEXT;
     {
         $default = 'Default';
         $result = $this->View->get('title', $default);
-        $this->assertEquals($default, $result);
+        $this->assertSame($default, $result);
 
         $expected = 'Back to the Future';
         $this->View->set('title', $expected);
         $result = $this->View->get('title', $default);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**

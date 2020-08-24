@@ -232,7 +232,7 @@ class RedisEngineTest extends TestCase
         $this->assertTrue($result);
 
         $result = Cache::read('test', 'redis');
-        $this->assertEquals($data, $result);
+        $this->assertSame($data, $result);
 
         $data = [1, 2, 3];
         $this->assertTrue(Cache::write('array_data', $data, 'redis'));
@@ -313,7 +313,7 @@ class RedisEngineTest extends TestCase
         sleep(2);
         $result = Cache::read('long_expiry_test', 'redis');
         $expecting = $data;
-        $this->assertEquals($expecting, $result);
+        $this->assertSame($expecting, $result);
     }
 
     /**
@@ -365,16 +365,16 @@ class RedisEngineTest extends TestCase
         $this->assertTrue($result);
 
         $result = Cache::decrement('test_decrement', 1, 'redis');
-        $this->assertEquals(4, $result);
+        $this->assertSame(4, $result);
 
         $result = Cache::read('test_decrement', 'redis');
-        $this->assertEquals(4, $result);
+        $this->assertSame(4, $result);
 
         $result = Cache::decrement('test_decrement', 2, 'redis');
-        $this->assertEquals(2, $result);
+        $this->assertSame(2, $result);
 
         $result = Cache::read('test_decrement', 'redis');
-        $this->assertEquals(2, $result);
+        $this->assertSame(2, $result);
     }
 
     /**
@@ -386,16 +386,16 @@ class RedisEngineTest extends TestCase
     {
         Cache::delete('test_increment', 'redis');
         $result = Cache::increment('test_increment', 1, 'redis');
-        $this->assertEquals(1, $result);
+        $this->assertSame(1, $result);
 
         $result = Cache::read('test_increment', 'redis');
-        $this->assertEquals(1, $result);
+        $this->assertSame(1, $result);
 
         $result = Cache::increment('test_increment', 2, 'redis');
-        $this->assertEquals(3, $result);
+        $this->assertSame(3, $result);
 
         $result = Cache::read('test_increment', 'redis');
-        $this->assertEquals(3, $result);
+        $this->assertSame(3, $result);
     }
 
     /**
@@ -431,13 +431,13 @@ class RedisEngineTest extends TestCase
         Cache::delete('test_decrement', 'redis');
 
         $result = Cache::increment('test_increment', 1, 'redis');
-        $this->assertEquals(1, $result);
+        $this->assertSame(1, $result);
 
         $result = Cache::decrement('test_decrement', 1, 'redis');
-        $this->assertEquals(-1, $result);
+        $this->assertSame(-1, $result);
 
-        $this->assertEquals(1, Cache::read('test_increment', 'redis'));
-        $this->assertEquals(-1, Cache::read('test_decrement', 'redis'));
+        $this->assertSame(1, Cache::read('test_increment', 'redis'));
+        $this->assertSame(-1, Cache::read('test_decrement', 'redis'));
     }
 
     /**
@@ -596,7 +596,7 @@ class RedisEngineTest extends TestCase
 
         $expected = 'test data';
         $result = Cache::read('test_add_key', 'redis');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Cache::add('test_add_key', 'test data 2', 'redis');
         $this->assertFalse($result);

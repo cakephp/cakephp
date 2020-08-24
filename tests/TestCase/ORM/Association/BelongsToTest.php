@@ -177,7 +177,7 @@ class BelongsToTest extends TestCase
         ];
         $this->assertEquals($expected, $query->clause('join'));
 
-        $this->assertEquals(
+        $this->assertSame(
             'integer',
             $query->getTypeMap()->type('Companies__id'),
             'Associations should map types.'

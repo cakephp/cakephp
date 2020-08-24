@@ -133,7 +133,7 @@ class IniConfigTest extends TestCase
 
         $this->assertTrue(isset($config['database']['db']['username']));
         $this->assertSame('mark', $config['database']['db']['username']);
-        $this->assertEquals(3, $config['nesting']['one']['two']['three']);
+        $this->assertSame('3', $config['nesting']['one']['two']['three']);
         $this->assertFalse(isset($config['database.db.username']));
         $this->assertFalse(isset($config['database']['db.username']));
     }

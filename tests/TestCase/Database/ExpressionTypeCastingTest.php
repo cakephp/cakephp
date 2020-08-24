@@ -106,7 +106,7 @@ class ExpressionTypeCastingTest extends TestCase
         });
 
         $result = array_sum($expressions);
-        $this->assertEquals(2, $result, 'Missing expressions in the tree');
+        $this->assertSame(2, $result, 'Missing expressions in the tree');
     }
 
     /**
@@ -136,7 +136,7 @@ class ExpressionTypeCastingTest extends TestCase
         });
 
         $result = array_sum($expressions);
-        $this->assertEquals(2, $result, 'Missing expressions in the tree');
+        $this->assertSame(2, $result, 'Missing expressions in the tree');
     }
 
     /**
@@ -158,7 +158,7 @@ class ExpressionTypeCastingTest extends TestCase
         });
 
         $result = array_sum($expressions);
-        $this->assertEquals(1, $result, 'Missing expressions in the tree');
+        $this->assertSame(1, $result, 'Missing expressions in the tree');
     }
 
     /**
@@ -174,7 +174,7 @@ class ExpressionTypeCastingTest extends TestCase
 
         $binder = new ValueBinder();
         $sql = $values->sql($binder);
-        $this->assertEquals(
+        $this->assertSame(
             ' VALUES ((CONCAT(:param0, :param1))), ((CONCAT(:param2, :param3)))',
             $sql
         );
@@ -187,6 +187,6 @@ class ExpressionTypeCastingTest extends TestCase
         });
 
         $result = array_sum($expressions);
-        $this->assertEquals(2, $result, 'Missing expressions in the tree');
+        $this->assertSame(2, $result, 'Missing expressions in the tree');
     }
 }

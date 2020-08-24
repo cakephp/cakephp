@@ -194,7 +194,7 @@ class QueryRegressionTest extends TestCase
                     return $q->where(['Authors.name' => 'larry']);
                 });
             });
-        $this->assertEquals(3, $query->count());
+        $this->assertSame(3, $query->count());
 
         $result = $query->first();
         $this->assertInstanceOf(EntityInterface::class, $result);
@@ -234,13 +234,13 @@ class QueryRegressionTest extends TestCase
             ->toArray();
 
         $this->assertCount(5, $results);
-        $this->assertEquals(1, $results[0]->articles_tag->foo->id);
-        $this->assertEquals(1, $results[0]->author->favorite_tag->id);
-        $this->assertEquals(2, $results[1]->articles_tag->foo->id);
-        $this->assertEquals(1, $results[2]->articles_tag->foo->id);
-        $this->assertEquals(3, $results[2]->author->favorite_tag->id);
-        $this->assertEquals(3, $results[3]->articles_tag->foo->id);
-        $this->assertEquals(3, $results[3]->author->favorite_tag->id);
+        $this->assertSame(1, $results[0]->articles_tag->foo->id);
+        $this->assertSame(1, $results[0]->author->favorite_tag->id);
+        $this->assertSame(2, $results[1]->articles_tag->foo->id);
+        $this->assertSame(1, $results[2]->articles_tag->foo->id);
+        $this->assertSame(3, $results[2]->author->favorite_tag->id);
+        $this->assertSame(3, $results[3]->articles_tag->foo->id);
+        $this->assertSame(3, $results[3]->author->favorite_tag->id);
     }
 
     /**
@@ -287,7 +287,7 @@ class QueryRegressionTest extends TestCase
         $entity = $articles->patchEntity($entity, $data, ['Highlights._joinData']);
         $articles->save($entity);
         $entity = $articles->get(2, ['contain' => ['Highlights']]);
-        $this->assertEquals(4, $entity->highlights[0]->_joinData->tag_id);
+        $this->assertSame(4, $entity->highlights[0]->_joinData->tag_id);
         $this->assertSame('2014-06-01', $entity->highlights[0]->_joinData->highlighted_time->format('Y-m-d'));
     }
 
@@ -333,7 +333,7 @@ class QueryRegressionTest extends TestCase
         });
 
         $query = $articles->Tags->find()->where(['Tags.id NOT IN' => $sub]);
-        $this->assertEquals(1, $query->count());
+        $this->assertSame(1, $query->count());
     }
 
     /**
@@ -644,7 +644,7 @@ class QueryRegressionTest extends TestCase
             ['tag1', 'tag2'],
             collection($result[0]->author->tags)->extract('name')->toArray()
         );
-        $this->assertEquals(3, $result[0]->author->id);
+        $this->assertSame(3, $result[0]->author->id);
     }
 
     /**
@@ -711,7 +711,7 @@ class QueryRegressionTest extends TestCase
                 return $q->where(['Authors.id' => 1]);
             }])
             ->count();
-        $this->assertEquals(2, $count);
+        $this->assertSame(2, $count);
     }
 
     /**
@@ -731,7 +731,7 @@ class QueryRegressionTest extends TestCase
             ->group(['id', 'title'])
             ->bind(':val', '%Second%');
         $count = $query->count();
-        $this->assertEquals(1, $count);
+        $this->assertSame(1, $count);
     }
 
     /**
@@ -759,7 +759,7 @@ class QueryRegressionTest extends TestCase
             });
 
         $count = $table->find()->count();
-        $this->assertEquals(3, $count);
+        $this->assertSame(3, $count);
     }
 
     /**
@@ -852,7 +852,7 @@ class QueryRegressionTest extends TestCase
         $query = $table->find()->where(['id' => 1]);
         $query2 = $table->find()->where(['id' => 2]);
         $query->union($query2);
-        $this->assertEquals(2, $query->count());
+        $this->assertSame(2, $query->count());
     }
 
     /**
@@ -907,7 +907,7 @@ class QueryRegressionTest extends TestCase
     {
         $this->loadFixtures('Articles');
         $results = $this->getTableLocator()->get('Articles')->find()->all();
-        $this->assertEquals(3, $results->count());
+        $this->assertSame(3, $results->count());
         $this->assertNotNull($results->first());
         $this->assertCount(3, $results->toArray());
     }
@@ -978,9 +978,9 @@ class QueryRegressionTest extends TestCase
             ->contain('Articles')
             ->first();
 
-        $this->assertEquals(1, $result->id);
-        $this->assertEquals(1, $result->_matchingData['Articles']->id);
-        $this->assertEquals(2, $result->_matchingData['Tags']->id);
+        $this->assertSame(1, $result->id);
+        $this->assertSame(1, $result->_matchingData['Articles']->id);
+        $this->assertSame(2, $result->_matchingData['Tags']->id);
         $this->assertNotNull($result->article);
         $this->assertEquals($result->article, $result->_matchingData['Articles']);
     }
@@ -1052,8 +1052,8 @@ class QueryRegressionTest extends TestCase
             ->first();
         $this->assertInstanceOf('Cake\ORM\Entity', $result->article);
         $this->assertInstanceOf('Cake\ORM\Entity', $result->user);
-        $this->assertEquals(2, $result->user->id);
-        $this->assertEquals(1, $result->article->id);
+        $this->assertSame(2, $result->user->id);
+        $this->assertSame(1, $result->article->id);
     }
 
     /**
@@ -1200,7 +1200,7 @@ class QueryRegressionTest extends TestCase
             ->where(['user_id' => 1])
             ->first()
             ->ratio;
-        $this->assertEquals(0.5, $ratio);
+        $this->assertSame(0.5, (float)$ratio);
     }
 
     /**
@@ -1306,7 +1306,7 @@ class QueryRegressionTest extends TestCase
             ->where(['Articles.id' => 2]);
 
         $result = $query->first();
-        $this->assertEquals(2, $result->id);
+        $this->assertSame(2, $result->id);
         $this->assertNotEmpty($result->tags, 'Missing tags');
         $this->assertNotEmpty($result->tags[0]->_joinData, 'Missing join data');
     }
@@ -1423,7 +1423,7 @@ class QueryRegressionTest extends TestCase
 
         $result = $query->first();
         $this->assertNotEmpty($result);
-        $this->assertEquals(3, $result->id);
+        $this->assertSame(3, $result->id);
         $this->assertInstanceOf(FrozenTime::class, $result->created);
     }
 
@@ -1662,7 +1662,7 @@ class QueryRegressionTest extends TestCase
         $query->order(['title' => 'desc']);
         // Executing the normal query before getting the count
         $query->all();
-        $this->assertEquals(3, $query->count());
+        $this->assertSame(3, $query->count());
 
         $table = $this->getTableLocator()->get('Articles');
         $query = $table->find();
@@ -1672,7 +1672,7 @@ class QueryRegressionTest extends TestCase
         ));
         $query->orderDesc($query->newExpr()->add(['id' => 3]));
         // Not executing the query first, just getting the count
-        $this->assertEquals(3, $query->count());
+        $this->assertSame(3, $query->count());
     }
 
     /**
@@ -1779,7 +1779,7 @@ class QueryRegressionTest extends TestCase
             });
 
         $result = $query->first()->get('value');
-        $this->assertEquals(1, $result);
+        $this->assertSame(1, $result);
     }
 
     /**
@@ -1810,7 +1810,7 @@ class QueryRegressionTest extends TestCase
             });
 
         $result = $query->first()->get('value');
-        $this->assertEquals('MARIANO', $result);
+        $this->assertSame('MARIANO', $result);
     }
 
     /**
@@ -1844,7 +1844,7 @@ class QueryRegressionTest extends TestCase
             });
 
         $result = $query->first()->get('value');
-        $this->assertEquals(1.23, $result);
+        $this->assertSame(1.23, $result);
     }
 
     /**
@@ -1858,7 +1858,7 @@ class QueryRegressionTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsTo('Authors');
 
-        $this->assertEquals(
+        $this->assertSame(
             1,
             $table->getAssociation('Authors')->updateAll(['name' => null], ['id' => 3])
         );
@@ -1911,7 +1911,7 @@ class QueryRegressionTest extends TestCase
             });
 
         $result = $query->first()->get('value');
-        $this->assertEquals('mariano appended', $result);
+        $this->assertSame('mariano appended', $result);
     }
 
     /**
@@ -1943,6 +1943,6 @@ class QueryRegressionTest extends TestCase
             });
 
         $result = $query->first()->get('value');
-        $this->assertEquals('mariano appended', $result);
+        $this->assertSame('mariano appended', $result);
     }
 }

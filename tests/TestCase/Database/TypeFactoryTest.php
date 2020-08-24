@@ -126,8 +126,8 @@ class TypeFactoryTest extends TestCase
         $fooType = FooType::class;
         TypeFactory::map('foo', $fooType);
         $map = TypeFactory::getMap();
-        $this->assertEquals($fooType, $map['foo']);
-        $this->assertEquals($fooType, TypeFactory::getMap('foo'));
+        $this->assertSame($fooType, $map['foo']);
+        $this->assertSame($fooType, TypeFactory::getMap('foo'));
 
         TypeFactory::map('foo2', $fooType);
         $map = TypeFactory::getMap();
@@ -189,7 +189,7 @@ class TypeFactoryTest extends TestCase
         $newMap = TypeFactory::getMap();
 
         $this->assertEquals(array_keys($map), array_keys($newMap));
-        $this->assertEquals($map['integer'], $newMap['integer']);
+        $this->assertSame($map['integer'], $newMap['integer']);
         $this->assertEquals($type, TypeFactory::build('float'));
     }
 
@@ -222,7 +222,7 @@ class TypeFactoryTest extends TestCase
         $type = TypeFactory::build('biginteger');
         $integer = time() * time();
         $driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
-        $this->assertEquals(PDO::PARAM_INT, $type->toStatement($integer, $driver));
+        $this->assertSame(PDO::PARAM_INT, $type->toStatement($integer, $driver));
     }
 
     /**
@@ -250,7 +250,7 @@ class TypeFactoryTest extends TestCase
         $type = TypeFactory::build('decimal');
         $string = '12.55';
         $driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
-        $this->assertEquals(PDO::PARAM_STR, $type->toStatement($string, $driver));
+        $this->assertSame(PDO::PARAM_STR, $type->toStatement($string, $driver));
     }
 
     /**

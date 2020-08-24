@@ -140,7 +140,7 @@ class MessageTest extends TestCase
 
         $expected = "<a\r\n" . 'href="http://cakephp.org">' . str_repeat('x', Message::LINE_LENGTH_MUST - 26) . "\r\n" .
             str_repeat('x', 26) . "\r\n</a>\r\n\r\n";
-        $this->assertEquals($expected, $result['message']);
+        $this->assertSame($expected, $result['message']);
         $this->assertLineLengths($result['message']);
 
         $str1 = 'a ';
@@ -152,7 +152,7 @@ class MessageTest extends TestCase
 
         $result = $transort->send($this->message);
         $expected = "{$message}\r\n\r\n";
-        $this->assertEquals($expected, $result['message']);
+        $this->assertSame($expected, $result['message']);
         $this->assertLineLengths($result['message']);
 
         $message = $str1 . str_repeat('x', Message::LINE_LENGTH_MUST - $length) . $str2;
@@ -161,7 +161,7 @@ class MessageTest extends TestCase
 
         $result = $transort->send($this->message);
         $expected = "{$message}\r\n\r\n";
-        $this->assertEquals($expected, $result['message']);
+        $this->assertSame($expected, $result['message']);
         $this->assertLineLengths($result['message']);
 
         $message = $str1 . str_repeat('x', Message::LINE_LENGTH_MUST - $length + 1) . $str2;
@@ -170,7 +170,7 @@ class MessageTest extends TestCase
 
         $result = $transort->send($this->message);
         $expected = $str1 . str_repeat('x', Message::LINE_LENGTH_MUST - $length + 1) . sprintf("\r\n%s\r\n\r\n", trim($str2));
-        $this->assertEquals($expected, $result['message']);
+        $this->assertSame($expected, $result['message']);
         $this->assertLineLengths($result['message']);
     }
 
@@ -199,7 +199,7 @@ HTML;
         $message = str_replace("\r\n", "\n", substr($message, 0, -9));
         $message = str_replace("\n", "\r\n", $message);
         $expected = "{$message}\r\nxxxxxxxxx\r\n\r\n";
-        $this->assertEquals($expected, $result['message']);
+        $this->assertSame($expected, $result['message']);
         $this->assertLineLengths($result['message']);
     }
 
@@ -222,7 +222,7 @@ HTML;
         $result = (new DebugTransport())->send($this->message);
         $message = substr($message, 0, -1);
         $expected = "{$message}\r\nx\r\n\r\n";
-        $this->assertEquals($expected, $result['message']);
+        $this->assertSame($expected, $result['message']);
         $this->assertLineLengths($result['message']);
     }
 
@@ -246,7 +246,7 @@ HTML;
 
         $result = (new DebugTransport())->send($this->message);
         $expected = "{$message}\r\n\r\n";
-        $this->assertEquals($expected, $result['message']);
+        $this->assertSame($expected, $result['message']);
     }
 
     /**

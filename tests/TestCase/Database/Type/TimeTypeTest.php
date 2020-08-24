@@ -118,7 +118,7 @@ class TimeTypeTest extends TestCase
     {
         $value = '16:30:15';
         $result = $this->type->toDatabase($value, $this->driver);
-        $this->assertEquals($value, $result);
+        $this->assertSame($value, $result);
 
         $date = new Time('16:30:15');
         $result = $this->type->toDatabase($date, $this->driver);
@@ -233,7 +233,7 @@ class TimeTypeTest extends TestCase
 
         $expected = new Time('23:23:00');
         $result = $this->type->marshal('11:23pm');
-        $this->assertEquals($expected->format('H:i'), $result->format('H:i'));
+        $this->assertSame($expected->format('H:i'), $result->format('H:i'));
         $this->assertNull($this->type->marshal('derp:23'));
 
         $this->type->useLocaleParser(false);
@@ -254,7 +254,7 @@ class TimeTypeTest extends TestCase
         I18n::setLocale('da_DK');
         $expected = new Time('03:20:00');
         $result = $this->type->marshal('03.20');
-        $this->assertEquals($expected->format('H:i'), $result->format('H:i'));
+        $this->assertSame($expected->format('H:i'), $result->format('H:i'));
 
         $this->type->useLocaleParser(false);
     }

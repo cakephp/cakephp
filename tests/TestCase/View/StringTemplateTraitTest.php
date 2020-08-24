@@ -97,7 +97,7 @@ class StringTemplateTraitTest extends TestCase
         $result = $this->Template->formatTemplate('text', [
             'text' => 'CakePHP',
         ]);
-        $this->assertEquals(
+        $this->assertSame(
             '<p>CakePHP</p>',
             $result
         );

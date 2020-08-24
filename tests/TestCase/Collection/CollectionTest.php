@@ -70,11 +70,11 @@ class CollectionTest extends TestCase
     public function testAvg($items)
     {
         $collection = new Collection($items);
-        $this->assertEquals(2, $collection->avg());
+        $this->assertSame(2, $collection->avg());
 
         $items = [['foo' => 1], ['foo' => 2], ['foo' => 3]];
         $collection = new Collection($items);
-        $this->assertEquals(2, $collection->avg('foo'));
+        $this->assertSame(2, $collection->avg('foo'));
     }
 
     /**
@@ -112,7 +112,7 @@ class CollectionTest extends TestCase
     public function testAvgWithMatcher($items)
     {
         $collection = new Collection($items);
-        $this->assertEquals(2, $collection->avg('foo'));
+        $this->assertSame(2, $collection->avg('foo'));
     }
 
     /**
@@ -139,7 +139,7 @@ class CollectionTest extends TestCase
     public function testMedian($items)
     {
         $collection = new Collection($items);
-        $this->assertEquals(4, $collection->median());
+        $this->assertSame(4, $collection->median());
     }
 
     /**
@@ -162,7 +162,7 @@ class CollectionTest extends TestCase
     public function testMedianEven($items)
     {
         $collection = new Collection($items);
-        $this->assertEquals(2.5, $collection->median());
+        $this->assertSame(2.5, $collection->median());
     }
 
     /**
@@ -194,7 +194,7 @@ class CollectionTest extends TestCase
      */
     public function testMedianWithMatcher($items)
     {
-        $this->assertEquals(333, (new Collection($items))->median('invoice.total'));
+        $this->assertSame(333, (new Collection($items))->median('invoice.total'));
     }
 
     /**
@@ -507,7 +507,7 @@ class CollectionTest extends TestCase
             ->method('__invoke')
             ->with(16, 4, 'd')
             ->will($this->returnValue(20));
-        $this->assertEquals(20, $collection->reduce($callable, 10));
+        $this->assertSame(20, $collection->reduce($callable, 10));
     }
 
     /**
@@ -535,7 +535,7 @@ class CollectionTest extends TestCase
             ->method('__invoke')
             ->with(6, 4, 'd')
             ->will($this->returnValue(10));
-        $this->assertEquals(10, $collection->reduce($callable));
+        $this->assertSame(10, $collection->reduce($callable));
     }
 
     /**
@@ -1023,7 +1023,7 @@ class CollectionTest extends TestCase
     {
         $list = (new Collection($list))->buffered();
         $collection = new Collection($list);
-        $this->assertEquals(8, $collection->append($list)->count());
+        $this->assertSame(8, $collection->append($list)->count());
     }
 
     /**
@@ -1036,7 +1036,7 @@ class CollectionTest extends TestCase
     {
         $list = (new Collection($list))->buffered();
         $collection = new Collection($list);
-        $this->assertEquals(4, $collection->append($list)->countKeys());
+        $this->assertSame(4, $collection->append($list)->countKeys());
     }
 
     /**
@@ -2139,12 +2139,12 @@ class CollectionTest extends TestCase
     public function testLast()
     {
         $collection = new Collection([1, 2, 3]);
-        $this->assertEquals(3, $collection->last());
+        $this->assertSame(3, $collection->last());
 
         $collection = $collection->map(function ($e) {
             return $e * 2;
         });
-        $this->assertEquals(6, $collection->last());
+        $this->assertSame(6, $collection->last());
     }
 
     /**
@@ -2166,7 +2166,7 @@ class CollectionTest extends TestCase
     public function testLastWithCountable()
     {
         $collection = new Collection(new ArrayObject([1, 2, 3]));
-        $this->assertEquals(3, $collection->last());
+        $this->assertSame(3, $collection->last());
     }
 
     /**
@@ -2189,7 +2189,7 @@ class CollectionTest extends TestCase
     {
         $iterator = new NoRewindIterator(new ArrayIterator([1, 2, 3]));
         $collection = new Collection($iterator);
-        $this->assertEquals(3, $collection->last());
+        $this->assertSame(3, $collection->last());
     }
 
     /**
@@ -2296,10 +2296,10 @@ class CollectionTest extends TestCase
     public function testSumOfWithIdentity()
     {
         $collection = new Collection([1, 2, 3]);
-        $this->assertEquals(6, $collection->sumOf());
+        $this->assertSame(6, $collection->sumOf());
 
         $collection = new Collection(['a' => 1, 'b' => 4, 'c' => 6]);
-        $this->assertEquals(11, $collection->sumOf());
+        $this->assertSame(11, $collection->sumOf());
     }
 
     /**
