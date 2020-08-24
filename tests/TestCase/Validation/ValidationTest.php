@@ -1650,6 +1650,13 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::time('1:00pm'));
         $this->assertFalse(Validation::time('13:00pm'));
         $this->assertFalse(Validation::time('9:00'));
+        $this->assertTrue(Validation::time('00'));
+        $this->assertFalse(Validation::time('0'));
+        $this->assertTrue(Validation::time('09'));
+        $this->assertFalse(Validation::time('9'));
+        $this->assertTrue(Validation::time('10'));
+        $this->assertTrue(Validation::time('23'));
+        $this->assertFalse(Validation::time('24'));
     }
 
     /**
