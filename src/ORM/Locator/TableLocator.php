@@ -79,6 +79,16 @@ class TableLocator extends AbstractLocator implements LocatorInterface
     }
 
     /**
+     * @param array|null $locations
+     *
+     * @return static
+     */
+    public static function instance(array $locations = null)
+    {
+        return new static($locations);
+    }
+
+    /**
      * @inheritDoc
      */
     public function setConfig($alias, $options = null)

@@ -62,6 +62,17 @@ class TableLocatorTest extends TestCase
     }
 
     /**
+     * Test TableLocator::instance()->...() factory.
+     *
+     * @return void
+     */
+    public function testInstance(): void
+    {
+        $instance = TableLocator::instance();
+        $this->assertInstanceOf(TableLocator::class, $instance);
+    }
+
+    /**
      * Test getConfig() method.
      *
      * @return void
