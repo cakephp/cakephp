@@ -855,22 +855,22 @@ I am a test task, I dispatch another Shell
 I am a dispatched Shell
 
 TEXT;
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         ob_start();
         $Shell->runCommand(['test_task_dispatch_array'], true);
         $result = ob_get_clean();
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         ob_start();
         $Shell->runCommand(['test_task_dispatch_command_string'], true);
         $result = ob_get_clean();
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         ob_start();
         $Shell->runCommand(['test_task_dispatch_command_array'], true);
         $result = ob_get_clean();
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $expected = <<<TEXT
 <info>Welcome to CakePHP Console</info>
@@ -882,7 +882,7 @@ TEXT;
         ob_start();
         $Shell->runCommand(['test_task_dispatch_with_param'], true);
         $result = ob_get_clean();
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $expected = <<<TEXT
 <info>Welcome to CakePHP Console</info>
@@ -894,7 +894,7 @@ TEXT;
         ob_start();
         $Shell->runCommand(['test_task_dispatch_with_multiple_params'], true);
         $result = ob_get_clean();
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $expected = <<<TEXT
 <info>Welcome to CakePHP Console</info>
@@ -906,7 +906,7 @@ TEXT;
         ob_start();
         $Shell->runCommand(['test_task_dispatch_with_requested_off'], true);
         $result = ob_get_clean();
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -1301,7 +1301,7 @@ TEXT;
         $this->Shell->tasks = ['TestApple'];
         $this->Shell->loadTasks();
         $expected = 'TestApple';
-        $this->assertEquals($expected, $this->Shell->TestApple->name);
+        $this->assertSame($expected, $this->Shell->TestApple->name);
     }
 
     /**

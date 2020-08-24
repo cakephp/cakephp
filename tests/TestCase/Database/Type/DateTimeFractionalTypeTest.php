@@ -150,7 +150,7 @@ class DateTimeFractionalTypeTest extends TestCase
     {
         $value = '2001-01-04 12:13:14.123456';
         $result = $this->type->toDatabase($value, $this->driver);
-        $this->assertEquals($value, $result);
+        $this->assertSame($value, $result);
 
         // test extra fractional second past microseconds being ignored
         $date = new Time('2013-08-12 15:16:17.1234567');

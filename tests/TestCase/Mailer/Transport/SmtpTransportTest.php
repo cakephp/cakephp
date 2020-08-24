@@ -462,7 +462,7 @@ class SmtpTransportTest extends TestCase
         ]);
         $expected = $this->SmtpTransport->getConfig();
 
-        $this->assertEquals(666, $expected['port']);
+        $this->assertSame(666, $expected['port']);
 
         $this->SmtpTransport->setConfig([]);
         $result = $this->SmtpTransport->getConfig();

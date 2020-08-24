@@ -601,7 +601,7 @@ class HtmlHelperTest extends TestCase
         $this->assertSame('display:none; margin:10px;', $result);
 
         $result = $this->Html->style(['display' => 'none', 'margin' => '10px'], false);
-        $this->assertEquals("display:none;\nmargin:10px;", $result);
+        $this->assertSame("display:none;\nmargin:10px;", $result);
     }
 
     /**
@@ -1826,7 +1826,7 @@ class HtmlHelperTest extends TestCase
         ];
         $result = $this->Html->tableCells($tr, ['class' => 'odd'], ['class' => 'even']);
         $expected = "<tr class=\"even\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"odd\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"even\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>";
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $tr = [
             ['td content 1', 'td content 2', 'td content 3'],
@@ -1836,7 +1836,7 @@ class HtmlHelperTest extends TestCase
         ];
         $result = $this->Html->tableCells($tr, ['class' => 'odd'], ['class' => 'even']);
         $expected = "<tr class=\"odd\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"even\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"odd\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"even\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>";
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $tr = [
             ['td content 1', 'td content 2', 'td content 3'],
@@ -1846,7 +1846,7 @@ class HtmlHelperTest extends TestCase
         $this->Html->tableCells($tr, ['class' => 'odd'], ['class' => 'even']);
         $result = $this->Html->tableCells($tr, ['class' => 'odd'], ['class' => 'even'], false, false);
         $expected = "<tr class=\"odd\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"even\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"odd\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>";
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $tr = [
             'td content 1',
@@ -1902,7 +1902,7 @@ class HtmlHelperTest extends TestCase
         $options = [$evilKey => 'some value'];
         $result = $this->Html->div('class-name', '', $options);
         $expected = '<div &gt;&lt;script&gt;alert(1)&lt;/script&gt;="some value" class="class-name"></div>';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**

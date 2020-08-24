@@ -204,8 +204,8 @@ class HasManyTest extends TestCase
 
         $result = $callable($row);
         $this->assertArrayHasKey('Articles', $result);
-        $this->assertEquals($row['Authors__id'], $result['Articles'][0]->author_id);
-        $this->assertEquals($row['Authors__id'], $result['Articles'][1]->author_id);
+        $this->assertSame($row['Authors__id'], $result['Articles'][0]->author_id);
+        $this->assertSame($row['Authors__id'], $result['Articles'][1]->author_id);
 
         $row = ['Authors__id' => 2];
         $result = $callable($row);
@@ -214,7 +214,7 @@ class HasManyTest extends TestCase
         $row = ['Authors__id' => 3];
         $result = $callable($row);
         $this->assertArrayHasKey('Articles', $result);
-        $this->assertEquals($row['Authors__id'], $result['Articles'][0]->author_id);
+        $this->assertSame($row['Authors__id'], $result['Articles'][0]->author_id);
 
         $row = ['Authors__id' => 4];
         $result = $callable($row);
@@ -557,7 +557,7 @@ class HasManyTest extends TestCase
         $this->assertSame(0, $query->count(), 'Cleared related rows');
 
         $query = $articles->query()->where(['author_id' => 3]);
-        $this->assertEquals(1, $query->count(), 'other records left behind');
+        $this->assertSame(1, $query->count(), 'other records left behind');
     }
 
     /**
@@ -1079,7 +1079,7 @@ class HasManyTest extends TestCase
 
         $entity = $authors->save($entity, ['associated' => ['Articles']]);
         $sizeArticles = count($entity->articles);
-        $this->assertEquals($sizeArticles, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+        $this->assertSame($sizeArticles, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
 
         $articleId = $entity->articles[0]->id;
         unset($entity->articles[0]);
@@ -1087,7 +1087,7 @@ class HasManyTest extends TestCase
 
         $authors->save($entity, ['associated' => ['Articles']]);
 
-        $this->assertEquals($sizeArticles - 1, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+        $this->assertSame($sizeArticles - 1, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
         $this->assertTrue($authors->Articles->exists(['id' => $articleId]));
     }
 
@@ -1143,7 +1143,7 @@ class HasManyTest extends TestCase
         $entity = $authors->save($entity, ['associated' => ['Articles']]);
         $sizeArticles = count($entity->articles);
 
-        $this->assertEquals($sizeArticles, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+        $this->assertSame($sizeArticles, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
 
         $articleId = $entity->articles[0]->id;
         unset($entity->articles[0]);
@@ -1151,7 +1151,7 @@ class HasManyTest extends TestCase
 
         $authors->save($entity, ['associated' => ['Articles']]);
 
-        $this->assertEquals($sizeArticles, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+        $this->assertSame($sizeArticles, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
         $this->assertTrue($authors->Articles->exists(['id' => $articleId]));
     }
 
@@ -1164,7 +1164,7 @@ class HasManyTest extends TestCase
     {
         $authors = $this->getTableLocator()->get('Authors');
         $authors->hasMany('Articles', ['saveStrategy' => HasMany::SAVE_APPEND]);
-        $this->assertEquals(HasMany::SAVE_APPEND, $authors->getAssociation('articles')->getSaveStrategy());
+        $this->assertSame(HasMany::SAVE_APPEND, $authors->getAssociation('articles')->getSaveStrategy());
     }
 
     /**
@@ -1188,7 +1188,7 @@ class HasManyTest extends TestCase
 
         $entity = $authors->save($entity, ['associated' => ['Articles']]);
         $sizeArticles = count($entity->articles);
-        $this->assertEquals($sizeArticles, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+        $this->assertSame($sizeArticles, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
 
         $articleId = $entity->articles[0]->id;
         unset($entity->articles[0]);
@@ -1196,7 +1196,7 @@ class HasManyTest extends TestCase
 
         $authors->save($entity, ['associated' => ['Articles']]);
 
-        $this->assertEquals($sizeArticles - 1, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+        $this->assertSame($sizeArticles - 1, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
         $this->assertFalse($authors->Articles->exists(['id' => $articleId]));
     }
 
@@ -1319,14 +1319,14 @@ class HasManyTest extends TestCase
         $commentId = $article->comments[0]->id;
         $sizeComments = count($article->comments);
 
-        $this->assertEquals($sizeComments, $articles->Comments->find('all')->where(['article_id' => $article->id])->count());
+        $this->assertSame($sizeComments, $articles->Comments->find('all')->where(['article_id' => $article->id])->count());
         $this->assertTrue($articles->Comments->exists(['id' => $commentId]));
 
         unset($article->comments[0]);
         $article->setDirty('comments', true);
         $article = $articles->save($article, ['associated' => ['Comments']]);
 
-        $this->assertEquals($sizeComments - 1, $articles->Comments->find('all')->where(['article_id' => $article->id])->count());
+        $this->assertSame($sizeComments - 1, $articles->Comments->find('all')->where(['article_id' => $article->id])->count());
         $this->assertFalse($articles->Comments->exists(['id' => $commentId]));
     }
 
@@ -1360,7 +1360,7 @@ class HasManyTest extends TestCase
         $sizeComments = count($article->comments);
         $articleId = $article->id;
 
-        $this->assertEquals($sizeComments, $articles->Comments->find('all')->where(['article_id' => $article->id])->count());
+        $this->assertSame($sizeComments, $articles->Comments->find('all')->where(['article_id' => $article->id])->count());
         $this->assertTrue($articles->Comments->exists(['id' => $commentId]));
 
         unset($article->comments[0]);
@@ -1372,7 +1372,7 @@ class HasManyTest extends TestCase
         $article->setDirty('comments', true);
         $article = $articles->save($article, ['associated' => ['Comments']]);
 
-        $this->assertEquals($sizeComments, $articles->Comments->find('all')->where(['article_id' => $article->id])->count());
+        $this->assertSame($sizeComments, $articles->Comments->find('all')->where(['article_id' => $article->id])->count());
         $this->assertFalse($articles->Comments->exists(['id' => $commentId]));
         $this->assertTrue($articles->Comments->exists(['comment' => 'new comment', 'article_id' => $articleId]));
     }
@@ -1423,7 +1423,7 @@ class HasManyTest extends TestCase
         $comment3 = $Comments->getTarget()->save($comment3);
         $this->assertNotEmpty($comment3);
 
-        $this->assertEquals(3, $Comments->getTarget()->find()->where(['Comments.article_id' => $article->get('id')])->count());
+        $this->assertSame(3, $Comments->getTarget()->find()->where(['Comments.article_id' => $article->get('id')])->count());
 
         unset($article->comments[1]);
         $article->setDirty('comments', true);
@@ -1435,7 +1435,7 @@ class HasManyTest extends TestCase
         // it is expected that only one of the three linked comments are
         // actually being deleted, as only one of them matches the
         // association condition.
-        $this->assertEquals(2, $Comments->getTarget()->find()->where(['Comments.article_id' => $article->get('id')])->count());
+        $this->assertSame(2, $Comments->getTarget()->find()->where(['Comments.article_id' => $article->get('id')])->count());
     }
 
     /**
@@ -1484,7 +1484,7 @@ class HasManyTest extends TestCase
         $article3 = $Articles->getTarget()->save($article3);
         $this->assertNotEmpty($article3);
 
-        $this->assertEquals(3, $Articles->getTarget()->find()->where(['Articles.author_id' => $author->get('id')])->count());
+        $this->assertSame(3, $Articles->getTarget()->find()->where(['Articles.author_id' => $author->get('id')])->count());
 
         $article2 = $author->articles[1];
         unset($author->articles[1]);
@@ -1497,7 +1497,7 @@ class HasManyTest extends TestCase
         // it is expected that only one of the three linked articles are
         // actually being unlinked (nulled), as only one of them matches the
         // association condition.
-        $this->assertEquals(2, $Articles->getTarget()->find()->where(['Articles.author_id' => $author->get('id')])->count());
+        $this->assertSame(2, $Articles->getTarget()->find()->where(['Articles.author_id' => $author->get('id')])->count());
         $this->assertNull($Articles->get($article2->get('id'))->get('author_id'));
         $this->assertEquals($author->get('id'), $Articles->get($article3->get('id'))->get('author_id'));
     }

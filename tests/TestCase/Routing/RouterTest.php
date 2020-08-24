@@ -235,7 +235,7 @@ class RouterTest extends TestCase
             '_method' => 'GET',
         ]);
         $expected = '/posts';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Router::url([
             'controller' => 'Posts',
@@ -244,15 +244,15 @@ class RouterTest extends TestCase
             'id' => '10',
         ]);
         $expected = '/posts/10';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Router::url(['controller' => 'Posts', 'action' => 'add', '_method' => 'POST']);
         $expected = '/posts';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Router::url(['controller' => 'Posts', 'action' => 'edit', '_method' => 'PUT', 'id' => '10']);
         $expected = '/posts/10';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Router::url([
             'controller' => 'Posts',
@@ -261,7 +261,7 @@ class RouterTest extends TestCase
             'id' => '10',
         ]);
         $expected = '/posts/10';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Router::url([
             'controller' => 'Posts',
@@ -270,7 +270,7 @@ class RouterTest extends TestCase
             'id' => '10',
         ]);
         $expected = '/posts/10';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -285,16 +285,16 @@ class RouterTest extends TestCase
         $expected = '/users/logout';
 
         $result = Router::normalize('/users/logout/');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Router::normalize('//users//logout//');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Router::normalize('users/logout');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Router::normalize(['controller' => 'users', 'action' => 'logout']);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Router::normalize('/');
         $this->assertSame('/', $result);
@@ -454,7 +454,7 @@ class RouterTest extends TestCase
         Router::connect('/pages/*', ['controller' => 'pages', 'action' => 'display']);
         $result = Router::url(['controller' => 'pages', 'action' => 'display', 'about']);
         $expected = '/pages/about';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         Router::reload();
         Router::connect('/:plugin/:id/*', ['controller' => 'posts', 'action' => 'view'], ['id' => $ID]);
@@ -466,7 +466,7 @@ class RouterTest extends TestCase
             'id' => '1',
         ]);
         $expected = '/cake_plugin/1';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Router::url([
             'plugin' => 'cake_plugin',
@@ -476,26 +476,26 @@ class RouterTest extends TestCase
             '0',
         ]);
         $expected = '/cake_plugin/1/0';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         Router::reload();
         Router::connect('/:controller/:action/:id', [], ['id' => $ID]);
 
         $result = Router::url(['controller' => 'posts', 'action' => 'view', 'id' => '1']);
         $expected = '/posts/view/1';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         Router::reload();
         Router::connect('/:controller/:id', ['action' => 'view']);
 
         $result = Router::url(['controller' => 'posts', 'action' => 'view', 'id' => '1']);
         $expected = '/posts/1';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         Router::connect('/view/*', ['controller' => 'posts', 'action' => 'view']);
         $result = Router::url(['controller' => 'posts', 'action' => 'view', '1']);
         $expected = '/view/1';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         Router::reload();
         Router::connect('/:controller/:action');
@@ -510,7 +510,7 @@ class RouterTest extends TestCase
 
         $result = Router::url(['action' => 'login']);
         $expected = '/users/login';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         Router::reload();
         Router::connect('/contact/:action', ['plugin' => 'contact', 'controller' => 'contact']);
@@ -522,7 +522,7 @@ class RouterTest extends TestCase
         ]);
 
         $expected = '/contact/me';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         Router::reload();
         Router::connect('/:controller', ['action' => 'index']);
@@ -537,7 +537,7 @@ class RouterTest extends TestCase
 
         $result = Router::url(['plugin' => null, 'controller' => 'myothercontroller']);
         $expected = '/myothercontroller';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -551,7 +551,7 @@ class RouterTest extends TestCase
         Router::connect('/:controller/:action/*', [], ['routeClass' => 'InflectedRoute']);
         $result = Router::url(['controller' => 'Articles', 'action' => 'view', 'id' => 10]);
         $expected = '/articles/10';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -569,7 +569,7 @@ class RouterTest extends TestCase
             '?' => ['var' => 'test', 'var2' => 'test2'],
         ]);
         $expected = '/posts/index/0?var=test&var2=test2';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Router::url(['controller' => 'posts', '0', '?' => ['var' => null]]);
         $this->assertSame('/posts/index/0', $result);
@@ -584,7 +584,7 @@ class RouterTest extends TestCase
             '#' => 'unencoded string %',
         ]);
         $expected = '/posts/index/0?var=test&var2=test2#unencoded string %';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -614,11 +614,11 @@ class RouterTest extends TestCase
 
         $result = Router::url(['admin' => false, 'language' => 'dan', 'action' => 'index', 'controller' => 'galleries']);
         $expected = '/dan/galleries';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Router::url(['admin' => false, 'language' => 'eng', 'action' => 'index', 'controller' => 'galleries']);
         $expected = '/eng/galleries';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         Router::reload();
         Router::connect(
@@ -630,14 +630,14 @@ class RouterTest extends TestCase
 
         $result = Router::url(['language' => 'eng', 'action' => 'index', 'controller' => 'pages']);
         $expected = '/eng/pages';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Router::url(['language' => 'eng', 'controller' => 'pages']);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Router::url(['language' => 'eng', 'controller' => 'pages', 'action' => 'add']);
         $expected = '/eng/pages/add';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         Router::reload();
         Router::connect(
@@ -655,7 +655,7 @@ class RouterTest extends TestCase
             'min-forestilling',
         ]);
         $expected = '/forestillinger/10/2007/min-forestilling';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         Router::reload();
         Router::connect(
@@ -667,7 +667,7 @@ class RouterTest extends TestCase
 
         $result = Router::url(['plugin' => 'shows', 'controller' => 'shows', 'action' => 'calendar', 'min-forestilling']);
         $expected = '/kalender/min-forestilling';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Router::url([
             'plugin' => 'shows',
@@ -678,7 +678,7 @@ class RouterTest extends TestCase
             'min-forestilling',
         ]);
         $expected = '/kalender/10/2007/min-forestilling';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -710,7 +710,7 @@ class RouterTest extends TestCase
 
         $result = Router::url([]);
         $expected = '/admin/registrations/index';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         Router::reload();
         Router::connect('/admin/subscriptions/:action/*', ['controller' => 'Subscribe', 'prefix' => 'Admin']);
@@ -731,11 +731,11 @@ class RouterTest extends TestCase
 
         $result = Router::url(['action' => 'edit', 1]);
         $expected = '/magazine/admin/subscriptions/edit/1';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Router::url(['prefix' => 'Admin', 'controller' => 'users', 'action' => 'login']);
         $expected = '/magazine/admin/users/login';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         Router::reload();
         $request = new ServerRequest([
@@ -754,7 +754,7 @@ class RouterTest extends TestCase
 
         $result = Router::url(['prefix' => 'admin', 'controller' => 'pages', 'action' => 'view', 'my-page']);
         $expected = '/page/my-page';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         Router::reload();
         Router::connect('/admin/:controller/:action/*', ['prefix' => 'admin']);
@@ -773,7 +773,7 @@ class RouterTest extends TestCase
 
         $result = Router::url(['plugin' => null, 'controller' => 'pages', 'action' => 'add', 'id' => false]);
         $expected = '/admin/pages/add';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         Router::reload();
         Router::connect('/admin/:controller/:action/*', ['prefix' => 'admin']);
@@ -791,7 +791,7 @@ class RouterTest extends TestCase
 
         $result = Router::url(['plugin' => null, 'controller' => 'pages', 'action' => 'add', 'id' => false]);
         $expected = '/admin/pages/add';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         Router::reload();
         Router::connect('/admin/:controller/:action/:id', ['prefix' => 'admin'], ['id' => '[0-9]+']);
@@ -809,7 +809,7 @@ class RouterTest extends TestCase
 
         $result = Router::url(['plugin' => null, 'controller' => 'pages', 'action' => 'edit', 'id' => '284']);
         $expected = '/admin/pages/edit/284';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         Router::reload();
         Router::connect('/admin/:controller/:action/*', ['prefix' => 'admin']);
@@ -824,7 +824,7 @@ class RouterTest extends TestCase
 
         $result = Router::url(['plugin' => null, 'controller' => 'pages', 'action' => 'add', 'id' => false]);
         $expected = '/admin/pages/add';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         Router::reload();
         Router::connect('/admin/:controller/:action/*', ['prefix' => 'admin']);
@@ -839,7 +839,7 @@ class RouterTest extends TestCase
 
         $result = Router::url(['plugin' => null, 'controller' => 'pages', 'action' => 'edit', 284]);
         $expected = '/admin/pages/edit/284';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         Router::reload();
         Router::connect('/admin/posts/*', ['controller' => 'posts', 'action' => 'index', 'prefix' => 'admin']);
@@ -854,7 +854,7 @@ class RouterTest extends TestCase
 
         $result = Router::url(['all']);
         $expected = '/admin/posts/all';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -877,7 +877,7 @@ class RouterTest extends TestCase
             2,
         ]);
         $expected = '/admin/my-plugin/forms/edit/2';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -898,7 +898,7 @@ class RouterTest extends TestCase
             'action' => 'home',
         ]);
         $expected = '/admin/backoffice/dashboards/home';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -919,7 +919,7 @@ class RouterTest extends TestCase
             '_ext' => 'json',
         ]);
         $expected = '/articles/add.json';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Router::url([
             'plugin' => null,
@@ -928,7 +928,7 @@ class RouterTest extends TestCase
             '_ext' => 'json',
         ]);
         $expected = '/articles/add.json';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Router::url([
             'plugin' => null,
@@ -938,7 +938,7 @@ class RouterTest extends TestCase
             '_ext' => 'json',
         ]);
         $expected = '/articles.json';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Router::url([
             'plugin' => null,
@@ -948,7 +948,7 @@ class RouterTest extends TestCase
             '_ext' => 'json',
         ]);
         $expected = '/articles.json?id=testing';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -973,7 +973,7 @@ class RouterTest extends TestCase
             1,
         ]);
         $expected = '/tasks/view/1';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Router::url([
             'controller' => 'Tasks',
@@ -982,7 +982,7 @@ class RouterTest extends TestCase
             '_ext' => 'json',
         ]);
         $expected = '/tasks/view/1.json';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -1102,7 +1102,7 @@ class RouterTest extends TestCase
         });
         $result = Router::url(['controller' => 'tasks', 'action' => 'edit']);
         $this->assertSame('/en/tasks/edit/1234', $result);
-        $this->assertEquals(2, $calledCount);
+        $this->assertSame(2, $calledCount);
     }
 
     /**
@@ -1203,15 +1203,15 @@ class RouterTest extends TestCase
     {
         $mailto = 'mailto:mark@example.com';
         $result = Router::url($mailto);
-        $this->assertEquals($mailto, $result);
+        $this->assertSame($mailto, $result);
 
         $js = 'javascript:alert("hi")';
         $result = Router::url($js);
-        $this->assertEquals($js, $result);
+        $this->assertSame($js, $result);
 
         $hash = '#first';
         $result = Router::url($hash);
-        $this->assertEquals($hash, $result);
+        $this->assertSame($hash, $result);
     }
 
     /**
@@ -1606,7 +1606,7 @@ class RouterTest extends TestCase
             'extra' => null,
         ]);
         $expected = '/page/this_is_the_slug';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Router::url([
             'admin' => null,
@@ -1617,7 +1617,7 @@ class RouterTest extends TestCase
             'extra' => 'some_extra',
         ]);
         $expected = '/some_extra/page/this_is_the_slug';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -1858,39 +1858,39 @@ class RouterTest extends TestCase
 
         $result = Router::url(['controller' => 'images', 'action' => 'add']);
         $expected = '/images/add';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Router::url(['controller' => 'images', 'action' => 'add', 'prefix' => 'protected']);
         $expected = '/protected/images/add';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Router::url(['controller' => 'images', 'action' => 'add_protected_test', 'prefix' => 'protected']);
         $expected = '/protected/images/add_protected_test';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Router::url(['action' => 'edit', 1]);
         $expected = '/images/edit/1';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Router::url(['action' => 'edit', 1, 'prefix' => 'protected']);
         $expected = '/protected/images/edit/1';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Router::url(['action' => 'protectededit', 1, 'prefix' => 'protected']);
         $expected = '/protected/images/protectededit/1';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Router::url(['action' => 'edit', 1, 'prefix' => 'protected']);
         $expected = '/protected/images/edit/1';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Router::url(['controller' => 'others', 'action' => 'edit', 1]);
         $expected = '/others/edit/1';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Router::url(['controller' => 'others', 'action' => 'edit', 1, 'prefix' => 'protected']);
         $expected = '/protected/others/edit/1';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -1976,15 +1976,15 @@ class RouterTest extends TestCase
 
         $result = Router::url(['prefix' => 'protected', 'controller' => 'images', 'action' => 'add']);
         $expected = '/protected/images/add';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Router::url(['controller' => 'images', 'action' => 'add']);
         $expected = '/protected/images/add';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Router::url(['controller' => 'images', 'action' => 'add', 'prefix' => false]);
         $expected = '/images/add';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -2007,7 +2007,7 @@ class RouterTest extends TestCase
 
         $result = Router::url(['controller' => 'images', 'action' => 'add', 'prefix' => 'admin']);
         $expected = '/admin/images/add';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $request = new ServerRequest([
             'url' => '/admin/images/index',
@@ -2018,7 +2018,7 @@ class RouterTest extends TestCase
         Router::setRequest($request);
         $result = Router::url(['controller' => 'images', 'action' => 'add', 'prefix' => 'protected']);
         $expected = '/protected/images/add';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -2032,7 +2032,7 @@ class RouterTest extends TestCase
 
         $url = Router::url(['prefix' => '0', 'plugin' => '1', 'controller' => '0', 'action' => '1', 'test']);
         $expected = '/cache/test';
-        $this->assertEquals($expected, $url);
+        $this->assertSame($expected, $url);
 
         try {
             Router::url(['controller' => '0', 'action' => '1', 'test']);
@@ -2068,11 +2068,11 @@ class RouterTest extends TestCase
 
         $result = Router::url(['controller' => 'my_controller', 'action' => 'my_action']);
         $expected = '/base/my_controller/my_action';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Router::url(['controller' => 'my_controller', 'action' => 'my_action', '_base' => false]);
         $expected = '/my_controller/my_action';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -2361,7 +2361,7 @@ class RouterTest extends TestCase
 
         $result = Router::url(['prefix' => 'admin', 'controller' => 'posts']);
         $expected = '/base/admin/posts';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         Router::reload();
 
@@ -2390,7 +2390,7 @@ class RouterTest extends TestCase
 
         $result = Router::url(['prefix' => 'members', 'controller' => 'users', 'action' => 'add']);
         $expected = '/base/members/users/add';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -2405,7 +2405,7 @@ class RouterTest extends TestCase
 
         $result = Router::url(['controller' => 'users', 'action' => 'login', 'prefix' => 'company']);
         $expected = '/company/users/login';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $request = new ServerRequest([
             'url' => '/',
@@ -2420,7 +2420,7 @@ class RouterTest extends TestCase
 
         $result = Router::url(['controller' => 'users', 'action' => 'login', 'prefix' => false]);
         $expected = '/login';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -2465,15 +2465,15 @@ class RouterTest extends TestCase
 
         $result = Router::url(['controller' => 'pages', 'action' => 'display', 1, 'whatever']);
         $expected = '/test/whatever';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Router::url(['controller' => 'pages', 'action' => 'display', 2, 'whatever']);
         $expected = '/test2/whatever';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Router::url(['controller' => 'pages', 'action' => 'display', 'home', 'whatever']);
         $expected = '/test-passed/whatever';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -2520,11 +2520,11 @@ class RouterTest extends TestCase
 
         $result = Router::url(['action' => 'test_another_action', 'locale' => 'eng']);
         $expected = '/eng/test/test_another_action';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Router::url(['action' => 'test_another_action']);
         $expected = '/';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -2635,7 +2635,7 @@ class RouterTest extends TestCase
         ]);
         $result = Router::reverse($request);
         $expected = '/eng/posts/view/1?test=value';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     public function testReverseFull()
@@ -2675,7 +2675,7 @@ class RouterTest extends TestCase
         ]);
         $result = Router::reverse($request);
         $expected = '/posts/view/1.json';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     public function testReverseToArrayQuery()
@@ -2760,7 +2760,7 @@ class RouterTest extends TestCase
         Router::connect($route);
 
         $result = Router::url(['controller' => 'posts', 'action' => 'view', 1]);
-        $this->assertEquals($url, $result);
+        $this->assertSame($url, $result);
     }
 
     /**
@@ -2771,38 +2771,38 @@ class RouterTest extends TestCase
     public function testUrlProtocol()
     {
         $url = 'http://example.com';
-        $this->assertEquals($url, Router::url($url));
+        $this->assertSame($url, Router::url($url));
 
         $url = 'ed2k://example.com';
-        $this->assertEquals($url, Router::url($url));
+        $this->assertSame($url, Router::url($url));
 
         $url = 'svn+ssh://example.com';
-        $this->assertEquals($url, Router::url($url));
+        $this->assertSame($url, Router::url($url));
 
         $url = '://example.com';
-        $this->assertEquals($url, Router::url($url));
+        $this->assertSame($url, Router::url($url));
 
         $url = '//example.com';
-        $this->assertEquals($url, Router::url($url));
+        $this->assertSame($url, Router::url($url));
 
         $url = 'javascript:void(0)';
-        $this->assertEquals($url, Router::url($url));
+        $this->assertSame($url, Router::url($url));
 
         $url = 'tel:012345-678';
-        $this->assertEquals($url, Router::url($url));
+        $this->assertSame($url, Router::url($url));
 
         $url = 'sms:012345-678';
-        $this->assertEquals($url, Router::url($url));
+        $this->assertSame($url, Router::url($url));
 
         $url = '#here';
-        $this->assertEquals($url, Router::url($url));
+        $this->assertSame($url, Router::url($url));
 
         $url = '?param=0';
-        $this->assertEquals($url, Router::url($url));
+        $this->assertSame($url, Router::url($url));
 
         $url = '/posts/index#here';
         $expected = Configure::read('App.fullBaseUrl') . '/posts/index#here';
-        $this->assertEquals($expected, Router::url($url, true));
+        $this->assertSame($expected, Router::url($url, true));
     }
 
     /**
@@ -3151,27 +3151,27 @@ class RouterTest extends TestCase
 
         $result = Router::pathUrl('Articles::index');
         $expected = '/articles';
-        $this->assertEquals($result, $expected);
+        $this->assertSame($result, $expected);
 
         $result = Router::pathUrl('Articles::view', [3]);
         $expected = '/articles/view/3';
-        $this->assertEquals($result, $expected);
+        $this->assertSame($result, $expected);
 
         $result = Router::pathUrl('Articles::read', ['slug' => 'title']);
         $expected = '/article/title';
-        $this->assertEquals($result, $expected);
+        $this->assertSame($result, $expected);
 
         $result = Router::pathUrl('Admin/Articles::index');
         $expected = '/admin/articles';
-        $this->assertEquals($result, $expected);
+        $this->assertSame($result, $expected);
 
         $result = Router::pathUrl('Cms.Admin/Articles::index');
         $expected = '/cms/admin/articles';
-        $this->assertEquals($result, $expected);
+        $this->assertSame($result, $expected);
 
         $result = Router::pathUrl('Cms.Articles::index');
         $expected = '/cms/articles';
-        $this->assertEquals($result, $expected);
+        $this->assertSame($result, $expected);
     }
 
     /**
@@ -3201,33 +3201,33 @@ class RouterTest extends TestCase
 
         $expected = '/articles';
         $result = Router::pathUrl('Articles::index');
-        $this->assertEquals($result, $expected);
+        $this->assertSame($result, $expected);
         $result = Router::url(['_path' => 'Articles::index']);
-        $this->assertEquals($result, $expected);
+        $this->assertSame($result, $expected);
 
         $expected = '/articles/view/3';
         $result = Router::pathUrl('Articles::view', [3]);
-        $this->assertEquals($result, $expected);
+        $this->assertSame($result, $expected);
         $result = Router::url(['_path' => 'Articles::view', 3]);
-        $this->assertEquals($result, $expected);
+        $this->assertSame($result, $expected);
 
         $expected = '/admin/articles';
         $result = Router::pathUrl('Admin/Articles::index');
-        $this->assertEquals($result, $expected);
+        $this->assertSame($result, $expected);
         $result = Router::url(['_path' => 'Admin/Articles::index']);
-        $this->assertEquals($result, $expected);
+        $this->assertSame($result, $expected);
 
         $expected = '/cms/admin/articles';
         $result = Router::pathUrl('Cms.Admin/Articles::index');
-        $this->assertEquals($result, $expected);
+        $this->assertSame($result, $expected);
         $result = Router::url(['_path' => 'Cms.Admin/Articles::index']);
-        $this->assertEquals($result, $expected);
+        $this->assertSame($result, $expected);
 
         $expected = '/cms/articles';
         $result = Router::pathUrl('Cms.Articles::index');
-        $this->assertEquals($result, $expected);
+        $this->assertSame($result, $expected);
         $result = Router::url(['_path' => 'Cms.Articles::index']);
-        $this->assertEquals($result, $expected);
+        $this->assertSame($result, $expected);
     }
 
     /**

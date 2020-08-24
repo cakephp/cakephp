@@ -1017,15 +1017,15 @@ class ServerRequestTest extends TestCase
         $request = new ServerRequest(['environment' => [
             'HTTP_HOST' => 'localhost',
             'CONTENT_TYPE' => 'application/json',
-            'CONTENT_LENGTH' => 1337,
+            'CONTENT_LENGTH' => '1337',
             'HTTP_CONTENT_MD5' => 'abc123',
             'HTTP_DOUBLE' => ['a', 'b'],
         ]]);
-        $new = $request->withHeader('Content-Length', 999);
+        $new = $request->withHeader('Content-Length', '999');
         $this->assertNotSame($new, $request);
 
-        $this->assertEquals(1337, $request->getHeaderLine('Content-length'), 'old request is unchanged');
-        $this->assertEquals(999, $new->getHeaderLine('Content-length'), 'new request is correct');
+        $this->assertSame('1337', $request->getHeaderLine('Content-length'), 'old request is unchanged');
+        $this->assertSame('999', $new->getHeaderLine('Content-length'), 'new request is correct');
 
         $new = $request->withHeader('Double', ['a']);
         $this->assertEquals(['a'], $new->getHeader('Double'), 'List values are overwritten');
@@ -1075,7 +1075,7 @@ class ServerRequestTest extends TestCase
         $new = $request->withoutHeader('Content-Length');
         $this->assertNotSame($new, $request);
 
-        $this->assertEquals(1337, $request->getHeaderLine('Content-length'), 'old request is unchanged');
+        $this->assertSame('1337', $request->getHeaderLine('Content-length'), 'old request is unchanged');
         $this->assertSame('', $new->getHeaderLine('Content-length'), 'new request is correct');
     }
 
@@ -1591,7 +1591,7 @@ XML;
         $this->deprecated(function () use ($request) {
             $result = $request->input('Cake\Utility\Xml::build', ['return' => 'domdocument']);
             $this->assertInstanceOf('DOMDocument', $result);
-            $this->assertEquals(
+            $this->assertSame(
                 'Test',
                 $result->getElementsByTagName('title')->item(0)->childNodes->item(0)->wholeText
             );
@@ -1989,11 +1989,11 @@ XML;
             ],
         ]);
         $result = $request->withData('Model.field.new_value', 'new value');
-        $this->assertEquals(
+        $this->assertSame(
             'new value',
             $result->getData('Model.field.new_value')
         );
-        $this->assertEquals(
+        $this->assertSame(
             'new value',
             $result->getData()['Model']['field']['new_value']
         );
@@ -2135,7 +2135,7 @@ XML;
             ],
             'base' => '/basedir',
         ]);
-        $this->assertEquals(
+        $this->assertSame(
             '/articles/view/1?comments=1&open=0',
             $request->getRequestTarget(),
             'Should not include basedir.'
@@ -2143,7 +2143,7 @@ XML;
 
         $new = $request->withRequestTarget('/articles/view/3');
         $this->assertNotSame($new, $request);
-        $this->assertEquals(
+        $this->assertSame(
             '/articles/view/1?comments=1&open=0',
             $request->getRequestTarget(),
             'should be unchanged.'

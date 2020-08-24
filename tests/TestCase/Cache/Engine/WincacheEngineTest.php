@@ -78,7 +78,7 @@ class WincacheEngineTest extends TestCase
 
         $result = Cache::read('test', 'wincache');
         $expecting = '';
-        $this->assertEquals($expecting, $result);
+        $this->assertSame($expecting, $result);
 
         $data = 'this is a test of the emergency broadcasting system';
         $result = Cache::write('test', $data, 'wincache');
@@ -86,7 +86,7 @@ class WincacheEngineTest extends TestCase
 
         $result = Cache::read('test', 'wincache');
         $expecting = $data;
-        $this->assertEquals($expecting, $result);
+        $this->assertSame($expecting, $result);
 
         Cache::delete('test', 'wincache');
     }
@@ -190,16 +190,16 @@ class WincacheEngineTest extends TestCase
         $this->assertTrue($result);
 
         $result = Cache::decrement('test_decrement', 1, 'wincache');
-        $this->assertEquals(4, $result);
+        $this->assertSame(4, $result);
 
         $result = Cache::read('test_decrement', 'wincache');
-        $this->assertEquals(4, $result);
+        $this->assertSame(4, $result);
 
         $result = Cache::decrement('test_decrement', 2, 'wincache');
-        $this->assertEquals(2, $result);
+        $this->assertSame(2, $result);
 
         $result = Cache::read('test_decrement', 'wincache');
-        $this->assertEquals(2, $result);
+        $this->assertSame(2, $result);
     }
 
     /**
@@ -218,16 +218,16 @@ class WincacheEngineTest extends TestCase
         $this->assertTrue($result);
 
         $result = Cache::increment('test_increment', 1, 'wincache');
-        $this->assertEquals(6, $result);
+        $this->assertSame(6, $result);
 
         $result = Cache::read('test_increment', 'wincache');
-        $this->assertEquals(6, $result);
+        $this->assertSame(6, $result);
 
         $result = Cache::increment('test_increment', 2, 'wincache');
-        $this->assertEquals(8, $result);
+        $this->assertSame(8, $result);
 
         $result = Cache::read('test_increment', 'wincache');
-        $this->assertEquals(8, $result);
+        $this->assertSame(8, $result);
     }
 
     /**

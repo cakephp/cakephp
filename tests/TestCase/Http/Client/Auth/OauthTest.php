@@ -496,7 +496,7 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
             urldecode($result)
         );
         $expected = 0;
-        $this->assertEquals($expected, ftell($passphrase));
+        $this->assertSame($expected, ftell($passphrase));
     }
 
     /**
@@ -538,6 +538,6 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
             urldecode($result)
         );
         $expected = 0;
-        $this->assertEquals($expected, ftell($passphrase));
+        $this->assertSame($expected, ftell($passphrase));
     }
 }

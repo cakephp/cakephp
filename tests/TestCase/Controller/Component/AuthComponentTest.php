@@ -609,7 +609,7 @@ class AuthComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         $this->Auth->startup($event);
         $expected = Router::normalize($this->Auth->getConfig('loginRedirect'));
-        $this->assertEquals($expected, $this->Auth->redirectUrl());
+        $this->assertSame($expected, $this->Auth->redirectUrl());
 
         $this->Auth->getController()->getRequest()->getSession()->delete('Auth');
 
@@ -637,7 +637,7 @@ class AuthComponentTest extends TestCase
             '?' => ['redirect' => '/posts/view/1'],
         ], true);
         $redirectHeader = $response->getHeaderLine('Location');
-        $this->assertEquals($expected, $redirectHeader);
+        $this->assertSame($expected, $redirectHeader);
 
         // Auth.redirect gets set when accessing a protected action without being authenticated
         $this->Auth->getController()->getRequest()->getSession()->delete('Auth');
@@ -655,7 +655,7 @@ class AuthComponentTest extends TestCase
         $this->assertInstanceOf('Cake\Http\Response', $response);
         $expected = Router::url(['controller' => 'AuthTest', 'action' => 'login', '?' => ['redirect' => '/posts/view/1']], true);
         $redirectHeader = $response->getHeaderLine('Location');
-        $this->assertEquals($expected, $redirectHeader);
+        $this->assertSame($expected, $redirectHeader);
     }
 
     /**
@@ -682,7 +682,7 @@ class AuthComponentTest extends TestCase
         $this->assertInstanceOf('Cake\Http\Response', $response);
         $expected = Router::url(['controller' => 'AuthTest', 'action' => 'login', '?' => ['redirect' => '/foo/bar']], true);
         $redirectHeader = $response->getHeaderLine('Location');
-        $this->assertEquals($expected, $redirectHeader);
+        $this->assertSame($expected, $redirectHeader);
     }
 
     /**
@@ -706,7 +706,7 @@ class AuthComponentTest extends TestCase
         $this->assertInstanceOf('Cake\Http\Response', $response);
         $expected = Router::url(['controller' => 'AuthTest', 'action' => 'login'], true);
         $redirectHeader = $response->getHeaderLine('Location');
-        $this->assertEquals($expected, $redirectHeader);
+        $this->assertSame($expected, $redirectHeader);
     }
 
     public function testLoginRedirectQueryString(): void
@@ -730,7 +730,7 @@ class AuthComponentTest extends TestCase
             '?' => ['redirect' => '/posts/view/29?print=true&refer=menu'],
         ], true);
         $redirectHeader = $response->getHeaderLine('Location');
-        $this->assertEquals($expected, $redirectHeader);
+        $this->assertSame($expected, $redirectHeader);
     }
 
     public function testLoginRedirectQueryStringWithComplexLoginActionUrl(): void
@@ -755,7 +755,7 @@ class AuthComponentTest extends TestCase
             'passed-param',
             '?' => ['a' => 'b', 'redirect' => '/posts/view/29?print=true&refer=menu'],
         ], true);
-        $this->assertEquals($expected, $redirectHeader);
+        $this->assertSame($expected, $redirectHeader);
     }
 
     public function testLoginRedirectDifferentBaseUrl(): void
@@ -795,7 +795,7 @@ class AuthComponentTest extends TestCase
 
         $expected = Router::url(['controller' => 'Users', 'action' => 'login', '?' => ['redirect' => '/posts/add']], true);
         $redirectHeader = $response->getHeaderLine('Location');
-        $this->assertEquals($expected, $redirectHeader);
+        $this->assertSame($expected, $redirectHeader);
 
         $this->Auth->getController()->getRequest()->getSession()->delete('Auth');
         Configure::write('App', $appConfig);
@@ -1161,7 +1161,7 @@ class AuthComponentTest extends TestCase
             'action' => 'login',
             '?' => ['redirect' => '/admin/auth_test/add'],
         ], true);
-        $this->assertEquals($expected, $redirectHeader);
+        $this->assertSame($expected, $redirectHeader);
     }
 
     /**
@@ -1182,7 +1182,7 @@ class AuthComponentTest extends TestCase
         $response = $this->Auth->startup($event);
 
         $this->assertTrue($event->isStopped());
-        $this->assertEquals(403, $response->getStatusCode());
+        $this->assertSame(403, $response->getStatusCode());
         $this->assertFalse($response->hasHeader('Location'));
     }
 
@@ -1411,7 +1411,7 @@ class AuthComponentTest extends TestCase
         ];
         $this->Auth->setUser($user);
         $this->assertTrue((bool)$this->Auth->user());
-        $this->assertEquals($user['username'], $this->Auth->user('username'));
+        $this->assertSame($user['username'], $this->Auth->user('username'));
     }
 
     /**
@@ -1597,10 +1597,10 @@ class AuthComponentTest extends TestCase
             $this->assertEquals($data['User'], $result);
 
             $result = $this->Auth->user('username');
-            $this->assertEquals($data['User']['username'], $result);
+            $this->assertSame($data['User']['username'], $result);
 
             $result = $this->Auth->user('Group.name');
-            $this->assertEquals($data['User']['Group']['name'], $result);
+            $this->assertSame($data['User']['Group']['name'], $result);
 
             $result = $this->Auth->user('invalid');
             $this->assertNull($result);
@@ -1646,7 +1646,7 @@ class AuthComponentTest extends TestCase
         $response = $this->Auth->startup($event);
         $this->assertInstanceOf(Response::class, $response);
 
-        $this->assertEquals(
+        $this->assertSame(
             'http://localhost/users/login?redirect=%2Fauth_test',
             $response->getHeaderLine('Location')
         );

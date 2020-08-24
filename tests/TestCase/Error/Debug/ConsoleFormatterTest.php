@@ -71,6 +71,6 @@ object(MyObject) id:1 {
 }
 TEXT;
         $noescape = preg_replace('/\\033\[\d\;\d+\;m([^\\\\]+)\\033\[0m/', '$1', $expected);
-        $this->assertEquals($expected, $noescape);
+        $this->assertSame($expected, $noescape);
     }
 }

@@ -79,7 +79,7 @@ class ConsoleErrorHandlerTest extends TestCase
             ->method('_stop');
 
         $this->Error->handleError(E_NOTICE, 'This is a notice error', '/some/file', 275);
-        $this->assertEquals($content, $this->stderr->messages()[0]);
+        $this->assertSame($content, $this->stderr->messages()[0]);
     }
 
     /**
@@ -94,7 +94,7 @@ class ConsoleErrorHandlerTest extends TestCase
 
         $this->Error->handleError(E_USER_ERROR, 'This is a fatal error', '/some/file', 275);
         $this->assertCount(1, $this->stderr->messages());
-        $this->assertEquals($content, $this->stderr->messages()[0]);
+        $this->assertSame($content, $this->stderr->messages()[0]);
         ob_end_clean();
     }
 
@@ -114,7 +114,7 @@ class ConsoleErrorHandlerTest extends TestCase
         $this->Error->handleException($exception);
 
         $this->assertCount(1, $this->stderr->messages());
-        $this->assertEquals($message, $this->stderr->messages()[0]);
+        $this->assertSame($message, $this->stderr->messages()[0]);
     }
 
     /**

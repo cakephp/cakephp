@@ -117,7 +117,7 @@ class InflectedRouteTest extends TestCase
             1,
         ]);
         $expected = '/admin/subscriptions/edit_admin_e/1';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $route = new InflectedRoute('/:controller/:action-:id');
         $result = $route->match([
@@ -222,7 +222,7 @@ class InflectedRouteTest extends TestCase
             'action' => 'action_name',
         ]);
         $expectedUrl = '/plugin/controller_name/action_name';
-        $this->assertEquals($expectedUrl, $url);
+        $this->assertSame($expectedUrl, $url);
         $result = $route->parse($expectedUrl, 'GET');
         $this->assertSame('ControllerName', $result['controller']);
         $this->assertSame('action_name', $result['action']);

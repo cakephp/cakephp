@@ -110,6 +110,6 @@ class BinaryUuidTypeTest extends TestCase
      */
     public function testToStatement()
     {
-        $this->assertEquals(PDO::PARAM_LOB, $this->type->toStatement('', $this->driver));
+        $this->assertSame(PDO::PARAM_LOB, $this->type->toStatement('', $this->driver));
     }
 }

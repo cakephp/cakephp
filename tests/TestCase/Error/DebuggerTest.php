@@ -670,7 +670,7 @@ object(TestApp\Error\Thing\DebuggableThing) id:0 {
   'inner' => object(TestApp\Error\Thing\DebuggableThing) id:1 {}
 }
 eos;
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -714,7 +714,7 @@ eos;
         Debugger::setOutputMask(['password' => '[**********]']);
         $result = Debugger::exportVar(['password' => 'pass1234']);
         $expected = "['password'=>'[**********]']";
-        $this->assertEquals($expected, preg_replace('/\s+/', '', $result));
+        $this->assertSame($expected, preg_replace('/\s+/', '', $result));
     }
 
     /**
@@ -728,7 +728,7 @@ eos;
         $object = new SecurityThing();
         $result = Debugger::exportVar($object);
         $expected = "object(TestApp\\Error\\Thing\\SecurityThing)id:0{password=>'[**********]'}";
-        $this->assertEquals($expected, preg_replace('/\s+/', '', $result));
+        $this->assertSame($expected, preg_replace('/\s+/', '', $result));
     }
 
     /**
@@ -750,7 +750,7 @@ eos;
 EXPECTED;
         $expected = sprintf($expectedText, Debugger::trimPath(__FILE__), __LINE__ - 9);
 
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         ob_start();
         $value = '<div>this-is-a-test</div>';
@@ -768,7 +768,7 @@ EXPECTED;
 </div>
 EXPECTED;
         $expected = sprintf($expected, Debugger::trimPath(__FILE__), __LINE__ - 8);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         ob_start();
         Debugger::printVar('<div>this-is-a-test</div>', [], true);
@@ -780,7 +780,7 @@ EXPECTED;
 </div>
 EXPECTED;
         $expected = sprintf($expected, Debugger::trimPath(__FILE__), __LINE__ - 8);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         ob_start();
         Debugger::printVar('<div>this-is-a-test</div>', ['file' => __FILE__, 'line' => __LINE__], false);
@@ -793,7 +793,7 @@ EXPECTED;
 
 EXPECTED;
         $expected = sprintf($expected, Debugger::trimPath(__FILE__), __LINE__ - 9);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         ob_start();
         Debugger::printVar('<div>this-is-a-test</div>');
@@ -806,7 +806,7 @@ EXPECTED;
 
 EXPECTED;
         $expected = sprintf($expected, Debugger::trimPath(__FILE__), __LINE__ - 8);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**

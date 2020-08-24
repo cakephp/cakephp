@@ -1090,7 +1090,7 @@ class TableTest extends TestCase
 
         $result = $table->find('all')->toArray();
         $this->assertCount(1, $result, 'Only one record should remain');
-        $this->assertEquals(4, $result[0]['id']);
+        $this->assertSame(4, $result[0]['id']);
     }
 
     /**
@@ -1110,7 +1110,7 @@ class TableTest extends TestCase
 
         $result = $table->find('all')->toArray();
         $this->assertCount(1, $result, 'Only one record should remain');
-        $this->assertEquals(4, $result[0]['id']);
+        $this->assertSame(4, $result[0]['id']);
     }
 
     /**
@@ -1345,7 +1345,7 @@ class TableTest extends TestCase
             ->select(['id', 'parent_id', 'name'])
             ->toArray();
 
-        $this->assertEquals(1, $results[0]->id);
+        $this->assertSame(1, $results[0]->id);
         $expected = [
             'id' => 8,
             'parent_id' => 2,
@@ -1573,7 +1573,7 @@ class TableTest extends TestCase
 
         $table = new Table();
         $this->assertSame($table, $table->setEntityClass('MyPlugin.SuperUser'));
-        $this->assertEquals(
+        $this->assertSame(
             'MyPlugin\Model\Entity\SuperUser',
             $table->getEntityClass()
         );
@@ -1615,7 +1615,7 @@ class TableTest extends TestCase
         $table = new Table();
         $class = '\\' . $this->getMockClass('Cake\ORM\Entity');
         $this->assertSame($table, $table->setEntityClass($class));
-        $this->assertEquals($class, $table->getEntityClass());
+        $this->assertSame($class, $table->getEntityClass());
     }
 
     /**
@@ -3190,13 +3190,13 @@ class TableTest extends TestCase
         ]);
 
         $member = $members->get(1);
-        $this->assertEquals(2, $member->section_count);
+        $this->assertSame(2, $member->section_count);
 
         $section = $sections->get(1);
         $sections->delete($section);
 
         $member = $members->get(1);
-        $this->assertEquals(1, $member->section_count);
+        $this->assertSame(1, $member->section_count);
     }
 
     /**
@@ -3806,8 +3806,8 @@ class TableTest extends TestCase
         $this->assertSame($entity, $table->save($entity));
         $this->assertFalse($entity->isNew());
         $this->assertFalse($entity->author->isNew());
-        $this->assertEquals(5, $entity->author->id);
-        $this->assertEquals(5, $entity->get('author_id'));
+        $this->assertSame(5, $entity->author->id);
+        $this->assertSame(5, $entity->get('author_id'));
     }
 
     /**
@@ -3831,8 +3831,8 @@ class TableTest extends TestCase
         $this->assertSame($entity, $table->save($entity));
         $this->assertFalse($entity->isNew());
         $this->assertFalse($entity->article->isNew());
-        $this->assertEquals(4, $entity->article->id);
-        $this->assertEquals(5, $entity->article->get('author_id'));
+        $this->assertSame(4, $entity->article->id);
+        $this->assertSame(5, $entity->article->get('author_id'));
         $this->assertFalse($entity->article->isDirty('author_id'));
     }
 
@@ -3890,10 +3890,10 @@ class TableTest extends TestCase
         $this->assertFalse($entity->isNew());
         $this->assertFalse($entity->articles[0]->isNew());
         $this->assertFalse($entity->articles[1]->isNew());
-        $this->assertEquals(4, $entity->articles[0]->id);
-        $this->assertEquals(5, $entity->articles[1]->id);
-        $this->assertEquals(5, $entity->articles[0]->author_id);
-        $this->assertEquals(5, $entity->articles[1]->author_id);
+        $this->assertSame(4, $entity->articles[0]->id);
+        $this->assertSame(5, $entity->articles[1]->id);
+        $this->assertSame(5, $entity->articles[0]->author_id);
+        $this->assertSame(5, $entity->articles[1]->author_id);
     }
 
     /**
@@ -3950,12 +3950,12 @@ class TableTest extends TestCase
         $this->assertFalse($entity->isNew());
         $this->assertFalse($entity->tags[0]->isNew());
         $this->assertFalse($entity->tags[1]->isNew());
-        $this->assertEquals(4, $entity->tags[0]->id);
-        $this->assertEquals(5, $entity->tags[1]->id);
-        $this->assertEquals(4, $entity->tags[0]->_joinData->article_id);
-        $this->assertEquals(4, $entity->tags[1]->_joinData->article_id);
-        $this->assertEquals(4, $entity->tags[0]->_joinData->tag_id);
-        $this->assertEquals(5, $entity->tags[1]->_joinData->tag_id);
+        $this->assertSame(4, $entity->tags[0]->id);
+        $this->assertSame(5, $entity->tags[1]->id);
+        $this->assertSame(4, $entity->tags[0]->_joinData->article_id);
+        $this->assertSame(4, $entity->tags[1]->_joinData->article_id);
+        $this->assertSame(4, $entity->tags[0]->_joinData->tag_id);
+        $this->assertSame(5, $entity->tags[1]->_joinData->tag_id);
     }
 
     /**
@@ -4243,9 +4243,9 @@ class TableTest extends TestCase
         $tags = $article->tags;
         $this->assertCount(3, $tags);
         $this->assertFalse($tags[2]->isNew());
-        $this->assertEquals(4, $tags[2]->id);
-        $this->assertEquals(1, $tags[2]->_joinData->article_id);
-        $this->assertEquals(4, $tags[2]->_joinData->tag_id);
+        $this->assertSame(4, $tags[2]->id);
+        $this->assertSame(1, $tags[2]->_joinData->article_id);
+        $this->assertSame(4, $tags[2]->_joinData->tag_id);
     }
 
     /**
@@ -4998,7 +4998,7 @@ class TableTest extends TestCase
 
         $table->getAssociation('Tags')->unlink($article, [$article->tags[0]]);
         $this->assertCount(1, $article->tags);
-        $this->assertEquals(2, $article->tags[0]->get('id'));
+        $this->assertSame(2, $article->tags[0]->get('id'));
         $this->assertFalse($article->isDirty('tags'));
     }
 
@@ -5068,15 +5068,15 @@ class TableTest extends TestCase
         $tags[] = new \TestApp\Model\Entity\Tag(['name' => 'foo']);
 
         $table->getAssociation('Tags')->replaceLinks($article, $tags);
-        $this->assertEquals(2, $article->tags[0]->id);
-        $this->assertEquals(3, $article->tags[1]->id);
-        $this->assertEquals(4, $article->tags[2]->id);
+        $this->assertSame(2, $article->tags[0]->id);
+        $this->assertSame(3, $article->tags[1]->id);
+        $this->assertSame(4, $article->tags[2]->id);
 
         $article = $table->find('all')->where(['id' => 1])->contain(['Tags'])->first();
         $this->assertCount(3, $article->tags);
-        $this->assertEquals(2, $article->tags[0]->id);
-        $this->assertEquals(3, $article->tags[1]->id);
-        $this->assertEquals(4, $article->tags[2]->id);
+        $this->assertSame(2, $article->tags[0]->id);
+        $this->assertSame(3, $article->tags[1]->id);
+        $this->assertSame(4, $article->tags[2]->id);
         $this->assertSame('foo', $article->tags[2]->name);
     }
 
@@ -5128,8 +5128,8 @@ class TableTest extends TestCase
         $this->assertSame($tags, $article->tags);
         $article = $table->find('all')->where(['id' => 1])->contain(['Tags'])->first();
         $this->assertCount(2, $article->tags);
-        $this->assertEquals(2, $article->tags[0]->id);
-        $this->assertEquals(3, $article->tags[1]->id);
+        $this->assertSame(2, $article->tags[0]->id);
+        $this->assertSame(3, $article->tags[1]->id);
     }
 
     /**
@@ -5980,12 +5980,12 @@ class TableTest extends TestCase
         $this->assertSame('First Article', $article->title);
         $this->assertSame('New body', $article->body);
         $this->assertSame('N', $article->published);
-        $this->assertEquals(2, $article->author_id);
+        $this->assertSame(2, $article->author_id);
 
         $query = $articles->find()->where(['author_id' => 2, 'title' => 'First Article']);
         $article = $articles->findOrCreate($query);
         $this->assertSame('First Article', $article->title);
-        $this->assertEquals(2, $article->author_id);
+        $this->assertSame(2, $article->author_id);
         $this->assertFalse($article->isNew());
     }
 
@@ -6177,7 +6177,7 @@ class TableTest extends TestCase
         EventManager::instance()->on('Model.initialize', $cb);
         $articles = $this->getTableLocator()->get('Articles');
 
-        $this->assertEquals(1, $count, 'Callback should be called');
+        $this->assertSame(1, $count, 'Callback should be called');
         EventManager::instance()->off('Model.initialize', $cb);
     }
 
@@ -6210,10 +6210,10 @@ class TableTest extends TestCase
         EventManager::instance()->on('Model.buildValidator', $cb);
         $articles = $this->getTableLocator()->get('Articles');
         $articles->getValidator();
-        $this->assertEquals(1, $count, 'Callback should be called');
+        $this->assertSame(1, $count, 'Callback should be called');
 
         $articles->getValidator();
-        $this->assertEquals(1, $count, 'Callback should be called only once');
+        $this->assertSame(1, $count, 'Callback should be called only once');
     }
 
     /**
@@ -6343,8 +6343,8 @@ class TableTest extends TestCase
             }
         );
         $table->find()->contain('authors')->first();
-        $this->assertEquals(1, $associationBeforeFindCount);
-        $this->assertEquals(1, $beforeFindCount);
+        $this->assertSame(1, $associationBeforeFindCount);
+        $this->assertSame(1, $beforeFindCount);
 
         $buildValidatorCount = 0;
         $eventManager->on(
@@ -6355,7 +6355,7 @@ class TableTest extends TestCase
             }
         );
         $table->getValidator();
-        $this->assertEquals(1, $buildValidatorCount);
+        $this->assertSame(1, $buildValidatorCount);
 
         $buildRulesCount =
         $beforeRulesCount =
@@ -6397,11 +6397,11 @@ class TableTest extends TestCase
         );
         $entity = new Entity(['title' => 'Title']);
         $this->assertNotFalse($table->save($entity));
-        $this->assertEquals(1, $buildRulesCount);
-        $this->assertEquals(1, $beforeRulesCount);
-        $this->assertEquals(1, $afterRulesCount);
-        $this->assertEquals(1, $beforeSaveCount);
-        $this->assertEquals(1, $afterSaveCount);
+        $this->assertSame(1, $buildRulesCount);
+        $this->assertSame(1, $beforeRulesCount);
+        $this->assertSame(1, $afterRulesCount);
+        $this->assertSame(1, $beforeSaveCount);
+        $this->assertSame(1, $afterSaveCount);
 
         $beforeDeleteCount =
         $afterDeleteCount = 0;
@@ -6418,8 +6418,8 @@ class TableTest extends TestCase
             }
         );
         $this->assertTrue($table->delete($entity, ['checkRules' => false]));
-        $this->assertEquals(1, $beforeDeleteCount);
-        $this->assertEquals(1, $afterDeleteCount);
+        $this->assertSame(1, $beforeDeleteCount);
+        $this->assertSame(1, $afterDeleteCount);
     }
 
     /**
@@ -6457,7 +6457,7 @@ class TableTest extends TestCase
             $article->extract(['title', 'author_id']),
             $cloned->extract(['title', 'author_id'])
         );
-        $this->assertEquals(4, $cloned->id);
+        $this->assertSame(4, $cloned->id);
     }
 
     /**
@@ -6517,7 +6517,7 @@ class TableTest extends TestCase
         $this->assertCount(3, $savedUser->comments);
         $savedUser->setDirty('comments', true);
         $userTable->save($savedUser);
-        $this->assertEquals(1, $counter);
+        $this->assertSame(1, $counter);
     }
 
     /**
@@ -6554,7 +6554,7 @@ class TableTest extends TestCase
         $this->assertCount(3, $article->tags);
         $article->setDirty('tags', true);
         $table->save($article);
-        $this->assertEquals(1, $counter);
+        $this->assertSame(1, $counter);
     }
 
     /**

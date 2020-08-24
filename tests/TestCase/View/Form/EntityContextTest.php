@@ -469,7 +469,7 @@ class EntityContextTest extends TestCase
             'table' => 'Articles',
         ]);
         $result = $context->val('title');
-        $this->assertEquals('Invalid title', $result);
+        $this->assertSame('Invalid title', $result);
     }
 
     /**

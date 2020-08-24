@@ -223,7 +223,7 @@ class RouteBuilderTest extends TestCase
 
         $url = $expected['_matchedRoute'];
         unset($expected['_matchedRoute']);
-        $this->assertEquals($url, '/' . $this->collection->match($expected, []));
+        $this->assertSame($url, '/' . $this->collection->match($expected, []));
     }
 
     /**
@@ -247,7 +247,7 @@ class RouteBuilderTest extends TestCase
 
         $url = $expected['_matchedRoute'];
         unset($expected['_matchedRoute']);
-        $this->assertEquals($url, '/' . $this->collection->match($expected, []));
+        $this->assertSame($url, '/' . $this->collection->match($expected, []));
     }
 
     /**
@@ -270,7 +270,7 @@ class RouteBuilderTest extends TestCase
 
         $url = $expected['_matchedRoute'];
         unset($expected['_matchedRoute']);
-        $this->assertEquals($url, '/' . $this->collection->match($expected, []));
+        $this->assertSame($url, '/' . $this->collection->match($expected, []));
     }
 
     /**
@@ -294,7 +294,7 @@ class RouteBuilderTest extends TestCase
 
         $url = $expected['_matchedRoute'];
         unset($expected['_matchedRoute']);
-        $this->assertEquals($url, '/' . $this->collection->match($expected, []));
+        $this->assertSame($url, '/' . $this->collection->match($expected, []));
     }
 
     /**
@@ -599,7 +599,7 @@ class RouteBuilderTest extends TestCase
         $this->assertSame('Articles', $all[0]->defaults['controller']);
         $this->assertSame('/api/posts', $all[0]->template);
         $this->assertSame('/api/posts/:id', $all[2]->template);
-        $this->assertEquals(
+        $this->assertSame(
             '/api/posts/:article_id/comments',
             $all[6]->template,
             'parameter name should reflect resource name'

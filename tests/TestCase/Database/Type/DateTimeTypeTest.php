@@ -166,7 +166,7 @@ class DateTimeTypeTest extends TestCase
     {
         $value = '2001-01-04 12:13:14';
         $result = $this->type->toDatabase($value, $this->driver);
-        $this->assertEquals($value, $result);
+        $this->assertSame($value, $result);
 
         $date = new Time('2013-08-12 15:16:17');
         $result = $this->type->toDatabase($date, $this->driver);

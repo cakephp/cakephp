@@ -1006,10 +1006,10 @@ class EmailTest extends TestCase
         $this->assertEquals($config['from'], $result);
 
         $result = $this->Email->getSubject();
-        $this->assertEquals($config['subject'], $result);
+        $this->assertSame($config['subject'], $result);
 
         $result = $this->Email->viewBuilder()->getTheme();
-        $this->assertEquals($config['theme'], $result);
+        $this->assertSame($config['theme'], $result);
 
         $result = $this->Email->getTransport();
         $this->assertInstanceOf('Cake\Mailer\Transport\DebugTransport', $result);
@@ -1059,7 +1059,7 @@ class EmailTest extends TestCase
         $this->assertEquals($expected, array_keys($result));
         $expected = "Here is my body, with multi lines.\r\nThis is the second line.\r\n\r\nAnd the last.\r\n\r\n";
 
-        $this->assertEquals($expected, $result['message']);
+        $this->assertSame($expected, $result['message']);
         $this->assertStringContainsString('Date: ', $result['headers']);
         $this->assertStringContainsString('Message-ID: ', $result['headers']);
         $this->assertStringContainsString('To: ', $result['headers']);
@@ -1933,7 +1933,7 @@ class EmailTest extends TestCase
         $configs = ['from' => 'root@cakephp.org', 'message' => 'Message from configs', 'transport' => 'debug'];
         $instance = Email::deliver('all@cakephp.org', 'About', null, $configs, true);
         $message = $instance->message();
-        $this->assertEquals($configs['message'], $message[0]);
+        $this->assertSame($configs['message'], $message[0]);
     }
 
     /**
@@ -2048,7 +2048,7 @@ class EmailTest extends TestCase
         $this->assertEquals($configs['from'], $result);
 
         $result = $this->Email->getSubject();
-        $this->assertEquals($configs['subject'], $result);
+        $this->assertSame($configs['subject'], $result);
 
         $result = $this->Email->getTransport();
         $this->assertInstanceOf('Cake\Mailer\Transport\DebugTransport', $result);
@@ -2078,7 +2078,7 @@ class EmailTest extends TestCase
         $template = $this->Email->viewBuilder()->getTemplate();
         $layout = $this->Email->viewBuilder()->getLayout();
         $this->assertNull($template);
-        $this->assertEquals($configs['layout'], $layout);
+        $this->assertSame($configs['layout'], $layout);
     }
 
     /**
@@ -2105,7 +2105,7 @@ class EmailTest extends TestCase
         $this->assertEquals($configs['from'], $result);
 
         $result = $this->Email->getSubject();
-        $this->assertEquals($configs['subject'], $result);
+        $this->assertSame($configs['subject'], $result);
 
         $result = $this->Email->getTransport();
         $this->assertInstanceOf('Cake\Mailer\Transport\DebugTransport', $result);
@@ -2531,7 +2531,7 @@ class EmailTest extends TestCase
         $result = $this->Email->send($message);
         $expected = "<a\r\n" . 'href="http://cakephp.org">' . str_repeat('x', Message::LINE_LENGTH_MUST - 26) . "\r\n" .
             str_repeat('x', 26) . "\r\n</a>\r\n\r\n";
-        $this->assertEquals($expected, $result['message']);
+        $this->assertSame($expected, $result['message']);
         $this->assertLineLengths($result['message']);
 
         $str1 = 'a ';
@@ -2541,21 +2541,21 @@ class EmailTest extends TestCase
 
         $result = $this->Email->send($message);
         $expected = "{$message}\r\n\r\n";
-        $this->assertEquals($expected, $result['message']);
+        $this->assertSame($expected, $result['message']);
         $this->assertLineLengths($result['message']);
 
         $message = $str1 . str_repeat('x', Message::LINE_LENGTH_MUST - $length) . $str2;
 
         $result = $this->Email->send($message);
         $expected = "{$message}\r\n\r\n";
-        $this->assertEquals($expected, $result['message']);
+        $this->assertSame($expected, $result['message']);
         $this->assertLineLengths($result['message']);
 
         $message = $str1 . str_repeat('x', Message::LINE_LENGTH_MUST - $length + 1) . $str2;
 
         $result = $this->Email->send($message);
         $expected = $str1 . str_repeat('x', Message::LINE_LENGTH_MUST - $length + 1) . sprintf("\r\n%s\r\n\r\n", trim($str2));
-        $this->assertEquals($expected, $result['message']);
+        $this->assertSame($expected, $result['message']);
         $this->assertLineLengths($result['message']);
     }
 
@@ -2584,7 +2584,7 @@ HTML;
         $message = str_replace("\r\n", "\n", substr($message, 0, -9));
         $message = str_replace("\n", "\r\n", $message);
         $expected = "{$message}\r\nxxxxxxxxx\r\n\r\n";
-        $this->assertEquals($expected, $result['message']);
+        $this->assertSame($expected, $result['message']);
         $this->assertLineLengths($result['message']);
     }
 
@@ -2608,7 +2608,7 @@ HTML;
         $result = $this->Email->send($message);
         $message = substr($message, 0, -1);
         $expected = "{$message}\r\nx\r\n\r\n";
-        $this->assertEquals($expected, $result['message']);
+        $this->assertSame($expected, $result['message']);
         $this->assertLineLengths($result['message']);
     }
 
@@ -2633,7 +2633,7 @@ HTML;
         $this->Email->setHeaderCharset('iso-2022-jp');
         $result = $this->Email->send($message);
         $expected = "{$message}\r\n\r\n";
-        $this->assertEquals($expected, $result['message']);
+        $this->assertSame($expected, $result['message']);
     }
 
     /**
@@ -2670,7 +2670,7 @@ HTML;
         $this->Email->setSubject('Wordwrap Test');
         $result = $this->Email->send($message);
         $expected = "{$message}\r\n\r\n";
-        $this->assertEquals($expected, $result['message']);
+        $this->assertSame($expected, $result['message']);
     }
 
     /**

@@ -82,7 +82,7 @@ class RouteTest extends TestCase
         $route = new Route('/', ['controller' => 'pages', 'action' => 'display', 'home']);
         $result = $route->compile();
         $expected = '#^/*$#';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
         $this->assertEquals([], $route->keys);
 
         $route = new Route('/:controller/:action', ['controller' => 'posts']);
@@ -348,7 +348,7 @@ class RouteTest extends TestCase
     {
         $route = new ProtectedRoute('/:controller/:action/*', [], ['_ext' => $ext]);
         [$outUrl, $outExt] = $route->parseExtension($url);
-        $this->assertEquals($url, $outUrl);
+        $this->assertSame($url, $outUrl);
         $this->assertNull($outExt);
     }
 
@@ -630,7 +630,7 @@ class RouteTest extends TestCase
         $url = ['controller' => 'subscribe', 'prefix' => 'admin', 'action' => 'edit', 1];
         $result = $route->match($url);
         $expected = '/admin/subscriptions/edit/1';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $url = [
             'controller' => 'subscribe',
@@ -640,7 +640,7 @@ class RouteTest extends TestCase
         ];
         $result = $route->match($url);
         $expected = '/admin/subscriptions/edit_admin_e/1';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -1045,7 +1045,7 @@ class RouteTest extends TestCase
             'action' => 'view',
             'id' => "\xC4\x81",
         ]);
-        $this->assertEquals("/articles/view/\xC4\x81", $result);
+        $this->assertSame("/articles/view/\xC4\x81", $result);
     }
 
     /**
@@ -1063,7 +1063,7 @@ class RouteTest extends TestCase
             'controller' => 'Articles',
             'action' => 'foo',
         ]);
-        $this->assertEquals('/anything', $result);
+        $this->assertSame('/anything', $result);
     }
 
     /**
@@ -1089,7 +1089,7 @@ class RouteTest extends TestCase
             ],
         ]);
         $expected = '/posts/index/0?test=var&amp;var2=test2&amp;more=test+data';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
         ini_set('arg_separator.output', $restore);
     }
 
@@ -1431,7 +1431,7 @@ class RouteTest extends TestCase
 
         $result = $route->match($url);
         $expected = '/foo/bar';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -1449,7 +1449,7 @@ class RouteTest extends TestCase
             $id,
         ]);
         $expected = '/pages/test/%20spaces/%E6%BC%A2%E5%AD%97/la%E2%80%A0%C3%AEn';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**

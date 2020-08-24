@@ -667,7 +667,7 @@ class PaginatorHelperTest extends TestCase
     {
         $result = $this->Paginator->sortDir();
         $expected = 'asc';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $this->setPagingParams([
             'Article' => [
@@ -990,7 +990,7 @@ class PaginatorHelperTest extends TestCase
 
         $result = $this->Paginator->generateUrl([], null, $url);
         $expected = '/members/Posts/index?page=2';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $this->Paginator->sort('name', null, ['url' => $url]);
         $expected = [
@@ -1027,13 +1027,13 @@ class PaginatorHelperTest extends TestCase
         ];
         $result = $this->Paginator->generateUrl($options, null, $url);
         $expected = '/members/Posts/index?sort=name&amp;direction=desc&amp;page=2';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $options = ['sort' => 'Article.name', 'direction' => 'desc'];
         $url = ['controller' => 'Posts'];
         $result = $this->Paginator->generateUrl($options, null, $url);
         $expected = '/Posts/index?sort=Article.name&amp;direction=desc&amp;page=2';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -1062,19 +1062,19 @@ class PaginatorHelperTest extends TestCase
 
         $result = $this->Paginator->generateUrl();
         $expected = '/members/posts/index?page=2';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $this->Paginator->generateUrl([], null, ['prefix' => 'members']);
         $expected = '/members/posts/index?page=2';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $this->Paginator->generateUrl([], null, ['prefix' => false]);
         $expected = '/posts/index?page=2';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $this->Paginator->options(['url' => ['prefix' => false]]);
         $result = $this->Paginator->generateUrl();
-        $this->assertEquals($expected, $result, 'Setting prefix in options should work too.');
+        $this->assertSame($expected, $result, 'Setting prefix in options should work too.');
     }
 
     /**
@@ -1105,7 +1105,7 @@ class PaginatorHelperTest extends TestCase
 
         $result = $this->Paginator->generateUrl([]);
         $expected = '/Posts/index?article%5Bpage%5D=3';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $this->Paginator->sort('name');
         $expected = [
@@ -1137,11 +1137,11 @@ class PaginatorHelperTest extends TestCase
 
         $result = $this->Paginator->generateUrl(['sort' => 'name']);
         $expected = '/Posts/index?article%5Bsort%5D=name&amp;article%5Bpage%5D=3';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $this->Paginator->generateUrl([], null, ['#' => 'foo']);
         $expected = '/Posts/index?article%5Bpage%5D=3#foo';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -1178,11 +1178,11 @@ class PaginatorHelperTest extends TestCase
 
         $result = $paginator->generateUrl(['sort' => 'name']);
         $expected = '/Posts/index?article%5Bsort%5D=name&amp;article%5Bpage%5D=3&amp;article%5Bpuppy%5D=no';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $paginator->generateUrl([]);
         $expected = '/Posts/index?article%5Bpage%5D=3&amp;article%5Bpuppy%5D=no';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -1570,13 +1570,13 @@ class PaginatorHelperTest extends TestCase
             'model' => 'Client',
         ]);
         $expected = '<li class="prev disabled"><a href="" onclick="return false;">Prev</a></li>';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $this->Paginator->next('Next', [
             'model' => 'Server',
         ]);
         $expected = '<li class="next disabled"><a href="" onclick="return false;">Next</a></li>';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $this->Paginator->prev('Prev', [
             'model' => 'Server',
@@ -2686,7 +2686,7 @@ class PaginatorHelperTest extends TestCase
 
         $result = $this->Paginator->last();
         $expected = '';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -2733,7 +2733,7 @@ class PaginatorHelperTest extends TestCase
 
         $result = $this->Paginator->first();
         $expected = '';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -2996,15 +2996,15 @@ class PaginatorHelperTest extends TestCase
         $expected = 'Page 1 of 5, showing 3 records out of 13 total, starting on record 1, ';
         $expected .= 'ending on 3';
         $result = $this->Paginator->counter($input);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $this->Paginator->counter('pages');
         $expected = '1 of 5';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $this->Paginator->counter('range');
         $expected = '1 - 3 of 13';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $this->Paginator->counter('Showing {{page}} of {{pages}} {{model}}');
         $this->assertSame('Showing 1 of 5 clients', $result);
@@ -3040,13 +3040,13 @@ class PaginatorHelperTest extends TestCase
         $expected = 'Page 1,523 of 1,600, showing 3,000 records out of 4,800,001 total, ';
         $expected .= 'starting on record 4,566,001, ending on 4,569,001';
         $result = $this->Paginator->counter($input);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         I18n::setLocale('de-DE');
         $expected = 'Page 1.523 of 1.600, showing 3.000 records out of 4.800.001 total, ';
         $expected .= 'starting on record 4.566.001, ending on 4.569.001';
         $result = $this->Paginator->counter($input);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -3127,7 +3127,7 @@ class PaginatorHelperTest extends TestCase
         $this->assertSame($params['Article']['page'], $result);
 
         $result = $this->Paginator->current('Incorrect');
-        $this->assertEquals(1, $result);
+        $this->assertSame(1, $result);
     }
 
     /**
@@ -3208,7 +3208,7 @@ class PaginatorHelperTest extends TestCase
 
         $result = $this->Paginator->counter('pages');
         $expected = '0 of 1';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -3482,7 +3482,7 @@ class PaginatorHelperTest extends TestCase
 
         $result = $paginator->counter();
         // counter() sets `pageCount` to 1 if empty.
-        $this->assertEquals('1 of 1', $result);
+        $this->assertSame('1 of 1', $result);
 
         $result = $paginator->total();
         $this->assertSame(0, $result);

@@ -1292,7 +1292,7 @@ class ServerRequestFactoryTest extends TestCase
         $this->assertSame('born on.txt', $uploads['birth_cert']->getClientFilename());
         $this->assertSame(0, $uploads['birth_cert']->getError());
         $this->assertSame('application/octet-stream', $uploads['birth_cert']->getClientMediaType());
-        $this->assertEquals(123, $uploads['birth_cert']->getSize());
+        $this->assertSame(123, $uploads['birth_cert']->getSize());
     }
 
     /**
@@ -1319,7 +1319,7 @@ class ServerRequestFactoryTest extends TestCase
 
         $uploads = $request->getUploadedFiles();
         $this->assertCount(1, $uploads);
-        $this->assertEquals($files[0]['name'], $uploads[0]->getClientFilename());
+        $this->assertSame($files[0]['name'], $uploads[0]->getClientFilename());
     }
 
     /**

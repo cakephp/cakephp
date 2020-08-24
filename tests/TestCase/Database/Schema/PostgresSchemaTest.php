@@ -996,7 +996,7 @@ SQL;
             ]);
 
         $result = $schema->columnSql($table, 'id');
-        $this->assertEquals($result, '"id" SERIAL');
+        $this->assertSame($result, '"id" SERIAL');
     }
 
     /**
@@ -1234,11 +1234,11 @@ SQL;
 
         $this->assertCount(3, $result);
         $this->assertTextEquals($expected, $result[0]);
-        $this->assertEquals(
+        $this->assertSame(
             'CREATE INDEX "title_idx" ON "schema_articles" ("title")',
             $result[1]
         );
-        $this->assertEquals(
+        $this->assertSame(
             'COMMENT ON COLUMN "schema_articles"."title" IS \'This is the title\'',
             $result[2]
         );

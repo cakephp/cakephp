@@ -1078,7 +1078,7 @@ SQL;
                 'columns' => ['id'],
             ]);
         $result = $schema->columnSql($table, 'id');
-        $this->assertEquals($result, '`id` INTEGER NOT NULL AUTO_INCREMENT');
+        $this->assertSame($result, '`id` INTEGER NOT NULL AUTO_INCREMENT');
 
         $table = new TableSchema('articles');
         $table->addColumn('id', [
@@ -1090,7 +1090,7 @@ SQL;
                 'columns' => ['id'],
             ]);
         $result = $schema->columnSql($table, 'id');
-        $this->assertEquals($result, '`id` BIGINT NOT NULL AUTO_INCREMENT');
+        $this->assertSame($result, '`id` BIGINT NOT NULL AUTO_INCREMENT');
     }
 
     /**

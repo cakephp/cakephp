@@ -75,15 +75,15 @@ class FolderTest extends TestCase
         $Folder = new Folder($path);
 
         $result = $Folder->pwd();
-        $this->assertEquals($path, $result);
+        $this->assertSame($path, $result);
 
         $result = Folder::addPathElement($path, 'test');
         $expected = $path . DS . 'test';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $Folder->cd(ROOT);
         $expected = ROOT;
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $Folder->cd(ROOT . DS . 'non-existent');
         $this->assertFalse($result);
@@ -101,7 +101,7 @@ class FolderTest extends TestCase
         $Base = new Folder($basePath);
 
         $result = $Base->pwd();
-        $this->assertEquals($basePath, $result);
+        $this->assertSame($basePath, $result);
 
         // is "/" in "/tests/test_app/"
         $result = $Base->inPath(realpath(DS), true);
@@ -315,7 +315,7 @@ class FolderTest extends TestCase
 
         $expected = $new . ' is a file';
         $result = $Folder->errors();
-        $this->assertEquals($expected, $result[0]);
+        $this->assertSame($expected, $result[0]);
 
         $new = TMP . 'tests' . DS . 'test_folder_new';
         $result = $Folder->create($new);
@@ -415,21 +415,21 @@ class FolderTest extends TestCase
         $expected = DS . 'some' . DS . 'dir' . DS . 'another_path';
 
         $result = Folder::addPathElement(DS . 'some' . DS . 'dir', 'another_path');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Folder::addPathElement(DS . 'some' . DS . 'dir' . DS, 'another_path');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Folder::addPathElement(DS . 'some' . DS . 'dir', ['another_path']);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Folder::addPathElement(DS . 'some' . DS . 'dir' . DS, ['another_path']);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $expected = DS . 'some' . DS . 'dir' . DS . 'another_path' . DS . 'and' . DS . 'another';
 
         $result = Folder::addPathElement(DS . 'some' . DS . 'dir', ['another_path', 'and', 'another']);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -692,17 +692,17 @@ class FolderTest extends TestCase
         $path = '/path/to\file';
         $expected = '/path/to/file';
         $result = Folder::normalizeFullPath($path);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $path = '\\path\\to\file';
         $expected = '/path/to/file';
         $result = Folder::normalizeFullPath($path);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $path = 'C:\\path/to/file';
         $expected = 'C:\\path\\to\\file';
         $result = Folder::normalizeFullPath($path);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -858,7 +858,7 @@ class FolderTest extends TestCase
         $File->create();
         $File->write('something here');
         $File->close();
-        $this->assertEquals(14, $Folder->dirSize());
+        $this->assertSame(14, $Folder->dirSize());
     }
 
     /**

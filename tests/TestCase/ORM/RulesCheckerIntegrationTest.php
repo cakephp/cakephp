@@ -206,7 +206,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $this->assertFalse($entity->isNew());
         $this->assertTrue($entity->articles[0]->isNew());
         $this->assertFalse($entity->articles[1]->isNew());
-        $this->assertEquals(4, $entity->articles[1]->id);
+        $this->assertSame(4, $entity->articles[1]->id);
         $this->assertNull($entity->articles[0]->id);
         $this->assertNotEmpty($entity->articles[0]->getError('title'));
     }
@@ -284,11 +284,11 @@ class RulesCheckerIntegrationTest extends TestCase
         $this->assertFalse($entity->isNew());
         $this->assertFalse($entity->tags[0]->isNew());
         $this->assertFalse($entity->tags[1]->isNew());
-        $this->assertEquals(4, $entity->tags[0]->id);
-        $this->assertEquals(5, $entity->tags[1]->id);
+        $this->assertSame(4, $entity->tags[0]->id);
+        $this->assertSame(5, $entity->tags[1]->id);
         $this->assertTrue($entity->tags[0]->_joinData->isNew());
-        $this->assertEquals(4, $entity->tags[1]->_joinData->article_id);
-        $this->assertEquals(5, $entity->tags[1]->_joinData->tag_id);
+        $this->assertSame(4, $entity->tags[1]->_joinData->article_id);
+        $this->assertSame(5, $entity->tags[1]->_joinData->tag_id);
     }
 
     /**

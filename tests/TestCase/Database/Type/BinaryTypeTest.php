@@ -84,7 +84,7 @@ class BinaryTypeTest extends TestCase
     {
         $value = 'some data';
         $result = $this->type->toDatabase($value, $this->driver);
-        $this->assertEquals($value, $result);
+        $this->assertSame($value, $result);
 
         $fh = fopen(__FILE__, 'r');
         $result = $this->type->toDatabase($fh, $this->driver);
@@ -98,6 +98,6 @@ class BinaryTypeTest extends TestCase
      */
     public function testToStatement()
     {
-        $this->assertEquals(PDO::PARAM_LOB, $this->type->toStatement('', $this->driver));
+        $this->assertSame(PDO::PARAM_LOB, $this->type->toStatement('', $this->driver));
     }
 }

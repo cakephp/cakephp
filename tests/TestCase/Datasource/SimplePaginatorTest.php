@@ -61,7 +61,7 @@ class SimplePaginatorTest extends PaginatorTest
         $this->assertEquals(['First Post', 'Second Post', 'Third Post', 'Fourth Post'], $titleExtractor($result));
 
         $pagingParams = $this->Paginator->getPagingParams();
-        $this->assertEquals(4, $pagingParams['PaginatorPosts']['current']);
+        $this->assertSame(4, $pagingParams['PaginatorPosts']['current']);
         $this->assertNull($pagingParams['PaginatorPosts']['count']);
 
         $settings = ['finder' => 'published'];
@@ -70,7 +70,7 @@ class SimplePaginatorTest extends PaginatorTest
         $this->assertEquals(['First Post', 'Second Post', 'Third Post'], $titleExtractor($result));
 
         $pagingParams = $this->Paginator->getPagingParams();
-        $this->assertEquals(3, $pagingParams['PaginatorPosts']['current']);
+        $this->assertSame(3, $pagingParams['PaginatorPosts']['current']);
         $this->assertNull($pagingParams['PaginatorPosts']['count']);
 
         $settings = ['finder' => 'published', 'limit' => 2, 'page' => 2];
@@ -79,7 +79,7 @@ class SimplePaginatorTest extends PaginatorTest
         $this->assertEquals(['Third Post'], $titleExtractor($result));
 
         $pagingParams = $this->Paginator->getPagingParams();
-        $this->assertEquals(1, $pagingParams['PaginatorPosts']['current']);
+        $this->assertSame(1, $pagingParams['PaginatorPosts']['current']);
         $this->assertNull($pagingParams['PaginatorPosts']['count']);
         $this->assertSame(0, $pagingParams['PaginatorPosts']['pageCount']);
 
@@ -89,12 +89,12 @@ class SimplePaginatorTest extends PaginatorTest
         $this->assertEquals(['First Post', 'Second Post'], $titleExtractor($result));
 
         $pagingParams = $this->Paginator->getPagingParams();
-        $this->assertEquals(2, $pagingParams['PaginatorPosts']['current']);
+        $this->assertSame(2, $pagingParams['PaginatorPosts']['current']);
         $this->assertNull($pagingParams['PaginatorPosts']['count']);
-        $this->assertEquals(0, $pagingParams['PaginatorPosts']['pageCount']);
+        $this->assertSame(0, $pagingParams['PaginatorPosts']['pageCount']);
         $this->assertTrue($pagingParams['PaginatorPosts']['nextPage']);
         $this->assertFalse($pagingParams['PaginatorPosts']['prevPage']);
-        $this->assertEquals(2, $pagingParams['PaginatorPosts']['perPage']);
+        $this->assertSame(2, $pagingParams['PaginatorPosts']['perPage']);
         $this->assertNull($pagingParams['PaginatorPosts']['limit']);
     }
 
@@ -125,9 +125,9 @@ class SimplePaginatorTest extends PaginatorTest
         $this->assertEquals($expected, $result);
 
         $result = $this->Paginator->getPagingParams()['PaginatorPosts'];
-        $this->assertEquals(2, $result['current']);
+        $this->assertSame(2, $result['current']);
         $this->assertNull($result['count']);
-        $this->assertEquals(0, $result['pageCount']);
+        $this->assertSame(0, $result['pageCount']);
         $this->assertTrue($result['nextPage']);
         $this->assertFalse($result['prevPage']);
     }

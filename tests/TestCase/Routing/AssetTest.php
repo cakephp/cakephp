@@ -72,7 +72,7 @@ class AssetTest extends TestCase
         Configure::write('Foo.bar', 'test');
         Configure::write('Asset.timestamp', false);
         $result = Asset::assetTimestamp(Configure::read('App.cssBaseUrl') . 'cake.generic.css');
-        $this->assertEquals(Configure::read('App.cssBaseUrl') . 'cake.generic.css', $result);
+        $this->assertSame(Configure::read('App.cssBaseUrl') . 'cake.generic.css', $result);
 
         Configure::write('Asset.timestamp', true);
         Configure::write('debug', false);
@@ -81,7 +81,7 @@ class AssetTest extends TestCase
         $this->assertSame('/%3Cb%3E/cake.generic.css', $result);
 
         $result = Asset::assetTimestamp(Configure::read('App.cssBaseUrl') . 'cake.generic.css');
-        $this->assertEquals(Configure::read('App.cssBaseUrl') . 'cake.generic.css', $result);
+        $this->assertSame(Configure::read('App.cssBaseUrl') . 'cake.generic.css', $result);
 
         Configure::write('Asset.timestamp', true);
         Configure::write('debug', true);
@@ -94,7 +94,7 @@ class AssetTest extends TestCase
         $this->assertMatchesRegularExpression('/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/', $result);
 
         $result = Asset::assetTimestamp(Configure::read('App.cssBaseUrl') . 'cake.generic.css?someparam');
-        $this->assertEquals(Configure::read('App.cssBaseUrl') . 'cake.generic.css?someparam', $result);
+        $this->assertSame(Configure::read('App.cssBaseUrl') . 'cake.generic.css?someparam', $result);
 
         $request = Router::getRequest()->withAttribute('webroot', '/some/dir/');
         Router::setRequest($request);
@@ -112,13 +112,13 @@ class AssetTest extends TestCase
         Router::connect('/:controller/:action/*');
 
         $result = Asset::url('js/post.js', ['fullBase' => true]);
-        $this->assertEquals(Router::fullBaseUrl() . '/js/post.js', $result);
+        $this->assertSame(Router::fullBaseUrl() . '/js/post.js', $result);
 
         $result = Asset::url('foo.jpg', ['pathPrefix' => 'img/']);
         $this->assertSame('/img/foo.jpg', $result);
 
         $result = Asset::url('foo.jpg', ['fullBase' => true]);
-        $this->assertEquals(Router::fullBaseUrl() . '/foo.jpg', $result);
+        $this->assertSame(Router::fullBaseUrl() . '/foo.jpg', $result);
 
         $result = Asset::url('style', ['ext' => '.css']);
         $this->assertSame('/style.css', $result);
@@ -175,7 +175,7 @@ class AssetTest extends TestCase
 
         $result = Asset::url('img/cake.icon.png', ['fullBase' => true]);
         $expected = Configure::read('App.fullBaseUrl') . '/cake_dev/app/webroot/img/cake.icon.png';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -204,7 +204,7 @@ class AssetTest extends TestCase
     public function testAssetUrlFullBase()
     {
         $result = Asset::url('img/foo.jpg', ['fullBase' => true]);
-        $this->assertEquals(Router::fullBaseUrl() . '/img/foo.jpg', $result);
+        $this->assertSame(Router::fullBaseUrl() . '/img/foo.jpg', $result);
 
         $result = Asset::url('img/foo.jpg', ['fullBase' => 'https://xyz/']);
         $this->assertSame('https://xyz/img/foo.jpg', $result);
@@ -234,7 +234,7 @@ class AssetTest extends TestCase
         $timestamp = false;
 
         $result = Asset::assetTimestamp(Configure::read('App.cssBaseUrl') . 'cake.generic.css', $timestamp);
-        $this->assertEquals(Configure::read('App.cssBaseUrl') . 'cake.generic.css', $result);
+        $this->assertSame(Configure::read('App.cssBaseUrl') . 'cake.generic.css', $result);
     }
 
     /**
@@ -273,7 +273,7 @@ class AssetTest extends TestCase
         Router::connect('/:controller/:action/*');
 
         $result = Asset::scriptUrl('post.js', ['fullBase' => true]);
-        $this->assertEquals(Router::fullBaseUrl() . '/js/post.js', $result);
+        $this->assertSame(Router::fullBaseUrl() . '/js/post.js', $result);
     }
 
     /**
@@ -300,7 +300,7 @@ class AssetTest extends TestCase
         $timestamp = false;
 
         $result = Asset::scriptUrl('script.js', ['timestamp' => $timestamp]);
-        $this->assertEquals('/' . Configure::read('App.jsBaseUrl') . 'script.js', $result);
+        $this->assertSame('/' . Configure::read('App.jsBaseUrl') . 'script.js', $result);
     }
 
     /**
@@ -314,7 +314,7 @@ class AssetTest extends TestCase
         $this->assertSame('/img/foo.jpg', $result);
 
         $result = Asset::imageUrl('foo.jpg', ['fullBase' => true]);
-        $this->assertEquals(Router::fullBaseUrl() . '/img/foo.jpg', $result);
+        $this->assertSame(Router::fullBaseUrl() . '/img/foo.jpg', $result);
 
         $result = Asset::imageUrl('dir/sub dir/my image.jpg');
         $this->assertSame('/img/dir/sub%20dir/my%20image.jpg', $result);
@@ -406,16 +406,16 @@ class AssetTest extends TestCase
     {
         $result = Asset::webroot('/img/cake.power.gif');
         $expected = '/img/cake.power.gif';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Asset::webroot('/img/cake.power.gif', ['theme' => 'TestTheme']);
         $expected = '/test_theme/img/cake.power.gif';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         Asset::setInflectionType('dasherize');
         $result = Asset::webroot('/img/test.jpg', ['theme' => 'TestTheme']);
         $expected = '/test-theme/img/test.jpg';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
         Asset::setInflectionType('underscore');
 
         $webRoot = Configure::read('App.wwwRoot');
@@ -423,19 +423,19 @@ class AssetTest extends TestCase
 
         $result = Asset::webroot('/img/cake.power.gif', ['theme' => 'TestTheme']);
         $expected = '/test_theme/img/cake.power.gif';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Asset::webroot('/img/test.jpg', ['theme' => 'TestTheme']);
         $expected = '/test_theme/img/test.jpg';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Asset::webroot('/img/cake.icon.gif', ['theme' => 'TestTheme']);
         $expected = '/img/cake.icon.gif';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Asset::webroot('/img/cake.icon.gif?some=param', ['theme' => 'TestTheme']);
         $expected = '/img/cake.icon.gif?some=param';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         Configure::write('App.wwwRoot', $webRoot);
     }
