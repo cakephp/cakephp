@@ -294,7 +294,6 @@ if (!function_exists('deprecationWarning')) {
 
             $patterns = (array)Configure::read('Error.disableDeprecations');
             $relative = substr($frame['file'], strlen(ROOT) + 1);
-            debug($relative);
             foreach ($patterns as $pattern) {
                 $pattern = str_replace('/', DIRECTORY_SEPARATOR, $pattern);
                 if (fnmatch($pattern, $relative)) {
