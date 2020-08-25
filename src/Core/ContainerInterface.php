@@ -40,10 +40,10 @@ interface ContainerInterface extends PsrInterface
      * @param mixed $concrete Either the classname an interface or name resolves to.
      *   Can also be a constructed object, Closure, or null. When null, the `$id` parameter will
      *   be used as the concrete class name.
-     * @param bool|null $shared Set to true to make a service shared.
+     * @param ?bool $shared Set to true to make a service shared.
      * @return \League\Container\Definition\DefinitionInterface
      */
-    public function add(string $id, $concrete = null, bool $shared = null): DefinitionInterface;
+    public function add(string $id, $concrete = null, ?bool $shared = null): DefinitionInterface;
 
     /**
      * Add a service provider to the container
