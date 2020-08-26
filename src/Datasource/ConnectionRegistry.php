@@ -70,10 +70,10 @@ class ConnectionRegistry extends ObjectRegistry
      *
      * @param string|\Cake\Datasource\ConnectionInterface|callable $class The classname or object to make.
      * @param string $alias The alias of the object.
-     * @param array $settings An array of settings to use for the datasource.
+     * @param array $config An array of settings to use for the datasource.
      * @return \Cake\Datasource\ConnectionInterface A connection with the correct settings.
      */
-    protected function _create($class, string $alias, array $settings)
+    protected function _create($class, string $alias, array $config)
     {
         if (is_callable($class)) {
             return $class($alias);
@@ -83,11 +83,11 @@ class ConnectionRegistry extends ObjectRegistry
             return $class;
         }
 
-        unset($settings['className']);
+        unset($config['className']);
 
         // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.InvalidFormat
         /** @var \Cake\Datasource\ConnectionInterface */
-        return new $class($settings);
+        return new $class($config);
     }
 
     /**

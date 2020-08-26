@@ -30,17 +30,18 @@ class IcuFormatter implements FormatterInterface
      * message. Variables are interpolated using the MessageFormatter class.
      *
      * @param string $locale The locale in which the message is presented.
-     * @param string $message The message to be translated
-     * @param array $vars The list of values to interpolate in the message
+     * @param string $string The message to be translated
+     * @param array $tokenValues The list of values to interpolate in the message
      * @return string The formatted message
      * @throws \Aura\Intl\Exception\CannotFormat
      * @throws \Aura\Intl\Exception\CannotInstantiateFormatter
+     * @psalm-suppress ParamNameMismatch
      */
-    public function format($locale, $message, array $vars): string
+    public function format($locale, $string, array $tokenValues): string
     {
-        unset($vars['_singular'], $vars['_count']);
+        unset($tokenValues['_singular'], $tokenValues['_count']);
 
-        return $this->_formatMessage($locale, $message, $vars);
+        return $this->_formatMessage($locale, $string, $tokenValues);
     }
 
     /**

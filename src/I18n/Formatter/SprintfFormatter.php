@@ -29,14 +29,15 @@ class SprintfFormatter implements FormatterInterface
      * message. Variables are interpolated using the sprintf format.
      *
      * @param string $locale The locale in which the message is presented.
-     * @param string $message The message to be translated
-     * @param array $vars The list of values to interpolate in the message
+     * @param string $string The message to be translated
+     * @param array $tokensValues The list of values to interpolate in the message
      * @return string The formatted message
+     * @psalm-suppress ParamNameMismatch
      */
-    public function format($locale, $message, array $vars): string
+    public function format($locale, $string, array $tokensValues): string
     {
-        unset($vars['_singular']);
+        unset($tokensValues['_singular']);
 
-        return vsprintf($message, $vars);
+        return vsprintf($string, $tokensValues);
     }
 }

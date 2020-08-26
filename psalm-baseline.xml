@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="3.12.2@7c7ebd068f8acaba211d4a2c707c4ba90874fa26">
+<files psalm-version="3.14.2@3538fe1955d47f6ee926c0769d71af6db08aa488">
   <file src="src/Collection/CollectionTrait.php">
     <ArgumentTypeCoercion occurrences="4">
       <code>$iterator</code>
@@ -19,8 +19,7 @@
     </DeprecatedClass>
   </file>
   <file src="src/Console/CommandCollection.php">
-    <DeprecatedClass occurrences="5">
-      <code>(\Cake\Console\Shell|\Cake\Console\CommandInterface|class-string)[]</code>
+    <DeprecatedClass occurrences="4">
       <code>string|\Cake\Console\Shell|\Cake\Console\CommandInterface</code>
       <code>Shell::class</code>
       <code>class-string|\Cake\Console\Shell|\Cake\Console\CommandInterface</code>
@@ -99,10 +98,25 @@
       <code>$time</code>
     </ArgumentTypeCoercion>
   </file>
+  <file src="src/I18n/Formatter/IcuFormatter.php">
+    <ParamNameMismatch occurrences="1">
+      <code>$tokenValues</code>
+    </ParamNameMismatch>
+  </file>
+  <file src="src/I18n/Formatter/SprintfFormatter.php">
+    <ParamNameMismatch occurrences="1">
+      <code>$tokensValues</code>
+    </ParamNameMismatch>
+  </file>
   <file src="src/I18n/FrozenDate.php">
     <ArgumentTypeCoercion occurrences="1">
       <code>$time</code>
     </ArgumentTypeCoercion>
+  </file>
+  <file src="src/I18n/Translator.php">
+    <ParamNameMismatch occurrences="1">
+      <code>$tokensValues</code>
+    </ParamNameMismatch>
   </file>
   <file src="src/ORM/Locator/LocatorAwareTrait.php">
     <DeprecatedClass occurrences="1">

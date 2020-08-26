@@ -64,11 +64,11 @@ class LogEngineRegistry extends ObjectRegistry
      *
      * @param string|\Psr\Log\LoggerInterface $class The classname or object to make.
      * @param string $alias The alias of the object.
-     * @param array $settings An array of settings to use for the logger.
+     * @param array $config An array of settings to use for the logger.
      * @return \Psr\Log\LoggerInterface The constructed logger class.
      * @throws \RuntimeException when an object doesn't implement the correct interface.
      */
-    protected function _create($class, string $alias, array $settings): LoggerInterface
+    protected function _create($class, string $alias, array $config): LoggerInterface
     {
         if (is_callable($class)) {
             $class = $class($alias);
@@ -80,7 +80,7 @@ class LogEngineRegistry extends ObjectRegistry
 
         if (!isset($instance)) {
             /** @psalm-suppress UndefinedClass */
-            $instance = new $class($settings);
+            $instance = new $class($config);
         }
 
         if ($instance instanceof LoggerInterface) {

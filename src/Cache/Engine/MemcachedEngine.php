@@ -302,16 +302,16 @@ class MemcachedEngine extends CacheEngine
     /**
      * Write many cache entries to the cache at once
      *
-     * @param iterable $data An array of data to be stored in the cache
+     * @param iterable $values An array of data to be stored in the cache
      * @param \DateInterval|int|null $ttl Optional. The TTL value of this item. If no value is sent and
      *   the driver supports TTL then the library may set a default value
      *   for it or let the driver take care of that.
      * @return bool Whether the write was successful or not.
      */
-    public function setMultiple($data, $ttl = null): bool
+    public function setMultiple($values, $ttl = null): bool
     {
         $cacheData = [];
-        foreach ($data as $key => $value) {
+        foreach ($values as $key => $value) {
             $cacheData[$this->_key($key)] = $value;
         }
         $duration = $this->duration($ttl);
