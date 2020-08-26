@@ -292,10 +292,10 @@ if (!function_exists('deprecationWarning')) {
             $frame = $trace[$stackFrame];
             $frame += ['file' => '[internal]', 'line' => '??'];
 
+            $relative = str_replace(DIRECTORY_SEPARATOR, '/', substr($frame['file'], strlen(ROOT) + 1));
             $patterns = (array)Configure::read('Error.disableDeprecations');
-            $relative = str_replace('/', DIRECTORY_SEPARATOR, substr($frame['file'], strlen(ROOT) + 1));
             foreach ($patterns as $pattern) {
-                $pattern = str_replace('/', DIRECTORY_SEPARATOR, $pattern);
+                $pattern = str_replace(DIRECTORY_SEPARATOR, '/', $pattern);
                 if (fnmatch($pattern, $relative)) {
                     return;
                 }
@@ -309,7 +309,7 @@ if (!function_exists('deprecationWarning')) {
                 $message,
                 $frame['file'],
                 $frame['line'],
-                str_replace(DIRECTORY_SEPARATOR, '/', $relative)
+                $relative
             );
         }
 
