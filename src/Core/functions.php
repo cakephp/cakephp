@@ -304,7 +304,7 @@ if (!function_exists('deprecationWarning')) {
             $message = sprintf(
                 '%s - %s, line: %s' . "\n" .
                 ' You can disable deprecation warnings by setting `Error.errorLevel` to' .
-                " `E_ALL & ~E_USER_DEPRECATED`, or add `%s` to " .
+                ' `E_ALL & ~E_USER_DEPRECATED`, or add `%s` to ' .
                 ' `Error.disableDeprecations` in your `config/app.php` to mute deprecations.',
                 $message,
                 $frame['file'],
