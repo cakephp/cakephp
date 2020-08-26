@@ -293,7 +293,7 @@ if (!function_exists('deprecationWarning')) {
             $frame += ['file' => '[internal]', 'line' => '??'];
 
             $patterns = (array)Configure::read('Error.disableDeprecations');
-            $relative = substr($frame['file'], strlen(ROOT) + 1);
+            $relative = str_replace('/', DIRECTORY_SEPARATOR, substr($frame['file'], strlen(ROOT) + 1));
             foreach ($patterns as $pattern) {
                 $pattern = str_replace('/', DIRECTORY_SEPARATOR, $pattern);
                 if (fnmatch($pattern, $relative)) {
@@ -304,11 +304,12 @@ if (!function_exists('deprecationWarning')) {
             $message = sprintf(
                 '%s - %s, line: %s' . "\n" .
                 ' You can disable deprecation warnings by setting `Error.errorLevel` to' .
-                " `E_ALL & ~E_USER_DEPRECATED`, or add `{$relative}` to " .
+                " `E_ALL & ~E_USER_DEPRECATED`, or add `%s` to " .
                 ' `Error.disableDeprecations` in your `config/app.php` to mute deprecations.',
                 $message,
                 $frame['file'],
-                $frame['line']
+                $frame['line'],
+                str_replace(DIRECTORY_SEPARATOR, '/', $relative)
             );
         }
 
