@@ -86,7 +86,7 @@ class FileLog extends BaseLog
     {
         parent::__construct($config);
 
-        $this->_path = $this->getConfig('path', sys_get_temp_dir());
+        $this->_path = $this->getConfig('path', sys_get_temp_dir() . DIRECTORY_SEPARATOR);
         if (Configure::read('debug') && !is_dir($this->_path)) {
             mkdir($this->_path, 0775, true);
         }
