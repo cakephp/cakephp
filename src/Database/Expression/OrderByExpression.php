@@ -62,13 +62,13 @@ class OrderByExpression extends QueryExpression
      *
      * New order by expressions are merged to existing ones
      *
-     * @param array $orders list of order by expressions
+     * @param array $conditions list of order by expressions
      * @param array $types list of types associated on fields referenced in $conditions
      * @return void
      */
-    protected function _addConditions(array $orders, array $types): void
+    protected function _addConditions(array $conditions, array $types): void
     {
-        foreach ($orders as $key => $val) {
+        foreach ($conditions as $key => $val) {
             if (
                 is_string($key) &&
                 is_string($val) &&
@@ -82,6 +82,6 @@ class OrderByExpression extends QueryExpression
             }
         }
 
-        $this->_conditions = array_merge($this->_conditions, $orders);
+        $this->_conditions = array_merge($this->_conditions, $conditions);
     }
 }
