@@ -111,7 +111,7 @@ class FunctionsTest extends TestCase
     {
         $this->expectNotToPerformAssertions();
 
-        Configure::write('Error.disableDeprecations', ['src/TestSuite/*']);
+        Configure::write('Error.ignoredDeprecationPaths', ['src/TestSuite/*']);
         $this->withErrorReporting(E_ALL, function () {
             deprecationWarning('This is going away');
         });
