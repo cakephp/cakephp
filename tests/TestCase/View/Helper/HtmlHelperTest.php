@@ -20,6 +20,7 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Filesystem\Filesystem;
 use Cake\Http\ServerRequest;
+use Cake\I18n\Date;
 use Cake\Routing\Route\DashedRoute;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
@@ -1859,6 +1860,17 @@ class HtmlHelperTest extends TestCase
             ['td' => ['class' => 'column-1']], 'td content 1', '/td',
             ['td' => ['class' => 'column-2']], 'td content 2', '/td',
             ['td' => ['class' => 'foo column-3']], 'td content 3', '/td',
+            '/tr',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $tr = [
+            new Date('2020-08-27'),
+        ];
+        $result = $this->Html->tableCells($tr);
+        $expected = [
+            '<tr',
+            '<td', '8/27/20', '/td',
             '/tr',
         ];
         $this->assertHtml($expected, $result);

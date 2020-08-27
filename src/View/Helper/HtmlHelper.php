@@ -790,7 +790,7 @@ class HtmlHelper extends Helper
                 }
             }
 
-            $cellsOut[] = $this->tableCell($cell, $cellOptions);
+            $cellsOut[] = $this->tableCell((string)$cell, $cellOptions);
         }
 
         return $cellsOut;
