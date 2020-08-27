@@ -108,6 +108,7 @@ class Translator
      * @param array $tokensValues Token values to interpolate into the
      *   message.
      * @return string The translated message with tokens replaced.
+     * @psalm-suppress ParamNameMismatch
      */
     public function translate(string $key, array $tokensValues = []): string
     {

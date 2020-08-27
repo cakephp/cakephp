@@ -99,7 +99,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
     /**
      * Adds one or more arguments for the function call.
      *
-     * @param array $params list of arguments to be passed to the function
+     * @param array $conditions list of arguments to be passed to the function
      * If associative the key would be used as argument when value is 'literal'
      * @param array $types associative array of types to be associated with the
      * passed arguments
@@ -108,11 +108,11 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      * @return $this
      * @psalm-suppress MoreSpecificImplementedParamType
      */
-    public function add($params, array $types = [], bool $prepend = false)
+    public function add($conditions, array $types = [], bool $prepend = false)
     {
         $put = $prepend ? 'array_unshift' : 'array_push';
         $typeMap = $this->getTypeMap()->setTypes($types);
-        foreach ($params as $k => $p) {
+        foreach ($conditions as $k => $p) {
             if ($p === 'literal') {
                 $put($this->_conditions, $k);
                 continue;

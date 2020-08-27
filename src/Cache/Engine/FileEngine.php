@@ -105,15 +105,15 @@ class FileEngine extends CacheEngine
      * Write data for key into cache
      *
      * @param string $key Identifier for the data
-     * @param mixed $data Data to be cached
+     * @param mixed $value Data to be cached
      * @param \DateInterval|int|null $ttl Optional. The TTL value of this item. If no value is sent and
      *   the driver supports TTL then the library may set a default value
      *   for it or let the driver take care of that.
      * @return bool True on success and false on failure.
      */
-    public function set($key, $data, $ttl = null): bool
+    public function set($key, $value, $ttl = null): bool
     {
-        if ($data === '' || !$this->_init) {
+        if ($value === '' || !$this->_init) {
             return false;
         }
 
@@ -124,11 +124,11 @@ class FileEngine extends CacheEngine
         }
 
         if (!empty($this->_config['serialize'])) {
-            $data = serialize($data);
+            $value = serialize($value);
         }
 
         $expires = time() + $this->duration($ttl);
-        $contents = implode([$expires, PHP_EOL, $data, PHP_EOL]);
+        $contents = implode([$expires, PHP_EOL, $value, PHP_EOL]);
 
         if ($this->_config['lock']) {
             /** @psalm-suppress PossiblyNullReference */
