@@ -1874,6 +1874,15 @@ class HtmlHelperTest extends TestCase
             '/tr',
         ];
         $this->assertHtml($expected, $result);
+
+        $tr = 'string';
+        $result = $this->Html->tableCells($tr);
+        $expected = [
+            '<tr',
+            '<td', 'string', '/td',
+            '/tr',
+        ];
+        $this->assertHtml($expected, $result);
     }
 
     /**

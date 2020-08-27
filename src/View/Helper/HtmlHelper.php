@@ -728,7 +728,9 @@ class HtmlHelper extends Helper
         bool $useCount = false,
         bool $continueOddEven = true
     ): string {
-        if (is_string($data) || empty($data[0]) || !is_array($data[0])) {
+        if (!is_array($data)) {
+            $data = [[$data]];
+        } elseif (empty($data[0]) || !is_array($data[0])) {
             $data = [$data];
         }
 
