@@ -61,8 +61,7 @@ class IcuFormatter implements FormatterInterface
         if ($message === '') {
             return $message;
         }
-        // Using procedural style as it showed twice as fast as
-        // its counterpart in PHP 5.5
+
         $result = MessageFormatter::formatMessage($locale, $message, $vars);
 
         if ($result === false) {
