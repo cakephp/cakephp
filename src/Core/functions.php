@@ -292,13 +292,24 @@ if (!function_exists('deprecationWarning')) {
             $frame = $trace[$stackFrame];
             $frame += ['file' => '[internal]', 'line' => '??'];
 
+            $relative = str_replace(DIRECTORY_SEPARATOR, '/', substr($frame['file'], strlen(ROOT) + 1));
+            $patterns = (array)Configure::read('Error.ignoredDeprecationPaths');
+            foreach ($patterns as $pattern) {
+                $pattern = str_replace(DIRECTORY_SEPARATOR, '/', $pattern);
+                if (fnmatch($pattern, $relative)) {
+                    return;
+                }
+            }
+
             $message = sprintf(
                 '%s - %s, line: %s' . "\n" .
-                ' You can disable deprecation warnings by setting `Error.errorLevel` to' .
-                ' `E_ALL & ~E_USER_DEPRECATED` in your config/app.php.',
+                ' You can disable all deprecation warnings by setting `Error.errorLevel` to' .
+                ' `E_ALL & ~E_USER_DEPRECATED`, or add `%s` to ' .
+                ' `Error.ignoredDeprecationPaths` in your `config/app.php` to mute deprecations from only this file.',
                 $message,
                 $frame['file'],
-                $frame['line']
+                $frame['line'],
+                $relative
             );
         }
 

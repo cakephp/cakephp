@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Core;
 
+use Cake\Core\Configure;
 use Cake\Http\Response;
 use Cake\TestSuite\TestCase;
 
@@ -96,6 +97,21 @@ class FunctionsTest extends TestCase
         $this->expectDeprecation();
         $this->expectDeprecationMessageMatches('/This is going away - (.*?)[\/\\\]TestCase.php, line\: \d+/');
 
+        $this->withErrorReporting(E_ALL, function () {
+            deprecationWarning('This is going away');
+        });
+    }
+
+    /**
+     * Test no error when deprecation matches ignore paths.
+     *
+     * @return void
+     */
+    public function testDeprecationWarningPathDisabled()
+    {
+        $this->expectNotToPerformAssertions();
+
+        Configure::write('Error.ignoredDeprecationPaths', ['src/TestSuite/*']);
         $this->withErrorReporting(E_ALL, function () {
             deprecationWarning('This is going away');
         });
