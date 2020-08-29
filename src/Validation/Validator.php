@@ -181,12 +181,34 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     protected $_allowEmptyFlags = [];
 
     /**
+     * Whether to apply last flag to generated rule(s).
+     *
+     * @var bool
+     */
+    protected $_stopOnFailure = false;
+
+    /**
      * Constructor
      */
     public function __construct()
     {
         $this->_useI18n = function_exists('__d');
         $this->_providers = self::$_defaultProviders;
+    }
+
+    /**
+     * Whether to apply last flag to generated rule(s).
+     * The first failing one will abort then per rule.
+     *
+     * @param bool $stopOnFailure If to apply last flag.
+     *
+     * @return $this
+     */
+    public function stopOnFailure(bool $stopOnFailure = true)
+    {
+        $this->_stopOnFailure = $stopOnFailure;
+
+        return $this;
     }
 
     /**
@@ -479,7 +501,10 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
 
         foreach ($rules as $name => $rule) {
             if (is_array($rule)) {
-                $rule += ['rule' => $name];
+                $rule += [
+                    'rule' => $name,
+                    'last' => $this->_stopOnFailure,
+                ];
             }
             if (!is_string($name)) {
                 /** @psalm-suppress PossiblyUndefinedMethod */
@@ -2715,6 +2740,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             '_allowEmptyMessages' => $this->_allowEmptyMessages,
             '_allowEmptyFlags' => $this->_allowEmptyFlags,
             '_useI18n' => $this->_useI18n,
+            '_stopOnFailure' => $this->_stopOnFailure,
             '_providers' => array_keys($this->_providers),
             '_fields' => $fields,
         ];
