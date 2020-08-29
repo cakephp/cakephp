@@ -1255,16 +1255,17 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|null $message The error message when the rule fails.
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
+     * @param array $extra Extra arguments, e.g. last.
      * @see \Cake\Validation\Validation::notBlank()
      * @return $this
      */
-    public function notBlank(string $field, ?string $message = null, $when = null)
+    public function notBlank(string $field, ?string $message = null, $when = null, array $extra = [])
     {
-        $extra = array_filter(['on' => $when, 'message' => $message]);
+        $extra = array_filter(['on' => $when, 'message' => $message]) + $extra;
 
-        return $this->add($field, 'notBlank', $extra + [
+        return $this->add($field, 'notBlank', [
             'rule' => 'notBlank',
-        ]);
+        ] + $extra);
     }
 
     /**
@@ -1825,16 +1826,17 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|null $message The error message when the rule fails.
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
+     * @param array $extra Extra arguments, e.g. last.
      * @see \Cake\Validation\Validation::email()
      * @return $this
      */
-    public function email(string $field, bool $checkMX = false, ?string $message = null, $when = null)
+    public function email(string $field, bool $checkMX = false, ?string $message = null, $when = null, array $extra = [])
     {
-        $extra = array_filter(['on' => $when, 'message' => $message]);
+        $extra = array_filter(['on' => $when, 'message' => $message]) + $extra;
 
-        return $this->add($field, 'email', $extra + [
+        return $this->add($field, 'email', [
             'rule' => ['email', $checkMX],
-        ]);
+        ] + $extra);
     }
 
     /**

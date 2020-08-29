@@ -1947,6 +1947,27 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Tests that setting last to a rule will stop validating the rest of the rules
+     *
+     * @return void
+     */
+    public function testErrorsWithLastRuleOnWrapperMethods(): void
+    {
+        $validator = new Validator();
+        $validator
+            ->notBlank('email', null, null, ['last' => true])
+            ->email('email', false, 'Y u no write email?', ['last' => true]);
+        $errors = $validator->validate(['email' => '']);
+        $expected = [
+            'email' => [
+                'notBlank' => 'The provided value is invalid',
+            ],
+        ];
+
+        $this->assertEquals($expected, $errors);
+    }
+
+    /**
      * Tests it is possible to get validation sets for a field using an array interface
      *
      * @return void
