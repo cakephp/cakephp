@@ -201,7 +201,6 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * The first failing one will abort then per rule.
      *
      * @param bool $stopOnFailure If to apply last flag.
-     *
      * @return $this
      */
     public function stopOnFailure(bool $stopOnFailure = true)
