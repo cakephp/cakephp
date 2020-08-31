@@ -32,7 +32,7 @@ interface ContainerApplicationInterface
      * on service definitions.
      *
      * @param \Cake\Core\ContainerInterface $container The container to add services to
-     * @return \Cake\Container\ContainerInterface The updated container.
+     * @return \Cake\Core\ContainerInterface The updated container.
      */
     public function register(ContainerInterface $container): ContainerInterface;
 
@@ -42,7 +42,7 @@ interface ContainerApplicationInterface
      * This will `register()` services provided by both the application
      * and any plugins if the application has plugin support.
      *
-     * @return \Cake\Container\ContainerInterface A populated container
+     * @return \Cake\Core\ContainerInterface A populated container
      */
     public function getContainer(): ContainerInterface;
 }
