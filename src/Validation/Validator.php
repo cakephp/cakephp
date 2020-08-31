@@ -197,8 +197,10 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * Whether to apply last flag to generated rule(s).
-     * The first failing one will abort then per rule.
+     * Whether to stop validation rule evaluation on the first failed rule.
+     *
+     * When enabled the first failing rule per field will cause validation to stop.
+     * When disabled all rules will be run even if there are failures.
      *
      * @param bool $stopOnFailure If to apply last flag.
      * @return $this
