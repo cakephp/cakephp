@@ -36,15 +36,20 @@ class BinaryUuidType extends BaseType
      *
      * @param mixed $value The value to convert.
      * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
-     * @return string|resource
+     * @return string|resource|null
      */
     public function toDatabase($value, DriverInterface $driver)
     {
-        if (is_string($value)) {
-            return $this->convertStringToBinaryUuid($value);
+        if (!is_string($value)) {
+            return $value;
         }
 
-        return $value;
+        $length = strlen($value);
+        if ($length !== 36 && $length !== 32) {
+            return null;
+        }
+
+        return $this->convertStringToBinaryUuid($value);
     }
 
     /**
@@ -126,7 +131,7 @@ class BinaryUuidType extends BaseType
     }
 
     /**
-     * Converts a string uuid to a binary representation
+     * Converts a string UUID (36 or 32 char) to a binary representation.
      *
      * @param string $string The value to convert.
      * @return string Converted value.
