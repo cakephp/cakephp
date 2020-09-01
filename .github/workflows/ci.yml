@@ -106,8 +106,6 @@ jobs:
 
         if [[ ${{ matrix.php-version }} == '7.2' ]]; then
           vendor/bin/phpunit
-        elif [[ ${{ matrix.php-version }} == '7.4' && ${{ matrix.db-type }} == 'mysql' ]]; then
-          vendor/bin/phpunit --teamcity --verbose
         else
           vendor/bin/phpunit --verbose
         fi
