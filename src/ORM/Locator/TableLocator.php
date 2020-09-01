@@ -160,8 +160,14 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      */
     protected function createInstance(string $alias, array $options)
     {
-        [, $classAlias] = pluginSplit($alias);
-        $options = ['alias' => $classAlias] + $options;
+        if (strpos($alias, '\\') === false) {
+            [, $classAlias] = pluginSplit($alias);
+            $options = ['alias' => $classAlias] + $options;
+        } elseif (!isset($options['alias'])) {
+            $options['className'] = $alias;
+            /** @psalm-suppress PossiblyFalseOperand */
+            $alias = substr($alias, strrpos($alias, '\\') + 1, -5);
+        }
 
         if (isset($this->_config[$alias])) {
             $options += $this->_config[$alias];
