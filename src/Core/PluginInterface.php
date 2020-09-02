@@ -21,7 +21,8 @@ use Cake\Routing\RouteBuilder;
 /**
  * Plugin Interface
  *
- * @method register(\Cake\Core\ContainerInterface $container): \Cake\Core\ContainerInterface
+ * @method \Cake\Core\ContainerInterface register(\Cake\Core\ContainerInterface $container) Register plugin services to
+ *   the application's container
  */
 interface PluginInterface
 {
