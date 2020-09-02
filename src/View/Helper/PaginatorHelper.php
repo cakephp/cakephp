@@ -43,7 +43,7 @@ class PaginatorHelper extends Helper
      *
      * @var array
      */
-    public $helpers = ['Url', 'Number', 'Html', 'Form'];
+    protected $helpers = ['Url', 'Number', 'Html', 'Form'];
 
     /**
      * Default config for this class
