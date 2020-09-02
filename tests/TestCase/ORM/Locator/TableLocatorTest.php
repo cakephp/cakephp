@@ -22,6 +22,7 @@ use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 use TestApp\Infrastructure\Table\AddressesTable;
+use TestApp\Model\Table\ArticlesTable;
 use TestApp\Model\Table\MyUsersTable;
 use TestPlugin\Infrastructure\Table\AddressesTable as PluginAddressesTable;
 
@@ -190,6 +191,9 @@ class TableLocatorTest extends TestCase
         $this->assertSame('my_articles', $result->getTable());
 
         $this->assertSame($this->_locator, $result->associations()->getTableLocator());
+
+        $result = $this->_locator->get(ArticlesTable::class);
+        $this->assertSame('Articles', $result->getAlias());
     }
 
     /**
