@@ -34,7 +34,7 @@ class BreadcrumbsHelper extends Helper
      *
      * @var array
      */
-    public $helpers = ['Url'];
+    protected $helpers = ['Url'];
 
     /**
      * Default config for the helper.
