@@ -53,6 +53,7 @@
         "cakephp/cakephp-codesniffer": "^4.0",
         "mikey179/vfsstream": "^1.6",
         "paragonie/csp-builder": "^2.3",
+        "phpmetrics/phpmetrics": "^2.7",
         "phpunit/phpunit": "~8.5.0"
     },
     "autoload": {

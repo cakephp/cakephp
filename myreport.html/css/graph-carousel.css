@@ -1,0 +1,59 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.bloc-graph {
+    text-align: center;
+    max-width: 1140px;
+    margin: auto;
+}
+
+.bloc-graph-carousel {
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    overflow: hidden;
+    height: 400px;
+    position: relative;
+    display: flex;
+}
+.bloc-graph-carousel p {
+    font-size: 1em;
+}
+
+.icon-container span.dot {
+    cursor: pointer;
+    height: 16px;
+    width: 16px;
+    background-color: #eee;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.icon-container span.dot.active {
+    background-color: #bbb;
+}
+
+.bloc-graph-items {
+    position: relative;
+    flex: 1;
+    overflow: hidden;
+    color: #000;
+}
+
+.bloc-graph-item {
+    width: 100%;
+    height: 100%;
+    transition: transform 1s;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.bloc-graph-item.first {
+    left: 0;
+}
+.bloc-graph-item.second {
+    left: 100%;
+}

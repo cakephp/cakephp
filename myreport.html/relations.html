@@ -1,0 +1,5039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PhpMetrics report</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/milligram.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/roboto.css">
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/material-icons.css">
+    <link rel="stylesheet" href="css/graph-carousel.css">
+</head>
+<body>
+
+
+<header class="headerbar">
+    <div class="headerbarInner">
+        <div class="float-left navigation-title">
+            <a href="http://www.phpmetrics.org/">
+                <h1 class="title">PhpMetrics</h1>
+                <span class="subtitle">
+                Static analyzer for PHP
+            </span>
+            </a>
+        </div>
+        <ul class="navigation-list float-right">
+            <li class="navigation-item">
+                <a class="navigation-link" href="http://www.phpmetrics.org/documentation/index.html">Documentation</a>
+                <a class="navigation-link" href="https://www.github.com/phpmetrics/phpmetrics">Support</a>
+            </li>
+        </ul>
+    </div>
+</header>
+
+<a class="hidden-xs github" href="https://github.com/phpmetrics/phpmetrics"
+   title="PhpMetrics on Github" target="blank">
+    <svg width="80" height="80" viewBox="0 0 250 250" class="github">
+        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+        <path
+            d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+            fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+        <path
+            d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+            fill="currentColor" class="octo-body"></path>
+    </svg>
+</a>
+
+
+<div class="page">
+    <div class="content content-first">
+        <div class="report-details">
+            Created at 2020-09-02 15:41:13        , with PHPMetrics v2.7.4 (<a href="https://twitter.com/Halleck45">Jean-François Lépine</a>).
+        </div>
+
+        
+
+
+<div class="row">
+    <div class="column">
+        <div class="bloc">
+            <h4>Object relations</h4>
+            <div id="chart-relations"></div>
+        </div>
+    </div>
+</div>
+
+</div>
+
+<!-- Sidebar -->
+<div id="sidebar">
+    <div class="content">
+        <div class="logo">
+            <a href="http://www.phpmetrics.org"><img src="images/phpmetrics-maintenability.png"
+                                                 alt="Logo PhpMetrics"/></a>
+            <h1>PhpMetrics</h1>
+        </div>
+        <div class="links">
+            <ul>
+                <li>
+                    <a href="index.html">
+                        <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0 0h24v24H0z" fill="none"/>
+                            <path
+                                d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                        </svg>
+                        Overview
+                    </a>
+                </li>
+                <li>
+                    <a href="violations.html">
+                        <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M20 8h-2.81c-.45-.78-1.07-1.45-1.82-1.96L17 4.41 15.59 3l-2.17 2.17C12.96 5.06 12.49 5 12 5c-.49 0-.96.06-1.41.17L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.26 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20V8zm-6 8h-4v-2h4v2zm0-4h-4v-2h4v2z"/>
+                        </svg>
+                        Violations (452)
+                    </a>
+                </li>
+                                    <li>
+                        <a href="composer.html">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="24px" height="24px"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>
+                            Composer
+                        </a>
+                    </li>
+                                                <li>
+                    <a href="loc.html">
+                        <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24"
+                             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <defs>
+                                <path d="M0 0h24v24H0z" id="a"/>
+                            </defs>
+                            <clipPath id="b">
+                                <use overflow="visible" xlink:href="#a"/>
+                            </clipPath>
+                            <path clip-path="url(#b)"
+                                  d="M11 5.08V2c-5 .5-9 4.81-9 10s4 9.5 9 10v-3.08c-3-.48-6-3.4-6-6.92s3-6.44 6-6.92zM18.97 11H22c-.47-5-4-8.53-9-9v3.08C16 5.51 18.54 8 18.97 11zM13 18.92V22c5-.47 8.53-4 9-9h-3.03c-.43 3-2.97 5.49-5.97 5.92z"/>
+                        </svg>
+                        Size &amp; volume
+                    </a>
+                </li>
+                <li>
+                    <a href="complexity.html">
+                        <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0 0h24v24H0V0z" fill="none"/>
+                            <path
+                                d="M19.07 4.93l-1.41 1.41C19.1 7.79 20 9.79 20 12c0 4.42-3.58 8-8 8s-8-3.58-8-8c0-4.08 3.05-7.44 7-7.93v2.02C8.16 6.57 6 9.03 6 12c0 3.31 2.69 6 6 6s6-2.69 6-6c0-1.66-.67-3.16-1.76-4.24l-1.41 1.41C15.55 9.9 16 10.9 16 12c0 2.21-1.79 4-4 4s-4-1.79-4-4c0-1.86 1.28-3.41 3-3.86v2.14c-.6.35-1 .98-1 1.72 0 1.1.9 2 2 2s2-.9 2-2c0-.74-.4-1.38-1-1.72V2h-1C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10c0-2.76-1.12-5.26-2.93-7.07z"/>
+                        </svg>
+                        Complexity &amp; defects
+                    </a>
+                </li>
+                <li>
+                    <a href="oop.html">
+                        <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0 0h24v24H0z" fill="none"/>
+                            <path
+                                d="M17 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zM5 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 6c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/>
+                        </svg>
+                        Object oriented metrics
+                    </a>
+                </li>
+                <li>
+                    <a href="relations.html">
+                        <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0 0h24v24H0z" fill="none"/>
+                            <path
+                                d="M14 4l2.29 2.29-2.88 2.88 1.42 1.42 2.88-2.88L20 10V4zm-4 0H4v6l2.29-2.29 4.71 4.7V20h2v-8.41l-5.29-5.3z"/>
+                        </svg>
+                        Object relations
+                    </a>
+                </li>
+                <li>
+                    <a href="coupling.html">
+                        <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24"
+                             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <defs>
+                                <path d="M0 0h24v24H0V0z" id="a"/>
+                            </defs>
+                            <clipPath id="b">
+                                <use overflow="visible" xlink:href="#a"/>
+                            </clipPath>
+                            <path clip-path="url(#b)"
+                                  d="M9.01 14H2v2h7.01v3L13 15l-3.99-4v3zm5.98-1v-3H22V8h-7.01V5L11 9l3.99 4z"/>
+                        </svg>
+                        Coupling
+                    </a>
+                </li>
+                <li>
+                    <a href="packages.html">
+                        <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24"
+                             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <path d="M11 9.16V2c-5 .5-9 4.79-9 10s4 9.5 9 10v-7.16c-1-.41-2-1.52-2-2.84s1-2.43 2-2.84zM14.86 11H22c-.48-4.75-4-8.53-9-9v7.16c1 .3 1.52.98 1.86 1.84zM13 14.84V22c5-.47 8.52-4.25 9-9h-7.14c-.34.86-.86 1.54-1.86 1.84z"/>
+                        </svg>
+                        Package oriented metrics
+                    </a>
+                </li>
+                <li>
+                    <a href="package_relations.html">
+                        <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path d="M17 20.41L18.41 19 15 15.59 13.59 17 17 20.41zM7.5 8H11v5.59L5.59 19 7 20.41l6-6V8h3.5L12 3.5 7.5 8z"/>
+                        </svg>
+                        Package relations
+                    </a>
+                </li>
+                                <!--<li>
+                    <a href="all.html">
+                        <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 3v18h18V3H3zm8 16H5v-6h6v6zm0-8H5V5h6v6zm8 8h-6v-6h6v6zm0-8h-6V5h6v6z"/>
+                            <path d="M0 0h24v24H0z" fill="none"/>
+                        </svg>
+                        All metrics
+                    </a>
+                </li>-->
+                <!--                <li>-->
+                <!--                    <a href="#">-->
+                <!--                        <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24"-->
+                <!--                             xmlns="http://www.w3.org/2000/svg">-->
+                <!--                            <path-->
+                <!--                                d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>-->
+                <!--                            <path d="M0 0h24v24H0z" fill="none"/>-->
+                <!--                        </svg>-->
+                <!--                        Third party-->
+                <!--                    </a>-->
+                <!--                </li>-->
+                <!--<li class="sep">
+                    <a href="panel.html">
+                        <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 1.99-.9 1.99-2L23 5c0-1.1-.9-2-2-2zm0 14H3V5h18v12z"/>
+                        </svg>
+                        TV Panel
+                    </a>
+                </li>-->
+            </ul>
+        </div>
+    </div>
+</div>
+</div>
+
+<script type="text/javascript" src="js/functions.js"></script>
+<script type="text/javascript" src="js/d3.v3.js"></script>
+<script type="text/javascript" src="js/d3.hexbin.v0.js"></script>
+<script type="text/javascript" src="js/sort-table.min.js"></script>
+<script type="text/javascript" src="js/graph-maintainability.js"></script>
+<script type="text/javascript" src="js/graph-carousel.js"></script>
+<script type="text/javascript" src="js/graph-licenses.js"></script>
+<script type="text/javascript" src="js/FileSaver.min.js"></script>
+
+<script src="js/clusterize.min.js"></script>
+<link rel="stylesheet" href="css/clusterize.css">
+
+<script type="text/javascript" src="classes.js"></script>
+
+<script type="text/javascript">
+    var accessibilityEnabled = false;
+</script>
+
+</body>
+</html>
+
+
+<script type="text/javascript">
+
+
+    var relations = [
+    {
+        "name": "\\Cake\\Controller\\ErrorController",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Controller\\Controller",
+            "\\Cake\\Event\\EventInterface"
+        ]
+    },
+    {
+        "name": "\\Cake\\Controller\\Controller",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Event\\EventInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Controller\\Exception\\MissingActionException",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Core\\Exception\\Exception",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Controller\\Exception\\SecurityException",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Http\\Exception\\BadRequestException",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Http\\Exception\\HttpException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Controller\\Exception\\AuthSecurityException",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Controller\\Exception\\MissingComponentException",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Controller\\Component\\FormProtectionComponent",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Controller\\Component",
+            "\\Cake\\Event\\EventInterface",
+            "\\Cake\\Routing\\Router",
+            "\\Cake\\Form\\FormProtector",
+            "\\Cake\\Core\\Configure",
+            "\\Cake\\Http\\Exception\\BadRequestException",
+            "\\Closure"
+        ]
+    },
+    {
+        "name": "\\Cake\\Controller\\Component",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Event\\EventListenerInterface",
+            "\\Cake\\Controller\\ComponentRegistry",
+            "\\Cake\\Controller\\Controller"
+        ]
+    },
+    {
+        "name": "\\Cake\\Routing\\Router",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Form\\FormProtector",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Core\\Configure",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Closure",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Controller\\Component\\AuthComponent",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Controller\\Component",
+            "\\Cake\\Event\\EventDispatcherInterface",
+            "\\Cake\\Event\\EventInterface",
+            "\\Cake\\Controller\\Controller",
+            "\\Cake\\Core\\Exception\\Exception",
+            "\\Cake\\Routing\\Router",
+            "\\Cake\\Http\\Exception\\ForbiddenException",
+            "\\Cake\\Utility\\Hash",
+            "\\Cake\\Core\\App",
+            "\\className"
+        ]
+    },
+    {
+        "name": "\\Cake\\Event\\EventDispatcherInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Http\\Exception\\ForbiddenException",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Http\\Exception\\HttpException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Utility\\Hash",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Core\\App",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\className",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Controller\\Component\\PaginatorComponent",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Controller\\Component",
+            "\\Cake\\Controller\\ComponentRegistry",
+            "\\InvalidArgumentException",
+            "\\Cake\\Datasource\\Paginator",
+            "\\Cake\\Datasource\\ResultSetInterface",
+            "\\Cake\\Http\\Exception\\NotFoundException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Controller\\ComponentRegistry",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\InvalidArgumentException",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Datasource\\Paginator",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Datasource\\PaginatorInterface",
+            "\\Cake\\Datasource\\ResultSetInterface",
+            "\\Cake\\Core\\Exception\\Exception",
+            "\\Cake\\Datasource\\Exception\\PageOutOfBoundsException",
+            "\\Cake\\Datasource\\QueryInterface",
+            "\\Cake\\Datasource\\RepositoryInterface"
+        ]
+    },
+    {
+        "name": "\\Cake\\Datasource\\ResultSetInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Http\\Exception\\NotFoundException",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Http\\Exception\\HttpException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Controller\\Component\\SecurityComponent",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Controller\\Component",
+            "\\Cake\\Event\\EventInterface",
+            "\\Cake\\Controller\\Exception\\AuthSecurityException",
+            "\\Cake\\Controller\\Controller",
+            "\\Cake\\Core\\Configure",
+            "\\Cake\\Http\\Exception\\BadRequestException",
+            "\\Cake\\Controller\\Exception\\SecurityException",
+            "\\Cake\\Utility\\Security",
+            "\\Cake\\Routing\\Router",
+            "\\Cake\\Utility\\Hash",
+            "\\Cake\\Http\\ServerRequest"
+        ]
+    },
+    {
+        "name": "\\Cake\\Utility\\Security",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Http\\ServerRequest",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Controller\\Component\\RequestHandlerComponent",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Controller\\Component",
+            "\\Cake\\Controller\\ComponentRegistry",
+            "\\Cake\\Http\\ServerRequest",
+            "\\Cake\\Http\\Response",
+            "\\Cake\\Routing\\Router",
+            "\\Cake\\Event\\EventInterface",
+            "\\Cake\\Http\\Exception\\NotFoundException",
+            "\\Cake\\Core\\Configure",
+            "\\Cake\\Controller\\Controller",
+            "\\Cake\\Utility\\Inflector",
+            "\\Cake\\Core\\App"
+        ]
+    },
+    {
+        "name": "\\Cake\\Http\\Response",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Utility\\Inflector",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Controller\\Component\\FlashComponent",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Controller\\Component",
+            "\\Cake\\Utility\\Inflector",
+            "\\Cake\\Http\\Exception\\InternalErrorException",
+            "\\Cake\\Http\\Session"
+        ]
+    },
+    {
+        "name": "\\Cake\\Http\\Exception\\InternalErrorException",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Http\\Exception\\HttpException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Http\\Session",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Core\\ObjectRegistry",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\class",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Controller\\ControllerFactory",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Http\\ControllerFactoryInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Psr\\Http\\Message\\ServerRequestInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\ReflectionClass",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Psr\\Http\\Message\\ResponseInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Http\\Exception\\MissingControllerException",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Core\\Exception\\Exception"
+        ]
+    },
+    {
+        "name": "\\Cake\\Event\\EventListenerInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\UnexpectedValueException",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\RuntimeException",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\ReflectionMethod",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Form\\Form",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Event\\EventListenerInterface",
+            "\\Cake\\Event\\EventDispatcherInterface",
+            "\\Cake\\Validation\\ValidatorAwareInterface",
+            "\\Cake\\Form\\Schema",
+            "\\this",
+            "\\Cake\\Utility\\Hash"
+        ]
+    },
+    {
+        "name": "\\Cake\\Validation\\ValidatorAwareInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Form\\Schema",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\this",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Error\\ErrorHandler",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Error\\BaseErrorHandler",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Error\\Debugger",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Throwable",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Error\\ExceptionRendererInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Http\\ResponseEmitter",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\static",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Error\\FatalErrorException",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Core\\Exception\\Exception"
+        ]
+    },
+    {
+        "name": "\\Cake\\Error\\ErrorLogger",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Error\\ErrorLoggerInterface",
+            "\\Cake\\Log\\Log",
+            "\\Throwable",
+            "\\Cake\\Core\\Configure",
+            "\\Cake\\Error\\Debugger",
+            "\\Psr\\Http\\Message\\ServerRequestInterface"
+        ]
+    },
+    {
+        "name": "\\Cake\\Error\\ConsoleErrorHandler",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Error\\BaseErrorHandler",
+            "\\Cake\\Console\\ConsoleOutput",
+            "\\Throwable"
+        ]
+    },
+    {
+        "name": "\\Cake\\Console\\ConsoleOutput",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Error\\ErrorLoggerInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Log\\Log",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Error\\ExceptionRenderer",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Error\\ExceptionRendererInterface",
+            "\\Throwable",
+            "\\Cake\\Controller\\Controller",
+            "\\Cake\\Routing\\Router",
+            "\\Cake\\Http\\ServerRequestFactory",
+            "\\Cake\\Controller\\ControllerFactory",
+            "\\Cake\\Core\\App",
+            "\\class",
+            "\\Cake\\Event\\Event",
+            "\\Psr\\Http\\Message\\ResponseInterface",
+            "\\Cake\\Core\\Configure",
+            "\\Cake\\Error\\Debugger",
+            "\\Cake\\Http\\Response",
+            "\\Cake\\Utility\\Inflector"
+        ]
+    },
+    {
+        "name": "\\Cake\\Http\\ServerRequestFactory",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Event\\Event",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Error\\Middleware\\ErrorHandlerMiddleware",
+        "size": 3000,
+        "relations": [
+            "\\Psr\\Http\\Server\\MiddlewareInterface",
+            "\\InvalidArgumentException",
+            "\\Psr\\Http\\Message\\ResponseInterface",
+            "\\Psr\\Http\\Message\\ServerRequestInterface",
+            "\\Psr\\Http\\Server\\RequestHandlerInterface",
+            "\\Throwable",
+            "\\Cake\\Http\\Exception\\RedirectException",
+            "\\Laminas\\Diactoros\\Response\\RedirectResponse",
+            "\\Cake\\Http\\Response",
+            "\\Cake\\Error\\ErrorHandler",
+            "\\Cake\\Core\\App",
+            "\\className"
+        ]
+    },
+    {
+        "name": "\\Psr\\Http\\Server\\MiddlewareInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Psr\\Http\\Server\\RequestHandlerInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Http\\Exception\\RedirectException",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Laminas\\Diactoros\\Response\\RedirectResponse",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Utility\\Text",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Error\\Debug\\FormatterInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Error\\Debug\\ConsoleFormatter",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Error\\Debug\\FormatterInterface",
+            "\\Cake\\Error\\Debug\\NodeInterface",
+            "\\RuntimeException",
+            "\\Cake\\Error\\Debug\\ArrayNode"
+        ]
+    },
+    {
+        "name": "\\Cake\\Error\\Debug\\HtmlFormatter",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Error\\Debug\\FormatterInterface",
+            "\\Cake\\Error\\Debug\\NodeInterface",
+            "\\RuntimeException",
+            "\\Cake\\Error\\Debug\\ArrayNode"
+        ]
+    },
+    {
+        "name": "\\Cake\\Error\\Debug\\DebugContext",
+        "size": 3000,
+        "relations": [
+            "\\SplObjectStorage"
+        ]
+    },
+    {
+        "name": "\\Cake\\Error\\Debug\\NodeInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Error\\Debug\\ScalarNode",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Error\\Debug\\NodeInterface"
+        ]
+    },
+    {
+        "name": "\\Cake\\Error\\Debug\\SpecialNode",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Error\\Debug\\NodeInterface"
+        ]
+    },
+    {
+        "name": "\\Cake\\Error\\Debug\\ArrayNode",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Error\\Debug\\ArrayItemNode",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Error\\Debug\\ReferenceNode",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Error\\Debug\\NodeInterface"
+        ]
+    },
+    {
+        "name": "\\Cake\\Error\\Debug\\ClassNode",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Error\\Debug\\NodeInterface",
+            "\\Cake\\Error\\Debug\\PropertyNode"
+        ]
+    },
+    {
+        "name": "\\Cake\\Error\\Debug\\PropertyNode",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\ReflectionObject",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\SplObjectStorage",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Error\\Debug\\TextFormatter",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Error\\Debug\\FormatterInterface",
+            "\\Cake\\Error\\Debug\\NodeInterface",
+            "\\RuntimeException",
+            "\\Cake\\Error\\Debug\\ArrayNode"
+        ]
+    },
+    {
+        "name": "\\Cake\\Cache\\Engine\\RedisEngine",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Cache\\CacheEngine",
+            "\\RuntimeException",
+            "\\Redis"
+        ]
+    },
+    {
+        "name": "\\Cake\\Cache\\CacheEngine",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Redis",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Cache\\Engine\\NullEngine",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Cache\\Engine\\ArrayEngine",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Cache\\CacheEngine"
+        ]
+    },
+    {
+        "name": "\\Cake\\Cache\\Engine\\FileEngine",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Cache\\CacheEngine",
+            "\\RecursiveDirectoryIterator",
+            "\\RecursiveIteratorIterator",
+            "\\SplFileObject",
+            "\\LogicException",
+            "\\SplFileInfo",
+            "\\Cake\\Cache\\InvalidArgumentException",
+            "\\CallbackFilterIterator"
+        ]
+    },
+    {
+        "name": "\\RecursiveDirectoryIterator",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\RecursiveIteratorIterator",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\SplFileObject",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\LogicException",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\SplFileInfo",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Cache\\InvalidArgumentException",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Core\\Exception\\Exception",
+            "\\Psr\\SimpleCache\\InvalidArgumentException"
+        ]
+    },
+    {
+        "name": "\\CallbackFilterIterator",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Cache\\Engine\\ApcuEngine",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Cache\\CacheEngine",
+            "\\RuntimeException",
+            "\\APCUIterator"
+        ]
+    },
+    {
+        "name": "\\APCUIterator",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Cache\\Cache",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Cache\\CacheRegistry",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Core\\ObjectRegistry",
+            "\\Cake\\Core\\App",
+            "\\BadMethodCallException",
+            "\\Cake\\Cache\\CacheEngine",
+            "\\class",
+            "\\RuntimeException"
+        ]
+    },
+    {
+        "name": "\\Psr\\SimpleCache\\CacheInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Cache\\CacheEngineInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Psr\\SimpleCache\\InvalidArgumentException",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\BadMethodCallException",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Console\\TaskRegistry",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Console\\Shell",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Console\\Exception\\MissingTaskException",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Console\\Exception\\ConsoleException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Console\\HelperRegistry",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Console\\ConsoleIo",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Console\\Exception\\MissingHelperException",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Console\\Exception\\ConsoleException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Console\\Helper",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Console\\ConsoleInputSubcommand",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Console\\ConsoleOptionParser",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\SimpleXMLElement",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Console\\ShellDispatcher",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Core\\Plugin",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Shell\\Task\\CommandTask",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Console\\Shell",
+            "\\Cake\\Core\\Plugin",
+            "\\Cake\\Core\\App",
+            "\\Cake\\Utility\\Inflector",
+            "\\Cake\\Filesystem\\Filesystem"
+        ]
+    },
+    {
+        "name": "\\Cake\\Console\\Exception\\MissingShellException",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Console\\Exception\\ConsoleException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Console\\CommandScanner",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Filesystem\\Filesystem",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Console\\ConsoleInputOption",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Console\\Exception\\ConsoleException",
+            "\\SimpleXMLElement"
+        ]
+    },
+    {
+        "name": "\\Cake\\Console\\ConsoleInputArgument",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Console\\ConsoleInputArgument",
+            "\\Cake\\Console\\Exception\\ConsoleException",
+            "\\SimpleXMLElement"
+        ]
+    },
+    {
+        "name": "\\Cake\\Console\\Exception\\ConsoleException",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Console\\HelpFormatter",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Console\\ConsoleOptionParser",
+            "\\Cake\\Utility\\Text",
+            "\\SimpleXMLElement"
+        ]
+    },
+    {
+        "name": "\\Cake\\Console\\Exception\\MissingOptionException",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Console\\Exception\\StopException",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Console\\ConsoleInput",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Console\\Exception\\MissingShellMethodException",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Console\\Exception\\ConsoleException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Console\\CommandRunner",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Event\\EventDispatcherInterface",
+            "\\Cake\\Core\\ConsoleApplicationInterface",
+            "\\Cake\\Console\\CommandFactory",
+            "\\Cake\\Console\\CommandCollection",
+            "\\RuntimeException",
+            "\\Cake\\Console\\ConsoleIo",
+            "\\Cake\\Event\\EventManagerInterface",
+            "\\Cake\\Event\\EventManager",
+            "\\InvalidArgumentException",
+            "\\Cake\\Utility\\Inflector",
+            "\\Cake\\Console\\Exception\\MissingOptionException",
+            "\\Cake\\Console\\CommandInterface",
+            "\\Cake\\Console\\Shell",
+            "\\Cake\\Routing\\Router"
+        ]
+    },
+    {
+        "name": "\\Cake\\Core\\ConsoleApplicationInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Console\\CommandFactory",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Console\\CommandFactoryInterface",
+            "\\className",
+            "\\InvalidArgumentException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Console\\CommandCollection",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Event\\EventManagerInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Event\\EventManager",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Console\\CommandInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Console\\BaseCommand",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Console\\Arguments",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\command",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\IteratorAggregate",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Countable",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Traversable",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\ArrayIterator",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Log\\Engine\\ConsoleLog",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Log\\Engine\\BaseLog",
+            "\\Cake\\Console\\ConsoleOutput",
+            "\\InvalidArgumentException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Console\\CommandFactoryInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Console\\Command\\HelpCommand",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Console\\BaseCommand",
+            "\\Cake\\Console\\CommandCollectionAwareInterface",
+            "\\Cake\\Console\\CommandCollection",
+            "\\Cake\\Console\\Arguments",
+            "\\Cake\\Console\\ConsoleIo",
+            "\\Cake\\Core\\Plugin",
+            "\\Cake\\Core\\Configure",
+            "\\SimpleXMLElement",
+            "\\Cake\\Console\\ConsoleOptionParser"
+        ]
+    },
+    {
+        "name": "\\Cake\\Console\\CommandCollectionAwareInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Http\\Cookie\\CookieCollection",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Http\\Cookie\\Cookie",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Http\\Cookie\\CookieInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Psr\\Http\\Message\\RequestInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\DateTimeZone",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\DateTimeImmutable",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Http\\CallbackStream",
+        "size": 3000,
+        "relations": [
+            "\\Laminas\\Diactoros\\CallbackStream"
+        ]
+    },
+    {
+        "name": "\\Laminas\\Diactoros\\CallbackStream",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Laminas\\Diactoros\\Stream",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\DateTimeInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\DateTime",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Http\\CorsBuilder",
+        "size": 3000,
+        "relations": [
+            "\\Psr\\Http\\Message\\MessageInterface"
+        ]
+    },
+    {
+        "name": "\\SessionHandlerInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Laminas\\Diactoros\\PhpInputStream",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Http\\Exception\\MethodNotAllowedException",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Http\\Exception\\HttpException"
+        ]
+    },
+    {
+        "name": "\\Psr\\Http\\Message\\StreamInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Psr\\Http\\Message\\UriInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Psr\\Http\\Message\\MessageInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Http\\Session\\CacheSession",
+        "size": 3000,
+        "relations": [
+            "\\SessionHandlerInterface",
+            "\\InvalidArgumentException",
+            "\\Cake\\Cache\\Cache"
+        ]
+    },
+    {
+        "name": "\\Cake\\Http\\Session\\DatabaseSession",
+        "size": 3000,
+        "relations": [
+            "\\SessionHandlerInterface",
+            "\\Cake\\ORM\\Entity"
+        ]
+    },
+    {
+        "name": "\\Cake\\ORM\\Entity",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Http\\Middleware\\EncryptedCookieMiddleware",
+        "size": 3000,
+        "relations": [
+            "\\Psr\\Http\\Server\\MiddlewareInterface",
+            "\\Psr\\Http\\Message\\ResponseInterface",
+            "\\Psr\\Http\\Message\\ServerRequestInterface",
+            "\\Psr\\Http\\Server\\RequestHandlerInterface",
+            "\\Cake\\Http\\Response",
+            "\\Cake\\Http\\Cookie\\CookieCollection"
+        ]
+    },
+    {
+        "name": "\\Cake\\Http\\Middleware\\BodyParserMiddleware",
+        "size": 3000,
+        "relations": [
+            "\\Psr\\Http\\Server\\MiddlewareInterface",
+            "\\Closure",
+            "\\Psr\\Http\\Message\\ResponseInterface",
+            "\\Psr\\Http\\Message\\ServerRequestInterface",
+            "\\Psr\\Http\\Server\\RequestHandlerInterface",
+            "\\Cake\\Http\\Exception\\BadRequestException",
+            "\\Cake\\Utility\\Xml"
+        ]
+    },
+    {
+        "name": "\\Cake\\Utility\\Xml",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Http\\Middleware\\CsrfProtectionMiddleware",
+        "size": 3000,
+        "relations": [
+            "\\Psr\\Http\\Server\\MiddlewareInterface",
+            "\\Psr\\Http\\Message\\ResponseInterface",
+            "\\Psr\\Http\\Message\\ServerRequestInterface",
+            "\\Psr\\Http\\Server\\RequestHandlerInterface",
+            "\\RuntimeException",
+            "\\Cake\\Utility\\Hash",
+            "\\Cake\\Utility\\Security",
+            "\\Cake\\Http\\Exception\\InvalidCsrfTokenException",
+            "\\Cake\\Http\\Cookie\\CookieInterface",
+            "\\Cake\\Http\\Cookie\\Cookie"
+        ]
+    },
+    {
+        "name": "\\Cake\\Http\\Exception\\InvalidCsrfTokenException",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Http\\Exception\\HttpException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Http\\Middleware\\ClosureDecoratorMiddleware",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Http\\Middleware\\SecurityHeadersMiddleware",
+        "size": 3000,
+        "relations": [
+            "\\Psr\\Http\\Server\\MiddlewareInterface",
+            "\\InvalidArgumentException",
+            "\\Psr\\Http\\Message\\ResponseInterface",
+            "\\Psr\\Http\\Message\\ServerRequestInterface",
+            "\\Psr\\Http\\Server\\RequestHandlerInterface"
+        ]
+    },
+    {
+        "name": "\\Cake\\Http\\Middleware\\DoublePassDecoratorMiddleware",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Http\\Middleware\\CspMiddleware",
+        "size": 3000,
+        "relations": [
+            "\\Psr\\Http\\Server\\MiddlewareInterface",
+            "\\RuntimeException",
+            "\\ParagonIE\\CSPBuilder\\CSPBuilder",
+            "\\Psr\\Http\\Message\\ResponseInterface",
+            "\\Psr\\Http\\Message\\ServerRequestInterface",
+            "\\Psr\\Http\\Server\\RequestHandlerInterface"
+        ]
+    },
+    {
+        "name": "\\ParagonIE\\CSPBuilder\\CSPBuilder",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Http\\Middleware\\HttpsEnforcerMiddleware",
+        "size": 3000,
+        "relations": [
+            "\\Psr\\Http\\Server\\MiddlewareInterface",
+            "\\Psr\\Http\\Message\\ResponseInterface",
+            "\\Psr\\Http\\Message\\ServerRequestInterface",
+            "\\Psr\\Http\\Server\\RequestHandlerInterface",
+            "\\Cake\\Core\\Configure",
+            "\\Laminas\\Diactoros\\Response\\RedirectResponse",
+            "\\Cake\\Http\\Exception\\BadRequestException"
+        ]
+    },
+    {
+        "name": "\\Laminas\\HttpHandlerRunner\\Emitter\\EmitterInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Laminas\\Diactoros\\RelativeStream",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Http\\Exception\\ServiceUnavailableException",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Http\\Exception\\HttpException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Http\\Exception\\HttpException",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Http\\Exception\\GoneException",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Http\\Exception\\HttpException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Http\\Exception\\NotAcceptableException",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Http\\Exception\\HttpException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Http\\Exception\\UnavailableForLegalReasonsException",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Http\\Exception\\HttpException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Http\\Exception\\ConflictException",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Http\\Exception\\HttpException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Http\\Exception\\NotImplementedException",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Http\\Exception\\HttpException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Http\\Exception\\UnauthorizedException",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Psr\\Http\\Message\\ServerRequestFactoryInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Http\\Runner",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Http\\MiddlewareQueue",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Http\\MiddlewareApplication",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Core\\HttpApplicationInterface",
+            "\\Cake\\Http\\MiddlewareQueue",
+            "\\Psr\\Http\\Message\\ResponseInterface",
+            "\\Psr\\Http\\Message\\ServerRequestInterface",
+            "\\Cake\\Http\\Response"
+        ]
+    },
+    {
+        "name": "\\Cake\\Core\\HttpApplicationInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Http\\Client\\Response",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Http\\Client\\Message",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Http\\Client\\FormDataPart",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Http\\Client\\Adapter\\Curl",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Http\\Client\\AdapterInterface",
+            "\\Psr\\Http\\Message\\RequestInterface",
+            "\\Cake\\Http\\Client\\Exception\\ClientException",
+            "\\Cake\\Http\\Client\\Exception\\RequestException",
+            "\\Cake\\Http\\Client\\Exception\\NetworkException",
+            "\\Composer\\CaBundle\\CaBundle",
+            "\\Cake\\Http\\Exception\\HttpException",
+            "\\Cake\\Http\\Client\\Response"
+        ]
+    },
+    {
+        "name": "\\Cake\\Http\\Client\\AdapterInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Http\\Client\\Exception\\ClientException",
+        "size": 3000,
+        "relations": [
+            "\\RuntimeException",
+            "\\Psr\\Http\\Client\\ClientExceptionInterface"
+        ]
+    },
+    {
+        "name": "\\Cake\\Http\\Client\\Exception\\RequestException",
+        "size": 3000,
+        "relations": [
+            "\\RuntimeException",
+            "\\Psr\\Http\\Client\\RequestExceptionInterface",
+            "\\Psr\\Http\\Message\\RequestInterface"
+        ]
+    },
+    {
+        "name": "\\Cake\\Http\\Client\\Exception\\NetworkException",
+        "size": 3000,
+        "relations": [
+            "\\RuntimeException",
+            "\\Psr\\Http\\Client\\NetworkExceptionInterface",
+            "\\Psr\\Http\\Message\\RequestInterface"
+        ]
+    },
+    {
+        "name": "\\Composer\\CaBundle\\CaBundle",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Http\\Client\\Adapter\\Stream",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Http\\Client\\AdapterInterface",
+            "\\Psr\\Http\\Message\\RequestInterface",
+            "\\Composer\\CaBundle\\CaBundle",
+            "\\Cake\\Http\\Client\\Exception\\NetworkException",
+            "\\Cake\\Http\\Client\\Response",
+            "\\Cake\\Http\\Client\\Exception\\ClientException",
+            "\\Cake\\Http\\Client\\Exception\\RequestException"
+        ]
+    },
+    {
+        "name": "\\Psr\\Http\\Client\\ClientExceptionInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Psr\\Http\\Client\\NetworkExceptionInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Psr\\Http\\Client\\RequestExceptionInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Http\\Client\\Auth\\Oauth",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Http\\Client\\Request",
+            "\\Cake\\Core\\Exception\\Exception",
+            "\\RuntimeException",
+            "\\Cake\\Utility\\Security",
+            "\\Psr\\Http\\Message\\UriInterface"
+        ]
+    },
+    {
+        "name": "\\Cake\\Http\\Client\\Request",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Http\\Client\\Auth\\Digest",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Http\\Client",
+            "\\Cake\\Http\\Client\\Request"
+        ]
+    },
+    {
+        "name": "\\Cake\\Http\\Client",
+        "size": 3000,
+        "relations": [
+            "\\Psr\\Http\\Client\\ClientInterface",
+            "\\adapter",
+            "\\InvalidArgumentException",
+            "\\Cake\\Http\\Cookie\\CookieCollection",
+            "\\Cake\\Http\\Cookie\\CookieInterface",
+            "\\Cake\\Http\\Client\\Response",
+            "\\Cake\\Utility\\Hash",
+            "\\Psr\\Http\\Message\\ResponseInterface",
+            "\\Psr\\Http\\Message\\RequestInterface",
+            "\\Laminas\\Diactoros\\Uri",
+            "\\Cake\\Http\\Client\\Request",
+            "\\Cake\\Core\\Exception\\Exception",
+            "\\Cake\\Core\\App",
+            "\\class"
+        ]
+    },
+    {
+        "name": "\\Cake\\Http\\Client\\Auth\\Basic",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Http\\Client\\Request"
+        ]
+    },
+    {
+        "name": "\\Cake\\Http\\Client\\FormData",
+        "size": 3000,
+        "relations": [
+            "\\Countable",
+            "\\Cake\\Http\\Client\\FormDataPart",
+            "\\finfo"
+        ]
+    },
+    {
+        "name": "\\finfo",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Http\\Server",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Event\\EventDispatcherInterface",
+            "\\Cake\\Core\\HttpApplicationInterface",
+            "\\Cake\\Http\\Runner",
+            "\\Psr\\Http\\Message\\ResponseInterface",
+            "\\Cake\\Http\\ServerRequestFactory",
+            "\\Cake\\Http\\MiddlewareQueue",
+            "\\Cake\\Http\\ResponseEmitter",
+            "\\Cake\\Event\\EventManagerInterface",
+            "\\Cake\\Event\\EventManager",
+            "\\InvalidArgumentException"
+        ]
+    },
+    {
+        "name": "\\Psr\\Http\\Client\\ClientInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\adapter",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Laminas\\Diactoros\\Uri",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\SeekableIterator",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\ReflectionFunction",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\OutOfBoundsException",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Http\\BaseApplication",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Core\\ConsoleApplicationInterface",
+            "\\Cake\\Core\\HttpApplicationInterface",
+            "\\Cake\\Core\\PluginApplicationInterface",
+            "\\Cake\\Routing\\RoutingApplicationInterface",
+            "\\Cake\\Core\\Plugin",
+            "\\Cake\\Event\\EventManager",
+            "\\Cake\\Http\\MiddlewareQueue",
+            "\\Cake\\Core\\PluginCollection",
+            "\\Cake\\Routing\\RouteBuilder",
+            "\\Cake\\Routing\\Router",
+            "\\Cake\\Console\\CommandCollection",
+            "\\Psr\\Http\\Message\\ResponseInterface",
+            "\\Psr\\Http\\Message\\ServerRequestInterface",
+            "\\Cake\\Controller\\ControllerFactory"
+        ]
+    },
+    {
+        "name": "\\Cake\\Core\\PluginApplicationInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Routing\\RoutingApplicationInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Core\\PluginCollection",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Routing\\RouteBuilder",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Routing\\RouteCollection",
+            "\\Cake\\Utility\\Inflector",
+            "\\Cake\\Routing\\Route\\Route",
+            "\\Cake\\Core\\Plugin",
+            "\\Cake\\Core\\Exception\\MissingPluginException",
+            "\\Cake\\Routing\\Router",
+            "\\Cake\\Core\\App",
+            "\\InvalidArgumentException",
+            "\\BadMethodCallException",
+            "\\routeClass",
+            "\\static",
+            "\\RuntimeException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\Schema\\CachedCollection",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Schema\\CollectionInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Schema\\TableSchemaInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Schema\\TableSchema",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Schema\\SqlGeneratorInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\TypeFactory",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Exception",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Connection",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Schema\\SqlserverSchemaDialect",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Schema\\SchemaDialect",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Schema\\Collection",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Schema\\MysqlSchemaDialect",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Schema\\SqliteSchemaDialect",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Schema\\PostgresSchemaDialect",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\DriverInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\IdentifierQuoter",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Driver",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\DriverInterface",
+            "\\InvalidArgumentException",
+            "\\PDO",
+            "\\Cake\\Database\\Retry\\ErrorCodeWaitStrategy",
+            "\\Cake\\Core\\Retry\\CommandRetry",
+            "\\Cake\\Core\\App",
+            "\\Cake\\Database\\Exception\\MissingConnectionException",
+            "\\Cake\\Database\\StatementInterface",
+            "\\Cake\\Database\\Statement\\PDOStatement",
+            "\\Closure",
+            "\\Cake\\Database\\Schema\\SchemaDialect",
+            "\\Cake\\Database\\Query",
+            "\\Cake\\Database\\ValueBinder",
+            "\\Cake\\Database\\QueryCompiler",
+            "\\Cake\\Database\\Schema\\TableSchema",
+            "\\className"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\Query",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\ExpressionInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Expression\\FieldInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Expression\\OrderByExpression",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\Expression\\QueryExpression",
+            "\\Cake\\Database\\ValueBinder",
+            "\\RuntimeException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\Expression\\IdentifierExpression",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\TypeMapTrait",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\TypeMap"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\TypeMap",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\StatementInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Expression\\CommonTableExpression",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\ExpressionInterface",
+            "\\Cake\\Database\\Expression\\IdentifierExpression",
+            "\\RuntimeException",
+            "\\Cake\\Database\\ValueBinder",
+            "\\Closure"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\Expression\\OrderClauseExpression",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\ExpressionInterface",
+            "\\Cake\\Database\\Expression\\FieldInterface",
+            "\\Cake\\Database\\ValueBinder",
+            "\\Closure"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\Expression\\WindowExpression",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Expression\\ValuesExpression",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\ExpressionInterface",
+            "\\Cake\\Database\\TypeMap",
+            "\\Cake\\Database\\Exception",
+            "\\Cake\\Database\\Query",
+            "\\Cake\\Database\\ValueBinder",
+            "\\Closure"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\Expression\\QueryExpression",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\FunctionsBuilder",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\Expression\\FunctionExpression",
+            "\\Cake\\Database\\Expression\\AggregateExpression",
+            "\\InvalidArgumentException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\ValueBinder",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\FieldTypeConverter",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\TypeMap",
+            "\\Cake\\Database\\DriverInterface",
+            "\\Cake\\Database\\TypeFactory"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\Statement\\CallbackStatement",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\TypedResultTrait",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Driver\\Postgres",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\Driver",
+            "\\PDO",
+            "\\Cake\\Database\\Schema\\SchemaDialect",
+            "\\Cake\\Database\\Schema\\PostgresSchemaDialect",
+            "\\Cake\\Database\\Query",
+            "\\Cake\\Database\\Expression\\FunctionExpression",
+            "\\Cake\\Database\\QueryCompiler",
+            "\\Cake\\Database\\PostgresCompiler"
+        ]
+    },
+    {
+        "name": "\\PDO",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Expression\\FunctionExpression",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\QueryCompiler",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\PostgresCompiler",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\QueryCompiler"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\Driver\\SqlDialectTrait",
+        "size": 3000,
+        "relations": [
+            "\\Closure",
+            "\\Cake\\Database\\IdentifierQuoter",
+            "\\Cake\\Database\\Query",
+            "\\RuntimeException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\Driver\\Sqlite",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\Driver",
+            "\\InvalidArgumentException",
+            "\\PDO",
+            "\\Cake\\Database\\StatementInterface",
+            "\\Cake\\Database\\Statement\\PDOStatement",
+            "\\Cake\\Database\\Statement\\SqliteStatement",
+            "\\Cake\\Database\\Schema\\SchemaDialect",
+            "\\Cake\\Database\\Schema\\SqliteSchemaDialect",
+            "\\Cake\\Database\\QueryCompiler",
+            "\\Cake\\Database\\SqliteCompiler",
+            "\\Cake\\Database\\Expression\\FunctionExpression"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\Statement\\PDOStatement",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Statement\\SqliteStatement",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\Statement\\StatementDecorator",
+            "\\Cake\\Database\\Statement\\BufferedStatement"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\SqliteCompiler",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\QueryCompiler"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\Driver\\Mysql",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\Driver",
+            "\\PDO",
+            "\\Cake\\Database\\StatementInterface",
+            "\\Cake\\Database\\Statement\\MysqlStatement",
+            "\\Cake\\Database\\Schema\\SchemaDialect",
+            "\\Cake\\Database\\Schema\\MysqlSchemaDialect"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\Statement\\MysqlStatement",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\Statement\\PDOStatement"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\Driver\\Sqlserver",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\Driver",
+            "\\InvalidArgumentException",
+            "\\PDO",
+            "\\Cake\\Database\\StatementInterface",
+            "\\Cake\\Database\\Statement\\SqlserverStatement",
+            "\\Cake\\Database\\Schema\\SchemaDialect",
+            "\\Cake\\Database\\Schema\\SqlserverSchemaDialect",
+            "\\Cake\\Database\\QueryCompiler",
+            "\\Cake\\Database\\SqlserverCompiler",
+            "\\Cake\\Database\\Query",
+            "\\Cake\\Database\\Expression\\OrderByExpression",
+            "\\Cake\\Database\\ValueBinder",
+            "\\Cake\\Database\\Expression\\UnaryExpression",
+            "\\Cake\\Database\\Expression\\FunctionExpression"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\Statement\\SqlserverStatement",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\Statement\\PDOStatement"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\SqlserverCompiler",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\QueryCompiler",
+            "\\Cake\\Database\\Query",
+            "\\Cake\\Database\\ValueBinder"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\Expression\\UnaryExpression",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\ExpressionInterface",
+            "\\Cake\\Database\\ValueBinder",
+            "\\Closure"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\Driver\\TupleComparisonTranslatorTrait",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\Expression\\TupleComparison",
+            "\\Cake\\Database\\Query",
+            "\\Cake\\Database\\Expression\\QueryExpression",
+            "\\Cake\\Database\\Expression\\IdentifierExpression"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\Expression\\TupleComparison",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\TypeInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Type\\UuidType",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\Type\\StringType",
+            "\\Cake\\Database\\DriverInterface",
+            "\\Cake\\Utility\\Text"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\Type\\StringType",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\Type\\BaseType",
+            "\\Cake\\Database\\Type\\OptionalConvertInterface",
+            "\\Cake\\Database\\DriverInterface",
+            "\\InvalidArgumentException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\Type\\BoolType",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\Type\\BaseType",
+            "\\Cake\\Database\\Type\\BatchCastingInterface",
+            "\\Cake\\Database\\DriverInterface",
+            "\\InvalidArgumentException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\Type\\BaseType",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Type\\BatchCastingInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Type\\DateType",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\Type\\DateTimeType",
+            "\\class"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\Type\\DateTimeType",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Type\\DecimalType",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\Type\\BaseType",
+            "\\Cake\\Database\\Type\\BatchCastingInterface",
+            "\\Cake\\Database\\DriverInterface",
+            "\\InvalidArgumentException",
+            "\\RuntimeException",
+            "\\class"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\Type\\DateTimeFractionalType",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\Type\\DateTimeType"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\Type\\JsonType",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\Type\\BaseType",
+            "\\Cake\\Database\\Type\\BatchCastingInterface",
+            "\\Cake\\Database\\DriverInterface",
+            "\\InvalidArgumentException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\Type\\FloatType",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\Type\\BaseType",
+            "\\Cake\\Database\\Type\\BatchCastingInterface",
+            "\\Cake\\Database\\DriverInterface",
+            "\\RuntimeException",
+            "\\class"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\Type\\BinaryType",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\Type\\BaseType",
+            "\\Cake\\Database\\DriverInterface",
+            "\\Cake\\Core\\Exception\\Exception"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\Type\\IntegerType",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\Type\\BaseType",
+            "\\Cake\\Database\\Type\\BatchCastingInterface",
+            "\\InvalidArgumentException",
+            "\\Cake\\Database\\DriverInterface"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\Type\\ExpressionTypeCasterTrait",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\TypeFactory"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\Type\\TimeType",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\Type\\DateTimeType",
+            "\\class"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\Type\\BinaryUuidType",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\Type\\BaseType",
+            "\\Cake\\Database\\DriverInterface",
+            "\\Cake\\Utility\\Text",
+            "\\Cake\\Core\\Exception\\Exception"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\Type\\OptionalConvertInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Type\\DateTimeTimezoneType",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\Type\\DateTimeType"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\Exception\\MissingConnectionException",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Exception\\NestedTransactionRollbackException",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Exception\\MissingDriverException",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Exception\\MissingExtensionException",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Expression\\ComparisonExpression",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Expression\\FieldTrait",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Expression\\CaseExpression",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Expression\\BetweenExpression",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\ExpressionInterface",
+            "\\Cake\\Database\\Expression\\FieldInterface",
+            "\\Cake\\Database\\ValueBinder",
+            "\\Closure"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\Expression\\WindowInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Expression\\AggregateExpression",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\TypedResultInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\SchemaCache",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\Connection",
+            "\\Cake\\Database\\Schema\\CachedCollection"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\Statement\\StatementDecorator",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Statement\\BufferedStatement",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\PDOStatement",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Statement\\BufferResultsTrait",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Iterator",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Retry\\ErrorCodeWaitStrategy",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Core\\Retry\\RetryStrategyInterface",
+            "\\Exception"
+        ]
+    },
+    {
+        "name": "\\Cake\\Core\\Retry\\CommandRetry",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Core\\Retry\\RetryStrategyInterface"
+        ]
+    },
+    {
+        "name": "\\Cake\\Datasource\\ConnectionInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Retry\\ReconnectStrategy",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Core\\Retry\\RetryStrategyInterface",
+            "\\Cake\\Database\\Connection",
+            "\\Exception"
+        ]
+    },
+    {
+        "name": "\\Psr\\Log\\LoggerInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Log\\QueryLogger",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Log\\Engine\\BaseLog",
+            "\\Cake\\Log\\Log"
+        ]
+    },
+    {
+        "name": "\\Cake\\Database\\Log\\LoggedQuery",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\Log\\LoggingStatement",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\Statement\\StatementDecorator",
+            "\\Cake\\Database\\Log\\LoggedQuery",
+            "\\Psr\\Log\\LoggerInterface"
+        ]
+    },
+    {
+        "name": "\\Cake\\Core\\Retry\\RetryStrategyInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Exception",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Database\\TypeConverterTrait",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Database\\TypeFactory"
+        ]
+    },
+    {
+        "name": "\\JsonSerializable",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Log\\Engine\\BaseLog",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Validation\\ValidatorAwareTrait",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Validation\\Validator",
+            "\\RuntimeException",
+            "\\this"
+        ]
+    },
+    {
+        "name": "\\Cake\\Validation\\Validator",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\ArrayAccess",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Validation\\ValidationSet",
+        "size": 3000,
+        "relations": [
+            "\\ArrayAccess",
+            "\\IteratorAggregate",
+            "\\Countable",
+            "\\Cake\\Validation\\ValidationRule",
+            "\\Traversable",
+            "\\ArrayIterator"
+        ]
+    },
+    {
+        "name": "\\Cake\\Validation\\RulesProvider",
+        "size": 3000,
+        "relations": [
+            "\\ReflectionClass"
+        ]
+    },
+    {
+        "name": "\\Cake\\Validation\\Validation",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Validation\\ValidationRule",
+        "size": 3000,
+        "relations": [
+            "\\InvalidArgumentException"
+        ]
+    },
+    {
+        "name": "\\Cake\\I18n\\Time",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\NumberFormatter",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Network\\Exception\\SocketException",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Network\\Socket",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Core\\Exception\\MissingPluginException",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Core\\PluginInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\name",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Generator",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Core\\Configure\\ConfigEngineInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Core\\Configure\\Engine\\PhpConfig",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Core\\Configure\\Engine\\JsonConfig",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Core\\Configure\\ConfigEngineInterface",
+            "\\Cake\\Core\\Exception\\Exception"
+        ]
+    },
+    {
+        "name": "\\Cake\\Core\\Configure\\Engine\\IniConfig",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Core\\Configure\\ConfigEngineInterface",
+            "\\Cake\\Utility\\Hash"
+        ]
+    },
+    {
+        "name": "\\Cake\\Core\\Configure\\FileConfigTrait",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Core\\Exception\\Exception",
+            "\\Cake\\Core\\Plugin"
+        ]
+    },
+    {
+        "name": "\\Cake\\Core\\InstanceConfigTrait",
+        "size": 3000,
+        "relations": [
+            "\\InvalidArgumentException",
+            "\\Cake\\Utility\\Hash",
+            "\\Cake\\Core\\Exception\\Exception"
+        ]
+    },
+    {
+        "name": "\\Cake\\Core\\ClassLoader",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Core\\BasePlugin",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Core\\PluginInterface",
+            "\\ReflectionClass",
+            "\\InvalidArgumentException",
+            "\\Cake\\Routing\\RouteBuilder",
+            "\\Cake\\Core\\PluginApplicationInterface",
+            "\\Cake\\Console\\CommandCollection",
+            "\\Cake\\Http\\MiddlewareQueue"
+        ]
+    },
+    {
+        "name": "\\Cake\\Core\\ConventionsTrait",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Utility\\Inflector",
+            "\\Cake\\Core\\Plugin",
+            "\\Cake\\Core\\App"
+        ]
+    },
+    {
+        "name": "\\Cake\\Core\\StaticConfigTrait",
+        "size": 3000,
+        "relations": [
+            "\\LogicException",
+            "\\static",
+            "\\BadMethodCallException",
+            "\\InvalidArgumentException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Datasource\\RuleInvoker",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Datasource\\EntityInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Datasource\\QueryCacher",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Datasource\\RulesAwareTrait",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Datasource\\EntityInterface",
+            "\\ArrayObject",
+            "\\Cake\\Datasource\\RulesChecker",
+            "\\class"
+        ]
+    },
+    {
+        "name": "\\ArrayObject",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Datasource\\RulesChecker",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Datasource\\QueryTrait",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Datasource\\RepositoryInterface",
+            "\\Cake\\Datasource\\QueryCacher",
+            "\\Cake\\Datasource\\ResultSetInterface",
+            "\\InvalidArgumentException",
+            "\\Cake\\Datasource\\Exception\\RecordNotFoundException",
+            "\\BadMethodCallException",
+            "\\Traversable",
+            "\\Cake\\Collection\\Iterator\\MapReduce",
+            "\\decorator"
+        ]
+    },
+    {
+        "name": "\\Cake\\Datasource\\RepositoryInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Datasource\\Exception\\RecordNotFoundException",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Collection\\Iterator\\MapReduce",
+        "size": 3000,
+        "relations": [
+            "\\IteratorAggregate",
+            "\\Traversable",
+            "\\ArrayIterator",
+            "\\LogicException"
+        ]
+    },
+    {
+        "name": "\\decorator",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Datasource\\ConnectionManager",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Datasource\\Exception\\MissingDatasourceConfigException",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Core\\Exception\\Exception"
+        ]
+    },
+    {
+        "name": "\\Cake\\Datasource\\ConnectionRegistry",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Core\\ObjectRegistry",
+            "\\Cake\\Core\\App",
+            "\\Cake\\Datasource\\Exception\\MissingDatasourceException",
+            "\\class"
+        ]
+    },
+    {
+        "name": "\\Cake\\Datasource\\SimplePaginator",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Datasource\\Paginator",
+            "\\Cake\\Datasource\\QueryInterface"
+        ]
+    },
+    {
+        "name": "\\Cake\\Datasource\\QueryInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Datasource\\PaginatorInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Datasource\\Exception\\PageOutOfBoundsException",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Core\\Exception\\Exception"
+        ]
+    },
+    {
+        "name": "\\Cake\\Datasource\\Exception\\MissingDatasourceException",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Core\\Exception\\Exception"
+        ]
+    },
+    {
+        "name": "\\Cake\\Datasource\\Exception\\InvalidPrimaryKeyException",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Datasource\\Exception\\MissingModelException",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Datasource\\ResultSetDecorator",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Collection\\Collection",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Datasource\\EntityTrait",
+        "size": 3000,
+        "relations": [
+            "\\InvalidArgumentException",
+            "\\static",
+            "\\Cake\\Utility\\Inflector",
+            "\\Cake\\Utility\\Hash",
+            "\\Cake\\Collection\\Collection"
+        ]
+    },
+    {
+        "name": "\\Cake\\Datasource\\FactoryLocator",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\ORM\\Locator\\TableLocator",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Datasource\\Locator\\AbstractLocator",
+            "\\Cake\\ORM\\Locator\\LocatorInterface",
+            "\\RuntimeException",
+            "\\Cake\\ORM\\Table",
+            "\\Cake\\Utility\\Inflector",
+            "\\className",
+            "\\Cake\\Datasource\\ConnectionManager",
+            "\\Cake\\ORM\\AssociationCollection",
+            "\\Cake\\Core\\App",
+            "\\options",
+            "\\Cake\\Datasource\\RepositoryInterface"
+        ]
+    },
+    {
+        "name": "\\Cake\\Datasource\\ModelAwareTrait",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Datasource\\RepositoryInterface",
+            "\\UnexpectedValueException",
+            "\\Cake\\Datasource\\FactoryLocator",
+            "\\Cake\\Datasource\\Exception\\MissingModelException",
+            "\\InvalidArgumentException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Datasource\\Locator\\AbstractLocator",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Datasource\\Locator\\LocatorInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Filesystem\\File",
+        "size": 3000,
+        "relations": [
+            "\\SplFileInfo",
+            "\\Cake\\Filesystem\\Folder",
+            "\\static",
+            "\\finfo"
+        ]
+    },
+    {
+        "name": "\\Cake\\Filesystem\\Folder",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Filesystem\\Folder"
+        ]
+    },
+    {
+        "name": "\\DirectoryIterator",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\FilesystemIterator",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\RecursiveCallbackFilterIterator",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\RegexIterator",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\I18n\\I18n",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\I18n\\TranslatorRegistry",
+        "size": 3000,
+        "relations": [
+            "\\Aura\\Intl\\TranslatorLocator",
+            "\\Aura\\Intl\\PackageLocator",
+            "\\Aura\\Intl\\FormatterLocator",
+            "\\Cake\\I18n\\TranslatorFactory",
+            "\\Cake\\I18n\\MessagesFileLoader",
+            "\\Cake\\I18n\\ChainMessagesLoader",
+            "\\Aura\\Intl\\TranslatorInterface",
+            "\\Closure"
+        ]
+    },
+    {
+        "name": "\\Aura\\Intl\\PackageLocator",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\I18n\\Formatter\\SprintfFormatter",
+        "size": 3000,
+        "relations": [
+            "\\Aura\\Intl\\FormatterInterface"
+        ]
+    },
+    {
+        "name": "\\Cake\\I18n\\Formatter\\IcuFormatter",
+        "size": 3000,
+        "relations": [
+            "\\Aura\\Intl\\FormatterInterface",
+            "\\MessageFormatter",
+            "\\Aura\\Intl\\Exception\\CannotFormat"
+        ]
+    },
+    {
+        "name": "\\Aura\\Intl\\FormatterLocator",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\I18n\\TranslatorFactory",
+        "size": 3000,
+        "relations": [
+            "\\Aura\\Intl\\TranslatorFactory",
+            "\\Aura\\Intl\\Package",
+            "\\Aura\\Intl\\FormatterInterface",
+            "\\RuntimeException",
+            "\\class"
+        ]
+    },
+    {
+        "name": "\\Aura\\Intl\\TranslatorInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Locale",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\I18n\\Parser\\PoFileParser",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\I18n\\Parser\\MoFileParser",
+        "size": 3000,
+        "relations": [
+            "\\RuntimeException"
+        ]
+    },
+    {
+        "name": "\\Cake\\I18n\\Number",
+        "size": 3000,
+        "relations": [
+            "\\static",
+            "\\NumberFormatter"
+        ]
+    },
+    {
+        "name": "\\Cake\\Chronos\\MutableDateTime",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\I18n\\I18nDateTimeInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\I18n\\FrozenTime",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Chronos\\Chronos",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\I18n\\RelativeTimeFormatter",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Chronos\\DifferenceFormatterInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Chronos\\ChronosInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\I18n\\FrozenDate",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Chronos\\Date",
+            "\\Cake\\I18n\\I18nDateTimeInterface",
+            "\\static"
+        ]
+    },
+    {
+        "name": "\\Cake\\I18n\\ChainMessagesLoader",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Aura\\Intl\\Package",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\I18n\\Middleware\\LocaleSelectorMiddleware",
+        "size": 3000,
+        "relations": [
+            "\\Psr\\Http\\Server\\MiddlewareInterface",
+            "\\Psr\\Http\\Message\\ResponseInterface",
+            "\\Psr\\Http\\Message\\ServerRequestInterface",
+            "\\Psr\\Http\\Server\\RequestHandlerInterface",
+            "\\Locale",
+            "\\Cake\\I18n\\I18n"
+        ]
+    },
+    {
+        "name": "\\Cake\\I18n\\Date",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Chronos\\MutableDate",
+            "\\Cake\\I18n\\I18nDateTimeInterface",
+            "\\static"
+        ]
+    },
+    {
+        "name": "\\Cake\\Chronos\\MutableDate",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\I18n\\DateFormatTrait",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\I18n\\I18n",
+            "\\RuntimeException",
+            "\\static",
+            "\\DateTime",
+            "\\DateTimeZone",
+            "\\Cake\\Chronos\\DifferenceFormatterInterface",
+            "\\Cake\\I18n\\RelativeTimeFormatter"
+        ]
+    },
+    {
+        "name": "\\Cake\\I18n\\PluralRules",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Aura\\Intl\\TranslatorLocator",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\I18n\\MessagesFileLoader",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Core\\App",
+            "\\RuntimeException",
+            "\\class",
+            "\\Aura\\Intl\\Package",
+            "\\Locale",
+            "\\Cake\\Utility\\Inflector",
+            "\\Cake\\Core\\Plugin"
+        ]
+    },
+    {
+        "name": "\\Aura\\Intl\\TranslatorFactory",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Aura\\Intl\\FormatterInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\I18n\\Translator",
+        "size": 3000,
+        "relations": [
+            "\\Aura\\Intl\\Translator",
+            "\\Cake\\I18n\\PluralRules"
+        ]
+    },
+    {
+        "name": "\\Aura\\Intl\\Translator",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\MessageFormatter",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Aura\\Intl\\Exception\\CannotFormat",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Chronos\\Date",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\ORM\\Association\\HasMany",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\ORM\\Association",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\ORM\\Table",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\ORM\\Association\\Loader\\SelectLoader",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\ORM\\Association\\DependentDeleteHelper",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\ORM\\Association\\HasOne",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\ORM\\Association\\Loader\\SelectWithPivotLoader",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\ORM\\Query",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\ORM\\Association\\BelongsTo",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\ORM\\Association\\BelongsToMany",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\entityClass",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\ORM\\LazyEagerLoader",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Collection\\CollectionInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\ORM\\EagerLoader",
+        "size": 3000,
+        "relations": [
+            "\\InvalidArgumentException",
+            "\\static",
+            "\\Cake\\ORM\\Table",
+            "\\Cake\\ORM\\Query",
+            "\\Cake\\ORM\\EagerLoadable",
+            "\\Cake\\Database\\StatementInterface",
+            "\\Cake\\Database\\Statement\\CallbackStatement",
+            "\\Cake\\ORM\\Association",
+            "\\Cake\\Database\\Statement\\BufferedStatement"
+        ]
+    },
+    {
+        "name": "\\Cake\\ORM\\ResultSet",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Datasource\\ResultSetInterface",
+            "\\Cake\\ORM\\Query",
+            "\\Cake\\Database\\StatementInterface",
+            "\\SplFixedArray",
+            "\\Cake\\Database\\Exception",
+            "\\Cake\\Collection\\Collection",
+            "\\matching",
+            "\\assoc",
+            "\\this"
+        ]
+    },
+    {
+        "name": "\\Cake\\ORM\\AssociationCollection",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\ORM\\EagerLoadable",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\ORM\\EagerLoadable",
+            "\\Cake\\ORM\\Association",
+            "\\RuntimeException"
+        ]
+    },
+    {
+        "name": "\\Cake\\ORM\\Marshaller",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\ORM\\Exception\\MissingEntityException",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\ORM\\Exception\\MissingTableClassException",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Core\\Exception\\Exception"
+        ]
+    },
+    {
+        "name": "\\Cake\\ORM\\Exception\\RolledbackTransactionException",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\ORM\\Exception\\PersistenceFailedException",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\ORM\\Exception\\MissingBehaviorException",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\ORM\\RulesChecker",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\ORM\\Rule\\IsUnique",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Datasource\\EntityInterface"
+        ]
+    },
+    {
+        "name": "\\Cake\\ORM\\Rule\\ExistsIn",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Datasource\\EntityInterface",
+            "\\RuntimeException",
+            "\\Cake\\ORM\\Table"
+        ]
+    },
+    {
+        "name": "\\Cake\\ORM\\Rule\\LinkConstraint",
+        "size": 3000,
+        "relations": [
+            "\\InvalidArgumentException",
+            "\\Cake\\Datasource\\EntityInterface",
+            "\\Cake\\ORM\\Table",
+            "\\Cake\\ORM\\Association",
+            "\\RuntimeException"
+        ]
+    },
+    {
+        "name": "\\Cake\\ORM\\Rule\\ValidCount",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Datasource\\EntityInterface",
+            "\\Cake\\Validation\\Validation"
+        ]
+    },
+    {
+        "name": "\\Cake\\ORM\\BehaviorRegistry",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Core\\ObjectRegistry",
+            "\\Cake\\Event\\EventDispatcherInterface",
+            "\\Cake\\ORM\\Table",
+            "\\Cake\\Core\\App",
+            "\\static",
+            "\\Cake\\ORM\\Exception\\MissingBehaviorException",
+            "\\Cake\\ORM\\Behavior",
+            "\\class",
+            "\\LogicException",
+            "\\BadMethodCallException",
+            "\\Cake\\ORM\\Query"
+        ]
+    },
+    {
+        "name": "\\Cake\\ORM\\Behavior",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\ORM\\SaveOptionsBuilder",
+        "size": 3000,
+        "relations": [
+            "\\ArrayObject",
+            "\\Cake\\ORM\\Table",
+            "\\RuntimeException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Datasource\\InvalidPropertyInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\ORM\\Locator\\LocatorAwareTrait",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\ORM\\Locator\\LocatorInterface",
+            "\\Cake\\Datasource\\FactoryLocator"
+        ]
+    },
+    {
+        "name": "\\Cake\\ORM\\Locator\\LocatorInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\options",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\ORM\\Behavior\\Translate\\EavStrategy",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\ORM\\Behavior\\Translate\\TranslateStrategyInterface",
+            "\\Cake\\ORM\\Table",
+            "\\Cake\\Event\\EventInterface",
+            "\\Cake\\ORM\\Query",
+            "\\ArrayObject",
+            "\\Cake\\Utility\\Hash",
+            "\\Cake\\Datasource\\EntityInterface",
+            "\\Cake\\ORM\\Entity",
+            "\\Cake\\Collection\\CollectionInterface",
+            "\\Cake\\Collection\\Collection",
+            "\\entityClass"
+        ]
+    },
+    {
+        "name": "\\Cake\\ORM\\Behavior\\Translate\\TranslateStrategyInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\ORM\\Behavior\\Translate\\TranslateStrategyTrait",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\ORM\\Table",
+            "\\Cake\\I18n\\I18n",
+            "\\Cake\\ORM\\Marshaller",
+            "\\Cake\\Event\\EventInterface",
+            "\\Cake\\Datasource\\EntityInterface"
+        ]
+    },
+    {
+        "name": "\\Cake\\ORM\\Behavior\\Translate\\ShadowTableStrategy",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\ORM\\Behavior\\Translate\\TranslateStrategyInterface",
+            "\\Cake\\ORM\\Table",
+            "\\Cake\\Event\\EventInterface",
+            "\\Cake\\ORM\\Query",
+            "\\ArrayObject",
+            "\\Cake\\Utility\\Hash",
+            "\\Cake\\Datasource\\EntityInterface",
+            "\\Cake\\ORM\\Marshaller",
+            "\\Cake\\Collection\\CollectionInterface"
+        ]
+    },
+    {
+        "name": "\\Cake\\ORM\\Behavior\\Translate\\TranslateTrait",
+        "size": 3000,
+        "relations": [
+            "\\className"
+        ]
+    },
+    {
+        "name": "\\Cake\\ORM\\Behavior\\TranslateBehavior",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\ORM\\Behavior",
+            "\\Cake\\ORM\\PropertyMarshalInterface",
+            "\\Cake\\ORM\\Table",
+            "\\Cake\\I18n\\I18n",
+            "\\Cake\\ORM\\Behavior\\Translate\\TranslateStrategyInterface",
+            "\\className",
+            "\\Cake\\ORM\\Marshaller",
+            "\\Cake\\ORM\\Query",
+            "\\Cake\\Utility\\Inflector"
+        ]
+    },
+    {
+        "name": "\\Cake\\ORM\\PropertyMarshalInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\ORM\\Behavior\\TreeBehavior",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\ORM\\Behavior",
+            "\\Cake\\Database\\Expression\\IdentifierExpression",
+            "\\Cake\\Event\\EventInterface",
+            "\\Cake\\Datasource\\EntityInterface",
+            "\\RuntimeException",
+            "\\Cake\\ORM\\Query",
+            "\\InvalidArgumentException",
+            "\\Cake\\Datasource\\Exception\\RecordNotFoundException"
+        ]
+    },
+    {
+        "name": "\\Cake\\ORM\\Behavior\\CounterCacheBehavior",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\ORM\\Behavior",
+            "\\Cake\\Event\\EventInterface",
+            "\\Cake\\Datasource\\EntityInterface",
+            "\\ArrayObject",
+            "\\Cake\\ORM\\Association"
+        ]
+    },
+    {
+        "name": "\\Cake\\ORM\\Behavior\\TimestampBehavior",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\ORM\\Behavior",
+            "\\Cake\\Event\\EventInterface",
+            "\\Cake\\Datasource\\EntityInterface",
+            "\\UnexpectedValueException",
+            "\\DateTimeInterface",
+            "\\Cake\\I18n\\Time",
+            "\\Cake\\Database\\TypeFactory",
+            "\\RuntimeException",
+            "\\class"
+        ]
+    },
+    {
+        "name": "\\Cake\\ORM\\TableRegistry",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\ORM\\Locator\\LocatorInterface",
+            "\\Cake\\Datasource\\FactoryLocator",
+            "\\Cake\\ORM\\Table",
+            "\\static"
+        ]
+    },
+    {
+        "name": "\\SplFixedArray",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\matching",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\assoc",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\ORM\\AssociationsNormalizerTrait",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Event\\EventList",
+        "size": 3000,
+        "relations": [
+            "\\ArrayAccess",
+            "\\Countable",
+            "\\Cake\\Event\\EventInterface"
+        ]
+    },
+    {
+        "name": "\\Cake\\Event\\Decorator\\ConditionDecorator",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Event\\Decorator\\AbstractDecorator",
+            "\\Cake\\Event\\EventInterface",
+            "\\RuntimeException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Event\\Decorator\\AbstractDecorator",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Event\\Decorator\\SubjectFilterDecorator",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Event\\Decorator\\AbstractDecorator",
+            "\\Cake\\Event\\EventInterface",
+            "\\RuntimeException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Event\\EventDispatcherTrait",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Event\\EventManagerInterface",
+            "\\Cake\\Event\\EventManager",
+            "\\Cake\\Event\\EventInterface",
+            "\\this"
+        ]
+    },
+    {
+        "name": "\\Transliterator",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Utility\\MergeVariablesTrait",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Utility\\Hash"
+        ]
+    },
+    {
+        "name": "\\Cake\\Utility\\CookieCryptTrait",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Utility\\Security",
+            "\\RuntimeException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Utility\\Crypto\\OpenSsl",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Utility\\Exception\\XmlException",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\DOMDocument",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\DOMText",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Routing\\RouteCollection",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Routing\\Route\\Route",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Routing\\Exception\\DuplicateNamedRouteException",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Core\\Exception\\Exception"
+        ]
+    },
+    {
+        "name": "\\Cake\\Routing\\Exception\\MissingRouteException",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Core\\Exception\\Exception"
+        ]
+    },
+    {
+        "name": "\\routeClass",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Routing\\Middleware\\RoutingMiddleware",
+        "size": 3000,
+        "relations": [
+            "\\Psr\\Http\\Server\\MiddlewareInterface",
+            "\\Cake\\Routing\\RoutingApplicationInterface",
+            "\\Cake\\Routing\\Router",
+            "\\Cake\\Routing\\RouteCollection",
+            "\\Cake\\Cache\\Cache",
+            "\\Psr\\Http\\Message\\ResponseInterface",
+            "\\Psr\\Http\\Message\\ServerRequestInterface",
+            "\\Psr\\Http\\Server\\RequestHandlerInterface",
+            "\\Laminas\\Diactoros\\Response\\RedirectResponse",
+            "\\Cake\\Http\\MiddlewareQueue",
+            "\\Cake\\Http\\Runner"
+        ]
+    },
+    {
+        "name": "\\Cake\\Routing\\Middleware\\AssetMiddleware",
+        "size": 3000,
+        "relations": [
+            "\\Psr\\Http\\Server\\MiddlewareInterface",
+            "\\Psr\\Http\\Message\\ResponseInterface",
+            "\\Psr\\Http\\Message\\ServerRequestInterface",
+            "\\Psr\\Http\\Server\\RequestHandlerInterface",
+            "\\SplFileInfo",
+            "\\Cake\\Http\\Response",
+            "\\Cake\\Utility\\Inflector",
+            "\\Cake\\Core\\Plugin",
+            "\\Laminas\\Diactoros\\Stream"
+        ]
+    },
+    {
+        "name": "\\Cake\\Routing\\Route\\EntityRoute",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Routing\\Route\\Route",
+            "\\RuntimeException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Routing\\Route\\PluginShortRoute",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Routing\\Route\\InflectedRoute"
+        ]
+    },
+    {
+        "name": "\\Cake\\Routing\\Route\\InflectedRoute",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Routing\\Route\\Route",
+            "\\Cake\\Utility\\Inflector"
+        ]
+    },
+    {
+        "name": "\\Cake\\Routing\\Route\\RedirectRoute",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Routing\\Route\\Route",
+            "\\Cake\\Routing\\Router",
+            "\\Cake\\Http\\Exception\\RedirectException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Routing\\Route\\DashedRoute",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Routing\\Route\\Route",
+            "\\Cake\\Utility\\Inflector"
+        ]
+    },
+    {
+        "name": "\\Cake\\Routing\\Exception\\MissingDispatcherFilterException",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Core\\Exception\\Exception"
+        ]
+    },
+    {
+        "name": "\\Cake\\Routing\\Exception\\RedirectException",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Core\\Exception\\Exception"
+        ]
+    },
+    {
+        "name": "\\Cake\\Routing\\Asset",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Collection\\CollectionTrait",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Collection\\CollectionInterface",
+            "\\Cake\\Collection\\Collection",
+            "\\Cake\\Collection\\Iterator\\FilterIterator",
+            "\\Cake\\Collection\\Iterator\\ReplaceIterator",
+            "\\Cake\\Collection\\Iterator\\ExtractIterator",
+            "\\Cake\\Collection\\Iterator\\SortIterator",
+            "\\Cake\\Collection\\Iterator\\MapReduce",
+            "\\LimitIterator",
+            "\\InvalidArgumentException",
+            "\\AppendIterator",
+            "\\ArrayIterator",
+            "\\Cake\\Collection\\Iterator\\InsertIterator",
+            "\\Cake\\Collection\\Iterator\\BufferedIterator",
+            "\\RuntimeException",
+            "\\Cake\\Collection\\Iterator\\NestIterator",
+            "\\Cake\\Collection\\Iterator\\TreeIterator",
+            "\\Cake\\Collection\\Iterator\\StoppableIterator",
+            "\\Cake\\Collection\\Iterator\\UnfoldIterator",
+            "\\RecursiveIteratorIterator",
+            "\\Cake\\Collection\\Iterator\\ZipIterator",
+            "\\Traversable",
+            "\\LogicException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Collection\\Iterator\\FilterIterator",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Collection\\Collection",
+            "\\CallbackFilterIterator",
+            "\\Traversable",
+            "\\ArrayIterator"
+        ]
+    },
+    {
+        "name": "\\Cake\\Collection\\Iterator\\ReplaceIterator",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Collection\\Collection",
+            "\\Traversable",
+            "\\ArrayIterator"
+        ]
+    },
+    {
+        "name": "\\Cake\\Collection\\Iterator\\ExtractIterator",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Collection\\Collection",
+            "\\Traversable",
+            "\\ArrayIterator"
+        ]
+    },
+    {
+        "name": "\\Cake\\Collection\\Iterator\\SortIterator",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Collection\\Collection",
+            "\\Traversable"
+        ]
+    },
+    {
+        "name": "\\LimitIterator",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\AppendIterator",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Collection\\Iterator\\InsertIterator",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Collection\\Collection"
+        ]
+    },
+    {
+        "name": "\\Cake\\Collection\\Iterator\\BufferedIterator",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Collection\\Collection",
+            "\\Countable",
+            "\\Serializable",
+            "\\SplDoublyLinkedList"
+        ]
+    },
+    {
+        "name": "\\Cake\\Collection\\Iterator\\NestIterator",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Collection\\Collection",
+            "\\RecursiveIterator",
+            "\\static"
+        ]
+    },
+    {
+        "name": "\\Cake\\Collection\\Iterator\\TreeIterator",
+        "size": 3000,
+        "relations": [
+            "\\RecursiveIteratorIterator",
+            "\\Cake\\Collection\\CollectionInterface",
+            "\\RecursiveIterator",
+            "\\Cake\\Collection\\Iterator\\TreePrinter"
+        ]
+    },
+    {
+        "name": "\\Cake\\Collection\\Iterator\\StoppableIterator",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Collection\\Collection",
+            "\\Traversable",
+            "\\ArrayIterator"
+        ]
+    },
+    {
+        "name": "\\Cake\\Collection\\Iterator\\UnfoldIterator",
+        "size": 3000,
+        "relations": [
+            "\\IteratorIterator",
+            "\\RecursiveIterator",
+            "\\Traversable",
+            "\\Cake\\Collection\\Iterator\\NoChildrenIterator"
+        ]
+    },
+    {
+        "name": "\\Cake\\Collection\\Iterator\\ZipIterator",
+        "size": 3000,
+        "relations": [
+            "\\MultipleIterator",
+            "\\Cake\\Collection\\CollectionInterface",
+            "\\Serializable",
+            "\\Cake\\Collection\\Collection"
+        ]
+    },
+    {
+        "name": "\\Cake\\Collection\\ExtractTrait",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Collection\\Collection",
+            "\\Closure"
+        ]
+    },
+    {
+        "name": "\\IteratorIterator",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Serializable",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\MultipleIterator",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Collection\\Iterator\\NoChildrenIterator",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\RecursiveIterator",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Collection\\Iterator\\TreePrinter",
+        "size": 3000,
+        "relations": [
+            "\\RecursiveIteratorIterator",
+            "\\Cake\\Collection\\CollectionInterface",
+            "\\RecursiveIterator"
+        ]
+    },
+    {
+        "name": "\\SplDoublyLinkedList",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Mailer\\TransportFactory",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Mailer\\TransportRegistry",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Core\\ObjectRegistry",
+            "\\Cake\\Core\\App",
+            "\\BadMethodCallException",
+            "\\Cake\\Mailer\\AbstractTransport",
+            "\\class",
+            "\\RuntimeException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Mailer\\AbstractTransport",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Mailer\\Message",
+            "\\Cake\\Core\\Exception\\Exception"
+        ]
+    },
+    {
+        "name": "\\Cake\\Mailer\\Mailer",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\View\\ViewBuilder",
+        "size": 3000,
+        "relations": [
+            "\\JsonSerializable",
+            "\\Serializable",
+            "\\Cake\\View\\View",
+            "\\Cake\\Core\\App",
+            "\\Cake\\View\\Exception\\MissingViewException",
+            "\\className",
+            "\\RuntimeException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Mailer\\Renderer",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Mailer\\Message",
+        "size": 3000,
+        "relations": [
+            "\\JsonSerializable",
+            "\\Serializable",
+            "\\Cake\\Core\\Configure",
+            "\\InvalidArgumentException",
+            "\\Cake\\Utility\\Hash",
+            "\\Cake\\Utility\\Text",
+            "\\Cake\\Utility\\Security",
+            "\\Cake\\Http\\Client\\FormDataPart",
+            "\\Cake\\Core\\Exception\\Exception"
+        ]
+    },
+    {
+        "name": "\\Cake\\Mailer\\Exception\\MissingActionException",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Core\\Exception\\Exception"
+        ]
+    },
+    {
+        "name": "\\Cake\\Mailer\\Email",
+        "size": 3000,
+        "relations": [
+            "\\JsonSerializable",
+            "\\Serializable",
+            "\\this",
+            "\\Cake\\Mailer\\Mailer",
+            "\\Cake\\Mailer\\Message",
+            "\\Cake\\Mailer\\TransportFactory",
+            "\\InvalidArgumentException",
+            "\\LogicException",
+            "\\BadMethodCallException",
+            "\\Cake\\View\\ViewBuilder",
+            "\\Cake\\Mailer\\Renderer",
+            "\\Cake\\Log\\Log",
+            "\\static"
+        ]
+    },
+    {
+        "name": "\\Cake\\Mailer\\Transport\\MailTransport",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Mailer\\AbstractTransport",
+            "\\Cake\\Mailer\\Message",
+            "\\Cake\\Core\\Exception\\Exception"
+        ]
+    },
+    {
+        "name": "\\Cake\\Mailer\\Transport\\SmtpTransport",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Mailer\\AbstractTransport",
+            "\\Cake\\Mailer\\Message",
+            "\\Cake\\Network\\Exception\\SocketException",
+            "\\Cake\\Network\\Socket",
+            "\\RuntimeException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Mailer\\Transport\\DebugTransport",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Mailer\\AbstractTransport",
+            "\\Cake\\Mailer\\Message"
+        ]
+    },
+    {
+        "name": "\\Cake\\Mailer\\Exception\\MissingMailerException",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Mailer\\MailerAwareTrait",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Mailer\\Mailer",
+            "\\Cake\\Core\\App",
+            "\\Cake\\Mailer\\Exception\\MissingMailerException",
+            "\\className"
+        ]
+    },
+    {
+        "name": "\\Cake\\Auth\\FormAuthenticate",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Auth\\BaseAuthenticate",
+            "\\Cake\\Http\\ServerRequest",
+            "\\Cake\\Http\\Response"
+        ]
+    },
+    {
+        "name": "\\Cake\\Auth\\BaseAuthenticate",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Auth\\PasswordHasherFactory",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Auth\\AbstractPasswordHasher",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Auth\\DefaultPasswordHasher",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Auth\\AbstractPasswordHasher"
+        ]
+    },
+    {
+        "name": "\\Cake\\Auth\\WeakPasswordHasher",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Auth\\AbstractPasswordHasher",
+            "\\Cake\\Core\\Configure",
+            "\\Cake\\Error\\Debugger",
+            "\\Cake\\Utility\\Security"
+        ]
+    },
+    {
+        "name": "\\Cake\\Auth\\BaseAuthorize",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Auth\\FallbackPasswordHasher",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Auth\\AbstractPasswordHasher",
+            "\\Cake\\Auth\\PasswordHasherFactory"
+        ]
+    },
+    {
+        "name": "\\Cake\\Auth\\Storage\\MemoryStorage",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Auth\\Storage\\StorageInterface"
+        ]
+    },
+    {
+        "name": "\\Cake\\Auth\\Storage\\StorageInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Auth\\Storage\\SessionStorage",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Auth\\Storage\\StorageInterface",
+            "\\Cake\\Http\\ServerRequest",
+            "\\Cake\\Http\\Response"
+        ]
+    },
+    {
+        "name": "\\Cake\\Auth\\ControllerAuthorize",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Auth\\BaseAuthorize",
+            "\\Cake\\Controller\\ComponentRegistry",
+            "\\Cake\\Controller\\Controller",
+            "\\Cake\\Http\\ServerRequest",
+            "\\Cake\\Core\\Exception\\Exception"
+        ]
+    },
+    {
+        "name": "\\Cake\\Auth\\BasicAuthenticate",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Auth\\DigestAuthenticate",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Auth\\BasicAuthenticate",
+            "\\Cake\\Controller\\ComponentRegistry",
+            "\\Cake\\Utility\\Security",
+            "\\Cake\\Http\\ServerRequest"
+        ]
+    },
+    {
+        "name": "\\Cake\\View\\XmlView",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\View\\SerializedView",
+            "\\Cake\\Utility\\Hash",
+            "\\Cake\\Core\\Configure",
+            "\\Cake\\Utility\\Xml"
+        ]
+    },
+    {
+        "name": "\\Cake\\View\\SerializedView",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\View\\HelperRegistry",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\View\\View",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\View\\Exception\\MissingHelperException",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Core\\Exception\\Exception"
+        ]
+    },
+    {
+        "name": "\\Cake\\View\\Helper",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\View\\Form\\ContextFactory",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\View\\Form\\EntityContext",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\View\\Form\\ContextInterface",
+            "\\Cake\\Utility\\Inflector",
+            "\\RuntimeException",
+            "\\Cake\\Collection\\Collection",
+            "\\Cake\\Validation\\Validator"
+        ]
+    },
+    {
+        "name": "\\Cake\\View\\Form\\NullContext",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\View\\Form\\ContextInterface"
+        ]
+    },
+    {
+        "name": "\\Cake\\View\\Form\\FormContext",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\View\\Form\\ContextInterface",
+            "\\Cake\\Utility\\Hash"
+        ]
+    },
+    {
+        "name": "\\Cake\\View\\Form\\ArrayContext",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\View\\Form\\ContextInterface",
+            "\\Cake\\Utility\\Hash"
+        ]
+    },
+    {
+        "name": "\\Cake\\View\\Form\\ContextInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\View\\StringTemplate",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\View\\Cell",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\View\\Exception\\MissingCellTemplateException",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\View\\Exception\\MissingTemplateException"
+        ]
+    },
+    {
+        "name": "\\Error",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\View\\StringTemplateTrait",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\View\\StringTemplate",
+            "\\class"
+        ]
+    },
+    {
+        "name": "\\Cake\\View\\CellTrait",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\View\\Cell",
+            "\\Cake\\Core\\App",
+            "\\Cake\\View\\Exception\\MissingCellException",
+            "\\className",
+            "\\Cake\\Utility\\Inflector"
+        ]
+    },
+    {
+        "name": "\\Cake\\View\\Exception\\MissingCellException",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Core\\Exception\\Exception"
+        ]
+    },
+    {
+        "name": "\\Cake\\View\\ViewVarsTrait",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\View\\ViewBuilder",
+            "\\Cake\\View\\View"
+        ]
+    },
+    {
+        "name": "\\Cake\\View\\Widget\\CheckboxWidget",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\View\\Widget\\BasicWidget",
+            "\\Cake\\View\\Form\\ContextInterface"
+        ]
+    },
+    {
+        "name": "\\Cake\\View\\Widget\\BasicWidget",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\View\\Widget\\WidgetLocator",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\View\\Widget\\WidgetInterface",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\View\\Widget\\MultiCheckboxWidget",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\View\\Widget\\BasicWidget",
+            "\\Cake\\View\\StringTemplate",
+            "\\Cake\\View\\Widget\\LabelWidget",
+            "\\Cake\\View\\Form\\ContextInterface"
+        ]
+    },
+    {
+        "name": "\\Cake\\View\\Widget\\LabelWidget",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\View\\Widget\\SelectBoxWidget",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\View\\Widget\\ButtonWidget",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\View\\Widget\\WidgetInterface",
+            "\\Cake\\View\\StringTemplate",
+            "\\Cake\\View\\Form\\ContextInterface"
+        ]
+    },
+    {
+        "name": "\\Cake\\View\\Widget\\DateTimeWidget",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\View\\Widget\\BasicWidget",
+            "\\Cake\\View\\Form\\ContextInterface",
+            "\\InvalidArgumentException",
+            "\\DateTime",
+            "\\DateTimeZone"
+        ]
+    },
+    {
+        "name": "\\Cake\\View\\Widget\\RadioWidget",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\View\\Widget\\BasicWidget",
+            "\\Cake\\View\\StringTemplate",
+            "\\Cake\\View\\Widget\\LabelWidget",
+            "\\Cake\\View\\Form\\ContextInterface"
+        ]
+    },
+    {
+        "name": "\\Cake\\View\\Widget\\TextareaWidget",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\View\\Widget\\BasicWidget",
+            "\\Cake\\View\\Form\\ContextInterface"
+        ]
+    },
+    {
+        "name": "\\Cake\\View\\Widget\\NestingLabelWidget",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\View\\Widget\\LabelWidget"
+        ]
+    },
+    {
+        "name": "\\Cake\\View\\Widget\\YearWidget",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\View\\Widget\\BasicWidget",
+            "\\Cake\\View\\StringTemplate",
+            "\\Cake\\View\\Widget\\SelectBoxWidget",
+            "\\Cake\\View\\Form\\ContextInterface",
+            "\\InvalidArgumentException"
+        ]
+    },
+    {
+        "name": "\\Cake\\View\\Widget\\FileWidget",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\View\\Widget\\BasicWidget",
+            "\\Cake\\View\\Form\\ContextInterface",
+            "\\Cake\\Core\\Configure"
+        ]
+    },
+    {
+        "name": "\\Cake\\View\\Exception\\MissingTemplateException",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\View\\Exception\\MissingViewException",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\View\\Exception\\MissingElementException",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\View\\Exception\\MissingLayoutException",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\View\\Exception\\SerializationFailureException",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\View\\JsonView",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\View\\SerializedView",
+            "\\Cake\\Core\\Configure",
+            "\\RuntimeException"
+        ]
+    },
+    {
+        "name": "\\Cake\\View\\ViewBlock",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Core\\Exception\\Exception"
+        ]
+    },
+    {
+        "name": "\\Cake\\View\\AjaxView",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\View\\View"
+        ]
+    },
+    {
+        "name": "\\Cake\\View\\Helper\\FormHelper",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\View\\Helper",
+            "\\Cake\\View\\View",
+            "\\Cake\\View\\Widget\\WidgetLocator",
+            "\\Cake\\View\\Form\\ContextFactory",
+            "\\Cake\\Core\\Configure",
+            "\\Cake\\View\\Form\\ContextInterface",
+            "\\Cake\\Routing\\Router",
+            "\\Cake\\Form\\FormProtector",
+            "\\Cake\\Core\\Exception\\Exception",
+            "\\Cake\\Utility\\Inflector",
+            "\\Cake\\Utility\\Hash",
+            "\\RuntimeException",
+            "\\InvalidArgumentException"
+        ]
+    },
+    {
+        "name": "\\Cake\\View\\Helper\\PaginatorHelper",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\View\\Helper",
+            "\\Cake\\View\\View",
+            "\\Cake\\Utility\\Hash",
+            "\\Cake\\Utility\\Inflector",
+            "\\Cake\\View\\StringTemplate"
+        ]
+    },
+    {
+        "name": "\\Cake\\View\\Helper\\HtmlHelper",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\View\\Helper",
+            "\\Cake\\Core\\Configure"
+        ]
+    },
+    {
+        "name": "\\Cake\\View\\Helper\\FlashHelper",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\View\\Helper",
+            "\\UnexpectedValueException"
+        ]
+    },
+    {
+        "name": "\\Cake\\View\\Helper\\TextHelper",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\View\\Helper",
+            "\\Cake\\View\\View",
+            "\\Cake\\Core\\App",
+            "\\Cake\\Core\\Exception\\Exception",
+            "\\engineClass",
+            "\\Cake\\Utility\\Security"
+        ]
+    },
+    {
+        "name": "\\engineClass",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\View\\Helper\\UrlHelper",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\View\\Helper",
+            "\\Cake\\Routing\\Router",
+            "\\Cake\\Routing\\Asset"
+        ]
+    },
+    {
+        "name": "\\Cake\\View\\Helper\\IdGeneratorTrait",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Utility\\Text"
+        ]
+    },
+    {
+        "name": "\\Cake\\View\\Helper\\NumberHelper",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\View\\Helper",
+            "\\Cake\\View\\View",
+            "\\Cake\\Core\\App",
+            "\\Cake\\Core\\Exception\\Exception",
+            "\\engineClass"
+        ]
+    },
+    {
+        "name": "\\Cake\\View\\Helper\\BreadcrumbsHelper",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\View\\Helper",
+            "\\LogicException"
+        ]
+    },
+    {
+        "name": "\\Cake\\View\\Helper\\TimeHelper",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\View\\Helper",
+            "\\Cake\\I18n\\Time"
+        ]
+    },
+    {
+        "name": "\\Cake\\Shell\\Helper\\ProgressHelper",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Console\\Helper",
+            "\\RuntimeException"
+        ]
+    },
+    {
+        "name": "\\Cake\\Shell\\Helper\\TableHelper",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Console\\Helper"
+        ]
+    },
+    {
+        "name": "\\Cake\\Command\\I18nExtractCommand",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Command\\Command",
+            "\\Cake\\Console\\ConsoleIo",
+            "\\Cake\\Core\\App",
+            "\\Cake\\Console\\Arguments",
+            "\\Cake\\Utility\\Inflector",
+            "\\Cake\\Core\\Plugin",
+            "\\Cake\\Console\\ConsoleOptionParser",
+            "\\Cake\\Filesystem\\Filesystem",
+            "\\Cake\\Core\\Configure"
+        ]
+    },
+    {
+        "name": "\\Cake\\Command\\Command",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Command\\PluginAssetsCopyCommand",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Command\\Command",
+            "\\Cake\\Console\\Arguments",
+            "\\Cake\\Console\\ConsoleIo",
+            "\\Cake\\Console\\ConsoleOptionParser"
+        ]
+    },
+    {
+        "name": "\\Cake\\Command\\I18nInitCommand",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Command\\Command",
+            "\\Cake\\Console\\Arguments",
+            "\\Cake\\Console\\ConsoleIo",
+            "\\Cake\\Core\\App",
+            "\\Cake\\Utility\\Inflector",
+            "\\Cake\\Core\\Plugin",
+            "\\DirectoryIterator",
+            "\\Cake\\Console\\ConsoleOptionParser"
+        ]
+    },
+    {
+        "name": "\\Cake\\Command\\CacheClearallCommand",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Command\\Command",
+            "\\Cake\\Console\\ConsoleOptionParser",
+            "\\Cake\\Console\\Arguments",
+            "\\Cake\\Console\\ConsoleIo",
+            "\\Cake\\Cache\\Cache"
+        ]
+    },
+    {
+        "name": "\\Cake\\Command\\PluginUnloadCommand",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Command\\Command",
+            "\\Cake\\Console\\Arguments",
+            "\\Cake\\Console\\ConsoleIo",
+            "\\Cake\\Console\\ConsoleOptionParser"
+        ]
+    },
+    {
+        "name": "\\Cake\\Command\\ServerCommand",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Command\\Command",
+            "\\Cake\\Console\\Arguments",
+            "\\Cake\\Console\\ConsoleIo",
+            "\\Cake\\Core\\Configure",
+            "\\Cake\\Console\\ConsoleOptionParser"
+        ]
+    },
+    {
+        "name": "\\Cake\\Command\\CompletionCommand",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Command\\Command",
+            "\\Cake\\Console\\CommandCollectionAwareInterface",
+            "\\Cake\\Console\\CommandCollection",
+            "\\Cake\\Console\\ConsoleOptionParser",
+            "\\Cake\\Console\\Arguments",
+            "\\Cake\\Console\\ConsoleIo",
+            "\\ReflectionClass",
+            "\\Cake\\Console\\Shell",
+            "\\Cake\\Utility\\Inflector"
+        ]
+    },
+    {
+        "name": "\\Cake\\Command\\I18nCommand",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Command\\Command",
+            "\\Cake\\Console\\Arguments",
+            "\\Cake\\Console\\ConsoleIo",
+            "\\Cake\\Console\\ConsoleOptionParser"
+        ]
+    },
+    {
+        "name": "\\Cake\\Command\\CacheClearCommand",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Command\\Command",
+            "\\Cake\\Console\\ConsoleOptionParser",
+            "\\Cake\\Console\\Arguments",
+            "\\Cake\\Console\\ConsoleIo",
+            "\\Cake\\Cache\\Cache"
+        ]
+    },
+    {
+        "name": "\\Cake\\Command\\RoutesGenerateCommand",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Command\\Command",
+            "\\Cake\\Console\\Arguments",
+            "\\Cake\\Console\\ConsoleIo",
+            "\\Cake\\Routing\\Router",
+            "\\Cake\\Console\\ConsoleOptionParser"
+        ]
+    },
+    {
+        "name": "\\Cake\\Command\\PluginLoadCommand",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Command\\Command",
+            "\\Cake\\Console\\Arguments",
+            "\\Cake\\Console\\ConsoleIo",
+            "\\Cake\\Console\\ConsoleOptionParser"
+        ]
+    },
+    {
+        "name": "\\Cake\\Command\\RoutesCheckCommand",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Command\\Command",
+            "\\Cake\\Console\\Arguments",
+            "\\Cake\\Console\\ConsoleIo",
+            "\\Cake\\Http\\ServerRequest",
+            "\\Cake\\Routing\\Router",
+            "\\Cake\\Console\\ConsoleOptionParser"
+        ]
+    },
+    {
+        "name": "\\Cake\\Command\\RoutesCommand",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Command\\Command",
+            "\\Cake\\Console\\Arguments",
+            "\\Cake\\Console\\ConsoleIo",
+            "\\Cake\\Routing\\Router",
+            "\\Cake\\Console\\ConsoleOptionParser"
+        ]
+    },
+    {
+        "name": "\\Cake\\Command\\PluginLoadedCommand",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Command\\Command",
+            "\\Cake\\Console\\Arguments",
+            "\\Cake\\Console\\ConsoleIo",
+            "\\Cake\\Core\\Plugin",
+            "\\Cake\\Console\\ConsoleOptionParser"
+        ]
+    },
+    {
+        "name": "\\Cake\\Command\\PluginAssetsTrait",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Core\\Plugin",
+            "\\Cake\\Utility\\Inflector",
+            "\\Cake\\Core\\Configure",
+            "\\Cake\\Filesystem\\Filesystem"
+        ]
+    },
+    {
+        "name": "\\Cake\\Command\\PluginAssetsRemoveCommand",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Command\\Command",
+            "\\Cake\\Console\\Arguments",
+            "\\Cake\\Console\\ConsoleIo",
+            "\\Cake\\Console\\ConsoleOptionParser"
+        ]
+    },
+    {
+        "name": "\\Cake\\Command\\PluginAssetsSymlinkCommand",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Command\\Command",
+            "\\Cake\\Console\\Arguments",
+            "\\Cake\\Console\\ConsoleIo",
+            "\\Cake\\Console\\ConsoleOptionParser"
+        ]
+    },
+    {
+        "name": "\\Cake\\Command\\VersionCommand",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Command\\Command",
+            "\\Cake\\Console\\Arguments",
+            "\\Cake\\Console\\ConsoleIo",
+            "\\Cake\\Core\\Configure"
+        ]
+    },
+    {
+        "name": "\\Cake\\Command\\CacheListCommand",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Command\\Command",
+            "\\Cake\\Console\\ConsoleOptionParser",
+            "\\Cake\\Console\\Arguments",
+            "\\Cake\\Console\\ConsoleIo",
+            "\\Cake\\Cache\\Cache"
+        ]
+    },
+    {
+        "name": "\\Cake\\Log\\LogEngineRegistry",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Core\\ObjectRegistry",
+            "\\Cake\\Core\\App",
+            "\\RuntimeException",
+            "\\Psr\\Log\\LoggerInterface",
+            "\\class"
+        ]
+    },
+    {
+        "name": "\\Psr\\Log\\AbstractLogger",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "\\Cake\\Log\\Engine\\ArrayLog",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Log\\Engine\\BaseLog"
+        ]
+    },
+    {
+        "name": "\\Cake\\Log\\Engine\\SyslogLog",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Log\\Engine\\BaseLog"
+        ]
+    },
+    {
+        "name": "\\Cake\\Log\\Engine\\FileLog",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Log\\Engine\\BaseLog",
+            "\\Cake\\Core\\Configure",
+            "\\Cake\\Utility\\Text"
+        ]
+    },
+    {
+        "name": "\\Cake\\Log\\LogTrait",
+        "size": 3000,
+        "relations": [
+            "\\Cake\\Log\\Log"
+        ]
+    }
+];
+
+    /**
+     * Thanks to http://bl.ocks.org/mbostock/raw/7607999/
+     */
+    function updateRelationsChart() {
+
+
+        var diameter = document.getElementById('chart-relations').offsetWidth,
+            radius = diameter / 2,
+            innerRadius = radius - 120;
+
+        var cluster = d3.layout.cluster()
+            .size([360, innerRadius])
+            .sort(null)
+            .value(function (d) {
+                return d.size;
+            });
+
+        var bundle = d3.layout.bundle();
+
+        var line = d3.svg.line.radial()
+            .interpolate("bundle")
+            .tension(.85)
+            .radius(function (d) {
+                return d.y;
+            })
+            .angle(function (d) {
+                return d.x / 180 * Math.PI;
+            });
+
+        var svg = d3.select("#chart-relations").append("svg")
+            .attr("width", diameter)
+            .attr("height", diameter)
+            .append("g")
+            .attr("transform", "translate(" + radius + "," + radius + ")");
+
+        var link = svg.append("g").selectAll(".link"),
+            node = svg.append("g").selectAll(".node");
+
+
+        var nodes = cluster.nodes(packageHierarchy(relations)),
+            links = packageImports(nodes);
+        link = link
+            .data(bundle(links))
+            .enter().append("path")
+            .each(function (d) {
+                d.source = d[0], d.target = d[d.length - 1];
+            })
+            .attr("class", "link")
+            .attr("d", line);
+
+        node = node
+            .data(nodes.filter(function (n) {
+                return !n.children;
+            }))
+            .enter().append("text")
+            .attr("class", "node")
+            .attr("dy", ".31em")
+            .attr("transform", function (d) {
+                return "rotate(" + (d.x - 90) + ")translate(" + (d.y + 8) + ",0)" + (d.x < 180 ? "" : "rotate(180)");
+            })
+            .style("text-anchor", function (d) {
+                return d.x < 180 ? "start" : "end";
+            })
+            .text(function (d) {
+                return d.key;
+            })
+            .on("mouseover", mouseovered)
+            .on("mouseout", mouseouted);
+
+
+//        d3.data(relations);
+
+        function mouseovered(d) {
+            node
+                .each(function (n) {
+                    n.target = n.source = false;
+                });
+
+            link
+                .classed("link--target", function (l) {
+                    if (l.target === d) return l.source.source = true;
+                })
+                .classed("link--source", function (l) {
+                    if (l.source === d) return l.target.target = true;
+                })
+                .filter(function (l) {
+                    return l.target === d || l.source === d;
+                })
+                .each(function () {
+                    this.parentNode.appendChild(this);
+                });
+
+            node
+                .classed("node--target", function (n) {
+                    return n.target;
+                })
+                .classed("node--source", function (n) {
+                    return n.source;
+                });
+        }
+
+        function mouseouted(d) {
+            link
+                .classed("link--target", false)
+                .classed("link--source", false);
+
+            node
+                .classed("node--target", false)
+                .classed("node--source", false);
+        }
+
+        d3.select(self.frameElement).style("height", diameter + "px");
+
+        // Lazily construct the package hierarchy from class names.
+        function packageHierarchy(classes) {
+            var map = {};
+
+            function find(name, data) {
+                name = (data ? name + ' ' : name);
+                var node = map[name], i;
+                if (!node) {
+                    node = map[name] = data || {name: name, children: []};
+                    if (name.length) {
+                        node.parent = find(name.substring(0, i = name.lastIndexOf("\\")));
+                        if (!node.parent.children) {
+                            node.parent.children = []; // fix anomalies
+                        }
+                        node.parent.children.push(node);
+                        node.key = name;//name.substring(i + 1);
+                    }
+                }
+                return node;
+            }
+
+            classes.forEach(function (d) {
+                find(d.name, d);
+            });
+
+            return map[""];
+        }
+
+        // Return a list of imports for the given array of nodes.
+        function packageImports(nodes) {
+            var map = {},
+                imports = [];
+
+            // Compute a map from name to node.
+            nodes.forEach(function (d) {
+                map[d.name] = d;
+            });
+
+            // For each import, construct a link from the source to target node.
+            nodes.forEach(function (d) {
+                if (d.relations) d.relations.forEach(function (i) {
+                    imports.push({source: map[d.name], target: map[i]});
+                });
+            });
+
+            return imports;
+        }
+
+
+    }
+
+    document.onreadystatechange = function () {
+        if (document.readyState === 'complete') {
+            updateRelationsChart();
+        }
+    };
+
+</script>

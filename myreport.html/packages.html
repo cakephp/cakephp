@@ -1,0 +1,1881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PhpMetrics report</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/milligram.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/roboto.css">
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/material-icons.css">
+    <link rel="stylesheet" href="css/graph-carousel.css">
+</head>
+<body>
+
+
+<header class="headerbar">
+    <div class="headerbarInner">
+        <div class="float-left navigation-title">
+            <a href="http://www.phpmetrics.org/">
+                <h1 class="title">PhpMetrics</h1>
+                <span class="subtitle">
+                Static analyzer for PHP
+            </span>
+            </a>
+        </div>
+        <ul class="navigation-list float-right">
+            <li class="navigation-item">
+                <a class="navigation-link" href="http://www.phpmetrics.org/documentation/index.html">Documentation</a>
+                <a class="navigation-link" href="https://www.github.com/phpmetrics/phpmetrics">Support</a>
+            </li>
+        </ul>
+    </div>
+</header>
+
+<a class="hidden-xs github" href="https://github.com/phpmetrics/phpmetrics"
+   title="PhpMetrics on Github" target="blank">
+    <svg width="80" height="80" viewBox="0 0 250 250" class="github">
+        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+        <path
+            d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+            fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+        <path
+            d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+            fill="currentColor" class="octo-body"></path>
+    </svg>
+</a>
+
+
+<div class="page">
+    <div class="content content-first">
+        <div class="report-details">
+            Created at 2020-09-02 15:41:14        , with PHPMetrics v2.7.4 (<a href="https://twitter.com/Halleck45">Jean-François Lépine</a>).
+        </div>
+
+        
+    <div class="row">
+        <div class="column">
+            <div class="bloc">
+                <h4>Packages</h4>
+
+                <div id="distances" class="scattered-plot"></div>
+
+                <table class="js-sort-table" id="table-length">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th class="js-sort-number">Classes</th>
+                        <th class="js-sort-number">Abstraction</th>
+                        <th class="js-sort-number">Instability</th>
+                        <th class="js-sort-number">Distance</th>
+                        <th class="js-sort-number">Outgoing class dep.</th>
+                        <th class="js-sort-number">Outgoing package dep.</th>
+                        <th class="js-sort-number">Incoming class dep.</th>
+                        <th class="js-sort-number">Incoming package dep.</th>
+                    </tr>
+                    </thead>
+                                            <tr>
+                            <td><span class="path">Cake\Controller</span></td>
+                            <td>5</td>
+                            <td>0</td>
+                            <td>0.647</td>
+                            <td>0.353</td>
+                            <td>22</td>
+                            <td>10</td>
+                            <td>12</td>
+                            <td>4</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Controller\Exception</span></td>
+                            <td>4</td>
+                            <td>0</td>
+                            <td>0.4</td>
+                            <td>0.6</td>
+                            <td>2</td>
+                            <td>2</td>
+                            <td>3</td>
+                            <td>2</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Controller\Component</span></td>
+                            <td>6</td>
+                            <td>0</td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>27</td>
+                            <td>12</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Form</span></td>
+                            <td>3</td>
+                            <td>0</td>
+                            <td>0.778</td>
+                            <td>0.222</td>
+                            <td>7</td>
+                            <td>5</td>
+                            <td>2</td>
+                            <td>2</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Error</span></td>
+                            <td>9</td>
+                            <td>0.333</td>
+                            <td>0.949</td>
+                            <td>0.282</td>
+                            <td>37</td>
+                            <td>12</td>
+                            <td>2</td>
+                            <td>2</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Error\Middleware</span></td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>12</td>
+                            <td>8</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Error\Debug</span></td>
+                            <td>13</td>
+                            <td>0.154</td>
+                            <td>0.667</td>
+                            <td>0.179</td>
+                            <td>2</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>1</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Cache\Engine</span></td>
+                            <td>5</td>
+                            <td>0</td>
+                            <td>0.917</td>
+                            <td>0.083</td>
+                            <td>11</td>
+                            <td>2</td>
+                            <td>1</td>
+                            <td>1</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Cache</span></td>
+                            <td>5</td>
+                            <td>0.4</td>
+                            <td>0.385</td>
+                            <td>0.215</td>
+                            <td>10</td>
+                            <td>5</td>
+                            <td>16</td>
+                            <td>9</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Console</span></td>
+                            <td>22</td>
+                            <td>0.227</td>
+                            <td>0.538</td>
+                            <td>0.234</td>
+                            <td>35</td>
+                            <td>10</td>
+                            <td>30</td>
+                            <td>8</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Console\Exception</span></td>
+                            <td>7</td>
+                            <td>0</td>
+                            <td>0.083</td>
+                            <td>0.917</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>11</td>
+                            <td>1</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Console\Command</span></td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>9</td>
+                            <td>3</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Http\Cookie</span></td>
+                            <td>3</td>
+                            <td>0.333</td>
+                            <td>0.632</td>
+                            <td>0.035</td>
+                            <td>12</td>
+                            <td>3</td>
+                            <td>7</td>
+                            <td>3</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Http</span></td>
+                            <td>14</td>
+                            <td>0.286</td>
+                            <td>0.67</td>
+                            <td>0.044</td>
+                            <td>59</td>
+                            <td>17</td>
+                            <td>29</td>
+                            <td>14</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Http\Session</span></td>
+                            <td>2</td>
+                            <td>0</td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>4</td>
+                            <td>3</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Http\Middleware</span></td>
+                            <td>8</td>
+                            <td>0</td>
+                            <td>0.95</td>
+                            <td>0.05</td>
+                            <td>19</td>
+                            <td>10</td>
+                            <td>1</td>
+                            <td>1</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Http\Exception</span></td>
+                            <td>16</td>
+                            <td>0</td>
+                            <td>0.056</td>
+                            <td>0.944</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>17</td>
+                            <td>9</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Http\Client</span></td>
+                            <td>6</td>
+                            <td>0.167</td>
+                            <td>0.533</td>
+                            <td>0.3</td>
+                            <td>8</td>
+                            <td>5</td>
+                            <td>7</td>
+                            <td>4</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Http\Client\Adapter</span></td>
+                            <td>2</td>
+                            <td>0</td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>8</td>
+                            <td>5</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Http\Client\Exception</span></td>
+                            <td>3</td>
+                            <td>0</td>
+                            <td>0.714</td>
+                            <td>0.286</td>
+                            <td>5</td>
+                            <td>3</td>
+                            <td>2</td>
+                            <td>1</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Http\Client\Auth</span></td>
+                            <td>3</td>
+                            <td>0</td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>6</td>
+                            <td>6</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Database\Schema</span></td>
+                            <td>12</td>
+                            <td>0.417</td>
+                            <td>0.438</td>
+                            <td>0.146</td>
+                            <td>7</td>
+                            <td>4</td>
+                            <td>9</td>
+                            <td>3</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Database</span></td>
+                            <td>24</td>
+                            <td>0.417</td>
+                            <td>0.436</td>
+                            <td>0.147</td>
+                            <td>41</td>
+                            <td>15</td>
+                            <td>53</td>
+                            <td>9</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Database\Driver</span></td>
+                            <td>6</td>
+                            <td>0.333</td>
+                            <td>1</td>
+                            <td>0.333</td>
+                            <td>28</td>
+                            <td>5</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Database\Type</span></td>
+                            <td>19</td>
+                            <td>0.263</td>
+                            <td>1</td>
+                            <td>0.263</td>
+                            <td>10</td>
+                            <td>4</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Database\Exception</span></td>
+                            <td>4</td>
+                            <td>0</td>
+                            <td>0.333</td>
+                            <td>0.667</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>2</td>
+                            <td>1</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Database\Expression</span></td>
+                            <td>17</td>
+                            <td>0.176</td>
+                            <td>0.423</td>
+                            <td>0.4</td>
+                            <td>11</td>
+                            <td>2</td>
+                            <td>15</td>
+                            <td>6</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Database\Statement</span></td>
+                            <td>8</td>
+                            <td>0.125</td>
+                            <td>0.5</td>
+                            <td>0.375</td>
+                            <td>7</td>
+                            <td>3</td>
+                            <td>7</td>
+                            <td>4</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Database\Retry</span></td>
+                            <td>2</td>
+                            <td>0</td>
+                            <td>0.6</td>
+                            <td>0.4</td>
+                            <td>3</td>
+                            <td>3</td>
+                            <td>2</td>
+                            <td>1</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Database\Log</span></td>
+                            <td>3</td>
+                            <td>0</td>
+                            <td>0.833</td>
+                            <td>0.167</td>
+                            <td>5</td>
+                            <td>5</td>
+                            <td>1</td>
+                            <td>1</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Validation</span></td>
+                            <td>8</td>
+                            <td>0.375</td>
+                            <td>0.737</td>
+                            <td>0.112</td>
+                            <td>14</td>
+                            <td>3</td>
+                            <td>5</td>
+                            <td>5</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Network\Exception</span></td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>0.333</td>
+                            <td>0.667</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>2</td>
+                            <td>2</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Network</span></td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>0.833</td>
+                            <td>0.167</td>
+                            <td>5</td>
+                            <td>5</td>
+                            <td>1</td>
+                            <td>1</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Core</span></td>
+                            <td>14</td>
+                            <td>0.571</td>
+                            <td>0.265</td>
+                            <td>0.163</td>
+                            <td>26</td>
+                            <td>11</td>
+                            <td>72</td>
+                            <td>28</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Core\Configure\Engine</span></td>
+                            <td>3</td>
+                            <td>0</td>
+                            <td>0.5</td>
+                            <td>0.5</td>
+                            <td>3</td>
+                            <td>3</td>
+                            <td>3</td>
+                            <td>3</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Core\Configure</span></td>
+                            <td>2</td>
+                            <td>1</td>
+                            <td>0.333</td>
+                            <td>0.333</td>
+                            <td>2</td>
+                            <td>2</td>
+                            <td>4</td>
+                            <td>2</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Core\Exception</span></td>
+                            <td>2</td>
+                            <td>0</td>
+                            <td>0.014</td>
+                            <td>0.986</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>71</td>
+                            <td>36</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Core\Retry</span></td>
+                            <td>2</td>
+                            <td>0.5</td>
+                            <td>0.2</td>
+                            <td>0.3</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>4</td>
+                            <td>2</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Datasource</span></td>
+                            <td>22</td>
+                            <td>0.591</td>
+                            <td>0.47</td>
+                            <td>0.061</td>
+                            <td>31</td>
+                            <td>11</td>
+                            <td>35</td>
+                            <td>11</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Datasource\Exception</span></td>
+                            <td>6</td>
+                            <td>0</td>
+                            <td>0.125</td>
+                            <td>0.875</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>7</td>
+                            <td>3</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Datasource\Locator</span></td>
+                            <td>2</td>
+                            <td>1</td>
+                            <td>0.5</td>
+                            <td>0.5</td>
+                            <td>2</td>
+                            <td>2</td>
+                            <td>2</td>
+                            <td>1</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Filesystem</span></td>
+                            <td>3</td>
+                            <td>0</td>
+                            <td>0.722</td>
+                            <td>0.278</td>
+                            <td>13</td>
+                            <td>2</td>
+                            <td>5</td>
+                            <td>3</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\I18n</span></td>
+                            <td>15</td>
+                            <td>0.133</td>
+                            <td>0.833</td>
+                            <td>0.033</td>
+                            <td>30</td>
+                            <td>8</td>
+                            <td>6</td>
+                            <td>5</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\I18n\Parser</span></td>
+                            <td>2</td>
+                            <td>0</td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\I18n\Middleware</span></td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>6</td>
+                            <td>4</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\I18n\Formatter</span></td>
+                            <td>2</td>
+                            <td>0</td>
+                            <td>0.75</td>
+                            <td>0.25</td>
+                            <td>3</td>
+                            <td>3</td>
+                            <td>1</td>
+                            <td>1</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\ORM\Association</span></td>
+                            <td>5</td>
+                            <td>0</td>
+                            <td>0.889</td>
+                            <td>0.111</td>
+                            <td>16</td>
+                            <td>8</td>
+                            <td>2</td>
+                            <td>1</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\ORM\Association\Loader</span></td>
+                            <td>2</td>
+                            <td>0</td>
+                            <td>0.636</td>
+                            <td>0.364</td>
+                            <td>7</td>
+                            <td>4</td>
+                            <td>4</td>
+                            <td>1</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\ORM</span></td>
+                            <td>17</td>
+                            <td>0.176</td>
+                            <td>0.759</td>
+                            <td>0.065</td>
+                            <td>66</td>
+                            <td>17</td>
+                            <td>21</td>
+                            <td>8</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\ORM\Exception</span></td>
+                            <td>5</td>
+                            <td>0</td>
+                            <td>0.6</td>
+                            <td>0.4</td>
+                            <td>3</td>
+                            <td>3</td>
+                            <td>2</td>
+                            <td>1</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\ORM\Locator</span></td>
+                            <td>3</td>
+                            <td>0.667</td>
+                            <td>0.857</td>
+                            <td>0.524</td>
+                            <td>12</td>
+                            <td>6</td>
+                            <td>2</td>
+                            <td>2</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\ORM\Behavior\Translate</span></td>
+                            <td>5</td>
+                            <td>0.6</td>
+                            <td>0.933</td>
+                            <td>0.533</td>
+                            <td>14</td>
+                            <td>7</td>
+                            <td>1</td>
+                            <td>1</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\ORM\Behavior</span></td>
+                            <td>4</td>
+                            <td>0</td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>22</td>
+                            <td>10</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\ORM\Rule</span></td>
+                            <td>4</td>
+                            <td>0</td>
+                            <td>0.857</td>
+                            <td>0.143</td>
+                            <td>6</td>
+                            <td>4</td>
+                            <td>1</td>
+                            <td>1</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Event</span></td>
+                            <td>8</td>
+                            <td>0.625</td>
+                            <td>0.135</td>
+                            <td>0.24</td>
+                            <td>5</td>
+                            <td>2</td>
+                            <td>32</td>
+                            <td>14</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Event\Decorator</span></td>
+                            <td>3</td>
+                            <td>0.333</td>
+                            <td>1</td>
+                            <td>0.333</td>
+                            <td>2</td>
+                            <td>2</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Utility</span></td>
+                            <td>7</td>
+                            <td>0.286</td>
+                            <td>0.133</td>
+                            <td>0.582</td>
+                            <td>11</td>
+                            <td>4</td>
+                            <td>72</td>
+                            <td>33</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Utility\Crypto</span></td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>1</td>
+                            <td>1</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Utility\Exception</span></td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>0.5</td>
+                            <td>0.5</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>1</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Routing</span></td>
+                            <td>5</td>
+                            <td>0.2</td>
+                            <td>0.447</td>
+                            <td>0.353</td>
+                            <td>17</td>
+                            <td>8</td>
+                            <td>21</td>
+                            <td>11</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Routing\Middleware</span></td>
+                            <td>2</td>
+                            <td>0</td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>16</td>
+                            <td>10</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Routing\Route</span></td>
+                            <td>6</td>
+                            <td>0</td>
+                            <td>0.778</td>
+                            <td>0.222</td>
+                            <td>7</td>
+                            <td>5</td>
+                            <td>2</td>
+                            <td>1</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Routing\Exception</span></td>
+                            <td>4</td>
+                            <td>0</td>
+                            <td>0.5</td>
+                            <td>0.5</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>1</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Collection</span></td>
+                            <td>4</td>
+                            <td>0.75</td>
+                            <td>0.5</td>
+                            <td>0.25</td>
+                            <td>25</td>
+                            <td>2</td>
+                            <td>25</td>
+                            <td>6</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Collection\Iterator</span></td>
+                            <td>14</td>
+                            <td>0</td>
+                            <td>0.882</td>
+                            <td>0.118</td>
+                            <td>15</td>
+                            <td>2</td>
+                            <td>2</td>
+                            <td>2</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Mailer</span></td>
+                            <td>8</td>
+                            <td>0.25</td>
+                            <td>0.885</td>
+                            <td>0.135</td>
+                            <td>23</td>
+                            <td>9</td>
+                            <td>3</td>
+                            <td>1</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Mailer\Transport</span></td>
+                            <td>3</td>
+                            <td>0</td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>6</td>
+                            <td>5</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Mailer\Exception</span></td>
+                            <td>2</td>
+                            <td>0</td>
+                            <td>0.333</td>
+                            <td>0.667</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>2</td>
+                            <td>1</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Auth</span></td>
+                            <td>11</td>
+                            <td>0.273</td>
+                            <td>1</td>
+                            <td>0.273</td>
+                            <td>14</td>
+                            <td>10</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Auth\Storage</span></td>
+                            <td>3</td>
+                            <td>0.333</td>
+                            <td>1</td>
+                            <td>0.333</td>
+                            <td>2</td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\View</span></td>
+                            <td>14</td>
+                            <td>0.357</td>
+                            <td>0.654</td>
+                            <td>0.011</td>
+                            <td>34</td>
+                            <td>10</td>
+                            <td>18</td>
+                            <td>3</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\View\Form</span></td>
+                            <td>6</td>
+                            <td>0.167</td>
+                            <td>0.35</td>
+                            <td>0.483</td>
+                            <td>7</td>
+                            <td>5</td>
+                            <td>13</td>
+                            <td>2</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\View\Widget</span></td>
+                            <td>14</td>
+                            <td>0.071</td>
+                            <td>0.923</td>
+                            <td>0.005</td>
+                            <td>12</td>
+                            <td>5</td>
+                            <td>1</td>
+                            <td>1</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\View\Exception</span></td>
+                            <td>8</td>
+                            <td>0</td>
+                            <td>0.143</td>
+                            <td>0.857</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>6</td>
+                            <td>1</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\View\Helper</span></td>
+                            <td>10</td>
+                            <td>0.1</td>
+                            <td>1</td>
+                            <td>0.1</td>
+                            <td>22</td>
+                            <td>10</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Shell\Task</span></td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>0.833</td>
+                            <td>0.167</td>
+                            <td>5</td>
+                            <td>4</td>
+                            <td>1</td>
+                            <td>1</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Shell\Helper</span></td>
+                            <td>2</td>
+                            <td>0</td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>2</td>
+                            <td>2</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Command</span></td>
+                            <td>20</td>
+                            <td>0.05</td>
+                            <td>1</td>
+                            <td>0.05</td>
+                            <td>17</td>
+                            <td>8</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Log</span></td>
+                            <td>3</td>
+                            <td>0.333</td>
+                            <td>0.467</td>
+                            <td>0.2</td>
+                            <td>7</td>
+                            <td>3</td>
+                            <td>8</td>
+                            <td>5</td>
+                        </tr>
+                                            <tr>
+                            <td><span class="path">Cake\Log\Engine</span></td>
+                            <td>5</td>
+                            <td>0.2</td>
+                            <td>0.75</td>
+                            <td>0.05</td>
+                            <td>6</td>
+                            <td>5</td>
+                            <td>2</td>
+                            <td>2</td>
+                        </tr>
+                                    </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sidebar -->
+<div id="sidebar">
+    <div class="content">
+        <div class="logo">
+            <a href="http://www.phpmetrics.org"><img src="images/phpmetrics-maintenability.png"
+                                                 alt="Logo PhpMetrics"/></a>
+            <h1>PhpMetrics</h1>
+        </div>
+        <div class="links">
+            <ul>
+                <li>
+                    <a href="index.html">
+                        <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0 0h24v24H0z" fill="none"/>
+                            <path
+                                d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                        </svg>
+                        Overview
+                    </a>
+                </li>
+                <li>
+                    <a href="violations.html">
+                        <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M20 8h-2.81c-.45-.78-1.07-1.45-1.82-1.96L17 4.41 15.59 3l-2.17 2.17C12.96 5.06 12.49 5 12 5c-.49 0-.96.06-1.41.17L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.26 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20V8zm-6 8h-4v-2h4v2zm0-4h-4v-2h4v2z"/>
+                        </svg>
+                        Violations (452)
+                    </a>
+                </li>
+                                    <li>
+                        <a href="composer.html">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="24px" height="24px"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>
+                            Composer
+                        </a>
+                    </li>
+                                                <li>
+                    <a href="loc.html">
+                        <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24"
+                             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <defs>
+                                <path d="M0 0h24v24H0z" id="a"/>
+                            </defs>
+                            <clipPath id="b">
+                                <use overflow="visible" xlink:href="#a"/>
+                            </clipPath>
+                            <path clip-path="url(#b)"
+                                  d="M11 5.08V2c-5 .5-9 4.81-9 10s4 9.5 9 10v-3.08c-3-.48-6-3.4-6-6.92s3-6.44 6-6.92zM18.97 11H22c-.47-5-4-8.53-9-9v3.08C16 5.51 18.54 8 18.97 11zM13 18.92V22c5-.47 8.53-4 9-9h-3.03c-.43 3-2.97 5.49-5.97 5.92z"/>
+                        </svg>
+                        Size &amp; volume
+                    </a>
+                </li>
+                <li>
+                    <a href="complexity.html">
+                        <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0 0h24v24H0V0z" fill="none"/>
+                            <path
+                                d="M19.07 4.93l-1.41 1.41C19.1 7.79 20 9.79 20 12c0 4.42-3.58 8-8 8s-8-3.58-8-8c0-4.08 3.05-7.44 7-7.93v2.02C8.16 6.57 6 9.03 6 12c0 3.31 2.69 6 6 6s6-2.69 6-6c0-1.66-.67-3.16-1.76-4.24l-1.41 1.41C15.55 9.9 16 10.9 16 12c0 2.21-1.79 4-4 4s-4-1.79-4-4c0-1.86 1.28-3.41 3-3.86v2.14c-.6.35-1 .98-1 1.72 0 1.1.9 2 2 2s2-.9 2-2c0-.74-.4-1.38-1-1.72V2h-1C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10c0-2.76-1.12-5.26-2.93-7.07z"/>
+                        </svg>
+                        Complexity &amp; defects
+                    </a>
+                </li>
+                <li>
+                    <a href="oop.html">
+                        <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0 0h24v24H0z" fill="none"/>
+                            <path
+                                d="M17 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zM5 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 6c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/>
+                        </svg>
+                        Object oriented metrics
+                    </a>
+                </li>
+                <li>
+                    <a href="relations.html">
+                        <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0 0h24v24H0z" fill="none"/>
+                            <path
+                                d="M14 4l2.29 2.29-2.88 2.88 1.42 1.42 2.88-2.88L20 10V4zm-4 0H4v6l2.29-2.29 4.71 4.7V20h2v-8.41l-5.29-5.3z"/>
+                        </svg>
+                        Object relations
+                    </a>
+                </li>
+                <li>
+                    <a href="coupling.html">
+                        <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24"
+                             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <defs>
+                                <path d="M0 0h24v24H0V0z" id="a"/>
+                            </defs>
+                            <clipPath id="b">
+                                <use overflow="visible" xlink:href="#a"/>
+                            </clipPath>
+                            <path clip-path="url(#b)"
+                                  d="M9.01 14H2v2h7.01v3L13 15l-3.99-4v3zm5.98-1v-3H22V8h-7.01V5L11 9l3.99 4z"/>
+                        </svg>
+                        Coupling
+                    </a>
+                </li>
+                <li>
+                    <a href="packages.html">
+                        <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24"
+                             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <path d="M11 9.16V2c-5 .5-9 4.79-9 10s4 9.5 9 10v-7.16c-1-.41-2-1.52-2-2.84s1-2.43 2-2.84zM14.86 11H22c-.48-4.75-4-8.53-9-9v7.16c1 .3 1.52.98 1.86 1.84zM13 14.84V22c5-.47 8.52-4.25 9-9h-7.14c-.34.86-.86 1.54-1.86 1.84z"/>
+                        </svg>
+                        Package oriented metrics
+                    </a>
+                </li>
+                <li>
+                    <a href="package_relations.html">
+                        <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path d="M17 20.41L18.41 19 15 15.59 13.59 17 17 20.41zM7.5 8H11v5.59L5.59 19 7 20.41l6-6V8h3.5L12 3.5 7.5 8z"/>
+                        </svg>
+                        Package relations
+                    </a>
+                </li>
+                                <!--<li>
+                    <a href="all.html">
+                        <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 3v18h18V3H3zm8 16H5v-6h6v6zm0-8H5V5h6v6zm8 8h-6v-6h6v6zm0-8h-6V5h6v6z"/>
+                            <path d="M0 0h24v24H0z" fill="none"/>
+                        </svg>
+                        All metrics
+                    </a>
+                </li>-->
+                <!--                <li>-->
+                <!--                    <a href="#">-->
+                <!--                        <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24"-->
+                <!--                             xmlns="http://www.w3.org/2000/svg">-->
+                <!--                            <path-->
+                <!--                                d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>-->
+                <!--                            <path d="M0 0h24v24H0z" fill="none"/>-->
+                <!--                        </svg>-->
+                <!--                        Third party-->
+                <!--                    </a>-->
+                <!--                </li>-->
+                <!--<li class="sep">
+                    <a href="panel.html">
+                        <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 1.99-.9 1.99-2L23 5c0-1.1-.9-2-2-2zm0 14H3V5h18v12z"/>
+                        </svg>
+                        TV Panel
+                    </a>
+                </li>-->
+            </ul>
+        </div>
+    </div>
+</div>
+</div>
+
+<script type="text/javascript" src="js/functions.js"></script>
+<script type="text/javascript" src="js/d3.v3.js"></script>
+<script type="text/javascript" src="js/d3.hexbin.v0.js"></script>
+<script type="text/javascript" src="js/sort-table.min.js"></script>
+<script type="text/javascript" src="js/graph-maintainability.js"></script>
+<script type="text/javascript" src="js/graph-carousel.js"></script>
+<script type="text/javascript" src="js/graph-licenses.js"></script>
+<script type="text/javascript" src="js/FileSaver.min.js"></script>
+
+<script src="js/clusterize.min.js"></script>
+<link rel="stylesheet" href="css/clusterize.css">
+
+<script type="text/javascript" src="classes.js"></script>
+
+<script type="text/javascript">
+    var accessibilityEnabled = false;
+</script>
+
+</body>
+</html>
+<script type="text/javascript">
+    /**
+     * Thx to http://bl.ocks.org/weiglemc/6185069
+     */
+    var margin = {top: 20, right: 20, bottom: 20, left: 20},
+        width = 500 - margin.left - margin.right,
+        height = 500 - margin.top - margin.bottom;
+
+    var spots = [
+    {
+        "name": "Cake\\Controller",
+        "abstraction": 0,
+        "instability": 0.6470588235294118,
+        "distance": 0.24956709924231085,
+        "normalizedDistance": 0.3529411764705882,
+        "classCount": 5
+    },
+    {
+        "name": "Cake\\Controller\\Exception",
+        "abstraction": 0,
+        "instability": 0.4,
+        "distance": 0.42426406871192845,
+        "normalizedDistance": 0.6,
+        "classCount": 4
+    },
+    {
+        "name": "Cake\\Controller\\Component",
+        "abstraction": 0,
+        "instability": 1,
+        "distance": 0,
+        "normalizedDistance": 0,
+        "classCount": 6
+    },
+    {
+        "name": "Cake\\Form",
+        "abstraction": 0,
+        "instability": 0.7777777777777778,
+        "distance": 0.15713484026367722,
+        "normalizedDistance": 0.2222222222222222,
+        "classCount": 3
+    },
+    {
+        "name": "Cake\\Error",
+        "abstraction": 0.3333333333333333,
+        "instability": 0.9487179487179487,
+        "distance": 0.199440374180821,
+        "normalizedDistance": 0.28205128205128194,
+        "classCount": 9
+    },
+    {
+        "name": "Cake\\Error\\Middleware",
+        "abstraction": 0,
+        "instability": 1,
+        "distance": 0,
+        "normalizedDistance": 0,
+        "classCount": 1
+    },
+    {
+        "name": "Cake\\Error\\Debug",
+        "abstraction": 0.15384615384615385,
+        "instability": 0.6666666666666666,
+        "distance": 0.12691660175143163,
+        "normalizedDistance": 0.17948717948717952,
+        "classCount": 13
+    },
+    {
+        "name": "Cake\\Cache\\Engine",
+        "abstraction": 0,
+        "instability": 0.9166666666666666,
+        "distance": 0.05892556509887898,
+        "normalizedDistance": 0.08333333333333337,
+        "classCount": 5
+    },
+    {
+        "name": "Cake\\Cache",
+        "abstraction": 0.4,
+        "instability": 0.38461538461538464,
+        "distance": 0.15229992210171786,
+        "normalizedDistance": 0.21538461538461529,
+        "classCount": 5
+    },
+    {
+        "name": "Cake\\Console",
+        "abstraction": 0.22727272727272727,
+        "instability": 0.5384615384615384,
+        "distance": 0.16565088929894645,
+        "normalizedDistance": 0.23426573426573427,
+        "classCount": 22
+    },
+    {
+        "name": "Cake\\Console\\Exception",
+        "abstraction": 0,
+        "instability": 0.08333333333333333,
+        "distance": 0.6481812160876685,
+        "normalizedDistance": 0.9166666666666666,
+        "classCount": 7
+    },
+    {
+        "name": "Cake\\Console\\Command",
+        "abstraction": 0,
+        "instability": 1,
+        "distance": 0,
+        "normalizedDistance": 0,
+        "classCount": 1
+    },
+    {
+        "name": "Cake\\Http\\Cookie",
+        "abstraction": 0.3333333333333333,
+        "instability": 0.631578947368421,
+        "distance": 0.024810764252159636,
+        "normalizedDistance": 0.03508771929824572,
+        "classCount": 3
+    },
+    {
+        "name": "Cake\\Http",
+        "abstraction": 0.2857142857142857,
+        "instability": 0.6704545454545454,
+        "distance": 0.030993316707851958,
+        "normalizedDistance": 0.04383116883116889,
+        "classCount": 14
+    },
+    {
+        "name": "Cake\\Http\\Session",
+        "abstraction": 0,
+        "instability": 1,
+        "distance": 0,
+        "normalizedDistance": 0,
+        "classCount": 2
+    },
+    {
+        "name": "Cake\\Http\\Middleware",
+        "abstraction": 0,
+        "instability": 0.95,
+        "distance": 0.035355339059327404,
+        "normalizedDistance": 0.050000000000000044,
+        "classCount": 8
+    },
+    {
+        "name": "Cake\\Http\\Exception",
+        "abstraction": 0,
+        "instability": 0.05555555555555555,
+        "distance": 0.6678230711206281,
+        "normalizedDistance": 0.9444444444444444,
+        "classCount": 16
+    },
+    {
+        "name": "Cake\\Http\\Client",
+        "abstraction": 0.16666666666666666,
+        "instability": 0.5333333333333333,
+        "distance": 0.21213203435596428,
+        "normalizedDistance": 0.30000000000000004,
+        "classCount": 6
+    },
+    {
+        "name": "Cake\\Http\\Client\\Adapter",
+        "abstraction": 0,
+        "instability": 1,
+        "distance": 0,
+        "normalizedDistance": 0,
+        "classCount": 2
+    },
+    {
+        "name": "Cake\\Http\\Client\\Exception",
+        "abstraction": 0,
+        "instability": 0.7142857142857143,
+        "distance": 0.20203050891044214,
+        "normalizedDistance": 0.2857142857142857,
+        "classCount": 3
+    },
+    {
+        "name": "Cake\\Http\\Client\\Auth",
+        "abstraction": 0,
+        "instability": 1,
+        "distance": 0,
+        "normalizedDistance": 0,
+        "classCount": 3
+    },
+    {
+        "name": "Cake\\Database\\Schema",
+        "abstraction": 0.4166666666666667,
+        "instability": 0.4375,
+        "distance": 0.10311973892303812,
+        "normalizedDistance": 0.14583333333333326,
+        "classCount": 12
+    },
+    {
+        "name": "Cake\\Database",
+        "abstraction": 0.4166666666666667,
+        "instability": 0.43617021276595747,
+        "distance": 0.1040600404937649,
+        "normalizedDistance": 0.1471631205673758,
+        "classCount": 24
+    },
+    {
+        "name": "Cake\\Database\\Driver",
+        "abstraction": 0.3333333333333333,
+        "instability": 1,
+        "distance": 0.23570226039551578,
+        "normalizedDistance": 0.33333333333333326,
+        "classCount": 6
+    },
+    {
+        "name": "Cake\\Database\\Type",
+        "abstraction": 0.2631578947368421,
+        "instability": 1,
+        "distance": 0.18608073189119664,
+        "normalizedDistance": 0.26315789473684204,
+        "classCount": 19
+    },
+    {
+        "name": "Cake\\Database\\Exception",
+        "abstraction": 0,
+        "instability": 0.3333333333333333,
+        "distance": 0.4714045207910317,
+        "normalizedDistance": 0.6666666666666667,
+        "classCount": 4
+    },
+    {
+        "name": "Cake\\Database\\Expression",
+        "abstraction": 0.17647058823529413,
+        "instability": 0.4230769230769231,
+        "distance": 0.2831626702941604,
+        "normalizedDistance": 0.4004524886877828,
+        "classCount": 17
+    },
+    {
+        "name": "Cake\\Database\\Statement",
+        "abstraction": 0.125,
+        "instability": 0.5,
+        "distance": 0.2651650429449553,
+        "normalizedDistance": 0.375,
+        "classCount": 8
+    },
+    {
+        "name": "Cake\\Database\\Retry",
+        "abstraction": 0,
+        "instability": 0.6,
+        "distance": 0.282842712474619,
+        "normalizedDistance": 0.4,
+        "classCount": 2
+    },
+    {
+        "name": "Cake\\Database\\Log",
+        "abstraction": 0,
+        "instability": 0.8333333333333334,
+        "distance": 0.11785113019775789,
+        "normalizedDistance": 0.16666666666666663,
+        "classCount": 3
+    },
+    {
+        "name": "Cake\\Validation",
+        "abstraction": 0.375,
+        "instability": 0.7368421052631579,
+        "distance": 0.07908431105375865,
+        "normalizedDistance": 0.11184210526315796,
+        "classCount": 8
+    },
+    {
+        "name": "Cake\\Network\\Exception",
+        "abstraction": 0,
+        "instability": 0.3333333333333333,
+        "distance": 0.4714045207910317,
+        "normalizedDistance": 0.6666666666666667,
+        "classCount": 1
+    },
+    {
+        "name": "Cake\\Network",
+        "abstraction": 0,
+        "instability": 0.8333333333333334,
+        "distance": 0.11785113019775789,
+        "normalizedDistance": 0.16666666666666663,
+        "classCount": 1
+    },
+    {
+        "name": "Cake\\Core",
+        "abstraction": 0.5714285714285714,
+        "instability": 0.2653061224489796,
+        "distance": 0.1154460050916812,
+        "normalizedDistance": 0.16326530612244894,
+        "classCount": 14
+    },
+    {
+        "name": "Cake\\Core\\Configure\\Engine",
+        "abstraction": 0,
+        "instability": 0.5,
+        "distance": 0.35355339059327373,
+        "normalizedDistance": 0.5,
+        "classCount": 3
+    },
+    {
+        "name": "Cake\\Core\\Configure",
+        "abstraction": 1,
+        "instability": 0.3333333333333333,
+        "distance": 0.23570226039551578,
+        "normalizedDistance": 0.33333333333333326,
+        "classCount": 2
+    },
+    {
+        "name": "Cake\\Core\\Exception",
+        "abstraction": 0,
+        "instability": 0.013888888888888888,
+        "distance": 0.6972858536700677,
+        "normalizedDistance": 0.9861111111111112,
+        "classCount": 2
+    },
+    {
+        "name": "Cake\\Core\\Retry",
+        "abstraction": 0.5,
+        "instability": 0.2,
+        "distance": 0.21213203435596428,
+        "normalizedDistance": 0.30000000000000004,
+        "classCount": 2
+    },
+    {
+        "name": "Cake\\Datasource",
+        "abstraction": 0.5909090909090909,
+        "instability": 0.4696969696969697,
+        "distance": 0.04285495643554829,
+        "normalizedDistance": 0.06060606060606055,
+        "classCount": 22
+    },
+    {
+        "name": "Cake\\Datasource\\Exception",
+        "abstraction": 0,
+        "instability": 0.125,
+        "distance": 0.6187184335382291,
+        "normalizedDistance": 0.875,
+        "classCount": 6
+    },
+    {
+        "name": "Cake\\Datasource\\Locator",
+        "abstraction": 1,
+        "instability": 0.5,
+        "distance": 0.35355339059327373,
+        "normalizedDistance": 0.5,
+        "classCount": 2
+    },
+    {
+        "name": "Cake\\Filesystem",
+        "abstraction": 0,
+        "instability": 0.7222222222222222,
+        "distance": 0.19641855032959654,
+        "normalizedDistance": 0.2777777777777778,
+        "classCount": 3
+    },
+    {
+        "name": "Cake\\I18n",
+        "abstraction": 0.13333333333333333,
+        "instability": 0.8333333333333334,
+        "distance": 0.023570226039551577,
+        "normalizedDistance": 0.033333333333333326,
+        "classCount": 15
+    },
+    {
+        "name": "Cake\\I18n\\Parser",
+        "abstraction": 0,
+        "instability": 1,
+        "distance": 0,
+        "normalizedDistance": 0,
+        "classCount": 2
+    },
+    {
+        "name": "Cake\\I18n\\Middleware",
+        "abstraction": 0,
+        "instability": 1,
+        "distance": 0,
+        "normalizedDistance": 0,
+        "classCount": 1
+    },
+    {
+        "name": "Cake\\I18n\\Formatter",
+        "abstraction": 0,
+        "instability": 0.75,
+        "distance": 0.17677669529663687,
+        "normalizedDistance": 0.25,
+        "classCount": 2
+    },
+    {
+        "name": "Cake\\ORM\\Association",
+        "abstraction": 0,
+        "instability": 0.8888888888888888,
+        "distance": 0.07856742013183865,
+        "normalizedDistance": 0.11111111111111116,
+        "classCount": 5
+    },
+    {
+        "name": "Cake\\ORM\\Association\\Loader",
+        "abstraction": 0,
+        "instability": 0.6363636363636364,
+        "distance": 0.25712973861328997,
+        "normalizedDistance": 0.36363636363636365,
+        "classCount": 2
+    },
+    {
+        "name": "Cake\\ORM",
+        "abstraction": 0.17647058823529413,
+        "instability": 0.7586206896551724,
+        "distance": 0.0458973975618043,
+        "normalizedDistance": 0.06490872210953347,
+        "classCount": 17
+    },
+    {
+        "name": "Cake\\ORM\\Exception",
+        "abstraction": 0,
+        "instability": 0.6,
+        "distance": 0.282842712474619,
+        "normalizedDistance": 0.4,
+        "classCount": 5
+    },
+    {
+        "name": "Cake\\ORM\\Locator",
+        "abstraction": 0.6666666666666666,
+        "instability": 0.8571428571428571,
+        "distance": 0.37038926633581054,
+        "normalizedDistance": 0.5238095238095237,
+        "classCount": 3
+    },
+    {
+        "name": "Cake\\ORM\\Behavior\\Translate",
+        "abstraction": 0.6,
+        "instability": 0.9333333333333333,
+        "distance": 0.37712361663282523,
+        "normalizedDistance": 0.5333333333333332,
+        "classCount": 5
+    },
+    {
+        "name": "Cake\\ORM\\Behavior",
+        "abstraction": 0,
+        "instability": 1,
+        "distance": 0,
+        "normalizedDistance": 0,
+        "classCount": 4
+    },
+    {
+        "name": "Cake\\ORM\\Rule",
+        "abstraction": 0,
+        "instability": 0.8571428571428571,
+        "distance": 0.1010152544552211,
+        "normalizedDistance": 0.1428571428571429,
+        "classCount": 4
+    },
+    {
+        "name": "Cake\\Event",
+        "abstraction": 0.625,
+        "instability": 0.13513513513513514,
+        "distance": 0.16961007251434082,
+        "normalizedDistance": 0.2398648648648649,
+        "classCount": 8
+    },
+    {
+        "name": "Cake\\Event\\Decorator",
+        "abstraction": 0.3333333333333333,
+        "instability": 1,
+        "distance": 0.23570226039551578,
+        "normalizedDistance": 0.33333333333333326,
+        "classCount": 3
+    },
+    {
+        "name": "Cake\\Utility",
+        "abstraction": 0.2857142857142857,
+        "instability": 0.13253012048192772,
+        "distance": 0.41136332537186415,
+        "normalizedDistance": 0.5817555938037866,
+        "classCount": 7
+    },
+    {
+        "name": "Cake\\Utility\\Crypto",
+        "abstraction": 0,
+        "instability": 0,
+        "distance": 0.7071067811865475,
+        "normalizedDistance": 1,
+        "classCount": 1
+    },
+    {
+        "name": "Cake\\Utility\\Exception",
+        "abstraction": 0,
+        "instability": 0.5,
+        "distance": 0.35355339059327373,
+        "normalizedDistance": 0.5,
+        "classCount": 1
+    },
+    {
+        "name": "Cake\\Routing",
+        "abstraction": 0.2,
+        "instability": 0.4473684210526316,
+        "distance": 0.24934818073420356,
+        "normalizedDistance": 0.3526315789473684,
+        "classCount": 5
+    },
+    {
+        "name": "Cake\\Routing\\Middleware",
+        "abstraction": 0,
+        "instability": 1,
+        "distance": 0,
+        "normalizedDistance": 0,
+        "classCount": 2
+    },
+    {
+        "name": "Cake\\Routing\\Route",
+        "abstraction": 0,
+        "instability": 0.7777777777777778,
+        "distance": 0.15713484026367722,
+        "normalizedDistance": 0.2222222222222222,
+        "classCount": 6
+    },
+    {
+        "name": "Cake\\Routing\\Exception",
+        "abstraction": 0,
+        "instability": 0.5,
+        "distance": 0.35355339059327373,
+        "normalizedDistance": 0.5,
+        "classCount": 4
+    },
+    {
+        "name": "Cake\\Collection",
+        "abstraction": 0.75,
+        "instability": 0.5,
+        "distance": 0.17677669529663687,
+        "normalizedDistance": 0.25,
+        "classCount": 4
+    },
+    {
+        "name": "Cake\\Collection\\Iterator",
+        "abstraction": 0,
+        "instability": 0.8823529411764706,
+        "distance": 0.08318903308077032,
+        "normalizedDistance": 0.11764705882352944,
+        "classCount": 14
+    },
+    {
+        "name": "Cake\\Mailer",
+        "abstraction": 0.25,
+        "instability": 0.8846153846153846,
+        "distance": 0.09518745131357367,
+        "normalizedDistance": 0.13461538461538458,
+        "classCount": 8
+    },
+    {
+        "name": "Cake\\Mailer\\Transport",
+        "abstraction": 0,
+        "instability": 1,
+        "distance": 0,
+        "normalizedDistance": 0,
+        "classCount": 3
+    },
+    {
+        "name": "Cake\\Mailer\\Exception",
+        "abstraction": 0,
+        "instability": 0.3333333333333333,
+        "distance": 0.4714045207910317,
+        "normalizedDistance": 0.6666666666666667,
+        "classCount": 2
+    },
+    {
+        "name": "Cake\\Auth",
+        "abstraction": 0.2727272727272727,
+        "instability": 1,
+        "distance": 0.1928473039599675,
+        "normalizedDistance": 0.2727272727272727,
+        "classCount": 11
+    },
+    {
+        "name": "Cake\\Auth\\Storage",
+        "abstraction": 0.3333333333333333,
+        "instability": 1,
+        "distance": 0.23570226039551578,
+        "normalizedDistance": 0.33333333333333326,
+        "classCount": 3
+    },
+    {
+        "name": "Cake\\View",
+        "abstraction": 0.35714285714285715,
+        "instability": 0.6538461538461539,
+        "distance": 0.007770404188863132,
+        "normalizedDistance": 0.01098901098901095,
+        "classCount": 14
+    },
+    {
+        "name": "Cake\\View\\Form",
+        "abstraction": 0.16666666666666666,
+        "instability": 0.35,
+        "distance": 0.341768277573498,
+        "normalizedDistance": 0.4833333333333334,
+        "classCount": 6
+    },
+    {
+        "name": "Cake\\View\\Widget",
+        "abstraction": 0.07142857142857142,
+        "instability": 0.9230769230769231,
+        "distance": 0.003885202094431566,
+        "normalizedDistance": 0.005494505494505475,
+        "classCount": 14
+    },
+    {
+        "name": "Cake\\View\\Exception",
+        "abstraction": 0,
+        "instability": 0.14285714285714285,
+        "distance": 0.6060915267313265,
+        "normalizedDistance": 0.8571428571428572,
+        "classCount": 8
+    },
+    {
+        "name": "Cake\\View\\Helper",
+        "abstraction": 0.1,
+        "instability": 1,
+        "distance": 0.07071067811865481,
+        "normalizedDistance": 0.10000000000000009,
+        "classCount": 10
+    },
+    {
+        "name": "Cake\\Shell\\Task",
+        "abstraction": 0,
+        "instability": 0.8333333333333334,
+        "distance": 0.11785113019775789,
+        "normalizedDistance": 0.16666666666666663,
+        "classCount": 1
+    },
+    {
+        "name": "Cake\\Shell\\Helper",
+        "abstraction": 0,
+        "instability": 1,
+        "distance": 0,
+        "normalizedDistance": 0,
+        "classCount": 2
+    },
+    {
+        "name": "Cake\\Command",
+        "abstraction": 0.05,
+        "instability": 1,
+        "distance": 0.035355339059327404,
+        "normalizedDistance": 0.050000000000000044,
+        "classCount": 20
+    },
+    {
+        "name": "Cake\\Log",
+        "abstraction": 0.3333333333333333,
+        "instability": 0.4666666666666667,
+        "distance": 0.14142135623730948,
+        "normalizedDistance": 0.19999999999999996,
+        "classCount": 3
+    },
+    {
+        "name": "Cake\\Log\\Engine",
+        "abstraction": 0.2,
+        "instability": 0.75,
+        "distance": 0.035355339059327404,
+        "normalizedDistance": 0.050000000000000044,
+        "classCount": 5
+    }
+];
+
+    /*
+     * value accessor - returns the value to encode for a given data object.
+     * scale - maps value to a visual display encoding, such as a pixel position.
+     * map function - maps from data value to display value
+     * axis - sets up axis
+     */
+
+    // setup x
+    var xValue = function(d) { return d.abstraction;}, // data -> value
+        xScale = d3.scale.linear().range([0, width]), // value -> display
+        xMap = function(d) { return xScale(xValue(d));}, // data -> display
+        xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+
+    // setup y
+    var yValue = function(d) { return d.instability;}, // data -> value
+        yScale = d3.scale.linear().range([height, 0]), // value -> display
+        yMap = function(d) { return yScale(yValue(d));}, // data -> display
+        yAxis = d3.svg.axis().scale(yScale).orient("left");
+
+    // setup fill color
+    var cValue = function(d) { return d.normalizedDistance;},
+        color = d3.scale.linear().domain([0,1])
+            .interpolate(d3.interpolateHcl)
+            .range([d3.rgb("#00FF00"), d3.rgb('#FF0000')])
+
+    // add the graph canvas to #distances
+    var svg = d3.select("#distances").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    // add the tooltip area to the webpage
+    var tooltip = d3.select("#distances").append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
+
+    // x-axis
+    svg
+        .append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis)
+        .append("text")
+            .attr("class", "label")
+            .attr("x", width)
+            .attr("y", -6)
+            .style("text-anchor", "end")
+            .text("Abstraction");
+
+    // y-axis
+    svg
+        .append("g")
+            .attr("class", "y axis")
+            .call(yAxis)
+        .append("text")
+            .attr("class", "label")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", ".71em")
+            .style("text-anchor", "end")
+            .text("Instability");
+
+    // optimal distance line
+    svg.append("path")
+        .attr("class", "line")
+        .attr("d", (d3.svg.line().x(function (d) { return xScale(d); }).y(function (d) { return yScale(1-d); }))([0, 1]));
+
+    // draw dots
+    svg.selectAll(".dot")
+        .data(spots)
+        .enter().append("circle")
+        .attr("class", "dot")
+        .attr("r", function(d) { return 3.0 + 0.5 * d.classCount; })
+        .attr("cx", xMap)
+        .attr("cy", yMap)
+        .style("fill", function(d) { return color(cValue(d));})
+        .on("mouseover", function(d) {
+            tooltip.transition()
+                .duration(200)
+                .style("opacity", .9);
+            tooltip.html(d.name + "<br/> (" + (Math.round(1000 * xValue(d)) / 1000)
+                + ", " + (Math.round(1000 * yValue(d)) / 1000) + ")")
+                .style("left", (d3.event.pageX + 5) + "px")
+                .style("top", (d3.event.pageY - 28) + "px");
+        })
+        .on("mouseout", function(d) {
+            tooltip.transition()
+                .duration(500)
+                .style("opacity", 0);
+        });
+</script>

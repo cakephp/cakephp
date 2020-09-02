@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PhpMetrics report</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/milligram.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/roboto.css">
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/material-icons.css">
+    <link rel="stylesheet" href="css/graph-carousel.css">
+</head>
+<body>
+
+
+<header class="headerbar">
+    <div class="headerbarInner">
+        <div class="float-left navigation-title">
+            <a href="http://www.phpmetrics.org/">
+                <h1 class="title">PhpMetrics</h1>
+                <span class="subtitle">
+                Static analyzer for PHP
+            </span>
+            </a>
+        </div>
+        <ul class="navigation-list float-right">
+            <li class="navigation-item">
+                <a class="navigation-link" href="http://www.phpmetrics.org/documentation/index.html">Documentation</a>
+                <a class="navigation-link" href="https://www.github.com/phpmetrics/phpmetrics">Support</a>
+            </li>
+        </ul>
+    </div>
+</header>
+
+<a class="hidden-xs github" href="https://github.com/phpmetrics/phpmetrics"
+   title="PhpMetrics on Github" target="blank">
+    <svg width="80" height="80" viewBox="0 0 250 250" class="github">
+        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+        <path
+            d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+            fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+        <path
+            d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+            fill="currentColor" class="octo-body"></path>
+    </svg>
+</a>
+
+
+<div class="page">
+    <div class="content content-first">
+        <div class="report-details">
+            Created at 2020-09-02 15:41:14        , with PHPMetrics v2.7.4 (<a href="https://twitter.com/Halleck45">Jean-François Lépine</a>).
+        </div>
+
+        
+
+
+<div class="row">
+    <div class="column">
+        <div class="bloc">
+            <h4>Package relations</h4>
+            <div id="chart-relations"></div>
+        </div>
+    </div>
+</div>
+
+</div>
+
+<!-- Sidebar -->
+<div id="sidebar">
+    <div class="content">
+        <div class="logo">
+            <a href="http://www.phpmetrics.org"><img src="images/phpmetrics-maintenability.png"
+                                                 alt="Logo PhpMetrics"/></a>
+            <h1>PhpMetrics</h1>
+        </div>
+        <div class="links">
+            <ul>
+                <li>
+                    <a href="index.html">
+                        <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0 0h24v24H0z" fill="none"/>
+                            <path
+                                d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                        </svg>
+                        Overview
+                    </a>
+                </li>
+                <li>
+                    <a href="violations.html">
+                        <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M20 8h-2.81c-.45-.78-1.07-1.45-1.82-1.96L17 4.41 15.59 3l-2.17 2.17C12.96 5.06 12.49 5 12 5c-.49 0-.96.06-1.41.17L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.26 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20V8zm-6 8h-4v-2h4v2zm0-4h-4v-2h4v2z"/>
+                        </svg>
+                        Violations (452)
+                    </a>
+                </li>
+                                    <li>
+                        <a href="composer.html">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="24px" height="24px"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>
+                            Composer
+                        </a>
+                    </li>
+                                                <li>
+                    <a href="loc.html">
+                        <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24"
+                             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <defs>
+                                <path d="M0 0h24v24H0z" id="a"/>
+                            </defs>
+                            <clipPath id="b">
+                                <use overflow="visible" xlink:href="#a"/>
+                            </clipPath>
+                            <path clip-path="url(#b)"
+                                  d="M11 5.08V2c-5 .5-9 4.81-9 10s4 9.5 9 10v-3.08c-3-.48-6-3.4-6-6.92s3-6.44 6-6.92zM18.97 11H22c-.47-5-4-8.53-9-9v3.08C16 5.51 18.54 8 18.97 11zM13 18.92V22c5-.47 8.53-4 9-9h-3.03c-.43 3-2.97 5.49-5.97 5.92z"/>
+                        </svg>
+                        Size &amp; volume
+                    </a>
+                </li>
+                <li>
+                    <a href="complexity.html">
+                        <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0 0h24v24H0V0z" fill="none"/>
+                            <path
+                                d="M19.07 4.93l-1.41 1.41C19.1 7.79 20 9.79 20 12c0 4.42-3.58 8-8 8s-8-3.58-8-8c0-4.08 3.05-7.44 7-7.93v2.02C8.16 6.57 6 9.03 6 12c0 3.31 2.69 6 6 6s6-2.69 6-6c0-1.66-.67-3.16-1.76-4.24l-1.41 1.41C15.55 9.9 16 10.9 16 12c0 2.21-1.79 4-4 4s-4-1.79-4-4c0-1.86 1.28-3.41 3-3.86v2.14c-.6.35-1 .98-1 1.72 0 1.1.9 2 2 2s2-.9 2-2c0-.74-.4-1.38-1-1.72V2h-1C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10c0-2.76-1.12-5.26-2.93-7.07z"/>
+                        </svg>
+                        Complexity &amp; defects
+                    </a>
+                </li>
+                <li>
+                    <a href="oop.html">
+                        <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0 0h24v24H0z" fill="none"/>
+                            <path
+                                d="M17 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zM5 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 6c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/>
+                        </svg>
+                        Object oriented metrics
+                    </a>
+                </li>
+                <li>
+                    <a href="relations.html">
+                        <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0 0h24v24H0z" fill="none"/>
+                            <path
+                                d="M14 4l2.29 2.29-2.88 2.88 1.42 1.42 2.88-2.88L20 10V4zm-4 0H4v6l2.29-2.29 4.71 4.7V20h2v-8.41l-5.29-5.3z"/>
+                        </svg>
+                        Object relations
+                    </a>
+                </li>
+                <li>
+                    <a href="coupling.html">
+                        <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24"
+                             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <defs>
+                                <path d="M0 0h24v24H0V0z" id="a"/>
+                            </defs>
+                            <clipPath id="b">
+                                <use overflow="visible" xlink:href="#a"/>
+                            </clipPath>
+                            <path clip-path="url(#b)"
+                                  d="M9.01 14H2v2h7.01v3L13 15l-3.99-4v3zm5.98-1v-3H22V8h-7.01V5L11 9l3.99 4z"/>
+                        </svg>
+                        Coupling
+                    </a>
+                </li>
+                <li>
+                    <a href="packages.html">
+                        <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24"
+                             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <path d="M11 9.16V2c-5 .5-9 4.79-9 10s4 9.5 9 10v-7.16c-1-.41-2-1.52-2-2.84s1-2.43 2-2.84zM14.86 11H22c-.48-4.75-4-8.53-9-9v7.16c1 .3 1.52.98 1.86 1.84zM13 14.84V22c5-.47 8.52-4.25 9-9h-7.14c-.34.86-.86 1.54-1.86 1.84z"/>
+                        </svg>
+                        Package oriented metrics
+                    </a>
+                </li>
+                <li>
+                    <a href="package_relations.html">
+                        <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path d="M17 20.41L18.41 19 15 15.59 13.59 17 17 20.41zM7.5 8H11v5.59L5.59 19 7 20.41l6-6V8h3.5L12 3.5 7.5 8z"/>
+                        </svg>
+                        Package relations
+                    </a>
+                </li>
+                                <!--<li>
+                    <a href="all.html">
+                        <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 3v18h18V3H3zm8 16H5v-6h6v6zm0-8H5V5h6v6zm8 8h-6v-6h6v6zm0-8h-6V5h6v6z"/>
+                            <path d="M0 0h24v24H0z" fill="none"/>
+                        </svg>
+                        All metrics
+                    </a>
+                </li>-->
+                <!--                <li>-->
+                <!--                    <a href="#">-->
+                <!--                        <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24"-->
+                <!--                             xmlns="http://www.w3.org/2000/svg">-->
+                <!--                            <path-->
+                <!--                                d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>-->
+                <!--                            <path d="M0 0h24v24H0z" fill="none"/>-->
+                <!--                        </svg>-->
+                <!--                        Third party-->
+                <!--                    </a>-->
+                <!--                </li>-->
+                <!--<li class="sep">
+                    <a href="panel.html">
+                        <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 1.99-.9 1.99-2L23 5c0-1.1-.9-2-2-2zm0 14H3V5h18v12z"/>
+                        </svg>
+                        TV Panel
+                    </a>
+                </li>-->
+            </ul>
+        </div>
+    </div>
+</div>
+</div>
+
+<script type="text/javascript" src="js/functions.js"></script>
+<script type="text/javascript" src="js/d3.v3.js"></script>
+<script type="text/javascript" src="js/d3.hexbin.v0.js"></script>
+<script type="text/javascript" src="js/sort-table.min.js"></script>
+<script type="text/javascript" src="js/graph-maintainability.js"></script>
+<script type="text/javascript" src="js/graph-carousel.js"></script>
+<script type="text/javascript" src="js/graph-licenses.js"></script>
+<script type="text/javascript" src="js/FileSaver.min.js"></script>
+
+<script src="js/clusterize.min.js"></script>
+<link rel="stylesheet" href="css/clusterize.css">
+
+<script type="text/javascript" src="classes.js"></script>
+
+<script type="text/javascript">
+    var accessibilityEnabled = false;
+</script>
+
+</body>
+</html>
+
+
+<script type="text/javascript">
+
+
+    var relations = [
+    {
+        "name": "Cake\\Controller",
+        "size": 3000,
+        "relations": [
+            "Cake\\Event",
+            "Cake\\Core",
+            "Cake\\Core\\Exception",
+            "Cake\\Controller\\Exception",
+            "global",
+            "Cake\\Http",
+            "Psr\\Http\\Message",
+            "Cake\\Utility",
+            "Cake\\Http\\Exception",
+            "Cake\\Routing"
+        ]
+    },
+    {
+        "name": "Cake\\Event",
+        "size": 3000,
+        "relations": [
+            "Cake\\Core\\Exception",
+            "global"
+        ]
+    },
+    {
+        "name": "Cake\\Core",
+        "size": 3000,
+        "relations": [
+            "global",
+            "Cake\\Core\\Exception",
+            "Cake\\Utility",
+            "Cake\\Core\\Configure",
+            "Cake\\Core\\Configure\\Engine",
+            "Cake\\Cache",
+            "Cake\\Routing",
+            "Cake\\Console",
+            "Cake\\Http",
+            "Psr\\Http\\Server",
+            "Cake\\Event"
+        ]
+    },
+    {
+        "name": "Cake\\Core\\Exception",
+        "size": 3000,
+        "relations": [
+            "global"
+        ]
+    },
+    {
+        "name": "Cake\\Controller\\Exception",
+        "size": 3000,
+        "relations": [
+            "Cake\\Core\\Exception",
+            "Cake\\Http\\Exception"
+        ]
+    },
+    {
+        "name": "global",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "Cake\\Http",
+        "size": 3000,
+        "relations": [
+            "Laminas\\Diactoros",
+            "Psr\\Http\\Message",
+            "global",
+            "Cake\\Core",
+            "Cake\\Http\\Cookie",
+            "Cake\\Http\\Exception",
+            "Cake\\Utility",
+            "Cake\\Core\\Exception",
+            "Laminas\\HttpHandlerRunner\\Emitter",
+            "Psr\\Http\\Server",
+            "Cake\\Event",
+            "Psr\\Http\\Client",
+            "Cake\\Http\\Client",
+            "Cake\\Http\\Middleware",
+            "Cake\\Routing",
+            "Cake\\Console",
+            "Cake\\Controller"
+        ]
+    },
+    {
+        "name": "Psr\\Http\\Message",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "Cake\\Utility",
+        "size": 3000,
+        "relations": [
+            "global",
+            "Cake\\Core\\Exception",
+            "Cake\\Utility\\Exception",
+            "Cake\\Utility\\Crypto"
+        ]
+    },
+    {
+        "name": "Cake\\Http\\Exception",
+        "size": 3000,
+        "relations": [
+            "Cake\\Core\\Exception"
+        ]
+    },
+    {
+        "name": "Cake\\Routing",
+        "size": 3000,
+        "relations": [
+            "Cake\\Routing\\Route",
+            "Cake\\Routing\\Exception",
+            "Psr\\Http\\Message",
+            "global",
+            "Cake\\Http",
+            "Cake\\Core",
+            "Cake\\Utility",
+            "Cake\\Core\\Exception"
+        ]
+    },
+    {
+        "name": "Cake\\Controller\\Component",
+        "size": 3000,
+        "relations": [
+            "Cake\\Controller",
+            "Cake\\Event",
+            "Cake\\Routing",
+            "Cake\\Form",
+            "Cake\\Core",
+            "Cake\\Http\\Exception",
+            "global",
+            "Cake\\Core\\Exception",
+            "Cake\\Utility",
+            "Cake\\Datasource",
+            "Cake\\Controller\\Exception",
+            "Cake\\Http"
+        ]
+    },
+    {
+        "name": "Cake\\Form",
+        "size": 3000,
+        "relations": [
+            "Cake\\Core",
+            "Cake\\Utility",
+            "Cake\\Event",
+            "Cake\\Validation",
+            "global"
+        ]
+    },
+    {
+        "name": "Cake\\Datasource",
+        "size": 3000,
+        "relations": [
+            "global",
+            "Cake\\Cache",
+            "Cake\\Datasource\\Exception",
+            "Cake\\Collection\\Iterator",
+            "Cake\\Core\\Exception",
+            "Cake\\Core",
+            "Cake\\Collection",
+            "Cake\\Utility",
+            "Cake\\ORM\\Locator",
+            "Psr\\Log",
+            "Psr\\SimpleCache"
+        ]
+    },
+    {
+        "name": "Cake\\Validation",
+        "size": 3000,
+        "relations": [
+            "global",
+            "Cake\\I18n",
+            "Cake\\Utility"
+        ]
+    },
+    {
+        "name": "Cake\\Error",
+        "size": 3000,
+        "relations": [
+            "global",
+            "Cake\\Routing",
+            "Cake\\Core",
+            "Cake\\Http",
+            "Cake\\Console",
+            "Cake\\Log",
+            "Psr\\Http\\Message",
+            "Cake\\Controller",
+            "Cake\\Event",
+            "Cake\\Utility",
+            "Cake\\Error\\Debug",
+            "Cake\\Core\\Exception"
+        ]
+    },
+    {
+        "name": "Cake\\Console",
+        "size": 3000,
+        "relations": [
+            "Cake\\Core",
+            "Cake\\Console\\Exception",
+            "global",
+            "Cake\\Utility",
+            "Cake\\Shell\\Task",
+            "Cake\\Log",
+            "Cake\\Filesystem",
+            "Cake\\Event",
+            "Cake\\Routing",
+            "Cake\\Log\\Engine"
+        ]
+    },
+    {
+        "name": "Cake\\Log",
+        "size": 3000,
+        "relations": [
+            "global",
+            "Cake\\Core",
+            "Psr\\Log"
+        ]
+    },
+    {
+        "name": "Cake\\Error\\Debug",
+        "size": 3000,
+        "relations": [
+            "global"
+        ]
+    },
+    {
+        "name": "Cake\\Error\\Middleware",
+        "size": 3000,
+        "relations": [
+            "Psr\\Http\\Server",
+            "global",
+            "Psr\\Http\\Message",
+            "Cake\\Http\\Exception",
+            "Laminas\\Diactoros\\Response",
+            "Cake\\Http",
+            "Cake\\Error",
+            "Cake\\Core"
+        ]
+    },
+    {
+        "name": "Psr\\Http\\Server",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "Laminas\\Diactoros\\Response",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "Cake\\Cache\\Engine",
+        "size": 3000,
+        "relations": [
+            "Cake\\Cache",
+            "global"
+        ]
+    },
+    {
+        "name": "Cake\\Cache",
+        "size": 3000,
+        "relations": [
+            "global",
+            "Cake\\Cache\\Engine",
+            "Psr\\SimpleCache",
+            "Cake\\Core\\Exception",
+            "Cake\\Core"
+        ]
+    },
+    {
+        "name": "Psr\\SimpleCache",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "Cake\\Console\\Exception",
+        "size": 3000,
+        "relations": [
+            "Cake\\Core\\Exception"
+        ]
+    },
+    {
+        "name": "Cake\\Shell\\Task",
+        "size": 3000,
+        "relations": [
+            "Cake\\Console",
+            "Cake\\Core",
+            "Cake\\Utility",
+            "Cake\\Filesystem"
+        ]
+    },
+    {
+        "name": "Cake\\Filesystem",
+        "size": 3000,
+        "relations": [
+            "global",
+            "Cake\\Core\\Exception"
+        ]
+    },
+    {
+        "name": "Cake\\Log\\Engine",
+        "size": 3000,
+        "relations": [
+            "Psr\\Log",
+            "global",
+            "Cake\\Console",
+            "Cake\\Core",
+            "Cake\\Utility"
+        ]
+    },
+    {
+        "name": "Cake\\Console\\Command",
+        "size": 3000,
+        "relations": [
+            "Cake\\Console",
+            "Cake\\Core",
+            "global"
+        ]
+    },
+    {
+        "name": "Cake\\Http\\Cookie",
+        "size": 3000,
+        "relations": [
+            "global",
+            "Psr\\Http\\Message",
+            "Cake\\Utility"
+        ]
+    },
+    {
+        "name": "Laminas\\Diactoros",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "Laminas\\HttpHandlerRunner\\Emitter",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "Psr\\Http\\Client",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "Cake\\Http\\Client",
+        "size": 3000,
+        "relations": [
+            "Psr\\Http\\Message",
+            "Laminas\\Diactoros",
+            "global",
+            "Cake\\Http\\Cookie",
+            "Cake\\Utility"
+        ]
+    },
+    {
+        "name": "Cake\\Http\\Middleware",
+        "size": 3000,
+        "relations": [
+            "Psr\\Http\\Server",
+            "Psr\\Http\\Message",
+            "Cake\\Http",
+            "Cake\\Http\\Cookie",
+            "global",
+            "Cake\\Http\\Exception",
+            "Cake\\Utility",
+            "ParagonIE\\CSPBuilder",
+            "Cake\\Core",
+            "Laminas\\Diactoros\\Response"
+        ]
+    },
+    {
+        "name": "Cake\\Http\\Session",
+        "size": 3000,
+        "relations": [
+            "global",
+            "Cake\\Cache",
+            "Cake\\ORM"
+        ]
+    },
+    {
+        "name": "Cake\\ORM",
+        "size": 3000,
+        "relations": [
+            "Cake\\Collection",
+            "Cake\\Database\\Expression",
+            "Cake\\Database",
+            "global",
+            "Cake\\Datasource",
+            "Cake\\Core",
+            "Cake\\Utility",
+            "Cake\\Database\\Statement",
+            "Cake\\ORM\\Association",
+            "Cake\\ORM\\Rule",
+            "Cake\\Event",
+            "Cake\\Validation",
+            "Cake\\Database\\Schema",
+            "Cake\\ORM\\Exception",
+            "Cake\\Datasource\\Exception",
+            "Cake\\Core\\Exception",
+            "Cake\\ORM\\Locator"
+        ]
+    },
+    {
+        "name": "ParagonIE\\CSPBuilder",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "Cake\\Http\\Client\\Adapter",
+        "size": 3000,
+        "relations": [
+            "Cake\\Http\\Client",
+            "Psr\\Http\\Message",
+            "Cake\\Http\\Client\\Exception",
+            "Composer\\CaBundle",
+            "Cake\\Http\\Exception"
+        ]
+    },
+    {
+        "name": "Cake\\Http\\Client\\Exception",
+        "size": 3000,
+        "relations": [
+            "global",
+            "Psr\\Http\\Client",
+            "Psr\\Http\\Message"
+        ]
+    },
+    {
+        "name": "Composer\\CaBundle",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "Cake\\Http\\Client\\Auth",
+        "size": 3000,
+        "relations": [
+            "Cake\\Http\\Client",
+            "Cake\\Core\\Exception",
+            "global",
+            "Cake\\Utility",
+            "Psr\\Http\\Message",
+            "Cake\\Http"
+        ]
+    },
+    {
+        "name": "Cake\\Database\\Schema",
+        "size": 3000,
+        "relations": [
+            "Psr\\SimpleCache",
+            "Cake\\Database",
+            "Cake\\Datasource",
+            "global"
+        ]
+    },
+    {
+        "name": "Cake\\Database",
+        "size": 3000,
+        "relations": [
+            "Cake\\Database\\Expression",
+            "global",
+            "Cake\\Database\\Schema",
+            "Cake\\Database\\Statement",
+            "Cake\\Core\\Exception",
+            "Cake\\Datasource",
+            "Cake\\Database\\Retry",
+            "Cake\\Core\\Retry",
+            "Cake\\Core",
+            "Cake\\Database\\Exception",
+            "Cake\\Log",
+            "Psr\\SimpleCache",
+            "Cake\\Cache",
+            "Psr\\Log",
+            "Cake\\Database\\Log"
+        ]
+    },
+    {
+        "name": "Cake\\Database\\Expression",
+        "size": 3000,
+        "relations": [
+            "Cake\\Database",
+            "global"
+        ]
+    },
+    {
+        "name": "Cake\\Database\\Statement",
+        "size": 3000,
+        "relations": [
+            "global",
+            "Cake\\Database",
+            "Cake\\Core\\Exception"
+        ]
+    },
+    {
+        "name": "Cake\\Database\\Retry",
+        "size": 3000,
+        "relations": [
+            "Cake\\Core\\Retry",
+            "Cake\\Database",
+            "global"
+        ]
+    },
+    {
+        "name": "Cake\\Core\\Retry",
+        "size": 3000,
+        "relations": [
+            "global"
+        ]
+    },
+    {
+        "name": "Cake\\Database\\Exception",
+        "size": 3000,
+        "relations": [
+            "Cake\\Core\\Exception"
+        ]
+    },
+    {
+        "name": "Psr\\Log",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "Cake\\Database\\Log",
+        "size": 3000,
+        "relations": [
+            "global",
+            "Cake\\Database\\Statement",
+            "Psr\\Log",
+            "Cake\\Log\\Engine",
+            "Cake\\Log"
+        ]
+    },
+    {
+        "name": "Cake\\Database\\Driver",
+        "size": 3000,
+        "relations": [
+            "Cake\\Database",
+            "global",
+            "Cake\\Database\\Schema",
+            "Cake\\Database\\Expression",
+            "Cake\\Database\\Statement"
+        ]
+    },
+    {
+        "name": "Cake\\Database\\Type",
+        "size": 3000,
+        "relations": [
+            "Cake\\Database",
+            "Cake\\Utility",
+            "global",
+            "Cake\\Core\\Exception"
+        ]
+    },
+    {
+        "name": "Cake\\I18n",
+        "size": 3000,
+        "relations": [
+            "Cake\\Chronos",
+            "global",
+            "Aura\\Intl",
+            "Cake\\I18n\\Formatter",
+            "Cake\\Cache",
+            "Cake\\Core\\Exception",
+            "Cake\\Core",
+            "Cake\\Utility"
+        ]
+    },
+    {
+        "name": "Cake\\Network\\Exception",
+        "size": 3000,
+        "relations": [
+            "Cake\\Core\\Exception"
+        ]
+    },
+    {
+        "name": "Cake\\Network",
+        "size": 3000,
+        "relations": [
+            "Cake\\Network\\Exception",
+            "Composer\\CaBundle",
+            "Cake\\Validation",
+            "global",
+            "Cake\\Core\\Exception"
+        ]
+    },
+    {
+        "name": "Cake\\Core\\Configure",
+        "size": 3000,
+        "relations": [
+            "Cake\\Core\\Exception",
+            "Cake\\Core"
+        ]
+    },
+    {
+        "name": "Cake\\Core\\Configure\\Engine",
+        "size": 3000,
+        "relations": [
+            "Cake\\Core\\Configure",
+            "Cake\\Core\\Exception",
+            "Cake\\Utility"
+        ]
+    },
+    {
+        "name": "Cake\\Datasource\\Exception",
+        "size": 3000,
+        "relations": [
+            "Cake\\Core\\Exception"
+        ]
+    },
+    {
+        "name": "Cake\\Collection\\Iterator",
+        "size": 3000,
+        "relations": [
+            "Cake\\Collection",
+            "global"
+        ]
+    },
+    {
+        "name": "Cake\\Collection",
+        "size": 3000,
+        "relations": [
+            "Cake\\Collection\\Iterator",
+            "global"
+        ]
+    },
+    {
+        "name": "Cake\\ORM\\Locator",
+        "size": 3000,
+        "relations": [
+            "Cake\\Datasource",
+            "Cake\\Datasource\\Locator",
+            "global",
+            "Cake\\ORM",
+            "Cake\\Utility",
+            "Cake\\Core"
+        ]
+    },
+    {
+        "name": "Cake\\Datasource\\Locator",
+        "size": 3000,
+        "relations": [
+            "global",
+            "Cake\\Datasource"
+        ]
+    },
+    {
+        "name": "Cake\\Chronos",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "Aura\\Intl",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "Cake\\I18n\\Formatter",
+        "size": 3000,
+        "relations": [
+            "Aura\\Intl",
+            "global",
+            "Aura\\Intl\\Exception"
+        ]
+    },
+    {
+        "name": "Cake\\I18n\\Parser",
+        "size": 3000,
+        "relations": [
+            "global"
+        ]
+    },
+    {
+        "name": "Cake\\I18n\\Middleware",
+        "size": 3000,
+        "relations": [
+            "Psr\\Http\\Server",
+            "Psr\\Http\\Message",
+            "global",
+            "Cake\\I18n"
+        ]
+    },
+    {
+        "name": "Aura\\Intl\\Exception",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "Cake\\ORM\\Association",
+        "size": 3000,
+        "relations": [
+            "Cake\\ORM",
+            "global",
+            "Cake\\Datasource",
+            "Cake\\Collection",
+            "Cake\\Database\\Expression",
+            "Cake\\ORM\\Association\\Loader",
+            "Cake\\Utility",
+            "Cake\\Core"
+        ]
+    },
+    {
+        "name": "Cake\\ORM\\Association\\Loader",
+        "size": 3000,
+        "relations": [
+            "Cake\\ORM",
+            "global",
+            "Cake\\Database\\Expression",
+            "Cake\\Database"
+        ]
+    },
+    {
+        "name": "Cake\\ORM\\Rule",
+        "size": 3000,
+        "relations": [
+            "Cake\\Datasource",
+            "Cake\\Validation",
+            "global",
+            "Cake\\ORM"
+        ]
+    },
+    {
+        "name": "Cake\\ORM\\Exception",
+        "size": 3000,
+        "relations": [
+            "Cake\\Core\\Exception",
+            "Cake\\Datasource",
+            "Cake\\Utility"
+        ]
+    },
+    {
+        "name": "Cake\\ORM\\Behavior\\Translate",
+        "size": 3000,
+        "relations": [
+            "Cake\\ORM",
+            "Cake\\Collection",
+            "Cake\\Event",
+            "global",
+            "Cake\\Datasource",
+            "Cake\\Utility",
+            "Cake\\I18n"
+        ]
+    },
+    {
+        "name": "Cake\\ORM\\Behavior",
+        "size": 3000,
+        "relations": [
+            "Cake\\ORM",
+            "Cake\\I18n",
+            "Cake\\ORM\\Behavior\\Translate",
+            "global",
+            "Cake\\Utility",
+            "Cake\\Database\\Expression",
+            "Cake\\Event",
+            "Cake\\Datasource",
+            "Cake\\Datasource\\Exception",
+            "Cake\\Database"
+        ]
+    },
+    {
+        "name": "Cake\\Event\\Decorator",
+        "size": 3000,
+        "relations": [
+            "Cake\\Event",
+            "global"
+        ]
+    },
+    {
+        "name": "Cake\\Utility\\Exception",
+        "size": 3000,
+        "relations": [
+            "Cake\\Core\\Exception"
+        ]
+    },
+    {
+        "name": "Cake\\Utility\\Crypto",
+        "size": 3000,
+        "relations": []
+    },
+    {
+        "name": "Cake\\Routing\\Route",
+        "size": 3000,
+        "relations": [
+            "global",
+            "Psr\\Http\\Message",
+            "Cake\\Utility",
+            "Cake\\Routing",
+            "Cake\\Http\\Exception"
+        ]
+    },
+    {
+        "name": "Cake\\Routing\\Exception",
+        "size": 3000,
+        "relations": [
+            "Cake\\Core\\Exception"
+        ]
+    },
+    {
+        "name": "Cake\\Routing\\Middleware",
+        "size": 3000,
+        "relations": [
+            "Psr\\Http\\Server",
+            "Cake\\Routing",
+            "Cake\\Cache",
+            "Psr\\Http\\Message",
+            "Laminas\\Diactoros\\Response",
+            "Cake\\Http",
+            "global",
+            "Cake\\Utility",
+            "Cake\\Core",
+            "Laminas\\Diactoros"
+        ]
+    },
+    {
+        "name": "Cake\\Mailer",
+        "size": 3000,
+        "relations": [
+            "global",
+            "Cake\\Event",
+            "Cake\\View",
+            "Cake\\Mailer\\Exception",
+            "Cake\\Core\\Exception",
+            "Cake\\Log",
+            "Cake\\Core",
+            "Cake\\Utility",
+            "Cake\\Http\\Client"
+        ]
+    },
+    {
+        "name": "Cake\\View",
+        "size": 3000,
+        "relations": [
+            "Cake\\Utility",
+            "Cake\\Core",
+            "Cake\\Event",
+            "Cake\\View\\Exception",
+            "global",
+            "Cake\\Core\\Exception",
+            "Cake\\Core\\Configure\\Engine",
+            "Cake\\Http",
+            "Cake\\Cache",
+            "Cake\\Routing"
+        ]
+    },
+    {
+        "name": "Cake\\Mailer\\Exception",
+        "size": 3000,
+        "relations": [
+            "Cake\\Core\\Exception"
+        ]
+    },
+    {
+        "name": "Cake\\Mailer\\Transport",
+        "size": 3000,
+        "relations": [
+            "Cake\\Mailer",
+            "Cake\\Core\\Exception",
+            "Cake\\Network\\Exception",
+            "Cake\\Network",
+            "global"
+        ]
+    },
+    {
+        "name": "Cake\\Auth",
+        "size": 3000,
+        "relations": [
+            "Cake\\Http",
+            "Cake\\Core",
+            "global",
+            "Cake\\Error",
+            "Cake\\Utility",
+            "Cake\\Controller",
+            "Cake\\Event",
+            "Cake\\ORM",
+            "Cake\\Core\\Exception",
+            "Cake\\Http\\Exception"
+        ]
+    },
+    {
+        "name": "Cake\\Auth\\Storage",
+        "size": 3000,
+        "relations": [
+            "Cake\\Http"
+        ]
+    },
+    {
+        "name": "Cake\\View\\Exception",
+        "size": 3000,
+        "relations": [
+            "Cake\\Core\\Exception"
+        ]
+    },
+    {
+        "name": "Cake\\View\\Form",
+        "size": 3000,
+        "relations": [
+            "Cake\\Collection",
+            "global",
+            "Cake\\Http",
+            "Cake\\Utility",
+            "Cake\\Validation"
+        ]
+    },
+    {
+        "name": "Cake\\View\\Widget",
+        "size": 3000,
+        "relations": [
+            "Cake\\View\\Form",
+            "Cake\\View",
+            "Cake\\Core\\Configure\\Engine",
+            "global",
+            "Cake\\Core"
+        ]
+    },
+    {
+        "name": "Cake\\View\\Helper",
+        "size": 3000,
+        "relations": [
+            "Cake\\View",
+            "Cake\\View\\Widget",
+            "Cake\\View\\Form",
+            "Cake\\Core",
+            "Cake\\Routing",
+            "Cake\\Form",
+            "Cake\\Core\\Exception",
+            "Cake\\Utility",
+            "global",
+            "Cake\\I18n"
+        ]
+    },
+    {
+        "name": "Cake\\Shell\\Helper",
+        "size": 3000,
+        "relations": [
+            "Cake\\Console",
+            "global"
+        ]
+    },
+    {
+        "name": "Cake\\Command",
+        "size": 3000,
+        "relations": [
+            "Cake\\Console",
+            "Cake\\Core",
+            "Cake\\Utility",
+            "Cake\\Filesystem",
+            "global",
+            "Cake\\Cache",
+            "Cake\\Routing",
+            "Cake\\Http"
+        ]
+    }
+];
+
+    /**
+     * Thanks to http://bl.ocks.org/mbostock/raw/7607999/
+     */
+    function updateRelationsChart() {
+
+
+        var diameter = document.getElementById('chart-relations').offsetWidth,
+            radius = diameter / 2,
+            innerRadius = radius - 320;
+
+        var cluster = d3.layout.cluster()
+            .size([360, innerRadius])
+            .sort(null)
+            .value(function (d) {
+                return d.size;
+            });
+
+        var bundle = d3.layout.bundle();
+
+        var line = d3.svg.line.radial()
+            .interpolate("bundle")
+            .tension(.85)
+            .radius(function (d) {
+                return d.y;
+            })
+            .angle(function (d) {
+                return d.x / 180 * Math.PI;
+            });
+
+        var svg = d3.select("#chart-relations").append("svg")
+            .attr("width", diameter)
+            .attr("height", diameter)
+            .append("g")
+            .attr("transform", "translate(" + radius + "," + radius + ")");
+
+        var link = svg.append("g").selectAll(".link"),
+            node = svg.append("g").selectAll(".node");
+
+
+        var nodes = cluster.nodes(packageHierarchy(relations)),
+            links = packageImports(nodes);
+        link = link
+            .data(bundle(links))
+            .enter().append("path")
+            .each(function (d) {
+                d.source = d[0], d.target = d[d.length - 1];
+            })
+            .attr("class", "link")
+            .attr("d", line);
+
+        node = node
+            .data(nodes.filter(function (n) {
+                return !n.children;
+            }))
+            .enter().append("text")
+            .attr("class", "node")
+            .attr("dy", ".31em")
+            .attr("transform", function (d) {
+                return "rotate(" + (d.x - 90) + ")translate(" + (d.y + 8) + ",0)" + (d.x < 180 ? "" : "rotate(180)");
+            })
+            .style("text-anchor", function (d) {
+                return d.x < 180 ? "start" : "end";
+            })
+            .text(function (d) {
+                return d.key;
+            })
+            .on("mouseover", mouseovered)
+            .on("mouseout", mouseouted);
+
+
+//        d3.data(relations);
+
+        function mouseovered(d) {
+            node
+                .each(function (n) {
+                    n.target = n.source = false;
+                });
+
+            link
+                .classed("link--target", function (l) {
+                    if (l.target === d) return l.source.source = true;
+                })
+                .classed("link--source", function (l) {
+                    if (l.source === d) return l.target.target = true;
+                })
+                .filter(function (l) {
+                    return l.target === d || l.source === d;
+                })
+                .each(function () {
+                    this.parentNode.appendChild(this);
+                });
+
+            node
+                .classed("node--target", function (n) {
+                    return n.target;
+                })
+                .classed("node--source", function (n) {
+                    return n.source;
+                });
+        }
+
+        function mouseouted(d) {
+            link
+                .classed("link--target", false)
+                .classed("link--source", false);
+
+            node
+                .classed("node--target", false)
+                .classed("node--source", false);
+        }
+
+        d3.select(self.frameElement).style("height", diameter + "px");
+
+        // Lazily construct the package hierarchy from class names.
+        function packageHierarchy(classes) {
+            var map = {};
+
+            function find(name, data) {
+                name = (data ? name + ' ' : name);
+                var node = map[name];
+                if (!node) {
+                    node = map[name] = data || {name: name, children: []};
+                    if (name.length) {
+                        node.parent = find("");
+                        if (!node.parent.children) {
+                            node.parent.children = []; // fix anomalies
+                        }
+                        node.parent.children.push(node);
+                        node.key = name.trim();
+                    }
+                }
+                return node;
+            }
+
+            classes.forEach(function (d) {
+                find(d.name, d);
+            });
+
+            return map[""];
+        }
+
+        // Return a list of imports for the given array of nodes.
+        function packageImports(nodes) {
+            var map = {},
+                imports = [];
+
+            // Compute a map from name to node.
+            nodes.forEach(function (d) {
+                map[d.name] = d;
+            });
+
+            // For each import, construct a link from the source to target node.
+            nodes.forEach(function (d) {
+                if (d.relations) d.relations.forEach(function (i) {
+                    imports.push({source: map[d.name], target: map[i]});
+                });
+            });
+
+            return imports;
+        }
+
+
+    }
+
+    document.onreadystatechange = function () {
+        if (document.readyState === 'complete') {
+            updateRelationsChart();
+        }
+    };
+
+</script>
