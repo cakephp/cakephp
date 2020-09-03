@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Core;
 use Cake\Console\CommandCollection;
 use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
+use Cake\Core\Container;
 use Cake\Core\Plugin;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Http\MiddlewareQueue;
@@ -59,6 +60,7 @@ class BasePluginTest extends TestCase
         $this->assertFalse($plugin->isEnabled('bootstrap'));
         $this->assertTrue($plugin->isEnabled('console'));
         $this->assertTrue($plugin->isEnabled('middleware'));
+        $this->assertTrue($plugin->isEnabled('register'));
     }
 
     public function testGetName()
@@ -83,11 +85,18 @@ class BasePluginTest extends TestCase
         $this->assertSame($middleware, $plugin->middleware($middleware));
     }
 
-    public function testConsoleNoop()
+    public function testConsole()
     {
         $plugin = new BasePlugin();
         $commands = new CommandCollection();
         $this->assertSame($commands, $plugin->console($commands));
+    }
+
+    public function testRegister()
+    {
+        $plugin = new BasePlugin();
+        $container = new Container();
+        $this->assertSame($container, $plugin->register($container));
     }
 
     public function testConsoleFind()
