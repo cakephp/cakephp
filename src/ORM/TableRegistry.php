@@ -55,9 +55,6 @@ use Cake\ORM\Locator\LocatorInterface;
  * // Prior to 3.6.0
  * $table = TableRegistry::get('Users', $config);
  * ```
- *
- * @deprecated 4.1.0 Use {@see \Cake\ORM\Locator\LocatorAwareTrait::getTableLocator()}
- *   or \Cake\Datasource\FactoryLocator::get('Table') to get the table locator instance instead.
  */
 class TableRegistry
 {
