@@ -20,6 +20,9 @@ namespace Cake\Http;
 use Cake\Console\CommandCollection;
 use Cake\Controller\ControllerFactory;
 use Cake\Core\ConsoleApplicationInterface;
+use Cake\Core\Container;
+use Cake\Core\ContainerInterface;
+use Cake\Core\ContainerApplicationInterface;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\HttpApplicationInterface;
 use Cake\Core\Plugin;
@@ -47,6 +50,7 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 abstract class BaseApplication implements
     ConsoleApplicationInterface,
+    ContainerApplicationInterface,
     HttpApplicationInterface,
     PluginApplicationInterface,
     RoutingApplicationInterface
@@ -71,6 +75,13 @@ abstract class BaseApplication implements
      * @var \Cake\Http\ControllerFactoryInterface|null
      */
     protected $controllerFactory;
+
+    /**
+     * Container
+     *
+     * @var \Cake\Core\ContainerInterface|null
+     */
+    protected $container;
 
     /**
      * Constructor
@@ -226,6 +237,39 @@ abstract class BaseApplication implements
     }
 
     /**
+     * Get the dependency injection container for the application.
+     *
+     * The first time the container is fetched it will be constructed
+     * and stored for future calls.
+     *
+     * @return \Cake\Core\ContainerInterface
+     */
+    public function getContainer(): ContainerInterface
+    {
+        if ($this->container) {
+            return $this->container;
+        }
+        $container = $this->register(new Container());
+        foreach ($this->plugins->with('register') as $plugin) {
+            $container = $plugin->register($container);
+        }
+        $this->container = $container;
+
+        return $this->container;
+    }
+
+    /**
+     * Register application services.
+     *
+     * @param \Cake\Core\ContainerInterface $container The Container to update.
+     * @return \Cake\Core\ContainerInterface The updated container
+     */
+    public function register(ContainerInterface $container): ContainerInterface
+    {
+        return $container;
+    }
+
+    /**
      * Invoke the application.
      *
      * - Convert the PSR response into CakePHP equivalents.
@@ -239,7 +283,7 @@ abstract class BaseApplication implements
         ServerRequestInterface $request
     ): ResponseInterface {
         if ($this->controllerFactory === null) {
-            $this->controllerFactory = new ControllerFactory();
+            $this->controllerFactory = new ControllerFactory($this->getContainer());
         }
 
         if (Router::getRequest() !== $request) {

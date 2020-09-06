@@ -18,11 +18,13 @@ namespace TestApp;
 
 use Cake\Console\CommandCollection;
 use Cake\Core\Configure;
+use Cake\Core\ContainerInterface;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
 use Cake\Http\BaseApplication;
 use Cake\Http\MiddlewareQueue;
 use Cake\Routing\Middleware\RoutingMiddleware;
 use Cake\Routing\RouteBuilder;
+use stdClass;
 use TestApp\Command\AbortCommand;
 
 class Application extends BaseApplication
@@ -88,5 +90,18 @@ class Application extends BaseApplication
         });
         $routes->connect('/posts', ['controller' => 'Posts', 'action' => 'index']);
         $routes->connect('/bake/:controller/:action', ['plugin' => 'Bake']);
+    }
+
+    /**
+     * Container register hook
+     *
+     * @param \Cake\Core\ContainerInterface $container The container to update
+     * @return \Cake\Core\ContainerInterface
+     */
+    public function register(ContainerInterface $container): ContainerInterface
+    {
+        $container->add(stdClass::class, json_decode('{"key":"value"}'));
+
+        return $container;
     }
 }
