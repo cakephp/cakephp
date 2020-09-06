@@ -35,6 +35,11 @@ use ReflectionFunction;
 class ControllerFactory implements ControllerFactoryInterface
 {
     /**
+     * @var \Psr\Container\ContainerInterface
+     */
+    protected $container;
+
+    /**
      * Constructor
      *
      * @param \Psr\Container\ContainerInterface $container The container to build controllers with.
