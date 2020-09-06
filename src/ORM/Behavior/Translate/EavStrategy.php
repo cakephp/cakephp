@@ -282,7 +282,6 @@ class EavStrategy implements TranslateStrategyInterface
 
         $preexistent = [];
         if ($key) {
-            /** @psalm-suppress UndefinedClass */
             $preexistent = $this->translationTable->find()
                 ->select(['id', 'field'])
                 ->where([
