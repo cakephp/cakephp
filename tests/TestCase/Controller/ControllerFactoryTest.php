@@ -17,10 +17,14 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Controller;
 
 use Cake\Controller\ControllerFactory;
+use Cake\Core\Container;
 use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
+use League\Container\Exception\NotFoundException as ContainerNotFound;
+use stdClass;
+use TestApp\Controller\DependenciesController;
 
 /**
  * Test case for ControllerFactory.
@@ -41,7 +45,8 @@ class ControllerFactoryTest extends TestCase
     {
         parent::setUp();
         static::setAppNamespace();
-        $this->factory = new ControllerFactory();
+        $this->container = new Container();
+        $this->factory = new ControllerFactory($this->container);
     }
 
     /**
@@ -267,6 +272,56 @@ class ControllerFactoryTest extends TestCase
     }
 
     /**
+     * Test create() injecting dependcies on defined controllers.
+     *
+     * @return void
+     */
+    public function testCreateWithContainerDependenciesNoController()
+    {
+        $this->container->add(stdClass::class, json_decode('{"key":"value"}'));
+
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/index',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'index',
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+        $this->assertNull($controller->inject);
+    }
+
+    /**
+     * Test create() injecting dependcies on defined controllers.
+     *
+     * @return void
+     */
+    public function testCreateWithContainerDependenciesWithController()
+    {
+        $this->container->add(stdClass::class, json_decode('{"key":"value"}'));
+        $this->container->add(DependenciesController::class)
+            ->addArgument(ServerRequest::class)
+            ->addArgument(null)
+            ->addArgument(null)
+            ->addArgument(null)
+            ->addArgument(null)
+            ->addArgument(stdClass::class);
+
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/index',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'index',
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+        $this->assertInstanceOf(DependenciesController::class, $controller);
+        $this->assertSame($controller->inject, $this->container->get(stdClass::class));
+    }
+
+    /**
      * Test building controller name when passing no controller name
      *
      * @return void
@@ -373,5 +428,79 @@ class ControllerFactoryTest extends TestCase
         $result = $this->factory->invoke($controller);
 
         $this->assertSame('shutdown stop', (string)$result->getBody());
+    }
+
+    /**
+     * Ensure that a controllers startup process can emit a response
+     *
+     * @return void
+     */
+    public function testInvokeInjectParametersDefined()
+    {
+        $this->container->add(stdClass::class, json_decode('{"key":"value"}'));
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/index',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'index',
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+        $result = $this->factory->invoke($controller);
+        $data = json_decode((string)$result->getBody());
+
+        $this->assertNotNull($data);
+        $this->assertNull($data->one);
+        $this->assertNull($data->two);
+        $this->assertSame('value', $data->three->key);
+    }
+
+    /**
+     * Ensure that a controllers startup process can emit a response
+     *
+     * @return void
+     */
+    public function testInvokeInjectParametersNotDefined()
+    {
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/index',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'index',
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+
+        $this->expectException(ContainerNotFound::class);
+        $this->factory->invoke($controller);
+    }
+
+    /**
+     * Ensure that a controllers startup process can emit a response
+     *
+     * @return void
+     */
+    public function testInvokeInjectParametersWithPassedParameters()
+    {
+        $this->container->add(stdClass::class, json_decode('{"key":"value"}'));
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/index',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'index',
+                'pass' => ['one', 'two'],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+        $result = $this->factory->invoke($controller);
+        $data = json_decode((string)$result->getBody());
+
+        $this->assertNotNull($data);
+        $this->assertSame($data->one, 'one');
+        $this->assertSame($data->two, 'two');
+        $this->assertSame('value', $data->three->key);
     }
 }

@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Controller;
 
 use Cake\Core\App;
+use Cake\Core\ContainerInterface;
 use Cake\Http\ControllerFactoryInterface;
 use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\ServerRequest;
@@ -24,6 +25,7 @@ use Cake\Utility\Inflector;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use ReflectionClass;
+use ReflectionFunction;
 
 /**
  * Factory method for building controllers for request.
@@ -32,6 +34,16 @@ use ReflectionClass;
  */
 class ControllerFactory implements ControllerFactoryInterface
 {
+    /**
+     * Constructor
+     *
+     * @param \Cake\Core\ContainerInterface $container The container to build controllers with.
+     */
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
+
     /**
      * Create a controller for a given request.
      *
@@ -45,15 +57,21 @@ class ControllerFactory implements ControllerFactoryInterface
         if ($className === null) {
             $this->missingController($request);
         }
-
         /** @psalm-suppress PossiblyNullArgument */
         $reflection = new ReflectionClass($className);
         if ($reflection->isAbstract()) {
             $this->missingController($request);
         }
 
-        /** @var \Cake\Controller\Controller $controller */
-        $controller = $reflection->newInstance($request);
+        // If the controller has a container definition
+        // add the request as a service.
+        if ($this->container->has($className)) {
+            $this->container->add(ServerRequest::class, $request);
+            $controller = $this->container->get($className);
+        } else {
+            /** @var \Cake\Controller\Controller $controller */
+            $controller = $reflection->newInstance($request);
+        }
 
         return $controller;
     }
@@ -73,9 +91,23 @@ class ControllerFactory implements ControllerFactoryInterface
         if ($result instanceof ResponseInterface) {
             return $result;
         }
-
         $action = $controller->getAction();
-        $args = array_values($controller->getRequest()->getParam('pass'));
+
+        $args = [];
+        $reflection = new ReflectionFunction($action);
+        $passed = array_values((array)$controller->getRequest()->getParam('pass'));
+        foreach ($reflection->getParameters() as $i => $parameter) {
+            if (isset($passed[$i])) {
+                $args[$i] = $passed[$i];
+                continue;
+            }
+            $class = $parameter->getClass();
+            $value = $parameter->getDefaultValue();
+            if ($class) {
+                $value = $this->container->get($class->getName());
+            }
+            $args[$parameter->getPosition()] = $value;
+        }
         $controller->invokeAction($action, $args);
 
         $result = $controller->shutdownProcess();
