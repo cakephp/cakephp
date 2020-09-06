@@ -17,11 +17,11 @@ declare(strict_types=1);
 namespace Cake\Controller;
 
 use Cake\Core\App;
-use Cake\Core\ContainerInterface;
 use Cake\Http\ControllerFactoryInterface;
 use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\ServerRequest;
 use Cake\Utility\Inflector;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use ReflectionClass;
@@ -37,7 +37,7 @@ class ControllerFactory implements ControllerFactoryInterface
     /**
      * Constructor
      *
-     * @param \Cake\Core\ContainerInterface $container The container to build controllers with.
+     * @param \Psr\Container\ContainerInterface $container The container to build controllers with.
      */
     public function __construct(ContainerInterface $container)
     {
