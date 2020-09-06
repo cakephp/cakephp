@@ -99,7 +99,8 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     {
         $config = $this->getConfig();
 
-        $this->table->hasMany($config['translationTable'], [
+        $targetAlias = $this->translationTable->getAlias();
+        $this->table->hasMany($targetAlias, [
             'className' => $config['translationTable'],
             'foreignKey' => 'id',
             'strategy' => $config['strategy'],

@@ -104,6 +104,18 @@ class BinaryUuidTypeTest extends TestCase
     }
 
     /**
+     * Test converting to database format fails
+     *
+     * @return void
+     */
+    public function testToDatabaseInvalid()
+    {
+        $value = 'mUMPWUxCpaCi685A9fEwJZ';
+        $result = $this->type->toDatabase($value, $this->driver);
+        $this->assertNull($result);
+    }
+
+    /**
      * Test that the PDO binding type is correct.
      *
      * @return void
