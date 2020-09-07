@@ -77,16 +77,31 @@ class PluginLoadCommandTest extends TestCase
     }
 
     /**
-     * Test loading the app
+     * Test loading a plugin modifies the app
      *
      * @return void
      */
-    public function testLoadApp()
+    public function testLoadModifiesApplication()
     {
         $this->exec('plugin load TestPlugin');
         $this->assertExitCode(Command::CODE_SUCCESS);
 
         $contents = file_get_contents($this->app);
         $this->assertStringContainsString("\$this->addPlugin('TestPlugin');", $contents);
+    }
+
+    /**
+     * Test loading an unknown plugin
+     *
+     * @return void
+     */
+    public function testLoadUnknownPlugin()
+    {
+        $this->exec('plugin load NopeNotThere');
+        $this->assertExitCode(Command::CODE_ERROR);
+        $this->assertErrorContains('Could not find plugin <info>NopeNotThere</info>');
+
+        $contents = file_get_contents($this->app);
+        $this->assertStringNotContainsString("\$this->addPlugin('NopeNotThere');", $contents);
     }
 }
