@@ -21,14 +21,19 @@ class DependenciesController extends Controller
         ?string $name = null,
         ?EventManagerInterface $eventManager = null,
         ?ComponentRegistry $components = null,
-        stdClass $inject = null
+        ?stdClass $inject = null
     ) {
         parent::__construct($request, $response, $name, $eventManager, $components);
         $this->inject = $inject;
     }
 
-    public function index($one = null, ?string $two = null, stdClass $three = null)
+    public function optionalDep($any = null, ?string $str = null, stdClass $dep = null)
     {
-        return $this->response->withStringBody(json_encode(compact('one', 'two', 'three')));
+        return $this->response->withStringBody(json_encode(compact('dep', 'any', 'str')));
+    }
+
+    public function requiredDep(stdClass $dep, $any = null, ?string $str = null)
+    {
+        return $this->response->withStringBody(json_encode(compact('dep', 'any', 'str')));
     }
 }

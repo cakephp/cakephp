@@ -17,11 +17,12 @@ declare(strict_types=1);
 namespace Cake\Controller;
 
 use Cake\Core\App;
+use Cake\Core\ContainerInterface;
 use Cake\Http\ControllerFactoryInterface;
 use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\ServerRequest;
 use Cake\Utility\Inflector;
-use Psr\Container\ContainerInterface;
+use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use ReflectionClass;
@@ -35,14 +36,14 @@ use ReflectionFunction;
 class ControllerFactory implements ControllerFactoryInterface
 {
     /**
-     * @var \Psr\Container\ContainerInterface
+     * @var \Cake\Core\ContainerInterface
      */
     protected $container;
 
     /**
      * Constructor
      *
-     * @param \Psr\Container\ContainerInterface $container The container to build controllers with.
+     * @param \Cake\Core\ContainerInterface $container The container to build controllers with.
      */
     public function __construct(ContainerInterface $container)
     {
@@ -60,12 +61,13 @@ class ControllerFactory implements ControllerFactoryInterface
     {
         $className = $this->getControllerClass($request);
         if ($className === null) {
-            $this->missingController($request);
+            throw $this->missingController($request);
         }
+
         /** @psalm-suppress PossiblyNullArgument */
         $reflection = new ReflectionClass($className);
         if ($reflection->isAbstract()) {
-            $this->missingController($request);
+            throw $this->missingController($request);
         }
 
         // If the controller has a container definition
@@ -102,16 +104,42 @@ class ControllerFactory implements ControllerFactoryInterface
         $reflection = new ReflectionFunction($action);
         $passed = array_values((array)$controller->getRequest()->getParam('pass'));
         foreach ($reflection->getParameters() as $i => $parameter) {
-            if (isset($passed[$i])) {
-                $args[$i] = $passed[$i];
+            $position = $parameter->getPosition();
+
+            // If there is no type we can't look in the container
+            // assume the parameter is a passed param
+            $type = $parameter->getType();
+            if (!$type) {
+                $args[$position] = array_shift($passed);
                 continue;
             }
-            $class = $parameter->getClass();
-            $value = $parameter->getDefaultValue();
-            if ($class) {
-                $value = $this->container->get($class->getName());
+            $typeName = $type->getName();
+            if (substr($typeName, 0, 1) === '?') {
+                $typeName = substr($typeName, 1);
             }
-            $args[$parameter->getPosition()] = $value;
+
+            // Primitive types are passed args as they can't be looked up in the container.
+            if (in_array($typeName, ['float', 'int', 'string', 'bool'], true)) {
+                if (count($passed) || !$type->allowsNull()) {
+                    $args[$position] = array_shift($passed);
+                } else {
+                    $args[$position] = null;
+                }
+                continue;
+            }
+
+            // Check the container and parameter default value.
+            if ($this->container->has($typeName)) {
+                $args[$position] = $this->container->get($typeName);
+            } elseif ($parameter->isDefaultValueAvailable()) {
+                $args[$position] = $parameter->getDefaultValue();
+            }
+            if (!array_key_exists($position, $args)) {
+                throw new InvalidArgumentException(
+                    "Could not resolve action argument `{$parameter->getName()}`. " .
+                    "It has no definition in the container, no passed parameter, and no default value."
+                );
+            }
         }
         $controller->invokeAction($action, $args);
 
@@ -175,7 +203,7 @@ class ControllerFactory implements ControllerFactoryInterface
             strpos($controller, '.') !== false ||
             $firstChar === strtolower($firstChar)
         ) {
-            $this->missingController($request);
+            throw $this->missingController($request);
         }
 
         // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.InvalidFormat
@@ -187,12 +215,11 @@ class ControllerFactory implements ControllerFactoryInterface
      * Throws an exception when a controller is missing.
      *
      * @param \Cake\Http\ServerRequest $request The request.
-     * @throws \Cake\Http\Exception\MissingControllerException
-     * @return void
+     * @return \Cake\Http\Exception\MissingControllerException
      */
-    protected function missingController(ServerRequest $request): void
+    protected function missingController(ServerRequest $request)
     {
-        throw new MissingControllerException([
+        return new MissingControllerException([
             'class' => $request->getParam('controller'),
             'plugin' => $request->getParam('plugin'),
             'prefix' => $request->getParam('prefix'),
