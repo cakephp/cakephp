@@ -19,8 +19,8 @@ namespace Cake\Command;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
-use Cake\Core\Plugin;
 use Cake\Core\Exception\MissingPluginException;
+use Cake\Core\Plugin;
 
 /**
  * Command for loading plugins.

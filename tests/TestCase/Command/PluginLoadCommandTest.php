@@ -99,7 +99,7 @@ class PluginLoadCommandTest extends TestCase
     {
         $this->exec('plugin load NopeNotThere');
         $this->assertExitCode(Command::CODE_ERROR);
-        $this->assertErrorContains('Could not find plugin <info>NopeNotThere</info>');
+        $this->assertErrorContains('Plugin NopeNotThere could not be found');
 
         $contents = file_get_contents($this->app);
         $this->assertStringNotContainsString("\$this->addPlugin('NopeNotThere');", $contents);
