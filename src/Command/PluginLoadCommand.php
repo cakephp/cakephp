@@ -74,7 +74,7 @@ class PluginLoadCommand extends Command
         try {
             Plugin::getCollection()->findPath($plugin);
         } catch (MissingPluginException $e) {
-            $this->io->err('Could not find plugin <info>NopeNotThere</info>');
+            $this->io->err($e->getMessage());
             $this->io->err('Ensure you have the correct spelling and casing.');
 
             return static::CODE_ERROR;
