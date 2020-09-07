@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace TestApp\Controller;
 
-use Cake\Controller\Controller;
 use Cake\Controller\ComponentRegistry;
+use Cake\Controller\Controller;
 use Cake\Event\EventManagerInterface;
-use Cake\Http\ServerRequest;
 use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use stdClass;
 
 /**
@@ -27,7 +27,7 @@ class DependenciesController extends Controller
         $this->inject = $inject;
     }
 
-    public function optionalDep($any = null, ?string $str = null, stdClass $dep = null)
+    public function optionalDep($any = null, ?string $str = null, ?stdClass $dep = null)
     {
         return $this->response->withStringBody(json_encode(compact('dep', 'any', 'str')));
     }

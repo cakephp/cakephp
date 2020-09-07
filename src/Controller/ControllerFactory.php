@@ -138,7 +138,7 @@ class ControllerFactory implements ControllerFactoryInterface
             if (!array_key_exists($position, $args)) {
                 throw new InvalidArgumentException(
                     "Could not resolve action argument `{$parameter->getName()}`. " .
-                    "It has no definition in the container, no passed parameter, and no default value."
+                    'It has no definition in the container, no passed parameter, and no default value.'
                 );
             }
         }
