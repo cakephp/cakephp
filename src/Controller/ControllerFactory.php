@@ -113,10 +113,7 @@ class ControllerFactory implements ControllerFactoryInterface
                 $args[$position] = array_shift($passed);
                 continue;
             }
-            $typeName = $type->getName();
-            if (substr($typeName, 0, 1) === '?') {
-                $typeName = substr($typeName, 1);
-            }
+            $typeName = ltrim($type->getName(), '?');
 
             // Primitive types are passed args as they can't be looked up in the container.
             // We only handle strings currently.
