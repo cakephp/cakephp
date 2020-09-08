@@ -627,7 +627,7 @@ class Validation
 
     /**
      * Time validation, determines if the string passed is a valid time.
-     * Validates time as 24hr (HH[:MM][:SS][.FFFFFF]) or am/pm ([H]H:MM[a|p]m)
+     * Validates time as 24hr (HH:MM[:SS][.FFFFFF]) or am/pm ([H]H:MM[a|p]m)
      *
      * Seconds and fractional seconds (microseconds) are allowed but optional
      * in 24hr format.
@@ -649,7 +649,7 @@ class Validation
         }
 
         $meridianClockRegex = '^((0?[1-9]|1[012])(:[0-5]\d){0,2} ?([AP]M|[ap]m))$';
-        $standardClockRegex = '^([01]\d|2[0-3])((:[0-5]\d){0,2}|(:[0-5]\d){2}\.\d{0,6})$';
+        $standardClockRegex = '^([01]\d|2[0-3])((:[0-5]\d){1,2}|(:[0-5]\d){2}\.\d{0,6})$';
 
         return static::_check($check, '%' . $meridianClockRegex . '|' . $standardClockRegex . '%');
     }
