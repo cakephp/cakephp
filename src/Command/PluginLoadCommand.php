@@ -19,6 +19,8 @@ namespace Cake\Command;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
+use Cake\Core\Exception\MissingPluginException;
+use Cake\Core\Plugin;
 
 /**
  * Command for loading plugins.
@@ -65,6 +67,15 @@ class PluginLoadCommand extends Command
         if (!$plugin) {
             $this->io->err('You must provide a plugin name in CamelCase format.');
             $this->io->err('To load an "Example" plugin, run `cake plugin load Example`.');
+
+            return static::CODE_ERROR;
+        }
+
+        try {
+            Plugin::getCollection()->findPath($plugin);
+        } catch (MissingPluginException $e) {
+            $this->io->err($e->getMessage());
+            $this->io->err('Ensure you have the correct spelling and casing.');
 
             return static::CODE_ERROR;
         }
