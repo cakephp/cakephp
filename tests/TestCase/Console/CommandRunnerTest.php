@@ -31,6 +31,7 @@ use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use TestApp\Command\AbortCommand;
 use TestApp\Command\DemoCommand;
+use TestApp\Command\DependencyCommand;
 use TestApp\Shell\SampleShell;
 
 /**
@@ -433,6 +434,27 @@ class CommandRunnerTest extends TestCase
 
         $messages = implode("\n", $output->messages());
         $this->assertStringContainsString('Demo Command!', $messages);
+    }
+
+    public function testRunWithContainerDependencies()
+    {
+        $app = $this->makeAppWithCommands([
+            'dependency' => DependencyCommand::class,
+        ]);
+        $container = $app->getContainer();
+        $container->add(stdClass::class, json_decode('{"key":"value"}'));
+        $container->add(DependencyCommand::class)
+            ->addArgument(stdClass::class);
+
+        $output = new ConsoleOutput();
+
+        $runner = new CommandRunner($app, 'cake');
+        $result = $runner->run(['cake', 'dependency'], $this->getMockIo($output));
+        $this->assertSame(Shell::CODE_SUCCESS, $result);
+
+        $messages = implode("\n", $output->messages());
+        $this->assertStringContainsString('Dependency Command', $messages);
+        $this->assertStringContainsString('constructor inject: stdClass', $messages);
     }
 
     /**
