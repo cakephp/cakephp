@@ -560,7 +560,7 @@ class Response extends Message implements ResponseInterface
      * For example to get the json data as an object:
      *
      * ```
-     * $body = $response->body('json_decode');
+     * $body = $response->getJson();
      * ```
      *
      * @param callable|null $parser The callback to use to decode
