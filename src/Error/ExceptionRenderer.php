@@ -20,6 +20,7 @@ use Cake\Controller\Controller;
 use Cake\Controller\ControllerFactory;
 use Cake\Core\App;
 use Cake\Core\Configure;
+use Cake\Core\Container;
 use Cake\Core\Exception\Exception as CakeException;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Event\Event;
@@ -136,7 +137,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
             $params = $request->getAttribute('params');
             $params['controller'] = 'Error';
 
-            $factory = new ControllerFactory();
+            $factory = new ControllerFactory(new Container());
             $class = $factory->getControllerClass($request->withAttribute('params', $params));
 
             if (!$class) {
