@@ -117,7 +117,9 @@ class RedisEngine extends CacheEngine
                 );
             }
         } catch (RedisException $e) {
-            Log::error('RedisEngine RedisException: ' . $e->getMessage());
+            if (class_exists(Log::class)) {
+                Log::error('RedisEngine RedisException: ' . $e->getMessage());
+            }
 
             return false;
         }
