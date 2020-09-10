@@ -118,6 +118,7 @@ class RedisEngine extends CacheEngine
             }
         } catch (RedisException $e) {
             Log::error('RedisEngine RedisException: ' . $e->getMessage());
+
             return false;
         }
         if ($return && $this->_config['password']) {
