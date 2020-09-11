@@ -33,7 +33,7 @@ class CommandFactory implements CommandFactoryInterface
     /**
      * Constructor
      *
-     * @param \Cake\Core\ContainerInterface $container The container to use if available.
+     * @param \Cake\Core\ContainerInterface|null $container The container to use if available.
      */
     public function __construct(?ContainerInterface $container = null)
     {
