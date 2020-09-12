@@ -50,7 +50,7 @@ class CommandRunner implements EventDispatcherInterface
     /**
      * The application console commands are being run for.
      *
-     * @var \Cake\Console\CommandFactoryInterface
+     * @var \Cake\Console\CommandFactoryInterface|null
      */
     protected $factory;
 
