@@ -86,14 +86,14 @@ trait TestListenerTrait
     /**
      * @inheritDoc
      */
-    public function addRiskyTest(Test $test, Throwable $e, float $time): void
+    public function addRiskyTest(Test $test, Throwable $t, float $time): void
     {
     }
 
     /**
      * @inheritDoc
      */
-    public function addIncompleteTest(Test $test, Throwable $e, float $time): void
+    public function addIncompleteTest(Test $test, Throwable $t, float $time): void
     {
     }
 }

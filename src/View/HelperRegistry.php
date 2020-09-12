@@ -143,16 +143,16 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      *
      * @param string $class The class to create.
      * @param string $alias The alias of the loaded helper.
-     * @param array $settings An array of settings to use for the helper.
+     * @param array $config An array of settings to use for the helper.
      * @return \Cake\View\Helper The constructed helper class.
      * @psalm-suppress MoreSpecificImplementedParamType
      */
-    protected function _create($class, string $alias, array $settings): Helper
+    protected function _create($class, string $alias, array $config): Helper
     {
         /** @var \Cake\View\Helper $instance */
-        $instance = new $class($this->_View, $settings);
+        $instance = new $class($this->_View, $config);
 
-        $enable = $settings['enabled'] ?? true;
+        $enable = $config['enabled'] ?? true;
         if ($enable) {
             $this->getEventManager()->on($instance);
         }

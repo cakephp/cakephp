@@ -39,7 +39,7 @@ class TextHelper extends Helper
      *
      * @var array
      */
-    public $helpers = ['Html'];
+    protected $helpers = ['Html'];
 
     /**
      * Default config for this class

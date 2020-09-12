@@ -43,17 +43,17 @@ class ArrayEngine extends CacheEngine
      * Write data for key into cache
      *
      * @param string $key Identifier for the data
-     * @param mixed $data Data to be cached
+     * @param mixed $value Data to be cached
      * @param \DateInterval|int|null $ttl Optional. The TTL value of this item. If no value is sent and
      *   the driver supports TTL then the library may set a default value
      *   for it or let the driver take care of that.
      * @return bool True on success and false on failure.
      */
-    public function set($key, $data, $ttl = null): bool
+    public function set($key, $value, $ttl = null): bool
     {
         $key = $this->_key($key);
         $expires = time() + $this->duration($ttl);
-        $this->data[$key] = ['exp' => $expires, 'val' => $data];
+        $this->data[$key] = ['exp' => $expires, 'val' => $value];
 
         return true;
     }

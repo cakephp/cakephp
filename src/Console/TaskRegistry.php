@@ -85,11 +85,11 @@ class TaskRegistry extends ObjectRegistry
      *
      * @param string $class The classname to create.
      * @param string $alias The alias of the task.
-     * @param array $settings An array of settings to use for the task.
+     * @param array $config An array of settings to use for the task.
      * @return \Cake\Console\Shell The constructed task class.
      * @psalm-suppress MoreSpecificImplementedParamType
      */
-    protected function _create($class, string $alias, array $settings): Shell
+    protected function _create($class, string $alias, array $config): Shell
     {
         // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.InvalidFormat
         /** @var \Cake\Console\Shell */

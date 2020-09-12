@@ -55,7 +55,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      *    Defaults to browser session.
      *  - `secure` Whether or not the cookie will be set with the Secure flag. Defaults to false.
      *  - `httponly` Whether or not the cookie will be set with the HttpOnly flag. Defaults to false.
-     *  - 'samesite' "SameSite" attribute for cookies. Defaults to `null`.
+     *  - `samesite` "SameSite" attribute for cookies. Defaults to `null`.
      *    Valid values: `CookieInterface::SAMESITE_LAX`, `CookieInterface::SAMESITE_STRICT`,
      *    `CookieInterface::SAMESITE_NONE` or `null`.
      *  - `field` The form field to check. Changing this will also require configuring

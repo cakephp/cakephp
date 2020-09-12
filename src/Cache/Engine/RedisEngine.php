@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
+use Cake\Log\Log;
 use Redis;
 use RedisException;
 use RuntimeException;
@@ -116,6 +117,10 @@ class RedisEngine extends CacheEngine
                 );
             }
         } catch (RedisException $e) {
+            if (class_exists(Log::class)) {
+                Log::error('RedisEngine could not connect. Got error: ' . $e->getMessage());
+            }
+
             return false;
         }
         if ($return && $this->_config['password']) {

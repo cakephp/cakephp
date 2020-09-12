@@ -211,11 +211,6 @@ parameters:
 			path: src/Database/Driver/Postgres.php
 
 		-
-			message: "#^Instanceof between mixed and int\\|string results in an error\\.$#"
-			count: 1
-			path: src/Database/Driver/Postgres.php
-
-		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: src/Database/Driver/Sqlite.php
@@ -226,22 +221,12 @@ parameters:
 			path: src/Database/Driver/Sqlite.php
 
 		-
-			message: "#^Instanceof between mixed and int\\|string results in an error\\.$#"
-			count: 1
-			path: src/Database/Driver/Sqlite.php
-
-		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: src/Database/Driver/Sqlserver.php
 
 		-
 			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: src/Database/Driver/Sqlserver.php
-
-		-
-			message: "#^Instanceof between mixed and int\\|string results in an error\\.$#"
 			count: 1
 			path: src/Database/Driver/Sqlserver.php
 

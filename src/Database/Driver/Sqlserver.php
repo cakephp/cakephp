@@ -134,7 +134,6 @@ class Sqlserver extends Driver
         ];
 
         if (!empty($config['encoding'])) {
-            /** @psalm-suppress UndefinedConstant */
             $config['flags'][PDO::SQLSRV_ATTR_ENCODING] = $config['encoding'];
         }
         $port = '';

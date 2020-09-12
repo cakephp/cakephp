@@ -35,6 +35,7 @@ class TimeType extends DateTimeType
      */
     protected $_marshalFormats = [
         'H:i:s',
+        'H:i',
     ];
 
     /**
