@@ -27,6 +27,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use ReflectionClass;
 use ReflectionFunction;
+use ReflectionNamedType;
 
 /**
  * Factory method for building controllers for request.
@@ -113,7 +114,7 @@ class ControllerFactory implements ControllerFactoryInterface
                 $args[$position] = array_shift($passed);
                 continue;
             }
-            $typeName = ltrim($type->getName(), '?');
+            $typeName = $type instanceof ReflectionNamedType ? ltrim($type->getName(), '?') : null;
 
             // Primitive types are passed args as they can't be looked up in the container.
             // We only handle strings currently.
@@ -127,7 +128,7 @@ class ControllerFactory implements ControllerFactoryInterface
             }
 
             // Check the container and parameter default value.
-            if ($this->container->has($typeName)) {
+            if ($typeName && $this->container->has($typeName)) {
                 $args[$position] = $this->container->get($typeName);
             } elseif ($parameter->isDefaultValueAvailable()) {
                 $args[$position] = $parameter->getDefaultValue();
