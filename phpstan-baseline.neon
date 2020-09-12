@@ -151,11 +151,6 @@ parameters:
 			path: src/Controller/Controller.php
 
 		-
-			message: "#^Call to an undefined method ReflectionType::getName\\(\\)\\.$#"
-			count: 1
-			path: src/Controller/ControllerFactory.php
-
-		-
 			message: "#^Parameter \\#1 \\$request of method Cake\\\\Controller\\\\ControllerFactory\\:\\:getControllerClass\\(\\) expects Cake\\\\Http\\\\ServerRequest, Psr\\\\Http\\\\Message\\\\ServerRequestInterface given\\.$#"
 			count: 1
 			path: src/Controller/ControllerFactory.php
