@@ -25,7 +25,6 @@ namespace Cake\Core;
  */
 class Configuration
 {
-
     /**
      * Read a configuration key
      *
@@ -42,10 +41,10 @@ class Configuration
      * Check if $path exists and has a non-null value.
      *
      * @param string $path The path to check.
-     * @return boolean True if the configuration data exists.
+     * @return bool True if the configuration data exists.
      */
-    public function has(string $key): bool
+    public function has(string $path): bool
     {
-        return Configure::check($key);
+        return Configure::check($path);
     }
 }
