@@ -3009,7 +3009,7 @@ class RouterTest extends TestCase
         $result = Router::url(['controller' => 'FooBar', 'action' => 'index']);
         $this->assertSame('/FooBar', $result);
 
-        // This is needed because tests/boostrap.php sets App.namespace to 'App'
+        // This is needed because tests/bootstrap.php sets App.namespace to 'App'
         static::setAppNamespace();
 
         Router::defaultRouteClass('DashedRoute');
