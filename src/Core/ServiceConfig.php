@@ -23,7 +23,7 @@ namespace Cake\Core;
  * a typehintable way for services to have application
  * confiugration injected as arrays cannot be typehinted.
  */
-class Configuration
+class ServiceConfig
 {
     /**
      * Read a configuration key

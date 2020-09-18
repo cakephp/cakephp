@@ -16,20 +16,20 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Core;
 
-use Cake\Core\Configuration;
+use Cake\Core\ServiceConfig;
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 
 /**
- * ConfigurationTest
+ * ServiceConfigTest
  */
-class ConfigurationTest extends TestCase
+class ServiceConfigTest extends TestCase
 {
     public function testGet()
     {
         Configure::write('first', 'first-val');
         Configure::write('nested.path', 'nested-val');
-        $config = new Configuration();
+        $config = new ServiceConfig();
 
         $this->assertSame('first-val', $config->get('first'));
         $this->assertSame('nested-val', $config->get('nested.path'));
@@ -43,7 +43,7 @@ class ConfigurationTest extends TestCase
         Configure::write('first', 'first-val');
         Configure::write('nested.path', 'nested-val');
         Configure::write('nullval', null);
-        $config = new Configuration();
+        $config = new ServiceConfig();
 
         $this->assertFalse($config->has('nope'));
         $this->assertTrue($config->has('first'));
