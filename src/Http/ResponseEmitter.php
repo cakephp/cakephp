@@ -202,15 +202,39 @@ class ResponseEmitter implements EmitterInterface
     {
         foreach ($cookies as $cookie) {
             if (is_array($cookie)) {
-                setcookie(
-                    $cookie['name'],
-                    $cookie['value'],
-                    $cookie['expire'],
-                    $cookie['path'],
-                    $cookie['domain'],
-                    $cookie['secure'],
-                    $cookie['httpOnly']
-                );
+                if (PHP_VERSION_ID >= 70300) {
+                    // PHP 7.3 and up don't support adding SameSite to the path,
+                    // but require the alternative setcookie syntax.
+                    // So we extract sameSite from the path
+                    $sameSite = null;
+                    $path = $cookie['path'];
+                    if (preg_match('/^(.*); SameSite=(.*)$/', $path, $matches) === 1) {
+                        $path = $matches[1];
+                        $sameSite = $matches[2];
+                    }
+                    setcookie(
+                        $cookie['name'],
+                        $cookie['value'],
+                        [
+                            'expires' => $cookie['expire'],
+                            'path' => $path,
+                            'domain' => $cookie['domain'],
+                            'secure' => $cookie['secure'],
+                            'httponly' => $cookie['httpOnly'],
+                            'samesite' => $sameSite,
+                        ]
+                    );
+                } else {
+                    setcookie(
+                        $cookie['name'],
+                        $cookie['value'],
+                        $cookie['expire'],
+                        $cookie['path'],
+                        $cookie['domain'],
+                        $cookie['secure'],
+                        $cookie['httpOnly']
+                    );
+                }
                 continue;
             }
 
@@ -230,6 +254,7 @@ class ResponseEmitter implements EmitterInterface
                 'domain' => '',
                 'secure' => false,
                 'httponly' => false,
+                'samesite' => null,
             ];
 
             foreach ($parts as $part) {
@@ -246,15 +271,33 @@ class ResponseEmitter implements EmitterInterface
             if (is_string($data['expires'])) {
                 $data['expires'] = strtotime($data['expires']);
             }
-            setcookie(
-                $data['name'],
-                $data['value'],
-                $data['expires'],
-                $data['path'],
-                $data['domain'],
-                $data['secure'],
-                $data['httponly']
-            );
+            if (PHP_VERSION_ID >= 70300) {
+                setcookie(
+                    $data['name'],
+                    $data['value'],
+                    [
+                        'expires' => $data['expires'],
+                        'path' => $data['path'],
+                        'domain' => $data['domain'],
+                        'secure' => $data['secure'],
+                        'httponly' => $data['httponly'],
+                        'samesite' => $data['samesite'],
+                    ]
+                );
+            } else {
+                if (isset($data['samesite'])) {
+                    $data['path'] .= '; SameSite=' . $data['samesite'];
+                }
+                setcookie(
+                    $data['name'],
+                    $data['value'],
+                    $data['expires'],
+                    $data['path'],
+                    $data['domain'],
+                    $data['secure'],
+                    $data['httponly']
+                );
+            }
         }
     }
 

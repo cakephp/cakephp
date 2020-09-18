@@ -135,6 +135,7 @@ class ResponseEmitterTest extends TestCase
                 'domain' => '',
                 'secure' => true,
                 'httponly' => false,
+                'samesite' => null,
             ],
             [
                 'name' => 'google',
@@ -144,6 +145,7 @@ class ResponseEmitterTest extends TestCase
                 'domain' => '',
                 'secure' => false,
                 'httponly' => true,
+                'samesite' => null,
             ],
         ];
         $this->assertEquals($expected, $GLOBALS['mockedCookies']);
@@ -162,6 +164,7 @@ class ResponseEmitterTest extends TestCase
             ->withAddedHeader('Set-Cookie', 'google=not=nice;Path=/accounts; HttpOnly')
             ->withAddedHeader('Set-Cookie', 'a=b;  Expires=Wed, 13 Jan 2021 22:23:01 GMT; Domain=www.example.com;')
             ->withAddedHeader('Set-Cookie', 'list%5B%5D=a%20b%20c')
+            ->withAddedHeader('Set-Cookie', 'x=y;Path=/somepath; SameSite=None')
             ->withHeader('Content-Type', 'text/plain');
         $response->getBody()->write('ok');
 
@@ -184,6 +187,7 @@ class ResponseEmitterTest extends TestCase
                 'domain' => '',
                 'secure' => true,
                 'httponly' => false,
+                'samesite' => null,
             ],
             [
                 'name' => 'people',
@@ -193,6 +197,7 @@ class ResponseEmitterTest extends TestCase
                 'domain' => '',
                 'secure' => false,
                 'httponly' => false,
+                'samesite' => null,
             ],
             [
                 'name' => 'google',
@@ -202,6 +207,7 @@ class ResponseEmitterTest extends TestCase
                 'domain' => '',
                 'secure' => false,
                 'httponly' => true,
+                'samesite' => null,
             ],
             [
                 'name' => 'a',
@@ -211,6 +217,7 @@ class ResponseEmitterTest extends TestCase
                 'domain' => 'www.example.com',
                 'secure' => false,
                 'httponly' => false,
+                'samesite' => null,
             ],
             [
                 'name' => 'list[]',
@@ -220,6 +227,17 @@ class ResponseEmitterTest extends TestCase
                 'domain' => '',
                 'secure' => false,
                 'httponly' => false,
+                'samesite' => null,
+            ],
+            [
+                'name' => 'x',
+                'value' => 'y',
+                'path' => '/somepath',
+                'expire' => 0,
+                'domain' => '',
+                'secure' => false,
+                'httponly' => false,
+                'samesite' => 'None',
             ],
         ];
         $this->assertEquals($expected, $GLOBALS['mockedCookies']);

@@ -604,15 +604,39 @@ class Session
 
         $this->start();
         $params = session_get_cookie_params();
-        setcookie(
-            session_name(),
-            '',
-            time() - 42000,
-            $params['path'],
-            $params['domain'],
-            $params['secure'],
-            $params['httponly']
-        );
+        if (PHP_VERSION_ID >= 70300) {
+            // PHP 7.3 and up don't support adding SameSite to the path,
+            // but require the alternative setcookie syntax.
+            // So we extract sameSite from the path
+            $sameSite = null;
+            $path = $params['path'];
+            if (preg_match('/^(.*); SameSite=(.*)$/', $path, $matches) === 1) {
+                $path = $matches[1];
+                $sameSite = $matches[2];
+            }
+            setcookie(
+                session_name(),
+                '',
+                [
+                    'expires' => time() - 42000,
+                    'path' => $path,
+                    'domain' => $params['domain'],
+                    'secure' => $params['secure'],
+                    'httponly' => $params['httponly'],
+                    'samesite' => $sameSite,
+                ]
+            );
+        } else {
+            setcookie(
+                session_name(),
+                '',
+                time() - 42000,
+                $params['path'],
+                $params['domain'],
+                $params['secure'],
+                $params['httponly']
+            );
+        }
 
         if (session_id() !== '') {
             session_regenerate_id(true);

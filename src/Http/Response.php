@@ -563,15 +563,29 @@ class Response implements ResponseInterface
         );
 
         foreach ($this->_cookies as $cookie) {
-            setcookie(
-                $cookie->getName(),
-                $cookie->getValue(),
-                $cookie->getExpiresTimestamp(),
-                $cookie->getPath(),
-                $cookie->getDomain(),
-                $cookie->isSecure(),
-                $cookie->isHttpOnly()
-            );
+            if (PHP_VERSION_ID >= 70300) {
+                setcookie(
+                    $cookie->getName(),
+                    $cookie->getValue(),
+                    [
+                        'expires' => $cookie->getExpiresTimestamp(),
+                        'path' => $cookie->getPath(),
+                        'domain' => $cookie->getDomain(),
+                        'secure' => $cookie->isSecure(),
+                        'httponly' => $cookie->isHttpOnly(),
+                    ]
+                );
+            } else {
+                setcookie(
+                    $cookie->getName(),
+                    $cookie->getValue(),
+                    $cookie->getExpiresTimestamp(),
+                    $cookie->getPath(),
+                    $cookie->getDomain(),
+                    $cookie->isSecure(),
+                    $cookie->isHttpOnly()
+                );
+            }
         }
     }
 
