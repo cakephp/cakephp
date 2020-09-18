@@ -16,8 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Core;
 
-use Cake\Core\ServiceConfig;
 use Cake\Core\Configure;
+use Cake\Core\ServiceConfig;
 use Cake\TestSuite\TestCase;
 
 /**
