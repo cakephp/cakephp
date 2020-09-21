@@ -248,6 +248,8 @@ class ResponseEmitter implements EmitterInterface
             if (is_string($data['expires'])) {
                 $data['expires'] = strtotime($data['expires']);
             }
+            unset($data['']);
+
             $this->setcookie($name, $value, $data);
         }
     }

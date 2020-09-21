@@ -161,6 +161,9 @@ class ResponseEmitterTest extends TestCase
         if (PHP_VERSION_ID < 70300) {
             $expected[1]['path'] = '/; SameSite=Lax';
             unset($expected[1]['samesite']);
+        } else {
+            $expected[0]['samesite'] = null;
+            $expected[2]['samesite'] = null;
         }
 
         $this->assertEquals($expected, $GLOBALS['mockedCookies']);
@@ -247,13 +250,17 @@ class ResponseEmitterTest extends TestCase
                 'domain' => '',
                 'secure' => false,
                 'httponly' => false,
-                'samesite' => 'None',
             ],
         ];
 
         if (PHP_VERSION_ID < 70300) {
             $expected[5]['path'] = '/; SameSite=None';
-            unset($expected[5]['samesite']);
+        } else {
+            foreach ($expected as &$val) {
+                $val['samesite'] = null;
+            }
+
+            $expected[5]['samesite'] = 'None';
         }
 
         $this->assertEquals($expected, $GLOBALS['mockedCookies']);
