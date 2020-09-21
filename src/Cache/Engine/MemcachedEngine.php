@@ -150,7 +150,7 @@ class MemcachedEngine extends CacheEngine
             if ($this->_config['persistent'] !== false) {
                 $actualServers = [];
                 foreach ($serverList as $server) {
-                    $actualServers[] = $server['host'] . ':' .$server['port'];
+                    $actualServers[] = $server['host'] . ':' . $server['port'];
                 }
                 unset($server);
                 sort($actualServers);
@@ -163,6 +163,7 @@ class MemcachedEngine extends CacheEngine
                     throw new InvalidArgumentException($message);
                 }
             }
+
             return true;
         }
 
