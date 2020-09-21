@@ -834,7 +834,11 @@ class TranslateBehaviorTest extends TestCase
 
         $authors->setLocale('eng');
 
-        $entity = $table->get(1);
+        try {
+            $entity = $table->get(1);
+        } catch (\Cake\Datasource\Exception\RecordNotFoundException $e) {
+            var_dump($table->find('all')->all()->toArray());
+        }
         $this->assertNotEmpty($entity);
         $entity = $table->loadInto($entity, ['Authors']);
         $this->assertFalse($entity->isDirty());
