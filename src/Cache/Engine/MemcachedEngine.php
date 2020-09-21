@@ -523,4 +523,14 @@ class MemcachedEngine extends CacheEngine
     {
         return (bool)$this->_Memcached->increment($this->_config['prefix'] . $group);
     }
+
+    /**
+     * Get the list of the servers in the pool.
+     *
+     * @return array
+     */
+    public function getServerList()
+    {
+        return $this->_Memcached->getServerList();
+    }
 }
