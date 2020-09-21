@@ -145,7 +145,24 @@ class MemcachedEngine extends CacheEngine
         }
         $this->_setOptions();
 
-        if (count($this->_Memcached->getServerList())) {
+        $serverList = $this->_Memcached->getServerList();
+        if (count($serverList)) {
+            if ($this->_config['persistent'] !== false) {
+                $actualServers = [];
+                foreach ($serverList as $server) {
+                    $actualServers[] = $server['host'] . ':' .$server['port'];
+                }
+                unset($server);
+                sort($actualServers);
+                $configuredServers = $this->_config['servers'];
+                sort($configuredServers);
+                if ($actualServers !== $configuredServers) {
+                    $message = "Invalid cache configuration. Multiple persistent cache configurations are detected" .
+                        " with different 'servers' values. 'servers' values for persistent cache configurations" .
+                        " must be the same when using the same persistence id.";
+                    throw new InvalidArgumentException($message);
+                }
+            }
             return true;
         }
 
@@ -522,15 +539,5 @@ class MemcachedEngine extends CacheEngine
     public function clearGroup($group)
     {
         return (bool)$this->_Memcached->increment($this->_config['prefix'] . $group);
-    }
-
-    /**
-     * Get the list of the servers in the pool.
-     *
-     * @return array
-     */
-    public function getServerList()
-    {
-        return $this->_Memcached->getServerList();
     }
 }
