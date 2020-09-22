@@ -126,6 +126,7 @@ class Cookie implements CookieInterface
      * @param bool $secure Is secure
      * @param bool $httpOnly HTTP Only
      * @param string|null $sameSite Samesite
+     * @throws \InvalidArgumentException If an invalid value is passed for any of the arguments.
      */
     public function __construct(
         $name,
@@ -500,6 +501,7 @@ class Cookie implements CookieInterface
      * @param string|null $sameSite Value for to set for Samesite option.
      *   One of CookieInterface::SAMESITE_* constants.
      * @return static
+     * @throws \InvalidArgumentException If argument value is not one of CookieInterface::SAMESITE_VALUES
      */
     public function withSameSite($sameSite = null)
     {
