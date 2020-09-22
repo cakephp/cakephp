@@ -526,7 +526,7 @@ class Cookie implements CookieInterface
     {
         if (!in_array($sameSite, CookieInterface::SAMESITE_VALUES, true)) {
             throw new InvalidArgumentException(
-                'Samesite value must be either of: ' . implode(', ', CookieInterface::SAMESITE_VALUES)
+                'SameSite value must be either of: ' . implode(', ', CookieInterface::SAMESITE_VALUES)
             );
         }
     }
