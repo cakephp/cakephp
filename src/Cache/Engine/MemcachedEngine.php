@@ -149,7 +149,7 @@ class MemcachedEngine extends CacheEngine
         if ($serverList) {
             if ($this->_Memcached->isPersistent()) {
                 foreach ($serverList as $server) {
-                    if (!in_array($server['host'] . ':' . $server['port'], $this->_config['server'], true)) {
+                    if (!in_array($server['host'] . ':' . $server['port'], $this->_config['servers'], true)) {
                         throw new InvalidArgumentException(
                             'Invalid cache configuration. Multiple persistent cache configurations are detected' .
                             ' with different `servers` values. `servers` values for persistent cache configurations' .
