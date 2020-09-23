@@ -147,7 +147,7 @@ class MemcachedEngine extends CacheEngine
 
         $serverList = $this->_Memcached->getServerList();
         if ($serverList) {
-            if ($this->_config['persistent'] !== false) {
+            if ($this->_Memcached->isPersistent()) {
                 foreach ($serverList as $server) {
                     if (!in_array($server['host'] . ':' . $server['port'], $this->_config['server'], true)) {
                         throw new InvalidArgumentException(

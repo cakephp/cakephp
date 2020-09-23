@@ -20,6 +20,7 @@ use Cake\Cache\Cache;
 use Cake\Cache\Engine\MemcachedEngine;
 use Cake\TestSuite\TestCase;
 use DateInterval;
+use InvalidArgumentException;
 use Memcached;
 
 /**
@@ -377,8 +378,6 @@ class MemcachedEngineTest extends TestCase
     /**
      * testConfigDifferentPorts method
      *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Invalid cache configuration. Multiple persistent cache configurations are detected with different 'servers' values. 'servers' values for persistent cache configurations must be the same when using the same persistence id.
      * @return void
      */
     public function testConfigDifferentPorts()
@@ -397,6 +396,8 @@ class MemcachedEngineTest extends TestCase
             'servers' => ['127.0.0.1:11212'],
             'persistent' => '123',
         ];
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid cache configuration. Multiple persistent cache');
         $Memcached2->init($config2);
     }
 
@@ -409,7 +410,7 @@ class MemcachedEngineTest extends TestCase
     {
         $servers = ['127.0.0.1:' . $this->port, '127.0.0.1:11222'];
         $available = true;
-        $Memcached = new \Memcached();
+        $Memcached = new Memcached();
 
         foreach ($servers as $server) {
             [$host, $port] = explode(':', $server);
