@@ -604,15 +604,25 @@ class Session
 
         $this->start();
         $params = session_get_cookie_params();
-        setcookie(
-            session_name(),
-            '',
-            time() - 42000,
-            $params['path'],
-            $params['domain'],
-            $params['secure'],
-            $params['httponly']
-        );
+        if (PHP_VERSION_ID >= 70300) {
+            unset($params['lifetime']);
+            $params['expires'] = time() - 42000;
+            setcookie(
+                session_name(),
+                '',
+                $params
+            );
+        } else {
+            setcookie(
+                session_name(),
+                '',
+                time() - 42000,
+                $params['path'],
+                $params['domain'],
+                $params['secure'],
+                $params['httponly']
+            );
+        }
 
         if (session_id() !== '') {
             session_regenerate_id(true);

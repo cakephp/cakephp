@@ -1586,6 +1586,7 @@ class ResponseTest extends TestCase
                 'domain' => '',
                 'secure' => false,
                 'httpOnly' => false,
+                'samesite' => null,
             ];
             $result = $response->cookie('CakeTestCookie[Testing]');
             $this->assertEquals($expected, $result);
@@ -1607,6 +1608,7 @@ class ResponseTest extends TestCase
                     'domain' => '',
                     'secure' => false,
                     'httpOnly' => false,
+                    'samesite' => null,
                 ],
                 'CakeTestCookie[Testing2]' => [
                     'name' => 'CakeTestCookie[Testing2]',
@@ -1616,6 +1618,7 @@ class ResponseTest extends TestCase
                     'domain' => '',
                     'secure' => true,
                     'httpOnly' => false,
+                    'samesite' => null,
                 ],
             ];
 
@@ -1634,6 +1637,7 @@ class ResponseTest extends TestCase
                     'domain' => '',
                     'secure' => false,
                     'httpOnly' => false,
+                    'samesite' => null,
                 ],
                 'CakeTestCookie[Testing2]' => [
                     'name' => 'CakeTestCookie[Testing2]',
@@ -1643,6 +1647,7 @@ class ResponseTest extends TestCase
                     'domain' => '',
                     'secure' => true,
                     'httpOnly' => false,
+                    'samesite' => null,
                 ],
             ];
 
@@ -1669,7 +1674,9 @@ class ResponseTest extends TestCase
             'path' => '/',
             'domain' => '',
             'secure' => false,
-            'httpOnly' => false];
+            'httpOnly' => false,
+            'samesite' => null,
+        ];
         $result = $new->getCookie('testing');
         $this->assertEquals($expected, $result);
     }
@@ -1727,6 +1734,7 @@ class ResponseTest extends TestCase
             'domain' => '',
             'secure' => true,
             'httpOnly' => false,
+            'samesite' => null,
         ];
 
         // Match the date time formatting to Response::convertCookieToArray
@@ -1776,6 +1784,7 @@ class ResponseTest extends TestCase
             'secure' => true,
             'httpOnly' => true,
             'expire' => new \DateTimeImmutable('+14 days'),
+            'samesite' => null,
         ];
 
         $cookie = new Cookie(
@@ -1833,6 +1842,7 @@ class ResponseTest extends TestCase
                 'domain' => '',
                 'secure' => false,
                 'httpOnly' => false,
+                'samesite' => null,
             ],
             'test2' => [
                 'name' => 'test2',
@@ -1842,6 +1852,7 @@ class ResponseTest extends TestCase
                 'domain' => '',
                 'secure' => true,
                 'httpOnly' => false,
+                'samesite' => null,
             ],
         ];
         $this->assertEquals($expected, $new->getCookies());
@@ -1869,6 +1880,7 @@ class ResponseTest extends TestCase
                 'domain' => '',
                 'secure' => false,
                 'httpOnly' => true,
+                'samesite' => null,
             ],
         ];
         $this->assertEquals($expected, $new->getCookies());

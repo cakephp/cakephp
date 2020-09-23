@@ -112,6 +112,7 @@ class ResponseEmitterTest extends TestCase
     {
         $response = (new Response())
             ->withCookie(new Cookie('simple', 'val', null, '/', '', true))
+            ->withCookie(new Cookie('samesite', 'val', null, '/', '', true, false, 'Lax'))
             ->withAddedHeader('Set-Cookie', 'google=not=nice;Path=/accounts; HttpOnly')
             ->withHeader('Content-Type', 'text/plain');
         $response->getBody()->write('ok');
@@ -137,6 +138,16 @@ class ResponseEmitterTest extends TestCase
                 'httponly' => false,
             ],
             [
+                'name' => 'samesite',
+                'value' => 'val',
+                'path' => '/',
+                'expire' => 0,
+                'domain' => '',
+                'secure' => true,
+                'httponly' => false,
+                'samesite' => 'Lax',
+            ],
+            [
                 'name' => 'google',
                 'value' => 'not=nice',
                 'path' => '/accounts',
@@ -146,6 +157,15 @@ class ResponseEmitterTest extends TestCase
                 'httponly' => true,
             ],
         ];
+
+        if (PHP_VERSION_ID < 70300) {
+            $expected[1]['path'] = '/; SameSite=Lax';
+            unset($expected[1]['samesite']);
+        } else {
+            $expected[0]['samesite'] = null;
+            $expected[2]['samesite'] = null;
+        }
+
         $this->assertEquals($expected, $GLOBALS['mockedCookies']);
     }
 
@@ -162,6 +182,7 @@ class ResponseEmitterTest extends TestCase
             ->withAddedHeader('Set-Cookie', 'google=not=nice;Path=/accounts; HttpOnly')
             ->withAddedHeader('Set-Cookie', 'a=b;  Expires=Wed, 13 Jan 2021 22:23:01 GMT; Domain=www.example.com;')
             ->withAddedHeader('Set-Cookie', 'list%5B%5D=a%20b%20c')
+            ->withAddedHeader('Set-Cookie', "samesite=val;Path=/;SameSite=None")
             ->withHeader('Content-Type', 'text/plain');
         $response->getBody()->write('ok');
 
@@ -221,7 +242,27 @@ class ResponseEmitterTest extends TestCase
                 'secure' => false,
                 'httponly' => false,
             ],
+            [
+                'name' => 'samesite',
+                'value' => 'val',
+                'path' => '/',
+                'expire' => 0,
+                'domain' => '',
+                'secure' => false,
+                'httponly' => false,
+            ],
         ];
+
+        if (PHP_VERSION_ID < 70300) {
+            $expected[5]['path'] = '/; SameSite=None';
+        } else {
+            foreach ($expected as &$val) {
+                $val['samesite'] = null;
+            }
+
+            $expected[5]['samesite'] = 'None';
+        }
+
         $this->assertEquals($expected, $GLOBALS['mockedCookies']);
     }
 

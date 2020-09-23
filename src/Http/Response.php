@@ -2271,6 +2271,7 @@ class Response implements ResponseInterface
                 'domain' => '',
                 'secure' => false,
                 'httpOnly' => false,
+                'samesite' => null,
             ];
             $expires = $data['expire'] ? new DateTime('@' . $data['expire']) : null;
             $cookie = new Cookie(
@@ -2280,7 +2281,8 @@ class Response implements ResponseInterface
                 $data['path'],
                 $data['domain'],
                 $data['secure'],
-                $data['httpOnly']
+                $data['httpOnly'],
+                $data['samesite']
             );
         }
 
@@ -2407,6 +2409,7 @@ class Response implements ResponseInterface
             'secure' => $cookie->isSecure(),
             'httpOnly' => $cookie->isHttpOnly(),
             'expire' => $cookie->getExpiresTimestamp(),
+            'samesite' => $cookie->getSameSite(),
         ];
     }
 
