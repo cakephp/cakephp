@@ -387,7 +387,7 @@ class MemcachedEngineTest extends TestCase
         $config1 = [
             'className' => 'Memcached',
             'servers' => ['127.0.0.1:11211'],
-            'persistent' => true,
+            'persistent' => '123',
         ];
         $Memcached1->init($config1);
 
@@ -395,7 +395,7 @@ class MemcachedEngineTest extends TestCase
         $config2 = [
             'className' => 'Memcached',
             'servers' => ['127.0.0.1:11212'],
-            'persistent' => true,
+            'persistent' => '123',
         ];
         $Memcached2->init($config2);
     }

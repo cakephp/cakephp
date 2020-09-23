@@ -157,9 +157,9 @@ class MemcachedEngine extends CacheEngine
                 $configuredServers = $this->_config['servers'];
                 sort($configuredServers);
                 if ($actualServers !== $configuredServers) {
-                    $message = "Invalid cache configuration. Multiple persistent cache configurations are detected" .
-                        " with different 'servers' values. 'servers' values for persistent cache configurations" .
-                        " must be the same when using the same persistence id.";
+                    $message = 'Invalid cache configuration. Multiple persistent cache configurations are detected' .
+                        ' with different `servers` values. `servers` values for persistent cache configurations' .
+                        ' must be the same when using the same persistence id.';
                     throw new InvalidArgumentException($message);
                 }
             }
