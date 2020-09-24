@@ -268,7 +268,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
         $controller = $event->getSubject();
 
         $action = $controller->getRequest()->getParam('action');
-        if (!$controller->isAction($action)) {
+        if ($action !== null && !$controller->isAction($action)) {
             return null;
         }
 
@@ -327,7 +327,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
      */
     protected function _isAllowed(Controller $controller): bool
     {
-        $action = strtolower($controller->getRequest()->getParam('action'));
+        $action = strtolower($controller->getRequest()->getParam('action', ''));
 
         return in_array($action, array_map('strtolower', $this->allowedActions), true);
     }
