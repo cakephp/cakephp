@@ -310,7 +310,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
         }
 
         if (empty($this->import) && empty($this->fields)) {
-            return true;
+            return $this->truncate($db);
         }
 
         try {
