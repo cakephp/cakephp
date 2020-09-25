@@ -17,6 +17,8 @@ declare(strict_types=1);
 namespace Cake\Database\Schema;
 
 use Cake\Database\DriverInterface;
+use Cake\Database\Type\SchemaAwareTypeInterface;
+use Cake\Database\TypeFactory;
 use InvalidArgumentException;
 
 /**
@@ -110,6 +112,53 @@ abstract class SchemaDialect
             [$this->_driver, 'quoteIdentifier'],
             $references
         ));
+    }
+
+    /**
+     * Tries to use a matching database type to generate the SQL
+     * fragment for a single column in a table.
+     *
+     * @param string $columnType The column type.
+     * @param \Cake\Database\Schema\TableSchemaInterface $schema The table schema instance the column is in.
+     * @param string $column The name of the column.
+     * @return string|null An SQL fragment, or `null` in case no corresponding type was found or the type didn't provide
+     *  custom column SQL.
+     */
+    protected function _getColumnSqlViaType(string $columnType, TableSchemaInterface $schema, string $column): ?string
+    {
+        if (!TypeFactory::getMap($columnType)) {
+            return null;
+        }
+
+        $type = TypeFactory::build($columnType);
+        if (!($type instanceof SchemaAwareTypeInterface)) {
+            return null;
+        }
+
+        return $type->getSchemaColumnSql($schema, $column, $this->_driver);
+    }
+
+    /**
+     * Tries to use a matching database type to convert a SQL column
+     * definition to an abstract type definition.
+     *
+     * @param string $columnType The column type.
+     * @param array $definition The column definition.
+     * @return array|null Array of column information, or `null` in case no corresponding type was found or the type
+     *  didn't provide custom column information.
+     */
+    protected function _convertColumnViaType(string $columnType, array $definition): ?array
+    {
+        if (!TypeFactory::getMap($columnType)) {
+            return null;
+        }
+
+        $type = TypeFactory::build($columnType);
+        if (!($type instanceof SchemaAwareTypeInterface)) {
+            return null;
+        }
+
+        return $type->convertSchemaColumn($definition, $this->_driver);
     }
 
     /**

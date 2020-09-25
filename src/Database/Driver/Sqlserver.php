@@ -310,6 +310,8 @@ class Sqlserver extends Driver
      */
     protected function _selectQueryTranslator(Query $query): Query
     {
+        $query = $this->_generateSelectExpressions($query);
+
         $limit = $query->clause('limit');
         $offset = $query->clause('offset');
 

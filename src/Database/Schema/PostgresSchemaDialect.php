@@ -90,6 +90,11 @@ class PostgresSchemaDialect extends SchemaDialect
             $length = (int)$matches[2];
         }
 
+        $type = $this->_convertColumnViaType($col, compact('length'));
+        if ($type !== null) {
+            return $type;
+        }
+
         if (in_array($col, ['date', 'time', 'boolean'], true)) {
             return ['type' => $col, 'length' => null];
         }
@@ -379,6 +384,12 @@ class PostgresSchemaDialect extends SchemaDialect
     {
         /** @var array $data */
         $data = $schema->getColumn($name);
+
+        $sql = $this->_getColumnSqlViaType($data['type'], $schema, $name);
+        if ($sql !== null) {
+            return $sql;
+        }
+
         $out = $this->_driver->quoteIdentifier($name);
         $typeMap = [
             TableSchema::TYPE_TINYINTEGER => ' SMALLINT',

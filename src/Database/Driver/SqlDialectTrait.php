@@ -20,6 +20,8 @@ use Cake\Database\Expression\ComparisonExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\IdentifierQuoter;
 use Cake\Database\Query;
+use Cake\Database\Type\SelectExpressionTypeInterface;
+use Cake\Database\TypeFactory;
 use Closure;
 use RuntimeException;
 
@@ -143,7 +145,90 @@ trait SqlDialectTrait
      */
     protected function _selectQueryTranslator(Query $query): Query
     {
+        $query = $this->_generateSelectExpressions($query);
+
         return $this->_transformDistinct($query);
+    }
+
+    /**
+     * Generates expressions for selected fields whose mapped types
+     * implement `\Cake\Database\Type\SelectExpressionTypeInterface`.
+     *
+     * @param \Cake\Database\Query $query The query to modify.
+     * @return \Cake\Database\Query The modified query.
+     */
+    protected function _generateSelectExpressions(Query $query): Query
+    {
+        $typeMap = $query->getSelectTypeMap()->toArray();
+        if (!$typeMap) {
+            return $query;
+        }
+
+        $isAutoQuotingEnabled = $this->isAutoQuotingEnabled();
+        $select = $query->clause('select');
+
+        foreach ($select as $alias => $field) {
+            // Only handle possible field names and identifier expressions,
+            // other complex expression are going to be assumed to already
+            // handle conversion required for the possible custom data type.
+            if (
+                !is_string($field) &&
+                !($field instanceof IdentifierExpression)
+            ) {
+                continue;
+            }
+
+            $originalAlias = $alias;
+            $originalField = $field;
+
+            if ($field instanceof IdentifierExpression) {
+                $field = $field->getIdentifier();
+            }
+
+            // Entries in the type map are unquoted.
+            if ($isAutoQuotingEnabled) {
+                $alias = trim((string)$alias, $this->_startQuote . $this->_endQuote);
+                $field = str_replace([$this->_startQuote, $this->_endQuote], '', $field);
+            }
+
+            // Use only the field name from `table.field`. The keys of a
+            // select type map must match the keys in the resulting rows,
+            // for fields in the form of `table.field` that would be `field`.
+            // Furthermore when using the field as an alias later on, only
+            // the field name portion can be used in the query.
+            if (strpos($field, '.') !== false) {
+                [, $field] = explode('.', $field, 2);
+            }
+
+            if (is_int($originalAlias)) {
+                $type = $typeMap[$field] ?? null;
+            } else {
+                $type = $typeMap[$alias] ?? null;
+            }
+
+            if (
+                $type === null ||
+                TypeFactory::getMap($type) === null
+            ) {
+                continue;
+            }
+
+            $type = TypeFactory::build($type);
+            if ($type instanceof SelectExpressionTypeInterface) {
+                $alias = $originalAlias;
+
+                // Use the field name as alias in case no alias has been defined.
+                // Turns `[0 => 'field']` into `['field' => expression('field')]`.
+                if (is_int($alias)) {
+                    unset($select[$alias]);
+                    $alias = $field;
+                }
+
+                $select[$alias] = $type->toSelectExpression($originalField);
+            }
+        }
+
+        return $query->select($select, true);
     }
 
     /**
