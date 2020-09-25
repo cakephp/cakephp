@@ -33,6 +33,10 @@ class SelectExpressionTypeIntegrationTest extends TestCase
 
         $this->connection = ConnectionManager::get('test');
         $this->skipIf(!($this->connection->getDriver() instanceof Mysql), 'MySQL only for now.');
+        $this->skipIf(
+            version_compare($this->connection->getDriver()->version(), '5.7.0', '<'),
+            'MySQL 5.7+ only for now.'
+        );
 
         TypeFactory::map('point', PointType::class);
 
