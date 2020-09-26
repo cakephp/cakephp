@@ -291,11 +291,11 @@ class ArrayContextTest extends TestCase
                 ],
             ],
         ]);
-        $this->assertEquals([], $context->attributes('Comments.id'));
-        $this->assertEquals(['length' => 25], $context->attributes('Comments.0.tags'));
-        $this->assertEquals(['length' => 255], $context->attributes('Comments.comment'));
-        $this->assertEquals(['precision' => 2, 'length' => 5], $context->attributes('Comments.decimal'));
-        $this->assertEquals(['precision' => 2, 'length' => 5], $context->attributes('Comments.floaty'));
+        $this->assertEquals(['type' => 'integer'], $context->attributes('Comments.id'));
+        $this->assertEquals(['length' => 25, 'type' => 'string'], $context->attributes('Comments.0.tags'));
+        $this->assertEquals(['length' => 255, 'type' => 'string'], $context->attributes('Comments.comment'));
+        $this->assertEquals(['precision' => 2, 'length' => 5, 'type' => 'decimal'], $context->attributes('Comments.decimal'));
+        $this->assertEquals(['precision' => 2, 'length' => 5, 'type' => 'float'], $context->attributes('Comments.floaty'));
     }
 
     /**

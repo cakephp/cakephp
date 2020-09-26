@@ -316,9 +316,8 @@ class ArrayContext implements ContextInterface
         if ($schema === null) {
             $schema = Hash::get($this->_context['schema'], $this->stripNesting($field));
         }
-        $allowed = ['length' => null, 'precision' => null];
 
-        return array_intersect_key((array)$schema, $allowed);
+        return (array)$schema;
     }
 
     /**
