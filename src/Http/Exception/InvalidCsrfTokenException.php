@@ -19,7 +19,7 @@ use Throwable;
 /**
  * Represents an HTTP 403 error caused by an invalid CSRF token
  */
-class InvalidCsrfTokenException extends HttpException
+class InvalidCsrfTokenException extends ForbiddenException
 {
     /**
      * @inheritDoc

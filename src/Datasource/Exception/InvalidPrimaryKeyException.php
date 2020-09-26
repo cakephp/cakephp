@@ -17,12 +17,16 @@ declare(strict_types=1);
 namespace Cake\Datasource\Exception;
 
 use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\HttpExceptionCodeInterface;
+use Cake\Core\Exception\HttpExceptionCodeTrait;
 
 /**
  * Exception raised when the provided primary key does not match the table primary key
  */
-class InvalidPrimaryKeyException extends Exception
+class InvalidPrimaryKeyException extends Exception implements HttpExceptionCodeInterface
 {
+    use HttpExceptionCodeTrait;
+
     /**
      * @inheritDoc
      */

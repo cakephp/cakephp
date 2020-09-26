@@ -21,7 +21,6 @@ use Cake\Core\PluginApplicationInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\Runner;
-use Cake\Routing\Exception\RedirectException as DeprecatedRedirectException;
 use Cake\Routing\RouteCollection;
 use Cake\Routing\Router;
 use Cake\Routing\RoutingApplicationInterface;
@@ -151,11 +150,6 @@ class RoutingMiddleware implements MiddlewareInterface
                 Router::setRequest($request);
             }
         } catch (RedirectException $e) {
-            return new RedirectResponse(
-                $e->getMessage(),
-                (int)$e->getCode()
-            );
-        } catch (DeprecatedRedirectException $e) {
             return new RedirectResponse(
                 $e->getMessage(),
                 (int)$e->getCode()

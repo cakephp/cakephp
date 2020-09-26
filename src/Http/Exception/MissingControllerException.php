@@ -14,13 +14,11 @@ declare(strict_types=1);
  */
 namespace Cake\Http\Exception;
 
-use Cake\Core\Exception\Exception;
-
 /**
  * Missing Controller exception - used when a controller
  * cannot be found.
  */
-class MissingControllerException extends Exception
+class MissingControllerException extends HttpException
 {
     /**
      * @inheritDoc

@@ -21,9 +21,9 @@ use Cake\Controller\ControllerFactory;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception as CakeException;
+use Cake\Core\Exception\HttpExceptionCodeInterface;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Event\Event;
-use Cake\Http\Exception\HttpException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
@@ -210,6 +210,11 @@ class ExceptionRenderer implements ExceptionRendererInterface
                 $response = $response->withHeader($key, $value);
             }
         }
+        if ($exception instanceof HttpExceptionCodeInterface) {
+            foreach ((array)$exception->getResponseHeaders() as $key => $value) {
+                $response = $response->withHeader($key, $value);
+            }
+        }
         $response = $response->withStatus($code);
 
         $viewVars = [
@@ -298,7 +303,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
 
         if (
             !Configure::read('debug') &&
-            !($exception instanceof HttpException)
+            !($exception instanceof HttpExceptionCodeInterface)
         ) {
             if ($code < 500) {
                 $message = __d('cake', 'Not Found');
@@ -320,15 +325,14 @@ class ExceptionRenderer implements ExceptionRendererInterface
      */
     protected function _template(Throwable $exception, string $method, int $code): string
     {
-        $isHttpException = $exception instanceof HttpException;
+        $isHttpException = $exception instanceof HttpExceptionCodeInterface;
 
         if (!Configure::read('debug') && !$isHttpException || $isHttpException) {
-            $template = 'error500';
             if ($code < 500) {
-                $template = 'error400';
+                return $this->template = 'error400';
             }
 
-            return $this->template = $template;
+            return $this->template = 'error500';
         }
 
         $template = $method ?: 'error500';
@@ -348,13 +352,11 @@ class ExceptionRenderer implements ExceptionRendererInterface
      */
     protected function _code(Throwable $exception): int
     {
-        $code = 500;
-        $errorCode = (int)$exception->getCode();
-        if ($errorCode >= 400 && $errorCode < 600) {
-            $code = $errorCode;
+        if ($exception instanceof HttpExceptionCodeInterface) {
+            return (int)$exception->getCode();
         }
 
-        return $code;
+        return 500;
     }
 
     /**

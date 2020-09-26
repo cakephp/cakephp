@@ -17,12 +17,16 @@ declare(strict_types=1);
 namespace Cake\Datasource\Exception;
 
 use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\HttpExceptionCodeInterface;
+use Cake\Core\Exception\HttpExceptionCodeTrait;
 
 /**
  * Exception raised when a particular record was not found
  */
-class RecordNotFoundException extends Exception
+class RecordNotFoundException extends Exception implements HttpExceptionCodeInterface
 {
+    use HttpExceptionCodeTrait;
+
     /**
      * @inheritDoc
      */

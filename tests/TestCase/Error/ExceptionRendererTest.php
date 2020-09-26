@@ -130,8 +130,8 @@ class ExceptionRendererTest extends TestCase
 
         $ExceptionRenderer->render();
         $controller = $ExceptionRenderer->__debugInfo()['controller'];
-        $this->assertSame('missingAction', $controller->viewBuilder()->getTemplate());
-        $this->assertSame('Error', $controller->viewBuilder()->getTemplatePath());
+        $this->assertSame('error400', $controller->viewBuilder()->getTemplate());
+        $this->assertSame('Admin/Error', $controller->viewBuilder()->getTemplatePath());
 
         Configure::write('debug', false);
         $ExceptionRenderer = new ExceptionRenderer($exception, $request);
@@ -200,7 +200,7 @@ class ExceptionRendererTest extends TestCase
         $result = $ExceptionRenderer->render();
 
         $this->assertMatchesRegularExpression(
-            '/Not Found/',
+            '/The requested address/',
             (string)$result->getBody(),
             'Method declared in error handler not converted to error400. %s'
         );
@@ -231,7 +231,7 @@ class ExceptionRendererTest extends TestCase
     public function testExceptionMessageCoercion()
     {
         Configure::write('debug', false);
-        $exception = new MissingActionException('Secret info not to be leaked');
+        $exception = new CakeException('Secret info not to be leaked');
         $ExceptionRenderer = new ExceptionRenderer($exception);
 
         $this->assertInstanceOf(
@@ -242,8 +242,8 @@ class ExceptionRendererTest extends TestCase
 
         $result = (string)$ExceptionRenderer->render()->getBody();
 
-        $this->assertSame('error400', $ExceptionRenderer->__debugInfo()['template']);
-        $this->assertStringContainsString('Not Found', $result);
+        $this->assertSame('error500', $ExceptionRenderer->__debugInfo()['template']);
+        $this->assertStringContainsString('Internal Error', $result);
         $this->assertStringNotContainsString('Secret info not to be leaked', $result);
     }
 
@@ -294,7 +294,7 @@ class ExceptionRendererTest extends TestCase
     }
 
     /**
-     * test that unknown exceptions have messages ignored.
+     * Test that messages are ignored in non-debug mode
      *
      * @return void
      */
@@ -311,22 +311,6 @@ class ExceptionRendererTest extends TestCase
         $this->assertSame(500, $response->getStatusCode());
         $this->assertStringNotContainsString('foul ball.', $result, 'Text should no show up.');
         $this->assertStringContainsString('Internal Error', $result, 'Generic message only.');
-    }
-
-    /**
-     * test that unknown exception types with valid status codes are treated correctly.
-     *
-     * @return void
-     */
-    public function testUnknownExceptionTypeWithCodeHigherThan500()
-    {
-        $exception = new \OutOfBoundsException('foul ball.', 501);
-        $ExceptionRenderer = new ExceptionRenderer($exception);
-        $response = $ExceptionRenderer->render();
-        $result = (string)$response->getBody();
-
-        $this->assertSame(501, $response->getStatusCode());
-        $this->assertStringContainsString('foul ball.', $result, 'Text should show up as its debug mode.');
     }
 
     /**
@@ -402,7 +386,7 @@ class ExceptionRendererTest extends TestCase
         $ExceptionRenderer = new ExceptionRenderer($exception);
 
         $result = $ExceptionRenderer->render();
-        $this->assertStringContainsString('Not Found', (string)$result->getBody());
+        $this->assertStringContainsString('The requested address', (string)$result->getBody());
     }
 
     /**
@@ -476,11 +460,10 @@ class ExceptionRendererTest extends TestCase
         $result = (string)$ExceptionRenderer->render()->getBody();
 
         $this->assertSame(
-            'missingController',
+            'error400',
             $ExceptionRenderer->__debugInfo()['template']
         );
-        $this->assertStringContainsString('Missing Controller', $result);
-        $this->assertStringContainsString('<em>PostsController</em>', $result);
+        $this->assertStringContainsString('could not be found', $result);
     }
 
     /**
@@ -500,11 +483,10 @@ class ExceptionRendererTest extends TestCase
         $result = (string)$ExceptionRenderer->render()->getBody();
 
         $this->assertSame(
-            'missingController',
+            'error400',
             $ExceptionRenderer->__debugInfo()['template']
         );
-        $this->assertStringContainsString('Missing Controller', $result);
-        $this->assertStringContainsString('<em>PostsController</em>', $result);
+        $this->assertStringContainsString('could not be found', $result);
     }
 
     /**
@@ -523,8 +505,7 @@ class ExceptionRendererTest extends TestCase
                     'plugin' => '',
                 ]),
                 [
-                    '/Missing Method in PostsController/',
-                    '/<em>PostsController::index\(\)<\/em>/',
+                    '/could not be found/',
                 ],
                 404,
             ],
@@ -536,8 +517,7 @@ class ExceptionRendererTest extends TestCase
                     'plugin' => '',
                 ]),
                 [
-                    '/Missing Method in PostsController/',
-                    '/<em>PostsController::index\(\)<\/em>/',
+                    '/could not be found/',
                 ],
                 404,
             ],
@@ -611,7 +591,7 @@ class ExceptionRendererTest extends TestCase
                     '/Missing Method in UserMailer/',
                     '/<em>UserMailer::welcome\(\)<\/em>/',
                 ],
-                404,
+                500,
             ],
             [
                 new Exception('boom'),

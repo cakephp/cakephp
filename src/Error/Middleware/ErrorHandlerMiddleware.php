@@ -160,7 +160,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
         return new RedirectResponse(
             $exception->getMessage(),
             $exception->getCode(),
-            $exception->getHeaders()
+            $exception->getResponseHeaders()
         );
     }
 
