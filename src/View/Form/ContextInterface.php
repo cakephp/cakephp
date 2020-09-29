@@ -21,6 +21,8 @@ namespace Cake\View\Form;
  */
 interface ContextInterface
 {
+    public const VALID_ATTRIBUTES = ['length', 'precision', 'comment', 'null', 'default'];
+
     /**
      * Get the fields used in the context as a primary key.
      *

@@ -202,7 +202,10 @@ class FormContext implements ContextInterface
      */
     public function attributes(string $field): array
     {
-        return (array)$this->_form->getSchema()->field($field);
+        return array_intersect_key(
+            (array)$this->_form->getSchema()->field($field),
+            array_flip(static::VALID_ATTRIBUTES)
+        );
     }
 
     /**

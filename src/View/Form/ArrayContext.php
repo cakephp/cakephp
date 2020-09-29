@@ -317,7 +317,10 @@ class ArrayContext implements ContextInterface
             $schema = Hash::get($this->_context['schema'], $this->stripNesting($field));
         }
 
-        return (array)$schema;
+        return array_intersect_key(
+            (array)$schema,
+            array_flip(static::VALID_ATTRIBUTES)
+        );
     }
 
     /**
