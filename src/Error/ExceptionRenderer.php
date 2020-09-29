@@ -95,6 +95,15 @@ class ExceptionRenderer implements ExceptionRendererInterface
      */
     protected $request;
 
+    /**
+     * Map of exceptions to http status codes.
+     *
+     * This can be customized for users that don't want specific exceptions to throw 404 errors
+     * or want their application exceptions to be automatically converted.
+     *
+     * @var array
+     * @psalm-var array<class-string<\Throwable>, int>
+     */
     protected $exceptionHttpCodes = [
         // Controller exceptions
         MissingActionException::class => 404,
