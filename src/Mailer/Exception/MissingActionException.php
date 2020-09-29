@@ -25,9 +25,4 @@ class MissingActionException extends Exception
      * @inheritDoc
      */
     protected $_messageTemplate = 'Mail %s::%s() could not be found, or is not accessible.';
-
-    /**
-     * @inheritDoc
-     */
-    protected $_defaultCode = 404;
 }

@@ -172,7 +172,7 @@ class ExceptionsTest extends TestCase
             ['Cake\Datasource\Exception\MissingModelException', 500],
             ['Cake\Datasource\Exception\PageOutOfBoundsException', 404],
             ['Cake\Datasource\Exception\RecordNotFoundException', 404],
-            ['Cake\Mailer\Exception\MissingActionException', 404],
+            ['Cake\Mailer\Exception\MissingActionException', 500],
             ['Cake\Mailer\Exception\MissingMailerException', 500],
             ['Cake\Http\Exception\BadRequestException', 400],
             ['Cake\Http\Exception\ConflictException', 409],
