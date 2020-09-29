@@ -711,7 +711,10 @@ class EntityContext implements ContextInterface
             return [];
         }
 
-        return (array)$table->getSchema()->getColumn(array_pop($parts));
+        $column = (array)$table->getSchema()->getColumn(array_pop($parts));
+        $allowed = ['length' => null, 'precision' => null, 'comment' => null, 'null' => null, 'default' => null];
+
+        return array_intersect_key($column, $allowed);
     }
 
     /**
