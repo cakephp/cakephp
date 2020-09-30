@@ -305,7 +305,8 @@ class ExceptionRenderer implements ExceptionRendererInterface
             $baseClass = substr($baseClass, 0, -9);
         }
 
-        $method = Inflector::variable($baseClass) ?: 'error500';
+        // $baseClass would be an empty string if the exception class is \Exception.
+        $method = $baseClass === '' ? 'error500' : Inflector::variable($baseClass);
 
         return $this->method = $method;
     }
@@ -339,24 +340,15 @@ class ExceptionRenderer implements ExceptionRendererInterface
      * Get template for rendering exception info.
      *
      * @param \Throwable $exception Exception instance.
-     * @param string $method Method name.
+     * @param string $template Template name.
      * @param int $code Error code.
      * @return string Template name
      */
-    protected function _template(Throwable $exception, string $method, int $code): string
+    protected function _template(Throwable $exception, string $template, int $code): string
     {
-        $isHttpException = $exception instanceof HttpException;
-
-        if (!Configure::read('debug') && !$isHttpException || $isHttpException) {
-            $template = 'error500';
-            if ($code < 500) {
-                $template = 'error400';
-            }
-
-            return $this->template = $template;
+        if ($exception instanceof HttpException || !Configure::read('debug')) {
+            return $this->template = $code < 500 ? 'error400' : 'error500';
         }
-
-        $template = $method ?: 'error500';
 
         if ($exception instanceof PDOException) {
             $template = 'pdo_error';
