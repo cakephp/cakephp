@@ -73,12 +73,7 @@ script:
       fi
 
 after_success:
-  - |
-      if [[ $TRAVIS_PHP_VERSION == '7.4' ]]; then
-        wget https://github.com/php-coveralls/php-coveralls/releases/download/v2.2.0/php-coveralls.phar
-        chmod +x php-coveralls.phar
-        ./php-coveralls.phar
-      fi
+  - if [[ $TRAVIS_PHP_VERSION == '7.4' ]]; then bash <(curl -s https://codecov.io/bash); fi
 
 notifications:
   email: false
