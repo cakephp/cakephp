@@ -340,21 +340,21 @@ class ExceptionRenderer implements ExceptionRendererInterface
      * Get template for rendering exception info.
      *
      * @param \Throwable $exception Exception instance.
-     * @param string $template Template name.
+     * @param string $method Method name.
      * @param int $code Error code.
      * @return string Template name
      */
-    protected function _template(Throwable $exception, string $template, int $code): string
+    protected function _template(Throwable $exception, string $method, int $code): string
     {
         if ($exception instanceof HttpException || !Configure::read('debug')) {
             return $this->template = $code < 500 ? 'error400' : 'error500';
         }
 
         if ($exception instanceof PDOException) {
-            $template = 'pdo_error';
+            return $this->template = 'pdo_error';
         }
 
-        return $this->template = $template;
+        return $this->template = $method;
     }
 
     /**
