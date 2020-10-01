@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Http;
 
 use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
+use Cake\Core\ContainerInterface;
 use Cake\Http\BaseApplication;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\ServerRequestFactory;
@@ -230,5 +231,14 @@ class BaseApplicationTest extends TestCase
 
         $this->assertCount(1, $app->getPlugins());
         $this->assertTrue($app->getPlugins()->has('TestPlugin'));
+    }
+
+    public function testGetContainer()
+    {
+        $app = $this->getMockForAbstractClass(BaseApplication::class, [$this->path]);
+        $container = $app->getContainer();
+
+        $this->assertInstanceOf(ContainerInterface::class, $container);
+        $this->assertSame($container, $app->getContainer(), 'Should return a reference');
     }
 }

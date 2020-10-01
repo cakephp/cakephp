@@ -21,6 +21,7 @@ use Cake\Console\Command\HelpCommand;
 use Cake\Console\Exception\MissingOptionException;
 use Cake\Console\Exception\StopException;
 use Cake\Core\ConsoleApplicationInterface;
+use Cake\Core\ContainerApplicationInterface;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
@@ -49,7 +50,7 @@ class CommandRunner implements EventDispatcherInterface
     /**
      * The application console commands are being run for.
      *
-     * @var \Cake\Console\CommandFactoryInterface
+     * @var \Cake\Console\CommandFactoryInterface|null
      */
     protected $factory;
 
@@ -81,7 +82,7 @@ class CommandRunner implements EventDispatcherInterface
     ) {
         $this->app = $app;
         $this->root = $root;
-        $this->factory = $factory ?: new CommandFactory();
+        $this->factory = $factory;
         $this->aliases = [
             '--version' => 'version',
             '--help' => 'help',
@@ -368,6 +369,14 @@ class CommandRunner implements EventDispatcherInterface
      */
     protected function createCommand(string $className, ConsoleIo $io)
     {
+        if (!$this->factory) {
+            $container = null;
+            if ($this->app instanceof ContainerApplicationInterface) {
+                $container = $this->app->getContainer();
+            }
+            $this->factory = new CommandFactory($container);
+        }
+
         $shell = $this->factory->create($className);
         if ($shell instanceof Shell) {
             $shell->setIo($io);

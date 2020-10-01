@@ -37,11 +37,11 @@ class BasePlugin implements PluginInterface
     protected $bootstrapEnabled = true;
 
     /**
-     * Load routes or not
+     * Console middleware
      *
      * @var bool
      */
-    protected $routesEnabled = true;
+    protected $consoleEnabled = true;
 
     /**
      * Enable middleware
@@ -51,11 +51,18 @@ class BasePlugin implements PluginInterface
     protected $middlewareEnabled = true;
 
     /**
-     * Console middleware
+     * Register container services
      *
      * @var bool
      */
-    protected $consoleEnabled = true;
+    protected $registerEnabled = true;
+
+    /**
+     * Load routes or not
+     *
+     * @var bool
+     */
+    protected $routesEnabled = true;
 
     /**
      * The path to this plugin.
@@ -280,5 +287,16 @@ class BasePlugin implements PluginInterface
     public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
     {
         return $middlewareQueue;
+    }
+
+    /**
+     * Register container services for this plugin.
+     *
+     * @param \Cake\Core\ContainerInterface $container The container to add services to.
+     * @return \Cake\Core\ContainerInterface The updated container
+     */
+    public function register(ContainerInterface $container): ContainerInterface
+    {
+        return $container;
     }
 }

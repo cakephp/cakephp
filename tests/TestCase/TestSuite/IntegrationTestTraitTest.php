@@ -305,7 +305,7 @@ class IntegrationTestTraitTest extends TestCase
 
         $this->configApplication(Configure::read('App.namespace') . '\ApplicationWithExceptionsInMiddleware', null);
 
-        $this->_request['headers'] = [ 'Accept' => 'application/json' ];
+        $this->_request['headers'] = ['Accept' => 'application/json'];
         $this->get('/json_response/api_get_data');
         $this->assertResponseCode(403);
         $this->assertHeader('Content-Type', 'application/json');
@@ -1730,5 +1730,16 @@ class IntegrationTestTraitTest extends TestCase
     {
         $this->_controller = new Controller();
         $this->assertNull($this->viewVariable('notFound'));
+    }
+
+    /**
+     * Integration test for a controller with action dependencies.
+     *
+     * @return void
+     */
+    public function testHandleWithContainerDependencies()
+    {
+        $this->get('/dependencies/');
+        $this->assertResponseContains('"key":"value"', 'Contains the data from the stdClass container object.');
     }
 }
