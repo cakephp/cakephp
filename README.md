@@ -84,7 +84,7 @@ If you’ve found a security issue in CakePHP, please use the following procedur
 
 For each report, we try to first confirm the vulnerability. Once confirmed, the CakePHP team will take the following actions:
 
-- Acknowledge to the reporter that we’ve received the issue, and are working on a fix. We ask that the reporter keep the issue confidential until we announce it.
+- Acknowledge to the reporter that we have received the issue, and are working on a fix. We ask that the reporter keep the issue confidential until we announce it.
 - Get a fix/patch prepared.
 - Prepare a post describing the vulnerability, and the possible exploits.
 - Release new versions of all affected versions.
