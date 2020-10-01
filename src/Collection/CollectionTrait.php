@@ -63,10 +63,10 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function each(callable $c)
+    public function each(callable $callback)
     {
         foreach ($this->optimizeUnwrap() as $k => $v) {
-            $c($v, $k);
+            $callback($v, $k);
         }
 
         return $this;
@@ -75,34 +75,34 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function filter(?callable $c = null): CollectionInterface
+    public function filter(?callable $callback = null): CollectionInterface
     {
-        if ($c === null) {
-            $c = function ($v) {
+        if ($callback === null) {
+            $callback = function ($v) {
                 return (bool)$v;
             };
         }
 
-        return new FilterIterator($this->unwrap(), $c);
+        return new FilterIterator($this->unwrap(), $callback);
     }
 
     /**
      * @inheritDoc
      */
-    public function reject(callable $c): CollectionInterface
+    public function reject(callable $callback): CollectionInterface
     {
-        return new FilterIterator($this->unwrap(), function ($key, $value, $items) use ($c) {
-            return !$c($key, $value, $items);
+        return new FilterIterator($this->unwrap(), function ($key, $value, $items) use ($callback) {
+            return !$callback($key, $value, $items);
         });
     }
 
     /**
      * @inheritDoc
      */
-    public function every(callable $c): bool
+    public function every(callable $callback): bool
     {
         foreach ($this->optimizeUnwrap() as $key => $value) {
-            if (!$c($value, $key)) {
+            if (!$callback($value, $key)) {
                 return false;
             }
         }
@@ -113,10 +113,10 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function some(callable $c): bool
+    public function some(callable $callback): bool
     {
         foreach ($this->optimizeUnwrap() as $key => $value) {
-            if ($c($value, $key) === true) {
+            if ($callback($value, $key) === true) {
                 return true;
             }
         }
@@ -141,29 +141,29 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function map(callable $c): CollectionInterface
+    public function map(callable $callback): CollectionInterface
     {
-        return new ReplaceIterator($this->unwrap(), $c);
+        return new ReplaceIterator($this->unwrap(), $callback);
     }
 
     /**
      * @inheritDoc
      */
-    public function reduce(callable $c, $zero = null)
+    public function reduce(callable $callback, $initial = null)
     {
         $isFirst = false;
         if (func_num_args() < 2) {
             $isFirst = true;
         }
 
-        $result = $zero;
+        $result = $initial;
         foreach ($this->optimizeUnwrap() as $k => $value) {
             if ($isFirst) {
                 $result = $value;
                 $isFirst = false;
                 continue;
             }
-            $result = $c($result, $value, $k);
+            $result = $callback($result, $value, $k);
         }
 
         return $result;
@@ -172,10 +172,10 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function extract($matcher): CollectionInterface
+    public function extract($path): CollectionInterface
     {
-        $extractor = new ExtractIterator($this->unwrap(), $matcher);
-        if (is_string($matcher) && strpos($matcher, '{*}') !== false) {
+        $extractor = new ExtractIterator($this->unwrap(), $path);
+        if (is_string($path) && strpos($path, '{*}') !== false) {
             $extractor = $extractor
                 ->filter(function ($data) {
                     return $data !== null && ($data instanceof Traversable || is_array($data));
@@ -189,27 +189,27 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function max($callback, int $type = \SORT_NUMERIC)
+    public function max($callback, int $sort = \SORT_NUMERIC)
     {
-        return (new SortIterator($this->unwrap(), $callback, \SORT_DESC, $type))->first();
+        return (new SortIterator($this->unwrap(), $callback, \SORT_DESC, $sort))->first();
     }
 
     /**
      * @inheritDoc
      */
-    public function min($callback, int $type = \SORT_NUMERIC)
+    public function min($callback, int $sort = \SORT_NUMERIC)
     {
-        return (new SortIterator($this->unwrap(), $callback, \SORT_ASC, $type))->first();
+        return (new SortIterator($this->unwrap(), $callback, \SORT_ASC, $sort))->first();
     }
 
     /**
      * @inheritDoc
      */
-    public function avg($matcher = null)
+    public function avg($path = null)
     {
         $result = $this;
-        if ($matcher !== null) {
-            $result = $result->extract($matcher);
+        if ($path !== null) {
+            $result = $result->extract($path);
         }
         $result = $result
             ->reduce(function ($acc, $current) {
@@ -228,13 +228,13 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function median($matcher = null)
+    public function median($path = null)
     {
-        $elements = $this;
-        if ($matcher !== null) {
-            $elements = $elements->extract($matcher);
+        $items = $this;
+        if ($path !== null) {
+            $items = $items->extract($path);
         }
-        $values = $elements->toList();
+        $values = $items->toList();
         sort($values);
         $count = count($values);
 
@@ -254,9 +254,9 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function sortBy($callback, int $dir = \SORT_DESC, int $type = \SORT_NUMERIC): CollectionInterface
+    public function sortBy($callback, int $order = \SORT_DESC, int $sort = \SORT_NUMERIC): CollectionInterface
     {
-        return new SortIterator($this->unwrap(), $callback, $dir, $type);
+        return new SortIterator($this->unwrap(), $callback, $order, $sort);
     }
 
     /**
@@ -310,13 +310,13 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function sumOf($matcher = null)
+    public function sumOf($path = null)
     {
-        if ($matcher === null) {
+        if ($path === null) {
             return array_sum($this->toList());
         }
 
-        $callback = $this->_propertyExtractor($matcher);
+        $callback = $this->_propertyExtractor($path);
         $sum = 0;
         foreach ($this->optimizeUnwrap() as $k => $v) {
             $sum += $callback($v, $k);
@@ -330,34 +330,34 @@ trait CollectionTrait
      */
     public function shuffle(): CollectionInterface
     {
-        $elements = $this->toList();
-        shuffle($elements);
+        $items = $this->toList();
+        shuffle($items);
 
-        return $this->newCollection($elements);
+        return $this->newCollection($items);
     }
 
     /**
      * @inheritDoc
      */
-    public function sample(int $size = 10): CollectionInterface
+    public function sample(int $length = 10): CollectionInterface
     {
-        return $this->newCollection(new LimitIterator($this->shuffle(), 0, $size));
+        return $this->newCollection(new LimitIterator($this->shuffle(), 0, $length));
     }
 
     /**
      * @inheritDoc
      */
-    public function take(int $size = 1, int $from = 0): CollectionInterface
+    public function take(int $length = 1, int $offset = 0): CollectionInterface
     {
-        return $this->newCollection(new LimitIterator($this, $from, $size));
+        return $this->newCollection(new LimitIterator($this, $offset, $length));
     }
 
     /**
      * @inheritDoc
      */
-    public function skip(int $howMany): CollectionInterface
+    public function skip(int $length): CollectionInterface
     {
-        return $this->newCollection(new LimitIterator($this, $howMany));
+        return $this->newCollection(new LimitIterator($this, $length));
     }
 
     /**
@@ -417,15 +417,15 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function takeLast(int $howMany): CollectionInterface
+    public function takeLast(int $length): CollectionInterface
     {
-        if ($howMany < 1) {
+        if ($length < 1) {
             throw new InvalidArgumentException('The takeLast method requires a number greater than 0.');
         }
 
         $iterator = $this->optimizeUnwrap();
         if (is_array($iterator)) {
-            return $this->newCollection(array_slice($iterator, $howMany * -1));
+            return $this->newCollection(array_slice($iterator, $length * -1));
         }
 
         if ($iterator instanceof Countable) {
@@ -435,12 +435,12 @@ trait CollectionTrait
                 return $this->newCollection([]);
             }
 
-            $iterator = new LimitIterator($iterator, max(0, $count - $howMany), $howMany);
+            $iterator = new LimitIterator($iterator, max(0, $count - $length), $length);
 
             return $this->newCollection($iterator);
         }
 
-        $generator = function ($iterator, $howMany) {
+        $generator = function ($iterator, $length) {
             $result = [];
             $bucket = 0;
             $offset = 0;
@@ -493,11 +493,11 @@ trait CollectionTrait
 
             foreach ($iterator as $k => $item) {
                 $result[$bucket] = [$k, $item];
-                $bucket = (++$bucket) % $howMany;
+                $bucket = (++$bucket) % $length;
                 $offset++;
             }
 
-            $offset = $offset % $howMany;
+            $offset = $offset % $length;
             $head = array_slice($result, $offset);
             $tail = array_slice($result, 0, $offset);
 
@@ -510,7 +510,7 @@ trait CollectionTrait
             }
         };
 
-        return $this->newCollection($generator($iterator, $howMany));
+        return $this->newCollection($generator($iterator, $length));
     }
 
     /**
@@ -725,28 +725,28 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function listNested($dir = 'desc', $nestingKey = 'children'): CollectionInterface
+    public function listNested($order = 'desc', $nestingKey = 'children'): CollectionInterface
     {
-        if (is_string($dir)) {
-            $dir = strtolower($dir);
+        if (is_string($order)) {
+            $order = strtolower($order);
             $modes = [
                 'desc' => RecursiveIteratorIterator::SELF_FIRST,
                 'asc' => RecursiveIteratorIterator::CHILD_FIRST,
                 'leaves' => RecursiveIteratorIterator::LEAVES_ONLY,
             ];
 
-            if (!isset($modes[$dir])) {
+            if (!isset($modes[$order])) {
                 throw new RuntimeException(sprintf(
                     "Invalid direction `%s` provided. Must be one of: 'desc', 'asc', 'leaves'",
-                    $dir
+                    $order
                 ));
             }
-            $dir = $modes[$dir];
+            $order = $modes[$order];
         }
 
         return new TreeIterator(
             new NestIterator($this, $nestingKey),
-            $dir
+            $order
         );
     }
 
@@ -765,17 +765,17 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function unfold(?callable $transformer = null): CollectionInterface
+    public function unfold(?callable $callback = null): CollectionInterface
     {
-        if ($transformer === null) {
-            $transformer = function ($item) {
+        if ($callback === null) {
+            $callback = function ($item) {
                 return $item;
             };
         }
 
         return $this->newCollection(
             new RecursiveIteratorIterator(
-                new UnfoldIterator($this->unwrap(), $transformer),
+                new UnfoldIterator($this->unwrap(), $callback),
                 RecursiveIteratorIterator::LEAVES_ONLY
             )
         );
@@ -784,9 +784,9 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function through(callable $handler): CollectionInterface
+    public function through(callable $callback): CollectionInterface
     {
-        $result = $handler($this);
+        $result = $callback($this);
 
         return $result instanceof CollectionInterface ? $result : $this->newCollection($result);
     }
@@ -802,16 +802,16 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function zipWith(iterable $items, $callable): CollectionInterface
+    public function zipWith(iterable $items, $callback): CollectionInterface
     {
         if (func_num_args() > 2) {
             $items = func_get_args();
-            $callable = array_pop($items);
+            $callback = array_pop($items);
         } else {
             $items = [$items];
         }
 
-        return new ZipIterator(array_merge([$this->unwrap()], $items), $callable);
+        return new ZipIterator(array_merge([$this->unwrap()], $items), $callback);
     }
 
     /**
