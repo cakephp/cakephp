@@ -1114,6 +1114,12 @@ interface CollectionInterface extends Iterator, JsonSerializable
      *
      * ## WARNINGS:
      *
+     * ### Will change the current position of the iterator:
+     *
+     * Calling this method at the same time that you are iterating this collections, for example in
+     * a foreach, will result in undefined behavior. Avoid doing this.
+     *
+     *
      * ### Consumes all elements for NoRewindIterator collections:
      *
      * On certain type of collections, calling this method may render unusable afterwards.
@@ -1135,11 +1141,6 @@ interface CollectionInterface extends Iterator, JsonSerializable
      *
      * If you need the count of elements after taking the keys in consideration
      * (the count of unique keys), you can call `countKeys()`
-     *
-     * ### Will change the current position of the iterator:
-     *
-     * Calling this method at the same time that you are iterating this collections, for example in
-     * a foreach, will result in undefined behavior. Avoid doing this.
      *
      * @return int
      */
