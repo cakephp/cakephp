@@ -226,6 +226,24 @@ function openPath(container, target) {
   }
 }
 
+// https://www.30secondsofcode.org/js/s/copy-to-clipboard
+function copyToClipboard (str) {
+  var el = document.createElement('textarea');
+  el.value = str;
+  el.setAttribute('readonly', '');
+  el.style.position = 'absolute';
+  el.style.left = '-9999px';
+  document.body.appendChild(el);
+  var selected = document.getSelection().rangeCount > 0 ? document.getSelection().getRangeAt(0) : false;
+  el.select();
+  document.execCommand('copy');
+  document.body.removeChild(el);
+  if (selected) {
+    document.getSelection().removeAllRanges();
+    document.getSelection().addRange(selected);
+  }
+}
+
 function attachCopyButton(nodes) {
   nodes.forEach(function (container) {
     var copy = doc.createElement('a');
@@ -245,7 +263,7 @@ function attachCopyButton(nodes) {
       }
 
       // Chop off last 4 to exclude copy button text.
-      navigator.clipboard.writeText(lineNo + container.textContent.substring(0, container.textContent.length - 4));
+      copyToClipboard(lineNo + container.textContent.substring(0, container.textContent.length - 4));
     });
 
     container.appendChild(copy);
