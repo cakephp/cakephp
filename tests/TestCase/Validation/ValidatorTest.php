@@ -129,7 +129,7 @@ class ValidatorTest extends TestCase
     public function testAddNestedSingleProviders()
     {
         $validator = new Validator();
-        $validator->setProvider('test', $this);
+        $validator->addProvider('test', $this);
 
         $inner = new Validator();
         $inner->add('username', 'not-blank', ['rule' => function () use ($inner, $validator) {
@@ -196,7 +196,7 @@ class ValidatorTest extends TestCase
     public function testAddNestedManyProviders()
     {
         $validator = new Validator();
-        $validator->setProvider('test', $this);
+        $validator->addProvider('test', $this);
 
         $inner = new Validator();
         $inner->add('comment', 'not-blank', ['rule' => function () use ($inner, $validator) {
@@ -1780,12 +1780,12 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $object = new \stdClass();
-        $this->assertSame($validator, $validator->setProvider('foo', $object));
+        $this->assertSame($validator, $validator->addProvider('foo', $object));
         $this->assertSame($object, $validator->getProvider('foo'));
         $this->assertNull($validator->getProvider('bar'));
 
         $another = new \stdClass();
-        $this->assertSame($validator, $validator->setProvider('bar', $another));
+        $this->assertSame($validator, $validator->addProvider('bar', $another));
         $this->assertSame($another, $validator->getProvider('bar'));
 
         $this->assertEquals(new \Cake\Validation\RulesProvider(), $validator->getProvider('default'));
@@ -1851,7 +1851,7 @@ class ValidatorTest extends TestCase
                 return "That ain't cool, yo";
             }));
 
-        $validator->setProvider('thing', $thing);
+        $validator->addProvider('thing', $thing);
         $errors = $validator->validate(['email' => '!', 'title' => 'bar']);
         $expected = [
             'email' => ['alpha' => 'The provided value is invalid'],
@@ -1898,7 +1898,7 @@ class ValidatorTest extends TestCase
 
                 return "That ain't cool, yo";
             }));
-        $validator->setProvider('thing', $thing);
+        $validator->addProvider('thing', $thing);
         $errors = $validator->validate(['email' => '!', 'title' => 'bar']);
         $expected = [
             'title' => ['cool' => "That ain't cool, yo"],
@@ -2124,7 +2124,7 @@ class ValidatorTest extends TestCase
     public function testDebugInfo()
     {
         $validator = new Validator();
-        $validator->setProvider('test', $this);
+        $validator->addProvider('test', $this);
         $validator->add('title', 'not-empty', ['rule' => 'notBlank']);
         $validator->requirePresence('body');
         $validator->allowEmptyString('published');

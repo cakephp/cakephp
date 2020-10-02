@@ -295,8 +295,24 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $name The name under which the provider should be set.
      * @param object|string $object Provider object or class name.
      * @return $this
+     * @deprecated In favour of addProvider()
      */
     public function setProvider(string $name, $object)
+    {
+        return $this->addProvider($name, $object);
+    }
+
+    /**
+     * Associates an object to a name so it can be used as a provider. Providers are
+     * objects or class names that can contain methods used during validation of for
+     * deciding whether a validation rule can be applied. All validation methods,
+     * when called will receive the full list of providers stored in this validator.
+     *
+     * @param string $name The name under which the provider should be set.
+     * @param object|string $object Provider object or class name.
+     * @return $this
+     */
+    public function addProvider(string $name, $object)
     {
         $this->_providers[$name] = $object;
 
@@ -535,7 +551,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             }
             foreach ($this->providers() as $provider) {
                 /** @psalm-suppress PossiblyNullArgument */
-                $validator->setProvider($provider, $this->getProvider($provider));
+                $validator->addProvider($provider, $this->getProvider($provider));
             }
             $errors = $validator->validate($value, $context['newRecord']);
 
@@ -578,7 +594,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             }
             foreach ($this->providers() as $provider) {
                 /** @psalm-suppress PossiblyNullArgument */
-                $validator->setProvider($provider, $this->getProvider($provider));
+                $validator->addProvider($provider, $this->getProvider($provider));
             }
             $errors = [];
             foreach ($value as $i => $row) {

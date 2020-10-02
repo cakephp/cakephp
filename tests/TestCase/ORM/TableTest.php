@@ -6203,7 +6203,7 @@ class TableTest extends TestCase
         $table = $this->getTableLocator()->get('Users');
         $validator = new Validator();
         $validator->add('username', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
-        $validator->setProvider('table', $table);
+        $validator->addProvider('table', $table);
 
         $data = ['username' => ['larry', 'notthere']];
         $this->assertNotEmpty($validator->validate($data));
@@ -6243,7 +6243,7 @@ class TableTest extends TestCase
             'rule' => ['validateUnique', ['derp' => 'erp', 'scope' => 'id']],
             'provider' => 'table',
         ]);
-        $validator->setProvider('table', $table);
+        $validator->addProvider('table', $table);
         $data = ['username' => 'larry', 'id' => 3];
         $this->assertNotEmpty($validator->validate($data));
 
@@ -6283,7 +6283,7 @@ class TableTest extends TestCase
             'provider' => 'table',
             'message' => 'Must be unique.',
         ]);
-        $validator->setProvider('table', $table);
+        $validator->addProvider('table', $table);
 
         $data = ['site_id' => 1, 'author_id' => null, 'title' => 'Null dupe'];
         $expected = ['site_id' => ['unique' => 'Must be unique.']];

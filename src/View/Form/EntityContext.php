@@ -599,7 +599,7 @@ class EntityContext implements ContextInterface
 
         if (isset($this->_validator[$key])) {
             /** @psalm-suppress PossiblyInvalidArgument */
-            $this->_validator[$key]->setProvider('entity', $entity);
+            $this->_validator[$key]->addProvider('entity', $entity);
 
             return $this->_validator[$key];
         }
@@ -619,7 +619,7 @@ class EntityContext implements ContextInterface
 
         $validator = $table->getValidator($method);
         /** @psalm-suppress PossiblyInvalidArgument */
-        $validator->setProvider('entity', $entity);
+        $validator->addProvider('entity', $entity);
 
         return $this->_validator[$key] = $validator;
     }
