@@ -25,9 +25,4 @@ class PageOutOfBoundsException extends Exception
      * @inheritDoc
      */
     protected $_messageTemplate = 'Page number %s could not be found.';
-
-    /**
-     * @inheritDoc
-     */
-    protected $_defaultCode = 404;
 }

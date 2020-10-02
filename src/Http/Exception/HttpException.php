@@ -26,4 +26,8 @@ use Cake\Core\Exception\Exception;
  */
 class HttpException extends Exception
 {
+    /**
+     * @inheritDoc
+     */
+    protected $_defaultCode = 500;
 }
