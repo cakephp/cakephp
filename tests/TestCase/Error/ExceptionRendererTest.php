@@ -320,7 +320,7 @@ class ExceptionRendererTest extends TestCase
      */
     public function testUnknownExceptionTypeWithCodeHigherThan500()
     {
-        $exception = new \OutOfBoundsException('foul ball.', 501);
+        $exception = new HttpException('foul ball.', 501);
         $ExceptionRenderer = new ExceptionRenderer($exception);
         $response = $ExceptionRenderer->render();
         $result = (string)$response->getBody();
@@ -611,7 +611,7 @@ class ExceptionRendererTest extends TestCase
                     '/Missing Method in UserMailer/',
                     '/<em>UserMailer::welcome\(\)<\/em>/',
                 ],
-                404,
+                500,
             ],
             [
                 new Exception('boom'),
