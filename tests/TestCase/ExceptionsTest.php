@@ -166,7 +166,7 @@ class ExceptionsTest extends TestCase
             ['Cake\Database\Exception\MissingDriverException', 500],
             ['Cake\Database\Exception\MissingExtensionException', 500],
             ['Cake\Database\Exception\NestedTransactionRollbackException', 500],
-            ['Cake\Datasource\Exception\InvalidPrimaryKeyException', 404],
+            ['Cake\Datasource\Exception\InvalidPrimaryKeyException', 500],
             ['Cake\Datasource\Exception\MissingDatasourceConfigException', 500],
             ['Cake\Datasource\Exception\MissingDatasourceException', 500],
             ['Cake\Datasource\Exception\MissingModelException', 500],

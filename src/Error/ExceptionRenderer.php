@@ -23,7 +23,6 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception as CakeException;
 use Cake\Core\Exception\MissingPluginException;
-use Cake\Datasource\Exception\InvalidPrimaryKeyException;
 use Cake\Datasource\Exception\PageOutOfBoundsException;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Event\Event;
@@ -108,7 +107,6 @@ class ExceptionRenderer implements ExceptionRendererInterface
         // Controller exceptions
         MissingActionException::class => 404,
         // Datasource exceptions
-        InvalidPrimaryKeyException::class => 404,
         PageOutOfBoundsException::class => 404,
         RecordNotFoundException::class => 404,
         // Http exceptions

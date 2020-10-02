@@ -23,8 +23,4 @@ use Cake\Core\Exception\Exception;
  */
 class InvalidPrimaryKeyException extends Exception
 {
-    /**
-     * @inheritDoc
-     */
-    protected $_defaultCode = 404;
 }
