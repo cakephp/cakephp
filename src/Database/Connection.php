@@ -275,13 +275,13 @@ class Connection implements ConnectionInterface
     /**
      * Prepares a SQL statement to be executed.
      *
-     * @param string|\Cake\Database\Query $sql The SQL to convert into a prepared statement.
+     * @param string|\Cake\Database\Query $query The SQL to convert into a prepared statement.
      * @return \Cake\Database\StatementInterface
      */
-    public function prepare($sql): StatementInterface
+    public function prepare($query): StatementInterface
     {
-        return $this->getDisconnectRetry()->run(function () use ($sql) {
-            $statement = $this->_driver->prepare($sql);
+        return $this->getDisconnectRetry()->run(function () use ($query) {
+            $statement = $this->_driver->prepare($query);
 
             if ($this->_logQueries) {
                 $statement = $this->_newLogger($statement);
@@ -295,15 +295,15 @@ class Connection implements ConnectionInterface
      * Executes a query using $params for interpolating values and $types as a hint for each
      * those params.
      *
-     * @param string $query SQL to be executed and interpolated with $params
-     * @param array $params list or associative array of params to be interpolated in $query as values
+     * @param string $sql SQL to be executed and interpolated with $params
+     * @param array $params list or associative array of params to be interpolated in $sql as values
      * @param array $types list or associative array of types to be used for casting values in query
      * @return \Cake\Database\StatementInterface executed statement
      */
-    public function execute(string $query, array $params = [], array $types = []): StatementInterface
+    public function execute(string $sql, array $params = [], array $types = []): StatementInterface
     {
-        return $this->getDisconnectRetry()->run(function () use ($query, $params, $types) {
-            $statement = $this->prepare($query);
+        return $this->getDisconnectRetry()->run(function () use ($sql, $params, $types) {
+            $statement = $this->prepare($sql);
             if (!empty($params)) {
                 $statement->bind($params, $types);
             }
@@ -409,18 +409,18 @@ class Connection implements ConnectionInterface
      * Executes an INSERT query on the specified table.
      *
      * @param string $table the table to insert values in
-     * @param array $data values to be inserted
+     * @param array $values values to be inserted
      * @param array $types list of associative array containing the types to be used for casting
      * @return \Cake\Database\StatementInterface
      */
-    public function insert(string $table, array $data, array $types = []): StatementInterface
+    public function insert(string $table, array $values, array $types = []): StatementInterface
     {
-        return $this->getDisconnectRetry()->run(function () use ($table, $data, $types) {
-            $columns = array_keys($data);
+        return $this->getDisconnectRetry()->run(function () use ($table, $values, $types) {
+            $columns = array_keys($values);
 
             return $this->newQuery()->insert($columns, $types)
                 ->into($table)
-                ->values($data)
+                ->values($values)
                 ->execute();
         });
     }
@@ -429,16 +429,16 @@ class Connection implements ConnectionInterface
      * Executes an UPDATE statement on the specified table.
      *
      * @param string $table the table to update rows from
-     * @param array $data values to be updated
+     * @param array $values values to be updated
      * @param array $conditions conditions to be set for update statement
      * @param array $types list of associative array containing the types to be used for casting
      * @return \Cake\Database\StatementInterface
      */
-    public function update(string $table, array $data, array $conditions = [], array $types = []): StatementInterface
+    public function update(string $table, array $values, array $conditions = [], array $types = []): StatementInterface
     {
-        return $this->getDisconnectRetry()->run(function () use ($table, $data, $conditions, $types) {
+        return $this->getDisconnectRetry()->run(function () use ($table, $values, $conditions, $types) {
             return $this->newQuery()->update($table)
-                ->set($data, $types)
+                ->set($values, $types)
                 ->where($conditions, $types)
                 ->execute();
         });
@@ -683,12 +683,12 @@ class Connection implements ConnectionInterface
     /**
      * @inheritDoc
      */
-    public function transactional(callable $transaction)
+    public function transactional(callable $callback)
     {
         $this->begin();
 
         try {
-            $result = $transaction($this);
+            $result = $callback($this);
         } catch (Throwable $e) {
             $this->rollback(false);
             throw $e;
@@ -723,13 +723,13 @@ class Connection implements ConnectionInterface
     /**
      * @inheritDoc
      */
-    public function disableConstraints(callable $operation)
+    public function disableConstraints(callable $callback)
     {
-        return $this->getDisconnectRetry()->run(function () use ($operation) {
+        return $this->getDisconnectRetry()->run(function () use ($callback) {
             $this->disableForeignKeys();
 
             try {
-                $result = $operation($this);
+                $result = $callback($this);
             } finally {
                 $this->enableForeignKeys();
             }
@@ -839,12 +839,12 @@ class Connection implements ConnectionInterface
     /**
      * Enable/disable query logging
      *
-     * @param bool $value Enable/disable query logging
+     * @param bool $enable Enable/disable query logging
      * @return $this
      */
-    public function enableQueryLogging(bool $value = true)
+    public function enableQueryLogging(bool $enable = true)
     {
-        $this->_logQueries = $value;
+        $this->_logQueries = $enable;
 
         return $this;
     }
