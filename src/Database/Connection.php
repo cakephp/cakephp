@@ -615,7 +615,7 @@ class Connection implements ConnectionInterface
     /**
      * Creates a new save point for nested transactions.
      *
-     * @param string|int $name The save point name.
+     * @param string|int $name Save point name or id
      * @return void
      */
     public function createSavePoint($name): void
@@ -626,7 +626,7 @@ class Connection implements ConnectionInterface
     /**
      * Releases a save point by its name.
      *
-     * @param string|int $name The save point name.
+     * @param string|int $name Save point name or id
      * @return void
      */
     public function releaseSavePoint($name): void
@@ -637,7 +637,7 @@ class Connection implements ConnectionInterface
     /**
      * Rollback a save point by its name.
      *
-     * @param string|int $name The save point name.
+     * @param string|int $name Save point name or id
      * @return void
      */
     public function rollbackSavepoint($name): void

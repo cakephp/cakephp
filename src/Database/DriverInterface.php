@@ -97,7 +97,7 @@ interface DriverInterface
     /**
      * Get the SQL for releasing a save point.
      *
-     * @param string|int $name The table name.
+     * @param string|int $name Save point name or id
      * @return string
      */
     public function releaseSavePointSQL($name): string;
@@ -105,7 +105,7 @@ interface DriverInterface
     /**
      * Get the SQL for creating a save point.
      *
-     * @param string|int $name The table name.
+     * @param string|int $name Save point name or id
      * @return string
      */
     public function savePointSQL($name): string;
@@ -113,7 +113,7 @@ interface DriverInterface
     /**
      * Get the SQL for rollingback a save point.
      *
-     * @param string|int $name The table name.
+     * @param string|int $name Save point name or id
      * @return string
      */
     public function rollbackSavePointSQL($name): string;
@@ -151,7 +151,7 @@ interface DriverInterface
      * Returns a value in a safe representation to be used in a query string
      *
      * @param mixed $value The value to quote.
-     * @param int $type Type to be used for determining kind of quoting to perform.
+     * @param int $type Must be one of the \PDO::PARAM_* constants
      * @return string
      */
     public function quote($value, $type): string;
@@ -256,11 +256,11 @@ interface DriverInterface
      * of the transformed query and the full compiled SQL string.
      *
      * @param \Cake\Database\Query $query The query to compile.
-     * @param \Cake\Database\ValueBinder $generator The value binder to use.
+     * @param \Cake\Database\ValueBinder $binder The value binder to use.
      * @return array containing 2 entries. The first entity is the transformed query
      * and the second one the compiled SQL.
      */
-    public function compileQuery(Query $query, ValueBinder $generator): array;
+    public function compileQuery(Query $query, ValueBinder $binder): array;
 
     /**
      * Returns an instance of a QueryCompiler.
