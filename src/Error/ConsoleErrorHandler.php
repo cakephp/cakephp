@@ -61,9 +61,7 @@ class ConsoleErrorHandler extends BaseErrorHandler
     {
         $this->_displayException($exception);
         $this->logException($exception);
-        $code = $exception->getCode();
-        $code = $code && is_int($code) ? $code : 1;
-        $this->_stop($code);
+        $this->_stop(1);
     }
 
     /**

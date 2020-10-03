@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Error;
 
 use Cake\Controller\Exception\MissingActionException;
-use Cake\Core\Exception\Exception;
 use Cake\Http\Exception\InternalErrorException;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Log\Log;
@@ -109,7 +108,8 @@ class ConsoleErrorHandlerTest extends TestCase
         $message = sprintf("<error>Exception:</error> Missing action\nIn [%s, line %s]\n", $exception->getFile(), $exception->getLine());
 
         $this->Error->expects($this->once())
-            ->method('_stop');
+            ->method('_stop')
+            ->with(1);
 
         $this->Error->handleException($exception);
 
@@ -154,27 +154,5 @@ class ConsoleErrorHandlerTest extends TestCase
 
         $this->Error->handleException($exception);
         $this->assertStringContainsString("don't use me in cli", $this->stderr->messages()[0]);
-    }
-
-    /**
-     * test a exception with non-integer code
-     *
-     * @return void
-     */
-    public function testNonIntegerExceptionCode()
-    {
-        $exception = new Exception('Non-integer exception code');
-
-        $class = new \ReflectionClass('Exception');
-        $property = $class->getProperty('code');
-        $property->setAccessible(true);
-        $property->setValue($exception, '42S22');
-
-        $this->Error->expects($this->once())
-            ->method('_stop')
-            ->with(1);
-
-        $this->Error->handleException($exception);
-        $this->assertStringContainsString('Non-integer exception code', $this->stderr->messages()[0]);
     }
 }
