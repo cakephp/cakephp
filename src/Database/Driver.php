@@ -271,36 +271,6 @@ abstract class Driver implements DriverInterface
     /**
      * @inheritDoc
      */
-    abstract public function releaseSavePointSQL($name): string;
-
-    /**
-     * @inheritDoc
-     */
-    abstract public function savePointSQL($name): string;
-
-    /**
-     * @inheritDoc
-     */
-    abstract public function rollbackSavePointSQL($name): string;
-
-    /**
-     * @inheritDoc
-     */
-    abstract public function disableForeignKeySQL(): string;
-
-    /**
-     * @inheritDoc
-     */
-    abstract public function enableForeignKeySQL(): string;
-
-    /**
-     * @inheritDoc
-     */
-    abstract public function supportsDynamicConstraints(): bool;
-
-    /**
-     * @inheritDoc
-     */
     public function supportsSavePoints(): bool
     {
         return true;
@@ -317,17 +287,13 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @param mixed $value The value to quote.
-     * @param int $type Type to be used for determining kind of quoting to perform.
-     * @return string
+     * @inheritDoc
      */
     public function quote($value, $type = PDO::PARAM_STR): string
     {
         $this->connect();
 
-        return $this->_connection->quote($value, $type);
+        return $this->_connection->quote((string)$value, $type);
     }
 
     /**
@@ -390,7 +356,7 @@ abstract class Driver implements DriverInterface
             return (string)$value;
         }
 
-        return $this->_connection->quote($value, PDO::PARAM_STR);
+        return $this->_connection->quote((string)$value, PDO::PARAM_STR);
     }
 
     /**
@@ -464,13 +430,13 @@ abstract class Driver implements DriverInterface
     /**
      * @inheritDoc
      */
-    public function compileQuery(Query $query, ValueBinder $generator): array
+    public function compileQuery(Query $query, ValueBinder $binder): array
     {
         $processor = $this->newCompiler();
         $translator = $this->queryTranslator($query->type());
         $query = $translator($query);
 
-        return [$query, $processor->compile($query, $generator)];
+        return [$query, $processor->compile($query, $binder)];
     }
 
     /**

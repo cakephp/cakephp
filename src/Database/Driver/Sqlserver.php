@@ -227,10 +227,7 @@ class Sqlserver extends Driver
     }
 
     /**
-     * Returns a SQL snippet for creating a new transaction savepoint
-     *
-     * @param string|int $name save point name
-     * @return string
+     * @inheritDoc
      */
     public function savePointSQL($name): string
     {
@@ -238,10 +235,7 @@ class Sqlserver extends Driver
     }
 
     /**
-     * Returns a SQL snippet for releasing a previously created save point
-     *
-     * @param string|int $name save point name
-     * @return string
+     * @inheritDoc
      */
     public function releaseSavePointSQL($name): string
     {
@@ -249,10 +243,7 @@ class Sqlserver extends Driver
     }
 
     /**
-     * Returns a SQL snippet for rollbacking a previously created save point
-     *
-     * @param string|int $name save point name
-     * @return string
+     * @inheritDoc
      */
     public function rollbackSavePointSQL($name): string
     {
