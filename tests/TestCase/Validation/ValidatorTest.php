@@ -1933,7 +1933,7 @@ class ValidatorTest extends TestCase
     public function testErrorsWithLastRuleGlobal(): void
     {
         $validator = new Validator();
-        $validator->stopOnFailure()
+        $validator->setStopOnFailure()
             ->notBlank('email', 'Fill something in!')
             ->email('email', false, 'Y u no write email?');
         $errors = $validator->validate(['email' => '']);

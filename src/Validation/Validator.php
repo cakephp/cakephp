@@ -205,7 +205,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param bool $stopOnFailure If to apply last flag.
      * @return $this
      */
-    public function stopOnFailure(bool $stopOnFailure = true)
+    public function setStopOnFailure(bool $stopOnFailure = true)
     {
         $this->_stopOnFailure = $stopOnFailure;
 
