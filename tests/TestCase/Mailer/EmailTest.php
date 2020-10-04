@@ -457,12 +457,13 @@ class EmailTest extends TestCase
         $this->Email->setTo('to@cakephp.org', 'To, CakePHP');
         $this->Email->setCc('cc@cakephp.org', 'Cc CakePHP');
         $this->Email->setBcc('bcc@cakephp.org', 'Bcc CakePHP');
+        $this->Email->addReplyTo('replyto2@cakephp.org', 'ReplyTo2 CakePHP');
         $this->Email->addTo('to2@cakephp.org', 'To2 CakePHP');
         $this->Email->addCc('cc2@cakephp.org', 'Cc2 CakePHP');
         $this->Email->addBcc('bcc2@cakephp.org', 'Bcc2 CakePHP');
 
         $this->assertSame($this->Email->getFrom(), ['cake@cakephp.org' => 'CakePHP']);
-        $this->assertSame($this->Email->getReplyTo(), ['replyto@cakephp.org' => 'ReplyTo CakePHP']);
+        $this->assertSame($this->Email->getReplyTo(), ['replyto@cakephp.org' => 'ReplyTo CakePHP', 'replyto2@cakephp.org' => 'ReplyTo2 CakePHP']);
         $this->assertSame($this->Email->getReadReceipt(), ['readreceipt@cakephp.org' => 'ReadReceipt CakePHP']);
         $this->assertSame($this->Email->getReturnPath(), ['returnpath@cakephp.org' => 'ReturnPath CakePHP']);
         $this->assertSame($this->Email->getTo(), ['to@cakephp.org' => 'To, CakePHP', 'to2@cakephp.org' => 'To2 CakePHP']);
@@ -471,7 +472,7 @@ class EmailTest extends TestCase
 
         $headers = $this->Email->getHeaders(array_fill_keys(['from', 'replyTo', 'readReceipt', 'returnPath', 'to', 'cc', 'bcc'], true));
         $this->assertSame($headers['From'], 'CakePHP <cake@cakephp.org>');
-        $this->assertSame($headers['Reply-To'], 'ReplyTo CakePHP <replyto@cakephp.org>');
+        $this->assertSame($headers['Reply-To'], 'ReplyTo CakePHP <replyto@cakephp.org>, ReplyTo2 CakePHP <replyto2@cakephp.org>');
         $this->assertSame($headers['Disposition-Notification-To'], 'ReadReceipt CakePHP <readreceipt@cakephp.org>');
         $this->assertSame($headers['Return-Path'], 'ReturnPath CakePHP <returnpath@cakephp.org>');
         $this->assertSame($headers['To'], '"To, CakePHP" <to@cakephp.org>, To2 CakePHP <to2@cakephp.org>');
