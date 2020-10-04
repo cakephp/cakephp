@@ -404,6 +404,7 @@ class SmtpTransportTest extends TestCase
         $message->setFrom('noreply@cakephp.org', 'CakePHP Test');
         $message->setReturnPath('pleasereply@cakephp.org', 'CakePHP Return');
         $message->setTo('cake@cakephp.org', 'CakePHP');
+        $message->setReplyTo(['mark@cakephp.org' => 'Mark Story', 'juan@cakephp.org' => 'Juan Basso']);
         $message->setCc(['mark@cakephp.org' => 'Mark Story', 'juan@cakephp.org' => 'Juan Basso']);
         $message->setBcc('phpnut@cakephp.org');
         $message->setMessageId('<4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>');
@@ -413,6 +414,7 @@ class SmtpTransportTest extends TestCase
         $message->setBody(['text' => "First Line\nSecond Line\n.Third Line"]);
 
         $data = "From: CakePHP Test <noreply@cakephp.org>\r\n";
+        $data .= "Reply-To: Mark Story <mark@cakephp.org>, Juan Basso <juan@cakephp.org>\r\n";
         $data .= "Return-Path: CakePHP Return <pleasereply@cakephp.org>\r\n";
         $data .= "To: CakePHP <cake@cakephp.org>\r\n";
         $data .= "Cc: Mark Story <mark@cakephp.org>, Juan Basso <juan@cakephp.org>\r\n";
