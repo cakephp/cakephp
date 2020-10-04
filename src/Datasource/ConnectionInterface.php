@@ -95,12 +95,12 @@ interface ConnectionInterface extends LoggerAwareInterface
      * });
      * ```
      *
-     * @param callable $transaction The callback to execute within a transaction.
+     * @param callable $callback The callback to execute within a transaction.
      * @return mixed The return value of the callback.
      * @throws \Exception Will re-throw any exception raised in $callback after
      *   rolling back the transaction.
      */
-    public function transactional(callable $transaction);
+    public function transactional(callable $callback);
 
     /**
      * Run an operation with constraints disabled.
@@ -115,20 +115,20 @@ interface ConnectionInterface extends LoggerAwareInterface
      * });
      * ```
      *
-     * @param callable $operation The callback to execute within a transaction.
+     * @param callable $callback The callback to execute within a transaction.
      * @return mixed The return value of the callback.
      * @throws \Exception Will re-throw any exception raised in $callback after
      *   rolling back the transaction.
      */
-    public function disableConstraints(callable $operation);
+    public function disableConstraints(callable $callback);
 
     /**
      * Enable/disable query logging
      *
-     * @param bool $value Enable/disable query logging
+     * @param bool $enable Enable/disable query logging
      * @return $this
      */
-    public function enableQueryLogging(bool $value = true);
+    public function enableQueryLogging(bool $enable = true);
 
     /**
      * Disable query logging

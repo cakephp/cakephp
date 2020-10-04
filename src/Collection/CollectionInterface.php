@@ -28,9 +28,7 @@ use Traversable;
 interface CollectionInterface extends Iterator, JsonSerializable
 {
     /**
-     * Executes the passed callable for each of the elements in this collection
-     * and passes both the value and key for them on each step.
-     * Returns the same collection for chaining.
+     * Applies a callback to the elements in this collection.
      *
      * ### Example:
      *
@@ -40,11 +38,10 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * });
      * ```
      *
-     * @param callable $c callable function that will receive each of the elements
-     * in this collection
+     * @param callable $callback Callback to run for each element in collection.
      * @return $this
      */
-    public function each(callable $c);
+    public function each(callable $callback);
 
     /**
      * Looks through each value in the collection, and returns another collection with
@@ -66,12 +63,12 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * });
      * ```
      *
-     * @param callable|null $c the method that will receive each of the elements and
+     * @param callable|null $callback the method that will receive each of the elements and
      *   returns true whether or not they should be in the resulting collection.
      *   If left null, a callback that filters out falsey values will be used.
      * @return self
      */
-    public function filter(?callable $c = null): CollectionInterface;
+    public function filter(?callable $callback = null): CollectionInterface;
 
     /**
      * Looks through each value in the collection, and returns another collection with
@@ -92,11 +89,11 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * });
      * ```
      *
-     * @param callable $c the method that will receive each of the elements and
+     * @param callable $callback the method that will receive each of the elements and
      * returns true whether or not they should be out of the resulting collection.
      * @return self
      */
-    public function reject(callable $c): CollectionInterface;
+    public function reject(callable $callback): CollectionInterface;
 
     /**
      * Returns true if all values in this collection pass the truth test provided
@@ -116,11 +113,11 @@ interface CollectionInterface extends Iterator, JsonSerializable
      *
      * Empty collections always return true because it is a vacuous truth.
      *
-     * @param callable $c a callback function
+     * @param callable $callback a callback function
      * @return bool true if for all elements in this collection the provided
      *   callback returns true, false otherwise.
      */
-    public function every(callable $c): bool;
+    public function every(callable $callback): bool;
 
     /**
      * Returns true if any of the values in this collection pass the truth test
@@ -138,11 +135,11 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * });
      * ```
      *
-     * @param callable $c a callback function
+     * @param callable $callback a callback function
      * @return bool true if the provided callback returns true for any element in this
      * collection, false otherwise
      */
-    public function some(callable $c): bool;
+    public function some(callable $callback): bool;
 
     /**
      * Returns true if $value is present in this collection. Comparisons are made
@@ -171,11 +168,11 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * });
      * ```
      *
-     * @param callable $c the method that will receive each of the elements and
+     * @param callable $callback the method that will receive each of the elements and
      * returns the new value for the key that is being iterated
      * @return self
      */
-    public function map(callable $c): CollectionInterface;
+    public function map(callable $callback): CollectionInterface;
 
     /**
      * Folds the values in this collection to a single value, as the result of
@@ -185,15 +182,15 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * If $zero is omitted the first value of the collection will be used in its place
      * and reduction will start from the second item.
      *
-     * @param callable $c The callback function to be called
-     * @param mixed $zero The state of reduction
+     * @param callable $callback The callback function to be called
+     * @param mixed $initial The state of reduction
      * @return mixed
      */
-    public function reduce(callable $c, $zero = null);
+    public function reduce(callable $callback, $initial = null);
 
     /**
      * Returns a new collection containing the column or property value found in each
-     * of the elements, as requested in the $matcher param.
+     * of the elements.
      *
      * The matcher can be a string with a property name to extract or a dot separated
      * path of properties that should be followed to get the last one in the path.
@@ -229,16 +226,16 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * [1, 2, 3, 4]
      * ```
      *
-     * @param string|callable $matcher A dot separated path of column to follow
+     * @param string|callable $path A dot separated path of column to follow
      * so that the final one can be returned or a callable that will take care
      * of doing that.
      * @return self
      */
-    public function extract($matcher): CollectionInterface;
+    public function extract($path): CollectionInterface;
 
     /**
      * Returns the top element in this collection after being sorted by a property.
-     * Check the sortBy method for information on the callback and $type parameters
+     * Check the sortBy method for information on the callback and $sort parameters
      *
      * ### Examples:
      *
@@ -255,16 +252,16 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * ```
      *
      * @param callable|string $callback the callback or column name to use for sorting
-     * @param int $type the type of comparison to perform, either SORT_STRING
+     * @param int $sort The sort type, one of SORT_STRING
      * SORT_NUMERIC or SORT_NATURAL
      * @see \Cake\Collection\CollectionInterface::sortBy()
      * @return mixed The value of the top element in the collection
      */
-    public function max($callback, int $type = \SORT_NUMERIC);
+    public function max($callback, int $sort = \SORT_NUMERIC);
 
     /**
      * Returns the bottom element in this collection after being sorted by a property.
-     * Check the sortBy method for information on the callback and $type parameters
+     * Check the sortBy method for information on the callback and $sort parameters
      *
      * ### Examples:
      *
@@ -281,15 +278,15 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * ```
      *
      * @param callable|string $callback the callback or column name to use for sorting
-     * @param int $type the type of comparison to perform, either SORT_STRING
+     * @param int $sort The sort type, one of SORT_STRING
      * SORT_NUMERIC or SORT_NATURAL
      * @see \Cake\Collection\CollectionInterface::sortBy()
      * @return mixed The value of the bottom element in the collection
      */
-    public function min($callback, int $type = \SORT_NUMERIC);
+    public function min($callback, int $sort = \SORT_NUMERIC);
 
     /**
-     * Returns the average of all the values extracted with $matcher
+     * Returns the average of all the values extracted with $path
      * or of this collection.
      *
      * ### Example:
@@ -308,15 +305,15 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * // Total: 2
      * ```
      *
-     * @param string|callable|null $matcher The property name to sum or a function
+     * @param string|callable|null $path The property name to sum or a function
      * If no value is passed, an identity function will be used.
      * that will return the value of the property to sum.
      * @return float|int|null
      */
-    public function avg($matcher = null);
+    public function avg($path = null);
 
     /**
-     * Returns the median of all the values extracted with $matcher
+     * Returns the median of all the values extracted with $path
      * or of this collection.
      *
      * ### Example:
@@ -338,12 +335,12 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * // Total: 2.5
      * ```
      *
-     * @param string|callable|null $matcher The property name to sum or a function
+     * @param string|callable|null $path The property name to sum or a function
      * If no value is passed, an identity function will be used.
      * that will return the value of the property to sum.
      * @return float|int|null
      */
-    public function median($matcher = null);
+    public function median($path = null);
 
     /**
      * Returns a sorted iterator out of the elements in this collection,
@@ -376,12 +373,12 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * ```
      *
      * @param callable|string $callback the callback or column name to use for sorting
-     * @param int $dir either SORT_DESC or SORT_ASC
-     * @param int $type the type of comparison to perform, either SORT_STRING
+     * @param int $order The sort order, either SORT_DESC or SORT_ASC
+     * @param int $sort The sort type, one of SORT_STRING
      * SORT_NUMERIC or SORT_NATURAL
      * @return self
      */
-    public function sortBy($callback, int $dir = SORT_DESC, int $type = \SORT_NUMERIC): CollectionInterface;
+    public function sortBy($callback, int $order = SORT_DESC, int $sort = \SORT_NUMERIC): CollectionInterface;
 
     /**
      * Splits a collection into sets, grouped by the result of running each value
@@ -523,12 +520,12 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * // Total: 6
      * ```
      *
-     * @param string|callable|null $matcher The property name to sum or a function
+     * @param string|callable|null $path The property name to sum or a function
      * If no value is passed, an identity function will be used.
      * that will return the value of the property to sum.
      * @return float|int
      */
-    public function sumOf($matcher = null);
+    public function sumOf($path = null);
 
     /**
      * Returns a new collection with the elements placed in a random order,
@@ -542,23 +539,23 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * Returns a new collection with maximum $size random elements
      * from this collection
      *
-     * @param int $size the maximum number of elements to randomly
+     * @param int $length the maximum number of elements to randomly
      * take from this collection
      * @return self
      */
-    public function sample(int $size = 10): CollectionInterface;
+    public function sample(int $length = 10): CollectionInterface;
 
     /**
      * Returns a new collection with maximum $size elements in the internal
      * order this collection was created. If a second parameter is passed, it
      * will determine from what position to start taking elements.
      *
-     * @param int $size the maximum number of elements to take from
+     * @param int $length the maximum number of elements to take from
      * this collection
-     * @param int $from A positional offset from where to take the elements
+     * @param int $offset A positional offset from where to take the elements
      * @return self
      */
-    public function take(int $size = 1, int $from = 0): CollectionInterface;
+    public function take(int $length = 1, int $offset = 0): CollectionInterface;
 
     /**
      * Returns the last N elements of a collection
@@ -574,19 +571,19 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * [3, 4, 5];
      * ```
      *
-     * @param int $howMany The number of elements at the end of the collection
+     * @param int $length The number of elements at the end of the collection
      * @return self
      */
-    public function takeLast(int $howMany): CollectionInterface;
+    public function takeLast(int $length): CollectionInterface;
 
     /**
      * Returns a new collection that will skip the specified amount of elements
      * at the beginning of the iteration.
      *
-     * @param int $howMany The number of elements to skip.
+     * @param int $length The number of elements to skip.
      * @return self
      */
-    public function skip(int $howMany): CollectionInterface;
+    public function skip(int $length): CollectionInterface;
 
     /**
      * Looks through each value in the list, returning a Collection of all the
@@ -887,12 +884,12 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * $flattenedIds = $collection->listNested()->extract('id'); // Yields [1, 2, 3, 4, 5]
      * ```
      *
-     * @param string|int $dir The direction in which to return the elements
+     * @param string|int $order The order in which to return the elements
      * @param string|callable $nestingKey The key name under which children are nested
      * or a callable function that will return the children list
      * @return self
      */
-    public function listNested($dir = 'desc', $nestingKey = 'children'): CollectionInterface;
+    public function listNested($order = 'desc', $nestingKey = 'children'): CollectionInterface;
 
     /**
      * Creates a new collection that when iterated will stop yielding results if
@@ -958,11 +955,11 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * });
      * ```
      *
-     * @param callable|null $transformer A callable function that will receive each of
+     * @param callable|null $callback A callable function that will receive each of
      * the items in the collection and should return an array or Traversable object
      * @return self
      */
-    public function unfold(?callable $transformer = null): CollectionInterface;
+    public function unfold(?callable $callback = null): CollectionInterface;
 
     /**
      * Passes this collection through a callable as its first argument.
@@ -977,11 +974,11 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * });
      * ```
      *
-     * @param callable $handler A callable function that will receive
+     * @param callable $callback A callable function that will receive
      * this collection as first argument.
      * @return self
      */
-    public function through(callable $handler): CollectionInterface;
+    public function through(callable $callback): CollectionInterface;
 
     /**
      * Combines the elements of this collection with each of the elements of the
@@ -1016,10 +1013,10 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * ```
      *
      * @param iterable ...$items The collections to zip.
-     * @param callable $callable The function to use for zipping the elements together.
+     * @param callable $callback The function to use for zipping the elements together.
      * @return self
      */
-    public function zipWith(iterable $items, $callable): CollectionInterface;
+    public function zipWith(iterable $items, $callback): CollectionInterface;
 
     /**
      * Breaks the collection into smaller arrays of the given size.
