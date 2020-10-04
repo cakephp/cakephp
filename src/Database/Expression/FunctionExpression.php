@@ -141,25 +141,19 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
     }
 
     /**
-     * Returns the string representation of this object so that it can be used in a
-     * SQL query. Note that values condition values are not included in the string,
-     * in their place placeholders are put and can be replaced by the quoted values
-     * accordingly.
-     *
-     * @param \Cake\Database\ValueBinder $generator Placeholder generator object
-     * @return string
+     * @inheritDoc
      */
-    public function sql(ValueBinder $generator): string
+    public function sql(ValueBinder $binder): string
     {
         $parts = [];
         foreach ($this->_conditions as $condition) {
             if ($condition instanceof Query) {
-                $condition = sprintf('(%s)', $condition->sql($generator));
+                $condition = sprintf('(%s)', $condition->sql($binder));
             } elseif ($condition instanceof ExpressionInterface) {
-                $condition = $condition->sql($generator);
+                $condition = $condition->sql($binder);
             } elseif (is_array($condition)) {
-                $p = $generator->placeholder('param');
-                $generator->bind($p, $condition['value'], $condition['type']);
+                $p = $binder->placeholder('param');
+                $binder->bind($p, $condition['value'], $condition['type']);
                 $condition = $p;
             }
             $parts[] = $condition;

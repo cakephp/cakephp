@@ -49,12 +49,12 @@ class OrderClauseExpression implements ExpressionInterface, FieldInterface
     /**
      * @inheritDoc
      */
-    public function sql(ValueBinder $generator): string
+    public function sql(ValueBinder $binder): string
     {
         /** @var string|\Cake\Database\ExpressionInterface $field */
         $field = $this->_field;
         if ($field instanceof ExpressionInterface) {
-            $field = $field->sql($generator);
+            $field = $field->sql($binder);
         }
 
         return sprintf('%s %s', $field, $this->_direction);
@@ -63,11 +63,11 @@ class OrderClauseExpression implements ExpressionInterface, FieldInterface
     /**
      * @inheritDoc
      */
-    public function traverse(Closure $visitor)
+    public function traverse(Closure $callback)
     {
         if ($this->_field instanceof ExpressionInterface) {
-            $visitor($this->_field);
-            $this->_field->traverse($visitor);
+            $callback($this->_field);
+            $this->_field->traverse($callback);
         }
 
         return $this;

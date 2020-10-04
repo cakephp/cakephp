@@ -26,19 +26,19 @@ interface ExpressionInterface
     /**
      * Converts the Node into a SQL string fragment.
      *
-     * @param \Cake\Database\ValueBinder $generator Placeholder generator object
+     * @param \Cake\Database\ValueBinder $binder Parameter binder
      * @return string
      */
-    public function sql(ValueBinder $generator): string;
+    public function sql(ValueBinder $binder): string;
 
     /**
      * Iterates over each part of the expression recursively for every
-     * level of the expressions tree and executes the $visitor callable
+     * level of the expressions tree and executes the $callback callable
      * passing as first parameter the instance of the expression currently
      * being iterated.
      *
-     * @param \Closure $visitor The callable to apply to all nodes.
+     * @param \Closure $callback The callable to apply to all nodes.
      * @return $this
      */
-    public function traverse(Closure $visitor);
+    public function traverse(Closure $callback);
 }

@@ -62,12 +62,9 @@ class TupleComparison extends ComparisonExpression
     }
 
     /**
-     * Convert the expression into a SQL fragment.
-     *
-     * @param \Cake\Database\ValueBinder $generator Placeholder generator object
-     * @return string
+     * @inheritDoc
      */
-    public function sql(ValueBinder $generator): string
+    public function sql(ValueBinder $binder): string
     {
         $template = '(%s) %s (%s)';
         $fields = [];
@@ -78,10 +75,10 @@ class TupleComparison extends ComparisonExpression
         }
 
         foreach ($originalFields as $field) {
-            $fields[] = $field instanceof ExpressionInterface ? $field->sql($generator) : $field;
+            $fields[] = $field instanceof ExpressionInterface ? $field->sql($binder) : $field;
         }
 
-        $values = $this->_stringifyValues($generator);
+        $values = $this->_stringifyValues($binder);
 
         $field = implode(', ', $fields);
 
@@ -92,21 +89,21 @@ class TupleComparison extends ComparisonExpression
      * Returns a string with the values as placeholders in a string to be used
      * for the SQL version of this expression
      *
-     * @param \Cake\Database\ValueBinder $generator The value binder to convert expressions with.
+     * @param \Cake\Database\ValueBinder $binder The value binder to convert expressions with.
      * @return string
      */
-    protected function _stringifyValues(ValueBinder $generator): string
+    protected function _stringifyValues(ValueBinder $binder): string
     {
         $values = [];
         $parts = $this->getValue();
 
         if ($parts instanceof ExpressionInterface) {
-            return $parts->sql($generator);
+            return $parts->sql($binder);
         }
 
         foreach ($parts as $i => $value) {
             if ($value instanceof ExpressionInterface) {
-                $values[] = $value->sql($generator);
+                $values[] = $value->sql($binder);
                 continue;
             }
 
@@ -121,7 +118,7 @@ class TupleComparison extends ComparisonExpression
                 foreach ($value as $k => $val) {
                     /** @var string $valType */
                     $valType = $type && isset($type[$k]) ? $type[$k] : $type;
-                    $bound[] = $this->_bindValue($val, $generator, $valType);
+                    $bound[] = $this->_bindValue($val, $binder, $valType);
                 }
 
                 $values[] = sprintf('(%s)', implode(',', $bound));
@@ -130,7 +127,7 @@ class TupleComparison extends ComparisonExpression
 
             /** @var string $valType */
             $valType = $type && isset($type[$i]) ? $type[$i] : $type;
-            $values[] = $this->_bindValue($value, $generator, $valType);
+            $values[] = $this->_bindValue($value, $binder, $valType);
         }
 
         return implode(', ', $values);
@@ -139,35 +136,29 @@ class TupleComparison extends ComparisonExpression
     /**
      * @inheritDoc
      */
-    protected function _bindValue($value, ValueBinder $generator, ?string $type = null): string
+    protected function _bindValue($value, ValueBinder $binder, ?string $type = null): string
     {
-        $placeholder = $generator->placeholder('tuple');
-        $generator->bind($placeholder, $value, $type);
+        $placeholder = $binder->placeholder('tuple');
+        $binder->bind($placeholder, $value, $type);
 
         return $placeholder;
     }
 
     /**
-     * Traverses the tree of expressions stored in this object, visiting first
-     * expressions in the left hand side and then the rest.
-     *
-     * Callback function receives as its only argument an instance of an ExpressionInterface
-     *
-     * @param \Closure $visitor The callable to apply to sub-expressions
-     * @return $this
+     * @inheritDoc
      */
-    public function traverse(Closure $visitor)
+    public function traverse(Closure $callback)
     {
         /** @var string[] $fields */
         $fields = $this->getField();
         foreach ($fields as $field) {
-            $this->_traverseValue($field, $visitor);
+            $this->_traverseValue($field, $callback);
         }
 
         $value = $this->getValue();
         if ($value instanceof ExpressionInterface) {
-            $visitor($value);
-            $value->traverse($visitor);
+            $callback($value);
+            $value->traverse($callback);
 
             return $this;
         }
@@ -175,10 +166,10 @@ class TupleComparison extends ComparisonExpression
         foreach ($value as $val) {
             if ($this->isMulti()) {
                 foreach ($val as $v) {
-                    $this->_traverseValue($v, $visitor);
+                    $this->_traverseValue($v, $callback);
                 }
             } else {
-                $this->_traverseValue($val, $visitor);
+                $this->_traverseValue($val, $callback);
             }
         }
 
@@ -190,14 +181,14 @@ class TupleComparison extends ComparisonExpression
      * it is an ExpressionInterface
      *
      * @param mixed $value The value to traverse
-     * @param \Closure $callable The callable to use when traversing
+     * @param \Closure $callback The callable to use when traversing
      * @return void
      */
-    protected function _traverseValue($value, Closure $callable): void
+    protected function _traverseValue($value, Closure $callback): void
     {
         if ($value instanceof ExpressionInterface) {
-            $callable($value);
-            $value->traverse($callable);
+            $callback($value);
+            $value->traverse($callback);
         }
     }
 

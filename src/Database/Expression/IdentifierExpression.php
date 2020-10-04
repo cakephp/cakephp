@@ -69,12 +69,9 @@ class IdentifierExpression implements ExpressionInterface
     }
 
     /**
-     * Converts the expression to its string representation
-     *
-     * @param \Cake\Database\ValueBinder $generator Placeholder generator object
-     * @return string
+     * @inheritDoc
      */
-    public function sql(ValueBinder $generator): string
+    public function sql(ValueBinder $binder): string
     {
         return $this->_identifier;
     }
@@ -82,7 +79,7 @@ class IdentifierExpression implements ExpressionInterface
     /**
      * @inheritDoc
      */
-    public function traverse(Closure $visitor)
+    public function traverse(Closure $callback)
     {
         return $this;
     }

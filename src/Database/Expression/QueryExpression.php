@@ -526,15 +526,9 @@ class QueryExpression implements ExpressionInterface, Countable
     }
 
     /**
-     * Returns the string representation of this object so that it can be used in a
-     * SQL query. Note that values condition values are not included in the string,
-     * in their place placeholders are put and can be replaced by the quoted values
-     * accordingly.
-     *
-     * @param \Cake\Database\ValueBinder $generator Placeholder generator object
-     * @return string
+     * @inheritDoc
      */
-    public function sql(ValueBinder $generator): string
+    public function sql(ValueBinder $binder): string
     {
         $len = $this->count();
         if ($len === 0) {
@@ -545,9 +539,9 @@ class QueryExpression implements ExpressionInterface, Countable
         $parts = [];
         foreach ($this->_conditions as $part) {
             if ($part instanceof Query) {
-                $part = '(' . $part->sql($generator) . ')';
+                $part = '(' . $part->sql($binder) . ')';
             } elseif ($part instanceof ExpressionInterface) {
-                $part = $part->sql($generator);
+                $part = $part->sql($binder);
             }
             if (strlen($part)) {
                 $parts[] = $part;
@@ -558,22 +552,14 @@ class QueryExpression implements ExpressionInterface, Countable
     }
 
     /**
-     * Traverses the tree structure of this query expression by executing a callback
-     * function for each of the conditions that are included in this object.
-     * Useful for compiling the final expression, or doing
-     * introspection in the structure.
-     *
-     * Callback function receives as only argument an instance of ExpressionInterface
-     *
-     * @param \Closure $visitor The callable to apply to all sub-expressions.
-     * @return $this
+     * @inheritDoc
      */
-    public function traverse(Closure $visitor)
+    public function traverse(Closure $callback)
     {
         foreach ($this->_conditions as $c) {
             if ($c instanceof ExpressionInterface) {
-                $visitor($c);
-                $c->traverse($visitor);
+                $callback($c);
+                $c->traverse($callback);
             }
         }
 
@@ -592,15 +578,15 @@ class QueryExpression implements ExpressionInterface, Countable
      * passed by reference, this will enable you to change the key under which the
      * modified part is stored.
      *
-     * @param callable $visitor The callable to apply to each part.
+     * @param callable $callback The callable to apply to each part.
      * @return $this
      */
-    public function iterateParts(callable $visitor)
+    public function iterateParts(callable $callback)
     {
         $parts = [];
         foreach ($this->_conditions as $k => $c) {
             $key = &$k;
-            $part = $visitor($c, $key);
+            $part = $callback($c, $key);
             if ($part !== null) {
                 $parts[$key] = $part;
             }
@@ -617,19 +603,19 @@ class QueryExpression implements ExpressionInterface, Countable
      * as they often contain user input and arrays of strings
      * are easy to sneak in.
      *
-     * @param callable|string|array|\Cake\Database\ExpressionInterface $c The callable to check.
+     * @param callable|string|array|\Cake\Database\ExpressionInterface $callable The callable to check.
      * @return bool Valid callable.
      */
-    public function isCallable($c): bool
+    public function isCallable($callable): bool
     {
-        if (is_string($c)) {
+        if (is_string($callable)) {
             return false;
         }
-        if (is_object($c) && is_callable($c)) {
+        if (is_object($callable) && is_callable($callable)) {
             return true;
         }
 
-        return is_array($c) && isset($c[0]) && is_object($c[0]) && is_callable($c);
+        return is_array($callable) && isset($callable[0]) && is_object($callable[0]) && is_callable($callable);
     }
 
     /**
