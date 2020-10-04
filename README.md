@@ -41,6 +41,8 @@ a starting point. For existing applications you can run the following:
 $ composer require cakephp/cakephp
 ```
 
+For details on the (minimum/maximum) PHP version see [version map](https://github.com/cakephp/cakephp/wiki#version-map).
+
 ## Running Tests
 
 Assuming you have PHPUnit installed system wide using one of the methods stated
