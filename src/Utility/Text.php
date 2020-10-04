@@ -236,7 +236,7 @@ class Text
         /** @var array<string, mixed> $dataReplacements */
         $dataReplacements = array_combine($hashKeys, array_values($data));
         foreach ($dataReplacements as $tmpHash => $tmpValue) {
-            $tmpValue = is_string($tmpValue) ? $tmpValue  : '';
+            $tmpValue = is_array($tmpValue) ? '' : (string) $tmpValue;
             $str = str_replace($tmpHash, $tmpValue, $str);
         }
 
