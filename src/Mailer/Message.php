@@ -101,7 +101,7 @@ class Message implements JsonSerializable, Serializable
     protected $sender = [];
 
     /**
-     * List of email's that the recipient will reply to
+     * List of email(s) that the recipient will reply to
      *
      * @var array
      */
