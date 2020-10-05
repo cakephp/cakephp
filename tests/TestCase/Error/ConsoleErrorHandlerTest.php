@@ -16,9 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Error;
 
+use Cake\Console\Exception\ConsoleException;
 use Cake\Controller\Exception\MissingActionException;
-use Cake\Http\Exception\InternalErrorException;
-use Cake\Http\Exception\NotFoundException;
 use Cake\Log\Log;
 use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
@@ -126,33 +125,28 @@ class ConsoleErrorHandlerTest extends TestCase
     {
         $exception = new \InvalidArgumentException('Too many parameters.');
 
+        $this->Error->expects($this->once())
+            ->method('_stop')
+            ->with(1);
+
         $this->Error->handleException($exception);
         $this->assertStringContainsString('Too many parameters', $this->stderr->messages()[0]);
     }
 
     /**
-     * test a Error404 exception.
+     * Test error code is used as exit code for ConsoleException.
      *
      * @return void
      */
-    public function testError404Exception()
+    public function testConsoleExceptions()
     {
-        $exception = new NotFoundException("don't use me in cli.");
+        $exception = new ConsoleException('Test ConsoleException', 2);
+
+        $this->Error->expects($this->once())
+            ->method('_stop')
+            ->with(2);
 
         $this->Error->handleException($exception);
-        $this->assertStringContainsString("don't use me in cli", $this->stderr->messages()[0]);
-    }
-
-    /**
-     * test a Error500 exception.
-     *
-     * @return void
-     */
-    public function testError500Exception()
-    {
-        $exception = new InternalErrorException("don't use me in cli.");
-
-        $this->Error->handleException($exception);
-        $this->assertStringContainsString("don't use me in cli", $this->stderr->messages()[0]);
+        $this->assertStringContainsString('Test ConsoleException', $this->stderr->messages()[0]);
     }
 }
