@@ -1772,23 +1772,46 @@ class ValidatorTest extends TestCase
     }
 
     /**
-     * Test the provider() method
+     * Run test cases for setProvider() and addProvider().
      *
+     * @param string $method Name of method to call.
      * @return void
      */
-    public function testProvider()
+    protected function runProviderTest(string $method)
     {
         $validator = new Validator();
         $object = new \stdClass();
-        $this->assertSame($validator, $validator->addProvider('foo', $object));
+        $this->assertSame($validator, $validator->$method('foo', $object));
         $this->assertSame($object, $validator->getProvider('foo'));
         $this->assertNull($validator->getProvider('bar'));
 
         $another = new \stdClass();
-        $this->assertSame($validator, $validator->addProvider('bar', $another));
+        $this->assertSame($validator, $validator->$method('bar', $another));
         $this->assertSame($another, $validator->getProvider('bar'));
 
         $this->assertEquals(new \Cake\Validation\RulesProvider(), $validator->getProvider('default'));
+    }
+
+    /**
+     * Test the addProvider() method.
+     *
+     * @return void
+     */
+    public function testAddProvider()
+    {
+        $this->runProviderTest('addProvider');
+    }
+
+    /**
+     * Test the deprecated setProvider() method.
+     *
+     * @return void
+     */
+    public function testSetProvider()
+    {
+        $this->deprecated(function () {
+            $this->runProviderTest('setProvider');
+        });
     }
 
     /**
