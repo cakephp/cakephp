@@ -605,6 +605,8 @@ class QueryExpression implements ExpressionInterface, Countable
      *
      * @param callable|string|array|\Cake\Database\ExpressionInterface $callable The callable to check.
      * @return bool Valid callable.
+     * @deprecated 4.2.0 This method is unused.
+     * @codeCoverageIgnore
      */
     public function isCallable($callable): bool
     {
