@@ -38,17 +38,14 @@ class OrderByExpression extends QueryExpression
     }
 
     /**
-     * Convert the expression into a SQL fragment.
-     *
-     * @param \Cake\Database\ValueBinder $generator Placeholder generator object
-     * @return string
+     * @inheritDoc
      */
-    public function sql(ValueBinder $generator): string
+    public function sql(ValueBinder $binder): string
     {
         $order = [];
         foreach ($this->_conditions as $k => $direction) {
             if ($direction instanceof ExpressionInterface) {
-                $direction = $direction->sql($generator);
+                $direction = $direction->sql($binder);
             }
             $order[] = is_numeric($k) ? $direction : sprintf('%s %s', $k, $direction);
         }

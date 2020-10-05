@@ -187,17 +187,17 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     /**
      * @inheritDoc
      */
-    public function sql(ValueBinder $generator): string
+    public function sql(ValueBinder $binder): string
     {
-        $sql = parent::sql($generator);
+        $sql = parent::sql($binder);
         if ($this->filter !== null) {
-            $sql .= ' FILTER (WHERE ' . $this->filter->sql($generator) . ')';
+            $sql .= ' FILTER (WHERE ' . $this->filter->sql($binder) . ')';
         }
         if ($this->window !== null) {
             if ($this->window->isNamedOnly()) {
-                $sql .= ' OVER ' . $this->window->sql($generator);
+                $sql .= ' OVER ' . $this->window->sql($binder);
             } else {
-                $sql .= ' OVER (' . $this->window->sql($generator) . ')';
+                $sql .= ' OVER (' . $this->window->sql($binder) . ')';
             }
         }
 
@@ -207,16 +207,16 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     /**
      * @inheritDoc
      */
-    public function traverse(Closure $visitor)
+    public function traverse(Closure $callback)
     {
-        parent::traverse($visitor);
+        parent::traverse($callback);
         if ($this->filter !== null) {
-            $visitor($this->filter);
-            $this->filter->traverse($visitor);
+            $callback($this->filter);
+            $this->filter->traverse($callback);
         }
         if ($this->window !== null) {
-            $visitor($this->window);
-            $this->window->traverse($visitor);
+            $callback($this->window);
+            $this->window->traverse($callback);
         }
 
         return $this;

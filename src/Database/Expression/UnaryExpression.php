@@ -75,16 +75,13 @@ class UnaryExpression implements ExpressionInterface
     }
 
     /**
-     * Converts the expression to its string representation
-     *
-     * @param \Cake\Database\ValueBinder $generator Placeholder generator object
-     * @return string
+     * @inheritDoc
      */
-    public function sql(ValueBinder $generator): string
+    public function sql(ValueBinder $binder): string
     {
         $operand = $this->_value;
         if ($operand instanceof ExpressionInterface) {
-            $operand = $operand->sql($generator);
+            $operand = $operand->sql($binder);
         }
 
         if ($this->_mode === self::POSTFIX) {
@@ -97,11 +94,11 @@ class UnaryExpression implements ExpressionInterface
     /**
      * @inheritDoc
      */
-    public function traverse(Closure $visitor)
+    public function traverse(Closure $callback)
     {
         if ($this->_value instanceof ExpressionInterface) {
-            $visitor($this->_value);
-            $this->_value->traverse($visitor);
+            $callback($this->_value);
+            $this->_value->traverse($callback);
         }
 
         return $this;
