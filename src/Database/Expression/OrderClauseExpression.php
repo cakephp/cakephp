@@ -32,18 +32,18 @@ class OrderClauseExpression implements ExpressionInterface, FieldInterface
      *
      * @var string
      */
-    protected $_direction;
+    protected $order;
 
     /**
      * Constructor
      *
      * @param \Cake\Database\ExpressionInterface|string $field The field to order on.
-     * @param string $direction The direction to sort on.
+     * @param string $order The direction to sort on.
      */
-    public function __construct($field, $direction)
+    public function __construct($field, $order)
     {
         $this->_field = $field;
-        $this->_direction = strtolower($direction) === 'asc' ? 'ASC' : 'DESC';
+        $this->order = strtolower($order) === 'asc' ? 'ASC' : 'DESC';
     }
 
     /**
@@ -57,7 +57,7 @@ class OrderClauseExpression implements ExpressionInterface, FieldInterface
             $field = $field->sql($binder);
         }
 
-        return sprintf('%s %s', $field, $this->_direction);
+        return sprintf('%s %s', $field, $this->order);
     }
 
     /**

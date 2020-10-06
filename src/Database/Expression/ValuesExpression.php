@@ -80,45 +80,45 @@ class ValuesExpression implements ExpressionInterface
     /**
      * Add a row of data to be inserted.
      *
-     * @param array|\Cake\Database\Query $data Array of data to append into the insert, or
+     * @param array|\Cake\Database\Query $values Array of data to append into the insert, or
      *   a query for doing INSERT INTO .. SELECT style commands
      * @return void
      * @throws \Cake\Database\Exception When mixing array + Query data types.
      */
-    public function add($data): void
+    public function add($values): void
     {
         if (
             (
                 count($this->_values) &&
-                $data instanceof Query
+                $values instanceof Query
             ) ||
             (
                 $this->_query &&
-                is_array($data)
+                is_array($values)
             )
         ) {
             throw new Exception(
-                'You cannot mix subqueries and array data in inserts.'
+                'You cannot mix subqueries and array values in inserts.'
             );
         }
-        if ($data instanceof Query) {
-            $this->setQuery($data);
+        if ($values instanceof Query) {
+            $this->setQuery($values);
 
             return;
         }
-        $this->_values[] = $data;
+        $this->_values[] = $values;
         $this->_castedExpressions = false;
     }
 
     /**
      * Sets the columns to be inserted.
      *
-     * @param array $cols Array with columns to be inserted.
+     * @param array $columns Array with columns to be inserted.
      * @return $this
      */
-    public function setColumns(array $cols)
+    public function setColumns(array $columns)
     {
-        $this->_columns = $cols;
+        $this->_columns = $columns;
         $this->_castedExpressions = false;
 
         return $this;
