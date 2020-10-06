@@ -1674,7 +1674,7 @@ class AuthComponentTest extends TestCase
         $this->Auth->setConfig([
             'authenticate' => ['Form'],
             'authorize' => false,
-            'loginAction' => ['controller' => 'auth_test', 'action' => 'login']
+            'loginAction' => ['controller' => 'auth_test', 'action' => 'login'],
         ]);
 
         $event = new Event('Controller.startup', $this->Controller);
