@@ -1653,6 +1653,36 @@ class AuthComponentTest extends TestCase
     }
 
     /**
+     * test null action no error
+     *
+     * @return void
+     */
+    public function testStartupNullAction(): void
+    {
+        $request = new ServerRequest([
+            'params' => [
+                'plugin' => null,
+                'controller' => null,
+                'action' => null,
+            ],
+            'url' => '/',
+            'session' => $this->Auth->session,
+        ]);
+        $this->Controller->setRequest($request);
+
+        $this->Auth->getController()->getRequest()->getSession()->clear();
+        $this->Auth->setConfig([
+            'authenticate' => ['Form'],
+            'authorize' => false,
+            'loginAction' => ['controller' => 'auth_test', 'action' => 'login']
+        ]);
+
+        $event = new Event('Controller.startup', $this->Controller);
+        $return = $this->Auth->startup($event);
+        $this->assertNull($return);
+    }
+
+    /**
      * test for BC getting/setting AuthComponent::$sessionKey gets/sets `key`
      * config of session storage.
      *

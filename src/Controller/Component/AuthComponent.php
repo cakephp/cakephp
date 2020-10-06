@@ -268,7 +268,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
         $controller = $event->getSubject();
 
         $action = $controller->getRequest()->getParam('action');
-        if ($action !== null && !$controller->isAction($action)) {
+        if ($action === null || !$controller->isAction($action)) {
             return null;
         }
 
