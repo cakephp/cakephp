@@ -2303,6 +2303,33 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test having casing with string expressions
+     *
+     * @return void
+     */
+    public function testHavingAliasCasingStringExpression()
+    {
+        $this->loadFixtures('Authors');
+        $query = new Query($this->connection);
+        $query
+            ->select(['id'])
+            ->from(['Authors' => 'authors'])
+            ->where([
+                'FUNC( Authors.id) =' => 1,
+                'FUNC( Authors.id) IS NOT' => null,
+            ])
+            ->having(['COUNT(DISTINCT Authors.id) =' => 1]);
+
+        $this->assertQuotedQuery(
+            'SELECT <id> FROM <authors> <Authors> WHERE ' .
+            '\(FUNC\( <Authors>\.<id>\) = :c0 AND \(FUNC\( <Authors>\.<id>\)\) IS NOT NULL\) ' .
+            'HAVING COUNT\(DISTINCT <Authors>\.<id>\) = :c1',
+            $query->sql(),
+            !$this->autoQuote
+        );
+    }
+
+    /**
      * Tests selecting rows using a limit clause
      *
      * @return void
