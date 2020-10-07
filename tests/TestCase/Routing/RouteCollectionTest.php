@@ -526,7 +526,7 @@ class RouteCollectionTest extends TestCase
     public function testMatchNamedError()
     {
         $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
-        $this->expectExceptionMessage('A named route was found for "fail", but matching failed');
+        $this->expectExceptionMessage('A named route was found for `fail`, but matching failed');
         $context = [
             '_base' => '/',
             '_scheme' => 'http',
