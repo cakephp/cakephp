@@ -369,23 +369,23 @@ class QueryExpression implements ExpressionInterface, Countable
     /**
      * Adds a new condition to the expression object in the form "EXISTS (...)".
      *
-     * @param \Cake\Database\ExpressionInterface $query the inner query
+     * @param \Cake\Database\ExpressionInterface $expression the inner query
      * @return $this
      */
-    public function exists(ExpressionInterface $query)
+    public function exists(ExpressionInterface $expression)
     {
-        return $this->add(new UnaryExpression('EXISTS', $query, UnaryExpression::PREFIX));
+        return $this->add(new UnaryExpression('EXISTS', $expression, UnaryExpression::PREFIX));
     }
 
     /**
      * Adds a new condition to the expression object in the form "NOT EXISTS (...)".
      *
-     * @param \Cake\Database\ExpressionInterface $query the inner query
+     * @param \Cake\Database\ExpressionInterface $expression the inner query
      * @return $this
      */
-    public function notExists(ExpressionInterface $query)
+    public function notExists(ExpressionInterface $expression)
     {
-        return $this->add(new UnaryExpression('NOT EXISTS', $query, UnaryExpression::PREFIX));
+        return $this->add(new UnaryExpression('NOT EXISTS', $expression, UnaryExpression::PREFIX));
     }
 
     /**
@@ -508,11 +508,11 @@ class QueryExpression implements ExpressionInterface, Countable
     /**
      * Builds equal condition or assignment with identifier wrapping.
      *
-     * @param string $left Left join condition field name.
-     * @param string $right Right join condition field name.
+     * @param string $leftField Left join condition field name.
+     * @param string $rightField Right join condition field name.
      * @return $this
      */
-    public function equalFields(string $left, string $right)
+    public function equalFields(string $leftField, string $rightField)
     {
         $wrapIdentifier = function ($field) {
             if ($field instanceof ExpressionInterface) {
@@ -522,7 +522,7 @@ class QueryExpression implements ExpressionInterface, Countable
             return new IdentifierExpression($field);
         };
 
-        return $this->eq($wrapIdentifier($left), $wrapIdentifier($right));
+        return $this->eq($wrapIdentifier($leftField), $wrapIdentifier($rightField));
     }
 
     /**

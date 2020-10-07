@@ -58,20 +58,20 @@ class UnaryExpression implements ExpressionInterface
      *
      * @var int
      */
-    protected $_mode;
+    protected $position;
 
     /**
      * Constructor
      *
      * @param string $operator The operator to used for the expression
      * @param mixed $value the value to use as the operand for the expression
-     * @param int $mode either UnaryExpression::PREFIX or UnaryExpression::POSTFIX
+     * @param int $position either UnaryExpression::PREFIX or UnaryExpression::POSTFIX
      */
-    public function __construct(string $operator, $value, $mode = self::PREFIX)
+    public function __construct(string $operator, $value, $position = self::PREFIX)
     {
         $this->_operator = $operator;
         $this->_value = $value;
-        $this->_mode = $mode;
+        $this->position = $position;
     }
 
     /**
@@ -84,7 +84,7 @@ class UnaryExpression implements ExpressionInterface
             $operand = $operand->sql($binder);
         }
 
-        if ($this->_mode === self::POSTFIX) {
+        if ($this->position === self::POSTFIX) {
             return '(' . $operand . ') ' . $this->_operator;
         }
 
