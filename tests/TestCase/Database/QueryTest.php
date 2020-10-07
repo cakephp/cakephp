@@ -2309,7 +2309,7 @@ class QueryTest extends TestCase
      */
     public function testHavingAliasCasingStringExpression()
     {
-        $this->loadFixtures('Authors');
+        $this->skipIf($this->autoQuote, 'Does not work when autoquoting is enabled.');
         $query = new Query($this->connection);
         $query
             ->select(['id'])
@@ -2320,12 +2320,11 @@ class QueryTest extends TestCase
             ])
             ->having(['COUNT(DISTINCT Authors.id) =' => 1]);
 
-        $this->assertQuotedQuery(
-            'SELECT <id> FROM <authors> <Authors> WHERE ' .
-            '\(FUNC\( <Authors>\.<id>\) = :c0 AND \(FUNC\( <Authors>\.<id>\)\) IS NOT NULL\) ' .
-            'HAVING COUNT\(DISTINCT <Authors>\.<id>\) = :c1',
-            $query->sql(),
-            !$this->autoQuote
+        $this->assertSame(
+            'SELECT id FROM authors Authors WHERE ' .
+            '(FUNC( Authors.id) = :c0 AND (FUNC( Authors.id)) IS NOT NULL) ' .
+            'HAVING COUNT(DISTINCT Authors.id) = :c1',
+            trim($query->sql())
         );
     }
 

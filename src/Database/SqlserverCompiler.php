@@ -39,7 +39,7 @@ class SqlserverCompiler extends QueryCompiler
     protected $_templates = [
         'delete' => 'DELETE',
         'where' => ' WHERE %s',
-        'group' => ' GROUP BY %s ',
+        'group' => ' GROUP BY %s',
         'order' => ' %s',
         'offset' => ' OFFSET %s ROWS',
         'epilog' => ' %s',
@@ -155,6 +155,6 @@ class SqlserverCompiler extends QueryCompiler
             }
         }
 
-        return sprintf('HAVING %s', implode(', ', $parts));
+        return sprintf(' HAVING %s', implode(', ', $parts));
     }
 }

@@ -737,7 +737,7 @@ class QueryExpression implements ExpressionInterface, Countable
         $spaces = substr_count($field, ' ');
         if ($spaces > 1) {
             $parts = explode(' ', $field);
-            if (preg_match('/(is not|not in)$/i', $field)) {
+            if (preg_match('/(is not|not \w+)$/i', $field)) {
                 $last = array_pop($parts);
                 $second = array_pop($parts);
                 array_push($parts, strtolower("{$second} {$last}"));
