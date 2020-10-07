@@ -187,7 +187,9 @@ class RouteCollection
 
         // Sort path segments matching longest paths first.
         $paths = array_keys($this->_paths);
-        rsort($paths);
+        usort($paths, function ($value1, $value2) {
+            return mb_strlen($value2) - mb_strlen($value1);
+        });
 
         foreach ($paths as $path) {
             if (strpos($urlPath, $path) !== 0) {
