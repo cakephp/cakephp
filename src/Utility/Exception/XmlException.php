@@ -22,8 +22,4 @@ use Cake\Core\Exception\Exception;
  */
 class XmlException extends Exception
 {
-    /**
-     * @inheritDoc
-     */
-    protected $_defaultCode = 0;
 }

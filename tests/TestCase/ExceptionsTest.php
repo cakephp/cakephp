@@ -69,13 +69,6 @@ class ExceptionsTest extends TestCase
         $this->assertSame(__FILE__, $exception->getFile());
         $this->assertSame(1, $exception->getLine());
         $this->assertSame($previous, $exception->getPrevious());
-
-        $exception = new FatalErrorException('message', null, __FILE__, 1, $previous);
-        $this->assertSame('message', $exception->getMessage());
-        $this->assertSame(500, $exception->getCode());
-        $this->assertSame(__FILE__, $exception->getFile());
-        $this->assertSame(1, $exception->getLine());
-        $this->assertSame($previous, $exception->getPrevious());
     }
 
     /**
@@ -93,11 +86,6 @@ class ExceptionsTest extends TestCase
         $this->assertSame(100, $exception->getCode());
         $this->assertSame($previous, $exception->getPrevious());
         $this->assertSame($entity, $exception->getEntity());
-
-        $exception = new PersistenceFailedException(new Entity(), 'message', null, $previous);
-        $this->assertSame('message', $exception->getMessage());
-        $this->assertSame(500, $exception->getCode());
-        $this->assertSame($previous, $exception->getPrevious());
     }
 
     /**
@@ -156,24 +144,24 @@ class ExceptionsTest extends TestCase
             ['Cake\Console\Exception\MissingTaskException', 1],
             ['Cake\Console\Exception\StopException', 1],
             ['Cake\Controller\Exception\AuthSecurityException', 400],
-            ['Cake\Controller\Exception\MissingActionException', 404],
-            ['Cake\Controller\Exception\MissingComponentException', 500],
+            ['Cake\Controller\Exception\MissingActionException', 0],
+            ['Cake\Controller\Exception\MissingComponentException', 0],
             ['Cake\Controller\Exception\SecurityException', 400],
-            ['Cake\Core\Exception\Exception', 500],
-            ['Cake\Core\Exception\MissingPluginException', 500],
-            ['Cake\Database\Exception', 500],
-            ['Cake\Database\Exception\MissingConnectionException', 500],
-            ['Cake\Database\Exception\MissingDriverException', 500],
-            ['Cake\Database\Exception\MissingExtensionException', 500],
-            ['Cake\Database\Exception\NestedTransactionRollbackException', 500],
-            ['Cake\Datasource\Exception\InvalidPrimaryKeyException', 500],
-            ['Cake\Datasource\Exception\MissingDatasourceConfigException', 500],
-            ['Cake\Datasource\Exception\MissingDatasourceException', 500],
-            ['Cake\Datasource\Exception\MissingModelException', 500],
-            ['Cake\Datasource\Exception\PageOutOfBoundsException', 404],
-            ['Cake\Datasource\Exception\RecordNotFoundException', 404],
-            ['Cake\Mailer\Exception\MissingActionException', 500],
-            ['Cake\Mailer\Exception\MissingMailerException', 500],
+            ['Cake\Core\Exception\Exception', 0],
+            ['Cake\Core\Exception\MissingPluginException', 0],
+            ['Cake\Database\Exception', 0],
+            ['Cake\Database\Exception\MissingConnectionException', 0],
+            ['Cake\Database\Exception\MissingDriverException', 0],
+            ['Cake\Database\Exception\MissingExtensionException', 0],
+            ['Cake\Database\Exception\NestedTransactionRollbackException', 0],
+            ['Cake\Datasource\Exception\InvalidPrimaryKeyException', 0],
+            ['Cake\Datasource\Exception\MissingDatasourceConfigException', 0],
+            ['Cake\Datasource\Exception\MissingDatasourceException', 0],
+            ['Cake\Datasource\Exception\MissingModelException', 0],
+            ['Cake\Datasource\Exception\PageOutOfBoundsException', 0],
+            ['Cake\Datasource\Exception\RecordNotFoundException', 0],
+            ['Cake\Mailer\Exception\MissingActionException', 0],
+            ['Cake\Mailer\Exception\MissingMailerException', 0],
             ['Cake\Http\Exception\BadRequestException', 400],
             ['Cake\Http\Exception\ConflictException', 409],
             ['Cake\Http\Exception\ForbiddenException', 403],
@@ -190,18 +178,18 @@ class ExceptionsTest extends TestCase
             ['Cake\Http\Exception\UnauthorizedException', 401],
             ['Cake\Http\Exception\UnavailableForLegalReasonsException', 451],
             ['Cake\Network\Exception\SocketException', 0],
-            ['Cake\ORM\Exception\MissingBehaviorException', 500],
-            ['Cake\ORM\Exception\MissingEntityException', 500],
-            ['Cake\ORM\Exception\MissingTableClassException', 500],
-            ['Cake\ORM\Exception\RolledbackTransactionException', 500],
-            ['Cake\Routing\Exception\DuplicateNamedRouteException', 500],
-            ['Cake\Routing\Exception\MissingDispatcherFilterException', 500],
-            ['Cake\Routing\Exception\MissingRouteException', 500],
+            ['Cake\ORM\Exception\MissingBehaviorException', 0],
+            ['Cake\ORM\Exception\MissingEntityException', 0],
+            ['Cake\ORM\Exception\MissingTableClassException', 0],
+            ['Cake\ORM\Exception\RolledbackTransactionException', 0],
+            ['Cake\Routing\Exception\DuplicateNamedRouteException', 0],
+            ['Cake\Routing\Exception\MissingDispatcherFilterException', 0],
+            ['Cake\Routing\Exception\MissingRouteException', 0],
             ['Cake\Routing\Exception\RedirectException', 302],
             ['Cake\Utility\Exception\XmlException', 0],
-            ['Cake\View\Exception\MissingCellException', 500],
-            ['Cake\View\Exception\MissingHelperException', 500],
-            ['Cake\View\Exception\MissingViewException', 500],
+            ['Cake\View\Exception\MissingCellException', 0],
+            ['Cake\View\Exception\MissingHelperException', 0],
+            ['Cake\View\Exception\MissingViewException', 0],
         ];
     }
 }

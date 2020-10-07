@@ -51,7 +51,7 @@ class Exception extends RuntimeException
      *
      * @var int
      */
-    protected $_defaultCode = 500;
+    protected $_defaultCode = 0;
 
     /**
      * Constructor.

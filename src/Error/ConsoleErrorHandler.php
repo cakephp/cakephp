@@ -16,7 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Error;
 
+use Cake\Command\Command;
 use Cake\Console\ConsoleOutput;
+use Cake\Console\Exception\ConsoleException;
 use Throwable;
 
 /**
@@ -61,9 +63,12 @@ class ConsoleErrorHandler extends BaseErrorHandler
     {
         $this->_displayException($exception);
         $this->logException($exception);
-        $code = $exception->getCode();
-        $code = $code && is_int($code) ? $code : 1;
-        $this->_stop($code);
+
+        $exitCode = Command::CODE_ERROR;
+        if ($exception instanceof ConsoleException) {
+            $exitCode = (int)$exception->getCode();
+        }
+        $this->_stop($exitCode);
     }
 
     /**
