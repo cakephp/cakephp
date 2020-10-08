@@ -451,12 +451,36 @@ class ExceptionRendererTest extends TestCase
     public function testExceptionResponseHeader()
     {
         $exception = new MethodNotAllowedException('Only allowing POST and DELETE');
-        $exception->responseHeader(['Allow' => 'POST, DELETE']);
+        $exception->setHeader('Allow', ['POST', 'DELETE']);
         $ExceptionRenderer = new ExceptionRenderer($exception);
 
         $result = $ExceptionRenderer->render();
         $this->assertTrue($result->hasHeader('Allow'));
-        $this->assertSame('POST, DELETE', $result->getHeaderLine('Allow'));
+        $this->assertSame('POST,DELETE', $result->getHeaderLine('Allow'));
+
+        $exception->setHeaders(['Allow' => 'GET']);
+        $result = $ExceptionRenderer->render();
+        $this->assertTrue($result->hasHeader('Allow'));
+        $this->assertSame('GET', $result->getHeaderLine('Allow'));
+    }
+
+    /**
+     * Tests setting exception response headers through core Exception
+     *
+     * @return void
+     */
+    public function testExceptionDeprecatedResponseHeader()
+    {
+        $this->deprecated(function () {
+            $exception = new CakeException('Should Not Set Headers');
+            $exception->responseHeader(['Allow' => 'POST, DELETE']);
+
+            $ExceptionRenderer = new ExceptionRenderer($exception);
+
+            $result = $ExceptionRenderer->render();
+            $this->assertTrue($result->hasHeader('Allow'));
+            $this->assertSame('POST, DELETE', $result->getHeaderLine('Allow'));
+        });
     }
 
     /**

@@ -1507,7 +1507,7 @@ class ServerRequest implements ServerRequestInterface
         }
         $allowed = strtoupper(implode(', ', $methods));
         $e = new MethodNotAllowedException();
-        $e->responseHeader('Allow', $allowed);
+        $e->setHeader('Allow', $allowed);
         throw $e;
     }
 
