@@ -249,7 +249,7 @@ class Asset
                 urldecode($path)
             );
             $webrootPath = Configure::read('App.wwwRoot') . str_replace('/', DIRECTORY_SEPARATOR, $filepath);
-            if (file_exists($webrootPath)) {
+            if (is_file($webrootPath)) {
                 return $path . '?' . filemtime($webrootPath);
             }
             // Check for plugins and org prefixed plugins.
@@ -265,7 +265,7 @@ class Asset
                     . 'webroot'
                     . DIRECTORY_SEPARATOR
                     . implode(DIRECTORY_SEPARATOR, $segments);
-                if (file_exists($pluginPath)) {
+                if (is_file($pluginPath)) {
                     return $path . '?' . filemtime($pluginPath);
                 }
             }
@@ -304,12 +304,12 @@ class Asset
                 $file = str_replace('/', '\\', $file);
             }
 
-            if (file_exists(Configure::read('App.wwwRoot') . $theme . $file)) {
+            if (is_file(Configure::read('App.wwwRoot') . $theme . $file)) {
                 $webPath = $requestWebroot . $theme . $asset[0];
             } else {
                 $themePath = Plugin::path($themeName);
                 $path = $themePath . 'webroot/' . $file;
-                if (file_exists($path)) {
+                if (is_file($path)) {
                     $webPath = $requestWebroot . $theme . $asset[0];
                 }
             }
