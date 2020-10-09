@@ -34,7 +34,7 @@ interface ContainerApplicationInterface
      * @param \Cake\Core\ContainerInterface $container The container to add services to
      * @return \Cake\Core\ContainerInterface The updated container.
      */
-    public function register(ContainerInterface $container): ContainerInterface;
+    public function services(ContainerInterface $container): ContainerInterface;
 
     /**
      * Create a new container and register services.

@@ -55,7 +55,7 @@ class BasePlugin implements PluginInterface
      *
      * @var bool
      */
-    protected $registerEnabled = true;
+    protected $servicesEnabled = true;
 
     /**
      * Load routes or not
@@ -295,7 +295,7 @@ class BasePlugin implements PluginInterface
      * @param \Cake\Core\ContainerInterface $container The container to add services to.
      * @return \Cake\Core\ContainerInterface The updated container
      */
-    public function register(ContainerInterface $container): ContainerInterface
+    public function services(ContainerInterface $container): ContainerInterface
     {
         return $container;
     }

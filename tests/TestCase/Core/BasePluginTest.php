@@ -60,7 +60,7 @@ class BasePluginTest extends TestCase
         $this->assertFalse($plugin->isEnabled('bootstrap'));
         $this->assertTrue($plugin->isEnabled('console'));
         $this->assertTrue($plugin->isEnabled('middleware'));
-        $this->assertTrue($plugin->isEnabled('register'));
+        $this->assertTrue($plugin->isEnabled('services'));
     }
 
     public function testGetName()
@@ -96,7 +96,7 @@ class BasePluginTest extends TestCase
     {
         $plugin = new BasePlugin();
         $container = new Container();
-        $this->assertSame($container, $plugin->register($container));
+        $this->assertSame($container, $plugin->services($container));
     }
 
     public function testConsoleFind()

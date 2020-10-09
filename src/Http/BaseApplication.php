@@ -249,9 +249,9 @@ abstract class BaseApplication implements
         if ($this->container) {
             return $this->container;
         }
-        $container = $this->register(new Container());
-        foreach ($this->plugins->with('register') as $plugin) {
-            $container = $plugin->register($container);
+        $container = $this->services(new Container());
+        foreach ($this->plugins->with('services') as $plugin) {
+            $container = $plugin->services($container);
         }
         $this->container = $container;
 
@@ -259,12 +259,12 @@ abstract class BaseApplication implements
     }
 
     /**
-     * Register application services.
+     * Register application container services.
      *
      * @param \Cake\Core\ContainerInterface $container The Container to update.
      * @return \Cake\Core\ContainerInterface The updated container
      */
-    public function register(ContainerInterface $container): ContainerInterface
+    public function services(ContainerInterface $container): ContainerInterface
     {
         return $container;
     }
