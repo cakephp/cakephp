@@ -71,6 +71,7 @@ class MailTransportTest extends TestCase
         $message->setFrom('noreply@cakephp.org', 'CakePHP Test');
         $message->setReturnPath('pleasereply@cakephp.org', 'CakePHP Return');
         $message->setTo('cake@cakephp.org', 'CakePHP');
+        $message->setReplyTo(['mark@cakephp.org' => 'Mark Story', 'juan@cakephp.org' => 'Juan Basso']);
         $message->setCc(['mark@cakephp.org' => 'Mark Story', 'juan@cakephp.org' => 'Juan Basso']);
         $message->setBcc('phpnut@cakephp.org');
         $message->setMessageId('<4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>');
@@ -88,6 +89,7 @@ class MailTransportTest extends TestCase
         $encoded .= ' =?UTF-8?B?Rm/DuCBCw6VyIELDqXo=?=';
 
         $data = 'From: CakePHP Test <noreply@cakephp.org>' . PHP_EOL;
+        $data .= 'Reply-To: Mark Story <mark@cakephp.org>, Juan Basso <juan@cakephp.org>' . PHP_EOL;
         $data .= 'Return-Path: CakePHP Return <pleasereply@cakephp.org>' . PHP_EOL;
         $data .= 'Cc: Mark Story <mark@cakephp.org>, Juan Basso <juan@cakephp.org>' . PHP_EOL;
         $data .= 'Bcc: phpnut@cakephp.org' . PHP_EOL;

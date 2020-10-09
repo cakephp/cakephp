@@ -101,7 +101,7 @@ class Message implements JsonSerializable, Serializable
     protected $sender = [];
 
     /**
-     * The email the recipient will reply to
+     * List of email(s) that the recipient will reply to
      *
      * @var array
      */
@@ -347,13 +347,14 @@ class Message implements JsonSerializable, Serializable
     }
 
     /**
-     * Sets "sender" address.
+     * Sets the "sender" address. See rfc link below for full explanation.
      *
      * @param string|array $email String with email,
      *   Array with email as key, name as value or email as value (without name)
      * @param string|null $name Name
      * @return $this
      * @throws \InvalidArgumentException
+     * @link https://tools.ietf.org/html/rfc2822.html#section-3.6.2
      */
     public function setSender($email, ?string $name = null)
     {
@@ -361,9 +362,10 @@ class Message implements JsonSerializable, Serializable
     }
 
     /**
-     * Gets "sender" address.
+     * Gets the "sender" address. See rfc link below for full explanation.
      *
      * @return array
+     * @link https://tools.ietf.org/html/rfc2822.html#section-3.6.2
      */
     public function getSender(): array
     {
@@ -381,7 +383,7 @@ class Message implements JsonSerializable, Serializable
      */
     public function setReplyTo($email, ?string $name = null)
     {
-        return $this->setEmailSingle('replyTo', $email, $name, 'Reply-To requires only 1 email address.');
+        return $this->setEmail('replyTo', $email, $name);
     }
 
     /**
@@ -878,10 +880,18 @@ class Message implements JsonSerializable, Serializable
             'replyTo' => 'Reply-To',
             'readReceipt' => 'Disposition-Notification-To',
             'returnPath' => 'Return-Path',
+            'to' => 'To',
+            'cc' => 'Cc',
+            'bcc' => 'Bcc',
         ];
+        $headersMultipleEmails = ['to', 'cc', 'bcc', 'replyTo'];
         foreach ($relation as $var => $header) {
             if ($include[$var]) {
-                $headers[$header] = (string)current($this->formatAddress($this->{$var}));
+                if (in_array($var, $headersMultipleEmails)) {
+                    $headers[$header] = implode(', ', $this->formatAddress($this->{$var}));
+                } else {
+                    $headers[$header] = (string)current($this->formatAddress($this->{$var}));
+                }
             }
         }
         if ($include['sender']) {
@@ -889,12 +899,6 @@ class Message implements JsonSerializable, Serializable
                 $headers['Sender'] = '';
             } else {
                 $headers['Sender'] = (string)current($this->formatAddress($this->sender));
-            }
-        }
-
-        foreach (['to', 'cc', 'bcc'] as $var) {
-            if ($include[$var]) {
-                $headers[ucfirst($var)] = implode(', ', $this->formatAddress($this->{$var}));
             }
         }
 
