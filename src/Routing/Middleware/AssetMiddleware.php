@@ -73,7 +73,7 @@ class AssetMiddleware implements MiddlewareInterface
         }
 
         $assetFile = $this->_getAssetFile($url);
-        if ($assetFile === null || !file_exists($assetFile)) {
+        if ($assetFile === null || !is_file($assetFile)) {
             return $handler->handle($request);
         }
 

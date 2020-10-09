@@ -421,7 +421,7 @@ class Configure
         }
 
         $path = dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'config/config.php';
-        if (file_exists($path)) {
+        if (is_file($path)) {
             $config = require $path;
             static::write($config);
 

@@ -1346,7 +1346,7 @@ class View implements EventDispatcherInterface
         $name .= $this->_ext;
         $paths = $this->_paths($plugin);
         foreach ($paths as $path) {
-            if (file_exists($path . $name)) {
+            if (is_file($path . $name)) {
                 return $this->_checkFilePath($path . $name, $path);
             }
         }
@@ -1440,7 +1440,7 @@ class View implements EventDispatcherInterface
         $name .= $this->_ext;
 
         foreach ($this->getLayoutPaths($plugin) as $path) {
-            if (file_exists($path . $name)) {
+            if (is_file($path . $name)) {
                 return $this->_checkFilePath($path . $name, $path);
             }
         }
@@ -1483,7 +1483,7 @@ class View implements EventDispatcherInterface
 
         $name .= $this->_ext;
         foreach ($this->getElementPaths($plugin) as $path) {
-            if (file_exists($path . $name)) {
+            if (is_file($path . $name)) {
                 return $path . $name;
             }
         }

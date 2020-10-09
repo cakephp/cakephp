@@ -365,7 +365,7 @@ class FileEngine extends CacheEngine
             $this->_File->getBasename() !== $key ||
             $this->_File->valid() === false
         ) {
-            $exists = file_exists($path->getPathname());
+            $exists = is_file($path->getPathname());
             try {
                 $this->_File = $path->openFile('c+');
             } catch (Exception $e) {

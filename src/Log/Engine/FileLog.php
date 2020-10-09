@@ -133,7 +133,7 @@ class FileLog extends BaseLog
             return;
         }
 
-        $exists = file_exists($pathname);
+        $exists = is_file($pathname);
         file_put_contents($pathname, $output, FILE_APPEND);
         static $selfError = false;
 
@@ -184,7 +184,7 @@ class FileLog extends BaseLog
         clearstatcache(true, $filePath);
 
         if (
-            !file_exists($filePath) ||
+            !is_file($filePath) ||
             filesize($filePath) < $this->_size
         ) {
             return null;

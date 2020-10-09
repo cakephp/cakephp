@@ -257,7 +257,7 @@ class BasePlugin implements PluginInterface
     public function routes(RouteBuilder $routes): void
     {
         $path = $this->getConfigPath() . 'routes.php';
-        if (file_exists($path)) {
+        if (is_file($path)) {
             require $path;
         }
     }
@@ -268,7 +268,7 @@ class BasePlugin implements PluginInterface
     public function bootstrap(PluginApplicationInterface $app): void
     {
         $bootstrap = $this->getConfigPath() . 'bootstrap.php';
-        if (file_exists($bootstrap)) {
+        if (is_file($bootstrap)) {
             require $bootstrap;
         }
     }
