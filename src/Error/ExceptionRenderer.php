@@ -32,6 +32,7 @@ use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
+use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\View\Exception\MissingLayoutException;
@@ -112,6 +113,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
         RecordNotFoundException::class => 404,
         // Http exceptions
         MissingControllerException::class => 404,
+        MissingRouteException::class => 404,
     ];
 
     /**
