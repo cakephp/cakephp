@@ -113,6 +113,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
         RecordNotFoundException::class => 404,
         // Http exceptions
         MissingControllerException::class => 404,
+        // Routing exceptions
         MissingRouteException::class => 404,
     ];
 
