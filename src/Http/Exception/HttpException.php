@@ -30,4 +30,42 @@ class HttpException extends Exception
      * @inheritDoc
      */
     protected $_defaultCode = 500;
+
+    /**
+     * @var array
+     */
+    protected $headers = [];
+
+    /**
+     * Set a single HTTP response header.
+     *
+     * @param string $header Header name
+     * @param string|string[]|null $value Header value
+     * @return void
+     */
+    public function setHeader(string $header, $value = null): void
+    {
+        $this->headers[$header] = $value;
+    }
+
+    /**
+     * Sets HTTP response headers.
+     *
+     * @param array $headers Array of header name and value pairs.
+     * @return void
+     */
+    public function setHeaders(array $headers): void
+    {
+        $this->headers = $headers;
+    }
+
+    /**
+     * Returns array of response headers.
+     *
+     * @return array
+     */
+    public function getHeaders(): array
+    {
+        return $this->headers;
+    }
 }

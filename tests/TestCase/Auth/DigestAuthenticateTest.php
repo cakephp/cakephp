@@ -150,7 +150,7 @@ class DigestAuthenticateTest extends TestCase
 
         $this->assertNotEmpty($e);
 
-        $header = $e->responseHeader();
+        $header = $e->getHeaders();
         $this->assertMatchesRegularExpression(
             '/^Digest realm="localhost",qop="auth",nonce="[a-zA-Z0-9=]+",opaque="123abc"$/',
             $header['WWW-Authenticate']
@@ -184,7 +184,7 @@ class DigestAuthenticateTest extends TestCase
         }
         $this->assertNotEmpty($e);
 
-        $header = $e->responseHeader()['WWW-Authenticate'];
+        $header = $e->getHeaders()['WWW-Authenticate'];
         $this->assertStringContainsString('stale=true', $header);
     }
 
