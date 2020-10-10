@@ -397,6 +397,19 @@ class Message implements JsonSerializable, Serializable
     }
 
     /**
+     * Add "Reply-To" address.
+     *
+     * @param string|array $email Null to get, String with email,
+     *   Array with email as key, name as value or email as value (without name)
+     * @param string|null $name Name
+     * @return $this
+     */
+    public function addReplyTo($email, ?string $name = null)
+    {
+        return $this->addEmail('replyTo', $email, $name);
+    }
+
+    /**
      * Sets Read Receipt (Disposition-Notification-To header).
      *
      * @param string|array $email String with email,

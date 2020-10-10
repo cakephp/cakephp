@@ -95,6 +95,7 @@ use InvalidArgumentException;
  * @method array getSender() Gets "sender" address. {@see \Cake\Mailer\Message::getSender()}
  * @method $this setReplyTo($email, $name = null) Sets "Reply-To" address. {@see \Cake\Mailer\Message::setReplyTo()}
  * @method array getReplyTo() Gets "Reply-To" address. {@see \Cake\Mailer\Message::getReplyTo()}
+ * @method $this addReplyTo($email, $name = null) Add "Reply-To" address. {@see \Cake\Mailer\Message::addReplyTo()}
  * @method $this setReadReceipt($email, $name = null) Sets Read Receipt (Disposition-Notification-To header).
  *   {@see \Cake\Mailer\Message::setReadReceipt()}
  * @method array getReadReceipt() Gets Read Receipt (Disposition-Notification-To header).
