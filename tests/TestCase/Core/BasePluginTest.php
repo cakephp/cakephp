@@ -92,7 +92,7 @@ class BasePluginTest extends TestCase
         $this->assertSame($commands, $plugin->console($commands));
     }
 
-    public function testRegister()
+    public function testServices()
     {
         $plugin = new BasePlugin();
         $container = new Container();
