@@ -96,12 +96,10 @@ class Application extends BaseApplication
      * Container register hook
      *
      * @param \Cake\Core\ContainerInterface $container The container to update
-     * @return \Cake\Core\ContainerInterface
+     * @return void
      */
-    public function register(ContainerInterface $container): ContainerInterface
+    public function services(ContainerInterface $container): void
     {
         $container->add(stdClass::class, json_decode('{"key":"value"}'));
-
-        return $container;
     }
 }
