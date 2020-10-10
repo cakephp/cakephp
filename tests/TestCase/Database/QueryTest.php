@@ -16,14 +16,20 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database;
 
+use Cake\Database\Driver\Mysql;
+use Cake\Database\Driver\Postgres;
+use Cake\Database\Driver\Sqlite;
+use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\Expression\StringExpression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
 use Cake\Database\Statement\StatementDecorator;
 use Cake\Database\StatementInterface;
 use Cake\Database\TypeFactory;
 use Cake\Database\TypeMap;
+use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use DateTimeImmutable;
@@ -4950,6 +4956,44 @@ class QueryTest extends TestCase
         $statement = $query->execute();
         $results = $statement->fetchColumn(3);
         $this->assertFalse($results);
+        $statement->closeCursor();
+    }
+
+    /**
+     * Tests creating StringExpression.
+     *
+     * @return void
+     */
+    public function testStringExpression()
+    {
+        $driver = $this->connection->getDriver();
+        if ($driver instanceof Mysql) {
+            if (version_compare($this->connection->getDriver()->version(), '5.7.0', '<')) {
+                $collation = 'utf8_general_ci';
+            } else {
+                $collation = 'utf8mb4_general_ci';
+            }
+        } elseif ($driver instanceof Postgres) {
+            $collation = 'en_US.utf8';
+        } elseif ($driver instanceof Sqlite) {
+            $collation = 'BINARY';
+        } elseif ($driver instanceof Sqlserver) {
+            $collation = 'Latin1_general_CI_AI';
+        }
+
+        $query = new Query($this->connection);
+        if ($driver instanceof Postgres) {
+            // Older postgres versions throw an error on the parameter type without a cast
+            $query->select(['test_string' => $query->func()->cast(new StringExpression('testString', $collation), 'text')]);
+            $expected = "SELECT \(CAST\(:c0 COLLATE \"${collation}\" AS text\)\) AS <test_string>";
+        } else {
+            $query->select(['test_string' => new StringExpression('testString', $collation)]);
+            $expected = "SELECT \(:c0 COLLATE ${collation}\) AS <test_string>";
+        }
+        $this->assertRegExpSql($expected, $query->sql(new ValueBinder()), !$this->autoQuote);
+
+        $statement = $query->execute();
+        $this->assertSame('testString', $statement->fetchColumn(0));
         $statement->closeCursor();
     }
 }
