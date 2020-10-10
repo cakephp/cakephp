@@ -36,4 +36,9 @@ class DependenciesController extends Controller
     {
         return $this->response->withStringBody(json_encode(compact('dep', 'any', 'str')));
     }
+
+    public function variadic()
+    {
+        return $this->response->withStringBody(json_encode(['args' => func_get_args()]));
+    }
 }

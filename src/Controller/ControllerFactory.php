@@ -140,6 +140,9 @@ class ControllerFactory implements ControllerFactoryInterface
                 );
             }
         }
+        if (count($passed)) {
+            $args = array_merge($args, $passed);
+        }
         $controller->invokeAction($action, $args);
 
         $result = $controller->shutdownProcess();
