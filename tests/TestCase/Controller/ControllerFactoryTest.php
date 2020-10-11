@@ -583,4 +583,52 @@ class ControllerFactoryTest extends TestCase
         $this->assertSame($data->str, 'two');
         $this->assertSame('value', $data->dep->key);
     }
+
+    /**
+     * Test that routing parameters are passed into variadic controller functions
+     *
+     * @return void
+     */
+    public function testInvokeInjectPassedParametersVariadic()
+    {
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/optionalDep',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'variadic',
+                'pass' => ['one', 'two'],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+        $result = $this->factory->invoke($controller);
+        $data = json_decode((string)$result->getBody());
+
+        $this->assertNotNull($data);
+        $this->assertSame(['one', 'two'], $data->args);
+    }
+
+    /**
+     * Test that routing parameters are passed into controller action using spread operator
+     *
+     * @return void
+     */
+    public function testInvokeInjectPassedParametersSpread()
+    {
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/optionalDep',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'spread',
+                'pass' => ['one', 'two'],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+        $result = $this->factory->invoke($controller);
+        $data = json_decode((string)$result->getBody());
+
+        $this->assertNotNull($data);
+        $this->assertSame(['one', 'two'], $data->args);
+    }
 }
