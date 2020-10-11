@@ -27,7 +27,8 @@
     },
     "suggest": {
         "cakephp/event": "To use PluginApplicationInterface or plugin applications.",
-        "cakephp/cache": "To use Configure::store() and restore()."
+        "cakephp/cache": "To use Configure::store() and restore().",
+        "league/container": "To use Container and ServiceProvider classes"
     },
     "autoload": {
         "psr-4": {
