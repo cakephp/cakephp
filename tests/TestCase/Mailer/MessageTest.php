@@ -711,9 +711,10 @@ HTML;
         $this->message->addTo('to2@cakephp.org', 'To2 CakePHP');
         $this->message->addCc('cc2@cakephp.org', 'Cc2 CakePHP');
         $this->message->addBcc('bcc2@cakephp.org', 'Bcc2 CakePHP');
+        $this->message->addReplyTo('replyto2@cakephp.org', 'ReplyTo2 CakePHP');
 
         $this->assertSame($this->message->getFrom(), ['cake@cakephp.org' => 'CakePHP']);
-        $this->assertSame($this->message->getReplyTo(), ['replyto@cakephp.org' => 'ReplyTo CakePHP']);
+        $this->assertSame($this->message->getReplyTo(), ['replyto@cakephp.org' => 'ReplyTo CakePHP', 'replyto2@cakephp.org' => 'ReplyTo2 CakePHP']);
         $this->assertSame($this->message->getReadReceipt(), ['readreceipt@cakephp.org' => 'ReadReceipt CakePHP']);
         $this->assertSame($this->message->getReturnPath(), ['returnpath@cakephp.org' => 'ReturnPath CakePHP']);
         $this->assertSame($this->message->getTo(), ['to@cakephp.org' => 'To, CakePHP', 'to2@cakephp.org' => 'To2 CakePHP']);
@@ -722,7 +723,7 @@ HTML;
 
         $headers = $this->message->getHeaders(array_fill_keys(['from', 'replyTo', 'readReceipt', 'returnPath', 'to', 'cc', 'bcc'], true));
         $this->assertSame($headers['From'], 'CakePHP <cake@cakephp.org>');
-        $this->assertSame($headers['Reply-To'], 'ReplyTo CakePHP <replyto@cakephp.org>');
+        $this->assertSame($headers['Reply-To'], 'ReplyTo CakePHP <replyto@cakephp.org>, ReplyTo2 CakePHP <replyto2@cakephp.org>');
         $this->assertSame($headers['Disposition-Notification-To'], 'ReadReceipt CakePHP <readreceipt@cakephp.org>');
         $this->assertSame($headers['Return-Path'], 'ReturnPath CakePHP <returnpath@cakephp.org>');
         $this->assertSame($headers['To'], '"To, CakePHP" <to@cakephp.org>, To2 CakePHP <to2@cakephp.org>');

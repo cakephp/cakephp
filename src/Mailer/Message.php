@@ -325,7 +325,7 @@ class Message implements JsonSerializable, Serializable
     /**
      * Sets "from" address.
      *
-     * @param string|array $email Null to get, String with email,
+     * @param string|array $email String with email,
      *   Array with email as key, name as value or email as value (without name)
      * @param string|null $name Name
      * @return $this
@@ -394,6 +394,19 @@ class Message implements JsonSerializable, Serializable
     public function getReplyTo(): array
     {
         return $this->replyTo;
+    }
+
+    /**
+     * Add "Reply-To" address.
+     *
+     * @param string|array $email String with email,
+     *   Array with email as key, name as value or email as value (without name)
+     * @param string|null $name Name
+     * @return $this
+     */
+    public function addReplyTo($email, ?string $name = null)
+    {
+        return $this->addEmail('replyTo', $email, $name);
     }
 
     /**
@@ -475,7 +488,7 @@ class Message implements JsonSerializable, Serializable
     /**
      * Add "To" address.
      *
-     * @param string|array $email Null to get, String with email,
+     * @param string|array $email String with email,
      *   Array with email as key, name as value or email as value (without name)
      * @param string|null $name Name
      * @return $this
@@ -511,7 +524,7 @@ class Message implements JsonSerializable, Serializable
     /**
      * Add "cc" address.
      *
-     * @param string|array $email Null to get, String with email,
+     * @param string|array $email String with email,
      *   Array with email as key, name as value or email as value (without name)
      * @param string|null $name Name
      * @return $this
@@ -547,7 +560,7 @@ class Message implements JsonSerializable, Serializable
     /**
      * Add "bcc" address.
      *
-     * @param string|array $email Null to get, String with email,
+     * @param string|array $email String with email,
      *   Array with email as key, name as value or email as value (without name)
      * @param string|null $name Name
      * @return $this
