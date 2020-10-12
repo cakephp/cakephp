@@ -38,13 +38,20 @@ class IdentifierExpression implements ExpressionInterface
     protected $_identifier;
 
     /**
+     * @var string|null
+     */
+    protected $collation;
+
+    /**
      * Constructor
      *
      * @param string $identifier The identifier this expression represents
+     * @param string|null $collation The identifier collation
      */
-    public function __construct(string $identifier)
+    public function __construct(string $identifier, ?string $collation = null)
     {
         $this->_identifier = $identifier;
+        $this->collation = $collation;
     }
 
     /**
@@ -69,11 +76,37 @@ class IdentifierExpression implements ExpressionInterface
     }
 
     /**
+     * Sets the collation.
+     *
+     * @param string $collation Identifier collation
+     * @return void
+     */
+    public function setCollation(string $collation): void
+    {
+        $this->collation = $collation;
+    }
+
+    /**
+     * Returns the collation.
+     *
+     * @return string|null
+     */
+    public function getCollation(): ?string
+    {
+        return $this->collation;
+    }
+
+    /**
      * @inheritDoc
      */
     public function sql(ValueBinder $binder): string
     {
-        return $this->_identifier;
+        $sql = $this->_identifier;
+        if ($this->collation) {
+            $sql .= ' COLLATE ' . $this->collation;
+        }
+
+        return $sql;
     }
 
     /**
