@@ -358,7 +358,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
     /**
      * Test the situation where the app is upgraded from 3.9.2 or earlier to 3.9.3 or later,
      * without deleting route cache.
-     * 
+     *
      * @return void
      */
     public function testMissingSamesite()
