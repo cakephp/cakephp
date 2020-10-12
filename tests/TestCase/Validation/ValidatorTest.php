@@ -1926,6 +1926,27 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Tests that setting last globally will stop validating the rest of the rules
+     *
+     * @return void
+     */
+    public function testErrorsWithLastRuleGlobal(): void
+    {
+        $validator = new Validator();
+        $validator->setStopOnFailure()
+            ->notBlank('email', 'Fill something in!')
+            ->email('email', false, 'Y u no write email?');
+        $errors = $validator->validate(['email' => '']);
+        $expected = [
+            'email' => [
+                'notBlank' => 'Fill something in!',
+            ],
+        ];
+
+        $this->assertEquals($expected, $errors);
+    }
+
+    /**
      * Tests that setting last to a rule will stop validating the rest of the rules
      *
      * @return void
@@ -2155,6 +2176,7 @@ class ValidatorTest extends TestCase
                 'published' => Validator::EMPTY_STRING,
             ],
             '_useI18n' => true,
+            '_stopOnFailure' => false,
         ];
         $this->assertEquals($expected, $result);
     }
