@@ -207,7 +207,7 @@ class CsrfProtectionMiddleware
             '',
             (bool)$this->_config['secure'],
             (bool)$this->_config['httpOnly'],
-            $this->_config['samesite']
+            isset($this->_config['samesite']) ? $this->_config['samesite'] : $this->_defaultConfig['samesite']
         );
 
         return $response->withCookie($cookie);
