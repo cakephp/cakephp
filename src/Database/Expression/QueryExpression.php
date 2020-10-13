@@ -735,6 +735,7 @@ class QueryExpression implements ExpressionInterface, Countable
         $expression = $field;
 
         $spaces = substr_count($field, ' ');
+        // Handle operators with a space in them like `is not` and `not like`
         if ($spaces > 1) {
             $parts = explode(' ', $field);
             if (preg_match('/(is not|not \w+)$/i', $field)) {
