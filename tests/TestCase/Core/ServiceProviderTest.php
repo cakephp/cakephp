@@ -17,8 +17,8 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Core;
 
 use Cake\Core\Container;
-use TestApp\ServiceProvider\PersonServiceProvider;
 use Cake\TestSuite\TestCase;
+use TestApp\ServiceProvider\PersonServiceProvider;
 
 /**
  * ServiceProviderTest
@@ -27,7 +27,7 @@ class ServiceProviderTest extends TestCase
 {
     public function testBootstrapHook()
     {
-        $container = new Container;
+        $container = new Container();
         $container->addServiceProvider(new PersonServiceProvider());
 
         $this->assertTrue(
@@ -39,10 +39,10 @@ class ServiceProviderTest extends TestCase
 
     public function testServicesHook()
     {
-        $container = new Container;
+        $container = new Container();
         $container->addServiceProvider(new PersonServiceProvider());
 
-        $this->assertTrue( $container->has('sally'), 'Should have service');
+        $this->assertTrue($container->has('sally'), 'Should have service');
         $this->assertSame('sally', $container->get('sally')->name);
     }
 }

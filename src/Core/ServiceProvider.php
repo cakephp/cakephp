@@ -30,8 +30,7 @@ use League\Container\ServiceProvider\BootableServiceProviderInterface;
  * @experimental This class' interface is not stable and may change
  *   in future minor releases.
  */
-abstract class ServiceProvider extends AbstractServiceProvider
-    implements BootableServiceProviderInterface
+abstract class ServiceProvider extends AbstractServiceProvider implements BootableServiceProviderInterface
 {
     /**
      * Delegate to the bootstrap() method
