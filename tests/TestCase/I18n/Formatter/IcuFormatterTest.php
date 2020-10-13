@@ -88,10 +88,9 @@ class IcuFormatterTest extends TestCase
      *
      * @return void
      */
-    public function testBadMessageFormatPHP7()
+    public function testBadMessageFormat()
     {
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Constructor failed');
 
         $formatter = new IcuFormatter();
         $formatter->format('en_US', '{crazy format', ['some', 'vars']);
