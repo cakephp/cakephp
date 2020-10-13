@@ -104,6 +104,7 @@ class Stream implements AdapterInterface
         foreach ($indexes as $i => $start) {
             /** @psalm-suppress InvalidOperand */
             $end = isset($indexes[$i + 1]) ? $indexes[$i + 1] - $start : null;
+            /** @psalm-suppress PossiblyInvalidArgument */
             $headerSlice = array_slice($headers, $start, $end);
             $body = $i === $last ? $content : '';
             $responses[] = $this->_buildResponse($headerSlice, $body);
@@ -255,6 +256,7 @@ class Stream implements AdapterInterface
         $content = '';
         $timedOut = false;
 
+        /** @psalm-suppress PossiblyNullArgument  */
         while (!feof($this->_stream)) {
             if ($deadline !== false) {
                 stream_set_timeout($this->_stream, max($deadline - time(), 1));
