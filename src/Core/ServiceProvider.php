@@ -18,6 +18,7 @@ namespace Cake\Core;
 
 use League\Container\ServiceProvider\AbstractServiceProvider;
 use League\Container\ServiceProvider\BootableServiceProviderInterface;
+use RuntimeException;
 
 /**
  * Container ServiceProvider
@@ -32,6 +33,26 @@ use League\Container\ServiceProvider\BootableServiceProviderInterface;
  */
 abstract class ServiceProvider extends AbstractServiceProvider implements BootableServiceProviderInterface
 {
+    /**
+     * Get the container.
+     *
+     * @return \Cake\Core\ContainerInterface
+     */
+    public function getContainer(): ContainerInterface
+    {
+        $container = parent::getContainer();
+        if (!($container instanceof ContainerInterface)) {
+            $message = sprintf(
+                "Unexpected container type. Expected `%s` got `%s` instead.",
+                ContainerInterface::class,
+                getTypeName($container)
+            );
+            throw new RuntimeException($message);
+        }
+
+        return $container;
+    }
+
     /**
      * Delegate to the bootstrap() method
      *
