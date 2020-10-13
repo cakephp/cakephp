@@ -2309,6 +2309,32 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test having casing with string expressions
+     *
+     * @return void
+     */
+    public function testHavingAliasCasingStringExpression()
+    {
+        $this->skipIf($this->autoQuote, 'Does not work when autoquoting is enabled.');
+        $query = new Query($this->connection);
+        $query
+            ->select(['id'])
+            ->from(['Authors' => 'authors'])
+            ->where([
+                'FUNC( Authors.id) =' => 1,
+                'FUNC( Authors.id) IS NOT' => null,
+            ])
+            ->having(['COUNT(DISTINCT Authors.id) =' => 1]);
+
+        $this->assertSame(
+            'SELECT id FROM authors Authors WHERE ' .
+            '(FUNC( Authors.id) = :c0 AND (FUNC( Authors.id)) IS NOT NULL) ' .
+            'HAVING COUNT(DISTINCT Authors.id) = :c1',
+            trim($query->sql())
+        );
+    }
+
+    /**
      * Tests selecting rows using a limit clause
      *
      * @return void
