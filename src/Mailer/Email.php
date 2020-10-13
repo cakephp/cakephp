@@ -421,13 +421,14 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
-     * Sets "sender" address.
+     * Sets the "sender" address. See rfc link below for full explanation.
      *
      * @param string|array $email String with email,
      *   Array with email as key, name as value or email as value (without name)
      * @param string|null $name Name
      * @return $this
      * @throws \InvalidArgumentException
+     * @link https://tools.ietf.org/html/rfc2822.html#section-3.6.2
      */
     public function setSender($email, $name = null)
     {
@@ -435,9 +436,10 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
-     * Gets "sender" address.
+     * Gets the "sender" address. See rfc link below for full explanation.
      *
      * @return array
+     * @link https://tools.ietf.org/html/rfc2822.html#section-3.6.2
      */
     public function getSender()
     {
