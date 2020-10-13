@@ -246,17 +246,30 @@ abstract class BaseApplication implements
      */
     public function getContainer(): ContainerInterface
     {
-        if ($this->container) {
-            return $this->container;
+        if ($this->container === null) {
+            $this->container = $this->buildContainer();
         }
 
+        return $this->container;
+    }
+
+    /**
+     * Build the service container
+     *
+     * Override this method if you need to use a custom container or
+     * want to change how the container is built.
+     *
+     * @return \Cake\Core\ContainerInterface
+     */
+    protected function buildContainer(): ContainerInterface
+    {
         $container = new Container();
         $this->services($container);
         foreach ($this->plugins->with('services') as $plugin) {
             $plugin->services($container);
         }
 
-        return $this->container = $container;
+        return $container;
     }
 
     /**
