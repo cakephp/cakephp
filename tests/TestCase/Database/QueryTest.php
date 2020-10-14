@@ -5022,4 +5022,45 @@ class QueryTest extends TestCase
         $this->assertSame('testString', $statement->fetchColumn(0));
         $statement->closeCursor();
     }
+
+    /**
+     * Tests setting identifier collation.
+     *
+     * @return void
+     */
+    public function testIdentifierCollation()
+    {
+        $this->loadFixtures('Articles');
+        $driver = $this->connection->getDriver();
+        if ($driver instanceof Mysql) {
+            if (version_compare($this->connection->getDriver()->version(), '5.7.0', '<')) {
+                $collation = 'utf8_general_ci';
+            } else {
+                $collation = 'utf8mb4_general_ci';
+            }
+        } elseif ($driver instanceof Postgres) {
+            $collation = 'en_US.utf8';
+        } elseif ($driver instanceof Sqlite) {
+            $collation = 'BINARY';
+        } elseif ($driver instanceof Sqlserver) {
+            $collation = 'Latin1_general_CI_AI';
+        }
+
+        $query = (new Query($this->connection))
+            ->select(['test_string' => new IdentifierExpression('title', $collation)])
+            ->from('articles')
+            ->where(['id' => 1]);
+
+        if ($driver instanceof Postgres) {
+            // Older postgres versions throw an error on the parameter type without a cast
+            $expected = "SELECT \(<title> COLLATE \"${collation}\"\) AS <test_string>";
+        } else {
+            $expected = "SELECT \(<title> COLLATE ${collation}\) AS <test_string>";
+        }
+        $this->assertRegExpSql($expected, $query->sql(new ValueBinder()), !$this->autoQuote);
+
+        $statement = $query->execute();
+        $this->assertSame('First Article', $statement->fetchColumn(0));
+        $statement->closeCursor();
+    }
 }

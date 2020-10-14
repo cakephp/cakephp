@@ -48,4 +48,15 @@ class IdentifierExpressionTest extends TestCase
         $expression = new IdentifierExpression('foo');
         $this->assertSame('foo', $expression->sql(new ValueBinder()));
     }
+
+    /**
+     * Tests setting collation.
+     *
+     * @return void
+     */
+    public function testCollation()
+    {
+        $expresssion = new IdentifierExpression('test', 'utf8_general_ci');
+        $this->assertSame('test COLLATE utf8_general_ci', $expresssion->sql(new ValueBinder()));
+    }
 }
