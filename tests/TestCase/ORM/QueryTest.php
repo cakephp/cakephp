@@ -3940,8 +3940,6 @@ class QueryTest extends TestCase
             'The current driver does not support window functions.'
         );
 
-        $this->loadFixtures('Articles');
-
         $table = $this->getTableLocator()->get('Articles');
 
         $cteQuery = $table
