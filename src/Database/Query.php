@@ -2119,7 +2119,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function enableBufferedResults(bool $enable = true)
     {
         $this->_dirty();
-        $this->_useBufferedResults = (bool)$enable;
+        $this->_useBufferedResults = $enable;
 
         return $this;
     }
