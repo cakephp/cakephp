@@ -316,7 +316,7 @@ class ConnectionTest extends TestCase
             !($this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlite),
             'Only required for SQLite driver which does not support buffered results natively'
         );
-        $this->loadFixtures('Things');
+
         $statement = $this->connection->query('SELECT * FROM things LIMIT 3');
 
         $collection = new Collection($statement);
