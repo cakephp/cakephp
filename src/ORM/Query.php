@@ -1084,7 +1084,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         if (!$this->_beforeFindFired && $this->_type === 'select') {
             $this->_beforeFindFired = true;
 
-            /** @var \Cake\Event\EventDispatcherInterface $repository */
             $repository = $this->getRepository();
             $repository->dispatchEvent('Model.beforeFind', [
                 $this,
