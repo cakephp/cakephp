@@ -252,9 +252,13 @@ abstract class TestCase extends BaseTestCase
      */
     public function loadFixtures(): void
     {
+        if ($this->autoFixtures) {
+            throw new RuntimeException('Cannot use `loadFixtures()` with `$autoFixtures` enabled.');
+        }
         if ($this->fixtureManager === null) {
             throw new RuntimeException('No fixture manager to load the test fixture');
         }
+
         $args = func_get_args();
         foreach ($args as $class) {
             $this->fixtureManager->loadSingle($class, null, $this->dropTables);
