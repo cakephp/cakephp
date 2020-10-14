@@ -3215,8 +3215,6 @@ class QueryTest extends TestCase
         // Sqlite only supports maximum 16 digits for decimals.
         $this->skipIf($this->connection->getDriver() instanceof Sqlite);
 
-        $this->loadFixtures('Datatypes');
-
         $big = '1234567890123456789.2';
         $table = $this->getTableLocator()->get('Datatypes');
         $entity = $table->newEntity([]);
