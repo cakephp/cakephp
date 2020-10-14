@@ -30,7 +30,6 @@ use Cake\Datasource\ResultSetInterface;
 use InvalidArgumentException;
 use JsonSerializable;
 use RuntimeException;
-use Traversable;
 
 /**
  * Extends the base Query class to provide new methods related to association
@@ -82,7 +81,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     use QueryTrait {
         cache as private _cache;
         all as private _all;
-        _decorateResults as private _applyDecorators;
         __call as private _call;
     }
 
@@ -1403,24 +1401,5 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     public function isAutoFieldsEnabled(): ?bool
     {
         return $this->_autoFields;
-    }
-
-    /**
-     * Decorates the results iterator with MapReduce routines and formatters
-     *
-     * @param \Traversable $result Original results
-     * @return \Cake\Datasource\ResultSetInterface
-     */
-    protected function _decorateResults(Traversable $result): ResultSetInterface
-    {
-        $result = $this->_applyDecorators($result);
-
-        if (!($result instanceof ResultSet) && $this->isBufferedResultsEnabled()) {
-            $class = $this->_decoratorClass();
-            /** @var \Cake\Datasource\ResultSetInterface $result */
-            $result = new $class($result->buffered());
-        }
-
-        return $result;
     }
 }
