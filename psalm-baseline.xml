@@ -73,6 +73,12 @@
       <code>$request</code>
     </ArgumentTypeCoercion>
   </file>
+  <file src="src/Core/ServiceProvider.php">
+    <MethodSignatureMismatch occurrences="2">
+      <code>ServiceProvider</code>
+      <code>public function getContainer(): ContainerInterface</code>
+    </MethodSignatureMismatch>
+  </file>
   <file src="src/Database/Driver.php">
     <InvalidScalarArgument occurrences="2">
       <code>$value</code>
