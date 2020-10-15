@@ -60,8 +60,8 @@ abstract class ServiceProvider extends AbstractServiceProvider implements Bootab
     /**
      * Delegate to the bootstrap() method
      *
-     * This method primarily exists as a shim between the interface
-     * that league/container has and the one we want to offer in CakePHP.
+     * This method wraps the league/container function so users
+     * only need to use the CakePHP bootstrap() interface.
      *
      * @return void
      */
