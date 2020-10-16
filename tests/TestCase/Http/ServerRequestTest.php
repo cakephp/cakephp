@@ -762,7 +762,7 @@ class ServerRequestTest extends TestCase
     }
 
     /**
-     * Test ajax, flash and friends
+     * Test AJAX, flash and friends
      *
      * @return void
      */
