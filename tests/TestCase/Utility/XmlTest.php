@@ -291,7 +291,7 @@ close to 5 million globally.
     }
 
     /**
-     * test loadHtml with a empty html string
+     * test loadHtml with a empty HTML string
      *
      * @return void
      */
