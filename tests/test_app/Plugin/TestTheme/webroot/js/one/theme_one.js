@@ -1,1 +1,1 @@
-// nested theme js file
+// nested theme JS file
