@@ -68,7 +68,7 @@ class Cache
     use StaticConfigTrait;
 
     /**
-     * An array mapping url schemes to fully qualified caching engine
+     * An array mapping URL schemes to fully qualified caching engine
      * class names.
      *
      * @var string[]
