@@ -206,7 +206,7 @@ class HelpFormatter
     }
 
     /**
-     * Get the help as an xml string.
+     * Get the help as an XML string.
      *
      * @param bool $string Return the SimpleXml object or a string. Defaults to true.
      * @return string|\SimpleXMLElement See $string

@@ -155,7 +155,7 @@ class ResponseTest extends TestCase
     }
 
     /**
-     * Test accessor for xml
+     * Test accessor for XML
      *
      * @return void
      */

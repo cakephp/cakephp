@@ -668,7 +668,7 @@ XML;
     }
 
     /**
-     * Test that there are not unterminated errors when building xml
+     * Test that there are not unterminated errors when building XML
      *
      * @return void
      */

@@ -61,7 +61,7 @@ use Cake\Utility\Xml;
 class XmlView extends SerializedView
 {
     /**
-     * XML layouts are located in the xml sub directory of `Layouts/`
+     * XML layouts are located in the 'xml' sub directory of `Layouts/`
      *
      * @var string
      */

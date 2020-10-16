@@ -527,7 +527,7 @@ class ServerRequestTest extends TestCase
     }
 
     /**
-     * Test is() with json and xml.
+     * Test is() with json and XML.
      *
      * @return void
      */
