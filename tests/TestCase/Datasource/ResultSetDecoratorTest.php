@@ -49,7 +49,7 @@ class ResultSetDecoratorTest extends TestCase
     }
 
     /**
-     * Tests json encoding method
+     * Tests JSON encoding method
      *
      * @return void
      */

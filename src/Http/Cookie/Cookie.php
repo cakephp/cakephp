@@ -793,7 +793,7 @@ class Cookie implements CookieInterface
      * Implode method to keep keys are multidimensional arrays
      *
      * @param array $array Map of key and values
-     * @return string A json encoded string.
+     * @return string A JSON encoded string.
      */
     protected function _flatten(array $array): string
     {

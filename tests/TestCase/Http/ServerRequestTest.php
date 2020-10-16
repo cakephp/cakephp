@@ -231,7 +231,7 @@ class ServerRequestTest extends TestCase
     }
 
     /**
-     * Test parsing json PUT data into the object.
+     * Test parsing JSON PUT data into the object.
      *
      * @return void
      * @group deprecated
@@ -527,7 +527,7 @@ class ServerRequestTest extends TestCase
     }
 
     /**
-     * Test is() with json and XML.
+     * Test is() with JSON and XML.
      *
      * @return void
      */

@@ -66,7 +66,7 @@ use SimpleXMLElement;
  * ```
  * // Get as XML
  * $content = $response->getXml()
- * // Get as json
+ * // Get as JSON
  * $content = $response->getJson()
  * ```
  *

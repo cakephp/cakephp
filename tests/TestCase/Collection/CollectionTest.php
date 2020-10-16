@@ -1002,7 +1002,7 @@ class CollectionTest extends TestCase
     }
 
     /**
-     * Test json encoding
+     * Test JSON encoding
      *
      * @return void
      */

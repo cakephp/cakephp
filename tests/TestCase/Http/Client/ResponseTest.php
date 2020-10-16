@@ -104,7 +104,7 @@ class ResponseTest extends TestCase
     }
 
     /**
-     * Test accessor for json
+     * Test accessor for JSON
      *
      * @return void
      */
@@ -139,7 +139,7 @@ class ResponseTest extends TestCase
     }
 
     /**
-     * Test accessor for json when set with PSR7 methods.
+     * Test accessor for JSON when set with PSR7 methods.
      *
      * @return void
      */

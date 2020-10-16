@@ -166,7 +166,7 @@ class DateTest extends TestCase
     }
 
     /**
-     * Tests change json encoding format
+     * Tests change JSON encoding format
      *
      * @dataProvider classNameProvider
      * @return void

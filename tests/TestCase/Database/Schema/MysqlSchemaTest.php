@@ -1353,7 +1353,7 @@ SQL;
     }
 
     /**
-     * Tests json column parsing on Mysql 5.7+
+     * Tests JSON column parsing on Mysql 5.7+
      *
      * @return void
      */

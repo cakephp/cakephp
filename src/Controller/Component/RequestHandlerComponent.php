@@ -63,7 +63,7 @@ class RequestHandlerComponent extends Component
      *
      * - `checkHttpCache` - Whether to check for HTTP cache. Default `true`.
      * - `viewClassMap` - Mapping between type and view classes. If undefined
-     *   json, XML, and ajax will be mapped. Defining any types will omit the defaults.
+     *   JSON, XML, and ajax will be mapped. Defining any types will omit the defaults.
      *
      * @var array
      */
