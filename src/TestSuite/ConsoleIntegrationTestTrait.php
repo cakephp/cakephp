@@ -88,7 +88,7 @@ trait ConsoleIntegrationTestTrait
     protected $_in;
 
     /**
-     * Runs cli integration test
+     * Runs CLI integration test
      *
      * @param string $command Command to run
      * @param array $input Input values to pass to an interactive shell

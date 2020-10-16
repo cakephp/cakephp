@@ -128,7 +128,7 @@ if (!function_exists('pr')) {
     /**
      * print_r() convenience function.
      *
-     * In terminals this will act similar to using print_r() directly, when not run on cli
+     * In terminals this will act similar to using print_r() directly, when not run on CLI
      * print_r() will also wrap <pre> tags around the output of given variable. Similar to debug().
      *
      * This function returns the same variable that was passed.
@@ -156,7 +156,7 @@ if (!function_exists('pj')) {
     /**
      * json pretty print convenience function.
      *
-     * In terminals this will act similar to using json_encode() with JSON_PRETTY_PRINT directly, when not run on cli
+     * In terminals this will act similar to using json_encode() with JSON_PRETTY_PRINT directly, when not run on CLI
      * will also wrap <pre> tags around the output of given variable. Similar to pr().
      *
      * This function returns the same variable that was passed.
