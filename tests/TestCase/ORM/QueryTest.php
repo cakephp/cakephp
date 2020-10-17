@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Collection\Collection;
+use Cake\Collection\Iterator\BufferedIterator;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Expression\CommonTableExpression;
@@ -1231,6 +1232,28 @@ class QueryTest extends TestCase
             ->enableBufferedResults(false)->first();
 
         $this->assertEquals(['id' => 1], $first);
+    }
+
+    /**
+     * Test to show that when results bufferring is enabled if ResultSet gets
+     * decorated by ResultSetDecorator it gets wrapped in a BufferedIterator instance.
+     *
+     * @return void
+     */
+    public function testBufferedDecoratedResultSet()
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $query = new Query($this->connection, $table);
+        $query
+            ->select(['id'])
+            // This causes ResultSet to be decorated by a ResultSetDecorator instance
+            ->formatResults(function ($results) {
+                return $results;
+            });
+
+        $results = $query->all();
+
+        $this->assertInstanceOf(BufferedIterator::class, $results->getInnerIterator());
     }
 
     /**
