@@ -1236,7 +1236,7 @@ class QueryTest extends TestCase
 
     /**
      * Test to show that when results bufferring is enabled if ResultSet gets
-     * decorated by ResultSetDecorator it get's wrapped in a BufferedIterator instance.
+     * decorated by ResultSetDecorator it gets wrapped in a BufferedIterator instance.
      *
      * @return void
      */
