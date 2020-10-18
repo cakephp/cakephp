@@ -608,7 +608,7 @@ class FormHelper extends Helper
             $this->formProtector->addField($field, true, $value);
         }
 
-        $debugSecurity = Configure::read('debug');
+        $debugSecurity = (bool)Configure::read('debug');
         if (isset($secureAttributes['debugSecurity'])) {
             $debugSecurity = $debugSecurity && $secureAttributes['debugSecurity'];
             unset($secureAttributes['debugSecurity']);
