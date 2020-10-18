@@ -406,7 +406,7 @@ SQL;
         $result = $schema->describe('view_schema_articles');
         $expected = [
             'total' => [
-                'type' => 'string',
+                'type' => 'text',
                 'length' => null,
                 'null' => true,
                 'default' => null,
