@@ -392,6 +392,11 @@ SQL;
         }
     }
 
+    /**
+     * Tests SQLite views
+     *
+     * @return void
+     */
     public function testDescribeView()
     {
         $connection = ConnectionManager::get('test');
