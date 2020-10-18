@@ -52,8 +52,8 @@ class SqliteSchemaDialect extends SchemaDialect
      */
     protected function _convertColumn(string $column): array
     {
-        if (empty($column)) {
-            return ['type' => TableSchema::TYPE_STRING, 'length' => null];
+        if ($column === '') {
+            return ['type' => TableSchema::TYPE_TEXT, 'length' => null];
         }
 
         preg_match('/(unsigned)?\s*([a-z]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
