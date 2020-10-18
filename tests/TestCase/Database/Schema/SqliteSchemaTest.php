@@ -413,7 +413,7 @@ SQL;
                 'precision' => null,
                 'comment' => null,
                 'collate' => null,
-            ]
+            ],
         ];
         $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
         foreach ($expected as $field => $definition) {
