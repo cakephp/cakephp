@@ -266,6 +266,26 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
     }
 
     /**
+     * Returns whether the table is managed by the fixture or simply
+     * wraps an existing table. Imported tables are consistered managed
+     * as they have a schema that can be created and destroyed.
+     *
+     * @return bool
+     */
+    public function managed(): bool
+    {
+        if (empty($this->_schema)) {
+            return false;
+        }
+
+        if (empty($this->import) && empty($this->fields)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * @inheritDoc
      */
     public function create(ConnectionInterface $db): bool
@@ -310,7 +330,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
         }
 
         if (empty($this->import) && empty($this->fields)) {
-            return $this->truncate($db);
+            return true;
         }
 
         try {

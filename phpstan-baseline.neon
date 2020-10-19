@@ -446,6 +446,11 @@ parameters:
 			path: src/TestSuite/Fixture/FixtureInjector.php
 
 		-
+			message: "#^Negated boolean expression is always false\\.$#"
+			count: 1
+			path: src/TestSuite/Fixture/FixtureManager.php
+
+		-
 			message: "#^Parameter \\#1 \\$connection of method Cake\\\\Database\\\\Schema\\\\SqlGeneratorInterface\\:\\:createSql\\(\\) expects Cake\\\\Database\\\\Connection, Cake\\\\Datasource\\\\ConnectionInterface given\\.$#"
 			count: 1
 			path: src/TestSuite/Fixture/TestFixture.php

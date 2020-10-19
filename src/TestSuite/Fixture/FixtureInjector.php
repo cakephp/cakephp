@@ -103,7 +103,7 @@ class FixtureInjector implements TestListener
     }
 
     /**
-     * Unloads fixtures from the test case.
+     * Truncates fixtures at the end of the test.
      *
      * @param \PHPUnit\Framework\Test $test The test case
      * @param float $time current time

@@ -179,6 +179,11 @@
       <code>FixtureInjector</code>
     </DeprecatedInterface>
   </file>
+  <file src="src/TestSuite/Fixture/FixtureManager.php">
+    <PossiblyNullArgument occurrences="8">
+      <code>FixtureManager</code>
+    </PossiblyNullArgument>
+  </file>
   <file src="src/TestSuite/Fixture/TestFixture.php">
     <ArgumentTypeCoercion occurrences="5">
       <code>$db</code>
