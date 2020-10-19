@@ -22,9 +22,9 @@ $validator
         'message' => 'E-mail must be valid'
     ])
     ->requirePresence('name')
-    ->notEmpty('name', 'We need your name.')
+    ->notEmptyString('name', 'We need your name.')
     ->requirePresence('comment')
-    ->notEmpty('comment', 'You need to give a comment.');
+    ->notEmptyString('comment', 'You need to give a comment.');
 
 $errors = $validator->validate($_POST);
 if (!empty($errors)) {
