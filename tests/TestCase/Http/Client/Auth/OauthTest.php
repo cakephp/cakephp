@@ -292,7 +292,7 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
             [
                 'Content-Type' => 'application/xml',
             ],
-            '<xml>stuff</xml>',
+            '<xml>stuff</xml>'
         );
 
         $auth = new Oauth();
