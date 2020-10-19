@@ -380,7 +380,7 @@ class RequestHandlerComponent extends Component
      *
      * ### Usage:
      *
-     * Render the response as an 'AJAX' response.
+     * Render the response as an 'ajax' response.
      *
      * ```
      * $this->RequestHandler->renderAs($this, 'ajax');
