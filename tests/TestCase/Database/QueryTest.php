@@ -4490,7 +4490,7 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Tests that the json type can save and get data symmetrically
+     * Tests that the JSON type can save and get data symmetrically
      *
      * @return void
      */

@@ -347,7 +347,7 @@ class Message implements JsonSerializable, Serializable
     }
 
     /**
-     * Sets the "sender" address. See rfc link below for full explanation.
+     * Sets the "sender" address. See RFC link below for full explanation.
      *
      * @param string|array $email String with email,
      *   Array with email as key, name as value or email as value (without name)
@@ -362,7 +362,7 @@ class Message implements JsonSerializable, Serializable
     }
 
     /**
-     * Gets the "sender" address. See rfc link below for full explanation.
+     * Gets the "sender" address. See RFC link below for full explanation.
      *
      * @return array
      * @link https://tools.ietf.org/html/rfc2822.html#section-3.6.2

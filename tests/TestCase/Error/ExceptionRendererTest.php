@@ -353,7 +353,7 @@ class ExceptionRendererTest extends TestCase
     }
 
     /**
-     * testerror400 method when returning as json
+     * testerror400 method when returning as JSON
      *
      * @return void
      */

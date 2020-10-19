@@ -23,7 +23,7 @@ use Cake\TestSuite\TestCase;
 use PDO;
 
 /**
- * Tests Mysql driver
+ * Tests MySQL driver
  */
 class MysqlTest extends TestCase
 {
@@ -40,7 +40,7 @@ class MysqlTest extends TestCase
     }
 
     /**
-     * Test connecting to Mysql with default configuration
+     * Test connecting to MySQL with default configuration
      *
      * @return void
      */
@@ -82,7 +82,7 @@ class MysqlTest extends TestCase
     }
 
     /**
-     * Test connecting to Mysql with custom configuration
+     * Test connecting to MySQL with custom configuration
      *
      * @return void
      */

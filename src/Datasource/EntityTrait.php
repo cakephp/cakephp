@@ -54,7 +54,7 @@ trait EntityTrait
     /**
      * List of computed or virtual fields that **should** be included in JSON or array
      * representations of this Entity. If a field is present in both _hidden and _virtual
-     * the field will **not** be in the array/json versions of the entity.
+     * the field will **not** be in the array/JSON versions of the entity.
      *
      * @var string[]
      */

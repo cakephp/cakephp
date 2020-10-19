@@ -1332,7 +1332,7 @@ class FormHelper extends Helper
     }
 
     /**
-     * Set required attribute and custom validity js.
+     * Set required attribute and custom validity JS.
      *
      * @param string $fieldName The name of the field to generate options for.
      * @param array $options Options list.

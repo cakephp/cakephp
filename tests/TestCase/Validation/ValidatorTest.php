@@ -2570,7 +2570,7 @@ class ValidatorTest extends TestCase
     }
 
     /**
-     * Tests the ip proxy methods
+     * Tests the IP proxy methods
      *
      * @return void
      */

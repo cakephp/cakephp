@@ -53,7 +53,7 @@
         <!-- Postgres
         <env name="DB_URL" value="postgres://localhost/cake_test?timezone=UTC"/>
         -->
-        <!-- Mysql
+        <!-- MySQL
         <env name="DB_URL" value="mysql://localhost/cake_test?timezone=UTC"/>
         -->
         <!-- SQL Server

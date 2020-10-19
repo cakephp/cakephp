@@ -162,7 +162,7 @@ class ResultSetTest extends TestCase
     }
 
     /**
-     * Test converting resultsets into json
+     * Test converting resultsets into JSON
      *
      * @return void
      */

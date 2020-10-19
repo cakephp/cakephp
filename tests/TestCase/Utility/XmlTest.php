@@ -291,7 +291,7 @@ close to 5 million globally.
     }
 
     /**
-     * test loadHtml with a empty html string
+     * test loadHtml with a empty HTML string
      *
      * @return void
      */
@@ -668,7 +668,7 @@ XML;
     }
 
     /**
-     * Test that there are not unterminated errors when building xml
+     * Test that there are not unterminated errors when building XML
      *
      * @return void
      */

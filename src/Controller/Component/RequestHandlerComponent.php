@@ -63,7 +63,7 @@ class RequestHandlerComponent extends Component
      *
      * - `checkHttpCache` - Whether to check for HTTP cache. Default `true`.
      * - `viewClassMap` - Mapping between type and view classes. If undefined
-     *   json, xml, and ajax will be mapped. Defining any types will omit the defaults.
+     *   JSON, XML, and AJAX will be mapped. Defining any types will omit the defaults.
      *
      * @var array
      */
@@ -244,7 +244,7 @@ class RequestHandlerComponent extends Component
      * $this->RequestHandler->accepts('xml');
      * ```
      *
-     * Returns true if the client accepts xml.
+     * Returns true if the client accepts XML.
      *
      * @param string|array|null $type Can be null (or no parameter), a string type name, or an
      *   array of types
@@ -386,7 +386,7 @@ class RequestHandlerComponent extends Component
      * $this->RequestHandler->renderAs($this, 'ajax');
      * ```
      *
-     * Render the response as an xml file and force the result as a file download.
+     * Render the response as an XML file and force the result as a file download.
      *
      * ```
      * $this->RequestHandler->renderAs($this, 'xml', ['attachment' => 'myfile.xml'];

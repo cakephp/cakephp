@@ -60,7 +60,7 @@ class JsonTypeTest extends TestCase
     }
 
     /**
-     * Test converting json strings to PHP values.
+     * Test converting JSON strings to PHP values.
      *
      * @return void
      */

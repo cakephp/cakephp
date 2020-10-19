@@ -128,7 +128,7 @@ interface I18nDateTimeInterface extends ChronosInterface, JsonSerializable
     public static function setToStringFormat($format): void;
 
     /**
-     * Sets the default format used when converting this object to json
+     * Sets the default format used when converting this object to JSON
      *
      * The format should be either the formatting constants from IntlDateFormatter as
      * described in (https://secure.php.net/manual/en/class.intldateformatter.php) or a pattern

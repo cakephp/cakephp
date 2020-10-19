@@ -19,7 +19,7 @@ namespace Cake\Database\Statement;
 use PDO;
 
 /**
- * Statement class meant to be used by a Mysql PDO driver
+ * Statement class meant to be used by a MySQL PDO driver
  *
  * @internal
  */
