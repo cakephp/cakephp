@@ -417,7 +417,7 @@ SQL;
         ];
         $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
         foreach ($expected as $field => $definition) {
-            $this->assertEquals($definition, $result->getColumn($field));
+            $this->assertSame($definition, $result->getColumn($field));
         }
     }
 
