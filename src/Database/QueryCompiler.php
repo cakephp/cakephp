@@ -97,25 +97,25 @@ class QueryCompiler
      * the placeholders for the bound values using the provided generator
      *
      * @param \Cake\Database\Query $query The query that is being compiled
-     * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
+     * @param \Cake\Database\ValueBinder $binder Value binder used to generate parameter placeholders
      * @return string
      */
-    public function compile(Query $query, ValueBinder $generator): string
+    public function compile(Query $query, ValueBinder $binder): string
     {
         $sql = '';
         $type = $query->type();
         $query->traverseParts(
-            $this->_sqlCompiler($sql, $query, $generator),
+            $this->_sqlCompiler($sql, $query, $binder),
             $this->{"_{$type}Parts"}
         );
 
         // Propagate bound parameters from sub-queries if the
         // placeholders can be found in the SQL statement.
-        if ($query->getValueBinder() !== $generator) {
+        if ($query->getValueBinder() !== $binder) {
             foreach ($query->getValueBinder()->bindings() as $binding) {
                 $placeholder = ':' . $binding['placeholder'];
                 if (preg_match('/' . $placeholder . '(?:\W|$)/', $sql) > 0) {
-                    $generator->bind($placeholder, $binding['value'], $binding['type']);
+                    $binder->bind($placeholder, $binding['value'], $binding['type']);
                 }
             }
         }

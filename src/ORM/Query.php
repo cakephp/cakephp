@@ -1096,13 +1096,13 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     /**
      * @inheritDoc
      */
-    public function sql(?ValueBinder $generator = null): string
+    public function sql(?ValueBinder $binder = null): string
     {
         $this->triggerBeforeFind();
 
         $this->_transformQuery();
 
-        return parent::sql($generator);
+        return parent::sql($binder);
     }
 
     /**

@@ -296,18 +296,17 @@ class Query implements ExpressionInterface, IteratorAggregate
      * values when the query is executed, hence it is most suitable to use with
      * prepared statements.
      *
-     * @param \Cake\Database\ValueBinder|null $generator A placeholder object that will hold
-     * associated values for expressions
+     * @param \Cake\Database\ValueBinder|null $binder Value binder that generates parameter placeholders
      * @return string
      */
-    public function sql(?ValueBinder $generator = null): string
+    public function sql(?ValueBinder $binder = null): string
     {
-        if (!$generator) {
-            $generator = $this->getValueBinder();
-            $generator->resetCount();
+        if (!$binder) {
+            $binder = $this->getValueBinder();
+            $binder->resetCount();
         }
 
-        return $this->getConnection()->compileQuery($this, $generator);
+        return $this->getConnection()->compileQuery($this, $binder);
     }
 
     /**

@@ -268,7 +268,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
     /**
      * @inheritDoc
      */
-    public function create(ConnectionInterface $db): bool
+    public function create(ConnectionInterface $connection): bool
     {
         if (empty($this->_schema)) {
             return false;
@@ -279,9 +279,9 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
         }
 
         try {
-            $queries = $this->_schema->createSql($db);
+            $queries = $this->_schema->createSql($connection);
             foreach ($queries as $query) {
-                $stmt = $db->prepare($query);
+                $stmt = $connection->prepare($query);
                 $stmt->execute();
                 $stmt->closeCursor();
             }
@@ -303,20 +303,20 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
     /**
      * @inheritDoc
      */
-    public function drop(ConnectionInterface $db): bool
+    public function drop(ConnectionInterface $connection): bool
     {
         if (empty($this->_schema)) {
             return false;
         }
 
         if (empty($this->import) && empty($this->fields)) {
-            return $this->truncate($db);
+            return $this->truncate($connection);
         }
 
         try {
-            $sql = $this->_schema->dropSql($db);
+            $sql = $this->_schema->dropSql($connection);
             foreach ($sql as $stmt) {
-                $db->execute($stmt)->closeCursor();
+                $connection->execute($stmt)->closeCursor();
             }
         } catch (Exception $e) {
             return false;
@@ -328,11 +328,11 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
     /**
      * @inheritDoc
      */
-    public function insert(ConnectionInterface $db)
+    public function insert(ConnectionInterface $connection)
     {
         if (isset($this->records) && !empty($this->records)) {
             [$fields, $values, $types] = $this->_getRecords();
-            $query = $db->newQuery()
+            $query = $connection->newQuery()
                 ->insert($fields, $types)
                 ->into($this->sourceName());
 
@@ -351,7 +351,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
     /**
      * @inheritDoc
      */
-    public function createConstraints(ConnectionInterface $db): bool
+    public function createConstraints(ConnectionInterface $connection): bool
     {
         if (empty($this->_constraints)) {
             return true;
@@ -361,14 +361,14 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
             $this->_schema->addConstraint($name, $data);
         }
 
-        $sql = $this->_schema->addConstraintSql($db);
+        $sql = $this->_schema->addConstraintSql($connection);
 
         if (empty($sql)) {
             return true;
         }
 
         foreach ($sql as $stmt) {
-            $db->execute($stmt)->closeCursor();
+            $connection->execute($stmt)->closeCursor();
         }
 
         return true;
@@ -377,20 +377,20 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
     /**
      * @inheritDoc
      */
-    public function dropConstraints(ConnectionInterface $db): bool
+    public function dropConstraints(ConnectionInterface $connection): bool
     {
         if (empty($this->_constraints)) {
             return true;
         }
 
-        $sql = $this->_schema->dropConstraintSql($db);
+        $sql = $this->_schema->dropConstraintSql($connection);
 
         if (empty($sql)) {
             return true;
         }
 
         foreach ($sql as $stmt) {
-            $db->execute($stmt)->closeCursor();
+            $connection->execute($stmt)->closeCursor();
         }
 
         foreach ($this->_constraints as $name => $data) {
@@ -429,11 +429,11 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
     /**
      * @inheritDoc
      */
-    public function truncate(ConnectionInterface $db): bool
+    public function truncate(ConnectionInterface $connection): bool
     {
-        $sql = $this->_schema->truncateSql($db);
+        $sql = $this->_schema->truncateSql($connection);
         foreach ($sql as $stmt) {
-            $db->execute($stmt)->closeCursor();
+            $connection->execute($stmt)->closeCursor();
         }
 
         return true;
