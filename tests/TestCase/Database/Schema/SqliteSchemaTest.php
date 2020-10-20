@@ -270,7 +270,15 @@ CREATE TABLE schema_composite (
     PRIMARY KEY("id", "site_id")
 );
 SQL;
+
         $connection->execute($sql);
+
+        $view = <<<SQL
+CREATE VIEW view_schema_articles AS
+    SELECT count(*) as total FROM schema_articles
+SQL;
+
+        $connection->execute($view);
     }
 
     /**
@@ -381,6 +389,35 @@ SQL;
         $this->assertEquals(['id'], $result->getPrimaryKey());
         foreach ($expected as $field => $definition) {
             $this->assertEquals($definition, $result->getColumn($field));
+        }
+    }
+
+    /**
+     * Tests SQLite views
+     *
+     * @return void
+     */
+    public function testDescribeView()
+    {
+        $connection = ConnectionManager::get('test');
+        $this->_createTables($connection);
+
+        $schema = new SchemaCollection($connection);
+        $result = $schema->describe('view_schema_articles');
+        $expected = [
+            'total' => [
+                'type' => 'text',
+                'length' => null,
+                'null' => true,
+                'default' => null,
+                'precision' => null,
+                'comment' => null,
+                'collate' => null,
+            ],
+        ];
+        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
+        foreach ($expected as $field => $definition) {
+            $this->assertSame($definition, $result->getColumn($field));
         }
     }
 
