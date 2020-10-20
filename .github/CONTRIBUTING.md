@@ -64,7 +64,7 @@ To run the test cases locally use the following command:
     vendor/bin/phpunit
 
 You can copy file `phpunit.xml.dist` to `phpunit.xml` and modify the database
-driver settings as required to run tests for particular database.
+driver settings as required to run tests for a particular database.
 
 You can also register on [Travis CI](https://travis-ci.org/) and from your
 [profile](https://travis-ci.org/profile) page enable the service hook for your
@@ -75,12 +75,12 @@ To run the sniffs for CakePHP coding standards:
     vendor/bin/phpcs -p --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src
 
 Check the [cakephp-codesniffer](https://github.com/cakephp/cakephp-codesniffer)
-repository to setup the CakePHP standard. The [README](https://github.com/cakephp/cakephp-codesniffer/blob/master/README.md) contains installation info
+repository to set up the CakePHP standard. The [README](https://github.com/cakephp/cakephp-codesniffer/blob/master/README.md) contains installation info
 for the sniff and phpcs.
 
 ## Reporting a Security Issue
 
-If you've found a security related issue in CakePHP, please don't open an issue in github. Instead contact us at security@cakephp.org. For more information on how we handle security issues, [see the CakePHP Security Issue Process](https://book.cakephp.org/3/en/contributing/tickets.html#reporting-security-issues).
+If you've found a security related issue in CakePHP, please don't open an issue in github. Instead, contact us at security@cakephp.org. For more information on how we handle security issues, [see the CakePHP Security Issue Process](https://book.cakephp.org/3/en/contributing/tickets.html#reporting-security-issues).
 
 # Additional Resources
 

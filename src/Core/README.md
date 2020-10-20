@@ -26,7 +26,7 @@ Configure::load('app', 'default', false);
 Configure::load('other_config', 'default');
 ```
 
-And Write the configuration back into files:
+And write the configuration back into files:
 
 ```php
 Configure::dump('my_config', 'default');
