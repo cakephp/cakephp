@@ -381,10 +381,10 @@ class FixtureManagerTest extends TestCase
             ->willReturn(['core.Products']);
 
         $manager = $this->getMockBuilder(FixtureManager::class)
-            ->onlyMethods(['_runOperation'])
+            ->onlyMethods(['runPerFixture'])
             ->getMock();
         $manager->expects($this->any())
-            ->method('_runOperation')
+            ->method('runPerFixture')
             ->will($this->returnCallback(function () {
                 throw new PDOException('message');
             }));
@@ -430,10 +430,10 @@ class FixtureManagerTest extends TestCase
 
         /** @var \Cake\TestSuite\Fixture\FixtureManager|\PHPUnit\Framework\MockObject\MockObject $manager */
         $manager = $this->getMockBuilder(FixtureManager::class)
-            ->onlyMethods(['_fixtureConnections'])
+            ->onlyMethods(['groupFixturesByConnection'])
             ->getMock();
         $manager->expects($this->any())
-            ->method('_fixtureConnections')
+            ->method('groupFixturesByConnection')
             ->will($this->returnValue([
                 'test' => $fixtures,
             ]));
