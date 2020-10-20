@@ -187,11 +187,11 @@
   </file>
   <file src="src/TestSuite/Fixture/TestFixture.php">
     <ArgumentTypeCoercion occurrences="5">
-      <code>$db</code>
-      <code>$db</code>
-      <code>$db</code>
-      <code>$db</code>
-      <code>$db</code>
+      <code>$connection</code>
+      <code>$connection</code>
+      <code>$connection</code>
+      <code>$connection</code>
+      <code>$connection</code>
     </ArgumentTypeCoercion>
   </file>
   <file src="src/TestSuite/IntegrationTestTrait.php">

@@ -24,38 +24,38 @@ interface FixtureInterface
     /**
      * Create the fixture schema/mapping/definition
      *
-     * @param \Cake\Datasource\ConnectionInterface $db An instance of the connection the fixture should be created on.
+     * @param \Cake\Datasource\ConnectionInterface $connection An instance of the connection the fixture should be created on.
      * @return bool True on success, false on failure.
      */
-    public function create(ConnectionInterface $db): bool;
+    public function create(ConnectionInterface $connection): bool;
 
     /**
      * Run after all tests executed, should remove the table/collection from the connection.
      *
-     * @param \Cake\Datasource\ConnectionInterface $db An instance of the connection the fixture should be removed from.
+     * @param \Cake\Datasource\ConnectionInterface $connection An instance of the connection the fixture should be removed from.
      * @return bool True on success, false on failure.
      */
-    public function drop(ConnectionInterface $db): bool;
+    public function drop(ConnectionInterface $connection): bool;
 
     /**
      * Run before each test is executed.
      *
      * Should insert all the records into the test database.
      *
-     * @param \Cake\Datasource\ConnectionInterface $db An instance of the connection
+     * @param \Cake\Datasource\ConnectionInterface $connection An instance of the connection
      *   into which the records will be inserted.
      * @return \Cake\Database\StatementInterface|bool on success or if there are no records to insert,
      *  or false on failure.
      */
-    public function insert(ConnectionInterface $db);
+    public function insert(ConnectionInterface $connection);
 
     /**
      * Truncates the current fixture.
      *
-     * @param \Cake\Datasource\ConnectionInterface $db A reference to a db instance
+     * @param \Cake\Datasource\ConnectionInterface $connection A reference to a db instance
      * @return bool
      */
-    public function truncate(ConnectionInterface $db): bool;
+    public function truncate(ConnectionInterface $connection): bool;
 
     /**
      * Get the connection name this fixture should be inserted into.
