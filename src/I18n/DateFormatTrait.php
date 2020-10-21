@@ -435,7 +435,7 @@ trait DateFormatTrait
     }
 
     /**
-     * Returns a string that should be serialized when converting this object to json
+     * Returns a string that should be serialized when converting this object to JSON
      *
      * @return string|int
      */

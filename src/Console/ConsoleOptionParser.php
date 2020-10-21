@@ -741,7 +741,7 @@ class ConsoleOptionParser
      *
      * @param string|null $subcommand If present and a valid subcommand that has a linked parser.
      *    That subcommands help will be shown instead.
-     * @param string $format Define the output format, can be text or xml
+     * @param string $format Define the output format, can be text or XML
      * @param int $width The width to format user content to. Defaults to 72
      * @return string Generated help.
      */

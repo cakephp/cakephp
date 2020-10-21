@@ -18,3 +18,6 @@ indent_size = 2
 
 [Makefile]
 indent_style = tab
+
+[*.neon]
+indent_style = tab

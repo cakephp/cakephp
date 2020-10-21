@@ -39,7 +39,7 @@ $object = new FileEngine($config);
 Cache::config('other', $object);
 ```
 
-You can now read a write from the cache:
+You can now read and write from the cache:
 
 ```php
 $data = Cache::remember('my_cache_key', function () {

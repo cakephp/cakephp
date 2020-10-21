@@ -730,7 +730,7 @@ class EntityTest extends TestCase
     }
 
     /**
-     * Tests serializing an entity as json
+     * Tests serializing an entity as JSON
      *
      * @return void
      */

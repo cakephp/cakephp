@@ -827,7 +827,7 @@ class Debugger
      *   Gets the following templates: `id`, `context`
      * - 'links' - An array of HTML links that are used for creating links to other resources.
      *   Typically this is used to create javascript links to open other sections.
-     *   Link keys, are: `code`, `context`, `help`. See the js output format for an
+     *   Link keys, are: `code`, `context`, `help`. See the JS output format for an
      *   example.
      * - 'traceLine' - Used for creating lines in the stacktrace. Gets the following
      *   template variables: `reference`, `path`, `line`

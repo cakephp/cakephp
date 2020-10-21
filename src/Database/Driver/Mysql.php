@@ -25,7 +25,7 @@ use Cake\Database\StatementInterface;
 use PDO;
 
 /**
- * Class Mysql
+ * MySQL Driver
  */
 class Mysql extends Driver
 {

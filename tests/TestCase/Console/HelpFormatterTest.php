@@ -537,7 +537,7 @@ xml;
     }
 
     /**
-     * Test xml help as object
+     * Test XML help as object
      *
      * @return void
      */

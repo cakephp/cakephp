@@ -232,7 +232,7 @@ SQL;
                 ['type' => 'DOUBLE PRECISION'],
                 ['type' => 'float', 'length' => null],
             ],
-            // Json
+            // JSON
             [
                 ['type' => 'JSON'],
                 ['type' => 'json', 'length' => null],

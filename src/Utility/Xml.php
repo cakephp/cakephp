@@ -231,7 +231,7 @@ class Xml
      *
      * ### Options
      *
-     * - `format` If create childs ('tags') or attributes ('attributes').
+     * - `format` If create children ('tags') or attributes ('attributes').
      * - `pretty` Returns formatted Xml when set to `true`. Defaults to `false`
      * - `version` Version of XML document. Default is 1.0.
      * - `encoding` Encoding of XML document. If null remove from XML header.
@@ -303,7 +303,7 @@ class Xml
     }
 
     /**
-     * Recursive method to create childs from array
+     * Recursive method to create children from array
      *
      * @param \DOMDocument $dom Handler to DOMDocument
      * @param \DOMDocument|\DOMElement $node Handler to DOMElement (child)
@@ -377,9 +377,9 @@ class Xml
     }
 
     /**
-     * Helper to _fromArray(). It will create childs of arrays
+     * Helper to _fromArray(). It will create children of arrays
      *
-     * @param array $data Array with information to create childs
+     * @param array $data Array with information to create children
      * @return void
      */
     protected static function _createChild(array $data): void

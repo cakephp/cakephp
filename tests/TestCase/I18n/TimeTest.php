@@ -731,7 +731,7 @@ class TimeTest extends TestCase
     }
 
     /**
-     * Tests encoding a Time object as json
+     * Tests encoding a Time object as JSON
      *
      * @dataProvider classNameProvider
      * @return void
@@ -772,7 +772,7 @@ class TimeTest extends TestCase
     }
 
     /**
-     * Tests change json encoding format
+     * Tests change JSON encoding format
      *
      * @dataProvider classNameProvider
      * @return void
