@@ -291,8 +291,8 @@ class TestShell extends Shell {
 	public function available() {
 		$params = $this->_parseArgs();
 		$testCases = CakeTestLoader::generateTestList($params);
-		$app = $params['app'];
-		$plugin = $params['plugin'];
+		$app = isset($params['app']) ? $params['app'] : null;
+		$plugin = isset($params['plugin']) ? $params['plugin'] : null;
 
 		$title = "Core Test Cases:";
 		$category = 'core';
