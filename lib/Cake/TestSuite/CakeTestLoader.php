@@ -31,7 +31,7 @@ class CakeTestLoader extends PHPUnit_Runner_StandardTestSuiteLoader {
  * Load a file and find the first test case / suite in that file.
  *
  * @param string $filePath The file path to load
- * @param string $params Additional parameters
+ * @param array $params Additional parameters
  * @return ReflectionClass
  */
 	public function load($filePath, $params = '') {
@@ -43,7 +43,7 @@ class CakeTestLoader extends PHPUnit_Runner_StandardTestSuiteLoader {
  * Convert path fragments used by CakePHP's test runner to absolute paths that can be fed to PHPUnit.
  *
  * @param string $filePath The file path to load.
- * @param string $params Additional parameters.
+ * @param array $params Additional parameters.
  * @return string Converted path fragments.
  */
 	protected function _resolveTestFile($filePath, $params) {
@@ -81,7 +81,7 @@ class CakeTestLoader extends PHPUnit_Runner_StandardTestSuiteLoader {
 /**
  * Get the list of files for the test listing.
  *
- * @param string $params Path parameters
+ * @param array $params Path parameters
  * @return array
  */
 	public static function generateTestList($params) {
