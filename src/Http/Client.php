@@ -233,7 +233,7 @@ class Client implements ClientInterface
      *
      * @param  string  $url A string url e.g. https://example.com
      * @return static
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public static function createScopedClientFromUrl(string $url)
     {
