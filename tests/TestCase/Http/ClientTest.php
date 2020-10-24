@@ -923,7 +923,7 @@ class ClientTest extends TestCase
     public function testCreateScopedClientSetsPort()
     {
         $client = Client::createScopedClientFromUrl('https://example.co:8765/');
-        $this->assertEquals('8765', $client->getConfig('port'));
+        $this->assertSame(8765, $client->getConfig('port'));
     }
 
     /**

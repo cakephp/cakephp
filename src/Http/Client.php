@@ -232,9 +232,10 @@ class Client implements ClientInterface
      * Url must parse into a scheme and host.
      *
      * @param  string  $url A string url e.g. https://example.com
-     * @return self
+     * @return static
+     * @throws InvalidArgumentException
      */
-    public static function createScopedClientFromUrl(string $url): self
+    public static function createScopedClientFromUrl(string $url)
     {
         $parts = parse_url($url);
 
