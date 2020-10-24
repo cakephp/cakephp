@@ -932,7 +932,7 @@ class ClientTest extends TestCase
     public function testCreateScopedClientThrowsInvalidArgumentExceptionWhenNoSchemeProvided()
     {
         try {
-            $client = Client::createScopedClientFromUrl('example.co');
+            Client::createScopedClientFromUrl('example.co');
         } catch (InvalidArgumentException $e) {
             $this->assertInstanceOf(InvalidArgumentException::class, $e);
 
@@ -947,7 +947,7 @@ class ClientTest extends TestCase
     public function testCreateScopedClientThrowsInvalidArgumentExceptionWhenNoDomainProvided()
     {
         try {
-            $client = Client::createScopedClientFromUrl('https://');
+            Client::createScopedClientFromUrl('https://');
         } catch (InvalidArgumentException $e) {
             $this->assertInstanceOf(InvalidArgumentException::class, $e);
 
