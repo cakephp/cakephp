@@ -905,7 +905,7 @@ class ClientTest extends TestCase
     public function testCreateScopedClientSetsProtocol()
     {
         $client = Client::createScopedClientFromUrl('https://example.co/');
-        $this->assertEquals('https', $client->getConfig('scheme'));
+        $this->assertSame('https', $client->getConfig('scheme'));
     }
 
     /**
@@ -914,7 +914,7 @@ class ClientTest extends TestCase
     public function testCreateScopedClientSetsHost()
     {
         $client = Client::createScopedClientFromUrl('https://example.co/');
-        $this->assertEquals('example.co', $client->getConfig('host'));
+        $this->assertSame('example.co', $client->getConfig('host'));
     }
 
     /**
