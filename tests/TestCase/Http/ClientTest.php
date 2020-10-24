@@ -898,4 +898,59 @@ class ClientTest extends TestCase
         $this->assertInstanceOf(Response::class, $result);
         $this->assertSame($response, $result);
     }
+
+    /**
+     * Scheme is set when passed to client in string
+     */
+    public function testCreateScopedClientSetsProtocol()
+    {
+        $client = Client::createScopedClientFromUrl('https://example.co/');
+        $this->assertEquals('https', $client->getConfig('scheme'));
+    }
+
+    /**
+     * Host is set when passed to client in string
+     */
+    public function testCreateScopedClientSetsHost()
+    {
+        $client = Client::createScopedClientFromUrl('https://example.co/');
+        $this->assertEquals('example.co', $client->getConfig('host'));
+    }
+
+    /**
+     * Port is set when passed to client in string
+     */
+    public function testCreateScopedClientSetsPort()
+    {
+        $client = Client::createScopedClientFromUrl('https://example.co:8765/');
+        $this->assertEquals('8765', $client->getConfig('port'));
+    }
+
+    /**
+     * Test exception is throw when no scheme is provided.
+     */
+    public function testCreateScopedClientThrowsInvalidArgumentExceptionWhenNoSchemeProvided()
+    {
+        try {
+            $client = Client::createScopedClientFromUrl('example.co');
+        } catch (InvalidArgumentException $e) {
+            $this->assertInstanceOf(InvalidArgumentException::class, $e);
+            return;
+        }
+        $this->fail('Client should have thrown exception');
+    }
+
+    /**
+     * Test exception is thrown if passed url has no domain
+     */
+    public function testCreateScopedClientThrowsInvalidArgumentExceptionWhenNoDomainProvided()
+    {
+        try {
+            $client = Client::createScopedClientFromUrl('https://');
+        } catch (InvalidArgumentException $e) {
+            $this->assertInstanceOf(InvalidArgumentException::class, $e);
+            return;
+        }
+        $this->fail('Client should have thrown exception');
+    }
 }

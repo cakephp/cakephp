@@ -228,6 +228,31 @@ class Client implements ClientInterface
     }
 
     /**
+     * Pass a string url to set the base domain and scheme for the request.
+     * Url must parse into a scheme and host.
+     *
+     * @param  string  $url A string url e.g. https://example.com
+     * @return $this
+     */
+    public static function createScopedClientFromUrl(string $url): self
+    {
+
+        $parts = parse_url($url);
+
+        if ($parts === false) {
+            $parts = [];
+        }
+
+        $config = array_intersect_key($parts, ['scheme' => '', 'port' => '', 'host' => '']);
+
+        if (!isset($config['scheme']) || !isset($config['host'])) {
+            throw new InvalidArgumentException('String ' . $url . ' did not parse');
+        }
+
+        return new static($config);
+    }
+
+    /**
      * Do a GET request.
      *
      * The $data argument supports a special `_content` key
