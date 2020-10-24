@@ -232,7 +232,7 @@ class Client implements ClientInterface
      * Url must parse into a scheme and host.
      *
      * @param  string  $url A string url e.g. https://example.com
-     * @return $this
+     * @return self
      */
     public static function createScopedClientFromUrl(string $url): self
     {
