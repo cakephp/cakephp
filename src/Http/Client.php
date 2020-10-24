@@ -236,7 +236,6 @@ class Client implements ClientInterface
      */
     public static function createScopedClientFromUrl(string $url): self
     {
-
         $parts = parse_url($url);
 
         if ($parts === false) {

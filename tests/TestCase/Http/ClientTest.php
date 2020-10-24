@@ -935,6 +935,7 @@ class ClientTest extends TestCase
             $client = Client::createScopedClientFromUrl('example.co');
         } catch (InvalidArgumentException $e) {
             $this->assertInstanceOf(InvalidArgumentException::class, $e);
+
             return;
         }
         $this->fail('Client should have thrown exception');
