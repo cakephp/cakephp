@@ -958,7 +958,7 @@ class ClientTest extends TestCase
     }
 
     /**
-     * Test exception is thrown if passed url has no domain
+     * Test exception is thrown if passed URL has no domain
      */
     public function testCreateScopedClientThrowsInvalidArgumentExceptionWhenNoDomainProvided()
     {
@@ -973,7 +973,7 @@ class ClientTest extends TestCase
     }
 
     /**
-     * Test that the passed parsed url parts won't override other constructor defaults
+     * Test that the passed parsed URL parts won't override other constructor defaults
      */
     public function testCreateScopedClientOnlySetSchemePortHost()
     {

@@ -228,11 +228,11 @@ class Client implements ClientInterface
     }
 
     /**
-     * Client instance returned is scoped to the domain, port, and scheme parsed from the passed url string. The passed
+     * Client instance returned is scoped to the domain, port, and scheme parsed from the passed URL string. The passed
      * string must have a scheme and a domain. Optionally, if a port is included in the string, the port will be scoped
      * too.
      *
-     * @param  string $url A string url e.g. https://example.com
+     * @param  string $url A string URL e.g. https://example.com
      * @return static
      * @throws \InvalidArgumentException
      */
