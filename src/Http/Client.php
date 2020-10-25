@@ -228,8 +228,9 @@ class Client implements ClientInterface
     }
 
     /**
-     * Pass a string URL to set the base domain and scheme for the request.
-     * URL must parse into a scheme and host.
+     * Client instance returned is scoped to the domain, port, and scheme parsed from the passed url string. The passed
+     * string must have a scheme and a domain. Optionally, if a port is included in the string, the port will be scoped
+     * too.
      *
      * @param  string $url A string url e.g. https://example.com
      * @return static
@@ -240,13 +241,13 @@ class Client implements ClientInterface
         $parts = parse_url($url);
 
         if ($parts === false) {
-            $parts = [];
+            throw new InvalidArgumentException('String ' . $url . ' did not parse');
         }
 
         $config = array_intersect_key($parts, ['scheme' => '', 'port' => '', 'host' => '']);
 
         if (!isset($config['scheme']) || !isset($config['host'])) {
-            throw new InvalidArgumentException('String ' . $url . ' did not parse');
+            throw new InvalidArgumentException('The URL was parsed but did not contain a scheme or host');
         }
 
         return new static($config);

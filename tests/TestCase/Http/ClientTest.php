@@ -918,6 +918,22 @@ class ClientTest extends TestCase
     }
 
     /**
+     * Test exception is thrown when URL cannot be parsed
+     */
+    public function testCreateScopedClientThrowsInvalidExceptionWhenUrlCannotBeParsed()
+    {
+        try {
+            Client::createScopedClientFromUrl('htps://');
+        } catch (InvalidArgumentException $e) {
+            $this->assertInstanceOf(InvalidArgumentException::class, $e);
+            $this->assertTextContains('did not parse', $e->getMessage());
+
+            return;
+        }
+        $this->fail('InvalidArgumentException was not thrown when string was not parsed');
+    }
+
+    /**
      * Port is set when passed to client in string
      */
     public function testCreateScopedClientSetsPort()
@@ -954,5 +970,24 @@ class ClientTest extends TestCase
             return;
         }
         $this->fail('Client should have thrown exception');
+    }
+
+    /**
+     * Test that the passed parsed url parts won't override other constructor defaults
+     */
+    public function testCreateScopedClientOnlySetSchemePortHost()
+    {
+        $client = Client::createScopedClientFromUrl('http://example.co:80/some/uri/?foo=bar');
+        $config = $client->getConfig();
+        $this->assertSame('http', $config['scheme']);
+        $this->assertSame('example.co', $config['host']);
+        $this->assertSame(80, $config['port']);
+        $this->assertSame(null, $config['adapter']);
+        $this->assertSame(30, $config['timeout']);
+        $this->assertSame(true, $config['ssl_verify_peer']);
+        $this->assertSame(true, $config['ssl_verify_peer_name']);
+        $this->assertSame(true, $config['ssl_verify_host']);
+        $this->assertSame(false, $config['redirect']);
+        $this->assertSame('1.1', $config['protocolVersion']);
     }
 }
