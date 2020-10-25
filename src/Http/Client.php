@@ -228,10 +228,10 @@ class Client implements ClientInterface
     }
 
     /**
-     * Pass a string url to set the base domain and scheme for the request.
-     * Url must parse into a scheme and host.
+     * Pass a string URL to set the base domain and scheme for the request.
+     * URL must parse into a scheme and host.
      *
-     * @param  string  $url A string url e.g. https://example.com
+     * @param  string $url A string url e.g. https://example.com
      * @return static
      * @throws \InvalidArgumentException
      */
