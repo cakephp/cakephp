@@ -360,7 +360,8 @@ class FixtureManager
                         );
                         throw new Exception($msg, null, $e);
                     }
-                }
+                },
+                true // Run in transaction
             );
         } catch (PDOException $e) {
             $msg = sprintf(
@@ -377,9 +378,10 @@ class FixtureManager
      *
      * @param string[] $names Test fixture names
      * @param \Closure $callback Callback that is run per fixture
+     * @param bool $transactional Whether to run in a transaction
      * @return void
      */
-    protected function runPerFixture(array $names, Closure $callback): void
+    protected function runPerFixture(array $names, Closure $callback, bool $transactional = false): void
     {
         $dbs = $this->groupFixturesByConnection($names);
         foreach ($dbs as $connection => $fixtures) {
@@ -391,13 +393,19 @@ class FixtureManager
             }
 
             $tableCache = $db->getSchemaCollection()->listTables();
-            $db->transactional(function (ConnectionInterface $db) use ($fixtures, $callback, $tableCache) {
-                $db->disableConstraints(function (ConnectionInterface $db) use ($fixtures, $callback, $tableCache) {
-                    foreach ($fixtures as $fixture) {
-                        $callback($db, $fixture, $tableCache);
-                    }
+            if ($transactional) {
+                $db->transactional(function (ConnectionInterface $db) use ($fixtures, $callback, $tableCache) {
+                    $db->disableConstraints(function (ConnectionInterface $db) use ($fixtures, $callback, $tableCache) {
+                        foreach ($fixtures as $fixture) {
+                            $callback($db, $fixture, $tableCache);
+                        }
+                    });
                 });
-            });
+            } else {
+                foreach ($fixtures as $fixture) {
+                    $callback($db, $fixture, $tableCache);
+                }
+            }
 
             if ($logQueries) {
                 $db->enableQueryLogging(true);
