@@ -244,7 +244,9 @@ jobs:
         key: ${{ runner.os }}-composer-${{ steps.key-date.outputs.date }}-${{ hashFiles('composer.json') }}
 
     - name: composer install
-      run: composer stan-setup
+      run: |
+        composer install
+        composer stan-setup
 
     - name: Run psalm
       run: vendor/bin/psalm.phar --output-format=github
