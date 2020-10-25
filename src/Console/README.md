@@ -9,7 +9,7 @@ parsers, and dispatching commands.
 
 # Getting Started
 
-To start, define an an entry point script and Application class that defines
+To start, define an entry point script and Application class which defines
 bootstrap logic, and binds your commands. Lets put our entrypoint script in
 `bin/tool.php`:
 

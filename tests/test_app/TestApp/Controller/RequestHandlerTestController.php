@@ -26,7 +26,7 @@ use Cake\Controller\Controller;
 class RequestHandlerTestController extends Controller
 {
     /**
-     * test method for ajax redirection
+     * test method for AJAX redirection
      *
      * @return void
      */
@@ -37,7 +37,7 @@ class RequestHandlerTestController extends Controller
     }
 
     /**
-     * test method for ajax redirection + parameter parsing
+     * test method for AJAX redirection + parameter parsing
      *
      * @param string|null $one
      * @param string|null $two

@@ -274,6 +274,56 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
     }
 
     /**
+     * Ensure that non-urlencoded post data is not included.
+     *
+     * Keys with array values have to be serialized using
+     * a more standard HTTP approach. PHP flavoured HTTP
+     * is not part of the Oauth spec.
+     *
+     * See Normalize Request Parameters (section 9.1.1)
+     *
+     * @return void
+     */
+    public function testBaseStringWithXmlPostData()
+    {
+        $request = new Request(
+            'http://example.com/search?q=pogo',
+            Request::METHOD_POST,
+            [
+                'Content-Type' => 'application/xml',
+            ],
+            '<xml>stuff</xml>'
+        );
+
+        $auth = new Oauth();
+        $values = [
+            'oauth_version' => '1.0',
+            'oauth_nonce' => uniqid(),
+            'oauth_timestamp' => time(),
+            'oauth_signature_method' => 'HMAC-SHA1',
+            'oauth_token' => 'token',
+            'oauth_consumer_key' => 'consumer-key',
+        ];
+        $result = $auth->baseString($request, $values);
+
+        $this->assertStringContainsString('POST&', $result, 'method was missing.');
+        $this->assertStringContainsString(
+            'http%3A%2F%2Fexample.com%2Fsearch&',
+            $result
+        );
+        $this->assertStringContainsString(
+            'oauth_consumer_key%3Dconsumer-key' .
+            '%26oauth_nonce%3D' . $values['oauth_nonce'] .
+            '%26oauth_signature_method%3DHMAC-SHA1' .
+            '%26oauth_timestamp%3D' . $values['oauth_timestamp'] .
+            '%26oauth_token%3Dtoken' .
+            '%26oauth_version%3D1.0' .
+            '%26q%3Dpogo',
+            $result
+        );
+    }
+
+    /**
      * Test HMAC-SHA1 signing
      *
      * Hash result + parameters taken from

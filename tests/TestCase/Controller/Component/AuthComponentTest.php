@@ -1165,7 +1165,7 @@ class AuthComponentTest extends TestCase
     }
 
     /**
-     * test ajax unauthenticated
+     * test AJAX unauthenticated
      *
      * @return void
      * @triggers Controller.startup $this->Controller

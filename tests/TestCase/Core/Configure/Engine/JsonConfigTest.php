@@ -151,7 +151,7 @@ class JsonConfigTest extends TestCase
     }
 
     /**
-     * Test dumping data to json format.
+     * Test dumping data to JSON format.
      *
      * @return void
      */

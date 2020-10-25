@@ -59,7 +59,7 @@ use RuntimeException;
 class JsonView extends SerializedView
 {
     /**
-     * JSON layouts are located in the json sub directory of `Layouts/`
+     * JSON layouts are located in the JSON sub directory of `Layouts/`
      *
      * @var string
      */

@@ -54,7 +54,7 @@ class BodyParserMiddleware implements MiddlewareInterface
      *
      * ### Options
      *
-     * - `json` Set to false to disable json body parsing.
+     * - `json` Set to false to disable JSON body parsing.
      * - `xml` Set to true to enable XML parsing. Defaults to false, as XML
      *   handling requires more care than JSON does.
      * - `methods` The HTTP methods to parse on. Defaults to PUT, POST, PATCH DELETE.

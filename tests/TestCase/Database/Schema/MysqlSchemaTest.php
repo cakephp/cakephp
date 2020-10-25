@@ -25,7 +25,7 @@ use Cake\TestSuite\TestCase;
 use PDO;
 
 /**
- * Test case for Mysql Schema Dialect.
+ * Test case for MySQL Schema Dialect.
  */
 class MysqlSchemaTest extends TestCase
 {
@@ -322,7 +322,7 @@ SQL;
     }
 
     /**
-     * Test describing a table with Mysql
+     * Test describing a table with MySQL
      *
      * @return void
      */
@@ -423,7 +423,7 @@ SQL;
     }
 
     /**
-     * Test describing a table with indexes in Mysql
+     * Test describing a table with indexes in MySQL
      *
      * @return void
      */
@@ -1353,7 +1353,7 @@ SQL;
     }
 
     /**
-     * Tests json column parsing on Mysql 5.7+
+     * Tests JSON column parsing on MySQL 5.7+
      *
      * @return void
      */

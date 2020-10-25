@@ -21,9 +21,9 @@ use InvalidArgumentException;
 use PDO;
 
 /**
- * Json type converter.
+ * JSON type converter.
  *
- * Use to convert json data between PHP and the database types.
+ * Use to convert JSON data between PHP and the database types.
  */
 class JsonType extends BaseType implements BatchCastingInterface
 {

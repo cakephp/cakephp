@@ -267,7 +267,7 @@ class ConsoleInputOption
     }
 
     /**
-     * Append the option's xml into the parent.
+     * Append the option's XML into the parent.
      *
      * @param \SimpleXMLElement $parent The parent element.
      * @return \SimpleXMLElement The parent with this option appended.

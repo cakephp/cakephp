@@ -55,10 +55,10 @@ class PostgresCompiler extends QueryCompiler
      *
      * @param array $parts list of fields to be transformed to string
      * @param \Cake\Database\Query $query The query that is being compiled
-     * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
+     * @param \Cake\Database\ValueBinder $binder Value binder used to generate parameter placeholder
      * @return string
      */
-    protected function _buildHavingPart($parts, $query, $generator)
+    protected function _buildHavingPart($parts, $query, $binder)
     {
         $selectParts = $query->clause('select');
 
@@ -82,7 +82,7 @@ class PostgresCompiler extends QueryCompiler
 
                 $parts[$k] = preg_replace(
                     ['/"/', '/\b' . trim($selectKey, '"') . '\b/i'],
-                    ['', $selectPart->sql($generator)],
+                    ['', $selectPart->sql($binder)],
                     $p
                 );
             }

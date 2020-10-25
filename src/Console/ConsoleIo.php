@@ -225,6 +225,24 @@ class ConsoleIo
     }
 
     /**
+     * Convenience method for out() that wraps message between <comment /> tag
+     *
+     * @param string|string[] $message A string or an array of strings to output
+     * @param int $newlines Number of newlines to append
+     * @param int $level The message's output level, see above.
+     * @return int|null The number of bytes returned from writing to stdout
+     *   or null if provided $level is greater than current level.
+     * @see https://book.cakephp.org/4/en/console-and-shells.html#ConsoleIo::out
+     */
+    public function comment($message, int $newlines = 1, int $level = self::NORMAL): ?int
+    {
+        $messageType = 'comment';
+        $message = $this->wrapMessageWithType($messageType, $message);
+
+        return $this->out($message, $newlines, $level);
+    }
+
+    /**
      * Convenience method for err() that wraps message between <warning /> tag
      *
      * @param string|string[] $message A string or an array of strings to output

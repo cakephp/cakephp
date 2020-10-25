@@ -1099,7 +1099,7 @@ class Validation
      * The regex checks for the following component parts:
      *
      * - a valid, optional, scheme
-     * - a valid ip address OR
+     * - a valid IP address OR
      *   a valid domain name as defined by section 2.3.1 of https://www.ietf.org/rfc/rfc1035.txt
      *   with an optional port number
      * - an optional valid path

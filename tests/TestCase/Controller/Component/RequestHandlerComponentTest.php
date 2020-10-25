@@ -360,7 +360,7 @@ class RequestHandlerComponentTest extends TestCase
     }
 
     /**
-     * Verify that isAjax is set on the request params for ajax requests
+     * Verify that isAjax is set on the request params for AJAX requests
      *
      * @return void
      * @triggers Controller.startup $this->Controller

@@ -604,7 +604,7 @@ class ConsoleIoTest extends TestCase
      */
     public function outHelperProvider()
     {
-        return [['info'], ['success']];
+        return [['info'], ['success'], ['comment']];
     }
 
     /**

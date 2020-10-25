@@ -1,7 +1,7 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/cakephp/filesystem.svg?style=flat-square)](https://packagist.org/packages/cakephp/filesystem)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE.txt)
 
-# This package is deprecated.
+# This package has been deprecated.
 
 ## CakePHP Filesystem Library
 

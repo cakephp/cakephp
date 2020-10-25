@@ -1,1 +1,1 @@
-// root theme js file
+// root theme JS file
