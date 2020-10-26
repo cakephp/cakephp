@@ -2136,8 +2136,7 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Tests that it is possible to select distinct rows, even filtering by one column
-     * this is testing that there is a specific implementation for DISTINCT ON
+     * Tests distinct on a specific column reduces rows based on that column.
      *
      * @return void
      */
@@ -2146,14 +2145,13 @@ class QueryTest extends TestCase
         $this->loadFixtures('Authors', 'Articles');
         $query = new Query($this->connection);
         $result = $query
-            ->select(['id', 'author_id'])
+            ->select(['author_id'])
             ->distinct(['author_id'])
             ->from(['a' => 'articles'])
             ->order(['author_id' => 'ASC'])
             ->execute();
         $this->assertCount(2, $result);
         $results = $result->fetchAll('assoc');
-        $this->assertEquals(['id', 'author_id'], array_keys($results[0]));
         $this->assertEquals(
             [3, 1],
             collection($results)->sortBy('author_id')->extract('author_id')->toList()
@@ -2161,14 +2159,13 @@ class QueryTest extends TestCase
 
         $query = new Query($this->connection);
         $result = $query
-            ->select(['id', 'author_id'])
+            ->select(['author_id'])
             ->distinct('author_id')
             ->from(['a' => 'articles'])
             ->order(['author_id' => 'ASC'])
             ->execute();
         $this->assertCount(2, $result);
         $results = $result->fetchAll('assoc');
-        $this->assertEquals(['id', 'author_id'], array_keys($results[0]));
         $this->assertEquals(
             [3, 1],
             collection($results)->sortBy('author_id')->extract('author_id')->toList()
