@@ -236,7 +236,7 @@ class Client implements ClientInterface
      * @return static
      * @throws \InvalidArgumentException
      */
-    public static function createScopedClientFromUrl(string $url)
+    public static function createFromUrl(string $url)
     {
         $parts = parse_url($url);
 

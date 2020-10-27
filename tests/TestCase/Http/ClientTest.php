@@ -902,82 +902,69 @@ class ClientTest extends TestCase
     /**
      * Scheme is set when passed to client in string
      */
-    public function testCreateScopedClientSetsProtocol()
+    public function testCreateFromUrlSetsProtocol()
     {
-        $client = Client::createScopedClientFromUrl('https://example.co/');
+        $client = Client::createFromUrl('https://example.co/');
         $this->assertSame('https', $client->getConfig('scheme'));
     }
 
     /**
      * Host is set when passed to client in string
      */
-    public function testCreateScopedClientSetsHost()
+    public function testCreateFromUrlSetsHost()
     {
-        $client = Client::createScopedClientFromUrl('https://example.co/');
+        $client = Client::createFromUrl('https://example.co/');
         $this->assertSame('example.co', $client->getConfig('host'));
     }
 
     /**
      * Test exception is thrown when URL cannot be parsed
      */
-    public function testCreateScopedClientThrowsInvalidExceptionWhenUrlCannotBeParsed()
+    public function testCreateFromUrlThrowsInvalidExceptionWhenUrlCannotBeParsed()
     {
-        try {
-            Client::createScopedClientFromUrl('htps://');
-        } catch (InvalidArgumentException $e) {
-            $this->assertInstanceOf(InvalidArgumentException::class, $e);
-            $this->assertTextContains('did not parse', $e->getMessage());
-
-            return;
-        }
-        $this->fail('InvalidArgumentException was not thrown when string was not parsed');
+        $this->expectException(InvalidArgumentException::class);
+        Client::createFromUrl('htps://');
+        $message = $this->getExpectedExceptionMessage();
+        $this->assertTextContains('did not parse', $message);
     }
 
     /**
      * Port is set when passed to client in string
      */
-    public function testCreateScopedClientSetsPort()
+    public function testCreateFromUrlSetsPort()
     {
-        $client = Client::createScopedClientFromUrl('https://example.co:8765/');
+        $client = Client::createFromUrl('https://example.co:8765/');
         $this->assertSame(8765, $client->getConfig('port'));
     }
 
     /**
      * Test exception is throw when no scheme is provided.
      */
-    public function testCreateScopedClientThrowsInvalidArgumentExceptionWhenNoSchemeProvided()
+    public function testCreateFromUrlThrowsInvalidArgumentExceptionWhenNoSchemeProvided()
     {
-        try {
-            Client::createScopedClientFromUrl('example.co');
-        } catch (InvalidArgumentException $e) {
-            $this->assertInstanceOf(InvalidArgumentException::class, $e);
-
-            return;
-        }
-        $this->fail('Client should have thrown exception');
+        $this->expectException(InvalidArgumentException::class);
+        Client::createFromUrl('example.co');
+        $message = $this->getExpectedExceptionMessage();
+        $this->assertSame('The URL was parsed but did not contain a scheme or host', $message);
     }
 
     /**
      * Test exception is thrown if passed URL has no domain
      */
-    public function testCreateScopedClientThrowsInvalidArgumentExceptionWhenNoDomainProvided()
+    public function testCreateFromUrlThrowsInvalidArgumentExceptionWhenNoDomainProvided()
     {
-        try {
-            Client::createScopedClientFromUrl('https://');
-        } catch (InvalidArgumentException $e) {
-            $this->assertInstanceOf(InvalidArgumentException::class, $e);
-
-            return;
-        }
-        $this->fail('Client should have thrown exception');
+        $this->expectException(InvalidArgumentException::class);
+        Client::createFromUrl('https://');
+        $message = $this->getExpectedExceptionMessage();
+        $this->assertSame('The URL was parsed but did not contain a scheme or host', $message);
     }
 
     /**
      * Test that the passed parsed URL parts won't override other constructor defaults
      */
-    public function testCreateScopedClientOnlySetSchemePortHost()
+    public function testCreateFromUrlOnlySetSchemePortHost()
     {
-        $client = Client::createScopedClientFromUrl('http://example.co:80/some/uri/?foo=bar');
+        $client = Client::createFromUrl('http://example.co:80/some/uri/?foo=bar');
         $config = $client->getConfig();
         $this->assertSame('http', $config['scheme']);
         $this->assertSame('example.co', $config['host']);
