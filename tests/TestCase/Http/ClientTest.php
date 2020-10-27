@@ -902,7 +902,7 @@ class ClientTest extends TestCase
     /**
      * Scheme is set when passed to client in string
      */
-    public function testCreateFromUrlSetsProtocol()
+    public function testCreateFromUrlSetsScheme()
     {
         $client = Client::createFromUrl('https://example.co/');
         $this->assertSame('https', $client->getConfig('scheme'));
