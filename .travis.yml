@@ -17,19 +17,18 @@ cache:
 
 php:
   - 7.4
+  - nightly
 
 env:
   matrix:
+    - DB=sqlite DB_URL='sqlite:///:memory:'
     - DB=mysql DB_URL='mysql://root@127.0.0.1/cakephp_test'
     - DB=pgsql DB_URL='postgres://postgres@127.0.0.1/cakephp_test'
-    - DB=sqlite DB_URL='sqlite:///:memory:'
 
 matrix:
   include:
     - php: 7.2
       env: PREFER_LOWEST=1
-    - php: nightly
-      env: DB=sqlite DB_URL='sqlite:///:memory:'
 
 before_install:
   - echo cakephp version && tail -1 VERSION.txt
