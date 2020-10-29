@@ -583,7 +583,7 @@ class Marshaller
                     || (
                         is_object($value)
                         && !($value instanceof EntityInterface)
-                        && $original === $value
+                        && $original == $value
                     )
                 ) {
                     continue;
