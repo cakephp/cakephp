@@ -17,7 +17,7 @@ cache:
 
 php:
   - 7.4
-  - nightly
+  - '8.0snapshot'
 
 env:
   matrix:
@@ -44,12 +44,14 @@ before_install:
 
   - |
       phpenv config-rm xdebug.ini
-      if [[ $TRAVIS_PHP_VERSION != 'nightly' ]]; then
+
+      if [[ $TRAVIS_PHP_VERSION != '8.0snapshot' ]]; then
         echo 'extension = memcached.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-        echo 'extension = redis.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-        echo 'extension = apcu.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-        echo 'apc.enable_cli = 1' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
       fi
+
+      echo 'extension = redis.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+      echo 'extension = apcu.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+      echo 'apc.enable_cli = 1' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 
   - sudo locale-gen da_DK.UTF-8
 
@@ -57,7 +59,7 @@ install:
   - |
       if [[ $PREFER_LOWEST == 1 ]]; then
         composer update --prefer-lowest --prefer-stable --no-interaction
-      elif [[ $TRAVIS_PHP_VERSION == 'nightly' ]]; then
+      elif [[ $TRAVIS_PHP_VERSION == '8.0snapshot' ]]; then
         composer install --no-interaction --ignore-platform-reqs
       else
         composer install --no-interaction
