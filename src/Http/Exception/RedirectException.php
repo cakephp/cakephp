@@ -41,7 +41,10 @@ class RedirectException extends HttpException
     public function __construct(string $target, int $code = 302, array $headers = [])
     {
         parent::__construct($target, $code);
-        $this->addHeaders($headers);
+
+        foreach ($headers as $key => $value) {
+            $this->setHeader($key, (array)$value);
+        }
     }
 
     /**
@@ -50,6 +53,7 @@ class RedirectException extends HttpException
      * @param array $headers An array of `header => value` to append to the exception.
      *  If a header already exists, the new values will be appended to the existing ones.
      * @return $this
+     * @deprecated 4.2.0 Use `setHeaders()` instead.
      */
     public function addHeaders(array $headers)
     {
@@ -65,6 +69,7 @@ class RedirectException extends HttpException
      *
      * @param string $key The header to remove.
      * @return $this
+     * @deprecated 4.2.0 Use `setHeaders()` instead.
      */
     public function removeHeader(string $key)
     {
