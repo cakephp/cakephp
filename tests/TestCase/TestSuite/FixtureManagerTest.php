@@ -281,6 +281,63 @@ class FixtureManagerTest extends TestCase
     }
 
     /**
+     * Tests handling unmnaged fixtures which don't
+     * import a schema or defined fields. These tables
+     * should only insert records and not drop/create.
+     *
+     * @return void
+     */
+    public function testLoadUnmanagedFixtures()
+    {
+        $schema = new TableSchema('unmanaged', [
+            'title' => ['type' => 'string', 'length' => 100],
+            'body' => ['type' => 'string', 'length' => 100],
+        ]);
+
+        $conn = ConnectionManager::get('test');
+        foreach ($schema->createSql($conn) as $sql) {
+            $conn->execute($sql);
+        }
+        $conn->newQuery()
+            ->insert(['title', 'body'])
+            ->into('unmanaged')
+            ->values([
+                'title' => 'Existing title',
+                'body' => 'Existing body',
+            ])
+            ->execute();
+
+        $buffer = new ConsoleOutput();
+        Log::setConfig('testQueryLogger', [
+            'className' => 'Console',
+            'stream' => $buffer,
+        ]);
+
+        $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
+        $test->expects($this->any())
+            ->method('getFixtures')
+            ->willReturn(['core.Unmanaged']);
+
+        $conn->enableQueryLogging(true);
+        $this->manager->setDebug(true);
+        $this->manager->fixturize($test);
+        $this->manager->load($test);
+        $this->assertStringNotContainsString('DROP TABLE', implode('', $buffer->messages()));
+
+        $stmt = $conn->newQuery()->select(['title', 'body'])->from('unmanaged')->execute();
+        $rows = $stmt->fetchAll();
+        $this->assertCount(2, $rows);
+
+        $this->manager->shutDown();
+        $this->assertStringNotContainsString('DROP TABLE', implode('', $buffer->messages()));
+        $this->assertContains('unmanaged', $conn->getSchemaCollection()->listTables());
+
+        foreach ($schema->dropSql($conn) as $sql) {
+            $conn->execute($sql);
+        }
+    }
+
+    /**
      * Test load uses aliased connections via a mock.
      *
      * Ensure that FixtureManager uses connection aliases
