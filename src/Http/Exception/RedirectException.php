@@ -16,8 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Http\Exception;
 
-use Cake\Core\Exception\Exception;
-
 /**
  * An exception subclass used by routing and application code to
  * trigger a redirect.
@@ -31,15 +29,8 @@ use Cake\Core\Exception\Exception;
  * Additional headers can also be provided in the constructor, or
  * using the addHeaders() method.
  */
-class RedirectException extends Exception
+class RedirectException extends HttpException
 {
-    /**
-     * Headers to include in the response.
-     *
-     * @var array
-     */
-    protected $headers = [];
-
     /**
      * Constructor
      *
@@ -80,15 +71,5 @@ class RedirectException extends Exception
         unset($this->headers[$key]);
 
         return $this;
-    }
-
-    /**
-     * Get the headers from the exception.
-     *
-     * @return array
-     */
-    public function getHeaders(): array
-    {
-        return $this->headers;
     }
 }
