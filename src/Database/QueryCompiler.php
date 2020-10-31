@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Database;
 
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\Exception as DatabaseException;
 use Closure;
 use Countable;
 
@@ -376,6 +377,12 @@ class QueryCompiler
      */
     protected function _buildInsertPart(array $parts, Query $query, ValueBinder $generator): string
     {
+        if (!isset($parts[0])) {
+            throw new DatabaseException(
+                'Could not compile insert query. No table was specified. ' .
+                'Use `into()` to define a table.'
+            );
+        }
         $table = $parts[0];
         $columns = $this->_stringifyExpressions($parts[1], $generator);
         $modifiers = $this->_buildModifierPart($query->clause('modifier'), $query, $generator);
