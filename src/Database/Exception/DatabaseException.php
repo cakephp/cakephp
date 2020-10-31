@@ -6,11 +6,25 @@ declare(strict_types=1);
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- * @since         4.2.0
+ * @link          https://cakephp.org CakePHP(tm) Project
+ * @since         3.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Database\Exception;
 
-class_exists('Cake\Core\Exception\CakeException');
+use Cake\Core\Exception\CakeException;
+
+/**
+ * Exception for the database package.
+ */
+class DatabaseException extends CakeException
+{
+}
+
+// phpcs:disable
+class_alias('Cake\Database\Exception\DatabaseException', 'Cake\Database\Exception');
+// phpcs:enable
