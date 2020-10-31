@@ -178,11 +178,19 @@ class BodyParserMiddleware implements MiddlewareInterface
      * Decode JSON into an array.
      *
      * @param string $body The request body to decode
-     * @return mixed
+     * @return array|null
      */
     protected function decodeJson(string $body)
     {
-        return json_decode($body, true);
+        if ($body === '') {
+            return [];
+        }
+        $decoded = json_decode($body, true);
+        if (json_last_error() === JSON_ERROR_NONE) {
+            return (array)$decoded;
+        }
+
+        return null;
     }
 
     /**
