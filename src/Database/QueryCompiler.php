@@ -16,8 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Database;
 
-use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Exception as DatabaseException;
+use Cake\Database\Expression\QueryExpression;
 use Closure;
 use Countable;
 
