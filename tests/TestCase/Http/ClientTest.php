@@ -39,6 +39,7 @@ class ClientTest extends TestCase
         $config = [
             'scheme' => 'http',
             'host' => 'example.org',
+            'basePath' => '/api/v1',
         ];
         $http = new Client($config);
         $result = $http->getConfig();
@@ -111,6 +112,27 @@ class ClientTest extends TestCase
                 [],
                 ['host' => 'example.com', 'scheme' => 'https'],
                 'HTTPS',
+            ],
+            [
+                'https://example.com/api/v1/foo/test.html',
+                '/foo/test.html',
+                [],
+                ['host' => 'example.com', 'scheme' => 'https', 'basePath' => '/api/v1'],
+                'Base path included',
+            ],
+            [
+                'https://example.com/api/v1/foo/test.html',
+                '/foo/test.html',
+                [],
+                ['host' => 'example.com', 'scheme' => 'https', 'basePath' => '/api/v1/'],
+                'Base path with trailing forward slash',
+            ],
+            [
+                'https://example.com/api/v1/foo/test.html',
+                '/foo/test.html',
+                [],
+                ['host' => 'example.com', 'scheme' => 'https', 'basePath' => 'api/v1/'],
+                'Base path with no prepended forward slash',
             ],
             [
                 'http://example.com:8080/test.html',
@@ -918,6 +940,15 @@ class ClientTest extends TestCase
     }
 
     /**
+     * basePath is set when passed to client in string
+     */
+    public function testCreateFromUrlSetsBasePath()
+    {
+        $client = Client::createFromUrl('https://example.co/api/v1');
+        $this->assertSame('/api/v1', $client->getConfig('basePath'));
+    }
+
+    /**
      * Test exception is thrown when URL cannot be parsed
      */
     public function testCreateFromUrlThrowsInvalidExceptionWhenUrlCannotBeParsed()
@@ -954,27 +985,33 @@ class ClientTest extends TestCase
     public function testCreateFromUrlThrowsInvalidArgumentExceptionWhenNoDomainProvided()
     {
         $this->expectException(InvalidArgumentException::class);
-        Client::createFromUrl('https://');
+        Client::createFromUrl('/api/v1');
         $message = $this->getExpectedExceptionMessage();
         $this->assertSame('The URL was parsed but did not contain a scheme or host', $message);
     }
 
     /**
      * Test that the passed parsed URL parts won't override other constructor defaults
+     * or add undefined configuration
      */
-    public function testCreateFromUrlOnlySetSchemePortHost()
+    public function testCreateFromUrlOnlySetSchemePortHostBasePath()
     {
         $client = Client::createFromUrl('http://example.co:80/some/uri/?foo=bar');
         $config = $client->getConfig();
-        $this->assertSame('http', $config['scheme']);
-        $this->assertSame('example.co', $config['host']);
-        $this->assertSame(80, $config['port']);
-        $this->assertSame(null, $config['adapter']);
-        $this->assertSame(30, $config['timeout']);
-        $this->assertSame(true, $config['ssl_verify_peer']);
-        $this->assertSame(true, $config['ssl_verify_peer_name']);
-        $this->assertSame(true, $config['ssl_verify_host']);
-        $this->assertSame(false, $config['redirect']);
-        $this->assertSame('1.1', $config['protocolVersion']);
+        $expected = [
+            'adapter' => null,
+            'host' => 'example.co',
+            'port' => 80,
+            'scheme' => 'http',
+            'basePath' => '/some/uri',
+            'timeout' => 30,
+            'ssl_verify_peer' => true,
+            'ssl_verify_peer_name' => true,
+            'ssl_verify_depth' => 5,
+            'ssl_verify_host' => true,
+            'redirect' => false,
+            'protocolVersion' => '1.1',
+        ];
+        $this->assertSame($expected, $config);
     }
 }

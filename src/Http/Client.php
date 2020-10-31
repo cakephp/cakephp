@@ -114,6 +114,7 @@ class Client implements ClientInterface
         'host' => null,
         'port' => null,
         'scheme' => 'http',
+        'basePath' => '',
         'timeout' => 30,
         'ssl_verify_peer' => true,
         'ssl_verify_peer_name' => true,
@@ -150,6 +151,7 @@ class Client implements ClientInterface
      * - host - The hostname to do requests on.
      * - port - The port to use.
      * - scheme - The default scheme/protocol to use. Defaults to http.
+     * - basePath - A path to append to the domain to use. (/api/v1/)
      * - timeout - The timeout in seconds. Defaults to 30
      * - ssl_verify_peer - Whether or not SSL certificates should be validated.
      *   Defaults to true.
@@ -244,10 +246,16 @@ class Client implements ClientInterface
             throw new InvalidArgumentException('String ' . $url . ' did not parse');
         }
 
-        $config = array_intersect_key($parts, ['scheme' => '', 'port' => '', 'host' => '']);
+        $config = array_intersect_key($parts, ['scheme' => '', 'port' => '', 'host' => '', 'path' => '']);
+        $config = array_merge(['scheme' => '', 'host' => ''], $config);
 
-        if (!isset($config['scheme']) || !isset($config['host'])) {
+        if (empty($config['scheme']) || empty($config['host'])) {
             throw new InvalidArgumentException('The URL was parsed but did not contain a scheme or host');
+        }
+
+        if (isset($config['path'])) {
+            $config['basePath'] = $config['path'];
+            unset($config['path']);
         }
 
         return new static($config);
@@ -519,6 +527,7 @@ class Client implements ClientInterface
             'host' => null,
             'port' => null,
             'scheme' => 'http',
+            'basePath' => '',
             'protocolRelative' => false,
         ];
         $options += $defaults;
@@ -538,6 +547,7 @@ class Client implements ClientInterface
         if ($options['port'] && (int)$options['port'] !== $defaultPorts[$options['scheme']]) {
             $out .= ':' . $options['port'];
         }
+        $out .= '/' . trim($options['basePath'], '/');
         $out .= '/' . ltrim($url, '/');
 
         return $out;
