@@ -26,5 +26,5 @@ class DatabaseException extends CakeException
 }
 
 // phpcs:disable
-class_alias('Cake\Database\Exception\DatabaseException', 'Cake\Database\Exception');
+class_exists('Cake\Database\Exception');
 // phpcs:enable

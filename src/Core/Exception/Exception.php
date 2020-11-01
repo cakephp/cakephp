@@ -13,4 +13,4 @@ declare(strict_types=1);
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
-class_exists('Cake\Core\Exception\CakeException');
+class_alias('Cake\Core\Exception\CakeException', 'Cake\Core\Exception\Exception');
