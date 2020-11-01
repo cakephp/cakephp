@@ -178,7 +178,9 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $middleware = new ErrorHandlerMiddleware();
         $handler = new TestRequestHandler(function () {
             $err = new RedirectException('http://example.org/login', 301, ['Constructor' => 'yes']);
-            $err->addHeaders(['Constructor' => 'no', 'Method' => 'yes']);
+            $this->deprecated(function () use ($err) {
+                $err->addHeaders(['Constructor' => 'no', 'Method' => 'yes']);
+            });
             throw $err;
         });
 
