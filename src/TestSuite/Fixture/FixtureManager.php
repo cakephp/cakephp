@@ -19,8 +19,6 @@ namespace Cake\TestSuite\Fixture;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Database\ConstraintsInterface;
-use Cake\Database\Schema\TableSchema;
-use Cake\Database\Schema\TableSchemaAwareInterface;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\FixtureInterface;
@@ -246,27 +244,16 @@ class FixtureManager
         array $sources,
         bool $drop = true
     ): void {
-        $configName = $db->configName();
-        $isFixtureSetup = $this->isFixtureSetup($configName, $fixture);
-        if ($isFixtureSetup) {
-            return;
-        }
-
-        $table = $fixture->sourceName();
-        $exists = in_array($table, $sources, true);
-
-        $hasSchema = $fixture instanceof TableSchemaAwareInterface && $fixture->getTableSchema() instanceof TableSchema;
-
-        if (($drop && $exists) || ($exists && $hasSchema)) {
-            $fixture->drop($db);
-            $fixture->create($db);
-        } elseif (!$exists) {
+        if (!method_exists($fixture, 'isManaged') || $fixture->isManaged()) {
+            if (in_array($fixture->sourceName(), $sources, true)) {
+                $fixture->drop($db);
+            }
             $fixture->create($db);
         } else {
             $fixture->truncate($db);
         }
 
-        $this->_insertionMap[$configName][] = $fixture;
+        $this->_insertionMap[$db->configName()][] = $fixture;
     }
 
     /**
@@ -509,7 +496,11 @@ class FixtureManager
             function (ConnectionInterface $db, FixtureInterface $fixture, array $tableCache) {
                 $connection = $db->configName();
                 if ($this->isFixtureSetup($connection, $fixture)) {
-                    $fixture->drop($db);
+                    if (method_exists($fixture, 'isManaged') && $fixture->isManaged()) {
+                        $fixture->drop($db);
+                    } else {
+                        $fixture->truncate($db);
+                    }
                     $index = array_search($fixture, $this->_insertionMap[$connection], true);
                     unset($this->_insertionMap[$connection][$index]);
                 }

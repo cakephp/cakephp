@@ -18,6 +18,8 @@ namespace Cake\Datasource;
 
 /**
  * Defines the interface that testing fixtures use.
+ *
+ * @method bool isManaged() Returns whether the fixture should be created/destroyed.
  */
 interface FixtureInterface
 {

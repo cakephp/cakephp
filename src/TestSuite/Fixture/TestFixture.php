@@ -274,7 +274,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
             return false;
         }
 
-        if (empty($this->import) && empty($this->fields)) {
+        if (!$this->isManaged()) {
             return true;
         }
 
@@ -309,8 +309,8 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
             return false;
         }
 
-        if (empty($this->import) && empty($this->fields)) {
-            return $this->truncate($connection);
+        if (!$this->isManaged()) {
+            return true;
         }
 
         try {
@@ -437,6 +437,18 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
         }
 
         return true;
+    }
+
+    /**
+     * Returns whether the fixture should be created/destroyed.
+     *
+     * Fixtures that are't managed will be truncated instead of created.
+     *
+     * @return bool
+     */
+    public function isManaged(): bool
+    {
+        return !empty($this->import) || !empty($this->fields);
     }
 
     /**
