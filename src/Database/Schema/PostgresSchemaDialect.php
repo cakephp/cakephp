@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Schema;
 
-use Cake\Database\Exception;
+use Cake\Database\Exception\DatabaseException;
 
 /**
  * Schema management/reflection features for Postgres.
@@ -74,14 +74,14 @@ class PostgresSchemaDialect extends SchemaDialect
      * Cake\Database\TypeFactory can handle.
      *
      * @param string $column The column type + length
-     * @throws \Cake\Database\Exception when column cannot be parsed.
+     * @throws \Cake\Database\Exception\DatabaseException when column cannot be parsed.
      * @return array Array of column information.
      */
     protected function _convertColumn(string $column): array
     {
         preg_match('/([a-z\s]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
         if (empty($matches)) {
-            throw new Exception(sprintf('Unable to parse column type from "%s"', $column));
+            throw new DatabaseException(sprintf('Unable to parse column type from "%s"', $column));
         }
 
         $col = strtolower($matches[1]);

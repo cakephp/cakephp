@@ -18,7 +18,7 @@ namespace Cake\Test\TestCase\ORM;
 
 use ArrayObject;
 use Cake\Collection\Collection;
-use Cake\Database\Exception;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\StatementInterface;
@@ -1054,7 +1054,7 @@ class TableTest extends TestCase
      */
     public function testUpdateAllFailure()
     {
-        $this->expectException(\Cake\Database\Exception::class);
+        $this->expectException(DatabaseException::class);
         $table = $this->getMockBuilder(Table::class)
             ->onlyMethods(['query'])
             ->setConstructorArgs([['table' => 'users', 'connection' => $this->connection]])
@@ -1069,7 +1069,7 @@ class TableTest extends TestCase
 
         $query->expects($this->once())
             ->method('execute')
-            ->will($this->throwException(new Exception('Not good')));
+            ->will($this->throwException(new DatabaseException('Not good')));
 
         $table->updateAll(['username' => 'mark'], []);
     }
@@ -1118,7 +1118,7 @@ class TableTest extends TestCase
      */
     public function testDeleteAllFailure()
     {
-        $this->expectException(\Cake\Database\Exception::class);
+        $this->expectException(DatabaseException::class);
         $table = $this->getMockBuilder(Table::class)
             ->onlyMethods(['query'])
             ->setConstructorArgs([['table' => 'users', 'connection' => $this->connection]])
@@ -1133,7 +1133,7 @@ class TableTest extends TestCase
 
         $query->expects($this->once())
             ->method('execute')
-            ->will($this->throwException(new Exception('Not good')));
+            ->will($this->throwException(new DatabaseException('Not good')));
 
         $table->deleteAll(['id >' => 4]);
     }

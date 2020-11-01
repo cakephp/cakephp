@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Database\Schema;
 
 use Cake\Database\Connection;
-use Cake\Database\Exception;
+use Cake\Database\Exception\DatabaseException;
 use PDOException;
 
 /**
@@ -87,7 +87,7 @@ class Collection implements CollectionInterface
      * @param string $name The name of the table to describe.
      * @param array $options The options to use, see above.
      * @return \Cake\Database\Schema\TableSchema Object with column metadata.
-     * @throws \Cake\Database\Exception when table cannot be described.
+     * @throws \Cake\Database\Exception\DatabaseException when table cannot be described.
      */
     public function describe(string $name, array $options = []): TableSchemaInterface
     {
@@ -99,7 +99,7 @@ class Collection implements CollectionInterface
 
         $this->_reflect('Column', $name, $config, $table);
         if (count($table->columns()) === 0) {
-            throw new Exception(sprintf('Cannot describe %s. It has 0 columns.', $name));
+            throw new DatabaseException(sprintf('Cannot describe %s. It has 0 columns.', $name));
         }
 
         $this->_reflect('Index', $name, $config, $table);
@@ -117,7 +117,7 @@ class Collection implements CollectionInterface
      * @param array $config The config data.
      * @param \Cake\Database\Schema\TableSchema $schema The table schema instance.
      * @return void
-     * @throws \Cake\Database\Exception on query failure.
+     * @throws \Cake\Database\Exception\DatabaseException on query failure.
      * @uses \Cake\Database\Schema\SchemaDialect::describeColumnSql
      * @uses \Cake\Database\Schema\SchemaDialect::describeIndexSql
      * @uses \Cake\Database\Schema\SchemaDialect::describeForeignKeySql
@@ -139,7 +139,7 @@ class Collection implements CollectionInterface
         try {
             $statement = $this->_connection->execute($sql, $params);
         } catch (PDOException $e) {
-            throw new Exception($e->getMessage(), 500, $e);
+            throw new DatabaseException($e->getMessage(), 500, $e);
         }
         /** @psalm-suppress PossiblyFalseIterator */
         foreach ($statement->fetchAll('assoc') as $row) {
