@@ -18,7 +18,7 @@ namespace Cake\Controller;
 
 use Cake\Controller\Exception\MissingComponentException;
 use Cake\Core\App;
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Core\ObjectRegistry;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
@@ -61,7 +61,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
     public function getController(): Controller
     {
         if ($this->_Controller === null) {
-            throw new Exception('Controller not set for ComponentRegistry');
+            throw new CakeException('Controller not set for ComponentRegistry');
         }
 
         return $this->_Controller;

@@ -148,7 +148,7 @@ class TestFixtureTest extends TestCase
      */
     public function testInitNoImportNoFieldsException()
     {
-        $this->expectException(\Cake\Core\Exception\Exception::class);
+        $this->expectException(\Cake\Core\Exception\CakeException::class);
         $this->expectExceptionMessage('Cannot describe schema for table `letters` for fixture `' . LettersFixture::class . '`: the table does not exist.');
         $fixture = new LettersFixture();
         $fixture->init();

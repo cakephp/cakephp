@@ -18,7 +18,7 @@ namespace Cake\Core\Configure\Engine;
 
 use Cake\Core\Configure\ConfigEngineInterface;
 use Cake\Core\Configure\FileConfigTrait;
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 
 /**
  * PHP engine allows Configure to load configuration values from
@@ -77,7 +77,7 @@ class PhpConfig implements ConfigEngineInterface
      * @param string $key The identifier to read from. If the key has a . it will be treated
      *  as a plugin prefix.
      * @return array Parsed configuration values.
-     * @throws \Cake\Core\Exception\Exception when files don't exist or they don't contain `$config`.
+     * @throws \Cake\Core\Exception\CakeException when files don't exist or they don't contain `$config`.
      *  Or when files contain '..' as this could lead to abusive reads.
      */
     public function read(string $key): array
@@ -91,7 +91,7 @@ class PhpConfig implements ConfigEngineInterface
             return $return;
         }
 
-        throw new Exception(sprintf('Config file "%s" did not return an array', $key . '.php'));
+        throw new CakeException(sprintf('Config file "%s" did not return an array', $key . '.php'));
     }
 
     /**

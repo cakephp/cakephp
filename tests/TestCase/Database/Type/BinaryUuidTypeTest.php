@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Type;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Database\Type\BinaryUuidType;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Text;
@@ -81,7 +81,7 @@ class BinaryUuidTypeTest extends TestCase
      */
     public function testToPHPFailure()
     {
-        $this->expectException(Exception::class);
+        $this->expectException(CakeException::class);
         $this->expectExceptionMessage('Unable to convert array into binary uuid.');
 
         $this->type->toPHP([], $this->driver);

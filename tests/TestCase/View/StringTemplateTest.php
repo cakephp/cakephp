@@ -208,7 +208,7 @@ class StringTemplateTest extends TestCase
      */
     public function testLoadErrorNoFile()
     {
-        $this->expectException(\Cake\Core\Exception\Exception::class);
+        $this->expectException(\Cake\Core\Exception\CakeException::class);
         $this->expectExceptionMessage('Could not load configuration file');
         $this->template->load('no_such_file');
     }

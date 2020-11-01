@@ -18,7 +18,7 @@ namespace Cake\Http;
 
 use BadMethodCallException;
 use Cake\Core\Configure;
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Exception\MethodNotAllowedException;
 use Cake\Utility\Hash;
@@ -258,7 +258,7 @@ class ServerRequest implements ServerRequestInterface
 
         if (isset($config['uri'])) {
             if (!$config['uri'] instanceof UriInterface) {
-                throw new Exception('The `uri` key must be an instance of ' . UriInterface::class);
+                throw new CakeException('The `uri` key must be an instance of ' . UriInterface::class);
             }
             $uri = $config['uri'];
         } else {

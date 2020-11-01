@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Mailer;
 
 use Cake\Core\Configure;
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Http\Client\FormDataPart;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
@@ -1914,7 +1914,7 @@ class Message implements JsonSerializable, Serializable
     {
         $array = unserialize($data);
         if (!is_array($array)) {
-            throw new Exception('Unable to unserialize message.');
+            throw new CakeException('Unable to unserialize message.');
         }
 
         $this->createFromArray($array);

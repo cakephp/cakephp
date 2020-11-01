@@ -14,12 +14,12 @@ declare(strict_types=1);
  */
 namespace Cake\Datasource\Exception;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 
 /**
  * Exception class to be thrown when a datasource configuration is not found
  */
-class MissingDatasourceConfigException extends Exception
+class MissingDatasourceConfigException extends CakeException
 {
     /**
      * @var string

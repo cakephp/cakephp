@@ -14,12 +14,12 @@ declare(strict_types=1);
  */
 namespace Cake\Mailer\Exception;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 
 /**
  * Missing Action exception - used when a mailer action cannot be found.
  */
-class MissingActionException extends Exception
+class MissingActionException extends CakeException
 {
     /**
      * @inheritDoc

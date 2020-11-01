@@ -14,7 +14,7 @@ declare(strict_types=1);
  */
 namespace TestApp\Model\Table;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 
@@ -50,7 +50,7 @@ class AuthUsersTable extends Table
     public function findUsername(Query $query, array $options)
     {
         if (empty($options['username'])) {
-            throw new Exception(__('Username not defined'));
+            throw new CakeException(__('Username not defined'));
         }
 
         $query = $this->find()

@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Filesystem;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use CallbackFilterIterator;
 use FilesystemIterator;
 use Iterator;
@@ -128,7 +128,7 @@ class Filesystem
      * @param string $filename File path.
      * @param string $content Content to dump.
      * @return void
-     * @throws \Cake\Core\Exception\Exception When dumping fails.
+     * @throws \Cake\Core\Exception\CakeException When dumping fails.
      */
     public function dumpFile(string $filename, string $content): void
     {
@@ -148,7 +148,7 @@ class Filesystem
         }
 
         if ($success === false) {
-            throw new Exception(sprintf('Failed dumping content to file `%s`', $dir));
+            throw new CakeException(sprintf('Failed dumping content to file `%s`', $dir));
         }
 
         if (!$exists) {
@@ -162,7 +162,7 @@ class Filesystem
      * @param string $dir Directory path.
      * @param int $mode Octal mode passed to mkdir(). Defaults to 0755.
      * @return void
-     * @throws \Cake\Core\Exception\Exception When directory creation fails.
+     * @throws \Cake\Core\Exception\CakeException When directory creation fails.
      */
     public function mkdir(string $dir, int $mode = 0755): void
     {
@@ -174,7 +174,7 @@ class Filesystem
         // phpcs:ignore
         if (@mkdir($dir, $mode, true) === false) {
             umask($old);
-            throw new Exception(sprintf('Failed to create directory "%s"', $dir));
+            throw new CakeException(sprintf('Failed to create directory "%s"', $dir));
         }
 
         umask($old);
@@ -185,7 +185,7 @@ class Filesystem
      *
      * @param string $path Directory path.
      * @return bool
-     * @throws \Cake\Core\Exception\Exception If path is not a directory.
+     * @throws \Cake\Core\Exception\CakeException If path is not a directory.
      */
     public function deleteDir(string $path): bool
     {
@@ -194,7 +194,7 @@ class Filesystem
         }
 
         if (!is_dir($path)) {
-            throw new Exception(sprintf('"%s" is not a directory', $path));
+            throw new CakeException(sprintf('"%s" is not a directory', $path));
         }
 
         $iterator = new RecursiveIteratorIterator(

@@ -14,12 +14,12 @@ declare(strict_types=1);
  */
 namespace Cake\Controller\Exception;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 
 /**
  * Used when a component cannot be found.
  */
-class MissingComponentException extends Exception
+class MissingComponentException extends CakeException
 {
     /**
      * @inheritDoc

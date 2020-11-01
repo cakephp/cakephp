@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Utility;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use InvalidArgumentException;
 use Transliterator;
 
@@ -1091,7 +1091,7 @@ class Text
     {
         $transliterator = transliterator_create($transliteratorId);
         if ($transliterator === null) {
-            throw new Exception('Unable to create transliterator for id: ' . $transliteratorId);
+            throw new CakeException('Unable to create transliterator for id: ' . $transliteratorId);
         }
 
         static::setTransliterator($transliterator);
@@ -1117,7 +1117,7 @@ class Text
 
         $return = transliterator_transliterate($transliterator, $string);
         if ($return === false) {
-            throw new Exception(sprintf('Unable to transliterate string: %s', $string));
+            throw new CakeException(sprintf('Unable to transliterate string: %s', $string));
         }
 
         return $return;

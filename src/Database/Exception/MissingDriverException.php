@@ -16,12 +16,12 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Exception;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 
 /**
  * Class MissingDriverException
  */
-class MissingDriverException extends Exception
+class MissingDriverException extends CakeException
 {
     /**
      * @inheritDoc

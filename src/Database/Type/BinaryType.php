@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Type;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Database\DriverInterface;
 use PDO;
 
@@ -48,7 +48,7 @@ class BinaryType extends BaseType
      * @param mixed $value The value to convert.
      * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
      * @return resource|null
-     * @throws \Cake\Core\Exception\Exception
+     * @throws \Cake\Core\Exception\CakeException
      */
     public function toPHP($value, DriverInterface $driver)
     {
@@ -61,7 +61,7 @@ class BinaryType extends BaseType
         if (is_resource($value)) {
             return $value;
         }
-        throw new Exception(sprintf('Unable to convert %s into binary.', gettype($value)));
+        throw new CakeException(sprintf('Unable to convert %s into binary.', gettype($value)));
     }
 
     /**

@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Network;
 
-use Cake\Core\Exception\Exception as CakeException;
+use Cake\Core\Exception\CakeException;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Network\Exception\SocketException;
 use Cake\Validation\Validation;

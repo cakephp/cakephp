@@ -238,7 +238,7 @@ class AuthComponentTest extends TestCase
      */
     public function testIsAuthorizedMissingFile(): void
     {
-        $this->expectException(\Cake\Core\Exception\Exception::class);
+        $this->expectException(\Cake\Core\Exception\CakeException::class);
         $this->Controller->Auth->setConfig('authorize', 'Missing');
         $this->Controller->Auth->isAuthorized(['User' => ['id' => 1]]);
     }
@@ -359,7 +359,7 @@ class AuthComponentTest extends TestCase
      */
     public function testLoadAuthenticateNoFile(): void
     {
-        $this->expectException(\Cake\Core\Exception\Exception::class);
+        $this->expectException(\Cake\Core\Exception\CakeException::class);
         $this->Controller->Auth->setConfig('authenticate', 'Missing');
         $this->Controller->Auth->identify(
             $this->Controller->getRequest(),

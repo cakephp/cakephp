@@ -14,12 +14,12 @@ declare(strict_types=1);
  */
 namespace Cake\Datasource\Exception;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 
 /**
  * Exception raised when requested page number does not exist.
  */
-class PageOutOfBoundsException extends Exception
+class PageOutOfBoundsException extends CakeException
 {
     /**
      * @inheritDoc

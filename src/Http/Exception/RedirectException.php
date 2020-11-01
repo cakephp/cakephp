@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Http\Exception;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 
 /**
  * An exception subclass used by routing and application code to
@@ -31,7 +31,7 @@ use Cake\Core\Exception\Exception;
  * Additional headers can also be provided in the constructor, or
  * using the addHeaders() method.
  */
-class RedirectException extends Exception
+class RedirectException extends CakeException
 {
     /**
      * Headers to include in the response.
