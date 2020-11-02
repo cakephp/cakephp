@@ -26,7 +26,7 @@ init:
   - SET ANSICON=121x90 (121x90)
 
 install:
-  - curl -fsS https://windows.php.net/downloads/releases/latest/php-7.2-nts-Win32-VC15-x64-latest.zip -o php.zip
+  - curl -fsS https://windows.php.net/downloads/qa/php-8.0.0RC3-Win32-vs16-x64.zip -o php.zip
   - curl -fsS https://windows.php.net/downloads/pecl/releases/pdo_sqlsrv/5.6.1/php_pdo_sqlsrv-5.6.1-7.2-nts-vc15-x64.zip -o pdosqlsrv.zip
   - curl -fsS https://windows.php.net/downloads/pecl/releases/sqlsrv/5.6.1/php_sqlsrv-5.6.1-7.2-nts-vc15-x64.zip -o sqlsrv.zip
   - 7z x php.zip -oC:\php\ -aoa > nul
