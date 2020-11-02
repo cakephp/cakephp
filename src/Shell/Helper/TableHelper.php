@@ -114,7 +114,7 @@ class TableHelper extends Helper
             if (!empty($options['style'])) {
                 $column = $this->_addStyle($column, $options['style']);
             }
-            if (!is_null($column) && preg_match('#<text-right>.*</text-right>#', $column)) {
+            if ($column !== null && preg_match('#<text-right>.+</text-right>#', $column)) {
                 $out .= '| ' . str_repeat(' ', $pad) . $column . ' ';
             } else {
                 $out .= '| ' . $column . str_repeat(' ', $pad) . ' ';
