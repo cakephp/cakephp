@@ -382,4 +382,26 @@ class TableHelperTest extends TestCase
         $this->helper->output([]);
         $this->assertEquals([], $this->stub->messages());
     }
+
+    /**
+     * Right-aligned text style test.
+     */
+    public function testTextRightStyle()
+    {
+        $data = [
+            ['Item', 'Price per piece (yen)'],
+            ['Apple', '<text-right>200</text-right>'],
+            ['Orange', '100'],
+        ];
+        $this->helper->output($data);
+        $expected = [
+            '+--------+-----------------------+',
+            '| <info>Item</info>   | <info>Price per piece (yen)</info> |',
+            '+--------+-----------------------+',
+            '| Apple  |                   <text-right>200</text-right> |',
+            '| Orange | 100                   |',
+            '+--------+-----------------------+',
+        ];
+        $this->assertEquals($expected, $this->stub->messages());
+    }
 }

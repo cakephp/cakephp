@@ -114,7 +114,11 @@ class TableHelper extends Helper
             if (!empty($options['style'])) {
                 $column = $this->_addStyle($column, $options['style']);
             }
-            $out .= '| ' . $column . str_repeat(' ', $pad) . ' ';
+            if (!is_null($column) && preg_match('#<text-right>.*</text-right>#', $column)) {
+                $out .= '| ' . str_repeat(' ', $pad) . $column . ' ';
+            } else {
+                $out .= '| ' . $column . str_repeat(' ', $pad) . ' ';
+            }
         }
         $out .= '|';
         $this->_io->out($out);
@@ -134,6 +138,8 @@ class TableHelper extends Helper
         if (empty($rows)) {
             return;
         }
+
+        $this->_io->setStyle('text-right', ['text' => null]);
 
         $config = $this->getConfig();
         $widths = $this->_calculateWidths($rows);
