@@ -56,6 +56,24 @@ class BodyParserMiddlewareTest extends TestCase
     }
 
     /**
+     * Data provider for JSON scalar and how it should be parsed
+     *
+     * @return array
+     */
+    public static function jsonScalarValues()
+    {
+        return [
+            ['', []], // Requests without body
+            ['true', [true]],
+            ['false', [false]],
+            ['0', [0]],
+            ['0.1', [0.1]],
+            ['"cake"', ['cake']],
+            ['null', []],
+        ];
+    }
+
+    /**
      * test constructor options
      *
      * @return void
@@ -387,11 +405,36 @@ XML;
     }
 
     /**
+     * test parsing non array/object values on JSON
+     *
+     * @dataProvider jsonScalarValues
+     * @return void
+     */
+    public function testInvokeParseNoArray($body, $expected)
+    {
+        $parser = new BodyParserMiddleware();
+
+        $request = new ServerRequest([
+            'environment' => [
+                'REQUEST_METHOD' => 'POST',
+                'CONTENT_TYPE' => 'application/json',
+            ],
+            'input' => $body,
+        ]);
+        $handler = new TestRequestHandler(function ($req) use ($expected) {
+            $this->assertSame($expected, $req->getParsedBody());
+
+            return new Response();
+        });
+        $parser->process($request, $handler);
+    }
+
+    /**
      * test parsing fails will raise a bad request.
      *
      * @return void
      */
-    public function testInvokeParseNoArray()
+    public function testInvokeParseInvalidJson()
     {
         $request = new ServerRequest([
             'environment' => [
