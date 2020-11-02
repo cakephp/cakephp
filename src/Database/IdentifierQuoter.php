@@ -178,7 +178,11 @@ class IdentifierQuoter
      */
     protected function _quoteInsert(Query $query): void
     {
-        [$table, $columns] = $query->clause('insert');
+        $insert = $query->clause('insert');
+        if (!isset($insert[0]) || !isset($insert[1])) {
+            return;
+        }
+        [$table, $columns] = $insert;
         $table = $this->_driver->quoteIdentifier($table);
         foreach ($columns as &$column) {
             if (is_scalar($column)) {
