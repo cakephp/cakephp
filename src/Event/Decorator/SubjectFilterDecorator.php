@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Event\Decorator;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Event\EventInterface;
 use RuntimeException;
 
@@ -61,7 +61,7 @@ class SubjectFilterDecorator extends AbstractDecorator
 
         try {
             $subject = $event->getSubject();
-        } catch (Exception $e) {
+        } catch (CakeException $e) {
             return false;
         }
 

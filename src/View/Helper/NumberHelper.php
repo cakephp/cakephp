@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\View\Helper;
 
 use Cake\Core\App;
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\I18n\Number;
 use Cake\View\Helper;
 use Cake\View\View;
@@ -58,7 +58,7 @@ class NumberHelper extends Helper
      *
      * @param \Cake\View\View $view The View this helper is being attached to.
      * @param array $config Configuration settings for the helper
-     * @throws \Cake\Core\Exception\Exception When the engine class could not be found.
+     * @throws \Cake\Core\Exception\CakeException When the engine class could not be found.
      */
     public function __construct(View $view, array $config = [])
     {
@@ -69,7 +69,7 @@ class NumberHelper extends Helper
         /** @psalm-var class-string<\Cake\I18n\Number>|null $engineClass */
         $engineClass = App::className($config['engine'], 'Utility');
         if ($engineClass === null) {
-            throw new Exception(sprintf('Class for %s could not be found', $config['engine']));
+            throw new CakeException(sprintf('Class for %s could not be found', $config['engine']));
         }
 
         $this->_engine = new $engineClass($config);

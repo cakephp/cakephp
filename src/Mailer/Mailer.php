@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Cake\Mailer;
 
 use BadMethodCallException;
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Core\StaticConfigTrait;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Event\EventListenerInterface;
@@ -481,7 +481,7 @@ class Mailer implements EventListenerInterface
         } elseif (is_object($name)) {
             $transport = $name;
             if (!$transport instanceof AbstractTransport) {
-                throw new Exception('Transport class must extend Cake\Mailer\AbstractTransport');
+                throw new CakeException('Transport class must extend Cake\Mailer\AbstractTransport');
             }
         } else {
             throw new InvalidArgumentException(sprintf(

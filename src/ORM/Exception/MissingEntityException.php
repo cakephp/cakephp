@@ -18,12 +18,12 @@ declare(strict_types=1);
  */
 namespace Cake\ORM\Exception;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 
 /**
  * Exception raised when an Entity could not be found.
  */
-class MissingEntityException extends Exception
+class MissingEntityException extends CakeException
 {
     /**
      * @var string

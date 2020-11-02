@@ -22,7 +22,7 @@ use Cake\Controller\Exception\MissingActionException;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Container;
-use Cake\Core\Exception\Exception as CakeException;
+use Cake\Core\Exception\CakeException;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Datasource\Exception\PageOutOfBoundsException;
 use Cake\Datasource\Exception\RecordNotFoundException;
@@ -75,7 +75,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
     protected $controller;
 
     /**
-     * Template to render for Cake\Core\Exception\Exception
+     * Template to render for Cake\Core\Exception\CakeException
      *
      * @var string
      */
@@ -119,7 +119,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
 
     /**
      * Creates the controller to perform rendering on the error response.
-     * If the error is a Cake\Core\Exception\Exception it will be converted to either a 400 or a 500
+     * If the error is a Cake\Core\Exception\CakeException it will be converted to either a 400 or a 500
      * code error depending on the code used to construct the error.
      *
      * @param \Throwable $exception Exception.

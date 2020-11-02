@@ -17,7 +17,7 @@ namespace Cake\Core\Exception;
 /**
  * Exception raised when a plugin could not be found
  */
-class MissingPluginException extends Exception
+class MissingPluginException extends CakeException
 {
     /**
      * @inheritDoc

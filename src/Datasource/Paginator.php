@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Datasource;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Datasource\Exception\PageOutOfBoundsException;
 
@@ -169,7 +169,7 @@ class Paginator implements PaginatorInterface
             $query = $object;
             $object = $query->getRepository();
             if ($object === null) {
-                throw new Exception('No repository set for query.');
+                throw new CakeException('No repository set for query.');
             }
         }
 

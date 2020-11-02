@@ -16,13 +16,13 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Exception;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Throwable;
 
 /**
  * Class NestedTransactionRollbackException
  */
-class NestedTransactionRollbackException extends Exception
+class NestedTransactionRollbackException extends CakeException
 {
     /**
      * Constructor

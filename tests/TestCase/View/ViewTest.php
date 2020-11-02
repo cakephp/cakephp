@@ -1584,7 +1584,7 @@ class ViewTest extends TestCase
             $this->View->start('first');
             $this->View->start('first');
             $this->fail('No exception');
-        } catch (\Cake\Core\Exception\Exception $e) {
+        } catch (\Cake\Core\Exception\CakeException $e) {
             ob_end_clean();
             $this->assertTrue(true);
         }

@@ -17,11 +17,11 @@ declare(strict_types=1);
  */
 namespace Cake\I18n\Exception;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 
 /**
  * I18n exception.
  */
-class I18nException extends Exception
+class I18nException extends CakeException
 {
 }

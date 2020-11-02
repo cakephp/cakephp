@@ -75,7 +75,7 @@ class ConnectionManager
      * @param string|array $key The name of the connection config, or an array of multiple configs.
      * @param array|null $config An array of name => config data for adapter.
      * @return void
-     * @throws \Cake\Core\Exception\Exception When trying to modify an existing config.
+     * @throws \Cake\Core\Exception\CakeException When trying to modify an existing config.
      * @see \Cake\Core\StaticConfigTrait::config()
      */
     public static function setConfig($key, $config = null): void

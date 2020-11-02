@@ -14,13 +14,13 @@ declare(strict_types=1);
  */
 namespace Cake\Routing\Exception;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Throwable;
 
 /**
  * Exception raised when a route names used twice.
  */
-class DuplicateNamedRouteException extends Exception
+class DuplicateNamedRouteException extends CakeException
 {
     /**
      * @inheritDoc

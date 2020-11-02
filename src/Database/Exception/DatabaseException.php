@@ -14,17 +14,17 @@ declare(strict_types=1);
  * @since         3.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Datasource\Exception;
+namespace Cake\Database\Exception;
 
 use Cake\Core\Exception\CakeException;
 
 /**
- * Used when a model cannot be found.
+ * Exception for the database package.
  */
-class MissingModelException extends CakeException
+class DatabaseException extends CakeException
 {
-    /**
-     * @var string
-     */
-    protected $_messageTemplate = 'Model class "%s" of type "%s" could not be found.';
 }
+
+// phpcs:disable
+class_exists('Cake\Database\Exception');
+// phpcs:enable

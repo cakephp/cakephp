@@ -80,7 +80,7 @@ class JsonConfigTest extends TestCase
      */
     public function testReadWithExistentFileWithoutExtension()
     {
-        $this->expectException(\Cake\Core\Exception\Exception::class);
+        $this->expectException(\Cake\Core\Exception\CakeException::class);
         $engine = new JsonConfig($this->path);
         $engine->read('no_json_extension');
     }
@@ -92,7 +92,7 @@ class JsonConfigTest extends TestCase
      */
     public function testReadWithNonExistentFile()
     {
-        $this->expectException(\Cake\Core\Exception\Exception::class);
+        $this->expectException(\Cake\Core\Exception\CakeException::class);
         $engine = new JsonConfig($this->path);
         $engine->read('fake_values');
     }
@@ -104,7 +104,7 @@ class JsonConfigTest extends TestCase
      */
     public function testReadEmptyFile()
     {
-        $this->expectException(\Cake\Core\Exception\Exception::class);
+        $this->expectException(\Cake\Core\Exception\CakeException::class);
         $this->expectExceptionMessage('config file "empty.json"');
         $engine = new JsonConfig($this->path);
         $config = $engine->read('empty');
@@ -117,7 +117,7 @@ class JsonConfigTest extends TestCase
      */
     public function testReadWithInvalidJson()
     {
-        $this->expectException(\Cake\Core\Exception\Exception::class);
+        $this->expectException(\Cake\Core\Exception\CakeException::class);
         $this->expectExceptionMessage('Error parsing JSON string fetched from config file "invalid.json"');
         $engine = new JsonConfig($this->path);
         $engine->read('invalid');
@@ -130,7 +130,7 @@ class JsonConfigTest extends TestCase
      */
     public function testReadWithDots()
     {
-        $this->expectException(\Cake\Core\Exception\Exception::class);
+        $this->expectException(\Cake\Core\Exception\CakeException::class);
         $engine = new JsonConfig($this->path);
         $engine->read('../empty');
     }

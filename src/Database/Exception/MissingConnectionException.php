@@ -16,12 +16,12 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Exception;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 
 /**
  * Class MissingConnectionException
  */
-class MissingConnectionException extends Exception
+class MissingConnectionException extends CakeException
 {
     /**
      * @inheritDoc

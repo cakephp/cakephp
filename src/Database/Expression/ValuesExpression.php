@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Expression;
 
-use Cake\Database\Exception;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
 use Cake\Database\Type\ExpressionTypeCasterTrait;
@@ -83,7 +83,7 @@ class ValuesExpression implements ExpressionInterface
      * @param array|\Cake\Database\Query $values Array of data to append into the insert, or
      *   a query for doing INSERT INTO .. SELECT style commands
      * @return void
-     * @throws \Cake\Database\Exception When mixing array + Query data types.
+     * @throws \Cake\Database\Exception\DatabaseException When mixing array + Query data types.
      */
     public function add($values): void
     {
@@ -97,7 +97,7 @@ class ValuesExpression implements ExpressionInterface
                 is_array($values)
             )
         ) {
-            throw new Exception(
+            throw new DatabaseException(
                 'You cannot mix subqueries and array values in inserts.'
             );
         }

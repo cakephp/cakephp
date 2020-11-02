@@ -16,12 +16,12 @@ declare(strict_types=1);
  */
 namespace Cake\View\Exception;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 
 /**
  * Used when a view class file cannot be found.
  */
-class MissingViewException extends Exception
+class MissingViewException extends CakeException
 {
     /**
      * @inheritDoc

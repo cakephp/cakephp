@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\View;
 
 use Cake\Core\Configure\Engine\PhpConfig;
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Utility\Hash;
 use RuntimeException;
@@ -203,7 +203,7 @@ class StringTemplate
     public function load(string $file): void
     {
         if ($file === '') {
-            throw new Exception('String template filename cannot be an empty string');
+            throw new CakeException('String template filename cannot be an empty string');
         }
 
         $loader = new PhpConfig();

@@ -14,12 +14,12 @@ declare(strict_types=1);
  */
 namespace Cake\View\Exception;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 
 /**
  * Used when a helper cannot be found.
  */
-class MissingHelperException extends Exception
+class MissingHelperException extends CakeException
 {
     /**
      * @inheritDoc

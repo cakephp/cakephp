@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Expression;
 
-use Cake\Database\Exception as DatabaseException;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Type\ExpressionTypeCasterTrait;
 use Cake\Database\ValueBinder;

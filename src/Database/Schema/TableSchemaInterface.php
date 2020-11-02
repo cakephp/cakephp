@@ -215,7 +215,7 @@ interface TableSchemaInterface extends SchemaInterface
      * @param array|string $attrs The attributes for the index.
      *   If string it will be used as `type`.
      * @return $this
-     * @throws \Cake\Database\Exception
+     * @throws \Cake\Database\Exception\DatabaseException
      */
     public function addIndex(string $name, $attrs);
 
@@ -254,7 +254,7 @@ interface TableSchemaInterface extends SchemaInterface
      * @param array|string $attrs The attributes for the constraint.
      *   If string it will be used as `type`.
      * @return $this
-     * @throws \Cake\Database\Exception
+     * @throws \Cake\Database\Exception\DatabaseException
      */
     public function addConstraint(string $name, $attrs);
 

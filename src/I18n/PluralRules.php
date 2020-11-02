@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\I18n;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 
 /**
  * Utility class used to determine the plural number to be used for a variable
@@ -200,6 +200,6 @@ class PluralRules
                 return $n % 10 !== 1 || $n % 100 === 11 ? 1 : 0;
         }
 
-        throw new Exception('Unable to find plural rule number.');
+        throw new CakeException('Unable to find plural rule number.');
     }
 }

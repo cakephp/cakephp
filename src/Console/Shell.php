@@ -19,7 +19,7 @@ namespace Cake\Console;
 use Cake\Console\Exception\ConsoleException;
 use Cake\Console\Exception\StopException;
 use Cake\Core\App;
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Filesystem\Filesystem;
 use Cake\Log\LogTrait;
@@ -874,7 +874,7 @@ class Shell
             $fs->dumpFile($path, $contents);
 
             $this->_io->out(sprintf('<success>Wrote</success> `%s`', $path));
-        } catch (Exception $e) {
+        } catch (CakeException $e) {
             $this->_io->err(sprintf('<error>Could not write to `%s`</error>.', $path), 2);
 
             return false;

@@ -7850,7 +7850,7 @@ class FormHelperTest extends TestCase
      */
     public function testHtml5ControlException()
     {
-        $this->expectException(\Cake\Core\Exception\Exception::class);
+        $this->expectException(\Cake\Core\Exception\CakeException::class);
         $this->Form->email();
     }
 
