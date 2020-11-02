@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\View\Helper;
 
 use Cake\Core\Configure;
+use Cake\Core\Exception\CakeException;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Route\DashedRoute;
 use Cake\Routing\RouteBuilder;
@@ -24,6 +25,7 @@ use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\UrlHelper;
 use Cake\View\View;
+use TestApp\Routing\Asset;
 
 /**
  * UrlHelperTest class
@@ -588,5 +590,39 @@ class UrlHelperTest extends TestCase
         $result = $this->Helper->css('TestTheme.app.css');
         $expected = $cdnPrefix . 'app.css';
         $this->assertSame($expected, $result);
+    }
+
+    /**
+     * Test if an app Asset class is being loaded
+     *
+     * @return void
+     */
+    public function testAppAssetPresent()
+    {
+        $Url = new UrlHelper($this->View, ['assetUrlClassName' => Asset::class]);
+        $Url->webroot = '';
+
+        $result = $Url->assetUrl('cake.generic.css', ['pathPrefix' => '/']);
+        $this->assertSame('/cake.generic.css?appHash', $result);
+
+        $result = $Url->css('cake.generic', ['pathPrefix' => '/']);
+        $this->assertSame('/cake.generic.css?appHash', $result);
+
+        $result = $Url->script('cake.generic', ['pathPrefix' => '/']);
+        $this->assertSame('/cake.generic.js?appHash', $result);
+
+        $result = $Url->image('cake.generic.png', ['pathPrefix' => '/']);
+        $this->assertSame('/cake.generic.png?appHash', $result);
+    }
+
+    /**
+     * Test if UrlHelper fails to load with wrong asset URL class name
+     *
+     * @return void
+     */
+    public function testAppAssetPresentWrong()
+    {
+        $this->expectException(CakeException::class);
+        new UrlHelper($this->View, ['assetUrlClassName' => 'InexistentClass']);
     }
 }
