@@ -16,7 +16,7 @@ declare(strict_types=1);
 namespace Cake\Http;
 
 use Cake\Core\App;
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Http\Client\Adapter\Curl;
 use Cake\Http\Client\Adapter\Stream;
@@ -595,7 +595,7 @@ class Client implements ClientInterface
      *
      * @param string $type short type alias or full mimetype.
      * @return string[] Headers to set on the request.
-     * @throws \Cake\Core\Exception\Exception When an unknown type alias is used.
+     * @throws \Cake\Core\Exception\CakeException When an unknown type alias is used.
      * @psalm-return array{Accept: string, Content-Type: string}
      */
     protected function _typeHeaders(string $type): array
@@ -611,7 +611,7 @@ class Client implements ClientInterface
             'xml' => 'application/xml',
         ];
         if (!isset($typeMap[$type])) {
-            throw new Exception("Unknown type alias '$type'.");
+            throw new CakeException("Unknown type alias '$type'.");
         }
 
         return [
@@ -667,7 +667,7 @@ class Client implements ClientInterface
      * @param array $auth The authentication options to use.
      * @param array $options The overall request options to use.
      * @return object Authentication strategy instance.
-     * @throws \Cake\Core\Exception\Exception when an invalid strategy is chosen.
+     * @throws \Cake\Core\Exception\CakeException when an invalid strategy is chosen.
      */
     protected function _createAuth(array $auth, array $options)
     {
@@ -677,7 +677,7 @@ class Client implements ClientInterface
         $name = ucfirst($auth['type']);
         $class = App::className($name, 'Http/Client/Auth');
         if (!$class) {
-            throw new Exception(
+            throw new CakeException(
                 sprintf('Invalid authentication type %s', $name)
             );
         }

@@ -18,7 +18,7 @@ namespace Cake\ORM;
 
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionTrait;
-use Cake\Database\Exception;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\StatementInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\ResultSetInterface;
@@ -219,7 +219,7 @@ class ResultSet implements ResultSetInterface
      *
      * Part of Iterator interface.
      *
-     * @throws \Cake\Database\Exception
+     * @throws \Cake\Database\Exception\DatabaseException
      * @return void
      */
     public function rewind(): void
@@ -231,7 +231,7 @@ class ResultSet implements ResultSetInterface
         if (!$this->_useBuffering) {
             $msg = 'You cannot rewind an un-buffered ResultSet. '
                 . 'Use Query::bufferResults() to get a buffered ResultSet.';
-            throw new Exception($msg);
+            throw new DatabaseException($msg);
         }
 
         $this->_index = 0;
@@ -303,7 +303,7 @@ class ResultSet implements ResultSetInterface
         if (!$this->_useBuffering) {
             $msg = 'You cannot serialize an un-buffered ResultSet. '
                 . 'Use Query::bufferResults() to get a buffered ResultSet.';
-            throw new Exception($msg);
+            throw new DatabaseException($msg);
         }
 
         while ($this->valid()) {

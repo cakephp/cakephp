@@ -14,14 +14,14 @@ declare(strict_types=1);
  */
 namespace Cake\Routing\Exception;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Throwable;
 
 /**
  * Exception raised when a URL cannot be reverse routed
  * or when a URL cannot be parsed.
  */
-class MissingRouteException extends Exception
+class MissingRouteException extends CakeException
 {
     /**
      * @inheritDoc

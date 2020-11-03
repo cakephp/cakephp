@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Statement;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Database\DriverInterface;
 use PDO;
 use PDOStatement as Statement;
@@ -112,7 +112,7 @@ class PDOStatement extends StatementDecorator
         }
 
         if (!is_int($type)) {
-            throw new Exception(sprintf(
+            throw new CakeException(sprintf(
                 'Fetch type for PDOStatement must be an integer, found `%s` instead',
                 getTypeName($type)
             ));
@@ -149,7 +149,7 @@ class PDOStatement extends StatementDecorator
         }
 
         if (!is_int($type)) {
-            throw new Exception(sprintf(
+            throw new CakeException(sprintf(
                 'Fetch type for PDOStatement must be an integer, found `%s` instead',
                 getTypeName($type)
             ));

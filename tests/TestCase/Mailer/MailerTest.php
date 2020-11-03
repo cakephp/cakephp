@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Mailer;
 
 use Cake\Core\Configure;
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Log\Log;
 use Cake\Mailer\AbstractTransport;
 use Cake\Mailer\Exception\MissingActionException;
@@ -112,7 +112,7 @@ class MailerTest extends TestCase
      */
     public function testTransportInstanceInvalid()
     {
-        $this->expectException(Exception::class);
+        $this->expectException(CakeException::class);
         $this->mailer->setTransport(new \stdClass());
     }
 

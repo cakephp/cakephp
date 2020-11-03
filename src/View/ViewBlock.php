@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\View;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 
 /**
  * ViewBlock implements the concept of Blocks or Slots in the View layer.
@@ -82,13 +82,13 @@ class ViewBlock
      * @param string $mode If ViewBlock::OVERRIDE existing content will be overridden by new content.
      *   If ViewBlock::APPEND content will be appended to existing content.
      *   If ViewBlock::PREPEND it will be prepended.
-     * @throws \Cake\Core\Exception\Exception When starting a block twice
+     * @throws \Cake\Core\Exception\CakeException When starting a block twice
      * @return void
      */
     public function start(string $name, string $mode = ViewBlock::OVERRIDE): void
     {
         if (array_key_exists($name, $this->_active)) {
-            throw new Exception(sprintf("A view block with the name '%s' is already/still open.", $name));
+            throw new CakeException(sprintf("A view block with the name '%s' is already/still open.", $name));
         }
         $this->_active[$name] = $mode;
         ob_start();

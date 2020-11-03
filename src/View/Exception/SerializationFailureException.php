@@ -16,11 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\View\Exception;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 
 /**
  * Used when a SerializedView class fails to serialize data.
  */
-class SerializationFailureException extends Exception
+class SerializationFailureException extends CakeException
 {
 }

@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\TestSuite\Fixture;
 
 use Cake\Core\Configure;
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Database\ConstraintsInterface;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\Schema\TableSchemaAwareInterface;
@@ -274,7 +274,7 @@ class FixtureManager
      *
      * @param \Cake\TestSuite\TestCase $test The test to inspect for fixture loading.
      * @return void
-     * @throws \Cake\Core\Exception\Exception When fixture records cannot be inserted.
+     * @throws \Cake\Core\Exception\CakeException When fixture records cannot be inserted.
      * @throws \RuntimeException
      */
     public function load(TestCase $test): void
@@ -307,7 +307,7 @@ class FixtureManager
                                 get_class($test),
                                 $e->getMessage()
                             );
-                            throw new Exception($msg, null, $e);
+                            throw new CakeException($msg, null, $e);
                         }
                     }
                 }
@@ -341,7 +341,7 @@ class FixtureManager
                             get_class($test),
                             $e->getMessage()
                         );
-                        throw new Exception($msg, null, $e);
+                        throw new CakeException($msg, null, $e);
                     }
                 }
             );
@@ -358,9 +358,10 @@ class FixtureManager
                             get_class($test),
                             $e->getMessage()
                         );
-                        throw new Exception($msg, null, $e);
+                        throw new CakeException($msg, null, $e);
                     }
-                }
+                },
+                true // Run in transaction
             );
         } catch (PDOException $e) {
             $msg = sprintf(
@@ -377,9 +378,10 @@ class FixtureManager
      *
      * @param string[] $names Test fixture names
      * @param \Closure $callback Callback that is run per fixture
+     * @param bool $transactional Whether to run in a transaction
      * @return void
      */
-    protected function runPerFixture(array $names, Closure $callback): void
+    protected function runPerFixture(array $names, Closure $callback, bool $transactional = false): void
     {
         $dbs = $this->groupFixturesByConnection($names);
         foreach ($dbs as $connection => $fixtures) {
@@ -391,13 +393,19 @@ class FixtureManager
             }
 
             $tableCache = $db->getSchemaCollection()->listTables();
-            $db->transactional(function (ConnectionInterface $db) use ($fixtures, $callback, $tableCache) {
-                $db->disableConstraints(function (ConnectionInterface $db) use ($fixtures, $callback, $tableCache) {
-                    foreach ($fixtures as $fixture) {
-                        $callback($db, $fixture, $tableCache);
-                    }
+            if ($transactional) {
+                $db->transactional(function (ConnectionInterface $db) use ($fixtures, $callback, $tableCache) {
+                    $db->disableConstraints(function (ConnectionInterface $db) use ($fixtures, $callback, $tableCache) {
+                        foreach ($fixtures as $fixture) {
+                            $callback($db, $fixture, $tableCache);
+                        }
+                    });
                 });
-            });
+            } else {
+                foreach ($fixtures as $fixture) {
+                    $callback($db, $fixture, $tableCache);
+                }
+            }
 
             if ($logQueries) {
                 $db->enableQueryLogging(true);

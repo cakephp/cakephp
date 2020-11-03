@@ -1375,6 +1375,32 @@ class MarshallerTest extends TestCase
     }
 
     /**
+     * Test merge() doesn't dirty objects which are equal.
+     *
+     * @return void
+     */
+    public function testMergeWithSameObjectValue()
+    {
+        $created = new FrozenTime('2020-10-29');
+        $entity = new Entity([
+            'comment' => 'foo',
+            'created' => $created,
+        ]);
+        $entity->setAccess('*', true);
+        $entity->setNew(false);
+        $entity->clean();
+
+        $data = [
+            'comment' => 'bar',
+            'created' => clone $created,
+        ];
+        $marshall = new Marshaller($this->comments);
+        $marshall->merge($entity, $data);
+
+        $this->assertFalse($entity->isDirty('created'));
+    }
+
+    /**
      * Tests that merge respects the entity accessible methods
      *
      * @return void

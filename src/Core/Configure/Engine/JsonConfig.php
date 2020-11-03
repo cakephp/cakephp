@@ -18,7 +18,7 @@ namespace Cake\Core\Configure\Engine;
 
 use Cake\Core\Configure\ConfigEngineInterface;
 use Cake\Core\Configure\FileConfigTrait;
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 
 /**
  * JSON engine allows Configure to load configuration values from
@@ -71,7 +71,7 @@ class JsonConfig implements ConfigEngineInterface
      * @param string $key The identifier to read from. If the key has a . it will be treated
      *   as a plugin prefix.
      * @return array Parsed configuration values.
-     * @throws \Cake\Core\Exception\Exception When files don't exist or when
+     * @throws \Cake\Core\Exception\CakeException When files don't exist or when
      *   files contain '..' (as this could lead to abusive reads) or when there
      *   is an error parsing the JSON string.
      */
@@ -81,14 +81,14 @@ class JsonConfig implements ConfigEngineInterface
 
         $values = json_decode(file_get_contents($file), true);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new Exception(sprintf(
+            throw new CakeException(sprintf(
                 'Error parsing JSON string fetched from config file "%s.json": %s',
                 $key,
                 json_last_error_msg()
             ));
         }
         if (!is_array($values)) {
-            throw new Exception(sprintf(
+            throw new CakeException(sprintf(
                 'Decoding JSON config file "%s.json" did not return an array',
                 $key
             ));

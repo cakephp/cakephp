@@ -14,12 +14,12 @@ declare(strict_types=1);
  */
 namespace Cake\ORM\Exception;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 
 /**
  * Used when a transaction was rolled back from a callback event.
  */
-class RolledbackTransactionException extends Exception
+class RolledbackTransactionException extends CakeException
 {
     /**
      * @var string

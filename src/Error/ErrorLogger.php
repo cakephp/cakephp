@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Error;
 
 use Cake\Core\Configure;
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Log\Log;
 use Psr\Http\Message\ServerRequestInterface;
@@ -110,7 +110,7 @@ class ErrorLogger implements ErrorLoggerInterface
         );
         $debug = Configure::read('debug');
 
-        if ($debug && $exception instanceof Exception) {
+        if ($debug && $exception instanceof CakeException) {
             $attributes = $exception->getAttributes();
             if ($attributes) {
                 $message .= "\nException Attributes: " . var_export($exception->getAttributes(), true);

@@ -402,7 +402,7 @@ class ClientTest extends TestCase
      */
     public function testInvalidAuthenticationType()
     {
-        $this->expectException(\Cake\Core\Exception\Exception::class);
+        $this->expectException(\Cake\Core\Exception\CakeException::class);
         $mock = $this->getMockBuilder(Stream::class)
             ->onlyMethods(['send'])
             ->getMock();
@@ -597,7 +597,7 @@ class ClientTest extends TestCase
      */
     public function testExceptionOnUnknownType()
     {
-        $this->expectException(\Cake\Core\Exception\Exception::class);
+        $this->expectException(\Cake\Core\Exception\CakeException::class);
         $mock = $this->getMockBuilder(Stream::class)
             ->onlyMethods(['send'])
             ->getMock();

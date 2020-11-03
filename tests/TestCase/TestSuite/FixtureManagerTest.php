@@ -16,12 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\TestSuite;
 
-use Cake\Core\Exception\Exception as CakeException;
+use Cake\Core\Exception\CakeException;
 use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
 use Cake\TestSuite\Fixture\FixtureManager;
-use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
 use PDOException;
 
@@ -49,8 +48,9 @@ class FixtureManagerTest extends TestCase
     public function tearDown(): void
     {
         parent::tearDown();
-        Log::reset();
         $this->clearPlugins();
+        Log::reset();
+        ConnectionManager::get('test')->disableQueryLogging();
     }
 
     /**
@@ -79,16 +79,13 @@ class FixtureManagerTest extends TestCase
      */
     public function testLogSchemaWithDebug()
     {
+        Log::setConfig('queries', ['className' => 'Array']);
+
         $db = ConnectionManager::get('test');
         $restore = $db->isQueryLoggingEnabled();
         $db->enableQueryLogging(true);
 
         $this->manager->setDebug(true);
-        $buffer = new ConsoleOutput();
-        Log::setConfig('testQueryLogger', [
-            'className' => 'Console',
-            'stream' => $buffer,
-        ]);
 
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
         $test->expects($this->any())
@@ -102,7 +99,7 @@ class FixtureManagerTest extends TestCase
         $this->manager->shutdown();
 
         $db->enableQueryLogging($restore);
-        $this->assertStringContainsString('CREATE TABLE', implode('', $buffer->messages()));
+        $this->assertStringContainsString('CREATE TABLE', implode('', Log::engine('queries')->read()));
     }
 
     /**
@@ -113,16 +110,13 @@ class FixtureManagerTest extends TestCase
      */
     public function testResetDbIfTableExists()
     {
+        Log::setConfig('queries', ['className' => 'Array']);
+
         $db = ConnectionManager::get('test');
         $restore = $db->isQueryLoggingEnabled();
         $db->enableQueryLogging(true);
 
         $this->manager->setDebug(true);
-        $buffer = new ConsoleOutput();
-        Log::setConfig('testQueryLogger', [
-            'className' => 'Console',
-            'stream' => $buffer,
-        ]);
 
         $table = new TableSchema('articles', [
             'id' => ['type' => 'integer', 'unsigned' => true],
@@ -142,7 +136,7 @@ class FixtureManagerTest extends TestCase
         $this->manager->load($test);
 
         $db->enableQueryLogging($restore);
-        $this->assertStringContainsString('DROP TABLE', implode('', $buffer->messages()));
+        $this->assertStringContainsString('DROP TABLE', implode('', Log::engine('queries')->read()));
     }
 
     /**
@@ -278,6 +272,59 @@ class FixtureManagerTest extends TestCase
             ->method('getFixtures')
             ->willReturn(['Derp.Derp']);
         $this->manager->fixturize($test);
+    }
+
+    /**
+     * Tests handling unmnaged fixtures which don't
+     * import a schema or defined fields. These tables
+     * should only insert records and not drop/create.
+     *
+     * @return void
+     */
+    public function testLoadUnmanagedFixtures()
+    {
+        $schema = new TableSchema('unmanaged', [
+            'title' => ['type' => 'string', 'length' => 100],
+            'body' => ['type' => 'string', 'length' => 100],
+        ]);
+
+        $conn = ConnectionManager::get('test');
+        foreach ($schema->createSql($conn) as $sql) {
+            $conn->execute($sql);
+        }
+        $conn->newQuery()
+            ->insert(['title', 'body'])
+            ->into('unmanaged')
+            ->values([
+                'title' => 'Existing title',
+                'body' => 'Existing body',
+            ])
+            ->execute();
+
+        Log::setConfig('queries', ['className' => 'Array']);
+        $conn->enableQueryLogging(true);
+
+        $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
+        $test->expects($this->any())
+            ->method('getFixtures')
+            ->willReturn(['core.Unmanaged']);
+
+        $this->manager->setDebug(true);
+        $this->manager->fixturize($test);
+        $this->manager->load($test);
+        $this->assertStringNotContainsString('DROP TABLE', implode('', Log::engine('queries')->read()));
+
+        $stmt = $conn->newQuery()->select(['title', 'body'])->from('unmanaged')->execute();
+        $rows = $stmt->fetchAll();
+        $this->assertCount(2, $rows);
+
+        $this->manager->shutDown();
+        $this->assertStringNotContainsString('DROP TABLE', implode('', Log::engine('queries')->read()));
+        $this->assertContains('unmanaged', $conn->getSchemaCollection()->listTables());
+
+        foreach ($schema->dropSql($conn) as $sql) {
+            $conn->execute($sql);
+        }
     }
 
     /**

@@ -14,13 +14,13 @@ declare(strict_types=1);
  */
 namespace Cake\Error;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Throwable;
 
 /**
  * Represents a fatal error
  */
-class FatalErrorException extends Exception
+class FatalErrorException extends CakeException
 {
     /**
      * Constructor

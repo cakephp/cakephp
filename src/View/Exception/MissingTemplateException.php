@@ -14,13 +14,13 @@ declare(strict_types=1);
  */
 namespace Cake\View\Exception;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Throwable;
 
 /**
  * Used when a template file cannot be found.
  */
-class MissingTemplateException extends Exception
+class MissingTemplateException extends CakeException
 {
     /**
      * @var string

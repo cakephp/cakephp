@@ -14,7 +14,7 @@ declare(strict_types=1);
  */
 namespace Cake\ORM\Exception;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Datasource\EntityInterface;
 use Cake\Utility\Hash;
 use Throwable;
@@ -22,7 +22,7 @@ use Throwable;
 /**
  * Used when a strict save or delete fails
  */
-class PersistenceFailedException extends Exception
+class PersistenceFailedException extends CakeException
 {
     /**
      * The entity on which the persistence operation failed

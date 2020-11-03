@@ -65,7 +65,7 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
      */
     public function testExceptionUnknownSigningMethod()
     {
-        $this->expectException(\Cake\Core\Exception\Exception::class);
+        $this->expectException(\Cake\Core\Exception\CakeException::class);
         $auth = new Oauth();
         $creds = [
             'consumerSecret' => 'it is secret',

@@ -17,19 +17,18 @@ cache:
 
 php:
   - 7.4
+  - nightly
 
 env:
   matrix:
-    - DB=mysql DB_URL='mysql://root@127.0.0.1/cakephp_test?init[]=SET sql_mode = "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"'
-    - DB=pgsql DB_URL='postgres://postgres@127.0.0.1/cakephp_test'
     - DB=sqlite DB_URL='sqlite:///:memory:'
+    - DB=mysql DB_URL='mysql://root@127.0.0.1/cakephp_test'
+    - DB=pgsql DB_URL='postgres://postgres@127.0.0.1/cakephp_test'
 
 matrix:
   include:
     - php: 7.2
       env: PREFER_LOWEST=1
-    - php: nightly
-      env: DB=sqlite DB_URL='sqlite:///:memory:'
 
 before_install:
   - echo cakephp version && tail -1 VERSION.txt

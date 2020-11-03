@@ -14,12 +14,12 @@ declare(strict_types=1);
  */
 namespace Cake\ORM\Exception;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 
 /**
  * Used when a behavior cannot be found.
  */
-class MissingBehaviorException extends Exception
+class MissingBehaviorException extends CakeException
 {
     /**
      * @var string

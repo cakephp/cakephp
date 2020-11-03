@@ -17,7 +17,7 @@ namespace Cake\TestSuite;
 
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
-use Cake\Database\Exception as DatabaseException;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Error\ExceptionRenderer;
 use Cake\Event\EventInterface;
 use Cake\Form\FormProtector;

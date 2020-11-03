@@ -134,7 +134,7 @@ class ShellDispatcher
      * Defines current working environment.
      *
      * @return void
-     * @throws \Cake\Core\Exception\Exception
+     * @throws \Cake\Core\Exception\CakeException
      */
     protected function _initEnvironment(): void
     {

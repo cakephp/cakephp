@@ -16,12 +16,12 @@ declare(strict_types=1);
  */
 namespace Cake\Cache;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Psr\SimpleCache\InvalidArgumentException as InvalidArgumentInterface;
 
 /**
  * Exception raised when cache keys are invalid.
  */
-class InvalidArgumentException extends Exception implements InvalidArgumentInterface
+class InvalidArgumentException extends CakeException implements InvalidArgumentInterface
 {
 }

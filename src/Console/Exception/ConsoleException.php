@@ -16,13 +16,13 @@ declare(strict_types=1);
 namespace Cake\Console\Exception;
 
 use Cake\Console\CommandInterface;
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 
 /**
  * Exception class for Console libraries. This exception will be thrown from Console library
  * classes when they encounter an error.
  */
-class ConsoleException extends Exception
+class ConsoleException extends CakeException
 {
     /**
      * Default exception code
