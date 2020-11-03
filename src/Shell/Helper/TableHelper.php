@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Shell\Helper;
 
 use Cake\Console\Helper;
+use UnexpectedValueException;
 
 /**
  * Create a visually pleasing ASCII art table
@@ -114,7 +115,11 @@ class TableHelper extends Helper
             if (!empty($options['style'])) {
                 $column = $this->_addStyle($column, $options['style']);
             }
-            if ($column !== null && preg_match('#<text-right>.+</text-right>#', $column)) {
+            if ($column !== null && preg_match('#(.*)<text-right>.+</text-right>(.*)#', $column, $matches)) {
+                if ($matches[1] !== '' || $matches[2] !== '') {
+                    throw new UnexpectedValueException('You cannot include text before or after the text-right tag.');
+                }
+                $column = str_replace(['<text-right>', '</text-right>'], '', $column);
                 $out .= '| ' . str_repeat(' ', $pad) . $column . ' ';
             } else {
                 $out .= '| ' . $column . str_repeat(' ', $pad) . ' ';

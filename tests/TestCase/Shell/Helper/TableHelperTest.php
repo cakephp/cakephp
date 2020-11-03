@@ -390,7 +390,7 @@ class TableHelperTest extends TestCase
     {
         $data = [
             ['Item', 'Price per piece (yen)'],
-            ['Apple', '<text-right>200</text-right>'],
+            ['Apple', '<text-right><info>¥</info> 200</text-right>'],
             ['Orange', '100'],
         ];
         $this->helper->output($data);
@@ -398,10 +398,36 @@ class TableHelperTest extends TestCase
             '+--------+-----------------------+',
             '| <info>Item</info>   | <info>Price per piece (yen)</info> |',
             '+--------+-----------------------+',
-            '| Apple  |                   <text-right>200</text-right> |',
+            '| Apple  |                 <info>¥</info> 200 |',
             '| Orange | 100                   |',
             '+--------+-----------------------+',
         ];
         $this->assertEquals($expected, $this->stub->messages());
+    }
+
+    /**
+     * Right-aligned text style test.(If there is text rightside the text-right tag)
+     */
+    public function testTextRightsideTheTextRightTag()
+    {
+        $this->expectException(\UnexpectedValueException::class);
+        $data = [
+            ['Item', 'Price per piece (yen)'],
+            ['Apple', '<text-right>some</text-right>text'],
+        ];
+        $this->helper->output($data);
+    }
+
+    /**
+     * Right-aligned text style test.(If there is text leftside the text-right tag)
+     */
+    public function testTextLeftsideTheTextRightTag()
+    {
+        $this->expectException(\UnexpectedValueException::class);
+        $data = [
+            ['Item', 'Price per piece (yen)'],
+            ['Apple', 'text<text-right>some</text-right>'],
+        ];
+        $this->helper->output($data);
     }
 }
