@@ -20,6 +20,7 @@ use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Postgres;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Driver\Sqlserver;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\StringExpression;
@@ -35,6 +36,7 @@ use Cake\TestSuite\TestCase;
 use DateTimeImmutable;
 use InvalidArgumentException;
 use ReflectionProperty;
+use RuntimeException;
 use stdClass;
 use TestApp\Database\Type\BarType;
 
@@ -867,7 +869,7 @@ class QueryTest extends TestCase
      */
     public function testSelectWhereArrayTypeEmpty()
     {
-        $this->expectException(\Cake\Database\Exception::class);
+        $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage('Impossible to generate condition with empty list of values for field');
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
@@ -885,7 +887,7 @@ class QueryTest extends TestCase
      */
     public function testSelectWhereArrayTypeEmptyWithExpression()
     {
-        $this->expectException(\Cake\Database\Exception::class);
+        $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage('with empty list of values for field (SELECT 1)');
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
@@ -3250,7 +3252,7 @@ class QueryTest extends TestCase
      */
     public function testInsertValuesBeforeInsertFailure()
     {
-        $this->expectException(\Cake\Database\Exception::class);
+        $this->expectException(DatabaseException::class);
         $query = new Query($this->connection);
         $query->select('*')->values([
             'id' => 1,
@@ -3266,10 +3268,23 @@ class QueryTest extends TestCase
      */
     public function testInsertNothing()
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('At least 1 column is required to perform an insert.');
         $query = new Query($this->connection);
         $query->insert([]);
+    }
+
+    /**
+     * Test insert() with no into()
+     *
+     * @return void
+     */
+    public function testInsertNoInto()
+    {
+        $this->expectException(DatabaseException::class);
+        $this->expectExceptionMessage('Could not compile insert query. No table was specified');
+        $query = new Query($this->connection);
+        $query->insert(['title', 'body'])->sql();
     }
 
     /**
@@ -3510,7 +3525,7 @@ class QueryTest extends TestCase
      */
     public function testInsertFailureMixingTypesArrayFirst()
     {
-        $this->expectException(\Cake\Database\Exception::class);
+        $this->expectException(DatabaseException::class);
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
         $query->insert(['name'])
@@ -3524,7 +3539,7 @@ class QueryTest extends TestCase
      */
     public function testInsertFailureMixingTypesQueryFirst()
     {
-        $this->expectException(\Cake\Database\Exception::class);
+        $this->expectException(DatabaseException::class);
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
         $query->insert(['name'])
