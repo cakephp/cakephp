@@ -1,3 +1,4 @@
+image: Visual Studio 2017
 build: false
 platform: 'x64'
 clone_folder: C:\projects\cakephp
@@ -14,11 +15,11 @@ cache:
   - '%LOCALAPPDATA%\Composer\files'
 
 services:
-  - mssql2012sp1
+  - mssql2017
 
 environment:
   global:
-    DB_URL: 'sqlserver://sa:Password12!@.\SQL2012SP1/cakephp?MultipleActiveResultSets=false'
+    DB_URL: 'sqlserver://sa:Password12!@.\SQL2017/cakephp?MultipleActiveResultSets=false'
 
 init:
   - SET PATH=C:\Program Files\OpenSSL;C:\php;%PATH%
