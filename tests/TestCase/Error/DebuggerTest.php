@@ -519,7 +519,7 @@ TEXT;
         $this->assertInstanceOf(NodeInterface::class, $result);
         $this->assertCount(2, $result->getChildren());
 
-        /** @var \Cake\Error\Debug\ArrayItemNode */
+        /** @var \Cake\Error\Debug\ArrayItemNode $item */
         $item = $result->getChildren()[0];
         $key = new ScalarNode('int', 1);
         $this->assertEquals($key, $item->getKey());
