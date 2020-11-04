@@ -638,9 +638,7 @@ class Debugger
      */
     public static function exportNodes($var, int $maxDepth = 3): NodeInterface
     {
-        $context = new DebugContext($maxDepth);
-
-        return static::export($var, $context);
+        return static::export($var, new DebugContext($maxDepth));
     }
 
     /**
