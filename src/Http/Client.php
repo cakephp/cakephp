@@ -548,7 +548,9 @@ class Client implements ClientInterface
         if ($options['port'] && (int)$options['port'] !== $defaultPorts[$options['scheme']]) {
             $out .= ':' . $options['port'];
         }
-        $out .= '/' . trim($options['basePath'], '/');
+        if (!empty($options['basePath'])) {
+            $out .= '/' . trim($options['basePath'], '/');
+        }
         $out .= '/' . ltrim($url, '/');
 
         return $out;

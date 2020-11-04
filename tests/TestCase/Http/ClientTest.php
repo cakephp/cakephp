@@ -1003,7 +1003,7 @@ class ClientTest extends TestCase
             'host' => 'example.co',
             'port' => 80,
             'scheme' => 'http',
-            'basePath' => '/some/uri',
+            'basePath' => '/some/uri/',
             'timeout' => 30,
             'ssl_verify_peer' => true,
             'ssl_verify_peer_name' => true,
