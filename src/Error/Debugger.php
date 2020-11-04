@@ -636,7 +636,7 @@ class Debugger
      * @param int $maxDepth The depth to generate nodes to. Defaults to 3.
      * @return \Cake\Error\Debug\NodeInterface The root node of the tree.
      */
-    public static function exportNodes($var, int $maxDepth = 3): NodeInterface
+    public static function exportVarAsNodes($var, int $maxDepth = 3): NodeInterface
     {
         return static::export($var, new DebugContext($maxDepth));
     }

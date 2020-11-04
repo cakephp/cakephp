@@ -515,7 +515,7 @@ TEXT;
             1 => 'Index one',
             5 => 'Index five',
         ];
-        $result = Debugger::exportNodes($data);
+        $result = Debugger::exportVarAsNodes($data);
         $this->assertInstanceOf(NodeInterface::class, $result);
         $this->assertCount(2, $result->getChildren());
 
