@@ -627,6 +627,23 @@ class Debugger
     }
 
     /**
+     * Convert the variable to the internal node tree.
+     *
+     * The node tree can be manipulated and serialized more easily
+     * than many object graphs can.
+     *
+     * @param mixed $var Variable to convert.
+     * @param int $maxDepth The depth to generate nodes to. Defaults to 3.
+     * @return NodeInterface The root node of the tree.
+     */
+    public static function exportNodes($var, int $maxDepth = 3): NodeInterface
+    {
+        $context = new DebugContext($maxDepth);
+
+        return static::export($var, $context);
+    }
+
+    /**
      * Protected export function used to keep track of indentation and recursion.
      *
      * @param mixed $var The variable to dump.

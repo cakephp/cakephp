@@ -18,6 +18,9 @@ namespace Cake\Test\TestCase\Error;
 
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
+use Cake\Error\Debug\NodeInterface;
+use Cake\Error\Debug\ScalarNode;
+use Cake\Error\Debug\SpecialNode;
 use Cake\Error\Debug\TextFormatter;
 use Cake\Error\Debugger;
 use Cake\Log\Log;
@@ -499,6 +502,41 @@ object(SplFixedArray) id:0 {
 }
 TEXT;
         $this->assertTextEquals($expected, $result);
+    }
+
+    /**
+     * Text exportNodes()
+     *
+     * @return void
+     */
+    public function testExportNodes()
+    {
+        $data = [
+            1 => 'Index one',
+            5 => 'Index five',
+        ];
+        $result = Debugger::exportNodes($data);
+        $this->assertInstanceOf(NodeInterface::class, $result);
+        $this->assertCount(2, $result->getChildren());
+
+        /** @var \Cake\Error\Debug\ArrayItemNode */
+        $item = $result->getChildren()[0];
+        $key = new ScalarNode('int', 1);
+        $this->assertEquals($key, $item->getKey());
+        $value = new ScalarNode('string', 'Index one');
+        $this->assertEquals($value, $item->getValue());
+
+        $data = [
+            'key' => [
+                'value',
+            ],
+        ];
+        $result = Debugger::exportNodes($data, 1);
+
+        $item = $result->getChildren()[0];
+        $nestedItem = $item->getValue()->getChildren()[0];
+        $expected = new SpecialNode('[maximum depth reached]');
+        $this->assertEquals($expected, $nestedItem->getValue());
     }
 
     /**
