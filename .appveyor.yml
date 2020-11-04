@@ -15,11 +15,11 @@ cache:
   - '%LOCALAPPDATA%\Composer\files'
 
 services:
-  - mssql2017
+  - mssql2014
 
 environment:
   global:
-    DB_URL: 'sqlserver://sa:Password12!@.\SQL2017/cakephp?MultipleActiveResultSets=false'
+    DB_URL: 'sqlserver://sa:Password12!@.\SQL2014/cakephp?MultipleActiveResultSets=false'
 
 init:
   - SET PATH=C:\Program Files\OpenSSL;C:\php;%PATH%
