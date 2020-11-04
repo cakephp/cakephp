@@ -505,11 +505,11 @@ TEXT;
     }
 
     /**
-     * Text exportNodes()
+     * Text exportVarAsNodes()
      *
      * @return void
      */
-    public function testExportNodes()
+    public function testExportVarAsNodes()
     {
         $data = [
             1 => 'Index one',
@@ -531,7 +531,7 @@ TEXT;
                 'value',
             ],
         ];
-        $result = Debugger::exportNodes($data, 1);
+        $result = Debugger::exportVarAsNodes($data, 1);
 
         $item = $result->getChildren()[0];
         $nestedItem = $item->getValue()->getChildren()[0];
