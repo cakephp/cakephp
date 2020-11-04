@@ -126,7 +126,7 @@ class ServerCommand extends Command
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
         $this->startup($args, $io);
-        $phpBinary = env('PHP', 'php');
+        $phpBinary = (string)env('PHP', 'php');
         $command = sprintf(
             '%s -S %s:%d -t %s',
             $phpBinary,
