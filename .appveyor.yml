@@ -1,4 +1,4 @@
-image: Visual Studio 2017
+image: Visual Studio 2019
 build: false
 platform: 'x64'
 clone_folder: C:\projects\cakephp
@@ -14,17 +14,15 @@ branches:
 cache:
   - '%LOCALAPPDATA%\Composer\files'
 
-services:
-  - mssql2014
-
 environment:
   global:
-    DB_URL: 'sqlserver://sa:Password12!@.\SQL2014/cakephp?MultipleActiveResultSets=false'
+    DB_URL: 'sqlserver://sa:Password12!@.\SQL2019/cakephp?MultipleActiveResultSets=false'
 
 init:
   - SET PATH=C:\Program Files\OpenSSL;C:\php;%PATH%
   - SET COMPOSER_NO_INTERACTION=1
   - SET ANSICON=121x90 (121x90)
+  - net start MSSQL$SQL2019
 
 install:
   - curl -fsS https://windows.php.net/downloads/qa/php-8.0.0RC3-nts-Win32-vs16-x64.zip -o php.zip
