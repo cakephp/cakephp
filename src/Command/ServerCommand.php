@@ -126,8 +126,10 @@ class ServerCommand extends Command
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
         $this->startup($args, $io);
+        $phpBinary = env('PHP', 'php');
         $command = sprintf(
-            'php -S %s:%d -t %s',
+            '%s -S %s:%d -t %s',
+            $phpBinary,
             $this->_host,
             $this->_port,
             escapeshellarg($this->_documentRoot)
