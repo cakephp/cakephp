@@ -203,33 +203,6 @@ class Client implements ClientInterface
     }
 
     /**
-     * Get the cookies stored in the Client.
-     *
-     * @return \Cake\Http\Cookie\CookieCollection
-     */
-    public function cookies(): CookieCollection
-    {
-        return $this->_cookies;
-    }
-
-    /**
-     * Adds a cookie to the Client collection.
-     *
-     * @param \Cake\Http\Cookie\CookieInterface $cookie Cookie object.
-     * @return $this
-     * @throws \InvalidArgumentException
-     */
-    public function addCookie(CookieInterface $cookie)
-    {
-        if (!$cookie->getDomain() || !$cookie->getPath()) {
-            throw new InvalidArgumentException('Cookie must have a domain and a path set.');
-        }
-        $this->_cookies = $this->_cookies->add($cookie);
-
-        return $this;
-    }
-
-    /**
      * Client instance returned is scoped to the domain, port, and scheme parsed from the passed URL string. The passed
      * string must have a scheme and a domain. Optionally, if a port is included in the string, the port will be scoped
      * too. If a path is included in the URL, the client instance will build urls with it prepended.
@@ -260,6 +233,33 @@ class Client implements ClientInterface
         }
 
         return new static($config);
+    }
+
+    /**
+     * Get the cookies stored in the Client.
+     *
+     * @return \Cake\Http\Cookie\CookieCollection
+     */
+    public function cookies(): CookieCollection
+    {
+        return $this->_cookies;
+    }
+
+    /**
+     * Adds a cookie to the Client collection.
+     *
+     * @param \Cake\Http\Cookie\CookieInterface $cookie Cookie object.
+     * @return $this
+     * @throws \InvalidArgumentException
+     */
+    public function addCookie(CookieInterface $cookie)
+    {
+        if (!$cookie->getDomain() || !$cookie->getPath()) {
+            throw new InvalidArgumentException('Cookie must have a domain and a path set.');
+        }
+        $this->_cookies = $this->_cookies->add($cookie);
+
+        return $this;
     }
 
     /**
