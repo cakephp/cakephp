@@ -3699,7 +3699,7 @@ class QueryTest extends TestCase
         $this->assertWithinRange(
             date('U'),
             (new \DateTime($result->fetchAll('assoc')[0]['d']))->format('U'),
-            1
+            5
         );
 
         $query = new Query($this->connection);
@@ -3709,7 +3709,7 @@ class QueryTest extends TestCase
         $this->assertWithinRange(
             date('U'),
             (new \DateTime($result->fetchAll('assoc')[0]['d']))->format('U'),
-            1
+            5
         );
 
         $query = new Query($this->connection);
