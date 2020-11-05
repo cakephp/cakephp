@@ -114,6 +114,7 @@ class Client implements ClientInterface
         'host' => null,
         'port' => null,
         'scheme' => 'http',
+        'basePath' => '',
         'timeout' => 30,
         'ssl_verify_peer' => true,
         'ssl_verify_peer_name' => true,
@@ -150,6 +151,7 @@ class Client implements ClientInterface
      * - host - The hostname to do requests on.
      * - port - The port to use.
      * - scheme - The default scheme/protocol to use. Defaults to http.
+     * - basePath - A path to append to the domain to use. (/api/v1/)
      * - timeout - The timeout in seconds. Defaults to 30
      * - ssl_verify_peer - Whether or not SSL certificates should be validated.
      *   Defaults to true.
@@ -198,6 +200,39 @@ class Client implements ClientInterface
         } else {
             $this->_cookies = new CookieCollection();
         }
+    }
+
+    /**
+     * Client instance returned is scoped to the domain, port, and scheme parsed from the passed URL string. The passed
+     * string must have a scheme and a domain. Optionally, if a port is included in the string, the port will be scoped
+     * too. If a path is included in the URL, the client instance will build urls with it prepended.
+     * Other parts of the url string are ignored.
+     *
+     * @param  string $url A string URL e.g. https://example.com
+     * @return static
+     * @throws \InvalidArgumentException
+     */
+    public static function createFromUrl(string $url)
+    {
+        $parts = parse_url($url);
+
+        if ($parts === false) {
+            throw new InvalidArgumentException('String ' . $url . ' did not parse');
+        }
+
+        $config = array_intersect_key($parts, ['scheme' => '', 'port' => '', 'host' => '', 'path' => '']);
+        $config = array_merge(['scheme' => '', 'host' => ''], $config);
+
+        if (empty($config['scheme']) || empty($config['host'])) {
+            throw new InvalidArgumentException('The URL was parsed but did not contain a scheme or host');
+        }
+
+        if (isset($config['path'])) {
+            $config['basePath'] = $config['path'];
+            unset($config['path']);
+        }
+
+        return new static($config);
     }
 
     /**
@@ -493,6 +528,7 @@ class Client implements ClientInterface
             'host' => null,
             'port' => null,
             'scheme' => 'http',
+            'basePath' => '',
             'protocolRelative' => false,
         ];
         $options += $defaults;
@@ -511,6 +547,9 @@ class Client implements ClientInterface
         $out = $options['scheme'] . '://' . $options['host'];
         if ($options['port'] && (int)$options['port'] !== $defaultPorts[$options['scheme']]) {
             $out .= ':' . $options['port'];
+        }
+        if (!empty($options['basePath'])) {
+            $out .= '/' . trim($options['basePath'], '/');
         }
         $out .= '/' . ltrim($url, '/');
 
