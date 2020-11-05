@@ -1135,6 +1135,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * - finder: The finder method to use when loading records from this association.
      *   Defaults to 'all'. When the strategy is 'join', only the fields, containments,
      *   and where conditions will be used from the finder.
+     * - propertyName: The property name that should be filled with data from the 
+     *   associated table into the source table results. By default this is the underscored 
+     *   & singular name of the association so user in our example.
      *
      * This method will return the association object that was built.
      *
