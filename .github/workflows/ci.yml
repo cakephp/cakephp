@@ -94,7 +94,7 @@ jobs:
         if [[ ${{ matrix.prefer-lowest == 'prefer-lowest' }} ]]; then
           composer update --prefer-lowest --prefer-stable
         else
-          composer install
+          composer update
         fi
 
     - name: Configure PHPUnit matcher
