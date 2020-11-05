@@ -122,11 +122,11 @@ jobs:
 
   testsuite-windows:
     runs-on: windows-2019
-    name: Windows - PHP 7.4 & SQL Server
+    name: Windows - PHP 8.0 & SQL Server
 
     env:
-      EXTENSIONS: mbstring, intl, apcu, pdo_sqlsrv
-      PHP_VERSION: '7.4'
+      EXTENSIONS: mbstring, intl, sqlsrv-5.9.0preview1, pdo_sqlsrv-5.9.0preview1
+      PHP_VERSION: '8.0'
 
     steps:
     - uses: actions/checkout@v1
@@ -159,6 +159,8 @@ jobs:
         extensions: ${{ env.EXTENSIONS }}
         ini-values: apc.enable_cli = 1, extension = php_fileinfo.dll
         coverage: none
+      env:
+        fail-fast: true
 
     - name: Setup SQLServer
       run: |
@@ -178,7 +180,7 @@ jobs:
         key: ${{ runner.os }}-composer-${{ steps.key-date.outputs.date }}-${{ hashFiles('composer.json') }}
 
     - name: composer install
-      run: composer install
+      run: composer install --no-interaction --ignore-platform-reqs
 
     - name: Run PHPUnit
       env:
