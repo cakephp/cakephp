@@ -17,10 +17,13 @@ jobs:
       matrix:
         php-version: ['7.2', '7.4']
         db-type: [sqlite, mysql, pgsql]
+        prefer-lowest: ['']
         include:
           - php-version: '7.2'
             db-type: 'mariadb'
-    name: PHP ${{ matrix.php-version }} & ${{ matrix.db-type }}
+          - php-version: '7.2'
+            db-type: 'mysql'
+            prefer-lowest: 'prefer-lowest'
 
     services:
       redis:
@@ -87,7 +90,12 @@ jobs:
         sudo locale-gen de_DE.UTF-8
 
     - name: composer install
-      run: composer install
+      run: |
+        if [[ ${{ matrix.prefer-lowest == 'prefer-lowest' }} ]]; then
+          composer update --prefer-lowest --prefer-stable
+        else
+          composer install
+        fi
 
     - name: Configure PHPUnit matcher
       if: matrix.php-version == '7.4' && matrix.db-type == 'mysql'
@@ -106,8 +114,12 @@ jobs:
         if [[ ${{ matrix.php-version }} == '7.2' ]]; then
           vendor/bin/phpunit
         else
-          vendor/bin/phpunit --verbose
+          export CODECOVERAGE=1 && vendor/bin/phpunit --verbose --coverage-clover=coverage.xml
         fi
+
+    - name: Submit code coverage
+      if: success() && matrix.php-version == '7.4'
+      uses: codecov/codecov-action@v1
 
   testsuite-windows:
     runs-on: windows-2019
