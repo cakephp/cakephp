@@ -187,8 +187,8 @@ jobs:
       run: |
           vendor/bin/phpunit --verbose
 
-  coding-standard:
-    name: Coding Standard
+  cs-stan:
+    name: Coding Standard & Static Analysis
     runs-on: ubuntu-18.04
 
     steps:
@@ -202,43 +202,6 @@ jobs:
         php-version: '7.2'
         extensions: mbstring, intl, apcu
         coverage: none
-
-    - name: Get composer cache directory
-      id: composer-cache
-      run: echo "::set-output name=dir::$(composer config cache-files-dir)"
-
-    - name: Get date part for cache key
-      id: key-date
-      run: echo "::set-output name=date::$(date +'%Y-%m')"
-
-    - name: Cache composer dependencies
-      uses: actions/cache@v1
-      with:
-        path: ${{ steps.composer-cache.outputs.dir }}
-        key: ${{ runner.os }}-composer-${{ steps.key-date.outputs.date }}-${{ hashFiles('composer.json') }}
-
-    - name: composer install
-      run: composer install
-
-    - name: Run PHP CodeSniffer
-      run: composer cs-check
-
-  static-analysis:
-    name: Static Analysis
-    runs-on: ubuntu-18.04
-
-    steps:
-    - uses: actions/checkout@v1
-      with:
-        fetch-depth: 1
-
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '7.2'
-        extensions: mbstring, intl, apcu
-        coverage: none
-        tools: cs2pr
 
     - name: Get composer cache directory
       id: composer-cache
@@ -257,8 +220,11 @@ jobs:
     - name: composer install
       run: composer stan-setup
 
+    - name: Run PHP CodeSniffer
+      run: vendor/bin/phpcs --report=checkstyle src/ tests/
+
     - name: Run psalm
       run: vendor/bin/psalm.phar --output-format=github
 
     - name: Run phpstan
-      run: vendor/bin/phpstan.phar analyse --error-format=checkstyle | cs2pr
+      run: vendor/bin/phpstan.phar analyse --error-format=github
