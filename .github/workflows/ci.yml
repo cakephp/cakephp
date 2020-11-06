@@ -91,7 +91,7 @@ jobs:
 
     - name: composer install
       run: |
-        if [[ ${{ matrix.prefer-lowest == 'prefer-lowest' }} ]]; then
+        if ${{ matrix.prefer-lowest == 'prefer-lowest' }}; then
           composer update --prefer-lowest --prefer-stable
         else
           composer update
