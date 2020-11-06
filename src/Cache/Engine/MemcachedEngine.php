@@ -453,13 +453,19 @@ class MemcachedEngine extends CacheEngine
             return false;
         }
 
+        $cleared = true;
         foreach ($keys as $key) {
             if (strpos($key, $this->_config['prefix']) === 0) {
-                $this->_Memcached->delete($key);
+                if (!$this->_Memcached->delete($key)) {
+                    $result = $this->_Memcached->getResultCode();
+                    if ($result !== Memcached::RES_NOTFOUND && $result !== Memcached::RES_SUCCESS) {
+                        $cleared = false;
+                    }
+                }
             }
         }
 
-        return true;
+        return $cleared;
     }
 
     /**
