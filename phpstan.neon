@@ -28,7 +28,6 @@ parameters:
         - '#Binary operation "\+" between array|false and array results in an error#'
         - '#Call to an undefined method DateTimeInterface::setTimezone\(\)#'
         - '#Access to undefined constant NumberFormatter::CURRENCY_ACCOUNTING#'
-        - '#Class APCuIterator referenced with incorrect case: APCUIterator#'
     earlyTerminatingMethodCalls:
         Cake\Console\Shell:
             - abort
