@@ -801,6 +801,7 @@ class MemcachedEngineTest extends TestCase
         $this->assertSame('cache1', Cache::read('some_value', 'memcached'));
 
         Cache::write('some_value', 'cache2', 'memcached2');
+        sleep(1); // try to allow time for getAllKeys() to include everything for clear()
         $this->assertTrue(Cache::clear(false, 'memcached'));
         $this->assertFalse(Cache::read('some_value', 'memcached'));
         $this->assertEquals('cache2', Cache::read('some_value', 'memcached2'));
