@@ -790,7 +790,7 @@ class MemcachedEngineTest extends TestCase
         $this->assertSame(2, Cache::increment('test_increment', 1, 'memcached'));
         $this->assertSame(0, Cache::decrement('test_decrement', 1, 'memcached'));
 
-        sleep(1);
+        sleep(2);
 
         $this->assertNull(Cache::read('test_increment', 'memcached'));
         $this->assertNull(Cache::read('test_decrement', 'memcached'));

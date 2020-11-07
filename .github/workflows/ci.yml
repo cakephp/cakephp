@@ -17,10 +17,13 @@ jobs:
       matrix:
         php-version: ['7.2', '7.4', '8.0']
         db-type: [sqlite, mysql, pgsql]
+        prefer-lowest: ['']
         include:
           - php-version: '7.2'
             db-type: 'mariadb'
-    name: PHP ${{ matrix.php-version }} & ${{ matrix.db-type }}
+          - php-version: '7.2'
+            db-type: 'mysql'
+            prefer-lowest: 'prefer-lowest'
 
     services:
       redis:
@@ -75,7 +78,7 @@ jobs:
       uses: actions/cache@v1
       with:
         path: ${{ steps.composer-cache.outputs.dir }}
-        key: ${{ runner.os }}-composer-${{ steps.key-date.outputs.date }}-${{ hashFiles('composer.json') }}
+        key: ${{ runner.os }}-composer-${{ steps.key-date.outputs.date }}-${{ hashFiles('composer.json') }}-${{ matrix.prefer-lowest }}
 
     - name: Install packages
       run: |
@@ -90,8 +93,10 @@ jobs:
       run: |
         if [[ ${{ matrix.php-version }} == '8.0' ]]; then
           composer install --ignore-platform-reqs
+        elif ${{ matrix.prefer-lowest == 'prefer-lowest' }}; then
+          composer update --prefer-lowest --prefer-stable
         else
-          composer install
+          composer update
         fi
 
     - name: Configure PHPUnit matcher
@@ -108,9 +113,7 @@ jobs:
         if [[ ${{ matrix.db-type }} == 'mariadb' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp'; fi
         if [[ ${{ matrix.db-type }} == 'pgsql' ]]; then export DB_URL='postgres://postgres:postgres@127.0.0.1/postgres'; fi
 
-        if [[ ${{ matrix.php-version }} == '7.2' ]]; then
-          vendor/bin/phpunit
-        elif [[ ${{ matrix.php-version }} == '7.4' ]]; then
+        if [[ ${{ matrix.php-version }} == '7.4' ]]; then
           export CODECOVERAGE=1 && vendor/bin/phpunit --coverage-clover=coverage.xml
         else
           vendor/bin/phpunit
@@ -158,6 +161,7 @@ jobs:
         php-version: ${{ env.PHP_VERSION }}
         extensions: ${{ env.EXTENSIONS }}
         ini-values: apc.enable_cli = 1, extension = php_fileinfo.dll
+        tools: composer:v1
         coverage: none
 
     - name: Setup SQLServer
@@ -186,8 +190,8 @@ jobs:
       run: |
           vendor/bin/phpunit --verbose
 
-  coding-standard:
-    name: Coding Standard
+  cs-stan:
+    name: Coding Standard & Static Analysis
     runs-on: ubuntu-18.04
 
     steps:
@@ -201,43 +205,6 @@ jobs:
         php-version: '7.2'
         extensions: mbstring, intl, apcu
         coverage: none
-
-    - name: Get composer cache directory
-      id: composer-cache
-      run: echo "::set-output name=dir::$(composer config cache-files-dir)"
-
-    - name: Get date part for cache key
-      id: key-date
-      run: echo "::set-output name=date::$(date +'%Y-%m')"
-
-    - name: Cache composer dependencies
-      uses: actions/cache@v1
-      with:
-        path: ${{ steps.composer-cache.outputs.dir }}
-        key: ${{ runner.os }}-composer-${{ steps.key-date.outputs.date }}-${{ hashFiles('composer.json') }}
-
-    - name: composer install
-      run: composer install
-
-    - name: Run PHP CodeSniffer
-      run: composer cs-check
-
-  static-analysis:
-    name: Static Analysis
-    runs-on: ubuntu-18.04
-
-    steps:
-    - uses: actions/checkout@v1
-      with:
-        fetch-depth: 1
-
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '7.2'
-        extensions: mbstring, intl, apcu
-        coverage: none
-        tools: cs2pr
 
     - name: Get composer cache directory
       id: composer-cache
@@ -256,8 +223,11 @@ jobs:
     - name: composer install
       run: composer stan-setup
 
+    - name: Run PHP CodeSniffer
+      run: vendor/bin/phpcs --report=checkstyle src/ tests/
+
     - name: Run psalm
       run: vendor/bin/psalm.phar --output-format=github
 
     - name: Run phpstan
-      run: vendor/bin/phpstan.phar analyse --error-format=checkstyle | cs2pr
+      run: vendor/bin/phpstan.phar analyse --error-format=github
