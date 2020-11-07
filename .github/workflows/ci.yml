@@ -158,6 +158,7 @@ jobs:
         php-version: ${{ env.PHP_VERSION }}
         extensions: ${{ env.EXTENSIONS }}
         ini-values: apc.enable_cli = 1, extension = php_fileinfo.dll
+        tools: composer:v1
         coverage: none
 
     - name: Setup SQLServer
