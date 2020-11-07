@@ -1300,6 +1300,38 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
+     * Insert multiple rows of data in one call make use of bulk inserts.
+     *
+     * @param  array  $columns The columns to insert as ['columnName', 'columnName']
+     * @param  array  $values The values to insert as [['columnName' => 'value'], ... ] or ['value', ...]
+     * @param  array  $types A map between columns & their datatypes.
+     * @return $this
+     */
+    public function insertAll(array $columns, array $values, array $types = [])
+    {
+        $query = $this->insert($columns, $types);
+        foreach ($values as $value) {
+            $preparedValue = [];
+            foreach ($value as $columnName => $val) {
+                if (is_numeric($columnName)) {
+                    if (isset($columns[$columnName]) && !empty($columns[$columnName])) {
+                        $columnName = $columns[$columnName];
+                    } else {
+                        throw new InvalidArgumentException(
+                            'No column found at index ' . $columnName . ' in passed $columns'
+                        );
+                    }
+                }
+                $preparedValue[$columnName] = $val;
+            }
+
+            $query->values($preparedValue);
+        }
+
+        return $this;
+    }
+
+    /**
      * Returns a new Query that has automatic field aliasing disabled.
      *
      * @param \Cake\ORM\Table $table The table this query is starting on

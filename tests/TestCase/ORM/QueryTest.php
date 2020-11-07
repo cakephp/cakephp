@@ -1842,6 +1842,94 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test insertAll method inserts more than one record
+     *
+     * @return void
+     */
+    public function testInsertAll()
+    {
+        $table = $this->getTableLocator()->get('articles');
+
+        $result = $table->query()
+            ->insertAll(
+                ['title'],
+                [
+                    ['title' => 'same ol same'],
+                    ['title' => 'other same ol'],
+                    ['title' => 'more of the same'],
+                ]
+            )
+            ->execute();
+
+        $result->closeCursor();
+
+        $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+        $this->assertEquals(3, $result->rowCount());
+    }
+
+    /**
+     * Test insert method with no column name strings in the values array
+     *
+     * @return void
+     */
+    public function testInsertAllWithNoColumnNames()
+    {
+        $table = $this->getTableLocator()->get('articles');
+        $result = $table->query()
+            ->insertAll(
+                ['title'],
+                [
+                    ['same ol same'],
+                    ['other same ol'],
+                    ['more of the same'],
+                ]
+            )
+            ->execute();
+
+        $result->closeCursor();
+        $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+        $this->assertEquals(3, $result->rowCount());
+    }
+
+    /**
+     * Inspect sql to insure bulk insert is being performed
+     */
+    public function testInsertAllWithSingleBulkInsertQuery()
+    {
+        $table = $this->getTableLocator()->get('articles');
+        $query = $table->query()
+            ->insertAll(
+                ['title'],
+                [
+                    ['same ol same'],
+                    ['other same ol'],
+                    ['more of the same'],
+                ]
+            );
+        $this->assertRegExpSql('^INSERT INTO .+ VALUES (\(.+\),? ?){3}', $query->sql());
+    }
+
+    /**
+     * Test insertAll method will throw an exception if columns don't match
+     *
+     * @return void
+     */
+    public function testInsertAllWithIncorrectColumnMapThrowsException()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $table = $this->getTableLocator()->get('articles');
+
+        $table->query()
+            ->insertAll(
+                ['title'],
+                [
+                    [1 => 'same ol same'],
+                ]
+            )
+            ->execute();
+    }
+
+    /**
      * Test delete method.
      *
      * @return void
