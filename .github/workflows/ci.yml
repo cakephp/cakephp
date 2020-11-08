@@ -118,7 +118,7 @@ jobs:
         fi
 
     - name: Submit code coverage
-      if: success() && matrix.php-version == '7.4'
+      if: matrix.php-version == '7.4'
       uses: codecov/codecov-action@v1
 
   testsuite-windows:
