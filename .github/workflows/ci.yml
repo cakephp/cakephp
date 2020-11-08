@@ -114,7 +114,7 @@ jobs:
         if [[ ${{ matrix.db-type }} == 'pgsql' ]]; then export DB_URL='postgres://postgres:postgres@127.0.0.1/postgres'; fi
 
         if [[ ${{ matrix.php-version }} == '7.4' ]]; then
-          export CODECOVERAGE=1 && vendor/bin/phpunit --coverage-clover=coverage.xml
+          export CODECOVERAGE=1 && vendor/bin/phpunit --verbose --coverage-clover=coverage.xml
         else
           vendor/bin/phpunit
         fi
@@ -161,7 +161,6 @@ jobs:
         php-version: ${{ env.PHP_VERSION }}
         extensions: ${{ env.EXTENSIONS }}
         ini-values: apc.enable_cli = 1, extension = php_fileinfo.dll
-        tools: composer:v1
         coverage: none
 
     - name: Setup SQLServer
