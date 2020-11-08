@@ -97,9 +97,9 @@ jobs:
           composer update
         fi
 
-    - name: Configure PHPUnit matcher
+    - name: Setup problem matchers for PHPUnit
       if: matrix.php-version == '7.4' && matrix.db-type == 'mysql'
-      uses: mheap/phpunit-matcher-action@master
+      run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
     - name: Run PHPUnit
       env:
