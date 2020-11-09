@@ -5,7 +5,6 @@
 /tags
 /composer.lock
 /phpunit.xml
-/phpcs.xml
 /vendor
 /vendors
 /composer.phar
