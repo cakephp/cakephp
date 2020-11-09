@@ -97,9 +97,9 @@ jobs:
           composer update
         fi
 
-    - name: Configure PHPUnit matcher
+    - name: Setup problem matchers for PHPUnit
       if: matrix.php-version == '7.4' && matrix.db-type == 'mysql'
-      uses: mheap/phpunit-matcher-action@master
+      run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
     - name: Run PHPUnit
       env:
@@ -118,7 +118,7 @@ jobs:
         fi
 
     - name: Submit code coverage
-      if: success() && matrix.php-version == '7.4'
+      if: matrix.php-version == '7.4'
       uses: codecov/codecov-action@v1
 
   testsuite-windows:
@@ -224,7 +224,9 @@ jobs:
       run: vendor/bin/phpcs --report=checkstyle src/ tests/
 
     - name: Run psalm
+      if: success() || failure()
       run: vendor/bin/psalm.phar --output-format=github
 
     - name: Run phpstan
+      if: success() || failure()
       run: vendor/bin/phpstan.phar analyse --error-format=github
