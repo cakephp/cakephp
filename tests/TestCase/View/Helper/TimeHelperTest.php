@@ -57,7 +57,7 @@ class TimeHelperTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Time::$defaultLocale = 'en_US';
+        Time::$defaultLocale = null;
         I18n::setLocale($this->locale);
     }
 

@@ -2217,6 +2217,7 @@ class QueryTest extends TestCase
             ->from('articles')
             ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
             ->group('author_id')
+            ->order(['total' => 'desc'])
             ->execute();
         $expected = [['total' => 2, 'author_id' => 1], ['total' => '1', 'author_id' => 3]];
         $this->assertEquals($expected, $result->fetchAll('assoc'));
@@ -2402,6 +2403,7 @@ class QueryTest extends TestCase
                 ->group('author_id')
                 ->having(['count(author_id) >' => 2], ['count(author_id)' => 'integer'])
                 ->orHaving(['count(author_id) <' => 2], ['count(author_id)' => 'integer'])
+                ->order(['total' => 'desc'])
                 ->execute();
             $expected = [['total' => 1, 'author_id' => 3]];
             $this->assertEquals($expected, $result->fetchAll('assoc'));
@@ -2414,6 +2416,7 @@ class QueryTest extends TestCase
                 ->group('author_id')
                 ->having(['count(author_id) >' => 2], ['count(author_id)' => 'integer'])
                 ->orHaving(['count(author_id) <=' => 2], ['count(author_id)' => 'integer'])
+                ->order(['total' => 'desc'])
                 ->execute();
             $expected = [['total' => 2, 'author_id' => 1], ['total' => 1, 'author_id' => 3]];
             $this->assertEquals($expected, $result->fetchAll('assoc'));
@@ -2428,6 +2431,7 @@ class QueryTest extends TestCase
                 ->orHaving(function ($e) {
                     return $e->add('count(author_id) = 1 + 1');
                 })
+                ->order(['total' => 'desc'])
                 ->execute();
             $expected = [['total' => 2, 'author_id' => 1]];
             $this->assertEquals($expected, $result->fetchAll('assoc'));
