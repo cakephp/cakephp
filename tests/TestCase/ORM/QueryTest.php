@@ -2935,6 +2935,7 @@ class QueryTest extends TestCase
     public function testCountPaginatorBeforeFind()
     {
         $table = $this->getTableLocator()->get('Articles');
+        $table->getConnection()->getDriver()->enableAutoQuoting(false);
         $table->hasMany('Comments');
         $table->getEventManager()
             ->on('Model.beforeFind', function (Event $event, $query) {
