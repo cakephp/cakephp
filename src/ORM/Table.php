@@ -125,6 +125,8 @@ use RuntimeException;
  * lifecycle methods below:
  *
  * - `beforeFind(EventInterface $event, Query $query, ArrayObject $options, boolean $primary)`
+ * - `beforeMarshal(EventInterface $event, ArrayObject $data, ArrayObject $options)`
+ * - `afterMarshal(EventInterface $event, EntityInterface $entity, ArrayObject $options)`
  * - `buildValidator(EventInterface $event, Validator $validator, string $name)`
  * - `buildRules(RulesChecker $rules)`
  * - `beforeRules(EventInterface $event, EntityInterface $entity, ArrayObject $options, string $operation)`
@@ -134,8 +136,10 @@ use RuntimeException;
  * - `afterSaveCommit(EventInterface $event, EntityInterface $entity, ArrayObject $options)`
  * - `beforeDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options)`
  * - `afterDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options)`
+ * - `afterDeleteCommit(EventInterface $event, EntityInterface $entity, ArrayObject $options)`
  *
  * @see \Cake\Event\EventManager for reference on the events system.
+ * @link https://book.cakephp.org/4/en/orm/table-objects.html#event-list
  */
 class Table implements RepositoryInterface, EventListenerInterface, EventDispatcherInterface, ValidatorAwareInterface
 {
