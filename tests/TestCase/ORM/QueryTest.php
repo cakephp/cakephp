@@ -2939,34 +2939,10 @@ class QueryTest extends TestCase
         $table->hasMany('Comments');
         $table->getEventManager()
             ->on('Model.beforeFind', function (Event $event, $query) {
-                $expected = 'SELECT (COUNT(*)) AS count FROM articles Articles';
-                $this->assertEquals($expected, $query->sql());
-            });
-
-        $actual = $table->find()
-            ->offset(10)
-            ->limit(20)
-            ->order(['Articles.id' => 'DESC'])
-            ->contain(['Comments'])
-            ->count();
-        $this->assertEquals(3, $actual);
-    }
-
-    /**
-     * Test that `count()` provides the correct Query object in `beforeFind`.
-     *
-     * @return void
-     */
-    public function testCountPaginatorBeforeFindAutoQuoted()
-    {
-        $this->skipIf(!$this->connection->getDriver() instanceof \Cake\Database\Driver\Mysql);
-        $table = $this->getTableLocator()->get('Articles');
-        $table->getConnection()->getDriver()->enableAutoQuoting();
-        $table->hasMany('Comments');
-        $table->getEventManager()
-            ->on('Model.beforeFind', function (Event $event, $query) {
-                $expected = 'SELECT (COUNT(*)) AS `count` FROM `articles` `Articles`';
-                $this->assertEquals($expected, $query->sql());
+                $expected = [
+                    'count' => $query->func()->count('*'),
+                ];
+                $this->assertEquals($expected, $query->clause('select'));
             });
 
         $actual = $table->find()
