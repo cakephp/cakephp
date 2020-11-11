@@ -60,6 +60,13 @@ class TableLocator extends AbstractLocator implements LocatorInterface
     protected $_fallbacked = [];
 
     /**
+     * Fallback class to use
+     *
+     * @var \Cake\ORM\Table;
+     */
+    protected $fallbackClassName = Table::class;
+
+    /**
      * Constructor.
      *
      * @param array|null $locations Locations where tables should be looked for.
@@ -184,7 +191,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
                 [, $table] = pluginSplit($options['className']);
                 $options['table'] = Inflector::underscore($table);
             }
-            $options['className'] = Table::class;
+            $options['className'] = $this->fallbackClassName;
         }
 
         if (empty($options['connection'])) {
@@ -205,7 +212,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
         $options['registryAlias'] = $alias;
         $instance = $this->_create($options);
 
-        if ($options['className'] === Table::class) {
+        if ($options['className'] === $this->fallbackClassName) {
             $this->_fallbacked[$alias] = $instance;
         }
 
