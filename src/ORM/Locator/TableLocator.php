@@ -21,6 +21,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\Locator\AbstractLocator;
 use Cake\Datasource\RepositoryInterface;
 use Cake\ORM\AssociationCollection;
+use Cake\ORM\Exception\MissingTableClassException;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 use RuntimeException;
@@ -65,6 +66,13 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      * @var \Cake\ORM\Table;
      */
     protected $fallbackClassName = Table::class;
+
+    /**
+     * Whether fallback class should be used if a table class could not be found.
+     *
+     * @var bool
+     */
+    protected $useFallbackClass = true;
 
     /**
      * Constructor.
@@ -180,10 +188,11 @@ class TableLocator extends AbstractLocator implements LocatorInterface
             $options += $this->_config[$alias];
         }
 
+        $useFallbackClass = $options['useFallbackClass'] ?? $this->useFallbackClass;
         $className = $this->_getClassName($alias, $options);
         if ($className) {
             $options['className'] = $className;
-        } else {
+        } elseif ($useFallbackClass) {
             if (empty($options['className'])) {
                 $options['className'] = $alias;
             }
@@ -192,6 +201,13 @@ class TableLocator extends AbstractLocator implements LocatorInterface
                 $options['table'] = Inflector::underscore($table);
             }
             $options['className'] = $this->fallbackClassName;
+        } else {
+            $message = $options['className'] ?? $alias;
+            $message = '`' . $message . '`';
+            if (strpos($message, '\\') === false) {
+                $message = 'for alias ' . $message;
+            }
+            throw new MissingTableClassException([$message]);
         }
 
         if (empty($options['connection'])) {
