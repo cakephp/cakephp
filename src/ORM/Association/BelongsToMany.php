@@ -270,7 +270,7 @@ class BelongsToMany extends Association
 
             $config = [];
             if (!$tableLocator->exists($tableAlias)) {
-                $config = ['table' => $tableName];
+                $config = ['table' => $tableName, 'useFallbackClass' => true];
 
                 // Propagate the connection if we'll get an auto-model
                 if (!App::className($tableAlias, 'Model/Table', 'Table')) {
