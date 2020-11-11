@@ -718,6 +718,21 @@ class IntegrationTestTraitTest extends TestCase
     }
 
     /**
+     * Test flash assertions stored with enableRememberFlashMessages() after a
+     * redirect.
+     *
+     * @return void
+     */
+    public function testFlashAssertionsAfterRedirect()
+    {
+        $this->get('/posts/someRedirect');
+
+        $this->assertResponseCode(302);
+
+        $this->assertSession('An error message', 'Flash.flash.0.message');
+    }
+
+    /**
      * Test flash assertions stored with enableRememberFlashMessages() after they
      * are rendered
      *
@@ -727,6 +742,8 @@ class IntegrationTestTraitTest extends TestCase
     {
         $this->enableRetainFlashMessages();
         $this->get('/posts/index/with_flash');
+
+        $this->assertResponseCode(200);
 
         $this->assertSession('An error message', 'Flash.flash.0.message');
     }
