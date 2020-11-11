@@ -63,7 +63,8 @@ class TableLocator extends AbstractLocator implements LocatorInterface
     /**
      * Fallback class to use
      *
-     * @var \Cake\ORM\Table;
+     * @var string
+     * @psalm-var class-string<\Cake\ORM\Table>
      */
     protected $fallbackClassName = Table::class;
 
