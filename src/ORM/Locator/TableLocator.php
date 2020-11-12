@@ -98,11 +98,13 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      * Set if fallback class should be used.
      *
      * @param bool $enable Flag to enable or disable fallback
-     * @return void
+     * @return $this
      */
-    public function useFallbackClass(bool $enable): void
+    public function useFallbackClass(bool $enable)
     {
         $this->useFallbackClass = $enable;
+
+        return $this;
     }
 
     /**

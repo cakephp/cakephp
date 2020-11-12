@@ -1235,9 +1235,7 @@ class BelongsToManyTest extends TestCase
             'sourceTable' => $this->article,
             'targetTable' => $this->tag,
         ]);
-        $tableLocator = new TableLocator();
-        $tableLocator->useFallbackClass(false);
-        $assoc->setTableLocator($tableLocator);
+        $assoc->setTableLocator((new TableLocator())->useFallbackClass(false));
         $junction = $assoc->junction();
         $this->assertInstanceOf(Table::class, $junction);
     }
