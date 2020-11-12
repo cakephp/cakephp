@@ -41,6 +41,9 @@ namespace App;
 
 use Cake\Core\HttpApplicationInterface;
 use Cake\Http\MiddlewareQueue;
+use Cake\Http\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class Application implements HttpApplicationInterface
 {
@@ -65,6 +68,17 @@ class Application implements HttpApplicationInterface
     {
         // Add middleware for your application.
         return $middlewareQueue;
+    }
+
+    /**
+     * Handle incoming server request and return a response.
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function handle(ServerRequestInterface $request): ResponseInterface
+    {
+        return new Response(['body'=>'Hello World!']);
     }
 }
 ```
