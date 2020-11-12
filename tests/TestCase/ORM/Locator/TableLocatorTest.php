@@ -720,4 +720,12 @@ class TableLocatorTest extends TestCase
         $table = $locator->get('Addresses');
         $this->assertInstanceOf(AddressesTable::class, $table);
     }
+
+    public function testSetFallbackClassName()
+    {
+        $this->_locator->setFallbackClassName(ArticlesTable::class);
+
+        $table = $this->_locator->get('FooBar');
+        $this->assertInstanceOf(ArticlesTable::class, $table);
+    }
 }

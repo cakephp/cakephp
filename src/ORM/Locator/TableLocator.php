@@ -108,6 +108,20 @@ class TableLocator extends AbstractLocator implements LocatorInterface
     }
 
     /**
+     * Set fallback class name.
+     *
+     * @param string $className Fallback class name
+     * @return $this
+     * @psalm-param class-string<\Cake\ORM\Table> $className
+     */
+    public function setFallbackClassName($className)
+    {
+        $this->fallbackClassName = $className;
+
+        return $this;
+    }
+
+    /**
      * @inheritDoc
      */
     public function setConfig($alias, $options = null)
