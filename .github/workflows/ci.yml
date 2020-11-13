@@ -58,12 +58,19 @@ jobs:
       with:
         fetch-depth: 1
 
+    - uses: haya14busa/action-cond@v1
+      id: jit-option
+      with:
+        cond: ${{ matrix.php-version == '8.0' }}
+        if_true: 'opcache.enable_cli=1, opcache.jit_buffer_size=100M'
+        if_false: ''
+
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php-version }}
-        extensions: mbstring, intl, apcu, pdo_${{ matrix.db-type }}
-        ini-values: apc.enable_cli = 1
+        extensions: mbstring, intl, pdo_${{ matrix.db-type }}
+        ini-values: ${{ steps.jit-option.outputs.value }}
         coverage: pcov
 
     - name: Get composer cache directory
