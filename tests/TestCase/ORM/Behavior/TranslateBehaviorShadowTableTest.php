@@ -669,7 +669,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
      *
      * The parent test expects description translations in only some of the records
      * that's incompatible with the shadow-translate behavior, since the schema
-     * dictates what fields to expect to be translated and doesnt permit any EAV
+     * dictates what fields to expect to be translated and doesn't permit any EAV
      * style translations
      *
      * @return void
