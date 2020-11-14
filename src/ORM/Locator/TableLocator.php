@@ -97,6 +97,9 @@ class TableLocator extends AbstractLocator implements LocatorInterface
     /**
      * Set if fallback class should be used.
      *
+     * Controls whether a fallback class should be used to create a table
+     * instance if a concrete class for alias used in `get()` could not be found.
+     *
      * @param bool $enable Flag to enable or disable fallback
      * @return $this
      */
@@ -109,6 +112,10 @@ class TableLocator extends AbstractLocator implements LocatorInterface
 
     /**
      * Set fallback class name.
+     *
+     * The class that should be used to create a table instance if a concrete
+     * class for alias used in `get()` could not be found. Defaults to
+     * `Cake\ORM\Table`.
      *
      * @param string $className Fallback class name
      * @return $this
