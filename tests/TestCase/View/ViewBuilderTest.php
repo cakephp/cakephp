@@ -448,4 +448,17 @@ class ViewBuilderTest extends TestCase
         ];
         $this->assertSame($expected, $helpers);
     }
+
+    /**
+     * @return void
+     */
+    public function testAddHelperOptions()
+    {
+        $builder = new ViewBuilder();
+        $builder->addHelper('Form')
+            ->addHelper('Text', ['foo' => 'bar']);
+
+        $helpers = $builder->getHelpers();
+        $this->assertSame(['foo' => 'bar'], $helpers['Text']);
+    }
 }
