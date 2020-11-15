@@ -305,12 +305,19 @@ class ViewBuilder implements JsonSerializable, Serializable
      * Adds a helper to use.
      *
      * @param string $helper Helper to use.
+     * @param array $options Options.
      * @return $this
      * @since 4.1.0
      */
-    public function addHelper(string $helper)
+    public function addHelper(string $helper, array $options = [])
     {
-        return $this->setHelpers([$helper]);
+        if ($options) {
+            $array = [$helper => $options];
+        } else {
+            $array = [$helper];
+        }
+
+        return $this->setHelpers($array);
     }
 
     /**
