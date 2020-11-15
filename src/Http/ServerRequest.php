@@ -161,6 +161,13 @@ class ServerRequest implements ServerRequestInterface
     protected $session;
 
     /**
+     * Instance of a FlashMessage object relative to this request
+     *
+     * @var \Cake\Http\FlashMessage
+     */
+    protected $flash;
+
+    /**
      * Store the additional attributes attached to the request.
      *
      * @var array
@@ -172,7 +179,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @var array
      */
-    protected $emulatedAttributes = ['session', 'webroot', 'base', 'params', 'here'];
+    protected $emulatedAttributes = ['session', 'flash', 'webroot', 'base', 'params', 'here'];
 
     /**
      * Array of Psr\Http\Message\UploadedFileInterface objects.
@@ -288,6 +295,7 @@ class ServerRequest implements ServerRequestInterface
         $this->query = $config['query'];
         $this->params = $config['params'];
         $this->session = $config['session'];
+        $this->flash = new FlashMessage($this->session);
     }
 
     /**
@@ -339,6 +347,16 @@ class ServerRequest implements ServerRequestInterface
     public function getSession(): Session
     {
         return $this->session;
+    }
+
+    /**
+     * Returns the instance of the FlashMessage object for this request
+     *
+     * @return \Cake\Http\FlashMessage
+     */
+    public function getFlash(): FlashMessage
+    {
+        return $this->flash;
     }
 
     /**

@@ -18,6 +18,7 @@ namespace Cake\TestSuite;
 use Cake\Core\Configure;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Event\EventManager;
+use Cake\Http\FlashMessage;
 use Cake\Http\Server;
 use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
@@ -164,7 +165,9 @@ class MiddlewareDispatcher
             $spec['cookies'],
             $spec['files']
         );
-        $request = $request->withAttribute('session', $spec['session']);
+        $request = $request
+            ->withAttribute('session', $spec['session'])
+            ->withAttribute('flash', new FlashMessage($spec['session']));
 
         return $request;
     }
