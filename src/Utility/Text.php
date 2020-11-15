@@ -203,6 +203,11 @@ class Text
         }
 
         if (strpos($str, '?') !== false && is_numeric(key($data))) {
+            deprecationWarning(
+                'Using Text::insert() with `?` placeholders is deprecated. ' .
+                'Use sprintf() with `%s` placeholders instead.'
+            );
+
             $offset = 0;
             while (($pos = strpos($str, '?', $offset)) !== false) {
                 $val = array_shift($data);
