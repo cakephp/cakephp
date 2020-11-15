@@ -218,19 +218,12 @@ class CollectionTest extends TestCase
     {
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
-        $callable = $this->getMockBuilder(stdClass::class)
-            ->addMethods(['__invoke'])
-            ->getMock();
-        $callable->expects($this->at(0))
-            ->method('__invoke')
-            ->with(1, 'a');
-        $callable->expects($this->at(1))
-            ->method('__invoke')
-            ->with(2, 'b');
-        $callable->expects($this->at(2))
-            ->method('__invoke')
-            ->with(3, 'c');
-        $collection->each($callable);
+
+        $results = [];
+        $collection->each(function ($value, $key) use (&$results) {
+            $results[] = [$key => $value];
+        });
+        $this->assertSame([['a' => 1], ['b' => 2], ['c' => 3]], $results);
     }
 
     public function filterProvider()
@@ -254,7 +247,7 @@ class CollectionTest extends TestCase
         $collection = new Collection($items);
         $result = $collection->filter()->toArray();
         $expected = [1, 2, 3, 4, 5];
-        $this->assertEquals($expected, array_values($result));
+        $this->assertSame($expected, array_values($result));
     }
 
     /**
@@ -266,19 +259,17 @@ class CollectionTest extends TestCase
     {
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
-        $callable = $this->getMockBuilder(stdClass::class)
-            ->addMethods(['__invoke'])
-            ->getMock();
 
-        $callable->expects($this->once())
-            ->method('__invoke')
-            ->with(3, 'c');
         $filtered = $collection->filter(function ($value, $key, $iterator) {
             return $value > 2;
         });
+        $this->assertInstanceOf(Collection::class, $filtered);
 
-        $this->assertInstanceOf('Cake\Collection\Collection', $filtered);
-        $filtered->each($callable);
+        $results = [];
+        $filtered->each(function ($value, $key) use (&$results) {
+            $results[] = [$key => $value];
+        });
+        $this->assertSame([['c' => 3]], $results);
     }
 
     /**
@@ -314,23 +305,14 @@ class CollectionTest extends TestCase
     {
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
-        $callable = $this->getMockBuilder(stdClass::class)
-            ->addMethods(['__invoke'])
-            ->getMock();
 
-        $callable->expects($this->at(0))
-            ->method('__invoke')
-            ->with(1, 'a')
-            ->will($this->returnValue(true));
-        $callable->expects($this->at(1))
-            ->method('__invoke')
-            ->with(2, 'b')
-            ->will($this->returnValue(true));
-        $callable->expects($this->at(2))
-            ->method('__invoke')
-            ->with(3, 'c')
-            ->will($this->returnValue(true));
-        $this->assertTrue($collection->every($callable));
+        $results = [];
+        $this->assertTrue($collection->every(function ($value, $key) use (&$results) {
+            $results[] = [$key => $value];
+
+            return true;
+        }));
+        $this->assertSame([['a' => 1], ['b' => 2], ['c' => 3]], $results);
     }
 
     /**
@@ -342,30 +324,14 @@ class CollectionTest extends TestCase
     {
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
-        $callable = $this->getMockBuilder(stdClass::class)
-            ->addMethods(['__invoke'])
-            ->getMock();
 
-        $callable->expects($this->at(0))
-            ->method('__invoke')
-            ->with(1, 'a')
-            ->will($this->returnValue(true));
-        $callable->expects($this->at(1))
-            ->method('__invoke')
-            ->with(2, 'b')
-            ->will($this->returnValue(false));
-        $callable->expects($this->exactly(2))->method('__invoke');
-        $this->assertFalse($collection->every($callable));
+        $results = [];
+        $this->assertFalse($collection->every(function ($value, $key) use (&$results) {
+            $results[] = [$key => $value];
 
-        $items = [];
-        $collection = new Collection($items);
-        $callable = $this->getMockBuilder(stdClass::class)
-            ->addMethods(['__invoke'])
-            ->getMock();
-
-        $callable->expects($this->never())
-            ->method('__invoke');
-        $this->assertTrue($collection->every($callable));
+            return $key !== 'b';
+        }));
+        $this->assertSame([['a' => 1], ['b' => 2]], $results);
     }
 
     /**
@@ -383,20 +349,14 @@ class CollectionTest extends TestCase
 
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
-        $callable = $this->getMockBuilder(stdClass::class)
-            ->addMethods(['__invoke'])
-            ->getMock();
 
-        $callable->expects($this->at(0))
-            ->method('__invoke')
-            ->with(1, 'a')
-            ->will($this->returnValue(false));
-        $callable->expects($this->at(1))
-            ->method('__invoke')
-            ->with(2, 'b')
-            ->will($this->returnValue(true));
-        $callable->expects($this->exactly(2))->method('__invoke');
-        $this->assertTrue($collection->some($callable));
+        $results = [];
+        $this->assertTrue($collection->some(function ($value, $key) use (&$results) {
+            $results[] = [$key => $value];
+
+            return $key === 'b';
+        }));
+        $this->assertSame([['a' => 1], ['b' => 2]], $results);
     }
 
     /**
@@ -408,23 +368,14 @@ class CollectionTest extends TestCase
     {
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
-        $callable = $this->getMockBuilder(stdClass::class)
-            ->addMethods(['__invoke'])
-            ->getMock();
 
-        $callable->expects($this->at(0))
-            ->method('__invoke')
-            ->with(1, 'a')
-            ->will($this->returnValue(false));
-        $callable->expects($this->at(1))
-            ->method('__invoke')
-            ->with(2, 'b')
-            ->will($this->returnValue(false));
-        $callable->expects($this->at(2))
-            ->method('__invoke')
-            ->with(3, 'c')
-            ->will($this->returnValue(false));
-        $this->assertFalse($collection->some($callable));
+        $results = [];
+        $this->assertFalse($collection->some(function ($value, $key) use (&$results) {
+            $results[] = [$key => $value];
+
+            return false;
+        }));
+        $this->assertSame([['a' => 1], ['b' => 2], ['c' => 3]], $results);
     }
 
     /**
@@ -487,27 +438,9 @@ class CollectionTest extends TestCase
     public function testReduceWithInitialValue($items)
     {
         $collection = new Collection($items);
-        $callable = $this->getMockBuilder(stdClass::class)
-            ->addMethods(['__invoke'])
-            ->getMock();
-
-        $callable->expects($this->at(0))
-            ->method('__invoke')
-            ->with(10, 1, 'a')
-            ->will($this->returnValue(11));
-        $callable->expects($this->at(1))
-            ->method('__invoke')
-            ->with(11, 2, 'b')
-            ->will($this->returnValue(13));
-        $callable->expects($this->at(2))
-            ->method('__invoke')
-            ->with(13, 3, 'c')
-            ->will($this->returnValue(16));
-        $callable->expects($this->at(3))
-            ->method('__invoke')
-            ->with(16, 4, 'd')
-            ->will($this->returnValue(20));
-        $this->assertSame(20, $collection->reduce($callable, 10));
+        $this->assertSame(20, $collection->reduce(function ($reduction, $value, $key) {
+            return $value + $reduction;
+        }, 10));
     }
 
     /**
@@ -519,23 +452,9 @@ class CollectionTest extends TestCase
     public function testReduceWithoutInitialValue($items)
     {
         $collection = new Collection($items);
-        $callable = $this->getMockBuilder(stdClass::class)
-            ->addMethods(['__invoke'])
-            ->getMock();
-
-        $callable->expects($this->at(0))
-            ->method('__invoke')
-            ->with(1, 2, 'b')
-            ->will($this->returnValue(3));
-        $callable->expects($this->at(1))
-            ->method('__invoke')
-            ->with(3, 3, 'c')
-            ->will($this->returnValue(6));
-        $callable->expects($this->at(2))
-            ->method('__invoke')
-            ->with(6, 4, 'd')
-            ->will($this->returnValue(10));
-        $this->assertSame(10, $collection->reduce($callable));
+        $this->assertSame(10, $collection->reduce(function ($reduction, $value, $key) {
+            return $value + $reduction;
+        }));
     }
 
     /**
@@ -1243,25 +1162,18 @@ class CollectionTest extends TestCase
     {
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
-        $callable = $this->getMockBuilder(stdClass::class)
-            ->addMethods(['__invoke'])
-            ->getMock();
 
-        $callable->expects($this->at(0))
-            ->method('__invoke')
-            ->with(1, 'a')
-            ->will($this->returnValue(4));
-        $callable->expects($this->at(1))
-            ->method('__invoke')
-            ->with(2, 'b')
-            ->will($this->returnValue(5));
-        $callable->expects($this->at(2))
-            ->method('__invoke')
-            ->with(3, 'c')
-            ->will($this->returnValue(6));
-        $compiled = $collection->map($callable)->compile();
-        $this->assertEquals(['a' => 4, 'b' => 5, 'c' => 6], $compiled->toArray());
-        $this->assertEquals(['a' => 4, 'b' => 5, 'c' => 6], $compiled->toArray());
+        $results = [];
+        $compiled = $collection
+            ->map(function ($value, $key) use (&$results) {
+                $results[] = [$key => $value];
+
+                return $value + 3;
+            })
+            ->compile();
+        $this->assertSame(['a' => 4, 'b' => 5, 'c' => 6], $compiled->toArray());
+        $this->assertSame(['a' => 4, 'b' => 5, 'c' => 6], $compiled->toArray());
+        $this->assertSame([['a' => 1], ['b' => 2], ['c' => 3]], $results);
     }
 
     /**
