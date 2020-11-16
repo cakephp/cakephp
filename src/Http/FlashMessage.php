@@ -60,7 +60,8 @@ class FlashMessage
     }
 
     /**
-     * Used to set a session variable that can be used to output messages in the view.
+     * Store flash messages that can be output in the view.
+     *
      * If you make consecutive calls to this method, the messages will stack
      * (if they are set with the same flash key)
      *
