@@ -157,12 +157,7 @@ class FlashMessage
      */
     public function consume(string $key): ?array
     {
-        $messages = $this->session->read("Flash.{$key}");
-        if ($messages !== null) {
-            $this->session->delete("Flash.{$key}");
-        }
-
-        return $messages;
+        return $this->session->consume("Flash.{$key}");
     }
 
     /**
