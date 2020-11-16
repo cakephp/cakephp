@@ -350,6 +350,27 @@ class SqlserverTest extends TestCase
             'FROM articles WHERE title = :c0) _cake_paging_ ' .
             'WHERE (_cake_paging_._cake_page_rownum_ > 50 AND _cake_paging_._cake_page_rownum_ <= 60)';
         $this->assertEquals($expected, $query->sql());
+
+        $query = new Query($connection);
+        $subquery = new Query($connection);
+        $subquery->select(1);
+        $query
+            ->select([
+                'id',
+                'computed' => $subquery,
+            ])
+            ->from('articles')
+            ->order([
+                'computed' => 'ASC',
+            ])
+            ->offset(10);
+        $expected =
+            'SELECT * FROM (' .
+                'SELECT id, (SELECT 1) AS [computed], ' .
+                '(ROW_NUMBER() OVER (ORDER BY (SELECT 1) ASC)) AS [_cake_page_rownum_] FROM articles' .
+            ') _cake_paging_ ' .
+            'WHERE _cake_paging_._cake_page_rownum_ > 10';
+        $this->assertEquals($expected, $query->sql());
     }
 
     /**
