@@ -120,6 +120,9 @@ trait SqlserverDialectTrait
                         $select[$orderBy] instanceof ExpressionInterface
                     ) {
                         $key = $select[$orderBy]->sql(new ValueBinder());
+                        if ($select[$orderBy] instanceof Query) {
+                            $key = "($key)";
+                        }
                     }
                     $order->add([$key => $direction]);
 
