@@ -19,6 +19,7 @@ namespace Cake\Database\Driver;
 use Cake\Database\Driver;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\OrderByExpression;
+use Cake\Database\Expression\OrderClauseExpression;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Database\Expression\UnaryExpression;
 use Cake\Database\ExpressionInterface;
@@ -356,12 +357,10 @@ class Sqlserver extends Driver
                         isset($select[$orderBy]) &&
                         $select[$orderBy] instanceof ExpressionInterface
                     ) {
-                        $key = $select[$orderBy]->sql(new ValueBinder());
-                        if ($select[$orderBy] instanceof Query) {
-                            $key = "($key)";
-                        }
+                        $order->add(new OrderClauseExpression($select[$orderBy], $direction));
+                    } else {
+                        $order->add([$key => $direction]);
                     }
-                    $order->add([$key => $direction]);
 
                     // Leave original order clause unchanged.
                     return $orderBy;
