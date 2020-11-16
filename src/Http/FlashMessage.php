@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Http;
 
 use Cake\Core\InstanceConfigTrait;
-use Cake\Utility\Hash;
 use Throwable;
 
 /**
@@ -82,7 +81,7 @@ class FlashMessage
      */
     public function set($message, array $options = []): void
     {
-        $options = Hash::merge((array)$this->getConfig(), $options);
+        $options += (array)$this->getConfig();
 
         if (isset($options['escape']) && !isset($options['params']['escape'])) {
             $options['params']['escape'] = $options['escape'];

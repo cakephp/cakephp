@@ -104,6 +104,27 @@ class FlashMessageTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    public function testDefaultParamsOverriding()
+    {
+        $this->Flash = new FlashMessage(
+            $this->Session,
+            ['params' => ['foo' => 'bar']]
+        );
+
+        $this->Flash->set(
+            'This is a test message',
+            ['params' => ['username' => 'ADmad']]
+        );
+        $expected[] = [
+            'message' => 'This is a test message',
+            'key' => 'flash',
+            'element' => 'flash/default',
+            'params' => ['username' => 'ADmad'],
+        ];
+        $result = $this->Session->read('Flash.flash');
+        $this->assertEquals($expected, $result);
+    }
+
     public function testDuplicateIgnored(): void
     {
         $this->assertNull($this->Session->read('Flash.flash'));
