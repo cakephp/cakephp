@@ -4978,4 +4978,61 @@ class QueryTest extends TestCase
         $this->assertFalse($results);
         $statement->closeCursor();
     }
+
+    /**
+     * Tests that query expressions can be used for ordering.
+     *
+     * @return void
+     */
+    public function testOrderBySubquery()
+    {
+        $this->autoQuote = true;
+        $this->connection->getDriver()->enableAutoQuoting($this->autoQuote);
+
+        $this->loadFixtures('Articles');
+        $connection = $this->connection;
+
+        $query = new Query($connection);
+
+        $stmt = $connection->update('articles', ['published' => 'N'], ['id' => 3]);
+        $stmt->closeCursor();
+
+        $subquery = new Query($connection);
+        $subquery
+            ->select(1)
+            ->from(['a' => 'articles'])
+            ->where([
+                'a.id = articles.id',
+                'a.published' => 'N'
+            ]);
+
+        $query
+            ->select(['id'])
+            ->from('articles')
+            ->orderDesc($subquery)
+            ->orderAsc('id');
+
+        $this->assertQuotedQuery(
+            'SELECT <id> FROM <articles> ORDER BY \(' .
+                'SELECT 1 FROM <articles> <a> WHERE \(a\.id = articles\.id AND <a>\.<published> = \:c0\)' .
+            '\) DESC, <id> ASC',
+            $query->sql(),
+            !$this->autoQuote
+        );
+
+        $this->assertEquals(
+            [
+                [
+                    'id' => '3'
+                ],
+                [
+                    'id' => '1'
+                ],
+                [
+                    'id' => '2'
+                ]
+            ],
+            $query->execute()->fetchAll('assoc')
+        );
+    }
 }
