@@ -36,6 +36,7 @@ class FlashMessage
     protected $_defaultConfig = [
         'key' => 'flash',
         'element' => 'default',
+        'plugin' => null,
         'params' => [],
         'clear' => false,
         'duplicate' => true,
@@ -67,7 +68,9 @@ class FlashMessage
      * ### Options:
      *
      * - `key` The key to set under the session's Flash key.
-     * - `element` The element used to render the flash message.
+     * - `element` The element used to render the flash message. You can use
+     *     `'SomePlugin.name'` style value for flash elements from a plugin.
+     * - `plugin` Plugin name to use element from.
      * - `params` An array of variables to be made available to the element.
      * - `clear` A bool stating if the current stack should be cleared to start a new one.
      * - `escape` Set to false to allow templates to print out HTML content.
@@ -86,6 +89,9 @@ class FlashMessage
         }
 
         [$plugin, $element] = pluginSplit($options['element']);
+        if ($options['plugin']) {
+            $plugin = $options['plugin'];
+        }
 
         if ($plugin) {
             $options['element'] = $plugin . '.flash/' . $element;

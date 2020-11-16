@@ -179,6 +179,38 @@ class FlashMessageTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    public function testSetWithPlugin(): void
+    {
+        $this->Flash->set('This is a test message', ['plugin' => 'FooBar']);
+        $expected = [
+            [
+                'message' => 'This is a test message',
+                'key' => 'flash',
+                'element' => 'FooBar.flash/default',
+                'params' => [],
+            ],
+        ];
+        $result = $this->Session->read('Flash.flash');
+        $this->assertEquals($expected, $result);
+
+        // Value of 'plugin' will override the plugin name used in 'element'
+        $this->Flash->set('This is a test message', [
+            'key' => 'msg',
+            'element' => 'Plugin.success',
+            'plugin' => 'FooBar',
+        ]);
+        $expected = [
+            [
+                'message' => 'This is a test message',
+                'key' => 'msg',
+                'element' => 'FooBar.flash/success',
+                'params' => [],
+            ],
+        ];
+        $result = $this->Session->read('Flash.msg');
+        $this->assertEquals($expected, $result);
+    }
+
     public function testSetExceptionMessage(): void
     {
         $this->assertNull($this->Session->read('Flash.flash'));
