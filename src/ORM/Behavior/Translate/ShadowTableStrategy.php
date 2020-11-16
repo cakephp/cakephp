@@ -84,7 +84,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         $this->table = $table;
         $this->translationTable = $this->getTableLocator()->get(
             $this->_config['translationTable'],
-            ['useFallbackClass' => true]
+            ['allowFallbackClass' => true]
         );
 
         $this->setupAssociations();

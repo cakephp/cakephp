@@ -82,7 +82,7 @@ class EavStrategy implements TranslateStrategyInterface
         $this->table = $table;
         $this->translationTable = $this->getTableLocator()->get(
             $this->_config['translationTable'],
-            ['useFallbackClass' => true]
+            ['allowFallbackClass' => true]
         );
 
         $this->setupAssociations();
@@ -119,7 +119,7 @@ class EavStrategy implements TranslateStrategyInterface
                     'table' => $this->translationTable->getTable(),
                 ]);
             } else {
-                $fieldTable = $tableLocator->get($name, ['useFallbackClass' => true]);
+                $fieldTable = $tableLocator->get($name, ['allowFallbackClass' => true]);
             }
 
             $conditions = [

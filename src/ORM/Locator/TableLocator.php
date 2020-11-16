@@ -223,7 +223,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
             $options += $this->_config[$alias];
         }
 
-        $useFallbackClass = $options['useFallbackClass'] ?? $this->useFallbackClass;
+        $useFallbackClass = $options['allowFallbackClass'] ?? $this->useFallbackClass;
         $className = $this->_getClassName($alias, $options);
         if ($className) {
             $options['className'] = $className;

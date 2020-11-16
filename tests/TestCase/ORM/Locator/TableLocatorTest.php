@@ -240,7 +240,7 @@ class TableLocatorTest extends TestCase
         $this->expectException(MissingTableClassException::class);
         $this->expectExceptionMessage('Table class for alias `Droids` could not be found.');
 
-        $this->_locator->get('Droids', ['useFallbackClass' => false]);
+        $this->_locator->get('Droids', ['allowFallbackClass' => false]);
     }
 
     public function testExceptionForFQCNWhenFallbackTurnedOff()
@@ -248,7 +248,7 @@ class TableLocatorTest extends TestCase
         $this->expectException(MissingTableClassException::class);
         $this->expectExceptionMessage('Table class `App\Model\DroidsTable` could not be found.');
 
-        $this->_locator->get('App\Model\DroidsTable', ['useFallbackClass' => false]);
+        $this->_locator->get('App\Model\DroidsTable', ['allowFallbackClass' => false]);
     }
 
     /**

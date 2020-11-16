@@ -44,7 +44,7 @@ abstract class AbstractLocator implements LocatorInterface
     public function get(string $alias, array $options = [])
     {
         $storeOptions = $options;
-        unset($storeOptions['useFallbackClass']);
+        unset($storeOptions['allowFallbackClass']);
 
         if (isset($this->instances[$alias])) {
             if (!empty($storeOptions) && $this->options[$alias] !== $storeOptions) {
