@@ -30,7 +30,6 @@ use Cake\Database\Schema\SqlserverSchemaDialect;
 use Cake\Database\SqlserverCompiler;
 use Cake\Database\Statement\SqlserverStatement;
 use Cake\Database\StatementInterface;
-use Cake\Database\ValueBinder;
 use InvalidArgumentException;
 use PDO;
 
