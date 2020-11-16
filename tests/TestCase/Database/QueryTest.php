@@ -5078,9 +5078,7 @@ class QueryTest extends TestCase
             ->where([
                 'b.id = articles.id',
                 'b.published' => 'N',
-                '1 = :customBinding',
-            ])
-            ->bind(':customBinding', 1, 'integer');
+            ]);
 
         $query
             ->select([
@@ -5095,10 +5093,10 @@ class QueryTest extends TestCase
         $this->assertQuotedQuery(
             'SELECT <id>, ' .
                 '\(SELECT count\(\*\) FROM <articles> <a> WHERE \(a\.id = articles\.id AND <a>\.<published> = :c0\)\) AS <computedA>, ' .
-                '\(SELECT count\(\*\) FROM <articles> <b> WHERE \(b\.id = articles\.id AND <b>\.<published> = :c1 AND 1 = :customBinding\)\) AS <computedB> ' .
+                '\(SELECT count\(\*\) FROM <articles> <b> WHERE \(b\.id = articles\.id AND <b>\.<published> = :c1\)\) AS <computedB> ' .
             'FROM <articles> ' .
             'ORDER BY \(' .
-                'SELECT count\(\*\) FROM <articles> <b> WHERE \(b\.id = articles\.id AND <b>\.<published> = :c2 AND 1 = :customBinding\)' .
+                'SELECT count\(\*\) FROM <articles> <b> WHERE \(b\.id = articles\.id AND <b>\.<published> = :c2\)' .
             '\) DESC, <id> ASC',
             $query->sql(),
             !$this->autoQuote
@@ -5137,11 +5135,6 @@ class QueryTest extends TestCase
                     'type' => null,
                     'placeholder' => 'c1',
                 ],
-                ':customBinding' => [
-                    'value' => 1,
-                    'type' => 'integer',
-                    'placeholder' => 'customBinding',
-                ],
                 ':c2' => [
                     'value' => 'N',
                     'type' => null,
@@ -5149,17 +5142,6 @@ class QueryTest extends TestCase
                 ],
             ],
             $query->getValueBinder()->bindings()
-        );
-
-        $this->assertEquals(
-            [
-                ':customBinding' => [
-                    'value' => 1,
-                    'type' => 'integer',
-                    'placeholder' => 'customBinding',
-                ],
-            ],
-            $subqueryB->getValueBinder()->bindings()
         );
     }
 }
