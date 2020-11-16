@@ -5003,7 +5003,7 @@ class QueryTest extends TestCase
             ->from(['a' => 'articles'])
             ->where([
                 'a.id = articles.id',
-                'a.published' => 'N'
+                'a.published' => 'N',
             ]);
 
         $query
@@ -5023,14 +5023,14 @@ class QueryTest extends TestCase
         $this->assertEquals(
             [
                 [
-                    'id' => '3'
+                    'id' => '3',
                 ],
                 [
-                    'id' => '1'
+                    'id' => '1',
                 ],
                 [
-                    'id' => '2'
-                ]
+                    'id' => '2',
+                ],
             ],
             $query->execute()->fetchAll('assoc')
         );
@@ -5061,7 +5061,7 @@ class QueryTest extends TestCase
             ->from(['a' => 'articles'])
             ->where([
                 'a.id = articles.id',
-                'a.published' => 'Y'
+                'a.published' => 'Y',
             ]);
 
         $subqueryB = new Query($connection);
@@ -5071,7 +5071,7 @@ class QueryTest extends TestCase
             ->where([
                 'b.id = articles.id',
                 'b.published' => 'N',
-                '1 = :customBinding'
+                '1 = :customBinding',
             ])
             ->bind(':customBinding', 1, 'integer');
 
@@ -5116,7 +5116,7 @@ class QueryTest extends TestCase
                     'id' => '2',
                     'computedA' => '1',
                     'computedB' => '0',
-                ]
+                ],
             ],
             $query->execute()->fetchAll('assoc')
         );
