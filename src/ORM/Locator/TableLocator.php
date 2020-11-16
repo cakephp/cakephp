@@ -73,7 +73,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      *
      * @var bool
      */
-    protected $useFallbackClass = true;
+    protected $allowFallbackClass = true;
 
     /**
      * Constructor.
@@ -100,12 +100,12 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      * Controls whether a fallback class should be used to create a table
      * instance if a concrete class for alias used in `get()` could not be found.
      *
-     * @param bool $enable Flag to enable or disable fallback
+     * @param bool $allow Flag to enable or disable fallback
      * @return $this
      */
-    public function useFallbackClass(bool $enable)
+    public function allowFallbackClass(bool $allow)
     {
-        $this->useFallbackClass = $enable;
+        $this->allowFallbackClass = $allow;
 
         return $this;
     }
@@ -223,11 +223,11 @@ class TableLocator extends AbstractLocator implements LocatorInterface
             $options += $this->_config[$alias];
         }
 
-        $useFallbackClass = $options['allowFallbackClass'] ?? $this->useFallbackClass;
+        $allowFallbackClass = $options['allowFallbackClass'] ?? $this->allowFallbackClass;
         $className = $this->_getClassName($alias, $options);
         if ($className) {
             $options['className'] = $className;
-        } elseif ($useFallbackClass) {
+        } elseif ($allowFallbackClass) {
             if (empty($options['className'])) {
                 $options['className'] = $alias;
             }
