@@ -4999,11 +4999,16 @@ class QueryTest extends TestCase
 
         $subquery = new Query($connection);
         $subquery
-            ->select(1)
+            ->select(
+                $subquery->newExpr()->addCase(
+                    [$subquery->newExpr()->add(['a.published' => 'N'])],
+                    [1, 0],
+                    ['integer', 'integer']
+                )
+            )
             ->from(['a' => 'articles'])
             ->where([
                 'a.id = articles.id',
-                'a.published' => 'N',
             ]);
 
         $query
@@ -5014,7 +5019,9 @@ class QueryTest extends TestCase
 
         $this->assertQuotedQuery(
             'SELECT <id> FROM <articles> ORDER BY \(' .
-                'SELECT 1 FROM <articles> <a> WHERE \(a\.id = articles\.id AND <a>\.<published> = \:c0\)' .
+                'SELECT \(CASE WHEN <a>\.<published> = \:c0 THEN \:param1 ELSE \:param2 END\) ' .
+                'FROM <articles> <a> ' .
+                'WHERE a\.id = articles\.id' .
             '\) DESC, <id> ASC',
             $query->sql(),
             !$this->autoQuote
