@@ -5083,9 +5083,7 @@ class QueryTest extends TestCase
             ])
             ->from('articles')
             ->orderDesc($subqueryB)
-            ->orderAsc('id')
-            ->limit(10)
-            ->offset(0);
+            ->orderAsc('id');
 
         $this->assertQuotedQuery(
             'SELECT <id>, ' .
@@ -5094,8 +5092,7 @@ class QueryTest extends TestCase
             'FROM <articles> ' .
             'ORDER BY \(' .
                 'SELECT count\(\*\) FROM <articles> <b> WHERE \(b\.id = articles\.id AND <b>\.<published> = :c2 AND 1 = :customBinding\)' .
-            '\) DESC, <id> ASC ' .
-            'LIMIT 10 OFFSET 0',
+            '\) DESC, <id> ASC',
             $query->sql(),
             !$this->autoQuote
         );
