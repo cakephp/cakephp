@@ -172,7 +172,6 @@ class FlashMessage
     public function success(string $message, array $options = []): void
     {
         $options['element'] = 'success';
-
         $this->set($message, $options);
     }
 
@@ -189,7 +188,38 @@ class FlashMessage
     public function error(string $message, array $options = []): void
     {
         $options['element'] = 'error';
+        $this->set($message, $options);
+    }
 
+    /**
+     * Set a warning message.
+     *
+     * The `'element'` option will be set to  `'warning'`.
+     *
+     * @param string $message Message to flash.
+     * @param array $options An array of options.
+     * @return void
+     * @see FlashMessage::set() For list of valid options
+     */
+    public function warning(string $message, array $options = []): void
+    {
+        $options['element'] = 'warning';
+        $this->set($message, $options);
+    }
+
+    /**
+     * Set an info message.
+     *
+     * The `'element'` option will be set to  `'info'`.
+     *
+     * @param string $message Message to flash.
+     * @param array $options An array of options.
+     * @return void
+     * @see FlashMessage::set() For list of valid options
+     */
+    public function info(string $message, array $options = []): void
+    {
+        $options['element'] = 'info';
         $this->set($message, $options);
     }
 }

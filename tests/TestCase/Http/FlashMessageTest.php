@@ -229,21 +229,34 @@ class FlashMessageTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testSuccess(): void
+    /**
+     * @dataProvider convenienceMethods
+     */
+    public function testConvenienceMethods(string $type): void
     {
         $this->assertNull($this->Session->read('Flash.flash'));
 
-        $this->Flash->success('It worked');
+        $this->Flash->{$type}('It worked');
         $expected = [
             [
                 'message' => 'It worked',
                 'key' => 'flash',
-                'element' => 'flash/success',
+                'element' => 'flash/' . $type,
                 'params' => [],
             ],
         ];
         $result = $this->Session->read('Flash.flash');
         $this->assertEquals($expected, $result);
+    }
+
+    public function convenienceMethods(): array
+    {
+        return [
+            ['success'],
+            ['error'],
+            ['warning'],
+            ['info'],
+        ];
     }
 
     public function testSuccessWithClear(): void
