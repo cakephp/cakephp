@@ -75,9 +75,13 @@ class OrderByExpression extends QueryExpression
                 !in_array(strtoupper($val), ['ASC', 'DESC'], true)
             ) {
                 throw new RuntimeException(
-                    'Passing extra expressions by associative array is not ' .
-                    'allowed to avoid potential SQL injection. ' .
-                    'Use QueryExpression or numeric array instead.'
+                    sprintf(
+                        'Passing extra expressions by associative array (`\'%s\' => \'%s\'`) ' .
+                        'is not allowed to avoid potential SQL injection. ' .
+                        'Use QueryExpression or numeric array instead.',
+                        $key,
+                        $val
+                    )
                 );
             }
         }
