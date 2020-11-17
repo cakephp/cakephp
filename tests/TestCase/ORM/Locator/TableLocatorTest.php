@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM\Locator;
 
 use Cake\Datasource\ConnectionManager;
+use Cake\ORM\Exception\MissingTableClassException;
 use Cake\ORM\Locator\TableLocator;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
@@ -232,6 +233,22 @@ class TableLocatorTest extends TestCase
         $this->assertInstanceOf(Table::class, $result);
         $this->assertSame('stuff', $result->getTable(), 'The table should be derived from the alias');
         $this->assertSame('Stuff', $result->getAlias());
+    }
+
+    public function testExceptionForAliasWhenFallbackTurnedOff()
+    {
+        $this->expectException(MissingTableClassException::class);
+        $this->expectExceptionMessage('Table class for alias `Droids` could not be found.');
+
+        $this->_locator->get('Droids', ['allowFallbackClass' => false]);
+    }
+
+    public function testExceptionForFQCNWhenFallbackTurnedOff()
+    {
+        $this->expectException(MissingTableClassException::class);
+        $this->expectExceptionMessage('Table class `App\Model\DroidsTable` could not be found.');
+
+        $this->_locator->get('App\Model\DroidsTable', ['allowFallbackClass' => false]);
     }
 
     /**
@@ -702,5 +719,13 @@ class TableLocatorTest extends TestCase
 
         $table = $locator->get('Addresses');
         $this->assertInstanceOf(AddressesTable::class, $table);
+    }
+
+    public function testSetFallbackClassName()
+    {
+        $this->_locator->setFallbackClassName(ArticlesTable::class);
+
+        $table = $this->_locator->get('FooBar');
+        $this->assertInstanceOf(ArticlesTable::class, $table);
     }
 }
