@@ -125,12 +125,52 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     public function beforeFind(EventInterface $event, Query $query, ArrayObject $options)
     {
         $locale = Hash::get($options, 'locale', $this->getLocale());
+        $config = $this->getConfig();
 
-        if ($locale === $this->getConfig('defaultLocale')) {
+        if ($locale === $config['defaultLocale']) {
             return;
         }
 
+        $this->setupHasOneAssociation($locale, $options);
+
+        $fieldsAdded = $this->addFieldsToQuery($query, $config);
+        $orderByTranslatedField = $this->iterateClause($query, 'order', $config);
+        $filteredByTranslatedField = $this->traverseClause($query, 'where', $config);
+
+        if (!$fieldsAdded && !$orderByTranslatedField && !$filteredByTranslatedField) {
+            return;
+        }
+
+        $query->contain([$config['hasOneAlias']]);
+
+        $query->formatResults(function ($results) use ($locale) {
+            return $this->rowMapper($results, $locale);
+        }, $query::PREPEND);
+    }
+
+    /**
+     * Create a hasOne association for record with required locale.
+     *
+     * @param string $locale Locale
+     * @param \ArrayObject $options Find options
+     * @return void
+     */
+    protected function setupHasOneAssociation(string $locale, ArrayObject $options): void
+    {
         $config = $this->getConfig();
+
+        [$plugin] = pluginSplit($config['translationTable']);
+        $hasOneTargetAlias = $plugin ? ($plugin . '.' . $config['hasOneAlias']) : $config['hasOneAlias'];
+        if (!$this->getTableLocator()->exists($hasOneTargetAlias)) {
+            // Load table before hand with fallback class usage enabled
+            $this->getTableLocator()->get(
+                $hasOneTargetAlias,
+                [
+                    'className' => $config['translationTable'],
+                    'allowFallbackClass' => true,
+                ]
+            );
+        }
 
         if (isset($options['filterByCurrentLocale'])) {
             $joinType = $options['filterByCurrentLocale'] ? 'INNER' : 'LEFT';
@@ -147,20 +187,6 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                 $config['hasOneAlias'] . '.locale' => $locale,
             ],
         ]);
-
-        $fieldsAdded = $this->addFieldsToQuery($query, $config);
-        $orderByTranslatedField = $this->iterateClause($query, 'order', $config);
-        $filteredByTranslatedField = $this->traverseClause($query, 'where', $config);
-
-        if (!$fieldsAdded && !$orderByTranslatedField && !$filteredByTranslatedField) {
-            return;
-        }
-
-        $query->contain([$config['hasOneAlias']]);
-
-        $query->formatResults(function ($results) use ($locale) {
-            return $this->rowMapper($results, $locale);
-        }, $query::PREPEND);
     }
 
     /**
