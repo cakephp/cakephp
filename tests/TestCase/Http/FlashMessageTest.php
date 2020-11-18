@@ -11,26 +11,23 @@ declare(strict_types=1);
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         3.0.0
+ * @since         4.2.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Controller\Component;
+namespace Cake\Test\TestCase\Http;
 
-use Cake\Controller\Component\FlashComponent;
-use Cake\Controller\ComponentRegistry;
-use Cake\Controller\Controller;
-use Cake\Http\ServerRequest;
+use Cake\Http\FlashMessage;
 use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
 use Exception;
 
 /**
- * FlashComponentTest class
+ * FlashMessageTest class
  */
-class FlashComponentTest extends TestCase
+class FlashMessageTest extends TestCase
 {
     /**
-     * @var \Cake\Controller\Component\FlashComponent
+     * @var \Cake\Http\FlashMessage
      */
     protected $Flash;
 
@@ -39,38 +36,22 @@ class FlashComponentTest extends TestCase
      */
     protected $Session;
 
-    /**
-     * setUp method
-     *
-     * @return void
-     */
     public function setUp(): void
     {
         parent::setUp();
+
         static::setAppNamespace();
-        $this->Controller = new Controller(new ServerRequest(['session' => new Session()]));
-        $this->ComponentRegistry = new ComponentRegistry($this->Controller);
-        $this->Flash = new FlashComponent($this->ComponentRegistry);
         $this->Session = new Session();
+        $this->Flash = new FlashMessage($this->Session);
     }
 
-    /**
-     * tearDown method
-     *
-     * @return void
-     */
     public function tearDown(): void
     {
         parent::tearDown();
+
         $this->Session->destroy();
     }
 
-    /**
-     * testSet method
-     *
-     * @return void
-     * @covers \Cake\Controller\Component\FlashComponent::set
-     */
     public function testSet(): void
     {
         $this->assertNull($this->Session->read('Flash.flash'));
@@ -87,7 +68,10 @@ class FlashComponentTest extends TestCase
         $result = $this->Session->read('Flash.flash');
         $this->assertEquals($expected, $result);
 
-        $this->Flash->set('This is a test message', ['element' => 'test', 'params' => ['foo' => 'bar']]);
+        $this->Flash->set(
+            'This is a test message',
+            ['element' => 'test', 'params' => ['foo' => 'bar']]
+        );
         $expected[] = [
             'message' => 'This is a test message',
             'key' => 'flash',
@@ -120,6 +104,27 @@ class FlashComponentTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    public function testDefaultParamsOverriding()
+    {
+        $this->Flash = new FlashMessage(
+            $this->Session,
+            ['params' => ['foo' => 'bar']]
+        );
+
+        $this->Flash->set(
+            'This is a test message',
+            ['params' => ['username' => 'ADmad']]
+        );
+        $expected[] = [
+            'message' => 'This is a test message',
+            'key' => 'flash',
+            'element' => 'flash/default',
+            'params' => ['username' => 'ADmad'],
+        ];
+        $result = $this->Session->read('Flash.flash');
+        $this->assertEquals($expected, $result);
+    }
+
     public function testDuplicateIgnored(): void
     {
         $this->assertNull($this->Session->read('Flash.flash'));
@@ -135,7 +140,10 @@ class FlashComponentTest extends TestCase
     {
         $this->assertNull($this->Session->read('Flash.flash'));
 
-        $this->Flash->set('This is a <b>test</b> message', ['escape' => false, 'params' => ['foo' => 'bar']]);
+        $this->Flash->set(
+            'This is a <b>test</b> message',
+            ['escape' => false, 'params' => ['foo' => 'bar']]
+        );
         $expected = [
             [
                 'message' => 'This is a <b>test</b> message',
@@ -147,7 +155,10 @@ class FlashComponentTest extends TestCase
         $result = $this->Session->read('Flash.flash');
         $this->assertEquals($expected, $result);
 
-        $this->Flash->set('This is a test message', ['key' => 'escaped', 'escape' => false, 'params' => ['foo' => 'bar', 'escape' => true]]);
+        $this->Flash->set(
+            'This is a test message',
+            ['key' => 'escaped', 'escape' => false, 'params' => ['foo' => 'bar', 'escape' => true]]
+        );
         $expected = [
             [
                 'message' => 'This is a test message',
@@ -160,12 +171,6 @@ class FlashComponentTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
-    /**
-     * test setting messages with using the clear option
-     *
-     * @return void
-     * @covers \Cake\Controller\Component\FlashComponent::set
-     */
     public function testSetWithClear(): void
     {
         $this->assertNull($this->Session->read('Flash.flash'));
@@ -195,17 +200,43 @@ class FlashComponentTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
-    /**
-     * testSetWithException method
-     *
-     * @return void
-     * @covers \Cake\Controller\Component\FlashComponent::set
-     */
-    public function testSetWithException(): void
+    public function testSetWithPlugin(): void
+    {
+        $this->Flash->set('This is a test message', ['plugin' => 'FooBar']);
+        $expected = [
+            [
+                'message' => 'This is a test message',
+                'key' => 'flash',
+                'element' => 'FooBar.flash/default',
+                'params' => [],
+            ],
+        ];
+        $result = $this->Session->read('Flash.flash');
+        $this->assertEquals($expected, $result);
+
+        // Value of 'plugin' will override the plugin name used in 'element'
+        $this->Flash->set('This is a test message', [
+            'key' => 'msg',
+            'element' => 'Plugin.success',
+            'plugin' => 'FooBar',
+        ]);
+        $expected = [
+            [
+                'message' => 'This is a test message',
+                'key' => 'msg',
+                'element' => 'FooBar.flash/success',
+                'params' => [],
+            ],
+        ];
+        $result = $this->Session->read('Flash.msg');
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testSetExceptionMessage(): void
     {
         $this->assertNull($this->Session->read('Flash.flash'));
 
-        $this->Flash->set(new Exception('This is a test message', 404));
+        $this->Flash->setExceptionMessage(new Exception('This is a test message', 404));
         $expected = [
             [
                 'message' => 'This is a test message',
@@ -216,19 +247,29 @@ class FlashComponentTest extends TestCase
         ];
         $result = $this->Session->read('Flash.flash');
         $this->assertEquals($expected, $result);
+
+        $this->Flash->setExceptionMessage(
+            new Exception('This is a test message'),
+            ['element' => 'default', 'clear' => true]
+        );
+        $expected = [
+            [
+                'message' => 'This is a test message',
+                'key' => 'flash',
+                'element' => 'flash/default',
+                'params' => ['code' => null],
+            ],
+        ];
+        $result = $this->Session->read('Flash.flash');
+        $this->assertEquals($expected, $result);
     }
 
-    /**
-     * testSetWithComponentConfiguration method
-     *
-     * @return void
-     */
-    public function testSetWithComponentConfiguration(): void
+    public function testSetWithConstructorConfiguration(): void
     {
         $this->assertNull($this->Session->read('Flash.flash'));
 
-        $this->Controller->loadComponent('Flash', ['element' => 'test']);
-        $this->Controller->Flash->set('This is a test message');
+        $flash = new FlashMessage($this->Session, ['element' => 'test']);
+        $flash->set('This is a test message');
         $expected = [
             [
                 'message' => 'This is a test message',
@@ -242,57 +283,36 @@ class FlashComponentTest extends TestCase
     }
 
     /**
-     * Test magic call method.
-     *
-     * @covers \Cake\Controller\Component\FlashComponent::__call
-     * @return void
+     * @dataProvider convenienceMethods
      */
-    public function testCall(): void
+    public function testConvenienceMethods(string $type): void
     {
         $this->assertNull($this->Session->read('Flash.flash'));
 
-        $this->Flash->success('It worked');
+        $this->Flash->{$type}('It worked');
         $expected = [
             [
                 'message' => 'It worked',
                 'key' => 'flash',
-                'element' => 'flash/success',
+                'element' => 'flash/' . $type,
                 'params' => [],
             ],
         ];
         $result = $this->Session->read('Flash.flash');
         $this->assertEquals($expected, $result);
-
-        $this->Flash->error('It did not work', ['element' => 'error_thing']);
-
-        $expected[] = [
-            'message' => 'It did not work',
-            'key' => 'flash',
-            'element' => 'flash/error',
-            'params' => [],
-        ];
-        $result = $this->Session->read('Flash.flash');
-        $this->assertEquals($expected, $result, 'Element is ignored in magic call.');
-
-        $this->Flash->success('It worked', ['plugin' => 'MyPlugin']);
-
-        $expected[] = [
-            'message' => 'It worked',
-            'key' => 'flash',
-            'element' => 'MyPlugin.flash/success',
-            'params' => [],
-        ];
-        $result = $this->Session->read('Flash.flash');
-        $this->assertEquals($expected, $result);
     }
 
-    /**
-     * Test a magic call with the "clear" flag to true
-     *
-     * @return void
-     * @covers \Cake\Controller\Component\FlashComponent::set
-     */
-    public function testCallWithClear(): void
+    public function convenienceMethods(): array
+    {
+        return [
+            ['success'],
+            ['error'],
+            ['warning'],
+            ['info'],
+        ];
+    }
+
+    public function testSuccessWithClear(): void
     {
         $this->assertNull($this->Session->read('Flash.flash'));
         $this->Flash->success('It worked');
@@ -317,5 +337,21 @@ class FlashComponentTest extends TestCase
         ];
         $result = $this->Session->read('Flash.flash');
         $this->assertEquals($expected, $result);
+    }
+
+    public function testError(): void
+    {
+        $this->assertNull($this->Session->read('Flash.flash'));
+
+        $this->Flash->error('It did not work', ['element' => 'error_thing']);
+
+        $expected[] = [
+            'message' => 'It did not work',
+            'key' => 'flash',
+            'element' => 'flash/error',
+            'params' => [],
+        ];
+        $result = $this->Session->read('Flash.flash');
+        $this->assertEquals($expected, $result, 'Element is ignored in convenience method call.');
     }
 }

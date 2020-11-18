@@ -142,16 +142,6 @@ class FlashHelperTest extends TestCase
     }
 
     /**
-     * testFlashThrowsException
-     */
-    public function testFlashThrowsException()
-    {
-        $this->expectException(\UnexpectedValueException::class);
-        $this->View->getRequest()->getSession()->write('Flash.foo', 'bar');
-        $this->Flash->render('foo');
-    }
-
-    /**
      * test setting the element from the attrs.
      *
      * @return void
