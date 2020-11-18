@@ -725,6 +725,12 @@ class Route
                 unset($url[$key]);
                 continue;
             }
+
+            // keys that don't exist are interpreted as query parameters
+            if (!isset($defaults[$key]) && ($value !== null && $value !== false && $value !== '')) {
+                $query[$key] = $value;
+                unset($url[$key]);
+            }
         }
 
         // if not a greedy route, no extra params are allowed.
