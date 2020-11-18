@@ -1864,8 +1864,8 @@ class QueryTest extends TestCase
     {
         $this->expectException('RuntimeException');
         $this->expectExceptionMessage(
-            'Passing extra expressions by associative array is not ' .
-            'allowed to avoid potential SQL injection. ' .
+            'Passing extra expressions by associative array (`\'id\' => \'desc -- Comment\'`) ' .
+            'is not allowed to avoid potential SQL injection. ' .
             'Use QueryExpression or numeric array instead.'
         );
 
@@ -4208,7 +4208,7 @@ class QueryTest extends TestCase
     public function testIsNullInvalid()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Expression is missing operator (IS, IS NOT) with `null` value.');
+        $this->expectExceptionMessage('Expression `name` is missing operator (IS, IS NOT) with `null` value.');
 
         $this->loadFixtures('Authors');
         (new Query($this->connection))
