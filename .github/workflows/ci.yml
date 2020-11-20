@@ -199,7 +199,7 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '7.2'
+        php-version: '7.3'
         extensions: mbstring, intl, apcu
         coverage: none
 

@@ -135,7 +135,7 @@ class TreeBehavior extends Behavior
             return;
         }
 
-        if (!$isNew && $dirty && $parent) {
+        if ($dirty && $parent) {
             $this->_setParent($entity, $parent);
 
             if ($level) {
@@ -146,7 +146,7 @@ class TreeBehavior extends Behavior
             return;
         }
 
-        if (!$isNew && $dirty && !$parent) {
+        if ($dirty && !$parent) {
             $this->_setAsRoot($entity);
 
             if ($level) {
