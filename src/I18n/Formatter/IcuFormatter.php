@@ -57,15 +57,10 @@ class IcuFormatter implements FormatterInterface
         if ($message === '') {
             return $message;
         }
-        // Using procedural style as it showed twice as fast as
-        // its counterpart in PHP 5.5
-        $result = MessageFormatter::formatMessage($locale, $message, $tokenValues);
 
+        $formatter = new MessageFormatter($locale, $message);
+        $result = $formatter->format($tokenValues);
         if ($result === false) {
-            // The user might be interested in what went wrong, so replay the
-            // previous action using the object oriented style to figure out
-            $formatter = new MessageFormatter($locale, $message);
-            $formatter->format($tokenValues);
             throw new I18nException($formatter->getErrorMessage(), $formatter->getErrorCode());
         }
 
