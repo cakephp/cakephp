@@ -326,6 +326,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
                 /** @psalm-suppress InvalidOperand */
                 $index += $offset;
             }
+            /** @psalm-suppress InvalidScalarArgument */
             $this->bindValue($index, $value, $type);
         }
     }

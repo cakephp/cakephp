@@ -130,6 +130,7 @@ class Translator
 
         // Check for missing/invalid context
         if (isset($message['_context'])) {
+            /** @psalm-suppress PossiblyInvalidArgument */
             $message = $this->resolveContext($key, $message, $tokensValues);
             unset($tokensValues['_context']);
         }
