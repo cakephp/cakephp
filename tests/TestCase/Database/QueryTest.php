@@ -5015,7 +5015,10 @@ class QueryTest extends TestCase
             ->select(['id'])
             ->from('articles')
             ->orderDesc($subquery)
-            ->orderAsc('id');
+            ->orderAsc('id')
+            ->setSelectTypeMap(new TypeMap([
+                'id' => 'integer',
+            ]));
 
         $this->assertQuotedQuery(
             'SELECT <id> FROM <articles> ORDER BY \(' .
@@ -5030,13 +5033,13 @@ class QueryTest extends TestCase
         $this->assertEquals(
             [
                 [
-                    'id' => '3',
+                    'id' => 3,
                 ],
                 [
-                    'id' => '1',
+                    'id' => 1,
                 ],
                 [
-                    'id' => '2',
+                    'id' => 2,
                 ],
             ],
             $query->execute()->fetchAll('assoc')
@@ -5088,7 +5091,12 @@ class QueryTest extends TestCase
             ])
             ->from('articles')
             ->orderDesc($subqueryB)
-            ->orderAsc('id');
+            ->orderAsc('id')
+            ->setSelectTypeMap(new TypeMap([
+                'id' => 'integer',
+                'computedA' => 'integer',
+                'computedB' => 'integer',
+            ]));
 
         $this->assertQuotedQuery(
             'SELECT <id>, ' .
@@ -5102,28 +5110,28 @@ class QueryTest extends TestCase
             !$this->autoQuote
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             [
                 [
-                    'id' => '3',
-                    'computedA' => '0',
-                    'computedB' => '1',
+                    'id' => 3,
+                    'computedA' => 0,
+                    'computedB' => 1,
                 ],
                 [
-                    'id' => '1',
-                    'computedA' => '1',
-                    'computedB' => '0',
+                    'id' => 1,
+                    'computedA' => 1,
+                    'computedB' => 0,
                 ],
                 [
-                    'id' => '2',
-                    'computedA' => '1',
-                    'computedB' => '0',
+                    'id' => 2,
+                    'computedA' => 1,
+                    'computedB' => 0,
                 ],
             ],
             $query->execute()->fetchAll('assoc')
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             [
                 ':c0' => [
                     'value' => 'Y',

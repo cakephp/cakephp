@@ -421,7 +421,7 @@ class SqlserverTest extends TestCase
             ])
             ->offset(10);
 
-        $this->assertEquals(
+        $this->assertSame(
             'SELECT * FROM (' .
                 'SELECT id, ' .
                 '(SELECT count(*) FROM articles a WHERE (a.id = articles.id AND a.published = :c0)) AS computedA, ' .
