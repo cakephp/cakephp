@@ -389,6 +389,48 @@ class SqlserverTest extends TestCase
             ') _cake_paging_ ' .
             'WHERE _cake_paging_._cake_page_rownum_ > 10';
         $this->assertSame($expected, $query->sql());
+
+        $subqueryA = new Query($connection);
+        $subqueryA
+            ->select('count(*)')
+            ->from(['a' => 'articles'])
+            ->where([
+                'a.id = articles.id',
+                'a.published' => 'Y',
+            ]);
+
+        $subqueryB = new Query($connection);
+        $subqueryB
+            ->select('count(*)')
+            ->from(['b' => 'articles'])
+            ->where([
+                'b.id = articles.id',
+                'b.published' => 'N',
+            ]);
+
+        $query = new Query($connection);
+        $query
+            ->select([
+                'id',
+                'computedA' => $subqueryA,
+                'computedB' => $subqueryB,
+            ])
+            ->from('articles')
+            ->order([
+                'computedA' => 'ASC',
+            ])
+            ->offset(10);
+
+        $this->assertSame(
+            'SELECT * FROM (' .
+                'SELECT id, ' .
+                '(SELECT count(*) FROM articles a WHERE (a.id = articles.id AND a.published = :c0)) AS computedA, ' .
+                '(SELECT count(*) FROM articles b WHERE (b.id = articles.id AND b.published = :c1)) AS computedB, ' .
+                '(ROW_NUMBER() OVER (ORDER BY (SELECT count(*) FROM articles a WHERE (a.id = articles.id AND a.published = :c2)) ASC)) AS _cake_page_rownum_ FROM articles' .
+            ') _cake_paging_ ' .
+            'WHERE _cake_paging_._cake_page_rownum_ > 10',
+            $query->sql()
+        );
     }
 
     /**
