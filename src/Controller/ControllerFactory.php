@@ -65,7 +65,6 @@ class ControllerFactory implements ControllerFactoryInterface
             throw $this->missingController($request);
         }
 
-        /** @psalm-suppress PossiblyNullArgument */
         $reflection = new ReflectionClass($className);
         if ($reflection->isAbstract()) {
             throw $this->missingController($request);
