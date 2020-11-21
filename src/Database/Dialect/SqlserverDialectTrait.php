@@ -17,12 +17,12 @@ namespace Cake\Database\Dialect;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\OrderByExpression;
+use Cake\Database\Expression\OrderClauseExpression;
 use Cake\Database\Expression\UnaryExpression;
 use Cake\Database\Query;
 use Cake\Database\Schema\SqlserverSchema;
 use Cake\Database\SqlDialectTrait;
 use Cake\Database\SqlserverCompiler;
-use Cake\Database\ValueBinder;
 use PDO;
 
 /**
@@ -119,12 +119,10 @@ trait SqlserverDialectTrait
                         isset($select[$orderBy]) &&
                         $select[$orderBy] instanceof ExpressionInterface
                     ) {
-                        $key = $select[$orderBy]->sql(new ValueBinder());
-                        if ($select[$orderBy] instanceof Query) {
-                            $key = "($key)";
-                        }
+                        $order->add(new OrderClauseExpression($select[$orderBy], $direction));
+                    } else {
+                        $order->add([$key => $direction]);
                     }
-                    $order->add([$key => $direction]);
 
                     // Leave original order clause unchanged.
                     return $orderBy;

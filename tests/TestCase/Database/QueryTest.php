@@ -5157,4 +5157,111 @@ class QueryTest extends TestCase
             $query->execute()->fetchAll('assoc')
         );
     }
+
+    /**
+     * Test that reusing expressions will duplicate bindings and run successfully.
+     *
+     * This replicates what the SQL Server driver would do for <= SQL Server 2008
+     * when ordering on fields that are expressions.
+     *
+     * @return void
+     * @see \Cake\Database\Driver\Sqlserver::_pagingSubquery()
+     */
+    public function testReusingExpressions()
+    {
+        $this->loadFixtures('Articles');
+        $connection = $this->connection;
+
+        $query = new Query($connection);
+
+        $stmt = $connection->update('articles', ['published' => 'N'], ['id' => 3]);
+        $stmt->closeCursor();
+
+        $subqueryA = new Query($connection);
+        $subqueryA
+            ->select('count(*)')
+            ->from(['a' => 'articles'])
+            ->where([
+                'a.id = articles.id',
+                'a.published' => 'Y',
+            ]);
+
+        $subqueryB = new Query($connection);
+        $subqueryB
+            ->select('count(*)')
+            ->from(['b' => 'articles'])
+            ->where([
+                'b.id = articles.id',
+                'b.published' => 'N',
+            ]);
+
+        $query
+            ->select([
+                'id',
+                'computedA' => $subqueryA,
+                'computedB' => $subqueryB,
+            ])
+            ->from('articles')
+            ->orderDesc($subqueryB)
+            ->orderAsc('id')
+            ->setSelectTypeMap(new TypeMap([
+                'id' => 'integer',
+                'computedA' => 'integer',
+                'computedB' => 'integer',
+            ]));
+
+        $this->assertQuotedQuery(
+            'SELECT <id>, ' .
+                '\(SELECT count\(\*\) FROM <articles> <a> WHERE \(a\.id = articles\.id AND <a>\.<published> = :c0\)\) AS <computedA>, ' .
+                '\(SELECT count\(\*\) FROM <articles> <b> WHERE \(b\.id = articles\.id AND <b>\.<published> = :c1\)\) AS <computedB> ' .
+            'FROM <articles> ' .
+            'ORDER BY \(' .
+                'SELECT count\(\*\) FROM <articles> <b> WHERE \(b\.id = articles\.id AND <b>\.<published> = :c2\)' .
+            '\) DESC, <id> ASC',
+            $query->sql(),
+            !$this->autoQuote
+        );
+
+        $this->assertSame(
+            [
+                [
+                    'id' => 3,
+                    'computedA' => 0,
+                    'computedB' => 1,
+                ],
+                [
+                    'id' => 1,
+                    'computedA' => 1,
+                    'computedB' => 0,
+                ],
+                [
+                    'id' => 2,
+                    'computedA' => 1,
+                    'computedB' => 0,
+                ],
+            ],
+            $query->execute()->fetchAll('assoc')
+        );
+
+        $this->assertSame(
+            [
+                ':c0' => [
+                    'value' => 'Y',
+                    'type' => null,
+                    'placeholder' => 'c0',
+                ],
+                ':c1' => [
+                    'value' => 'N',
+                    'type' => null,
+                    'placeholder' => 'c1',
+                ],
+                ':c2' => [
+                    'value' => 'N',
+                    'type' => null,
+                    'placeholder' => 'c2',
+                ],
+            ],
+            $query->getValueBinder()->bindings()
+        );
+    }
 }
