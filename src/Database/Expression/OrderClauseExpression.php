@@ -15,6 +15,7 @@
 namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
+use Cake\Database\Query;
 use Cake\Database\ValueBinder;
 
 /**
@@ -49,7 +50,9 @@ class OrderClauseExpression implements ExpressionInterface, FieldInterface
     public function sql(ValueBinder $generator)
     {
         $field = $this->_field;
-        if ($field instanceof ExpressionInterface) {
+        if ($field instanceof Query) {
+            $field = sprintf('(%s)', $field->sql($generator));
+        } elseif ($field instanceof ExpressionInterface) {
             $field = $field->sql($generator);
         }
 
