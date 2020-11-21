@@ -5090,4 +5090,71 @@ class QueryTest extends TestCase
         $results = $statement->fetchColumn(3);
         $this->assertFalse($results);
     }
+
+    /**
+     * Tests that query expressions can be used for ordering.
+     *
+     * @return void
+     */
+    public function testOrderBySubquery()
+    {
+        $this->autoQuote = true;
+        $this->connection->getDriver()->enableAutoQuoting($this->autoQuote);
+
+        $this->loadFixtures('Articles');
+        $connection = $this->connection;
+
+        $query = new Query($connection);
+
+        $stmt = $connection->update('articles', ['published' => 'N'], ['id' => 3]);
+        $stmt->closeCursor();
+
+        $subquery = new Query($connection);
+        $subquery
+            ->select(
+                $subquery->newExpr()->addCase(
+                    [$subquery->newExpr()->add(['a.published' => 'N'])],
+                    [1, 0],
+                    ['integer', 'integer']
+                )
+            )
+            ->from(['a' => 'articles'])
+            ->where([
+                'a.id = articles.id',
+            ]);
+
+        $query
+            ->select(['id'])
+            ->from('articles')
+            ->orderDesc($subquery)
+            ->orderAsc('id')
+            ->setSelectTypeMap(new TypeMap([
+                'id' => 'integer',
+            ]));
+
+        $this->assertQuotedQuery(
+            'SELECT <id> FROM <articles> ORDER BY \(' .
+                'SELECT \(CASE WHEN <a>\.<published> = \:c0 THEN \:param1 ELSE \:param2 END\) ' .
+                'FROM <articles> <a> ' .
+                'WHERE a\.id = articles\.id' .
+            '\) DESC, <id> ASC',
+            $query->sql(),
+            !$this->autoQuote
+        );
+
+        $this->assertSame(
+            [
+                [
+                    'id' => 3,
+                ],
+                [
+                    'id' => 1,
+                ],
+                [
+                    'id' => 2,
+                ],
+            ],
+            $query->execute()->fetchAll('assoc')
+        );
+    }
 }
