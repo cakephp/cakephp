@@ -64,6 +64,6 @@ trait StringCompareTrait
         }
 
         $expected = file_get_contents($path);
-        $this->assertTextEquals($expected, $result);
+        $this->assertTextEquals($expected, $result, 'Content does not match file ' . $path);
     }
 }
