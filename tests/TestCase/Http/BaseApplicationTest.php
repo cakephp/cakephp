@@ -247,7 +247,7 @@ class BaseApplicationTest extends TestCase
     {
         $app = $this->getMockForAbstractClass(BaseApplication::class, [$this->path]);
         $called = false;
-        $app->getEventManager()->on('Application.buildContainer', function ($event, $container)  use (&$called) {
+        $app->getEventManager()->on('Application.buildContainer', function ($event, $container) use (&$called) {
             $this->assertInstanceOf(BaseApplication::class, $event->getSubject());
             $this->assertInstanceOf(ContainerInterface::class, $container);
             $called = true;

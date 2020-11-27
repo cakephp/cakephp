@@ -15,16 +15,14 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite;
 
-use Cake\Core\Configure;
+use Cake\Core\HttpApplicationInterface;
 use Cake\Core\PluginApplicationInterface;
-use Cake\Event\EventManager;
 use Cake\Http\FlashMessage;
 use Cake\Http\Server;
 use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Router;
 use Cake\Routing\RoutingApplicationInterface;
-use LogicException;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -36,28 +34,6 @@ use Psr\Http\Message\ResponseInterface;
 class MiddlewareDispatcher
 {
     /**
-     * The test case being run.
-     *
-     * @var \Cake\TestSuite\TestCase
-     */
-    protected $_test;
-
-    /**
-     * The application class name
-     *
-     * @var string
-     * @psalm-var class-string<\Cake\Core\HttpApplicationInterface>
-     */
-    protected $_class;
-
-    /**
-     * Constructor arguments for your application class.
-     *
-     * @var array
-     */
-    protected $_constructorArgs;
-
-    /**
      * The application that is being dispatched.
      *
      * @var \Cake\Core\HttpApplicationInterface
@@ -67,31 +43,11 @@ class MiddlewareDispatcher
     /**
      * Constructor
      *
-     * @param \Cake\TestSuite\TestCase $test The test case to run.
-     * @param string|null $class The application class name. Defaults to App\Application.
-     * @param array|null $constructorArgs The constructor arguments for your application class.
-     *   Defaults to `['./config']`
-     * @throws \LogicException If it cannot load class for use in integration testing.
-     * @psalm-param class-string<\Cake\Core\HttpApplicationInterface>|null $class
+     * @param \Cake\Core\HttpApplicationInterface $app The test case to run.
      */
-    public function __construct(
-        TestCase $test,
-        ?string $class = null,
-        ?array $constructorArgs = null
-    ) {
-        $this->_test = $test;
-        if ($class === null) {
-            /** @psalm-var class-string<\Cake\Core\HttpApplicationInterface> */
-            $class = Configure::read('App.namespace') . '\Application';
-        }
-        $this->_class = $class;
-        $this->_constructorArgs = $constructorArgs ?: [CONFIG];
-
-        if (!class_exists($this->_class)) {
-            throw new LogicException("Cannot load `{$this->_class}` for use in integration testing.", 0);
-        }
-
-        $this->app = new $this->_class(...$this->_constructorArgs);
+    public function __construct(HttpApplicationInterface $app)
+    {
+        $this->app = $app;
     }
 
     /**
@@ -181,13 +137,6 @@ class MiddlewareDispatcher
      */
     public function execute(array $requestSpec): ResponseInterface
     {
-        // Spy on the controller using the initialize hook instead
-        // of the dispatcher hooks as those will be going away one day.
-        EventManager::instance()->on(
-            'Controller.initialize',
-            [$this->_test, 'controllerSpy']
-        );
-
         $server = new Server($this->app);
 
         return $server->run($this->_createRequest($requestSpec));

@@ -19,7 +19,6 @@ use Cake\Command\Command;
 use Cake\Console\CommandRunner;
 use Cake\Console\ConsoleIo;
 use Cake\Console\Exception\StopException;
-use Cake\Core\Configure;
 use Cake\TestSuite\Constraint\Console\ContentsContain;
 use Cake\TestSuite\Constraint\Console\ContentsContainRow;
 use Cake\TestSuite\Constraint\Console\ContentsEmpty;
@@ -32,32 +31,22 @@ use Cake\TestSuite\Stub\MissingConsoleInputException;
 use RuntimeException;
 
 /**
- * A test case class intended to make integration tests of cake console commands
- * easier.
+ * A bundle of methods that makes testing commands
+ * and shell classes easier.
+ *
+ * Enables you to call commands/shells with a
+ * full application context.
  */
 trait ConsoleIntegrationTestTrait
 {
+    use ContainerStubTrait;
+
     /**
      * Whether or not to use the CommandRunner
      *
      * @var bool
      */
     protected $_useCommandRunner = false;
-
-    /**
-     * The customized application class name.
-     *
-     * @var string|null
-     * @psalm-var class-string<\Cake\Core\ConsoleApplicationInterface>|null
-     */
-    protected $_appClass;
-
-    /**
-     * The customized application constructor arguments.
-     *
-     * @var array|null
-     */
-    protected $_appArgs;
 
     /**
      * Last exit code
@@ -142,8 +131,6 @@ trait ConsoleIntegrationTestTrait
         $this->_err = null;
         $this->_in = null;
         $this->_useCommandRunner = false;
-        $this->_appClass = null;
-        $this->_appArgs = null;
     }
 
     /**
@@ -155,20 +142,6 @@ trait ConsoleIntegrationTestTrait
     public function useCommandRunner(): void
     {
         $this->_useCommandRunner = true;
-    }
-
-    /**
-     * Configure the application class to use in console integration tests.
-     *
-     * @param string $class The application class name.
-     * @param array|null $constructorArgs The constructor arguments for your application class.
-     * @return void
-     * @psalm-param class-string<\Cake\Core\ConsoleApplicationInterface> $class
-     */
-    public function configApplication(string $class, ?array $constructorArgs): void
-    {
-        $this->_appClass = $class;
-        $this->_appArgs = $constructorArgs;
     }
 
     /**
@@ -307,15 +280,9 @@ trait ConsoleIntegrationTestTrait
     protected function makeRunner()
     {
         if ($this->_useCommandRunner) {
-            if ($this->_appClass) {
-                $appClass = $this->_appClass;
-            } else {
-                /** @psalm-var class-string<\Cake\Core\ConsoleApplicationInterface> */
-                $appClass = Configure::read('App.namespace') . '\Application';
-            }
-            $appArgs = $this->_appArgs ?: [CONFIG];
-
-            return new CommandRunner(new $appClass(...$appArgs));
+            /** @var \Cake\Core\ConsoleApplicationInterface */
+            $app = $this->createApp();
+            return new CommandRunner($app);
         }
 
         return new LegacyCommandRunner();

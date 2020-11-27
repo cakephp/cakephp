@@ -1742,4 +1742,13 @@ class IntegrationTestTraitTest extends TestCase
         $this->get('/dependencies/');
         $this->assertResponseContains('"key":"value"', 'Contains the data from the stdClass container object.');
     }
+
+    public function testHandleWithMockedDependencies()
+    {
+        $this->mockService(stdClass::class, function () {
+            return json_decode('{"mock":true}');
+        });
+        $this->get('/dependencies/');
+        $this->assertResponseContains('"mock":true', 'Contains the data from the stdClass mock container.');
+    }
 }

@@ -21,7 +21,7 @@ class DependencyCommand extends Command
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
         $io->out('Dependency Command');
-        $io->out('constructor inject: ' . get_class($this->inject));
+        $io->out('constructor inject: ' . json_encode($this->inject));
 
         return static::CODE_SUCCESS;
     }

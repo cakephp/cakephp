@@ -26,6 +26,7 @@ use Cake\Routing\Middleware\RoutingMiddleware;
 use Cake\Routing\RouteBuilder;
 use stdClass;
 use TestApp\Command\AbortCommand;
+use TestApp\Command\DependencyCommand;
 
 class Application extends BaseApplication
 {
@@ -101,5 +102,7 @@ class Application extends BaseApplication
     public function services(ContainerInterface $container): void
     {
         $container->add(stdClass::class, json_decode('{"key":"value"}'));
+        $container->add(DependencyCommand::class)
+            ->addArgument(stdClass::class);
     }
 }

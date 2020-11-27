@@ -454,7 +454,7 @@ class CommandRunnerTest extends TestCase
 
         $messages = implode("\n", $output->messages());
         $this->assertStringContainsString('Dependency Command', $messages);
-        $this->assertStringContainsString('constructor inject: stdClass', $messages);
+        $this->assertStringContainsString('constructor inject: {"key":"value"}', $messages);
     }
 
     /**
