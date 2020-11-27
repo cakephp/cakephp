@@ -24,6 +24,9 @@ use Cake\Http\Cookie\Cookie;
  */
 class PostsController extends AppController
 {
+    /**
+     * @return void
+     */
     public function initialize(): void
     {
         $this->loadComponent('Flash');
@@ -32,8 +35,7 @@ class PostsController extends AppController
     }
 
     /**
-     * beforeFilter
-     *
+     * @param \Cake\Event\EventInterface $event
      * @return \Cake\Http\Response|null|void
      */
     public function beforeFilter(EventInterface $event)
@@ -57,6 +59,16 @@ class PostsController extends AppController
         $this->response = $this->response->withCookie(new Cookie('remember_me', 1));
         $this->set('test', 'value');
         $this->viewBuilder()->setLayout($layout);
+    }
+
+    /**
+     * @return \Cake\Http\Response|null
+     */
+    public function someRedirect()
+    {
+        $this->Flash->error('An error message');
+
+        return $this->redirect('/somewhere');
     }
 
     /**

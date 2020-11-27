@@ -738,7 +738,7 @@ class QueryExpression implements ExpressionInterface, Countable
             [$expression, $operator] = $parts;
             $operator = strtolower(trim($operator));
         }
-        $type = $this->getTypeMap() ->type($expression);
+        $type = $this->getTypeMap()->type($expression);
 
         $typeMultiple = (is_string($type) && strpos($type, '[]') !== false);
         if (in_array($operator, ['in', 'not in']) || $typeMultiple) {
@@ -780,7 +780,9 @@ class QueryExpression implements ExpressionInterface, Countable
         }
 
         if ($value === null && $this->_conjunction !== ',') {
-            throw new InvalidArgumentException('Expression is missing operator (IS, IS NOT) with `null` value.');
+            throw new InvalidArgumentException(
+                sprintf('Expression `%s` is missing operator (IS, IS NOT) with `null` value.', $expression)
+            );
         }
 
         return new ComparisonExpression($expression, $value, $type, $operator);

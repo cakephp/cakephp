@@ -30,6 +30,10 @@ jobs:
         image: redis
         ports:
           - 6379/tcp
+      memcached:
+        image: memcached
+        ports:
+          - 11211/tcp
 
     steps:
     - name: Setup MySQL latest
@@ -82,10 +86,6 @@ jobs:
 
     - name: Install packages
       run: |
-        # memcached installation fails without updating packages.
-        sudo apt update
-        sudo apt install memcached
-
         sudo locale-gen da_DK.UTF-8
         sudo locale-gen de_DE.UTF-8
 
@@ -104,6 +104,7 @@ jobs:
     - name: Run PHPUnit
       env:
         REDIS_PORT: ${{ job.services.redis.ports['6379'] }}
+        MEMCACHED_PORT: ${{ job.services.memcached.ports['11211'] }}
       run: |
         if [[ ${{ matrix.db-type }} == 'sqlite' ]]; then export DB_URL='sqlite:///:memory:'; fi
         if [[ ${{ matrix.db-type }} == 'mysql' && ${{ matrix.php-version }} != '7.2' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp'; fi
