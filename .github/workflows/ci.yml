@@ -62,12 +62,20 @@ jobs:
       with:
         fetch-depth: 1
 
+    - name: Configure PHP ini values
+      uses: haya14busa/action-cond@v1
+      id: php-ini
+      with:
+        cond: ${{ matrix.php-version == '8.0' }}
+        if_true: apc.enable_cli = 1, opcache.enable_cli = 1, opcache.jit_buffer_size = 512M
+        if_false: apc.enable_cli = 1, opcache.enable_cli = 1,
+
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php-version }}
         extensions: mbstring, intl, apcu, pdo_${{ matrix.db-type }}
-        ini-values: apc.enable_cli = 1
+        ini-values: ${{ steps.php-ini.outputs.value }}
         coverage: pcov
 
     - name: Get composer cache directory
@@ -89,7 +97,7 @@ jobs:
         sudo locale-gen da_DK.UTF-8
         sudo locale-gen de_DE.UTF-8
 
-    - name: composer install
+    - name: Composer install
       run: |
         if ${{ matrix.prefer-lowest == 'prefer-lowest' }}; then
           composer update --prefer-lowest --prefer-stable
@@ -159,7 +167,7 @@ jobs:
       with:
         php-version: ${{ env.PHP_VERSION }}
         extensions: ${{ env.EXTENSIONS }}
-        ini-values: apc.enable_cli = 1, extension = php_fileinfo.dll
+        ini-values: apc.enable_cli = 1, opcache.enable_cli = 1, extension = php_fileinfo.dll
         coverage: none
 
     - name: Setup SQLServer
@@ -179,8 +187,8 @@ jobs:
         path: ${{ steps.composer-cache.outputs.dir }}
         key: ${{ runner.os }}-composer-${{ steps.key-date.outputs.date }}-${{ hashFiles('composer.json') }}-${{ matrix.prefer-lowest }}
 
-    - name: composer install
-      run: composer install
+    - name: Composer install
+      run: composer update
 
     - name: Run PHPUnit
       env:
@@ -218,7 +226,7 @@ jobs:
         path: ${{ steps.composer-cache.outputs.dir }}
         key: ${{ runner.os }}-composer-${{ steps.key-date.outputs.date }}-${{ hashFiles('composer.json') }}-${{ matrix.prefer-lowest }}
 
-    - name: composer install
+    - name: Composer install
       run: composer stan-setup
 
     - name: Run PHP CodeSniffer
