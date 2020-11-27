@@ -282,6 +282,7 @@ trait ConsoleIntegrationTestTrait
         if ($this->_useCommandRunner) {
             /** @var \Cake\Core\ConsoleApplicationInterface $app */
             $app = $this->createApp();
+
             return new CommandRunner($app);
         }
 

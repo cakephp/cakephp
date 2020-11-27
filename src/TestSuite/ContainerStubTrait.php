@@ -91,6 +91,7 @@ trait ContainerStubTrait
         if (!empty($this->containerServices) && method_exists($app, 'getEventManager')) {
             $app->getEventManager()->on('Application.buildContainer', [$this, 'modifyContainer']);
         }
+
         return $app;
     }
 
