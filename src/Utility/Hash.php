@@ -1123,8 +1123,8 @@ class Hash
         foreach ($compare as $key => $value) {
             if (!array_key_exists($key, $data)) {
                 $data[$key] = $value;
-            } elseif (is_array($value)) {
-                $data[$key] = static::mergeDiff($data[$key], $compare[$key]);
+            } elseif (is_array($value) && is_array($data[$key])) {
+                $data[$key] = static::mergeDiff($data[$key], $value);
             }
         }
 
