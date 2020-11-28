@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Http;
 
 use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
+use Cake\Core\Container;
 use Cake\Core\ContainerInterface;
 use Cake\Http\BaseApplication;
 use Cake\Http\MiddlewareQueue;
@@ -240,5 +241,35 @@ class BaseApplicationTest extends TestCase
 
         $this->assertInstanceOf(ContainerInterface::class, $container);
         $this->assertSame($container, $app->getContainer(), 'Should return a reference');
+    }
+
+    public function testBuildContainerEvent()
+    {
+        $app = $this->getMockForAbstractClass(BaseApplication::class, [$this->path]);
+        $called = false;
+        $app->getEventManager()->on('Application.buildContainer', function ($event, $container) use (&$called) {
+            $this->assertInstanceOf(BaseApplication::class, $event->getSubject());
+            $this->assertInstanceOf(ContainerInterface::class, $container);
+            $called = true;
+        });
+
+        $container = $app->getContainer();
+        $this->assertInstanceOf(ContainerInterface::class, $container);
+        $this->assertTrue($called, 'Listener should be called');
+    }
+
+    public function testBuildContainerEventReplaceContainer()
+    {
+        $app = $this->getMockForAbstractClass(BaseApplication::class, [$this->path]);
+        $app->getEventManager()->on('Application.buildContainer', function () {
+            $new = new Container();
+            $new->add('testing', 'yes');
+
+            return $new;
+        });
+
+        $container = $app->getContainer();
+        $this->assertInstanceOf(ContainerInterface::class, $container);
+        $this->assertTrue($container->has('testing'));
     }
 }

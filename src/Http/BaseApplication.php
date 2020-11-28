@@ -269,6 +269,11 @@ abstract class BaseApplication implements
             $plugin->services($container);
         }
 
+        $event = $this->dispatchEvent('Application.buildContainer', ['container' => $container]);
+        if ($event->getResult() instanceof ContainerInterface) {
+            return $event->getResult();
+        }
+
         return $container;
     }
 

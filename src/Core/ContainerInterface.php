@@ -52,4 +52,12 @@ interface ContainerInterface extends PsrInterface
      * @return $this
      */
     public function addServiceProvider($provider);
+
+    /**
+     * Modify an existing definition
+     *
+     * @param string $id The class name or name of the service being modified.
+     * @return \League\Container\Definition\DefinitionInterface
+     */
+    public function extend(string $id): DefinitionInterface;
 }

@@ -20,6 +20,7 @@ use Cake\Core\Configure;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Error\ExceptionRenderer;
 use Cake\Event\EventInterface;
+use Cake\Event\EventManager;
 use Cake\Form\FormProtector;
 use Cake\Http\Middleware\CsrfProtectionMiddleware;
 use Cake\Http\Session;
@@ -75,21 +76,7 @@ use Throwable;
 trait IntegrationTestTrait
 {
     use CookieCryptTrait;
-
-    /**
-     * The customized application class name.
-     *
-     * @var string|null
-     * @psalm-var class-string<\Cake\Core\HttpApplicationInterface>|null
-     */
-    protected $_appClass;
-
-    /**
-     * The customized application constructor arguments.
-     *
-     * @var array|null
-     */
-    protected $_appArgs;
+    use ContainerStubTrait;
 
     /**
      * The data used to build the next request.
@@ -215,25 +202,9 @@ trait IntegrationTestTrait
         $this->_viewName = null;
         $this->_layoutName = null;
         $this->_requestSession = null;
-        $this->_appClass = null;
-        $this->_appArgs = null;
         $this->_securityToken = false;
         $this->_csrfToken = false;
         $this->_retainFlashMessages = false;
-    }
-
-    /**
-     * Configure the application class to use in integration tests.
-     *
-     * @param string $class The application class name.
-     * @param array|null $constructorArgs The constructor arguments for your application class.
-     * @return void
-     * @psalm-param class-string<\Cake\Core\HttpApplicationInterface> $class
-     */
-    public function configApplication(string $class, ?array $constructorArgs): void
-    {
-        $this->_appClass = $class;
-        $this->_appArgs = $constructorArgs;
     }
 
     /**
@@ -518,7 +489,11 @@ trait IntegrationTestTrait
      */
     protected function _makeDispatcher(): MiddlewareDispatcher
     {
-        return new MiddlewareDispatcher($this, $this->_appClass, $this->_appArgs);
+        EventManager::instance()->on('Controller.initialize', [$this, 'controllerSpy']);
+        /** @var \Cake\Core\HttpApplicationInterface $app */
+        $app = $this->createApp();
+
+        return new MiddlewareDispatcher($app);
     }
 
     /**

@@ -34,6 +34,7 @@ use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 use Laminas\Diactoros\UploadedFile;
 use PHPUnit\Framework\AssertionFailedError;
+use stdClass;
 
 /**
  * Self test of the IntegrationTestTrait
@@ -1756,7 +1757,58 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testHandleWithContainerDependencies()
     {
-        $this->get('/dependencies/');
+        $this->get('/dependencies/requiredDep');
+        $this->assertResponseOk();
         $this->assertResponseContains('"key":"value"', 'Contains the data from the stdClass container object.');
+    }
+
+    /**
+     * Test that mockService() injects into controllers.
+     *
+     * @return void
+     */
+    public function testHandleWithMockServices()
+    {
+        $this->mockService(stdClass::class, function () {
+            return json_decode('{"mock":true}');
+        });
+        $this->get('/dependencies/requiredDep');
+        $this->assertResponseOk();
+        $this->assertResponseContains('"mock":true', 'Contains the data from the stdClass mock container.');
+    }
+
+    /**
+     * Test that mockService() injects into controllers.
+     *
+     * @return void
+     */
+    public function testHandleWithMockServicesOverwrite()
+    {
+        $this->mockService(stdClass::class, function () {
+            return json_decode('{"first":true}');
+        });
+        $this->mockService(stdClass::class, function () {
+            return json_decode('{"second":true}');
+        });
+        $this->get('/dependencies/requiredDep');
+        $this->assertResponseOk();
+        $this->assertResponseContains('"second":true', 'Contains the data from the stdClass mock container.');
+    }
+
+    /**
+     * Test that removeMock() unsets mocks
+     *
+     * @return void
+     */
+    public function testHandleWithMockServicesUnset()
+    {
+        $this->mockService(stdClass::class, function () {
+            return json_decode('{"first":true}');
+        });
+        $this->removeMockService(stdClass::class);
+
+        $this->get('/dependencies/requiredDep');
+        $this->assertResponseOk();
+        $this->assertResponseNotContains('"first":true');
     }
 }

@@ -164,6 +164,11 @@
       <code>Shell</code>
     </DeprecatedClass>
   </file>
+  <file src="src/TestSuite/ContainerStubTrait.php">
+    <DeprecatedClass occurrences="2">
+      <code>$this</code>
+    </DeprecatedClass>
+  </file>
   <file src="src/TestSuite/Constraint/EventFired.php">
     <InternalClass occurrences="1"/>
   </file>
