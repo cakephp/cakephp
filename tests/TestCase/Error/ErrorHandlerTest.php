@@ -151,8 +151,6 @@ class ErrorHandlerTest extends TestCase
      */
     public function testHandleErrorTraceOffset()
     {
-        $this->_restoreError = true;
-
         set_error_handler(function ($code, $message, $file, $line, $context = null) {
             $errorHandler = new ErrorHandler();
             $context['_trace_frame_offset'] = 3;
@@ -162,6 +160,8 @@ class ErrorHandlerTest extends TestCase
         ob_start();
         $wrong = $wrong + 1;
         $result = ob_get_clean();
+
+        restore_error_handler();
 
         $this->assertStringNotContainsString(
             'ErrorHandlerTest.php, line ' . (__LINE__ - 4),
