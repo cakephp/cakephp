@@ -3230,6 +3230,20 @@ class HashTest extends TestCase
     }
 
     /**
+     * Test mergeDiff() with scalar elements.
+     *
+     * @return void
+     */
+    public function testMergeDiffWithScalarValue()
+    {
+        $result = Hash::mergeDiff(['a' => 'value'], ['a' => ['value']]);
+        $this->assertSame(['a' => 'value'], $result);
+
+        $result = Hash::mergeDiff(['a' => ['value']], ['a' => 'value']);
+        $this->assertSame(['a' => ['value']], $result);
+    }
+
+    /**
      * Tests Hash::expand
      *
      * @return void
