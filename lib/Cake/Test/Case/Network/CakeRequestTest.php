@@ -215,9 +215,14 @@ class CakeRequestTest extends CakeTestCase {
 		$request = new CakeRequest();
 		$this->assertEquals('some/path', $request->url);
 
-		$_SERVER['REQUEST_URI'] = Configure::read('App.fullBaseUrl') . '/other/path?url=https://cakephp.org';
+		$base = Configure::read('App.fullBaseUrl');
+		$_SERVER['REQUEST_URI'] = $base . '/other/path?url=https://cakephp.org';
 		$request = new CakeRequest();
 		$this->assertEquals('other/path', $request->url);
+
+		$_SERVER['REQUEST_URI'] = str_repeat('x', strlen($base) - 4) . '://?/other/path';
+		$request = new CakeRequest();
+		$this->assertEquals('', $request->url);
 	}
 
 /**
