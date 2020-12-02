@@ -482,16 +482,19 @@ class ControllerTest extends TestCase
      * testSetAction method
      *
      * @return void
+     * @group deprecated
      */
     public function testSetAction(): void
     {
-        $request = new ServerRequest(['url' => 'controller/posts/index']);
+        $this->deprecated(function () {
+            $request = new ServerRequest(['url' => 'controller/posts/index']);
 
-        $TestController = new TestController($request);
-        $TestController->setAction('view', 1, 2);
-        $expected = ['testId' => 1, 'test2Id' => 2];
-        $this->assertSame($expected, $TestController->getRequest()->getData());
-        $this->assertSame('view', $TestController->getRequest()->getParam('action'));
+            $TestController = new TestController($request);
+            $TestController->setAction('view', 1, 2);
+            $expected = ['testId' => 1, 'test2Id' => 2];
+            $this->assertSame($expected, $TestController->getRequest()->getData());
+            $this->assertSame('view', $TestController->getRequest()->getParam('action'));
+        });
     }
 
     /**

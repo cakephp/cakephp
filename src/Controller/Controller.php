@@ -647,6 +647,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *   Any other parameters passed to this method will be passed as parameters to the new action.
      * @param mixed ...$args Arguments passed to the action
      * @return mixed Returns the return value of the called action
+     * @deprecated 4.2.0 Refactor your code to not require changing the action for the same HTTP request.
+     *   Use actual redirection instead.
      */
     public function setAction(string $action, ...$args)
     {
