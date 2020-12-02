@@ -118,11 +118,10 @@ class ControllerFactory implements ControllerFactoryInterface
             // Primitive types are passed args as they can't be looked up in the container.
             // We only handle strings currently.
             if ($typeName === 'string') {
-                $defaultValue = $parameter->getDefaultValue();
                 if (count($passed)) {
                     $args[$position] = array_shift($passed);
-                } elseif ($defaultValue) {
-                    $args[$position] = $defaultValue;
+                } elseif ($parameter->isDefaultValueAvailable()) {
+                    $args[$position] = $parameter->getDefaultValue();
                 } else {
                     $args[$position] = null;
                 }
