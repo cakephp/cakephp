@@ -631,4 +631,28 @@ class ControllerFactoryTest extends TestCase
         $this->assertNotNull($data);
         $this->assertSame(['one', 'two'], $data->args);
     }
+
+    /**
+     * Test that default parameters work for controller methods
+     *
+     * @return void
+     */
+    public function testInvokeOptionalStringParam()
+    {
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/optionalString',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'optionalString',
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+
+        $result = $this->factory->invoke($controller);
+        $data = json_decode((string)$result->getBody());
+
+        $this->assertNotNull($data);
+        $this->assertSame('default val', $data->str);
+    }
 }
