@@ -342,7 +342,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
         if ($this->_groupPrefix) {
             $prefix = md5(implode('_', $this->groups()));
         }
-        $key = preg_replace('/[\s]+/', '_', (string)$key);
+        $key = preg_replace('/[\s]+/', '_', $key);
 
         return $this->_config['prefix'] . $prefix . $key;
     }

@@ -428,7 +428,7 @@ class Route
             return null;
         }
 
-        return $this->parse($uri->getPath(), (string)$request->getMethod());
+        return $this->parse($uri->getPath(), $request->getMethod());
     }
 
     /**

@@ -420,7 +420,7 @@ class ShellTest extends TestCase
         $this->assertTrue($this->Shell->loadTasks());
         $this->assertInstanceOf('Cake\Shell\Task\TestAppleTask', $this->Shell->TestApple);
 
-        $this->Shell->tasks = 'TestBanana';
+        $this->Shell->tasks = ['TestBanana'];
         $this->assertTrue($this->Shell->loadTasks());
         $this->assertInstanceOf('Cake\Shell\Task\TestAppleTask', $this->Shell->TestApple);
         $this->assertInstanceOf('Cake\Shell\Task\TestBananaTask', $this->Shell->TestBanana);

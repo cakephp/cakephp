@@ -336,7 +336,7 @@ object(Cake\View\View) id:0 {
     (int) 0 => 'Html',
     (int) 1 => 'Form'
   ]
-  [protected] templatePath => null
+  [protected] templatePath => ''
   [protected] template => null
   [protected] layout => 'default'
   [protected] layoutPath => ''

@@ -172,6 +172,7 @@ class Event implements EventInterface
             return $this->_data[$key] ?? null;
         }
 
+        /** @psalm-suppress RedundantCastGivenDocblockType */
         return (array)$this->_data;
     }
 

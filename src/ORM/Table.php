@@ -420,7 +420,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if ($this->_alias === null) {
             $alias = namespaceSplit(static::class);
             $alias = substr(end($alias), 0, -5) ?: $this->_table;
-            $this->_alias = (string)$alias;
+            $this->_alias = $alias;
         }
 
         return $this->_alias;
@@ -650,7 +650,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function getPrimaryKey()
     {
         if ($this->_primaryKey === null) {
-            $key = (array)$this->getSchema()->getPrimaryKey();
+            $key = $this->getSchema()->getPrimaryKey();
             if (count($key) === 1) {
                 $key = $key[0];
             }
@@ -2091,7 +2091,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     protected function _newId(array $primary)
     {
-        if (!$primary || count((array)$primary) > 1) {
+        if (!$primary || count($primary) > 1) {
             return null;
         }
         /** @var string $typeName */
@@ -2451,7 +2451,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         $query = $this->query();
-        $conditions = (array)$entity->extract($primaryKey);
+        $conditions = $entity->extract($primaryKey);
         $statement = $query->delete()
             ->where($conditions)
             ->execute();

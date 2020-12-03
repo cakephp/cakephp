@@ -374,7 +374,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
     protected function getHttpCode(Throwable $exception): int
     {
         if ($exception instanceof HttpException) {
-            return (int)$exception->getCode();
+            return $exception->getCode();
         }
 
         return $this->exceptionHttpCodes[get_class($exception)] ?? 500;

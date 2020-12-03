@@ -287,7 +287,7 @@ class Shell
         if ($this->tasks === true || empty($this->tasks) || empty($this->Tasks)) {
             return true;
         }
-        $this->_taskMap = $this->Tasks->normalizeArray((array)$this->tasks);
+        $this->_taskMap = $this->Tasks->normalizeArray($this->tasks);
         $this->taskNames = array_merge($this->taskNames, array_keys($this->_taskMap));
 
         $this->_validateTasks();

@@ -1237,9 +1237,12 @@ class FormHelper extends Helper
             return 'select';
         }
 
+        $type = 'text';
         $internalType = $context->type($fieldName);
         $map = $this->_config['typeMap'];
-        $type = $map[$internalType] ?? 'text';
+        if ($internalType !== null && isset($map[$internalType])) {
+            $type = $map[$internalType];
+        }
         $fieldName = array_slice(explode('.', $fieldName), -1)[0];
 
         switch (true) {

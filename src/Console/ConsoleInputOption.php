@@ -144,7 +144,7 @@ class ConsoleInputOption
      */
     public function short(): string
     {
-        return (string)$this->_short;
+        return $this->_short;
     }
 
     /**

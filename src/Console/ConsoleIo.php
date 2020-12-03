@@ -198,7 +198,7 @@ class ConsoleIo
     public function out($message = '', int $newlines = 1, int $level = self::NORMAL): ?int
     {
         if ($level <= $this->_level) {
-            $this->_lastWritten = (int)$this->_out->write($message, $newlines);
+            $this->_lastWritten = $this->_out->write($message, $newlines);
 
             return $this->_lastWritten;
         }

@@ -217,7 +217,7 @@ class EagerLoadable
      */
     public function setCanBeJoined(bool $possible)
     {
-        $this->_canBeJoined = (bool)$possible;
+        $this->_canBeJoined = $possible;
 
         return $this;
     }

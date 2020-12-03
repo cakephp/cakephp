@@ -694,7 +694,7 @@ class Debugger
 
         $remaining = $context->remainingDepth();
         if ($remaining >= 0) {
-            $outputMask = (array)static::outputMask();
+            $outputMask = static::outputMask();
             foreach ($var as $key => $val) {
                 if (array_key_exists($key, $outputMask)) {
                     $node = new ScalarNode('string', $outputMask[$key]);
@@ -750,12 +750,13 @@ class Debugger
                 }
             }
 
-            $outputMask = (array)static::outputMask();
+            $outputMask = static::outputMask();
             $objectVars = get_object_vars($var);
             foreach ($objectVars as $key => $value) {
                 if (array_key_exists($key, $outputMask)) {
                     $value = $outputMask[$key];
                 }
+                /** @psalm-suppress RedundantCast */
                 $node->addProperty(
                     new PropertyNode((string)$key, 'public', static::export($value, $context->withAddedDepth()))
                 );

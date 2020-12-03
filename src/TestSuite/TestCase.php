@@ -631,7 +631,7 @@ abstract class TestCase extends BaseTestCase
     {
         $regex = [];
         $normalized = [];
-        foreach ((array)$expected as $key => $val) {
+        foreach ($expected as $key => $val) {
             if (!is_numeric($key)) {
                 $normalized[] = [$key => $val];
             } else {
@@ -645,6 +645,7 @@ abstract class TestCase extends BaseTestCase
             }
             $i++;
             if (is_string($tags) && $tags[0] === '<') {
+                /** @psalm-suppress InvalidArrayOffset */
                 $tags = [substr($tags, 1) => []];
             } elseif (is_string($tags)) {
                 $tagsTrimmed = preg_replace('/\s+/m', '', $tags);

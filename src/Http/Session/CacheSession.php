@@ -104,7 +104,7 @@ class CacheSession implements SessionHandlerInterface
             return false;
         }
 
-        return (bool)Cache::write($id, $data, $this->_options['config']);
+        return Cache::write($id, $data, $this->_options['config']);
     }
 
     /**

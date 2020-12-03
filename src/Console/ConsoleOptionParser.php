@@ -373,7 +373,7 @@ class ConsoleOptionParser
      */
     public function enableSubcommandSort(bool $value = true)
     {
-        $this->_subcommandSort = (bool)$value;
+        $this->_subcommandSort = $value;
 
         return $this;
     }
@@ -793,7 +793,7 @@ class ConsoleOptionParser
         throw new MissingOptionException(
             $message,
             $subcommand,
-            array_keys((array)$this->subcommands())
+            array_keys($this->subcommands())
         );
     }
 
@@ -805,7 +805,7 @@ class ConsoleOptionParser
      */
     public function setRootName(string $name)
     {
-        $this->rootName = (string)$name;
+        $this->rootName = $name;
 
         return $this;
     }

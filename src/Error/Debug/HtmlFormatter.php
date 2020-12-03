@@ -147,7 +147,7 @@ class HtmlFormatter implements FormatterInterface
             return $this->exportObject($var, $indent + 1);
         }
         if ($var instanceof SpecialNode) {
-            return $this->style('special', (string)$var->getValue());
+            return $this->style('special', $var->getValue());
         }
         throw new RuntimeException('Unknown node received ' . get_class($var));
     }

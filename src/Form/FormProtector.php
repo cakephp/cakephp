@@ -533,7 +533,7 @@ class FormProtector
         $messages = [];
         foreach ($dataFields as $key => $value) {
             if (is_int($key)) {
-                $foundKey = array_search($value, (array)$expectedFields, true);
+                $foundKey = array_search($value, $expectedFields, true);
                 if ($foundKey === false) {
                     $messages[] = sprintf($intKeyMessage, $value);
                 } else {
@@ -564,7 +564,7 @@ class FormProtector
         }
 
         $expectedFieldNames = [];
-        foreach ((array)$expectedFields as $key => $expectedField) {
+        foreach ($expectedFields as $key => $expectedField) {
             if (is_int($key)) {
                 $expectedFieldNames[] = $expectedField;
             } else {

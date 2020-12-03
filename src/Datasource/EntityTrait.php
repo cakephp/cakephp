@@ -1152,15 +1152,15 @@ trait EntityTrait
     {
         if ($field === '*') {
             $this->_accessible = array_map(function ($p) use ($set) {
-                return (bool)$set;
+                return $set;
             }, $this->_accessible);
-            $this->_accessible['*'] = (bool)$set;
+            $this->_accessible['*'] = $set;
 
             return $this;
         }
 
         foreach ((array)$field as $prop) {
-            $this->_accessible[$prop] = (bool)$set;
+            $this->_accessible[$prop] = $set;
         }
 
         return $this;

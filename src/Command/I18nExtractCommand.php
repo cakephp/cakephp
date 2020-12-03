@@ -207,7 +207,7 @@ class I18nExtractCommand extends Command
                 ['y', 'n'],
                 'n'
             );
-            $this->_extractCore = strtolower((string)$response) === 'y';
+            $this->_extractCore = strtolower($response) === 'y';
         }
 
         if ($args->hasOption('exclude-plugins') && $this->_isExtractingApp()) {
@@ -263,7 +263,7 @@ class I18nExtractCommand extends Command
                 ['y', 'n'],
                 'n'
             );
-            $this->_merge = strtolower((string)$response) === 'y';
+            $this->_merge = strtolower($response) === 'y';
         }
 
         $this->_markerError = (bool)$args->getOption('marker-error');

@@ -267,7 +267,7 @@ class SelectLoader
             throw new InvalidArgumentException(
                 sprintf(
                     'You are required to select the "%s" field(s)',
-                    implode(', ', (array)$key)
+                    implode(', ', $key)
                 )
             );
         }
