@@ -2681,6 +2681,7 @@ class DboSource extends DataSource {
 				$fields = array_diff($fields, array($field));
 			}
 			$fields = array_values($fields);
+			$virtual = array_unique($virtual);
 		}
 		if (!$quote) {
 			if (!empty($virtual)) {
