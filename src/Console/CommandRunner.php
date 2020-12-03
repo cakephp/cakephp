@@ -353,9 +353,7 @@ class CommandRunner implements EventDispatcherInterface
 
             return $shell->runCommand($argv, true);
         } catch (StopException $e) {
-            $code = $e->getCode();
-
-            return $code === null ? $code : (int)$code;
+            return $e->getCode();
         }
     }
 

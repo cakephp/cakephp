@@ -1209,7 +1209,7 @@ class Response implements ResponseInterface
      */
     public function checkNotModified(ServerRequest $request): bool
     {
-        $etags = preg_split('/\s*,\s*/', (string)$request->getHeaderLine('If-None-Match'), 0, PREG_SPLIT_NO_EMPTY);
+        $etags = preg_split('/\s*,\s*/', $request->getHeaderLine('If-None-Match'), 0, PREG_SPLIT_NO_EMPTY);
         $responseTag = $this->getHeaderLine('Etag');
         $etagMatches = null;
         if ($responseTag) {
@@ -1243,7 +1243,7 @@ class Response implements ResponseInterface
     {
         $this->stream->rewind();
 
-        return (string)$this->stream->getContents();
+        return $this->stream->getContents();
     }
 
     /**

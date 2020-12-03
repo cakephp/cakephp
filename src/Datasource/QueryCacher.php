@@ -96,7 +96,7 @@ class QueryCacher
         $key = $this->_resolveKey($query);
         $storage = $this->_resolveCacher();
 
-        return (bool)$storage->set($key, $results);
+        return $storage->set($key, $results);
     }
 
     /**

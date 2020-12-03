@@ -130,7 +130,7 @@ class EventManager implements EventManagerInterface
      */
     protected function _attachSubscriber(EventListenerInterface $subscriber): void
     {
-        foreach ((array)$subscriber->implementedEvents() as $eventKey => $function) {
+        foreach ($subscriber->implementedEvents() as $eventKey => $function) {
             $options = [];
             $method = $function;
             if (is_array($function) && isset($function['callable'])) {
@@ -234,7 +234,7 @@ class EventManager implements EventManagerInterface
      */
     protected function _detachSubscriber(EventListenerInterface $subscriber, ?string $eventKey = null): void
     {
-        $events = (array)$subscriber->implementedEvents();
+        $events = $subscriber->implementedEvents();
         if (!empty($eventKey) && empty($events[$eventKey])) {
             return;
         }
@@ -406,7 +406,7 @@ class EventManager implements EventManagerInterface
      */
     public function trackEvents(bool $enabled)
     {
-        $this->_trackEvents = (bool)$enabled;
+        $this->_trackEvents = $enabled;
 
         return $this;
     }

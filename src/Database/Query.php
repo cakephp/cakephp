@@ -867,7 +867,10 @@ class Query implements ExpressionInterface, IteratorAggregate
             $table = current($table);
         }
 
-        /** @psalm-suppress InvalidReturnStatement */
+        /**
+         * @psalm-suppress InvalidArrayOffset
+         * @psalm-suppress InvalidReturnStatement
+         */
         return [
             $alias => [
                 'table' => $table,
@@ -1490,9 +1493,6 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function limit($num)
     {
         $this->_dirty();
-        if ($num !== null && !is_object($num)) {
-            $num = (int)$num;
-        }
         $this->_parts['limit'] = $num;
 
         return $this;
@@ -1519,9 +1519,6 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function offset($num)
     {
         $this->_dirty();
-        if ($num !== null && !is_object($num)) {
-            $num = (int)$num;
-        }
         $this->_parts['offset'] = $num;
 
         return $this;

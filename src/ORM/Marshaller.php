@@ -314,7 +314,7 @@ class Marshaller
         $types = [Association::ONE_TO_ONE, Association::MANY_TO_ONE];
         $type = $assoc->type();
         if (in_array($type, $types, true)) {
-            return $marshaller->one($value, (array)$options);
+            return $marshaller->one($value, $options);
         }
         if ($type === Association::ONE_TO_MANY || $type === Association::MANY_TO_MANY) {
             $hasIds = array_key_exists('_ids', $value);
@@ -328,10 +328,10 @@ class Marshaller
             }
         }
         if ($type === Association::MANY_TO_MANY) {
-            return $marshaller->_belongsToMany($assoc, $value, (array)$options);
+            return $marshaller->_belongsToMany($assoc, $value, $options);
         }
 
-        return $marshaller->many($value, (array)$options);
+        return $marshaller->many($value, $options);
     }
 
     /**
@@ -748,11 +748,11 @@ class Marshaller
         $type = $assoc->type();
         if (in_array($type, $types, true)) {
             /** @psalm-suppress PossiblyInvalidArgument */
-            return $marshaller->merge($original, $value, (array)$options);
+            return $marshaller->merge($original, $value, $options);
         }
         if ($type === Association::MANY_TO_MANY) {
             /** @psalm-suppress PossiblyInvalidArgument */
-            return $marshaller->_mergeBelongsToMany($original, $assoc, $value, (array)$options);
+            return $marshaller->_mergeBelongsToMany($original, $assoc, $value, $options);
         }
 
         if ($type === Association::ONE_TO_MANY) {
@@ -767,7 +767,7 @@ class Marshaller
         }
 
         /** @psalm-suppress PossiblyInvalidArgument */
-        return $marshaller->mergeMany($original, $value, (array)$options);
+        return $marshaller->mergeMany($original, $value, $options);
     }
 
     /**

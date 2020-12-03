@@ -721,7 +721,7 @@ class Message implements JsonSerializable, Serializable
             if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 return;
             }
-        } elseif (preg_match($this->emailPattern, (string)$email)) {
+        } elseif (preg_match($this->emailPattern, $email)) {
             return;
         }
 

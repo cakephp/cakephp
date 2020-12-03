@@ -1111,10 +1111,10 @@ class Hash
     public static function diff(array $data, array $compare): array
     {
         if (empty($data)) {
-            return (array)$compare;
+            return $compare;
         }
         if (empty($compare)) {
-            return (array)$data;
+            return $data;
         }
         $intersection = array_intersect_key($data, $compare);
         while (($key = key($intersection)) !== null) {
@@ -1241,7 +1241,7 @@ class Hash
             $parentId = static::get($result, $parentKeys);
 
             if (isset($idMap[$id][$options['children']])) {
-                $idMap[$id] = array_merge($result, (array)$idMap[$id]);
+                $idMap[$id] = array_merge($result, $idMap[$id]);
             } else {
                 $idMap[$id] = array_merge($result, [$options['children'] => []]);
             }

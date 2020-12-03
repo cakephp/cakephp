@@ -89,7 +89,7 @@ class ValidationRule
      */
     public function isLast(): bool
     {
-        return (bool)$this->_last;
+        return $this->_last;
     }
 
     /**

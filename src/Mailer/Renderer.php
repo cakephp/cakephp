@@ -68,7 +68,7 @@ class Renderer
         $view = $this->createView();
 
         [$templatePlugin] = pluginSplit($view->getTemplate());
-        [$layoutPlugin] = pluginSplit((string)$view->getLayout());
+        [$layoutPlugin] = pluginSplit($view->getLayout());
         if ($templatePlugin) {
             $view->setPlugin($templatePlugin);
         } elseif ($layoutPlugin) {

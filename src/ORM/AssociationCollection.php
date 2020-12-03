@@ -311,7 +311,7 @@ class AssociationCollection implements IteratorAggregate
             return true;
         }
         if (!empty($nested)) {
-            $options = (array)$nested + $options;
+            $options = $nested + $options;
         }
 
         return (bool)$association->saveAssociated($entity, $options);

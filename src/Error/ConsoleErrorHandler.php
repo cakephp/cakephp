@@ -66,7 +66,7 @@ class ConsoleErrorHandler extends BaseErrorHandler
 
         $exitCode = Command::CODE_ERROR;
         if ($exception instanceof ConsoleException) {
-            $exitCode = (int)$exception->getCode();
+            $exitCode = $exception->getCode();
         }
         $this->_stop($exitCode);
     }

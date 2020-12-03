@@ -710,7 +710,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      */
     public function setTemporary(bool $temporary)
     {
-        $this->_temporary = (bool)$temporary;
+        $this->_temporary = $temporary;
 
         return $this;
     }

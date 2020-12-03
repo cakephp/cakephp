@@ -192,7 +192,7 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
      */
     public function setXssProtection(string $mode = self::XSS_BLOCK)
     {
-        $mode = (string)$mode;
+        $mode = $mode;
 
         if ($mode === self::XSS_BLOCK) {
             $mode = self::XSS_ENABLED_BLOCK;

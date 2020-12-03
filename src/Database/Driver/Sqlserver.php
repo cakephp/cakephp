@@ -373,10 +373,10 @@ class Sqlserver extends Driver
             ->from(['_cake_paging_' => $query]);
 
         if ($offset) {
-            $outer->where(["$field > " . (int)$offset]);
+            $outer->where(["$field > " . $offset]);
         }
         if ($limit) {
-            $value = (int)$offset + (int)$limit;
+            $value = (int)$offset + $limit;
             $outer->where(["$field <= $value"]);
         }
 

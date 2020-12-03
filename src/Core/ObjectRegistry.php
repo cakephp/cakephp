@@ -47,7 +47,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * Map of loaded objects.
      *
      * @var object[]
-     * @psalm-var array<string, TObject>
+     * @psalm-var array<array-key, TObject>
      */
     protected $_loaded = [];
 
@@ -103,8 +103,10 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
             }
         }
 
-        // phpcs:ignore SlevomatCodingStandard.Namespaces.FullyQualifiedClassNameInAnnotation.NonFullyQualifiedClassName
-        /** @psalm-var TObject $instance */
+        /**
+         * @psalm-var TObject $instance
+         * @psalm-suppress PossiblyNullArgument
+         **/
         $instance = $this->_create($className, $name, $config);
         $this->_loaded[$name] = $instance;
 
