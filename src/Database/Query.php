@@ -179,7 +179,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     /**
      * The Type map for fields in the select clause
      *
-     * @var \Cake\Database\TypeMap
+     * @var \Cake\Database\TypeMap|null
      */
     protected $_selectTypeMap;
 

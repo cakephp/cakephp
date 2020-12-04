@@ -64,7 +64,7 @@ class TimestampBehavior extends Behavior
     /**
      * Current timestamp
      *
-     * @var \Cake\I18n\Time
+     * @var \Cake\I18n\Time|null
      */
     protected $_ts;
 

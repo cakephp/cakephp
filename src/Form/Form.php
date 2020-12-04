@@ -75,7 +75,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
     /**
      * The schema used by this form.
      *
-     * @var \Cake\Form\Schema
+     * @var \Cake\Form\Schema|null
      */
     protected $_schema;
 

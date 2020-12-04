@@ -80,7 +80,7 @@ class Sqlserver extends Driver
     /**
      * The schema dialect class for this driver
      *
-     * @var \Cake\Database\Schema\SqlserverSchemaDialect
+     * @var \Cake\Database\Schema\SqlserverSchemaDialect|null
      */
     protected $_schemaDialect;
 

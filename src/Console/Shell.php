@@ -284,7 +284,7 @@ class Shell
      */
     public function loadTasks(): bool
     {
-        if ($this->tasks === true || empty($this->tasks) || empty($this->Tasks)) {
+        if ($this->tasks === true || empty($this->tasks)) {
             return true;
         }
         $this->_taskMap = $this->Tasks->normalizeArray($this->tasks);

@@ -471,16 +471,6 @@ parameters:
 			path: src/TestSuite/Fixture/TestFixture.php
 
 		-
-			message: "#^Property Cake\\\\TestSuite\\\\IntegrationTestCase\\:\\:\\$_response \\(Psr\\\\Http\\\\Message\\\\ResponseInterface\\) does not accept null\\.$#"
-			count: 1
-			path: src/TestSuite/IntegrationTestCase.php
-
-		-
-			message: "#^Property Cake\\\\TestSuite\\\\IntegrationTestCase\\:\\:\\$_controller \\(Cake\\\\Controller\\\\Controller\\) does not accept null\\.$#"
-			count: 1
-			path: src/TestSuite/IntegrationTestCase.php
-
-		-
 			message: "#^Property Cake\\\\TestSuite\\\\IntegrationTestCase\\:\\:\\$_viewName \\(string\\) does not accept null\\.$#"
 			count: 1
 			path: src/TestSuite/IntegrationTestCase.php
@@ -496,22 +486,12 @@ parameters:
 			path: src/TestSuite/IntegrationTestCase.php
 
 		-
-			message: "#^Negated boolean expression is always false\\.$#"
+			message: "#^Parameter \\#1 \\$response of class Cake\\\\TestSuite\\\\Constraint\\\\Response\\\\CookieEquals constructor expects Cake\\\\Http\\\\Response\\|null, Psr\\\\Http\\\\Message\\\\ResponseInterface\\|null given\\.$#"
 			count: 1
 			path: src/TestSuite/IntegrationTestCase.php
 
 		-
-			message: "#^Ternary operator condition is always true\\.$#"
-			count: 1
-			path: src/TestSuite/IntegrationTestCase.php
-
-		-
-			message: "#^Parameter \\#1 \\$response of class Cake\\\\TestSuite\\\\Constraint\\\\Response\\\\CookieEquals constructor expects Cake\\\\Http\\\\Response\\|null, Psr\\\\Http\\\\Message\\\\ResponseInterface given\\.$#"
-			count: 1
-			path: src/TestSuite/IntegrationTestCase.php
-
-		-
-			message: "#^Parameter \\#1 \\$response of class Cake\\\\TestSuite\\\\Constraint\\\\Response\\\\CookieEncryptedEquals constructor expects Cake\\\\Http\\\\Response\\|null, Psr\\\\Http\\\\Message\\\\ResponseInterface given\\.$#"
+			message: "#^Parameter \\#1 \\$response of class Cake\\\\TestSuite\\\\Constraint\\\\Response\\\\CookieEncryptedEquals constructor expects Cake\\\\Http\\\\Response\\|null, Psr\\\\Http\\\\Message\\\\ResponseInterface\\|null given\\.$#"
 			count: 1
 			path: src/TestSuite/IntegrationTestCase.php
 

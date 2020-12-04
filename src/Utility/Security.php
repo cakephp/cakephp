@@ -43,7 +43,7 @@ class Security
     /**
      * The crypto implementation to use.
      *
-     * @var object
+     * @var object|null
      */
     protected static $_instance;
 

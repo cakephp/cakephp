@@ -185,7 +185,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Name of the table as it can be found in the database
      *
-     * @var string
+     * @var string|null
      */
     protected $_table;
 
@@ -193,7 +193,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Human name giving to this particular instance. Multiple objects representing
      * the same database table can exist by using different aliases.
      *
-     * @var string
+     * @var string|null
      */
     protected $_alias;
 
@@ -214,14 +214,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * The name of the field that represents the primary key in the table
      *
-     * @var string|string[]
+     * @var string|string[]|null
      */
     protected $_primaryKey;
 
     /**
      * The name of the field that represents a human readable representation of a row
      *
-     * @var string|string[]
+     * @var string|string[]|null
      */
     protected $_displayField;
 
@@ -419,7 +419,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         if ($this->_alias === null) {
             $alias = namespaceSplit(static::class);
-            $alias = substr(end($alias), 0, -5) ?: $this->_table;
+            $alias = substr(end($alias), 0, -5) ?: $this->getTable();
             $this->_alias = $alias;
         }
 

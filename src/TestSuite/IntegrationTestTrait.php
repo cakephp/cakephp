@@ -88,7 +88,7 @@ trait IntegrationTestTrait
     /**
      * The response for the most recent request.
      *
-     * @var \Psr\Http\Message\ResponseInterface
+     * @var \Psr\Http\Message\ResponseInterface|null
      */
     protected $_response;
 
@@ -116,7 +116,7 @@ trait IntegrationTestTrait
     /**
      * The controller used in the last request.
      *
-     * @var \Cake\Controller\Controller
+     * @var \Cake\Controller\Controller|null
      */
     protected $_controller;
 
@@ -815,6 +815,10 @@ trait IntegrationTestTrait
      */
     public function assertRedirect($url = null, $message = ''): void
     {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert header.');
+        }
+
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat(null, new HeaderSet($this->_response, 'Location'), $verboseMessage);
 
@@ -838,6 +842,10 @@ trait IntegrationTestTrait
      */
     public function assertRedirectEquals($url = null, $message = '')
     {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert header.');
+        }
+
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat(null, new HeaderSet($this->_response, 'Location'), $verboseMessage);
 
@@ -855,6 +863,10 @@ trait IntegrationTestTrait
      */
     public function assertRedirectContains(string $url, string $message = ''): void
     {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert header.');
+        }
+
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat(null, new HeaderSet($this->_response, 'Location'), $verboseMessage);
         $this->assertThat($url, new HeaderContains($this->_response, 'Location'), $verboseMessage);
@@ -869,6 +881,10 @@ trait IntegrationTestTrait
      */
     public function assertRedirectNotContains(string $url, string $message = ''): void
     {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert header.');
+        }
+
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat(null, new HeaderSet($this->_response, 'Location'), $verboseMessage);
         $this->assertThat($url, new HeaderNotContains($this->_response, 'Location'), $verboseMessage);
@@ -896,6 +912,10 @@ trait IntegrationTestTrait
      */
     public function assertHeader(string $header, string $content, string $message = ''): void
     {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert header.');
+        }
+
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat(null, new HeaderSet($this->_response, $header), $verboseMessage);
         $this->assertThat($content, new HeaderEquals($this->_response, $header), $verboseMessage);
@@ -911,6 +931,10 @@ trait IntegrationTestTrait
      */
     public function assertHeaderContains(string $header, string $content, string $message = ''): void
     {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert header.');
+        }
+
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat(null, new HeaderSet($this->_response, $header), $verboseMessage);
         $this->assertThat($content, new HeaderContains($this->_response, $header), $verboseMessage);
@@ -926,6 +950,10 @@ trait IntegrationTestTrait
      */
     public function assertHeaderNotContains(string $header, string $content, string $message = ''): void
     {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert header.');
+        }
+
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat(null, new HeaderSet($this->_response, $header), $verboseMessage);
         $this->assertThat($content, new HeaderNotContains($this->_response, $header), $verboseMessage);
@@ -980,6 +1008,10 @@ trait IntegrationTestTrait
      */
     public function assertResponseContains(string $content, string $message = '', bool $ignoreCase = false): void
     {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert content.');
+        }
+
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat($content, new BodyContains($this->_response, $ignoreCase), $verboseMessage);
     }
@@ -994,6 +1026,10 @@ trait IntegrationTestTrait
      */
     public function assertResponseNotContains(string $content, string $message = '', bool $ignoreCase = false): void
     {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert content.');
+        }
+
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat($content, new BodyNotContains($this->_response, $ignoreCase), $verboseMessage);
     }
