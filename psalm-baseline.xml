@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="3.15@de6e7f324f44dde540ebe7ebd4eb481b97c86f30">
+<files psalm-version="4.3.1@2feba22a005a18bf31d4c7b9bdb9252c73897476">
   <file src="src/Collection/CollectionTrait.php">
     <ArgumentTypeCoercion occurrences="4">
       <code>$iterator</code>
       <code>$iterator</code>
-      <code>$this-&gt;unwrap()</code>
       <code>$this-&gt;newCollection($items)-&gt;unwrap()</code>
+      <code>$this-&gt;unwrap()</code>
     </ArgumentTypeCoercion>
   </file>
   <file src="src/Collection/Iterator/ZipIterator.php">
@@ -18,17 +18,12 @@
       <code>\Cake\Console\Shell</code>
     </DeprecatedClass>
   </file>
-  <file src="src/Console/Command/HelpCommand.php">
-    <NullableReturnStatement occurrences="1">
-      <code>array_shift($names)</code>
-    </NullableReturnStatement>
-  </file>
   <file src="src/Console/CommandCollection.php">
     <DeprecatedClass occurrences="4">
-      <code>string|\Cake\Console\Shell|\Cake\Console\CommandInterface</code>
       <code>Shell::class</code>
-      <code>class-string|\Cake\Console\Shell|\Cake\Console\CommandInterface</code>
       <code>\Traversable&lt;string, \Cake\Console\Shell|\Cake\Console\CommandInterface|class-string&gt;</code>
+      <code>class-string|\Cake\Console\Shell|\Cake\Console\CommandInterface</code>
+      <code>string|\Cake\Console\Shell|\Cake\Console\CommandInterface</code>
     </DeprecatedClass>
   </file>
   <file src="src/Console/CommandFactoryInterface.php">
@@ -38,26 +33,26 @@
   </file>
   <file src="src/Console/CommandRunner.php">
     <DeprecatedClass occurrences="3">
-      <code>\Cake\Console\Shell|\Cake\Console\CommandInterface</code>
       <code>\Cake\Console\Shell</code>
+      <code>\Cake\Console\Shell|\Cake\Console\CommandInterface</code>
       <code>\Cake\Console\Shell|\Cake\Console\CommandInterface</code>
     </DeprecatedClass>
   </file>
   <file src="src/Console/ShellDispatcher.php">
     <DeprecatedClass occurrences="5">
-      <code>Shell</code>
-      <code>\Cake\Console\Shell</code>
-      <code>Shell</code>
-      <code>\Cake\Console\Shell</code>
       <code>$instance</code>
+      <code>Shell</code>
+      <code>Shell</code>
+      <code>\Cake\Console\Shell</code>
+      <code>\Cake\Console\Shell</code>
     </DeprecatedClass>
   </file>
   <file src="src/Console/TaskRegistry.php">
     <DeprecatedClass occurrences="5">
+      <code>Shell</code>
       <code>TaskRegistry</code>
       <code>\Cake\Console\Shell</code>
       <code>\Cake\Console\Shell</code>
-      <code>Shell</code>
       <code>\Cake\Console\Shell</code>
     </DeprecatedClass>
   </file>
@@ -72,12 +67,6 @@
       <code>$request</code>
       <code>$request</code>
     </ArgumentTypeCoercion>
-  </file>
-  <file src="src/Core/ServiceProvider.php">
-    <MethodSignatureMismatch occurrences="2">
-      <code>ServiceProvider</code>
-      <code>public function getContainer(): ContainerInterface</code>
-    </MethodSignatureMismatch>
   </file>
   <file src="src/Database/Driver.php">
     <InvalidScalarArgument occurrences="2">
@@ -207,11 +196,11 @@
   </file>
   <file src="src/TestSuite/LegacyShellDispatcher.php">
     <DeprecatedClass occurrences="5">
-      <code>ShellDispatcher</code>
-      <code>parent::__construct($args, $bootstrap)</code>
-      <code>Shell</code>
-      <code>\Cake\Console\Shell</code>
       <code>$instance</code>
+      <code>Shell</code>
+      <code>ShellDispatcher</code>
+      <code>\Cake\Console\Shell</code>
+      <code>parent::__construct($args, $bootstrap)</code>
     </DeprecatedClass>
   </file>
   <file src="src/TestSuite/TestSuite.php">
