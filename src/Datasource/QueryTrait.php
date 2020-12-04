@@ -454,7 +454,6 @@ trait QueryTrait
     {
         $entity = $this->first();
         if (!$entity) {
-            /** @var \Cake\ORM\Table $table */
             $table = $this->getRepository();
             throw new RecordNotFoundException(sprintf(
                 'Record not found in table "%s"',

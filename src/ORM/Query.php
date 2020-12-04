@@ -1144,7 +1144,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             return;
         }
 
-        /** @var \Cake\ORM\Table $repository */
         $repository = $this->getRepository();
 
         if (empty($this->_parts['from'])) {
@@ -1166,7 +1165,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         $select = $this->clause('select');
         $this->_hasFields = true;
 
-        /** @var \Cake\ORM\Table $repository */
         $repository = $this->getRepository();
 
         if (!count($select) || $this->_autoFields === true) {
@@ -1217,7 +1215,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function find(string $finder, array $options = [])
     {
-        /** @var \Cake\ORM\Table $table */
         $table = $this->getRepository();
 
         /** @psalm-suppress LessSpecificReturnStatement */
@@ -1249,7 +1246,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     public function update($table = null)
     {
         if (!$table) {
-            /** @var \Cake\ORM\Table $repository */
             $repository = $this->getRepository();
             $table = $repository->getTable();
         }
@@ -1268,7 +1264,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function delete(?string $table = null)
     {
-        /** @var \Cake\ORM\Table $repository */
         $repository = $this->getRepository();
         $this->from([$repository->getAlias() => $repository->getTable()]);
 
@@ -1291,7 +1286,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function insert(array $columns, array $types = [])
     {
-        /** @var \Cake\ORM\Table $repository */
         $repository = $this->getRepository();
         $table = $repository->getTable();
         $this->into($table);
@@ -1416,7 +1410,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
 
         if (!($result instanceof ResultSet) && $this->isBufferedResultsEnabled()) {
             $class = $this->_decoratorClass();
-            /** @var \Cake\Datasource\ResultSetInterface $result */
             $result = new $class($result->buffered());
         }
 
