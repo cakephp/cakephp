@@ -106,7 +106,7 @@ abstract class Association
     /**
      * The field name in the owning side table that is used to match with the foreignKey
      *
-     * @var string|string[]
+     * @var string|string[]|null
      */
     protected $_bindingKey;
 

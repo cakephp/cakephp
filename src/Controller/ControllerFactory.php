@@ -76,7 +76,6 @@ class ControllerFactory implements ControllerFactoryInterface
             $this->container->add(ServerRequest::class, $request);
             $controller = $this->container->get($className);
         } else {
-            /** @var \Cake\Controller\Controller $controller */
             $controller = $reflection->newInstance($request);
         }
 

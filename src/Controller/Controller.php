@@ -150,7 +150,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * Instance of ComponentRegistry used to create Components
      *
-     * @var \Cake\Controller\ComponentRegistry
+     * @var \Cake\Controller\ComponentRegistry|null
      */
     protected $_components;
 
@@ -251,12 +251,14 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function components(?ComponentRegistry $components = null): ComponentRegistry
     {
-        if ($components === null && $this->_components === null) {
-            $this->_components = new ComponentRegistry($this);
-        }
         if ($components !== null) {
             $components->setController($this);
-            $this->_components = $components;
+
+            return $this->_components = $components;
+        }
+
+        if ($this->_components === null) {
+            $this->_components = new ComponentRegistry($this);
         }
 
         return $this->_components;

@@ -44,7 +44,7 @@ class I18n
     /**
      * The environment default locale
      *
-     * @var string
+     * @var string|null
      */
     protected static $_defaultLocale;
 

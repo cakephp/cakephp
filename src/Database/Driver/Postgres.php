@@ -61,7 +61,7 @@ class Postgres extends Driver
     /**
      * The schema dialect class for this driver
      *
-     * @var \Cake\Database\Schema\PostgresSchemaDialect
+     * @var \Cake\Database\Schema\PostgresSchemaDialect|null
      */
     protected $_schemaDialect;
 

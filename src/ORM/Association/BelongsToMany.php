@@ -106,7 +106,7 @@ class BelongsToMany extends Association
     /**
      * The name of the field representing the foreign key to the target table
      *
-     * @var string|string[]
+     * @var string|string[]|null
      */
     protected $_targetForeignKey;
 

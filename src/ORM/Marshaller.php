@@ -181,7 +181,6 @@ class Marshaller
 
         $primaryKey = (array)$this->_table->getPrimaryKey();
         $entityClass = $this->_table->getEntityClass();
-        /** @var \Cake\Datasource\EntityInterface $entity */
         $entity = new $entityClass();
         $entity->setSource($this->_table->getRegistryAlias());
 

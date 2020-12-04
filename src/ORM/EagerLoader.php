@@ -628,7 +628,6 @@ class EagerLoader
      */
     public function loadExternal(Query $query, StatementInterface $statement): StatementInterface
     {
-        /** @var \Cake\ORM\Table $table */
         $table = $query->getRepository();
         $external = $this->externalAssociations($table);
         if (empty($external)) {

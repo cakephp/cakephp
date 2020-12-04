@@ -74,7 +74,7 @@ class Number
     /**
      * Default currency format used by Number::currency()
      *
-     * @var string
+     * @var string|null
      */
     protected static $_defaultCurrencyFormat;
 

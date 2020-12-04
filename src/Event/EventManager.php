@@ -36,7 +36,7 @@ class EventManager implements EventManagerInterface
     /**
      * The globally available instance, used for dispatching events attached from any scope
      *
-     * @var \Cake\Event\EventManager
+     * @var \Cake\Event\EventManager|null
      */
     protected static $_generalManager;
 

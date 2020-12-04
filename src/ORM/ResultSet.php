@@ -159,7 +159,6 @@ class ResultSet implements ResultSetInterface
      */
     public function __construct(Query $query, StatementInterface $statement)
     {
-        /** @var \Cake\ORM\Table $repository */
         $repository = $query->getRepository();
         $this->_statement = $statement;
         $this->_driver = $query->getConnection()->getDriver();

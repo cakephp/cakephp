@@ -59,7 +59,7 @@ class Sqlite extends Driver
     /**
      * The schema dialect class for this driver
      *
-     * @var \Cake\Database\Schema\SqliteSchemaDialect
+     * @var \Cake\Database\Schema\SqliteSchemaDialect|null
      */
     protected $_schemaDialect;
 
