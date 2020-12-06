@@ -400,7 +400,7 @@ trait QueryTrait
      *
      * ```
      * $query->formatResults(function ($results, $query) {
-     *     return $results->map(function ($row) {
+     *     return $results->map(function ($row) use ($query) {
      *         $data = [
      *             'bar' => 'baz',
      *         ];
@@ -416,13 +416,14 @@ trait QueryTrait
      * });
      * ```
      *
-     * Retaining access to the original query instance by inheriting the query variable:
+     * Retaining access to the association target query instance of joined associations,
+     * by inheriting the contain callback's query argument:
      *
      * ```
      * // Assuming a `Articles belongsTo Authors` association that uses the join strategy
      *
      * $articlesQuery->contain('Authors', function ($authorsQuery) {
-     *     return $query->formatResults(function ($results, $query) use ($authorsQuery) {
+     *     return $authorsQuery->formatResults(function ($results, $query) use ($authorsQuery) {
      *         // Here `$authorsQuery` will always be the instance
      *         // where the callback was attached to.
      *
