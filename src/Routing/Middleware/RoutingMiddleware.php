@@ -136,11 +136,6 @@ class RoutingMiddleware implements MiddlewareInterface
             $params = (array)$request->getAttribute('params', []);
             $middleware = [];
             if (empty($params['controller'])) {
-                $parsedBody = $request->getParsedBody();
-                if (is_array($parsedBody) && isset($parsedBody['_method'])) {
-                    /** @var \Cake\Http\ServerRequest $request */
-                    $request = $request->withMethod($parsedBody['_method']);
-                }
                 $params = Router::parseRequest($request) + $params;
                 if (isset($params['_middleware'])) {
                     $middleware = $params['_middleware'];
