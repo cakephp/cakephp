@@ -1000,7 +1000,7 @@ abstract class Association
 
         $property = $options['propertyPath'];
         $propertyPath = explode('.', $property);
-        $query->formatResults(function ($results) use ($formatters, $property, $propertyPath, $query) {
+        $query->formatResults(function ($results, $query) use ($formatters, $property, $propertyPath) {
             $extracted = [];
             foreach ($results as $result) {
                 foreach ($propertyPath as $propertyPathItem) {
@@ -1014,7 +1014,7 @@ abstract class Association
             }
             $extracted = new Collection($extracted);
             foreach ($formatters as $callable) {
-                $extracted = new ResultSetDecorator($callable($extracted));
+                $extracted = new ResultSetDecorator($callable($extracted, $query));
             }
 
             /** @var \Cake\Collection\CollectionInterface $results */

@@ -2245,6 +2245,179 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Tests that results formatters do receive the query object.
+     *
+     * @return void
+     */
+    public function testResultFormatterReceivesTheQueryObject()
+    {
+        $resultFormatterQuery = null;
+
+        $query = $this->getTableLocator()->get('Authors')
+            ->find()
+            ->formatResults(function ($results, $query) use (&$resultFormatterQuery) {
+                $resultFormatterQuery = $query;
+
+                return $results;
+            });
+        $query->firstOrFail();
+
+        $this->assertSame($query, $resultFormatterQuery);
+    }
+
+    /**
+     * Tests that when using `beforeFind` events, results formatters for
+     * queries of joined associations do receive the source query, not the
+     * association target query.
+     *
+     * @return void
+     */
+    public function testResultFormatterReceivesTheSourceQueryForJoinedAssociationsWhenUsingBeforeFind()
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $authors = $articles->belongsTo('Authors');
+
+        $resultFormatterTargetQuery = null;
+        $resultFormatterSourceQuery = null;
+
+        $authors->getEventManager()->on(
+            'Model.beforeFind',
+            function ($event, Query $targetQuery) use (&$resultFormatterTargetQuery, &$resultFormatterSourceQuery) {
+                $resultFormatterTargetQuery = $targetQuery;
+
+                $targetQuery->formatResults(function ($results, $query) use (&$resultFormatterSourceQuery) {
+                    $resultFormatterSourceQuery = $query;
+
+                    return $results;
+                });
+            }
+        );
+
+        $sourceQuery = $articles
+            ->find()
+            ->contain('Authors');
+
+        $sourceQuery->firstOrFail();
+
+        $this->assertNotSame($resultFormatterTargetQuery, $resultFormatterSourceQuery);
+        $this->assertNotSame($sourceQuery, $resultFormatterTargetQuery);
+        $this->assertSame($sourceQuery, $resultFormatterSourceQuery);
+    }
+
+    /**
+     * Tests that when using `contain()` callables, results formatters for
+     * queries of joined associations do receive the source query, not the
+     * association target query.
+     *
+     * @return void
+     */
+    public function testResultFormatterReceivesTheSourceQueryForJoinedAssociationWhenUsingContainCallables()
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->belongsTo('Authors');
+
+        $resultFormatterTargetQuery = null;
+        $resultFormatterSourceQuery = null;
+
+        $sourceQuery = $articles
+            ->find()
+            ->contain('Authors', function (Query $targetQuery) use (
+                &$resultFormatterTargetQuery,
+                &$resultFormatterSourceQuery
+            ) {
+                $resultFormatterTargetQuery = $targetQuery;
+
+                return $targetQuery->formatResults(function ($results, $query) use (&$resultFormatterSourceQuery) {
+                    $resultFormatterSourceQuery = $query;
+
+                    return $results;
+                });
+            });
+
+        $sourceQuery->firstOrFail();
+
+        $this->assertNotSame($resultFormatterTargetQuery, $resultFormatterSourceQuery);
+        $this->assertNotSame($sourceQuery, $resultFormatterTargetQuery);
+        $this->assertSame($sourceQuery, $resultFormatterSourceQuery);
+    }
+
+    /**
+     * Tests that when using `beforeFind` events, results formatters for
+     * queries of non-joined associations do receive the association target
+     * query, not the source query.
+     *
+     * @return void
+     */
+    public function testResultFormatterReceivesTheTargetQueryForNonJoinedAssociationsWhenUsingBeforeFind()
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $tags = $articles->belongsToMany('Tags');
+
+        $resultFormatterTargetQuery = null;
+        $resultFormatterSourceQuery = null;
+
+        $tags->getEventManager()->on(
+            'Model.beforeFind',
+            function ($event, Query $targetQuery) use (&$resultFormatterTargetQuery, &$resultFormatterSourceQuery) {
+                $resultFormatterTargetQuery = $targetQuery;
+
+                $targetQuery->formatResults(function ($results, $query) use (&$resultFormatterSourceQuery) {
+                    $resultFormatterSourceQuery = $query;
+
+                    return $results;
+                });
+            }
+        );
+
+        $sourceQuery = $articles
+            ->find('all')
+            ->contain('Tags');
+
+        $sourceQuery->firstOrFail();
+
+        $this->assertNotSame($sourceQuery, $resultFormatterTargetQuery);
+        $this->assertNotSame($sourceQuery, $resultFormatterSourceQuery);
+        $this->assertSame($resultFormatterTargetQuery, $resultFormatterSourceQuery);
+    }
+
+    /**
+     * Tests that when using `contain()` callables, results formatters for
+     * queries of non-joined associations do receive the association target
+     * query, not the source query.
+     *
+     * @return void
+     */
+    public function testResultFormatterReceivesTheTargetQueryForNonJoinedAssociationsWhenUsingContainCallables()
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->belongsToMany('Tags');
+
+        $resultFormatterTargetQuery = null;
+        $resultFormatterSourceQuery = null;
+
+        $sourceQuery = $articles
+            ->find()
+            ->contain('Tags', function (Query $targetQuery) use (
+                &$resultFormatterTargetQuery,
+                &$resultFormatterSourceQuery
+            ) {
+                $resultFormatterTargetQuery = $targetQuery;
+
+                return $targetQuery->formatResults(function ($results, $query) use (&$resultFormatterSourceQuery) {
+                    $resultFormatterSourceQuery = $query;
+
+                    return $results;
+                });
+            });
+
+        $sourceQuery->firstOrFail();
+
+        $this->assertNotSame($sourceQuery, $resultFormatterTargetQuery);
+        $this->assertNotSame($sourceQuery, $resultFormatterSourceQuery);
+        $this->assertSame($resultFormatterTargetQuery, $resultFormatterSourceQuery);
+    }
+
+    /**
      * Test fetching results from a qurey with a custom formatter
      *
      * @return void
