@@ -701,8 +701,7 @@ class Validation
 
     /**
      * Time validation, determines if the string passed is a valid time.
-     * Validates time as 24hr (HH:MM) or am/pm ([H]H:MM[a|p]m)
-     * Does not allow/validate seconds.
+     * Validates time as 24hr (HH:MM[:SS]) or am/pm ([H]H[:MM][:SS][a|p]m)
      *
      * @param string|\DateTimeInterface $check a valid time string/object
      * @return bool Success
@@ -716,7 +715,7 @@ class Validation
             $check = static::_getDateString($check);
         }
 
-        return static::_check($check, '%^((0?[1-9]|1[012])(:[0-5]\d){0,2} ?([AP]M|[ap]m))$|^([01]\d|2[0-3])(:[0-5]\d){0,2}$%');
+        return static::_check($check, '%^((0?[1-9]|1[012])(:[0-5]\d){0,2} ?([AP]M|[ap]m))$|^([01]\d|2[0-3])(:[0-5]\d){1,2}$%');
     }
 
     /**
