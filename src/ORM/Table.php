@@ -1312,6 +1312,25 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ]);
      * ```
      *
+     * The `valueField` can also be an array, in which case you can also specify
+     * the `valueSeparator` option to control how the values will be concatinated:
+     *
+     * ```
+     * $table->find('list', [
+     *  'valueField' => ['first_name', 'last_name'],
+     *  'valueSeparator' => ' | ',
+     * ]);
+     *
+     *
+     * The results of this finder will be in the following form:
+     *
+     * ```
+     * [
+     *  1 => 'John | Doe',
+     *  2 => 'Steve | Smith'
+     * ]
+     * ```
+     *
      * Results can be put together in bigger groups when they share a property, you
      * can customize the property to use for grouping by setting `groupField`:
      *
@@ -1345,6 +1364,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             'keyField' => $this->getPrimaryKey(),
             'valueField' => $this->getDisplayField(),
             'groupField' => null,
+            'valueSeparator' => ';',
         ];
 
         if (
@@ -1445,13 +1465,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
 
             $fields = $options[$field];
-            $options[$field] = function ($row) use ($fields) {
+            $glue = in_array($field, ['keyField', 'parentField'], true) ? ';' : $options['valueSeparator'];
+            $options[$field] = function ($row) use ($fields, $glue) {
                 $matches = [];
                 foreach ($fields as $field) {
                     $matches[] = $row[$field];
                 }
 
-                return implode(';', $matches);
+                return implode($glue, $matches);
             };
         }
 
