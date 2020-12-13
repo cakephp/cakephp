@@ -1444,6 +1444,19 @@ class TableTest extends TestCase
             3 => '1;Third Article',
         ];
         $this->assertSame($expected, $query->toArray());
+
+        $query = $articles->find('list', [
+                'valueField' => ['id', 'title'],
+                'valueSeparator' => ' : ',
+            ])
+            ->order('id');
+
+        $expected = [
+            1 => '1 : First Article',
+            2 => '2 : Second Article',
+            3 => '3 : Third Article',
+        ];
+        $this->assertSame($expected, $query->toArray());
     }
 
     /**
