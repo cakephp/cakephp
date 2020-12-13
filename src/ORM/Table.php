@@ -1135,6 +1135,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * - finder: The finder method to use when loading records from this association.
      *   Defaults to 'all'. When the strategy is 'join', only the fields, containments,
      *   and where conditions will be used from the finder.
+     * - propertyName: The property name that should be filled with data from the
+     *   associated table into the source table results. By default this is the underscored
+     *   & singular name of the association. For an association of ProductCategories it would
+     *   be product_category.
+     * - bindingKey: The name of the column in the other table used to match 'foreignKey'.
+     *   The default value is the primary key of the other table.
      *
      * This method will return the association object that was built.
      *
@@ -1181,6 +1187,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * - finder: The finder method to use when loading records from this association.
      *   Defaults to 'all'. When the strategy is 'join', only the fields, containments,
      *   and where conditions will be used from the finder.
+     * - propertyName: The property name that should be filled with data from the
+     *   associated table into the source table results. By default this is the underscored
+     *   & singular name of the association. For an association of ProductCategories it would
+     *   be product_category.
+     * - bindingKey: The name of the column in the other table used to match 'foreignKey'.
+     *   The default value is the primary key of the other table.
      *
      * This method will return the association object that was built.
      *
@@ -1233,6 +1245,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   target table.
      * - finder: The finder method to use when loading records from this association.
      *   Defaults to 'all'.
+     * - propertyName: The property name that should be filled with data from the
+     *   associated table into the source table results. By default this is the underscored
+     *   & singular name of the association. For an association of ProductCategories it would
+     *   be product_category.
+     * - bindingKey: The name of the column in the other table used to match 'foreignKey'.
+     *   The default value is the primary key of the other table.
      *
      * This method will return the association object that was built.
      *
@@ -1287,6 +1305,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * - strategy: The loading strategy to use. 'select' and 'subquery' are supported.
      * - finder: The finder method to use when loading records from this association.
      *   Defaults to 'all'.
+     * - propertyName: The property name that should be filled with data from the
+     *   associated table into the source table results. By default this is the underscored
+     *   & singular name of the association. For an association of ProductCategories it would
+     *   be product_category.
+     * - bindingKey: The name of the column in the other table used to match 'foreignKey'.
+     *   The default value is the primary key of the other table.
      *
      * This method will return the association object that was built.
      *
