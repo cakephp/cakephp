@@ -222,6 +222,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
         $code = $this->getHttpCode($exception);
         $method = $this->_method($exception);
         $template = $this->_template($exception, $method, $code);
+        $fallbackTemplate = $this->_fallbackTemplate($exception, $method, $code);
         $this->clearOutput();
 
         if (method_exists($this, $method)) {
@@ -278,7 +279,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
         }
         $this->controller->setResponse($response);
 
-        return $this->_outputMessage($template);
+        return $this->_outputMessage($template, $fallbackTemplate);
     }
 
     /**
@@ -366,6 +367,19 @@ class ExceptionRenderer implements ExceptionRendererInterface
     }
 
     /**
+     * Gets fallback template for rendering exception info.
+     *
+     * @param \Throwable $exception Exception instance.
+     * @param string $method Method name.
+     * @param int $code Error code.
+     * @return string Template name
+     */
+    protected function _fallbackTemplate(Throwable $exception, string $method, int $code): string
+    {
+        return $code < 500 ? 'error400' : 'error500';
+    }
+
+    /**
      * Gets the appropriate http status code for exception.
      *
      * @param \Throwable $exception Exception.
@@ -384,9 +398,10 @@ class ExceptionRenderer implements ExceptionRendererInterface
      * Generate the response using the controller object.
      *
      * @param string $template The template to render.
+     * @param string $fallbackTemplate The fallback template to render if $template is missing.
      * @return \Cake\Http\Response A response object that can be sent.
      */
-    protected function _outputMessage(string $template): Response
+    protected function _outputMessage(string $template, string $fallbackTemplate = 'error500'): Response
     {
         try {
             $this->controller->render($template);
@@ -404,7 +419,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
                 return $this->_outputMessageSafe('error500');
             }
 
-            return $this->_outputMessage('error500');
+            return $this->_outputMessage($fallbackTemplate);
         } catch (MissingPluginException $e) {
             $attributes = $e->getAttributes();
             if (isset($attributes['plugin']) && $attributes['plugin'] === $this->controller->getPlugin()) {

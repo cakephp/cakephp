@@ -45,6 +45,7 @@ use RuntimeException;
 use TestApp\Controller\Admin\ErrorController;
 use TestApp\Error\Exception\MissingWidgetThing;
 use TestApp\Error\Exception\MissingWidgetThingException;
+use TestApp\Error\Exception\NonHttpMissingException;
 use TestApp\Error\MyCustomExceptionRenderer;
 
 class ExceptionRendererTest extends TestCase
@@ -143,6 +144,20 @@ class ExceptionRendererTest extends TestCase
             'Admin' . DIRECTORY_SEPARATOR . 'Error',
             $controller->viewBuilder()->getTemplatePath()
         );
+    }
+
+    public function testFallbackTemplatePath()
+    {
+        $request = (new ServerRequest())
+            ->withParam('controller', 'Foo')
+            ->withParam('action', 'bar');
+        $exception = new NonHttpMissingException();
+        $renderer = new MyCustomExceptionRenderer($exception, $request);
+
+        $renderer->render();
+        $controller = $renderer->__debugInfo()['controller'];
+        $this->assertSame('error400', $controller->viewBuilder()->getTemplate());
+        $this->assertSame('Error', $controller->viewBuilder()->getTemplatePath());
     }
 
     /**
