@@ -93,7 +93,7 @@ class FloatType extends BaseType implements BatchCastingInterface
     }
 
     /**
-     * Get the correct PDO binding type for integer data.
+     * Get the correct PDO binding type for float data.
      *
      * @param mixed $value The value being bound.
      * @param \Cake\Database\DriverInterface $driver The driver.

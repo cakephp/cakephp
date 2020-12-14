@@ -8,6 +8,10 @@ on:
   pull_request:
     branches:
       - '*'
+  schedule:
+    - cron: "0 0 * * *"
+      branches:
+        - master
 
 jobs:
   testsuite:
