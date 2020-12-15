@@ -154,7 +154,7 @@ class DebuggerTest extends TestCase
     }
 
     /**
-     * Test that choosing a non-existent format causes an exception
+     * Test that choosing a nonexistent format causes an exception
      *
      * @return void
      */

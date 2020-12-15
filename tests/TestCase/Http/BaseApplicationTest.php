@@ -204,16 +204,16 @@ class BaseApplicationTest extends TestCase
     }
 
     /**
-     * Tests that loading a non existing plugin through addOptionalPlugin() does not throw an exception
+     * Tests that loading a nonexistent plugin through addOptionalPlugin() does not throw an exception
      *
      * @return void
      * @covers ::addOptionalPlugin
      */
-    public function testAddOptionalPluginLoadingNonExistingPlugin()
+    public function testAddOptionalPluginLoadingNonExistentPlugin()
     {
         $app = $this->getMockForAbstractClass(BaseApplication::class, [$this->path]);
         $pluginCountBefore = count($app->getPlugins());
-        $nonExistingPlugin = 'NonExistingPlugin';
+        $nonExistingPlugin = 'NonExistentPlugin';
         $app->addOptionalPlugin($nonExistingPlugin);
         $pluginCountAfter = count($app->getPlugins());
         $this->assertSame($pluginCountBefore, $pluginCountAfter);
@@ -225,7 +225,7 @@ class BaseApplicationTest extends TestCase
      * @return void
      * @covers ::addOptionalPlugin
      */
-    public function testAddOptionalPluginLoadingNonExistingPluginValid()
+    public function testAddOptionalPluginLoadingNonExistentPluginValid()
     {
         $app = $this->getMockForAbstractClass(BaseApplication::class, [$this->path]);
         $app->addOptionalPlugin(TestPlugin::class);

@@ -138,7 +138,7 @@ class FlashHelperTest extends TestCase
             '/div',
         ];
         $this->assertHtml($expected, $result);
-        $this->assertNull($this->Flash->render('non-existent'));
+        $this->assertNull($this->Flash->render('nonexistent'));
     }
 
     /**

@@ -37,11 +37,11 @@ class FactoryLocatorTest extends TestCase
     }
 
     /**
-     * Test get non existing factory
+     * Test get nonexistent factory
      *
      * @return void
      */
-    public function testGetNonExisting()
+    public function testGetNonExistent()
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Unknown repository type "Test". Make sure you register a type before trying to use it.');

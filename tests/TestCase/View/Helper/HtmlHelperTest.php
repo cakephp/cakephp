@@ -1517,16 +1517,16 @@ class HtmlHelperTest extends TestCase
         $expected = ['link' => ['href' => 'preg:/.*\/posts\.xml/', 'type' => 'application/atom+xml', 'title' => 'atom']];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Html->meta('non-existing');
+        $result = $this->Html->meta('nonexistent');
         $expected = ['<meta'];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Html->meta('non-existing', 'some content');
-        $expected = ['meta' => ['name' => 'non-existing', 'content' => 'some content']];
+        $result = $this->Html->meta('nonexistent', 'some content');
+        $expected = ['meta' => ['name' => 'nonexistent', 'content' => 'some content']];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Html->meta('non-existing', '/posts.xpp', ['type' => 'atom']);
-        $expected = ['link' => ['href' => 'preg:/.*\/posts\.xpp/', 'type' => 'application/atom+xml', 'title' => 'non-existing']];
+        $result = $this->Html->meta('nonexistent', '/posts.xpp', ['type' => 'atom']);
+        $expected = ['link' => ['href' => 'preg:/.*\/posts\.xpp/', 'type' => 'application/atom+xml', 'title' => 'nonexistent']];
         $this->assertHtml($expected, $result);
 
         $result = $this->Html->meta('atom', ['controller' => 'posts', '_ext' => 'xml'], ['link' => '/articles.rss']);

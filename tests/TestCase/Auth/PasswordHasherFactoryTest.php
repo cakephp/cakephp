@@ -48,7 +48,7 @@ class PasswordHasherFactoryTest extends TestCase
     }
 
     /**
-     * test build() throws exception for non existent hasher
+     * test build() throws exception for nonexistent hasher
      *
      * @return void
      */

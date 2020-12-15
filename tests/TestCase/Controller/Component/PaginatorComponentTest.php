@@ -437,7 +437,7 @@ class PaginatorComponentTest extends TestCase
             'limit' => 20,
             'maxLimit' => 100,
             'finder' => 'myCustomFind',
-            'scope' => 'non-existent',
+            'scope' => 'nonexistent',
         ];
         $result = $this->Paginator->mergeOptions('Post', $settings);
         $expected = [
@@ -447,7 +447,7 @@ class PaginatorComponentTest extends TestCase
             'finder' => 'myCustomFind',
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
-            'scope' => 'non-existent',
+            'scope' => 'nonexistent',
         ];
         $this->assertEquals($expected, $result);
 

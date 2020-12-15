@@ -64,7 +64,7 @@ class CollectionTest extends TestCase
     }
 
     /**
-     * Test that describing non-existent tables fails.
+     * Test that describing nonexistent tables fails.
      *
      * Tests for positive describe() calls are in each platformSchema
      * test case.

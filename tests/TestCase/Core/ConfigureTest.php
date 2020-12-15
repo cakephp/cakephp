@@ -282,7 +282,7 @@ class ConfigureTest extends TestCase
     {
         $this->expectException(\RuntimeException::class);
         Configure::config('test', new PhpConfig());
-        Configure::load('non_existing_configuration_file', 'test');
+        Configure::load('nonexistent_configuration_file', 'test');
     }
 
     /**
@@ -293,10 +293,10 @@ class ConfigureTest extends TestCase
     public function testLoadDefaultConfig()
     {
         try {
-            Configure::load('non_existing_configuration_file');
+            Configure::load('nonexistent_configuration_file');
         } catch (\Exception $e) {
             $this->assertTrue(Configure::isConfigured('default'));
-            $this->assertFalse(Configure::isConfigured('non_existing_configuration_file'));
+            $this->assertFalse(Configure::isConfigured('nonexistent_configuration_file'));
         }
     }
 

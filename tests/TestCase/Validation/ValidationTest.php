@@ -2150,7 +2150,7 @@ class ValidationTest extends TestCase
      */
     public function testEmailDeep()
     {
-        $this->skipIf((bool)gethostbynamel('example.abcd'), 'Your DNS service responds for non-existent domains, skipping deep email checks.');
+        $this->skipIf((bool)gethostbynamel('example.abcd'), 'Your DNS service responds for nonexistent domains, skipping deep email checks.');
 
         $this->assertTrue(Validation::email('abc.efg@cakephp.org', true));
         $this->assertFalse(Validation::email('abc.efg@caphpkeinvalid.com', true));

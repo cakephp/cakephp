@@ -674,7 +674,7 @@ class TableTest extends TestCase
     }
 
     /**
-     * Tests that the getAssociation() method throws an exception on non-existent ones.
+     * Tests that the getAssociation() method throws an exception on nonexistent ones.
      *
      * @return void
      */
@@ -1598,7 +1598,7 @@ class TableTest extends TestCase
      *
      * @return void
      */
-    public function testTableClassNonExisting()
+    public function testTableClassNonExistent()
     {
         $this->expectException(\Cake\ORM\Exception\MissingEntityException::class);
         $this->expectExceptionMessage('Entity class FooUser could not be found.');
