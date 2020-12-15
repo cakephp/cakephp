@@ -267,7 +267,14 @@ trait CollectionTrait
         $callback = $this->_propertyExtractor($path);
         $group = [];
         foreach ($this->optimizeUnwrap() as $value) {
-            $group[$callback($value)][] = $value;
+            $pathValue = $callback($value);
+            if ($pathValue === null) {
+                throw new InvalidArgumentException(
+                    'Cannot use a nonexistent path or null value. ' .
+                    'Use a callback to provide default values if necessary.'
+                );
+            }
+            $group[$pathValue][] = $value;
         }
 
         return $this->newCollection($group);
@@ -281,7 +288,14 @@ trait CollectionTrait
         $callback = $this->_propertyExtractor($path);
         $group = [];
         foreach ($this->optimizeUnwrap() as $value) {
-            $group[$callback($value)] = $value;
+            $pathValue = $callback($value);
+            if ($pathValue === null) {
+                throw new InvalidArgumentException(
+                    'Cannot use a nonexistent path or null value. ' .
+                    'Use a callback to provide default values if necessary.'
+                );
+            }
+            $group[$pathValue] = $value;
         }
 
         return $this->newCollection($group);
