@@ -1084,13 +1084,13 @@ class EntityContextTest extends TestCase
         ]);
 
         $this->assertSame('integer', $context->type('tags.0._joinData.article_id'));
-        $this->assertNull($context->type('tags.0._joinData.non_existent'));
+        $this->assertNull($context->type('tags.0._joinData.nonexistent'));
 
         // tests the fallback behavior
         $this->assertSame('integer', $context->type('tags.0._joinData._joinData.article_id'));
-        $this->assertSame('integer', $context->type('tags.0._joinData.non_existent.article_id'));
-        $this->assertNull($context->type('tags.0._joinData._joinData.non_existent'));
-        $this->assertNull($context->type('tags.0._joinData.non_existent'));
+        $this->assertSame('integer', $context->type('tags.0._joinData.nonexistent.article_id'));
+        $this->assertNull($context->type('tags.0._joinData._joinData.nonexistent'));
+        $this->assertNull($context->type('tags.0._joinData.nonexistent'));
     }
 
     /**

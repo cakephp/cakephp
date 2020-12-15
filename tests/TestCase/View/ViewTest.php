@@ -636,7 +636,7 @@ class ViewTest extends TestCase
         $result = $this->View->elementExists('TestPlugin.plugin_element');
         $this->assertTrue($result);
 
-        $result = $this->View->elementExists('non_existent_element');
+        $result = $this->View->elementExists('nonexistent_element');
         $this->assertFalse($result);
 
         $result = $this->View->elementExists('TestPlugin.element');
@@ -702,13 +702,13 @@ class ViewTest extends TestCase
     public function testElementMissing()
     {
         $this->expectException(\Cake\View\Exception\MissingElementException::class);
-        $this->expectExceptionMessage('Element file `non_existent_element.php` could not be found');
+        $this->expectExceptionMessage('Element file `nonexistent_element.php` could not be found');
 
-        $this->View->element('non_existent_element');
+        $this->View->element('nonexistent_element');
     }
 
     /**
-     * Test loading non-existent plugin view element
+     * Test loading nonexistent plugin view element
      *
      * @return void
      */

@@ -204,7 +204,7 @@ class StringTemplateTest extends TestCase
     }
 
     /**
-     * Test that loading non-existing templates causes errors.
+     * Test that loading nonexistent templates causes errors.
      */
     public function testLoadErrorNoFile()
     {
@@ -434,14 +434,14 @@ class StringTemplateTest extends TestCase
                 ],
             ],
             'new_class',
-            'non-existent'
+            'nonexistent'
         );
         $this->assertEquals($result, [
             'class' => [
                 'current_class',
                 'text',
             ],
-            'non-existent' => ['new_class'],
+            'nonexistent' => ['new_class'],
         ]);
     }
 }

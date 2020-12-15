@@ -314,7 +314,7 @@ class CellTest extends TestCase
     }
 
     /**
-     * Tests that using an non-existent cell throws an exception.
+     * Tests that using an nonexistent cell throws an exception.
      *
      * @return void
      */

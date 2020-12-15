@@ -155,14 +155,14 @@ class LinkConstraintTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage(
             'LinkConstraint rule on `Articles` requires all primary key values for building the counting ' .
-            'conditions, expected values for `(id, non_existent)`, got `(1, )`.'
+            'conditions, expected values for `(id, nonexistent)`, got `(1, )`.'
         );
 
         $Articles = $this->getTableLocator()->get('Articles');
         $Articles->hasMany('Comments');
 
         $Articles->getEventManager()->on('Model.beforeRules', function (Event $event) {
-            $event->getSubject()->setPrimaryKey(['id', 'non_existent']);
+            $event->getSubject()->setPrimaryKey(['id', 'nonexistent']);
         });
 
         $rulesChecker = $Articles->rulesChecker();

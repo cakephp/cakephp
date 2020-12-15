@@ -1951,7 +1951,7 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Tests that calling an non-existent method in query throws an
+     * Tests that calling an nonexistent method in query throws an
      * exception
      *
      * @return void

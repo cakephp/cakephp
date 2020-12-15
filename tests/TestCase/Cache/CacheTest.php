@@ -321,7 +321,7 @@ class CacheTest extends TestCase
      *
      * @return void
      */
-    public function testWriteNonExistingConfig()
+    public function testWriteNonExistentConfig()
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -333,7 +333,7 @@ class CacheTest extends TestCase
      *
      * @return void
      */
-    public function testIncrementNonExistingConfig()
+    public function testIncrementNonExistentConfig()
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -357,7 +357,7 @@ class CacheTest extends TestCase
      *
      * @return void
      */
-    public function testDecrementNonExistingConfig()
+    public function testDecrementNonExistentConfig()
     {
         $this->expectException(InvalidArgumentException::class);
 

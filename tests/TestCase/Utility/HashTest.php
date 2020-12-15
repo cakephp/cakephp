@@ -388,7 +388,7 @@ class HashTest extends TestCase
         $return = Hash::get($data, 'associated.user');
         $this->assertSame('bar', $return);
 
-        $return = Hash::get($data, 'non-existent');
+        $return = Hash::get($data, 'nonexistent');
         $this->assertNull($return);
 
         $data = ['a' => ['b' => ['c' => ['d' => 1]]]];
@@ -2290,7 +2290,7 @@ class HashTest extends TestCase
         $expected = [2 => null, 14 => null, 25 => null];
         $this->assertSame($expected, $result);
 
-        $result = Hash::combine($a, '{n}.User.id', '{n}.User.non-existant');
+        $result = Hash::combine($a, '{n}.User.id', '{n}.User.nonexistent');
         $expected = [2 => null, 14 => null, 25 => null];
         $this->assertSame($expected, $result);
 
@@ -2325,7 +2325,7 @@ class HashTest extends TestCase
         $expected = [0 => null, 1 => null, 2 => null];
         $this->assertEquals($expected, $result);
 
-        $result = Hash::combine($a, null, '{n}.User.non-existant');
+        $result = Hash::combine($a, null, '{n}.User.nonexistent');
         $expected = [0 => null, 1 => null, 2 => null];
         $this->assertEquals($expected, $result);
 

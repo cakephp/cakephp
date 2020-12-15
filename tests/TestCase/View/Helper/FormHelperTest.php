@@ -7533,52 +7533,52 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * testForMagicControlNonExistingNorValidated method
+     * testForMagicControlNonExistentNotValidated method
      *
      * @return void
      */
-    public function testForMagicControlNonExistingNorValidated()
+    public function testForMagicControlNonExistentNotValidated()
     {
         $this->Form->create($this->article);
         $this->Form->setTemplates(['inputContainer' => '{{content}}']);
-        $result = $this->Form->control('non_existing_nor_validated');
+        $result = $this->Form->control('nonexistent_not_validated');
         $expected = [
-            'label' => ['for' => 'non-existing-nor-validated'],
-            'Non Existing Nor Validated',
+            'label' => ['for' => 'nonexistent-not-validated'],
+            'Nonexistent Not Validated',
             '/label',
             'input' => [
-                'type' => 'text', 'name' => 'non_existing_nor_validated',
-                'id' => 'non-existing-nor-validated',
+                'type' => 'text', 'name' => 'nonexistent_not_validated',
+                'id' => 'nonexistent-not-validated',
             ],
         ];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Form->control('non_existing_nor_validated', [
+        $result = $this->Form->control('nonexistent_not_validated', [
             'val' => 'my value',
         ]);
         $expected = [
-            'label' => ['for' => 'non-existing-nor-validated'],
-            'Non Existing Nor Validated',
+            'label' => ['for' => 'nonexistent-not-validated'],
+            'Nonexistent Not Validated',
             '/label',
             'input' => [
-                'type' => 'text', 'name' => 'non_existing_nor_validated',
-                'value' => 'my value', 'id' => 'non-existing-nor-validated',
+                'type' => 'text', 'name' => 'nonexistent_not_validated',
+                'value' => 'my value', 'id' => 'nonexistent-not-validated',
             ],
         ];
         $this->assertHtml($expected, $result);
 
         $this->View->setRequest(
-            $this->View->getRequest()->withData('non_existing_nor_validated', 'CakePHP magic')
+            $this->View->getRequest()->withData('nonexistent_not_validated', 'CakePHP magic')
         );
         $this->Form->create($this->article);
-        $result = $this->Form->control('non_existing_nor_validated');
+        $result = $this->Form->control('nonexistent_not_validated');
         $expected = [
-            'label' => ['for' => 'non-existing-nor-validated'],
-            'Non Existing Nor Validated',
+            'label' => ['for' => 'nonexistent-not-validated'],
+            'Nonexistent Not Validated',
             '/label',
             'input' => [
-                'type' => 'text', 'name' => 'non_existing_nor_validated',
-                'value' => 'CakePHP magic', 'id' => 'non-existing-nor-validated',
+                'type' => 'text', 'name' => 'nonexistent_not_validated',
+                'value' => 'CakePHP magic', 'id' => 'nonexistent-not-validated',
             ],
         ];
         $this->assertHtml($expected, $result);

@@ -120,11 +120,11 @@ class CompletionCommandTest extends TestCase
     }
 
     /**
-     * test that options with a non-existing command returns nothing
+     * test that options with a nonexistent command returns nothing
      *
      * @return void
      */
-    public function testOptionsNonExistingCommand()
+    public function testOptionsNonExistentCommand()
     {
         $this->exec('completion options foo');
         $this->assertExitCode(Command::CODE_SUCCESS);
@@ -369,11 +369,11 @@ class CompletionCommandTest extends TestCase
     }
 
     /**
-     * test that subcommands with a non-existing command returns nothing
+     * test that subcommands with a nonexistent command returns nothing
      *
      * @return void
      */
-    public function testSubCommandsNonExistingCommand()
+    public function testSubCommandsNonExistentCommand()
     {
         $this->exec('completion subcommands foo');
         $this->assertExitCode(Command::CODE_SUCCESS);

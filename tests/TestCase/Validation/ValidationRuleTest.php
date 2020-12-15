@@ -187,7 +187,7 @@ class ValidationRuleTest extends TestCase
         $this->assertSame('foo', $Rule->get('message'));
         $this->assertSame('default', $Rule->get('provider'));
         $this->assertEquals([], $Rule->get('pass'));
-        $this->assertNull($Rule->get('non-existent'));
+        $this->assertNull($Rule->get('nonexistent'));
 
         $Rule = new ValidationRule(['rule' => ['willPass', 'param'], 'message' => 'bar']);
 

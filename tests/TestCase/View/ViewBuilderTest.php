@@ -415,7 +415,7 @@ class ViewBuilderTest extends TestCase
         $builder->setOption('foo', 'overwrite');
         $this->assertSame('overwrite', $builder->getOption('foo'));
 
-        $this->assertNull($builder->getOption('non-existent'));
+        $this->assertNull($builder->getOption('nonexistent'));
     }
 
     /**

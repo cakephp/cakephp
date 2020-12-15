@@ -629,7 +629,7 @@ class EntityContext implements ContextInterface
      *
      * @param string[]|string|\Cake\Datasource\EntityInterface $parts Each one of the parts in a path for a field name
      * @param bool $fallback Whether or not to fallback to the last found table
-     *  when a non-existent field/property is being encountered.
+     *  when a nonexistent field/property is being encountered.
      * @return \Cake\ORM\Table|null Table instance or null
      */
     protected function _getTable($parts, $fallback = true): ?Table

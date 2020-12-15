@@ -85,7 +85,7 @@ class FolderTest extends TestCase
         $expected = ROOT;
         $this->assertSame($expected, $result);
 
-        $result = $Folder->cd(ROOT . DS . 'non-existent');
+        $result = $Folder->cd(ROOT . DS . 'nonexistent');
         $this->assertFalse($result);
     }
 
@@ -327,7 +327,7 @@ class FolderTest extends TestCase
         $result = $Folder->delete();
         $this->assertTrue($result);
 
-        $Folder = new Folder('non-existent');
+        $Folder = new Folder('nonexistent');
         $result = $Folder->pwd();
         $this->assertNull($result);
     }
@@ -445,7 +445,7 @@ class FolderTest extends TestCase
         $this->assertContains('Core', $result[0]);
         $this->assertContains('Cache', $result[0]);
 
-        $Folder = new Folder(TMP . 'non-existent');
+        $Folder = new Folder(TMP . 'nonexistent');
         $expected = [[], []];
         $result = $Folder->read(true, true);
         $this->assertEquals($expected, $result);
@@ -838,8 +838,8 @@ class FolderTest extends TestCase
     public function testConstructWithNonExistentPath()
     {
         $path = TMP . 'tests' . DS;
-        $Folder = new Folder($path . 'config_non_existent', true);
-        $this->assertDirectoryExists($path . 'config_non_existent');
+        $Folder = new Folder($path . 'config_nonexistent', true);
+        $this->assertDirectoryExists($path . 'config_nonexistent');
         $Folder->cd($path);
     }
 
@@ -851,7 +851,7 @@ class FolderTest extends TestCase
     public function testDirSize()
     {
         $path = TMP . 'tests' . DS;
-        $Folder = new Folder($path . 'config_non_existent', true);
+        $Folder = new Folder($path . 'config_nonexistent', true);
         $this->assertSame(0, $Folder->dirSize());
 
         $File = new File($Folder->pwd() . DS . 'my.php', true, 0777);

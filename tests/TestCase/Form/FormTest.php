@@ -270,7 +270,7 @@ class FormTest extends TestCase
 
         $this->assertSame($expected, $form->getData());
         $this->assertSame('title', $form->getData('title'));
-        $this->assertNull($form->getData('non-existent'));
+        $this->assertNull($form->getData('nonexistent'));
     }
 
     /**
