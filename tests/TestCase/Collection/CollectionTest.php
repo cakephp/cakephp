@@ -21,6 +21,7 @@ use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use NoRewindIterator;
 use stdClass;
 use TestApp\Collection\CountableIterator;
@@ -710,6 +711,25 @@ class CollectionTest extends TestCase
     }
 
     /**
+     * Tests passing an invalid path to groupBy.
+     *
+     * @return void
+     */
+    public function testGroupByInvalidPath()
+    {
+        $items = [
+            ['id' => 1, 'name' => 'foo'],
+            ['id' => 2, 'name' => 'bar'],
+            ['id' => 3, 'name' => 'baz'],
+        ];
+        $collection = new Collection($items);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot use a nonexistent path or null value.');
+        $collection->groupBy('missing');
+    }
+
+    /**
      * Provider for some indexBy tests
      *
      * @return array
@@ -786,6 +806,25 @@ class CollectionTest extends TestCase
             11 => ['id' => 2, 'name' => 'bar', 'thing' => ['parent_id' => 11]],
         ];
         $this->assertEquals($expected, iterator_to_array($grouped));
+    }
+
+    /**
+     * Tests passing an invalid path to indexBy.
+     *
+     * @return void
+     */
+    public function testIndexByInvalidPath()
+    {
+        $items = [
+            ['id' => 1, 'name' => 'foo'],
+            ['id' => 2, 'name' => 'bar'],
+            ['id' => 3, 'name' => 'baz'],
+        ];
+        $collection = new Collection($items);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot use a nonexistent path or null value.');
+        $collection->indexBy('missing');
     }
 
     /**
