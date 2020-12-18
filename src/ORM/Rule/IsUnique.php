@@ -31,13 +31,28 @@ class IsUnique
     protected $_fields;
 
     /**
+     * The unique check options
+     *
+     * @var array
+     */
+    protected $_options = [
+        'allowMultipleNulls' => false,
+    ];
+
+    /**
      * Constructor.
      *
+     * ### Options
+     *
+     * - `allowMultipleNulls` Allows any field to have multiple null values. Defaults to false.
+     *
      * @param string[] $fields The list of fields to check uniqueness for
+     * @param array $options The options for unique checks.
      */
-    public function __construct(array $fields)
+    public function __construct(array $fields, array $options = [])
     {
         $this->_fields = $fields;
+        $this->_options = $options + $this->_options;
     }
 
     /**
@@ -54,8 +69,13 @@ class IsUnique
             return true;
         }
 
+        $fields = $entity->extract($this->_fields);
+        if ($this->_options['allowMultipleNulls'] && array_filter($fields, 'is_null')) {
+            return true;
+        }
+
         $alias = $options['repository']->getAlias();
-        $conditions = $this->_alias($alias, $entity->extract($this->_fields));
+        $conditions = $this->_alias($alias, $fields);
         if ($entity->isNew() === false) {
             $keys = (array)$options['repository']->getPrimaryKey();
             $keys = $this->_alias($alias, $entity->extract($keys));
