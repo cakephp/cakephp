@@ -34,8 +34,8 @@ class BinaryUuiditemsBinaryUuidtagsFixture extends TestFixture
             'primary' => ['type' => 'primary', 'columns' => ['id']],
             'unique_item_tag' => [
                 'type' => 'unique',
-                'columns' => ['binary_uuiditem_id', 'binary_uuidtag_id']
-            ]
+                'columns' => ['binary_uuiditem_id', 'binary_uuidtag_id'],
+            ],
         ],
     ];
 
