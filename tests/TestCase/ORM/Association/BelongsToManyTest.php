@@ -1020,7 +1020,7 @@ class BelongsToManyTest extends TestCase
             'targetTable' => $tags,
         ]);
         $itemId = '481fc6d0-b920-43e0-a40d-6d1740cf8569';
-        $item = $items->get($itemId);
+        $item = $items->find()->where(['id' => $itemId])->firstOrFail();
 
         // 1=existing, 2=new tag
         $item->binary_uuidtags = [
@@ -1030,7 +1030,7 @@ class BelongsToManyTest extends TestCase
         $item->name = 'Updated';
         $items->saveOrFail($item);
 
-        $refresh = $items->get($itemId, ['contain' => 'BinaryUuidtags']);
+        $refresh = $items->find()->where(['id' => $itemId])->contain('BinaryUuidtags')->firstOrFail();
         $this->assertCount(2, $refresh->binary_uuidtags, 'Two tags should exist');
 
         $refresh->binary_uuidtags = [$refresh->binary_uuidtags[0]];
