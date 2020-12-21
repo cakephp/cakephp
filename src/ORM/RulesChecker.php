@@ -37,11 +37,15 @@ class RulesChecker extends BaseRulesChecker
      * Returns a callable that can be used as a rule for checking the uniqueness of a value
      * in the table.
      *
-     * ### Example:
+     * ### Example
      *
      * ```
      * $rules->add($rules->isUnique(['email'], 'The email should be unique'));
      * ```
+     *
+     * ### Options
+     *
+     * - `allowMultipleNulls` Allows any field to have multiple null values. Defaults to false.
      *
      * @param string[] $fields The list of fields to check for uniqueness.
      * @param string|array|null $message The error message to show in case the rule does not pass. Can
@@ -50,6 +54,10 @@ class RulesChecker extends BaseRulesChecker
      */
     public function isUnique(array $fields, $message = null): RuleInvoker
     {
+        $options = is_array($message) ? $message : ['message' => $message];
+        $message = $options['message'] ?? null;
+        unset($options['message']);
+
         if (!$message) {
             if ($this->_useI18n) {
                 $message = __d('cake', 'This value is already in use');
@@ -60,7 +68,7 @@ class RulesChecker extends BaseRulesChecker
 
         $errorField = current($fields);
 
-        return $this->_addError(new IsUnique($fields), '_isUnique', compact('errorField', 'message'));
+        return $this->_addError(new IsUnique($fields, $options), '_isUnique', compact('errorField', 'message'));
     }
 
     /**
