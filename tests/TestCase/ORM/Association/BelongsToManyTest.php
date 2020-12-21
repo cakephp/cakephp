@@ -1013,7 +1013,7 @@ class BelongsToManyTest extends TestCase
     public function testReplaceLinkBinaryUuid()
     {
         $this->skipIf(
-            $this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlserver,
+            ConnectionManager::get('test')->getDriver() instanceof \Cake\Database\Driver\Sqlserver,
             'This test is failing in SQLServer and needs to be revisited.'
         );
         $items = $this->getTableLocator()->get('BinaryUuiditems');
