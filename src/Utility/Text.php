@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Utility;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use InvalidArgumentException;
 use Transliterator;
 
@@ -203,6 +203,11 @@ class Text
         }
 
         if (strpos($str, '?') !== false && is_numeric(key($data))) {
+            deprecationWarning(
+                'Using Text::insert() with `?` placeholders is deprecated. ' .
+                'Use sprintf() with `%s` placeholders instead.'
+            );
+
             $offset = 0;
             while (($pos = strpos($str, '?', $offset)) !== false) {
                 $val = array_shift($data);
@@ -236,7 +241,7 @@ class Text
         /** @var array<string, mixed> $dataReplacements */
         $dataReplacements = array_combine($hashKeys, array_values($data));
         foreach ($dataReplacements as $tmpHash => $tmpValue) {
-            $tmpValue = is_array($tmpValue) ? '' : strval($tmpValue);
+            $tmpValue = is_array($tmpValue) ? '' : (string)$tmpValue;
             $str = str_replace($tmpHash, $tmpValue, $str);
         }
 
@@ -1091,7 +1096,7 @@ class Text
     {
         $transliterator = transliterator_create($transliteratorId);
         if ($transliterator === null) {
-            throw new Exception('Unable to create transliterator for id: ' . $transliteratorId);
+            throw new CakeException('Unable to create transliterator for id: ' . $transliteratorId);
         }
 
         static::setTransliterator($transliterator);
@@ -1117,7 +1122,7 @@ class Text
 
         $return = transliterator_transliterate($transliterator, $string);
         if ($return === false) {
-            throw new Exception(sprintf('Unable to transliterate string: %s', $string));
+            throw new CakeException(sprintf('Unable to transliterate string: %s', $string));
         }
 
         return $return;

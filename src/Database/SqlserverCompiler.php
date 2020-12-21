@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database;
 
-use Cake\Database\Exception as DatabaseException;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\FunctionExpression;
 
 /**
@@ -61,14 +61,14 @@ class SqlserverCompiler extends QueryCompiler
      *
      * @param array $parts List of CTEs to be transformed to string
      * @param \Cake\Database\Query $query The query that is being compiled
-     * @param \Cake\Database\ValueBinder $generator The placeholder generator to be used in expressions
+     * @param \Cake\Database\ValueBinder $binder Value binder used to generate parameter placeholder
      * @return string
      */
-    protected function _buildWithPart(array $parts, Query $query, ValueBinder $generator): string
+    protected function _buildWithPart(array $parts, Query $query, ValueBinder $binder): string
     {
         $expressions = [];
         foreach ($parts as $cte) {
-            $expressions[] = $cte->sql($generator);
+            $expressions[] = $cte->sql($binder);
         }
 
         return sprintf('WITH %s ', implode(', ', $expressions));
@@ -83,10 +83,10 @@ class SqlserverCompiler extends QueryCompiler
      *
      * @param array $parts The parts to build
      * @param \Cake\Database\Query $query The query that is being compiled
-     * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
+     * @param \Cake\Database\ValueBinder $binder Value binder used to generate parameter placeholder
      * @return string
      */
-    protected function _buildInsertPart(array $parts, Query $query, ValueBinder $generator): string
+    protected function _buildInsertPart(array $parts, Query $query, ValueBinder $binder): string
     {
         if (!isset($parts[0])) {
             throw new DatabaseException(
@@ -95,8 +95,8 @@ class SqlserverCompiler extends QueryCompiler
             );
         }
         $table = $parts[0];
-        $columns = $this->_stringifyExpressions($parts[1], $generator);
-        $modifiers = $this->_buildModifierPart($query->clause('modifier'), $query, $generator);
+        $columns = $this->_stringifyExpressions($parts[1], $binder);
+        $modifiers = $this->_buildModifierPart($query->clause('modifier'), $query, $binder);
 
         return sprintf(
             'INSERT%s INTO %s (%s) OUTPUT INSERTED.*',
@@ -129,10 +129,10 @@ class SqlserverCompiler extends QueryCompiler
      *
      * @param array $parts list of fields to be transformed to string
      * @param \Cake\Database\Query $query The query that is being compiled
-     * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
+     * @param \Cake\Database\ValueBinder $binder Value binder used to generate parameter placeholder
      * @return string
      */
-    protected function _buildHavingPart($parts, $query, $generator)
+    protected function _buildHavingPart($parts, $query, $binder)
     {
         $selectParts = $query->clause('select');
 
@@ -156,7 +156,7 @@ class SqlserverCompiler extends QueryCompiler
 
                 $parts[$k] = preg_replace(
                     ['/\[|\]/', '/\b' . trim($selectKey, '[]') . '\b/i'],
-                    ['', $selectPart->sql($generator)],
+                    ['', $selectPart->sql($binder)],
                     $p
                 );
             }

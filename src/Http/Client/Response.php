@@ -247,7 +247,7 @@ class Response extends Message implements ResponseInterface
      */
     public function getStatusCode(): int
     {
-        return (int)$this->code;
+        return $this->code;
     }
 
     /**

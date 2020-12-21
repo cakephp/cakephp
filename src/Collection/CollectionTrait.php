@@ -189,17 +189,17 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function max($callback, int $sort = \SORT_NUMERIC)
+    public function max($path, int $sort = \SORT_NUMERIC)
     {
-        return (new SortIterator($this->unwrap(), $callback, \SORT_DESC, $sort))->first();
+        return (new SortIterator($this->unwrap(), $path, \SORT_DESC, $sort))->first();
     }
 
     /**
      * @inheritDoc
      */
-    public function min($callback, int $sort = \SORT_NUMERIC)
+    public function min($path, int $sort = \SORT_NUMERIC)
     {
-        return (new SortIterator($this->unwrap(), $callback, \SORT_ASC, $sort))->first();
+        return (new SortIterator($this->unwrap(), $path, \SORT_ASC, $sort))->first();
     }
 
     /**
@@ -254,20 +254,27 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function sortBy($callback, int $order = \SORT_DESC, int $sort = \SORT_NUMERIC): CollectionInterface
+    public function sortBy($path, int $order = \SORT_DESC, int $sort = \SORT_NUMERIC): CollectionInterface
     {
-        return new SortIterator($this->unwrap(), $callback, $order, $sort);
+        return new SortIterator($this->unwrap(), $path, $order, $sort);
     }
 
     /**
      * @inheritDoc
      */
-    public function groupBy($callback): CollectionInterface
+    public function groupBy($path): CollectionInterface
     {
-        $callback = $this->_propertyExtractor($callback);
+        $callback = $this->_propertyExtractor($path);
         $group = [];
         foreach ($this->optimizeUnwrap() as $value) {
-            $group[$callback($value)][] = $value;
+            $pathValue = $callback($value);
+            if ($pathValue === null) {
+                throw new InvalidArgumentException(
+                    'Cannot use a nonexistent path or null value. ' .
+                    'Use a callback to provide default values if necessary.'
+                );
+            }
+            $group[$pathValue][] = $value;
         }
 
         return $this->newCollection($group);
@@ -276,12 +283,19 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function indexBy($callback): CollectionInterface
+    public function indexBy($path): CollectionInterface
     {
-        $callback = $this->_propertyExtractor($callback);
+        $callback = $this->_propertyExtractor($path);
         $group = [];
         foreach ($this->optimizeUnwrap() as $value) {
-            $group[$callback($value)] = $value;
+            $pathValue = $callback($value);
+            if ($pathValue === null) {
+                throw new InvalidArgumentException(
+                    'Cannot use a nonexistent path or null value. ' .
+                    'Use a callback to provide default values if necessary.'
+                );
+            }
+            $group[$pathValue] = $value;
         }
 
         return $this->newCollection($group);
@@ -290,9 +304,9 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function countBy($callback): CollectionInterface
+    public function countBy($path): CollectionInterface
     {
-        $callback = $this->_propertyExtractor($callback);
+        $callback = $this->_propertyExtractor($path);
 
         $mapper = function ($value, $key, $mr) use ($callback): void {
             /** @var \Cake\Collection\Iterator\MapReduce $mr */

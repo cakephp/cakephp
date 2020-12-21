@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\Database\Exception;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Log\QueryLogger;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
@@ -98,7 +98,7 @@ class ResultSetTest extends TestCase
         foreach ($results as $result) {
             $first[] = $result;
         }
-        $this->expectException(Exception::class);
+        $this->expectException(DatabaseException::class);
         foreach ($results as $result) {
             $second[] = $result;
         }

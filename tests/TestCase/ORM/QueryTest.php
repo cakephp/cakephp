@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Collection\Collection;
+use Cake\Collection\Iterator\BufferedIterator;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Expression\CommonTableExpression;
@@ -1234,6 +1235,28 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test to show that when results bufferring is enabled if ResultSet gets
+     * decorated by ResultSetDecorator it gets wrapped in a BufferedIterator instance.
+     *
+     * @return void
+     */
+    public function testBufferedDecoratedResultSet()
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $query = new Query($this->connection, $table);
+        $query
+            ->select(['id'])
+            // This causes ResultSet to be decorated by a ResultSetDecorator instance
+            ->formatResults(function ($results) {
+                return $results;
+            });
+
+        $results = $query->all();
+
+        $this->assertInstanceOf(BufferedIterator::class, $results->getInnerIterator());
+    }
+
+    /**
      * Testing hydrating a result set into Entity objects
      *
      * @return void
@@ -1815,12 +1838,7 @@ class QueryTest extends TestCase
         $result->closeCursor();
 
         $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
-        //PDO_SQLSRV returns -1 for successful inserts when using INSERT ... OUTPUT
-        if (!$this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlserver) {
-            $this->assertEquals(2, $result->rowCount());
-        } else {
-            $this->assertEquals(-1, $result->rowCount());
-        }
+        $this->assertEquals(2, $result->rowCount());
     }
 
     /**
@@ -1933,7 +1951,7 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Tests that calling an non-existent method in query throws an
+     * Tests that calling an nonexistent method in query throws an
      * exception
      *
      * @return void
@@ -2224,6 +2242,179 @@ class QueryTest extends TestCase
         $query->formatResults($callback1);
         $query->formatResults($callback2, $query::PREPEND);
         $this->assertSame([$callback2, $callback1], $query->getResultFormatters());
+    }
+
+    /**
+     * Tests that results formatters do receive the query object.
+     *
+     * @return void
+     */
+    public function testResultFormatterReceivesTheQueryObject()
+    {
+        $resultFormatterQuery = null;
+
+        $query = $this->getTableLocator()->get('Authors')
+            ->find()
+            ->formatResults(function ($results, $query) use (&$resultFormatterQuery) {
+                $resultFormatterQuery = $query;
+
+                return $results;
+            });
+        $query->firstOrFail();
+
+        $this->assertSame($query, $resultFormatterQuery);
+    }
+
+    /**
+     * Tests that when using `beforeFind` events, results formatters for
+     * queries of joined associations do receive the source query, not the
+     * association target query.
+     *
+     * @return void
+     */
+    public function testResultFormatterReceivesTheSourceQueryForJoinedAssociationsWhenUsingBeforeFind()
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $authors = $articles->belongsTo('Authors');
+
+        $resultFormatterTargetQuery = null;
+        $resultFormatterSourceQuery = null;
+
+        $authors->getEventManager()->on(
+            'Model.beforeFind',
+            function ($event, Query $targetQuery) use (&$resultFormatterTargetQuery, &$resultFormatterSourceQuery) {
+                $resultFormatterTargetQuery = $targetQuery;
+
+                $targetQuery->formatResults(function ($results, $query) use (&$resultFormatterSourceQuery) {
+                    $resultFormatterSourceQuery = $query;
+
+                    return $results;
+                });
+            }
+        );
+
+        $sourceQuery = $articles
+            ->find()
+            ->contain('Authors');
+
+        $sourceQuery->firstOrFail();
+
+        $this->assertNotSame($resultFormatterTargetQuery, $resultFormatterSourceQuery);
+        $this->assertNotSame($sourceQuery, $resultFormatterTargetQuery);
+        $this->assertSame($sourceQuery, $resultFormatterSourceQuery);
+    }
+
+    /**
+     * Tests that when using `contain()` callables, results formatters for
+     * queries of joined associations do receive the source query, not the
+     * association target query.
+     *
+     * @return void
+     */
+    public function testResultFormatterReceivesTheSourceQueryForJoinedAssociationWhenUsingContainCallables()
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->belongsTo('Authors');
+
+        $resultFormatterTargetQuery = null;
+        $resultFormatterSourceQuery = null;
+
+        $sourceQuery = $articles
+            ->find()
+            ->contain('Authors', function (Query $targetQuery) use (
+                &$resultFormatterTargetQuery,
+                &$resultFormatterSourceQuery
+            ) {
+                $resultFormatterTargetQuery = $targetQuery;
+
+                return $targetQuery->formatResults(function ($results, $query) use (&$resultFormatterSourceQuery) {
+                    $resultFormatterSourceQuery = $query;
+
+                    return $results;
+                });
+            });
+
+        $sourceQuery->firstOrFail();
+
+        $this->assertNotSame($resultFormatterTargetQuery, $resultFormatterSourceQuery);
+        $this->assertNotSame($sourceQuery, $resultFormatterTargetQuery);
+        $this->assertSame($sourceQuery, $resultFormatterSourceQuery);
+    }
+
+    /**
+     * Tests that when using `beforeFind` events, results formatters for
+     * queries of non-joined associations do receive the association target
+     * query, not the source query.
+     *
+     * @return void
+     */
+    public function testResultFormatterReceivesTheTargetQueryForNonJoinedAssociationsWhenUsingBeforeFind()
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $tags = $articles->belongsToMany('Tags');
+
+        $resultFormatterTargetQuery = null;
+        $resultFormatterSourceQuery = null;
+
+        $tags->getEventManager()->on(
+            'Model.beforeFind',
+            function ($event, Query $targetQuery) use (&$resultFormatterTargetQuery, &$resultFormatterSourceQuery) {
+                $resultFormatterTargetQuery = $targetQuery;
+
+                $targetQuery->formatResults(function ($results, $query) use (&$resultFormatterSourceQuery) {
+                    $resultFormatterSourceQuery = $query;
+
+                    return $results;
+                });
+            }
+        );
+
+        $sourceQuery = $articles
+            ->find('all')
+            ->contain('Tags');
+
+        $sourceQuery->firstOrFail();
+
+        $this->assertNotSame($sourceQuery, $resultFormatterTargetQuery);
+        $this->assertNotSame($sourceQuery, $resultFormatterSourceQuery);
+        $this->assertSame($resultFormatterTargetQuery, $resultFormatterSourceQuery);
+    }
+
+    /**
+     * Tests that when using `contain()` callables, results formatters for
+     * queries of non-joined associations do receive the association target
+     * query, not the source query.
+     *
+     * @return void
+     */
+    public function testResultFormatterReceivesTheTargetQueryForNonJoinedAssociationsWhenUsingContainCallables()
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->belongsToMany('Tags');
+
+        $resultFormatterTargetQuery = null;
+        $resultFormatterSourceQuery = null;
+
+        $sourceQuery = $articles
+            ->find()
+            ->contain('Tags', function (Query $targetQuery) use (
+                &$resultFormatterTargetQuery,
+                &$resultFormatterSourceQuery
+            ) {
+                $resultFormatterTargetQuery = $targetQuery;
+
+                return $targetQuery->formatResults(function ($results, $query) use (&$resultFormatterSourceQuery) {
+                    $resultFormatterSourceQuery = $query;
+
+                    return $results;
+                });
+            });
+
+        $sourceQuery->firstOrFail();
+
+        $this->assertNotSame($sourceQuery, $resultFormatterTargetQuery);
+        $this->assertNotSame($sourceQuery, $resultFormatterSourceQuery);
+        $this->assertSame($resultFormatterTargetQuery, $resultFormatterSourceQuery);
     }
 
     /**
@@ -3220,8 +3411,6 @@ class QueryTest extends TestCase
         // Sqlite only supports maximum 16 digits for decimals.
         $this->skipIf($this->connection->getDriver() instanceof Sqlite);
 
-        $this->loadFixtures('Datatypes');
-
         $big = '1234567890123456789.2';
         $table = $this->getTableLocator()->get('Datatypes');
         $entity = $table->newEntity([]);
@@ -3248,7 +3437,7 @@ class QueryTest extends TestCase
             ])
             ->first();
         $this->assertNotEmpty($out, 'Should get a record');
-        $this->assertRegExp('/^0?\.1234567890123456789$/', $out->fraction);
+        $this->assertMatchesRegularExpression('/^0?\.1234567890123456789$/', $out->fraction);
 
         $small = 0.1234567890123456789;
         $entity = $table->newEntity(['fraction' => $small]);
@@ -3261,7 +3450,7 @@ class QueryTest extends TestCase
             ->first();
         $this->assertNotEmpty($out, 'Should get a record');
         // There will be loss of precision if too large/small value is set as float instead of string.
-        $this->assertRegExp('/^0?\.123456789012350+$/', $out->fraction);
+        $this->assertMatchesRegularExpression('/^0?\.123456789012350+$/', $out->fraction);
     }
 
     /**
@@ -3947,8 +4136,6 @@ class QueryTest extends TestCase
             'The current driver does not support window functions.'
         );
 
-        $this->loadFixtures('Articles');
-
         $table = $this->getTableLocator()->get('Articles');
 
         $cteQuery = $table
@@ -4000,5 +4187,82 @@ class QueryTest extends TestCase
         ];
 
         $this->assertEquals($expected, $query->toArray());
+    }
+
+    /**
+     * Tests subquery() copies connection by default.
+     *
+     * @return void
+     */
+    public function testSubqueryConnection()
+    {
+        $subquery = Query::subquery($this->table);
+        $this->assertEquals($this->table->getConnection(), $subquery->getConnection());
+    }
+
+    /**
+     * Tests subquery() disables aliasing.
+     *
+     * @return void
+     */
+    public function testSubqueryAliasing()
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $subquery = Query::subquery($articles);
+
+        $subquery->select('Articles.field1');
+        $this->assertRegExpSql(
+            'SELECT <Articles>.<field1> FROM <articles> <Articles>',
+            $subquery->sql(),
+            !$this->connection->getDriver()->isAutoQuotingEnabled()
+        );
+
+        $subquery->select($articles, true);
+        $this->assertEqualsSql('SELECT id, author_id, title, body, published FROM articles Articles', $subquery->sql());
+
+        $subquery->selectAllExcept($articles, ['author_id'], true);
+        $this->assertEqualsSql('SELECT id, title, body, published FROM articles Articles', $subquery->sql());
+    }
+
+    /**
+     * Tests subquery() in where clause.
+     *
+     * @return void
+     */
+    public function testSubqueryWhereClause()
+    {
+        $subquery = Query::subquery($this->getTableLocator()->get('Authors'))
+            ->select(['Authors.id'])
+            ->where(['Authors.name' => 'mariano']);
+
+        $query = $this->getTableLocator()->get('Articles')->find()
+            ->where(['Articles.author_id IN' => $subquery])
+            ->order(['Articles.id' => 'ASC']);
+
+        $results = $query->all()->toList();
+        $this->assertCount(2, $results);
+        $this->assertEquals([1, 3], array_column($results, 'id'));
+    }
+
+    /**
+     * Tests subquery() in join clause.
+     *
+     * @return void
+     */
+    public function testSubqueryJoinClause()
+    {
+        $subquery = Query::subquery($this->getTableLocator()->get('Articles'))
+            ->select(['author_id']);
+
+        $query = $this->getTableLocator()->get('Authors')->find();
+        $query
+            ->select(['Authors.id', 'total_articles' => $query->func()->count('articles.author_id')])
+            ->leftJoin(['articles' => $subquery], ['articles.author_id' => new IdentifierExpression('Authors.id')])
+            ->group(['Authors.id'])
+            ->order(['Authors.id' => 'ASC']);
+
+        $results = $query->all()->toList();
+        $this->assertEquals(1, $results[0]->id);
+        $this->assertEquals(2, $results[0]->total_articles);
     }
 }

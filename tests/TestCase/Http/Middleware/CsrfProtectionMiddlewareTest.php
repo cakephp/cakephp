@@ -97,7 +97,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
         $cookie = $response->getCookie('csrfToken');
         $this->assertNotEmpty($cookie, 'Should set a token.');
-        $this->assertRegExp('/^[a-f0-9]+$/', $cookie['value'], 'Should look like a hash.');
+        $this->assertMatchesRegularExpression('/^[a-f0-9]+$/', $cookie['value'], 'Should look like a hash.');
         $this->assertSame(0, $cookie['expires'], 'session duration.');
         $this->assertSame('/dir/', $cookie['path'], 'session path.');
         $this->assertEquals($cookie['value'], $updatedRequest->getAttribute('csrfToken'));
@@ -232,7 +232,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
             $this->fail();
         } catch (InvalidCsrfTokenException $exception) {
-            $responseHeaders = $exception->responseHeader();
+            $responseHeaders = $exception->getHeaders();
 
             $this->assertArrayHasKey('Set-Cookie', $responseHeaders);
 
@@ -313,7 +313,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
             $this->fail();
         } catch (InvalidCsrfTokenException $exception) {
-            $responseHeaders = $exception->responseHeader();
+            $responseHeaders = $exception->getHeaders();
             $this->assertArrayHasKey('Set-Cookie', $responseHeaders);
 
             $cookie = Cookie::createFromHeaderString($responseHeaders['Set-Cookie']);
@@ -386,7 +386,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
             $this->fail();
         } catch (InvalidCsrfTokenException $exception) {
-            $responseHeaders = $exception->responseHeader();
+            $responseHeaders = $exception->getHeaders();
             $this->assertEmpty($responseHeaders, 'Should not send any header');
         }
     }
@@ -415,7 +415,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $this->assertEmpty($response->getCookie('csrfToken'));
         $cookie = $response->getCookie('token');
         $this->assertNotEmpty($cookie, 'Should set a token.');
-        $this->assertRegExp('/^[a-f0-9]+$/', $cookie['value'], 'Should look like a hash.');
+        $this->assertMatchesRegularExpression('/^[a-f0-9]+$/', $cookie['value'], 'Should look like a hash.');
         $this->assertWithinRange(strtotime('+1 hour'), $cookie['expires'], 1, 'session duration.');
         $this->assertSame('/dir/', $cookie['path'], 'session path.');
         $this->assertTrue($cookie['secure'], 'cookie security flag missing');

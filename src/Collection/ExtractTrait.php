@@ -29,27 +29,27 @@ trait ExtractTrait
      * Returns a callable that can be used to extract a property or column from
      * an array or object based on a dot separated path.
      *
-     * @param string|callable $callback A dot separated path of column to follow
+     * @param string|callable $path A dot separated path of column to follow
      * so that the final one can be returned or a callable that will take care
      * of doing that.
      * @return callable
      */
-    protected function _propertyExtractor($callback): callable
+    protected function _propertyExtractor($path): callable
     {
-        if (!is_string($callback)) {
-            return $callback;
+        if (!is_string($path)) {
+            return $path;
         }
 
-        $path = explode('.', $callback);
+        $parts = explode('.', $path);
 
-        if (strpos($callback, '{*}') !== false) {
-            return function ($element) use ($path) {
-                return $this->_extract($element, $path);
+        if (strpos($path, '{*}') !== false) {
+            return function ($element) use ($parts) {
+                return $this->_extract($element, $parts);
             };
         }
 
-        return function ($element) use ($path) {
-            return $this->_simpleExtract($element, $path);
+        return function ($element) use ($parts) {
+            return $this->_simpleExtract($element, $parts);
         };
     }
 
@@ -59,15 +59,15 @@ trait ExtractTrait
      * It will return arrays for elements in represented with `{*}`
      *
      * @param array|\ArrayAccess $data Data.
-     * @param string[] $path Path to extract from.
+     * @param string[] $parts Path to extract from.
      * @return mixed
      */
-    protected function _extract($data, array $path)
+    protected function _extract($data, array $parts)
     {
         $value = null;
         $collectionTransform = false;
 
-        foreach ($path as $i => $column) {
+        foreach ($parts as $i => $column) {
             if ($column === '{*}') {
                 $collectionTransform = true;
                 continue;
@@ -84,7 +84,7 @@ trait ExtractTrait
             }
 
             if ($collectionTransform) {
-                $rest = implode('.', array_slice($path, $i));
+                $rest = implode('.', array_slice($parts, $i));
 
                 return (new Collection($data))->extract($rest);
             }
@@ -105,13 +105,13 @@ trait ExtractTrait
      * by iterating over the column names contained in $path
      *
      * @param array|\ArrayAccess $data Data.
-     * @param string[] $path Path to extract from.
+     * @param string[] $parts Path to extract from.
      * @return mixed
      */
-    protected function _simpleExtract($data, array $path)
+    protected function _simpleExtract($data, array $parts)
     {
         $value = null;
-        foreach ($path as $column) {
+        foreach ($parts as $column) {
             if (!isset($data[$column])) {
                 return null;
             }

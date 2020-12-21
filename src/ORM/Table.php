@@ -185,7 +185,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Name of the table as it can be found in the database
      *
-     * @var string
+     * @var string|null
      */
     protected $_table;
 
@@ -193,7 +193,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Human name giving to this particular instance. Multiple objects representing
      * the same database table can exist by using different aliases.
      *
-     * @var string
+     * @var string|null
      */
     protected $_alias;
 
@@ -214,14 +214,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * The name of the field that represents the primary key in the table
      *
-     * @var string|string[]
+     * @var string|string[]|null
      */
     protected $_primaryKey;
 
     /**
      * The name of the field that represents a human readable representation of a row
      *
-     * @var string|string[]
+     * @var string|string[]|null
      */
     protected $_displayField;
 
@@ -419,8 +419,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         if ($this->_alias === null) {
             $alias = namespaceSplit(static::class);
-            $alias = substr(end($alias), 0, -5) ?: $this->_table;
-            $this->_alias = (string)$alias;
+            $alias = substr(end($alias), 0, -5) ?: $this->getTable();
+            $this->_alias = $alias;
         }
 
         return $this->_alias;
@@ -650,7 +650,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function getPrimaryKey()
     {
         if ($this->_primaryKey === null) {
-            $key = (array)$this->getSchema()->getPrimaryKey();
+            $key = $this->getSchema()->getPrimaryKey();
             if (count($key) === 1) {
                 $key = $key[0];
             }
@@ -860,7 +860,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             ));
         }
 
-        /** @var \Cake\ORM\Behavior $behavior */
         $behavior = $this->_behaviors->get($name);
 
         return $behavior;
@@ -1313,6 +1312,25 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ]);
      * ```
      *
+     * The `valueField` can also be an array, in which case you can also specify
+     * the `valueSeparator` option to control how the values will be concatinated:
+     *
+     * ```
+     * $table->find('list', [
+     *  'valueField' => ['first_name', 'last_name'],
+     *  'valueSeparator' => ' | ',
+     * ]);
+     *
+     *
+     * The results of this finder will be in the following form:
+     *
+     * ```
+     * [
+     *  1 => 'John | Doe',
+     *  2 => 'Steve | Smith'
+     * ]
+     * ```
+     *
      * Results can be put together in bigger groups when they share a property, you
      * can customize the property to use for grouping by setting `groupField`:
      *
@@ -1346,6 +1364,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             'keyField' => $this->getPrimaryKey(),
             'valueField' => $this->getDisplayField(),
             'groupField' => null,
+            'valueSeparator' => ';',
         ];
 
         if (
@@ -1446,13 +1465,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
 
             $fields = $options[$field];
-            $options[$field] = function ($row) use ($fields) {
+            $glue = in_array($field, ['keyField', 'parentField'], true) ? ';' : $options['valueSeparator'];
+            $options[$field] = function ($row) use ($fields, $glue) {
                 $matches = [];
                 foreach ($fields as $field) {
                     $matches[] = $row[$field];
                 }
 
-                return implode(';', $matches);
+                return implode($glue, $matches);
             };
         }
 
@@ -1681,6 +1701,17 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function query(): Query
     {
         return new Query($this->getConnection(), $this);
+    }
+
+    /**
+     * Creates a new Query::subquery() instance for a table.
+     *
+     * @return \Cake\ORM\Query
+     * @see \Cake\ORM\Query::subquery()
+     */
+    public function subquery(): Query
+    {
+        return Query::subquery($this);
     }
 
     /**
@@ -2080,7 +2111,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     protected function _newId(array $primary)
     {
-        if (!$primary || count((array)$primary) > 1) {
+        if (!$primary || count($primary) > 1) {
             return null;
         }
         /** @var string $typeName */
@@ -2440,7 +2471,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         $query = $this->query();
-        $conditions = (array)$entity->extract($primaryKey);
+        $conditions = $entity->extract($primaryKey);
         $statement = $query->delete()
             ->where($conditions)
             ->execute();

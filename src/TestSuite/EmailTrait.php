@@ -24,6 +24,7 @@ use Cake\TestSuite\Constraint\Email\MailCount;
 use Cake\TestSuite\Constraint\Email\MailSentFrom;
 use Cake\TestSuite\Constraint\Email\MailSentTo;
 use Cake\TestSuite\Constraint\Email\MailSentWith;
+use Cake\TestSuite\Constraint\Email\MailSubjectContains;
 use Cake\TestSuite\Constraint\Email\NoMailSent;
 
 /**
@@ -150,7 +151,7 @@ trait EmailTrait
      *
      * @param int $at Email index
      * @param string $expected Contents
-     * @param string $parameter Email getter parameter (e.g. "cc", "subject")
+     * @param string $parameter Email getter parameter (e.g. "cc", "bcc")
      * @param string $message Message
      * @return void
      */
@@ -243,5 +244,30 @@ trait EmailTrait
     public function assertMailSentWith(string $expected, string $parameter, string $message = ''): void
     {
         $this->assertThat($expected, new MailSentWith(null, $parameter), $message);
+    }
+
+    /**
+     * Asserts an email subject contains expected contents
+     *
+     * @param string $contents Contents
+     * @param string $message Message
+     * @return void
+     */
+    public function assertMailSubjectContains(string $contents, string $message = ''): void
+    {
+        $this->assertThat($contents, new MailSubjectContains(), $message);
+    }
+
+    /**
+     * Asserts an email at a specific index contains expected html contents
+     *
+     * @param int $at Email index
+     * @param string $contents Contents
+     * @param string $message Message
+     * @return void
+     */
+    public function assertMailSubjectContainsAt(int $at, string $contents, string $message = ''): void
+    {
+        $this->assertThat($contents, new MailSubjectContains($at), $message);
     }
 }

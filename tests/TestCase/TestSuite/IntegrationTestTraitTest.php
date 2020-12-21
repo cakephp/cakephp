@@ -20,7 +20,9 @@ use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Event\EventManager;
 use Cake\Http\Cookie\Cookie;
+use Cake\Http\Middleware\CsrfProtectionMiddleware;
 use Cake\Http\Middleware\EncryptedCookieMiddleware;
+use Cake\Http\Middleware\SessionCsrfProtectionMiddleware;
 use Cake\Http\Response;
 use Cake\Http\Session;
 use Cake\Routing\Route\InflectedRoute;
@@ -32,6 +34,7 @@ use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 use Laminas\Diactoros\UploadedFile;
 use PHPUnit\Framework\AssertionFailedError;
+use stdClass;
 
 /**
  * Self test of the IntegrationTestTrait
@@ -68,6 +71,16 @@ class IntegrationTestTraitTest extends TestCase
             $routes->head('/head/:controller/:action', []);
             $routes->options('/options/:controller/:action', []);
             $routes->connect('/:controller/:action/*', []);
+        });
+        Router::scope('/cookie-csrf/', ['csrf' => 'cookie'], function (RouteBuilder $routes) {
+            $routes->registerMiddleware('cookieCsrf', new CsrfProtectionMiddleware());
+            $routes->applyMiddleware('cookieCsrf');
+            $routes->connect('/posts/:action', ['controller' => 'Posts']);
+        });
+        Router::scope('/session-csrf/', ['csrf' => 'session'], function (RouteBuilder $routes) {
+            $routes->registerMiddleware('sessionCsrf', new SessionCsrfProtectionMiddleware());
+            $routes->applyMiddleware('sessionCsrf');
+            $routes->connect('/posts/:action/', ['controller' => 'Posts']);
         });
 
         $this->configApplication(Configure::read('App.namespace') . '\Application', null);
@@ -183,6 +196,7 @@ class IntegrationTestTraitTest extends TestCase
         $this->assertArrayHasKey('csrfToken', $request['cookies']);
         $this->assertArrayHasKey('_csrfToken', $request['post']);
         $this->assertSame($request['cookies']['csrfToken'], $request['post']['_csrfToken']);
+        $this->assertSame($request['session']->read('csrfToken'), $request['post']['_csrfToken']);
 
         $this->cookie('csrfToken', '');
         $request = $this->_buildRequest('/tasks/add', 'POST', [
@@ -210,25 +224,15 @@ class IntegrationTestTraitTest extends TestCase
             'Csrf token should match cookie'
         );
         $this->assertSame(
+            $first['session']->read('csrfToken'),
+            $second['post']['_csrfToken'],
+            'Csrf token should match session'
+        );
+        $this->assertSame(
             $first['post']['_csrfToken'],
             $second['post']['_csrfToken'],
             'Tokens should be consistent per test method'
         );
-    }
-
-    /**
-     * Test pre-determined CSRF tokens.
-     *
-     * @return void
-     */
-    public function testEnableCsrfPredeterminedCookie()
-    {
-        $this->enableCsrfToken();
-        $value = 'I am a teapot';
-        $this->cookie('csrfToken', $value);
-        $request = $this->_buildRequest('/tasks/add', 'POST', ['title' => 'First post']);
-        $this->assertSame($value, $request['cookies']['csrfToken'], 'Csrf token should match cookie');
-        $this->assertSame($value, $request['post']['_csrfToken'], 'Tokens should match');
     }
 
     /**
@@ -302,7 +306,7 @@ class IntegrationTestTraitTest extends TestCase
 
         $this->configApplication(Configure::read('App.namespace') . '\ApplicationWithExceptionsInMiddleware', null);
 
-        $this->_request['headers'] = [ 'Accept' => 'application/json' ];
+        $this->_request['headers'] = ['Accept' => 'application/json'];
         $this->get('/json_response/api_get_data');
         $this->assertResponseCode(403);
         $this->assertHeader('Content-Type', 'application/json');
@@ -942,6 +946,72 @@ class IntegrationTestTraitTest extends TestCase
         ];
         $this->post('/posts/securePost', $data);
         $this->assertResponseError();
+    }
+
+    /**
+     * Integration test for cookie based CSRF token protection success
+     *
+     * @return void
+     */
+    public function testPostCookieCsrfSuccess()
+    {
+        $this->enableCsrfToken();
+        $data = [
+            'title' => 'Some title',
+            'body' => 'Some text',
+        ];
+        $this->post('/cookie-csrf/posts/header', $data);
+        $this->assertResponseSuccess();
+    }
+
+    /**
+     * Integration test for cookie based CSRF token protection fail
+     *
+     * @return void
+     */
+    public function testPostCookieCsrfFailure()
+    {
+        $this->enableCsrfToken();
+        $data = [
+            'title' => 'Some title',
+            'body' => 'Some text',
+            '_csrfToken' => 'failure',
+        ];
+        $this->post('/cookie-csrf/posts/header', $data);
+        $this->assertResponseCode(403);
+    }
+
+    /**
+     * Integration test for session based CSRF token protection success
+     *
+     * @return void
+     */
+    public function testPostSessionCsrfSuccess()
+    {
+        $this->enableCsrfToken();
+        $data = [
+            'title' => 'Some title',
+            'body' => 'Some text',
+        ];
+        $this->post('/session-csrf/posts/header', $data);
+        $this->assertResponseSuccess();
+    }
+
+    /**
+     * Integration test for session based CSRF token protection fail
+     *
+     * @return void
+     */
+    public function testPostSessionCsrfFailure()
+    {
+        $this->enableCsrfToken();
+        $data = [
+            'title' => 'Some title',
+            'body' => 'Some text',
+            '_csrfToken' => 'failure',
+        ];
+        $this->post('/session-csrf/posts/header', $data);
+        $this->assertResponseCode(403);
     }
 
     /**
@@ -1678,5 +1748,67 @@ class IntegrationTestTraitTest extends TestCase
     {
         $this->_controller = new Controller();
         $this->assertNull($this->viewVariable('notFound'));
+    }
+
+    /**
+     * Integration test for a controller with action dependencies.
+     *
+     * @return void
+     */
+    public function testHandleWithContainerDependencies()
+    {
+        $this->get('/dependencies/requiredDep');
+        $this->assertResponseOk();
+        $this->assertResponseContains('"key":"value"', 'Contains the data from the stdClass container object.');
+    }
+
+    /**
+     * Test that mockService() injects into controllers.
+     *
+     * @return void
+     */
+    public function testHandleWithMockServices()
+    {
+        $this->mockService(stdClass::class, function () {
+            return json_decode('{"mock":true}');
+        });
+        $this->get('/dependencies/requiredDep');
+        $this->assertResponseOk();
+        $this->assertResponseContains('"mock":true', 'Contains the data from the stdClass mock container.');
+    }
+
+    /**
+     * Test that mockService() injects into controllers.
+     *
+     * @return void
+     */
+    public function testHandleWithMockServicesOverwrite()
+    {
+        $this->mockService(stdClass::class, function () {
+            return json_decode('{"first":true}');
+        });
+        $this->mockService(stdClass::class, function () {
+            return json_decode('{"second":true}');
+        });
+        $this->get('/dependencies/requiredDep');
+        $this->assertResponseOk();
+        $this->assertResponseContains('"second":true', 'Contains the data from the stdClass mock container.');
+    }
+
+    /**
+     * Test that removeMock() unsets mocks
+     *
+     * @return void
+     */
+    public function testHandleWithMockServicesUnset()
+    {
+        $this->mockService(stdClass::class, function () {
+            return json_decode('{"first":true}');
+        });
+        $this->removeMockService(stdClass::class);
+
+        $this->get('/dependencies/requiredDep');
+        $this->assertResponseOk();
+        $this->assertResponseNotContains('"first":true');
     }
 }

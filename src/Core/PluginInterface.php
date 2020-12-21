@@ -20,6 +20,9 @@ use Cake\Routing\RouteBuilder;
 
 /**
  * Plugin Interface
+ *
+ * @method void services(\Cake\Core\ContainerInterface $container) Register plugin services to
+ *   the application's container
  */
 interface PluginInterface
 {
@@ -28,7 +31,7 @@ interface PluginInterface
      *
      * @var string[]
      */
-    public const VALID_HOOKS = ['routes', 'bootstrap', 'console', 'middleware'];
+    public const VALID_HOOKS = ['bootstrap', 'console', 'middleware', 'routes', 'services'];
 
     /**
      * Get the name of this plugin.

@@ -1394,7 +1394,7 @@ class TreeBehaviorTest extends TestCase
     public function testFindPathWithAssociation()
     {
         $table = $this->table;
-        $other = $this->getTableLocator()->get('FriendlyTrees', [
+        $this->getTableLocator()->get('FriendlyTrees', [
             'table' => $table->getTable(),
         ]);
         $table->hasOne('FriendlyTrees', [

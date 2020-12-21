@@ -74,7 +74,7 @@ class Number
     /**
      * Default currency format used by Number::currency()
      *
-     * @var string
+     * @var string|null
      */
     protected static $_defaultCurrencyFormat;
 
@@ -259,11 +259,7 @@ class Number
 
         $before = $options['before'] ?? '';
         $after = $options['after'] ?? '';
-        if ($currency) {
-            $value = $formatter->formatCurrency($value, $currency);
-        } else {
-            $formatter->format($value, NumberFormatter::TYPE_CURRENCY);
-        }
+        $value = $formatter->formatCurrency($value, $currency);
 
         return $before . $value . $after;
     }

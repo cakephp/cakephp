@@ -14,16 +14,12 @@ declare(strict_types=1);
  */
 namespace Cake\Utility\Exception;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 
 /**
  * Exception class for Xml. This exception will be thrown from Xml when it
  * encounters an error.
  */
-class XmlException extends Exception
+class XmlException extends CakeException
 {
-    /**
-     * @inheritDoc
-     */
-    protected $_defaultCode = 0;
 }

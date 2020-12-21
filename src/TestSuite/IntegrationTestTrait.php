@@ -17,9 +17,10 @@ namespace Cake\TestSuite;
 
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
-use Cake\Database\Exception as DatabaseException;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Error\ExceptionRenderer;
 use Cake\Event\EventInterface;
+use Cake\Event\EventManager;
 use Cake\Form\FormProtector;
 use Cake\Http\Middleware\CsrfProtectionMiddleware;
 use Cake\Http\Session;
@@ -75,21 +76,7 @@ use Throwable;
 trait IntegrationTestTrait
 {
     use CookieCryptTrait;
-
-    /**
-     * The customized application class name.
-     *
-     * @var string|null
-     * @psalm-var class-string<\Cake\Core\HttpApplicationInterface>|null
-     */
-    protected $_appClass;
-
-    /**
-     * The customized application constructor arguments.
-     *
-     * @var array|null
-     */
-    protected $_appArgs;
+    use ContainerStubTrait;
 
     /**
      * The data used to build the next request.
@@ -101,7 +88,7 @@ trait IntegrationTestTrait
     /**
      * The response for the most recent request.
      *
-     * @var \Psr\Http\Message\ResponseInterface
+     * @var \Psr\Http\Message\ResponseInterface|null
      */
     protected $_response;
 
@@ -129,7 +116,7 @@ trait IntegrationTestTrait
     /**
      * The controller used in the last request.
      *
-     * @var \Cake\Controller\Controller
+     * @var \Cake\Controller\Controller|null
      */
     protected $_controller;
 
@@ -215,25 +202,9 @@ trait IntegrationTestTrait
         $this->_viewName = null;
         $this->_layoutName = null;
         $this->_requestSession = null;
-        $this->_appClass = null;
-        $this->_appArgs = null;
         $this->_securityToken = false;
         $this->_csrfToken = false;
         $this->_retainFlashMessages = false;
-    }
-
-    /**
-     * Configure the application class to use in integration tests.
-     *
-     * @param string $class The application class name.
-     * @param array|null $constructorArgs The constructor arguments for your application class.
-     * @return void
-     * @psalm-param class-string<\Cake\Core\HttpApplicationInterface> $class
-     */
-    public function configApplication(string $class, ?array $constructorArgs): void
-    {
-        $this->_appClass = $class;
-        $this->_appArgs = $constructorArgs;
     }
 
     /**
@@ -518,7 +489,11 @@ trait IntegrationTestTrait
      */
     protected function _makeDispatcher(): MiddlewareDispatcher
     {
-        return new MiddlewareDispatcher($this, $this->_appClass, $this->_appArgs);
+        EventManager::instance()->on('Controller.initialize', [$this, 'controllerSpy']);
+        /** @var \Cake\Core\HttpApplicationInterface $app */
+        $app = $this->createApp();
+
+        return new MiddlewareDispatcher($app);
     }
 
     /**
@@ -583,7 +558,6 @@ trait IntegrationTestTrait
             'defaults' => 'php',
         ];
         $session = Session::create($sessionConfig);
-        $session->write($this->_session);
         [$url, $query, $hostInfo] = $this->_url($url);
         $tokenUrl = $url;
 
@@ -636,6 +610,7 @@ trait IntegrationTestTrait
         }
 
         $props['cookies'] = $this->_cookie;
+        $session->write($this->_session);
         $props = Hash::merge($props, $this->_request);
 
         return $props;
@@ -669,11 +644,23 @@ trait IntegrationTestTrait
 
         if ($this->_csrfToken === true) {
             $middleware = new CsrfProtectionMiddleware();
-            if (!isset($this->_cookie['csrfToken'])) {
-                $this->_cookie['csrfToken'] = $middleware->createToken();
+            $token = null;
+            if (!isset($this->_cookie['csrfToken']) && !isset($this->_session['csrfToken'])) {
+                $token = $middleware->createToken();
+            } elseif (isset($this->_cookie['csrfToken'])) {
+                $token = $this->_cookie['csrfToken'];
+            } else {
+                $token = $this->_session['csrfToken'];
             }
+
+            // Add the token to both the session and cookie to cover
+            // both types of CSRF tokens. We generate the token with the cookie
+            // middleware as cookie tokens will be accepted by session csrf, but not
+            // the inverse.
+            $this->_session['csrfToken'] = $token;
+            $this->_cookie['csrfToken'] = $token;
             if (!isset($data['_csrfToken'])) {
-                $data['_csrfToken'] = $this->_cookie['csrfToken'];
+                $data['_csrfToken'] = $token;
             }
         }
 
@@ -828,6 +815,10 @@ trait IntegrationTestTrait
      */
     public function assertRedirect($url = null, $message = ''): void
     {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert header.');
+        }
+
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat(null, new HeaderSet($this->_response, 'Location'), $verboseMessage);
 
@@ -851,6 +842,10 @@ trait IntegrationTestTrait
      */
     public function assertRedirectEquals($url = null, $message = '')
     {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert header.');
+        }
+
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat(null, new HeaderSet($this->_response, 'Location'), $verboseMessage);
 
@@ -868,6 +863,10 @@ trait IntegrationTestTrait
      */
     public function assertRedirectContains(string $url, string $message = ''): void
     {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert header.');
+        }
+
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat(null, new HeaderSet($this->_response, 'Location'), $verboseMessage);
         $this->assertThat($url, new HeaderContains($this->_response, 'Location'), $verboseMessage);
@@ -882,6 +881,10 @@ trait IntegrationTestTrait
      */
     public function assertRedirectNotContains(string $url, string $message = ''): void
     {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert header.');
+        }
+
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat(null, new HeaderSet($this->_response, 'Location'), $verboseMessage);
         $this->assertThat($url, new HeaderNotContains($this->_response, 'Location'), $verboseMessage);
@@ -909,6 +912,10 @@ trait IntegrationTestTrait
      */
     public function assertHeader(string $header, string $content, string $message = ''): void
     {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert header.');
+        }
+
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat(null, new HeaderSet($this->_response, $header), $verboseMessage);
         $this->assertThat($content, new HeaderEquals($this->_response, $header), $verboseMessage);
@@ -924,6 +931,10 @@ trait IntegrationTestTrait
      */
     public function assertHeaderContains(string $header, string $content, string $message = ''): void
     {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert header.');
+        }
+
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat(null, new HeaderSet($this->_response, $header), $verboseMessage);
         $this->assertThat($content, new HeaderContains($this->_response, $header), $verboseMessage);
@@ -939,6 +950,10 @@ trait IntegrationTestTrait
      */
     public function assertHeaderNotContains(string $header, string $content, string $message = ''): void
     {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert header.');
+        }
+
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat(null, new HeaderSet($this->_response, $header), $verboseMessage);
         $this->assertThat($content, new HeaderNotContains($this->_response, $header), $verboseMessage);
@@ -993,6 +1008,10 @@ trait IntegrationTestTrait
      */
     public function assertResponseContains(string $content, string $message = '', bool $ignoreCase = false): void
     {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert content.');
+        }
+
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat($content, new BodyContains($this->_response, $ignoreCase), $verboseMessage);
     }
@@ -1007,6 +1026,10 @@ trait IntegrationTestTrait
      */
     public function assertResponseNotContains(string $content, string $message = '', bool $ignoreCase = false): void
     {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert content.');
+        }
+
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat($content, new BodyNotContains($this->_response, $ignoreCase), $verboseMessage);
     }

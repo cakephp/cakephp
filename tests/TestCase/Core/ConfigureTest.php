@@ -282,7 +282,7 @@ class ConfigureTest extends TestCase
     {
         $this->expectException(\RuntimeException::class);
         Configure::config('test', new PhpConfig());
-        Configure::load('non_existing_configuration_file', 'test');
+        Configure::load('nonexistent_configuration_file', 'test');
     }
 
     /**
@@ -293,10 +293,10 @@ class ConfigureTest extends TestCase
     public function testLoadDefaultConfig()
     {
         try {
-            Configure::load('non_existing_configuration_file');
+            Configure::load('nonexistent_configuration_file');
         } catch (\Exception $e) {
             $this->assertTrue(Configure::isConfigured('default'));
-            $this->assertFalse(Configure::isConfigured('non_existing_configuration_file'));
+            $this->assertFalse(Configure::isConfigured('nonexistent_configuration_file'));
         }
     }
 
@@ -531,7 +531,7 @@ class ConfigureTest extends TestCase
      */
     public function testDumpNoAdapter()
     {
-        $this->expectException(\Cake\Core\Exception\Exception::class);
+        $this->expectException(\Cake\Core\Exception\CakeException::class);
         Configure::dump(TMP . 'test.php', 'does_not_exist');
     }
 

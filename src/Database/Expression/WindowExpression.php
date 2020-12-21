@@ -216,34 +216,34 @@ class WindowExpression implements ExpressionInterface, WindowInterface
     /**
      * @inheritDoc
      */
-    public function sql(ValueBinder $generator): string
+    public function sql(ValueBinder $binder): string
     {
         $clauses = [];
         if ($this->name->getIdentifier()) {
-            $clauses[] = $this->name->sql($generator);
+            $clauses[] = $this->name->sql($binder);
         }
 
         if ($this->partitions) {
             $expressions = [];
             foreach ($this->partitions as $partition) {
-                $expressions[] = $partition->sql($generator);
+                $expressions[] = $partition->sql($binder);
             }
 
             $clauses[] = 'PARTITION BY ' . implode(', ', $expressions);
         }
 
         if ($this->order) {
-            $clauses[] = $this->order->sql($generator);
+            $clauses[] = $this->order->sql($binder);
         }
 
         if ($this->frame) {
             $start = $this->buildOffsetSql(
-                $generator,
+                $binder,
                 $this->frame['start']['offset'],
                 $this->frame['start']['direction']
             );
             $end = $this->buildOffsetSql(
-                $generator,
+                $binder,
                 $this->frame['end']['offset'],
                 $this->frame['end']['direction']
             );
@@ -263,29 +263,29 @@ class WindowExpression implements ExpressionInterface, WindowInterface
     /**
      * @inheritDoc
      */
-    public function traverse(Closure $visitor)
+    public function traverse(Closure $callback)
     {
-        $visitor($this->name);
+        $callback($this->name);
         foreach ($this->partitions as $partition) {
-            $visitor($partition);
-            $partition->traverse($visitor);
+            $callback($partition);
+            $partition->traverse($callback);
         }
 
         if ($this->order) {
-            $visitor($this->order);
-            $this->order->traverse($visitor);
+            $callback($this->order);
+            $this->order->traverse($callback);
         }
 
         if ($this->frame !== null) {
             $offset = $this->frame['start']['offset'];
             if ($offset instanceof ExpressionInterface) {
-                $visitor($offset);
-                $offset->traverse($visitor);
+                $callback($offset);
+                $offset->traverse($callback);
             }
             $offset = $this->frame['end']['offset'] ?? null;
             if ($offset instanceof ExpressionInterface) {
-                $visitor($offset);
-                $offset->traverse($visitor);
+                $callback($offset);
+                $offset->traverse($callback);
             }
         }
 
@@ -295,19 +295,19 @@ class WindowExpression implements ExpressionInterface, WindowInterface
     /**
      * Builds frame offset sql.
      *
-     * @param \Cake\Database\ValueBinder $generator Value binder
+     * @param \Cake\Database\ValueBinder $binder Value binder
      * @param int|string|\Cake\Database\ExpressionInterface|null $offset Frame offset
      * @param string $direction Frame offset direction
      * @return string
      */
-    protected function buildOffsetSql(ValueBinder $generator, $offset, string $direction): string
+    protected function buildOffsetSql(ValueBinder $binder, $offset, string $direction): string
     {
         if ($offset === 0) {
             return 'CURRENT ROW';
         }
 
         if ($offset instanceof ExpressionInterface) {
-            $offset = $offset->sql($generator);
+            $offset = $offset->sql($binder);
         }
 
         $sql = sprintf(

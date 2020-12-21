@@ -89,7 +89,7 @@ TEXT;
             return $this->exportObject($var, $indent + 1);
         }
         if ($var instanceof SpecialNode) {
-            return (string)$var->getValue();
+            return $var->getValue();
         }
         throw new RuntimeException('Unknown node received ' . get_class($var));
     }

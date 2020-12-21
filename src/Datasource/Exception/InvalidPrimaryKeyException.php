@@ -16,15 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\Datasource\Exception;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 
 /**
  * Exception raised when the provided primary key does not match the table primary key
  */
-class InvalidPrimaryKeyException extends Exception
+class InvalidPrimaryKeyException extends CakeException
 {
-    /**
-     * @inheritDoc
-     */
-    protected $_defaultCode = 404;
 }

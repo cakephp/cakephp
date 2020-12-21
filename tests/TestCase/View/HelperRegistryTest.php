@@ -357,6 +357,7 @@ class HelperRegistryTest extends TestCase
     public function testArrayIsNormalized()
     {
         $config = [
+            'SomeHelper',
             'SomeHelper' => [
                 'value' => 1,
                 'value2' => 2,
@@ -403,6 +404,9 @@ class HelperRegistryTest extends TestCase
                 'value' => 1,
                 'value2' => 2,
             ],
+            'SomeAliasesHelper' => [
+                'class' => 'Plugin.SomeHelper',
+            ],
         ];
 
         $result1 = $this->Helpers->normalizeArray($config);
@@ -421,6 +425,10 @@ class HelperRegistryTest extends TestCase
                     'value' => 1,
                     'value2' => 2,
                 ],
+            ],
+            'SomeAliasesHelper' => [
+                'class' => 'Plugin.SomeHelper',
+                'config' => [],
             ],
         ];
         $this->assertEquals($expected, $result2);

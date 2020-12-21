@@ -16,9 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\I18n;
 
-use Aura\Intl\Package;
 use Cake\Cache\Cache;
 use Cake\I18n\I18n;
+use Cake\I18n\Package;
+use Cake\I18n\Translator;
+use Cake\I18n\TranslatorRegistry;
 use Cake\TestSuite\TestCase;
 use Locale;
 
@@ -82,7 +84,7 @@ class I18nTest extends TestCase
     public function testGetDefaultTranslator()
     {
         $translator = I18n::getTranslator();
-        $this->assertInstanceOf('Aura\Intl\TranslatorInterface', $translator);
+        $this->assertInstanceOf(Translator::class, $translator);
         $this->assertSame('%d is 1 (po translated)', $translator->translate('%d = 1'));
         $this->assertSame($translator, I18n::getTranslator(), 'backwards compat works');
     }
@@ -702,7 +704,7 @@ class I18nTest extends TestCase
      */
     public function testLoaderFactory()
     {
-        I18n::config('custom', function ($name, $locale) {
+        I18n::config('custom', function (string $name, string $locale) {
             $this->assertSame('custom', $name);
             $package = new Package('default');
 
@@ -748,7 +750,7 @@ class I18nTest extends TestCase
      */
     public function testFallbackLoaderFactory()
     {
-        I18n::config('_fallback', function ($name) {
+        I18n::config(TranslatorRegistry::FALLBACK_LOADER, function (string $name, string $locale) {
             $package = new Package('default');
 
             if ($name === 'custom') {

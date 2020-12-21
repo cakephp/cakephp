@@ -971,7 +971,7 @@ class FormHelperTest extends TestCase
             'name' => 'password', 'type' => 'password',
         ]];
         $this->assertHtml($expected, $result);
-        $this->assertNotRegExp('/<input[^<>]+[^id|name|type|value]=[^<>]*\/>$/', $result);
+        $this->assertDoesNotMatchRegularExpression('/<input[^<>]+[^id|name|type|value]=[^<>]*\/>$/', $result);
 
         $result = $this->Form->text('user_form');
         $expected = ['input' => [
@@ -6672,7 +6672,7 @@ class FormHelperTest extends TestCase
             'onClick' => "$('#postAddForm').ajaxSubmit({target: '#postTextUpload', url: '/posts/text'});return false;'",
             'escape' => false,
         ]);
-        $this->assertNotRegExp('/\&039/', $result);
+        $this->assertDoesNotMatchRegularExpression('/\&039/', $result);
     }
 
     /**
@@ -7533,52 +7533,52 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * testForMagicControlNonExistingNorValidated method
+     * testForMagicControlNonExistentNotValidated method
      *
      * @return void
      */
-    public function testForMagicControlNonExistingNorValidated()
+    public function testForMagicControlNonExistentNotValidated()
     {
         $this->Form->create($this->article);
         $this->Form->setTemplates(['inputContainer' => '{{content}}']);
-        $result = $this->Form->control('non_existing_nor_validated');
+        $result = $this->Form->control('nonexistent_not_validated');
         $expected = [
-            'label' => ['for' => 'non-existing-nor-validated'],
-            'Non Existing Nor Validated',
+            'label' => ['for' => 'nonexistent-not-validated'],
+            'Nonexistent Not Validated',
             '/label',
             'input' => [
-                'type' => 'text', 'name' => 'non_existing_nor_validated',
-                'id' => 'non-existing-nor-validated',
+                'type' => 'text', 'name' => 'nonexistent_not_validated',
+                'id' => 'nonexistent-not-validated',
             ],
         ];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Form->control('non_existing_nor_validated', [
+        $result = $this->Form->control('nonexistent_not_validated', [
             'val' => 'my value',
         ]);
         $expected = [
-            'label' => ['for' => 'non-existing-nor-validated'],
-            'Non Existing Nor Validated',
+            'label' => ['for' => 'nonexistent-not-validated'],
+            'Nonexistent Not Validated',
             '/label',
             'input' => [
-                'type' => 'text', 'name' => 'non_existing_nor_validated',
-                'value' => 'my value', 'id' => 'non-existing-nor-validated',
+                'type' => 'text', 'name' => 'nonexistent_not_validated',
+                'value' => 'my value', 'id' => 'nonexistent-not-validated',
             ],
         ];
         $this->assertHtml($expected, $result);
 
         $this->View->setRequest(
-            $this->View->getRequest()->withData('non_existing_nor_validated', 'CakePHP magic')
+            $this->View->getRequest()->withData('nonexistent_not_validated', 'CakePHP magic')
         );
         $this->Form->create($this->article);
-        $result = $this->Form->control('non_existing_nor_validated');
+        $result = $this->Form->control('nonexistent_not_validated');
         $expected = [
-            'label' => ['for' => 'non-existing-nor-validated'],
-            'Non Existing Nor Validated',
+            'label' => ['for' => 'nonexistent-not-validated'],
+            'Nonexistent Not Validated',
             '/label',
             'input' => [
-                'type' => 'text', 'name' => 'non_existing_nor_validated',
-                'value' => 'CakePHP magic', 'id' => 'non-existing-nor-validated',
+                'type' => 'text', 'name' => 'nonexistent_not_validated',
+                'value' => 'CakePHP magic', 'id' => 'nonexistent-not-validated',
             ],
         ];
         $this->assertHtml($expected, $result);
@@ -7850,7 +7850,7 @@ class FormHelperTest extends TestCase
      */
     public function testHtml5ControlException()
     {
-        $this->expectException(\Cake\Core\Exception\Exception::class);
+        $this->expectException(\Cake\Core\Exception\CakeException::class);
         $this->Form->email();
     }
 

@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Database\Schema;
 
 use Cake\Database\Connection;
-use Cake\Database\Exception;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\TypeFactory;
 
 /**
@@ -468,7 +468,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         unset($attrs['references'], $attrs['update'], $attrs['delete']);
 
         if (!in_array($attrs['type'], static::$_validIndexTypes, true)) {
-            throw new Exception(sprintf(
+            throw new DatabaseException(sprintf(
                 'Invalid index type "%s" in index "%s" in table "%s".',
                 $attrs['type'],
                 $name,
@@ -476,7 +476,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
             ));
         }
         if (empty($attrs['columns'])) {
-            throw new Exception(sprintf(
+            throw new DatabaseException(sprintf(
                 'Index "%s" in table "%s" must have at least one column.',
                 $name,
                 $this->_table
@@ -492,7 +492,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
                     $this->_table,
                     $field
                 );
-                throw new Exception($msg);
+                throw new DatabaseException($msg);
             }
         }
         $this->_indexes[$name] = $attrs;
@@ -559,10 +559,17 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         $attrs = array_intersect_key($attrs, static::$_indexKeys);
         $attrs += static::$_indexKeys;
         if (!in_array($attrs['type'], static::$_validConstraintTypes, true)) {
-            throw new Exception(sprintf('Invalid constraint type "%s" in table "%s".', $attrs['type'], $this->_table));
+            throw new DatabaseException(sprintf(
+                'Invalid constraint type "%s" in table "%s".',
+                $attrs['type'],
+                $this->_table
+            ));
         }
         if (empty($attrs['columns'])) {
-            throw new Exception(sprintf('Constraints in table "%s" must have at least one column.', $this->_table));
+            throw new DatabaseException(sprintf(
+                'Constraints in table "%s" must have at least one column.',
+                $this->_table
+            ));
         }
         $attrs['columns'] = (array)$attrs['columns'];
         foreach ($attrs['columns'] as $field) {
@@ -573,7 +580,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
                     $field,
                     $this->_table
                 );
-                throw new Exception($msg);
+                throw new DatabaseException($msg);
             }
         }
 
@@ -637,21 +644,21 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      *
      * @param array $attrs Attributes to set.
      * @return array
-     * @throws \Cake\Database\Exception When foreign key definition is not valid.
+     * @throws \Cake\Database\Exception\DatabaseException When foreign key definition is not valid.
      */
     protected function _checkForeignKey(array $attrs): array
     {
         if (count($attrs['references']) < 2) {
-            throw new Exception('References must contain a table and column.');
+            throw new DatabaseException('References must contain a table and column.');
         }
         if (!in_array($attrs['update'], static::$_validForeignKeyActions)) {
-            throw new Exception(sprintf(
+            throw new DatabaseException(sprintf(
                 'Update action is invalid. Must be one of %s',
                 implode(',', static::$_validForeignKeyActions)
             ));
         }
         if (!in_array($attrs['delete'], static::$_validForeignKeyActions)) {
-            throw new Exception(sprintf(
+            throw new DatabaseException(sprintf(
                 'Delete action is invalid. Must be one of %s',
                 implode(',', static::$_validForeignKeyActions)
             ));
@@ -703,7 +710,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      */
     public function setTemporary(bool $temporary)
     {
-        $this->_temporary = (bool)$temporary;
+        $this->_temporary = $temporary;
 
         return $this;
     }

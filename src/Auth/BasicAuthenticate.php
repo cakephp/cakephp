@@ -95,7 +95,7 @@ class BasicAuthenticate extends BaseAuthenticate
     public function unauthenticated(ServerRequest $request, Response $response)
     {
         $unauthorizedException = new UnauthorizedException();
-        $unauthorizedException->responseHeader($this->loginHeaders($request));
+        $unauthorizedException->setHeaders($this->loginHeaders($request));
 
         throw $unauthorizedException;
     }

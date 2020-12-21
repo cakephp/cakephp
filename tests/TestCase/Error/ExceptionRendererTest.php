@@ -20,7 +20,7 @@ use Cake\Controller\Controller;
 use Cake\Controller\Exception\MissingActionException;
 use Cake\Controller\Exception\MissingComponentException;
 use Cake\Core\Configure;
-use Cake\Core\Exception\Exception as CakeException;
+use Cake\Core\Exception\CakeException;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Datasource\Exception\MissingDatasourceConfigException;
 use Cake\Datasource\Exception\MissingDatasourceException;
@@ -199,7 +199,7 @@ class ExceptionRendererTest extends TestCase
 
         $result = $ExceptionRenderer->render();
 
-        $this->assertRegExp(
+        $this->assertMatchesRegularExpression(
             '/Not Found/',
             (string)$result->getBody(),
             'Method declared in error handler not converted to error400. %s'
@@ -320,7 +320,7 @@ class ExceptionRendererTest extends TestCase
      */
     public function testUnknownExceptionTypeWithCodeHigherThan500()
     {
-        $exception = new \OutOfBoundsException('foul ball.', 501);
+        $exception = new HttpException('foul ball.', 501);
         $ExceptionRenderer = new ExceptionRenderer($exception);
         $response = $ExceptionRenderer->render();
         $result = (string)$response->getBody();
@@ -349,7 +349,7 @@ class ExceptionRendererTest extends TestCase
 
         $this->assertSame(404, $response->getStatusCode());
         $this->assertStringContainsString('<h2>Custom message</h2>', $result);
-        $this->assertRegExp("/<strong>'.*?\/posts\/view\/1000'<\/strong>/", $result);
+        $this->assertMatchesRegularExpression("/<strong>'.*?\/posts\/view\/1000'<\/strong>/", $result);
     }
 
     /**
@@ -451,12 +451,36 @@ class ExceptionRendererTest extends TestCase
     public function testExceptionResponseHeader()
     {
         $exception = new MethodNotAllowedException('Only allowing POST and DELETE');
-        $exception->responseHeader(['Allow' => 'POST, DELETE']);
+        $exception->setHeader('Allow', ['POST', 'DELETE']);
         $ExceptionRenderer = new ExceptionRenderer($exception);
 
         $result = $ExceptionRenderer->render();
         $this->assertTrue($result->hasHeader('Allow'));
-        $this->assertSame('POST, DELETE', $result->getHeaderLine('Allow'));
+        $this->assertSame('POST,DELETE', $result->getHeaderLine('Allow'));
+
+        $exception->setHeaders(['Allow' => 'GET']);
+        $result = $ExceptionRenderer->render();
+        $this->assertTrue($result->hasHeader('Allow'));
+        $this->assertSame('GET', $result->getHeaderLine('Allow'));
+    }
+
+    /**
+     * Tests setting exception response headers through core Exception
+     *
+     * @return void
+     */
+    public function testExceptionDeprecatedResponseHeader()
+    {
+        $this->deprecated(function () {
+            $exception = new CakeException('Should Not Set Headers');
+            $exception->responseHeader(['Allow' => 'POST, DELETE']);
+
+            $ExceptionRenderer = new ExceptionRenderer($exception);
+
+            $result = $ExceptionRenderer->render();
+            $this->assertTrue($result->hasHeader('Allow'));
+            $this->assertSame('POST, DELETE', $result->getHeaderLine('Allow'));
+        });
     }
 
     /**
@@ -611,7 +635,7 @@ class ExceptionRendererTest extends TestCase
                     '/Missing Method in UserMailer/',
                     '/<em>UserMailer::welcome\(\)<\/em>/',
                 ],
-                404,
+                500,
             ],
             [
                 new Exception('boom'),
@@ -654,7 +678,7 @@ class ExceptionRendererTest extends TestCase
         $this->assertEquals($code, $response->getStatusCode());
         $body = (string)$response->getBody();
         foreach ($patterns as $pattern) {
-            $this->assertRegExp($pattern, $body);
+            $this->assertMatchesRegularExpression($pattern, $body);
         }
     }
 

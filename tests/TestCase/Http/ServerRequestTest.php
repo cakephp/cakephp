@@ -20,6 +20,7 @@ use Cake\Core\Configure;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Exception\MethodNotAllowedException;
+use Cake\Http\FlashMessage;
 use Cake\Http\ServerRequest;
 use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
@@ -99,8 +100,14 @@ class ServerRequestTest extends TestCase
         $this->assertFalse($request->is('json'));
     }
 
+    public function testConstructor()
+    {
+        $request = new ServerRequest();
+        $this->assertInstanceOf(FlashMessage::class, $request->getAttribute('flash'));
+    }
+
     /**
-     * Test construction
+     * Test construction with query data
      *
      * @return void
      */
@@ -1833,7 +1840,7 @@ XML;
             $request->allowMethod(['POST', 'DELETE']);
             $this->fail('An expected exception has not been raised.');
         } catch (MethodNotAllowedException $e) {
-            $this->assertEquals(['Allow' => 'POST, DELETE'], $e->responseHeader());
+            $this->assertEquals(['Allow' => 'POST, DELETE'], $e->getHeaders());
         }
 
         $this->expectException(MethodNotAllowedException::class);
@@ -1854,6 +1861,12 @@ XML;
 
         $request = new ServerRequest();
         $this->assertEquals($session, $request->getSession());
+    }
+
+    public function testGetFlash()
+    {
+        $request = new ServerRequest();
+        $this->assertInstanceOf(FlashMessage::class, $request->getFlash());
     }
 
     /**

@@ -18,15 +18,21 @@ namespace Cake\Error;
 
 use Cake\Controller\Controller;
 use Cake\Controller\ControllerFactory;
+use Cake\Controller\Exception\MissingActionException;
 use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Core\Exception\Exception as CakeException;
+use Cake\Core\Container;
+use Cake\Core\Exception\CakeException;
 use Cake\Core\Exception\MissingPluginException;
+use Cake\Datasource\Exception\PageOutOfBoundsException;
+use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Event\Event;
 use Cake\Http\Exception\HttpException;
+use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
+use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\View\Exception\MissingLayoutException;
@@ -69,7 +75,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
     protected $controller;
 
     /**
-     * Template to render for Cake\Core\Exception\Exception
+     * Template to render for Cake\Core\Exception\CakeException
      *
      * @var string
      */
@@ -91,8 +97,29 @@ class ExceptionRenderer implements ExceptionRendererInterface
     protected $request;
 
     /**
+     * Map of exceptions to http status codes.
+     *
+     * This can be customized for users that don't want specific exceptions to throw 404 errors
+     * or want their application exceptions to be automatically converted.
+     *
+     * @var array
+     * @psalm-var array<class-string<\Throwable>, int>
+     */
+    protected $exceptionHttpCodes = [
+        // Controller exceptions
+        MissingActionException::class => 404,
+        // Datasource exceptions
+        PageOutOfBoundsException::class => 404,
+        RecordNotFoundException::class => 404,
+        // Http exceptions
+        MissingControllerException::class => 404,
+        // Routing exceptions
+        MissingRouteException::class => 404,
+    ];
+
+    /**
      * Creates the controller to perform rendering on the error response.
-     * If the error is a Cake\Core\Exception\Exception it will be converted to either a 400 or a 500
+     * If the error is a Cake\Core\Exception\CakeException it will be converted to either a 400 or a 500
      * code error depending on the code used to construct the error.
      *
      * @param \Throwable $exception Exception.
@@ -136,7 +163,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
             $params = $request->getAttribute('params');
             $params['controller'] = 'Error';
 
-            $factory = new ControllerFactory();
+            $factory = new ControllerFactory(new Container());
             $class = $factory->getControllerClass($request->withAttribute('params', $params));
 
             if (!$class) {
@@ -192,7 +219,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
     public function render(): ResponseInterface
     {
         $exception = $this->error;
-        $code = $this->_code($exception);
+        $code = $this->getHttpCode($exception);
         $method = $this->_method($exception);
         $template = $this->_template($exception, $method, $code);
         $this->clearOutput();
@@ -206,8 +233,14 @@ class ExceptionRenderer implements ExceptionRendererInterface
         $response = $this->controller->getResponse();
 
         if ($exception instanceof CakeException) {
+            /** @psalm-suppress DeprecatedMethod */
             foreach ((array)$exception->responseHeader() as $key => $value) {
                 $response = $response->withHeader($key, $value);
+            }
+        }
+        if ($exception instanceof HttpException) {
+            foreach ($exception->getHeaders() as $name => $value) {
+                $response = $response->withHeader($name, $value);
             }
         }
         $response = $response->withStatus($code);
@@ -280,7 +313,8 @@ class ExceptionRenderer implements ExceptionRendererInterface
             $baseClass = substr($baseClass, 0, -9);
         }
 
-        $method = Inflector::variable($baseClass) ?: 'error500';
+        // $baseClass would be an empty string if the exception class is \Exception.
+        $method = $baseClass === '' ? 'error500' : Inflector::variable($baseClass);
 
         return $this->method = $method;
     }
@@ -320,41 +354,30 @@ class ExceptionRenderer implements ExceptionRendererInterface
      */
     protected function _template(Throwable $exception, string $method, int $code): string
     {
-        $isHttpException = $exception instanceof HttpException;
-
-        if (!Configure::read('debug') && !$isHttpException || $isHttpException) {
-            $template = 'error500';
-            if ($code < 500) {
-                $template = 'error400';
-            }
-
-            return $this->template = $template;
+        if ($exception instanceof HttpException || !Configure::read('debug')) {
+            return $this->template = $code < 500 ? 'error400' : 'error500';
         }
-
-        $template = $method ?: 'error500';
 
         if ($exception instanceof PDOException) {
-            $template = 'pdo_error';
+            return $this->template = 'pdo_error';
         }
 
-        return $this->template = $template;
+        return $this->template = $method;
     }
 
     /**
-     * Get HTTP status code.
+     * Gets the appropriate http status code for exception.
      *
      * @param \Throwable $exception Exception.
-     * @return int A valid HTTP error status code.
+     * @return int A valid HTTP status code.
      */
-    protected function _code(Throwable $exception): int
+    protected function getHttpCode(Throwable $exception): int
     {
-        $code = 500;
-        $errorCode = (int)$exception->getCode();
-        if ($errorCode >= 400 && $errorCode < 600) {
-            $code = $errorCode;
+        if ($exception instanceof HttpException) {
+            return $exception->getCode();
         }
 
-        return $code;
+        return $this->exceptionHttpCodes[get_class($exception)] ?? 500;
     }
 
     /**

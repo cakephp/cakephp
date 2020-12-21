@@ -31,8 +31,7 @@
         "php": ">=7.2.0",
         "ext-intl": "*",
         "cakephp/core": "^4.0",
-        "cakephp/chronos": "^2.0.0",
-        "aura/intl": "^3.0.0"
+        "cakephp/chronos": "^2.0.0"
     },
     "suggest": {
         "cakephp/cache": "Require this if you want automatic caching of translators"

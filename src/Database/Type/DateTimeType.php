@@ -163,6 +163,8 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      */
     public function setTimezone($timezone)
     {
+        deprecationWarning('DateTimeType::setTimezone() is deprecated. Use setDatabaseTimezone() instead.');
+
         return $this->setDatabaseTimezone($timezone);
     }
 
@@ -466,7 +468,6 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      */
     protected function _parseValue(string $value): ?DateTimeInterface
     {
-        /** @psalm-var class-string<\DateTime>|class-string<\DateTimeImmutable> $class */
         $class = $this->_className;
 
         foreach ($this->_marshalFormats as $format) {

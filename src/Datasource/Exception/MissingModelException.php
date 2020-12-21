@@ -16,12 +16,12 @@ declare(strict_types=1);
  */
 namespace Cake\Datasource\Exception;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 
 /**
  * Used when a model cannot be found.
  */
-class MissingModelException extends Exception
+class MissingModelException extends CakeException
 {
     /**
      * @var string

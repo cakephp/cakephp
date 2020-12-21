@@ -22,7 +22,7 @@ use Cake\Auth\Storage\StorageInterface;
 use Cake\Controller\Component;
 use Cake\Controller\Controller;
 use Cake\Core\App;
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventInterface;
@@ -176,7 +176,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
      *
      * @var array
      */
-    public $components = ['RequestHandler', 'Flash'];
+    protected $components = ['RequestHandler', 'Flash'];
 
     /**
      * Objects that will be used for authentication checks.
@@ -342,7 +342,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
      * @param \Cake\Controller\Controller $controller A reference to the controller object.
      * @return \Cake\Http\Response|null Null if current action is login action
      *   else response object returned by authenticate object or Controller::redirect().
-     * @throws \Cake\Core\Exception\Exception
+     * @throws \Cake\Core\Exception\CakeException
      */
     protected function _unauthenticated(Controller $controller): ?Response
     {
@@ -352,7 +352,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
         $response = $controller->getResponse();
         $auth = end($this->_authenticateObjects);
         if ($auth === false) {
-            throw new Exception('At least one authenticate object must be available.');
+            throw new CakeException('At least one authenticate object must be available.');
         }
         $result = $auth->unauthenticated($controller->getRequest(), $response);
         if ($result !== null) {
@@ -513,7 +513,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
      * Loads the authorization objects configured.
      *
      * @return array|null The loaded authorization objects, or null when authorize is empty.
-     * @throws \Cake\Core\Exception\Exception
+     * @throws \Cake\Core\Exception\CakeException
      */
     public function constructAuthorize(): ?array
     {
@@ -536,10 +536,10 @@ class AuthComponent extends Component implements EventDispatcherInterface
             }
             $className = App::className($class, 'Auth', 'Authorize');
             if ($className === null) {
-                throw new Exception(sprintf('Authorization adapter "%s" was not found.', $class));
+                throw new CakeException(sprintf('Authorization adapter "%s" was not found.', $class));
             }
             if (!method_exists($className, 'authorize')) {
-                throw new Exception('Authorization objects must implement an authorize() method.');
+                throw new CakeException('Authorization objects must implement an authorize() method.');
             }
             $config = (array)$config + $global;
             $this->_authorizeObjects[$alias] = new $className($this->_registry, $config);
@@ -808,7 +808,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
      * Loads the configured authentication objects.
      *
      * @return array|null The loaded authorization objects, or null on empty authenticate value.
-     * @throws \Cake\Core\Exception\Exception
+     * @throws \Cake\Core\Exception\CakeException
      */
     public function constructAuthenticate(): ?array
     {
@@ -831,10 +831,10 @@ class AuthComponent extends Component implements EventDispatcherInterface
             }
             $className = App::className($class, 'Auth', 'Authenticate');
             if ($className === null) {
-                throw new Exception(sprintf('Authentication adapter "%s" was not found.', $class));
+                throw new CakeException(sprintf('Authentication adapter "%s" was not found.', $class));
             }
             if (!method_exists($className, 'authenticate')) {
-                throw new Exception('Authentication objects must implement an authenticate() method.');
+                throw new CakeException('Authentication objects must implement an authenticate() method.');
             }
             $config = array_merge($global, (array)$config);
             $this->_authenticateObjects[$alias] = new $className($this->_registry, $config);
@@ -873,7 +873,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
         }
         $className = App::className($class, 'Auth/Storage', 'Storage');
         if ($className === null) {
-            throw new Exception(sprintf('Auth storage adapter "%s" was not found.', $class));
+            throw new CakeException(sprintf('Auth storage adapter "%s" was not found.', $class));
         }
         $request = $this->getController()->getRequest();
         $response = $this->getController()->getResponse();

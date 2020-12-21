@@ -223,7 +223,7 @@ class FileEngineTest extends TestCase
 
         $result = Cache::delete('delete_test', 'file_test');
         $this->assertTrue($result);
-        $this->assertFileNotExists(TMP . 'tests/delete_test');
+        $this->assertFileDoesNotExist(TMP . 'tests/delete_test');
 
         $result = Cache::delete('delete_test', 'file_test');
         $this->assertFalse($result);
@@ -268,9 +268,9 @@ class FileEngineTest extends TestCase
 
         $result = Cache::clear('file_test');
         $this->assertTrue($result);
-        $this->assertFileNotExists(TMP . 'tests/cake_serialize_test1');
-        $this->assertFileNotExists(TMP . 'tests/cake_serialize_test2');
-        $this->assertFileNotExists(TMP . 'tests/cake_serialize_test3');
+        $this->assertFileDoesNotExist(TMP . 'tests/cake_serialize_test1');
+        $this->assertFileDoesNotExist(TMP . 'tests/cake_serialize_test2');
+        $this->assertFileDoesNotExist(TMP . 'tests/cake_serialize_test3');
     }
 
     /**
@@ -720,7 +720,7 @@ class FileEngineTest extends TestCase
 
         $result = Cache::clear('file_test');
         $this->assertTrue($result);
-        $this->assertFileNotExists(TMP . 'tests/key');
+        $this->assertFileDoesNotExist(TMP . 'tests/key');
 
         $this->assertFileExists($unrelatedFile);
         $this->assertTrue(unlink($unrelatedFile));

@@ -18,7 +18,7 @@ namespace Cake\Test\TestCase\ORM;
 
 use ArrayObject;
 use Cake\Collection\Collection;
-use Cake\Database\Exception;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\StatementInterface;
@@ -189,6 +189,29 @@ class TableTest extends TestCase
     {
         parent::tearDown();
         $this->clearPlugins();
+    }
+
+    /**
+     * Tests query creation wrappers.
+     *
+     * @return void
+     */
+    public function testTableQuery()
+    {
+        $table = new Table(['table' => 'users']);
+
+        $query = $table->query();
+        $this->assertEquals('users', $query->getRepository()->getTable());
+
+        $query = $table->subquery();
+        $this->assertEquals('users', $query->getRepository()->getTable());
+
+        $sql = $query->select(['username'])->sql();
+        $this->assertRegExpSql(
+            'SELECT <username> FROM <users> <users>',
+            $sql,
+            !$this->connection->getDriver()->isAutoQuotingEnabled()
+        );
     }
 
     /**
@@ -651,7 +674,7 @@ class TableTest extends TestCase
     }
 
     /**
-     * Tests that the getAssociation() method throws an exception on non-existent ones.
+     * Tests that the getAssociation() method throws an exception on nonexistent ones.
      *
      * @return void
      */
@@ -1031,7 +1054,7 @@ class TableTest extends TestCase
      */
     public function testUpdateAllFailure()
     {
-        $this->expectException(\Cake\Database\Exception::class);
+        $this->expectException(DatabaseException::class);
         $table = $this->getMockBuilder(Table::class)
             ->onlyMethods(['query'])
             ->setConstructorArgs([['table' => 'users', 'connection' => $this->connection]])
@@ -1046,7 +1069,7 @@ class TableTest extends TestCase
 
         $query->expects($this->once())
             ->method('execute')
-            ->will($this->throwException(new Exception('Not good')));
+            ->will($this->throwException(new DatabaseException('Not good')));
 
         $table->updateAll(['username' => 'mark'], []);
     }
@@ -1095,7 +1118,7 @@ class TableTest extends TestCase
      */
     public function testDeleteAllFailure()
     {
-        $this->expectException(\Cake\Database\Exception::class);
+        $this->expectException(DatabaseException::class);
         $table = $this->getMockBuilder(Table::class)
             ->onlyMethods(['query'])
             ->setConstructorArgs([['table' => 'users', 'connection' => $this->connection]])
@@ -1110,7 +1133,7 @@ class TableTest extends TestCase
 
         $query->expects($this->once())
             ->method('execute')
-            ->will($this->throwException(new Exception('Not good')));
+            ->will($this->throwException(new DatabaseException('Not good')));
 
         $table->deleteAll(['id >' => 4]);
     }
@@ -1421,6 +1444,19 @@ class TableTest extends TestCase
             3 => '1;Third Article',
         ];
         $this->assertSame($expected, $query->toArray());
+
+        $query = $articles->find('list', [
+                'valueField' => ['id', 'title'],
+                'valueSeparator' => ' : ',
+            ])
+            ->order('id');
+
+        $expected = [
+            1 => '1 : First Article',
+            2 => '2 : Second Article',
+            3 => '3 : Third Article',
+        ];
+        $this->assertSame($expected, $query->toArray());
     }
 
     /**
@@ -1562,7 +1598,7 @@ class TableTest extends TestCase
      *
      * @return void
      */
-    public function testTableClassNonExisting()
+    public function testTableClassNonExistent()
     {
         $this->expectException(\Cake\ORM\Exception\MissingEntityException::class);
         $this->expectExceptionMessage('Entity class FooUser could not be found.');

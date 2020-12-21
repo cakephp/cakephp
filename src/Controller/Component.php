@@ -75,7 +75,7 @@ class Component implements EventListenerInterface
      *
      * @var array
      */
-    public $components = [];
+    protected $components = [];
 
     /**
      * Default config

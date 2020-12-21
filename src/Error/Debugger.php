@@ -218,7 +218,7 @@ class Debugger
      * @param mixed|null $value The value to set.
      * @param bool $merge Whether to recursively merge or overwrite existing config, defaults to true.
      * @return mixed Config value being read, or the object itself on write operations.
-     * @throws \Cake\Core\Exception\Exception When trying to set a key that is invalid.
+     * @throws \Cake\Core\Exception\CakeException When trying to set a key that is invalid.
      */
     public static function configInstance($key = null, $value = null, bool $merge = true)
     {
@@ -627,6 +627,21 @@ class Debugger
     }
 
     /**
+     * Convert the variable to the internal node tree.
+     *
+     * The node tree can be manipulated and serialized more easily
+     * than many object graphs can.
+     *
+     * @param mixed $var Variable to convert.
+     * @param int $maxDepth The depth to generate nodes to. Defaults to 3.
+     * @return \Cake\Error\Debug\NodeInterface The root node of the tree.
+     */
+    public static function exportVarAsNodes($var, int $maxDepth = 3): NodeInterface
+    {
+        return static::export($var, new DebugContext($maxDepth));
+    }
+
+    /**
      * Protected export function used to keep track of indentation and recursion.
      *
      * @param mixed $var The variable to dump.
@@ -679,7 +694,7 @@ class Debugger
 
         $remaining = $context->remainingDepth();
         if ($remaining >= 0) {
-            $outputMask = (array)static::outputMask();
+            $outputMask = static::outputMask();
             foreach ($var as $key => $val) {
                 if (array_key_exists($key, $outputMask)) {
                     $node = new ScalarNode('string', $outputMask[$key]);
@@ -735,12 +750,13 @@ class Debugger
                 }
             }
 
-            $outputMask = (array)static::outputMask();
+            $outputMask = static::outputMask();
             $objectVars = get_object_vars($var);
             foreach ($objectVars as $key => $value) {
                 if (array_key_exists($key, $outputMask)) {
                     $value = $outputMask[$key];
                 }
+                /** @psalm-suppress RedundantCast */
                 $node->addProperty(
                     new PropertyNode((string)$key, 'public', static::export($value, $context->withAddedDepth()))
                 );

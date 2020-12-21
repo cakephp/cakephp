@@ -2489,9 +2489,11 @@ class ValidatorTest extends TestCase
      */
     public function testContainsNonAlphaNumeric()
     {
-        $validator = new Validator();
-        $this->assertProxyMethod($validator, 'containsNonAlphaNumeric', 2, [2]);
-        $this->assertNotEmpty($validator->validate(['username' => '$']));
+        $this->deprecated(function () {
+            $validator = new Validator();
+            $this->assertProxyMethod($validator, 'containsNonAlphaNumeric', 2, [2]);
+            $this->assertNotEmpty($validator->validate(['username' => '$']));
+        });
     }
 
     /**

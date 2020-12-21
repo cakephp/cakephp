@@ -18,7 +18,7 @@ namespace Cake\Auth;
 
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Http\ServerRequest;
 
 /**
@@ -80,13 +80,13 @@ class ControllerAuthorize extends BaseAuthorize
      *
      * @param array|\ArrayAccess $user Active user data
      * @param \Cake\Http\ServerRequest $request Request instance.
-     * @throws \Cake\Core\Exception\Exception If controller does not have method `isAuthorized()`.
+     * @throws \Cake\Core\Exception\CakeException If controller does not have method `isAuthorized()`.
      * @return bool
      */
     public function authorize($user, ServerRequest $request): bool
     {
         if (!method_exists($this->_Controller, 'isAuthorized')) {
-            throw new Exception(sprintf(
+            throw new CakeException(sprintf(
                 '%s does not implement an isAuthorized() method.',
                 get_class($this->_Controller)
             ));

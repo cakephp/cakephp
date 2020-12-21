@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM;
 
+use Cake\Database\Driver\Sqlserver;
+use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\I18n\I18n;
@@ -37,7 +39,7 @@ class RulesCheckerIntegrationTest extends TestCase
     protected $fixtures = [
         'core.Articles', 'core.ArticlesTags', 'core.Authors', 'core.Comments', 'core.Tags',
         'core.SpecialTags', 'core.Categories', 'core.SiteArticles', 'core.SiteAuthors',
-        'core.Comments',
+        'core.Comments', 'core.UniqueAuthors',
     ];
 
     /**
@@ -394,6 +396,27 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
+     * Tests isUnique with non-unique null values
+     *
+     * @return void
+     */
+    public function testIsUniqueNonUniqueNulls()
+    {
+        $table = $this->getTableLocator()->get('UniqueAuthors');
+        $rules = $table->rulesChecker();
+        $rules->add($rules->isUnique(
+            ['first_author_id', 'second_author_id']
+        ));
+
+        $entity = new Entity([
+            'first_author_id' => null,
+            'second_author_id' => 1,
+        ]);
+        $this->assertFalse($table->save($entity));
+        $this->assertEquals(['first_author_id' => ['_isUnique' => 'This value is already in use']], $entity->getErrors());
+    }
+
+    /**
      * Tests isUnique with allowMultipleNulls
      *
      * @group save
@@ -401,79 +424,30 @@ class RulesCheckerIntegrationTest extends TestCase
      */
     public function testIsUniqueAllowMultipleNulls()
     {
-        $entity = new Entity([
-            'article_id' => 11,
-            'tag_id' => 11,
-            'author_id' => null,
-        ]);
+        $this->skipIf(ConnectionManager::get('test')->getDriver() instanceof Sqlserver);
 
-        $table = $this->getTableLocator()->get('SpecialTags');
+        $table = $this->getTableLocator()->get('UniqueAuthors');
         $rules = $table->rulesChecker();
-        $rules->add($rules->isUnique(['author_id'], 'All fields are required'));
+        $rules->add($rules->isUnique(
+            ['first_author_id', 'second_author_id'],
+            ['allowMultipleNulls' => true]
+        ));
 
+        $entity = new Entity([
+            'first_author_id' => null,
+            'second_author_id' => 1,
+        ]);
+        $this->assertNotEmpty($table->save($entity));
+
+        $entity->first_author_id = 2;
+        $this->assertSame($entity, $table->save($entity));
+
+        $entity = new Entity([
+            'first_author_id' => 2,
+            'second_author_id' => 1,
+        ]);
         $this->assertFalse($table->save($entity));
-        $this->assertEquals(['_isUnique' => 'All fields are required'], $entity->getError('author_id'));
-
-        $entity->author_id = 11;
-        $this->assertSame($entity, $table->save($entity));
-
-        $entity = $table->get(1);
-        $entity->setDirty('author_id', true);
-        $this->assertSame($entity, $table->save($entity));
-    }
-
-    /**
-     * Tests isUnique with multiple fields and allowMultipleNulls
-     *
-     * @group save
-     * @return void
-     */
-    public function testIsUniqueMultipleFieldsAllowMultipleNulls()
-    {
-        $entity = new Entity([
-            'article_id' => 10,
-            'tag_id' => 12,
-            'author_id' => null,
-        ]);
-
-        $table = $this->getTableLocator()->get('SpecialTags');
-        $rules = $table->rulesChecker();
-        $rules->add($rules->isUnique(['author_id', 'article_id'], 'Nope'));
-
-        $this->assertFalse($table->save($entity));
-        $this->assertEquals(['author_id' => ['_isUnique' => 'Nope']], $entity->getErrors());
-
-        $entity->clean();
-        $entity->article_id = 10;
-        $entity->tag_id = 12;
-        $entity->author_id = 12;
-        $this->assertSame($entity, $table->save($entity));
-    }
-
-    /**
-     * Tests isUnique with multiple fields emulates SQL UNIQUE keys
-     *
-     * @group save
-     * @return void
-     */
-    public function testIsUniqueMultipleFieldsOneIsNull()
-    {
-        $entity = new Entity([
-            'author_id' => null,
-            'title' => 'First Article',
-        ]);
-        $table = $this->getTableLocator()->get('Articles');
-        $rules = $table->rulesChecker();
-        $rules->add($rules->isUnique(['title', 'author_id'], 'Nope'));
-
-        $this->assertSame($entity, $table->save($entity));
-
-        // Make a matching record
-        $entity = new Entity([
-            'author_id' => null,
-            'title' => 'New Article',
-        ]);
-        $this->assertSame($entity, $table->save($entity));
+        $this->assertEquals(['first_author_id' => ['_isUnique' => 'This value is already in use']], $entity->getErrors());
     }
 
     /**
@@ -1820,7 +1794,7 @@ class RulesCheckerIntegrationTest extends TestCase
         ];
         $this->assertEquals($expected, $comment->getErrors());
 
-        $translator->getPackage()->addMessage($messageId, null);
+        $translator->getPackage()->addMessage($messageId, '');
     }
 
     /**
@@ -1860,7 +1834,7 @@ class RulesCheckerIntegrationTest extends TestCase
         ];
         $this->assertEquals($expected, $comment->getErrors());
 
-        $translator->getPackage()->addMessage($messageId, null);
+        $translator->getPackage()->addMessage($messageId, '');
     }
 
     /**
@@ -1913,7 +1887,7 @@ class RulesCheckerIntegrationTest extends TestCase
         ];
         $this->assertEquals($expected, $comment->getErrors());
 
-        $translator->getPackage()->addMessage($messageId, null);
+        $translator->getPackage()->addMessage($messageId, '');
     }
 
     /**
@@ -1961,7 +1935,7 @@ class RulesCheckerIntegrationTest extends TestCase
         ];
         $this->assertEquals($expected, $comment->getErrors());
 
-        $translator->getPackage()->addMessage($messageId, null);
+        $translator->getPackage()->addMessage($messageId, '');
     }
 
     /**

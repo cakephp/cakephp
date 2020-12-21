@@ -15,7 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Http\Client\Auth;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Http\Client\Request;
 use Cake\Utility\Security;
 use Psr\Http\Message\UriInterface;
@@ -39,7 +39,7 @@ class Oauth
      * @param \Cake\Http\Client\Request $request The request object.
      * @param array $credentials Authentication credentials.
      * @return \Cake\Http\Client\Request The updated request.
-     * @throws \Cake\Core\Exception\Exception On invalid signature types.
+     * @throws \Cake\Core\Exception\CakeException On invalid signature types.
      */
     public function authentication(Request $request, array $credentials): Request
     {
@@ -85,7 +85,7 @@ class Oauth
                 break;
 
             default:
-                throw new Exception(sprintf('Unknown Oauth signature method %s', $credentials['method']));
+                throw new CakeException(sprintf('Unknown Oauth signature method %s', $credentials['method']));
         }
 
         return $request->withHeader('Authorization', $value);
@@ -218,7 +218,9 @@ class Oauth
         $privateKey = openssl_pkey_get_private($credentials['privateKey'], $credentials['privateKeyPassphrase']);
         $signature = '';
         openssl_sign($baseString, $signature, $privateKey);
-        openssl_free_key($privateKey);
+        if (PHP_MAJOR_VERSION < 8) {
+            openssl_free_key($privateKey);
+        }
 
         $values['oauth_signature'] = base64_encode($signature);
 

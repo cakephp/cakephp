@@ -89,6 +89,8 @@ class EmailTraitTest extends TestCase
         $this->assertMailContains('text');
         $this->assertMailContains('html');
 
+        $this->assertMailSubjectContains('world');
+
         $this->assertMailContainsAttachment('custom_name.php');
         $this->assertMailContainsAttachment('custom_name.php', ['file' => CAKE . 'basics.php']);
 
@@ -122,6 +124,8 @@ class EmailTraitTest extends TestCase
 
         $this->assertMailContainsAt(0, 'text');
         $this->assertMailContainsAt(1, 'html');
+
+        $this->assertMailSubjectContainsAt(0, 'world');
 
         $this->assertMailSentWithAt(0, 'Hello world', 'subject');
         $this->assertMailSentWithAt(0, 'replyto@example.com', 'replyTo');
@@ -222,6 +226,8 @@ class EmailTraitTest extends TestCase
             'assertMailContainsAt' => ['assertMailContainsAt', 'Failed asserting that \'Missing\' is in email #1' . PHP_EOL . 'was: .', [1, 'Missing']],
             'assertMailContainsHtmlAt' => ['assertMailContainsHtmlAt', 'Failed asserting that \'Missing\' is in the html message of email #1' . PHP_EOL . 'was: .', [1, 'Missing']],
             'assertMailContainsTextAt' => ['assertMailContainsTextAt', 'Failed asserting that \'Missing\' is in the text message of email #1' . PHP_EOL . 'was: .', [1, 'Missing']],
+            'assertMailSubjectContains' => ['assertMailSubjectContains', 'Failed asserting that \'Missing\' is in an email subject' . PHP_EOL . 'was: .', ['Missing']],
+            'assertMailSubjectContainsAt' => ['assertMailSubjectContainsAt', 'Failed asserting that \'Missing\' is in an email subject #1' . PHP_EOL . 'was: .', [1, 'Missing']],
         ];
     }
 

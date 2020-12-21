@@ -64,7 +64,7 @@ class TimestampBehavior extends Behavior
     /**
      * Current timestamp
      *
-     * @var \Cake\I18n\Time
+     * @var \Cake\I18n\Time|null
      */
     protected $_ts;
 
@@ -211,7 +211,7 @@ class TimestampBehavior extends Behavior
 
         $ts = $this->timestamp(null, $refreshTimestamp);
 
-        $columnType = $this->getTable()->getSchema()->getColumnType($field);
+        $columnType = $this->table()->getSchema()->getColumnType($field);
         if (!$columnType) {
             return;
         }

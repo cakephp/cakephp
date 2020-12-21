@@ -130,7 +130,7 @@ class XmlTest extends TestCase
         $this->assertSame('value', $obj->firstChild->nodeValue);
 
         $obj = Xml::build($xml, ['return' => 'domdocument', 'encoding' => '']);
-        $this->assertNotRegExp('/encoding/', $obj->saveXML());
+        $this->assertDoesNotMatchRegularExpression('/encoding/', $obj->saveXML());
     }
 
     /**

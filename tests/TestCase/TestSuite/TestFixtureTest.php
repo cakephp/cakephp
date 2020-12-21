@@ -75,6 +75,7 @@ class TestFixtureTest extends TestCase
         $Fixture->table = null;
         $Fixture->init();
         $this->assertSame('articles', $Fixture->table);
+        $this->assertTrue($Fixture->isManaged());
 
         $schema = $Fixture->getTableSchema();
         $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $schema);
@@ -104,6 +105,7 @@ class TestFixtureTest extends TestCase
             'connection' => 'test',
         ];
         $fixture->init();
+        $this->assertTrue($fixture->isManaged());
 
         $expected = [
             'id',
@@ -129,6 +131,7 @@ class TestFixtureTest extends TestCase
             'connection' => 'test',
         ];
         $fixture->init();
+        $this->assertTrue($fixture->isManaged());
 
         $expected = [
             'id',
@@ -148,7 +151,7 @@ class TestFixtureTest extends TestCase
      */
     public function testInitNoImportNoFieldsException()
     {
-        $this->expectException(\Cake\Core\Exception\Exception::class);
+        $this->expectException(\Cake\Core\Exception\CakeException::class);
         $this->expectExceptionMessage('Cannot describe schema for table `letters` for fixture `' . LettersFixture::class . '`: the table does not exist.');
         $fixture = new LettersFixture();
         $fixture->init();
@@ -176,6 +179,7 @@ class TestFixtureTest extends TestCase
         $fixture = new LettersFixture();
         $fixture->init();
         $this->assertSame(['id', 'letter'], $fixture->getTableSchema()->columns());
+        $this->assertFalse($fixture->isManaged());
 
         $db = $this->getMockBuilder('Cake\Database\Connection')
             ->disableOriginalConstructor()

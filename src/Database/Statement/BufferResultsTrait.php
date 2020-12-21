@@ -38,7 +38,7 @@ trait BufferResultsTrait
      */
     public function bufferResults(bool $buffer)
     {
-        $this->_bufferResults = (bool)$buffer;
+        $this->_bufferResults = $buffer;
 
         return $this;
     }

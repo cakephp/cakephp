@@ -134,6 +134,7 @@ class MemcachedEngine extends CacheEngine
             $this->_config['servers'] = [$this->_config['servers']];
         }
 
+        /** @psalm-suppress RedundantPropertyInitializationCheck */
         if (isset($this->_Memcached)) {
             return true;
         }
@@ -329,7 +330,7 @@ class MemcachedEngine extends CacheEngine
         }
         $duration = $this->duration($ttl);
 
-        return (bool)$this->_Memcached->setMulti($cacheData, $duration);
+        return $this->_Memcached->setMulti($cacheData, $duration);
     }
 
     /**

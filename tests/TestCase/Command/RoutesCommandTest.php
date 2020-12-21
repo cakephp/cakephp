@@ -65,7 +65,7 @@ class RoutesCommandTest extends TestCase
     }
 
     /**
-     * Test checking an non-existing route.
+     * Test checking an nonexistent route.
      *
      * @return void
      */
@@ -163,7 +163,7 @@ class RoutesCommandTest extends TestCase
     }
 
     /**
-     * Test checking an non-existing route.
+     * Test checking an nonexistent route.
      *
      * @return void
      */

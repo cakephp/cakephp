@@ -143,6 +143,7 @@ class XmlView extends SerializedView
                 $data &&
                 (!is_array($data) || Hash::numeric(array_keys($data)))
             ) {
+                /** @psalm-suppress InvalidArrayOffset */
                 $data = [$rootNode => [$serialize => $data]];
             }
         }

@@ -395,7 +395,10 @@ class EntityContextTest extends TestCase
         $this->assertSame('string', $context->type('99.title'));
         $this->assertNull($context->type('0.nope'));
 
-        $expected = ['length' => 255, 'precision' => null];
+        $expected = [
+            'length' => 255, 'precision' => null,
+            'null' => null, 'default' => null, 'comment' => null,
+        ];
         $this->assertEquals($expected, $context->attributes('0.user.username'));
     }
 
@@ -1081,13 +1084,13 @@ class EntityContextTest extends TestCase
         ]);
 
         $this->assertSame('integer', $context->type('tags.0._joinData.article_id'));
-        $this->assertNull($context->type('tags.0._joinData.non_existent'));
+        $this->assertNull($context->type('tags.0._joinData.nonexistent'));
 
         // tests the fallback behavior
         $this->assertSame('integer', $context->type('tags.0._joinData._joinData.article_id'));
-        $this->assertSame('integer', $context->type('tags.0._joinData.non_existent.article_id'));
-        $this->assertNull($context->type('tags.0._joinData._joinData.non_existent'));
-        $this->assertNull($context->type('tags.0._joinData.non_existent'));
+        $this->assertSame('integer', $context->type('tags.0._joinData.nonexistent.article_id'));
+        $this->assertNull($context->type('tags.0._joinData._joinData.nonexistent'));
+        $this->assertNull($context->type('tags.0._joinData.nonexistent'));
     }
 
     /**
@@ -1118,21 +1121,25 @@ class EntityContextTest extends TestCase
 
         $expected = [
             'length' => 255, 'precision' => null,
+            'null' => null, 'default' => null, 'comment' => null,
         ];
         $this->assertEquals($expected, $context->attributes('title'));
 
         $expected = [
             'length' => null, 'precision' => null,
+            'null' => null, 'default' => null, 'comment' => null,
         ];
         $this->assertEquals($expected, $context->attributes('body'));
 
         $expected = [
             'length' => 10, 'precision' => 3,
+            'null' => null, 'default' => null, 'comment' => null,
         ];
         $this->assertEquals($expected, $context->attributes('user.rating'));
 
         $expected = [
             'length' => 11, 'precision' => null,
+            'null' => false, 'default' => null, 'comment' => null,
         ];
         $this->assertEquals($expected, $context->attributes('tags.0._joinData.article_id'));
     }

@@ -88,7 +88,7 @@ class IcuFormatterTest extends TestCase
      *
      * @return void
      */
-    public function testBadMessageFormatPHP7()
+    public function testBadMessageFormat()
     {
         $this->expectException(\Exception::class);
 

@@ -96,7 +96,7 @@ class DateTimeTypeTest extends TestCase
         $this->assertSame('13', $result->format('i'));
         $this->assertSame('14', $result->format('s'));
 
-        $this->type->setTimezone('Asia/Kolkata'); // UTC+5:30
+        $this->type->setDatabaseTimezone('Asia/Kolkata'); // UTC+5:30
         $result = $this->type->toPHP('2001-01-04 12:00:00', $this->driver);
         $this->assertInstanceOf(FrozenTime::class, $result);
         $this->assertSame('2001', $result->format('Y'));
@@ -127,7 +127,7 @@ class DateTimeTypeTest extends TestCase
             $this->type->manyToPHP($values, array_keys($values), $this->driver)
         );
 
-        $this->type->setTimezone('Asia/Kolkata'); // UTC+5:30
+        $this->type->setDatabaseTimezone('Asia/Kolkata'); // UTC+5:30
         $values = [
             'a' => null,
             'b' => '2001-01-04 12:13:14',
@@ -173,24 +173,24 @@ class DateTimeTypeTest extends TestCase
         $this->assertSame('2013-08-12 15:16:17', $result);
 
         $tz = $date->getTimezone();
-        $this->type->setTimezone('Asia/Kolkata'); // UTC+5:30
+        $this->type->setDatabaseTimezone('Asia/Kolkata'); // UTC+5:30
         $result = $this->type->toDatabase($date, $this->driver);
         $this->assertSame('2013-08-12 20:46:17', $result);
         $this->assertEquals($tz, $date->getTimezone());
 
-        $this->type->setTimezone(new DateTimeZone('Asia/Kolkata'));
+        $this->type->setDatabaseTimezone(new DateTimeZone('Asia/Kolkata'));
         $result = $this->type->toDatabase($date, $this->driver);
         $this->assertSame('2013-08-12 20:46:17', $result);
-        $this->type->setTimezone(null);
+        $this->type->setDatabaseTimezone(null);
 
         $date = new FrozenTime('2013-08-12 15:16:17');
         $result = $this->type->toDatabase($date, $this->driver);
         $this->assertSame('2013-08-12 15:16:17', $result);
 
-        $this->type->setTimezone('Asia/Kolkata'); // UTC+5:30
+        $this->type->setDatabaseTimezone('Asia/Kolkata'); // UTC+5:30
         $result = $this->type->toDatabase($date, $this->driver);
         $this->assertSame('2013-08-12 20:46:17', $result);
-        $this->type->setTimezone(null);
+        $this->type->setDatabaseTimezone(null);
 
         $date = 1401906995;
         $result = $this->type->toDatabase($date, $this->driver);

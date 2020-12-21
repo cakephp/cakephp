@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\View\Helper;
 
 use Cake\Core\App;
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Utility\Security;
 use Cake\Utility\Text;
 use Cake\View\Helper;
@@ -39,7 +39,7 @@ class TextHelper extends Helper
      *
      * @var array
      */
-    public $helpers = ['Html'];
+    protected $helpers = ['Html'];
 
     /**
      * Default config for this class
@@ -75,7 +75,7 @@ class TextHelper extends Helper
      *
      * @param \Cake\View\View $view the view object the helper is attached to.
      * @param array $config Settings array Settings array
-     * @throws \Cake\Core\Exception\Exception when the engine class could not be found.
+     * @throws \Cake\Core\Exception\CakeException when the engine class could not be found.
      */
     public function __construct(View $view, array $config = [])
     {
@@ -86,7 +86,7 @@ class TextHelper extends Helper
         /** @psalm-var class-string<\Cake\Utility\Text>|null $engineClass */
         $engineClass = App::className($config['engine'], 'Utility');
         if ($engineClass === null) {
-            throw new Exception(sprintf('Class for %s could not be found', $config['engine']));
+            throw new CakeException(sprintf('Class for %s could not be found', $config['engine']));
         }
 
         $this->_engine = new $engineClass($config);

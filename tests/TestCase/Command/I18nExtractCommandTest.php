@@ -82,20 +82,20 @@ class I18nExtractCommandTest extends TestCase
         $this->assertFileExists($this->path . DS . 'default.pot');
         $result = file_get_contents($this->path . DS . 'default.pot');
 
-        $this->assertFileNotExists($this->path . DS . 'cake.pot');
+        $this->assertFileDoesNotExist($this->path . DS . 'cake.pot');
 
         // extract.ctp
         $pattern = '/\#: [\/\\\\]extract\.php:\d+\n';
         $pattern .= '\#: [\/\\\\]extract\.php:\d+\n';
         $pattern .= 'msgid "You have %d new message."\nmsgid_plural "You have %d new messages."/';
-        $this->assertRegExp($pattern, $result);
+        $this->assertMatchesRegularExpression($pattern, $result);
 
         $pattern = '/msgid "You have %d new message."\nmsgstr ""/';
-        $this->assertNotRegExp($pattern, $result, 'No duplicate msgid');
+        $this->assertDoesNotMatchRegularExpression($pattern, $result, 'No duplicate msgid');
 
         $pattern = '/\#: [\/\\\\]extract\.php:\d+\n';
         $pattern .= 'msgid "You deleted %d message."\nmsgid_plural "You deleted %d messages."/';
-        $this->assertRegExp($pattern, $result);
+        $this->assertMatchesRegularExpression($pattern, $result);
 
         $pattern = '/\#: [\/\\\\]extract\.php:\d+\nmsgid "';
         $pattern .= 'Hot features!';
@@ -103,7 +103,7 @@ class I18nExtractCommandTest extends TestCase
         $pattern .= '\\\n - Extremely Simple: Just look at the name...It\'s Cake';
         $pattern .= '\\\n - Active, Friendly Community: Join us #cakephp on IRC. We\'d love to help you get started';
         $pattern .= '"\nmsgstr ""/';
-        $this->assertRegExp($pattern, $result);
+        $this->assertMatchesRegularExpression($pattern, $result);
 
         $this->assertStringContainsString('msgid "double \\"quoted\\""', $result, 'Strings with quotes not handled correctly');
         $this->assertStringContainsString("msgid \"single 'quoted'\"", $result, 'Strings with quotes not handled correctly');
@@ -111,25 +111,25 @@ class I18nExtractCommandTest extends TestCase
         $pattern = '/\#: [\/\\\\]extract\.php:\d+\n';
         $pattern .= 'msgctxt "mail"\n';
         $pattern .= 'msgid "letter"/';
-        $this->assertRegExp($pattern, $result);
+        $this->assertMatchesRegularExpression($pattern, $result);
 
         $pattern = '/\#: [\/\\\\]extract\.php:\d+\n';
         $pattern .= 'msgctxt "alphabet"\n';
         $pattern .= 'msgid "letter"/';
-        $this->assertRegExp($pattern, $result);
+        $this->assertMatchesRegularExpression($pattern, $result);
 
         // extract.php - reading the domain.pot
         $result = file_get_contents($this->path . DS . 'domain.pot');
 
         $pattern = '/msgid "You have %d new message."\nmsgid_plural "You have %d new messages."/';
-        $this->assertNotRegExp($pattern, $result);
+        $this->assertDoesNotMatchRegularExpression($pattern, $result);
         $pattern = '/msgid "You deleted %d message."\nmsgid_plural "You deleted %d messages."/';
-        $this->assertNotRegExp($pattern, $result);
+        $this->assertDoesNotMatchRegularExpression($pattern, $result);
 
         $pattern = '/msgid "You have %d new message \(domain\)."\nmsgid_plural "You have %d new messages \(domain\)."/';
-        $this->assertRegExp($pattern, $result);
+        $this->assertMatchesRegularExpression($pattern, $result);
         $pattern = '/msgid "You deleted %d message \(domain\)."\nmsgid_plural "You deleted %d messages \(domain\)."/';
-        $this->assertRegExp($pattern, $result);
+        $this->assertMatchesRegularExpression($pattern, $result);
     }
 
     /**
@@ -169,8 +169,8 @@ class I18nExtractCommandTest extends TestCase
         );
         $this->assertExitSuccess();
         $this->assertFileExists($this->path . DS . 'default.pot');
-        $this->assertFileNotExists($this->path . DS . 'cake.pot');
-        $this->assertFileNotExists($this->path . DS . 'domain.pot');
+        $this->assertFileDoesNotExist($this->path . DS . 'cake.pot');
+        $this->assertFileDoesNotExist($this->path . DS . 'domain.pot');
     }
 
     /**
@@ -192,10 +192,10 @@ class I18nExtractCommandTest extends TestCase
         $result = file_get_contents($this->path . DS . 'default.pot');
 
         $pattern = '/\#: .*extract\.php:\d+\n/';
-        $this->assertNotRegExp($pattern, $result);
+        $this->assertDoesNotMatchRegularExpression($pattern, $result);
 
         $pattern = '/\#: .*default\.php:\d+\n/';
-        $this->assertNotRegExp($pattern, $result);
+        $this->assertDoesNotMatchRegularExpression($pattern, $result);
     }
 
     /**
@@ -219,7 +219,7 @@ class I18nExtractCommandTest extends TestCase
         $result = file_get_contents($this->path . DS . 'default.pot');
 
         $pattern = '/\n\#: .*\n/';
-        $this->assertNotRegExp($pattern, $result);
+        $this->assertDoesNotMatchRegularExpression($pattern, $result);
     }
 
     /**
@@ -241,7 +241,7 @@ class I18nExtractCommandTest extends TestCase
         $result = file_get_contents($this->path . DS . 'default.pot');
 
         $pattern = '/msgid "Add User"/';
-        $this->assertRegExp($pattern, $result);
+        $this->assertMatchesRegularExpression($pattern, $result);
     }
 
     /**
@@ -262,7 +262,7 @@ class I18nExtractCommandTest extends TestCase
         $this->assertExitSuccess();
 
         $result = file_get_contents($this->path . DS . 'default.pot');
-        $this->assertNotRegExp('#TestPlugin#', $result);
+        $this->assertDoesNotMatchRegularExpression('#TestPlugin#', $result);
     }
 
     /**
@@ -283,8 +283,8 @@ class I18nExtractCommandTest extends TestCase
         $this->assertExitSuccess();
 
         $result = file_get_contents($this->path . DS . 'default.pot');
-        $this->assertNotRegExp('#Pages#', $result);
-        $this->assertRegExp('/translate\.php:\d+/', $result);
+        $this->assertDoesNotMatchRegularExpression('#Pages#', $result);
+        $this->assertMatchesRegularExpression('/translate\.php:\d+/', $result);
         $this->assertStringContainsString('This is a translatable string', $result);
     }
 
@@ -306,8 +306,8 @@ class I18nExtractCommandTest extends TestCase
         $this->assertExitSuccess();
 
         $result = file_get_contents($this->path . DS . 'test_plugin_three.pot');
-        $this->assertNotRegExp('#Pages#', $result);
-        $this->assertRegExp('/default\.php:\d+/', $result);
+        $this->assertDoesNotMatchRegularExpression('#Pages#', $result);
+        $this->assertMatchesRegularExpression('/default\.php:\d+/', $result);
         $this->assertStringContainsString('A vendor message', $result);
     }
 
@@ -354,10 +354,10 @@ class I18nExtractCommandTest extends TestCase
         $result = file_get_contents($this->path . DS . 'cake.pot');
 
         $pattern = '/#: Console\/Templates\//';
-        $this->assertNotRegExp($pattern, $result);
+        $this->assertDoesNotMatchRegularExpression($pattern, $result);
 
         $pattern = '/#: Test\//';
-        $this->assertNotRegExp($pattern, $result);
+        $this->assertDoesNotMatchRegularExpression($pattern, $result);
     }
 
     /**

@@ -204,11 +204,11 @@ class StringTemplateTest extends TestCase
     }
 
     /**
-     * Test that loading non-existing templates causes errors.
+     * Test that loading nonexistent templates causes errors.
      */
     public function testLoadErrorNoFile()
     {
-        $this->expectException(\Cake\Core\Exception\Exception::class);
+        $this->expectException(\Cake\Core\Exception\CakeException::class);
         $this->expectExceptionMessage('Could not load configuration file');
         $this->template->load('no_such_file');
     }
@@ -434,14 +434,14 @@ class StringTemplateTest extends TestCase
                 ],
             ],
             'new_class',
-            'non-existent'
+            'nonexistent'
         );
         $this->assertEquals($result, [
             'class' => [
                 'current_class',
                 'text',
             ],
-            'non-existent' => ['new_class'],
+            'nonexistent' => ['new_class'],
         ]);
     }
 }

@@ -29,6 +29,10 @@ use Cake\TestSuite\Constraint\EventFired;
 use Cake\TestSuite\Constraint\EventFiredWith;
 use Cake\Utility\Inflector;
 use LogicException;
+use PHPUnit\Framework\Constraint\DirectoryExists;
+use PHPUnit\Framework\Constraint\FileExists;
+use PHPUnit\Framework\Constraint\LogicalNot;
+use PHPUnit\Framework\Constraint\RegularExpression;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use ReflectionClass;
 use ReflectionException;
@@ -79,6 +83,72 @@ abstract class TestCase extends BaseTestCase
      * @var array
      */
     protected $_configure = [];
+
+    /**
+     * Asserts that a string matches a given regular expression.
+     *
+     * @param string $pattern Regex pattern
+     * @param string $string String to test
+     * @param string $message Message
+     * @return void
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+     * @codeCoverageIgnore
+     */
+    public static function assertMatchesRegularExpression(string $pattern, string $string, string $message = ''): void
+    {
+        static::assertThat($string, new RegularExpression($pattern), $message);
+    }
+
+    /**
+     * Asserts that a string does not match a given regular expression.
+     *
+     * @param string $pattern Regex pattern
+     * @param string $string String to test
+     * @param string $message Message
+     * @return void
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+     */
+    public static function assertDoesNotMatchRegularExpression(
+        string $pattern,
+        string $string,
+        string $message = ''
+    ): void {
+        static::assertThat(
+            $string,
+            new LogicalNot(
+                new RegularExpression($pattern)
+            ),
+            $message
+        );
+    }
+
+    /**
+     * Asserts that a file does not exist.
+     *
+     * @param string $filename Filename
+     * @param string $message Message
+     * @return void
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+     * @codeCoverageIgnore
+     */
+    public static function assertFileDoesNotExist(string $filename, string $message = ''): void
+    {
+        static::assertThat($filename, new LogicalNot(new FileExists()), $message);
+    }
+
+    /**
+     * Asserts that a directory does not exist.
+     *
+     * @param string $directory Directory
+     * @param string $message Message
+     * @return void
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+     * @codeCoverageIgnore
+     */
+    public static function assertDirectoryDoesNotExist(string $directory, string $message = ''): void
+    {
+        static::assertThat($directory, new LogicalNot(new DirectoryExists()), $message);
+    }
 
     /**
      * Overrides SimpleTestCase::skipIf to provide a boolean return value
@@ -138,7 +208,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @return void
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -157,7 +227,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @return void
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         if ($this->_configure) {
@@ -182,9 +252,13 @@ abstract class TestCase extends BaseTestCase
      */
     public function loadFixtures(): void
     {
+        if ($this->autoFixtures) {
+            throw new RuntimeException('Cannot use `loadFixtures()` with `$autoFixtures` enabled.');
+        }
         if ($this->fixtureManager === null) {
             throw new RuntimeException('No fixture manager to load the test fixture');
         }
+
         $args = func_get_args();
         foreach ($args as $class) {
             $this->fixtureManager->loadSingle($class, null, $this->dropTables);
@@ -506,7 +580,7 @@ abstract class TestCase extends BaseTestCase
         $optional = $optional ? '?' : '';
         $pattern = str_replace('<', '[`"\[]' . $optional, $pattern);
         $pattern = str_replace('>', '[`"\]]' . $optional, $pattern);
-        $this->assertRegExp('#' . $pattern . '#', $actual);
+        $this->assertMatchesRegularExpression('#' . $pattern . '#', $actual);
     }
 
     /**
@@ -557,7 +631,7 @@ abstract class TestCase extends BaseTestCase
     {
         $regex = [];
         $normalized = [];
-        foreach ((array)$expected as $key => $val) {
+        foreach ($expected as $key => $val) {
             if (!is_numeric($key)) {
                 $normalized[] = [$key => $val];
             } else {
@@ -571,6 +645,7 @@ abstract class TestCase extends BaseTestCase
             }
             $i++;
             if (is_string($tags) && $tags[0] === '<') {
+                /** @psalm-suppress InvalidArrayOffset */
                 $tags = [substr($tags, 1) => []];
             } elseif (is_string($tags)) {
                 $tagsTrimmed = preg_replace('/\s+/m', '', $tags);
@@ -686,7 +761,7 @@ abstract class TestCase extends BaseTestCase
                     debug($string);
                     debug($regex);
                 }
-                $this->assertRegExp(
+                $this->assertMatchesRegularExpression(
                     $expression,
                     $string,
                     sprintf('Item #%d / regex #%d failed: %s', $itemNum, $i, $description)

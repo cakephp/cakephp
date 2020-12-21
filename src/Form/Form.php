@@ -75,7 +75,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
     /**
      * The schema used by this form.
      *
-     * @var \Cake\Form\Schema
+     * @var \Cake\Form\Schema|null
      */
     protected $_schema;
 
@@ -182,6 +182,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      */
     public function schema(?Schema $schema = null): Schema
     {
+        deprecationWarning('Form::schema() is deprecated. Use setSchema() and getSchema() instead.');
         if ($schema !== null) {
             $this->setSchema($schema);
         }

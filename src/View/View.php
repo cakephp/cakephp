@@ -121,7 +121,7 @@ class View implements EventDispatcherInterface
      *
      * @var string
      */
-    protected $templatePath;
+    protected $templatePath = '';
 
     /**
      * The name of the template file to render. The name specified
@@ -742,7 +742,7 @@ class View implements EventDispatcherInterface
      * @param string|null $template Name of template file to use
      * @param string|false|null $layout Layout to use. False to disable.
      * @return string Rendered content.
-     * @throws \Cake\Core\Exception\Exception If there is an error in the view.
+     * @throws \Cake\Core\Exception\CakeException If there is an error in the view.
      * @triggers View.beforeRender $this, [$templateFileName]
      * @triggers View.afterRender $this, [$templateFileName]
      */
@@ -792,7 +792,7 @@ class View implements EventDispatcherInterface
      * @param string $content Content to render in a template, wrapped by the surrounding layout.
      * @param string|null $layout Layout name
      * @return string Rendered output.
-     * @throws \Cake\Core\Exception\Exception if there is an error in the view.
+     * @throws \Cake\Core\Exception\CakeException if there is an error in the view.
      * @triggers View.beforeLayout $this, [$layoutFileName]
      * @triggers View.afterLayout $this, [$layoutFileName]
      */
@@ -808,7 +808,7 @@ class View implements EventDispatcherInterface
 
         $title = $this->Blocks->get('title');
         if ($title === '') {
-            $title = Inflector::humanize(str_replace(DIRECTORY_SEPARATOR, '/', (string)$this->templatePath));
+            $title = Inflector::humanize(str_replace(DIRECTORY_SEPARATOR, '/', $this->templatePath));
             $this->Blocks->set('title', $title);
         }
 
@@ -1346,7 +1346,7 @@ class View implements EventDispatcherInterface
         $name .= $this->_ext;
         $paths = $this->_paths($plugin);
         foreach ($paths as $path) {
-            if (file_exists($path . $name)) {
+            if (is_file($path . $name)) {
                 return $this->_checkFilePath($path . $name, $path);
             }
         }
@@ -1440,7 +1440,7 @@ class View implements EventDispatcherInterface
         $name .= $this->_ext;
 
         foreach ($this->getLayoutPaths($plugin) as $path) {
-            if (file_exists($path . $name)) {
+            if (is_file($path . $name)) {
                 return $this->_checkFilePath($path . $name, $path);
             }
         }
@@ -1483,7 +1483,7 @@ class View implements EventDispatcherInterface
 
         $name .= $this->_ext;
         foreach ($this->getElementPaths($plugin) as $path) {
-            if (file_exists($path . $name)) {
+            if (is_file($path . $name)) {
                 return $path . $name;
             }
         }

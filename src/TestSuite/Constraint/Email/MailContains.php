@@ -77,7 +77,7 @@ class MailContains extends MailConstraintBase
         if ($this->at && isset($messageMembers[$this->at - 1])) {
             $messageMembers = [$messageMembers[$this->at - 1]];
         }
-        $result = join(PHP_EOL, $messageMembers);
+        $result = implode(PHP_EOL, $messageMembers);
 
         return PHP_EOL . 'was: ' . mb_substr($result, 0, 1000);
     }

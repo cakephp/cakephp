@@ -636,7 +636,7 @@ class ViewTest extends TestCase
         $result = $this->View->elementExists('TestPlugin.plugin_element');
         $this->assertTrue($result);
 
-        $result = $this->View->elementExists('non_existent_element');
+        $result = $this->View->elementExists('nonexistent_element');
         $this->assertFalse($result);
 
         $result = $this->View->elementExists('TestPlugin.element');
@@ -702,13 +702,13 @@ class ViewTest extends TestCase
     public function testElementMissing()
     {
         $this->expectException(\Cake\View\Exception\MissingElementException::class);
-        $this->expectExceptionMessage('Element file `non_existent_element.php` could not be found');
+        $this->expectExceptionMessage('Element file `nonexistent_element.php` could not be found');
 
-        $this->View->element('non_existent_element');
+        $this->View->element('nonexistent_element');
     }
 
     /**
-     * Test loading non-existent plugin view element
+     * Test loading nonexistent plugin view element
      *
      * @return void
      */
@@ -1060,8 +1060,8 @@ class ViewTest extends TestCase
 
         $content = 'This is my view output';
         $result = $View->renderLayout($content, 'default');
-        $this->assertRegExp('/modified in the afterlife/', $result);
-        $this->assertRegExp('/This is my view output/', $result);
+        $this->assertMatchesRegularExpression('/modified in the afterlife/', $result);
+        $this->assertMatchesRegularExpression('/This is my view output/', $result);
     }
 
     /**
@@ -1107,9 +1107,9 @@ class ViewTest extends TestCase
         $View->setTemplatePath($this->PostsController->getName());
         $result = $View->render('index');
 
-        $this->assertRegExp("/<meta charset=\"utf-8\"\/>\s*<title>/", $result);
-        $this->assertRegExp("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
-        $this->assertRegExp("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
+        $this->assertMatchesRegularExpression("/<meta charset=\"utf-8\"\/>\s*<title>/", $result);
+        $this->assertMatchesRegularExpression("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
+        $this->assertMatchesRegularExpression("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
 
         $this->PostsController->viewBuilder()->setHelpers(['Html']);
         $this->PostsController->setRequest(
@@ -1121,8 +1121,8 @@ class ViewTest extends TestCase
         $View->setTemplatePath($this->PostsController->getName());
         $result = $View->render('index');
 
-        $this->assertRegExp("/<meta charset=\"utf-8\"\/>\s*<title>/", $result);
-        $this->assertRegExp("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
+        $this->assertMatchesRegularExpression("/<meta charset=\"utf-8\"\/>\s*<title>/", $result);
+        $this->assertMatchesRegularExpression("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
     }
 
     /**
@@ -1138,7 +1138,7 @@ class ViewTest extends TestCase
 
         $this->assertSame('cache_form', $View->getTemplate());
         $result = $View->render();
-        $this->assertRegExp('/Add User/', $result);
+        $this->assertMatchesRegularExpression('/Add User/', $result);
     }
 
     /**
@@ -1159,8 +1159,8 @@ class ViewTest extends TestCase
         $View->setTemplatePath('Error');
 
         $result = $View->render('pdo_error', 'error');
-        $this->assertRegExp('/this is sql string/', $result);
-        $this->assertRegExp('/it works/', $result);
+        $this->assertMatchesRegularExpression('/this is sql string/', $result);
+        $this->assertMatchesRegularExpression('/it works/', $result);
     }
 
     /**
@@ -1173,7 +1173,7 @@ class ViewTest extends TestCase
         $View = $this->PostsController->createView(TestView::class);
         $result = $View->renderLayout('', 'ajax2');
 
-        $this->assertRegExp('/Ajax\!/', $result);
+        $this->assertMatchesRegularExpression('/Ajax\!/', $result);
     }
 
     /**
@@ -1218,8 +1218,8 @@ class ViewTest extends TestCase
         $View->setTemplatePath($Controller->getName());
         $result = $View->render('helper_overwrite', false);
 
-        $this->assertRegExp('/I am some test html/', $result);
-        $this->assertRegExp('/Test link/', $result);
+        $this->assertMatchesRegularExpression('/I am some test html/', $result);
+        $this->assertMatchesRegularExpression('/Test link/', $result);
     }
 
     /**
@@ -1234,16 +1234,16 @@ class ViewTest extends TestCase
         $View->setTemplatePath('Posts');
 
         $result = $View->getTemplateFileName('index');
-        $this->assertRegExp('/Posts(\/|\\\)index.php/', $result);
+        $this->assertMatchesRegularExpression('/Posts(\/|\\\)index.php/', $result);
 
         $result = $View->getTemplateFileName('TestPlugin.index');
-        $this->assertRegExp('/Posts(\/|\\\)index.php/', $result);
+        $this->assertMatchesRegularExpression('/Posts(\/|\\\)index.php/', $result);
 
         $result = $View->getTemplateFileName('/Pages/home');
-        $this->assertRegExp('/Pages(\/|\\\)home.php/', $result);
+        $this->assertMatchesRegularExpression('/Pages(\/|\\\)home.php/', $result);
 
         $result = $View->getTemplateFileName('../element/test_element');
-        $this->assertRegExp('/element(\/|\\\)test_element.php/', $result);
+        $this->assertMatchesRegularExpression('/element(\/|\\\)test_element.php/', $result);
 
         $expected = TEST_APP . 'templates' . DS . 'Posts' . DS . 'index.php';
         $result = $View->getTemplateFileName('../Posts/index');
@@ -1584,7 +1584,7 @@ class ViewTest extends TestCase
             $this->View->start('first');
             $this->View->start('first');
             $this->fail('No exception');
-        } catch (\Cake\Core\Exception\Exception $e) {
+        } catch (\Cake\Core\Exception\CakeException $e) {
             ob_end_clean();
             $this->assertTrue(true);
         }

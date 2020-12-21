@@ -16,8 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Http\Exception;
 
-use Cake\Core\Exception\Exception;
-
 /**
  * An exception subclass used by routing and application code to
  * trigger a redirect.
@@ -31,15 +29,8 @@ use Cake\Core\Exception\Exception;
  * Additional headers can also be provided in the constructor, or
  * using the addHeaders() method.
  */
-class RedirectException extends Exception
+class RedirectException extends HttpException
 {
-    /**
-     * Headers to include in the response.
-     *
-     * @var array
-     */
-    protected $headers = [];
-
     /**
      * Constructor
      *
@@ -50,7 +41,10 @@ class RedirectException extends Exception
     public function __construct(string $target, int $code = 302, array $headers = [])
     {
         parent::__construct($target, $code);
-        $this->addHeaders($headers);
+
+        foreach ($headers as $key => $value) {
+            $this->setHeader($key, (array)$value);
+        }
     }
 
     /**
@@ -59,9 +53,12 @@ class RedirectException extends Exception
      * @param array $headers An array of `header => value` to append to the exception.
      *  If a header already exists, the new values will be appended to the existing ones.
      * @return $this
+     * @deprecated 4.2.0 Use `setHeaders()` instead.
      */
     public function addHeaders(array $headers)
     {
+        deprecationWarning('RedirectException::addHeaders() is deprecated, use setHeaders() instead.');
+
         foreach ($headers as $key => $value) {
             $this->headers[$key][] = $value;
         }
@@ -74,21 +71,14 @@ class RedirectException extends Exception
      *
      * @param string $key The header to remove.
      * @return $this
+     * @deprecated 4.2.0 Use `setHeaders()` instead.
      */
     public function removeHeader(string $key)
     {
+        deprecationWarning('RedirectException::removeHeader() is deprecated, use setHeaders() instead.');
+
         unset($this->headers[$key]);
 
         return $this;
-    }
-
-    /**
-     * Get the headers from the exception.
-     *
-     * @return array
-     */
-    public function getHeaders(): array
-    {
-        return $this->headers;
     }
 }

@@ -38,13 +38,20 @@ class IdentifierExpression implements ExpressionInterface
     protected $_identifier;
 
     /**
+     * @var string|null
+     */
+    protected $collation;
+
+    /**
      * Constructor
      *
      * @param string $identifier The identifier this expression represents
+     * @param string|null $collation The identifier collation
      */
-    public function __construct(string $identifier)
+    public function __construct(string $identifier, ?string $collation = null)
     {
         $this->_identifier = $identifier;
+        $this->collation = $collation;
     }
 
     /**
@@ -69,20 +76,43 @@ class IdentifierExpression implements ExpressionInterface
     }
 
     /**
-     * Converts the expression to its string representation
+     * Sets the collation.
      *
-     * @param \Cake\Database\ValueBinder $generator Placeholder generator object
-     * @return string
+     * @param string $collation Identifier collation
+     * @return void
      */
-    public function sql(ValueBinder $generator): string
+    public function setCollation(string $collation): void
     {
-        return $this->_identifier;
+        $this->collation = $collation;
+    }
+
+    /**
+     * Returns the collation.
+     *
+     * @return string|null
+     */
+    public function getCollation(): ?string
+    {
+        return $this->collation;
     }
 
     /**
      * @inheritDoc
      */
-    public function traverse(Closure $visitor)
+    public function sql(ValueBinder $binder): string
+    {
+        $sql = $this->_identifier;
+        if ($this->collation) {
+            $sql .= ' COLLATE ' . $this->collation;
+        }
+
+        return $sql;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function traverse(Closure $callback)
     {
         return $this;
     }

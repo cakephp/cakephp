@@ -83,7 +83,7 @@ class DateTimeFractionalTypeTest extends TestCase
         $this->assertInstanceOf(FrozenTime::class, $result);
         $this->assertSame('123456', $result->format('u'));
 
-        $this->type->setTimezone('Asia/Kolkata'); // UTC+5:30
+        $this->type->setDatabaseTimezone('Asia/Kolkata'); // UTC+5:30
         $result = $this->type->toPHP('2001-01-04 12:00:00.123456', $this->driver);
         $this->assertInstanceOf(FrozenTime::class, $result);
         $this->assertSame('2001', $result->format('Y'));
@@ -122,7 +122,7 @@ class DateTimeFractionalTypeTest extends TestCase
             $this->type->manyToPHP($values, array_keys($values), $this->driver)
         );
 
-        $this->type->setTimezone('Asia/Kolkata'); // UTC+5:30
+        $this->type->setDatabaseTimezone('Asia/Kolkata'); // UTC+5:30
         $values = [
             'a' => null,
             'b' => '2001-01-04 12:13:14',
@@ -162,24 +162,24 @@ class DateTimeFractionalTypeTest extends TestCase
         $this->assertSame('2013-08-12 15:16:17.123456', $result);
 
         $tz = $date->getTimezone();
-        $this->type->setTimezone('Asia/Kolkata'); // UTC+5:30
+        $this->type->setDatabaseTimezone('Asia/Kolkata'); // UTC+5:30
         $result = $this->type->toDatabase($date, $this->driver);
         $this->assertSame('2013-08-12 20:46:17.123456', $result);
         $this->assertEquals($tz, $date->getTimezone());
 
-        $this->type->setTimezone(new DateTimeZone('Asia/Kolkata'));
+        $this->type->setDatabaseTimezone(new DateTimeZone('Asia/Kolkata'));
         $result = $this->type->toDatabase($date, $this->driver);
         $this->assertSame('2013-08-12 20:46:17.123456', $result);
-        $this->type->setTimezone(null);
+        $this->type->setDatabaseTimezone(null);
 
         $date = new FrozenTime('2013-08-12 15:16:17.123456');
         $result = $this->type->toDatabase($date, $this->driver);
         $this->assertSame('2013-08-12 15:16:17.123456', $result);
 
-        $this->type->setTimezone('Asia/Kolkata'); // UTC+5:30
+        $this->type->setDatabaseTimezone('Asia/Kolkata'); // UTC+5:30
         $result = $this->type->toDatabase($date, $this->driver);
         $this->assertSame('2013-08-12 20:46:17.123456', $result);
-        $this->type->setTimezone(null);
+        $this->type->setDatabaseTimezone(null);
     }
 
     /**
@@ -194,24 +194,24 @@ class DateTimeFractionalTypeTest extends TestCase
         $this->assertSame('2013-08-12 15:16:17.000000', $result);
 
         $tz = $date->getTimezone();
-        $this->type->setTimezone('Asia/Kolkata'); // UTC+5:30
+        $this->type->setDatabaseTimezone('Asia/Kolkata'); // UTC+5:30
         $result = $this->type->toDatabase($date, $this->driver);
         $this->assertSame('2013-08-12 20:46:17.000000', $result);
         $this->assertEquals($tz, $date->getTimezone());
 
-        $this->type->setTimezone(new DateTimeZone('Asia/Kolkata'));
+        $this->type->setDatabaseTimezone(new DateTimeZone('Asia/Kolkata'));
         $result = $this->type->toDatabase($date, $this->driver);
         $this->assertSame('2013-08-12 20:46:17.000000', $result);
-        $this->type->setTimezone(null);
+        $this->type->setDatabaseTimezone(null);
 
         $date = new FrozenTime('2013-08-12 15:16:17');
         $result = $this->type->toDatabase($date, $this->driver);
         $this->assertSame('2013-08-12 15:16:17.000000', $result);
 
-        $this->type->setTimezone('Asia/Kolkata'); // UTC+5:30
+        $this->type->setDatabaseTimezone('Asia/Kolkata'); // UTC+5:30
         $result = $this->type->toDatabase($date, $this->driver);
         $this->assertSame('2013-08-12 20:46:17.000000', $result);
-        $this->type->setTimezone(null);
+        $this->type->setDatabaseTimezone(null);
 
         $date = 1401906995;
         $result = $this->type->toDatabase($date, $this->driver);

@@ -509,6 +509,7 @@ class Session
             $data = Hash::insert($data, $key, $val);
         }
 
+        /** @psalm-suppress NullReference */
         $this->_overwrite($_SESSION, $data);
     }
 

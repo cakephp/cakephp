@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database;
 
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\CommonTableExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
@@ -178,7 +179,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     /**
      * The Type map for fields in the select clause
      *
-     * @var \Cake\Database\TypeMap
+     * @var \Cake\Database\TypeMap|null
      */
     protected $_selectTypeMap;
 
@@ -296,18 +297,17 @@ class Query implements ExpressionInterface, IteratorAggregate
      * values when the query is executed, hence it is most suitable to use with
      * prepared statements.
      *
-     * @param \Cake\Database\ValueBinder|null $generator A placeholder object that will hold
-     * associated values for expressions
+     * @param \Cake\Database\ValueBinder|null $binder Value binder that generates parameter placeholders
      * @return string
      */
-    public function sql(?ValueBinder $generator = null): string
+    public function sql(?ValueBinder $binder = null): string
     {
-        if (!$generator) {
-            $generator = $this->getValueBinder();
-            $generator->resetCount();
+        if (!$binder) {
+            $binder = $this->getValueBinder();
+            $binder->resetCount();
         }
 
-        return $this->getConnection()->compileQuery($this, $generator);
+        return $this->getConnection()->compileQuery($this, $binder);
     }
 
     /**
@@ -867,7 +867,10 @@ class Query implements ExpressionInterface, IteratorAggregate
             $table = current($table);
         }
 
-        /** @psalm-suppress InvalidReturnStatement */
+        /**
+         * @psalm-suppress InvalidArrayOffset
+         * @psalm-suppress InvalidReturnStatement
+         */
         return [
             $alias => [
                 'table' => $table,
@@ -1490,9 +1493,6 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function limit($num)
     {
         $this->_dirty();
-        if ($num !== null && !is_object($num)) {
-            $num = (int)$num;
-        }
         $this->_parts['limit'] = $num;
 
         return $this;
@@ -1519,9 +1519,6 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function offset($num)
     {
         $this->_dirty();
-        if ($num !== null && !is_object($num)) {
-            $num = (int)$num;
-        }
         $this->_parts['offset'] = $num;
 
         return $this;
@@ -1673,18 +1670,18 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @param array|\Cake\Database\Query|\Cake\Database\Expression\ValuesExpression $data The data to insert.
      * @return $this
-     * @throws \Cake\Database\Exception if you try to set values before declaring columns.
+     * @throws \Cake\Database\Exception\DatabaseException if you try to set values before declaring columns.
      *   Or if you try to set values on non-insert queries.
      */
     public function values($data)
     {
         if ($this->_type !== 'insert') {
-            throw new Exception(
+            throw new DatabaseException(
                 'You cannot add values before defining columns to use.'
             );
         }
         if (empty($this->_parts['insert'])) {
-            throw new Exception(
+            throw new DatabaseException(
                 'You cannot add values before defining columns to use.'
             );
         }
@@ -2119,7 +2116,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function enableBufferedResults(bool $enable = true)
     {
         $this->_dirty();
-        $this->_useBufferedResults = (bool)$enable;
+        $this->_useBufferedResults = $enable;
 
         return $this;
     }
@@ -2188,7 +2185,11 @@ class Query implements ExpressionInterface, IteratorAggregate
     }
 
     /**
-     * Disables the automatic casting of fields to their corresponding PHP data type
+     * Disables result casting.
+     *
+     * When disabled, the fields will be returned as received from the database
+     * driver (which in most environments means they are being returned as
+     * strings), which can improve performance with larger datasets.
      *
      * @return $this
      */
@@ -2200,7 +2201,10 @@ class Query implements ExpressionInterface, IteratorAggregate
     }
 
     /**
-     * Enables the automatic casting of fields to their corresponding type
+     * Enables result casting.
+     *
+     * When enabled, the fields in the results returned by this Query will be
+     * cast to their corresponding PHP data type.
      *
      * @return $this
      */
@@ -2209,6 +2213,23 @@ class Query implements ExpressionInterface, IteratorAggregate
         $this->typeCastEnabled = true;
 
         return $this;
+    }
+
+    /**
+     * Returns whether result casting is enabled/disabled.
+     *
+     * When enabled, the fields in the results returned by this Query will be
+     * casted to their corresponding PHP data type.
+     *
+     * When disabled, the fields will be returned as received from the database
+     * driver (which in most environments means they are being returned as
+     * strings), which can improve performance with larger datasets.
+     *
+     * @return bool
+     */
+    public function isResultsCastingEnabled(): bool
+    {
+        return $this->typeCastEnabled;
     }
 
     /**

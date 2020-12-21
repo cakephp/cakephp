@@ -16,12 +16,12 @@ declare(strict_types=1);
  */
 namespace Cake\Mailer\Exception;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 
 /**
  * Used when a mailer cannot be found.
  */
-class MissingMailerException extends Exception
+class MissingMailerException extends CakeException
 {
     /**
      * @inheritDoc

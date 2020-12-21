@@ -215,6 +215,8 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      */
     protected function _createToken(): string
     {
+        deprecationWarning('_createToken() is deprecated. Use createToken() instead.');
+
         return $this->createToken();
     }
 
@@ -290,7 +292,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
             $exception = new InvalidCsrfTokenException(__d('cake', 'Missing or invalid CSRF cookie.'));
 
             $expiredCookie = $this->_createCookie('', $request)->withExpired();
-            $exception->responseHeader('Set-Cookie', $expiredCookie->toHeaderValue());
+            $exception->setHeader('Set-Cookie', $expiredCookie->toHeaderValue());
 
             throw $exception;
         }

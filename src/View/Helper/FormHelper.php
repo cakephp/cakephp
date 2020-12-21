@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\View\Helper;
 
 use Cake\Core\Configure;
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Form\FormProtector;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
@@ -55,7 +55,7 @@ class FormHelper extends Helper
      *
      * @var array
      */
-    public $helpers = ['Url', 'Html'];
+    protected $helpers = ['Url', 'Html'];
 
     /**
      * Default config for the helper.
@@ -207,7 +207,7 @@ class FormHelper extends Helper
     /**
      * Context factory.
      *
-     * @var \Cake\View\Form\ContextFactory
+     * @var \Cake\View\Form\ContextFactory|null
      */
     protected $_contextFactory;
 
@@ -673,12 +673,14 @@ class FormHelper extends Helper
      * Get form protector instance.
      *
      * @return \Cake\Form\FormProtector
-     * @throws \Cake\Core\Exception\Exception
+     * @throws \Cake\Core\Exception\CakeException
      */
     public function getFormProtector(): FormProtector
     {
         if ($this->formProtector === null) {
-            throw new Exception('FormHelper::create() must be called first for FormProtector instance to be created.');
+            throw new CakeException(
+                'FormHelper::create() must be called first for FormProtector instance to be created.'
+            );
         }
 
         return $this->formProtector;
@@ -1235,9 +1237,12 @@ class FormHelper extends Helper
             return 'select';
         }
 
+        $type = 'text';
         $internalType = $context->type($fieldName);
         $map = $this->_config['typeMap'];
-        $type = $map[$internalType] ?? 'text';
+        if ($internalType !== null && isset($map[$internalType])) {
+            $type = $map[$internalType];
+        }
         $fieldName = array_slice(explode('.', $fieldName), -1)[0];
 
         switch (true) {
@@ -1569,13 +1574,13 @@ class FormHelper extends Helper
      * @param string $method Method name / input type to make.
      * @param array $params Parameters for the method call
      * @return string Formatted input method.
-     * @throws \Cake\Core\Exception\Exception When there are no params for the method call.
+     * @throws \Cake\Core\Exception\CakeException When there are no params for the method call.
      */
     public function __call(string $method, array $params)
     {
         $options = [];
         if (empty($params)) {
-            throw new Exception(sprintf('Missing field name for FormHelper::%s', $method));
+            throw new CakeException(sprintf('Missing field name for FormHelper::%s', $method));
         }
         if (isset($params[1])) {
             $options = $params[1];

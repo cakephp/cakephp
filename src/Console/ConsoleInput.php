@@ -60,7 +60,6 @@ class ConsoleInput
     public function read(): ?string
     {
         if ($this->_canReadline) {
-            /** @var string|false $line */
             $line = readline('');
 
             if ($line !== false && strlen($line) > 0) {

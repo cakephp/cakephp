@@ -16,15 +16,21 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database;
 
-use Cake\Database\Exception as DatabaseException;
+use Cake\Database\Driver\Mysql;
+use Cake\Database\Driver\Postgres;
+use Cake\Database\Driver\Sqlite;
+use Cake\Database\Driver\Sqlserver;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\Expression\StringExpression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
 use Cake\Database\Statement\StatementDecorator;
 use Cake\Database\StatementInterface;
 use Cake\Database\TypeFactory;
 use Cake\Database\TypeMap;
+use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use DateTimeImmutable;
@@ -2132,8 +2138,7 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Tests that it is possible to select distinct rows, even filtering by one column
-     * this is testing that there is a specific implementation for DISTINCT ON
+     * Tests distinct on a specific column reduces rows based on that column.
      *
      * @return void
      */
@@ -2142,14 +2147,13 @@ class QueryTest extends TestCase
         $this->loadFixtures('Authors', 'Articles');
         $query = new Query($this->connection);
         $result = $query
-            ->select(['id', 'author_id'])
+            ->select(['author_id'])
             ->distinct(['author_id'])
             ->from(['a' => 'articles'])
             ->order(['author_id' => 'ASC'])
             ->execute();
         $this->assertCount(2, $result);
         $results = $result->fetchAll('assoc');
-        $this->assertEquals(['id', 'author_id'], array_keys($results[0]));
         $this->assertEquals(
             [3, 1],
             collection($results)->sortBy('author_id')->extract('author_id')->toList()
@@ -2157,14 +2161,13 @@ class QueryTest extends TestCase
 
         $query = new Query($this->connection);
         $result = $query
-            ->select(['id', 'author_id'])
+            ->select(['author_id'])
             ->distinct('author_id')
             ->from(['a' => 'articles'])
             ->order(['author_id' => 'ASC'])
             ->execute();
         $this->assertCount(2, $result);
         $results = $result->fetchAll('assoc');
-        $this->assertEquals(['id', 'author_id'], array_keys($results[0]));
         $this->assertEquals(
             [3, 1],
             collection($results)->sortBy('author_id')->extract('author_id')->toList()
@@ -4749,6 +4752,21 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test obtaining the current results casting mode.
+     *
+     * @return void
+     */
+    public function testObtainingResultsCastingMode()
+    {
+        $query = new Query($this->connection);
+
+        $this->assertTrue($query->isResultsCastingEnabled());
+
+        $query->disableResultsCasting();
+        $this->assertFalse($query->isResultsCastingEnabled());
+    }
+
+    /**
      * Test that type conversion is only applied once.
      *
      * @return void
@@ -4826,7 +4844,7 @@ class QueryTest extends TestCase
         }
         $pattern = str_replace('<', '[`"\[]' . $optional, $pattern);
         $pattern = str_replace('>', '[`"\]]' . $optional, $pattern);
-        $this->assertRegExp('#' . $pattern . '#', $query);
+        $this->assertMatchesRegularExpression('#' . $pattern . '#', $query);
     }
 
     /**
@@ -5151,5 +5169,84 @@ class QueryTest extends TestCase
             ],
             $query->getValueBinder()->bindings()
         );
+    }
+
+    /**
+     * Tests creating StringExpression.
+     *
+     * @return void
+     */
+    public function testStringExpression()
+    {
+        $driver = $this->connection->getDriver();
+        if ($driver instanceof Mysql) {
+            if (version_compare($this->connection->getDriver()->version(), '5.7.0', '<')) {
+                $collation = 'utf8_general_ci';
+            } else {
+                $collation = 'utf8mb4_general_ci';
+            }
+        } elseif ($driver instanceof Postgres) {
+            $collation = 'en_US.utf8';
+        } elseif ($driver instanceof Sqlite) {
+            $collation = 'BINARY';
+        } elseif ($driver instanceof Sqlserver) {
+            $collation = 'Latin1_general_CI_AI';
+        }
+
+        $query = new Query($this->connection);
+        if ($driver instanceof Postgres) {
+            // Older postgres versions throw an error on the parameter type without a cast
+            $query->select(['test_string' => $query->func()->cast(new StringExpression('testString', $collation), 'text')]);
+            $expected = "SELECT \(CAST\(:c0 COLLATE \"${collation}\" AS text\)\) AS <test_string>";
+        } else {
+            $query->select(['test_string' => new StringExpression('testString', $collation)]);
+            $expected = "SELECT \(:c0 COLLATE ${collation}\) AS <test_string>";
+        }
+        $this->assertRegExpSql($expected, $query->sql(new ValueBinder()), !$this->autoQuote);
+
+        $statement = $query->execute();
+        $this->assertSame('testString', $statement->fetchColumn(0));
+        $statement->closeCursor();
+    }
+
+    /**
+     * Tests setting identifier collation.
+     *
+     * @return void
+     */
+    public function testIdentifierCollation()
+    {
+        $this->loadFixtures('Articles');
+        $driver = $this->connection->getDriver();
+        if ($driver instanceof Mysql) {
+            if (version_compare($this->connection->getDriver()->version(), '5.7.0', '<')) {
+                $collation = 'utf8_general_ci';
+            } else {
+                $collation = 'utf8mb4_general_ci';
+            }
+        } elseif ($driver instanceof Postgres) {
+            $collation = 'en_US.utf8';
+        } elseif ($driver instanceof Sqlite) {
+            $collation = 'BINARY';
+        } elseif ($driver instanceof Sqlserver) {
+            $collation = 'Latin1_general_CI_AI';
+        }
+
+        $query = (new Query($this->connection))
+            ->select(['test_string' => new IdentifierExpression('title', $collation)])
+            ->from('articles')
+            ->where(['id' => 1]);
+
+        if ($driver instanceof Postgres) {
+            // Older postgres versions throw an error on the parameter type without a cast
+            $expected = "SELECT \(<title> COLLATE \"${collation}\"\) AS <test_string>";
+        } else {
+            $expected = "SELECT \(<title> COLLATE ${collation}\) AS <test_string>";
+        }
+        $this->assertRegExpSql($expected, $query->sql(new ValueBinder()), !$this->autoQuote);
+
+        $statement = $query->execute();
+        $this->assertSame('First Article', $statement->fetchColumn(0));
+        $statement->closeCursor();
     }
 }

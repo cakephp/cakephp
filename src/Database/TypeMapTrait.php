@@ -25,7 +25,7 @@ namespace Cake\Database;
 trait TypeMapTrait
 {
     /**
-     * @var \Cake\Database\TypeMap
+     * @var \Cake\Database\TypeMap|null
      */
     protected $_typeMap;
 

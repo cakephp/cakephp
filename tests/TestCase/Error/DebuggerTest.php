@@ -18,6 +18,9 @@ namespace Cake\Test\TestCase\Error;
 
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
+use Cake\Error\Debug\NodeInterface;
+use Cake\Error\Debug\ScalarNode;
+use Cake\Error\Debug\SpecialNode;
 use Cake\Error\Debug\TextFormatter;
 use Cake\Error\Debugger;
 use Cake\Log\Log;
@@ -95,7 +98,7 @@ class DebuggerTest extends TestCase
         $result = Debugger::excerpt(__FILE__, __LINE__ - 1, 2);
         $this->assertIsArray($result);
         $this->assertCount(5, $result);
-        $this->assertRegExp('/function(.+)testExcerpt/', $result[1]);
+        $this->assertMatchesRegularExpression('/function(.+)testExcerpt/', $result[1]);
 
         $result = Debugger::excerpt(__FILE__, 2, 2);
         $this->assertIsArray($result);
@@ -103,13 +106,13 @@ class DebuggerTest extends TestCase
 
         $this->skipIf(defined('HHVM_VERSION'), 'HHVM does not highlight php code');
         $pattern = '/<code>.*?<span style\="color\: \#\d+">.*?&lt;\?php/';
-        $this->assertRegExp($pattern, $result[0]);
+        $this->assertMatchesRegularExpression($pattern, $result[0]);
 
         $result = Debugger::excerpt(__FILE__, 11, 2);
         $this->assertCount(5, $result);
 
         $pattern = '/<span style\="color\: \#\d{6}">.*?<\/span>/';
-        $this->assertRegExp($pattern, $result[0]);
+        $this->assertMatchesRegularExpression($pattern, $result[0]);
 
         $return = Debugger::excerpt('[internal]', 2, 2);
         $this->assertEmpty($return);
@@ -151,7 +154,7 @@ class DebuggerTest extends TestCase
     }
 
     /**
-     * Test that choosing a non-existent format causes an exception
+     * Test that choosing a nonexistent format causes an exception
      *
      * @return void
      */
@@ -207,7 +210,7 @@ class DebuggerTest extends TestCase
         $debugger->outputError($data);
         $result = ob_get_clean();
 
-        $this->assertRegExp('#^\<span class\="code\-highlight"\>.*outputError.*\</span\>$#m', $result);
+        $this->assertMatchesRegularExpression('#^\<span class\="code\-highlight"\>.*outputError.*\</span\>$#m', $result);
     }
 
     /**
@@ -224,7 +227,7 @@ class DebuggerTest extends TestCase
         Debugger::setOutputFormat('js');
 
         $result = Debugger::trace();
-        $this->assertRegExp('/' . preg_quote('txmt://open?url=file://', '/') . '(\/|[A-Z]:\\\\)' . '/', $result);
+        $this->assertMatchesRegularExpression('/' . preg_quote('txmt://open?url=file://', '/') . '(\/|[A-Z]:\\\\)' . '/', $result);
 
         Debugger::addFormat('xml', [
             'error' => '<error><code>{:code}</code><file>{:file}</file><line>{:line}</line>' .
@@ -333,7 +336,7 @@ object(Cake\View\View) id:0 {
     (int) 0 => 'Html',
     (int) 1 => 'Form'
   ]
-  [protected] templatePath => null
+  [protected] templatePath => ''
   [protected] template => null
   [protected] layout => 'default'
   [protected] layoutPath => ''
@@ -502,6 +505,41 @@ TEXT;
     }
 
     /**
+     * Text exportVarAsNodes()
+     *
+     * @return void
+     */
+    public function testExportVarAsNodes()
+    {
+        $data = [
+            1 => 'Index one',
+            5 => 'Index five',
+        ];
+        $result = Debugger::exportVarAsNodes($data);
+        $this->assertInstanceOf(NodeInterface::class, $result);
+        $this->assertCount(2, $result->getChildren());
+
+        /** @var \Cake\Error\Debug\ArrayItemNode $item */
+        $item = $result->getChildren()[0];
+        $key = new ScalarNode('int', 1);
+        $this->assertEquals($key, $item->getKey());
+        $value = new ScalarNode('string', 'Index one');
+        $this->assertEquals($value, $item->getValue());
+
+        $data = [
+            'key' => [
+                'value',
+            ],
+        ];
+        $result = Debugger::exportVarAsNodes($data, 1);
+
+        $item = $result->getChildren()[0];
+        $nestedItem = $item->getValue()->getChildren()[0];
+        $expected = new SpecialNode('[maximum depth reached]');
+        $this->assertEquals($expected, $nestedItem->getValue());
+    }
+
+    /**
      * testLog method
      *
      * @return void
@@ -636,7 +674,7 @@ TEXT;
     public function testExportVarRecursion()
     {
         $output = Debugger::exportVar($GLOBALS);
-        $this->assertRegExp("/'GLOBALS' => \[\s+'' \=\> \[maximum depth reached\]/", $output);
+        $this->assertMatchesRegularExpression("/'GLOBALS' => \[\s+'' \=\> \[maximum depth reached\]/", $output);
     }
 
     /**
@@ -647,12 +685,12 @@ TEXT;
     public function testTraceExclude()
     {
         $result = Debugger::trace();
-        $this->assertRegExp('/^Cake\\\Test\\\TestCase\\\Error\\\DebuggerTest::testTraceExclude/', $result);
+        $this->assertMatchesRegularExpression('/^Cake\\\Test\\\TestCase\\\Error\\\DebuggerTest::testTraceExclude/', $result);
 
         $result = Debugger::trace([
             'exclude' => ['Cake\Test\TestCase\Error\DebuggerTest::testTraceExclude'],
         ]);
-        $this->assertNotRegExp('/^Cake\\\Test\\\TestCase\\\Error\\\DebuggerTest::testTraceExclude/', $result);
+        $this->assertDoesNotMatchRegularExpression('/^Cake\\\Test\\\TestCase\\\Error\\\DebuggerTest::testTraceExclude/', $result);
     }
 
     /**

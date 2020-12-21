@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Event;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 
 /**
  * Class Event
@@ -103,14 +103,14 @@ class Event implements EventInterface
      * If the event has no subject an exception will be raised.
      *
      * @return object
-     * @throws \Cake\Core\Exception\Exception
+     * @throws \Cake\Core\Exception\CakeException
      * @psalm-return TSubject
      * @psalm-suppress LessSpecificImplementedReturnType
      */
     public function getSubject()
     {
         if ($this->_subject === null) {
-            throw new Exception('No subject set for this event');
+            throw new CakeException('No subject set for this event');
         }
 
         return $this->_subject;
@@ -172,6 +172,7 @@ class Event implements EventInterface
             return $this->_data[$key] ?? null;
         }
 
+        /** @psalm-suppress RedundantCastGivenDocblockType */
         return (array)$this->_data;
     }
 

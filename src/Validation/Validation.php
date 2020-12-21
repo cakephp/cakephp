@@ -96,6 +96,13 @@ class Validation
      */
     public const COMPARE_LESS_OR_EQUAL = '<=';
 
+    protected const COMPARE_STRING = [
+        self::COMPARE_EQUAL,
+        self::COMPARE_NOT_EQUAL,
+        self::COMPARE_SAME,
+        self::COMPARE_NOT_SAME,
+    ];
+
     /**
      * Datetime ISO8601 format
      *
@@ -315,19 +322,21 @@ class Validation
      * Used to compare 2 numeric values.
      *
      * @param string|int $check1 The left value to compare.
-     * @param string $operator Can be either a word or operand
-     *    is greater >, is less <, greater or equal >=
-     *    less or equal <=, is less <, equal to ==, not equal !=
+     * @param string $operator Can be one of following operator strings:
+     *   '>', '<', '>=', '<=', '==', '!=', '===' and '!=='. You can use one of
+     *   the Validation::COMPARE_* constants.
      * @param string|int $check2 The right value to compare.
      * @return bool Success
      */
     public static function comparison($check1, string $operator, $check2): bool
     {
-        if ((float)$check1 != $check1) {
+        if (
+            (!is_numeric($check1) || !is_numeric($check2)) &&
+            !in_array($operator, static::COMPARE_STRING)
+        ) {
             return false;
         }
 
-        $operator = str_replace([' ', "\t", "\n", "\r", "\0", "\x0B"], '', strtolower($operator));
         switch ($operator) {
             case static::COMPARE_GREATER:
                 if ($check1 > $check2) {
@@ -370,7 +379,7 @@ class Validation
                 }
                 break;
             default:
-                static::$errors[] = 'You must define the $operator parameter for Validation::comparison()';
+                static::$errors[] = 'You must define a valid $operator parameter for Validation::comparison()';
         }
 
         return false;
@@ -398,7 +407,7 @@ class Validation
      *
      * @param mixed $check The value to find in $field.
      * @param string $field The field to check $check against. This field must be present in $context.
-     * @param string $operator Comparison operator.
+     * @param string $operator Comparison operator. See Validation::comparison().
      * @param array $context The validation context.
      * @return bool
      * @since 3.6.0
@@ -424,6 +433,7 @@ class Validation
      */
     public static function containsNonAlphaNumeric($check, int $count = 1): bool
     {
+        deprecationWarning('Validation::containsNonAlphaNumeric() is deprecated. Use notAlphaNumeric() instead.');
         if (!is_string($check)) {
             return false;
         }
@@ -639,7 +649,7 @@ class Validation
         }
 
         $meridianClockRegex = '^((0?[1-9]|1[012])(:[0-5]\d){0,2} ?([AP]M|[ap]m))$';
-        $standardClockRegex = '^([01]\d|2[0-3])((:[0-5]\d){0,2}|(:[0-5]\d){2}\.\d{0,6})$';
+        $standardClockRegex = '^([01]\d|2[0-3])((:[0-5]\d){1,2}|(:[0-5]\d){2}\.\d{0,6})$';
 
         return static::_check($check, '%' . $meridianClockRegex . '|' . $standardClockRegex . '%');
     }

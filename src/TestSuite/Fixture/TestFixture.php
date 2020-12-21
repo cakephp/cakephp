@@ -15,7 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite\Fixture;
 
-use Cake\Core\Exception\Exception as CakeException;
+use Cake\Core\Exception\CakeException;
 use Cake\Database\ConstraintsInterface;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\Schema\TableSchemaAwareInterface;
@@ -97,7 +97,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
     /**
      * Instantiate the fixture.
      *
-     * @throws \Cake\Core\Exception\Exception on invalid datasource usage.
+     * @throws \Cake\Core\Exception\CakeException on invalid datasource usage.
      */
     public function __construct()
     {
@@ -212,7 +212,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
      * Build fixture schema from a table in another datasource.
      *
      * @return void
-     * @throws \Cake\Core\Exception\Exception when trying to import from an empty table.
+     * @throws \Cake\Core\Exception\CakeException when trying to import from an empty table.
      */
     protected function _schemaFromImport(): void
     {
@@ -244,7 +244,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
      * Build fixture schema directly from the datasource
      *
      * @return void
-     * @throws \Cake\Core\Exception\Exception when trying to reflect a table that does not exist
+     * @throws \Cake\Core\Exception\CakeException when trying to reflect a table that does not exist
      */
     protected function _schemaFromReflection(): void
     {
@@ -268,20 +268,20 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
     /**
      * @inheritDoc
      */
-    public function create(ConnectionInterface $db): bool
+    public function create(ConnectionInterface $connection): bool
     {
         if (empty($this->_schema)) {
             return false;
         }
 
-        if (empty($this->import) && empty($this->fields)) {
+        if (!$this->isManaged()) {
             return true;
         }
 
         try {
-            $queries = $this->_schema->createSql($db);
+            $queries = $this->_schema->createSql($connection);
             foreach ($queries as $query) {
-                $stmt = $db->prepare($query);
+                $stmt = $connection->prepare($query);
                 $stmt->execute();
                 $stmt->closeCursor();
             }
@@ -303,20 +303,20 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
     /**
      * @inheritDoc
      */
-    public function drop(ConnectionInterface $db): bool
+    public function drop(ConnectionInterface $connection): bool
     {
         if (empty($this->_schema)) {
             return false;
         }
 
-        if (empty($this->import) && empty($this->fields)) {
-            return $this->truncate($db);
+        if (!$this->isManaged()) {
+            return true;
         }
 
         try {
-            $sql = $this->_schema->dropSql($db);
+            $sql = $this->_schema->dropSql($connection);
             foreach ($sql as $stmt) {
-                $db->execute($stmt)->closeCursor();
+                $connection->execute($stmt)->closeCursor();
             }
         } catch (Exception $e) {
             return false;
@@ -328,11 +328,11 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
     /**
      * @inheritDoc
      */
-    public function insert(ConnectionInterface $db)
+    public function insert(ConnectionInterface $connection)
     {
         if (isset($this->records) && !empty($this->records)) {
             [$fields, $values, $types] = $this->_getRecords();
-            $query = $db->newQuery()
+            $query = $connection->newQuery()
                 ->insert($fields, $types)
                 ->into($this->sourceName());
 
@@ -351,7 +351,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
     /**
      * @inheritDoc
      */
-    public function createConstraints(ConnectionInterface $db): bool
+    public function createConstraints(ConnectionInterface $connection): bool
     {
         if (empty($this->_constraints)) {
             return true;
@@ -361,14 +361,14 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
             $this->_schema->addConstraint($name, $data);
         }
 
-        $sql = $this->_schema->addConstraintSql($db);
+        $sql = $this->_schema->addConstraintSql($connection);
 
         if (empty($sql)) {
             return true;
         }
 
         foreach ($sql as $stmt) {
-            $db->execute($stmt)->closeCursor();
+            $connection->execute($stmt)->closeCursor();
         }
 
         return true;
@@ -377,20 +377,20 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
     /**
      * @inheritDoc
      */
-    public function dropConstraints(ConnectionInterface $db): bool
+    public function dropConstraints(ConnectionInterface $connection): bool
     {
         if (empty($this->_constraints)) {
             return true;
         }
 
-        $sql = $this->_schema->dropConstraintSql($db);
+        $sql = $this->_schema->dropConstraintSql($connection);
 
         if (empty($sql)) {
             return true;
         }
 
         foreach ($sql as $stmt) {
-            $db->execute($stmt)->closeCursor();
+            $connection->execute($stmt)->closeCursor();
         }
 
         foreach ($this->_constraints as $name => $data) {
@@ -429,14 +429,26 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
     /**
      * @inheritDoc
      */
-    public function truncate(ConnectionInterface $db): bool
+    public function truncate(ConnectionInterface $connection): bool
     {
-        $sql = $this->_schema->truncateSql($db);
+        $sql = $this->_schema->truncateSql($connection);
         foreach ($sql as $stmt) {
-            $db->execute($stmt)->closeCursor();
+            $connection->execute($stmt)->closeCursor();
         }
 
         return true;
+    }
+
+    /**
+     * Returns whether the fixture should be created/destroyed.
+     *
+     * Fixtures that are't managed will be truncated instead of created.
+     *
+     * @return bool
+     */
+    public function isManaged(): bool
+    {
+        return !empty($this->import) || !empty($this->fields);
     }
 
     /**

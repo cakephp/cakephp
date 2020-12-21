@@ -136,11 +136,6 @@ parameters:
 			path: src/Command/I18nExtractCommand.php
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between int and null will always evaluate to false\\.$#"
-			count: 1
-			path: src/Console/CommandRunner.php
-
-		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 2
 			path: src/Console/ConsoleOptionParser.php
@@ -171,7 +166,7 @@ parameters:
 			path: src/Core/ObjectRegistry.php
 
 		-
-			message: "#^Array \\(array\\<string, TObject\\>\\) does not accept object\\.$#"
+			message: "#^Array \\(array\\<TObject\\>\\) does not accept object\\.$#"
 			count: 1
 			path: src/Core/ObjectRegistry.php
 
@@ -236,17 +231,17 @@ parameters:
 			path: src/Database/Log/LoggingStatement.php
 
 		-
-			message: "#^Result of && is always false\\.$#"
-			count: 1
-			path: src/Datasource/QueryCacher.php
-
-		-
 			message: "#^Property Cake\\\\ORM\\\\Query\\:\\:\\$_repository \\(Cake\\\\ORM\\\\Table\\) does not accept Cake\\\\Datasource\\\\RepositoryInterface\\.$#"
 			count: 1
 			path: src/ORM/Query.php
 
 		-
 			message: "#^Method Cake\\\\ORM\\\\Query\\:\\:find\\(\\) should return static\\(Cake\\\\ORM\\\\Query\\) but returns Cake\\\\ORM\\\\Query\\.$#"
+			count: 1
+			path: src/ORM/Query.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/ORM/Query.php
 
@@ -279,6 +274,11 @@ parameters:
 			message: "#^Parameter \\#1 \\$request of static method Cake\\\\Routing\\\\Router\\:\\:setRequest\\(\\) expects Cake\\\\Http\\\\ServerRequest, Psr\\\\Http\\\\Message\\\\ServerRequestInterface given\\.$#"
 			count: 1
 			path: src/Http/BaseApplication.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: src/Http/Client.php
 
 		-
 			message: "#^Constructor of class Cake\\\\Http\\\\Client\\\\Auth\\\\Digest has an unused parameter \\$options\\.$#"
@@ -471,16 +471,6 @@ parameters:
 			path: src/TestSuite/Fixture/TestFixture.php
 
 		-
-			message: "#^Property Cake\\\\TestSuite\\\\IntegrationTestCase\\:\\:\\$_response \\(Psr\\\\Http\\\\Message\\\\ResponseInterface\\) does not accept null\\.$#"
-			count: 1
-			path: src/TestSuite/IntegrationTestCase.php
-
-		-
-			message: "#^Property Cake\\\\TestSuite\\\\IntegrationTestCase\\:\\:\\$_controller \\(Cake\\\\Controller\\\\Controller\\) does not accept null\\.$#"
-			count: 1
-			path: src/TestSuite/IntegrationTestCase.php
-
-		-
 			message: "#^Property Cake\\\\TestSuite\\\\IntegrationTestCase\\:\\:\\$_viewName \\(string\\) does not accept null\\.$#"
 			count: 1
 			path: src/TestSuite/IntegrationTestCase.php
@@ -496,22 +486,12 @@ parameters:
 			path: src/TestSuite/IntegrationTestCase.php
 
 		-
-			message: "#^Negated boolean expression is always false\\.$#"
+			message: "#^Parameter \\#1 \\$response of class Cake\\\\TestSuite\\\\Constraint\\\\Response\\\\CookieEquals constructor expects Cake\\\\Http\\\\Response\\|null, Psr\\\\Http\\\\Message\\\\ResponseInterface\\|null given\\.$#"
 			count: 1
 			path: src/TestSuite/IntegrationTestCase.php
 
 		-
-			message: "#^Ternary operator condition is always true\\.$#"
-			count: 1
-			path: src/TestSuite/IntegrationTestCase.php
-
-		-
-			message: "#^Parameter \\#1 \\$response of class Cake\\\\TestSuite\\\\Constraint\\\\Response\\\\CookieEquals constructor expects Cake\\\\Http\\\\Response\\|null, Psr\\\\Http\\\\Message\\\\ResponseInterface given\\.$#"
-			count: 1
-			path: src/TestSuite/IntegrationTestCase.php
-
-		-
-			message: "#^Parameter \\#1 \\$response of class Cake\\\\TestSuite\\\\Constraint\\\\Response\\\\CookieEncryptedEquals constructor expects Cake\\\\Http\\\\Response\\|null, Psr\\\\Http\\\\Message\\\\ResponseInterface given\\.$#"
+			message: "#^Parameter \\#1 \\$response of class Cake\\\\TestSuite\\\\Constraint\\\\Response\\\\CookieEncryptedEquals constructor expects Cake\\\\Http\\\\Response\\|null, Psr\\\\Http\\\\Message\\\\ResponseInterface\\|null given\\.$#"
 			count: 1
 			path: src/TestSuite/IntegrationTestCase.php
 

@@ -187,16 +187,16 @@ class CaseExpression implements ExpressionInterface
      * Compiles the relevant parts into sql
      *
      * @param array|string|\Cake\Database\ExpressionInterface $part The part to compile
-     * @param \Cake\Database\ValueBinder $generator Sql generator
+     * @param \Cake\Database\ValueBinder $binder Sql generator
      * @return string
      */
-    protected function _compile($part, ValueBinder $generator): string
+    protected function _compile($part, ValueBinder $binder): string
     {
         if ($part instanceof ExpressionInterface) {
-            $part = $part->sql($generator);
+            $part = $part->sql($binder);
         } elseif (is_array($part)) {
-            $placeholder = $generator->placeholder('param');
-            $generator->bind($placeholder, $part['value'], $part['type']);
+            $placeholder = $binder->placeholder('param');
+            $binder->bind($placeholder, $part['value'], $part['type']);
             $part = $placeholder;
         }
 
@@ -206,20 +206,20 @@ class CaseExpression implements ExpressionInterface
     /**
      * Converts the Node into a SQL string fragment.
      *
-     * @param \Cake\Database\ValueBinder $generator Placeholder generator object
+     * @param \Cake\Database\ValueBinder $binder Placeholder generator object
      * @return string
      */
-    public function sql(ValueBinder $generator): string
+    public function sql(ValueBinder $binder): string
     {
         $parts = [];
         $parts[] = 'CASE';
         foreach ($this->_conditions as $k => $part) {
             $value = $this->_values[$k];
-            $parts[] = 'WHEN ' . $this->_compile($part, $generator) . ' THEN ' . $this->_compile($value, $generator);
+            $parts[] = 'WHEN ' . $this->_compile($part, $binder) . ' THEN ' . $this->_compile($value, $binder);
         }
         if ($this->_elseValue !== null) {
             $parts[] = 'ELSE';
-            $parts[] = $this->_compile($this->_elseValue, $generator);
+            $parts[] = $this->_compile($this->_elseValue, $binder);
         }
         $parts[] = 'END';
 
@@ -229,19 +229,19 @@ class CaseExpression implements ExpressionInterface
     /**
      * @inheritDoc
      */
-    public function traverse(Closure $visitor)
+    public function traverse(Closure $callback)
     {
         foreach (['_conditions', '_values'] as $part) {
             foreach ($this->{$part} as $c) {
                 if ($c instanceof ExpressionInterface) {
-                    $visitor($c);
-                    $c->traverse($visitor);
+                    $callback($c);
+                    $c->traverse($callback);
                 }
             }
         }
         if ($this->_elseValue instanceof ExpressionInterface) {
-            $visitor($this->_elseValue);
-            $this->_elseValue->traverse($visitor);
+            $callback($this->_elseValue);
+            $this->_elseValue->traverse($callback);
         }
 
         return $this;

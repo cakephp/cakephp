@@ -138,17 +138,7 @@ class FlashHelperTest extends TestCase
             '/div',
         ];
         $this->assertHtml($expected, $result);
-        $this->assertNull($this->Flash->render('non-existent'));
-    }
-
-    /**
-     * testFlashThrowsException
-     */
-    public function testFlashThrowsException()
-    {
-        $this->expectException(\UnexpectedValueException::class);
-        $this->View->getRequest()->getSession()->write('Flash.foo', 'bar');
-        $this->Flash->render('foo');
+        $this->assertNull($this->Flash->render('nonexistent'));
     }
 
     /**

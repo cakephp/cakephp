@@ -1717,6 +1717,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function containsNonAlphaNumeric(string $field, int $limit = 1, ?string $message = null, $when = null)
     {
+        deprecationWarning('Validator::containsNonAlphaNumeric() is deprecated. Use notAlphaNumeric() instead.');
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'containsNonAlphaNumeric', $extra + [

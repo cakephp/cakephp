@@ -241,14 +241,14 @@ class ControllerTest extends TestCase
         $Controller->viewBuilder()->setTemplatePath('Posts');
 
         $result = $Controller->render('index');
-        $this->assertRegExp('/posts index/', (string)$result);
+        $this->assertMatchesRegularExpression('/posts index/', (string)$result);
 
         $Controller->viewBuilder()->setTemplate('index');
         $result = $Controller->render();
-        $this->assertRegExp('/posts index/', (string)$result);
+        $this->assertMatchesRegularExpression('/posts index/', (string)$result);
 
         $result = $Controller->render('/element/test_element');
-        $this->assertRegExp('/this is the test element/', (string)$result);
+        $this->assertMatchesRegularExpression('/this is the test element/', (string)$result);
     }
 
     /**
@@ -482,16 +482,19 @@ class ControllerTest extends TestCase
      * testSetAction method
      *
      * @return void
+     * @group deprecated
      */
     public function testSetAction(): void
     {
-        $request = new ServerRequest(['url' => 'controller/posts/index']);
+        $this->deprecated(function () {
+            $request = new ServerRequest(['url' => 'controller/posts/index']);
 
-        $TestController = new TestController($request);
-        $TestController->setAction('view', 1, 2);
-        $expected = ['testId' => 1, 'test2Id' => 2];
-        $this->assertSame($expected, $TestController->getRequest()->getData());
-        $this->assertSame('view', $TestController->getRequest()->getParam('action'));
+            $TestController = new TestController($request);
+            $TestController->setAction('view', 1, 2);
+            $expected = ['testId' => 1, 'test2Id' => 2];
+            $this->assertSame($expected, $TestController->getRequest()->getData());
+            $this->assertSame('view', $TestController->getRequest()->getParam('action'));
+        });
     }
 
     /**
@@ -1012,7 +1015,7 @@ class ControllerTest extends TestCase
         });
 
         $result = $Controller->render('/Element/test_element', 'default');
-        $this->assertRegExp('/posts index/', (string)$result);
+        $this->assertMatchesRegularExpression('/posts index/', (string)$result);
     }
 
     /**

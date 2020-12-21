@@ -18,7 +18,7 @@ namespace Cake\Test\TestCase\Controller;
 use Cake\Controller\Component\FlashComponent;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Event\EventManager;
 use Cake\TestSuite\TestCase;
 use TestApp\Controller\Component\AppleComponent;
@@ -282,7 +282,7 @@ class ComponentTest extends TestCase
      */
     public function testGetControllerException()
     {
-        $this->expectException(Exception::class);
+        $this->expectException(CakeException::class);
         $this->expectExceptionMessage('Controller not set for ComponentRegistry');
 
         $collection = new ComponentRegistry();

@@ -180,12 +180,12 @@ class CommonTableExpression implements ExpressionInterface
     /**
      * @inheritDoc
      */
-    public function sql(ValueBinder $generator): string
+    public function sql(ValueBinder $binder): string
     {
         $fields = '';
         if ($this->fields) {
-            $expressions = array_map(function (IdentifierExpression $e) use ($generator) {
-                return $e->sql($generator);
+            $expressions = array_map(function (IdentifierExpression $e) use ($binder) {
+                return $e->sql($binder);
             }, $this->fields);
             $fields = sprintf('(%s)', implode(', ', $expressions));
         }
@@ -194,27 +194,27 @@ class CommonTableExpression implements ExpressionInterface
 
         return sprintf(
             '%s%s AS %s(%s)',
-            $this->name->sql($generator),
+            $this->name->sql($binder),
             $fields,
             $suffix,
-            $this->query ? $this->query->sql($generator) : ''
+            $this->query ? $this->query->sql($binder) : ''
         );
     }
 
     /**
      * @inheritDoc
      */
-    public function traverse(Closure $visitor)
+    public function traverse(Closure $callback)
     {
-        $visitor($this->name);
+        $callback($this->name);
         foreach ($this->fields as $field) {
-            $visitor($field);
-            $field->traverse($visitor);
+            $callback($field);
+            $field->traverse($callback);
         }
 
         if ($this->query) {
-            $visitor($this->query);
-            $this->query->traverse($visitor);
+            $callback($this->query);
+            $this->query->traverse($callback);
         }
 
         return $this;

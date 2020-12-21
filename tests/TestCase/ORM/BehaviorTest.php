@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use TestApp\Model\Behavior\Test2Behavior;
@@ -51,7 +51,7 @@ class BehaviorTest extends TestCase
         $table = $this->getMockBuilder(Table::class)->getMock();
 
         $behavior = new TestBehavior($table);
-        $this->assertSame($table, $behavior->getTable());
+        $this->assertSame($table, $behavior->table());
     }
 
     public function testReflectionCache()
@@ -266,7 +266,7 @@ class BehaviorTest extends TestCase
      */
     public function testVerifyImplementedFindersInvalid()
     {
-        $this->expectException(\Cake\Core\Exception\Exception::class);
+        $this->expectException(CakeException::class);
         $this->expectExceptionMessage('The method findNotDefined is not callable on class ' . Test2Behavior::class);
         $table = $this->getMockBuilder(Table::class)->getMock();
         $behavior = new Test2Behavior($table, [
@@ -304,7 +304,7 @@ class BehaviorTest extends TestCase
      */
     public function testVerifyImplementedMethodsInvalid()
     {
-        $this->expectException(Exception::class);
+        $this->expectException(CakeException::class);
         $this->expectExceptionMessage('The method iDoNotExist is not callable on class ' . Test2Behavior::class);
         $table = $this->getMockBuilder(Table::class)->getMock();
         $behavior = new Test2Behavior($table, [

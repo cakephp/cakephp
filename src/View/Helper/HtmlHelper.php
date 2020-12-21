@@ -37,7 +37,7 @@ class HtmlHelper extends Helper
      *
      * @var array
      */
-    public $helpers = ['Url'];
+    protected $helpers = ['Url'];
 
     /**
      * Default config for this class

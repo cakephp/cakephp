@@ -29,7 +29,7 @@ trait StringTemplateTrait
     /**
      * StringTemplate instance.
      *
-     * @var \Cake\View\StringTemplate
+     * @var \Cake\View\StringTemplate|null
      */
     protected $_templater;
 

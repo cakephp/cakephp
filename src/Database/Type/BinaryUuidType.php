@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Type;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Database\DriverInterface;
 use Cake\Utility\Text;
 use PDO;
@@ -68,7 +68,7 @@ class BinaryUuidType extends BaseType
      * @param mixed $value The value to convert.
      * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
      * @return resource|string|null
-     * @throws \Cake\Core\Exception\Exception
+     * @throws \Cake\Core\Exception\CakeException
      */
     public function toPHP($value, DriverInterface $driver)
     {
@@ -82,7 +82,7 @@ class BinaryUuidType extends BaseType
             return $value;
         }
 
-        throw new Exception(sprintf('Unable to convert %s into binary uuid.', gettype($value)));
+        throw new CakeException(sprintf('Unable to convert %s into binary uuid.', gettype($value)));
     }
 
     /**

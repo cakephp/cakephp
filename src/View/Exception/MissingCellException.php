@@ -16,12 +16,12 @@ declare(strict_types=1);
  */
 namespace Cake\View\Exception;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 
 /**
  * Used when a cell class file cannot be found.
  */
-class MissingCellException extends Exception
+class MissingCellException extends CakeException
 {
     /**
      * @inheritDoc

@@ -892,12 +892,12 @@ class HtmlHelperTest extends TestCase
         $timestamp = substr((string)strtotime('now'), 0, 8);
 
         $result = $this->Html->script('__cake_js_test', ['once' => false]);
-        $this->assertRegExp('/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result, 'Timestamp value not found %s');
+        $this->assertMatchesRegularExpression('/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result, 'Timestamp value not found %s');
 
         Configure::write('debug', false);
         Configure::write('Asset.timestamp', 'force');
         $result = $this->Html->script('__cake_js_test', ['once' => false]);
-        $this->assertRegExp('/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result, 'Timestamp value not found %s');
+        $this->assertMatchesRegularExpression('/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result, 'Timestamp value not found %s');
         unlink(WWW_ROOT . 'js/__cake_js_test.js');
         Configure::write('Asset.timestamp', false);
     }
@@ -922,12 +922,12 @@ class HtmlHelperTest extends TestCase
         $timestamp = substr((string)strtotime('now'), 0, 8);
 
         $result = $this->Html->script('TestPlugin.__cake_js_test', ['once' => false]);
-        $this->assertRegExp('/test_plugin\/js\/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result, 'Timestamp value not found %s');
+        $this->assertMatchesRegularExpression('/test_plugin\/js\/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result, 'Timestamp value not found %s');
 
         Configure::write('debug', false);
         Configure::write('Asset.timestamp', 'force');
         $result = $this->Html->script('TestPlugin.__cake_js_test', ['once' => false]);
-        $this->assertRegExp('/test_plugin\/js\/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result, 'Timestamp value not found %s');
+        $this->assertMatchesRegularExpression('/test_plugin\/js\/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result, 'Timestamp value not found %s');
         unlink($pluginJsPath . DS . '__cake_js_test.js');
         Configure::write('Asset.timestamp', false);
 
@@ -1024,7 +1024,7 @@ class HtmlHelperTest extends TestCase
         $this->assertNull($result, 'Script returned upon duplicate inclusion %s');
 
         $result = $this->Html->script(['foo', 'bar', 'baz']);
-        $this->assertNotRegExp('/foo.js/', $result);
+        $this->assertDoesNotMatchRegularExpression('/foo.js/', $result);
 
         $result = $this->Html->script('foo', ['once' => false]);
         $this->assertNotNull($result);
@@ -1089,7 +1089,7 @@ class HtmlHelperTest extends TestCase
         $this->assertNull($result, 'Script returned upon duplicate inclusion %s');
 
         $result = $this->Html->script(['TestPlugin.foo', 'TestPlugin.bar', 'TestPlugin.baz']);
-        $this->assertNotRegExp('/test_plugin\/js\/foo.js/', $result);
+        $this->assertDoesNotMatchRegularExpression('/test_plugin\/js\/foo.js/', $result);
 
         $result = $this->Html->script('TestPlugin.foo', ['once' => false]);
         $this->assertNotNull($result);
@@ -1517,16 +1517,16 @@ class HtmlHelperTest extends TestCase
         $expected = ['link' => ['href' => 'preg:/.*\/posts\.xml/', 'type' => 'application/atom+xml', 'title' => 'atom']];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Html->meta('non-existing');
+        $result = $this->Html->meta('nonexistent');
         $expected = ['<meta'];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Html->meta('non-existing', 'some content');
-        $expected = ['meta' => ['name' => 'non-existing', 'content' => 'some content']];
+        $result = $this->Html->meta('nonexistent', 'some content');
+        $expected = ['meta' => ['name' => 'nonexistent', 'content' => 'some content']];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Html->meta('non-existing', '/posts.xpp', ['type' => 'atom']);
-        $expected = ['link' => ['href' => 'preg:/.*\/posts\.xpp/', 'type' => 'application/atom+xml', 'title' => 'non-existing']];
+        $result = $this->Html->meta('nonexistent', '/posts.xpp', ['type' => 'atom']);
+        $expected = ['link' => ['href' => 'preg:/.*\/posts\.xpp/', 'type' => 'application/atom+xml', 'title' => 'nonexistent']];
         $this->assertHtml($expected, $result);
 
         $result = $this->Html->meta('atom', ['controller' => 'posts', '_ext' => 'xml'], ['link' => '/articles.rss']);

@@ -16,15 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\Datasource\Exception;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 
 /**
  * Exception raised when a particular record was not found
  */
-class RecordNotFoundException extends Exception
+class RecordNotFoundException extends CakeException
 {
-    /**
-     * @inheritDoc
-     */
-    protected $_defaultCode = 404;
 }

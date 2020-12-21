@@ -420,7 +420,7 @@ class ShellTest extends TestCase
         $this->assertTrue($this->Shell->loadTasks());
         $this->assertInstanceOf('Cake\Shell\Task\TestAppleTask', $this->Shell->TestApple);
 
-        $this->Shell->tasks = 'TestBanana';
+        $this->Shell->tasks = ['TestBanana'];
         $this->assertTrue($this->Shell->loadTasks());
         $this->assertInstanceOf('Cake\Shell\Task\TestAppleTask', $this->Shell->TestApple);
         $this->assertInstanceOf('Cake\Shell\Task\TestBananaTask', $this->Shell->TestBanana);
@@ -657,7 +657,7 @@ class ShellTest extends TestCase
         chmod($path, 0444);
 
         $this->Shell->createFile($file, 'testing');
-        $this->assertFileNotExists($file);
+        $this->assertFileDoesNotExist($file);
 
         chmod($path, 0744);
         rmdir($path);

@@ -25,6 +25,8 @@ use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Entity;
+use Cake\ORM\Exception\MissingTableClassException;
+use Cake\ORM\Locator\TableLocator;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
@@ -1268,6 +1270,45 @@ class BelongsToManyTest extends TestCase
         $inverseRelation = $this->tag->getAssociation('Articles');
         $this->assertSame('Tag', $inverseRelation->getForeignKey());
         $this->assertSame('Art', $inverseRelation->getTargetForeignKey());
+    }
+
+    /**
+     * Test that fallback class is used for join table even when fallback
+     * class usage is turned off for table locator.
+     *
+     * @return void
+     */
+    public function testFallbackClassForJunction()
+    {
+        $assoc = new BelongsToMany('Test', [
+            'sourceTable' => $this->article,
+            'targetTable' => $this->tag,
+        ]);
+        $assoc->setTableLocator((new TableLocator())->allowFallbackClass(false));
+        $junction = $assoc->junction();
+        $this->assertInstanceOf(Table::class, $junction);
+    }
+
+    /**
+     * Test that fallback class is used for join table even when fallback
+     * class usage is turned off for table locator.
+     *
+     * @return void
+     */
+    public function testNoFallbackClassForThrough()
+    {
+        $this->expectException(MissingTableClassException::class);
+        $this->expectExceptionMessage('Table class for alias `ArticlesTags` could not be found.');
+
+        $assoc = new BelongsToMany('Test', [
+            'sourceTable' => $this->article,
+            'targetTable' => $this->tag,
+            'through' => 'ArticlesTags',
+        ]);
+        $tableLocator = new TableLocator();
+        $tableLocator->allowFallbackClass(false);
+        $assoc->setTableLocator($tableLocator);
+        $assoc->junction();
     }
 
     /**

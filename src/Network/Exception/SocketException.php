@@ -14,16 +14,12 @@ declare(strict_types=1);
  */
 namespace Cake\Network\Exception;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 
 /**
  * Exception class for Socket. This exception will be thrown from Socket, Email, HttpSocket
  * SmtpTransport, MailTransport and HttpResponse when it encounters an error.
  */
-class SocketException extends Exception
+class SocketException extends CakeException
 {
-    /**
-     * @inheritDoc
-     */
-    protected $_defaultCode = 0;
 }

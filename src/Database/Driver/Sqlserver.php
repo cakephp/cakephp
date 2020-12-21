@@ -80,7 +80,7 @@ class Sqlserver extends Driver
     /**
      * The schema dialect class for this driver
      *
-     * @var \Cake\Database\Schema\SqlserverSchemaDialect
+     * @var \Cake\Database\Schema\SqlserverSchemaDialect|null
      */
     protected $_schemaDialect;
 
@@ -134,7 +134,6 @@ class Sqlserver extends Driver
         ];
 
         if (!empty($config['encoding'])) {
-            /** @psalm-suppress UndefinedConstant */
             $config['flags'][PDO::SQLSRV_ATTR_ENCODING] = $config['encoding'];
         }
         $port = '';
@@ -201,7 +200,10 @@ class Sqlserver extends Driver
         $this->connect();
 
         $sql = $query;
-        $options = [PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL];
+        $options = [
+            PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL,
+            PDO::SQLSRV_ATTR_CURSOR_SCROLL_TYPE => PDO::SQLSRV_CURSOR_BUFFERED,
+        ];
         if ($query instanceof Query) {
             $sql = $query->sql();
             if (count($query->getValueBinder()->bindings()) > 2100) {
@@ -225,10 +227,7 @@ class Sqlserver extends Driver
     }
 
     /**
-     * Returns a SQL snippet for creating a new transaction savepoint
-     *
-     * @param string|int $name save point name
-     * @return string
+     * @inheritDoc
      */
     public function savePointSQL($name): string
     {
@@ -236,10 +235,7 @@ class Sqlserver extends Driver
     }
 
     /**
-     * Returns a SQL snippet for releasing a previously created save point
-     *
-     * @param string|int $name save point name
-     * @return string
+     * @inheritDoc
      */
     public function releaseSavePointSQL($name): string
     {
@@ -247,10 +243,7 @@ class Sqlserver extends Driver
     }
 
     /**
-     * Returns a SQL snippet for rollbacking a previously created save point
-     *
-     * @param string|int $name save point name
-     * @return string
+     * @inheritDoc
      */
     public function rollbackSavePointSQL($name): string
     {
@@ -380,10 +373,10 @@ class Sqlserver extends Driver
             ->from(['_cake_paging_' => $query]);
 
         if ($offset) {
-            $outer->where(["$field > " . (int)$offset]);
+            $outer->where(["$field > " . $offset]);
         }
         if ($limit) {
-            $value = (int)$offset + (int)$limit;
+            $value = (int)$offset + $limit;
             $outer->where(["$field <= $value"]);
         }
 

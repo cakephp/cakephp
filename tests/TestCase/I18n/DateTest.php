@@ -475,7 +475,7 @@ class DateTest extends TestCase
 
         $date = new $class('+2 weeks +2 days');
         $result = $date->timeAgoInWords(['format' => 'yyyy-MM-dd']);
-        $this->assertRegExp('/^2 weeks, [1|2] day(s)?$/', $result);
+        $this->assertMatchesRegularExpression('/^2 weeks, [1|2] day(s)?$/', $result);
 
         $date = new $class('+2 months +2 days');
         $result = $date->timeAgoInWords(['end' => '1 month', 'format' => 'yyyy-MM-dd']);

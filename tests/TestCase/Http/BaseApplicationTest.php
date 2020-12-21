@@ -18,6 +18,8 @@ namespace Cake\Test\TestCase\Http;
 
 use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
+use Cake\Core\Container;
+use Cake\Core\ContainerInterface;
 use Cake\Http\BaseApplication;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\ServerRequestFactory;
@@ -202,16 +204,16 @@ class BaseApplicationTest extends TestCase
     }
 
     /**
-     * Tests that loading a non existing plugin through addOptionalPlugin() does not throw an exception
+     * Tests that loading a nonexistent plugin through addOptionalPlugin() does not throw an exception
      *
      * @return void
      * @covers ::addOptionalPlugin
      */
-    public function testAddOptionalPluginLoadingNonExistingPlugin()
+    public function testAddOptionalPluginLoadingNonExistentPlugin()
     {
         $app = $this->getMockForAbstractClass(BaseApplication::class, [$this->path]);
         $pluginCountBefore = count($app->getPlugins());
-        $nonExistingPlugin = 'NonExistingPlugin';
+        $nonExistingPlugin = 'NonExistentPlugin';
         $app->addOptionalPlugin($nonExistingPlugin);
         $pluginCountAfter = count($app->getPlugins());
         $this->assertSame($pluginCountBefore, $pluginCountAfter);
@@ -223,12 +225,51 @@ class BaseApplicationTest extends TestCase
      * @return void
      * @covers ::addOptionalPlugin
      */
-    public function testAddOptionalPluginLoadingNonExistingPluginValid()
+    public function testAddOptionalPluginLoadingNonExistentPluginValid()
     {
         $app = $this->getMockForAbstractClass(BaseApplication::class, [$this->path]);
         $app->addOptionalPlugin(TestPlugin::class);
 
         $this->assertCount(1, $app->getPlugins());
         $this->assertTrue($app->getPlugins()->has('TestPlugin'));
+    }
+
+    public function testGetContainer()
+    {
+        $app = $this->getMockForAbstractClass(BaseApplication::class, [$this->path]);
+        $container = $app->getContainer();
+
+        $this->assertInstanceOf(ContainerInterface::class, $container);
+        $this->assertSame($container, $app->getContainer(), 'Should return a reference');
+    }
+
+    public function testBuildContainerEvent()
+    {
+        $app = $this->getMockForAbstractClass(BaseApplication::class, [$this->path]);
+        $called = false;
+        $app->getEventManager()->on('Application.buildContainer', function ($event, $container) use (&$called) {
+            $this->assertInstanceOf(BaseApplication::class, $event->getSubject());
+            $this->assertInstanceOf(ContainerInterface::class, $container);
+            $called = true;
+        });
+
+        $container = $app->getContainer();
+        $this->assertInstanceOf(ContainerInterface::class, $container);
+        $this->assertTrue($called, 'Listener should be called');
+    }
+
+    public function testBuildContainerEventReplaceContainer()
+    {
+        $app = $this->getMockForAbstractClass(BaseApplication::class, [$this->path]);
+        $app->getEventManager()->on('Application.buildContainer', function () {
+            $new = new Container();
+            $new->add('testing', 'yes');
+
+            return $new;
+        });
+
+        $container = $app->getContainer();
+        $this->assertInstanceOf(ContainerInterface::class, $container);
+        $this->assertTrue($container->has('testing'));
     }
 }

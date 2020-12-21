@@ -514,7 +514,7 @@ class FileTest extends TestCase
         }
 
         $TmpFile = new File($tmpFile);
-        $this->assertFileNotExists($tmpFile);
+        $this->assertFileDoesNotExist($tmpFile);
         $this->assertNull($TmpFile->handle);
 
         $testData = ['CakePHP\'s', ' test suite', ' was here ...', ''];
@@ -542,7 +542,7 @@ class FileTest extends TestCase
         }
 
         $TmpFile = new File($tmpFile);
-        $this->assertFileNotExists($tmpFile);
+        $this->assertFileDoesNotExist($tmpFile);
 
         $fragments = ['CakePHP\'s', ' test suite', ' was here ...'];
         $data = null;
@@ -581,7 +581,7 @@ class FileTest extends TestCase
         $file->read();
         $this->assertTrue($file->delete());
         $this->assertFalse($file->exists());
-        $this->assertFileNotExists($tmpFile);
+        $this->assertFileDoesNotExist($tmpFile);
 
         $TmpFile = new File('/this/does/not/exist');
         $result = $TmpFile->delete();

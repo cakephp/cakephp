@@ -308,7 +308,7 @@ class EagerLoader
         $contain = [];
         foreach ($this->_containments as $alias => $options) {
             if (!empty($options['instance'])) {
-                $contain = (array)$this->_containments;
+                $contain = $this->_containments;
                 break;
             }
             $contain[$alias] = $this->_normalizeContain(
@@ -336,7 +336,7 @@ class EagerLoader
     {
         $result = $original;
 
-        foreach ((array)$associations as $table => $options) {
+        foreach ($associations as $table => $options) {
             $pointer = &$result;
             if (is_int($table)) {
                 $table = $options;
@@ -388,6 +388,7 @@ class EagerLoader
             }
 
             if (!is_array($options)) {
+                /** @psalm-suppress InvalidArrayOffset */
                 $options = [$options => []];
             }
 
@@ -627,7 +628,6 @@ class EagerLoader
      */
     public function loadExternal(Query $query, StatementInterface $statement): StatementInterface
     {
-        /** @var \Cake\ORM\Table $table */
         $table = $query->getRepository();
         $external = $this->externalAssociations($table);
         if (empty($external)) {

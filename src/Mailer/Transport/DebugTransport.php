@@ -35,7 +35,7 @@ class DebugTransport extends AbstractTransport
         $headers = $message->getHeadersString(
             ['from', 'sender', 'replyTo', 'readReceipt', 'returnPath', 'to', 'cc', 'subject']
         );
-        $message = implode("\r\n", (array)$message->getBody());
+        $message = implode("\r\n", $message->getBody());
 
         return ['headers' => $headers, 'message' => $message];
     }

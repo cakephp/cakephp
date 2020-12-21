@@ -131,6 +131,13 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     protected $_hydrate = true;
 
     /**
+     * Whether aliases are generated for fields.
+     *
+     * @var bool
+     */
+    protected $aliasingEnabled = true;
+
+    /**
      * A callable function that can be used to calculate the total amount of
      * records this query will match when not using `limit`
      *
@@ -225,7 +232,11 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         }
 
         if ($fields instanceof Table) {
-            $fields = $this->aliasFields($fields->getSchema()->columns(), $fields->getAlias());
+            if ($this->aliasingEnabled) {
+                $fields = $this->aliasFields($fields->getSchema()->columns(), $fields->getAlias());
+            } else {
+                $fields = $fields->getSchema()->columns();
+            }
         }
 
         return parent::select($fields, $overwrite);
@@ -255,9 +266,11 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         }
 
         $fields = array_diff($table->getSchema()->columns(), $excludedFields);
-        $aliasedFields = $this->aliasFields($fields);
+        if ($this->aliasingEnabled) {
+            $fields = $this->aliasFields($fields);
+        }
 
-        return $this->select($aliasedFields, $overwrite);
+        return $this->select($fields, $overwrite);
     }
 
     /**
@@ -1071,7 +1084,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         if (!$this->_beforeFindFired && $this->_type === 'select') {
             $this->_beforeFindFired = true;
 
-            /** @var \Cake\Event\EventDispatcherInterface $repository */
             $repository = $this->getRepository();
             $repository->dispatchEvent('Model.beforeFind', [
                 $this,
@@ -1084,13 +1096,13 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     /**
      * @inheritDoc
      */
-    public function sql(?ValueBinder $generator = null): string
+    public function sql(?ValueBinder $binder = null): string
     {
         $this->triggerBeforeFind();
 
         $this->_transformQuery();
 
-        return parent::sql($generator);
+        return parent::sql($binder);
     }
 
     /**
@@ -1132,7 +1144,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             return;
         }
 
-        /** @var \Cake\ORM\Table $repository */
         $repository = $this->getRepository();
 
         if (empty($this->_parts['from'])) {
@@ -1154,7 +1165,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         $select = $this->clause('select');
         $this->_hasFields = true;
 
-        /** @var \Cake\ORM\Table $repository */
         $repository = $this->getRepository();
 
         if (!count($select) || $this->_autoFields === true) {
@@ -1163,8 +1173,10 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             $select = $this->clause('select');
         }
 
-        $aliased = $this->aliasFields($select, $repository->getAlias());
-        $this->select($aliased, true);
+        if ($this->aliasingEnabled) {
+            $select = $this->aliasFields($select, $repository->getAlias());
+        }
+        $this->select($select, true);
     }
 
     /**
@@ -1203,7 +1215,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function find(string $finder, array $options = [])
     {
-        /** @var \Cake\ORM\Table $table */
         $table = $this->getRepository();
 
         /** @psalm-suppress LessSpecificReturnStatement */
@@ -1235,7 +1246,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     public function update($table = null)
     {
         if (!$table) {
-            /** @var \Cake\ORM\Table $repository */
             $repository = $this->getRepository();
             $table = $repository->getTable();
         }
@@ -1254,7 +1264,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function delete(?string $table = null)
     {
-        /** @var \Cake\ORM\Table $repository */
         $repository = $this->getRepository();
         $this->from([$repository->getAlias() => $repository->getTable()]);
 
@@ -1277,12 +1286,25 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function insert(array $columns, array $types = [])
     {
-        /** @var \Cake\ORM\Table $repository */
         $repository = $this->getRepository();
         $table = $repository->getTable();
         $this->into($table);
 
         return parent::insert($columns, $types);
+    }
+
+    /**
+     * Returns a new Query that has automatic field aliasing disabled.
+     *
+     * @param \Cake\ORM\Table $table The table this query is starting on
+     * @return static
+     */
+    public static function subquery(Table $table)
+    {
+        $query = new static($table->getConnection(), $table);
+        $query->aliasingEnabled = false;
+
+        return $query;
     }
 
     /**
@@ -1388,7 +1410,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
 
         if (!($result instanceof ResultSet) && $this->isBufferedResultsEnabled()) {
             $class = $this->_decoratorClass();
-            /** @var \Cake\Datasource\ResultSetInterface $result */
             $result = new $class($result->buffered());
         }
 

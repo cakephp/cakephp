@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Schema;
 
-use Cake\Database\Exception;
+use Cake\Database\Exception\DatabaseException;
 
 /**
  * Schema generation/reflection features for MySQL
@@ -82,13 +82,13 @@ class MysqlSchemaDialect extends SchemaDialect
      *
      * @param string $column The column type + length
      * @return array Array of column information.
-     * @throws \Cake\Database\Exception When column type cannot be parsed.
+     * @throws \Cake\Database\Exception\DatabaseException When column type cannot be parsed.
      */
     protected function _convertColumn(string $column): array
     {
         preg_match('/([a-z]+)(?:\(([0-9,]+)\))?\s*([a-z]+)?/i', $column, $matches);
         if (empty($matches)) {
-            throw new Exception(sprintf('Unable to parse column type from "%s"', $column));
+            throw new DatabaseException(sprintf('Unable to parse column type from "%s"', $column));
         }
 
         $col = strtolower($matches[1]);
@@ -451,7 +451,7 @@ class MysqlSchemaDialect extends SchemaDialect
             $out .= ' NOT NULL';
         }
         $addAutoIncrement = (
-            (array)$schema->getPrimaryKey() === [$name] &&
+            $schema->getPrimaryKey() === [$name] &&
             !$schema->hasAutoincrement() &&
             !isset($data['autoIncrement'])
         );

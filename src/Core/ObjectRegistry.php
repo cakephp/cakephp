@@ -47,7 +47,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * Map of loaded objects.
      *
      * @var object[]
-     * @psalm-var array<string, TObject>
+     * @psalm-var array<array-key, TObject>
      */
     protected $_loaded = [];
 
@@ -62,9 +62,9 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * an object by setting the 'className' key, i.e.,
      *
      * ```
-     * public $components = [
+     * protected $components = [
      *   'Email' => [
-     *     'className' => '\App\Controller\Component\AliasedEmailComponent'
+     *     'className' => 'App\Controller\Component\AliasedEmailComponent'
      *   ];
      * ];
      * ```
@@ -103,8 +103,10 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
             }
         }
 
-        // phpcs:ignore SlevomatCodingStandard.Namespaces.FullyQualifiedClassNameInAnnotation.NonFullyQualifiedClassName
-        /** @psalm-var TObject $instance */
+        /**
+         * @psalm-var TObject $instance
+         * @psalm-suppress PossiblyNullArgument
+         **/
         $instance = $this->_create($className, $name, $config);
         $this->_loaded[$name] = $instance;
 
@@ -299,7 +301,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
             }
             [, $name] = pluginSplit($objectName);
             if (isset($config['class'])) {
-                $normal[$name] = $config;
+                $normal[$name] = $config + ['config' => []];
             } else {
                 $normal[$name] = ['class' => $objectName, 'config' => $config];
             }

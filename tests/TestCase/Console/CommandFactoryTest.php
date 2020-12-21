@@ -16,9 +16,12 @@ namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\CommandFactory;
 use Cake\Console\CommandInterface;
+use Cake\Core\Container;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use stdClass;
 use TestApp\Command\DemoCommand;
+use TestApp\Command\DependencyCommand;
 use TestApp\Shell\SampleShell;
 
 class CommandFactoryTest extends TestCase
@@ -30,6 +33,19 @@ class CommandFactoryTest extends TestCase
         $command = $factory->create(DemoCommand::class);
         $this->assertInstanceOf(DemoCommand::class, $command);
         $this->assertInstanceOf(CommandInterface::class, $command);
+    }
+
+    public function testCreateCommandDependencies()
+    {
+        $container = new Container();
+        $container->add(stdClass::class, json_decode('{"key":"value"}'));
+        $container->add(DependencyCommand::class)
+            ->addArgument(stdClass::class);
+        $factory = new CommandFactory($container);
+
+        $command = $factory->create(DependencyCommand::class);
+        $this->assertInstanceOf(DependencyCommand::class, $command);
+        $this->assertInstanceOf(stdClass::class, $command->inject);
     }
 
     public function testCreateShell()

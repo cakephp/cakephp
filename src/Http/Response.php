@@ -167,6 +167,8 @@ class Response implements ResponseInterface
         'gz' => 'application/x-gzip',
         'bz2' => 'application/x-bzip',
         '7z' => 'application/x-7z-compressed',
+        'haljson' => ['application/hal+json', 'application/vnd.hal+json'],
+        'halxml' => ['application/hal+xml', 'application/vnd.hal+xml'],
         'hdf' => 'application/x-hdf',
         'hqx' => 'application/mac-binhex40',
         'ico' => 'image/x-icon',
@@ -175,6 +177,7 @@ class Response implements ResponseInterface
         'js' => 'application/javascript',
         'jsonapi' => 'application/vnd.api+json',
         'latex' => 'application/x-latex',
+        'jsonld' => 'application/ld+json',
         'lha' => 'application/octet-stream',
         'lsp' => 'application/x-lisp',
         'lzh' => 'application/octet-stream',
@@ -1206,7 +1209,7 @@ class Response implements ResponseInterface
      */
     public function checkNotModified(ServerRequest $request): bool
     {
-        $etags = preg_split('/\s*,\s*/', (string)$request->getHeaderLine('If-None-Match'), 0, PREG_SPLIT_NO_EMPTY);
+        $etags = preg_split('/\s*,\s*/', $request->getHeaderLine('If-None-Match'), 0, PREG_SPLIT_NO_EMPTY);
         $responseTag = $this->getHeaderLine('Etag');
         $etagMatches = null;
         if ($responseTag) {
@@ -1240,7 +1243,7 @@ class Response implements ResponseInterface
     {
         $this->stream->rewind();
 
-        return (string)$this->stream->getContents();
+        return $this->stream->getContents();
     }
 
     /**

@@ -141,7 +141,7 @@ class SaveOptionsBuilder extends ArrayObject
      */
     public function guard(bool $guard)
     {
-        $this->_options['guard'] = (bool)$guard;
+        $this->_options['guard'] = $guard;
 
         return $this;
     }
@@ -168,7 +168,7 @@ class SaveOptionsBuilder extends ArrayObject
      */
     public function checkExisting(bool $checkExisting)
     {
-        $this->_options['checkExisting'] = (bool)$checkExisting;
+        $this->_options['checkExisting'] = $checkExisting;
 
         return $this;
     }
@@ -181,7 +181,7 @@ class SaveOptionsBuilder extends ArrayObject
      */
     public function checkRules(bool $checkRules)
     {
-        $this->_options['checkRules'] = (bool)$checkRules;
+        $this->_options['checkRules'] = $checkRules;
 
         return $this;
     }
@@ -194,7 +194,7 @@ class SaveOptionsBuilder extends ArrayObject
      */
     public function atomic(bool $atomic)
     {
-        $this->_options['atomic'] = (bool)$atomic;
+        $this->_options['atomic'] = $atomic;
 
         return $this;
     }

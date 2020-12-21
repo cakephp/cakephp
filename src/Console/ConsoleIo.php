@@ -198,7 +198,7 @@ class ConsoleIo
     public function out($message = '', int $newlines = 1, int $level = self::NORMAL): ?int
     {
         if ($level <= $this->_level) {
-            $this->_lastWritten = (int)$this->_out->write($message, $newlines);
+            $this->_lastWritten = $this->_out->write($message, $newlines);
 
             return $this->_lastWritten;
         }
@@ -219,6 +219,24 @@ class ConsoleIo
     public function info($message, int $newlines = 1, int $level = self::NORMAL): ?int
     {
         $messageType = 'info';
+        $message = $this->wrapMessageWithType($messageType, $message);
+
+        return $this->out($message, $newlines, $level);
+    }
+
+    /**
+     * Convenience method for out() that wraps message between <comment /> tag
+     *
+     * @param string|string[] $message A string or an array of strings to output
+     * @param int $newlines Number of newlines to append
+     * @param int $level The message's output level, see above.
+     * @return int|null The number of bytes returned from writing to stdout
+     *   or null if provided $level is greater than current level.
+     * @see https://book.cakephp.org/4/en/console-and-shells.html#ConsoleIo::out
+     */
+    public function comment($message, int $newlines = 1, int $level = self::NORMAL): ?int
+    {
+        $messageType = 'comment';
         $message = $this->wrapMessageWithType($messageType, $message);
 
         return $this->out($message, $newlines, $level);

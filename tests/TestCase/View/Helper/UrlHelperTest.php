@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\View\Helper;
 
 use Cake\Core\Configure;
+use Cake\Core\Exception\CakeException;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Route\DashedRoute;
 use Cake\Routing\RouteBuilder;
@@ -24,6 +25,7 @@ use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\UrlHelper;
 use Cake\View\View;
+use TestApp\Routing\Asset;
 
 /**
  * UrlHelperTest class
@@ -201,12 +203,12 @@ class UrlHelperTest extends TestCase
         Configure::write('Asset.timestamp', true);
         Configure::write('debug', true);
         $result = $this->Helper->assetTimestamp(Configure::read('App.cssBaseUrl') . 'cake.generic.css');
-        $this->assertRegExp('/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/', $result);
+        $this->assertMatchesRegularExpression('/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/', $result);
 
         Configure::write('Asset.timestamp', 'force');
         Configure::write('debug', false);
         $result = $this->Helper->assetTimestamp(Configure::read('App.cssBaseUrl') . 'cake.generic.css');
-        $this->assertRegExp('/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/', $result);
+        $this->assertMatchesRegularExpression('/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/', $result);
 
         $result = $this->Helper->assetTimestamp(Configure::read('App.cssBaseUrl') . 'cake.generic.css?someparam');
         $this->assertSame(Configure::read('App.cssBaseUrl') . 'cake.generic.css?someparam', $result);
@@ -215,7 +217,7 @@ class UrlHelperTest extends TestCase
         $this->View->setRequest($request);
         Router::setRequest($request);
         $result = $this->Helper->assetTimestamp('/some/dir/' . Configure::read('App.cssBaseUrl') . 'cake.generic.css');
-        $this->assertRegExp('/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/', $result);
+        $this->assertMatchesRegularExpression('/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/', $result);
     }
 
     /**
@@ -337,7 +339,7 @@ class UrlHelperTest extends TestCase
         Configure::write('Asset.timestamp', 'force');
 
         $result = $this->Helper->assetUrl('cake.generic.css', ['pathPrefix' => Configure::read('App.cssBaseUrl')]);
-        $this->assertRegExp('/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/', $result);
+        $this->assertMatchesRegularExpression('/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/', $result);
     }
 
     /**
@@ -366,16 +368,16 @@ class UrlHelperTest extends TestCase
         $this->loadPlugins(['TestPlugin']);
 
         $result = $this->Helper->assetTimestamp('/test_plugin/css/test_plugin_asset.css');
-        $this->assertRegExp('#/test_plugin/css/test_plugin_asset.css\?[0-9]+$#', $result, 'Missing timestamp plugin');
+        $this->assertMatchesRegularExpression('#/test_plugin/css/test_plugin_asset.css\?[0-9]+$#', $result, 'Missing timestamp plugin');
 
         $result = $this->Helper->assetTimestamp('/test_plugin/css/i_dont_exist.css');
-        $this->assertRegExp('#/test_plugin/css/i_dont_exist.css$#', $result, 'No error on missing file');
+        $this->assertMatchesRegularExpression('#/test_plugin/css/i_dont_exist.css$#', $result, 'No error on missing file');
 
         $result = $this->Helper->assetTimestamp('/test_theme/js/theme.js');
-        $this->assertRegExp('#/test_theme/js/theme.js\?[0-9]+$#', $result, 'Missing timestamp theme');
+        $this->assertMatchesRegularExpression('#/test_theme/js/theme.js\?[0-9]+$#', $result, 'Missing timestamp theme');
 
-        $result = $this->Helper->assetTimestamp('/test_theme/js/non_existant.js');
-        $this->assertRegExp('#/test_theme/js/non_existant.js$#', $result, 'No error on missing file');
+        $result = $this->Helper->assetTimestamp('/test_theme/js/nonexistent.js');
+        $this->assertMatchesRegularExpression('#/test_theme/js/nonexistent.js$#', $result, 'No error on missing file');
     }
 
     /**
@@ -404,7 +406,7 @@ class UrlHelperTest extends TestCase
         Configure::write('Asset.timestamp', 'force');
 
         $result = $this->Helper->script('script.js');
-        $this->assertRegExp('/' . preg_quote(Configure::read('App.jsBaseUrl') . 'script.js?', '/') . '[0-9]+/', $result);
+        $this->assertMatchesRegularExpression('/' . preg_quote(Configure::read('App.jsBaseUrl') . 'script.js?', '/') . '[0-9]+/', $result);
     }
 
     /**
@@ -460,7 +462,7 @@ class UrlHelperTest extends TestCase
         Configure::write('Asset.timestamp', 'force');
 
         $result = $this->Helper->image('cake.icon.png');
-        $this->assertRegExp('/' . preg_quote('img/cake.icon.png?', '/') . '[0-9]+/', $result);
+        $this->assertMatchesRegularExpression('/' . preg_quote('img/cake.icon.png?', '/') . '[0-9]+/', $result);
     }
 
     /**
@@ -498,7 +500,7 @@ class UrlHelperTest extends TestCase
         Configure::write('Asset.timestamp', 'force');
 
         $result = $this->Helper->css('cake.generic');
-        $this->assertRegExp('/' . preg_quote('css/cake.generic.css?', '/') . '[0-9]+/', $result);
+        $this->assertMatchesRegularExpression('/' . preg_quote('css/cake.generic.css?', '/') . '[0-9]+/', $result);
     }
 
     /**
@@ -588,5 +590,39 @@ class UrlHelperTest extends TestCase
         $result = $this->Helper->css('TestTheme.app.css');
         $expected = $cdnPrefix . 'app.css';
         $this->assertSame($expected, $result);
+    }
+
+    /**
+     * Test if an app Asset class is being loaded
+     *
+     * @return void
+     */
+    public function testAppAssetPresent()
+    {
+        $Url = new UrlHelper($this->View, ['assetUrlClassName' => Asset::class]);
+        $Url->webroot = '';
+
+        $result = $Url->assetUrl('cake.generic.css', ['pathPrefix' => '/']);
+        $this->assertSame('/cake.generic.css?appHash', $result);
+
+        $result = $Url->css('cake.generic', ['pathPrefix' => '/']);
+        $this->assertSame('/cake.generic.css?appHash', $result);
+
+        $result = $Url->script('cake.generic', ['pathPrefix' => '/']);
+        $this->assertSame('/cake.generic.js?appHash', $result);
+
+        $result = $Url->image('cake.generic.png', ['pathPrefix' => '/']);
+        $this->assertSame('/cake.generic.png?appHash', $result);
+    }
+
+    /**
+     * Test if UrlHelper fails to load with wrong asset URL class name
+     *
+     * @return void
+     */
+    public function testAppAssetPresentWrong()
+    {
+        $this->expectException(CakeException::class);
+        new UrlHelper($this->View, ['assetUrlClassName' => 'InexistentClass']);
     }
 }

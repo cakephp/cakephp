@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Expression;
 
-use Cake\Database\Exception;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
 use Cake\Database\Type\ExpressionTypeCasterTrait;
@@ -80,45 +80,45 @@ class ValuesExpression implements ExpressionInterface
     /**
      * Add a row of data to be inserted.
      *
-     * @param array|\Cake\Database\Query $data Array of data to append into the insert, or
+     * @param array|\Cake\Database\Query $values Array of data to append into the insert, or
      *   a query for doing INSERT INTO .. SELECT style commands
      * @return void
-     * @throws \Cake\Database\Exception When mixing array + Query data types.
+     * @throws \Cake\Database\Exception\DatabaseException When mixing array + Query data types.
      */
-    public function add($data): void
+    public function add($values): void
     {
         if (
             (
                 count($this->_values) &&
-                $data instanceof Query
+                $values instanceof Query
             ) ||
             (
                 $this->_query &&
-                is_array($data)
+                is_array($values)
             )
         ) {
-            throw new Exception(
-                'You cannot mix subqueries and array data in inserts.'
+            throw new DatabaseException(
+                'You cannot mix subqueries and array values in inserts.'
             );
         }
-        if ($data instanceof Query) {
-            $this->setQuery($data);
+        if ($values instanceof Query) {
+            $this->setQuery($values);
 
             return;
         }
-        $this->_values[] = $data;
+        $this->_values[] = $values;
         $this->_castedExpressions = false;
     }
 
     /**
      * Sets the columns to be inserted.
      *
-     * @param array $cols Array with columns to be inserted.
+     * @param array $columns Array with columns to be inserted.
      * @return $this
      */
-    public function setColumns(array $cols)
+    public function setColumns(array $columns)
     {
-        $this->_columns = $cols;
+        $this->_columns = $columns;
         $this->_castedExpressions = false;
 
         return $this;
@@ -209,12 +209,9 @@ class ValuesExpression implements ExpressionInterface
     }
 
     /**
-     * Convert the values into a SQL string with placeholders.
-     *
-     * @param \Cake\Database\ValueBinder $generator Placeholder generator object
-     * @return string
+     * @inheritDoc
      */
-    public function sql(ValueBinder $generator): string
+    public function sql(ValueBinder $binder): string
     {
         if (empty($this->_values) && empty($this->_query)) {
             return '';
@@ -242,13 +239,13 @@ class ValuesExpression implements ExpressionInterface
                 $value = $row[$column];
 
                 if ($value instanceof ExpressionInterface) {
-                    $rowPlaceholders[] = '(' . $value->sql($generator) . ')';
+                    $rowPlaceholders[] = '(' . $value->sql($binder) . ')';
                     continue;
                 }
 
-                $placeholder = $generator->placeholder('c');
+                $placeholder = $binder->placeholder('c');
                 $rowPlaceholders[] = $placeholder;
-                $generator->bind($placeholder, $value, $types[$column]);
+                $binder->bind($placeholder, $value, $types[$column]);
             }
 
             $placeholders[] = implode(', ', $rowPlaceholders);
@@ -256,22 +253,16 @@ class ValuesExpression implements ExpressionInterface
 
         $query = $this->getQuery();
         if ($query) {
-            return ' ' . $query->sql($generator);
+            return ' ' . $query->sql($binder);
         }
 
         return sprintf(' VALUES (%s)', implode('), (', $placeholders));
     }
 
     /**
-     * Traverse the values expression.
-     *
-     * This method will also traverse any queries that are to be used in the INSERT
-     * values.
-     *
-     * @param \Closure $visitor The visitor to traverse the expression with.
-     * @return $this
+     * @inheritDoc
      */
-    public function traverse(Closure $visitor)
+    public function traverse(Closure $callback)
     {
         if ($this->_query) {
             return $this;
@@ -283,15 +274,15 @@ class ValuesExpression implements ExpressionInterface
 
         foreach ($this->_values as $v) {
             if ($v instanceof ExpressionInterface) {
-                $v->traverse($visitor);
+                $v->traverse($callback);
             }
             if (!is_array($v)) {
                 continue;
             }
             foreach ($v as $field) {
                 if ($field instanceof ExpressionInterface) {
-                    $visitor($field);
-                    $field->traverse($visitor);
+                    $callback($field);
+                    $field->traverse($callback);
                 }
             }
         }

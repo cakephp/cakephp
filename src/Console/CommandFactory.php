@@ -14,6 +14,7 @@ declare(strict_types=1);
  */
 namespace Cake\Console;
 
+use Cake\Core\ContainerInterface;
 use InvalidArgumentException;
 
 /**
@@ -25,11 +26,31 @@ use InvalidArgumentException;
 class CommandFactory implements CommandFactoryInterface
 {
     /**
+     * @var \Cake\Core\ContainerInterface|null
+     */
+    protected $container;
+
+    /**
+     * Constructor
+     *
+     * @param \Cake\Core\ContainerInterface|null $container The container to use if available.
+     */
+    public function __construct(?ContainerInterface $container = null)
+    {
+        $this->container = $container;
+    }
+
+    /**
      * @inheritDoc
      */
     public function create(string $className)
     {
-        $command = new $className();
+        if ($this->container && $this->container->has($className)) {
+            $command = $this->container->get($className);
+        } else {
+            $command = new $className();
+        }
+
         if (!($command instanceof CommandInterface) && !($command instanceof Shell)) {
             /** @psalm-suppress DeprecatedClass */
             $valid = implode('` or `', [Shell::class, CommandInterface::class]);

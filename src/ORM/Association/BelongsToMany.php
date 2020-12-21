@@ -106,7 +106,7 @@ class BelongsToMany extends Association
     /**
      * The name of the field representing the foreign key to the target table
      *
-     * @var string|string[]
+     * @var string|string[]|null
      */
     protected $_targetForeignKey;
 
@@ -270,7 +270,7 @@ class BelongsToMany extends Association
 
             $config = [];
             if (!$tableLocator->exists($tableAlias)) {
-                $config = ['table' => $tableName];
+                $config = ['table' => $tableName, 'allowFallbackClass' => true];
 
                 // Propagate the connection if we'll get an auto-model
                 if (!App::className($tableAlias, 'Model/Table', 'Table')) {

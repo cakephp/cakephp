@@ -259,7 +259,7 @@ class ConnectionTest extends TestCase
         $result = $this->connection->prepare($query);
         $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
         $sql = '#SELECT [`"\[]?1 \+ 1[`"\]]?#';
-        $this->assertRegExp($sql, $result->queryString);
+        $this->assertMatchesRegularExpression($sql, $result->queryString);
     }
 
     /**
@@ -316,7 +316,7 @@ class ConnectionTest extends TestCase
             !($this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlite),
             'Only required for SQLite driver which does not support buffered results natively'
         );
-        $this->loadFixtures('Things');
+
         $statement = $this->connection->query('SELECT * FROM things LIMIT 3');
 
         $collection = new Collection($statement);

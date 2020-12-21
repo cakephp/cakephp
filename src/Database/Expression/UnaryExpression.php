@@ -58,36 +58,33 @@ class UnaryExpression implements ExpressionInterface
      *
      * @var int
      */
-    protected $_mode;
+    protected $position;
 
     /**
      * Constructor
      *
      * @param string $operator The operator to used for the expression
      * @param mixed $value the value to use as the operand for the expression
-     * @param int $mode either UnaryExpression::PREFIX or UnaryExpression::POSTFIX
+     * @param int $position either UnaryExpression::PREFIX or UnaryExpression::POSTFIX
      */
-    public function __construct(string $operator, $value, $mode = self::PREFIX)
+    public function __construct(string $operator, $value, $position = self::PREFIX)
     {
         $this->_operator = $operator;
         $this->_value = $value;
-        $this->_mode = $mode;
+        $this->position = $position;
     }
 
     /**
-     * Converts the expression to its string representation
-     *
-     * @param \Cake\Database\ValueBinder $generator Placeholder generator object
-     * @return string
+     * @inheritDoc
      */
-    public function sql(ValueBinder $generator): string
+    public function sql(ValueBinder $binder): string
     {
         $operand = $this->_value;
         if ($operand instanceof ExpressionInterface) {
-            $operand = $operand->sql($generator);
+            $operand = $operand->sql($binder);
         }
 
-        if ($this->_mode === self::POSTFIX) {
+        if ($this->position === self::POSTFIX) {
             return '(' . $operand . ') ' . $this->_operator;
         }
 
@@ -97,11 +94,11 @@ class UnaryExpression implements ExpressionInterface
     /**
      * @inheritDoc
      */
-    public function traverse(Closure $visitor)
+    public function traverse(Closure $callback)
     {
         if ($this->_value instanceof ExpressionInterface) {
-            $visitor($this->_value);
-            $this->_value->traverse($visitor);
+            $callback($this->_value);
+            $this->_value->traverse($callback);
         }
 
         return $this;

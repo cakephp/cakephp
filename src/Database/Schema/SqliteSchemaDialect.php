@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Schema;
 
-use Cake\Database\Exception;
+use Cake\Database\Exception\DatabaseException;
 
 /**
  * Schema management/reflection features for Sqlite
@@ -47,7 +47,7 @@ class SqliteSchemaDialect extends SchemaDialect
      * Cake\Database\TypeFactory can handle.
      *
      * @param string $column The column type + length
-     * @throws \Cake\Database\Exception when unable to parse column type
+     * @throws \Cake\Database\Exception\DatabaseException when unable to parse column type
      * @return array Array of column information.
      */
     protected function _convertColumn(string $column): array
@@ -58,7 +58,7 @@ class SqliteSchemaDialect extends SchemaDialect
 
         preg_match('/(unsigned)?\s*([a-z]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
         if (empty($matches)) {
-            throw new Exception(sprintf('Unable to parse column type from "%s"', $column));
+            throw new DatabaseException(sprintf('Unable to parse column type from "%s"', $column));
         }
 
         $unsigned = false;
@@ -321,7 +321,7 @@ class SqliteSchemaDialect extends SchemaDialect
      * @param \Cake\Database\Schema\TableSchema $schema The table instance the column is in.
      * @param string $name The name of the column.
      * @return string SQL fragment.
-     * @throws \Cake\Database\Exception when the column type is unknown
+     * @throws \Cake\Database\Exception\DatabaseException when the column type is unknown
      */
     public function columnSql(TableSchema $schema, string $name): string
     {
@@ -363,7 +363,7 @@ class SqliteSchemaDialect extends SchemaDialect
             isset($data['unsigned']) &&
             $data['unsigned'] === true
         ) {
-            if ($data['type'] !== TableSchema::TYPE_INTEGER || (array)$schema->getPrimaryKey() !== [$name]) {
+            if ($data['type'] !== TableSchema::TYPE_INTEGER || $schema->getPrimaryKey() !== [$name]) {
                 $out .= ' UNSIGNED';
             }
         }
@@ -410,7 +410,7 @@ class SqliteSchemaDialect extends SchemaDialect
         if (
             in_array($data['type'], $integerTypes, true) &&
             isset($data['length']) &&
-            (array)$schema->getPrimaryKey() !== [$name]
+            $schema->getPrimaryKey() !== [$name]
         ) {
             $out .= '(' . (int)$data['length'] . ')';
         }
@@ -430,7 +430,7 @@ class SqliteSchemaDialect extends SchemaDialect
             $out .= ' NOT NULL';
         }
 
-        if ($data['type'] === TableSchema::TYPE_INTEGER && (array)$schema->getPrimaryKey() === [$name]) {
+        if ($data['type'] === TableSchema::TYPE_INTEGER && $schema->getPrimaryKey() === [$name]) {
             $out .= ' PRIMARY KEY AUTOINCREMENT';
         }
 

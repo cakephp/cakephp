@@ -17,6 +17,13 @@ declare(strict_types=1);
 
 use Cake\I18n\I18n;
 
+// Backwards compatibility alias for custom translation messages loaders which return a Package instance.
+// phpcs:disable
+if (!class_exists('Aura\Intl\Package')) {
+    class_alias('Cake\I18n\Package', 'Aura\Intl\Package');
+}
+// phpcs:enable
+
 if (!function_exists('__')) {
     /**
      * Returns a translated string if one is found; Otherwise, the submitted message.

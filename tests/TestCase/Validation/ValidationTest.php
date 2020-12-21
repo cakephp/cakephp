@@ -1650,6 +1650,12 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::time('1:00pm'));
         $this->assertFalse(Validation::time('13:00pm'));
         $this->assertFalse(Validation::time('9:00'));
+        $this->assertFalse(Validation::time('00'));
+        $this->assertFalse(Validation::time('0'));
+        $this->assertFalse(Validation::time('09'));
+        $this->assertFalse(Validation::time('9'));
+        $this->assertFalse(Validation::time('10'));
+        $this->assertFalse(Validation::time('23'));
     }
 
     /**
@@ -2144,7 +2150,7 @@ class ValidationTest extends TestCase
      */
     public function testEmailDeep()
     {
-        $this->skipIf((bool)gethostbynamel('example.abcd'), 'Your DNS service responds for non-existent domains, skipping deep email checks.');
+        $this->skipIf((bool)gethostbynamel('example.abcd'), 'Your DNS service responds for nonexistent domains, skipping deep email checks.');
 
         $this->assertTrue(Validation::email('abc.efg@cakephp.org', true));
         $this->assertFalse(Validation::email('abc.efg@caphpkeinvalid.com', true));

@@ -31,8 +31,8 @@ class TableUuidTest extends TestCase
      * @var array
      */
     protected $fixtures = [
-        'core.BinaryUuiditems',
-        'core.Uuiditems',
+        'core.BinaryUuidItems',
+        'core.UuidItems',
     ];
 
     /**
@@ -53,7 +53,7 @@ class TableUuidTest extends TestCase
      */
     public function uuidTableProvider()
     {
-        return [['uuiditems'], ['binary_uuiditems']];
+        return [['uuid_items'], ['binary_uuid_items']];
     }
 
     /**
@@ -70,7 +70,7 @@ class TableUuidTest extends TestCase
         ]);
         $table = $this->getTableLocator()->get($tableName);
         $this->assertSame($entity, $table->save($entity));
-        $this->assertRegExp('/^[a-f0-9-]{36}$/', $entity->id, 'Should be 36 characters');
+        $this->assertMatchesRegularExpression('/^[a-f0-9-]{36}$/', $entity->id, 'Should be 36 characters');
 
         $row = $table->find('all')->where(['id' => $entity->id])->first();
         $row->id = strtolower($row->id);

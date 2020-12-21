@@ -71,7 +71,7 @@ class Mysql extends Driver
     /**
      * The schema dialect for this driver
      *
-     * @var \Cake\Database\Schema\MysqlSchemaDialect
+     * @var \Cake\Database\Schema\MysqlSchemaDialect|null
      */
     protected $_schemaDialect;
 

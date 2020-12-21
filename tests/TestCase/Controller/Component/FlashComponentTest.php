@@ -210,7 +210,7 @@ class FlashComponentTest extends TestCase
             [
                 'message' => 'This is a test message',
                 'key' => 'flash',
-                'element' => 'flash/default',
+                'element' => 'flash/error',
                 'params' => ['code' => 404],
             ],
         ];

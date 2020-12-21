@@ -596,11 +596,13 @@ class EntityTest extends TestCase
      */
     public function testUnsetDeprecated()
     {
-        $entity = new Entity();
-        $entity->foo = 'foo';
+        $this->deprecated(function () {
+            $entity = new Entity();
+            $entity->foo = 'foo';
 
-        $entity->unsetProperty('foo');
-        $this->assertNull($entity->foo);
+            $entity->unsetProperty('foo');
+            $this->assertNull($entity->foo);
+        });
     }
 
     /**

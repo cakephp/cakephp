@@ -415,7 +415,7 @@ class ViewBuilderTest extends TestCase
         $builder->setOption('foo', 'overwrite');
         $this->assertSame('overwrite', $builder->getOption('foo'));
 
-        $this->assertNull($builder->getOption('non-existent'));
+        $this->assertNull($builder->getOption('nonexistent'));
     }
 
     /**
@@ -447,5 +447,18 @@ class ViewBuilderTest extends TestCase
             'Text',
         ];
         $this->assertSame($expected, $helpers);
+    }
+
+    /**
+     * @return void
+     */
+    public function testAddHelperOptions()
+    {
+        $builder = new ViewBuilder();
+        $builder->addHelper('Form')
+            ->addHelper('Text', ['foo' => 'bar']);
+
+        $helpers = $builder->getHelpers();
+        $this->assertSame(['foo' => 'bar'], $helpers['Text']);
     }
 }

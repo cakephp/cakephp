@@ -318,12 +318,12 @@ class Connection implements ConnectionInterface
      * connection's driver
      *
      * @param \Cake\Database\Query $query The query to be compiled
-     * @param \Cake\Database\ValueBinder $generator The placeholder generator to use
+     * @param \Cake\Database\ValueBinder $binder Value binder
      * @return string
      */
-    public function compileQuery(Query $query, ValueBinder $generator): string
+    public function compileQuery(Query $query, ValueBinder $binder): string
     {
-        return $this->getDriver()->compileQuery($query, $generator)[1];
+        return $this->getDriver()->compileQuery($query, $binder)[1];
     }
 
     /**
@@ -615,7 +615,7 @@ class Connection implements ConnectionInterface
     /**
      * Creates a new save point for nested transactions.
      *
-     * @param string|int $name The save point name.
+     * @param string|int $name Save point name or id
      * @return void
      */
     public function createSavePoint($name): void
@@ -626,7 +626,7 @@ class Connection implements ConnectionInterface
     /**
      * Releases a save point by its name.
      *
-     * @param string|int $name The save point name.
+     * @param string|int $name Save point name or id
      * @return void
      */
     public function releaseSavePoint($name): void
@@ -637,7 +637,7 @@ class Connection implements ConnectionInterface
     /**
      * Rollback a save point by its name.
      *
-     * @param string|int $name The save point name.
+     * @param string|int $name Save point name or id
      * @return void
      */
     public function rollbackSavepoint($name): void

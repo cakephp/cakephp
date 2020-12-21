@@ -382,4 +382,52 @@ class TableHelperTest extends TestCase
         $this->helper->output([]);
         $this->assertEquals([], $this->stub->messages());
     }
+
+    /**
+     * Right-aligned text style test.
+     */
+    public function testTextRightStyle()
+    {
+        $data = [
+            ['Item', 'Price per piece (yen)'],
+            ['Apple', '<text-right><info>¥</info> 200</text-right>'],
+            ['Orange', '100'],
+        ];
+        $this->helper->output($data);
+        $expected = [
+            '+--------+-----------------------+',
+            '| <info>Item</info>   | <info>Price per piece (yen)</info> |',
+            '+--------+-----------------------+',
+            '| Apple  |                 <info>¥</info> 200 |',
+            '| Orange | 100                   |',
+            '+--------+-----------------------+',
+        ];
+        $this->assertEquals($expected, $this->stub->messages());
+    }
+
+    /**
+     * Right-aligned text style test.(If there is text rightside the text-right tag)
+     */
+    public function testTextRightsideTheTextRightTag()
+    {
+        $this->expectException(\UnexpectedValueException::class);
+        $data = [
+            ['Item', 'Price per piece (yen)'],
+            ['Apple', '<text-right>some</text-right>text'],
+        ];
+        $this->helper->output($data);
+    }
+
+    /**
+     * Right-aligned text style test.(If there is text leftside the text-right tag)
+     */
+    public function testTextLeftsideTheTextRightTag()
+    {
+        $this->expectException(\UnexpectedValueException::class);
+        $data = [
+            ['Item', 'Price per piece (yen)'],
+            ['Apple', 'text<text-right>some</text-right>'],
+        ];
+        $this->helper->output($data);
+    }
 }

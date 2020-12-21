@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         1.2.0
+ * @since         4.2.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\Fixture;
@@ -17,9 +17,9 @@ namespace Cake\Test\Fixture;
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * BinaryUuiditemsFixture
+ * Tables of unique author ids
  */
-class BinaryUuiditemsFixture extends TestFixture
+class UniqueAuthorsFixture extends TestFixture
 {
     /**
      * fields property
@@ -27,10 +27,13 @@ class BinaryUuiditemsFixture extends TestFixture
      * @var array
      */
     public $fields = [
-        'id' => ['type' => 'binaryuuid'],
-        'name' => ['type' => 'string', 'null' => false],
-        'published' => ['type' => 'boolean', 'null' => false],
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
+        'id' => ['type' => 'integer'],
+        'first_author_id' => ['type' => 'integer', 'null' => true],
+        'second_author_id' => ['type' => 'integer', 'null' => false],
+        '_constraints' => [
+            'primary' => ['type' => 'primary', 'columns' => ['id']],
+            'nullable_non_nullable_unique' => ['type' => 'unique', 'columns' => ['first_author_id', 'second_author_id']],
+        ],
     ];
 
     /**
@@ -39,8 +42,6 @@ class BinaryUuiditemsFixture extends TestFixture
      * @var array
      */
     public $records = [
-        ['id' => '481fc6d0-b920-43e0-a40d-6d1740cf8569', 'published' => true, 'name' => 'Item 1'],
-        ['id' => '48298a29-81c0-4c26-a7fb-413140cf8569', 'published' => false, 'name' => 'Item 2'],
-        ['id' => '482b7756-8da0-419a-b21f-27da40cf8569', 'published' => true, 'name' => 'Item 3'],
+        ['first_author_id' => null, 'second_author_id' => 1],
     ];
 }

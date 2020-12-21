@@ -14,12 +14,12 @@ declare(strict_types=1);
  */
 namespace Cake\Routing\Exception;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 
 /**
  * Exception raised when a Dispatcher filter could not be found
  */
-class MissingDispatcherFilterException extends Exception
+class MissingDispatcherFilterException extends CakeException
 {
     /**
      * @inheritDoc

@@ -43,8 +43,11 @@ abstract class AbstractLocator implements LocatorInterface
      */
     public function get(string $alias, array $options = [])
     {
+        $storeOptions = $options;
+        unset($storeOptions['allowFallbackClass']);
+
         if (isset($this->instances[$alias])) {
-            if (!empty($options) && $this->options[$alias] !== $options) {
+            if (!empty($storeOptions) && $this->options[$alias] !== $storeOptions) {
                 throw new RuntimeException(sprintf(
                     'You cannot configure "%s", it already exists in the registry.',
                     $alias
@@ -54,7 +57,7 @@ abstract class AbstractLocator implements LocatorInterface
             return $this->instances[$alias];
         }
 
-        $this->options[$alias] = $options;
+        $this->options[$alias] = $storeOptions;
 
         return $this->instances[$alias] = $this->createInstance($alias, $options);
     }

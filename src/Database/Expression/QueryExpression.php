@@ -350,7 +350,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * "field NOT IN (value1, value2)".
      *
      * @param string|\Cake\Database\ExpressionInterface $field Database field to be compared against value
-     * @param array|\Cake\Database\ExpressionInterface $values the value to be bound to $field for comparison
+     * @param string|array|\Cake\Database\ExpressionInterface $values the value to be bound to $field for comparison
      * @param string|null $type the type name for $value as configured using the Type map.
      * @return $this
      */
@@ -369,23 +369,23 @@ class QueryExpression implements ExpressionInterface, Countable
     /**
      * Adds a new condition to the expression object in the form "EXISTS (...)".
      *
-     * @param \Cake\Database\ExpressionInterface $query the inner query
+     * @param \Cake\Database\ExpressionInterface $expression the inner query
      * @return $this
      */
-    public function exists(ExpressionInterface $query)
+    public function exists(ExpressionInterface $expression)
     {
-        return $this->add(new UnaryExpression('EXISTS', $query, UnaryExpression::PREFIX));
+        return $this->add(new UnaryExpression('EXISTS', $expression, UnaryExpression::PREFIX));
     }
 
     /**
      * Adds a new condition to the expression object in the form "NOT EXISTS (...)".
      *
-     * @param \Cake\Database\ExpressionInterface $query the inner query
+     * @param \Cake\Database\ExpressionInterface $expression the inner query
      * @return $this
      */
-    public function notExists(ExpressionInterface $query)
+    public function notExists(ExpressionInterface $expression)
     {
-        return $this->add(new UnaryExpression('NOT EXISTS', $query, UnaryExpression::PREFIX));
+        return $this->add(new UnaryExpression('NOT EXISTS', $expression, UnaryExpression::PREFIX));
     }
 
     /**
@@ -508,11 +508,11 @@ class QueryExpression implements ExpressionInterface, Countable
     /**
      * Builds equal condition or assignment with identifier wrapping.
      *
-     * @param string $left Left join condition field name.
-     * @param string $right Right join condition field name.
+     * @param string $leftField Left join condition field name.
+     * @param string $rightField Right join condition field name.
      * @return $this
      */
-    public function equalFields(string $left, string $right)
+    public function equalFields(string $leftField, string $rightField)
     {
         $wrapIdentifier = function ($field) {
             if ($field instanceof ExpressionInterface) {
@@ -522,19 +522,13 @@ class QueryExpression implements ExpressionInterface, Countable
             return new IdentifierExpression($field);
         };
 
-        return $this->eq($wrapIdentifier($left), $wrapIdentifier($right));
+        return $this->eq($wrapIdentifier($leftField), $wrapIdentifier($rightField));
     }
 
     /**
-     * Returns the string representation of this object so that it can be used in a
-     * SQL query. Note that values condition values are not included in the string,
-     * in their place placeholders are put and can be replaced by the quoted values
-     * accordingly.
-     *
-     * @param \Cake\Database\ValueBinder $generator Placeholder generator object
-     * @return string
+     * @inheritDoc
      */
-    public function sql(ValueBinder $generator): string
+    public function sql(ValueBinder $binder): string
     {
         $len = $this->count();
         if ($len === 0) {
@@ -545,9 +539,9 @@ class QueryExpression implements ExpressionInterface, Countable
         $parts = [];
         foreach ($this->_conditions as $part) {
             if ($part instanceof Query) {
-                $part = '(' . $part->sql($generator) . ')';
+                $part = '(' . $part->sql($binder) . ')';
             } elseif ($part instanceof ExpressionInterface) {
-                $part = $part->sql($generator);
+                $part = $part->sql($binder);
             }
             if (strlen($part)) {
                 $parts[] = $part;
@@ -558,22 +552,14 @@ class QueryExpression implements ExpressionInterface, Countable
     }
 
     /**
-     * Traverses the tree structure of this query expression by executing a callback
-     * function for each of the conditions that are included in this object.
-     * Useful for compiling the final expression, or doing
-     * introspection in the structure.
-     *
-     * Callback function receives as only argument an instance of ExpressionInterface
-     *
-     * @param \Closure $visitor The callable to apply to all sub-expressions.
-     * @return $this
+     * @inheritDoc
      */
-    public function traverse(Closure $visitor)
+    public function traverse(Closure $callback)
     {
         foreach ($this->_conditions as $c) {
             if ($c instanceof ExpressionInterface) {
-                $visitor($c);
-                $c->traverse($visitor);
+                $callback($c);
+                $c->traverse($callback);
             }
         }
 
@@ -592,15 +578,15 @@ class QueryExpression implements ExpressionInterface, Countable
      * passed by reference, this will enable you to change the key under which the
      * modified part is stored.
      *
-     * @param callable $visitor The callable to apply to each part.
+     * @param callable $callback The callable to apply to each part.
      * @return $this
      */
-    public function iterateParts(callable $visitor)
+    public function iterateParts(callable $callback)
     {
         $parts = [];
         foreach ($this->_conditions as $k => $c) {
             $key = &$k;
-            $part = $visitor($c, $key);
+            $part = $callback($c, $key);
             if ($part !== null) {
                 $parts[$key] = $part;
             }
@@ -617,19 +603,21 @@ class QueryExpression implements ExpressionInterface, Countable
      * as they often contain user input and arrays of strings
      * are easy to sneak in.
      *
-     * @param callable|string|array|\Cake\Database\ExpressionInterface $c The callable to check.
+     * @param callable|string|array|\Cake\Database\ExpressionInterface $callable The callable to check.
      * @return bool Valid callable.
+     * @deprecated 4.2.0 This method is unused.
+     * @codeCoverageIgnore
      */
-    public function isCallable($c): bool
+    public function isCallable($callable): bool
     {
-        if (is_string($c)) {
+        if (is_string($callable)) {
             return false;
         }
-        if (is_object($c) && is_callable($c)) {
+        if (is_object($callable) && is_callable($callable)) {
             return true;
         }
 
-        return is_array($c) && isset($c[0]) && is_object($c[0]) && is_callable($c);
+        return is_array($callable) && isset($callable[0]) && is_object($callable[0]) && is_callable($callable);
     }
 
     /**

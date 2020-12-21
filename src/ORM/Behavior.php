@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\ORM;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Event\EventListenerInterface;
 use ReflectionClass;
@@ -184,8 +184,21 @@ class Behavior implements EventListenerInterface
      * Get the table instance this behavior is bound to.
      *
      * @return \Cake\ORM\Table The bound table instance.
+     * @deprecated 4.2.0 Use table() instead.
      */
     public function getTable(): Table
+    {
+        deprecationWarning('Behavior::getTable() is deprecated. Use table() instead.');
+
+        return $this->table();
+    }
+
+    /**
+     * Get the table instance this behavior is bound to.
+     *
+     * @return \Cake\ORM\Table The bound table instance.
+     */
+    public function table(): Table
     {
         return $this->_table;
     }
@@ -229,7 +242,7 @@ class Behavior implements EventListenerInterface
      * Checks that implemented keys contain values pointing at callable.
      *
      * @return void
-     * @throws \Cake\Core\Exception\Exception if config are invalid
+     * @throws \Cake\Core\Exception\CakeException if config are invalid
      */
     public function verifyConfig(): void
     {
@@ -241,7 +254,7 @@ class Behavior implements EventListenerInterface
 
             foreach ($this->_config[$key] as $method) {
                 if (!is_callable([$this, $method])) {
-                    throw new Exception(sprintf(
+                    throw new CakeException(sprintf(
                         'The method %s is not callable on class %s',
                         $method,
                         static::class

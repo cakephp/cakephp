@@ -1180,7 +1180,7 @@ class MarshallerTest extends TestCase
     }
 
     /**
-     * Test if exception is raised when called with [associated => NonExistingAssociation]
+     * Test if exception is raised when called with [associated => NonExistentAssociation]
      * Previously such association were simply ignored
      *
      * @return void

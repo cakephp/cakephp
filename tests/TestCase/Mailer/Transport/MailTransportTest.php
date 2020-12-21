@@ -18,7 +18,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Mailer\Transport;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Mailer\Message;
 use Cake\TestSuite\TestCase;
 
@@ -53,7 +53,7 @@ class MailTransportTest extends TestCase
      */
     public function testSendWithoutRecipient()
     {
-        $this->expectException(Exception::class);
+        $this->expectException(CakeException::class);
         $this->expectExceptionMessage('You must specify at least one recipient. Use one of `setTo`, `setCc` or `setBcc` to define a recipient.');
 
         $message = new Message();

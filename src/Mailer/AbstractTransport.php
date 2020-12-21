@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Mailer;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Core\InstanceConfigTrait;
 
 /**
@@ -57,7 +57,7 @@ abstract class AbstractTransport
      *
      * @param \Cake\Mailer\Message $message Message instance.
      * @return void
-     * @throws \Cake\Core\Exception\Exception If at least one of to, cc or bcc is not specified.
+     * @throws \Cake\Core\Exception\CakeException If at least one of to, cc or bcc is not specified.
      */
     protected function checkRecipient(Message $message): void
     {
@@ -66,7 +66,7 @@ abstract class AbstractTransport
             && $message->getCc() === []
             && $message->getBcc() === []
         ) {
-            throw new Exception(
+            throw new CakeException(
                 'You must specify at least one recipient.'
                 . ' Use one of `setTo`, `setCc` or `setBcc` to define a recipient.'
             );

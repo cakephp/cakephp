@@ -60,7 +60,7 @@ class ShellDispatcher
     public function __construct(array $args = [], bool $bootstrap = true)
     {
         set_time_limit(0);
-        $this->args = (array)$args;
+        $this->args = $args;
 
         $this->addShortPluginAliases();
 
@@ -134,7 +134,7 @@ class ShellDispatcher
      * Defines current working environment.
      *
      * @return void
-     * @throws \Cake\Core\Exception\Exception
+     * @throws \Cake\Core\Exception\CakeException
      */
     protected function _initEnvironment(): void
     {
@@ -181,7 +181,7 @@ class ShellDispatcher
         } catch (StopException $e) {
             $code = $e->getCode();
 
-            return (int)$code;
+            return $code;
         }
         if ($result === null || $result === true) {
             /** @psalm-suppress DeprecatedClass */

@@ -232,8 +232,14 @@ class FormContextTest extends TestCase
             'entity' => $form,
         ]);
         $this->assertEquals([], $context->attributes('id'));
-        $this->assertEquals(['length' => 10, 'precision' => null], $context->attributes('email'));
-        $this->assertEquals(['precision' => 2, 'length' => 5], $context->attributes('amount'));
+        $this->assertEquals(
+            ['length' => 10, 'precision' => null, 'default' => null],
+            $context->attributes('email')
+        );
+        $this->assertEquals(
+            ['precision' => 2, 'length' => 5, 'default' => null],
+            $context->attributes('amount')
+        );
     }
 
     /**

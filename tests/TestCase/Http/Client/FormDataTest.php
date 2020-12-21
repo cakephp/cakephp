@@ -32,7 +32,7 @@ class FormDataTest extends TestCase
     {
         $data = new FormData();
         $result = $data->boundary();
-        $this->assertRegExp('/^[a-f0-9]{32}$/', $result);
+        $this->assertMatchesRegularExpression('/^[a-f0-9]{32}$/', $result);
 
         $result2 = $data->boundary();
         $this->assertSame($result, $result2);

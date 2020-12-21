@@ -183,7 +183,7 @@ class SchemaCacheCommandsTest extends TestCase
     }
 
     /**
-     * Test build() with a non-existing connection name.
+     * Test build() with a nonexistent connection name.
      *
      * @return void
      */

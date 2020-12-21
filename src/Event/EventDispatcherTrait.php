@@ -25,7 +25,7 @@ trait EventDispatcherTrait
      * Instance of the Cake\Event\EventManager this object is using
      * to dispatch inner events.
      *
-     * @var \Cake\Event\EventManagerInterface
+     * @var \Cake\Event\EventManagerInterface|null
      */
     protected $_eventManager;
 

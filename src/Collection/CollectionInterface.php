@@ -251,13 +251,13 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * echo $max->name;
      * ```
      *
-     * @param callable|string $callback the callback or column name to use for sorting
+     * @param callable|string $path The column name to use for sorting or callback that returns the value.
      * @param int $sort The sort type, one of SORT_STRING
      * SORT_NUMERIC or SORT_NATURAL
      * @see \Cake\Collection\CollectionInterface::sortBy()
      * @return mixed The value of the top element in the collection
      */
-    public function max($callback, int $sort = \SORT_NUMERIC);
+    public function max($path, int $sort = \SORT_NUMERIC);
 
     /**
      * Returns the bottom element in this collection after being sorted by a property.
@@ -277,13 +277,13 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * echo $min->name;
      * ```
      *
-     * @param callable|string $callback the callback or column name to use for sorting
+     * @param callable|string $path The column name to use for sorting or callback that returns the value.
      * @param int $sort The sort type, one of SORT_STRING
      * SORT_NUMERIC or SORT_NATURAL
      * @see \Cake\Collection\CollectionInterface::sortBy()
      * @return mixed The value of the bottom element in the collection
      */
-    public function min($callback, int $sort = \SORT_NUMERIC);
+    public function min($path, int $sort = \SORT_NUMERIC);
 
     /**
      * Returns the average of all the values extracted with $path
@@ -372,13 +372,13 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * }
      * ```
      *
-     * @param callable|string $callback the callback or column name to use for sorting
+     * @param callable|string $path The column name to use for sorting or callback that returns the value.
      * @param int $order The sort order, either SORT_DESC or SORT_ASC
      * @param int $sort The sort type, one of SORT_STRING
      * SORT_NUMERIC or SORT_NATURAL
      * @return self
      */
-    public function sortBy($callback, int $order = SORT_DESC, int $sort = \SORT_NUMERIC): CollectionInterface;
+    public function sortBy($path, int $order = SORT_DESC, int $sort = \SORT_NUMERIC): CollectionInterface;
 
     /**
      * Splits a collection into sets, grouped by the result of running each value
@@ -417,11 +417,11 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * ];
      * ```
      *
-     * @param callable|string $callback the callback or column name to use for grouping
+     * @param callable|string $path The column name to use for grouping or callback that returns the value.
      * or a function returning the grouping key out of the provided element
      * @return self
      */
-    public function groupBy($callback): CollectionInterface;
+    public function groupBy($path): CollectionInterface;
 
     /**
      * Given a list and a callback function that returns a key for each element
@@ -456,11 +456,11 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * ];
      * ```
      *
-     * @param callable|string $callback the callback or column name to use for indexing
+     * @param callable|string $path The column name to use for indexing or callback that returns the value.
      * or a function returning the indexing key out of the provided element
      * @return self
      */
-    public function indexBy($callback): CollectionInterface;
+    public function indexBy($path): CollectionInterface;
 
     /**
      * Sorts a list into groups and returns a count for the number of elements
@@ -494,11 +494,11 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * ];
      * ```
      *
-     * @param callable|string $callback the callback or column name to use for indexing
+     * @param callable|string $path The column name to use for indexing or callback that returns the value.
      * or a function returning the indexing key out of the provided element
      * @return self
      */
-    public function countBy($callback): CollectionInterface;
+    public function countBy($path): CollectionInterface;
 
     /**
      * Returns the total sum of all the values extracted with $matcher

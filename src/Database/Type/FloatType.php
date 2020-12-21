@@ -65,7 +65,7 @@ class FloatType extends BaseType implements BatchCastingInterface
      * @param mixed $value The value to convert.
      * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
      * @return float|null
-     * @throws \Cake\Core\Exception\Exception
+     * @throws \Cake\Core\Exception\CakeException
      */
     public function toPHP($value, DriverInterface $driver): ?float
     {

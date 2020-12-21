@@ -604,7 +604,7 @@ class ConsoleIoTest extends TestCase
      */
     public function outHelperProvider()
     {
-        return [['info'], ['success']];
+        return [['info'], ['success'], ['comment']];
     }
 
     /**
@@ -700,7 +700,7 @@ class ConsoleIoTest extends TestCase
             ->method('write');
 
         $directory = TMP . 'shell_test';
-        $this->assertFileNotExists($directory, 'Directory should not exist before createFile');
+        $this->assertFileDoesNotExist($directory, 'Directory should not exist before createFile');
 
         $path = $directory . DS . 'create.txt';
         $contents = 'some content';
@@ -729,7 +729,7 @@ class ConsoleIoTest extends TestCase
         chmod($path, 0444);
 
         $this->io->createFile($file, 'testing');
-        $this->assertFileNotExists($file);
+        $this->assertFileDoesNotExist($file);
 
         chmod($path, 0744);
         rmdir($path);
