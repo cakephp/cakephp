@@ -48,7 +48,7 @@ class BelongsToManyTest extends TestCase
         'core.SpecialTags',
         'core.ArticlesTags',
         'core.Tags',
-        'core.BinaryUuiditems',
+        'core.BinaryUuidItems',
         'core.BinaryUuidtags',
         'core.BinaryUuiditemsBinaryUuidtags',
     ];
@@ -1018,7 +1018,7 @@ class BelongsToManyTest extends TestCase
             ConnectionManager::get('test')->getDriver() instanceof \Cake\Database\Driver\Sqlserver,
             'This test is failing in SQLServer and needs to be revisited.'
         );
-        $items = $this->getTableLocator()->get('BinaryUuiditems');
+        $items = $this->getTableLocator()->get('BinaryUuidItems');
         $tags = $this->getTableLocator()->get('BinaryUuidtags');
 
         $items->belongsToMany('BinaryUuidtags', [
@@ -1026,7 +1026,7 @@ class BelongsToManyTest extends TestCase
             'targetTable' => $tags,
         ]);
         $itemName = 'Item 1';
-        $item = $items->find()->where(['BinaryUuiditems.name' => $itemName])->firstOrFail();
+        $item = $items->find()->where(['BinaryUuidItems.name' => $itemName])->firstOrFail();
 
         // 1=existing, 2=new tag
         $item->binary_uuidtags = [
