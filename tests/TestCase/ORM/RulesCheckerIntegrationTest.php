@@ -417,7 +417,7 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
-     * Tests isUnique with allowMultipleNulles
+     * Tests isUnique with allowMultipleNulls
      *
      * @group save
      * @return void
