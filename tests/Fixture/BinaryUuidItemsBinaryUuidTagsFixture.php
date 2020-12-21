@@ -17,9 +17,9 @@ namespace Cake\Test\Fixture;
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * BinaryUuiditemsBinaryUuidtagsFixture
+ * BinaryUuidItemsBinaryUuidTagsFixture
  */
-class BinaryUuiditemsBinaryUuidtagsFixture extends TestFixture
+class BinaryUuidItemsBinaryUuidTagsFixture extends TestFixture
 {
     /**
      * fields property
@@ -28,13 +28,13 @@ class BinaryUuiditemsBinaryUuidtagsFixture extends TestFixture
      */
     public $fields = [
         'id' => ['type' => 'integer'],
-        'binary_uuiditem_id' => ['type' => 'binaryuuid', 'null' => false],
-        'binary_uuidtag_id' => ['type' => 'binaryuuid', 'null' => false],
+        'binary_uuid_item_id' => ['type' => 'binaryuuid', 'null' => false],
+        'binary_uuid_tag_id' => ['type' => 'binaryuuid', 'null' => false],
         '_constraints' => [
             'primary' => ['type' => 'primary', 'columns' => ['id']],
             'unique_item_tag' => [
                 'type' => 'unique',
-                'columns' => ['binary_uuiditem_id', 'binary_uuidtag_id'],
+                'columns' => ['binary_uuid_item_id', 'binary_uuid_tag_id'],
             ],
         ],
     ];
