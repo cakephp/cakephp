@@ -351,7 +351,7 @@ class TimeHelper extends Helper
      *
      * This method is an alias for TimeHelper::i18nFormat().
      *
-     * @param int|string|\DateTimeInterface $date UNIX timestamp, strtotime() valid string
+     * @param int|string|\DateTimeInterface|null $date UNIX timestamp, strtotime() valid string
      *   or DateTime object (or a date format string).
      * @param int|string|null $format date format string (or a UNIX timestamp,
      *   strtotime() valid string or DateTime object).
