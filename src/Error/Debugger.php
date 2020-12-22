@@ -1058,12 +1058,12 @@ class Debugger
      */
     public static function checkSecurityKeys(): void
     {
-        if (Security::getSalt() === '__SALT__') {
-            trigger_error(sprintf(
-                'Please change the value of %s in %s to a salt value specific to your application.',
-                '\'Security.salt\'',
-                'ROOT/config/app.php'
-            ), E_USER_NOTICE);
+        $salt = Security::getSalt();
+        if ($salt === '__SALT__' || strlen($salt) < 32) {
+            trigger_error(
+                "Please change the value of `Security.salt` in `ROOT/config/app.php` to a random value of at least 32 characters.",
+                E_USER_NOTICE
+            );
         }
     }
 }
