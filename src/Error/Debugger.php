@@ -1061,7 +1061,8 @@ class Debugger
         $salt = Security::getSalt();
         if ($salt === '__SALT__' || strlen($salt) < 32) {
             trigger_error(
-                "Please change the value of `Security.salt` in `ROOT/config/app.php` to a random value of at least 32 characters.",
+                'Please change the value of `Security.salt` in `ROOT/config/app.php` ' .
+                'to a random value of at least 32 characters.',
                 E_USER_NOTICE
             );
         }
