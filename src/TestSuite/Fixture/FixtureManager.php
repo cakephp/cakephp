@@ -389,9 +389,11 @@ class FixtureManager
                     });
                 });
             } else {
-                foreach ($fixtures as $fixture) {
-                    $callback($db, $fixture, $tableCache);
-                }
+                $db->disableConstraints(function (ConnectionInterface $db) use ($fixtures, $callback, $tableCache) {
+                    foreach ($fixtures as $fixture) {
+                        $callback($db, $fixture, $tableCache);
+                    }
+                });
             }
 
             if ($logQueries) {
