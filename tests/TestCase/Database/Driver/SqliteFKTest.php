@@ -32,6 +32,9 @@ class SqliteFKTest extends TestCase
     {
         parent::setUp();
 
+        $config = ConnectionManager::getConfig('test');
+        $this->skipIf(strpos($config['driver'], 'Sqlite') === false, 'Not using Sqlite for test config');
+
         ConnectionManager::setConfig('sqliteFKtest', ['url' => 'sqlite:///:memory:']);
         $connection = ConnectionManager::get('sqliteFKtest');
         $connection->connect();
