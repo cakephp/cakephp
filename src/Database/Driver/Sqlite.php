@@ -149,7 +149,7 @@ class Sqlite extends Driver
         // Fetch the current state of FK support
         $statement = $this->getConnection()->query('PRAGMA foreign_keys');
         $statement->execute();
-        $this->_isFKEnabled = (bool) $statement->fetch()['foreign_keys'];
+        $this->_isFKEnabled = (bool)$statement->fetch()['foreign_keys'];
 
         return true;
     }
