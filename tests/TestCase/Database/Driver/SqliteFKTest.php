@@ -58,7 +58,7 @@ class SqliteFKTest extends TestCase
             $current ?
             'PRAGMA foreign_keys = ON' :
             'PRAGMA foreign_keys = OFF',
-          $driver->enableForeignKeySQL()
+            $driver->enableForeignKeySQL()
         );
     }
 

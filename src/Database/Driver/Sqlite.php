@@ -183,6 +183,11 @@ class Sqlite extends Driver
         return $result;
     }
 
+    /**
+     * Query SQLite DB for current status of foreign keys support
+     *
+     * @return  bool      True if foreign key support is currently enabled
+     */
     public function isForeignKeyEnabled(): bool
     {
         $statement = $this->getConnection()->query('PRAGMA foreign_keys');
