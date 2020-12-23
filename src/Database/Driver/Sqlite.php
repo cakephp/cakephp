@@ -57,6 +57,13 @@ class Sqlite extends Driver
     ];
 
     /**
+     * Stores the initial state of foreign key support in sqlite db
+     *
+     * @var bool
+     */
+    protected $_isFKEnabled = false;
+
+    /**
      * The schema dialect class for this driver
      *
      * @var \Cake\Database\Schema\SqliteSchemaDialect|null
@@ -139,6 +146,11 @@ class Sqlite extends Driver
             }
         }
 
+        // Fetch the current state of FK support
+        $statement = $this->getConnection()->query('PRAGMA foreign_keys');
+        $statement->execute();
+        $this->_isFKEnabled = (bool) $statement->fetch()['foreign_keys'];
+
         return true;
     }
 
@@ -189,7 +201,7 @@ class Sqlite extends Driver
      */
     public function enableForeignKeySQL(): string
     {
-        return 'PRAGMA foreign_keys = ON';
+        return 'PRAGMA foreign_keys = ' . ($this->_isFKEnabled ? 'ON' : 'OFF');
     }
 
     /**
