@@ -183,6 +183,15 @@ class Sqlite extends Driver
         return $result;
     }
 
+    public function isForeignKeyEnabled(): bool
+    {
+        $statement = $this->getConnection()->query('PRAGMA foreign_keys');
+        $statement->execute();
+        $status = $statement->fetch()['foreign_keys'];
+
+        return (bool)$status;
+    }
+
     /**
      * @inheritDoc
      */
@@ -190,11 +199,8 @@ class Sqlite extends Driver
     {
         // Fetch the current state of FK support
         if ($this->_isFKEnabled === null) {
-            $statement = $this->getConnection()->query('PRAGMA foreign_keys');
-            $statement->execute();
-            $this->_isFKEnabled = (bool)$statement->fetch()['foreign_keys'];
+            $this->_isFKEnabled = $this->isForeignKeyEnabled();
         }
-
         return 'PRAGMA foreign_keys = OFF';
     }
 
@@ -203,7 +209,7 @@ class Sqlite extends Driver
      */
     public function enableForeignKeySQL(): string
     {
-        return 'PRAGMA foreign_keys = ' . ($this->_isFKEnabled ? 'ON' : 'OFF');
+        return 'PRAGMA foreign_keys = ' . ($this->_isFKEnabled === false ? 'OFF' : 'ON');
     }
 
     /**
