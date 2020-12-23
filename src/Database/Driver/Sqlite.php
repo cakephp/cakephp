@@ -206,7 +206,7 @@ class Sqlite extends Driver
         if ($this->_isFKEnabled === null) {
             $this->_isFKEnabled = $this->isForeignKeyEnabled();
         }
-        
+
         return 'PRAGMA foreign_keys = OFF';
     }
 
