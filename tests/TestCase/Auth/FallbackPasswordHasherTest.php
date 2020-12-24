@@ -19,8 +19,8 @@ namespace Cake\Test\TestCase\Auth;
 use Cake\Auth\DefaultPasswordHasher;
 use Cake\Auth\FallbackPasswordHasher;
 use Cake\Auth\WeakPasswordHasher;
-use Cake\Utility\Security;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Security;
 
 /**
  * Test case for FallbackPasswordHasher
