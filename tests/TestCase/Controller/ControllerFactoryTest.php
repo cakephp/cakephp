@@ -583,7 +583,7 @@ class ControllerFactoryTest extends TestCase
                 'plugin' => null,
                 'controller' => 'Dependencies',
                 'action' => 'requiredParam',
-                'pass' => ['one']
+                'pass' => ['one'],
             ],
         ]);
         $controller = $this->factory->create($request);
