@@ -167,13 +167,14 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
             // XOR the token and salt together so that we can reverse it later.
             $salted .= chr(ord($token[$i]) ^ ord($salt[$i]));
         }
+
         return $salted . $salt;
     }
 
     /**
      * Remove the salt from a CSRF token.
      *
-     * If the token is not TOKEN_VALUE_LENGTH * 2 it is an old 
+     * If the token is not TOKEN_VALUE_LENGTH * 2 it is an old
      * unsalted value that is supported for backwards compatibility.
      *
      * @param string $token The token that could be salty.
@@ -192,6 +193,7 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
             // Reverse the the XOR to desalt.
             $unsalted .= chr(ord($salted[$i]) ^ ord($salt[$i]));
         }
+
         return $unsalted;
     }
 

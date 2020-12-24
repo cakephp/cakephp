@@ -80,7 +80,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
             'webroot' => '/dir/',
         ]);
 
-        /** @var $updatedRequest \Cake\Http\ServerRequest|null */
+        /** @var \Cake\Http\ServerRequest|null $updatedRequest */
         $updatedRequest = null;
         $handler = new TestRequestHandler(function ($request) use (&$updatedRequest) {
             $updatedRequest = $request;
@@ -174,7 +174,6 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
         $response = $middleware->process($request, $this->_getRequestHandler());
         $this->assertInstanceOf(Response::class, $response);
     }
-
 
     /**
      * Test that the X-CSRF-Token works with the various http methods.
