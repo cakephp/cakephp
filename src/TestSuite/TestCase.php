@@ -50,7 +50,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @var \Cake\TestSuite\Fixture\FixtureManager|null
      */
-    public $fixtureManager;
+    public static $fixtureManager;
 
     /**
      * Fixtures used by this test case.
@@ -237,7 +237,7 @@ abstract class TestCase extends BaseTestCase
         $this->getTableLocator()->clear();
         $this->_configure = [];
         $this->_tableLocator = null;
-        $this->fixtureManager = null;
+        static::$fixtureManager = null;
     }
 
     /**
@@ -255,7 +255,7 @@ abstract class TestCase extends BaseTestCase
         if ($this->autoFixtures) {
             throw new RuntimeException('Cannot use `loadFixtures()` with `$autoFixtures` enabled.');
         }
-        if ($this->fixtureManager === null) {
+        if (static::$fixtureManager === null) {
             throw new RuntimeException('No fixture manager to load the test fixture');
         }
 
@@ -267,7 +267,7 @@ abstract class TestCase extends BaseTestCase
         if (empty($args)) {
             $autoFixtures = $this->autoFixtures;
             $this->autoFixtures = true;
-            $this->fixtureManager->load($this);
+            static::$fixtureManager->load($this);
             $this->autoFixtures = $autoFixtures;
         }
     }
@@ -989,36 +989,5 @@ abstract class TestCase extends BaseTestCase
         Configure::write('App.namespace', $appNamespace);
 
         return $previous;
-    }
-
-    /**
-     * Adds a fixture to this test case.
-     *
-     * Examples:
-     * - core.Tags
-     * - app.MyRecords
-     * - plugin.MyPluginName.MyModelName
-     *
-     * Use this method inside your test cases' {@link getFixtures()} method
-     * to build up the fixture list.
-     *
-     * @param string $fixture Fixture
-     * @return $this
-     */
-    protected function addFixture(string $fixture)
-    {
-        $this->fixtures[] = $fixture;
-
-        return $this;
-    }
-
-    /**
-     * Gets fixtures.
-     *
-     * @return string[]
-     */
-    public function getFixtures(): array
-    {
-        return $this->fixtures;
     }
 }

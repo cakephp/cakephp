@@ -22,9 +22,9 @@ use Cake\Database\ConstraintsInterface;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\FixtureInterface;
-use Cake\TestSuite\TestCase;
 use Closure;
 use PDOException;
+use ReflectionClass;
 use RuntimeException;
 use UnexpectedValueException;
 
@@ -90,17 +90,24 @@ class FixtureManager
     /**
      * Inspects the test to look for unloaded fixtures and loads them
      *
-     * @param \Cake\TestSuite\TestCase $test The test case to inspect.
+     * @param string $testClass The class name of the TestCase
      * @return void
+     * @psalm-param class-string<\Cake\TestSuite\TestCase> $testClass
      */
-    public function fixturize(TestCase $test): void
+    public function fixturize(string $testClass): void
     {
         $this->_initDb();
-        if (!$test->getFixtures() || !empty($this->_processed[get_class($test)])) {
+
+        if (!empty($this->_processed[$testClass])) {
             return;
         }
-        $this->_loadFixtures($test);
-        $this->_processed[get_class($test)] = true;
+
+        $test = new ReflectionClass($testClass);
+        $prop = $test->getProperty('fixtures');
+        $prop->setAccessible(true);
+        $this->_loadFixtures($testClass, $prop->getValue(new $testClass()));
+
+        $this->_processed[$testClass] = true;
     }
 
     /**
@@ -161,17 +168,14 @@ class FixtureManager
     /**
      * Looks for fixture files and instantiates the classes accordingly
      *
-     * @param \Cake\TestSuite\TestCase $test The test suite to load fixtures for.
+     * @param string $testClass The class name of the TestCase
+     * @param string[] $fixtureNames The names of fixtures to initialize
      * @return void
      * @throws \UnexpectedValueException when a referenced fixture does not exist.
      */
-    protected function _loadFixtures(TestCase $test): void
+    protected function _loadFixtures(string $testClass, array $fixtureNames): void
     {
-        $fixtures = $test->getFixtures();
-        if (!$fixtures) {
-            return;
-        }
-        foreach ($fixtures as $fixture) {
+        foreach ($fixtureNames as $fixture) {
             if (isset($this->_loaded[$fixture])) {
                 continue;
             }
@@ -222,7 +226,7 @@ class FixtureManager
                     'Referenced fixture class "%s" not found. Fixture "%s" was referenced in test case "%s".',
                     $className,
                     $fixture,
-                    get_class($test)
+                    $testClass
                 );
                 throw new UnexpectedValueException($msg);
             }
@@ -259,22 +263,32 @@ class FixtureManager
     /**
      * Creates the fixtures tables and inserts data on them.
      *
-     * @param \Cake\TestSuite\TestCase $test The test to inspect for fixture loading.
+     * @param string $testClass The class name of the TestCase
      * @return void
      * @throws \Cake\Core\Exception\CakeException When fixture records cannot be inserted.
      * @throws \RuntimeException
      */
-    public function load(TestCase $test): void
+    public function load(string $testClass): void
     {
-        $fixtures = $test->getFixtures();
-        if (!$fixtures || !$test->autoFixtures) {
+        $test = new ReflectionClass($testClass);
+        $prop = $test->getProperty('fixtures');
+        $prop->setAccessible(true);
+        $fixtureNames = $prop->getValue(new $testClass());
+
+        $prop = $test->getProperty('dropTables');
+        $prop->setAccessible(true);
+        $dropTables = $prop->getValue(new $testClass());
+
+        $prop = $test->getProperty('autoFixtures');
+        $prop->setAccessible(true);
+        if (!$prop->getValue(new $testClass())) {
             return;
         }
 
         try {
             $this->runPerFixture(
-                $fixtures,
-                function (ConnectionInterface $db, FixtureInterface $fixture, array $tableCache) use ($test) {
+                $fixtureNames,
+                function (ConnectionInterface $db, FixtureInterface $fixture, array $tableCache) use ($testClass) {
                     $configName = $db->configName();
                     if (!isset($this->_insertionMap[$configName])) {
                         $this->_insertionMap[$configName] = [];
@@ -291,7 +305,7 @@ class FixtureManager
                             $msg = sprintf(
                                 'Unable to drop constraints for fixture "%s" in "%s" test case: ' . "\n" . '%s',
                                 get_class($fixture),
-                                get_class($test),
+                                $testClass,
                                 $e->getMessage()
                             );
                             throw new CakeException($msg, null, $e);
@@ -301,11 +315,11 @@ class FixtureManager
             );
 
             $this->runPerFixture(
-                $fixtures,
-                function (ConnectionInterface $db, FixtureInterface $fixture, array $tableCache) use ($test) {
+                $fixtureNames,
+                function (ConnectionInterface $db, FixtureInterface $fixture, array $tableCache) use ($dropTables) {
                     $configName = $db->configName();
                     if (!in_array($fixture, $this->_insertionMap[$configName], true)) {
-                        $this->_setupTable($fixture, $db, $tableCache, $test->dropTables);
+                        $this->_setupTable($fixture, $db, $tableCache, $dropTables);
                     } else {
                         $fixture->truncate($db);
                     }
@@ -313,8 +327,8 @@ class FixtureManager
             );
 
             $this->runPerFixture(
-                $fixtures,
-                function (ConnectionInterface $db, FixtureInterface $fixture, array $tableCache) use ($test) {
+                $fixtureNames,
+                function (ConnectionInterface $db, FixtureInterface $fixture, array $tableCache) use ($testClass) {
                     if (!$fixture instanceof ConstraintsInterface) {
                         return;
                     }
@@ -325,7 +339,7 @@ class FixtureManager
                         $msg = sprintf(
                             'Unable to create constraints for fixture "%s" in "%s" test case: ' . "\n" . '%s',
                             get_class($fixture),
-                            get_class($test),
+                            $testClass,
                             $e->getMessage()
                         );
                         throw new CakeException($msg, null, $e);
@@ -334,15 +348,15 @@ class FixtureManager
             );
 
             $this->runPerFixture(
-                $fixtures,
-                function (ConnectionInterface $db, FixtureInterface $fixture, array $tableCache) use ($test) {
+                $fixtureNames,
+                function (ConnectionInterface $db, FixtureInterface $fixture, array $tableCache) use ($testClass) {
                     try {
                         $fixture->insert($db);
                     } catch (PDOException $e) {
                         $msg = sprintf(
                             'Unable to insert fixture "%s" in "%s" test case: ' . "\n" . '%s',
                             get_class($fixture),
-                            get_class($test),
+                            $testClass,
                             $e->getMessage()
                         );
                         throw new CakeException($msg, null, $e);
@@ -353,7 +367,7 @@ class FixtureManager
         } catch (PDOException $e) {
             $msg = sprintf(
                 'Unable to insert fixtures for "%s" test case. %s',
-                get_class($test),
+                $testClass,
                 $e->getMessage()
             );
             throw new RuntimeException($msg, 0, $e);
@@ -422,18 +436,18 @@ class FixtureManager
     /**
      * Truncates the fixtures tables
      *
-     * @param \Cake\TestSuite\TestCase $test The test to inspect for fixture unloading.
+     * @param string $testClass The class name of the TestCase
      * @return void
      */
-    public function unload(TestCase $test): void
+    public function unload(string $testClass): void
     {
-        $fixtures = $test->getFixtures();
-        if (!$fixtures) {
-            return;
-        }
+        $test = new ReflectionClass($testClass);
+        $prop = $test->getProperty('fixtures');
+        $prop->setAccessible(true);
+        $fixtureNames = $prop->getValue(new $testClass());
 
         $this->runPerFixture(
-            $fixtures,
+            $fixtureNames,
             function (ConnectionInterface $db, FixtureInterface $fixture, array $tableCache) {
                 if (
                     $this->isFixtureSetup($db->configName(), $fixture)
