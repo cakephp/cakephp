@@ -34,7 +34,7 @@ class WeakPasswordHasherTest extends TestCase
     {
         parent::setUp();
 
-        Security::setSalt('YJfIxfs2guVoUubWDYhG93b0qyJfIxfs2guwvniR2G0FgaC9mi');
+        Security::setSalt('YJfIxfs2guVoUubWDYhG93b0qyJfIxfs2guwvniR2G0FgaC9mia1390as13dla8kjasdlwerpoiASf');
     }
 
     /**
