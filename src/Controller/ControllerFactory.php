@@ -104,12 +104,17 @@ class ControllerFactory implements ControllerFactoryInterface
         $passed = array_values((array)$controller->getRequest()->getParam('pass'));
         foreach ($reflection->getParameters() as $i => $parameter) {
             $position = $parameter->getPosition();
+            $hasDefault = $parameter->isDefaultValueAvailable();
 
             // If there is no type we can't look in the container
             // assume the parameter is a passed param
             $type = $parameter->getType();
             if (!$type) {
-                $args[$position] = array_shift($passed);
+                if (count($passed)) {
+                    $args[$position] = array_shift($passed);
+                } elseif ($hasDefault) {
+                    $args[$position] = $parameter->getDefaultValue();
+                }
                 continue;
             }
             $typeName = $type instanceof ReflectionNamedType ? ltrim($type->getName(), '?') : null;
@@ -119,7 +124,7 @@ class ControllerFactory implements ControllerFactoryInterface
             if ($typeName === 'string') {
                 if (count($passed)) {
                     $args[$position] = array_shift($passed);
-                } elseif ($parameter->isDefaultValueAvailable()) {
+                } elseif ($hasDefault) {
                     $args[$position] = $parameter->getDefaultValue();
                 } else {
                     $args[$position] = null;
@@ -130,7 +135,7 @@ class ControllerFactory implements ControllerFactoryInterface
             // Check the container and parameter default value.
             if ($typeName && $this->container->has($typeName)) {
                 $args[$position] = $this->container->get($typeName);
-            } elseif ($parameter->isDefaultValueAvailable()) {
+            } elseif ($hasDefault) {
                 $args[$position] = $parameter->getDefaultValue();
             }
             if (!array_key_exists($position, $args)) {
