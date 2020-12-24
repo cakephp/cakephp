@@ -118,7 +118,7 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
             $token = $this->createToken();
             $session->write($this->_config['key'], $token);
         }
-        $request = $request->withAttribute('csrfToken', $token);
+        $request = $request->withAttribute('csrfToken', $this->saltToken($token));
 
         if ($method === 'GET') {
             return $handler->handle($request);
@@ -146,6 +146,53 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
         $this->skipCheckCallback = $callback;
 
         return $this;
+    }
+
+    /**
+     * Apply entropy to a CSRF token
+     *
+     * To avoid BREACH apply a random salt value to a token
+     * When the token is compared to the session the token needs
+     * to be unsalted.
+     *
+     * @param string $token The token to salt.
+     * @return string The salted token with the salt appended.
+     */
+    public function saltToken(string $token): string
+    {
+        $length = strlen($token);
+        $salt = Security::randomString($length);
+        $salted = '';
+        for ($i = 0; $i < $length; $i++) {
+            // XOR the token and salt together so that we can reverse it later.
+            $salted .= chr(ord($token[$i]) ^ ord($salt[$i]));
+        }
+        return $salted . $salt;
+    }
+
+    /**
+     * Remove the salt from a CSRF token.
+     *
+     * If the token is not TOKEN_VALUE_LENGTH * 2 it is an old 
+     * unsalted value that is supported for backwards compatibility.
+     *
+     * @param string $token The token that could be salty.
+     * @return string An unsalted token.
+     */
+    protected function unsaltToken(string $token): string
+    {
+        if (strlen($token) != static::TOKEN_VALUE_LENGTH * 2) {
+            return $token;
+        }
+        $salted = substr($token, 0, static::TOKEN_VALUE_LENGTH);
+        $salt = substr($token, static::TOKEN_VALUE_LENGTH);
+
+        $unsalted = '';
+        for ($i = 0; $i < static::TOKEN_VALUE_LENGTH; $i++) {
+            // Reverse the the XOR to desalt.
+            $unsalted .= chr(ord($salted[$i]) ^ ord($salt[$i]));
+        }
+        return $unsalted;
     }
 
     /**
@@ -199,12 +246,14 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
         $body = $request->getParsedBody();
         if (is_array($body) || $body instanceof ArrayAccess) {
             $post = (string)Hash::get($body, $this->_config['field']);
+            $post = $this->unsaltToken($post);
             if (hash_equals($post, $token)) {
                 return;
             }
         }
 
         $header = $request->getHeaderLine('X-CSRF-Token');
+        $header = $this->unsaltToken($header);
         if (hash_equals($header, $token)) {
             return;
         }
