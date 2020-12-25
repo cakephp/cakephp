@@ -160,15 +160,16 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
      */
     public function saltToken(string $token): string
     {
-        $length = strlen($token);
-        $salt = Security::randomString($length);
+        $decoded = base64_decode($token);
+        $length = strlen($decoded);
+        $salt = Security::randomBytes($length);
         $salted = '';
         for ($i = 0; $i < $length; $i++) {
             // XOR the token and salt together so that we can reverse it later.
-            $salted .= chr(ord($token[$i]) ^ ord($salt[$i]));
+            $salted .= chr(ord($decoded[$i]) ^ ord($salt[$i]));
         }
 
-        return $salted . $salt;
+        return base64_encode($salted . $salt);
     }
 
     /**
@@ -182,11 +183,12 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
      */
     protected function unsaltToken(string $token): string
     {
-        if (strlen($token) != static::TOKEN_VALUE_LENGTH * 2) {
+        $decoded = base64_decode($token);
+        if (strlen($decoded) != static::TOKEN_VALUE_LENGTH * 2) {
             return $token;
         }
-        $salted = substr($token, 0, static::TOKEN_VALUE_LENGTH);
-        $salt = substr($token, static::TOKEN_VALUE_LENGTH);
+        $salted = substr($decoded, 0, static::TOKEN_VALUE_LENGTH);
+        $salt = substr($decoded, static::TOKEN_VALUE_LENGTH);
 
         $unsalted = '';
         for ($i = 0; $i < static::TOKEN_VALUE_LENGTH; $i++) {
@@ -194,7 +196,7 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
             $unsalted .= chr(ord($salted[$i]) ^ ord($salt[$i]));
         }
 
-        return $unsalted;
+        return base64_encode($unsalted);
     }
 
     /**
@@ -227,7 +229,7 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
      */
     public function createToken(): string
     {
-        return Security::randomString(static::TOKEN_VALUE_LENGTH);
+        return base64_encode(Security::randomBytes(static::TOKEN_VALUE_LENGTH));
     }
 
     /**

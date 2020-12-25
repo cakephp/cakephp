@@ -94,10 +94,11 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
         $this->assertInstanceOf(Response::class, $response);
         $token = $updatedRequest->getSession()->read('csrfToken');
         $this->assertNotEmpty($token, 'Should set a token.');
-        $this->assertMatchesRegularExpression('/^[a-f0-9]+$/', $token, 'Should look like a hash.');
+        $this->assertMatchesRegularExpression('/^[A-Z0-9+\/]+=*$/i', $token, 'Should look like base64 data.');
         $requestAttr = $updatedRequest->getAttribute('csrfToken');
         $this->assertNotEquals($token, $requestAttr);
         $this->assertEquals(strlen($token) * 2, strlen($requestAttr));
+        $this->assertMatchesRegularExpression('/^[A-Z0-9\/+]+=*$/i', $requestAttr);
     }
 
     /**
@@ -360,7 +361,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
         $this->assertEmpty($session->read('csrfToken'));
         $token = $session->read('csrf');
         $this->assertNotEmpty($token, 'Should set a token.');
-        $this->assertMatchesRegularExpression('/^[a-f0-9]+$/', $token, 'Should look like a hash.');
+        $this->assertMatchesRegularExpression('/^[A-Z0-9\/+]+=*$/i', $token, 'Should look like base64 data.');
     }
 
     /**
