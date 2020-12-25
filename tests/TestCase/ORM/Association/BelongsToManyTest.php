@@ -1014,10 +1014,6 @@ class BelongsToManyTest extends TestCase
      */
     public function testReplaceLinkBinaryUuid()
     {
-        $this->skipIf(
-            ConnectionManager::get('test')->getDriver() instanceof \Cake\Database\Driver\Sqlserver,
-            'This test is failing in SQLServer and needs to be revisited.'
-        );
         $items = $this->getTableLocator()->get('BinaryUuidItems');
         $tags = $this->getTableLocator()->get('BinaryUuidTags');
 
@@ -1027,10 +1023,11 @@ class BelongsToManyTest extends TestCase
         ]);
         $itemName = 'Item 1';
         $item = $items->find()->where(['BinaryUuidItems.name' => $itemName])->firstOrFail();
+        $existingTag = $tags->find()->where(['BinaryUuidTags.name' => 'Defect'])->firstOrFail();
 
         // 1=existing, 2=new tag
         $item->binary_uuid_tags = [
-            new Entity(['id' => '481fc6d0-b920-43e0-a40d-111111111111'], ['markNew' => false]),
+            $existingTag,
             new Entity(['name' => 'net new']),
         ];
         $item->name = 'Updated';
