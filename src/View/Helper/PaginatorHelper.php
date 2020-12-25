@@ -260,7 +260,7 @@ class PaginatorHelper extends Helper
             $options = $this->params($model);
         }
 
-        if (isset($options['direction'])) {
+        if (!empty($options['direction'])) {
             $dir = strtolower($options['direction']);
         }
 
