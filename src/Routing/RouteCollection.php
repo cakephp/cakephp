@@ -40,13 +40,6 @@ class RouteCollection
     protected $_routeTable = [];
 
     /**
-     * The routes connected to this collection.
-     *
-     * @var \Cake\Routing\Route\Route[]
-     */
-    protected $_routes = [];
-
-    /**
      * The hash map of named routes that are in this collection.
      *
      * @var \Cake\Routing\Route\Route[]
@@ -56,7 +49,7 @@ class RouteCollection
     /**
      * Routes indexed by path prefix.
      *
-     * @var array
+     * @var array<string, array<\Cake\Routing\Route\Route>>
      */
     protected $_paths = [];
 
@@ -91,8 +84,6 @@ class RouteCollection
      */
     public function add(Route $route, array $options = []): void
     {
-        $this->_routes[] = $route;
-
         // Explicit names
         if (isset($options['_name'])) {
             if (isset($this->_named[$options['_name']])) {
@@ -136,10 +127,9 @@ class RouteCollection
         $decoded = urldecode($url);
 
         // Sort path segments matching longest paths first.
-        $paths = array_keys($this->_paths);
-        rsort($paths);
+        krsort($this->_paths);
 
-        foreach ($paths as $path) {
+        foreach ($this->_paths as $path => $routes) {
             if (strpos($decoded, $path) !== 0) {
                 continue;
             }
@@ -149,8 +139,8 @@ class RouteCollection
                 [$url, $qs] = explode('?', $url, 2);
                 parse_str($qs, $queryParameters);
             }
-            /** @var \Cake\Routing\Route\Route $route */
-            foreach ($this->_paths[$path] as $route) {
+
+            foreach ($routes as $route) {
                 $r = $route->parse($url, $method);
                 if ($r === null) {
                     continue;
@@ -186,16 +176,14 @@ class RouteCollection
         $urlPath = urldecode($uri->getPath());
 
         // Sort path segments matching longest paths first.
-        $paths = array_keys($this->_paths);
-        rsort($paths);
+        krsort($this->_paths);
 
-        foreach ($paths as $path) {
+        foreach ($this->_paths as $path => $routes) {
             if (strpos($urlPath, $path) !== 0) {
                 continue;
             }
 
-            /** @var \Cake\Routing\Route\Route $route */
-            foreach ($this->_paths[$path] as $route) {
+            foreach ($routes as $route) {
                 $r = $route->parseRequest($request);
                 if ($r === null) {
                     continue;
@@ -348,7 +336,13 @@ class RouteCollection
      */
     public function routes(): array
     {
-        return $this->_routes;
+        krsort($this->_paths);
+
+        return array_reduce(
+            $this->_paths,
+            'array_merge',
+            []
+        );
     }
 
     /**
