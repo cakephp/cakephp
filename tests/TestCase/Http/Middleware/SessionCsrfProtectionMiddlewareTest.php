@@ -80,6 +80,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
             'webroot' => '/dir/',
         ]);
 
+        /** @var \Cake\Http\ServerRequest|null $updatedRequest */
         $updatedRequest = null;
         $handler = new TestRequestHandler(function ($request) use (&$updatedRequest) {
             $updatedRequest = $request;
@@ -91,9 +92,13 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
         $response = $middleware->process($request, $handler);
 
         $this->assertInstanceOf(Response::class, $response);
-        $token = $request->getSession()->read('csrfToken');
+        $token = $updatedRequest->getSession()->read('csrfToken');
         $this->assertNotEmpty($token, 'Should set a token.');
-        $this->assertMatchesRegularExpression('/^[a-f0-9]+$/', $token, 'Should look like a hash.');
+        $this->assertMatchesRegularExpression('/^[A-Z0-9+\/]+=*$/i', $token, 'Should look like base64 data.');
+        $requestAttr = $updatedRequest->getAttribute('csrfToken');
+        $this->assertNotEquals($token, $requestAttr);
+        $this->assertEquals(strlen($token) * 2, strlen($requestAttr));
+        $this->assertMatchesRegularExpression('/^[A-Z0-9\/+]+=*$/i', $requestAttr);
     }
 
     /**
@@ -121,10 +126,12 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
     /**
      * Test that the X-CSRF-Token works with the various http methods.
      *
+     * Ensure unsalted tokens work.
+     *
      * @dataProvider httpMethodProvider
      * @return void
      */
-    public function testValidTokenInHeader($method)
+    public function testValidTokenInHeaderBackwardsCompat($method)
     {
         $middleware = new SessionCsrfProtectionMiddleware();
         $token = $middleware->createToken();
@@ -132,6 +139,32 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
             'environment' => [
                 'REQUEST_METHOD' => $method,
                 'HTTP_X_CSRF_TOKEN' => $token,
+            ],
+            'post' => ['a' => 'b'],
+        ]);
+        $request->getSession()->write('csrfToken', $token);
+        $response = new Response();
+
+        // No exception means the test is valid
+        $response = $middleware->process($request, $this->_getRequestHandler());
+        $this->assertInstanceOf(Response::class, $response);
+    }
+
+    /**
+     * Test that the X-CSRF-Token works with the various http methods.
+     *
+     * @dataProvider httpMethodProvider
+     * @return void
+     */
+    public function testValidTokenInHeader($method)
+    {
+        $middleware = new SessionCsrfProtectionMiddleware();
+        $token = $middleware->createToken();
+        $salted = $middleware->saltToken($token);
+        $request = new ServerRequest([
+            'environment' => [
+                'REQUEST_METHOD' => $method,
+                'HTTP_X_CSRF_TOKEN' => $salted,
             ],
             'post' => ['a' => 'b'],
         ]);
@@ -175,10 +208,12 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
     /**
      * Test that request data works with the various http methods.
      *
+     * Ensure unsalted tokens are still accepted.
+     *
      * @dataProvider httpMethodProvider
      * @return void
      */
-    public function testValidTokenInRequestData($method)
+    public function testValidTokenInRequestDataBackwardsCompat($method)
     {
         $middleware = new SessionCsrfProtectionMiddleware();
         $token = $middleware->createToken();
@@ -204,18 +239,52 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
     /**
      * Test that request data works with the various http methods.
      *
+     * Ensure salted tokens are accepted.
+     *
+     * @dataProvider httpMethodProvider
+     * @return void
+     */
+    public function testValidTokenInRequestData($method)
+    {
+        $middleware = new SessionCsrfProtectionMiddleware();
+        $token = $middleware->createToken();
+        $salted = $middleware->saltToken($token);
+
+        $request = new ServerRequest([
+            'environment' => [
+                'REQUEST_METHOD' => $method,
+            ],
+            'post' => ['_csrfToken' => $salted],
+        ]);
+        $request->getSession()->write('csrfToken', $token);
+
+        $handler = new TestRequestHandler(function ($request) {
+            $this->assertNull($request->getData('_csrfToken'));
+
+            return new Response();
+        });
+
+        // No exception means everything is OK
+        $middleware->process($request, $handler);
+    }
+
+    /**
+     * Test that request data works with the various http methods.
+     *
      * @dataProvider httpMethodProvider
      * @return void
      */
     public function testInvalidTokenRequestData($method)
     {
+        $middleware = new SessionCsrfProtectionMiddleware();
+        $token = $middleware->createToken();
         $request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => $method,
             ],
             'post' => ['_csrfToken' => 'nope'],
         ]);
-        $request->getSession()->write('csrfToken', 'testing123');
+        $request->getSession()->write('csrfToken', $token);
 
         $middleware = new SessionCsrfProtectionMiddleware();
 
@@ -292,7 +361,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
         $this->assertEmpty($session->read('csrfToken'));
         $token = $session->read('csrf');
         $this->assertNotEmpty($token, 'Should set a token.');
-        $this->assertMatchesRegularExpression('/^[a-f0-9]+$/', $token, 'Should look like a hash.');
+        $this->assertMatchesRegularExpression('/^[A-Z0-9\/+]+=*$/i', $token, 'Should look like base64 data.');
     }
 
     /**
@@ -349,5 +418,21 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
 
         $response = $middleware->process($request, $handler);
         $this->assertInstanceOf(Response::class, $response);
+    }
+
+    /**
+     * Ensure salting is not consistent
+     *
+     * @return void
+     */
+    public function testSaltToken()
+    {
+        $middleware = new SessionCsrfProtectionMiddleware();
+        $token = $middleware->createToken();
+        $results = [];
+        for ($i = 0; $i < 10; $i++) {
+            $results[] = $middleware->saltToken($token);
+        }
+        $this->assertCount(10, array_unique($results));
     }
 }
