@@ -304,7 +304,10 @@ class FixtureManager
                 $fixtures,
                 function (ConnectionInterface $db, FixtureInterface $fixture, array $tableCache) use ($test) {
                     $configName = $db->configName();
-                    if (!in_array($fixture, $this->_insertionMap[$configName], true)) {
+                    if (
+                        !in_array($fixture, $this->_insertionMap[$configName], true) ||
+                        !in_array($fixture->sourceName(), $tableCache, true)
+                    ) {
                         $this->_setupTable($fixture, $db, $tableCache, $test->dropTables);
                     } else {
                         $fixture->truncate($db);
@@ -491,12 +494,36 @@ class FixtureManager
      */
     public function shutDown(): void
     {
+        /*
+        $this->runPerFixture(
+            array_keys($this->_loaded),
+            function (ConnectionInterface $db, FixtureInterface $fixture, array $tableCache) {
+                if (!$fixture instanceof ConstraintsInterface) {
+                    return;
+                }
+
+                if (in_array($fixture->sourceName(), $tableCache, true)) {
+                    try {
+                        $fixture->dropConstraints($db);
+                    } catch (PDOException $e) {
+                        $msg = sprintf(
+                            'Unable to drop constraints for fixture "%s" when shutting down: ' . "\n" . '%s',
+                            get_class($fixture),
+                            $e->getMessage()
+                        );
+                        throw new CakeException($msg, null, $e);
+                    }
+                }
+            }
+        );
+        */
+
         $this->runPerFixture(
             array_keys($this->_loaded),
             function (ConnectionInterface $db, FixtureInterface $fixture, array $tableCache) {
                 $connection = $db->configName();
                 if ($this->isFixtureSetup($connection, $fixture)) {
-                    if (method_exists($fixture, 'isManaged') && $fixture->isManaged()) {
+                    if (!method_exists($fixture, 'isManaged') || $fixture->isManaged()) {
                         $fixture->drop($db);
                     } else {
                         $fixture->truncate($db);

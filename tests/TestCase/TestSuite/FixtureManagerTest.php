@@ -367,18 +367,39 @@ class FixtureManagerTest extends TestCase
         ConnectionManager::setConfig('other', $other);
         ConnectionManager::setConfig('test_other', $testOther);
 
-        // Connect the alias making test_other an alias of other.
-        ConnectionManager::alias('test_other', 'other');
-
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
         $test->expects($this->any())
             ->method('getFixtures')
             ->willReturn(['core.OtherArticles']);
+
         $this->manager->fixturize($test);
         $this->manager->load($test);
+        $this->assertSame(ConnectionManager::get('test_other'), ConnectionManager::get('other'));
 
         ConnectionManager::drop('other');
         ConnectionManager::drop('test_other');
+    }
+
+    /**
+     * Tests shutting down FixtureManager with tables that have foreign key constraints.
+     *
+     * @return void
+     */
+    public function testShutdownWithFKConstraints()
+    {
+        $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
+        $test->expects($this->any())
+            ->method('getFixtures')
+            ->willReturn(['core.Articles', 'core.Tags', 'core.ArticlesTags']);
+
+        $this->manager->fixturize($test);
+        $this->manager->load($test);
+        $tables = ConnectionManager::get('test')->getSchemaCollection()->listTables();
+        $this->assertContains('articles_tags', $tables);
+
+        $this->manager->shutDown();
+        $tables = ConnectionManager::get('test')->getSchemaCollection()->listTables();
+        $this->assertNotContains('articles_tags', $tables);
     }
 
     /**
