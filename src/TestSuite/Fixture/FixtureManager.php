@@ -445,39 +445,39 @@ class FixtureManager
      * Creates a single fixture table and loads data into it.
      *
      * @param string $name of the fixture
-     * @param \Cake\Datasource\ConnectionInterface|null $db Connection instance or null
+     * @param \Cake\Datasource\ConnectionInterface|null $connection Connection instance or null
      *  to get a Connection from the fixture.
      * @param bool $dropTables Whether or not tables should be dropped and re-created.
      * @return void
      * @throws \UnexpectedValueException if $name is not a previously loaded class
      */
-    public function loadSingle(string $name, ?ConnectionInterface $db = null, bool $dropTables = true): void
+    public function loadSingle(string $name, ?ConnectionInterface $connection = null, bool $dropTables = true): void
     {
         if (!isset($this->_fixtureMap[$name])) {
             throw new UnexpectedValueException(sprintf('Referenced fixture class %s not found', $name));
         }
 
         $fixture = $this->_fixtureMap[$name];
-        if (!$db) {
-            $db = ConnectionManager::get($fixture->connection());
+        if (!$connection) {
+            $connection = ConnectionManager::get($fixture->connection());
         }
 
-        if (!$this->isFixtureSetup($db->configName(), $fixture)) {
-            $sources = $db->getSchemaCollection()->listTables();
-            $this->_setupTable($fixture, $db, $sources, $dropTables);
+        if (!$this->isFixtureSetup($connection->configName(), $fixture)) {
+            $sources = $connection->getSchemaCollection()->listTables();
+            $this->_setupTable($fixture, $connection, $sources, $dropTables);
         }
 
         if (!$dropTables) {
             if ($fixture instanceof ConstraintsInterface) {
-                $fixture->dropConstraints($db);
+                $fixture->dropConstraints($connection);
             }
-            $fixture->truncate($db);
+            $fixture->truncate($connection);
         }
 
         if ($fixture instanceof ConstraintsInterface) {
-            $fixture->createConstraints($db);
+            $fixture->createConstraints($connection);
         }
-        $fixture->insert($db);
+        $fixture->insert($connection);
     }
 
     /**
