@@ -496,7 +496,7 @@ class FixtureManager
             function (ConnectionInterface $db, FixtureInterface $fixture, array $tableCache) {
                 $connection = $db->configName();
                 if ($this->isFixtureSetup($connection, $fixture)) {
-                    if (method_exists($fixture, 'isManaged') && $fixture->isManaged()) {
+                    if (!method_exists($fixture, 'isManaged') || $fixture->isManaged()) {
                         $fixture->drop($db);
                     } else {
                         $fixture->truncate($db);
