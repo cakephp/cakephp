@@ -21,6 +21,9 @@ namespace Cake\View\Form;
  */
 interface ContextInterface
 {
+    /**
+     * @var string[]
+     */
     public const VALID_ATTRIBUTES = ['length', 'precision', 'comment', 'null', 'default'];
 
     /**
