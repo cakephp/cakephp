@@ -21,6 +21,7 @@ use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
 use Cake\TestSuite\Fixture\FixtureManager;
+use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
 use PDOException;
 
@@ -48,9 +49,8 @@ class FixtureManagerTest extends TestCase
     public function tearDown(): void
     {
         parent::tearDown();
-        $this->clearPlugins();
         Log::reset();
-        ConnectionManager::get('test')->disableQueryLogging();
+        $this->clearPlugins();
     }
 
     /**
@@ -79,13 +79,16 @@ class FixtureManagerTest extends TestCase
      */
     public function testLogSchemaWithDebug()
     {
-        Log::setConfig('queries', ['className' => 'Array']);
-
         $db = ConnectionManager::get('test');
         $restore = $db->isQueryLoggingEnabled();
         $db->enableQueryLogging(true);
 
         $this->manager->setDebug(true);
+        $buffer = new ConsoleOutput();
+        Log::setConfig('testQueryLogger', [
+            'className' => 'Console',
+            'stream' => $buffer,
+        ]);
 
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
         $test->expects($this->any())
@@ -99,7 +102,7 @@ class FixtureManagerTest extends TestCase
         $this->manager->shutdown();
 
         $db->enableQueryLogging($restore);
-        $this->assertStringContainsString('CREATE TABLE', implode('', Log::engine('queries')->read()));
+        $this->assertStringContainsString('CREATE TABLE', implode('', $buffer->messages()));
     }
 
     /**
@@ -110,13 +113,16 @@ class FixtureManagerTest extends TestCase
      */
     public function testResetDbIfTableExists()
     {
-        Log::setConfig('queries', ['className' => 'Array']);
-
         $db = ConnectionManager::get('test');
         $restore = $db->isQueryLoggingEnabled();
         $db->enableQueryLogging(true);
 
         $this->manager->setDebug(true);
+        $buffer = new ConsoleOutput();
+        Log::setConfig('testQueryLogger', [
+            'className' => 'Console',
+            'stream' => $buffer,
+        ]);
 
         $table = new TableSchema('articles', [
             'id' => ['type' => 'integer', 'unsigned' => true],
@@ -136,7 +142,7 @@ class FixtureManagerTest extends TestCase
         $this->manager->load($test);
 
         $db->enableQueryLogging($restore);
-        $this->assertStringContainsString('DROP TABLE', implode('', Log::engine('queries')->read()));
+        $this->assertStringContainsString('DROP TABLE', implode('', $buffer->messages()));
     }
 
     /**
@@ -275,59 +281,6 @@ class FixtureManagerTest extends TestCase
     }
 
     /**
-     * Tests handling unmnaged fixtures which don't
-     * import a schema or defined fields. These tables
-     * should only insert records and not drop/create.
-     *
-     * @return void
-     */
-    public function testLoadUnmanagedFixtures()
-    {
-        $schema = new TableSchema('unmanaged', [
-            'title' => ['type' => 'string', 'length' => 100],
-            'body' => ['type' => 'string', 'length' => 100],
-        ]);
-
-        $conn = ConnectionManager::get('test');
-        foreach ($schema->createSql($conn) as $sql) {
-            $conn->execute($sql);
-        }
-        $conn->newQuery()
-            ->insert(['title', 'body'])
-            ->into('unmanaged')
-            ->values([
-                'title' => 'Existing title',
-                'body' => 'Existing body',
-            ])
-            ->execute();
-
-        Log::setConfig('queries', ['className' => 'Array']);
-        $conn->enableQueryLogging(true);
-
-        $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
-        $test->expects($this->any())
-            ->method('getFixtures')
-            ->willReturn(['core.Unmanaged']);
-
-        $this->manager->setDebug(true);
-        $this->manager->fixturize($test);
-        $this->manager->load($test);
-        $this->assertStringNotContainsString('DROP TABLE', implode('', Log::engine('queries')->read()));
-
-        $stmt = $conn->newQuery()->select(['title', 'body'])->from('unmanaged')->execute();
-        $rows = $stmt->fetchAll();
-        $this->assertCount(2, $rows);
-
-        $this->manager->shutDown();
-        $this->assertStringNotContainsString('DROP TABLE', implode('', Log::engine('queries')->read()));
-        $this->assertContains('unmanaged', $conn->getSchemaCollection()->listTables());
-
-        foreach ($schema->dropSql($conn) as $sql) {
-            $conn->execute($sql);
-        }
-    }
-
-    /**
      * Test load uses aliased connections via a mock.
      *
      * Ensure that FixtureManager uses connection aliases
@@ -367,14 +320,15 @@ class FixtureManagerTest extends TestCase
         ConnectionManager::setConfig('other', $other);
         ConnectionManager::setConfig('test_other', $testOther);
 
+        // Connect the alias making test_other an alias of other.
+        ConnectionManager::alias('test_other', 'other');
+
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
         $test->expects($this->any())
             ->method('getFixtures')
             ->willReturn(['core.OtherArticles']);
-
         $this->manager->fixturize($test);
         $this->manager->load($test);
-        $this->assertSame(ConnectionManager::get('test_other'), ConnectionManager::get('other'));
 
         ConnectionManager::drop('other');
         ConnectionManager::drop('test_other');
@@ -427,10 +381,10 @@ class FixtureManagerTest extends TestCase
             ->willReturn(['core.Products']);
 
         $manager = $this->getMockBuilder(FixtureManager::class)
-            ->onlyMethods(['runPerFixture'])
+            ->onlyMethods(['_runOperation'])
             ->getMock();
         $manager->expects($this->any())
-            ->method('runPerFixture')
+            ->method('_runOperation')
             ->will($this->returnCallback(function () {
                 throw new PDOException('message');
             }));
@@ -444,7 +398,7 @@ class FixtureManagerTest extends TestCase
         }
 
         $this->assertNotNull($e);
-        $this->assertMatchesRegularExpression('/^Unable to insert fixtures for "Mock_TestCase_\w+" test case. message$/D', $e->getMessage());
+        $this->assertRegExp('/^Unable to insert fixtures for "Mock_TestCase_\w+" test case. message$/D', $e->getMessage());
         $this->assertInstanceOf('PDOException', $e->getPrevious());
     }
 
@@ -476,10 +430,10 @@ class FixtureManagerTest extends TestCase
 
         /** @var \Cake\TestSuite\Fixture\FixtureManager|\PHPUnit\Framework\MockObject\MockObject $manager */
         $manager = $this->getMockBuilder(FixtureManager::class)
-            ->onlyMethods(['groupFixturesByConnection'])
+            ->onlyMethods(['_fixtureConnections'])
             ->getMock();
         $manager->expects($this->any())
-            ->method('groupFixturesByConnection')
+            ->method('_fixtureConnections')
             ->will($this->returnValue([
                 'test' => $fixtures,
             ]));
@@ -493,7 +447,7 @@ class FixtureManagerTest extends TestCase
         }
 
         $this->assertNotNull($e);
-        $this->assertMatchesRegularExpression($expectedMessage, $e->getMessage());
+        $this->assertRegExp($expectedMessage, $e->getMessage());
         $this->assertInstanceOf('PDOException', $e->getPrevious());
     }
 

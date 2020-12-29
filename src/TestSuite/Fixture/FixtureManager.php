@@ -19,11 +19,12 @@ namespace Cake\TestSuite\Fixture;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Database\ConstraintsInterface;
+use Cake\Database\Schema\TableSchema;
+use Cake\Database\Schema\TableSchemaAwareInterface;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\FixtureInterface;
 use Cake\TestSuite\TestCase;
-use Closure;
 use PDOException;
 use RuntimeException;
 use UnexpectedValueException;
@@ -244,16 +245,27 @@ class FixtureManager
         array $sources,
         bool $drop = true
     ): void {
-        if (!method_exists($fixture, 'isManaged') || $fixture->isManaged()) {
-            if (in_array($fixture->sourceName(), $sources, true)) {
-                $fixture->drop($db);
-            }
+        $configName = $db->configName();
+        $isFixtureSetup = $this->isFixtureSetup($configName, $fixture);
+        if ($isFixtureSetup) {
+            return;
+        }
+
+        $table = $fixture->sourceName();
+        $exists = in_array($table, $sources, true);
+
+        $hasSchema = $fixture instanceof TableSchemaAwareInterface && $fixture->getTableSchema() instanceof TableSchema;
+
+        if (($drop && $exists) || ($exists && $hasSchema)) {
+            $fixture->drop($db);
+            $fixture->create($db);
+        } elseif (!$exists) {
             $fixture->create($db);
         } else {
             $fixture->truncate($db);
         }
 
-        $this->_insertionMap[$db->configName()][] = $fixture;
+        $this->_insertionMap[$configName][] = $fixture;
     }
 
     /**
@@ -272,19 +284,20 @@ class FixtureManager
         }
 
         try {
-            $this->runPerFixture(
-                $fixtures,
-                function (ConnectionInterface $db, FixtureInterface $fixture, array $tableCache) use ($test) {
-                    $configName = $db->configName();
-                    if (!isset($this->_insertionMap[$configName])) {
-                        $this->_insertionMap[$configName] = [];
-                    }
+            $createTables = function (ConnectionInterface $db, array $fixtures) use ($test): void {
+                /** @var \Cake\Datasource\FixtureInterface[] $fixtures */
+                $tables = $db->getSchemaCollection()->listTables();
+                $configName = $db->configName();
+                if (!isset($this->_insertionMap[$configName])) {
+                    $this->_insertionMap[$configName] = [];
+                }
 
+                foreach ($fixtures as $fixture) {
                     if (!$fixture instanceof ConstraintsInterface) {
-                        return;
+                        continue;
                     }
 
-                    if (in_array($fixture->sourceName(), $tableCache, true)) {
+                    if (in_array($fixture->sourceName(), $tables, true)) {
                         try {
                             $fixture->dropConstraints($db);
                         } catch (PDOException $e) {
@@ -298,25 +311,18 @@ class FixtureManager
                         }
                     }
                 }
-            );
 
-            $this->runPerFixture(
-                $fixtures,
-                function (ConnectionInterface $db, FixtureInterface $fixture, array $tableCache) use ($test) {
-                    $configName = $db->configName();
+                foreach ($fixtures as $fixture) {
                     if (!in_array($fixture, $this->_insertionMap[$configName], true)) {
-                        $this->_setupTable($fixture, $db, $tableCache, $test->dropTables);
+                        $this->_setupTable($fixture, $db, $tables, $test->dropTables);
                     } else {
                         $fixture->truncate($db);
                     }
                 }
-            );
 
-            $this->runPerFixture(
-                $fixtures,
-                function (ConnectionInterface $db, FixtureInterface $fixture, array $tableCache) use ($test) {
+                foreach ($fixtures as $fixture) {
                     if (!$fixture instanceof ConstraintsInterface) {
-                        return;
+                        continue;
                     }
 
                     try {
@@ -331,11 +337,12 @@ class FixtureManager
                         throw new CakeException($msg, null, $e);
                     }
                 }
-            );
+            };
+            $this->_runOperation($fixtures, $createTables);
 
-            $this->runPerFixture(
-                $fixtures,
-                function (ConnectionInterface $db, FixtureInterface $fixture, array $tableCache) use ($test) {
+            // Use a separate transaction because of postgres.
+            $insert = function (ConnectionInterface $db, array $fixtures) use ($test): void {
+                foreach ($fixtures as $fixture) {
                     try {
                         $fixture->insert($db);
                     } catch (PDOException $e) {
@@ -347,9 +354,9 @@ class FixtureManager
                         );
                         throw new CakeException($msg, null, $e);
                     }
-                },
-                true // Run in transaction
-            );
+                }
+            };
+            $this->_runOperation($fixtures, $insert);
         } catch (PDOException $e) {
             $msg = sprintf(
                 'Unable to insert fixtures for "%s" test case. %s',
@@ -363,37 +370,25 @@ class FixtureManager
     /**
      * Run a function on each connection and collection of fixtures.
      *
-     * @param string[] $names Test fixture names
-     * @param \Closure $callback Callback that is run per fixture
-     * @param bool $transactional Whether to run in a transaction
+     * @param string[] $fixtures A list of fixtures to operate on.
+     * @param callable $operation The operation to run on each connection + fixture set.
      * @return void
      */
-    protected function runPerFixture(array $names, Closure $callback, bool $transactional = false): void
+    protected function _runOperation(array $fixtures, callable $operation): void
     {
-        $dbs = $this->groupFixturesByConnection($names);
+        $dbs = $this->_fixtureConnections($fixtures);
         foreach ($dbs as $connection => $fixtures) {
             $db = ConnectionManager::get($connection);
-
             $logQueries = $db->isQueryLoggingEnabled();
+
             if ($logQueries && !$this->_debug) {
                 $db->disableQueryLogging();
             }
-
-            $tableCache = $db->getSchemaCollection()->listTables();
-            if ($transactional) {
-                $db->transactional(function (ConnectionInterface $db) use ($fixtures, $callback, $tableCache) {
-                    $db->disableConstraints(function (ConnectionInterface $db) use ($fixtures, $callback, $tableCache) {
-                        foreach ($fixtures as $fixture) {
-                            $callback($db, $fixture, $tableCache);
-                        }
-                    });
+            $db->transactional(function (ConnectionInterface $db) use ($fixtures, $operation): void {
+                $db->disableConstraints(function (ConnectionInterface $db) use ($fixtures, $operation): void {
+                    $operation($db, $fixtures);
                 });
-            } else {
-                foreach ($fixtures as $fixture) {
-                    $callback($db, $fixture, $tableCache);
-                }
-            }
-
+            });
             if ($logQueries) {
                 $db->enableQueryLogging(true);
             }
@@ -401,15 +396,15 @@ class FixtureManager
     }
 
     /**
-     * Groups fixtures by connection name.
+     * Get the unique list of connections that a set of fixtures contains.
      *
-     * @param string[] $names Test fixture names.
-     * @return array
+     * @param string[] $fixtures The array of fixtures a list of connections is needed from.
+     * @return array An array of connection names.
      */
-    protected function groupFixturesByConnection(array $names): array
+    protected function _fixtureConnections(array $fixtures): array
     {
         $dbs = [];
-        foreach ($names as $name) {
+        foreach ($fixtures as $name) {
             if (!empty($this->_loaded[$name])) {
                 $fixture = $this->_loaded[$name];
                 $dbs[$fixture->connection()][$name] = $fixture;
@@ -431,18 +426,19 @@ class FixtureManager
         if (!$fixtures) {
             return;
         }
+        $truncate = function (ConnectionInterface $db, array $fixtures): void {
+            $configName = $db->configName();
 
-        $this->runPerFixture(
-            $fixtures,
-            function (ConnectionInterface $db, FixtureInterface $fixture, array $tableCache) {
+            foreach ($fixtures as $name => $fixture) {
                 if (
-                    $this->isFixtureSetup($db->configName(), $fixture)
+                    $this->isFixtureSetup($configName, $fixture)
                     && $fixture instanceof ConstraintsInterface
                 ) {
                     $fixture->dropConstraints($db);
                 }
             }
-        );
+        };
+        $this->_runOperation($fixtures, $truncate);
     }
 
     /**
@@ -491,21 +487,18 @@ class FixtureManager
      */
     public function shutDown(): void
     {
-        $this->runPerFixture(
-            array_keys($this->_loaded),
-            function (ConnectionInterface $db, FixtureInterface $fixture, array $tableCache) {
-                $connection = $db->configName();
+        $shutdown = function (ConnectionInterface $db, array $fixtures): void {
+            $connection = $db->configName();
+            /** @var \Cake\Datasource\FixtureInterface $fixture */
+            foreach ($fixtures as $fixture) {
                 if ($this->isFixtureSetup($connection, $fixture)) {
-                    if (!method_exists($fixture, 'isManaged') || $fixture->isManaged()) {
-                        $fixture->drop($db);
-                    } else {
-                        $fixture->truncate($db);
-                    }
+                    $fixture->drop($db);
                     $index = array_search($fixture, $this->_insertionMap[$connection], true);
                     unset($this->_insertionMap[$connection][$index]);
                 }
             }
-        );
+        };
+        $this->_runOperation(array_keys($this->_loaded), $shutdown);
     }
 
     /**
