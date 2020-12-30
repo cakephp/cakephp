@@ -396,13 +396,15 @@ class Sqlserver extends Driver
     /**
      * @inheritDoc
      */
-    protected function _transformDistinct(Query $original): Query
+    protected function _transformDistinct(Query $query): Query
     {
-        if (!is_array($original->clause('distinct'))) {
-            return $original;
+        if (!is_array($query->clause('distinct'))) {
+            return $query;
         }
 
+        $original = $query;
         $query = clone $original;
+
         $distinct = $query->clause('distinct');
         $query->distinct(false);
 

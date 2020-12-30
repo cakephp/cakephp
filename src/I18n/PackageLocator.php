@@ -49,7 +49,7 @@ class PackageLocator
      * Constructor.
      *
      * @param array $registry A registry of packages.
-     * @see $registry
+     * @see PackageLocator::$registry
      */
     public function __construct(array $registry = [])
     {

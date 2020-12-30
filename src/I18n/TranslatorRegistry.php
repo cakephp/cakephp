@@ -24,6 +24,8 @@ class TranslatorRegistry
 {
     /**
      * Fallback loader name.
+     *
+     * @var string
      */
     public const FALLBACK_LOADER = '_fallback';
 
