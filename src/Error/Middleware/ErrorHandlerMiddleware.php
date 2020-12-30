@@ -18,6 +18,7 @@ namespace Cake\Error\Middleware;
 
 use Cake\Core\App;
 use Cake\Core\InstanceConfigTrait;
+use Cake\Error\BaseErrorHandler;
 use Cake\Error\ErrorHandler;
 use Cake\Error\ExceptionRenderer;
 use Cake\Http\Exception\RedirectException;
@@ -98,9 +99,9 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
             return;
         }
 
-        if (!$errorHandler instanceof ErrorHandler) {
+        if (!$errorHandler instanceof BaseErrorHandler) {
             throw new InvalidArgumentException(sprintf(
-                '$errorHandler argument must be a config array or ErrorHandler instance. Got `%s` instead.',
+                '$errorHandler argument must be an array of configuration or a subclass of BaseErrorHandler. Got `%s` instead.',
                 getTypeName($errorHandler)
             ));
         }

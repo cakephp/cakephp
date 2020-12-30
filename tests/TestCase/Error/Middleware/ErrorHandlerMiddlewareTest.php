@@ -78,7 +78,8 @@ class ErrorHandlerMiddlewareTest extends TestCase
     public function testConstructorInvalid()
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('$errorHandler argument must be a config array or ErrorHandler');
+        $this->expectExceptionMessage('$errorHandler argument must be a configuration array');
+        $this->expectExceptionMessage('or a subclass of BaseErrorHandler');
         new ErrorHandlerMiddleware('nope');
     }
 
