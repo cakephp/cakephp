@@ -85,6 +85,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
             'webroot' => '/dir/',
         ]);
 
+        /** @var \Cake\Http\ServerRequest $updatedRequest */
         $updatedRequest = null;
         $handler = new TestRequestHandler(function ($request) use (&$updatedRequest) {
             $updatedRequest = $request;
@@ -97,10 +98,14 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
         $cookie = $response->getCookie('csrfToken');
         $this->assertNotEmpty($cookie, 'Should set a token.');
-        $this->assertMatchesRegularExpression('/^[a-f0-9]+$/', $cookie['value'], 'Should look like a hash.');
+        $this->assertMatchesRegularExpression('/^[a-z0-9\/+]+={0,2}$/i', $cookie['value'], 'Should look like base64.');
         $this->assertSame(0, $cookie['expires'], 'session duration.');
         $this->assertSame('/dir/', $cookie['path'], 'session path.');
-        $this->assertEquals($cookie['value'], $updatedRequest->getAttribute('csrfToken'));
+        $requestAttr = $updatedRequest->getAttribute('csrfToken');
+
+        $this->assertNotEquals($cookie['value'], $requestAttr);
+        $this->assertEquals(strlen($cookie['value']) * 2, strlen($requestAttr));
+        $this->assertMatchesRegularExpression('/^[A-Z0-9\/+]+=*$/i', $requestAttr);
     }
 
     /**
@@ -189,7 +194,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
      * @dataProvider httpMethodProvider
      * @return void
      */
-    public function testValidTokenInHeader($method)
+    public function testValidTokenInHeaderCompat($method)
     {
         $middleware = new CsrfProtectionMiddleware();
         $token = $middleware->createToken();
@@ -197,6 +202,32 @@ class CsrfProtectionMiddlewareTest extends TestCase
             'environment' => [
                 'REQUEST_METHOD' => $method,
                 'HTTP_X_CSRF_TOKEN' => $token,
+            ],
+            'post' => ['a' => 'b'],
+            'cookies' => ['csrfToken' => $token],
+        ]);
+        $response = new Response();
+
+        // No exception means the test is valid
+        $response = $middleware->process($request, $this->_getRequestHandler());
+        $this->assertInstanceOf(Response::class, $response);
+    }
+
+    /**
+     * Test that the X-CSRF-Token works with the various http methods.
+     *
+     * @dataProvider httpMethodProvider
+     * @return void
+     */
+    public function testValidTokenInHeader($method)
+    {
+        $middleware = new CsrfProtectionMiddleware();
+        $token = $middleware->createToken();
+        $salted = $middleware->saltToken($token);
+        $request = new ServerRequest([
+            'environment' => [
+                'REQUEST_METHOD' => $method,
+                'HTTP_X_CSRF_TOKEN' => $salted,
             ],
             'post' => ['a' => 'b'],
             'cookies' => ['csrfToken' => $token],
@@ -248,7 +279,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
      * @dataProvider httpMethodProvider
      * @return void
      */
-    public function testValidTokenRequestData($method)
+    public function testValidTokenRequestDataCompat($method)
     {
         $middleware = new CsrfProtectionMiddleware();
         $token = $middleware->createToken();
@@ -258,6 +289,36 @@ class CsrfProtectionMiddlewareTest extends TestCase
                 'REQUEST_METHOD' => $method,
             ],
             'post' => ['_csrfToken' => $token],
+            'cookies' => ['csrfToken' => $token],
+        ]);
+
+        $handler = new TestRequestHandler(function ($request) {
+            $this->assertNull($request->getData('_csrfToken'));
+
+            return new Response();
+        });
+
+        // No exception means everything is OK
+        $middleware->process($request, $handler);
+    }
+
+    /**
+     * Test that request data works with the various http methods.
+     *
+     * @dataProvider httpMethodProvider
+     * @return void
+     */
+    public function testValidTokenRequestDataSalted($method)
+    {
+        $middleware = new CsrfProtectionMiddleware();
+        $token = $middleware->createToken();
+        $salted = $middleware->saltToken($token);
+
+        $request = new ServerRequest([
+            'environment' => [
+                'REQUEST_METHOD' => $method,
+            ],
+            'post' => ['_csrfToken' => $salted],
             'cookies' => ['csrfToken' => $token],
         ]);
 
@@ -415,7 +476,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $this->assertEmpty($response->getCookie('csrfToken'));
         $cookie = $response->getCookie('token');
         $this->assertNotEmpty($cookie, 'Should set a token.');
-        $this->assertMatchesRegularExpression('/^[a-f0-9]+$/', $cookie['value'], 'Should look like a hash.');
+        $this->assertMatchesRegularExpression('/^[a-z0-9\/+]+={0,2}$/i', $cookie['value'], 'Should look like base64.');
         $this->assertWithinRange(strtotime('+1 hour'), $cookie['expires'], 1, 'session duration.');
         $this->assertSame('/dir/', $cookie['path'], 'session path.');
         $this->assertTrue($cookie['secure'], 'cookie security flag missing');
@@ -535,5 +596,21 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
         $response = $middleware->process($request, $handler);
         $this->assertInstanceOf(Response::class, $response);
+    }
+
+    /**
+     * Ensure salting is not consistent
+     *
+     * @return void
+     */
+    public function testSaltToken()
+    {
+        $middleware = new CsrfProtectionMiddleware();
+        $token = $middleware->createToken();
+        $results = [];
+        for ($i = 0; $i < 10; $i++) {
+            $results[] = $middleware->saltToken($token);
+        }
+        $this->assertCount(10, array_unique($results));
     }
 }
