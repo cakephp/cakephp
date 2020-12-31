@@ -596,7 +596,7 @@ class RouteBuilder
      * Examples:
      *
      * ```
-     * $routes->connect('/:controller/:action/*');
+     * $routes->connect('/{controller}/{action}/*');
      * ```
      *
      * The first parameter will be used as a controller name while the second is
@@ -613,7 +613,7 @@ class RouteBuilder
      *
      * ```
      * $routes->connect(
-     *   '/:lang/:controller/:action/:id',
+     *   '/{lang}/{controller}/{action}/{id}',
      *   [],
      *   ['id' => '[0-9]+', 'lang' => '[a-z]{3}']
      * );
@@ -937,7 +937,7 @@ class RouteBuilder
     }
 
     /**
-     * Connect the `/:controller` and `/:controller/:action/*` fallback routes.
+     * Connect the `/{controller}` and `/{controller}/{action}/*` fallback routes.
      *
      * This is a shortcut method for connecting fallback routes in a given scope.
      *
