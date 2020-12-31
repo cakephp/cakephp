@@ -536,7 +536,8 @@ trait IntegrationTestTrait
         }
         $this->_controller = $controller;
         $events = $controller->getEventManager();
-        $events->on('Controller.beforeRedirect', function () use ($controller): void {
+        $events->on('Controller.beforeRedirect', function ($event): void {
+            $controller = $event->getSubject();
             if ($this->_retainFlashMessages) {
                 $this->_flashMessages = $controller->getRequest()->getSession()->read('Flash');
             }
