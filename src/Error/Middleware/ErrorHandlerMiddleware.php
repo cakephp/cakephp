@@ -71,7 +71,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
     /**
      * Error handler instance.
      *
-     * @var \Cake\Error\ErrorHandler|null
+     * @var \Cake\Error\BaseErrorHandler|null
      */
     protected $errorHandler;
 
@@ -101,7 +101,8 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
 
         if (!$errorHandler instanceof BaseErrorHandler) {
             throw new InvalidArgumentException(sprintf(
-                '$errorHandler argument must be an array of configuration or a subclass of BaseErrorHandler. Got `%s` instead.',
+                '$errorHandler argument must be an array of configuration or ' .
+                'a subclass of BaseErrorHandler. Got `%s` instead.',
                 getTypeName($errorHandler)
             ));
         }
