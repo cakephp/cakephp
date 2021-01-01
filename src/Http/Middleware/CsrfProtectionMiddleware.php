@@ -280,7 +280,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      */
     public function unsaltToken(string $token): string
     {
-        $decoded = base64_decode($token);
+        $decoded = base64_decode($token, true);
         if ($decoded === false || strlen($decoded) !== static::TOKEN_WITH_CHECKSUM_LENGTH * 2) {
             return $token;
         }
@@ -304,7 +304,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      */
     protected function _verifyToken(string $token): bool
     {
-        $decoded = base64_decode($token);
+        $decoded = base64_decode($token, true);
         // If base64 fails we're in a compatibility mode from before
         // tokens were salted on each request.
         if ($decoded === false) {
