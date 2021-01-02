@@ -764,7 +764,24 @@ class IntegrationTestTraitTest extends TestCase
         $this->get('/posts/flashNoRender');
         $this->assertRedirect();
 
-        $this->assertSession('An error message', 'Flash.flash.0.message');
+        $this->assertFlashElement('flash/error');
+        $this->assertFlashMessage('An error message');
+    }
+
+    /**
+     * Test flash assertions stored with enableRememberFlashMessages() even if
+     * the controller clears flash data in `beforeRender`
+     *
+     * @return void
+     */
+    public function testFlashAssertionsRemoveInBeforeRender()
+    {
+        $this->enableRetainFlashMessages();
+        $this->get('/posts/index/with_flash/?clear=true');
+        $this->assertResponseOk();
+
+        $this->assertFlashElement('flash/error');
+        $this->assertFlashMessage('An error message');
     }
 
     /**
