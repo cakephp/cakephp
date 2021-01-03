@@ -183,8 +183,8 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
      */
     protected function unsaltToken(string $token): string
     {
-        $decoded = base64_decode($token);
-        if (strlen($decoded) != static::TOKEN_VALUE_LENGTH * 2) {
+        $decoded = base64_decode($token, true);
+        if ($decoded === false || strlen($decoded) !== static::TOKEN_VALUE_LENGTH * 2) {
             return $token;
         }
         $salted = substr($decoded, 0, static::TOKEN_VALUE_LENGTH);
@@ -192,7 +192,7 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
 
         $unsalted = '';
         for ($i = 0; $i < static::TOKEN_VALUE_LENGTH; $i++) {
-            // Reverse the the XOR to desalt.
+            // Reverse the XOR to desalt.
             $unsalted .= chr(ord($salted[$i]) ^ ord($salt[$i]));
         }
 
