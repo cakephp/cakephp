@@ -683,11 +683,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if ($this->_displayField === null) {
             $schema = $this->getSchema();
             $this->_displayField = $this->getPrimaryKey();
-            if ($schema->getColumn('title')) {
-                $this->_displayField = 'title';
-            }
-            if ($schema->getColumn('name')) {
-                $this->_displayField = 'name';
+            foreach (['title', 'name', 'label'] as $field) {
+                if ($schema->hasColumn($field)) {
+                    $this->_displayField = $field;
+                    break;
+                }
             }
         }
 
