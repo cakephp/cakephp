@@ -354,6 +354,23 @@ class TableTest extends TestCase
     }
 
     /**
+     * Tests that label will be selected as a displayField
+     *
+     * @return void
+     */
+    public function testDisplayFieldLabel()
+    {
+        $table = new Table([
+            'table' => 'users',
+            'schema' => [
+                'foo' => ['type' => 'string'],
+                'label' => ['type' => 'string'],
+            ],
+        ]);
+        $this->assertSame('label', $table->getDisplayField());
+    }
+
+    /**
      * Tests that no displayField will fallback to primary key
      *
      * @return void
@@ -369,6 +386,9 @@ class TableTest extends TestCase
             ],
         ]);
         $this->assertSame('id', $table->getDisplayField());
+
+        $table = $this->getTableLocator()->get('ArticlesTags');
+        $this->assertSame(['article_id', 'tag_id'], $table->getDisplayField());
     }
 
     /**
