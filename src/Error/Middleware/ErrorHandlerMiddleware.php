@@ -181,9 +181,9 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
     /**
      * Get a error handler instance
      *
-     * @return \Cake\Error\ErrorHandler The error handler.
+     * @return \Cake\Error\BaseErrorHandler The error handler.
      */
-    protected function getErrorHandler(): ErrorHandler
+    protected function getErrorHandler(): BaseErrorHandler
     {
         if ($this->errorHandler === null) {
             /** @var class-string<\Cake\Error\ErrorHandler> $className */
