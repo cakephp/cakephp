@@ -511,18 +511,17 @@ trait IntegrationTestTrait
         }
         $this->_controller = $controller;
         $events = $controller->getEventManager();
-        $events->on('Controller.beforeRedirect', function ($event): void {
-            $controller = $event->getSubject();
-            if ($this->_retainFlashMessages) {
+        $flashCapture = function (EventInterface $event): void {
+            if ($this->_retainFlashMessages && empty($this->_flashMessages)) {
+                $controller = $event->getSubject();
                 $this->_flashMessages = $controller->getRequest()->getSession()->read('Flash');
             }
-        });
-        $events->on('View.beforeRender', function ($event, $viewFile) use ($controller): void {
+        };
+        $events->on('Controller.beforeRedirect', ['priority' => -100], $flashCapture);
+        $events->on('Controller.beforeRender', ['priority' => -100], $flashCapture);
+        $events->on('View.beforeRender', function ($event, $viewFile): void {
             if (!$this->_viewName) {
                 $this->_viewName = $viewFile;
-            }
-            if ($this->_retainFlashMessages) {
-                $this->_flashMessages = $controller->getRequest()->getSession()->read('Flash');
             }
         });
         $events->on('View.beforeLayout', function ($event, $viewFile): void {
