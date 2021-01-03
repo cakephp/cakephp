@@ -97,7 +97,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
     /**
      * Instantiate the fixture.
      *
-     * @throws \Cake\Core\Exception\Exception on invalid datasource usage.
+     * @throws \Cake\Core\Exception\CakeException on invalid datasource usage.
      */
     public function __construct()
     {
@@ -212,7 +212,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
      * Build fixture schema from a table in another datasource.
      *
      * @return void
-     * @throws \Cake\Core\Exception\Exception when trying to import from an empty table.
+     * @throws \Cake\Core\Exception\CakeException when trying to import from an empty table.
      */
     protected function _schemaFromImport(): void
     {
@@ -244,7 +244,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
      * Build fixture schema directly from the datasource
      *
      * @return void
-     * @throws \Cake\Core\Exception\Exception when trying to reflect a table that does not exist
+     * @throws \Cake\Core\Exception\CakeException when trying to reflect a table that does not exist
      */
     protected function _schemaFromReflection(): void
     {
