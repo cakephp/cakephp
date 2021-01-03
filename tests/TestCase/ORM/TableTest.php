@@ -369,6 +369,9 @@ class TableTest extends TestCase
             ],
         ]);
         $this->assertSame('id', $table->getDisplayField());
+
+        $table = $this->getTableLocator()->get('ArticlesTags');
+        $this->assertSame(['article_id', 'tag_id'], $table->getDisplayField());
     }
 
     /**
