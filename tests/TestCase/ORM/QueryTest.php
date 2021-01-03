@@ -4285,50 +4285,36 @@ class QueryTest extends TestCase
             ->belongsTo('Articles')
             ->setStrategy(BelongsTo::STRATEGY_SELECT);
 
-        $disabled = true;
-        $enabled = true;
-
         $articles
             ->find()
-            ->contain('Comments', function (Query $query) use (&$disabled) {
-                $disabled =
-                    $disabled &&
-                    !$query->isHydrationEnabled() &&
-                    !$query->isResultsCastingEnabled();
+            ->contain('Comments', function (Query $query) {
+                $this->assertFalse($query->isHydrationEnabled());
+                $this->assertFalse($query->isResultsCastingEnabled());
 
                 return $query;
             })
-            ->contain('Comments.Articles', function (Query $query) use (&$disabled) {
-                $disabled =
-                    $disabled &&
-                    !$query->isHydrationEnabled() &&
-                    !$query->isResultsCastingEnabled();
+            ->contain('Comments.Articles', function (Query $query) {
+                $this->assertFalse($query->isHydrationEnabled());
+                $this->assertFalse($query->isResultsCastingEnabled());
 
                 return $query;
             })
-            ->contain('Comments.Articles.Tags', function (Query $query) use (&$disabled) {
-                $disabled =
-                    $disabled &&
-                    !$query->isHydrationEnabled() &&
-                    !$query->isResultsCastingEnabled();
+            ->contain('Comments.Articles.Tags', function (Query $query) {
+                $this->assertFalse($query->isHydrationEnabled());
+                $this->assertFalse($query->isResultsCastingEnabled());
 
                 return $query
                     ->enableHydration()
                     ->enableResultsCasting();
             })
-            ->contain('Comments.Articles.Tags.Articles', function (Query $query) use (&$enabled) {
-                $enabled =
-                    $enabled &&
-                    $query->isHydrationEnabled() &&
-                    $query->isResultsCastingEnabled();
+            ->contain('Comments.Articles.Tags.Articles', function (Query $query) {
+                $this->assertTrue($query->isHydrationEnabled());
+                $this->assertTrue($query->isResultsCastingEnabled());
 
                 return $query;
             })
             ->disableHydration()
             ->disableResultsCasting()
             ->firstOrFail();
-
-        $this->assertTrue($disabled);
-        $this->assertTrue($enabled);
     }
 }
