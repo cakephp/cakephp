@@ -236,12 +236,15 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
     /**
      * Test if the token predates salted tokens.
      *
-     * These tokens are vulnerable to BREACH but will rotate over time.
+     * These tokens are hexadecimal values and equal
+     * to the token with checksum length. While they are vulnerable
+     * to BREACH they should rotate over time and support will be dropped
+     * in 5.x.
      *
      * @param string $token The token to test.
      * @return bool
      */
-    protected function isOldToken(string $token): bool
+    protected function isUnsaltedToken(string $token): bool
     {
         return preg_match('/^[a-f0-9]{' . static::TOKEN_WITH_CHECKSUM_LENGTH . '}$/', $token) === 1;
     }
@@ -270,7 +273,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      */
     public function saltToken(string $token): string
     {
-        if ($this->isOldToken($token)) {
+        if ($this->isUnsaltedToken($token)) {
             return $token;
         }
         $decoded = base64_decode($token, true);
@@ -296,7 +299,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      */
     public function unsaltToken(string $token): string
     {
-        if ($this->isOldToken($token)) {
+        if ($this->isUnsaltedToken($token)) {
             return $token;
         }
         $decoded = base64_decode($token, true);
@@ -325,7 +328,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
     {
         // If we have a hexadecimal value we're in a compatibility mode from before
         // tokens were salted on each request.
-        if ($this->isOldToken($token)) {
+        if ($this->isUnsaltedToken($token)) {
             $decoded = $token;
         } else {
             $decoded = base64_decode($token, true);
