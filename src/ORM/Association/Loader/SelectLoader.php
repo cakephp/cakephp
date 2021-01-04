@@ -178,6 +178,11 @@ class SelectLoader
             ->where($options['conditions'])
             ->eagerLoaded(true)
             ->enableHydration($options['query']->isHydrationEnabled());
+        if ($options['query']->isResultsCastingEnabled()) {
+            $fetchQuery->enableResultsCasting();
+        } else {
+            $fetchQuery->disableResultsCasting();
+        }
 
         if ($useSubquery) {
             $filter = $this->_buildSubquery($options['query']);
