@@ -23,6 +23,7 @@ use Cake\Http\Middleware\CsrfProtectionMiddleware;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Security;
 use Laminas\Diactoros\Response as DiactorosResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Psr\Http\Message\ServerRequestInterface;
@@ -34,6 +35,13 @@ use TestApp\Http\TestRequestHandler;
  */
 class CsrfProtectionMiddlewareTest extends TestCase
 {
+    protected function createOldToken(): string
+    {
+        // Create an old style token. These tokens are hexadecimal with an hmac.
+        $random = Security::randomString(CsrfProtectionMiddleware::TOKEN_VALUE_LENGTH);
+        return $random . hash_hmac('sha1', $random, Security::getSalt());
+    }
+
     /**
      * Data provider for HTTP method tests.
      *
@@ -106,6 +114,37 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $this->assertNotEquals($cookie['value'], $requestAttr);
         $this->assertEquals(strlen($cookie['value']) * 2, strlen($requestAttr));
         $this->assertMatchesRegularExpression('/^[A-Z0-9\/+]+=*$/i', $requestAttr);
+    }
+
+    /**
+     * Test setting request attribute based on old cookie value.
+     *
+     * @return void
+     */
+    public function testRequestAttributeCompatWithOldToken()
+    {
+        $middleware = new CsrfProtectionMiddleware();
+        $oldToken = $this->createOldToken();
+
+        $request = new ServerRequest([
+            'environment' => [
+                'REQUEST_METHOD' => 'GET',
+            ],
+            'cookies' => ['csrfToken' => $oldToken],
+        ]);
+
+        /** @var \Cake\Http\ServerRequest $updatedRequest */
+        $updatedRequest = null;
+        $handler = new TestRequestHandler(function ($request) use (&$updatedRequest) {
+            $updatedRequest = $request;
+
+            return new Response();
+        });
+        $response = $middleware->process($request, $handler);
+        $this->assertInstanceOf(Response::class, $response);
+
+        $requestAttr = $updatedRequest->getAttribute('csrfToken');
+        $this->assertSame($requestAttr, $oldToken, 'Request attribute should match the token.');
     }
 
     /**
@@ -282,7 +321,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
     public function testValidTokenRequestDataCompat($method)
     {
         $middleware = new CsrfProtectionMiddleware();
-        $token = $middleware->createToken();
+        $token = $this->createOldToken();
 
         $request = new ServerRequest([
             'environment' => [

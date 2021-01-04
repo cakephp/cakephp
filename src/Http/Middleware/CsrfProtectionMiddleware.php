@@ -234,6 +234,19 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
     }
 
     /**
+     * Test if the token predates salted tokens.
+     *
+     * These tokens are vulnerable to BREACH but will rotate over time.
+     *
+     * @param string $token The token to test.
+     * @return bool
+     */
+    protected function isOldToken(string $token): bool
+    {
+        return preg_match('/^[a-f0-9]{' . static::TOKEN_WITH_CHECKSUM_LENGTH . '}$/', $token) === 1;
+    }
+
+    /**
      * Create a new token to be used for CSRF protection
      *
      * @return string
@@ -257,7 +270,10 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      */
     public function saltToken(string $token): string
     {
-        $decoded = base64_decode($token);
+        if ($this->isOldToken($token)) {
+            return $token;
+        }
+        $decoded = base64_decode($token, true);
         $length = strlen($decoded);
         $salt = Security::randomBytes($length);
         $salted = '';
@@ -280,6 +296,9 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      */
     public function unsaltToken(string $token): string
     {
+        if ($this->isOldToken($token)) {
+            return $token;
+        }
         $decoded = base64_decode($token, true);
         if ($decoded === false || strlen($decoded) !== static::TOKEN_WITH_CHECKSUM_LENGTH * 2) {
             return $token;
@@ -304,13 +323,14 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      */
     protected function _verifyToken(string $token): bool
     {
-        $decoded = base64_decode($token, true);
-        // If base64 fails we're in a compatibility mode from before
+        // If we have a hexadecimal value we're in a compatibility mode from before
         // tokens were salted on each request.
-        if ($decoded === false) {
+        if ($this->isOldToken($token)) {
             $decoded = $token;
+        } else {
+            $decoded = base64_decode($token, true);
         }
-        if (strlen($decoded) <= self::TOKEN_VALUE_LENGTH) {
+        if (strlen($decoded) <= static::TOKEN_VALUE_LENGTH) {
             return false;
         }
 
