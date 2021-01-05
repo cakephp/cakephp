@@ -244,7 +244,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      * @param string $token The token to test.
      * @return bool
      */
-    protected function isUnsaltedToken(string $token): bool
+    protected function isHexadecimalToken(string $token): bool
     {
         return preg_match('/^[a-f0-9]{' . static::TOKEN_WITH_CHECKSUM_LENGTH . '}$/', $token) === 1;
     }
@@ -273,7 +273,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      */
     public function saltToken(string $token): string
     {
-        if ($this->isUnsaltedToken($token)) {
+        if ($this->isHexadecimalToken($token)) {
             return $token;
         }
         $decoded = base64_decode($token, true);
@@ -299,7 +299,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      */
     public function unsaltToken(string $token): string
     {
-        if ($this->isUnsaltedToken($token)) {
+        if ($this->isHexadecimalToken($token)) {
             return $token;
         }
         $decoded = base64_decode($token, true);
@@ -328,7 +328,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
     {
         // If we have a hexadecimal value we're in a compatibility mode from before
         // tokens were salted on each request.
-        if ($this->isUnsaltedToken($token)) {
+        if ($this->isHexadecimalToken($token)) {
             $decoded = $token;
         } else {
             $decoded = base64_decode($token, true);
