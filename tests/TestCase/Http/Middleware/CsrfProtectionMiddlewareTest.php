@@ -39,6 +39,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
     {
         // Create an old style token. These tokens are hexadecimal with an hmac.
         $random = Security::randomString(CsrfProtectionMiddleware::TOKEN_VALUE_LENGTH);
+
         return $random . hash_hmac('sha1', $random, Security::getSalt());
     }
 
