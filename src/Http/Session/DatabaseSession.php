@@ -18,7 +18,6 @@ declare(strict_types=1);
  */
 namespace Cake\Http\Session;
 
-use Cake\ORM\Entity;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use SessionHandlerInterface;
 
@@ -155,7 +154,9 @@ class DatabaseSession implements SessionHandlerInterface
         /** @var string $pkField */
         $pkField = $this->_table->getPrimaryKey();
         $record[$pkField] = $id;
-        $result = $this->_table->save(new Entity($record));
+        $entityClass = $this->_table->getEntityClass();
+        $entity = new $entityClass($record);
+        $result = $this->_table->save($entity);
 
         return (bool)$result;
     }
@@ -170,10 +171,12 @@ class DatabaseSession implements SessionHandlerInterface
     {
         /** @var string $pkField */
         $pkField = $this->_table->getPrimaryKey();
-        $this->_table->delete(new Entity(
+        $entityClass = $this->_table->getEntityClass();
+        $entity = new $entityClass(
             [$pkField => $id],
             ['markNew' => false]
-        ));
+        );
+        $this->_table->delete($entity);
 
         return true;
     }
