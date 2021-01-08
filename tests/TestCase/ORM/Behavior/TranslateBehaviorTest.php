@@ -974,7 +974,7 @@ class TranslateBehaviorTest extends TestCase
     }
 
     /**
-     * Tests adding new translation to a record
+     * Tests adding new translation to a record with a missing translation
      *
      * @return void
      */
