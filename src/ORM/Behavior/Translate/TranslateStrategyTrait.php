@@ -111,7 +111,7 @@ trait TranslateStrategyTrait
         foreach ($translations as $locale => $translation) {
             $fields = $translation->extract($this->_config['fields'], false);
             foreach ($fields as $field => $value) {
-                if (strlen($value) === 0) {
+                if ($value === null || strlen($value) === 0) {
                     $translation->unset($field);
                 }
             }
