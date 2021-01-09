@@ -168,9 +168,9 @@ trait IntegrationTestTrait
     /**
      * Stored flash messages before render
      *
-     * @var array|null
+     * @var array
      */
-    protected $_flashMessages;
+    protected $_flashMessages = [];
 
     /**
      * @var string|null
@@ -205,6 +205,7 @@ trait IntegrationTestTrait
         $this->_securityToken = false;
         $this->_csrfToken = false;
         $this->_retainFlashMessages = false;
+        $this->_flashMessages = [];
     }
 
     /**
@@ -512,10 +513,14 @@ trait IntegrationTestTrait
         $this->_controller = $controller;
         $events = $controller->getEventManager();
         $flashCapture = function (EventInterface $event): void {
-            if ($this->_retainFlashMessages && empty($this->_flashMessages)) {
-                $controller = $event->getSubject();
-                $this->_flashMessages = $controller->getRequest()->getSession()->read('Flash');
+            if (!$this->_retainFlashMessages) {
+                return;
             }
+            $controller = $event->getSubject();
+            $this->_flashMessages = Hash::merge(
+                $this->_flashMessages,
+                $controller->getRequest()->getSession()->read('Flash')
+            );
         };
         $events->on('Controller.beforeRedirect', ['priority' => -100], $flashCapture);
         $events->on('Controller.beforeRender', ['priority' => -100], $flashCapture);

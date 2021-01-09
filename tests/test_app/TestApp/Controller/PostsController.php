@@ -73,7 +73,7 @@ class PostsController extends AppController
      */
     public function someRedirect()
     {
-        $this->Flash->error('An error message');
+        $this->Flash->success('A success message');
 
         return $this->redirect('/somewhere');
     }
