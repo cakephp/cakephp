@@ -22,6 +22,7 @@ use Cake\Core\ContainerInterface;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
 use Cake\Http\BaseApplication;
 use Cake\Http\MiddlewareQueue;
+use Cake\Routing\Exception\DuplicateNamedRouteException;
 use Cake\Routing\Middleware\RoutingMiddleware;
 use Cake\Routing\RouteBuilder;
 use stdClass;
@@ -86,7 +87,11 @@ class Application extends BaseApplication
             $routes->connect('/articles', ['controller' => 'Articles']);
             $routes->connect('/articles/:action/*', ['controller' => 'Articles']);
 
-            $routes->connect('/tests/:action/*', ['controller' => 'Tests'], ['_name' => 'testName']);
+            try {
+                $routes->connect('/tests/:action/*', ['controller' => 'Tests'], ['_name' => 'testName']);
+            } catch (DuplicateNamedRouteException $e) {
+                // do nothing. This happens when one test does multiple requests.
+            }
             $routes->fallbacks();
         });
         $routes->connect('/posts', ['controller' => 'Posts', 'action' => 'index']);
