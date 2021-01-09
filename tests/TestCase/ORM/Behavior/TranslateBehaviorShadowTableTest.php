@@ -952,6 +952,36 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
     }
 
     /**
+     * Tests adding new translation to a record with a missing translation
+     *
+     * @return void
+     */
+    public function testAllowEmptyFalseWithNull()
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $table->addBehavior('Translate', ['fields' => ['title', 'description'], 'allowEmptyTranslations' => false]);
+
+        $article = $table->find()->first();
+        $this->assertSame(1, $article->get('id'));
+
+        $article = $table->patchEntity($article, [
+            '_translations' => [
+                'fra' => [
+                    'title' => 'Title',
+                ],
+            ],
+        ]);
+
+        $table->save($article);
+
+        // Remove the Behavior to unset the content != '' condition
+        $table->removeBehavior('Translate');
+
+        $fra = $table->ArticlesTranslations->find()->where(['locale' => 'fra'])->first();
+        $this->assertNotEmpty($fra);
+    }
+
+    /**
      * Tests adding new translation to a record
      *
      * @return void
