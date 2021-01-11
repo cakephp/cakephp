@@ -1114,6 +1114,39 @@ class Query implements ExpressionInterface, IteratorAggregate
     }
 
     /**
+     * Adds a NOT IN condition or set of conditions to be used in the WHERE clause for this
+     * query. This also allows the field to be null with a IS NULL condition since the null
+     * value would cause the NOT IN condition to always fail.
+     *
+     * This method does allow empty inputs in contrast to where() if you set
+     * 'allowEmpty' to true.
+     * Be careful about using it without proper sanity checks.
+     *
+     * @param string $field Field
+     * @param array $values Array of values
+     * @param array $options Options
+     * @return $this
+     */
+    public function whereNotInListOrNull(string $field, array $values, array $options = [])
+    {
+        $options += [
+            'types' => [],
+            'allowEmpty' => false,
+        ];
+
+        if ($options['allowEmpty'] && !$values) {
+            return $this->where([$field . ' IS NOT' => null]);
+        }
+
+        return $this->where(
+            [
+                'OR' => [$field . ' NOT IN' => $values, $field . ' IS' => null],
+            ],
+            $options['types']
+        );
+    }
+
+    /**
      * Connects any previously defined set of conditions to the provided list
      * using the AND operator. This function accepts the conditions list in the same
      * format as the method `where` does, hence you can use arrays, expression objects
