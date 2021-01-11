@@ -375,7 +375,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param string|null $type the type name for $value as configured using the Type map.
      * @return $this
      */
-    public function notInOrNull($field, $values, $type = null)
+    public function notInOrNull($field, $values, ?string $type = null)
     {
         $or = new static([], [], 'OR');
         $or
