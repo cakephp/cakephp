@@ -96,6 +96,9 @@ class Validation
      */
     public const COMPARE_LESS_OR_EQUAL = '<=';
 
+    /**
+     * @var string[]
+     */
     protected const COMPARE_STRING = [
         self::COMPARE_EQUAL,
         self::COMPARE_NOT_EQUAL,

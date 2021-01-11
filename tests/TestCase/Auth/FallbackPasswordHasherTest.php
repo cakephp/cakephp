@@ -20,12 +20,19 @@ use Cake\Auth\DefaultPasswordHasher;
 use Cake\Auth\FallbackPasswordHasher;
 use Cake\Auth\WeakPasswordHasher;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Security;
 
 /**
  * Test case for FallbackPasswordHasher
  */
 class FallbackPasswordHasherTest extends TestCase
 {
+    public function setUp(): void
+    {
+        parent::setUp();
+        Security::setSalt('YJfIxfs2guVoUubWDYhG93b0qyJfIxfs2guwvniR2G0FgaC9mia1390as13dla8kjasdlwerpoiASf');
+    }
+
     /**
      * Tests that only the first hasher is user for hashing a password
      *

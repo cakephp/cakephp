@@ -43,7 +43,15 @@ class BelongsToManyTest extends TestCase
      *
      * @var array
      */
-    protected $fixtures = ['core.Articles', 'core.SpecialTags', 'core.ArticlesTags', 'core.Tags'];
+    protected $fixtures = [
+        'core.Articles',
+        'core.SpecialTags',
+        'core.ArticlesTags',
+        'core.Tags',
+        'core.BinaryUuidItems',
+        'core.BinaryUuidTags',
+        'core.BinaryUuidItemsBinaryUuidTags',
+    ];
 
     /**
      * Set up
@@ -995,6 +1003,44 @@ class BelongsToManyTest extends TestCase
         $entity = $articles->get(1, ['contain' => 'Tags']);
         $this->assertCount($originalCount, $entity->tags, 'Should not have changed.');
         $this->assertSame('tag1', $entity->tags[0]->name);
+    }
+
+    /**
+     * Tests that replaceLinks will delete entities not present in the passed,
+     * array, maintain those are already persisted and were passed and also
+     * insert the rest.
+     *
+     * @return void
+     */
+    public function testReplaceLinkBinaryUuid()
+    {
+        $items = $this->getTableLocator()->get('BinaryUuidItems');
+        $tags = $this->getTableLocator()->get('BinaryUuidTags');
+
+        $items->belongsToMany('BinaryUuidTags', [
+            'sourceTable' => $items,
+            'targetTable' => $tags,
+        ]);
+        $itemName = 'Item 1';
+        $item = $items->find()->where(['BinaryUuidItems.name' => $itemName])->firstOrFail();
+        $existingTag = $tags->find()->where(['BinaryUuidTags.name' => 'Defect'])->firstOrFail();
+
+        // 1=existing, 2=new tag
+        $item->binary_uuid_tags = [
+            $existingTag,
+            new Entity(['name' => 'net new']),
+        ];
+        $item->name = 'Updated';
+        $items->saveOrFail($item);
+
+        $refresh = $items->find()->where(['id' => $item->id])->contain('BinaryUuidTags')->firstOrFail();
+        $this->assertCount(2, $refresh->binary_uuid_tags, 'Two tags should exist');
+
+        $refresh->binary_uuid_tags = [$refresh->binary_uuid_tags[0]];
+        $items->save($refresh);
+
+        $refresh = $items->get($item->id, ['contain' => 'BinaryUuidTags']);
+        $this->assertCount(1, $refresh->binary_uuid_tags, 'One tag should remain');
     }
 
     /**

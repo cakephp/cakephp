@@ -47,6 +47,13 @@ class PostsController extends AppController
         $this->FormProtection->setConfig('unlockedFields', ['some_unlocked_field']);
     }
 
+    public function beforeRender(EventInterface $event)
+    {
+        if ($this->request->getQuery('clear')) {
+            $this->set('flash', $this->request->getSession()->consume('Flash'));
+        }
+    }
+
     /**
      * Index method.
      *
@@ -66,7 +73,7 @@ class PostsController extends AppController
      */
     public function someRedirect()
     {
-        $this->Flash->error('An error message');
+        $this->Flash->success('A success message');
 
         return $this->redirect('/somewhere');
     }

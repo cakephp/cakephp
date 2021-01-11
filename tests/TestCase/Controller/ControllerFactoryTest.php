@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Controller;
 
+use ArgumentCountError;
 use Cake\Controller\ControllerFactory;
 use Cake\Core\Container;
 use Cake\Http\Exception\MissingControllerException;
@@ -514,7 +515,7 @@ class ControllerFactoryTest extends TestCase
      *
      * @return void
      */
-    public function testInvokeInjectRequiredParameterDefined()
+    public function testInvokeInjectParametersRequiredDefined()
     {
         $this->container->add(stdClass::class, json_decode('{"key":"value"}'));
         $request = new ServerRequest([
@@ -557,16 +558,47 @@ class ControllerFactoryTest extends TestCase
         $this->factory->invoke($controller);
     }
 
-    /**
-     * Ensure that a controllers startup process can emit a response
-     *
-     * @return void
-     */
+    public function testInvokeInjectParametersRequiredMissingUntyped()
+    {
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/requiredParam',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'requiredParam',
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+
+        $this->expectException(ArgumentCountError::class);
+        $this->expectExceptionMessage('Too few arguments');
+        $this->factory->invoke($controller);
+    }
+
+    public function testInvokeInjectParametersRequiredUntyped()
+    {
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/requiredParam',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'requiredParam',
+                'pass' => ['one'],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+        $result = $this->factory->invoke($controller);
+        $data = json_decode((string)$result->getBody());
+
+        $this->assertNotNull($data);
+        $this->assertSame($data->one, 'one');
+    }
+
     public function testInvokeInjectParametersRequiredWithPassedParameters()
     {
         $this->container->add(stdClass::class, json_decode('{"key":"value"}'));
         $request = new ServerRequest([
-            'url' => 'test_plugin_three/dependencies/optionalDep',
+            'url' => 'test_plugin_three/dependencies/requiredDep',
             'params' => [
                 'plugin' => null,
                 'controller' => 'Dependencies',
@@ -592,7 +624,7 @@ class ControllerFactoryTest extends TestCase
     public function testInvokeInjectPassedParametersVariadic()
     {
         $request = new ServerRequest([
-            'url' => 'test_plugin_three/dependencies/optionalDep',
+            'url' => 'test_plugin_three/dependencies/variadic',
             'params' => [
                 'plugin' => null,
                 'controller' => 'Dependencies',
@@ -616,7 +648,7 @@ class ControllerFactoryTest extends TestCase
     public function testInvokeInjectPassedParametersSpread()
     {
         $request = new ServerRequest([
-            'url' => 'test_plugin_three/dependencies/optionalDep',
+            'url' => 'test_plugin_three/dependencies/spread',
             'params' => [
                 'plugin' => null,
                 'controller' => 'Dependencies',
@@ -630,6 +662,30 @@ class ControllerFactoryTest extends TestCase
 
         $this->assertNotNull($data);
         $this->assertSame(['one', 'two'], $data->args);
+    }
+
+    /**
+     * Test that routing parameters are passed into controller action using spread operator
+     *
+     * @return void
+     */
+    public function testInvokeInjectPassedParametersSpreadNoParams()
+    {
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/spread',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'spread',
+                'pass' => [],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+        $result = $this->factory->invoke($controller);
+        $data = json_decode((string)$result->getBody());
+
+        $this->assertNotNull($data);
+        $this->assertSame([], $data->args);
     }
 
     /**

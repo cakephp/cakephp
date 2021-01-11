@@ -51,4 +51,9 @@ class DependenciesController extends Controller
     {
         return $this->response->withStringBody(json_encode(['args' => $args]));
     }
+
+    public function requiredParam($one)
+    {
+        return $this->response->withStringBody(json_encode(compact('one')));
+    }
 }

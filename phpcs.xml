@@ -3,4 +3,6 @@
     <config name="installed_paths" value="../../cakephp/cakephp-codesniffer" />
 
     <rule ref="CakePHP" />
+
+    <arg value="s"/>
 </ruleset>

@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         4.2.0
+ * @since         4.1.8
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\Fixture;
@@ -17,21 +17,28 @@ namespace Cake\Test\Fixture;
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * Fixture that wraps a pre-existing table
- * without importing and with no fields.
+ * BinaryUuidTagsFixture
  */
-class UnmanagedFixture extends TestFixture
+class BinaryUuidTagsFixture extends TestFixture
 {
     /**
-     * @inheritDoc
+     * fields property
+     *
+     * @var array
      */
-    public $table = 'unmanaged';
+    public $fields = [
+        'id' => ['type' => 'binaryuuid'],
+        'name' => ['type' => 'string', 'null' => false],
+        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
+    ];
 
     /**
-     * @inheritDoc
+     * records property
+     *
+     * @var array
      */
     public $records = [
-        ['title' => 'a title', 'body' => 'a body'],
-        ['title' => 'another title', 'body' => 'another body'],
+        ['id' => '481fc6d0-b920-43e0-a40d-111111111111', 'name' => 'Defect'],
+        ['id' => '48298a29-81c0-4c26-a7fb-222222222222', 'name' => 'Enhancement'],
     ];
 }

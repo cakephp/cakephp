@@ -1091,8 +1091,9 @@ class BelongsToMany extends Association
      */
     protected function _appendJunctionJoin(Query $query, ?array $conditions = null): Query
     {
+        $junctionTable = $this->junction();
         if ($conditions === null) {
-            $belongsTo = $this->junction()->getAssociation($this->getTarget()->getAlias());
+            $belongsTo = $junctionTable->getAssociation($this->getTarget()->getAlias());
             $conditions = $belongsTo->_joinCondition([
                 'foreignKey' => $this->getTargetForeignKey(),
             ]);
@@ -1104,15 +1105,14 @@ class BelongsToMany extends Association
         $joins = $query->clause('join');
         $matching = [
             $name => [
-                'table' => $this->junction()->getTable(),
+                'table' => $junctionTable->getTable(),
                 'conditions' => $conditions,
                 'type' => Query::JOIN_TYPE_INNER,
             ],
         ];
 
-        $assoc = $this->getTarget()->getAssociation($name);
         $query
-            ->addDefaultTypes($assoc->getTarget())
+            ->addDefaultTypes($junctionTable)
             ->join($matching + $joins, [], true);
 
         return $query;
@@ -1195,14 +1195,21 @@ class BelongsToMany extends Association
 
                 // Find existing rows so that we can diff with new entities.
                 // Only hydrate primary/foreign key columns to save time.
-                $existing = $this->find()
+                // Attach joins first to ensure where conditions have correct
+                // column types set.
+                $existing = $this->_appendJunctionJoin($this->find())
                     ->select($keys)
                     ->where(array_combine($prefixedForeignKey, $primaryValue));
-                $existing = $this->_appendJunctionJoin($existing);
+
+                // Because we're aliasing key fields to look like they are not
+                // from joined table we need to overwrite the type map as the junction
+                // table can have a surrogate primary key that doesn't share a type
+                // with the target table.
+                $junctionTypes = array_intersect_key($junction->getSchema()->typeMap(), $keys);
+                $existing->getSelectTypeMap()->setTypes($junctionTypes);
 
                 $jointEntities = $this->_collectJointEntities($sourceEntity, $targetEntities);
                 $inserts = $this->_diffLinks($existing, $jointEntities, $targetEntities, $options);
-
                 if ($inserts === false) {
                     return false;
                 }

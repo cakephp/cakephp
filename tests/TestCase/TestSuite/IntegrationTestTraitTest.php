@@ -733,7 +733,7 @@ class IntegrationTestTraitTest extends TestCase
 
         $this->assertResponseCode(302);
 
-        $this->assertSession('An error message', 'Flash.flash.0.message');
+        $this->assertSession('A success message', 'Flash.flash.0.message');
     }
 
     /**
@@ -764,7 +764,44 @@ class IntegrationTestTraitTest extends TestCase
         $this->get('/posts/flashNoRender');
         $this->assertRedirect();
 
-        $this->assertSession('An error message', 'Flash.flash.0.message');
+        $this->assertFlashElement('flash/error');
+        $this->assertFlashMessage('An error message');
+    }
+
+    /**
+     * If multiple requests occur in the same test method
+     * flash messages should be retained.
+     *
+     * @return void
+     */
+    public function testFlashAssertionMultipleRequests()
+    {
+        $this->enableRetainFlashMessages();
+        $this->disableErrorHandlerMiddleware();
+
+        $this->get('/posts/index/with_flash');
+        $this->assertResponseCode(200);
+        $this->assertFlashMessage('An error message');
+
+        $this->get('/posts/someRedirect');
+        $this->assertResponseCode(302);
+        $this->assertFlashMessage('A success message');
+    }
+
+    /**
+     * Test flash assertions stored with enableRememberFlashMessages() even if
+     * the controller clears flash data in `beforeRender`
+     *
+     * @return void
+     */
+    public function testFlashAssertionsRemoveInBeforeRender()
+    {
+        $this->enableRetainFlashMessages();
+        $this->get('/posts/index/with_flash/?clear=true');
+        $this->assertResponseOk();
+
+        $this->assertFlashElement('flash/error');
+        $this->assertFlashMessage('An error message');
     }
 
     /**
