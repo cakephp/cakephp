@@ -35,8 +35,6 @@ class SprintfFormatter implements FormatterInterface
      */
     public function format(string $locale, string $message, array $tokenValues): string
     {
-        unset($tokenValues['_singular']);
-
         return vsprintf($message, $tokenValues);
     }
 }
