@@ -149,6 +149,18 @@ class SessionTest extends TestCase
     }
 
     /**
+     * test read fallback
+     *
+     * @return void
+     */
+    public function testReadFallback()
+    {
+        $_SESSION = null;
+        $session = new Session();
+        $this->assertSame('default', $session->read('no', 'default'));
+    }
+
+    /**
      * Tests read() with defaulting.
      *
      * @return void
