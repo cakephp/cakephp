@@ -222,7 +222,7 @@ parameters:
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
-			count: 7
+			count: 8
 			path: src/Database/Expression/QueryExpression.php
 
 		-

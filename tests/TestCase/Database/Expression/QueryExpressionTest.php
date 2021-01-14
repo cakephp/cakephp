@@ -203,4 +203,19 @@ class QueryExpressionTest extends TestCase
         $expr = new QueryExpression(['OR' => []]);
         $this->assertCount(0, $expr);
     }
+
+    /**
+     * Tests that both conditions are generated for notInOrNull().
+     *
+     * @return void
+     */
+    public function testNotInOrNull()
+    {
+        $expr = new QueryExpression();
+        $expr->notInOrNull('test', ['one', 'two']);
+        $this->assertEqualsSql(
+            '(test NOT IN (:c0,:c1) OR (test) IS NULL)',
+            $expr->sql(new ValueBinder())
+        );
+    }
 }
