@@ -3352,6 +3352,8 @@ class ValidationTest extends TestCase
             'width' => [Validation::COMPARE_GREATER, 100],
             'height' => [Validation::COMPARE_GREATER, 100],
         ]));
+        $this->assertTrue(Validation::imageHeight($upload, Validation::COMPARE_GREATER, 100));
+        $this->assertTrue(Validation::imageWidth($upload, Validation::COMPARE_GREATER, 100));
     }
 
     /**

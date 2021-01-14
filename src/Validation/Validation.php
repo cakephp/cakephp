@@ -1265,7 +1265,7 @@ class Validation
      * Helper for reading the file out of the various file implementations
      * we accept.
      *
-     * @param string|array|\Psr\Http\Message\UploadedFileInterface $check The data to read a filename out of.
+     * @param mixed $check The data to read a filename out of.
      * @return string|false Either the filename or false on failure.
      */
     protected static function getFilename($check)
@@ -1463,12 +1463,12 @@ class Validation
     /**
      * Validates the image width.
      *
-     * @param array $file The uploaded file data from PHP.
+     * @param mixed $file The uploaded file data from PHP.
      * @param string $operator Comparison operator.
      * @param int $width Min or max width.
      * @return bool
      */
-    public static function imageWidth(array $file, string $operator, int $width): bool
+    public static function imageWidth($file, string $operator, int $width): bool
     {
         return self::imageSize($file, [
             'width' => [
@@ -1481,12 +1481,12 @@ class Validation
     /**
      * Validates the image width.
      *
-     * @param array $file The uploaded file data from PHP.
+     * @param mixed $file The uploaded file data from PHP.
      * @param string $operator Comparison operator.
      * @param int $height Min or max width.
      * @return bool
      */
-    public static function imageHeight(array $file, string $operator, int $height): bool
+    public static function imageHeight($file, string $operator, int $height): bool
     {
         return self::imageSize($file, [
             'height' => [
