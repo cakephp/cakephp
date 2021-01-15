@@ -969,7 +969,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::custom('12345', '/(?<!\\S)\\d++(?!\\S)/'));
         $this->assertFalse(Validation::custom('Text', '/(?<!\\S)\\d++(?!\\S)/'));
         $this->assertFalse(Validation::custom('123.45', '/(?<!\\S)\\d++(?!\\S)/'));
-        //why ? $this->assertFalse(Validation::custom(1, '/.*/'));
+        $this->assertTrue(Validation::custom(1, '/.*/'));
         $this->assertTrue(Validation::custom('1', '/^[0-9A-Za-z\s&]*$/'));
         $this->assertFalse(Validation::custom(['input is not string'], '/.*/'));
         $this->assertFalse(Validation::custom('missing regex'));
