@@ -455,10 +455,9 @@ class Validation
      */
     public static function custom($check, ?string $regex = null): bool
     {
-        if (!is_string($check)) {
+        if (!is_scalar($check)) {
             return false;
         }
-
         if ($regex === null) {
             static::$errors[] = 'You must define a regular expression for Validation::custom()';
 
