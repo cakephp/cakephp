@@ -221,6 +221,10 @@ class MarshallerTest extends TestCase
         $data['created'] = 1392387900;
         $result = $marshall->one($data, []);
         $this->assertSame($data['created'], $result->created->getTimestamp());
+
+        $data['created'] = '2014-02-14';
+        $result = $marshall->one($data, []);
+        $this->assertEquals('2014-02-14', $result->created->format('Y-m-d'));
     }
 
     /**
