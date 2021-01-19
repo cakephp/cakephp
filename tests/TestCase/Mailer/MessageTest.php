@@ -1391,4 +1391,27 @@ HTML;
             );
         }
     }
+
+    public function testSerialization()
+    {
+        $message = new Message();
+
+        $message
+            ->setSubject('I haz Cake')
+            ->setEmailFormat(Message::MESSAGE_BOTH)
+            ->setBody([
+                Message::MESSAGE_TEXT => 'text message',
+                Message::MESSAGE_HTML => '<strong>html message</strong>',
+            ]);
+
+        $string = serialize($message);
+        $this->assertStringContainsString('text message', $string);
+
+        /** @var \Cake\Mailer\Message $message */
+        $message = unserialize($string);
+        $this->assertSame('I haz Cake', $message->getSubject());
+        $body = $message->getBodyString();
+        $this->assertStringContainsString('text message', $body);
+        $this->assertStringContainsString('<strong>html message</strong>', $body);
+    }
 }
