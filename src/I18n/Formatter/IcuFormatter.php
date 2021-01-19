@@ -37,23 +37,6 @@ class IcuFormatter implements FormatterInterface
      */
     public function format(string $locale, string $message, array $tokenValues): string
     {
-        unset($tokenValues['_singular'], $tokenValues['_count']);
-
-        return $this->_formatMessage($locale, $message, $tokenValues);
-    }
-
-    /**
-     * Does the actual formatting using the MessageFormatter class
-     *
-     * @param string $locale The locale in which the message is presented.
-     * @param string $message The message to be translated
-     * @param array $tokenValues The list of values to interpolate in the message
-     * @return string The formatted message
-     * @throws \Cake\I18n\Exception\I18nException If any error related to the passed
-     * variables is found
-     */
-    protected function _formatMessage(string $locale, string $message, array $tokenValues): string
-    {
         if ($message === '') {
             return $message;
         }
