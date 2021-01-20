@@ -474,7 +474,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
         foreach ($this->_marshalFormats as $format) {
             try {
                 // if date format, force casting into correct DateTime with empty H:i:s
-                if($format === 'Y-m-d' && preg_match('/^[\d]{4}[-][\d]{2}[-][\d]{2}$/', $value)) {
+                if ($format === 'Y-m-d' && preg_match('/^[\d]{4}[-][\d]{2}[-][\d]{2}$/', $value)) {
                     $format = 'Y-m-d H:i:s';
                     $value .= ' 00:00:00';
                 }
