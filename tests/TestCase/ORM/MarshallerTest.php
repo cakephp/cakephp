@@ -224,7 +224,7 @@ class MarshallerTest extends TestCase
 
         $data['created'] = '2014-02-14';
         $result = $marshall->one($data, []);
-        $this->assertEquals('2014-02-14', $result->created->format('Y-m-d'));
+        $this->assertEquals(new Time('2014-02-14 00:00:00'), $result->created);
     }
 
     /**
