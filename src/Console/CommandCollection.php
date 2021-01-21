@@ -220,7 +220,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * - CakePHP provided commands
      * - Application commands
      *
-     * Commands defined in the application will ovewrite commands with
+     * Commands defined in the application will overwrite commands with
      * the same name provided by CakePHP.
      *
      * @return string[] An array of command names and their classes.

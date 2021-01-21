@@ -36,7 +36,7 @@ abstract class AbstractTransport
     /**
      * Send mail
      *
-     * @param \Cake\Mailer\Message $message Email mesage.
+     * @param \Cake\Mailer\Message $message Email message.
      * @return array
      * @psalm-return array{headers: string, message: string}
      */
