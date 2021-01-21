@@ -608,7 +608,7 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
-     * Proxy all static method calls (for methods provided by StaticConfigTrat) to Mailer.
+     * Proxy all static method calls (for methods provided by StaticConfigTrait) to Mailer.
      *
      * @param string $name Method name.
      * @param array $arguments Method argument.

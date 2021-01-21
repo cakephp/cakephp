@@ -49,7 +49,7 @@ use RuntimeException;
  * You can also set `'serialize'` to a string or array to serialize only the
  * specified view variables.
  *
- * If you don't set the `serialize` opton, you will need a view template.
+ * If you don't set the `serialize` option, you will need a view template.
  * You can use extended views to provide layout-like functionality.
  *
  * You can also enable JSONP support by setting `jsonp` option to true or a
