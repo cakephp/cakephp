@@ -35,7 +35,7 @@ use SplFileInfo;
  *
  * There are external packages such as `fig/http-message-util` that provide HTTP
  * status code constants. These can be used with any method that accepts or
- * returns a status code integer. Keep in mind that these consants might
+ * returns a status code integer. Keep in mind that these constants might
  * include status codes that are now allowed which will throw an
  * `\InvalidArgumentException`.
  */
@@ -599,7 +599,7 @@ class Response implements ResponseInterface
      *
      * There are external packages such as `fig/http-message-util` that provide HTTP
      * status code constants. These can be used with any method that accepts or
-     * returns a status code integer. However, keep in mind that these consants
+     * returns a status code integer. However, keep in mind that these constants
      * might include status codes that are now allowed which will throw an
      * `\InvalidArgumentException`.
      *
