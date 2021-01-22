@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Error\Middleware;
 
 use Cake\Core\App;
+use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Error\ErrorHandler;
 use Cake\Error\ExceptionRenderer;
@@ -90,6 +91,10 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
             );
 
             $errorHandler = func_get_arg(1);
+        }
+
+        if (PHP_VERSION_ID >= 70400 && Configure::read('debug')) {
+            ini_set('zend.exception_ignore_args', '0');
         }
 
         if (is_array($errorHandler)) {

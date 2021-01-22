@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Error\Middleware;
 
+use Cake\Core\Configure;
 use Cake\Error\ErrorHandler;
 use Cake\Error\ExceptionRendererInterface;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
@@ -375,5 +376,28 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $response = $middleware->process($request, $handler);
         $this->assertSame(500, $response->getStatusCode());
         $this->assertSame('An Internal Server Error Occurred', '' . $response->getBody());
+    }
+
+    /**
+     * Test exception args are not ignored in php7.4 with debug enabled.
+     *
+     * @return void
+     */
+    public function testExceptionArgs()
+    {
+        $this->skipIf(PHP_VERSION_ID < 70400);
+
+        // Force exception_ignore_args to true for test
+        ini_set('zend.exception_ignore_args', '1');
+
+        // Debug disabled
+        Configure::write('debug', false);
+        new ErrorHandlerMiddleware();
+        $this->assertSame('1', ini_get('zend.exception_ignore_args'));
+
+        // Debug enabled
+        Configure::write('debug', true);
+        new ErrorHandlerMiddleware();
+        $this->assertSame('0', ini_get('zend.exception_ignore_args'));
     }
 }
