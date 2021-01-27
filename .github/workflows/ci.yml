@@ -1,4 +1,4 @@
-name: CakePHP CI
+name: CI
 
 on:
   push:
