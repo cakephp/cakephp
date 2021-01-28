@@ -348,7 +348,10 @@ class Debugger
         $source = static::trace(['start' => 1]);
         $source .= "\n";
 
-        Log::write($level, "\n" . $source . static::exportVar($var, $maxDepth));
+        Log::write(
+            $level,
+            "\n" . $source . static::exportVarAsPlainText($var, $maxDepth)
+        );
     }
 
     /**
@@ -624,6 +627,20 @@ class Debugger
         $node = static::export($var, $context);
 
         return static::getInstance()->getExportFormatter()->dump($node);
+    }
+
+    /**
+     * Converts a variable to a plain text string.
+     *
+     * @param mixed $var Variable to convert.
+     * @param int $maxDepth The depth to output to. Defaults to 3.
+     * @return string Variable as a string
+     */
+    public static function exportVarAsPlainText($var, int $maxDepth = 3): string
+    {
+        return (new TextFormatter())->dump(
+            static::export($var, new DebugContext($maxDepth))
+        );
     }
 
     /**

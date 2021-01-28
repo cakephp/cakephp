@@ -18,6 +18,8 @@ namespace Cake\Test\TestCase\Error;
 
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
+use Cake\Error\Debug\ConsoleFormatter;
+use Cake\Error\Debug\HtmlFormatter;
 use Cake\Error\Debug\NodeInterface;
 use Cake\Error\Debug\ScalarNode;
 use Cake\Error\Debug\SpecialNode;
@@ -505,6 +507,22 @@ TEXT;
     }
 
     /**
+     * Tests plain text variable export.
+     *
+     * @return void
+     */
+    public function testExportVarAsPlainText()
+    {
+        Debugger::configInstance('exportFormatter', null);
+        $result = Debugger::exportVarAsPlainText(123);
+        $this->assertSame('(int) 123', $result);
+
+        Debugger::configInstance('exportFormatter', ConsoleFormatter::class);
+        $result = Debugger::exportVarAsPlainText(123);
+        $this->assertSame('(int) 123', $result);
+    }
+
+    /**
      * Text exportVarAsNodes()
      *
      * @return void
@@ -561,6 +579,41 @@ TEXT;
         $this->assertStringContainsString('[main]', $messages[1]);
         $this->assertStringContainsString("'whatever'", $messages[1]);
         $this->assertStringContainsString("'here'", $messages[1]);
+
+        Log::drop('test');
+    }
+
+    /**
+     * Tests that logging does not apply formatting.
+     *
+     * @return void
+     */
+    public function testLogShouldNotApplyFormatting()
+    {
+        Log::setConfig('test', [
+            'className' => 'Array',
+        ]);
+
+        Debugger::configInstance('exportFormatter', null);
+        Debugger::log(123);
+        $messages = implode('', Log::engine('test')->read());
+        Log::engine('test')->clear();
+        $this->assertStringContainsString('(int) 123', $messages);
+        $this->assertStringNotContainsString("\033[0m", $messages);
+
+        Debugger::configInstance('exportFormatter', HtmlFormatter::class);
+        Debugger::log(123);
+        $messages = implode('', Log::engine('test')->read());
+        Log::engine('test')->clear();
+        $this->assertStringContainsString('(int) 123', $messages);
+        $this->assertStringNotContainsString('<style', $messages);
+
+        Debugger::configInstance('exportFormatter', ConsoleFormatter::class);
+        Debugger::log(123);
+        $messages = implode('', Log::engine('test')->read());
+        Log::engine('test')->clear();
+        $this->assertStringContainsString('(int) 123', $messages);
+        $this->assertStringNotContainsString("\033[0m", $messages);
 
         Log::drop('test');
     }
