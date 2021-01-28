@@ -1,7 +1,7 @@
 {
     "name": "cakephp/cakephp",
-    "description": "The CakePHP framework",
     "type": "library",
+    "description": "The CakePHP framework",
     "keywords": [
         "framework",
         "mvc",
@@ -21,16 +21,10 @@
             "homepage": "https://github.com/cakephp/cakephp/graphs/contributors"
         }
     ],
-    "support": {
-        "issues": "https://github.com/cakephp/cakephp/issues",
-        "forum": "https://stackoverflow.com/tags/cakephp",
-        "irc": "irc://irc.freenode.org/cakephp",
-        "source": "https://github.com/cakephp/cakephp"
-    },
     "require": {
         "php": ">=7.2.0",
-        "ext-json": "*",
         "ext-intl": "*",
+        "ext-json": "*",
         "ext-mbstring": "*",
         "cakephp/chronos": "^2.0",
         "composer/ca-bundle": "^1.2",
@@ -43,17 +37,38 @@
         "psr/log": "^1.0.0",
         "psr/simple-cache": "^1.0.0"
     },
-    "suggest": {
-        "ext-openssl": "To use Security::encrypt() or have secure CSRF token generation.",
-        "ext-curl": "To enable more efficient network calls in Http\\Client.",
-        "lib-ICU": "The intl PHP library, to use Text::transliterate() or Text::slug()",
-        "paragonie/csp-builder": "CSP builder, to use the CSP Middleware"
+    "replace": {
+        "cakephp/cache": "self.version",
+        "cakephp/collection": "self.version",
+        "cakephp/console": "self.version",
+        "cakephp/core": "self.version",
+        "cakephp/database": "self.version",
+        "cakephp/datasource": "self.version",
+        "cakephp/event": "self.version",
+        "cakephp/filesystem": "self.version",
+        "cakephp/form": "self.version",
+        "cakephp/http": "self.version",
+        "cakephp/i18n": "self.version",
+        "cakephp/log": "self.version",
+        "cakephp/orm": "self.version",
+        "cakephp/utility": "self.version",
+        "cakephp/validation": "self.version"
     },
     "require-dev": {
         "cakephp/cakephp-codesniffer": "^4.0",
         "mikey179/vfsstream": "^1.6",
         "paragonie/csp-builder": "^2.3",
         "phpunit/phpunit": "^8.5 || ^9.3"
+    },
+    "suggest": {
+        "ext-curl": "To enable more efficient network calls in Http\\Client.",
+        "ext-openssl": "To use Security::encrypt() or have secure CSRF token generation.",
+        "lib-ICU": "The intl PHP library, to use Text::transliterate() or Text::slug()",
+        "paragonie/csp-builder": "CSP builder, to use the CSP Middleware"
+    },
+    "config": {
+        "process-timeout": 900,
+        "sort-packages": true
     },
     "autoload": {
         "psr-4": {
@@ -80,23 +95,6 @@
             "ParentPlugin\\": "tests/test_app/Plugin/ParentPlugin/src/"
         }
     },
-    "replace": {
-        "cakephp/cache": "self.version",
-        "cakephp/collection": "self.version",
-        "cakephp/console": "self.version",
-        "cakephp/core": "self.version",
-        "cakephp/datasource": "self.version",
-        "cakephp/database": "self.version",
-        "cakephp/event": "self.version",
-        "cakephp/filesystem": "self.version",
-        "cakephp/form": "self.version",
-        "cakephp/http": "self.version",
-        "cakephp/i18n": "self.version",
-        "cakephp/log": "self.version",
-        "cakephp/orm": "self.version",
-        "cakephp/utility": "self.version",
-        "cakephp/validation": "self.version"
-    },
     "scripts": {
         "check": [
             "@cs-check",
@@ -104,18 +102,20 @@
         ],
         "cs-check": "phpcs --colors --parallel=16 -p src/ tests/",
         "cs-fix": "phpcbf --colors --parallel=16 -p src/ tests/",
-        "test": "phpunit",
-        "test-coverage": "phpunit --coverage-clover=clover.xml",
         "phpstan": "phpstan.phar analyse",
         "psalm": "psalm.phar --show-info=false",
         "stan": [
             "@phpstan",
             "@psalm"
         ],
-        "stan-setup": "cp composer.json composer.backup && composer require --dev phpstan/phpstan:0.12.58 psalm/phar:~4.3.0 && mv composer.backup composer.json"
+        "stan-setup": "cp composer.json composer.backup && composer require --dev phpstan/phpstan:0.12.58 psalm/phar:~4.3.0 && mv composer.backup composer.json",
+        "test": "phpunit",
+        "test-coverage": "phpunit --coverage-clover=clover.xml"
     },
-    "config": {
-        "sort-packages": true,
-        "process-timeout": 900
+    "support": {
+        "issues": "https://github.com/cakephp/cakephp/issues",
+        "forum": "https://stackoverflow.com/tags/cakephp",
+        "irc": "irc://irc.freenode.org/cakephp",
+        "source": "https://github.com/cakephp/cakephp"
     }
 }
