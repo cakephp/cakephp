@@ -510,7 +510,7 @@ class Response implements ResponseInterface
             $this->_file = null;
             $this->_fileRange = [];
         } else {
-            $this->_sendContent($this->body());
+            $this->_sendContent($this->getBody());
         }
 
         if (function_exists('fastcgi_finish_request')) {
@@ -2271,6 +2271,7 @@ class Response implements ResponseInterface
                 'domain' => '',
                 'secure' => false,
                 'httpOnly' => false,
+                'samesite' => null,
             ];
             $expires = $data['expire'] ? new DateTime('@' . $data['expire']) : null;
             $cookie = new Cookie(
@@ -2280,7 +2281,8 @@ class Response implements ResponseInterface
                 $data['path'],
                 $data['domain'],
                 $data['secure'],
-                $data['httpOnly']
+                $data['httpOnly'],
+                $data['samesite']
             );
         }
 
@@ -2407,6 +2409,7 @@ class Response implements ResponseInterface
             'secure' => $cookie->isSecure(),
             'httpOnly' => $cookie->isHttpOnly(),
             'expire' => $cookie->getExpiresTimestamp(),
+            'samesite' => $cookie->getSameSite(),
         ];
     }
 

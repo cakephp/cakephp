@@ -180,12 +180,12 @@ class SocketTest extends TestCase
         $this->Socket = new Socket(['timeout' => 5]);
         try {
             $this->Socket->connect();
-            $this->assertNull($this->Socket->read(26));
+            $this->assertFalse($this->Socket->read(26));
 
             $config = ['host' => 'google.com', 'port' => 80, 'timeout' => 1];
             $this->Socket = new Socket($config);
             $this->assertTrue($this->Socket->connect());
-            $this->assertNull($this->Socket->read(26));
+            $this->assertFalse($this->Socket->read(26));
             $this->assertEquals('2: ' . 'Connection timed out', $this->Socket->lastError());
         } catch (SocketException $e) {
             $this->markTestSkipped('Cannot test network, skipping.');

@@ -53,7 +53,6 @@ class CurlTest extends TestCase
         $response = $responses[0];
         $this->assertInstanceOf(Response::class, $response);
         $this->assertNotEmpty($response->getHeaders());
-        $this->assertNotEmpty($response->getBody()->getContents());
     }
 
     /**
@@ -69,7 +68,7 @@ class CurlTest extends TestCase
         try {
             $responses = $this->curl->send($request, []);
         } catch (\Cake\Core\Exception\Exception $e) {
-            $this->markTestSkipped('Could not connect to book.cakephp.org, skipping');
+            $this->markTestSkipped('Could not connect to api.cakephp.org, skipping');
         }
         $this->assertCount(1, $responses);
 
@@ -309,6 +308,36 @@ class CurlTest extends TestCase
             CURLOPT_CAINFO => $this->caFile,
             CURLOPT_PROXY => '127.0.0.1:8080',
             CURLOPT_PROXYUSERPWD => 'frodo:one_ring',
+        ];
+        $this->assertSame($expected, $result);
+    }
+
+    /**
+     * Test converting client options into curl ones.
+     *
+     * @return void
+     */
+    public function testBuildOptionsHead()
+    {
+        $options = [];
+        $request = new Request(
+            'http://localhost/things',
+            'HEAD',
+            ['Cookie' => 'testing=value']
+        );
+        $result = $this->curl->buildOptions($request, $options);
+        $expected = [
+            CURLOPT_URL => 'http://localhost/things',
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HEADER => true,
+            CURLOPT_HTTPHEADER => [
+                'Cookie: testing=value',
+                'Connection: close',
+                'User-Agent: CakePHP',
+            ],
+            CURLOPT_NOBODY => true,
+            CURLOPT_CAINFO => $this->caFile,
         ];
         $this->assertSame($expected, $result);
     }

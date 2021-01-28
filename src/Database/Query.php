@@ -1760,7 +1760,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * Epliog content is raw SQL and not suitable for use with user supplied data.
      *
-     * @param string|\Cake\Database\Expression\QueryExpression|null $expression The expression to be appended
+     * @param string|\Cake\Database\ExpressionInterface|null $expression The expression to be appended
      * @return $this
      */
     public function epilog($expression = null)

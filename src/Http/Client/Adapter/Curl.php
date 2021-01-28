@@ -86,6 +86,10 @@ class Curl implements AdapterInterface
                 $out[CURLOPT_POST] = true;
                 break;
 
+            case Request::METHOD_HEAD:
+                $out[CURLOPT_NOBODY] = true;
+                break;
+
             default:
                 $out[CURLOPT_POST] = true;
                 $out[CURLOPT_CUSTOMREQUEST] = $request->getMethod();

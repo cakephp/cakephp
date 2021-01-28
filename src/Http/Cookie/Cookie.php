@@ -104,6 +104,13 @@ class Cookie implements CookieInterface
     protected $httpOnly = false;
 
     /**
+     * Samesite
+     *
+     * @var string|null
+     */
+    protected $sameSite = null;
+
+    /**
      * Constructor
      *
      * The constructors args are similar to the native PHP `setcookie()` method.
@@ -118,6 +125,8 @@ class Cookie implements CookieInterface
      * @param string $domain Domain
      * @param bool $secure Is secure
      * @param bool $httpOnly HTTP Only
+     * @param string|null $sameSite Samesite
+     * @throws \InvalidArgumentException If an invalid value is passed for any of the arguments.
      */
     public function __construct(
         $name,
@@ -126,7 +135,8 @@ class Cookie implements CookieInterface
         $path = '/',
         $domain = '',
         $secure = false,
-        $httpOnly = false
+        $httpOnly = false,
+        $sameSite = null
     ) {
         $this->validateName($name);
         $this->name = $name;
@@ -144,6 +154,12 @@ class Cookie implements CookieInterface
 
         $this->validateBool($secure);
         $this->secure = $secure;
+
+        if ($sameSite) {
+            $this->validateSameSiteValue($sameSite);
+            $this->sameSite = $sameSite;
+        }
+
         if ($expiresAt) {
             $expiresAt = $expiresAt->setTimezone(new DateTimeZone('GMT'));
         }
@@ -168,6 +184,9 @@ class Cookie implements CookieInterface
         }
         if ($this->path !== '') {
             $headerValue[] = sprintf('path=%s', $this->path);
+        }
+        if ($this->sameSite) {
+            $headerValue[] = sprintf('samesite=%s', $this->sameSite);
         }
         if ($this->domain !== '') {
             $headerValue[] = sprintf('domain=%s', $this->domain);
@@ -464,6 +483,52 @@ class Cookie implements CookieInterface
         $new->expiresAt = Chronos::createFromTimestamp(1);
 
         return $new;
+    }
+
+    /**
+     * Get the SameSite attribute.
+     *
+     * @return string|null
+     */
+    public function getSameSite()
+    {
+        return $this->sameSite;
+    }
+
+    /**
+     * Create a cookie with an updated SameSite option.
+     *
+     * @param string|null $sameSite Value for to set for Samesite option.
+     *   One of CookieInterface::SAMESITE_* constants.
+     * @return static
+     * @throws \InvalidArgumentException If argument value is not one of CookieInterface::SAMESITE_VALUES
+     */
+    public function withSameSite($sameSite = null)
+    {
+        if ($sameSite !== null) {
+            $this->validateSameSiteValue($sameSite);
+        }
+
+        $new = clone $this;
+        $new->sameSite = $sameSite;
+
+        return $new;
+    }
+
+    /**
+     * Check that value passed for SameSite is valid.
+     *
+     * @param string $sameSite SameSite value
+     * @return void
+     * @throws \InvalidArgumentException
+     */
+    protected static function validateSameSiteValue($sameSite)
+    {
+        if (!in_array($sameSite, CookieInterface::SAMESITE_VALUES, true)) {
+            throw new InvalidArgumentException(
+                'SameSite value must be either of: ' . implode(', ', CookieInterface::SAMESITE_VALUES)
+            );
+        }
     }
 
     /**

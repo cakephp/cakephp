@@ -1,0 +1,228 @@
+name: CakePHP CI
+
+on:
+  push:
+    branches:
+      - 3.x
+      - 3.next
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+  testsuite:
+    runs-on: ubuntu-18.04
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: ['5.6', '7.4']
+        db-type: [sqlite, mysql, pgsql]
+        prefer-lowest: ['']
+        include:
+          - php-version: '5.6'
+            db-type: 'mysql'
+            prefer-lowest: 'prefer-lowest'
+
+    services:
+      redis:
+        image: redis
+        ports:
+          - 6379/tcp
+      memcached:
+        image: memcached
+        ports:
+          - 11211/tcp
+
+    steps:
+    - name: Setup MySQL 5.7
+      if: matrix.db-type == 'mysql' && matrix.php-version != '5.6'
+      run: docker run --rm --name=mysqld -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=cakephp -p 3306:3306 -d mysql:5.7
+
+    - name: Setup MySQL 5.6
+      if: matrix.db-type == 'mysql' && matrix.php-version == '5.6'
+      run: docker run --rm --name=mysqld -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=cakephp -p 3306:3306 -d mysql:5.6 --character-set-server=utf8
+
+    - name: Setup PostgreSQL latest
+      if: matrix.db-type == 'pgsql' && matrix.php-version != '5.6'
+      run: docker run --rm --name=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=cakephp -p 5432:5432 -d postgres
+
+    - name: Setup PostgreSQL 9.4
+      if: matrix.db-type == 'pgsql' && matrix.php-version == '5.6'
+      run: docker run --rm --name=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=cakephp -p 5432:5432 -d postgres:9.4
+
+    - uses: actions/checkout@v1
+      with:
+        fetch-depth: 1
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-version }}
+        extensions: mbstring, intl, apcu, pdo_${{ matrix.db-type }}
+        ini-values: apc.enable_cli = 1
+        coverage: pcov
+
+    - name: Get composer cache directory
+      id: composer-cache
+      run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+    - name: Get date part for cache key
+      id: key-date
+      run: echo "::set-output name=date::$(date +'%Y-%m')"
+
+    - name: Cache composer dependencies
+      uses: actions/cache@v1
+      with:
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ steps.key-date.outputs.date }}-${{ hashFiles('composer.json') }}-${{ matrix.prefer-lowest }}
+
+    - name: Install packages
+      run: |
+        sudo locale-gen da_DK.UTF-8
+        sudo locale-gen de_DE.UTF-8
+
+    - name: Composer install
+      run: |
+        if [[ ${{ matrix.php-version }} == '8.0' ]]; then
+          composer install --ignore-platform-reqs
+        elif ${{ matrix.prefer-lowest == 'prefer-lowest' }}; then
+          composer update --prefer-lowest --prefer-stable
+        else
+          composer update
+        fi
+
+        if [[ ${{ matrix.php-version }} == '7.4' ]]; then
+          composer require --dev pcov/clobber
+        fi
+
+    - name: Configure PHPUnit matcher
+      if: matrix.php-version == '7.4' && matrix.db-type == 'mysql'
+      run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
+
+    - name: Run PHPUnit
+      env:
+        REDIS_PORT: ${{ job.services.redis.ports['6379'] }}
+        MEMCACHED_PORT: ${{ job.services.memcached.ports['11211'] }}
+      run: |
+        if [[ ${{ matrix.db-type }} == 'sqlite' ]]; then export db_dsn='sqlite:///:memory:'; fi
+        if [[ ${{ matrix.db-type }} == 'mysql' && ${{ matrix.php-version }} != '5.6' ]]; then export db_dsn='mysql://root:root@127.0.0.1/cakephp?init[]=SET sql_mode = "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"'; fi
+        if [[ ${{ matrix.db-type }} == 'mysql' && ${{ matrix.php-version }} == '5.6' ]]; then export db_dsn='mysql://root:root@127.0.0.1/cakephp?encoding=utf8'; fi
+        if [[ ${{ matrix.db-type }} == 'pgsql' ]]; then export db_dsn='postgres://postgres:postgres@127.0.0.1/postgres'; fi
+
+        if [[ ${{ matrix.php-version }} == '7.4' ]]; then
+          export CODECOVERAGE=1 && vendor/bin/pcov clobber; vendor/bin/phpunit --coverage-clover=coverage.xml
+        else
+          vendor/bin/phpunit
+        fi
+
+    - name: Submit code coverage
+      if: matrix.php-version == '7.4'
+      uses: codecov/codecov-action@v1
+
+  testsuite-windows:
+    runs-on: windows-2019
+    name: Windows - PHP 7.4 & SQL Server
+
+    env:
+      EXTENSIONS: mbstring, intl, apcu, pdo_sqlsrv
+      PHP_VERSION: '7.4'
+
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        fetch-depth: 1
+
+    - name: Get date part for cache key
+      id: key-date
+      run: echo "::set-output name=date::$(date +'%Y-%m')"
+
+    - name: Setup PHP extensions cache
+      id: php-ext-cache
+      uses: shivammathur/cache-extensions@v1
+      with:
+        php-version: ${{ env.PHP_VERSION }}
+        extensions: ${{ env.EXTENSIONS }}
+        key: ${{ steps.key-date.outputs.date }}
+
+    - name: Cache PHP extensions
+      uses: actions/cache@v1
+      with:
+        path: ${{ steps.php-ext-cache.outputs.dir }}
+        key: ${{ runner.os }}-php-ext-${{ steps.php-ext-cache.outputs.key }}
+        restore-keys: ${{ runner.os }}-php-ext-${{ steps.php-ext-cache.outputs.key }}
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ env.PHP_VERSION }}
+        extensions: ${{ env.EXTENSIONS }}
+        ini-values: apc.enable_cli = 1, extension = php_fileinfo.dll
+        tools: composer:v1
+        coverage: none
+
+    - name: Setup SQLServer
+      run: |
+        # MSSQLLocalDB is the default SQL LocalDB instance
+        SqlLocalDB start MSSQLLocalDB
+        SqlLocalDB info MSSQLLocalDB
+        sqlcmd -S "(localdb)\MSSQLLocalDB" -Q "create database cakephp;"
+
+    - name: Get composer cache directory
+      id: composer-cache
+      run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+    - name: Cache composer dependencies
+      uses: actions/cache@v1
+      with:
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ steps.key-date.outputs.date }}-${{ hashFiles('composer.json') }}-${{ matrix.prefer-lowest }}
+
+    - name: Composer install
+      run: composer update
+
+    - name: Run PHPUnit
+      env:
+        db_dsn: 'sqlserver://@(localdb)\MSSQLLocalDB/cakephp'
+      run: |
+          vendor/bin/phpunit --verbose
+
+  cs-stan:
+    name: Coding Standard & Static Analysis
+    runs-on: ubuntu-18.04
+
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        fetch-depth: 1
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '7.2'
+        extensions: mbstring, intl, apcu
+        coverage: none
+
+    - name: Get composer cache directory
+      id: composer-cache
+      run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+    - name: Get date part for cache key
+      id: key-date
+      run: echo "::set-output name=date::$(date +'%Y-%m')"
+
+    - name: Cache composer dependencies
+      uses: actions/cache@v1
+      with:
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ steps.key-date.outputs.date }}-${{ hashFiles('composer.json') }}
+
+    - name: Composer install
+      run: |
+        composer update
+        composer phpstan-setup
+
+    - name: Run PHP CodeSniffer
+      run: composer cs-check
+
+    - name: Run phpstan
+      run: composer phpstan

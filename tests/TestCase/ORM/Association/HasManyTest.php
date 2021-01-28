@@ -1002,6 +1002,49 @@ class HasManyTest extends TestCase
     }
 
     /**
+     * Test that save works with replace saveStrategy conditions
+     *
+     * @return void
+     */
+    public function testSaveReplaceSaveStrategyClosureConditions()
+    {
+        $authors = $this->getTableLocator()->get('Authors');
+        $authors->hasMany('Articles')
+            ->setDependent(true)
+            ->setSaveStrategy('replace')
+            ->setConditions(function () {
+                return ['published' => 'Y'];
+            });
+
+        $entity = $authors->newEntity([
+            'name' => 'mylux',
+            'articles' => [
+                ['title' => 'Not matching conditions', 'body' => '', 'published' => 'N'],
+                ['title' => 'Random Post', 'body' => 'The cake is nice', 'published' => 'Y'],
+                ['title' => 'Another Random Post', 'body' => 'The cake is yummy', 'published' => 'Y'],
+                ['title' => 'One more random post', 'body' => 'The cake is forever', 'published' => 'Y'],
+            ],
+        ], ['associated' => ['Articles']]);
+
+        $entity = $authors->save($entity, ['associated' => ['Articles']]);
+        $sizeArticles = count($entity->articles);
+        // Should be one fewer because of conditions.
+        $this->assertSame($sizeArticles - 1, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+
+        $articleId = $entity->articles[0]->id;
+        unset($entity->articles[0], $entity->articles[1]);
+        $entity->setDirty('articles', true);
+
+        $authors->save($entity, ['associated' => ['Articles']]);
+
+        $this->assertSame($sizeArticles - 2, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+
+        // Should still exist because it doesn't match the association conditions.
+        $articles = $this->getTableLocator()->get('Articles');
+        $this->assertTrue($articles->exists(['id' => $articleId]));
+    }
+
+    /**
      * Test that save works with replace saveStrategy, replacing the already persisted entities even if no new entities are passed
      *
      * @return void

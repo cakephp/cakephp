@@ -179,7 +179,7 @@ if (!function_exists('pj')) {
         }
 
         $template = (PHP_SAPI !== 'cli' && PHP_SAPI !== 'phpdbg') ? '<pre class="pj">%s</pre>' : "\n%s\n\n";
-        printf($template, trim(json_encode($var, JSON_PRETTY_PRINT)));
+        printf($template, trim(json_encode($var, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)));
 
         return $var;
     }

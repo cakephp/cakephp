@@ -59,7 +59,7 @@ use Cake\ORM\Locator\LocatorAwareTrait;
 $articles = $this->getTableLocator()->get('Articles');
 ```
 
-By default classes using `LocatorAwareTrait` will share a global locator instance.
+By default, classes using `LocatorAwareTrait` will share a global locator instance.
 You can inject your own locator instance into the object:
 
 ```php
@@ -78,8 +78,8 @@ In your table classes you can define the relations between your tables. CakePHP'
 supports 4 association types out of the box:
 
 * belongsTo - E.g. Many articles belong to a user.
-* hasOne - E.g. A user has one profile
-* hasMany - E.g. A user has many articles
+* hasOne - E.g. A user has one profile.
+* hasMany - E.g. A user has many articles.
 * belongsToMany - E.g. An article belongsToMany tags.
 
 You define associations in your table's `initialize()` method. See the
@@ -149,7 +149,7 @@ $articles->delete($article);
 
 ## Meta Data Cache
 
-It is recommended to enable meta data cache for production systems to avoid performance issues.
+It is recommended to enable metadata cache for production systems to avoid performance issues.
 For e.g. file system strategy your bootstrap file could look like this:
 ```php
 use Cake\Cache\Engine\FileEngine;

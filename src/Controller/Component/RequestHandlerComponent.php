@@ -287,7 +287,7 @@ class RequestHandlerComponent extends Component
         }
         /** @var \Cake\Controller\Controller $controller */
         $controller = $event->getSubject();
-        $response->body($controller->requestAction($url, [
+        $response = $response->withStringBody($controller->requestAction($url, [
             'return',
             'bare' => false,
             'environment' => [
