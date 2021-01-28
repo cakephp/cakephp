@@ -1853,6 +1853,7 @@ class Message implements JsonSerializable, Serializable
             'to', 'from', 'sender', 'replyTo', 'cc', 'bcc', 'subject',
             'returnPath', 'readReceipt', 'emailFormat', 'emailPattern', 'domain',
             'attachments', 'messageId', 'headers', 'appCharset', 'charset', 'headerCharset',
+            'textMessage', 'htmlMessage',
         ];
 
         $array = [];
@@ -1905,7 +1906,7 @@ class Message implements JsonSerializable, Serializable
     }
 
     /**
-     * Unserializes the Email object.
+     * Unserializes the Message object.
      *
      * @param string $data Serialized string.
      * @return void

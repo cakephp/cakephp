@@ -29,7 +29,7 @@ trait ExpressionTypeCasterTrait
      * if the type class implements the ExpressionTypeInterface. Otherwise,
      * returns the value unmodified.
      *
-     * @param mixed $value The value to converto to ExpressionInterface
+     * @param mixed $value The value to convert to ExpressionInterface
      * @param string|null $type The type name
      * @return mixed
      */

@@ -49,7 +49,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
     use EventDispatcherTrait;
 
     /**
-     * The query string key used for remembering the referrered page when getting
+     * The query string key used for remembering the referred page when getting
      * redirected to login.
      *
      * @var string

@@ -25,7 +25,7 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 /**
- * Middlware for encrypting & decrypting cookies.
+ * Middleware for encrypting & decrypting cookies.
  *
  * This middleware layer will encrypt/decrypt the named cookies with the given key
  * and cipher type. To support multiple keys/cipher types use this middleware multiple
