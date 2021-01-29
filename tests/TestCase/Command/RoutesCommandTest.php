@@ -163,6 +163,25 @@ class RoutesCommandTest extends TestCase
     }
 
     /**
+     * Test checking an existing route with redirect route.
+     *
+     * @return void
+     */
+    public function testCheckWithRedirectRoute()
+    {
+        $this->exec('routes check /app/redirect');
+        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertOutputContainsRow([
+            '<info>URI template</info>',
+            '<info>Redirect</info>',
+        ]);
+        $this->assertOutputContainsRow([
+            '/app/redirect',
+            'http://example.com/test.html',
+        ]);
+    }
+
+    /**
      * Test checking an nonexistent route.
      *
      * @return void
