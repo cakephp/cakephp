@@ -1641,7 +1641,7 @@ class QueryRegressionTest extends TestCase
         }
         gc_collect_cycles();
         $endMemory = memory_get_usage() / 1024 / 1024;
-        $this->assertWithinRange($endMemory, $memory, 1.25, 'Memory leak in ResultSet');
+        $this->assertWithinRange($endMemory, $memory, 1.5, 'Memory leak in ResultSet');
     }
 
     /**
