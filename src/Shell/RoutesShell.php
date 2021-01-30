@@ -74,7 +74,7 @@ class RoutesShell extends Shell
             $this->helper('table')->output($output);
             $this->out();
         } catch (RedirectException $e) {
-           $output = [
+            $output = [
                 ['URI template', 'Redirect'],
                 [$url, $e->getMessage()],
             ];
