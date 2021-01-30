@@ -34,6 +34,9 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
         Router::connect('/articles/:action/*', ['controller' => 'Articles']);
         Router::connect('/bake/:controller/:action', ['plugin' => 'Bake']);
         Router::connect('/tests/:action/*', ['controller' => 'Tests'], ['_name' => 'testName']);
+        Router::scope('/', function ($routes) {
+            $routes->redirect('/redirect', 'http://example.com/test.html');
+        });
     }
 
     /**
@@ -130,6 +133,25 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
         $this->exec('routes check /nope');
         $this->assertExitCode(Shell::CODE_ERROR);
         $this->assertErrorContains('did not match');
+    }
+
+    /**
+     * Test checking an existing route with redirect route.
+     *
+     * @return void
+     */
+    public function testCheckWithRedirectRoute()
+    {
+        $this->exec('routes check /redirect');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertOutputContainsRow([
+            '<info>URI template</info>',
+            '<info>Redirect</info>',
+        ]);
+        $this->assertOutputContainsRow([
+            '/redirect',
+            'http://example.com/test.html',
+        ]);
     }
 
     /**
