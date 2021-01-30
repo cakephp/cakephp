@@ -19,6 +19,7 @@ namespace Cake\Command;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
+use Cake\Http\Exception\RedirectException;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Router;
@@ -63,6 +64,13 @@ class RoutesCheckCommand extends Command
             $output = [
                 ['Route name', 'URI template', 'Defaults'],
                 [$name, $url, json_encode($route)],
+            ];
+            $io->helper('table')->output($output);
+            $io->out();
+        } catch (RedirectException $e) {
+            $output = [
+                ['URI template', 'Redirect'],
+                [$url, $e->getMessage()],
             ];
             $io->helper('table')->output($output);
             $io->out();
