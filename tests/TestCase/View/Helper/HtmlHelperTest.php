@@ -686,6 +686,24 @@ class HtmlHelperTest extends TestCase
         $this->assertHtml($expected, $result);
     }
 
+     /**
+      * Test that css() includes CSP nonces if available.
+      *
+      * @return void
+      */
+     public function testCssWithCspNonce()
+     {
+        $nonce = 'r@nd0mV4lue';
+        $request = $this->View->getRequest()->withAttribute('cspStyleNonce', $nonce);
+        $this->View->setRequest($request);
+
+        $result = $this->Html->css('app');
+        $expected = [
+            'link' => ['rel' => 'stylesheet', 'href' => 'css/app.css', 'nonce' => $nonce],
+        ];
+        $this->assertHtml($expected, $result);
+     }
+
     /**
      * Test css() with once option.
      *
@@ -1037,6 +1055,26 @@ class HtmlHelperTest extends TestCase
     }
 
     /**
+     * Test that content-security-policy nonces are applied if the request attribute
+     * is present.
+     *
+     * @return void
+     */
+    public function testScriptCspNonce()
+    {
+        $nonce = 'r@ndomV4lue';
+        $request = $this->View->getRequest()
+            ->withAttribute('cspScriptNonce', $nonce);
+        $this->View->setRequest($request);
+
+        $result = $this->Html->script('app.js', ['defer' => true, 'encoding' => 'utf-8']);
+        $expected = [
+            'script' => ['src' => 'js/app.js', 'defer' => 'defer', 'encoding' => 'utf-8', 'nonce' => $nonce],
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * test that plugin scripts added with uses() are only ever included once.
      * test script tag generation with plugin syntax
      *
@@ -1226,6 +1264,27 @@ class HtmlHelperTest extends TestCase
             'script' => ['encoding' => 'utf-8'],
             'window.foo = 2;',
             '/script',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * Ensure that scriptBlock() uses CSP nonces.
+     *
+     * @return void
+     */
+    public function testScriptBlockCspNonce()
+    {
+        $nonce = 'r@ndomV4lue';
+        $request = $this->View->getRequest()
+            ->withAttribute('cspScriptNonce', $nonce);
+        $this->View->setRequest($request);
+
+        $result = $this->Html->scriptBlock('window.foo = 2;');
+        $expected = [
+            'script' => ['nonce' => $nonce],
+            'window.foo = 2;',
+            '/script'
         ];
         $this->assertHtml($expected, $result);
     }

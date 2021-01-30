@@ -42,11 +42,11 @@ class CspMiddlewareTest extends TestCase
     }
 
     /**
-     * testInvoke
+     * test process adding headers
      *
      * @return void
      */
-    public function testProcess()
+    public function testProcessAddHeaders()
     {
         $request = new ServerRequest();
 
@@ -62,13 +62,57 @@ class CspMiddlewareTest extends TestCase
         ]);
 
         $response = $middleware->process($request, $this->_getRequestHandler());
-        $headers = $response->getHeaders();
+        $policy = $response->getHeaderLine('Content-Security-Policy');
         $expected = [
-            'script-src \'self\' https://www.google-analytics.com; ',
+            'script-src \'self\' https://www.google-analytics.com',
         ];
 
-        $this->assertNotEmpty($headers['Content-Security-Policy']);
-        $this->assertEquals($expected, $headers['Content-Security-Policy']);
+        $this->assertNotEmpty($policy);
+        foreach ($expected as $match) {
+            $this->assertStringContainsString($match, $policy);
+        }
+    }
+
+    /**
+     * test process adding request attributes for nonces
+     *
+     * @return void
+     */
+    public function testProcessAddNonceAttributes()
+    {
+        $request = new ServerRequest();
+
+        $middleware = new CspMiddleware([
+            'script-src' => [
+                'self' => true,
+                'unsafe-inline' => false,
+                'unsafe-eval' => false,
+            ],
+            'style-src' => [
+                'self' => true,
+                'unsafe-inline' => false,
+                'unsafe-eval' => false,
+            ]
+        ]);
+
+        $handler = new TestRequestHandler(function ($request) {
+            $this->assertNotEmpty($request->getAttribute('cspScriptNonce'));
+            $this->assertNotEmpty($request->getAttribute('cspStyleNonce'));
+
+            return new Response();
+        });
+
+        $response = $middleware->process($request, $handler);
+        $policy = $response->getHeaderLine('Content-Security-Policy');
+        $expected = [
+            "script-src 'self' 'nonce-",
+            "style-src 'self' 'nonce-",
+        ];
+
+        $this->assertNotEmpty($policy);
+        foreach ($expected as $match) {
+            $this->assertStringContainsString($match, $policy);
+        }
     }
 
     /**
@@ -95,12 +139,14 @@ class CspMiddlewareTest extends TestCase
         $middleware = new CspMiddleware($cspBuilder);
 
         $response = $middleware->process($request, $this->_getRequestHandler());
-        $headers = $response->getHeaders();
+        $policy = $response->getHeaderLine('Content-Security-Policy');
         $expected = [
-            'script-src \'self\' https://www.google-analytics.com; ',
+            'script-src \'self\' https://www.google-analytics.com',
         ];
 
-        $this->assertNotEmpty($headers['Content-Security-Policy']);
-        $this->assertEquals($expected, $headers['Content-Security-Policy']);
+        $this->assertNotEmpty($policy);
+        foreach ($expected as $match) {
+            $this->assertStringContainsString($match, $policy);
+        }
     }
 }
