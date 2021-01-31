@@ -92,7 +92,7 @@ class CspMiddlewareTest extends TestCase
                 'self' => true,
                 'unsafe-inline' => false,
                 'unsafe-eval' => false,
-            ]
+            ],
         ]);
 
         $handler = new TestRequestHandler(function ($request) {

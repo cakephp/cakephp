@@ -686,23 +686,23 @@ class HtmlHelperTest extends TestCase
         $this->assertHtml($expected, $result);
     }
 
-     /**
-      * Test that css() includes CSP nonces if available.
-      *
-      * @return void
-      */
-     public function testCssWithCspNonce()
-     {
+    /**
+     * Test that css() includes CSP nonces if available.
+     *
+     * @return void
+     */
+    public function testCssWithCspNonce()
+    {
         $nonce = 'r@nd0mV4lue';
         $request = $this->View->getRequest()->withAttribute('cspStyleNonce', $nonce);
         $this->View->setRequest($request);
 
         $result = $this->Html->css('app');
         $expected = [
-            'link' => ['rel' => 'stylesheet', 'href' => 'css/app.css', 'nonce' => $nonce],
+           'link' => ['rel' => 'stylesheet', 'href' => 'css/app.css', 'nonce' => $nonce],
         ];
         $this->assertHtml($expected, $result);
-     }
+    }
 
     /**
      * Test css() with once option.
@@ -1284,7 +1284,7 @@ class HtmlHelperTest extends TestCase
         $expected = [
             'script' => ['nonce' => $nonce],
             'window.foo = 2;',
-            '/script'
+            '/script',
         ];
         $this->assertHtml($expected, $result);
     }
