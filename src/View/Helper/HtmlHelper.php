@@ -540,11 +540,7 @@ class HtmlHelper extends Helper
      */
     public function scriptBlock(string $script, array $options = []): ?string
     {
-        $options += ['block' => null];
-        $nonce = $this->_View->getRequest()->getAttribute('cspScriptNonce');
-        if (!isset($options['nonce']) && $nonce) {
-            $options['nonce'] = $nonce;
-        }
+        $options += ['block' => null, 'nonce' => $this->_View->getRequest()->getAttribute('cspScriptNonce')];
 
         $out = $this->formatTemplate('javascriptblock', [
             'attrs' => $this->templater()->formatAttributes($options, ['block']),
