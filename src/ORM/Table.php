@@ -2739,6 +2739,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array $data The data to build an entity with.
      * @param array $options A list of options for the object hydration.
      * @return \Cake\Datasource\EntityInterface
+     * @see \Cake\ORM\Marshaller::one()
      */
     public function newEntity(array $data, array $options = []): EntityInterface
     {
@@ -2841,6 +2842,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array $data key value list of fields to be merged into the entity
      * @param array $options A list of options for the object hydration.
      * @return \Cake\Datasource\EntityInterface
+     * @see \Cake\ORM\Marshaller::merge()
      */
     public function patchEntity(EntityInterface $entity, array $data, array $options = []): EntityInterface
     {
