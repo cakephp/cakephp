@@ -483,7 +483,7 @@ class HtmlHelper extends Helper
         $defaults = [
             'block' => null,
             'once' => true,
-            'nonce' => $this->_View->getRequest()->getAttribute('cspScriptNonce')
+            'nonce' => $this->_View->getRequest()->getAttribute('cspScriptNonce'),
         ];
         $options += $defaults;
 
