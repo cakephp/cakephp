@@ -376,7 +376,12 @@ class HtmlHelper extends Helper
      */
     public function css($path, array $options = []): ?string
     {
-        $options += ['once' => true, 'block' => null, 'rel' => 'stylesheet'];
+        $options += [
+            'once' => true,
+            'block' => null,
+            'rel' => 'stylesheet',
+            'nonce' => $this->_View->getRequest()->getAttribute('cspStyleNonce'),
+        ];
 
         if (is_array($path)) {
             $out = '';
@@ -402,10 +407,6 @@ class HtmlHelper extends Helper
         }
         unset($options['once']);
         $this->_includedAssets[__METHOD__][$path] = true;
-        $nonce = $this->_View->getRequest()->getAttribute('cspStyleNonce');
-        if (!isset($options['nonce']) && $nonce) {
-            $options['nonce'] = $nonce;
-        }
 
         $templater = $this->templater();
         if ($options['rel'] === 'import') {
@@ -479,7 +480,11 @@ class HtmlHelper extends Helper
      */
     public function script($url, array $options = []): ?string
     {
-        $defaults = ['block' => null, 'once' => true];
+        $defaults = [
+            'block' => null,
+            'once' => true,
+            'nonce' => $this->_View->getRequest()->getAttribute('cspScriptNonce')
+        ];
         $options += $defaults;
 
         if (is_array($url)) {
@@ -502,11 +507,6 @@ class HtmlHelper extends Helper
             return null;
         }
         $this->_includedAssets[__METHOD__][$url] = true;
-
-        $nonce = $this->_View->getRequest()->getAttribute('cspScriptNonce');
-        if (!isset($options['nonce']) && $nonce) {
-            $options['nonce'] = $nonce;
-        }
 
         $out = $this->formatTemplate('javascriptlink', [
             'url' => $url,
@@ -540,11 +540,7 @@ class HtmlHelper extends Helper
      */
     public function scriptBlock(string $script, array $options = []): ?string
     {
-        $options += ['block' => null];
-        $nonce = $this->_View->getRequest()->getAttribute('cspScriptNonce');
-        if (!isset($options['nonce']) && $nonce) {
-            $options['nonce'] = $nonce;
-        }
+        $options += ['block' => null, 'nonce' => $this->_View->getRequest()->getAttribute('cspScriptNonce')];
 
         $out = $this->formatTemplate('javascriptblock', [
             'attrs' => $this->templater()->formatAttributes($options, ['block']),
