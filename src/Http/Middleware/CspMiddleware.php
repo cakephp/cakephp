@@ -56,7 +56,7 @@ class CspMiddleware implements MiddlewareInterface
     }
 
     /**
-     * Serve assets if the path matches one.
+     * Add nonces to the request and apply the CSP header to the response.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request.
      * @param \Psr\Http\Server\RequestHandlerInterface $handler The request handler.
@@ -64,6 +64,10 @@ class CspMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        $request = $request
+            ->withAttribute('cspScriptNonce', $this->csp->nonce('script-src'))
+            ->withAttribute('cspStyleNonce', $this->csp->nonce('style-src'));
+
         $response = $handler->handle($request);
 
         // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.InvalidFormat

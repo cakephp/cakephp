@@ -363,6 +363,10 @@ class HtmlHelper extends Helper
      * - `rel` Defaults to 'stylesheet'. If equal to 'import' the stylesheet will be imported.
      * - `fullBase` If true the URL will get a full address for the css file.
      *
+     * All other options will be treated as HTML attributes. If the request contains a
+     * `cspStyleNonce` attribute, that value will be applied as the `nonce` attribute on the
+     * generated HTML.
+     *
      * @param string|string[] $path The name of a CSS style sheet or an array containing names of
      *   CSS stylesheets. If `$path` is prefixed with '/', the path will be relative to the webroot
      *   of your application. Otherwise, the path will be relative to your CSS path, usually webroot/css.
@@ -372,7 +376,12 @@ class HtmlHelper extends Helper
      */
     public function css($path, array $options = []): ?string
     {
-        $options += ['once' => true, 'block' => null, 'rel' => 'stylesheet'];
+        $options += [
+            'once' => true,
+            'block' => null,
+            'rel' => 'stylesheet',
+            'nonce' => $this->_View->getRequest()->getAttribute('cspStyleNonce'),
+        ];
 
         if (is_array($path)) {
             $out = '';
@@ -398,8 +407,8 @@ class HtmlHelper extends Helper
         }
         unset($options['once']);
         $this->_includedAssets[__METHOD__][$path] = true;
-        $templater = $this->templater();
 
+        $templater = $this->templater();
         if ($options['rel'] === 'import') {
             $out = $templater->format('style', [
                 'attrs' => $templater->formatAttributes($options, ['rel', 'block']),
@@ -459,6 +468,10 @@ class HtmlHelper extends Helper
      * - `plugin` False value will prevent parsing path as a plugin
      * - `fullBase` If true the url will get a full address for the script file.
      *
+     * All other options will be added as attributes to the generated script tag.
+     * If the current request has a `cspScriptNonce` attribute, that value will
+     * be inserted as a `nonce` attribute on the script tag.
+     *
      * @param string|string[] $url String or array of javascript files to include
      * @param array $options Array of options, and html attributes see above.
      * @return string|null String of `<script />` tags or null if block is specified in options
@@ -467,7 +480,11 @@ class HtmlHelper extends Helper
      */
     public function script($url, array $options = []): ?string
     {
-        $defaults = ['block' => null, 'once' => true];
+        $defaults = [
+            'block' => null,
+            'once' => true,
+            'nonce' => $this->_View->getRequest()->getAttribute('cspScriptNonce'),
+        ];
         $options += $defaults;
 
         if (is_array($url)) {
@@ -523,7 +540,7 @@ class HtmlHelper extends Helper
      */
     public function scriptBlock(string $script, array $options = []): ?string
     {
-        $options += ['block' => null];
+        $options += ['block' => null, 'nonce' => $this->_View->getRequest()->getAttribute('cspScriptNonce')];
 
         $out = $this->formatTemplate('javascriptblock', [
             'attrs' => $this->templater()->formatAttributes($options, ['block']),
