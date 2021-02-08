@@ -148,10 +148,7 @@ class Route
      */
     public function setExtensions(array $extensions)
     {
-        $this->_extensions = [];
-        foreach ($extensions as $ext) {
-            $this->_extensions[] = strtolower($ext);
-        }
+        $this->_extensions = array_map('strtolower', $extensions);
 
         return $this;
     }
@@ -352,10 +349,7 @@ class Route
             $parsed = preg_replace('#/\\\\\*$#', '(?:/(?P<_args_>.*))?', $parsed);
             $this->_greedy = true;
         }
-        $mode = '';
-        if (!empty($this->options['multibytePattern'])) {
-            $mode = 'u';
-        }
+        $mode = empty($this->options['multibytePattern']) ? '' : 'u';
         krsort($routeParams);
         $parsed = str_replace(array_keys($routeParams), $routeParams, $parsed);
         $this->_compiledRoute = '#^' . $parsed . '[/]*$#' . $mode;
