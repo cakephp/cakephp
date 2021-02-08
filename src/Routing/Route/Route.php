@@ -98,7 +98,7 @@ class Route
      *
      * @var bool
      */
-    protected $braceKeys = false;
+    protected $braceKeys = true;
 
     /**
      * Valid HTTP methods.
@@ -148,10 +148,7 @@ class Route
      */
     public function setExtensions(array $extensions)
     {
-        $this->_extensions = [];
-        foreach ($extensions as $ext) {
-            $this->_extensions[] = strtolower($ext);
-        }
+        $this->_extensions = array_map('strtolower', $extensions);
 
         return $this;
     }
@@ -320,7 +317,6 @@ class Route
 
         if (strpos($route, '{') !== false && strpos($route, '}') !== false) {
             preg_match_all('/\{([a-z][a-z0-9-_]*)\}/i', $route, $namedElements);
-            $this->braceKeys = true;
         } else {
             preg_match_all('/:([a-z0-9-_]+(?<![-_]))/i', $route, $namedElements);
             $this->braceKeys = false;
@@ -353,10 +349,7 @@ class Route
             $parsed = preg_replace('#/\\\\\*$#', '(?:/(?P<_args_>.*))?', $parsed);
             $this->_greedy = true;
         }
-        $mode = '';
-        if (!empty($this->options['multibytePattern'])) {
-            $mode = 'u';
-        }
+        $mode = empty($this->options['multibytePattern']) ? '' : 'u';
         krsort($routeParams);
         $parsed = str_replace(array_keys($routeParams), $routeParams, $parsed);
         $this->_compiledRoute = '#^' . $parsed . '[/]*$#' . $mode;
