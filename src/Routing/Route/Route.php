@@ -98,7 +98,7 @@ class Route
      *
      * @var bool
      */
-    protected $braceKeys = false;
+    protected $braceKeys = true;
 
     /**
      * Valid HTTP methods.
@@ -320,7 +320,6 @@ class Route
 
         if (strpos($route, '{') !== false && strpos($route, '}') !== false) {
             preg_match_all('/\{([a-z][a-z0-9-_]*)\}/i', $route, $namedElements);
-            $this->braceKeys = true;
         } else {
             preg_match_all('/:([a-z0-9-_]+(?<![-_]))/i', $route, $namedElements);
             $this->braceKeys = false;
