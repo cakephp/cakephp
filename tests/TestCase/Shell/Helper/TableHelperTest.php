@@ -430,4 +430,25 @@ class TableHelperTest extends TestCase
         ];
         $this->helper->output($data);
     }
+
+    /**
+     * Table row column of type integer should be cast to string
+     */
+    public function testRowValueInteger()
+    {
+        $data = [
+            ['Item', 'Quantity'],
+            ['Cakes', 2],
+        ];
+        $this->helper->output($data);
+        $expected = [
+            '+-------+----------+',
+            '| <info>Item</info>  | <info>Quantity</info> |',
+            '+-------+----------+',
+            '| Cakes | 2        |',
+            '+-------+----------+',
+        ];
+
+        $this->assertEquals($expected, $this->stub->messages());
+    }
 }

@@ -46,6 +46,7 @@ class TableHelper extends Helper
         $widths = [];
         foreach ($rows as $line) {
             foreach (array_values($line) as $k => $v) {
+                $v = is_integer($v) ? (string)$v : $v;
                 $columnLength = $this->_cellWidth($v);
                 if ($columnLength >= ($widths[$k] ?? 0)) {
                     $widths[$k] = $columnLength;
@@ -111,6 +112,7 @@ class TableHelper extends Helper
 
         $out = '';
         foreach (array_values($row) as $i => $column) {
+            $column = is_integer($column) ? (string)$column : $column;
             $pad = $widths[$i] - $this->_cellWidth($column);
             if (!empty($options['style'])) {
                 $column = $this->_addStyle($column, $options['style']);
