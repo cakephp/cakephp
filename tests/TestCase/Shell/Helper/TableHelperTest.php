@@ -451,4 +451,25 @@ class TableHelperTest extends TestCase
 
         $this->assertEquals($expected, $this->stub->messages());
     }
+
+    /**
+     * Table row column of type null should be cast to empty string
+     */
+    public function testRowValueNull()
+    {
+        $data = [
+            ['Item', 'Quantity'],
+            ['Cakes', null],
+        ];
+        $this->helper->output($data);
+        $expected = [
+            '+-------+----------+',
+            '| <info>Item</info>  | <info>Quantity</info> |',
+            '+-------+----------+',
+            '| Cakes |          |',
+            '+-------+----------+',
+        ];
+
+        $this->assertEquals($expected, $this->stub->messages());
+    }
 }

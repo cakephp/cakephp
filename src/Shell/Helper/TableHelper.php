@@ -59,12 +59,12 @@ class TableHelper extends Helper
     /**
      * Get the width of a cell exclusive of style tags.
      *
-     * @param string|null $text The text to calculate a width for.
+     * @param string $text The text to calculate a width for.
      * @return int The width of the textual content in visible characters.
      */
-    protected function _cellWidth(?string $text): int
+    protected function _cellWidth(string $text): int
     {
-        if ($text === null) {
+        if (strlen($text) === 0) {
             return 0;
         }
 
@@ -116,7 +116,7 @@ class TableHelper extends Helper
             if (!empty($options['style'])) {
                 $column = $this->_addStyle($column, $options['style']);
             }
-            if ($column !== null && preg_match('#(.*)<text-right>.+</text-right>(.*)#', $column, $matches)) {
+            if (strlen($column) > 0 && preg_match('#(.*)<text-right>.+</text-right>(.*)#', $column, $matches)) {
                 if ($matches[1] !== '' || $matches[2] !== '') {
                     throw new UnexpectedValueException('You cannot include text before or after the text-right tag.');
                 }
