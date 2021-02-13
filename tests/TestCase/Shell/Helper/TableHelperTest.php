@@ -430,4 +430,46 @@ class TableHelperTest extends TestCase
         ];
         $this->helper->output($data);
     }
+
+    /**
+     * Table row column of type integer should be cast to string
+     */
+    public function testRowValueInteger()
+    {
+        $data = [
+            ['Item', 'Quantity'],
+            ['Cakes', 2],
+        ];
+        $this->helper->output($data);
+        $expected = [
+            '+-------+----------+',
+            '| <info>Item</info>  | <info>Quantity</info> |',
+            '+-------+----------+',
+            '| Cakes | 2        |',
+            '+-------+----------+',
+        ];
+
+        $this->assertEquals($expected, $this->stub->messages());
+    }
+
+    /**
+     * Table row column of type null should be cast to empty string
+     */
+    public function testRowValueNull()
+    {
+        $data = [
+            ['Item', 'Quantity'],
+            ['Cakes', null],
+        ];
+        $this->helper->output($data);
+        $expected = [
+            '+-------+----------+',
+            '| <info>Item</info>  | <info>Quantity</info> |',
+            '+-------+----------+',
+            '| Cakes |          |',
+            '+-------+----------+',
+        ];
+
+        $this->assertEquals($expected, $this->stub->messages());
+    }
 }
