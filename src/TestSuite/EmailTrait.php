@@ -95,7 +95,7 @@ trait EmailTrait
      * Asserts an email at a specific index was sent from an address
      *
      * @param int $at Email index
-     * @param string $address Email address
+     * @param string|array $address Email address or [$emailAddress => $displayName].
      * @param string $message Message
      * @return void
      */
@@ -172,7 +172,7 @@ trait EmailTrait
     /**
      * Asserts an email was sent from an address
      *
-     * @param string $address Email address
+     * @param string|array $address Email address or [$emailAddress => $displayName].
      * @param string $message Message
      * @return void
      */
