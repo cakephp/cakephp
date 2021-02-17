@@ -321,7 +321,7 @@ class RouteCollection
             foreach ($this->_routeTable[$name] as $route) {
                 $match = $route->match($url, $context);
                 if ($match) {
-                    return strlen($match) > 1 ? trim($match, '/') : $match;
+                    return $match === '/' ? $match : trim($match, '/');
                 }
             }
         }
