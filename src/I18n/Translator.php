@@ -84,6 +84,8 @@ class Translator extends BaseTranslator
             $message = $key;
         }
 
+        unset($tokensValues['_count'], $tokensValues['_singular']);
+
         return $this->formatter->format($this->locale, $message, $tokensValues);
     }
 

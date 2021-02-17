@@ -106,14 +106,14 @@ class I18nTest extends TestCase
      *
      * @return void
      */
-    public function testPluralSelection()
+    public function testPluralSelectionSprintfFormatter()
     {
         I18n::setDefaultFormatter('sprintf');
         $translator = I18n::getTranslator(); // en_US
-        $result = $translator->translate('%d = 0 or > 1', ['_count' => 1]);
+        $result = $translator->translate('%d = 0 or > 1', ['_count' => 1, 1]);
         $this->assertEquals('1 is 1 (po translated)', $result);
 
-        $result = $translator->translate('%d = 0 or > 1', ['_count' => 2]);
+        $result = $translator->translate('%d = 0 or > 1', ['_count' => 2, 2]);
         $this->assertEquals('2 is 2-4 (po translated)', $result);
     }
 
@@ -315,17 +315,17 @@ class I18nTest extends TestCase
     public function testBasicTranslatePluralFunction()
     {
         I18n::setDefaultFormatter('sprintf');
-        $result = __n('singular msg', '%d = 0 or > 1', 1);
+        $result = __n('singular msg', '%d = 0 or > 1', 1, 1);
         $this->assertEquals('1 is 1 (po translated)', $result);
 
-        $result = __n('singular msg', '%d = 0 or > 1', 2);
+        $result = __n('singular msg', '%d = 0 or > 1', 2, 2);
         $this->assertEquals('2 is 2-4 (po translated)', $result);
 
-        $result = __n('%s %s and %s are good', '%s and %s are best', 1, ['red', 'blue']);
-        $this->assertEquals('1 red and blue are good', $result);
+        $result = __n('%s, %s, and %s are good', '%s, %s, and %s are best', 1, ['red', 'blue', 'green']);
+        $this->assertSame('red, blue, and green are good', $result);
 
-        $result = __n('%s %s and %s are good', '%s and %s are best', 1, 'red', 'blue');
-        $this->assertEquals('1 red and blue are good', $result);
+        $result = __n('%s, %s, and %s are good', '%s, %s, and %s are best', 1, 'red', 'blue', 'green');
+        $this->assertSame('red, blue, and green are good', $result);
     }
 
     /**
