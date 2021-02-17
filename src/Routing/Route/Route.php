@@ -385,8 +385,8 @@ class Route
         foreach ($keys as $key => $glue) {
             $value = null;
             if (
-                strpos($this->template, ':' . $key) !== false
-                || strpos($this->template, '{' . $key . '}') !== false
+                strpos($this->template, '{' . $key . '}') !== false
+                || strpos($this->template, ':' . $key) !== false
             ) {
                 $value = '_' . $key;
             } elseif (isset($this->defaults[$key])) {
@@ -851,12 +851,12 @@ class Route
      */
     public function staticPath(): string
     {
-        $routeKey = strpos($this->template, ':');
-        if ($routeKey !== false) {
-            return substr($this->template, 0, $routeKey);
-        }
         $routeKey = strpos($this->template, '{');
         if ($routeKey !== false && strpos($this->template, '}') !== false) {
+            return substr($this->template, 0, $routeKey);
+        }
+        $routeKey = strpos($this->template, ':');
+        if ($routeKey !== false) {
             return substr($this->template, 0, $routeKey);
         }
         $star = strpos($this->template, '*');

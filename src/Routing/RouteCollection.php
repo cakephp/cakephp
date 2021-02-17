@@ -35,7 +35,7 @@ class RouteCollection
     /**
      * The routes connected to this collection.
      *
-     * @var array
+     * @var array<string, array<\Cake\Routing\Route\Route>>
      */
     protected $_routeTable = [];
 
@@ -318,11 +318,10 @@ class RouteCollection
             if (empty($this->_routeTable[$name])) {
                 continue;
             }
-            /** @var \Cake\Routing\Route\Route $route */
             foreach ($this->_routeTable[$name] as $route) {
                 $match = $route->match($url, $context);
                 if ($match) {
-                    return strlen($match) > 1 ? trim($match, '/') : $match;
+                    return $match === '/' ? $match : trim($match, '/');
                 }
             }
         }
