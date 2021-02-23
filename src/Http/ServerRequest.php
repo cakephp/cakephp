@@ -801,7 +801,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string|string[] $type The type of request you want to check. If an array
      *   this method will return true if the request matches any type.
-     * @param array ...$args List of arguments
+     * @param mixed ...$args List of arguments
      * @return bool Whether or not the request is the type you are checking.
      */
     public function is($type, ...$args)
