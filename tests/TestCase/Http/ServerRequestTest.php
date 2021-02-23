@@ -883,6 +883,24 @@ class ServerRequestTest extends TestCase
         $request->clearDetectorCache();
         $this->assertFalse($request->isIndex());
 
+        ServerRequest::addDetector('withParams', function ($request, array $params) {
+            foreach ($params as $name => $value) {
+                if ($request->getParam($name) != $value) {
+                    return false;
+                }
+            }
+
+            return true;
+        });
+
+        $request = $request->withParam('controller', 'Pages')->withParam('action', 'index');
+        $request->clearDetectorCache();
+        $this->assertTrue($request->isWithParams(['controller' => 'Pages', 'action' => 'index']));
+
+        $request = $request->withParam('controller', 'Posts');
+        $request->clearDetectorCache();
+        $this->assertFalse($request->isWithParams(['controller' => 'Pages', 'action' => 'index']));
+
         ServerRequest::addDetector('callme', function ($request) {
             return $request->getAttribute('return');
         });
