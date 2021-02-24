@@ -422,6 +422,10 @@ class TimeTest extends TestCase
 
         $this->assertTimeFormat('20 avr. 2014 20:00', $time->nice(null, 'fr-FR'));
         $this->assertTimeFormat('20 avr. 2014 16:00', $time->nice('America/New_York', 'fr-FR'));
+
+        // Test with custom default locale
+        $class::setDefaultLocale('fr-FR');
+        $this->assertTimeFormat('20 avr. 2014 20:00', $time->nice());
     }
 
     /**
@@ -433,52 +437,35 @@ class TimeTest extends TestCase
     public function testI18nFormat($class)
     {
         $time = new $class('Thu Jan 14 13:59:28 2010');
+
+        // Test the default format which should be SHORT
         $result = $time->i18nFormat();
         $expected = '1/14/10, 1:59 PM';
         $this->assertTimeFormat($expected, $result);
 
-        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'es-ES');
-        $expected = 'jueves, 14 de enero de 2010, 13:59:28 (GMT)';
+        // Test with a custom timezone
+        $result = $time->i18nFormat('HH:mm:ss', 'Australia/Sydney');
+        $expected = '00:59:28';
         $this->assertTimeFormat($expected, $result);
 
+        // Test using a time-specific format
         $format = [\IntlDateFormatter::NONE, \IntlDateFormatter::SHORT];
         $result = $time->i18nFormat($format);
         $expected = '1:59 PM';
         $this->assertTimeFormat($expected, $result);
 
-        $result = $time->i18nFormat('HH:mm:ss', 'Australia/Sydney');
-        $expected = '00:59:28';
+        // Test using a specific format, timezone and locale
+        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'es-ES');
+        $expected = 'jueves, 14 de enero de 2010, 13:59:28 (GMT)';
         $this->assertTimeFormat($expected, $result);
 
+        // Test with custom default locale
         $class::setDefaultLocale('fr-FR');
         $result = $time->i18nFormat(\IntlDateFormatter::FULL);
         $expected = 'jeudi 14 janvier 2010 13:59:28 UTC';
         $this->assertTimeFormat($expected, $result);
 
-        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'es-ES');
-        $expected = 'jueves, 14 de enero de 2010, 13:59:28 (GMT)';
-        $this->assertTimeFormat($expected, $result, 'Default locale should not be used');
-
-        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'fa-SA');
-        $expected = 'پنجشنبه ۱۴ ژانویهٔ ۲۰۱۰، ساعت ۱۳:۵۹:۲۸ GMT';
-        $this->assertTimeFormat($expected, $result, 'fa-SA locale should be used');
-
-        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'en-IR@calendar=persian');
-        $expected = 'Thursday, Dey 24, 1388 at 1:59:28 PM GMT';
-        $this->assertTimeFormat($expected, $result);
-
-        $result = $time->i18nFormat([\IntlDateFormatter::SHORT, \IntlDateFormatter::FULL], null, 'fa-IR@calendar=persian');
-        $expected = '۱۳۸۸/۱۰/۲۴،‏ ۱۳:۵۹:۲۸ GMT';
-        $this->assertTimeFormat($expected, $result);
-
-        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'en-KW@calendar=islamic');
-        $expected = 'Thursday, Muharram 29, 1431 at 1:59:28 PM GMT';
-        $this->assertTimeFormat($expected, $result);
-
-        $result = $time->i18nFormat(\IntlDateFormatter::FULL, 'Asia/Tokyo', 'ja-JP@calendar=japanese');
-        $expected = '平成22年1月14日木曜日 22時59分28秒 日本標準時';
-        $this->assertTimeFormat($expected, $result);
-
+        // Test with a non-gregorian calendar in locale
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, 'Asia/Tokyo', 'ja-JP@calendar=japanese');
         $expected = '平成22年1月14日木曜日 22時59分28秒 日本標準時';
         $this->assertTimeFormat($expected, $result);
@@ -964,27 +951,6 @@ class TimeTest extends TestCase
     }
 
     /**
-     * Tests the default locale setter.
-     *
-     * @dataProvider classNameProvider
-     * @return void
-     */
-    public function testDefaultLocaleEffectsFormatting($class)
-    {
-        $result = $class::parseDate('12/03/2015');
-        $this->assertMatchesRegularExpression('/Dec 3, 2015[ ,]+12:00 AM/', $result->nice());
-
-        $class::setDefaultLocale('fr-FR');
-
-        $result = $class::parseDate('12/03/2015');
-        $this->assertMatchesRegularExpression('/12 mars 2015 (?:à )?00:00/', $result->nice());
-
-        $expected = 'Y-m-d';
-        $result = $class::parseDate('12/03/2015');
-        $this->assertSame('2015-03-12', $result->format($expected));
-    }
-
-    /**
      * Custom assert to allow for variation in the version of the intl library, where
      * some translations contain a few extra commas.
      *
@@ -1002,9 +968,6 @@ class TimeTest extends TestCase
         $result = str_replace('Coordinated Universal Time', 'GMT', $result);
 
         $result = str_replace([',', '(', ')', ' at', ' م.', ' ه‍.ش.', ' AP', ' AH', ' SAKA', 'à '], '', $result);
-        $result = str_replace(['گرینویچ'], 'GMT', $result);
-        $result = str_replace('زمان هماهنگ جهانی', 'GMT', $result);
-        $result = str_replace('همغږۍ نړیواله موده', 'GMT', $result);
         $result = str_replace(['  '], ' ', $result);
 
         $this->assertSame($expected, $result, $message);
