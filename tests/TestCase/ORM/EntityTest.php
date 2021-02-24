@@ -1761,6 +1761,7 @@ class EntityTest extends TestCase
             'emptyArray' => [],
             'object' => new \stdClass(),
             'string' => 'string',
+            'stringZero' => '0',
             'emptyString' => '',
             'intZero' => 0,
             'intNotZero' => 1,
@@ -1773,6 +1774,7 @@ class EntityTest extends TestCase
         $this->assertTrue($entity->isEmpty('emptyArray'));
         $this->assertFalse($entity->isEmpty('object'));
         $this->assertFalse($entity->isEmpty('string'));
+        $this->assertFalse($entity->isEmpty('stringZero'));
         $this->assertTrue($entity->isEmpty('emptyString'));
         $this->assertFalse($entity->isEmpty('intZero'));
         $this->assertFalse($entity->isEmpty('intNotZero'));
@@ -1793,6 +1795,7 @@ class EntityTest extends TestCase
             'emptyArray' => [],
             'object' => new \stdClass(),
             'string' => 'string',
+            'stringZero' => '0',
             'emptyString' => '',
             'intZero' => 0,
             'intNotZero' => 1,
@@ -1805,6 +1808,7 @@ class EntityTest extends TestCase
         $this->assertFalse($entity->hasValue('emptyArray'));
         $this->assertTrue($entity->hasValue('object'));
         $this->assertTrue($entity->hasValue('string'));
+        $this->assertTrue($entity->hasValue('stringZero'));
         $this->assertFalse($entity->hasValue('emptyString'));
         $this->assertTrue($entity->hasValue('intZero'));
         $this->assertTrue($entity->hasValue('intNotZero'));
