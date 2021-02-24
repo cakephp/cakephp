@@ -394,7 +394,7 @@ trait EntityTrait
                 empty($value) ||
                 (
                     is_string($value) &&
-                    strlen($value) === 0
+                    $value === ''
                 )
             )
         ) {
