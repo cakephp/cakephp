@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Database;
 
 use Cake\Database\Exception\DatabaseException;
-use Cake\Database\Expression\QueryExpression;
 use Closure;
 use Countable;
 
@@ -270,13 +269,8 @@ class QueryCompiler
     {
         $joins = '';
         foreach ($parts as $join) {
-            $subquery = $join['table'] instanceof Query || $join['table'] instanceof QueryExpression;
             if ($join['table'] instanceof ExpressionInterface) {
-                $join['table'] = $join['table']->sql($binder);
-            }
-
-            if ($subquery) {
-                $join['table'] = '(' . $join['table'] . ')';
+                $join['table'] = '(' . $join['table']->sql($binder) . ')';
             }
 
             $joins .= sprintf(' %s JOIN %s %s', $join['type'], $join['table'], $join['alias']);
