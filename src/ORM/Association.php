@@ -696,8 +696,6 @@ abstract class Association
      * - conditions: array with a list of conditions to filter the join with, this
      *   will be merged with any conditions originally configured for this association
      * - fields: a list of fields in the target table to include in the result
-     * - type: The type of join to be used (e.g. INNER)
-     *   the records found on this association
      * - aliasPath: A dot separated string representing the path of association names
      *   followed from the passed query main table to this association.
      * - propertyPath: A dot separated string representing the path of association
@@ -710,21 +708,19 @@ abstract class Association
      * @param \Cake\ORM\Query $query the query to be altered to include the target table data
      * @param array $options Any extra options or overrides to be taken in account
      * @return void
-     * @throws \RuntimeException if the query builder passed does not return a query
-     * object
+     * @throws \RuntimeException Unable to build the query or associations.
      */
     public function attachTo(Query $query, array $options = []): void
     {
         $target = $this->getTarget();
-        $joinType = empty($options['joinType']) ? $this->getJoinType() : $options['joinType'];
         $table = $target->getTable();
 
         $options += [
             'includeFields' => true,
             'foreignKey' => $this->getForeignKey(),
             'conditions' => [],
+            'joinType' => $this->getJoinType(),
             'fields' => [],
-            'type' => $joinType,
             'table' => $table,
             'finder' => $this->getFinder(),
         ];
@@ -764,9 +760,11 @@ abstract class Association
         $dummy->where($options['conditions']);
         $this->_dispatchBeforeFind($dummy);
 
-        $joinOptions = ['table' => 1, 'conditions' => 1, 'type' => 1];
-        $options['conditions'] = $dummy->clause('where');
-        $query->join([$this->_name => array_intersect_key($options, $joinOptions)]);
+        $query->join([$this->_name => [
+            'table' => $options['table'],
+            'conditions' => $dummy->clause('where'),
+            'type' => $options['joinType'],
+        ]]);
 
         $this->_appendFields($query, $dummy, $options);
         $this->_formatAssociationResults($query, $dummy, $options);

@@ -609,11 +609,10 @@ class QueryRegressionTest extends TestCase
         ]);
 
         $result = $table->find()->contain(['Articles.Tags'])->toArray();
-        $this->skipIf(count($result) === 0, 'No results, this test sometimes acts up on PHP 5.6');
 
         $this->assertEquals(
             ['tag1', 'tag3'],
-            collection($result[2]->articles[0]->tags)->extract('name')->toArray()
+            collection($result[2]->articles[0]->tags)->sortBy('name')->extract('name')->toArray()
         );
     }
 
