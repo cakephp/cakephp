@@ -42,8 +42,7 @@ abstract class SerializedView extends View
      *   names. If true all view variables will be serialized. If null or false
      *   normal view template will be rendered.
      *
-     * @var array
-     * @psalm-var array{serialize:string|bool|null}
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'serialize' => null,

@@ -48,7 +48,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
     /**
      * Instances that belong to the registry.
      *
-     * @var \Cake\ORM\Table[]
+     * @var array<string, \Cake\ORM\Table>
      */
     protected $instances = [];
 
