@@ -59,6 +59,7 @@ class DatabaseSessionTest extends TestCase
      */
     public function tearDown(): void
     {
+        $this->storage->destroy('foo');
         unset($this->storage);
         parent::tearDown();
     }
@@ -123,7 +124,8 @@ class DatabaseSessionTest extends TestCase
      */
     public function testRead()
     {
-        $this->storage->write('foo', 'Some value');
+        $result = $this->storage->write('foo', 'Some value');
+        $this->assertTrue($result);
 
         $result = $this->storage->read('foo');
         $expected = 'Some value';
@@ -140,7 +142,8 @@ class DatabaseSessionTest extends TestCase
      */
     public function testDestroy()
     {
-        $this->storage->write('foo', 'Some value');
+        $result = $this->storage->write('foo', 'Some value');
+        $this->assertTrue($result);
 
         $this->assertTrue($this->storage->destroy('foo'), 'Destroy failed');
         $this->assertSame('', $this->storage->read('foo'), 'Value still present.');
@@ -158,7 +161,8 @@ class DatabaseSessionTest extends TestCase
 
         $storage = new DatabaseSession();
         $storage->setTimeout(0);
-        $storage->write('foo', 'Some value');
+        $result = $storage->write('foo', 'Some value');
+        $this->assertTrue($result);
 
         sleep(1);
         $storage->gc(0);
@@ -174,8 +178,13 @@ class DatabaseSessionTest extends TestCase
     {
         $entity = new Entity();
         $entity->value = 'something';
-        $result = $this->storage->write('key', serialize($entity));
-        $data = $this->getTableLocator()->get('Sessions')->get('key')->data;
+        $result = $this->storage->write('foo', serialize($entity));
+        $this->assertTrue($result);
+
+        $result = $this->storage->read('foo');
+        $this->assertSame(serialize($entity), $result);
+
+        $data = $this->getTableLocator()->get('Sessions')->get('foo')->data;
         $this->assertSame(serialize($entity), stream_get_contents($data));
     }
 }
