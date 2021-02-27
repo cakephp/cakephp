@@ -140,7 +140,7 @@ class DatabaseSessionTest extends TestCase
      */
     public function testDestroy()
     {
-        $this->storage->write('foo', 'Some value');
+        $this->assertTrue($this->storage->write('foo', 'Some value'));
 
         $this->assertTrue($this->storage->destroy('foo'), 'Destroy failed');
         $this->assertSame('', $this->storage->read('foo'), 'Value still present.');
