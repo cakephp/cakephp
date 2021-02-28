@@ -231,6 +231,9 @@ class SmtpTransport extends AbstractTransport
 
         $host = 'localhost';
         if (isset($config['client'])) {
+            if (empty($config['client'])) {
+                throw new SocketException('Cannot use an empty client name.');
+            }
             $host = $config['client'];
         } else {
             /** @var string $httpHost */

@@ -452,23 +452,22 @@ class SmtpTransportTest extends TestCase
     }
 
     /**
-     * testEmptyConfigArray method
+     * Tests using empty client name
      *
      * @return void
      */
-    public function testEmptyConfigArray()
+    public function testEmptyClientName()
     {
-        $this->SmtpTransport->setConfig([
-            'client' => 'myhost.com',
-            'port' => 666,
-        ]);
-        $expected = $this->SmtpTransport->getConfig();
+        $this->socket->expects($this->any())->method('connect')->will($this->returnValue(true));
+        $this->socket->expects($this->any())
+           ->method('read')
+           ->will($this->onConsecutiveCalls("220 Welcome message\r\n", "250 Accepted\r\n"));
 
-        $this->assertSame(666, $expected['port']);
+        $this->SmtpTransport->setConfig(['client' => '']);
 
-        $this->SmtpTransport->setConfig([]);
-        $result = $this->SmtpTransport->getConfig();
-        $this->assertEquals($expected, $result);
+        $this->expectException(SocketException::class);
+        $this->expectExceptionMessage('Cannot use an empty client name');
+        $this->SmtpTransport->connect();
     }
 
     /**
