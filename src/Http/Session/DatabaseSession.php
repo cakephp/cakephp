@@ -18,7 +18,6 @@ declare(strict_types=1);
  */
 namespace Cake\Http\Session;
 
-use Cake\ORM\Entity;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use SessionHandlerInterface;
 
@@ -150,14 +149,16 @@ class DatabaseSession implements SessionHandlerInterface
         if (!$id) {
             return false;
         }
-        $expires = time() + $this->_timeout;
-        $record = compact('data', 'expires');
+
         /** @var string $pkField */
         $pkField = $this->_table->getPrimaryKey();
-        $record[$pkField] = $id;
-        $result = $this->_table->save(new Entity($record));
+        $session = $this->_table->newEntity([
+            $pkField => $id,
+            'data' => $data,
+            'expires' => time() + $this->_timeout,
+        ], ['accessibleFields' => [$pkField => true]]);
 
-        return (bool)$result;
+        return (bool)$this->_table->save($session);
     }
 
     /**
@@ -170,10 +171,7 @@ class DatabaseSession implements SessionHandlerInterface
     {
         /** @var string $pkField */
         $pkField = $this->_table->getPrimaryKey();
-        $this->_table->delete(new Entity(
-            [$pkField => $id],
-            ['markNew' => false]
-        ));
+        $this->_table->deleteAll([$pkField => $id]);
 
         return true;
     }
