@@ -180,11 +180,7 @@ class ViewBlock
      */
     public function get(string $name, string $default = ''): string
     {
-        if (!isset($this->_blocks[$name])) {
-            return $default;
-        }
-
-        return $this->_blocks[$name];
+        return $this->_blocks[$name] ?? $default;
     }
 
     /**

@@ -400,10 +400,7 @@ class RouteBuilder
                 continue;
             }
 
-            $action = $params['action'];
-            if (isset($options['actions'][$method])) {
-                $action = $options['actions'][$method];
-            }
+            $action = $options['actions'][$method] ?? $params['action'];
 
             $url = '/' . implode('/', array_filter([$options['path'], $params['path']]));
             $params = [
@@ -793,9 +790,7 @@ class RouteBuilder
      */
     public function redirect(string $route, $url, array $options = []): Route
     {
-        if (!isset($options['routeClass'])) {
-            $options['routeClass'] = RedirectRoute::class;
-        }
+        $options['routeClass'] = $options['routeClass'] ?? RedirectRoute::class;
         if (is_string($url)) {
             $url = ['redirect' => $url];
         }

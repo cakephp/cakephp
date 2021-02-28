@@ -58,9 +58,7 @@ class ClassLoader
         $baseDir = rtrim($baseDir, '/') . DIRECTORY_SEPARATOR;
         $baseDir = rtrim($baseDir, DIRECTORY_SEPARATOR) . '/';
 
-        if (!isset($this->_prefixes[$prefix])) {
-            $this->_prefixes[$prefix] = [];
-        }
+        $this->_prefixes[$prefix] = $this->_prefixes[$prefix] ?? [];
 
         if ($prepend) {
             array_unshift($this->_prefixes[$prefix], $baseDir);

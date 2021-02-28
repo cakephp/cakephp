@@ -963,16 +963,10 @@ class FormHelper extends Helper
      */
     public function fieldset(string $fields = '', array $options = []): string
     {
-        $fieldset = $legend = true;
+        $legend = $options['legend'] ?? true;
+        $fieldset = $options['fieldset'] ?? true;
         $context = $this->_getContext();
         $out = $fields;
-
-        if (isset($options['legend'])) {
-            $legend = $options['legend'];
-        }
-        if (isset($options['fieldset'])) {
-            $fieldset = $options['fieldset'];
-        }
 
         if ($legend === true) {
             $isCreate = $context->isCreate();
@@ -1381,10 +1375,7 @@ class FormHelper extends Helper
             return false;
         }
 
-        $label = null;
-        if (isset($options['label'])) {
-            $label = $options['label'];
-        }
+        $label = $options['label'] ?? null;
 
         if ($label === false && $options['type'] === 'checkbox') {
             return $options['input'];
@@ -1578,16 +1569,11 @@ class FormHelper extends Helper
      */
     public function __call(string $method, array $params)
     {
-        $options = [];
         if (empty($params)) {
             throw new CakeException(sprintf('Missing field name for FormHelper::%s', $method));
         }
-        if (isset($params[1])) {
-            $options = $params[1];
-        }
-        if (!isset($options['type'])) {
-            $options['type'] = $method;
-        }
+        $options = $params[1] ?? [];
+        $options['type'] = $options['type'] ?? $method;
         $options = $this->_initInputField($params[0], $options);
 
         return $this->widget($options['type'], $options);

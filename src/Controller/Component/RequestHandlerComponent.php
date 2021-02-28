@@ -467,9 +467,7 @@ class RequestHandlerComponent extends Component
             $cType = $response->getMimeType($type);
         }
         if (is_array($cType)) {
-            if (isset($cType[$options['index']])) {
-                $cType = $cType[$options['index']];
-            }
+            $cType = $cType[$options['index']] ?? $cType;
 
             if ($this->prefers($cType)) {
                 $cType = $this->prefers($cType);

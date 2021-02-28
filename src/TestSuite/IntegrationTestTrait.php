@@ -315,11 +315,7 @@ trait IntegrationTestTrait
      */
     protected function _getCookieEncryptionKey(): string
     {
-        if (isset($this->_cookieEncryptionKey)) {
-            return $this->_cookieEncryptionKey;
-        }
-
-        return Security::getSalt();
+        return $this->_cookieEncryptionKey ?? Security::getSalt();
     }
 
     /**

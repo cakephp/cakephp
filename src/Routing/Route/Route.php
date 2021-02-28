@@ -626,9 +626,7 @@ class Route
             if (!isset($hostOptions['_host']) && strpos($this->options['_host'], '*') === false) {
                 $hostOptions['_host'] = $this->options['_host'];
             }
-            if (!isset($hostOptions['_host'])) {
-                $hostOptions['_host'] = $context['_host'];
-            }
+            $hostOptions['_host'] = $hostOptions['_host'] ?? $context['_host'];
 
             // The host did not match the route preferences
             if (!$this->hostMatches((string)$hostOptions['_host'])) {

@@ -288,9 +288,7 @@ class FixtureManager
                 /** @var \Cake\Datasource\FixtureInterface[] $fixtures */
                 $tables = $db->getSchemaCollection()->listTables();
                 $configName = $db->configName();
-                if (!isset($this->_insertionMap[$configName])) {
-                    $this->_insertionMap[$configName] = [];
-                }
+                $this->_insertionMap[$configName] = $this->_insertionMap[$configName] ?? [];
 
                 foreach ($fixtures as $fixture) {
                     if (!$fixture instanceof ConstraintsInterface) {

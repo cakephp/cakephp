@@ -113,11 +113,7 @@ class Package
      */
     public function getMessage(string $key)
     {
-        if (isset($this->messages[$key])) {
-            return $this->messages[$key];
-        }
-
-        return false;
+        return $this->messages[$key] ?? false;
     }
 
     /**

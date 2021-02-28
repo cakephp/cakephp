@@ -414,9 +414,7 @@ class Router
         $context = static::$_requestContext;
         $request = static::getRequest();
 
-        if (!isset($context['_base'])) {
-            $context['_base'] = Configure::read('App.base') ?: '';
-        }
+        $context['_base'] = $context['_base'] ?? Configure::read('App.base') ?: '';
 
         if (empty($url)) {
             $here = $request ? $request->getRequestTarget() : '/';

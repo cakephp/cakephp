@@ -277,9 +277,7 @@ class SelectBoxWidget extends BasicWidget
                 $optAttrs = $val;
                 $key = $optAttrs['value'];
             }
-            if (!isset($optAttrs['templateVars'])) {
-                $optAttrs['templateVars'] = [];
-            }
+            $optAttrs['templateVars'] = $optAttrs['templateVars'] ?? [];
             if ($this->_isSelected((string)$key, $selected)) {
                 $optAttrs['selected'] = true;
             }

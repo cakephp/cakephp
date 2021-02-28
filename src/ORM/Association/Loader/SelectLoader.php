@@ -161,10 +161,7 @@ class SelectLoader
         $filter = $options['keys'];
         $useSubquery = $options['strategy'] === Association::STRATEGY_SUBQUERY;
         $finder = $this->finder;
-
-        if (!isset($options['fields'])) {
-            $options['fields'] = [];
-        }
+        $options['fields'] = $options['fields'] ?? [];
 
         /** @var \Cake\ORM\Query $query */
         $query = $finder();
