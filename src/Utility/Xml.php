@@ -472,6 +472,7 @@ class Xml
             }
 
             foreach ($xml->children($namespace, true) as $child) {
+                /** @psalm-suppress PossiblyNullArgument */
                 static::_toArray($child, $data, $namespace, $namespaces);
             }
         }
