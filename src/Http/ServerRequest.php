@@ -499,11 +499,8 @@ class ServerRequest implements ServerRequestInterface
         if ($args) {
             return $this->_is($type, $args);
         }
-        if (!isset($this->_detectorCache[$type])) {
-            $this->_detectorCache[$type] = $this->_is($type, $args);
-        }
 
-        return $this->_detectorCache[$type];
+        return $this->_detectorCache[$type] = $this->_detectorCache[$type] ?? $this->_is($type, $args);
     }
 
     /**

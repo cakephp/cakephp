@@ -304,9 +304,7 @@ class CommandRunner implements EventDispatcherInterface
             $io->err('<error>No command provided. Choose one of the available commands.</error>', 2);
             $name = 'help';
         }
-        if (isset($this->aliases[$name])) {
-            $name = $this->aliases[$name];
-        }
+        $name = $this->aliases[$name] ?? $name;
         if (!$commands->has($name)) {
             $name = Inflector::underscore($name);
         }

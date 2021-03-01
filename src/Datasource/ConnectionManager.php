@@ -205,10 +205,8 @@ class ConnectionManager
         if (empty(static::$_registry)) {
             static::$_registry = new ConnectionRegistry();
         }
-        if (isset(static::$_registry->{$name})) {
-            return static::$_registry->{$name};
-        }
 
-        return static::$_registry->load($name, static::$_config[$name]);
+        return static::$_registry->{$name}
+            ?? static::$_registry->load($name, static::$_config[$name]);
     }
 }

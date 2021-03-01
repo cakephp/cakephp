@@ -304,15 +304,10 @@ class File
         if (!$this->info) {
             $this->info = pathinfo($this->path);
         }
-        if (!isset($this->info['filename'])) {
-            $this->info['filename'] = $this->name();
-        }
-        if (!isset($this->info['filesize'])) {
-            $this->info['filesize'] = $this->size();
-        }
-        if (!isset($this->info['mime'])) {
-            $this->info['mime'] = $this->mime();
-        }
+
+        $this->info['filename'] = $this->info['filename'] ?? $this->name();
+        $this->info['filesize'] = $this->info['filesize'] ?? $this->size();
+        $this->info['mime'] = $this->info['mime'] ?? $this->mime();
 
         return $this->info;
     }
@@ -327,11 +322,8 @@ class File
         if (!$this->info) {
             $this->info();
         }
-        if (isset($this->info['extension'])) {
-            return $this->info['extension'];
-        }
 
-        return false;
+        return $this->info['extension'] ?? false;
     }
 
     /**

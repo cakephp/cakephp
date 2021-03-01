@@ -110,11 +110,7 @@ class AssociationCollection implements IteratorAggregate
      */
     public function get(string $alias): ?Association
     {
-        if (isset($this->_items[$alias])) {
-            return $this->_items[$alias];
-        }
-
-        return null;
+        return $this->_items[$alias] ?? null;
     }
 
     /**

@@ -839,11 +839,7 @@ class View implements EventDispatcherInterface
      */
     public function get(string $var, $default = null)
     {
-        if (!isset($this->viewVars[$var])) {
-            return $default;
-        }
-
-        return $this->viewVars[$var];
+        return $this->viewVars[$var] ?? $default;
     }
 
     /**

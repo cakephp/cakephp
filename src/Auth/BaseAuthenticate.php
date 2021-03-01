@@ -171,9 +171,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
             $finder = key($finder);
         }
 
-        if (!isset($options['username'])) {
-            $options['username'] = $username;
-        }
+        $options['username'] = $options['username'] ?? $username;
 
         return $table->find($finder, $options);
     }

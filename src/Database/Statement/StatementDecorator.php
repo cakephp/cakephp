@@ -318,10 +318,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
         $anonymousParams = is_int(key($params)) ? true : false;
         $offset = 1;
         foreach ($params as $index => $value) {
-            $type = null;
-            if (isset($types[$index])) {
-                $type = $types[$index];
-            }
+            $type = $types[$index] ?? null;
             if ($anonymousParams) {
                 /** @psalm-suppress InvalidOperand */
                 $index += $offset;

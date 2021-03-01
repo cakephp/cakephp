@@ -680,11 +680,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      */
     public function getConstraint(string $name): ?array
     {
-        if (!isset($this->_constraints[$name])) {
-            return null;
-        }
-
-        return $this->_constraints[$name];
+        return $this->_constraints[$name] ?? null;
     }
 
     /**

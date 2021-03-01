@@ -212,8 +212,7 @@ class ValidationRule
     public function get(string $property)
     {
         $property = '_' . $property;
-        if (isset($this->{$property})) {
-            return $this->{$property};
-        }
+
+        return $this->{$property} ?? null;
     }
 }

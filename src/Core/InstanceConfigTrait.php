@@ -265,9 +265,7 @@ trait InstanceConfigTrait
                 throw new CakeException(sprintf('Cannot set %s value', $key));
             }
 
-            if (!isset($update[$k])) {
-                $update[$k] = [];
-            }
+            $update[$k] = $update[$k] ?? [];
 
             $update = &$update[$k];
         }

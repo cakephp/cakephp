@@ -394,9 +394,7 @@ class Shell
     {
         [$args, $extra] = $this->parseDispatchArguments(func_get_args());
 
-        if (!isset($extra['requested'])) {
-            $extra['requested'] = true;
-        }
+        $extra['requested'] = $extra['requested'] ?? true;
         /** @psalm-suppress DeprecatedClass */
         $dispatcher = new ShellDispatcher($args, false);
 
@@ -615,11 +613,7 @@ class Shell
      */
     public function param(string $name)
     {
-        if (!isset($this->params[$name])) {
-            return null;
-        }
-
-        return $this->params[$name];
+        return $this->params[$name] ?? null;
     }
 
     /**

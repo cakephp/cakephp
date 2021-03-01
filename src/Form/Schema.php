@@ -105,11 +105,7 @@ class Schema
      */
     public function field(string $name): ?array
     {
-        if (!isset($this->_fields[$name])) {
-            return null;
-        }
-
-        return $this->_fields[$name];
+        return $this->_fields[$name] ?? null;
     }
 
     /**

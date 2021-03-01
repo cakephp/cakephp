@@ -443,12 +443,8 @@ class Response implements ResponseInterface
      */
     public function __construct(array $options = [])
     {
-        if (isset($options['streamTarget'])) {
-            $this->_streamTarget = $options['streamTarget'];
-        }
-        if (isset($options['streamMode'])) {
-            $this->_streamMode = $options['streamMode'];
-        }
+        $this->_streamTarget = $options['streamTarget'] ?? $this->_streamTarget;
+        $this->_streamMode = $options['streamMode'] ?? $this->_streamMode;
         if (isset($options['stream'])) {
             if (!$options['stream'] instanceof StreamInterface) {
                 throw new InvalidArgumentException('Stream option must be an object that implements StreamInterface');
@@ -746,11 +742,7 @@ class Response implements ResponseInterface
      */
     public function getMimeType(string $alias)
     {
-        if (isset($this->_mimeTypes[$alias])) {
-            return $this->_mimeTypes[$alias];
-        }
-
-        return false;
+        return $this->_mimeTypes[$alias] ?? false;
     }
 
     /**

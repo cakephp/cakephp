@@ -268,10 +268,7 @@ class Hash
                 return false;
             }
 
-            $prop = '';
-            if (isset($data[$attr])) {
-                $prop = $data[$attr];
-            }
+            $prop = $data[$attr] ?? '';
             $isBool = is_bool($prop);
             if ($isBool && is_numeric($val)) {
                 $prop = $prop ? '1' : '0';
@@ -372,9 +369,7 @@ class Hash
 
                     return $data;
                 }
-                if (!isset($_list[$key])) {
-                    $_list[$key] = [];
-                }
+                $_list[$key] = $_list[$key] ?? [];
                 $_list = &$_list[$key];
                 if (!is_array($_list)) {
                     $_list = [];
@@ -513,12 +508,8 @@ class Hash
                 $c = is_array($keys) ? count($keys) : count($vals);
                 $out = [];
                 for ($i = 0; $i < $c; $i++) {
-                    if (!isset($group[$i])) {
-                        $group[$i] = 0;
-                    }
-                    if (!isset($out[$group[$i]])) {
-                        $out[$group[$i]] = [];
-                    }
+                    $group[$i] = $group[$i] ?? 0;
+                    $out[$group[$i]] = $out[$group[$i]] ?? [];
                     if ($keys === null) {
                         $out[$group[$i]][] = $vals[$i];
                     } else {

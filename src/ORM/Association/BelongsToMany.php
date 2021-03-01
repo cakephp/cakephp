@@ -461,10 +461,7 @@ class BelongsToMany extends Association
         $cond = $belongsTo->_joinCondition(['foreignKey' => $belongsTo->getForeignKey()]);
         $cond += $this->junctionConditions();
 
-        $includeFields = null;
-        if (isset($options['includeFields'])) {
-            $includeFields = $options['includeFields'];
-        }
+        $includeFields = $options['includeFields'] ?? null;
 
         // Attach the junction table as well we need it to populate _joinData.
         $assoc = $this->_targetTable->getAssociation($junction->getAlias());
@@ -492,9 +489,7 @@ class BelongsToMany extends Association
         if (empty($options['negateMatch'])) {
             return;
         }
-        if (!isset($options['conditions'])) {
-            $options['conditions'] = [];
-        }
+        $options['conditions'] = $options['conditions'] ?? [];
         $junction = $this->junction();
         $belongsTo = $junction->getAssociation($this->getSource()->getAlias());
         $conds = $belongsTo->_joinCondition(['foreignKey' => $belongsTo->getForeignKey()]);

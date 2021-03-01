@@ -2742,9 +2742,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function newEntity(array $data, array $options = []): EntityInterface
     {
-        if (!isset($options['associated'])) {
-            $options['associated'] = $this->_associations->keys();
-        }
+        $options['associated'] = $options['associated'] ?? $this->_associations->keys();
         $marshaller = $this->marshaller();
 
         return $marshaller->one($data, $options);
@@ -2784,9 +2782,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function newEntities(array $data, array $options = []): array
     {
-        if (!isset($options['associated'])) {
-            $options['associated'] = $this->_associations->keys();
-        }
+        $options['associated'] = $options['associated'] ?? $this->_associations->keys();
         $marshaller = $this->marshaller();
 
         return $marshaller->many($data, $options);
@@ -2845,9 +2841,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function patchEntity(EntityInterface $entity, array $data, array $options = []): EntityInterface
     {
-        if (!isset($options['associated'])) {
-            $options['associated'] = $this->_associations->keys();
-        }
+        $options['associated'] = $options['associated'] ?? $this->_associations->keys();
         $marshaller = $this->marshaller();
 
         return $marshaller->merge($entity, $data, $options);
@@ -2886,9 +2880,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function patchEntities(iterable $entities, array $data, array $options = []): array
     {
-        if (!isset($options['associated'])) {
-            $options['associated'] = $this->_associations->keys();
-        }
+        $options['associated'] = $options['associated'] ?? $this->_associations->keys();
         $marshaller = $this->marshaller();
 
         return $marshaller->mergeMany($entities, $data, $options);

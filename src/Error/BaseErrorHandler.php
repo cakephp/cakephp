@@ -88,10 +88,7 @@ abstract class BaseErrorHandler
      */
     public function register(): void
     {
-        $level = -1;
-        if (isset($this->_config['errorLevel'])) {
-            $level = $this->_config['errorLevel'];
-        }
+        $level = $this->_config['errorLevel'] ?? -1;
         error_reporting($level);
         set_error_handler([$this, 'handleError'], $level);
         set_exception_handler([$this, 'handleException']);

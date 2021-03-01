@@ -99,9 +99,7 @@ class RouteCollection
 
         // Generated names.
         $name = $route->getName();
-        if (!isset($this->_routeTable[$name])) {
-            $this->_routeTable[$name] = [];
-        }
+        $this->_routeTable[$name] = $this->_routeTable[$name] ?? [];
         $this->_routeTable[$name][] = $route;
 
         // Index path prefixes (for parsing)

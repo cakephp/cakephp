@@ -142,11 +142,8 @@ class PaginatorHelper extends Helper
     public function param(string $key, ?string $model = null)
     {
         $params = $this->params($model);
-        if (!isset($params[$key])) {
-            return null;
-        }
 
-        return $params[$key];
+        return $params[$key] ?? null;
     }
 
     /**
@@ -198,11 +195,7 @@ class PaginatorHelper extends Helper
     {
         $params = $this->params($model);
 
-        if (isset($params['page'])) {
-            return $params['page'];
-        }
-
-        return 1;
+        return $params['page'] ?? 1;
     }
 
     /**
@@ -215,11 +208,7 @@ class PaginatorHelper extends Helper
     {
         $params = $this->params($model);
 
-        if (isset($params['pageCount'])) {
-            return $params['pageCount'];
-        }
-
-        return 0;
+        return $params['pageCount'] ?? 0;
     }
 
     /**
@@ -583,9 +572,7 @@ class PaginatorHelper extends Helper
             $url = Hash::merge($url, Hash::get($this->_config, $key, []));
         }
 
-        if (!isset($url['?'])) {
-            $url['?'] = [];
-        }
+        $url['?'] = $url['?'] ?? [];
 
         if (!empty($this->_config['options']['routePlaceholders'])) {
             $placeholders = array_flip($this->_config['options']['routePlaceholders']);
