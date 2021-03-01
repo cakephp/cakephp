@@ -158,8 +158,8 @@ class AssetMiddleware implements MiddlewareInterface
         return $response
             ->withHeader('Content-Type', $contentType)
             ->withHeader('Cache-Control', 'public,max-age=' . $maxAge)
-            ->withHeader('Date', gmdate('D, j M Y G:i:s \G\M\T', time()))
-            ->withHeader('Last-Modified', gmdate('D, j M Y G:i:s \G\M\T', $modified))
-            ->withHeader('Expires', gmdate('D, j M Y G:i:s \G\M\T', $expire));
+            ->withHeader('Date', gmdate(DATE_RFC7231, time()))
+            ->withHeader('Last-Modified', gmdate(DATE_RFC7231, $modified))
+            ->withHeader('Expires', gmdate(DATE_RFC7231, $expire));
     }
 }
