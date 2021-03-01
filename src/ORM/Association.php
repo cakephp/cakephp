@@ -725,6 +725,12 @@ abstract class Association
             'finder' => $this->getFinder(),
         ];
 
+        // This is set by joinWith to disable matching results
+        if ($options['fields'] === false) {
+            $options['fields'] = [];
+            $options['includeFields'] = false;
+        }
+
         if (!empty($options['foreignKey'])) {
             $joinCondition = $this->_joinCondition($options);
             if ($joinCondition) {
@@ -954,25 +960,17 @@ abstract class Association
             return;
         }
 
-        $fields = $surrogate->clause('select') ?: $options['fields'];
-        $target = $this->_targetTable;
-        $autoFields = $surrogate->isAutoFieldsEnabled();
+        $fields = array_merge($surrogate->clause('select'), $options['fields']);
 
-        if (empty($fields) && !$autoFields) {
-            if ($options['includeFields'] && ($fields === null || $fields !== false)) {
-                $fields = $target->getSchema()->columns();
-            }
+        if (
+            (empty($fields) && $options['includeFields']) ||
+            $surrogate->isAutoFieldsEnabled()
+        ) {
+            $fields = array_merge($fields, $this->_targetTable->getSchema()->columns());
         }
 
-        if ($autoFields === true) {
-            $fields = array_filter((array)$fields);
-            $fields = array_merge($fields, $target->getSchema()->columns());
-        }
-
-        if ($fields) {
-            $query->select($query->aliasFields($fields, $this->_name));
-        }
-        $query->addDefaultTypes($target);
+        $query->select($query->aliasFields($fields, $this->_name));
+        $query->addDefaultTypes($this->_targetTable);
     }
 
     /**

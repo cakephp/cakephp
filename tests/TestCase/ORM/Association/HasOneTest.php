@@ -158,7 +158,7 @@ class HasOneTest extends TestCase
         $association = new HasOne('Profiles', $config);
 
         $query = $this->getMockBuilder('Cake\ORM\Query')
-            ->onlyMethods(['join', 'select'])
+            ->onlyMethods(['join'])
             ->disableOriginalConstructor()
             ->getMock();
         $field1 = new IdentifierExpression('Profiles.user_id');
@@ -173,8 +173,7 @@ class HasOneTest extends TestCase
                 'table' => 'profiles',
             ],
         ]);
-        $query->expects($this->never())->method('select');
-        $association->attachTo($query, ['includeFields' => false]);
+        $association->attachTo($query);
     }
 
     /**
