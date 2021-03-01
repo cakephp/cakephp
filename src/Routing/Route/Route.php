@@ -292,6 +292,7 @@ class Route
             $this->_writeRoute();
         }
 
+        /** @var string */
         return $this->_compiledRoute;
     }
 

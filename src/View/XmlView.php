@@ -103,8 +103,7 @@ class XmlView extends SerializedView
      *   For e.g. 'format' as 'attributes' instead of 'tags'.
      * - `rootNode`: Root node name. Defaults to "response".
      *
-     * @var array
-     * @psalm-var array{serialize:string|bool|null, xmlOptions: int|null, rootNode: string|null}
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'serialize' => null,

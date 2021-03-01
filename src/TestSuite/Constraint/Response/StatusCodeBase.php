@@ -19,11 +19,13 @@ namespace Cake\TestSuite\Constraint\Response;
  * StatusCodeBase
  *
  * @internal
+ * @template TCode as int|array<int, int>
  */
 abstract class StatusCodeBase extends ResponseBase
 {
     /**
      * @var int|array
+     * @psalm-var TCode
      */
     protected $code;
 

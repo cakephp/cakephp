@@ -308,7 +308,6 @@ abstract class BaseErrorHandler
         );
         $context = [];
         if (!empty($this->_config['trace'])) {
-            /** @var string $trace */
             $context['trace'] = Debugger::trace([
                 'start' => 1,
                 'format' => 'log',

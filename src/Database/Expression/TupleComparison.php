@@ -30,6 +30,7 @@ class TupleComparison extends ComparisonExpression
      * The type to be used for casting the value to a database representation
      *
      * @var array
+     * @psalm-suppress NonInvariantDocblockPropertyType
      */
     protected $_type;
 

@@ -19,6 +19,7 @@ namespace Cake\TestSuite\Constraint\Response;
  * StatusSuccess
  *
  * @internal
+ * @extends \Cake\TestSuite\Constraint\Response\StatusCodeBase<array<int, int>>
  */
 class StatusSuccess extends StatusCodeBase
 {

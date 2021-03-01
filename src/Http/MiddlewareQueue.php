@@ -31,6 +31,8 @@ use SeekableIterator;
 /**
  * Provides methods for creating and manipulating a "queue" of middlewares.
  * This queue is used to process a request and generate response via \Cake\Http\Runner.
+ *
+ * @template-implements \SeekableIterator<int, \Psr\Http\Server\MiddlewareInterface>
  */
 class MiddlewareQueue implements Countable, SeekableIterator
 {

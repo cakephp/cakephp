@@ -92,6 +92,8 @@ class ConsoleInput
         $error = null;
         set_error_handler(function (int $code, string $message) use (&$error) {
             $error = "stream_select failed with code={$code} message={$message}.";
+
+            return true;
         });
         $readyFds = stream_select($readFds, $writeFds, $errorFds, $timeout);
         restore_error_handler();

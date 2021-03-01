@@ -1,12 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="4.3.1@2feba22a005a18bf31d4c7b9bdb9252c73897476">
+<files psalm-version="4.x-dev@">
   <file src="src/Collection/CollectionTrait.php">
-    <ArgumentTypeCoercion occurrences="4">
+    <ArgumentTypeCoercion occurrences="2">
       <code>$iterator</code>
       <code>$iterator</code>
-      <code>$this-&gt;newCollection($items)-&gt;unwrap()</code>
-      <code>$this-&gt;unwrap()</code>
     </ArgumentTypeCoercion>
+    <MissingParamType occurrences="28">
+      <code>$callback</code>
+      <code>$condition</code>
+      <code>$groupPath</code>
+      <code>$idPath</code>
+      <code>$initial</code>
+      <code>$item</code>
+      <code>$item</code>
+      <code>$items</code>
+      <code>$items</code>
+      <code>$key</code>
+      <code>$key</code>
+      <code>$keyPath</code>
+      <code>$nestingKey</code>
+      <code>$order</code>
+      <code>$parentPath</code>
+      <code>$path</code>
+      <code>$path</code>
+      <code>$path</code>
+      <code>$path</code>
+      <code>$path</code>
+      <code>$path</code>
+      <code>$path</code>
+      <code>$path</code>
+      <code>$path</code>
+      <code>$path</code>
+      <code>$value</code>
+      <code>$valuePath</code>
+      <code>$values</code>
+    </MissingParamType>
   </file>
   <file src="src/Collection/Iterator/ZipIterator.php">
     <ArgumentTypeCoercion occurrences="1">
@@ -74,6 +102,19 @@
       <code>$value</code>
     </InvalidScalarArgument>
   </file>
+  <file src="src/Database/Query.php">
+    <InvalidArgument occurrences="1"/>
+  </file>
+  <file src="src/Database/Schema/MysqlSchemaDialect.php">
+    <NonInvariantDocblockPropertyType occurrences="1">
+      <code>$_driver</code>
+    </NonInvariantDocblockPropertyType>
+  </file>
+  <file src="src/Database/Statement/PDOStatement.php">
+    <NonInvariantDocblockPropertyType occurrences="1">
+      <code>$_statement</code>
+    </NonInvariantDocblockPropertyType>
+  </file>
   <file src="src/Datasource/ModelAwareTrait.php">
     <DeprecatedClass occurrences="1">
       <code>$this</code>
@@ -104,6 +145,11 @@
       <code>$time</code>
     </ArgumentTypeCoercion>
   </file>
+  <file src="src/I18n/DateFormatTrait.php">
+    <MissingParamType occurrences="1">
+      <code>$format</code>
+    </MissingParamType>
+  </file>
   <file src="src/I18n/FrozenDate.php">
     <ArgumentTypeCoercion occurrences="1">
       <code>$time</code>
@@ -131,6 +177,11 @@
       <code>$this</code>
     </DeprecatedClass>
   </file>
+  <file src="src/ORM/Locator/TableLocator.php">
+    <NonInvariantDocblockPropertyType occurrences="1">
+      <code>$instances</code>
+    </NonInvariantDocblockPropertyType>
+  </file>
   <file src="src/ORM/Marshaller.php">
     <ArgumentTypeCoercion occurrences="2">
       <code>$assoc</code>
@@ -153,16 +204,41 @@
       <code>Shell</code>
     </DeprecatedClass>
   </file>
-  <file src="src/TestSuite/ContainerStubTrait.php">
-    <DeprecatedClass occurrences="2">
-      <code>$this</code>
-    </DeprecatedClass>
-  </file>
   <file src="src/TestSuite/Constraint/EventFired.php">
     <InternalClass occurrences="1"/>
   </file>
   <file src="src/TestSuite/Constraint/EventFiredWith.php">
     <InternalClass occurrences="2"/>
+  </file>
+  <file src="src/TestSuite/Constraint/Response/ContentType.php">
+    <NonInvariantDocblockPropertyType occurrences="1">
+      <code>$response</code>
+    </NonInvariantDocblockPropertyType>
+  </file>
+  <file src="src/TestSuite/Constraint/Response/CookieEncryptedEquals.php">
+    <NonInvariantDocblockPropertyType occurrences="1">
+      <code>$response</code>
+    </NonInvariantDocblockPropertyType>
+  </file>
+  <file src="src/TestSuite/Constraint/Response/CookieEquals.php">
+    <NonInvariantDocblockPropertyType occurrences="1">
+      <code>$response</code>
+    </NonInvariantDocblockPropertyType>
+  </file>
+  <file src="src/TestSuite/Constraint/Response/CookieSet.php">
+    <NonInvariantDocblockPropertyType occurrences="1">
+      <code>$response</code>
+    </NonInvariantDocblockPropertyType>
+  </file>
+  <file src="src/TestSuite/Constraint/Response/FileSent.php">
+    <NonInvariantDocblockPropertyType occurrences="1">
+      <code>$response</code>
+    </NonInvariantDocblockPropertyType>
+  </file>
+  <file src="src/TestSuite/Constraint/Response/FileSentAs.php">
+    <NonInvariantDocblockPropertyType occurrences="1">
+      <code>$response</code>
+    </NonInvariantDocblockPropertyType>
   </file>
   <file src="src/TestSuite/Constraint/Response/ResponseBase.php">
     <InternalClass occurrences="1">
@@ -173,6 +249,12 @@
     <InternalClass occurrences="1">
       <code>new AssertionFailedError($message)</code>
     </InternalClass>
+  </file>
+  <file src="src/TestSuite/ContainerStubTrait.php">
+    <DeprecatedClass occurrences="2">
+      <code>$this</code>
+      <code>$this</code>
+    </DeprecatedClass>
   </file>
   <file src="src/TestSuite/Fixture/FixtureInjector.php">
     <DeprecatedInterface occurrences="1">

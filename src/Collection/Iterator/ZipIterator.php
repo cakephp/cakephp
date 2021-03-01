@@ -88,7 +88,7 @@ class ZipIterator extends MultipleIterator implements CollectionInterface, Seria
      * Returns the value resulting out of zipping all the elements for all the
      * iterators with the same positional index.
      *
-     * @return array|false
+     * @return array
      */
     public function current()
     {
