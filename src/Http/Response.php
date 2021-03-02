@@ -1370,7 +1370,7 @@ class Response implements ResponseInterface
             }
         }
 
-        $this->_setHeader('Date', gmdate('D, j M Y G:i:s ', time()) . 'GMT');
+        $this->_setHeader('Date', gmdate('D, d M Y H:i:s ', time()) . 'GMT');
 
         $this->modified($since);
         $this->expires($time);
@@ -1395,7 +1395,7 @@ class Response implements ResponseInterface
             }
         }
 
-        return $this->withHeader('Date', gmdate('D, j M Y G:i:s ', time()) . 'GMT')
+        return $this->withHeader('Date', gmdate('D, d M Y H:i:s ', time()) . 'GMT')
             ->withModified($since)
             ->withExpires($time)
             ->withSharable(true)

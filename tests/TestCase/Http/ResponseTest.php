@@ -722,7 +722,7 @@ class ResponseTest extends TestCase
             $time = new \DateTime('+1 day', new \DateTimeZone('UTC'));
             $response->expires('+1 day');
             $expected = [
-                'Date' => gmdate('D, j M Y G:i:s ', $since) . 'GMT',
+                'Date' => gmdate('D, d M Y H:i:s ', $since) . 'GMT',
                 'Last-Modified' => gmdate('D, j M Y H:i:s ', $since) . 'GMT',
                 'Expires' => $time->format('D, j M Y H:i:s') . ' GMT',
                 'Cache-Control' => 'public, max-age=' . ($time->format('U') - time()),
@@ -735,7 +735,7 @@ class ResponseTest extends TestCase
             $since = time();
             $time = '+5 day';
             $expected = [
-                'Date' => gmdate('D, j M Y G:i:s ', $since) . 'GMT',
+                'Date' => gmdate('D, d M Y H:i:s ', $since) . 'GMT',
                 'Last-Modified' => gmdate('D, j M Y H:i:s ', $since) . 'GMT',
                 'Expires' => gmdate('D, j M Y H:i:s', strtotime($time)) . ' GMT',
                 'Cache-Control' => 'public, max-age=' . (strtotime($time) - time()),
@@ -748,7 +748,7 @@ class ResponseTest extends TestCase
             $since = time();
             $time = time();
             $expected = [
-                'Date' => gmdate('D, j M Y G:i:s ', $since) . 'GMT',
+                'Date' => gmdate('D, d M Y H:i:s ', $since) . 'GMT',
                 'Last-Modified' => gmdate('D, j M Y H:i:s ', $since) . 'GMT',
                 'Expires' => gmdate('D, j M Y H:i:s', $time) . ' GMT',
                 'Cache-Control' => 'public, max-age=0',
@@ -773,7 +773,7 @@ class ResponseTest extends TestCase
         $this->assertFalse($response->hasHeader('Date'));
         $this->assertFalse($response->hasHeader('Last-Modified'));
 
-        $this->assertEquals(gmdate('D, j M Y G:i:s ', $since) . 'GMT', $new->getHeaderLine('Date'));
+        $this->assertEquals(gmdate('D, d M Y H:i:s ', $since) . 'GMT', $new->getHeaderLine('Date'));
         $this->assertEquals(gmdate('D, j M Y H:i:s ', $since) . 'GMT', $new->getHeaderLine('Last-Modified'));
         $this->assertEquals(gmdate('D, j M Y H:i:s', $time) . ' GMT', $new->getHeaderLine('Expires'));
         $this->assertEquals('public, max-age=0', $new->getHeaderLine('Cache-Control'));
