@@ -234,13 +234,13 @@ class EagerLoader
      *  - `fields`: Fields to contain
      *  - `negateMatch`: Whether to add conditions negate match on target association
      *
-     * @param string $path Dot separated association path
+     * @param string $associationPath Dot separated association path, 'Name1.Name2.Name3'
      * @param callable|null $builder the callback function to be used for setting extra
      * options to the filtering query
      * @param array $options Extra options for the association matching.
      * @return $this
      */
-    public function setMatching(string $path, ?callable $builder = null, array $options = [])
+    public function setMatching(string $associationPath, ?callable $builder = null, array $options = [])
     {
         if ($this->_matching === null) {
             $this->_matching = new static();
@@ -251,7 +251,7 @@ class EagerLoader
 
         $contains = [];
         $nested = &$contains;
-        foreach (explode('.', $path) as $association) {
+        foreach (explode('.', $associationPath) as $association) {
             // Add contain to parent contain using association name as key
             $nested[$association] = $sharedOptions;
             // Set to next nested level
