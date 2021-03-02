@@ -2812,8 +2812,8 @@ class QueryTest extends TestCase
             'contain' => [],
             'matching' => [
                 'articles' => [
-                    'queryBuilder' => null,
                     'matching' => true,
+                    'queryBuilder' => null,
                     'joinType' => 'INNER',
                 ],
             ],
