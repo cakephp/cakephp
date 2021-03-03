@@ -308,7 +308,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * @param string|callable|null $path The property name to sum or a function
      * If no value is passed, an identity function will be used.
      * that will return the value of the property to sum.
-     * @return float|int|null
+     * @return float|int
      */
     public function avg($path = null);
 

@@ -86,7 +86,7 @@ class CollectionTest extends TestCase
     public function testAvgWithEmptyCollection()
     {
         $collection = new Collection([]);
-        $this->assertNull($collection->avg());
+        $this->assertSame(0, $collection->avg());
     }
 
     /**
