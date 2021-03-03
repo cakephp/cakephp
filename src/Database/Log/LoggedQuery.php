@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Log;
 
+use Cake\Database\Driver\Sqlserver;
 use JsonSerializable;
 
 /**
@@ -26,6 +27,13 @@ use JsonSerializable;
  */
 class LoggedQuery implements JsonSerializable
 {
+    /**
+     * Driver executing the query
+     *
+     * @var \Cake\Database\DriverInterface|null
+     */
+    public $driver = null;
+
     /**
      * Query string that was executed
      *
@@ -73,8 +81,13 @@ class LoggedQuery implements JsonSerializable
             if ($p === null) {
                 return 'NULL';
             }
+
             if (is_bool($p)) {
-                return $p ? '1' : '0';
+                if ($this->driver instanceof Sqlserver) {
+                    return $p ? '1' : '0';
+                }
+
+                return $p ? 'TRUE' : 'FALSE';
             }
 
             if (is_string($p)) {
