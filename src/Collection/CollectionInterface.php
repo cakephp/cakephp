@@ -305,6 +305,9 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * // Total: 2
      * ```
      *
+     * The average of an empty set or 0 rows is `null`. Collections with `null`
+     * values are not considered empty.
+     *
      * @param string|callable|null $path The property name to sum or a function
      * If no value is passed, an identity function will be used.
      * that will return the value of the property to sum.
@@ -334,6 +337,9 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * $total = (new Collection([1, 2, 3, 4]))->median();
      * // Total: 2.5
      * ```
+     *
+     * The median of an empty set or 0 rows is `null`. Collections with `null`
+     * values are not considered empty.
      *
      * @param string|callable|null $path The property name to sum or a function
      * If no value is passed, an identity function will be used.
