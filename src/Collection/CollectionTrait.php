@@ -218,11 +218,7 @@ trait CollectionTrait
                 return [$count + 1, $sum + $current];
             }, [0, 0]);
 
-        if ($result[0] === 0) {
-            return null;
-        }
-
-        return $result[1] / $result[0];
+        return $result[0] !== 0 ? $result[1] / $result[0] : 0;
     }
 
     /**
