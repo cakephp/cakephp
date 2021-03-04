@@ -68,6 +68,7 @@ class LoggingStatement extends StatementDecorator
         $this->startTime = microtime(true);
 
         $this->loggedQuery = new LoggedQuery();
+        $this->loggedQuery->driver = $this->_driver;
         $this->loggedQuery->params = $params ?: $this->_compiledParams;
 
         try {
