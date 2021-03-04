@@ -48,6 +48,13 @@ class TableLocator implements LocatorInterface
     protected $_instances = [];
 
     /**
+     * List of Table classes being initialized.
+     *
+     * @var array<string, bool>
+     */
+    protected $initializing = [];
+
+    /**
      * Contains a list of Table objects that were created out of the
      * built-in Table class. The list is indexed by table alias
      *
@@ -218,6 +225,10 @@ class TableLocator implements LocatorInterface
 
         $className = $this->_getClassName($alias, $options);
         if ($className) {
+            if (isset($this->initializing[$className])) {
+                throw new RuntimeException('Infinite recursion. Cannot call get() on Table that is being constructed.');
+            }
+            $this->initializing[$className] = true;
             $options['className'] = $className;
         } else {
             if (empty($options['className'])) {
@@ -251,6 +262,9 @@ class TableLocator implements LocatorInterface
         if ($options['className'] === 'Cake\ORM\Table') {
             $this->_fallbacked[$alias] = $this->_instances[$alias];
         }
+
+        // clear initializing flag after construction complete
+        unset($this->initializing[$options['className']]);
 
         return $this->_instances[$alias];
     }
@@ -315,6 +329,7 @@ class TableLocator implements LocatorInterface
     public function clear()
     {
         $this->_instances = [];
+        $this->initializing = [];
         $this->_config = [];
         $this->_fallbacked = [];
         $this->_options = [];
