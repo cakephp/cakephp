@@ -87,6 +87,9 @@ class CollectionTest extends TestCase
     {
         $collection = new Collection([]);
         $this->assertNull($collection->avg());
+
+        $collection = new Collection([null, null]);
+        $this->assertSame(0, $collection->avg());
     }
 
     /**
@@ -152,6 +155,9 @@ class CollectionTest extends TestCase
     {
         $collection = new Collection([]);
         $this->assertNull($collection->median());
+
+        $collection = new Collection([null, null]);
+        $this->assertSame(0, $collection->median());
     }
 
     /**
