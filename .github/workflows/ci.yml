@@ -124,11 +124,11 @@ jobs:
 
   testsuite-windows:
     runs-on: windows-2019
-    name: Windows - PHP 8.0 & SQL Server
+    name: Windows - PHP 7.4 & SQL Server
 
     env:
-      EXTENSIONS: mbstring, intl, apcu, memcached, redis, wincache, pdo_sqlsrv
-      PHP_VERSION: '8.0'
+      EXTENSIONS: mbstring, intl, apcu, memcached, redis, wincache, pdo_sqlsrv-5.9
+      PHP_VERSION: '7.4'
 
     steps:
     - uses: actions/checkout@v2
