@@ -127,7 +127,7 @@ jobs:
     name: Windows - PHP 7.4 & SQL Server
 
     env:
-      EXTENSIONS: mbstring, intl, apcu, memcached, redis, wincache, pdo_sqlsrv-5.9
+      EXTENSIONS: mbstring, intl, apcu, memcached, redis, wincache, pdo_sqlsrv-5.9.0
       PHP_VERSION: '8.0'
 
     steps:
