@@ -53,6 +53,13 @@ class TableLocator extends AbstractLocator implements LocatorInterface
     protected $instances = [];
 
     /**
+     * List of Table classes being initialized.
+     *
+     * @var array<string, bool>
+     */
+    protected $initializing = [];
+
+    /**
      * Contains a list of Table objects that were created out of the
      * built-in Table class. The list is indexed by table alias
      *
@@ -226,6 +233,10 @@ class TableLocator extends AbstractLocator implements LocatorInterface
         $allowFallbackClass = $options['allowFallbackClass'] ?? $this->allowFallbackClass;
         $className = $this->_getClassName($alias, $options);
         if ($className) {
+            if (isset($this->initializing[$className])) {
+                throw new RuntimeException('Infinite recursion. Cannot call get() on Table that is being constructed.');
+            }
+            $this->initializing[$className] = true;
             $options['className'] = $className;
         } elseif ($allowFallbackClass) {
             if (empty($options['className'])) {
@@ -266,6 +277,9 @@ class TableLocator extends AbstractLocator implements LocatorInterface
         if ($options['className'] === $this->fallbackClassName) {
             $this->_fallbacked[$alias] = $instance;
         }
+
+        // clear initializing flag after construction complete
+        unset($this->initializing[$options['className']]);
 
         return $instance;
     }
@@ -329,6 +343,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
     {
         parent::clear();
 
+        $this->initializing = [];
         $this->_fallbacked = [];
         $this->_config = [];
     }
