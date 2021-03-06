@@ -33,8 +33,6 @@ class SprintfFormatter implements FormatterInterface
      */
     public function format($locale, $message, array $vars)
     {
-        unset($vars['_singular']);
-
         return vsprintf($message, $vars);
     }
 }

@@ -277,12 +277,18 @@ class FileEngine extends CacheEngine
             RecursiveIteratorIterator::SELF_FIRST
         );
         $cleared = [];
-        foreach ($contents as $path) {
-            if ($path->isFile()) {
+        /** @var \SplFileInfo $fileInfo */
+        foreach ($contents as $fileInfo) {
+            if ($fileInfo->isFile()) {
                 continue;
             }
 
-            $path = $path->getRealPath() . DIRECTORY_SEPARATOR;
+            $realPath = $fileInfo->getRealPath();
+            if (!$realPath) {
+                continue;
+            }
+
+            $path = $realPath . DIRECTORY_SEPARATOR;
             if (!in_array($path, $cleared, true)) {
                 $this->_clearDirectory($path, $now, $threshold);
                 $cleared[] = $path;

@@ -74,7 +74,6 @@ class Sqlserver extends Driver
         }
 
         $config['flags'] += [
-            PDO::ATTR_EMULATE_PREPARES => false,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
 

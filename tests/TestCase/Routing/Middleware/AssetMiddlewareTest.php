@@ -57,7 +57,7 @@ class AssetMiddlewareTest extends TestCase
         $modified = filemtime(TEST_APP . 'Plugin/TestPlugin/webroot/root.js');
         $request = ServerRequestFactory::fromGlobals([
             'REQUEST_URI' => '/test_plugin/root.js',
-            'HTTP_IF_MODIFIED_SINCE' => date('D, j M Y G:i:s \G\M\T', $modified),
+            'HTTP_IF_MODIFIED_SINCE' => date('D, d M Y H:i:s \G\M\T', $modified),
         ]);
         $response = new Response();
         $next = function ($req, $res) {
@@ -168,7 +168,7 @@ class AssetMiddlewareTest extends TestCase
             $res->getHeaderLine('Content-Type')
         );
         $this->assertEquals(
-            gmdate('D, j M Y G:i:s ', $time) . 'GMT',
+            gmdate('D, d M Y H:i:s ', $time) . 'GMT',
             $res->getHeaderLine('Date')
         );
         $this->assertEquals(
@@ -176,11 +176,11 @@ class AssetMiddlewareTest extends TestCase
             $res->getHeaderLine('Cache-Control')
         );
         $this->assertEquals(
-            gmdate('D, j M Y G:i:s ', $modified) . 'GMT',
+            gmdate('D, d M Y H:i:s ', $modified) . 'GMT',
             $res->getHeaderLine('Last-Modified')
         );
         $this->assertEquals(
-            gmdate('D, j M Y G:i:s ', $expires) . 'GMT',
+            gmdate('D, d M Y H:i:s ', $expires) . 'GMT',
             $res->getHeaderLine('Expires')
         );
     }

@@ -17,6 +17,7 @@ namespace Cake\Shell;
 use Cake\Console\Shell;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Exception\MissingRouteException;
+use Cake\Routing\Exception\RedirectException;
 use Cake\Routing\Router;
 
 /**
@@ -69,6 +70,13 @@ class RoutesShell extends Shell
             $output = [
                 ['Route name', 'URI template', 'Defaults'],
                 [$name, $url, json_encode($route)],
+            ];
+            $this->helper('table')->output($output);
+            $this->out();
+        } catch (RedirectException $e) {
+            $output = [
+                ['URI template', 'Redirect'],
+                [$url, $e->getMessage()],
             ];
             $this->helper('table')->output($output);
             $this->out();

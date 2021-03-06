@@ -392,9 +392,15 @@ trait EntityTrait
     {
         $value = $this->get($property);
         if (
-            $value === null
-            || (is_array($value) && empty($value)
-            || (is_string($value) && empty($value)))
+            $value === null ||
+            (
+                is_array($value) &&
+                empty($value) ||
+                (
+                    is_string($value) &&
+                    $value === ''
+                )
+            )
         ) {
             return true;
         }

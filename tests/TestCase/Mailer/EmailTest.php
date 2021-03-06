@@ -546,6 +546,11 @@ class EmailTest extends TestCase
         $this->assertSame($headers['To'], '"To, CakePHP" <to@cakephp.org>, To2 CakePHP <to2@cakephp.org>');
         $this->assertSame($headers['Cc'], 'Cc CakePHP <cc@cakephp.org>, Cc2 CakePHP <cc2@cakephp.org>');
         $this->assertSame($headers['Bcc'], 'Bcc CakePHP <bcc@cakephp.org>, Bcc2 CakePHP <bcc2@cakephp.org>');
+
+        $this->Email->setReplyTo(['replyto@cakephp.org' => 'Reply to me', 'replyto2@cakephp.org' => 'Reply to me too']);
+        $this->assertCount(2, $this->Email->getReplyTo());
+        $headers = $this->Email->getHeaders(array_fill_keys(['replyTo'], true));
+        $this->assertSame($headers['Reply-To'], 'Reply to me <replyto@cakephp.org>, Reply to me too <replyto2@cakephp.org>');
     }
 
     /**

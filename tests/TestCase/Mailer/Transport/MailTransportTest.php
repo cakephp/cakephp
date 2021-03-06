@@ -52,6 +52,7 @@ class MailTransportTest extends TestCase
         $email->setTo('cake@cakephp.org', 'CakePHP');
         $email->setCc(['mark@cakephp.org' => 'Mark Story', 'juan@cakephp.org' => 'Juan Basso']);
         $email->setBcc('phpnut@cakephp.org');
+        $email->setReplyTo(['rep@cakephp.org' => 'reply', 'rep2@cakephp.org' => 'reply 2']);
         $email->setMessageId('<4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>');
         $longNonAscii = 'Foø Bår Béz Foø Bår Béz Foø Bår Béz Foø Bår Béz';
         $email->setSubject($longNonAscii);
@@ -68,6 +69,7 @@ class MailTransportTest extends TestCase
         $encoded .= ' =?UTF-8?B?Rm/DuCBCw6VyIELDqXo=?=';
 
         $data = 'From: CakePHP Test <noreply@cakephp.org>' . PHP_EOL;
+        $data .= 'Reply-To: reply <rep@cakephp.org>, reply 2 <rep2@cakephp.org>' . PHP_EOL;
         $data .= 'Return-Path: CakePHP Return <pleasereply@cakephp.org>' . PHP_EOL;
         $data .= 'Cc: Mark Story <mark@cakephp.org>, Juan Basso <juan@cakephp.org>' . PHP_EOL;
         $data .= 'Bcc: phpnut@cakephp.org' . PHP_EOL;
