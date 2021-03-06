@@ -437,6 +437,7 @@ class SmtpTransportTest extends TestCase
         $email->setCc(['mark@cakephp.org' => 'Mark Story', 'juan@cakephp.org' => 'Juan Basso']);
         $email->setBcc('phpnut@cakephp.org');
         $email->setMessageId('<4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>');
+        $email->setReplyTo(['replyto@cakephp.org' => 'ReplyTo CakePHP', 'reply2@cakephp.org' => 'Reply 2']);
         $email->setSubject('Testing SMTP');
         $date = date(DATE_RFC2822);
         $email->setHeaders(['Date' => $date]);
@@ -445,6 +446,7 @@ class SmtpTransportTest extends TestCase
             ->will($this->returnValue(['First Line', 'Second Line', '.Third Line', '']));
 
         $data = "From: CakePHP Test <noreply@cakephp.org>\r\n";
+        $data .= "Reply-To: ReplyTo CakePHP <replyto@cakephp.org>, Reply 2 <reply2@cakephp.org>\r\n";
         $data .= "Return-Path: CakePHP Return <pleasereply@cakephp.org>\r\n";
         $data .= "To: CakePHP <cake@cakephp.org>\r\n";
         $data .= "Cc: Mark Story <mark@cakephp.org>, Juan Basso <juan@cakephp.org>\r\n";
