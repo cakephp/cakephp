@@ -449,7 +449,7 @@ class TableLocatorTest extends TestCase
     }
 
     /**
-     * Tests calling get() after table initialization
+     * Tests calling get() after table initialization doesn't trigger recursion check.
      *
      * @return void
      */
@@ -457,6 +457,12 @@ class TableLocatorTest extends TestCase
     {
         $locator = new TableLocator(['Model/Table']);
         $this->assertInstanceOf(ArticlesTable::class, $locator->get('Articles'));
+        $this->assertInstanceOf(ArticlesTable::class, $locator->get('Articles'));
+
+        // Test FQCN
+        $locator = new TableLocator(['Model/Table']);
+        $this->assertInstanceOf(ArticlesTable::class, $locator->get('Articles', ['className' => '\TestApp\Model\Table\ArticlesTable']));
+        $this->assertInstanceOf(ArticlesTable::class, $locator->get('Articles', ['className' => '\TestApp\Model\Table\ArticlesTable']));
         $this->assertInstanceOf(ArticlesTable::class, $locator->get('Articles'));
     }
 
