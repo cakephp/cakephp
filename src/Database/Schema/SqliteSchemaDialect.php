@@ -77,6 +77,11 @@ class SqliteSchemaDialect extends SchemaDialect
             $precision = (int)$precision;
         }
 
+        $type = $this->_convertColumnViaType($col, compact('length', 'precision'));
+        if ($type !== null) {
+            return $type;
+        }
+
         if ($col === 'bigint') {
             return ['type' => TableSchema::TYPE_BIGINTEGER, 'length' => $length, 'unsigned' => $unsigned];
         }
@@ -327,6 +332,12 @@ class SqliteSchemaDialect extends SchemaDialect
     {
         /** @var array $data */
         $data = $schema->getColumn($name);
+
+        $sql = $this->_getColumnSqlViaType($data['type'], $schema, $name);
+        if ($sql !== null) {
+            return $sql;
+        }
+
         $typeMap = [
             TableSchema::TYPE_BINARY_UUID => ' BINARY(16)',
             TableSchema::TYPE_UUID => ' CHAR(36)',
