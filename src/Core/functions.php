@@ -129,7 +129,7 @@ if (!function_exists('pr')) {
      * print_r() convenience function.
      *
      * In terminals this will act similar to using print_r() directly, when not run on CLI
-     * print_r() will also wrap <pre> tags around the output of given variable. Similar to debug().
+     * print_r() will also wrap `<pre>` tags around the output of given variable. Similar to debug().
      *
      * This function returns the same variable that was passed.
      *
