@@ -157,7 +157,7 @@ if (!function_exists('pj')) {
      * JSON pretty print convenience function.
      *
      * In terminals this will act similar to using json_encode() with JSON_PRETTY_PRINT directly, when not run on CLI
-     * will also wrap <pre> tags around the output of given variable. Similar to pr().
+     * will also wrap `<pre>` tags around the output of given variable. Similar to pr().
      *
      * This function returns the same variable that was passed.
      *
