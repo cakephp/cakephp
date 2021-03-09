@@ -15,12 +15,25 @@ class SchemaAwareTypeIntegrationTest extends TestCase
 
     public $autoFixtures = false;
 
+    /**
+     * @var \Cake\Database\TypeInterface|null
+     */
+    public $textType;
+
     public function setUp(): void
     {
         parent::setUp();
 
-        TypeFactory::map('schemaawaretype', SchemaAwareType::class);
+        $this->textType = TypeFactory::build('text');
+        TypeFactory::map('text', SchemaAwareType::class);
+
         $this->loadFixtures('SchemaAwareTypeValues');
+    }
+
+    public function tearDown(): void
+    {
+        parent::tearDown();
+        TypeFactory::set('text', $this->textType);
     }
 
     public function testCustomTypesCanBeUsedInFixtures()
@@ -33,5 +46,14 @@ class SchemaAwareTypeIntegrationTest extends TestCase
         ];
         $result = $table->find()->orderAsc('id')->extract('val')->toArray();
         $this->assertSame($expected, $result);
+    }
+
+    public function testCustomTypeCanProcessColumnInfo()
+    {
+        $column = $this->getTableLocator()->get('SchemaAwareTypeValues')->getSchema()->getColumn('val');
+
+        $this->assertSame('text', $column['type']);
+        $this->assertSame(255, $column['length']);
+        $this->assertSame('Custom schema aware type comment', $column['comment']);
     }
 }

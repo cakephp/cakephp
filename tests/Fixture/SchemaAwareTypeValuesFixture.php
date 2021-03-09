@@ -10,7 +10,7 @@ class SchemaAwareTypeValuesFixture extends TestFixture
 {
     public $fields = [
         'id' => ['type' => 'integer'],
-        'val' => ['type' => 'schemaawaretype', 'null' => false],
+        'val' => ['type' => 'text', 'null' => false, 'comment' => 'Fixture comment'],
         '_constraints' => [
             'primary' => ['type' => 'primary', 'columns' => ['id']],
         ],

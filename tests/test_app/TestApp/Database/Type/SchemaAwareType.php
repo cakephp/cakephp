@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace TestApp\Database\Type;
 
+use Cake\Database\Driver\Mysql;
 use Cake\Database\DriverInterface;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\ExpressionInterface;
@@ -68,6 +69,7 @@ class SchemaAwareType extends BaseType implements ExpressionTypeInterface, Schem
         }
 
         if (
+            ($driver instanceof Mysql) &&
             isset($data['comment']) &&
             $data['comment'] !== ''
         ) {
@@ -81,7 +83,7 @@ class SchemaAwareType extends BaseType implements ExpressionTypeInterface, Schem
     {
         return [
             'type' => $this->_name,
-            'length' => null,
+            'length' => 255,
             'comment' => 'Custom schema aware type comment',
         ];
     }
