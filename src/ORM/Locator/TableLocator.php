@@ -208,8 +208,13 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      */
     public function get(string $alias, array $options = []): Table
     {
-        /** @var \Cake\ORM\Table */
-        return parent::get($alias, $options);
+        /** @var \Cake\ORM\Table $table */
+        $table = parent::get($alias, $options);
+
+        $className = get_class($table);
+        unset($this->initializing[$className]);
+
+        return $table;
     }
 
     /**
@@ -277,9 +282,6 @@ class TableLocator extends AbstractLocator implements LocatorInterface
         if ($options['className'] === $this->fallbackClassName) {
             $this->_fallbacked[$alias] = $instance;
         }
-
-        // clear initializing flag after construction complete
-        unset($this->initializing[$options['className']]);
 
         return $instance;
     }
