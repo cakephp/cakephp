@@ -53,13 +53,6 @@ class TableLocator extends AbstractLocator implements LocatorInterface
     protected $instances = [];
 
     /**
-     * List of Table classes being initialized.
-     *
-     * @var array<string, bool>
-     */
-    protected $initializing = [];
-
-    /**
      * Contains a list of Table objects that were created out of the
      * built-in Table class. The list is indexed by table alias
      *
@@ -208,13 +201,8 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      */
     public function get(string $alias, array $options = []): Table
     {
-        /** @var \Cake\ORM\Table $table */
-        $table = parent::get($alias, $options);
-
-        $className = get_class($table);
-        unset($this->initializing[$className]);
-
-        return $table;
+        /** @var \Cake\ORM\Table */
+        return parent::get($alias, $options);
     }
 
     /**
@@ -238,10 +226,6 @@ class TableLocator extends AbstractLocator implements LocatorInterface
         $allowFallbackClass = $options['allowFallbackClass'] ?? $this->allowFallbackClass;
         $className = $this->_getClassName($alias, $options);
         if ($className) {
-            if (isset($this->initializing[$className])) {
-                throw new RuntimeException('Infinite recursion. Cannot call get() on Table that is being constructed.');
-            }
-            $this->initializing[$className] = true;
             $options['className'] = $className;
         } elseif ($allowFallbackClass) {
             if (empty($options['className'])) {
@@ -345,7 +329,6 @@ class TableLocator extends AbstractLocator implements LocatorInterface
     {
         parent::clear();
 
-        $this->initializing = [];
         $this->_fallbacked = [];
         $this->_config = [];
     }
