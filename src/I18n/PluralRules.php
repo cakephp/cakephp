@@ -143,7 +143,7 @@ class PluralRules
         $locale = strtolower($locale);
 
         if (!isset(static::$_rulesMap[$locale])) {
-            $locale = explode('_', $locale)[0];
+            $locale = explode('_', str_replace('-', '_', $locale))[0];
         }
 
         if (!isset(static::$_rulesMap[$locale])) {
