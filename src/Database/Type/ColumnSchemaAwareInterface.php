@@ -6,7 +6,7 @@ namespace Cake\Database\Type;
 use Cake\Database\DriverInterface;
 use Cake\Database\Schema\TableSchemaInterface;
 
-interface SchemaAwareTypeInterface
+interface ColumnSchemaAwareInterface
 {
     /**
      * Generate the SQL fragment for a single column in a table.
@@ -16,7 +16,7 @@ interface SchemaAwareTypeInterface
      * @param \Cake\Database\DriverInterface $driver The driver instance being used.
      * @return string|null An SQL fragment, or `null` in case the column isn't processed by this type.
      */
-    public function getSchemaColumnSql(TableSchemaInterface $schema, string $column, DriverInterface $driver): ?string;
+    public function getColumnSql(TableSchemaInterface $schema, string $column, DriverInterface $driver): ?string;
 
     /**
      * Convert a SQL column definition to an abstract type definition.
@@ -25,5 +25,5 @@ interface SchemaAwareTypeInterface
      * @param \Cake\Database\DriverInterface $driver The driver instance being used.
      * @return array|null Array of column information, or `null` in case the column isn't processed by this type.
      */
-    public function convertSchemaColumn(array $definition, DriverInterface $driver): ?array;
+    public function convertColumnDefinition(array $definition, DriverInterface $driver): ?array;
 }

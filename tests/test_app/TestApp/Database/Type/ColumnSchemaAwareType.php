@@ -9,11 +9,11 @@ use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Database\Type\BaseType;
+use Cake\Database\Type\ColumnSchemaAwareInterface;
 use Cake\Database\Type\ExpressionTypeInterface;
-use Cake\Database\Type\SchemaAwareTypeInterface;
-use TestApp\Database\SchemaAwareTypeValueObject;
+use TestApp\Database\ColumnSchemaAwareTypeValueObject;
 
-class SchemaAwareType extends BaseType implements ExpressionTypeInterface, SchemaAwareTypeInterface
+class ColumnSchemaAwareType extends BaseType implements ExpressionTypeInterface, ColumnSchemaAwareInterface
 {
     public function toPHP($value, DriverInterface $driver)
     {
@@ -32,7 +32,7 @@ class SchemaAwareType extends BaseType implements ExpressionTypeInterface, Schem
 
     public function toExpression($value): ExpressionInterface
     {
-        if ($value instanceof SchemaAwareTypeValueObject) {
+        if ($value instanceof ColumnSchemaAwareTypeValueObject) {
             $value = $value->value();
         }
 
@@ -49,12 +49,12 @@ class SchemaAwareType extends BaseType implements ExpressionTypeInterface, Schem
 
         throw new \InvalidArgumentException(sprintf(
             'The `$value` argument must be an instance of `\%s`, or a string, `%s` given.',
-            SchemaAwareTypeValueObject::class,
+            ColumnSchemaAwareTypeValueObject::class,
             getTypeName($value)
         ));
     }
 
-    public function getSchemaColumnSql(TableSchemaInterface $schema, string $column, DriverInterface $driver): ?string
+    public function getColumnSql(TableSchemaInterface $schema, string $column, DriverInterface $driver): ?string
     {
         $data = $schema->getColumn($column);
 
@@ -79,7 +79,7 @@ class SchemaAwareType extends BaseType implements ExpressionTypeInterface, Schem
         return $sql;
     }
 
-    public function convertSchemaColumn(array $definition, DriverInterface $driver): ?array
+    public function convertColumnDefinition(array $definition, DriverInterface $driver): ?array
     {
         return [
             'type' => $this->_name,

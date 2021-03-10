@@ -5,12 +5,12 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\Database\TypeFactory;
 use Cake\TestSuite\TestCase;
-use TestApp\Database\Type\SchemaAwareType;
+use TestApp\Database\Type\ColumnSchemaAwareType;
 
-class SchemaAwareTypeIntegrationTest extends TestCase
+class ColumnSchemaAwareTypeIntegrationTest extends TestCase
 {
     protected $fixtures = [
-        'core.SchemaAwareTypeValues',
+        'core.ColumnSchemaAwareTypeValues',
     ];
 
     public $autoFixtures = false;
@@ -25,9 +25,9 @@ class SchemaAwareTypeIntegrationTest extends TestCase
         parent::setUp();
 
         $this->textType = TypeFactory::build('text');
-        TypeFactory::map('text', SchemaAwareType::class);
+        TypeFactory::map('text', ColumnSchemaAwareType::class);
 
-        $this->loadFixtures('SchemaAwareTypeValues');
+        $this->loadFixtures('ColumnSchemaAwareTypeValues');
     }
 
     public function tearDown(): void
@@ -38,7 +38,7 @@ class SchemaAwareTypeIntegrationTest extends TestCase
 
     public function testCustomTypesCanBeUsedInFixtures()
     {
-        $table = $this->getTableLocator()->get('SchemaAwareTypeValues');
+        $table = $this->getTableLocator()->get('ColumnSchemaAwareTypeValues');
 
         $expected = [
             'this text has been processed via a custom type',
@@ -50,7 +50,7 @@ class SchemaAwareTypeIntegrationTest extends TestCase
 
     public function testCustomTypeCanProcessColumnInfo()
     {
-        $column = $this->getTableLocator()->get('SchemaAwareTypeValues')->getSchema()->getColumn('val');
+        $column = $this->getTableLocator()->get('ColumnSchemaAwareTypeValues')->getSchema()->getColumn('val');
 
         $this->assertSame('text', $column['type']);
         $this->assertSame(255, $column['length']);

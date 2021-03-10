@@ -90,7 +90,7 @@ class PostgresSchemaDialect extends SchemaDialect
             $length = (int)$matches[2];
         }
 
-        $type = $this->_convertColumnViaType($col, compact('length'));
+        $type = $this->_applyTypeSpecificColumnConversion($col, compact('length'));
         if ($type !== null) {
             return $type;
         }
@@ -385,7 +385,7 @@ class PostgresSchemaDialect extends SchemaDialect
         /** @var array $data */
         $data = $schema->getColumn($name);
 
-        $sql = $this->_getColumnSqlViaType($data['type'], $schema, $name);
+        $sql = $this->_getTypeSpecificColumnSql($data['type'], $schema, $name);
         if ($sql !== null) {
             return $sql;
         }

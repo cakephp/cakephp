@@ -77,7 +77,7 @@ class SqliteSchemaDialect extends SchemaDialect
             $precision = (int)$precision;
         }
 
-        $type = $this->_convertColumnViaType($col, compact('length', 'precision'));
+        $type = $this->_applyTypeSpecificColumnConversion($col, compact('length', 'precision'));
         if ($type !== null) {
             return $type;
         }
@@ -333,7 +333,7 @@ class SqliteSchemaDialect extends SchemaDialect
         /** @var array $data */
         $data = $schema->getColumn($name);
 
-        $sql = $this->_getColumnSqlViaType($data['type'], $schema, $name);
+        $sql = $this->_getTypeSpecificColumnSql($data['type'], $schema, $name);
         if ($sql !== null) {
             return $sql;
         }

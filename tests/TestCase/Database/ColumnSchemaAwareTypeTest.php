@@ -8,9 +8,9 @@ use Cake\Database\Schema\TableSchema;
 use Cake\Database\TypeFactory;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
-use TestApp\Database\Type\SchemaAwareType;
+use TestApp\Database\Type\ColumnSchemaAwareType;
 
-class SchemaAwareTypeTest extends TestCase
+class ColumnSchemaAwareTypeTest extends TestCase
 {
     /**
      * @var \Cake\Database\Connection
@@ -23,7 +23,7 @@ class SchemaAwareTypeTest extends TestCase
 
         $this->connection = ConnectionManager::get('test');
 
-        TypeFactory::map('schemaawaretype', SchemaAwareType::class);
+        TypeFactory::map('columnSchemaAwareType', ColumnSchemaAwareType::class);
     }
 
     public function testColumnSql()
@@ -32,7 +32,7 @@ class SchemaAwareTypeTest extends TestCase
 
         $schema = new TableSchema('table', [
             'field' => [
-                'type' => 'schemaawaretype',
+                'type' => 'columnSchemaAwareType',
                 'null' => false,
                 'comment' => 'Lorem ipsum',
             ],

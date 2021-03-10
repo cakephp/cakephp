@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace TestApp\Database;
 
-class SchemaAwareTypeValueObject
+class ColumnSchemaAwareTypeValueObject
 {
     protected $_value;
 

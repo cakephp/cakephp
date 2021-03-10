@@ -92,7 +92,7 @@ class SqlserverSchemaDialect extends SchemaDialect
     ): array {
         $col = strtolower($col);
 
-        $type = $this->_convertColumnViaType($col, compact('length', 'precision', 'scale'));
+        $type = $this->_applyTypeSpecificColumnConversion($col, compact('length', 'precision', 'scale'));
         if ($type !== null) {
             return $type;
         }
@@ -383,7 +383,7 @@ class SqlserverSchemaDialect extends SchemaDialect
         /** @var array $data */
         $data = $schema->getColumn($name);
 
-        $sql = $this->_getColumnSqlViaType($data['type'], $schema, $name);
+        $sql = $this->_getTypeSpecificColumnSql($data['type'], $schema, $name);
         if ($sql !== null) {
             return $sql;
         }

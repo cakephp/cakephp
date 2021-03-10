@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace Cake\Test\Fixture;
 
 use Cake\TestSuite\Fixture\TestFixture;
-use TestApp\Database\SchemaAwareTypeValueObject;
+use TestApp\Database\ColumnSchemaAwareTypeValueObject;
 
-class SchemaAwareTypeValuesFixture extends TestFixture
+class ColumnSchemaAwareTypeValuesFixture extends TestFixture
 {
     public $fields = [
         'id' => ['type' => 'integer'],
@@ -22,7 +22,7 @@ class SchemaAwareTypeValuesFixture extends TestFixture
 
         $this->records = [
             [
-                'val' => new SchemaAwareTypeValueObject('THIS TEXT SHOULD BE PROCESSED VIA A CUSTOM TYPE'),
+                'val' => new ColumnSchemaAwareTypeValueObject('THIS TEXT SHOULD BE PROCESSED VIA A CUSTOM TYPE'),
             ],
             [
                 'val' => 'THIS TEXT ALSO SHOULD BE PROCESSED VIA A CUSTOM TYPE',
