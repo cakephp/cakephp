@@ -27,6 +27,8 @@ use InvalidArgumentException;
  * for a table once a query is provided and delegates the job of creating the
  * required joins and decorating the results so that those associations can be
  * part of the result set.
+ *
+ * @internal
  */
 class EagerLoader
 {
