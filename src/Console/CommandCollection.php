@@ -188,7 +188,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * @param array $input The results of a CommandScanner operation.
      * @return string[] A flat map of command names => class names.
      */
-    protected function resolveNames(array $input): array
+    public function resolveNames(array $input): array
     {
         $out = [];
         foreach ($input as $info) {

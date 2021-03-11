@@ -108,7 +108,7 @@ class CommandScanner
      * @param string[] $hide A list of command names to hide as they are internal commands.
      * @return array The list of shell info arrays based on scanning the filesystem and inflection.
      */
-    protected function scanDir(string $path, string $namespace, string $prefix, array $hide): array
+    public function scanDir(string $path, string $namespace, string $prefix, array $hide): array
     {
         if (!is_dir($path)) {
             return [];
