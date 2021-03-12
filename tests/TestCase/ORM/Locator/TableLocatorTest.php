@@ -22,7 +22,6 @@ use Cake\ORM\Locator\TableLocator;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
-use RuntimeException;
 use TestApp\Infrastructure\Table\AddressesTable;
 use TestApp\Model\Table\ArticlesTable;
 use TestApp\Model\Table\MyUsersTable;
@@ -432,38 +431,6 @@ class TableLocatorTest extends TestCase
         $this->assertFalse($this->_locator->exists('TestPluginComments'), 'Class name should not exist');
         $this->assertFalse($this->_locator->exists('TestPlugin.TestPluginComments'), 'Full class alias should not exist');
         $this->assertTrue($this->_locator->exists('Comments'), 'Class name should exist');
-    }
-
-    /**
-     * Tests calling get() on a table that's being initialized.
-     *
-     * @return void
-     */
-    public function testGetInfiniteRecursion()
-    {
-        $locator = new TableLocator(['Model/Table']);
-
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Infinite recursion.');
-        $locator->get('Recursion', ['locator' => $locator]);
-    }
-
-    /**
-     * Tests calling get() after table initialization doesn't trigger recursion check.
-     *
-     * @return void
-     */
-    public function testGetAfterGet()
-    {
-        $locator = new TableLocator(['Model/Table']);
-        $this->assertInstanceOf(ArticlesTable::class, $locator->get('Articles'));
-        $this->assertInstanceOf(ArticlesTable::class, $locator->get('Articles'));
-
-        // Test FQCN
-        $locator = new TableLocator(['Model/Table']);
-        $this->assertInstanceOf(ArticlesTable::class, $locator->get('Articles', ['className' => '\TestApp\Model\Table\ArticlesTable']));
-        $this->assertInstanceOf(ArticlesTable::class, $locator->get('Articles', ['className' => '\TestApp\Model\Table\ArticlesTable']));
-        $this->assertInstanceOf(ArticlesTable::class, $locator->get('Articles'));
     }
 
     /**
