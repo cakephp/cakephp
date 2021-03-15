@@ -56,9 +56,9 @@ class RouteBuilder
     protected static $_resourceMap = [
         'index' => ['action' => 'index', 'method' => 'GET', 'path' => ''],
         'create' => ['action' => 'add', 'method' => 'POST', 'path' => ''],
-        'view' => ['action' => 'view', 'method' => 'GET', 'path' => ':id'],
-        'update' => ['action' => 'edit', 'method' => ['PUT', 'PATCH'], 'path' => ':id'],
-        'delete' => ['action' => 'delete', 'method' => 'DELETE', 'path' => ':id'],
+        'view' => ['action' => 'view', 'method' => 'GET', 'path' => '{id}'],
+        'update' => ['action' => 'edit', 'method' => ['PUT', 'PATCH'], 'path' => '{id}'],
+        'delete' => ['action' => 'delete', 'method' => 'DELETE', 'path' => '{id}'],
     ];
 
     /**
@@ -215,6 +215,11 @@ class RouteBuilder
      */
     public function path(): string
     {
+        $routeKey = strpos($this->_path, '{');
+        if ($routeKey !== false && strpos($this->_path, '}') !== false) {
+            return substr($this->_path, 0, $routeKey);
+        }
+
         $routeKey = strpos($this->_path, ':');
         if ($routeKey !== false) {
             return substr($this->_path, 0, $routeKey);
@@ -421,7 +426,7 @@ class RouteBuilder
 
         if ($callback !== null) {
             $idName = Inflector::singularize(Inflector::underscore($name)) . '_id';
-            $path = '/' . $options['path'] . '/:' . $idName;
+            $path = '/' . $options['path'] . '/{' . $idName . '}';
             $this->scope($path, [], $callback);
         }
 
