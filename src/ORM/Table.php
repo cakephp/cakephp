@@ -1585,8 +1585,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * $article = $articles->get(1, ['contain' => ['Users', 'Comments']]);
      * ```
      *
-     * @throws \Cake\Datasource\Exception\InvalidPrimaryKeyException When $primaryKey has an
-     *      incorrect number of elements.
+     * @throws \Cake\Datasource\Exception\InvalidPrimaryKeyException When the given `$primaryKey`
+     * was not found in the table.
      */
     public function get($primaryKey, $options = [])
     {
