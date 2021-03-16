@@ -889,8 +889,8 @@ class RouteBuilder
 
         $path = $options['path'] ?? '/' . Inflector::dasherize($name);
         unset($options['path']);
-        $params = ['plugin' => $name] + $options + $this->_params;
-        $this->scope($path, $params, $callback);
+        $options = ['plugin' => $name] + $options;
+        $this->scope($path, $options, $callback);
 
         return $this;
     }
