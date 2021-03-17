@@ -89,12 +89,12 @@ jobs:
         sudo locale-gen da_DK.UTF-8
         sudo locale-gen de_DE.UTF-8
 
-    - name: composer install
+    - name: Composer install
       run: |
         if ${{ matrix.prefer-lowest == 'prefer-lowest' }}; then
           composer update --prefer-lowest --prefer-stable
         else
-          composer update
+          composer install
         fi
 
     - name: Setup problem matchers for PHPUnit
@@ -177,7 +177,7 @@ jobs:
         path: ${{ steps.composer-cache.outputs.dir }}
         key: ${{ runner.os }}-composer-${{ steps.key-date.outputs.date }}-${{ hashFiles('composer.json') }}-${{ matrix.prefer-lowest }}
 
-    - name: composer install
+    - name: Composer install
       run: composer install
 
     - name: Run PHPUnit
@@ -198,6 +198,7 @@ jobs:
       with:
         php-version: '7.3'
         extensions: mbstring, intl, apcu, memcached, redis
+        tools: cs2pr
         coverage: none
 
     - name: Get composer cache directory
@@ -218,7 +219,7 @@ jobs:
       run: composer stan-setup
 
     - name: Run PHP CodeSniffer
-      run: vendor/bin/phpcs --report=checkstyle src/ tests/
+      run: vendor/bin/phpcs --report=checkstyle src/ tests/ | cs2pr
 
     - name: Run psalm
       if: success() || failure()
