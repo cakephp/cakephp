@@ -72,6 +72,7 @@ class LoggingStatement extends StatementDecorator
 
         try {
             $result = parent::execute($params);
+            $this->loggedQuery->took = (int)round((microtime(true) - $this->startTime) * 1000, 0);
         } catch (Exception $e) {
             /** @psalm-suppress UndefinedPropertyAssignment */
             $e->queryString = $this->queryString;
@@ -142,7 +143,6 @@ class LoggingStatement extends StatementDecorator
             return;
         }
 
-        $this->loggedQuery->took = (int)round((microtime(true) - $this->startTime) * 1000, 0);
         $this->loggedQuery->query = $this->queryString;
         $this->getLogger()->debug((string)$this->loggedQuery, ['query' => $this->loggedQuery]);
 
