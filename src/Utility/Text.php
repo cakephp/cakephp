@@ -679,7 +679,7 @@ class Text
             }
 
             // If result is empty, then we don't need to count ellipsis in the cut.
-            if (!strlen($result)) {
+            if ($result === '') {
                 $result = self::_substr($text, 0, $length, $options);
             }
         }
@@ -1173,7 +1173,7 @@ class Text
             '/[' . $regex . ']/mu' => $options['replacement'],
             sprintf('/^[%s]+|[%s]+$/', $quotedReplacement, $quotedReplacement) => '',
         ];
-        if (is_string($options['replacement']) && strlen($options['replacement']) > 0) {
+        if (is_string($options['replacement']) && $options['replacement'] !== '') {
             $map[sprintf('/[%s]+/mu', $quotedReplacement)] = $options['replacement'];
         }
         $string = preg_replace(array_keys($map), $map, $string);

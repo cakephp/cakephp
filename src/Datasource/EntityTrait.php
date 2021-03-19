@@ -303,7 +303,7 @@ trait EntityTrait
      */
     public function getOriginal(string $field)
     {
-        if (!strlen($field)) {
+        if ($field === '') {
             throw new InvalidArgumentException('Cannot get an empty field');
         }
         if (array_key_exists($field, $this->_original)) {
