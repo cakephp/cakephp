@@ -212,6 +212,8 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
 
+        // TODO add loading data only fixtures.
+
         if (!$this->_configure) {
             $this->_configure = Configure::read();
         }
