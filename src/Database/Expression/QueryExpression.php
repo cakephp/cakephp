@@ -566,7 +566,7 @@ class QueryExpression implements ExpressionInterface, Countable
             } elseif ($part instanceof ExpressionInterface) {
                 $part = $part->sql($binder);
             }
-            if (strlen($part)) {
+            if ($part !== '') {
                 $parts[] = $part;
             }
         }

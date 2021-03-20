@@ -64,7 +64,7 @@ class TableHelper extends Helper
      */
     protected function _cellWidth(string $text): int
     {
-        if (strlen($text) === 0) {
+        if ($text === '') {
             return 0;
         }
 

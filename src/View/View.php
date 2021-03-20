@@ -1308,7 +1308,7 @@ class View implements EventDispatcherInterface
         if ($this->templatePath) {
             $templatePath = $this->templatePath . DIRECTORY_SEPARATOR;
         }
-        if (strlen($this->subDir)) {
+        if ($this->subDir !== '') {
             $subDir = $this->subDir . DIRECTORY_SEPARATOR;
             // Check if templatePath already terminates with subDir
             if ($templatePath != $subDir && substr($templatePath, -strlen($subDir)) === $subDir) {

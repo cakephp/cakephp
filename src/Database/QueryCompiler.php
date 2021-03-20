@@ -279,10 +279,10 @@ class QueryCompiler
             if (isset($join['conditions']) && $join['conditions'] instanceof ExpressionInterface) {
                 $condition = $join['conditions']->sql($binder);
             }
-            if (strlen($condition)) {
-                $joins .= " ON {$condition}";
-            } else {
+            if ($condition === '') {
                 $joins .= ' ON 1 = 1';
+            } else {
+                $joins .= " ON {$condition}";
             }
         }
 

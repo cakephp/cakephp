@@ -155,7 +155,7 @@ class Translator
             $message = $message[$form] ?? (string)end($message);
         }
 
-        if (strlen($message) === 0) {
+        if ($message === '') {
             $message = $key;
         }
 

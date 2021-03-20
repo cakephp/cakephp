@@ -143,7 +143,7 @@ class EntityContext implements ContextInterface
                 $table = Inflector::pluralize($entityClass);
             }
         }
-        if (is_string($table) && strlen($table)) {
+        if (is_string($table) && $table !== '') {
             $table = $this->getTableLocator()->get($table);
         }
 

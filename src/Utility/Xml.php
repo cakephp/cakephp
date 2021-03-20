@@ -480,7 +480,7 @@ class Xml
         $asString = trim((string)$xml);
         if (empty($data)) {
             $data = $asString;
-        } elseif (strlen($asString) > 0) {
+        } elseif ($asString !== '') {
             $data['@'] = $asString;
         }
 

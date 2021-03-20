@@ -1610,7 +1610,7 @@ class Message implements JsonSerializable, Serializable
      */
     protected function wrap(?string $message = null, int $wrapLength = self::LINE_LENGTH_MUST): array
     {
-        if ($message === null || strlen($message) === 0) {
+        if ($message === null || $message === '') {
             return [''];
         }
         $message = str_replace(["\r\n", "\r"], "\n", $message);

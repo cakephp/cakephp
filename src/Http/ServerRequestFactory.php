@@ -268,7 +268,7 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
     protected static function updatePath(string $base, UriInterface $uri): UriInterface
     {
         $path = $uri->getPath();
-        if (strlen($base) > 0 && strpos($path, $base) === 0) {
+        if ($base !== '' && strpos($path, $base) === 0) {
             $path = substr($path, strlen($base));
         }
         if ($path === '/index.php' && $uri->getQuery()) {
