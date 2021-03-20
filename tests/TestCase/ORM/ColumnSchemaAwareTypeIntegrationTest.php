@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Cake\Test\TestCase\ORM;
 
+use Cake\Database\DriverInterface;
 use Cake\Database\TypeFactory;
 use Cake\TestSuite\TestCase;
 use TestApp\Database\Type\ColumnSchemaAwareType;
@@ -55,5 +56,36 @@ class ColumnSchemaAwareTypeIntegrationTest extends TestCase
         $this->assertSame('text', $column['type']);
         $this->assertSame(255, $column['length']);
         $this->assertSame('Custom schema aware type comment', $column['comment']);
+    }
+
+    public function testCustomTypeReceivesAllColumnDefinitionKeys()
+    {
+        $table = $this->getTableLocator()->get('ColumnSchemaAwareTypeValues');
+
+        $type = $this
+            ->getMockBuilder(ColumnSchemaAwareType::class)
+            ->setConstructorArgs(['char'])
+            ->onlyMethods(['convertColumnDefinition'])
+            ->getMock();
+
+        $type
+            ->expects($this->once())
+            ->method('convertColumnDefinition')
+            ->willReturnCallback(function (array $definition, DriverInterface $driver) {
+                $this->assertEquals(
+                    [
+                        'length',
+                        'precision',
+                        'scale',
+                    ],
+                    array_keys($definition)
+                );
+
+                return null;
+            });
+
+        TypeFactory::set('text', $type);
+
+        $table->getSchema()->getColumn('val');
     }
 }

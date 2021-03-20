@@ -92,7 +92,7 @@ class MysqlSchemaDialect extends SchemaDialect
         }
 
         $col = strtolower($matches[1]);
-        $length = $precision = null;
+        $length = $precision = $scale = null;
         if (isset($matches[2]) && strlen($matches[2])) {
             $length = $matches[2];
             if (strpos($matches[2], ',') !== false) {
@@ -102,7 +102,10 @@ class MysqlSchemaDialect extends SchemaDialect
             $precision = (int)$precision;
         }
 
-        $type = $this->_applyTypeSpecificColumnConversion($col, compact('length', 'precision'));
+        $type = $this->_applyTypeSpecificColumnConversion(
+            $col,
+            compact('length', 'precision', 'scale')
+        );
         if ($type !== null) {
             return $type;
         }

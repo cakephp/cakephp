@@ -92,7 +92,10 @@ class SqlserverSchemaDialect extends SchemaDialect
     ): array {
         $col = strtolower($col);
 
-        $type = $this->_applyTypeSpecificColumnConversion($col, compact('length', 'precision', 'scale'));
+        $type = $this->_applyTypeSpecificColumnConversion(
+            $col,
+            compact('length', 'precision', 'scale')
+        );
         if ($type !== null) {
             return $type;
         }

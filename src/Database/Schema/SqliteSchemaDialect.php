@@ -67,7 +67,7 @@ class SqliteSchemaDialect extends SchemaDialect
         }
 
         $col = strtolower($matches[2]);
-        $length = $precision = null;
+        $length = $precision = $scale = null;
         if (isset($matches[3])) {
             $length = $matches[3];
             if (strpos($length, ',') !== false) {
@@ -77,7 +77,10 @@ class SqliteSchemaDialect extends SchemaDialect
             $precision = (int)$precision;
         }
 
-        $type = $this->_applyTypeSpecificColumnConversion($col, compact('length', 'precision'));
+        $type = $this->_applyTypeSpecificColumnConversion(
+            $col,
+            compact('length', 'precision', 'scale')
+        );
         if ($type !== null) {
             return $type;
         }

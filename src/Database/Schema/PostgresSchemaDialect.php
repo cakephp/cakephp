@@ -85,12 +85,15 @@ class PostgresSchemaDialect extends SchemaDialect
         }
 
         $col = strtolower($matches[1]);
-        $length = null;
+        $length = $precision = $scale = null;
         if (isset($matches[2])) {
             $length = (int)$matches[2];
         }
 
-        $type = $this->_applyTypeSpecificColumnConversion($col, compact('length'));
+        $type = $this->_applyTypeSpecificColumnConversion(
+            $col,
+            compact('length', 'precision', 'scale')
+        );
         if ($type !== null) {
             return $type;
         }
