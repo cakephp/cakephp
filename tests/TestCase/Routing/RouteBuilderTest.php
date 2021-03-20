@@ -531,7 +531,7 @@ class RouteBuilderTest extends TestCase
      *
      * @return void
      */
-    public function testNestedPlugin()
+    public function testPlugin()
     {
         $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
         $res = $routes->plugin('Contacts', function (RouteBuilder $r) {
@@ -553,12 +553,31 @@ class RouteBuilderTest extends TestCase
      *
      * @return void
      */
-    public function testNestedPluginPathOption()
+    public function testPluginPathOption()
     {
         $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
         $routes->plugin('Contacts', ['path' => '/people'], function (RouteBuilder $r) {
             $this->assertSame('/b/people', $r->path());
             $this->assertEquals(['plugin' => 'Contacts', 'key' => 'value'], $r->params());
+        });
+    }
+
+    /**
+     * Test creating sub-scopes with plugin() + namePrefix option
+     *
+     * @return void
+     */
+    public function testPluginNamePrefix()
+    {
+        $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
+        $routes->plugin('Contacts', ['_namePrefix' => 'contacts.'], function (RouteBuilder $r) {
+            $this->assertEquals('contacts.', $r->namePrefix());
+        });
+
+        $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
+        $routes->namePrefix('default.');
+        $routes->plugin('Blog', ['_namePrefix' => 'blog.'], function (RouteBuilder $r) {
+            $this->assertEquals('default.blog.', $r->namePrefix(), 'Should combine nameprefix');
         });
     }
 
