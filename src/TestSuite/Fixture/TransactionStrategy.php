@@ -95,7 +95,7 @@ class TransactionStrategy
     {
         $connections = ConnectionManager::configured();
         foreach ($connections as $connection) {
-            if (strpos($connection, 'test') === false) {
+            if (strpos($connection, 'test') !== 0) {
                 continue;
             }
             $db = ConnectionManager::get($connection);
