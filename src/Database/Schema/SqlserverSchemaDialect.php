@@ -92,6 +92,14 @@ class SqlserverSchemaDialect extends SchemaDialect
     ): array {
         $col = strtolower($col);
 
+        $type = $this->_applyTypeSpecificColumnConversion(
+            $col,
+            compact('length', 'precision', 'scale')
+        );
+        if ($type !== null) {
+            return $type;
+        }
+
         if (in_array($col, ['date', 'time'])) {
             return ['type' => $col, 'length' => null];
         }
@@ -377,6 +385,12 @@ class SqlserverSchemaDialect extends SchemaDialect
     {
         /** @var array $data */
         $data = $schema->getColumn($name);
+
+        $sql = $this->_getTypeSpecificColumnSql($data['type'], $schema, $name);
+        if ($sql !== null) {
+            return $sql;
+        }
+
         $out = $this->_driver->quoteIdentifier($name);
         $typeMap = [
             TableSchema::TYPE_TINYINTEGER => ' TINYINT',

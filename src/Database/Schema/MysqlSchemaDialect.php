@@ -92,7 +92,7 @@ class MysqlSchemaDialect extends SchemaDialect
         }
 
         $col = strtolower($matches[1]);
-        $length = $precision = null;
+        $length = $precision = $scale = null;
         if (isset($matches[2]) && strlen($matches[2])) {
             $length = $matches[2];
             if (strpos($matches[2], ',') !== false) {
@@ -100,6 +100,14 @@ class MysqlSchemaDialect extends SchemaDialect
             }
             $length = (int)$length;
             $precision = (int)$precision;
+        }
+
+        $type = $this->_applyTypeSpecificColumnConversion(
+            $col,
+            compact('length', 'precision', 'scale')
+        );
+        if ($type !== null) {
+            return $type;
         }
 
         if (in_array($col, ['date', 'time'])) {
@@ -323,6 +331,12 @@ class MysqlSchemaDialect extends SchemaDialect
     {
         /** @var array $data */
         $data = $schema->getColumn($name);
+
+        $sql = $this->_getTypeSpecificColumnSql($data['type'], $schema, $name);
+        if ($sql !== null) {
+            return $sql;
+        }
+
         $out = $this->_driver->quoteIdentifier($name);
         $nativeJson = $this->_driver->supportsNativeJson();
 
