@@ -72,7 +72,8 @@ class TransactionStrategy
             ConnectionManager::alias($testConnection, $normal);
             $connection = ConnectionManager::get($normal);
             if ($connection instanceof Connection) {
-                if (!$connection->enableSavePoints(true)) {
+                $connection->enableSavePoints();
+                if (!$connection->isSavePointsEnabled()) {
                     throw new RuntimeException(
                         "Could not enable save points for the `{$normal}` connection. " .
                             'Your database needs to support savepoints in order to use the ' .
@@ -80,7 +81,7 @@ class TransactionStrategy
                     );
                 }
                 if ($enableLogging) {
-                    $connection->enableQueryLogging(true);
+                    $connection->enableQueryLogging();
                 }
             }
         }
@@ -119,7 +120,7 @@ class TransactionStrategy
     {
         $connections = ConnectionManager::configured();
         foreach ($connections as $connection) {
-            if (strpos($connection, 'test') === false) {
+            if (strpos($connection, 'test') !== 0) {
                 continue;
             }
             $db = ConnectionManager::get($connection);
