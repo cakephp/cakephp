@@ -16,7 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite\Fixture;
 
+use Cake\Database\Connection;
 use Cake\Datasource\ConnectionManager;
+use RuntimeException;
 
 /**
  * Fixture state strategy that wraps tests in transactions
@@ -69,11 +71,17 @@ class TransactionStrategy
         foreach ($map as $testConnection => $normal) {
             ConnectionManager::alias($testConnection, $normal);
             $connection = ConnectionManager::get($normal);
-            if (method_exists($connection, 'enableSavePoints') && !$connection->enableSavePoints(true)) {
-                throw new RuntimeException("Could not enable save points for the `{$normal}` connection. Your database needs to support savepoints in order to use the TransactionStrategy for fixtures.");
-            }
-            if ($enableLogging) {
-                $connection->enableQueryLogging(true);
+            if ($connection instanceof Connection) {
+                if (!$connection->enableSavePoints(true)) {
+                    throw new RuntimeException(
+                        "Could not enable save points for the `{$normal}` connection. " .
+                            'Your database needs to support savepoints in order to use the ' .
+                            'TransactionStrategy for fixtures.'
+                    );
+                }
+                if ($enableLogging) {
+                    $connection->enableQueryLogging(true);
+                }
             }
         }
     }
@@ -91,7 +99,7 @@ class TransactionStrategy
                 continue;
             }
             $db = ConnectionManager::get($connection);
-            if (method_exists($db, 'begin')) {
+            if ($db instanceof Connection) {
                 $db->begin();
                 $db->createSavePoint('__fixtures__');
             }
@@ -115,7 +123,7 @@ class TransactionStrategy
                 continue;
             }
             $db = ConnectionManager::get($connection);
-            if (method_exists($db, 'rollback')) {
+            if ($db instanceof Connection) {
                 $db->rollback(true);
             }
         }
