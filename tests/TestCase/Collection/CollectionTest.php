@@ -553,7 +553,7 @@ class CollectionTest extends TestCase
     {
         $collection = new Collection($items);
         $callback = function ($e) {
-            return $e['a']['b']['c'] * - 1;
+            return $e['a']['b']['c'] * -1;
         };
         $this->assertEquals(['a' => ['b' => ['c' => 4]]], $collection->max($callback));
     }
@@ -568,7 +568,7 @@ class CollectionTest extends TestCase
     {
         $collection = new Collection($items);
         $this->assertEquals(['a' => ['b' => ['c' => 4]]], $collection->max(function ($e) {
-            return $e['a']['b']['c'] * - 1;
+            return $e['a']['b']['c'] * -1;
         }));
     }
 
@@ -1233,6 +1233,25 @@ class CollectionTest extends TestCase
         $buffered = (new Collection($items))->buffered();
         $this->assertEquals(['a' => 4, 'b' => 5, 'c' => 6], $buffered->toArray());
         $this->assertEquals(['a' => 4, 'b' => 5, 'c' => 6], $buffered->toArray());
+    }
+
+    public function testBufferedIterator()
+    {
+        $data = [
+            ['myField' => '1'],
+            ['myField' => '2'],
+            ['myField' => '3'],
+        ];
+        $buffered = (new \Cake\Collection\Collection($data))->buffered();
+        // Check going forwards
+        $this->assertNotEmpty($buffered->firstMatch(['myField' => '1']));
+        $this->assertNotEmpty($buffered->firstMatch(['myField' => '2']));
+        $this->assertNotEmpty($buffered->firstMatch(['myField' => '3']));
+
+        // And backwards.
+        $this->assertNotEmpty($buffered->firstMatch(['myField' => '3']));
+        $this->assertNotEmpty($buffered->firstMatch(['myField' => '2']));
+        $this->assertNotEmpty($buffered->firstMatch(['myField' => '1']));
     }
 
     /**
