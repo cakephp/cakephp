@@ -183,12 +183,12 @@ class FixtureDataManagerTest extends TestCase
         $manager->load($this);
 
         $db = ConnectionManager::get('test');
-        $stmt = $db->newQuery()->select(['count()'])->from('articles')->execute();
+        $stmt = $db->newQuery()->select(['count(*)'])->from('articles')->execute();
         $result = $stmt->fetch()[0];
         $stmt->closeCursor();
         $this->assertEquals(3, $result);
 
-        $stmt = $db->newQuery()->select(['count()'])->from('comments')->execute();
+        $stmt = $db->newQuery()->select(['count(*)'])->from('comments')->execute();
         $result = $stmt->fetch()[0];
         $stmt->closeCursor();
         $this->assertEquals(6, $result);
