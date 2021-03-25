@@ -18,11 +18,11 @@ namespace Cake\Test\TestCase\TestSuite\Fixture;
 
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\FixtureInterface;
-use Cake\TestSuite\Fixture\DataFixtureManager;
+use Cake\TestSuite\Fixture\FixtureDataManager;
 use Cake\TestSuite\TestCase;
 use UnexpectedValueException;
 
-class DataFixtureManagerTest extends TestCase
+class FixtureDataManagerTest extends TestCase
 {
     /**
      * Schema fixtures to load.
@@ -77,7 +77,7 @@ class DataFixtureManagerTest extends TestCase
      */
     public function testFixturizeErrorOnUnknown($name)
     {
-        $manager = new DataFixtureManager();
+        $manager = new FixtureDataManager();
         $this->fixtures = [$name];
 
         $this->expectException(UnexpectedValueException::class);
@@ -112,7 +112,7 @@ class DataFixtureManagerTest extends TestCase
         // Also loads TestPlugin
         $this->loadPlugins(['Company/TestPluginThree']);
 
-        $manager = new DataFixtureManager();
+        $manager = new FixtureDataManager();
         $this->fixtures = [$name];
         $manager->fixturize($this);
 
@@ -128,7 +128,7 @@ class DataFixtureManagerTest extends TestCase
      */
     public function testFixturizeLoadsMultipleFixtures()
     {
-        $manager = new DataFixtureManager();
+        $manager = new FixtureDataManager();
         $manager->fixturize($this);
 
         $fixtures = $manager->loaded();
@@ -144,7 +144,7 @@ class DataFixtureManagerTest extends TestCase
      */
     public function testLoadSingleValid()
     {
-        $manager = new DataFixtureManager();
+        $manager = new FixtureDataManager();
         $manager->fixturize($this);
 
         $manager->loadSingle('Articles');
@@ -163,7 +163,7 @@ class DataFixtureManagerTest extends TestCase
      */
     public function testLoadSingleInvalid()
     {
-        $manager = new DataFixtureManager();
+        $manager = new FixtureDataManager();
         $manager->fixturize($this);
 
         $this->expectException(UnexpectedValueException::class);
@@ -177,7 +177,7 @@ class DataFixtureManagerTest extends TestCase
      */
     public function testLoad()
     {
-        $manager = new DataFixtureManager();
+        $manager = new FixtureDataManager();
         $manager->fixturize($this);
 
         $manager->load($this);

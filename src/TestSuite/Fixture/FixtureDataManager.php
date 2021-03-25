@@ -35,21 +35,21 @@ use UnexpectedValueException;
  * This class implements a common interface with the Cake\TestSuite\FixtureManager so that
  * test cases only need to interact with a single interface.
  */
-class DataFixtureManager
+class FixtureDataManager
 {
     /**
      * A mapping between the fixture name (including the prefix) and the object.
      *
      * @var \Cake\Datasource\FixtureInterface[]
      */
-    protected $loaded = [];
+    protected $fixtures = [];
 
     /**
      * A map between a fixture name without the plugin prefix and the object.
      *
      * @var \Cake\Datasource\FixtureInterface[]
      */
-    protected $fixtureMap = [];
+    protected $nameMap = [];
 
     /**
      * Looks for fixture files and instantiates the classes accordingly
@@ -65,7 +65,7 @@ class DataFixtureManager
             return;
         }
         foreach ($fixtures as $fixture) {
-            if (isset($this->loaded[$fixture])) {
+            if (isset($this->fixtures[$fixture])) {
                 continue;
             }
 
@@ -108,8 +108,8 @@ class DataFixtureManager
             }
 
             if (class_exists($className)) {
-                $this->loaded[$fixture] = new $className();
-                $this->fixtureMap[$name] = $this->loaded[$fixture];
+                $this->fixtures[$fixture] = new $className();
+                $this->nameMap[$name] = $this->fixtures[$fixture];
             } else {
                 $msg = sprintf(
                     'Referenced fixture class "%s" not found. Fixture "%s" was referenced in test case "%s".',
@@ -129,15 +129,15 @@ class DataFixtureManager
      * @param \Cake\Datasource\ConnectionInterface|null $connection Connection instance or null
      *  to get a Connection from the fixture.
      * @return void
-     * @throws \UnexpectedValueException if $name is not a previously loaded class
+     * @throws \UnexpectedValueException if $name is not a previously fixtures class
      */
     public function loadSingle(string $name, ?ConnectionInterface $connection = null): void
     {
-        if (!isset($this->fixtureMap[$name])) {
+        if (!isset($this->nameMap[$name])) {
             throw new UnexpectedValueException(sprintf('Referenced fixture class %s not found', $name));
         }
 
-        $fixture = $this->fixtureMap[$name];
+        $fixture = $this->nameMap[$name];
         if (!$connection) {
             $connection = ConnectionManager::get($fixture->connection());
         }
@@ -217,8 +217,8 @@ class DataFixtureManager
     {
         $dbs = [];
         foreach ($fixtures as $name) {
-            if (!empty($this->loaded[$name])) {
-                $fixture = $this->loaded[$name];
+            if (!empty($this->fixtures[$name])) {
+                $fixture = $this->fixtures[$name];
                 $dbs[$fixture->connection()][$name] = $fixture;
             }
         }
@@ -241,12 +241,12 @@ class DataFixtureManager
     }
 
     /**
-     * Get the loaded fixtures.
+     * Get the fixtures fixtures.
      *
      * @return \Cake\Datasource\FixtureInterface[]
      */
     public function loaded(): array
     {
-        return $this->loaded;
+        return $this->fixtures;
     }
 }
