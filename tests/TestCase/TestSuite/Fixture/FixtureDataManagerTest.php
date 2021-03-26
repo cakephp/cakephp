@@ -149,7 +149,7 @@ class FixtureDataManagerTest extends TestCase
 
         $manager->loadSingle('Articles');
         $db = ConnectionManager::get('test');
-        $stmt = $db->newQuery()->select(['count()'])->from('articles')->execute();
+        $stmt = $db->newQuery()->select(['count(*)'])->from('articles')->execute();
         $result = $stmt->fetch()[0];
         $stmt->closeCursor();
 
