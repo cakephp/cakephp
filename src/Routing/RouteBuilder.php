@@ -945,8 +945,14 @@ class RouteBuilder
      * Routes connected in the scoped collection will have the correct path segment
      * prepended, and have a matching plugin routing key set.
      *
+     * ### Options
+     *
+     * - `path` The path prefix to use. Defaults to `Inflector::dasherize($name)`.
+     * - `_namePrefix` Set a prefix used for named routes. The prefix is prepended to the
+     *   name of any route created in a scope callback.
+     *
      * @param string $name The plugin name to build routes for
-     * @param array|callable $options Either the options to use, or a callback
+     * @param array|callable $options Either the options to use, or a callback to build routes.
      * @param callable|null $callback The callback to invoke that builds the plugin routes
      *   Only required when $options is defined.
      * @return void
@@ -957,11 +963,14 @@ class RouteBuilder
             $callback = $options;
             $options = [];
         }
-        $params = ['plugin' => $name] + $this->_params;
         if (empty($options['path'])) {
-            $options['path'] = '/' . Inflector::underscore($name);
+            $path = '/' . Inflector::underscore($name);
+        } else {
+            $path = $options['path'];
         }
-        $this->scope($options['path'], $params, $callback);
+        unset($options['path']);
+        $params = ['plugin' => $name] + $options + $this->_params;
+        $this->scope($path, $params, $callback);
     }
 
     /**
@@ -970,6 +979,11 @@ class RouteBuilder
      * Scopes created with this method will inherit the properties of the scope they are
      * added to. This means that both the current path and parameters will be appended
      * to the supplied parameters.
+     *
+     * ### Special Keys in $params
+     *
+     * - `_namePrefix` Set a prefix used for named routes. The prefix is prepended to the
+     *   name of any route created in a scope callback.
      *
      * @param string $path The path to create a scope for.
      * @param array|callable $params Either the parameters to add to routes, or a callback.
