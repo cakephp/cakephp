@@ -157,6 +157,10 @@ class BufferedIterator extends Collection implements Countable, Serializable
     {
         $this->_index++;
 
+        // Don't move inner iterator if we have more buffer
+        if ($this->_buffer->offsetExists($this->_index)) {
+            return;
+        }
         if (!$this->_finished) {
             parent::next();
         }
