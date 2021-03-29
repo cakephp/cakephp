@@ -100,7 +100,6 @@ class HelperRegistry extends ObjectRegistry
      */
     protected function _create($class, string $alias, array $config): Helper
     {
-        // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.InvalidFormat
         /** @var \Cake\Console\Helper */
         return new $class($this->_io, $config);
     }

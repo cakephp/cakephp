@@ -85,7 +85,6 @@ class ConnectionRegistry extends ObjectRegistry
 
         unset($config['className']);
 
-        // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.InvalidFormat
         /** @var \Cake\Datasource\ConnectionInterface */
         return new $class($config);
     }
