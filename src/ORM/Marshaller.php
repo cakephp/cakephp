@@ -327,6 +327,7 @@ class Marshaller
             }
         }
         if ($type === Association::MANY_TO_MANY) {
+            /** @psalm-suppress ArgumentTypeCoercion */
             return $marshaller->_belongsToMany($assoc, $value, $options);
         }
 
@@ -747,11 +748,11 @@ class Marshaller
         $types = [Association::ONE_TO_ONE, Association::MANY_TO_ONE];
         $type = $assoc->type();
         if (in_array($type, $types, true)) {
-            /** @psalm-suppress PossiblyInvalidArgument */
+            /** @psalm-suppress PossiblyInvalidArgument, ArgumentTypeCoercion */
             return $marshaller->merge($original, $value, $options);
         }
         if ($type === Association::MANY_TO_MANY) {
-            /** @psalm-suppress PossiblyInvalidArgument */
+            /** @psalm-suppress PossiblyInvalidArgument, ArgumentTypeCoercion */
             return $marshaller->_mergeBelongsToMany($original, $assoc, $value, $options);
         }
 
