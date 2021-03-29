@@ -223,8 +223,12 @@ trait DateFormatTrait
             $locale = I18n::getLocale();
         }
 
-        // phpcs:ignore Generic.Files.LineLength
-        if (preg_match('/@calendar=(japanese|buddhist|chinese|persian|indian|islamic|hebrew|coptic|ethiopic)/', $locale)) {
+        if (
+            preg_match(
+                '/@calendar=(japanese|buddhist|chinese|persian|indian|islamic|hebrew|coptic|ethiopic)/',
+                $locale
+            )
+        ) {
             $calendar = IntlDateFormatter::TRADITIONAL;
         } else {
             $calendar = IntlDateFormatter::GREGORIAN;

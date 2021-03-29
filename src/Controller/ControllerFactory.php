@@ -213,7 +213,6 @@ class ControllerFactory implements ControllerFactoryInterface
             throw $this->missingController($request);
         }
 
-        // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.InvalidFormat
         /** @var class-string<\Cake\Controller\Controller>|null */
         return App::className($pluginPath . $controller, $namespace, 'Controller');
     }

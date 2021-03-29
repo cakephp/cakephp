@@ -65,7 +65,6 @@ class App
         $fullname = '\\' . str_replace('/', '\\', $type . '\\' . $name) . $suffix;
 
         if (static::_classExistsInBase($fullname, $base)) {
-            // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.InvalidFormat
             /** @var class-string */
             return $base . $fullname;
         }
@@ -74,7 +73,6 @@ class App
             return null;
         }
 
-        // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.InvalidFormat
         /** @var class-string */
         return 'Cake' . $fullname;
     }
