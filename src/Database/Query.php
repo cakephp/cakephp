@@ -2356,9 +2356,13 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function __debugInfo(): array
     {
         try {
-            set_error_handler(function ($errno, $errstr) {
-                throw new RuntimeException($errstr, $errno);
-            }, E_ALL);
+            set_error_handler(
+                /** @return no-return */
+                function ($errno, $errstr) {
+                    throw new RuntimeException($errstr, $errno);
+                },
+                E_ALL
+            );
             $sql = $this->sql();
             $params = $this->getValueBinder()->bindings();
         } catch (RuntimeException $e) {

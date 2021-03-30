@@ -19,11 +19,12 @@ namespace Cake\TestSuite\Constraint\Response;
  * StatusFailure
  *
  * @internal
+ * @extends \Cake\TestSuite\Constraint\Response\StatusCodeBase<array<int, int>>
  */
 class StatusFailure extends StatusCodeBase
 {
     /**
-     * @var int[]
+     * @var array<int, int>
      */
     protected $code = [500, 505];
 
