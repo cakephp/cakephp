@@ -16,6 +16,8 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Core;
 
 use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Database\Driver\Mysql;
 use Cake\TestSuite\TestCase;
 use TestApp\Core\TestApp;
 
@@ -108,6 +110,18 @@ class AppTest extends TestCase
         $this->assertSame('Pages', $return);
 
         static::setAppNamespace();
+    }
+
+    /**
+     * @link https://github.com/cakephp/cakephp/issues/15415
+     * @return void
+     */
+    public function testShortNameWithAppNamespaceUnset()
+    {
+        Configure::delete('App.namespace');
+
+        $result = App::shortName(Mysql::class, 'Database/Driver');
+        $this->assertSame('Mysql', $result);
     }
 
     /**

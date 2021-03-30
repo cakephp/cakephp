@@ -136,7 +136,7 @@ class App
 
         $nonPluginNamespaces = [
             'Cake',
-            str_replace('\\', '/', Configure::read('App.namespace')),
+            str_replace('\\', '/', (string)Configure::read('App.namespace')),
         ];
         if (in_array($pluginName, $nonPluginNamespaces, true)) {
             return $name;
