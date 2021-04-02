@@ -1338,6 +1338,7 @@ class Validation
 
         return true;
     }
+
     /**
      * Checking for upload errors
      *
