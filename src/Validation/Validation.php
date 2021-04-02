@@ -1307,19 +1307,36 @@ class Validation
      */
     public static function fileSize($check, string $operator, $size): bool
     {
-        $file = static::getFilename($check);
-        if ($file === false) {
-            return false;
+        if (is_array($check)) {
+            foreach ($check as $fileInCheck) {
+                $file = static::getFilename($fileInCheck);
+                if ($file === false) {
+                    return false;
+                } else {
+                    $files[] = $file;
+                }
+            }
+        } else {
+            $file = static::getFilename($check);
+            if ($file === false) {
+                return false;
+            } else {
+                $files[] = $file;
+            }
         }
 
         if (is_string($size)) {
             $size = Text::parseFileSize($size);
         }
-        $filesize = filesize($file);
 
-        return static::comparison($filesize, $operator, $size);
+        foreach ($files as $file) {
+            $filesize = filesize($file);
+            if (!static::comparison($filesize, $operator, $size)) {
+                return false;
+            }
+        }
+        return true;
     }
-
     /**
      * Checking for upload errors
      *
