@@ -972,7 +972,7 @@ TEXT;
             trigger_error(sprintf(
                 'Please change the value of %s in %s to a salt value specific to your application.',
                 '\'Security.salt\'',
-                'ROOT/config/app.php'
+                'ROOT/config/app_local.php'
             ), E_USER_NOTICE);
         }
     }
