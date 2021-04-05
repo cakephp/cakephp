@@ -25,7 +25,7 @@ use Cake\TestSuite\TestCase;
  */
 class TruncationStrategyTest extends TestCase
 {
-    public $fixtures = ['core.Articles', 'core.ArticlesTags', 'core.Tags'];
+    public $fixtures = ['core.Articles', 'core.Tags', 'core.ArticlesTags'];
 
     /**
      * Test that beforeTest truncates tables from the previous test
