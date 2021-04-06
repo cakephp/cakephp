@@ -44,10 +44,10 @@ class HasManyTest extends TestCase
     protected $fixtures = [
         'core.Comments',
         'core.Articles',
+        'core.Tags',
         'core.Authors',
         'core.Users',
         'core.ArticlesTags',
-        'core.Tags',
     ];
 
     /**

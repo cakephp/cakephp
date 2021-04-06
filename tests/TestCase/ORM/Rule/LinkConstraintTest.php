@@ -38,10 +38,10 @@ class LinkConstraintTest extends TestCase
      */
     protected $fixtures = [
         'core.Articles',
+        'core.Tags',
         'core.ArticlesTags',
         'core.Attachments',
         'core.Comments',
-        'core.Tags',
     ];
 
     /**
