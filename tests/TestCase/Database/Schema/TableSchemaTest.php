@@ -31,8 +31,8 @@ class TableSchemaTest extends TestCase
         'core.Articles',
         'core.Tags',
         'core.ArticlesTags',
-        'core.Orders',
         'core.Products',
+        'core.Orders',
     ];
 
     protected $_map;
