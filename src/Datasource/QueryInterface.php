@@ -218,7 +218,9 @@ interface QueryInterface
      * `ORDER BY title DESC, author_id ASC`
      *
      * ```
-     * $query->order(['title' => 'DESC NULLS FIRST'])->order('author_id');
+     * $query
+     *     ->order(['title' => $query->newExpr('DESC NULLS FIRST')])
+     *     ->order('author_id');
      * ```
      *
      * Will generate:
