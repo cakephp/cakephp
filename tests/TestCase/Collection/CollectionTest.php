@@ -731,7 +731,7 @@ class CollectionTest extends TestCase
         $collection = new Collection($items);
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot use a nonexistent path or null value.');
+        $this->expectExceptionMessage('Cannot group by path that does not exist or contains a null value.');
         $collection->groupBy('missing');
     }
 
@@ -829,8 +829,29 @@ class CollectionTest extends TestCase
         $collection = new Collection($items);
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot use a nonexistent path or null value.');
+        $this->expectExceptionMessage('Cannot index by path that does not exist or contains a null value');
         $collection->indexBy('missing');
+    }
+
+    /**
+     * Tests passing an invalid path to indexBy.
+     *
+     * @return void
+     */
+    public function testIndexByInvalidPathCallback()
+    {
+        $items = [
+            ['id' => 1, 'name' => 'foo'],
+            ['id' => 2, 'name' => 'bar'],
+            ['id' => 3, 'name' => 'baz'],
+        ];
+        $collection = new Collection($items);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot index by path that does not exist or contains a null value');
+        $collection->indexBy(function ($e) {
+            return null;
+        });
     }
 
     /**
