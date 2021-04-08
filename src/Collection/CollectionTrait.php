@@ -269,10 +269,11 @@ trait CollectionTrait
         foreach ($this->optimizeUnwrap() as $value) {
             $pathValue = $callback($value);
             if ($pathValue === null) {
-                throw new InvalidArgumentException(
-                    'Cannot use a nonexistent path or null value. ' .
-                    'Use a callback to provide default values if necessary.'
-                );
+                throw new InvalidArgumentException(sprintf(
+                    'Cannot group by `%s` because does not exist or contains a null value. ' .
+                    'Use a callback to provide a default value for paths that are optional.',
+                    $path
+                ));
             }
             $group[$pathValue][] = $value;
         }
@@ -290,10 +291,11 @@ trait CollectionTrait
         foreach ($this->optimizeUnwrap() as $value) {
             $pathValue = $callback($value);
             if ($pathValue === null) {
-                throw new InvalidArgumentException(
-                    'Cannot use a nonexistent path or null value. ' .
-                    'Use a callback to provide default values if necessary.'
-                );
+                throw new InvalidArgumentException(sprintf(
+                    'Cannot index by `%s` because does not exist or contains a null value. ' .
+                    'Use a callback to provide a default value for paths that are optional.',
+                    $path
+                ));
             }
             $group[$pathValue] = $value;
         }

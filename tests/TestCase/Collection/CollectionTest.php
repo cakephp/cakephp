@@ -731,7 +731,7 @@ class CollectionTest extends TestCase
         $collection = new Collection($items);
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot use a nonexistent path or null value.');
+        $this->expectExceptionMessage('Cannot group by `missing` because does not exist or contains a null value.');
         $collection->groupBy('missing');
     }
 
@@ -829,7 +829,7 @@ class CollectionTest extends TestCase
         $collection = new Collection($items);
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot use a nonexistent path or null value.');
+        $this->expectExceptionMessage('Cannot index by `missing` because does not exist or contains a null value');
         $collection->indexBy('missing');
     }
 
