@@ -397,6 +397,11 @@ class ResultSet implements ResultSetInterface
             }
 
             $parts = explode('__', $key, 2);
+            // FIX PostgreSQL NAMEDATALEN
+            if ($this->_driver->getMaxAliasLength()) {
+                $key = substr($key, 0, $this->_driver->getMaxAliasLength());
+            }
+            // END FIX PostgreSQL NAMEDATALEN
             $map[$parts[0]][$key] = $parts[1];
         }
 
