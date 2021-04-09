@@ -60,13 +60,6 @@ class I18nExtractCommand extends Command
     protected $_merge = false;
 
     /**
-     * Use relative paths in the pot files rather than full path
-     *
-     * @var bool
-     */
-    protected $_relativePaths = false;
-
-    /**
      * Current file being processed
      *
      * @var string
@@ -267,7 +260,6 @@ class I18nExtractCommand extends Command
         }
 
         $this->_markerError = (bool)$args->getOption('marker-error');
-        $this->_relativePaths = (bool)$args->getOption('relative-paths');
 
         if (empty($this->_files)) {
             $this->_searchFiles();
@@ -368,10 +360,6 @@ class I18nExtractCommand extends Command
             'help' => 'Merge all domain strings into a single default.po file.',
             'default' => 'no',
             'choices' => ['yes', 'no'],
-        ])->addOption('relative-paths', [
-            'help' => 'Use application relative paths in the .pot file.',
-            'boolean' => true,
-            'default' => false,
         ])->addOption('output', [
             'help' => 'Full path to output directory.',
         ])->addOption('files', [
@@ -510,9 +498,7 @@ class I18nExtractCommand extends Command
                         'file' => $this->_file,
                         'line' => $line,
                     ];
-                    if ($this->_relativePaths) {
-                        $details['file'] = '.' . str_replace(ROOT, '', $details['file']);
-                    }
+                    $details['file'] = '.' . str_replace(ROOT, '', $details['file']);
                     if ($plural !== null) {
                         $details['msgid_plural'] = $plural;
                     }
@@ -562,7 +548,7 @@ class I18nExtractCommand extends Command
                         $occurrences = implode("\n#: ", $occurrences);
 
                         $header = '#: '
-                            . str_replace(DIRECTORY_SEPARATOR, '/', str_replace($paths, '', $occurrences))
+                            . str_replace(DIRECTORY_SEPARATOR, '/', $occurrences)
                             . "\n";
                     }
 
