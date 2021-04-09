@@ -122,6 +122,31 @@ class FieldTypeConverter
      */
     public function __invoke(array $row): array
     {
+        if ($this->_driver instanceof \Cake\Database\Driver\Postgres) {
+            $exceedNameDataLen = array_filter($this->_typeMap, function($k) {
+                return (strlen($k) > $this->_driver->getMaxAliasLength());
+            }, ARRAY_FILTER_USE_KEY);
+
+            if (!empty($exceedNameDataLen)) {
+                return $this->_invokePostgres($row);
+            }
+        }
+
+        return $this->_invokeCakePHP($row);
+    }
+
+
+    /**********************************
+     * AGAR
+     **********************************/
+
+    /**
+     * FieldTypeConverter CakePHP
+     * @param array $row The array with the fields to be casted
+     * @return array
+     */
+    private function _invokeCakePHP(array $row): array
+    {
         if (!empty($this->_typeMap)) {
             foreach ($this->_typeMap as $field => $type) {
                 $row[$field] = $type->toPHP($row[$field], $this->_driver);
@@ -136,5 +161,27 @@ class FieldTypeConverter
         }
 
         return $row;
+    }
+
+    /**
+     * FieldTypeConverter PostgreSQL (FIX NAMEDATALEN)
+     * @param array $row The array with the fields to be casted
+     * @return array
+     */
+    private function _invokePostgres(array $row): array
+    {
+        $keys = array_keys($row);
+        $values = array_values($row);
+
+        foreach ($this->_typeMap as $field => $type) {    
+            // FIX PosgreSQL NAMEDATALEN
+            $fixedField = (strlen($field) > $this->_driver->getMaxAliasLength()) ? substr($field, 0, $this->_driver->getMaxAliasLength()) : $field;   
+
+            $pos = array_search($fixedField, $keys);
+            $keys[$pos] = $field;
+            $values[$pos] = $type->toPHP($row[$fixedField], $this->_driver);
+        }
+        $combined = array_combine($keys, $values);
+        return $combined;
     }
 }
