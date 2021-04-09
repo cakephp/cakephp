@@ -51,11 +51,6 @@ class PluginAssetsCommandsTest extends TestCase
     {
         parent::setUp();
 
-        $this->skipIf(
-            DS === '\\',
-            'Skip AssetsTask tests on windows to prevent side effects for UrlHelper tests on AppVeyor.'
-        );
-
         $this->wwwRoot = TMP . 'assets_task_webroot' . DS;
         Configure::write('App.wwwRoot', $this->wwwRoot);
 
