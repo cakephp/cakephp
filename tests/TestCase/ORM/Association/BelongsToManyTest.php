@@ -45,9 +45,9 @@ class BelongsToManyTest extends TestCase
      */
     protected $fixtures = [
         'core.Articles',
+        'core.Tags',
         'core.SpecialTags',
         'core.ArticlesTags',
-        'core.Tags',
         'core.BinaryUuidItems',
         'core.BinaryUuidTags',
         'core.BinaryUuidItemsBinaryUuidTags',

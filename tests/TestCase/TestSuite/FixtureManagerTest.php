@@ -155,7 +155,7 @@ class FixtureManagerTest extends TestCase
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
         $test->expects($this->any())
             ->method('getFixtures')
-            ->willReturn(['core.Articles', 'core.ArticlesTags', 'core.Tags']);
+            ->willReturn(['core.Articles', 'core.Tags', 'core.ArticlesTags']);
         $this->manager->fixturize($test);
         $this->manager->load($test);
 

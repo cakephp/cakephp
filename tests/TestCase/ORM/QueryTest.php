@@ -50,13 +50,13 @@ class QueryTest extends TestCase
      */
     protected $fixtures = [
         'core.Articles',
+        'core.Tags',
         'core.ArticlesTags',
         'core.ArticlesTranslations',
         'core.Authors',
         'core.Comments',
         'core.Datatypes',
         'core.Posts',
-        'core.Tags',
     ];
 
     /**
