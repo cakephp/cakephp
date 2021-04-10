@@ -84,38 +84,39 @@ class I18nExtractCommandTest extends TestCase
 
         $this->assertFileDoesNotExist($this->path . DS . 'cake.pot');
 
-        // extract.ctp
-        $pattern = '/\#: [\/\\\\]extract\.php:\d+\n';
-        $pattern .= '\#: [\/\\\\]extract\.php:\d+\n';
-        $pattern .= 'msgid "You have %d new message."\nmsgid_plural "You have %d new messages."/';
+        // The additional "./tests/test_app" is just due to the wonky folder structure of the test app.
+        // In a regular app the path would start with "./templates".
+        $pattern = '@\#: \./tests/test_app/templates/Pages/extract\.php:\d+\n';
+        $pattern .= '\#: \./tests/test_app/templates/Pages/extract\.php:\d+\n';
+        $pattern .= 'msgid "You have %d new message."\nmsgid_plural "You have %d new messages."@';
         $this->assertMatchesRegularExpression($pattern, $result);
 
         $pattern = '/msgid "You have %d new message."\nmsgstr ""/';
         $this->assertDoesNotMatchRegularExpression($pattern, $result, 'No duplicate msgid');
 
-        $pattern = '/\#: [\/\\\\]extract\.php:\d+\n';
-        $pattern .= 'msgid "You deleted %d message."\nmsgid_plural "You deleted %d messages."/';
+        $pattern = '@\#: \./tests/test_app/templates/Pages/extract\.php:\d+\n';
+        $pattern .= 'msgid "You deleted %d message."\nmsgid_plural "You deleted %d messages."@';
         $this->assertMatchesRegularExpression($pattern, $result);
 
-        $pattern = '/\#: [\/\\\\]extract\.php:\d+\nmsgid "';
+        $pattern = '@\#: \./tests/test_app/templates/Pages/extract\.php:\d+\nmsgid "';
         $pattern .= 'Hot features!';
         $pattern .= '\\\n - No Configuration: Set-up the database and let the magic begin';
         $pattern .= '\\\n - Extremely Simple: Just look at the name...It\'s Cake';
         $pattern .= '\\\n - Active, Friendly Community: Join us #cakephp on IRC. We\'d love to help you get started';
-        $pattern .= '"\nmsgstr ""/';
+        $pattern .= '"\nmsgstr ""@';
         $this->assertMatchesRegularExpression($pattern, $result);
 
         $this->assertStringContainsString('msgid "double \\"quoted\\""', $result, 'Strings with quotes not handled correctly');
         $this->assertStringContainsString("msgid \"single 'quoted'\"", $result, 'Strings with quotes not handled correctly');
 
-        $pattern = '/\#: [\/\\\\]extract\.php:\d+\n';
+        $pattern = '@\#: \./tests/test_app/templates/Pages/extract\.php:\d+\n';
         $pattern .= 'msgctxt "mail"\n';
-        $pattern .= 'msgid "letter"/';
+        $pattern .= 'msgid "letter"@';
         $this->assertMatchesRegularExpression($pattern, $result);
 
-        $pattern = '/\#: [\/\\\\]extract\.php:\d+\n';
+        $pattern = '@\#: \./tests/test_app/templates/Pages/extract\.php:\d+\n';
         $pattern .= 'msgctxt "alphabet"\n';
-        $pattern .= 'msgid "letter"/';
+        $pattern .= 'msgid "letter"@';
         $this->assertMatchesRegularExpression($pattern, $result);
 
         // extract.php - reading the domain.pot
@@ -389,7 +390,6 @@ class I18nExtractCommandTest extends TestCase
     {
         $this->exec(
             'i18n extract ' .
-            '--relative-paths ' .
             '--extract-core=no ' .
             '--paths=' . TEST_APP . 'templates ' .
             '--output=' . $this->path . DS
