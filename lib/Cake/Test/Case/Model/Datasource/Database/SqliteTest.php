@@ -165,7 +165,7 @@ class SqliteTest extends CakeTestCase {
 	public function testCacheKeyName() {
 		Configure::write('Cache.disable', false);
 
-		$dbName = 'db' . rand() . '$(*%&).db';
+		$dbName = 'db' . mt_rand() . '$(*%&).db';
 		$this->assertFalse(file_exists(TMP . $dbName));
 
 		try {
