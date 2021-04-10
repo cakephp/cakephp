@@ -88,39 +88,28 @@ class PluginAssetsCommandsTest extends TestCase
 
         $path = $this->wwwRoot . 'test_plugin';
         $this->assertFileExists($path . DS . 'root.js');
-        if (DS === '\\') {
-            $this->assertDirectoryExists($path);
-        } else {
-            $this->assertTrue(is_link($path));
-        }
+        $this->assertTrue(is_link($path));
 
         $path = $this->wwwRoot . 'company' . DS . 'test_plugin_three';
-        // If "company" directory exists beforehand "test_plugin_three" would
-        // be a link. But if the directory is created by the shell itself
-        // symlinking fails and the assets folder is copied as fallback.
-        $this->assertDirectoryExists($path);
         $this->assertFileExists($path . DS . 'css' . DS . 'company.css');
+        $this->assertTrue(is_link($path));
     }
 
     /**
-     * testSymlinkWhenVendorDirectoryExits
-     *
      * @return void
      */
-    public function testSymlinkWhenVendorDirectoryExits()
+    public function testSymlinkWhenVendorDirectoryExists()
     {
         $this->loadPlugins(['Company/TestPluginThree']);
 
         mkdir($this->wwwRoot . 'company');
 
         $this->exec('plugin assets symlink');
+        $this->assertExitCode(Command::CODE_SUCCESS);
+
         $path = $this->wwwRoot . 'company' . DS . 'test_plugin_three';
-        if (DS === '\\') {
-            $this->assertDirectoryExists($path);
-        } else {
-            $this->assertTrue(is_link($path));
-        }
         $this->assertFileExists($path . DS . 'css' . DS . 'company.css');
+        $this->assertTrue(is_link($path));
     }
 
     /**
@@ -180,7 +169,6 @@ class PluginAssetsCommandsTest extends TestCase
         $path = $this->wwwRoot . 'test_plugin';
         $link = new \SplFileInfo($path);
         $this->assertFileExists($path . DS . 'root.js');
-        unlink($path);
 
         $path = $this->wwwRoot . 'company' . DS . 'test_plugin_three';
         $this->assertDirectoryDoesNotExist($path);
@@ -243,12 +231,6 @@ class PluginAssetsCommandsTest extends TestCase
      */
     public function testRemoveSymlink()
     {
-        if (DS === '\\') {
-            $this->markTestSkipped(
-                "Can't test symlink removal on windows."
-            );
-        }
-
         $this->loadPlugins(['TestPlugin' => ['routes' => false], 'Company/TestPluginThree']);
 
         mkdir($this->wwwRoot . 'company');
@@ -265,8 +247,6 @@ class PluginAssetsCommandsTest extends TestCase
         $this->assertFalse(is_link($this->wwwRoot . 'test_plugin'));
         $this->assertFalse(is_link($path));
         $this->assertDirectoryExists($this->wwwRoot . 'company', 'Ensure namespace folder isn\'t removed');
-
-        rmdir($this->wwwRoot . 'company');
     }
 
     /**
@@ -289,8 +269,6 @@ class PluginAssetsCommandsTest extends TestCase
         $this->assertDirectoryDoesNotExist($this->wwwRoot . 'test_plugin');
         $this->assertDirectoryDoesNotExist($this->wwwRoot . 'company' . DS . 'test_plugin_three');
         $this->assertDirectoryExists($this->wwwRoot . 'company', 'Ensure namespace folder isn\'t removed');
-
-        rmdir($this->wwwRoot . 'company');
     }
 
     /**
@@ -309,20 +287,10 @@ class PluginAssetsCommandsTest extends TestCase
 
         sleep(1);
         $this->exec('plugin assets symlink TestPlugin --overwrite');
-        if (DS === '\\') {
-            $this->assertDirectoryExists($path);
-        } else {
-            $this->assertTrue(is_link($path));
-        }
+        $this->assertTrue(is_link($path));
 
         $newfilectime = filectime($path);
         $this->assertTrue($newfilectime !== $filectime);
-
-        if (DS === '\\') {
-            $this->fs->deleteDir($path);
-        } else {
-            unlink($path);
-        }
 
         $path = $this->wwwRoot . 'company' . DS . 'test_plugin_three';
         mkdir($path, 0777, true);
