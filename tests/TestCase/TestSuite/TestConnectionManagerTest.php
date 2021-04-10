@@ -21,16 +21,6 @@ use Cake\TestSuite\TestConnectionManager;
 
 class TestConnectionManagerTest extends TestCase
 {
-    /**
-     * Note that phinxlog tables are suffixed by _phinxlog.
-     */
-    public function testUnsetMigrationTables()
-    {
-        $input = ['foo', 'phinxlog', 'phinxlog_bar', 'some_table', 'some_plugin_phinxlog'];
-        $output = TestConnectionManager::unsetMigrationTables($input);
-        $this->assertSame(['foo', 'phinxlog_bar', 'some_table',], $output);
-    }
-
     public function testAliasConnections()
     {
         ConnectionManager::drop('dummy');

@@ -20,7 +20,6 @@ use Cake\Database\Schema\BaseSchema;
 use Cake\Database\Schema\CollectionInterface;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
-use Cake\TestSuite\TestConnectionManager;
 
 /**
  * This class will help dropping all tables of a given connection
@@ -38,7 +37,7 @@ class SchemaCleaner
      */
     public static function drop(string $connectionName, ?ConsoleIo $io = null)
     {
-        self::info($io, __d('cake', 'Dropping all tables for connection ' . $connectionName));
+        self::info('Dropping all tables for connection ' . $connectionName, $io);
 
         $schema = static::getSchema($connectionName);
         $dialect = static::getDialect($connectionName);
@@ -55,26 +54,49 @@ class SchemaCleaner
     /**
      * Truncate all tables of the provided connection.
      *
-     * @param string $connectionName Name of the connection.
      * @param \Cake\Console\ConsoleIo|null $io Console IO to output the processes.
+     * @param string $connectionName Name of the connection.
      * @return void
      * @throws \Exception if the truncation failed.
      */
     public static function truncate(string $connectionName, ?ConsoleIo $io = null)
     {
-        static::info($io, __d('cake', 'Truncating all tables for connection ' . $connectionName));
+        static::info('Truncating all tables for connection ' . $connectionName, $io);
 
         $stmts = [];
         $schema = static::getSchema($connectionName);
         $dialect = static::getDialect($connectionName);
         $tables = $schema->listTables();
-        $tables = TestConnectionManager::unsetMigrationTables($tables);
+        $tables = self::unsetMigrationTables($tables);
         foreach ($tables as $table) {
             $table = $schema->describe($table);
             $stmts = array_merge($stmts, $dialect->truncateTableSql($table));
         }
 
         static::executeStatements(ConnectionManager::get($connectionName), $stmts);
+    }
+
+    /**
+     * Unset the phinx migration tables from an array of tables.
+     *
+     * @param  string[] $tables Array of strings with table names.
+     * @return array
+     */
+    private static function unsetMigrationTables(array $tables): array
+    {
+        $endsWithPhinxlog = function (string $string) {
+            $needle = 'phinxlog';
+
+            return substr($string, -strlen($needle)) === $needle;
+        };
+
+        foreach ($tables as $i => $table) {
+            if ($endsWithPhinxlog($table)) {
+                unset($tables[$i]);
+            }
+        }
+
+        return array_values($tables);
     }
 
     /**
@@ -95,11 +117,13 @@ class SchemaCleaner
     }
 
     /**
+     *
+     * @param string $msg Message to display.
+     *
      * @param \Cake\Console\ConsoleIo|null $io Console IO.
-     * @param string         $msg Message to display.
      * @return void
      */
-    private static function info($io, string $msg): void
+    private static function info(string $msg, ?ConsoleIo $io): void
     {
         if ($io instanceof ConsoleIo) {
             $io->info($msg);

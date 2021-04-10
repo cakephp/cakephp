@@ -59,12 +59,12 @@ class SchemaManager
 
         foreach ($files as $file) {
             if (!file_exists($file)) {
-                throw new \RuntimeException(__('cake', 'The file {0} was not found.', $file));
+                throw new \RuntimeException('The file {0} was not found.', $file);
             }
 
             $sql = file_get_contents($file);
             if ($sql === false) {
-                throw new \RuntimeException(__('cake', 'The file {0} could not be read.', $file));
+                throw new \RuntimeException('The file {0} could not be read.', $file);
             }
 
             ConnectionManager::get($connectionName)->execute($sql);

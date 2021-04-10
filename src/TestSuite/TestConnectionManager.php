@@ -39,29 +39,6 @@ final class TestConnectionManager
     }
 
     /**
-     * Unset the phinx migration tables from an array of tables.
-     *
-     * @param  string[] $tables Array of strings with table names.
-     * @return array
-     */
-    public static function unsetMigrationTables(array $tables): array
-    {
-        $endsWithPhinxlog = function (string $string) {
-            $needle = 'phinxlog';
-
-            return substr($string, -strlen($needle)) === $needle;
-        };
-
-        foreach ($tables as $i => $table) {
-            if ($endsWithPhinxlog($table)) {
-                unset($tables[$i]);
-            }
-        }
-
-        return array_values($tables);
-    }
-
-    /**
      * Add aliases for all non test prefixed connections.
      *
      * This allows models to use the test connections without
