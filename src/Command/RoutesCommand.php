@@ -43,10 +43,7 @@ class RoutesCommand extends Command
         $output = [];
 
         foreach (Router::routes() as $route) {
-            $methods = '';
-            if (isset($route->defaults['_method']) && is_array($route->defaults['_method'])) {
-                $methods = implode(', ', $route->defaults['_method']);
-            }
+            $methods = $route->defaults['_method'] ?? '';
 
             $item = [
                 $route->options['_name'] ?? $route->getName(),
@@ -55,7 +52,7 @@ class RoutesCommand extends Command
                 $route->defaults['prefix'] ?? '',
                 $route->defaults['controller'] ?? '',
                 $route->defaults['action'] ?? '',
-                $methods,
+                is_string($methods) ? $methods : implode(', ', $route->defaults['_method']),
             ];
 
             if ($args->getOption('verbose')) {
