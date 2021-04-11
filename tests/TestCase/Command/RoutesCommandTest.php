@@ -71,26 +71,46 @@ class RoutesCommandTest extends TestCase
      */
     public function testRouteList()
     {
-        $this->exec('routes');
+        $this->exec('routes -v');
         $this->assertExitCode(Command::CODE_SUCCESS);
         $this->assertOutputContainsRow([
             '<info>Route name</info>',
             '<info>URI template</info>',
-            '<info>Defaults</info>',
+            '<info>Controller</info>',
+            '<info>Action</info>',
+            '<info>Plugin</info>',
+            '<info>Prefix</info>',
+            '<info>Method(s)</info>',
+            '<info>Defaults</info>'
         ]);
         $this->assertOutputContainsRow([
             'articles:_action',
             '/app/articles/:action/*',
+            'Articles',
+            'index',
+            '',
+            '',
+            '',
             '{"action":"index","controller":"Articles","plugin":null}',
         ]);
         $this->assertOutputContainsRow([
             'bake._controller:_action',
             '/bake/:controller/:action',
+            '',
+            'index',
+            'Bake',
+            '',
+            '',
             '{"action":"index","plugin":"Bake"}',
         ]);
         $this->assertOutputContainsRow([
             'testName',
             '/app/tests/:action/*',
+            'Tests',
+            'index',
+            '',
+            '',
+            '',
             '{"action":"index","controller":"Tests","plugin":null}',
         ]);
     }

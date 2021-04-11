@@ -35,14 +35,43 @@ class RoutesCommand extends Command
      */
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
-        $output = [
-            ['Route name', 'URI template', 'Defaults'],
-        ];
-        foreach (Router::routes() as $route) {
-            $name = $route->options['_name'] ?? $route->getName();
-            ksort($route->defaults);
-            $output[] = [$name, $route->template, json_encode($route->defaults)];
+        $header = ['Route name', 'URI template', 'Controller', 'Action', 'Plugin', 'Prefix', 'Method(s)'];
+        if ($args->getOption('verbose') !== null) {
+            $header[] = 'Defaults';
         }
+
+        $output = [];
+
+        foreach (Router::routes() as $route) {
+            $methods = '';
+            if (isset($route->defaults['_method']) && is_array($route->defaults['_method'])) {
+                $methods = implode(', ', $route->defaults['_method']);
+            }
+
+            $item = [
+                $route->options['_name'] ?? $route->getName(),
+                $route->template,
+                $route->defaults['controller'] ?? '',
+                $route->defaults['action'] ?? '',
+                $route->defaults['plugin'] ?? '',
+                $route->defaults['prefix'] ?? '',
+                $methods,
+            ];
+
+            if ($args->getOption('verbose') !== null) {
+                ksort($route->defaults);
+                $item[] = json_encode($route->defaults);
+            }
+
+            $output[] = $item;
+        }
+
+        usort($output, function ($a, $b) {
+            return strcasecmp($a[0], $b[0]);
+        });
+
+        array_unshift($output, $header);
+
         $io->helper('table')->output($output);
         $io->out();
 
@@ -57,7 +86,12 @@ class RoutesCommand extends Command
      */
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
-        $parser->setDescription('Get the list of routes connected in this application.');
+        $parser
+            ->setDescription('Get the list of routes connected in this application.')
+            ->addOption('verbose', [
+                'help' => 'Display verbose output',
+                'short' => 'v',
+            ]);
 
         return $parser;
     }
