@@ -59,21 +59,19 @@ class SchemaManager
 
         foreach ($files as $file) {
             if (!file_exists($file)) {
-                throw new \RuntimeException('The file {0} was not found.', $file);
+                throw new \RuntimeException('The file ' . $file . ' could not found.');
             }
 
             $sql = file_get_contents($file);
             if ($sql === false) {
-                throw new \RuntimeException('The file {0} could not be read.', $file);
+                throw new \RuntimeException('The file ' . $file . ' could not read.');
             }
 
             ConnectionManager::get($connectionName)->execute($sql);
 
-            $migrator->io->success(__d(
-                'cake',
-                'Dump of schema in file {0} for connection {1} successful.',
-                [$file, $connectionName]
-            ));
+            $migrator->io->success(
+                'Dump of schema in file ' . $file . ' for connection ' . $connectionName . ' successful.'
+            );
         }
 
         SchemaCleaner::truncate($connectionName, $migrator->io);

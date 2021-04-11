@@ -54,8 +54,8 @@ class SchemaCleaner
     /**
      * Truncate all tables of the provided connection.
      *
-     * @param \Cake\Console\ConsoleIo|null $io Console IO to output the processes.
      * @param string $connectionName Name of the connection.
+     * @param \Cake\Console\ConsoleIo|null $io Console IO to output the processes.
      * @return void
      * @throws \Exception if the truncation failed.
      */
@@ -117,9 +117,7 @@ class SchemaCleaner
     }
 
     /**
-     *
      * @param string $msg Message to display.
-     *
      * @param \Cake\Console\ConsoleIo|null $io Console IO.
      * @return void
      */
