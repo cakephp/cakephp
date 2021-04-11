@@ -180,7 +180,8 @@ trait PluginAssetsTrait
 
         if (is_link($dest)) {
             // phpcs:ignore
-            if (@unlink($dest)) {
+            $success = DS === '\\' ? @rmdir($dest) : @unlink($dest);
+            if ($success) {
                 $this->io->out('Unlinked ' . $dest);
 
                 return true;
