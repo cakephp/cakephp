@@ -36,7 +36,7 @@ class RoutesCommand extends Command
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
         $header = ['Route name', 'URI template', 'Controller', 'Action', 'Plugin', 'Prefix', 'Method(s)'];
-        if ($args->getOption('verbose') !== null) {
+        if ($args->getOption('verbose')) {
             $header[] = 'Defaults';
         }
 
