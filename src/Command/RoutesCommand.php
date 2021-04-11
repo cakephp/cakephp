@@ -58,7 +58,7 @@ class RoutesCommand extends Command
                 $methods,
             ];
 
-            if ($args->getOption('verbose') === true) {
+            if ($args->getOption('verbose')) {
                 ksort($route->defaults);
                 $item[] = json_encode($route->defaults);
             }
