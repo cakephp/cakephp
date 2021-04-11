@@ -81,7 +81,7 @@ class RoutesCommandTest extends TestCase
             '<info>Plugin</info>',
             '<info>Prefix</info>',
             '<info>Method(s)</info>',
-            '<info>Defaults</info>'
+            '<info>Defaults</info>',
         ]);
         $this->assertOutputContainsRow([
             'articles:_action',
