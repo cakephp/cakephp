@@ -91,7 +91,6 @@ class TaskRegistry extends ObjectRegistry
      */
     protected function _create($class, string $alias, array $config): Shell
     {
-        // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.InvalidFormat
         /** @var \Cake\Console\Shell */
         return new $class($this->_Shell->getIo());
     }

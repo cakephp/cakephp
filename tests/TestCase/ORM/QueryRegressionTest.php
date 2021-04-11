@@ -1617,33 +1617,6 @@ class QueryRegressionTest extends TestCase
     }
 
     /**
-     * Tests that decorating the results does not result in a memory leak
-     *
-     * @return void
-     */
-    public function testFormatResultsMemoryLeak()
-    {
-        $this->loadFixtures('Articles', 'Authors', 'Tags', 'ArticlesTags');
-        $this->skipIf((bool)env('CODECOVERAGE'), 'Running coverage this causes this tests to fail sometimes.');
-        $table = $this->getTableLocator()->get('Articles');
-        $table->belongsTo('Authors');
-        $table->belongsToMany('Tags');
-        gc_collect_cycles();
-        $memory = memory_get_usage() / 1024 / 1024;
-        foreach (range(1, 3) as $time) {
-                $table->find()
-                ->contain(['Authors', 'Tags'])
-                ->formatResults(function ($results) {
-                    return $results;
-                })
-                ->all();
-        }
-        gc_collect_cycles();
-        $endMemory = memory_get_usage() / 1024 / 1024;
-        $this->assertWithinRange($endMemory, $memory, 1.5, 'Memory leak in ResultSet');
-    }
-
-    /**
      * Tests that having bound placeholders in the order clause does not result
      * in an error when trying to count a query.
      *

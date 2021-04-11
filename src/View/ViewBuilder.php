@@ -570,7 +570,6 @@ class ViewBuilder implements JsonSerializable, Serializable
         ];
         $data += $this->_options;
 
-        // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.InvalidFormat
         /** @var \Cake\View\View */
         return new $className($request, $response, $events, $data);
     }

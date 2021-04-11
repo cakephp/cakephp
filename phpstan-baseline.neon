@@ -61,6 +61,11 @@ parameters:
 			path: src/Collection/Iterator/TreeIterator.php
 
 		-
+			message: "#^Parameter \\#1 \\$items of class Cake\\\\Collection\\\\Iterator\\\\TreePrinter constructor expects RecursiveIterator, Iterator\\<mixed, mixed\\> given\\.$#"
+			count: 1
+			path: src/Collection/Iterator/TreeIterator.php
+
+		-
 			message: "#^Parameter \\#1 \\$iterator of class LimitIterator constructor expects Iterator, Countable&Traversable\\<mixed, mixed\\> given\\.$#"
 			count: 2
 			path: src/Collection/Iterator/TreePrinter.php
@@ -292,11 +297,6 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method DateTimeInterface\\:\\:setTimezone\\(\\)\\.$#"
-			count: 1
-			path: src/Http/Cookie/Cookie.php
-
-		-
-			message: "#^Method Cake\\\\Http\\\\Cookie\\\\Cookie\\:\\:createFromHeaderString\\(\\) should return static\\(Cake\\\\Http\\\\Cookie\\\\Cookie\\) but returns Cake\\\\Http\\\\Cookie\\\\Cookie\\.$#"
 			count: 1
 			path: src/Http/Cookie/Cookie.php
 

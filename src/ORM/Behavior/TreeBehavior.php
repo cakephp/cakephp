@@ -828,47 +828,41 @@ class TreeBehavior extends Behavior
     /**
      * Recursive method used to recover a single level of the tree
      *
-     * @param int $counter The Last left column value that was assigned
+     * @param int $lftRght The starting lft/rght value
      * @param mixed $parentId the parent id of the level to be recovered
      * @param int $level Node level
-     * @return int The next value to use for the left column
+     * @return int The next lftRght value
      */
-    protected function _recoverTree(int $counter = 0, $parentId = null, $level = -1): int
+    protected function _recoverTree(int $lftRght = 1, $parentId = null, $level = 0): int
     {
         $config = $this->getConfig();
         [$parent, $left, $right] = [$config['parent'], $config['left'], $config['right']];
         $primaryKey = $this->_getPrimaryKey();
-        $aliasedPrimaryKey = $this->_table->aliasField($primaryKey);
-        $order = $config['recoverOrder'] ?: $aliasedPrimaryKey;
+        $order = $config['recoverOrder'] ?: $primaryKey;
 
-        $query = $this->_scope($this->_table->query())
-            ->select([$aliasedPrimaryKey])
-            ->where([$this->_table->aliasField($parent) . ' IS' => $parentId])
+        $nodes = $this->_scope($this->_table->query())
+            ->select($primaryKey)
+            ->where([$parent . ' IS' => $parentId])
             ->order($order)
-            ->disableHydration();
+            ->disableHydration()
+            ->all();
 
-        $leftCounter = $counter;
-        $nextLevel = $level + 1;
-        foreach ($query as $row) {
-            $counter++;
-            $counter = $this->_recoverTree($counter, $row[$primaryKey], $nextLevel);
+        foreach ($nodes as $node) {
+            $nodeLft = $lftRght++;
+            $lftRght = $this->_recoverTree($lftRght, $node[$primaryKey], $level + 1);
+
+            $fields = [$left => $nodeLft, $right => $lftRght++];
+            if ($config['level']) {
+                $fields[$config['level']] = $level;
+            }
+
+            $this->_table->updateAll(
+                $fields,
+                [$primaryKey => $node[$primaryKey]]
+            );
         }
 
-        if ($parentId === null) {
-            return $counter;
-        }
-
-        $fields = [$left => $leftCounter, $right => $counter + 1];
-        if ($config['level']) {
-            $fields[$config['level']] = $level;
-        }
-
-        $this->_table->updateAll(
-            $fields,
-            [$primaryKey => $parentId]
-        );
-
-        return $counter + 1;
+        return $lftRght;
     }
 
     /**

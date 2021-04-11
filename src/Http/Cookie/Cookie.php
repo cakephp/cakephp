@@ -236,7 +236,7 @@ class Cookie implements CookieInterface
      * Converts non null expiry value into DateTimeInterface instance.
      *
      * @param mixed $expires Expiry value.
-     * @return \DateTimeInterface|null
+     * @return \DateTime|\DatetimeImmutable|null
      */
     protected static function dateTimeInstance($expires): ?DateTimeInterface
     {

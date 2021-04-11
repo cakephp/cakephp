@@ -1478,11 +1478,11 @@ class Validation
     }
 
     /**
-     * Validates the image width.
+     * Validates the image height.
      *
      * @param mixed $file The uploaded file data from PHP.
      * @param string $operator Comparison operator.
-     * @param int $height Min or max width.
+     * @param int $height Min or max height.
      * @return bool
      */
     public static function imageHeight($file, string $operator, int $height): bool

@@ -234,7 +234,6 @@ class PluginCollection implements Iterator, Countable
     public function create(string $name, array $config = []): PluginInterface
     {
         if (strpos($name, '\\') !== false) {
-            // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.InvalidFormat
             /** @var \Cake\Core\PluginInterface */
             return new $name($config);
         }

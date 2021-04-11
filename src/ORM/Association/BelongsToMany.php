@@ -932,6 +932,7 @@ class BelongsToMany extends Association
             return true;
         }
 
+        /** @var \SplObjectStorage<\Cake\Datasource\EntityInterface, null> $storage*/
         $storage = new SplObjectStorage();
         foreach ($targetEntities as $e) {
             $storage->attach($e);

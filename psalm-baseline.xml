@@ -102,9 +102,6 @@
       <code>$value</code>
     </InvalidScalarArgument>
   </file>
-  <file src="src/Database/Query.php">
-    <InvalidArgument occurrences="1"/>
-  </file>
   <file src="src/Database/Schema/MysqlSchemaDialect.php">
     <NonInvariantDocblockPropertyType occurrences="1">
       <code>$_driver</code>
@@ -120,19 +117,9 @@
       <code>$this</code>
     </DeprecatedClass>
   </file>
-  <file src="src/Datasource/RulesAwareTrait.php">
-    <ArgumentTypeCoercion occurrences="1">
-      <code>new $class(['repository' =&gt; $this])</code>
-    </ArgumentTypeCoercion>
-  </file>
   <file src="src/Http/BaseApplication.php">
     <ArgumentTypeCoercion occurrences="1">
       <code>$request</code>
-    </ArgumentTypeCoercion>
-  </file>
-  <file src="src/Http/Cookie/Cookie.php">
-    <ArgumentTypeCoercion occurrences="1">
-      <code>$options['expires']</code>
     </ArgumentTypeCoercion>
   </file>
   <file src="src/Http/ServerRequest.php">
@@ -140,20 +127,10 @@
       <code>$this-&gt;data</code>
     </ArgumentTypeCoercion>
   </file>
-  <file src="src/I18n/Date.php">
-    <ArgumentTypeCoercion occurrences="1">
-      <code>$time</code>
-    </ArgumentTypeCoercion>
-  </file>
   <file src="src/I18n/DateFormatTrait.php">
     <MissingParamType occurrences="1">
       <code>$format</code>
     </MissingParamType>
-  </file>
-  <file src="src/I18n/FrozenDate.php">
-    <ArgumentTypeCoercion occurrences="1">
-      <code>$time</code>
-    </ArgumentTypeCoercion>
   </file>
   <file src="src/I18n/functions.php">
     <InternalMethod occurrences="8">
@@ -167,11 +144,6 @@
       <code>translate</code>
     </InternalMethod>
   </file>
-  <file src="src/ORM/Association/BelongsToMany.php">
-    <InvalidArgument occurrences="1">
-      <code>$e</code>
-    </InvalidArgument>
-  </file>
   <file src="src/ORM/Locator/LocatorAwareTrait.php">
     <DeprecatedClass occurrences="1">
       <code>$this</code>
@@ -181,12 +153,6 @@
     <NonInvariantDocblockPropertyType occurrences="1">
       <code>$instances</code>
     </NonInvariantDocblockPropertyType>
-  </file>
-  <file src="src/ORM/Marshaller.php">
-    <ArgumentTypeCoercion occurrences="2">
-      <code>$assoc</code>
-      <code>$assoc</code>
-    </ArgumentTypeCoercion>
   </file>
   <file src="src/ORM/Query.php">
     <ArgumentTypeCoercion occurrences="1">

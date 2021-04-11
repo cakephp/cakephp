@@ -124,10 +124,10 @@ class FrozenDate extends ChronosDate implements I18nDateTimeInterface
      *
      * Date instances lack time components, however due to limitations in PHP's
      * internal Datetime object the time will always be set to 00:00:00, and the
-     * timezone will always be UTC. Normalizing the timezone allows for
+     * timezone will always be the server local time. Normalizing the timezone allows for
      * subtraction/addition to have deterministic results.
      *
-     * @param string|int|\DateTimeInterface|null $time Fixed or relative time
+     * @param string|int|\DateTime|\DateTimeImmutable|null $time Fixed or relative time
      * @param \DateTimeZone|string|null $tz The timezone in which the date is taken.
      *                                  Ignored if `$time` is a DateTimeInterface instance.
      */

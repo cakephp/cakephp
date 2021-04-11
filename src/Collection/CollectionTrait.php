@@ -270,8 +270,8 @@ trait CollectionTrait
             $pathValue = $callback($value);
             if ($pathValue === null) {
                 throw new InvalidArgumentException(
-                    'Cannot use a nonexistent path or null value. ' .
-                    'Use a callback to provide default values if necessary.'
+                    'Cannot group by path that does not exist or contains a null value. ' .
+                    'Use a callback to return a default value for that path.'
                 );
             }
             $group[$pathValue][] = $value;
@@ -291,8 +291,8 @@ trait CollectionTrait
             $pathValue = $callback($value);
             if ($pathValue === null) {
                 throw new InvalidArgumentException(
-                    'Cannot use a nonexistent path or null value. ' .
-                    'Use a callback to provide default values if necessary.'
+                    'Cannot index by path that does not exist or contains a null value. ' .
+                    'Use a callback to return a default value for that path.'
                 );
             }
             $group[$pathValue] = $value;
@@ -954,10 +954,8 @@ trait CollectionTrait
 
             $currentIndexes[$lastIndex]++;
 
-            // phpcs:ignore Squiz.ControlStructures.ForLoopDeclaration.SpacingAfterFirst
             for (
                 $changeIndex = $lastIndex;
-                // phpcs:ignore Squiz.ControlStructures.ForLoopDeclaration.SpacingAfterSecond
                 $currentIndexes[$changeIndex] === $collectionArraysCounts[$changeIndex] && $changeIndex > 0;
                 $changeIndex--
             ) {
