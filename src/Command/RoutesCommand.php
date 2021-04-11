@@ -66,9 +66,11 @@ class RoutesCommand extends Command
             $output[] = $item;
         }
 
-        usort($output, function ($a, $b) {
-            return strcasecmp($a[0], $b[0]);
-        });
+        if ($args->getOption('sort') !== null) {
+            usort($output, function ($a, $b) {
+                return strcasecmp($a[0], $b[0]);
+            });
+        }
 
         array_unshift($output, $header);
 
@@ -91,6 +93,10 @@ class RoutesCommand extends Command
             ->addOption('verbose', [
                 'help' => 'Display verbose output',
                 'short' => 'v',
+            ])
+            ->addOption('sort', [
+                'help' => 'Sorts alphabetically by route name A-Z',
+                'short' => 's',
             ]);
 
         return $parser;

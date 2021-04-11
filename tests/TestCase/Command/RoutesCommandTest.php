@@ -71,7 +71,7 @@ class RoutesCommandTest extends TestCase
      */
     public function testRouteList()
     {
-        $this->exec('routes -v');
+        $this->exec('routes -v -s');
         $this->assertExitCode(Command::CODE_SUCCESS);
         $this->assertOutputContainsRow([
             '<info>Route name</info>',
