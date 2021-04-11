@@ -66,7 +66,7 @@ class RoutesCommand extends Command
             $output[] = $item;
         }
 
-        if ($args->getOption('sort') === true) {
+        if ($args->getOption('sort')) {
             usort($output, function ($a, $b) {
                 return strcasecmp($a[0], $b[0]);
             });
