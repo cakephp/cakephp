@@ -39,19 +39,19 @@ jobs:
 
     steps:
     - name: Setup MySQL latest
-      if: matrix.db-type == 'mysql' && matrix.php-version == '7.2'
+      if: matrix.db-type == 'mysql' && matrix.php-version != '7.2'
       run: docker run --rm --name=mysqld -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=cakephp -p 3306:3306 -d mysql --default-authentication-plugin=mysql_native_password --disable-log-bin
 
     - name: Setup MySQL 5.6
-      if: matrix.db-type == 'mysql' && matrix.php-version != '7.2'
+      if: matrix.db-type == 'mysql' && matrix.php-version == '7.2'
       run: docker run --rm --name=mysqld -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=cakephp -p 3306:3306 -d mysql:5.6 --character-set-server=utf8
 
     - name: Setup PostgreSQL latest
-      if: matrix.db-type == 'pgsql' && matrix.php-version == '7.2'
+      if: matrix.db-type == 'pgsql' && matrix.php-version != '7.2'
       run: docker run --rm --name=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=cakephp -p 5432:5432 -d postgres
 
     - name: Setup PostgreSQL 9.4
-      if: matrix.db-type == 'pgsql' && matrix.php-version != '7.2'
+      if: matrix.db-type == 'pgsql' && matrix.php-version == '7.2'
       run: docker run --rm --name=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=cakephp -p 5432:5432 -d postgres:9.4
 
     - uses: getong/mariadb-action@v1.1
@@ -107,8 +107,8 @@ jobs:
         MEMCACHED_PORT: ${{ job.services.memcached.ports['11211'] }}
       run: |
         if [[ ${{ matrix.db-type }} == 'sqlite' ]]; then export DB_URL='sqlite:///:memory:'; fi
-        if [[ ${{ matrix.db-type }} == 'mysql' && ${{ matrix.php-version }} == '7.2' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp'; fi
-        if [[ ${{ matrix.db-type }} == 'mysql' && ${{ matrix.php-version }} != '7.2' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp?encoding=utf8'; fi
+        if [[ ${{ matrix.db-type }} == 'mysql' && ${{ matrix.php-version }} != '7.2' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp'; fi
+        if [[ ${{ matrix.db-type }} == 'mysql' && ${{ matrix.php-version }} == '7.2' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp?encoding=utf8'; fi
         if [[ ${{ matrix.db-type }} == 'mariadb' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp'; fi
         if [[ ${{ matrix.db-type }} == 'pgsql' ]]; then export DB_URL='postgres://postgres:postgres@127.0.0.1/postgres'; fi
 
@@ -215,7 +215,7 @@ jobs:
         path: ${{ steps.composer-cache.outputs.dir }}
         key: ${{ runner.os }}-composer-${{ steps.key-date.outputs.date }}-${{ hashFiles('composer.json') }}-${{ matrix.prefer-lowest }}
 
-    - name: Composer install
+    - name: composer install
       run: composer stan-setup
 
     - name: Run PHP CodeSniffer
