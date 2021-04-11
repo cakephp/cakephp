@@ -58,7 +58,7 @@ class RoutesCommand extends Command
                 $methods,
             ];
 
-            if ($args->getOption('verbose') !== null) {
+            if ($args->getOption('verbose') === true) {
                 ksort($route->defaults);
                 $item[] = json_encode($route->defaults);
             }
@@ -66,7 +66,7 @@ class RoutesCommand extends Command
             $output[] = $item;
         }
 
-        if ($args->getOption('sort') !== null) {
+        if ($args->getOption('sort') === true) {
             usort($output, function ($a, $b) {
                 return strcasecmp($a[0], $b[0]);
             });
@@ -93,6 +93,7 @@ class RoutesCommand extends Command
             ->addOption('sort', [
                 'help' => 'Sorts alphabetically by route name A-Z',
                 'short' => 's',
+                'boolean' => true,
             ]);
 
         return $parser;
