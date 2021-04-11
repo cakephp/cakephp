@@ -109,4 +109,26 @@ class FilesystemTest extends TestCase
 
         $this->assertTrue($return);
     }
+
+    /**
+     * Tests deleteDir() on directory that contains symlinks
+     *
+     * @return void
+     */
+    public function testDeleteDirWithLinks()
+    {
+        $path = TMP . 'fs_links_test';
+        // phpcs:ignore
+        @mkdir($path);
+        $target = $path . DS . 'target';
+        // phpcs:ignore
+        @mkdir($target);
+
+        $link = $path . DS . 'link';
+        // phpcs:ignore
+        @symlink($target, $link);
+
+        $this->assertTrue($this->fs->deleteDir($path));
+        $this->assertFalse(file_exists($link));
+    }
 }

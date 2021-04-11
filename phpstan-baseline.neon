@@ -1,6 +1,22 @@
 parameters:
 	ignoreErrors:
 		-
+			message: "#^Strict comparison using \\=\\=\\= between '/' and '\\\\\\\\' will always evaluate to false\\.$#"
+			path: src/Command/PluginAssetsTrait.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between \\*NEVER\\* and '\\\\\\\\' will always evaluate to false\\.$#"
+			path: src/Filesystem/Filesystem.php
+
+		-
+			message: "#^Result of && is always false.$#"
+			path: src/Filesystem/Filesystem.php
+
+		-
+			message: "#^Right side of \\|\\| is always false\\.$#"
+			path: src/Filesystem/Filesystem.php
+
+		-
 			message: "#^Strict comparison using \\=\\=\\= between string and false will always evaluate to false\\.$#"
 			count: 1
 			path: src/Auth/DigestAuthenticate.php
