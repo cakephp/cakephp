@@ -90,10 +90,6 @@ class RoutesCommand extends Command
     {
         $parser
             ->setDescription('Get the list of routes connected in this application.')
-            ->addOption('verbose', [
-                'help' => 'Display verbose output',
-                'short' => 'v',
-            ])
             ->addOption('sort', [
                 'help' => 'Sorts alphabetically by route name A-Z',
                 'short' => 's',
