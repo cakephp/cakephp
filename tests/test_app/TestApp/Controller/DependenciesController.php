@@ -47,7 +47,7 @@ class DependenciesController extends Controller
         return $this->response->withStringBody(json_encode(['args' => func_get_args()]));
     }
 
-    public function spread(...$args)
+    public function spread(string ...$args)
     {
         return $this->response->withStringBody(json_encode(['args' => $args]));
     }
