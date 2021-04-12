@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Command;
 
 use Cake\Command\Command;
+use Cake\Routing\Route\Route;
 use Cake\Routing\Router;
 use Cake\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
@@ -71,7 +72,54 @@ class RoutesCommandTest extends TestCase
      */
     public function testRouteList()
     {
-        $this->exec('routes -v -s');
+        $this->exec('routes');
+        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertOutputContainsRow([
+            '<info>Route name</info>',
+            '<info>URI template</info>',
+            '<info>Plugin</info>',
+            '<info>Prefix</info>',
+            '<info>Controller</info>',
+            '<info>Action</info>',
+            '<info>Method(s)</info>',
+        ]);
+        $this->assertOutputContainsRow([
+            'articles:_action',
+            '/app/articles/:action/*',
+            '',
+            '',
+            'Articles',
+            'index',
+            '',
+        ]);
+        $this->assertOutputContainsRow([
+            'bake._controller:_action',
+            '/bake/:controller/:action',
+            'Bake',
+            '',
+            '',
+            'index',
+            '',
+        ]);
+        $this->assertOutputContainsRow([
+            'testName',
+            '/app/tests/:action/*',
+            '',
+            '',
+            'Tests',
+            'index',
+            '',
+        ]);
+    }
+
+    /**
+     * Test routes with --verbose option
+     *
+     * @return void
+     */
+    public function testRouteListVerbose()
+    {
+        $this->exec('routes -v');
         $this->assertExitCode(Command::CODE_SUCCESS);
         $this->assertOutputContainsRow([
             '<info>Route name</info>',
@@ -93,26 +141,23 @@ class RoutesCommandTest extends TestCase
             '',
             '{"action":"index","controller":"Articles","plugin":null}',
         ]);
-        $this->assertOutputContainsRow([
-            'bake._controller:_action',
-            '/bake/:controller/:action',
-            'Bake',
-            '',
-            '',
-            'index',
-            '',
-            '{"action":"index","plugin":"Bake"}',
-        ]);
-        $this->assertOutputContainsRow([
-            'testName',
-            '/app/tests/:action/*',
-            '',
-            '',
-            'Tests',
-            'index',
-            '',
-            '{"action":"index","controller":"Tests","plugin":null}',
-        ]);
+    }
+
+    /**
+     * Test routes with --sort option
+     *
+     * @return void
+     */
+    public function testRouteListSorted()
+    {
+        Router::connect(
+            new Route('/a/route/sorted', [], ['_name' => '_aRoute'])
+        );
+
+        $this->exec('routes -s');
+        $this->assertExitCode(Command::CODE_SUCCESS);
+        $messages = $this->getMessages();
+        $this->assertOutputContains('_aRoute', $messages[3]);
     }
 
     /**
