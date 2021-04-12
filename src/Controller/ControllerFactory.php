@@ -126,8 +126,6 @@ class ControllerFactory implements ControllerFactoryInterface
                     $args[$position] = array_shift($passed);
                 } elseif ($hasDefault) {
                     $args[$position] = $parameter->getDefaultValue();
-                } elseif (!$parameter->isVariadic()) {
-                    $args[$position] = '';
                 }
                 continue;
             }

@@ -27,6 +27,11 @@ class DependenciesController extends Controller
         $this->inject = $inject;
     }
 
+    public function requiredString(string $str)
+    {
+        return $this->response->withStringBody(json_encode(compact('str')));
+    }
+
     public function optionalString(string $str = 'default val')
     {
         return $this->response->withStringBody(json_encode(compact('str')));
