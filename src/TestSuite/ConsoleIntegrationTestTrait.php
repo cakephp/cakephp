@@ -145,16 +145,6 @@ trait ConsoleIntegrationTestTrait
     }
 
     /**
-     * Get an array of messages from \Cake\TestSuite\Stub\ConsoleOutput::messages()
-     *
-     * @return array
-     */
-    public function getMessages(): array
-    {
-        return $this->_out->messages();
-    }
-
-    /**
      * Asserts shell exited with the expected code
      *
      * @param int $expected Expected exit code
