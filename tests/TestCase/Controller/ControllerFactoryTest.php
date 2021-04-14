@@ -711,4 +711,26 @@ class ControllerFactoryTest extends TestCase
         $this->assertNotNull($data);
         $this->assertSame('default val', $data->str);
     }
+
+    /**
+     * Test that required strings a default value.
+     *
+     * @return void
+     */
+    public function testInvokeRequiredStringParam()
+    {
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/requiredString',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'requiredString',
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+
+        $this->expectException(ArgumentCountError::class);
+        $this->expectExceptionMessage('Too few arguments');
+        $this->factory->invoke($controller);
+    }
 }
