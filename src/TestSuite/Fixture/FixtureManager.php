@@ -430,7 +430,14 @@ class FixtureManager extends FixtureLoader
     }
 
     /**
-     * @inheritDoc
+     * Loads the data for a single fixture.
+     *
+     * @param string $name of the fixture
+     * @param \Cake\Datasource\ConnectionInterface|null $connection Connection instance or null
+     *  to get a Connection from the fixture.
+     * @param bool $dropTables Whether or not to drop tables.
+     * @return void
+     * @throws \UnexpectedValueException if $name is not a previously fixtures class
      */
     public function loadSingle(string $name, ?ConnectionInterface $connection = null, bool $dropTables = true): void
     {
