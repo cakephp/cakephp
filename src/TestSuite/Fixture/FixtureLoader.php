@@ -46,7 +46,7 @@ abstract class FixtureLoader
      *
      * @return \Cake\TestSuite\Fixture\FixtureLoader|null
      */
-    public static function getInstance(): self
+    public static function getInstance(): ?self
     {
         return static::$instance;
     }
