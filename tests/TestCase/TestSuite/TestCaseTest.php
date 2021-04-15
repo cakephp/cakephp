@@ -109,44 +109,6 @@ class TestCaseTest extends TestCase
     }
 
     /**
-     * testLoadFixturesOnDemand
-     *
-     * @return void
-     */
-    public function testLoadFixturesOnDemand()
-    {
-        $test = new FixturizedTestCase('testFixtureLoadOnDemand');
-        $test->autoFixtures = false;
-        $manager = $this->getMockBuilder('Cake\TestSuite\Fixture\FixtureManager')->getMock();
-        $manager->fixturize($test);
-        $test->fixtureManager = $manager;
-        $manager->expects($this->once())->method('loadSingle');
-        $result = $test->run();
-
-        $this->assertSame(0, $result->errorCount());
-    }
-
-    /**
-     * tests loadFixtures loads all fixtures on the test
-     *
-     * @return void
-     */
-    public function testLoadAllFixtures()
-    {
-        $test = new FixturizedTestCase('testLoadAllFixtures');
-        $test->autoFixtures = false;
-        $manager = new FixtureManager();
-        $manager->fixturize($test);
-        $test->fixtureManager = $manager;
-
-        $result = $test->run();
-
-        $this->assertSame(0, $result->errorCount());
-        $this->assertCount(1, $result->passed());
-        $this->assertFalse($test->autoFixtures);
-    }
-
-    /**
      * testSkipIf
      *
      * @return void

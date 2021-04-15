@@ -32,7 +32,7 @@ use UnexpectedValueException;
 /**
  * A factory class to manage the life cycle of test fixtures
  */
-class FixtureManager
+class FixtureManager extends FixtureLoader
 {
     /**
      * Was this instance already initialized?
@@ -89,10 +89,7 @@ class FixtureManager
     }
 
     /**
-     * Inspects the test to look for unloaded fixtures and loads them
-     *
-     * @param \Cake\TestSuite\TestCase $test The test case to inspect.
-     * @return void
+     * @inheritDoc
      */
     public function fixturize(TestCase $test): void
     {
@@ -105,9 +102,7 @@ class FixtureManager
     }
 
     /**
-     * Get the loaded fixtures.
-     *
-     * @return \Cake\Datasource\FixtureInterface[]
+     * @inheritDoc
      */
     public function loaded(): array
     {
@@ -269,12 +264,7 @@ class FixtureManager
     }
 
     /**
-     * Creates the fixtures tables and inserts data on them.
-     *
-     * @param \Cake\TestSuite\TestCase $test The test to inspect for fixture loading.
-     * @return void
-     * @throws \Cake\Core\Exception\CakeException When fixture records cannot be inserted.
-     * @throws \RuntimeException
+     * @inheritDoc
      */
     public function load(TestCase $test): void
     {
@@ -440,14 +430,7 @@ class FixtureManager
     }
 
     /**
-     * Creates a single fixture table and loads data into it.
-     *
-     * @param string $name of the fixture
-     * @param \Cake\Datasource\ConnectionInterface|null $connection Connection instance or null
-     *  to get a Connection from the fixture.
-     * @param bool $dropTables Whether or not tables should be dropped and re-created.
-     * @return void
-     * @throws \UnexpectedValueException if $name is not a previously loaded class
+     * @inheritDoc
      */
     public function loadSingle(string $name, ?ConnectionInterface $connection = null, bool $dropTables = true): void
     {

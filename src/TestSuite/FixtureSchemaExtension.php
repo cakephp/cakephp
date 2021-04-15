@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite;
 
+use Cake\TestSuite\Fixture\FixtureDataManager;
+use Cake\TestSuite\Fixture\FixtureLoader;
 use Cake\TestSuite\Fixture\TransactionStrategy;
 use PHPUnit\Runner\AfterTestHook;
 use PHPUnit\Runner\BeforeTestHook;
@@ -42,7 +44,7 @@ class FixtureSchemaExtension implements
         $enableLogging = in_array('--debug', $_SERVER['argv'] ?? [], true);
         $this->state = new $stateStrategy($enableLogging);
 
-        // TODO Create the singleton fixture manager that tests will use.
+        FixtureLoader::setInstance(new FixtureDataManager());
     }
 
     /**

@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite\Fixture;
 
+use Cake\TestSuite\Fix;
 use Cake\TestSuite\TestCase;
 use Cake\TestSuite\TestListenerTrait;
 use PHPUnit\Framework\Test;
@@ -29,13 +30,6 @@ use PHPUnit\Framework\TestSuite;
 class FixtureInjector implements TestListener
 {
     use TestListenerTrait;
-
-    /**
-     * The instance of the fixture manager to use
-     *
-     * @var \Cake\TestSuite\Fixture\FixtureManager
-     */
-    protected $_fixtureManager;
 
     /**
      * Holds a reference to the container test suite
@@ -54,6 +48,7 @@ class FixtureInjector implements TestListener
         if (isset($_SERVER['argv'])) {
             $manager->setDebug(in_array('--debug', $_SERVER['argv'], true));
         }
+        FixtureLoader::setInstance($manager);
         $this->_fixtureManager = $manager;
         $this->_fixtureManager->shutDown();
     }
@@ -94,9 +89,6 @@ class FixtureInjector implements TestListener
      */
     public function startTest(Test $test): void
     {
-        // TODO replace this with reading from the singleton
-        /** @psalm-suppress NoInterfaceProperties */
-        $test->fixtureManager = $this->_fixtureManager;
         if ($test instanceof TestCase) {
             $this->_fixtureManager->fixturize($test);
             $this->_fixtureManager->load($test);
