@@ -152,27 +152,32 @@ trait TranslateStrategyTrait
 
         return [
             '_translations' => function ($value, $entity) use ($marshaller, $options) {
-                /** @var \Cake\Datasource\EntityInterface $entity */
+                if (!is_array($value)) {
+                    return null;
+                }
+
+                /** @var array<string, \Cake\Datasource\EntityInterface>|null $translations */
                 $translations = $entity->get('_translations');
-                foreach ($this->_config['fields'] as $field) {
-                    $options['validate'] = $this->_config['validator'];
-                    $errors = [];
-                    if (!is_array($value)) {
-                        return null;
+                if ($translations === null) {
+                    $translations = [];
+                }
+
+                $options['validate'] = $this->_config['validator'];
+                $errors = [];
+                foreach ($value as $language => $fields) {
+                    if (!isset($translations[$language])) {
+                        $translations[$language] = $this->table->newEmptyEntity();
                     }
-                    foreach ($value as $language => $fields) {
-                        if (!isset($translations[$language])) {
-                            $translations[$language] = $this->table->newEmptyEntity();
-                        }
-                        $marshaller->merge($translations[$language], $fields, $options);
-                        /** @var \Cake\Datasource\EntityInterface $translation */
-                        $translation = $translations[$language];
-                        if ((bool)$translation->getErrors()) {
-                            $errors[$language] = $translation->getErrors();
-                        }
+                    $marshaller->merge($translations[$language], $fields, $options);
+
+                    $translationErrors = $translations[$language]->getErrors();
+                    if ($translationErrors) {
+                        $errors[$language] = $translationErrors;
                     }
-                    // Set errors into the root entity, so validation errors
-                    // match the original form data position.
+                }
+
+                // Set errors into the root entity, so validation errors match the original form data position.
+                if ($errors) {
                     $entity->setErrors($errors);
                 }
 
