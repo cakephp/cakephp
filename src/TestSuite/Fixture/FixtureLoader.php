@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -14,6 +15,7 @@ declare(strict_types=1);
  * @since         4.3.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace Cake\TestSuite\Fixture;
 
 use Cake\Datasource\ConnectionInterface;
@@ -57,10 +59,16 @@ abstract class FixtureLoader
      * @param string $name of the fixture
      * @param \Cake\Datasource\ConnectionInterface|null $connection Connection instance or null
      *  to get a Connection from the fixture.
+     * @param bool $dropTables Whether or not tables should be dropped. Not all implementations
+     *   support this parameter.
      * @return void
      * @throws \UnexpectedValueException if $name is not a previously fixtures class
      */
-    abstract public function loadSingle(string $name, ?ConnectionInterface $connection = null): void;
+    abstract public function loadSingle(
+        string $name,
+        ?ConnectionInterface $connection = null,
+        bool $dropTables = true
+    ): void;
 
     /**
      * Creates records defined in a test case's fixtures.
