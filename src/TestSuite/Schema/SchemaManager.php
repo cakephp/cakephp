@@ -54,8 +54,9 @@ class SchemaManager
         $files = (array)$file;
 
         $migrator = new static($verbose);
+        $schemaCleaner = new SchemaCleaner($migrator->io);
 
-        SchemaCleaner::drop($connectionName, $migrator->io);
+        $schemaCleaner->drop($connectionName);
 
         foreach ($files as $file) {
             if (!file_exists($file)) {
@@ -74,6 +75,6 @@ class SchemaManager
             );
         }
 
-        SchemaCleaner::truncate($connectionName, $migrator->io);
+        $schemaCleaner->truncate($connectionName);
     }
 }

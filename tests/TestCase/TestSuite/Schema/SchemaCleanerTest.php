@@ -55,7 +55,7 @@ class SchemaCleanerTest extends TestCase
         $this->assertSame(['test_table'], $tables, 'The schema should not be empty.');
 
         // Drop the schema
-        SchemaCleaner::drop('test');
+        (new SchemaCleaner())->drop('test');
 
         // Schema is empty
         $tables = $connection->execute($stmt[0])->count();
@@ -68,7 +68,7 @@ class SchemaCleanerTest extends TestCase
 
         $this->createSchemas();
 
-        SchemaCleaner::truncate('test');
+        (new SchemaCleaner())->truncate('test');
 
         $this->assertSame(
             0,
@@ -82,7 +82,8 @@ class SchemaCleanerTest extends TestCase
 
     private function createSchemas()
     {
-        SchemaCleaner::drop('test');
+        $schemaCleaner = new SchemaCleaner();
+        $schemaCleaner->drop('test');
 
         $connection = ConnectionManager::get('test');
 

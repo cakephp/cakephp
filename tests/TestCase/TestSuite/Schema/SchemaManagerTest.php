@@ -27,7 +27,7 @@ class SchemaManagerTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        SchemaCleaner::drop('test');
+        (new SchemaCleaner())->drop('test');
     }
 
     public function testCreateFromOneFile()
