@@ -178,7 +178,7 @@ trait TranslateStrategyTrait
 
                 // Set errors into the root entity, so validation errors match the original form data position.
                 if ($errors) {
-                    $entity->setErrors($errors);
+                    $entity->setErrors(['_translations' => $errors]);
                 }
 
                 return $translations;
