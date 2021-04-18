@@ -32,6 +32,11 @@ use RuntimeException;
 class Preload
 {
     /**
+     * @var string
+     */
+    private $path;
+
+    /**
      * @var string|null
      */
     private $regex;
@@ -47,42 +52,49 @@ class Preload
     private $plugins;
 
     /**
+     * @var array;
+     */
+    private $files;
+
+    /**
      * @param array $options An array of options
      */
-    public function __construct(array $options)
+    public function __construct(array $options = [])
     {
         $options = array_merge([
+            'path' => ROOT . DS . 'preload.php',
             'regex' => '/^(((?!\/tests\/).)+\.php$)*$/i',
             'src' => false,
             'plugins' => [],
+            'files' => [],
         ], $options);
 
+        $this->path = $options['path'];
         $this->regex = $options['regex'];
         $this->src = $options['src'];
         $this->plugins = $options['plugins'];
+        $this->files = $options['files'];
     }
 
     /**
-     * Write preloader to the specified path after executing an optional callback
+     * Write preloader to the specified path after executing an optional callback. If no path is specified
      *
-     * @param string $path The file to write the preloader to
-     * @param array $files An initial list of files to add to the preloader
      * @param mixed|null $callback A callback to execute on the list of files to be preloaded
      * @return bool
      * @throws \LogicException
      * @throws \RuntimeException
      */
-    public function write(string $path, array $files = [], $callback = null): bool
+    public function write($callback = null): bool
     {
-        $this->errorHandler($path);
+        $this->errorHandler();
 
-        $files = $this->fileList($files);
+        $files = $this->fileList();
 
         if (is_callable($callback)) {
             $files = $callback($files);
         }
 
-        return (bool)file_put_contents($path, $this->contents($files));
+        return (bool)file_put_contents($this->path, $this->contents($files));
     }
 
     /**
@@ -141,11 +153,11 @@ class Preload
     /**
      * Returns a list of files containing at least all CAKE core classes and optionally plugins and APP src
      *
-     * @param array $files The list of seed files
      * @return array
      */
-    private function fileList(array $files = []): array
+    private function fileList(): array
     {
+        $files = $this->files;
         $files = array_merge($files, $this->findFiles(CAKE));
 
         if (!empty($this->plugins)) {
@@ -185,17 +197,16 @@ class Preload
     }
 
     /**
-     * @param string $path The file output path
      * @return void
      * @throws \RuntimeException
      */
-    private function errorHandler(string $path): void
+    private function errorHandler(): void
     {
         if (!function_exists('opcache_get_status')) {
             throw new RuntimeException('OPcache must be enabled');
         }
 
-        if ((file_exists($path) && !is_writable($path)) || !is_writable(APP)) {
+        if ((file_exists($this->path) && !is_writable($this->path)) || !is_writable(APP)) {
             throw new RuntimeException('OPcache must be enabled');
         }
     }

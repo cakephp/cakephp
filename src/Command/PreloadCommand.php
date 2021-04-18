@@ -40,24 +40,33 @@ class PreloadCommand extends Command
      */
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
-        $path = ROOT . DS . $args->getOption('name');
+        $options = [
+            'path' => ROOT . DS . $args->getOption('name'),
+            'regex' => $args->getOption('regex'),
+            'src' => $args->getOption('src'),
+        ];
 
-        $preload = $this->buildPreload($args);
+        if (is_string($args->getOption('plugins'))) {
+            $options['plugins'] = explode(',', $args->getOption('plugins'));
+        }
 
-        $result = $preload->write($path, [], function ($files) use ($preload) {
+        $preload = new Preload($options);
+
+        // $files is a flat array of absolute file paths
+        $result = $preload->write(function ($files) use ($preload) {
             return $preload->filter($files);
         });
 
         if ($result) {
             $io->hr();
-            $io->success("Preload written to $path");
+            $io->success('Preload written to ' . $options['path']);
             $io->hr();
             $this->status($io);
 
             return static::CODE_SUCCESS;
         }
 
-        $io->err("Error encountered writing to $path");
+        $io->err('Error encountered writing to ' . $options['path']);
 
         return static::CODE_ERROR;
     }
@@ -129,26 +138,5 @@ class PreloadCommand extends Command
             ['Hits', $stats['hits'] ?? ''],
             ['Misses', $stats['misses'] ?? ''],
         ]);
-    }
-
-    /**
-     * Returns an instance of Preload
-     *
-     * @param \Cake\Console\Arguments $args The command arguments
-     * @return \Cake\Core\Preload The instance of Preload
-     */
-    private function buildPreload(Arguments $args): Preload
-    {
-        $options = [
-            'regex' => $args->getOption('regex'),
-            'src' => $args->getOption('src'),
-            'files' => [],
-        ];
-
-        if (is_string($args->getOption('plugins'))) {
-            $options['plugins'] = explode(',', $args->getOption('plugins'));
-        }
-
-        return new Preload($options);
     }
 }
