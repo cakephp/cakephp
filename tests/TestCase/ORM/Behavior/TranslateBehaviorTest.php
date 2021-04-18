@@ -1847,7 +1847,7 @@ class TranslateBehaviorTest extends TestCase
                 '_empty' => 'This field cannot be left empty',
             ],
         ];
-        $this->assertEquals($expected, $entity->getError('es'));
+        $this->assertEquals($expected, $entity->getError('_translations.es'));
 
         $this->assertSame('English Title', $result['en']->title);
         $this->assertNull($result['es']->title);
@@ -1936,7 +1936,7 @@ class TranslateBehaviorTest extends TestCase
                 '_empty' => 'This field cannot be left empty',
             ],
         ];
-        $this->assertEquals($expected, $entity->getError('es'));
+        $this->assertEquals($expected, $entity->getError('_translations.es'));
     }
 
     /**
