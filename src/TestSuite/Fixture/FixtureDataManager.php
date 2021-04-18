@@ -35,7 +35,7 @@ use UnexpectedValueException;
  * This class implements a common interface with the Cake\TestSuite\FixtureManager so that
  * test cases only need to interact with a single interface.
  */
-class FixtureDataManager
+class FixtureDataManager extends FixtureLoader
 {
     /**
      * A mapping between the fixture name (including the prefix) and the object.
@@ -123,15 +123,9 @@ class FixtureDataManager
     }
 
     /**
-     * Loads the data for a single fixture.
-     *
-     * @param string $name of the fixture
-     * @param \Cake\Datasource\ConnectionInterface|null $connection Connection instance or null
-     *  to get a Connection from the fixture.
-     * @return void
-     * @throws \UnexpectedValueException if $name is not a previously fixtures class
+     * @inheritDoc
      */
-    public function loadSingle(string $name, ?ConnectionInterface $connection = null): void
+    public function loadSingle(string $name, ?ConnectionInterface $connection = null, bool $dropTables = true): void
     {
         if (!isset($this->nameMap[$name])) {
             throw new UnexpectedValueException(sprintf('Referenced fixture class %s not found', $name));
@@ -146,12 +140,7 @@ class FixtureDataManager
     }
 
     /**
-     * Creates records defined in a test case's fixtures.
-     *
-     * @param \Cake\TestSuite\TestCase $test The test to inspect for fixture loading.
-     * @return void
-     * @throws \Cake\Core\Exception\CakeException When fixture records cannot be inserted.
-     * @throws \RuntimeException
+     * @inheritDoc
      */
     public function load(TestCase $test): void
     {
@@ -227,10 +216,7 @@ class FixtureDataManager
     }
 
     /**
-     * Inspects the test to to load fixture classes.
-     *
-     * @param \Cake\TestSuite\TestCase $test The test case to inspect.
-     * @return void
+     * @inheritDoc
      */
     public function fixturize(TestCase $test): void
     {
@@ -241,9 +227,7 @@ class FixtureDataManager
     }
 
     /**
-     * Get the fixtures fixtures.
-     *
-     * @return \Cake\Datasource\FixtureInterface[]
+     * @inheritDoc
      */
     public function loaded(): array
     {

@@ -457,11 +457,6 @@ parameters:
 			path: src/TestSuite/Constraint/Response/StatusCodeBase.php
 
 		-
-			message: "#^Access to an undefined property PHPUnit\\\\Framework\\\\Test\\:\\:\\$fixtureManager\\.$#"
-			count: 1
-			path: src/TestSuite/Fixture/FixtureInjector.php
-
-		-
 			message: "#^Parameter \\#1 \\$connection of method Cake\\\\Database\\\\Schema\\\\SqlGeneratorInterface\\:\\:createSql\\(\\) expects Cake\\\\Database\\\\Connection, Cake\\\\Datasource\\\\ConnectionInterface given\\.$#"
 			count: 1
 			path: src/TestSuite/Fixture/TestFixture.php

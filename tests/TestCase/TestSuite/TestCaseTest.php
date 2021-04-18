@@ -26,7 +26,6 @@ use Cake\ORM\Table;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Router;
 use Cake\Test\Fixture\FixturizedTestCase;
-use Cake\TestSuite\Fixture\FixtureManager;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\AssertionFailedError;
 use TestApp\Model\Table\SecondaryPostsTable;
@@ -106,44 +105,6 @@ class TestCaseTest extends TestCase
         $event = new Event('my.event');
         $manager->dispatch($event);
         $this->assertEventFired('my.event', $manager);
-    }
-
-    /**
-     * testLoadFixturesOnDemand
-     *
-     * @return void
-     */
-    public function testLoadFixturesOnDemand()
-    {
-        $test = new FixturizedTestCase('testFixtureLoadOnDemand');
-        $test->autoFixtures = false;
-        $manager = $this->getMockBuilder('Cake\TestSuite\Fixture\FixtureManager')->getMock();
-        $manager->fixturize($test);
-        $test->fixtureManager = $manager;
-        $manager->expects($this->once())->method('loadSingle');
-        $result = $test->run();
-
-        $this->assertSame(0, $result->errorCount());
-    }
-
-    /**
-     * tests loadFixtures loads all fixtures on the test
-     *
-     * @return void
-     */
-    public function testLoadAllFixtures()
-    {
-        $test = new FixturizedTestCase('testLoadAllFixtures');
-        $test->autoFixtures = false;
-        $manager = new FixtureManager();
-        $manager->fixturize($test);
-        $test->fixtureManager = $manager;
-
-        $result = $test->run();
-
-        $this->assertSame(0, $result->errorCount());
-        $this->assertCount(1, $result->passed());
-        $this->assertFalse($test->autoFixtures);
     }
 
     /**

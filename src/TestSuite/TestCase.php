@@ -27,6 +27,7 @@ use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Routing\Router;
 use Cake\TestSuite\Constraint\EventFired;
 use Cake\TestSuite\Constraint\EventFiredWith;
+use Cake\TestSuite\Fixture\FixtureLoader;
 use Cake\Utility\Inflector;
 use LogicException;
 use PHPUnit\Framework\Constraint\DirectoryExists;
@@ -48,7 +49,7 @@ abstract class TestCase extends BaseTestCase
     /**
      * The class responsible for managing the creation, loading and removing of fixtures
      *
-     * @var \Cake\TestSuite\Fixture\FixtureManager|null
+     * @var \Cake\TestSuite\Fixture\FixtureLoader|null
      */
     public $fixtureManager;
 
@@ -211,9 +212,7 @@ abstract class TestCase extends BaseTestCase
     protected function setUp(): void
     {
         parent::setUp();
-
-        // TODO add loading data only fixtures.
-
+        $this->fixtureManager = FixtureLoader::getInstance();
         if (!$this->_configure) {
             $this->_configure = Configure::read();
         }
