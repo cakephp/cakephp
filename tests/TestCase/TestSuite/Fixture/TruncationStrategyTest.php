@@ -43,7 +43,7 @@ class TruncationStrategyTest extends TestCase
         $this->assertGreaterThan(0, $rowCount);
 
         $strategy = new TruncationStrategy();
-        $strategy->beforeTest();
+        $strategy->beforeTest(__METHOD__);
 
         $rowCount = $articles->find()->count();
         $this->assertEquals(0, $rowCount);

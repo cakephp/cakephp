@@ -27,10 +27,8 @@ use RuntimeException;
  * This strategy aims to gives good performance at the cost
  * of not being able to query data in fixtures from another
  * process.
- *
- * @TODO create a strategy interface
  */
-class TransactionStrategy
+class TransactionStrategy implements StateResetStrategyInterface
 {
     /**
      * Constructor.
@@ -90,9 +88,10 @@ class TransactionStrategy
     /**
      * Before each test start a transaction.
      *
+     * @param string $test The test that was completed.
      * @return void
      */
-    public function beforeTest(): void
+    public function beforeTest(string $test): void
     {
         $connections = ConnectionManager::configured();
         foreach ($connections as $connection) {
@@ -114,9 +113,10 @@ class TransactionStrategy
      * operations we should end up at a transaction depth of 0
      * and we will rollback the root transaction started in beforeTest()
      *
+     * @param string $test The test that was completed.
      * @return void
      */
-    public function afterTest(): void
+    public function afterTest(string $test): void
     {
         $connections = ConnectionManager::configured();
         foreach ($connections as $connection) {
