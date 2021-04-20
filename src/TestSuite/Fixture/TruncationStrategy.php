@@ -32,7 +32,7 @@ use Cake\Datasource\ConnectionManager;
  * This mode also offers 'backwards compatible' behavior
  * with the schema + data fixture system.
  */
-class TruncationStrategy
+class TruncationStrategy implements StateResetStrategyInterface
 {
     /**
      * Constructor.
@@ -82,9 +82,10 @@ class TruncationStrategy
     /**
      * Before each test start a transaction.
      *
+     * @param string $test The test class::method that was completed.
      * @return void
      */
-    public function beforeTest(): void
+    public function beforeTest(string $test): void
     {
         $connections = ConnectionManager::configured();
         foreach ($connections as $connection) {
@@ -117,9 +118,10 @@ class TruncationStrategy
      *
      * Implemented to satisfy the interface.
      *
+     * @param string $test The test class::method that was completed.
      * @return void
      */
-    public function afterTest(): void
+    public function afterTest(string $test): void
     {
         // Do nothing
     }

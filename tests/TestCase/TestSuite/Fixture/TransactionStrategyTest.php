@@ -34,14 +34,14 @@ class TransactionStrategyTest extends TestCase
         $users = TableRegistry::get('Users');
 
         $strategy = new TransactionStrategy();
-        $strategy->beforeTest();
+        $strategy->beforeTest(__METHOD__);
         $user = $users->newEntity(['username' => 'testing', 'password' => 'secrets']);
 
         $users->save($user, ['atomic' => true]);
         $this->assertNotEmpty($users->get($user->id), 'User should exist.');
 
         // Rollback and the user should be gone.
-        $strategy->afterTest();
+        $strategy->afterTest(__METHOD__);
         $this->assertNull($users->findById($user->id)->first(), 'No user expected.');
     }
 }

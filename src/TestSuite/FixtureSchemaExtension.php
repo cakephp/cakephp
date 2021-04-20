@@ -18,9 +18,12 @@ namespace Cake\TestSuite;
 
 use Cake\TestSuite\Fixture\FixtureDataManager;
 use Cake\TestSuite\Fixture\FixtureLoader;
+use Cake\TestSuite\Fixture\StateResetStrategyInterface;
 use Cake\TestSuite\Fixture\TransactionStrategy;
+use InvalidArgumentException;
 use PHPUnit\Runner\AfterTestHook;
 use PHPUnit\Runner\BeforeTestHook;
+use ReflectionClass;
 
 /**
  * PHPUnit extension to integrate CakePHP's data-only fixtures.
@@ -30,7 +33,7 @@ class FixtureSchemaExtension implements
     BeforeTestHook
 {
     /**
-     * @var object
+     * @var \Cake\TestSuite\Fixture\StateResetStrategyInterface
      */
     protected $state;
 
@@ -38,10 +41,19 @@ class FixtureSchemaExtension implements
      * Constructor.
      *
      * @param string $stateStrategy The state management strategy to use.
+     * @psalm-param class-string<\Cake\TestSuite\Fixture\StateResetStrategyInterface> $stateStrategy
      */
     public function __construct(string $stateStrategy = TransactionStrategy::class)
     {
         $enableLogging = in_array('--debug', $_SERVER['argv'] ?? [], true);
+        $class = new ReflectionClass($stateStrategy);
+        if (!$class->implementsInterface(StateResetStrategyInterface::class)) {
+            throw new InvalidArgumentException(sprintf(
+                'Invalid stateStrategy provided. State strategies must implement `%s`. Got `%s`.',
+                StateResetStrategyInterface::class,
+                $stateStrategy
+            ));
+        }
         $this->state = new $stateStrategy($enableLogging);
 
         FixtureLoader::setInstance(new FixtureDataManager());
@@ -50,23 +62,23 @@ class FixtureSchemaExtension implements
     /**
      * BeforeTestHook implementation
      *
-     * @param string $test The test being run.
+     * @param string $test The test class::method being run.
      * @return void
      */
     public function executeBeforeTest(string $test): void
     {
-        $this->state->beforeTest();
+        $this->state->beforeTest($test);
     }
 
     /**
      * AfterTestHook implementation
      *
-     * @param string $test The test being run.
+     * @param string $test The test class::method being run.
      * @param float $time The duration the test took.
      * @return void
      */
     public function executeAfterTest(string $test, float $time): void
     {
-        $this->state->afterTest();
+        $this->state->afterTest($test);
     }
 }
