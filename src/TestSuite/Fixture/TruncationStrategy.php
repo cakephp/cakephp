@@ -82,7 +82,7 @@ class TruncationStrategy implements StateResetStrategyInterface
     /**
      * Before each test start a transaction.
      *
-     * @param string $test The test that was completed.
+     * @param string $test The test class::method that was completed.
      * @return void
      */
     public function beforeTest(string $test): void
@@ -118,7 +118,7 @@ class TruncationStrategy implements StateResetStrategyInterface
      *
      * Implemented to satisfy the interface.
      *
-     * @param string $test The test that was completed.
+     * @param string $test The test class::method that was completed.
      * @return void
      */
     public function afterTest(string $test): void

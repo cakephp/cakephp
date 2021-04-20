@@ -88,7 +88,7 @@ class TransactionStrategy implements StateResetStrategyInterface
     /**
      * Before each test start a transaction.
      *
-     * @param string $test The test that was completed.
+     * @param string $test The test class::method that was completed.
      * @return void
      */
     public function beforeTest(string $test): void
@@ -113,7 +113,7 @@ class TransactionStrategy implements StateResetStrategyInterface
      * operations we should end up at a transaction depth of 0
      * and we will rollback the root transaction started in beforeTest()
      *
-     * @param string $test The test that was completed.
+     * @param string $test The test class::method that was completed.
      * @return void
      */
     public function afterTest(string $test): void

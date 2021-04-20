@@ -62,7 +62,7 @@ class FixtureSchemaExtension implements
     /**
      * BeforeTestHook implementation
      *
-     * @param string $test The test being run.
+     * @param string $test The test class::method being run.
      * @return void
      */
     public function executeBeforeTest(string $test): void
@@ -73,7 +73,7 @@ class FixtureSchemaExtension implements
     /**
      * AfterTestHook implementation
      *
-     * @param string $test The test being run.
+     * @param string $test The test class::method being run.
      * @param float $time The duration the test took.
      * @return void
      */
