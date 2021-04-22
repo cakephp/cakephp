@@ -317,10 +317,18 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $name The name under which the provider should be set.
      * @param object|string $object Provider object or class name.
+     * @psalm-param object|class-string $object
      * @return $this
      */
     public function setProvider(string $name, $object)
     {
+        if (!is_string($object) && !is_object($object)) {
+            deprecationWarning(sprintf(
+                'The provider must be an object or class name string. Got `%s` instead.',
+                getTypeName($object)
+            ));
+        }
+
         $this->_providers[$name] = $object;
 
         return $this;
@@ -331,6 +339,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $name The name under which the provider should be set.
      * @return object|string|null
+     * @psalm-return object|class-string|null
      */
     public function getProvider(string $name)
     {
@@ -351,6 +360,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $name The name under which the provider should be retrieved.
      * @return object|string|null
+     * @psalm-return object|class-string|null
      */
     public static function getDefaultProvider(string $name)
     {
@@ -362,10 +372,18 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $name The name under which the provider should be set.
      * @param object|string $object Provider object or class name.
+     * @psalm-param object|class-string $object
      * @return void
      */
     public static function addDefaultProvider(string $name, $object): void
     {
+        if (!is_string($object) && !is_object($object)) {
+            deprecationWarning(sprintf(
+                'The provider must be an object or class name string. Got `%s` instead.',
+                getTypeName($object)
+            ));
+        }
+
         self::$_defaultProviders[$name] = $object;
     }
 

@@ -1791,6 +1791,15 @@ class ValidatorTest extends TestCase
         $this->assertEquals(new \Cake\Validation\RulesProvider(), $validator->getProvider('default'));
     }
 
+    public function testProviderWarning()
+    {
+        $this->expectError();
+        $this->expectErrorMessage('The provider must be an object or class name string. Got `array` instead.');
+
+        $validator = new Validator();
+        $validator->setProvider('test', []);
+    }
+
     /**
      * Tests validate() method when using validators from the default provider, this proves
      * that it returns a default validation message and the custom one set in the rule
