@@ -11,9 +11,13 @@
             <!-- Excludes are required in order to let DatabaseSuite decorate the tests -->
             <exclude>tests/TestCase/Database/</exclude>
             <exclude>tests/TestCase/ORM/</exclude>
+            <exclude>tests/TestCase/TestSuite/Schema/</exclude>
         </testsuite>
         <testsuite name="database">
             <file>tests/TestCase/DatabaseSuite.php</file>
+        </testsuite>
+        <testsuite name="test-schema">
+            <directory>tests/TestCase/TestSuite/Schema</directory>
         </testsuite>
     </testsuites>
 
