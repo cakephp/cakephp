@@ -25,18 +25,19 @@ class TestConnectionManagerTest extends TestCase
     {
         ConnectionManager::drop('dummy');
         ConnectionManager::drop('test_dummy');
+        $testConfig = ConnectionManager::get('test')->config();
 
-        ConnectionManager::setConfig('dummy', ['url' => 'sqlite:///:foo:',]);
-        ConnectionManager::setConfig('test_dummy', ['url' => 'sqlite:///:bar:',]);
+        ConnectionManager::setConfig('dummy', array_merge($testConfig,  ['some_key' => 'foo',]));
+        ConnectionManager::setConfig('test_dummy', array_merge($testConfig,  ['some_key' => 'bar',]));
 
-        $testDB = ConnectionManager::get('dummy')->config()['database'];
-        $this->assertSame(':foo:', $testDB);
+        $someKeyValueBeforeAliasing = ConnectionManager::get('dummy')->config()['some_key'];
+        $this->assertSame('foo', $someKeyValueBeforeAliasing);
 
         TestConnectionManager::$aliasConnectionIsLoaded = false;
         TestConnectionManager::aliasConnections();
 
-        $testDB = ConnectionManager::get('dummy')->config()['database'];
-        $this->assertSame(':bar:', $testDB);
+        $someKeyValueAfterAliasing = ConnectionManager::get('dummy')->config()['database'];
+        $this->assertSame('bar', $someKeyValueAfterAliasing);
 
         ConnectionManager::drop('dummy');
         ConnectionManager::drop('test_dummy');

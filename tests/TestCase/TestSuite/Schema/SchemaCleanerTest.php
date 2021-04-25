@@ -49,7 +49,7 @@ class SchemaCleanerTest extends TestCase
         $this->createSchemas();
 
         $stmt = $dialect->listTablesSql($connection->config());
-        $tables = $connection->execute($stmt[0])->fetch();
+        $tables = $connection->execute($stmt[0], $stmt[1])->fetch();
 
         // Assert that the schema is not empty
         $this->assertSame(['test_table'], $tables, 'The schema should not be empty.');
@@ -58,7 +58,7 @@ class SchemaCleanerTest extends TestCase
         (new SchemaCleaner())->drop('test');
 
         // Schema is empty
-        $tables = $connection->execute($stmt[0])->count();
+        $tables = $connection->execute($stmt[0], $stmt[1])->count();
         $this->assertSame(0, $tables, 'The schema should be empty.');
     }
 

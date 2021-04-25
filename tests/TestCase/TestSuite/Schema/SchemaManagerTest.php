@@ -94,6 +94,6 @@ class SchemaManagerTest extends TestCase
 
         $stmt = $dialect->listTablesSql($connection->config());
 
-        return $connection->execute($stmt[0])->fetchAll(StatementInterface::FETCH_TYPE_NUM);
+        return $connection->execute($stmt[0], $stmt[1])->fetchAll(StatementInterface::FETCH_TYPE_NUM);
     }
 }
