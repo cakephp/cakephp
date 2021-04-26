@@ -58,7 +58,7 @@ class SchemaCleanerTest extends TestCase
         (new SchemaCleaner())->drop('test');
 
         // Schema is empty
-        $tables = $connection->execute($stmt[0], $stmt[1])->count();
+        $tables = $connection->execute($sql, $params)->count();
         $this->assertSame(0, $tables, 'The schema should be empty.');
     }
 

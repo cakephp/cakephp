@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Datasource\ConnectionManager;
+use Cake\Datasource\Exception\MissingDatasourceConfigException;
 use Cake\TestSuite\TestCase;
 use Cake\TestSuite\TestConnectionManager;
 
@@ -23,23 +24,23 @@ class TestConnectionManagerTest extends TestCase
 {
     public function testAliasConnections()
     {
-        ConnectionManager::drop('dummy');
-        ConnectionManager::drop('test_dummy');
-        $testConfig = ConnectionManager::get('test')->config();
+        ConnectionManager::dropAlias('default');
 
-        ConnectionManager::setConfig('dummy', array_merge($testConfig,  ['some_key' => 'foo',]));
-        ConnectionManager::setConfig('test_dummy', array_merge($testConfig,  ['some_key' => 'bar',]));
-
-        $someKeyValueBeforeAliasing = ConnectionManager::get('dummy')->config()['some_key'];
-        $this->assertSame('foo', $someKeyValueBeforeAliasing);
+        try {
+            $exceptionThrown = false;
+            ConnectionManager::get('default');
+        } catch (MissingDatasourceConfigException $e) {
+            $exceptionThrown = true;
+        } finally {
+            $this->assertTrue($exceptionThrown);
+        }
 
         TestConnectionManager::$aliasConnectionIsLoaded = false;
         TestConnectionManager::aliasConnections();
 
-        $someKeyValueAfterAliasing = ConnectionManager::get('dummy')->config()['database'];
-        $this->assertSame('bar', $someKeyValueAfterAliasing);
-
-        ConnectionManager::drop('dummy');
-        ConnectionManager::drop('test_dummy');
+        $this->assertSame(
+            ConnectionManager::get('test'),
+            ConnectionManager::get('default')
+        );
     }
 }
