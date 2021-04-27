@@ -18,7 +18,6 @@ namespace Cake\Test\TestCase\Collection\Iterator;
 
 use Cake\Collection\Iterator\FilterIterator;
 use Cake\TestSuite\TestCase;
-use RuntimeException;
 
 /**
  * FilterIterator test
@@ -33,15 +32,12 @@ class FilterIteratorTest extends TestCase
     public function testFilter()
     {
         $items = new \ArrayIterator([1, 2, 3]);
-        $callable = function ($key, $value, $itemArg) use ($items) {
+        $callable = function ($value, $key, $itemArg) use ($items) {
             $this->assertSame($items, $itemArg);
-            if ($key === 1 || $key === 3) {
-                return false;
-            }
-            if ($key === 2) {
-                return true;
-            }
-            throw new RuntimeException('Unexpected value');
+            $this->assertContains($value, $items);
+            $this->assertContains($key, [0, 1, 2]);
+
+            return $value === 2;
         };
 
         $filter = new FilterIterator($items, $callable);

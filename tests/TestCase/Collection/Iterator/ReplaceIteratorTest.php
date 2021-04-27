@@ -18,7 +18,6 @@ namespace Cake\Test\TestCase\Collection\Iterator;
 
 use Cake\Collection\Iterator\ReplaceIterator;
 use Cake\TestSuite\TestCase;
-use RuntimeException;
 
 /**
  * ReplaceIterator Test
@@ -33,18 +32,12 @@ class ReplaceIteratorTest extends TestCase
     public function testReplace()
     {
         $items = new \ArrayIterator([1, 2, 3]);
-        $callable = function ($key, $value, $itemsArg) use ($items) {
+        $callable = function ($value, $key, $itemsArg) use ($items) {
             $this->assertSame($items, $itemsArg);
-            if ($key === 1) {
-                return 1;
-            }
-            if ($key === 2) {
-                return 4;
-            }
-            if ($key === 3) {
-                return 9;
-            }
-            throw new RuntimeException('Unexpected value');
+            $this->assertContains($value, $items);
+            $this->assertContains($key, [0, 1, 2]);
+
+            return $value > 1 ? $value * $value : $value;
         };
 
         $map = new ReplaceIterator($items, $callable);
