@@ -49,7 +49,7 @@ class SchemaCleaner
      * @return void
      * @throws \Exception if the dropping failed.
      */
-    public function drop(string $connectionName)
+    public function dropTables(string $connectionName)
     {
         $this->info('Dropping all tables for connection ' . $connectionName);
 
