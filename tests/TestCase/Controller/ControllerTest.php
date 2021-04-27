@@ -508,19 +508,16 @@ class ControllerTest extends TestCase
         $controller = new Controller(null, null, null, $eventManager);
 
         $eventManager
-            ->expects($this->at(0))
+            ->expects($this->exactly(2))
             ->method('dispatch')
-            ->with($this->callback(function (EventInterface $event) {
-                return $event->getName() === 'Controller.initialize';
-            }))
-            ->will($this->returnValue(new Event('stub')));
-
-        $eventManager
-            ->expects($this->at(1))
-            ->method('dispatch')
-            ->with($this->callback(function (EventInterface $event) {
-                return $event->getName() === 'Controller.startup';
-            }))
+            ->withConsecutive(
+                [$this->callback(function (EventInterface $event) {
+                    return $event->getName() === 'Controller.initialize';
+                })],
+                [$this->callback(function (EventInterface $event) {
+                    return $event->getName() === 'Controller.startup';
+                })]
+            )
             ->will($this->returnValue(new Event('stub')));
 
         $controller->startupProcess();
@@ -787,7 +784,7 @@ class ControllerTest extends TestCase
         $this->expectException(\UnexpectedValueException::class);
         $this->expectExceptionMessage(
             'Controller actions can only return ResponseInterface instance or null. '
-            . 'Got string instead.'
+                . 'Got string instead.'
         );
 
         $url = new ServerRequest([

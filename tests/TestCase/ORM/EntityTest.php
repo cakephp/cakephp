@@ -250,13 +250,14 @@ class EntityTest extends TestCase
             ->onlyMethods(['set'])
             ->disableOriginalConstructor()
             ->getMock();
-        $entity->expects($this->at(0))
+        $entity->expects($this->exactly(2))
             ->method('set')
-            ->with(['a' => 'b', 'c' => 'd'], ['setter' => true, 'guard' => false]);
-
-        $entity->expects($this->at(1))
-            ->method('set')
-            ->with(['foo' => 'bar'], ['setter' => false, 'guard' => false]);
+            ->withConsecutive(
+                [
+                    ['a' => 'b', 'c' => 'd'], ['setter' => true, 'guard' => false],
+                ],
+                [['foo' => 'bar'], ['setter' => false, 'guard' => false]]
+            );
 
         $entity->__construct(['a' => 'b', 'c' => 'd']);
         $entity->__construct(['foo' => 'bar'], ['useSetters' => false]);
@@ -583,7 +584,7 @@ class EntityTest extends TestCase
         $entity = $this->getMockBuilder(Entity::class)
             ->onlyMethods(['unset'])
             ->getMock();
-        $entity->expects($this->at(0))
+        $entity->expects($this->once())
             ->method('unset')
             ->with('foo');
         unset($entity->foo);
@@ -629,15 +630,13 @@ class EntityTest extends TestCase
         $entity = $this->getMockBuilder(Entity::class)
             ->onlyMethods(['get'])
             ->getMock();
-        $entity->expects($this->at(0))
+        $entity->expects($this->exactly(2))
             ->method('get')
-            ->with('foo')
-            ->will($this->returnValue('worked'));
-
-        $entity->expects($this->at(1))
-            ->method('get')
-            ->with('bar')
-            ->will($this->returnValue('worked too'));
+            ->withConsecutive(['foo'], ['bar'])
+            ->will($this->onConsecutiveCalls(
+                $this->returnValue('worked'),
+                $this->returnValue('worked too')
+            ));
 
         $this->assertSame('worked', $entity['foo']);
         $this->assertSame('worked too', $entity['bar']);
@@ -655,15 +654,13 @@ class EntityTest extends TestCase
             ->getMock();
         $entity->setAccess('*', true);
 
-        $entity->expects($this->at(0))
+        $entity->expects($this->exactly(2))
             ->method('set')
-            ->with('foo', 1)
-            ->will($this->returnSelf());
-
-        $entity->expects($this->at(1))
-            ->method('set')
-            ->with('bar', 2)
-            ->will($this->returnSelf());
+            ->withConsecutive(['foo', 1], ['bar', 2])
+            ->will($this->onConsecutiveCalls(
+                $this->returnSelf(),
+                $this->returnSelf()
+            ));
 
         $entity['foo'] = 1;
         $entity['bar'] = 2;
@@ -680,7 +677,7 @@ class EntityTest extends TestCase
         $entity = $this->getMockBuilder(Entity::class)
             ->onlyMethods(['unset'])
             ->getMock();
-        $entity->expects($this->at(0))
+        $entity->expects($this->once())
             ->method('unset')
             ->with('foo');
         unset($entity['foo']);
@@ -784,7 +781,7 @@ class EntityTest extends TestCase
             'title' => 'Foo',
             'author_id' => 3,
         ]);
-        $expected = ['author_id' => 3, 'title' => 'Foo', ];
+        $expected = ['author_id' => 3, 'title' => 'Foo',];
         $this->assertEquals($expected, $entity->extract(['author_id', 'title']));
 
         $expected = ['id' => 1];

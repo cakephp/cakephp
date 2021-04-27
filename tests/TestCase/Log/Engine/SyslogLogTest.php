@@ -79,9 +79,12 @@ class SyslogLogTest extends TestCase
         $log = $this->getMockBuilder(SyslogLog::class)
             ->onlyMethods(['_open', '_write'])
             ->getMock();
-        $log->expects($this->at(1))->method('_write')->with(LOG_DEBUG, 'debug: Foo');
-        $log->expects($this->at(2))->method('_write')->with(LOG_DEBUG, 'debug: Bar');
-        $log->expects($this->exactly(2))->method('_write');
+        $log->expects($this->exactly(2))
+            ->method('_write')
+            ->withConsecutive(
+                [LOG_DEBUG, 'debug: Foo'],
+                [LOG_DEBUG, 'debug: Bar']
+            );
         $log->log('debug', "Foo\nBar");
     }
 
