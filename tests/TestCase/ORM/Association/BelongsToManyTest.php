@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -14,6 +15,7 @@ declare(strict_types=1);
  * @since         3.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace Cake\Test\TestCase\ORM\Association;
 
 use Cake\Database\Connection;
@@ -207,9 +209,9 @@ class BelongsToManyTest extends TestCase
     public function testJunctionConnection()
     {
         $mock = $this->getMockBuilder(Connection::class)
-                ->onlyMethods(['setDriver'])
-                ->setConstructorArgs([['name' => 'other_source']])
-                ->getMock();
+            ->onlyMethods(['setDriver'])
+            ->setConstructorArgs([['name' => 'other_source']])
+            ->getMock();
         ConnectionManager::setConfig('other_source', $mock);
         $this->article->setConnection(ConnectionManager::get('other_source'));
 
@@ -638,27 +640,28 @@ class BelongsToManyTest extends TestCase
         $joint->method('getPrimaryKey')
             ->will($this->returnValue(['article_id', 'tag_id']));
 
-        $joint->expects($this->at(1))
+        $joint->expects($this->exactly(2))
             ->method('save')
-            ->will($this->returnCallback(function (EntityInterface $e, $opts) use ($entity) {
-                $expected = ['article_id' => 1, 'tag_id' => 2];
-                $this->assertEquals($expected, $e->toArray());
-                $this->assertEquals(['foo' => 'bar'], $opts);
-                $this->assertTrue($e->isNew());
+            ->will(
+                $this->onConsecutiveCalls(
+                    $this->returnCallback(function (EntityInterface $e, $opts) use ($entity) {
+                        $expected = ['article_id' => 1, 'tag_id' => 2];
+                        $this->assertEquals($expected, $e->toArray());
+                        $this->assertEquals(['foo' => 'bar'], $opts);
+                        $this->assertTrue($e->isNew());
 
-                return $entity;
-            }));
+                        return $entity;
+                    }),
+                    $this->returnCallback(function (EntityInterface $e, $opts) use ($entity) {
+                        $expected = ['article_id' => 1, 'tag_id' => 3];
+                        $this->assertEquals($expected, $e->toArray());
+                        $this->assertEquals(['foo' => 'bar'], $opts);
+                        $this->assertTrue($e->isNew());
 
-        $joint->expects($this->at(2))
-            ->method('save')
-            ->will($this->returnCallback(function (EntityInterface $e, $opts) use ($entity) {
-                $expected = ['article_id' => 1, 'tag_id' => 3];
-                $this->assertEquals($expected, $e->toArray());
-                $this->assertEquals(['foo' => 'bar'], $opts);
-                $this->assertTrue($e->isNew());
-
-                return $entity;
-            }));
+                        return $entity;
+                    })
+                )
+            );
 
         $this->assertTrue($assoc->link($entity, $tags, $saveOptions));
         $this->assertSame($entity->test, $tags);
