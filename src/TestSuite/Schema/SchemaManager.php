@@ -56,7 +56,7 @@ class SchemaManager
         $migrator = new static($verbose);
         $schemaCleaner = new SchemaCleaner($migrator->io);
 
-        $schemaCleaner->drop($connectionName);
+        $schemaCleaner->dropTables($connectionName);
 
         foreach ($files as $file) {
             if (!file_exists($file)) {
