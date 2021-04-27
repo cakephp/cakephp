@@ -32,7 +32,7 @@ class ConsoleLogTest extends TestCase
         $output = $this->getMockBuilder('Cake\Console\ConsoleOutput')->getMock();
 
         $message = ' Error: oh noes</error>';
-        $output->expects($this->at(0))
+        $output->expects($this->once())
             ->method('write')
             ->with($this->stringContains($message));
 
@@ -67,7 +67,7 @@ class ConsoleLogTest extends TestCase
     {
         $output = $this->getMockBuilder(ConsoleOutput::class)->getMock();
 
-        $output->expects($this->at(0))
+        $output->expects($this->once())
             ->method('setOutputAs')
             ->with(ConsoleOutput::RAW);
 
