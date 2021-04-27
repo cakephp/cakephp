@@ -37,6 +37,8 @@ class YearWidget extends BasicWidget
     protected $defaults = [
         'name' => '',
         'val' => null,
+        'min' => null,
+        'max' => null,
         'order' => 'desc',
         'templateVars' => [],
     ];
