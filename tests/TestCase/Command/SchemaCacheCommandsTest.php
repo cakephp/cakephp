@@ -133,7 +133,7 @@ class SchemaCacheCommandsTest extends TestCase
      */
     public function testBuildNoArgs()
     {
-        $this->cache->expects($this->at(0))
+        $this->cache->expects($this->once())
             ->method('set')
             ->with('test_articles')
             ->will($this->returnValue(true));
@@ -211,7 +211,7 @@ class SchemaCacheCommandsTest extends TestCase
      */
     public function testClearNoArgs()
     {
-        $this->cache->expects($this->at(0))
+        $this->cache->expects($this->once())
             ->method('delete')
             ->with('test_articles')
             ->will($this->returnValue(true));

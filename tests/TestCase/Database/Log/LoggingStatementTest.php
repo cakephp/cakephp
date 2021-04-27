@@ -102,8 +102,9 @@ class LoggingStatementTest extends TestCase
         $inner->method('execute')->will($this->returnValue(true));
 
         $date = new \DateTime('2013-01-01');
-        $inner->expects($this->at(0))->method('bindValue')->with('a', 1);
-        $inner->expects($this->at(1))->method('bindValue')->with('b', $date);
+        $inner->expects($this->atLeast(2))
+              ->method('bindValue')
+              ->withConsecutive(['a', 1], ['b', $date]);
 
         $driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
         $st = new LoggingStatement($inner, $driver);
