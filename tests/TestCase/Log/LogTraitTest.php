@@ -41,7 +41,7 @@ class LogTraitTest extends TestCase
             ->method('log')
             ->withConsecutive(
                 ['error', 'Testing'],
-                ['debug', 'message'],
+                ['debug', 'message']
             );
 
         Log::setConfig('trait_test', ['engine' => $mock]);

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -14,6 +15,7 @@ declare(strict_types=1);
  * @since         2.4.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace Cake\Test\TestCase\Log\Engine;
 
 use Cake\Log\Engine\SyslogLog;
@@ -83,7 +85,7 @@ class SyslogLogTest extends TestCase
             ->method('_write')
             ->withConsecutive(
                 [LOG_DEBUG, 'debug: Foo'],
-                [LOG_DEBUG, 'debug: Bar'],
+                [LOG_DEBUG, 'debug: Bar']
             );
         $log->log('debug', "Foo\nBar");
     }

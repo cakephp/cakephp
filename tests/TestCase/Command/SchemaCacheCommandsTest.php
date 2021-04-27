@@ -133,9 +133,9 @@ class SchemaCacheCommandsTest extends TestCase
      */
     public function testBuildNoArgs()
     {
-        $this->cache->expects($this->once())
+        $this->cache->expects($this->atLeastOnce())
             ->method('set')
-            ->with('test_articles')
+            ->withConsecutive(['test_articles'])
             ->will($this->returnValue(true));
 
         $this->exec('schema_cache build --connection test');
@@ -211,9 +211,9 @@ class SchemaCacheCommandsTest extends TestCase
      */
     public function testClearNoArgs()
     {
-        $this->cache->expects($this->once())
+        $this->cache->expects($this->atLeastOnce())
             ->method('delete')
-            ->with('test_articles')
+            ->withConsecutive(['test_articles'])
             ->will($this->returnValue(true));
 
         $this->exec('schema_cache clear --connection test');
