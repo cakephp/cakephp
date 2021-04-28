@@ -602,17 +602,12 @@ class TranslateBehaviorTest extends TestCase
     public function testFindSingleLocaleHasMany()
     {
         $table = $this->getTableLocator()->get('Articles');
-        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
-        $table->hasMany('Comments');
         $comments = $table->hasMany('Comments')->getTarget();
         $comments->addBehavior('Translate', ['fields' => ['comment']]);
 
-        $table->setLocale('eng');
         $comments->setLocale('eng');
 
-        $results = $table->find()->contain(['Comments' => function ($q) {
-            return $q->select(['id', 'comment', 'article_id']);
-        }]);
+        $results = $table->find()->contain(['Comments'])->order(['id']);
 
         $list = new Collection($results->first()->comments);
         $expected = [
