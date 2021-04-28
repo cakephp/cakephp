@@ -379,7 +379,7 @@ class ConsoleIoTest extends TestCase
                 [str_repeat("\x08", $number), 0],
                 ['Less text', 0],
                 [str_repeat(' ', $number - 9), 0],
-                ["\n", 0]
+                [PHP_EOL, 0]
             )
             ->will($this->onConsecutiveCalls(
                 $number,
