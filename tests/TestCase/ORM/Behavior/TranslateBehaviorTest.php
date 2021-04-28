@@ -603,18 +603,21 @@ class TranslateBehaviorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
-        $table->hasMany('Comments');
+
         $comments = $table->hasMany('Comments')->getTarget();
         $comments->addBehavior('Translate', ['fields' => ['comment']]);
 
         $table->setLocale('eng');
         $comments->setLocale('eng');
 
-        $results = $table->find()->contain(['Comments' => function ($q) {
-            return $q->select(['id', 'comment', 'article_id']);
-        }]);
+        $article = $table->find()
+            ->contain(['Comments' => function ($q) {
+                return $q->select(['id', 'comment', 'article_id']);
+            }])
+            ->where(['Articles.id' => 1])
+            ->firstOrFail();
 
-        $list = new Collection($results->first()->comments);
+        $list = new Collection($article->comments);
         $expected = [
             1 => 'Comment #1',
             2 => 'Comment #2',
