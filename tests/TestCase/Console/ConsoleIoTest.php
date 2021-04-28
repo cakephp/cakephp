@@ -202,7 +202,7 @@ class ConsoleIoTest extends TestCase
             ->withConsecutive(
                 ['Verbose', 1],
                 ['Normal', 1],
-                ['Quiet', 1],
+                ['Quiet', 1]
             );
 
         $this->io->level(ConsoleIo::VERBOSE);
@@ -224,7 +224,7 @@ class ConsoleIoTest extends TestCase
             ->withConsecutive(
                 ['Verbose', 1],
                 ['Normal', 1],
-                ['Quiet', 1],
+                ['Quiet', 1]
             );
 
         $this->io->level(ConsoleIo::VERBOSE);
@@ -245,7 +245,7 @@ class ConsoleIoTest extends TestCase
             ->method('write')
             ->withConsecutive(
                 ['Quiet', 1],
-                ['Quiet', 1],
+                ['Quiet', 1]
             );
 
         $this->io->level(ConsoleIo::QUIET);
@@ -356,7 +356,7 @@ class ConsoleIoTest extends TestCase
                 ['', 0],
                 ['', true],
                 [$bar, 1],
-                ['', true],
+                ['', true]
             );
 
         $this->io->hr();
@@ -447,7 +447,7 @@ class ConsoleIoTest extends TestCase
                 ['123', 0],
                 // Backspaces
                 [str_repeat("\x08", 3), 0],
-                ['12345', 0],
+                ['12345', 0]
             )
             ->will($this->onConsecutiveCalls(
                 1,
