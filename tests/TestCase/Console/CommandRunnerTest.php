@@ -513,18 +513,18 @@ class CommandRunnerTest extends TestCase
             ->setConstructorArgs([$this->config])
             ->getMock();
 
-        $app->expects($this->at(0))->method('bootstrap');
-        $app->expects($this->at(1))->method('pluginBootstrap');
+        $app->expects($this->once())->method('bootstrap');
+        $app->expects($this->once())->method('pluginBootstrap');
 
         $commands = new CommandCollection();
-        $app->expects($this->at(2))
+        $app->expects($this->once())
             ->method('pluginConsole')
             ->with($this->isinstanceOf(CommandCollection::class))
             ->will($this->returnCallback(function ($commands) {
                 return $commands;
             }));
-        $app->expects($this->at(3))->method('routes');
-        $app->expects($this->at(4))->method('pluginRoutes');
+        $app->expects($this->once())->method('routes');
+        $app->expects($this->once())->method('pluginRoutes');
 
         $output = new ConsoleOutput();
         $runner = new CommandRunner($app, 'cake');

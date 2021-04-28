@@ -197,9 +197,8 @@ class ShellDispatcherTest extends TestCase
             ->getMock();
 
         $Shell->expects($this->exactly(2))->method('initialize');
-        $Shell->expects($this->at(0))->method('runCommand')
-            ->will($this->returnValue(true));
-        $Shell->expects($this->at(1))->method('runCommand')
+        $Shell->expects($this->exactly(2))
+            ->method('runCommand')
             ->will($this->returnValue(null));
 
         $dispatcher->expects($this->any())
@@ -321,12 +320,12 @@ class ShellDispatcherTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $dispatcher->expects($this->at(1))
+        $dispatcher->expects($this->exactly(2))
             ->method('_shellExists')
-            ->with('TestPlugin.Example')
-            ->will($this->returnValue('TestPlugin\Console\Command\TestPluginShell'));
+            ->withConsecutive(['example'], ['TestPlugin.Example'])
+            ->will($this->onConsecutiveCalls(null, 'TestPlugin\Console\Command\TestPluginShell'));
 
-        $dispatcher->expects($this->at(2))
+        $dispatcher->expects($this->once())
             ->method('_createShell')
             ->with('TestPlugin\Console\Command\TestPluginShell', 'TestPlugin.Example')
             ->will($this->returnValue($Shell));
@@ -350,12 +349,12 @@ class ShellDispatcherTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $dispatcher->expects($this->at(1))
+        $dispatcher->expects($this->exactly(2))
             ->method('_shellExists')
-            ->with('TestPlugin.Example')
-            ->will($this->returnValue('TestPlugin\Console\Command\TestPluginShell'));
+            ->withConsecutive(['Example'], ['TestPlugin.Example'])
+            ->will($this->onConsecutiveCalls(null, 'TestPlugin\Console\Command\TestPluginShell'));
 
-        $dispatcher->expects($this->at(2))
+        $dispatcher->expects($this->once())
             ->method('_createShell')
             ->with('TestPlugin\Console\Command\TestPluginShell', 'TestPlugin.Example')
             ->will($this->returnValue($Shell));
@@ -379,14 +378,14 @@ class ShellDispatcherTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $dispatcher->expects($this->at(1))
+        $dispatcher->expects($this->once())
             ->method('_shellExists')
-            ->with('Sample')
+            ->with('sample')
             ->will($this->returnValue('App\Shell\SampleShell'));
 
-        $dispatcher->expects($this->at(2))
+        $dispatcher->expects($this->once())
             ->method('_createShell')
-            ->with('App\Shell\SampleShell', 'Sample')
+            ->with('App\Shell\SampleShell', 'sample')
             ->will($this->returnValue($Shell));
 
         $dispatcher->args = ['sample'];
