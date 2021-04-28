@@ -106,7 +106,7 @@ class ConsoleIoTest extends TestCase
      */
     public function testAskChoices($choices)
     {
-        $this->in->expects($this->at(0))
+        $this->in->expects($this->once())
             ->method('read')
             ->will($this->returnValue('y'));
 
@@ -122,7 +122,7 @@ class ConsoleIoTest extends TestCase
      */
     public function testAskChoicesInsensitive($choices)
     {
-        $this->in->expects($this->at(0))
+        $this->in->expects($this->once())
             ->method('read')
             ->will($this->returnValue('Y'));
 
@@ -137,11 +137,11 @@ class ConsoleIoTest extends TestCase
      */
     public function testAsk()
     {
-        $this->out->expects($this->at(0))
+        $this->out->expects($this->once())
             ->method('write')
             ->with("<question>Just a test?</question>\n> ");
 
-        $this->in->expects($this->at(0))
+        $this->in->expects($this->once())
             ->method('read')
             ->will($this->returnValue('y'));
 
@@ -156,11 +156,11 @@ class ConsoleIoTest extends TestCase
      */
     public function testAskDefaultValue()
     {
-        $this->out->expects($this->at(0))
+        $this->out->expects($this->once())
             ->method('write')
             ->with("<question>Just a test?</question>\n[n] > ");
 
-        $this->in->expects($this->at(0))
+        $this->in->expects($this->once())
             ->method('read')
             ->will($this->returnValue(''));
 
@@ -175,21 +175,14 @@ class ConsoleIoTest extends TestCase
      */
     public function testOut()
     {
-        $this->out->expects($this->at(0))
+        $this->out->expects($this->exactly(4))
             ->method('write')
-            ->with('Just a test', 1);
-
-        $this->out->expects($this->at(1))
-            ->method('write')
-            ->with(['Just', 'a', 'test'], 1);
-
-        $this->out->expects($this->at(2))
-            ->method('write')
-            ->with(['Just', 'a', 'test'], 2);
-
-        $this->out->expects($this->at(3))
-            ->method('write')
-            ->with('', 1);
+            ->withConsecutive(
+                ['Just a test', 1],
+                [['Just', 'a', 'test'], 1],
+                [['Just', 'a', 'test'], 2],
+                ['', 1]
+            );
 
         $this->io->out('Just a test');
         $this->io->out(['Just', 'a', 'test']);
@@ -204,15 +197,13 @@ class ConsoleIoTest extends TestCase
      */
     public function testVerboseOut()
     {
-        $this->out->expects($this->at(0))
+        $this->out->expects($this->exactly(3))
             ->method('write')
-            ->with('Verbose', 1);
-        $this->out->expects($this->at(1))
-            ->method('write')
-            ->with('Normal', 1);
-        $this->out->expects($this->at(2))
-            ->method('write')
-            ->with('Quiet', 1);
+            ->withConsecutive(
+                ['Verbose', 1],
+                ['Normal', 1],
+                ['Quiet', 1],
+            );
 
         $this->io->level(ConsoleIo::VERBOSE);
 
@@ -228,15 +219,13 @@ class ConsoleIoTest extends TestCase
      */
     public function testVerboseOutput()
     {
-        $this->out->expects($this->at(0))
+        $this->out->expects($this->exactly(3))
             ->method('write')
-            ->with('Verbose', 1);
-        $this->out->expects($this->at(1))
-            ->method('write')
-            ->with('Normal', 1);
-        $this->out->expects($this->at(2))
-            ->method('write')
-            ->with('Quiet', 1);
+            ->withConsecutive(
+                ['Verbose', 1],
+                ['Normal', 1],
+                ['Quiet', 1],
+            );
 
         $this->io->level(ConsoleIo::VERBOSE);
 
@@ -254,7 +243,10 @@ class ConsoleIoTest extends TestCase
     {
         $this->out->expects($this->exactly(2))
             ->method('write')
-            ->with('Quiet', 1);
+            ->withConsecutive(
+                ['Quiet', 1],
+                ['Quiet', 1],
+            );
 
         $this->io->level(ConsoleIo::QUIET);
 
@@ -272,21 +264,14 @@ class ConsoleIoTest extends TestCase
      */
     public function testErr()
     {
-        $this->err->expects($this->at(0))
+        $this->err->expects($this->exactly(4))
             ->method('write')
-            ->with('Just a test', 1);
-
-        $this->err->expects($this->at(1))
-            ->method('write')
-            ->with(['Just', 'a', 'test'], 1);
-
-        $this->err->expects($this->at(2))
-            ->method('write')
-            ->with(['Just', 'a', 'test'], 2);
-
-        $this->err->expects($this->at(3))
-            ->method('write')
-            ->with('', 1);
+            ->withConsecutive(
+                ['Just a test', 1],
+                [['Just', 'a', 'test'], 1],
+                [['Just', 'a', 'test'], 2],
+                ['', 1]
+            );
 
         $this->io->err('Just a test');
         $this->io->err(['Just', 'a', 'test']);
@@ -305,7 +290,7 @@ class ConsoleIoTest extends TestCase
         $this->expectExceptionMessage('Some error');
         $this->expectExceptionCode(1);
 
-        $this->err->expects($this->at(0))
+        $this->err->expects($this->once())
             ->method('write')
             ->with('<error>Some error</error>', 1);
 
@@ -327,7 +312,7 @@ class ConsoleIoTest extends TestCase
         $this->expectExceptionMessage('Some error');
         $this->expectExceptionCode(99);
 
-        $this->err->expects($this->at(0))
+        $this->err->expects($this->once())
             ->method('write')
             ->with('<error>Some error</error>', 1);
 
@@ -363,13 +348,16 @@ class ConsoleIoTest extends TestCase
     {
         $bar = str_repeat('-', 79);
 
-        $this->out->expects($this->at(0))->method('write')->with('', 0);
-        $this->out->expects($this->at(1))->method('write')->with($bar, 1);
-        $this->out->expects($this->at(2))->method('write')->with('', 0);
-
-        $this->out->expects($this->at(3))->method('write')->with('', true);
-        $this->out->expects($this->at(4))->method('write')->with($bar, 1);
-        $this->out->expects($this->at(5))->method('write')->with('', true);
+        $this->out->expects($this->exactly(6))
+            ->method('write')
+            ->withConsecutive(
+                ['', 0],
+                [$bar, 1],
+                ['', 0],
+                ['', true],
+                [$bar, 1],
+                ['', true],
+            );
 
         $this->io->hr();
         $this->io->hr(2);
@@ -384,23 +372,22 @@ class ConsoleIoTest extends TestCase
     {
         $number = strlen('Some text I want to overwrite');
 
-        $this->out->expects($this->at(0))
+        $this->out->expects($this->atLeast(4))
             ->method('write')
-            ->with('Some <info>text</info> I want to overwrite', 0)
-            ->will($this->returnValue($number));
-
-        $this->out->expects($this->at(1))
-            ->method('write')
-            ->with(str_repeat("\x08", $number), 0);
-
-        $this->out->expects($this->at(2))
-            ->method('write')
-            ->with('Less text', 0)
-            ->will($this->returnValue(9));
-
-        $this->out->expects($this->at(3))
-            ->method('write')
-            ->with(str_repeat(' ', $number - 9), 0);
+            ->withConsecutive(
+                ['Some <info>text</info> I want to overwrite', 0],
+                [str_repeat("\x08", $number), 0],
+                ['Less text', 0],
+                [str_repeat(' ', $number - 9), 0],
+                ["\n", 0]
+            )
+            ->will($this->onConsecutiveCalls(
+                $number,
+                9,
+                9,
+                1,
+                0
+            ));
 
         $this->io->out('Some <info>text</info> I want to overwrite', 0);
         $this->io->overwrite('Less text');
@@ -415,42 +402,29 @@ class ConsoleIoTest extends TestCase
     {
         $length = strlen('12345');
 
-        $this->out->expects($this->at(0))
+        $this->out->expects($this->exactly(7))
             ->method('write')
-            ->with('12345')
-            ->will($this->returnValue($length));
-
-        // Backspaces
-        $this->out->expects($this->at(1))
-            ->method('write')
-            ->with(str_repeat("\x08", $length), 0)
-            ->will($this->returnValue($length));
-
-        $this->out->expects($this->at(2))
-            ->method('write')
-            ->with('123', 0)
-            ->will($this->returnValue(3));
-
-        // 2 spaces output to pad up to 5 bytes
-        $this->out->expects($this->at(3))
-            ->method('write')
-            ->with(str_repeat(' ', $length - 3), 0)
-            ->will($this->returnValue($length - 3));
-
-        // Backspaces
-        $this->out->expects($this->at(4))
-            ->method('write')
-            ->with(str_repeat("\x08", $length), 0)
-            ->will($this->returnValue($length));
-
-        $this->out->expects($this->at(5))
-            ->method('write')
-            ->with('12', 0)
-            ->will($this->returnValue(2));
-
-        $this->out->expects($this->at(6))
-            ->method('write')
-            ->with(str_repeat(' ', $length - 2), 0);
+            ->withConsecutive(
+                ['12345'],
+                // Backspaces
+                [str_repeat("\x08", $length), 0],
+                ['123', 0],
+                // 2 spaces output to pad up to 5 bytes
+                [str_repeat(' ', $length - 3), 0],
+                // Backspaces
+                [str_repeat("\x08", $length), 0],
+                ['12', 0],
+                [str_repeat(' ', $length - 2), 0]
+            )
+            ->will($this->onConsecutiveCalls(
+                $length,
+                $length,
+                3,
+                $length - 3,
+                $length,
+                2,
+                $length - 2
+            ));
 
         $this->io->out('12345');
         $this->io->overwrite('123', 0);
@@ -464,32 +438,24 @@ class ConsoleIoTest extends TestCase
      */
     public function testOverwriteWithLongerContent()
     {
-        $this->out->expects($this->at(0))
+        $this->out->expects($this->exactly(5))
             ->method('write')
-            ->with('1')
-            ->will($this->returnValue(1));
-
-        // Backspaces
-        $this->out->expects($this->at(1))
-            ->method('write')
-            ->with(str_repeat("\x08", 1), 0)
-            ->will($this->returnValue(1));
-
-        $this->out->expects($this->at(2))
-            ->method('write')
-            ->with('123', 0)
-            ->will($this->returnValue(3));
-
-        // Backspaces
-        $this->out->expects($this->at(3))
-            ->method('write')
-            ->with(str_repeat("\x08", 3), 0)
-            ->will($this->returnValue(3));
-
-        $this->out->expects($this->at(4))
-            ->method('write')
-            ->with('12345', 0)
-            ->will($this->returnValue(5));
+            ->withConsecutive(
+                ['1'],
+                // Backspaces
+                [str_repeat("\x08", 1), 0],
+                ['123', 0],
+                // Backspaces
+                [str_repeat("\x08", 3), 0],
+                ['12345', 0],
+            )
+            ->will($this->onConsecutiveCalls(
+                1,
+                1,
+                3,
+                3,
+                5
+            ));
 
         $this->io->out('1');
         $this->io->overwrite('123', 0);
@@ -625,13 +591,12 @@ class ConsoleIoTest extends TestCase
      */
     public function testOutHelpers($method)
     {
-        $this->out->expects($this->at(0))
+        $this->out->expects($this->exactly(2))
             ->method('write')
-            ->with("<{$method}>Just a test</{$method}>", 1);
-
-        $this->out->expects($this->at(1))
-            ->method('write')
-            ->with(["<{$method}>Just</{$method}>", "<{$method}>a test</{$method}>"], 1);
+            ->withConsecutive(
+                [ "<{$method}>Just a test</{$method}>", 1],
+                [["<{$method}>Just</{$method}>", "<{$method}>a test</{$method}>"], 1]
+            );
 
         $this->io->{$method}('Just a test');
         $this->io->{$method}(['Just', 'a test']);
@@ -645,13 +610,12 @@ class ConsoleIoTest extends TestCase
      */
     public function testErrHelpers($method)
     {
-        $this->err->expects($this->at(0))
+        $this->err->expects($this->exactly(2))
             ->method('write')
-            ->with("<{$method}>Just a test</{$method}>", 1);
-
-        $this->err->expects($this->at(1))
-            ->method('write')
-            ->with(["<{$method}>Just</{$method}>", "<{$method}>a test</{$method}>"], 1);
+            ->withConsecutive(
+                [ "<{$method}>Just a test</{$method}>", 1],
+                [["<{$method}>Just</{$method}>", "<{$method}>a test</{$method}>"], 1]
+            );
 
         $this->io->{$method}('Just a test');
         $this->io->{$method}(['Just', 'a test']);
