@@ -158,7 +158,8 @@ class ViewTest extends TestCase
      */
     public function testPluginGetTemplate()
     {
-        $viewOptions = ['plugin' => 'TestPlugin',
+        $viewOptions = [
+            'plugin' => 'TestPlugin',
             'name' => 'TestPlugin',
             'templatePath' => 'Tests',
             'template' => 'index',
@@ -205,7 +206,8 @@ class ViewTest extends TestCase
      */
     public function testPluginThemedGetTemplate()
     {
-        $viewOptions = ['plugin' => 'TestPlugin',
+        $viewOptions = [
+            'plugin' => 'TestPlugin',
             'name' => 'TestPlugin',
             'templatePath' => 'Tests',
             'template' => 'index',
@@ -235,7 +237,8 @@ class ViewTest extends TestCase
      */
     public function testPathPluginGeneration()
     {
-        $viewOptions = ['plugin' => 'TestPlugin',
+        $viewOptions = [
+            'plugin' => 'TestPlugin',
             'name' => 'TestPlugin',
             'viewPath' => 'Tests',
             'view' => 'index',
@@ -264,7 +267,8 @@ class ViewTest extends TestCase
      */
     public function testPathThemedPluginGeneration()
     {
-        $viewOptions = ['plugin' => 'TestPlugin',
+        $viewOptions = [
+            'plugin' => 'TestPlugin',
             'name' => 'TestPlugin',
             'viewPath' => 'Tests',
             'view' => 'index',
@@ -293,7 +297,8 @@ class ViewTest extends TestCase
      */
     public function testMultipleAppPaths()
     {
-        $viewOptions = ['plugin' => 'TestPlugin',
+        $viewOptions = [
+            'plugin' => 'TestPlugin',
             'name' => 'TestPlugin',
             'viewPath' => 'Tests',
             'view' => 'index',
@@ -328,7 +333,8 @@ class ViewTest extends TestCase
      */
     public function testCamelCasePluginGetTemplate()
     {
-        $viewOptions = ['plugin' => 'TestPlugin',
+        $viewOptions = [
+            'plugin' => 'TestPlugin',
             'name' => 'TestPlugin',
             'templatePath' => 'Tests',
             'template' => 'index',
@@ -460,7 +466,8 @@ class ViewTest extends TestCase
      */
     public function testGetLayoutFileName()
     {
-        $viewOptions = ['plugin' => null,
+        $viewOptions = [
+            'plugin' => null,
             'name' => 'Pages',
             'viewPath' => 'Pages',
             'action' => 'display',
@@ -490,7 +497,8 @@ class ViewTest extends TestCase
      */
     public function testGetLayoutFileNamePlugin()
     {
-        $viewOptions = ['plugin' => null,
+        $viewOptions = [
+            'plugin' => null,
             'name' => 'Pages',
             'viewPath' => 'Pages',
             'action' => 'display',
@@ -974,53 +982,34 @@ class ViewTest extends TestCase
         $manager = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
         $View->setEventManager($manager);
 
-        $manager->expects($this->at(0))
+        $manager->expects($this->exactly(8))
             ->method('dispatch')
-            ->with($this->callback(function (EventInterface $event) {
-                return $event->getName() === 'View.beforeRender';
-            }));
-
-        $manager->expects($this->at(1))
-            ->method('dispatch')
-            ->with($this->callback(function (EventInterface $event) {
-                return $event->getName() === 'View.beforeRenderFile';
-            }));
-
-        $manager->expects($this->at(2))
-            ->method('dispatch')
-            ->with($this->callback(function (EventInterface $event) {
-                return $event->getName() === 'View.afterRenderFile';
-            }));
-
-        $manager->expects($this->at(3))
-            ->method('dispatch')
-            ->with($this->callback(function (EventInterface $event) {
-                return $event->getName() === 'View.afterRender';
-            }));
-
-        $manager->expects($this->at(4))
-            ->method('dispatch')
-            ->with($this->callback(function (EventInterface $event) {
-                return $event->getName() === 'View.beforeLayout';
-            }));
-
-        $manager->expects($this->at(5))
-            ->method('dispatch')
-            ->with($this->callback(function (EventInterface $event) {
-                return $event->getName() === 'View.beforeRenderFile';
-            }));
-
-        $manager->expects($this->at(6))
-            ->method('dispatch')
-            ->with($this->callback(function (EventInterface $event) {
-                return $event->getName() === 'View.afterRenderFile';
-            }));
-
-        $manager->expects($this->at(7))
-            ->method('dispatch')
-            ->with($this->callback(function (EventInterface $event) {
-                return $event->getName() === 'View.afterLayout';
-            }));
+            ->withConsecutive(
+                [$this->callback(function (EventInterface $event) {
+                    return $event->getName() === 'View.beforeRender';
+                })],
+                [$this->callback(function (EventInterface $event) {
+                    return $event->getName() === 'View.beforeRenderFile';
+                })],
+                [$this->callback(function (EventInterface $event) {
+                    return $event->getName() === 'View.afterRenderFile';
+                })],
+                [$this->callback(function (EventInterface $event) {
+                    return $event->getName() === 'View.afterRender';
+                })],
+                [$this->callback(function (EventInterface $event) {
+                    return $event->getName() === 'View.beforeLayout';
+                })],
+                [$this->callback(function (EventInterface $event) {
+                    return $event->getName() === 'View.beforeRenderFile';
+                })],
+                [$this->callback(function (EventInterface $event) {
+                    return $event->getName() === 'View.afterRenderFile';
+                })],
+                [$this->callback(function (EventInterface $event) {
+                    return $event->getName() === 'View.afterLayout';
+                })]
+            );
 
         $View->render('index');
     }

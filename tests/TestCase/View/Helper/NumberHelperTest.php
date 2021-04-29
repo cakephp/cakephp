@@ -97,7 +97,7 @@ class NumberHelperTest extends TestCase
             ->getMock();
         $helper = new NumberHelperTestObject($this->View, ['engine' => NumberMock::class]);
         $helper->attach($number);
-        $number->expects($this->at(0))
+        $number->expects($this->once())
             ->method($method)
             ->with(12.3)
             ->willReturn('');
