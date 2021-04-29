@@ -610,11 +610,14 @@ class TranslateBehaviorTest extends TestCase
         $table->setLocale('eng');
         $comments->setLocale('eng');
 
-        $article = $table->find()
+        $query = $table->find()
             ->contain(['Comments' => function ($q) {
                 return $q->select(['id', 'comment', 'article_id']);
             }])
-            ->where(['Articles.id' => 1])
+            ->where(['Articles.id' => 1]);
+        var_dump($query->sql());
+        
+        $article = $query
             ->firstOrFail();
 
         $list = new Collection($article->comments);
