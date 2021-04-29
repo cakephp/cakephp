@@ -560,7 +560,7 @@ class HtmlHelperTest extends TestCase
             'img' => [
                 'src' => 'preg:/\/testing\/test_theme\/img\/__cake_test_image\.gif\?\d+/',
                 'alt' => '',
-            ]
+            ],
         ];
         $this->assertHtml($expected, $result);
 
