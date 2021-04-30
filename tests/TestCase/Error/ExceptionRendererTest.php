@@ -718,7 +718,7 @@ class ExceptionRendererTest extends TestCase
             ->getMock();
         $controller->viewBuilder()->setHelpers(['Fail', 'Boom']);
         $controller->setRequest(new ServerRequest());
-        $controller->expects($this->at(0))
+        $controller->expects($this->once())
             ->method('render')
             ->with('missingHelper')
             ->will($this->throwException($exception));

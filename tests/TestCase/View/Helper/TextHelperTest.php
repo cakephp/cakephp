@@ -83,7 +83,7 @@ class TextHelperTest extends TestCase
         $Text = new TextHelperTestObject($this->View, ['engine' => TextMock::class]);
         $Text->attach($String);
         foreach ($methods as $method) {
-            $String->expects($this->at(0))->method($method)->willReturn('');
+            $String->expects($this->once())->method($method)->willReturn('');
             $Text->{$method}(['who'], 'what', 'when', 'where', 'how');
         }
 
@@ -96,7 +96,7 @@ class TextHelperTest extends TestCase
         $Text = new TextHelperTestObject($this->View, ['engine' => TextMock::class]);
         $Text->attach($String);
         foreach ($methods as $method) {
-            $String->expects($this->at(0))->method($method)->willReturn('');
+            $String->expects($this->once())->method($method)->willReturn('');
             $Text->{$method}('who', 'what');
         }
 
@@ -109,7 +109,7 @@ class TextHelperTest extends TestCase
         $Text = new TextHelperTestObject($this->View, ['engine' => TextMock::class]);
         $Text->attach($String);
         foreach ($methods as $method) {
-            $String->expects($this->at(0))->method($method)->willReturn('');
+            $String->expects($this->once())->method($method)->willReturn('');
             $Text->{$method}('who', 'what');
         }
 
@@ -122,7 +122,7 @@ class TextHelperTest extends TestCase
         $Text = new TextHelperTestObject($this->View, ['engine' => TextMock::class]);
         $Text->attach($String);
         foreach ($methods as $method) {
-            $String->expects($this->at(0))->method($method)->willReturn('');
+            $String->expects($this->once())->method($method)->willReturn('');
             $Text->{$method}('who', 1, ['what']);
         }
     }

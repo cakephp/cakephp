@@ -258,12 +258,12 @@ class FormHelperTest extends TestCase
         $mock = $this->getMockBuilder('Cake\View\Widget\WidgetInterface')->getMock();
         $this->Form->addWidget('test', $mock);
 
-        $mock->expects($this->at(0))
+        $mock->expects($this->once())
             ->method('render')
             ->with($data)
             ->will($this->returnValue('HTML'));
 
-        $mock->expects($this->at(1))
+        $mock->expects($this->once())
             ->method('secureFields')
             ->with($data)
             ->will($this->returnValue(['test']));

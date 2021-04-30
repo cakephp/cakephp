@@ -149,8 +149,9 @@ class ValueBinderTest extends TestCase
             ->onlyMethods(['bindValue'])
             ->getMock();
 
-        $statementMock->expects($this->at(0))->method('bindValue')->with('c0', 'value0', 'string');
-        $statementMock->expects($this->at(1))->method('bindValue')->with('c1', 'value1', 'string');
+        $statementMock->expects($this->exactly(2))
+            ->method('bindValue')
+            ->withConsecutive(['c0', 'value0', 'string'], ['c1', 'value1', 'string']);
 
         $valueBinder->attachTo($statementMock); //empty array shouldn't call statement
 
