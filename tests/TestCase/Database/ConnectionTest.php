@@ -1122,8 +1122,8 @@ class ConnectionTest extends TestCase
             ->onlyMethods(['connect', 'commit', 'begin'])
             ->setConstructorArgs([['driver' => $driver]])
             ->getMock();
-        $connection->expects($this->at(0))->method('begin');
-        $connection->expects($this->at(1))->method('commit');
+        $connection->expects($this->once())->method('begin');
+        $connection->expects($this->once())->method('commit');
         $result = $connection->transactional(function ($conn) use ($connection) {
             $this->assertSame($connection, $conn);
 
@@ -1145,8 +1145,8 @@ class ConnectionTest extends TestCase
             ->onlyMethods(['connect', 'commit', 'begin', 'rollback'])
             ->setConstructorArgs([['driver' => $driver]])
             ->getMock();
-        $connection->expects($this->at(0))->method('begin');
-        $connection->expects($this->at(1))->method('rollback');
+        $connection->expects($this->once())->method('begin');
+        $connection->expects($this->once())->method('rollback');
         $connection->expects($this->never())->method('commit');
         $result = $connection->transactional(function ($conn) use ($connection) {
             $this->assertSame($connection, $conn);
@@ -1171,8 +1171,8 @@ class ConnectionTest extends TestCase
             ->onlyMethods(['connect', 'commit', 'begin', 'rollback'])
             ->setConstructorArgs([['driver' => $driver]])
             ->getMock();
-        $connection->expects($this->at(0))->method('begin');
-        $connection->expects($this->at(1))->method('rollback');
+        $connection->expects($this->once())->method('begin');
+        $connection->expects($this->once())->method('rollback');
         $connection->expects($this->never())->method('commit');
         $connection->transactional(function ($conn) use ($connection) {
             $this->assertSame($connection, $conn);
@@ -1393,15 +1393,12 @@ class ConnectionTest extends TestCase
         $newDriver = $this->getMockBuilder(Driver::class)->getMock();
         $prop->setValue($conn, $newDriver);
 
-        $newDriver->expects($this->at(0))
+        $newDriver->expects($this->exactly(2))
             ->method('prepare')
-            ->will($this->throwException(new Exception('server gone away')));
-
-        $newDriver->expects($this->at(1))->method('disconnect');
-        $newDriver->expects($this->at(2))->method('connect');
-        $newDriver->expects($this->at(3))
-            ->method('prepare')
-            ->will($this->returnValue($statement));
+            ->will($this->onConsecutiveCalls(
+                $this->throwException(new Exception('server gone away')),
+                $this->returnValue($statement)
+            ));
 
         $res = $conn->query('SELECT 1');
         $this->assertInstanceOf(StatementInterface::class, $res);
