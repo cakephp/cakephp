@@ -1437,10 +1437,10 @@ class AuthComponentTest extends TestCase
                         'key' => 'auth-key',
                         'element' => 'error',
                         'params' => ['class' => 'error'],
-                    ]
+                    ],
                 ],
                 [
-                    'Auth failure', ['key' => 'auth-key', 'element' => 'custom']
+                    'Auth failure', ['key' => 'auth-key', 'element' => 'custom'],
                 ]
             );
 

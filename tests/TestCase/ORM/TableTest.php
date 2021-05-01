@@ -3718,7 +3718,7 @@ class TableTest extends TestCase
                 'OR' => [
                     'Users.username' => 'garrett',
                     'Users.id' => 4,
-                ]
+                ],
             ]
         );
         $this->assertEquals($expected, $result->clause('where'));
