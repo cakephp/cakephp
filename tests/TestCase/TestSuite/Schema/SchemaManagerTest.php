@@ -27,7 +27,7 @@ class SchemaManagerTest extends TestCase
     {
         $connection = ConnectionManager::get('test');
 
-        $tableName = 'test_table';
+        $tableName = 'test_table_' . rand();
         (new SchemaCleaner())->dropTables('test', [$tableName]);
 
         $file = $this->createSchemaFile($tableName);
@@ -47,18 +47,23 @@ class SchemaManagerTest extends TestCase
     public function testCreateFromMultipleFiles()
     {
         $connection = ConnectionManager::get('test');
+        $tables = [
+            'test_table_' . rand(),
+            'test_table_' . rand(),
+            'test_table_' . rand(),
+        ];
 
-        (new SchemaCleaner())->dropTables('test', $this->getTestTables());
+        (new SchemaCleaner())->dropTables('test', $tables);
 
         $files = [];
-        foreach ($this->getTestTables() as $table) {
+        foreach ($tables as $table) {
             $files[] = $this->createSchemaFile($table);
         }
 
         SchemaManager::create('test', $files, false, false);
 
         // Assert that all test tables were created
-        foreach ($this->getTestTables() as $table) {
+        foreach ($tables as $table) {
             $this->assertSame(
                 0,
                 $connection->newQuery()->select('id')->from($table)->execute()->count()
@@ -66,7 +71,7 @@ class SchemaManagerTest extends TestCase
         }
 
         // Cleanup
-        (new SchemaCleaner())->dropTables('test', $this->getTestTables());
+        (new SchemaCleaner())->dropTables('test', $tables);
     }
 
     public function testCreateFromNonExistentFile()
@@ -83,15 +88,6 @@ class SchemaManagerTest extends TestCase
 
         $this->expectException(\RuntimeException::class);
         SchemaManager::create('test', $tmpFile, false, false);
-    }
-
-    private function getTestTables(): array
-    {
-        return [
-            'test_table',
-            'test_table_2',
-            'test_table_3',
-        ];
     }
 
     private function createSchemaFile(string $tableName): string

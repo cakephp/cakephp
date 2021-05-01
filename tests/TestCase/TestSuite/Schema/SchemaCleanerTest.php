@@ -26,13 +26,13 @@ class SchemaCleanerTest extends TestCase
     {
         $connection = ConnectionManager::get('test');
 
-        $this->createSchemas();
+        [$table] = $this->createSchemas();
 
-        $this->assertTestTablesExistWithCount(1);
+        $this->assertTestTableExistsWithCount($table, 1);
 
         $exceptionThrown = false;
         try {
-            $connection->delete('test_table');
+            $connection->delete($table);
         } catch (\Throwable $e) {
             $exceptionThrown = true;
         } finally {
@@ -51,15 +51,16 @@ class SchemaCleanerTest extends TestCase
         [$sql, $params] = $dialect->listTablesSql($connection->config());
         $initialNumberOfTables = $connection->execute($sql, $params)->count();
 
-        $this->createSchemas();
+        [$table1, $table2] = $this->createSchemas();
 
-        // Assert that the schema is not empty
-        $this->assertTestTablesExistWithCount(1);
+        // Assert that the schema was created
+        $this->assertTestTableExistsWithCount($table1, 1);
+        $this->assertTestTableExistsWithCount($table2, 1);
 
         // Drop the schema
-        (new SchemaCleaner())->dropTables('test', ['test_table','test_table2']);
+        (new SchemaCleaner())->dropTables('test', [$table1, $table2]);
 
-        // Schema is empty
+        // Assert that the tables created were dropped
         [$sql, $params] = $dialect->listTablesSql($connection->config());
         $tables = $connection->execute($sql, $params)->count();
         $this->assertSame($initialNumberOfTables, $tables, 'The test tables should be dropped.');
@@ -67,41 +68,37 @@ class SchemaCleanerTest extends TestCase
 
     public function testTruncateSchema()
     {
-        $this->createSchemas();
+        [$table1, $table2] = $this->createSchemas();
 
-        $this->assertTestTablesExistWithCount(1);
+        $this->assertTestTableExistsWithCount($table1, 1);
+        $this->assertTestTableExistsWithCount($table2, 1);
 
         (new SchemaCleaner())->truncateTables('test');
 
-        $this->assertTestTablesExistWithCount(0);
+        $this->assertTestTableExistsWithCount($table1, 0);
+        $this->assertTestTableExistsWithCount($table2, 0);
     }
 
-    private function assertTestTablesExistWithCount(int $count)
+    private function assertTestTableExistsWithCount(string $table, int $count)
     {
-        $connection = ConnectionManager::get('test');
-
         $this->assertSame(
             $count,
-            $connection->newQuery()->select('id')->from('test_table')->execute()->count()
-        );
-        $this->assertSame(
-            $count,
-            $connection->newQuery()->select('id')->from('test_table2')->execute()->count()
+            ConnectionManager::get('test')->newQuery()->select('id')->from($table)->execute()->count()
         );
     }
 
     private function createSchemas()
     {
-        $schemaCleaner = new SchemaCleaner();
-        $schemaCleaner->dropTables('test', ['test_table', 'test_table2']);
+        $table1 = 'test_table_' . rand();
+        $table2 = 'test_table_' . rand();
 
         $connection = ConnectionManager::get('test');
 
-        $schema = new TableSchema('test_table');
+        $schema = new TableSchema($table1);
         $schema
             ->addColumn('id', 'integer')
             ->addColumn('name', 'string')
-            ->addConstraint('primary', [
+            ->addConstraint($table1 . '_primary', [
                 'type' => TableSchema::CONSTRAINT_PRIMARY,
                 'columns' => ['id'],
             ]);
@@ -111,19 +108,19 @@ class SchemaCleanerTest extends TestCase
             $connection->execute($sql);
         }
 
-        $schema = new TableSchema('test_table2');
+        $schema = new TableSchema($table2);
         $schema
             ->addColumn('id', 'integer')
             ->addColumn('name', 'string')
-            ->addColumn('fk_id', 'integer')
-            ->addConstraint('primary', [
+            ->addColumn('table1_id', 'integer')
+            ->addConstraint($table2 . '_primary', [
                 'type' => TableSchema::CONSTRAINT_PRIMARY,
                 'columns' => ['id'],
             ])
-            ->addConstraint('foreign_key', [
-                'columns' => ['fk_id'],
+            ->addConstraint($table2 . '_foreign_key', [
+                'columns' => ['table1_id'],
                 'type' => TableSchema::CONSTRAINT_FOREIGN,
-                'references' => ['test_table', 'id', ],
+                'references' => [$table1, 'id', ],
             ]);
 
         $queries = $schema->createSql($connection);
@@ -132,11 +129,13 @@ class SchemaCleanerTest extends TestCase
             $connection->execute($sql);
         }
 
-        $connection->insert('test_table', ['name' => 'foo']);
+        $connection->insert($table1, ['name' => 'foo']);
 
-        $id = $connection->newQuery()->select('id')->from('test_table')->limit(1)->execute()->fetch()[0];
-        $connection->insert('test_table2', ['name' => 'foo', 'fk_id' => $id]);
+        $id = $connection->newQuery()->select('id')->from($table1)->limit(1)->execute()->fetch()[0];
+        $connection->insert($table2, ['name' => 'foo', 'table1_id' => $id]);
 
         $connection->execute($connection->getDriver()->enableForeignKeySQL());
+
+        return [$table1, $table2];
     }
 }

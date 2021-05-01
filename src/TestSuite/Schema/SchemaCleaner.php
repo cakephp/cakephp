@@ -35,13 +35,13 @@ class SchemaCleaner
     /**
      * @var bool
      */
-    protected $isDroppingEnabled;
+    protected $isDroppingEnabled = true;
 
     /**
      * SchemaCleaner constructor.
      *
      * @param \Cake\Console\ConsoleIo|null $io Outputs if provided.
-     * @param bool|null $enableDropping Enable dropping (useful for testing purposes)
+     * @param bool $enableDropping Enable dropping (useful for testing purposes)
      */
     public function __construct(?ConsoleIo $io = null, ?bool $enableDropping = true)
     {
