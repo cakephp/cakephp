@@ -308,6 +308,20 @@ class DateTimeTypeTest extends TestCase
         }
     }
 
+    /**
+     * Test that the marhsalled datetime instance always has the system's default timezone.
+     *
+     * @return void
+     */
+    public function testMarshalDateTimeInstance()
+    {
+        $expected = new Time('2020-05-01 23:28:00', 'Europe/Paris');
+
+        $result = $this->type->marshal($expected);
+        $this->assertEquals('UTC', $result->getTimezone()->getName());
+        $this->assertEquals($expected, $result->addHours(2));
+    }
+
     public function testMarshalWithUserTimezone()
     {
         $this->type->setUserTimezone('+0200');
@@ -316,13 +330,15 @@ class DateTimeTypeTest extends TestCase
         $expected = new Time($value);
 
         $result = $this->type->marshal($value);
+        $this->assertEquals('UTC', $result->getTimezone()->getName());
         $this->assertEquals($expected, $result->addHours(2));
 
-        $expected = new Time('2020-05-01 23:28:00', '+0200');
+        $expected = new Time('2020-05-01 21:28:00', 'UTC');
         $result = $this->type->marshal([
             'year' => 2020, 'month' => 5, 'day' => 1,
             'hour' => 23, 'minute' => 28, 'second' => 0,
         ]);
+        $this->assertEquals('UTC', $result->getTimezone()->getName());
         $this->assertEquals($expected, $result);
 
         $this->type->setUserTimezone(null);
@@ -362,6 +378,7 @@ class DateTimeTypeTest extends TestCase
 
         $this->type->setUserTimezone('+0200');
         $result = $this->type->marshal('10/13/2013 11:28pm');
+        $this->assertEquals('UTC', $result->getTimezone()->getName());
         $this->assertEquals($expected, $result->addHours(2));
         $this->type->setUserTimezone(null);
 
