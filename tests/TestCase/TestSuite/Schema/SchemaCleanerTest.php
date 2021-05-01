@@ -27,17 +27,20 @@ class SchemaCleanerTest extends TestCase
         $connection = ConnectionManager::get('test');
 
         $this->createSchemas();
-        $this->assertSame(
-            1,
-            $connection->newQuery()->select('id')->from('test_table')->execute()->count()
-        );
-        $this->assertSame(
-            1,
-            $connection->newQuery()->select('id')->from('test_table2')->execute()->count()
-        );
 
-        $this->expectException(\PDOException::class);
-        $connection->delete('test_table');
+        $this->assertTestTablesExistWithCount(1);
+
+        $exceptionThrown = false;
+        try {
+            $connection->delete('test_table');
+        } catch (\Throwable $e) {
+            $exceptionThrown = true;
+        } finally {
+            $this->assertTrue($exceptionThrown);
+        }
+
+        // Cleanup
+        (new SchemaCleaner())->dropTables('test', ['test_table','test_table2']);
     }
 
     public function testDropSchema()
@@ -45,37 +48,44 @@ class SchemaCleanerTest extends TestCase
         $connection = ConnectionManager::get('test');
         /** @var SchemaDialect $dialect */
         $dialect = $connection->getDriver()->schemaDialect();
+        [$sql, $params] = $dialect->listTablesSql($connection->config());
+        $initialNumberOfTables = $connection->execute($sql, $params)->count();
 
         $this->createSchemas();
 
-        [$sql, $params] = $dialect->listTablesSql($connection->config());
-        $tables = $connection->execute($sql, $params)->fetch();
-
         // Assert that the schema is not empty
-        $this->assertSame(['test_table'], $tables, 'The schema should not be empty.');
+        $this->assertTestTablesExistWithCount(1);
 
         // Drop the schema
-        (new SchemaCleaner())->dropTables('test');
+        (new SchemaCleaner())->dropTables('test', ['test_table','test_table2']);
 
         // Schema is empty
+        [$sql, $params] = $dialect->listTablesSql($connection->config());
         $tables = $connection->execute($sql, $params)->count();
-        $this->assertSame(0, $tables, 'The schema should be empty.');
+        $this->assertSame($initialNumberOfTables, $tables, 'The test tables should be dropped.');
     }
 
     public function testTruncateSchema()
     {
-        $connection = ConnectionManager::get('test');
-
         $this->createSchemas();
 
-        (new SchemaCleaner())->truncate('test');
+        $this->assertTestTablesExistWithCount(1);
+
+        (new SchemaCleaner())->truncateTables('test');
+
+        $this->assertTestTablesExistWithCount(0);
+    }
+
+    private function assertTestTablesExistWithCount(int $count)
+    {
+        $connection = ConnectionManager::get('test');
 
         $this->assertSame(
-            0,
+            $count,
             $connection->newQuery()->select('id')->from('test_table')->execute()->count()
         );
         $this->assertSame(
-            0,
+            $count,
             $connection->newQuery()->select('id')->from('test_table2')->execute()->count()
         );
     }
@@ -83,7 +93,7 @@ class SchemaCleanerTest extends TestCase
     private function createSchemas()
     {
         $schemaCleaner = new SchemaCleaner();
-        $schemaCleaner->dropTables('test');
+        $schemaCleaner->dropTables('test', ['test_table', 'test_table2']);
 
         $connection = ConnectionManager::get('test');
 

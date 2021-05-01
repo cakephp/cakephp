@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\TestSuite\Schema;
 
 use Cake\Database\Schema\TableSchema;
-use Cake\Database\StatementInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\Schema\SchemaCleaner;
 use Cake\TestSuite\Schema\SchemaManager;
@@ -24,34 +23,50 @@ use Cake\TestSuite\TestCase;
 
 class SchemaManagerTest extends TestCase
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-        (new SchemaCleaner())->dropTables('test');
-    }
-
     public function testCreateFromOneFile()
     {
+        $connection = ConnectionManager::get('test');
+
         $tableName = 'test_table';
+        (new SchemaCleaner())->dropTables('test', [$tableName]);
+
         $file = $this->createSchemaFile($tableName);
 
-        SchemaManager::create('test', $file);
+        SchemaManager::create('test', $file, false, false);
 
-        $this->assertSame([[$tableName]], $this->listTables());
+        // Assert that the test table was created
+        $this->assertSame(
+            0,
+            $connection->newQuery()->select('id')->from($tableName)->execute()->count()
+        );
+
+        // Cleanup
+        (new SchemaCleaner())->dropTables('test', [$tableName]);
     }
 
     public function testCreateFromMultipleFiles()
     {
-        $tableName1 = 'test_table';
-        $tableName2 = 'test_table_2';
-        $tableName3 = 'test_table_3';
-        $file1 = $this->createSchemaFile($tableName1);
-        $file2 = $this->createSchemaFile($tableName2);
-        $file3 = $this->createSchemaFile($tableName3);
+        $connection = ConnectionManager::get('test');
 
-        SchemaManager::create('test', [$file1, $file2, $file3]);
+        (new SchemaCleaner())->dropTables('test', $this->getTestTables());
 
-        $this->assertSame([[$tableName1], [$tableName2], [$tableName3],], array_values($this->listTables()));
+        $files = [];
+        foreach ($this->getTestTables() as $table) {
+            $files[] = $this->createSchemaFile($table);
+        }
+
+        SchemaManager::create('test', $files, false, false);
+
+        // Assert that all test tables were created
+        foreach ($this->getTestTables() as $table) {
+            $this->assertSame(
+                0,
+                $connection->newQuery()->select('id')->from($table)->execute()->count()
+            );
+        }
+
+        // Cleanup
+        (new SchemaCleaner())->dropTables('test', $this->getTestTables());
     }
 
     public function testCreateFromNonExistentFile()
@@ -67,7 +82,16 @@ class SchemaManagerTest extends TestCase
         file_put_contents($tmpFile, $query);
 
         $this->expectException(\RuntimeException::class);
-        SchemaManager::create('test', $tmpFile);
+        SchemaManager::create('test', $tmpFile, false, false);
+    }
+
+    private function getTestTables(): array
+    {
+        return [
+            'test_table',
+            'test_table_2',
+            'test_table_3',
+        ];
     }
 
     private function createSchemaFile(string $tableName): string
@@ -84,16 +108,5 @@ class SchemaManagerTest extends TestCase
         file_put_contents($tmpFile, $query);
 
         return $tmpFile;
-    }
-
-    private function listTables(): array
-    {
-        $connection = ConnectionManager::get('test');
-        /** @var SchemaDialect $dialect */
-        $dialect = $connection->getDriver()->schemaDialect();
-
-        [$sql, $params] = $dialect->listTablesSql($connection->config());
-
-        return $connection->execute($sql, $params)->fetchAll(StatementInterface::FETCH_TYPE_NUM);
     }
 }

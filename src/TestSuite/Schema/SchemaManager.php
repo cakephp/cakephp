@@ -45,36 +45,50 @@ class SchemaManager
      * @param string $connectionName Connection
      * @param string|string[] $file File to dump
      * @param bool|null $verbose Set to true to display messages
+     * @param bool|null $enableDropping Will drop all tables prior to creating the schema (true by default)
      * @return void
      * @throws \Exception if the truncation failed
      * @throws \RuntimeException if the file could not be processed
      */
-    public static function create(string $connectionName, $file, ?bool $verbose = false)
-    {
+    public static function create(
+        string $connectionName,
+        $file,
+        ?bool $verbose = false,
+        ?bool $enableDropping = true
+    ): void {
         $files = (array)$file;
 
-        $migrator = new static($verbose);
-        $schemaCleaner = new SchemaCleaner($migrator->io);
+        if (empty($files)) {
+            return;
+        }
 
-        $schemaCleaner->dropTables($connectionName);
-
+        $stmts = [];
         foreach ($files as $file) {
             if (!file_exists($file)) {
                 throw new \RuntimeException('The file ' . $file . ' could not found.');
             }
 
-            $sql = file_get_contents($file);
+            $stmts[] = $sql = file_get_contents($file);
             if ($sql === false) {
                 throw new \RuntimeException('The file ' . $file . ' could not read.');
             }
+        }
 
-            ConnectionManager::get($connectionName)->execute($sql);
+        $migrator = new static($verbose);
+        $schemaCleaner = new SchemaCleaner($migrator->io);
+
+        if ($enableDropping) {
+            $schemaCleaner->dropTables($connectionName);
+        }
+
+        foreach ($stmts as $stmt) {
+            ConnectionManager::get($connectionName)->execute($stmt);
 
             $migrator->io->success(
                 'Dump of schema in file ' . $file . ' for connection ' . $connectionName . ' successful.'
             );
         }
 
-        $schemaCleaner->truncate($connectionName);
+        $schemaCleaner->truncateTables($connectionName);
     }
 }

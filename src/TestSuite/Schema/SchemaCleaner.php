@@ -33,34 +33,80 @@ class SchemaCleaner
     protected $io;
 
     /**
+     * @var bool
+     */
+    protected $isDroppingEnabled;
+
+    /**
      * SchemaCleaner constructor.
      *
      * @param \Cake\Console\ConsoleIo|null $io Outputs if provided.
+     * @param bool|null $enableDropping Enable dropping (useful for testing purposes)
      */
-    public function __construct(?ConsoleIo $io = null)
+    public function __construct(?ConsoleIo $io = null, ?bool $enableDropping = true)
     {
         $this->io = $io;
+        $this->isDroppingEnabled = $enableDropping;
     }
 
     /**
      * Drop all tables of the provided connection.
      *
      * @param string $connectionName Name of the connection.
+     * @param array|null $tables Tables to truncate (all if not set).
      * @return void
      * @throws \Exception if the dropping failed.
      */
-    public function dropTables(string $connectionName)
+    public function dropTables(string $connectionName, $tables = null): void
     {
-        $this->info('Dropping all tables for connection ' . $connectionName);
+        if ($this->isDroppingEnabled === true) {
+            $this->handle($connectionName, 'dropTableSql', 'dropping', $tables);
+        }
+    }
 
+    /**
+     * Truncate all tables of the provided connection.
+     *
+     * @param string $connectionName Name of the connection.
+     * @param array|null $tables Tables to truncate (all if not set).
+     * @return void
+     * @throws \Exception if the truncation failed.
+     */
+    public function truncateTables(string $connectionName, $tables = null): void
+    {
+        $this->handle($connectionName, 'truncateTableSql', 'truncating', $tables);
+    }
+
+    /**
+     * @param string $connectionName Name of the connection.
+     * @param string $dialectMethod Method applied to the SQL dialect.
+     * @param string $action Action displayed in the info message
+     * @param string[]|null $tables Tables to truncate (all if null)
+     * @return void
+     * @throws \Exception
+     */
+    protected function handle(string $connectionName, string $dialectMethod, string $action, $tables): void
+    {
         $schema = $this->getSchema($connectionName);
         $dialect = $this->getDialect($connectionName);
+        $allTables = $schema->listTables();
+        if (is_null($tables)) {
+            $tables = $allTables;
+        } else {
+            $tables = array_intersect($allTables, $tables);
+        }
+
+        $this->displayInfoMessage($connectionName, $tables, $action);
+
+        if (empty($tables)) {
+            return;
+        }
 
         $stmts = [];
-        foreach ($schema->listTables() as $table) {
+        foreach ($tables as $table) {
             $table = $schema->describe($table);
             if ($table instanceof TableSchema) {
-                $stmts = array_merge($stmts, $dialect->dropTableSql($table));
+                $stmts = array_merge($stmts, $dialect->{$dialectMethod}($table));
             }
         }
 
@@ -68,28 +114,19 @@ class SchemaCleaner
     }
 
     /**
-     * Truncate all tables of the provided connection.
+     * Display message in info.
      *
      * @param string $connectionName Name of the connection.
+     * @param array $tables Table handled.
+     * @param string $action Action performed.
      * @return void
-     * @throws \Exception if the truncation failed.
      */
-    public function truncate(string $connectionName)
+    protected function displayInfoMessage(string $connectionName, array $tables, string $action): void
     {
-        $this->info('Truncating all tables for connection ' . $connectionName);
-
-        $stmts = [];
-        $schema = static::getSchema($connectionName);
-        $dialect = static::getDialect($connectionName);
-        $tables = $schema->listTables();
-        foreach ($tables as $table) {
-            $table = $schema->describe($table);
-            if ($table instanceof TableSchema) {
-                $stmts = array_merge($stmts, $dialect->truncateTableSql($table));
-            }
-        }
-
-        $this->executeStatements(ConnectionManager::get($connectionName), $stmts);
+        $msg = [ucwords($action)];
+        $msg[] = count($tables) . ' tables';
+        $msg[] = 'for connection ' . $connectionName;
+        $this->info(implode(' ', $msg));
     }
 
     /**
