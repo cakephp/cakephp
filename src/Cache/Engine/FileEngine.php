@@ -254,11 +254,13 @@ class FileEngine extends CacheEngine
         /** @var \SplFileInfo $fileInfo */
         foreach ($contents as $fileInfo) {
             if ($fileInfo->isFile()) {
+                unset($fileInfo);
                 continue;
             }
 
             $realPath = $fileInfo->getRealPath();
             if (!$realPath) {
+                unset($fileInfo);
                 continue;
             }
 
@@ -267,7 +269,11 @@ class FileEngine extends CacheEngine
                 $this->_clearDirectory($path);
                 $cleared[] = $path;
             }
+
+            unset($fileInfo);
         }
+
+        unset($directory, $contents);
 
         return true;
     }
@@ -482,6 +488,8 @@ class FileEngine extends CacheEngine
             // phpcs:ignore
             @unlink($path);
         }
+
+        unset($directoryIterator, $contents, $filtered);
 
         return true;
     }

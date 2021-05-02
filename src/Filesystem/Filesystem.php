@@ -208,12 +208,16 @@ class Filesystem
             if ($fileInfo->getType() === self::TYPE_DIR || $isWindowsLink) {
                 // phpcs:ignore
                 $result = $result && @rmdir($fileInfo->getPathname());
+                unset($fileInfo);
                 continue;
             }
 
             // phpcs:ignore
             $result = $result && @unlink($fileInfo->getPathname());
+            unset($fileInfo);
         }
+
+        unset($iterator);
 
         // phpcs:ignore
         $result = $result && @rmdir($path);
