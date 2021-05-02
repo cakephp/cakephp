@@ -270,9 +270,12 @@ class FileEngine extends CacheEngine
                 $cleared[] = $path;
             }
 
+            // possible inner iterators need to be unset too in order for locks on parents to be released
             unset($fileInfo);
         }
 
+        // unsetting iterators helps releasing possible locks in certain environments,
+        // which could otherwise make `rmdir()` fail
         unset($directory, $contents);
 
         return true;
