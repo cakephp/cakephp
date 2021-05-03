@@ -120,10 +120,9 @@ class MysqlTest extends TestCase
         $connection = $this->getMockBuilder('StdClass')
             ->addMethods(['exec'])
             ->getMock();
-        $connection->expects($this->at(0))->method('exec')->with('Execute this');
-        $connection->expects($this->at(1))->method('exec')->with('this too');
-        $connection->expects($this->at(2))->method('exec')->with("SET time_zone = 'Antarctica'");
-        $connection->expects($this->exactly(3))->method('exec');
+        $connection->expects($this->exactly(3))
+            ->method('exec')
+            ->withConsecutive(['Execute this'], ['this too'], ["SET time_zone = 'Antartica'"]);
 
         $driver->expects($this->once())->method('_connect')
             ->with($dsn, $expected);

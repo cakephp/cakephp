@@ -169,10 +169,14 @@ class SqlserverTest extends TestCase
                 $this->returnArgument(0)
             ));
 
-        $connection->expects($this->at(0))->method('exec')->with('Execute this');
-        $connection->expects($this->at(1))->method('exec')->with('this too');
-        $connection->expects($this->at(2))->method('exec')->with('SET config1 value1');
-        $connection->expects($this->at(3))->method('exec')->with('SET config2 value2');
+        $connection->expects($this->exactly(3))
+            ->method('exec')
+            ->withConsecutive(
+                ['Execute this'],
+                ['this too'],
+                ['SET config1 value1'],
+                ['SET config2 value2']
+            );
 
         $driver->setConnection($connection);
         $driver->expects($this->once())->method('_connect')

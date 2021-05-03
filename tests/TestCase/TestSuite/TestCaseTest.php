@@ -349,7 +349,7 @@ class TestCaseTest extends TestCase
         $this->assertSame('posts', $Posts->getTable());
 
         $Posts = $this->getMockForModel('Posts', ['save']);
-        $Posts->expects($this->at(0))
+        $Posts->expects($this->once())
             ->method('save')
             ->will($this->returnValue('mocked'));
         $this->assertSame('mocked', $Posts->save($entity));
@@ -361,14 +361,14 @@ class TestCaseTest extends TestCase
         $this->assertSame('TestApp\Model\Entity\Tag', $Tags->getEntityClass());
 
         $SluggedPosts = $this->getMockForModel('SluggedPosts', ['slugify']);
-        $SluggedPosts->expects($this->at(0))
+        $SluggedPosts->expects($this->once())
             ->method('slugify')
             ->with('some value')
             ->will($this->returnValue('mocked'));
         $this->assertSame('mocked', $SluggedPosts->slugify('some value'));
 
         $SluggedPosts = $this->getMockForModel('SluggedPosts', ['save', 'slugify']);
-        $SluggedPosts->expects($this->at(0))
+        $SluggedPosts->expects($this->once())
             ->method('slugify')
             ->with('some value two')
             ->will($this->returnValue('mocked'));
@@ -407,12 +407,12 @@ class TestCaseTest extends TestCase
 
         $this->assertInstanceOf('TestPlugin\Model\Table\TestPluginCommentsTable', $TestPluginComment);
         $this->assertSame('Cake\ORM\Entity', $TestPluginComment->getEntityClass());
-        $TestPluginComment->expects($this->at(0))
+        $TestPluginComment->expects($this->exactly(2))
             ->method('save')
-            ->will($this->returnValue(true));
-        $TestPluginComment->expects($this->at(1))
-            ->method('save')
-            ->will($this->returnValue(false));
+            ->will($this->onConsecutiveCalls(
+                $this->returnValue(true),
+                $this->returnValue(false)
+            ));
 
         $entity = new Entity([]);
         $this->assertTrue($TestPluginComment->save($entity));
@@ -441,12 +441,12 @@ class TestCaseTest extends TestCase
         $this->assertInstanceOf(Table::class, $result);
         $this->assertSame('Comments', $Mock->getAlias());
 
-        $Mock->expects($this->at(0))
+        $Mock->expects($this->exactly(2))
             ->method('save')
-            ->will($this->returnValue(true));
-        $Mock->expects($this->at(1))
-            ->method('save')
-            ->will($this->returnValue(false));
+            ->will($this->onConsecutiveCalls(
+                $this->returnValue(true),
+                $this->returnValue(false)
+            ));
 
         $entity = new Entity([]);
         $this->assertTrue($Mock->save($entity));

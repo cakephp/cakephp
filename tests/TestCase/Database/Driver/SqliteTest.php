@@ -90,9 +90,9 @@ class SqliteTest extends TestCase
         $connection = $this->getMockBuilder('StdClass')
             ->addMethods(['exec'])
             ->getMock();
-        $connection->expects($this->at(0))->method('exec')->with('Execute this');
-        $connection->expects($this->at(1))->method('exec')->with('this too');
-        $connection->expects($this->exactly(2))->method('exec');
+        $connection->expects($this->exactly(2))
+            ->method('exec')
+            ->withConsecutive(['Execute this'], ['this too']);
 
         $driver->expects($this->once())->method('_connect')
             ->with($dsn, $expected);
