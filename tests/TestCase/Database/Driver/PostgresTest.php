@@ -130,7 +130,7 @@ class PostgresTest extends TestCase
                 ['SET search_path TO fooblic'],
                 ['Execute this'],
                 ['this too'],
-                ['SET timezone = Antartica']
+                ['SET timezone = Antarctica']
             );
 
         $driver->setConnection($connection);
