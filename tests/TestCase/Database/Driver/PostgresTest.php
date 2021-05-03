@@ -123,12 +123,15 @@ class PostgresTest extends TestCase
                 $this->returnArgument(0)
             ));
 
-        $connection->expects($this->at(1))->method('exec')->with('SET NAMES a-language');
-        $connection->expects($this->at(3))->method('exec')->with('SET search_path TO fooblic');
-        $connection->expects($this->at(5))->method('exec')->with('Execute this');
-        $connection->expects($this->at(6))->method('exec')->with('this too');
-        $connection->expects($this->at(7))->method('exec')->with('SET timezone = Antarctica');
-        $connection->expects($this->exactly(5))->method('exec');
+        $connection->expects($this->exactly(5))
+            ->method('exec')
+            ->withConsecutive(
+                ['SET NAMES a-language'],
+                ['SET search_path TO fooblic'],
+                ['Execute this'],
+                ['this too'],
+                ['SET timezone = Antarctica']
+            );
 
         $driver->setConnection($connection);
         $driver->expects($this->once())->method('_connect')

@@ -280,17 +280,13 @@ class TestFixtureTest extends TestCase
             ['name' => 'Captain Picard', 'created' => '2009-04-28 19:20:00'],
             ['name' => 'Chewbacca', 'created' => '2009-04-28 19:20:00'],
         ];
-        $query->expects($this->at(2))
+        $query->expects($this->exactly(3))
             ->method('values')
-            ->with($expected[0])
-            ->will($this->returnSelf());
-        $query->expects($this->at(3))
-            ->method('values')
-            ->with($expected[1])
-            ->will($this->returnSelf());
-        $query->expects($this->at(4))
-            ->method('values')
-            ->with($expected[2])
+            ->withConsecutive(
+                [$expected[0]],
+                [$expected[1]],
+                [$expected[2]]
+            )
             ->will($this->returnSelf());
 
         $statement = $this->createMock(StatementInterface::class);
@@ -335,7 +331,7 @@ class TestFixtureTest extends TestCase
         $expected = [
             ['title' => 'Hello!', 'body' => 'Hello world!'],
         ];
-        $query->expects($this->at(2))
+        $query->expects($this->once())
             ->method('values')
             ->with($expected[0])
             ->will($this->returnSelf());
@@ -384,17 +380,13 @@ class TestFixtureTest extends TestCase
             ['name' => 'John Doe', 'email' => 'john.doe@email.com', 'age' => 20],
             ['name' => 'Jane Doe', 'email' => 'jane.doe@email.com', 'age' => 30],
         ];
-        $query->expects($this->at(2))
+        $query->expects($this->exactly(3))
             ->method('values')
-            ->with($expected[0])
-            ->will($this->returnSelf());
-        $query->expects($this->at(3))
-            ->method('values')
-            ->with($expected[1])
-            ->will($this->returnSelf());
-        $query->expects($this->at(4))
-            ->method('values')
-            ->with($expected[2])
+            ->withConsecutive(
+                [$expected[0]],
+                [$expected[1]],
+                [$expected[2]]
+            )
             ->will($this->returnSelf());
 
         $statement = $this->createMock(StatementInterface::class);
