@@ -320,6 +320,10 @@ class DateTimeType extends BaseType implements BatchCastingInterface
     public function marshal($value): ?DateTimeInterface
     {
         if ($value instanceof DateTimeInterface) {
+            if ($value instanceof DateTime) {
+                $value = clone $value;
+            }
+
             /** @var \Datetime|\DateTimeImmutable $value */
             return $value->setTimezone($this->defaultTimezone);
         }

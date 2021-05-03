@@ -319,7 +319,8 @@ class DateTimeTypeTest extends TestCase
 
         $result = $this->type->marshal($expected);
         $this->assertEquals('UTC', $result->getTimezone()->getName());
-        $this->assertEquals($expected, $result->addHours(2));
+        $this->assertEquals($expected->toDateTimeString(), $result->addHours(2)->toDateTimeString());
+        $this->assertEquals('Europe/Paris', $expected->getTimezone()->getName());
     }
 
     public function testMarshalWithUserTimezone()
