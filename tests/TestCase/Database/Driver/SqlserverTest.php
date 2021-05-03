@@ -169,7 +169,7 @@ class SqlserverTest extends TestCase
                 $this->returnArgument(0)
             ));
 
-        $connection->expects($this->exactly(3))
+        $connection->expects($this->exactly(4))
             ->method('exec')
             ->withConsecutive(
                 ['Execute this'],
