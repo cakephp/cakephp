@@ -742,12 +742,14 @@ class Folder
                     } else {
                         $this->_errors[] = sprintf('%s NOT removed', $filePath);
 
-                        // inner iterators need to be unset too in order for locks on parents to be released
                         unset($directory, $iterator, $item);
 
                         return false;
                     }
                 }
+
+                // inner iterators need to be unset too in order for locks on parents to be released
+                unset($item);
             }
 
             // unsetting iterators helps releasing possible locks in certain environments,

@@ -492,6 +492,8 @@ class FileEngine extends CacheEngine
             @unlink($path);
         }
 
+        // unsetting iterators helps releasing possible locks in certain environments,
+        // which could otherwise make `rmdir()` fail
         unset($directoryIterator, $contents, $filtered);
 
         return true;
