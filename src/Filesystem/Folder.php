@@ -592,9 +592,12 @@ class Folder
                 $directories[] = $itemPath;
             }
 
+            // inner iterators need to be unset too in order for locks on parents to be released
             unset($fsIterator, $item);
         }
 
+        // unsetting iterators helps releasing possible locks in certain environments,
+        // which could otherwise make `rmdir()` fail
         unset($directory, $iterator);
 
         if ($type === null) {
@@ -739,6 +742,7 @@ class Folder
                     } else {
                         $this->_errors[] = sprintf('%s NOT removed', $filePath);
 
+                        // inner iterators need to be unset too in order for locks on parents to be released
                         unset($directory, $iterator, $item);
 
                         return false;
@@ -746,6 +750,8 @@ class Folder
                 }
             }
 
+            // unsetting iterators helps releasing possible locks in certain environments,
+            // which could otherwise make `rmdir()` fail
             unset($directory, $iterator);
 
             $path = rtrim($path, DIRECTORY_SEPARATOR);
