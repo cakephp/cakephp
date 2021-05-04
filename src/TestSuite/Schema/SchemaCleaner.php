@@ -33,20 +33,13 @@ class SchemaCleaner
     protected $io;
 
     /**
-     * @var bool
-     */
-    protected $isDroppingEnabled = true;
-
-    /**
      * SchemaCleaner constructor.
      *
      * @param \Cake\Console\ConsoleIo|null $io Outputs if provided.
-     * @param bool $enableDropping Enable dropping (useful for testing purposes)
      */
-    public function __construct(?ConsoleIo $io = null, ?bool $enableDropping = true)
+    public function __construct(?ConsoleIo $io = null)
     {
         $this->io = $io;
-        $this->isDroppingEnabled = $enableDropping;
     }
 
     /**
@@ -59,9 +52,7 @@ class SchemaCleaner
      */
     public function dropTables(string $connectionName, $tables = null): void
     {
-        if ($this->isDroppingEnabled === true) {
-            $this->handle($connectionName, 'dropTableSql', 'dropping', $tables);
-        }
+        $this->handle($connectionName, 'dropTableSql', 'dropping', $tables);
     }
 
     /**
