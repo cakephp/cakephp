@@ -122,6 +122,7 @@ class Client implements ClientInterface
         'ssl_verify_host' => true,
         'redirect' => false,
         'protocolVersion' => '1.1',
+        'query_encoding' => PHP_QUERY_RFC1738,
     ];
 
     /**
@@ -519,19 +520,25 @@ class Client implements ClientInterface
         if (empty($options) && empty($query)) {
             return $url;
         }
-        if ($query) {
-            $q = strpos($url, '?') === false ? '?' : '&';
-            $url .= $q;
-            $url .= is_string($query) ? $query : http_build_query($query);
-        }
         $defaults = [
             'host' => null,
             'port' => null,
             'scheme' => 'http',
             'basePath' => '',
             'protocolRelative' => false,
+            'query_encoding' => PHP_QUERY_RFC1738,
         ];
         $options += $defaults;
+
+        if ($query) {
+            $q = strpos($url, '?') === false ? '?' : '&';
+            $url .= $q;
+            if (is_string($query)) {
+                $url .= $query;
+            } else {
+                $url .= http_build_query($query, "", "&", $options['query_encoding']);
+            }
+        }
 
         if ($options['protocolRelative'] && preg_match('#^//#', $url)) {
             $url = $options['scheme'] . ':' . $url;
