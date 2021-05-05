@@ -536,7 +536,7 @@ class Client implements ClientInterface
             if (is_string($query)) {
                 $url .= $query;
             } else {
-                $url .= http_build_query($query, "", "&", $options['query_encoding']);
+                $url .= http_build_query($query, '', '&', $options['query_encoding']);
             }
         }
 

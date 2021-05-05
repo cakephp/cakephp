@@ -210,7 +210,7 @@ class ClientTest extends TestCase
                 ['$filter' => 'operation_id eq 12'],
                 ['query_encoding' => PHP_QUERY_RFC3986],
                 'check RFC 3986 alternate query encoding',
-            ]
+            ],
         ];
     }
 
