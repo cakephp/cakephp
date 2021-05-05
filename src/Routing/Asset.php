@@ -214,13 +214,15 @@ class Asset
     protected static function encodeUrl(string $url): string
     {
         $path = parse_url($url, PHP_URL_PATH);
+        if ($path === false) {
+            $path = $url;
+        }
+
         $parts = array_map('rawurldecode', explode('/', $path));
         $parts = array_map('rawurlencode', $parts);
         $encoded = implode('/', $parts);
 
-        $url = str_replace($path, $encoded, $url);
-
-        return $url;
+        return str_replace($path, $encoded, $url);
     }
 
     /**
