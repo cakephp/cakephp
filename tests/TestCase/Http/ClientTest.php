@@ -202,14 +202,14 @@ class ClientTest extends TestCase
                 'https://example.com/operations',
                 ['$filter' => 'operation_id eq 12'],
                 ['queryEncoding' => PHP_QUERY_RFC1738],
-                'check default query encoding',
+                'check the alternate RFC 1738 query encoding',
             ],
             [
                 'https://example.com/operations?%24filter=operation_id%20eq%2012',
                 'https://example.com/operations',
                 ['$filter' => 'operation_id eq 12'],
                 [],
-                'check RFC 3986 alternate query encoding',
+                'check the default RFC 3986 query encoding',
             ],
         ];
     }
