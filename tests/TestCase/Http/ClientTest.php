@@ -201,14 +201,14 @@ class ClientTest extends TestCase
                 'https://example.com/operations?%24filter=operation_id+eq+12',
                 'https://example.com/operations',
                 ['$filter' => 'operation_id eq 12'],
-                [],
+                ['queryEncoding' => PHP_QUERY_RFC1738],
                 'check default query encoding',
             ],
             [
                 'https://example.com/operations?%24filter=operation_id%20eq%2012',
                 'https://example.com/operations',
                 ['$filter' => 'operation_id eq 12'],
-                ['query_encoding' => PHP_QUERY_RFC3986],
+                [],
                 'check RFC 3986 alternate query encoding',
             ],
         ];
@@ -1025,7 +1025,7 @@ class ClientTest extends TestCase
             'ssl_verify_host' => true,
             'redirect' => false,
             'protocolVersion' => '1.1',
-            'query_encoding' => PHP_QUERY_RFC1738,
+            'queryEncoding' => PHP_QUERY_RFC3986,
         ];
         $this->assertSame($expected, $config);
     }

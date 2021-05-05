@@ -122,7 +122,7 @@ class Client implements ClientInterface
         'ssl_verify_host' => true,
         'redirect' => false,
         'protocolVersion' => '1.1',
-        'query_encoding' => PHP_QUERY_RFC1738,
+        'queryEncoding' => PHP_QUERY_RFC3986,
     ];
 
     /**
@@ -526,7 +526,7 @@ class Client implements ClientInterface
             'scheme' => 'http',
             'basePath' => '',
             'protocolRelative' => false,
-            'query_encoding' => PHP_QUERY_RFC1738,
+            'queryEncoding' => PHP_QUERY_RFC3986,
         ];
         $options += $defaults;
 
@@ -536,7 +536,7 @@ class Client implements ClientInterface
             if (is_string($query)) {
                 $url .= $query;
             } else {
-                $url .= http_build_query($query, '', '&', $options['query_encoding']);
+                $url .= http_build_query($query, '', '&', $options['queryEncoding']);
             }
         }
 
