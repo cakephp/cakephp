@@ -19,10 +19,12 @@ namespace Cake\Test\TestCase\TestSuite;
 use Cake\Mailer\Mailer;
 use Cake\Mailer\Message;
 use Cake\Mailer\TransportFactory;
+use Cake\TestSuite\Constraint\Email\MailSentFrom;
 use Cake\TestSuite\EmailTrait;
 use Cake\TestSuite\TestCase;
 use Cake\TestSuite\TestEmailTransport;
 use PHPUnit\Framework\AssertionFailedError;
+use PHPUnit\Framework\Constraint\LogicalNot;
 
 /**
  * Tests EmailTrait assertions
@@ -117,6 +119,9 @@ class EmailTraitTest extends TestCase
 
         $this->assertMailSentFromAt(0, 'default@example.com');
         $this->assertMailSentFromAt(1, 'alternate@example.com');
+
+        // Confirm that "at 0" is really testing email 0, not all the emails
+        $this->assertThat('alternate@example.com', new LogicalNot(new MailSentFrom(0)));
 
         $this->assertMailSentToAt(0, 'to@example.com');
         $this->assertMailSentToAt(1, 'to2@example.com');

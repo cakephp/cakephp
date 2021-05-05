@@ -51,7 +51,7 @@ abstract class MailConstraintBase extends Constraint
     {
         $messages = TestEmailTransport::getMessages();
 
-        if ($this->at) {
+        if ($this->at !== null) {
             if (!isset($messages[$this->at])) {
                 return [];
             }
