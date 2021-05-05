@@ -110,9 +110,6 @@ class EmailTraitTest extends TestCase
         $this->assertMailSentFromAt(0, 'default@example.com');
         $this->assertMailSentFromAt(1, 'alternate@example.com');
 
-        // Confirm that "at 0" is really testing email 0, not all the emails
-        $this->assertThat('alternate@example.com', new LogicalNot(new MailSentFrom(0)));
-
         $this->assertMailSentToAt(0, 'to@example.com');
         $this->assertMailSentToAt(1, 'to2@example.com');
         $this->assertMailSentToAt(2, 'to3@example.com');
@@ -121,6 +118,24 @@ class EmailTraitTest extends TestCase
         $this->assertMailContainsAt(1, 'html');
 
         $this->assertMailSentWithAt(0, 'Hello world', 'subject');
+    }
+
+    /**
+     * confirm that "at 0" is really testing email 0, not all the emails
+     *
+     * @return void
+     */
+    public function testAt0()
+    {
+        $this->skipIf(!class_exists('PHPUnit\Framework\Constraint\LogicalNot'), 'LogicalNot class not supported on PHP5.6');
+
+        $this->assertNoMailSent();
+
+        $this->sendEmails();
+
+        $this->assertMailCount(3);
+
+        $this->assertThat('alternate@example.com', new LogicalNot(new MailSentFrom(0)));
     }
 
     /**
