@@ -519,11 +519,6 @@ class Client implements ClientInterface
         if (empty($options) && empty($query)) {
             return $url;
         }
-        if ($query) {
-            $q = strpos($url, '?') === false ? '?' : '&';
-            $url .= $q;
-            $url .= is_string($query) ? $query : http_build_query($query);
-        }
         $defaults = [
             'host' => null,
             'port' => null,
@@ -532,6 +527,16 @@ class Client implements ClientInterface
             'protocolRelative' => false,
         ];
         $options += $defaults;
+
+        if ($query) {
+            $q = strpos($url, '?') === false ? '?' : '&';
+            $url .= $q;
+            if (is_string($query)) {
+                $url .= $query;
+            } else {
+                $url .= http_build_query($query, '', '&', PHP_QUERY_RFC3986);
+            }
+        }
 
         if ($options['protocolRelative'] && preg_match('#^//#', $url)) {
             $url = $options['scheme'] . ':' . $url;
